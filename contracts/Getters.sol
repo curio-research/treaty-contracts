@@ -22,7 +22,7 @@ contract Getters {
     {
         GameTypes.ItemWithMetadata[]
             memory allItems = new GameTypes.ItemWithMetadata[](
-                gameCore._getItemNonce() + 1
+                gameCore._getItemNonce() - 1
             );
 
         for (uint256 i = 1; i < gameCore._getItemNonce(); i++) {

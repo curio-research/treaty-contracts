@@ -33,6 +33,7 @@ describe("Getter Contract", () => {
 
     // bulk getter test
     const allItems = await Getters.bulkGetAllItems();
+    expect(allItems.length).equals(INITIAL_ITEMS.length);
     expect(serializeBigNumberArr(allItems[0].materialIds)).to.eqls(INITIAL_ITEMS[0].materialIds); // item 1
     expect(serializeBigNumberArr(allItems[0].materialAmounts)).to.eqls(INITIAL_ITEMS[0].materialAmounts);
     expect(serializeBigNumberArr(allItems[1].materialIds)).to.eqls(INITIAL_ITEMS[1].materialIds); // item 2

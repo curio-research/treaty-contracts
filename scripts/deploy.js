@@ -1,5 +1,5 @@
 const hre = require("hardhat");
-const { _positions, _blockTypes, deployGame } = require("../test/helper");
+const { _positions, _blockTypes, deployGameContract, deployGettersContract } = require("../test/util/helper");
 
 // deploy command:
 // npx hardhat run --network localhost scripts/deploy.js
@@ -8,7 +8,8 @@ const main = async () => {
   let player1;
   [player1] = await ethers.getSigners();
 
-  const GameContract = await deployGame();
+  const GameContract = await deployGameContract();
+  const GettersContract = await deployGettersContract(GameContract.address);
 
   // initialize user at 1, 1
   await GameContract.initializePlayer(1, 1);
