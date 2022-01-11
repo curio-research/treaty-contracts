@@ -12,20 +12,25 @@ task("port", "compile and port contracts over to frontend repo").setAction(async
 
   const clientAbiDir = path.join(__dirname, "../../frontend/src/network/abi");
 
-  // create folder if there is none. not needed for now
-  // await fs.mkdir(clientAbiDir);
+  // TODO: Replace with copy entire folder over recursively
 
   // save contract ABIs to client
   await fs.writeFile(path.join(clientAbiDir, "Game.json"), gameAbi);
   await fs.writeFile(path.join(clientAbiDir, "Getters.json"), gettersAbi);
 
   // port typechain files as well
-  const clientTypechainDir = path.join(__dirname, "../../frontend/src/network/typechain");
+  const clientTypechainDir = path.join(__dirname, "../../frontend/src/network/typechain-types");
   const localTypechainDir = path.join(__dirname, "../typechain-types");
 
   await fs.copyFile(path.join(localTypechainDir, "common.ts"), path.join(clientTypechainDir, "common.ts"));
   await fs.copyFile(path.join(localTypechainDir, "Game.ts"), path.join(clientTypechainDir, "Game.ts"));
   await fs.copyFile(path.join(localTypechainDir, "Getters.ts"), path.join(clientTypechainDir, "Getters.ts"));
 
+  // port factory files
+  const clientTypechainFactoryDir = path.join(clientTypechainDir, "factories");
+  const localFactoryDir = path.join(localTypechainDir, "factories");
+
+  await fs.copyFile(path.join(localFactoryDir, "Game__factory.ts"), path.join(clientTypechainFactoryDir, "Game__factory.ts"));
+  await fs.copyFile(path.join(localFactoryDir, "Getters__factory.ts"), path.join(clientTypechainFactoryDir, "Getters__factory.ts"));
   console.log("Porting complete!");
 });

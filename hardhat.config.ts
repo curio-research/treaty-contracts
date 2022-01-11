@@ -36,10 +36,10 @@ export default {
   networks: {
     hardhat: {
       chainId: 1337,
-      // mining: {
-      //   auto: false,
-      //   interval: 1000,
-      // },
+      mining: {
+        auto: false,
+        interval: 1000,
+      },
     },
   },
 };
