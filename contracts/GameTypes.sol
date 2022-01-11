@@ -17,6 +17,7 @@ library GameTypes {
     }
 
     struct PlayerData {
+        address a;
         bool alive;
         bool isInitialized;
         uint256 initTimestamp;
@@ -53,10 +54,10 @@ library GameTypes {
         uint256 moveRange;
         uint256 attackRange;
         // player states
-        address[] allPlayers; // potentially good for record keeping
+        address[] allPlayers;
         mapping(address => uint256) joined; // time joined for player
         mapping(uint256 => uint256) levelMaxHeath; // max health for each level
-        mapping(address => GameTypes.PlayerData) players; // player positions
+        mapping(address => GameTypes.PlayerData) players; // player data
         mapping(address => mapping(uint256 => uint256)) inventory; // player => itemId => inventory. Keeps count of items
         mapping(address => uint256) lastMoved; // when user last moved
         mapping(address => uint256) lastAttacked; // when user last attacked

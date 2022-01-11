@@ -4,8 +4,6 @@ import { HardhatArguments, HardhatRuntimeEnvironment, RunSuperFunction, TaskArgu
 import { deployProxy } from "./util/deployHelper";
 import { GAME_DEPLOY_ARGS } from "../test/util/constants";
 
-// it seems like this is not actually deploying to local hardhat network for some reason ...
-// need to use network --localhost flag
 task("deploy", "deploy contracts").setAction(async (args: HardhatArguments, hre: HardhatRuntimeEnvironment) => {
   let player1: SignerWithAddress;
   [player1] = await hre.ethers.getSigners();

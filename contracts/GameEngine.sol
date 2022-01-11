@@ -75,8 +75,11 @@ contract Game is GameStorage {
             position: GameTypes.Position(_x, _y),
             energy: 100,
             health: 100,
-            level: 1
+            level: 1,
+            a: msg.sender
         });
+        s.allPlayers.push(msg.sender);
+
         _setOccupierAtLocation(msg.sender, _x, _y);
 
         emit NewPlayer(msg.sender, _x, _y);

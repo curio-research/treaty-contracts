@@ -1,4 +1,3 @@
-import { ethers } from "hardhat";
 import { REVERT_MESSAGES } from "./util/constants";
 import { Game } from "../typechain-types";
 import { expect } from "chai";
@@ -20,8 +19,8 @@ describe("Game", () => {
     return world;
   };
 
-  // load world fixture
   before(async () => {
+    // load world fixture
     world = await fixtureLoader(worldFixture);
     contracts = world.contracts;
     GameContract = world.contracts.Game;
@@ -42,7 +41,7 @@ describe("Game", () => {
   });
 
   it("Move", async () => {
-    await moveAndVerify(GameContract, world.user1, 3, 1);
+    await moveAndVerify(GameContract, world.user1, 3, 2);
     await moveAndVerify(GameContract, world.user1, 5, 3);
   });
 

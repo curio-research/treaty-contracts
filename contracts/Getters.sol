@@ -31,4 +31,22 @@ contract Getters {
 
         return allItems;
     }
+
+    // bulk fetch all player data including location in an array
+    function bulkGetAllPlayerData()
+        external
+        view
+        returns (GameTypes.PlayerData[] memory)
+    {
+        address[] memory playerAddresses = gameCore._getAllPlayerAddresses();
+        GameTypes.PlayerData[] memory ret = new GameTypes.PlayerData[](
+            playerAddresses.length
+        );
+
+        for (uint256 i = 0; i < playerAddresses.length; i++) {
+            ret[i] = gameCore._getAllPlayerData(playerAddresses[i]);
+        }
+
+        return ret;
+    }
 }

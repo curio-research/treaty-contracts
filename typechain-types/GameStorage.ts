@@ -25,6 +25,7 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
 };
 
 export type PlayerDataStruct = {
+  a: string;
   alive: boolean;
   isInitialized: boolean;
   initTimestamp: BigNumberish;
@@ -35,6 +36,7 @@ export type PlayerDataStruct = {
 };
 
 export type PlayerDataStructOutput = [
+  string,
   boolean,
   boolean,
   BigNumber,
@@ -43,6 +45,7 @@ export type PlayerDataStructOutput = [
   BigNumber,
   BigNumber
 ] & {
+  a: string;
   alive: boolean;
   isInitialized: boolean;
   initTimestamp: BigNumber;
@@ -72,6 +75,7 @@ export interface GameStorageInterface extends utils.Interface {
     "_decreaseHealth(address,uint256)": FunctionFragment;
     "_decreaseItemInInventory(address,uint256,uint256)": FunctionFragment;
     "_die(address)": FunctionFragment;
+    "_getAllPlayerAddresses()": FunctionFragment;
     "_getAllPlayerData(address)": FunctionFragment;
     "_getBlockAmountById(address,uint256)": FunctionFragment;
     "_getItemNonce()": FunctionFragment;
@@ -123,6 +127,10 @@ export interface GameStorageInterface extends utils.Interface {
     values: [string, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "_die", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "_getAllPlayerAddresses",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "_getAllPlayerData",
     values: [string]
@@ -236,6 +244,10 @@ export interface GameStorageInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "_die", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "_getAllPlayerAddresses",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "_getAllPlayerData",
     data: BytesLike
@@ -387,6 +399,8 @@ export interface GameStorage extends BaseContract {
       _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    _getAllPlayerAddresses(overrides?: CallOverrides): Promise<[string[]]>;
 
     _getAllPlayerData(
       _player: string,
@@ -578,6 +592,8 @@ export interface GameStorage extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  _getAllPlayerAddresses(overrides?: CallOverrides): Promise<string[]>;
+
   _getAllPlayerData(
     _player: string,
     overrides?: CallOverrides
@@ -754,6 +770,8 @@ export interface GameStorage extends BaseContract {
     ): Promise<void>;
 
     _die(_player: string, overrides?: CallOverrides): Promise<void>;
+
+    _getAllPlayerAddresses(overrides?: CallOverrides): Promise<string[]>;
 
     _getAllPlayerData(
       _player: string,
@@ -946,6 +964,8 @@ export interface GameStorage extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    _getAllPlayerAddresses(overrides?: CallOverrides): Promise<BigNumber>;
+
     _getAllPlayerData(
       _player: string,
       overrides?: CallOverrides
@@ -1113,6 +1133,10 @@ export interface GameStorage extends BaseContract {
     _die(
       _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    _getAllPlayerAddresses(
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     _getAllPlayerData(

@@ -25,18 +25,65 @@ export type ItemWithMetadataStructOutput = [BigNumber[], BigNumber[]] & {
   materialAmounts: BigNumber[];
 };
 
+export type PositionStruct = { x: BigNumberish; y: BigNumberish };
+
+export type PositionStructOutput = [BigNumber, BigNumber] & {
+  x: BigNumber;
+  y: BigNumber;
+};
+
+export type PlayerDataStruct = {
+  a: string;
+  alive: boolean;
+  isInitialized: boolean;
+  initTimestamp: BigNumberish;
+  position: PositionStruct;
+  energy: BigNumberish;
+  health: BigNumberish;
+  level: BigNumberish;
+};
+
+export type PlayerDataStructOutput = [
+  string,
+  boolean,
+  boolean,
+  BigNumber,
+  PositionStructOutput,
+  BigNumber,
+  BigNumber,
+  BigNumber
+] & {
+  a: string;
+  alive: boolean;
+  isInitialized: boolean;
+  initTimestamp: BigNumber;
+  position: PositionStructOutput;
+  energy: BigNumber;
+  health: BigNumber;
+  level: BigNumber;
+};
+
 export interface GettersInterface extends utils.Interface {
   functions: {
     "bulkGetAllItems()": FunctionFragment;
+    "bulkGetAllPlayerData()": FunctionFragment;
   };
 
   encodeFunctionData(
     functionFragment: "bulkGetAllItems",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "bulkGetAllPlayerData",
+    values?: undefined
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "bulkGetAllItems",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "bulkGetAllPlayerData",
     data: BytesLike
   ): Result;
 
@@ -73,25 +120,43 @@ export interface Getters extends BaseContract {
     bulkGetAllItems(
       overrides?: CallOverrides
     ): Promise<[ItemWithMetadataStructOutput[]]>;
+
+    bulkGetAllPlayerData(
+      overrides?: CallOverrides
+    ): Promise<[PlayerDataStructOutput[]]>;
   };
 
   bulkGetAllItems(
     overrides?: CallOverrides
   ): Promise<ItemWithMetadataStructOutput[]>;
 
+  bulkGetAllPlayerData(
+    overrides?: CallOverrides
+  ): Promise<PlayerDataStructOutput[]>;
+
   callStatic: {
     bulkGetAllItems(
       overrides?: CallOverrides
     ): Promise<ItemWithMetadataStructOutput[]>;
+
+    bulkGetAllPlayerData(
+      overrides?: CallOverrides
+    ): Promise<PlayerDataStructOutput[]>;
   };
 
   filters: {};
 
   estimateGas: {
     bulkGetAllItems(overrides?: CallOverrides): Promise<BigNumber>;
+
+    bulkGetAllPlayerData(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
     bulkGetAllItems(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    bulkGetAllPlayerData(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
   };
 }

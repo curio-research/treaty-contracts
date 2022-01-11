@@ -67,8 +67,7 @@ contract GameStorage {
         return true;
     }
 
-    // player movement
-    // checks distance and whether player is in map
+    // checks distance between locations and whether player is in map
     function _isValidMove(
         address _player,
         uint256 _x,
@@ -250,6 +249,7 @@ contract GameStorage {
         s.map[_pos.x][_pos.y].occupier = address(0);
     }
 
+    // fetch single player data
     function _getAllPlayerData(address _player)
         public
         view
@@ -281,5 +281,9 @@ contract GameStorage {
         });
 
         return ret;
+    }
+
+    function _getAllPlayerAddresses() public view returns (address[] memory) {
+        return s.allPlayers;
     }
 }
