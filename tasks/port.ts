@@ -19,5 +19,13 @@ task("port", "compile and port contracts over to frontend repo").setAction(async
   await fs.writeFile(path.join(clientAbiDir, "Game.json"), gameAbi);
   await fs.writeFile(path.join(clientAbiDir, "Getters.json"), gettersAbi);
 
+  // port typechain files as well
+  const clientTypechainDir = path.join(__dirname, "../../frontend/src/network/typechain");
+  const localTypechainDir = path.join(__dirname, "../typechain-types");
+
+  await fs.copyFile(path.join(localTypechainDir, "common.ts"), path.join(clientTypechainDir, "common.ts"));
+  await fs.copyFile(path.join(localTypechainDir, "Game.ts"), path.join(clientTypechainDir, "Game.ts"));
+  await fs.copyFile(path.join(localTypechainDir, "Getters.ts"), path.join(clientTypechainDir, "Getters.ts"));
+
   console.log("Porting complete!");
 });
