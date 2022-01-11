@@ -1,12 +1,16 @@
 import { task } from "hardhat/config";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { HardhatArguments, HardhatRuntimeEnvironment, RunSuperFunction, TaskArguments } from "hardhat/types";
-import { deployProxy } from "./deployHelper";
+import { deployProxy } from "./util/deployHelper";
 import { GAME_DEPLOY_ARGS } from "../test/util/constants";
 
+// it seems like this is not actually deploying to local hardhat network for some reason ...
+// need to use network --localhost flag
 task("deploy", "deploy contracts").setAction(async (args: HardhatArguments, hre: HardhatRuntimeEnvironment) => {
   let player1: SignerWithAddress;
   [player1] = await hre.ethers.getSigners();
+
+  console.log(hre.network.name);
 
   const GameContract = await deployProxy("Game", player1, hre, GAME_DEPLOY_ARGS);
   const GettersContract = await deployProxy("Getters", player1, hre, [GameContract.address]);
