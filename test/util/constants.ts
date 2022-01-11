@@ -13,3 +13,30 @@ export const INITIAL_ITEMS = [
   { materialIds: [2], materialAmounts: [3] },
   { materialIds: [1], materialAmounts: [1] },
 ];
+
+// initialize 6 by 6 grid map
+const WORLD_WIDTH = 6;
+const WORLD_HEIGHT = 6;
+
+// map setup
+const MASTER_MAP = [
+  [1, 1, 0, 0, 0, 1],
+  [1, 1, 0, 0, 0, 1],
+  [0, 0, 0, 1, 0, 0],
+  [0, 0, 0, 1, 1, 0],
+  [0, 1, 0, 0, 0, 0],
+  [0, 1, 0, 0, 1, 0],
+];
+
+// list of coordinates
+// TODO: Improve map initialization method. This is too tedius
+export let positions: unknown[] = [];
+for (let i = 0; i < WORLD_WIDTH; i++) {
+  for (let j = 0; j < WORLD_HEIGHT; j++) {
+    positions.push({ x: i, y: j });
+  }
+}
+// initialize resource types on map
+export const blockTypes = MASTER_MAP.flat();
+
+export const GAME_DEPLOY_ARGS = [positions, blockTypes, WORLD_WIDTH, WORLD_HEIGHT, INITIAL_ITEMS];

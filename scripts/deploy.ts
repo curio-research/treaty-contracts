@@ -5,9 +5,6 @@ const { _positions, _blockTypes, deployGameContract, deployGettersContract } = r
 // npx hardhat run --network localhost scripts/deploy.js
 
 const main = async () => {
-  let player1;
-  [player1] = await ethers.getSigners();
-
   const GameContract = await deployGameContract();
   const GettersContract = await deployGettersContract(GameContract.address);
 

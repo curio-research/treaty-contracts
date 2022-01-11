@@ -3,7 +3,7 @@ import { task } from "hardhat/config";
 import * as path from "path";
 import * as fs from "fs/promises";
 
-task("port", "compile and port contracts over to frontend repo").setAction(async (args: any, hre: HardhatRuntimeEnvironment) => {
+task("port", "compile and port contracts over to frontend repo").setAction(async (args: HardhatArguments, hre: HardhatRuntimeEnvironment) => {
   console.log("Porting files over ...");
 
   // read ABI from artifacts folder compiled by Hardhat
