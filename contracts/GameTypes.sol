@@ -58,6 +58,7 @@ library GameTypes {
         mapping(address => uint256) joined; // time joined for player
         mapping(uint256 => uint256) levelMaxHeath; // max health for each level
         mapping(address => GameTypes.PlayerData) players; // player data
+        mapping(address => uint256[]) inventoryNonce; // keep track of inventory
         mapping(address => mapping(uint256 => uint256)) inventory; // player => itemId => inventory. Keeps count of items
         mapping(address => uint256) lastMoved; // when user last moved
         mapping(address => uint256) lastAttacked; // when user last attacked

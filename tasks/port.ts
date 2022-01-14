@@ -36,6 +36,8 @@ task("port", "compile and port contracts over to frontend repo").setAction(async
   await fs.rmdirSync(clientTypechainDir, { recursive: true });
 
   copyFolderSync(localTypechainDir, clientTypechainDir);
+
+  console.log("Porting complete!");
 });
 
 // await fsPromise.copyFile(path.join(localTypechainDir, "common.ts"), path.join(clientTypechainDir, "common.ts"));

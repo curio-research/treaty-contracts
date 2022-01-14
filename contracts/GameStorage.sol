@@ -41,6 +41,7 @@ contract GameStorage {
         uint256 _blockId,
         uint256 _amount
     ) public {
+        _modifyItemInInventoryNonce(_blockId, true);
         s.inventory[_player][_blockId] += _amount;
     }
 
@@ -49,6 +50,7 @@ contract GameStorage {
         uint256 _blockId,
         uint256 _amount
     ) public {
+        _modifyItemInInventoryNonce(_blockId, false);
         s.inventory[_player][_blockId] -= _amount;
     }
 
@@ -281,6 +283,49 @@ contract GameStorage {
         });
 
         return ret;
+    }
+
+    // dir = true means to add item (if it doesn't exist);
+    function _modifyItemInInventoryNonce(uint256 _itemId, bool dir) public {
+        uint256 idx = 0;
+        bool hasFound = false;
+
+        for (uint256 i = 0; i < s.inventoryNonce[msg.sender].length; i++) {
+            if (s.inventoryNonce[msg.sender][i] == _itemId) {
+                idx = i;
+                hasFound = true;
+            }
+        }
+        // remove case
+        if (!dir) {
+            if (hasFound) {
+                delete s.inventoryNonce[msg.sender][idx];
+            }
+        } else if (dir) {
+            if (!hasFound) {
+                s.inventoryNonce[msg.sender].push(_itemId);
+            }
+        }
+    }
+
+    // fetch player inventory
+    function _getInventoryByPlayer(address _player)
+        public
+        view
+        returns (GameTypes.ItemWithMetadata memory)
+    {
+        uint256 itemCount = s.inventoryNonce[_player].length;
+        uint256[] memory ret = new uint256[](itemCount);
+        for (uint256 i = 0; i < itemCount; i++) {
+            uint256 _itemId = s.inventoryNonce[_player][i];
+            ret[0] = s.inventory[_player][_itemId];
+        }
+
+        return
+            GameTypes.ItemWithMetadata({
+                materialIds: s.inventoryNonce[_player],
+                materialAmounts: ret
+            });
     }
 
     function _getAllPlayerAddresses() public view returns (address[] memory) {

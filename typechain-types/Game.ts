@@ -78,6 +78,7 @@ export interface GameInterface extends utils.Interface {
     "_getAllPlayerAddresses()": FunctionFragment;
     "_getAllPlayerData(address)": FunctionFragment;
     "_getBlockAmountById(address,uint256)": FunctionFragment;
+    "_getInventoryByPlayer(address)": FunctionFragment;
     "_getItemNonce()": FunctionFragment;
     "_getItemWithMetadata(uint256)": FunctionFragment;
     "_increaseEnergy(address,uint256)": FunctionFragment;
@@ -88,6 +89,7 @@ export interface GameInterface extends utils.Interface {
     "_isValidAttack(address,address)": FunctionFragment;
     "_isValidMove(address,uint256,uint256)": FunctionFragment;
     "_mineBlock(uint256,uint256,uint256)": FunctionFragment;
+    "_modifyItemInInventoryNonce(uint256,bool)": FunctionFragment;
     "_placeBlock(uint256,uint256,uint256)": FunctionFragment;
     "_playerPosition(address)": FunctionFragment;
     "_removeItemMaterialAndAmount(uint256)": FunctionFragment;
@@ -148,6 +150,10 @@ export interface GameInterface extends utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "_getInventoryByPlayer",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "_getItemNonce",
     values?: undefined
   ): string;
@@ -186,6 +192,10 @@ export interface GameInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "_mineBlock",
     values: [BigNumberish, BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_modifyItemInInventoryNonce",
+    values: [BigNumberish, boolean]
   ): string;
   encodeFunctionData(
     functionFragment: "_placeBlock",
@@ -288,6 +298,10 @@ export interface GameInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "_getInventoryByPlayer",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "_getItemNonce",
     data: BytesLike
   ): Result;
@@ -324,6 +338,10 @@ export interface GameInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "_mineBlock", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "_modifyItemInInventoryNonce",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "_placeBlock",
     data: BytesLike
@@ -528,6 +546,11 @@ export interface Game extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    _getInventoryByPlayer(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<[ItemWithMetadataStructOutput]>;
+
     _getItemNonce(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     _getItemWithMetadata(
@@ -582,6 +605,12 @@ export interface Game extends BaseContract {
       _x: BigNumberish,
       _y: BigNumberish,
       _zIdx: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    _modifyItemInInventoryNonce(
+      _itemId: BigNumberish,
+      dir: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -760,6 +789,11 @@ export interface Game extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  _getInventoryByPlayer(
+    _player: string,
+    overrides?: CallOverrides
+  ): Promise<ItemWithMetadataStructOutput>;
+
   _getItemNonce(overrides?: CallOverrides): Promise<BigNumber>;
 
   _getItemWithMetadata(
@@ -814,6 +848,12 @@ export interface Game extends BaseContract {
     _x: BigNumberish,
     _y: BigNumberish,
     _zIdx: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  _modifyItemInInventoryNonce(
+    _itemId: BigNumberish,
+    dir: boolean,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -979,6 +1019,11 @@ export interface Game extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _getInventoryByPlayer(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<ItemWithMetadataStructOutput>;
+
     _getItemNonce(overrides?: CallOverrides): Promise<BigNumber>;
 
     _getItemWithMetadata(
@@ -1033,6 +1078,12 @@ export interface Game extends BaseContract {
       _x: BigNumberish,
       _y: BigNumberish,
       _zIdx: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    _modifyItemInInventoryNonce(
+      _itemId: BigNumberish,
+      dir: boolean,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1260,6 +1311,11 @@ export interface Game extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _getInventoryByPlayer(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     _getItemNonce(overrides?: CallOverrides): Promise<BigNumber>;
 
     _getItemWithMetadata(
@@ -1314,6 +1370,12 @@ export interface Game extends BaseContract {
       _x: BigNumberish,
       _y: BigNumberish,
       _zIdx: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    _modifyItemInInventoryNonce(
+      _itemId: BigNumberish,
+      dir: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1473,6 +1535,11 @@ export interface Game extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    _getInventoryByPlayer(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     _getItemNonce(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     _getItemWithMetadata(
@@ -1527,6 +1594,12 @@ export interface Game extends BaseContract {
       _x: BigNumberish,
       _y: BigNumberish,
       _zIdx: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    _modifyItemInInventoryNonce(
+      _itemId: BigNumberish,
+      dir: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

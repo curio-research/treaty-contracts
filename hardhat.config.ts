@@ -25,6 +25,7 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
  */
 
 // ADD THIS WHEN DEPLOYING TO LOCAL
+// TODO: Figure out how to configure this on the fly ...
 // mining: {
 //   auto: false,
 //   interval: 1000,
@@ -36,10 +37,10 @@ export default {
   networks: {
     hardhat: {
       chainId: 1337,
-      mining: {
-        auto: false,
-        interval: 1000,
-      },
+      // mining: {
+      //   auto: false,
+      //   interval: 1000,
+      // },
     },
   },
 };
