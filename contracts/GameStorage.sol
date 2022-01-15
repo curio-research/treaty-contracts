@@ -290,7 +290,6 @@ contract GameStorage {
         }
 
         GameTypes.ItemWithMetadata memory ret = GameTypes.ItemWithMetadata({
-            itemType: s.itemType[_itemId],
             mineable: s.mineable[_itemId],
             mineItemId: s.mineItemId[_itemId],
             strength: s.strength[_itemId],

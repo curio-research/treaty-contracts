@@ -131,7 +131,7 @@ contract Game is GameStorage {
         emit Mine(msg.sender, _x, _y, _itemId, _zIdx);
     }
 
-    // place block at location
+    // place item at block
     function place(
         uint256 _x,
         uint256 _y,
@@ -192,9 +192,6 @@ contract Game is GameStorage {
         // attacks are both time-limited and range-limited
         if (_target == address(0)) revert("engine/no-target");
 
-        // GameTypes.Position memory playerPosition = _playerPosition(msg.sender);
-        // GameTypes.Position memory targetPosition = _playerPosition(_target);
-
         if (!_isValidAttack(msg.sender, _target))
             revert("engine/invalid-attack");
 
@@ -214,6 +211,7 @@ contract Game is GameStorage {
         /**
          * For testing purposes
          */
+
         return "blocky";
     }
 }

@@ -7,12 +7,28 @@ import "../GameEngine.sol";
 
 contract Minigame is Game {
     constructor(
-        GameTypes.Position[] memory _positions,
-        uint256[] memory _tileTypes,
-        uint256 width,
-        uint256 height,
+        uint256 _worldWidth,
+        uint256 _worldHeight,
+        uint256 _moveRange,
+        uint256 _attackRange,
+        uint256 _attackDamage,
+        uint256 _attackWaitTime,
+        uint256 _startPlayerHealth,
+        uint256 _startPlayerEnergy,
+        uint256[][] memory _blocks,
         GameTypes.ItemWithMetadata[] memory _items
-    ) Game(_positions, _tileTypes, width, height, _items) {
+    ) Game(
+        _worldWidth,
+        _worldHeight,
+        _moveRange,
+        _attackRange,
+        _attackDamage,
+        _attackWaitTime,
+        _startPlayerHealth,
+        _startPlayerEnergy,
+        _blocks,
+        _items
+    ) {
         // TODO additional info
     }
 

@@ -15,19 +15,19 @@ library GameStorageHelper {
 
     // item
     function addItem(
-        GameTypes.Item memory _item,
-        uint256[] memory _materialIds,
-        uint256[] memory _materialAmounts
+        GameTypes.ItemData memory _item,
+        uint256[] memory _craftItemIds,
+        uint256[] memory _craftItemAmounts
     ) public {
         uint256 _itemNonce = s().itemNonce;
         s().items[_itemNonce] = _item;
 
-        if (_materialIds.length != _materialAmounts.length)
+        if (_craftItemIds.length != _craftItemAmounts.length)
             revert("helper/uneven-material-length");
 
-        for (uint256 i = 0; i < _materialIds.length; i++) {
-            uint256 _materialId = _materialIds[i];
-            s().materialAmounts[_itemNonce][_materialId] = _materialIds[i];
+        for (uint256 i = 0; i < _craftItemIds.length; i++) {
+            uint256 _craftItemId = _craftItemIds[i];
+            s().craftItemAmounts[_itemNonce][_craftItemId] = _craftItemAmounts[i];
         }
 
         s().itemNonce += 1;

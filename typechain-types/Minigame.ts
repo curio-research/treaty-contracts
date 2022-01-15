@@ -95,7 +95,7 @@ export type PlayerDataStructOutput = [
   energy: BigNumber;
 };
 
-export interface GameInterface extends utils.Interface {
+export interface MinigameInterface extends utils.Interface {
   functions: {
     "_addCraftItemAndAmount(uint256,uint256[],uint256[])": FunctionFragment;
     "_blockOccupier(uint256,uint256)": FunctionFragment;
@@ -472,12 +472,12 @@ export type PlaceEvent = TypedEvent<
 
 export type PlaceEventFilter = TypedEventFilter<PlaceEvent>;
 
-export interface Game extends BaseContract {
+export interface Minigame extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: GameInterface;
+  interface: MinigameInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,

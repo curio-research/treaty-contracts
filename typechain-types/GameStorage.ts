@@ -25,61 +25,94 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
 };
 
 export type PlayerDataStruct = {
-  a: string;
-  alive: boolean;
-  isInitialized: boolean;
+  initialized: boolean;
   initTimestamp: BigNumberish;
+  playerAddr: string;
+  alive: boolean;
   position: PositionStruct;
-  energy: BigNumberish;
   health: BigNumberish;
-  level: BigNumberish;
+  energy: BigNumberish;
 };
 
 export type PlayerDataStructOutput = [
+  boolean,
+  BigNumber,
   string,
   boolean,
-  boolean,
-  BigNumber,
   PositionStructOutput,
-  BigNumber,
   BigNumber,
   BigNumber
 ] & {
-  a: string;
-  alive: boolean;
-  isInitialized: boolean;
+  initialized: boolean;
   initTimestamp: BigNumber;
+  playerAddr: string;
+  alive: boolean;
   position: PositionStructOutput;
-  energy: BigNumber;
   health: BigNumber;
-  level: BigNumber;
+  energy: BigNumber;
 };
 
 export type ItemWithMetadataStruct = {
-  materialIds: BigNumberish[];
-  materialAmounts: BigNumberish[];
+  mineable: boolean;
+  mineItemId: BigNumberish;
+  strength: BigNumberish;
+  craftable: boolean;
+  craftItemIds: BigNumberish[];
+  craftItemAmounts: BigNumberish[];
+  placeItemIds: BigNumberish[];
+  occupiable: boolean;
+  healthDamage: BigNumberish;
+  energyDamage: BigNumberish;
+  protectItemIds: BigNumberish[];
+  protectItemHealths: BigNumberish[];
 };
 
-export type ItemWithMetadataStructOutput = [BigNumber[], BigNumber[]] & {
-  materialIds: BigNumber[];
-  materialAmounts: BigNumber[];
+export type ItemWithMetadataStructOutput = [
+  boolean,
+  BigNumber,
+  BigNumber,
+  boolean,
+  BigNumber[],
+  BigNumber[],
+  BigNumber[],
+  boolean,
+  BigNumber,
+  BigNumber,
+  BigNumber[],
+  BigNumber[]
+] & {
+  mineable: boolean;
+  mineItemId: BigNumber;
+  strength: BigNumber;
+  craftable: boolean;
+  craftItemIds: BigNumber[];
+  craftItemAmounts: BigNumber[];
+  placeItemIds: BigNumber[];
+  occupiable: boolean;
+  healthDamage: BigNumber;
+  energyDamage: BigNumber;
+  protectItemIds: BigNumber[];
+  protectItemHealths: BigNumber[];
 };
 
 export interface GameStorageInterface extends utils.Interface {
   functions: {
-    "_addItemMaterialAndAmount(uint256,uint256[],uint256[])": FunctionFragment;
-    "_blockAtLocation(uint256,uint256,uint256)": FunctionFragment;
+    "_addCraftItemAndAmount(uint256,uint256[],uint256[])": FunctionFragment;
     "_blockOccupier(uint256,uint256)": FunctionFragment;
-    "_checkLevel(address,uint256)": FunctionFragment;
     "_decreaseEnergy(address,uint256)": FunctionFragment;
     "_decreaseHealth(address,uint256)": FunctionFragment;
     "_decreaseItemInInventory(address,uint256,uint256)": FunctionFragment;
     "_die(address)": FunctionFragment;
     "_getAllPlayerAddresses()": FunctionFragment;
     "_getAllPlayerData(address)": FunctionFragment;
-    "_getBlockAmountById(address,uint256)": FunctionFragment;
+    "_getBlockAtPosition(uint256,uint256,uint256)": FunctionFragment;
+    "_getBlockCountAtPosition(uint256,uint256)": FunctionFragment;
+    "_getItemAmountById(address,uint256)": FunctionFragment;
     "_getItemNonce()": FunctionFragment;
     "_getItemWithMetadata(uint256)": FunctionFragment;
+    "_getPlayerPosition(address)": FunctionFragment;
+    "_getPositionFromIndex(uint256)": FunctionFragment;
+    "_getTopBlockAtPosition(uint256,uint256)": FunctionFragment;
     "_increaseEnergy(address,uint256)": FunctionFragment;
     "_increaseHealth(address,uint256)": FunctionFragment;
     "_increaseItemInInventory(address,uint256,uint256)": FunctionFragment;
@@ -87,11 +120,10 @@ export interface GameStorageInterface extends utils.Interface {
     "_isOccupied(uint256,uint256)": FunctionFragment;
     "_isValidAttack(address,address)": FunctionFragment;
     "_isValidMove(address,uint256,uint256)": FunctionFragment;
-    "_mineBlock(uint256,uint256,uint256)": FunctionFragment;
-    "_placeBlock(uint256,uint256,uint256)": FunctionFragment;
-    "_playerPosition(address)": FunctionFragment;
-    "_removeItemMaterialAndAmount(uint256)": FunctionFragment;
-    "_setOccupierAtLocation(address,uint256,uint256)": FunctionFragment;
+    "_mine(uint256,uint256)": FunctionFragment;
+    "_place(uint256,uint256,uint256)": FunctionFragment;
+    "_removeCraftItemAndAmount(uint256)": FunctionFragment;
+    "_setOccupierAtPosition(address,uint256,uint256)": FunctionFragment;
     "_setPlayerPosition(address,uint256,uint256)": FunctionFragment;
     "_transfer(address,uint256,uint256)": FunctionFragment;
     "_withinDistance(uint256,uint256,uint256,uint256,uint256)": FunctionFragment;
@@ -99,20 +131,12 @@ export interface GameStorageInterface extends utils.Interface {
   };
 
   encodeFunctionData(
-    functionFragment: "_addItemMaterialAndAmount",
+    functionFragment: "_addCraftItemAndAmount",
     values: [BigNumberish, BigNumberish[], BigNumberish[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_blockAtLocation",
-    values: [BigNumberish, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "_blockOccupier",
     values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_checkLevel",
-    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "_decreaseEnergy",
@@ -136,7 +160,15 @@ export interface GameStorageInterface extends utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "_getBlockAmountById",
+    functionFragment: "_getBlockAtPosition",
+    values: [BigNumberish, BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getBlockCountAtPosition",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getItemAmountById",
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
@@ -146,6 +178,18 @@ export interface GameStorageInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "_getItemWithMetadata",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getPlayerPosition",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getPositionFromIndex",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getTopBlockAtPosition",
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "_increaseEnergy",
@@ -176,23 +220,19 @@ export interface GameStorageInterface extends utils.Interface {
     values: [string, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "_mineBlock",
+    functionFragment: "_mine",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_place",
     values: [BigNumberish, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "_placeBlock",
-    values: [BigNumberish, BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_playerPosition",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_removeItemMaterialAndAmount",
+    functionFragment: "_removeCraftItemAndAmount",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "_setOccupierAtLocation",
+    functionFragment: "_setOccupierAtPosition",
     values: [string, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
@@ -216,19 +256,11 @@ export interface GameStorageInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "s", values?: undefined): string;
 
   decodeFunctionResult(
-    functionFragment: "_addItemMaterialAndAmount",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_blockAtLocation",
+    functionFragment: "_addCraftItemAndAmount",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "_blockOccupier",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_checkLevel",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -253,7 +285,15 @@ export interface GameStorageInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "_getBlockAmountById",
+    functionFragment: "_getBlockAtPosition",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_getBlockCountAtPosition",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_getItemAmountById",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -262,6 +302,18 @@ export interface GameStorageInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "_getItemWithMetadata",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_getPlayerPosition",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_getPositionFromIndex",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_getTopBlockAtPosition",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -292,21 +344,14 @@ export interface GameStorageInterface extends utils.Interface {
     functionFragment: "_isValidMove",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "_mineBlock", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "_mine", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "_place", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "_placeBlock",
+    functionFragment: "_removeCraftItemAndAmount",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "_playerPosition",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_removeItemMaterialAndAmount",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_setOccupierAtLocation",
+    functionFragment: "_setOccupierAtPosition",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -350,31 +395,18 @@ export interface GameStorage extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    _addItemMaterialAndAmount(
+    _addCraftItemAndAmount(
       _itemId: BigNumberish,
-      _materialIds: BigNumberish[],
-      _amounts: BigNumberish[],
+      _craftItemIds: BigNumberish[],
+      _craftItemAmounts: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
-
-    _blockAtLocation(
-      _x: BigNumberish,
-      _y: BigNumberish,
-      _zIdx: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
 
     _blockOccupier(
       _x: BigNumberish,
       _y: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[string]>;
-
-    _checkLevel(
-      _player: string,
-      _blockId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
 
     _decreaseEnergy(
       _player: string,
@@ -390,7 +422,7 @@ export interface GameStorage extends BaseContract {
 
     _decreaseItemInInventory(
       _player: string,
-      _blockId: BigNumberish,
+      _itemId: BigNumberish,
       _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -409,7 +441,20 @@ export interface GameStorage extends BaseContract {
       [PlayerDataStructOutput] & { playerData: PlayerDataStructOutput }
     >;
 
-    _getBlockAmountById(
+    _getBlockAtPosition(
+      _x: BigNumberish,
+      _y: BigNumberish,
+      _zIdx: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    _getBlockCountAtPosition(
+      _x: BigNumberish,
+      _y: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    _getItemAmountById(
       _player: string,
       _blockId: BigNumberish,
       overrides?: CallOverrides
@@ -421,6 +466,22 @@ export interface GameStorage extends BaseContract {
       _itemId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[ItemWithMetadataStructOutput]>;
+
+    _getPlayerPosition(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<[PositionStructOutput]>;
+
+    _getPositionFromIndex(
+      k: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[PositionStructOutput]>;
+
+    _getTopBlockAtPosition(
+      _x: BigNumberish,
+      _y: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     _increaseEnergy(
       _player: string,
@@ -436,13 +497,13 @@ export interface GameStorage extends BaseContract {
 
     _increaseItemInInventory(
       _player: string,
-      _blockId: BigNumberish,
+      _itemId: BigNumberish,
       _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     _isItemActive(
-      _blockId: BigNumberish,
+      _itemId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
@@ -465,31 +526,25 @@ export interface GameStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    _mineBlock(
+    _mine(
       _x: BigNumberish,
       _y: BigNumberish,
-      _zIdx: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    _placeBlock(
+    _place(
       _x: BigNumberish,
       _y: BigNumberish,
-      _blockId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    _playerPosition(
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<[PositionStructOutput]>;
-
-    _removeItemMaterialAndAmount(
       _itemId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    _setOccupierAtLocation(
+    _removeCraftItemAndAmount(
+      _itemId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    _setOccupierAtPosition(
       _player: string,
       _x: BigNumberish,
       _y: BigNumberish,
@@ -505,7 +560,7 @@ export interface GameStorage extends BaseContract {
 
     _transfer(
       _recipient: string,
-      _blockId: BigNumberish,
+      _itemId: BigNumberish,
       _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -529,44 +584,39 @@ export interface GameStorage extends BaseContract {
         boolean,
         BigNumber,
         BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
         BigNumber
       ] & {
-        WORLD_WIDTH: BigNumber;
-        WORLD_HEIGHT: BigNumber;
+        worldWidth: BigNumber;
+        worldHeight: BigNumber;
         admin: string;
         paused: boolean;
         itemNonce: BigNumber;
         moveRange: BigNumber;
         attackRange: BigNumber;
+        attackDamage: BigNumber;
+        attackWaitTime: BigNumber;
+        startPlayerHealth: BigNumber;
+        startPlayerEnergy: BigNumber;
       }
     >;
   };
 
-  _addItemMaterialAndAmount(
+  _addCraftItemAndAmount(
     _itemId: BigNumberish,
-    _materialIds: BigNumberish[],
-    _amounts: BigNumberish[],
+    _craftItemIds: BigNumberish[],
+    _craftItemAmounts: BigNumberish[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
-
-  _blockAtLocation(
-    _x: BigNumberish,
-    _y: BigNumberish,
-    _zIdx: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
 
   _blockOccupier(
     _x: BigNumberish,
     _y: BigNumberish,
     overrides?: CallOverrides
   ): Promise<string>;
-
-  _checkLevel(
-    _player: string,
-    _blockId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
 
   _decreaseEnergy(
     _player: string,
@@ -582,7 +632,7 @@ export interface GameStorage extends BaseContract {
 
   _decreaseItemInInventory(
     _player: string,
-    _blockId: BigNumberish,
+    _itemId: BigNumberish,
     _amount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -599,7 +649,20 @@ export interface GameStorage extends BaseContract {
     overrides?: CallOverrides
   ): Promise<PlayerDataStructOutput>;
 
-  _getBlockAmountById(
+  _getBlockAtPosition(
+    _x: BigNumberish,
+    _y: BigNumberish,
+    _zIdx: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  _getBlockCountAtPosition(
+    _x: BigNumberish,
+    _y: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  _getItemAmountById(
     _player: string,
     _blockId: BigNumberish,
     overrides?: CallOverrides
@@ -611,6 +674,22 @@ export interface GameStorage extends BaseContract {
     _itemId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<ItemWithMetadataStructOutput>;
+
+  _getPlayerPosition(
+    _player: string,
+    overrides?: CallOverrides
+  ): Promise<PositionStructOutput>;
+
+  _getPositionFromIndex(
+    k: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<PositionStructOutput>;
+
+  _getTopBlockAtPosition(
+    _x: BigNumberish,
+    _y: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   _increaseEnergy(
     _player: string,
@@ -626,13 +705,13 @@ export interface GameStorage extends BaseContract {
 
   _increaseItemInInventory(
     _player: string,
-    _blockId: BigNumberish,
+    _itemId: BigNumberish,
     _amount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   _isItemActive(
-    _blockId: BigNumberish,
+    _itemId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
@@ -655,31 +734,25 @@ export interface GameStorage extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  _mineBlock(
+  _mine(
     _x: BigNumberish,
     _y: BigNumberish,
-    _zIdx: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  _placeBlock(
+  _place(
     _x: BigNumberish,
     _y: BigNumberish,
-    _blockId: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  _playerPosition(
-    _player: string,
-    overrides?: CallOverrides
-  ): Promise<PositionStructOutput>;
-
-  _removeItemMaterialAndAmount(
     _itemId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  _setOccupierAtLocation(
+  _removeCraftItemAndAmount(
+    _itemId: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  _setOccupierAtPosition(
     _player: string,
     _x: BigNumberish,
     _y: BigNumberish,
@@ -695,7 +768,7 @@ export interface GameStorage extends BaseContract {
 
   _transfer(
     _recipient: string,
-    _blockId: BigNumberish,
+    _itemId: BigNumberish,
     _amount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -712,43 +785,46 @@ export interface GameStorage extends BaseContract {
   s(
     overrides?: CallOverrides
   ): Promise<
-    [BigNumber, BigNumber, string, boolean, BigNumber, BigNumber, BigNumber] & {
-      WORLD_WIDTH: BigNumber;
-      WORLD_HEIGHT: BigNumber;
+    [
+      BigNumber,
+      BigNumber,
+      string,
+      boolean,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber
+    ] & {
+      worldWidth: BigNumber;
+      worldHeight: BigNumber;
       admin: string;
       paused: boolean;
       itemNonce: BigNumber;
       moveRange: BigNumber;
       attackRange: BigNumber;
+      attackDamage: BigNumber;
+      attackWaitTime: BigNumber;
+      startPlayerHealth: BigNumber;
+      startPlayerEnergy: BigNumber;
     }
   >;
 
   callStatic: {
-    _addItemMaterialAndAmount(
+    _addCraftItemAndAmount(
       _itemId: BigNumberish,
-      _materialIds: BigNumberish[],
-      _amounts: BigNumberish[],
+      _craftItemIds: BigNumberish[],
+      _craftItemAmounts: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<void>;
-
-    _blockAtLocation(
-      _x: BigNumberish,
-      _y: BigNumberish,
-      _zIdx: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     _blockOccupier(
       _x: BigNumberish,
       _y: BigNumberish,
       overrides?: CallOverrides
     ): Promise<string>;
-
-    _checkLevel(
-      _player: string,
-      _blockId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
 
     _decreaseEnergy(
       _player: string,
@@ -764,7 +840,7 @@ export interface GameStorage extends BaseContract {
 
     _decreaseItemInInventory(
       _player: string,
-      _blockId: BigNumberish,
+      _itemId: BigNumberish,
       _amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -778,7 +854,20 @@ export interface GameStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PlayerDataStructOutput>;
 
-    _getBlockAmountById(
+    _getBlockAtPosition(
+      _x: BigNumberish,
+      _y: BigNumberish,
+      _zIdx: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getBlockCountAtPosition(
+      _x: BigNumberish,
+      _y: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getItemAmountById(
       _player: string,
       _blockId: BigNumberish,
       overrides?: CallOverrides
@@ -790,6 +879,22 @@ export interface GameStorage extends BaseContract {
       _itemId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<ItemWithMetadataStructOutput>;
+
+    _getPlayerPosition(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<PositionStructOutput>;
+
+    _getPositionFromIndex(
+      k: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PositionStructOutput>;
+
+    _getTopBlockAtPosition(
+      _x: BigNumberish,
+      _y: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     _increaseEnergy(
       _player: string,
@@ -805,13 +910,13 @@ export interface GameStorage extends BaseContract {
 
     _increaseItemInInventory(
       _player: string,
-      _blockId: BigNumberish,
+      _itemId: BigNumberish,
       _amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     _isItemActive(
-      _blockId: BigNumberish,
+      _itemId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -834,31 +939,25 @@ export interface GameStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    _mineBlock(
+    _mine(
       _x: BigNumberish,
       _y: BigNumberish,
-      _zIdx: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    _placeBlock(
+    _place(
       _x: BigNumberish,
       _y: BigNumberish,
-      _blockId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    _playerPosition(
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<PositionStructOutput>;
-
-    _removeItemMaterialAndAmount(
       _itemId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    _setOccupierAtLocation(
+    _removeCraftItemAndAmount(
+      _itemId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    _setOccupierAtPosition(
       _player: string,
       _x: BigNumberish,
       _y: BigNumberish,
@@ -874,7 +973,7 @@ export interface GameStorage extends BaseContract {
 
     _transfer(
       _recipient: string,
-      _blockId: BigNumberish,
+      _itemId: BigNumberish,
       _amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -898,15 +997,23 @@ export interface GameStorage extends BaseContract {
         boolean,
         BigNumber,
         BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
         BigNumber
       ] & {
-        WORLD_WIDTH: BigNumber;
-        WORLD_HEIGHT: BigNumber;
+        worldWidth: BigNumber;
+        worldHeight: BigNumber;
         admin: string;
         paused: boolean;
         itemNonce: BigNumber;
         moveRange: BigNumber;
         attackRange: BigNumber;
+        attackDamage: BigNumber;
+        attackWaitTime: BigNumber;
+        startPlayerHealth: BigNumber;
+        startPlayerEnergy: BigNumber;
       }
     >;
   };
@@ -914,29 +1021,16 @@ export interface GameStorage extends BaseContract {
   filters: {};
 
   estimateGas: {
-    _addItemMaterialAndAmount(
+    _addCraftItemAndAmount(
       _itemId: BigNumberish,
-      _materialIds: BigNumberish[],
-      _amounts: BigNumberish[],
+      _craftItemIds: BigNumberish[],
+      _craftItemAmounts: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    _blockAtLocation(
-      _x: BigNumberish,
-      _y: BigNumberish,
-      _zIdx: BigNumberish,
-      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     _blockOccupier(
       _x: BigNumberish,
       _y: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _checkLevel(
-      _player: string,
-      _blockId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -954,7 +1048,7 @@ export interface GameStorage extends BaseContract {
 
     _decreaseItemInInventory(
       _player: string,
-      _blockId: BigNumberish,
+      _itemId: BigNumberish,
       _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -971,7 +1065,20 @@ export interface GameStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getBlockAmountById(
+    _getBlockAtPosition(
+      _x: BigNumberish,
+      _y: BigNumberish,
+      _zIdx: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getBlockCountAtPosition(
+      _x: BigNumberish,
+      _y: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getItemAmountById(
       _player: string,
       _blockId: BigNumberish,
       overrides?: CallOverrides
@@ -981,6 +1088,22 @@ export interface GameStorage extends BaseContract {
 
     _getItemWithMetadata(
       _itemId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getPlayerPosition(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getPositionFromIndex(
+      k: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getTopBlockAtPosition(
+      _x: BigNumberish,
+      _y: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -998,13 +1121,13 @@ export interface GameStorage extends BaseContract {
 
     _increaseItemInInventory(
       _player: string,
-      _blockId: BigNumberish,
+      _itemId: BigNumberish,
       _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     _isItemActive(
-      _blockId: BigNumberish,
+      _itemId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1027,31 +1150,25 @@ export interface GameStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _mineBlock(
+    _mine(
       _x: BigNumberish,
       _y: BigNumberish,
-      _zIdx: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    _placeBlock(
+    _place(
       _x: BigNumberish,
       _y: BigNumberish,
-      _blockId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    _playerPosition(
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _removeItemMaterialAndAmount(
       _itemId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    _setOccupierAtLocation(
+    _removeCraftItemAndAmount(
+      _itemId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    _setOccupierAtPosition(
       _player: string,
       _x: BigNumberish,
       _y: BigNumberish,
@@ -1067,7 +1184,7 @@ export interface GameStorage extends BaseContract {
 
     _transfer(
       _recipient: string,
-      _blockId: BigNumberish,
+      _itemId: BigNumberish,
       _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -1085,29 +1202,16 @@ export interface GameStorage extends BaseContract {
   };
 
   populateTransaction: {
-    _addItemMaterialAndAmount(
+    _addCraftItemAndAmount(
       _itemId: BigNumberish,
-      _materialIds: BigNumberish[],
-      _amounts: BigNumberish[],
+      _craftItemIds: BigNumberish[],
+      _craftItemAmounts: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    _blockAtLocation(
-      _x: BigNumberish,
-      _y: BigNumberish,
-      _zIdx: BigNumberish,
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     _blockOccupier(
       _x: BigNumberish,
       _y: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _checkLevel(
-      _player: string,
-      _blockId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1125,7 +1229,7 @@ export interface GameStorage extends BaseContract {
 
     _decreaseItemInInventory(
       _player: string,
-      _blockId: BigNumberish,
+      _itemId: BigNumberish,
       _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -1144,7 +1248,20 @@ export interface GameStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _getBlockAmountById(
+    _getBlockAtPosition(
+      _x: BigNumberish,
+      _y: BigNumberish,
+      _zIdx: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getBlockCountAtPosition(
+      _x: BigNumberish,
+      _y: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getItemAmountById(
       _player: string,
       _blockId: BigNumberish,
       overrides?: CallOverrides
@@ -1154,6 +1271,22 @@ export interface GameStorage extends BaseContract {
 
     _getItemWithMetadata(
       _itemId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getPlayerPosition(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getPositionFromIndex(
+      k: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getTopBlockAtPosition(
+      _x: BigNumberish,
+      _y: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1171,13 +1304,13 @@ export interface GameStorage extends BaseContract {
 
     _increaseItemInInventory(
       _player: string,
-      _blockId: BigNumberish,
+      _itemId: BigNumberish,
       _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     _isItemActive(
-      _blockId: BigNumberish,
+      _itemId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1200,31 +1333,25 @@ export interface GameStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _mineBlock(
+    _mine(
       _x: BigNumberish,
       _y: BigNumberish,
-      _zIdx: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    _placeBlock(
+    _place(
       _x: BigNumberish,
       _y: BigNumberish,
-      _blockId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    _playerPosition(
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _removeItemMaterialAndAmount(
       _itemId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    _setOccupierAtLocation(
+    _removeCraftItemAndAmount(
+      _itemId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    _setOccupierAtPosition(
       _player: string,
       _x: BigNumberish,
       _y: BigNumberish,
@@ -1240,7 +1367,7 @@ export interface GameStorage extends BaseContract {
 
     _transfer(
       _recipient: string,
-      _blockId: BigNumberish,
+      _itemId: BigNumberish,
       _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;

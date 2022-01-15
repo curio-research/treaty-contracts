@@ -4,9 +4,11 @@
 export type { Game } from "./Game";
 export type { GameStorage } from "./GameStorage";
 export type { Getters } from "./Getters";
+export type { Minigame } from "./Minigame";
 export type { Permission } from "./Permission";
 
 export { Game__factory } from "./factories/Game__factory";
 export { GameStorage__factory } from "./factories/GameStorage__factory";
 export { Getters__factory } from "./factories/Getters__factory";
+export { Minigame__factory } from "./factories/Minigame__factory";
 export { Permission__factory } from "./factories/Permission__factory";

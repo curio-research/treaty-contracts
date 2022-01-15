@@ -10,16 +10,26 @@ export enum REVERT_MESSAGES {
   ENGINE_INSUFFICIENT_MATERIAL = "engine/insufficient-material",
 }
 
-type GameConstants = {
-  worldWidth: number,
-  worldHeight: number,
-  moveRange: number,
-  attackRange: number,
-  attackDamage: number,
-  attackWaitTime: number,
-  startPlayerHealth: number,
-  startPlayerEnergy: number,
-}
+// type GameConstants = {
+//   worldWidth: number,
+//   worldHeight: number,
+//   moveRange: number,
+//   attackRange: number,
+//   attackDamage: number,
+//   attackWaitTime: number,
+//   startPlayerHealth: number,
+//   startPlayerEnergy: number,
+// }
+// const constants: GameConstants = {
+//   worldWidth: 6,
+//   worldHeight: 6,
+//   moveRange: 2,
+//   attackRange: 1,
+//   attackDamage: 5,
+//   attackWaitTime: 5,
+//   startPlayerHealth: 100,
+//   startPlayerEnergy: 100,
+// };
 
 type ItemWithMetadata = {
   mineable: boolean,
@@ -36,16 +46,16 @@ type ItemWithMetadata = {
   protectItemHealths?: number[],
 }
 
-const constants: GameConstants = {
-  worldWidth: 6,
-  worldHeight: 6,
-  moveRange: 2,
-  attackRange: 1,
-  attackDamage: 5,
-  attackWaitTime: 5,
-  startPlayerHealth: 100,
-  startPlayerEnergy: 100,
-};
+const constants = [
+  6,  // worldWidth
+  6,  // worldHeight
+  2,  // moveRange
+  1,  // attackRange
+  5,  // attackDamage
+  5,  // attackWaitTime
+  100,// startPlayerHealth
+  100,// startPlayerEnergy
+]
 
 // // map setup
 // const MASTER_MAP = [
@@ -82,8 +92,8 @@ const tileTypes = [
 ];
 
 const generateBlocks = () => {
-  const worldWidth = constants.worldWidth;
-  const worldHeight = constants.worldHeight;
+  const worldWidth = constants[0];
+  const worldHeight = constants[1];
   const worldSize = worldWidth * worldHeight;
 
   let blocks: number[][] = [];
@@ -97,7 +107,7 @@ const generateBlocks = () => {
 } 
 const blocks = generateBlocks();
 
-const items: ItemWithMetadata[] = [
+export const items: ItemWithMetadata[] = [
   {
     // dirt
     mineable: true,
