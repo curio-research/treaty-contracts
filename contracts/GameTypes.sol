@@ -64,11 +64,6 @@ library GameTypes {
          * Additional information on an item.
          * Used to bulk-return crafting items.
          */
-
-        // Type of item, belonging to one of above 4 categories
-		// Note: Can change to enum
-		// Note: Can also remove - duplicate with bools below
-		uint256 itemType;
 	
 		// Mining
 		bool mineable;
@@ -91,8 +86,8 @@ library GameTypes {
 		// e.g.3. lava: occupiable; 1 energy & 1 health damage
 		// e.g.4. mountain: not occupiable
 		bool occupiable;
-		uint256 energyDamage; // per unit time
 		uint256 healthDamage; // per unit time
+		uint256 energyDamage; // per unit time
 
 		// Protection
         // e.g. If gold shield has health 1 on lava, then lava has 

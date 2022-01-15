@@ -39,7 +39,6 @@ contract Game is GameStorage {
         uint256 _attackWaitTime,
         uint256 _startPlayerHealth,
         uint256 _startPlayerEnergy,
-        GameTypes.Position[] memory _positions,
         uint256[][] memory _blocks,
         GameTypes.ItemWithMetadata[] memory _items
     ) {
@@ -55,8 +54,9 @@ contract Game is GameStorage {
         s.startPlayerEnergy = _startPlayerEnergy;
 
         // Set map and blocks
-        for (uint256 k = 0; k < _positions.length; k++) {
-            GameTypes.Position memory _position = _positions[k];
+        uint256 _positionCount = _worldWidth * _worldHeight;
+        for (uint256 k = 0; k < _positionCount; k++) {
+            GameTypes.Position memory _position = _getPositionFromIndex(k);
             s.map[_position.x][_position.y].blocks = _blocks[k]; // FIXME is this safer, or the for loop below?
             // for (uint256 z = 0; z < _blocks[k].length; z++) {
             //     s.map[_position.x][_position.y].blocks.push(_blocks[k][z]);
@@ -143,6 +143,16 @@ contract Game is GameStorage {
             _getPlayerPosition(msg.sender).x == _x &&
             _getPlayerPosition(msg.sender).y == _y
         ) revert("engine/cannot-stand-on-block");
+
+        uint256 _blockId = _getTopBlockAtPosition(_x, _y);
+        bool _placable = false;
+        for (uint256 i = 0; i < s.placeItemIds[_blockId].length; i++) {
+            if (s.placeItemIds[_blockId][i] == _itemId) {
+                _placable = true;
+                break;
+            }
+        }
+        if (!_placable) revert("engine/cannot-place-on-block");
 
         // TODO add distance logic here
 

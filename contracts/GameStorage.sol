@@ -11,6 +11,12 @@ import "hardhat/console.sol";
 contract GameStorage {
     GameTypes.GameStorage public s;
 
+    function _getPositionFromIndex(
+        uint256 k
+    ) view public returns (GameTypes.Position memory) {
+        return GameTypes.Position(k / s.worldHeight, k % s.worldHeight);
+    }
+
     function _addCraftItemAndAmount(
         uint256 _itemId,
         uint256[] memory _craftItemIds,
