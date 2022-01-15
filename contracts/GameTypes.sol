@@ -96,6 +96,11 @@ library GameTypes {
         uint256[] protectItemHealths;
     }
 
+    struct Recipe {
+        uint256[] craftItemIds; // recipe items
+		uint256[] craftItemAmounts; // recipe amounts
+    }
+
     struct GameStorage {
         // Map info
         uint256 worldWidth;
@@ -130,9 +135,9 @@ library GameTypes {
         // Player states
         address[] allPlayers;
         mapping(address => GameTypes.PlayerData) players; // player data
-        mapping(address => uint256) joinedAt; // time joined for player
         mapping(address => mapping(uint256 => uint256)) inventory; // player => itemId => inventory
         mapping(address => uint256) lastMovedAt; // time when user last moved
         mapping(address => uint256) lastAttackedAt; // time when user last attacked
+        mapping(address => uint256[]) inventoryNonce; // keep track of inventory
     }
 }

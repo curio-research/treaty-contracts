@@ -1,7 +1,7 @@
 import { REVERT_MESSAGES } from "./util/constants";
 import { Game } from "../typechain-types";
 import { expect } from "chai";
-import { delay } from "./util/helper";
+import { delay, serializeBigNumberArr } from "./util/helper";
 import { World, initializeWorld, AllContracts, verifyAt, moveAndVerify, mineAndVerify } from "./util/testWorld";
 import { fixtureLoader } from "./util/helper";
 
@@ -68,6 +68,12 @@ describe("Game", () => {
     // mine resource blocks (z = 0)
     await mineAndVerify(GameContract, world.user1, 0, 0, 0, 0);
     await mineAndVerify(GameContract, world.user1, 1, 1, 0, 1);
+
+    // check inventory
+    const player1Inventory = await GameContract._getInventoryByPlayer(world.user1.address);
+    expect(serializeBigNumberArr(player1Inventory.materialIds)).eqls([1]);
+    expect(serializeBigNumberArr(player1Inventory.materialAmounts)).eqls([2]);
+
     const blockId = await mineAndVerify(GameContract, world.user1, 0, 1, 0, 2);
 
     // place block and verify
