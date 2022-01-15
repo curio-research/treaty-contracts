@@ -76,6 +76,8 @@ library GameTypes {
 		uint256[] craftItemAmounts; // recipe amounts
 
 		// Placing
+        // e.g. stone can be placed on water and lava, so it has
+        // those two in its placeItemIds
 		uint256[] placeItemIds; // empty = not placable anywhere
 
 		// Note: Posession is taken care of in PlayerData
@@ -124,11 +126,12 @@ library GameTypes {
         mapping(uint256 => uint256) healthDamage;
         mapping(uint256 => uint256[]) protectItemIds;
         mapping(uint256 => mapping(uint256 => uint256)) protectItemHealths; // id => item id => amount
+        // TODO move constants below into a struct for readability
         uint256 itemNonce;
-        uint256 moveRange;
-        uint256 attackRange;
-        uint256 attackDamage;
-        uint256 attackWaitTime;
+        uint256 moveRange;          // TODO move into PlayerData
+        uint256 attackRange;        // TODO move into PlayerData
+        uint256 attackDamage;       // TODO move into PlayerData
+        uint256 attackWaitTime;     // TODO move into PlayerData
         uint256 startPlayerHealth;
         uint256 startPlayerEnergy;
 

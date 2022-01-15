@@ -71,8 +71,8 @@ describe("Game", () => {
 
     // check inventory
     const player1Inventory = await GameContract._getInventoryByPlayer(world.user1.address);
-    expect(serializeBigNumberArr(player1Inventory.materialIds)).eqls([1]);
-    expect(serializeBigNumberArr(player1Inventory.materialAmounts)).eqls([2]);
+    expect(serializeBigNumberArr(player1Inventory.craftItemIds)).eqls([1]);
+    expect(serializeBigNumberArr(player1Inventory.craftItemAmounts)).eqls([2]);
 
     const blockId = await mineAndVerify(GameContract, world.user1, 0, 1, 0, 2);
 

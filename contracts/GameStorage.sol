@@ -3,18 +3,25 @@ pragma solidity ^0.8.4;
 
 import "./GameTypes.sol";
 import "hardhat/console.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 /// @title Monolithic game storage
 /// @notice for v1 we can store everything in here - both player states and game states. we can think about
 /// using diamond proxy upgrade or other microservice architecture
 
 contract GameStorage {
+    using SafeMath for uint256;
     GameTypes.GameStorage public s;
 
     function _getPositionFromIndex(
         uint256 k
     ) view public returns (GameTypes.Position memory) {
-        return GameTypes.Position(k / s.worldHeight, k % s.worldHeight);
+        (bool _xValid, uint256 _x) = SafeMath.tryDiv(k, s.worldHeight);
+        (bool _yValid, uint256 _y) = SafeMath.tryMod(k, s.worldHeight);
+
+        if (!_xValid || !_yValid) revert("SafeMath/invalid-division");
+
+        return GameTypes.Position(_x, _y);
     }
 
     function _addCraftItemAndAmount(
@@ -22,7 +29,7 @@ contract GameStorage {
         uint256[] memory _craftItemIds,
         uint256[] memory _craftItemAmounts
     ) public {
-        // assert(_craftItemIds.length == _amounts.length);
+        if (_craftItemIds.length != _craftItemAmounts.length) revert("engine/invalid-craft-item-amounts");
 
         s.craftItemIds[_itemId] = _craftItemIds;
         for (uint256 i = 0; i < _craftItemIds.length; i++) {
