@@ -28,6 +28,27 @@ const MASTER_MAP = [
   [0, 1, 0, 0, 1, 0],
 ];
 
+const TEN_BY_TEN_MINI_MAP = [
+  [1, 1, 0, 0, 0, 1],
+  [1, 1, 0, 0, 0, 1],
+  [0, 0, 0, 1, 0, 0],
+  [0, 0, 0, 1, 1, 0],
+  [0, 1, 0, 0, 0, 0],
+  [0, 1, 0, 0, 1, 0],
+];
+const RESOURCE_MAP = {
+  0: 'dirt',
+  1: 'grass',
+  2: 'sand',
+  3: 'water',
+  10: 'lava',
+  1000: 'stone',
+  1001: 'wood',
+  1002: 'cactus',
+  2000: 'apple',
+  3000: 'workbench'
+}
+
 // list of coordinates
 // TODO: Improve map initialization method. This is too tedius
 export let positions: unknown[] = [];

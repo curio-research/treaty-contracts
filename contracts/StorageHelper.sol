@@ -6,8 +6,6 @@ import "./GameTypes.sol";
 // some functions need to be stored in a library because functions in contracts cannot take in structs
 library GameStorageHelper {
     // THIS IS COPIED FROM DARKFOREST
-    // the only contract that ever calls this is DarkForestCore, which has a known storage layout
-    // we know that DFCore's GameStorage struct lives at storage slot 1
     function s() public pure returns (GameTypes.GameStorage storage ret) {
         bytes32 position = bytes32(uint256(1));
         assembly {

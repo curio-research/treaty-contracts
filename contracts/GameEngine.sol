@@ -31,56 +31,67 @@ contract Game is GameStorage {
 
     // initialize game with map, items
     constructor(
+        uint256 _worldWidth,
+        uint256 _worldHeight,
+        uint256 _moveRange,
+        uint256 _attackRange,
+        uint256 _attackDamage,
+        uint256 _attackWaitTime,
+        uint256 _startPlayerHealth,
+        uint256 _startPlayerEnergy,
         GameTypes.Position[] memory _positions,
-        uint256[] memory _tileTypes,
-        uint256 width,
-        uint256 height,
+        uint256[][] memory _blocks,
         GameTypes.ItemWithMetadata[] memory _items
     ) {
-        for (uint256 i = 0; i < _positions.length; i++) {
-            GameTypes.Position memory _position = _positions[i];
-            uint256 _tileType = _tileTypes[i];
-            s.map[_position.x][_position.y].blocks[0] = _tileType; // 0 is the base level resource
+        // Set constants
+        s.worldWidth = _worldWidth;
+        s.worldHeight = _worldHeight;
+        s.itemNonce = 1; // valid blockId start at 1. Id 0 = no blocks
+        s.moveRange = _moveRange;
+        s.attackRange = _attackRange;
+        s.attackDamage = _attackDamage;
+        s.attackWaitTime = _attackWaitTime;
+        s.startPlayerHealth = _startPlayerHealth;
+        s.startPlayerEnergy = _startPlayerEnergy;
+
+        // Set map and blocks
+        for (uint256 k = 0; k < _positions.length; k++) {
+            GameTypes.Position memory _position = _positions[k];
+            s.map[_position.x][_position.y].blocks = _blocks[k]; // FIXME is this safer, or the for loop below?
+            // for (uint256 z = 0; z < _blocks[k].length; z++) {
+            //     s.map[_position.x][_position.y].blocks.push(_blocks[k][z]);
+            // }
         }
 
-        s.WORLD_WIDTH = width;
-        s.WORLD_HEIGHT = height;
-
-        s.itemNonce = 1; // valid blockId start at 1. Id 0 = no blocks
-
-        s.moveRange = 2;
-        s.attackRange = 1;
-
-        // initialize all craft items
+        // Initialize items
         for (uint256 i = 0; i < _items.length; i++) {
-            _addItemMaterialAndAmount(
+            _addCraftItemAndAmount(
                 i + 1,
-                _items[i].materialIds,
-                _items[i].materialAmounts
+                _items[i].craftItemIds,
+                _items[i].craftItemAmounts
             );
         }
     }
 
     function initializePlayer(uint256 _x, uint256 _y) public {
-        if (s.players[msg.sender].isInitialized)
+        if (s.players[msg.sender].initialized)
             revert("engine/player-already-initialized");
 
         // check if target coordinate has block or another player
         if (_isOccupied(_x, _y)) revert("engine/location-occupied");
 
         s.players[msg.sender] = GameTypes.PlayerData({
-            alive: true,
-            isInitialized: true,
+            initialized: true,
             initTimestamp: block.timestamp,
+            playerAddr: msg.sender,
+            alive: true,
             position: GameTypes.Position(_x, _y),
-            energy: 100,
-            health: 100,
-            level: 1,
-            a: msg.sender
+            health: s.startPlayerHealth,
+            energy: s.startPlayerEnergy
         });
         s.allPlayers.push(msg.sender);
 
-        _setOccupierAtLocation(msg.sender, _x, _y);
+        _setOccupierAtPosition(msg.sender, _x, _y);
 
         emit NewPlayer(msg.sender, _x, _y);
     }
@@ -90,12 +101,11 @@ contract Game is GameStorage {
         // add hook here. look at openzeppelin
         if (!_isValidMove(msg.sender, _x, _y)) revert("engine/invalid-move");
 
-        GameTypes.Position memory _position = _playerPosition(msg.sender);
-        _setOccupierAtLocation(address(0), _position.x, _position.y); // remove occupier from previous position
+        GameTypes.Position memory _position = _getPlayerPosition(msg.sender);
+        _setOccupierAtPosition(address(0), _position.x, _position.y); // remove occupier from previous position
 
         _setPlayerPosition(msg.sender, _x, _y);
-        _setOccupierAtLocation(msg.sender, _x, _y);
-        _decreaseEnergy(msg.sender, 0); // change this based on game dynamic
+        _setOccupierAtPosition(msg.sender, _x, _y);
 
         emit Move(msg.sender, _x, _y);
     }
@@ -106,62 +116,66 @@ contract Game is GameStorage {
         uint256 _y,
         uint256 _zIdx
     ) external {
-        uint256 blockType = _blockAtLocation(_x, _y, _zIdx);
-        if (blockType == 0) revert("engine/no-blocks-available");
+        uint256 _blockCount = _getBlockCountAtPosition(_x, _y);
+        if (_zIdx != _blockCount - 1) revert("engine/invalid-mine");
 
-        // // TODO : change to only reveal to certain players with zkp later
-        // if (!_checkLevel(msg.sender, blockType)) revert("engine/insufficient-level");
+        // can only mine with the needed tool
+        uint256 _itemId = _getBlockAtPosition(_x, _y, _zIdx);
+        uint256 _mineItemId = s.mineItemId[_itemId];
+        uint256 _mineItemAmount = _getItemAmountById(msg.sender, _mineItemId);
+        if (_mineItemAmount == 0) revert("engine/tool-needed");
 
-        _increaseItemInInventory(msg.sender, blockType, 1);
-        _mineBlock(_x, _y, _zIdx); // mine block
+        _increaseItemInInventory(msg.sender, _itemId, 1);
+        _mine(_x, _y);
 
-        emit Mine(msg.sender, _x, _y, blockType, _zIdx);
+        emit Mine(msg.sender, _x, _y, _itemId, _zIdx);
     }
 
     // place block at location
-    // players can only place at z-index of 1 because 0 is the base layer aka where resources are mined
     function place(
         uint256 _x,
         uint256 _y,
-        uint256 _blockId
+        uint256 _itemId
     ) external {
-        if (_getBlockAmountById(msg.sender, _blockId) == 0)
+        if (_getItemAmountById(msg.sender, _itemId) == 0)
             revert("engine/insufficient-inventory");
         if (
-            _playerPosition(msg.sender).x == _x &&
-            _playerPosition(msg.sender).y == _y
+            _getPlayerPosition(msg.sender).x == _x &&
+            _getPlayerPosition(msg.sender).y == _y
         ) revert("engine/cannot-stand-on-block");
 
-        _placeBlock(_x, _y, _blockId);
-        _decreaseItemInInventory(msg.sender, _blockId, 1);
+        // TODO add distance logic here
 
-        emit Place(msg.sender, _x, _y, _blockId);
+        _place(_x, _y, _itemId);
+        _decreaseItemInInventory(msg.sender, _itemId, 1);
+
+        emit Place(msg.sender, _x, _y, _itemId);
     }
 
-    // craft blocks (once) based on their recipe
-    function craft(uint256 _blockId) external {
-        if (_isItemActive(_blockId)) revert("engine/inactive-block");
+    // craft item (once) based on their recipe
+    function craft(uint256 _itemId) external {
+        if (_isItemActive(_itemId)) revert("engine/inactive-block");
 
         // loop through player inventory to check if player has all required ingredients to make a block
-        for (uint256 i = 0; i < s.itemMaterials[_blockId].length; i++) {
-            uint256 materialId = s.itemMaterials[_blockId][i];
-            uint256 materialAmount = s.materialAmounts[_blockId][materialId];
+        for (uint256 i = 0; i < s.craftItemIds[_itemId].length; i++) {
+            uint256 craftItemId = s.craftItemIds[_itemId][i];
+            uint256 craftItemAmount = s.craftItemAmounts[_itemId][craftItemId];
 
-            if (s.inventory[msg.sender][materialId] < materialAmount) {
+            if (s.inventory[msg.sender][craftItemId] < craftItemAmount) {
                 revert("engine/insufficient-material");
             } else {
                 // deduct material from player inventory count
                 _decreaseItemInInventory(
                     msg.sender,
-                    materialId,
-                    materialAmount
+                    craftItemId,
+                    craftItemAmount
                 );
             }
         }
 
-        _increaseItemInInventory(msg.sender, _blockId, 1);
+        _increaseItemInInventory(msg.sender, _itemId, 1);
 
-        emit Craft(msg.sender, _blockId);
+        emit Craft(msg.sender, _itemId);
     }
 
     function attack(address _target) external {
@@ -174,9 +188,9 @@ contract Game is GameStorage {
         if (!_isValidAttack(msg.sender, _target))
             revert("engine/invalid-attack");
 
-        _decreaseHealth(_target, 5); // add more details later
+        _decreaseHealth(_target, s.attackDamage);
 
-        s.lastAttacked[msg.sender] = block.timestamp;
+        s.lastAttackedAt[msg.sender] = block.timestamp;
 
         emit Attack(msg.sender, _target);
 
@@ -187,14 +201,9 @@ contract Game is GameStorage {
     }
 
     function gameName() external pure returns (string memory name) {
+        /**
+         * For testing purposes
+         */
         return "blocky";
-    }
-
-    function getPlayerPosition()
-        external
-        view
-        returns (GameTypes.Position memory position)
-    {
-        return _playerPosition(msg.sender);
     }
 }
