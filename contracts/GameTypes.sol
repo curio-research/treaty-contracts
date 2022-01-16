@@ -9,58 +9,129 @@ library GameTypes {
         uint256 y;
     }
 
-    struct Item {
-        bool active;
+    struct ItemData {
+        /**
+         * Abstraction for all inanimate things in the game.
+         */
+
         uint256 id;
-        uint256 strength;
         address itemAddr;
+
+        bool active;
     }
 
     struct PlayerData {
-        address a;
-        bool alive;
-        bool isInitialized;
+        /**
+         * Abstraction for all animate beings in the game.
+         */
+
+        // Fixed attributes
+        bool initialized;
         uint256 initTimestamp;
+        address playerAddr;
+
+        // Variable attributes
+        bool alive;
         Position position;
-        uint256 energy;
         uint256 health;
-        uint256 level; // currently only used to determine whether able to mine or craft item
+        uint256 energy;
+        
+        // Note for future purposes
+        // uint256 level;
+        // uint256 fullness;
+        // uint256[] holdItems; // items the user is currently holding
     }
 
-    struct MapData {
-        address occupier;
-        mapping(uint256 => uint256) blocks; // z-index => block. This allows us to have "3D" maps. 0 means no blocks
+    struct Tile {
+        /**
+         * A unit of space which can host a player and/or an array
+         * of items.
+         */
+
+        // Player on a tile, if applicable
+		address occupier;
+
+		// All items on a tile.
+		// Items "pile" starting from the first element to the last.
+		// e.g.1 "water -> dirt -> grass -> wood"
+		// e.g.2 "lava -> marble -> workbench"
+		// All but the first element can theoretically be extracted.
+		uint256[] blocks;
     }
 
-    // used to bulk return crafting items
     struct ItemWithMetadata {
-        uint256[] materialIds;
-        uint256[] materialAmounts;
+        /**
+         * Additional information on an item.
+         * Used to bulk-return crafting items.
+         */
+	
+		// Mining
+		bool mineable;
+        uint256[] mineItemIds; // tools for mining
+        // strength for both mining and being mined
+        uint256 strength;
+	
+        // Crafting
+        bool craftable;
+        uint256[] craftItemIds; // recipe items
+        uint256[] craftItemAmounts; // recipe amounts
+
+        // Placing
+        // e.g. stone can be placed on water and lava, so it has
+        // those two in its placeItemIds
+        // Note: Ignored for now
+        // uint256[] placeItemIds; // empty = not placable anywhere
+
+		// Note: Posession is taken care of in PlayerData
+
+		// Occupation
+		// e.g.1. sand: occupiable; no energy impact
+		// e.g.2. water: occupiable; 1 energy damage
+		// e.g.3. lava: occupiable; 1 energy & 1 health damage
+		// e.g.4. mountain: not occupiable
+		bool occupiable;
+		uint256 healthDamage; // per unit time
+		uint256 energyDamage; // per unit time
+
+		// Protection
+        // e.g. If gold shield has health 1 on lava, then lava has 
+        // no health damage on player.
+        // Note: ignored for now
+        // uint256[] protectItemIds;
+        // uint256[] protectItemHealths;
+    }
+
+    struct Recipe {
+        uint256[] craftItemIds; // recipe items
+		uint256[] craftItemAmounts; // recipe amounts
     }
 
     struct GameStorage {
-        // map info
-        uint256 WORLD_WIDTH;
-        uint256 WORLD_HEIGHT;
-        GameTypes.MapData[1000][1000] map;
-        // game info
+        // Map info
+        uint256 worldWidth;
+        uint256 worldHeight;
+        GameTypes.Tile[1000][1000] map;
+
+        // Game info
         address admin;
         bool paused;
-        mapping(uint256 => GameTypes.Item) items; // all available items to be collected / crafted;
-        mapping(uint256 => uint256[]) itemMaterials;
-        mapping(uint256 => mapping(uint256 => uint256)) materialAmounts; // id => material => amount
-        mapping(uint256 => uint256) itemLevels; // later
+        mapping(uint256 => GameTypes.ItemData) items;
+        mapping(uint256 => GameTypes.ItemWithMetadata) itemsWithMetadata;
+        // TODO move constants below into a struct for readability
         uint256 itemNonce;
-        uint256 moveRange;
-        uint256 attackRange;
-        // player states
+        uint256 moveRange;          // TODO move into PlayerData
+        uint256 attackRange;        // TODO move into PlayerData
+        uint256 attackDamage;       // TODO move into PlayerData
+        uint256 attackWaitTime;     // TODO move into PlayerData
+        uint256 startPlayerHealth;
+        uint256 startPlayerEnergy;
+
+        // Player states
         address[] allPlayers;
-        mapping(address => uint256) joined; // time joined for player
-        mapping(uint256 => uint256) levelMaxHeath; // max health for each level
         mapping(address => GameTypes.PlayerData) players; // player data
+        mapping(address => mapping(uint256 => uint256)) inventory; // player => itemId => inventory
+        mapping(address => uint256) lastMovedAt; // time when user last moved
+        mapping(address => uint256) lastAttackedAt; // time when user last attacked
         mapping(address => uint256[]) inventoryNonce; // keep track of inventory
-        mapping(address => mapping(uint256 => uint256)) inventory; // player => itemId => inventory. Keeps count of items
-        mapping(address => uint256) lastMoved; // when user last moved
-        mapping(address => uint256) lastAttacked; // when user last attacked
     }
 }

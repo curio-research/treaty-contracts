@@ -6,8 +6,6 @@ import "./GameTypes.sol";
 // some functions need to be stored in a library because functions in contracts cannot take in structs
 library GameStorageHelper {
     // THIS IS COPIED FROM DARKFOREST
-    // the only contract that ever calls this is DarkForestCore, which has a known storage layout
-    // we know that DFCore's GameStorage struct lives at storage slot 1
     function s() public pure returns (GameTypes.GameStorage storage ret) {
         bytes32 position = bytes32(uint256(1));
         assembly {
@@ -17,19 +15,19 @@ library GameStorageHelper {
 
     // item
     function addItem(
-        GameTypes.Item memory _item,
-        uint256[] memory _materialIds,
-        uint256[] memory _materialAmounts
+        GameTypes.ItemData memory _item,
+        uint256[] memory _craftItemIds,
+        uint256[] memory _craftItemAmounts
     ) public {
         uint256 _itemNonce = s().itemNonce;
         s().items[_itemNonce] = _item;
 
-        if (_materialIds.length != _materialAmounts.length)
+        if (_craftItemIds.length != _craftItemAmounts.length)
             revert("helper/uneven-material-length");
 
-        for (uint256 i = 0; i < _materialIds.length; i++) {
-            uint256 _materialId = _materialIds[i];
-            s().materialAmounts[_itemNonce][_materialId] = _materialIds[i];
+        for (uint256 i = 0; i < _craftItemIds.length; i++) {
+            uint256 _craftItemId = _craftItemIds[i];
+            s().itemsWithMetadata[_itemNonce].craftItemAmounts[_craftItemId] = _craftItemAmounts[i];
         }
 
         s().itemNonce += 1;

@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { INITIAL_ITEMS } from "./util/constants";
+import { items } from "./util/constants";
 import { Getters } from "../typechain-types";
 import { World, initializeWorld, AllContracts, verifyAt, moveAndVerify, mineAndVerify } from "./util/testWorld";
 import { fixtureLoader, serializeBigNumberArr } from "./util/helper";
@@ -31,17 +31,17 @@ describe("Getter Contract", () => {
 
   it("Bulk fetch craft items", async () => {
     // single getter test
-    const item1 = await contracts.Game._getItemWithMetadata(1);
-    expect(serializeBigNumberArr(item1.materialIds)).to.eqls(INITIAL_ITEMS[0].materialIds);
-    expect(serializeBigNumberArr(item1.materialAmounts)).to.eqls(INITIAL_ITEMS[0].materialAmounts);
+    const item1 = await contracts.Game._getItemWithMetadata(12); // pickaxe
+    expect(serializeBigNumberArr(item1.craftItemIds)).to.eqls(items[12].craftItemIds);
+    expect(serializeBigNumberArr(item1.craftItemAmounts)).to.eqls(items[12].craftItemAmounts);
 
     // bulk getter test
     const allItems = await Getters.bulkGetAllItems();
-    expect(allItems.length).equals(INITIAL_ITEMS.length);
-    expect(serializeBigNumberArr(allItems[0].materialIds)).to.eqls(INITIAL_ITEMS[0].materialIds); // item 1
-    expect(serializeBigNumberArr(allItems[0].materialAmounts)).to.eqls(INITIAL_ITEMS[0].materialAmounts);
-    expect(serializeBigNumberArr(allItems[1].materialIds)).to.eqls(INITIAL_ITEMS[1].materialIds); // item 2
-    expect(serializeBigNumberArr(allItems[1].materialAmounts)).to.eqls(INITIAL_ITEMS[1].materialAmounts);
+    expect(allItems.length).equals(items.length);
+    expect(serializeBigNumberArr(allItems[9].craftItemIds)).to.eqls(items[9].craftItemIds); // workbench
+    expect(serializeBigNumberArr(allItems[9].craftItemAmounts)).to.eqls(items[9].craftItemAmounts);
+    expect(serializeBigNumberArr(allItems[10].craftItemIds)).to.eqls(items[10].craftItemIds); // shovel
+    expect(serializeBigNumberArr(allItems[10].craftItemAmounts)).to.eqls(items[10].craftItemAmounts);
   });
 
   it("Bulk fetch player info", async () => {
@@ -53,10 +53,10 @@ describe("Getter Contract", () => {
     // verify player1 and player2 data
     expect(allPlayerData[0].position.x).equals(1);
     expect(allPlayerData[0].position.y).equals(1);
-    expect(allPlayerData[0].a).equals(allPlayerAddresses[0]);
+    expect(allPlayerData[0].playerAddr).equals(allPlayerAddresses[0]);
 
     expect(allPlayerData[1].position.x).equals(2);
     expect(allPlayerData[1].position.y).equals(1);
-    expect(allPlayerData[1].a).equals(allPlayerAddresses[1]);
+    expect(allPlayerData[1].playerAddr).equals(allPlayerAddresses[1]);
   });
 });

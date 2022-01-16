@@ -16,13 +16,37 @@ import { Listener, Provider } from "@ethersproject/providers";
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
 export type ItemWithMetadataStruct = {
-  materialIds: BigNumberish[];
-  materialAmounts: BigNumberish[];
+  mineable: boolean;
+  mineItemIds: BigNumberish[];
+  strength: BigNumberish;
+  craftable: boolean;
+  craftItemIds: BigNumberish[];
+  craftItemAmounts: BigNumberish[];
+  occupiable: boolean;
+  healthDamage: BigNumberish;
+  energyDamage: BigNumberish;
 };
 
-export type ItemWithMetadataStructOutput = [BigNumber[], BigNumber[]] & {
-  materialIds: BigNumber[];
-  materialAmounts: BigNumber[];
+export type ItemWithMetadataStructOutput = [
+  boolean,
+  BigNumber[],
+  BigNumber,
+  boolean,
+  BigNumber[],
+  BigNumber[],
+  boolean,
+  BigNumber,
+  BigNumber
+] & {
+  mineable: boolean;
+  mineItemIds: BigNumber[];
+  strength: BigNumber;
+  craftable: boolean;
+  craftItemIds: BigNumber[];
+  craftItemAmounts: BigNumber[];
+  occupiable: boolean;
+  healthDamage: BigNumber;
+  energyDamage: BigNumber;
 };
 
 export type PositionStruct = { x: BigNumberish; y: BigNumberish };
@@ -33,34 +57,31 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
 };
 
 export type PlayerDataStruct = {
-  a: string;
-  alive: boolean;
-  isInitialized: boolean;
+  initialized: boolean;
   initTimestamp: BigNumberish;
+  playerAddr: string;
+  alive: boolean;
   position: PositionStruct;
-  energy: BigNumberish;
   health: BigNumberish;
-  level: BigNumberish;
+  energy: BigNumberish;
 };
 
 export type PlayerDataStructOutput = [
+  boolean,
+  BigNumber,
   string,
   boolean,
-  boolean,
-  BigNumber,
   PositionStructOutput,
-  BigNumber,
   BigNumber,
   BigNumber
 ] & {
-  a: string;
-  alive: boolean;
-  isInitialized: boolean;
+  initialized: boolean;
   initTimestamp: BigNumber;
+  playerAddr: string;
+  alive: boolean;
   position: PositionStructOutput;
-  energy: BigNumber;
   health: BigNumber;
-  level: BigNumber;
+  energy: BigNumber;
 };
 
 export interface GettersInterface extends utils.Interface {

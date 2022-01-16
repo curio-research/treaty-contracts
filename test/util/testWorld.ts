@@ -41,23 +41,23 @@ export const moveAndVerify = async (game: Game, signer: SignerWithAddress, x: nu
 };
 
 export const verifyAt = async (game: Game, signer: SignerWithAddress, x: number, y: number) => {
-  const position = await game.connect(signer).getPlayerPosition();
+  const position = await game.connect(signer)._getPlayerPosition(signer.address);
   expect(position.x).equals(x);
   expect(position.y).equals(y);
 };
 
 export const mineAndVerify = async (game: Game, signer: SignerWithAddress, x: number, y: number, z: number, initialInventory: number) => {
   // verify initial inventory
-  const blockId = await game.connect(signer)._blockAtLocation(x, y, z);
-  await expect(await game.connect(signer)._getBlockAmountById(signer.address, blockId)).equals(initialInventory);
+  const blockId = await game.connect(signer)._getBlockAtPosition(x, y, z);
+  await expect(await game.connect(signer)._getItemAmountById(signer.address, blockId)).equals(initialInventory);
 
   await game.connect(signer).mine(x, y, z);
 
   // verify block adds to player's inventory
-  await expect(await game.connect(signer)._getBlockAmountById(signer.address, blockId)).equals(initialInventory + 1);
+  await expect(await game.connect(signer)._getItemAmountById(signer.address, blockId)).equals(initialInventory + 1);
 
   // verify block is indeed mined
-  await expect(await game.connect(signer)._blockAtLocation(x, y, z)).equals(0);
+  await expect(await game.connect(signer)._getBlockAtPosition(x, y, z)).equals(0);
 
   // verify that player cannot mine blocks at same position
   await expect(game.connect(signer).mine(x, y, z)).to.be.revertedWith("engine/no-blocks-available");

@@ -1,3 +1,5 @@
+import internal from "stream";
+
 export const EMPTY_ADDRESS = "0x0000000000000000000000000000000000000000";
 
 export enum REVERT_MESSAGES {
@@ -8,35 +10,190 @@ export enum REVERT_MESSAGES {
   ENGINE_INSUFFICIENT_MATERIAL = "engine/insufficient-material",
 }
 
-// initial world item and corresponding crafting information
-export const INITIAL_ITEMS = [
-  { materialIds: [2], materialAmounts: [3] },
-  { materialIds: [1], materialAmounts: [1] },
-];
-
-// initialize 6 by 6 grid map
-const WORLD_WIDTH = 6;
-const WORLD_HEIGHT = 6;
-
-// map setup
-const MASTER_MAP = [
-  [1, 1, 0, 0, 0, 1],
-  [1, 1, 0, 0, 0, 1],
-  [0, 0, 0, 1, 0, 0],
-  [0, 0, 0, 1, 1, 0],
-  [0, 1, 0, 0, 0, 0],
-  [0, 1, 0, 0, 1, 0],
-];
-
-// list of coordinates
-// TODO: Improve map initialization method. This is too tedius
-export let positions: unknown[] = [];
-for (let i = 0; i < WORLD_WIDTH; i++) {
-  for (let j = 0; j < WORLD_HEIGHT; j++) {
-    positions.push({ x: i, y: j });
-  }
+type ItemWithMetadata = {
+  mineable: boolean,
+  craftable: boolean,
+  occupiable: boolean,
+  mineItemIds?: number[],
+  strength?: number,
+  craftItemIds?: number[],
+  craftItemAmounts?: number[],
+  // placeItemIds?: number[],
+  healthDamage?: number,
+  energyDamage?: number,
+  // protectItemIds?: number[],
+  // protectItemHealths?: number[],
 }
-// initialize resource types on map
-export const blockTypes = MASTER_MAP.flat();
 
-export const GAME_DEPLOY_ARGS = [positions, blockTypes, WORLD_WIDTH, WORLD_HEIGHT, INITIAL_ITEMS];
+const constants = [
+  6,    // worldWidth
+  6,    // worldHeight
+  2,    // moveRange
+  1,    // attackRange
+  5,    // attackDamage
+  5,    // attackWaitTime
+  100,  // startPlayerHealth
+  100,  // startPlayerEnergy
+]
+
+const blockMap = new Map<string, number>([
+  ['dirt', 0],
+  ['grass', 1],
+  ['sand', 2],
+  ['water', 3],
+  ['lava', 4],
+  ['stone', 5],
+  ['wood', 6],
+  ['cactus', 7],
+  ['apple', 8],
+  ['workbench', 9],
+  ['shovel', 10],
+  ['lava suit', 11],
+  ['pickaxe', 12],
+  ['axe', 13],
+]);
+const tileTypes = [
+  ['water', 'dirt', 'grass'],
+  ['water', 'dirt', 'grass', 'wood'],
+  ['lava', 'stone'],
+  ['sand', 'cactus'],
+  ['sand', 'stone', 'workbench'],
+];
+
+const generateBlocks = () => {
+  const worldWidth = constants[0];
+  const worldHeight = constants[1];
+  const worldSize = worldWidth * worldHeight;
+
+  let blocks: number[][] = [];
+  let tileIdx;
+  for (let i = 0; i < worldSize; i++) {
+    tileIdx = Math.floor(Math.random() * 5);
+    blocks.push(tileTypes[tileIdx].map(b => blockMap.get(b)!))
+  }
+  
+  return blocks;
+} 
+const blocks = generateBlocks();
+
+export const items: ItemWithMetadata[] = [
+  {
+    // dirt
+    mineable: true,
+    mineItemIds: [10],
+    strength: 1,
+    craftable: false,
+    // placeItemIds: [3],
+    occupiable: true,
+  },
+  {
+    // grass
+    mineable: true,
+    mineItemIds: [10],
+    strength: 1,
+    craftable: false,
+    // placeItemIds: [0],
+    occupiable: true,
+  },
+  {
+    // sand
+    mineable: false,
+    craftable: false,
+    occupiable: true,
+  },
+  {
+    // water
+    mineable: false,
+    craftable: false,
+    occupiable: true,
+    energyDamage: 1,
+  },
+  {
+    // lava
+    mineable: false,
+    craftable: false,
+    occupiable: true,
+    healthDamage: 1,
+    energyDamage: 1,
+    // protectItemIds: [11],
+    // protectItemHealths: [1],
+  },
+  {
+    // stone
+    mineable: true,
+    mineItemIds: [12],
+    strength: 20,
+    craftable: false,
+    // placeItemIds: [0, 3, 4],
+    occupiable: false,
+  },
+  {
+    // wood
+    mineable: true,
+    mineItemIds: [13],
+    strength: 10,
+    craftable: false,
+    // placeItemIds: [1],
+    occupiable: false,
+  },
+  {
+    // cactus
+    mineable: true,
+    mineItemIds: [13],
+    strength: 5,
+    craftable: false,
+    // placeItemIds: [2],
+    occupiable: false,
+  },
+  {
+    // apple
+    mineable: true,
+    craftable: false,
+    occupiable: false,
+  },
+  {
+    // workbench
+    mineable: false,
+    craftable: true,
+    craftItemIds: [6],
+    craftItemAmounts: [15],
+    // placeItemIds: [0, 1, 2],
+    occupiable: false,
+  },
+  {
+    // shovel
+    mineable: false,
+    craftable: true,
+    craftItemIds: [5, 6],
+    craftItemAmounts: [5, 5],
+    // placeItemIds: [0, 1, 2],
+    occupiable: false,
+  },
+  {
+    // lava suit
+    mineable: false,
+    craftable: true,
+    craftItemIds: [5],
+    craftItemAmounts: [2],
+    occupiable: false,
+  },
+  {
+    // pickaxe
+    mineable: false,
+    craftable: true,
+    craftItemIds: [6],
+    craftItemAmounts: [5],
+    occupiable: false,
+  },
+  {
+    // axe
+    mineable: false,
+    craftable: true,
+    craftItemIds: [6],
+    craftItemAmounts: [5],
+    occupiable: false,
+  }
+];
+
+// @ts-ignore
+export const GAME_DEPLOY_ARGS = [...constants, blocks, items];

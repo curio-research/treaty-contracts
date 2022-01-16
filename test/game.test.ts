@@ -71,14 +71,14 @@ describe("Game", () => {
 
     // check inventory
     const player1Inventory = await GameContract._getInventoryByPlayer(world.user1.address);
-    expect(serializeBigNumberArr(player1Inventory.materialIds)).eqls([1]);
-    expect(serializeBigNumberArr(player1Inventory.materialAmounts)).eqls([2]);
+    expect(serializeBigNumberArr(player1Inventory.craftItemIds)).eqls([1]);
+    expect(serializeBigNumberArr(player1Inventory.craftItemAmounts)).eqls([2]);
 
     const blockId = await mineAndVerify(GameContract, world.user1, 0, 1, 0, 2);
 
     // place block and verify
     await GameContract.connect(world.user1).place(2, 2, blockId);
-    expect(await GameContract._blockAtLocation(2, 2, 1)).equals(blockId);
+    expect(await GameContract._getBlockAtPosition(2, 2, 1)).equals(blockId);
     await expect(GameContract.place(5, 3, blockId)).to.be.revertedWith(REVERT_MESSAGES.ENGINE_NOT_STAND_ON_BLOCK);
     await expect(GameContract.place(2, 3, 15)).to.be.revertedWith(REVERT_MESSAGES.ENGINE_INSUFFICIENT_INVENT);
   });
@@ -110,8 +110,8 @@ describe("Game", () => {
   });
 
   it("Craft", async () => {
-    const block1amount = await GameContract._getBlockAmountById(world.user1.address, 0);
-    const block2amount = await GameContract._getBlockAmountById(world.user1.address, 1);
+    const block1amount = await GameContract._getItemAmountById(world.user1.address, 0);
+    const block2amount = await GameContract._getItemAmountById(world.user1.address, 1);
 
     expect(block1amount).equals(0);
     expect(block2amount).equals(2);
@@ -119,8 +119,8 @@ describe("Game", () => {
     // craft 1 block2
     await GameContract.connect(world.user1).craft(2);
 
-    const block2amountAfterCraft = await GameContract._getBlockAmountById(world.user1.address, 2);
-    const block1amountAfterCraft = await GameContract._getBlockAmountById(world.user1.address, 1);
+    const block2amountAfterCraft = await GameContract._getItemAmountById(world.user1.address, 2);
+    const block1amountAfterCraft = await GameContract._getItemAmountById(world.user1.address, 1);
 
     expect(block1amountAfterCraft).equals(1);
     expect(block2amountAfterCraft).equals(1);
