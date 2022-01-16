@@ -27,7 +27,7 @@ library GameStorageHelper {
 
         for (uint256 i = 0; i < _craftItemIds.length; i++) {
             uint256 _craftItemId = _craftItemIds[i];
-            s().craftItemAmounts[_itemNonce][_craftItemId] = _craftItemAmounts[i];
+            s().itemsWithMetadata[_itemNonce].craftItemAmounts[_craftItemId] = _craftItemAmounts[i];
         }
 
         s().itemNonce += 1;

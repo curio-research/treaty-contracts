@@ -24,13 +24,6 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
  * @type import('hardhat/config').HardhatUserConfig
  */
 
-// ADD THIS WHEN DEPLOYING TO LOCAL
-// TODO: Figure out how to configure this on the fly ...
-// mining: {
-//   auto: false,
-//   interval: 1000,
-// },
-
 export default {
   solidity: "0.8.4",
   // defaultNetwork: "localhost",

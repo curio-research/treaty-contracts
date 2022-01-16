@@ -10,62 +10,31 @@ export enum REVERT_MESSAGES {
   ENGINE_INSUFFICIENT_MATERIAL = "engine/insufficient-material",
 }
 
-// type GameConstants = {
-//   worldWidth: number,
-//   worldHeight: number,
-//   moveRange: number,
-//   attackRange: number,
-//   attackDamage: number,
-//   attackWaitTime: number,
-//   startPlayerHealth: number,
-//   startPlayerEnergy: number,
-// }
-// const constants: GameConstants = {
-//   worldWidth: 6,
-//   worldHeight: 6,
-//   moveRange: 2,
-//   attackRange: 1,
-//   attackDamage: 5,
-//   attackWaitTime: 5,
-//   startPlayerHealth: 100,
-//   startPlayerEnergy: 100,
-// };
-
 type ItemWithMetadata = {
   mineable: boolean,
   craftable: boolean,
   occupiable: boolean,
-  mineItemId?: number,
+  mineItemIds?: number[],
   strength?: number,
   craftItemIds?: number[],
   craftItemAmounts?: number[],
-  placeItemIds?: number[],
+  // placeItemIds?: number[],
   healthDamage?: number,
   energyDamage?: number,
-  protectItemIds?: number[],
-  protectItemHealths?: number[],
+  // protectItemIds?: number[],
+  // protectItemHealths?: number[],
 }
 
 const constants = [
-  6,  // worldWidth
-  6,  // worldHeight
-  2,  // moveRange
-  1,  // attackRange
-  5,  // attackDamage
-  5,  // attackWaitTime
-  100,// startPlayerHealth
-  100,// startPlayerEnergy
+  6,    // worldWidth
+  6,    // worldHeight
+  2,    // moveRange
+  1,    // attackRange
+  5,    // attackDamage
+  5,    // attackWaitTime
+  100,  // startPlayerHealth
+  100,  // startPlayerEnergy
 ]
-
-// // map setup
-// const MASTER_MAP = [
-//   [1, 1, 0, 0, 0, 1],
-//   [1, 1, 0, 0, 0, 1],
-//   [0, 0, 0, 1, 0, 0],
-//   [0, 0, 0, 1, 1, 0],
-//   [0, 1, 0, 0, 0, 0],
-//   [0, 1, 0, 0, 1, 0],
-// ];
 
 const blockMap = new Map<string, number>([
   ['dirt', 0],
@@ -111,19 +80,19 @@ export const items: ItemWithMetadata[] = [
   {
     // dirt
     mineable: true,
-    mineItemId: 10,
+    mineItemIds: [10],
     strength: 1,
     craftable: false,
-    placeItemIds: [3],
+    // placeItemIds: [3],
     occupiable: true,
   },
   {
     // grass
     mineable: true,
-    mineItemId: 10,
+    mineItemIds: [10],
     strength: 1,
     craftable: false,
-    placeItemIds: [0],
+    // placeItemIds: [0],
     occupiable: true,
   },
   {
@@ -146,34 +115,34 @@ export const items: ItemWithMetadata[] = [
     occupiable: true,
     healthDamage: 1,
     energyDamage: 1,
-    protectItemIds: [11],
-    protectItemHealths: [1],
+    // protectItemIds: [11],
+    // protectItemHealths: [1],
   },
   {
     // stone
     mineable: true,
-    mineItemId: 12,
+    mineItemIds: [12],
     strength: 20,
     craftable: false,
-    placeItemIds: [0, 3, 4],
+    // placeItemIds: [0, 3, 4],
     occupiable: false,
   },
   {
     // wood
     mineable: true,
-    mineItemId: 13,
+    mineItemIds: [13],
     strength: 10,
     craftable: false,
-    placeItemIds: [1],
+    // placeItemIds: [1],
     occupiable: false,
   },
   {
     // cactus
     mineable: true,
-    mineItemId: 13,
+    mineItemIds: [13],
     strength: 5,
     craftable: false,
-    placeItemIds: [2],
+    // placeItemIds: [2],
     occupiable: false,
   },
   {
@@ -188,7 +157,7 @@ export const items: ItemWithMetadata[] = [
     craftable: true,
     craftItemIds: [6],
     craftItemAmounts: [15],
-    placeItemIds: [0, 1, 2],
+    // placeItemIds: [0, 1, 2],
     occupiable: false,
   },
   {
@@ -197,7 +166,7 @@ export const items: ItemWithMetadata[] = [
     craftable: true,
     craftItemIds: [5, 6],
     craftItemAmounts: [5, 5],
-    placeItemIds: [0, 1, 2],
+    // placeItemIds: [0, 1, 2],
     occupiable: false,
   },
   {

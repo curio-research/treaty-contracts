@@ -36,7 +36,7 @@ library GameTypes {
         uint256 health;
         uint256 energy;
         
-        // // for future purposes
+        // Note for future purposes
         // uint256 level;
         // uint256 fullness;
         // uint256[] holdItems; // items the user is currently holding
@@ -67,18 +67,20 @@ library GameTypes {
 	
 		// Mining
 		bool mineable;
-		uint256 mineItemId; // tool needed
+        uint256[] mineItemIds; // tools for mining
+        // strength for both mining and being mined
         uint256 strength;
 	
-		// Crafting
-		bool craftable;
-		uint256[] craftItemIds; // recipe items
-		uint256[] craftItemAmounts; // recipe amounts
+        // Crafting
+        bool craftable;
+        uint256[] craftItemIds; // recipe items
+        uint256[] craftItemAmounts; // recipe amounts
 
-		// Placing
+        // Placing
         // e.g. stone can be placed on water and lava, so it has
         // those two in its placeItemIds
-		uint256[] placeItemIds; // empty = not placable anywhere
+        // Note: Ignored for now
+        // uint256[] placeItemIds; // empty = not placable anywhere
 
 		// Note: Posession is taken care of in PlayerData
 
@@ -94,8 +96,9 @@ library GameTypes {
 		// Protection
         // e.g. If gold shield has health 1 on lava, then lava has 
         // no health damage on player.
-        uint256[] protectItemIds;
-        uint256[] protectItemHealths;
+        // Note: ignored for now
+        // uint256[] protectItemIds;
+        // uint256[] protectItemHealths;
     }
 
     struct Recipe {
@@ -113,19 +116,7 @@ library GameTypes {
         address admin;
         bool paused;
         mapping(uint256 => GameTypes.ItemData) items;
-        mapping(uint256 => uint256) itemType;
-        mapping(uint256 => bool) mineable;
-        mapping(uint256 => uint256) mineItemId;
-        mapping(uint256 => uint256) strength; // FIXME name might be confounding
-        mapping(uint256 => bool) craftable;
-        mapping(uint256 => uint256[]) craftItemIds;
-        mapping(uint256 => mapping(uint256 => uint256)) craftItemAmounts; // id => material id => amount
-        mapping(uint256 => uint256[]) placeItemIds;
-        mapping(uint256 => bool) occupiable;
-        mapping(uint256 => uint256) energyDamage;
-        mapping(uint256 => uint256) healthDamage;
-        mapping(uint256 => uint256[]) protectItemIds;
-        mapping(uint256 => mapping(uint256 => uint256)) protectItemHealths; // id => item id => amount
+        mapping(uint256 => GameTypes.ItemWithMetadata) itemsWithMetadata;
         // TODO move constants below into a struct for readability
         uint256 itemNonce;
         uint256 moveRange;          // TODO move into PlayerData

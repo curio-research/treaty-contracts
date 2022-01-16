@@ -65,11 +65,7 @@ contract Game is GameStorage {
 
         // Initialize items
         for (uint256 i = 0; i < _items.length; i++) {
-            _addCraftItemAndAmount(
-                i + 1,
-                _items[i].craftItemIds,
-                _items[i].craftItemAmounts
-            );
+            s.itemsWithMetadata[i] = _items[i];
         }
     }
 
@@ -121,9 +117,16 @@ contract Game is GameStorage {
 
         // can only mine with the needed tool
         uint256 _itemId = _getBlockAtPosition(_x, _y, _zIdx);
-        uint256 _mineItemId = s.mineItemId[_itemId];
-        uint256 _mineItemAmount = _getItemAmountById(msg.sender, _mineItemId);
-        if (_mineItemAmount == 0) revert("engine/tool-needed");
+        uint256[] memory _mineItemIds = s.itemsWithMetadata[_itemId].mineItemIds;
+        bool _canMine = false;
+        for (uint256 i = 0; i < _mineItemIds.length; i++) {
+            uint256 _mineItemAmount = _getItemAmountById(msg.sender, _mineItemIds[i]);
+            if (_mineItemAmount > 0) {
+                _canMine = true;
+                break;
+            }
+        }
+        if (!_canMine) revert("engine/tool-needed");
 
         _increaseItemInInventory(msg.sender, _itemId, 1);
         _mine(_x, _y);
@@ -144,15 +147,17 @@ contract Game is GameStorage {
             _getPlayerPosition(msg.sender).y == _y
         ) revert("engine/cannot-stand-on-block");
 
-        uint256 _blockId = _getTopBlockAtPosition(_x, _y);
-        bool _placable = false;
-        for (uint256 i = 0; i < s.placeItemIds[_blockId].length; i++) {
-            if (s.placeItemIds[_blockId][i] == _itemId) {
-                _placable = true;
-                break;
-            }
-        }
-        if (!_placable) revert("engine/cannot-place-on-block");
+        // Logic for allowed blocks to place upon
+        // Note: saved for later
+        // uint256 _blockId = _getTopBlockAtPosition(_x, _y);
+        // bool _placable = false;
+        // for (uint256 i = 0; i < s.placeItemIds[_blockId].length; i++) {
+        //     if (s.placeItemIds[_blockId][i] == _itemId) {
+        //         _placable = true;
+        //         break;
+        //     }
+        // }
+        // if (!_placable) revert("engine/cannot-place-on-block");
 
         // TODO add distance logic here
 
@@ -167,9 +172,10 @@ contract Game is GameStorage {
         if (_isItemActive(_itemId)) revert("engine/inactive-block");
 
         // loop through player inventory to check if player has all required ingredients to make a block
-        for (uint256 i = 0; i < s.craftItemIds[_itemId].length; i++) {
-            uint256 craftItemId = s.craftItemIds[_itemId][i];
-            uint256 craftItemAmount = s.craftItemAmounts[_itemId][craftItemId];
+        GameTypes.ItemWithMetadata memory _item = s.itemsWithMetadata[_itemId];
+        for (uint256 i = 0; i < _item.craftItemIds.length; i++) {
+            uint256 craftItemId = _item.craftItemIds[i];
+            uint256 craftItemAmount = _item.craftItemAmounts[i];
 
             if (s.inventory[msg.sender][craftItemId] < craftItemAmount) {
                 revert("engine/insufficient-material");

@@ -31,21 +31,17 @@ contract GameStorage {
     ) public {
         if (_craftItemIds.length != _craftItemAmounts.length) revert("engine/invalid-craft-item-amounts");
 
-        s.craftItemIds[_itemId] = _craftItemIds;
-        for (uint256 i = 0; i < _craftItemIds.length; i++) {
-            uint256 _materialId = _craftItemIds[i];
-            s.craftItemAmounts[_itemId][_materialId] = _craftItemAmounts[i];
-        }
+        s.itemsWithMetadata[_itemId].craftable = true;
+        s.itemsWithMetadata[_itemId].craftItemIds = _craftItemIds;
+        s.itemsWithMetadata[_itemId].craftItemAmounts = _craftItemAmounts;
 
         s.itemNonce += 1;
     }
 
     function _removeCraftItemAndAmount(uint256 _itemId) public {
-        for (uint256 i = 0; i < s.craftItemIds[_itemId].length; i++) {
-            uint256 _materialId = s.craftItemIds[_itemId][i];
-            s.craftItemAmounts[_itemId][_materialId] = 0;
-        }
-        delete s.craftItemIds[_itemId];
+        s.itemsWithMetadata[_itemId].craftable = false;
+        delete s.itemsWithMetadata[_itemId].craftItemIds;
+        delete s.itemsWithMetadata[_itemId].craftItemAmounts;
     }
 
     function _increaseItemInInventory(
@@ -81,7 +77,7 @@ contract GameStorage {
 
         // check if top block at target position is occupiable
         uint256 _blockId = _getTopBlockAtPosition(_x, _y);
-        bool _occupiable = s.occupiable[_blockId];
+        bool _occupiable = s.itemsWithMetadata[_blockId].occupiable;
         if (!_occupiable) return false;
 
         return true;
@@ -282,38 +278,7 @@ contract GameStorage {
         view
         returns (GameTypes.ItemWithMetadata memory)
     {
-        // unfold double mappings into arrays for craft item amounts
-        uint256 craftItemCount = s.craftItemIds[_itemId].length;
-        uint256[] memory _craftItemAmounts = new uint256[](craftItemCount);
-        for (uint256 i = 0; i < craftItemCount; i++) {
-            uint256 _id = s.craftItemIds[_itemId][i];
-            _craftItemAmounts[i] = s.craftItemAmounts[_itemId][_id];
-        }
-
-        // unfold double mappings into arrays for protect item healths
-        uint256 protectItemCount = s.protectItemIds[_itemId].length;
-        uint256[] memory _protectItemHealths = new uint256[](craftItemCount);
-        for (uint256 i = 0; i < protectItemCount; i++) {
-            uint256 _id = s.protectItemIds[_itemId][i];
-            _protectItemHealths[i] = s.protectItemHealths[_itemId][_id];
-        }
-
-        GameTypes.ItemWithMetadata memory ret = GameTypes.ItemWithMetadata({
-            mineable: s.mineable[_itemId],
-            mineItemId: s.mineItemId[_itemId],
-            strength: s.strength[_itemId],
-            craftable: s.craftable[_itemId],
-            craftItemIds: s.craftItemIds[_itemId],
-            craftItemAmounts: _craftItemAmounts,
-            placeItemIds: s.placeItemIds[_itemId],
-            occupiable: s.occupiable[_itemId],
-            energyDamage: s.energyDamage[_itemId],
-            healthDamage: s.healthDamage[_itemId],
-            protectItemIds: s.protectItemIds[_itemId],
-            protectItemHealths: _protectItemHealths
-        });
-
-        return ret;
+        return s.itemsWithMetadata[_itemId];
     }
 
     // dir = true means to add item (if it doesn't exist);

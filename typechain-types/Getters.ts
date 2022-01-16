@@ -17,45 +17,36 @@ import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
 export type ItemWithMetadataStruct = {
   mineable: boolean;
-  mineItemId: BigNumberish;
+  mineItemIds: BigNumberish[];
   strength: BigNumberish;
   craftable: boolean;
   craftItemIds: BigNumberish[];
   craftItemAmounts: BigNumberish[];
-  placeItemIds: BigNumberish[];
   occupiable: boolean;
   healthDamage: BigNumberish;
   energyDamage: BigNumberish;
-  protectItemIds: BigNumberish[];
-  protectItemHealths: BigNumberish[];
 };
 
 export type ItemWithMetadataStructOutput = [
   boolean,
-  BigNumber,
+  BigNumber[],
   BigNumber,
   boolean,
   BigNumber[],
   BigNumber[],
-  BigNumber[],
   boolean,
   BigNumber,
-  BigNumber,
-  BigNumber[],
-  BigNumber[]
+  BigNumber
 ] & {
   mineable: boolean;
-  mineItemId: BigNumber;
+  mineItemIds: BigNumber[];
   strength: BigNumber;
   craftable: boolean;
   craftItemIds: BigNumber[];
   craftItemAmounts: BigNumber[];
-  placeItemIds: BigNumber[];
   occupiable: boolean;
   healthDamage: BigNumber;
   energyDamage: BigNumber;
-  protectItemIds: BigNumber[];
-  protectItemHealths: BigNumber[];
 };
 
 export type PositionStruct = { x: BigNumberish; y: BigNumberish };
