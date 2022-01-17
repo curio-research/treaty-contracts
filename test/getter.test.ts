@@ -72,7 +72,7 @@ describe("Getter Contract", () => {
       for (let j = 0; j < worldHeight.toNumber(); j++) {
         blockIdx = i * worldWidth.toNumber() + j;
         for (let z = 0; z < blocks[blockIdx].length; z++) {
-          expect(map[i][j].blocks[z]).equals(blocks[blockIdx][z]);
+          expect(map[blockIdx].blocks[z]).equals(blocks[blockIdx][z]); // FIXME
         }
         console.log('ha');
       }

@@ -180,10 +180,10 @@ export interface Getters extends BaseContract {
   bulkGetAllMapInfo(
     overrides?: CallOverrides
   ): Promise<
-    [BigNumber, BigNumber, TileStructOutput[][]] & {
+    [BigNumber, BigNumber, TileStructOutput[]] & {
       worldWidth: BigNumber;
       worldHeight: BigNumber;
-      map: TileStructOutput[][];
+      map: TileStructOutput[];
     }
   >;
 
