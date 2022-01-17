@@ -23,7 +23,7 @@ task("deploy", "deploy contracts").setAction(async (args: HardhatArguments, hre:
   await GameContract.connect(player1).initializePlayer(1, 1);
   await GameContract.connect(player2).initializePlayer(2, 2);
 
-  // give user1 item for testing
+  // give user1 items for testing
   await GameContract.connect(player1)._increaseItemInInventory(player1.address, 1, 100);
   await GameContract.connect(player1)._increaseItemInInventory(player1.address, 2, 100);
 });

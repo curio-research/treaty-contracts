@@ -1,9 +1,9 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "./GameTypes.sol";
 import "hardhat/console.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 /// @title Monolithic game storage
 /// @notice for v1 we can store everything in here - both player states and game states. we can think about
@@ -309,6 +309,7 @@ contract GameStorage {
                 hasFound = true;
             }
         }
+
         // remove case
         if (!dir) {
             if (hasFound) {
