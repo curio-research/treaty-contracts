@@ -84,7 +84,7 @@ const tileTypes = [
   ["water", "dirt", "grass", "wood"],
 ];
 
-const generateBlocks = () => {
+export const generateBlocks = (tileTypes: string[][]) => {
   const worldWidth = constants[0];
   const worldHeight = constants[1];
   const worldSize = worldWidth * worldHeight;
@@ -99,7 +99,7 @@ const generateBlocks = () => {
 
   return blocks;
 };
-export const blocks = generateBlocks();
+export const blocks = generateBlocks(tileTypes);
 
 const itemInputs: ItemWithMetadataInput[] = [
   {
@@ -221,4 +221,4 @@ const itemInputs: ItemWithMetadataInput[] = [
 ];
 export const items = itemInputs.map((i) => new ItemWithMetadata(i));
 
-export const GAME_DEPLOY_ARGS = [...constants, blocks, items];
+export const GAME_DEPLOY_TEST_ARGS = [...constants, blocks, items];

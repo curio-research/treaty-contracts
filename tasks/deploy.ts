@@ -2,7 +2,7 @@ import { task } from "hardhat/config";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { HardhatArguments, HardhatRuntimeEnvironment, RunSuperFunction, TaskArguments } from "hardhat/types";
 import { deployProxy } from "./util/deployHelper";
-import { GAME_DEPLOY_ARGS } from "../test/util/constants";
+import { GAME_DEPLOY_ARGS } from "./util/constants";
 import { Getters, Game } from "../typechain-types";
 
 // npx hardhat deploy --network localhost

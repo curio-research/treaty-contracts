@@ -1,13 +1,13 @@
 import { ethers, waffle } from "hardhat";
 import { Game, Getters } from "../../typechain-types";
 import { BigNumber } from "@ethersproject/bignumber";
-import { GAME_DEPLOY_ARGS } from "./constants";
+import { GAME_DEPLOY_TEST_ARGS } from "./constants";
 
 export const fixtureLoader = waffle.createFixtureLoader();
 
 // deploy script
 export const deployGameContract = async (): Promise<Game> => {
-  const _contract: any = await (await ethers.getContractFactory("Game")).deploy(...GAME_DEPLOY_ARGS);
+  const _contract: any = await (await ethers.getContractFactory("Game")).deploy(...GAME_DEPLOY_TEST_ARGS);
 
   console.log("Game Core:", _contract.address);
   return _contract;
