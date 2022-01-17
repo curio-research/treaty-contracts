@@ -96,6 +96,20 @@ export type RecipeStructOutput = [BigNumber[], BigNumber[]] & {
   craftItemAmounts: BigNumber[];
 };
 
+export type TileWithMetadataStruct = {
+  occupier: string;
+  blocks: BigNumberish[];
+  x: BigNumberish;
+  y: BigNumberish;
+};
+
+export type TileWithMetadataStructOutput = [
+  string,
+  BigNumber[],
+  BigNumber,
+  BigNumber
+] & { occupier: string; blocks: BigNumber[]; x: BigNumber; y: BigNumber };
+
 export interface GameInterface extends utils.Interface {
   functions: {
     "_addCraftItemAndAmount(uint256,uint256[],uint256[])": FunctionFragment;
@@ -112,9 +126,11 @@ export interface GameInterface extends utils.Interface {
     "_getItemAmountById(address,uint256)": FunctionFragment;
     "_getItemNonce()": FunctionFragment;
     "_getItemWithMetadata(uint256)": FunctionFragment;
+    "_getMap(uint256,uint256)": FunctionFragment;
     "_getPlayerPosition(address)": FunctionFragment;
     "_getPositionFromIndex(uint256)": FunctionFragment;
     "_getTopBlockAtPosition(uint256,uint256)": FunctionFragment;
+    "_getWorldSize()": FunctionFragment;
     "_increaseEnergy(address,uint256)": FunctionFragment;
     "_increaseHealth(address,uint256)": FunctionFragment;
     "_increaseItemInInventory(address,uint256,uint256)": FunctionFragment;
@@ -194,6 +210,10 @@ export interface GameInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "_getMap",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "_getPlayerPosition",
     values: [string]
   ): string;
@@ -204,6 +224,10 @@ export interface GameInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "_getTopBlockAtPosition",
     values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getWorldSize",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "_increaseEnergy",
@@ -345,6 +369,7 @@ export interface GameInterface extends utils.Interface {
     functionFragment: "_getItemWithMetadata",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "_getMap", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_getPlayerPosition",
     data: BytesLike
@@ -355,6 +380,10 @@ export interface GameInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "_getTopBlockAtPosition",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_getWorldSize",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -595,6 +624,12 @@ export interface Game extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[ItemWithMetadataStructOutput]>;
 
+    _getMap(
+      _x: BigNumberish,
+      _y: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[TileWithMetadataStructOutput[]]>;
+
     _getPlayerPosition(
       _player: string,
       overrides?: CallOverrides
@@ -610,6 +645,8 @@ export interface Game extends BaseContract {
       _y: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    _getWorldSize(overrides?: CallOverrides): Promise<[BigNumber, BigNumber]>;
 
     _increaseEnergy(
       _player: string,
@@ -852,6 +889,12 @@ export interface Game extends BaseContract {
     overrides?: CallOverrides
   ): Promise<ItemWithMetadataStructOutput>;
 
+  _getMap(
+    _x: BigNumberish,
+    _y: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<TileWithMetadataStructOutput[]>;
+
   _getPlayerPosition(
     _player: string,
     overrides?: CallOverrides
@@ -867,6 +910,8 @@ export interface Game extends BaseContract {
     _y: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  _getWorldSize(overrides?: CallOverrides): Promise<[BigNumber, BigNumber]>;
 
   _increaseEnergy(
     _player: string,
@@ -1106,6 +1151,12 @@ export interface Game extends BaseContract {
       overrides?: CallOverrides
     ): Promise<ItemWithMetadataStructOutput>;
 
+    _getMap(
+      _x: BigNumberish,
+      _y: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<TileWithMetadataStructOutput[]>;
+
     _getPlayerPosition(
       _player: string,
       overrides?: CallOverrides
@@ -1121,6 +1172,8 @@ export interface Game extends BaseContract {
       _y: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    _getWorldSize(overrides?: CallOverrides): Promise<[BigNumber, BigNumber]>;
 
     _increaseEnergy(
       _player: string,
@@ -1414,6 +1467,12 @@ export interface Game extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _getMap(
+      _x: BigNumberish,
+      _y: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     _getPlayerPosition(
       _player: string,
       overrides?: CallOverrides
@@ -1429,6 +1488,8 @@ export interface Game extends BaseContract {
       _y: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    _getWorldSize(overrides?: CallOverrides): Promise<BigNumber>;
 
     _increaseEnergy(
       _player: string,
@@ -1646,6 +1707,12 @@ export interface Game extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    _getMap(
+      _x: BigNumberish,
+      _y: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     _getPlayerPosition(
       _player: string,
       overrides?: CallOverrides
@@ -1661,6 +1728,8 @@ export interface Game extends BaseContract {
       _y: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    _getWorldSize(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     _increaseEnergy(
       _player: string,

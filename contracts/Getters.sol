@@ -3,6 +3,7 @@ pragma solidity ^0.8.4;
 
 import "./GameEngine.sol";
 import "./GameTypes.sol";
+import "hardhat/console.sol";
 
 /// @title Bulk getters
 /// @notice Getters provide bulk functions useful for fetching data from frontend
@@ -26,7 +27,7 @@ contract Getters {
             );
 
         for (uint256 i = 1; i < gameCore._getItemNonce(); i++) {
-            allItems[i - 1] = gameCore._getItemWithMetadata(i-1);
+            allItems[i - 1] = gameCore._getItemWithMetadata(i - 1);
         }
 
         return allItems;

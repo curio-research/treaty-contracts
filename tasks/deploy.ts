@@ -2,7 +2,7 @@ import { task } from "hardhat/config";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { HardhatArguments, HardhatRuntimeEnvironment, RunSuperFunction, TaskArguments } from "hardhat/types";
 import { deployProxy } from "./util/deployHelper";
-import { GAME_DEPLOY_ARGS } from "../test/util/constants";
+import { GAME_DEPLOY_ARGS, blocks } from "./util/constants";
 import { Getters, Game } from "../typechain-types";
 
 // npx hardhat deploy --network localhost
@@ -16,6 +16,7 @@ task("deploy", "deploy contracts").setAction(async (args: HardhatArguments, hre:
   const GameContract = await deployProxy<Game>("Game", player1, hre, GAME_DEPLOY_ARGS);
   const GettersContract = await deployProxy<Getters>("Getters", player1, hre, [GameContract.address]);
 
+  console.log(blocks);
   console.log("Game: ", GameContract.address);
   console.log("Getters:", GettersContract.address);
 

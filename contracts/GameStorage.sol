@@ -26,6 +26,35 @@ contract GameStorage {
         return GameTypes.Position(_x, _y);
     }
 
+    // due to gas limitations we need to fetch the map in 10x10 chunks and piece them together
+    // on the frontend
+    function _getMap(uint256 _x, uint256 _y)
+        public
+        view
+        returns (GameTypes.TileWithMetadata[] memory)
+    {
+        GameTypes.TileWithMetadata[]
+            memory ret = new GameTypes.TileWithMetadata[](100);
+        uint256 nonce = 0;
+        for (uint256 y = _y; y < _y + 10; y++) {
+            for (uint256 x = _x; x < _x + 10; x++) {
+                ret[nonce] = GameTypes.TileWithMetadata({
+                    occupier: s.map[y][x].occupier,
+                    blocks: s.map[y][x].blocks,
+                    x: x,
+                    y: y
+                });
+                nonce += 1;
+            }
+        }
+        return ret;
+    }
+
+    function _getWorldSize() public view returns (uint256, uint256) {
+        console.log("in _getWorldSize!");
+        return (s.worldWidth, s.worldHeight);
+    }
+
     function _addCraftItemAndAmount(
         uint256 _itemId,
         uint256[] memory _craftItemIds,

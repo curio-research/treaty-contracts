@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { items } from "./util/constants";
+import { items, constants, blocks } from "./util/constants";
 import { Getters } from "../typechain-types";
 import { World, initializeWorld, AllContracts, verifyAt, moveAndVerify, mineAndVerify } from "./util/testWorld";
 import { fixtureLoader, serializeBigNumberArr } from "./util/helper";
@@ -59,4 +59,21 @@ describe("Getter Contract", () => {
     expect(allPlayerData[1].position.y).equals(1);
     expect(allPlayerData[1].playerAddr).equals(allPlayerAddresses[1]);
   });
+
+  // it("Bulk fetch map info", async () => {
+  //   const [worldWidth, worldHeight, map] = await Getters.bulkGetAllMapInfo();
+  //   expect(worldWidth).equals(constants[0]);
+  //   expect(worldHeight).equals(constants[1]);
+
+  //   let blockIdx;
+  //   for (let i = 0; i < worldWidth.toNumber(); i++) {
+  //     for (let j = 0; j < worldHeight.toNumber(); j++) {
+  //       blockIdx = i * worldWidth.toNumber() + j;
+  //       for (let z = 0; z < blocks[blockIdx].length; z++) {
+  //         expect(map[blockIdx].blocks[z]).equals(blocks[blockIdx][z]); // FIXME
+  //       }
+  //       console.log("ha");
+  //     }
+  //   }
+  // });
 });
