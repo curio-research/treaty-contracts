@@ -26,7 +26,7 @@ contract Getters {
             );
 
         for (uint256 i = 1; i < gameCore._getItemNonce(); i++) {
-            allItems[i - 1] = gameCore._getItemWithMetadata(i);
+            allItems[i - 1] = gameCore._getItemWithMetadata(i-1);
         }
 
         return allItems;

@@ -73,14 +73,14 @@ contract GameStorage {
 
     function _isOccupied(uint256 _x, uint256 _y) public view returns (bool) {
         // check if target coordinate has player
-        if (_blockOccupier(_x, _y) == address(0)) return false;
+        if (_blockOccupier(_x, _y) != address(0)) return true;
 
         // check if top block at target position is occupiable
         uint256 _blockId = _getTopBlockAtPosition(_x, _y);
         bool _occupiable = s.itemsWithMetadata[_blockId].occupiable;
-        if (!_occupiable) return false;
+        if (!_occupiable) return true;
 
-        return true;
+        return false;
     }
 
     // checks distance between positions and whether player is in map
@@ -103,7 +103,7 @@ contract GameStorage {
         if (!_withinDistance(_x, _y, _position.x, _position.y, s.moveRange))
             return false;
 
-        // check if target coordinate has block
+        // check if target coordinate has block or player
         if (_isOccupied(_x, _y)) return false;
 
         return true;
@@ -151,6 +151,8 @@ contract GameStorage {
         uint256 _y,
         uint256 _zIdx
     ) public view returns (uint256) {
+        if (_zIdx >= s.map[_x][_y].blocks.length) revert("engine/invalid-z-index");
+
         return s.map[_x][_y].blocks[_zIdx];
     }
 

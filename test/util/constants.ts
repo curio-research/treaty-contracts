@@ -1,4 +1,5 @@
 import internal from "stream";
+import { ItemWithMetadataStruct } from "../../typechain-types/Game";
 
 export const EMPTY_ADDRESS = "0x0000000000000000000000000000000000000000";
 
@@ -10,7 +11,7 @@ export enum REVERT_MESSAGES {
   ENGINE_INSUFFICIENT_MATERIAL = "engine/insufficient-material",
 }
 
-type ItemWithMetadata = {
+type ItemWithMetadataInput = {
   mineable: boolean,
   craftable: boolean,
   occupiable: boolean,
@@ -23,6 +24,30 @@ type ItemWithMetadata = {
   energyDamage?: number,
   // protectItemIds?: number[],
   // protectItemHealths?: number[],
+}
+
+class ItemWithMetadata {
+  readonly mineable: boolean;
+  readonly mineItemIds: number[];
+  readonly strength: number;
+  readonly craftable: boolean;
+  readonly craftItemIds: number[];
+  readonly craftItemAmounts: number[];
+  readonly occupiable: boolean;
+  readonly healthDamage: number;
+  readonly energyDamage: number;
+
+  constructor(attr: ItemWithMetadataInput) {
+    this.mineable = attr.mineable;
+    this.mineItemIds = attr.mineItemIds ?? [];
+    this.strength = attr.strength ?? 0;
+    this.craftable = attr.craftable;
+    this.craftItemIds = attr.craftItemIds ?? [];
+    this.craftItemAmounts = attr.craftItemAmounts ?? [];
+    this.occupiable = attr.occupiable;
+    this.healthDamage = attr.healthDamage ?? 0;
+    this.energyDamage = attr.energyDamage ?? 0;
+  }
 }
 
 const constants = [
@@ -55,9 +80,9 @@ const blockMap = new Map<string, number>([
 const tileTypes = [
   ['water', 'dirt', 'grass'],
   ['water', 'dirt', 'grass', 'wood'],
-  ['lava', 'stone'],
-  ['sand', 'cactus'],
-  ['sand', 'stone', 'workbench'],
+  // ['lava', 'stone'],
+  // ['sand', 'cactus'],
+  // ['sand', 'stone', 'workbench'],
 ];
 
 const generateBlocks = () => {
@@ -68,7 +93,7 @@ const generateBlocks = () => {
   let blocks: number[][] = [];
   let tileIdx;
   for (let i = 0; i < worldSize; i++) {
-    tileIdx = Math.floor(Math.random() * 5);
+    tileIdx = (i % 12 == 0) ? 1 : 0;
     blocks.push(tileTypes[tileIdx].map(b => blockMap.get(b)!))
   }
   
@@ -76,7 +101,7 @@ const generateBlocks = () => {
 } 
 const blocks = generateBlocks();
 
-export const items: ItemWithMetadata[] = [
+const itemInputs: ItemWithMetadataInput[] = [
   {
     // dirt
     mineable: true,
@@ -130,7 +155,7 @@ export const items: ItemWithMetadata[] = [
   {
     // wood
     mineable: true,
-    mineItemIds: [13],
+    // mineItemIds: [13],
     strength: 10,
     craftable: false,
     // placeItemIds: [1],
@@ -182,7 +207,7 @@ export const items: ItemWithMetadata[] = [
     mineable: false,
     craftable: true,
     craftItemIds: [6],
-    craftItemAmounts: [5],
+    craftItemAmounts: [2],
     occupiable: false,
   },
   {
@@ -194,6 +219,6 @@ export const items: ItemWithMetadata[] = [
     occupiable: false,
   }
 ];
+export const items = itemInputs.map(i => new ItemWithMetadata(i))
 
-// @ts-ignore
 export const GAME_DEPLOY_ARGS = [...constants, blocks, items];

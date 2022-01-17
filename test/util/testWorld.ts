@@ -57,7 +57,7 @@ export const mineAndVerify = async (game: Game, signer: SignerWithAddress, x: nu
   await expect(await game.connect(signer)._getItemAmountById(signer.address, blockId)).equals(initialInventory + 1);
 
   // verify block is indeed mined
-  await expect(await game.connect(signer)._getBlockAtPosition(x, y, z)).equals(0);
+  await expect(game.connect(signer)._getBlockAtPosition(x, y, z)).to.be.revertedWith("engine/invalid-z-index");
 
   // verify that player cannot mine blocks at same position
   await expect(game.connect(signer).mine(x, y, z)).to.be.revertedWith("engine/no-blocks-available");

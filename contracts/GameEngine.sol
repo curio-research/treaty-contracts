@@ -66,6 +66,7 @@ contract Game is GameStorage {
         // Initialize items
         for (uint256 i = 0; i < _items.length; i++) {
             s.itemsWithMetadata[i] = _items[i];
+            s.itemNonce += 1;
         }
     }
 
@@ -113,19 +114,24 @@ contract Game is GameStorage {
         uint256 _zIdx
     ) external {
         uint256 _blockCount = _getBlockCountAtPosition(_x, _y);
-        if (_zIdx != _blockCount - 1) revert("engine/invalid-mine");
+        if (_zIdx != _blockCount - 1) revert("engine/no-blocks-available");
 
         // can only mine with the needed tool
         uint256 _itemId = _getBlockAtPosition(_x, _y, _zIdx);
         uint256[] memory _mineItemIds = s.itemsWithMetadata[_itemId].mineItemIds;
         bool _canMine = false;
-        for (uint256 i = 0; i < _mineItemIds.length; i++) {
-            uint256 _mineItemAmount = _getItemAmountById(msg.sender, _mineItemIds[i]);
-            if (_mineItemAmount > 0) {
-                _canMine = true;
-                break;
+        if (_mineItemIds.length == 0) {
+            _canMine = true;
+        } else {
+            for (uint256 i = 0; i < _mineItemIds.length; i++) {
+                uint256 _mineItemAmount = _getItemAmountById(msg.sender, _mineItemIds[i]);
+                if (_mineItemAmount > 0) {
+                    _canMine = true;
+                    break;
+                }
             }
         }
+        
         if (!_canMine) revert("engine/tool-needed");
 
         _increaseItemInInventory(msg.sender, _itemId, 1);
