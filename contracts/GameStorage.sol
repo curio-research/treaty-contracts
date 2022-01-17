@@ -41,8 +41,8 @@ contract GameStorage {
                 ret[nonce] = GameTypes.TileWithMetadata({
                     occupier: s.map[y][x].occupier,
                     blocks: s.map[y][x].blocks,
-                    x: _x,
-                    y: _y
+                    x: x,
+                    y: y
                 });
                 nonce += 1;
             }
