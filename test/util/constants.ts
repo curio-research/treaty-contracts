@@ -50,7 +50,7 @@ class ItemWithMetadata {
   }
 }
 
-const constants = [
+export const constants = [
   6,    // worldWidth
   6,    // worldHeight
   2,    // moveRange
@@ -99,7 +99,7 @@ const generateBlocks = () => {
   
   return blocks;
 } 
-const blocks = generateBlocks();
+export const blocks = generateBlocks();
 
 const itemInputs: ItemWithMetadataInput[] = [
   {

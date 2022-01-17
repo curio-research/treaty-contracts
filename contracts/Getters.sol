@@ -3,6 +3,7 @@ pragma solidity ^0.8.4;
 
 import "./GameEngine.sol";
 import "./GameTypes.sol";
+import "hardhat/console.sol";
 
 /// @title Bulk getters
 /// @notice Getters provide bulk functions useful for fetching data from frontend
@@ -48,5 +49,16 @@ contract Getters {
         }
 
         return ret;
+    }
+
+    function bulkGetAllMapInfo() external view returns (
+        uint256 worldWidth,
+        uint256 worldHeight,
+        GameTypes.Tile[1000][1000] memory map
+    ) {
+        console.log("started call");
+        (worldWidth, worldHeight) = gameCore._getWorldSize();
+        console.log("worldWidth ready");
+        return (worldWidth, worldHeight, gameCore._getMap());
     }
 }

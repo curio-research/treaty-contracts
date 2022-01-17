@@ -49,6 +49,13 @@ export type ItemWithMetadataStructOutput = [
   energyDamage: BigNumber;
 };
 
+export type TileStruct = { occupier: string; blocks: BigNumberish[] };
+
+export type TileStructOutput = [string, BigNumber[]] & {
+  occupier: string;
+  blocks: BigNumber[];
+};
+
 export type PositionStruct = { x: BigNumberish; y: BigNumberish };
 
 export type PositionStructOutput = [BigNumber, BigNumber] & {
@@ -87,11 +94,16 @@ export type PlayerDataStructOutput = [
 export interface GettersInterface extends utils.Interface {
   functions: {
     "bulkGetAllItems()": FunctionFragment;
+    "bulkGetAllMapInfo()": FunctionFragment;
     "bulkGetAllPlayerData()": FunctionFragment;
   };
 
   encodeFunctionData(
     functionFragment: "bulkGetAllItems",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "bulkGetAllMapInfo",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -101,6 +113,10 @@ export interface GettersInterface extends utils.Interface {
 
   decodeFunctionResult(
     functionFragment: "bulkGetAllItems",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "bulkGetAllMapInfo",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -142,6 +158,16 @@ export interface Getters extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[ItemWithMetadataStructOutput[]]>;
 
+    bulkGetAllMapInfo(
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, TileStructOutput[]] & {
+        worldWidth: BigNumber;
+        worldHeight: BigNumber;
+        map: TileStructOutput[];
+      }
+    >;
+
     bulkGetAllPlayerData(
       overrides?: CallOverrides
     ): Promise<[PlayerDataStructOutput[]]>;
@@ -151,6 +177,16 @@ export interface Getters extends BaseContract {
     overrides?: CallOverrides
   ): Promise<ItemWithMetadataStructOutput[]>;
 
+  bulkGetAllMapInfo(
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber, TileStructOutput[][]] & {
+      worldWidth: BigNumber;
+      worldHeight: BigNumber;
+      map: TileStructOutput[][];
+    }
+  >;
+
   bulkGetAllPlayerData(
     overrides?: CallOverrides
   ): Promise<PlayerDataStructOutput[]>;
@@ -159,6 +195,16 @@ export interface Getters extends BaseContract {
     bulkGetAllItems(
       overrides?: CallOverrides
     ): Promise<ItemWithMetadataStructOutput[]>;
+
+    bulkGetAllMapInfo(
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, TileStructOutput[]] & {
+        worldWidth: BigNumber;
+        worldHeight: BigNumber;
+        map: TileStructOutput[];
+      }
+    >;
 
     bulkGetAllPlayerData(
       overrides?: CallOverrides
@@ -170,11 +216,15 @@ export interface Getters extends BaseContract {
   estimateGas: {
     bulkGetAllItems(overrides?: CallOverrides): Promise<BigNumber>;
 
+    bulkGetAllMapInfo(overrides?: CallOverrides): Promise<BigNumber>;
+
     bulkGetAllPlayerData(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
     bulkGetAllItems(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    bulkGetAllMapInfo(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     bulkGetAllPlayerData(
       overrides?: CallOverrides

@@ -24,6 +24,23 @@ contract GameStorage {
         return GameTypes.Position(_x, _y);
     }
 
+    function _getMap() view public returns (GameTypes.Tile[1000][1000] memory allTiles) {
+        // (bool _valid, uint256 _worldSize) = SafeMath.tryMul(s.worldWidth, s.worldHeight);
+        // if (!_valid) revert("SafeMath/invalid-multiplication");
+
+        // for (uint256 i = 0; i < s.worldWidth; i++) {
+        //     for (uint256 j = 0; j < s.worldHeight; j++) {s 
+        //         allTiles.push();
+        //     }
+        // }
+        return s.map;
+    }
+
+    function _getWorldSize() view public returns (uint256, uint256) {
+        console.log("in _getWorldSize!");
+        return (s.worldWidth, s.worldHeight);
+    }
+
     function _addCraftItemAndAmount(
         uint256 _itemId,
         uint256[] memory _craftItemIds,
