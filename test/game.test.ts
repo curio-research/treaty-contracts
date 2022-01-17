@@ -1,9 +1,9 @@
-import { REVERT_MESSAGES } from "./util/constants";
+import { serializeTileWithMetadata } from "./util/serializer";
+import { blocks, REVERT_MESSAGES } from "./util/constants";
 import { Game } from "../typechain-types";
 import { expect } from "chai";
-import { delay, serializeBigNumberArr } from "./util/helper";
 import { World, initializeWorld, AllContracts, verifyAt, moveAndVerify, mineAndVerify } from "./util/testWorld";
-import { fixtureLoader } from "./util/helper";
+import { delay, fixtureLoader, serializeBigNumberArr } from "./util/helper";
 
 describe("Game", () => {
   let world: World;
@@ -38,6 +38,11 @@ describe("Game", () => {
     await verifyAt(GameContract, world.user1, 2, 1);
     await verifyAt(GameContract, world.user2, 4, 3);
     await verifyAt(GameContract, world.user3, 1, 0);
+  });
+
+  it("Verify map", async () => {
+    const mapChunk0 = await GameContract._getMap(0, 0);
+    expect(blocks[0]).eqls(serializeTileWithMetadata(mapChunk0[0]).blocks);
   });
 
   it("Move", async () => {
@@ -101,7 +106,6 @@ describe("Game", () => {
     // invalid attack because of distance
     await expect(GameContract.connect(world.user1).attack(world.user3.address)).to.be.revertedWith(REVERT_MESSAGES.ENGINE_INVALID_ATTACK);
 
-    // wait 5 seconds and second attack should succeed
     // TODO: There's a native way for the local blockchain to speed up x seconds using hardhat library. ideally switch to that for accuracy
     await delay(5000);
 

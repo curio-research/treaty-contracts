@@ -12,19 +12,19 @@ export enum REVERT_MESSAGES {
 }
 
 type ItemWithMetadataInput = {
-  mineable: boolean,
-  craftable: boolean,
-  occupiable: boolean,
-  mineItemIds?: number[],
-  strength?: number,
-  craftItemIds?: number[],
-  craftItemAmounts?: number[],
+  mineable: boolean;
+  craftable: boolean;
+  occupiable: boolean;
+  mineItemIds?: number[];
+  strength?: number;
+  craftItemIds?: number[];
+  craftItemAmounts?: number[];
   // placeItemIds?: number[],
-  healthDamage?: number,
-  energyDamage?: number,
+  healthDamage?: number;
+  energyDamage?: number;
   // protectItemIds?: number[],
   // protectItemHealths?: number[],
-}
+};
 
 class ItemWithMetadata {
   readonly mineable: boolean;
@@ -51,38 +51,37 @@ class ItemWithMetadata {
 }
 
 export const constants = [
-  6,    // worldWidth
-  6,    // worldHeight
-  2,    // moveRange
-  1,    // attackRange
-  5,    // attackDamage
-  5,    // attackWaitTime
-  100,  // startPlayerHealth
-  100,  // startPlayerEnergy
-]
+  6, // worldWidth
+  6, // worldHeight
+  2, // moveRange
+  1, // attackRange
+  5, // attackDamage
+  5, // attackWaitTime
+  100, // startPlayerHealth
+  100, // startPlayerEnergy
+];
 
 const blockMap = new Map<string, number>([
-  ['dirt', 0],
-  ['grass', 1],
-  ['sand', 2],
-  ['water', 3],
-  ['lava', 4],
-  ['stone', 5],
-  ['wood', 6],
-  ['cactus', 7],
-  ['apple', 8],
-  ['workbench', 9],
-  ['shovel', 10],
-  ['lava suit', 11],
-  ['pickaxe', 12],
-  ['axe', 13],
+  ["dirt", 0],
+  ["grass", 1],
+  ["sand", 2],
+  ["water", 3],
+  ["lava", 4],
+  ["stone", 5],
+  ["wood", 6],
+  ["cactus", 7],
+  ["apple", 8],
+  ["workbench", 9],
+  ["shovel", 10],
+  ["lava suit", 11],
+  ["pickaxe", 12],
+  ["axe", 13],
 ]);
+
+// tile types for map
 const tileTypes = [
-  ['water', 'dirt', 'grass'],
-  ['water', 'dirt', 'grass', 'wood'],
-  // ['lava', 'stone'],
-  // ['sand', 'cactus'],
-  // ['sand', 'stone', 'workbench'],
+  ["water", "dirt", "grass"],
+  ["water", "dirt", "grass", "wood"],
 ];
 
 const generateBlocks = () => {
@@ -93,12 +92,13 @@ const generateBlocks = () => {
   let blocks: number[][] = [];
   let tileIdx;
   for (let i = 0; i < worldSize; i++) {
-    tileIdx = (i % 12 == 0) ? 1 : 0;
-    blocks.push(tileTypes[tileIdx].map(b => blockMap.get(b)!))
+    // TODO: created a fixed map with real resource
+    tileIdx = i % 12 == 0 ? 1 : 0;
+    blocks.push(tileTypes[tileIdx].map((b) => blockMap.get(b)!));
   }
-  
+
   return blocks;
-} 
+};
 export const blocks = generateBlocks();
 
 const itemInputs: ItemWithMetadataInput[] = [
@@ -217,8 +217,8 @@ const itemInputs: ItemWithMetadataInput[] = [
     craftItemIds: [6],
     craftItemAmounts: [5],
     occupiable: false,
-  }
+  },
 ];
-export const items = itemInputs.map(i => new ItemWithMetadata(i))
+export const items = itemInputs.map((i) => new ItemWithMetadata(i));
 
 export const GAME_DEPLOY_ARGS = [...constants, blocks, items];

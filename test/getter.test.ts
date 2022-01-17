@@ -60,22 +60,20 @@ describe("Getter Contract", () => {
     expect(allPlayerData[1].playerAddr).equals(allPlayerAddresses[1]);
   });
 
-  it("Bulk fetch map info", async () => {
-    console.log("yo, we testin'");
+  // it("Bulk fetch map info", async () => {
+  //   const [worldWidth, worldHeight, map] = await Getters.bulkGetAllMapInfo();
+  //   expect(worldWidth).equals(constants[0]);
+  //   expect(worldHeight).equals(constants[1]);
 
-    const [worldWidth, worldHeight, map] = await Getters.bulkGetAllMapInfo();
-    expect(worldWidth).equals(constants[0]);
-    expect(worldHeight).equals(constants[1]);
-
-    let blockIdx;
-    for (let i = 0; i < worldWidth.toNumber(); i++) {
-      for (let j = 0; j < worldHeight.toNumber(); j++) {
-        blockIdx = i * worldWidth.toNumber() + j;
-        for (let z = 0; z < blocks[blockIdx].length; z++) {
-          expect(map[blockIdx].blocks[z]).equals(blocks[blockIdx][z]); // FIXME
-        }
-        console.log('ha');
-      }
-    }
-  })
+  //   let blockIdx;
+  //   for (let i = 0; i < worldWidth.toNumber(); i++) {
+  //     for (let j = 0; j < worldHeight.toNumber(); j++) {
+  //       blockIdx = i * worldWidth.toNumber() + j;
+  //       for (let z = 0; z < blocks[blockIdx].length; z++) {
+  //         expect(map[blockIdx].blocks[z]).equals(blocks[blockIdx][z]); // FIXME
+  //       }
+  //       console.log("ha");
+  //     }
+  //   }
+  // });
 });

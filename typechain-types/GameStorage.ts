@@ -96,12 +96,19 @@ export type ItemWithMetadataStructOutput = [
   energyDamage: BigNumber;
 };
 
-export type TileStruct = { occupier: string; blocks: BigNumberish[] };
-
-export type TileStructOutput = [string, BigNumber[]] & {
+export type TileWithMetadataStruct = {
   occupier: string;
-  blocks: BigNumber[];
+  blocks: BigNumberish[];
+  x: BigNumberish;
+  y: BigNumberish;
 };
+
+export type TileWithMetadataStructOutput = [
+  string,
+  BigNumber[],
+  BigNumber,
+  BigNumber
+] & { occupier: string; blocks: BigNumber[]; x: BigNumber; y: BigNumber };
 
 export interface GameStorageInterface extends utils.Interface {
   functions: {
@@ -119,7 +126,7 @@ export interface GameStorageInterface extends utils.Interface {
     "_getItemAmountById(address,uint256)": FunctionFragment;
     "_getItemNonce()": FunctionFragment;
     "_getItemWithMetadata(uint256)": FunctionFragment;
-    "_getMap()": FunctionFragment;
+    "_getMap(uint256,uint256)": FunctionFragment;
     "_getPlayerPosition(address)": FunctionFragment;
     "_getPositionFromIndex(uint256)": FunctionFragment;
     "_getTopBlockAtPosition(uint256,uint256)": FunctionFragment;
@@ -195,7 +202,10 @@ export interface GameStorageInterface extends utils.Interface {
     functionFragment: "_getItemWithMetadata",
     values: [BigNumberish]
   ): string;
-  encodeFunctionData(functionFragment: "_getMap", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "_getMap",
+    values: [BigNumberish, BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "_getPlayerPosition",
     values: [string]
@@ -511,8 +521,10 @@ export interface GameStorage extends BaseContract {
     ): Promise<[ItemWithMetadataStructOutput]>;
 
     _getMap(
+      _x: BigNumberish,
+      _y: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[TileStructOutput[]] & { allTiles: TileStructOutput[] }>;
+    ): Promise<[TileWithMetadataStructOutput[]]>;
 
     _getPlayerPosition(
       _player: string,
@@ -735,7 +747,11 @@ export interface GameStorage extends BaseContract {
     overrides?: CallOverrides
   ): Promise<ItemWithMetadataStructOutput>;
 
-  _getMap(overrides?: CallOverrides): Promise<TileStructOutput[]>;
+  _getMap(
+    _x: BigNumberish,
+    _y: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<TileWithMetadataStructOutput[]>;
 
   _getPlayerPosition(
     _player: string,
@@ -955,7 +971,11 @@ export interface GameStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<ItemWithMetadataStructOutput>;
 
-    _getMap(overrides?: CallOverrides): Promise<TileStructOutput[]>;
+    _getMap(
+      _x: BigNumberish,
+      _y: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<TileWithMetadataStructOutput[]>;
 
     _getPlayerPosition(
       _player: string,
@@ -1181,7 +1201,11 @@ export interface GameStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getMap(overrides?: CallOverrides): Promise<BigNumber>;
+    _getMap(
+      _x: BigNumberish,
+      _y: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     _getPlayerPosition(
       _player: string,
@@ -1379,7 +1403,11 @@ export interface GameStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _getMap(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    _getMap(
+      _x: BigNumberish,
+      _y: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     _getPlayerPosition(
       _player: string,

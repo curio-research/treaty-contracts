@@ -27,7 +27,7 @@ contract Getters {
             );
 
         for (uint256 i = 1; i < gameCore._getItemNonce(); i++) {
-            allItems[i - 1] = gameCore._getItemWithMetadata(i-1);
+            allItems[i - 1] = gameCore._getItemWithMetadata(i - 1);
         }
 
         return allItems;
@@ -49,16 +49,5 @@ contract Getters {
         }
 
         return ret;
-    }
-
-    function bulkGetAllMapInfo() external view returns (
-        uint256 worldWidth,
-        uint256 worldHeight,
-        GameTypes.Tile[1000][1000] memory map
-    ) {
-        console.log("started call");
-        (worldWidth, worldHeight) = gameCore._getWorldSize();
-        console.log("worldWidth ready");
-        return (worldWidth, worldHeight, gameCore._getMap());
     }
 }

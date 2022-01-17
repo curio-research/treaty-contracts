@@ -16,7 +16,6 @@ library GameTypes {
 
         uint256 id;
         address itemAddr;
-
         bool active;
     }
 
@@ -29,13 +28,12 @@ library GameTypes {
         bool initialized;
         uint256 initTimestamp;
         address playerAddr;
-
         // Variable attributes
         bool alive;
         Position position;
         uint256 health;
         uint256 energy;
-        
+
         // Note for future purposes
         // uint256 level;
         // uint256 fullness;
@@ -49,14 +47,20 @@ library GameTypes {
          */
 
         // Player on a tile, if applicable
-		address occupier;
+        address occupier;
+        // All items on a tile.
+        // Items "pile" starting from the first element to the last.
+        // e.g.1 "water -> dirt -> grass -> wood"
+        // e.g.2 "lava -> marble -> workbench"
+        // All but the first element can theoretically be extracted.
+        uint256[] blocks;
+    }
 
-		// All items on a tile.
-		// Items "pile" starting from the first element to the last.
-		// e.g.1 "water -> dirt -> grass -> wood"
-		// e.g.2 "lava -> marble -> workbench"
-		// All but the first element can theoretically be extracted.
-		uint256[] blocks;
+    struct TileWithMetadata {
+        address occupier;
+        uint256[] blocks;
+        uint256 x;
+        uint256 y;
     }
 
     struct ItemWithMetadata {
@@ -64,37 +68,35 @@ library GameTypes {
          * Additional information on an item.
          * Used to bulk-return crafting items.
          */
-	
-		// Mining
-		bool mineable;
+
+        // Mining
+        bool mineable;
         uint256[] mineItemIds; // tools for mining
         // strength for both mining and being mined
         uint256 strength;
-	
         // Crafting
         bool craftable;
         uint256[] craftItemIds; // recipe items
         uint256[] craftItemAmounts; // recipe amounts
-
         // Placing
         // e.g. stone can be placed on water and lava, so it has
         // those two in its placeItemIds
         // Note: Ignored for now
         // uint256[] placeItemIds; // empty = not placable anywhere
 
-		// Note: Posession is taken care of in PlayerData
+        // Note: Posession is taken care of in PlayerData
 
-		// Occupation
-		// e.g.1. sand: occupiable; no energy impact
-		// e.g.2. water: occupiable; 1 energy damage
-		// e.g.3. lava: occupiable; 1 energy & 1 health damage
-		// e.g.4. mountain: not occupiable
-		bool occupiable;
-		uint256 healthDamage; // per unit time
-		uint256 energyDamage; // per unit time
+        // Occupation
+        // e.g.1. sand: occupiable; no energy impact
+        // e.g.2. water: occupiable; 1 energy damage
+        // e.g.3. lava: occupiable; 1 energy & 1 health damage
+        // e.g.4. mountain: not occupiable
+        bool occupiable;
+        uint256 healthDamage; // per unit time
+        uint256 energyDamage; // per unit time
 
-		// Protection
-        // e.g. If gold shield has health 1 on lava, then lava has 
+        // Protection
+        // e.g. If gold shield has health 1 on lava, then lava has
         // no health damage on player.
         // Note: ignored for now
         // uint256[] protectItemIds;
@@ -103,15 +105,14 @@ library GameTypes {
 
     struct Recipe {
         uint256[] craftItemIds; // recipe items
-		uint256[] craftItemAmounts; // recipe amounts
+        uint256[] craftItemAmounts; // recipe amounts
     }
 
     struct GameStorage {
         // Map info
         uint256 worldWidth;
         uint256 worldHeight;
-        GameTypes.Tile[1000][1000] map;
-
+        GameTypes.Tile[100][100] map;
         // Game info
         address admin;
         bool paused;
@@ -119,13 +120,12 @@ library GameTypes {
         mapping(uint256 => GameTypes.ItemWithMetadata) itemsWithMetadata;
         // TODO move constants below into a struct for readability
         uint256 itemNonce;
-        uint256 moveRange;          // TODO move into PlayerData
-        uint256 attackRange;        // TODO move into PlayerData
-        uint256 attackDamage;       // TODO move into PlayerData
-        uint256 attackWaitTime;     // TODO move into PlayerData
+        uint256 moveRange; // TODO move into PlayerData
+        uint256 attackRange; // TODO move into PlayerData
+        uint256 attackDamage; // TODO move into PlayerData
+        uint256 attackWaitTime; // TODO move into PlayerData
         uint256 startPlayerHealth;
         uint256 startPlayerEnergy;
-
         // Player states
         address[] allPlayers;
         mapping(address => GameTypes.PlayerData) players; // player data

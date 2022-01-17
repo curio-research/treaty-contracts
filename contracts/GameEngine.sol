@@ -42,7 +42,6 @@ contract Game is GameStorage {
         uint256[][] memory _blocks,
         GameTypes.ItemWithMetadata[] memory _items
     ) {
-        // Set constants
         s.worldWidth = _worldWidth;
         s.worldHeight = _worldHeight;
         s.itemNonce = 1; // valid blockId start at 1. Id 0 = no blocks
@@ -58,9 +57,6 @@ contract Game is GameStorage {
         for (uint256 k = 0; k < _positionCount; k++) {
             GameTypes.Position memory _position = _getPositionFromIndex(k);
             s.map[_position.x][_position.y].blocks = _blocks[k]; // FIXME is this safer, or the for loop below?
-            // for (uint256 z = 0; z < _blocks[k].length; z++) {
-            //     s.map[_position.x][_position.y].blocks.push(_blocks[k][z]);
-            // }
         }
 
         // Initialize items
