@@ -36,11 +36,11 @@ contract GameStorage {
         GameTypes.TileWithMetadata[]
             memory ret = new GameTypes.TileWithMetadata[](100);
         uint256 nonce = 0;
-        for (uint256 y = _y; y < _y + 10; y++) {
-            for (uint256 x = _x; x < _x + 10; x++) {
+        for (uint256 x = _x; x < _x + 10; x++) {
+            for (uint256 y = _y; y < _y + 10; y++) {
                 ret[nonce] = GameTypes.TileWithMetadata({
-                    occupier: s.map[y][x].occupier,
-                    blocks: s.map[y][x].blocks,
+                    occupier: s.map[x][y].occupier,
+                    blocks: s.map[x][y].blocks,
                     x: x,
                     y: y
                 });

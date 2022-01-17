@@ -1,5 +1,5 @@
 import { serializeTileWithMetadata } from "./util/serializer";
-import { blocks, REVERT_MESSAGES } from "./util/constants";
+import { blocks, EMPTY_ADDRESS, REVERT_MESSAGES } from "./util/constants";
 import { Game } from "../typechain-types";
 import { expect } from "chai";
 import { World, initializeWorld, AllContracts, verifyAt, moveAndVerify, mineAndVerify } from "./util/testWorld";
@@ -135,4 +135,20 @@ describe("Game", () => {
 
     //  TODO: Add more advanced crafting tests here
   });
+
+  it("Get Map", async () => {
+    const tilesWithMetadata = await GameContract._getMap(0, 0);
+    const zeroAndZero = tilesWithMetadata[0];
+    const fourAndThree = tilesWithMetadata[43];
+
+    expect(zeroAndZero.occupier).equals(EMPTY_ADDRESS);
+    expect(zeroAndZero.x).equals(0);
+    expect(zeroAndZero.y).equals(0);
+    expect(zeroAndZero.blocks.map(b => b.toNumber())).eql([3, 0, 1, 6]);
+
+    expect(fourAndThree.occupier).equals(world.user2.address);
+    expect(fourAndThree.x).equals(4);
+    expect(fourAndThree.y).equals(3);
+    expect(fourAndThree.blocks.map(b => b.toNumber())).eql([3, 0, 1]);
+  })
 });
