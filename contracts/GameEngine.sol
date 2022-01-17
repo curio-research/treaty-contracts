@@ -118,20 +118,25 @@ contract Game is GameStorage {
 
         // can only mine with the needed tool
         uint256 _itemId = _getBlockAtPosition(_x, _y, _zIdx);
-        uint256[] memory _mineItemIds = s.itemsWithMetadata[_itemId].mineItemIds;
+        uint256[] memory _mineItemIds = s
+            .itemsWithMetadata[_itemId]
+            .mineItemIds;
         bool _canMine = false;
         if (_mineItemIds.length == 0) {
             _canMine = true;
         } else {
             for (uint256 i = 0; i < _mineItemIds.length; i++) {
-                uint256 _mineItemAmount = _getItemAmountById(msg.sender, _mineItemIds[i]);
+                uint256 _mineItemAmount = _getItemAmountById(
+                    msg.sender,
+                    _mineItemIds[i]
+                );
                 if (_mineItemAmount > 0) {
                     _canMine = true;
                     break;
                 }
             }
         }
-        
+
         if (!_canMine) revert("engine/tool-needed");
 
         _increaseItemInInventory(msg.sender, _itemId, 1);

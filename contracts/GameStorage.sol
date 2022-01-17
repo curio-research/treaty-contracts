@@ -13,9 +13,11 @@ contract GameStorage {
     using SafeMath for uint256;
     GameTypes.GameStorage public s;
 
-    function _getPositionFromIndex(
-        uint256 k
-    ) view public returns (GameTypes.Position memory) {
+    function _getPositionFromIndex(uint256 k)
+        public
+        view
+        returns (GameTypes.Position memory)
+    {
         (bool _xValid, uint256 _x) = SafeMath.tryDiv(k, s.worldHeight);
         (bool _yValid, uint256 _y) = SafeMath.tryMod(k, s.worldHeight);
 
@@ -29,7 +31,8 @@ contract GameStorage {
         uint256[] memory _craftItemIds,
         uint256[] memory _craftItemAmounts
     ) public {
-        if (_craftItemIds.length != _craftItemAmounts.length) revert("engine/invalid-craft-item-amounts");
+        if (_craftItemIds.length != _craftItemAmounts.length)
+            revert("engine/invalid-craft-item-amounts");
 
         s.itemsWithMetadata[_itemId].craftable = true;
         s.itemsWithMetadata[_itemId].craftItemIds = _craftItemIds;
@@ -66,9 +69,13 @@ contract GameStorage {
         return s.items[_itemId].active;
     }
 
-    function _getTopBlockAtPosition(uint256 _x, uint256 _y) public view returns (uint256) {
+    function _getTopBlockAtPosition(uint256 _x, uint256 _y)
+        public
+        view
+        returns (uint256)
+    {
         uint256 _blockCount = _getBlockCountAtPosition(_x, _y);
-        return s.map[_x][_y].blocks[_blockCount-1];
+        return s.map[_x][_y].blocks[_blockCount - 1];
     }
 
     function _isOccupied(uint256 _x, uint256 _y) public view returns (bool) {
@@ -151,7 +158,8 @@ contract GameStorage {
         uint256 _y,
         uint256 _zIdx
     ) public view returns (uint256) {
-        if (_zIdx >= s.map[_x][_y].blocks.length) revert("engine/invalid-z-index");
+        if (_zIdx >= s.map[_x][_y].blocks.length)
+            revert("engine/invalid-z-index");
 
         return s.map[_x][_y].blocks[_zIdx];
     }
@@ -215,17 +223,15 @@ contract GameStorage {
         s.players[_player].health -= _amount;
     }
 
-    function _getBlockCountAtPosition(
-        uint256 _x,
-        uint256 _y
-    ) view public returns (uint256) {
+    function _getBlockCountAtPosition(uint256 _x, uint256 _y)
+        public
+        view
+        returns (uint256)
+    {
         return s.map[_x][_y].blocks.length;
     }
 
-    function _mine(
-        uint256 _x,
-        uint256 _y
-    ) public {
+    function _mine(uint256 _x, uint256 _y) public {
         s.map[_x][_y].blocks.pop();
     }
 
@@ -243,10 +249,19 @@ contract GameStorage {
         uint256 _amount
     ) public {
         GameTypes.Position memory _giverLoc = _getPlayerPosition(msg.sender);
-        GameTypes.Position memory _recipientLoc = _getPlayerPosition(_recipient);
+        GameTypes.Position memory _recipientLoc = _getPlayerPosition(
+            _recipient
+        );
         // can only transfer within certain range
-        if (!_withinDistance(_giverLoc.x, _giverLoc.y, _recipientLoc.x, _recipientLoc.y, 5))
-            revert("storage/not-in-range");
+        if (
+            !_withinDistance(
+                _giverLoc.x,
+                _giverLoc.y,
+                _recipientLoc.x,
+                _recipientLoc.y,
+                5
+            )
+        ) revert("storage/not-in-range");
         if (_getItemAmountById(msg.sender, _itemId) < _amount)
             revert("storage/insufficient-block");
 
@@ -316,7 +331,7 @@ contract GameStorage {
         uint256[] memory ret = new uint256[](itemCount);
         for (uint256 i = 0; i < itemCount; i++) {
             uint256 _itemId = s.inventoryNonce[_player][i];
-            ret[0] = s.inventory[_player][_itemId];
+            ret[i] = s.inventory[_player][_itemId];
         }
 
         return
