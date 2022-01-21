@@ -78,15 +78,6 @@ describe("Game", () => {
     const player1Inventory = await GameContract._getInventoryByPlayer(world.user1.address);
     expect(serializeBigNumberArr(player1Inventory.craftItemIds)).eqls([6]);
     expect(serializeBigNumberArr(player1Inventory.craftItemAmounts)).eqls([2]);
-
-    // place block and verify
-    await GameContract.connect(world.user1).place(2, 2, blockId);
-    expect(await GameContract._getBlockAtPosition(2, 2, 3)).equals(blockId);
-    await expect(GameContract.place(5, 3, blockId)).to.be.revertedWith(REVERT_MESSAGES.ENGINE_NOT_STAND_ON_BLOCK);
-    await expect(GameContract.place(2, 3, 12)).to.be.revertedWith(REVERT_MESSAGES.ENGINE_INSUFFICIENT_INVENT);
-
-    // pick up the block again
-    await mineAndVerify(GameContract, world.user1, 2, 2, 3, 1);
   });
 
   it("Attack", async () => {
