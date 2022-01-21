@@ -1,10 +1,13 @@
+import { RecipeStructOutput } from "./../typechain-types/Minigame";
 import { expect } from "chai";
 import { items, constants, blocks } from "./util/constants";
 import { Getters } from "../typechain-types";
 import { World, initializeWorld, AllContracts, verifyAt, moveAndVerify, mineAndVerify } from "./util/testWorld";
 import { fixtureLoader, serializeBigNumberArr } from "./util/helper";
 
-describe("Getter Contract", () => {
+// testing data getters, ones including but not limited to Getters.sol
+
+describe("Getters", () => {
   let world: World;
   let contracts: AllContracts;
   let Getters: Getters;
@@ -42,6 +45,25 @@ describe("Getter Contract", () => {
     expect(serializeBigNumberArr(allItems[9].craftItemAmounts)).to.eqls(items[9].craftItemAmounts);
     expect(serializeBigNumberArr(allItems[10].craftItemIds)).to.eqls(items[10].craftItemIds); // shovel
     expect(serializeBigNumberArr(allItems[10].craftItemAmounts)).to.eqls(items[10].craftItemAmounts);
+  });
+
+  it("Inventory getter", async () => {
+    await contracts.Game._increaseItemInInventory(world.user1.address, 1, 100);
+    await contracts.Game._increaseItemInInventory(world.user1.address, 2, 200);
+    await contracts.Game._increaseItemInInventory(world.user1.address, 3, 300);
+
+    let res = await contracts.Game._getInventoryByPlayer(world.user1.address);
+    expect(serializeBigNumberArr(res.craftItemIds)).to.eqls([1, 2, 3]);
+    expect(serializeBigNumberArr(res.craftItemAmounts)).to.eqls([100, 200, 300]);
+
+    // place block
+    await contracts.Game.place(0, 1, 1);
+    res = await contracts.Game._getInventoryByPlayer(world.user1.address);
+    expect(serializeBigNumberArr(res.craftItemIds)).to.eql([1, 2, 3]);
+    expect(serializeBigNumberArr(res.craftItemAmounts)[0]).equals(99);
+
+    const block = await contracts.Game._getBlockAtPosition(0, 1, 0);
+    expect(block.toNumber()).equals(1);
   });
 
   it("Bulk fetch player info", async () => {
