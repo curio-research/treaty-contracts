@@ -109,14 +109,13 @@ contract GameStorage {
         return s.map[_x][_y].blocks[_blockCount - 1];
     }
 
+    // check if location has blocks or player on it
     function _isOccupied(uint256 _x, uint256 _y) public view returns (bool) {
-        // check if target coordinate has player
+        // if block has player on it
         if (_blockOccupier(_x, _y) != address(0)) return true;
 
-        // check if top block at target position is occupiable
-        uint256 _blockId = _getTopBlockAtPosition(_x, _y);
-        bool _occupiable = s.itemsWithMetadata[_blockId].occupiable;
-        if (!_occupiable) return true;
+        // if block has any blocks
+        if (s.map[_x][_y].blocks.length > 0) return true;
 
         return false;
     }

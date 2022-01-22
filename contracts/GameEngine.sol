@@ -111,6 +111,7 @@ contract Game is GameStorage {
         uint256 _zIdx
     ) external {
         uint256 _blockCount = _getBlockCountAtPosition(_x, _y);
+        if (_blockCount == 0) revert("engine/no-blocks-available");
         if (_zIdx != _blockCount - 1) revert("engine/no-blocks-available");
 
         // can only mine with the needed tool

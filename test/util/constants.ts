@@ -79,7 +79,9 @@ const blockMap = new Map<string, number>([
 ]);
 
 // tile types for map
-const tileTypes = [
+const tileTypesSimple = [[], ["wood"]];
+
+const tileTypesComplex = [
   ["water", "dirt", "grass"],
   ["water", "dirt", "grass", "wood"],
 ];
@@ -99,7 +101,9 @@ export const generateBlocks = (tileTypes: string[][]) => {
 
   return blocks;
 };
-export const blocks = generateBlocks(tileTypes);
+
+// TODO: Add more sophisticated map for testing
+export const blocks = generateBlocks(tileTypesSimple);
 
 const itemInputs: ItemWithMetadataInput[] = [
   {
@@ -108,7 +112,6 @@ const itemInputs: ItemWithMetadataInput[] = [
     mineItemIds: [10],
     strength: 1,
     craftable: false,
-    // placeItemIds: [3],
     occupiable: true,
   },
   {
@@ -117,7 +120,6 @@ const itemInputs: ItemWithMetadataInput[] = [
     mineItemIds: [10],
     strength: 1,
     craftable: false,
-    // placeItemIds: [0],
     occupiable: true,
   },
   {
@@ -140,8 +142,6 @@ const itemInputs: ItemWithMetadataInput[] = [
     occupiable: true,
     healthDamage: 1,
     energyDamage: 1,
-    // protectItemIds: [11],
-    // protectItemHealths: [1],
   },
   {
     // stone
@@ -149,16 +149,13 @@ const itemInputs: ItemWithMetadataInput[] = [
     mineItemIds: [12],
     strength: 20,
     craftable: false,
-    // placeItemIds: [0, 3, 4],
     occupiable: false,
   },
   {
     // wood
     mineable: true,
-    // mineItemIds: [13],
     strength: 10,
     craftable: false,
-    // placeItemIds: [1],
     occupiable: false,
   },
   {
@@ -167,7 +164,6 @@ const itemInputs: ItemWithMetadataInput[] = [
     mineItemIds: [13],
     strength: 5,
     craftable: false,
-    // placeItemIds: [2],
     occupiable: false,
   },
   {
@@ -182,7 +178,6 @@ const itemInputs: ItemWithMetadataInput[] = [
     craftable: true,
     craftItemIds: [6],
     craftItemAmounts: [15],
-    // placeItemIds: [0, 1, 2],
     occupiable: false,
   },
   {
@@ -191,7 +186,6 @@ const itemInputs: ItemWithMetadataInput[] = [
     craftable: true,
     craftItemIds: [5, 6],
     craftItemAmounts: [5, 5],
-    // placeItemIds: [0, 1, 2],
     occupiable: false,
   },
   {
@@ -207,7 +201,7 @@ const itemInputs: ItemWithMetadataInput[] = [
     mineable: false,
     craftable: true,
     craftItemIds: [6],
-    craftItemAmounts: [2],
+    craftItemAmounts: [1],
     occupiable: false,
   },
   {
@@ -219,6 +213,7 @@ const itemInputs: ItemWithMetadataInput[] = [
     occupiable: false,
   },
 ];
+
 export const items = itemInputs.map((i) => new ItemWithMetadata(i));
 
 export const GAME_DEPLOY_TEST_ARGS = [...constants, blocks, items];

@@ -47,6 +47,7 @@ export const verifyAt = async (game: Game, signer: SignerWithAddress, x: number,
 };
 
 export const mineAndVerify = async (game: Game, signer: SignerWithAddress, x: number, y: number, z: number, initialInventory: number) => {
+  // TODO: Remove this. initialInventory should be auto fetched instead of a parameter
   // verify initial inventory
   const blockId = await game.connect(signer)._getBlockAtPosition(x, y, z);
   await expect(await game.connect(signer)._getItemAmountById(signer.address, blockId)).equals(initialInventory);
@@ -57,7 +58,7 @@ export const mineAndVerify = async (game: Game, signer: SignerWithAddress, x: nu
   await expect(await game.connect(signer)._getItemAmountById(signer.address, blockId)).equals(initialInventory + 1);
 
   // verify block is indeed mined
-  await expect(game.connect(signer)._getBlockAtPosition(x, y, z)).to.be.revertedWith("engine/invalid-z-index");
+  await expect(game._getBlockAtPosition(x, y, z)).to.be.revertedWith("engine/invalid-z-index");
 
   // verify that player cannot mine blocks at same position
   await expect(game.connect(signer).mine(x, y, z)).to.be.revertedWith("engine/no-blocks-available");
