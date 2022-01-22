@@ -26,8 +26,7 @@ contract GameStorage {
         return GameTypes.Position(_x, _y);
     }
 
-    // due to gas limitations we need to fetch the map in 10x10 chunks and piece them together
-    // on the frontend
+    // due to gas limitations we fetch the map in 10x10 chunks
     function _getMap(uint256 _x, uint256 _y)
         public
         view
@@ -90,8 +89,11 @@ contract GameStorage {
         uint256 _itemId,
         uint256 _amount
     ) public {
-        _modifyItemInInventoryNonce(_itemId, false);
         s.inventory[_player][_itemId] -= _amount;
+        // remove itemId from inventory list
+        if (s.inventory[_player][_itemId] == 0) {
+            _modifyItemInInventoryNonce(_itemId, false);
+        }
     }
 
     function _isItemActive(uint256 _itemId) public view returns (bool) {
@@ -269,7 +271,13 @@ contract GameStorage {
         uint256 _y,
         uint256 _itemId
     ) public {
-        s.map[_x][_y].blocks.push(_itemId);
+        // simple version of the game places blocks at index 0;
+        uint256[] storage blocks = s.map[_x][_y].blocks;
+        if (blocks.length >= 1) {
+            blocks[0] = _itemId;
+        } else {
+            blocks.push(_itemId);
+        }
     }
 
     function _transfer(

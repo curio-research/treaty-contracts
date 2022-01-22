@@ -16,13 +16,12 @@ task("deploy", "deploy contracts").setAction(async (args: HardhatArguments, hre:
   const GameContract = await deployProxy<Game>("Game", player1, hre, GAME_DEPLOY_ARGS);
   const GettersContract = await deployProxy<Getters>("Getters", player1, hre, [GameContract.address]);
 
-  console.log(blocks);
   console.log("Game: ", GameContract.address);
   console.log("Getters:", GettersContract.address);
 
   // initialize user1 at 1, 1
   await GameContract.connect(player1).initializePlayer(1, 1);
-  await GameContract.connect(player2).initializePlayer(2, 2);
+  await GameContract.connect(player2).initializePlayer(5, 5);
 
   // give user1 items for testing
   await GameContract.connect(player1)._increaseItemInInventory(player1.address, 1, 100);

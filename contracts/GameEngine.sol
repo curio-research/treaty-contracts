@@ -80,7 +80,8 @@ contract Game is GameStorage {
             alive: true,
             position: GameTypes.Position(_x, _y),
             health: s.startPlayerHealth,
-            energy: s.startPlayerEnergy
+            energy: s.startPlayerEnergy,
+            reach: 6
         });
         s.allPlayers.push(msg.sender);
 

@@ -33,6 +33,7 @@ library GameTypes {
         Position position;
         uint256 health;
         uint256 energy;
+        uint256 reach;
 
         // Note for future purposes
         // uint256 level;

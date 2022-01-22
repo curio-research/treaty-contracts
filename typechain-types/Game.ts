@@ -66,6 +66,7 @@ export type PlayerDataStruct = {
   position: PositionStruct;
   health: BigNumberish;
   energy: BigNumberish;
+  reach: BigNumberish;
 };
 
 export type PlayerDataStructOutput = [
@@ -74,6 +75,7 @@ export type PlayerDataStructOutput = [
   string,
   boolean,
   PositionStructOutput,
+  BigNumber,
   BigNumber,
   BigNumber
 ] & {
@@ -84,6 +86,7 @@ export type PlayerDataStructOutput = [
   position: PositionStructOutput;
   health: BigNumber;
   energy: BigNumber;
+  reach: BigNumber;
 };
 
 export type RecipeStruct = {
