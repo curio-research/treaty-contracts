@@ -111,6 +111,7 @@ contract Game is GameStorage {
         uint256 _zIdx
     ) external {
         uint256 _blockCount = _getBlockCountAtPosition(_x, _y);
+        if (_blockCount == 0) revert("engine/no-blocks-available");
         if (_zIdx != _blockCount - 1) revert("engine/no-blocks-available");
 
         // can only mine with the needed tool
@@ -177,6 +178,7 @@ contract Game is GameStorage {
 
     // craft item (once) based on their recipe
     function craft(uint256 _itemId) external {
+        if (_itemId > _getItemNonce()) revert("engine/nonexistent-block");
         if (_isItemActive(_itemId)) revert("engine/inactive-block");
 
         // loop through player inventory to check if player has all required ingredients to make a block
