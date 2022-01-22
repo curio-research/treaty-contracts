@@ -178,6 +178,7 @@ contract Game is GameStorage {
 
     // craft item (once) based on their recipe
     function craft(uint256 _itemId) external {
+        if (_itemId > _getItemNonce()) revert("engine/nonexistent-block");
         if (_isItemActive(_itemId)) revert("engine/inactive-block");
 
         // loop through player inventory to check if player has all required ingredients to make a block

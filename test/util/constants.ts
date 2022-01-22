@@ -9,6 +9,7 @@ export enum REVERT_MESSAGES {
   ENGINE_INSUFFICIENT_INVENT = "engine/insufficient-inventory",
   ENGINE_INVALID_ATTACK = "engine/invalid-attack",
   ENGINE_INSUFFICIENT_MATERIAL = "engine/insufficient-material",
+  ENGINE_NONEXISTENT_BLOCK = "engine/nonexistent-block",
 }
 
 type ItemWithMetadataInput = {

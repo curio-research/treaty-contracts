@@ -78,7 +78,7 @@ describe("Game", () => {
     expect(woodAmount).equals(0);
     expect(pickaxeAmount).equals(1);
 
-    // TODO: Add "nonexistant block ID" error
+    await expect(GameContract.connect(world.user1).craft(100)).to.be.revertedWith(REVERT_MESSAGES.ENGINE_NONEXISTENT_BLOCK);
     await expect(GameContract.connect(world.user1).craft(12)).to.be.revertedWith(REVERT_MESSAGES.ENGINE_INSUFFICIENT_MATERIAL);
 
     // TODO: Add more advanced crafting tests here
