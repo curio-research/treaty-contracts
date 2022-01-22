@@ -16,7 +16,6 @@ describe("Game", () => {
   };
 
   before(async () => {
-    // load world fixture
     world = await fixtureLoader(worldFixture);
     contracts = world.contracts;
     GameContract = world.contracts.Game;
@@ -37,7 +36,6 @@ describe("Game", () => {
   });
 
   it("Verify map", async () => {
-    // TODO: Add more complex map checkers (perhaps random data sampling. check random locations of map and see if they match)
     const mapChunk0 = await GameContract._getMap(0, 0);
     expect(blocks[0]).eqls(serializeTileWithMetadata(mapChunk0[0]).blocks);
   });
@@ -60,28 +58,19 @@ describe("Game", () => {
     await mineAndVerify(GameContract, world.user1, 0, 0, 0, 0); // mine block at (0, 0)
 
     const player1Inventory = await GameContract._getInventoryByPlayer(world.user1.address);
-    // TODO: Add dynamic fetcher for blocks. blockId 6 should not be hardcoded
     expect(serializeBigNumberArr(player1Inventory.craftItemIds)).eqls([6]);
     expect(serializeBigNumberArr(player1Inventory.craftItemAmounts)).eqls([1]);
   });
 
   it("Craft", async () => {
-    // await GameContract._getItemAmountById(world.user1.address, 6);
     expect(await GameContract._getItemAmountById(world.user1.address, 6)).to.be.equals(1);
 
-    // craft 1 block2
-    await GameContract.connect(world.user1).craft(12);
-
-    const woodAmount = await GameContract._getItemAmountById(world.user1.address, 6);
-    const pickaxeAmount = await GameContract._getItemAmountById(world.user1.address, 12);
-
-    expect(woodAmount).equals(0);
-    expect(pickaxeAmount).equals(1);
+    await GameContract.connect(world.user1).craft(12); // craft 1 block2
+    expect(await GameContract._getItemAmountById(world.user1.address, 6)).equals(0); // check inventory post-crafting
+    expect(await GameContract._getItemAmountById(world.user1.address, 12)).equals(1);
 
     await expect(GameContract.connect(world.user1).craft(100)).to.be.revertedWith(REVERT_MESSAGES.ENGINE_NONEXISTENT_BLOCK);
     await expect(GameContract.connect(world.user1).craft(12)).to.be.revertedWith(REVERT_MESSAGES.ENGINE_INSUFFICIENT_MATERIAL);
-
-    // TODO: Add more advanced crafting tests here
   });
 
   // it("Attack", async () => {
