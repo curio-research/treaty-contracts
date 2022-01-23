@@ -17,7 +17,7 @@ const copyFolderSync = (from: string, to: string) => {
 };
 
 task("port", "compile and port contracts over to frontend repo").setAction(async (args: HardhatArguments, hre: HardhatRuntimeEnvironment) => {
-  console.log("Porting files over ...");
+  console.log("✦ Porting files over ...");
 
   // read ABI from artifacts folder compiled by Hardhat
   const gameAbi = JSON.stringify((await hre.artifacts.readArtifact("Game")).abi);
@@ -34,10 +34,12 @@ task("port", "compile and port contracts over to frontend repo").setAction(async
   const localTypechainDir = path.join(__dirname, "../typechain-types");
 
   await fs.rmdirSync(clientTypechainDir, { recursive: true });
-
   copyFolderSync(localTypechainDir, clientTypechainDir);
 
-  console.log("Porting complete!");
-});
+  const configFileDir = path.join(__dirname, "/game.config.json");
+  const configClientDir = path.join(__dirname, "../../frontend/src/game.config.json");
 
-// await fsPromise.copyFile(path.join(localTypechainDir, "common.ts"), path.join(clientTypechainDir, "common.ts"));
+  await fs.copyFileSync(configFileDir, configClientDir);
+
+  console.log("✦ Porting complete!");
+});
