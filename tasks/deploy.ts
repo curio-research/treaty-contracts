@@ -9,8 +9,8 @@ import { Getters, Game } from "../typechain-types";
 
 // npx hardhat deploy --network localhost
 task("deploy", "deploy contracts")
-  .addFlag("port", "Port files to frontend")
-  .setAction(async (args: HardhatArguments, hre: HardhatRuntimeEnvironment) => {
+  .addFlag("noport", "Don't port files to frontend") // default is to call port
+  .setAction(async (args: any, hre: HardhatRuntimeEnvironment) => {
     let player1: SignerWithAddress;
     let player2: SignerWithAddress;
     [player1, player2] = await hre.ethers.getSigners();
@@ -39,12 +39,10 @@ task("deploy", "deploy contracts")
       WS_RPC_URL: LOCALHOST_WS_RPC_URL,
     };
 
+    // port flag
     await fsPromise.writeFile(path.join(currentFileDir, "game.config.json"), JSON.stringify(configFile));
 
-    console.log("Porting complete!");
-  })
-  .setAction(async (args: any, hre: HardhatRuntimeEnvironment) => {
-    const isPort = args.port;
-    if (!isPort) return;
+    const noPort = args.noport;
+    if (noPort) return;
     await hre.run("port");
   });

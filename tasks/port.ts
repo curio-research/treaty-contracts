@@ -17,7 +17,7 @@ const copyFolderSync = (from: string, to: string) => {
 };
 
 task("port", "compile and port contracts over to frontend repo").setAction(async (args: HardhatArguments, hre: HardhatRuntimeEnvironment) => {
-  console.log("Porting files over ...");
+  console.log("✦ Porting files over ...");
 
   // read ABI from artifacts folder compiled by Hardhat
   const gameAbi = JSON.stringify((await hre.artifacts.readArtifact("Game")).abi);
@@ -41,5 +41,5 @@ task("port", "compile and port contracts over to frontend repo").setAction(async
 
   await fs.copyFileSync(configFileDir, configClientDir);
 
-  console.log("Porting complete");
+  console.log("✦ Porting complete!");
 });
