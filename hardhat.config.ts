@@ -20,11 +20,11 @@ export default {
   // defaultNetwork: "localhost",
   networks: {
     hardhat: {
-      // chainId: 1337,
-      // mining: {
-      //   auto: false,
-      //   interval: 1000,
-      // },
+      chainId: 1337,
+      mining: {
+        auto: false,
+        interval: 500,
+      },
     },
   },
 };
