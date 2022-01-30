@@ -14,10 +14,6 @@ describe("Getters", () => {
 
   const worldFixture = async () => {
     const world = await fixtureLoader(initializeWorld);
-
-    // fixtures are "snapshots" of the world at a certain moment
-    // here we can add fixtures such as player movements etc for advanced testing in the near future
-
     return world;
   };
 
