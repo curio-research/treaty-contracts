@@ -16,23 +16,23 @@ describe("Map", () => {
     return world;
   };
 
-  // load world fixture
-  //   before(async () => {
-  //     world = await fixtureLoader(worldFixture);
-  //     contracts = world.contracts;
-  //     Getters = world.contracts.Getters;
+  //     before(async () => {
+  //       world = await fixtureLoader(worldFixture);
+  //       contracts = world.contracts;
+  //       Getters = world.contracts.Getters;
 
-  //     // initialize players
-  //     await contracts.Game.connect(world.user1).initializePlayer(1, 1);
-  //     await contracts.Game.connect(world.user2).initializePlayer(2, 1);
-  //   });
+  //       // initialize players
+  //       await contracts.Game.connect(world.user1).initializePlayer(1, 1);
+  //       await contracts.Game.connect(world.user2).initializePlayer(2, 1);
+  //     });
 
   it("Map generation", async () => {
     const WORLD_WIDTH = 7;
     const WORLD_HEIGHT = 7;
+    const ROOM_WIDTH = 7;
 
     const wallCoords = GenerateWalls(WORLD_WIDTH, WORLD_HEIGHT);
-    const towerCoords = GenerateTowerPos(WORLD_WIDTH, WORLD_HEIGHT);
+    const towerCoords = GenerateTowerPos(WORLD_WIDTH, WORLD_HEIGHT, ROOM_WIDTH);
 
     // console.log(wallCoords);
     // console.log(towerCoords);

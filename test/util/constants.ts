@@ -1,6 +1,3 @@
-import internal from "stream";
-import { ItemWithMetadataStruct } from "../../typechain-types/Game";
-
 export const EMPTY_ADDRESS = "0x0000000000000000000000000000000000000000";
 
 export enum REVERT_MESSAGES {
@@ -20,13 +17,11 @@ type ItemWithMetadataInput = {
   strength?: number;
   craftItemIds?: number[];
   craftItemAmounts?: number[];
-  // placeItemIds?: number[],
   healthDamage?: number;
   energyDamage?: number;
-  // protectItemIds?: number[],
-  // protectItemHealths?: number[],
 };
 
+// Pretty sure this can be rewritten in some way
 class ItemWithMetadata {
   readonly mineable: boolean;
   readonly mineItemIds: number[];
@@ -62,6 +57,7 @@ export const constants = [
   100, // startPlayerEnergy
 ];
 
+// TODO: Convert this to more efficient data structure
 const blockMap = new Map<string, number>([
   ["dirt", 0],
   ["grass", 1],
@@ -77,6 +73,7 @@ const blockMap = new Map<string, number>([
   ["lava suit", 11],
   ["pickaxe", 12],
   ["axe", 13],
+  ["wall", 14],
 ]);
 
 // tile types for map
