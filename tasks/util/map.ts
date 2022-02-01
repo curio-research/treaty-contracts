@@ -51,49 +51,56 @@ export const GenerateEmptyMap = (worldWidth: number, worldHeight: number): numbe
 export const GenerateWallCoords = (worldWidth: number, worldHeight: number): number[] => {
   const walls = GenerateWalls(worldWidth, worldHeight);
 
-  console.log(walls);
-
   const coords: number[] = [];
-
   walls.forEach((wall) => {
-    // calculate idx
-    const idx = wall.y * worldWidth + wall.x;
+    const idx = wall.y * worldWidth + wall.x; // calculate idx in array
     coords.push(idx);
   });
-
   return coords;
 };
 
 // master map generation function
-export const MasterGenerateMap = (): number[][] => {
-  const WORLD_WIDTH = 7;
-  const WORLD_HEIGHT = 7;
+export const MasterGenerateMap = (worldWidth: number, worldHeight: number): number[][] => {
+  const map = GenerateEmptyMap(worldWidth, worldHeight); // generate empty map
 
-  const map = GenerateEmptyMap(WORLD_WIDTH, WORLD_HEIGHT); // generate empty map
-
-  // generate all blocks
-  const walls = GenerateWallCoords(WORLD_WIDTH, WORLD_HEIGHT);
+  const walls = GenerateWallCoords(worldWidth, worldHeight); // generate wall blocks
+  const towers = GenerateTowerCoords(worldWidth, worldHeight, 7); // generate tower locations
 
   // apply block coordinates to master map;
   walls.forEach((idx) => {
     map[idx].push(14);
   });
 
+  towers.forEach((idx) => {
+    map[idx].push(15);
+  });
+
   return map;
 };
 
 // Generate tower locations in middle of rooms
-// room width
 export const GenerateTowerPos = (width: number, height: number, roomWidth: number): position[] => {
   let totalPos: position[] = [];
 
-  for (let x = (roomWidth + 1) / 2; x < width; x += roomWidth - 1) {
-    for (let y = (roomWidth + 1) / 2; y < height; y += roomWidth - 1) {
+  // assume room width is even
+  for (let x = (roomWidth - 1) / 2; x < width; x += roomWidth - 1) {
+    for (let y = (roomWidth - 1) / 2; y < height; y += roomWidth - 1) {
       totalPos = totalPos.concat([{ x, y }]);
     }
   }
 
   return totalPos;
+};
+
+export const GenerateTowerCoords = (worldWidth: number, worldHeight: number, roomWidth: number) => {
+  const towers = GenerateTowerPos(worldWidth, worldHeight, roomWidth);
+
+  const coords: number[] = [];
+  towers.forEach((pos) => {
+    const idx = pos.y * worldWidth + pos.x; // calculate idx in array
+    coords.push(idx);
+  });
+  return coords;
 };
 
 // helper functions //

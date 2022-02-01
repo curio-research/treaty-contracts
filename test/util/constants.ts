@@ -57,7 +57,8 @@ export const constants = [
   100, // startPlayerEnergy
 ];
 
-// TODO: Convert this to more efficient data structure
+// TODO: Convert this to more efficient data structure.
+// TODO: This should be ported over to frontend as well (?)
 const blockMap = new Map<string, number>([
   ["dirt", 0],
   ["grass", 1],
@@ -74,6 +75,7 @@ const blockMap = new Map<string, number>([
   ["pickaxe", 12],
   ["axe", 13],
   ["wall", 14],
+  ["tower", 15],
 ]);
 
 // tile types for map
