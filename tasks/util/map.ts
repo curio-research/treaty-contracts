@@ -4,21 +4,62 @@ import { position } from "../../types/common";
 // map helpers are used to generate a world with rooms, entrances, and a tower in the middle
 
 // Generate single room with starting coordinate
-const GenerateSingleRoom = (x: number, y: number, width: number, height: number): position[] => {
-  const coords = [
-    { x: x, y: y },
-    { x: x + 1, y: y },
-    { x: x + 5, y: y },
-    { x: x + 6, y: y },
-    { x: x, y: y + 1 },
-    { x: x + 6, y: y + 1 },
-    { x: x, y: y + 5 },
-    { x: x + 6, y: y + 5 },
-    { x: x, y: y + 6 },
-    { x: x + 1, y: y + 6 },
-    { x: x + 5, y: y + 6 },
-    { x: x + 6, y: y + 6 },
+const GenerateSingleRoom = (x: number, y: number, width: number, height: number, roomWidth: number): position[] => {
+  // left wall
+  const leftWalls = [
+    { x: x, y: y + 2 },
+    { x: x, y: y + 3 },
+    { x: x, y: y + 4 },
   ];
+
+  // right wall
+  const rightWalls = [
+    { x: x + 6, y: y + 2 },
+    { x: x + 6, y: y + 3 },
+    { x: x + 6, y: y + 4 },
+  ];
+
+  // top wall
+  const topWalls = [
+    { x: x + 2, y: y },
+    { x: x + 3, y: y },
+    { x: x + 4, y: y },
+  ];
+
+  // bottom wall
+  const bottomWalls = [
+    { x: x + 2, y: y + 6 },
+    { x: x + 3, y: y + 6 },
+    { x: x + 4, y: y + 6 },
+  ];
+
+  const generateCoords = () => {
+    let coords = [
+      { x: x, y: y },
+      { x: x + 1, y: y },
+      { x: x + 5, y: y },
+      { x: x + 6, y: y },
+      { x: x, y: y + 1 },
+      { x: x + 6, y: y + 1 },
+      { x: x, y: y + 5 },
+      { x: x + 6, y: y + 5 },
+      { x: x, y: y + 6 },
+      { x: x + 1, y: y + 6 },
+      { x: x + 5, y: y + 6 },
+      { x: x + 6, y: y + 6 },
+    ];
+
+    // select top walls and left walls for now to avoid overlap
+    const shuffledLeft = _.shuffle(leftWalls);
+    const shuffledTop = _.shuffle(topWalls);
+
+    coords = coords.concat(shuffledLeft.slice(0, 1));
+    coords = coords.concat(shuffledTop.slice(0, 1));
+
+    return coords;
+  };
+
+  const coords = generateCoords();
 
   return coords.filter((coord) => coord.x < width && coord.y < height); // remove coords outside of map
 };
@@ -28,7 +69,7 @@ export const GenerateWalls = (width: number, height: number, roomWidth: number):
 
   for (let x = 0; x < width; x += roomWidth - 1) {
     for (let y = 0; y < height; y += roomWidth - 1) {
-      const coords = GenerateSingleRoom(x, y, width, height);
+      const coords = GenerateSingleRoom(x, y, width, height, roomWidth);
       totalPos = totalPos.concat(coords);
     }
   }

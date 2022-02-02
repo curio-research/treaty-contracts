@@ -5,8 +5,8 @@ export const LOCALHOST_RPC_URL = "http://127.0.0.1:8545/";
 export const LOCALHOST_WS_RPC_URL = "ws://localhost:8545";
 
 // game specs
-const WORLD_WIDTH = 10;
-const WORLD_HEIGHT = 10;
+const WORLD_WIDTH = 20;
+const WORLD_HEIGHT = 20;
 const ROOM_WIDTH = 7;
 
 export const gameConstants = [
