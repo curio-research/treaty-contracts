@@ -330,6 +330,17 @@ contract GameStorage {
         }
     }
 
+    // increase epoch
+    function _increaseEpoch() public {
+        if (block.timestamp - s.epochLastUpdated >= 60) {
+            s.epoch++;
+        }
+    }
+
+    /////////////////////
+    ////// GETTERS //////
+    /////////////////////
+
     // fetch player inventory
     function _getInventoryByPlayer(address _player)
         public
@@ -355,6 +366,7 @@ contract GameStorage {
         return s.allPlayers;
     }
 
+    // get
     function _getItemNonce() public view returns (uint256) {
         return s.itemNonce;
     }

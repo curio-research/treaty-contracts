@@ -72,7 +72,8 @@ library GameTypes {
         // game info
         address admin;
         bool paused;
-        bool epoch; //
+        uint256 epoch;
+        uint256 epochLastUpdated;
         mapping(uint256 => GameTypes.ItemData) items;
         mapping(uint256 => GameTypes.ItemWithMetadata) itemsWithMetadata;
         uint256 itemNonce; // TODO move constants below into a struct for readability
