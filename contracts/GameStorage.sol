@@ -26,7 +26,7 @@ contract GameStorage {
         return GameTypes.Position(_x, _y);
     }
 
-    // due to gas limitations we fetch the map in 10x10 chunks
+    // getter method to fetch map in 10x10 chunks. can increase size
     function _getMap(uint256 _x, uint256 _y)
         public
         view
@@ -50,7 +50,6 @@ contract GameStorage {
     }
 
     function _getWorldSize() public view returns (uint256, uint256) {
-        console.log("in _getWorldSize!");
         return (s.worldWidth, s.worldHeight);
     }
 

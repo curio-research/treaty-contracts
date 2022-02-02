@@ -5,8 +5,9 @@ export const LOCALHOST_RPC_URL = "http://127.0.0.1:8545/";
 export const LOCALHOST_WS_RPC_URL = "ws://localhost:8545";
 
 // game specs
-const WORLD_WIDTH = 7;
-const WORLD_HEIGHT = 7;
+const WORLD_WIDTH = 20;
+const WORLD_HEIGHT = 20;
+const ROOM_WIDTH = 7;
 
 export const gameConstants = [
   WORLD_WIDTH, // worldWidth
@@ -19,6 +20,6 @@ export const gameConstants = [
   100, // startPlayerEnergy
 ];
 
-export const blocks = MasterGenerateMap(WORLD_WIDTH, WORLD_HEIGHT);
+export const blocks = MasterGenerateMap(WORLD_WIDTH, WORLD_HEIGHT, ROOM_WIDTH);
 
 export const GAME_DEPLOY_ARGS = [...gameConstants, blocks, items];
