@@ -1,10 +1,7 @@
 import _ from "lodash";
-// generate a world with rooms, entrances, and a tower in the middle
+import { position } from "../../types/common";
 
-interface position {
-  x: number;
-  y: number;
-}
+// map helpers are used to generate a world with rooms, entrances, and a tower in the middle
 
 // Generate single room with starting coordinate
 const GenerateSingleRoom = (x: number, y: number, width: number, height: number): position[] => {
@@ -26,11 +23,11 @@ const GenerateSingleRoom = (x: number, y: number, width: number, height: number)
   return coords.filter((coord) => coord.x < width && coord.y < height); // remove coords outside of map
 };
 
-export const GenerateWalls = (width: number, height: number): position[] => {
+export const GenerateWalls = (width: number, height: number, roomWidth: number): position[] => {
   let totalPos: position[] = [];
 
-  for (let x = 0; x < width; x += width - 1) {
-    for (let y = 0; y < height; y += width - 1) {
+  for (let x = 0; x < width; x += roomWidth - 1) {
+    for (let y = 0; y < height; y += roomWidth - 1) {
       const coords = GenerateSingleRoom(x, y, width, height);
       totalPos = totalPos.concat(coords);
     }
@@ -48,8 +45,8 @@ export const GenerateEmptyMap = (worldWidth: number, worldHeight: number): numbe
 };
 
 // generate a list of indices to apply to the map
-export const GenerateWallCoords = (worldWidth: number, worldHeight: number): number[] => {
-  const walls = GenerateWalls(worldWidth, worldHeight);
+export const GenerateWallCoords = (worldWidth: number, worldHeight: number, roomWidth: number): number[] => {
+  const walls = GenerateWalls(worldWidth, worldHeight, roomWidth);
 
   const coords: number[] = [];
   walls.forEach((wall) => {
@@ -60,11 +57,11 @@ export const GenerateWallCoords = (worldWidth: number, worldHeight: number): num
 };
 
 // master map generation function
-export const MasterGenerateMap = (worldWidth: number, worldHeight: number): number[][] => {
+export const MasterGenerateMap = (worldWidth: number, worldHeight: number, roomWidth: number): number[][] => {
   const map = GenerateEmptyMap(worldWidth, worldHeight); // generate empty map
 
-  const walls = GenerateWallCoords(worldWidth, worldHeight); // generate wall blocks
-  const towers = GenerateTowerCoords(worldWidth, worldHeight, 7); // generate tower locations
+  const walls = GenerateWallCoords(worldWidth, worldHeight, roomWidth); // generate wall blocks
+  const towers = GenerateTowerCoords(worldWidth, worldHeight, roomWidth); // generate tower locations
 
   // apply block coordinates to master map;
   walls.forEach((idx) => {
