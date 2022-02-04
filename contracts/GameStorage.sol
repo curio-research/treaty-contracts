@@ -330,12 +330,13 @@ contract GameStorage {
         }
     }
 
+    // once enabled solidity tells me stack is too deep. wtf
     // increase epoch
-    function _increaseEpoch() public {
-        if (block.timestamp - s.epochLastUpdated >= 60) {
-            s.epoch++;
-        }
-    }
+    // function _increaseEpoch() public {
+    //     if (block.timestamp - s.epochLastUpdated >= 60) {
+    //         s.epoch++;
+    //     }
+    // }
 
     /////////////////////
     ////// GETTERS //////
