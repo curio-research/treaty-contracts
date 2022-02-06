@@ -11,7 +11,6 @@ library GameTypes {
 
     struct ItemData {
         uint256 id;
-        address itemAddr;
         bool active;
     }
 
@@ -31,12 +30,6 @@ library GameTypes {
         // uint256[] holdItems; // items the user is currently holding
     }
 
-    // blocks: all items on a tile
-    // All items on a tile.
-    // Items "pile" starting from the first element to the last.
-    // e.g.1 "water -> dirt -> grass -> wood"
-    // e.g.2 "lava -> marble -> workbench"
-    // All but the first element can theoretically be extracted.
     struct Tile {
         address occupier;
         uint256[] blocks;
@@ -51,14 +44,14 @@ library GameTypes {
 
     struct ItemWithMetadata {
         bool mineable;
-        uint256[] mineItemIds; // tools for mining
-        uint256 strength;
         bool craftable;
-        uint256[] craftItemIds;
-        uint256[] craftItemAmounts;
         bool occupiable;
+        uint256 strength;
         uint256 healthDamage;
         uint256 energyDamage;
+        uint256[] mineItemIds; // tools for mining
+        uint256[] craftItemIds;
+        uint256[] craftItemAmounts;
     }
 
     struct Recipe {
