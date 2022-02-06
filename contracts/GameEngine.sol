@@ -15,9 +15,9 @@ import "./GameTypes.sol";
 contract Game is GameStorage {
     using SafeMath for uint256;
 
-    ////////////////////////
-    //      events
-    ////////////////////////
+    // ------------------------------------------------------------
+    // Events
+    // ------------------------------------------------------------
 
     event NewPlayer(address _player, uint256 _x, uint256 _y);
     event Move(address _player, uint256 _x, uint256 _y);
@@ -220,8 +220,6 @@ contract Game is GameStorage {
             revert("engine/invalid-attack");
 
         _decreaseHealth(_target, s.attackDamage);
-
-        s.lastAttackedAt[msg.sender] = block.timestamp;
 
         emit Attack(msg.sender, _target);
 

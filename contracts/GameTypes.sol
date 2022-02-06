@@ -1,6 +1,8 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
+import "./Epoch.sol";
+
 library GameTypes {
     struct Position {
         uint256 x;
@@ -52,18 +54,27 @@ library GameTypes {
         uint256[] mineItemIds; // tools for mining
         uint256 strength;
         bool craftable;
-        uint256[] craftItemIds; // recipe items
-        uint256[] craftItemAmounts; // recipe amounts
+        uint256[] craftItemIds;
+        uint256[] craftItemAmounts;
         bool occupiable;
         uint256 healthDamage;
         uint256 energyDamage;
     }
 
     struct Recipe {
-        uint256[] craftItemIds; // recipe items
-        uint256[] craftItemAmounts; // recipe amounts
+        uint256[] craftItemIds;
+        uint256[] craftItemAmounts;
     }
 
+    struct Tower {
+        uint256 rewardPerEpoch;
+        uint256 itemId;
+        uint256 stakedAmount;
+        uint256 stakedTime; // in epochs unit
+        address owner;
+    }
+
+    // TODO: Pack this struct
     struct GameStorage {
         // map info
         uint256 worldWidth;
@@ -72,9 +83,7 @@ library GameTypes {
         // game info
         address admin;
         bool paused;
-        // Once adding these, Solidity tells me the stack is too deep.
-        // uint256 epoch;
-        // uint256 epochLastUpdated;
+        Epoch epochController;
         mapping(uint256 => GameTypes.ItemData) items;
         mapping(uint256 => GameTypes.ItemWithMetadata) itemsWithMetadata;
         uint256 itemNonce; // TODO move constants below into a struct for readability
@@ -89,7 +98,9 @@ library GameTypes {
         mapping(address => GameTypes.PlayerData) players; // player data
         mapping(address => mapping(uint256 => uint256)) inventory; // player => itemId => inventory
         mapping(address => uint256) lastMovedAt; // time when user last moved
-        mapping(address => uint256) lastAttackedAt; // time when user last attacked
-        mapping(address => uint256[]) inventoryNonce; // keep track of inventory
+        mapping(address => uint256[]) inventoryNonce; // array of all items in player inventory
+        // tower
+        mapping(string => Tower) towers; // towerId => Tower
+        mapping(address => uint256) stakePoints;
     }
 }

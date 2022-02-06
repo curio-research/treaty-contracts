@@ -149,7 +149,9 @@ export interface GameStorageInterface extends utils.Interface {
     "_setPlayerPosition(address,uint256,uint256)": FunctionFragment;
     "_transfer(address,uint256,uint256)": FunctionFragment;
     "_withinDistance(uint256,uint256,uint256,uint256,uint256)": FunctionFragment;
+    "claimReward(string)": FunctionFragment;
     "s()": FunctionFragment;
+    "stake(string,uint256)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -291,7 +293,12 @@ export interface GameStorageInterface extends utils.Interface {
       BigNumberish
     ]
   ): string;
+  encodeFunctionData(functionFragment: "claimReward", values: [string]): string;
   encodeFunctionData(functionFragment: "s", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "stake",
+    values: [string, BigNumberish]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "_addCraftItemAndAmount",
@@ -414,7 +421,12 @@ export interface GameStorageInterface extends utils.Interface {
     functionFragment: "_withinDistance",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "claimReward",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "s", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "stake", data: BytesLike): Result;
 
   events: {};
 }
@@ -644,6 +656,11 @@ export interface GameStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    claimReward(
+      _towerId: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     s(
       overrides?: CallOverrides
     ): Promise<
@@ -652,6 +669,7 @@ export interface GameStorage extends BaseContract {
         BigNumber,
         string,
         boolean,
+        string,
         BigNumber,
         BigNumber,
         BigNumber,
@@ -664,6 +682,7 @@ export interface GameStorage extends BaseContract {
         worldHeight: BigNumber;
         admin: string;
         paused: boolean;
+        epochController: string;
         itemNonce: BigNumber;
         moveRange: BigNumber;
         attackRange: BigNumber;
@@ -673,6 +692,12 @@ export interface GameStorage extends BaseContract {
         startPlayerEnergy: BigNumber;
       }
     >;
+
+    stake(
+      _towerId: string,
+      _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
   };
 
   _addCraftItemAndAmount(
@@ -871,6 +896,11 @@ export interface GameStorage extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  claimReward(
+    _towerId: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   s(
     overrides?: CallOverrides
   ): Promise<
@@ -879,6 +909,7 @@ export interface GameStorage extends BaseContract {
       BigNumber,
       string,
       boolean,
+      string,
       BigNumber,
       BigNumber,
       BigNumber,
@@ -891,6 +922,7 @@ export interface GameStorage extends BaseContract {
       worldHeight: BigNumber;
       admin: string;
       paused: boolean;
+      epochController: string;
       itemNonce: BigNumber;
       moveRange: BigNumber;
       attackRange: BigNumber;
@@ -900,6 +932,12 @@ export interface GameStorage extends BaseContract {
       startPlayerEnergy: BigNumber;
     }
   >;
+
+  stake(
+    _towerId: string,
+    _amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   callStatic: {
     _addCraftItemAndAmount(
@@ -1095,6 +1133,8 @@ export interface GameStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    claimReward(_towerId: string, overrides?: CallOverrides): Promise<void>;
+
     s(
       overrides?: CallOverrides
     ): Promise<
@@ -1103,6 +1143,7 @@ export interface GameStorage extends BaseContract {
         BigNumber,
         string,
         boolean,
+        string,
         BigNumber,
         BigNumber,
         BigNumber,
@@ -1115,6 +1156,7 @@ export interface GameStorage extends BaseContract {
         worldHeight: BigNumber;
         admin: string;
         paused: boolean;
+        epochController: string;
         itemNonce: BigNumber;
         moveRange: BigNumber;
         attackRange: BigNumber;
@@ -1124,6 +1166,12 @@ export interface GameStorage extends BaseContract {
         startPlayerEnergy: BigNumber;
       }
     >;
+
+    stake(
+      _towerId: string,
+      _amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
   };
 
   filters: {};
@@ -1325,7 +1373,18 @@ export interface GameStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    claimReward(
+      _towerId: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     s(overrides?: CallOverrides): Promise<BigNumber>;
+
+    stake(
+      _towerId: string,
+      _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -1527,6 +1586,17 @@ export interface GameStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    claimReward(
+      _towerId: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     s(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    stake(
+      _towerId: string,
+      _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
   };
 }
