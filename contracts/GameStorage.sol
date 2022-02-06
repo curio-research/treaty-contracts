@@ -3,7 +3,6 @@ pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "./GameTypes.sol";
-import "hardhat/console.sol";
 
 /// @title Monolithic game storage
 /// @notice for v1 we can store everything in here - both player states and game states. we can think about
@@ -341,6 +340,15 @@ contract GameStorage {
     // Tower
     // ------------------------------------------------------------
 
+    // give user points for staking
+    function addStakingPoints(uint256 _points) external {
+        s.stakePoints[msg.sender] += _points;
+    }
+
+    function setEpochController(Epoch _addr) external {
+        s.epochController = _addr;
+    }
+
     // add tower to map. using this instead of constructor to avoid bloat
     function addTower(string memory _towerId, GameTypes.Tower memory _tower)
         external
@@ -388,12 +396,25 @@ contract GameStorage {
     function unstake(string memory _towerId, uint256 _amount) external {
         // add checker for distance
         GameTypes.Tower storage tower = s.towers[_towerId];
-        if (tower.owner != msg.sender) revert("tower/not-owner");
+        if (tower.owner != msg.sender) revert("tower/invalid-tower-owner");
         if (tower.stakedAmount < _amount) revert("tower/withdraw-overflow");
 
         tower.stakedAmount -= _amount;
 
+        // if user unstakes all the points, they're no longer the owner
+        if (tower.stakedAmount == 0) {
+            tower.owner = address(0);
+        }
+
         emit UnstakeTower(_towerId, _amount);
+    }
+
+    function getTowerById(string memory _id)
+        external
+        view
+        returns (GameTypes.Tower memory)
+    {
+        return s.towers[_id];
     }
 
     // ------------------------------------------------------------

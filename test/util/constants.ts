@@ -8,6 +8,9 @@ export enum REVERT_MESSAGES {
   ENGINE_INSUFFICIENT_MATERIAL = "engine/insufficient-material",
   ENGINE_NONEXISTENT_BLOCK = "engine/nonexistent-block",
   EPOCH_PREMATURE = "epoch/premature",
+  TOWER_INVALID_OWNER = "tower/invalid-tower-owner",
+  TOWER_INSUFFICIENT_STAKE = "tower/insufficient-stake",
+  TOWER_UNSTAKE_OVERFLOW = "tower/withdraw-overflow",
 }
 
 type ItemWithMetadataInput = {

@@ -16,13 +16,13 @@ library GameTypes {
 
     struct PlayerData {
         bool initialized;
+        bool alive;
         uint256 initTimestamp;
         address playerAddr;
-        bool alive;
-        Position position;
         uint256 health;
         uint256 energy;
         uint256 reach;
+        Position position;
 
         // Note for future purposes
         // uint256 level;

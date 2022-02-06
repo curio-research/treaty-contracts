@@ -13,7 +13,7 @@ import {
   Signer,
   utils,
 } from "ethers";
-import { FunctionFragment, Result } from "@ethersproject/abi";
+import { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
 import { Listener, Provider } from "@ethersproject/providers";
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
@@ -26,33 +26,33 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
 
 export type PlayerDataStruct = {
   initialized: boolean;
+  alive: boolean;
   initTimestamp: BigNumberish;
   playerAddr: string;
-  alive: boolean;
-  position: PositionStruct;
   health: BigNumberish;
   energy: BigNumberish;
   reach: BigNumberish;
+  position: PositionStruct;
 };
 
 export type PlayerDataStructOutput = [
   boolean,
+  boolean,
   BigNumber,
   string,
-  boolean,
-  PositionStructOutput,
   BigNumber,
   BigNumber,
-  BigNumber
+  BigNumber,
+  PositionStructOutput
 ] & {
   initialized: boolean;
+  alive: boolean;
   initTimestamp: BigNumber;
   playerAddr: string;
-  alive: boolean;
-  position: PositionStructOutput;
   health: BigNumber;
   energy: BigNumber;
   reach: BigNumber;
+  position: PositionStructOutput;
 };
 
 export type RecipeStruct = {
@@ -67,36 +67,36 @@ export type RecipeStructOutput = [BigNumber[], BigNumber[]] & {
 
 export type ItemWithMetadataStruct = {
   mineable: boolean;
-  mineItemIds: BigNumberish[];
-  strength: BigNumberish;
   craftable: boolean;
-  craftItemIds: BigNumberish[];
-  craftItemAmounts: BigNumberish[];
   occupiable: boolean;
+  strength: BigNumberish;
   healthDamage: BigNumberish;
   energyDamage: BigNumberish;
+  mineItemIds: BigNumberish[];
+  craftItemIds: BigNumberish[];
+  craftItemAmounts: BigNumberish[];
 };
 
 export type ItemWithMetadataStructOutput = [
   boolean,
-  BigNumber[],
-  BigNumber,
   boolean,
-  BigNumber[],
-  BigNumber[],
   boolean,
   BigNumber,
-  BigNumber
+  BigNumber,
+  BigNumber,
+  BigNumber[],
+  BigNumber[],
+  BigNumber[]
 ] & {
   mineable: boolean;
-  mineItemIds: BigNumber[];
-  strength: BigNumber;
   craftable: boolean;
-  craftItemIds: BigNumber[];
-  craftItemAmounts: BigNumber[];
   occupiable: boolean;
+  strength: BigNumber;
   healthDamage: BigNumber;
   energyDamage: BigNumber;
+  mineItemIds: BigNumber[];
+  craftItemIds: BigNumber[];
+  craftItemAmounts: BigNumber[];
 };
 
 export type TileWithMetadataStruct = {
@@ -112,6 +112,28 @@ export type TileWithMetadataStructOutput = [
   BigNumber,
   BigNumber
 ] & { occupier: string; blocks: BigNumber[]; x: BigNumber; y: BigNumber };
+
+export type TowerStruct = {
+  rewardPerEpoch: BigNumberish;
+  itemId: BigNumberish;
+  stakedAmount: BigNumberish;
+  stakedTime: BigNumberish;
+  owner: string;
+};
+
+export type TowerStructOutput = [
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  string
+] & {
+  rewardPerEpoch: BigNumber;
+  itemId: BigNumber;
+  stakedAmount: BigNumber;
+  stakedTime: BigNumber;
+  owner: string;
+};
 
 export interface GameStorageInterface extends utils.Interface {
   functions: {
@@ -149,9 +171,14 @@ export interface GameStorageInterface extends utils.Interface {
     "_setPlayerPosition(address,uint256,uint256)": FunctionFragment;
     "_transfer(address,uint256,uint256)": FunctionFragment;
     "_withinDistance(uint256,uint256,uint256,uint256,uint256)": FunctionFragment;
+    "addStakingPoints(uint256)": FunctionFragment;
+    "addTower(string,(uint256,uint256,uint256,uint256,address))": FunctionFragment;
     "claimReward(string)": FunctionFragment;
+    "getTowerById(string)": FunctionFragment;
     "s()": FunctionFragment;
+    "setEpochController(address)": FunctionFragment;
     "stake(string,uint256)": FunctionFragment;
+    "unstake(string,uint256)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -293,10 +320,30 @@ export interface GameStorageInterface extends utils.Interface {
       BigNumberish
     ]
   ): string;
+  encodeFunctionData(
+    functionFragment: "addStakingPoints",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "addTower",
+    values: [string, TowerStruct]
+  ): string;
   encodeFunctionData(functionFragment: "claimReward", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "getTowerById",
+    values: [string]
+  ): string;
   encodeFunctionData(functionFragment: "s", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "setEpochController",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "stake",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "unstake",
     values: [string, BigNumberish]
   ): string;
 
@@ -422,14 +469,48 @@ export interface GameStorageInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "addStakingPoints",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "addTower", data: BytesLike): Result;
+  decodeFunctionResult(
     functionFragment: "claimReward",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTowerById",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "s", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setEpochController",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "stake", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "unstake", data: BytesLike): Result;
 
-  events: {};
+  events: {
+    "StakeTower(string,uint256)": EventFragment;
+    "UnstakeTower(string,uint256)": EventFragment;
+  };
+
+  getEvent(nameOrSignatureOrTopic: "StakeTower"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "UnstakeTower"): EventFragment;
 }
+
+export type StakeTowerEvent = TypedEvent<
+  [string, BigNumber],
+  { _towerId: string; _amount: BigNumber }
+>;
+
+export type StakeTowerEventFilter = TypedEventFilter<StakeTowerEvent>;
+
+export type UnstakeTowerEvent = TypedEvent<
+  [string, BigNumber],
+  { _towerId: string; _amount: BigNumber }
+>;
+
+export type UnstakeTowerEventFilter = TypedEventFilter<UnstakeTowerEvent>;
 
 export interface GameStorage extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -656,10 +737,26 @@ export interface GameStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    addStakingPoints(
+      _points: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    addTower(
+      _towerId: string,
+      _tower: TowerStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     claimReward(
       _towerId: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    getTowerById(
+      _id: string,
+      overrides?: CallOverrides
+    ): Promise<[TowerStructOutput]>;
 
     s(
       overrides?: CallOverrides
@@ -693,7 +790,18 @@ export interface GameStorage extends BaseContract {
       }
     >;
 
+    setEpochController(
+      _addr: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     stake(
+      _towerId: string,
+      _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    unstake(
       _towerId: string,
       _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -896,10 +1004,26 @@ export interface GameStorage extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  addStakingPoints(
+    _points: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  addTower(
+    _towerId: string,
+    _tower: TowerStruct,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   claimReward(
     _towerId: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
+
+  getTowerById(
+    _id: string,
+    overrides?: CallOverrides
+  ): Promise<TowerStructOutput>;
 
   s(
     overrides?: CallOverrides
@@ -933,7 +1057,18 @@ export interface GameStorage extends BaseContract {
     }
   >;
 
+  setEpochController(
+    _addr: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   stake(
+    _towerId: string,
+    _amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  unstake(
     _towerId: string,
     _amount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -1133,7 +1268,23 @@ export interface GameStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    addStakingPoints(
+      _points: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    addTower(
+      _towerId: string,
+      _tower: TowerStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     claimReward(_towerId: string, overrides?: CallOverrides): Promise<void>;
+
+    getTowerById(
+      _id: string,
+      overrides?: CallOverrides
+    ): Promise<TowerStructOutput>;
 
     s(
       overrides?: CallOverrides
@@ -1167,14 +1318,34 @@ export interface GameStorage extends BaseContract {
       }
     >;
 
+    setEpochController(_addr: string, overrides?: CallOverrides): Promise<void>;
+
     stake(
+      _towerId: string,
+      _amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    unstake(
       _towerId: string,
       _amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
   };
 
-  filters: {};
+  filters: {
+    "StakeTower(string,uint256)"(
+      _towerId?: null,
+      _amount?: null
+    ): StakeTowerEventFilter;
+    StakeTower(_towerId?: null, _amount?: null): StakeTowerEventFilter;
+
+    "UnstakeTower(string,uint256)"(
+      _towerId?: null,
+      _amount?: null
+    ): UnstakeTowerEventFilter;
+    UnstakeTower(_towerId?: null, _amount?: null): UnstakeTowerEventFilter;
+  };
 
   estimateGas: {
     _addCraftItemAndAmount(
@@ -1373,14 +1544,38 @@ export interface GameStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    addStakingPoints(
+      _points: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    addTower(
+      _towerId: string,
+      _tower: TowerStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     claimReward(
       _towerId: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    getTowerById(_id: string, overrides?: CallOverrides): Promise<BigNumber>;
+
     s(overrides?: CallOverrides): Promise<BigNumber>;
 
+    setEpochController(
+      _addr: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     stake(
+      _towerId: string,
+      _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    unstake(
       _towerId: string,
       _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1586,14 +1781,41 @@ export interface GameStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    addStakingPoints(
+      _points: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    addTower(
+      _towerId: string,
+      _tower: TowerStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     claimReward(
       _towerId: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    getTowerById(
+      _id: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     s(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    setEpochController(
+      _addr: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     stake(
+      _towerId: string,
+      _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    unstake(
       _towerId: string,
       _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
