@@ -252,18 +252,12 @@ contract GameStorage {
         s.players[_player].health -= _amount;
     }
 
-    function _getBlockCountAtPosition(uint256 _x, uint256 _y)
-        public
-        view
-        returns (uint256)
-    {
-        return s.map[_x][_y].blocks.length;
-    }
-
+    // mine block
     function _mine(uint256 _x, uint256 _y) public {
         s.map[_x][_y].blocks.pop();
     }
 
+    // place block
     function _place(
         uint256 _x,
         uint256 _y,
@@ -278,6 +272,7 @@ contract GameStorage {
         }
     }
 
+    // transfer item from one player to another
     function _transfer(
         address _recipient,
         uint256 _itemId,
@@ -287,7 +282,9 @@ contract GameStorage {
         GameTypes.Position memory _recipientLoc = _getPlayerPosition(
             _recipient
         );
-        // can only transfer within certain range
+        if (msg.sender == _recipient)
+            revert("storage/recipient-same-as-sender");
+
         if (
             !_withinDistance(
                 _giverLoc.x,
@@ -296,7 +293,7 @@ contract GameStorage {
                 _recipientLoc.y,
                 5
             )
-        ) revert("storage/not-in-range");
+        ) revert("storage/not-in-range"); // can only transfer within certain range
         if (_getItemAmountById(msg.sender, _itemId) < _amount)
             revert("storage/insufficient-block");
 
@@ -309,28 +306,6 @@ contract GameStorage {
 
         GameTypes.Position memory _pos = s.players[_player].position;
         delete s.map[_pos.x][_pos.y].occupier;
-    }
-
-    // fetch single player data
-    function _getAllPlayerData(address _player)
-        public
-        view
-        returns (GameTypes.PlayerData memory playerData)
-    {
-        return s.players[_player];
-    }
-
-    function _getItemNonce() public view returns (uint256) {
-        return s.itemNonce;
-    }
-
-    // get data about a single item
-    function _getItemWithMetadata(uint256 _itemId)
-        public
-        view
-        returns (GameTypes.ItemWithMetadata memory)
-    {
-        return s.itemsWithMetadata[_itemId];
     }
 
     // dir = true means to add item (if it doesn't exist);
@@ -357,6 +332,10 @@ contract GameStorage {
         }
     }
 
+    // ------------------------------------------------------------
+    // Getters
+    // ------------------------------------------------------------
+
     // fetch player inventory
     function _getInventoryByPlayer(address _player)
         public
@@ -377,7 +356,40 @@ contract GameStorage {
             });
     }
 
+    // get all player addresses
     function _getAllPlayerAddresses() public view returns (address[] memory) {
         return s.allPlayers;
+    }
+
+    // get
+    function _getItemNonce() public view returns (uint256) {
+        return s.itemNonce;
+    }
+
+    // fetch single player data
+    function _getAllPlayerData(address _player)
+        public
+        view
+        returns (GameTypes.PlayerData memory playerData)
+    {
+        return s.players[_player];
+    }
+
+    // fetch metadata about a single item
+    function _getItemWithMetadata(uint256 _itemId)
+        public
+        view
+        returns (GameTypes.ItemWithMetadata memory)
+    {
+        return s.itemsWithMetadata[_itemId];
+    }
+
+    // get the number of blocks at a current location
+    function _getBlockCountAtPosition(uint256 _x, uint256 _y)
+        public
+        view
+        returns (uint256)
+    {
+        return s.map[_x][_y].blocks.length;
     }
 }
