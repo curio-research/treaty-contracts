@@ -157,6 +157,7 @@ export interface MinigameInterface extends utils.Interface {
     "move(uint256,uint256)": FunctionFragment;
     "place(uint256,uint256,uint256)": FunctionFragment;
     "s()": FunctionFragment;
+    "transfer(address,uint256,uint256)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -318,6 +319,10 @@ export interface MinigameInterface extends utils.Interface {
     values: [BigNumberish, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "s", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "transfer",
+    values: [string, BigNumberish, BigNumberish]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "_addCraftItemAndAmount",
@@ -451,6 +456,7 @@ export interface MinigameInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "move", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "place", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "s", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "transfer", data: BytesLike): Result;
 
   events: {
     "Attack(address,address)": EventFragment;
@@ -460,6 +466,7 @@ export interface MinigameInterface extends utils.Interface {
     "Move(address,uint256,uint256)": EventFragment;
     "NewPlayer(address,uint256,uint256)": EventFragment;
     "Place(address,uint256,uint256,uint256)": EventFragment;
+    "Transfer(address,address,uint256,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Attack"): EventFragment;
@@ -469,6 +476,7 @@ export interface MinigameInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "Move"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NewPlayer"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Place"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
 }
 
 export type AttackEvent = TypedEvent<
@@ -522,6 +530,13 @@ export type PlaceEvent = TypedEvent<
 >;
 
 export type PlaceEventFilter = TypedEventFilter<PlaceEvent>;
+
+export type TransferEvent = TypedEvent<
+  [string, string, BigNumber, BigNumber],
+  { _player: string; _recipient: string; _id: BigNumber; _amount: BigNumber }
+>;
+
+export type TransferEventFilter = TypedEventFilter<TransferEvent>;
 
 export interface Minigame extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -815,6 +830,13 @@ export interface Minigame extends BaseContract {
         startPlayerEnergy: BigNumber;
       }
     >;
+
+    transfer(
+      _recipient: string,
+      _itemId: BigNumberish,
+      _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
   };
 
   _addCraftItemAndAmount(
@@ -1081,6 +1103,13 @@ export interface Minigame extends BaseContract {
     }
   >;
 
+  transfer(
+    _recipient: string,
+    _itemId: BigNumberish,
+    _amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
     _addCraftItemAndAmount(
       _itemId: BigNumberish,
@@ -1336,6 +1365,13 @@ export interface Minigame extends BaseContract {
         startPlayerEnergy: BigNumber;
       }
     >;
+
+    transfer(
+      _recipient: string,
+      _itemId: BigNumberish,
+      _amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
   };
 
   filters: {
@@ -1392,6 +1428,19 @@ export interface Minigame extends BaseContract {
       _y?: null,
       _blockId?: null
     ): PlaceEventFilter;
+
+    "Transfer(address,address,uint256,uint256)"(
+      _player?: null,
+      _recipient?: null,
+      _id?: null,
+      _amount?: null
+    ): TransferEventFilter;
+    Transfer(
+      _player?: null,
+      _recipient?: null,
+      _id?: null,
+      _amount?: null
+    ): TransferEventFilter;
   };
 
   estimateGas: {
@@ -1630,6 +1679,13 @@ export interface Minigame extends BaseContract {
     ): Promise<BigNumber>;
 
     s(overrides?: CallOverrides): Promise<BigNumber>;
+
+    transfer(
+      _recipient: string,
+      _itemId: BigNumberish,
+      _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -1870,5 +1926,12 @@ export interface Minigame extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     s(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    transfer(
+      _recipient: string,
+      _itemId: BigNumberish,
+      _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
   };
 }

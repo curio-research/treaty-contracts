@@ -11,9 +11,13 @@ import "./GameTypes.sol";
 /// the actual "finite game" mechanics should live in another file, the one that players play.
 
 // TODO: Add proxy upgradeable
-// TODO: Find a better formatter lol
+
 contract Game is GameStorage {
     using SafeMath for uint256;
+
+    ////////////////////////
+    //      events
+    ////////////////////////
 
     event NewPlayer(address _player, uint256 _x, uint256 _y);
     event Move(address _player, uint256 _x, uint256 _y);
@@ -28,6 +32,12 @@ contract Game is GameStorage {
     event Craft(address _player, uint256 _blockId);
     event Attack(address _player1, address _player2); // add attack result here?
     event Death(address _player);
+    event Transfer(
+        address _player,
+        address _recipient,
+        uint256 _id,
+        uint256 _amount
+    );
 
     // initialize game with map, items
     constructor(
@@ -156,18 +166,6 @@ contract Game is GameStorage {
             _getPlayerPosition(msg.sender).y == _y
         ) revert("engine/cannot-stand-on-block");
 
-        // Logic for allowed blocks to place upon
-        // Note: saved for later
-        // uint256 _blockId = _getTopBlockAtPosition(_x, _y);
-        // bool _placable = false;
-        // for (uint256 i = 0; i < s.placeItemIds[_blockId].length; i++) {
-        //     if (s.placeItemIds[_blockId][i] == _itemId) {
-        //         _placable = true;
-        //         break;
-        //     }
-        // }
-        // if (!_placable) revert("engine/cannot-place-on-block");
-
         // TODO add distance logic here
 
         _place(_x, _y, _itemId);
@@ -202,6 +200,16 @@ contract Game is GameStorage {
         _increaseItemInInventory(msg.sender, _itemId, 1);
 
         emit Craft(msg.sender, _itemId);
+    }
+
+    // transfer resource
+    function transfer(
+        address _recipient,
+        uint256 _itemId,
+        uint256 _amount
+    ) public {
+        _transfer(_recipient, _itemId, _amount);
+        emit Transfer(msg.sender, _recipient, _itemId, _amount);
     }
 
     function attack(address _target) external {

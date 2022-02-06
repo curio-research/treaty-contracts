@@ -282,7 +282,9 @@ contract GameStorage {
         GameTypes.Position memory _recipientLoc = _getPlayerPosition(
             _recipient
         );
-        // can only transfer within certain range
+        if (msg.sender == _recipient)
+            revert("storage/recipient-same-as-sender");
+
         if (
             !_withinDistance(
                 _giverLoc.x,
@@ -291,7 +293,7 @@ contract GameStorage {
                 _recipientLoc.y,
                 5
             )
-        ) revert("storage/not-in-range");
+        ) revert("storage/not-in-range"); // can only transfer within certain range
         if (_getItemAmountById(msg.sender, _itemId) < _amount)
             revert("storage/insufficient-block");
 
@@ -330,17 +332,9 @@ contract GameStorage {
         }
     }
 
-    // once enabled solidity tells me stack is too deep. wtf
-    // increase epoch
-    // function _increaseEpoch() public {
-    //     if (block.timestamp - s.epochLastUpdated >= 60) {
-    //         s.epoch++;
-    //     }
-    // }
-
-    /////////////////////
-    ////// GETTERS //////
-    /////////////////////
+    // ------------------------------------------------------------
+    // Getters
+    // ------------------------------------------------------------
 
     // fetch player inventory
     function _getInventoryByPlayer(address _player)

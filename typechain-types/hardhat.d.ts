@@ -13,6 +13,10 @@ import * as Contracts from ".";
 declare module "hardhat/types/runtime" {
   interface HardhatEthersHelpers extends HardhatEthersHelpersBase {
     getContractFactory(
+      name: "Epoch",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Epoch__factory>;
+    getContractFactory(
       name: "Game",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Game__factory>;
@@ -25,14 +29,15 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Getters__factory>;
     getContractFactory(
-      name: "Minigame",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Minigame__factory>;
-    getContractFactory(
       name: "Permission",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Permission__factory>;
 
+    getContractAt(
+      name: "Epoch",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Epoch>;
     getContractAt(
       name: "Game",
       address: string,
@@ -48,11 +53,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Getters>;
-    getContractAt(
-      name: "Minigame",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.Minigame>;
     getContractAt(
       name: "Permission",
       address: string,
