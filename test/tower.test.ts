@@ -57,8 +57,8 @@ describe("Tower", () => {
   });
 
   it("Setup", async () => {
-    await game.connect(world.user1).initializePlayer(2, 1);
-    await game.connect(world.user2).initializePlayer(4, 3);
+    await game.connect(world.user1).initializePlayer(1, 1);
+    await game.connect(world.user2).initializePlayer(1, 2);
 
     await game.setEpochController(epoch.address);
   });
