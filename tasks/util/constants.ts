@@ -17,8 +17,12 @@ const START_PLAYER_ENERGY = 100;
 
 export const gameConstants = [WORLD_WIDTH, WORLD_HEIGHT, MOVE_RANGE, ATTACK_RANGE, ATTACK_DAMAGE, ATTACK_WAITTIME, START_PLAYER_HEALTH, START_PLAYER_ENERGY];
 
-export const masterGameSpecs = generateMap(WORLD_WIDTH, WORLD_HEIGHT, ROOM_WIDTH);
+// master game deploy args generator
+export const generateAllGameArgs = () => {
+  const masterGameSpecs = generateMap(WORLD_WIDTH, WORLD_HEIGHT, ROOM_WIDTH);
 
-// game deploy args
-export const GAME_DEPLOY_ARGS = [...gameConstants, masterGameSpecs.blocks, items];
-export const ALL_TOWERS = masterGameSpecs.towers;
+  return {
+    gameDeployArgs: [...gameConstants, masterGameSpecs.blocks, items],
+    allTowerArgs: masterGameSpecs.towers,
+  };
+};

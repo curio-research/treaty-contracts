@@ -1,3 +1,5 @@
+import { position } from "../../types/common";
+
 export interface Tower {
   rewardPerEpoch: number;
   itemId: number;
@@ -7,6 +9,6 @@ export interface Tower {
 }
 
 export interface TowerWithLocation {
-  location: string;
+  location: position;
   tower: Tower;
 }

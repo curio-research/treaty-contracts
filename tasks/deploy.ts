@@ -5,7 +5,7 @@ import * as fsPromise from "fs/promises";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { deployProxy, printDivider } from "./util/deployHelper";
-import { ALL_TOWERS, GAME_DEPLOY_ARGS, LOCALHOST_RPC_URL, LOCALHOST_WS_RPC_URL } from "./util/constants";
+import { generateAllGameArgs, LOCALHOST_RPC_URL, LOCALHOST_WS_RPC_URL } from "./util/constants";
 import { Getters, Game } from "../typechain-types";
 
 // ---------------------------------
@@ -23,7 +23,9 @@ task("deploy", "deploy contracts")
     printDivider();
     console.log("Network:", hre.network.name);
 
-    const GameContract = await deployProxy<Game>("Game", player1, hre, GAME_DEPLOY_ARGS);
+    const gameDeployArgs = generateAllGameArgs();
+
+    const GameContract = await deployProxy<Game>("Game", player1, hre, gameDeployArgs.gameDeployArgs);
     const GettersContract = await deployProxy<Getters>("Getters", player1, hre, [GameContract.address]);
     const EpochContract = await deployProxy<Epoch>("Epoch", player1, hre, [10]);
 
@@ -39,8 +41,10 @@ task("deploy", "deploy contracts")
     await GameContract.connect(player1)._increaseItemInInventory(player1.address, 1, 100); // give user1 items for testing
     await GameContract.connect(player1)._increaseItemInInventory(player1.address, 2, 100);
 
+    await GameContract.setEpochController(EpochContract.address); // set epoch controller
+
     // initialize towers
-    for (const tower of ALL_TOWERS) {
+    for (const tower of gameDeployArgs.allTowerArgs) {
       await GameContract.addTower(tower.location, tower.tower);
     }
 

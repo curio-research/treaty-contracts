@@ -10,5 +10,5 @@ export const deployProxy = async <C extends Contract>(contractName: string, sign
 };
 
 export const printDivider = () => {
-  console.log("----------------------");
+  console.log("------------------------------------");
 };

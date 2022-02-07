@@ -5,28 +5,18 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "./GameTypes.sol";
 
 /// @title Monolithic game storage
-/// @notice for v1 we can store everything in here - both player states and game states. we can think about
-/// using diamond proxy upgrade or other microservice architecture
 
 contract GameStorage {
     using SafeMath for uint256;
     GameTypes.GameStorage public s;
 
-    event StakeTower(string _towerId, uint256 _amount);
-    event UnstakeTower(string _towerId, uint256 _amount);
+    // ------------------------------------------------------------
+    // Events
+    // ------------------------------------------------------------
 
-    function _getPositionFromIndex(uint256 k)
-        public
-        view
-        returns (GameTypes.Position memory)
-    {
-        (bool _xValid, uint256 _x) = SafeMath.tryDiv(k, s.worldHeight);
-        (bool _yValid, uint256 _y) = SafeMath.tryMod(k, s.worldHeight);
-
-        if (!_xValid || !_yValid) revert("SafeMath/invalid-division");
-
-        return GameTypes.Position(_x, _y);
-    }
+    event StakeTower(address _player, string _towerId, uint256 _amount);
+    event UnstakeTower(address _player, string _towerId, uint256 _amount);
+    event ClaimReward(address _player, string _towerId, uint256 _reward);
 
     // getter method to fetch map in 10x10 chunks. can increase size
     function _getMap(uint256 _x, uint256 _y)
@@ -51,8 +41,36 @@ contract GameStorage {
         return ret;
     }
 
-    function _getWorldSize() public view returns (uint256, uint256) {
-        return (s.worldWidth, s.worldHeight);
+    function encodePos(GameTypes.Position memory _position)
+        public
+        pure
+        returns (string memory)
+    {
+        return string(abi.encodePacked(_position.x, _position.y));
+    }
+
+    // check if its within a distance (need to refactor into distance)
+    function _withinDistance(
+        GameTypes.Position memory p1,
+        GameTypes.Position memory p2,
+        uint256 _dist
+    ) public pure returns (bool) {
+        uint256 _xDist = p1.x >= p2.x ? p1.x - p2.x : p2.x - p1.x;
+        uint256 _yDist = p1.y >= p2.y ? p1.y - p2.y : p2.y - p1.y;
+        return _xDist <= _dist && _yDist <= _dist;
+    }
+
+    function _getPositionFromIndex(uint256 k)
+        public
+        view
+        returns (GameTypes.Position memory)
+    {
+        (bool _xValid, uint256 _x) = SafeMath.tryDiv(k, s.worldHeight);
+        (bool _yValid, uint256 _y) = SafeMath.tryMod(k, s.worldHeight);
+
+        if (!_xValid || !_yValid) revert("SafeMath/invalid-division");
+
+        return GameTypes.Position(_x, _y);
     }
 
     function _addCraftItemAndAmount(
@@ -130,7 +148,6 @@ contract GameStorage {
     ) public view returns (bool) {
         GameTypes.Position memory _position = _getPlayerPosition(_player);
 
-        // check if target coordinate is within map
         bool _inMap = _x < s.worldWidth &&
             _y < s.worldHeight &&
             _x >= 0 &&
@@ -138,12 +155,10 @@ contract GameStorage {
 
         if (!_inMap) return false;
 
-        // check coordinate x and y differences
-        if (!_withinDistance(_x, _y, _position.x, _position.y, s.moveRange))
-            return false;
+        GameTypes.Position memory _pos = GameTypes.Position({x: _x, y: _y});
+        if (!_withinDistance(_pos, _position, s.moveRange)) return false;
 
-        // check if target coordinate has block or player
-        if (_isOccupied(_x, _y)) return false;
+        if (_isOccupied(_x, _y)) return false; // check if target coordinate has block or player
 
         return true;
     }
@@ -160,30 +175,10 @@ contract GameStorage {
         // uint256 lastAttackedAt = s.lastAttackedAt[_player];
         // if (block.timestamp - lastAttackedAt <= s.attackWaitTime) return false; // must wait 5 seconds till next attack
 
-        if (
-            !_withinDistance(
-                playerPosition.x,
-                playerPosition.y,
-                targetPosition.x,
-                targetPosition.y,
-                s.attackRange
-            )
-        ) return false;
+        if (!_withinDistance(playerPosition, targetPosition, s.attackRange))
+            return false;
 
         return true;
-    }
-
-    function _withinDistance(
-        uint256 _x1,
-        uint256 _y1,
-        uint256 _x2,
-        uint256 _y2,
-        uint256 _dist
-    ) public pure returns (bool) {
-        uint256 _xDist = _x1 >= _x2 ? _x1 - _x2 : _x2 - _x1;
-        uint256 _yDist = _y1 >= _y2 ? _y1 - _y2 : _y2 - _y1;
-        bool _inDistance = _xDist <= _dist && _yDist <= _dist;
-        return _inDistance;
     }
 
     function _getBlockAtPosition(
@@ -240,20 +235,24 @@ contract GameStorage {
     }
 
     // player stats
-    function _increaseEnergy(address _player, uint256 _amount) public {
-        s.players[_player].energy += _amount;
+    function _changeEnergy(
+        address _player,
+        uint256 _amount,
+        bool dir
+    ) public {
+        dir
+            ? s.players[_player].energy += _amount
+            : s.players[_player].energy -= _amount;
     }
 
-    function _decreaseEnergy(address _player, uint256 _amount) public {
-        s.players[_player].energy -= _amount;
-    }
-
-    function _increaseHealth(address _player, uint256 _amount) public {
-        s.players[_player].health += _amount;
-    }
-
-    function _decreaseHealth(address _player, uint256 _amount) public {
-        s.players[_player].health -= _amount;
+    function _changeHealth(
+        address _player,
+        uint256 _amount,
+        bool dir
+    ) public {
+        dir
+            ? s.players[_player].health += _amount
+            : s.players[_player].health -= _amount;
     }
 
     // mine block
@@ -289,15 +288,8 @@ contract GameStorage {
         if (msg.sender == _recipient)
             revert("storage/recipient-same-as-sender");
 
-        if (
-            !_withinDistance(
-                _giverLoc.x,
-                _giverLoc.y,
-                _recipientLoc.x,
-                _recipientLoc.y,
-                5
-            )
-        ) revert("storage/not-in-range"); // can only transfer within certain range
+        if (!_withinDistance(_giverLoc, _recipientLoc, 5))
+            revert("storage/not-in-range"); // can only transfer within certain range
         if (_getItemAmountById(msg.sender, _itemId) < _amount)
             revert("storage/insufficient-block");
 
@@ -305,12 +297,13 @@ contract GameStorage {
         _increaseItemInInventory(_recipient, _itemId, _amount);
     }
 
-    function _die(address _player) public {
-        s.players[_player].alive = false;
+    // commenting it out for now
+    // function _die(address _player) public {
+    //     s.players[_player].alive = false;
 
-        GameTypes.Position memory _pos = s.players[_player].position;
-        delete s.map[_pos.x][_pos.y].occupier;
-    }
+    //     GameTypes.Position memory _pos = s.players[_player].position;
+    //     delete s.map[_pos.x][_pos.y].occupier;
+    // }
 
     // dir = true means to add item (if it doesn't exist);
     function _modifyItemInInventoryNonce(uint256 _itemId, bool dir) public {
@@ -340,86 +333,17 @@ contract GameStorage {
     // Tower
     // ------------------------------------------------------------
 
-    // give user points for staking
-    function addStakingPoints(uint256 _points) external {
-        s.stakePoints[msg.sender] += _points;
-    }
-
     function setEpochController(Epoch _addr) external {
         s.epochController = _addr;
-    }
-
-    // add tower to map. using this instead of constructor to avoid bloat
-    function addTower(string memory _towerId, GameTypes.Tower memory _tower)
-        external
-    {
-        s.towers[_towerId] = _tower;
-    }
-
-    // user claim reward for tower
-    function claimReward(string memory _towerId) external {
-        // add checker for distance
-        GameTypes.Tower memory tower = s.towers[_towerId];
-        if (tower.owner != msg.sender) revert("tower/invalid-tower-owner");
-
-        uint256 currentEpoch = s.epochController.epoch();
-
-        uint256 stakedEpochs = currentEpoch - tower.stakedTime;
-        uint256 totalReward = stakedEpochs * tower.rewardPerEpoch;
-
-        _increaseItemInInventory(msg.sender, tower.itemId, totalReward);
-        s.towers[_towerId].stakedTime = currentEpoch;
-    }
-
-    // stake in tower
-    function stake(string memory _towerId, uint256 _amount) external {
-        // add checker for distance
-        GameTypes.Tower storage tower = s.towers[_towerId];
-        if (tower.stakedAmount >= _amount) revert("tower/insufficient-stake");
-        if (s.stakePoints[msg.sender] < _amount)
-            revert("tower/insufficient-points");
-
-        s.stakePoints[msg.sender] += tower.stakedAmount; // return points to previous tower owner
-
-        uint256 currentEpoch = s.epochController.epoch();
-        // check inventory points to see if there are sufficient points
-        tower.owner = msg.sender;
-        tower.stakedTime = currentEpoch;
-        tower.stakedAmount = _amount;
-
-        s.stakePoints[msg.sender] -= _amount; // subtract points from user power
-
-        emit StakeTower(_towerId, _amount);
-    }
-
-    // unstake in tower
-    function unstake(string memory _towerId, uint256 _amount) external {
-        // add checker for distance
-        GameTypes.Tower storage tower = s.towers[_towerId];
-        if (tower.owner != msg.sender) revert("tower/invalid-tower-owner");
-        if (tower.stakedAmount < _amount) revert("tower/withdraw-overflow");
-
-        tower.stakedAmount -= _amount;
-
-        // if user unstakes all the points, they're no longer the owner
-        if (tower.stakedAmount == 0) {
-            tower.owner = address(0);
-        }
-
-        emit UnstakeTower(_towerId, _amount);
-    }
-
-    function getTowerById(string memory _id)
-        external
-        view
-        returns (GameTypes.Tower memory)
-    {
-        return s.towers[_id];
     }
 
     // ------------------------------------------------------------
     // Getters
     // ------------------------------------------------------------
+
+    function _getWorldSize() public view returns (uint256, uint256) {
+        return (s.worldWidth, s.worldHeight);
+    }
 
     // fetch player inventory
     function _getInventoryByPlayer(address _player)

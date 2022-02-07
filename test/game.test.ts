@@ -21,10 +21,6 @@ describe("Game", () => {
     GameContract = world.contracts.Game;
   });
 
-  it("Game Initialization", async () => {
-    expect(await GameContract.gameName()).to.be.equal("blocky");
-  });
-
   it("Player Initialization", async () => {
     await GameContract.connect(world.user1).initializePlayer(2, 1);
     await GameContract.connect(world.user2).initializePlayer(4, 3);

@@ -13,7 +13,10 @@ import { TowerWithLocation } from "../util/types/tower";
 // ------------------------------------------------------------
 
 const tower1: TowerWithLocation = {
-  location: `0-0`,
+  location: {
+    x: 0,
+    y: 0,
+  },
   tower: {
     rewardPerEpoch: 100,
     itemId: 1,
@@ -24,7 +27,10 @@ const tower1: TowerWithLocation = {
 };
 
 const tower2: TowerWithLocation = {
-  location: `1-1`,
+  location: {
+    x: 1,
+    y: 1,
+  },
   tower: {
     rewardPerEpoch: 200,
     itemId: 2,
@@ -51,8 +57,9 @@ describe("Tower", () => {
   });
 
   it("Setup", async () => {
-    await game.connect(world.user1).addStakingPoints(100); // give user stake points
-    await game.connect(world.user2).addStakingPoints(100);
+    await game.connect(world.user1).initializePlayer(2, 1);
+    await game.connect(world.user2).initializePlayer(4, 3);
+
     await game.setEpochController(epoch.address);
   });
 

@@ -5,10 +5,8 @@ export type { Epoch } from "./Epoch";
 export type { Game } from "./Game";
 export type { GameStorage } from "./GameStorage";
 export type { Getters } from "./Getters";
-export type { Permission } from "./Permission";
 
 export { Epoch__factory } from "./factories/Epoch__factory";
 export { Game__factory } from "./factories/Game__factory";
 export { GameStorage__factory } from "./factories/GameStorage__factory";
 export { Getters__factory } from "./factories/Getters__factory";
-export { Permission__factory } from "./factories/Permission__factory";

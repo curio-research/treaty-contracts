@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { EMPTY_ADDRESS } from "../../test/util/constants";
 import { position } from "../../types/common";
-import { Tower, TowerWithLocation } from "../../util/types/tower";
+import { TowerWithLocation } from "../../util/types/tower";
 
 // map helpers are used to generate a world with rooms, entrances, and a tower in the middle
 
@@ -134,7 +134,10 @@ export const generateTowerCoords = (worldWidth: number, worldHeight: number, roo
 const generateTowerSpecs = (towerLocations: position[]): TowerWithLocation[] => {
   return towerLocations.map((location) => {
     return {
-      location: `${location.x}-${location.y}`,
+      location: {
+        x: location.x,
+        y: location.y,
+      },
       tower: {
         rewardPerEpoch: 100,
         itemId: 1,

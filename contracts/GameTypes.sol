@@ -23,11 +23,6 @@ library GameTypes {
         uint256 energy;
         uint256 reach;
         Position position;
-
-        // Note for future purposes
-        // uint256 level;
-        // uint256 fullness;
-        // uint256[] holdItems; // items the user is currently holding
     }
 
     struct Tile {
