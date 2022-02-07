@@ -1,5 +1,7 @@
 import _ from "lodash";
+import { EMPTY_ADDRESS } from "../../test/util/constants";
 import { position } from "../../types/common";
+import { TowerWithLocation } from "../../util/types/tower";
 
 // map helpers are used to generate a world with rooms, entrances, and a tower in the middle
 
@@ -74,46 +76,30 @@ export const GenerateWalls = (width: number, height: number, roomWidth: number):
     }
   }
 
-  // remove duplicates
-  return removeDupPosFromArr(totalPos);
+  return removeDupPosFromArr(totalPos); // remove duplicates
 };
 
 // generate empty map
-export const GenerateEmptyMap = (worldWidth: number, worldHeight: number): number[][] => {
+export const generateEmptyMap = (worldWidth: number, worldHeight: number): number[][] => {
   const map = [];
   for (let i = 0; i < worldWidth * worldHeight; i++) map.push([]);
   return map;
 };
 
+interface GenerateWallCoordsProps {
+  gridCoords: position[];
+  indices: number[];
+}
+
 // generate a list of indices to apply to the map
-export const GenerateWallCoords = (worldWidth: number, worldHeight: number, roomWidth: number): number[] => {
+export const generateWallCoords = (worldWidth: number, worldHeight: number, roomWidth: number): GenerateWallCoordsProps => {
   const walls = GenerateWalls(worldWidth, worldHeight, roomWidth);
+  const indexedCoords = walls.map((wall) => wall.y * worldWidth + wall.x);
 
-  const coords: number[] = [];
-  walls.forEach((wall) => {
-    const idx = wall.y * worldWidth + wall.x; // calculate idx in array
-    coords.push(idx);
-  });
-  return coords;
-};
-
-// master map generation function
-export const MasterGenerateMap = (worldWidth: number, worldHeight: number, roomWidth: number): number[][] => {
-  const map = GenerateEmptyMap(worldWidth, worldHeight); // generate empty map
-
-  const walls = GenerateWallCoords(worldWidth, worldHeight, roomWidth); // generate wall blocks
-  const towers = GenerateTowerCoords(worldWidth, worldHeight, roomWidth); // generate tower locations
-
-  // apply block coordinates to master map;
-  walls.forEach((idx) => {
-    map[idx].push(14);
-  });
-
-  towers.forEach((idx) => {
-    map[idx].push(15);
-  });
-
-  return map;
+  return {
+    gridCoords: walls,
+    indices: indexedCoords,
+  };
 };
 
 // Generate tower locations in middle of rooms
@@ -130,18 +116,75 @@ export const GenerateTowerPos = (width: number, height: number, roomWidth: numbe
   return totalPos;
 };
 
-export const GenerateTowerCoords = (worldWidth: number, worldHeight: number, roomWidth: number) => {
-  const towers = GenerateTowerPos(worldWidth, worldHeight, roomWidth);
+interface TowerCoordsProps {
+  gridCoords: position[];
+  indices: number[];
+}
 
-  const coords: number[] = [];
-  towers.forEach((pos) => {
-    const idx = pos.y * worldWidth + pos.x; // calculate idx in array
-    coords.push(idx);
-  });
-  return coords;
+export const generateTowerCoords = (worldWidth: number, worldHeight: number, roomWidth: number): TowerCoordsProps => {
+  const towers = GenerateTowerPos(worldWidth, worldHeight, roomWidth);
+  const indices = towers.map((pos) => pos.y * worldWidth + pos.x);
+
+  return {
+    gridCoords: towers,
+    indices: indices,
+  };
 };
 
-// helper functions //
+const generateTowerSpecs = (towerLocations: position[]): TowerWithLocation[] => {
+  return towerLocations.map((location) => {
+    return {
+      location: {
+        x: location.x,
+        y: location.y,
+      },
+      tower: {
+        rewardPerEpoch: 100,
+        itemId: 1,
+        stakedAmount: 0,
+        stakedTime: 0,
+        owner: EMPTY_ADDRESS,
+      },
+    };
+  });
+};
+
+// ---------------------------------
+// master map generation function
+// ---------------------------------
+
+interface MasterGameSpecs {
+  blocks: number[][];
+  towers: TowerWithLocation[];
+}
+
+export const generateMap = (worldWidth: number, worldHeight: number, roomWidth: number): MasterGameSpecs => {
+  const map = generateEmptyMap(worldWidth, worldHeight); // generate empty map
+
+  const walls = generateWallCoords(worldWidth, worldHeight, roomWidth); // generate wall blocks
+  const towers = generateTowerCoords(worldWidth, worldHeight, roomWidth); // generate tower locations
+
+  const towerSpecs = generateTowerSpecs(towers.gridCoords);
+
+  // apply block coordinates to master map;
+  walls.indices.forEach((idx) => {
+    map[idx].push(14);
+  });
+
+  towers.indices.forEach((idx) => {
+    map[idx].push(15);
+  });
+
+  return {
+    blocks: map,
+    towers: towerSpecs,
+  };
+};
+
+// ---------------------------------
+// misc helpers
+// ---------------------------------
+
 const includeArrPos = (arr: position[], element: position): boolean => {
   for (let i = 0; i < arr.length; i++) {
     if (_.isEqual(arr[i], element)) {

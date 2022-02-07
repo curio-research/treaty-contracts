@@ -8,3 +8,7 @@ export const deployProxy = async <C extends Contract>(contractName: string, sign
   const contract = await factory.deploy(...contractArgs);
   return contract as C;
 };
+
+export const printDivider = () => {
+  console.log("------------------------------------");
+};

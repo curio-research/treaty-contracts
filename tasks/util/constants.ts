@@ -1,4 +1,4 @@
-import { MasterGenerateMap } from "./map";
+import { generateMap } from "./map";
 import { items } from "./../../test/util/constants";
 
 export const LOCALHOST_RPC_URL = "http://127.0.0.1:8545/";
@@ -8,18 +8,21 @@ export const LOCALHOST_WS_RPC_URL = "ws://localhost:8545";
 const WORLD_WIDTH = 20;
 const WORLD_HEIGHT = 20;
 const ROOM_WIDTH = 7;
+const MOVE_RANGE = 2;
+const ATTACK_RANGE = 1;
+const ATTACK_DAMAGE = 5;
+const ATTACK_WAITTIME = 5;
+const START_PLAYER_HEALTH = 100;
+const START_PLAYER_ENERGY = 100;
 
-export const gameConstants = [
-  WORLD_WIDTH, // worldWidth
-  WORLD_HEIGHT, // worldHeight
-  2, // moveRange
-  1, // attackRange
-  5, // attackDamage
-  5, // attackWaitTime
-  100, // startPlayerHealth
-  100, // startPlayerEnergy
-];
+export const gameConstants = [WORLD_WIDTH, WORLD_HEIGHT, MOVE_RANGE, ATTACK_RANGE, ATTACK_DAMAGE, ATTACK_WAITTIME, START_PLAYER_HEALTH, START_PLAYER_ENERGY];
 
-export const blocks = MasterGenerateMap(WORLD_WIDTH, WORLD_HEIGHT, ROOM_WIDTH);
+// master game deploy args generator
+export const generateAllGameArgs = () => {
+  const masterGameSpecs = generateMap(WORLD_WIDTH, WORLD_HEIGHT, ROOM_WIDTH);
 
-export const GAME_DEPLOY_ARGS = [...gameConstants, blocks, items];
+  return {
+    gameDeployArgs: [...gameConstants, masterGameSpecs.blocks, items],
+    allTowerArgs: masterGameSpecs.towers,
+  };
+};

@@ -15,9 +15,9 @@ import "./GameTypes.sol";
 contract Game is GameStorage {
     using SafeMath for uint256;
 
-    ////////////////////////
-    //      events
-    ////////////////////////
+    // ------------------------------------------------------------
+    // Events
+    // ------------------------------------------------------------
 
     event NewPlayer(address _player, uint256 _x, uint256 _y);
     event Move(address _player, uint256 _x, uint256 _y);
@@ -39,7 +39,10 @@ contract Game is GameStorage {
         uint256 _amount
     );
 
-    // initialize game with map, items
+    // ------------------------------------------------------------
+    // Constructor
+    // ------------------------------------------------------------
+
     constructor(
         uint256 _worldWidth,
         uint256 _worldHeight,
@@ -76,6 +79,7 @@ contract Game is GameStorage {
         }
     }
 
+    // initialize player
     function initializePlayer(uint256 _x, uint256 _y) public {
         if (s.players[msg.sender].initialized)
             revert("engine/player-already-initialized");
@@ -97,12 +101,14 @@ contract Game is GameStorage {
 
         _setOccupierAtPosition(msg.sender, _x, _y);
 
+        s.stakePoints[msg.sender] = 100;
+
         emit NewPlayer(msg.sender, _x, _y);
     }
 
     // player move function
+    // refactor this into Position struct?
     function move(uint256 _x, uint256 _y) external {
-        // add hook here. look at openzeppelin
         if (!_isValidMove(msg.sender, _x, _y)) revert("engine/invalid-move");
 
         GameTypes.Position memory _position = _getPlayerPosition(msg.sender);
@@ -219,23 +225,108 @@ contract Game is GameStorage {
         if (!_isValidAttack(msg.sender, _target))
             revert("engine/invalid-attack");
 
-        _decreaseHealth(_target, s.attackDamage);
-
-        s.lastAttackedAt[msg.sender] = block.timestamp;
+        _changeHealth(_target, s.attackDamage, false);
 
         emit Attack(msg.sender, _target);
 
         if (s.players[_target].health <= 0) {
-            _die(_target);
+            // _die(_target);
             emit Death(_target);
         }
     }
 
-    function gameName() external pure returns (string memory name) {
-        /**
-         * For testing purposes
-         */
+    // ------------------------------------------------------------
+    // Tower
+    // ------------------------------------------------------------
 
-        return "blocky";
+    // add tower to map. using this instead of constructor to avoid bloat
+    function addTower(
+        GameTypes.Position memory _position,
+        GameTypes.Tower memory _tower
+    ) external {
+        string memory _towerId = encodePos(_position);
+        s.towers[_towerId] = _tower;
+    }
+
+    // user claim reward for tower
+    function claimReward(GameTypes.Position memory _position) external {
+        string memory _towerId = encodePos(_position);
+        GameTypes.Tower memory tower = s.towers[_towerId];
+
+        // should we add a distance checker here?
+        if (tower.owner != msg.sender) revert("tower/invalid-tower-owner");
+
+        uint256 currentEpoch = s.epochController.epoch();
+
+        uint256 stakedEpochs = currentEpoch - tower.stakedTime;
+        uint256 totalReward = stakedEpochs * tower.rewardPerEpoch;
+
+        _increaseItemInInventory(msg.sender, tower.itemId, totalReward);
+        s.towers[_towerId].stakedTime = currentEpoch;
+
+        emit ClaimReward(msg.sender, _towerId, totalReward);
+    }
+
+    // stake in tower
+    function stake(GameTypes.Position memory _position, uint256 _amount)
+        external
+    {
+        string memory _towerId = encodePos(_position);
+
+        // add checker for distance
+
+        if (!_withinDistance(_position, s.players[msg.sender].position, 2))
+            revert("tower/outside-distance");
+
+        GameTypes.Tower storage tower = s.towers[_towerId];
+        if (tower.stakedAmount >= _amount) revert("tower/insufficient-stake");
+        if (s.stakePoints[msg.sender] < _amount)
+            revert("tower/insufficient-points");
+
+        s.stakePoints[msg.sender] += tower.stakedAmount; // return points to previous tower owner
+
+        uint256 currentEpoch = s.epochController.epoch();
+        // check inventory points to see if there are sufficient points
+        tower.owner = msg.sender;
+        tower.stakedTime = currentEpoch;
+        tower.stakedAmount = _amount;
+
+        s.stakePoints[msg.sender] -= _amount; // subtract points from user power
+
+        emit StakeTower(msg.sender, _towerId, _amount);
+    }
+
+    // unstake in tower
+    function unstake(GameTypes.Position memory _position, uint256 _amount)
+        external
+    {
+        if (!_withinDistance(_position, s.players[msg.sender].position, 2))
+            revert("tower/outside-distance");
+
+        string memory _towerId = encodePos(_position);
+
+        GameTypes.Tower storage tower = s.towers[_towerId];
+        if (tower.owner != msg.sender) revert("tower/invalid-tower-owner");
+        if (tower.stakedAmount < _amount) revert("tower/withdraw-overflow");
+
+        tower.stakedAmount -= _amount;
+
+        // if user unstakes all the points, they're no longer the owner
+        if (tower.stakedAmount == 0) {
+            tower.owner = address(0);
+        }
+
+        emit UnstakeTower(msg.sender, _towerId, _amount);
+    }
+
+    function getTowerById(GameTypes.Position memory _position)
+        external
+        view
+        returns (GameTypes.Tower memory)
+    {
+        string memory _towerId = string(
+            abi.encodePacked(_position.x, _position.y)
+        );
+        return s.towers[_towerId];
     }
 }
