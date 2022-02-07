@@ -39,7 +39,10 @@ contract Game is GameStorage {
         uint256 _amount
     );
 
-    // initialize game with map, items
+    // ------------------------------------------------------------
+    // Constructor
+    // ------------------------------------------------------------
+
     constructor(
         uint256 _worldWidth,
         uint256 _worldHeight,
@@ -96,6 +99,8 @@ contract Game is GameStorage {
         s.allPlayers.push(msg.sender);
 
         _setOccupierAtPosition(msg.sender, _x, _y);
+
+        s.stakePoints[msg.sender] = 100;
 
         emit NewPlayer(msg.sender, _x, _y);
     }

@@ -1,13 +1,18 @@
+import { Epoch } from "./../typechain-types/Epoch";
 import { task } from "hardhat/config";
 import * as path from "path";
 import * as fsPromise from "fs/promises";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { HardhatArguments, HardhatRuntimeEnvironment, RunSuperFunction, TaskArguments } from "hardhat/types";
-import { deployProxy } from "./util/deployHelper";
-import { GAME_DEPLOY_ARGS, LOCALHOST_RPC_URL, LOCALHOST_WS_RPC_URL } from "./util/constants";
+import { HardhatRuntimeEnvironment } from "hardhat/types";
+import { deployProxy, printDivider } from "./util/deployHelper";
+import { ALL_TOWERS, GAME_DEPLOY_ARGS, LOCALHOST_RPC_URL, LOCALHOST_WS_RPC_URL } from "./util/constants";
 import { Getters, Game } from "../typechain-types";
 
+// ---------------------------------
+// deploy script
 // npx hardhat deploy --network localhost
+// ---------------------------------
+
 task("deploy", "deploy contracts")
   .addFlag("noport", "Don't port files to frontend") // default is to call port
   .setAction(async (args: any, hre: HardhatRuntimeEnvironment) => {
@@ -15,13 +20,18 @@ task("deploy", "deploy contracts")
     let player2: SignerWithAddress;
     [player1, player2] = await hre.ethers.getSigners();
 
+    printDivider();
     console.log("Network:", hre.network.name);
 
     const GameContract = await deployProxy<Game>("Game", player1, hre, GAME_DEPLOY_ARGS);
     const GettersContract = await deployProxy<Getters>("Getters", player1, hre, [GameContract.address]);
+    const EpochContract = await deployProxy<Epoch>("Epoch", player1, hre, [10]);
 
+    printDivider();
     console.log("Game: ", GameContract.address);
     console.log("Getters:", GettersContract.address);
+    console.log("Epoch: ", EpochContract.address);
+    printDivider();
 
     await GameContract.connect(player1).initializePlayer(1, 1); // initialize users
     await GameContract.connect(player2).initializePlayer(5, 5);
@@ -29,7 +39,15 @@ task("deploy", "deploy contracts")
     await GameContract.connect(player1)._increaseItemInInventory(player1.address, 1, 100); // give user1 items for testing
     await GameContract.connect(player1)._increaseItemInInventory(player1.address, 2, 100);
 
-    // save config file
+    // initialize towers
+    for (const tower of ALL_TOWERS) {
+      await GameContract.addTower(tower.location, tower.tower);
+    }
+
+    // ---------------------------------
+    // porting files to frontend
+    // ---------------------------------
+
     const currentFileDir = path.join(__dirname);
 
     const configFile = {
@@ -39,10 +57,9 @@ task("deploy", "deploy contracts")
       WS_RPC_URL: LOCALHOST_WS_RPC_URL,
     };
 
-    // port flag
     await fsPromise.writeFile(path.join(currentFileDir, "game.config.json"), JSON.stringify(configFile));
 
-    const noPort = args.noport;
+    const noPort = args.noport; // port flag
     if (noPort) return;
-    await hre.run("port");
+    await hre.run("port"); // default to porting files
   });

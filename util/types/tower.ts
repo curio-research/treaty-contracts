@@ -5,3 +5,8 @@ export interface Tower {
   stakedTime: number;
   owner: string;
 }
+
+export interface TowerWithLocation {
+  location: string;
+  tower: Tower;
+}

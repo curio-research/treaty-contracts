@@ -1,9 +1,9 @@
 import { serializeTileWithMetadata } from "./util/serializer";
-import { blocks, EMPTY_ADDRESS, REVERT_MESSAGES } from "./util/constants";
+import { blocks, REVERT_MESSAGES } from "./util/constants";
 import { Game } from "../typechain-types";
 import { expect } from "chai";
 import { World, initializeWorld, AllContracts, verifyAt, moveAndVerify, mineAndVerify } from "./util/testWorld";
-import { delay, fixtureLoader, serializeBigNumberArr } from "./util/helper";
+import { fixtureLoader, serializeBigNumberArr } from "./util/helper";
 
 describe("Game", () => {
   let world: World;

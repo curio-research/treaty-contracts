@@ -1,19 +1,20 @@
+import { expect } from "chai";
 import { decodePlayerInventory } from "./../util/serde/game";
 import { decodeTower } from "./../util/serde/tower";
 import { Game } from "./../typechain-types/Game";
 import { Epoch } from "./../typechain-types/Epoch";
-import { expect } from "chai";
 import { EMPTY_ADDRESS, REVERT_MESSAGES } from "./util/constants";
 import { World, initializeWorld } from "./util/testWorld";
 import { fixtureLoader, increaseBlockchainTime } from "./util/helper";
+import { TowerWithLocation } from "../util/types/tower";
 
 // ------------------------------------------------------------
 // Tower test
 // ------------------------------------------------------------
 
-const tower1 = {
+const tower1: TowerWithLocation = {
   location: `0-0`,
-  towerInfo: {
+  tower: {
     rewardPerEpoch: 100,
     itemId: 1,
     stakedAmount: 0,
@@ -22,9 +23,9 @@ const tower1 = {
   },
 };
 
-const tower2 = {
+const tower2: TowerWithLocation = {
   location: `1-1`,
-  towerInfo: {
+  tower: {
     rewardPerEpoch: 200,
     itemId: 2,
     stakedAmount: 0,
@@ -56,13 +57,13 @@ describe("Tower", () => {
   });
 
   it("Initialize towers", async () => {
-    await game.addTower(tower1.location, tower1.towerInfo);
-    await game.addTower(tower2.location, tower2.towerInfo);
+    await game.addTower(tower1.location, tower1.tower);
+    await game.addTower(tower2.location, tower2.tower);
 
     const tower_1 = decodeTower(await game.getTowerById(tower1.location));
     const tower_2 = decodeTower(await game.getTowerById(tower2.location));
-    expect(tower_1).eqls(tower1.towerInfo);
-    expect(tower_2).eqls(tower2.towerInfo);
+    expect(tower_1).eqls(tower1.tower);
+    expect(tower_2).eqls(tower2.tower);
   });
 
   it("Stake", async () => {
@@ -81,7 +82,7 @@ describe("Tower", () => {
 
     const player1_inventory = decodePlayerInventory(await game._getInventoryByPlayer(world.user1.address)); // check player1 inventory
     expect(player1_inventory.itemIds).eqls([1]);
-    expect(player1_inventory.itemAmounts).eqls([tower1.towerInfo.rewardPerEpoch]);
+    expect(player1_inventory.itemAmounts).eqls([tower1.tower.rewardPerEpoch]);
   });
 
   it("Faulty claim", async () => {
@@ -113,7 +114,7 @@ describe("Tower", () => {
     await game.connect(world.user2).claimReward(tower1.location); // user2 claims reward
     const player2_inventory = decodePlayerInventory(await game._getInventoryByPlayer(world.user2.address)); // check player2 inventory
     expect(player2_inventory.itemIds).eqls([1]);
-    expect(player2_inventory.itemAmounts).eqls([increase_epochs * tower1.towerInfo.rewardPerEpoch]);
+    expect(player2_inventory.itemAmounts).eqls([increase_epochs * tower1.tower.rewardPerEpoch]);
   });
 
   it("Unstake", async () => {
