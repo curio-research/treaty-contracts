@@ -4,6 +4,7 @@ import { deployGameContract, deployGettersContract, deployEpochContract } from "
 import { ethers } from "hardhat";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { Game, Getters } from "../../typechain-types";
+import { REVERT_MESSAGES } from "./constants";
 
 export interface AllContracts {
   Game: Game;
@@ -62,10 +63,10 @@ export const mineAndVerify = async (game: Game, signer: SignerWithAddress, x: nu
   await expect(await game.connect(signer)._getItemAmountById(signer.address, blockId)).equals(initialInventory + 1);
 
   // verify block is indeed mined
-  await expect(game._getBlockAtPosition(x, y, z)).to.be.revertedWith("engine/invalid-z-index");
+  await expect(game._getBlockAtPosition(x, y, z)).to.be.revertedWith(REVERT_MESSAGES.ENGINE_INVALID_Z_INDEX);
 
   // verify that player cannot mine blocks at same position
-  await expect(game.connect(signer).mine(x, y, z)).to.be.revertedWith("engine/no-blocks-available");
+  await expect(game.connect(signer).mine(x, y, z)).to.be.revertedWith(REVERT_MESSAGES.ENGINE_NONEXISTENT_BLOCK);
 
   return blockId;
 };

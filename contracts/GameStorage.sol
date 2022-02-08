@@ -41,7 +41,7 @@ contract GameStorage {
         return ret;
     }
 
-    function encodePos(GameTypes.Position memory _position)
+    function _encodePos(GameTypes.Position memory _position)
         public
         pure
         returns (string memory)
@@ -73,26 +73,26 @@ contract GameStorage {
         return GameTypes.Position(_x, _y);
     }
 
-    function _addCraftItemAndAmount(
-        uint256 _itemId,
-        uint256[] memory _craftItemIds,
-        uint256[] memory _craftItemAmounts
-    ) public {
-        if (_craftItemIds.length != _craftItemAmounts.length)
-            revert("engine/invalid-craft-item-amounts");
+    // function _addCraftItemAndAmount(
+    //     uint256 _itemId,
+    //     uint256[] memory _craftItemIds,
+    //     uint256[] memory _craftItemAmounts
+    // ) public {
+    //     if (_craftItemIds.length != _craftItemAmounts.length)
+    //         revert("engine/invalid-craft-item-amounts");
 
-        s.itemsWithMetadata[_itemId].craftable = true;
-        s.itemsWithMetadata[_itemId].craftItemIds = _craftItemIds;
-        s.itemsWithMetadata[_itemId].craftItemAmounts = _craftItemAmounts;
+    //     s.itemsWithMetadata[_itemId].craftable = true;
+    //     s.itemsWithMetadata[_itemId].craftItemIds = _craftItemIds;
+    //     s.itemsWithMetadata[_itemId].craftItemAmounts = _craftItemAmounts;
 
-        s.itemNonce += 1;
-    }
+    //     s.itemNonce += 1;
+    // }
 
-    function _removeCraftItemAndAmount(uint256 _itemId) public {
-        s.itemsWithMetadata[_itemId].craftable = false;
-        delete s.itemsWithMetadata[_itemId].craftItemIds;
-        delete s.itemsWithMetadata[_itemId].craftItemAmounts;
-    }
+    // function _removeCraftItemAndAmount(uint256 _itemId) public {
+    //     s.itemsWithMetadata[_itemId].craftable = false;
+    //     delete s.itemsWithMetadata[_itemId].craftItemIds;
+    //     delete s.itemsWithMetadata[_itemId].craftItemAmounts;
+    // }
 
     // merge these two functions together
     function _increaseItemInInventory(
@@ -234,16 +234,16 @@ contract GameStorage {
         return s.inventory[_player][_blockId];
     }
 
-    // player stats
-    function _changeEnergy(
-        address _player,
-        uint256 _amount,
-        bool dir
-    ) public {
-        dir
-            ? s.players[_player].energy += _amount
-            : s.players[_player].energy -= _amount;
-    }
+    // // player stats
+    // function _changeEnergy(
+    //     address _player,
+    //     uint256 _amount,
+    //     bool dir
+    // ) public {
+    //     dir
+    //         ? s.players[_player].energy += _amount
+    //         : s.players[_player].energy -= _amount;
+    // }
 
     function _changeHealth(
         address _player,
@@ -258,8 +258,14 @@ contract GameStorage {
     // mine block
     function _mine(uint256 _x, uint256 _y) public {
         s.map[_x][_y].blocks.pop();
-        uint256 topBlockId = s.map[_x][_y].blocks[_getBlockCountAtPosition(_x, _y)-1];
-        s.map[_x][_y].topLevelStrength = s.itemsWithMetadata[topBlockId].strength;
+
+        uint256 _blockCount = _getBlockCountAtPosition(_x, _y);
+        if (_blockCount > 0) {
+            uint256 topBlockId = s.map[_x][_y].blocks[_getBlockCountAtPosition(_x, _y)-1];
+            s.map[_x][_y].topLevelStrength = s.itemsWithMetadata[topBlockId].strength;
+        } else {
+            s.map[_x][_y].topLevelStrength = 0;
+        }
     }
 
     // place block
@@ -275,6 +281,7 @@ contract GameStorage {
         } else {
             blocks.push(_itemId);
         }
+        s.map[_x][_y].topLevelStrength = s.itemsWithMetadata[_itemId].strength;
     }
 
     // transfer item from one player to another
