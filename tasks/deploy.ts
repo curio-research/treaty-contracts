@@ -38,8 +38,7 @@ task("deploy", "deploy contracts")
     await GameContract.connect(player1).initializePlayer(1, 1); // initialize users
     await GameContract.connect(player2).initializePlayer(5, 5);
 
-    await GameContract.connect(player1)._increaseItemInInventory(player1.address, 1, 100); // give user1 items for testing
-    await GameContract.connect(player1)._increaseItemInInventory(player1.address, 2, 100);
+    await GameContract.connect(player1)._increaseItemInInventory(player1.address, 0, 10); // give user1 cacti for defense
 
     await GameContract.setEpochController(EpochContract.address); // set epoch controller
 
