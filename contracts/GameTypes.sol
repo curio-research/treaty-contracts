@@ -28,6 +28,10 @@ library GameTypes {
     struct Tile {
         address occupier;
         uint256[] blocks;
+
+        // Remaining strength of the top level block. 
+        // Note: May need to convert to a full array in future to prevent malicious restoring of block strength by placing on top.
+        uint256 topLevelStrength; 
     }
 
     struct TileWithMetadata {

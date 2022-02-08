@@ -21,11 +21,17 @@ contract Game is GameStorage {
 
     event NewPlayer(address _player, uint256 _x, uint256 _y);
     event Move(address _player, uint256 _x, uint256 _y);
-    event Mine(
+    event MineItem(
         address _player,
         uint256 _x,
         uint256 _y,
         uint256 _blockId,
+        uint256 _zIndex
+    );
+    event AttackItem(
+        address _player,
+        uint256 _x,
+        uint256 _y,
         uint256 _zIndex
     );
     event Place(address _player, uint256 _x, uint256 _y, uint256 _blockId);
@@ -120,16 +126,11 @@ contract Game is GameStorage {
         emit Move(msg.sender, _x, _y);
     }
 
-    // mine resource blocks at specific z-index base layer (z-index of 0)
-    function mine(
+    function mineItem(
         uint256 _x,
         uint256 _y,
         uint256 _zIdx
     ) external {
-        uint256 _blockCount = _getBlockCountAtPosition(_x, _y);
-        if (_blockCount == 0) revert("engine/no-blocks-available");
-        if (_zIdx != _blockCount - 1) revert("engine/no-blocks-available");
-
         // can only mine with the needed tool
         uint256 _itemId = _getBlockAtPosition(_x, _y, _zIdx);
         uint256[] memory _mineItemIds = s
@@ -156,7 +157,33 @@ contract Game is GameStorage {
         _increaseItemInInventory(msg.sender, _itemId, 1);
         _mine(_x, _y);
 
-        emit Mine(msg.sender, _x, _y, _itemId, _zIdx);
+        emit MineItem(msg.sender, _x, _y, _itemId, _zIdx);
+    }
+
+    function attackItem(
+        uint256 _x,
+        uint256 _y,
+        uint256 _zIdx
+    ) external {
+        _decreaseTopLevelStrengthAtPosition(_x, _y, s.attackDamage);
+        emit AttackItem(msg.sender, _x, _y, _zIdx);
+    }
+
+    // mine resource blocks at specific z-index base layer (z-index of 0)
+    function mine(
+        uint256 _x,
+        uint256 _y,
+        uint256 _zIdx
+    ) external {
+        uint256 _blockCount = _getBlockCountAtPosition(_x, _y);
+        if (_blockCount == 0) revert("engine/no-blocks-available");
+        if (_zIdx != _blockCount - 1) revert("engine/no-blocks-available");
+
+        if (s.attackDamage < _getTopLevelStrengthAtPosition(_x, _y)) {
+            this.attackItem(_x, _y, _zIdx);
+        } else {
+            this.mineItem(_x, _y, _zIdx);
+        }
     }
 
     // place item at block

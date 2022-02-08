@@ -258,6 +258,8 @@ contract GameStorage {
     // mine block
     function _mine(uint256 _x, uint256 _y) public {
         s.map[_x][_y].blocks.pop();
+        uint256 topBlockId = s.map[_x][_y].blocks[_getBlockCountAtPosition(_x, _y)-1];
+        s.map[_x][_y].topLevelStrength = s.itemsWithMetadata[topBlockId].strength;
     }
 
     // place block
@@ -400,5 +402,21 @@ contract GameStorage {
         returns (uint256)
     {
         return s.map[_x][_y].blocks.length;
+    }
+
+    function _getTopLevelStrengthAtPosition(uint256 _x, uint256 _y)
+        public
+        view
+        returns (uint256)
+    {
+        return s.map[_x][_y].topLevelStrength;
+    }
+
+    function _decreaseTopLevelStrengthAtPosition(uint256 _x, uint256 _y, uint256 _attackDamage)
+        public
+        returns (uint256)
+    {
+        s.map[_x][_y].topLevelStrength -= _attackDamage;
+        return s.map[_x][_y].topLevelStrength;
     }
 }
