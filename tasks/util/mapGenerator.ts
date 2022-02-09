@@ -1,6 +1,7 @@
+import { EMPTY_ADDRESS } from "./../../util/network/common";
+import { position } from "./../../util/types/common";
+import { GenerateWallCoordsProps, MasterGameSpecs, TowerCoordsProps } from "./types/mapGenerator";
 import _ from "lodash";
-import { EMPTY_ADDRESS } from "../../test/util/constants";
-import { position } from "../../types/common";
 import { TowerWithLocation } from "../../util/types/tower";
 
 // map helpers are used to generate a world with rooms, entrances, and a tower in the middle
@@ -61,12 +62,10 @@ const GenerateSingleRoom = (x: number, y: number, width: number, height: number,
     return coords;
   };
 
-  const coords = generateCoords();
-
-  return coords.filter((coord) => coord.x < width && coord.y < height); // remove coords outside of map
+  return generateCoords().filter((coord) => coord.x < width && coord.y < height); // remove coords outside of map
 };
 
-export const GenerateWalls = (width: number, height: number, roomWidth: number): position[] => {
+export const generateWalls = (width: number, height: number, roomWidth: number): position[] => {
   let totalPos: position[] = [];
 
   for (let x = 0; x < width; x += roomWidth - 1) {
@@ -86,14 +85,9 @@ export const generateEmptyMap = (worldWidth: number, worldHeight: number): numbe
   return map;
 };
 
-interface GenerateWallCoordsProps {
-  gridCoords: position[];
-  indices: number[];
-}
-
 // generate a list of indices to apply to the map
 export const generateWallCoords = (worldWidth: number, worldHeight: number, roomWidth: number): GenerateWallCoordsProps => {
-  const walls = GenerateWalls(worldWidth, worldHeight, roomWidth);
+  const walls = generateWalls(worldWidth, worldHeight, roomWidth);
   const indexedCoords = walls.map((wall) => wall.y * worldWidth + wall.x);
 
   return {
@@ -115,11 +109,6 @@ export const GenerateTowerPos = (width: number, height: number, roomWidth: numbe
 
   return totalPos;
 };
-
-interface TowerCoordsProps {
-  gridCoords: position[];
-  indices: number[];
-}
 
 export const generateTowerCoords = (worldWidth: number, worldHeight: number, roomWidth: number): TowerCoordsProps => {
   const towers = GenerateTowerPos(worldWidth, worldHeight, roomWidth);
@@ -152,11 +141,6 @@ const generateTowerSpecs = (towerLocations: position[]): TowerWithLocation[] => 
 // ---------------------------------
 // master map generation function
 // ---------------------------------
-
-interface MasterGameSpecs {
-  blocks: number[][];
-  towers: TowerWithLocation[];
-}
 
 export const generateMap = (worldWidth: number, worldHeight: number, roomWidth: number): MasterGameSpecs => {
   const map = generateEmptyMap(worldWidth, worldHeight); // generate empty map

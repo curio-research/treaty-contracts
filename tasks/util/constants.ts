@@ -1,5 +1,6 @@
-import { generateMap } from "./map";
+import { generateMap } from "./mapGenerator";
 import { ItemWithMetadata } from "../../util/types/getter";
+import { TowerWithLocation } from "./../../util/types/tower";
 
 export const LOCALHOST_RPC_URL = "http://127.0.0.1:8545/";
 export const LOCALHOST_WS_RPC_URL = "ws://localhost:8545";
@@ -63,7 +64,7 @@ const items: ItemWithMetadata[] = [
     craftItemAmounts: [],
     occupiable: false,
     healthDamage: 0,
-    energyDamage: 0
+    energyDamage: 0,
   },
   {
     // tower
@@ -75,14 +76,17 @@ const items: ItemWithMetadata[] = [
     craftItemAmounts: [],
     occupiable: false,
     healthDamage: 0,
-    energyDamage: 0
+    energyDamage: 0,
   },
 ];
 
-export const gameConstants = [WORLD_WIDTH, WORLD_HEIGHT, MOVE_RANGE, ATTACK_RANGE, ATTACK_DAMAGE, ATTACK_WAITTIME, START_PLAYER_HEALTH, START_PLAYER_ENERGY];
+const generateGameConstants = () => {
+  return [WORLD_WIDTH, WORLD_HEIGHT, MOVE_RANGE, ATTACK_RANGE, ATTACK_DAMAGE, ATTACK_WAITTIME, START_PLAYER_HEALTH, START_PLAYER_ENERGY];
+};
 
 // master game deploy args generator
-export const generateAllGameArgs = () => {
+export const generateAllGameArgs = (): allGameArgs => {
+  const gameConstants = generateGameConstants();
   const masterGameSpecs = generateMap(WORLD_WIDTH, WORLD_HEIGHT, ROOM_WIDTH);
 
   return {
@@ -90,3 +94,8 @@ export const generateAllGameArgs = () => {
     allTowerArgs: masterGameSpecs.towers,
   };
 };
+
+interface allGameArgs {
+  gameDeployArgs: any[];
+  allTowerArgs: TowerWithLocation[];
+}

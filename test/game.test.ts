@@ -1,10 +1,9 @@
-import { serializeTileWithMetadata } from "./util/serializer";
 import { blocks, REVERT_MESSAGES } from "./util/constants";
 import { Game } from "../typechain-types";
 import { expect } from "chai";
 import { World, initializeWorld, AllContracts, verifyAt, moveAndVerify, mineAndVerify } from "./util/testWorld";
 import { fixtureLoader, serializeBigNumberArr } from "./util/helper";
-import { decodePlayerInventory } from "../util/serde/game";
+import { decodePlayerInventory, decodeTileWithMetadata } from "../util/serde/game";
 
 describe("Game", () => {
   let world: World;
@@ -36,7 +35,7 @@ describe("Game", () => {
 
   it("Verify map", async () => {
     const mapChunk0 = await GameContract._getMap(0, 0);
-    expect(blocks[0]).eqls(serializeTileWithMetadata(mapChunk0[0]).blocks);
+    expect(blocks[0]).eqls(decodeTileWithMetadata(mapChunk0[0]).blocks);
   });
 
   it("Move", async () => {
