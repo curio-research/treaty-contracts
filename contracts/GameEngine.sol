@@ -33,12 +33,6 @@ contract Game is GameStorage {
     event Craft(address _player, uint256 _blockId);
     event Attack(address _player1, address _player2); // add attack result here?
     event Death(address _player);
-    event Transfer(
-        address _player,
-        address _recipient,
-        uint256 _id,
-        uint256 _amount
-    );
 
     // ------------------------------------------------------------
     // Constructor

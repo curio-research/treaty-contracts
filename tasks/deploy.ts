@@ -25,8 +25,6 @@ task("deploy", "deploy contracts")
 
     const gameDeployArgs = generateAllGameArgs();
 
-    console.log(gameDeployArgs);
-
     const GameContract = await deployProxy<Game>("Game", player1, hre, gameDeployArgs.gameDeployArgs);
     const GettersContract = await deployProxy<Getters>("Getters", player1, hre, [GameContract.address]);
     const EpochContract = await deployProxy<Epoch>("Epoch", player1, hre, [10]);

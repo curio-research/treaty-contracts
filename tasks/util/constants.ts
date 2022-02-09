@@ -45,7 +45,7 @@ const items: ItemWithMetadata[] = [
     // sword
     mineable: false,
     mineItemIds: [],
-    strength: 10, // playerAttack += 10 => mining wood takes 2 turns not 5
+    strength: 10,
     craftable: true,
     craftItemIds: [1],
     craftItemAmounts: [5],

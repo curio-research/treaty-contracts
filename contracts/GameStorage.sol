@@ -17,6 +17,12 @@ contract GameStorage {
     event StakeTower(address _player, string _towerId, uint256 _amount);
     event UnstakeTower(address _player, string _towerId, uint256 _amount);
     event ClaimReward(address _player, string _towerId, uint256 _reward);
+    event Transfer(
+        address _player,
+        address _recipient,
+        uint256 _id,
+        uint256 _amount
+    );
 
     // getter method to fetch map in 10x10 chunks. can increase size
     function _getMap(uint256 _x, uint256 _y)
@@ -308,6 +314,8 @@ contract GameStorage {
 
         _decreaseItemInInventory(msg.sender, _itemId, _amount);
         _increaseItemInInventory(_recipient, _itemId, _amount);
+
+        emit Transfer(msg.sender, _recipient, _itemId, _amount);
     }
 
     // commenting it out for now for MVP

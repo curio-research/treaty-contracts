@@ -398,11 +398,13 @@ export interface GameStorageInterface extends utils.Interface {
   events: {
     "ClaimReward(address,string,uint256)": EventFragment;
     "StakeTower(address,string,uint256)": EventFragment;
+    "Transfer(address,address,uint256,uint256)": EventFragment;
     "UnstakeTower(address,string,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "ClaimReward"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "StakeTower"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "UnstakeTower"): EventFragment;
 }
 
@@ -419,6 +421,13 @@ export type StakeTowerEvent = TypedEvent<
 >;
 
 export type StakeTowerEventFilter = TypedEventFilter<StakeTowerEvent>;
+
+export type TransferEvent = TypedEvent<
+  [string, string, BigNumber, BigNumber],
+  { _player: string; _recipient: string; _id: BigNumber; _amount: BigNumber }
+>;
+
+export type TransferEventFilter = TypedEventFilter<TransferEvent>;
 
 export type UnstakeTowerEvent = TypedEvent<
   [string, string, BigNumber],
@@ -1126,6 +1135,19 @@ export interface GameStorage extends BaseContract {
       _towerId?: null,
       _amount?: null
     ): StakeTowerEventFilter;
+
+    "Transfer(address,address,uint256,uint256)"(
+      _player?: null,
+      _recipient?: null,
+      _id?: null,
+      _amount?: null
+    ): TransferEventFilter;
+    Transfer(
+      _player?: null,
+      _recipient?: null,
+      _id?: null,
+      _amount?: null
+    ): TransferEventFilter;
 
     "UnstakeTower(address,string,uint256)"(
       _player?: null,
