@@ -1,4 +1,4 @@
-import { position } from "../../../types/common";
+import { position } from "../../../util/types/common";
 import { TowerWithLocation } from "../../../util/types/tower";
 
 export interface MasterGameSpecs {

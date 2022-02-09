@@ -1,9 +1,10 @@
 import { blocks, REVERT_MESSAGES } from "./util/constants";
-import { Game } from "../typechain-types";
 import { expect } from "chai";
+import { Game } from "../typechain-types";
 import { World, initializeWorld, AllContracts, verifyAt, moveAndVerify, mineAndVerify } from "./util/testWorld";
-import { fixtureLoader, serializeBigNumberArr } from "./util/helper";
+import { fixtureLoader } from "./util/helper";
 import { decodePlayerInventory, decodeTileWithMetadata } from "../util/serde/game";
+import { decodeBNArr } from "../util/serde/common";
 
 describe("Game", () => {
   let world: World;
@@ -102,8 +103,8 @@ describe("Game", () => {
   //   await mineAndVerify(GameContract, world.user1, 0, 0, 0, 0); // mine block at (0, 0)
 
   //   const player1Inventory = await GameContract._getInventoryByPlayer(world.user1.address);
-  //   expect(serializeBigNumberArr(player1Inventory.craftItemIds)).eqls([6]);
-  //   expect(serializeBigNumberArr(player1Inventory.craftItemAmounts)).eqls([1]);
+  //   expect(decodeBNArr(player1Inventory.craftItemIds)).eqls([6]);
+  //   expect(decodeBNArr(player1Inventory.craftItemAmounts)).eqls([1]);
   // });
 
   // it("Craft", async () => {
@@ -135,7 +136,7 @@ describe("Game", () => {
   //   await expect(GameContract.connect(world.user1).attack(world.user3.address)).to.be.revertedWith(REVERT_MESSAGES.ENGINE_INVALID_ATTACK);
 
   //   // TODO: There's a native way for the local blockchain to speed up x seconds using hardhat library. ideally switch to that for accuracy
-  //   await delay(5000);
+  // increaseBlockchainTime(5000)
 
   //   await GameContract.connect(world.user1).attack(world.user2.address);
   //   user2Data = await GameContract._getAllPlayerData(world.user2.address);

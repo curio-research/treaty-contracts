@@ -1,3 +1,5 @@
+export const EMPTY_ADDRESS = "0x0000000000000000000000000000000000000000";
+
 export enum REVERT_MESSAGES {
   ENGINE_INVALID_MOVE = "engine/invalid-move",
   ENGINE_NOT_STAND_ON_BLOCK = "engine/cannot-stand-on-block",
