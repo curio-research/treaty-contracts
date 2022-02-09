@@ -66,13 +66,12 @@ contract Game is GameStorage {
             GameTypes.Position memory _position = _getPositionFromIndex(k);
             s.map[_position.x][_position.y].blocks = _blocks[k];
 
-            // this is buggy. removing for now and assume each block has 1 block
-            // if (_blocks[k].length > 0) {
-            //     uint256 topBlockId = _blocks[k][_blocks[k].length - 1];
-            //     s.map[_position.x][_position.y].topLevelStrength = _items[
-            //         topBlockId
-            //     ].strength;
-            // }
+            if (_blocks[k].length > 0) {
+                uint256 topBlockId = _blocks[k][_blocks[k].length - 1];
+                s.map[_position.x][_position.y].topLevelStrength = _items[
+                    topBlockId
+                ].strength;
+            }
         }
 
         // Initialize items

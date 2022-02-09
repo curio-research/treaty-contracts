@@ -168,11 +168,11 @@ export const generateMap = (worldWidth: number, worldHeight: number, roomWidth: 
 
   // apply block coordinates to master map;
   walls.indices.forEach((idx) => {
-    map[idx].push(14);
+    map[idx].push(3);
   });
 
   towers.indices.forEach((idx) => {
-    map[idx].push(15);
+    map[idx].push(4);
   });
 
   return {

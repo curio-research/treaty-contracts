@@ -53,6 +53,30 @@ const items: ItemWithMetadata[] = [
     healthDamage: 0,
     energyDamage: 0,
   },
+  {
+    // wall
+    mineable: false,
+    mineItemIds: [],
+    strength: 0,
+    craftable: false,
+    craftItemIds: [],
+    craftItemAmounts: [],
+    occupiable: false,
+    healthDamage: 0,
+    energyDamage: 0
+  },
+  {
+    // tower
+    mineable: false,
+    mineItemIds: [],
+    strength: 0,
+    craftable: false,
+    craftItemIds: [],
+    craftItemAmounts: [],
+    occupiable: false,
+    healthDamage: 0,
+    energyDamage: 0
+  },
 ];
 
 export const gameConstants = [WORLD_WIDTH, WORLD_HEIGHT, MOVE_RANGE, ATTACK_RANGE, ATTACK_DAMAGE, ATTACK_WAITTIME, START_PLAYER_HEALTH, START_PLAYER_ENERGY];
