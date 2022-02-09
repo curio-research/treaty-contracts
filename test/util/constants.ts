@@ -7,6 +7,7 @@ export enum REVERT_MESSAGES {
   ENGINE_INVALID_ATTACK = "engine/invalid-attack",
   ENGINE_INSUFFICIENT_MATERIAL = "engine/insufficient-material",
   ENGINE_NONEXISTENT_BLOCK = "engine/nonexistent-block",
+  ENGINE_INVALID_Z_INDEX = "engine/invalid-z-index",
   EPOCH_PREMATURE = "epoch/premature",
   TOWER_INVALID_OWNER = "tower/invalid-tower-owner",
   TOWER_INSUFFICIENT_STAKE = "tower/insufficient-stake",
@@ -151,14 +152,14 @@ const itemInputs: ItemWithMetadataInput[] = [
     // stone
     mineable: true,
     mineItemIds: [12],
-    strength: 20,
+    strength: 75,
     craftable: false,
     occupiable: false,
   },
   {
     // wood
     mineable: true,
-    strength: 10,
+    strength: 50,
     craftable: false,
     occupiable: false,
   },
@@ -166,7 +167,7 @@ const itemInputs: ItemWithMetadataInput[] = [
     // cactus
     mineable: true,
     mineItemIds: [13],
-    strength: 5,
+    strength: 25,
     craftable: false,
     occupiable: false,
   },

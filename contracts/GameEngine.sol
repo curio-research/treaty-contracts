@@ -21,13 +21,14 @@ contract Game is GameStorage {
 
     event NewPlayer(address _player, uint256 _x, uint256 _y);
     event Move(address _player, uint256 _x, uint256 _y);
-    event Mine(
+    event MineItem(
         address _player,
         uint256 _x,
         uint256 _y,
         uint256 _blockId,
         uint256 _zIndex
     );
+    event AttackItem(address _player, uint256 _x, uint256 _y, uint256 _zIndex);
     event Place(address _player, uint256 _x, uint256 _y, uint256 _blockId);
     event Craft(address _player, uint256 _blockId);
     event Attack(address _player1, address _player2); // add attack result here?
@@ -69,7 +70,13 @@ contract Game is GameStorage {
         uint256 _positionCount = _worldWidth * _worldHeight;
         for (uint256 k = 0; k < _positionCount; k++) {
             GameTypes.Position memory _position = _getPositionFromIndex(k);
-            s.map[_position.x][_position.y].blocks = _blocks[k]; // FIXME is this safer, or the for loop below?
+            s.map[_position.x][_position.y].blocks = _blocks[k];
+            if (_blocks[k].length > 0) {
+                uint256 topBlockId = _blocks[k][_blocks[k].length - 1];
+                s.map[_position.x][_position.y].topLevelStrength = _items[
+                    topBlockId
+                ].strength;
+            }
         }
 
         // Initialize items
@@ -120,18 +127,15 @@ contract Game is GameStorage {
         emit Move(msg.sender, _x, _y);
     }
 
-    // mine resource blocks at specific z-index base layer (z-index of 0)
-    function mine(
+    function mineItem(
         uint256 _x,
         uint256 _y,
-        uint256 _zIdx
-    ) external {
-        uint256 _blockCount = _getBlockCountAtPosition(_x, _y);
-        if (_blockCount == 0) revert("engine/no-blocks-available");
-        if (_zIdx != _blockCount - 1) revert("engine/no-blocks-available");
-
+        uint256 _zIdx,
+        address _playerAddr
+    ) public {
         // can only mine with the needed tool
         uint256 _itemId = _getBlockAtPosition(_x, _y, _zIdx);
+
         uint256[] memory _mineItemIds = s
             .itemsWithMetadata[_itemId]
             .mineItemIds;
@@ -141,7 +145,7 @@ contract Game is GameStorage {
         } else {
             for (uint256 i = 0; i < _mineItemIds.length; i++) {
                 uint256 _mineItemAmount = _getItemAmountById(
-                    msg.sender,
+                    _playerAddr,
                     _mineItemIds[i]
                 );
                 if (_mineItemAmount > 0) {
@@ -153,10 +157,38 @@ contract Game is GameStorage {
 
         if (!_canMine) revert("engine/tool-needed");
 
-        _increaseItemInInventory(msg.sender, _itemId, 1);
+        _increaseItemInInventory(_playerAddr, _itemId, 1);
         _mine(_x, _y);
 
-        emit Mine(msg.sender, _x, _y, _itemId, _zIdx);
+        emit MineItem(_playerAddr, _x, _y, _itemId, _zIdx);
+    }
+
+    function attackItem(
+        uint256 _x,
+        uint256 _y,
+        uint256 _zIdx,
+        address _playerAddr
+    ) public {
+        _changeTopLevelStrengthAtPosition(_x, _y, s.attackDamage, false);
+
+        emit AttackItem(_playerAddr, _x, _y, _zIdx);
+    }
+
+    // mine resource blocks at specific z-index base layer (z-indexf of 0)
+    function mine(
+        uint256 _x,
+        uint256 _y,
+        uint256 _zIdx
+    ) external {
+        uint256 _blockCount = _getBlockCountAtPosition(_x, _y);
+        if (_blockCount == 0) revert("engine/nonexistent-block");
+        if (_zIdx != _blockCount - 1) revert("engine/nonexistent-block");
+
+        if (s.attackDamage < _getTopLevelStrengthAtPosition(_x, _y)) {
+            attackItem(_x, _y, _zIdx, msg.sender);
+        } else {
+            mineItem(_x, _y, _zIdx, msg.sender);
+        }
     }
 
     // place item at block
@@ -208,16 +240,6 @@ contract Game is GameStorage {
         emit Craft(msg.sender, _itemId);
     }
 
-    // transfer resource
-    function transfer(
-        address _recipient,
-        uint256 _itemId,
-        uint256 _amount
-    ) public {
-        _transfer(_recipient, _itemId, _amount);
-        emit Transfer(msg.sender, _recipient, _itemId, _amount);
-    }
-
     function attack(address _target) external {
         // attacks are both time-limited and range-limited
         if (_target == address(0)) revert("engine/no-target");
@@ -244,13 +266,13 @@ contract Game is GameStorage {
         GameTypes.Position memory _position,
         GameTypes.Tower memory _tower
     ) external {
-        string memory _towerId = encodePos(_position);
+        string memory _towerId = _encodePos(_position);
         s.towers[_towerId] = _tower;
     }
 
     // user claim reward for tower
     function claimReward(GameTypes.Position memory _position) external {
-        string memory _towerId = encodePos(_position);
+        string memory _towerId = _encodePos(_position);
         GameTypes.Tower memory tower = s.towers[_towerId];
 
         // should we add a distance checker here?
@@ -271,7 +293,7 @@ contract Game is GameStorage {
     function stake(GameTypes.Position memory _position, uint256 _amount)
         external
     {
-        string memory _towerId = encodePos(_position);
+        string memory _towerId = _encodePos(_position);
 
         // add checker for distance
 
@@ -303,7 +325,7 @@ contract Game is GameStorage {
         if (!_withinDistance(_position, s.players[msg.sender].position, 2))
             revert("tower/outside-distance");
 
-        string memory _towerId = encodePos(_position);
+        string memory _towerId = _encodePos(_position);
 
         GameTypes.Tower storage tower = s.towers[_towerId];
         if (tower.owner != msg.sender) revert("tower/invalid-tower-owner");
