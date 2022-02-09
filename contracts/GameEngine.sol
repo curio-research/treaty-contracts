@@ -28,12 +28,7 @@ contract Game is GameStorage {
         uint256 _blockId,
         uint256 _zIndex
     );
-    event AttackItem(
-        address _player,
-        uint256 _x,
-        uint256 _y,
-        uint256 _zIndex
-    );
+    event AttackItem(address _player, uint256 _x, uint256 _y, uint256 _zIndex);
     event Place(address _player, uint256 _x, uint256 _y, uint256 _blockId);
     event Craft(address _player, uint256 _blockId);
     event Attack(address _player1, address _player2); // add attack result here?
@@ -77,8 +72,10 @@ contract Game is GameStorage {
             GameTypes.Position memory _position = _getPositionFromIndex(k);
             s.map[_position.x][_position.y].blocks = _blocks[k];
             if (_blocks[k].length > 0) {
-                uint256 topBlockId = _blocks[k][_blocks[k].length-1];
-                s.map[_position.x][_position.y].topLevelStrength = _items[topBlockId].strength;
+                uint256 topBlockId = _blocks[k][_blocks[k].length - 1];
+                s.map[_position.x][_position.y].topLevelStrength = _items[
+                    topBlockId
+                ].strength;
             }
         }
 
@@ -138,6 +135,7 @@ contract Game is GameStorage {
     ) external {
         // can only mine with the needed tool
         uint256 _itemId = _getBlockAtPosition(_x, _y, _zIdx);
+
         uint256[] memory _mineItemIds = s
             .itemsWithMetadata[_itemId]
             .mineItemIds;
@@ -171,11 +169,12 @@ contract Game is GameStorage {
         uint256 _zIdx,
         address _playerAddr
     ) external {
-        _decreaseTopLevelStrengthAtPosition(_x, _y, s.attackDamage);
+        _changeTopLevelStrengthAtPosition(_x, _y, s.attackDamage, false);
+
         emit AttackItem(_playerAddr, _x, _y, _zIdx);
     }
 
-    // mine resource blocks at specific z-index base layer (z-index of 0)
+    // mine resource blocks at specific z-index base layer (z-indexf of 0)
     function mine(
         uint256 _x,
         uint256 _y,
@@ -242,16 +241,6 @@ contract Game is GameStorage {
 
         emit Craft(msg.sender, _itemId);
     }
-
-    // transfer resource
-    // function transfer(
-    //     address _recipient,
-    //     uint256 _itemId,
-    //     uint256 _amount
-    // ) public {
-    //     _transfer(_recipient, _itemId, _amount);
-    //     emit Transfer(msg.sender, _recipient, _itemId, _amount);
-    // }
 
     function attack(address _target) external {
         // attacks are both time-limited and range-limited

@@ -261,8 +261,12 @@ contract GameStorage {
 
         uint256 _blockCount = _getBlockCountAtPosition(_x, _y);
         if (_blockCount > 0) {
-            uint256 topBlockId = s.map[_x][_y].blocks[_getBlockCountAtPosition(_x, _y)-1];
-            s.map[_x][_y].topLevelStrength = s.itemsWithMetadata[topBlockId].strength;
+            uint256 topBlockId = s.map[_x][_y].blocks[
+                _getBlockCountAtPosition(_x, _y) - 1
+            ];
+            s.map[_x][_y].topLevelStrength = s
+                .itemsWithMetadata[topBlockId]
+                .strength;
         } else {
             s.map[_x][_y].topLevelStrength = 0;
         }
@@ -306,7 +310,7 @@ contract GameStorage {
         _increaseItemInInventory(_recipient, _itemId, _amount);
     }
 
-    // commenting it out for now
+    // commenting it out for now for MVP
     // function _die(address _player) public {
     //     s.players[_player].alive = false;
 
@@ -419,11 +423,14 @@ contract GameStorage {
         return s.map[_x][_y].topLevelStrength;
     }
 
-    function _decreaseTopLevelStrengthAtPosition(uint256 _x, uint256 _y, uint256 _attackDamage)
-        public
-        returns (uint256)
-    {
-        s.map[_x][_y].topLevelStrength -= _attackDamage;
-        return s.map[_x][_y].topLevelStrength;
+    function _changeTopLevelStrengthAtPosition(
+        uint256 _x,
+        uint256 _y,
+        uint256 _attackDamage,
+        bool dir
+    ) public {
+        dir == true
+            ? s.map[_x][_y].topLevelStrength += _attackDamage
+            : s.map[_x][_y].topLevelStrength -= _attackDamage;
     }
 }

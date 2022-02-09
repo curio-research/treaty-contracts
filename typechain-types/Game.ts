@@ -139,8 +139,8 @@ export interface GameInterface extends utils.Interface {
   functions: {
     "_blockOccupier(uint256,uint256)": FunctionFragment;
     "_changeHealth(address,uint256,bool)": FunctionFragment;
+    "_changeTopLevelStrengthAtPosition(uint256,uint256,uint256,bool)": FunctionFragment;
     "_decreaseItemInInventory(address,uint256,uint256)": FunctionFragment;
-    "_decreaseTopLevelStrengthAtPosition(uint256,uint256,uint256)": FunctionFragment;
     "_encodePos((uint256,uint256))": FunctionFragment;
     "_getAllPlayerAddresses()": FunctionFragment;
     "_getAllPlayerData(address)": FunctionFragment;
@@ -194,12 +194,12 @@ export interface GameInterface extends utils.Interface {
     values: [string, BigNumberish, boolean]
   ): string;
   encodeFunctionData(
-    functionFragment: "_decreaseItemInInventory",
-    values: [string, BigNumberish, BigNumberish]
+    functionFragment: "_changeTopLevelStrengthAtPosition",
+    values: [BigNumberish, BigNumberish, BigNumberish, boolean]
   ): string;
   encodeFunctionData(
-    functionFragment: "_decreaseTopLevelStrengthAtPosition",
-    values: [BigNumberish, BigNumberish, BigNumberish]
+    functionFragment: "_decreaseItemInInventory",
+    values: [string, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "_encodePos",
@@ -370,11 +370,11 @@ export interface GameInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "_decreaseItemInInventory",
+    functionFragment: "_changeTopLevelStrengthAtPosition",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "_decreaseTopLevelStrengthAtPosition",
+    functionFragment: "_decreaseItemInInventory",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "_encodePos", data: BytesLike): Result;
@@ -654,17 +654,18 @@ export interface Game extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    _changeTopLevelStrengthAtPosition(
+      _x: BigNumberish,
+      _y: BigNumberish,
+      _attackDamage: BigNumberish,
+      dir: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     _decreaseItemInInventory(
       _player: string,
       _itemId: BigNumberish,
       _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    _decreaseTopLevelStrengthAtPosition(
-      _x: BigNumberish,
-      _y: BigNumberish,
-      _attackDamage: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -952,17 +953,18 @@ export interface Game extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  _changeTopLevelStrengthAtPosition(
+    _x: BigNumberish,
+    _y: BigNumberish,
+    _attackDamage: BigNumberish,
+    dir: boolean,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   _decreaseItemInInventory(
     _player: string,
     _itemId: BigNumberish,
     _amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  _decreaseTopLevelStrengthAtPosition(
-    _x: BigNumberish,
-    _y: BigNumberish,
-    _attackDamage: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1248,19 +1250,20 @@ export interface Game extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    _changeTopLevelStrengthAtPosition(
+      _x: BigNumberish,
+      _y: BigNumberish,
+      _attackDamage: BigNumberish,
+      dir: boolean,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     _decreaseItemInInventory(
       _player: string,
       _itemId: BigNumberish,
       _amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    _decreaseTopLevelStrengthAtPosition(
-      _x: BigNumberish,
-      _y: BigNumberish,
-      _attackDamage: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     _encodePos(
       _position: PositionStruct,
@@ -1651,17 +1654,18 @@ export interface Game extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    _changeTopLevelStrengthAtPosition(
+      _x: BigNumberish,
+      _y: BigNumberish,
+      _attackDamage: BigNumberish,
+      dir: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     _decreaseItemInInventory(
       _player: string,
       _itemId: BigNumberish,
       _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    _decreaseTopLevelStrengthAtPosition(
-      _x: BigNumberish,
-      _y: BigNumberish,
-      _attackDamage: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1918,17 +1922,18 @@ export interface Game extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    _changeTopLevelStrengthAtPosition(
+      _x: BigNumberish,
+      _y: BigNumberish,
+      _attackDamage: BigNumberish,
+      dir: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     _decreaseItemInInventory(
       _player: string,
       _itemId: BigNumberish,
       _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    _decreaseTopLevelStrengthAtPosition(
-      _x: BigNumberish,
-      _y: BigNumberish,
-      _attackDamage: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
