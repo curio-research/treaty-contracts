@@ -17,7 +17,8 @@ const START_PLAYER_ENERGY = 100;
 
 // item specs
 const items: ItemWithMetadata[] = [
-  { // cactus
+  {
+    // cactus
     mineable: true,
     mineItemIds: [],
     strength: 25,
@@ -26,9 +27,10 @@ const items: ItemWithMetadata[] = [
     craftItemAmounts: [],
     occupiable: false,
     healthDamage: 0,
-    energyDamage: 0
+    energyDamage: 0,
   },
-  { // iron
+  {
+    // iron
     mineable: true,
     mineItemIds: [],
     strength: 50,
@@ -37,9 +39,10 @@ const items: ItemWithMetadata[] = [
     craftItemAmounts: [],
     occupiable: false,
     healthDamage: 0,
-    energyDamage: 0
+    energyDamage: 0,
   },
-  { // sword
+  {
+    // sword
     mineable: false,
     mineItemIds: [],
     strength: 10, // playerAttack += 10 => mining wood takes 2 turns not 5
@@ -48,9 +51,9 @@ const items: ItemWithMetadata[] = [
     craftItemAmounts: [5],
     occupiable: false,
     healthDamage: 0,
-    energyDamage: 0
-  }
-]
+    energyDamage: 0,
+  },
+];
 
 export const gameConstants = [WORLD_WIDTH, WORLD_HEIGHT, MOVE_RANGE, ATTACK_RANGE, ATTACK_DAMAGE, ATTACK_WAITTIME, START_PLAYER_HEALTH, START_PLAYER_ENERGY];
 
