@@ -4,6 +4,7 @@ import { Game } from "../typechain-types";
 import { expect } from "chai";
 import { World, initializeWorld, AllContracts, verifyAt, moveAndVerify, mineAndVerify } from "./util/testWorld";
 import { fixtureLoader, serializeBigNumberArr } from "./util/helper";
+import { decodePlayerInventory } from "../util/serde/game";
 
 describe("Game", () => {
   let world: World;
@@ -53,24 +54,24 @@ describe("Game", () => {
   });
 
   it("Place", async () => {
-    let player1Inventory = await GameContract._getInventoryByPlayer(world.user1.address);
-    expect(serializeBigNumberArr(player1Inventory.craftItemIds)).eqls([6]);
-    expect(serializeBigNumberArr(player1Inventory.craftItemAmounts)).eqls([10]);
+    let player1Inventory = decodePlayerInventory(await GameContract._getInventoryByPlayer(world.user1.address));
+    expect(player1Inventory.itemIds).eqls([6]);
+    expect(player1Inventory.itemAmounts).eqls([10]);
 
     await GameContract.connect(world.user1).place(2, 2, 6);
     await GameContract.connect(world.user1).place(2, 0, 6);
-    player1Inventory = await GameContract._getInventoryByPlayer(world.user1.address);
-    expect(serializeBigNumberArr(player1Inventory.craftItemIds)).eqls([6]);
-    expect(serializeBigNumberArr(player1Inventory.craftItemAmounts)).eqls([8]);
+    player1Inventory = decodePlayerInventory(await GameContract._getInventoryByPlayer(world.user1.address));
+    expect(player1Inventory.itemIds).eqls([6]);
+    expect(player1Inventory.itemAmounts).eqls([8]);
 
     expect(await GameContract._getBlockAtPosition(2, 2, 0)).equals(6);
     await expect(GameContract._getBlockAtPosition(1, 1, 0)).to.be.revertedWith(REVERT_MESSAGES.ENGINE_INVALID_Z_INDEX);
   });
 
   it("Repeated Mine", async () => {
-    let player1Inventory = await GameContract._getInventoryByPlayer(world.user1.address);
-    expect(serializeBigNumberArr(player1Inventory.craftItemIds)).eqls([6]);
-    expect(serializeBigNumberArr(player1Inventory.craftItemAmounts)).eqls([8]);
+    let player1Inventory = decodePlayerInventory(await GameContract._getInventoryByPlayer(world.user1.address));
+    expect(player1Inventory.itemIds).eqls([6]);
+    expect(player1Inventory.itemAmounts).eqls([8]);
     expect(await GameContract._getTopLevelStrengthAtPosition(2, 2)).equals(50);
 
     // player attack is 5 and block strength is 50 => expect exactly 10 mines
@@ -78,20 +79,20 @@ describe("Game", () => {
     for (let i = 0; i < 9; i++) {
       await GameContract.connect(world.user1).mine(2, 2, 0);
     }
-    player1Inventory = await GameContract._getInventoryByPlayer(world.user1.address);
-    expect(serializeBigNumberArr(player1Inventory.craftItemIds)).eqls([6]);
-    expect(serializeBigNumberArr(player1Inventory.craftItemAmounts)).eqls([8]);
+    player1Inventory = decodePlayerInventory(await GameContract._getInventoryByPlayer(world.user1.address));
+    expect(player1Inventory.itemIds).eqls([6]);
+    expect(player1Inventory.itemAmounts).eqls([8]);
     expect(await GameContract._getTopLevelStrengthAtPosition(2, 2)).equals(5);
 
     // the last mine successfully mines the item
     await GameContract.connect(world.user1).mine(2, 2, 0);
-    player1Inventory = await GameContract._getInventoryByPlayer(world.user1.address);
-    expect(serializeBigNumberArr(player1Inventory.craftItemIds)).eqls([6]);
-    expect(serializeBigNumberArr(player1Inventory.craftItemAmounts)).eqls([9]);
+    player1Inventory = decodePlayerInventory(await GameContract._getInventoryByPlayer(world.user1.address));
+    expect(player1Inventory.itemIds).eqls([6]);
+    expect(player1Inventory.itemAmounts).eqls([9]);
 
     // no more mines should be possible
     await expect(GameContract.connect(world.user1).mine(2, 2, 0)).to.be.revertedWith(REVERT_MESSAGES.ENGINE_NONEXISTENT_BLOCK);
-  })
+  });
 
   /**
    * Below are tests for mine, place, and craft based on a different item list.

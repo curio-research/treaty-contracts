@@ -132,7 +132,7 @@ contract Game is GameStorage {
         uint256 _y,
         uint256 _zIdx,
         address _playerAddr
-    ) external {
+    ) public {
         // can only mine with the needed tool
         uint256 _itemId = _getBlockAtPosition(_x, _y, _zIdx);
 
@@ -168,7 +168,7 @@ contract Game is GameStorage {
         uint256 _y,
         uint256 _zIdx,
         address _playerAddr
-    ) external {
+    ) public {
         _changeTopLevelStrengthAtPosition(_x, _y, s.attackDamage, false);
 
         emit AttackItem(_playerAddr, _x, _y, _zIdx);
@@ -185,12 +185,10 @@ contract Game is GameStorage {
         if (_zIdx != _blockCount - 1) revert("engine/nonexistent-block");
 
         if (s.attackDamage < _getTopLevelStrengthAtPosition(_x, _y)) {
-            this.attackItem(_x, _y, _zIdx, msg.sender);
+            attackItem(_x, _y, _zIdx, msg.sender);
         } else {
-            this.mineItem(_x, _y, _zIdx, msg.sender);
+            mineItem(_x, _y, _zIdx, msg.sender);
         }
-        // console.log(_getInventoryByPlayer(msg.sender).craftItemIds[0]);
-        // console.log(_getInventoryByPlayer(msg.sender).craftItemAmounts[0]);
     }
 
     // place item at block
