@@ -26,7 +26,6 @@ type ItemWithMetadataInput = {
   energyDamage?: number;
 };
 
-// Pretty sure this can be rewritten in some way
 class ItemWithMetadata {
   readonly mineable: boolean;
   readonly mineItemIds: number[];
@@ -83,6 +82,11 @@ export const constants = [
 //   ["tower", 15],
 // ]);
 
+// const tileTypesComplex = [
+//   ["water", "dirt", "grass"],
+//   ["water", "dirt", "grass", "wood"],
+// ];
+
 const blockMap = new Map<string, number>([
   ["cactus", 0],
   ["iron", 1],
@@ -93,11 +97,6 @@ const blockMap = new Map<string, number>([
 
 // tile types for map
 const tileTypesSimple = [[], ["iron"]];
-
-// const tileTypesComplex = [
-//   ["water", "dirt", "grass"],
-//   ["water", "dirt", "grass", "wood"],
-// ];
 
 export const generateBlocks = (tileTypes: string[][]) => {
   const worldWidth = constants[0];
@@ -181,6 +180,8 @@ export const items: ItemWithMetadata[] = [
     energyDamage: 0,
   },
 ];
+
+export const GAME_DEPLOY_TEST_ARGS = [...constants, blocks, items];
 
 // const oldItemInputs: ItemWithMetadataInput[] = [
 //   {
@@ -292,5 +293,3 @@ export const items: ItemWithMetadata[] = [
 // ];
 
 // export const items = itemInputs.map((i) => new ItemWithMetadata(i));
-
-export const GAME_DEPLOY_TEST_ARGS = [...constants, blocks, items];
