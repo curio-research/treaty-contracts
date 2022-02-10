@@ -64,40 +64,40 @@ export const constants = [
 
 // TODO: Convert this to more efficient data structure.
 // TODO: This should be ported over to frontend as well (?)
-const oldBlockMap = new Map<string, number>([
-  ["dirt", 0],
-  ["grass", 1],
-  ["sand", 2],
-  ["water", 3],
-  ["lava", 4],
-  ["stone", 5],
-  ["wood", 6],
-  ["cactus", 7],
-  ["apple", 8],
-  ["workbench", 9],
-  ["shovel", 10],
-  ["lava suit", 11],
-  ["pickaxe", 12],
-  ["axe", 13],
-  ["wall", 14],
-  ["tower", 15],
-]);
-
-// const blockMap = new Map<string, number>([
-//   ["cactus", 0],
-//   ["iron", 1],
-//   ["sword", 2],
-//   ["wall", 3],
-//   ["tower", 4],
+// const oldBlockMap = new Map<string, number>([
+//   ["dirt", 0],
+//   ["grass", 1],
+//   ["sand", 2],
+//   ["water", 3],
+//   ["lava", 4],
+//   ["stone", 5],
+//   ["wood", 6],
+//   ["cactus", 7],
+//   ["apple", 8],
+//   ["workbench", 9],
+//   ["shovel", 10],
+//   ["lava suit", 11],
+//   ["pickaxe", 12],
+//   ["axe", 13],
+//   ["wall", 14],
+//   ["tower", 15],
 // ]);
 
-// tile types for map
-const tileTypesSimple = [[], ["wood"]];
+const blockMap = new Map<string, number>([
+  ["cactus", 0],
+  ["iron", 1],
+  ["sword", 2],
+  ["wall", 3],
+  ["tower", 4],
+]);
 
-const tileTypesComplex = [
-  ["water", "dirt", "grass"],
-  ["water", "dirt", "grass", "wood"],
-];
+// tile types for map
+const tileTypesSimple = [[], ["iron"]];
+
+// const tileTypesComplex = [
+//   ["water", "dirt", "grass"],
+//   ["water", "dirt", "grass", "wood"],
+// ];
 
 export const generateBlocks = (tileTypes: string[][]) => {
   const worldWidth = constants[0];
@@ -109,7 +109,7 @@ export const generateBlocks = (tileTypes: string[][]) => {
   for (let i = 0; i < worldSize; i++) {
     // TODO: created a fixed map with real resource
     tileIdx = i % 12 == 0 ? 1 : 0;
-    blocks.push(tileTypes[tileIdx].map((b) => oldBlockMap.get(b)!));
+    blocks.push(tileTypes[tileIdx].map((b) => blockMap.get(b)!));
   }
 
   return blocks;
@@ -118,115 +118,179 @@ export const generateBlocks = (tileTypes: string[][]) => {
 // TODO: Add more sophisticated map for testing
 export const blocks = generateBlocks(tileTypesSimple);
 
-const itemInputs: ItemWithMetadataInput[] = [
-  {
-    // dirt
-    mineable: true,
-    mineItemIds: [10],
-    strength: 1,
-    craftable: false,
-    occupiable: true,
-  },
-  {
-    // grass
-    mineable: true,
-    mineItemIds: [10],
-    strength: 1,
-    craftable: false,
-    occupiable: true,
-  },
-  {
-    // sand
-    mineable: false,
-    craftable: false,
-    occupiable: true,
-  },
-  {
-    // water
-    mineable: false,
-    craftable: false,
-    occupiable: true,
-    energyDamage: 1,
-  },
-  {
-    // lava
-    mineable: false,
-    craftable: false,
-    occupiable: true,
-    healthDamage: 1,
-    energyDamage: 1,
-  },
-  {
-    // stone
-    mineable: true,
-    mineItemIds: [12],
-    strength: 75,
-    craftable: false,
-    occupiable: false,
-  },
-  {
-    // wood
-    mineable: true,
-    strength: 50,
-    craftable: false,
-    occupiable: false,
-  },
+// item specs
+export const items: ItemWithMetadata[] = [
   {
     // cactus
     mineable: true,
-    mineItemIds: [13],
+    mineItemIds: [],
     strength: 25,
     craftable: false,
+    craftItemIds: [],
+    craftItemAmounts: [],
     occupiable: false,
+    healthDamage: 0,
+    energyDamage: 0,
   },
   {
-    // apple
+    // iron
     mineable: true,
+    mineItemIds: [],
+    strength: 50,
     craftable: false,
+    craftItemIds: [],
+    craftItemAmounts: [],
     occupiable: false,
+    healthDamage: 0,
+    energyDamage: 0,
   },
   {
-    // workbench
+    // sword
     mineable: false,
+    mineItemIds: [],
+    strength: 10,
     craftable: true,
-    craftItemIds: [6],
-    craftItemAmounts: [15],
-    occupiable: false,
-  },
-  {
-    // shovel
-    mineable: false,
-    craftable: true,
-    craftItemIds: [5, 6],
-    craftItemAmounts: [5, 5],
-    occupiable: false,
-  },
-  {
-    // lava suit
-    mineable: false,
-    craftable: true,
-    craftItemIds: [5],
-    craftItemAmounts: [2],
-    occupiable: false,
-  },
-  {
-    // pickaxe
-    mineable: false,
-    craftable: true,
-    craftItemIds: [6],
-    craftItemAmounts: [1],
-    occupiable: false,
-  },
-  {
-    // axe
-    mineable: false,
-    craftable: true,
-    craftItemIds: [6],
+    craftItemIds: [1],
     craftItemAmounts: [5],
     occupiable: false,
+    healthDamage: 0,
+    energyDamage: 0,
+  },
+  {
+    // wall
+    mineable: false,
+    mineItemIds: [],
+    strength: 0,
+    craftable: false,
+    craftItemIds: [],
+    craftItemAmounts: [],
+    occupiable: false,
+    healthDamage: 0,
+    energyDamage: 0,
+  },
+  {
+    // tower
+    mineable: false,
+    mineItemIds: [],
+    strength: 0,
+    craftable: false,
+    craftItemIds: [],
+    craftItemAmounts: [],
+    occupiable: false,
+    healthDamage: 0,
+    energyDamage: 0,
   },
 ];
 
-export const items = itemInputs.map((i) => new ItemWithMetadata(i));
+// const oldItemInputs: ItemWithMetadataInput[] = [
+//   {
+//     // dirt
+//     mineable: true,
+//     mineItemIds: [10],
+//     strength: 1,
+//     craftable: false,
+//     occupiable: true,
+//   },
+//   {
+//     // grass
+//     mineable: true,
+//     mineItemIds: [10],
+//     strength: 1,
+//     craftable: false,
+//     occupiable: true,
+//   },
+//   {
+//     // sand
+//     mineable: false,
+//     craftable: false,
+//     occupiable: true,
+//   },
+//   {
+//     // water
+//     mineable: false,
+//     craftable: false,
+//     occupiable: true,
+//     energyDamage: 1,
+//   },
+//   {
+//     // lava
+//     mineable: false,
+//     craftable: false,
+//     occupiable: true,
+//     healthDamage: 1,
+//     energyDamage: 1,
+//   },
+//   {
+//     // stone
+//     mineable: true,
+//     mineItemIds: [12],
+//     strength: 75,
+//     craftable: false,
+//     occupiable: false,
+//   },
+//   {
+//     // wood
+//     mineable: true,
+//     strength: 50,
+//     craftable: false,
+//     occupiable: false,
+//   },
+//   {
+//     // cactus
+//     mineable: true,
+//     mineItemIds: [13],
+//     strength: 25,
+//     craftable: false,
+//     occupiable: false,
+//   },
+//   {
+//     // apple
+//     mineable: true,
+//     craftable: false,
+//     occupiable: false,
+//   },
+//   {
+//     // workbench
+//     mineable: false,
+//     craftable: true,
+//     craftItemIds: [6],
+//     craftItemAmounts: [15],
+//     occupiable: false,
+//   },
+//   {
+//     // shovel
+//     mineable: false,
+//     craftable: true,
+//     craftItemIds: [5, 6],
+//     craftItemAmounts: [5, 5],
+//     occupiable: false,
+//   },
+//   {
+//     // lava suit
+//     mineable: false,
+//     craftable: true,
+//     craftItemIds: [5],
+//     craftItemAmounts: [2],
+//     occupiable: false,
+//   },
+//   {
+//     // pickaxe
+//     mineable: false,
+//     craftable: true,
+//     craftItemIds: [6],
+//     craftItemAmounts: [1],
+//     occupiable: false,
+//   },
+//   {
+//     // axe
+//     mineable: false,
+//     craftable: true,
+//     craftItemIds: [6],
+//     craftItemAmounts: [5],
+//     occupiable: false,
+//   },
+// ];
+
+// export const items = itemInputs.map((i) => new ItemWithMetadata(i));
 
 export const GAME_DEPLOY_TEST_ARGS = [...constants, blocks, items];
