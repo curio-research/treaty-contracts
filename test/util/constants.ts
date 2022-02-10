@@ -64,32 +64,32 @@ export const constants = [
 
 // TODO: Convert this to more efficient data structure.
 // TODO: This should be ported over to frontend as well (?)
-// const oldBlockMap = new Map<string, number>([
-//   ["dirt", 0],
-//   ["grass", 1],
-//   ["sand", 2],
-//   ["water", 3],
-//   ["lava", 4],
-//   ["stone", 5],
-//   ["wood", 6],
-//   ["cactus", 7],
-//   ["apple", 8],
-//   ["workbench", 9],
-//   ["shovel", 10],
-//   ["lava suit", 11],
-//   ["pickaxe", 12],
-//   ["axe", 13],
-//   ["wall", 14],
-//   ["tower", 15],
-// ]);
-
-const blockMap = new Map<string, number>([
-  ["cactus", 0],
-  ["iron", 1],
-  ["sword", 2],
-  ["wall", 3],
-  ["tower", 4],
+const oldBlockMap = new Map<string, number>([
+  ["dirt", 0],
+  ["grass", 1],
+  ["sand", 2],
+  ["water", 3],
+  ["lava", 4],
+  ["stone", 5],
+  ["wood", 6],
+  ["cactus", 7],
+  ["apple", 8],
+  ["workbench", 9],
+  ["shovel", 10],
+  ["lava suit", 11],
+  ["pickaxe", 12],
+  ["axe", 13],
+  ["wall", 14],
+  ["tower", 15],
 ]);
+
+// const blockMap = new Map<string, number>([
+//   ["cactus", 0],
+//   ["iron", 1],
+//   ["sword", 2],
+//   ["wall", 3],
+//   ["tower", 4],
+// ]);
 
 // tile types for map
 const tileTypesSimple = [[], ["wood"]];
@@ -109,7 +109,7 @@ export const generateBlocks = (tileTypes: string[][]) => {
   for (let i = 0; i < worldSize; i++) {
     // TODO: created a fixed map with real resource
     tileIdx = i % 12 == 0 ? 1 : 0;
-    blocks.push(tileTypes[tileIdx].map((b) => blockMap.get(b)!));
+    blocks.push(tileTypes[tileIdx].map((b) => oldBlockMap.get(b)!));
   }
 
   return blocks;
