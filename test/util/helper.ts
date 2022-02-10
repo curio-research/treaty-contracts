@@ -7,6 +7,7 @@ export const fixtureLoader = waffle.createFixtureLoader();
 
 // deploy script
 export const deployGameContract = async (): Promise<Game> => {
+  console.log("a");
   const _contract: any = await (await ethers.getContractFactory("Game")).deploy(...GAME_DEPLOY_TEST_ARGS);
   console.log("Game Core:", _contract.address);
   return _contract;
@@ -24,20 +25,8 @@ export const deployEpochContract = async (interval: number): Promise<Epoch> => {
   return _contract;
 };
 
-export const delay = (time: number) => {
-  return new Promise((resolve) => setTimeout(resolve, time));
-};
-
 // increase blockchain time in seconds
 export async function increaseBlockchainTime(interval: number) {
   await ethers.provider.send("evm_increaseTime", [interval]);
   await ethers.provider.send("evm_mine", []);
 }
-
-export const serializeBigNumberArr = (arr: BigNumber[]): number[] => {
-  const newArr = [];
-  for (let i = 0; i < arr.length; i++) {
-    newArr.push(arr[i].toNumber());
-  }
-  return newArr;
-};

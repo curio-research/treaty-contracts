@@ -26,7 +26,6 @@ type ItemWithMetadataInput = {
   energyDamage?: number;
 };
 
-// Pretty sure this can be rewritten in some way
 class ItemWithMetadata {
   readonly mineable: boolean;
   readonly mineItemIds: number[];
@@ -83,21 +82,21 @@ export const constants = [
 //   ["tower", 15],
 // ]);
 
+// const tileTypesComplex = [
+//   ["water", "dirt", "grass"],
+//   ["water", "dirt", "grass", "wood"],
+// ];
+
 const blockMap = new Map<string, number>([
-    ["cactus", 0],
-    ["iron", 1],
-    ["sword", 2],
-    ["wall", 3],
-    ["tower", 4],
-  ]);
+  ["cactus", 0],
+  ["iron", 1],
+  ["sword", 2],
+  ["wall", 3],
+  ["tower", 4],
+]);
 
 // tile types for map
-const tileTypesSimple = [[], ["wood"]];
-
-const tileTypesComplex = [
-  ["water", "dirt", "grass"],
-  ["water", "dirt", "grass", "wood"],
-];
+const tileTypesSimple = [[], ["iron"]];
 
 export const generateBlocks = (tileTypes: string[][]) => {
   const worldWidth = constants[0];
@@ -118,115 +117,179 @@ export const generateBlocks = (tileTypes: string[][]) => {
 // TODO: Add more sophisticated map for testing
 export const blocks = generateBlocks(tileTypesSimple);
 
-const itemInputs: ItemWithMetadataInput[] = [
-  {
-    // dirt
-    mineable: true,
-    mineItemIds: [10],
-    strength: 1,
-    craftable: false,
-    occupiable: true,
-  },
-  {
-    // grass
-    mineable: true,
-    mineItemIds: [10],
-    strength: 1,
-    craftable: false,
-    occupiable: true,
-  },
-  {
-    // sand
-    mineable: false,
-    craftable: false,
-    occupiable: true,
-  },
-  {
-    // water
-    mineable: false,
-    craftable: false,
-    occupiable: true,
-    energyDamage: 1,
-  },
-  {
-    // lava
-    mineable: false,
-    craftable: false,
-    occupiable: true,
-    healthDamage: 1,
-    energyDamage: 1,
-  },
-  {
-    // stone
-    mineable: true,
-    mineItemIds: [12],
-    strength: 75,
-    craftable: false,
-    occupiable: false,
-  },
-  {
-    // wood
-    mineable: true,
-    strength: 50,
-    craftable: false,
-    occupiable: false,
-  },
+// item specs
+export const items: ItemWithMetadata[] = [
   {
     // cactus
     mineable: true,
-    mineItemIds: [13],
+    mineItemIds: [],
     strength: 25,
     craftable: false,
+    craftItemIds: [],
+    craftItemAmounts: [],
     occupiable: false,
+    healthDamage: 0,
+    energyDamage: 0,
   },
   {
-    // apple
+    // iron
     mineable: true,
+    mineItemIds: [],
+    strength: 50,
     craftable: false,
+    craftItemIds: [],
+    craftItemAmounts: [],
     occupiable: false,
+    healthDamage: 0,
+    energyDamage: 0,
   },
   {
-    // workbench
+    // sword
     mineable: false,
+    mineItemIds: [],
+    strength: 10,
     craftable: true,
-    craftItemIds: [6],
-    craftItemAmounts: [15],
-    occupiable: false,
-  },
-  {
-    // shovel
-    mineable: false,
-    craftable: true,
-    craftItemIds: [5, 6],
-    craftItemAmounts: [5, 5],
-    occupiable: false,
-  },
-  {
-    // lava suit
-    mineable: false,
-    craftable: true,
-    craftItemIds: [5],
-    craftItemAmounts: [2],
-    occupiable: false,
-  },
-  {
-    // pickaxe
-    mineable: false,
-    craftable: true,
-    craftItemIds: [6],
-    craftItemAmounts: [1],
-    occupiable: false,
-  },
-  {
-    // axe
-    mineable: false,
-    craftable: true,
-    craftItemIds: [6],
+    craftItemIds: [1],
     craftItemAmounts: [5],
     occupiable: false,
+    healthDamage: 0,
+    energyDamage: 0,
+  },
+  {
+    // wall
+    mineable: false,
+    mineItemIds: [],
+    strength: 0,
+    craftable: false,
+    craftItemIds: [],
+    craftItemAmounts: [],
+    occupiable: false,
+    healthDamage: 0,
+    energyDamage: 0,
+  },
+  {
+    // tower
+    mineable: false,
+    mineItemIds: [],
+    strength: 0,
+    craftable: false,
+    craftItemIds: [],
+    craftItemAmounts: [],
+    occupiable: false,
+    healthDamage: 0,
+    energyDamage: 0,
   },
 ];
 
-export const items = itemInputs.map((i) => new ItemWithMetadata(i));
-
 export const GAME_DEPLOY_TEST_ARGS = [...constants, blocks, items];
+
+// const oldItemInputs: ItemWithMetadataInput[] = [
+//   {
+//     // dirt
+//     mineable: true,
+//     mineItemIds: [10],
+//     strength: 1,
+//     craftable: false,
+//     occupiable: true,
+//   },
+//   {
+//     // grass
+//     mineable: true,
+//     mineItemIds: [10],
+//     strength: 1,
+//     craftable: false,
+//     occupiable: true,
+//   },
+//   {
+//     // sand
+//     mineable: false,
+//     craftable: false,
+//     occupiable: true,
+//   },
+//   {
+//     // water
+//     mineable: false,
+//     craftable: false,
+//     occupiable: true,
+//     energyDamage: 1,
+//   },
+//   {
+//     // lava
+//     mineable: false,
+//     craftable: false,
+//     occupiable: true,
+//     healthDamage: 1,
+//     energyDamage: 1,
+//   },
+//   {
+//     // stone
+//     mineable: true,
+//     mineItemIds: [12],
+//     strength: 75,
+//     craftable: false,
+//     occupiable: false,
+//   },
+//   {
+//     // wood
+//     mineable: true,
+//     strength: 50,
+//     craftable: false,
+//     occupiable: false,
+//   },
+//   {
+//     // cactus
+//     mineable: true,
+//     mineItemIds: [13],
+//     strength: 25,
+//     craftable: false,
+//     occupiable: false,
+//   },
+//   {
+//     // apple
+//     mineable: true,
+//     craftable: false,
+//     occupiable: false,
+//   },
+//   {
+//     // workbench
+//     mineable: false,
+//     craftable: true,
+//     craftItemIds: [6],
+//     craftItemAmounts: [15],
+//     occupiable: false,
+//   },
+//   {
+//     // shovel
+//     mineable: false,
+//     craftable: true,
+//     craftItemIds: [5, 6],
+//     craftItemAmounts: [5, 5],
+//     occupiable: false,
+//   },
+//   {
+//     // lava suit
+//     mineable: false,
+//     craftable: true,
+//     craftItemIds: [5],
+//     craftItemAmounts: [2],
+//     occupiable: false,
+//   },
+//   {
+//     // pickaxe
+//     mineable: false,
+//     craftable: true,
+//     craftItemIds: [6],
+//     craftItemAmounts: [1],
+//     occupiable: false,
+//   },
+//   {
+//     // axe
+//     mineable: false,
+//     craftable: true,
+//     craftItemIds: [6],
+//     craftItemAmounts: [5],
+//     occupiable: false,
+//   },
+// ];
+
+// export const items = itemInputs.map((i) => new ItemWithMetadata(i));

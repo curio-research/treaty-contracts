@@ -3,10 +3,11 @@ import { decodePlayerInventory } from "./../util/serde/game";
 import { decodeTower } from "./../util/serde/tower";
 import { Game } from "./../typechain-types/Game";
 import { Epoch } from "./../typechain-types/Epoch";
-import { EMPTY_ADDRESS, REVERT_MESSAGES } from "./util/constants";
+import { REVERT_MESSAGES } from "./util/constants";
 import { World, initializeWorld } from "./util/testWorld";
 import { fixtureLoader, increaseBlockchainTime } from "./util/helper";
 import { TowerWithLocation } from "../util/types/tower";
+import { EMPTY_ADDRESS } from "../util/network/common";
 
 // ------------------------------------------------------------
 // Tower test

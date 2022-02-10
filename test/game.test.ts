@@ -1,10 +1,10 @@
-import { serializeTileWithMetadata } from "./util/serializer";
 import { blocks, REVERT_MESSAGES } from "./util/constants";
-import { Game } from "../typechain-types";
 import { expect } from "chai";
+import { Game } from "../typechain-types";
 import { World, initializeWorld, AllContracts, verifyAt, moveAndVerify, mineAndVerify } from "./util/testWorld";
-import { fixtureLoader, serializeBigNumberArr } from "./util/helper";
-import { decodePlayerInventory } from "../util/serde/game";
+import { fixtureLoader } from "./util/helper";
+import { decodePlayerInventory, decodeTileWithMetadata } from "../util/serde/game";
+import { decodeBNArr } from "../util/serde/common";
 
 describe("Game", () => {
   let world: World;
@@ -27,7 +27,7 @@ describe("Game", () => {
     await GameContract.connect(world.user2).initializePlayer(4, 3);
     await GameContract.connect(world.user3).initializePlayer(1, 0);
 
-    await GameContract.connect(world.user1)._increaseItemInInventory(world.user1.address, 6, 10); // start with 10 woods for player 1
+    await GameContract.connect(world.user1)._increaseItemInInventory(world.user1.address, 1, 10); // start with 10 iron for player 1
 
     await verifyAt(GameContract, world.user1, 2, 1);
     await verifyAt(GameContract, world.user2, 4, 3);
@@ -36,7 +36,7 @@ describe("Game", () => {
 
   it("Verify map", async () => {
     const mapChunk0 = await GameContract._getMap(0, 0);
-    expect(blocks[0]).eqls(serializeTileWithMetadata(mapChunk0[0]).blocks);
+    expect(blocks[0]).eqls(decodeTileWithMetadata(mapChunk0[0]).blocks);
   });
 
   it("Move", async () => {
@@ -55,22 +55,22 @@ describe("Game", () => {
 
   it("Place", async () => {
     let player1Inventory = decodePlayerInventory(await GameContract._getInventoryByPlayer(world.user1.address));
-    expect(player1Inventory.itemIds).eqls([6]);
+    expect(player1Inventory.itemIds).eqls([1]);
     expect(player1Inventory.itemAmounts).eqls([10]);
 
-    await GameContract.connect(world.user1).place(2, 2, 6);
-    await GameContract.connect(world.user1).place(2, 0, 6);
+    await GameContract.connect(world.user1).place(2, 2, 1);
+    await GameContract.connect(world.user1).place(2, 0, 1);
     player1Inventory = decodePlayerInventory(await GameContract._getInventoryByPlayer(world.user1.address));
-    expect(player1Inventory.itemIds).eqls([6]);
+    expect(player1Inventory.itemIds).eqls([1]);
     expect(player1Inventory.itemAmounts).eqls([8]);
 
-    expect(await GameContract._getBlockAtPosition(2, 2, 0)).equals(6);
+    expect(await GameContract._getBlockAtPosition(2, 2, 0)).equals(1);
     await expect(GameContract._getBlockAtPosition(1, 1, 0)).to.be.revertedWith(REVERT_MESSAGES.ENGINE_INVALID_Z_INDEX);
   });
 
   it("Repeated Mine", async () => {
     let player1Inventory = decodePlayerInventory(await GameContract._getInventoryByPlayer(world.user1.address));
-    expect(player1Inventory.itemIds).eqls([6]);
+    expect(player1Inventory.itemIds).eqls([1]);
     expect(player1Inventory.itemAmounts).eqls([8]);
     expect(await GameContract._getTopLevelStrengthAtPosition(2, 2)).equals(50);
 
@@ -80,14 +80,14 @@ describe("Game", () => {
       await GameContract.connect(world.user1).mine(2, 2, 0);
     }
     player1Inventory = decodePlayerInventory(await GameContract._getInventoryByPlayer(world.user1.address));
-    expect(player1Inventory.itemIds).eqls([6]);
+    expect(player1Inventory.itemIds).eqls([1]);
     expect(player1Inventory.itemAmounts).eqls([8]);
     expect(await GameContract._getTopLevelStrengthAtPosition(2, 2)).equals(5);
 
     // the last mine successfully mines the item
     await GameContract.connect(world.user1).mine(2, 2, 0);
     player1Inventory = decodePlayerInventory(await GameContract._getInventoryByPlayer(world.user1.address));
-    expect(player1Inventory.itemIds).eqls([6]);
+    expect(player1Inventory.itemIds).eqls([1]);
     expect(player1Inventory.itemAmounts).eqls([9]);
 
     // no more mines should be possible
@@ -103,8 +103,8 @@ describe("Game", () => {
   //   await mineAndVerify(GameContract, world.user1, 0, 0, 0, 0); // mine block at (0, 0)
 
   //   const player1Inventory = await GameContract._getInventoryByPlayer(world.user1.address);
-  //   expect(serializeBigNumberArr(player1Inventory.craftItemIds)).eqls([6]);
-  //   expect(serializeBigNumberArr(player1Inventory.craftItemAmounts)).eqls([1]);
+  //   expect(decodeBNArr(player1Inventory.craftItemIds)).eqls([6]);
+  //   expect(decodeBNArr(player1Inventory.craftItemAmounts)).eqls([1]);
   // });
 
   // it("Craft", async () => {
@@ -136,7 +136,7 @@ describe("Game", () => {
   //   await expect(GameContract.connect(world.user1).attack(world.user3.address)).to.be.revertedWith(REVERT_MESSAGES.ENGINE_INVALID_ATTACK);
 
   //   // TODO: There's a native way for the local blockchain to speed up x seconds using hardhat library. ideally switch to that for accuracy
-  //   await delay(5000);
+  // increaseBlockchainTime(5000)
 
   //   await GameContract.connect(world.user1).attack(world.user2.address);
   //   user2Data = await GameContract._getAllPlayerData(world.user2.address);

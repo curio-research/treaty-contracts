@@ -30,16 +30,16 @@ describe("Getters", () => {
   });
 
   it("Bulk fetch craft items", async () => {
-    const item1 = decodeItemWithMetadata(await contracts.Game._getItemWithMetadata(12)); // single getter test
-    expect(item1.craftItemIds).eqls(items[12].craftItemIds);
-    expect(item1.craftItemAmounts).eqls(items[12].craftItemAmounts);
+    const item1 = decodeItemWithMetadata(await contracts.Game._getItemWithMetadata(1)); // single getter test
+    expect(item1.craftItemIds).eqls(items[1].craftItemIds);
+    expect(item1.craftItemAmounts).eqls(items[1].craftItemAmounts);
 
     const allItems = decodeBulkGetAllItems(await Getters.bulkGetAllItems()); // bulk getter test
     expect(allItems.length).equals(items.length);
-    expect(allItems[9].craftItemIds).to.eqls(items[9].craftItemIds); // workbench
-    expect(allItems[9].craftItemAmounts).to.eqls(items[9].craftItemAmounts);
-    expect(allItems[10].craftItemIds).to.eqls(items[10].craftItemIds); // shovel
-    expect(allItems[10].craftItemAmounts).to.eqls(items[10].craftItemAmounts);
+    expect(allItems[2].craftItemIds).to.eqls(items[2].craftItemIds); // sword
+    expect(allItems[2].craftItemAmounts).to.eqls(items[2].craftItemAmounts);
+    expect(allItems[0].craftItemIds).to.eqls(items[0].craftItemIds); // cactus
+    expect(allItems[0].craftItemAmounts).to.eqls(items[0].craftItemAmounts);
   });
 
   it("Inventory getter", async () => {
