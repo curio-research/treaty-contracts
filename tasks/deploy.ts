@@ -1,3 +1,4 @@
+import { generateBlockIdToNameMap } from "./../test/util/constants";
 import { Epoch } from "./../typechain-types/Epoch";
 import { task } from "hardhat/config";
 import * as path from "path";
@@ -7,6 +8,7 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { deployProxy, printDivider } from "./util/deployHelper";
 import { generateAllGameArgs, LOCALHOST_RPC_URL, LOCALHOST_WS_RPC_URL } from "./util/constants";
 import { Getters, Game } from "../typechain-types";
+import { masterItems } from "../test/util/constants";
 
 // ---------------------------------
 // deploy script
@@ -59,6 +61,7 @@ task("deploy", "deploy contracts")
       EPOCH_ADDRESS: EpochContract.address,
       RPC_URL: LOCALHOST_RPC_URL,
       WS_RPC_URL: LOCALHOST_WS_RPC_URL,
+      BLOCK_ID_TO_NAME_MAP: generateBlockIdToNameMap(masterItems),
     };
 
     await fsPromise.writeFile(path.join(currentFileDir, "game.config.json"), JSON.stringify(configFile));

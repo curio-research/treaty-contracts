@@ -7,7 +7,6 @@ export const fixtureLoader = waffle.createFixtureLoader();
 
 // deploy script
 export const deployGameContract = async (): Promise<Game> => {
-  console.log("a");
   const _contract: any = await (await ethers.getContractFactory("Game")).deploy(...GAME_DEPLOY_TEST_ARGS);
   console.log("Game Core:", _contract.address);
   return _contract;

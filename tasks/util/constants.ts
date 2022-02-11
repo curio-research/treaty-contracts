@@ -1,5 +1,4 @@
 import { generateMap } from "./mapGenerator";
-import { ItemWithMetadata } from "../../util/types/getter";
 import { TowerWithLocation } from "./../../util/types/tower";
 import { items } from "../../test/util/constants";
 
@@ -16,8 +15,6 @@ const ATTACK_DAMAGE = 5;
 const ATTACK_WAITTIME = 5;
 const START_PLAYER_HEALTH = 100;
 const START_PLAYER_ENERGY = 100;
-
-
 
 const generateGameConstants = () => {
   return [WORLD_WIDTH, WORLD_HEIGHT, MOVE_RANGE, ATTACK_RANGE, ATTACK_DAMAGE, ATTACK_WAITTIME, START_PLAYER_HEALTH, START_PLAYER_ENERGY];
