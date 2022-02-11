@@ -11,6 +11,8 @@ contract Epoch {
     uint256 public lastUpdated;
     uint256 public interval;
 
+    event EpochUpdate(address _player, uint256 _epoch, uint256 _time);
+
     constructor(uint256 _interval) {
         interval = _interval;
         lastUpdated = block.timestamp;
@@ -21,5 +23,7 @@ contract Epoch {
         require(block.timestamp - interval >= lastUpdated, "epoch/premature");
         epoch++;
         lastUpdated = block.timestamp;
+
+        emit EpochUpdate(msg.sender, epoch, lastUpdated);
     }
 }
