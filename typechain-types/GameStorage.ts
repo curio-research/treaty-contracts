@@ -396,31 +396,11 @@ export interface GameStorageInterface extends utils.Interface {
   ): Result;
 
   events: {
-    "ClaimReward(address,string,uint256)": EventFragment;
-    "StakeTower(address,string,uint256)": EventFragment;
     "Transfer(address,address,uint256,uint256)": EventFragment;
-    "UnstakeTower(address,string,uint256)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "ClaimReward"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "StakeTower"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "UnstakeTower"): EventFragment;
 }
-
-export type ClaimRewardEvent = TypedEvent<
-  [string, string, BigNumber],
-  { _player: string; _towerId: string; _reward: BigNumber }
->;
-
-export type ClaimRewardEventFilter = TypedEventFilter<ClaimRewardEvent>;
-
-export type StakeTowerEvent = TypedEvent<
-  [string, string, BigNumber],
-  { _player: string; _towerId: string; _amount: BigNumber }
->;
-
-export type StakeTowerEventFilter = TypedEventFilter<StakeTowerEvent>;
 
 export type TransferEvent = TypedEvent<
   [string, string, BigNumber, BigNumber],
@@ -428,13 +408,6 @@ export type TransferEvent = TypedEvent<
 >;
 
 export type TransferEventFilter = TypedEventFilter<TransferEvent>;
-
-export type UnstakeTowerEvent = TypedEvent<
-  [string, string, BigNumber],
-  { _player: string; _towerId: string; _amount: BigNumber }
->;
-
-export type UnstakeTowerEventFilter = TypedEventFilter<UnstakeTowerEvent>;
 
 export interface GameStorage extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -1114,28 +1087,6 @@ export interface GameStorage extends BaseContract {
   };
 
   filters: {
-    "ClaimReward(address,string,uint256)"(
-      _player?: null,
-      _towerId?: null,
-      _reward?: null
-    ): ClaimRewardEventFilter;
-    ClaimReward(
-      _player?: null,
-      _towerId?: null,
-      _reward?: null
-    ): ClaimRewardEventFilter;
-
-    "StakeTower(address,string,uint256)"(
-      _player?: null,
-      _towerId?: null,
-      _amount?: null
-    ): StakeTowerEventFilter;
-    StakeTower(
-      _player?: null,
-      _towerId?: null,
-      _amount?: null
-    ): StakeTowerEventFilter;
-
     "Transfer(address,address,uint256,uint256)"(
       _player?: null,
       _recipient?: null,
@@ -1148,17 +1099,6 @@ export interface GameStorage extends BaseContract {
       _id?: null,
       _amount?: null
     ): TransferEventFilter;
-
-    "UnstakeTower(address,string,uint256)"(
-      _player?: null,
-      _towerId?: null,
-      _amount?: null
-    ): UnstakeTowerEventFilter;
-    UnstakeTower(
-      _player?: null,
-      _towerId?: null,
-      _amount?: null
-    ): UnstakeTowerEventFilter;
   };
 
   estimateGas: {

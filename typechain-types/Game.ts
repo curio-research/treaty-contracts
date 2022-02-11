@@ -501,16 +501,16 @@ export interface GameInterface extends utils.Interface {
   events: {
     "Attack(address,address)": EventFragment;
     "AttackItem(address,uint256,uint256,uint256)": EventFragment;
-    "ClaimReward(address,string,uint256)": EventFragment;
+    "ClaimReward(address,tuple,uint256)": EventFragment;
     "Craft(address,uint256)": EventFragment;
     "Death(address)": EventFragment;
     "MineItem(address,uint256,uint256,uint256,uint256)": EventFragment;
     "Move(address,uint256,uint256)": EventFragment;
     "NewPlayer(address,uint256,uint256)": EventFragment;
     "Place(address,uint256,uint256,uint256)": EventFragment;
-    "StakeTower(address,string,uint256)": EventFragment;
+    "StakeTower(address,tuple,uint256)": EventFragment;
     "Transfer(address,address,uint256,uint256)": EventFragment;
-    "UnstakeTower(address,string,uint256)": EventFragment;
+    "UnstakeTower(address,tuple,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Attack"): EventFragment;
@@ -542,8 +542,8 @@ export type AttackItemEvent = TypedEvent<
 export type AttackItemEventFilter = TypedEventFilter<AttackItemEvent>;
 
 export type ClaimRewardEvent = TypedEvent<
-  [string, string, BigNumber],
-  { _player: string; _towerId: string; _reward: BigNumber }
+  [string, PositionStructOutput, BigNumber],
+  { _player: string; _towerPos: PositionStructOutput; _reward: BigNumber }
 >;
 
 export type ClaimRewardEventFilter = TypedEventFilter<ClaimRewardEvent>;
@@ -594,8 +594,8 @@ export type PlaceEvent = TypedEvent<
 export type PlaceEventFilter = TypedEventFilter<PlaceEvent>;
 
 export type StakeTowerEvent = TypedEvent<
-  [string, string, BigNumber],
-  { _player: string; _towerId: string; _amount: BigNumber }
+  [string, PositionStructOutput, BigNumber],
+  { _player: string; _towerPos: PositionStructOutput; _amount: BigNumber }
 >;
 
 export type StakeTowerEventFilter = TypedEventFilter<StakeTowerEvent>;
@@ -608,8 +608,8 @@ export type TransferEvent = TypedEvent<
 export type TransferEventFilter = TypedEventFilter<TransferEvent>;
 
 export type UnstakeTowerEvent = TypedEvent<
-  [string, string, BigNumber],
-  { _player: string; _towerId: string; _amount: BigNumber }
+  [string, PositionStructOutput, BigNumber],
+  { _player: string; _towerPos: PositionStructOutput; _amount: BigNumber }
 >;
 
 export type UnstakeTowerEventFilter = TypedEventFilter<UnstakeTowerEvent>;
@@ -1545,14 +1545,14 @@ export interface Game extends BaseContract {
       _zIndex?: null
     ): AttackItemEventFilter;
 
-    "ClaimReward(address,string,uint256)"(
+    "ClaimReward(address,tuple,uint256)"(
       _player?: null,
-      _towerId?: null,
+      _towerPos?: null,
       _reward?: null
     ): ClaimRewardEventFilter;
     ClaimReward(
       _player?: null,
-      _towerId?: null,
+      _towerPos?: null,
       _reward?: null
     ): ClaimRewardEventFilter;
 
@@ -1604,14 +1604,14 @@ export interface Game extends BaseContract {
       _blockId?: null
     ): PlaceEventFilter;
 
-    "StakeTower(address,string,uint256)"(
+    "StakeTower(address,tuple,uint256)"(
       _player?: null,
-      _towerId?: null,
+      _towerPos?: null,
       _amount?: null
     ): StakeTowerEventFilter;
     StakeTower(
       _player?: null,
-      _towerId?: null,
+      _towerPos?: null,
       _amount?: null
     ): StakeTowerEventFilter;
 
@@ -1628,14 +1628,14 @@ export interface Game extends BaseContract {
       _amount?: null
     ): TransferEventFilter;
 
-    "UnstakeTower(address,string,uint256)"(
+    "UnstakeTower(address,tuple,uint256)"(
       _player?: null,
-      _towerId?: null,
+      _towerPos?: null,
       _amount?: null
     ): UnstakeTowerEventFilter;
     UnstakeTower(
       _player?: null,
-      _towerId?: null,
+      _towerPos?: null,
       _amount?: null
     ): UnstakeTowerEventFilter;
   };

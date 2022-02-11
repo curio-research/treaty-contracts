@@ -14,9 +14,6 @@ contract GameStorage {
     // Events
     // ------------------------------------------------------------
 
-    event StakeTower(address _player, string _towerId, uint256 _amount);
-    event UnstakeTower(address _player, string _towerId, uint256 _amount);
-    event ClaimReward(address _player, string _towerId, uint256 _reward);
     event Transfer(
         address _player,
         address _recipient,

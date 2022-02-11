@@ -33,6 +33,22 @@ contract Game is GameStorage {
     event Craft(address _player, uint256 _blockId);
     event Attack(address _player1, address _player2); // add attack result here?
     event Death(address _player);
+    // for some reason when we emit a string it doesn't do so properly
+    event StakeTower(
+        address _player,
+        GameTypes.Position _towerPos,
+        uint256 _amount
+    );
+    event UnstakeTower(
+        address _player,
+        GameTypes.Position _towerPos,
+        uint256 _amount
+    );
+    event ClaimReward(
+        address _player,
+        GameTypes.Position _towerPos,
+        uint256 _reward
+    );
 
     // ------------------------------------------------------------
     // Constructor
@@ -281,12 +297,12 @@ contract Game is GameStorage {
         _increaseItemInInventory(msg.sender, tower.itemId, totalReward);
         s.towers[_towerId].stakedTime = currentEpoch;
 
-        emit ClaimReward(msg.sender, _towerId, totalReward);
+        emit ClaimReward(msg.sender, _position, totalReward);
     }
 
     // stake in tower
     function stake(GameTypes.Position memory _position, uint256 _amount)
-        external
+        public
     {
         string memory _towerId = _encodePos(_position);
 
@@ -310,7 +326,7 @@ contract Game is GameStorage {
 
         s.stakePoints[msg.sender] -= _amount; // subtract points from user power
 
-        emit StakeTower(msg.sender, _towerId, _amount);
+        emit StakeTower(msg.sender, _position, _amount);
     }
 
     // unstake in tower
@@ -333,7 +349,7 @@ contract Game is GameStorage {
             tower.owner = address(0);
         }
 
-        emit UnstakeTower(msg.sender, _towerId, _amount);
+        emit UnstakeTower(msg.sender, _position, _amount);
     }
 
     function getTowerById(GameTypes.Position memory _position)

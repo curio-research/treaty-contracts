@@ -1,10 +1,10 @@
 import { Epoch } from "./../../typechain-types/Epoch";
 import { expect } from "chai";
-import { deployGameContract, deployGettersContract, deployEpochContract } from "./helper";
+import { deployContract } from "./helper";
 import { ethers } from "hardhat";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { Game, Getters } from "../../typechain-types";
-import { REVERT_MESSAGES } from "./constants";
+import { GAME_DEPLOY_TEST_ARGS, REVERT_MESSAGES } from "./constants";
 
 export interface AllContracts {
   Game: Game;
@@ -23,9 +23,9 @@ export const initializeWorld = async (): Promise<World> => {
   const [signer1, signer2, signer3] = await ethers.getSigners();
 
   // initialize contracts
-  const GameContract = await deployGameContract();
-  const GettersContract = await deployGettersContract(GameContract.address);
-  const EpochContract = await deployEpochContract(30);
+  const GameContract = await deployContract<Game>("Game", GAME_DEPLOY_TEST_ARGS);
+  const GettersContract = await deployContract<Getters>("Getters", [GameContract.address]);
+  const EpochContract = await deployContract<Epoch>("Epoch", [30]);
 
   return {
     contracts: {
