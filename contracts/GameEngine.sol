@@ -19,27 +19,19 @@ contract Game is GameStorage {
     // Events
     // ------------------------------------------------------------
 
-    event NewPlayer(address indexed _player, GameTypes.Position indexed _pos);
-    event Move(address indexed _player, GameTypes.Position indexed _pos);
+    event NewPlayer(address _player, GameTypes.Position _pos);
+    event Move(address _player, GameTypes.Position _pos);
     event MineItem(
-        address indexed _player,
-        GameTypes.Position indexed _pos,
-        uint256 indexed _blockId,
+        address _player,
+        GameTypes.Position _pos,
+        uint256 _blockId,
         uint256 _zIndex
     );
-    event AttackItem(
-        address indexed _player,
-        GameTypes.Position indexed _pos,
-        uint256 indexed _zIndex
-    );
-    event Place(
-        address indexed _player,
-        GameTypes.Position indexed _pos,
-        uint256 indexed _blockId
-    );
-    event Craft(address indexed _player, uint256 indexed _blockId);
-    event Attack(address indexed _player1, address indexed _player2); // add attack result here?
-    event Death(address indexed _player);
+    event AttackItem(address _player, GameTypes.Position _pos, uint256 _zIndex);
+    event Place(address _player, GameTypes.Position _pos, uint256 _blockId);
+    event Craft(address _player, uint256 _blockId);
+    event Attack(address _player1, address _player2); // add attack result here?
+    event Death(address _player);
     // for some reason when we emit a string it doesn't do so properly
     event StakeTower(
         address _player,
@@ -194,10 +186,10 @@ contract Game is GameStorage {
     }
 
     // mine resource blocks at specific z-index base layer (z-indexf of 0)
-    function mine(GameTypes.Position memory _pos, uint256 _zIdx) external {
+    function mine(GameTypes.Position memory _pos) external {
         uint256 _blockCount = _getBlockCountAtPosition(_pos);
         if (_blockCount == 0) revert("engine/nonexistent-block");
-        if (_zIdx != _blockCount - 1) revert("engine/nonexistent-block");
+        uint256 _zIdx = _blockCount - 1;
 
         if (s.attackDamage < _getTopLevelStrengthAtPosition(_pos)) {
             attackItem(_pos, _zIdx, msg.sender);

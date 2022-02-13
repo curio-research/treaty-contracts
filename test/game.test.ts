@@ -77,7 +77,7 @@ describe("Game", () => {
     // player attack is 5 and block strength is 50 => expect exactly 10 mines
     // the first 9 mines only decrease strength
     for (let i = 0; i < 9; i++) {
-      await GameContract.connect(world.user1).mine({ x: 2, y: 2 }, 0);
+      await GameContract.connect(world.user1).mine({ x: 2, y: 2 });
     }
     player1Inventory = decodePlayerInventory(await GameContract._getInventoryByPlayer(world.user1.address));
     expect(player1Inventory.itemIds).eqls([1]);
@@ -85,13 +85,13 @@ describe("Game", () => {
     expect(await GameContract._getTopLevelStrengthAtPosition({ x: 2, y: 2 })).equals(5);
 
     // the last mine successfully mines the item
-    await GameContract.connect(world.user1).mine({ x: 2, y: 2 }, 0);
+    await GameContract.connect(world.user1).mine({ x: 2, y: 2 });
     player1Inventory = decodePlayerInventory(await GameContract._getInventoryByPlayer(world.user1.address));
     expect(player1Inventory.itemIds).eqls([1]);
     expect(player1Inventory.itemAmounts).eqls([9]);
 
     // no more mines should be possible
-    await expect(GameContract.connect(world.user1).mine({ x: 2, y: 2 }, 0)).to.be.revertedWith(REVERT_MESSAGES.ENGINE_NONEXISTENT_BLOCK);
+    await expect(GameContract.connect(world.user1).mine({ x: 2, y: 2 })).to.be.revertedWith(REVERT_MESSAGES.ENGINE_NONEXISTENT_BLOCK);
   });
 
   /**

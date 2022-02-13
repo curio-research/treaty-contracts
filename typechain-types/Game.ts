@@ -175,7 +175,7 @@ export interface GameInterface extends utils.Interface {
     "craft(uint256)": FunctionFragment;
     "getTowerById((uint256,uint256))": FunctionFragment;
     "initializePlayer((uint256,uint256))": FunctionFragment;
-    "mine((uint256,uint256),uint256)": FunctionFragment;
+    "mine((uint256,uint256))": FunctionFragment;
     "mineItem((uint256,uint256),uint256,address)": FunctionFragment;
     "move((uint256,uint256))": FunctionFragment;
     "place((uint256,uint256),uint256)": FunctionFragment;
@@ -333,7 +333,7 @@ export interface GameInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "mine",
-    values: [PositionStruct, BigNumberish]
+    values: [PositionStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "mineItem",
@@ -853,7 +853,6 @@ export interface Game extends BaseContract {
 
     mine(
       _pos: PositionStruct,
-      _zIdx: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -1131,7 +1130,6 @@ export interface Game extends BaseContract {
 
   mine(
     _pos: PositionStruct,
-    _zIdx: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1398,11 +1396,7 @@ export interface Game extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    mine(
-      _pos: PositionStruct,
-      _zIdx: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    mine(_pos: PositionStruct, overrides?: CallOverrides): Promise<void>;
 
     mineItem(
       _pos: PositionStruct,
@@ -1468,23 +1462,20 @@ export interface Game extends BaseContract {
 
   filters: {
     "Attack(address,address)"(
-      _player1?: string | null,
-      _player2?: string | null
+      _player1?: null,
+      _player2?: null
     ): AttackEventFilter;
-    Attack(
-      _player1?: string | null,
-      _player2?: string | null
-    ): AttackEventFilter;
+    Attack(_player1?: null, _player2?: null): AttackEventFilter;
 
     "AttackItem(address,tuple,uint256)"(
-      _player?: string | null,
-      _pos?: PositionStruct | null,
-      _zIndex?: BigNumberish | null
+      _player?: null,
+      _pos?: null,
+      _zIndex?: null
     ): AttackItemEventFilter;
     AttackItem(
-      _player?: string | null,
-      _pos?: PositionStruct | null,
-      _zIndex?: BigNumberish | null
+      _player?: null,
+      _pos?: null,
+      _zIndex?: null
     ): AttackItemEventFilter;
 
     "ClaimReward(address,tuple,uint256,uint256)"(
@@ -1500,59 +1491,40 @@ export interface Game extends BaseContract {
       _epoch?: null
     ): ClaimRewardEventFilter;
 
-    "Craft(address,uint256)"(
-      _player?: string | null,
-      _blockId?: BigNumberish | null
-    ): CraftEventFilter;
-    Craft(
-      _player?: string | null,
-      _blockId?: BigNumberish | null
-    ): CraftEventFilter;
+    "Craft(address,uint256)"(_player?: null, _blockId?: null): CraftEventFilter;
+    Craft(_player?: null, _blockId?: null): CraftEventFilter;
 
-    "Death(address)"(_player?: string | null): DeathEventFilter;
-    Death(_player?: string | null): DeathEventFilter;
+    "Death(address)"(_player?: null): DeathEventFilter;
+    Death(_player?: null): DeathEventFilter;
 
     "MineItem(address,tuple,uint256,uint256)"(
-      _player?: string | null,
-      _pos?: PositionStruct | null,
-      _blockId?: BigNumberish | null,
+      _player?: null,
+      _pos?: null,
+      _blockId?: null,
       _zIndex?: null
     ): MineItemEventFilter;
     MineItem(
-      _player?: string | null,
-      _pos?: PositionStruct | null,
-      _blockId?: BigNumberish | null,
+      _player?: null,
+      _pos?: null,
+      _blockId?: null,
       _zIndex?: null
     ): MineItemEventFilter;
 
-    "Move(address,tuple)"(
-      _player?: string | null,
-      _pos?: PositionStruct | null
-    ): MoveEventFilter;
-    Move(
-      _player?: string | null,
-      _pos?: PositionStruct | null
-    ): MoveEventFilter;
+    "Move(address,tuple)"(_player?: null, _pos?: null): MoveEventFilter;
+    Move(_player?: null, _pos?: null): MoveEventFilter;
 
     "NewPlayer(address,tuple)"(
-      _player?: string | null,
-      _pos?: PositionStruct | null
+      _player?: null,
+      _pos?: null
     ): NewPlayerEventFilter;
-    NewPlayer(
-      _player?: string | null,
-      _pos?: PositionStruct | null
-    ): NewPlayerEventFilter;
+    NewPlayer(_player?: null, _pos?: null): NewPlayerEventFilter;
 
     "Place(address,tuple,uint256)"(
-      _player?: string | null,
-      _pos?: PositionStruct | null,
-      _blockId?: BigNumberish | null
+      _player?: null,
+      _pos?: null,
+      _blockId?: null
     ): PlaceEventFilter;
-    Place(
-      _player?: string | null,
-      _pos?: PositionStruct | null,
-      _blockId?: BigNumberish | null
-    ): PlaceEventFilter;
+    Place(_player?: null, _pos?: null, _blockId?: null): PlaceEventFilter;
 
     "StakeTower(address,tuple,uint256)"(
       _player?: null,
@@ -1797,7 +1769,6 @@ export interface Game extends BaseContract {
 
     mine(
       _pos: PositionStruct,
-      _zIdx: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -2048,7 +2019,6 @@ export interface Game extends BaseContract {
 
     mine(
       _pos: PositionStruct,
-      _zIdx: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
