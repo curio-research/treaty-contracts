@@ -23,15 +23,15 @@ describe("Game", () => {
   });
 
   it("Player Initialization", async () => {
-    await GameContract.connect(world.user1).initializePlayer({ x: 2, y: 1 });
+    await GameContract.connect(world.user1).initializePlayer({ x: 3, y: 1 });
     await GameContract.connect(world.user2).initializePlayer({ x: 4, y: 3 });
     await GameContract.connect(world.user3).initializePlayer({ x: 1, y: 0 });
 
     await GameContract.connect(world.user1)._increaseItemInInventory(world.user1.address, 1, 10); // start with 10 iron for player 1
 
-    await verifyAt(GameContract, world.user1, 2, 1);
-    await verifyAt(GameContract, world.user2, 4, 3);
-    await verifyAt(GameContract, world.user3, 1, 0);
+    await verifyAt(GameContract, world.user1, { x: 3, y: 1 });
+    await verifyAt(GameContract, world.user2, { x: 4, y: 3 });
+    await verifyAt(GameContract, world.user3, { x: 1, y: 0 });
   });
 
   it("Verify map", async () => {
@@ -40,16 +40,14 @@ describe("Game", () => {
   });
 
   it("Move", async () => {
-    await moveAndVerify(GameContract, world.user1, 3, 2);
-    await moveAndVerify(GameContract, world.user1, 5, 3);
+    await moveAndVerify(GameContract, world.user1, { x: 3, y: 2 });
+    await moveAndVerify(GameContract, world.user1, { x: 3, y: 3 });
   });
 
   it("Failed move", async () => {
-    await verifyAt(GameContract, world.user1, 5, 3); // make sure starting at (5, 3)
+    await verifyAt(GameContract, world.user1, { x: 3, y: 3 }); // make sure starting at (5, 3)
     await expect(GameContract.connect(world.user1).move({ x: 4, y: 0 })).to.be.revertedWith(REVERT_MESSAGES.ENGINE_INVALID_MOVE); // failed move due to distance
-    await verifyAt(GameContract, world.user1, 5, 3);
     await expect(GameContract.connect(world.user1).move({ x: 6, y: 3 })).to.be.revertedWith(REVERT_MESSAGES.ENGINE_INVALID_MOVE); // failed move due to out of bound
-    await verifyAt(GameContract, world.user1, 5, 3);
     await expect(GameContract.connect(world.user1).move({ x: 4, y: 3 })).to.be.revertedWith(REVERT_MESSAGES.ENGINE_INVALID_MOVE); // failed move due to occupied by player2
   });
 

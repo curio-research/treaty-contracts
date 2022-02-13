@@ -16,7 +16,6 @@ library GameTypes {
 
     struct PlayerData {
         bool initialized;
-        bool alive;
         uint256 initTimestamp;
         address playerAddr;
         uint256 health;
@@ -76,7 +75,6 @@ library GameTypes {
         mapping(uint256 => GameTypes.ItemData) items;
         mapping(uint256 => GameTypes.ItemWithMetadata) itemsWithMetadata;
         uint256 itemNonce; // TODO move constants below into a struct for readability
-        uint256 moveRange;
         uint256 attackRange;
         uint256 attackDamage;
         uint256 attackWaitTime;

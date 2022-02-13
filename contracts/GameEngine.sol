@@ -57,7 +57,6 @@ contract Game is GameStorage {
     constructor(
         uint256 _worldWidth,
         uint256 _worldHeight,
-        uint256 _moveRange,
         uint256 _attackRange,
         uint256 _attackDamage,
         uint256 _attackWaitTime,
@@ -69,7 +68,6 @@ contract Game is GameStorage {
         s.worldWidth = _worldWidth;
         s.worldHeight = _worldHeight;
         s.itemNonce = 1; // valid blockId start at 1. Id 0 = no blocks
-        s.moveRange = _moveRange;
         s.attackRange = _attackRange;
         s.attackDamage = _attackDamage;
         s.attackWaitTime = _attackWaitTime;
@@ -109,7 +107,6 @@ contract Game is GameStorage {
             initialized: true,
             initTimestamp: block.timestamp,
             playerAddr: msg.sender,
-            alive: true,
             position: _pos,
             health: s.startPlayerHealth,
             energy: s.startPlayerEnergy,

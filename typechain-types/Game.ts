@@ -60,7 +60,6 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
 
 export type PlayerDataStruct = {
   initialized: boolean;
-  alive: boolean;
   initTimestamp: BigNumberish;
   playerAddr: string;
   health: BigNumberish;
@@ -71,7 +70,6 @@ export type PlayerDataStruct = {
 
 export type PlayerDataStructOutput = [
   boolean,
-  boolean,
   BigNumber,
   string,
   BigNumber,
@@ -80,7 +78,6 @@ export type PlayerDataStructOutput = [
   PositionStructOutput
 ] & {
   initialized: boolean;
-  alive: boolean;
   initTimestamp: BigNumber;
   playerAddr: string;
   health: BigNumber;
@@ -888,7 +885,6 @@ export interface Game extends BaseContract {
         BigNumber,
         BigNumber,
         BigNumber,
-        BigNumber,
         BigNumber
       ] & {
         worldWidth: BigNumber;
@@ -897,7 +893,6 @@ export interface Game extends BaseContract {
         paused: boolean;
         epochController: string;
         itemNonce: BigNumber;
-        moveRange: BigNumber;
         attackRange: BigNumber;
         attackDamage: BigNumber;
         attackWaitTime: BigNumber;
@@ -1165,7 +1160,6 @@ export interface Game extends BaseContract {
       BigNumber,
       BigNumber,
       BigNumber,
-      BigNumber,
       BigNumber
     ] & {
       worldWidth: BigNumber;
@@ -1174,7 +1168,6 @@ export interface Game extends BaseContract {
       paused: boolean;
       epochController: string;
       itemNonce: BigNumber;
-      moveRange: BigNumber;
       attackRange: BigNumber;
       attackDamage: BigNumber;
       attackWaitTime: BigNumber;
@@ -1427,7 +1420,6 @@ export interface Game extends BaseContract {
         BigNumber,
         BigNumber,
         BigNumber,
-        BigNumber,
         BigNumber
       ] & {
         worldWidth: BigNumber;
@@ -1436,7 +1428,6 @@ export interface Game extends BaseContract {
         paused: boolean;
         epochController: string;
         itemNonce: BigNumber;
-        moveRange: BigNumber;
         attackRange: BigNumber;
         attackDamage: BigNumber;
         attackWaitTime: BigNumber;

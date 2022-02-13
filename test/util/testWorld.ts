@@ -5,6 +5,7 @@ import { ethers } from "hardhat";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { Game, Getters } from "../../typechain-types";
 import { GAME_DEPLOY_TEST_ARGS, REVERT_MESSAGES } from "./constants";
+import { position } from "../../util/types/common";
 
 export interface AllContracts {
   Game: Game;
@@ -40,15 +41,15 @@ export const initializeWorld = async (): Promise<World> => {
 };
 
 // helper functions
-export const moveAndVerify = async (game: Game, signer: SignerWithAddress, x: number, y: number) => {
-  await game.connect(signer).move({ x, y });
-  await verifyAt(game, signer, x, y);
+export const moveAndVerify = async (game: Game, signer: SignerWithAddress, position: position) => {
+  await game.connect(signer).move(position);
+  await verifyAt(game, signer, position);
 };
 
-export const verifyAt = async (game: Game, signer: SignerWithAddress, x: number, y: number) => {
-  const position = await game.connect(signer)._getPlayerPosition(signer.address);
-  expect(position.x).equals(x);
-  expect(position.y).equals(y);
+export const verifyAt = async (game: Game, signer: SignerWithAddress, position: position) => {
+  const pos = await game.connect(signer)._getPlayerPosition(signer.address);
+  expect(pos.x).equals(position.x);
+  expect(pos.y).equals(position.y);
 };
 
 export const mineAndVerify = async (game: Game, signer: SignerWithAddress, x: number, y: number, z: number, initialInventory: number) => {

@@ -53,6 +53,7 @@ contract GameStorage {
     }
 
     // check if its within a distance (need to refactor into distance)
+    // allow character to only move 1 block at a time in either x or y direction
     function _withinDistance(
         GameTypes.Position memory p1,
         GameTypes.Position memory p2,
@@ -162,7 +163,7 @@ contract GameStorage {
 
         if (!_inMap) return false;
 
-        if (!_withinDistance(_pos, _position, s.moveRange)) return false;
+        if (!_withinDistance(_pos, _position, 1)) return false;
 
         if (_isOccupied(_pos)) return false; // check if target coordinate has block or player
 
@@ -177,7 +178,6 @@ contract GameStorage {
         GameTypes.Position memory playerPosition = _getPlayerPosition(_player);
         GameTypes.Position memory targetPosition = _getPlayerPosition(_target);
 
-        // removing for now for mvp
         // uint256 lastAttackedAt = s.lastAttackedAt[_player];
         // if (block.timestamp - lastAttackedAt <= s.attackWaitTime) return false; // must wait 5 seconds till next attack
 
@@ -258,7 +258,6 @@ contract GameStorage {
     }
 
     // mine block
-    // refactor
     function _mine(GameTypes.Position memory _pos) public {
         s.map[_pos.x][_pos.y].blocks.pop();
 
@@ -313,15 +312,6 @@ contract GameStorage {
         emit Transfer(msg.sender, _recipient, _itemId, _amount);
     }
 
-    // commenting it out for now for MVP
-    // function _die(address _player) public {
-    //     s.players[_player].alive = false;
-
-    //     GameTypes.Position memory _pos = s.players[_player].position;
-    //     delete s.map[_pos.x][_pos.y].occupier;
-    // }
-
-    // dir = true means to add item (if it doesn't exist);
     function _modifyItemInInventoryNonce(uint256 _itemId, bool dir) public {
         uint256 idx = 0;
         bool hasFound = false;
@@ -333,7 +323,6 @@ contract GameStorage {
             }
         }
 
-        // remove case
         if (!dir) {
             if (hasFound) {
                 delete s.inventoryNonce[msg.sender][idx];
