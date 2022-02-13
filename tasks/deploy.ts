@@ -39,8 +39,8 @@ task("deploy", "deploy contracts")
     console.log("Epoch: ", EpochContract.address);
     printDivider();
 
-    await GameContract.connect(player1).initializePlayer(1, 1); // initialize users
-    await GameContract.connect(player2).initializePlayer(5, 5);
+    await GameContract.connect(player1).initializePlayer({ x: 1, y: 1 }); // initialize users
+    await GameContract.connect(player2).initializePlayer({ x: 5, y: 5 });
 
     await GameContract.connect(player1)._increaseItemInInventory(player1.address, 0, 10); // give user1 cacti for defense
 

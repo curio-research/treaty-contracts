@@ -19,20 +19,27 @@ contract Game is GameStorage {
     // Events
     // ------------------------------------------------------------
 
-    event NewPlayer(address _player, uint256 _x, uint256 _y);
-    event Move(address _player, uint256 _x, uint256 _y);
+    event NewPlayer(address indexed _player, GameTypes.Position indexed _pos);
+    event Move(address indexed _player, GameTypes.Position indexed _pos);
     event MineItem(
-        address _player,
-        uint256 _x,
-        uint256 _y,
-        uint256 _blockId,
+        address indexed _player,
+        GameTypes.Position indexed _pos,
+        uint256 indexed _blockId,
         uint256 _zIndex
     );
-    event AttackItem(address _player, uint256 _x, uint256 _y, uint256 _zIndex);
-    event Place(address _player, GameTypes.Position _pos, uint256 _blockId);
-    event Craft(address _player, uint256 _blockId);
-    event Attack(address _player1, address _player2); // add attack result here?
-    event Death(address _player);
+    event AttackItem(
+        address indexed _player,
+        GameTypes.Position indexed _pos,
+        uint256 indexed _zIndex
+    );
+    event Place(
+        address indexed _player,
+        GameTypes.Position indexed _pos,
+        uint256 indexed _blockId
+    );
+    event Craft(address indexed _player, uint256 indexed _blockId);
+    event Attack(address indexed _player1, address indexed _player2); // add attack result here?
+    event Death(address indexed _player);
     // for some reason when we emit a string it doesn't do so properly
     event StakeTower(
         address _player,
@@ -99,54 +106,55 @@ contract Game is GameStorage {
     }
 
     // initialize player
-    function initializePlayer(uint256 _x, uint256 _y) public {
+    function initializePlayer(GameTypes.Position memory _pos) public {
         if (s.players[msg.sender].initialized)
             revert("engine/player-already-initialized");
 
         // check if target coordinate has block or another player
-        if (_isOccupied(_x, _y)) revert("engine/location-occupied");
+        if (_isOccupied(_pos)) revert("engine/location-occupied");
 
         s.players[msg.sender] = GameTypes.PlayerData({
             initialized: true,
             initTimestamp: block.timestamp,
             playerAddr: msg.sender,
             alive: true,
-            position: GameTypes.Position(_x, _y),
+            position: _pos,
             health: s.startPlayerHealth,
             energy: s.startPlayerEnergy,
             reach: 6
         });
         s.allPlayers.push(msg.sender);
 
-        _setOccupierAtPosition(msg.sender, _x, _y);
+        _setOccupierAtPosition(msg.sender, _pos);
 
         s.stakePoints[msg.sender] = 100;
 
-        emit NewPlayer(msg.sender, _x, _y);
+        emit NewPlayer(msg.sender, _pos);
     }
 
     // player move function
     // refactor this into Position struct?
-    function move(uint256 _x, uint256 _y) external {
-        if (!_isValidMove(msg.sender, _x, _y)) revert("engine/invalid-move");
+    function move(GameTypes.Position memory _pos) external {
+        if (!_isValidMove(msg.sender, _pos)) revert("engine/invalid-move");
 
-        GameTypes.Position memory _position = _getPlayerPosition(msg.sender);
-        _setOccupierAtPosition(address(0), _position.x, _position.y); // remove occupier from previous position
+        GameTypes.Position memory _prevPosition = _getPlayerPosition(
+            msg.sender
+        );
+        _setOccupierAtPosition(address(0), _prevPosition); // remove occupier from previous position
 
-        _setPlayerPosition(msg.sender, _x, _y);
-        _setOccupierAtPosition(msg.sender, _x, _y);
+        _setPlayerPosition(msg.sender, _pos);
+        _setOccupierAtPosition(msg.sender, _pos);
 
-        emit Move(msg.sender, _x, _y);
+        emit Move(msg.sender, _pos);
     }
 
     function mineItem(
-        uint256 _x,
-        uint256 _y,
+        GameTypes.Position memory _pos,
         uint256 _zIdx,
         address _playerAddr
     ) public {
         // can only mine with the needed tool
-        uint256 _itemId = _getBlockAtPosition(_x, _y, _zIdx);
+        uint256 _itemId = _getBlockAtPosition(_pos, _zIdx);
 
         uint256[] memory _mineItemIds = s
             .itemsWithMetadata[_itemId]
@@ -170,36 +178,31 @@ contract Game is GameStorage {
         if (!_canMine) revert("engine/tool-needed");
 
         _increaseItemInInventory(_playerAddr, _itemId, 1);
-        _mine(_x, _y);
+        _mine(_pos);
 
-        emit MineItem(_playerAddr, _x, _y, _itemId, _zIdx);
+        emit MineItem(_playerAddr, _pos, _itemId, _zIdx);
     }
 
     function attackItem(
-        uint256 _x,
-        uint256 _y,
+        GameTypes.Position memory _pos,
         uint256 _zIdx,
         address _playerAddr
     ) public {
-        _changeTopLevelStrengthAtPosition(_x, _y, s.attackDamage, false);
+        _changeTopLevelStrengthAtPosition(_pos, s.attackDamage, false);
 
-        emit AttackItem(_playerAddr, _x, _y, _zIdx);
+        emit AttackItem(_playerAddr, _pos, _zIdx);
     }
 
     // mine resource blocks at specific z-index base layer (z-indexf of 0)
-    function mine(
-        uint256 _x,
-        uint256 _y,
-        uint256 _zIdx
-    ) external {
-        uint256 _blockCount = _getBlockCountAtPosition(_x, _y);
+    function mine(GameTypes.Position memory _pos, uint256 _zIdx) external {
+        uint256 _blockCount = _getBlockCountAtPosition(_pos);
         if (_blockCount == 0) revert("engine/nonexistent-block");
         if (_zIdx != _blockCount - 1) revert("engine/nonexistent-block");
 
-        if (s.attackDamage < _getTopLevelStrengthAtPosition(_x, _y)) {
-            attackItem(_x, _y, _zIdx, msg.sender);
+        if (s.attackDamage < _getTopLevelStrengthAtPosition(_pos)) {
+            attackItem(_pos, _zIdx, msg.sender);
         } else {
-            mineItem(_x, _y, _zIdx, msg.sender);
+            mineItem(_pos, _zIdx, msg.sender);
         }
     }
 

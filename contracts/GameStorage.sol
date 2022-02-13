@@ -22,7 +22,7 @@ contract GameStorage {
     );
 
     // getter method to fetch map in 10x10 chunks. can increase size
-    function _getMap(uint256 _x, uint256 _y)
+    function _getMap(GameTypes.Position memory _pos)
         public
         view
         returns (GameTypes.TileWithMetadata[] memory)
@@ -30,8 +30,8 @@ contract GameStorage {
         GameTypes.TileWithMetadata[]
             memory ret = new GameTypes.TileWithMetadata[](100);
         uint256 nonce = 0;
-        for (uint256 x = _x; x < _x + 10; x++) {
-            for (uint256 y = _y; y < _y + 10; y++) {
+        for (uint256 x = _pos.x; x < _pos.x + 10; x++) {
+            for (uint256 y = _pos.y; y < _pos.y + 10; y++) {
                 ret[nonce] = GameTypes.TileWithMetadata({
                     occupier: s.map[x][y].occupier,
                     blocks: s.map[x][y].blocks,
@@ -123,45 +123,48 @@ contract GameStorage {
         return s.items[_itemId].active;
     }
 
-    function _getTopBlockAtPosition(uint256 _x, uint256 _y)
+    function _getTopBlockAtPosition(GameTypes.Position memory _pos)
         public
         view
         returns (uint256)
     {
-        uint256 _blockCount = _getBlockCountAtPosition(_x, _y);
-        return s.map[_x][_y].blocks[_blockCount - 1];
+        uint256 _blockCount = _getBlockCountAtPosition(_pos);
+        return s.map[_pos.x][_pos.y].blocks[_blockCount - 1];
     }
 
     // check if location has blocks or player on it
-    function _isOccupied(uint256 _x, uint256 _y) public view returns (bool) {
+    function _isOccupied(GameTypes.Position memory _pos)
+        public
+        view
+        returns (bool)
+    {
         // if block has player on it
-        if (_blockOccupier(_x, _y) != address(0)) return true;
+        if (_blockOccupier(_pos) != address(0)) return true;
 
         // if block has any blocks
-        if (s.map[_x][_y].blocks.length > 0) return true;
+        if (s.map[_pos.x][_pos.y].blocks.length > 0) return true;
 
         return false;
     }
 
     // checks distance between positions and whether player is in map
-    function _isValidMove(
-        address _player,
-        uint256 _x,
-        uint256 _y
-    ) public view returns (bool) {
+    function _isValidMove(address _player, GameTypes.Position memory _pos)
+        public
+        view
+        returns (bool)
+    {
         GameTypes.Position memory _position = _getPlayerPosition(_player);
 
-        bool _inMap = _x < s.worldWidth &&
-            _y < s.worldHeight &&
-            _x >= 0 &&
-            _y >= 0;
+        bool _inMap = _pos.x < s.worldWidth &&
+            _pos.y < s.worldHeight &&
+            _pos.x >= 0 &&
+            _pos.y >= 0;
 
         if (!_inMap) return false;
 
-        GameTypes.Position memory _pos = GameTypes.Position({x: _x, y: _y});
         if (!_withinDistance(_pos, _position, s.moveRange)) return false;
 
-        if (_isOccupied(_x, _y)) return false; // check if target coordinate has block or player
+        if (_isOccupied(_pos)) return false; // check if target coordinate has block or player
 
         return true;
     }
@@ -184,24 +187,24 @@ contract GameStorage {
         return true;
     }
 
-    function _getBlockAtPosition(
-        uint256 _x,
-        uint256 _y,
-        uint256 _zIdx
-    ) public view returns (uint256) {
-        if (_zIdx >= s.map[_x][_y].blocks.length)
+    function _getBlockAtPosition(GameTypes.Position memory _pos, uint256 _zIdx)
+        public
+        view
+        returns (uint256)
+    {
+        if (_zIdx >= s.map[_pos.x][_pos.y].blocks.length)
             revert("engine/invalid-z-index");
 
-        return s.map[_x][_y].blocks[_zIdx];
+        return s.map[_pos.x][_pos.y].blocks[_zIdx];
     }
 
     // get the player's address who's occupying a block
-    function _blockOccupier(uint256 _x, uint256 _y)
+    function _blockOccupier(GameTypes.Position memory _pos)
         public
         view
         returns (address)
     {
-        return s.map[_x][_y].occupier;
+        return s.map[_pos.x][_pos.y].occupier;
     }
 
     function _getPlayerPosition(address _player)
@@ -212,21 +215,17 @@ contract GameStorage {
         return s.players[_player].position;
     }
 
-    function _setPlayerPosition(
-        address _player,
-        uint256 _x,
-        uint256 _y
-    ) public {
-        s.players[_player].position.x = _x;
-        s.players[_player].position.y = _y;
+    function _setPlayerPosition(address _player, GameTypes.Position memory _pos)
+        public
+    {
+        s.players[_player].position = _pos;
     }
 
     function _setOccupierAtPosition(
         address _player,
-        uint256 _x,
-        uint256 _y
+        GameTypes.Position memory _pos
     ) public {
-        s.map[_x][_y].occupier = _player;
+        s.map[_pos.x][_pos.y].occupier = _player;
     }
 
     function _getItemAmountById(address _player, uint256 _blockId)
@@ -259,19 +258,20 @@ contract GameStorage {
     }
 
     // mine block
-    function _mine(uint256 _x, uint256 _y) public {
-        s.map[_x][_y].blocks.pop();
+    // refactor
+    function _mine(GameTypes.Position memory _pos) public {
+        s.map[_pos.x][_pos.y].blocks.pop();
 
-        uint256 _blockCount = _getBlockCountAtPosition(_x, _y);
+        uint256 _blockCount = _getBlockCountAtPosition(_pos);
         if (_blockCount > 0) {
-            uint256 topBlockId = s.map[_x][_y].blocks[
-                _getBlockCountAtPosition(_x, _y) - 1
+            uint256 topBlockId = s.map[_pos.x][_pos.y].blocks[
+                _getBlockCountAtPosition(_pos) - 1
             ];
-            s.map[_x][_y].topLevelStrength = s
+            s.map[_pos.x][_pos.y].topLevelStrength = s
                 .itemsWithMetadata[topBlockId]
                 .strength;
         } else {
-            s.map[_x][_y].topLevelStrength = 0;
+            s.map[_pos.x][_pos.y].topLevelStrength = 0;
         }
     }
 
@@ -410,30 +410,29 @@ contract GameStorage {
     }
 
     // get the number of blocks at a current location
-    function _getBlockCountAtPosition(uint256 _x, uint256 _y)
+    function _getBlockCountAtPosition(GameTypes.Position memory _pos)
         public
         view
         returns (uint256)
     {
-        return s.map[_x][_y].blocks.length;
+        return s.map[_pos.x][_pos.y].blocks.length;
     }
 
-    function _getTopLevelStrengthAtPosition(uint256 _x, uint256 _y)
+    function _getTopLevelStrengthAtPosition(GameTypes.Position memory _pos)
         public
         view
         returns (uint256)
     {
-        return s.map[_x][_y].topLevelStrength;
+        return s.map[_pos.x][_pos.y].topLevelStrength;
     }
 
     function _changeTopLevelStrengthAtPosition(
-        uint256 _x,
-        uint256 _y,
+        GameTypes.Position memory _pos,
         uint256 _attackDamage,
         bool dir
     ) public {
         dir == true
-            ? s.map[_x][_y].topLevelStrength += _attackDamage
-            : s.map[_x][_y].topLevelStrength -= _attackDamage;
+            ? s.map[_pos.x][_pos.y].topLevelStrength += _attackDamage
+            : s.map[_pos.x][_pos.y].topLevelStrength -= _attackDamage;
     }
 }
