@@ -58,8 +58,8 @@ describe("Game", () => {
     expect(player1Inventory.itemIds).eqls([1]);
     expect(player1Inventory.itemAmounts).eqls([10]);
 
-    await GameContract.connect(world.user1).place(2, 2, 1);
-    await GameContract.connect(world.user1).place(2, 0, 1);
+    await GameContract.connect(world.user1).place({ x: 2, y: 2 }, 1);
+    await GameContract.connect(world.user1).place({ x: 2, y: 0 }, 1);
     player1Inventory = decodePlayerInventory(await GameContract._getInventoryByPlayer(world.user1.address));
     expect(player1Inventory.itemIds).eqls([1]);
     expect(player1Inventory.itemAmounts).eqls([8]);

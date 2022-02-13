@@ -51,7 +51,7 @@ describe("Getters", () => {
     expect(res.itemIds).to.eqls([1, 2, 3]);
     expect(res.itemAmounts).to.eqls([100, 200, 300]);
 
-    await contracts.Game.place(0, 1, 1); // place block
+    await contracts.Game.place({ x: 0, y: 1 }, 1); // place block
     res = decodePlayerInventory(await contracts.Game._getInventoryByPlayer(world.user1.address));
     expect(res.itemIds).to.eql([1, 2, 3]);
     expect(res.itemAmounts[0]).equals(99);

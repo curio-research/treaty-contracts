@@ -276,19 +276,17 @@ contract GameStorage {
     }
 
     // place block
-    function _place(
-        uint256 _x,
-        uint256 _y,
-        uint256 _itemId
-    ) public {
+    function _place(GameTypes.Position memory _pos, uint256 _itemId) public {
         // simple version of the game places blocks at index 0;
-        uint256[] storage blocks = s.map[_x][_y].blocks;
+        uint256[] storage blocks = s.map[_pos.x][_pos.y].blocks;
         if (blocks.length >= 1) {
             blocks[0] = _itemId;
         } else {
             blocks.push(_itemId);
         }
-        s.map[_x][_y].topLevelStrength = s.itemsWithMetadata[_itemId].strength;
+        s.map[_pos.x][_pos.y].topLevelStrength = s
+            .itemsWithMetadata[_itemId]
+            .strength;
     }
 
     // transfer item from one player to another

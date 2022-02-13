@@ -29,7 +29,7 @@ contract Game is GameStorage {
         uint256 _zIndex
     );
     event AttackItem(address _player, uint256 _x, uint256 _y, uint256 _zIndex);
-    event Place(address _player, uint256 _x, uint256 _y, uint256 _blockId);
+    event Place(address _player, GameTypes.Position _pos, uint256 _blockId);
     event Craft(address _player, uint256 _blockId);
     event Attack(address _player1, address _player2); // add attack result here?
     event Death(address _player);
@@ -47,7 +47,8 @@ contract Game is GameStorage {
     event ClaimReward(
         address _player,
         GameTypes.Position _towerPos,
-        uint256 _reward
+        uint256 _reward,
+        uint256 _epoch
     );
 
     // ------------------------------------------------------------
@@ -203,24 +204,20 @@ contract Game is GameStorage {
     }
 
     // place item at block
-    function place(
-        uint256 _x,
-        uint256 _y,
-        uint256 _itemId
-    ) external {
+    function place(GameTypes.Position memory _pos, uint256 _itemId) external {
         if (_getItemAmountById(msg.sender, _itemId) == 0)
             revert("engine/insufficient-inventory");
         if (
-            _getPlayerPosition(msg.sender).x == _x &&
-            _getPlayerPosition(msg.sender).y == _y
+            _getPlayerPosition(msg.sender).x == _pos.x &&
+            _getPlayerPosition(msg.sender).y == _pos.y
         ) revert("engine/cannot-stand-on-block");
 
         // TODO add distance logic here
 
-        _place(_x, _y, _itemId);
+        _place(_pos, _itemId);
         _decreaseItemInInventory(msg.sender, _itemId, 1);
 
-        emit Place(msg.sender, _x, _y, _itemId);
+        emit Place(msg.sender, _pos, _itemId);
     }
 
     // craft item (once) based on their recipe
@@ -284,7 +281,7 @@ contract Game is GameStorage {
     // user claim reward for tower
     function claimReward(GameTypes.Position memory _position) external {
         string memory _towerId = _encodePos(_position);
-        GameTypes.Tower memory tower = s.towers[_towerId];
+        GameTypes.Tower storage tower = s.towers[_towerId];
 
         // should we add a distance checker here?
         if (tower.owner != msg.sender) revert("tower/invalid-tower-owner");
@@ -295,9 +292,9 @@ contract Game is GameStorage {
         uint256 totalReward = stakedEpochs * tower.rewardPerEpoch;
 
         _increaseItemInInventory(msg.sender, tower.itemId, totalReward);
-        s.towers[_towerId].stakedTime = currentEpoch;
+        tower.stakedTime = currentEpoch;
 
-        emit ClaimReward(msg.sender, _position, totalReward);
+        emit ClaimReward(msg.sender, _position, totalReward, currentEpoch);
     }
 
     // stake in tower

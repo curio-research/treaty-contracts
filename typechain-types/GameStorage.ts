@@ -141,7 +141,7 @@ export interface GameStorageInterface extends utils.Interface {
     "_isValidMove(address,uint256,uint256)": FunctionFragment;
     "_mine(uint256,uint256)": FunctionFragment;
     "_modifyItemInInventoryNonce(uint256,bool)": FunctionFragment;
-    "_place(uint256,uint256,uint256)": FunctionFragment;
+    "_place((uint256,uint256),uint256)": FunctionFragment;
     "_setOccupierAtPosition(address,uint256,uint256)": FunctionFragment;
     "_setPlayerPosition(address,uint256,uint256)": FunctionFragment;
     "_transfer(address,uint256,uint256)": FunctionFragment;
@@ -256,7 +256,7 @@ export interface GameStorageInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "_place",
-    values: [BigNumberish, BigNumberish, BigNumberish]
+    values: [PositionStruct, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "_setOccupierAtPosition",
@@ -583,8 +583,7 @@ export interface GameStorage extends BaseContract {
     ): Promise<ContractTransaction>;
 
     _place(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       _itemId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -800,8 +799,7 @@ export interface GameStorage extends BaseContract {
   ): Promise<ContractTransaction>;
 
   _place(
-    _x: BigNumberish,
-    _y: BigNumberish,
+    _pos: PositionStruct,
     _itemId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -1017,8 +1015,7 @@ export interface GameStorage extends BaseContract {
     ): Promise<void>;
 
     _place(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       _itemId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1247,8 +1244,7 @@ export interface GameStorage extends BaseContract {
     ): Promise<BigNumber>;
 
     _place(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       _itemId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -1437,8 +1433,7 @@ export interface GameStorage extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     _place(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       _itemId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;

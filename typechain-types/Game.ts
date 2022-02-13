@@ -163,7 +163,7 @@ export interface GameInterface extends utils.Interface {
     "_isValidMove(address,uint256,uint256)": FunctionFragment;
     "_mine(uint256,uint256)": FunctionFragment;
     "_modifyItemInInventoryNonce(uint256,bool)": FunctionFragment;
-    "_place(uint256,uint256,uint256)": FunctionFragment;
+    "_place((uint256,uint256),uint256)": FunctionFragment;
     "_setOccupierAtPosition(address,uint256,uint256)": FunctionFragment;
     "_setPlayerPosition(address,uint256,uint256)": FunctionFragment;
     "_transfer(address,uint256,uint256)": FunctionFragment;
@@ -178,7 +178,7 @@ export interface GameInterface extends utils.Interface {
     "mine(uint256,uint256,uint256)": FunctionFragment;
     "mineItem(uint256,uint256,uint256,address)": FunctionFragment;
     "move(uint256,uint256)": FunctionFragment;
-    "place(uint256,uint256,uint256)": FunctionFragment;
+    "place((uint256,uint256),uint256)": FunctionFragment;
     "s()": FunctionFragment;
     "setEpochController(address)": FunctionFragment;
     "stake((uint256,uint256),uint256)": FunctionFragment;
@@ -291,7 +291,7 @@ export interface GameInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "_place",
-    values: [BigNumberish, BigNumberish, BigNumberish]
+    values: [PositionStruct, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "_setOccupierAtPosition",
@@ -345,7 +345,7 @@ export interface GameInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "place",
-    values: [BigNumberish, BigNumberish, BigNumberish]
+    values: [PositionStruct, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "s", values?: undefined): string;
   encodeFunctionData(
@@ -501,13 +501,13 @@ export interface GameInterface extends utils.Interface {
   events: {
     "Attack(address,address)": EventFragment;
     "AttackItem(address,uint256,uint256,uint256)": EventFragment;
-    "ClaimReward(address,tuple,uint256)": EventFragment;
+    "ClaimReward(address,tuple,uint256,uint256)": EventFragment;
     "Craft(address,uint256)": EventFragment;
     "Death(address)": EventFragment;
     "MineItem(address,uint256,uint256,uint256,uint256)": EventFragment;
     "Move(address,uint256,uint256)": EventFragment;
     "NewPlayer(address,uint256,uint256)": EventFragment;
-    "Place(address,uint256,uint256,uint256)": EventFragment;
+    "Place(address,tuple,uint256)": EventFragment;
     "StakeTower(address,tuple,uint256)": EventFragment;
     "Transfer(address,address,uint256,uint256)": EventFragment;
     "UnstakeTower(address,tuple,uint256)": EventFragment;
@@ -542,8 +542,13 @@ export type AttackItemEvent = TypedEvent<
 export type AttackItemEventFilter = TypedEventFilter<AttackItemEvent>;
 
 export type ClaimRewardEvent = TypedEvent<
-  [string, PositionStructOutput, BigNumber],
-  { _player: string; _towerPos: PositionStructOutput; _reward: BigNumber }
+  [string, PositionStructOutput, BigNumber, BigNumber],
+  {
+    _player: string;
+    _towerPos: PositionStructOutput;
+    _reward: BigNumber;
+    _epoch: BigNumber;
+  }
 >;
 
 export type ClaimRewardEventFilter = TypedEventFilter<ClaimRewardEvent>;
@@ -587,8 +592,8 @@ export type NewPlayerEvent = TypedEvent<
 export type NewPlayerEventFilter = TypedEventFilter<NewPlayerEvent>;
 
 export type PlaceEvent = TypedEvent<
-  [string, BigNumber, BigNumber, BigNumber],
-  { _player: string; _x: BigNumber; _y: BigNumber; _blockId: BigNumber }
+  [string, PositionStructOutput, BigNumber],
+  { _player: string; _pos: PositionStructOutput; _blockId: BigNumber }
 >;
 
 export type PlaceEventFilter = TypedEventFilter<PlaceEvent>;
@@ -788,8 +793,7 @@ export interface Game extends BaseContract {
     ): Promise<ContractTransaction>;
 
     _place(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       _itemId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -884,8 +888,7 @@ export interface Game extends BaseContract {
     ): Promise<ContractTransaction>;
 
     place(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       _itemId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -1085,8 +1088,7 @@ export interface Game extends BaseContract {
   ): Promise<ContractTransaction>;
 
   _place(
-    _x: BigNumberish,
-    _y: BigNumberish,
+    _pos: PositionStruct,
     _itemId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -1181,8 +1183,7 @@ export interface Game extends BaseContract {
   ): Promise<ContractTransaction>;
 
   place(
-    _x: BigNumberish,
-    _y: BigNumberish,
+    _pos: PositionStruct,
     _itemId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -1382,8 +1383,7 @@ export interface Game extends BaseContract {
     ): Promise<void>;
 
     _place(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       _itemId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1472,8 +1472,7 @@ export interface Game extends BaseContract {
     ): Promise<void>;
 
     place(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       _itemId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1545,15 +1544,17 @@ export interface Game extends BaseContract {
       _zIndex?: null
     ): AttackItemEventFilter;
 
-    "ClaimReward(address,tuple,uint256)"(
+    "ClaimReward(address,tuple,uint256,uint256)"(
       _player?: null,
       _towerPos?: null,
-      _reward?: null
+      _reward?: null,
+      _epoch?: null
     ): ClaimRewardEventFilter;
     ClaimReward(
       _player?: null,
       _towerPos?: null,
-      _reward?: null
+      _reward?: null,
+      _epoch?: null
     ): ClaimRewardEventFilter;
 
     "Craft(address,uint256)"(_player?: null, _blockId?: null): CraftEventFilter;
@@ -1591,18 +1592,12 @@ export interface Game extends BaseContract {
     ): NewPlayerEventFilter;
     NewPlayer(_player?: null, _x?: null, _y?: null): NewPlayerEventFilter;
 
-    "Place(address,uint256,uint256,uint256)"(
+    "Place(address,tuple,uint256)"(
       _player?: null,
-      _x?: null,
-      _y?: null,
+      _pos?: null,
       _blockId?: null
     ): PlaceEventFilter;
-    Place(
-      _player?: null,
-      _x?: null,
-      _y?: null,
-      _blockId?: null
-    ): PlaceEventFilter;
+    Place(_player?: null, _pos?: null, _blockId?: null): PlaceEventFilter;
 
     "StakeTower(address,tuple,uint256)"(
       _player?: null,
@@ -1786,8 +1781,7 @@ export interface Game extends BaseContract {
     ): Promise<BigNumber>;
 
     _place(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       _itemId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -1882,8 +1876,7 @@ export interface Game extends BaseContract {
     ): Promise<BigNumber>;
 
     place(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       _itemId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -2056,8 +2049,7 @@ export interface Game extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     _place(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       _itemId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -2152,8 +2144,7 @@ export interface Game extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     place(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       _itemId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;

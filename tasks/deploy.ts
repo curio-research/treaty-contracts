@@ -18,6 +18,8 @@ import { masterItems } from "../test/util/constants";
 task("deploy", "deploy contracts")
   .addFlag("noport", "Don't port files to frontend") // default is to call port
   .setAction(async (args: any, hre: HardhatRuntimeEnvironment) => {
+    await hre.run("compile");
+
     let player1: SignerWithAddress;
     let player2: SignerWithAddress;
     [player1, player2] = await hre.ethers.getSigners();
