@@ -9,3 +9,8 @@ export interface ItemWithMetadata {
   craftItemIds: number[];
   craftItemAmounts: number[];
 }
+
+export interface ItemMaster {
+  name: string;
+  item: ItemWithMetadata;
+}

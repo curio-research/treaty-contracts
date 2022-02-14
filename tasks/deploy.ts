@@ -1,3 +1,4 @@
+import { generateBlockIdToNameMap } from "./../test/util/constants";
 import { Epoch } from "./../typechain-types/Epoch";
 import { task } from "hardhat/config";
 import * as path from "path";
@@ -7,6 +8,7 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { deployProxy, printDivider } from "./util/deployHelper";
 import { generateAllGameArgs, LOCALHOST_RPC_URL, LOCALHOST_WS_RPC_URL } from "./util/constants";
 import { Getters, Game } from "../typechain-types";
+import { masterItems } from "../test/util/constants";
 
 // ---------------------------------
 // deploy script
@@ -16,6 +18,8 @@ import { Getters, Game } from "../typechain-types";
 task("deploy", "deploy contracts")
   .addFlag("noport", "Don't port files to frontend") // default is to call port
   .setAction(async (args: any, hre: HardhatRuntimeEnvironment) => {
+    await hre.run("compile");
+
     let player1: SignerWithAddress;
     let player2: SignerWithAddress;
     [player1, player2] = await hre.ethers.getSigners();
@@ -35,8 +39,8 @@ task("deploy", "deploy contracts")
     console.log("Epoch: ", EpochContract.address);
     printDivider();
 
-    await GameContract.connect(player1).initializePlayer(1, 1); // initialize users
-    await GameContract.connect(player2).initializePlayer(5, 5);
+    await GameContract.connect(player1).initializePlayer({ x: 1, y: 1 }); // initialize users
+    await GameContract.connect(player2).initializePlayer({ x: 5, y: 5 });
 
     await GameContract.connect(player1)._increaseItemInInventory(player1.address, 0, 10); // give user1 cacti for defense
 
@@ -59,6 +63,7 @@ task("deploy", "deploy contracts")
       EPOCH_ADDRESS: EpochContract.address,
       RPC_URL: LOCALHOST_RPC_URL,
       WS_RPC_URL: LOCALHOST_WS_RPC_URL,
+      BLOCK_ID_TO_NAME_MAP: generateBlockIdToNameMap(masterItems),
     };
 
     await fsPromise.writeFile(path.join(currentFileDir, "game.config.json"), JSON.stringify(configFile));

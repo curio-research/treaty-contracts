@@ -1,10 +1,11 @@
 import { Epoch } from "./../../typechain-types/Epoch";
 import { expect } from "chai";
-import { deployGameContract, deployGettersContract, deployEpochContract } from "./helper";
+import { deployContract } from "./helper";
 import { ethers } from "hardhat";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { Game, Getters } from "../../typechain-types";
-import { REVERT_MESSAGES } from "./constants";
+import { GAME_DEPLOY_TEST_ARGS, REVERT_MESSAGES } from "./constants";
+import { position } from "../../util/types/common";
 
 export interface AllContracts {
   Game: Game;
@@ -23,9 +24,9 @@ export const initializeWorld = async (): Promise<World> => {
   const [signer1, signer2, signer3] = await ethers.getSigners();
 
   // initialize contracts
-  const GameContract = await deployGameContract();
-  const GettersContract = await deployGettersContract(GameContract.address);
-  const EpochContract = await deployEpochContract(30);
+  const GameContract = await deployContract<Game>("Game", GAME_DEPLOY_TEST_ARGS);
+  const GettersContract = await deployContract<Getters>("Getters", [GameContract.address]);
+  const EpochContract = await deployContract<Epoch>("Epoch", [30]);
 
   return {
     contracts: {
@@ -40,33 +41,33 @@ export const initializeWorld = async (): Promise<World> => {
 };
 
 // helper functions
-export const moveAndVerify = async (game: Game, signer: SignerWithAddress, x: number, y: number) => {
-  await game.connect(signer).move(x, y);
-  await verifyAt(game, signer, x, y);
+export const moveAndVerify = async (game: Game, signer: SignerWithAddress, position: position) => {
+  await game.connect(signer).move(position);
+  await verifyAt(game, signer, position);
 };
 
-export const verifyAt = async (game: Game, signer: SignerWithAddress, x: number, y: number) => {
-  const position = await game.connect(signer)._getPlayerPosition(signer.address);
-  expect(position.x).equals(x);
-  expect(position.y).equals(y);
+export const verifyAt = async (game: Game, signer: SignerWithAddress, position: position) => {
+  const pos = await game.connect(signer)._getPlayerPosition(signer.address);
+  expect(pos.x).equals(position.x);
+  expect(pos.y).equals(position.y);
 };
 
 export const mineAndVerify = async (game: Game, signer: SignerWithAddress, x: number, y: number, z: number, initialInventory: number) => {
   // TODO: Remove this. initialInventory should be auto fetched instead of a parameter
   // verify initial inventory
-  const blockId = await game.connect(signer)._getBlockAtPosition(x, y, z);
+  const blockId = await game.connect(signer)._getBlockAtPosition({ x, y }, z);
   await expect(await game.connect(signer)._getItemAmountById(signer.address, blockId)).equals(initialInventory);
 
-  await game.connect(signer).mine(x, y, z);
+  await game.connect(signer).mine({ x, y });
 
   // verify block adds to player's inventory
   await expect(await game.connect(signer)._getItemAmountById(signer.address, blockId)).equals(initialInventory + 1);
 
   // verify block is indeed mined
-  await expect(game._getBlockAtPosition(x, y, z)).to.be.revertedWith(REVERT_MESSAGES.ENGINE_INVALID_Z_INDEX);
+  await expect(game._getBlockAtPosition({ x, y }, z)).to.be.revertedWith(REVERT_MESSAGES.ENGINE_INVALID_Z_INDEX);
 
   // verify that player cannot mine blocks at same position
-  await expect(game.connect(signer).mine(x, y, z)).to.be.revertedWith(REVERT_MESSAGES.ENGINE_NONEXISTENT_BLOCK);
+  await expect(game.connect(signer).mine({ x, y })).to.be.revertedWith(REVERT_MESSAGES.ENGINE_NONEXISTENT_BLOCK);
 
   return blockId;
 };

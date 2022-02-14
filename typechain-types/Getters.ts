@@ -58,7 +58,6 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
 
 export type PlayerDataStruct = {
   initialized: boolean;
-  alive: boolean;
   initTimestamp: BigNumberish;
   playerAddr: string;
   health: BigNumberish;
@@ -69,7 +68,6 @@ export type PlayerDataStruct = {
 
 export type PlayerDataStructOutput = [
   boolean,
-  boolean,
   BigNumber,
   string,
   BigNumber,
@@ -78,7 +76,6 @@ export type PlayerDataStructOutput = [
   PositionStructOutput
 ] & {
   initialized: boolean;
-  alive: boolean;
   initTimestamp: BigNumber;
   playerAddr: string;
   health: BigNumber;

@@ -60,7 +60,6 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
 
 export type PlayerDataStruct = {
   initialized: boolean;
-  alive: boolean;
   initTimestamp: BigNumberish;
   playerAddr: string;
   health: BigNumberish;
@@ -71,7 +70,6 @@ export type PlayerDataStruct = {
 
 export type PlayerDataStructOutput = [
   boolean,
-  boolean,
   BigNumber,
   string,
   BigNumber,
@@ -80,7 +78,6 @@ export type PlayerDataStructOutput = [
   PositionStructOutput
 ] & {
   initialized: boolean;
-  alive: boolean;
   initTimestamp: BigNumber;
   playerAddr: string;
   health: BigNumber;
@@ -113,6 +110,18 @@ export type TileWithMetadataStructOutput = [
   BigNumber
 ] & { occupier: string; blocks: BigNumber[]; x: BigNumber; y: BigNumber };
 
+export type TileStruct = {
+  occupier: string;
+  topLevelStrength: BigNumberish;
+  blocks: BigNumberish[];
+};
+
+export type TileStructOutput = [string, BigNumber, BigNumber[]] & {
+  occupier: string;
+  topLevelStrength: BigNumber;
+  blocks: BigNumber[];
+};
+
 export type TowerStruct = {
   rewardPerEpoch: BigNumberish;
   itemId: BigNumberish;
@@ -137,48 +146,49 @@ export type TowerStructOutput = [
 
 export interface GameInterface extends utils.Interface {
   functions: {
-    "_blockOccupier(uint256,uint256)": FunctionFragment;
+    "_blockOccupier((uint256,uint256))": FunctionFragment;
     "_changeHealth(address,uint256,bool)": FunctionFragment;
-    "_changeTopLevelStrengthAtPosition(uint256,uint256,uint256,bool)": FunctionFragment;
+    "_changeTopLevelStrengthAtPosition((uint256,uint256),uint256,bool)": FunctionFragment;
     "_decreaseItemInInventory(address,uint256,uint256)": FunctionFragment;
     "_encodePos((uint256,uint256))": FunctionFragment;
     "_getAllPlayerAddresses()": FunctionFragment;
     "_getAllPlayerData(address)": FunctionFragment;
-    "_getBlockAtPosition(uint256,uint256,uint256)": FunctionFragment;
-    "_getBlockCountAtPosition(uint256,uint256)": FunctionFragment;
+    "_getBlockAtPosition((uint256,uint256),uint256)": FunctionFragment;
+    "_getBlockCountAtPosition((uint256,uint256))": FunctionFragment;
     "_getInventoryByPlayer(address)": FunctionFragment;
     "_getItemAmountById(address,uint256)": FunctionFragment;
     "_getItemNonce()": FunctionFragment;
     "_getItemWithMetadata(uint256)": FunctionFragment;
-    "_getMap(uint256,uint256)": FunctionFragment;
+    "_getMap((uint256,uint256))": FunctionFragment;
     "_getPlayerPosition(address)": FunctionFragment;
     "_getPositionFromIndex(uint256)": FunctionFragment;
-    "_getTopBlockAtPosition(uint256,uint256)": FunctionFragment;
-    "_getTopLevelStrengthAtPosition(uint256,uint256)": FunctionFragment;
+    "_getTileData((uint256,uint256))": FunctionFragment;
+    "_getTopBlockAtPosition((uint256,uint256))": FunctionFragment;
+    "_getTopLevelStrengthAtPosition((uint256,uint256))": FunctionFragment;
     "_getWorldSize()": FunctionFragment;
     "_increaseItemInInventory(address,uint256,uint256)": FunctionFragment;
     "_isItemActive(uint256)": FunctionFragment;
-    "_isOccupied(uint256,uint256)": FunctionFragment;
+    "_isOccupied((uint256,uint256))": FunctionFragment;
     "_isValidAttack(address,address)": FunctionFragment;
-    "_isValidMove(address,uint256,uint256)": FunctionFragment;
-    "_mine(uint256,uint256)": FunctionFragment;
+    "_isValidMove(address,(uint256,uint256))": FunctionFragment;
+    "_mine((uint256,uint256))": FunctionFragment;
     "_modifyItemInInventoryNonce(uint256,bool)": FunctionFragment;
-    "_place(uint256,uint256,uint256)": FunctionFragment;
-    "_setOccupierAtPosition(address,uint256,uint256)": FunctionFragment;
-    "_setPlayerPosition(address,uint256,uint256)": FunctionFragment;
+    "_place((uint256,uint256),uint256)": FunctionFragment;
+    "_setOccupierAtPosition(address,(uint256,uint256))": FunctionFragment;
+    "_setPlayerPosition(address,(uint256,uint256))": FunctionFragment;
     "_transfer(address,uint256,uint256)": FunctionFragment;
     "_withinDistance((uint256,uint256),(uint256,uint256),uint256)": FunctionFragment;
     "addTower((uint256,uint256),(uint256,uint256,uint256,uint256,address))": FunctionFragment;
     "attack(address)": FunctionFragment;
-    "attackItem(uint256,uint256,uint256,address)": FunctionFragment;
+    "attackItem((uint256,uint256),uint256,address)": FunctionFragment;
     "claimReward((uint256,uint256))": FunctionFragment;
     "craft(uint256)": FunctionFragment;
     "getTowerById((uint256,uint256))": FunctionFragment;
-    "initializePlayer(uint256,uint256)": FunctionFragment;
-    "mine(uint256,uint256,uint256)": FunctionFragment;
-    "mineItem(uint256,uint256,uint256,address)": FunctionFragment;
-    "move(uint256,uint256)": FunctionFragment;
-    "place(uint256,uint256,uint256)": FunctionFragment;
+    "initializePlayer((uint256,uint256))": FunctionFragment;
+    "mine((uint256,uint256))": FunctionFragment;
+    "mineItem((uint256,uint256),uint256,address)": FunctionFragment;
+    "move((uint256,uint256))": FunctionFragment;
+    "place((uint256,uint256),uint256)": FunctionFragment;
     "s()": FunctionFragment;
     "setEpochController(address)": FunctionFragment;
     "stake((uint256,uint256),uint256)": FunctionFragment;
@@ -187,7 +197,7 @@ export interface GameInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "_blockOccupier",
-    values: [BigNumberish, BigNumberish]
+    values: [PositionStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "_changeHealth",
@@ -195,7 +205,7 @@ export interface GameInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "_changeTopLevelStrengthAtPosition",
-    values: [BigNumberish, BigNumberish, BigNumberish, boolean]
+    values: [PositionStruct, BigNumberish, boolean]
   ): string;
   encodeFunctionData(
     functionFragment: "_decreaseItemInInventory",
@@ -215,11 +225,11 @@ export interface GameInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "_getBlockAtPosition",
-    values: [BigNumberish, BigNumberish, BigNumberish]
+    values: [PositionStruct, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "_getBlockCountAtPosition",
-    values: [BigNumberish, BigNumberish]
+    values: [PositionStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "_getInventoryByPlayer",
@@ -239,7 +249,7 @@ export interface GameInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "_getMap",
-    values: [BigNumberish, BigNumberish]
+    values: [PositionStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "_getPlayerPosition",
@@ -250,12 +260,16 @@ export interface GameInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "_getTileData",
+    values: [PositionStruct]
+  ): string;
+  encodeFunctionData(
     functionFragment: "_getTopBlockAtPosition",
-    values: [BigNumberish, BigNumberish]
+    values: [PositionStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "_getTopLevelStrengthAtPosition",
-    values: [BigNumberish, BigNumberish]
+    values: [PositionStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "_getWorldSize",
@@ -271,7 +285,7 @@ export interface GameInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "_isOccupied",
-    values: [BigNumberish, BigNumberish]
+    values: [PositionStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "_isValidAttack",
@@ -279,11 +293,11 @@ export interface GameInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "_isValidMove",
-    values: [string, BigNumberish, BigNumberish]
+    values: [string, PositionStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "_mine",
-    values: [BigNumberish, BigNumberish]
+    values: [PositionStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "_modifyItemInInventoryNonce",
@@ -291,15 +305,15 @@ export interface GameInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "_place",
-    values: [BigNumberish, BigNumberish, BigNumberish]
+    values: [PositionStruct, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "_setOccupierAtPosition",
-    values: [string, BigNumberish, BigNumberish]
+    values: [string, PositionStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "_setPlayerPosition",
-    values: [string, BigNumberish, BigNumberish]
+    values: [string, PositionStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "_transfer",
@@ -316,7 +330,7 @@ export interface GameInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "attack", values: [string]): string;
   encodeFunctionData(
     functionFragment: "attackItem",
-    values: [BigNumberish, BigNumberish, BigNumberish, string]
+    values: [PositionStruct, BigNumberish, string]
   ): string;
   encodeFunctionData(
     functionFragment: "claimReward",
@@ -329,23 +343,23 @@ export interface GameInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "initializePlayer",
-    values: [BigNumberish, BigNumberish]
+    values: [PositionStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "mine",
-    values: [BigNumberish, BigNumberish, BigNumberish]
+    values: [PositionStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "mineItem",
-    values: [BigNumberish, BigNumberish, BigNumberish, string]
+    values: [PositionStruct, BigNumberish, string]
   ): string;
   encodeFunctionData(
     functionFragment: "move",
-    values: [BigNumberish, BigNumberish]
+    values: [PositionStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "place",
-    values: [BigNumberish, BigNumberish, BigNumberish]
+    values: [PositionStruct, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "s", values?: undefined): string;
   encodeFunctionData(
@@ -417,6 +431,10 @@ export interface GameInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "_getPositionFromIndex",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_getTileData",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -500,17 +518,17 @@ export interface GameInterface extends utils.Interface {
 
   events: {
     "Attack(address,address)": EventFragment;
-    "AttackItem(address,uint256,uint256,uint256)": EventFragment;
-    "ClaimReward(address,string,uint256)": EventFragment;
+    "AttackItem(address,tuple,uint256,uint256)": EventFragment;
+    "ClaimReward(address,tuple,uint256,uint256)": EventFragment;
     "Craft(address,uint256)": EventFragment;
     "Death(address)": EventFragment;
-    "MineItem(address,uint256,uint256,uint256,uint256)": EventFragment;
-    "Move(address,uint256,uint256)": EventFragment;
-    "NewPlayer(address,uint256,uint256)": EventFragment;
-    "Place(address,uint256,uint256,uint256)": EventFragment;
-    "StakeTower(address,string,uint256)": EventFragment;
+    "MineItem(address,tuple,uint256,uint256)": EventFragment;
+    "Move(address,tuple)": EventFragment;
+    "NewPlayer(address,tuple)": EventFragment;
+    "Place(address,tuple,uint256)": EventFragment;
+    "StakeTower(address,tuple,uint256)": EventFragment;
     "Transfer(address,address,uint256,uint256)": EventFragment;
-    "UnstakeTower(address,string,uint256)": EventFragment;
+    "UnstakeTower(address,tuple,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Attack"): EventFragment;
@@ -535,15 +553,25 @@ export type AttackEvent = TypedEvent<
 export type AttackEventFilter = TypedEventFilter<AttackEvent>;
 
 export type AttackItemEvent = TypedEvent<
-  [string, BigNumber, BigNumber, BigNumber],
-  { _player: string; _x: BigNumber; _y: BigNumber; _zIndex: BigNumber }
+  [string, PositionStructOutput, BigNumber, BigNumber],
+  {
+    _player: string;
+    _pos: PositionStructOutput;
+    _strength: BigNumber;
+    _zIndex: BigNumber;
+  }
 >;
 
 export type AttackItemEventFilter = TypedEventFilter<AttackItemEvent>;
 
 export type ClaimRewardEvent = TypedEvent<
-  [string, string, BigNumber],
-  { _player: string; _towerId: string; _reward: BigNumber }
+  [string, PositionStructOutput, BigNumber, BigNumber],
+  {
+    _player: string;
+    _towerPos: PositionStructOutput;
+    _reward: BigNumber;
+    _epoch: BigNumber;
+  }
 >;
 
 export type ClaimRewardEventFilter = TypedEventFilter<ClaimRewardEvent>;
@@ -560,11 +588,10 @@ export type DeathEvent = TypedEvent<[string], { _player: string }>;
 export type DeathEventFilter = TypedEventFilter<DeathEvent>;
 
 export type MineItemEvent = TypedEvent<
-  [string, BigNumber, BigNumber, BigNumber, BigNumber],
+  [string, PositionStructOutput, BigNumber, BigNumber],
   {
     _player: string;
-    _x: BigNumber;
-    _y: BigNumber;
+    _pos: PositionStructOutput;
     _blockId: BigNumber;
     _zIndex: BigNumber;
   }
@@ -573,29 +600,29 @@ export type MineItemEvent = TypedEvent<
 export type MineItemEventFilter = TypedEventFilter<MineItemEvent>;
 
 export type MoveEvent = TypedEvent<
-  [string, BigNumber, BigNumber],
-  { _player: string; _x: BigNumber; _y: BigNumber }
+  [string, PositionStructOutput],
+  { _player: string; _pos: PositionStructOutput }
 >;
 
 export type MoveEventFilter = TypedEventFilter<MoveEvent>;
 
 export type NewPlayerEvent = TypedEvent<
-  [string, BigNumber, BigNumber],
-  { _player: string; _x: BigNumber; _y: BigNumber }
+  [string, PositionStructOutput],
+  { _player: string; _pos: PositionStructOutput }
 >;
 
 export type NewPlayerEventFilter = TypedEventFilter<NewPlayerEvent>;
 
 export type PlaceEvent = TypedEvent<
-  [string, BigNumber, BigNumber, BigNumber],
-  { _player: string; _x: BigNumber; _y: BigNumber; _blockId: BigNumber }
+  [string, PositionStructOutput, BigNumber],
+  { _player: string; _pos: PositionStructOutput; _blockId: BigNumber }
 >;
 
 export type PlaceEventFilter = TypedEventFilter<PlaceEvent>;
 
 export type StakeTowerEvent = TypedEvent<
-  [string, string, BigNumber],
-  { _player: string; _towerId: string; _amount: BigNumber }
+  [string, PositionStructOutput, BigNumber],
+  { _player: string; _towerPos: PositionStructOutput; _amount: BigNumber }
 >;
 
 export type StakeTowerEventFilter = TypedEventFilter<StakeTowerEvent>;
@@ -608,8 +635,8 @@ export type TransferEvent = TypedEvent<
 export type TransferEventFilter = TypedEventFilter<TransferEvent>;
 
 export type UnstakeTowerEvent = TypedEvent<
-  [string, string, BigNumber],
-  { _player: string; _towerId: string; _amount: BigNumber }
+  [string, PositionStructOutput, BigNumber],
+  { _player: string; _towerPos: PositionStructOutput; _amount: BigNumber }
 >;
 
 export type UnstakeTowerEventFilter = TypedEventFilter<UnstakeTowerEvent>;
@@ -642,8 +669,7 @@ export interface Game extends BaseContract {
 
   functions: {
     _blockOccupier(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
@@ -655,8 +681,7 @@ export interface Game extends BaseContract {
     ): Promise<ContractTransaction>;
 
     _changeTopLevelStrengthAtPosition(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       _attackDamage: BigNumberish,
       dir: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -684,15 +709,13 @@ export interface Game extends BaseContract {
     >;
 
     _getBlockAtPosition(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       _zIdx: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     _getBlockCountAtPosition(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -715,8 +738,7 @@ export interface Game extends BaseContract {
     ): Promise<[ItemWithMetadataStructOutput]>;
 
     _getMap(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<[TileWithMetadataStructOutput[]]>;
 
@@ -730,15 +752,18 @@ export interface Game extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[PositionStructOutput]>;
 
+    _getTileData(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<[TileStructOutput]>;
+
     _getTopBlockAtPosition(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     _getTopLevelStrengthAtPosition(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -757,8 +782,7 @@ export interface Game extends BaseContract {
     ): Promise<[boolean]>;
 
     _isOccupied(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
@@ -770,14 +794,12 @@ export interface Game extends BaseContract {
 
     _isValidMove(
       _player: string,
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     _mine(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -788,23 +810,20 @@ export interface Game extends BaseContract {
     ): Promise<ContractTransaction>;
 
     _place(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       _itemId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     _setOccupierAtPosition(
       _player: string,
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     _setPlayerPosition(
       _player: string,
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -834,8 +853,7 @@ export interface Game extends BaseContract {
     ): Promise<ContractTransaction>;
 
     attackItem(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       _zIdx: BigNumberish,
       _playerAddr: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -857,35 +875,29 @@ export interface Game extends BaseContract {
     ): Promise<[TowerStructOutput]>;
 
     initializePlayer(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     mine(
-      _x: BigNumberish,
-      _y: BigNumberish,
-      _zIdx: BigNumberish,
+      _pos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     mineItem(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       _zIdx: BigNumberish,
       _playerAddr: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     move(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     place(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       _itemId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -898,27 +910,25 @@ export interface Game extends BaseContract {
         BigNumber,
         string,
         boolean,
-        string,
         BigNumber,
         BigNumber,
         BigNumber,
         BigNumber,
         BigNumber,
         BigNumber,
-        BigNumber
+        string
       ] & {
         worldWidth: BigNumber;
         worldHeight: BigNumber;
         admin: string;
         paused: boolean;
-        epochController: string;
         itemNonce: BigNumber;
-        moveRange: BigNumber;
         attackRange: BigNumber;
         attackDamage: BigNumber;
         attackWaitTime: BigNumber;
         startPlayerHealth: BigNumber;
         startPlayerEnergy: BigNumber;
+        epochController: string;
       }
     >;
 
@@ -941,8 +951,7 @@ export interface Game extends BaseContract {
   };
 
   _blockOccupier(
-    _x: BigNumberish,
-    _y: BigNumberish,
+    _pos: PositionStruct,
     overrides?: CallOverrides
   ): Promise<string>;
 
@@ -954,8 +963,7 @@ export interface Game extends BaseContract {
   ): Promise<ContractTransaction>;
 
   _changeTopLevelStrengthAtPosition(
-    _x: BigNumberish,
-    _y: BigNumberish,
+    _pos: PositionStruct,
     _attackDamage: BigNumberish,
     dir: boolean,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -981,15 +989,13 @@ export interface Game extends BaseContract {
   ): Promise<PlayerDataStructOutput>;
 
   _getBlockAtPosition(
-    _x: BigNumberish,
-    _y: BigNumberish,
+    _pos: PositionStruct,
     _zIdx: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   _getBlockCountAtPosition(
-    _x: BigNumberish,
-    _y: BigNumberish,
+    _pos: PositionStruct,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -1012,8 +1018,7 @@ export interface Game extends BaseContract {
   ): Promise<ItemWithMetadataStructOutput>;
 
   _getMap(
-    _x: BigNumberish,
-    _y: BigNumberish,
+    _pos: PositionStruct,
     overrides?: CallOverrides
   ): Promise<TileWithMetadataStructOutput[]>;
 
@@ -1027,15 +1032,18 @@ export interface Game extends BaseContract {
     overrides?: CallOverrides
   ): Promise<PositionStructOutput>;
 
+  _getTileData(
+    _pos: PositionStruct,
+    overrides?: CallOverrides
+  ): Promise<TileStructOutput>;
+
   _getTopBlockAtPosition(
-    _x: BigNumberish,
-    _y: BigNumberish,
+    _pos: PositionStruct,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   _getTopLevelStrengthAtPosition(
-    _x: BigNumberish,
-    _y: BigNumberish,
+    _pos: PositionStruct,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -1054,8 +1062,7 @@ export interface Game extends BaseContract {
   ): Promise<boolean>;
 
   _isOccupied(
-    _x: BigNumberish,
-    _y: BigNumberish,
+    _pos: PositionStruct,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
@@ -1067,14 +1074,12 @@ export interface Game extends BaseContract {
 
   _isValidMove(
     _player: string,
-    _x: BigNumberish,
-    _y: BigNumberish,
+    _pos: PositionStruct,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   _mine(
-    _x: BigNumberish,
-    _y: BigNumberish,
+    _pos: PositionStruct,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1085,23 +1090,20 @@ export interface Game extends BaseContract {
   ): Promise<ContractTransaction>;
 
   _place(
-    _x: BigNumberish,
-    _y: BigNumberish,
+    _pos: PositionStruct,
     _itemId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   _setOccupierAtPosition(
     _player: string,
-    _x: BigNumberish,
-    _y: BigNumberish,
+    _pos: PositionStruct,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   _setPlayerPosition(
     _player: string,
-    _x: BigNumberish,
-    _y: BigNumberish,
+    _pos: PositionStruct,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1131,8 +1133,7 @@ export interface Game extends BaseContract {
   ): Promise<ContractTransaction>;
 
   attackItem(
-    _x: BigNumberish,
-    _y: BigNumberish,
+    _pos: PositionStruct,
     _zIdx: BigNumberish,
     _playerAddr: string,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -1154,35 +1155,29 @@ export interface Game extends BaseContract {
   ): Promise<TowerStructOutput>;
 
   initializePlayer(
-    _x: BigNumberish,
-    _y: BigNumberish,
+    _pos: PositionStruct,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   mine(
-    _x: BigNumberish,
-    _y: BigNumberish,
-    _zIdx: BigNumberish,
+    _pos: PositionStruct,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   mineItem(
-    _x: BigNumberish,
-    _y: BigNumberish,
+    _pos: PositionStruct,
     _zIdx: BigNumberish,
     _playerAddr: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   move(
-    _x: BigNumberish,
-    _y: BigNumberish,
+    _pos: PositionStruct,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   place(
-    _x: BigNumberish,
-    _y: BigNumberish,
+    _pos: PositionStruct,
     _itemId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -1195,27 +1190,25 @@ export interface Game extends BaseContract {
       BigNumber,
       string,
       boolean,
-      string,
       BigNumber,
       BigNumber,
       BigNumber,
       BigNumber,
       BigNumber,
       BigNumber,
-      BigNumber
+      string
     ] & {
       worldWidth: BigNumber;
       worldHeight: BigNumber;
       admin: string;
       paused: boolean;
-      epochController: string;
       itemNonce: BigNumber;
-      moveRange: BigNumber;
       attackRange: BigNumber;
       attackDamage: BigNumber;
       attackWaitTime: BigNumber;
       startPlayerHealth: BigNumber;
       startPlayerEnergy: BigNumber;
+      epochController: string;
     }
   >;
 
@@ -1238,8 +1231,7 @@ export interface Game extends BaseContract {
 
   callStatic: {
     _blockOccupier(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -1251,8 +1243,7 @@ export interface Game extends BaseContract {
     ): Promise<void>;
 
     _changeTopLevelStrengthAtPosition(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       _attackDamage: BigNumberish,
       dir: boolean,
       overrides?: CallOverrides
@@ -1278,15 +1269,13 @@ export interface Game extends BaseContract {
     ): Promise<PlayerDataStructOutput>;
 
     _getBlockAtPosition(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       _zIdx: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     _getBlockCountAtPosition(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1309,8 +1298,7 @@ export interface Game extends BaseContract {
     ): Promise<ItemWithMetadataStructOutput>;
 
     _getMap(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<TileWithMetadataStructOutput[]>;
 
@@ -1324,15 +1312,18 @@ export interface Game extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PositionStructOutput>;
 
+    _getTileData(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<TileStructOutput>;
+
     _getTopBlockAtPosition(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     _getTopLevelStrengthAtPosition(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1351,8 +1342,7 @@ export interface Game extends BaseContract {
     ): Promise<boolean>;
 
     _isOccupied(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -1364,16 +1354,11 @@ export interface Game extends BaseContract {
 
     _isValidMove(
       _player: string,
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    _mine(
-      _x: BigNumberish,
-      _y: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    _mine(_pos: PositionStruct, overrides?: CallOverrides): Promise<void>;
 
     _modifyItemInInventoryNonce(
       _itemId: BigNumberish,
@@ -1382,23 +1367,20 @@ export interface Game extends BaseContract {
     ): Promise<void>;
 
     _place(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       _itemId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     _setOccupierAtPosition(
       _player: string,
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
     _setPlayerPosition(
       _player: string,
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1425,8 +1407,7 @@ export interface Game extends BaseContract {
     attack(_target: string, overrides?: CallOverrides): Promise<void>;
 
     attackItem(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       _zIdx: BigNumberish,
       _playerAddr: string,
       overrides?: CallOverrides
@@ -1445,35 +1426,23 @@ export interface Game extends BaseContract {
     ): Promise<TowerStructOutput>;
 
     initializePlayer(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    mine(
-      _x: BigNumberish,
-      _y: BigNumberish,
-      _zIdx: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    mine(_pos: PositionStruct, overrides?: CallOverrides): Promise<void>;
 
     mineItem(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       _zIdx: BigNumberish,
       _playerAddr: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    move(
-      _x: BigNumberish,
-      _y: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    move(_pos: PositionStruct, overrides?: CallOverrides): Promise<void>;
 
     place(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       _itemId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1486,27 +1455,25 @@ export interface Game extends BaseContract {
         BigNumber,
         string,
         boolean,
-        string,
         BigNumber,
         BigNumber,
         BigNumber,
         BigNumber,
         BigNumber,
         BigNumber,
-        BigNumber
+        string
       ] & {
         worldWidth: BigNumber;
         worldHeight: BigNumber;
         admin: string;
         paused: boolean;
-        epochController: string;
         itemNonce: BigNumber;
-        moveRange: BigNumber;
         attackRange: BigNumber;
         attackDamage: BigNumber;
         attackWaitTime: BigNumber;
         startPlayerHealth: BigNumber;
         startPlayerEnergy: BigNumber;
+        epochController: string;
       }
     >;
 
@@ -1532,28 +1499,30 @@ export interface Game extends BaseContract {
     ): AttackEventFilter;
     Attack(_player1?: null, _player2?: null): AttackEventFilter;
 
-    "AttackItem(address,uint256,uint256,uint256)"(
+    "AttackItem(address,tuple,uint256,uint256)"(
       _player?: null,
-      _x?: null,
-      _y?: null,
+      _pos?: null,
+      _strength?: null,
       _zIndex?: null
     ): AttackItemEventFilter;
     AttackItem(
       _player?: null,
-      _x?: null,
-      _y?: null,
+      _pos?: null,
+      _strength?: null,
       _zIndex?: null
     ): AttackItemEventFilter;
 
-    "ClaimReward(address,string,uint256)"(
+    "ClaimReward(address,tuple,uint256,uint256)"(
       _player?: null,
-      _towerId?: null,
-      _reward?: null
+      _towerPos?: null,
+      _reward?: null,
+      _epoch?: null
     ): ClaimRewardEventFilter;
     ClaimReward(
       _player?: null,
-      _towerId?: null,
-      _reward?: null
+      _towerPos?: null,
+      _reward?: null,
+      _epoch?: null
     ): ClaimRewardEventFilter;
 
     "Craft(address,uint256)"(_player?: null, _blockId?: null): CraftEventFilter;
@@ -1562,56 +1531,43 @@ export interface Game extends BaseContract {
     "Death(address)"(_player?: null): DeathEventFilter;
     Death(_player?: null): DeathEventFilter;
 
-    "MineItem(address,uint256,uint256,uint256,uint256)"(
+    "MineItem(address,tuple,uint256,uint256)"(
       _player?: null,
-      _x?: null,
-      _y?: null,
+      _pos?: null,
       _blockId?: null,
       _zIndex?: null
     ): MineItemEventFilter;
     MineItem(
       _player?: null,
-      _x?: null,
-      _y?: null,
+      _pos?: null,
       _blockId?: null,
       _zIndex?: null
     ): MineItemEventFilter;
 
-    "Move(address,uint256,uint256)"(
-      _player?: null,
-      _x?: null,
-      _y?: null
-    ): MoveEventFilter;
-    Move(_player?: null, _x?: null, _y?: null): MoveEventFilter;
+    "Move(address,tuple)"(_player?: null, _pos?: null): MoveEventFilter;
+    Move(_player?: null, _pos?: null): MoveEventFilter;
 
-    "NewPlayer(address,uint256,uint256)"(
+    "NewPlayer(address,tuple)"(
       _player?: null,
-      _x?: null,
-      _y?: null
+      _pos?: null
     ): NewPlayerEventFilter;
-    NewPlayer(_player?: null, _x?: null, _y?: null): NewPlayerEventFilter;
+    NewPlayer(_player?: null, _pos?: null): NewPlayerEventFilter;
 
-    "Place(address,uint256,uint256,uint256)"(
+    "Place(address,tuple,uint256)"(
       _player?: null,
-      _x?: null,
-      _y?: null,
+      _pos?: null,
       _blockId?: null
     ): PlaceEventFilter;
-    Place(
-      _player?: null,
-      _x?: null,
-      _y?: null,
-      _blockId?: null
-    ): PlaceEventFilter;
+    Place(_player?: null, _pos?: null, _blockId?: null): PlaceEventFilter;
 
-    "StakeTower(address,string,uint256)"(
+    "StakeTower(address,tuple,uint256)"(
       _player?: null,
-      _towerId?: null,
+      _towerPos?: null,
       _amount?: null
     ): StakeTowerEventFilter;
     StakeTower(
       _player?: null,
-      _towerId?: null,
+      _towerPos?: null,
       _amount?: null
     ): StakeTowerEventFilter;
 
@@ -1628,22 +1584,21 @@ export interface Game extends BaseContract {
       _amount?: null
     ): TransferEventFilter;
 
-    "UnstakeTower(address,string,uint256)"(
+    "UnstakeTower(address,tuple,uint256)"(
       _player?: null,
-      _towerId?: null,
+      _towerPos?: null,
       _amount?: null
     ): UnstakeTowerEventFilter;
     UnstakeTower(
       _player?: null,
-      _towerId?: null,
+      _towerPos?: null,
       _amount?: null
     ): UnstakeTowerEventFilter;
   };
 
   estimateGas: {
     _blockOccupier(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1655,8 +1610,7 @@ export interface Game extends BaseContract {
     ): Promise<BigNumber>;
 
     _changeTopLevelStrengthAtPosition(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       _attackDamage: BigNumberish,
       dir: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1682,15 +1636,13 @@ export interface Game extends BaseContract {
     ): Promise<BigNumber>;
 
     _getBlockAtPosition(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       _zIdx: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     _getBlockCountAtPosition(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1713,8 +1665,7 @@ export interface Game extends BaseContract {
     ): Promise<BigNumber>;
 
     _getMap(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1728,15 +1679,18 @@ export interface Game extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _getTileData(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     _getTopBlockAtPosition(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     _getTopLevelStrengthAtPosition(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1755,8 +1709,7 @@ export interface Game extends BaseContract {
     ): Promise<BigNumber>;
 
     _isOccupied(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1768,14 +1721,12 @@ export interface Game extends BaseContract {
 
     _isValidMove(
       _player: string,
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     _mine(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1786,23 +1737,20 @@ export interface Game extends BaseContract {
     ): Promise<BigNumber>;
 
     _place(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       _itemId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     _setOccupierAtPosition(
       _player: string,
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     _setPlayerPosition(
       _player: string,
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1832,8 +1780,7 @@ export interface Game extends BaseContract {
     ): Promise<BigNumber>;
 
     attackItem(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       _zIdx: BigNumberish,
       _playerAddr: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1855,35 +1802,29 @@ export interface Game extends BaseContract {
     ): Promise<BigNumber>;
 
     initializePlayer(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     mine(
-      _x: BigNumberish,
-      _y: BigNumberish,
-      _zIdx: BigNumberish,
+      _pos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     mineItem(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       _zIdx: BigNumberish,
       _playerAddr: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     move(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     place(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       _itemId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -1910,8 +1851,7 @@ export interface Game extends BaseContract {
 
   populateTransaction: {
     _blockOccupier(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1923,8 +1863,7 @@ export interface Game extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     _changeTopLevelStrengthAtPosition(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       _attackDamage: BigNumberish,
       dir: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1952,15 +1891,13 @@ export interface Game extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     _getBlockAtPosition(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       _zIdx: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     _getBlockCountAtPosition(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1983,8 +1920,7 @@ export interface Game extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     _getMap(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1998,15 +1934,18 @@ export interface Game extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    _getTileData(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     _getTopBlockAtPosition(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     _getTopLevelStrengthAtPosition(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2025,8 +1964,7 @@ export interface Game extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     _isOccupied(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2038,14 +1976,12 @@ export interface Game extends BaseContract {
 
     _isValidMove(
       _player: string,
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     _mine(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2056,23 +1992,20 @@ export interface Game extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     _place(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       _itemId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     _setOccupierAtPosition(
       _player: string,
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     _setPlayerPosition(
       _player: string,
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2102,8 +2035,7 @@ export interface Game extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     attackItem(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       _zIdx: BigNumberish,
       _playerAddr: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -2125,35 +2057,29 @@ export interface Game extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     initializePlayer(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     mine(
-      _x: BigNumberish,
-      _y: BigNumberish,
-      _zIdx: BigNumberish,
+      _pos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     mineItem(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       _zIdx: BigNumberish,
       _playerAddr: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     move(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     place(
-      _x: BigNumberish,
-      _y: BigNumberish,
+      _pos: PositionStruct,
       _itemId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
