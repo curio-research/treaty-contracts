@@ -110,6 +110,18 @@ export type TileWithMetadataStructOutput = [
   BigNumber
 ] & { occupier: string; blocks: BigNumber[]; x: BigNumber; y: BigNumber };
 
+export type TileStruct = {
+  occupier: string;
+  topLevelStrength: BigNumberish;
+  blocks: BigNumberish[];
+};
+
+export type TileStructOutput = [string, BigNumber, BigNumber[]] & {
+  occupier: string;
+  topLevelStrength: BigNumber;
+  blocks: BigNumber[];
+};
+
 export interface GameStorageInterface extends utils.Interface {
   functions: {
     "_blockOccupier((uint256,uint256))": FunctionFragment;
@@ -128,6 +140,7 @@ export interface GameStorageInterface extends utils.Interface {
     "_getMap((uint256,uint256))": FunctionFragment;
     "_getPlayerPosition(address)": FunctionFragment;
     "_getPositionFromIndex(uint256)": FunctionFragment;
+    "_getTileData((uint256,uint256))": FunctionFragment;
     "_getTopBlockAtPosition((uint256,uint256))": FunctionFragment;
     "_getTopLevelStrengthAtPosition((uint256,uint256))": FunctionFragment;
     "_getWorldSize()": FunctionFragment;
@@ -210,6 +223,10 @@ export interface GameStorageInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "_getPositionFromIndex",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getTileData",
+    values: [PositionStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "_getTopBlockAtPosition",
@@ -333,6 +350,10 @@ export interface GameStorageInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "_getPositionFromIndex",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_getTileData",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -517,6 +538,11 @@ export interface GameStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[PositionStructOutput]>;
 
+    _getTileData(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<[TileStructOutput]>;
+
     _getTopBlockAtPosition(
       _pos: PositionStruct,
       overrides?: CallOverrides
@@ -609,25 +635,25 @@ export interface GameStorage extends BaseContract {
         BigNumber,
         string,
         boolean,
-        string,
         BigNumber,
         BigNumber,
         BigNumber,
         BigNumber,
         BigNumber,
-        BigNumber
+        BigNumber,
+        string
       ] & {
         worldWidth: BigNumber;
         worldHeight: BigNumber;
         admin: string;
         paused: boolean;
-        epochController: string;
         itemNonce: BigNumber;
         attackRange: BigNumber;
         attackDamage: BigNumber;
         attackWaitTime: BigNumber;
         startPlayerHealth: BigNumber;
         startPlayerEnergy: BigNumber;
+        epochController: string;
       }
     >;
 
@@ -718,6 +744,11 @@ export interface GameStorage extends BaseContract {
     k: BigNumberish,
     overrides?: CallOverrides
   ): Promise<PositionStructOutput>;
+
+  _getTileData(
+    _pos: PositionStruct,
+    overrides?: CallOverrides
+  ): Promise<TileStructOutput>;
 
   _getTopBlockAtPosition(
     _pos: PositionStruct,
@@ -811,25 +842,25 @@ export interface GameStorage extends BaseContract {
       BigNumber,
       string,
       boolean,
-      string,
       BigNumber,
       BigNumber,
       BigNumber,
       BigNumber,
       BigNumber,
-      BigNumber
+      BigNumber,
+      string
     ] & {
       worldWidth: BigNumber;
       worldHeight: BigNumber;
       admin: string;
       paused: boolean;
-      epochController: string;
       itemNonce: BigNumber;
       attackRange: BigNumber;
       attackDamage: BigNumber;
       attackWaitTime: BigNumber;
       startPlayerHealth: BigNumber;
       startPlayerEnergy: BigNumber;
+      epochController: string;
     }
   >;
 
@@ -921,6 +952,11 @@ export interface GameStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PositionStructOutput>;
 
+    _getTileData(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<TileStructOutput>;
+
     _getTopBlockAtPosition(
       _pos: PositionStruct,
       overrides?: CallOverrides
@@ -1010,25 +1046,25 @@ export interface GameStorage extends BaseContract {
         BigNumber,
         string,
         boolean,
-        string,
         BigNumber,
         BigNumber,
         BigNumber,
         BigNumber,
         BigNumber,
-        BigNumber
+        BigNumber,
+        string
       ] & {
         worldWidth: BigNumber;
         worldHeight: BigNumber;
         admin: string;
         paused: boolean;
-        epochController: string;
         itemNonce: BigNumber;
         attackRange: BigNumber;
         attackDamage: BigNumber;
         attackWaitTime: BigNumber;
         startPlayerHealth: BigNumber;
         startPlayerEnergy: BigNumber;
+        epochController: string;
       }
     >;
 
@@ -1130,6 +1166,11 @@ export interface GameStorage extends BaseContract {
 
     _getPositionFromIndex(
       k: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getTileData(
+      _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1307,6 +1348,11 @@ export interface GameStorage extends BaseContract {
 
     _getPositionFromIndex(
       k: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getTileData(
+      _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

@@ -110,6 +110,18 @@ export type TileWithMetadataStructOutput = [
   BigNumber
 ] & { occupier: string; blocks: BigNumber[]; x: BigNumber; y: BigNumber };
 
+export type TileStruct = {
+  occupier: string;
+  topLevelStrength: BigNumberish;
+  blocks: BigNumberish[];
+};
+
+export type TileStructOutput = [string, BigNumber, BigNumber[]] & {
+  occupier: string;
+  topLevelStrength: BigNumber;
+  blocks: BigNumber[];
+};
+
 export type TowerStruct = {
   rewardPerEpoch: BigNumberish;
   itemId: BigNumberish;
@@ -150,6 +162,7 @@ export interface GameInterface extends utils.Interface {
     "_getMap((uint256,uint256))": FunctionFragment;
     "_getPlayerPosition(address)": FunctionFragment;
     "_getPositionFromIndex(uint256)": FunctionFragment;
+    "_getTileData((uint256,uint256))": FunctionFragment;
     "_getTopBlockAtPosition((uint256,uint256))": FunctionFragment;
     "_getTopLevelStrengthAtPosition((uint256,uint256))": FunctionFragment;
     "_getWorldSize()": FunctionFragment;
@@ -245,6 +258,10 @@ export interface GameInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "_getPositionFromIndex",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getTileData",
+    values: [PositionStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "_getTopBlockAtPosition",
@@ -417,6 +434,10 @@ export interface GameInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "_getTileData",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "_getTopBlockAtPosition",
     data: BytesLike
   ): Result;
@@ -497,7 +518,7 @@ export interface GameInterface extends utils.Interface {
 
   events: {
     "Attack(address,address)": EventFragment;
-    "AttackItem(address,tuple,uint256)": EventFragment;
+    "AttackItem(address,tuple,uint256,uint256)": EventFragment;
     "ClaimReward(address,tuple,uint256,uint256)": EventFragment;
     "Craft(address,uint256)": EventFragment;
     "Death(address)": EventFragment;
@@ -532,8 +553,13 @@ export type AttackEvent = TypedEvent<
 export type AttackEventFilter = TypedEventFilter<AttackEvent>;
 
 export type AttackItemEvent = TypedEvent<
-  [string, PositionStructOutput, BigNumber],
-  { _player: string; _pos: PositionStructOutput; _zIndex: BigNumber }
+  [string, PositionStructOutput, BigNumber, BigNumber],
+  {
+    _player: string;
+    _pos: PositionStructOutput;
+    _strength: BigNumber;
+    _zIndex: BigNumber;
+  }
 >;
 
 export type AttackItemEventFilter = TypedEventFilter<AttackItemEvent>;
@@ -726,6 +752,11 @@ export interface Game extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[PositionStructOutput]>;
 
+    _getTileData(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<[TileStructOutput]>;
+
     _getTopBlockAtPosition(
       _pos: PositionStruct,
       overrides?: CallOverrides
@@ -879,25 +910,25 @@ export interface Game extends BaseContract {
         BigNumber,
         string,
         boolean,
-        string,
         BigNumber,
         BigNumber,
         BigNumber,
         BigNumber,
         BigNumber,
-        BigNumber
+        BigNumber,
+        string
       ] & {
         worldWidth: BigNumber;
         worldHeight: BigNumber;
         admin: string;
         paused: boolean;
-        epochController: string;
         itemNonce: BigNumber;
         attackRange: BigNumber;
         attackDamage: BigNumber;
         attackWaitTime: BigNumber;
         startPlayerHealth: BigNumber;
         startPlayerEnergy: BigNumber;
+        epochController: string;
       }
     >;
 
@@ -1000,6 +1031,11 @@ export interface Game extends BaseContract {
     k: BigNumberish,
     overrides?: CallOverrides
   ): Promise<PositionStructOutput>;
+
+  _getTileData(
+    _pos: PositionStruct,
+    overrides?: CallOverrides
+  ): Promise<TileStructOutput>;
 
   _getTopBlockAtPosition(
     _pos: PositionStruct,
@@ -1154,25 +1190,25 @@ export interface Game extends BaseContract {
       BigNumber,
       string,
       boolean,
-      string,
       BigNumber,
       BigNumber,
       BigNumber,
       BigNumber,
       BigNumber,
-      BigNumber
+      BigNumber,
+      string
     ] & {
       worldWidth: BigNumber;
       worldHeight: BigNumber;
       admin: string;
       paused: boolean;
-      epochController: string;
       itemNonce: BigNumber;
       attackRange: BigNumber;
       attackDamage: BigNumber;
       attackWaitTime: BigNumber;
       startPlayerHealth: BigNumber;
       startPlayerEnergy: BigNumber;
+      epochController: string;
     }
   >;
 
@@ -1275,6 +1311,11 @@ export interface Game extends BaseContract {
       k: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PositionStructOutput>;
+
+    _getTileData(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<TileStructOutput>;
 
     _getTopBlockAtPosition(
       _pos: PositionStruct,
@@ -1414,25 +1455,25 @@ export interface Game extends BaseContract {
         BigNumber,
         string,
         boolean,
-        string,
         BigNumber,
         BigNumber,
         BigNumber,
         BigNumber,
         BigNumber,
-        BigNumber
+        BigNumber,
+        string
       ] & {
         worldWidth: BigNumber;
         worldHeight: BigNumber;
         admin: string;
         paused: boolean;
-        epochController: string;
         itemNonce: BigNumber;
         attackRange: BigNumber;
         attackDamage: BigNumber;
         attackWaitTime: BigNumber;
         startPlayerHealth: BigNumber;
         startPlayerEnergy: BigNumber;
+        epochController: string;
       }
     >;
 
@@ -1458,14 +1499,16 @@ export interface Game extends BaseContract {
     ): AttackEventFilter;
     Attack(_player1?: null, _player2?: null): AttackEventFilter;
 
-    "AttackItem(address,tuple,uint256)"(
+    "AttackItem(address,tuple,uint256,uint256)"(
       _player?: null,
       _pos?: null,
+      _strength?: null,
       _zIndex?: null
     ): AttackItemEventFilter;
     AttackItem(
       _player?: null,
       _pos?: null,
+      _strength?: null,
       _zIndex?: null
     ): AttackItemEventFilter;
 
@@ -1633,6 +1676,11 @@ export interface Game extends BaseContract {
 
     _getPositionFromIndex(
       k: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getTileData(
+      _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1883,6 +1931,11 @@ export interface Game extends BaseContract {
 
     _getPositionFromIndex(
       k: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getTileData(
+      _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

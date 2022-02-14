@@ -370,6 +370,14 @@ contract GameStorage {
             });
     }
 
+    function _getTileData(GameTypes.Position memory _pos)
+        public
+        view
+        returns (GameTypes.Tile memory)
+    {
+        return s.map[_pos.x][_pos.y];
+    }
+
     // get all player addresses
     function _getAllPlayerAddresses() public view returns (address[] memory) {
         return s.allPlayers;

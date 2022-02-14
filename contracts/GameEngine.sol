@@ -27,7 +27,12 @@ contract Game is GameStorage {
         uint256 _blockId,
         uint256 _zIndex
     );
-    event AttackItem(address _player, GameTypes.Position _pos, uint256 _zIndex);
+    event AttackItem(
+        address _player,
+        GameTypes.Position _pos,
+        uint256 _strength,
+        uint256 _zIndex
+    );
     event Place(address _player, GameTypes.Position _pos, uint256 _blockId);
     event Craft(address _player, uint256 _blockId);
     event Attack(address _player1, address _player2); // add attack result here?
@@ -178,11 +183,13 @@ contract Game is GameStorage {
         address _playerAddr
     ) public {
         _changeTopLevelStrengthAtPosition(_pos, s.attackDamage, false);
+        uint256 _strength = _getTopLevelStrengthAtPosition(_pos);
 
-        emit AttackItem(_playerAddr, _pos, _zIdx);
+        emit AttackItem(_playerAddr, _pos, _strength, _zIdx);
     }
 
     // mine resource blocks at specific z-index base layer (z-indexf of 0)
+    // attack + mine. main function
     function mine(GameTypes.Position memory _pos) external {
         uint256 _blockCount = _getBlockCountAtPosition(_pos);
         if (_blockCount == 0) revert("engine/nonexistent-block");

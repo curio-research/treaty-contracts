@@ -71,22 +71,22 @@ library GameTypes {
         // game info
         address admin;
         bool paused;
-        Epoch epochController;
         mapping(uint256 => GameTypes.ItemData) items;
         mapping(uint256 => GameTypes.ItemWithMetadata) itemsWithMetadata;
-        uint256 itemNonce; // TODO move constants below into a struct for readability
-        uint256 attackRange;
+        uint256 itemNonce;
+        uint256 attackRange; // TODO move constants below into a struct for readability
         uint256 attackDamage;
         uint256 attackWaitTime;
         uint256 startPlayerHealth;
         uint256 startPlayerEnergy;
-        // Player states
+        // players
         address[] allPlayers;
         mapping(address => GameTypes.PlayerData) players; // player data
         mapping(address => mapping(uint256 => uint256)) inventory; // player => itemId => inventory
         mapping(address => uint256) lastMovedAt; // time when user last moved
         mapping(address => uint256[]) inventoryNonce; // array of all items in player inventory
         // tower
+        Epoch epochController;
         mapping(string => Tower) towers; // towerId => Tower
         mapping(address => uint256) stakePoints;
     }
