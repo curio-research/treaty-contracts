@@ -1,13 +1,13 @@
-import { TileWithMetadataStructOutput } from "./../../typechain-types/GameStorage";
+import { TileWithMetadataStructOutput, RecipeStructOutput } from "./../../typechain-types/GameStorage";
 import { TileWithMetadata } from "./../types/game";
 import { Inventory } from "../types/game";
-import { RecipeStructOutput } from "./../../typechain-types/Game";
+
 import { decodeBNArr } from "./common";
 
-export const decodePlayerInventory = (recipe: RecipeStructOutput): Inventory => {
+export const decodePlayerInventory = (inventory: RecipeStructOutput): Inventory => {
   return {
-    itemIds: decodeBNArr(recipe.craftItemIds),
-    itemAmounts: decodeBNArr(recipe.craftItemAmounts),
+    itemIds: decodeBNArr(inventory.craftItemIds),
+    itemAmounts: decodeBNArr(inventory.craftItemAmounts),
   };
 };
 

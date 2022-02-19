@@ -12,7 +12,7 @@ import { decodePlayerInventory } from "../util/serde/game";
 
 describe("Getters", () => {
   let world: World;
-  let contracts: AllContracts;
+  let c: AllContracts;
   let Getters: Getters;
 
   const worldFixture = async () => {
@@ -22,15 +22,15 @@ describe("Getters", () => {
 
   before(async () => {
     world = await fixtureLoader(worldFixture);
-    contracts = world.contracts;
+    c = world.contracts;
     Getters = world.contracts.Getters;
 
-    await contracts.Game.connect(world.user1).initializePlayer({ x: 1, y: 1 });
-    await contracts.Game.connect(world.user2).initializePlayer({ x: 2, y: 1 });
+    await c.Game.connect(world.user1).initializePlayer({ x: 1, y: 1 });
+    await c.Game.connect(world.user2).initializePlayer({ x: 2, y: 1 });
   });
 
   it("Bulk fetch craft items", async () => {
-    const item1 = decodeItemWithMetadata(await contracts.Game._getItemWithMetadata(1)); // single getter test
+    const item1 = decodeItemWithMetadata(await c.GameStorage._getItemWithMetadata(1)); // single getter test
     expect(item1.craftItemIds).eqls(items[1].craftItemIds);
     expect(item1.craftItemAmounts).eqls(items[1].craftItemAmounts);
 
@@ -43,25 +43,25 @@ describe("Getters", () => {
   });
 
   it("Inventory getter", async () => {
-    await contracts.Game._increaseItemInInventory(world.user1.address, 1, 100);
-    await contracts.Game._increaseItemInInventory(world.user1.address, 2, 200);
-    await contracts.Game._increaseItemInInventory(world.user1.address, 3, 300);
+    await c.GameStorage._increaseItemInInventory(world.user1.address, 1, 100);
+    await c.GameStorage._increaseItemInInventory(world.user1.address, 2, 200);
+    await c.GameStorage._increaseItemInInventory(world.user1.address, 3, 300);
 
-    let res = decodePlayerInventory(await contracts.Game._getInventoryByPlayer(world.user1.address));
+    let res = decodePlayerInventory(await c.GameStorage._getInventoryByPlayer(world.user1.address));
     expect(res.itemIds).to.eqls([1, 2, 3]);
     expect(res.itemAmounts).to.eqls([100, 200, 300]);
 
-    await contracts.Game.place({ x: 0, y: 1 }, 1); // place block
-    res = decodePlayerInventory(await contracts.Game._getInventoryByPlayer(world.user1.address));
+    await c.Game.place({ x: 0, y: 1 }, 1); // place block
+    res = decodePlayerInventory(await c.GameStorage._getInventoryByPlayer(world.user1.address));
     expect(res.itemIds).to.eql([1, 2, 3]);
     expect(res.itemAmounts[0]).equals(99);
 
-    const block = await contracts.Game._getBlockAtPosition({ x: 0, y: 1 }, 0);
+    const block = await c.GameStorage._getBlockAtPosition({ x: 0, y: 1 }, 0);
     expect(block.toNumber()).equals(1);
   });
 
   it("Bulk fetch player info", async () => {
-    const allPlayerAddresses = await contracts.Game._getAllPlayerAddresses();
+    const allPlayerAddresses = await c.GameStorage._getAllPlayerAddresses();
     expect(allPlayerAddresses.length).equals(2);
 
     const allPlayerData = await Getters.bulkGetAllPlayerData();

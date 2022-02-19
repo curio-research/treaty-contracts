@@ -10,9 +10,11 @@ import "hardhat/console.sol";
 
 contract Getters {
     Game gameCore;
+    GameStorage utils;
 
-    constructor(Game _gameCore) {
+    constructor(Game _gameCore, GameStorage _gameStorage) {
         gameCore = _gameCore;
+        utils = _gameStorage;
     }
 
     // bulk fetch all items and corresponding metadata (amount of material needed to craft and which materials)
@@ -23,11 +25,11 @@ contract Getters {
     {
         GameTypes.ItemWithMetadata[]
             memory allItems = new GameTypes.ItemWithMetadata[](
-                gameCore._getItemNonce() - 1
+                utils._getItemNonce() - 1
             );
 
-        for (uint256 i = 1; i < gameCore._getItemNonce(); i++) {
-            allItems[i - 1] = gameCore._getItemWithMetadata(i - 1);
+        for (uint256 i = 1; i < utils._getItemNonce(); i++) {
+            allItems[i - 1] = utils._getItemWithMetadata(i - 1);
         }
 
         return allItems;
@@ -39,13 +41,13 @@ contract Getters {
         view
         returns (GameTypes.PlayerData[] memory)
     {
-        address[] memory playerAddresses = gameCore._getAllPlayerAddresses();
+        address[] memory playerAddresses = utils._getAllPlayerAddresses();
         GameTypes.PlayerData[] memory ret = new GameTypes.PlayerData[](
             playerAddresses.length
         );
 
         for (uint256 i = 0; i < playerAddresses.length; i++) {
-            ret[i] = gameCore._getAllPlayerData(playerAddresses[i]);
+            ret[i] = utils._getAllPlayerData(playerAddresses[i]);
         }
 
         return ret;
