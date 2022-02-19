@@ -12,8 +12,9 @@ contract Getters {
     Game gameCore;
     GameStorage utils;
 
-    constructor(Game _gameCore) {
+    constructor(Game _gameCore, GameStorage _gameStorage) {
         gameCore = _gameCore;
+        utils = _gameStorage;
     }
 
     // bulk fetch all items and corresponding metadata (amount of material needed to craft and which materials)

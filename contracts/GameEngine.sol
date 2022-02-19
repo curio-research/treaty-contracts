@@ -53,8 +53,10 @@ contract Game {
         uint256 _startPlayerHealth,
         uint256 _startPlayerEnergy,
         uint256[][] memory _blocks,
-        GameTypes.ItemWithMetadata[] memory _items
+        GameTypes.ItemWithMetadata[] memory _items,
+        GameStorage _gameStorage
     ) {
+        utils = _gameStorage;
         utils._setConstants(_worldWidth, _worldHeight, _attackRange, _attackDamage, _attackWaitTime, _startPlayerHealth, _startPlayerEnergy);
 
         // Set map and blocks

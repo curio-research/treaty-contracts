@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "./GameStorage.sol";
 import "./GameTypes.sol";
 
-contract Game {
+contract TowerGame {
     using SafeMath for uint256;
     GameStorage utils;
 
