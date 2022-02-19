@@ -3,6 +3,7 @@ pragma solidity ^0.8.4;
 
 // import "@openzeppelin/contracts-upgradeable/proxy/Initializable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "hardhat/console.sol";
 import "./GameStorage.sol";
 import "./GameTypes.sol";
 
@@ -29,9 +30,9 @@ contract TowerGame {
         uint256 _epoch
     );
 
-    // ------------------------------------------------------------
-    // Tower
-    // ------------------------------------------------------------
+    constructor(GameStorage _util) {
+        utils = _util;
+    }
 
     // add tower to map. using this instead of constructor to avoid bloat
     function addTower(
@@ -70,8 +71,13 @@ contract TowerGame {
 
         // add checker for distance
 
-        if (!utils._withinDistance(_position, utils._getPlayerPosition(msg.sender), 2))
-            revert("tower/outside-distance");
+        if (
+            !utils._withinDistance(
+                _position,
+                utils._getPlayerPosition(msg.sender),
+                2
+            )
+        ) revert("tower/outside-distance");
 
         GameTypes.Tower memory tower = utils._getTower(_towerId);
         if (tower.stakedAmount >= _amount) revert("tower/insufficient-stake");
@@ -103,8 +109,13 @@ contract TowerGame {
     function unstake(GameTypes.Position memory _position, uint256 _amount)
         external
     {
-        if (!utils._withinDistance(_position, utils._getPlayerPosition(msg.sender), 2))
-            revert("tower/outside-distance");
+        if (
+            !utils._withinDistance(
+                _position,
+                utils._getPlayerPosition(msg.sender),
+                2
+            )
+        ) revert("tower/outside-distance");
 
         string memory _towerId = utils._encodePos(_position);
 
@@ -115,19 +126,16 @@ contract TowerGame {
         utils._subtractTowerStakePoints(_towerId, _amount);
         utils._addPlayerStakePoints(msg.sender, _amount);
 
-        // return points to user
-
         // if user unstakes all the points, they're no longer the owner
-        if (tower.stakedAmount == 0) {
-            tower.owner = address(0);
-            utils._setTower(_towerId, tower);
+        if (utils._getTower(_towerId).stakedAmount == 0) {
+            utils._setTowerOwner(_towerId, address(0));
         }
 
         emit UnstakeTower(
             msg.sender,
             _position,
             utils._getStakePointsByUser(msg.sender),
-            tower.stakedAmount
+            utils._getTower(_towerId).stakedAmount
         );
     }
 

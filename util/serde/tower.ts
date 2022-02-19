@@ -1,5 +1,5 @@
 import { Tower } from "./../types/tower";
-import { TowerStructOutput } from "./../../typechain-types/Game";
+import { TowerStructOutput } from "./../../typechain-types/TowerGame";
 
 export const decodeTower = (tower: TowerStructOutput): Tower => {
   return {

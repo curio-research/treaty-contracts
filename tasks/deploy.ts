@@ -7,7 +7,8 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { deployProxy, printDivider } from "./util/deployHelper";
 import { generateAllGameArgs, LOCALHOST_RPC_URL, LOCALHOST_WS_RPC_URL } from "./util/constants";
-import { Getters, Game, GameStorage, TowerGame } from "../typechain-types";
+import { Getters, Game, GameStorage } from "../typechain-types";
+import { TowerGame } from "./../typechain-types/TowerGame";
 import { masterItems } from "../test/util/constants";
 
 // ---------------------------------
@@ -29,24 +30,26 @@ task("deploy", "deploy contracts")
 
     const gameDeployArgs = generateAllGameArgs();
 
-    const UtilContract = await deployProxy<GameStorage>("GameStorage", player1, hre, []);
-    const GameContract = await deployProxy<Game>("Game", player1, hre, [...gameDeployArgs.gameDeployArgs, UtilContract.address]);
-    const TowerContract = await deployProxy<TowerGame>("TowerGame", player1, hre, []);
-    const GettersContract = await deployProxy<Getters>("Getters", player1, hre, [GameContract.address, UtilContract.address]);
+    const GameStorage = await deployProxy<GameStorage>("GameStorage", player1, hre, []);
+    const GameContract = await deployProxy<Game>("Game", player1, hre, [...gameDeployArgs.gameDeployArgs, GameStorage.address]);
+    const TowerContract = await deployProxy<TowerGame>("TowerGame", player1, hre, [GameStorage.address]);
+    const GettersContract = await deployProxy<Getters>("Getters", player1, hre, [GameContract.address, GameStorage.address]);
     const EpochContract = await deployProxy<Epoch>("Epoch", player1, hre, [10]);
 
     printDivider();
-    console.log("Game: ", GameContract.address);
-    console.log("Getters:", GettersContract.address);
-    console.log("Epoch: ", EpochContract.address);
+    console.log("Game:      ", GameContract.address);
+    console.log("Getters:   ", GettersContract.address);
+    console.log("Epoch:     ", EpochContract.address);
+    console.log("Tower:     ", TowerContract.address);
+    console.log("Storage:   ", GameStorage.address);
     printDivider();
 
     await GameContract.connect(player1).initializePlayer({ x: 1, y: 1 }); // initialize users
     await GameContract.connect(player2).initializePlayer({ x: 5, y: 5 });
 
-    await UtilContract.connect(player1)._increaseItemInInventory(player1.address, 0, 10); // give user1 cacti for defense
+    await GameStorage.connect(player1)._increaseItemInInventory(player1.address, 0, 10); // give user1 cacti for defense
 
-    await UtilContract.setEpochController(EpochContract.address); // set epoch controller
+    await GameStorage.setEpochController(EpochContract.address); // set epoch controller
 
     // initialize towers
     for (const tower of gameDeployArgs.allTowerArgs) {

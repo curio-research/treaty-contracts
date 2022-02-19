@@ -50,7 +50,9 @@ contract GameStorage {
         s.map[_position.x][_position.y].blocks = _blocks;
     }
 
-    function _setItem(uint256 _i, GameTypes.ItemWithMetadata memory _item) public {
+    function _setItem(uint256 _i, GameTypes.ItemWithMetadata memory _item)
+        public
+    {
         s.itemsWithMetadata[_i] = _item;
     }
 
@@ -70,7 +72,7 @@ contract GameStorage {
     function _incrementNonce() public {
         s.itemNonce += 1;
     }
-    
+
     function _getAttackDamage() public view returns (uint256) {
         return s.attackDamage;
     }
@@ -179,9 +181,10 @@ contract GameStorage {
         return s.map[_pos.x][_pos.y].occupier;
     }
 
-    function _setTopLevelStrengthAtPosition(GameTypes.Position memory _pos, uint256 _strength)
-        public
-    {
+    function _setTopLevelStrengthAtPosition(
+        GameTypes.Position memory _pos,
+        uint256 _strength
+    ) public {
         s.map[_pos.x][_pos.y].topLevelStrength = _strength;
     }
 
@@ -203,11 +206,19 @@ contract GameStorage {
             : s.map[_pos.x][_pos.y].topLevelStrength -= _attackDamage;
     }
 
-    function _getMineItemIds(uint256 _itemId) public view returns (uint256[] memory) {
+    function _getMineItemIds(uint256 _itemId)
+        public
+        view
+        returns (uint256[] memory)
+    {
         return s.itemsWithMetadata[_itemId].mineItemIds;
     }
 
-    function _getCraftItemAmount(address _player, uint256 _craftItemId) public view returns (uint256) {
+    function _getCraftItemAmount(address _player, uint256 _craftItemId)
+        public
+        view
+        returns (uint256)
+    {
         return s.inventory[_player][_craftItemId];
     }
 
@@ -268,7 +279,7 @@ contract GameStorage {
         uint256 _itemId,
         uint256 _amount
     ) public {
-        _modifyItemInInventoryNonce(_itemId, true);
+        _modifyItemInInventoryNonce(_player, _itemId, true);
         s.inventory[_player][_itemId] += _amount;
     }
 
@@ -280,7 +291,7 @@ contract GameStorage {
         s.inventory[_player][_itemId] -= _amount;
         // remove itemId from inventory list
         if (s.inventory[_player][_itemId] == 0) {
-            _modifyItemInInventoryNonce(_itemId, false);
+            _modifyItemInInventoryNonce(_player, _itemId, false);
         }
     }
 
@@ -296,12 +307,16 @@ contract GameStorage {
         return s.inventory[_player][_blockId];
     }
 
-    function _modifyItemInInventoryNonce(uint256 _itemId, bool dir) public {
+    function _modifyItemInInventoryNonce(
+        address _player,
+        uint256 _itemId,
+        bool dir
+    ) public {
         uint256 idx = 0;
         bool hasFound = false;
 
-        for (uint256 i = 0; i < s.inventoryNonce[msg.sender].length; i++) {
-            if (s.inventoryNonce[msg.sender][i] == _itemId) {
+        for (uint256 i = 0; i < s.inventoryNonce[_player].length; i++) {
+            if (s.inventoryNonce[_player][i] == _itemId) {
                 idx = i;
                 hasFound = true;
             }
@@ -309,11 +324,11 @@ contract GameStorage {
 
         if (!dir) {
             if (hasFound) {
-                delete s.inventoryNonce[msg.sender][idx];
+                delete s.inventoryNonce[_player][idx];
             }
         } else if (dir) {
             if (!hasFound) {
-                s.inventoryNonce[msg.sender].push(_itemId);
+                s.inventoryNonce[_player].push(_itemId);
             }
         }
     }
@@ -367,9 +382,7 @@ contract GameStorage {
             : s.players[_player].health -= _amount;
     }
 
-    function _getHealth(
-        address _player
-    ) public view returns (uint256) {
+    function _getHealth(address _player) public view returns (uint256) {
         return s.players[_player].health;
     }
 
@@ -440,17 +453,23 @@ contract GameStorage {
         s.epochController = _addr;
     }
 
-    function _getTower(string memory _towerId) public view returns (GameTypes.Tower memory) {
+    function _getTower(string memory _towerId)
+        public
+        view
+        returns (GameTypes.Tower memory)
+    {
         return s.towers[_towerId];
     }
 
-    function _setTower(string memory _towerId, GameTypes.Tower memory _tower) public {
+    function _setTower(string memory _towerId, GameTypes.Tower memory _tower)
+        public
+    {
         s.towers[_towerId] = _tower;
     }
-    
-    // function _setTowerOwner(string memory _towerId, address _player) public {
-    //     s.towers[_towerId].owner = _player;
-    // }
+
+    function _setTowerOwner(string memory _towerId, address _player) public {
+        s.towers[_towerId].owner = _player;
+    }
 
     // ------------------------------------------------------------
     // Getters
@@ -498,7 +517,11 @@ contract GameStorage {
         return s.itemNonce;
     }
 
-    function _getItemById(uint256 _itemId) public view returns (GameTypes.ItemWithMetadata memory) {
+    function _getItemById(uint256 _itemId)
+        public
+        view
+        returns (GameTypes.ItemWithMetadata memory)
+    {
         return s.itemsWithMetadata[_itemId];
     }
 
@@ -545,11 +568,15 @@ contract GameStorage {
         s.stakePoints[_player] += _amount;
     }
 
-    function _subtractPlayerStakePoints(address _player, uint256 _amount) public {
+    function _subtractPlayerStakePoints(address _player, uint256 _amount)
+        public
+    {
         s.stakePoints[_player] -= _amount;
     }
 
-    function _subtractTowerStakePoints(string memory _towerId, uint256 _amount) public {
+    function _subtractTowerStakePoints(string memory _towerId, uint256 _amount)
+        public
+    {
         GameTypes.Tower storage tower = s.towers[_towerId];
         tower.stakedAmount -= _amount;
     }

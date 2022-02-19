@@ -184,7 +184,7 @@ export interface GameStorageInterface extends utils.Interface {
     "_isValidAttack(address,address)": FunctionFragment;
     "_isValidMove(address,(uint256,uint256))": FunctionFragment;
     "_mine((uint256,uint256))": FunctionFragment;
-    "_modifyItemInInventoryNonce(uint256,bool)": FunctionFragment;
+    "_modifyItemInInventoryNonce(address,uint256,bool)": FunctionFragment;
     "_place((uint256,uint256),uint256)": FunctionFragment;
     "_setBlocks((uint256,uint256),uint256[])": FunctionFragment;
     "_setConstants(uint256,uint256,uint256,uint256,uint256,uint256,uint256)": FunctionFragment;
@@ -195,6 +195,7 @@ export interface GameStorageInterface extends utils.Interface {
     "_setPlayerStakedPoints(address,uint256)": FunctionFragment;
     "_setTopLevelStrengthAtPosition((uint256,uint256),uint256)": FunctionFragment;
     "_setTower(string,(uint256,uint256,uint256,uint256,address))": FunctionFragment;
+    "_setTowerOwner(string,address)": FunctionFragment;
     "_subtractPlayerStakePoints(address,uint256)": FunctionFragment;
     "_subtractTowerStakePoints(string,uint256)": FunctionFragment;
     "_transfer(address,uint256,uint256)": FunctionFragment;
@@ -351,7 +352,7 @@ export interface GameStorageInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "_modifyItemInInventoryNonce",
-    values: [BigNumberish, boolean]
+    values: [string, BigNumberish, boolean]
   ): string;
   encodeFunctionData(
     functionFragment: "_place",
@@ -400,6 +401,10 @@ export interface GameStorageInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "_setTower",
     values: [string, TowerStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_setTowerOwner",
+    values: [string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "_subtractPlayerStakePoints",
@@ -589,6 +594,10 @@ export interface GameStorageInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "_setTower", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "_setTowerOwner",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "_subtractPlayerStakePoints",
     data: BytesLike
@@ -839,6 +848,7 @@ export interface GameStorage extends BaseContract {
     ): Promise<ContractTransaction>;
 
     _modifyItemInInventoryNonce(
+      _player: string,
       _itemId: BigNumberish,
       dir: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -905,6 +915,12 @@ export interface GameStorage extends BaseContract {
     _setTower(
       _towerId: string,
       _tower: TowerStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    _setTowerOwner(
+      _towerId: string,
+      _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -1155,6 +1171,7 @@ export interface GameStorage extends BaseContract {
   ): Promise<ContractTransaction>;
 
   _modifyItemInInventoryNonce(
+    _player: string,
     _itemId: BigNumberish,
     dir: boolean,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -1221,6 +1238,12 @@ export interface GameStorage extends BaseContract {
   _setTower(
     _towerId: string,
     _tower: TowerStruct,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  _setTowerOwner(
+    _towerId: string,
+    _player: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1466,6 +1489,7 @@ export interface GameStorage extends BaseContract {
     _mine(_pos: PositionStruct, overrides?: CallOverrides): Promise<void>;
 
     _modifyItemInInventoryNonce(
+      _player: string,
       _itemId: BigNumberish,
       dir: boolean,
       overrides?: CallOverrides
@@ -1529,6 +1553,12 @@ export interface GameStorage extends BaseContract {
     _setTower(
       _towerId: string,
       _tower: TowerStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    _setTowerOwner(
+      _towerId: string,
+      _player: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1789,6 +1819,7 @@ export interface GameStorage extends BaseContract {
     ): Promise<BigNumber>;
 
     _modifyItemInInventoryNonce(
+      _player: string,
       _itemId: BigNumberish,
       dir: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1855,6 +1886,12 @@ export interface GameStorage extends BaseContract {
     _setTower(
       _towerId: string,
       _tower: TowerStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    _setTowerOwner(
+      _towerId: string,
+      _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -2086,6 +2123,7 @@ export interface GameStorage extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     _modifyItemInInventoryNonce(
+      _player: string,
       _itemId: BigNumberish,
       dir: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -2152,6 +2190,12 @@ export interface GameStorage extends BaseContract {
     _setTower(
       _towerId: string,
       _tower: TowerStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    _setTowerOwner(
+      _towerId: string,
+      _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
