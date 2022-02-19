@@ -59,7 +59,7 @@ export const moveAndVerify = async (game: Game, gameStorage: GameStorage, signer
 };
 
 export const verifyAt = async (gameStorage: GameStorage, signer: SignerWithAddress, position: position) => {
-  const pos = await gameStorage.connect(signer)._getPlayerPosition(signer.address);
+  const pos = await gameStorage.connect(signer)._getPlayer(signer.address).position;
   expect(pos.x).equals(position.x);
   expect(pos.y).equals(position.y);
 };

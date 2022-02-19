@@ -9,10 +9,10 @@ library GameTypes {
         uint256 y;
     }
 
-    struct ItemData {
-        uint256 id;
-        bool active;
-    }
+    // struct ItemData {
+    //     uint256 id;
+    //     bool active;
+    // }
 
     struct PlayerData {
         bool initialized;
@@ -71,7 +71,7 @@ library GameTypes {
         // game info
         address admin;
         bool paused;
-        mapping(uint256 => GameTypes.ItemData) items;
+        // mapping(uint256 => GameTypes.ItemData) items;
         mapping(uint256 => GameTypes.ItemWithMetadata) itemsWithMetadata;
         uint256 itemNonce;
         uint256 attackRange; // TODO move constants below into a struct for readability
@@ -83,7 +83,6 @@ library GameTypes {
         address[] allPlayers;
         mapping(address => GameTypes.PlayerData) players; // player data
         mapping(address => mapping(uint256 => uint256)) inventory; // player => itemId => inventory
-        mapping(address => uint256) lastMovedAt; // time when user last moved
         mapping(address => uint256[]) inventoryNonce; // array of all items in player inventory
         // tower
         Epoch epochController;

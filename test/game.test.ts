@@ -117,12 +117,12 @@ describe("Game", () => {
   // it("Attack", async () => {
   //   // this takes extra long for some reason (5000 ms). probably nothing but noting here
   //   // verify that player starts with 100 health
-  //   let user2Data = await GameContract._getAllPlayerData(world.user2.address);
+  //   let user2Data = await GameContract._getPlayer(world.user2.address);
   //   expect(user2Data.health).equals(100);
 
   //   // user1 attacks user2
   //   await GameContract.connect(world.user1).attack(world.user2.address);
-  //   user2Data = await GameContract._getAllPlayerData(world.user2.address);
+  //   user2Data = await GameContract._getPlayer(world.user2.address);
   //   expect(user2Data.health).equals(95);
 
   //   // invalid attack because 5 seconds have not passed
@@ -135,7 +135,7 @@ describe("Game", () => {
   // increaseBlockchainTime(5000)
 
   //   await GameContract.connect(world.user1).attack(world.user2.address);
-  //   user2Data = await GameContract._getAllPlayerData(world.user2.address);
+  //   user2Data = await GameContract._getPlayer(world.user2.address);
   //   expect(user2Data.health).equals(90);
   // });
 });

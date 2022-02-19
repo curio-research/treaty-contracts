@@ -3,45 +3,29 @@ pragma solidity ^0.8.4;
 
 contract Permissions {
     mapping(address => bool) contractPerms; // immutable after initialization
-    mapping(address => bool) playerPerms;
     address owner;
 
-    modifier onlyOwner {
+    modifier onlyOwner() {
         require(msg.sender == owner, "only owner can perform this operation.");
         _;
     }
 
-    // constructor() 
-    // {
-    //     for (uint256 i = 0; i < _contractWhitelist.length; i++) {
-    //         contractPerms[_contractWhitelist[i]] = true;
-    //     }
-    //     for (uint256 i = 0; i < _playerWhitelist.length; i++) {
-    //         playerPerms[_playerWhitelist[i]] = true;
-    //     }
-    // }
-
-    function _addPlayerPermission(address _player) public {
-        playerPerms[_player] = true;
+    constructor(address _owner) {
+        owner = _owner;
     }
 
-    function _removePlayerPermission(address _player) public {
-        playerPerms[_player] = false;
+    function setPermission(address _contract, bool _permission)
+        public
+        onlyOwner
+    {
+        contractPerms[_contract] = _permission;
     }
 
-    function _addContractPermission(address _contract) public {
-        contractPerms[_contract] = true;
-    }
-
-    function _removeContractPermission(address _contract) public {
-        contractPerms[_contract] = false;
-    }
-
-    function _hasContractPermission(address _contract) public view returns (bool) {
+    function _hasContractPermission(address _contract)
+        public
+        view
+        returns (bool)
+    {
         return contractPerms[_contract];
-    }
-
-    function _hasPlayerPermission(address _player) public view returns (bool) {
-        return playerPerms[_player];
     }
 }
