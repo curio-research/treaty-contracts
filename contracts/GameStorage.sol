@@ -21,6 +21,64 @@ contract GameStorage {
         uint256 _amount
     );
 
+    // ------------------------------------------------------------
+    // Meta
+    // ------------------------------------------------------------
+    function _setConstants(
+        uint256 _worldWidth,
+        uint256 _worldHeight,
+        uint256 _attackRange,
+        uint256 _attackDamage,
+        uint256 _attackWaitTime,
+        uint256 _startPlayerHealth,
+        uint256 _startPlayerEnergy
+    ) public {
+        s.worldWidth = _worldWidth;
+        s.worldHeight = _worldHeight;
+        s.itemNonce = 1; // valid blockId start at 1. Id 0 = no blocks
+        s.attackRange = _attackRange;
+        s.attackDamage = _attackDamage;
+        s.attackWaitTime = _attackWaitTime;
+        s.startPlayerHealth = _startPlayerHealth;
+        s.startPlayerEnergy = _startPlayerEnergy;
+    }
+
+    function _setBlocks(
+        GameTypes.Position memory _position,
+        uint256[] memory _blocks
+    ) public {
+        s.map[_position.x][_position.y].blocks = _blocks;
+    }
+
+    function _setItem(uint256 _i, GameTypes.ItemWithMetadata memory _item) public {
+        s.itemsWithMetadata[_i] = _item;
+    }
+
+    function _setPlayer(GameTypes.Position memory _pos) public {
+        s.players[msg.sender] = GameTypes.PlayerData({
+            initialized: true,
+            initTimestamp: block.timestamp,
+            playerAddr: msg.sender,
+            position: _pos,
+            health: s.startPlayerHealth,
+            energy: s.startPlayerEnergy,
+            reach: 6
+        });
+        s.allPlayers.push(msg.sender);
+    }
+
+    function _incrementNonce() public {
+        s.itemNonce += 1;
+    }
+    
+    function _getAttackDamage() public view returns (uint256) {
+        return s.attackDamage;
+    }
+
+    // ------------------------------------------------------------
+    // Map
+    // ------------------------------------------------------------
+
     // getter method to fetch map in 10x10 chunks. can increase size
     function _getMap(GameTypes.Position memory _pos)
         public
@@ -77,26 +135,132 @@ contract GameStorage {
         return GameTypes.Position(_x, _y);
     }
 
-    // function _addCraftItemAndAmount(
-    //     uint256 _itemId,
-    //     uint256[] memory _craftItemIds,
-    //     uint256[] memory _craftItemAmounts
-    // ) public {
-    //     if (_craftItemIds.length != _craftItemAmounts.length)
-    //         revert("engine/invalid-craft-item-amounts");
+    function _getTopBlockAtPosition(GameTypes.Position memory _pos)
+        public
+        view
+        returns (uint256)
+    {
+        uint256 _blockCount = _getBlockCountAtPosition(_pos);
+        return s.map[_pos.x][_pos.y].blocks[_blockCount - 1];
+    }
 
-    //     s.itemsWithMetadata[_itemId].craftable = true;
-    //     s.itemsWithMetadata[_itemId].craftItemIds = _craftItemIds;
-    //     s.itemsWithMetadata[_itemId].craftItemAmounts = _craftItemAmounts;
+    // check if location has blocks or player on it
+    function _isOccupied(GameTypes.Position memory _pos)
+        public
+        view
+        returns (bool)
+    {
+        // if block has player on it
+        if (_blockOccupier(_pos) != address(0)) return true;
 
-    //     s.itemNonce += 1;
-    // }
+        // if block has any blocks
+        if (s.map[_pos.x][_pos.y].blocks.length > 0) return true;
 
-    // function _removeCraftItemAndAmount(uint256 _itemId) public {
-    //     s.itemsWithMetadata[_itemId].craftable = false;
-    //     delete s.itemsWithMetadata[_itemId].craftItemIds;
-    //     delete s.itemsWithMetadata[_itemId].craftItemAmounts;
-    // }
+        return false;
+    }
+
+    function _getBlockAtPosition(GameTypes.Position memory _pos, uint256 _zIdx)
+        public
+        view
+        returns (uint256)
+    {
+        if (_zIdx >= s.map[_pos.x][_pos.y].blocks.length)
+            revert("engine/invalid-z-index");
+
+        return s.map[_pos.x][_pos.y].blocks[_zIdx];
+    }
+
+    // get the player's address who's occupying a block
+    function _blockOccupier(GameTypes.Position memory _pos)
+        public
+        view
+        returns (address)
+    {
+        return s.map[_pos.x][_pos.y].occupier;
+    }
+
+    function _setTopLevelStrengthAtPosition(GameTypes.Position memory _pos, uint256 _strength)
+        public
+    {
+        s.map[_pos.x][_pos.y].topLevelStrength = _strength;
+    }
+
+    function _getTopLevelStrengthAtPosition(GameTypes.Position memory _pos)
+        public
+        view
+        returns (uint256)
+    {
+        return s.map[_pos.x][_pos.y].topLevelStrength;
+    }
+
+    function _changeTopLevelStrengthAtPosition(
+        GameTypes.Position memory _pos,
+        uint256 _attackDamage,
+        bool dir
+    ) public {
+        dir == true
+            ? s.map[_pos.x][_pos.y].topLevelStrength += _attackDamage
+            : s.map[_pos.x][_pos.y].topLevelStrength -= _attackDamage;
+    }
+
+    function _getMineItemIds(uint256 _itemId) public view returns (uint256[] memory) {
+        return s.itemsWithMetadata[_itemId].mineItemIds;
+    }
+
+    function _getCraftItemAmount(address _player, uint256 _craftItemId) public view returns (uint256) {
+        return s.inventory[_player][_craftItemId];
+    }
+
+    // ------------------------------------------------------------
+    // Movement
+    // ------------------------------------------------------------
+
+    // checks distance between positions and whether player is in map
+    function _isValidMove(address _player, GameTypes.Position memory _pos)
+        public
+        view
+        returns (bool)
+    {
+        GameTypes.Position memory _position = _getPlayerPosition(_player);
+
+        bool _inMap = _pos.x < s.worldWidth &&
+            _pos.y < s.worldHeight &&
+            _pos.x >= 0 &&
+            _pos.y >= 0;
+
+        if (!_inMap) return false;
+
+        if (!_withinDistance(_pos, _position, 1)) return false;
+
+        if (_isOccupied(_pos)) return false; // check if target coordinate has block or player
+
+        return true;
+    }
+
+    function _getPlayerPosition(address _player)
+        public
+        view
+        returns (GameTypes.Position memory)
+    {
+        return s.players[_player].position;
+    }
+
+    function _setPlayerPosition(address _player, GameTypes.Position memory _pos)
+        public
+    {
+        s.players[_player].position = _pos;
+    }
+
+    function _setOccupierAtPosition(
+        address _player,
+        GameTypes.Position memory _pos
+    ) public {
+        s.map[_pos.x][_pos.y].occupier = _player;
+    }
+
+    // ------------------------------------------------------------
+    // Item
+    // ------------------------------------------------------------
 
     // merge these two functions together
     function _increaseItemInInventory(
@@ -124,51 +288,39 @@ contract GameStorage {
         return s.items[_itemId].active;
     }
 
-    function _getTopBlockAtPosition(GameTypes.Position memory _pos)
+    function _getItemAmountById(address _player, uint256 _blockId)
         public
         view
         returns (uint256)
     {
-        uint256 _blockCount = _getBlockCountAtPosition(_pos);
-        return s.map[_pos.x][_pos.y].blocks[_blockCount - 1];
+        return s.inventory[_player][_blockId];
     }
 
-    // check if location has blocks or player on it
-    function _isOccupied(GameTypes.Position memory _pos)
-        public
-        view
-        returns (bool)
-    {
-        // if block has player on it
-        if (_blockOccupier(_pos) != address(0)) return true;
+    function _modifyItemInInventoryNonce(uint256 _itemId, bool dir) public {
+        uint256 idx = 0;
+        bool hasFound = false;
 
-        // if block has any blocks
-        if (s.map[_pos.x][_pos.y].blocks.length > 0) return true;
+        for (uint256 i = 0; i < s.inventoryNonce[msg.sender].length; i++) {
+            if (s.inventoryNonce[msg.sender][i] == _itemId) {
+                idx = i;
+                hasFound = true;
+            }
+        }
 
-        return false;
+        if (!dir) {
+            if (hasFound) {
+                delete s.inventoryNonce[msg.sender][idx];
+            }
+        } else if (dir) {
+            if (!hasFound) {
+                s.inventoryNonce[msg.sender].push(_itemId);
+            }
+        }
     }
 
-    // checks distance between positions and whether player is in map
-    function _isValidMove(address _player, GameTypes.Position memory _pos)
-        public
-        view
-        returns (bool)
-    {
-        GameTypes.Position memory _position = _getPlayerPosition(_player);
-
-        bool _inMap = _pos.x < s.worldWidth &&
-            _pos.y < s.worldHeight &&
-            _pos.x >= 0 &&
-            _pos.y >= 0;
-
-        if (!_inMap) return false;
-
-        if (!_withinDistance(_pos, _position, 1)) return false;
-
-        if (_isOccupied(_pos)) return false; // check if target coordinate has block or player
-
-        return true;
-    }
+    // ------------------------------------------------------------
+    // Attack
+    // ------------------------------------------------------------
 
     function _isValidAttack(address _player, address _target)
         public
@@ -187,65 +339,23 @@ contract GameStorage {
         return true;
     }
 
-    function _getBlockAtPosition(GameTypes.Position memory _pos, uint256 _zIdx)
-        public
-        view
-        returns (uint256)
-    {
-        if (_zIdx >= s.map[_pos.x][_pos.y].blocks.length)
-            revert("engine/invalid-z-index");
+    // ------------------------------------------------------------
+    // Player state
+    // ------------------------------------------------------------
 
-        return s.map[_pos.x][_pos.y].blocks[_zIdx];
+    function _initialized(address player) public view returns (bool) {
+        return s.players[player].initialized;
     }
 
-    // get the player's address who's occupying a block
-    function _blockOccupier(GameTypes.Position memory _pos)
-        public
-        view
-        returns (address)
-    {
-        return s.map[_pos.x][_pos.y].occupier;
-    }
-
-    function _getPlayerPosition(address _player)
-        public
-        view
-        returns (GameTypes.Position memory)
-    {
-        return s.players[_player].position;
-    }
-
-    function _setPlayerPosition(address _player, GameTypes.Position memory _pos)
-        public
-    {
-        s.players[_player].position = _pos;
-    }
-
-    function _setOccupierAtPosition(
+    function _changeEnergy(
         address _player,
-        GameTypes.Position memory _pos
+        uint256 _amount,
+        bool dir
     ) public {
-        s.map[_pos.x][_pos.y].occupier = _player;
+        dir
+            ? s.players[_player].energy += _amount
+            : s.players[_player].energy -= _amount;
     }
-
-    function _getItemAmountById(address _player, uint256 _blockId)
-        public
-        view
-        returns (uint256)
-    {
-        return s.inventory[_player][_blockId];
-    }
-
-    // // player stats
-    // function _changeEnergy(
-    //     address _player,
-    //     uint256 _amount,
-    //     bool dir
-    // ) public {
-    //     dir
-    //         ? s.players[_player].energy += _amount
-    //         : s.players[_player].energy -= _amount;
-    // }
 
     function _changeHealth(
         address _player,
@@ -256,6 +366,16 @@ contract GameStorage {
             ? s.players[_player].health += _amount
             : s.players[_player].health -= _amount;
     }
+
+    function _getHealth(
+        address _player
+    ) public view returns (uint256) {
+        return s.players[_player].health;
+    }
+
+    // ------------------------------------------------------------
+    // Function helpers
+    // ------------------------------------------------------------
 
     // mine block
     function _mine(GameTypes.Position memory _pos) public {
@@ -312,28 +432,6 @@ contract GameStorage {
         emit Transfer(msg.sender, _recipient, _itemId, _amount);
     }
 
-    function _modifyItemInInventoryNonce(uint256 _itemId, bool dir) public {
-        uint256 idx = 0;
-        bool hasFound = false;
-
-        for (uint256 i = 0; i < s.inventoryNonce[msg.sender].length; i++) {
-            if (s.inventoryNonce[msg.sender][i] == _itemId) {
-                idx = i;
-                hasFound = true;
-            }
-        }
-
-        if (!dir) {
-            if (hasFound) {
-                delete s.inventoryNonce[msg.sender][idx];
-            }
-        } else if (dir) {
-            if (!hasFound) {
-                s.inventoryNonce[msg.sender].push(_itemId);
-            }
-        }
-    }
-
     // ------------------------------------------------------------
     // Tower
     // ------------------------------------------------------------
@@ -341,6 +439,18 @@ contract GameStorage {
     function setEpochController(Epoch _addr) external {
         s.epochController = _addr;
     }
+
+    function _getTower(string memory _towerId) public view returns (GameTypes.Tower memory) {
+        return s.towers[_towerId];
+    }
+
+    function _setTower(string memory _towerId, GameTypes.Tower memory _tower) public {
+        s.towers[_towerId] = _tower;
+    }
+    
+    // function _setTowerOwner(string memory _towerId, address _player) public {
+    //     s.towers[_towerId].owner = _player;
+    // }
 
     // ------------------------------------------------------------
     // Getters
@@ -388,6 +498,10 @@ contract GameStorage {
         return s.itemNonce;
     }
 
+    function _getItemById(uint256 _itemId) public view returns (GameTypes.ItemWithMetadata memory) {
+        return s.itemsWithMetadata[_itemId];
+    }
+
     // fetch single player data
     function _getAllPlayerData(address _player)
         public
@@ -415,29 +529,32 @@ contract GameStorage {
         return s.map[_pos.x][_pos.y].blocks.length;
     }
 
-    function _getTopLevelStrengthAtPosition(GameTypes.Position memory _pos)
-        public
-        view
-        returns (uint256)
-    {
-        return s.map[_pos.x][_pos.y].topLevelStrength;
-    }
-
-    function _changeTopLevelStrengthAtPosition(
-        GameTypes.Position memory _pos,
-        uint256 _attackDamage,
-        bool dir
-    ) public {
-        dir == true
-            ? s.map[_pos.x][_pos.y].topLevelStrength += _attackDamage
-            : s.map[_pos.x][_pos.y].topLevelStrength -= _attackDamage;
-    }
-
     function _getStakePointsByUser(address _user)
         public
         view
         returns (uint256)
     {
         return s.stakePoints[_user];
+    }
+
+    function _setPlayerStakedPoints(address _player, uint256 _amount) public {
+        s.stakePoints[_player] += _amount;
+    }
+
+    function _addPlayerStakePoints(address _player, uint256 _amount) public {
+        s.stakePoints[_player] += _amount;
+    }
+
+    function _subtractPlayerStakePoints(address _player, uint256 _amount) public {
+        s.stakePoints[_player] -= _amount;
+    }
+
+    function _subtractTowerStakePoints(string memory _towerId, uint256 _amount) public {
+        GameTypes.Tower storage tower = s.towers[_towerId];
+        tower.stakedAmount -= _amount;
+    }
+
+    function _getCurrentEpoch() public view returns (uint256) {
+        return s.epochController.epoch();
     }
 }
