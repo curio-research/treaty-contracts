@@ -70,6 +70,7 @@ contract Game {
     ) {
         utils = _gameStorage;
         p = _permissions;
+        p._addContractPermission(address(this));
 
         utils._setConstants(
             _worldWidth,

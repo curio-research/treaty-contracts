@@ -36,7 +36,7 @@ contract GameStorage {
     // ------------------------------------------------------------
     constructor(Permissions _permissions) {
         p = _permissions;
-        // p._addContractPermission(this.address);
+        p._addContractPermission(address(this));
     }
     
     function _setConstants(

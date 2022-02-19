@@ -6,10 +6,20 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "hardhat/console.sol";
 import "./GameStorage.sol";
 import "./GameTypes.sol";
+import "./Permissions.sol";
 
 contract TowerGame {
     using SafeMath for uint256;
-    GameStorage utils;
+    GameStorage private utils;
+    Permissions private p;
+
+    // ------------------------------------------------------------
+    // Modifiers
+    // ------------------------------------------------------------
+    modifier hasPermission {
+        require(p._hasPlayerPermission(msg.sender));
+        _;
+    }
 
     event StakeTower(
         address _player,
@@ -30,8 +40,10 @@ contract TowerGame {
         uint256 _epoch
     );
 
-    constructor(GameStorage _util) {
+    constructor(GameStorage _util, Permissions _permissions) {
         utils = _util;
+        p = _permissions;
+        p._addContractPermission(address(this));
     }
 
     // add tower to map. using this instead of constructor to avoid bloat
@@ -44,7 +56,9 @@ contract TowerGame {
     }
 
     // user claim reward for tower
-    function claimReward(GameTypes.Position memory _position) external {
+    function claimReward(GameTypes.Position memory _position)
+        external hasPermission
+    {
         string memory _towerId = utils._encodePos(_position);
         GameTypes.Tower memory tower = utils._getTower(_towerId);
 
@@ -66,6 +80,7 @@ contract TowerGame {
     // stake in tower
     function stake(GameTypes.Position memory _position, uint256 _amount)
         public
+        hasPermission
     {
         string memory _towerId = utils._encodePos(_position);
 
@@ -108,6 +123,7 @@ contract TowerGame {
     // unstake in tower
     function unstake(GameTypes.Position memory _position, uint256 _amount)
         external
+        hasPermission
     {
         if (
             !utils._withinDistance(
@@ -142,6 +158,7 @@ contract TowerGame {
     function getTowerById(GameTypes.Position memory _position)
         external
         view
+        hasPermission
         returns (GameTypes.Tower memory)
     {
         string memory _towerId = string(

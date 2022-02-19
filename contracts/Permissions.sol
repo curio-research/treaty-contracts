@@ -21,20 +21,20 @@ contract Permissions {
     //     }
     // }
 
-    function _addPlayerPermission(address _player) public onlyOwner {
+    function _addPlayerPermission(address _player) public {
         playerPerms[_player] = true;
     }
 
-    function _removePlayerPermission(address _player) public onlyOwner {
+    function _removePlayerPermission(address _player) public {
         playerPerms[_player] = false;
     }
 
-    function _addContractPermission(address _player) public {
-        playerPerms[_player] = true;
+    function _addContractPermission(address _contract) public {
+        contractPerms[_contract] = true;
     }
 
-    function _removeContractPermission(address _player) public {
-        playerPerms[_player] = false;
+    function _removeContractPermission(address _contract) public {
+        contractPerms[_contract] = false;
     }
 
     function _hasContractPermission(address _contract) public view returns (bool) {
