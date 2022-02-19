@@ -190,7 +190,7 @@ export interface GameStorageInterface extends utils.Interface {
     "_setConstants(uint256,uint256,uint256,uint256,uint256,uint256,uint256)": FunctionFragment;
     "_setItem(uint256,(bool,bool,bool,uint256,uint256,uint256,uint256[],uint256[],uint256[]))": FunctionFragment;
     "_setOccupierAtPosition(address,(uint256,uint256))": FunctionFragment;
-    "_setPlayer((uint256,uint256))": FunctionFragment;
+    "_setPlayer(address,(uint256,uint256))": FunctionFragment;
     "_setPlayerPosition(address,(uint256,uint256))": FunctionFragment;
     "_setPlayerStakedPoints(address,uint256)": FunctionFragment;
     "_setTopLevelStrengthAtPosition((uint256,uint256),uint256)": FunctionFragment;
@@ -384,7 +384,7 @@ export interface GameStorageInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "_setPlayer",
-    values: [PositionStruct]
+    values: [string, PositionStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "_setPlayerPosition",
@@ -890,6 +890,7 @@ export interface GameStorage extends BaseContract {
     ): Promise<ContractTransaction>;
 
     _setPlayer(
+      _player: string,
       _pos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -1213,6 +1214,7 @@ export interface GameStorage extends BaseContract {
   ): Promise<ContractTransaction>;
 
   _setPlayer(
+    _player: string,
     _pos: PositionStruct,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -1530,7 +1532,11 @@ export interface GameStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    _setPlayer(_pos: PositionStruct, overrides?: CallOverrides): Promise<void>;
+    _setPlayer(
+      _player: string,
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     _setPlayerPosition(
       _player: string,
@@ -1861,6 +1867,7 @@ export interface GameStorage extends BaseContract {
     ): Promise<BigNumber>;
 
     _setPlayer(
+      _player: string,
       _pos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -2165,6 +2172,7 @@ export interface GameStorage extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     _setPlayer(
+      _player: string,
       _pos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;

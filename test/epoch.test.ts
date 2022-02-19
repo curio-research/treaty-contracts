@@ -23,11 +23,14 @@ describe("Epoch", () => {
   });
 
   it("Epoch", async () => {
-    // expect(await epoch.epoch()).equals(0);
-    // expect(await epoch.interval()).equals(30);
-    // await expect(epoch.updateEpoch()).to.be.revertedWith(REVERT_MESSAGES.EPOCH_PREMATURE);
-    // increaseBlockchainTime(30);
-    // await epoch.updateEpoch();
-    // expect(await epoch.epoch()).equals(1);
+    expect(await epoch.epoch()).equals(0);
+    expect(await epoch.interval()).equals(30);
+
+    await expect(epoch.updateEpoch()).to.be.revertedWith(REVERT_MESSAGES.EPOCH_PREMATURE);
+
+    increaseBlockchainTime(30);
+
+    await epoch.updateEpoch();
+    expect(await epoch.epoch()).equals(1);
   });
 });

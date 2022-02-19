@@ -38,6 +38,7 @@ contract Game {
     event Craft(address _player, uint256 _blockId);
     event Attack(address _player1, address _player2); // add attack result here?
     event Death(address _player);
+
     // for some reason when we emit a string it doesn't do so properly
 
     // ------------------------------------------------------------
@@ -57,19 +58,30 @@ contract Game {
         GameStorage _gameStorage
     ) {
         utils = _gameStorage;
-        utils._setConstants(_worldWidth, _worldHeight, _attackRange, _attackDamage, _attackWaitTime, _startPlayerHealth, _startPlayerEnergy);
+        utils._setConstants(
+            _worldWidth,
+            _worldHeight,
+            _attackRange,
+            _attackDamage,
+            _attackWaitTime,
+            _startPlayerHealth,
+            _startPlayerEnergy
+        );
 
         // Set map and blocks
         uint256 _positionCount = _worldWidth * _worldHeight;
         for (uint256 k = 0; k < _positionCount; k++) {
-            GameTypes.Position memory _position = utils._getPositionFromIndex(k);
+            GameTypes.Position memory _position = utils._getPositionFromIndex(
+                k
+            );
             utils._setBlocks(_position, _blocks[k]);
 
             if (_blocks[k].length > 0) {
                 uint256 topBlockId = _blocks[k][_blocks[k].length - 1];
-                utils._setTopLevelStrengthAtPosition(_position, _items[
-                    topBlockId
-                ].strength);
+                utils._setTopLevelStrengthAtPosition(
+                    _position,
+                    _items[topBlockId].strength
+                );
             }
         }
 
@@ -88,7 +100,7 @@ contract Game {
         // check if target coordinate has block or another player
         if (utils._isOccupied(_pos)) revert("engine/location-occupied");
 
-        utils._setPlayer(_pos);
+        utils._setPlayer(msg.sender, _pos);
 
         utils._setOccupierAtPosition(msg.sender, _pos);
         utils._setPlayerStakedPoints(msg.sender, 100);
@@ -99,7 +111,8 @@ contract Game {
     // player move function
     // refactor this into Position struct?
     function move(GameTypes.Position memory _pos) external {
-        if (!utils._isValidMove(msg.sender, _pos)) revert("engine/invalid-move");
+        if (!utils._isValidMove(msg.sender, _pos))
+            revert("engine/invalid-move");
 
         GameTypes.Position memory _prevPosition = utils._getPlayerPosition(
             msg.sender
@@ -150,7 +163,11 @@ contract Game {
         uint256 _zIdx,
         address _playerAddr
     ) public {
-        utils._changeTopLevelStrengthAtPosition(_pos, utils._getAttackDamage(), false);
+        utils._changeTopLevelStrengthAtPosition(
+            _pos,
+            utils._getAttackDamage(),
+            false
+        );
         uint256 _strength = utils._getTopLevelStrengthAtPosition(_pos);
 
         emit AttackItem(_playerAddr, _pos, _strength, _zIdx);
@@ -163,7 +180,10 @@ contract Game {
         if (_blockCount == 0) revert("engine/nonexistent-block");
         uint256 _zIdx = _blockCount - 1;
 
-        if (utils._getAttackDamage() < utils._getTopLevelStrengthAtPosition(_pos)) {
+        if (
+            utils._getAttackDamage() <
+            utils._getTopLevelStrengthAtPosition(_pos)
+        ) {
             attackItem(_pos, _zIdx, msg.sender);
         } else {
             mineItem(_pos, _zIdx, msg.sender);
@@ -198,7 +218,10 @@ contract Game {
             uint256 craftItemId = _item.craftItemIds[i];
             uint256 craftItemAmount = _item.craftItemAmounts[i];
 
-            if (utils._getCraftItemAmount(msg.sender, craftItemId) < craftItemAmount) {
+            if (
+                utils._getCraftItemAmount(msg.sender, craftItemId) <
+                craftItemAmount
+            ) {
                 revert("engine/insufficient-material");
             } else {
                 // deduct material from player inventory count
@@ -231,6 +254,4 @@ contract Game {
             emit Death(_target);
         }
     }
-
-    
 }

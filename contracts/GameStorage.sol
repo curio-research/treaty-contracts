@@ -56,17 +56,19 @@ contract GameStorage {
         s.itemsWithMetadata[_i] = _item;
     }
 
-    function _setPlayer(GameTypes.Position memory _pos) public {
-        s.players[msg.sender] = GameTypes.PlayerData({
+    function _setPlayer(address _player, GameTypes.Position memory _pos)
+        public
+    {
+        s.players[_player] = GameTypes.PlayerData({
             initialized: true,
             initTimestamp: block.timestamp,
-            playerAddr: msg.sender,
+            playerAddr: _player,
             position: _pos,
             health: s.startPlayerHealth,
             energy: s.startPlayerEnergy,
             reach: 6
         });
-        s.allPlayers.push(msg.sender);
+        s.allPlayers.push(_player);
     }
 
     function _incrementNonce() public {
