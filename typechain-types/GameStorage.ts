@@ -140,6 +140,7 @@ export interface GameStorageInterface extends utils.Interface {
     "_getMap((uint256,uint256))": FunctionFragment;
     "_getPlayerPosition(address)": FunctionFragment;
     "_getPositionFromIndex(uint256)": FunctionFragment;
+    "_getStakePointsByUser(address)": FunctionFragment;
     "_getTileData((uint256,uint256))": FunctionFragment;
     "_getTopBlockAtPosition((uint256,uint256))": FunctionFragment;
     "_getTopLevelStrengthAtPosition((uint256,uint256))": FunctionFragment;
@@ -223,6 +224,10 @@ export interface GameStorageInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "_getPositionFromIndex",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getStakePointsByUser",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "_getTileData",
@@ -350,6 +355,10 @@ export interface GameStorageInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "_getPositionFromIndex",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_getStakePointsByUser",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -537,6 +546,11 @@ export interface GameStorage extends BaseContract {
       k: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[PositionStructOutput]>;
+
+    _getStakePointsByUser(
+      _user: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     _getTileData(
       _pos: PositionStruct,
@@ -745,6 +759,11 @@ export interface GameStorage extends BaseContract {
     overrides?: CallOverrides
   ): Promise<PositionStructOutput>;
 
+  _getStakePointsByUser(
+    _user: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   _getTileData(
     _pos: PositionStruct,
     overrides?: CallOverrides
@@ -951,6 +970,11 @@ export interface GameStorage extends BaseContract {
       k: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PositionStructOutput>;
+
+    _getStakePointsByUser(
+      _user: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     _getTileData(
       _pos: PositionStruct,
@@ -1169,6 +1193,11 @@ export interface GameStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _getStakePointsByUser(
+      _user: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     _getTileData(
       _pos: PositionStruct,
       overrides?: CallOverrides
@@ -1348,6 +1377,11 @@ export interface GameStorage extends BaseContract {
 
     _getPositionFromIndex(
       k: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getStakePointsByUser(
+      _user: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

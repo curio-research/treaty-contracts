@@ -432,4 +432,12 @@ contract GameStorage {
             ? s.map[_pos.x][_pos.y].topLevelStrength += _attackDamage
             : s.map[_pos.x][_pos.y].topLevelStrength -= _attackDamage;
     }
+
+    function _getStakePointsByUser(address _user)
+        public
+        view
+        returns (uint256)
+    {
+        return s.stakePoints[_user];
+    }
 }

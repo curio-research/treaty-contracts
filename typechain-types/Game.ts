@@ -162,6 +162,7 @@ export interface GameInterface extends utils.Interface {
     "_getMap((uint256,uint256))": FunctionFragment;
     "_getPlayerPosition(address)": FunctionFragment;
     "_getPositionFromIndex(uint256)": FunctionFragment;
+    "_getStakePointsByUser(address)": FunctionFragment;
     "_getTileData((uint256,uint256))": FunctionFragment;
     "_getTopBlockAtPosition((uint256,uint256))": FunctionFragment;
     "_getTopLevelStrengthAtPosition((uint256,uint256))": FunctionFragment;
@@ -179,7 +180,6 @@ export interface GameInterface extends utils.Interface {
     "_transfer(address,uint256,uint256)": FunctionFragment;
     "_withinDistance((uint256,uint256),(uint256,uint256),uint256)": FunctionFragment;
     "addTower((uint256,uint256),(uint256,uint256,uint256,uint256,address))": FunctionFragment;
-    "attack(address)": FunctionFragment;
     "attackItem((uint256,uint256),uint256,address)": FunctionFragment;
     "claimReward((uint256,uint256))": FunctionFragment;
     "craft(uint256)": FunctionFragment;
@@ -260,6 +260,10 @@ export interface GameInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "_getStakePointsByUser",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "_getTileData",
     values: [PositionStruct]
   ): string;
@@ -327,7 +331,6 @@ export interface GameInterface extends utils.Interface {
     functionFragment: "addTower",
     values: [PositionStruct, TowerStruct]
   ): string;
-  encodeFunctionData(functionFragment: "attack", values: [string]): string;
   encodeFunctionData(
     functionFragment: "attackItem",
     values: [PositionStruct, BigNumberish, string]
@@ -434,6 +437,10 @@ export interface GameInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "_getStakePointsByUser",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "_getTileData",
     data: BytesLike
   ): Result;
@@ -489,7 +496,6 @@ export interface GameInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "addTower", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "attack", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "attackItem", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "claimReward",
@@ -526,9 +532,9 @@ export interface GameInterface extends utils.Interface {
     "Move(address,tuple)": EventFragment;
     "NewPlayer(address,tuple)": EventFragment;
     "Place(address,tuple,uint256)": EventFragment;
-    "StakeTower(address,tuple,uint256)": EventFragment;
+    "StakeTower(address,tuple,uint256,uint256)": EventFragment;
     "Transfer(address,address,uint256,uint256)": EventFragment;
-    "UnstakeTower(address,tuple,uint256)": EventFragment;
+    "UnstakeTower(address,tuple,uint256,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Attack"): EventFragment;
@@ -621,8 +627,13 @@ export type PlaceEvent = TypedEvent<
 export type PlaceEventFilter = TypedEventFilter<PlaceEvent>;
 
 export type StakeTowerEvent = TypedEvent<
-  [string, PositionStructOutput, BigNumber],
-  { _player: string; _towerPos: PositionStructOutput; _amount: BigNumber }
+  [string, PositionStructOutput, BigNumber, BigNumber],
+  {
+    _player: string;
+    _towerPos: PositionStructOutput;
+    _playerPoints: BigNumber;
+    _towerPoints: BigNumber;
+  }
 >;
 
 export type StakeTowerEventFilter = TypedEventFilter<StakeTowerEvent>;
@@ -635,8 +646,13 @@ export type TransferEvent = TypedEvent<
 export type TransferEventFilter = TypedEventFilter<TransferEvent>;
 
 export type UnstakeTowerEvent = TypedEvent<
-  [string, PositionStructOutput, BigNumber],
-  { _player: string; _towerPos: PositionStructOutput; _amount: BigNumber }
+  [string, PositionStructOutput, BigNumber, BigNumber],
+  {
+    _player: string;
+    _towerPos: PositionStructOutput;
+    _playerPoints: BigNumber;
+    _towerPoints: BigNumber;
+  }
 >;
 
 export type UnstakeTowerEventFilter = TypedEventFilter<UnstakeTowerEvent>;
@@ -752,6 +768,11 @@ export interface Game extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[PositionStructOutput]>;
 
+    _getStakePointsByUser(
+      _user: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     _getTileData(
       _pos: PositionStruct,
       overrides?: CallOverrides
@@ -844,11 +865,6 @@ export interface Game extends BaseContract {
     addTower(
       _position: PositionStruct,
       _tower: TowerStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    attack(
-      _target: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -1032,6 +1048,11 @@ export interface Game extends BaseContract {
     overrides?: CallOverrides
   ): Promise<PositionStructOutput>;
 
+  _getStakePointsByUser(
+    _user: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   _getTileData(
     _pos: PositionStruct,
     overrides?: CallOverrides
@@ -1124,11 +1145,6 @@ export interface Game extends BaseContract {
   addTower(
     _position: PositionStruct,
     _tower: TowerStruct,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  attack(
-    _target: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1312,6 +1328,11 @@ export interface Game extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PositionStructOutput>;
 
+    _getStakePointsByUser(
+      _user: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     _getTileData(
       _pos: PositionStruct,
       overrides?: CallOverrides
@@ -1403,8 +1424,6 @@ export interface Game extends BaseContract {
       _tower: TowerStruct,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    attack(_target: string, overrides?: CallOverrides): Promise<void>;
 
     attackItem(
       _pos: PositionStruct,
@@ -1560,15 +1579,17 @@ export interface Game extends BaseContract {
     ): PlaceEventFilter;
     Place(_player?: null, _pos?: null, _blockId?: null): PlaceEventFilter;
 
-    "StakeTower(address,tuple,uint256)"(
+    "StakeTower(address,tuple,uint256,uint256)"(
       _player?: null,
       _towerPos?: null,
-      _amount?: null
+      _playerPoints?: null,
+      _towerPoints?: null
     ): StakeTowerEventFilter;
     StakeTower(
       _player?: null,
       _towerPos?: null,
-      _amount?: null
+      _playerPoints?: null,
+      _towerPoints?: null
     ): StakeTowerEventFilter;
 
     "Transfer(address,address,uint256,uint256)"(
@@ -1584,15 +1605,17 @@ export interface Game extends BaseContract {
       _amount?: null
     ): TransferEventFilter;
 
-    "UnstakeTower(address,tuple,uint256)"(
+    "UnstakeTower(address,tuple,uint256,uint256)"(
       _player?: null,
       _towerPos?: null,
-      _amount?: null
+      _playerPoints?: null,
+      _towerPoints?: null
     ): UnstakeTowerEventFilter;
     UnstakeTower(
       _player?: null,
       _towerPos?: null,
-      _amount?: null
+      _playerPoints?: null,
+      _towerPoints?: null
     ): UnstakeTowerEventFilter;
   };
 
@@ -1676,6 +1699,11 @@ export interface Game extends BaseContract {
 
     _getPositionFromIndex(
       k: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getStakePointsByUser(
+      _user: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1771,11 +1799,6 @@ export interface Game extends BaseContract {
     addTower(
       _position: PositionStruct,
       _tower: TowerStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    attack(
-      _target: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1934,6 +1957,11 @@ export interface Game extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    _getStakePointsByUser(
+      _user: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     _getTileData(
       _pos: PositionStruct,
       overrides?: CallOverrides
@@ -2026,11 +2054,6 @@ export interface Game extends BaseContract {
     addTower(
       _position: PositionStruct,
       _tower: TowerStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    attack(
-      _target: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

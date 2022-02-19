@@ -41,12 +41,14 @@ contract Game is GameStorage {
     event StakeTower(
         address _player,
         GameTypes.Position _towerPos,
-        uint256 _amount
+        uint256 _playerPoints,
+        uint256 _towerPoints
     );
     event UnstakeTower(
         address _player,
         GameTypes.Position _towerPos,
-        uint256 _amount
+        uint256 _playerPoints,
+        uint256 _towerPoints
     );
     event ClaimReward(
         address _player,
@@ -247,22 +249,22 @@ contract Game is GameStorage {
         emit Craft(msg.sender, _itemId);
     }
 
-    function attack(address _target) external {
-        // attacks are both time-limited and range-limited
-        if (_target == address(0)) revert("engine/no-target");
+    // function attack(address _target) external {
+    //     // attacks are both time-limited and range-limited
+    //     if (_target == address(0)) revert("engine/no-target");
 
-        if (!_isValidAttack(msg.sender, _target))
-            revert("engine/invalid-attack");
+    //     if (!_isValidAttack(msg.sender, _target))
+    //         revert("engine/invalid-attack");
 
-        _changeHealth(_target, s.attackDamage, false);
+    //     _changeHealth(_target, s.attackDamage, false);
 
-        emit Attack(msg.sender, _target);
+    //     emit Attack(msg.sender, _target);
 
-        if (s.players[_target].health <= 0) {
-            // _die(_target);
-            emit Death(_target);
-        }
-    }
+    //     if (s.players[_target].health <= 0) {
+    //         // _die(_target);
+    //         emit Death(_target);
+    //     }
+    // }
 
     // ------------------------------------------------------------
     // Tower
@@ -312,7 +314,7 @@ contract Game is GameStorage {
         if (s.stakePoints[msg.sender] < _amount)
             revert("tower/insufficient-points");
 
-        s.stakePoints[msg.sender] += tower.stakedAmount; // return points to previous tower owner
+        s.stakePoints[tower.owner] += tower.stakedAmount; // return points to previous tower owner
 
         uint256 currentEpoch = s.epochController.epoch();
         // check inventory points to see if there are sufficient points
@@ -322,7 +324,12 @@ contract Game is GameStorage {
 
         s.stakePoints[msg.sender] -= _amount; // subtract points from user power
 
-        emit StakeTower(msg.sender, _position, _amount);
+        emit StakeTower(
+            msg.sender,
+            _position,
+            s.stakePoints[msg.sender],
+            tower.stakedAmount
+        );
     }
 
     // unstake in tower
@@ -340,12 +347,21 @@ contract Game is GameStorage {
 
         tower.stakedAmount -= _amount;
 
+        s.stakePoints[msg.sender] += _amount;
+
+        // return points to user
+
         // if user unstakes all the points, they're no longer the owner
         if (tower.stakedAmount == 0) {
             tower.owner = address(0);
         }
 
-        emit UnstakeTower(msg.sender, _position, _amount);
+        emit UnstakeTower(
+            msg.sender,
+            _position,
+            s.stakePoints[msg.sender],
+            tower.stakedAmount
+        );
     }
 
     function getTowerById(GameTypes.Position memory _position)
