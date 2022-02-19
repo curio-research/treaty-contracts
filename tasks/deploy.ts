@@ -30,6 +30,7 @@ task("deploy", "deploy contracts")
 
     const gameDeployArgs = generateAllGameArgs();
 
+    // const Permissions = await deployProxy<Permissions>("Permissions", player1, hre, )
     const GameStorage = await deployProxy<GameStorage>("GameStorage", player1, hre, []);
     const GameContract = await deployProxy<Game>("Game", player1, hre, [...gameDeployArgs.gameDeployArgs, GameStorage.address]);
     const TowerContract = await deployProxy<TowerGame>("TowerGame", player1, hre, [GameStorage.address]);

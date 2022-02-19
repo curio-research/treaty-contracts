@@ -15,7 +15,16 @@ import "./Permissions.sol";
 
 contract Game {
     using SafeMath for uint256;
-    GameStorage utils;
+    GameStorage private utils;
+    Permissions private p;
+
+    // ------------------------------------------------------------
+    // Modifiers
+    // ------------------------------------------------------------
+    modifier hasPermission {
+        require(p._hasPlayerPermission(msg.sender));
+        _;
+    }
 
     // ------------------------------------------------------------
     // Events
@@ -56,9 +65,12 @@ contract Game {
         uint256 _startPlayerEnergy,
         uint256[][] memory _blocks,
         GameTypes.ItemWithMetadata[] memory _items,
-        GameStorage _gameStorage
+        GameStorage _gameStorage,
+        Permissions _permissions
     ) {
         utils = _gameStorage;
+        p = _permissions;
+
         utils._setConstants(
             _worldWidth,
             _worldHeight,
@@ -94,7 +106,10 @@ contract Game {
     }
 
     // initialize player
-    function initializePlayer(GameTypes.Position memory _pos) public {
+    function initializePlayer(GameTypes.Position memory _pos) 
+        public
+        hasPermission
+    {
         if (utils._initialized(msg.sender))
             revert("engine/player-already-initialized");
 
@@ -111,7 +126,10 @@ contract Game {
 
     // player move function
     // refactor this into Position struct?
-    function move(GameTypes.Position memory _pos) external {
+    function move(GameTypes.Position memory _pos)
+        external
+        hasPermission
+    {
         if (!utils._isValidMove(msg.sender, _pos))
             revert("engine/invalid-move");
 
@@ -130,7 +148,7 @@ contract Game {
         GameTypes.Position memory _pos,
         uint256 _zIdx,
         address _playerAddr
-    ) public {
+    ) public hasPermission {
         // can only mine with the needed tool
         uint256 _itemId = utils._getBlockAtPosition(_pos, _zIdx);
 
@@ -163,7 +181,7 @@ contract Game {
         GameTypes.Position memory _pos,
         uint256 _zIdx,
         address _playerAddr
-    ) public {
+    ) public hasPermission {
         utils._changeTopLevelStrengthAtPosition(
             _pos,
             utils._getAttackDamage(),
@@ -176,7 +194,7 @@ contract Game {
 
     // mine resource blocks at specific z-index base layer (z-indexf of 0)
     // attack + mine. main function
-    function mine(GameTypes.Position memory _pos) external {
+    function mine(GameTypes.Position memory _pos) external hasPermission {
         uint256 _blockCount = utils._getBlockCountAtPosition(_pos);
         if (_blockCount == 0) revert("engine/nonexistent-block");
         uint256 _zIdx = _blockCount - 1;
@@ -192,7 +210,10 @@ contract Game {
     }
 
     // place item at block
-    function place(GameTypes.Position memory _pos, uint256 _itemId) external {
+    function place(GameTypes.Position memory _pos, uint256 _itemId)
+        external
+        hasPermission
+    {
         if (utils._getItemAmountById(msg.sender, _itemId) == 0)
             revert("engine/insufficient-inventory");
         if (
@@ -209,7 +230,7 @@ contract Game {
     }
 
     // craft item (once) based on their recipe
-    function craft(uint256 _itemId) external {
+    function craft(uint256 _itemId) external hasPermission {
         if (_itemId > utils._getItemNonce()) revert("engine/nonexistent-block");
         if (utils._isItemActive(_itemId)) revert("engine/inactive-block");
 
@@ -239,7 +260,7 @@ contract Game {
         emit Craft(msg.sender, _itemId);
     }
 
-    function attack(address _target) external {
+    function attack(address _target) external hasPermission {
         // attacks are both time-limited and range-limited
         if (_target == address(0)) revert("engine/no-target");
 
