@@ -5,6 +5,7 @@ pragma solidity ^0.8.4;
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "./GameStorage.sol";
 import "./GameTypes.sol";
+import "./Permissions.sol";
 
 /// @title Game physics engine
 /// @notice the game engine takes care of low level interactions such as "move" and "craft" item.

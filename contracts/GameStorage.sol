@@ -451,6 +451,7 @@ contract GameStorage {
     // Tower
     // ------------------------------------------------------------
 
+    // TODO: why is this external?
     function setEpochController(Epoch _addr) external {
         s.epochController = _addr;
     }
