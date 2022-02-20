@@ -71,6 +71,7 @@ task("deploy", "deploy contracts")
     const configFile = {
       GAME_ADDRESS: GameContract.address,
       TOWER_GAME_ADDRESS: TowerContract.address,
+      GAME_STORAGE_CONTRACT: GameStorage.address,
       GETTERS_ADDRESS: GettersContract.address,
       EPOCH_ADDRESS: EpochContract.address,
       RPC_URL: LOCALHOST_RPC_URL,

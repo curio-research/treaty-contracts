@@ -75,7 +75,6 @@ describe("Game", () => {
     for (let i = 0; i < 9; i++) {
       await c.Game.connect(world.user1).mine({ x: 2, y: 2 });
     }
-    
     player1Inventory = decodePlayerInventory(await c.GameStorage._getInventoryByPlayer(world.user1.address));
     expect(player1Inventory.itemIds).eqls([1]);
     expect(player1Inventory.itemAmounts).eqls([8]);

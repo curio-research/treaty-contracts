@@ -64,9 +64,13 @@ contract Getters {
         uint256 nonce = 0;
         for (uint256 x = _pos.x; x < _pos.x + 10; x++) {
             for (uint256 y = _pos.y; y < _pos.y + 10; y++) {
+                GameTypes.Position memory _tempPos = GameTypes.Position({
+                    x: x,
+                    y: y
+                });
                 ret[nonce] = GameTypes.TileWithMetadata({
-                    occupier: utils._getTileData(_pos).occupier,
-                    blocks: utils._getTileData(_pos).blocks,
+                    occupier: utils._getTileData(_tempPos).occupier,
+                    blocks: utils._getTileData(_tempPos).blocks,
                     x: x,
                     y: y
                 });
