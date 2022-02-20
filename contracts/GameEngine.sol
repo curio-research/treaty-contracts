@@ -16,6 +16,7 @@ import "./Permissions.sol";
 contract Game {
     using SafeMath for uint256;
     GameStorage private utils;
+    Permissions private p;
 
     // ------------------------------------------------------------
     // Events
@@ -60,6 +61,8 @@ contract Game {
         Permissions _permissions
     ) {
         utils = _gameStorage;
+        p = _permissions;
+        p.setPermission(address(this), true);
 
         utils._setConstants(
             _worldWidth,

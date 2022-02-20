@@ -6,7 +6,7 @@ contract Permissions {
     address owner;
 
     modifier onlyOwner() {
-        require(msg.sender == owner, "only owner can perform this operation.");
+        require(tx.origin == owner, "only owner can perform this operation.");
         _;
     }
 

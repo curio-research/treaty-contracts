@@ -33,7 +33,7 @@ describe("Game", () => {
   });
 
   it("Verify map", async () => {
-    const mapChunk0 = await c.GameStorage._getMap({ x: 0, y: 0 });
+    const mapChunk0 = await c.Getters._getMap({ x: 0, y: 0 });
     expect(blocks[0]).eqls(decodeTileWithMetadata(mapChunk0[0]).blocks);
   });
 
@@ -68,7 +68,7 @@ describe("Game", () => {
     let player1Inventory = decodePlayerInventory(await c.GameStorage._getInventoryByPlayer(world.user1.address));
     expect(player1Inventory.itemIds).eqls([1]);
     expect(player1Inventory.itemAmounts).eqls([8]);
-    expect(await c.GameStorage._getTopLevelStrengthAtPosition({ x: 2, y: 2 })).equals(50);
+    expect((await c.GameStorage._getTileData({ x: 2, y: 2 })).topLevelStrength).equals(50);
 
     // player attack is 5 and block strength is 50 => expect exactly 10 mines
     // the first 9 mines only decrease strength
@@ -78,7 +78,7 @@ describe("Game", () => {
     player1Inventory = decodePlayerInventory(await c.GameStorage._getInventoryByPlayer(world.user1.address));
     expect(player1Inventory.itemIds).eqls([1]);
     expect(player1Inventory.itemAmounts).eqls([8]);
-    expect(await c.GameStorage._getTopLevelStrengthAtPosition({ x: 2, y: 2 })).equals(5);
+    expect((await c.GameStorage._getTileData({ x: 2, y: 2 })).topLevelStrength).equals(5);
 
     // the last mine successfully mines the item
     await c.Game.connect(world.user1).mine({ x: 2, y: 2 });

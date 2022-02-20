@@ -1,4 +1,5 @@
-import { TileWithMetadataStructOutput, RecipeStructOutput } from "./../../typechain-types/GameStorage";
+import { RecipeStructOutput } from "./../../typechain-types/GameStorage";
+import { TileWithMetadataStructOutput } from "../../typechain-types/Getters";
 import { TileWithMetadata } from "./../types/game";
 import { Inventory } from "../types/game";
 
