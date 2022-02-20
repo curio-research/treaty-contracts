@@ -171,7 +171,7 @@ contract Game {
     ) public {
         utils._setTopLevelStrength(
             _pos,
-            utils._getTileData(_pos).topLevelStrength + utils._getAttackDamage()
+            utils._getTileData(_pos).topLevelStrength - utils._getAttackDamage()
         );
         uint256 _strength = utils._getTileData(_pos).topLevelStrength;
 

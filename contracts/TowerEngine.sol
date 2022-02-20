@@ -134,7 +134,7 @@ contract TowerGame {
         if (tower.owner != msg.sender) revert("tower/invalid-tower-owner");
         if (tower.stakedAmount < _amount) revert("tower/withdraw-overflow");
 
-        tower.stakedAmount += _amount;
+        tower.stakedAmount -= _amount;
         utils._setTower(_towerId, tower);
 
         utils._setPlayerStakedPoints(msg.sender, tower.stakedAmount + _amount);

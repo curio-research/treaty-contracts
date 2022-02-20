@@ -75,10 +75,12 @@ describe("Game", () => {
     for (let i = 0; i < 9; i++) {
       await c.Game.connect(world.user1).mine({ x: 2, y: 2 });
     }
+    console.log('gutAA');
     player1Inventory = decodePlayerInventory(await c.GameStorage._getInventoryByPlayer(world.user1.address));
     expect(player1Inventory.itemIds).eqls([1]);
     expect(player1Inventory.itemAmounts).eqls([8]);
     expect((await c.GameStorage._getTileData({ x: 2, y: 2 })).topLevelStrength).equals(5);
+    console.log('gutBB');
 
     // the last mine successfully mines the item
     await c.Game.connect(world.user1).mine({ x: 2, y: 2 });
