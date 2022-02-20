@@ -36,7 +36,6 @@ contract TowerGame {
     constructor(GameStorage _util, Permissions _permissions) {
         utils = _util;
         p = _permissions;
-        p.setPermission(address(this), true);
     }
 
     // add tower to map. using this instead of constructor to avoid bloat

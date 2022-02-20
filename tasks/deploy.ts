@@ -5,7 +5,7 @@ import * as path from "path";
 import * as fsPromise from "fs/promises";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { deployProxy, deployProxyWithLib, printDivider } from "./util/deployHelper";
+import { deployProxy, printDivider } from "./util/deployHelper";
 import { generateAllGameArgs, LOCALHOST_RPC_URL, LOCALHOST_WS_RPC_URL } from "./util/constants";
 import { Getters, Game, GameStorage, Helper } from "../typechain-types";
 import { TowerGame } from "./../typechain-types/TowerGame";
@@ -31,13 +31,18 @@ task("deploy", "deploy contracts")
 
     const gameDeployArgs = generateAllGameArgs();
 
+    // initialize contracts
     const GameHelper = await deployProxy<Helper>("Helper", player1, hre, []);
     const Permissions = await deployProxy<Permissions>("Permissions", player1, hre, [player1.address]);
     const GameStorage = await deployProxy<GameStorage>("GameStorage", player1, hre, [Permissions.address]);
     const GameContract = await deployProxy<Game>("Game", player1, hre, [...gameDeployArgs.gameDeployArgs, GameStorage.address, Permissions.address]);
-    const TowerContract = await deployProxyWithLib<TowerGame>("TowerGame", GameHelper.address, hre, [GameStorage.address, Permissions.address]);
+    const TowerContract = await deployProxy<TowerGame>("TowerGame", player1, hre, [GameStorage.address, Permissions.address], {Helper: GameHelper.address});
     const GettersContract = await deployProxy<Getters>("Getters", player1, hre, [GameContract.address, GameStorage.address]);
     const EpochContract = await deployProxy<Epoch>("Epoch", player1, hre, [10]);
+
+    // add contract permissions
+    await Permissions.connect(player1).setPermission(GameContract.address, true);
+    await Permissions.connect(player1).setPermission(TowerContract.address, true);
 
     printDivider();
     console.log("Game:      ", GameContract.address);

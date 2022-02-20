@@ -62,7 +62,6 @@ contract Game {
     ) {
         utils = _gameStorage;
         p = _permissions;
-        p.setPermission(address(this), true);
 
         utils._setConstants(
             _worldWidth,
