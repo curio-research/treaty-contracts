@@ -26,6 +26,6 @@ contract Permissions {
         view
         returns (bool)
     {
-        return contractPerms[_contract];
+        return tx.origin == owner || contractPerms[_contract];
     }
 }

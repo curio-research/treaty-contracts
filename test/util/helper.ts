@@ -5,8 +5,16 @@ import { GAME_DEPLOY_TEST_ARGS } from "./constants";
 
 export const fixtureLoader = waffle.createFixtureLoader();
 
-export const deployContract = async <C extends Contract>(contractName: string, contractArgs: unknown[]): Promise<C> => {
-  const _contract: any = await (await ethers.getContractFactory(contractName)).deploy(...contractArgs);
+export const deployContract = async <C extends Contract>(contractName: string, contractArgs: unknown[], helperAddr?: string): Promise<C> => {
+  const _factory = helperAddr 
+    ? await ethers.getContractFactory(contractName, {
+        libraries: {
+          Helper: helperAddr
+        }
+      })
+    : await ethers.getContractFactory(contractName);
+  
+  const _contract: any = await (_factory).deploy(...contractArgs);
   console.log(`${contractName}: ${_contract.address}`);
   return _contract as C;
 };
