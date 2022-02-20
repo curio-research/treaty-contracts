@@ -6,10 +6,13 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "hardhat/console.sol";
 import "./GameStorage.sol";
 import "./GameTypes.sol";
+import "./Permissions.sol";
+import "./GameHelper.sol";
 
 contract TowerGame {
     using SafeMath for uint256;
-    GameStorage utils;
+    GameStorage private utils;
+    Permissions private p;
 
     event StakeTower(
         address _player,
@@ -30,8 +33,9 @@ contract TowerGame {
         uint256 _epoch
     );
 
-    constructor(GameStorage _util) {
+    constructor(GameStorage _util, Permissions _permissions) {
         utils = _util;
+        p = _permissions;
     }
 
     // add tower to map. using this instead of constructor to avoid bloat
@@ -39,20 +43,19 @@ contract TowerGame {
         GameTypes.Position memory _position,
         GameTypes.Tower memory _tower
     ) external {
-        string memory _towerId = utils._encodePos(_position);
+        string memory _towerId = Helper._encodePos(_position);
         utils._setTower(_towerId, _tower);
     }
 
     // user claim reward for tower
     function claimReward(GameTypes.Position memory _position) external {
-        string memory _towerId = utils._encodePos(_position);
+        string memory _towerId = Helper._encodePos(_position);
         GameTypes.Tower memory tower = utils._getTower(_towerId);
 
         // should we add a distance checker here?
         if (tower.owner != msg.sender) revert("tower/invalid-tower-owner");
 
         uint256 currentEpoch = utils._getCurrentEpoch();
-
         uint256 stakedEpochs = currentEpoch - tower.stakedTime;
         uint256 totalReward = stakedEpochs * tower.rewardPerEpoch;
 
@@ -67,14 +70,14 @@ contract TowerGame {
     function stake(GameTypes.Position memory _position, uint256 _amount)
         public
     {
-        string memory _towerId = utils._encodePos(_position);
+        string memory _towerId = Helper._encodePos(_position);
 
         // add checker for distance
 
         if (
             !utils._withinDistance(
                 _position,
-                utils._getPlayerPosition(msg.sender),
+                utils._getPlayer(msg.sender).position,
                 2
             )
         ) revert("tower/outside-distance");
@@ -85,7 +88,10 @@ contract TowerGame {
             revert("tower/insufficient-points");
 
         // return points to previous tower owner
-        utils._addPlayerStakePoints(tower.owner, tower.stakedAmount);
+        utils._setPlayerStakedPoints(
+            tower.owner,
+            utils._getStakePointsByUser(tower.owner) + tower.stakedAmount
+        );
 
         uint256 currentEpoch = utils._getCurrentEpoch();
         // check inventory points to see if there are sufficient points
@@ -95,7 +101,11 @@ contract TowerGame {
         tower.stakedAmount = _amount;
         utils._setTower(_towerId, tower);
 
-        utils._subtractPlayerStakePoints(msg.sender, _amount); // subtract points from user power
+        utils._setPlayerStakedPoints(
+            msg.sender,
+            utils._getStakePointsByUser(msg.sender) - _amount
+        );
+        (msg.sender, _amount);
 
         emit StakeTower(
             msg.sender,
@@ -112,23 +122,26 @@ contract TowerGame {
         if (
             !utils._withinDistance(
                 _position,
-                utils._getPlayerPosition(msg.sender),
+                utils._getPlayer(msg.sender).position,
                 2
             )
         ) revert("tower/outside-distance");
 
-        string memory _towerId = utils._encodePos(_position);
+        string memory _towerId = Helper._encodePos(_position);
 
         GameTypes.Tower memory tower = utils._getTower(_towerId);
         if (tower.owner != msg.sender) revert("tower/invalid-tower-owner");
         if (tower.stakedAmount < _amount) revert("tower/withdraw-overflow");
 
-        utils._subtractTowerStakePoints(_towerId, _amount);
-        utils._addPlayerStakePoints(msg.sender, _amount);
+        tower.stakedAmount -= _amount;
+        utils._setTower(_towerId, tower);
+
+        utils._setPlayerStakedPoints(msg.sender, tower.stakedAmount + _amount);
 
         // if user unstakes all the points, they're no longer the owner
         if (utils._getTower(_towerId).stakedAmount == 0) {
-            utils._setTowerOwner(_towerId, address(0));
+            tower.owner = address(0);
+            utils._setTower(_towerId, tower);
         }
 
         emit UnstakeTower(

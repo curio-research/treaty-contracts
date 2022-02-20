@@ -7,8 +7,9 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { deployProxy, printDivider } from "./util/deployHelper";
 import { generateAllGameArgs, LOCALHOST_RPC_URL, LOCALHOST_WS_RPC_URL } from "./util/constants";
-import { Getters, Game, GameStorage } from "../typechain-types";
+import { Getters, Game, GameStorage, Helper } from "../typechain-types";
 import { TowerGame } from "./../typechain-types/TowerGame";
+import { Permissions } from "../typechain-types";
 import { masterItems } from "../test/util/constants";
 
 // ---------------------------------
@@ -30,11 +31,18 @@ task("deploy", "deploy contracts")
 
     const gameDeployArgs = generateAllGameArgs();
 
-    const GameStorage = await deployProxy<GameStorage>("GameStorage", player1, hre, []);
-    const GameContract = await deployProxy<Game>("Game", player1, hre, [...gameDeployArgs.gameDeployArgs, GameStorage.address]);
-    const TowerContract = await deployProxy<TowerGame>("TowerGame", player1, hre, [GameStorage.address]);
+    // initialize contracts
+    const GameHelper = await deployProxy<Helper>("Helper", player1, hre, []);
+    const Permissions = await deployProxy<Permissions>("Permissions", player1, hre, [player1.address]);
+    const GameStorage = await deployProxy<GameStorage>("GameStorage", player1, hre, [Permissions.address]);
+    const GameContract = await deployProxy<Game>("Game", player1, hre, [...gameDeployArgs.gameDeployArgs, GameStorage.address, Permissions.address]);
+    const TowerContract = await deployProxy<TowerGame>("TowerGame", player1, hre, [GameStorage.address, Permissions.address], {Helper: GameHelper.address});
     const GettersContract = await deployProxy<Getters>("Getters", player1, hre, [GameContract.address, GameStorage.address]);
     const EpochContract = await deployProxy<Epoch>("Epoch", player1, hre, [10]);
+
+    // add contract permissions
+    await Permissions.connect(player1).setPermission(GameContract.address, true);
+    await Permissions.connect(player1).setPermission(TowerContract.address, true);
 
     printDivider();
     console.log("Game:      ", GameContract.address);
@@ -46,9 +54,7 @@ task("deploy", "deploy contracts")
 
     await GameContract.connect(player1).initializePlayer({ x: 1, y: 1 }); // initialize users
     await GameContract.connect(player2).initializePlayer({ x: 5, y: 5 });
-
     await GameStorage.connect(player1)._increaseItemInInventory(player1.address, 0, 10); // give user1 cacti for defense
-
     await GameStorage.setEpochController(EpochContract.address); // set epoch controller
 
     // initialize towers
@@ -65,6 +71,7 @@ task("deploy", "deploy contracts")
     const configFile = {
       GAME_ADDRESS: GameContract.address,
       TOWER_GAME_ADDRESS: TowerContract.address,
+      GAME_STORAGE_CONTRACT: GameStorage.address,
       GETTERS_ADDRESS: GettersContract.address,
       EPOCH_ADDRESS: EpochContract.address,
       RPC_URL: LOCALHOST_RPC_URL,

@@ -30,7 +30,7 @@ describe("Getters", () => {
   });
 
   it("Bulk fetch craft items", async () => {
-    const item1 = decodeItemWithMetadata(await c.GameStorage._getItemWithMetadata(1)); // single getter test
+    const item1 = decodeItemWithMetadata(await c.GameStorage._getItem(1)); // single getter test
     expect(item1.craftItemIds).eqls(items[1].craftItemIds);
     expect(item1.craftItemAmounts).eqls(items[1].craftItemAmounts);
 

@@ -13,6 +13,7 @@ jobs:
         run: |
           ls ${{ github.workspace }}
       - run: yarn add hardhat
-      - run: npx hardhat compile
+      - run: npx hardhat compile --force
+      # - run: npx hardhat deploy
       - run: npx hardhat test
       - run: echo "🍏 This job's status is ${{ job.status }}."

@@ -5,6 +5,7 @@ pragma solidity ^0.8.4;
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "./GameStorage.sol";
 import "./GameTypes.sol";
+import "./Permissions.sol";
 
 /// @title Game physics engine
 /// @notice the game engine takes care of low level interactions such as "move" and "craft" item.
@@ -14,7 +15,8 @@ import "./GameTypes.sol";
 
 contract Game {
     using SafeMath for uint256;
-    GameStorage utils;
+    GameStorage private utils;
+    Permissions private p;
 
     // ------------------------------------------------------------
     // Events
@@ -55,9 +57,12 @@ contract Game {
         uint256 _startPlayerEnergy,
         uint256[][] memory _blocks,
         GameTypes.ItemWithMetadata[] memory _items,
-        GameStorage _gameStorage
+        GameStorage _gameStorage,
+        Permissions _permissions
     ) {
         utils = _gameStorage;
+        p = _permissions;
+
         utils._setConstants(
             _worldWidth,
             _worldHeight,
@@ -78,7 +83,7 @@ contract Game {
 
             if (_blocks[k].length > 0) {
                 uint256 topBlockId = _blocks[k][_blocks[k].length - 1];
-                utils._setTopLevelStrengthAtPosition(
+                utils._setTopLevelStrength(
                     _position,
                     _items[topBlockId].strength
                 );
@@ -94,7 +99,7 @@ contract Game {
 
     // initialize player
     function initializePlayer(GameTypes.Position memory _pos) public {
-        if (utils._initialized(msg.sender))
+        if (utils._getPlayer(msg.sender).initialized)
             revert("engine/player-already-initialized");
 
         // check if target coordinate has block or another player
@@ -114,9 +119,9 @@ contract Game {
         if (!utils._isValidMove(msg.sender, _pos))
             revert("engine/invalid-move");
 
-        GameTypes.Position memory _prevPosition = utils._getPlayerPosition(
-            msg.sender
-        );
+        GameTypes.Position memory _prevPosition = utils
+            ._getPlayer(msg.sender)
+            .position;
         utils._setOccupierAtPosition(address(0), _prevPosition); // remove occupier from previous position
 
         utils._setPlayerPosition(msg.sender, _pos);
@@ -133,7 +138,7 @@ contract Game {
         // can only mine with the needed tool
         uint256 _itemId = utils._getBlockAtPosition(_pos, _zIdx);
 
-        uint256[] memory _mineItemIds = utils._getMineItemIds(_itemId);
+        uint256[] memory _mineItemIds = utils._getItem(_itemId).mineItemIds;
         bool _canMine = false;
         if (_mineItemIds.length == 0) {
             _canMine = true;
@@ -163,12 +168,11 @@ contract Game {
         uint256 _zIdx,
         address _playerAddr
     ) public {
-        utils._changeTopLevelStrengthAtPosition(
+        utils._setTopLevelStrength(
             _pos,
-            utils._getAttackDamage(),
-            false
+            utils._getTileData(_pos).topLevelStrength - utils._getAttackDamage()
         );
-        uint256 _strength = utils._getTopLevelStrengthAtPosition(_pos);
+        uint256 _strength = utils._getTileData(_pos).topLevelStrength;
 
         emit AttackItem(_playerAddr, _pos, _strength, _zIdx);
     }
@@ -181,8 +185,7 @@ contract Game {
         uint256 _zIdx = _blockCount - 1;
 
         if (
-            utils._getAttackDamage() <
-            utils._getTopLevelStrengthAtPosition(_pos)
+            utils._getAttackDamage() < utils._getTileData(_pos).topLevelStrength
         ) {
             attackItem(_pos, _zIdx, msg.sender);
         } else {
@@ -195,8 +198,8 @@ contract Game {
         if (utils._getItemAmountById(msg.sender, _itemId) == 0)
             revert("engine/insufficient-inventory");
         if (
-            utils._getPlayerPosition(msg.sender).x == _pos.x &&
-            utils._getPlayerPosition(msg.sender).y == _pos.y
+            utils._getPlayer(msg.sender).position.x == _pos.x &&
+            utils._getPlayer(msg.sender).position.y == _pos.y
         ) revert("engine/cannot-stand-on-block");
 
         // TODO add distance logic here
@@ -210,10 +213,9 @@ contract Game {
     // craft item (once) based on their recipe
     function craft(uint256 _itemId) external {
         if (_itemId > utils._getItemNonce()) revert("engine/nonexistent-block");
-        if (utils._isItemActive(_itemId)) revert("engine/inactive-block");
 
         // loop through player inventory to check if player has all required ingredients to make a block
-        GameTypes.ItemWithMetadata memory _item = utils._getItemById(_itemId);
+        GameTypes.ItemWithMetadata memory _item = utils._getItem(_itemId);
         for (uint256 i = 0; i < _item.craftItemIds.length; i++) {
             uint256 craftItemId = _item.craftItemIds[i];
             uint256 craftItemAmount = _item.craftItemAmounts[i];
@@ -236,22 +238,5 @@ contract Game {
         utils._increaseItemInInventory(msg.sender, _itemId, 1);
 
         emit Craft(msg.sender, _itemId);
-    }
-
-    function attack(address _target) external {
-        // attacks are both time-limited and range-limited
-        if (_target == address(0)) revert("engine/no-target");
-
-        if (!utils._isValidAttack(msg.sender, _target))
-            revert("engine/invalid-attack");
-
-        utils._changeHealth(_target, utils._getAttackDamage(), false);
-
-        emit Attack(msg.sender, _target);
-
-        if (utils._getHealth(_target) <= 0) {
-            // _die(_target);
-            emit Death(_target);
-        }
     }
 }

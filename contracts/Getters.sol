@@ -29,7 +29,7 @@ contract Getters {
             );
 
         for (uint256 i = 1; i < utils._getItemNonce(); i++) {
-            allItems[i - 1] = utils._getItemWithMetadata(i - 1);
+            allItems[i - 1] = utils._getItem(i - 1);
         }
 
         return allItems;
@@ -47,9 +47,36 @@ contract Getters {
         );
 
         for (uint256 i = 0; i < playerAddresses.length; i++) {
-            ret[i] = utils._getAllPlayerData(playerAddresses[i]);
+            ret[i] = utils._getPlayer(playerAddresses[i]);
         }
 
+        return ret;
+    }
+
+    // getter method to fetch map in 10x10 chunks. can increase size
+    function _getMap(GameTypes.Position memory _pos)
+        public
+        view
+        returns (GameTypes.TileWithMetadata[] memory)
+    {
+        GameTypes.TileWithMetadata[]
+            memory ret = new GameTypes.TileWithMetadata[](100);
+        uint256 nonce = 0;
+        for (uint256 x = _pos.x; x < _pos.x + 10; x++) {
+            for (uint256 y = _pos.y; y < _pos.y + 10; y++) {
+                GameTypes.Position memory _tempPos = GameTypes.Position({
+                    x: x,
+                    y: y
+                });
+                ret[nonce] = GameTypes.TileWithMetadata({
+                    occupier: utils._getTileData(_tempPos).occupier,
+                    blocks: utils._getTileData(_tempPos).blocks,
+                    x: x,
+                    y: y
+                });
+                nonce += 1;
+            }
+        }
         return ret;
     }
 }
