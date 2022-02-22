@@ -11,6 +11,7 @@ import "hardhat/console.sol";
 contract Getters {
     Game gameCore;
     GameStorage utils;
+    uint256 GET_MAP_INTERVAL = 10;
 
     constructor(Game _gameCore, GameStorage _gameStorage) {
         gameCore = _gameCore;
@@ -60,17 +61,20 @@ contract Getters {
         returns (GameTypes.TileWithMetadata[] memory)
     {
         GameTypes.TileWithMetadata[]
-            memory ret = new GameTypes.TileWithMetadata[](100);
+            memory ret = new GameTypes.TileWithMetadata[](
+                GET_MAP_INTERVAL * GET_MAP_INTERVAL
+            );
         uint256 nonce = 0;
-        for (uint256 x = _pos.x; x < _pos.x + 10; x++) {
-            for (uint256 y = _pos.y; y < _pos.y + 10; y++) {
+        for (uint256 x = _pos.x; x < _pos.x + GET_MAP_INTERVAL; x++) {
+            for (uint256 y = _pos.y; y < _pos.y + GET_MAP_INTERVAL; y++) {
                 GameTypes.Position memory _tempPos = GameTypes.Position({
                     x: x,
                     y: y
                 });
+                GameTypes.Tile memory _tileData = utils._getTileData(_tempPos);
                 ret[nonce] = GameTypes.TileWithMetadata({
-                    occupier: utils._getTileData(_tempPos).occupier,
-                    blocks: utils._getTileData(_tempPos).blocks,
+                    occupier: _tileData.occupier,
+                    blocks: _tileData.blocks,
                     x: x,
                     y: y
                 });

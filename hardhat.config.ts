@@ -2,7 +2,6 @@ import { task } from "hardhat/config";
 import "@typechain/hardhat";
 import "@nomiclabs/hardhat-ethers";
 import "@nomiclabs/hardhat-waffle";
-require("hardhat-contract-sizer");
 
 // tasks
 import "./tasks/port";
@@ -22,10 +21,10 @@ export default {
   networks: {
     hardhat: {
       chainId: 1337,
-      // mining: {
-      //   auto: false,
-      //   interval: 500,
-      // },
+      mining: {
+        auto: false,
+        interval: 500,
+      },
     },
   },
 };

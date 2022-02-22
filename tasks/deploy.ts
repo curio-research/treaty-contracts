@@ -10,7 +10,7 @@ import { generateAllGameArgs, LOCALHOST_RPC_URL, LOCALHOST_WS_RPC_URL } from "./
 import { Getters, Game, GameStorage, Helper } from "../typechain-types";
 import { TowerGame } from "./../typechain-types/TowerGame";
 import { Permissions } from "../typechain-types";
-import { masterItems } from "../test/util/constants";
+import { masterItems } from "./util/itemGenerator";
 
 // ---------------------------------
 // deploy script
@@ -36,7 +36,7 @@ task("deploy", "deploy contracts")
     const Permissions = await deployProxy<Permissions>("Permissions", player1, hre, [player1.address]);
     const GameStorage = await deployProxy<GameStorage>("GameStorage", player1, hre, [Permissions.address]);
     const GameContract = await deployProxy<Game>("Game", player1, hre, [...gameDeployArgs.gameDeployArgs, GameStorage.address, Permissions.address]);
-    const TowerContract = await deployProxy<TowerGame>("TowerGame", player1, hre, [GameStorage.address, Permissions.address], {Helper: GameHelper.address});
+    const TowerContract = await deployProxy<TowerGame>("TowerGame", player1, hre, [GameStorage.address, Permissions.address], { Helper: GameHelper.address });
     const GettersContract = await deployProxy<Getters>("Getters", player1, hre, [GameContract.address, GameStorage.address]);
     const EpochContract = await deployProxy<Epoch>("Epoch", player1, hre, [10]);
 
