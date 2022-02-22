@@ -63,7 +63,7 @@ export const masterItems: Item[] = [
       mineable: true,
       mineItemIds: [],
       strength: 40,
-      craftable: false,
+      craftable: true,
       craftItemIds: [0],
       craftItemAmounts: [10],
       occupiable: false,
