@@ -24,6 +24,8 @@ export interface World {
   user3: SignerWithAddress;
 }
 
+export const EPOCH_INTERVAL = 30;
+
 export const initializeWorld = async (): Promise<World> => {
   const [signer1, signer2, signer3] = await ethers.getSigners();
 
@@ -32,13 +34,15 @@ export const initializeWorld = async (): Promise<World> => {
   const Permissions = await deployContract<Permissions>("Permissions", [signer1.address]);
   const GameStorage = await deployContract<GameStorage>("GameStorage", [Permissions.address]);
   const GameContract = await deployContract<Game>("Game", [...GAME_DEPLOY_TEST_ARGS, GameStorage.address, Permissions.address]);
-  const TowerContract = await deployContract<TowerGame>("TowerGame", [GameStorage.address, Permissions.address], {Helper: GameHelper.address});
+  const TowerContract = await deployContract<TowerGame>("TowerGame", [GameStorage.address, Permissions.address], { Helper: GameHelper.address });
   const GettersContract = await deployContract<Getters>("Getters", [GameContract.address, GameStorage.address]);
-  const EpochContract = await deployContract<Epoch>("Epoch", [30]);
+  const EpochContract = await deployContract<Epoch>("Epoch", [EPOCH_INTERVAL]);
 
   // add contract permissions
   await Permissions.connect(signer1).setPermission(GameContract.address, true);
   await Permissions.connect(signer1).setPermission(TowerContract.address, true);
+
+  GameStorage.setEpochController(EpochContract.address);
 
   return {
     contracts: {
