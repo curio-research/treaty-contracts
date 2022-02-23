@@ -100,11 +100,16 @@ export type PlayerDataStructOutput = [
 
 export interface GettersInterface extends utils.Interface {
   functions: {
+    "GET_MAP_INTERVAL()": FunctionFragment;
     "_getMap((uint256,uint256))": FunctionFragment;
     "bulkGetAllItems()": FunctionFragment;
     "bulkGetAllPlayerData()": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "GET_MAP_INTERVAL",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "_getMap",
     values: [PositionStruct]
@@ -118,6 +123,10 @@ export interface GettersInterface extends utils.Interface {
     values?: undefined
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "GET_MAP_INTERVAL",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "_getMap", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "bulkGetAllItems",
@@ -158,6 +167,8 @@ export interface Getters extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    GET_MAP_INTERVAL(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     _getMap(
       _pos: PositionStruct,
       overrides?: CallOverrides
@@ -171,6 +182,8 @@ export interface Getters extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[PlayerDataStructOutput[]]>;
   };
+
+  GET_MAP_INTERVAL(overrides?: CallOverrides): Promise<BigNumber>;
 
   _getMap(
     _pos: PositionStruct,
@@ -186,6 +199,8 @@ export interface Getters extends BaseContract {
   ): Promise<PlayerDataStructOutput[]>;
 
   callStatic: {
+    GET_MAP_INTERVAL(overrides?: CallOverrides): Promise<BigNumber>;
+
     _getMap(
       _pos: PositionStruct,
       overrides?: CallOverrides
@@ -203,6 +218,8 @@ export interface Getters extends BaseContract {
   filters: {};
 
   estimateGas: {
+    GET_MAP_INTERVAL(overrides?: CallOverrides): Promise<BigNumber>;
+
     _getMap(
       _pos: PositionStruct,
       overrides?: CallOverrides
@@ -214,6 +231,8 @@ export interface Getters extends BaseContract {
   };
 
   populateTransaction: {
+    GET_MAP_INTERVAL(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     _getMap(
       _pos: PositionStruct,
       overrides?: CallOverrides

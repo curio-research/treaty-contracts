@@ -11,7 +11,7 @@ import "hardhat/console.sol";
 contract Getters {
     Game gameCore;
     GameStorage utils;
-    uint256 GET_MAP_INTERVAL = 10;
+    uint256 public GET_MAP_INTERVAL = 10;
 
     constructor(Game _gameCore, GameStorage _gameStorage) {
         gameCore = _gameCore;

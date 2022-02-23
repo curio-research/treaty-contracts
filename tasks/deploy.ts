@@ -41,6 +41,8 @@ task("deploy", "deploy contracts")
     const GettersContract = await deployProxy<Getters>("Getters", player1, hre, [GameContract.address, GameStorage.address]);
     const EpochContract = await deployProxy<Epoch>("Epoch", player1, hre, [10]);
 
+    const GET_MAP_INTERVAL = (await GettersContract.GET_MAP_INTERVAL()).toNumber();
+
     // add contract permissions
     await Permissions.connect(player1).setPermission(GameContract.address, true);
     await Permissions.connect(player1).setPermission(TowerContract.address, true);
@@ -82,6 +84,7 @@ task("deploy", "deploy contracts")
       EPOCH_ADDRESS: EpochContract.address,
       RPC_URL: LOCALHOST_RPC_URL,
       WS_RPC_URL: LOCALHOST_WS_RPC_URL,
+      GET_MAP_INTERVAL: GET_MAP_INTERVAL,
       BLOCK_ID_TO_NAME_MAP: generateBlockIdToNameMap(masterItems),
     };
 
