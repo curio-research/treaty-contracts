@@ -1,118 +1,33 @@
-import { Item } from "./../../util/types/getter";
-
-// ------------------------------------------------
-// Item sheet for game deployment
-// ------------------------------------------------
-
-export enum ALL_ITEMS {
-  IRON = "Iron",
-  SILVER = "Silver",
-  FENCE = "Fence",
-  WALL = "Wall",
-  TOWER = "Tower",
-  TURBO = "Turbo",
-  BLOCK = "Block",
-}
-
-export const masterItems: Item[] = [
-  {
-    name: ALL_ITEMS.IRON,
-    item: {
-      mineable: true,
-      mineItemIds: [],
-      strength: 0,
-      craftable: false,
-      craftItemIds: [],
-      craftItemAmounts: [],
-      occupiable: false,
-      healthDamage: 0,
-      energyDamage: 0,
-    },
-  },
-  {
-    name: ALL_ITEMS.SILVER,
-    item: {
-      mineable: true,
-      mineItemIds: [],
-      strength: 0,
-      craftable: false,
-      craftItemIds: [],
-      craftItemAmounts: [],
-      occupiable: false,
-      healthDamage: 0,
-      energyDamage: 0,
-    },
-  },
-  {
-    name: ALL_ITEMS.FENCE,
-    item: {
-      mineable: true,
-      mineItemIds: [],
-      strength: 20,
-      craftable: true,
-      craftItemIds: [0],
-      craftItemAmounts: [5],
-      occupiable: false,
-      healthDamage: 0,
-      energyDamage: 0,
-    },
-  },
-  {
-    name: ALL_ITEMS.WALL,
-    item: {
-      mineable: true,
-      mineItemIds: [],
-      strength: 40,
-      craftable: true,
-      craftItemIds: [0],
-      craftItemAmounts: [10],
-      occupiable: false,
-      healthDamage: 0,
-      energyDamage: 0,
-    },
-  },
-  {
-    name: ALL_ITEMS.TOWER,
-    item: {
-      mineable: false,
-      mineItemIds: [],
-      strength: 0,
-      craftable: false,
-      craftItemIds: [],
-      craftItemAmounts: [],
-      occupiable: false,
-      healthDamage: 0,
-      energyDamage: 0,
-    },
-  },
-  {
-    name: ALL_ITEMS.TURBO,
-    item: {
-      mineable: true,
-      mineItemIds: [],
-      strength: 0,
-      craftable: true,
-      craftItemIds: [0, 1],
-      craftItemAmounts: [10, 1],
-      occupiable: false,
-      healthDamage: 0,
-      energyDamage: 0,
-    },
-  },
-  {
-    name: ALL_ITEMS.BLOCK,
-    item: {
-      mineable: false,
-      mineItemIds: [],
-      strength: 0,
-      craftable: true,
-      craftItemIds: [0, 1],
-      craftItemAmounts: [20, 3],
-      occupiable: false,
-      healthDamage: 0,
-      energyDamage: 0,
-    },
-  },
-];
+import { masterItems } from "../../test/util/constants";
+import { ITEM_RATIO, WORLD_HEIGHT, WORLD_WIDTH } from "./constants";
 
 export const allGameItems = masterItems.map((item) => item.item);
+
+// ------------------------------------------------
+// Randomized item generation across map
+// ------------------------------------------------
+
+const worldSize = WORLD_WIDTH * WORLD_HEIGHT;
+const getRandomCoordinate = (): number => Math.floor(Math.random() * worldSize);
+
+/**
+ * Generate items based on their ratio for empty map.
+ * @param map Block map with only towers and no other items
+ * @returns Block map with all items
+ */
+export const generateItems = (map: number[][]): number[][] => {
+  const itemCounts = ITEM_RATIO.map((r) => r * Math.round(worldSize / 100));
+
+  for (let i = 0; i < itemCounts.length; i++) {
+    for (let k = 0; k < itemCounts[i]; k++) {
+      let coord;
+      do {
+        coord = getRandomCoordinate();
+      } while (map[coord].length > 0);
+
+      map[coord].push(i);
+    }
+  }
+
+  return map;
+}

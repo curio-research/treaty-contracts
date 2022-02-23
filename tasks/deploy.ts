@@ -6,12 +6,11 @@ import * as fsPromise from "fs/promises";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { deployProxy, printDivider } from "./util/deployHelper";
-import { LOCALHOST_RPC_URL, LOCALHOST_WS_RPC_URL } from "./util/constants";
+import { LOCALHOST_RPC_URL, LOCALHOST_WS_RPC_URL, masterItems } from "./util/constants";
 import { generateAllGameArgs } from "./util/allArgsGenerator";
 import { Getters, Game, GameStorage, Helper } from "../typechain-types";
 import { TowerGame } from "./../typechain-types/TowerGame";
 import { Permissions } from "../typechain-types";
-import { masterItems } from "./util/itemGenerator";
 import { visualizeMap } from "./util/mapGenerator";
 
 // ---------------------------------
