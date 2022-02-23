@@ -98,7 +98,7 @@ export interface TowerGameInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "unstake", data: BytesLike): Result;
 
   events: {
-    "ClaimReward(address,tuple,uint256,uint256)": EventFragment;
+    "ClaimReward(address,tuple,uint256,uint256,uint256)": EventFragment;
     "StakeTower(address,tuple,uint256,uint256)": EventFragment;
     "UnstakeTower(address,tuple,uint256,uint256)": EventFragment;
   };
@@ -109,11 +109,12 @@ export interface TowerGameInterface extends utils.Interface {
 }
 
 export type ClaimRewardEvent = TypedEvent<
-  [string, PositionStructOutput, BigNumber, BigNumber],
+  [string, PositionStructOutput, BigNumber, BigNumber, BigNumber],
   {
     _player: string;
     _towerPos: PositionStructOutput;
-    _reward: BigNumber;
+    _itemId: BigNumber;
+    _itemAmount: BigNumber;
     _epoch: BigNumber;
   }
 >;
@@ -277,16 +278,18 @@ export interface TowerGame extends BaseContract {
   };
 
   filters: {
-    "ClaimReward(address,tuple,uint256,uint256)"(
+    "ClaimReward(address,tuple,uint256,uint256,uint256)"(
       _player?: null,
       _towerPos?: null,
-      _reward?: null,
+      _itemId?: null,
+      _itemAmount?: null,
       _epoch?: null
     ): ClaimRewardEventFilter;
     ClaimReward(
       _player?: null,
       _towerPos?: null,
-      _reward?: null,
+      _itemId?: null,
+      _itemAmount?: null,
       _epoch?: null
     ): ClaimRewardEventFilter;
 

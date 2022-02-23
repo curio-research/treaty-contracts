@@ -30,7 +30,8 @@ contract TowerGame {
     event ClaimReward(
         address _player,
         GameTypes.Position _towerPos,
-        uint256 _reward,
+        uint256 _itemId,
+        uint256 _itemAmount,
         uint256 _epoch
     );
 
@@ -97,7 +98,13 @@ contract TowerGame {
         tower.stakedTime = currentEpoch;
         utils._setTower(_towerId, tower);
 
-        emit ClaimReward(msg.sender, _position, _rFinal, currentEpoch);
+        emit ClaimReward(
+            msg.sender,
+            _position,
+            tower.itemId,
+            _rFinal,
+            currentEpoch
+        );
     }
 
     // stake in tower
