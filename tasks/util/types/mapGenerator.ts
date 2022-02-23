@@ -6,12 +6,7 @@ export interface MasterGameSpecs {
   towers: TowerWithLocation[];
 }
 
-export interface TowerCoordsProps {
-  gridCoords: position[];
-  indices: number[];
-}
-
-export interface GenerateWallCoordsProps {
+export interface CoordsProps {
   gridCoords: position[];
   indices: number[];
 }

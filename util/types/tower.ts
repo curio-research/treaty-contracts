@@ -1,4 +1,4 @@
-import { position } from "../../types/common";
+import { position } from "./common";
 
 export interface Tower {
   rewardPerEpoch: number;

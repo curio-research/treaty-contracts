@@ -1,8 +1,10 @@
 import { EMPTY_ADDRESS } from "./../../util/network/common";
 import { position } from "./../../util/types/common";
-import { GenerateWallCoordsProps, MasterGameSpecs, TowerCoordsProps } from "./types/mapGenerator";
+import { MasterGameSpecs, CoordsProps } from "./types/mapGenerator";
 import _ from "lodash";
 import { TowerWithLocation } from "../../util/types/tower";
+import { WORLD_HEIGHT, WORLD_WIDTH } from "./constants";
+import fs from 'fs';
 
 // map helpers are used to generate a world with rooms, entrances, and a tower in the middle
 
@@ -86,7 +88,7 @@ export const generateEmptyMap = (worldWidth: number, worldHeight: number): numbe
 };
 
 // generate a list of indices to apply to the map
-export const generateWallCoords = (worldWidth: number, worldHeight: number, roomWidth: number): GenerateWallCoordsProps => {
+export const generateWallCoords = (worldWidth: number, worldHeight: number, roomWidth: number): CoordsProps => {
   const walls = generateWalls(worldWidth, worldHeight, roomWidth);
   const indexedCoords = walls.map((wall) => wall.y * worldWidth + wall.x);
 
@@ -110,7 +112,7 @@ export const GenerateTowerPos = (width: number, height: number, roomWidth: numbe
   return totalPos;
 };
 
-export const generateTowerCoords = (worldWidth: number, worldHeight: number, roomWidth: number): TowerCoordsProps => {
+export const generateTowerCoords = (worldWidth: number, worldHeight: number, roomWidth: number): CoordsProps => {
   const towers = GenerateTowerPos(worldWidth, worldHeight, roomWidth);
   const indices = towers.map((pos) => pos.y * worldWidth + pos.x);
 
@@ -190,3 +192,32 @@ const removeDupPosFromArr = (arr: position[]): position[] => {
 
   return res;
 };
+
+/**
+ * Visualize map blocks of a map.
+ * @param blocks A list of positions with their list of blocks
+ * @param exportToFile Whether to export output to file or to log
+ */
+export const visualizeMap = (blocks: number[][], exportToFile?: boolean): void => {
+  let visualMap = '';
+  for (let i = 0; i < WORLD_WIDTH; i++) {
+    for (let j = 0; j < WORLD_HEIGHT; j++) {
+      let block;
+      if (blocks[i*WORLD_WIDTH+j].length > 0) {
+        block = blocks[i*WORLD_WIDTH+j][0] + '';
+        if (block.length == 1) block = ' ' + block;
+      } else {
+        block = '  ';
+      }
+
+      visualMap += '[' + block + '] ';
+    }
+    visualMap += '\n';
+  }
+
+  if (exportToFile) {
+    fs.writeFileSync("map.txt", visualMap);
+  } else {
+    console.log(visualMap);
+  }
+}
