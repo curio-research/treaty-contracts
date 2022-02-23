@@ -268,10 +268,6 @@ contract GameStorage {
         }
     }
 
-    // ------------------------------------------------------------
-    // Player state
-    // ------------------------------------------------------------
-
     function _changeHealth(
         address _player,
         uint256 _amount,

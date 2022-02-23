@@ -114,7 +114,6 @@ contract Game {
     }
 
     // player move function
-    // refactor this into Position struct?
     function move(GameTypes.Position memory _pos) external {
         if (!utils._isValidMove(msg.sender, _pos))
             revert("engine/invalid-move");

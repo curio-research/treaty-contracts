@@ -10,7 +10,7 @@ import { generateAllGameArgs, LOCALHOST_RPC_URL, LOCALHOST_WS_RPC_URL } from "./
 import { Getters, Game, GameStorage, Helper } from "../typechain-types";
 import { TowerGame } from "./../typechain-types/TowerGame";
 import { Permissions } from "../typechain-types";
-import { masterItems } from "../test/util/constants";
+import { masterItems } from "./util/itemGenerator";
 
 // ---------------------------------
 // deploy script
@@ -20,6 +20,7 @@ import { masterItems } from "../test/util/constants";
 task("deploy", "deploy contracts")
   .addFlag("noport", "Don't port files to frontend") // default is to call port
   .setAction(async (args: any, hre: HardhatRuntimeEnvironment) => {
+    const isDev = hre.network.name === "localhost" || hre.network.name === "hardhat";
     await hre.run("compile");
 
     let player1: SignerWithAddress;
@@ -36,9 +37,11 @@ task("deploy", "deploy contracts")
     const Permissions = await deployProxy<Permissions>("Permissions", player1, hre, [player1.address]);
     const GameStorage = await deployProxy<GameStorage>("GameStorage", player1, hre, [Permissions.address]);
     const GameContract = await deployProxy<Game>("Game", player1, hre, [...gameDeployArgs.gameDeployArgs, GameStorage.address, Permissions.address]);
-    const TowerContract = await deployProxy<TowerGame>("TowerGame", player1, hre, [GameStorage.address, Permissions.address], {Helper: GameHelper.address});
+    const TowerContract = await deployProxy<TowerGame>("TowerGame", player1, hre, [GameStorage.address, Permissions.address], { Helper: GameHelper.address });
     const GettersContract = await deployProxy<Getters>("Getters", player1, hre, [GameContract.address, GameStorage.address]);
     const EpochContract = await deployProxy<Epoch>("Epoch", player1, hre, [10]);
+
+    const GET_MAP_INTERVAL = (await GettersContract.GET_MAP_INTERVAL()).toNumber();
 
     // add contract permissions
     await Permissions.connect(player1).setPermission(GameContract.address, true);
@@ -54,7 +57,12 @@ task("deploy", "deploy contracts")
 
     await GameContract.connect(player1).initializePlayer({ x: 1, y: 1 }); // initialize users
     await GameContract.connect(player2).initializePlayer({ x: 5, y: 5 });
-    await GameStorage.connect(player1)._increaseItemInInventory(player1.address, 0, 10); // give user1 cacti for defense
+
+    if (isDev) {
+      await GameStorage.connect(player1)._increaseItemInInventory(player1.address, 0, 100);
+      await GameStorage.connect(player1)._increaseItemInInventory(player1.address, 1, 100);
+    }
+
     await GameStorage.setEpochController(EpochContract.address); // set epoch controller
 
     // initialize towers
@@ -76,6 +84,7 @@ task("deploy", "deploy contracts")
       EPOCH_ADDRESS: EpochContract.address,
       RPC_URL: LOCALHOST_RPC_URL,
       WS_RPC_URL: LOCALHOST_WS_RPC_URL,
+      GET_MAP_INTERVAL: GET_MAP_INTERVAL,
       BLOCK_ID_TO_NAME_MAP: generateBlockIdToNameMap(masterItems),
     };
 

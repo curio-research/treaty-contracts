@@ -1,6 +1,6 @@
 import { generateMap } from "./mapGenerator";
 import { TowerWithLocation } from "./../../util/types/tower";
-import { items } from "../../test/util/constants";
+import { allGameItems } from "./itemGenerator";
 
 export const LOCALHOST_RPC_URL = "http://127.0.0.1:8545/";
 export const LOCALHOST_WS_RPC_URL = "ws://localhost:8545";
@@ -25,7 +25,7 @@ export const generateAllGameArgs = (): allGameArgs => {
   const masterGameSpecs = generateMap(WORLD_WIDTH, WORLD_HEIGHT, ROOM_WIDTH);
 
   return {
-    gameDeployArgs: [...gameConstants, masterGameSpecs.blocks, items],
+    gameDeployArgs: [...gameConstants, masterGameSpecs.blocks, allGameItems],
     allTowerArgs: masterGameSpecs.towers,
   };
 };
