@@ -42,8 +42,6 @@ export const initializeWorld = async (): Promise<World> => {
   await Permissions.connect(signer1).setPermission(GameContract.address, true);
   await Permissions.connect(signer1).setPermission(TowerContract.address, true);
 
-  GameStorage.setEpochController(EpochContract.address);
-
   return {
     contracts: {
       Game: GameContract,

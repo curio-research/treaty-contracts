@@ -32,6 +32,8 @@ describe("Tower", () => {
 
     await c.Tower.addTower(tower1.location, tower1.tower);
     await c.Tower.addTower(tower2.location, tower2.tower);
+
+    await c.GameStorage.setEpochController(c.Epoch.address);
   });
 
   it("Stake", async () => {
