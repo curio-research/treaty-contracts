@@ -74,7 +74,7 @@ export const masterItems: Item[] = [
   {
     name: ALL_ITEMS.TOWER,
     item: {
-      mineable: true,
+      mineable: false,
       mineItemIds: [],
       strength: 0,
       craftable: false,
@@ -102,7 +102,7 @@ export const masterItems: Item[] = [
   {
     name: ALL_ITEMS.BLOCK,
     item: {
-      mineable: true,
+      mineable: false,
       mineItemIds: [],
       strength: 0,
       craftable: true,

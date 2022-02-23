@@ -117,7 +117,7 @@ describe("Tower", () => {
     await c.Tower.connect(world.user2).claimReward(tower1.location); // user2 claims reward
 
     player2_inventory = decodePlayerInventory(await c.GameStorage._getInventoryByPlayer(world.user2.address));
-    expect(player2_inventory.itemAmounts).eqls([tower1.tower.rewardPerEpoch * 2 + tower1.tower.rewardPerEpoch * 2]);
+    expect(player2_inventory.itemAmounts).eqls([tower1.tower.rewardPerEpoch * 4]);
   });
 
   it("Add block effect", async () => {

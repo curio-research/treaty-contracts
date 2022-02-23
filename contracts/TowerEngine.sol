@@ -80,19 +80,22 @@ contract TowerGame {
             tower.rewardPerEpoch;
 
         // we assume here towers aren't on map edges
+        uint256 _r1 = _modifyRewardByBlockLocation(
+            totalReward,
+            GameTypes.Position({x: _position.x - 1, y: _position.y})
+        );
+        uint256 _r2 = _modifyRewardByBlockLocation(
+            _r1,
+            GameTypes.Position({x: _position.x + 1, y: _position.y})
+        );
+        uint256 _r3 = _modifyRewardByBlockLocation(
+            _r2,
+            GameTypes.Position({x: _position.x, y: _position.y - 1})
+        );
         uint256 _rFinal = _modifyRewardByBlockLocation(
-            _modifyRewardByBlockLocation(
-                _modifyRewardByBlockLocation(
-                    _modifyRewardByBlockLocation(
-                        totalReward,
-                        GameTypes.Position({x: _position.x - 1, y: _position.y})
-                    ),
-                    GameTypes.Position({x: _position.x + 1, y: _position.y})
-                ),
-                GameTypes.Position({x: _position.x, y: _position.y - 1})
-            ),
+            _r3,
             GameTypes.Position({x: _position.x, y: _position.y + 1})
-        ); // bottom block
+        );
 
         utils._increaseItemInInventory(msg.sender, tower.itemId, _rFinal);
         tower.stakedTime = currentEpoch;
