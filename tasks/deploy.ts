@@ -12,6 +12,7 @@ import { Getters, Game, GameStorage, Helper } from "../typechain-types";
 import { TowerGame } from "./../typechain-types/TowerGame";
 import { Permissions } from "../typechain-types";
 import { visualizeMap } from "./util/mapGenerator";
+import { position } from "../util/types/common";
 
 // ---------------------------------
 // deploy script
@@ -59,8 +60,18 @@ task("deploy", "deploy contracts")
     console.log("Storage:   ", GameStorage.address);
     printDivider();
 
-    await GameContract.connect(player1).initializePlayer({ x: 1, y: 1 }); // initialize users
-    await GameContract.connect(player2).initializePlayer({ x: 5, y: 5 });
+    // initialize players
+    let player1Pos: position = { x: 1, y: 1 };
+    let player2Pos: position = { x: 5, y: 5 };
+    // positions may be occupied by randomized blocks; remove block if that is the case
+    if (await GameStorage._isOccupied(player1Pos)) {
+      await GameStorage._mine(player1Pos);
+    }
+    if (await GameStorage._isOccupied(player2Pos)) {
+      await GameStorage._mine(player2Pos);
+    }
+    await GameContract.connect(player1).initializePlayer(player1Pos); // initialize users
+    await GameContract.connect(player2).initializePlayer(player2Pos);
 
     if (isDev) {
       await GameStorage.connect(player1)._increaseItemInInventory(player1.address, 0, 100);
