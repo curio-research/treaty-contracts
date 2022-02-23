@@ -48,6 +48,7 @@ export type TowerStructOutput = [
 
 export interface TowerGameInterface extends utils.Interface {
   functions: {
+    "_modifyRewardByBlockLocation(uint256,(uint256,uint256))": FunctionFragment;
     "addTower((uint256,uint256),(uint256,uint256,uint256,uint256,address))": FunctionFragment;
     "claimReward((uint256,uint256))": FunctionFragment;
     "getTowerById((uint256,uint256))": FunctionFragment;
@@ -55,6 +56,10 @@ export interface TowerGameInterface extends utils.Interface {
     "unstake((uint256,uint256),uint256)": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "_modifyRewardByBlockLocation",
+    values: [BigNumberish, PositionStruct]
+  ): string;
   encodeFunctionData(
     functionFragment: "addTower",
     values: [PositionStruct, TowerStruct]
@@ -76,6 +81,10 @@ export interface TowerGameInterface extends utils.Interface {
     values: [PositionStruct, BigNumberish]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "_modifyRewardByBlockLocation",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "addTower", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "claimReward",
@@ -162,6 +171,12 @@ export interface TowerGame extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    _modifyRewardByBlockLocation(
+      _reward: BigNumberish,
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     addTower(
       _position: PositionStruct,
       _tower: TowerStruct,
@@ -190,6 +205,12 @@ export interface TowerGame extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
+
+  _modifyRewardByBlockLocation(
+    _reward: BigNumberish,
+    _pos: PositionStruct,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   addTower(
     _position: PositionStruct,
@@ -220,6 +241,12 @@ export interface TowerGame extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    _modifyRewardByBlockLocation(
+      _reward: BigNumberish,
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     addTower(
       _position: PositionStruct,
       _tower: TowerStruct,
@@ -291,6 +318,12 @@ export interface TowerGame extends BaseContract {
   };
 
   estimateGas: {
+    _modifyRewardByBlockLocation(
+      _reward: BigNumberish,
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     addTower(
       _position: PositionStruct,
       _tower: TowerStruct,
@@ -321,6 +354,12 @@ export interface TowerGame extends BaseContract {
   };
 
   populateTransaction: {
+    _modifyRewardByBlockLocation(
+      _reward: BigNumberish,
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     addTower(
       _position: PositionStruct,
       _tower: TowerStruct,

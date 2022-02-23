@@ -1,13 +1,14 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-// import "@openzeppelin/contracts-upgradeable/proxy/Initializable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "hardhat/console.sol";
 import "./GameStorage.sol";
 import "./GameTypes.sol";
 import "./Permissions.sol";
 import "./GameHelper.sol";
+
+import "hardhat/console.sol";
 
 contract TowerGame {
     using SafeMath for uint256;
@@ -47,23 +48,56 @@ contract TowerGame {
         utils._setTower(_towerId, _tower);
     }
 
-    // user claim reward for tower
+    function _modifyRewardByBlockLocation(
+        uint256 _reward,
+        GameTypes.Position memory _pos
+    ) public view returns (uint256) {
+        // if there's no blocks at the location, return original value
+        if (utils._getBlockCountAtPosition(_pos) == 0) {
+            return _reward;
+        }
+        uint256 _blockId = utils._getTopBlockAtPosition(_pos);
+        // update the list based on item mapping
+        if (_blockId == 5) {
+            return _reward * 2;
+        } else if (_blockId == 6) {
+            return 0;
+        }
+        console.log(_reward);
+        return _reward;
+    }
+
+    // claim reward for tower
     function claimReward(GameTypes.Position memory _position) external {
         string memory _towerId = Helper._encodePos(_position);
         GameTypes.Tower memory tower = utils._getTower(_towerId);
 
-        // should we add a distance checker here?
         if (tower.owner != msg.sender) revert("tower/invalid-tower-owner");
 
         uint256 currentEpoch = utils._getCurrentEpoch();
-        uint256 stakedEpochs = currentEpoch - tower.stakedTime;
-        uint256 totalReward = stakedEpochs * tower.rewardPerEpoch;
+        uint256 totalReward = (currentEpoch - tower.stakedTime) *
+            tower.rewardPerEpoch;
 
-        utils._increaseItemInInventory(msg.sender, tower.itemId, totalReward);
+        // we assume here towers aren't on map edges
+        uint256 _rFinal = _modifyRewardByBlockLocation(
+            _modifyRewardByBlockLocation(
+                _modifyRewardByBlockLocation(
+                    _modifyRewardByBlockLocation(
+                        totalReward,
+                        GameTypes.Position({x: _position.x - 1, y: _position.y})
+                    ),
+                    GameTypes.Position({x: _position.x + 1, y: _position.y})
+                ),
+                GameTypes.Position({x: _position.x, y: _position.y - 1})
+            ),
+            GameTypes.Position({x: _position.x, y: _position.y + 1})
+        ); // bottom block
+
+        utils._increaseItemInInventory(msg.sender, tower.itemId, _rFinal);
         tower.stakedTime = currentEpoch;
         utils._setTower(_towerId, tower);
 
-        emit ClaimReward(msg.sender, _position, totalReward, currentEpoch);
+        emit ClaimReward(msg.sender, _position, _rFinal, currentEpoch);
     }
 
     // stake in tower
@@ -136,7 +170,10 @@ contract TowerGame {
         tower.stakedAmount -= _amount;
         utils._setTower(_towerId, tower);
 
-        utils._setPlayerStakedPoints(msg.sender, tower.stakedAmount + _amount);
+        utils._setPlayerStakedPoints(
+            msg.sender,
+            utils._getStakePointsByUser(msg.sender) + _amount
+        );
 
         // if user unstakes all the points, they're no longer the owner
         if (utils._getTower(_towerId).stakedAmount == 0) {

@@ -1,3 +1,4 @@
+import { position } from "./../util/types/common";
 import { GameStorage } from "./../typechain-types/GameStorage";
 import { expect } from "chai";
 import { decodePlayerInventory } from "./../util/serde/game";
@@ -11,13 +12,13 @@ import { TowerWithLocation } from "../util/types/tower";
 import { EMPTY_ADDRESS } from "../util/network/common";
 
 // ------------------------------------------------------------
-// Tower test
+// Towerzzzzz
 // ------------------------------------------------------------
 
 const tower1: TowerWithLocation = {
   location: {
-    x: 0,
-    y: 0,
+    x: 1,
+    y: 1,
   },
   tower: {
     rewardPerEpoch: 100,
@@ -30,8 +31,8 @@ const tower1: TowerWithLocation = {
 
 const tower2: TowerWithLocation = {
   location: {
-    x: 1,
-    y: 1,
+    x: 2,
+    y: 2,
   },
   tower: {
     rewardPerEpoch: 200,
@@ -45,6 +46,7 @@ const tower2: TowerWithLocation = {
 describe("Tower", () => {
   let c: AllContracts;
   let world: World;
+  const EPOCH_INTERVAL = 30;
 
   const worldFixture = async () => {
     const world = await fixtureLoader(initializeWorld);
@@ -80,7 +82,7 @@ describe("Tower", () => {
   });
 
   it("Claim reward", async () => {
-    await increaseBlockchainTime(30); // increase 1 epoch
+    await increaseBlockchainTime(EPOCH_INTERVAL); // increase 1 epoch
 
     await c.Epoch.updateEpoch();
     expect(await c.Epoch.epoch()).equals(1);
@@ -97,12 +99,12 @@ describe("Tower", () => {
   });
 
   it("Tower overtake and claim reward", async () => {
-    await increaseBlockchainTime(30); // increase 1 epoch
+    await increaseBlockchainTime(EPOCH_INTERVAL); // increase 1 epoch
     await c.Epoch.updateEpoch();
 
     expect(c.Tower.connect(world.user2).stake(tower1.location, 9)).to.be.revertedWith(REVERT_MESSAGES.TOWER_INSUFFICIENT_STAKE); // user2 fails to try to stake 9 points (less than 10)
 
-    await c.Tower.connect(world.user2).stake(tower1.location, 11); // successful stake. 11 is greater than 1 points (what user1 staked previously)
+    await c.Tower.connect(world.user2).stake(tower1.location, 11); // successful stake. 11 is greater than 10 points (what user1 staked previously)
 
     const tower_1 = decodeTower(await c.Tower.getTowerById(tower1.location));
     expect(tower_1.stakedTime).equals(2); // user2 staked at 2nd epoch
@@ -112,7 +114,7 @@ describe("Tower", () => {
     const increase_epochs = 2; // increase
 
     for (let i = 0; i < increase_epochs; i++) {
-      await increaseBlockchainTime(30);
+      await increaseBlockchainTime(EPOCH_INTERVAL);
       await c.Epoch.updateEpoch();
     }
 
@@ -136,5 +138,40 @@ describe("Tower", () => {
     tower_1 = decodeTower(await c.Tower.getTowerById(tower1.location));
     expect(tower_1.stakedAmount).equals(0); // check how many points tower has staked now
     expect(tower_1.owner).equals(EMPTY_ADDRESS); // tower1 should have no owner left
+  });
+
+  it("Add add boost effect", async () => {
+    let player2_inventory = decodePlayerInventory(await c.GameStorage._getInventoryByPlayer(world.user2.address)); // check player1 inventory
+
+    const blockLeftOfTower: position = { x: tower1.location.x - 1, y: tower1.location.y };
+    await c.GameStorage._place(blockLeftOfTower, 5);
+
+    await c.Tower.connect(world.user2).stake(tower1.location, 1);
+    const tower_1 = decodeTower(await c.Tower.getTowerById(tower1.location));
+    expect(tower_1.owner).equals(world.user2.address);
+
+    await increaseBlockchainTime(EPOCH_INTERVAL); // increase 1 epoch
+    await c.Epoch.updateEpoch();
+
+    await c.Tower.connect(world.user2).claimReward(tower1.location); // user2 claims reward
+
+    player2_inventory = decodePlayerInventory(await c.GameStorage._getInventoryByPlayer(world.user2.address)); // check player1 inventory
+    expect(player2_inventory.itemAmounts).eqls([tower1.tower.rewardPerEpoch * 2 + 200]); // make this dynamic
+  });
+
+  it("Add block effect", async () => {
+    const blockRightOfTower: position = { x: tower1.location.x + 1, y: tower1.location.y };
+    await c.GameStorage._place(blockRightOfTower, 6);
+
+    await c.Tower.connect(world.user2).stake(tower1.location, 20);
+
+    await increaseBlockchainTime(EPOCH_INTERVAL); // increase 1 epoch
+    await c.Epoch.updateEpoch();
+
+    const inventoryBeforeStake = decodePlayerInventory(await c.GameStorage._getInventoryByPlayer(world.user2.address));
+    await c.Tower.connect(world.user2).claimReward(tower1.location); // user2 claims reward
+
+    const player2_inventory = decodePlayerInventory(await c.GameStorage._getInventoryByPlayer(world.user2.address)); // check player1 inventory
+    expect(player2_inventory.itemAmounts).eqls(inventoryBeforeStake.itemAmounts); // make this dynamic
   });
 });
