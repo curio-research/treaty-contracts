@@ -5,3 +5,6 @@ node_modules
 cache
 artifacts
 typechain-types/factories
+
+#local dev help
+*.txt

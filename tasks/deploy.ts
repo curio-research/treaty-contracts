@@ -6,11 +6,13 @@ import * as fsPromise from "fs/promises";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { deployProxy, printDivider } from "./util/deployHelper";
-import { generateAllGameArgs, LOCALHOST_RPC_URL, LOCALHOST_WS_RPC_URL } from "./util/constants";
+import { LOCALHOST_RPC_URL, LOCALHOST_WS_RPC_URL } from "./util/constants";
+import { generateAllGameArgs } from "./util/allArgsGenerator";
 import { Getters, Game, GameStorage, Helper } from "../typechain-types";
 import { TowerGame } from "./../typechain-types/TowerGame";
 import { Permissions } from "../typechain-types";
 import { masterItems } from "./util/itemGenerator";
+import { visualizeMap } from "./util/mapGenerator";
 
 // ---------------------------------
 // deploy script
@@ -30,13 +32,16 @@ task("deploy", "deploy contracts")
     printDivider();
     console.log("Network:", hre.network.name);
 
-    const gameDeployArgs = generateAllGameArgs();
+    const allGameArgs = generateAllGameArgs();
+    
+    const blocks = allGameArgs.gameDeployArgs[allGameArgs.gameDeployArgs.length - 2];
+    visualizeMap(blocks, true);
 
     // initialize contracts
     const GameHelper = await deployProxy<Helper>("Helper", player1, hre, []);
     const Permissions = await deployProxy<Permissions>("Permissions", player1, hre, [player1.address]);
     const GameStorage = await deployProxy<GameStorage>("GameStorage", player1, hre, [Permissions.address]);
-    const GameContract = await deployProxy<Game>("Game", player1, hre, [...gameDeployArgs.gameDeployArgs, GameStorage.address, Permissions.address]);
+    const GameContract = await deployProxy<Game>("Game", player1, hre, [...allGameArgs.gameDeployArgs, GameStorage.address, Permissions.address]);
     const TowerContract = await deployProxy<TowerGame>("TowerGame", player1, hre, [GameStorage.address, Permissions.address], { Helper: GameHelper.address });
     const GettersContract = await deployProxy<Getters>("Getters", player1, hre, [GameContract.address, GameStorage.address]);
     const EpochContract = await deployProxy<Epoch>("Epoch", player1, hre, [10]);
@@ -66,7 +71,7 @@ task("deploy", "deploy contracts")
     await GameStorage.setEpochController(EpochContract.address); // set epoch controller
 
     // initialize towers
-    for (const tower of gameDeployArgs.allTowerArgs) {
+    for (const tower of allGameArgs.allTowerArgs) {
       await TowerContract.addTower(tower.location, tower.tower);
     }
 
