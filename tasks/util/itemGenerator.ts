@@ -8,7 +8,7 @@ export const allGameItems = masterItems.map((item) => item.item);
 // ------------------------------------------------
 
 const worldSize = WORLD_WIDTH * WORLD_HEIGHT;
-const getRandomCoordinate = (): number => Math.floor(Math.random() * worldSize);
+const getRandomFlattenedCoord = (): number => Math.floor(Math.random() * worldSize);
 
 /**
  * Generate items based on their ratio for empty map.
@@ -20,12 +20,12 @@ export const generateItems = (map: number[][]): number[][] => {
 
   for (let i = 0; i < itemCounts.length; i++) {
     for (let k = 0; k < itemCounts[i]; k++) {
-      let coord;
+      let flattenedCoord;
       do {
-        coord = getRandomCoordinate();
-      } while (map[coord].length > 0);
+        flattenedCoord = getRandomFlattenedCoord();
+      } while (map[flattenedCoord].length > 0);
 
-      map[coord].push(i);
+      map[flattenedCoord].push(i);
     }
   }
 
