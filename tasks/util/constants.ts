@@ -1,6 +1,5 @@
 import { Item } from "../../util/types/getter";
 
-
 export const LOCALHOST_RPC_URL = "http://127.0.0.1:8545/";
 export const LOCALHOST_WS_RPC_URL = "ws://localhost:8545";
 
@@ -19,12 +18,11 @@ export const START_PLAYER_ENERGY = 100;
 
 // game specs - auto
 export const WORLD_WIDTH = (ROOM_LENGTH - 1) * ROOMS_PER_DIMENSION + 1; // due to shared walls
-export const WORLD_HEIGHT = (ROOM_LENGTH - 1) * ROOMS_PER_DIMENSION + 1
+export const WORLD_HEIGHT = (ROOM_LENGTH - 1) * ROOMS_PER_DIMENSION + 1;
 
 export const generateGameConstants = () => {
   return [WORLD_WIDTH, WORLD_HEIGHT, ATTACK_RANGE, ATTACK_DAMAGE, ATTACK_WAITTIME, START_PLAYER_HEALTH, START_PLAYER_ENERGY];
 };
-
 
 // ------------------------------------------------
 // Item constants for game deployment
@@ -46,7 +44,7 @@ export const masterItems: Item[] = [
     item: {
       mineable: true,
       mineItemIds: [],
-      strength: 0,
+      strength: 10,
       craftable: false,
       craftItemIds: [],
       craftItemAmounts: [],
@@ -60,7 +58,7 @@ export const masterItems: Item[] = [
     item: {
       mineable: true,
       mineItemIds: [],
-      strength: 0,
+      strength: 10,
       craftable: false,
       craftItemIds: [],
       craftItemAmounts: [],
@@ -143,13 +141,5 @@ export const masterItems: Item[] = [
 
 // number of each item to generate every 100 tiles
 // determines the rarity of items
-export const ITEM_RATIO = [
-  12,
-  3,
-  0,
-  0,
-  0,
-  0,
-  0
-];
+export const ITEM_RATIO = [12, 3, 0, 0, 0, 0, 0];
 console.assert(masterItems.length == ITEM_RATIO.length);

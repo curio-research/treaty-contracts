@@ -1,5 +1,4 @@
-import { masterItems } from "../../test/util/constants";
-import { ITEM_RATIO, WORLD_HEIGHT, WORLD_WIDTH } from "./constants";
+import { ITEM_RATIO, masterItems, WORLD_HEIGHT, WORLD_WIDTH } from "./constants";
 
 export const allGameItems = masterItems.map((item) => item.item);
 
@@ -30,4 +29,4 @@ export const generateItems = (map: number[][]): number[][] => {
   }
 
   return map;
-}
+};
