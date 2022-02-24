@@ -156,5 +156,5 @@ export const masterItems: Item[] = [
 
 // number of each item to generate every 100 tiles
 // determines the rarity of items
-export const ITEM_RATIO = [12, 3, 0, 0, 0, 0, 0];
+export const ITEM_RATIO = [12, 3, 0, 0, 0, 0, 0, 0];
 console.assert(masterItems.length == ITEM_RATIO.length);
