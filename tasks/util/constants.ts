@@ -15,6 +15,7 @@ export const ATTACK_DAMAGE = 5;
 export const ATTACK_WAITTIME = 5;
 export const START_PLAYER_HEALTH = 100;
 export const START_PLAYER_ENERGY = 100;
+export const MAP_INTERVAL = 10;
 
 // game specs - auto
 export const WORLD_WIDTH = (ROOM_LENGTH - 1) * ROOMS_PER_DIMENSION + 1; // due to shared walls

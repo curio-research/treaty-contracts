@@ -56,7 +56,6 @@ contract Game {
         uint256 _attackWaitTime,
         uint256 _startPlayerHealth,
         uint256 _startPlayerEnergy,
-        uint256[][] memory _blocks,
         GameTypes.ItemWithMetadata[] memory _items,
         GameStorage _gameStorage,
         Permissions _permissions
@@ -103,7 +102,7 @@ contract Game {
      * @param _startPos Top-left coordinate of region to start set
      * @param _blocks 10x10 array of blocks for the region
      */
-    function setMap(GameTypes.Position memory _startPos, uint256[][] memory _blocks) 
+    function setMapRegion(GameTypes.Position memory _startPos, uint256[][] memory _blocks) 
         public 
     {
         for (uint256 _xAdd = 0; _xAdd < SET_MAP_INTERVAL; _xAdd++) {
