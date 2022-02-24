@@ -36,6 +36,7 @@ export enum ALL_ITEMS {
   TOWER = "Tower",
   TURBO = "Turbo",
   BLOCK = "Block",
+  INDESCRUCTIBLE_WALL = "INDESCRUCTIBLE_WALL",
 }
 
 export const masterItems: Item[] = [
@@ -114,7 +115,7 @@ export const masterItems: Item[] = [
     item: {
       mineable: true,
       mineItemIds: [],
-      strength: 0,
+      strength: 50,
       craftable: true,
       craftItemIds: [0, 1],
       craftItemAmounts: [10, 1],
@@ -126,12 +127,26 @@ export const masterItems: Item[] = [
   {
     name: ALL_ITEMS.BLOCK,
     item: {
+      mineable: true,
+      mineItemIds: [],
+      strength: 50,
+      craftable: true,
+      craftItemIds: [0, 1],
+      craftItemAmounts: [20, 3],
+      occupiable: false,
+      healthDamage: 0,
+      energyDamage: 0,
+    },
+  },
+  {
+    name: ALL_ITEMS.INDESCRUCTIBLE_WALL,
+    item: {
       mineable: false,
       mineItemIds: [],
       strength: 0,
       craftable: true,
-      craftItemIds: [0, 1],
-      craftItemAmounts: [20, 3],
+      craftItemIds: [],
+      craftItemAmounts: [],
       occupiable: false,
       healthDamage: 0,
       energyDamage: 0,
