@@ -4,7 +4,7 @@ import { MasterGameSpecs, CoordsProps } from "./types/mapGenerator";
 import _ from "lodash";
 import { TowerWithLocation } from "../../util/types/tower";
 import { WORLD_HEIGHT, WORLD_WIDTH } from "./constants";
-import fs from 'fs';
+import fs from "fs";
 
 // map helpers are used to generate a world with rooms, entrances, and a tower in the middle
 
@@ -154,7 +154,7 @@ export const generateMap = (worldWidth: number, worldHeight: number, roomWidth: 
 
   // apply block coordinates to master map;
   walls.indices.forEach((idx) => {
-    map[idx].push(3);
+    map[idx].push(7);
   });
 
   towers.indices.forEach((idx) => {
@@ -199,20 +199,20 @@ const removeDupPosFromArr = (arr: position[]): position[] => {
  * @param exportToFile Whether to export output to file or to log
  */
 export const visualizeMap = (blocks: number[][], exportToFile?: boolean): void => {
-  let visualMap = '';
+  let visualMap = "";
   for (let i = 0; i < WORLD_WIDTH; i++) {
     for (let j = 0; j < WORLD_HEIGHT; j++) {
       let block;
-      if (blocks[i*WORLD_WIDTH+j].length > 0) {
-        block = blocks[i*WORLD_WIDTH+j][0] + '';
-        if (block.length == 1) block = ' ' + block;
+      if (blocks[i * WORLD_WIDTH + j].length > 0) {
+        block = blocks[i * WORLD_WIDTH + j][0] + "";
+        if (block.length == 1) block = " " + block;
       } else {
-        block = '  ';
+        block = "  ";
       }
 
-      visualMap += '[' + block + '] ';
+      visualMap += "[" + block + "] ";
     }
-    visualMap += '\n';
+    visualMap += "\n";
   }
 
   if (exportToFile) {
@@ -220,4 +220,4 @@ export const visualizeMap = (blocks: number[][], exportToFile?: boolean): void =
   } else {
     console.log(visualMap);
   }
-}
+};
