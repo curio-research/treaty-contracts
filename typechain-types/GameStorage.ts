@@ -140,6 +140,7 @@ export interface GameStorageInterface extends utils.Interface {
     "_getBlockCountAtPosition((uint256,uint256))": FunctionFragment;
     "_getCraftItemAmount(address,uint256)": FunctionFragment;
     "_getCurrentEpoch()": FunctionFragment;
+    "_getIndexFromPosition((uint256,uint256))": FunctionFragment;
     "_getInventoryByPlayer(address)": FunctionFragment;
     "_getItem(uint256)": FunctionFragment;
     "_getItemAmountById(address,uint256)": FunctionFragment;
@@ -204,6 +205,10 @@ export interface GameStorageInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "_getCurrentEpoch",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getIndexFromPosition",
+    values: [PositionStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "_getInventoryByPlayer",
@@ -359,6 +364,10 @@ export interface GameStorageInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "_getCurrentEpoch",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_getIndexFromPosition",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -530,6 +539,11 @@ export interface GameStorage extends BaseContract {
     ): Promise<[BigNumber]>;
 
     _getCurrentEpoch(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    _getIndexFromPosition(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     _getInventoryByPlayer(
       _player: string,
@@ -769,6 +783,11 @@ export interface GameStorage extends BaseContract {
 
   _getCurrentEpoch(overrides?: CallOverrides): Promise<BigNumber>;
 
+  _getIndexFromPosition(
+    _pos: PositionStruct,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   _getInventoryByPlayer(
     _player: string,
     overrides?: CallOverrides
@@ -1004,6 +1023,11 @@ export interface GameStorage extends BaseContract {
     ): Promise<BigNumber>;
 
     _getCurrentEpoch(overrides?: CallOverrides): Promise<BigNumber>;
+
+    _getIndexFromPosition(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     _getInventoryByPlayer(
       _player: string,
@@ -1249,6 +1273,11 @@ export interface GameStorage extends BaseContract {
 
     _getCurrentEpoch(overrides?: CallOverrides): Promise<BigNumber>;
 
+    _getIndexFromPosition(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     _getInventoryByPlayer(
       _player: string,
       overrides?: CallOverrides
@@ -1453,6 +1482,11 @@ export interface GameStorage extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     _getCurrentEpoch(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    _getIndexFromPosition(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     _getInventoryByPlayer(
       _player: string,

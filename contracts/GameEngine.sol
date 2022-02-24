@@ -17,6 +17,7 @@ contract Game {
     using SafeMath for uint256;
     GameStorage private utils;
     Permissions private p;
+    uint256 SET_MAP_INTERVAL = 10;
 
     // ------------------------------------------------------------
     // Events
@@ -73,27 +74,58 @@ contract Game {
             _startPlayerEnergy
         );
 
-        // Set map and blocks
-        uint256 _positionCount = _worldWidth * _worldHeight;
-        for (uint256 k = 0; k < _positionCount; k++) {
-            GameTypes.Position memory _position = utils._getPositionFromIndex(
-                k
-            );
-            utils._setBlocks(_position, _blocks[k]);
+        // // Set map and blocks
+        // uint256 _positionCount = _worldWidth * _worldHeight;
+        // for (uint256 k = 0; k < _positionCount; k++) {
+        //     GameTypes.Position memory _position = utils._getPositionFromIndex(
+        //         k
+        //     );
+        //     utils._setBlocks(_position, _blocks[k]);
 
-            if (_blocks[k].length > 0) {
-                uint256 topBlockId = _blocks[k][_blocks[k].length - 1];
-                utils._setTopLevelStrength(
-                    _position,
-                    _items[topBlockId].strength
-                );
-            }
-        }
+        //     if (_blocks[k].length > 0) {
+        //         uint256 topBlockId = _blocks[k][_blocks[k].length - 1];
+        //         utils._setTopLevelStrength(
+        //             _position,
+        //             _items[topBlockId].strength
+        //         );
+        //     }
+        // }
 
         // Initialize items
         for (uint256 i = 0; i < _items.length; i++) {
             utils._setItem(i, _items[i]);
             utils._incrementNonce();
+        }
+    }
+
+    /**
+     * Set map blocks in 10x10 regions due to gas limitation.
+     * @param _startPos Top-left coordinate of region to start set
+     * @param _blocks 10x10 array of blocks for the region
+     */
+    function setMap(GameTypes.Position memory _startPos, uint256[][] memory _blocks) 
+        public 
+    {
+        for (uint256 _xAdd = 0; _xAdd < SET_MAP_INTERVAL; _xAdd++) {
+            for (uint256 _yAdd = 0; _yAdd < SET_MAP_INTERVAL; _yAdd++) {
+                uint256 _x = _startPos.x + _xAdd;
+                uint256 _y = _startPos.y + _yAdd;
+                GameTypes.Position memory _pos = GameTypes.Position({
+                    x: _x,
+                    y: _y
+                });
+                uint256 _idx = utils._getIndexFromPosition(_pos);
+
+                utils._setBlocks(_pos, _blocks[_idx]);
+
+                if (_blocks[_idx].length > 0) {
+                    uint256 _topBlockId = _blocks[_idx][_blocks[_idx].length - 1];
+                    utils._setTopLevelStrength(
+                        _pos,
+                        utils._getItem(_topBlockId).strength
+                    );
+                }
+            }
         }
     }
 

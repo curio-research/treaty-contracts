@@ -62,7 +62,7 @@ library GameTypes {
         // map info
         uint256 worldWidth;
         uint256 worldHeight;
-        GameTypes.Tile[100][100] map;
+        GameTypes.Tile[1000][1000] map;
         // game info
         address admin;
         bool paused;

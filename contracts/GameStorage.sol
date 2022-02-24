@@ -121,6 +121,23 @@ contract GameStorage {
         return GameTypes.Position(_x, _y);
     }
 
+    function _getIndexFromPosition(GameTypes.Position memory _pos)
+        public
+        view
+        returns (uint256)
+    {
+        (bool _aValid, uint256 _a) = SafeMath.tryMul(_pos.x, s.worldHeight);
+        (bool _bValid, uint256 _b) = SafeMath.tryAdd(_a, _pos.y);
+
+        if (!_aValid || !_bValid) revert("SafeMath/invalid-math");
+
+        return _b;
+    }
+
+    // ------------------------------------------------------------
+    // Items
+    // ------------------------------------------------------------
+
     function _getTopBlockAtPosition(GameTypes.Position memory _pos)
         public
         view
