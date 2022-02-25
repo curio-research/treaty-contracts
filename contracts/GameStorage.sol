@@ -363,11 +363,6 @@ contract GameStorage {
     // Getters
     // ------------------------------------------------------------
 
-    function _getWorldSize() public view returns (uint256, uint256) {
-        GameTypes.WorldConstants memory constants = _getWorldConstants();
-        return (constants.worldWidth, constants.worldHeight);
-    }
-
     // fetch player inventory
     function _getInventoryByPlayer(address _player)
         public

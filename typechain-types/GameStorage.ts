@@ -187,7 +187,6 @@ export interface GameStorageInterface extends utils.Interface {
     "_getTopBlockAtPosition((uint256,uint256))": FunctionFragment;
     "_getTower(string)": FunctionFragment;
     "_getWorldConstants()": FunctionFragment;
-    "_getWorldSize()": FunctionFragment;
     "_increaseItemInInventory(address,uint256,uint256)": FunctionFragment;
     "_incrementNonce()": FunctionFragment;
     "_isOccupied((uint256,uint256))": FunctionFragment;
@@ -274,10 +273,6 @@ export interface GameStorageInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "_getTower", values: [string]): string;
   encodeFunctionData(
     functionFragment: "_getWorldConstants",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getWorldSize",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -419,10 +414,6 @@ export interface GameStorageInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "_getTower", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_getWorldConstants",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getWorldSize",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -611,8 +602,6 @@ export interface GameStorage extends BaseContract {
     _getWorldConstants(
       overrides?: CallOverrides
     ): Promise<[WorldConstantsStructOutput]>;
-
-    _getWorldSize(overrides?: CallOverrides): Promise<[BigNumber, BigNumber]>;
 
     _increaseItemInInventory(
       _player: string,
@@ -826,8 +815,6 @@ export interface GameStorage extends BaseContract {
     overrides?: CallOverrides
   ): Promise<WorldConstantsStructOutput>;
 
-  _getWorldSize(overrides?: CallOverrides): Promise<[BigNumber, BigNumber]>;
-
   _increaseItemInInventory(
     _player: string,
     _itemId: BigNumberish,
@@ -1039,8 +1026,6 @@ export interface GameStorage extends BaseContract {
     _getWorldConstants(
       overrides?: CallOverrides
     ): Promise<WorldConstantsStructOutput>;
-
-    _getWorldSize(overrides?: CallOverrides): Promise<[BigNumber, BigNumber]>;
 
     _increaseItemInInventory(
       _player: string,
@@ -1254,8 +1239,6 @@ export interface GameStorage extends BaseContract {
 
     _getWorldConstants(overrides?: CallOverrides): Promise<BigNumber>;
 
-    _getWorldSize(overrides?: CallOverrides): Promise<BigNumber>;
-
     _increaseItemInInventory(
       _player: string,
       _itemId: BigNumberish,
@@ -1460,8 +1443,6 @@ export interface GameStorage extends BaseContract {
     _getWorldConstants(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
-
-    _getWorldSize(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     _increaseItemInInventory(
       _player: string,
