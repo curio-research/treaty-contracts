@@ -48,13 +48,7 @@ contract Game {
     // ------------------------------------------------------------
 
     constructor(
-        uint256 _worldWidth,
-        uint256 _worldHeight,
-        uint256 _attackRange,
-        uint256 _attackDamage,
-        uint256 _attackWaitTime,
-        uint256 _startPlayerHealth,
-        uint256 _startPlayerEnergy,
+        GameTypes.WorldConstants memory constants,
         uint256[][] memory _blocks,
         GameTypes.ItemWithMetadata[] memory _items,
         GameStorage _gameStorage,
@@ -63,18 +57,10 @@ contract Game {
         utils = _gameStorage;
         p = _permissions;
 
-        utils._setConstants(
-            _worldWidth,
-            _worldHeight,
-            _attackRange,
-            _attackDamage,
-            _attackWaitTime,
-            _startPlayerHealth,
-            _startPlayerEnergy
-        );
+        utils._setConstants(constants);
 
         // Set map and blocks
-        uint256 _positionCount = _worldWidth * _worldHeight;
+        uint256 _positionCount = constants.worldWidth * constants.worldHeight;
         for (uint256 k = 0; k < _positionCount; k++) {
             GameTypes.Position memory _position = utils._getPositionFromIndex(
                 k
@@ -137,7 +123,12 @@ contract Game {
         // can only mine with the needed tool
         uint256 _itemId = utils._getBlockAtPosition(_pos, _zIdx);
 
-        uint256[] memory _mineItemIds = utils._getItem(_itemId).mineItemIds;
+        GameTypes.ItemWithMetadata memory _itemWithMetadata = utils._getItem(
+            _itemId
+        );
+
+        uint256[] memory _mineItemIds = _itemWithMetadata.mineItemIds;
+
         bool _canMine = false;
         if (_mineItemIds.length == 0) {
             _canMine = true;
@@ -162,6 +153,7 @@ contract Game {
         emit MineItem(_playerAddr, _pos, _itemId, _zIdx);
     }
 
+    // reduces item health
     function attackItem(
         GameTypes.Position memory _pos,
         uint256 _zIdx,
@@ -169,22 +161,30 @@ contract Game {
     ) public {
         utils._setTopLevelStrength(
             _pos,
-            utils._getTileData(_pos).topLevelStrength - utils._getAttackDamage()
+            utils._getTileData(_pos).topLevelStrength -
+                utils._getPlayer(msg.sender).attackDamage
         );
         uint256 _strength = utils._getTileData(_pos).topLevelStrength;
 
         emit AttackItem(_playerAddr, _pos, _strength, _zIdx);
     }
 
-    // mine resource blocks at specific z-index base layer (z-indexf of 0)
+    // main mine item function
     // attack + mine. main function
     function mine(GameTypes.Position memory _pos) external {
         uint256 _blockCount = utils._getBlockCountAtPosition(_pos);
         if (_blockCount == 0) revert("engine/nonexistent-block");
+
+        uint256 blockToMine = utils._getTopBlockAtPosition(_pos);
+        GameTypes.ItemWithMetadata memory _itemWithMetadata = utils._getItem(
+            blockToMine
+        );
+        if (!_itemWithMetadata.mineable) revert("engine/not-mineable");
         uint256 _zIdx = _blockCount - 1;
 
         if (
-            utils._getAttackDamage() < utils._getTileData(_pos).topLevelStrength
+            utils._getPlayer(msg.sender).attackDamage <
+            utils._getTileData(_pos).topLevelStrength
         ) {
             attackItem(_pos, _zIdx, msg.sender);
         } else {

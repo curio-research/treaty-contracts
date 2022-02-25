@@ -38,23 +38,11 @@ contract GameStorage {
         p = _permissions;
     }
 
-    function _setConstants(
-        uint256 _worldWidth,
-        uint256 _worldHeight,
-        uint256 _attackRange,
-        uint256 _attackDamage,
-        uint256 _attackWaitTime,
-        uint256 _startPlayerHealth,
-        uint256 _startPlayerEnergy
-    ) public hasPermission {
-        s.worldWidth = _worldWidth;
-        s.worldHeight = _worldHeight;
-        s.itemNonce = 1; // valid blockId start at 1. Id 0 = no blocks
-        s.attackRange = _attackRange;
-        s.attackDamage = _attackDamage;
-        s.attackWaitTime = _attackWaitTime;
-        s.startPlayerHealth = _startPlayerHealth;
-        s.startPlayerEnergy = _startPlayerEnergy;
+    function _setConstants(GameTypes.WorldConstants memory constants)
+        public
+        hasPermission
+    {
+        s.worldConstants = constants;
     }
 
     function _setBlocks(
@@ -71,29 +59,35 @@ contract GameStorage {
         s.itemsWithMetadata[_i] = _item;
     }
 
+    function _getWorldConstants()
+        public
+        view
+        returns (GameTypes.WorldConstants memory)
+    {
+        return s.worldConstants;
+    }
+
     function _setPlayer(address _player, GameTypes.Position memory _pos)
         public
         hasPermission
     {
+        GameTypes.WorldConstants memory constants = _getWorldConstants();
         s.players[_player] = GameTypes.PlayerData({
             initialized: true,
             initTimestamp: block.timestamp,
             playerAddr: _player,
             position: _pos,
-            health: s.startPlayerHealth,
-            energy: s.startPlayerEnergy,
-            reach: 6
+            health: constants.startPlayerHealth,
+            energy: constants.startPlayerEnergy,
+            attackDamage: constants.startingAttackDamage,
+            attackRange: constants.startingAttackRange,
+            reach: constants.startingReach
         });
         s.allPlayers.push(_player);
     }
 
     function _incrementNonce() public hasPermission {
         s.itemNonce += 1;
-    }
-
-    // refactor this out into player struct
-    function _getAttackDamage() public view returns (uint256) {
-        return s.attackDamage;
     }
 
     // check if its within a distance (need to refactor into distance)
@@ -113,8 +107,10 @@ contract GameStorage {
         view
         returns (GameTypes.Position memory)
     {
-        (bool _xValid, uint256 _x) = SafeMath.tryDiv(k, s.worldHeight);
-        (bool _yValid, uint256 _y) = SafeMath.tryMod(k, s.worldHeight);
+        GameTypes.WorldConstants memory constants = _getWorldConstants();
+
+        (bool _xValid, uint256 _x) = SafeMath.tryDiv(k, constants.worldHeight);
+        (bool _yValid, uint256 _y) = SafeMath.tryMod(k, constants.worldWidth);
 
         if (!_xValid || !_yValid) revert("SafeMath/invalid-division");
 
@@ -180,9 +176,10 @@ contract GameStorage {
         returns (bool)
     {
         GameTypes.Position memory _position = _getPlayer(_player).position;
+        GameTypes.WorldConstants memory constants = _getWorldConstants();
 
-        bool _inMap = _pos.x < s.worldWidth &&
-            _pos.y < s.worldHeight &&
+        bool _inMap = _pos.x < constants.worldWidth &&
+            _pos.y < constants.worldWidth &&
             _pos.x >= 0 &&
             _pos.y >= 0;
 
@@ -367,7 +364,8 @@ contract GameStorage {
     // ------------------------------------------------------------
 
     function _getWorldSize() public view returns (uint256, uint256) {
-        return (s.worldWidth, s.worldHeight);
+        GameTypes.WorldConstants memory constants = _getWorldConstants();
+        return (constants.worldWidth, constants.worldHeight);
     }
 
     // fetch player inventory

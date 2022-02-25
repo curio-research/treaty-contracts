@@ -17,6 +17,37 @@ import { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
 import { Listener, Provider } from "@ethersproject/providers";
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
+export type WorldConstantsStruct = {
+  worldWidth: BigNumberish;
+  worldHeight: BigNumberish;
+  startingAttackDamage: BigNumberish;
+  startingAttackRange: BigNumberish;
+  startingAttackWaitTime: BigNumberish;
+  startPlayerHealth: BigNumberish;
+  startPlayerEnergy: BigNumberish;
+  startingReach: BigNumberish;
+};
+
+export type WorldConstantsStructOutput = [
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber
+] & {
+  worldWidth: BigNumber;
+  worldHeight: BigNumber;
+  startingAttackDamage: BigNumber;
+  startingAttackRange: BigNumber;
+  startingAttackWaitTime: BigNumber;
+  startPlayerHealth: BigNumber;
+  startPlayerEnergy: BigNumber;
+  startingReach: BigNumber;
+};
+
 export type ItemWithMetadataStruct = {
   mineable: boolean;
   craftable: boolean;

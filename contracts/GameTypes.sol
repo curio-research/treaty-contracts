@@ -9,10 +9,23 @@ library GameTypes {
         uint256 y;
     }
 
+    struct WorldConstants {
+        uint256 worldWidth;
+        uint256 worldHeight;
+        uint256 startingAttackDamage;
+        uint256 startingAttackRange;
+        uint256 startingAttackWaitTime;
+        uint256 startPlayerHealth;
+        uint256 startPlayerEnergy;
+        uint256 startingReach;
+    }
+
     struct PlayerData {
         bool initialized;
         uint256 initTimestamp;
         address playerAddr;
+        uint256 attackDamage;
+        uint256 attackRange;
         uint256 health;
         uint256 energy;
         uint256 reach;
@@ -60,19 +73,13 @@ library GameTypes {
     // TODO: Pack this struct
     struct GameStorage {
         // map info
-        uint256 worldWidth;
-        uint256 worldHeight;
+        WorldConstants worldConstants;
         GameTypes.Tile[100][100] map;
         // game info
         address admin;
         bool paused;
         mapping(uint256 => GameTypes.ItemWithMetadata) itemsWithMetadata;
         uint256 itemNonce;
-        uint256 attackRange; // TODO move constants below into a struct for readability
-        uint256 attackDamage;
-        uint256 attackWaitTime;
-        uint256 startPlayerHealth;
-        uint256 startPlayerEnergy;
         // playersa
         address[] allPlayers;
         mapping(address => GameTypes.PlayerData) players; // player data

@@ -72,6 +72,8 @@ export type PlayerDataStruct = {
   initialized: boolean;
   initTimestamp: BigNumberish;
   playerAddr: string;
+  attackDamage: BigNumberish;
+  attackRange: BigNumberish;
   health: BigNumberish;
   energy: BigNumberish;
   reach: BigNumberish;
@@ -85,11 +87,15 @@ export type PlayerDataStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
+  BigNumber,
+  BigNumber,
   PositionStructOutput
 ] & {
   initialized: boolean;
   initTimestamp: BigNumber;
   playerAddr: string;
+  attackDamage: BigNumber;
+  attackRange: BigNumber;
   health: BigNumber;
   energy: BigNumber;
   reach: BigNumber;
@@ -130,12 +136,42 @@ export type TowerStructOutput = [
   owner: string;
 };
 
+export type WorldConstantsStruct = {
+  worldWidth: BigNumberish;
+  worldHeight: BigNumberish;
+  startingAttackDamage: BigNumberish;
+  startingAttackRange: BigNumberish;
+  startingAttackWaitTime: BigNumberish;
+  startPlayerHealth: BigNumberish;
+  startPlayerEnergy: BigNumberish;
+  startingReach: BigNumberish;
+};
+
+export type WorldConstantsStructOutput = [
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber
+] & {
+  worldWidth: BigNumber;
+  worldHeight: BigNumber;
+  startingAttackDamage: BigNumber;
+  startingAttackRange: BigNumber;
+  startingAttackWaitTime: BigNumber;
+  startPlayerHealth: BigNumber;
+  startPlayerEnergy: BigNumber;
+  startingReach: BigNumber;
+};
+
 export interface GameStorageInterface extends utils.Interface {
   functions: {
     "_changeHealth(address,uint256,bool)": FunctionFragment;
     "_decreaseItemInInventory(address,uint256,uint256)": FunctionFragment;
     "_getAllPlayerAddresses()": FunctionFragment;
-    "_getAttackDamage()": FunctionFragment;
     "_getBlockAtPosition((uint256,uint256),uint256)": FunctionFragment;
     "_getBlockCountAtPosition((uint256,uint256))": FunctionFragment;
     "_getCraftItemAmount(address,uint256)": FunctionFragment;
@@ -150,6 +186,7 @@ export interface GameStorageInterface extends utils.Interface {
     "_getTileData((uint256,uint256))": FunctionFragment;
     "_getTopBlockAtPosition((uint256,uint256))": FunctionFragment;
     "_getTower(string)": FunctionFragment;
+    "_getWorldConstants()": FunctionFragment;
     "_getWorldSize()": FunctionFragment;
     "_increaseItemInInventory(address,uint256,uint256)": FunctionFragment;
     "_incrementNonce()": FunctionFragment;
@@ -159,7 +196,7 @@ export interface GameStorageInterface extends utils.Interface {
     "_modifyItemInInventoryNonce(address,uint256,bool)": FunctionFragment;
     "_place((uint256,uint256),uint256)": FunctionFragment;
     "_setBlocks((uint256,uint256),uint256[])": FunctionFragment;
-    "_setConstants(uint256,uint256,uint256,uint256,uint256,uint256,uint256)": FunctionFragment;
+    "_setConstants((uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))": FunctionFragment;
     "_setItem(uint256,(bool,bool,bool,uint256,uint256,uint256,uint256[],uint256[],uint256[]))": FunctionFragment;
     "_setOccupierAtPosition(address,(uint256,uint256))": FunctionFragment;
     "_setPlayer(address,(uint256,uint256))": FunctionFragment;
@@ -183,10 +220,6 @@ export interface GameStorageInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "_getAllPlayerAddresses",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getAttackDamage",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -240,6 +273,10 @@ export interface GameStorageInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "_getTower", values: [string]): string;
   encodeFunctionData(
+    functionFragment: "_getWorldConstants",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "_getWorldSize",
     values?: undefined
   ): string;
@@ -277,15 +314,7 @@ export interface GameStorageInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "_setConstants",
-    values: [
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish
-    ]
+    values: [WorldConstantsStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "_setItem",
@@ -342,10 +371,6 @@ export interface GameStorageInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "_getAttackDamage",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "_getBlockAtPosition",
     data: BytesLike
   ): Result;
@@ -392,6 +417,10 @@ export interface GameStorageInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "_getTower", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "_getWorldConstants",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "_getWorldSize",
     data: BytesLike
@@ -510,8 +539,6 @@ export interface GameStorage extends BaseContract {
 
     _getAllPlayerAddresses(overrides?: CallOverrides): Promise<[string[]]>;
 
-    _getAttackDamage(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     _getBlockAtPosition(
       _pos: PositionStruct,
       _zIdx: BigNumberish,
@@ -581,6 +608,10 @@ export interface GameStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[TowerStructOutput]>;
 
+    _getWorldConstants(
+      overrides?: CallOverrides
+    ): Promise<[WorldConstantsStructOutput]>;
+
     _getWorldSize(overrides?: CallOverrides): Promise<[BigNumber, BigNumber]>;
 
     _increaseItemInInventory(
@@ -630,13 +661,7 @@ export interface GameStorage extends BaseContract {
     ): Promise<ContractTransaction>;
 
     _setConstants(
-      _worldWidth: BigNumberish,
-      _worldHeight: BigNumberish,
-      _attackRange: BigNumberish,
-      _attackDamage: BigNumberish,
-      _attackWaitTime: BigNumberish,
-      _startPlayerHealth: BigNumberish,
-      _startPlayerEnergy: BigNumberish,
+      constants: WorldConstantsStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -699,29 +724,11 @@ export interface GameStorage extends BaseContract {
     s(
       overrides?: CallOverrides
     ): Promise<
-      [
-        BigNumber,
-        BigNumber,
-        string,
-        boolean,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        string
-      ] & {
-        worldWidth: BigNumber;
-        worldHeight: BigNumber;
+      [WorldConstantsStructOutput, string, boolean, BigNumber, string] & {
+        worldConstants: WorldConstantsStructOutput;
         admin: string;
         paused: boolean;
         itemNonce: BigNumber;
-        attackRange: BigNumber;
-        attackDamage: BigNumber;
-        attackWaitTime: BigNumber;
-        startPlayerHealth: BigNumber;
-        startPlayerEnergy: BigNumber;
         epochController: string;
       }
     >;
@@ -747,8 +754,6 @@ export interface GameStorage extends BaseContract {
   ): Promise<ContractTransaction>;
 
   _getAllPlayerAddresses(overrides?: CallOverrides): Promise<string[]>;
-
-  _getAttackDamage(overrides?: CallOverrides): Promise<BigNumber>;
 
   _getBlockAtPosition(
     _pos: PositionStruct,
@@ -817,6 +822,10 @@ export interface GameStorage extends BaseContract {
     overrides?: CallOverrides
   ): Promise<TowerStructOutput>;
 
+  _getWorldConstants(
+    overrides?: CallOverrides
+  ): Promise<WorldConstantsStructOutput>;
+
   _getWorldSize(overrides?: CallOverrides): Promise<[BigNumber, BigNumber]>;
 
   _increaseItemInInventory(
@@ -866,13 +875,7 @@ export interface GameStorage extends BaseContract {
   ): Promise<ContractTransaction>;
 
   _setConstants(
-    _worldWidth: BigNumberish,
-    _worldHeight: BigNumberish,
-    _attackRange: BigNumberish,
-    _attackDamage: BigNumberish,
-    _attackWaitTime: BigNumberish,
-    _startPlayerHealth: BigNumberish,
-    _startPlayerEnergy: BigNumberish,
+    constants: WorldConstantsStruct,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -935,29 +938,11 @@ export interface GameStorage extends BaseContract {
   s(
     overrides?: CallOverrides
   ): Promise<
-    [
-      BigNumber,
-      BigNumber,
-      string,
-      boolean,
-      BigNumber,
-      BigNumber,
-      BigNumber,
-      BigNumber,
-      BigNumber,
-      BigNumber,
-      string
-    ] & {
-      worldWidth: BigNumber;
-      worldHeight: BigNumber;
+    [WorldConstantsStructOutput, string, boolean, BigNumber, string] & {
+      worldConstants: WorldConstantsStructOutput;
       admin: string;
       paused: boolean;
       itemNonce: BigNumber;
-      attackRange: BigNumber;
-      attackDamage: BigNumber;
-      attackWaitTime: BigNumber;
-      startPlayerHealth: BigNumber;
-      startPlayerEnergy: BigNumber;
       epochController: string;
     }
   >;
@@ -983,8 +968,6 @@ export interface GameStorage extends BaseContract {
     ): Promise<void>;
 
     _getAllPlayerAddresses(overrides?: CallOverrides): Promise<string[]>;
-
-    _getAttackDamage(overrides?: CallOverrides): Promise<BigNumber>;
 
     _getBlockAtPosition(
       _pos: PositionStruct,
@@ -1053,6 +1036,10 @@ export interface GameStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<TowerStructOutput>;
 
+    _getWorldConstants(
+      overrides?: CallOverrides
+    ): Promise<WorldConstantsStructOutput>;
+
     _getWorldSize(overrides?: CallOverrides): Promise<[BigNumber, BigNumber]>;
 
     _increaseItemInInventory(
@@ -1097,13 +1084,7 @@ export interface GameStorage extends BaseContract {
     ): Promise<void>;
 
     _setConstants(
-      _worldWidth: BigNumberish,
-      _worldHeight: BigNumberish,
-      _attackRange: BigNumberish,
-      _attackDamage: BigNumberish,
-      _attackWaitTime: BigNumberish,
-      _startPlayerHealth: BigNumberish,
-      _startPlayerEnergy: BigNumberish,
+      constants: WorldConstantsStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1166,29 +1147,11 @@ export interface GameStorage extends BaseContract {
     s(
       overrides?: CallOverrides
     ): Promise<
-      [
-        BigNumber,
-        BigNumber,
-        string,
-        boolean,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        BigNumber,
-        string
-      ] & {
-        worldWidth: BigNumber;
-        worldHeight: BigNumber;
+      [WorldConstantsStructOutput, string, boolean, BigNumber, string] & {
+        worldConstants: WorldConstantsStructOutput;
         admin: string;
         paused: boolean;
         itemNonce: BigNumber;
-        attackRange: BigNumber;
-        attackDamage: BigNumber;
-        attackWaitTime: BigNumber;
-        startPlayerHealth: BigNumber;
-        startPlayerEnergy: BigNumber;
         epochController: string;
       }
     >;
@@ -1227,8 +1190,6 @@ export interface GameStorage extends BaseContract {
     ): Promise<BigNumber>;
 
     _getAllPlayerAddresses(overrides?: CallOverrides): Promise<BigNumber>;
-
-    _getAttackDamage(overrides?: CallOverrides): Promise<BigNumber>;
 
     _getBlockAtPosition(
       _pos: PositionStruct,
@@ -1291,6 +1252,8 @@ export interface GameStorage extends BaseContract {
 
     _getTower(_towerId: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+    _getWorldConstants(overrides?: CallOverrides): Promise<BigNumber>;
+
     _getWorldSize(overrides?: CallOverrides): Promise<BigNumber>;
 
     _increaseItemInInventory(
@@ -1340,13 +1303,7 @@ export interface GameStorage extends BaseContract {
     ): Promise<BigNumber>;
 
     _setConstants(
-      _worldWidth: BigNumberish,
-      _worldHeight: BigNumberish,
-      _attackRange: BigNumberish,
-      _attackDamage: BigNumberish,
-      _attackWaitTime: BigNumberish,
-      _startPlayerHealth: BigNumberish,
-      _startPlayerEnergy: BigNumberish,
+      constants: WorldConstantsStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1433,8 +1390,6 @@ export interface GameStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _getAttackDamage(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     _getBlockAtPosition(
       _pos: PositionStruct,
       _zIdx: BigNumberish,
@@ -1502,6 +1457,10 @@ export interface GameStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    _getWorldConstants(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     _getWorldSize(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     _increaseItemInInventory(
@@ -1551,13 +1510,7 @@ export interface GameStorage extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     _setConstants(
-      _worldWidth: BigNumberish,
-      _worldHeight: BigNumberish,
-      _attackRange: BigNumberish,
-      _attackDamage: BigNumberish,
-      _attackWaitTime: BigNumberish,
-      _startPlayerHealth: BigNumberish,
-      _startPlayerEnergy: BigNumberish,
+      constants: WorldConstantsStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -10,7 +10,7 @@ export const generateAllGameArgs = (): allGameArgs => {
   const mapWithItems = generateItems(masterGameSpecs.blocks);
 
   return {
-    gameDeployArgs: [...gameConstants, mapWithItems, allGameItems],
+    gameDeployArgs: [gameConstants, mapWithItems, allGameItems],
     allTowerArgs: masterGameSpecs.towers,
   };
 };
