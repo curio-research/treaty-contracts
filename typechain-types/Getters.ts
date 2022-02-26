@@ -74,6 +74,8 @@ export type PlayerDataStruct = {
   initialized: boolean;
   initTimestamp: BigNumberish;
   playerAddr: string;
+  attackDamage: BigNumberish;
+  attackRange: BigNumberish;
   health: BigNumberish;
   energy: BigNumberish;
   reach: BigNumberish;
@@ -87,11 +89,15 @@ export type PlayerDataStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
+  BigNumber,
+  BigNumber,
   PositionStructOutput
 ] & {
   initialized: boolean;
   initTimestamp: BigNumber;
   playerAddr: string;
+  attackDamage: BigNumber;
+  attackRange: BigNumber;
   health: BigNumber;
   energy: BigNumber;
   reach: BigNumber;

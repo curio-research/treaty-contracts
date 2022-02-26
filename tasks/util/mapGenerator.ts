@@ -122,6 +122,28 @@ export const generateTowerCoords = (worldWidth: number, worldHeight: number, roo
   };
 };
 
+// get a random outcome based a list of probability distributions and list of outcomes. they must be the same length
+const getRandom = (weights: number[], results: number[]) => {
+  const num = Math.random();
+  let s = 0;
+  let lastIndex = weights.length - 1;
+
+  for (let i = 0; i < lastIndex; ++i) {
+    s += weights[i];
+    if (num < s) {
+      return results[i];
+    }
+  }
+
+  return results[lastIndex];
+};
+
+const itemWeights = [0.7, 0.3];
+const itemResults = [0, 1];
+
+const rewardWeights = [0.1, 0.2, 0.3, 0.4];
+const rewardResults = [1, 2, 3, 4];
+
 const generateTowerSpecs = (towerLocations: position[]): TowerWithLocation[] => {
   return towerLocations.map((location) => {
     return {
@@ -130,8 +152,8 @@ const generateTowerSpecs = (towerLocations: position[]): TowerWithLocation[] => 
         y: location.y,
       },
       tower: {
-        rewardPerEpoch: 100,
-        itemId: 1,
+        rewardPerEpoch: getRandom(rewardWeights, rewardResults),
+        itemId: getRandom(itemWeights, itemResults),
         stakedAmount: 0,
         stakedTime: 0,
         owner: EMPTY_ADDRESS,
