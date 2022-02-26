@@ -149,7 +149,7 @@ contract Game {
         GameTypes.Position memory _pos,
         uint256 _zIdx,
         address _playerAddr
-    ) public {
+    ) internal {
         // can only mine with the needed tool
         uint256 _itemId = utils._getBlockAtPosition(_pos, _zIdx);
 
@@ -188,7 +188,7 @@ contract Game {
         GameTypes.Position memory _pos,
         uint256 _zIdx,
         address _playerAddr
-    ) public {
+    ) internal {
         utils._setTopLevelStrength(
             _pos,
             utils._getTileData(_pos).topLevelStrength -
@@ -199,17 +199,18 @@ contract Game {
         emit AttackItem(_playerAddr, _pos, _strength, _zIdx);
     }
 
-    // main mine item function
-    // attack + mine. main function
+    // mine item function
     function mine(GameTypes.Position memory _pos) external {
         uint256 _blockCount = utils._getBlockCountAtPosition(_pos);
         if (_blockCount == 0) revert("engine/nonexistent-block");
+        if (
+            !utils._withinDistance(
+                _pos,
+                utils._getPlayer(msg.sender).position,
+                1
+            )
+        ) revert("engine/invalid-distance");
 
-        uint256 blockToMine = utils._getTopBlockAtPosition(_pos);
-        GameTypes.ItemWithMetadata memory _itemWithMetadata = utils._getItem(
-            blockToMine
-        );
-        if (!_itemWithMetadata.mineable) revert("engine/not-mineable");
         uint256 _zIdx = _blockCount - 1;
 
         if (
@@ -226,12 +227,12 @@ contract Game {
     function place(GameTypes.Position memory _pos, uint256 _itemId) external {
         if (utils._getItemAmountById(msg.sender, _itemId) == 0)
             revert("engine/insufficient-inventory");
+        GameTypes.PlayerData memory _playerData = utils._getPlayer(msg.sender);
         if (
-            utils._getPlayer(msg.sender).position.x == _pos.x &&
-            utils._getPlayer(msg.sender).position.y == _pos.y
+            _playerData.position.x == _pos.x && _playerData.position.y == _pos.y
         ) revert("engine/cannot-stand-on-block");
-
-        // TODO add distance logic here
+        if (!utils._withinDistance(_pos, _playerData.position, 1))
+            revert("engine/invalid-distance");
 
         utils._place(_pos, _itemId);
         utils._decreaseItemInInventory(msg.sender, _itemId, 1);

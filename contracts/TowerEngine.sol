@@ -114,17 +114,12 @@ contract TowerGame {
     function stake(GameTypes.Position memory _position, uint256 _amount)
         public
     {
+        GameTypes.PlayerData memory playerData = utils._getPlayer(msg.sender);
+        require(
+            utils._withinDistance(_position, playerData.position, 1),
+            "tower/not-within-distance"
+        );
         string memory _towerId = Helper._encodePos(_position);
-
-        // add checker for distance
-
-        if (
-            !utils._withinDistance(
-                _position,
-                utils._getPlayer(msg.sender).position,
-                2
-            )
-        ) revert("tower/outside-distance");
 
         GameTypes.Tower memory tower = utils._getTower(_towerId);
         if (tower.stakedAmount >= _amount) revert("tower/insufficient-stake");
@@ -149,7 +144,6 @@ contract TowerGame {
             msg.sender,
             utils._getStakePointsByUser(msg.sender) - _amount
         );
-        (msg.sender, _amount);
 
         emit StakeTower(
             msg.sender,
@@ -163,13 +157,11 @@ contract TowerGame {
     function unstake(GameTypes.Position memory _position, uint256 _amount)
         external
     {
-        if (
-            !utils._withinDistance(
-                _position,
-                utils._getPlayer(msg.sender).position,
-                2
-            )
-        ) revert("tower/outside-distance");
+        GameTypes.PlayerData memory playerData = utils._getPlayer(msg.sender);
+        require(
+            utils._withinDistance(_position, playerData.position, 1),
+            "tower/not-within-distance"
+        );
 
         string memory _towerId = Helper._encodePos(_position);
 

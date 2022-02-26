@@ -91,20 +91,14 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
 
 export interface GameInterface extends utils.Interface {
   functions: {
-    "attackItem((uint256,uint256),uint256,address)": FunctionFragment;
     "craft(uint256)": FunctionFragment;
     "initializePlayer((uint256,uint256))": FunctionFragment;
     "mine((uint256,uint256))": FunctionFragment;
-    "mineItem((uint256,uint256),uint256,address)": FunctionFragment;
     "move((uint256,uint256))": FunctionFragment;
     "place((uint256,uint256),uint256)": FunctionFragment;
     "setMapRegion((uint256,uint256),uint256[][][])": FunctionFragment;
   };
 
-  encodeFunctionData(
-    functionFragment: "attackItem",
-    values: [PositionStruct, BigNumberish, string]
-  ): string;
   encodeFunctionData(functionFragment: "craft", values: [BigNumberish]): string;
   encodeFunctionData(
     functionFragment: "initializePlayer",
@@ -113,10 +107,6 @@ export interface GameInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "mine",
     values: [PositionStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "mineItem",
-    values: [PositionStruct, BigNumberish, string]
   ): string;
   encodeFunctionData(
     functionFragment: "move",
@@ -131,14 +121,12 @@ export interface GameInterface extends utils.Interface {
     values: [PositionStruct, BigNumberish[][][]]
   ): string;
 
-  decodeFunctionResult(functionFragment: "attackItem", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "craft", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "initializePlayer",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "mine", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "mineItem", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "move", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "place", data: BytesLike): Result;
   decodeFunctionResult(
@@ -257,13 +245,6 @@ export interface Game extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    attackItem(
-      _pos: PositionStruct,
-      _zIdx: BigNumberish,
-      _playerAddr: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     craft(
       _itemId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -276,13 +257,6 @@ export interface Game extends BaseContract {
 
     mine(
       _pos: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    mineItem(
-      _pos: PositionStruct,
-      _zIdx: BigNumberish,
-      _playerAddr: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -304,13 +278,6 @@ export interface Game extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
-  attackItem(
-    _pos: PositionStruct,
-    _zIdx: BigNumberish,
-    _playerAddr: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   craft(
     _itemId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -323,13 +290,6 @@ export interface Game extends BaseContract {
 
   mine(
     _pos: PositionStruct,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  mineItem(
-    _pos: PositionStruct,
-    _zIdx: BigNumberish,
-    _playerAddr: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -351,13 +311,6 @@ export interface Game extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    attackItem(
-      _pos: PositionStruct,
-      _zIdx: BigNumberish,
-      _playerAddr: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     craft(_itemId: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
     initializePlayer(
@@ -366,13 +319,6 @@ export interface Game extends BaseContract {
     ): Promise<void>;
 
     mine(_pos: PositionStruct, overrides?: CallOverrides): Promise<void>;
-
-    mineItem(
-      _pos: PositionStruct,
-      _zIdx: BigNumberish,
-      _playerAddr: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     move(_pos: PositionStruct, overrides?: CallOverrides): Promise<void>;
 
@@ -446,13 +392,6 @@ export interface Game extends BaseContract {
   };
 
   estimateGas: {
-    attackItem(
-      _pos: PositionStruct,
-      _zIdx: BigNumberish,
-      _playerAddr: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     craft(
       _itemId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -465,13 +404,6 @@ export interface Game extends BaseContract {
 
     mine(
       _pos: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    mineItem(
-      _pos: PositionStruct,
-      _zIdx: BigNumberish,
-      _playerAddr: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -494,13 +426,6 @@ export interface Game extends BaseContract {
   };
 
   populateTransaction: {
-    attackItem(
-      _pos: PositionStruct,
-      _zIdx: BigNumberish,
-      _playerAddr: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     craft(
       _itemId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -513,13 +438,6 @@ export interface Game extends BaseContract {
 
     mine(
       _pos: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    mineItem(
-      _pos: PositionStruct,
-      _zIdx: BigNumberish,
-      _playerAddr: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
