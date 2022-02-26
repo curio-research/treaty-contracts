@@ -69,28 +69,26 @@ describe("Game", () => {
     expect(player1Inventory.itemIds).eqls([1]);
     expect(player1Inventory.itemAmounts).eqls([8]);
 
-    const tileData = await c.GameStorage._getTileData({ x: 2, y: 2 });
-    console.log(tileData);
-    expect((await c.GameStorage._getTileData({ x: 2, y: 2 })).topLevelStrength).equals(50);
+    expect((await c.GameStorage._getTileData({ x: 2, y: 3 })).topLevelStrength).equals(50);
 
     // player attack is 5 and block strength is 50 => expect exactly 10 mines
     // the first 9 mines only decrease strength
-    // for (let i = 0; i < 9; i++) {
-    //   await c.Game.connect(world.user1).mine({ x: 2, y: 2 });
-    // }
-    // player1Inventory = decodePlayerInventory(await c.GameStorage._getInventoryByPlayer(world.user1.address));
-    // expect(player1Inventory.itemIds).eqls([1]);
-    // expect(player1Inventory.itemAmounts).eqls([8]);
-    // expect((await c.GameStorage._getTileData({ x: 2, y: 2 })).topLevelStrength).equals(5);
+    for (let i = 0; i < 9; i++) {
+      await c.Game.connect(world.user1).mine({ x: 2, y: 3 });
+    }
+    player1Inventory = decodePlayerInventory(await c.GameStorage._getInventoryByPlayer(world.user1.address));
+    expect(player1Inventory.itemIds).eqls([1]);
+    expect(player1Inventory.itemAmounts).eqls([8]);
+    expect((await c.GameStorage._getTileData({ x: 2, y: 3 })).topLevelStrength).equals(5);
 
     // // the last mine successfully mines the item
-    // await c.Game.connect(world.user1).mine({ x: 2, y: 2 });
-    // player1Inventory = decodePlayerInventory(await c.GameStorage._getInventoryByPlayer(world.user1.address));
-    // expect(player1Inventory.itemIds).eqls([1]);
-    // expect(player1Inventory.itemAmounts).eqls([9]);
+    await c.Game.connect(world.user1).mine({ x: 2, y: 3 });
+    player1Inventory = decodePlayerInventory(await c.GameStorage._getInventoryByPlayer(world.user1.address));
+    expect(player1Inventory.itemIds).eqls([1]);
+    expect(player1Inventory.itemAmounts).eqls([9]);
 
     // // no more mines should be possible
-    // await expect(c.Game.connect(world.user1).mine({ x: 2, y: 2 })).to.be.revertedWith(REVERT_MESSAGES.ENGINE_NONEXISTENT_BLOCK);
+    await expect(c.Game.connect(world.user1).mine({ x: 2, y: 3 })).to.be.revertedWith(REVERT_MESSAGES.ENGINE_NONEXISTENT_BLOCK);
   });
 
   /**
