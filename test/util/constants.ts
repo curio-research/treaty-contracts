@@ -61,7 +61,17 @@ const ATTACK_WAITTIME = 5;
 const START_PLAYER_HEALTH = 100;
 const START_PLAYER_ENERGY = 100;
 
-const GAME_CONSTANTS = { worldWidth: WORLD_WIDTH, worldHeight: WORLD_HEIGHT, startingAttackDamage: ATTACK_DAMAGE, startingAttackRange: ATTACK_RANGE, startingAttackWaitTime: 0, startPlayerHealth: 100, startPlayerEnergy: 100, startingReach: 2 };
+const GAME_CONSTANTS = {
+  worldWidth: WORLD_WIDTH,
+  worldHeight: WORLD_HEIGHT,
+  startingAttackDamage: ATTACK_DAMAGE,
+  startingAttackRange: ATTACK_RANGE,
+  startingAttackWaitTime: 0,
+  startPlayerHealth: 100,
+  startPlayerEnergy: 100,
+  startingReach: 2,
+  startingPlayerDefaultCurrencyAmount: 0,
+};
 
 // tile types for map
 const tileTypesSimple = [[], ["Iron"]];

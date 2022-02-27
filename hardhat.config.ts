@@ -28,7 +28,7 @@ export default {
       chainId: 1337,
       // mining: {
       //   auto: false,
-      //   interval: 500,
+      //   interval: 1000,
       // },
     },
   },

@@ -12,17 +12,16 @@ import { tower1, tower2 } from "./util/tower";
 // Towerzzzzz
 // ------------------------------------------------------------
 
+const BASE_ITEM1 = 100;
+const STAKE_AMOUNT_1 = 10;
+const STAKE_AMOUNT_2 = 11;
+
 describe("Tower", () => {
   let c: AllContracts;
   let world: World;
 
-  const worldFixture = async () => {
-    const world = await fixtureLoader(initializeWorld);
-    return world;
-  };
-
   before(async () => {
-    world = await fixtureLoader(worldFixture);
+    world = await fixtureLoader(initializeWorld);
     c = world.contracts;
   });
 
@@ -34,10 +33,13 @@ describe("Tower", () => {
     await c.Tower.addTower(tower2.location, tower2.tower);
 
     await c.GameStorage.setEpochController(c.Epoch.address);
+
+    await c.GameStorage._increaseItemInInventory(world.user1.address, 1, BASE_ITEM1); // give user 100 base currency points for staking
+    await c.GameStorage._increaseItemInInventory(world.user2.address, 1, BASE_ITEM1); // give user 100 base currency points for staking
   });
 
   it("Stake", async () => {
-    await c.Tower.connect(world.user1).stake(tower1.location, 10); // user1 stakes 10 points to tower1
+    await c.Tower.connect(world.user1).stake(tower1.location, STAKE_AMOUNT_1); // user1 stakes 10 points to tower1
     expect(decodeTower(await c.Tower.getTowerById(tower1.location)).owner).equals(world.user1.address);
   });
 
@@ -51,7 +53,7 @@ describe("Tower", () => {
 
     const player1_inventory = decodePlayerInventory(await c.GameStorage._getInventoryByPlayer(world.user1.address)); // check player1 inventory
     expect(player1_inventory.itemIds).eqls([1]);
-    expect(player1_inventory.itemAmounts).eqls([tower1.tower.rewardPerEpoch]);
+    expect(player1_inventory.itemAmounts).eqls([tower1.tower.rewardPerEpoch + BASE_ITEM1 - STAKE_AMOUNT_1]);
   });
 
   it("Faulty claim", async () => {
@@ -64,17 +66,16 @@ describe("Tower", () => {
 
     expect(c.Tower.connect(world.user2).stake(tower1.location, 9)).to.be.revertedWith(REVERT_MESSAGES.TOWER_INSUFFICIENT_STAKE); // user2 fails to try to stake 9 points (less than 10)
 
-    const STAKE_AMOUNT = 11;
-    await c.Tower.connect(world.user2).stake(tower1.location, STAKE_AMOUNT); // successful stake. 11 is greater than 10 points (what user1 staked previously)
+    await c.Tower.connect(world.user2).stake(tower1.location, STAKE_AMOUNT_2); // successful stake. 11 is greater than 10 points (what user1 staked previously)
 
     const tower_1 = decodeTower(await c.Tower.getTowerById(tower1.location));
     expect(tower_1.stakedTime).equals(2); // user2 staked at 2nd epoch
-    expect(tower_1.stakedAmount).equals(STAKE_AMOUNT); // user2 staked 11 points
+    expect(tower_1.stakedAmount).equals(STAKE_AMOUNT_2); // user2 staked 11 points
     expect(tower_1.owner).equals(world.user2.address); // user2 is the owner of tower1
 
     const INCREASE_EPOCHS = 2; // increase
 
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < INCREASE_EPOCHS; i++) {
       await increaseBlockchainTime(EPOCH_INTERVAL);
       await c.Epoch.updateEpoch();
     }
@@ -84,7 +85,7 @@ describe("Tower", () => {
     await c.Tower.connect(world.user2).claimReward(tower1.location); // user2 claims reward
     const player2_inventory = decodePlayerInventory(await c.GameStorage._getInventoryByPlayer(world.user2.address)); // check player2 inventory
     expect(player2_inventory.itemIds).eqls([1]);
-    expect(player2_inventory.itemAmounts).eqls([INCREASE_EPOCHS * tower1.tower.rewardPerEpoch]);
+    expect(player2_inventory.itemAmounts).eqls([INCREASE_EPOCHS * tower1.tower.rewardPerEpoch + BASE_ITEM1 - STAKE_AMOUNT_2]);
   });
 
   it("Unstake", async () => {
@@ -117,7 +118,7 @@ describe("Tower", () => {
     await c.Tower.connect(world.user2).claimReward(tower1.location); // user2 claims reward
 
     player2_inventory = decodePlayerInventory(await c.GameStorage._getInventoryByPlayer(world.user2.address));
-    expect(player2_inventory.itemAmounts).eqls([tower1.tower.rewardPerEpoch * 4]);
+    expect(player2_inventory.itemAmounts).eqls([499]);
   });
 
   it("Add block effect", async () => {

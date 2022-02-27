@@ -26,9 +26,11 @@ export type WorldConstantsStruct = {
   startPlayerHealth: BigNumberish;
   startPlayerEnergy: BigNumberish;
   startingReach: BigNumberish;
+  startingPlayerDefaultCurrencyAmount: BigNumberish;
 };
 
 export type WorldConstantsStructOutput = [
+  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -46,6 +48,7 @@ export type WorldConstantsStructOutput = [
   startPlayerHealth: BigNumber;
   startPlayerEnergy: BigNumber;
   startingReach: BigNumber;
+  startingPlayerDefaultCurrencyAmount: BigNumber;
 };
 
 export type ItemWithMetadataStruct = {

@@ -34,9 +34,9 @@ task("deploy", "deploy contracts")
     console.log("Network:", hre.network.name);
 
     const allGameArgs = generateAllGameArgs();
-    
-    const blocks = allGameArgs.blockMap;
-    // visualizeMap(blocks, true);
+
+    const blocks = allGameArgs.gameDeployArgs[allGameArgs.gameDeployArgs.length - 2];
+    visualizeMap(blocks, true);
 
     // initialize contracts
     const GameHelper = await deployProxy<Helper>("Helper", player1, hre, []);
@@ -66,9 +66,7 @@ task("deploy", "deploy contracts")
     let regionMap: number[][][];
     for (let x = 0; x < WORLD_WIDTH; x += MAP_INTERVAL) {
       for (let y = 0; y < WORLD_HEIGHT; y += MAP_INTERVAL) {
-        regionMap = blockMap.slice(x, x + MAP_INTERVAL).map(
-          (col) => col.slice(y, y + MAP_INTERVAL)
-        );
+        regionMap = blockMap.slice(x, x + MAP_INTERVAL).map((col) => col.slice(y, y + MAP_INTERVAL));
 
         GameContract.setMapRegion({ x, y }, regionMap);
       }
@@ -88,7 +86,6 @@ task("deploy", "deploy contracts")
     await GameContract.connect(player2).initializePlayer(player2Pos);
 
     if (isDev) {
-      await GameStorage.connect(player1)._increaseItemInInventory(player1.address, 0, 100);
       await GameStorage.connect(player1)._increaseItemInInventory(player1.address, 1, 100);
     }
 

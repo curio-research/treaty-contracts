@@ -10,6 +10,10 @@ import "./GameHelper.sol";
 
 import "hardhat/console.sol";
 
+// ------------------------------------------------------------
+// Tower contract
+// ------------------------------------------------------------
+
 contract TowerGame {
     using SafeMath for uint256;
     GameStorage private utils;
@@ -110,7 +114,7 @@ contract TowerGame {
         );
     }
 
-    // stake in tower
+    // NOTE: We assume that item 1 is default currency of the universe that's used to stake towers
     function stake(GameTypes.Position memory _position, uint256 _amount)
         public
     {
@@ -123,14 +127,11 @@ contract TowerGame {
 
         GameTypes.Tower memory tower = utils._getTower(_towerId);
         if (tower.stakedAmount >= _amount) revert("tower/insufficient-stake");
-        if (utils._getStakePointsByUser(msg.sender) < _amount)
+        if (utils._getItemAmountById(msg.sender, 1) < _amount)
             revert("tower/insufficient-points");
 
         // return points to previous tower owner
-        utils._setPlayerStakedPoints(
-            tower.owner,
-            utils._getStakePointsByUser(tower.owner) + tower.stakedAmount
-        );
+        utils._increaseItemInInventory(tower.owner, 1, tower.stakedAmount);
 
         uint256 currentEpoch = utils._getCurrentEpoch();
         // check inventory points to see if there are sufficient points
@@ -140,15 +141,13 @@ contract TowerGame {
         tower.stakedAmount = _amount;
         utils._setTower(_towerId, tower);
 
-        utils._setPlayerStakedPoints(
-            msg.sender,
-            utils._getStakePointsByUser(msg.sender) - _amount
-        );
+        // deduct item 1 count from staking user
+        utils._decreaseItemInInventory(msg.sender, 1, _amount);
 
         emit StakeTower(
             msg.sender,
             _position,
-            utils._getStakePointsByUser(msg.sender),
+            utils._getItemAmountById(msg.sender, 1),
             tower.stakedAmount
         );
     }
@@ -172,10 +171,8 @@ contract TowerGame {
         tower.stakedAmount -= _amount;
         utils._setTower(_towerId, tower);
 
-        utils._setPlayerStakedPoints(
-            msg.sender,
-            utils._getStakePointsByUser(msg.sender) + _amount
-        );
+        // add item 1 back to user
+        utils._increaseItemInInventory(msg.sender, 1, _amount);
 
         // if user unstakes all the points, they're no longer the owner
         if (utils._getTower(_towerId).stakedAmount == 0) {
@@ -186,7 +183,7 @@ contract TowerGame {
         emit UnstakeTower(
             msg.sender,
             _position,
-            utils._getStakePointsByUser(msg.sender),
+            utils._getItemAmountById(msg.sender, 1),
             utils._getTower(_towerId).stakedAmount
         );
     }

@@ -1,3 +1,4 @@
+import { WorldConstantsStruct } from "./../../typechain-types/Game";
 import { Item } from "../../util/types/getter";
 
 export const LOCALHOST_RPC_URL = "http://127.0.0.1:8545/";
@@ -21,17 +22,16 @@ export const MAP_INTERVAL = 10;
 export const WORLD_WIDTH = (ROOM_LENGTH - 1) * ROOMS_PER_DIMENSION + 1; // due to shared walls
 export const WORLD_HEIGHT = (ROOM_LENGTH - 1) * ROOMS_PER_DIMENSION + 1;
 
-export const generateGameConstants = () => {
-  return {
-    worldWidth: WORLD_WIDTH,
-    worldHeight: WORLD_HEIGHT,
-    startingAttackDamage: ATTACK_DAMAGE,
-    startingAttackRange: ATTACK_RANGE,
-    startingAttackWaitTime: 0,
-    startPlayerHealth: 100,
-    startPlayerEnergy: 100,
-    startingReach: 2,
-  };
+export const deployGameConstants: WorldConstantsStruct = {
+  worldWidth: WORLD_WIDTH,
+  worldHeight: WORLD_HEIGHT,
+  startingAttackDamage: ATTACK_DAMAGE,
+  startingAttackRange: ATTACK_RANGE,
+  startingAttackWaitTime: 0,
+  startPlayerHealth: 100,
+  startPlayerEnergy: 100,
+  startingReach: 2,
+  startingPlayerDefaultCurrencyAmount: 100,
 };
 
 // ------------------------------------------------

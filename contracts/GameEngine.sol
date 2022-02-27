@@ -1,17 +1,14 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-// import "@openzeppelin/contracts-upgradeable/proxy/Initializable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "./GameStorage.sol";
 import "./GameTypes.sol";
 import "./Permissions.sol";
 
-/// @title Game physics engine
-/// @notice the game engine takes care of low level interactions such as "move" and "craft" item.
-/// the actual "finite game" mechanics should live in another file, the one that players play.
-
-// TODO: Add proxy upgradeable
+// ------------------------------------------------------------
+// Main game contract
+// ------------------------------------------------------------
 
 contract Game {
     using SafeMath for uint256;
@@ -124,7 +121,11 @@ contract Game {
         utils._setPlayer(msg.sender, _pos);
 
         utils._setOccupierAtPosition(msg.sender, _pos);
-        utils._setPlayerStakedPoints(msg.sender, 100);
+        utils._increaseItemInInventory(
+            msg.sender,
+            1,
+            utils._getWorldConstants().startingPlayerDefaultCurrencyAmount
+        ); //  give users some base currency points so they can start staking in towers
 
         emit NewPlayer(msg.sender, _pos);
     }
