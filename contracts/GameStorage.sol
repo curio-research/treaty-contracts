@@ -170,9 +170,9 @@ contract GameStorage {
 
     function _setTopLevelStrength(
         GameTypes.Position memory _pos,
-        uint256 _strength
+        uint256 _amount
     ) public hasPermission {
-        s.map[_pos.x][_pos.y].topLevelStrength = _strength;
+        s.map[_pos.x][_pos.y].topLevelStrength = _amount;
     }
 
     function _getCraftItemAmount(address _player, uint256 _craftItemId)

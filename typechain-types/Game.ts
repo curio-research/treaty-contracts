@@ -94,6 +94,7 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
 
 export interface GameInterface extends utils.Interface {
   functions: {
+    "changeBlockStrength((uint256,uint256),uint256,bool)": FunctionFragment;
     "craft(uint256)": FunctionFragment;
     "initializePlayer((uint256,uint256))": FunctionFragment;
     "mine((uint256,uint256))": FunctionFragment;
@@ -102,6 +103,10 @@ export interface GameInterface extends utils.Interface {
     "setMapRegion((uint256,uint256),uint256[][][])": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "changeBlockStrength",
+    values: [PositionStruct, BigNumberish, boolean]
+  ): string;
   encodeFunctionData(functionFragment: "craft", values: [BigNumberish]): string;
   encodeFunctionData(
     functionFragment: "initializePlayer",
@@ -124,6 +129,10 @@ export interface GameInterface extends utils.Interface {
     values: [PositionStruct, BigNumberish[][][]]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "changeBlockStrength",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "craft", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "initializePlayer",
@@ -140,6 +149,7 @@ export interface GameInterface extends utils.Interface {
   events: {
     "Attack(address,address)": EventFragment;
     "AttackItem(address,tuple,uint256,uint256)": EventFragment;
+    "ChangeBlockStrength(address,tuple,uint256,uint256)": EventFragment;
     "Craft(address,uint256)": EventFragment;
     "Death(address)": EventFragment;
     "MineItem(address,tuple,uint256,uint256)": EventFragment;
@@ -150,6 +160,7 @@ export interface GameInterface extends utils.Interface {
 
   getEvent(nameOrSignatureOrTopic: "Attack"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "AttackItem"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ChangeBlockStrength"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Craft"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Death"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MineItem"): EventFragment;
@@ -176,6 +187,19 @@ export type AttackItemEvent = TypedEvent<
 >;
 
 export type AttackItemEventFilter = TypedEventFilter<AttackItemEvent>;
+
+export type ChangeBlockStrengthEvent = TypedEvent<
+  [string, PositionStructOutput, BigNumber, BigNumber],
+  {
+    _player: string;
+    _pos: PositionStructOutput;
+    _strength: BigNumber;
+    _resourceUsed: BigNumber;
+  }
+>;
+
+export type ChangeBlockStrengthEventFilter =
+  TypedEventFilter<ChangeBlockStrengthEvent>;
 
 export type CraftEvent = TypedEvent<
   [string, BigNumber],
@@ -248,6 +272,13 @@ export interface Game extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    changeBlockStrength(
+      _pos: PositionStruct,
+      _amount: BigNumberish,
+      _dir: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     craft(
       _itemId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -280,6 +311,13 @@ export interface Game extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
+
+  changeBlockStrength(
+    _pos: PositionStruct,
+    _amount: BigNumberish,
+    _dir: boolean,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   craft(
     _itemId: BigNumberish,
@@ -314,6 +352,13 @@ export interface Game extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    changeBlockStrength(
+      _pos: PositionStruct,
+      _amount: BigNumberish,
+      _dir: boolean,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     craft(_itemId: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
     initializePlayer(
@@ -358,6 +403,19 @@ export interface Game extends BaseContract {
       _zIndex?: null
     ): AttackItemEventFilter;
 
+    "ChangeBlockStrength(address,tuple,uint256,uint256)"(
+      _player?: null,
+      _pos?: null,
+      _strength?: null,
+      _resourceUsed?: null
+    ): ChangeBlockStrengthEventFilter;
+    ChangeBlockStrength(
+      _player?: null,
+      _pos?: null,
+      _strength?: null,
+      _resourceUsed?: null
+    ): ChangeBlockStrengthEventFilter;
+
     "Craft(address,uint256)"(_player?: null, _blockId?: null): CraftEventFilter;
     Craft(_player?: null, _blockId?: null): CraftEventFilter;
 
@@ -395,6 +453,13 @@ export interface Game extends BaseContract {
   };
 
   estimateGas: {
+    changeBlockStrength(
+      _pos: PositionStruct,
+      _amount: BigNumberish,
+      _dir: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     craft(
       _itemId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -429,6 +494,13 @@ export interface Game extends BaseContract {
   };
 
   populateTransaction: {
+    changeBlockStrength(
+      _pos: PositionStruct,
+      _amount: BigNumberish,
+      _dir: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     craft(
       _itemId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }

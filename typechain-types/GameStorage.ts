@@ -674,7 +674,7 @@ export interface GameStorage extends BaseContract {
 
     _setTopLevelStrength(
       _pos: PositionStruct,
-      _strength: BigNumberish,
+      _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -880,7 +880,7 @@ export interface GameStorage extends BaseContract {
 
   _setTopLevelStrength(
     _pos: PositionStruct,
-    _strength: BigNumberish,
+    _amount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1081,7 +1081,7 @@ export interface GameStorage extends BaseContract {
 
     _setTopLevelStrength(
       _pos: PositionStruct,
-      _strength: BigNumberish,
+      _amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1292,7 +1292,7 @@ export interface GameStorage extends BaseContract {
 
     _setTopLevelStrength(
       _pos: PositionStruct,
-      _strength: BigNumberish,
+      _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1491,7 +1491,7 @@ export interface GameStorage extends BaseContract {
 
     _setTopLevelStrength(
       _pos: PositionStruct,
-      _strength: BigNumberish,
+      _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

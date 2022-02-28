@@ -38,6 +38,12 @@ contract Game {
     event Craft(address _player, uint256 _blockId);
     event Attack(address _player1, address _player2); // add attack result here?
     event Death(address _player);
+    event ChangeBlockStrength(
+        address _player,
+        GameTypes.Position _pos,
+        uint256 _strength,
+        uint256 _resourceUsed
+    );
 
     // for some reason when we emit a string it doesn't do so properly
 
@@ -270,5 +276,56 @@ contract Game {
         utils._increaseItemInInventory(msg.sender, _itemId, 1);
 
         emit Craft(msg.sender, _itemId);
+    }
+
+    /**
+     * Changes the top level strength of a block
+     * @param _pos position of block
+     * @param _amount amount of world default currency
+     * @param _dir if true, you want to increase the defense. if not, you want to decrease it.
+     */
+
+    function changeBlockStrength(
+        GameTypes.Position memory _pos,
+        uint256 _amount,
+        bool _dir
+    ) public {
+        uint256 _userAmount = utils._getItemAmountById(msg.sender, 0); // world default currency is 0
+        require(_userAmount >= _amount, "engine/insufficient-inventory");
+
+        // 1 to 1 exchange rate between default currency and score;
+        utils._decreaseItemInInventory(msg.sender, 0, _amount);
+        GameTypes.Tile memory _tileData = utils._getTileData(_pos);
+
+        // to reinforce the strength of a block
+        if (_dir == true) {
+            utils._setTopLevelStrength(
+                _pos,
+                _tileData.topLevelStrength + _amount
+            );
+            emit ChangeBlockStrength(
+                msg.sender,
+                _pos,
+                _tileData.topLevelStrength + _amount,
+                _amount
+            );
+        } else {
+            if (_amount < _tileData.topLevelStrength) {
+                // if the strength is less than the block strength
+                utils._setTopLevelStrength(
+                    _pos,
+                    _tileData.topLevelStrength - _amount
+                );
+                emit ChangeBlockStrength(
+                    msg.sender,
+                    _pos,
+                    _tileData.topLevelStrength - _amount,
+                    _amount
+                );
+            } else {
+                uint256 _blockCount = utils._getBlockCountAtPosition(_pos);
+                mineItem(_pos, _blockCount - 1, msg.sender);
+            }
+        }
     }
 }
