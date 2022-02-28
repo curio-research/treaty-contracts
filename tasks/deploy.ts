@@ -1,3 +1,4 @@
+import { Tower } from "./../util/types/tower";
 import { generateBlockIdToNameMap } from "./../test/util/constants";
 import { Epoch } from "./../typechain-types/Epoch";
 import { task } from "hardhat/config";
@@ -86,15 +87,20 @@ task("deploy", "deploy contracts")
     await GameContract.connect(player2).initializePlayer(player2Pos);
 
     if (isDev) {
-      await GameStorage.connect(player1)._increaseItemInInventory(player1.address, 1, 100);
+      await GameStorage.connect(player1)._increaseItemInInventory(player1.address, 0, 100);
     }
 
     await GameStorage.setEpochController(EpochContract.address); // set epoch controller
 
-    // initialize towers
+    // bulk initialize towers
+    const allTowerLocations: position[] = [];
+    const allTowers: Tower[] = [];
     for (const tower of allGameArgs.allTowerArgs) {
-      await TowerContract.addTower(tower.location, tower.tower);
+      allTowerLocations.push(tower.location);
+      allTowers.push(tower.tower);
     }
+
+    await TowerContract.addTowerBulk(allTowerLocations, allTowers);
 
     // ---------------------------------
     // porting files to frontend

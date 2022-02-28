@@ -19,6 +19,8 @@ contract TowerGame {
     GameStorage private utils;
     Permissions private p;
 
+    uint256 BASE_ITEM_ID = 0;
+
     event StakeTower(
         address _player,
         GameTypes.Position _towerPos,
@@ -48,9 +50,18 @@ contract TowerGame {
     function addTower(
         GameTypes.Position memory _position,
         GameTypes.Tower memory _tower
-    ) external {
+    ) public {
         string memory _towerId = Helper._encodePos(_position);
         utils._setTower(_towerId, _tower);
+    }
+
+    function addTowerBulk(
+        GameTypes.Position[] memory _positions,
+        GameTypes.Tower[] memory _towers
+    ) external {
+        for (uint256 i = 0; i < _positions.length; i++) {
+            addTower(_positions[i], _towers[i]);
+        }
     }
 
     function _modifyRewardByBlockLocation(
@@ -114,76 +125,84 @@ contract TowerGame {
         );
     }
 
-    // NOTE: We assume that item 1 is default currency of the universe that's used to stake towers
+    // NOTE: We assume that item 1 is default currency of the universe that's used to stake towers, always
+    // _amount is the amount to send
     function stake(GameTypes.Position memory _position, uint256 _amount)
         public
     {
         GameTypes.PlayerData memory playerData = utils._getPlayer(msg.sender);
-        require(
-            utils._withinDistance(_position, playerData.position, 1),
-            "tower/not-within-distance"
-        );
         string memory _towerId = Helper._encodePos(_position);
-
         GameTypes.Tower memory tower = utils._getTower(_towerId);
-        if (tower.stakedAmount >= _amount) revert("tower/insufficient-stake");
-        if (utils._getItemAmountById(msg.sender, 1) < _amount)
+
+        if (msg.sender != tower.owner) {
+            require(
+                utils._withinDistance(_position, playerData.position, 1),
+                "tower/not-within-distance"
+            );
+        }
+
+        if (utils._getItemAmountById(msg.sender, BASE_ITEM_ID) < _amount)
             revert("tower/insufficient-points");
 
         // return points to previous tower owner
-        utils._increaseItemInInventory(tower.owner, 1, tower.stakedAmount);
+        // utils._increaseItemInInventory(
+        //     tower.owner,
+        //     BASE_ITEM_ID,
+        //     tower.stakedAmount
+        // );
 
-        uint256 currentEpoch = utils._getCurrentEpoch();
         // check inventory points to see if there are sufficient points
+        if (msg.sender != tower.owner) {
+            tower.stakedTime = utils._getCurrentEpoch(); // only change epoch time if there's a new owner
+            tower.owner = msg.sender; // set new owner if it's not the original owner
+        }
 
-        tower.owner = msg.sender;
-        tower.stakedTime = currentEpoch;
-        tower.stakedAmount = _amount;
+        tower.stakedAmount += _amount;
         utils._setTower(_towerId, tower);
 
-        // deduct item 1 count from staking user
-        utils._decreaseItemInInventory(msg.sender, 1, _amount);
+        utils._decreaseItemInInventory(msg.sender, BASE_ITEM_ID, _amount); // deduct item 1 count from staking user
 
         emit StakeTower(
             msg.sender,
             _position,
-            utils._getItemAmountById(msg.sender, 1),
+            utils._getItemAmountById(msg.sender, BASE_ITEM_ID),
             tower.stakedAmount
         );
     }
 
-    // unstake in tower
+    // unstake resource from tower
     function unstake(GameTypes.Position memory _position, uint256 _amount)
         external
     {
         GameTypes.PlayerData memory playerData = utils._getPlayer(msg.sender);
-        require(
-            utils._withinDistance(_position, playerData.position, 1),
-            "tower/not-within-distance"
-        );
-
         string memory _towerId = Helper._encodePos(_position);
-
         GameTypes.Tower memory tower = utils._getTower(_towerId);
+
+        if (msg.sender != tower.owner) {
+            require(
+                utils._withinDistance(_position, playerData.position, 1),
+                "tower/not-within-distance"
+            );
+        }
+
         if (tower.owner != msg.sender) revert("tower/invalid-tower-owner");
         if (tower.stakedAmount < _amount) revert("tower/withdraw-overflow");
 
         tower.stakedAmount -= _amount;
-        utils._setTower(_towerId, tower);
-
-        // add item 1 back to user
-        utils._increaseItemInInventory(msg.sender, 1, _amount);
 
         // if user unstakes all the points, they're no longer the owner
         if (utils._getTower(_towerId).stakedAmount == 0) {
             tower.owner = address(0);
-            utils._setTower(_towerId, tower);
         }
+
+        utils._setTower(_towerId, tower);
+
+        utils._increaseItemInInventory(msg.sender, BASE_ITEM_ID, _amount);
 
         emit UnstakeTower(
             msg.sender,
             _position,
-            utils._getItemAmountById(msg.sender, 1),
+            utils._getItemAmountById(msg.sender, BASE_ITEM_ID),
             utils._getTower(_towerId).stakedAmount
         );
     }

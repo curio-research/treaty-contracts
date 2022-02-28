@@ -50,6 +50,7 @@ export interface TowerGameInterface extends utils.Interface {
   functions: {
     "_modifyRewardByBlockLocation(uint256,(uint256,uint256))": FunctionFragment;
     "addTower((uint256,uint256),(uint256,uint256,uint256,uint256,address))": FunctionFragment;
+    "addTowerBulk((uint256,uint256)[],(uint256,uint256,uint256,uint256,address)[])": FunctionFragment;
     "claimReward((uint256,uint256))": FunctionFragment;
     "getTowerById((uint256,uint256))": FunctionFragment;
     "stake((uint256,uint256),uint256)": FunctionFragment;
@@ -63,6 +64,10 @@ export interface TowerGameInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "addTower",
     values: [PositionStruct, TowerStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "addTowerBulk",
+    values: [PositionStruct[], TowerStruct[]]
   ): string;
   encodeFunctionData(
     functionFragment: "claimReward",
@@ -86,6 +91,10 @@ export interface TowerGameInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "addTower", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "addTowerBulk",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "claimReward",
     data: BytesLike
@@ -184,6 +193,12 @@ export interface TowerGame extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    addTowerBulk(
+      _positions: PositionStruct[],
+      _towers: TowerStruct[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     claimReward(
       _position: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -219,6 +234,12 @@ export interface TowerGame extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  addTowerBulk(
+    _positions: PositionStruct[],
+    _towers: TowerStruct[],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   claimReward(
     _position: PositionStruct,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -251,6 +272,12 @@ export interface TowerGame extends BaseContract {
     addTower(
       _position: PositionStruct,
       _tower: TowerStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    addTowerBulk(
+      _positions: PositionStruct[],
+      _towers: TowerStruct[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -333,6 +360,12 @@ export interface TowerGame extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    addTowerBulk(
+      _positions: PositionStruct[],
+      _towers: TowerStruct[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     claimReward(
       _position: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -366,6 +399,12 @@ export interface TowerGame extends BaseContract {
     addTower(
       _position: PositionStruct,
       _tower: TowerStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    addTowerBulk(
+      _positions: PositionStruct[],
+      _towers: TowerStruct[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -247,6 +247,7 @@ contract Game {
 
         // loop through player inventory to check if player has all required ingredients to make a block
         GameTypes.ItemWithMetadata memory _item = utils._getItem(_itemId);
+
         for (uint256 i = 0; i < _item.craftItemIds.length; i++) {
             uint256 craftItemId = _item.craftItemIds[i];
             uint256 craftItemAmount = _item.craftItemAmounts[i];
