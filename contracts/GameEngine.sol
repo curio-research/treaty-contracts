@@ -141,6 +141,8 @@ contract Game {
         if (!utils._isValidMove(msg.sender, _pos))
             revert("engine/invalid-move");
 
+        emit Move(msg.sender, _pos);
+
         GameTypes.Position memory _prevPosition = utils
             ._getPlayer(msg.sender)
             .position;
@@ -148,8 +150,6 @@ contract Game {
 
         utils._setPlayerPosition(msg.sender, _pos);
         utils._setOccupierAtPosition(msg.sender, _pos);
-
-        emit Move(msg.sender, _pos);
     }
 
     function mineItem(

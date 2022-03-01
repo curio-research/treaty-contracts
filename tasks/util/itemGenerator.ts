@@ -26,6 +26,17 @@ const getRandomPosition = (): PositionStruct => {
 export const generateItems = (map: number[][][]): number[][][] => {
   const itemCounts = ITEM_RATIO.map((r) => r * Math.round(worldSize / 100));
 
+  // for (let i = 0; i < itemCounts.length; i++) {
+  //   for (let k = 0; k < itemCounts[i]; k++) {
+  //     let flattenedCoord;
+  //     do {
+  //       flattenedCoord = getRandomFlattenedCoord();
+  //     } while (map[flattenedCoord].length > 0);
+
+  //     map[flattenedCoord].push(i);
+  //   }
+  // }
+
   for (let i = 0; i < itemCounts.length; i++) {
     for (let k = 0; k < itemCounts[i]; k++) {
       let pos, x, y;

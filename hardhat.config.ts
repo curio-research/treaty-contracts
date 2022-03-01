@@ -8,6 +8,7 @@ import "hardhat-contract-sizer";
 import "./tasks/port";
 import "./tasks/deploy";
 import "./tasks/map";
+import "./tasks/simulate";
 
 task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
   const accounts = await hre.ethers.getSigners();

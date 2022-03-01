@@ -37,7 +37,7 @@ task("deploy", "deploy contracts")
     const allGameArgs = generateAllGameArgs();
 
     const blocks = allGameArgs.gameDeployArgs[allGameArgs.gameDeployArgs.length - 2];
-    visualizeMap(blocks, true);
+    // visualizeMap(blocks, true);
 
     // initialize contracts
     const GameHelper = await deployProxy<Helper>("Helper", player1, hre, []);
@@ -74,8 +74,8 @@ task("deploy", "deploy contracts")
     }
 
     // initialize players
-    let player1Pos: position = { x: 1, y: 1 };
-    let player2Pos: position = { x: 5, y: 5 };
+    let player1Pos: position = { x: 5, y: 5 };
+    let player2Pos: position = { x: 1, y: 2 };
     // positions may be occupied by randomized blocks; remove block if that is the case
     if (await GameStorage._isOccupied(player1Pos)) {
       await GameStorage._mine(player1Pos);
