@@ -22,7 +22,16 @@ export const WORLD_WIDTH = (ROOM_LENGTH - 1) * ROOMS_PER_DIMENSION + 1; // due t
 export const WORLD_HEIGHT = (ROOM_LENGTH - 1) * ROOMS_PER_DIMENSION + 1;
 
 export const generateGameConstants = () => {
-  return [WORLD_WIDTH, WORLD_HEIGHT, ATTACK_RANGE, ATTACK_DAMAGE, ATTACK_WAITTIME, START_PLAYER_HEALTH, START_PLAYER_ENERGY];
+  return {
+    worldWidth: WORLD_WIDTH,
+    worldHeight: WORLD_HEIGHT,
+    startingAttackDamage: ATTACK_DAMAGE,
+    startingAttackRange: ATTACK_RANGE,
+    startingAttackWaitTime: 0,
+    startPlayerHealth: 100,
+    startPlayerEnergy: 100,
+    startingReach: 2,
+  };
 };
 
 // ------------------------------------------------
@@ -145,7 +154,7 @@ export const masterItems: Item[] = [
       mineable: false,
       mineItemIds: [],
       strength: 0,
-      craftable: true,
+      craftable: false,
       craftItemIds: [],
       craftItemAmounts: [],
       occupiable: false,
