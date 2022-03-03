@@ -3,6 +3,7 @@ import "@typechain/hardhat";
 import "@nomiclabs/hardhat-ethers";
 import "@nomiclabs/hardhat-waffle";
 import "hardhat-contract-sizer";
+require("dotenv").config();
 
 // tasks
 import "./tasks/port";
@@ -15,27 +16,31 @@ import "./tasks/poll";
 // yarn run hardhat size-contracts
 
 // Add this
-const { DEPLOYER_MNEMONIC, ADMIN_PUBLIC_ADDRESS } = process.env;
-
-const opKovan = {
-  url: process.env.KOVAN_RPC_URL,
-  accounts: {
-    mnemonic: DEPLOYER_MNEMONIC,
-  },
-  chainId: 69,
-};
+const { DEPLOYER_MNEMONIC, DEPLOYER_PK } = process.env;
 
 export default {
-  solidity: "0.8.4",
-  // defaultNetwork: "localhost",
+  solidity: {
+    version: "0.8.4",
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 1000,
+      },
+    },
+  },
 
   networks: {
-    ...(DEPLOYER_MNEMONIC ? { opKovan } : undefined),
-    localhost: {
-      url: "http://localhost:8545/",
-      accounts: {},
-      chainId: 31337,
+    optimismKovan: {
+      url: "https://opt-kovan.g.alchemy.com/v2/E_ebhkTnCKjELG-ojELYnsIWFvGSLso9",
+      accounts: [DEPLOYER_PK],
+      chainId: 69,
     },
+    arbitrumRinkeby: {
+      url: "",
+      accounts: [DEPLOYER_PK],
+      chainId: 421611,
+    },
+
     hardhat: {
       chainId: 1337,
       mining: {

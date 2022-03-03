@@ -41,12 +41,19 @@ task("deploy", "deploy contracts")
 
     // initialize contracts
     const GameHelper = await deployProxy<Helper>("Helper", player1, hre, []);
+    console.log("helper done");
     const Permissions = await deployProxy<Permissions>("Permissions", player1, hre, [player1.address]);
+    console.log("p done");
     const GameStorage = await deployProxy<GameStorage>("GameStorage", player1, hre, [Permissions.address]);
+    console.log("storage done");
     const GameContract = await deployProxy<Game>("Game", player1, hre, [...allGameArgs.gameDeployArgs, GameStorage.address, Permissions.address]);
+    console.log("game contract done");
     const TowerContract = await deployProxy<TowerGame>("TowerGame", player1, hre, [GameStorage.address, Permissions.address], { Helper: GameHelper.address });
+    console.log("tower contract done");
     const GettersContract = await deployProxy<Getters>("Getters", player1, hre, [GameContract.address, GameStorage.address]);
+    console.log("getters contract done");
     const EpochContract = await deployProxy<Epoch>("Epoch", player1, hre, [10]);
+    console.log("epoch contract done");
 
     const GET_MAP_INTERVAL = (await GettersContract.GET_MAP_INTERVAL()).toNumber();
 
