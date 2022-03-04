@@ -82,7 +82,7 @@ task("deploy", "deploy contracts")
       for (let y = 0; y < WORLD_HEIGHT; y += MAP_INTERVAL) {
         regionMap = blockMap.slice(x, x + MAP_INTERVAL).map((col) => col.slice(y, y + MAP_INTERVAL));
 
-        GameContract.setMapRegion({ x, y }, regionMap);
+        await GameContract.setMapRegion({ x, y }, regionMap);
       }
     }
 

@@ -51,7 +51,6 @@ contract Game {
 
     constructor(
         GameTypes.WorldConstants memory constants,
-        // uint256[][] memory _blocks,
         GameTypes.ItemWithMetadata[] memory _items,
         GameStorage _gameStorage,
         Permissions _permissions
@@ -60,23 +59,6 @@ contract Game {
         p = _permissions;
 
         utils._setConstants(constants);
-
-        // // Set map and blocks
-        // uint256 _positionCount = constants.worldWidth * constants.worldHeight;
-        // for (uint256 k = 0; k < _positionCount; k++) {
-        //     GameTypes.Position memory _position = utils._getPositionFromIndex(
-        //         k
-        //     );
-        //     utils._setBlocks(_position, _blocks[k]);
-
-        //     if (_blocks[k].length > 0) {
-        //         uint256 topBlockId = _blocks[k][_blocks[k].length - 1];
-        //         utils._setTopLevelStrength(
-        //             _position,
-        //             _items[topBlockId].strength
-        //         );
-        //     }
-        // }
 
         // Initialize items
         for (uint256 i = 0; i < _items.length; i++) {
@@ -90,9 +72,10 @@ contract Game {
      * @param _startPos Top-left coordinate of region to start set
      * @param _blocks 10x10 array of blocks for the region
      */
-    function setMapRegion(GameTypes.Position memory _startPos, uint256[][][] memory _blocks) 
-        public 
-    {
+    function setMapRegion(
+        GameTypes.Position memory _startPos,
+        uint256[][][] memory _blocks
+    ) public {
         for (uint256 _xAdd = 0; _xAdd < _blocks.length; _xAdd++) {
             for (uint256 _yAdd = 0; _yAdd < _blocks[0].length; _yAdd++) {
                 GameTypes.Position memory _pos = GameTypes.Position({
@@ -104,7 +87,9 @@ contract Game {
                 utils._setBlocks(_pos, _blocks[_xAdd][_yAdd]);
 
                 if (_blocks[_xAdd][_yAdd].length > 0) {
-                    uint256 _topBlockId = _blocks[_xAdd][_yAdd][_blocks[_xAdd][_yAdd].length - 1];
+                    uint256 _topBlockId = _blocks[_xAdd][_yAdd][
+                        _blocks[_xAdd][_yAdd].length - 1
+                    ];
                     utils._setTopLevelStrength(
                         _pos,
                         utils._getItem(_topBlockId).strength

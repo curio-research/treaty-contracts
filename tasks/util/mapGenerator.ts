@@ -58,8 +58,8 @@ const GenerateSingleRoom = (x: number, y: number, width: number, height: number,
     const shuffledLeft = _.shuffle(leftWalls);
     const shuffledTop = _.shuffle(topWalls);
 
-    coords = coords.concat(shuffledLeft.slice(0, 2));
-    coords = coords.concat(shuffledTop.slice(0, 2));
+    coords = coords.concat(shuffledLeft.slice(0, 1));
+    coords = coords.concat(shuffledTop.slice(0, 1));
 
     return coords;
   };
@@ -165,6 +165,7 @@ const generateTowerSpecs = (towerLocations: position[]): TowerWithLocation[] => 
 
 export const generateMap = (worldWidth: number, worldHeight: number, roomWidth: number): MasterGameSpecs => {
   const map = generateEmptyMap(worldWidth, worldHeight); // generate empty map
+
   const walls = generateWallCoords(worldWidth, worldHeight, roomWidth); // generate wall blocks
   const towers = generateTowerCoords(worldWidth, worldHeight, roomWidth); // generate tower locations
 
@@ -180,7 +181,7 @@ export const generateMap = (worldWidth: number, worldHeight: number, roomWidth: 
   });
 
   return {
-    map: map,
+    blocks: map,
     towers: towerSpecs,
   };
 };

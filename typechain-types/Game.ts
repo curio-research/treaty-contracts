@@ -275,7 +275,7 @@ export interface Game extends BaseContract {
     changeBlockStrength(
       _pos: PositionStruct,
       _amount: BigNumberish,
-      _dir: boolean,
+      _state: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -315,7 +315,7 @@ export interface Game extends BaseContract {
   changeBlockStrength(
     _pos: PositionStruct,
     _amount: BigNumberish,
-    _dir: boolean,
+    _state: boolean,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -355,7 +355,7 @@ export interface Game extends BaseContract {
     changeBlockStrength(
       _pos: PositionStruct,
       _amount: BigNumberish,
-      _dir: boolean,
+      _state: boolean,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -456,7 +456,7 @@ export interface Game extends BaseContract {
     changeBlockStrength(
       _pos: PositionStruct,
       _amount: BigNumberish,
-      _dir: boolean,
+      _state: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -497,7 +497,7 @@ export interface Game extends BaseContract {
     changeBlockStrength(
       _pos: PositionStruct,
       _amount: BigNumberish,
-      _dir: boolean,
+      _state: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
