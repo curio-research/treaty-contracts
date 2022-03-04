@@ -3,9 +3,10 @@ import { FactoryOptions, HardhatRuntimeEnvironment } from "hardhat/types";
 
 // deploy proxy used in hre
 export const deployProxy = async <C extends Contract>(contractName: string, signer: Signer, hre: HardhatRuntimeEnvironment, contractArgs: unknown[], libs?: FactoryOptions["libraries"]): Promise<C> => {
-  // add compile task to ensure artifacts are generated
+  // add retry ?
   const factory = await hre.ethers.getContractFactory(contractName, libs ? { libraries: libs } : signer);
   const contract = await factory.deploy(...contractArgs);
+  await contract.deployTransaction.wait();
   return contract as C;
 };
 

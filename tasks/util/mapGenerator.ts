@@ -85,7 +85,7 @@ export const generateEmptyMap = (worldWidth: number, worldHeight: number): numbe
   const map = [];
   let col;
   for (let i = 0; i < worldWidth; i++) {
-    col = []
+    col = [];
     for (let j = 0; j < worldHeight; j++) col.push([]);
     map.push(col);
   }
@@ -173,7 +173,6 @@ export const generateMap = (worldWidth: number, worldHeight: number, roomWidth: 
 
   // apply block coordinates to master map;
   walls.forEach((pos) => {
-
     map[pos.x][pos.y].push(7);
   });
 

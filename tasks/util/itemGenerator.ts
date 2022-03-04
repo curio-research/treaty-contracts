@@ -1,6 +1,10 @@
 import { PositionStruct } from "../../typechain-types/Game";
 import { ITEM_RATIO, masterItems, WORLD_HEIGHT, WORLD_WIDTH } from "./constants";
 
+// ------------------------------------------------
+// Generate all items with crafting recipes
+// ------------------------------------------------
+
 export const allGameItems = masterItems.map((item) => item.item);
 
 // ------------------------------------------------

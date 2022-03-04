@@ -9,7 +9,7 @@ import "./Permissions.sol";
 
 contract GameStorage {
     using SafeMath for uint256;
-    GameTypes.GameStorage public s;
+    GameTypes.GameStorage public s; // storage slot 1
     Permissions private p;
 
     // ------------------------------------------------------------
@@ -170,9 +170,9 @@ contract GameStorage {
 
     function _setTopLevelStrength(
         GameTypes.Position memory _pos,
-        uint256 _strength
+        uint256 _amount
     ) public hasPermission {
-        s.map[_pos.x][_pos.y].topLevelStrength = _strength;
+        s.map[_pos.x][_pos.y].topLevelStrength = _amount;
     }
 
     function _getCraftItemAmount(address _player, uint256 _craftItemId)
@@ -443,21 +443,6 @@ contract GameStorage {
         returns (uint256)
     {
         return s.map[_pos.x][_pos.y].blocks.length;
-    }
-
-    function _getStakePointsByUser(address _user)
-        public
-        view
-        returns (uint256)
-    {
-        return s.stakePoints[_user];
-    }
-
-    function _setPlayerStakedPoints(address _player, uint256 _amount)
-        public
-        hasPermission
-    {
-        s.stakePoints[_player] = _amount;
     }
 
     function _getCurrentEpoch() public view returns (uint256) {

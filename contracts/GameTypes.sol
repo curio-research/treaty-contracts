@@ -18,6 +18,7 @@ library GameTypes {
         uint256 startPlayerHealth;
         uint256 startPlayerEnergy;
         uint256 startingReach;
+        uint256 startingPlayerDefaultCurrencyAmount;
     }
 
     struct PlayerData {
@@ -80,7 +81,7 @@ library GameTypes {
         bool paused;
         mapping(uint256 => GameTypes.ItemWithMetadata) itemsWithMetadata;
         uint256 itemNonce;
-        // playersa
+        // players
         address[] allPlayers;
         mapping(address => GameTypes.PlayerData) players; // player data
         mapping(address => mapping(uint256 => uint256)) inventory; // player => itemId => inventory
@@ -88,6 +89,5 @@ library GameTypes {
         // tower
         Epoch epochController;
         mapping(string => Tower) towers; // towerId => Tower
-        mapping(address => uint256) stakePoints;
     }
 }

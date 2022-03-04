@@ -1,7 +1,6 @@
 import { decodeBulkGetAllItems, decodeItemWithMetadata } from "./../util/serde/getter";
 import { expect } from "chai";
 import { items } from "./util/constants";
-import { Getters } from "../typechain-types";
 import { World, initializeWorld, AllContracts } from "./util/testWorld";
 import { fixtureLoader } from "./util/helper";
 import { decodePlayerInventory } from "../util/serde/game";
@@ -13,7 +12,6 @@ import { decodePlayerInventory } from "../util/serde/game";
 describe("Getters", () => {
   let world: World;
   let c: AllContracts;
-  let Getters: Getters;
 
   const worldFixture = async () => {
     const world = await fixtureLoader(initializeWorld);
@@ -23,7 +21,6 @@ describe("Getters", () => {
   before(async () => {
     world = await fixtureLoader(worldFixture);
     c = world.contracts;
-    Getters = world.contracts.Getters;
 
     await c.Game.connect(world.user1).initializePlayer({ x: 1, y: 1 });
     await c.Game.connect(world.user2).initializePlayer({ x: 2, y: 1 });
@@ -34,7 +31,7 @@ describe("Getters", () => {
     expect(item1.craftItemIds).eqls(items[1].craftItemIds);
     expect(item1.craftItemAmounts).eqls(items[1].craftItemAmounts);
 
-    const allItems = decodeBulkGetAllItems(await Getters.bulkGetAllItems()); // bulk getter test
+    const allItems = decodeBulkGetAllItems(await c.Getters.bulkGetAllItems()); // bulk getter test
     expect(allItems.length).equals(items.length);
     expect(allItems[2].craftItemIds).to.eqls(items[2].craftItemIds); // sword
     expect(allItems[2].craftItemAmounts).to.eqls(items[2].craftItemAmounts);
@@ -64,7 +61,7 @@ describe("Getters", () => {
     const allPlayerAddresses = await c.GameStorage._getAllPlayerAddresses();
     expect(allPlayerAddresses.length).equals(2);
 
-    const allPlayerData = await Getters.bulkGetAllPlayerData();
+    const allPlayerData = await c.Getters.bulkGetAllPlayerData();
 
     expect(allPlayerData[0].position.x).equals(1); // verify player1 and player2 data
     expect(allPlayerData[0].position.y).equals(1);

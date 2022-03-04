@@ -1,5 +1,4 @@
 import { Item } from "../../util/types/getter";
-
 export const LOCALHOST_RPC_URL = "http://127.0.0.1:8545/";
 export const LOCALHOST_WS_RPC_URL = "ws://localhost:8545";
 
@@ -9,7 +8,7 @@ export const LOCALHOST_WS_RPC_URL = "ws://localhost:8545";
 
 // game specs - manual
 export const ROOM_LENGTH = 7;
-export const ROOMS_PER_DIMENSION = 20;
+export const ROOMS_PER_DIMENSION = 4;
 export const ATTACK_RANGE = 1;
 export const ATTACK_DAMAGE = 5;
 export const ATTACK_WAITTIME = 5;
@@ -31,6 +30,7 @@ export const generateGameConstants = () => {
     startPlayerHealth: 100,
     startPlayerEnergy: 100,
     startingReach: 2,
+    startingPlayerDefaultCurrencyAmount: 0,
   };
 };
 
@@ -128,7 +128,7 @@ export const masterItems: Item[] = [
       strength: 50,
       craftable: true,
       craftItemIds: [0, 1],
-      craftItemAmounts: [10, 1],
+      craftItemAmounts: [20, 10],
       occupiable: false,
       healthDamage: 0,
       energyDamage: 0,
@@ -142,7 +142,7 @@ export const masterItems: Item[] = [
       strength: 50,
       craftable: true,
       craftItemIds: [0, 1],
-      craftItemAmounts: [20, 3],
+      craftItemAmounts: [40, 20],
       occupiable: false,
       healthDamage: 0,
       energyDamage: 0,

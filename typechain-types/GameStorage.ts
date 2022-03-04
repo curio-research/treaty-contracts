@@ -145,9 +145,11 @@ export type WorldConstantsStruct = {
   startPlayerHealth: BigNumberish;
   startPlayerEnergy: BigNumberish;
   startingReach: BigNumberish;
+  startingPlayerDefaultCurrencyAmount: BigNumberish;
 };
 
 export type WorldConstantsStructOutput = [
+  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -165,6 +167,7 @@ export type WorldConstantsStructOutput = [
   startPlayerHealth: BigNumber;
   startPlayerEnergy: BigNumber;
   startingReach: BigNumber;
+  startingPlayerDefaultCurrencyAmount: BigNumber;
 };
 
 export interface GameStorageInterface extends utils.Interface {
@@ -183,7 +186,6 @@ export interface GameStorageInterface extends utils.Interface {
     "_getItemNonce()": FunctionFragment;
     "_getPlayer(address)": FunctionFragment;
     "_getPositionFromIndex(uint256)": FunctionFragment;
-    "_getStakePointsByUser(address)": FunctionFragment;
     "_getTileData((uint256,uint256))": FunctionFragment;
     "_getTopBlockAtPosition((uint256,uint256))": FunctionFragment;
     "_getTower(string)": FunctionFragment;
@@ -196,12 +198,11 @@ export interface GameStorageInterface extends utils.Interface {
     "_modifyItemInInventoryNonce(address,uint256,bool)": FunctionFragment;
     "_place((uint256,uint256),uint256)": FunctionFragment;
     "_setBlocks((uint256,uint256),uint256[])": FunctionFragment;
-    "_setConstants((uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))": FunctionFragment;
+    "_setConstants((uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))": FunctionFragment;
     "_setItem(uint256,(bool,bool,bool,uint256,uint256,uint256,uint256[],uint256[],uint256[]))": FunctionFragment;
     "_setOccupierAtPosition(address,(uint256,uint256))": FunctionFragment;
     "_setPlayer(address,(uint256,uint256))": FunctionFragment;
     "_setPlayerPosition(address,(uint256,uint256))": FunctionFragment;
-    "_setPlayerStakedPoints(address,uint256)": FunctionFragment;
     "_setTopLevelStrength((uint256,uint256),uint256)": FunctionFragment;
     "_setTower(string,(uint256,uint256,uint256,uint256,address))": FunctionFragment;
     "_transfer(address,uint256,uint256)": FunctionFragment;
@@ -262,10 +263,6 @@ export interface GameStorageInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "_getPositionFromIndex",
     values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getStakePointsByUser",
-    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "_getTileData",
@@ -331,10 +328,6 @@ export interface GameStorageInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "_setPlayerPosition",
     values: [string, PositionStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_setPlayerStakedPoints",
-    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "_setTopLevelStrength",
@@ -409,10 +402,6 @@ export interface GameStorageInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "_getStakePointsByUser",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "_getTileData",
     data: BytesLike
   ): Result;
@@ -460,10 +449,6 @@ export interface GameStorageInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "_setPlayer", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_setPlayerPosition",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_setPlayerStakedPoints",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -593,11 +578,6 @@ export interface GameStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[PositionStructOutput]>;
 
-    _getStakePointsByUser(
-      _user: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     _getTileData(
       _pos: PositionStruct,
       overrides?: CallOverrides
@@ -692,15 +672,9 @@ export interface GameStorage extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    _setPlayerStakedPoints(
-      _player: string,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     _setTopLevelStrength(
       _pos: PositionStruct,
-      _strength: BigNumberish,
+      _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -810,11 +784,6 @@ export interface GameStorage extends BaseContract {
     overrides?: CallOverrides
   ): Promise<PositionStructOutput>;
 
-  _getStakePointsByUser(
-    _user: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   _getTileData(
     _pos: PositionStruct,
     overrides?: CallOverrides
@@ -909,15 +878,9 @@ export interface GameStorage extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  _setPlayerStakedPoints(
-    _player: string,
-    _amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   _setTopLevelStrength(
     _pos: PositionStruct,
-    _strength: BigNumberish,
+    _amount: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1027,11 +990,6 @@ export interface GameStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PositionStructOutput>;
 
-    _getStakePointsByUser(
-      _user: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     _getTileData(
       _pos: PositionStruct,
       overrides?: CallOverrides
@@ -1121,15 +1079,9 @@ export interface GameStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    _setPlayerStakedPoints(
-      _player: string,
-      _amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     _setTopLevelStrength(
       _pos: PositionStruct,
-      _strength: BigNumberish,
+      _amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1249,11 +1201,6 @@ export interface GameStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getStakePointsByUser(
-      _user: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     _getTileData(
       _pos: PositionStruct,
       overrides?: CallOverrides
@@ -1343,15 +1290,9 @@ export interface GameStorage extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    _setPlayerStakedPoints(
-      _player: string,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     _setTopLevelStrength(
       _pos: PositionStruct,
-      _strength: BigNumberish,
+      _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1454,11 +1395,6 @@ export interface GameStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _getStakePointsByUser(
-      _user: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     _getTileData(
       _pos: PositionStruct,
       overrides?: CallOverrides
@@ -1553,15 +1489,9 @@ export interface GameStorage extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    _setPlayerStakedPoints(
-      _player: string,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     _setTopLevelStrength(
       _pos: PositionStruct,
-      _strength: BigNumberish,
+      _amount: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

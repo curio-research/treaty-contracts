@@ -9,3 +9,5 @@ typechain-types/factories
 #local dev help
 *.txt
 tasks/game.config.json
+
+.env
