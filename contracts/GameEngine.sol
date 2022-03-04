@@ -279,14 +279,14 @@ contract Game {
     /**
      * Changes the top level strength of a block
      * @param _pos position of block
-     * @param _amount amount of world default currency
-     * @param _dir if true, you want to increase the defense. if not, you want to decrease it.
+     * @param _amount amount of points (a resource) you want to apply to the block
+     * @param _state if true, you want to increase the defense. if not, you want to decrease it.
      */
 
     function changeBlockStrength(
         GameTypes.Position memory _pos,
         uint256 _amount,
-        bool _dir
+        bool _state
     ) public {
         uint256 _userAmount = utils._getItemAmountById(msg.sender, 0); // world default currency is 0
         require(_userAmount >= _amount, "engine/insufficient-inventory");
@@ -296,7 +296,7 @@ contract Game {
         GameTypes.Tile memory _tileData = utils._getTileData(_pos);
 
         // to reinforce the strength of a block
-        if (_dir == true) {
+        if (_state == true) {
             utils._setTopLevelStrength(
                 _pos,
                 _tileData.topLevelStrength + _amount

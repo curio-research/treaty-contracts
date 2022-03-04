@@ -10,7 +10,11 @@ export const LOCALHOST_WS_RPC_URL = "ws://localhost:8545";
 
 // game specs - manual
 export const ROOM_LENGTH = 7;
+<<<<<<< HEAD
 export const ROOMS_PER_DIMENSION = 20;
+=======
+export const ROOMS_PER_DIMENSION = 3;
+>>>>>>> ce6301b (Resolve all comments)
 export const ATTACK_RANGE = 1;
 export const ATTACK_DAMAGE = 5;
 export const ATTACK_WAITTIME = 5;

@@ -19,7 +19,9 @@ export const fetchLogs = async (startBlock: number, endBlock: number) => {
 
 task("poll", "fetch logs").setAction(async (args: HardhatArguments, hre: HardhatRuntimeEnvironment) => {
   console.log("Fetching logs ...");
-  await fetchLogs(1341292, 1341292);
+
+  // uncomment to run function. Enter a start block and end block to get the logs from
+  // await fetchLogs(_startBlock, _endBlock);
 });
 
 export const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));

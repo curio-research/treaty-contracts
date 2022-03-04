@@ -10,24 +10,6 @@ import "./GameTypes.sol";
 library Helper {
     using SafeMath for uint256;
 
-    // // the only contract that should call functions relating to getGameStorage() and s() is GameStorage
-    // // because we know that the gameStorage lives in slot1.
-    // function getGameStorage()
-    //     public
-    //     pure
-    //     returns (GameTypes.GameStorage storage ret)
-    // {
-    //     bytes32 position = bytes32(uint256(1));
-    //     assembly {
-    //         ret.slot := position
-    //     }
-    // }
-
-    // // alias for accessing storage vars
-    // function s() public pure returns (GameTypes.GameStorage storage ret) {
-    //     ret = getGameStorage();
-    // }
-
     // check if its within a distance (need to refactor into distance)
     // allow character to only move 1 block at a time in either x or y direction
     function _withinDistance(

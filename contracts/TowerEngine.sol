@@ -144,13 +144,6 @@ contract TowerGame {
         if (utils._getItemAmountById(msg.sender, BASE_ITEM_ID) < _amount)
             revert("tower/insufficient-points");
 
-        // return points to previous tower owner
-        // utils._increaseItemInInventory(
-        //     tower.owner,
-        //     BASE_ITEM_ID,
-        //     tower.stakedAmount
-        // );
-
         // check inventory points to see if there are sufficient points
         if (msg.sender != tower.owner) {
             tower.stakedTime = utils._getCurrentEpoch(); // only change epoch time if there's a new owner
