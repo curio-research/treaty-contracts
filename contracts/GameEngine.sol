@@ -45,8 +45,6 @@ contract Game {
         uint256 _resourceUsed
     );
 
-    // for some reason when we emit a string it doesn't do so properly
-
     // ------------------------------------------------------------
     // Constructor
     // ------------------------------------------------------------

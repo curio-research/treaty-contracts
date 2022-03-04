@@ -41,32 +41,38 @@ task("deploy", "deploy contracts")
 
     // initialize contracts
     const GameHelper = await deployProxy<Helper>("Helper", player1, hre, []);
-    console.log("helper done");
+    console.log("✦ GameHelper deployed");
     const Permissions = await deployProxy<Permissions>("Permissions", player1, hre, [player1.address]);
-    console.log("p done");
+    console.log("✦ Permissions deployed");
     const GameStorage = await deployProxy<GameStorage>("GameStorage", player1, hre, [Permissions.address]);
-    console.log("storage done");
+    console.log("✦ GameStorage deployed");
     const GameContract = await deployProxy<Game>("Game", player1, hre, [...allGameArgs.gameDeployArgs, GameStorage.address, Permissions.address]);
-    console.log("game contract done");
+    console.log("✦ GameContract deployed");
     const TowerContract = await deployProxy<TowerGame>("TowerGame", player1, hre, [GameStorage.address, Permissions.address], { Helper: GameHelper.address });
-    console.log("tower contract done");
+    console.log("✦ TowerContract deployed");
     const GettersContract = await deployProxy<Getters>("Getters", player1, hre, [GameContract.address, GameStorage.address]);
-    console.log("getters contract done");
+    console.log("✦ GettersContract deployed");
     const EpochContract = await deployProxy<Epoch>("Epoch", player1, hre, [10]);
-    console.log("epoch contract done");
+    console.log("✦ EpochContract deployed");
 
     const GET_MAP_INTERVAL = (await GettersContract.GET_MAP_INTERVAL()).toNumber();
 
     // add contract permissions
-    await Permissions.connect(player1).setPermission(GameContract.address, true);
-    await Permissions.connect(player1).setPermission(TowerContract.address, true);
+    const p1tx = await Permissions.connect(player1).setPermission(GameContract.address, true);
+    await p1tx.wait();
 
+    const p2tx = await Permissions.connect(player1).setPermission(TowerContract.address, true);
+    await p2tx.wait();
+
+    // make this into a table
     printDivider();
-    console.log("Game:      ", GameContract.address);
-    console.log("Getters:   ", GettersContract.address);
-    console.log("Epoch:     ", EpochContract.address);
-    console.log("Tower:     ", TowerContract.address);
-    console.log("Storage:   ", GameStorage.address);
+    console.log("Game         ", GameContract.address);
+    console.log("Permissions  ", Permissions.address);
+    console.log("Getters      ", GettersContract.address);
+    console.log("Epoch        ", EpochContract.address);
+    console.log("Tower        ", TowerContract.address);
+    console.log("Storage      ", GameStorage.address);
+    console.log("GameHelper   ", GameHelper.address);
     printDivider();
 
     // initialize blocks
@@ -83,21 +89,29 @@ task("deploy", "deploy contracts")
     // initialize players
     let player1Pos: position = { x: 5, y: 5 };
     let player2Pos: position = { x: 1, y: 2 };
-    // positions may be occupied by randomized blocks; remove block if that is the case
+
+    // need to act the nonce already been used case
     if (await GameStorage._isOccupied(player1Pos)) {
-      await GameStorage._mine(player1Pos);
+      const tx = await GameStorage._mine(player1Pos);
+      await tx.wait();
     }
+
     if (await GameStorage._isOccupied(player2Pos)) {
-      await GameStorage._mine(player2Pos);
-    }
-    await GameContract.connect(player1).initializePlayer(player1Pos); // initialize users
-    await GameContract.connect(player2).initializePlayer(player2Pos);
-
-    if (isDev) {
-      await GameStorage.connect(player1)._increaseItemInInventory(player1.address, 0, 100);
+      const tx = await GameStorage._mine(player2Pos);
+      tx.wait();
     }
 
-    await GameStorage.setEpochController(EpochContract.address); // set epoch controller
+    let tx = await GameContract.connect(player1).initializePlayer(player1Pos); // initialize users
+    await tx.wait();
+
+    tx = await GameContract.connect(player2).initializePlayer(player2Pos);
+    tx.wait();
+
+    tx = await GameStorage.connect(player1)._increaseItemInInventory(player1.address, 0, 100);
+    tx.wait();
+
+    tx = await GameStorage.setEpochController(EpochContract.address); // set epoch controller
+    await tx.wait();
 
     // bulk initialize towers
     const allTowerLocations: position[] = [];
@@ -107,7 +121,8 @@ task("deploy", "deploy contracts")
       allTowers.push(tower.tower);
     }
 
-    await TowerContract.addTowerBulk(allTowerLocations, allTowers);
+    const towerTx = await TowerContract.addTowerBulk(allTowerLocations, allTowers);
+    await towerTx.wait();
 
     // ---------------------------------
     // porting files to frontend
@@ -115,14 +130,16 @@ task("deploy", "deploy contracts")
 
     const currentFileDir = path.join(__dirname);
 
+    const networkRPCs = rpcUrlSelector(hre.network.name);
+
     const configFile = {
       GAME_ADDRESS: GameContract.address,
       TOWER_GAME_ADDRESS: TowerContract.address,
       GAME_STORAGE_CONTRACT: GameStorage.address,
       GETTERS_ADDRESS: GettersContract.address,
       EPOCH_ADDRESS: EpochContract.address,
-      RPC_URL: LOCALHOST_RPC_URL,
-      WS_RPC_URL: LOCALHOST_WS_RPC_URL,
+      RPC_URL: networkRPCs[0],
+      WS_RPC_URL: networkRPCs[1],
       GET_MAP_INTERVAL: GET_MAP_INTERVAL,
       BLOCK_ID_TO_NAME_MAP: generateBlockIdToNameMap(masterItems),
     };
@@ -133,3 +150,12 @@ task("deploy", "deploy contracts")
     if (noPort) return;
     await hre.run("port"); // default to porting files
   });
+
+const rpcUrlSelector = (networkName: string): string[] => {
+  if (networkName === "localhost") {
+    return [LOCALHOST_RPC_URL, LOCALHOST_WS_RPC_URL];
+  } else if (networkName === "optimismKovan") {
+    return [process.env.KOVAN_RPC_URL!, process.env.KOVAN_WS_RPC_URL!];
+  }
+  return [];
+};
