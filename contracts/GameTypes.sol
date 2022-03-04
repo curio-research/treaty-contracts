@@ -74,7 +74,7 @@ library GameTypes {
     struct GameStorage {
         // map info
         WorldConstants worldConstants;
-        GameTypes.Tile[100][100] map;
+        GameTypes.Tile[1000][1000] map;
         // game info
         address admin;
         bool paused;

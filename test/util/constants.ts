@@ -52,8 +52,9 @@ class ItemWithMetadata {
 }
 
 // test world specs
-const WORLD_WIDTH = 6;
-const WORLD_HEIGHT = 6;
+export const WORLD_WIDTH = 6;
+export const WORLD_HEIGHT = 6;
+export const MAP_INTERVAL = 10;
 const ATTACK_RANGE = 1;
 const ATTACK_DAMAGE = 5;
 const ATTACK_WAITTIME = 5;
@@ -176,11 +177,16 @@ export const items = masterItems.map((item) => item.item);
 export const generateBlocks = (tileTypes: string[][]) => {
   const worldSize = WORLD_WIDTH * WORLD_HEIGHT;
 
-  let blocks: number[][] = [];
-  let tileIdx;
-  for (let i = 0; i < worldSize; i++) {
-    tileIdx = i % 12 == 0 ? 1 : 0;
-    blocks.push(tileTypes[tileIdx].map((b) => blockNameToIdMap[b]));
+  let blocks: number[][][] = [];
+
+  let tileIdx, col;
+  for (let i = 0; i < WORLD_WIDTH; i++) {
+    col = [];
+    for (let j = 0; j < WORLD_HEIGHT; j++) {
+      tileIdx = (i % 2 == 0 && j == 0) ? 1 : 0;
+      col.push(tileTypes[tileIdx].map((b) => blockNameToIdMap[b]));
+    }
+    blocks.push(col);
   }
 
   return blocks;
@@ -189,4 +195,4 @@ export const generateBlocks = (tileTypes: string[][]) => {
 export const blocks = generateBlocks(tileTypesSimple);
 
 // fix dis
-export const GAME_DEPLOY_TEST_ARGS = [GAME_CONSTANTS, blocks, items];
+export const GAME_DEPLOY_TEST_ARGS = [GAME_CONSTANTS, items];

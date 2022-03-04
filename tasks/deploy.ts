@@ -6,13 +6,14 @@ import * as fsPromise from "fs/promises";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { deployProxy, printDivider } from "./util/deployHelper";
-import { LOCALHOST_RPC_URL, LOCALHOST_WS_RPC_URL, masterItems } from "./util/constants";
+import { LOCALHOST_RPC_URL, LOCALHOST_WS_RPC_URL, MAP_INTERVAL, masterItems, ROOM_LENGTH, WORLD_HEIGHT, WORLD_WIDTH } from "./util/constants";
 import { generateAllGameArgs } from "./util/allArgsGenerator";
 import { Getters, Game, GameStorage, Helper } from "../typechain-types";
 import { TowerGame } from "./../typechain-types/TowerGame";
 import { Permissions } from "../typechain-types";
-import { visualizeMap } from "./util/mapGenerator";
+import { generateMap, visualizeMap } from "./util/mapGenerator";
 import { position } from "../util/types/common";
+import { generateItems } from "./util/itemGenerator";
 
 // ---------------------------------
 // deploy script
@@ -34,8 +35,8 @@ task("deploy", "deploy contracts")
 
     const allGameArgs = generateAllGameArgs();
     
-    const blocks = allGameArgs.gameDeployArgs[allGameArgs.gameDeployArgs.length - 2];
-    visualizeMap(blocks, true);
+    const blocks = allGameArgs.blockMap;
+    // visualizeMap(blocks, true);
 
     // initialize contracts
     const GameHelper = await deployProxy<Helper>("Helper", player1, hre, []);
@@ -59,6 +60,19 @@ task("deploy", "deploy contracts")
     console.log("Tower:     ", TowerContract.address);
     console.log("Storage:   ", GameStorage.address);
     printDivider();
+
+    // initialize blocks
+    const blockMap = allGameArgs.blockMap;
+    let regionMap: number[][][];
+    for (let x = 0; x < WORLD_WIDTH; x += MAP_INTERVAL) {
+      for (let y = 0; y < WORLD_HEIGHT; y += MAP_INTERVAL) {
+        regionMap = blockMap.slice(x, x + MAP_INTERVAL).map(
+          (col) => col.slice(y, y + MAP_INTERVAL)
+        );
+
+        GameContract.setMapRegion({ x, y }, regionMap);
+      }
+    }
 
     // initialize players
     let player1Pos: position = { x: 1, y: 1 };

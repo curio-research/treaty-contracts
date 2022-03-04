@@ -6,7 +6,7 @@ import { deployContract } from "./helper";
 import { ethers } from "hardhat";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { Game, Getters, Helper, Permissions } from "../../typechain-types";
-import { GAME_DEPLOY_TEST_ARGS, REVERT_MESSAGES } from "./constants";
+import { blocks, GAME_DEPLOY_TEST_ARGS, MAP_INTERVAL, REVERT_MESSAGES, WORLD_HEIGHT, WORLD_WIDTH } from "./constants";
 import { position } from "../../util/types/common";
 
 export interface AllContracts {
@@ -37,6 +37,18 @@ export const initializeWorld = async (): Promise<World> => {
   const TowerContract = await deployContract<TowerGame>("TowerGame", [GameStorage.address, Permissions.address], { Helper: GameHelper.address });
   const GettersContract = await deployContract<Getters>("Getters", [GameContract.address, GameStorage.address]);
   const EpochContract = await deployContract<Epoch>("Epoch", [EPOCH_INTERVAL]);
+
+  // initialize blocks
+  let regionMap: number[][][];
+    for (let x = 0; x < WORLD_WIDTH; x += MAP_INTERVAL) {
+      for (let y = 0; y < WORLD_HEIGHT; y += MAP_INTERVAL) {
+        regionMap = blocks.slice(x, x + MAP_INTERVAL).map(
+          (col) => col.slice(y, y + MAP_INTERVAL)
+        );
+
+        GameContract.setMapRegion({ x, y }, regionMap);
+      }
+    }
 
   // add contract permissions
   await Permissions.connect(signer1).setPermission(GameContract.address, true);
