@@ -50,7 +50,7 @@ contract Game {
 
     constructor(
         GameTypes.WorldConstants memory constants,
-        uint256[][] memory _blocks,
+        // uint256[][] memory _blocks,
         GameTypes.ItemWithMetadata[] memory _items,
         GameStorage _gameStorage,
         Permissions _permissions
@@ -89,23 +89,21 @@ contract Game {
      * @param _startPos Top-left coordinate of region to start set
      * @param _blocks 10x10 array of blocks for the region
      */
-    function setMapRegion(GameTypes.Position memory _startPos, uint256[][] memory _blocks) 
+    function setMapRegion(GameTypes.Position memory _startPos, uint256[][][] memory _blocks) 
         public 
     {
-        for (uint256 _xAdd = 0; _xAdd < SET_MAP_INTERVAL; _xAdd++) {
-            for (uint256 _yAdd = 0; _yAdd < SET_MAP_INTERVAL; _yAdd++) {
-                uint256 _x = _startPos.x + _xAdd;
-                uint256 _y = _startPos.y + _yAdd;
+        for (uint256 _xAdd = 0; _xAdd < _blocks.length; _xAdd++) {
+            for (uint256 _yAdd = 0; _yAdd < _blocks[0].length; _yAdd++) {
                 GameTypes.Position memory _pos = GameTypes.Position({
-                    x: _x,
-                    y: _y
+                    x: _startPos.x + _xAdd,
+                    y: _startPos.y + _yAdd
                 });
-                uint256 _idx = utils._getIndexFromPosition(_pos);
+                // uint256 _idx = utils._getIndexFromPosition(_pos);
 
-                utils._setBlocks(_pos, _blocks[_idx]);
+                utils._setBlocks(_pos, _blocks[_xAdd][_yAdd]);
 
-                if (_blocks[_idx].length > 0) {
-                    uint256 _topBlockId = _blocks[_idx][_blocks[_idx].length - 1];
+                if (_blocks[_xAdd][_yAdd].length > 0) {
+                    uint256 _topBlockId = _blocks[_xAdd][_yAdd][_blocks[_xAdd][_yAdd].length - 1];
                     utils._setTopLevelStrength(
                         _pos,
                         utils._getItem(_topBlockId).strength

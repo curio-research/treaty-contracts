@@ -122,7 +122,9 @@ contract GameStorage {
         view
         returns (uint256)
     {
-        (bool _aValid, uint256 _a) = SafeMath.tryMul(_pos.x, s.worldHeight);
+        GameTypes.WorldConstants memory constants = _getWorldConstants();
+
+        (bool _aValid, uint256 _a) = SafeMath.tryMul(_pos.x, constants.worldHeight);
         (bool _bValid, uint256 _b) = SafeMath.tryAdd(_a, _pos.y);
 
         if (!_aValid || !_bValid) revert("SafeMath/invalid-math");

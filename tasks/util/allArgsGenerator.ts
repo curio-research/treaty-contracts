@@ -21,5 +21,5 @@ export const generateAllGameArgs = (): allGameArgs => {
 interface allGameArgs {
   gameDeployArgs: any[];
   allTowerArgs: TowerWithLocation[];
-  blockMap: number[][];
+  blockMap: number[][][];
 }

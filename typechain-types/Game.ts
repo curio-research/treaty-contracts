@@ -98,7 +98,7 @@ export interface GameInterface extends utils.Interface {
     "mineItem((uint256,uint256),uint256,address)": FunctionFragment;
     "move((uint256,uint256))": FunctionFragment;
     "place((uint256,uint256),uint256)": FunctionFragment;
-    "setMapRegion((uint256,uint256),uint256[][])": FunctionFragment;
+    "setMapRegion((uint256,uint256),uint256[][][])": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -128,7 +128,7 @@ export interface GameInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "setMapRegion",
-    values: [PositionStruct, BigNumberish[][]]
+    values: [PositionStruct, BigNumberish[][][]]
   ): string;
 
   decodeFunctionResult(functionFragment: "attackItem", data: BytesLike): Result;
@@ -299,7 +299,7 @@ export interface Game extends BaseContract {
 
     setMapRegion(
       _startPos: PositionStruct,
-      _blocks: BigNumberish[][],
+      _blocks: BigNumberish[][][],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
@@ -346,7 +346,7 @@ export interface Game extends BaseContract {
 
   setMapRegion(
     _startPos: PositionStruct,
-    _blocks: BigNumberish[][],
+    _blocks: BigNumberish[][][],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -384,7 +384,7 @@ export interface Game extends BaseContract {
 
     setMapRegion(
       _startPos: PositionStruct,
-      _blocks: BigNumberish[][],
+      _blocks: BigNumberish[][][],
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -488,7 +488,7 @@ export interface Game extends BaseContract {
 
     setMapRegion(
       _startPos: PositionStruct,
-      _blocks: BigNumberish[][],
+      _blocks: BigNumberish[][][],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
@@ -536,7 +536,7 @@ export interface Game extends BaseContract {
 
     setMapRegion(
       _startPos: PositionStruct,
-      _blocks: BigNumberish[][],
+      _blocks: BigNumberish[][][],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

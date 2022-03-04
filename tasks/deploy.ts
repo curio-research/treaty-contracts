@@ -35,7 +35,7 @@ task("deploy", "deploy contracts")
 
     const allGameArgs = generateAllGameArgs();
     
-    // const blocks = allGameArgs.gameDeployArgs[allGameArgs.gameDeployArgs.length - 2];
+    const blocks = allGameArgs.blockMap;
     // visualizeMap(blocks, true);
 
     // initialize contracts
@@ -63,9 +63,14 @@ task("deploy", "deploy contracts")
 
     // initialize blocks
     const blockMap = allGameArgs.blockMap;
+    let regionMap: number[][][];
     for (let x = 0; x < WORLD_WIDTH; x += MAP_INTERVAL) {
       for (let y = 0; y < WORLD_HEIGHT; y += MAP_INTERVAL) {
-        GameContract.setMapRegion({ x, y }, blockMap); // FIXME: change blockMap to coordinate based! otherwise nightmare
+        regionMap = blockMap.slice(x, x + MAP_INTERVAL).map(
+          (col) => col.slice(y, y + MAP_INTERVAL)
+        );
+
+        GameContract.setMapRegion({ x, y }, regionMap);
       }
     }
 
