@@ -100,7 +100,6 @@ export interface GameInterface extends utils.Interface {
     "mine((uint256,uint256))": FunctionFragment;
     "move((uint256,uint256))": FunctionFragment;
     "place((uint256,uint256),uint256)": FunctionFragment;
-    "setMapRegion((uint256,uint256),uint256[][][])": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -124,10 +123,6 @@ export interface GameInterface extends utils.Interface {
     functionFragment: "place",
     values: [PositionStruct, BigNumberish]
   ): string;
-  encodeFunctionData(
-    functionFragment: "setMapRegion",
-    values: [PositionStruct, BigNumberish[][][]]
-  ): string;
 
   decodeFunctionResult(
     functionFragment: "changeBlockStrength",
@@ -141,10 +136,6 @@ export interface GameInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "mine", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "move", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "place", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "setMapRegion",
-    data: BytesLike
-  ): Result;
 
   events: {
     "Attack(address,address)": EventFragment;
@@ -304,12 +295,6 @@ export interface Game extends BaseContract {
       _itemId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
-
-    setMapRegion(
-      _startPos: PositionStruct,
-      _blocks: BigNumberish[][][],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
   };
 
   changeBlockStrength(
@@ -345,12 +330,6 @@ export interface Game extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setMapRegion(
-    _startPos: PositionStruct,
-    _blocks: BigNumberish[][][],
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   callStatic: {
     changeBlockStrength(
       _pos: PositionStruct,
@@ -373,12 +352,6 @@ export interface Game extends BaseContract {
     place(
       _pos: PositionStruct,
       _itemId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setMapRegion(
-      _startPos: PositionStruct,
-      _blocks: BigNumberish[][][],
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -485,12 +458,6 @@ export interface Game extends BaseContract {
       _itemId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
-
-    setMapRegion(
-      _startPos: PositionStruct,
-      _blocks: BigNumberish[][][],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -524,12 +491,6 @@ export interface Game extends BaseContract {
     place(
       _pos: PositionStruct,
       _itemId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setMapRegion(
-      _startPos: PositionStruct,
-      _blocks: BigNumberish[][][],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

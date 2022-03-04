@@ -52,6 +52,35 @@ contract GameStorage {
         s.map[_position.x][_position.y].blocks = _blocks;
     }
 
+    /**
+     * Set map blocks in 10x10 regions due to gas limitation.
+     * @param _startPos Top-left coordinate of region to start set
+     * @param _blocks 10x10 array of blocks for the region
+     */
+    function setMapRegion(
+        GameTypes.Position memory _startPos,
+        uint256[][][] memory _blocks
+    ) public {
+        for (uint256 _xAdd = 0; _xAdd < _blocks.length; _xAdd++) {
+            for (uint256 _yAdd = 0; _yAdd < _blocks[0].length; _yAdd++) {
+                GameTypes.Position memory _pos = GameTypes.Position({
+                    x: _startPos.x + _xAdd,
+                    y: _startPos.y + _yAdd
+                });
+                // uint256 _idx = utils._getIndexFromPosition(_pos);
+
+                _setBlocks(_pos, _blocks[_xAdd][_yAdd]);
+
+                if (_blocks[_xAdd][_yAdd].length > 0) {
+                    uint256 _topBlockId = _blocks[_xAdd][_yAdd][
+                        _blocks[_xAdd][_yAdd].length - 1
+                    ];
+                    _setTopLevelStrength(_pos, _getItem(_topBlockId).strength);
+                }
+            }
+        }
+    }
+
     function _setItem(uint256 _i, GameTypes.ItemWithMetadata memory _item)
         public
         hasPermission
@@ -124,7 +153,10 @@ contract GameStorage {
     {
         GameTypes.WorldConstants memory constants = _getWorldConstants();
 
-        (bool _aValid, uint256 _a) = SafeMath.tryMul(_pos.x, constants.worldHeight);
+        (bool _aValid, uint256 _a) = SafeMath.tryMul(
+            _pos.x,
+            constants.worldHeight
+        );
         (bool _bValid, uint256 _b) = SafeMath.tryAdd(_a, _pos.y);
 
         if (!_aValid || !_bValid) revert("SafeMath/invalid-math");
