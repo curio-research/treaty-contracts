@@ -90,18 +90,20 @@ task("deploy", "deploy contracts")
     let player1Pos: position = { x: 5, y: 5 };
     let player2Pos: position = { x: 1, y: 2 };
 
+    let tx;
+
     // need to act the nonce already been used case
     if (await GameStorage._isOccupied(player1Pos)) {
-      const tx = await GameStorage._mine(player1Pos);
+      tx = await GameStorage._mine(player1Pos);
       await tx.wait();
     }
 
     if (await GameStorage._isOccupied(player2Pos)) {
-      const tx = await GameStorage._mine(player2Pos);
+      tx = await GameStorage._mine(player2Pos);
       tx.wait();
     }
 
-    let tx = await GameContract.connect(player1).initializePlayer(player1Pos); // initialize users
+    tx = await GameContract.connect(player1).initializePlayer(player1Pos); // initialize users
     await tx.wait();
 
     tx = await GameContract.connect(player2).initializePlayer(player2Pos);

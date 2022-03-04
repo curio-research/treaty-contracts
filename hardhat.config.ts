@@ -16,7 +16,7 @@ import "./tasks/poll";
 // yarn run hardhat size-contracts
 
 // Add this
-const { DEPLOYER_MNEMONIC, DEPLOYER_PK, KOVAN_RPC_URL, PLAYER_2_PK } = process.env;
+const { USER1_PK, USER2_PK, KOVAN_RPC_URL } = process.env;
 
 export default {
   solidity: {
@@ -32,15 +32,9 @@ export default {
   networks: {
     optimismKovan: {
       url: KOVAN_RPC_URL,
-      accounts: [DEPLOYER_PK, PLAYER_2_PK],
+      accounts: [USER1_PK, USER2_PK],
       chainId: 69,
     },
-    arbitrumRinkeby: {
-      url: "",
-      accounts: [DEPLOYER_PK, PLAYER_2_PK],
-      chainId: 421611,
-    },
-
     hardhat: {
       chainId: 1337,
       mining: {
