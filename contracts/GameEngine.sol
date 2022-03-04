@@ -216,6 +216,12 @@ contract Game {
             )
         ) revert("engine/invalid-distance");
 
+        uint256 blockToMine = utils._getTopBlockAtPosition(_pos);
+        GameTypes.ItemWithMetadata memory _itemWithMetadata = utils._getItem(
+            blockToMine
+        );
+        if (!_itemWithMetadata.mineable) revert("engine/not-mineable");
+
         uint256 _zIdx = _blockCount - 1;
 
         if (
