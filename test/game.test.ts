@@ -34,7 +34,7 @@ describe("Game", () => {
 
   it("Verify map", async () => {
     const mapChunk0 = await c.Getters._getMap({ x: 0, y: 0 });
-    expect(blocks[0]).eqls(decodeTileWithMetadata(mapChunk0[0]).blocks);
+    expect(blocks[0][0]).eqls(decodeTileWithMetadata(mapChunk0[0]).blocks);
   });
 
   it("Move", async () => {

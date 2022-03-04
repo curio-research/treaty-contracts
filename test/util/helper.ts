@@ -1,8 +1,6 @@
 import { Contract } from "ethers";
 import { ethers, waffle } from "hardhat";
 import { FactoryOptions } from "hardhat/types";
-import { Epoch, Game, Getters } from "../../typechain-types";
-import { GAME_DEPLOY_TEST_ARGS } from "./constants";
 
 export const fixtureLoader = waffle.createFixtureLoader();
 
