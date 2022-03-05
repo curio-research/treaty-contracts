@@ -134,6 +134,11 @@ contract TowerGame {
         string memory _towerId = Helper._encodePos(_position);
         GameTypes.Tower memory tower = utils._getTower(_towerId);
 
+        // if the user doesn't own the tower, they need to stake more points
+        if (tower.owner != msg.sender) {
+            require(_amount > tower.stakedAmount, "Insufficient points");
+        }
+
         if (msg.sender != tower.owner) {
             require(
                 utils._withinDistance(_position, playerData.position, 1),
@@ -141,18 +146,24 @@ contract TowerGame {
             );
         }
 
+        // check inventory points to see if there are sufficient points
         if (utils._getItemAmountById(msg.sender, BASE_ITEM_ID) < _amount)
             revert("tower/insufficient-points");
 
-        // check inventory points to see if there are sufficient points
+        // if it's not the owner (which means it's an overtake), set the points
+        if (tower.owner != msg.sender) {
+            tower.stakedAmount = _amount;
+        } else {
+            // if not, reinforce points
+            tower.stakedAmount += _amount;
+        }
+
         if (msg.sender != tower.owner) {
             tower.stakedTime = utils._getCurrentEpoch(); // only change epoch time if there's a new owner
             tower.owner = msg.sender; // set new owner if it's not the original owner
         }
 
-        tower.stakedAmount += _amount;
         utils._setTower(_towerId, tower);
-
         utils._decreaseItemInInventory(msg.sender, BASE_ITEM_ID, _amount); // deduct item 1 count from staking user
 
         emit StakeTower(
