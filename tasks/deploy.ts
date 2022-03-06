@@ -7,14 +7,13 @@ import * as fsPromise from "fs/promises";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { deployProxy, printDivider } from "./util/deployHelper";
-import { LOCALHOST_RPC_URL, LOCALHOST_WS_RPC_URL, MAP_INTERVAL, masterItems, ROOM_LENGTH, WORLD_HEIGHT, WORLD_WIDTH } from "./util/constants";
+import { LOCALHOST_RPC_URL, LOCALHOST_WS_RPC_URL, MAP_INTERVAL, masterItems, WORLD_HEIGHT, WORLD_WIDTH } from "./util/constants";
 import { generateAllGameArgs } from "./util/allArgsGenerator";
 import { Getters, Game, GameStorage, Helper } from "../typechain-types";
 import { TowerGame } from "./../typechain-types/TowerGame";
 import { Permissions } from "../typechain-types";
-import { generateMap, visualizeMap } from "./util/mapGenerator";
 import { position } from "../util/types/common";
-import { generateItems } from "./util/itemGenerator";
+import { visualizeMap } from "./util/mapGenerator";
 
 // ---------------------------------
 // deploy script
@@ -36,8 +35,9 @@ task("deploy", "deploy contracts")
 
     const allGameArgs = generateAllGameArgs();
 
-    const blocks = allGameArgs.gameDeployArgs[allGameArgs.gameDeployArgs.length - 2];
-    // visualizeMap(blocks, true);
+    const blocks = allGameArgs.blockMap;
+    visualizeMap(blocks, true);
+    throw "sup";
 
     // initialize contracts
     const GameHelper = await deployProxy<Helper>("Helper", player1, hre, []);
