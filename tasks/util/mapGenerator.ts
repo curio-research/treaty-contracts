@@ -225,6 +225,7 @@ export const visualizeMap = (blocks: number[][], exportToFile?: boolean): void =
       if (blocks[i * WORLD_WIDTH + j].length > 0) {
         block = blocks[i * WORLD_WIDTH + j][0] + "";
         if (block.length == 1) block = " " + block;
+        if (block.length > 2) throw "Unsupported index of item";
       } else {
         block = "  ";
       }
