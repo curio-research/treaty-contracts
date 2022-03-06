@@ -13,8 +13,8 @@ enum Direction {
   WEST
 }
 
-const REMOVAL_COUNT = 6;
-const GROWTH_COUNT = 3;
+const REMOVAL_COUNT = 4;
+const GROWTH_COUNT = 2;
 
 const equals = (a: any[], b: any[]) => a.length === b.length && a.every((v, i) => v === b[i]);
 
@@ -63,22 +63,26 @@ export const generatePrimsMap = (
     pos = growableTiles[idx];
     x = pos.x;
     y = pos.y;
+    if (!equals(map[x][y], [wallIdx])) { // must only remove walls
+      growableTiles.splice(idx, 1);
+      continue;
+    }
     map[x][y] = [];
     growableTiles.splice(idx, 1);
 
-    // connect another tile TODO
-    dirs = [Direction.EAST, Direction.WEST, Direction.NORTH, Direction.SOUTH];
+    // connect the tile to a cleared tile
+    dirs = [Direction.WEST, Direction.EAST, Direction.NORTH, Direction.SOUTH];
     let dirIdx: number;
     while (dirs.length > 0) {
       dirIdx = Math.floor(Math.random() * dirs.length);
       switch (dirs[dirIdx]) {
-        case Direction.EAST:
+        case Direction.WEST:
           if (x - 2 >= 0 && equals(map[x-2][y], [])) {
             map[x-1][y] = [];
             dirs = [];
           }
           break;
-        case Direction.WEST:
+        case Direction.EAST:
             if (x + 2 < width && equals(map[x+2][y], [])) {
               map[x+1][y] = [];
               dirs = [];
@@ -139,7 +143,6 @@ export const generatePrimsMap = (
         }
       }
     }
-    console.log("dead " + JSON.stringify(deadEnds));
 
     // remove dead ends
     deadEnds.forEach((pos) => map[pos.x][pos.y] = [wallIdx])
@@ -159,10 +162,10 @@ export const generatePrimsMap = (
       for (let h = 0; h < height; h++) {
         if (equals(map[w][h], [wallIdx])) {
           neighbors = 0;
-          for (let a = 0; a < 3; a++) {
-            for (let b = 0; b < 3; b++) {
-              neighborX = w - a;
-              neighborY = h - b;
+          for (let a = -1; a < 2; a++) {
+            for (let b = -1; b < 2; b++) {
+              neighborX = w + a;
+              neighborY = h + b;
               if (neighborX >= 0 && neighborX < width 
                   && neighborY >= 0 && neighborY < height) {
                 if (equals(map[neighborX][neighborY], [])) neighbors++;

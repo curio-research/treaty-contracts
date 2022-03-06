@@ -37,7 +37,6 @@ task("deploy", "deploy contracts")
 
     const blocks = allGameArgs.blockMap;
     visualizeMap(blocks, true);
-    throw "sup";
 
     // initialize contracts
     const GameHelper = await deployProxy<Helper>("Helper", player1, hre, []);
@@ -85,6 +84,7 @@ task("deploy", "deploy contracts")
         await GameStorage.setMapRegion({ x, y }, regionMap);
       }
     }
+    console.log("blocks initialized");
 
     // initialize players
     let player1Pos: position = { x: 5, y: 5 };
@@ -97,20 +97,25 @@ task("deploy", "deploy contracts")
       tx = await GameStorage._mine(player1Pos);
       await tx.wait();
     }
+    console.log("AA");
 
     if (await GameStorage._isOccupied(player2Pos)) {
       tx = await GameStorage._mine(player2Pos);
       tx.wait();
     }
+    console.log("BB");
 
     tx = await GameContract.connect(player1).initializePlayer(player1Pos); // initialize users
     await tx.wait();
+    console.log("CC");
 
     tx = await GameContract.connect(player2).initializePlayer(player2Pos);
     tx.wait();
+    console.log("DD");
 
     tx = await GameStorage.connect(player1)._increaseItemInInventory(player1.address, 0, 100);
     tx.wait();
+    console.log("players initialized");
 
     tx = await GameStorage.setEpochController(EpochContract.address); // set epoch controller
     await tx.wait();
@@ -125,6 +130,7 @@ task("deploy", "deploy contracts")
 
     const towerTx = await TowerContract.addTowerBulk(allTowerLocations, allTowers);
     await towerTx.wait();
+    console.log("towers initialized");
 
     // ---------------------------------
     // porting files to frontend

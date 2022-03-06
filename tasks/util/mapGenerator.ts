@@ -171,7 +171,7 @@ export const generateMap = (worldWidth: number, worldHeight: number, roomWidth: 
   if (usePrims) {
     let primsMapOutput = generatePrimsMap(worldWidth, worldHeight);
     map = primsMapOutput.map;
-    primsMapOutput.mapSnapshot.forEach((m) => visualizeMap(m, true, "yo/"));
+    // primsMapOutput.mapSnapshot.forEach((m) => visualizeMap(m, true, "maps/"));
   } else {
     map = generateEmptyMap(worldWidth, worldHeight); // generate empty map
     
@@ -185,7 +185,9 @@ export const generateMap = (worldWidth: number, worldHeight: number, roomWidth: 
   const towers = generateTowerCoords(worldWidth, worldHeight, roomWidth); // generate tower locations
   const towerSpecs = generateTowerSpecs(towers);
   towers.forEach((pos) => {
-    map[pos.x][pos.y].push(4);
+    if (map[pos.x][pos.y].length === 0 || map[pos.x][pos.y][0] !== 7) {
+      map[pos.x][pos.y] = [4];
+    }
   });
 
   return {

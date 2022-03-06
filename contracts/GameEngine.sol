@@ -69,15 +69,19 @@ contract Game {
 
     // initialize player
     function initializePlayer(GameTypes.Position memory _pos) public {
+        console.log("the trouble starts");
         if (utils._getPlayer(msg.sender).initialized)
             revert("engine/player-already-initialized");
 
         // check if target coordinate has block or another player
         if (utils._isOccupied(_pos)) revert("engine/location-occupied");
+        console.log("nothing reverted");
 
         utils._setPlayer(msg.sender, _pos);
+        console.log("player set");
 
         utils._setOccupierAtPosition(msg.sender, _pos);
+        console.log("occupier set");
         utils._increaseItemInInventory(
             msg.sender,
             1,
