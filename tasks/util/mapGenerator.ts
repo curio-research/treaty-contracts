@@ -185,8 +185,20 @@ export const generateMap = (worldWidth: number, worldHeight: number, roomWidth: 
   const towers = generateTowerCoords(worldWidth, worldHeight, roomWidth); // generate tower locations
   const towerSpecs = generateTowerSpecs(towers);
   towers.forEach((pos) => {
-    if (map[pos.x][pos.y].length === 0 || map[pos.x][pos.y][0] !== 7) {
-      map[pos.x][pos.y] = [4];
+    const x = pos.x;
+    const y = pos.y;
+    if (map[x][y].length === 0 || map[x][y][0] !== 7) {
+      // clear tower surroundings
+      for (let i = -1; i <= 1; i++) {
+        for (let j = -1; j <= 1; j++) {
+          if (x + i >= 0 && x + i < worldWidth && y + j >= 0 && y + j < worldHeight) {
+            if (map[x+i][y+j].length > 0) map[x+i][y+j] = [];
+          }
+        }
+      }
+
+      // set tower
+      map[x][y] = [4];
     }
   });
 

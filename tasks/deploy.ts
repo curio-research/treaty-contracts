@@ -78,6 +78,7 @@ task("deploy", "deploy contracts")
     printDivider();
 
     // initialize blocks
+    console.log("✦ initializing blocks");
     let regionMap: number[][][];
     for (let x = 0; x < WORLD_WIDTH; x += MAP_INTERVAL) {
       for (let y = 0; y < WORLD_HEIGHT; y += MAP_INTERVAL) {
@@ -86,40 +87,45 @@ task("deploy", "deploy contracts")
         await GameStorage.setMapRegion({ x, y }, regionMap);
       }
     }
-    console.log("✦ blocks initialized");
 
-    // initialize players only if we're on localhost
+    // randomly initialize players only if we're on localhost
     if (isDev) {
-      // initialize players
-      let player1Pos: position = { x: 5, y: 5 };
-      let player2Pos: position = { x: 1, y: 2 };
+      console.log("✦ initializing players");
+      let x: number;
+      let y: number;
+
+      let player1Pos: position;
+      do {
+        x = Math.floor(Math.random() * WORLD_WIDTH);
+        y = Math.floor(Math.random() * WORLD_HEIGHT);
+        player1Pos = { x, y };
+      } while (blocks[x][y].length > 0);
+
+      let player2Pos: position;
+      do {
+        x = Math.floor(Math.random() * WORLD_WIDTH);
+        y = Math.floor(Math.random() * WORLD_HEIGHT);
+        player2Pos = { x, y };
+      } while (blocks[x][y].length > 0);
 
       let tx;
 
-    // need to act the nonce already been used case
-    while (await GameStorage._isOccupied(player1Pos)) {
-      tx = await GameStorage._mine(player1Pos);
+      tx = await GameContract.connect(player1).initializePlayer(player1Pos); // initialize users
       await tx.wait();
 
-    while (await GameStorage._isOccupied(player2Pos)) {
-      tx = await GameStorage._mine(player2Pos);
+      tx = await GameContract.connect(player2).initializePlayer(player2Pos);
       await tx.wait();
+
+      tx = await GameStorage.connect(player1)._increaseItemInInventory(player1.address, 0, 100);
+      await tx.wait();
+      
+      console.log("✦ setting epoch controller");
+      tx = await GameStorage.setEpochController(EpochContract.address); // set epoch controller
+      await tx.wait(); 
     }
 
-    tx = await GameContract.connect(player1).initializePlayer(player1Pos); // initialize users
-    await tx.wait();
-
-    tx = await GameContract.connect(player2).initializePlayer(player2Pos);
-    tx.wait();
-
-    tx = await GameStorage.connect(player1)._increaseItemInInventory(player1.address, 0, 100);
-    tx.wait();
-    console.log("✦ players initialized");
-
-    tx = await GameStorage.setEpochController(EpochContract.address); // set epoch controller
-    await tx.wait();
-
     // bulk initialize towers
+    console.log("✦ initializing towers");
     const allTowerLocations: position[] = [];
     const allTowers: Tower[] = [];
     for (const tower of allGameArgs.allTowerArgs) {
@@ -128,8 +134,7 @@ task("deploy", "deploy contracts")
     }
 
     const towerTx = await TowerContract.addTowerBulk(allTowerLocations, allTowers);
-    await towerTx.wait();
-    console.log("✦ towers initialized");
+    await towerTx.wait();    
 
     // ---------------------------------
     // porting files to frontend
