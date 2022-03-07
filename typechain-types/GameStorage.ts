@@ -200,6 +200,7 @@ export interface GameStorageInterface extends utils.Interface {
     "_setBlocks((uint256,uint256),uint256[])": FunctionFragment;
     "_setConstants((uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))": FunctionFragment;
     "_setItem(uint256,(bool,bool,bool,uint256,uint256,uint256,uint256[],uint256[],uint256[]))": FunctionFragment;
+    "_setMapRegion((uint256,uint256),uint256[][][])": FunctionFragment;
     "_setOccupierAtPosition(address,(uint256,uint256))": FunctionFragment;
     "_setPlayer(address,(uint256,uint256))": FunctionFragment;
     "_setPlayerPosition(address,(uint256,uint256))": FunctionFragment;
@@ -209,7 +210,6 @@ export interface GameStorageInterface extends utils.Interface {
     "_withinDistance((uint256,uint256),(uint256,uint256),uint256)": FunctionFragment;
     "s()": FunctionFragment;
     "setEpochController(address)": FunctionFragment;
-    "setMapRegion((uint256,uint256),uint256[][][])": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -319,6 +319,10 @@ export interface GameStorageInterface extends utils.Interface {
     values: [BigNumberish, ItemWithMetadataStruct]
   ): string;
   encodeFunctionData(
+    functionFragment: "_setMapRegion",
+    values: [PositionStruct, BigNumberish[][][]]
+  ): string;
+  encodeFunctionData(
     functionFragment: "_setOccupierAtPosition",
     values: [string, PositionStruct]
   ): string;
@@ -350,10 +354,6 @@ export interface GameStorageInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "setEpochController",
     values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setMapRegion",
-    values: [PositionStruct, BigNumberish[][][]]
   ): string;
 
   decodeFunctionResult(
@@ -448,6 +448,10 @@ export interface GameStorageInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "_setItem", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "_setMapRegion",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "_setOccupierAtPosition",
     data: BytesLike
   ): Result;
@@ -469,10 +473,6 @@ export interface GameStorageInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "s", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setEpochController",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setMapRegion",
     data: BytesLike
   ): Result;
 
@@ -663,6 +663,12 @@ export interface GameStorage extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    _setMapRegion(
+      _startPos: PositionStruct,
+      _blocks: BigNumberish[][][],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     _setOccupierAtPosition(
       _player: string,
       _pos: PositionStruct,
@@ -721,12 +727,6 @@ export interface GameStorage extends BaseContract {
 
     setEpochController(
       _addr: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    setMapRegion(
-      _startPos: PositionStruct,
-      _blocks: BigNumberish[][][],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
@@ -875,6 +875,12 @@ export interface GameStorage extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  _setMapRegion(
+    _startPos: PositionStruct,
+    _blocks: BigNumberish[][][],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   _setOccupierAtPosition(
     _player: string,
     _pos: PositionStruct,
@@ -933,12 +939,6 @@ export interface GameStorage extends BaseContract {
 
   setEpochController(
     _addr: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setMapRegion(
-    _startPos: PositionStruct,
-    _blocks: BigNumberish[][][],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1082,6 +1082,12 @@ export interface GameStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    _setMapRegion(
+      _startPos: PositionStruct,
+      _blocks: BigNumberish[][][],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     _setOccupierAtPosition(
       _player: string,
       _pos: PositionStruct,
@@ -1139,12 +1145,6 @@ export interface GameStorage extends BaseContract {
     >;
 
     setEpochController(_addr: string, overrides?: CallOverrides): Promise<void>;
-
-    setMapRegion(
-      _startPos: PositionStruct,
-      _blocks: BigNumberish[][][],
-      overrides?: CallOverrides
-    ): Promise<void>;
   };
 
   filters: {
@@ -1299,6 +1299,12 @@ export interface GameStorage extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    _setMapRegion(
+      _startPos: PositionStruct,
+      _blocks: BigNumberish[][][],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     _setOccupierAtPosition(
       _player: string,
       _pos: PositionStruct,
@@ -1347,12 +1353,6 @@ export interface GameStorage extends BaseContract {
 
     setEpochController(
       _addr: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setMapRegion(
-      _startPos: PositionStruct,
-      _blocks: BigNumberish[][][],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
@@ -1504,6 +1504,12 @@ export interface GameStorage extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    _setMapRegion(
+      _startPos: PositionStruct,
+      _blocks: BigNumberish[][][],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     _setOccupierAtPosition(
       _player: string,
       _pos: PositionStruct,
@@ -1552,12 +1558,6 @@ export interface GameStorage extends BaseContract {
 
     setEpochController(
       _addr: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setMapRegion(
-      _startPos: PositionStruct,
-      _blocks: BigNumberish[][][],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

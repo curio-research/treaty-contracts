@@ -46,7 +46,7 @@ export const initializeWorld = async (): Promise<World> => {
           (col) => col.slice(y, y + MAP_INTERVAL)
         );
 
-        GameStorage.setMapRegion({ x, y }, regionMap);
+        GameStorage._setMapRegion({ x, y }, regionMap);
       }
     }
 

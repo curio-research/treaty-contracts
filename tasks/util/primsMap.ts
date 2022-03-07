@@ -18,6 +18,13 @@ const GROWTH_COUNT = 2;
 
 const equals = (a: any[], b: any[]) => a.length === b.length && a.every((v, i) => v === b[i]);
 
+/**
+ * Generate walls on the world map based on Prim's algorithm.
+ * @param width : world width;
+ * @param height : world height;
+ * @param wallIdx : index of wall in the items array
+ * @returns block map together with complete snapshots
+ */
 export const generatePrimsMap = (
   width: number,
   height: number,
