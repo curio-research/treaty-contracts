@@ -12,13 +12,11 @@ import { generateAllGameArgs } from "./util/allArgsGenerator";
 import { Getters, Game, GameStorage, Helper } from "../typechain-types";
 import { TowerGame } from "./../typechain-types/TowerGame";
 import { Permissions } from "../typechain-types";
-import { generateMap, visualizeMap } from "./util/mapGenerator";
 import { position } from "../util/types/common";
-import { generateItems } from "./util/itemGenerator";
 
 // ---------------------------------
 // deploy script
-// npx hardhat deploy --network localhost
+// npx hardhat deploy --network *NETWORK_NAME_HERE*
 // ---------------------------------
 
 task("deploy", "deploy contracts")
@@ -86,33 +84,39 @@ task("deploy", "deploy contracts")
       }
     }
 
-    // initialize players
-    let player1Pos: position = { x: 5, y: 5 };
-    let player2Pos: position = { x: 1, y: 2 };
+    // initialize players only if we're on localhost
+    if (isDev) {
+      // initialize players
+      let player1Pos: position = { x: 5, y: 5 };
+      let player2Pos: position = { x: 1, y: 2 };
 
-    let tx;
+      let tx;
 
-    // need to act the nonce already been used case
-    if (await GameStorage._isOccupied(player1Pos)) {
-      tx = await GameStorage._mine(player1Pos);
+      // need to act the nonce already been used case
+      if (await GameStorage._isOccupied(player1Pos)) {
+        tx = await GameStorage._mine(player1Pos);
+        await tx.wait();
+      }
+
+      if (await GameStorage._isOccupied(player2Pos)) {
+        tx = await GameStorage._mine(player2Pos);
+        tx.wait();
+      }
+
+      tx = await GameContract.connect(player1).initializePlayer(player1Pos); // initialize users
       await tx.wait();
-    }
 
-    if (await GameStorage._isOccupied(player2Pos)) {
-      tx = await GameStorage._mine(player2Pos);
+      tx = await GameContract.connect(player2).initializePlayer(player2Pos);
+      tx.wait();
+
+      tx = await GameStorage.connect(player1)._increaseItemInInventory(player1.address, 0, 100);
+      tx.wait();
+
+      tx = await GameStorage.connect(player1)._increaseItemInInventory(player2.address, 0, 100);
       tx.wait();
     }
 
-    tx = await GameContract.connect(player1).initializePlayer(player1Pos); // initialize users
-    await tx.wait();
-
-    tx = await GameContract.connect(player2).initializePlayer(player2Pos);
-    tx.wait();
-
-    tx = await GameStorage.connect(player1)._increaseItemInInventory(player1.address, 0, 100);
-    tx.wait();
-
-    tx = await GameStorage.setEpochController(EpochContract.address); // set epoch controller
+    let tx = await GameStorage.setEpochController(EpochContract.address); // set epoch controller
     await tx.wait();
 
     // bulk initialize towers
@@ -139,6 +143,7 @@ task("deploy", "deploy contracts")
       TOWER_GAME_ADDRESS: TowerContract.address,
       GAME_STORAGE_CONTRACT: GameStorage.address,
       GETTERS_ADDRESS: GettersContract.address,
+      NETWORK: hre.network.name,
       EPOCH_ADDRESS: EpochContract.address,
       RPC_URL: networkRPCs[0],
       WS_RPC_URL: networkRPCs[1],
