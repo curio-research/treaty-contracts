@@ -78,9 +78,11 @@ contract Game {
         utils._setPlayer(msg.sender, _pos);
 
         utils._setOccupierAtPosition(msg.sender, _pos);
+
+        // give users some starting currency
         utils._increaseItemInInventory(
             msg.sender,
-            1,
+            0,
             utils._getWorldConstants().startingPlayerDefaultCurrencyAmount
         ); //  give users some base currency points so they can start staking in towers
 

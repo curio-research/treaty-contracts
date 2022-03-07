@@ -17,7 +17,7 @@ import { visualizeMap } from "./util/mapGenerator";
 
 // ---------------------------------
 // deploy script
-// npx hardhat deploy --network localhost
+// npx hardhat deploy --network *NETWORK_NAME_HERE*
 // ---------------------------------
 
 task("deploy", "deploy contracts")
@@ -88,17 +88,18 @@ task("deploy", "deploy contracts")
     }
     console.log("✦ blocks initialized");
 
-    // initialize players
-    let player1Pos: position = { x: 5, y: 5 };
-    let player2Pos: position = { x: 1, y: 2 };
+    // initialize players only if we're on localhost
+    if (isDev) {
+      // initialize players
+      let player1Pos: position = { x: 5, y: 5 };
+      let player2Pos: position = { x: 1, y: 2 };
 
-    let tx;
+      let tx;
 
     // need to act the nonce already been used case
     while (await GameStorage._isOccupied(player1Pos)) {
       tx = await GameStorage._mine(player1Pos);
       await tx.wait();
-    }
 
     while (await GameStorage._isOccupied(player2Pos)) {
       tx = await GameStorage._mine(player2Pos);
@@ -143,6 +144,7 @@ task("deploy", "deploy contracts")
       TOWER_GAME_ADDRESS: TowerContract.address,
       GAME_STORAGE_CONTRACT: GameStorage.address,
       GETTERS_ADDRESS: GettersContract.address,
+      NETWORK: hre.network.name,
       EPOCH_ADDRESS: EpochContract.address,
       RPC_URL: networkRPCs[0],
       WS_RPC_URL: networkRPCs[1],

@@ -30,7 +30,7 @@ export const generateGameConstants = () => {
     startPlayerHealth: 100,
     startPlayerEnergy: 100,
     startingReach: 2,
-    startingPlayerDefaultCurrencyAmount: 0,
+    startingPlayerDefaultCurrencyAmount: 100,
   };
 };
 
