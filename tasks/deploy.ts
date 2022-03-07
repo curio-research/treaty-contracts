@@ -33,8 +33,6 @@ task("deploy", "deploy contracts")
     const allGameArgs = generateAllGameArgs();
 
     let blocks = allGameArgs.blockMap;
-    blocks[5][5] = [];
-    blocks[1][2] = [];
     visualizeMap(blocks, true);
     console.log("✦ map visualized in map.txt");
 
@@ -84,7 +82,7 @@ task("deploy", "deploy contracts")
       for (let y = 0; y < WORLD_HEIGHT; y += MAP_INTERVAL) {
         regionMap = blocks.slice(x, x + MAP_INTERVAL).map((col) => col.slice(y, y + MAP_INTERVAL));
 
-        await GameStorage.setMapRegion({ x, y }, regionMap);
+        await GameStorage._setMapRegion({ x, y }, regionMap);
       }
     }
 

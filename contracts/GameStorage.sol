@@ -53,14 +53,14 @@ contract GameStorage {
     }
 
     /**
-     * Set map blocks in 10x10 regions due to gas limitation.
+     * Set map blocks in NxN regions due to gas limitation.
      * @param _startPos Top-left coordinate of region to start set
-     * @param _blocks 10x10 array of blocks for the region
+     * @param _blocks NxN array of blocks for the region
      */
-    function setMapRegion(
+    function _setMapRegion(
         GameTypes.Position memory _startPos,
         uint256[][][] memory _blocks
-    ) public {
+    ) public hasPermission {
         for (uint256 _xAdd = 0; _xAdd < _blocks.length; _xAdd++) {
             for (uint256 _yAdd = 0; _yAdd < _blocks[0].length; _yAdd++) {
                 GameTypes.Position memory _pos = GameTypes.Position({
