@@ -8,7 +8,7 @@ import { generateGameConstants, WORLD_WIDTH, WORLD_HEIGHT, ROOM_LENGTH } from ".
 
 export const generateAllGameArgs = (): allGameArgs => {
   const gameConstants: WorldConstantsStruct = generateGameConstants();
-  const masterGameSpecs = generateMap(WORLD_WIDTH, WORLD_HEIGHT, ROOM_LENGTH);
+  const masterGameSpecs = generateMap(WORLD_WIDTH, WORLD_HEIGHT, ROOM_LENGTH, true);
   const blockMap = generateItems(masterGameSpecs.blocks);
 
   return {

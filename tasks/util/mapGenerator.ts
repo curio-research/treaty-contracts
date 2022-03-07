@@ -5,6 +5,9 @@ import _ from "lodash";
 import { TowerWithLocation } from "../../util/types/tower";
 import { WORLD_HEIGHT, WORLD_WIDTH } from "./constants";
 import fs from "fs";
+import { generatePrimsMap } from "./primsMap";
+
+let visualizeNonce = 0;
 
 // map helpers are used to generate a world with rooms, entrances, and a tower in the middle
 
@@ -163,21 +166,28 @@ const generateTowerSpecs = (towerLocations: position[]): TowerWithLocation[] => 
 // master map generation function
 // ---------------------------------
 
-export const generateMap = (worldWidth: number, worldHeight: number, roomWidth: number): MasterGameSpecs => {
-  const map = generateEmptyMap(worldWidth, worldHeight); // generate empty map
-
-  const walls = generateWallCoords(worldWidth, worldHeight, roomWidth); // generate wall blocks
+export const generateMap = (worldWidth: number, worldHeight: number, roomWidth: number, usePrims?: boolean): MasterGameSpecs => {
+  let map: number[][][];
+  if (usePrims) {
+    let primsMapOutput = generatePrimsMap(worldWidth, worldHeight);
+    map = primsMapOutput.map;
+    // primsMapOutput.mapSnapshot.forEach((m) => visualizeMap(m, true, "maps/"));
+  } else {
+    map = generateEmptyMap(worldWidth, worldHeight); // generate empty map
+    
+    const walls = generateWallCoords(worldWidth, worldHeight, roomWidth); // generate wall blocks
+    // apply block coordinates to master map;
+    walls.forEach((pos) => {
+      map[pos.x][pos.y].push(7);
+    });
+  }
+  
   const towers = generateTowerCoords(worldWidth, worldHeight, roomWidth); // generate tower locations
-
   const towerSpecs = generateTowerSpecs(towers);
-
-  // apply block coordinates to master map;
-  walls.forEach((pos) => {
-    map[pos.x][pos.y].push(7);
-  });
-
   towers.forEach((pos) => {
-    map[pos.x][pos.y].push(4);
+    if (map[pos.x][pos.y].length === 0 || map[pos.x][pos.y][0] !== 7) {
+      map[pos.x][pos.y] = [4];
+    }
   });
 
   return {
@@ -217,14 +227,15 @@ const removeDupPosFromArr = (arr: position[]): position[] => {
  * @param blocks A list of positions with their list of blocks
  * @param exportToFile Whether to export output to file or to log
  */
-export const visualizeMap = (blocks: number[][], exportToFile?: boolean): void => {
+export const visualizeMap = (blocks: number[][][], exportToFile?: boolean, dir?: string): void => {
   let visualMap = "";
   for (let i = 0; i < WORLD_WIDTH; i++) {
     for (let j = 0; j < WORLD_HEIGHT; j++) {
       let block;
-      if (blocks[i * WORLD_WIDTH + j].length > 0) {
-        block = blocks[i * WORLD_WIDTH + j][0] + "";
+      if (blocks[i][j].length > 0) {
+        block = blocks[i][j][0] + "";
         if (block.length == 1) block = " " + block;
+        if (block.length > 2) throw "Unsupported index of item";
       } else {
         block = "  ";
       }
@@ -235,7 +246,8 @@ export const visualizeMap = (blocks: number[][], exportToFile?: boolean): void =
   }
 
   if (exportToFile) {
-    fs.writeFileSync("map.txt", visualMap);
+    fs.writeFileSync((dir ?? "") + "map" + visualizeNonce + ".txt", visualMap);
+    visualizeNonce++;
   } else {
     console.log(visualMap);
   }

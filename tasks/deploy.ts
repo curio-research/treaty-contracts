@@ -7,12 +7,13 @@ import * as fsPromise from "fs/promises";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { deployProxy, printDivider } from "./util/deployHelper";
-import { LOCALHOST_RPC_URL, LOCALHOST_WS_RPC_URL, MAP_INTERVAL, masterItems, ROOM_LENGTH, WORLD_HEIGHT, WORLD_WIDTH } from "./util/constants";
+import { LOCALHOST_RPC_URL, LOCALHOST_WS_RPC_URL, MAP_INTERVAL, masterItems, WORLD_HEIGHT, WORLD_WIDTH } from "./util/constants";
 import { generateAllGameArgs } from "./util/allArgsGenerator";
 import { Getters, Game, GameStorage, Helper } from "../typechain-types";
 import { TowerGame } from "./../typechain-types/TowerGame";
 import { Permissions } from "../typechain-types";
 import { position } from "../util/types/common";
+import { visualizeMap } from "./util/mapGenerator";
 
 // ---------------------------------
 // deploy script
@@ -29,13 +30,16 @@ task("deploy", "deploy contracts")
     let player2: SignerWithAddress;
     [player1, player2] = await hre.ethers.getSigners();
 
-    printDivider();
-    console.log("Network:", hre.network.name);
-
     const allGameArgs = generateAllGameArgs();
 
-    const blocks = allGameArgs.gameDeployArgs[allGameArgs.gameDeployArgs.length - 2];
-    // visualizeMap(blocks, true);
+    let blocks = allGameArgs.blockMap;
+    blocks[5][5] = [];
+    blocks[1][2] = [];
+    visualizeMap(blocks, true);
+    console.log("✦ map visualized in map.txt");
+
+    printDivider();
+    console.log("Network:", hre.network.name);    
 
     // initialize contracts
     const GameHelper = await deployProxy<Helper>("Helper", player1, hre, []);
@@ -74,15 +78,15 @@ task("deploy", "deploy contracts")
     printDivider();
 
     // initialize blocks
-    const blockMap = allGameArgs.blockMap;
     let regionMap: number[][][];
     for (let x = 0; x < WORLD_WIDTH; x += MAP_INTERVAL) {
       for (let y = 0; y < WORLD_HEIGHT; y += MAP_INTERVAL) {
-        regionMap = blockMap.slice(x, x + MAP_INTERVAL).map((col) => col.slice(y, y + MAP_INTERVAL));
+        regionMap = blocks.slice(x, x + MAP_INTERVAL).map((col) => col.slice(y, y + MAP_INTERVAL));
 
         await GameStorage.setMapRegion({ x, y }, regionMap);
       }
     }
+    console.log("✦ blocks initialized");
 
     // initialize players only if we're on localhost
     if (isDev) {
@@ -92,31 +96,27 @@ task("deploy", "deploy contracts")
 
       let tx;
 
-      // need to act the nonce already been used case
-      if (await GameStorage._isOccupied(player1Pos)) {
-        tx = await GameStorage._mine(player1Pos);
-        await tx.wait();
-      }
-
-      if (await GameStorage._isOccupied(player2Pos)) {
-        tx = await GameStorage._mine(player2Pos);
-        tx.wait();
-      }
-
-      tx = await GameContract.connect(player1).initializePlayer(player1Pos); // initialize users
+    // need to act the nonce already been used case
+    while (await GameStorage._isOccupied(player1Pos)) {
+      tx = await GameStorage._mine(player1Pos);
       await tx.wait();
 
-      tx = await GameContract.connect(player2).initializePlayer(player2Pos);
-      tx.wait();
-
-      tx = await GameStorage.connect(player1)._increaseItemInInventory(player1.address, 0, 100);
-      tx.wait();
-
-      tx = await GameStorage.connect(player1)._increaseItemInInventory(player2.address, 0, 100);
-      tx.wait();
+    while (await GameStorage._isOccupied(player2Pos)) {
+      tx = await GameStorage._mine(player2Pos);
+      await tx.wait();
     }
 
-    let tx = await GameStorage.setEpochController(EpochContract.address); // set epoch controller
+    tx = await GameContract.connect(player1).initializePlayer(player1Pos); // initialize users
+    await tx.wait();
+
+    tx = await GameContract.connect(player2).initializePlayer(player2Pos);
+    tx.wait();
+
+    tx = await GameStorage.connect(player1)._increaseItemInInventory(player1.address, 0, 100);
+    tx.wait();
+    console.log("✦ players initialized");
+
+    tx = await GameStorage.setEpochController(EpochContract.address); // set epoch controller
     await tx.wait();
 
     // bulk initialize towers
@@ -129,6 +129,7 @@ task("deploy", "deploy contracts")
 
     const towerTx = await TowerContract.addTowerBulk(allTowerLocations, allTowers);
     await towerTx.wait();
+    console.log("✦ towers initialized");
 
     // ---------------------------------
     // porting files to frontend

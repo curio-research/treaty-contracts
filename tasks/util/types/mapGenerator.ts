@@ -10,3 +10,8 @@ export interface CoordsProps {
   gridCoords: position[];
   indices: number[][];
 }
+
+export interface PrimsMapOutput {
+  map: number[][][];
+  mapSnapshot: number[][][][];
+}
