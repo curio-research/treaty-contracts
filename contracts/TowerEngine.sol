@@ -204,7 +204,7 @@ contract TowerGame {
         utils._increaseItemInInventory(msg.sender, BASE_ITEM_ID, _amount);
 
         emit UnstakeTower(
-            msg.sender,
+            tower.owner,
             _position,
             utils._getItemAmountById(msg.sender, BASE_ITEM_ID),
             utils._getTower(_towerId).stakedAmount
