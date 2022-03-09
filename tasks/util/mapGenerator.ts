@@ -184,10 +184,17 @@ export const generateMap = (worldWidth: number, worldHeight: number, roomWidth: 
   
   const towers = generateTowerCoords(worldWidth, worldHeight, roomWidth); // generate tower locations
   const towerSpecs = generateTowerSpecs(towers);
-  towers.forEach((pos) => {
-    const x = pos.x;
-    const y = pos.y;
+  let pos: position;
+  let x: number;
+  let y: number;
+  for (let k = 0; k < towers.length; k++) {
+    pos = towers[k];
+    x = pos.x;
+    y = pos.y;
+
+    // check no indestructible wall exists at tower coordinate
     if (map[x][y].length === 0 || map[x][y][0] !== 7) {
+      
       // clear tower surroundings
       for (let i = -1; i <= 1; i++) {
         for (let j = -1; j <= 1; j++) {
@@ -199,8 +206,14 @@ export const generateMap = (worldWidth: number, worldHeight: number, roomWidth: 
 
       // set tower
       map[x][y] = [4];
+
+    } else {
+      // remove one from towers and towerSpecs arrays
+      towers.splice(k, 1);
+      towerSpecs.splice(k, 1);
+      k--;
     }
-  });
+  }
 
   return {
     blocks: map,
@@ -245,6 +258,7 @@ export const visualizeMap = (blocks: number[][][], exportToFile?: boolean, dir?:
     for (let j = 0; j < WORLD_HEIGHT; j++) {
       let block;
       if (blocks[i][j].length > 0) {
+        if (blocks[i][j].length > 1) throw "unintended stacked items";
         block = blocks[i][j][0] + "";
         if (block.length == 1) block = " " + block;
         if (block.length > 2) throw "Unsupported index of item";
