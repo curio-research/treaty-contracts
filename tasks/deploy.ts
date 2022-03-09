@@ -37,7 +37,7 @@ task("deploy", "deploy contracts")
     console.log("✦ map visualized in map.txt");
 
     printDivider();
-    console.log("Network:", hre.network.name);    
+    console.log("Network:", hre.network.name);
 
     // initialize contracts
     const GameHelper = await deployProxy<Helper>("Helper", player1, hre, []);
@@ -59,10 +59,10 @@ task("deploy", "deploy contracts")
 
     // add contract permissions
     const p1tx = await Permissions.connect(player1).setPermission(GameContract.address, true);
-    await p1tx.wait();
+    p1tx.wait();
 
     const p2tx = await Permissions.connect(player1).setPermission(TowerContract.address, true);
-    await p2tx.wait();
+    p2tx.wait();
 
     // make this into a table
     printDivider();
@@ -82,7 +82,8 @@ task("deploy", "deploy contracts")
       for (let y = 0; y < WORLD_HEIGHT; y += MAP_INTERVAL) {
         regionMap = blocks.slice(x, x + MAP_INTERVAL).map((col) => col.slice(y, y + MAP_INTERVAL));
 
-        await GameStorage._setMapRegion({ x, y }, regionMap);
+        let tx = await GameStorage._setMapRegion({ x, y }, regionMap);
+        tx.wait();
       }
     }
 
@@ -116,10 +117,10 @@ task("deploy", "deploy contracts")
 
       tx = await GameStorage.connect(player1)._increaseItemInInventory(player1.address, 0, 100);
       await tx.wait();
-      
+
       console.log("✦ setting epoch controller");
       tx = await GameStorage.setEpochController(EpochContract.address); // set epoch controller
-      await tx.wait(); 
+      await tx.wait();
     }
 
     // bulk initialize towers
@@ -132,7 +133,7 @@ task("deploy", "deploy contracts")
     }
 
     const towerTx = await TowerContract.addTowerBulk(allTowerLocations, allTowers);
-    await towerTx.wait();    
+    await towerTx.wait();
 
     // ---------------------------------
     // porting files to frontend
