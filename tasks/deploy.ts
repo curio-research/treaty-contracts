@@ -163,7 +163,7 @@ task("deploy", "deploy contracts")
     await hre.run("port"); // default to porting files
   });
 
-const rpcUrlSelector = (networkName: string): string[] => {
+export const rpcUrlSelector = (networkName: string): string[] => {
   if (networkName === "localhost") {
     return [LOCALHOST_RPC_URL, LOCALHOST_WS_RPC_URL];
   } else if (networkName === "optimismKovan") {

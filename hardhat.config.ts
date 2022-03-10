@@ -3,6 +3,11 @@ import "@typechain/hardhat";
 import "@nomiclabs/hardhat-ethers";
 import "@nomiclabs/hardhat-waffle";
 import "hardhat-contract-sizer";
+import { HardhatRuntimeEnvironment } from "hardhat/types";
+import { generateAllGameArgs } from "./tasks/util/allArgsGenerator";
+import * as path from "path";
+import * as fsPromise from "fs/promises";
+import * as fs from "fs";
 require("dotenv").config();
 
 // tasks
@@ -53,4 +58,22 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
   for (const account of accounts) {
     console.log(account.address);
   }
+});
+
+task("mapgen", "Ports the map to render on frontend", 
+  async (args: any, hre: HardhatRuntimeEnvironment) => {
+  
+  // ---------------------------------
+  // porting files to frontend
+  // ---------------------------------
+  let blocks = generateAllGameArgs().blockMap;
+  await fsPromise.writeFile(path.join(path.join(__dirname), "map.json"), JSON.stringify(blocks));
+
+  console.log("✦ Porting map file over ...");
+  const mapFileDir = path.join(__dirname, "/map.json");
+  const mapClientDir = path.join(__dirname, "../frontend/src/map.json");
+
+  await fs.copyFileSync(mapFileDir, mapClientDir);
+
+  console.log("✦ Porting complete!");
 });
