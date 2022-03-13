@@ -18,7 +18,6 @@ import './tasks/deploy';
 import './tasks/map';
 import './tasks/simulate';
 import './tasks/poll';
-import { deployProxy } from './tasks/util/deployHelper';
 
 // to get the smart contract file sizes, run:
 // yarn run hardhat size-contracts
@@ -62,20 +61,4 @@ task('accounts', 'Prints the list of accounts', async (taskArgs, hre) => {
   for (const account of accounts) {
     console.log(account.address);
   }
-});
-
-task('mapgen', 'Ports the map to render on frontend', async (args: any, hre: HardhatRuntimeEnvironment) => {
-  // ---------------------------------
-  // porting files to frontend
-  // ---------------------------------
-  let blocks = generateAllGameArgs(gameItems, ITEM_RATIO).blockMap;
-  await fsPromise.writeFile(path.join(path.join(__dirname), 'map.json'), JSON.stringify(blocks));
-
-  console.log('✦ Porting map file over ...');
-  const mapFileDir = path.join(__dirname, '/map.json');
-  const mapClientDir = path.join(__dirname, '../frontend/src/map.json');
-
-  await fs.copyFileSync(mapFileDir, mapClientDir);
-
-  console.log('✦ Porting complete!');
 });

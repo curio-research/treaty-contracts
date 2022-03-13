@@ -38,6 +38,11 @@ contract Game {
         uint256 _strength,
         uint256 _resourceUsed
     );
+    event MoveBlock(
+        address _player,
+        GameTypes.Position _startPos,
+        GameTypes.Position _endPos
+    );
 
     // ------------------------------------------------------------
     // Constructor
@@ -99,9 +104,42 @@ contract Game {
         emit Move(msg.sender, _pos);
     }
 
-    function mineItem(GameTypes.Position memory _pos, address _playerAddr)
-        internal
-    {
+    // move block if its a selection
+    function moveBlock(
+        GameTypes.Position memory _startPos,
+        GameTypes.Position memory _targetPos
+    ) external {
+        GameTypes.Tile memory startTile = utils._getTileData(_startPos);
+        GameTypes.Tile memory targetTile = utils._getTileData(_targetPos);
+
+        // target pos needs to have nothing
+        require(
+            targetTile.topLevelStrength == 0,
+            "engine/invalid-top-level-strength"
+        );
+
+        // check if two are within same range
+        require(
+            utils._withinDistance(_startPos, _targetPos, 1),
+            "engine/invalid-distance"
+        );
+
+        // set new top level strength and blocks
+        utils._setTopLevelStrength(_targetPos, startTile.topLevelStrength);
+
+        // set new block
+        utils._setBlocks(_targetPos, startTile.blocks);
+
+        // target
+
+        emit MoveBlock(msg.sender, _startPos, _targetPos);
+    }
+
+    function mineItem(
+        GameTypes.Position memory _pos,
+        uint256 _zIdx,
+        address _playerAddr
+    ) internal {
         // can only mine with the needed tool
         uint256 _itemId = utils._getBlockAtPos(_pos);
 
