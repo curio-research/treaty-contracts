@@ -1,4 +1,5 @@
 import { assert } from "console";
+import { position } from "../../util/types/common";
 import { PrimsMapOutput } from "./types/mapGenerator";
 
 type Position = {
@@ -218,4 +219,49 @@ export const generatePrimsMap = (
   }
 
   return { map, mapSnapshot };
+}
+
+/**
+ * Add additional corridors to a Prim's map to increase connectivity.
+ * @param map : map generated from Prim's algorithm.
+ * @param wallIdx : index of wall in the items array
+ * @param maxCorridorLen : maximal length of a corridor to cut
+ * @param minPeninsularPerimToCut : minimal perimeter for a peninsular to cut
+ * @returns map with additional corridors
+ */
+export const addConnectivity = (
+  map: number[][][],
+  wallIdx: number = 7,
+  maxCorridorLen: number = 5,
+  minPeninsularPerimToCut: number = 64
+): number[][][] => {
+  const width = map.length;
+  const height = map[0].length;
+
+  let yRange: number;
+  let coords: position[];
+  for (let x = maxCorridorLen; x < width - maxCorridorLen; x++) {
+    for (let y = maxCorridorLen; y < height - maxCorridorLen; y++) {
+      if (map[x][y].length > 0) continue; // ignore walls
+      
+      // find coordinates close enough for potential corridors
+      coords = [];
+      for (let xDiff = -maxCorridorLen + 1; xDiff < maxCorridorLen; xDiff++) {
+        yRange = maxCorridorLen - Math.abs(xDiff);
+        for (let yDiff = -yRange + 1; yDiff < yRange; yDiff++) {
+          // only track empty tiles
+          if (map[x+xDiff][y+yDiff].length == 0) {
+            coords.push({ x: x + xDiff, y: y + yDiff });
+          } 
+        }
+      }
+
+      // run shortest path algorithm until all coordinates are visited
+      while (coords) {
+        // TODO: left here
+      }
+    }
+  }
+
+  return map;
 }
