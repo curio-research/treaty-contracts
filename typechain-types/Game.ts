@@ -54,7 +54,6 @@ export type WorldConstantsStructOutput = [
 export type ItemWithMetadataStruct = {
   mineable: boolean;
   craftable: boolean;
-  occupiable: boolean;
   strength: BigNumberish;
   healthDamage: BigNumberish;
   mineItemIds: BigNumberish[];
@@ -68,8 +67,6 @@ export type ItemWithMetadataStruct = {
 export type ItemWithMetadataStructOutput = [
   boolean,
   boolean,
-  boolean,
-  BigNumber,
   BigNumber,
   BigNumber[],
   BigNumber[],
@@ -80,7 +77,6 @@ export type ItemWithMetadataStructOutput = [
 ] & {
   mineable: boolean;
   craftable: boolean;
-  occupiable: boolean;
   strength: BigNumber;
   healthDamage: BigNumber;
   mineItemIds: BigNumber[];
@@ -100,14 +96,20 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
 
 export interface GameInterface extends utils.Interface {
   functions: {
+    "SET_MAP_INTERVAL()": FunctionFragment;
     "changeBlockStrength((uint256,uint256),uint256,bool)": FunctionFragment;
     "craft(uint256)": FunctionFragment;
     "initializePlayer((uint256,uint256))": FunctionFragment;
     "mine((uint256,uint256))": FunctionFragment;
     "move((uint256,uint256))": FunctionFragment;
+    "moveBlock((uint256,uint256),(uint256,uint256))": FunctionFragment;
     "place((uint256,uint256),uint256)": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "SET_MAP_INTERVAL",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "changeBlockStrength",
     values: [PositionStruct, BigNumberish, boolean]
@@ -126,10 +128,18 @@ export interface GameInterface extends utils.Interface {
     values: [PositionStruct]
   ): string;
   encodeFunctionData(
+    functionFragment: "moveBlock",
+    values: [PositionStruct, PositionStruct]
+  ): string;
+  encodeFunctionData(
     functionFragment: "place",
     values: [PositionStruct, BigNumberish]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "SET_MAP_INTERVAL",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "changeBlockStrength",
     data: BytesLike
@@ -141,6 +151,7 @@ export interface GameInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "mine", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "move", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "moveBlock", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "place", data: BytesLike): Result;
 
   events: {
@@ -151,6 +162,7 @@ export interface GameInterface extends utils.Interface {
     "Death(address)": EventFragment;
     "MineItem(address,tuple,uint256)": EventFragment;
     "Move(address,tuple)": EventFragment;
+    "MoveBlock(address,tuple,tuple)": EventFragment;
     "NewPlayer(address,tuple)": EventFragment;
     "Place(address,tuple,uint256)": EventFragment;
   };
@@ -162,6 +174,7 @@ export interface GameInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "Death"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MineItem"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Move"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "MoveBlock"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NewPlayer"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Place"): EventFragment;
 }
@@ -218,6 +231,17 @@ export type MoveEvent = TypedEvent<
 
 export type MoveEventFilter = TypedEventFilter<MoveEvent>;
 
+export type MoveBlockEvent = TypedEvent<
+  [string, PositionStructOutput, PositionStructOutput],
+  {
+    _player: string;
+    _startPos: PositionStructOutput;
+    _endPos: PositionStructOutput;
+  }
+>;
+
+export type MoveBlockEventFilter = TypedEventFilter<MoveBlockEvent>;
+
 export type NewPlayerEvent = TypedEvent<
   [string, PositionStructOutput],
   { _player: string; _pos: PositionStructOutput }
@@ -259,6 +283,8 @@ export interface Game extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    SET_MAP_INTERVAL(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     changeBlockStrength(
       _pos: PositionStruct,
       _amount: BigNumberish,
@@ -286,12 +312,20 @@ export interface Game extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    moveBlock(
+      _startPos: PositionStruct,
+      _targetPos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     place(
       _pos: PositionStruct,
       _itemId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
+
+  SET_MAP_INTERVAL(overrides?: CallOverrides): Promise<BigNumber>;
 
   changeBlockStrength(
     _pos: PositionStruct,
@@ -320,6 +354,12 @@ export interface Game extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  moveBlock(
+    _startPos: PositionStruct,
+    _targetPos: PositionStruct,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   place(
     _pos: PositionStruct,
     _itemId: BigNumberish,
@@ -327,6 +367,8 @@ export interface Game extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    SET_MAP_INTERVAL(overrides?: CallOverrides): Promise<BigNumber>;
+
     changeBlockStrength(
       _pos: PositionStruct,
       _amount: BigNumberish,
@@ -344,6 +386,12 @@ export interface Game extends BaseContract {
     mine(_pos: PositionStruct, overrides?: CallOverrides): Promise<void>;
 
     move(_pos: PositionStruct, overrides?: CallOverrides): Promise<void>;
+
+    moveBlock(
+      _startPos: PositionStruct,
+      _targetPos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     place(
       _pos: PositionStruct,
@@ -399,6 +447,17 @@ export interface Game extends BaseContract {
     "Move(address,tuple)"(_player?: null, _pos?: null): MoveEventFilter;
     Move(_player?: null, _pos?: null): MoveEventFilter;
 
+    "MoveBlock(address,tuple,tuple)"(
+      _player?: null,
+      _startPos?: null,
+      _endPos?: null
+    ): MoveBlockEventFilter;
+    MoveBlock(
+      _player?: null,
+      _startPos?: null,
+      _endPos?: null
+    ): MoveBlockEventFilter;
+
     "NewPlayer(address,tuple)"(
       _player?: null,
       _pos?: null
@@ -414,6 +473,8 @@ export interface Game extends BaseContract {
   };
 
   estimateGas: {
+    SET_MAP_INTERVAL(overrides?: CallOverrides): Promise<BigNumber>;
+
     changeBlockStrength(
       _pos: PositionStruct,
       _amount: BigNumberish,
@@ -438,6 +499,12 @@ export interface Game extends BaseContract {
 
     move(
       _pos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    moveBlock(
+      _startPos: PositionStruct,
+      _targetPos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -449,6 +516,8 @@ export interface Game extends BaseContract {
   };
 
   populateTransaction: {
+    SET_MAP_INTERVAL(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     changeBlockStrength(
       _pos: PositionStruct,
       _amount: BigNumberish,
@@ -473,6 +542,12 @@ export interface Game extends BaseContract {
 
     move(
       _pos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    moveBlock(
+      _startPos: PositionStruct,
+      _targetPos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -1,4 +1,4 @@
-import { ItemMaster, ItemWithMetadata } from '../../util/types/getter';
+import { ItemMaster } from '../../util/types/getter';
 export const LOCALHOST_RPC_URL = 'http://127.0.0.1:8545/';
 export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 
@@ -8,7 +8,7 @@ export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 
 // game specs - manual
 export const ROOM_LENGTH = 7;
-export const ROOMS_PER_DIMENSION = 3;
+export const ROOMS_PER_DIMENSION = 1;
 export const ATTACK_RANGE = 1;
 export const ATTACK_DAMAGE = 5;
 export const ATTACK_WAITTIME = 5;

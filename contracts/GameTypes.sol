@@ -33,8 +33,10 @@ library GameTypes {
         Position position;
     }
 
+    // i'm not sure if this is an efficient data structure
     struct Tile {
         address occupier;
+        address owner;
         uint256 topLevelStrength; // Remaining strength of the top level block. May need to convert to a full array in future to prevent malicious restoring of block strength by placing on top.
         uint256 blockId;
     }
@@ -49,13 +51,10 @@ library GameTypes {
     struct ItemWithMetadata {
         bool mineable;
         bool craftable;
-        bool occupiable;
         uint256 strength;
-        uint256 healthDamage;
         uint256[] mineItemIds; // tools for mining
         uint256[] craftItemIds;
         uint256[] craftItemAmounts;
-
         /* Programmable blocks */
         bool programmable;
         string abiEncoding;

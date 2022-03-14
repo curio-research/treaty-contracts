@@ -6,9 +6,7 @@ export const decodeItemWithMetadata = (res: ItemWithMetadataStruct): ItemWithMet
   return {
     mineable: res.mineable,
     craftable: res.craftable,
-    occupiable: res.occupiable,
     strength: Number(res.strength),
-    healthDamage: Number(res.healthDamage),
     mineItemIds: decodeBigNumberishArr(res.mineItemIds),
     craftItemIds: decodeBigNumberishArr(res.craftItemIds),
     craftItemAmounts: decodeBigNumberishArr(res.craftItemAmounts),

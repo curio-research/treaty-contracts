@@ -13,9 +13,9 @@ import * as fs from 'fs';
 require('dotenv').config();
 
 // tasks
+import './tasks/mapgen';
 import './tasks/port';
 import './tasks/deploy';
-import './tasks/map';
 import './tasks/simulate';
 import './tasks/poll';
 

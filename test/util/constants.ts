@@ -18,12 +18,10 @@ export enum REVERT_MESSAGES {
 type ItemWithMetadataInput = {
   mineable: boolean;
   craftable: boolean;
-  occupiable: boolean;
   mineItemIds?: number[];
   strength?: number;
   craftItemIds?: number[];
   craftItemAmounts?: number[];
-  healthDamage?: number;
 };
 
 class ItemWithMetadata {
@@ -33,8 +31,6 @@ class ItemWithMetadata {
   readonly craftable: boolean;
   readonly craftItemIds: number[];
   readonly craftItemAmounts: number[];
-  readonly occupiable: boolean;
-  readonly healthDamage: number;
 
   constructor(attr: ItemWithMetadataInput) {
     this.mineable = attr.mineable;
@@ -43,8 +39,6 @@ class ItemWithMetadata {
     this.craftable = attr.craftable;
     this.craftItemIds = attr.craftItemIds ?? [];
     this.craftItemAmounts = attr.craftItemAmounts ?? [];
-    this.occupiable = attr.occupiable;
-    this.healthDamage = attr.healthDamage ?? 0;
   }
 }
 
@@ -88,7 +82,6 @@ export const masterItems: ItemMaster[] = [
       healthDamage: 0,
       programmable: false,
       abiEncoding: '',
-      contractAddr: '',
     },
   },
   {
@@ -104,7 +97,6 @@ export const masterItems: ItemMaster[] = [
       healthDamage: 0,
       programmable: false,
       abiEncoding: '',
-      contractAddr: '',
     },
   },
   {
@@ -120,7 +112,6 @@ export const masterItems: ItemMaster[] = [
       healthDamage: 0,
       programmable: false,
       abiEncoding: '',
-      contractAddr: '',
     },
   },
   {
@@ -136,7 +127,6 @@ export const masterItems: ItemMaster[] = [
       healthDamage: 0,
       programmable: false,
       abiEncoding: '',
-      contractAddr: '',
     },
   },
   {
@@ -152,7 +142,6 @@ export const masterItems: ItemMaster[] = [
       healthDamage: 0,
       programmable: false,
       abiEncoding: '',
-      contractAddr: '',
     },
   },
   {
@@ -168,7 +157,6 @@ export const masterItems: ItemMaster[] = [
       healthDamage: 0,
       programmable: false,
       abiEncoding: '',
-      contractAddr: '',
     },
   },
 ];

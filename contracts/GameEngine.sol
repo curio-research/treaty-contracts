@@ -14,7 +14,7 @@ contract Game {
     using SafeMath for uint256;
     GameStorage private utils;
     Permissions private p;
-    uint256 SET_MAP_INTERVAL = 10;
+    uint256 public SET_MAP_INTERVAL = 10;
 
     // ------------------------------------------------------------
     // Events
@@ -22,7 +22,13 @@ contract Game {
 
     event NewPlayer(address _player, GameTypes.Position _pos);
     event Move(address _player, GameTypes.Position _pos);
-    event MineItem(address _player, GameTypes.Position _pos, uint256 _blockId);
+    // we can maybe sunset mine and attack into the same event
+    event MineItem(
+        address _player,
+        GameTypes.Position _pos,
+        uint256 _blockId,
+        uint256 _zIndex
+    );
     event AttackItem(
         address _player,
         GameTypes.Position _pos,
@@ -38,6 +44,7 @@ contract Game {
         uint256 _strength,
         uint256 _resourceUsed
     );
+
     event MoveBlock(
         address _player,
         GameTypes.Position _startPos,
@@ -66,32 +73,37 @@ contract Game {
         }
     }
 
-    // initialize player
+    /**
+     * initialize player
+     * @param _pos position to initialize
+     */
     function initializePlayer(GameTypes.Position memory _pos) public {
-        if (utils._getPlayer(msg.sender).initialized)
-            revert("engine/player-already-initialized");
+        require(
+            !utils._getPlayer(msg.sender).initialized,
+            "engine/player-already-initialized"
+        );
 
-        // check if target coordinate has block or another player
-        if (utils._isOccupied(_pos)) revert("engine/location-occupied");
+        require(!utils._isOccupied(_pos), "engine/location-occupied"); // if target coordinate already has a block or player, revert
 
         utils._setPlayer(msg.sender, _pos);
-
         utils._setOccupierAtPosition(msg.sender, _pos);
 
-        // give users some starting currency
+        // give users starting currency
         utils._increaseItemInInventory(
             msg.sender,
             0,
             utils._getWorldConstants().startingPlayerDefaultCurrencyAmount
-        ); //  give users some base currency points so they can start staking in towers
+        );
 
         emit NewPlayer(msg.sender, _pos);
     }
 
-    // player move function
+    /**
+     * move player
+     * @param _pos target position
+     */
     function move(GameTypes.Position memory _pos) external {
-        if (!utils._isValidMove(msg.sender, _pos))
-            revert("engine/invalid-move");
+        require(utils._isValidMove(msg.sender, _pos), "engine/invalid-move");
 
         GameTypes.Position memory _prevPosition = utils
             ._getPlayer(msg.sender)
@@ -104,19 +116,25 @@ contract Game {
         emit Move(msg.sender, _pos);
     }
 
-    // move block if its a selection
+    /**
+     * move a block from point to point. ex: a block can be an army unit
+     * @param _startPos starting position
+     * @param _targetPos target position
+     */
     function moveBlock(
         GameTypes.Position memory _startPos,
         GameTypes.Position memory _targetPos
-    ) external {
+    ) public {
         GameTypes.Tile memory startTile = utils._getTileData(_startPos);
         GameTypes.Tile memory targetTile = utils._getTileData(_targetPos);
 
-        // target pos needs to have nothing
+        // target pos needs to have no strength (so no items)
         require(
             targetTile.topLevelStrength == 0,
             "engine/invalid-top-level-strength"
         );
+
+        require(targetTile.occupier == address(0), "engine/block is occupied");
 
         // check if two are within same range
         require(
@@ -124,13 +142,11 @@ contract Game {
             "engine/invalid-distance"
         );
 
-        // set new top level strength and blocks
-        utils._setTopLevelStrength(_targetPos, startTile.topLevelStrength);
+        require(startTile.occupier == address(0), "engine/not owner");
 
-        // set new block
-        utils._setBlocks(_targetPos, startTile.blocks);
-
-        // target
+        // we basically swap the two tiles
+        utils._setTileData(_targetPos, startTile);
+        utils._setTileData(_startPos, targetTile);
 
         emit MoveBlock(msg.sender, _startPos, _targetPos);
     }
@@ -165,7 +181,7 @@ contract Game {
             }
         }
 
-        if (!_canMine) revert("engine/tool-needed");
+        require(_canMine, "engine/tool-needed");
 
         utils._increaseItemInInventory(_playerAddr, _itemId, 1);
         utils._mine(_pos);
@@ -173,10 +189,18 @@ contract Game {
         emit MineItem(_playerAddr, _pos, _itemId);
     }
 
-    // reduces item health
-    function attackItem(GameTypes.Position memory _pos, address _playerAddr)
-        internal
-    {
+    /**
+     * reduces item health
+     * @param _pos position to mine item at
+     * @param _zIdx z index of block to mine at
+     * @param _playerAddr player address
+     */
+
+    function attackItem(
+        GameTypes.Position memory _pos,
+        uint256 _zIdx,
+        address _playerAddr
+    ) internal {
         utils._setTopLevelStrength(
             _pos,
             utils._getTileData(_pos).topLevelStrength -
@@ -187,7 +211,10 @@ contract Game {
         emit AttackItem(_playerAddr, _pos, _strength);
     }
 
-    // mine item function
+    /**
+     * mine item
+     * @param _pos position to mine item at
+     */
     function mine(GameTypes.Position memory _pos) external {
         uint256 _block = utils._getBlockAtPos(_pos);
         require(_block != 0, "engine/nonexistent-block");
@@ -216,26 +243,38 @@ contract Game {
         }
     }
 
-    // place item at block
+    /**
+     * place item at tile location
+     * @param _pos position to place block at
+     * @param _itemId item id to place
+     */
     function place(GameTypes.Position memory _pos, uint256 _itemId) external {
-        if (utils._getItemAmountById(msg.sender, _itemId) == 0)
-            revert("engine/insufficient-inventory");
+        require(
+            utils._getItemAmountById(msg.sender, _itemId) != 0,
+            "engine/insufficient-inventory"
+        );
+
         GameTypes.PlayerData memory _playerData = utils._getPlayer(msg.sender);
         if (
             _playerData.position.x == _pos.x && _playerData.position.y == _pos.y
         ) revert("engine/cannot-stand-on-block");
+
         if (!utils._withinDistance(_pos, _playerData.position, 1))
             revert("engine/invalid-distance");
 
         utils._place(_pos, _itemId);
         utils._decreaseItemInInventory(msg.sender, _itemId, 1);
+        utils._setBlockOwner(_pos, msg.sender);
 
         emit Place(msg.sender, _pos, _itemId);
     }
 
-    // craft item (once) based on their recipe
+    /**
+     * craft item (once) based on their recipe
+     * @param _itemId item id to craft
+     */
     function craft(uint256 _itemId) external {
-        if (_itemId > utils._getItemNonce()) revert("engine/nonexistent-block");
+        require(_itemId <= utils._getItemNonce(), "engine/nonexistent-block"); // has to craft an existing item
 
         // loop through player inventory to check if player has all required ingredients to make a block
         GameTypes.ItemWithMetadata memory _item = utils._getItem(_itemId);
@@ -243,20 +282,21 @@ contract Game {
         for (uint256 i = 0; i < _item.craftItemIds.length; i++) {
             uint256 craftItemId = _item.craftItemIds[i];
             uint256 craftItemAmount = _item.craftItemAmounts[i];
+            uint256 userItemAmount = utils._getItemAmountById(
+                msg.sender,
+                craftItemId
+            );
 
-            if (
-                utils._getCraftItemAmount(msg.sender, craftItemId) <
+            require(
+                userItemAmount >= craftItemAmount,
+                "engine/insufficient-material"
+            );
+
+            utils._decreaseItemInInventory(
+                msg.sender,
+                craftItemId,
                 craftItemAmount
-            ) {
-                revert("engine/insufficient-material");
-            } else {
-                // deduct material from player inventory count
-                utils._decreaseItemInInventory(
-                    msg.sender,
-                    craftItemId,
-                    craftItemAmount
-                );
-            }
+            );
         }
 
         utils._increaseItemInInventory(msg.sender, _itemId, 1);
@@ -279,11 +319,10 @@ contract Game {
         uint256 _userAmount = utils._getItemAmountById(msg.sender, 0); // world default currency is 0
         require(_userAmount >= _amount, "engine/insufficient-inventory");
 
-        // 1 to 1 exchange rate between default currency and score;
         utils._decreaseItemInInventory(msg.sender, 0, _amount);
         GameTypes.Tile memory _tileData = utils._getTileData(_pos);
 
-        // to reinforce the strength of a block
+        // add defense to a block
         if (_state == true) {
             utils._setTopLevelStrength(
                 _pos,

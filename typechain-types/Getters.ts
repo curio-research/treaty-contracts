@@ -39,7 +39,6 @@ export type TileWithMetadataStructOutput = [
 export type ItemWithMetadataStruct = {
   mineable: boolean;
   craftable: boolean;
-  occupiable: boolean;
   strength: BigNumberish;
   healthDamage: BigNumberish;
   mineItemIds: BigNumberish[];
@@ -53,8 +52,6 @@ export type ItemWithMetadataStruct = {
 export type ItemWithMetadataStructOutput = [
   boolean,
   boolean,
-  boolean,
-  BigNumber,
   BigNumber,
   BigNumber[],
   BigNumber[],
@@ -65,7 +62,6 @@ export type ItemWithMetadataStructOutput = [
 ] & {
   mineable: boolean;
   craftable: boolean;
-  occupiable: boolean;
   strength: BigNumber;
   healthDamage: BigNumber;
   mineItemIds: BigNumber[];
