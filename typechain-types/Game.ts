@@ -99,6 +99,7 @@ export interface GameInterface extends utils.Interface {
     "initializePlayer((uint256,uint256))": FunctionFragment;
     "mine((uint256,uint256))": FunctionFragment;
     "move((uint256,uint256))": FunctionFragment;
+    "moveBlock((uint256,uint256),(uint256,uint256))": FunctionFragment;
     "place((uint256,uint256),uint256)": FunctionFragment;
   };
 
@@ -120,6 +121,10 @@ export interface GameInterface extends utils.Interface {
     values: [PositionStruct]
   ): string;
   encodeFunctionData(
+    functionFragment: "moveBlock",
+    values: [PositionStruct, PositionStruct]
+  ): string;
+  encodeFunctionData(
     functionFragment: "place",
     values: [PositionStruct, BigNumberish]
   ): string;
@@ -135,6 +140,7 @@ export interface GameInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "mine", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "move", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "moveBlock", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "place", data: BytesLike): Result;
 
   events: {
@@ -145,6 +151,7 @@ export interface GameInterface extends utils.Interface {
     "Death(address)": EventFragment;
     "MineItem(address,tuple,uint256,uint256)": EventFragment;
     "Move(address,tuple)": EventFragment;
+    "MoveBlock(address,tuple,tuple)": EventFragment;
     "NewPlayer(address,tuple)": EventFragment;
     "Place(address,tuple,uint256)": EventFragment;
   };
@@ -156,6 +163,7 @@ export interface GameInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "Death"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MineItem"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Move"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "MoveBlock"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NewPlayer"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Place"): EventFragment;
 }
@@ -221,6 +229,17 @@ export type MoveEvent = TypedEvent<
 >;
 
 export type MoveEventFilter = TypedEventFilter<MoveEvent>;
+
+export type MoveBlockEvent = TypedEvent<
+  [string, PositionStructOutput, PositionStructOutput],
+  {
+    _player: string;
+    _startPos: PositionStructOutput;
+    _endPos: PositionStructOutput;
+  }
+>;
+
+export type MoveBlockEventFilter = TypedEventFilter<MoveBlockEvent>;
 
 export type NewPlayerEvent = TypedEvent<
   [string, PositionStructOutput],
@@ -290,6 +309,12 @@ export interface Game extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    moveBlock(
+      _startPos: PositionStruct,
+      _targetPos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     place(
       _pos: PositionStruct,
       _itemId: BigNumberish,
@@ -324,6 +349,12 @@ export interface Game extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  moveBlock(
+    _startPos: PositionStruct,
+    _targetPos: PositionStruct,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   place(
     _pos: PositionStruct,
     _itemId: BigNumberish,
@@ -348,6 +379,12 @@ export interface Game extends BaseContract {
     mine(_pos: PositionStruct, overrides?: CallOverrides): Promise<void>;
 
     move(_pos: PositionStruct, overrides?: CallOverrides): Promise<void>;
+
+    moveBlock(
+      _startPos: PositionStruct,
+      _targetPos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     place(
       _pos: PositionStruct,
@@ -411,6 +448,17 @@ export interface Game extends BaseContract {
     "Move(address,tuple)"(_player?: null, _pos?: null): MoveEventFilter;
     Move(_player?: null, _pos?: null): MoveEventFilter;
 
+    "MoveBlock(address,tuple,tuple)"(
+      _player?: null,
+      _startPos?: null,
+      _endPos?: null
+    ): MoveBlockEventFilter;
+    MoveBlock(
+      _player?: null,
+      _startPos?: null,
+      _endPos?: null
+    ): MoveBlockEventFilter;
+
     "NewPlayer(address,tuple)"(
       _player?: null,
       _pos?: null
@@ -453,6 +501,12 @@ export interface Game extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    moveBlock(
+      _startPos: PositionStruct,
+      _targetPos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     place(
       _pos: PositionStruct,
       _itemId: BigNumberish,
@@ -485,6 +539,12 @@ export interface Game extends BaseContract {
 
     move(
       _pos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    moveBlock(
+      _startPos: PositionStruct,
+      _targetPos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

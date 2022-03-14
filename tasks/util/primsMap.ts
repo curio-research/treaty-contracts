@@ -224,14 +224,12 @@ export const generatePrimsMap = (
 /**
  * Add additional corridors to a Prim's map to increase connectivity.
  * @param map : map generated from Prim's algorithm.
- * @param wallIdx : index of wall in the items array
  * @param maxCorridorLen : maximal length of a corridor to cut
  * @param minPeninsularPerimToCut : minimal perimeter for a peninsular to cut
  * @returns map with additional corridors
  */
 export const addConnectivity = (
   map: number[][][],
-  wallIdx: number = 7,
   maxCorridorLen: number = 5,
   minPeninsularPerimToCut: number = 64
 ): number[][][] => {
@@ -240,25 +238,95 @@ export const addConnectivity = (
 
   let yRange: number;
   let coords: position[];
+  let lastCoord: position = { x: 0, y: 0 };
+
+  /**
+   * Iterate through all empty tiles
+   */
   for (let x = maxCorridorLen; x < width - maxCorridorLen; x++) {
     for (let y = maxCorridorLen; y < height - maxCorridorLen; y++) {
       if (map[x][y].length > 0) continue; // ignore walls
       
-      // find coordinates close enough for potential corridors
+      /**
+       * Find coordinates close enough for potential corridors
+       */
       coords = [];
       for (let xDiff = -maxCorridorLen + 1; xDiff < maxCorridorLen; xDiff++) {
         yRange = maxCorridorLen - Math.abs(xDiff);
         for (let yDiff = -yRange + 1; yDiff < yRange; yDiff++) {
+          if (xDiff === 0 && yDiff === 0) continue; // skip current coordinate
+
           // only track empty tiles
-          if (map[x+xDiff][y+yDiff].length == 0) {
+          if (map[x+xDiff][y+yDiff].length === 0) {
             coords.push({ x: x + xDiff, y: y + yDiff });
           } 
         }
       }
 
-      // run shortest path algorithm until all coordinates are visited
+      /**
+       * Run shortest path algorithm until all coordinates are visited
+       */
+      let visited: position[] = [];
+      let border: position[] = [];
+      let temp: position[];
+      let travelDist = 0;
       while (coords) {
-        // TODO: left here
+        if (travelDist > 1000) throw "timeout";
+
+        temp = [];
+
+        // from every point on the border, take a step in every four directions
+        border.forEach((c) => {
+          if (map[c.x-1][c.y].length === 0 && !visited.includes({ x: c.x - 1, y: c.y })) {
+            temp.push({ x: c.x - 1, y: c.y });
+          }
+          if (map[c.x+1][c.y].length === 0 && !visited.includes({ x: c.x + 1, y: c.y })) {
+            temp.push({ x: c.x + 1, y: c.y });
+          }
+          if (map[c.x][c.y-1].length === 0 && !visited.includes({ x: c.x, y: c.y - 1 })) {
+            temp.push({ x: c.x, y: c.y - 1 });
+          }
+          if (map[c.x][c.y+1].length === 0 && !visited.includes({ x: c.x, y: c.y + 1 })) {
+            temp.push({ x: c.x, y: c.y + 1 });
+          }
+        });
+
+        if (temp.length === 0) break; // finished exploring map
+
+        border = [...new Set(temp)];
+        for (let i = 0; i < coords.length; i++) {
+          if (border.includes(coords[i])) {
+            if (coords.length == 1) lastCoord = coords[i]; // found the last visited coordinate
+            coords.splice(i, 1);
+            i--;
+          }
+        }
+
+        visited.push(...border);
+        travelDist++;
+      }
+
+      /**
+       * Slice corridor
+       */
+      if (travelDist > minPeninsularPerimToCut) {
+        if (lastCoord.x === 0 && lastCoord.y === 0) throw "logic error";
+
+        const xS = Math.min(lastCoord.x, x);
+        const xL = Math.max(lastCoord.x, x);
+        const yS = Math.min(lastCoord.y, y);
+        const yL = Math.max(lastCoord.y, y);
+
+        // dig in x-direction
+        for (let xTrans = xS; xTrans <= xL; xTrans++) {
+          map[xTrans][yS] = [];
+        }
+
+        // dig in y-direction depending on how the two coordinates are laid out
+        const xDig = ((xS === x && yS === y) || (xS === lastCoord.x && yS === lastCoord.y)) ? xS : xL;
+        for (let yTrans = yS; yTrans <= yL; yTrans++) {
+          map[xDig][yTrans] = [];
+        }
       }
     }
   }
