@@ -40,7 +40,6 @@ export type ItemWithMetadataStruct = {
   mineable: boolean;
   craftable: boolean;
   strength: BigNumberish;
-  healthDamage: BigNumberish;
   mineItemIds: BigNumberish[];
   craftItemIds: BigNumberish[];
   craftItemAmounts: BigNumberish[];
@@ -63,7 +62,6 @@ export type ItemWithMetadataStructOutput = [
   mineable: boolean;
   craftable: boolean;
   strength: BigNumber;
-  healthDamage: BigNumber;
   mineItemIds: BigNumber[];
   craftItemIds: BigNumber[];
   craftItemAmounts: BigNumber[];
@@ -79,7 +77,6 @@ export type PlayerDataStruct = {
   attackDamage: BigNumberish;
   attackRange: BigNumberish;
   health: BigNumberish;
-  energy: BigNumberish;
   reach: BigNumberish;
   position: PositionStruct;
 };
@@ -92,7 +89,6 @@ export type PlayerDataStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
-  BigNumber,
   PositionStructOutput
 ] & {
   initialized: boolean;
@@ -101,7 +97,6 @@ export type PlayerDataStructOutput = [
   attackDamage: BigNumber;
   attackRange: BigNumber;
   health: BigNumber;
-  energy: BigNumber;
   reach: BigNumber;
   position: PositionStructOutput;
 };

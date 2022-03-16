@@ -24,13 +24,11 @@ export type WorldConstantsStruct = {
   startingAttackRange: BigNumberish;
   startingAttackWaitTime: BigNumberish;
   startPlayerHealth: BigNumberish;
-  startPlayerEnergy: BigNumberish;
   startingReach: BigNumberish;
   startingPlayerDefaultCurrencyAmount: BigNumberish;
 };
 
 export type WorldConstantsStructOutput = [
-  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -46,7 +44,6 @@ export type WorldConstantsStructOutput = [
   startingAttackRange: BigNumber;
   startingAttackWaitTime: BigNumber;
   startPlayerHealth: BigNumber;
-  startPlayerEnergy: BigNumber;
   startingReach: BigNumber;
   startingPlayerDefaultCurrencyAmount: BigNumber;
 };
@@ -55,7 +52,6 @@ export type ItemWithMetadataStruct = {
   mineable: boolean;
   craftable: boolean;
   strength: BigNumberish;
-  healthDamage: BigNumberish;
   mineItemIds: BigNumberish[];
   craftItemIds: BigNumberish[];
   craftItemAmounts: BigNumberish[];
@@ -78,7 +74,6 @@ export type ItemWithMetadataStructOutput = [
   mineable: boolean;
   craftable: boolean;
   strength: BigNumber;
-  healthDamage: BigNumber;
   mineItemIds: BigNumber[];
   craftItemIds: BigNumber[];
   craftItemAmounts: BigNumber[];

@@ -27,6 +27,7 @@ const { USER1_PK, USER2_PK, KOVAN_RPC_URL } = process.env;
 
 export default {
   defaultNetwork: 'localhost',
+
   solidity: {
     version: '0.8.4',
     settings: {

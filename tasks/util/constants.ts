@@ -8,12 +8,11 @@ export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 
 // game specs - manual
 export const ROOM_LENGTH = 7;
-export const ROOMS_PER_DIMENSION = 1;
+export const ROOMS_PER_DIMENSION = 2;
 export const ATTACK_RANGE = 1;
 export const ATTACK_DAMAGE = 5;
 export const ATTACK_WAITTIME = 5;
 export const START_PLAYER_HEALTH = 100;
-export const START_PLAYER_ENERGY = 100;
 export const MAP_INTERVAL = 10;
 export enum MAP_MODE {
   DEFAULT,
@@ -33,7 +32,6 @@ export const generateGameConstants = () => {
     startingAttackRange: ATTACK_RANGE,
     startingAttackWaitTime: 0,
     startPlayerHealth: 100,
-    startPlayerEnergy: 100,
     startingReach: 2,
     startingPlayerDefaultCurrencyAmount: 100,
   };
@@ -186,6 +184,17 @@ export var masterItems: ItemMaster[] = [
       programmable: false,
       abiEncoding: '',
       contractAddr: '',
+    },
+  },
+  {
+    name: ALL_ITEMS.ORB,
+    item: {
+      mineable: false,
+      mineItemIds: [],
+      strength: 30,
+      craftable: true,
+      craftItemIds: [0, 1],
+      craftItemAmounts: [20, 10],
     },
   },
 ];

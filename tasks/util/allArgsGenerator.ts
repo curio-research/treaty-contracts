@@ -1,8 +1,7 @@
-import { WorldConstantsStruct } from './../../typechain-types/Game';
 import { generateMap } from './mapGenerator';
 import { TowerWithLocation } from './../../util/types/tower';
 import { generateItems } from './itemGenerator';
-import { generateGameConstants, WORLD_WIDTH, WORLD_HEIGHT, ROOM_LENGTH, MAP_MODE, masterItems } from './constants';
+import { generateGameConstants, WORLD_WIDTH, WORLD_HEIGHT, ROOM_LENGTH } from './constants';
 import { ItemWithMetadata } from '../../util/types/getter';
 
 // This generates all game parameters needed to deploy the GameEngine.sol contract

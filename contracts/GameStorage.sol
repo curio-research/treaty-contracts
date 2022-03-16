@@ -111,7 +111,6 @@ contract GameStorage {
             playerAddr: _player,
             position: _pos,
             health: constants.startPlayerHealth,
-            energy: constants.startPlayerEnergy,
             attackDamage: constants.startingAttackDamage,
             attackRange: constants.startingAttackRange,
             reach: constants.startingReach

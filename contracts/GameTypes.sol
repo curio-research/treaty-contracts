@@ -16,7 +16,6 @@ library GameTypes {
         uint256 startingAttackRange;
         uint256 startingAttackWaitTime;
         uint256 startPlayerHealth;
-        uint256 startPlayerEnergy;
         uint256 startingReach;
         uint256 startingPlayerDefaultCurrencyAmount;
     }
@@ -28,7 +27,6 @@ library GameTypes {
         uint256 attackDamage;
         uint256 attackRange;
         uint256 health;
-        uint256 energy;
         uint256 reach;
         Position position;
     }
@@ -52,7 +50,7 @@ library GameTypes {
         bool mineable;
         bool craftable;
         uint256 strength;
-        uint256[] mineItemIds; // tools for mining
+        uint256[] mineItemIds; // we can remove this
         uint256[] craftItemIds;
         uint256[] craftItemAmounts;
         /* Programmable blocks */
@@ -76,17 +74,16 @@ library GameTypes {
 
     // TODO: Pack this struct
     struct GameStorage {
-        // map info
-        WorldConstants worldConstants;
-        GameTypes.Tile[1000][1000] map;
+        WorldConstants worldConstants; // map info
+        Tile[1000][1000] map;
         // game info
         address admin;
         bool paused;
-        mapping(uint256 => GameTypes.ItemWithMetadata) itemsWithMetadata;
+        mapping(uint256 => ItemWithMetadata) itemsWithMetadata;
         uint256 itemNonce;
         // players
         address[] allPlayers;
-        mapping(address => GameTypes.PlayerData) players; // player data
+        mapping(address => PlayerData) players; // player data
         mapping(address => mapping(uint256 => uint256)) inventory; // player => itemId => inventory
         mapping(address => uint256[]) inventoryNonce; // array of all items in player inventory
         // tower

@@ -28,7 +28,7 @@ contract Getters {
                 utils._getItemNonce()
             );
 
-        for (uint256 i = 1; i < utils._getItemNonce(); i++) {
+        for (uint256 i = 0; i < utils._getItemNonce(); i++) {
             allItems[i] = utils._getItem(i);
         }
 

@@ -3,7 +3,7 @@ pragma solidity ^0.8.4;
 import "hardhat/console.sol";
 
 // ------------------------------------------------------------
-// Epoch control for tower energy claim
+// Epoch control for tower reward claim
 // ------------------------------------------------------------
 
 contract Epoch {
