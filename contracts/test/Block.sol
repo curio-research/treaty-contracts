@@ -28,4 +28,8 @@ contract Block {
     function setWhitelistPlayer(address _player, bool _isWhitelisted) public onlyOwner {
         whitelist[_player] = _isWhitelisted;
     }
+
+    function isWhitelisted(address _player) public view returns (bool) {
+        return whitelist[_player];
+    }
 }
