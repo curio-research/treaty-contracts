@@ -1,5 +1,7 @@
 import { assert } from "console";
 import { position } from "../../util/types/common";
+import { WORLD_WIDTH } from "./constants";
+import { printDivider } from "./deployHelper";
 import { PrimsMapOutput } from "./types/mapGenerator";
 
 type Position = {
@@ -221,6 +223,14 @@ export const generatePrimsMap = (
   return { map, mapSnapshot };
 }
 
+const getFIndexFromCoord = (coord: position): number => {
+  return coord.x * WORLD_WIDTH + coord.y;
+}
+
+const getCoordFromFIndex = (fIndex: number): position => {
+  return { x: Math.floor(fIndex / WORLD_WIDTH), y: fIndex % WORLD_WIDTH };
+}
+
 /**
  * Add additional corridors to a Prim's map to increase connectivity.
  * @param map : map generated from Prim's algorithm.
@@ -231,14 +241,23 @@ export const generatePrimsMap = (
 export const addConnectivity = (
   map: number[][][],
   maxCorridorLen: number = 5,
-  minPeninsularPerimToCut: number = 64
+  minPeninsularPerimToCut: number = 100
 ): number[][][] => {
+  /**
+   * TODO:
+   * 1. Add corridor-perimeter pairs rather than a single pair for more flexibility.
+   * 2. Fix adjacent multicut problem.
+   */
+
   const width = map.length;
   const height = map[0].length;
 
   let yRange: number;
   let coords: position[];
   let lastCoord: position = { x: 0, y: 0 };
+
+  printDivider();
+  console.log("✦ adding connectivity to map");
 
   /**
    * Iterate through all empty tiles
@@ -266,43 +285,53 @@ export const addConnectivity = (
       /**
        * Run shortest path algorithm until all coordinates are visited
        */
-      let visited: position[] = [];
-      let border: position[] = [];
-      let temp: position[];
+      let visited: Set<number> = new Set();
+      let border: Set<number> = new Set();
+      let temp: Set<number>;
       let travelDist = 0;
+      let neighbor: number;
+      let c: position;
+      border.add(getFIndexFromCoord({ x, y }));
+
       while (coords) {
         if (travelDist > 1000) throw "timeout";
 
-        temp = [];
+        temp = new Set();
 
         // from every point on the border, take a step in every four directions
-        border.forEach((c) => {
-          if (map[c.x-1][c.y].length === 0 && !visited.includes({ x: c.x - 1, y: c.y })) {
-            temp.push({ x: c.x - 1, y: c.y });
+        border.forEach((fIndex) => {
+          c = getCoordFromFIndex(fIndex);
+
+          neighbor = getFIndexFromCoord({ x: c.x - 1, y: c.y });
+          if (map[c.x-1][c.y].length === 0 && !visited.has(neighbor)) {
+            temp.add(neighbor);
           }
-          if (map[c.x+1][c.y].length === 0 && !visited.includes({ x: c.x + 1, y: c.y })) {
-            temp.push({ x: c.x + 1, y: c.y });
+          neighbor = getFIndexFromCoord({ x: c.x + 1, y: c.y });
+          if (map[c.x+1][c.y].length === 0 && !visited.has(neighbor)) {
+            temp.add(neighbor);
           }
-          if (map[c.x][c.y-1].length === 0 && !visited.includes({ x: c.x, y: c.y - 1 })) {
-            temp.push({ x: c.x, y: c.y - 1 });
+          neighbor = getFIndexFromCoord({ x: c.x, y: c.y - 1 });
+          if (map[c.x][c.y-1].length === 0 && !visited.has(neighbor)) {
+            temp.add(neighbor);
           }
-          if (map[c.x][c.y+1].length === 0 && !visited.includes({ x: c.x, y: c.y + 1 })) {
-            temp.push({ x: c.x, y: c.y + 1 });
+          neighbor = getFIndexFromCoord({ x: c.x, y: c.y + 1 });
+          if (map[c.x][c.y+1].length === 0 && !visited.has(neighbor)) {
+            temp.add(neighbor);
           }
         });
 
-        if (temp.length === 0) break; // finished exploring map
+        if (temp.size === 0) break; // finished exploring map
 
-        border = [...new Set(temp)];
+        border = new Set(temp);
         for (let i = 0; i < coords.length; i++) {
-          if (border.includes(coords[i])) {
+          if (border.has(getFIndexFromCoord(coords[i]))) {
             if (coords.length == 1) lastCoord = coords[i]; // found the last visited coordinate
             coords.splice(i, 1);
             i--;
           }
         }
 
-        visited.push(...border);
+        border.forEach((c) => visited.add(c));
         travelDist++;
       }
 
@@ -310,6 +339,8 @@ export const addConnectivity = (
        * Slice corridor
        */
       if (travelDist > minPeninsularPerimToCut) {
+        console.log("slicing a corridor from (" + x + ", " + y + ") to (" + lastCoord.x + ", " + lastCoord.y + ")...");
+
         if (lastCoord.x === 0 && lastCoord.y === 0) throw "logic error";
 
         const xS = Math.min(lastCoord.x, x);
@@ -331,5 +362,6 @@ export const addConnectivity = (
     }
   }
 
+  printDivider();
   return map;
 }

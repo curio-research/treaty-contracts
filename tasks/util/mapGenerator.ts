@@ -5,7 +5,7 @@ import _ from "lodash";
 import { TowerWithLocation } from "../../util/types/tower";
 import { WORLD_HEIGHT, WORLD_WIDTH } from "./constants";
 import fs from "fs";
-import { generatePrimsMap } from "./primsMap";
+import { generatePrimsMap, addConnectivity } from "./primsMap";
 
 let visualizeNonce = 0;
 
@@ -166,11 +166,12 @@ const generateTowerSpecs = (towerLocations: position[]): TowerWithLocation[] => 
 // master map generation function
 // ---------------------------------
 
-export const generateMap = (worldWidth: number, worldHeight: number, roomWidth: number, usePrims?: boolean): MasterGameSpecs => {
+export const generateMap = (worldWidth: number, worldHeight: number, roomWidth: number, usePrims: boolean = false, moreConn: boolean = true): MasterGameSpecs => {
   let map: number[][][];
   if (usePrims) {
     let primsMapOutput = generatePrimsMap(worldWidth, worldHeight);
     map = primsMapOutput.map;
+    if (moreConn) map = addConnectivity(map);
     // primsMapOutput.mapSnapshot.forEach((m) => visualizeMap(m, true, "maps/"));
   } else {
     map = generateEmptyMap(worldWidth, worldHeight); // generate empty map
