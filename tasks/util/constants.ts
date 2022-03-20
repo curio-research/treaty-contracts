@@ -47,7 +47,7 @@ export enum ALL_ITEMS {
   TURBO = "Turbo",
   BLOCK = "Block",
   INDESCRUCTIBLE_WALL = "INDESCRUCTIBLE_WALL",
-  PROGRAMMABLE_BLOCK = "PROGRAMMABLE_BLOCK"
+  PROGRAMMABLE_BLOCK = "PROGRAMMABLE_BLOCK",
 }
 
 export const masterItems: Item[] = [
@@ -184,8 +184,8 @@ export const masterItems: Item[] = [
       healthDamage: 0,
       energyDamage: 0,
       programmable: false,
-    }
-  }
+    },
+  },
 ];
 
 // number of each item to generate every 100 tiles
