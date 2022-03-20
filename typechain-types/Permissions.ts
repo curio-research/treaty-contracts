@@ -19,6 +19,7 @@ import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 export interface PermissionsInterface extends utils.Interface {
   functions: {
     "_hasContractPermission(address)": FunctionFragment;
+    "getOwner()": FunctionFragment;
     "setPermission(address,bool)": FunctionFragment;
   };
 
@@ -26,6 +27,7 @@ export interface PermissionsInterface extends utils.Interface {
     functionFragment: "_hasContractPermission",
     values: [string]
   ): string;
+  encodeFunctionData(functionFragment: "getOwner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "setPermission",
     values: [string, boolean]
@@ -35,6 +37,7 @@ export interface PermissionsInterface extends utils.Interface {
     functionFragment: "_hasContractPermission",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getOwner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setPermission",
     data: BytesLike
@@ -75,6 +78,8 @@ export interface Permissions extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    getOwner(overrides?: CallOverrides): Promise<[string]>;
+
     setPermission(
       _contract: string,
       _permission: boolean,
@@ -87,6 +92,8 @@ export interface Permissions extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  getOwner(overrides?: CallOverrides): Promise<string>;
+
   setPermission(
     _contract: string,
     _permission: boolean,
@@ -98,6 +105,8 @@ export interface Permissions extends BaseContract {
       _contract: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    getOwner(overrides?: CallOverrides): Promise<string>;
 
     setPermission(
       _contract: string,
@@ -114,6 +123,8 @@ export interface Permissions extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getOwner(overrides?: CallOverrides): Promise<BigNumber>;
+
     setPermission(
       _contract: string,
       _permission: boolean,
@@ -126,6 +137,8 @@ export interface Permissions extends BaseContract {
       _contract: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    getOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     setPermission(
       _contract: string,

@@ -56,6 +56,8 @@ library GameTypes {
         uint256[] mineItemIds; // tools for mining
         uint256[] craftItemIds;
         uint256[] craftItemAmounts;
+
+        bool programmable;
     }
 
     struct Recipe {

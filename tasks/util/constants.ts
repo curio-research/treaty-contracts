@@ -47,6 +47,7 @@ export enum ALL_ITEMS {
   TURBO = "Turbo",
   BLOCK = "Block",
   INDESCRUCTIBLE_WALL = "INDESCRUCTIBLE_WALL",
+  PROGRAMMABLE_BLOCK = "PROGRAMMABLE_BLOCK"
 }
 
 export const masterItems: Item[] = [
@@ -62,6 +63,7 @@ export const masterItems: Item[] = [
       occupiable: false,
       healthDamage: 0,
       energyDamage: 0,
+      programmable: false,
     },
   },
   {
@@ -76,6 +78,7 @@ export const masterItems: Item[] = [
       occupiable: false,
       healthDamage: 0,
       energyDamage: 0,
+      programmable: false,
     },
   },
   {
@@ -90,6 +93,7 @@ export const masterItems: Item[] = [
       occupiable: false,
       healthDamage: 0,
       energyDamage: 0,
+      programmable: false,
     },
   },
   {
@@ -104,6 +108,7 @@ export const masterItems: Item[] = [
       occupiable: false,
       healthDamage: 0,
       energyDamage: 0,
+      programmable: false,
     },
   },
   {
@@ -118,6 +123,7 @@ export const masterItems: Item[] = [
       occupiable: false,
       healthDamage: 0,
       energyDamage: 0,
+      programmable: false,
     },
   },
   {
@@ -132,6 +138,7 @@ export const masterItems: Item[] = [
       occupiable: false,
       healthDamage: 0,
       energyDamage: 0,
+      programmable: false,
     },
   },
   {
@@ -146,6 +153,7 @@ export const masterItems: Item[] = [
       occupiable: false,
       healthDamage: 0,
       energyDamage: 0,
+      programmable: false,
     },
   },
   {
@@ -160,8 +168,24 @@ export const masterItems: Item[] = [
       occupiable: false,
       healthDamage: 0,
       energyDamage: 0,
+      programmable: false,
     },
   },
+  {
+    name: ALL_ITEMS.PROGRAMMABLE_BLOCK,
+    item: {
+      mineable: true,
+      mineItemIds: [],
+      strength: 0,
+      craftable: true,
+      craftItemIds: [],
+      craftItemAmounts: [],
+      occupiable: false,
+      healthDamage: 0,
+      energyDamage: 0,
+      programmable: false,
+    }
+  }
 ];
 
 // number of each item to generate every 100 tiles

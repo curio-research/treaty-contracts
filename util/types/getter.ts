@@ -1,4 +1,4 @@
-import { ALL_ITEMS } from "./../../tasks/util/itemGenerator";
+import { ALL_ITEMS } from "./../../tasks/util/constants";
 export interface ItemWithMetadata {
   mineable: boolean;
   craftable: boolean;
@@ -9,6 +9,7 @@ export interface ItemWithMetadata {
   mineItemIds: number[];
   craftItemIds: number[];
   craftItemAmounts: number[];
+  programmable: boolean;
 }
 
 export interface ItemMaster {

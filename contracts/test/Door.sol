@@ -1,21 +1,25 @@
 //SPDX-License-Identifier: MIT
-pragma solidity ^0.8.11;
+pragma solidity ^0.8.4;
 import "hardhat/console.sol";
 import "../Permissions.sol";
+import "../GameTypes.sol";
 
-contract Block {
+contract Door {
     mapping(address => bool) public whitelist;
+    GameTypes.ItemWithMetadata public item;
     Permissions private p;
     address private owner;
 
     constructor(
         address[] memory _whitelist,
+        GameTypes.ItemWithMetadata memory _item,
         Permissions _permissions
     ) {
         for (uint256 i = 0; i < _whitelist.length; i++) {
             whitelist[_whitelist[i]] = true;
         }
 
+        item = _item;
         p = _permissions;
         owner = tx.origin;
     }
