@@ -1,4 +1,4 @@
-import { Item } from "../../util/types/getter";
+import { Item, ItemMaster } from "../../util/types/getter";
 export const LOCALHOST_RPC_URL = "http://127.0.0.1:8545/";
 export const LOCALHOST_WS_RPC_URL = "ws://localhost:8545";
 
@@ -64,6 +64,7 @@ export const masterItems: Item[] = [
       healthDamage: 0,
       energyDamage: 0,
       programmable: false,
+      abiEncoding: "",
     },
   },
   {
@@ -79,6 +80,7 @@ export const masterItems: Item[] = [
       healthDamage: 0,
       energyDamage: 0,
       programmable: false,
+      abiEncoding: "",
     },
   },
   {
@@ -94,6 +96,7 @@ export const masterItems: Item[] = [
       healthDamage: 0,
       energyDamage: 0,
       programmable: false,
+      abiEncoding: "",
     },
   },
   {
@@ -109,6 +112,7 @@ export const masterItems: Item[] = [
       healthDamage: 0,
       energyDamage: 0,
       programmable: false,
+      abiEncoding: "",
     },
   },
   {
@@ -124,6 +128,7 @@ export const masterItems: Item[] = [
       healthDamage: 0,
       energyDamage: 0,
       programmable: false,
+      abiEncoding: "",
     },
   },
   {
@@ -139,6 +144,7 @@ export const masterItems: Item[] = [
       healthDamage: 0,
       energyDamage: 0,
       programmable: false,
+      abiEncoding: "",
     },
   },
   {
@@ -154,6 +160,7 @@ export const masterItems: Item[] = [
       healthDamage: 0,
       energyDamage: 0,
       programmable: false,
+      abiEncoding: "",
     },
   },
   {
@@ -169,6 +176,7 @@ export const masterItems: Item[] = [
       healthDamage: 0,
       energyDamage: 0,
       programmable: false,
+      abiEncoding: "",
     },
   },
   {
@@ -183,10 +191,21 @@ export const masterItems: Item[] = [
       occupiable: false,
       healthDamage: 0,
       energyDamage: 0,
-      programmable: false,
+      programmable: true,
+      abiEncoding: "",
     },
   },
 ];
+
+export const generateBlockIdToNameMap = (
+  items: ItemMaster[]
+): Record<number, string> => {
+  const res: Record<number, string> = {};
+  items.forEach((item, idx) => {
+    res[idx] = item.name;
+  });
+  return res;
+};
 
 // number of each item to generate every 100 tiles
 // determines the rarity of items

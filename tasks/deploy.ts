@@ -1,5 +1,6 @@
 import { Tower } from "./../util/types/tower";
-import { generateBlockIdToNameMap } from "./../test/util/constants";
+import { generateBlockIdToNameMap } from "./util/constants";
+import { deployToIPFS } from "./util/programmableBlockDeployer";
 import { Epoch } from "./../typechain-types/Epoch";
 import { task } from "hardhat/config";
 import axios from "axios";
@@ -18,13 +19,13 @@ import {
   WORLD_WIDTH,
 } from "./util/constants";
 import { generateAllGameArgs } from "./util/allArgsGenerator";
-import { Getters, Game, GameStorage, Helper } from "../typechain-types";
+import { Getters, Game, GameStorage, Helper, Door } from "../typechain-types";
 import { TowerGame } from "./../typechain-types/TowerGame";
 import { Permissions } from "../typechain-types";
 import { position } from "../util/types/common";
-import { flatten3dMapArray } from "./util/mapGenerator";
+import { visualizeMap } from "./util/mapGenerator";
+import axios from "axios";
 const { BACKEND_URL } = process.env;
-import pinataSDK from "@pinata/sdk";
 
 // ---------------------------------
 // deploy script
@@ -35,24 +36,6 @@ task("deploy", "deploy contracts")
   .addFlag("noport", "Don't port files to frontend") // default is to call port
   .addFlag("publish", "Publish deployment to game launcher") // default is to call port
   .setAction(async (args: any, hre: HardhatRuntimeEnvironment) => {
-    const pinata = pinataSDK(
-      process.env.PINATA_API_KEY!,
-      process.env.PINATA_API_SECRET!
-    );
-
-    const result = await pinata.testAuthentication();
-
-    console.log(result);
-    /*
-    const doorAbi = JSON.stringify(
-      (await hre.artifacts.readArtifact("Door")).abi
-    );
-
-    console.log(doorAbi);*/
-
-    const res = await pinata.pinJSONToIPFS(doorAbi);
-    console.log(res);
-
     const isDev =
       hre.network.name === "localhost" || hre.network.name === "hardhat";
     await hre.run("compile");
@@ -110,6 +93,13 @@ task("deploy", "deploy contracts")
     const EpochContract = await deployProxy<Epoch>("Epoch", player1, hre, [10]);
     console.log("✦ EpochContract deployed");
 
+    //Deploying Programmable Block Contract, may be abstracted
+    const DoorContract = await deployProxy<Door>("Door", player1, hre, [
+      [player1.address],
+      Permissions.address,
+    ]);
+    console.log("✦ Programmable Block deployed");
+
     const GET_MAP_INTERVAL = (
       await GettersContract.GET_MAP_INTERVAL()
     ).toNumber();
@@ -136,6 +126,7 @@ task("deploy", "deploy contracts")
     console.log("Tower        ", TowerContract.address);
     console.log("Storage      ", GameStorage.address);
     console.log("GameHelper   ", GameHelper.address);
+    console.log("Dooor   ", DoorContract.address);
     printDivider();
 
     // initialize blocks
@@ -143,13 +134,9 @@ task("deploy", "deploy contracts")
     let regionMap: number[][];
     for (let x = 0; x < WORLD_WIDTH; x += MAP_INTERVAL) {
       for (let y = 0; y < WORLD_HEIGHT; y += MAP_INTERVAL) {
-<<<<<<< HEAD
-        regionMap = flattenedMap.slice(x, x + MAP_INTERVAL).map((col) => col.slice(y, y + MAP_INTERVAL));
-=======
         regionMap = blocks
           .slice(x, x + MAP_INTERVAL)
           .map((col) => col.slice(y, y + MAP_INTERVAL));
->>>>>>> f60a6c4 (WIP add programmable block abi to pinata)
 
         let tx = await GameStorage._setMapRegion({ x, y }, regionMap);
         tx.wait();
@@ -183,21 +170,26 @@ task("deploy", "deploy contracts")
       tx = await GameContract.connect(player2).initializePlayer(player2Pos);
       tx.wait();
 
-<<<<<<< HEAD
+
       tx = await GameStorage.connect(player1)._increaseItemInInventory(player1.address, 0, 100);
       tx.wait();
-=======
+
+>>>>>>> e23ff3c (deployed programmable block to ipfs)
       tx = await GameStorage.connect(player1)._increaseItemInInventory(
         player1.address,
         0,
         100
       );
+<<<<<<< HEAD
       await tx.wait();
 
       console.log("✦ setting epoch controller");
       tx = await GameStorage.setEpochController(EpochContract.address); // set epoch controller
       await tx.wait();
 >>>>>>> f60a6c4 (WIP add programmable block abi to pinata)
+=======
+      tx.wait();
+>>>>>>> e23ff3c (deployed programmable block to ipfs)
     }
 
     console.log("✦ setting epoch controller");
@@ -220,8 +212,7 @@ task("deploy", "deploy contracts")
     await towerTx.wait();
 
     console.log("✦ initializing programmable blocks");
-    
-
+    await deployToIPFS(hre, "Door");
     // ---------------------------------
     // porting files to frontend
     // ---------------------------------
@@ -249,6 +240,7 @@ task("deploy", "deploy contracts")
     };
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     const publish = args.publish;
 =======
     await fsPromise.writeFile(
@@ -256,13 +248,19 @@ task("deploy", "deploy contracts")
       JSON.stringify(configFile)
     );
 >>>>>>> f60a6c4 (WIP add programmable block abi to pinata)
+=======
+    const publish = args.publish;
+>>>>>>> e23ff3c (deployed programmable block to ipfs)
 
     // publish the deployment to mongodb
     if (publish && !isDev) {
       console.log("Backend URL", BACKEND_URL);
 
       // publish
-      const { data } = await axios.post(`${BACKEND_URL}/deployments/add`, configFile);
+      const { data } = await axios.post(
+        `${BACKEND_URL}/deployments/add`,
+        configFile
+      );
 
       if (data) {
         console.log("Published successfully");
@@ -273,13 +271,24 @@ task("deploy", "deploy contracts")
     if (isDev) {
       const configFileDir = path.join(currentFileDir, "game.config.json");
 
+<<<<<<< HEAD
       const existingDeployments = await fs.readFileSync(configFileDir).toString();
+=======
+      const existingDeployments = await fs
+        .readFileSync(configFileDir)
+        .toString();
+>>>>>>> e23ff3c (deployed programmable block to ipfs)
 
-      const existingDeploymentsArray = existingDeployments ? JSON.parse(existingDeployments) : [];
+      const existingDeploymentsArray = existingDeployments
+        ? JSON.parse(existingDeployments)
+        : [];
 
       existingDeploymentsArray.push(configFile);
 
-      await fsPromise.writeFile(configFileDir, JSON.stringify(existingDeploymentsArray));
+      await fsPromise.writeFile(
+        configFileDir,
+        JSON.stringify(existingDeploymentsArray)
+      );
 
       await hre.run("port"); // default to porting files
     }

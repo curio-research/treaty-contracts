@@ -10,6 +10,7 @@ export interface ItemWithMetadata {
   craftItemIds: number[];
   craftItemAmounts: number[];
   programmable: boolean;
+  abiEncoding: string;
 }
 
 export interface ItemMaster {

@@ -47,6 +47,7 @@ export type ItemWithMetadataStruct = {
   craftItemIds: BigNumberish[];
   craftItemAmounts: BigNumberish[];
   programmable: boolean;
+  abiEncoding: string;
 };
 
 export type ItemWithMetadataStructOutput = [
@@ -59,7 +60,8 @@ export type ItemWithMetadataStructOutput = [
   BigNumber[],
   BigNumber[],
   BigNumber[],
-  boolean
+  boolean,
+  string
 ] & {
   mineable: boolean;
   craftable: boolean;
@@ -71,6 +73,7 @@ export type ItemWithMetadataStructOutput = [
   craftItemIds: BigNumber[];
   craftItemAmounts: BigNumber[];
   programmable: boolean;
+  abiEncoding: string;
 };
 
 export type PlayerDataStruct = {

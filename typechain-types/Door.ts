@@ -4,7 +4,6 @@
 import {
   BaseContract,
   BigNumber,
-  BigNumberish,
   BytesLike,
   CallOverrides,
   ContractTransaction,
@@ -17,47 +16,9 @@ import { FunctionFragment, Result } from "@ethersproject/abi";
 import { Listener, Provider } from "@ethersproject/providers";
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
-export type ItemWithMetadataStruct = {
-  mineable: boolean;
-  craftable: boolean;
-  occupiable: boolean;
-  strength: BigNumberish;
-  healthDamage: BigNumberish;
-  energyDamage: BigNumberish;
-  mineItemIds: BigNumberish[];
-  craftItemIds: BigNumberish[];
-  craftItemAmounts: BigNumberish[];
-  programmable: boolean;
-};
-
-export type ItemWithMetadataStructOutput = [
-  boolean,
-  boolean,
-  boolean,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber[],
-  BigNumber[],
-  BigNumber[],
-  boolean
-] & {
-  mineable: boolean;
-  craftable: boolean;
-  occupiable: boolean;
-  strength: BigNumber;
-  healthDamage: BigNumber;
-  energyDamage: BigNumber;
-  mineItemIds: BigNumber[];
-  craftItemIds: BigNumber[];
-  craftItemAmounts: BigNumber[];
-  programmable: boolean;
-};
-
 export interface DoorInterface extends utils.Interface {
   functions: {
     "isWhitelisted(address)": FunctionFragment;
-    "item()": FunctionFragment;
     "setWhitelistPlayer(address,bool)": FunctionFragment;
     "whitelist(address)": FunctionFragment;
   };
@@ -66,7 +27,6 @@ export interface DoorInterface extends utils.Interface {
     functionFragment: "isWhitelisted",
     values: [string]
   ): string;
-  encodeFunctionData(functionFragment: "item", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "setWhitelistPlayer",
     values: [string, boolean]
@@ -77,7 +37,6 @@ export interface DoorInterface extends utils.Interface {
     functionFragment: "isWhitelisted",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "item", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setWhitelistPlayer",
     data: BytesLike
@@ -119,20 +78,6 @@ export interface Door extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    item(
-      overrides?: CallOverrides
-    ): Promise<
-      [boolean, boolean, boolean, BigNumber, BigNumber, BigNumber, boolean] & {
-        mineable: boolean;
-        craftable: boolean;
-        occupiable: boolean;
-        strength: BigNumber;
-        healthDamage: BigNumber;
-        energyDamage: BigNumber;
-        programmable: boolean;
-      }
-    >;
-
     setWhitelistPlayer(
       _player: string,
       _isWhitelisted: boolean,
@@ -144,20 +89,6 @@ export interface Door extends BaseContract {
 
   isWhitelisted(_player: string, overrides?: CallOverrides): Promise<boolean>;
 
-  item(
-    overrides?: CallOverrides
-  ): Promise<
-    [boolean, boolean, boolean, BigNumber, BigNumber, BigNumber, boolean] & {
-      mineable: boolean;
-      craftable: boolean;
-      occupiable: boolean;
-      strength: BigNumber;
-      healthDamage: BigNumber;
-      energyDamage: BigNumber;
-      programmable: boolean;
-    }
-  >;
-
   setWhitelistPlayer(
     _player: string,
     _isWhitelisted: boolean,
@@ -168,20 +99,6 @@ export interface Door extends BaseContract {
 
   callStatic: {
     isWhitelisted(_player: string, overrides?: CallOverrides): Promise<boolean>;
-
-    item(
-      overrides?: CallOverrides
-    ): Promise<
-      [boolean, boolean, boolean, BigNumber, BigNumber, BigNumber, boolean] & {
-        mineable: boolean;
-        craftable: boolean;
-        occupiable: boolean;
-        strength: BigNumber;
-        healthDamage: BigNumber;
-        energyDamage: BigNumber;
-        programmable: boolean;
-      }
-    >;
 
     setWhitelistPlayer(
       _player: string,
@@ -200,8 +117,6 @@ export interface Door extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    item(overrides?: CallOverrides): Promise<BigNumber>;
-
     setWhitelistPlayer(
       _player: string,
       _isWhitelisted: boolean,
@@ -216,8 +131,6 @@ export interface Door extends BaseContract {
       _player: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
-
-    item(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     setWhitelistPlayer(
       _player: string,
