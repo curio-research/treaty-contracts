@@ -4,6 +4,7 @@ import { Epoch } from "./../typechain-types/Epoch";
 import { task } from "hardhat/config";
 import * as path from "path";
 import * as fsPromise from "fs/promises";
+import * as fs from "fs";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { deployProxy, printDivider } from "./util/deployHelper";
@@ -14,6 +15,8 @@ import { TowerGame } from "./../typechain-types/TowerGame";
 import { Permissions } from "../typechain-types";
 import { position } from "../util/types/common";
 import { visualizeMap } from "./util/mapGenerator";
+import axios from "axios";
+const { BACKEND_URL } = process.env;
 
 // ---------------------------------
 // deploy script
@@ -22,6 +25,7 @@ import { visualizeMap } from "./util/mapGenerator";
 
 task("deploy", "deploy contracts")
   .addFlag("noport", "Don't port files to frontend") // default is to call port
+  .addFlag("publish", "Publish deployment to game launcher") // default is to call port
   .setAction(async (args: any, hre: HardhatRuntimeEnvironment) => {
     const isDev = hre.network.name === "localhost" || hre.network.name === "hardhat";
     await hre.run("compile");
@@ -110,18 +114,18 @@ task("deploy", "deploy contracts")
       let tx;
 
       tx = await GameContract.connect(player1).initializePlayer(player1Pos); // initialize users
-      await tx.wait();
+      tx.wait();
 
       tx = await GameContract.connect(player2).initializePlayer(player2Pos);
-      await tx.wait();
+      tx.wait();
 
       tx = await GameStorage.connect(player1)._increaseItemInInventory(player1.address, 0, 100);
-      await tx.wait();
-
-      console.log("✦ setting epoch controller");
-      tx = await GameStorage.setEpochController(EpochContract.address); // set epoch controller
-      await tx.wait();
+      tx.wait();
     }
+
+    console.log("✦ setting epoch controller");
+    const tx = await GameStorage.setEpochController(EpochContract.address); // set epoch controller
+    tx.wait();
 
     // bulk initialize towers
     console.log("✦ initializing towers");
@@ -143,24 +147,52 @@ task("deploy", "deploy contracts")
 
     const networkRPCs = rpcUrlSelector(hre.network.name);
 
+    const blockIdToNameMapping = generateBlockIdToNameMap(masterItems);
+
     const configFile = {
-      GAME_ADDRESS: GameContract.address,
-      TOWER_GAME_ADDRESS: TowerContract.address,
-      GAME_STORAGE_CONTRACT: GameStorage.address,
-      GETTERS_ADDRESS: GettersContract.address,
-      NETWORK: hre.network.name,
-      EPOCH_ADDRESS: EpochContract.address,
-      RPC_URL: networkRPCs[0],
-      WS_RPC_URL: networkRPCs[1],
-      GET_MAP_INTERVAL: GET_MAP_INTERVAL,
-      BLOCK_ID_TO_NAME_MAP: generateBlockIdToNameMap(masterItems),
+      addresses: JSON.stringify({
+        GAME_ADDRESS: GameContract.address,
+        TOWER_GAME_ADDRESS: TowerContract.address,
+        GAME_STORAGE_CONTRACT: GameStorage.address,
+        GETTERS_ADDRESS: GettersContract.address,
+        EPOCH_ADDRESS: EpochContract.address,
+      }),
+      network: hre.network.name,
+      rpcUrl: networkRPCs[0],
+      wsRpcUrl: networkRPCs[1],
+      getMapInterval: GET_MAP_INTERVAL,
+      blockIdToNameMapping: JSON.stringify(blockIdToNameMapping),
+      deploymentId: `${hre.network.name}-${Date.now()}`,
     };
 
-    await fsPromise.writeFile(path.join(currentFileDir, "game.config.json"), JSON.stringify(configFile));
+    const publish = args.publish;
 
-    const noPort = args.noport; // port flag
-    if (noPort) return;
-    await hre.run("port"); // default to porting files
+    // publish the deployment to mongodb
+    if (publish && !isDev) {
+      console.log("Backend URL", BACKEND_URL);
+
+      // publish
+      const { data } = await axios.post(`${BACKEND_URL}/deployments/add`, configFile);
+
+      if (data) {
+        console.log("Published successfully");
+      }
+    }
+
+    // if we're in dev mode, port the files to the frontend.
+    if (isDev) {
+      const configFileDir = path.join(currentFileDir, "game.config.json");
+
+      const existingDeployments = await fs.readFileSync(configFileDir).toString();
+
+      const existingDeploymentsArray = existingDeployments ? JSON.parse(existingDeployments) : [];
+
+      existingDeploymentsArray.push(configFile);
+
+      await fsPromise.writeFile(configFileDir, JSON.stringify(existingDeploymentsArray));
+
+      await hre.run("port"); // default to porting files
+    }
   });
 
 export const rpcUrlSelector = (networkName: string): string[] => {
