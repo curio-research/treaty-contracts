@@ -90,6 +90,7 @@ export const masterItems: ItemMaster[] = [
       occupiable: false,
       healthDamage: 0,
       energyDamage: 0,
+      programmable: false,
     },
   },
   {
@@ -104,6 +105,7 @@ export const masterItems: ItemMaster[] = [
       occupiable: false,
       healthDamage: 0,
       energyDamage: 0,
+      programmable: false,
     },
   },
   {
@@ -118,6 +120,7 @@ export const masterItems: ItemMaster[] = [
       occupiable: false,
       healthDamage: 0,
       energyDamage: 0,
+      programmable: false,
     },
   },
   {
@@ -132,6 +135,7 @@ export const masterItems: ItemMaster[] = [
       occupiable: false,
       healthDamage: 0,
       energyDamage: 0,
+      programmable: false,
     },
   },
   {
@@ -146,6 +150,7 @@ export const masterItems: ItemMaster[] = [
       occupiable: false,
       healthDamage: 0,
       energyDamage: 0,
+      programmable: false,
     },
   },
   {
@@ -160,6 +165,7 @@ export const masterItems: ItemMaster[] = [
       occupiable: false,
       healthDamage: 0,
       energyDamage: 0,
+      programmable: false,
     },
   },
 ];
