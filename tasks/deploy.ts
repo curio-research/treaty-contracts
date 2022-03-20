@@ -219,6 +219,9 @@ task("deploy", "deploy contracts")
     );
     await towerTx.wait();
 
+    console.log("✦ initializing programmable blocks");
+    
+
     // ---------------------------------
     // porting files to frontend
     // ---------------------------------
