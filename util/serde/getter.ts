@@ -13,6 +13,7 @@ export const decodeItemWithMetadata = (res: ItemWithMetadataStruct): ItemWithMet
     mineItemIds: decodeBigNumberishArr(res.mineItemIds),
     craftItemIds: decodeBigNumberishArr(res.craftItemIds),
     craftItemAmounts: decodeBigNumberishArr(res.craftItemAmounts),
+    programmable: res.programmable,
   };
 };
 

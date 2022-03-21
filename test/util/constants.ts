@@ -90,6 +90,8 @@ export const masterItems: ItemMaster[] = [
       occupiable: false,
       healthDamage: 0,
       energyDamage: 0,
+      programmable: false,
+      abiEncoding: "",
     },
   },
   {
@@ -104,6 +106,8 @@ export const masterItems: ItemMaster[] = [
       occupiable: false,
       healthDamage: 0,
       energyDamage: 0,
+      programmable: false,
+      abiEncoding: "",
     },
   },
   {
@@ -118,6 +122,8 @@ export const masterItems: ItemMaster[] = [
       occupiable: false,
       healthDamage: 0,
       energyDamage: 0,
+      programmable: false,
+      abiEncoding: "",
     },
   },
   {
@@ -132,6 +138,8 @@ export const masterItems: ItemMaster[] = [
       occupiable: false,
       healthDamage: 0,
       energyDamage: 0,
+      programmable: false,
+      abiEncoding: "",
     },
   },
   {
@@ -146,6 +154,8 @@ export const masterItems: ItemMaster[] = [
       occupiable: false,
       healthDamage: 0,
       energyDamage: 0,
+      programmable: false,
+      abiEncoding: "",
     },
   },
   {
@@ -160,22 +170,18 @@ export const masterItems: ItemMaster[] = [
       occupiable: false,
       healthDamage: 0,
       energyDamage: 0,
+      programmable: false,
+      abiEncoding: "",
     },
   },
 ];
 
-export const generateBlockNameToIdMap = (items: ItemMaster[]): Record<string, number> => {
+export const generateBlockNameToIdMap = (
+  items: ItemMaster[]
+): Record<string, number> => {
   const res: Record<string, number> = {};
   items.forEach((item, idx) => {
     res[item.name] = idx;
-  });
-  return res;
-};
-
-export const generateBlockIdToNameMap = (items: ItemMaster[]): Record<number, string> => {
-  const res: Record<number, string> = {};
-  items.forEach((item, idx) => {
-    res[idx] = item.name;
   });
   return res;
 };
@@ -193,7 +199,7 @@ export const generateBlocks = (tileTypes: string[][]) => {
   for (let i = 0; i < WORLD_WIDTH; i++) {
     col = [];
     for (let j = 0; j < WORLD_HEIGHT; j++) {
-      tileIdx = (i % 2 == 0 && j == 0) ? 1 : 0;
+      tileIdx = i % 2 == 0 && j == 0 ? 1 : 0;
       col.push(tileTypes[tileIdx].map((b) => blockNameToIdMap[b]));
     }
     blocks.push(col);

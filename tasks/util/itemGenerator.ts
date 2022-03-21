@@ -1,11 +1,12 @@
-import { PositionStruct } from "../../typechain-types/Game";
-import { ITEM_RATIO, masterItems, WORLD_HEIGHT, WORLD_WIDTH } from "./constants";
+import { PositionStruct } from '../../typechain-types/Game';
+import { ItemMaster, ItemWithMetadata } from '../../util/types/getter';
+import { ITEM_RATIO, masterItems, WORLD_HEIGHT, WORLD_WIDTH } from './constants';
 
 // ------------------------------------------------
 // Generate all items with crafting recipes
 // ------------------------------------------------
 
-export const allGameItems = masterItems.map((item) => item.item);
+export const gameItems = masterItems.map((item) => item.item);
 
 // ------------------------------------------------
 // Randomized item generation across map
@@ -15,8 +16,8 @@ const worldSize = WORLD_WIDTH * WORLD_HEIGHT;
 const getRandomPosition = (): PositionStruct => {
   const x = Math.floor(Math.random() * WORLD_WIDTH);
   const y = Math.floor(Math.random() * WORLD_HEIGHT);
-  return {x, y};
-}
+  return { x, y };
+};
 
 /**
  * Generate items based on their ratio for empty map.
@@ -42,4 +43,17 @@ export const generateItems = (map: number[][][]): number[][][] => {
   }
 
   return map;
+};
+
+export const appendIpfsHashToMetadata = (blockMetadata: ItemWithMetadata, ipfsHash: string): ItemWithMetadata => {
+  const temp = blockMetadata;
+  temp.abiEncoding = ipfsHash;
+  return temp;
+};
+
+export const removeBlockToMasterItems = (block: ItemMaster): void => {
+  const index = masterItems.indexOf(block);
+  if (index > -1) {
+    masterItems.splice(index, 1);
+  }
 };

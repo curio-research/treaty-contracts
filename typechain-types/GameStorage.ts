@@ -44,6 +44,8 @@ export type ItemWithMetadataStruct = {
   mineItemIds: BigNumberish[];
   craftItemIds: BigNumberish[];
   craftItemAmounts: BigNumberish[];
+  programmable: boolean;
+  abiEncoding: string;
 };
 
 export type ItemWithMetadataStructOutput = [
@@ -55,7 +57,9 @@ export type ItemWithMetadataStructOutput = [
   BigNumber,
   BigNumber[],
   BigNumber[],
-  BigNumber[]
+  BigNumber[],
+  boolean,
+  string
 ] & {
   mineable: boolean;
   craftable: boolean;
@@ -66,6 +70,8 @@ export type ItemWithMetadataStructOutput = [
   mineItemIds: BigNumber[];
   craftItemIds: BigNumber[];
   craftItemAmounts: BigNumber[];
+  programmable: boolean;
+  abiEncoding: string;
 };
 
 export type PlayerDataStruct = {
@@ -197,7 +203,7 @@ export interface GameStorageInterface extends utils.Interface {
     "_place((uint256,uint256),uint256)": FunctionFragment;
     "_setBlock((uint256,uint256),uint256)": FunctionFragment;
     "_setConstants((uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))": FunctionFragment;
-    "_setItem(uint256,(bool,bool,bool,uint256,uint256,uint256,uint256[],uint256[],uint256[]))": FunctionFragment;
+    "_setItem(uint256,(bool,bool,bool,uint256,uint256,uint256,uint256[],uint256[],uint256[],bool,string))": FunctionFragment;
     "_setMapRegion((uint256,uint256),uint256[][])": FunctionFragment;
     "_setOccupierAtPosition(address,(uint256,uint256))": FunctionFragment;
     "_setPlayer(address,(uint256,uint256))": FunctionFragment;
