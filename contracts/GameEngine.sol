@@ -22,17 +22,11 @@ contract Game {
 
     event NewPlayer(address _player, GameTypes.Position _pos);
     event Move(address _player, GameTypes.Position _pos);
-    event MineItem(
-        address _player,
-        GameTypes.Position _pos,
-        uint256 _blockId,
-        uint256 _zIndex
-    );
+    event MineItem(address _player, GameTypes.Position _pos, uint256 _blockId);
     event AttackItem(
         address _player,
         GameTypes.Position _pos,
-        uint256 _strength,
-        uint256 _zIndex
+        uint256 _strength
     );
     event Place(address _player, GameTypes.Position _pos, uint256 _blockId);
     event Craft(address _player, uint256 _blockId);
@@ -105,13 +99,11 @@ contract Game {
         utils._setOccupierAtPosition(msg.sender, _pos);
     }
 
-    function mineItem(
-        GameTypes.Position memory _pos,
-        uint256 _zIdx,
-        address _playerAddr
-    ) internal {
+    function mineItem(GameTypes.Position memory _pos, address _playerAddr)
+        internal
+    {
         // can only mine with the needed tool
-        uint256 _itemId = utils._getBlockAtPosition(_pos, _zIdx);
+        uint256 _itemId = utils._getBlockAtPos(_pos);
 
         GameTypes.ItemWithMetadata memory _itemWithMetadata = utils._getItem(
             _itemId
@@ -140,15 +132,13 @@ contract Game {
         utils._increaseItemInInventory(_playerAddr, _itemId, 1);
         utils._mine(_pos);
 
-        emit MineItem(_playerAddr, _pos, _itemId, _zIdx);
+        emit MineItem(_playerAddr, _pos, _itemId);
     }
 
     // reduces item health
-    function attackItem(
-        GameTypes.Position memory _pos,
-        uint256 _zIdx,
-        address _playerAddr
-    ) internal {
+    function attackItem(GameTypes.Position memory _pos, address _playerAddr)
+        internal
+    {
         utils._setTopLevelStrength(
             _pos,
             utils._getTileData(_pos).topLevelStrength -
@@ -156,13 +146,14 @@ contract Game {
         );
         uint256 _strength = utils._getTileData(_pos).topLevelStrength;
 
-        emit AttackItem(_playerAddr, _pos, _strength, _zIdx);
+        emit AttackItem(_playerAddr, _pos, _strength);
     }
 
     // mine item function
     function mine(GameTypes.Position memory _pos) external {
-        uint256 _blockCount = utils._getBlockCountAtPosition(_pos);
-        if (_blockCount == 0) revert("engine/nonexistent-block");
+        uint256 _block = utils._getBlockAtPos(_pos);
+        require(_block != 0, "engine/nonexistent-block");
+
         if (
             !utils._withinDistance(
                 _pos,
@@ -171,21 +162,19 @@ contract Game {
             )
         ) revert("engine/invalid-distance");
 
-        uint256 blockToMine = utils._getTopBlockAtPosition(_pos);
         GameTypes.ItemWithMetadata memory _itemWithMetadata = utils._getItem(
-            blockToMine
+            _block
         );
-        if (!_itemWithMetadata.mineable) revert("engine/not-mineable");
 
-        uint256 _zIdx = _blockCount - 1;
+        if (!_itemWithMetadata.mineable) revert("engine/not-mineable");
 
         if (
             utils._getPlayer(msg.sender).attackDamage <
             utils._getTileData(_pos).topLevelStrength
         ) {
-            attackItem(_pos, _zIdx, msg.sender);
+            attackItem(_pos, msg.sender);
         } else {
-            mineItem(_pos, _zIdx, msg.sender);
+            mineItem(_pos, msg.sender);
         }
     }
 
@@ -282,8 +271,7 @@ contract Game {
                     _amount
                 );
             } else {
-                uint256 _blockCount = utils._getBlockCountAtPosition(_pos);
-                mineItem(_pos, _blockCount - 1, msg.sender);
+                mineItem(_pos, msg.sender);
             }
         }
     }

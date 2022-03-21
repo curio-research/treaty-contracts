@@ -5,11 +5,9 @@ import { FactoryOptions } from "hardhat/types";
 export const fixtureLoader = waffle.createFixtureLoader();
 
 export const deployContract = async <C extends Contract>(contractName: string, contractArgs: unknown[], libs?: FactoryOptions["libraries"]): Promise<C> => {
-  const _factory = libs 
-    ? await ethers.getContractFactory(contractName, {libraries: libs})
-    : await ethers.getContractFactory(contractName);
-  
-  const _contract: any = await (_factory).deploy(...contractArgs);
+  const _factory = libs ? await ethers.getContractFactory(contractName, { libraries: libs }) : await ethers.getContractFactory(contractName);
+
+  const _contract: any = await _factory.deploy(...contractArgs);
   console.log(`${contractName}: ${_contract.address}`);
   return _contract as C;
 };

@@ -24,6 +24,7 @@ import "./tasks/poll";
 const { USER1_PK, USER2_PK, KOVAN_RPC_URL } = process.env;
 
 export default {
+  defaultNetwork: "localhost",
   solidity: {
     version: "0.8.4",
     settings: {
@@ -60,9 +61,7 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
   }
 });
 
-task("mapgen", "Ports the map to render on frontend", 
-  async (args: any, hre: HardhatRuntimeEnvironment) => {
-  
+task("mapgen", "Ports the map to render on frontend", async (args: any, hre: HardhatRuntimeEnvironment) => {
   // ---------------------------------
   // porting files to frontend
   // ---------------------------------

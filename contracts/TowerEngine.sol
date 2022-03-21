@@ -8,8 +8,6 @@ import "./GameTypes.sol";
 import "./Permissions.sol";
 import "./GameHelper.sol";
 
-import "hardhat/console.sol";
-
 // ------------------------------------------------------------
 // Tower contract
 // ------------------------------------------------------------
@@ -68,18 +66,13 @@ contract TowerGame {
         uint256 _reward,
         GameTypes.Position memory _pos
     ) public view returns (uint256) {
-        // if there's no blocks at the location, return original value
-        if (utils._getBlockCountAtPosition(_pos) == 0) {
-            return _reward;
-        }
-        uint256 _blockId = utils._getTopBlockAtPosition(_pos);
+        uint256 _blockId = utils._getBlockAtPos(_pos);
         // update the list based on item mapping
         if (_blockId == 5) {
             return _reward * 2;
         } else if (_blockId == 6) {
             return 0;
         }
-        console.log(_reward);
         return _reward;
     }
 

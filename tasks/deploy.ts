@@ -14,7 +14,7 @@ import { Getters, Game, GameStorage, Helper } from "../typechain-types";
 import { TowerGame } from "./../typechain-types/TowerGame";
 import { Permissions } from "../typechain-types";
 import { position } from "../util/types/common";
-import { visualizeMap } from "./util/mapGenerator";
+import { visualizeMap, flatten3dMapArray } from "./util/mapGenerator";
 import axios from "axios";
 const { BACKEND_URL } = process.env;
 
@@ -86,7 +86,8 @@ task("deploy", "deploy contracts")
       for (let y = 0; y < WORLD_HEIGHT; y += MAP_INTERVAL) {
         regionMap = blocks.slice(x, x + MAP_INTERVAL).map((col) => col.slice(y, y + MAP_INTERVAL));
 
-        let tx = await GameStorage._setMapRegion({ x, y }, regionMap);
+        // flatten 3d array to 2d array
+        let tx = await GameStorage._setMapRegion({ x, y }, flatten3dMapArray(regionMap));
         tx.wait();
       }
     }

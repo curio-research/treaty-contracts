@@ -105,13 +105,13 @@ export type PlayerDataStructOutput = [
 export type TileStruct = {
   occupier: string;
   topLevelStrength: BigNumberish;
-  blocks: BigNumberish[];
+  blockId: BigNumberish;
 };
 
-export type TileStructOutput = [string, BigNumber, BigNumber[]] & {
+export type TileStructOutput = [string, BigNumber, BigNumber] & {
   occupier: string;
   topLevelStrength: BigNumber;
-  blocks: BigNumber[];
+  blockId: BigNumber;
 };
 
 export type TowerStruct = {
@@ -175,8 +175,7 @@ export interface GameStorageInterface extends utils.Interface {
     "_changeHealth(address,uint256,bool)": FunctionFragment;
     "_decreaseItemInInventory(address,uint256,uint256)": FunctionFragment;
     "_getAllPlayerAddresses()": FunctionFragment;
-    "_getBlockAtPosition((uint256,uint256),uint256)": FunctionFragment;
-    "_getBlockCountAtPosition((uint256,uint256))": FunctionFragment;
+    "_getBlockAtPos((uint256,uint256))": FunctionFragment;
     "_getCraftItemAmount(address,uint256)": FunctionFragment;
     "_getCurrentEpoch()": FunctionFragment;
     "_getIndexFromPosition((uint256,uint256))": FunctionFragment;
@@ -187,7 +186,6 @@ export interface GameStorageInterface extends utils.Interface {
     "_getPlayer(address)": FunctionFragment;
     "_getPositionFromIndex(uint256)": FunctionFragment;
     "_getTileData((uint256,uint256))": FunctionFragment;
-    "_getTopBlockAtPosition((uint256,uint256))": FunctionFragment;
     "_getTower(string)": FunctionFragment;
     "_getWorldConstants()": FunctionFragment;
     "_increaseItemInInventory(address,uint256,uint256)": FunctionFragment;
@@ -197,10 +195,10 @@ export interface GameStorageInterface extends utils.Interface {
     "_mine((uint256,uint256))": FunctionFragment;
     "_modifyItemInInventoryNonce(address,uint256,bool)": FunctionFragment;
     "_place((uint256,uint256),uint256)": FunctionFragment;
-    "_setBlocks((uint256,uint256),uint256[])": FunctionFragment;
+    "_setBlock((uint256,uint256),uint256)": FunctionFragment;
     "_setConstants((uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))": FunctionFragment;
     "_setItem(uint256,(bool,bool,bool,uint256,uint256,uint256,uint256[],uint256[],uint256[]))": FunctionFragment;
-    "_setMapRegion((uint256,uint256),uint256[][][])": FunctionFragment;
+    "_setMapRegion((uint256,uint256),uint256[][])": FunctionFragment;
     "_setOccupierAtPosition(address,(uint256,uint256))": FunctionFragment;
     "_setPlayer(address,(uint256,uint256))": FunctionFragment;
     "_setPlayerPosition(address,(uint256,uint256))": FunctionFragment;
@@ -225,11 +223,7 @@ export interface GameStorageInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "_getBlockAtPosition",
-    values: [PositionStruct, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getBlockCountAtPosition",
+    functionFragment: "_getBlockAtPos",
     values: [PositionStruct]
   ): string;
   encodeFunctionData(
@@ -269,10 +263,6 @@ export interface GameStorageInterface extends utils.Interface {
     functionFragment: "_getTileData",
     values: [PositionStruct]
   ): string;
-  encodeFunctionData(
-    functionFragment: "_getTopBlockAtPosition",
-    values: [PositionStruct]
-  ): string;
   encodeFunctionData(functionFragment: "_getTower", values: [string]): string;
   encodeFunctionData(
     functionFragment: "_getWorldConstants",
@@ -307,8 +297,8 @@ export interface GameStorageInterface extends utils.Interface {
     values: [PositionStruct, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "_setBlocks",
-    values: [PositionStruct, BigNumberish[]]
+    functionFragment: "_setBlock",
+    values: [PositionStruct, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "_setConstants",
@@ -320,7 +310,7 @@ export interface GameStorageInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "_setMapRegion",
-    values: [PositionStruct, BigNumberish[][][]]
+    values: [PositionStruct, BigNumberish[][]]
   ): string;
   encodeFunctionData(
     functionFragment: "_setOccupierAtPosition",
@@ -369,11 +359,7 @@ export interface GameStorageInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "_getBlockAtPosition",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getBlockCountAtPosition",
+    functionFragment: "_getBlockAtPos",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -410,10 +396,6 @@ export interface GameStorageInterface extends utils.Interface {
     functionFragment: "_getTileData",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getTopBlockAtPosition",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "_getTower", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_getWorldConstants",
@@ -441,7 +423,7 @@ export interface GameStorageInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "_place", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "_setBlocks", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "_setBlock", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_setConstants",
     data: BytesLike
@@ -533,13 +515,7 @@ export interface GameStorage extends BaseContract {
 
     _getAllPlayerAddresses(overrides?: CallOverrides): Promise<[string[]]>;
 
-    _getBlockAtPosition(
-      _pos: PositionStruct,
-      _zIdx: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    _getBlockCountAtPosition(
+    _getBlockAtPos(
       _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
@@ -592,11 +568,6 @@ export interface GameStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[TileStructOutput]>;
 
-    _getTopBlockAtPosition(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     _getTower(
       _towerId: string,
       overrides?: CallOverrides
@@ -646,9 +617,9 @@ export interface GameStorage extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    _setBlocks(
+    _setBlock(
       _position: PositionStruct,
-      _blocks: BigNumberish[],
+      blockId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -665,7 +636,7 @@ export interface GameStorage extends BaseContract {
 
     _setMapRegion(
       _startPos: PositionStruct,
-      _blocks: BigNumberish[][][],
+      _blocks: BigNumberish[][],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -747,13 +718,7 @@ export interface GameStorage extends BaseContract {
 
   _getAllPlayerAddresses(overrides?: CallOverrides): Promise<string[]>;
 
-  _getBlockAtPosition(
-    _pos: PositionStruct,
-    _zIdx: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  _getBlockCountAtPosition(
+  _getBlockAtPos(
     _pos: PositionStruct,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
@@ -804,11 +769,6 @@ export interface GameStorage extends BaseContract {
     overrides?: CallOverrides
   ): Promise<TileStructOutput>;
 
-  _getTopBlockAtPosition(
-    _pos: PositionStruct,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   _getTower(
     _towerId: string,
     overrides?: CallOverrides
@@ -858,9 +818,9 @@ export interface GameStorage extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  _setBlocks(
+  _setBlock(
     _position: PositionStruct,
-    _blocks: BigNumberish[],
+    blockId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -877,7 +837,7 @@ export interface GameStorage extends BaseContract {
 
   _setMapRegion(
     _startPos: PositionStruct,
-    _blocks: BigNumberish[][][],
+    _blocks: BigNumberish[][],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -959,13 +919,7 @@ export interface GameStorage extends BaseContract {
 
     _getAllPlayerAddresses(overrides?: CallOverrides): Promise<string[]>;
 
-    _getBlockAtPosition(
-      _pos: PositionStruct,
-      _zIdx: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getBlockCountAtPosition(
+    _getBlockAtPos(
       _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1016,11 +970,6 @@ export interface GameStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<TileStructOutput>;
 
-    _getTopBlockAtPosition(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     _getTower(
       _towerId: string,
       overrides?: CallOverrides
@@ -1065,9 +1014,9 @@ export interface GameStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    _setBlocks(
+    _setBlock(
       _position: PositionStruct,
-      _blocks: BigNumberish[],
+      blockId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1084,7 +1033,7 @@ export interface GameStorage extends BaseContract {
 
     _setMapRegion(
       _startPos: PositionStruct,
-      _blocks: BigNumberish[][][],
+      _blocks: BigNumberish[][],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1179,13 +1128,7 @@ export interface GameStorage extends BaseContract {
 
     _getAllPlayerAddresses(overrides?: CallOverrides): Promise<BigNumber>;
 
-    _getBlockAtPosition(
-      _pos: PositionStruct,
-      _zIdx: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getBlockCountAtPosition(
+    _getBlockAtPos(
       _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1229,11 +1172,6 @@ export interface GameStorage extends BaseContract {
     ): Promise<BigNumber>;
 
     _getTileData(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getTopBlockAtPosition(
       _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1282,9 +1220,9 @@ export interface GameStorage extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    _setBlocks(
+    _setBlock(
       _position: PositionStruct,
-      _blocks: BigNumberish[],
+      blockId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1301,7 +1239,7 @@ export interface GameStorage extends BaseContract {
 
     _setMapRegion(
       _startPos: PositionStruct,
-      _blocks: BigNumberish[][][],
+      _blocks: BigNumberish[][],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1376,13 +1314,7 @@ export interface GameStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _getBlockAtPosition(
-      _pos: PositionStruct,
-      _zIdx: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getBlockCountAtPosition(
+    _getBlockAtPos(
       _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -1429,11 +1361,6 @@ export interface GameStorage extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     _getTileData(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getTopBlockAtPosition(
       _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -1487,9 +1414,9 @@ export interface GameStorage extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    _setBlocks(
+    _setBlock(
       _position: PositionStruct,
-      _blocks: BigNumberish[],
+      blockId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1506,7 +1433,7 @@ export interface GameStorage extends BaseContract {
 
     _setMapRegion(
       _startPos: PositionStruct,
-      _blocks: BigNumberish[][][],
+      _blocks: BigNumberish[][],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
