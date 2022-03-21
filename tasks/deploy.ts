@@ -1,27 +1,14 @@
-<<<<<<< HEAD
-import { Tower } from "./../util/types/tower";
-import { deployToIPFS } from "./util/programmableBlockDeployer";
-import { Epoch } from "./../typechain-types/Epoch";
-import { task } from "hardhat/config";
-import axios from "axios";
-import * as path from "path";
-import * as fsPromise from "fs/promises";
-import * as fs from "fs";
-import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { deployProxy, printDivider } from "./util/deployHelper";
-=======
+import axios from 'axios';
+import * as path from 'path';
+import * as fsPromise from 'fs/promises';
+import * as fs from 'fs';
 import { Tower } from './../util/types/tower';
 import { deployToIPFS } from './util/programmableBlockDeployer';
 import { Epoch } from './../typechain-types/Epoch';
 import { task } from 'hardhat/config';
-import * as path from 'path';
-import * as fsPromise from 'fs/promises';
-import * as fs from 'fs';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { deployProxy, printDivider } from './util/deployHelper';
->>>>>>> 0a81ce4 (Fixes)
 import {
   LOCALHOST_RPC_URL,
   LOCALHOST_WS_RPC_URL,
@@ -37,9 +24,9 @@ import { Getters, Game, GameStorage, Helper, Door } from '../typechain-types';
 import { TowerGame } from './../typechain-types/TowerGame';
 import { Permissions } from '../typechain-types';
 import { position } from '../util/types/common';
-import { visualizeMap } from './util/mapGenerator';
 import { gameItems, appendIpfsHashToMetadata } from './util/itemGenerator';
-import axios from 'axios';
+import { flatten3dMapArray } from './util/mapGenerator';
+
 const { BACKEND_URL } = process.env;
 
 // ---------------------------------
@@ -49,12 +36,13 @@ const { BACKEND_URL } = process.env;
 
 task('deploy', 'deploy contracts')
   .addFlag('noport', "Don't port files to frontend") // default is to call port
-  .addFlag('publish', 'Publish deployment to game launcher') // default is to call port
+  .addFlag('publish', 'Publish deployment to game launcher') // default is to call publish
   .setAction(async (args: any, hre: HardhatRuntimeEnvironment) => {
+    await hre.run('compile');
     const isDev = hre.network.name === 'localhost' || hre.network.name === 'hardhat';
+
     printDivider();
     console.log('Network:', hre.network.name);
-    await hre.run('compile');
 
     let player1: SignerWithAddress;
     let player2: SignerWithAddress;
@@ -75,8 +63,7 @@ task('deploy', 'deploy contracts')
     );
 
     let blocks = allGameArgs.blockMap;
-    visualizeMap(blocks, true);
-    console.log('✦ map visualized in map.txt');
+    const flattenedMap = flatten3dMapArray(blocks);
 
     // initialize Game contracts
     const GameStorage = await deployProxy<GameStorage>('GameStorage', player1, hre, [Permissions.address]);
@@ -86,6 +73,7 @@ task('deploy', 'deploy contracts')
       GameStorage.address,
       Permissions.address,
     ]);
+
     console.log('✦ GameContract deployed');
     const TowerContract = await deployProxy<TowerGame>(
       'TowerGame',
@@ -94,23 +82,25 @@ task('deploy', 'deploy contracts')
       [GameStorage.address, Permissions.address],
       { Helper: GameHelper.address }
     );
+
     console.log('✦ TowerContract deployed');
     const GettersContract = await deployProxy<Getters>('Getters', player1, hre, [
       GameContract.address,
       GameStorage.address,
     ]);
     console.log('✦ GettersContract deployed');
+
     const EpochContract = await deployProxy<Epoch>('Epoch', player1, hre, [10]);
     console.log('✦ EpochContract deployed');
 
     const GET_MAP_INTERVAL = (await GettersContract.GET_MAP_INTERVAL()).toNumber();
 
     // add contract permissions
-    const p1tx = await Permissions.connect(player1).setPermission(GameContract.address, true);
-    p1tx.wait();
+    let tx = await Permissions.connect(player1).setPermission(GameContract.address, true);
+    tx.wait();
 
-    const p2tx = await Permissions.connect(player1).setPermission(TowerContract.address, true);
-    p2tx.wait();
+    tx = await Permissions.connect(player1).setPermission(TowerContract.address, true);
+    tx.wait();
 
     // make this into a table
     printDivider();
@@ -126,10 +116,10 @@ task('deploy', 'deploy contracts')
 
     // initialize map
     console.log('✦ initializing map');
-    let regionMap: number[][][];
+    let regionMap: number[][];
     for (let x = 0; x < WORLD_WIDTH; x += MAP_INTERVAL) {
       for (let y = 0; y < WORLD_HEIGHT; y += MAP_INTERVAL) {
-        regionMap = blocks.slice(x, x + MAP_INTERVAL).map((col) => col.slice(y, y + MAP_INTERVAL));
+        regionMap = flattenedMap.slice(x, x + MAP_INTERVAL).map((col) => col.slice(y, y + MAP_INTERVAL));
 
         let tx = await GameStorage._setMapRegion({ x, y }, regionMap);
         tx.wait();
@@ -163,34 +153,13 @@ task('deploy', 'deploy contracts')
       tx = await GameContract.connect(player2).initializePlayer(player2Pos);
       tx.wait();
 
-<<<<<<< HEAD
-
       tx = await GameStorage.connect(player1)._increaseItemInInventory(player1.address, 0, 100);
-      tx.wait();
 
->>>>>>> e23ff3c (deployed programmable block to ipfs)
-      tx = await GameStorage.connect(player1)._increaseItemInInventory(
-        player1.address,
-        0,
-        100
-      );
-<<<<<<< HEAD
       await tx.wait();
-
-      console.log("✦ setting epoch controller");
-      tx = await GameStorage.setEpochController(EpochContract.address); // set epoch controller
-      await tx.wait();
->>>>>>> f60a6c4 (WIP add programmable block abi to pinata)
-=======
-=======
-      tx = await GameStorage.connect(player1)._increaseItemInInventory(player1.address, 0, 100);
->>>>>>> 0a81ce4 (Fixes)
-      tx.wait();
->>>>>>> e23ff3c (deployed programmable block to ipfs)
     }
 
     console.log('✦ setting epoch controller');
-    const tx = await GameStorage.setEpochController(EpochContract.address); // set epoch controller
+    tx = await GameStorage.setEpochController(EpochContract.address); // set epoch controller
     tx.wait();
 
     // bulk initialize towers
@@ -231,18 +200,7 @@ task('deploy', 'deploy contracts')
       deploymentId: `${hre.network.name}-${Date.now()}`,
     };
 
-<<<<<<< HEAD
-<<<<<<< HEAD
     const publish = args.publish;
-=======
-    await fsPromise.writeFile(
-      path.join(currentFileDir, "game.config.json"),
-      JSON.stringify(configFile)
-    );
->>>>>>> f60a6c4 (WIP add programmable block abi to pinata)
-=======
-    const publish = args.publish;
->>>>>>> e23ff3c (deployed programmable block to ipfs)
 
     // publish the deployment to mongodb
     if (publish && !isDev) {
@@ -260,17 +218,7 @@ task('deploy', 'deploy contracts')
     if (isDev) {
       const configFileDir = path.join(currentFileDir, 'game.config.json');
 
-<<<<<<< HEAD
-<<<<<<< HEAD
       const existingDeployments = await fs.readFileSync(configFileDir).toString();
-=======
-      const existingDeployments = await fs
-        .readFileSync(configFileDir)
-        .toString();
->>>>>>> e23ff3c (deployed programmable block to ipfs)
-=======
-      const existingDeployments = await fs.readFileSync(configFileDir).toString();
->>>>>>> 0a81ce4 (Fixes)
 
       const existingDeploymentsArray = existingDeployments ? JSON.parse(existingDeployments) : [];
 
