@@ -1,5 +1,4 @@
 import { Tower } from "./../util/types/tower";
-import { generateBlockIdToNameMap } from "./util/constants";
 import { deployToIPFS } from "./util/programmableBlockDeployer";
 import { Epoch } from "./../typechain-types/Epoch";
 import { task } from "hardhat/config";
@@ -17,6 +16,8 @@ import {
   masterItems,
   WORLD_HEIGHT,
   WORLD_WIDTH,
+  blockMetadata,
+  generateBlockIdToNameMap,
 } from "./util/constants";
 import { generateAllGameArgs } from "./util/allArgsGenerator";
 import { Getters, Game, GameStorage, Helper, Door } from "../typechain-types";
@@ -24,6 +25,7 @@ import { TowerGame } from "./../typechain-types/TowerGame";
 import { Permissions } from "../typechain-types";
 import { position } from "../util/types/common";
 import { visualizeMap } from "./util/mapGenerator";
+import { gameItems, appendIpfsHashToMetadata } from "./util/itemGenerator";
 import axios from "axios";
 const { BACKEND_URL } = process.env;
 
@@ -44,15 +46,6 @@ task("deploy", "deploy contracts")
     let player2: SignerWithAddress;
     [player1, player2] = await hre.ethers.getSigners();
 
-    const allGameArgs = generateAllGameArgs();
-
-    let blocks = allGameArgs.blockMap;
-    const flattenedMap = flatten3dMapArray(blocks); // flatten 3d map into 2d for change from blocks[] to blockId
-
-    printDivider();
-    console.log("Network:", hre.network.name);
-
-    // initialize contracts
     const GameHelper = await deployProxy<Helper>("Helper", player1, hre, []);
     console.log("✦ GameHelper deployed");
     const Permissions = await deployProxy<Permissions>(
@@ -62,6 +55,28 @@ task("deploy", "deploy contracts")
       [player1.address]
     );
     console.log("✦ Permissions deployed");
+    //Deploying Programmable Block Contract, may be abstracted
+    const DoorContract = await deployProxy<Door>("Door", player1, hre, [
+      [player1.address],
+      Permissions.address,
+    ]);
+    console.log("✦ ProgrammableBlocks deployed");
+
+    const payload = await deployToIPFS(hre, "Door");
+    const allGameArgs = generateAllGameArgs(
+      gameItems.concat(
+        appendIpfsHashToMetadata(blockMetadata, payload.IpfsHash)
+      )
+    );
+
+    let blocks = allGameArgs.blockMap;
+    visualizeMap(blocks, true);
+    console.log("✦ map visualized in map.txt");
+
+    printDivider();
+    console.log("Network:", hre.network.name);
+
+    // initialize Game contracts
     const GameStorage = await deployProxy<GameStorage>(
       "GameStorage",
       player1,
@@ -93,13 +108,6 @@ task("deploy", "deploy contracts")
     const EpochContract = await deployProxy<Epoch>("Epoch", player1, hre, [10]);
     console.log("✦ EpochContract deployed");
 
-    //Deploying Programmable Block Contract, may be abstracted
-    const DoorContract = await deployProxy<Door>("Door", player1, hre, [
-      [player1.address],
-      Permissions.address,
-    ]);
-    console.log("✦ Programmable Block deployed");
-
     const GET_MAP_INTERVAL = (
       await GettersContract.GET_MAP_INTERVAL()
     ).toNumber();
@@ -129,9 +137,9 @@ task("deploy", "deploy contracts")
     console.log("Dooor   ", DoorContract.address);
     printDivider();
 
-    // initialize blocks
-    console.log("✦ initializing blocks");
-    let regionMap: number[][];
+    // initialize map
+    console.log("✦ initializing map");
+    let regionMap: number[][][];
     for (let x = 0; x < WORLD_WIDTH; x += MAP_INTERVAL) {
       for (let y = 0; y < WORLD_HEIGHT; y += MAP_INTERVAL) {
         regionMap = blocks
@@ -211,8 +219,6 @@ task("deploy", "deploy contracts")
     );
     await towerTx.wait();
 
-    console.log("✦ initializing programmable blocks");
-    await deployToIPFS(hre, "Door");
     // ---------------------------------
     // porting files to frontend
     // ---------------------------------

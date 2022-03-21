@@ -5,6 +5,7 @@ import "@nomiclabs/hardhat-waffle";
 import "hardhat-contract-sizer";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { generateAllGameArgs } from "./tasks/util/allArgsGenerator";
+import { gameItems } from "./tasks/util/itemGenerator";
 import * as path from "path";
 import * as fsPromise from "fs/promises";
 import * as fs from "fs";

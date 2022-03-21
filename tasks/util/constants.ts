@@ -1,4 +1,4 @@
-import { Item, ItemMaster } from "../../util/types/getter";
+import { ItemMaster } from "../../util/types/getter";
 export const LOCALHOST_RPC_URL = "http://127.0.0.1:8545/";
 export const LOCALHOST_WS_RPC_URL = "ws://localhost:8545";
 
@@ -38,21 +38,9 @@ export const generateGameConstants = () => {
 // Item constants for game deployment
 // ------------------------------------------------
 
-export enum ALL_ITEMS {
-  IRON = "Iron",
-  SILVER = "Silver",
-  FENCE = "Fence",
-  WALL = "Wall",
-  TOWER = "Tower",
-  TURBO = "Turbo",
-  BLOCK = "Block",
-  INDESCRUCTIBLE_WALL = "INDESCRUCTIBLE_WALL",
-  PROGRAMMABLE_BLOCK = "PROGRAMMABLE_BLOCK",
-}
-
-export const masterItems: Item[] = [
+export var masterItems: ItemMaster[] = [
   {
-    name: ALL_ITEMS.IRON,
+    name: "Iron",
     item: {
       mineable: true,
       mineItemIds: [],
@@ -68,7 +56,7 @@ export const masterItems: Item[] = [
     },
   },
   {
-    name: ALL_ITEMS.SILVER,
+    name: "Silver",
     item: {
       mineable: true,
       mineItemIds: [],
@@ -84,7 +72,7 @@ export const masterItems: Item[] = [
     },
   },
   {
-    name: ALL_ITEMS.FENCE,
+    name: "Fence",
     item: {
       mineable: true,
       mineItemIds: [],
@@ -100,7 +88,7 @@ export const masterItems: Item[] = [
     },
   },
   {
-    name: ALL_ITEMS.WALL,
+    name: "Wall",
     item: {
       mineable: true,
       mineItemIds: [],
@@ -116,7 +104,7 @@ export const masterItems: Item[] = [
     },
   },
   {
-    name: ALL_ITEMS.TOWER,
+    name: "Tower",
     item: {
       mineable: false,
       mineItemIds: [],
@@ -132,7 +120,7 @@ export const masterItems: Item[] = [
     },
   },
   {
-    name: ALL_ITEMS.TURBO,
+    name: "Turbo",
     item: {
       mineable: true,
       mineItemIds: [],
@@ -148,7 +136,7 @@ export const masterItems: Item[] = [
     },
   },
   {
-    name: ALL_ITEMS.BLOCK,
+    name: "Block",
     item: {
       mineable: true,
       mineItemIds: [],
@@ -164,7 +152,7 @@ export const masterItems: Item[] = [
     },
   },
   {
-    name: ALL_ITEMS.INDESCRUCTIBLE_WALL,
+    name: "Indestructible Wall",
     item: {
       mineable: false,
       mineItemIds: [],
@@ -179,23 +167,21 @@ export const masterItems: Item[] = [
       abiEncoding: "",
     },
   },
-  {
-    name: ALL_ITEMS.PROGRAMMABLE_BLOCK,
-    item: {
-      mineable: true,
-      mineItemIds: [],
-      strength: 0,
-      craftable: true,
-      craftItemIds: [],
-      craftItemAmounts: [],
-      occupiable: false,
-      healthDamage: 0,
-      energyDamage: 0,
-      programmable: true,
-      abiEncoding: "",
-    },
-  },
 ];
+
+export var blockMetadata = {
+  mineable: true,
+  mineItemIds: [],
+  strength: 0,
+  craftable: true,
+  craftItemIds: [],
+  craftItemAmounts: [],
+  occupiable: false,
+  healthDamage: 0,
+  energyDamage: 0,
+  programmable: true,
+  abiEncoding: "",
+};
 
 export const generateBlockIdToNameMap = (
   items: ItemMaster[]
@@ -209,5 +195,5 @@ export const generateBlockIdToNameMap = (
 
 // number of each item to generate every 100 tiles
 // determines the rarity of items
-export const ITEM_RATIO = [10, 3, 0, 0, 0, 0, 0, 0, 4];
+export var ITEM_RATIO = [10, 3, 0, 0, 0, 0, 0, 0];
 console.assert(masterItems.length == ITEM_RATIO.length);

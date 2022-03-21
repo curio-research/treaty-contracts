@@ -1,11 +1,15 @@
 import { generateAllGameArgs } from "./util/allArgsGenerator";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
+import { gameItems } from "./util/itemGenerator";
 import { task } from "hardhat/config";
 
-task("map", "generate maps").setAction(async (args: any, hre: HardhatRuntimeEnvironment) => {
-  const isDev = hre.network.name === "localhost" || hre.network.name === "hardhat";
-  //   await hre.run("compile");
+task("map", "generate maps").setAction(
+  async (args: any, hre: HardhatRuntimeEnvironment) => {
+    const isDev =
+      hre.network.name === "localhost" || hre.network.name === "hardhat";
+    //   await hre.run("compile");
 
-  const allGameArgs = generateAllGameArgs();
-  console.log(allGameArgs.allTowerArgs);
-});
+    const allGameArgs = generateAllGameArgs(gameItems);
+    console.log(allGameArgs.allTowerArgs);
+  }
+);
