@@ -6,6 +6,7 @@ import 'hardhat-contract-sizer';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { generateAllGameArgs } from './tasks/util/allArgsGenerator';
 import { gameItems } from './tasks/util/itemGenerator';
+import { ITEM_RATIO } from './tasks/util/constants';
 import * as path from 'path';
 import * as fsPromise from 'fs/promises';
 import * as fs from 'fs';
@@ -67,7 +68,7 @@ task('mapgen', 'Ports the map to render on frontend', async (args: any, hre: Har
   // ---------------------------------
   // porting files to frontend
   // ---------------------------------
-  let blocks = generateAllGameArgs(gameItems).blockMap;
+  let blocks = generateAllGameArgs(gameItems, ITEM_RATIO).blockMap;
   await fsPromise.writeFile(path.join(path.join(__dirname), 'map.json'), JSON.stringify(blocks));
 
   console.log('✦ Porting map file over ...');
