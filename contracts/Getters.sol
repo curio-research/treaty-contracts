@@ -10,7 +10,7 @@ import "./GameTypes.sol";
 contract Getters {
     Game gameCore;
     GameStorage utils;
-    uint256 public GET_MAP_INTERVAL = 10;
+    uint256 public GET_MAP_INTERVAL = 10; // this should be variable
 
     constructor(Game _gameCore, GameStorage _gameStorage) {
         gameCore = _gameCore;
@@ -59,12 +59,9 @@ contract Getters {
         view
         returns (GameTypes.Tile[] memory, GameTypes.Position[] memory)
     {
-        GameTypes.Tile[] memory allTiles = new GameTypes.Tile[](
-            GET_MAP_INTERVAL * GET_MAP_INTERVAL
-        );
-        GameTypes.Position[] memory allPos = new GameTypes.Position[](
-            GET_MAP_INTERVAL * GET_MAP_INTERVAL
-        );
+        uint256 size = GET_MAP_INTERVAL * GET_MAP_INTERVAL;
+        GameTypes.Tile[] memory allTiles = new GameTypes.Tile[](size);
+        GameTypes.Position[] memory allPos = new GameTypes.Position[](size);
 
         uint256 nonce = 0;
         for (uint256 x = _pos.x; x < _pos.x + GET_MAP_INTERVAL; x++) {

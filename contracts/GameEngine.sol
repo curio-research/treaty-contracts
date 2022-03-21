@@ -39,8 +39,7 @@ contract Game is IGameEngine {
         }
     }
 
-    // let blocks attack each other
-
+    // let some blocks (eg. creatures) attack other blocks;
     function attack() public {}
 
     /**

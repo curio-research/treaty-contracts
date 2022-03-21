@@ -1,3 +1,4 @@
+import { ItemWithMetadata } from './../../util/types/getter';
 import { ItemMaster } from '../../util/types/getter';
 export const LOCALHOST_RPC_URL = 'http://127.0.0.1:8545/';
 export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
@@ -72,7 +73,7 @@ export var masterItems: ItemMaster[] = [
       healthDamage: 0,
       programmable: false,
       abiEncoding: '',
-      contractAddr: '',
+      attackDamage: 0,
     },
   },
   {
@@ -88,7 +89,7 @@ export var masterItems: ItemMaster[] = [
       healthDamage: 0,
       programmable: false,
       abiEncoding: '',
-      contractAddr: '',
+      attackDamage: 0,
     },
   },
   {
@@ -104,7 +105,7 @@ export var masterItems: ItemMaster[] = [
       healthDamage: 0,
       programmable: false,
       abiEncoding: '',
-      contractAddr: '',
+      attackDamage: 5,
     },
   },
   {
@@ -120,7 +121,7 @@ export var masterItems: ItemMaster[] = [
       healthDamage: 0,
       programmable: false,
       abiEncoding: '',
-      contractAddr: '',
+      attackDamage: 0,
     },
   },
   {
@@ -136,7 +137,7 @@ export var masterItems: ItemMaster[] = [
       healthDamage: 0,
       programmable: false,
       abiEncoding: '',
-      contractAddr: '',
+      attackDamage: 0,
     },
   },
   {
@@ -152,7 +153,7 @@ export var masterItems: ItemMaster[] = [
       healthDamage: 0,
       programmable: false,
       abiEncoding: '',
-      contractAddr: '',
+      attackDamage: 0,
     },
   },
   {
@@ -168,12 +169,12 @@ export var masterItems: ItemMaster[] = [
       healthDamage: 0,
       programmable: false,
       abiEncoding: '',
-      contractAddr: '',
+      attackDamage: 0,
     },
   },
 ];
 
-export var programmableBlockMetadata: ItemWithMetadata = {
+export const blockMetadata: ItemWithMetadata = {
   mineable: true,
   mineItemIds: [],
   strength: 0,
@@ -184,7 +185,7 @@ export var programmableBlockMetadata: ItemWithMetadata = {
   healthDamage: 0,
   programmable: true,
   abiEncoding: '',
-  contractAddr: '',
+  attackDamage: 0,
 };
 
 export const generateBlockIdToNameMap = (items: ItemMaster[]): Record<number, string> => {

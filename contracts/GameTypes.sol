@@ -52,7 +52,7 @@ library GameTypes {
         /* Programmable blocks */
         bool programmable;
         string abiEncoding;
-        // uint256 attackDamage; // creature properties here too
+        uint256 attackDamage; // creature properties here too
         // uint256 attackRange;
         // uint256 lastAttacked;
         // uint256 defense;

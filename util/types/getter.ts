@@ -11,6 +11,7 @@ export interface ItemWithMetadata {
   programmable: boolean;
   abiEncoding: string;
   contractAddr: string;
+  attackDamage: number;
 }
 export interface ItemMaster {
   name: string;
