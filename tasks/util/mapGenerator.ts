@@ -1,12 +1,11 @@
 import { EMPTY_ADDRESS } from './../../util/network/common';
 import { position } from './../../util/types/common';
 import { MasterGameSpecs } from './types/mapGenerator';
-import _ from 'lodash';
 import { TowerWithLocation } from '../../util/types/tower';
-import { MAP_MODE } from './constants';
-import { addConnectivity, generatePrimsMap } from './primsMap';
-import { ItemMaster } from '../../util/types/getter';
-import { getItemIndexByName } from './deployHelper';
+import { generatePrimsMap } from './primsMap';
+import _ from 'lodash';
+
+// map helpers are used to generate a world with rooms, entrances, and a tower in the middle
 
 // Generate single room with starting coordinate
 const GenerateSingleRoom = (x: number, y: number, width: number, height: number, roomWidth: number): position[] => {
@@ -81,12 +80,12 @@ export const generateWalls = (width: number, height: number, roomWidth: number):
 };
 
 // generate empty map
-export const generateEmptyMap = (worldWidth: number, worldHeight: number): number[][] => {
+export const generateEmptyMap = (worldWidth: number, worldHeight: number): number[][][] => {
   const map = [];
   let col;
   for (let i = 0; i < worldWidth; i++) {
     col = [];
-    for (let j = 0; j < worldHeight; j++) col.push(0);
+    for (let j = 0; j < worldHeight; j++) col.push([]);
     map.push(col);
   }
   return map;
@@ -163,14 +162,6 @@ const generateTowerSpecs = (towerLocations: position[]): TowerWithLocation[] => 
 // master map generation function
 // ---------------------------------
 
-export const generateMap = (worldWidth: number, worldHeight: number, roomWidth: number, masterItems: ItemMaster[], mapMode: MAP_MODE = MAP_MODE.DEFAULT): MasterGameSpecs => {
-  let map: number[][][];
-  if ([MAP_MODE.PRIMS, MAP_MODE.PRIMS_CONNECTED].includes(mapMode)) {
-    let primsMapOutput = generatePrimsMap(worldWidth, worldHeight);
-    map = primsMapOutput.map;
-    if (mapMode === MAP_MODE.PRIMS_CONNECTED) map = addConnectivity(map);
-
-
 export const generateMap = (
   worldWidth: number,
   worldHeight: number,
@@ -178,13 +169,9 @@ export const generateMap = (
   usePrims?: boolean
 ): MasterGameSpecs => {
   let map: number[][][];
-
-export const generateMap = (worldWidth: number, worldHeight: number, roomWidth: number, usePrims?: boolean): MasterGameSpecs => {
-  let map: number[][] = [];
-
   if (usePrims) {
-    // let primsMapOutput = generatePrimsMap(worldWidth, worldHeight);
-    // map = primsMapOutput.map;
+    let primsMapOutput = generatePrimsMap(worldWidth, worldHeight);
+    map = primsMapOutput.map;
     // primsMapOutput.mapSnapshot.forEach((m) => visualizeMap(m, true, "maps/"));
   } else {
     map = generateEmptyMap(worldWidth, worldHeight); // generate empty map
@@ -192,7 +179,7 @@ export const generateMap = (worldWidth: number, worldHeight: number, roomWidth: 
     const walls = generateWallCoords(worldWidth, worldHeight, roomWidth); // generate wall blocks
     // apply block coordinates to master map;
     walls.forEach((pos) => {
-      map[pos.x][pos.y] = 7;
+      map[pos.x][pos.y].push(7);
     });
   }
 
@@ -201,26 +188,24 @@ export const generateMap = (worldWidth: number, worldHeight: number, roomWidth: 
   let pos: position;
   let x: number;
   let y: number;
-
   for (let k = 0; k < towers.length; k++) {
     pos = towers[k];
     x = pos.x;
     y = pos.y;
 
     // check no indestructible wall exists at tower coordinate
-    if (map[x][y] !== 7) {
+    if (map[x][y].length === 0 || map[x][y][0] !== 7) {
       // clear tower surroundings
       for (let i = -1; i <= 1; i++) {
         for (let j = -1; j <= 1; j++) {
           if (x + i >= 0 && x + i < worldWidth && y + j >= 0 && y + j < worldHeight) {
-            if (map[x + i][y + j] != 0) map[x + i][y + j] = 0;
+            if (map[x + i][y + j].length > 0) map[x + i][y + j] = [];
           }
         }
       }
 
       // set tower
-      const TOWER_INDEX = getItemIndexByName(masterItems, 'Tower');
-      map[x][y] = [TOWER_INDEX];
+      map[x][y] = [4];
     } else {
       // remove one from towers and towerSpecs arrays
       towers.splice(k, 1);
@@ -276,5 +261,3 @@ export const flatten3dMapArray = (map: number[][][]): number[][] => {
   });
   return res;
 };
-
-

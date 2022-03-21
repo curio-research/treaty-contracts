@@ -23,12 +23,7 @@ contract Game {
     event NewPlayer(address _player, GameTypes.Position _pos);
     event Move(address _player, GameTypes.Position _pos);
     // we can maybe sunset mine and attack into the same event
-    event MineItem(
-        address _player,
-        GameTypes.Position _pos,
-        uint256 _blockId,
-        uint256 _zIndex
-    );
+    event MineItem(address _player, GameTypes.Position _pos, uint256 _blockId);
     event AttackItem(
         address _player,
         GameTypes.Position _pos,
@@ -145,12 +140,9 @@ contract Game {
         emit MoveBlock(msg.sender, _startPos, _targetPos);
     }
 
-<<<<<<< HEAD
-    function mineItem(
-        GameTypes.Position memory _pos,
-        uint256 _zIdx,
-        address _playerAddr
-    ) internal {
+    function mineItem(GameTypes.Position memory _pos, address _playerAddr)
+        internal
+    {
         // can only mine with the needed tool
         uint256 _itemId = utils._getBlockAtPos(_pos);
 
@@ -176,7 +168,7 @@ contract Game {
             }
         }
 
-        require(_canMine, "engine/tool-needed");
+        if (!_canMine) revert("engine/tool-needed");
 
         utils._increaseItemInInventory(_playerAddr, _itemId, 1);
         utils._mine(_pos);
@@ -187,15 +179,12 @@ contract Game {
     /**
      * reduces item health
      * @param _pos position to mine item at
-     * @param _zIdx z index of block to mine at
      * @param _playerAddr player address
-     */
+     **/
 
-    function attackItem(
-        GameTypes.Position memory _pos,
-        uint256 _zIdx,
-        address _playerAddr
-    ) internal {
+    function attackItem(GameTypes.Position memory _pos, address _playerAddr)
+        internal
+    {
         utils._setTopLevelStrength(
             _pos,
             utils._getTileData(_pos).topLevelStrength -
@@ -238,8 +227,6 @@ contract Game {
         }
     }
 
-=======
->>>>>>> e1481c0 (Remove blocks)
     /**
      * place item at tile location
      * @param _pos position to place block at
@@ -307,7 +294,6 @@ contract Game {
      * @param _amount amount of points (a resource) you want to apply to the block
      * @param _state if true, you want to increase the defense. if not, you want to decrease it.
      */
-<<<<<<< HEAD
 
     function changeBlockStrength(
         GameTypes.Position memory _pos,
@@ -350,6 +336,4 @@ contract Game {
             }
         }
     }
-=======
->>>>>>> e1481c0 (Remove blocks)
 }

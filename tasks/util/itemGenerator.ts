@@ -24,7 +24,7 @@ const getRandomPosition = (): PositionStruct => {
  * @param map Block map with only towers and no other items
  * @returns Block map with all items
  */
-export const generateItems = (map: number[][]): number[][] => {
+export const generateItems = (map: number[][][]): number[][][] => {
   const itemCounts = ITEM_RATIO.map((r) => r * Math.round(worldSize / 100));
 
   for (let i = 0; i < itemCounts.length; i++) {
@@ -36,9 +36,9 @@ export const generateItems = (map: number[][]): number[][] => {
         pos = getRandomPosition();
         x = Number(pos.x);
         y = Number(pos.y);
-      } while (map[x][y] != 0);
+      } while (map[x][y].length > 0);
 
-      map[x][y] = i;
+      map[x][y].push(i);
     }
   }
 

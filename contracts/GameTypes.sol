@@ -16,6 +16,7 @@ library GameTypes {
         uint256 startingAttackRange;
         uint256 startingAttackWaitTime;
         uint256 startPlayerHealth;
+        uint256 startPlayerEnergy;
         uint256 startingReach;
         uint256 startingPlayerDefaultCurrencyAmount;
     }
@@ -27,15 +28,16 @@ library GameTypes {
         uint256 attackDamage;
         uint256 attackRange;
         uint256 health;
+        uint256 energy;
         uint256 reach;
         Position position;
     }
 
-    // tile should not have any strength. only items on top of the tiles should have strength
     struct Tile {
-        address occupier; // if there's owner on top
+        address occupier;
         address owner;
-        uint256 blockId; // reverting this to only allow 1 type of block on top. this should be the ID?
+        uint256 topLevelStrength; // Remaining strength of the top level block. May need to convert to a full array in future to prevent malicious restoring of block strength by placing on top.
+        uint256 blockId;
     }
 
     struct TileWithMetadata {
@@ -45,16 +47,14 @@ library GameTypes {
         uint256 y;
     }
 
-    enum ItemType {
-        NORMAL,
-        CREATURE
-    }
-
-    // creatures are a type of item as well?
     struct ItemWithMetadata {
         bool mineable;
         bool craftable;
+        bool occupiable;
         uint256 strength;
+        uint256 healthDamage;
+        uint256 energyDamage;
+        uint256[] mineItemIds; // tools for mining
         uint256[] craftItemIds;
         uint256[] craftItemAmounts;
         /* Programmable blocks */
@@ -78,23 +78,21 @@ library GameTypes {
 
     // TODO: Pack this struct
     struct GameStorage {
+        // map info
         WorldConstants worldConstants;
-        Tile[1000][1000] map; // this is not efficient
-        address admin; // game info
+        GameTypes.Tile[1000][1000] map;
+        // game info
+        address admin;
         bool paused;
-        mapping(uint256 => ItemWithMetadata) itemsWithMetadata;
+        mapping(uint256 => GameTypes.ItemWithMetadata) itemsWithMetadata;
         uint256 itemNonce;
         // players
         address[] allPlayers;
-        mapping(address => PlayerData) players; // player data
+        mapping(address => GameTypes.PlayerData) players; // player data
         mapping(address => mapping(uint256 => uint256)) inventory; // player => itemId => inventory
         mapping(address => uint256[]) inventoryNonce; // array of all items in player inventory
         // tower
         Epoch epochController;
         mapping(string => Tower) towers; // towerId => Tower
-        // how do we store creatures?
-        // every creature can have an index and we increment it, and then reference it in the block?
-        uint256 creatureNonce;
-        mapping(uint256 => Creature) creatures; // so these would not be blocks
     }
 }

@@ -1,3 +1,4 @@
+import { WorldConstantsStruct } from './../../typechain-types/Game';
 import { generateMap } from './mapGenerator';
 import { TowerWithLocation } from './../../util/types/tower';
 import { generateItems } from './itemGenerator';
@@ -20,5 +21,5 @@ export const generateAllGameArgs = (allGameItems: ItemWithMetadata[], itemRatio:
 interface AllGameArgs {
   gameDeployArgs: any[];
   allTowerArgs: TowerWithLocation[];
-  blockMap: number[][];
+  blockMap: number[][][];
 }

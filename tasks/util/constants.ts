@@ -32,6 +32,7 @@ export const generateGameConstants = () => {
     startingAttackRange: ATTACK_RANGE,
     startingAttackWaitTime: 0,
     startPlayerHealth: 100,
+    startPlayerEnergy: 100,
     startingReach: 2,
     startingPlayerDefaultCurrencyAmount: 100,
   };
@@ -184,17 +185,6 @@ export var masterItems: ItemMaster[] = [
       programmable: false,
       abiEncoding: '',
       contractAddr: '',
-    },
-  },
-  {
-    name: ALL_ITEMS.ORB,
-    item: {
-      mineable: false,
-      mineItemIds: [],
-      strength: 30,
-      craftable: true,
-      craftItemIds: [0, 1],
-      craftItemAmounts: [20, 10],
     },
   },
 ];
