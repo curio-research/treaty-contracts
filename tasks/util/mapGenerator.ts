@@ -81,12 +81,12 @@ export const generateWalls = (width: number, height: number, roomWidth: number):
 };
 
 // generate empty map
-export const generateEmptyMap = (worldWidth: number, worldHeight: number): number[][][] => {
+export const generateEmptyMap = (worldWidth: number, worldHeight: number): number[][] => {
   const map = [];
   let col;
   for (let i = 0; i < worldWidth; i++) {
     col = [];
-    for (let j = 0; j < worldHeight; j++) col.push([]);
+    for (let j = 0; j < worldHeight; j++) col.push(0);
     map.push(col);
   }
   return map;
@@ -169,6 +169,22 @@ export const generateMap = (worldWidth: number, worldHeight: number, roomWidth: 
     let primsMapOutput = generatePrimsMap(worldWidth, worldHeight);
     map = primsMapOutput.map;
     if (mapMode === MAP_MODE.PRIMS_CONNECTED) map = addConnectivity(map);
+
+
+export const generateMap = (
+  worldWidth: number,
+  worldHeight: number,
+  roomWidth: number,
+  usePrims?: boolean
+): MasterGameSpecs => {
+  let map: number[][][];
+
+export const generateMap = (worldWidth: number, worldHeight: number, roomWidth: number, usePrims?: boolean): MasterGameSpecs => {
+  let map: number[][] = [];
+
+  if (usePrims) {
+    // let primsMapOutput = generatePrimsMap(worldWidth, worldHeight);
+    // map = primsMapOutput.map;
     // primsMapOutput.mapSnapshot.forEach((m) => visualizeMap(m, true, "maps/"));
   } else {
     map = generateEmptyMap(worldWidth, worldHeight); // generate empty map
@@ -176,7 +192,7 @@ export const generateMap = (worldWidth: number, worldHeight: number, roomWidth: 
     const walls = generateWallCoords(worldWidth, worldHeight, roomWidth); // generate wall blocks
     // apply block coordinates to master map;
     walls.forEach((pos) => {
-      map[pos.x][pos.y].push(7);
+      map[pos.x][pos.y] = 7;
     });
   }
 
@@ -185,18 +201,19 @@ export const generateMap = (worldWidth: number, worldHeight: number, roomWidth: 
   let pos: position;
   let x: number;
   let y: number;
+
   for (let k = 0; k < towers.length; k++) {
     pos = towers[k];
     x = pos.x;
     y = pos.y;
 
     // check no indestructible wall exists at tower coordinate
-    if (map[x][y].length === 0 || map[x][y][0] !== 7) {
+    if (map[x][y] !== 7) {
       // clear tower surroundings
       for (let i = -1; i <= 1; i++) {
         for (let j = -1; j <= 1; j++) {
           if (x + i >= 0 && x + i < worldWidth && y + j >= 0 && y + j < worldHeight) {
-            if (map[x + i][y + j].length > 0) map[x + i][y + j] = [];
+            if (map[x + i][y + j] != 0) map[x + i][y + j] = 0;
           }
         }
       }
@@ -259,3 +276,5 @@ export const flatten3dMapArray = (map: number[][][]): number[][] => {
   });
   return res;
 };
+
+

@@ -31,12 +31,11 @@ library GameTypes {
         Position position;
     }
 
-    // i'm not sure if this is an efficient data structure
+    // tile should not have any strength. only items on top of the tiles should have strength
     struct Tile {
-        address occupier;
+        address occupier; // if there's owner on top
         address owner;
-        uint256 topLevelStrength; // Remaining strength of the top level block. May need to convert to a full array in future to prevent malicious restoring of block strength by placing on top.
-        uint256 blockId;
+        uint256 blockId; // reverting this to only allow 1 type of block on top. this should be the ID?
     }
 
     struct TileWithMetadata {
@@ -46,11 +45,16 @@ library GameTypes {
         uint256 y;
     }
 
+    enum ItemType {
+        NORMAL,
+        CREATURE
+    }
+
+    // creatures are a type of item as well?
     struct ItemWithMetadata {
         bool mineable;
         bool craftable;
         uint256 strength;
-        uint256[] mineItemIds; // we can remove this
         uint256[] craftItemIds;
         uint256[] craftItemAmounts;
         /* Programmable blocks */
@@ -74,10 +78,9 @@ library GameTypes {
 
     // TODO: Pack this struct
     struct GameStorage {
-        WorldConstants worldConstants; // map info
-        Tile[1000][1000] map;
-        // game info
-        address admin;
+        WorldConstants worldConstants;
+        Tile[1000][1000] map; // this is not efficient
+        address admin; // game info
         bool paused;
         mapping(uint256 => ItemWithMetadata) itemsWithMetadata;
         uint256 itemNonce;
@@ -89,5 +92,9 @@ library GameTypes {
         // tower
         Epoch epochController;
         mapping(string => Tower) towers; // towerId => Tower
+        // how do we store creatures?
+        // every creature can have an index and we increment it, and then reference it in the block?
+        uint256 creatureNonce;
+        mapping(uint256 => Creature) creatures; // so these would not be blocks
     }
 }

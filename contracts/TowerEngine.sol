@@ -66,7 +66,13 @@ contract TowerGame {
         uint256 _reward,
         GameTypes.Position memory _pos
     ) public view returns (uint256) {
+<<<<<<< HEAD
         uint256 _blockId = utils._getBlockAtPos(_pos);
+=======
+        // if there's no blocks at the location, return original value
+
+        uint256 _blockId = utils._getBlock(_pos);
+>>>>>>> e1481c0 (Remove blocks)
         // update the list based on item mapping
         if (_blockId == 5) {
             return _reward * 2;

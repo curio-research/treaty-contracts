@@ -128,12 +128,6 @@ contract Game {
         GameTypes.Tile memory startTile = utils._getTileData(_startPos);
         GameTypes.Tile memory targetTile = utils._getTileData(_targetPos);
 
-        // target pos needs to have no strength (so no items)
-        require(
-            targetTile.topLevelStrength == 0,
-            "engine/invalid-top-level-strength"
-        );
-
         require(targetTile.occupier == address(0), "engine/block is occupied");
 
         // check if two are within same range
@@ -151,6 +145,7 @@ contract Game {
         emit MoveBlock(msg.sender, _startPos, _targetPos);
     }
 
+<<<<<<< HEAD
     function mineItem(
         GameTypes.Position memory _pos,
         uint256 _zIdx,
@@ -243,6 +238,8 @@ contract Game {
         }
     }
 
+=======
+>>>>>>> e1481c0 (Remove blocks)
     /**
      * place item at tile location
      * @param _pos position to place block at
@@ -310,6 +307,7 @@ contract Game {
      * @param _amount amount of points (a resource) you want to apply to the block
      * @param _state if true, you want to increase the defense. if not, you want to decrease it.
      */
+<<<<<<< HEAD
 
     function changeBlockStrength(
         GameTypes.Position memory _pos,
@@ -352,4 +350,6 @@ contract Game {
             }
         }
     }
+=======
+>>>>>>> e1481c0 (Remove blocks)
 }

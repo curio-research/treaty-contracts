@@ -1,33 +1,32 @@
-import axios from 'axios';
-import * as path from 'path';
-import * as fsPromise from 'fs/promises';
-import * as fs from 'fs';
-import { Tower } from './../util/types/tower';
-import { deployToIPFS } from './util/programmableBlockDeployer';
-import { Epoch } from './../typechain-types/Epoch';
-import { task } from 'hardhat/config';
-import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
-import { HardhatRuntimeEnvironment } from 'hardhat/types';
-import { deployProxy, getItemIndexByName, printDivider } from './util/deployHelper';
-import { LOCALHOST_RPC_URL, LOCALHOST_WS_RPC_URL, MAP_INTERVAL, masterItems, WORLD_HEIGHT, WORLD_WIDTH, programmableBlockMetadata, generateBlockIdToNameMap, ITEM_RATIO, DOOR_RATIO } from './util/constants';
-import { generateAllGameArgs } from './util/allArgsGenerator';
-import { Getters, Game, GameStorage, Helper, Door } from '../typechain-types';
-import { TowerGame } from './../typechain-types/TowerGame';
-import { Permissions } from '../typechain-types';
-import { position } from '../util/types/common';
-import { gameItems, appendIpfsHashToMetadata } from './util/itemGenerator';
-import { flatten3dMapArray } from './util/mapGenerator';
-
-const { BACKEND_URL } = process.env;
+import { Tower } from "./../util/types/tower";
+import { generateBlockIdToNameMap } from "./../test/util/constants";
+import { Epoch } from "./../typechain-types/Epoch";
+import { task } from "hardhat/config";
+import * as path from "path";
+import * as fsPromise from "fs/promises";
+import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
+import { HardhatRuntimeEnvironment } from "hardhat/types";
+import { deployProxy, printDivider } from "./util/deployHelper";
+import { LOCALHOST_RPC_URL, LOCALHOST_WS_RPC_URL, MAP_INTERVAL, masterItems, WORLD_HEIGHT, WORLD_WIDTH } from "./util/constants";
+import { generateAllGameArgs } from "./util/allArgsGenerator";
+import { Getters, Game, GameStorage, Helper } from "../typechain-types";
+import { TowerGame } from "./../typechain-types/TowerGame";
+import { Permissions } from "../typechain-types";
+import { position } from "../util/types/common";
 
 // ---------------------------------
 // deploy script
 // npx hardhat deploy --network *NETWORK_NAME_HERE*
 // ---------------------------------
 
+<<<<<<< HEAD
 task('deploy', 'deploy contracts')
   .addFlag('noport', "Don't port files to frontend") // default is to call port
   .addFlag('publish', 'Publish deployment to game launcher') // default is to call publish
+=======
+task("deploy", "deploy contracts")
+  .addFlag("noport", "Don't port files to frontend") // default is to call port
+>>>>>>> e1481c0 (Remove blocks)
   .setAction(async (args: any, hre: HardhatRuntimeEnvironment) => {
     await hre.run('compile');
     const isDev = hre.network.name === 'localhost' || hre.network.name === 'hardhat';
@@ -44,14 +43,22 @@ task('deploy', 'deploy contracts')
     const Permissions = await deployProxy<Permissions>('Permissions', player1, hre, [player1.address]);
     console.log('✦ Permissions deployed');
 
+<<<<<<< HEAD
     // initialize Game contracts
     const GameStorage = await deployProxy<GameStorage>('GameStorage', player1, hre, [Permissions.address]);
     console.log('✦ GameStorage deployed');
 
+=======
+<<<<<<< HEAD
+>>>>>>> f6f4840 (Remove blocks)
     // deploying programmable block contract, may be abstracted
     const doorIndex = gameItems.length; // since it will be the last item
     const DoorContract = await deployProxy<Door>('Door', player1, hre, [[player1.address], Permissions.address, GameStorage.address, doorIndex]);
     console.log('✦ ProgrammableBlocks deployed');
+=======
+    let blocks = allGameArgs.blockMap;
+    console.log("✦ map visualized in map.txt");
+>>>>>>> e1481c0 (Remove blocks)
 
     const payload = await deployToIPFS(hre, 'Door');
     const newGameItems = gameItems.concat(appendIpfsHashToMetadata(programmableBlockMetadata, payload.IpfsHash, DoorContract.address));
@@ -93,8 +100,13 @@ task('deploy', 'deploy contracts')
     console.log('Door         ', DoorContract.address);
     printDivider();
 
+<<<<<<< HEAD
     // initialize map
     console.log('✦ initializing map');
+=======
+    // initialize blocks
+    console.log("✦ initializing blocks");
+>>>>>>> e1481c0 (Remove blocks)
     let regionMap: number[][];
     for (let x = 0; x < WORLD_WIDTH; x += MAP_INTERVAL) {
       for (let y = 0; y < WORLD_HEIGHT; y += MAP_INTERVAL) {
@@ -116,23 +128,32 @@ task('deploy', 'deploy contracts')
         x = Math.floor(Math.random() * WORLD_WIDTH);
         y = Math.floor(Math.random() * WORLD_HEIGHT);
         player1Pos = { x, y };
+<<<<<<< HEAD
       } while (flattenedMap[x][y] != 0);
+=======
+      } while (blocks[x][y] != 0);
+>>>>>>> e1481c0 (Remove blocks)
 
       let player2Pos: position;
       do {
         x = Math.floor(Math.random() * WORLD_WIDTH);
         y = Math.floor(Math.random() * WORLD_HEIGHT);
         player2Pos = { x, y };
+<<<<<<< HEAD
       } while (flattenedMap[x][y] != 0);
+=======
+      } while (blocks[x][y] != 0);
+>>>>>>> e1481c0 (Remove blocks)
 
       let tx;
       tx = await GameContract.connect(player1).initializePlayer(player1Pos); // initialize users
-      tx.wait();
+      await tx.wait();
 
       tx = await GameContract.connect(player2).initializePlayer(player2Pos);
-      tx.wait();
+      await tx.wait();
 
       tx = await GameStorage.connect(player1)._increaseItemInInventory(player1.address, 0, 100);
+<<<<<<< HEAD
 
       await tx.wait();
     }
@@ -140,6 +161,14 @@ task('deploy', 'deploy contracts')
     console.log('✦ setting epoch controller');
     tx = await GameStorage.setEpochController(EpochContract.address); // set epoch controller
     tx.wait();
+=======
+      await tx.wait();
+
+      console.log("✦ setting epoch controller");
+      tx = await GameStorage.setEpochController(EpochContract.address); // set epoch controller
+      await tx.wait();
+    }
+>>>>>>> e1481c0 (Remove blocks)
 
     // bulk initialize towers
     console.log('✦ initializing towers');
@@ -161,6 +190,7 @@ task('deploy', 'deploy contracts')
 
     const networkRPCs = rpcUrlSelector(hre.network.name);
 
+<<<<<<< HEAD
     const programmableBlock = {
       name: 'Door',
       item: { ...programmableBlockMetadata },
@@ -168,22 +198,22 @@ task('deploy', 'deploy contracts')
 
     const blockIdToNameMapping = generateBlockIdToNameMap(masterItems.concat(programmableBlock));
 
+=======
+>>>>>>> f6f4840 (Remove blocks)
     const configFile = {
-      addresses: JSON.stringify({
-        GAME_ADDRESS: GameContract.address,
-        TOWER_GAME_ADDRESS: TowerContract.address,
-        GAME_STORAGE_CONTRACT: GameStorage.address,
-        GETTERS_ADDRESS: GettersContract.address,
-        EPOCH_ADDRESS: EpochContract.address,
-      }),
-      network: hre.network.name,
-      rpcUrl: networkRPCs[0],
-      wsRpcUrl: networkRPCs[1],
-      getMapInterval: GET_MAP_INTERVAL,
-      blockIdToNameMapping: JSON.stringify(blockIdToNameMapping),
-      deploymentId: `${hre.network.name}-${Date.now()}`,
+      GAME_ADDRESS: GameContract.address,
+      TOWER_GAME_ADDRESS: TowerContract.address,
+      GAME_STORAGE_CONTRACT: GameStorage.address,
+      GETTERS_ADDRESS: GettersContract.address,
+      NETWORK: hre.network.name,
+      EPOCH_ADDRESS: EpochContract.address,
+      RPC_URL: networkRPCs[0],
+      WS_RPC_URL: networkRPCs[1],
+      GET_MAP_INTERVAL: GET_MAP_INTERVAL,
+      BLOCK_ID_TO_NAME_MAP: generateBlockIdToNameMap(masterItems),
     };
 
+<<<<<<< HEAD
     const publish = args.publish;
 
     // publish the deployment to mongodb
@@ -212,6 +242,13 @@ task('deploy', 'deploy contracts')
 
       await hre.run('port'); // default to porting files
     }
+=======
+    await fsPromise.writeFile(path.join(currentFileDir, "game.config.json"), JSON.stringify(configFile));
+
+    const noPort = args.noport; // port flag
+    if (noPort) return;
+    await hre.run("port"); // default to porting files
+>>>>>>> e1481c0 (Remove blocks)
   });
 
 export const rpcUrlSelector = (networkName: string): string[] => {
