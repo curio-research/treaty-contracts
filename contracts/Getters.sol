@@ -57,12 +57,15 @@ contract Getters {
     function _getMap(GameTypes.Position memory _pos)
         public
         view
-        returns (GameTypes.TileWithMetadata[] memory)
+        returns (GameTypes.Tile[] memory, GameTypes.Position[] memory)
     {
-        GameTypes.TileWithMetadata[]
-            memory ret = new GameTypes.TileWithMetadata[](
-                GET_MAP_INTERVAL * GET_MAP_INTERVAL
-            );
+        GameTypes.Tile[] memory allTiles = new GameTypes.Tile[](
+            GET_MAP_INTERVAL * GET_MAP_INTERVAL
+        );
+        GameTypes.Position[] memory allPos = new GameTypes.Position[](
+            GET_MAP_INTERVAL * GET_MAP_INTERVAL
+        );
+
         uint256 nonce = 0;
         for (uint256 x = _pos.x; x < _pos.x + GET_MAP_INTERVAL; x++) {
             for (uint256 y = _pos.y; y < _pos.y + GET_MAP_INTERVAL; y++) {
@@ -70,16 +73,12 @@ contract Getters {
                     x: x,
                     y: y
                 });
-                GameTypes.Tile memory _tileData = utils._getTileData(_tempPos);
-                ret[nonce] = GameTypes.TileWithMetadata({
-                    occupier: _tileData.occupier,
-                    blockId: _tileData.blockId,
-                    x: x,
-                    y: y
-                });
+                allTiles[nonce] = utils._getTileData(_tempPos);
+                allPos[nonce] = _tempPos;
                 nonce += 1;
             }
         }
-        return ret;
+
+        return (allTiles, allPos);
     }
 }

@@ -36,32 +36,45 @@ library GameTypes {
     struct Tile {
         address occupier;
         address owner;
-        uint256 topLevelStrength; // Remaining strength of the top level block. May need to convert to a full array in future to prevent malicious restoring of block strength by placing on top.
+        uint256 topLevelStrength; // DELETE?
         uint256 blockId;
     }
 
-    struct TileWithMetadata {
-        address occupier;
-        uint256 blockId;
-        uint256 x;
-        uint256 y;
-    }
-
+    // should creature be an item?
     struct ItemWithMetadata {
         bool mineable;
         bool craftable;
         bool occupiable;
         uint256 strength;
-        uint256 healthDamage;
-        uint256 energyDamage;
         uint256[] mineItemIds; // tools for mining
         uint256[] craftItemIds;
         uint256[] craftItemAmounts;
         /* Programmable blocks */
         bool programmable;
         string abiEncoding;
-        string contractAddr;
+        // uint256 attackDamage; // creature properties here too
+        // uint256 attackRange;
+        // uint256 lastAttacked;
+        // uint256 defense;
+        // uint256 health;
+        // uint256 movesPerEpoch;
     }
+
+    // representing creatures on chain
+    // enum BLOCK_TYPE {
+    //     NORMAL,
+    //     CREATURE
+    // }
+
+    // struct Creature {
+    //     uint256 attackDamage;
+    //     uint256 attackRange;
+    //     uint256 lastAttacked;
+    //     uint256 defense;
+    //     uint256 health;
+    //     uint256 movesPerEpoch;
+    //     uint256 owner;
+    // }
 
     struct Recipe {
         uint256[] craftItemIds;

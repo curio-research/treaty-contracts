@@ -92,23 +92,7 @@ export var masterItems: ItemMaster[] = [
     },
   },
   {
-    name: 'Fence',
-    item: {
-      mineable: true,
-      mineItemIds: [],
-      strength: 20,
-      craftable: true,
-      craftItemIds: [0],
-      craftItemAmounts: [5],
-      occupiable: false,
-      healthDamage: 0,
-      programmable: false,
-      abiEncoding: '',
-      contractAddr: '',
-    },
-  },
-  {
-    name: 'Wall',
+    name: 'Minion',
     item: {
       mineable: true,
       mineItemIds: [],

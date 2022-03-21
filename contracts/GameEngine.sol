@@ -2,6 +2,7 @@
 pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "./interface/IGameEngine.sol";
 import "./GameStorage.sol";
 import "./GameTypes.sol";
 import "./Permissions.sol";
@@ -10,41 +11,11 @@ import "./Permissions.sol";
 // Main game contract
 // ------------------------------------------------------------
 
-contract Game {
+contract Game is IGameEngine {
     using SafeMath for uint256;
     GameStorage private utils;
     Permissions private p;
     uint256 public SET_MAP_INTERVAL = 10;
-
-    // ------------------------------------------------------------
-    // Events
-    // ------------------------------------------------------------
-
-    event NewPlayer(address _player, GameTypes.Position _pos);
-    event Move(address _player, GameTypes.Position _pos);
-    // we can maybe sunset mine and attack into the same event
-    event MineItem(address _player, GameTypes.Position _pos, uint256 _blockId);
-    event AttackItem(
-        address _player,
-        GameTypes.Position _pos,
-        uint256 _strength
-    );
-    event Place(address _player, GameTypes.Position _pos, uint256 _blockId);
-    event Craft(address _player, uint256 _blockId);
-    event Attack(address _player1, address _player2); // add attack result here?
-    event Death(address _player);
-    event ChangeBlockStrength(
-        address _player,
-        GameTypes.Position _pos,
-        uint256 _strength,
-        uint256 _resourceUsed
-    );
-
-    event MoveBlock(
-        address _player,
-        GameTypes.Position _startPos,
-        GameTypes.Position _endPos
-    );
 
     // ------------------------------------------------------------
     // Constructor
@@ -68,11 +39,15 @@ contract Game {
         }
     }
 
+    // let blocks attack each other
+
+    function attack() public {}
+
     /**
      * initialize player
      * @param _pos position to initialize
      */
-    function initializePlayer(GameTypes.Position memory _pos) public {
+    function initializePlayer(GameTypes.Position memory _pos) public override {
         require(
             !utils._getPlayer(msg.sender).initialized,
             "engine/player-already-initialized"
@@ -97,7 +72,7 @@ contract Game {
      * move player
      * @param _pos target position
      */
-    function move(GameTypes.Position memory _pos) external {
+    function move(GameTypes.Position memory _pos) external override {
         require(utils._isValidMove(msg.sender, _pos), "engine/invalid-move");
 
         GameTypes.Position memory _prevPosition = utils
@@ -119,7 +94,7 @@ contract Game {
     function moveBlock(
         GameTypes.Position memory _startPos,
         GameTypes.Position memory _targetPos
-    ) public {
+    ) public override {
         GameTypes.Tile memory startTile = utils._getTileData(_startPos);
         GameTypes.Tile memory targetTile = utils._getTileData(_targetPos);
 
@@ -199,7 +174,7 @@ contract Game {
      * mine item
      * @param _pos position to mine item at
      */
-    function mine(GameTypes.Position memory _pos) external {
+    function mine(GameTypes.Position memory _pos) external override {
         uint256 _block = utils._getBlockAtPos(_pos);
         require(_block != 0, "engine/nonexistent-block");
 
@@ -232,7 +207,10 @@ contract Game {
      * @param _pos position to place block at
      * @param _itemId item id to place
      */
-    function place(GameTypes.Position memory _pos, uint256 _itemId) external {
+    function place(GameTypes.Position memory _pos, uint256 _itemId)
+        external
+        override
+    {
         require(
             utils._getItemAmountById(msg.sender, _itemId) != 0,
             "engine/insufficient-inventory"
@@ -257,7 +235,7 @@ contract Game {
      * craft item (once) based on their recipe
      * @param _itemId item id to craft
      */
-    function craft(uint256 _itemId) external {
+    function craft(uint256 _itemId) external override {
         require(_itemId <= utils._getItemNonce(), "engine/nonexistent-block"); // has to craft an existing item
 
         // loop through player inventory to check if player has all required ingredients to make a block
@@ -299,7 +277,7 @@ contract Game {
         GameTypes.Position memory _pos,
         uint256 _amount,
         bool _state
-    ) public {
+    ) public override {
         uint256 _userAmount = utils._getItemAmountById(msg.sender, 0); // world default currency is 0
         require(_userAmount >= _amount, "engine/insufficient-inventory");
 

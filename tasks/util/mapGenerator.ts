@@ -205,7 +205,7 @@ export const generateMap = (
       }
 
       // set tower
-      map[x][y] = [4];
+      map[x][y] = [3];
     } else {
       // remove one from towers and towerSpecs arrays
       towers.splice(k, 1);
