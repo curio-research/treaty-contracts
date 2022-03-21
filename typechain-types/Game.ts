@@ -139,11 +139,11 @@ export interface GameInterface extends utils.Interface {
 
   events: {
     "Attack(address,address)": EventFragment;
-    "AttackItem(address,tuple,uint256,uint256)": EventFragment;
+    "AttackItem(address,tuple,uint256)": EventFragment;
     "ChangeBlockStrength(address,tuple,uint256,uint256)": EventFragment;
     "Craft(address,uint256)": EventFragment;
     "Death(address)": EventFragment;
-    "MineItem(address,tuple,uint256,uint256)": EventFragment;
+    "MineItem(address,tuple,uint256)": EventFragment;
     "Move(address,tuple)": EventFragment;
     "NewPlayer(address,tuple)": EventFragment;
     "Place(address,tuple,uint256)": EventFragment;
@@ -168,13 +168,8 @@ export type AttackEvent = TypedEvent<
 export type AttackEventFilter = TypedEventFilter<AttackEvent>;
 
 export type AttackItemEvent = TypedEvent<
-  [string, PositionStructOutput, BigNumber, BigNumber],
-  {
-    _player: string;
-    _pos: PositionStructOutput;
-    _strength: BigNumber;
-    _zIndex: BigNumber;
-  }
+  [string, PositionStructOutput, BigNumber],
+  { _player: string; _pos: PositionStructOutput; _strength: BigNumber }
 >;
 
 export type AttackItemEventFilter = TypedEventFilter<AttackItemEvent>;
@@ -204,13 +199,8 @@ export type DeathEvent = TypedEvent<[string], { _player: string }>;
 export type DeathEventFilter = TypedEventFilter<DeathEvent>;
 
 export type MineItemEvent = TypedEvent<
-  [string, PositionStructOutput, BigNumber, BigNumber],
-  {
-    _player: string;
-    _pos: PositionStructOutput;
-    _blockId: BigNumber;
-    _zIndex: BigNumber;
-  }
+  [string, PositionStructOutput, BigNumber],
+  { _player: string; _pos: PositionStructOutput; _blockId: BigNumber }
 >;
 
 export type MineItemEventFilter = TypedEventFilter<MineItemEvent>;
@@ -363,17 +353,15 @@ export interface Game extends BaseContract {
     ): AttackEventFilter;
     Attack(_player1?: null, _player2?: null): AttackEventFilter;
 
-    "AttackItem(address,tuple,uint256,uint256)"(
+    "AttackItem(address,tuple,uint256)"(
       _player?: null,
       _pos?: null,
-      _strength?: null,
-      _zIndex?: null
+      _strength?: null
     ): AttackItemEventFilter;
     AttackItem(
       _player?: null,
       _pos?: null,
-      _strength?: null,
-      _zIndex?: null
+      _strength?: null
     ): AttackItemEventFilter;
 
     "ChangeBlockStrength(address,tuple,uint256,uint256)"(
@@ -395,18 +383,12 @@ export interface Game extends BaseContract {
     "Death(address)"(_player?: null): DeathEventFilter;
     Death(_player?: null): DeathEventFilter;
 
-    "MineItem(address,tuple,uint256,uint256)"(
+    "MineItem(address,tuple,uint256)"(
       _player?: null,
       _pos?: null,
-      _blockId?: null,
-      _zIndex?: null
+      _blockId?: null
     ): MineItemEventFilter;
-    MineItem(
-      _player?: null,
-      _pos?: null,
-      _blockId?: null,
-      _zIndex?: null
-    ): MineItemEventFilter;
+    MineItem(_player?: null, _pos?: null, _blockId?: null): MineItemEventFilter;
 
     "Move(address,tuple)"(_player?: null, _pos?: null): MoveEventFilter;
     Move(_player?: null, _pos?: null): MoveEventFilter;

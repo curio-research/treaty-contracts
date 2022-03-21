@@ -45,11 +45,11 @@ contract GameStorage {
         s.worldConstants = constants;
     }
 
-    function _setBlocks(
-        GameTypes.Position memory _position,
-        uint256[] memory _blocks
-    ) public hasPermission {
-        s.map[_position.x][_position.y].blocks = _blocks;
+    function _setBlock(GameTypes.Position memory _position, uint256 blockId)
+        public
+        hasPermission
+    {
+        s.map[_position.x][_position.y].blockId = blockId;
     }
 
     /**
@@ -59,7 +59,7 @@ contract GameStorage {
      */
     function _setMapRegion(
         GameTypes.Position memory _startPos,
-        uint256[][][] memory _blocks
+        uint256[][] memory _blocks
     ) public hasPermission {
         for (uint256 _xAdd = 0; _xAdd < _blocks.length; _xAdd++) {
             for (uint256 _yAdd = 0; _yAdd < _blocks[0].length; _yAdd++) {
@@ -67,15 +67,12 @@ contract GameStorage {
                     x: _startPos.x + _xAdd,
                     y: _startPos.y + _yAdd
                 });
-                // uint256 _idx = utils._getIndexFromPosition(_pos);
 
-                _setBlocks(_pos, _blocks[_xAdd][_yAdd]);
+                _setBlock(_pos, _blocks[_xAdd][_yAdd]);
 
-                if (_blocks[_xAdd][_yAdd].length > 0) {
-                    uint256 _topBlockId = _blocks[_xAdd][_yAdd][
-                        _blocks[_xAdd][_yAdd].length - 1
-                    ];
-                    _setTopLevelStrength(_pos, _getItem(_topBlockId).strength);
+                if (_blocks[_xAdd][_yAdd] != 0) {
+                    uint256 _block = _getBlockAtPos(_pos);
+                    _setTopLevelStrength(_pos, _getItem(_block).strength);
                 }
             }
         }
@@ -168,36 +165,15 @@ contract GameStorage {
     // Items
     // ------------------------------------------------------------
 
-    function _getTopBlockAtPosition(GameTypes.Position memory _pos)
-        public
-        view
-        returns (uint256)
-    {
-        uint256 _blockCount = _getBlockCountAtPosition(_pos);
-        return s.map[_pos.x][_pos.y].blocks[_blockCount - 1];
-    }
-
     // check if location has blocks or player on it
     function _isOccupied(GameTypes.Position memory _pos)
         public
         view
-        hasPermission
         returns (bool)
     {
         if (s.map[_pos.x][_pos.y].occupier != address(0)) return true; // if block has player on it
-        if (s.map[_pos.x][_pos.y].blocks.length > 0) return true; // if block has any blocks
+        if (s.map[_pos.x][_pos.y].blockId != 0) return true;
         return false;
-    }
-
-    function _getBlockAtPosition(GameTypes.Position memory _pos, uint256 _zIdx)
-        public
-        view
-        returns (uint256)
-    {
-        if (_zIdx >= s.map[_pos.x][_pos.y].blocks.length)
-            revert("engine/invalid-z-index");
-
-        return s.map[_pos.x][_pos.y].blocks[_zIdx];
     }
 
     function _setTopLevelStrength(
@@ -229,6 +205,7 @@ contract GameStorage {
         GameTypes.Position memory _position = _getPlayer(_player).position;
         GameTypes.WorldConstants memory constants = _getWorldConstants();
 
+        // if player is within bounds of map
         bool _inMap = _pos.x < constants.worldWidth &&
             _pos.y < constants.worldWidth &&
             _pos.x >= 0 &&
@@ -236,8 +213,10 @@ contract GameStorage {
 
         if (!_inMap) return false;
 
+        // if its within the move distance
         if (!_withinDistance(_pos, _position, 1)) return false;
 
+        // if the target block is occupied
         if (_isOccupied(_pos)) return false; // check if target coordinate has block or player
 
         return true;
@@ -330,21 +309,11 @@ contract GameStorage {
     // Function helpers
     // ------------------------------------------------------------
 
-    // mine block
+    // mine block completely
     function _mine(GameTypes.Position memory _pos) public hasPermission {
-        s.map[_pos.x][_pos.y].blocks.pop();
-
-        uint256 _blockCount = _getBlockCountAtPosition(_pos);
-        if (_blockCount > 0) {
-            uint256 topBlockId = s.map[_pos.x][_pos.y].blocks[
-                _getBlockCountAtPosition(_pos) - 1
-            ];
-            s.map[_pos.x][_pos.y].topLevelStrength = s
-                .itemsWithMetadata[topBlockId]
-                .strength;
-        } else {
-            s.map[_pos.x][_pos.y].topLevelStrength = 0;
-        }
+        _setBlock(_pos, 0); // set block to no block which is 0
+        // uint256 _block = _getBlockAtLocation(_pos);
+        s.map[_pos.x][_pos.y].topLevelStrength = 0; // if its not a null block. remove it
     }
 
     // place block
@@ -352,13 +321,8 @@ contract GameStorage {
         public
         hasPermission
     {
-        // simple version of the game places blocks at index 0;
-        uint256[] storage blocks = s.map[_pos.x][_pos.y].blocks;
-        if (blocks.length >= 1) {
-            blocks[0] = _itemId;
-        } else {
-            blocks.push(_itemId);
-        }
+        s.map[_pos.x][_pos.y].blockId = _itemId;
+
         s.map[_pos.x][_pos.y].topLevelStrength = s
             .itemsWithMetadata[_itemId]
             .strength;
@@ -468,13 +432,12 @@ contract GameStorage {
         return s.players[_player];
     }
 
-    // get the number of blocks at a current location
-    function _getBlockCountAtPosition(GameTypes.Position memory _pos)
+    function _getBlockAtPos(GameTypes.Position memory _pos)
         public
         view
         returns (uint256)
     {
-        return s.map[_pos.x][_pos.y].blocks.length;
+        return s.map[_pos.x][_pos.y].blockId;
     }
 
     function _getCurrentEpoch() public view returns (uint256) {

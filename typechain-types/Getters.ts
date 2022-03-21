@@ -24,17 +24,17 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
 
 export type TileWithMetadataStruct = {
   occupier: string;
-  blocks: BigNumberish[];
+  blockId: BigNumberish;
   x: BigNumberish;
   y: BigNumberish;
 };
 
 export type TileWithMetadataStructOutput = [
   string,
-  BigNumber[],
+  BigNumber,
   BigNumber,
   BigNumber
-] & { occupier: string; blocks: BigNumber[]; x: BigNumber; y: BigNumber };
+] & { occupier: string; blockId: BigNumber; x: BigNumber; y: BigNumber };
 
 export type ItemWithMetadataStruct = {
   mineable: boolean;

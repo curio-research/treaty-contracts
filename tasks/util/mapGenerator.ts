@@ -174,14 +174,14 @@ export const generateMap = (worldWidth: number, worldHeight: number, roomWidth: 
     // primsMapOutput.mapSnapshot.forEach((m) => visualizeMap(m, true, "maps/"));
   } else {
     map = generateEmptyMap(worldWidth, worldHeight); // generate empty map
-    
+
     const walls = generateWallCoords(worldWidth, worldHeight, roomWidth); // generate wall blocks
     // apply block coordinates to master map;
     walls.forEach((pos) => {
       map[pos.x][pos.y].push(7);
     });
   }
-  
+
   const towers = generateTowerCoords(worldWidth, worldHeight, roomWidth); // generate tower locations
   const towerSpecs = generateTowerSpecs(towers);
   let pos: position;
@@ -194,19 +194,17 @@ export const generateMap = (worldWidth: number, worldHeight: number, roomWidth: 
 
     // check no indestructible wall exists at tower coordinate
     if (map[x][y].length === 0 || map[x][y][0] !== 7) {
-      
       // clear tower surroundings
       for (let i = -1; i <= 1; i++) {
         for (let j = -1; j <= 1; j++) {
           if (x + i >= 0 && x + i < worldWidth && y + j >= 0 && y + j < worldHeight) {
-            if (map[x+i][y+j].length > 0) map[x+i][y+j] = [];
+            if (map[x + i][y + j].length > 0) map[x + i][y + j] = [];
           }
         }
       }
 
       // set tower
       map[x][y] = [4];
-
     } else {
       // remove one from towers and towerSpecs arrays
       towers.splice(k, 1);
@@ -247,34 +245,18 @@ const removeDupPosFromArr = (arr: position[]): position[] => {
   return res;
 };
 
-/**
- * Visualize map blocks of a map.
- * @param blocks A list of positions with their list of blocks
- * @param exportToFile Whether to export output to file or to log
- */
-export const visualizeMap = (blocks: number[][][], exportToFile?: boolean, dir?: string): void => {
-  let visualMap = "";
-  for (let i = 0; i < WORLD_WIDTH; i++) {
-    for (let j = 0; j < WORLD_HEIGHT; j++) {
-      let block;
-      if (blocks[i][j].length > 0) {
-        if (blocks[i][j].length > 1) throw "unintended stacked items";
-        block = blocks[i][j][0] + "";
-        if (block.length == 1) block = " " + block;
-        if (block.length > 2) throw "Unsupported index of item";
+export const flatten3dMapArray = (map: number[][][]): number[][] => {
+  let res: number[][] = [];
+  map.forEach((row) => {
+    let resRow: number[] = [];
+    row.forEach((blockArr) => {
+      if (blockArr.length === 0) {
+        resRow.push(0);
       } else {
-        block = "  ";
+        resRow.push(blockArr[0]);
       }
-
-      visualMap += "[" + block + "] ";
-    }
-    visualMap += "\n";
-  }
-
-  if (exportToFile) {
-    fs.writeFileSync((dir ?? "") + "map" + visualizeNonce + ".txt", visualMap);
-    visualizeNonce++;
-  } else {
-    console.log(visualMap);
-  }
+    });
+    res.push(resRow);
+  });
+  return res;
 };

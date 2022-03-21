@@ -73,7 +73,7 @@ contract Getters {
                 GameTypes.Tile memory _tileData = utils._getTileData(_tempPos);
                 ret[nonce] = GameTypes.TileWithMetadata({
                     occupier: _tileData.occupier,
-                    blocks: _tileData.blocks,
+                    blockId: _tileData.blockId,
                     x: x,
                     y: y
                 });
