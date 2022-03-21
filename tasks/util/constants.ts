@@ -1,6 +1,6 @@
-import { ItemMaster } from "../../util/types/getter";
-export const LOCALHOST_RPC_URL = "http://127.0.0.1:8545/";
-export const LOCALHOST_WS_RPC_URL = "ws://localhost:8545";
+import { ItemMaster } from '../../util/types/getter';
+export const LOCALHOST_RPC_URL = 'http://127.0.0.1:8545/';
+export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 
 // ------------------------------------------------
 // General constants
@@ -15,6 +15,10 @@ export const ATTACK_WAITTIME = 5;
 export const START_PLAYER_HEALTH = 100;
 export const START_PLAYER_ENERGY = 100;
 export const MAP_INTERVAL = 10;
+export enum MAP_MODE {
+  DEFAULT,
+  PRIMS,
+}
 
 // game specs - auto
 export const WORLD_WIDTH = (ROOM_LENGTH - 1) * ROOMS_PER_DIMENSION + 1; // due to shared walls
@@ -40,7 +44,23 @@ export const generateGameConstants = () => {
 
 export var masterItems: ItemMaster[] = [
   {
-    name: "Iron",
+    name: 'Space',
+    item: {
+      mineable: false,
+      mineItemIds: [],
+      strength: 0,
+      craftable: false,
+      craftItemIds: [],
+      craftItemAmounts: [],
+      occupiable: false,
+      healthDamage: 0,
+      energyDamage: 0,
+      programmable: false,
+      abiEncoding: '',
+    },
+  },
+  {
+    name: 'Iron',
     item: {
       mineable: true,
       mineItemIds: [],
@@ -52,11 +72,11 @@ export var masterItems: ItemMaster[] = [
       healthDamage: 0,
       energyDamage: 0,
       programmable: false,
-      abiEncoding: "",
+      abiEncoding: '',
     },
   },
   {
-    name: "Silver",
+    name: 'Silver',
     item: {
       mineable: true,
       mineItemIds: [],
@@ -68,11 +88,11 @@ export var masterItems: ItemMaster[] = [
       healthDamage: 0,
       energyDamage: 0,
       programmable: false,
-      abiEncoding: "",
+      abiEncoding: '',
     },
   },
   {
-    name: "Fence",
+    name: 'Fence',
     item: {
       mineable: true,
       mineItemIds: [],
@@ -84,11 +104,11 @@ export var masterItems: ItemMaster[] = [
       healthDamage: 0,
       energyDamage: 0,
       programmable: false,
-      abiEncoding: "",
+      abiEncoding: '',
     },
   },
   {
-    name: "Wall",
+    name: 'Wall',
     item: {
       mineable: true,
       mineItemIds: [],
@@ -100,11 +120,11 @@ export var masterItems: ItemMaster[] = [
       healthDamage: 0,
       energyDamage: 0,
       programmable: false,
-      abiEncoding: "",
+      abiEncoding: '',
     },
   },
   {
-    name: "Tower",
+    name: 'Tower',
     item: {
       mineable: false,
       mineItemIds: [],
@@ -116,11 +136,11 @@ export var masterItems: ItemMaster[] = [
       healthDamage: 0,
       energyDamage: 0,
       programmable: false,
-      abiEncoding: "",
+      abiEncoding: '',
     },
   },
   {
-    name: "Turbo",
+    name: 'Turbo',
     item: {
       mineable: true,
       mineItemIds: [],
@@ -132,11 +152,11 @@ export var masterItems: ItemMaster[] = [
       healthDamage: 0,
       energyDamage: 0,
       programmable: false,
-      abiEncoding: "",
+      abiEncoding: '',
     },
   },
   {
-    name: "Block",
+    name: 'Block',
     item: {
       mineable: true,
       mineItemIds: [],
@@ -148,11 +168,11 @@ export var masterItems: ItemMaster[] = [
       healthDamage: 0,
       energyDamage: 0,
       programmable: false,
-      abiEncoding: "",
+      abiEncoding: '',
     },
   },
   {
-    name: "Indestructible Wall",
+    name: 'Indestructible Wall',
     item: {
       mineable: false,
       mineItemIds: [],
@@ -164,12 +184,12 @@ export var masterItems: ItemMaster[] = [
       healthDamage: 0,
       energyDamage: 0,
       programmable: false,
-      abiEncoding: "",
+      abiEncoding: '',
     },
   },
 ];
 
-export var blockMetadata = {
+export var programmableBlockMetadata = {
   mineable: true,
   mineItemIds: [],
   strength: 0,
@@ -180,12 +200,10 @@ export var blockMetadata = {
   healthDamage: 0,
   energyDamage: 0,
   programmable: true,
-  abiEncoding: "",
+  abiEncoding: '',
 };
 
-export const generateBlockIdToNameMap = (
-  items: ItemMaster[]
-): Record<number, string> => {
+export const generateBlockIdToNameMap = (items: ItemMaster[]): Record<number, string> => {
   const res: Record<number, string> = {};
   items.forEach((item, idx) => {
     res[idx] = item.name;
@@ -195,5 +213,5 @@ export const generateBlockIdToNameMap = (
 
 // number of each item to generate every 100 tiles
 // determines the rarity of items
-export var ITEM_RATIO = [10, 3, 0, 0, 0, 0, 0, 0];
+export const ITEM_RATIO = [0, 10, 3, 0, 0, 0, 0, 0, 0];
 console.assert(masterItems.length == ITEM_RATIO.length);

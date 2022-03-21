@@ -3,7 +3,7 @@ import { position } from './../../util/types/common';
 import { MasterGameSpecs, CoordsProps } from './types/mapGenerator';
 import _ from 'lodash';
 import { TowerWithLocation } from '../../util/types/tower';
-import { WORLD_HEIGHT, WORLD_WIDTH } from './constants';
+import { WORLD_HEIGHT, WORLD_WIDTH, MAP_MODE } from './constants';
 import fs from 'fs';
 import { generatePrimsMap } from './primsMap';
 
@@ -166,14 +166,9 @@ const generateTowerSpecs = (towerLocations: position[]): TowerWithLocation[] => 
 // master map generation function
 // ---------------------------------
 
-export const generateMap = (
-  worldWidth: number,
-  worldHeight: number,
-  roomWidth: number,
-  usePrims?: boolean
-): MasterGameSpecs => {
+export const generateMap = (worldWidth: number, worldHeight: number, roomWidth: number, towerIndex: number, mapMode?: MAP_MODE): MasterGameSpecs => {
   let map: number[][][];
-  if (usePrims) {
+  if (mapMode === MAP_MODE.PRIMS) {
     let primsMapOutput = generatePrimsMap(worldWidth, worldHeight);
     map = primsMapOutput.map;
     // primsMapOutput.mapSnapshot.forEach((m) => visualizeMap(m, true, "maps/"));
@@ -209,7 +204,7 @@ export const generateMap = (
       }
 
       // set tower
-      map[x][y] = [4];
+      map[x][y] = [towerIndex];
     } else {
       // remove one from towers and towerSpecs arrays
       towers.splice(k, 1);
