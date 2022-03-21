@@ -15,7 +15,7 @@
     "typescript": "^4.4.4"
   },
   "dependencies": {
-    "@openzeppelin/contrfcts": "^4.3.2",
+    "@openzeppelin/contracts": "^4.3.2",
     "@openzeppelin/contracts-upgradeable": "^4.3.2",
     "@pinata/sdk": "^1.1.23",
     "@typechain/ethers-v5": "^8.0.2",
