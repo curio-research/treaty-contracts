@@ -134,7 +134,7 @@ task("deploy", "deploy contracts")
     console.log("Tower        ", TowerContract.address);
     console.log("Storage      ", GameStorage.address);
     console.log("GameHelper   ", GameHelper.address);
-    console.log("Dooor   ", DoorContract.address);
+    console.log("Door         ", DoorContract.address);
     printDivider();
 
     // initialize map

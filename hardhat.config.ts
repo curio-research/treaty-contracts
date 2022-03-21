@@ -17,6 +17,7 @@ import "./tasks/deploy";
 import "./tasks/map";
 import "./tasks/simulate";
 import "./tasks/poll";
+import { deployProxy } from "./tasks/util/deployHelper";
 
 // to get the smart contract file sizes, run:
 // yarn run hardhat size-contracts
