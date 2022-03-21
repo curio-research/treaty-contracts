@@ -2,6 +2,7 @@ import { Tower } from "./../util/types/tower";
 import { generateBlockIdToNameMap } from "./../test/util/constants";
 import { Epoch } from "./../typechain-types/Epoch";
 import { task } from "hardhat/config";
+import axios from "axios";
 import * as path from "path";
 import * as fsPromise from "fs/promises";
 import * as fs from "fs";
@@ -14,8 +15,8 @@ import { Getters, Game, GameStorage, Helper } from "../typechain-types";
 import { TowerGame } from "./../typechain-types/TowerGame";
 import { Permissions } from "../typechain-types";
 import { position } from "../util/types/common";
-import { visualizeMap, flatten3dMapArray } from "./util/mapGenerator";
-import axios from "axios";
+import { flatten3dMapArray } from "./util/mapGenerator";
+
 const { BACKEND_URL } = process.env;
 
 // ---------------------------------
@@ -37,8 +38,7 @@ task("deploy", "deploy contracts")
     const allGameArgs = generateAllGameArgs();
 
     let blocks = allGameArgs.blockMap;
-    visualizeMap(blocks, true);
-    console.log("✦ map visualized in map.txt");
+    const flattenedMap = flatten3dMapArray(blocks); // flatten 3d map into 2d for change from blocks[] to blockId
 
     printDivider();
     console.log("Network:", hre.network.name);
@@ -81,13 +81,12 @@ task("deploy", "deploy contracts")
 
     // initialize blocks
     console.log("✦ initializing blocks");
-    let regionMap: number[][][];
+    let regionMap: number[][];
     for (let x = 0; x < WORLD_WIDTH; x += MAP_INTERVAL) {
       for (let y = 0; y < WORLD_HEIGHT; y += MAP_INTERVAL) {
-        regionMap = blocks.slice(x, x + MAP_INTERVAL).map((col) => col.slice(y, y + MAP_INTERVAL));
+        regionMap = flattenedMap.slice(x, x + MAP_INTERVAL).map((col) => col.slice(y, y + MAP_INTERVAL));
 
-        // flatten 3d array to 2d array
-        let tx = await GameStorage._setMapRegion({ x, y }, flatten3dMapArray(regionMap));
+        let tx = await GameStorage._setMapRegion({ x, y }, regionMap);
         tx.wait();
       }
     }
@@ -103,17 +102,16 @@ task("deploy", "deploy contracts")
         x = Math.floor(Math.random() * WORLD_WIDTH);
         y = Math.floor(Math.random() * WORLD_HEIGHT);
         player1Pos = { x, y };
-      } while (blocks[x][y].length > 0);
+      } while (flattenedMap[x][y] != 0);
 
       let player2Pos: position;
       do {
         x = Math.floor(Math.random() * WORLD_WIDTH);
         y = Math.floor(Math.random() * WORLD_HEIGHT);
         player2Pos = { x, y };
-      } while (blocks[x][y].length > 0);
+      } while (flattenedMap[x][y] != 0);
 
       let tx;
-
       tx = await GameContract.connect(player1).initializePlayer(player1Pos); // initialize users
       tx.wait();
 

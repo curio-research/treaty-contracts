@@ -169,10 +169,10 @@ contract GameStorage {
     function _isOccupied(GameTypes.Position memory _pos)
         public
         view
-        hasPermission
         returns (bool)
     {
         if (s.map[_pos.x][_pos.y].occupier != address(0)) return true; // if block has player on it
+        if (s.map[_pos.x][_pos.y].blockId != 0) return true;
         return false;
     }
 
@@ -205,6 +205,7 @@ contract GameStorage {
         GameTypes.Position memory _position = _getPlayer(_player).position;
         GameTypes.WorldConstants memory constants = _getWorldConstants();
 
+        // if player is within bounds of map
         bool _inMap = _pos.x < constants.worldWidth &&
             _pos.y < constants.worldWidth &&
             _pos.x >= 0 &&
@@ -212,8 +213,10 @@ contract GameStorage {
 
         if (!_inMap) return false;
 
+        // if its within the move distance
         if (!_withinDistance(_pos, _position, 1)) return false;
 
+        // if the target block is occupied
         if (_isOccupied(_pos)) return false; // check if target coordinate has block or player
 
         return true;

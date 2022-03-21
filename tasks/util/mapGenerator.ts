@@ -245,38 +245,6 @@ const removeDupPosFromArr = (arr: position[]): position[] => {
   return res;
 };
 
-/**
- * Visualize map blocks of a map.
- * @param blocks A list of positions with their list of blocks
- * @param exportToFile Whether to export output to file or to log
- */
-export const visualizeMap = (blocks: number[][][], exportToFile?: boolean, dir?: string): void => {
-  let visualMap = "";
-  for (let i = 0; i < WORLD_WIDTH; i++) {
-    for (let j = 0; j < WORLD_HEIGHT; j++) {
-      let block;
-      if (blocks[i][j].length > 0) {
-        if (blocks[i][j].length > 1) throw "unintended stacked items";
-        block = blocks[i][j][0] + "";
-        if (block.length == 1) block = " " + block;
-        if (block.length > 2) throw "Unsupported index of item";
-      } else {
-        block = "  ";
-      }
-
-      visualMap += "[" + block + "] ";
-    }
-    visualMap += "\n";
-  }
-
-  if (exportToFile) {
-    fs.writeFileSync((dir ?? "") + "map" + visualizeNonce + ".txt", visualMap);
-    visualizeNonce++;
-  } else {
-    console.log(visualMap);
-  }
-};
-
 export const flatten3dMapArray = (map: number[][][]): number[][] => {
   let res: number[][] = [];
   map.forEach((row) => {
