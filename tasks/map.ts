@@ -9,5 +9,4 @@ task('map', 'generate maps').setAction(async (args: any, hre: HardhatRuntimeEnvi
   //   await hre.run("compile");
 
   const allGameArgs = generateAllGameArgs(gameItems, ITEM_RATIO);
-  console.log(allGameArgs.allTowerArgs);
 });

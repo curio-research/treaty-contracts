@@ -51,9 +51,6 @@ task('deploy', 'deploy contracts')
     const payload = await deployToIPFS(hre, 'Door');
     const newGameItems = gameItems.concat(appendIpfsHashToMetadata(programmableBlockMetadata, payload.IpfsHash));
     const newItemRatio = ITEM_RATIO.concat(5);
-
-    console.log(newGameItems);
-    console.log(newItemRatio);
     const allGameArgs = generateAllGameArgs(newGameItems, newItemRatio);
 
     let blocks = allGameArgs.blockMap;
