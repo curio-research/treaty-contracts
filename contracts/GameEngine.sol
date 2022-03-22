@@ -11,11 +11,40 @@ import "./Permissions.sol";
 // Main game contract
 // ------------------------------------------------------------
 
-contract Game is IGameEngine {
+// TODO: Add interface
+contract Game {
     using SafeMath for uint256;
     GameStorage private utils;
     Permissions private p;
-    uint256 public SET_MAP_INTERVAL = 10;
+
+    // ------------------------------------------------------------
+    // Events
+    // ------------------------------------------------------------
+
+    event NewPlayer(address _player, GameTypes.Position _pos);
+    event Move(address _player, GameTypes.Position _pos);
+    event MineItem(address _player, GameTypes.Position _pos, uint256 _blockId);
+    event AttackItem(
+        address _player,
+        GameTypes.Position _pos,
+        uint256 _strength
+    );
+    event Place(address _player, GameTypes.Position _pos, uint256 _blockId);
+    event Craft(address _player, uint256 _blockId);
+    event Attack(address _player1, address _player2);
+    event Death(address _player);
+    event ChangeBlockStrength(
+        address _player,
+        GameTypes.Position _pos,
+        uint256 _strength,
+        uint256 _resourceUsed
+    );
+
+    event MoveBlock(
+        address _player,
+        GameTypes.Position _startPos,
+        GameTypes.Position _endPos
+    );
 
     // ------------------------------------------------------------
     // Constructor
@@ -39,14 +68,51 @@ contract Game is IGameEngine {
         }
     }
 
-    // let some blocks (eg. creatures) attack other blocks;
-    function attack() public {}
+    // let some blocks (eg. creatures) attack other blocks
+    // perhaps this can be abstracted into the main attack function
+    function attack(
+        GameTypes.Position memory _origin,
+        GameTypes.Position memory _target
+    ) public {
+        // check if the two are in the same range
+        GameTypes.Tile memory _attackerTile = utils._getTileData(_origin);
+
+        // get the worldBlock data from the tile
+        GameTypes.BlockData memory _attackerWorldBlockData = utils
+            ._getWorldBlockData(_attackerTile.worldBlockId);
+
+        // get item data
+        GameTypes.ItemWithMetadata memory _attackerBlockInfo = utils._getItem(
+            _attackerWorldBlockData.blockId
+        );
+
+        // check range of attack
+        require(
+            utils._withinDistance(
+                _origin,
+                _target,
+                _attackerBlockInfo.attackRange
+            )
+        );
+
+        // set health
+
+        uint256 healthAfterAttack = _attackerWorldBlockData.health -
+            _attackerBlockInfo.attackDamage;
+        utils.setWorldBlockHealth(
+            _attackerTile.worldBlockId,
+            healthAfterAttack
+        );
+
+        // this should emit more things
+        emit AttackItem(msg.sender, _target, healthAfterAttack);
+    }
 
     /**
      * initialize player
      * @param _pos position to initialize
      */
-    function initializePlayer(GameTypes.Position memory _pos) public override {
+    function initializePlayer(GameTypes.Position memory _pos) public {
         require(
             !utils._getPlayer(msg.sender).initialized,
             "engine/player-already-initialized"
@@ -71,7 +137,7 @@ contract Game is IGameEngine {
      * move player
      * @param _pos target position
      */
-    function move(GameTypes.Position memory _pos) external override {
+    function move(GameTypes.Position memory _pos) external {
         require(utils._isValidMove(msg.sender, _pos), "engine/invalid-move");
 
         GameTypes.Position memory _prevPosition = utils
@@ -93,7 +159,7 @@ contract Game is IGameEngine {
     function moveBlock(
         GameTypes.Position memory _startPos,
         GameTypes.Position memory _targetPos
-    ) public override {
+    ) public {
         GameTypes.Tile memory startTile = utils._getTileData(_startPos);
         GameTypes.Tile memory targetTile = utils._getTileData(_targetPos);
 
@@ -150,68 +216,46 @@ contract Game is IGameEngine {
         emit MineItem(_playerAddr, _pos, _itemId);
     }
 
-    /**
-     * reduces item health
-     * @param _pos position to mine item at
-     * @param _playerAddr player address
-     **/
+    // /**
+    //  * mine item
+    //  * @param _pos position to mine item at
+    //  */
+    // function mine(GameTypes.Position memory _pos) external override {
+    //     uint256 _block = utils._getBlockAtPos(_pos);
+    //     require(_block != 0, "engine/nonexistent-block");
 
-    function attackItem(GameTypes.Position memory _pos, address _playerAddr)
-        internal
-    {
-        utils._setTopLevelStrength(
-            _pos,
-            utils._getTileData(_pos).topLevelStrength -
-                utils._getPlayer(msg.sender).attackDamage
-        );
-        uint256 _strength = utils._getTileData(_pos).topLevelStrength;
+    //     if (
+    //         !utils._withinDistance(
+    //             _pos,
+    //             utils._getPlayer(msg.sender).position,
+    //             1
+    //         )
+    //     ) revert("engine/invalid-distance");
 
-        emit AttackItem(_playerAddr, _pos, _strength);
-    }
+    //     GameTypes.ItemWithMetadata memory _itemWithMetadata = utils._getItem(
+    //         _block
+    //     );
 
-    /**
-     * mine item
-     * @param _pos position to mine item at
-     */
-    function mine(GameTypes.Position memory _pos) external override {
-        uint256 _block = utils._getBlockAtPos(_pos);
-        require(_block != 0, "engine/nonexistent-block");
+    //     if (!_itemWithMetadata.mineable) revert("engine/not-mineable");
 
-        if (
-            !utils._withinDistance(
-                _pos,
-                utils._getPlayer(msg.sender).position,
-                1
-            )
-        ) revert("engine/invalid-distance");
-
-        GameTypes.ItemWithMetadata memory _itemWithMetadata = utils._getItem(
-            _block
-        );
-
-        if (!_itemWithMetadata.mineable) revert("engine/not-mineable");
-
-        if (
-            utils._getPlayer(msg.sender).attackDamage <
-            utils._getTileData(_pos).topLevelStrength
-        ) {
-            attackItem(_pos, msg.sender);
-        } else {
-            mineItem(_pos, msg.sender);
-        }
-    }
+    //     if (
+    //         utils._getPlayer(msg.sender).attackDamage <
+    //         utils._getTileData(_pos).topLevelStrength
+    //     ) {
+    //         attackItem(_pos, msg.sender);
+    //     } else {
+    //         mineItem(_pos, msg.sender);
+    //     }
+    // }
 
     /**
      * place item at tile location
      * @param _pos position to place block at
-     * @param _itemId item id to place
+     * @param _blockId blockId to place
      */
-    function place(GameTypes.Position memory _pos, uint256 _itemId)
-        external
-        override
-    {
+    function place(GameTypes.Position memory _pos, uint256 _blockId) external {
         require(
-            utils._getItemAmountById(msg.sender, _itemId) != 0,
+            utils._getItemAmountById(msg.sender, _blockId) != 0,
             "engine/insufficient-inventory"
         );
 
@@ -223,18 +267,25 @@ contract Game is IGameEngine {
         if (!utils._withinDistance(_pos, _playerData.position, 1))
             revert("engine/invalid-distance");
 
-        utils._place(_pos, _itemId);
-        utils._decreaseItemInInventory(msg.sender, _itemId, 1);
-        utils._setBlockOwner(_pos, msg.sender);
+        // create a worldBlockId by initiating the block into the world
+        uint256 _newWorldBlockId = utils.createNewWorldBlock(
+            msg.sender,
+            _blockId
+        );
 
-        emit Place(msg.sender, _pos, _itemId);
+        // set the newly created worldBlockId to tile
+        utils._setWorldBlockIdOnTile(_pos, _newWorldBlockId);
+
+        utils._decreaseItemInInventory(msg.sender, _blockId, 1);
+
+        emit Place(msg.sender, _pos, _blockId);
     }
 
     /**
      * craft item (once) based on their recipe
      * @param _itemId item id to craft
      */
-    function craft(uint256 _itemId) external override {
+    function craft(uint256 _itemId) external {
         require(_itemId <= utils._getItemNonce(), "engine/nonexistent-block"); // has to craft an existing item
 
         // loop through player inventory to check if player has all required ingredients to make a block
@@ -265,52 +316,52 @@ contract Game is IGameEngine {
         emit Craft(msg.sender, _itemId);
     }
 
-    /**
-     * Changes the top level strength of a block
-     * @param _pos position of block
-     * @param _amount amount of points (a resource) you want to apply to the block
-     * @param _state if true, you want to increase the defense. if not, you want to decrease it.
-     */
+    // /**
+    //  * Changes the top level strength of a block
+    //  * @param _pos position of block
+    //  * @param _amount amount of points (a resource) you want to apply to the block
+    //  * @param _state if true, you want to increase the defense. if not, you want to decrease it.
+    //  */
 
-    function changeBlockStrength(
-        GameTypes.Position memory _pos,
-        uint256 _amount,
-        bool _state
-    ) public override {
-        uint256 _userAmount = utils._getItemAmountById(msg.sender, 0); // world default currency is 0
-        require(_userAmount >= _amount, "engine/insufficient-inventory");
+    // function changeBlockStrength(
+    //     GameTypes.Position memory _pos,
+    //     uint256 _amount,
+    //     bool _state
+    // ) public {
+    //     uint256 _userAmount = utils._getItemAmountById(msg.sender, 0); // world default currency is 0
+    //     require(_userAmount >= _amount, "engine/insufficient-inventory");
 
-        utils._decreaseItemInInventory(msg.sender, 0, _amount);
-        GameTypes.Tile memory _tileData = utils._getTileData(_pos);
+    //     utils._decreaseItemInInventory(msg.sender, 0, _amount);
+    //     GameTypes.Tile memory _tileData = utils._getTileData(_pos);
 
-        // add defense to a block
-        if (_state == true) {
-            utils._setTopLevelStrength(
-                _pos,
-                _tileData.topLevelStrength + _amount
-            );
-            emit ChangeBlockStrength(
-                msg.sender,
-                _pos,
-                _tileData.topLevelStrength + _amount,
-                _amount
-            );
-        } else {
-            if (_amount < _tileData.topLevelStrength) {
-                // if the strength is less than the block strength
-                utils._setTopLevelStrength(
-                    _pos,
-                    _tileData.topLevelStrength - _amount
-                );
-                emit ChangeBlockStrength(
-                    msg.sender,
-                    _pos,
-                    _tileData.topLevelStrength - _amount,
-                    _amount
-                );
-            } else {
-                mineItem(_pos, msg.sender);
-            }
-        }
-    }
+    //     // add defense to a block
+    //     if (_state == true) {
+    //         utils._setTopLevelStrength(
+    //             _pos,
+    //             _tileData.topLevelStrength + _amount
+    //         );
+    //         emit ChangeBlockStrength(
+    //             msg.sender,
+    //             _pos,
+    //             _tileData.topLevelStrength + _amount,
+    //             _amount
+    //         );
+    //     } else {
+    //         if (_amount < _tileData.topLevelStrength) {
+    //             // if the strength is less than the block strength
+    //             utils._setTopLevelStrength(
+    //                 _pos,
+    //                 _tileData.topLevelStrength - _amount
+    //             );
+    //             emit ChangeBlockStrength(
+    //                 msg.sender,
+    //                 _pos,
+    //                 _tileData.topLevelStrength - _amount,
+    //                 _amount
+    //             );
+    //         } else {
+    //             mineItem(_pos, msg.sender);
+    //         }
+    //     }
+    // }
 }

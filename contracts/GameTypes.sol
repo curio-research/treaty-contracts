@@ -35,9 +35,15 @@ library GameTypes {
 
     struct Tile {
         address occupier;
-        address owner;
-        uint256 topLevelStrength; // DELETE?
+        uint256 worldBlockId;
+    }
+
+    // spawned block data
+    struct BlockData {
         uint256 blockId;
+        uint256 health;
+        address owner;
+        // Position position;
     }
 
     // should creature be an item?
@@ -45,7 +51,7 @@ library GameTypes {
         bool mineable;
         bool craftable;
         bool occupiable;
-        uint256 strength;
+        uint256 health;
         uint256[] mineItemIds; // tools for mining
         uint256[] craftItemIds;
         uint256[] craftItemAmounts;
@@ -53,28 +59,13 @@ library GameTypes {
         bool programmable;
         string abiEncoding;
         uint256 attackDamage; // creature properties here too
-        // uint256 attackRange;
+        uint256 attackRange;
+        // uint256 attackCooldown; // in seconds
         // uint256 lastAttacked;
         // uint256 defense;
         // uint256 health;
         // uint256 movesPerEpoch;
     }
-
-    // representing creatures on chain
-    // enum BLOCK_TYPE {
-    //     NORMAL,
-    //     CREATURE
-    // }
-
-    // struct Creature {
-    //     uint256 attackDamage;
-    //     uint256 attackRange;
-    //     uint256 lastAttacked;
-    //     uint256 defense;
-    //     uint256 health;
-    //     uint256 movesPerEpoch;
-    //     uint256 owner;
-    // }
 
     struct Recipe {
         uint256[] craftItemIds;
@@ -94,18 +85,19 @@ library GameTypes {
         // map info
         WorldConstants worldConstants;
         GameTypes.Tile[1000][1000] map;
-        // game info
-        address admin;
+        address admin; // game info
         bool paused;
         mapping(uint256 => GameTypes.ItemWithMetadata) itemsWithMetadata;
         uint256 itemNonce;
-        // players
-        address[] allPlayers;
+        address[] allPlayers; // running list of all initialized players
         mapping(address => GameTypes.PlayerData) players; // player data
         mapping(address => mapping(uint256 => uint256)) inventory; // player => itemId => inventory
         mapping(address => uint256[]) inventoryNonce; // array of all items in player inventory
         // tower
         Epoch epochController;
         mapping(string => Tower) towers; // towerId => Tower
+        // every time we spawn a new block it's a new instance
+        uint256 worldBlockNonce;
+        mapping(uint256 => BlockData) worldBlocks;
     }
 }

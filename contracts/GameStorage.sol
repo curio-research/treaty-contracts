@@ -51,11 +51,11 @@ contract GameStorage {
         s.worldConstants = constants;
     }
 
-    function _setBlock(GameTypes.Position memory _position, uint256 blockId)
-        public
-        hasPermission
-    {
-        s.map[_position.x][_position.y].blockId = blockId;
+    function _setBlock(
+        GameTypes.Position memory _position,
+        uint256 _worldBlockId
+    ) public hasPermission {
+        s.map[_position.x][_position.y].worldBlockId = _worldBlockId;
     }
 
     /**
@@ -75,11 +75,6 @@ contract GameStorage {
                 });
 
                 _setBlock(_pos, _blocks[_xAdd][_yAdd]);
-
-                if (_blocks[_xAdd][_yAdd] != 0) {
-                    uint256 _block = _getBlockAtPos(_pos);
-                    _setTopLevelStrength(_pos, _getItem(_block).strength);
-                }
             }
         }
     }
@@ -185,15 +180,16 @@ contract GameStorage {
         if (_blockId != 0 && !_getItem(_blockId).occupiable) return true; // if tile has non-occupiable block
 
         if (s.map[_pos.x][_pos.y].occupier != address(0)) return true; // if block has player on it
-        if (s.map[_pos.x][_pos.y].blockId != 0) return true;
+        if (s.map[_pos.x][_pos.y].worldBlockId != 0) return true;
         return false;
     }
 
-    function _setTopLevelStrength(
-        GameTypes.Position memory _pos,
-        uint256 _amount
-    ) public hasPermission {
-        s.map[_pos.x][_pos.y].topLevelStrength = _amount;
+    function _getWorldBlockData(uint256 _idx)
+        public
+        view
+        returns (GameTypes.BlockData memory)
+    {
+        return s.worldBlocks[_idx];
     }
 
 
@@ -318,29 +314,17 @@ contract GameStorage {
     // Function helpers
     // ------------------------------------------------------------
 
-    // mine block completely
+    // mine (remove) block completely from location
     function _mine(GameTypes.Position memory _pos) public hasPermission {
         _setBlock(_pos, 0); // set block to no block which is 0
-        s.map[_pos.x][_pos.y].topLevelStrength = 0; // if its not a null block. remove it
     }
 
     // place block
-    function _place(GameTypes.Position memory _pos, uint256 _itemId)
-        public
-        hasPermission
-    {
-        s.map[_pos.x][_pos.y].blockId = _itemId;
-
-        s.map[_pos.x][_pos.y].topLevelStrength = s
-            .itemsWithMetadata[_itemId]
-            .strength;
-    }
-
-    function _setBlockOwner(GameTypes.Position memory _pos, address _owner)
-        public
-        hasPermission
-    {
-        s.map[_pos.x][_pos.y].owner = _owner;
+    function _setWorldBlockIdOnTile(
+        GameTypes.Position memory _pos,
+        uint256 _itemId
+    ) public hasPermission {
+        s.map[_pos.x][_pos.y].worldBlockId = _itemId;
     }
 
     // transfer item from one player to another
@@ -364,6 +348,47 @@ contract GameStorage {
         _increaseItemInInventory(_recipient, _itemId, _amount);
 
         emit Transfer(msg.sender, _recipient, _itemId, _amount);
+    }
+
+    function increaseWorldBlockNonce() public hasPermission {
+        s.worldBlockNonce++;
+    }
+
+    function getWorldBlockNonce() public view returns (uint256) {
+        return s.worldBlockNonce;
+    }
+
+    // returns the new worldBlockId
+    function setWorldBlock(GameTypes.BlockData memory _worldBlock)
+        public
+        returns (uint256)
+    {
+        uint256 _currentNonce = getWorldBlockNonce();
+        s.worldBlocks[_currentNonce] = _worldBlock;
+        increaseWorldBlockNonce();
+        return _currentNonce;
+    }
+
+    // create a new world block that's "placed" in the world
+    function createNewWorldBlock(address _owner, uint256 _blockId)
+        public
+        returns (uint256 ret)
+    {
+        GameTypes.ItemWithMetadata memory _item = _getItem(_blockId);
+        GameTypes.BlockData memory _newWorldBlock = GameTypes.BlockData({
+            blockId: _blockId,
+            health: _item.health,
+            owner: _owner
+        });
+
+        ret = setWorldBlock(_newWorldBlock);
+    }
+
+    function setWorldBlockHealth(uint256 _worldBlockId, uint256 _health)
+        public
+        hasPermission
+    {
+        s.worldBlocks[_worldBlockId].health = _health;
     }
 
     // ------------------------------------------------------------
@@ -440,12 +465,12 @@ contract GameStorage {
         return s.itemNonce;
     }
 
-    function _getItem(uint256 _itemId)
+    function _getItem(uint256 _blockId)
         public
         view
         returns (GameTypes.ItemWithMetadata memory)
     {
-        return s.itemsWithMetadata[_itemId];
+        return s.itemsWithMetadata[_blockId];
     }
 
     function _getPlayer(address _player)
@@ -461,7 +486,7 @@ contract GameStorage {
         view
         returns (uint256)
     {
-        return s.map[_pos.x][_pos.y].blockId;
+        return s.map[_pos.x][_pos.y].worldBlockId;
     }
 
     function _getCurrentEpoch() public view returns (uint256) {
