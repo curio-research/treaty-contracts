@@ -17,23 +17,6 @@ import { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
 import { Listener, Provider } from "@ethersproject/providers";
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
-export type PositionStruct = { x: BigNumberish; y: BigNumberish };
-
-export type PositionStructOutput = [BigNumber, BigNumber] & {
-  x: BigNumber;
-  y: BigNumber;
-};
-
-export type RecipeStruct = {
-  craftItemIds: BigNumberish[];
-  craftItemAmounts: BigNumberish[];
-};
-
-export type RecipeStructOutput = [BigNumber[], BigNumber[]] & {
-  craftItemIds: BigNumber[];
-  craftItemAmounts: BigNumber[];
-};
-
 export type ItemWithMetadataStruct = {
   mineable: boolean;
   craftable: boolean;
@@ -72,6 +55,23 @@ export type ItemWithMetadataStructOutput = [
   craftItemAmounts: BigNumber[];
   programmable: boolean;
   abiEncoding: string;
+};
+
+export type PositionStruct = { x: BigNumberish; y: BigNumberish };
+
+export type PositionStructOutput = [BigNumber, BigNumber] & {
+  x: BigNumber;
+  y: BigNumber;
+};
+
+export type RecipeStruct = {
+  craftItemIds: BigNumberish[];
+  craftItemAmounts: BigNumberish[];
+};
+
+export type RecipeStructOutput = [BigNumber[], BigNumber[]] & {
+  craftItemIds: BigNumber[];
+  craftItemAmounts: BigNumber[];
 };
 
 export type PlayerDataStruct = {
@@ -178,7 +178,6 @@ export type WorldConstantsStructOutput = [
 
 export interface GameStorageInterface extends utils.Interface {
   functions: {
-    "_changeBlockOccupiable(uint256,bool)": FunctionFragment;
     "_changeHealth(address,uint256,bool)": FunctionFragment;
     "_decreaseItemInInventory(address,uint256,uint256)": FunctionFragment;
     "_getAllPlayerAddresses()": FunctionFragment;
@@ -217,10 +216,6 @@ export interface GameStorageInterface extends utils.Interface {
     "setEpochController(address)": FunctionFragment;
   };
 
-  encodeFunctionData(
-    functionFragment: "_changeBlockOccupiable",
-    values: [BigNumberish, boolean]
-  ): string;
   encodeFunctionData(
     functionFragment: "_changeHealth",
     values: [string, BigNumberish, boolean]
@@ -358,10 +353,6 @@ export interface GameStorageInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "_changeBlockOccupiable",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "_changeHealth",
     data: BytesLike
   ): Result;
@@ -474,21 +465,21 @@ export interface GameStorageInterface extends utils.Interface {
   ): Result;
 
   events: {
-    "ChangeBlockOccupiable(uint256,bool)": EventFragment;
+    "ChangeBlockProperty(uint256,tuple)": EventFragment;
     "Transfer(address,address,uint256,uint256)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "ChangeBlockOccupiable"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ChangeBlockProperty"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
 }
 
-export type ChangeBlockOccupiableEvent = TypedEvent<
-  [BigNumber, boolean],
-  { _blockId: BigNumber; isOccupiable: boolean }
+export type ChangeBlockPropertyEvent = TypedEvent<
+  [BigNumber, ItemWithMetadataStructOutput],
+  { _blockId: BigNumber; item: ItemWithMetadataStructOutput }
 >;
 
-export type ChangeBlockOccupiableEventFilter =
-  TypedEventFilter<ChangeBlockOccupiableEvent>;
+export type ChangeBlockPropertyEventFilter =
+  TypedEventFilter<ChangeBlockPropertyEvent>;
 
 export type TransferEvent = TypedEvent<
   [string, string, BigNumber, BigNumber],
@@ -524,12 +515,6 @@ export interface GameStorage extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    _changeBlockOccupiable(
-      _blockId: BigNumberish,
-      _isOccupiable: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     _changeHealth(
       _player: string,
       _amount: BigNumberish,
@@ -733,12 +718,6 @@ export interface GameStorage extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
-  _changeBlockOccupiable(
-    _blockId: BigNumberish,
-    _isOccupiable: boolean,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   _changeHealth(
     _player: string,
     _amount: BigNumberish,
@@ -940,12 +919,6 @@ export interface GameStorage extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    _changeBlockOccupiable(
-      _blockId: BigNumberish,
-      _isOccupiable: boolean,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     _changeHealth(
       _player: string,
       _amount: BigNumberish,
@@ -1140,14 +1113,14 @@ export interface GameStorage extends BaseContract {
   };
 
   filters: {
-    "ChangeBlockOccupiable(uint256,bool)"(
+    "ChangeBlockProperty(uint256,tuple)"(
       _blockId?: null,
-      isOccupiable?: null
-    ): ChangeBlockOccupiableEventFilter;
-    ChangeBlockOccupiable(
+      item?: null
+    ): ChangeBlockPropertyEventFilter;
+    ChangeBlockProperty(
       _blockId?: null,
-      isOccupiable?: null
-    ): ChangeBlockOccupiableEventFilter;
+      item?: null
+    ): ChangeBlockPropertyEventFilter;
 
     "Transfer(address,address,uint256,uint256)"(
       _player?: null,
@@ -1164,12 +1137,6 @@ export interface GameStorage extends BaseContract {
   };
 
   estimateGas: {
-    _changeBlockOccupiable(
-      _blockId: BigNumberish,
-      _isOccupiable: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     _changeHealth(
       _player: string,
       _amount: BigNumberish,
@@ -1354,12 +1321,6 @@ export interface GameStorage extends BaseContract {
   };
 
   populateTransaction: {
-    _changeBlockOccupiable(
-      _blockId: BigNumberish,
-      _isOccupiable: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     _changeHealth(
       _player: string,
       _amount: BigNumberish,
