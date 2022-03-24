@@ -74,35 +74,35 @@ export interface Door extends BaseContract {
 
   functions: {
     isWhitelisted(
-      _player: string,
+      player: string,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     setWhitelistPlayer(
-      _player: string,
-      _isWhitelisted: boolean,
+      player: string,
+      whitelisted: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     whitelist(arg0: string, overrides?: CallOverrides): Promise<[boolean]>;
   };
 
-  isWhitelisted(_player: string, overrides?: CallOverrides): Promise<boolean>;
+  isWhitelisted(player: string, overrides?: CallOverrides): Promise<boolean>;
 
   setWhitelistPlayer(
-    _player: string,
-    _isWhitelisted: boolean,
+    player: string,
+    whitelisted: boolean,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   whitelist(arg0: string, overrides?: CallOverrides): Promise<boolean>;
 
   callStatic: {
-    isWhitelisted(_player: string, overrides?: CallOverrides): Promise<boolean>;
+    isWhitelisted(player: string, overrides?: CallOverrides): Promise<boolean>;
 
     setWhitelistPlayer(
-      _player: string,
-      _isWhitelisted: boolean,
+      player: string,
+      whitelisted: boolean,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -113,13 +113,13 @@ export interface Door extends BaseContract {
 
   estimateGas: {
     isWhitelisted(
-      _player: string,
+      player: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     setWhitelistPlayer(
-      _player: string,
-      _isWhitelisted: boolean,
+      player: string,
+      whitelisted: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -128,13 +128,13 @@ export interface Door extends BaseContract {
 
   populateTransaction: {
     isWhitelisted(
-      _player: string,
+      player: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     setWhitelistPlayer(
-      _player: string,
-      _isWhitelisted: boolean,
+      player: string,
+      whitelisted: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

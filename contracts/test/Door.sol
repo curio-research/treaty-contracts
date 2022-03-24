@@ -1,6 +1,5 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
-import "hardhat/console.sol";
 import "../Permissions.sol";
 import "../GameTypes.sol";
 
@@ -26,11 +25,11 @@ contract Door {
         _;
     }
 
-    function setWhitelistPlayer(address _player, bool _isWhitelisted) public onlyOwner {
-        whitelist[_player] = _isWhitelisted;
+    function setWhitelistPlayer(address player, bool whitelisted) public onlyOwner {
+        whitelist[player] = whitelisted;
     }
 
-    function isWhitelisted(address _player) public view returns (bool) {
-        return whitelist[_player];
+    function isWhitelisted(address player) public view returns (bool) {
+        return whitelist[player];
     }
 }
