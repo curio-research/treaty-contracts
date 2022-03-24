@@ -92,6 +92,7 @@ export const masterItems: ItemMaster[] = [
       energyDamage: 0,
       programmable: false,
       abiEncoding: "",
+      contractAddr: "",
     },
   },
   {
@@ -108,6 +109,7 @@ export const masterItems: ItemMaster[] = [
       energyDamage: 0,
       programmable: false,
       abiEncoding: "",
+      contractAddr: "",
     },
   },
   {
@@ -124,6 +126,7 @@ export const masterItems: ItemMaster[] = [
       energyDamage: 0,
       programmable: false,
       abiEncoding: "",
+      contractAddr: "",
     },
   },
   {
@@ -140,6 +143,7 @@ export const masterItems: ItemMaster[] = [
       energyDamage: 0,
       programmable: false,
       abiEncoding: "",
+      contractAddr: "",
     },
   },
   {
@@ -156,6 +160,7 @@ export const masterItems: ItemMaster[] = [
       energyDamage: 0,
       programmable: false,
       abiEncoding: "",
+      contractAddr: "",
     },
   },
   {
@@ -172,6 +177,7 @@ export const masterItems: ItemMaster[] = [
       energyDamage: 0,
       programmable: false,
       abiEncoding: "",
+      contractAddr: "",
     },
   },
 ];

@@ -162,7 +162,7 @@ task('deploy', 'deploy contracts')
 
     const programmableBlock = {
       name: 'Door',
-      item: programmableBlockMetadata,
+      item: { ...programmableBlockMetadata, contractAddr: DoorContract.address },
     };
 
     const blockIdToNameMapping = generateBlockIdToNameMap(masterItems.concat(programmableBlock));
@@ -175,6 +175,7 @@ task('deploy', 'deploy contracts')
         GETTERS_ADDRESS: GettersContract.address,
         EPOCH_ADDRESS: EpochContract.address,
       }),
+      externalAddresses: [DoorContract.address],
       network: hre.network.name,
       rpcUrl: networkRPCs[0],
       wsRpcUrl: networkRPCs[1],

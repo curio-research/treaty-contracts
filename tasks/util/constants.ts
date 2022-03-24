@@ -1,4 +1,4 @@
-import { ItemMaster } from '../../util/types/getter';
+import { ItemMaster, ItemWithMetadata } from '../../util/types/getter';
 export const LOCALHOST_RPC_URL = 'http://127.0.0.1:8545/';
 export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 
@@ -57,6 +57,7 @@ export var masterItems: ItemMaster[] = [
       energyDamage: 0,
       programmable: false,
       abiEncoding: '',
+      contractAddr: '',
     },
   },
   {
@@ -73,6 +74,7 @@ export var masterItems: ItemMaster[] = [
       energyDamage: 0,
       programmable: false,
       abiEncoding: '',
+      contractAddr: '',
     },
   },
   {
@@ -89,6 +91,7 @@ export var masterItems: ItemMaster[] = [
       energyDamage: 0,
       programmable: false,
       abiEncoding: '',
+      contractAddr: '',
     },
   },
   {
@@ -105,6 +108,7 @@ export var masterItems: ItemMaster[] = [
       energyDamage: 0,
       programmable: false,
       abiEncoding: '',
+      contractAddr: '',
     },
   },
   {
@@ -121,6 +125,7 @@ export var masterItems: ItemMaster[] = [
       energyDamage: 0,
       programmable: false,
       abiEncoding: '',
+      contractAddr: '',
     },
   },
   {
@@ -137,6 +142,7 @@ export var masterItems: ItemMaster[] = [
       energyDamage: 0,
       programmable: false,
       abiEncoding: '',
+      contractAddr: '',
     },
   },
   {
@@ -153,6 +159,7 @@ export var masterItems: ItemMaster[] = [
       energyDamage: 0,
       programmable: false,
       abiEncoding: '',
+      contractAddr: '',
     },
   },
   {
@@ -169,6 +176,7 @@ export var masterItems: ItemMaster[] = [
       energyDamage: 0,
       programmable: false,
       abiEncoding: '',
+      contractAddr: '',
     },
   },
   {
@@ -185,11 +193,12 @@ export var masterItems: ItemMaster[] = [
       energyDamage: 0,
       programmable: false,
       abiEncoding: '',
+      contractAddr: '',
     },
   },
 ];
 
-export var programmableBlockMetadata = {
+export var programmableBlockMetadata: ItemWithMetadata = {
   mineable: true,
   mineItemIds: [],
   strength: 0,
@@ -201,6 +210,7 @@ export var programmableBlockMetadata = {
   energyDamage: 0,
   programmable: true,
   abiEncoding: '',
+  contractAddr: ''
 };
 
 export const generateBlockIdToNameMap = (items: ItemMaster[]): Record<number, string> => {
