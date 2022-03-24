@@ -175,7 +175,6 @@ task('deploy', 'deploy contracts')
         GETTERS_ADDRESS: GettersContract.address,
         EPOCH_ADDRESS: EpochContract.address,
       }),
-      externalAddresses: [DoorContract.address],
       network: hre.network.name,
       rpcUrl: networkRPCs[0],
       wsRpcUrl: networkRPCs[1],
