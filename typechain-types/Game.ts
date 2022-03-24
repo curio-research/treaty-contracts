@@ -57,7 +57,6 @@ export type ItemWithMetadataStruct = {
   occupiable: boolean;
   strength: BigNumberish;
   healthDamage: BigNumberish;
-  energyDamage: BigNumberish;
   mineItemIds: BigNumberish[];
   craftItemIds: BigNumberish[];
   craftItemAmounts: BigNumberish[];
@@ -72,7 +71,6 @@ export type ItemWithMetadataStructOutput = [
   boolean,
   BigNumber,
   BigNumber,
-  BigNumber,
   BigNumber[],
   BigNumber[],
   BigNumber[],
@@ -85,7 +83,6 @@ export type ItemWithMetadataStructOutput = [
   occupiable: boolean;
   strength: BigNumber;
   healthDamage: BigNumber;
-  energyDamage: BigNumber;
   mineItemIds: BigNumber[];
   craftItemIds: BigNumber[];
   craftItemAmounts: BigNumber[];

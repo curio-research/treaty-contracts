@@ -52,7 +52,6 @@ library GameTypes {
         bool occupiable;
         uint256 strength;
         uint256 healthDamage;
-        uint256 energyDamage;
         uint256[] mineItemIds; // tools for mining
         uint256[] craftItemIds;
         uint256[] craftItemAmounts;

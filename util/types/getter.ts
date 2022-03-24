@@ -4,7 +4,6 @@ export interface ItemWithMetadata {
   occupiable: boolean;
   strength: number;
   healthDamage: number;
-  energyDamage: number;
   mineItemIds: number[];
   craftItemIds: number[];
   craftItemAmounts: number[];
