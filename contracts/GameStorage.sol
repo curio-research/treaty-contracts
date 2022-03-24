@@ -174,8 +174,11 @@ contract GameStorage {
         view
         returns (bool)
     {
-        if (s.map[_pos.x][_pos.y].occupier != address(0)) return true; // if block has player on it
-        if (s.map[_pos.x][_pos.y].blockId != 0) return true;
+        if (s.map[_pos.x][_pos.y].occupier != address(0)) return true; // if tile has player on it
+
+        uint256 _blockId = s.map[_pos.x][_pos.y].blockId;
+        if (_blockId != 0 && !_getItem(_blockId).occupiable) return true; // if tile has non-occupiable block
+
         return false;
     }
 

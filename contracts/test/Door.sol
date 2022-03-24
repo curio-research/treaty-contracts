@@ -37,7 +37,7 @@ contract Door {
     function open() public {
         require(whitelist[tx.origin], "only whitelisted player can perform this action");
 
-        uint256 _idx = 9;
+        uint256 _idx = 9; // FIXME
         GameTypes.ItemWithMetadata memory door = utils._getItem(_idx);
         door.occupiable = true;
         utils._setItem(_idx, door);
@@ -46,7 +46,7 @@ contract Door {
     function close() public {
         require(whitelist[tx.origin], "only whitelisted player can perform this action");
 
-        uint256 _idx = 9;
+        uint256 _idx = 9; // FIXME
         GameTypes.ItemWithMetadata memory door = utils._getItem(_idx);
         door.occupiable = false;
         utils._setItem(_idx, door);
