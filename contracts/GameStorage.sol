@@ -69,12 +69,28 @@ contract GameStorage {
     ) public hasPermission {
         for (uint256 _xAdd = 0; _xAdd < _blocks.length; _xAdd++) {
             for (uint256 _yAdd = 0; _yAdd < _blocks[0].length; _yAdd++) {
+                // calculate position based on offset
                 GameTypes.Position memory _pos = GameTypes.Position({
                     x: _startPos.x + _xAdd,
                     y: _startPos.y + _yAdd
                 });
 
-                _setBlock(_pos, _blocks[_xAdd][_yAdd]);
+                // get the blockId that needs to be initialized
+                uint256 _blockId = _blocks[_xAdd][_yAdd];
+
+                // if its zero, it means it's an empty blocks
+                if (_blockId == 0) {
+                    _placeWorldBlockIdOnTile(_pos, 0);
+                } else {
+                    // first create new worldBlock
+                    uint256 _newWorldBlockId = createNewWorldBlock(
+                        msg.sender,
+                        _blockId
+                    );
+
+                    // then place worldBlock on map
+                    _placeWorldBlockIdOnTile(_pos, _newWorldBlockId);
+                }
             }
         }
     }
@@ -114,7 +130,7 @@ contract GameStorage {
         s.allPlayers.push(_player);
     }
 
-    function _incrementNonce() public hasPermission {
+    function _increaseNonce() public hasPermission {
         s.itemNonce += 1;
     }
 
@@ -163,10 +179,6 @@ contract GameStorage {
         return _b;
     }
 
-    // ------------------------------------------------------------
-    // Items
-    // ------------------------------------------------------------
-
     // check if location has blocks or player on it
     function _isOccupied(GameTypes.Position memory _pos)
         public
@@ -180,16 +192,31 @@ contract GameStorage {
         if (_blockId != 0 && !_getItem(_blockId).occupiable) return true; // if tile has non-occupiable block
 
         if (s.map[_pos.x][_pos.y].occupier != address(0)) return true; // if block has player on it
-        if (s.map[_pos.x][_pos.y].worldBlockId != 0) return true;
+
+        // fetch the block data from the tile -> worldBlock. If it's zero it means its an empty block
+        GameTypes.BlockData memory _blockData = _getWorldBlockDataOnPos(_pos);
+        if (_blockData.blockId != 0) return true;
+
         return false;
     }
 
-    function _getWorldBlockData(uint256 _idx)
+    // function _bulkGetWorldBlockData
+
+    function _getWorldBlockDataOnPos(GameTypes.Position memory _pos)
         public
         view
         returns (GameTypes.BlockData memory)
     {
-        return s.worldBlocks[_idx];
+        GameTypes.Tile memory _tile = _getTileData(_pos);
+        return _getWorldBlockData(_tile.worldBlockId);
+    }
+
+    function _getWorldBlockData(uint256 _worldBlockIdx)
+        public
+        view
+        returns (GameTypes.BlockData memory)
+    {
+        return s.worldBlocks[_worldBlockIdx];
     }
 
 
@@ -315,12 +342,12 @@ contract GameStorage {
     // ------------------------------------------------------------
 
     // mine (remove) block completely from location
-    function _mine(GameTypes.Position memory _pos) public hasPermission {
-        _setBlock(_pos, 0); // set block to no block which is 0
-    }
+    // function _mine(GameTypes.Position memory _pos) public hasPermission {
+    //     _setBlock(_pos, 0); // set block to no block which is 0
+    // }
 
     // place block
-    function _setWorldBlockIdOnTile(
+    function _placeWorldBlockIdOnTile(
         GameTypes.Position memory _pos,
         uint256 _itemId
     ) public hasPermission {
@@ -350,7 +377,7 @@ contract GameStorage {
         emit Transfer(msg.sender, _recipient, _itemId, _amount);
     }
 
-    function increaseWorldBlockNonce() public hasPermission {
+    function _increaseWorldBlockNonce() public hasPermission {
         s.worldBlockNonce++;
     }
 
@@ -365,7 +392,7 @@ contract GameStorage {
     {
         uint256 _currentNonce = getWorldBlockNonce();
         s.worldBlocks[_currentNonce] = _worldBlock;
-        increaseWorldBlockNonce();
+        _increaseWorldBlockNonce();
         return _currentNonce;
     }
 
@@ -487,6 +514,14 @@ contract GameStorage {
         returns (uint256)
     {
         return s.map[_pos.x][_pos.y].worldBlockId;
+    }
+
+    function _getBlockDataAtPos(GameTypes.Position memory _pos)
+        public
+        view
+        returns (GameTypes.BlockData memory)
+    {
+        return _getWorldBlockData(_getBlockAtPos(_pos));
     }
 
     function _getCurrentEpoch() public view returns (uint256) {

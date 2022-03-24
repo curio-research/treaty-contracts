@@ -64,8 +64,11 @@ contract Game {
         // Initialize items
         for (uint256 i = 0; i < _items.length; i++) {
             utils._setItem(i, _items[i]);
-            utils._incrementNonce();
+            utils._increaseNonce();
         }
+
+        // start worldBlockNonce at 1 because 0 denotes an empty block
+        utils._increaseWorldBlockNonce();
     }
 
     // let some blocks (eg. creatures) attack other blocks
@@ -151,101 +154,69 @@ contract Game {
         emit Move(msg.sender, _pos);
     }
 
-    /**
-     * move a block from point to point. ex: a block can be an army unit
-     * @param _startPos starting position
-     * @param _targetPos target position
-     */
-    function moveBlock(
-        GameTypes.Position memory _startPos,
-        GameTypes.Position memory _targetPos
-    ) public {
-        GameTypes.Tile memory startTile = utils._getTileData(_startPos);
-        GameTypes.Tile memory targetTile = utils._getTileData(_targetPos);
-
-        require(targetTile.occupier == address(0), "engine/block is occupied");
-
-        // check if two are within same range
-        require(
-            utils._withinDistance(_startPos, _targetPos, 1),
-            "engine/invalid-distance"
-        );
-
-        require(startTile.occupier == address(0), "engine/not owner");
-
-        // we basically swap the two tiles
-        utils._setTileData(_targetPos, startTile);
-        utils._setTileData(_startPos, targetTile);
-
-        emit MoveBlock(msg.sender, _startPos, _targetPos);
-    }
-
-    function mineItem(GameTypes.Position memory _pos, address _playerAddr)
-        internal
-    {
-        // can only mine with the needed tool
-        uint256 _itemId = utils._getBlockAtPos(_pos);
-
-        GameTypes.ItemWithMetadata memory _itemWithMetadata = utils._getItem(
-            _itemId
-        );
-
-        uint256[] memory _mineItemIds = _itemWithMetadata.mineItemIds;
-
-        bool _canMine = false;
-        if (_mineItemIds.length == 0) {
-            _canMine = true;
-        } else {
-            for (uint256 i = 0; i < _mineItemIds.length; i++) {
-                uint256 _mineItemAmount = utils._getItemAmountById(
-                    _playerAddr,
-                    _mineItemIds[i]
-                );
-                if (_mineItemAmount > 0) {
-                    _canMine = true;
-                    break;
-                }
-            }
-        }
-
-        if (!_canMine) revert("engine/tool-needed");
-
-        utils._increaseItemInInventory(_playerAddr, _itemId, 1);
-        utils._mine(_pos);
-
-        emit MineItem(_playerAddr, _pos, _itemId);
-    }
-
     // /**
-    //  * mine item
-    //  * @param _pos position to mine item at
+    //  * move a block from point to point. ex: a block (Army unit) can be moved from unit to unit
+    //  * @param _startPos starting position
+    //  * @param _targetPos target position
     //  */
-    // function mine(GameTypes.Position memory _pos) external override {
-    //     uint256 _block = utils._getBlockAtPos(_pos);
-    //     require(_block != 0, "engine/nonexistent-block");
+    // function moveBlock(
+    //     GameTypes.Position memory _startPos,
+    //     GameTypes.Position memory _targetPos
+    // ) public {
+    //     GameTypes.Tile memory startTile = utils._getTileData(_startPos);
+    //     GameTypes.Tile memory targetTile = utils._getTileData(_targetPos);
 
-    //     if (
-    //         !utils._withinDistance(
-    //             _pos,
-    //             utils._getPlayer(msg.sender).position,
-    //             1
-    //         )
-    //     ) revert("engine/invalid-distance");
+    //     require(targetTile.occupier == address(0), "engine/block is occupied");
 
-    //     GameTypes.ItemWithMetadata memory _itemWithMetadata = utils._getItem(
-    //         _block
+    //     // check if two are within same range
+    //     require(
+    //         utils._withinDistance(_startPos, _targetPos, 1),
+    //         "engine/invalid-distance"
     //     );
 
-    //     if (!_itemWithMetadata.mineable) revert("engine/not-mineable");
+    //     require(startTile.occupier == address(0), "engine/not owner");
 
-    //     if (
-    //         utils._getPlayer(msg.sender).attackDamage <
-    //         utils._getTileData(_pos).topLevelStrength
-    //     ) {
-    //         attackItem(_pos, msg.sender);
+    //     // we basically swap the two tiles
+    //     utils._setTileData(_targetPos, startTile);
+    //     utils._setTileData(_startPos, targetTile);
+
+    //     emit MoveBlock(msg.sender, _startPos, _targetPos);
+    // }
+
+    // function mineItem(GameTypes.Position memory _pos, address _playerAddr)
+    //     internal
+    // {
+    //     // can only mine with the needed tool
+    //     uint256 _itemId = utils._getBlockAtPos(_pos);
+
+    //     GameTypes.ItemWithMetadata memory _itemWithMetadata = utils._getItem(
+    //         _itemId
+    //     );
+
+    //     uint256[] memory _mineItemIds = _itemWithMetadata.mineItemIds;
+
+    //     bool _canMine = false;
+    //     if (_mineItemIds.length == 0) {
+    //         _canMine = true;
     //     } else {
-    //         mineItem(_pos, msg.sender);
+    //         for (uint256 i = 0; i < _mineItemIds.length; i++) {
+    //             uint256 _mineItemAmount = utils._getItemAmountById(
+    //                 _playerAddr,
+    //                 _mineItemIds[i]
+    //             );
+    //             if (_mineItemAmount > 0) {
+    //                 _canMine = true;
+    //                 break;
+    //             }
+    //         }
     //     }
+
+    //     if (!_canMine) revert("engine/tool-needed");
+
+    //     utils._increaseItemInInventory(_playerAddr, _itemId, 1);
+    //     utils._mine(_pos);
+
+    //     emit MineItem(_playerAddr, _pos, _itemId);
     // }
 
     /**
@@ -274,7 +245,7 @@ contract Game {
         );
 
         // set the newly created worldBlockId to tile
-        utils._setWorldBlockIdOnTile(_pos, _newWorldBlockId);
+        utils._placeWorldBlockIdOnTile(_pos, _newWorldBlockId);
 
         utils._decreaseItemInInventory(msg.sender, _blockId, 1);
 
@@ -317,51 +288,34 @@ contract Game {
     }
 
     // /**
-    //  * Changes the top level strength of a block
-    //  * @param _pos position of block
-    //  * @param _amount amount of points (a resource) you want to apply to the block
-    //  * @param _state if true, you want to increase the defense. if not, you want to decrease it.
+    //  * mine item
+    //  * @param _pos position to mine item at
     //  */
+    // function mine(GameTypes.Position memory _pos) external override {
+    //     uint256 _block = utils._getBlockAtPos(_pos);
+    //     require(_block != 0, "engine/nonexistent-block");
 
-    // function changeBlockStrength(
-    //     GameTypes.Position memory _pos,
-    //     uint256 _amount,
-    //     bool _state
-    // ) public {
-    //     uint256 _userAmount = utils._getItemAmountById(msg.sender, 0); // world default currency is 0
-    //     require(_userAmount >= _amount, "engine/insufficient-inventory");
-
-    //     utils._decreaseItemInInventory(msg.sender, 0, _amount);
-    //     GameTypes.Tile memory _tileData = utils._getTileData(_pos);
-
-    //     // add defense to a block
-    //     if (_state == true) {
-    //         utils._setTopLevelStrength(
+    //     if (
+    //         !utils._withinDistance(
     //             _pos,
-    //             _tileData.topLevelStrength + _amount
-    //         );
-    //         emit ChangeBlockStrength(
-    //             msg.sender,
-    //             _pos,
-    //             _tileData.topLevelStrength + _amount,
-    //             _amount
-    //         );
+    //             utils._getPlayer(msg.sender).position,
+    //             1
+    //         )
+    //     ) revert("engine/invalid-distance");
+
+    //     GameTypes.ItemWithMetadata memory _itemWithMetadata = utils._getItem(
+    //         _block
+    //     );
+
+    //     if (!_itemWithMetadata.mineable) revert("engine/not-mineable");
+
+    //     if (
+    //         utils._getPlayer(msg.sender).attackDamage <
+    //         utils._getTileData(_pos).topLevelStrength
+    //     ) {
+    //         attackItem(_pos, msg.sender);
     //     } else {
-    //         if (_amount < _tileData.topLevelStrength) {
-    //             // if the strength is less than the block strength
-    //             utils._setTopLevelStrength(
-    //                 _pos,
-    //                 _tileData.topLevelStrength - _amount
-    //             );
-    //             emit ChangeBlockStrength(
-    //                 msg.sender,
-    //                 _pos,
-    //                 _tileData.topLevelStrength - _amount,
-    //                 _amount
-    //             );
-    //         } else {
-    //             mineItem(_pos, msg.sender);
-    //         }
+    //         mineItem(_pos, msg.sender);
     //     }
     // }
 }

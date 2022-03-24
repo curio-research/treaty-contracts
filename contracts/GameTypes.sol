@@ -35,7 +35,7 @@ library GameTypes {
 
     struct Tile {
         address occupier;
-        uint256 worldBlockId;
+        uint256 worldBlockId; // zero means its empty
     }
 
     // spawned block data
@@ -97,7 +97,7 @@ library GameTypes {
         Epoch epochController;
         mapping(string => Tower) towers; // towerId => Tower
         // every time we spawn a new block it's a new instance
-        uint256 worldBlockNonce;
+        uint256 worldBlockNonce; // 0 denotes empty block on tile. >1 denotes real block
         mapping(uint256 => BlockData) worldBlocks;
     }
 }

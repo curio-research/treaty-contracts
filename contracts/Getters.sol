@@ -53,13 +53,14 @@ contract Getters {
         return ret;
     }
 
-    // getter method to fetch map in 10x10 chunks. can increase size
+    // getter method to fetch tile chunk in 10x10 chunks.
     function _getMap(GameTypes.Position memory _pos)
         public
         view
         returns (GameTypes.Tile[] memory, GameTypes.Position[] memory)
     {
         uint256 size = GET_MAP_INTERVAL * GET_MAP_INTERVAL;
+
         GameTypes.Tile[] memory allTiles = new GameTypes.Tile[](size);
         GameTypes.Position[] memory allPos = new GameTypes.Position[](size);
 
@@ -77,5 +78,33 @@ contract Getters {
         }
 
         return (allTiles, allPos);
+    }
+
+    // this is called after _getMap is called. used to fetch metadata around blocks
+    function _getBlockChunkData(GameTypes.Position memory _pos)
+        public
+        view
+        returns (GameTypes.BlockData[] memory, GameTypes.Position[] memory)
+    {
+        uint256 size = GET_MAP_INTERVAL * GET_MAP_INTERVAL;
+
+        GameTypes.BlockData[]
+            memory allBlockChunkData = new GameTypes.BlockData[](size);
+        GameTypes.Position[] memory allPos = new GameTypes.Position[](size);
+
+        uint256 nonce = 0;
+        for (uint256 x = _pos.x; x < _pos.x + GET_MAP_INTERVAL; x++) {
+            for (uint256 y = _pos.y; y < _pos.y + GET_MAP_INTERVAL; y++) {
+                GameTypes.Position memory _tempPos = GameTypes.Position({
+                    x: x,
+                    y: y
+                });
+                allBlockChunkData[nonce] = utils._getBlockDataAtPos(_tempPos);
+                allPos[nonce] = _tempPos;
+                nonce += 1;
+            }
+        }
+
+        return (allBlockChunkData, allPos);
     }
 }
