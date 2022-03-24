@@ -9,6 +9,7 @@ contract Door {
     Permissions private p;
     GameStorage private utils;
     address private owner;
+    uint256 private idx = 9; // FIXME
 
     constructor(
         address[] memory _whitelist,
@@ -30,25 +31,24 @@ contract Door {
         _;
     }
 
+    modifier onlyWhitelist() {
+        require(whitelist[tx.origin], "only whitelisted player can perform this action");
+        _;
+    }
+
     function setWhitelistPlayer(address player, bool whitelisted) public onlyOwner {
         whitelist[player] = whitelisted;
     }
 
-    function open() public {
-        require(whitelist[tx.origin], "only whitelisted player can perform this action");
-
-        uint256 _idx = 9; // FIXME
-        GameTypes.ItemWithMetadata memory door = utils._getItem(_idx);
+    function open() public onlyWhitelist {
+        GameTypes.ItemWithMetadata memory door = utils._getItem(idx);
         door.occupiable = true;
-        utils._setItem(_idx, door);
+        utils._setItem(idx, door);
     }
 
-    function close() public {
-        require(whitelist[tx.origin], "only whitelisted player can perform this action");
-
-        uint256 _idx = 9; // FIXME
-        GameTypes.ItemWithMetadata memory door = utils._getItem(_idx);
+    function close() public onlyWhitelist {
+        GameTypes.ItemWithMetadata memory door = utils._getItem(idx);
         door.occupiable = false;
-        utils._setItem(_idx, door);
+        utils._setItem(idx, door);
     }
 }
