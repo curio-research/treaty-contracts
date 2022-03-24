@@ -45,9 +45,10 @@ export const generateItems = (map: number[][][], itemRatio: number[]): number[][
   return map;
 };
 
-export const appendIpfsHashToMetadata = (blockMetadata: ItemWithMetadata, ipfsHash: string): ItemWithMetadata => {
+export const appendIpfsHashToMetadata = (blockMetadata: ItemWithMetadata, ipfsHash: string, contractAddr: string): ItemWithMetadata => {
   const temp = blockMetadata;
   temp.abiEncoding = ipfsHash;
+  temp.contractAddr = contractAddr;
   return temp;
 };
 
