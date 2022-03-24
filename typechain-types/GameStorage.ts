@@ -178,6 +178,7 @@ export type WorldConstantsStructOutput = [
 
 export interface GameStorageInterface extends utils.Interface {
   functions: {
+    "_changeBlockOccupiable(uint256,bool)": FunctionFragment;
     "_changeHealth(address,uint256,bool)": FunctionFragment;
     "_decreaseItemInInventory(address,uint256,uint256)": FunctionFragment;
     "_getAllPlayerAddresses()": FunctionFragment;
@@ -216,6 +217,10 @@ export interface GameStorageInterface extends utils.Interface {
     "setEpochController(address)": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "_changeBlockOccupiable",
+    values: [BigNumberish, boolean]
+  ): string;
   encodeFunctionData(
     functionFragment: "_changeHealth",
     values: [string, BigNumberish, boolean]
@@ -353,6 +358,10 @@ export interface GameStorageInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(
+    functionFragment: "_changeBlockOccupiable",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "_changeHealth",
     data: BytesLike
   ): Result;
@@ -465,11 +474,21 @@ export interface GameStorageInterface extends utils.Interface {
   ): Result;
 
   events: {
+    "ChangeBlockOccupiable(uint256,bool)": EventFragment;
     "Transfer(address,address,uint256,uint256)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "ChangeBlockOccupiable"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
 }
+
+export type ChangeBlockOccupiableEvent = TypedEvent<
+  [BigNumber, boolean],
+  { _blockId: BigNumber; isOccupiable: boolean }
+>;
+
+export type ChangeBlockOccupiableEventFilter =
+  TypedEventFilter<ChangeBlockOccupiableEvent>;
 
 export type TransferEvent = TypedEvent<
   [string, string, BigNumber, BigNumber],
@@ -505,6 +524,12 @@ export interface GameStorage extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    _changeBlockOccupiable(
+      _blockId: BigNumberish,
+      _isOccupiable: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     _changeHealth(
       _player: string,
       _amount: BigNumberish,
@@ -708,6 +733,12 @@ export interface GameStorage extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
+  _changeBlockOccupiable(
+    _blockId: BigNumberish,
+    _isOccupiable: boolean,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   _changeHealth(
     _player: string,
     _amount: BigNumberish,
@@ -909,6 +940,12 @@ export interface GameStorage extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    _changeBlockOccupiable(
+      _blockId: BigNumberish,
+      _isOccupiable: boolean,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     _changeHealth(
       _player: string,
       _amount: BigNumberish,
@@ -1103,6 +1140,15 @@ export interface GameStorage extends BaseContract {
   };
 
   filters: {
+    "ChangeBlockOccupiable(uint256,bool)"(
+      _blockId?: null,
+      isOccupiable?: null
+    ): ChangeBlockOccupiableEventFilter;
+    ChangeBlockOccupiable(
+      _blockId?: null,
+      isOccupiable?: null
+    ): ChangeBlockOccupiableEventFilter;
+
     "Transfer(address,address,uint256,uint256)"(
       _player?: null,
       _recipient?: null,
@@ -1118,6 +1164,12 @@ export interface GameStorage extends BaseContract {
   };
 
   estimateGas: {
+    _changeBlockOccupiable(
+      _blockId: BigNumberish,
+      _isOccupiable: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     _changeHealth(
       _player: string,
       _amount: BigNumberish,
@@ -1302,6 +1354,12 @@ export interface GameStorage extends BaseContract {
   };
 
   populateTransaction: {
+    _changeBlockOccupiable(
+      _blockId: BigNumberish,
+      _isOccupiable: boolean,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     _changeHealth(
       _player: string,
       _amount: BigNumberish,

@@ -31,6 +31,8 @@ contract GameStorage {
         uint256 _amount
     );
 
+    event ChangeBlockOccupiable(uint256 _blockId, bool isOccupiable);
+
     // ------------------------------------------------------------
     // Initialization
     // ------------------------------------------------------------
@@ -76,6 +78,11 @@ contract GameStorage {
                 }
             }
         }
+    }
+
+    function _changeBlockOccupiable(uint256 _blockId, bool _isOccupiable) public hasPermission {
+        s.itemsWithMetadata[_blockId].occupiable = _isOccupiable;
+        emit ChangeBlockOccupiable(_blockId, _isOccupiable);
     }
 
     function _setItem(uint256 _i, GameTypes.ItemWithMetadata memory _item)
