@@ -18,30 +18,24 @@ import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
 export interface DoorInterface extends utils.Interface {
   functions: {
-    "isWhitelisted(address)": FunctionFragment;
+    "close()": FunctionFragment;
+    "open()": FunctionFragment;
     "setWhitelistPlayer(address,bool)": FunctionFragment;
-    "whitelist(address)": FunctionFragment;
   };
 
-  encodeFunctionData(
-    functionFragment: "isWhitelisted",
-    values: [string]
-  ): string;
+  encodeFunctionData(functionFragment: "close", values?: undefined): string;
+  encodeFunctionData(functionFragment: "open", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "setWhitelistPlayer",
     values: [string, boolean]
   ): string;
-  encodeFunctionData(functionFragment: "whitelist", values: [string]): string;
 
-  decodeFunctionResult(
-    functionFragment: "isWhitelisted",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "close", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "open", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setWhitelistPlayer",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "whitelist", data: BytesLike): Result;
 
   events: {};
 }
@@ -73,21 +67,28 @@ export interface Door extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    isWhitelisted(
-      player: string,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    close(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    open(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     setWhitelistPlayer(
       player: string,
       whitelisted: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
-
-    whitelist(arg0: string, overrides?: CallOverrides): Promise<[boolean]>;
   };
 
-  isWhitelisted(player: string, overrides?: CallOverrides): Promise<boolean>;
+  close(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  open(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   setWhitelistPlayer(
     player: string,
@@ -95,26 +96,27 @@ export interface Door extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  whitelist(arg0: string, overrides?: CallOverrides): Promise<boolean>;
-
   callStatic: {
-    isWhitelisted(player: string, overrides?: CallOverrides): Promise<boolean>;
+    close(overrides?: CallOverrides): Promise<void>;
+
+    open(overrides?: CallOverrides): Promise<void>;
 
     setWhitelistPlayer(
       player: string,
       whitelisted: boolean,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    whitelist(arg0: string, overrides?: CallOverrides): Promise<boolean>;
   };
 
   filters: {};
 
   estimateGas: {
-    isWhitelisted(
-      player: string,
-      overrides?: CallOverrides
+    close(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    open(
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     setWhitelistPlayer(
@@ -122,25 +124,21 @@ export interface Door extends BaseContract {
       whitelisted: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
-
-    whitelist(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    isWhitelisted(
-      player: string,
-      overrides?: CallOverrides
+    close(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    open(
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     setWhitelistPlayer(
       player: string,
       whitelisted: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    whitelist(
-      arg0: string,
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
 }

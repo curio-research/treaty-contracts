@@ -44,9 +44,7 @@ task('deploy', 'deploy contracts')
     const Permissions = await deployProxy<Permissions>('Permissions', player1, hre, [player1.address]);
     console.log('✦ Permissions deployed');
 
-    // deploying programmable block contract, may be abstracted
-    const DoorContract = await deployProxy<Door>('Door', player1, hre, [[player1.address], Permissions.address]);
-    console.log('✦ ProgrammableBlocks deployed');
+    
 
     const payload = await deployToIPFS(hre, 'Door');
     const newGameItems = gameItems.concat(appendIpfsHashToMetadata(programmableBlockMetadata, payload.IpfsHash));
@@ -60,6 +58,10 @@ task('deploy', 'deploy contracts')
     const GameStorage = await deployProxy<GameStorage>('GameStorage', player1, hre, [Permissions.address]);
     console.log('✦ GameStorage deployed');
     const GameContract = await deployProxy<Game>('Game', player1, hre, [...allGameArgs.gameDeployArgs, GameStorage.address, Permissions.address]);
+
+    // deploying programmable block contract, may be abstracted
+    const DoorContract = await deployProxy<Door>('Door', player1, hre, [[player1.address], Permissions.address, GameStorage.address]);
+    console.log('✦ ProgrammableBlocks deployed');
 
     console.log('✦ GameContract deployed');
     const TowerContract = await deployProxy<TowerGame>('TowerGame', player1, hre, [GameStorage.address, Permissions.address], { Helper: GameHelper.address });
