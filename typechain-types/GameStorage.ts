@@ -1237,7 +1237,9 @@ export interface GameStorage extends BaseContract {
       _owner: string,
       _blockId: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<
+      [BigNumber, BlockDataStructOutput] & { worldBlockId: BigNumber }
+    >;
 
     getWorldBlockNonce(overrides?: CallOverrides): Promise<BigNumber>;
 

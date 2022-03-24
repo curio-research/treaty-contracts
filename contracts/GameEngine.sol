@@ -29,7 +29,12 @@ contract Game {
         GameTypes.Position _pos,
         uint256 _strength
     );
-    event Place(address _player, GameTypes.Position _pos, uint256 _blockId);
+    event Place(
+        address _player,
+        GameTypes.Position _pos,
+        uint256 _worldBlockId,
+        GameTypes.BlockData _blockData
+    );
     event Craft(address _player, uint256 _blockId);
     event Attack(address _player1, address _player2);
     event Death(address _player);
@@ -43,7 +48,8 @@ contract Game {
     event MoveBlock(
         address _player,
         GameTypes.Position _startPos,
-        GameTypes.Position _endPos
+        GameTypes.Position _endPos,
+        uint256 _worldBlockId
     );
 
     // ------------------------------------------------------------
@@ -84,28 +90,30 @@ contract Game {
         GameTypes.BlockData memory _attackerWorldBlockData = utils
             ._getWorldBlockData(_attackerTile.worldBlockId);
 
-        // get item data
-        GameTypes.ItemWithMetadata memory _attackerBlockInfo = utils._getItem(
+        // get item metadata
+        GameTypes.ItemWithMetadata memory _attackerBlockData = utils._getItem(
             _attackerWorldBlockData.blockId
         );
+
+        GameTypes.Tile memory _targetTile = utils._getTileData(_target);
 
         // check range of attack
         require(
             utils._withinDistance(
                 _origin,
                 _target,
-                _attackerBlockInfo.attackRange
+                _attackerBlockData.attackRange
             )
         );
 
         // set health
-
         uint256 healthAfterAttack = _attackerWorldBlockData.health -
-            _attackerBlockInfo.attackDamage;
-        utils.setWorldBlockHealth(
-            _attackerTile.worldBlockId,
-            healthAfterAttack
-        );
+            _attackerBlockData.attackDamage;
+
+        // decrease target block's health
+        utils.setWorldBlockHealth(_targetTile.worldBlockId, healthAfterAttack);
+
+        // we should check whether we've destroyed an item or not
 
         // this should emit more things
         emit AttackItem(msg.sender, _target, healthAfterAttack);
@@ -154,34 +162,47 @@ contract Game {
         emit Move(msg.sender, _pos);
     }
 
-    // /**
-    //  * move a block from point to point. ex: a block (Army unit) can be moved from unit to unit
-    //  * @param _startPos starting position
-    //  * @param _targetPos target position
-    //  */
-    // function moveBlock(
-    //     GameTypes.Position memory _startPos,
-    //     GameTypes.Position memory _targetPos
-    // ) public {
-    //     GameTypes.Tile memory startTile = utils._getTileData(_startPos);
-    //     GameTypes.Tile memory targetTile = utils._getTileData(_targetPos);
+    /**
+     * move a block from point to point. ex: a block (Army unit) can be moved from unit to unit
+     * @param _startPos starting position
+     * @param _targetPos target position
+     */
+    function moveBlock(
+        GameTypes.Position memory _startPos,
+        GameTypes.Position memory _targetPos
+    ) public {
+        GameTypes.Tile memory startTile = utils._getTileData(_startPos);
+        GameTypes.Tile memory targetTile = utils._getTileData(_targetPos);
 
-    //     require(targetTile.occupier == address(0), "engine/block is occupied");
+        require(targetTile.occupier == address(0), "engine/block is occupied");
 
-    //     // check if two are within same range
-    //     require(
-    //         utils._withinDistance(_startPos, _targetPos, 1),
-    //         "engine/invalid-distance"
-    //     );
+        // check if two are within same range
+        require(
+            utils._withinDistance(_startPos, _targetPos, 1),
+            "engine/invalid-distance"
+        );
 
-    //     require(startTile.occupier == address(0), "engine/not owner");
+        require(startTile.occupier == address(0), "engine/not-owner");
 
-    //     // we basically swap the two tiles
-    //     utils._setTileData(_targetPos, startTile);
-    //     utils._setTileData(_startPos, targetTile);
+        // check if there's a block in the target position
+        GameTypes.BlockData memory targetBlockData = utils._getWorldBlockData(
+            targetTile.worldBlockId
+        );
 
-    //     emit MoveBlock(msg.sender, _startPos, _targetPos);
-    // }
+        // require(targetBlockdata)
+
+        // set new data
+        utils._setBlock(_startPos, 0);
+        utils._setBlock(_targetPos, startTile.worldBlockId);
+
+        // since stats don't change i don't think we need to emit block data
+        emit MoveBlock(
+            msg.sender,
+            _startPos,
+            _targetPos,
+            startTile.worldBlockId
+        );
+    }
 
     // function mineItem(GameTypes.Position memory _pos, address _playerAddr)
     //     internal
@@ -238,18 +259,18 @@ contract Game {
         if (!utils._withinDistance(_pos, _playerData.position, 1))
             revert("engine/invalid-distance");
 
-        // create a worldBlockId by initiating the block into the world
-        uint256 _newWorldBlockId = utils.createNewWorldBlock(
-            msg.sender,
-            _blockId
-        );
-
-        // set the newly created worldBlockId to tile
-        utils._placeWorldBlockIdOnTile(_pos, _newWorldBlockId);
-
         utils._decreaseItemInInventory(msg.sender, _blockId, 1);
 
-        emit Place(msg.sender, _pos, _blockId);
+        // create a worldBlockId by initiating the block into the world
+        (
+            uint256 _worldBlockId,
+            GameTypes.BlockData memory _worldBlockData
+        ) = utils.createNewWorldBlock(msg.sender, _blockId);
+
+        // set the newly created worldBlockId to tile
+        utils._placeWorldBlockIdOnTile(_pos, _worldBlockId);
+
+        emit Place(msg.sender, _pos, _worldBlockId, _worldBlockData);
     }
 
     /**

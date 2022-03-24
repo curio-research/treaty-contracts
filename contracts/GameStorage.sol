@@ -83,7 +83,7 @@ contract GameStorage {
                     _placeWorldBlockIdOnTile(_pos, 0);
                 } else {
                     // first create new worldBlock
-                    uint256 _newWorldBlockId = createNewWorldBlock(
+                    (uint256 _newWorldBlockId, ) = createNewWorldBlock(
                         msg.sender,
                         _blockId
                     );
@@ -399,7 +399,7 @@ contract GameStorage {
     // create a new world block that's "placed" in the world
     function createNewWorldBlock(address _owner, uint256 _blockId)
         public
-        returns (uint256 ret)
+        returns (uint256 worldBlockId, GameTypes.BlockData memory)
     {
         GameTypes.ItemWithMetadata memory _item = _getItem(_blockId);
         GameTypes.BlockData memory _newWorldBlock = GameTypes.BlockData({
@@ -408,7 +408,9 @@ contract GameStorage {
             owner: _owner
         });
 
-        ret = setWorldBlock(_newWorldBlock);
+        uint256 _newWorldBlockId = setWorldBlock(_newWorldBlock);
+
+        return (_newWorldBlockId, _newWorldBlock);
     }
 
     function setWorldBlockHealth(uint256 _worldBlockId, uint256 _health)
