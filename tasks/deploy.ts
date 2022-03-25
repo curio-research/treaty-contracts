@@ -67,7 +67,7 @@ task('deploy', 'deploy contracts')
       GameStorage.address,
       doorIndex,
     ]);
-    console.log('✦ ProgrammableBlocks deployed');
+    console.log('✦ Door programmable block deployed');
 
     const payload = await deployToIPFS(hre, 'Door');
     const newGameItems = gameItems.concat(

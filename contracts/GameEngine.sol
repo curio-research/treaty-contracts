@@ -38,8 +38,6 @@ contract Game {
         GameTypes.BlockData _blockData
     );
     event Craft(address _player, uint256 _blockId);
-    event Attack(address _player1, address _player2);
-    event Death(address _player);
     event ChangeBlockStrength(
         address _player,
         GameTypes.Position _pos,
@@ -100,11 +98,11 @@ contract Game {
         require(
             block.timestamp - _attackerWorldBlockData.lastAttacked >=
                 _attackerBlockItem.attackCooldown,
-            "engine/attack not ready"
+            "engine/attack-not-ready"
         );
 
         // set attack cooldown time
-        utils.setLastAttacked(_attackerTile.worldBlockId);
+        utils._setLastAttacked(_attackerTile.worldBlockId);
 
         // get target world block data
         GameTypes.Tile memory _targetTile = utils._getTileData(_target);
@@ -112,7 +110,7 @@ contract Game {
         // worldIds cannot attack themselves
         require(
             _attackerTile.worldBlockId != _targetTile.worldBlockId,
-            "engine/attacker same as target"
+            "engine/attacker-same-as-target"
         );
 
         GameTypes.BlockData memory _targetBlockData = utils
@@ -132,11 +130,11 @@ contract Game {
             _attackerBlockItem.attackDamage;
 
         // decrease target block's health
-        utils.setWorldBlockHealth(_targetTile.worldBlockId, healthAfterAttack);
+        utils._setWorldBlockHealth(_targetTile.worldBlockId, healthAfterAttack);
 
         // if health is zero, delete world block Id
         if (healthAfterAttack == 0) {
-            utils.removeWorldBlockId(_targetTile.worldBlockId); // delete world block Id
+            utils._removeWorldBlockId(_targetTile.worldBlockId); // delete world block Id
             utils._setWorldBlockIdAtTile(_target, 0);
         }
 
@@ -216,7 +214,7 @@ contract Game {
 
         require(startTile.occupier == address(0), "engine/not-owner");
 
-        require(targetTile.worldBlockId == 0, "engine/targe-tile-not-empty");
+        require(targetTile.worldBlockId == 0, "engine/target-tile-not-empty");
 
         // set new worldId for each tile
         utils._setWorldBlockIdAtTile(_startPos, 0);
@@ -274,7 +272,7 @@ contract Game {
         );
 
         // remove worldBlock
-        utils.removeWorldBlockId(_targetTileData.worldBlockId); // delete world block Id
+        utils._removeWorldBlockId(_targetTileData.worldBlockId); // delete world block Id
         utils._setWorldBlockIdAtTile(_pos, 0);
 
         emit MineItem(_playerAddr, _pos, _targetBlockData.blockId);
@@ -286,18 +284,24 @@ contract Game {
      * @param _blockId blockId to place
      */
     function place(GameTypes.Position memory _pos, uint256 _blockId) external {
+        // player needs sufficient inventory of item to place
         require(
             utils._getItemAmountById(msg.sender, _blockId) != 0,
             "engine/insufficient-inventory"
         );
 
         GameTypes.PlayerData memory _playerData = utils._getPlayer(msg.sender);
-        if (
-            _playerData.position.x == _pos.x && _playerData.position.y == _pos.y
-        ) revert("engine/cannot-stand-on-block");
 
-        if (!utils._withinDistance(_pos, _playerData.position, 1))
-            revert("engine/invalid-distance");
+        require(
+            _playerData.position.x != _pos.x ||
+                _playerData.position.y != _pos.y,
+            "engine/cannot-stand-on-block"
+        );
+
+        require(
+            utils._withinDistance(_pos, _playerData.position, 1),
+            "engine/invalid-distance"
+        );
 
         utils._decreaseItemInInventory(msg.sender, _blockId, 1);
 
@@ -305,7 +309,7 @@ contract Game {
         (
             uint256 _worldBlockId,
             GameTypes.BlockData memory _worldBlockData
-        ) = utils.createNewWorldBlock(msg.sender, _blockId);
+        ) = utils._createNewWorldBlock(msg.sender, _blockId);
 
         // set the newly created worldBlockId to tile
         utils._placeWorldBlockIdOnTile(_pos, _worldBlockId);
@@ -365,7 +369,7 @@ contract Game {
             utils._getPlayer(msg.sender).attackDamage;
 
         // set new health for worldBlockId
-        utils.setWorldBlockHealth(_worldBlockId, _healthAfterAttack);
+        utils._setWorldBlockHealth(_worldBlockId, _healthAfterAttack);
 
         emit ChangeBlockStrength(
             _playerAddr,
@@ -383,13 +387,14 @@ contract Game {
         uint256 _worldBlockId = utils._getBlockAtPos(_pos);
         require(_worldBlockId != 0, "engine/nonexistent-block");
 
-        if (
-            !utils._withinDistance(
+        require(
+            utils._withinDistance(
                 _pos,
                 utils._getPlayer(msg.sender).position,
                 1
-            )
-        ) revert("engine/invalid-distance");
+            ),
+            "engine/invalid-distance"
+        );
 
         // get world block info
         GameTypes.BlockData memory _blockData = utils._getWorldBlockData(
@@ -401,7 +406,7 @@ contract Game {
             _blockData.blockId
         );
 
-        if (!_itemWithMetadata.mineable) revert("engine/not-mineable");
+        require(_itemWithMetadata.mineable, "engine/not-mineable");
 
         if (utils._getPlayer(msg.sender).attackDamage < _blockData.health) {
             attackItem(_pos, msg.sender);
