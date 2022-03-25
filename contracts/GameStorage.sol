@@ -83,7 +83,7 @@ contract GameStorage {
                     _placeWorldBlockIdOnTile(_pos, 0);
                 } else {
                     // first create new worldBlock
-                    (uint256 _newWorldBlockId, ) = createNewWorldBlock(
+                    (uint256 _newWorldBlockId, ) = _createNewWorldBlock(
                         msg.sender,
                         _blockId
                     );
@@ -357,13 +357,18 @@ contract GameStorage {
         GameTypes.Position memory _giverLoc = _getPlayer(msg.sender).position;
         GameTypes.Position memory _recipientLoc = _getPlayer(_recipient)
             .position;
-        if (msg.sender == _recipient)
-            revert("storage/recipient-same-as-sender");
 
-        if (!_withinDistance(_giverLoc, _recipientLoc, 5))
-            revert("storage/not-in-range"); // can only transfer within certain range
-        if (_getItemAmountById(msg.sender, _itemId) < _amount)
-            revert("storage/insufficient-block");
+        require(msg.sender != _recipient, "storage/recipient-same-as-sender");
+
+        require(
+            _withinDistance(_giverLoc, _recipientLoc, 5),
+            "storage/not-in-range"
+        ); // can only transfer within certain range
+
+        require(
+            _getItemAmountById(msg.sender, _itemId) > _amount,
+            "storage/insufficient-block"
+        );
 
         _decreaseItemInInventory(msg.sender, _itemId, _amount);
         _increaseItemInInventory(_recipient, _itemId, _amount);
@@ -382,6 +387,7 @@ contract GameStorage {
     // returns the new worldBlockId
     function setWorldBlock(GameTypes.BlockData memory _worldBlock)
         public
+        hasPermission
         returns (uint256)
     {
         uint256 _currentNonce = getWorldBlockNonce();
@@ -391,8 +397,9 @@ contract GameStorage {
     }
 
     // create a new world block that's "placed" in the world
-    function createNewWorldBlock(address _owner, uint256 _blockId)
+    function _createNewWorldBlock(address _owner, uint256 _blockId)
         public
+        hasPermission
         returns (uint256 worldBlockId, GameTypes.BlockData memory)
     {
         GameTypes.ItemWithMetadata memory _item = _getItem(_blockId);
@@ -410,18 +417,18 @@ contract GameStorage {
         return (_newWorldBlockId, _newWorldBlock);
     }
 
-    function setWorldBlockHealth(uint256 _worldBlockId, uint256 _health)
+    function _setWorldBlockHealth(uint256 _worldBlockId, uint256 _health)
         public
         hasPermission
     {
         s.worldBlocks[_worldBlockId].health = _health;
     }
 
-    function removeWorldBlockId(uint256 _worldBlockId) public hasPermission {
+    function _removeWorldBlockId(uint256 _worldBlockId) public hasPermission {
         delete s.worldBlocks[_worldBlockId];
     }
 
-    function setLastAttacked(uint256 _worldBlockId) public hasPermission {
+    function _setLastAttacked(uint256 _worldBlockId) public hasPermission {
         s.worldBlocks[_worldBlockId].lastAttacked = block.timestamp;
     }
 

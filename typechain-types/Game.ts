@@ -172,11 +172,9 @@ export interface GameInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "place", data: BytesLike): Result;
 
   events: {
-    "Attack(address,address)": EventFragment;
     "AttackItem(address,tuple,tuple,uint256,uint256,uint256)": EventFragment;
     "ChangeBlockStrength(address,tuple,uint256,uint256)": EventFragment;
     "Craft(address,uint256)": EventFragment;
-    "Death(address)": EventFragment;
     "MineItem(address,tuple,uint256)": EventFragment;
     "Move(address,tuple)": EventFragment;
     "MoveBlock(address,tuple,tuple,uint256)": EventFragment;
@@ -184,24 +182,15 @@ export interface GameInterface extends utils.Interface {
     "Place(address,tuple,uint256,tuple)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "Attack"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "AttackItem"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ChangeBlockStrength"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Craft"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Death"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MineItem"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Move"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MoveBlock"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NewPlayer"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Place"): EventFragment;
 }
-
-export type AttackEvent = TypedEvent<
-  [string, string],
-  { _player1: string; _player2: string }
->;
-
-export type AttackEventFilter = TypedEventFilter<AttackEvent>;
 
 export type AttackItemEvent = TypedEvent<
   [
@@ -243,10 +232,6 @@ export type CraftEvent = TypedEvent<
 >;
 
 export type CraftEventFilter = TypedEventFilter<CraftEvent>;
-
-export type DeathEvent = TypedEvent<[string], { _player: string }>;
-
-export type DeathEventFilter = TypedEventFilter<DeathEvent>;
 
 export type MineItemEvent = TypedEvent<
   [string, PositionStructOutput, BigNumber],
@@ -429,12 +414,6 @@ export interface Game extends BaseContract {
   };
 
   filters: {
-    "Attack(address,address)"(
-      _player1?: null,
-      _player2?: null
-    ): AttackEventFilter;
-    Attack(_player1?: null, _player2?: null): AttackEventFilter;
-
     "AttackItem(address,tuple,tuple,uint256,uint256,uint256)"(
       _player?: null,
       _origin?: null,
@@ -467,9 +446,6 @@ export interface Game extends BaseContract {
 
     "Craft(address,uint256)"(_player?: null, _blockId?: null): CraftEventFilter;
     Craft(_player?: null, _blockId?: null): CraftEventFilter;
-
-    "Death(address)"(_player?: null): DeathEventFilter;
-    Death(_player?: null): DeathEventFilter;
 
     "MineItem(address,tuple,uint256)"(
       _player?: null,
