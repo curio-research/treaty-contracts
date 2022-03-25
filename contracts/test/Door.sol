@@ -16,28 +16,28 @@ contract Door {
         Permissions _permissions,
         GameStorage _gameStorage
     ) {
-        whitelist[tx.origin] = true;
+        whitelist[msg.sender] = true;
         for (uint256 i = 0; i < _whitelist.length; i++) {
             whitelist[_whitelist[i]] = true;
         }
 
         p = _permissions;
         utils = _gameStorage;
-        owner = tx.origin;
+        owner = msg.sender;
     }
 
     modifier onlyOwner() {
-        require(tx.origin == owner, 'only owner can perform this operation.');
+        require(msg.sender == owner, 'only owner can perform this operation.');
         _;
     }
 
     modifier onlyWhitelist() {
-        require(whitelist[tx.origin], 'only whitelisted player can perform this action');
+        require(whitelist[msg.sender], 'only whitelisted player can perform this action');
         _;
     }
 
     function hasDoorNearby() private view returns (bool) {
-        GameTypes.Position memory _playerPos = utils._getPlayer(tx.origin).position;
+        GameTypes.Position memory _playerPos = utils._getPlayer(msg.sender).position;
 
         GameTypes.Position memory _leftPos = GameTypes.Position({x: _playerPos.x - 1, y: _playerPos.y});
         if (utils._getBlockAtPos(_leftPos) == idx) return true;

@@ -19,16 +19,11 @@ import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 export interface DoorInterface extends utils.Interface {
   functions: {
     "close()": FunctionFragment;
-    "hasDoorNearby()": FunctionFragment;
     "open()": FunctionFragment;
     "setWhitelistPlayer(address,bool)": FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: "close", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "hasDoorNearby",
-    values?: undefined
-  ): string;
   encodeFunctionData(functionFragment: "open", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "setWhitelistPlayer",
@@ -36,10 +31,6 @@ export interface DoorInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(functionFragment: "close", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "hasDoorNearby",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "open", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setWhitelistPlayer",
@@ -80,8 +71,6 @@ export interface Door extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    hasDoorNearby(overrides?: CallOverrides): Promise<[boolean]>;
-
     open(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -97,8 +86,6 @@ export interface Door extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  hasDoorNearby(overrides?: CallOverrides): Promise<boolean>;
-
   open(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -111,8 +98,6 @@ export interface Door extends BaseContract {
 
   callStatic: {
     close(overrides?: CallOverrides): Promise<void>;
-
-    hasDoorNearby(overrides?: CallOverrides): Promise<boolean>;
 
     open(overrides?: CallOverrides): Promise<void>;
 
@@ -130,8 +115,6 @@ export interface Door extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    hasDoorNearby(overrides?: CallOverrides): Promise<BigNumber>;
-
     open(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -147,8 +130,6 @@ export interface Door extends BaseContract {
     close(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
-
-    hasDoorNearby(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     open(
       overrides?: Overrides & { from?: string | Promise<string> }

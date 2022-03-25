@@ -9,7 +9,7 @@ import { task } from 'hardhat/config';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { deployProxy, printDivider } from './util/deployHelper';
-import { LOCALHOST_RPC_URL, LOCALHOST_WS_RPC_URL, MAP_INTERVAL, masterItems, WORLD_HEIGHT, WORLD_WIDTH, programmableBlockMetadata, generateBlockIdToNameMap, ITEM_RATIO } from './util/constants';
+import { LOCALHOST_RPC_URL, LOCALHOST_WS_RPC_URL, MAP_INTERVAL, masterItems, WORLD_HEIGHT, WORLD_WIDTH, programmableBlockMetadata, generateBlockIdToNameMap, ITEM_RATIO, DOOR_RATIO } from './util/constants';
 import { generateAllGameArgs } from './util/allArgsGenerator';
 import { Getters, Game, GameStorage, Helper, Door } from '../typechain-types';
 import { TowerGame } from './../typechain-types/TowerGame';
@@ -54,7 +54,7 @@ task('deploy', 'deploy contracts')
 
     const payload = await deployToIPFS(hre, 'Door');
     const newGameItems = gameItems.concat(appendIpfsHashToMetadata(programmableBlockMetadata, payload.IpfsHash, DoorContract.address));
-    const newItemRatio = ITEM_RATIO.concat(5);
+    const newItemRatio = ITEM_RATIO.concat(DOOR_RATIO);
     const allGameArgs = generateAllGameArgs(newGameItems, newItemRatio);
 
     let blocks = allGameArgs.blockMap;
