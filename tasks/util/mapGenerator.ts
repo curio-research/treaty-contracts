@@ -1,11 +1,12 @@
 import { EMPTY_ADDRESS } from './../../util/network/common';
 import { position } from './../../util/types/common';
 import { MasterGameSpecs } from './types/mapGenerator';
-import { TowerWithLocation } from '../../util/types/tower';
-import { generatePrimsMap } from './primsMap';
 import _ from 'lodash';
-
-// map helpers are used to generate a world with rooms, entrances, and a tower in the middle
+import { TowerWithLocation } from '../../util/types/tower';
+import { MAP_MODE } from './constants';
+import { addConnectivity, generatePrimsMap } from './primsMap';
+import { ItemMaster } from '../../util/types/getter';
+import { getItemIndexByName } from './deployHelper';
 
 // Generate single room with starting coordinate
 const GenerateSingleRoom = (x: number, y: number, width: number, height: number, roomWidth: number): position[] => {
@@ -166,12 +167,14 @@ export const generateMap = (
   worldWidth: number,
   worldHeight: number,
   roomWidth: number,
-  usePrims?: boolean
+  masterItems: ItemMaster[],
+  mapMode: MAP_MODE = MAP_MODE.DEFAULT
 ): MasterGameSpecs => {
   let map: number[][][];
-  if (usePrims) {
+  if ([MAP_MODE.PRIMS, MAP_MODE.PRIMS_CONNECTED].includes(mapMode)) {
     let primsMapOutput = generatePrimsMap(worldWidth, worldHeight);
     map = primsMapOutput.map;
+    if (mapMode === MAP_MODE.PRIMS_CONNECTED) map = addConnectivity(map);
     // primsMapOutput.mapSnapshot.forEach((m) => visualizeMap(m, true, "maps/"));
   } else {
     map = generateEmptyMap(worldWidth, worldHeight); // generate empty map
@@ -205,7 +208,8 @@ export const generateMap = (
       }
 
       // set tower
-      map[x][y] = [3];
+      const TOWER_INDEX = getItemIndexByName(masterItems, 'Tower');
+      map[x][y] = [TOWER_INDEX];
     } else {
       // remove one from towers and towerSpecs arrays
       towers.splice(k, 1);

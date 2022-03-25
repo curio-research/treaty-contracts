@@ -17,42 +17,6 @@ import { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
 import { Listener, Provider } from "@ethersproject/providers";
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
-export type PositionStruct = { x: BigNumberish; y: BigNumberish };
-
-export type PositionStructOutput = [BigNumber, BigNumber] & {
-  x: BigNumber;
-  y: BigNumber;
-};
-
-export type BlockDataStruct = {
-  blockId: BigNumberish;
-  health: BigNumberish;
-  owner: string;
-  lastAttacked: BigNumberish;
-};
-
-export type BlockDataStructOutput = [
-  BigNumber,
-  BigNumber,
-  string,
-  BigNumber
-] & {
-  blockId: BigNumber;
-  health: BigNumber;
-  owner: string;
-  lastAttacked: BigNumber;
-};
-
-export type RecipeStruct = {
-  craftItemIds: BigNumberish[];
-  craftItemAmounts: BigNumberish[];
-};
-
-export type RecipeStructOutput = [BigNumber[], BigNumber[]] & {
-  craftItemIds: BigNumber[];
-  craftItemAmounts: BigNumber[];
-};
-
 export type ItemWithMetadataStruct = {
   mineable: boolean;
   craftable: boolean;
@@ -94,6 +58,42 @@ export type ItemWithMetadataStructOutput = [
   attackDamage: BigNumber;
   attackRange: BigNumber;
   attackCooldown: BigNumber;
+};
+
+export type PositionStruct = { x: BigNumberish; y: BigNumberish };
+
+export type PositionStructOutput = [BigNumber, BigNumber] & {
+  x: BigNumber;
+  y: BigNumber;
+};
+
+export type BlockDataStruct = {
+  blockId: BigNumberish;
+  health: BigNumberish;
+  owner: string;
+  lastAttacked: BigNumberish;
+};
+
+export type BlockDataStructOutput = [
+  BigNumber,
+  BigNumber,
+  string,
+  BigNumber
+] & {
+  blockId: BigNumber;
+  health: BigNumber;
+  owner: string;
+  lastAttacked: BigNumber;
+};
+
+export type RecipeStruct = {
+  craftItemIds: BigNumberish[];
+  craftItemAmounts: BigNumberish[];
+};
+
+export type RecipeStructOutput = [BigNumber[], BigNumber[]] & {
+  craftItemIds: BigNumber[];
+  craftItemAmounts: BigNumber[];
 };
 
 export type PlayerDataStruct = {
@@ -563,11 +563,21 @@ export interface GameStorageInterface extends utils.Interface {
   ): Result;
 
   events: {
+    "ChangeBlockProperty(uint256,tuple)": EventFragment;
     "Transfer(address,address,uint256,uint256)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "ChangeBlockProperty"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
 }
+
+export type ChangeBlockPropertyEvent = TypedEvent<
+  [BigNumber, ItemWithMetadataStructOutput],
+  { _blockId: BigNumber; item: ItemWithMetadataStructOutput }
+>;
+
+export type ChangeBlockPropertyEventFilter =
+  TypedEventFilter<ChangeBlockPropertyEvent>;
 
 export type TransferEvent = TypedEvent<
   [string, string, BigNumber, BigNumber],
@@ -1339,6 +1349,15 @@ export interface GameStorage extends BaseContract {
   };
 
   filters: {
+    "ChangeBlockProperty(uint256,tuple)"(
+      _blockId?: null,
+      item?: null
+    ): ChangeBlockPropertyEventFilter;
+    ChangeBlockProperty(
+      _blockId?: null,
+      item?: null
+    ): ChangeBlockPropertyEventFilter;
+
     "Transfer(address,address,uint256,uint256)"(
       _player?: null,
       _recipient?: null,

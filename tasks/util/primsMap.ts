@@ -1,19 +1,19 @@
-import { assert } from "console";
-import { position } from "../../util/types/common";
-import { WORLD_WIDTH } from "./constants";
-import { printDivider } from "./deployHelper";
-import { PrimsMapOutput } from "./types/mapGenerator";
+import { assert } from 'console';
+import { position } from '../../util/types/common';
+import { WORLD_WIDTH } from './constants';
+import { printDivider } from './deployHelper';
+import { PrimsMapOutput } from './types/mapGenerator';
 
 type Position = {
   x: number;
   y: number;
-}
+};
 
 enum Direction {
   NORTH,
   EAST,
   SOUTH,
-  WEST
+  WEST,
 }
 
 const REMOVAL_COUNT = 4;
@@ -28,12 +28,8 @@ const equals = (a: any[], b: any[]) => a.length === b.length && a.every((v, i) =
  * @param wallIdx : index of wall in the items array
  * @returns block map together with complete snapshots
  */
-export const generatePrimsMap = (
-  width: number,
-  height: number,
-  wallIdx: number = 7
-): PrimsMapOutput => {
-  assert(width > 0 && height > 0, "invalid map params");
+export const generatePrimsMap = (width: number, height: number, wallIdx: number = 7): PrimsMapOutput => {
+  assert(width > 0 && height > 0, 'invalid map params');
 
   let map: number[][][] = [];
   let mapSnapshot: number[][][][] = [];
@@ -45,7 +41,7 @@ export const generatePrimsMap = (
     for (let j = 0; j < height; j++) {
       col.push([wallIdx]);
     }
-    map.push(col)
+    map.push(col);
   }
   mapSnapshot.push(JSON.parse(JSON.stringify(map)));
 
@@ -73,7 +69,8 @@ export const generatePrimsMap = (
     pos = growableTiles[idx];
     x = pos.x;
     y = pos.y;
-    if (!equals(map[x][y], [wallIdx])) { // must only remove walls
+    if (!equals(map[x][y], [wallIdx])) {
+      // must only remove walls
       growableTiles.splice(idx, 1);
       continue;
     }
@@ -87,26 +84,26 @@ export const generatePrimsMap = (
       dirIdx = Math.floor(Math.random() * dirs.length);
       switch (dirs[dirIdx]) {
         case Direction.WEST:
-          if (x - 2 >= 0 && equals(map[x-2][y], [])) {
-            map[x-1][y] = [];
+          if (x - 2 >= 0 && equals(map[x - 2][y], [])) {
+            map[x - 1][y] = [];
             dirs = [];
           }
           break;
         case Direction.EAST:
-            if (x + 2 < width && equals(map[x+2][y], [])) {
-              map[x+1][y] = [];
-              dirs = [];
-            }
-            break;
+          if (x + 2 < width && equals(map[x + 2][y], [])) {
+            map[x + 1][y] = [];
+            dirs = [];
+          }
+          break;
         case Direction.NORTH:
-          if (y - 2 >= 0 && equals(map[x][y-2], [])) {
-            map[x][y-1] = [];
+          if (y - 2 >= 0 && equals(map[x][y - 2], [])) {
+            map[x][y - 1] = [];
             dirs = [];
           }
           break;
         case Direction.SOUTH:
-          if (y + 2 < height && equals(map[x][y+2], [])) {
-            map[x][y+1] = [];
+          if (y + 2 < height && equals(map[x][y + 2], [])) {
+            map[x][y + 1] = [];
             dirs = [];
           }
           break;
@@ -115,16 +112,16 @@ export const generatePrimsMap = (
     }
 
     // add valid tiles two spaces away from tile just cleared
-    if (x - 2 >= 0 && equals(map[x-2][y], [wallIdx])) {
+    if (x - 2 >= 0 && equals(map[x - 2][y], [wallIdx])) {
       growableTiles.push({ x: x - 2, y });
     }
-    if (x + 2 < width && equals(map[x+2][y], [wallIdx])) {
+    if (x + 2 < width && equals(map[x + 2][y], [wallIdx])) {
       growableTiles.push({ x: x + 2, y });
     }
-    if (y - 2 >= 0 && equals(map[x][y-2], [wallIdx])) {
+    if (y - 2 >= 0 && equals(map[x][y - 2], [wallIdx])) {
       growableTiles.push({ x, y: y - 2 });
     }
-    if (y + 2 < height && equals(map[x][y+2], [wallIdx])) {
+    if (y + 2 < height && equals(map[x][y + 2], [wallIdx])) {
       growableTiles.push({ x, y: y + 2 });
     }
 
@@ -143,10 +140,10 @@ export const generatePrimsMap = (
       for (let h = 0; h < height; h++) {
         if (equals(map[w][h], [])) {
           neighbors = 0;
-          if (w - 1 >= 0 && equals(map[w-1][h], [])) neighbors++;
-          if (w + 1 < width && equals(map[w+1][h], [])) neighbors++;
-          if (h - 1 >= 0 && equals(map[w][h-1], [])) neighbors++;
-          if (h + 1 < height && equals(map[w][h+1], [])) neighbors++;
+          if (w - 1 >= 0 && equals(map[w - 1][h], [])) neighbors++;
+          if (w + 1 < width && equals(map[w + 1][h], [])) neighbors++;
+          if (h - 1 >= 0 && equals(map[w][h - 1], [])) neighbors++;
+          if (h + 1 < height && equals(map[w][h + 1], [])) neighbors++;
           if (neighbors <= 1) {
             deadEnds.push({ x: w, y: h });
           }
@@ -155,7 +152,7 @@ export const generatePrimsMap = (
     }
 
     // remove dead ends
-    deadEnds.forEach((pos) => map[pos.x][pos.y] = [wallIdx])
+    deadEnds.forEach((pos) => (map[pos.x][pos.y] = [wallIdx]));
 
     mapSnapshot.push(JSON.parse(JSON.stringify(map)));
   }
@@ -176,8 +173,7 @@ export const generatePrimsMap = (
             for (let b = -1; b < 2; b++) {
               neighborX = w + a;
               neighborY = h + b;
-              if (neighborX >= 0 && neighborX < width 
-                  && neighborY >= 0 && neighborY < height) {
+              if (neighborX >= 0 && neighborX < width && neighborY >= 0 && neighborY < height) {
                 if (equals(map[neighborX][neighborY], [])) neighbors++;
               }
             }
@@ -188,7 +184,7 @@ export const generatePrimsMap = (
         }
       }
     }
-    newTiles.forEach((pos) => map[pos.x][pos.y] = []);
+    newTiles.forEach((pos) => (map[pos.x][pos.y] = []));
 
     mapSnapshot.push(JSON.parse(JSON.stringify(map)));
   }
@@ -203,10 +199,10 @@ export const generatePrimsMap = (
       for (let h = 0; h < height; h++) {
         if (equals(map[w][h], [])) {
           neighbors = 0;
-          if (w - 1 >= 0 && equals(map[w-1][h], [])) neighbors++;
-          if (w + 1 < width && equals(map[w+1][h], [])) neighbors++;
-          if (h - 1 >= 0 && equals(map[w][h-1], [])) neighbors++;
-          if (h + 1 < height && equals(map[w][h+1], [])) neighbors++;
+          if (w - 1 >= 0 && equals(map[w - 1][h], [])) neighbors++;
+          if (w + 1 < width && equals(map[w + 1][h], [])) neighbors++;
+          if (h - 1 >= 0 && equals(map[w][h - 1], [])) neighbors++;
+          if (h + 1 < height && equals(map[w][h + 1], [])) neighbors++;
           if (neighbors <= 1) {
             deadEnds.push({ x: w, y: h });
           }
@@ -215,21 +211,21 @@ export const generatePrimsMap = (
     }
 
     // remove dead ends
-    deadEnds.forEach((pos) => map[pos.x][pos.y] = [wallIdx])
+    deadEnds.forEach((pos) => (map[pos.x][pos.y] = [wallIdx]));
 
     mapSnapshot.push(JSON.parse(JSON.stringify(map)));
   }
 
   return { map, mapSnapshot };
-}
+};
 
 const getFIndexFromCoord = (coord: position): number => {
   return coord.x * WORLD_WIDTH + coord.y;
-}
+};
 
 const getCoordFromFIndex = (fIndex: number): position => {
   return { x: Math.floor(fIndex / WORLD_WIDTH), y: fIndex % WORLD_WIDTH };
-}
+};
 
 /**
  * Add additional corridors to a Prim's map to increase connectivity.
@@ -257,7 +253,7 @@ export const addConnectivity = (
   let lastCoord: position = { x: 0, y: 0 };
 
   printDivider();
-  console.log("✦ adding connectivity to map");
+  console.log('✦ adding connectivity to map');
 
   /**
    * Iterate through all empty tiles
@@ -265,7 +261,7 @@ export const addConnectivity = (
   for (let x = maxCorridorLen; x < width - maxCorridorLen; x++) {
     for (let y = maxCorridorLen; y < height - maxCorridorLen; y++) {
       if (map[x][y].length > 0) continue; // ignore walls
-      
+
       /**
        * Find coordinates close enough for potential corridors
        */
@@ -276,9 +272,9 @@ export const addConnectivity = (
           if (xDiff === 0 && yDiff === 0) continue; // skip current coordinate
 
           // only track empty tiles
-          if (map[x+xDiff][y+yDiff].length === 0) {
+          if (map[x + xDiff][y + yDiff].length === 0) {
             coords.push({ x: x + xDiff, y: y + yDiff });
-          } 
+          }
         }
       }
 
@@ -294,7 +290,7 @@ export const addConnectivity = (
       border.add(getFIndexFromCoord({ x, y }));
 
       while (coords) {
-        if (travelDist > 1000) throw "timeout";
+        if (travelDist > 1000) throw 'timeout';
 
         temp = new Set();
 
@@ -303,19 +299,19 @@ export const addConnectivity = (
           c = getCoordFromFIndex(fIndex);
 
           neighbor = getFIndexFromCoord({ x: c.x - 1, y: c.y });
-          if (map[c.x-1][c.y].length === 0 && !visited.has(neighbor)) {
+          if (map[c.x - 1][c.y].length === 0 && !visited.has(neighbor)) {
             temp.add(neighbor);
           }
           neighbor = getFIndexFromCoord({ x: c.x + 1, y: c.y });
-          if (map[c.x+1][c.y].length === 0 && !visited.has(neighbor)) {
+          if (map[c.x + 1][c.y].length === 0 && !visited.has(neighbor)) {
             temp.add(neighbor);
           }
           neighbor = getFIndexFromCoord({ x: c.x, y: c.y - 1 });
-          if (map[c.x][c.y-1].length === 0 && !visited.has(neighbor)) {
+          if (map[c.x][c.y - 1].length === 0 && !visited.has(neighbor)) {
             temp.add(neighbor);
           }
           neighbor = getFIndexFromCoord({ x: c.x, y: c.y + 1 });
-          if (map[c.x][c.y+1].length === 0 && !visited.has(neighbor)) {
+          if (map[c.x][c.y + 1].length === 0 && !visited.has(neighbor)) {
             temp.add(neighbor);
           }
         });
@@ -339,9 +335,9 @@ export const addConnectivity = (
        * Slice corridor
        */
       if (travelDist > minPeninsularPerimToCut) {
-        console.log("slicing a corridor from (" + x + ", " + y + ") to (" + lastCoord.x + ", " + lastCoord.y + ")...");
+        console.log('slicing a corridor from (' + x + ', ' + y + ') to (' + lastCoord.x + ', ' + lastCoord.y + ')...');
 
-        if (lastCoord.x === 0 && lastCoord.y === 0) throw "logic error";
+        if (lastCoord.x === 0 && lastCoord.y === 0) throw 'logic error';
 
         const xS = Math.min(lastCoord.x, x);
         const xL = Math.max(lastCoord.x, x);
@@ -354,7 +350,7 @@ export const addConnectivity = (
         }
 
         // dig in y-direction depending on how the two coordinates are laid out
-        const xDig = ((xS === x && yS === y) || (xS === lastCoord.x && yS === lastCoord.y)) ? xS : xL;
+        const xDig = (xS === x && yS === y) || (xS === lastCoord.x && yS === lastCoord.y) ? xS : xL;
         for (let yTrans = yS; yTrans <= yL; yTrans++) {
           map[xDig][yTrans] = [];
         }
@@ -364,4 +360,4 @@ export const addConnectivity = (
 
   printDivider();
   return map;
-}
+};

@@ -18,6 +18,8 @@ import {
   WORLD_WIDTH,
   blockMetadata,
   generateBlockIdToNameMap,
+  ITEM_RATIO,
+  DOOR_RATIO,
 } from './util/constants';
 import { generateAllGameArgs } from './util/allArgsGenerator';
 import { Getters, Game, GameStorage, Helper, Door } from '../typechain-types';
@@ -69,7 +71,7 @@ task('deploy', 'deploy contracts')
 
     const payload = await deployToIPFS(hre, 'Door');
     const newGameItems = gameItems.concat(
-      appendIpfsHashToMetadata(programmableBlockMetadata, payload.IpfsHash, DoorContract.address)
+      appendIpfsHashToMetadata(blockMetadata, payload.IpfsHash, DoorContract.address)
     );
     const newItemRatio = ITEM_RATIO.concat(DOOR_RATIO);
     const allGameArgs = generateAllGameArgs(newGameItems, newItemRatio);
@@ -191,12 +193,10 @@ task('deploy', 'deploy contracts')
     const networkRPCs = rpcUrlSelector(hre.network.name);
     const programmableBlock = {
       name: 'Door',
-      item: { ...programmableBlockMetadata },
+      item: { ...blockMetadata },
     };
 
     const blockIdToNameMapping = generateBlockIdToNameMap(masterItems.concat(programmableBlock));
-
-    const blockIdToNameMapping = generateBlockIdToNameMap(masterItems);
 
     const configFile = {
       addresses: JSON.stringify({

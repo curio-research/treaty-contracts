@@ -49,15 +49,17 @@ export var masterItems: ItemMaster[] = [
     item: {
       mineable: false,
       mineItemIds: [],
-      strength: 0,
+      health: 0,
       craftable: false,
       craftItemIds: [],
       craftItemAmounts: [],
       occupiable: false,
-      healthDamage: 0,
       programmable: false,
       abiEncoding: '',
       contractAddr: '',
+      attackDamage: 0,
+      attackRange: 0,
+      attackCooldown: 0,
     },
   },
   {
@@ -75,6 +77,7 @@ export var masterItems: ItemMaster[] = [
       attackDamage: 0,
       attackRange: 0,
       attackCooldown: 0,
+      contractAddr: '',
     },
   },
   {
@@ -92,6 +95,7 @@ export var masterItems: ItemMaster[] = [
       attackDamage: 0,
       attackRange: 0,
       attackCooldown: 0,
+      contractAddr: '',
     },
   },
   {
@@ -109,6 +113,7 @@ export var masterItems: ItemMaster[] = [
       attackDamage: 5,
       attackRange: 1,
       attackCooldown: 10,
+      contractAddr: '',
     },
   },
   {
@@ -126,6 +131,7 @@ export var masterItems: ItemMaster[] = [
       attackDamage: 0,
       attackRange: 0,
       attackCooldown: 0,
+      contractAddr: '',
     },
   },
   {
@@ -143,6 +149,7 @@ export var masterItems: ItemMaster[] = [
       attackDamage: 0,
       attackRange: 0,
       attackCooldown: 0,
+      contractAddr: '',
     },
   },
   {
@@ -160,6 +167,7 @@ export var masterItems: ItemMaster[] = [
       attackDamage: 0,
       attackRange: 0,
       attackCooldown: 0,
+      contractAddr: '',
     },
   },
   {
@@ -177,6 +185,7 @@ export var masterItems: ItemMaster[] = [
       attackDamage: 0,
       attackRange: 0,
       attackCooldown: 0,
+      contractAddr: '',
     },
   },
 ];
@@ -192,6 +201,7 @@ export const blockMetadata: ItemWithMetadata = {
   occupiable: false,
   programmable: true,
   abiEncoding: '',
+  contractAddr: '',
   attackDamage: 0,
   attackRange: 0,
   attackCooldown: 0,
