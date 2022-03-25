@@ -229,21 +229,22 @@ console.assert(masterItems.length == ITEM_RATIO.length);
 
 const W = getItemIndexByName(masterItems, 'Indestructible Wall');
 const O = getItemIndexByName(masterItems, 'Space');
+const T = getItemIndexByName(masterItems, 'Tower');
 const D = masterItems.length; // because door will be next item
 
 export const MAP_ROOMS_1 = [
   [W, W, W, W, W, W, W, W, W, W, W, W, W, W],
   [W, O, O, O, O, W, W, W, W, O, O, W, W, W],
-  [W, O, O, O, O, O, O, W, W, O, O, O, O, W],
-  [W, O, O, O, O, O, O, O, O, O, O, O, O, W],
-  [W, O, O, O, O, O, O, O, O, O, O, W, O, W],
+  [W, O, T, O, O, O, O, W, W, O, O, O, O, W],
+  [W, O, O, O, O, T, O, O, O, O, O, O, O, W],
+  [W, O, O, O, O, O, O, O, O, T, O, W, O, W],
   [W, W, W, O, W, O, O, O, O, O, O, W, O, W],
-  [W, W, W, O, W, O, O, O, O, O, W, W, O, W],
-  [W, W, O, O, O, O, O, W, O, O, O, O, O, W],
-  [W, W, O, O, O, O, O, W, W, W, W, D, W, W],
+  [W, W, W, O, W, O, O, T, O, O, W, W, O, W],
+  [W, W, O, O, O, O, O, O, O, O, O, O, O, W],
+  [W, W, O, T, O, O, O, W, W, W, W, D, W, W],
   [W, W, O, O, O, O, W, W, O, O, O, O, O, W],
-  [W, W, W, W, W, W, W, W, O, O, O, O, O, W],
-  [W, W, W, W, W, W, W, W, O, O, O, O, O, W],
+  [W, W, W, W, W, W, W, W, O, T, O, O, O, W],
+  [W, W, W, W, W, W, W, W, O, O, O, T, O, W],
   [W, W, W, W, W, W, W, W, W, O, O, O, O, W],
   [W, W, W, W, W, W, W, W, W, W, W, W, W, W],
 ];

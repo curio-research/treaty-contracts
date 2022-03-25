@@ -187,23 +187,19 @@ export const generateMap = (worldWidth: number, worldHeight: number, roomWidth: 
       });
       break;
     default:
+      // custom maps — skip tower specs later
       map = customMapMapping[mapMode];
-      break;
-  }
-
-  if ([MAP_MODE.PRIMS, MAP_MODE.PRIMS_CONNECTED].includes(mapMode)) {
-    let primsMapOutput = generatePrimsMap(worldWidth, worldHeight);
-    map = primsMapOutput.map;
-    if (mapMode === MAP_MODE.PRIMS_CONNECTED) map = addConnectivity(map);
-  } else if (mapMode === MAP_MODE.DEFAULT) {
-    map = generateEmptyMap(worldWidth, worldHeight); // generate empty map
-
-    const walls = generateWallCoords(worldWidth, worldHeight, roomWidth); // generate wall blocks
-    // apply block coordinates to master map;
-    walls.forEach((pos) => {
-      map[pos.x][pos.y] = wallIdx;
-    });
-  } else {
+      let towers: position[] = [];
+      for (let x = 0; x < map.length; x++) {
+        for (let y = 0; y < map[0].length; y++) {
+          if (map[x][y] === towerIdx) towers.push({ x, y });
+        }
+      }
+      const towerSpecs = generateTowerSpecs(towers);
+      return {
+        blocks: map,
+        towers: towerSpecs,
+      };
   }
 
   const towers = generateTowerCoords(worldWidth, worldHeight, roomWidth); // generate tower locations
