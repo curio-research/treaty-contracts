@@ -67,6 +67,7 @@ contract TowerGame {
         GameTypes.Position memory _pos
     ) public view returns (uint256) {
         uint256 _blockId = utils._getBlockAtPos(_pos);
+
         // update the list based on item mapping
         if (_blockId == 5) {
             return _reward * 2;

@@ -1,5 +1,5 @@
-import { position } from "../../../util/types/common";
-import { TowerWithLocation } from "../../../util/types/tower";
+import { position } from '../../../util/types/common';
+import { TowerWithLocation } from '../../../util/types/tower';
 
 export interface MasterGameSpecs {
   blocks: number[][][];

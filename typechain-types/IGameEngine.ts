@@ -17,83 +17,6 @@ import { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
 import { Listener, Provider } from "@ethersproject/providers";
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
-export type WorldConstantsStruct = {
-  worldWidth: BigNumberish;
-  worldHeight: BigNumberish;
-  startingAttackDamage: BigNumberish;
-  startingAttackRange: BigNumberish;
-  startingAttackWaitTime: BigNumberish;
-  startPlayerHealth: BigNumberish;
-  startPlayerEnergy: BigNumberish;
-  startingReach: BigNumberish;
-  startingPlayerDefaultCurrencyAmount: BigNumberish;
-};
-
-export type WorldConstantsStructOutput = [
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber
-] & {
-  worldWidth: BigNumber;
-  worldHeight: BigNumber;
-  startingAttackDamage: BigNumber;
-  startingAttackRange: BigNumber;
-  startingAttackWaitTime: BigNumber;
-  startPlayerHealth: BigNumber;
-  startPlayerEnergy: BigNumber;
-  startingReach: BigNumber;
-  startingPlayerDefaultCurrencyAmount: BigNumber;
-};
-
-export type ItemWithMetadataStruct = {
-  mineable: boolean;
-  craftable: boolean;
-  occupiable: boolean;
-  health: BigNumberish;
-  mineItemIds: BigNumberish[];
-  craftItemIds: BigNumberish[];
-  craftItemAmounts: BigNumberish[];
-  programmable: boolean;
-  abiEncoding: string;
-  attackDamage: BigNumberish;
-  attackRange: BigNumberish;
-  attackCooldown: BigNumberish;
-};
-
-export type ItemWithMetadataStructOutput = [
-  boolean,
-  boolean,
-  boolean,
-  BigNumber,
-  BigNumber[],
-  BigNumber[],
-  BigNumber[],
-  boolean,
-  string,
-  BigNumber,
-  BigNumber,
-  BigNumber
-] & {
-  mineable: boolean;
-  craftable: boolean;
-  occupiable: boolean;
-  health: BigNumber;
-  mineItemIds: BigNumber[];
-  craftItemIds: BigNumber[];
-  craftItemAmounts: BigNumber[];
-  programmable: boolean;
-  abiEncoding: string;
-  attackDamage: BigNumber;
-  attackRange: BigNumber;
-  attackCooldown: BigNumber;
-};
-
 export type PositionStruct = { x: BigNumberish; y: BigNumberish };
 
 export type PositionStructOutput = [BigNumber, BigNumber] & {
@@ -101,28 +24,9 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
   y: BigNumber;
 };
 
-export type BlockDataStruct = {
-  blockId: BigNumberish;
-  health: BigNumberish;
-  owner: string;
-  lastAttacked: BigNumberish;
-};
-
-export type BlockDataStructOutput = [
-  BigNumber,
-  BigNumber,
-  string,
-  BigNumber
-] & {
-  blockId: BigNumber;
-  health: BigNumber;
-  owner: string;
-  lastAttacked: BigNumber;
-};
-
-export interface GameInterface extends utils.Interface {
+export interface IGameEngineInterface extends utils.Interface {
   functions: {
-    "attack((uint256,uint256),(uint256,uint256))": FunctionFragment;
+    "changeBlockStrength((uint256,uint256),uint256,bool)": FunctionFragment;
     "craft(uint256)": FunctionFragment;
     "initializePlayer((uint256,uint256))": FunctionFragment;
     "mine((uint256,uint256))": FunctionFragment;
@@ -132,8 +36,8 @@ export interface GameInterface extends utils.Interface {
   };
 
   encodeFunctionData(
-    functionFragment: "attack",
-    values: [PositionStruct, PositionStruct]
+    functionFragment: "changeBlockStrength",
+    values: [PositionStruct, BigNumberish, boolean]
   ): string;
   encodeFunctionData(functionFragment: "craft", values: [BigNumberish]): string;
   encodeFunctionData(
@@ -157,7 +61,10 @@ export interface GameInterface extends utils.Interface {
     values: [PositionStruct, BigNumberish]
   ): string;
 
-  decodeFunctionResult(functionFragment: "attack", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "changeBlockStrength",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "craft", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "initializePlayer",
@@ -170,15 +77,15 @@ export interface GameInterface extends utils.Interface {
 
   events: {
     "Attack(address,address)": EventFragment;
-    "AttackItem(address,tuple,tuple,uint256,uint256,uint256)": EventFragment;
+    "AttackItem(address,tuple,uint256)": EventFragment;
     "ChangeBlockStrength(address,tuple,uint256,uint256)": EventFragment;
     "Craft(address,uint256)": EventFragment;
     "Death(address)": EventFragment;
     "MineItem(address,tuple,uint256)": EventFragment;
     "Move(address,tuple)": EventFragment;
-    "MoveBlock(address,tuple,tuple,uint256)": EventFragment;
+    "MoveBlock(address,tuple,tuple)": EventFragment;
     "NewPlayer(address,tuple)": EventFragment;
-    "Place(address,tuple,uint256,tuple)": EventFragment;
+    "Place(address,tuple,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Attack"): EventFragment;
@@ -201,22 +108,8 @@ export type AttackEvent = TypedEvent<
 export type AttackEventFilter = TypedEventFilter<AttackEvent>;
 
 export type AttackItemEvent = TypedEvent<
-  [
-    string,
-    PositionStructOutput,
-    PositionStructOutput,
-    BigNumber,
-    BigNumber,
-    BigNumber
-  ],
-  {
-    _player: string;
-    _origin: PositionStructOutput;
-    _target: PositionStructOutput;
-    _attackerWorldBlockId: BigNumber;
-    _targetWorldBlockId: BigNumber;
-    _strength: BigNumber;
-  }
+  [string, PositionStructOutput, BigNumber],
+  { _player: string; _pos: PositionStructOutput; _strength: BigNumber }
 >;
 
 export type AttackItemEventFilter = TypedEventFilter<AttackItemEvent>;
@@ -226,7 +119,7 @@ export type ChangeBlockStrengthEvent = TypedEvent<
   {
     _player: string;
     _pos: PositionStructOutput;
-    _health: BigNumber;
+    _strength: BigNumber;
     _resourceUsed: BigNumber;
   }
 >;
@@ -247,7 +140,7 @@ export type DeathEventFilter = TypedEventFilter<DeathEvent>;
 
 export type MineItemEvent = TypedEvent<
   [string, PositionStructOutput, BigNumber],
-  { _player: string; _pos: PositionStructOutput; _itemId: BigNumber }
+  { _player: string; _pos: PositionStructOutput; _blockId: BigNumber }
 >;
 
 export type MineItemEventFilter = TypedEventFilter<MineItemEvent>;
@@ -260,12 +153,11 @@ export type MoveEvent = TypedEvent<
 export type MoveEventFilter = TypedEventFilter<MoveEvent>;
 
 export type MoveBlockEvent = TypedEvent<
-  [string, PositionStructOutput, PositionStructOutput, BigNumber],
+  [string, PositionStructOutput, PositionStructOutput],
   {
     _player: string;
     _startPos: PositionStructOutput;
     _endPos: PositionStructOutput;
-    _worldBlockId: BigNumber;
   }
 >;
 
@@ -279,23 +171,18 @@ export type NewPlayerEvent = TypedEvent<
 export type NewPlayerEventFilter = TypedEventFilter<NewPlayerEvent>;
 
 export type PlaceEvent = TypedEvent<
-  [string, PositionStructOutput, BigNumber, BlockDataStructOutput],
-  {
-    _player: string;
-    _pos: PositionStructOutput;
-    _worldBlockId: BigNumber;
-    _blockData: BlockDataStructOutput;
-  }
+  [string, PositionStructOutput, BigNumber],
+  { _player: string; _pos: PositionStructOutput; _blockId: BigNumber }
 >;
 
 export type PlaceEventFilter = TypedEventFilter<PlaceEvent>;
 
-export interface Game extends BaseContract {
+export interface IGameEngine extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: GameInterface;
+  interface: IGameEngineInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -317,9 +204,10 @@ export interface Game extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    attack(
-      _origin: PositionStruct,
-      _target: PositionStruct,
+    changeBlockStrength(
+      _pos: PositionStruct,
+      _amount: BigNumberish,
+      _state: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -351,14 +239,15 @@ export interface Game extends BaseContract {
 
     place(
       _pos: PositionStruct,
-      _blockId: BigNumberish,
+      _itemId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
 
-  attack(
-    _origin: PositionStruct,
-    _target: PositionStruct,
+  changeBlockStrength(
+    _pos: PositionStruct,
+    _amount: BigNumberish,
+    _state: boolean,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -390,14 +279,15 @@ export interface Game extends BaseContract {
 
   place(
     _pos: PositionStruct,
-    _blockId: BigNumberish,
+    _itemId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    attack(
-      _origin: PositionStruct,
-      _target: PositionStruct,
+    changeBlockStrength(
+      _pos: PositionStruct,
+      _amount: BigNumberish,
+      _state: boolean,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -420,7 +310,7 @@ export interface Game extends BaseContract {
 
     place(
       _pos: PositionStruct,
-      _blockId: BigNumberish,
+      _itemId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -432,33 +322,27 @@ export interface Game extends BaseContract {
     ): AttackEventFilter;
     Attack(_player1?: null, _player2?: null): AttackEventFilter;
 
-    "AttackItem(address,tuple,tuple,uint256,uint256,uint256)"(
+    "AttackItem(address,tuple,uint256)"(
       _player?: null,
-      _origin?: null,
-      _target?: null,
-      _attackerWorldBlockId?: null,
-      _targetWorldBlockId?: null,
+      _pos?: null,
       _strength?: null
     ): AttackItemEventFilter;
     AttackItem(
       _player?: null,
-      _origin?: null,
-      _target?: null,
-      _attackerWorldBlockId?: null,
-      _targetWorldBlockId?: null,
+      _pos?: null,
       _strength?: null
     ): AttackItemEventFilter;
 
     "ChangeBlockStrength(address,tuple,uint256,uint256)"(
       _player?: null,
       _pos?: null,
-      _health?: null,
+      _strength?: null,
       _resourceUsed?: null
     ): ChangeBlockStrengthEventFilter;
     ChangeBlockStrength(
       _player?: null,
       _pos?: null,
-      _health?: null,
+      _strength?: null,
       _resourceUsed?: null
     ): ChangeBlockStrengthEventFilter;
 
@@ -471,24 +355,22 @@ export interface Game extends BaseContract {
     "MineItem(address,tuple,uint256)"(
       _player?: null,
       _pos?: null,
-      _itemId?: null
+      _blockId?: null
     ): MineItemEventFilter;
-    MineItem(_player?: null, _pos?: null, _itemId?: null): MineItemEventFilter;
+    MineItem(_player?: null, _pos?: null, _blockId?: null): MineItemEventFilter;
 
     "Move(address,tuple)"(_player?: null, _pos?: null): MoveEventFilter;
     Move(_player?: null, _pos?: null): MoveEventFilter;
 
-    "MoveBlock(address,tuple,tuple,uint256)"(
+    "MoveBlock(address,tuple,tuple)"(
       _player?: null,
       _startPos?: null,
-      _endPos?: null,
-      _worldBlockId?: null
+      _endPos?: null
     ): MoveBlockEventFilter;
     MoveBlock(
       _player?: null,
       _startPos?: null,
-      _endPos?: null,
-      _worldBlockId?: null
+      _endPos?: null
     ): MoveBlockEventFilter;
 
     "NewPlayer(address,tuple)"(
@@ -497,24 +379,19 @@ export interface Game extends BaseContract {
     ): NewPlayerEventFilter;
     NewPlayer(_player?: null, _pos?: null): NewPlayerEventFilter;
 
-    "Place(address,tuple,uint256,tuple)"(
+    "Place(address,tuple,uint256)"(
       _player?: null,
       _pos?: null,
-      _worldBlockId?: null,
-      _blockData?: null
+      _blockId?: null
     ): PlaceEventFilter;
-    Place(
-      _player?: null,
-      _pos?: null,
-      _worldBlockId?: null,
-      _blockData?: null
-    ): PlaceEventFilter;
+    Place(_player?: null, _pos?: null, _blockId?: null): PlaceEventFilter;
   };
 
   estimateGas: {
-    attack(
-      _origin: PositionStruct,
-      _target: PositionStruct,
+    changeBlockStrength(
+      _pos: PositionStruct,
+      _amount: BigNumberish,
+      _state: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -546,15 +423,16 @@ export interface Game extends BaseContract {
 
     place(
       _pos: PositionStruct,
-      _blockId: BigNumberish,
+      _itemId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    attack(
-      _origin: PositionStruct,
-      _target: PositionStruct,
+    changeBlockStrength(
+      _pos: PositionStruct,
+      _amount: BigNumberish,
+      _state: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -586,7 +464,7 @@ export interface Game extends BaseContract {
 
     place(
       _pos: PositionStruct,
-      _blockId: BigNumberish,
+      _itemId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

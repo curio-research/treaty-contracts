@@ -22,32 +22,45 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
   y: BigNumber;
 };
 
-export type TileWithMetadataStruct = {
-  occupier: string;
+export type BlockDataStruct = {
   blockId: BigNumberish;
-  x: BigNumberish;
-  y: BigNumberish;
+  health: BigNumberish;
+  owner: string;
+  lastAttacked: BigNumberish;
 };
 
-export type TileWithMetadataStructOutput = [
+export type BlockDataStructOutput = [
+  BigNumber,
+  BigNumber,
   string,
-  BigNumber,
-  BigNumber,
   BigNumber
-] & { occupier: string; blockId: BigNumber; x: BigNumber; y: BigNumber };
+] & {
+  blockId: BigNumber;
+  health: BigNumber;
+  owner: string;
+  lastAttacked: BigNumber;
+};
+
+export type TileStruct = { occupier: string; worldBlockId: BigNumberish };
+
+export type TileStructOutput = [string, BigNumber] & {
+  occupier: string;
+  worldBlockId: BigNumber;
+};
 
 export type ItemWithMetadataStruct = {
   mineable: boolean;
   craftable: boolean;
   occupiable: boolean;
-  strength: BigNumberish;
-  healthDamage: BigNumberish;
+  health: BigNumberish;
   mineItemIds: BigNumberish[];
   craftItemIds: BigNumberish[];
   craftItemAmounts: BigNumberish[];
   programmable: boolean;
   abiEncoding: string;
-  contractAddr: string;
+  attackDamage: BigNumberish;
+  attackRange: BigNumberish;
+  attackCooldown: BigNumberish;
 };
 
 export type ItemWithMetadataStructOutput = [
@@ -55,25 +68,27 @@ export type ItemWithMetadataStructOutput = [
   boolean,
   boolean,
   BigNumber,
-  BigNumber,
   BigNumber[],
   BigNumber[],
   BigNumber[],
   boolean,
   string,
-  string
+  BigNumber,
+  BigNumber,
+  BigNumber
 ] & {
   mineable: boolean;
   craftable: boolean;
   occupiable: boolean;
-  strength: BigNumber;
-  healthDamage: BigNumber;
+  health: BigNumber;
   mineItemIds: BigNumber[];
   craftItemIds: BigNumber[];
   craftItemAmounts: BigNumber[];
   programmable: boolean;
   abiEncoding: string;
-  contractAddr: string;
+  attackDamage: BigNumber;
+  attackRange: BigNumber;
+  attackCooldown: BigNumber;
 };
 
 export type PlayerDataStruct = {
@@ -113,6 +128,7 @@ export type PlayerDataStructOutput = [
 export interface GettersInterface extends utils.Interface {
   functions: {
     "GET_MAP_INTERVAL()": FunctionFragment;
+    "_getBlockChunkData((uint256,uint256))": FunctionFragment;
     "_getMap((uint256,uint256))": FunctionFragment;
     "bulkGetAllItems()": FunctionFragment;
     "bulkGetAllPlayerData()": FunctionFragment;
@@ -121,6 +137,10 @@ export interface GettersInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "GET_MAP_INTERVAL",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getBlockChunkData",
+    values: [PositionStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "_getMap",
@@ -137,6 +157,10 @@ export interface GettersInterface extends utils.Interface {
 
   decodeFunctionResult(
     functionFragment: "GET_MAP_INTERVAL",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_getBlockChunkData",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "_getMap", data: BytesLike): Result;
@@ -181,10 +205,15 @@ export interface Getters extends BaseContract {
   functions: {
     GET_MAP_INTERVAL(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    _getBlockChunkData(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<[BlockDataStructOutput[], PositionStructOutput[]]>;
+
     _getMap(
       _pos: PositionStruct,
       overrides?: CallOverrides
-    ): Promise<[TileWithMetadataStructOutput[]]>;
+    ): Promise<[TileStructOutput[], PositionStructOutput[]]>;
 
     bulkGetAllItems(
       overrides?: CallOverrides
@@ -197,10 +226,15 @@ export interface Getters extends BaseContract {
 
   GET_MAP_INTERVAL(overrides?: CallOverrides): Promise<BigNumber>;
 
+  _getBlockChunkData(
+    _pos: PositionStruct,
+    overrides?: CallOverrides
+  ): Promise<[BlockDataStructOutput[], PositionStructOutput[]]>;
+
   _getMap(
     _pos: PositionStruct,
     overrides?: CallOverrides
-  ): Promise<TileWithMetadataStructOutput[]>;
+  ): Promise<[TileStructOutput[], PositionStructOutput[]]>;
 
   bulkGetAllItems(
     overrides?: CallOverrides
@@ -213,10 +247,15 @@ export interface Getters extends BaseContract {
   callStatic: {
     GET_MAP_INTERVAL(overrides?: CallOverrides): Promise<BigNumber>;
 
+    _getBlockChunkData(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<[BlockDataStructOutput[], PositionStructOutput[]]>;
+
     _getMap(
       _pos: PositionStruct,
       overrides?: CallOverrides
-    ): Promise<TileWithMetadataStructOutput[]>;
+    ): Promise<[TileStructOutput[], PositionStructOutput[]]>;
 
     bulkGetAllItems(
       overrides?: CallOverrides
@@ -232,6 +271,11 @@ export interface Getters extends BaseContract {
   estimateGas: {
     GET_MAP_INTERVAL(overrides?: CallOverrides): Promise<BigNumber>;
 
+    _getBlockChunkData(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     _getMap(
       _pos: PositionStruct,
       overrides?: CallOverrides
@@ -244,6 +288,11 @@ export interface Getters extends BaseContract {
 
   populateTransaction: {
     GET_MAP_INTERVAL(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    _getBlockChunkData(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     _getMap(
       _pos: PositionStruct,

@@ -1,6 +1,6 @@
 import { PositionStruct } from '../../typechain-types/Game';
 import { ItemMaster, ItemWithMetadata } from '../../util/types/getter';
-import { masterItems, WORLD_HEIGHT, WORLD_WIDTH } from './constants';
+import { ITEM_RATIO, masterItems, WORLD_HEIGHT, WORLD_WIDTH } from './constants';
 
 // ------------------------------------------------
 // Generate all items with crafting recipes
@@ -45,7 +45,11 @@ export const generateItems = (map: number[][][], itemRatio: number[]): number[][
   return map;
 };
 
-export const appendIpfsHashToMetadata = (blockMetadata: ItemWithMetadata, ipfsHash: string, contractAddr: string): ItemWithMetadata => {
+export const appendIpfsHashToMetadata = (
+  blockMetadata: ItemWithMetadata,
+  ipfsHash: string,
+  contractAddr: string
+): ItemWithMetadata => {
   const temp = blockMetadata;
   temp.abiEncoding = ipfsHash;
   temp.contractAddr = contractAddr;

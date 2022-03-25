@@ -163,7 +163,13 @@ const generateTowerSpecs = (towerLocations: position[]): TowerWithLocation[] => 
 // master map generation function
 // ---------------------------------
 
-export const generateMap = (worldWidth: number, worldHeight: number, roomWidth: number, masterItems: ItemMaster[], mapMode: MAP_MODE = MAP_MODE.DEFAULT): MasterGameSpecs => {
+export const generateMap = (
+  worldWidth: number,
+  worldHeight: number,
+  roomWidth: number,
+  masterItems: ItemMaster[],
+  mapMode: MAP_MODE = MAP_MODE.DEFAULT
+): MasterGameSpecs => {
   let map: number[][][];
   if ([MAP_MODE.PRIMS, MAP_MODE.PRIMS_CONNECTED].includes(mapMode)) {
     let primsMapOutput = generatePrimsMap(worldWidth, worldHeight);

@@ -1,4 +1,5 @@
-import { ItemMaster, ItemWithMetadata } from '../../util/types/getter';
+import { ItemWithMetadata } from './../../util/types/getter';
+import { ItemMaster } from '../../util/types/getter';
 export const LOCALHOST_RPC_URL = 'http://127.0.0.1:8545/';
 export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 
@@ -8,12 +9,11 @@ export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 
 // game specs - manual
 export const ROOM_LENGTH = 7;
-export const ROOMS_PER_DIMENSION = 3;
+export const ROOMS_PER_DIMENSION = 2;
 export const ATTACK_RANGE = 1;
 export const ATTACK_DAMAGE = 5;
 export const ATTACK_WAITTIME = 5;
 export const START_PLAYER_HEALTH = 100;
-export const START_PLAYER_ENERGY = 100;
 export const MAP_INTERVAL = 10;
 export enum MAP_MODE {
   DEFAULT,
@@ -49,15 +49,17 @@ export var masterItems: ItemMaster[] = [
     item: {
       mineable: false,
       mineItemIds: [],
-      strength: 0,
+      health: 0,
       craftable: false,
       craftItemIds: [],
       craftItemAmounts: [],
       occupiable: false,
-      healthDamage: 0,
       programmable: false,
       abiEncoding: '',
       contractAddr: '',
+      attackDamage: 0,
+      attackRange: 0,
+      attackCooldown: 0,
     },
   },
   {
@@ -65,14 +67,16 @@ export var masterItems: ItemMaster[] = [
     item: {
       mineable: true,
       mineItemIds: [],
-      strength: 10,
+      health: 10,
       craftable: false,
       craftItemIds: [],
       craftItemAmounts: [],
       occupiable: false,
-      healthDamage: 0,
       programmable: false,
       abiEncoding: '',
+      attackDamage: 0,
+      attackRange: 0,
+      attackCooldown: 0,
       contractAddr: '',
     },
   },
@@ -81,46 +85,34 @@ export var masterItems: ItemMaster[] = [
     item: {
       mineable: true,
       mineItemIds: [],
-      strength: 10,
+      health: 10,
       craftable: false,
       craftItemIds: [],
       craftItemAmounts: [],
       occupiable: false,
-      healthDamage: 0,
       programmable: false,
       abiEncoding: '',
+      attackDamage: 0,
+      attackRange: 0,
+      attackCooldown: 0,
       contractAddr: '',
     },
   },
   {
-    name: 'Fence',
+    name: 'Minion',
     item: {
       mineable: true,
       mineItemIds: [],
-      strength: 20,
-      craftable: true,
-      craftItemIds: [0],
-      craftItemAmounts: [5],
-      occupiable: false,
-      healthDamage: 0,
-      programmable: false,
-      abiEncoding: '',
-      contractAddr: '',
-    },
-  },
-  {
-    name: 'Wall',
-    item: {
-      mineable: true,
-      mineItemIds: [],
-      strength: 40,
+      health: 40,
       craftable: true,
       craftItemIds: [0],
       craftItemAmounts: [10],
       occupiable: false,
-      healthDamage: 0,
       programmable: false,
       abiEncoding: '',
+      attackDamage: 5,
+      attackRange: 1,
+      attackCooldown: 10,
       contractAddr: '',
     },
   },
@@ -129,14 +121,16 @@ export var masterItems: ItemMaster[] = [
     item: {
       mineable: false,
       mineItemIds: [],
-      strength: 0,
+      health: 0,
       craftable: false,
       craftItemIds: [],
       craftItemAmounts: [],
       occupiable: false,
-      healthDamage: 0,
       programmable: false,
       abiEncoding: '',
+      attackDamage: 0,
+      attackRange: 0,
+      attackCooldown: 0,
       contractAddr: '',
     },
   },
@@ -145,14 +139,16 @@ export var masterItems: ItemMaster[] = [
     item: {
       mineable: true,
       mineItemIds: [],
-      strength: 50,
+      health: 50,
       craftable: true,
       craftItemIds: [0, 1],
       craftItemAmounts: [20, 10],
       occupiable: false,
-      healthDamage: 0,
       programmable: false,
       abiEncoding: '',
+      attackDamage: 0,
+      attackRange: 0,
+      attackCooldown: 0,
       contractAddr: '',
     },
   },
@@ -161,14 +157,16 @@ export var masterItems: ItemMaster[] = [
     item: {
       mineable: true,
       mineItemIds: [],
-      strength: 50,
+      health: 50,
       craftable: true,
       craftItemIds: [0, 1],
       craftItemAmounts: [40, 20],
       occupiable: false,
-      healthDamage: 0,
       programmable: false,
       abiEncoding: '',
+      attackDamage: 0,
+      attackRange: 0,
+      attackCooldown: 0,
       contractAddr: '',
     },
   },
@@ -177,31 +175,36 @@ export var masterItems: ItemMaster[] = [
     item: {
       mineable: false,
       mineItemIds: [],
-      strength: 0,
+      health: 0,
       craftable: false,
       craftItemIds: [],
       craftItemAmounts: [],
       occupiable: false,
-      healthDamage: 0,
       programmable: false,
       abiEncoding: '',
+      attackDamage: 0,
+      attackRange: 0,
+      attackCooldown: 0,
       contractAddr: '',
     },
   },
 ];
 
-export var programmableBlockMetadata: ItemWithMetadata = {
+// door metadata
+export const blockMetadata: ItemWithMetadata = {
   mineable: true,
   mineItemIds: [],
-  strength: 0,
+  health: 0,
   craftable: true,
   craftItemIds: [],
   craftItemAmounts: [],
   occupiable: false,
-  healthDamage: 0,
   programmable: true,
   abiEncoding: '',
   contractAddr: '',
+  attackDamage: 0,
+  attackRange: 0,
+  attackCooldown: 0,
 };
 
 export const generateBlockIdToNameMap = (items: ItemMaster[]): Record<number, string> => {

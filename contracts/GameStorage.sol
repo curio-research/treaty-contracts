@@ -1,9 +1,9 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import '@openzeppelin/contracts/utils/math/SafeMath.sol';
-import './GameTypes.sol';
-import './Permissions.sol';
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "./GameTypes.sol";
+import "./Permissions.sol";
 
 /// @title Monolithic game storage
 
@@ -24,23 +24,38 @@ contract GameStorage {
     // Events
     // ------------------------------------------------------------
 
-    event Transfer(address _player, address _recipient, uint256 _id, uint256 _amount);
+    event Transfer(
+        address _player,
+        address _recipient,
+        uint256 _id,
+        uint256 _amount
+    );
 
-    event ChangeBlockProperty(uint256 _blockId, GameTypes.ItemWithMetadata item);
+    event ChangeBlockProperty(
+        uint256 _blockId,
+        GameTypes.ItemWithMetadata item
+    );
 
     // ------------------------------------------------------------
     // Initialization
     // ------------------------------------------------------------
+
     constructor(Permissions _permissions) {
         p = _permissions;
     }
 
-    function _setConstants(GameTypes.WorldConstants memory constants) public hasPermission {
+    function _setConstants(GameTypes.WorldConstants memory constants)
+        public
+        hasPermission
+    {
         s.worldConstants = constants;
     }
 
-    function _setBlock(GameTypes.Position memory _position, uint256 blockId) public hasPermission {
-        s.map[_position.x][_position.y].blockId = blockId;
+    function _setWorldBlockIdAtTile(
+        GameTypes.Position memory _position,
+        uint256 _worldBlockId
+    ) public hasPermission {
+        s.map[_position.x][_position.y].worldBlockId = _worldBlockId;
     }
 
     /**
@@ -48,37 +63,74 @@ contract GameStorage {
      * @param _startPos Top-left coordinate of region to start set
      * @param _blocks NxN array of blocks for the region
      */
-    function _setMapRegion(GameTypes.Position memory _startPos, uint256[][] memory _blocks) public hasPermission {
+    function _setMapRegion(
+        GameTypes.Position memory _startPos,
+        uint256[][] memory _blocks
+    ) public hasPermission {
         for (uint256 _xAdd = 0; _xAdd < _blocks.length; _xAdd++) {
             for (uint256 _yAdd = 0; _yAdd < _blocks[0].length; _yAdd++) {
-                GameTypes.Position memory _pos = GameTypes.Position({x: _startPos.x + _xAdd, y: _startPos.y + _yAdd});
+                // calculate position based on offset
+                GameTypes.Position memory _pos = GameTypes.Position({
+                    x: _startPos.x + _xAdd,
+                    y: _startPos.y + _yAdd
+                });
 
-                _setBlock(_pos, _blocks[_xAdd][_yAdd]);
+                // get the blockId that needs to be initialized
+                uint256 _blockId = _blocks[_xAdd][_yAdd];
 
-                if (_blocks[_xAdd][_yAdd] != 0) {
-                    uint256 _block = _getBlockAtPos(_pos);
-                    _setTopLevelStrength(_pos, _getItem(_block).strength);
+                // if its zero, it means it's an empty blocks
+                if (_blockId == 0) {
+                    _placeWorldBlockIdOnTile(_pos, 0);
+                } else {
+                    // first create new worldBlock
+                    (uint256 _newWorldBlockId, ) = createNewWorldBlock(
+                        msg.sender,
+                        _blockId
+                    );
+
+                    // then place worldBlock on map
+                    _placeWorldBlockIdOnTile(_pos, _newWorldBlockId);
                 }
             }
         }
     }
 
-    function _setItem(uint256 _i, GameTypes.ItemWithMetadata memory _item) public hasPermission {
+    function _setItem(uint256 _i, GameTypes.ItemWithMetadata memory _item)
+        public
+        hasPermission
+    {
         s.itemsWithMetadata[_i] = _item;
         emit ChangeBlockProperty(_i, _item);
     }
 
-    function _getWorldConstants() public view returns (GameTypes.WorldConstants memory) {
+    function _getWorldConstants()
+        public
+        view
+        returns (GameTypes.WorldConstants memory)
+    {
         return s.worldConstants;
     }
 
-    function _setPlayer(address _player, GameTypes.Position memory _pos) public hasPermission {
+    function _setPlayer(address _player, GameTypes.Position memory _pos)
+        public
+        hasPermission
+    {
         GameTypes.WorldConstants memory constants = _getWorldConstants();
-        s.players[_player] = GameTypes.PlayerData({initialized: true, initTimestamp: block.timestamp, playerAddr: _player, position: _pos, health: constants.startPlayerHealth, energy: constants.startPlayerEnergy, attackDamage: constants.startingAttackDamage, attackRange: constants.startingAttackRange, reach: constants.startingReach});
+        s.players[_player] = GameTypes.PlayerData({
+            initialized: true,
+            initTimestamp: block.timestamp,
+            playerAddr: _player,
+            position: _pos,
+            health: constants.startPlayerHealth,
+            energy: constants.startPlayerEnergy,
+            attackDamage: constants.startingAttackDamage,
+            attackRange: constants.startingAttackRange,
+            reach: constants.startingReach
+        });
         s.allPlayers.push(_player);
     }
 
-    function _incrementNonce() public hasPermission {
+    function _increaseNonce() public hasPermission {
         s.itemNonce += 1;
     }
 
@@ -94,48 +146,71 @@ contract GameStorage {
         return _xDist <= _dist && _yDist <= _dist;
     }
 
-    function _getPositionFromIndex(uint256 k) public view returns (GameTypes.Position memory) {
+    function _getPositionFromIndex(uint256 k)
+        public
+        view
+        returns (GameTypes.Position memory)
+    {
         GameTypes.WorldConstants memory constants = _getWorldConstants();
 
         (bool _xValid, uint256 _x) = SafeMath.tryDiv(k, constants.worldHeight);
         (bool _yValid, uint256 _y) = SafeMath.tryMod(k, constants.worldWidth);
 
-        if (!_xValid || !_yValid) revert('SafeMath/invalid-division');
+        if (!_xValid || !_yValid) revert("SafeMath/invalid-division");
 
         return GameTypes.Position(_x, _y);
     }
 
-    function _getIndexFromPosition(GameTypes.Position memory _pos) public view returns (uint256) {
+    function _getIndexFromPosition(GameTypes.Position memory _pos)
+        public
+        view
+        returns (uint256)
+    {
         GameTypes.WorldConstants memory constants = _getWorldConstants();
 
-        (bool _aValid, uint256 _a) = SafeMath.tryMul(_pos.x, constants.worldHeight);
+        (bool _aValid, uint256 _a) = SafeMath.tryMul(
+            _pos.x,
+            constants.worldHeight
+        );
         (bool _bValid, uint256 _b) = SafeMath.tryAdd(_a, _pos.y);
 
-        if (!_aValid || !_bValid) revert('SafeMath/invalid-math');
+        if (!_aValid || !_bValid) revert("SafeMath/invalid-math");
 
         return _b;
     }
 
-    // ------------------------------------------------------------
-    // Items
-    // ------------------------------------------------------------
-
     // check if location has blocks or player on it
-    function _isOccupied(GameTypes.Position memory _pos) public view returns (bool) {
-        if (s.map[_pos.x][_pos.y].occupier != address(0)) return true; // if tile has player on it
+    function _isOccupied(GameTypes.Position memory _pos)
+        public
+        view
+        returns (bool)
+    {
+        if (s.map[_pos.x][_pos.y].occupier != address(0)) return true; // if block has player on it
 
-        uint256 _blockId = s.map[_pos.x][_pos.y].blockId;
-        if (_blockId != 0 && !_getItem(_blockId).occupiable) return true; // if tile has non-occupiable block
+        // fetch the block data from the tile -> worldBlock. If it's zero it means its an empty block
+        GameTypes.BlockData memory _blockData = _getWorldBlockDataOnPos(_pos);
+        if (_blockData.blockId != 0) return true;
 
         return false;
     }
 
-    function _setTopLevelStrength(GameTypes.Position memory _pos, uint256 _amount) public hasPermission {
-        s.map[_pos.x][_pos.y].topLevelStrength = _amount;
+    // function _bulkGetWorldBlockData
+
+    function _getWorldBlockDataOnPos(GameTypes.Position memory _pos)
+        public
+        view
+        returns (GameTypes.BlockData memory)
+    {
+        GameTypes.Tile memory _tile = _getTileData(_pos);
+        return _getWorldBlockData(_tile.worldBlockId);
     }
 
-    function _getCraftItemAmount(address _player, uint256 _craftItemId) public view returns (uint256) {
-        return s.inventory[_player][_craftItemId];
+    function _getWorldBlockData(uint256 _worldBlockIdx)
+        public
+        view
+        returns (GameTypes.BlockData memory)
+    {
+        return s.worldBlocks[_worldBlockIdx];
     }
 
     // ------------------------------------------------------------
@@ -143,12 +218,20 @@ contract GameStorage {
     // ------------------------------------------------------------
 
     // checks distance between positions and whether player is in map
-    function _isValidMove(address _player, GameTypes.Position memory _pos) public view hasPermission returns (bool) {
+    function _isValidMove(address _player, GameTypes.Position memory _pos)
+        public
+        view
+        hasPermission
+        returns (bool)
+    {
         GameTypes.Position memory _position = _getPlayer(_player).position;
         GameTypes.WorldConstants memory constants = _getWorldConstants();
 
         // if player is within bounds of map
-        bool _inMap = _pos.x < constants.worldWidth && _pos.y < constants.worldWidth && _pos.x >= 0 && _pos.y >= 0;
+        bool _inMap = _pos.x < constants.worldWidth &&
+            _pos.y < constants.worldWidth &&
+            _pos.x >= 0 &&
+            _pos.y >= 0;
 
         if (!_inMap) return false;
 
@@ -161,11 +244,17 @@ contract GameStorage {
         return true;
     }
 
-    function _setPlayerPosition(address _player, GameTypes.Position memory _pos) public hasPermission {
+    function _setPlayerPosition(address _player, GameTypes.Position memory _pos)
+        public
+        hasPermission
+    {
         s.players[_player].position = _pos;
     }
 
-    function _setOccupierAtPosition(address _player, GameTypes.Position memory _pos) public hasPermission {
+    function _setOccupierAtPosition(
+        address _player,
+        GameTypes.Position memory _pos
+    ) public hasPermission {
         s.map[_pos.x][_pos.y].occupier = _player;
     }
 
@@ -194,7 +283,11 @@ contract GameStorage {
         }
     }
 
-    function _getItemAmountById(address _player, uint256 _blockId) public view returns (uint256) {
+    function _getItemAmountById(address _player, uint256 _blockId)
+        public
+        view
+        returns (uint256)
+    {
         return s.inventory[_player][_blockId];
     }
 
@@ -229,25 +322,21 @@ contract GameStorage {
         uint256 _amount,
         bool dir
     ) public hasPermission {
-        dir ? s.players[_player].health += _amount : s.players[_player].health -= _amount;
+        dir
+            ? s.players[_player].health += _amount
+            : s.players[_player].health -= _amount;
     }
 
     // ------------------------------------------------------------
     // Function helpers
     // ------------------------------------------------------------
 
-    // mine block completely
-    function _mine(GameTypes.Position memory _pos) public hasPermission {
-        _setBlock(_pos, 0); // set block to no block which is 0
-        // uint256 _block = _getBlockAtLocation(_pos);
-        s.map[_pos.x][_pos.y].topLevelStrength = 0; // if its not a null block. remove it
-    }
-
     // place block
-    function _place(GameTypes.Position memory _pos, uint256 _itemId) public hasPermission {
-        s.map[_pos.x][_pos.y].blockId = _itemId;
-
-        s.map[_pos.x][_pos.y].topLevelStrength = s.itemsWithMetadata[_itemId].strength;
+    function _placeWorldBlockIdOnTile(
+        GameTypes.Position memory _pos,
+        uint256 _itemId
+    ) public hasPermission {
+        s.map[_pos.x][_pos.y].worldBlockId = _itemId;
     }
 
     // transfer item from one player to another
@@ -257,16 +346,74 @@ contract GameStorage {
         uint256 _amount
     ) public hasPermission {
         GameTypes.Position memory _giverLoc = _getPlayer(msg.sender).position;
-        GameTypes.Position memory _recipientLoc = _getPlayer(_recipient).position;
-        if (msg.sender == _recipient) revert('storage/recipient-same-as-sender');
+        GameTypes.Position memory _recipientLoc = _getPlayer(_recipient)
+            .position;
+        if (msg.sender == _recipient)
+            revert("storage/recipient-same-as-sender");
 
-        if (!_withinDistance(_giverLoc, _recipientLoc, 5)) revert('storage/not-in-range'); // can only transfer within certain range
-        if (_getItemAmountById(msg.sender, _itemId) < _amount) revert('storage/insufficient-block');
+        if (!_withinDistance(_giverLoc, _recipientLoc, 5))
+            revert("storage/not-in-range"); // can only transfer within certain range
+        if (_getItemAmountById(msg.sender, _itemId) < _amount)
+            revert("storage/insufficient-block");
 
         _decreaseItemInInventory(msg.sender, _itemId, _amount);
         _increaseItemInInventory(_recipient, _itemId, _amount);
 
         emit Transfer(msg.sender, _recipient, _itemId, _amount);
+    }
+
+    function _increaseWorldBlockNonce() public hasPermission {
+        s.worldBlockNonce++;
+    }
+
+    function getWorldBlockNonce() public view returns (uint256) {
+        return s.worldBlockNonce;
+    }
+
+    // returns the new worldBlockId
+    function setWorldBlock(GameTypes.BlockData memory _worldBlock)
+        public
+        returns (uint256)
+    {
+        uint256 _currentNonce = getWorldBlockNonce();
+        s.worldBlocks[_currentNonce] = _worldBlock;
+        _increaseWorldBlockNonce();
+        return _currentNonce;
+    }
+
+    // create a new world block that's "placed" in the world
+    function createNewWorldBlock(address _owner, uint256 _blockId)
+        public
+        returns (uint256 worldBlockId, GameTypes.BlockData memory)
+    {
+        GameTypes.ItemWithMetadata memory _item = _getItem(_blockId);
+
+        // initialize new world block
+        GameTypes.BlockData memory _newWorldBlock = GameTypes.BlockData({
+            blockId: _blockId,
+            health: _item.health,
+            owner: _owner,
+            lastAttacked: 0
+        });
+
+        uint256 _newWorldBlockId = setWorldBlock(_newWorldBlock);
+
+        return (_newWorldBlockId, _newWorldBlock);
+    }
+
+    function setWorldBlockHealth(uint256 _worldBlockId, uint256 _health)
+        public
+        hasPermission
+    {
+        s.worldBlocks[_worldBlockId].health = _health;
+    }
+
+    function removeWorldBlockId(uint256 _worldBlockId) public hasPermission {
+        delete s.worldBlocks[_worldBlockId];
+    }
+
+    function setLastAttacked(uint256 _worldBlockId) public hasPermission {
+        s.worldBlocks[_worldBlockId].lastAttacked = block.timestamp;
     }
 
     // ------------------------------------------------------------
@@ -277,11 +424,18 @@ contract GameStorage {
         s.epochController = _addr;
     }
 
-    function _getTower(string memory _towerId) public view returns (GameTypes.Tower memory) {
+    function _getTower(string memory _towerId)
+        public
+        view
+        returns (GameTypes.Tower memory)
+    {
         return s.towers[_towerId];
     }
 
-    function _setTower(string memory _towerId, GameTypes.Tower memory _tower) public hasPermission {
+    function _setTower(string memory _towerId, GameTypes.Tower memory _tower)
+        public
+        hasPermission
+    {
         s.towers[_towerId] = _tower;
     }
 
@@ -290,7 +444,11 @@ contract GameStorage {
     // ------------------------------------------------------------
 
     // fetch player inventory
-    function _getInventoryByPlayer(address _player) public view returns (GameTypes.Recipe memory) {
+    function _getInventoryByPlayer(address _player)
+        public
+        view
+        returns (GameTypes.Recipe memory)
+    {
         uint256 itemCount = s.inventoryNonce[_player].length;
         uint256[] memory ret = new uint256[](itemCount);
         for (uint256 i = 0; i < itemCount; i++) {
@@ -298,11 +456,26 @@ contract GameStorage {
             ret[i] = s.inventory[_player][_itemId];
         }
 
-        return GameTypes.Recipe({craftItemIds: s.inventoryNonce[_player], craftItemAmounts: ret});
+        return
+            GameTypes.Recipe({
+                craftItemIds: s.inventoryNonce[_player],
+                craftItemAmounts: ret
+            });
     }
 
-    function _getTileData(GameTypes.Position memory _pos) public view returns (GameTypes.Tile memory) {
+    function _getTileData(GameTypes.Position memory _pos)
+        public
+        view
+        returns (GameTypes.Tile memory)
+    {
         return s.map[_pos.x][_pos.y];
+    }
+
+    function _setTileData(
+        GameTypes.Position memory _pos,
+        GameTypes.Tile memory _tile
+    ) public hasPermission {
+        s.map[_pos.x][_pos.y] = _tile;
     }
 
     // get all player addresses
@@ -315,16 +488,36 @@ contract GameStorage {
         return s.itemNonce;
     }
 
-    function _getItem(uint256 _itemId) public view returns (GameTypes.ItemWithMetadata memory) {
-        return s.itemsWithMetadata[_itemId];
+    function _getItem(uint256 _blockId)
+        public
+        view
+        returns (GameTypes.ItemWithMetadata memory)
+    {
+        return s.itemsWithMetadata[_blockId];
     }
 
-    function _getPlayer(address _player) public view returns (GameTypes.PlayerData memory playerData) {
+    function _getPlayer(address _player)
+        public
+        view
+        returns (GameTypes.PlayerData memory playerData)
+    {
         return s.players[_player];
     }
 
-    function _getBlockAtPos(GameTypes.Position memory _pos) public view returns (uint256) {
-        return s.map[_pos.x][_pos.y].blockId;
+    function _getBlockAtPos(GameTypes.Position memory _pos)
+        public
+        view
+        returns (uint256)
+    {
+        return s.map[_pos.x][_pos.y].worldBlockId;
+    }
+
+    function _getBlockDataAtPos(GameTypes.Position memory _pos)
+        public
+        view
+        returns (GameTypes.BlockData memory)
+    {
+        return _getWorldBlockData(_getBlockAtPos(_pos));
     }
 
     function _getCurrentEpoch() public view returns (uint256) {

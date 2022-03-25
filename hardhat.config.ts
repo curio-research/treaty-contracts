@@ -13,12 +13,11 @@ import * as fs from 'fs';
 require('dotenv').config();
 
 // tasks
+import './tasks/mapgen';
 import './tasks/port';
 import './tasks/deploy';
-import './tasks/map';
 import './tasks/simulate';
 import './tasks/poll';
-import { deployProxy } from './tasks/util/deployHelper';
 
 // to get the smart contract file sizes, run:
 // yarn run hardhat size-contracts
@@ -28,6 +27,7 @@ const { USER1_PK, USER2_PK, KOVAN_RPC_URL } = process.env;
 
 export default {
   defaultNetwork: 'localhost',
+
   solidity: {
     version: '0.8.4',
     settings: {
@@ -62,20 +62,4 @@ task('accounts', 'Prints the list of accounts', async (taskArgs, hre) => {
   for (const account of accounts) {
     console.log(account.address);
   }
-});
-
-task('mapgen', 'Ports the map to render on frontend', async (args: any, hre: HardhatRuntimeEnvironment) => {
-  // ---------------------------------
-  // porting files to frontend
-  // ---------------------------------
-  let blocks = generateAllGameArgs(gameItems, ITEM_RATIO).blockMap;
-  await fsPromise.writeFile(path.join(path.join(__dirname), 'map.json'), JSON.stringify(blocks));
-
-  console.log('✦ Porting map file over ...');
-  const mapFileDir = path.join(__dirname, '/map.json');
-  const mapClientDir = path.join(__dirname, '../frontend/src/map.json');
-
-  await fs.copyFileSync(mapFileDir, mapClientDir);
-
-  console.log('✦ Porting complete!');
 });

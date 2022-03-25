@@ -35,31 +35,36 @@ library GameTypes {
 
     struct Tile {
         address occupier;
-        uint256 topLevelStrength; // Remaining strength of the top level block. May need to convert to a full array in future to prevent malicious restoring of block strength by placing on top.
-        uint256 blockId;
+        uint256 worldBlockId; // zero means its empty
     }
 
-    struct TileWithMetadata {
-        address occupier;
+    // spawned block data
+    struct BlockData {
         uint256 blockId;
-        uint256 x;
-        uint256 y;
+        uint256 health;
+        address owner;
+        uint256 lastAttacked; // "block data" stores the raw data unique to each game instane. Does this make sense?
+        // Position position; // do we need this?
     }
 
+    // should creature be an item?
     struct ItemWithMetadata {
         bool mineable;
         bool craftable;
         bool occupiable;
-        uint256 strength;
-        uint256 healthDamage;
+        uint256 health;
         uint256[] mineItemIds; // tools for mining
         uint256[] craftItemIds;
         uint256[] craftItemAmounts;
-
         /* Programmable blocks */
         bool programmable;
         string abiEncoding;
-        string contractAddr;
+        uint256 attackDamage; // additional creature property
+        uint256 attackRange;
+        uint256 attackCooldown;
+        // uint256 defense;
+        // uint256 health;
+        // uint256 movesPerEpoch;
     }
 
     struct Recipe {
@@ -80,18 +85,19 @@ library GameTypes {
         // map info
         WorldConstants worldConstants;
         GameTypes.Tile[1000][1000] map;
-        // game info
-        address admin;
+        address admin; // game info
         bool paused;
         mapping(uint256 => GameTypes.ItemWithMetadata) itemsWithMetadata;
         uint256 itemNonce;
-        // players
-        address[] allPlayers;
+        address[] allPlayers; // running list of all initialized players
         mapping(address => GameTypes.PlayerData) players; // player data
         mapping(address => mapping(uint256 => uint256)) inventory; // player => itemId => inventory
         mapping(address => uint256[]) inventoryNonce; // array of all items in player inventory
         // tower
         Epoch epochController;
         mapping(string => Tower) towers; // towerId => Tower
+        // every time we spawn a new block it's a new instance
+        uint256 worldBlockNonce; // 0 denotes empty block on tile. >1 denotes real block
+        mapping(uint256 => BlockData) worldBlocks;
     }
 }
