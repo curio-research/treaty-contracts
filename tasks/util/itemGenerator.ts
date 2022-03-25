@@ -24,7 +24,7 @@ const getRandomPosition = (): PositionStruct => {
  * @param map Block map with only towers and no other items
  * @returns Block map with all items
  */
-export const generateItems = (map: number[][][], itemRatio: number[]): number[][][] => {
+export const generateItems = (map: number[][], itemRatio: number[], spaceIdx: number = 0): number[][] => {
   const itemCounts = itemRatio.map((r) => r * Math.round(worldSize / 100));
 
   for (let i = 0; i < itemCounts.length; i++) {
@@ -36,20 +36,16 @@ export const generateItems = (map: number[][][], itemRatio: number[]): number[][
         pos = getRandomPosition();
         x = Number(pos.x);
         y = Number(pos.y);
-      } while (map[x][y].length > 0);
+      } while (map[x][y] !== spaceIdx);
 
-      map[x][y].push(i);
+      map[x][y] = i;
     }
   }
 
   return map;
 };
 
-export const appendIpfsHashToMetadata = (
-  blockMetadata: ItemWithMetadata,
-  ipfsHash: string,
-  contractAddr: string
-): ItemWithMetadata => {
+export const appendIpfsHashToMetadata = (blockMetadata: ItemWithMetadata, ipfsHash: string, contractAddr: string): ItemWithMetadata => {
   const temp = blockMetadata;
   temp.abiEncoding = ipfsHash;
   temp.contractAddr = contractAddr;

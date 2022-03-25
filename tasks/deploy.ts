@@ -9,18 +9,7 @@ import { task } from 'hardhat/config';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { deployProxy, printDivider } from './util/deployHelper';
-import {
-  LOCALHOST_RPC_URL,
-  LOCALHOST_WS_RPC_URL,
-  MAP_INTERVAL,
-  masterItems,
-  WORLD_HEIGHT,
-  WORLD_WIDTH,
-  blockMetadata,
-  generateBlockIdToNameMap,
-  ITEM_RATIO,
-  DOOR_RATIO,
-} from './util/constants';
+import { LOCALHOST_RPC_URL, LOCALHOST_WS_RPC_URL, MAP_INTERVAL, masterItems, WORLD_HEIGHT, WORLD_WIDTH, blockMetadata, generateBlockIdToNameMap, ITEM_RATIO, DOOR_RATIO } from './util/constants';
 import { generateAllGameArgs } from './util/allArgsGenerator';
 import { Getters, Game, GameStorage, Helper, Door } from '../typechain-types';
 import { TowerGame } from './../typechain-types/TowerGame';
@@ -61,43 +50,25 @@ task('deploy', 'deploy contracts')
 
     // deploying programmable block contract, may be abstracted
     const doorIndex = gameItems.length; // since it will be the last item
-    const DoorContract = await deployProxy<Door>('Door', player1, hre, [
-      [player1.address],
-      Permissions.address,
-      GameStorage.address,
-      doorIndex,
-    ]);
+    const DoorContract = await deployProxy<Door>('Door', player1, hre, [[player1.address], Permissions.address, GameStorage.address, doorIndex]);
     console.log('✦ Door programmable block deployed');
 
     const payload = await deployToIPFS(hre, 'Door');
-    const newGameItems = gameItems.concat(
-      appendIpfsHashToMetadata(blockMetadata, payload.IpfsHash, DoorContract.address)
-    );
+    const newGameItems = gameItems.concat(appendIpfsHashToMetadata(blockMetadata, payload.IpfsHash, DoorContract.address));
     const newItemRatio = ITEM_RATIO.concat(DOOR_RATIO);
     const allGameArgs = generateAllGameArgs(newGameItems, newItemRatio);
 
     let blocks = allGameArgs.blockMap;
-    const flattenedMap = flatten3dMapArray(blocks);
 
-    const GameContract = await deployProxy<Game>('Game', player1, hre, [
-      ...allGameArgs.gameDeployArgs,
-      GameStorage.address,
-      Permissions.address,
-    ]);
+    // visualize map
+    await fsPromise.writeFile(path.join(path.join(__dirname), 'map.json'), JSON.stringify(blocks));
+
+    const GameContract = await deployProxy<Game>('Game', player1, hre, [...allGameArgs.gameDeployArgs, GameStorage.address, Permissions.address]);
     console.log('✦ GameContract deployed');
-    const TowerContract = await deployProxy<TowerGame>(
-      'TowerGame',
-      player1,
-      hre,
-      [GameStorage.address, Permissions.address],
-      { Helper: GameHelper.address }
-    );
+    const TowerContract = await deployProxy<TowerGame>('TowerGame', player1, hre, [GameStorage.address, Permissions.address], { Helper: GameHelper.address });
 
     console.log('✦ TowerContract deployed');
-    const GettersContract = await deployProxy<Getters>('Getters', player1, hre, [
-      GameContract.address,
-      GameStorage.address,
-    ]);
+    const GettersContract = await deployProxy<Getters>('Getters', player1, hre, [GameContract.address, GameStorage.address]);
     console.log('✦ GettersContract deployed');
 
     const EpochContract = await deployProxy<Epoch>('Epoch', player1, hre, [10]);
@@ -129,7 +100,7 @@ task('deploy', 'deploy contracts')
     let regionMap: number[][];
     for (let x = 0; x < WORLD_WIDTH; x += MAP_INTERVAL) {
       for (let y = 0; y < WORLD_HEIGHT; y += MAP_INTERVAL) {
-        regionMap = flattenedMap.slice(x, x + MAP_INTERVAL).map((col) => col.slice(y, y + MAP_INTERVAL));
+        regionMap = blocks.slice(x, x + MAP_INTERVAL).map((col) => col.slice(y, y + MAP_INTERVAL));
 
         let tx = await GameStorage._setMapRegion({ x, y }, regionMap);
         tx.wait();
@@ -147,14 +118,14 @@ task('deploy', 'deploy contracts')
         x = Math.floor(Math.random() * WORLD_WIDTH);
         y = Math.floor(Math.random() * WORLD_HEIGHT);
         player1Pos = { x, y };
-      } while (flattenedMap[x][y] != 0);
+      } while (blocks[x][y] != 0);
 
       let player2Pos: position;
       do {
         x = Math.floor(Math.random() * WORLD_WIDTH);
         y = Math.floor(Math.random() * WORLD_HEIGHT);
         player2Pos = { x, y };
-      } while (flattenedMap[x][y] != 0);
+      } while (blocks[x][y] != 0);
 
       let tx;
       tx = await GameContract.connect(player1).initializePlayer(player1Pos); // initialize users
