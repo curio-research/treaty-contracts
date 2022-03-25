@@ -194,7 +194,7 @@ export var masterItems: ItemMaster[] = [
 
 // door metadata
 export const blockMetadata: ItemWithMetadata = {
-  mineable: true,
+  mineable: false,
   mineItemIds: [],
   health: 0,
   craftable: true,
