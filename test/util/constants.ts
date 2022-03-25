@@ -1,18 +1,18 @@
-import { ItemMaster } from "./../../util/types/getter";
-export const EMPTY_ADDRESS = "0x0000000000000000000000000000000000000000";
+import { ItemMaster } from './../../util/types/getter';
+export const EMPTY_ADDRESS = '0x0000000000000000000000000000000000000000';
 
 export enum REVERT_MESSAGES {
-  ENGINE_INVALID_MOVE = "engine/invalid-move",
-  ENGINE_NOT_STAND_ON_BLOCK = "engine/cannot-stand-on-block",
-  ENGINE_INSUFFICIENT_INVENT = "engine/insufficient-inventory",
-  ENGINE_INVALID_ATTACK = "engine/invalid-attack",
-  ENGINE_INSUFFICIENT_MATERIAL = "engine/insufficient-material",
-  ENGINE_NONEXISTENT_BLOCK = "engine/nonexistent-block",
-  ENGINE_INVALID_Z_INDEX = "engine/invalid-z-index",
-  EPOCH_PREMATURE = "epoch/premature",
-  TOWER_INVALID_OWNER = "tower/invalid-tower-owner",
-  TOWER_INSUFFICIENT_STAKE = "tower/insufficient-stake",
-  TOWER_UNSTAKE_OVERFLOW = "tower/withdraw-overflow",
+  ENGINE_INVALID_MOVE = 'engine/invalid-move',
+  ENGINE_NOT_STAND_ON_BLOCK = 'engine/cannot-stand-on-block',
+  ENGINE_INSUFFICIENT_INVENT = 'engine/insufficient-inventory',
+  ENGINE_INVALID_ATTACK = 'engine/invalid-attack',
+  ENGINE_INSUFFICIENT_MATERIAL = 'engine/insufficient-material',
+  ENGINE_NONEXISTENT_BLOCK = 'engine/nonexistent-block',
+  ENGINE_INVALID_Z_INDEX = 'engine/invalid-z-index',
+  EPOCH_PREMATURE = 'epoch/premature',
+  TOWER_INVALID_OWNER = 'tower/invalid-tower-owner',
+  TOWER_INSUFFICIENT_STAKE = 'tower/insufficient-stake',
+  TOWER_UNSTAKE_OVERFLOW = 'tower/withdraw-overflow',
 }
 
 type ItemWithMetadataInput = {
@@ -24,7 +24,6 @@ type ItemWithMetadataInput = {
   craftItemIds?: number[];
   craftItemAmounts?: number[];
   healthDamage?: number;
-  energyDamage?: number;
 };
 
 class ItemWithMetadata {
@@ -36,7 +35,6 @@ class ItemWithMetadata {
   readonly craftItemAmounts: number[];
   readonly occupiable: boolean;
   readonly healthDamage: number;
-  readonly energyDamage: number;
 
   constructor(attr: ItemWithMetadataInput) {
     this.mineable = attr.mineable;
@@ -47,7 +45,6 @@ class ItemWithMetadata {
     this.craftItemAmounts = attr.craftItemAmounts ?? [];
     this.occupiable = attr.occupiable;
     this.healthDamage = attr.healthDamage ?? 0;
-    this.energyDamage = attr.energyDamage ?? 0;
   }
 }
 
@@ -74,12 +71,12 @@ const GAME_CONSTANTS = {
 };
 
 // tile types for map
-const tileTypesSimple = [[], ["Iron"]];
+const tileTypesSimple = [[], ['Iron']];
 
 // item specs
 export const masterItems: ItemMaster[] = [
   {
-    name: "Cactus",
+    name: 'Cactus',
     item: {
       mineable: true,
       mineItemIds: [],
@@ -89,13 +86,13 @@ export const masterItems: ItemMaster[] = [
       craftItemAmounts: [],
       occupiable: false,
       healthDamage: 0,
-      energyDamage: 0,
       programmable: false,
-      abiEncoding: "",
+      abiEncoding: '',
+      contractAddr: '',
     },
   },
   {
-    name: "Iron",
+    name: 'Iron',
     item: {
       mineable: true,
       mineItemIds: [],
@@ -105,13 +102,13 @@ export const masterItems: ItemMaster[] = [
       craftItemAmounts: [],
       occupiable: false,
       healthDamage: 0,
-      energyDamage: 0,
       programmable: false,
-      abiEncoding: "",
+      abiEncoding: '',
+      contractAddr: '',
     },
   },
   {
-    name: "Sword",
+    name: 'Sword',
     item: {
       mineable: false,
       mineItemIds: [],
@@ -121,13 +118,13 @@ export const masterItems: ItemMaster[] = [
       craftItemAmounts: [5],
       occupiable: false,
       healthDamage: 0,
-      energyDamage: 0,
       programmable: false,
-      abiEncoding: "",
+      abiEncoding: '',
+      contractAddr: '',
     },
   },
   {
-    name: "Wall",
+    name: 'Wall',
     item: {
       mineable: false,
       mineItemIds: [],
@@ -137,13 +134,13 @@ export const masterItems: ItemMaster[] = [
       craftItemAmounts: [],
       occupiable: false,
       healthDamage: 0,
-      energyDamage: 0,
       programmable: false,
-      abiEncoding: "",
+      abiEncoding: '',
+      contractAddr: '',
     },
   },
   {
-    name: "Tower",
+    name: 'Tower',
     item: {
       mineable: false,
       mineItemIds: [],
@@ -153,13 +150,13 @@ export const masterItems: ItemMaster[] = [
       craftItemAmounts: [],
       occupiable: false,
       healthDamage: 0,
-      energyDamage: 0,
       programmable: false,
-      abiEncoding: "",
+      abiEncoding: '',
+      contractAddr: '',
     },
   },
   {
-    name: "Ruby",
+    name: 'Ruby',
     item: {
       mineable: true,
       mineItemIds: [],
@@ -169,16 +166,14 @@ export const masterItems: ItemMaster[] = [
       craftItemAmounts: [],
       occupiable: false,
       healthDamage: 0,
-      energyDamage: 0,
       programmable: false,
-      abiEncoding: "",
+      abiEncoding: '',
+      contractAddr: '',
     },
   },
 ];
 
-export const generateBlockNameToIdMap = (
-  items: ItemMaster[]
-): Record<string, number> => {
+export const generateBlockNameToIdMap = (items: ItemMaster[]): Record<string, number> => {
   const res: Record<string, number> = {};
   items.forEach((item, idx) => {
     res[item.name] = idx;

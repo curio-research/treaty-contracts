@@ -17,6 +17,46 @@ import { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
 import { Listener, Provider } from "@ethersproject/providers";
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
+export type ItemWithMetadataStruct = {
+  mineable: boolean;
+  craftable: boolean;
+  occupiable: boolean;
+  strength: BigNumberish;
+  healthDamage: BigNumberish;
+  mineItemIds: BigNumberish[];
+  craftItemIds: BigNumberish[];
+  craftItemAmounts: BigNumberish[];
+  programmable: boolean;
+  abiEncoding: string;
+  contractAddr: string;
+};
+
+export type ItemWithMetadataStructOutput = [
+  boolean,
+  boolean,
+  boolean,
+  BigNumber,
+  BigNumber,
+  BigNumber[],
+  BigNumber[],
+  BigNumber[],
+  boolean,
+  string,
+  string
+] & {
+  mineable: boolean;
+  craftable: boolean;
+  occupiable: boolean;
+  strength: BigNumber;
+  healthDamage: BigNumber;
+  mineItemIds: BigNumber[];
+  craftItemIds: BigNumber[];
+  craftItemAmounts: BigNumber[];
+  programmable: boolean;
+  abiEncoding: string;
+  contractAddr: string;
+};
+
 export type PositionStruct = { x: BigNumberish; y: BigNumberish };
 
 export type PositionStructOutput = [BigNumber, BigNumber] & {
@@ -32,46 +72,6 @@ export type RecipeStruct = {
 export type RecipeStructOutput = [BigNumber[], BigNumber[]] & {
   craftItemIds: BigNumber[];
   craftItemAmounts: BigNumber[];
-};
-
-export type ItemWithMetadataStruct = {
-  mineable: boolean;
-  craftable: boolean;
-  occupiable: boolean;
-  strength: BigNumberish;
-  healthDamage: BigNumberish;
-  energyDamage: BigNumberish;
-  mineItemIds: BigNumberish[];
-  craftItemIds: BigNumberish[];
-  craftItemAmounts: BigNumberish[];
-  programmable: boolean;
-  abiEncoding: string;
-};
-
-export type ItemWithMetadataStructOutput = [
-  boolean,
-  boolean,
-  boolean,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber[],
-  BigNumber[],
-  BigNumber[],
-  boolean,
-  string
-] & {
-  mineable: boolean;
-  craftable: boolean;
-  occupiable: boolean;
-  strength: BigNumber;
-  healthDamage: BigNumber;
-  energyDamage: BigNumber;
-  mineItemIds: BigNumber[];
-  craftItemIds: BigNumber[];
-  craftItemAmounts: BigNumber[];
-  programmable: boolean;
-  abiEncoding: string;
 };
 
 export type PlayerDataStruct = {
@@ -203,7 +203,7 @@ export interface GameStorageInterface extends utils.Interface {
     "_place((uint256,uint256),uint256)": FunctionFragment;
     "_setBlock((uint256,uint256),uint256)": FunctionFragment;
     "_setConstants((uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))": FunctionFragment;
-    "_setItem(uint256,(bool,bool,bool,uint256,uint256,uint256,uint256[],uint256[],uint256[],bool,string))": FunctionFragment;
+    "_setItem(uint256,(bool,bool,bool,uint256,uint256,uint256[],uint256[],uint256[],bool,string,string))": FunctionFragment;
     "_setMapRegion((uint256,uint256),uint256[][])": FunctionFragment;
     "_setOccupierAtPosition(address,(uint256,uint256))": FunctionFragment;
     "_setPlayer(address,(uint256,uint256))": FunctionFragment;
@@ -465,11 +465,21 @@ export interface GameStorageInterface extends utils.Interface {
   ): Result;
 
   events: {
+    "ChangeBlockProperty(uint256,tuple)": EventFragment;
     "Transfer(address,address,uint256,uint256)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "ChangeBlockProperty"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
 }
+
+export type ChangeBlockPropertyEvent = TypedEvent<
+  [BigNumber, ItemWithMetadataStructOutput],
+  { _blockId: BigNumber; item: ItemWithMetadataStructOutput }
+>;
+
+export type ChangeBlockPropertyEventFilter =
+  TypedEventFilter<ChangeBlockPropertyEvent>;
 
 export type TransferEvent = TypedEvent<
   [string, string, BigNumber, BigNumber],
@@ -1103,6 +1113,15 @@ export interface GameStorage extends BaseContract {
   };
 
   filters: {
+    "ChangeBlockProperty(uint256,tuple)"(
+      _blockId?: null,
+      item?: null
+    ): ChangeBlockPropertyEventFilter;
+    ChangeBlockProperty(
+      _blockId?: null,
+      item?: null
+    ): ChangeBlockPropertyEventFilter;
+
     "Transfer(address,address,uint256,uint256)"(
       _player?: null,
       _recipient?: null,

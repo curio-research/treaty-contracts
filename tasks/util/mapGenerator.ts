@@ -1,11 +1,12 @@
 import { EMPTY_ADDRESS } from './../../util/network/common';
 import { position } from './../../util/types/common';
-import { MasterGameSpecs, CoordsProps } from './types/mapGenerator';
+import { MasterGameSpecs } from './types/mapGenerator';
 import _ from 'lodash';
 import { TowerWithLocation } from '../../util/types/tower';
-import { WORLD_HEIGHT, WORLD_WIDTH } from './constants';
-import fs from 'fs';
+import { MAP_MODE } from './constants';
 import { generatePrimsMap } from './primsMap';
+import { ItemMaster } from '../../util/types/getter';
+import { getItemIndexByName } from './deployHelper';
 
 let visualizeNonce = 0;
 
@@ -166,14 +167,9 @@ const generateTowerSpecs = (towerLocations: position[]): TowerWithLocation[] => 
 // master map generation function
 // ---------------------------------
 
-export const generateMap = (
-  worldWidth: number,
-  worldHeight: number,
-  roomWidth: number,
-  usePrims?: boolean
-): MasterGameSpecs => {
+export const generateMap = (worldWidth: number, worldHeight: number, roomWidth: number, masterItems: ItemMaster[], mapMode?: MAP_MODE): MasterGameSpecs => {
   let map: number[][][];
-  if (usePrims) {
+  if (mapMode === MAP_MODE.PRIMS) {
     let primsMapOutput = generatePrimsMap(worldWidth, worldHeight);
     map = primsMapOutput.map;
     // primsMapOutput.mapSnapshot.forEach((m) => visualizeMap(m, true, "maps/"));
@@ -209,7 +205,8 @@ export const generateMap = (
       }
 
       // set tower
-      map[x][y] = [4];
+      const TOWER_INDEX = getItemIndexByName(masterItems, 'Tower');
+      map[x][y] = [TOWER_INDEX];
     } else {
       // remove one from towers and towerSpecs arrays
       towers.splice(k, 1);

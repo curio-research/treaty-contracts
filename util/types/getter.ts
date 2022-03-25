@@ -4,12 +4,12 @@ export interface ItemWithMetadata {
   occupiable: boolean;
   strength: number;
   healthDamage: number;
-  energyDamage: number;
   mineItemIds: number[];
   craftItemIds: number[];
   craftItemAmounts: number[];
   programmable: boolean;
   abiEncoding: string;
+  contractAddr: string;
 }
 
 export interface ItemMaster {

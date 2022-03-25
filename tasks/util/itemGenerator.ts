@@ -1,6 +1,6 @@
 import { PositionStruct } from '../../typechain-types/Game';
 import { ItemMaster, ItemWithMetadata } from '../../util/types/getter';
-import { ITEM_RATIO, masterItems, WORLD_HEIGHT, WORLD_WIDTH } from './constants';
+import { masterItems, WORLD_HEIGHT, WORLD_WIDTH } from './constants';
 
 // ------------------------------------------------
 // Generate all items with crafting recipes
@@ -24,8 +24,8 @@ const getRandomPosition = (): PositionStruct => {
  * @param map Block map with only towers and no other items
  * @returns Block map with all items
  */
-export const generateItems = (map: number[][][]): number[][][] => {
-  const itemCounts = ITEM_RATIO.map((r) => r * Math.round(worldSize / 100));
+export const generateItems = (map: number[][][], itemRatio: number[]): number[][][] => {
+  const itemCounts = itemRatio.map((r) => r * Math.round(worldSize / 100));
 
   for (let i = 0; i < itemCounts.length; i++) {
     for (let k = 0; k < itemCounts[i]; k++) {
@@ -45,9 +45,10 @@ export const generateItems = (map: number[][][]): number[][][] => {
   return map;
 };
 
-export const appendIpfsHashToMetadata = (blockMetadata: ItemWithMetadata, ipfsHash: string): ItemWithMetadata => {
+export const appendIpfsHashToMetadata = (blockMetadata: ItemWithMetadata, ipfsHash: string, contractAddr: string): ItemWithMetadata => {
   const temp = blockMetadata;
   temp.abiEncoding = ipfsHash;
+  temp.contractAddr = contractAddr;
   return temp;
 };
 

@@ -1,6 +1,6 @@
-import { ItemWithMetadata } from "./../types/getter";
-import { ItemWithMetadataStruct } from "./../../typechain-types/Getters";
-import { decodeBigNumberishArr } from "./common";
+import { ItemWithMetadata } from './../types/getter';
+import { ItemWithMetadataStruct } from './../../typechain-types/Getters';
+import { decodeBigNumberishArr } from './common';
 
 export const decodeItemWithMetadata = (res: ItemWithMetadataStruct): ItemWithMetadata => {
   return {
@@ -9,7 +9,6 @@ export const decodeItemWithMetadata = (res: ItemWithMetadataStruct): ItemWithMet
     occupiable: res.occupiable,
     strength: Number(res.strength),
     healthDamage: Number(res.healthDamage),
-    energyDamage: Number(res.energyDamage),
     mineItemIds: decodeBigNumberishArr(res.mineItemIds),
     craftItemIds: decodeBigNumberishArr(res.craftItemIds),
     craftItemAmounts: decodeBigNumberishArr(res.craftItemAmounts),
