@@ -1,8 +1,8 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
-import "../Permissions.sol";
-import "../GameTypes.sol";
-import "../GameStorage.sol";
+import '../Permissions.sol';
+import '../GameTypes.sol';
+import '../GameStorage.sol';
 
 contract Door {
     mapping(address => bool) private whitelist;
@@ -27,13 +27,31 @@ contract Door {
     }
 
     modifier onlyOwner() {
-        require(tx.origin == owner, "only owner can perform this operation.");
+        require(tx.origin == owner, 'only owner can perform this operation.');
         _;
     }
 
     modifier onlyWhitelist() {
-        require(whitelist[tx.origin], "only whitelisted player can perform this action");
+        require(whitelist[tx.origin], 'only whitelisted player can perform this action');
         _;
+    }
+
+    function hasDoorNearby() private view returns (bool) {
+        GameTypes.Position memory _playerPos = utils._getPlayer(tx.origin).position;
+
+        GameTypes.Position memory _leftPos = GameTypes.Position({x: _playerPos.x - 1, y: _playerPos.y});
+        if (utils._getBlockAtPos(_leftPos) == idx) return true;
+
+        GameTypes.Position memory _rightPos = GameTypes.Position({x: _playerPos.x + 1, y: _playerPos.y});
+        if (utils._getBlockAtPos(_rightPos) == idx) return true;
+
+        GameTypes.Position memory _abovePos = GameTypes.Position({x: _playerPos.x, y: _playerPos.y - 1});
+        if (utils._getBlockAtPos(_abovePos) == idx) return true;
+
+        GameTypes.Position memory _belowPos = GameTypes.Position({x: _playerPos.x, y: _playerPos.y + 1});
+        if (utils._getBlockAtPos(_belowPos) == idx) return true;
+
+        return false;
     }
 
     function setWhitelistPlayer(address player, bool whitelisted) public onlyOwner {
@@ -41,12 +59,14 @@ contract Door {
     }
 
     function open() public onlyWhitelist {
+        require(hasDoorNearby(), 'must have door nearby');
         GameTypes.ItemWithMetadata memory door = utils._getItem(idx);
         door.occupiable = true;
         utils._setItem(idx, door);
     }
 
     function close() public onlyWhitelist {
+        require(hasDoorNearby(), 'must have door nearby');
         GameTypes.ItemWithMetadata memory door = utils._getItem(idx);
         door.occupiable = false;
         utils._setItem(idx, door);
