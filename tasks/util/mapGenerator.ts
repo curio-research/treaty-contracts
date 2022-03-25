@@ -6,6 +6,7 @@ import { TowerWithLocation } from '../../util/types/tower';
 import { MAP_MODE } from './constants';
 import { generatePrimsMap } from './primsMap';
 import { ItemMaster } from '../../util/types/getter';
+import { getItemIndexByName } from './deployHelper';
 
 let visualizeNonce = 0;
 
@@ -204,7 +205,7 @@ export const generateMap = (worldWidth: number, worldHeight: number, roomWidth: 
       }
 
       // set tower
-      const TOWER_INDEX = masterItems.indexOf(masterItems.filter((im) => im.name === 'Tower')[0]);
+      const TOWER_INDEX = getItemIndexByName(masterItems, 'Tower');
       map[x][y] = [TOWER_INDEX];
     } else {
       // remove one from towers and towerSpecs arrays

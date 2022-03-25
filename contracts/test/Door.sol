@@ -9,12 +9,13 @@ contract Door {
     Permissions private p;
     GameStorage private utils;
     address private owner;
-    uint256 private idx = 9; // FIXME
+    uint256 private idx;
 
     constructor(
         address[] memory _whitelist,
         Permissions _permissions,
-        GameStorage _gameStorage
+        GameStorage _gameStorage,
+        uint256 _doorIdx
     ) {
         whitelist[msg.sender] = true;
         for (uint256 i = 0; i < _whitelist.length; i++) {
@@ -24,6 +25,7 @@ contract Door {
         p = _permissions;
         utils = _gameStorage;
         owner = msg.sender;
+        idx = _doorIdx;
     }
 
     modifier onlyOwner() {
@@ -36,7 +38,7 @@ contract Door {
         _;
     }
 
-    function hasDoorNearby() private view returns (bool) {
+    function _hasDoorNearby() private view returns (bool) {
         GameTypes.Position memory _playerPos = utils._getPlayer(msg.sender).position;
 
         GameTypes.Position memory _leftPos = GameTypes.Position({x: _playerPos.x - 1, y: _playerPos.y});
@@ -59,14 +61,14 @@ contract Door {
     }
 
     function open() public onlyWhitelist {
-        require(hasDoorNearby(), 'must have door nearby');
+        require(_hasDoorNearby(), 'must have door nearby');
         GameTypes.ItemWithMetadata memory door = utils._getItem(idx);
         door.occupiable = true;
         utils._setItem(idx, door);
     }
 
     function close() public onlyWhitelist {
-        require(hasDoorNearby(), 'must have door nearby');
+        require(_hasDoorNearby(), 'must have door nearby');
         GameTypes.ItemWithMetadata memory door = utils._getItem(idx);
         door.occupiable = false;
         utils._setItem(idx, door);

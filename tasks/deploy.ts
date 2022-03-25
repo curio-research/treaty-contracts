@@ -8,7 +8,7 @@ import { Epoch } from './../typechain-types/Epoch';
 import { task } from 'hardhat/config';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
-import { deployProxy, printDivider } from './util/deployHelper';
+import { deployProxy, getItemIndexByName, printDivider } from './util/deployHelper';
 import { LOCALHOST_RPC_URL, LOCALHOST_WS_RPC_URL, MAP_INTERVAL, masterItems, WORLD_HEIGHT, WORLD_WIDTH, programmableBlockMetadata, generateBlockIdToNameMap, ITEM_RATIO, DOOR_RATIO } from './util/constants';
 import { generateAllGameArgs } from './util/allArgsGenerator';
 import { Getters, Game, GameStorage, Helper, Door } from '../typechain-types';
@@ -49,7 +49,8 @@ task('deploy', 'deploy contracts')
     console.log('✦ GameStorage deployed');
 
     // deploying programmable block contract, may be abstracted
-    const DoorContract = await deployProxy<Door>('Door', player1, hre, [[player1.address], Permissions.address, GameStorage.address]);
+    const doorIndex = gameItems.length; // since it will be the last item
+    const DoorContract = await deployProxy<Door>('Door', player1, hre, [[player1.address], Permissions.address, GameStorage.address, doorIndex]);
     console.log('✦ ProgrammableBlocks deployed');
 
     const payload = await deployToIPFS(hre, 'Door');
