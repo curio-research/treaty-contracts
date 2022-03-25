@@ -341,11 +341,6 @@ contract GameStorage {
     // Function helpers
     // ------------------------------------------------------------
 
-    // mine (remove) block completely from location
-    // function _mine(GameTypes.Position memory _pos) public hasPermission {
-    //     _setBlock(_pos, 0); // set block to no block which is 0
-    // }
-
     // place block
     function _placeWorldBlockIdOnTile(
         GameTypes.Position memory _pos,

@@ -22,7 +22,7 @@ contract Game {
 
     event NewPlayer(address _player, GameTypes.Position _pos);
     event Move(address _player, GameTypes.Position _pos);
-    event MineItem(address _player, GameTypes.Position _pos, uint256 _blockId);
+    event MineItem(address _player, GameTypes.Position _pos, uint256 _itemId);
     event AttackItem(
         address _player,
         GameTypes.Position _origin,
@@ -43,7 +43,7 @@ contract Game {
     event ChangeBlockStrength(
         address _player,
         GameTypes.Position _pos,
-        uint256 _strength,
+        uint256 _health,
         uint256 _resourceUsed
     );
 
@@ -136,12 +136,11 @@ contract Game {
 
         // if health is zero, delete world block Id
         if (healthAfterAttack == 0) {
-            // delete world block Id
-            utils.removeWorldBlockId(_targetTile.worldBlockId);
+            utils.removeWorldBlockId(_targetTile.worldBlockId); // delete world block Id
             utils._setWorldBlockIdAtTile(_target, 0);
         }
 
-        // this should emit more info ?
+        // this should emit more info ? or nah
         emit AttackItem(
             msg.sender,
             _origin,
@@ -232,41 +231,54 @@ contract Game {
         );
     }
 
-    // function mineItem(GameTypes.Position memory _pos, address _playerAddr)
-    //     internal
-    // {
-    //     // can only mine with the needed tool
-    //     uint256 _itemId = utils._getBlockAtPos(_pos);
+    // mine item completely
+    function mineItem(GameTypes.Position memory _pos, address _playerAddr)
+        internal
+    {
+        GameTypes.Tile memory _targetTileData = utils._getTileData(_pos);
 
-    //     GameTypes.ItemWithMetadata memory _itemWithMetadata = utils._getItem(
-    //         _itemId
-    //     );
+        // can only mine with the needed tool
+        GameTypes.BlockData memory _targetBlockData = utils._getBlockDataAtPos(
+            _pos
+        );
 
-    //     uint256[] memory _mineItemIds = _itemWithMetadata.mineItemIds;
+        // itemWithMetadata on target position
+        GameTypes.ItemWithMetadata memory _itemWithMetadata = utils._getItem(
+            _targetBlockData.blockId
+        );
 
-    //     bool _canMine = false;
-    //     if (_mineItemIds.length == 0) {
-    //         _canMine = true;
-    //     } else {
-    //         for (uint256 i = 0; i < _mineItemIds.length; i++) {
-    //             uint256 _mineItemAmount = utils._getItemAmountById(
-    //                 _playerAddr,
-    //                 _mineItemIds[i]
-    //             );
-    //             if (_mineItemAmount > 0) {
-    //                 _canMine = true;
-    //                 break;
-    //             }
-    //         }
-    //     }
+        uint256[] memory _mineItemIds = _itemWithMetadata.mineItemIds;
 
-    //     if (!_canMine) revert("engine/tool-needed");
+        bool _canMine = false;
+        if (_mineItemIds.length == 0) {
+            _canMine = true;
+        } else {
+            for (uint256 i = 0; i < _mineItemIds.length; i++) {
+                uint256 _mineItemAmount = utils._getItemAmountById(
+                    _playerAddr,
+                    _mineItemIds[i]
+                );
+                if (_mineItemAmount > 0) {
+                    _canMine = true;
+                    break;
+                }
+            }
+        }
 
-    //     utils._increaseItemInInventory(_playerAddr, _itemId, 1);
-    //     utils._mine(_pos);
+        if (!_canMine) revert("engine/tool-needed");
 
-    //     emit MineItem(_playerAddr, _pos, _itemId);
-    // }
+        utils._increaseItemInInventory(
+            _playerAddr,
+            _targetBlockData.blockId,
+            1
+        );
+
+        // remove worldBlock
+        utils.removeWorldBlockId(_targetTileData.worldBlockId); // delete world block Id
+        utils._setWorldBlockIdAtTile(_pos, 0);
+
+        emit MineItem(_playerAddr, _pos, _targetBlockData.blockId);
+    }
 
     /**
      * place item at tile location
@@ -336,35 +348,65 @@ contract Game {
         emit Craft(msg.sender, _itemId);
     }
 
-    // /**
-    //  * mine item
-    //  * @param _pos position to mine item at
-    //  */
-    // function mine(GameTypes.Position memory _pos) external override {
-    //     uint256 _block = utils._getBlockAtPos(_pos);
-    //     require(_block != 0, "engine/nonexistent-block");
+    // reduces item health
+    // this is ONLY used when player is attacking a block
+    function attackItem(
+        GameTypes.Position memory _targetPos,
+        address _playerAddr
+    ) internal {
+        // attack item
+        uint256 _worldBlockId = utils._getBlockAtPos(_targetPos);
 
-    //     if (
-    //         !utils._withinDistance(
-    //             _pos,
-    //             utils._getPlayer(msg.sender).position,
-    //             1
-    //         )
-    //     ) revert("engine/invalid-distance");
+        GameTypes.BlockData memory _targetBlockData = utils._getBlockDataAtPos(
+            _targetPos
+        );
 
-    //     GameTypes.ItemWithMetadata memory _itemWithMetadata = utils._getItem(
-    //         _block
-    //     );
+        uint256 _healthAfterAttack = _targetBlockData.health -
+            utils._getPlayer(msg.sender).attackDamage;
 
-    //     if (!_itemWithMetadata.mineable) revert("engine/not-mineable");
+        // set new health for worldBlockId
+        utils.setWorldBlockHealth(_worldBlockId, _healthAfterAttack);
 
-    //     if (
-    //         utils._getPlayer(msg.sender).attackDamage <
-    //         utils._getTileData(_pos).topLevelStrength
-    //     ) {
-    //         attackItem(_pos, msg.sender);
-    //     } else {
-    //         mineItem(_pos, msg.sender);
-    //     }
-    // }
+        emit ChangeBlockStrength(
+            _playerAddr,
+            _targetPos,
+            _healthAfterAttack,
+            1000000
+        );
+    }
+
+    /**
+     * mine item
+     * @param _pos position to mine item at
+     */
+    function mine(GameTypes.Position memory _pos) external {
+        uint256 _worldBlockId = utils._getBlockAtPos(_pos);
+        require(_worldBlockId != 0, "engine/nonexistent-block");
+
+        if (
+            !utils._withinDistance(
+                _pos,
+                utils._getPlayer(msg.sender).position,
+                1
+            )
+        ) revert("engine/invalid-distance");
+
+        // get world block info
+        GameTypes.BlockData memory _blockData = utils._getWorldBlockData(
+            _worldBlockId
+        );
+
+        // get item with metadata from worldBlockId
+        GameTypes.ItemWithMetadata memory _itemWithMetadata = utils._getItem(
+            _blockData.blockId
+        );
+
+        if (!_itemWithMetadata.mineable) revert("engine/not-mineable");
+
+        if (utils._getPlayer(msg.sender).attackDamage < _blockData.health) {
+            attackItem(_pos, msg.sender);
+        } else {
+            mineItem(_pos, msg.sender);
+        }
+    }
 }

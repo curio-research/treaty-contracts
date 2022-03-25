@@ -33,10 +33,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Getters__factory>;
     getContractFactory(
-      name: "IGameEngine",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IGameEngine__factory>;
-    getContractFactory(
       name: "Permissions",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Permissions__factory>;
@@ -74,11 +70,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Getters>;
-    getContractAt(
-      name: "IGameEngine",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IGameEngine>;
     getContractAt(
       name: "Permissions",
       address: string,
