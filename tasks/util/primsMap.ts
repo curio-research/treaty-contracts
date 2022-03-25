@@ -1,4 +1,7 @@
 import { assert } from "console";
+import { position } from "../../util/types/common";
+import { WORLD_WIDTH } from "./constants";
+import { printDivider } from "./deployHelper";
 import { PrimsMapOutput } from "./types/mapGenerator";
 
 type Position = {
@@ -218,4 +221,147 @@ export const generatePrimsMap = (
   }
 
   return { map, mapSnapshot };
+}
+
+const getFIndexFromCoord = (coord: position): number => {
+  return coord.x * WORLD_WIDTH + coord.y;
+}
+
+const getCoordFromFIndex = (fIndex: number): position => {
+  return { x: Math.floor(fIndex / WORLD_WIDTH), y: fIndex % WORLD_WIDTH };
+}
+
+/**
+ * Add additional corridors to a Prim's map to increase connectivity.
+ * @param map : map generated from Prim's algorithm.
+ * @param maxCorridorLen : maximal length of a corridor to cut
+ * @param minPeninsularPerimToCut : minimal perimeter for a peninsular to cut
+ * @returns map with additional corridors
+ */
+export const addConnectivity = (
+  map: number[][][],
+  maxCorridorLen: number = 5,
+  minPeninsularPerimToCut: number = 100
+): number[][][] => {
+  /**
+   * TODO:
+   * 1. Add corridor-perimeter pairs rather than a single pair for more flexibility.
+   * 2. Fix adjacent multicut problem.
+   */
+
+  const width = map.length;
+  const height = map[0].length;
+
+  let yRange: number;
+  let coords: position[];
+  let lastCoord: position = { x: 0, y: 0 };
+
+  printDivider();
+  console.log("✦ adding connectivity to map");
+
+  /**
+   * Iterate through all empty tiles
+   */
+  for (let x = maxCorridorLen; x < width - maxCorridorLen; x++) {
+    for (let y = maxCorridorLen; y < height - maxCorridorLen; y++) {
+      if (map[x][y].length > 0) continue; // ignore walls
+      
+      /**
+       * Find coordinates close enough for potential corridors
+       */
+      coords = [];
+      for (let xDiff = -maxCorridorLen + 1; xDiff < maxCorridorLen; xDiff++) {
+        yRange = maxCorridorLen - Math.abs(xDiff);
+        for (let yDiff = -yRange + 1; yDiff < yRange; yDiff++) {
+          if (xDiff === 0 && yDiff === 0) continue; // skip current coordinate
+
+          // only track empty tiles
+          if (map[x+xDiff][y+yDiff].length === 0) {
+            coords.push({ x: x + xDiff, y: y + yDiff });
+          } 
+        }
+      }
+
+      /**
+       * Run shortest path algorithm until all coordinates are visited
+       */
+      let visited: Set<number> = new Set();
+      let border: Set<number> = new Set();
+      let temp: Set<number>;
+      let travelDist = 0;
+      let neighbor: number;
+      let c: position;
+      border.add(getFIndexFromCoord({ x, y }));
+
+      while (coords) {
+        if (travelDist > 1000) throw "timeout";
+
+        temp = new Set();
+
+        // from every point on the border, take a step in every four directions
+        border.forEach((fIndex) => {
+          c = getCoordFromFIndex(fIndex);
+
+          neighbor = getFIndexFromCoord({ x: c.x - 1, y: c.y });
+          if (map[c.x-1][c.y].length === 0 && !visited.has(neighbor)) {
+            temp.add(neighbor);
+          }
+          neighbor = getFIndexFromCoord({ x: c.x + 1, y: c.y });
+          if (map[c.x+1][c.y].length === 0 && !visited.has(neighbor)) {
+            temp.add(neighbor);
+          }
+          neighbor = getFIndexFromCoord({ x: c.x, y: c.y - 1 });
+          if (map[c.x][c.y-1].length === 0 && !visited.has(neighbor)) {
+            temp.add(neighbor);
+          }
+          neighbor = getFIndexFromCoord({ x: c.x, y: c.y + 1 });
+          if (map[c.x][c.y+1].length === 0 && !visited.has(neighbor)) {
+            temp.add(neighbor);
+          }
+        });
+
+        if (temp.size === 0) break; // finished exploring map
+
+        border = new Set(temp);
+        for (let i = 0; i < coords.length; i++) {
+          if (border.has(getFIndexFromCoord(coords[i]))) {
+            if (coords.length == 1) lastCoord = coords[i]; // found the last visited coordinate
+            coords.splice(i, 1);
+            i--;
+          }
+        }
+
+        border.forEach((c) => visited.add(c));
+        travelDist++;
+      }
+
+      /**
+       * Slice corridor
+       */
+      if (travelDist > minPeninsularPerimToCut) {
+        console.log("slicing a corridor from (" + x + ", " + y + ") to (" + lastCoord.x + ", " + lastCoord.y + ")...");
+
+        if (lastCoord.x === 0 && lastCoord.y === 0) throw "logic error";
+
+        const xS = Math.min(lastCoord.x, x);
+        const xL = Math.max(lastCoord.x, x);
+        const yS = Math.min(lastCoord.y, y);
+        const yL = Math.max(lastCoord.y, y);
+
+        // dig in x-direction
+        for (let xTrans = xS; xTrans <= xL; xTrans++) {
+          map[xTrans][yS] = [];
+        }
+
+        // dig in y-direction depending on how the two coordinates are laid out
+        const xDig = ((xS === x && yS === y) || (xS === lastCoord.x && yS === lastCoord.y)) ? xS : xL;
+        for (let yTrans = yS; yTrans <= yL; yTrans++) {
+          map[xDig][yTrans] = [];
+        }
+      }
+    }
+  }
+
+  printDivider();
+  return map;
 }

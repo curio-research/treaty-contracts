@@ -4,13 +4,9 @@ import { MasterGameSpecs } from './types/mapGenerator';
 import _ from 'lodash';
 import { TowerWithLocation } from '../../util/types/tower';
 import { MAP_MODE } from './constants';
-import { generatePrimsMap } from './primsMap';
+import { addConnectivity, generatePrimsMap } from './primsMap';
 import { ItemMaster } from '../../util/types/getter';
 import { getItemIndexByName } from './deployHelper';
-
-let visualizeNonce = 0;
-
-// map helpers are used to generate a world with rooms, entrances, and a tower in the middle
 
 // Generate single room with starting coordinate
 const GenerateSingleRoom = (x: number, y: number, width: number, height: number, roomWidth: number): position[] => {
@@ -167,11 +163,12 @@ const generateTowerSpecs = (towerLocations: position[]): TowerWithLocation[] => 
 // master map generation function
 // ---------------------------------
 
-export const generateMap = (worldWidth: number, worldHeight: number, roomWidth: number, masterItems: ItemMaster[], mapMode?: MAP_MODE): MasterGameSpecs => {
+export const generateMap = (worldWidth: number, worldHeight: number, roomWidth: number, masterItems: ItemMaster[], mapMode: MAP_MODE = MAP_MODE.DEFAULT): MasterGameSpecs => {
   let map: number[][][];
-  if (mapMode === MAP_MODE.PRIMS) {
+  if ([MAP_MODE.PRIMS, MAP_MODE.PRIMS_CONNECTED].includes(mapMode)) {
     let primsMapOutput = generatePrimsMap(worldWidth, worldHeight);
     map = primsMapOutput.map;
+    if (mapMode === MAP_MODE.PRIMS_CONNECTED) map = addConnectivity(map);
     // primsMapOutput.mapSnapshot.forEach((m) => visualizeMap(m, true, "maps/"));
   } else {
     map = generateEmptyMap(worldWidth, worldHeight); // generate empty map
