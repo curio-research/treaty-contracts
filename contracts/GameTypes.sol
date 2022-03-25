@@ -43,7 +43,8 @@ library GameTypes {
         uint256 blockId;
         uint256 health;
         address owner;
-        // Position position;
+        uint256 lastAttacked; // "block data" stores the raw data unique to each game instane. Does this make sense?
+        // Position position; // do we need this?
     }
 
     // should creature be an item?
@@ -60,8 +61,7 @@ library GameTypes {
         string abiEncoding;
         uint256 attackDamage; // creature properties here too
         uint256 attackRange;
-        // uint256 attackCooldown; // in seconds
-        // uint256 lastAttacked;
+        uint256 attackCooldown; // or can use lastAttacked?
         // uint256 defense;
         // uint256 health;
         // uint256 movesPerEpoch;

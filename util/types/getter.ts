@@ -11,6 +11,7 @@ export interface ItemWithMetadata {
   contractAddr: string;
   attackDamage: number;
   attackRange: number;
+  attackCooldown: number;
 }
 export interface ItemMaster {
   name: string;

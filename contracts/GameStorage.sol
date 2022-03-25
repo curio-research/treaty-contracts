@@ -51,7 +51,7 @@ contract GameStorage {
         s.worldConstants = constants;
     }
 
-    function _setBlock(
+    function _setWorldBlockIdAtTile(
         GameTypes.Position memory _position,
         uint256 _worldBlockId
     ) public hasPermission {
@@ -402,10 +402,13 @@ contract GameStorage {
         returns (uint256 worldBlockId, GameTypes.BlockData memory)
     {
         GameTypes.ItemWithMetadata memory _item = _getItem(_blockId);
+
+        // initialize new world block
         GameTypes.BlockData memory _newWorldBlock = GameTypes.BlockData({
             blockId: _blockId,
             health: _item.health,
-            owner: _owner
+            owner: _owner,
+            lastAttacked: 0
         });
 
         uint256 _newWorldBlockId = setWorldBlock(_newWorldBlock);
@@ -418,6 +421,14 @@ contract GameStorage {
         hasPermission
     {
         s.worldBlocks[_worldBlockId].health = _health;
+    }
+
+    function removeWorldBlockId(uint256 _worldBlockId) public hasPermission {
+        delete s.worldBlocks[_worldBlockId];
+    }
+
+    function setLastAttacked(uint256 _worldBlockId) public hasPermission {
+        s.worldBlocks[_worldBlockId].lastAttacked = block.timestamp;
     }
 
     // ------------------------------------------------------------
@@ -481,8 +492,6 @@ contract GameStorage {
     ) public hasPermission {
         s.map[_pos.x][_pos.y] = _tile;
     }
-
-    // function _setTileData(GameTypes.Position memory _pos, GameTypes.)
 
     // get all player addresses
     function _getAllPlayerAddresses() public view returns (address[] memory) {

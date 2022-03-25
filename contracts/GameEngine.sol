@@ -26,7 +26,10 @@ contract Game {
     event MineItem(address _player, GameTypes.Position _pos, uint256 _blockId);
     event AttackItem(
         address _player,
-        GameTypes.Position _pos,
+        GameTypes.Position _origin,
+        GameTypes.Position _target,
+        uint256 _attackerWorldBlockId,
+        uint256 _targetWorldBlockId,
         uint256 _strength
     );
     event Place(
@@ -91,32 +94,63 @@ contract Game {
             ._getWorldBlockData(_attackerTile.worldBlockId);
 
         // get item metadata
-        GameTypes.ItemWithMetadata memory _attackerBlockData = utils._getItem(
+        GameTypes.ItemWithMetadata memory _attackerBlockItem = utils._getItem(
             _attackerWorldBlockData.blockId
         );
 
+        require(
+            block.timestamp - _attackerWorldBlockData.lastAttacked >=
+                _attackerBlockItem.attackCooldown,
+            "engine/attack not ready"
+        );
+
+        // set attack cooldown time
+        utils.setLastAttacked(_attackerTile.worldBlockId);
+
+        // get target world block data
         GameTypes.Tile memory _targetTile = utils._getTileData(_target);
+
+        // worldIds cannot attack themselves
+        require(
+            _attackerTile.worldBlockId != _targetTile.worldBlockId,
+            "engine/attacker same as target"
+        );
+
+        GameTypes.BlockData memory _targetBlockData = utils
+            ._getWorldBlockDataOnPos(_target);
 
         // check range of attack
         require(
             utils._withinDistance(
                 _origin,
                 _target,
-                _attackerBlockData.attackRange
+                _attackerBlockItem.attackRange
             )
         );
 
-        // set health
-        uint256 healthAfterAttack = _attackerWorldBlockData.health -
-            _attackerBlockData.attackDamage;
+        // calculate health of the target after the attack
+        uint256 healthAfterAttack = _targetBlockData.health -
+            _attackerBlockItem.attackDamage;
 
         // decrease target block's health
         utils.setWorldBlockHealth(_targetTile.worldBlockId, healthAfterAttack);
 
-        // we should check whether we've destroyed an item or not
+        // if health is zero, delete world block Id
+        if (healthAfterAttack == 0) {
+            // delete world block Id
+            utils.removeWorldBlockId(_targetTile.worldBlockId);
+            utils._setWorldBlockIdAtTile(_target, 0);
+        }
 
-        // this should emit more things
-        emit AttackItem(msg.sender, _target, healthAfterAttack);
+        // this should emit more info ?
+        emit AttackItem(
+            msg.sender,
+            _origin,
+            _target,
+            _attackerTile.worldBlockId,
+            _targetTile.worldBlockId,
+            healthAfterAttack
+        );
     }
 
     /**
@@ -184,16 +218,11 @@ contract Game {
 
         require(startTile.occupier == address(0), "engine/not-owner");
 
-        // check if there's a block in the target position
-        GameTypes.BlockData memory targetBlockData = utils._getWorldBlockData(
-            targetTile.worldBlockId
-        );
+        require(targetTile.worldBlockId == 0, "engine/targe-tile-not-empty");
 
-        // require(targetBlockdata)
-
-        // set new data
-        utils._setBlock(_startPos, 0);
-        utils._setBlock(_targetPos, startTile.worldBlockId);
+        // set new worldId for each tile
+        utils._setWorldBlockIdAtTile(_startPos, 0);
+        utils._setWorldBlockIdAtTile(_targetPos, startTile.worldBlockId);
 
         // since stats don't change i don't think we need to emit block data
         emit MoveBlock(

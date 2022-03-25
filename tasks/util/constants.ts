@@ -74,6 +74,7 @@ export var masterItems: ItemMaster[] = [
       abiEncoding: '',
       attackDamage: 0,
       attackRange: 0,
+      attackCooldown: 0,
     },
   },
   {
@@ -90,6 +91,7 @@ export var masterItems: ItemMaster[] = [
       abiEncoding: '',
       attackDamage: 0,
       attackRange: 0,
+      attackCooldown: 0,
     },
   },
   {
@@ -106,6 +108,7 @@ export var masterItems: ItemMaster[] = [
       abiEncoding: '',
       attackDamage: 5,
       attackRange: 1,
+      attackCooldown: 10,
     },
   },
   {
@@ -122,6 +125,7 @@ export var masterItems: ItemMaster[] = [
       abiEncoding: '',
       attackDamage: 0,
       attackRange: 0,
+      attackCooldown: 0,
     },
   },
   {
@@ -138,6 +142,7 @@ export var masterItems: ItemMaster[] = [
       abiEncoding: '',
       attackDamage: 0,
       attackRange: 0,
+      attackCooldown: 0,
     },
   },
   {
@@ -154,6 +159,7 @@ export var masterItems: ItemMaster[] = [
       abiEncoding: '',
       attackDamage: 0,
       attackRange: 0,
+      attackCooldown: 0,
     },
   },
   {
@@ -170,10 +176,12 @@ export var masterItems: ItemMaster[] = [
       abiEncoding: '',
       attackDamage: 0,
       attackRange: 0,
+      attackCooldown: 0,
     },
   },
 ];
 
+// door metadata
 export const blockMetadata: ItemWithMetadata = {
   mineable: true,
   mineItemIds: [],
@@ -186,6 +194,7 @@ export const blockMetadata: ItemWithMetadata = {
   abiEncoding: '',
   attackDamage: 0,
   attackRange: 0,
+  attackCooldown: 0,
 };
 
 export const generateBlockIdToNameMap = (items: ItemMaster[]): Record<number, string> => {

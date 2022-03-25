@@ -28,12 +28,19 @@ export type BlockDataStruct = {
   blockId: BigNumberish;
   health: BigNumberish;
   owner: string;
+  lastAttacked: BigNumberish;
 };
 
-export type BlockDataStructOutput = [BigNumber, BigNumber, string] & {
+export type BlockDataStructOutput = [
+  BigNumber,
+  BigNumber,
+  string,
+  BigNumber
+] & {
   blockId: BigNumber;
   health: BigNumber;
   owner: string;
+  lastAttacked: BigNumber;
 };
 
 export type RecipeStruct = {
@@ -58,6 +65,7 @@ export type ItemWithMetadataStruct = {
   abiEncoding: string;
   attackDamage: BigNumberish;
   attackRange: BigNumberish;
+  attackCooldown: BigNumberish;
 };
 
 export type ItemWithMetadataStructOutput = [
@@ -70,6 +78,7 @@ export type ItemWithMetadataStructOutput = [
   BigNumber[],
   boolean,
   string,
+  BigNumber,
   BigNumber,
   BigNumber
 ] & {
@@ -84,6 +93,7 @@ export type ItemWithMetadataStructOutput = [
   abiEncoding: string;
   attackDamage: BigNumber;
   attackRange: BigNumber;
+  attackCooldown: BigNumber;
 };
 
 export type PlayerDataStruct = {
@@ -210,22 +220,24 @@ export interface GameStorageInterface extends utils.Interface {
     "_isValidMove(address,(uint256,uint256))": FunctionFragment;
     "_modifyItemInInventoryNonce(address,uint256,bool)": FunctionFragment;
     "_placeWorldBlockIdOnTile((uint256,uint256),uint256)": FunctionFragment;
-    "_setBlock((uint256,uint256),uint256)": FunctionFragment;
     "_setConstants((uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))": FunctionFragment;
-    "_setItem(uint256,(bool,bool,bool,uint256,uint256[],uint256[],uint256[],bool,string,uint256,uint256))": FunctionFragment;
+    "_setItem(uint256,(bool,bool,bool,uint256,uint256[],uint256[],uint256[],bool,string,uint256,uint256,uint256))": FunctionFragment;
     "_setMapRegion((uint256,uint256),uint256[][])": FunctionFragment;
     "_setOccupierAtPosition(address,(uint256,uint256))": FunctionFragment;
     "_setPlayer(address,(uint256,uint256))": FunctionFragment;
     "_setPlayerPosition(address,(uint256,uint256))": FunctionFragment;
     "_setTileData((uint256,uint256),(address,uint256))": FunctionFragment;
     "_setTower(string,(uint256,uint256,uint256,uint256,address))": FunctionFragment;
+    "_setWorldBlockIdAtTile((uint256,uint256),uint256)": FunctionFragment;
     "_transfer(address,uint256,uint256)": FunctionFragment;
     "_withinDistance((uint256,uint256),(uint256,uint256),uint256)": FunctionFragment;
     "createNewWorldBlock(address,uint256)": FunctionFragment;
     "getWorldBlockNonce()": FunctionFragment;
+    "removeWorldBlockId(uint256)": FunctionFragment;
     "s()": FunctionFragment;
     "setEpochController(address)": FunctionFragment;
-    "setWorldBlock((uint256,uint256,address))": FunctionFragment;
+    "setLastAttacked(uint256)": FunctionFragment;
+    "setWorldBlock((uint256,uint256,address,uint256))": FunctionFragment;
     "setWorldBlockHealth(uint256,uint256)": FunctionFragment;
   };
 
@@ -324,10 +336,6 @@ export interface GameStorageInterface extends utils.Interface {
     values: [PositionStruct, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "_setBlock",
-    values: [PositionStruct, BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "_setConstants",
     values: [WorldConstantsStruct]
   ): string;
@@ -360,6 +368,10 @@ export interface GameStorageInterface extends utils.Interface {
     values: [string, TowerStruct]
   ): string;
   encodeFunctionData(
+    functionFragment: "_setWorldBlockIdAtTile",
+    values: [PositionStruct, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "_transfer",
     values: [string, BigNumberish, BigNumberish]
   ): string;
@@ -375,10 +387,18 @@ export interface GameStorageInterface extends utils.Interface {
     functionFragment: "getWorldBlockNonce",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "removeWorldBlockId",
+    values: [BigNumberish]
+  ): string;
   encodeFunctionData(functionFragment: "s", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "setEpochController",
     values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setLastAttacked",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "setWorldBlock",
@@ -480,7 +500,6 @@ export interface GameStorageInterface extends utils.Interface {
     functionFragment: "_placeWorldBlockIdOnTile",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "_setBlock", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_setConstants",
     data: BytesLike
@@ -504,6 +523,10 @@ export interface GameStorageInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "_setTower", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "_setWorldBlockIdAtTile",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "_transfer", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_withinDistance",
@@ -517,9 +540,17 @@ export interface GameStorageInterface extends utils.Interface {
     functionFragment: "getWorldBlockNonce",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "removeWorldBlockId",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "s", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setEpochController",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setLastAttacked",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -698,12 +729,6 @@ export interface GameStorage extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    _setBlock(
-      _position: PositionStruct,
-      _worldBlockId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     _setConstants(
       constants: WorldConstantsStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -751,6 +776,12 @@ export interface GameStorage extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    _setWorldBlockIdAtTile(
+      _position: PositionStruct,
+      _worldBlockId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     _transfer(
       _recipient: string,
       _itemId: BigNumberish,
@@ -772,6 +803,11 @@ export interface GameStorage extends BaseContract {
     ): Promise<ContractTransaction>;
 
     getWorldBlockNonce(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    removeWorldBlockId(
+      _worldBlockId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     s(
       overrides?: CallOverrides
@@ -795,6 +831,11 @@ export interface GameStorage extends BaseContract {
 
     setEpochController(
       _addr: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setLastAttacked(
+      _worldBlockId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -934,12 +975,6 @@ export interface GameStorage extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  _setBlock(
-    _position: PositionStruct,
-    _worldBlockId: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   _setConstants(
     constants: WorldConstantsStruct,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -987,6 +1022,12 @@ export interface GameStorage extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  _setWorldBlockIdAtTile(
+    _position: PositionStruct,
+    _worldBlockId: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   _transfer(
     _recipient: string,
     _itemId: BigNumberish,
@@ -1008,6 +1049,11 @@ export interface GameStorage extends BaseContract {
   ): Promise<ContractTransaction>;
 
   getWorldBlockNonce(overrides?: CallOverrides): Promise<BigNumber>;
+
+  removeWorldBlockId(
+    _worldBlockId: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   s(
     overrides?: CallOverrides
@@ -1031,6 +1077,11 @@ export interface GameStorage extends BaseContract {
 
   setEpochController(
     _addr: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setLastAttacked(
+    _worldBlockId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1166,12 +1217,6 @@ export interface GameStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    _setBlock(
-      _position: PositionStruct,
-      _worldBlockId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     _setConstants(
       constants: WorldConstantsStruct,
       overrides?: CallOverrides
@@ -1219,6 +1264,12 @@ export interface GameStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    _setWorldBlockIdAtTile(
+      _position: PositionStruct,
+      _worldBlockId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     _transfer(
       _recipient: string,
       _itemId: BigNumberish,
@@ -1243,6 +1294,11 @@ export interface GameStorage extends BaseContract {
 
     getWorldBlockNonce(overrides?: CallOverrides): Promise<BigNumber>;
 
+    removeWorldBlockId(
+      _worldBlockId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     s(
       overrides?: CallOverrides
     ): Promise<
@@ -1264,6 +1320,11 @@ export interface GameStorage extends BaseContract {
     >;
 
     setEpochController(_addr: string, overrides?: CallOverrides): Promise<void>;
+
+    setLastAttacked(
+      _worldBlockId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     setWorldBlock(
       _worldBlock: BlockDataStruct,
@@ -1409,12 +1470,6 @@ export interface GameStorage extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    _setBlock(
-      _position: PositionStruct,
-      _worldBlockId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     _setConstants(
       constants: WorldConstantsStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1462,6 +1517,12 @@ export interface GameStorage extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    _setWorldBlockIdAtTile(
+      _position: PositionStruct,
+      _worldBlockId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     _transfer(
       _recipient: string,
       _itemId: BigNumberish,
@@ -1484,10 +1545,20 @@ export interface GameStorage extends BaseContract {
 
     getWorldBlockNonce(overrides?: CallOverrides): Promise<BigNumber>;
 
+    removeWorldBlockId(
+      _worldBlockId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     s(overrides?: CallOverrides): Promise<BigNumber>;
 
     setEpochController(
       _addr: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setLastAttacked(
+      _worldBlockId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1630,12 +1701,6 @@ export interface GameStorage extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    _setBlock(
-      _position: PositionStruct,
-      _worldBlockId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     _setConstants(
       constants: WorldConstantsStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1683,6 +1748,12 @@ export interface GameStorage extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    _setWorldBlockIdAtTile(
+      _position: PositionStruct,
+      _worldBlockId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     _transfer(
       _recipient: string,
       _itemId: BigNumberish,
@@ -1707,10 +1778,20 @@ export interface GameStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    removeWorldBlockId(
+      _worldBlockId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     s(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     setEpochController(
       _addr: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setLastAttacked(
+      _worldBlockId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
