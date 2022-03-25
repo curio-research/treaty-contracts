@@ -16,42 +16,36 @@ import { FunctionFragment, Result } from "@ethersproject/abi";
 import { Listener, Provider } from "@ethersproject/providers";
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
-export interface PermissionsInterface extends utils.Interface {
+export interface DoorInterface extends utils.Interface {
   functions: {
-    "_hasContractPermission(address)": FunctionFragment;
-    "getOwner()": FunctionFragment;
-    "setPermission(address,bool)": FunctionFragment;
+    "close()": FunctionFragment;
+    "open()": FunctionFragment;
+    "setWhitelistPlayer(address,bool)": FunctionFragment;
   };
 
+  encodeFunctionData(functionFragment: "close", values?: undefined): string;
+  encodeFunctionData(functionFragment: "open", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "_hasContractPermission",
-    values: [string]
-  ): string;
-  encodeFunctionData(functionFragment: "getOwner", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "setPermission",
+    functionFragment: "setWhitelistPlayer",
     values: [string, boolean]
   ): string;
 
+  decodeFunctionResult(functionFragment: "close", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "open", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "_hasContractPermission",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "getOwner", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "setPermission",
+    functionFragment: "setWhitelistPlayer",
     data: BytesLike
   ): Result;
 
   events: {};
 }
 
-export interface Permissions extends BaseContract {
+export interface Door extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: PermissionsInterface;
+  interface: DoorInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -73,44 +67,43 @@ export interface Permissions extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    _hasContractPermission(
-      _contract: string,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    close(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
-    getOwner(overrides?: CallOverrides): Promise<[string]>;
+    open(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
-    setPermission(
-      _contract: string,
-      _permission: boolean,
+    setWhitelistPlayer(
+      player: string,
+      whitelisted: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
 
-  _hasContractPermission(
-    _contract: string,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
+  close(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-  getOwner(overrides?: CallOverrides): Promise<string>;
+  open(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-  setPermission(
-    _contract: string,
-    _permission: boolean,
+  setWhitelistPlayer(
+    player: string,
+    whitelisted: boolean,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    _hasContractPermission(
-      _contract: string,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
+    close(overrides?: CallOverrides): Promise<void>;
 
-    getOwner(overrides?: CallOverrides): Promise<string>;
+    open(overrides?: CallOverrides): Promise<void>;
 
-    setPermission(
-      _contract: string,
-      _permission: boolean,
+    setWhitelistPlayer(
+      player: string,
+      whitelisted: boolean,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -118,31 +111,33 @@ export interface Permissions extends BaseContract {
   filters: {};
 
   estimateGas: {
-    _hasContractPermission(
-      _contract: string,
-      overrides?: CallOverrides
+    close(
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    getOwner(overrides?: CallOverrides): Promise<BigNumber>;
+    open(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
-    setPermission(
-      _contract: string,
-      _permission: boolean,
+    setWhitelistPlayer(
+      player: string,
+      whitelisted: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    _hasContractPermission(
-      _contract: string,
-      overrides?: CallOverrides
+    close(
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    getOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    open(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
-    setPermission(
-      _contract: string,
-      _permission: boolean,
+    setWhitelistPlayer(
+      player: string,
+      whitelisted: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

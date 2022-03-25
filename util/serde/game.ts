@@ -15,7 +15,7 @@ export const decodePlayerInventory = (inventory: RecipeStructOutput): Inventory 
 export const decodeTileWithMetadata = (data: TileWithMetadataStructOutput): TileWithMetadata => {
   return {
     occupier: data.occupier,
-    blocks: decodeBNArr(data.blocks),
+    blocks: decodeBNArr([data.blockId]),
     x: data.x.toNumber(),
     y: data.y.toNumber(),
   };

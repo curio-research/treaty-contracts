@@ -24,17 +24,17 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
 
 export type TileWithMetadataStruct = {
   occupier: string;
-  blocks: BigNumberish[];
+  blockId: BigNumberish;
   x: BigNumberish;
   y: BigNumberish;
 };
 
 export type TileWithMetadataStructOutput = [
   string,
-  BigNumber[],
+  BigNumber,
   BigNumber,
   BigNumber
-] & { occupier: string; blocks: BigNumber[]; x: BigNumber; y: BigNumber };
+] & { occupier: string; blockId: BigNumber; x: BigNumber; y: BigNumber };
 
 export type ItemWithMetadataStruct = {
   mineable: boolean;
@@ -42,10 +42,12 @@ export type ItemWithMetadataStruct = {
   occupiable: boolean;
   strength: BigNumberish;
   healthDamage: BigNumberish;
-  energyDamage: BigNumberish;
   mineItemIds: BigNumberish[];
   craftItemIds: BigNumberish[];
   craftItemAmounts: BigNumberish[];
+  programmable: boolean;
+  abiEncoding: string;
+  contractAddr: string;
 };
 
 export type ItemWithMetadataStructOutput = [
@@ -54,20 +56,24 @@ export type ItemWithMetadataStructOutput = [
   boolean,
   BigNumber,
   BigNumber,
-  BigNumber,
   BigNumber[],
   BigNumber[],
-  BigNumber[]
+  BigNumber[],
+  boolean,
+  string,
+  string
 ] & {
   mineable: boolean;
   craftable: boolean;
   occupiable: boolean;
   strength: BigNumber;
   healthDamage: BigNumber;
-  energyDamage: BigNumber;
   mineItemIds: BigNumber[];
   craftItemIds: BigNumber[];
   craftItemAmounts: BigNumber[];
+  programmable: boolean;
+  abiEncoding: string;
+  contractAddr: string;
 };
 
 export type PlayerDataStruct = {

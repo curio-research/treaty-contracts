@@ -29,7 +29,7 @@ contract Getters {
             );
 
         for (uint256 i = 1; i < utils._getItemNonce(); i++) {
-            allItems[i - 1] = utils._getItem(i - 1);
+            allItems[i] = utils._getItem(i);
         }
 
         return allItems;
@@ -73,7 +73,7 @@ contract Getters {
                 GameTypes.Tile memory _tileData = utils._getTileData(_tempPos);
                 ret[nonce] = GameTypes.TileWithMetadata({
                     occupier: _tileData.occupier,
-                    blocks: _tileData.blocks,
+                    blockId: _tileData.blockId,
                     x: x,
                     y: y
                 });

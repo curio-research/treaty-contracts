@@ -1,15 +1,12 @@
-import { EMPTY_ADDRESS } from "./../../util/network/common";
-import { position } from "./../../util/types/common";
-import { MasterGameSpecs, CoordsProps } from "./types/mapGenerator";
-import _ from "lodash";
-import { TowerWithLocation } from "../../util/types/tower";
-import { WORLD_HEIGHT, WORLD_WIDTH } from "./constants";
-import fs from "fs";
-import { generatePrimsMap, addConnectivity } from "./primsMap";
-
-let visualizeNonce = 0;
-
-// map helpers are used to generate a world with rooms, entrances, and a tower in the middle
+import { EMPTY_ADDRESS } from './../../util/network/common';
+import { position } from './../../util/types/common';
+import { MasterGameSpecs } from './types/mapGenerator';
+import _ from 'lodash';
+import { TowerWithLocation } from '../../util/types/tower';
+import { MAP_MODE } from './constants';
+import { addConnectivity, generatePrimsMap } from './primsMap';
+import { ItemMaster } from '../../util/types/getter';
+import { getItemIndexByName } from './deployHelper';
 
 // Generate single room with starting coordinate
 const GenerateSingleRoom = (x: number, y: number, width: number, height: number, roomWidth: number): position[] => {
@@ -166,23 +163,23 @@ const generateTowerSpecs = (towerLocations: position[]): TowerWithLocation[] => 
 // master map generation function
 // ---------------------------------
 
-export const generateMap = (worldWidth: number, worldHeight: number, roomWidth: number, usePrims: boolean = false, moreConn: boolean = true): MasterGameSpecs => {
+export const generateMap = (worldWidth: number, worldHeight: number, roomWidth: number, masterItems: ItemMaster[], mapMode: MAP_MODE = MAP_MODE.DEFAULT): MasterGameSpecs => {
   let map: number[][][];
-  if (usePrims) {
+  if ([MAP_MODE.PRIMS, MAP_MODE.PRIMS_CONNECTED].includes(mapMode)) {
     let primsMapOutput = generatePrimsMap(worldWidth, worldHeight);
     map = primsMapOutput.map;
-    if (moreConn) map = addConnectivity(map);
+    if (mapMode === MAP_MODE.PRIMS_CONNECTED) map = addConnectivity(map);
     // primsMapOutput.mapSnapshot.forEach((m) => visualizeMap(m, true, "maps/"));
   } else {
     map = generateEmptyMap(worldWidth, worldHeight); // generate empty map
-    
+
     const walls = generateWallCoords(worldWidth, worldHeight, roomWidth); // generate wall blocks
     // apply block coordinates to master map;
     walls.forEach((pos) => {
       map[pos.x][pos.y].push(7);
     });
   }
-  
+
   const towers = generateTowerCoords(worldWidth, worldHeight, roomWidth); // generate tower locations
   const towerSpecs = generateTowerSpecs(towers);
   let pos: position;
@@ -195,19 +192,18 @@ export const generateMap = (worldWidth: number, worldHeight: number, roomWidth: 
 
     // check no indestructible wall exists at tower coordinate
     if (map[x][y].length === 0 || map[x][y][0] !== 7) {
-      
       // clear tower surroundings
       for (let i = -1; i <= 1; i++) {
         for (let j = -1; j <= 1; j++) {
           if (x + i >= 0 && x + i < worldWidth && y + j >= 0 && y + j < worldHeight) {
-            if (map[x+i][y+j].length > 0) map[x+i][y+j] = [];
+            if (map[x + i][y + j].length > 0) map[x + i][y + j] = [];
           }
         }
       }
 
       // set tower
-      map[x][y] = [4];
-
+      const TOWER_INDEX = getItemIndexByName(masterItems, 'Tower');
+      map[x][y] = [TOWER_INDEX];
     } else {
       // remove one from towers and towerSpecs arrays
       towers.splice(k, 1);
@@ -248,34 +244,18 @@ const removeDupPosFromArr = (arr: position[]): position[] => {
   return res;
 };
 
-/**
- * Visualize map blocks of a map.
- * @param blocks A list of positions with their list of blocks
- * @param exportToFile Whether to export output to file or to log
- */
-export const visualizeMap = (blocks: number[][][], exportToFile?: boolean, dir?: string): void => {
-  let visualMap = "";
-  for (let i = 0; i < WORLD_WIDTH; i++) {
-    for (let j = 0; j < WORLD_HEIGHT; j++) {
-      let block;
-      if (blocks[i][j].length > 0) {
-        if (blocks[i][j].length > 1) throw "unintended stacked items";
-        block = blocks[i][j][0] + "";
-        if (block.length == 1) block = " " + block;
-        if (block.length > 2) throw "Unsupported index of item";
+export const flatten3dMapArray = (map: number[][][]): number[][] => {
+  let res: number[][] = [];
+  map.forEach((row) => {
+    let resRow: number[] = [];
+    row.forEach((blockArr) => {
+      if (blockArr.length === 0) {
+        resRow.push(0);
       } else {
-        block = "  ";
+        resRow.push(blockArr[0]);
       }
-
-      visualMap += "[" + block + "] ";
-    }
-    visualMap += "\n";
-  }
-
-  if (exportToFile) {
-    fs.writeFileSync((dir ?? "") + "map" + visualizeNonce + ".txt", visualMap);
-    visualizeNonce++;
-  } else {
-    console.log(visualMap);
-  }
+    });
+    res.push(resRow);
+  });
+  return res;
 };

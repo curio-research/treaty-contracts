@@ -20,76 +20,80 @@ describe("Game", () => {
     c = world.contracts;
   });
 
-  it("Player Initialization", async () => {
-    await c.Game.connect(world.user1).initializePlayer({ x: 3, y: 1 });
-    await c.Game.connect(world.user2).initializePlayer({ x: 4, y: 3 });
-    await c.Game.connect(world.user3).initializePlayer({ x: 1, y: 0 });
+  /**
+   * This is also outdated and needs to be fixed.
+   */
 
-    await c.GameStorage.connect(world.user1)._increaseItemInInventory(world.user1.address, 1, 10); // start with 10 iron for player 1
+  // it("Player Initialization", async () => {
+  //   await c.Game.connect(world.user1).initializePlayer({ x: 3, y: 1 });
+  //   await c.Game.connect(world.user2).initializePlayer({ x: 4, y: 3 });
+  //   await c.Game.connect(world.user3).initializePlayer({ x: 1, y: 0 });
 
-    await verifyAt(c.GameStorage, world.user1, { x: 3, y: 1 });
-    await verifyAt(c.GameStorage, world.user2, { x: 4, y: 3 });
-    await verifyAt(c.GameStorage, world.user3, { x: 1, y: 0 });
-  });
+  //   await c.GameStorage.connect(world.user1)._increaseItemInInventory(world.user1.address, 1, 10); // start with 10 iron for player 1
 
-  it("Verify map", async () => {
-    const mapChunk0 = await c.Getters._getMap({ x: 0, y: 0 });
-    expect(blocks[0][0]).eqls(decodeTileWithMetadata(mapChunk0[0]).blocks);
-  });
+  //   await verifyAt(c.GameStorage, world.user1, { x: 3, y: 1 });
+  //   await verifyAt(c.GameStorage, world.user2, { x: 4, y: 3 });
+  //   await verifyAt(c.GameStorage, world.user3, { x: 1, y: 0 });
+  // });
 
-  it("Move", async () => {
-    await moveAndVerify(c.Game, c.GameStorage, world.user1, { x: 3, y: 2 });
-    await moveAndVerify(c.Game, c.GameStorage, world.user1, { x: 3, y: 3 });
-  });
+  // it("Verify map", async () => {
+  //   const mapChunk0 = await c.Getters._getMap({ x: 0, y: 0 });
+  //   expect(blocks[0][0]).eqls(decodeTileWithMetadata(mapChunk0[0]).blocks);
+  // });
 
-  it("Failed move", async () => {
-    await verifyAt(c.GameStorage, world.user1, { x: 3, y: 3 }); // make sure starting at (5, 3)
-    await expect(c.Game.connect(world.user1).move({ x: 4, y: 0 })).to.be.revertedWith(REVERT_MESSAGES.ENGINE_INVALID_MOVE); // failed move due to distance
-    await expect(c.Game.connect(world.user1).move({ x: 6, y: 3 })).to.be.revertedWith(REVERT_MESSAGES.ENGINE_INVALID_MOVE); // failed move due to out of bound
-    await expect(c.Game.connect(world.user1).move({ x: 4, y: 3 })).to.be.revertedWith(REVERT_MESSAGES.ENGINE_INVALID_MOVE); // failed move due to occupied by player2
-  });
+  // it("Move", async () => {
+  //   await moveAndVerify(c.Game, c.GameStorage, world.user1, { x: 3, y: 2 });
+  //   await moveAndVerify(c.Game, c.GameStorage, world.user1, { x: 3, y: 3 });
+  // });
 
-  it("Place", async () => {
-    let player1Inventory = decodePlayerInventory(await c.GameStorage._getInventoryByPlayer(world.user1.address));
-    expect(player1Inventory.itemIds).eqls([1]);
-    expect(player1Inventory.itemAmounts).eqls([10]);
+  // it("Failed move", async () => {
+  //   await verifyAt(c.GameStorage, world.user1, { x: 3, y: 3 }); // make sure starting at (5, 3)
+  //   await expect(c.Game.connect(world.user1).move({ x: 4, y: 0 })).to.be.revertedWith(REVERT_MESSAGES.ENGINE_INVALID_MOVE); // failed move due to distance
+  //   await expect(c.Game.connect(world.user1).move({ x: 6, y: 3 })).to.be.revertedWith(REVERT_MESSAGES.ENGINE_INVALID_MOVE); // failed move due to out of bound
+  //   await expect(c.Game.connect(world.user1).move({ x: 4, y: 3 })).to.be.revertedWith(REVERT_MESSAGES.ENGINE_INVALID_MOVE); // failed move due to occupied by player2
+  // });
 
-    await c.Game.connect(world.user1).place({ x: 2, y: 3 }, 1);
-    await c.Game.connect(world.user1).place({ x: 3, y: 2 }, 1);
-    player1Inventory = decodePlayerInventory(await c.GameStorage._getInventoryByPlayer(world.user1.address));
-    expect(player1Inventory.itemIds).eqls([1]);
-    expect(player1Inventory.itemAmounts).eqls([8]);
+  // it("Place", async () => {
+  //   let player1Inventory = decodePlayerInventory(await c.GameStorage._getInventoryByPlayer(world.user1.address));
+  //   expect(player1Inventory.itemIds).eqls([1]);
+  //   expect(player1Inventory.itemAmounts).eqls([10]);
 
-    expect(await c.GameStorage._getBlockAtPosition({ x: 2, y: 3 }, 0)).equals(1);
-    await expect(c.GameStorage._getBlockAtPosition({ x: 1, y: 1 }, 0)).to.be.revertedWith(REVERT_MESSAGES.ENGINE_INVALID_Z_INDEX);
-  });
+  //   await c.Game.connect(world.user1).place({ x: 2, y: 3 }, 1);
+  //   await c.Game.connect(world.user1).place({ x: 3, y: 2 }, 1);
+  //   player1Inventory = decodePlayerInventory(await c.GameStorage._getInventoryByPlayer(world.user1.address));
+  //   expect(player1Inventory.itemIds).eqls([1]);
+  //   expect(player1Inventory.itemAmounts).eqls([8]);
 
-  it("Repeated Mine", async () => {
-    let player1Inventory = decodePlayerInventory(await c.GameStorage._getInventoryByPlayer(world.user1.address));
-    expect(player1Inventory.itemIds).eqls([1]);
-    expect(player1Inventory.itemAmounts).eqls([8]);
+  //   expect(await c.GameStorage._getBlockAtPosition({ x: 2, y: 3 }, 0)).equals(1);
+  //   await expect(c.GameStorage._getBlockAtPosition({ x: 1, y: 1 }, 0)).to.be.revertedWith(REVERT_MESSAGES.ENGINE_INVALID_Z_INDEX);
+  // });
 
-    expect((await c.GameStorage._getTileData({ x: 2, y: 3 })).topLevelStrength).equals(50);
+  // it("Repeated Mine", async () => {
+  //   let player1Inventory = decodePlayerInventory(await c.GameStorage._getInventoryByPlayer(world.user1.address));
+  //   expect(player1Inventory.itemIds).eqls([1]);
+  //   expect(player1Inventory.itemAmounts).eqls([8]);
 
-    // player attack is 5 and block strength is 50 => expect exactly 10 mines
-    // the first 9 mines only decrease strength
-    for (let i = 0; i < 9; i++) {
-      await c.Game.connect(world.user1).mine({ x: 2, y: 3 });
-    }
-    player1Inventory = decodePlayerInventory(await c.GameStorage._getInventoryByPlayer(world.user1.address));
-    expect(player1Inventory.itemIds).eqls([1]);
-    expect(player1Inventory.itemAmounts).eqls([8]);
-    expect((await c.GameStorage._getTileData({ x: 2, y: 3 })).topLevelStrength).equals(5);
+  //   expect((await c.GameStorage._getTileData({ x: 2, y: 3 })).topLevelStrength).equals(50);
 
-    // // the last mine successfully mines the item
-    await c.Game.connect(world.user1).mine({ x: 2, y: 3 });
-    player1Inventory = decodePlayerInventory(await c.GameStorage._getInventoryByPlayer(world.user1.address));
-    expect(player1Inventory.itemIds).eqls([1]);
-    expect(player1Inventory.itemAmounts).eqls([9]);
+  //   // player attack is 5 and block strength is 50 => expect exactly 10 mines
+  //   // the first 9 mines only decrease strength
+  //   for (let i = 0; i < 9; i++) {
+  //     await c.Game.connect(world.user1).mine({ x: 2, y: 3 });
+  //   }
+  //   player1Inventory = decodePlayerInventory(await c.GameStorage._getInventoryByPlayer(world.user1.address));
+  //   expect(player1Inventory.itemIds).eqls([1]);
+  //   expect(player1Inventory.itemAmounts).eqls([8]);
+  //   expect((await c.GameStorage._getTileData({ x: 2, y: 3 })).topLevelStrength).equals(5);
 
-    // // no more mines should be possible
-    await expect(c.Game.connect(world.user1).mine({ x: 2, y: 3 })).to.be.revertedWith(REVERT_MESSAGES.ENGINE_NONEXISTENT_BLOCK);
-  });
+  //   // // the last mine successfully mines the item
+  //   await c.Game.connect(world.user1).mine({ x: 2, y: 3 });
+  //   player1Inventory = decodePlayerInventory(await c.GameStorage._getInventoryByPlayer(world.user1.address));
+  //   expect(player1Inventory.itemIds).eqls([1]);
+  //   expect(player1Inventory.itemAmounts).eqls([9]);
+
+  //   // // no more mines should be possible
+  //   await expect(c.Game.connect(world.user1).mine({ x: 2, y: 3 })).to.be.revertedWith(REVERT_MESSAGES.ENGINE_NONEXISTENT_BLOCK);
+  // });
 
   /**
    * Below are tests for mine, place, and craft based on a different item list.

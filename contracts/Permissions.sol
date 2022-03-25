@@ -14,6 +14,10 @@ contract Permissions {
         owner = _owner;
     }
 
+    function getOwner() public view returns (address) {
+        return owner;
+    }
+
     function setPermission(address _contract, bool _permission)
         public
         onlyOwner

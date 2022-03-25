@@ -36,12 +36,12 @@ library GameTypes {
     struct Tile {
         address occupier;
         uint256 topLevelStrength; // Remaining strength of the top level block. May need to convert to a full array in future to prevent malicious restoring of block strength by placing on top.
-        uint256[] blocks;
+        uint256 blockId;
     }
 
     struct TileWithMetadata {
         address occupier;
-        uint256[] blocks;
+        uint256 blockId;
         uint256 x;
         uint256 y;
     }
@@ -52,10 +52,14 @@ library GameTypes {
         bool occupiable;
         uint256 strength;
         uint256 healthDamage;
-        uint256 energyDamage;
         uint256[] mineItemIds; // tools for mining
         uint256[] craftItemIds;
         uint256[] craftItemAmounts;
+
+        /* Programmable blocks */
+        bool programmable;
+        string abiEncoding;
+        string contractAddr;
     }
 
     struct Recipe {
