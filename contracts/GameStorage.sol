@@ -189,6 +189,15 @@ contract GameStorage {
 
         // fetch the block data from the tile -> worldBlock. If it's zero it means its an empty block
         GameTypes.BlockData memory _blockData = _getWorldBlockDataOnPos(_pos);
+
+        GameTypes.ItemWithMetadata memory _itemWithMetadata = _getItem(
+            _blockData.blockId
+        );
+
+        // if block is ocupiable, immediately return fasle for "isOccupied"
+        if (_itemWithMetadata.occupiable) return false;
+
+        // if it's a block, if it's occupiable then return true
         if (_blockData.blockId != 0) return true;
 
         return false;

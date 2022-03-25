@@ -58,6 +58,7 @@ export type ItemWithMetadataStruct = {
   craftItemAmounts: BigNumberish[];
   programmable: boolean;
   abiEncoding: string;
+  contractAddr: string;
   attackDamage: BigNumberish;
   attackRange: BigNumberish;
   attackCooldown: BigNumberish;
@@ -73,6 +74,7 @@ export type ItemWithMetadataStructOutput = [
   BigNumber[],
   boolean,
   string,
+  string,
   BigNumber,
   BigNumber,
   BigNumber
@@ -86,6 +88,7 @@ export type ItemWithMetadataStructOutput = [
   craftItemAmounts: BigNumber[];
   programmable: boolean;
   abiEncoding: string;
+  contractAddr: string;
   attackDamage: BigNumber;
   attackRange: BigNumber;
   attackCooldown: BigNumber;

@@ -56,9 +56,9 @@ library GameTypes {
         uint256[] mineItemIds; // tools for mining
         uint256[] craftItemIds;
         uint256[] craftItemAmounts;
-        /* Programmable blocks */
-        bool programmable;
+        bool programmable; // programmable blocks
         string abiEncoding;
+        string contractAddr;
         uint256 attackDamage; // additional creature property
         uint256 attackRange;
         uint256 attackCooldown;
