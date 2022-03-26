@@ -3,7 +3,7 @@ import { position } from './../../util/types/common';
 import { MasterGameSpecs, PrimsMapOutput } from './types/mapGenerator';
 import _ from 'lodash';
 import { TowerWithLocation } from '../../util/types/tower';
-import { customMapMapping, MAP_MODE } from './constants';
+import { customMapMapping, MAP_MODE, masterItems } from './constants';
 import { addConnectivity, generatePrimsMap } from './primsMap';
 import { ItemMaster } from '../../util/types/getter';
 import { getItemIndexByName } from './deployHelper';
@@ -136,7 +136,7 @@ const getRandom = (weights: number[], results: number[]) => {
 };
 
 const itemWeights = [0.7, 0.3];
-const itemResults = [0, 1];
+const itemResults = [getItemIndexByName(masterItems, 'Iron'), getItemIndexByName(masterItems, 'Silver')];
 
 const rewardWeights = [0.1, 0.2, 0.3, 0.4];
 const rewardResults = [1, 2, 3, 4];

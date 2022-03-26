@@ -8,7 +8,7 @@ import { Epoch } from './../typechain-types/Epoch';
 import { task } from 'hardhat/config';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
-import { deployProxy, printDivider } from './util/deployHelper';
+import { deployProxy, getItemIndexByName, printDivider } from './util/deployHelper';
 import { LOCALHOST_RPC_URL, LOCALHOST_WS_RPC_URL, MAP_INTERVAL, masterItems, WORLD_HEIGHT, WORLD_WIDTH, blockMetadata, generateBlockIdToNameMap, ITEM_RATIO, DOOR_RATIO } from './util/constants';
 import { generateAllGameArgs } from './util/allArgsGenerator';
 import { Getters, Game, GameStorage, Helper, Door } from '../typechain-types';
@@ -128,13 +128,12 @@ task('deploy', 'deploy contracts')
       } while (blocks[x][y] != 0);
 
       let tx;
-      tx = await GameContract.connect(player1).initializePlayer(player1Pos); // initialize users
+      const ironIdx = getItemIndexByName(masterItems, 'Iron');
+      tx = await GameContract.connect(player1).initializePlayer(player1Pos, ironIdx); // initialize users
       tx.wait();
 
-      tx = await GameContract.connect(player2).initializePlayer(player2Pos);
+      tx = await GameContract.connect(player2).initializePlayer(player2Pos, ironIdx);
       tx.wait();
-
-      tx = await GameStorage.connect(player1)._increaseItemInInventory(player1.address, 0, 100);
 
       await tx.wait();
     }
