@@ -12,5 +12,11 @@ module.exports = {
         singleQuote: false,
       },
     },
+    {
+      files: '*.sol',
+      options: {
+        singleQuote: false,
+      },
+    },
   ],
 };
