@@ -78,6 +78,7 @@ contract TowerGame {
     }
 
     // claim reward for tower
+    // if we have a gamemode that the tower is occupiable, then when user claims reward we check if the creature belongs to them or not
     function claimReward(GameTypes.Position memory _position) external {
         string memory _towerId = Helper._encodePos(_position);
         GameTypes.Tower memory tower = utils._getTower(_towerId);

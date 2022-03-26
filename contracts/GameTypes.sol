@@ -34,7 +34,7 @@ library GameTypes {
     }
 
     struct Tile {
-        address occupier;
+        address occupier; // this should be the player OR blocks?
         uint256 worldBlockId; // zero means its empty
     }
 
@@ -44,6 +44,7 @@ library GameTypes {
         uint256 health;
         address owner;
         uint256 lastAttacked; // "block data" stores the raw data unique to each game instane. Does this make sense?
+        uint256 lastMoved;
         // Position position; // do we need this?
     }
 
@@ -59,9 +60,11 @@ library GameTypes {
         bool programmable; // programmable blocks
         string abiEncoding;
         string contractAddr;
+        uint256 moveCooldown; // move cooldown for minions mostly
         uint256 attackDamage; // additional creature property
         uint256 attackRange;
         uint256 attackCooldown;
+        // moveable?
         // uint256 defense;
         // uint256 health;
         // uint256 movesPerEpoch;

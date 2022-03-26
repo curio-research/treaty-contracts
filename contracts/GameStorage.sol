@@ -409,7 +409,8 @@ contract GameStorage {
             blockId: _blockId,
             health: _item.health,
             owner: _owner,
-            lastAttacked: 0
+            lastAttacked: 0,
+            lastMoved: 0
         });
 
         uint256 _newWorldBlockId = setWorldBlock(_newWorldBlock);
@@ -430,6 +431,10 @@ contract GameStorage {
 
     function _setLastAttacked(uint256 _worldBlockId) public hasPermission {
         s.worldBlocks[_worldBlockId].lastAttacked = block.timestamp;
+    }
+
+    function _setLastMoved(uint256 _worldBlockId) public hasPermission {
+        s.worldBlocks[_worldBlockId].lastMoved = block.timestamp;
     }
 
     // ------------------------------------------------------------

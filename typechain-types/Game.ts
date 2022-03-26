@@ -62,6 +62,7 @@ export type ItemWithMetadataStruct = {
   programmable: boolean;
   abiEncoding: string;
   contractAddr: string;
+  moveCooldown: BigNumberish;
   attackDamage: BigNumberish;
   attackRange: BigNumberish;
   attackCooldown: BigNumberish;
@@ -80,6 +81,7 @@ export type ItemWithMetadataStructOutput = [
   string,
   BigNumber,
   BigNumber,
+  BigNumber,
   BigNumber
 ] & {
   mineable: boolean;
@@ -92,6 +94,7 @@ export type ItemWithMetadataStructOutput = [
   programmable: boolean;
   abiEncoding: string;
   contractAddr: string;
+  moveCooldown: BigNumber;
   attackDamage: BigNumber;
   attackRange: BigNumber;
   attackCooldown: BigNumber;
@@ -109,18 +112,21 @@ export type BlockDataStruct = {
   health: BigNumberish;
   owner: string;
   lastAttacked: BigNumberish;
+  lastMoved: BigNumberish;
 };
 
 export type BlockDataStructOutput = [
   BigNumber,
   BigNumber,
   string,
+  BigNumber,
   BigNumber
 ] & {
   blockId: BigNumber;
   health: BigNumber;
   owner: string;
   lastAttacked: BigNumber;
+  lastMoved: BigNumber;
 };
 
 export interface GameInterface extends utils.Interface {

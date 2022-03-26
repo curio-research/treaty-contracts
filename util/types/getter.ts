@@ -12,6 +12,7 @@ export interface ItemWithMetadata {
   attackDamage: number;
   attackRange: number;
   attackCooldown: number;
+  moveCooldown: number;
 }
 export interface ItemMaster {
   name: string;
