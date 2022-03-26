@@ -17,7 +17,7 @@ contract TowerGame {
     GameStorage private utils;
     Permissions private p;
 
-    uint256 BASE_ITEM_ID = 0;
+    uint256 BASE_ITEM_ID = 1;
 
     event StakeTower(
         address _player,
@@ -84,6 +84,8 @@ contract TowerGame {
         GameTypes.Tower memory tower = utils._getTower(_towerId);
 
         if (tower.owner != msg.sender) revert("tower/invalid-tower-owner");
+
+        // check the world block Id
 
         uint256 currentEpoch = utils._getCurrentEpoch();
         uint256 totalReward = (currentEpoch - tower.stakedTime) *
