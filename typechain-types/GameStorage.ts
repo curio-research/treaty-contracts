@@ -28,6 +28,7 @@ export type ItemWithMetadataStruct = {
   programmable: boolean;
   abiEncoding: string;
   contractAddr: string;
+  moveCooldown: BigNumberish;
   attackDamage: BigNumberish;
   attackRange: BigNumberish;
   attackCooldown: BigNumberish;
@@ -46,6 +47,7 @@ export type ItemWithMetadataStructOutput = [
   string,
   BigNumber,
   BigNumber,
+  BigNumber,
   BigNumber
 ] & {
   mineable: boolean;
@@ -58,6 +60,7 @@ export type ItemWithMetadataStructOutput = [
   programmable: boolean;
   abiEncoding: string;
   contractAddr: string;
+  moveCooldown: BigNumber;
   attackDamage: BigNumber;
   attackRange: BigNumber;
   attackCooldown: BigNumber;
@@ -68,18 +71,21 @@ export type BlockDataStruct = {
   health: BigNumberish;
   owner: string;
   lastAttacked: BigNumberish;
+  lastMoved: BigNumberish;
 };
 
 export type BlockDataStructOutput = [
   BigNumber,
   BigNumber,
   string,
+  BigNumber,
   BigNumber
 ] & {
   blockId: BigNumber;
   health: BigNumber;
   owner: string;
   lastAttacked: BigNumber;
+  lastMoved: BigNumber;
 };
 
 export type PositionStruct = { x: BigNumberish; y: BigNumberish };
@@ -226,8 +232,9 @@ export interface GameStorageInterface extends utils.Interface {
     "_placeWorldBlockIdOnTile((uint256,uint256),uint256)": FunctionFragment;
     "_removeWorldBlockId(uint256)": FunctionFragment;
     "_setConstants((uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))": FunctionFragment;
-    "_setItem(uint256,(bool,bool,bool,uint256,uint256[],uint256[],uint256[],bool,string,string,uint256,uint256,uint256))": FunctionFragment;
+    "_setItem(uint256,(bool,bool,bool,uint256,uint256[],uint256[],uint256[],bool,string,string,uint256,uint256,uint256,uint256))": FunctionFragment;
     "_setLastAttacked(uint256)": FunctionFragment;
+    "_setLastMoved(uint256)": FunctionFragment;
     "_setMapRegion((uint256,uint256),uint256[][])": FunctionFragment;
     "_setOccupierAtPosition(address,(uint256,uint256))": FunctionFragment;
     "_setPlayer(address,(uint256,uint256))": FunctionFragment;
@@ -241,7 +248,7 @@ export interface GameStorageInterface extends utils.Interface {
     "getWorldBlockNonce()": FunctionFragment;
     "s()": FunctionFragment;
     "setEpochController(address)": FunctionFragment;
-    "setWorldBlock((uint256,uint256,address,uint256))": FunctionFragment;
+    "setWorldBlock((uint256,uint256,address,uint256,uint256))": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -356,6 +363,10 @@ export interface GameStorageInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "_setLastAttacked",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_setLastMoved",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
@@ -518,6 +529,10 @@ export interface GameStorageInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "_setItem", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_setLastAttacked",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_setLastMoved",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -769,6 +784,11 @@ export interface GameStorage extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    _setLastMoved(
+      _worldBlockId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     _setMapRegion(
       _startPos: PositionStruct,
       _blocks: BigNumberish[][],
@@ -1015,6 +1035,11 @@ export interface GameStorage extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  _setLastMoved(
+    _worldBlockId: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   _setMapRegion(
     _startPos: PositionStruct,
     _blocks: BigNumberish[][],
@@ -1255,6 +1280,11 @@ export interface GameStorage extends BaseContract {
     ): Promise<void>;
 
     _setLastAttacked(
+      _worldBlockId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    _setLastMoved(
       _worldBlockId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -1519,6 +1549,11 @@ export interface GameStorage extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    _setLastMoved(
+      _worldBlockId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     _setMapRegion(
       _startPos: PositionStruct,
       _blocks: BigNumberish[][],
@@ -1746,6 +1781,11 @@ export interface GameStorage extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     _setLastAttacked(
+      _worldBlockId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    _setLastMoved(
       _worldBlockId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;

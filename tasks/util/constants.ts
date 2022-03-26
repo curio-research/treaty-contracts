@@ -62,6 +62,7 @@ export var masterItems: ItemMaster[] = [
       attackDamage: 0,
       attackRange: 0,
       attackCooldown: 0,
+      moveCooldown: 0,
     },
   },
   {
@@ -80,6 +81,7 @@ export var masterItems: ItemMaster[] = [
       attackRange: 0,
       attackCooldown: 0,
       contractAddr: '',
+      moveCooldown: 0,
     },
   },
   {
@@ -98,6 +100,7 @@ export var masterItems: ItemMaster[] = [
       attackRange: 0,
       attackCooldown: 0,
       contractAddr: '',
+      moveCooldown: 0,
     },
   },
   {
@@ -116,6 +119,7 @@ export var masterItems: ItemMaster[] = [
       attackRange: 1,
       attackCooldown: 10,
       contractAddr: '',
+      moveCooldown: 10,
     },
   },
   {
@@ -134,6 +138,7 @@ export var masterItems: ItemMaster[] = [
       attackRange: 0,
       attackCooldown: 0,
       contractAddr: '',
+      moveCooldown: 0,
     },
   },
   {
@@ -152,6 +157,7 @@ export var masterItems: ItemMaster[] = [
       attackRange: 0,
       attackCooldown: 0,
       contractAddr: '',
+      moveCooldown: 0,
     },
   },
   {
@@ -170,6 +176,7 @@ export var masterItems: ItemMaster[] = [
       attackRange: 0,
       attackCooldown: 0,
       contractAddr: '',
+      moveCooldown: 0,
     },
   },
   {
@@ -188,6 +195,7 @@ export var masterItems: ItemMaster[] = [
       attackRange: 0,
       attackCooldown: 0,
       contractAddr: '',
+      moveCooldown: 0,
     },
   },
 ];
@@ -207,6 +215,7 @@ export const blockMetadata: ItemWithMetadata = {
   attackDamage: 0,
   attackRange: 0,
   attackCooldown: 0,
+  moveCooldown: 0,
 };
 
 export const generateBlockIdToNameMap = (items: ItemMaster[]): Record<number, string> => {

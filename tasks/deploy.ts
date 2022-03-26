@@ -38,6 +38,7 @@ task('deploy', 'deploy contracts')
     let player1: SignerWithAddress;
     let player2: SignerWithAddress;
     [player1, player2] = await hre.ethers.getSigners();
+    const ironIdx = getItemIndexByName(masterItems, 'Iron');
 
     const GameHelper = await deployProxy<Helper>('Helper', player1, hre, []);
     console.log('✦ GameHelper deployed');
@@ -65,7 +66,7 @@ task('deploy', 'deploy contracts')
 
     const GameContract = await deployProxy<Game>('Game', player1, hre, [...allGameArgs.gameDeployArgs, GameStorage.address, Permissions.address]);
     console.log('✦ GameContract deployed');
-    const TowerContract = await deployProxy<TowerGame>('TowerGame', player1, hre, [GameStorage.address, Permissions.address], { Helper: GameHelper.address });
+    const TowerContract = await deployProxy<TowerGame>('TowerGame', player1, hre, [GameStorage.address, Permissions.address, ironIdx], { Helper: GameHelper.address });
 
     console.log('✦ TowerContract deployed');
     const GettersContract = await deployProxy<Getters>('Getters', player1, hre, [GameContract.address, GameStorage.address]);
@@ -128,7 +129,6 @@ task('deploy', 'deploy contracts')
       } while (blocks[x][y] != 0);
 
       let tx;
-      const ironIdx = getItemIndexByName(masterItems, 'Iron');
       tx = await GameContract.connect(player1).initializePlayer(player1Pos, ironIdx); // initialize users
       tx.wait();
 
