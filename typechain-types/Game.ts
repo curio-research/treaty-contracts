@@ -127,7 +127,7 @@ export interface GameInterface extends utils.Interface {
   functions: {
     "attack((uint256,uint256),(uint256,uint256))": FunctionFragment;
     "craft(uint256)": FunctionFragment;
-    "initializePlayer((uint256,uint256))": FunctionFragment;
+    "initializePlayer((uint256,uint256),uint256)": FunctionFragment;
     "mine((uint256,uint256))": FunctionFragment;
     "move((uint256,uint256))": FunctionFragment;
     "moveBlock((uint256,uint256),(uint256,uint256))": FunctionFragment;
@@ -141,7 +141,7 @@ export interface GameInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "craft", values: [BigNumberish]): string;
   encodeFunctionData(
     functionFragment: "initializePlayer",
-    values: [PositionStruct]
+    values: [PositionStruct, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "mine",
@@ -318,6 +318,7 @@ export interface Game extends BaseContract {
 
     initializePlayer(
       _pos: PositionStruct,
+      _defaultCurrencyIdx: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -357,6 +358,7 @@ export interface Game extends BaseContract {
 
   initializePlayer(
     _pos: PositionStruct,
+    _defaultCurrencyIdx: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -393,6 +395,7 @@ export interface Game extends BaseContract {
 
     initializePlayer(
       _pos: PositionStruct,
+      _defaultCurrencyIdx: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -504,6 +507,7 @@ export interface Game extends BaseContract {
 
     initializePlayer(
       _pos: PositionStruct,
+      _defaultCurrencyIdx: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -544,6 +548,7 @@ export interface Game extends BaseContract {
 
     initializePlayer(
       _pos: PositionStruct,
+      _defaultCurrencyIdx: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
