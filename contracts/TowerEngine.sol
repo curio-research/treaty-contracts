@@ -20,7 +20,7 @@ contract TowerGame {
 
     // new capture
     event Capture(address _player, GameTypes.Position _position);
-    event ClaimReward(address _player, GameTypes.Position _position);
+    event ClaimReward(address _player, GameTypes.Position _position, uint256 _itemId, uint256 _itemAmount, uint256 _epoch);
 
     constructor(
         GameStorage _util,
@@ -58,8 +58,8 @@ contract TowerGame {
 
         require(tower.owner == msg.sender, "tower/not-owner");
 
-        uint256 currentEpoch = utils._getCurrentEpoch();
-        uint256 totalReward = (currentEpoch - tower.lastCapturedEpoch) * tower.rewardPerEpoch;
+        uint256 epoch = utils._getCurrentEpoch();
+        uint256 totalReward = (epoch - tower.lastCapturedEpoch) * tower.rewardPerEpoch;
 
         utils._increaseItemInInventory(msg.sender, tower.itemId, totalReward);
         tower.lastCapturedEpoch = block.timestamp;
@@ -68,7 +68,7 @@ contract TowerGame {
 
         // add boosters in the future
 
-        emit ClaimReward(msg.sender, _position);
+        emit ClaimReward(msg.sender, _position, tower.itemId, totalReward, epoch);
     }
 
     // ------------------------

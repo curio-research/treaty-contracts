@@ -94,7 +94,7 @@ export interface TowerGameInterface extends utils.Interface {
 
   events: {
     "Capture(address,tuple)": EventFragment;
-    "ClaimReward(address,tuple)": EventFragment;
+    "ClaimReward(address,tuple,uint256,uint256,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Capture"): EventFragment;
@@ -109,8 +109,14 @@ export type CaptureEvent = TypedEvent<
 export type CaptureEventFilter = TypedEventFilter<CaptureEvent>;
 
 export type ClaimRewardEvent = TypedEvent<
-  [string, PositionStructOutput],
-  { _player: string; _position: PositionStructOutput }
+  [string, PositionStructOutput, BigNumber, BigNumber, BigNumber],
+  {
+    _player: string;
+    _position: PositionStructOutput;
+    _itemId: BigNumber;
+    _itemAmount: BigNumber;
+    _epoch: BigNumber;
+  }
 >;
 
 export type ClaimRewardEventFilter = TypedEventFilter<ClaimRewardEvent>;
@@ -251,11 +257,20 @@ export interface TowerGame extends BaseContract {
     ): CaptureEventFilter;
     Capture(_player?: null, _position?: null): CaptureEventFilter;
 
-    "ClaimReward(address,tuple)"(
+    "ClaimReward(address,tuple,uint256,uint256,uint256)"(
       _player?: null,
-      _position?: null
+      _position?: null,
+      _itemId?: null,
+      _itemAmount?: null,
+      _epoch?: null
     ): ClaimRewardEventFilter;
-    ClaimReward(_player?: null, _position?: null): ClaimRewardEventFilter;
+    ClaimReward(
+      _player?: null,
+      _position?: null,
+      _itemId?: null,
+      _itemAmount?: null,
+      _epoch?: null
+    ): ClaimRewardEventFilter;
   };
 
   estimateGas: {
