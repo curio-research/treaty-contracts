@@ -20,19 +20,13 @@ import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 export type WorldConstantsStruct = {
   worldWidth: BigNumberish;
   worldHeight: BigNumberish;
-  startingAttackDamage: BigNumberish;
-  startingAttackRange: BigNumberish;
-  startingAttackWaitTime: BigNumberish;
   startPlayerHealth: BigNumberish;
-  startPlayerEnergy: BigNumberish;
   startingReach: BigNumberish;
   startingPlayerDefaultCurrencyAmount: BigNumberish;
+  playerMoveCooldown: BigNumberish;
 };
 
 export type WorldConstantsStructOutput = [
-  BigNumber,
-  BigNumber,
-  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -42,13 +36,10 @@ export type WorldConstantsStructOutput = [
 ] & {
   worldWidth: BigNumber;
   worldHeight: BigNumber;
-  startingAttackDamage: BigNumber;
-  startingAttackRange: BigNumber;
-  startingAttackWaitTime: BigNumber;
   startPlayerHealth: BigNumber;
-  startPlayerEnergy: BigNumber;
   startingReach: BigNumber;
   startingPlayerDefaultCurrencyAmount: BigNumber;
+  playerMoveCooldown: BigNumber;
 };
 
 export type ItemWithMetadataStruct = {
@@ -59,13 +50,13 @@ export type ItemWithMetadataStruct = {
   mineItemIds: BigNumberish[];
   craftItemIds: BigNumberish[];
   craftItemAmounts: BigNumberish[];
-  programmable: boolean;
-  abiEncoding: string;
-  contractAddr: string;
   moveCooldown: BigNumberish;
   attackDamage: BigNumberish;
   attackRange: BigNumberish;
   attackCooldown: BigNumberish;
+  programmable: boolean;
+  abiEncoding: string;
+  contractAddr: string;
 };
 
 export type ItemWithMetadataStructOutput = [
@@ -76,13 +67,13 @@ export type ItemWithMetadataStructOutput = [
   BigNumber[],
   BigNumber[],
   BigNumber[],
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
   boolean,
   string,
-  string,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber
+  string
 ] & {
   mineable: boolean;
   craftable: boolean;
@@ -91,13 +82,13 @@ export type ItemWithMetadataStructOutput = [
   mineItemIds: BigNumber[];
   craftItemIds: BigNumber[];
   craftItemAmounts: BigNumber[];
-  programmable: boolean;
-  abiEncoding: string;
-  contractAddr: string;
   moveCooldown: BigNumber;
   attackDamage: BigNumber;
   attackRange: BigNumber;
   attackCooldown: BigNumber;
+  programmable: boolean;
+  abiEncoding: string;
+  contractAddr: string;
 };
 
 export type PositionStruct = { x: BigNumberish; y: BigNumberish };

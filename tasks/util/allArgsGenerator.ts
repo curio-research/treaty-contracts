@@ -9,17 +9,19 @@ import { ItemWithMetadata } from '../../util/types/getter';
 
 export const generateAllGameArgs = (allGameItems: ItemWithMetadata[], itemRatio: number[]): AllGameArgs => {
   const gameConstants: WorldConstantsStruct = generateGameConstants();
-  const masterGameSpecs = generateMap(WORLD_WIDTH, WORLD_HEIGHT, ROOM_LENGTH, masterItems, MAP_MODE.ROOMS_1);
+  const masterGameSpecs = generateMap(WORLD_WIDTH, WORLD_HEIGHT, ROOM_LENGTH, masterItems, MAP_MODE.DEFAULT);
   const blockMap = generateItems(masterGameSpecs.blocks, itemRatio);
   return {
-    gameDeployArgs: [gameConstants, allGameItems],
+    gameConstants: gameConstants,
+    allGameItems: allGameItems,
     allTowerArgs: masterGameSpecs.towers,
     blockMap,
   };
 };
 
 interface AllGameArgs {
-  gameDeployArgs: any[];
+  gameConstants: WorldConstantsStruct;
+  allGameItems: ItemWithMetadata[];
   allTowerArgs: TowerWithLocation[];
   blockMap: number[][];
 }

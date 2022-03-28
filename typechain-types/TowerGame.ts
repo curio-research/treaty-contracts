@@ -27,40 +27,27 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
 export type TowerStruct = {
   rewardPerEpoch: BigNumberish;
   itemId: BigNumberish;
-  stakedAmount: BigNumberish;
-  stakedTime: BigNumberish;
+  lastCapturedEpoch: BigNumberish;
   owner: string;
 };
 
-export type TowerStructOutput = [
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  string
-] & {
+export type TowerStructOutput = [BigNumber, BigNumber, BigNumber, string] & {
   rewardPerEpoch: BigNumber;
   itemId: BigNumber;
-  stakedAmount: BigNumber;
-  stakedTime: BigNumber;
+  lastCapturedEpoch: BigNumber;
   owner: string;
 };
 
 export interface TowerGameInterface extends utils.Interface {
   functions: {
-    "_modifyRewardByBlockLocation(uint256,(uint256,uint256))": FunctionFragment;
-    "addTower((uint256,uint256),(uint256,uint256,uint256,uint256,address))": FunctionFragment;
-    "addTowerBulk((uint256,uint256)[],(uint256,uint256,uint256,uint256,address)[])": FunctionFragment;
+    "addTower((uint256,uint256),(uint256,uint256,uint256,address))": FunctionFragment;
+    "addTowerBulk((uint256,uint256)[],(uint256,uint256,uint256,address)[])": FunctionFragment;
+    "capture((uint256,uint256))": FunctionFragment;
     "claimReward((uint256,uint256))": FunctionFragment;
     "getTowerById((uint256,uint256))": FunctionFragment;
-    "stake((uint256,uint256),uint256)": FunctionFragment;
-    "unstake((uint256,uint256),uint256)": FunctionFragment;
+    "isValidCapture(address,(uint256,uint256))": FunctionFragment;
   };
 
-  encodeFunctionData(
-    functionFragment: "_modifyRewardByBlockLocation",
-    values: [BigNumberish, PositionStruct]
-  ): string;
   encodeFunctionData(
     functionFragment: "addTower",
     values: [PositionStruct, TowerStruct]
@@ -70,6 +57,10 @@ export interface TowerGameInterface extends utils.Interface {
     values: [PositionStruct[], TowerStruct[]]
   ): string;
   encodeFunctionData(
+    functionFragment: "capture",
+    values: [PositionStruct]
+  ): string;
+  encodeFunctionData(
     functionFragment: "claimReward",
     values: [PositionStruct]
   ): string;
@@ -78,23 +69,16 @@ export interface TowerGameInterface extends utils.Interface {
     values: [PositionStruct]
   ): string;
   encodeFunctionData(
-    functionFragment: "stake",
-    values: [PositionStruct, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "unstake",
-    values: [PositionStruct, BigNumberish]
+    functionFragment: "isValidCapture",
+    values: [string, PositionStruct]
   ): string;
 
-  decodeFunctionResult(
-    functionFragment: "_modifyRewardByBlockLocation",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "addTower", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "addTowerBulk",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "capture", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "claimReward",
     data: BytesLike
@@ -103,56 +87,33 @@ export interface TowerGameInterface extends utils.Interface {
     functionFragment: "getTowerById",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "stake", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "unstake", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "isValidCapture",
+    data: BytesLike
+  ): Result;
 
   events: {
-    "ClaimReward(address,tuple,uint256,uint256,uint256)": EventFragment;
-    "StakeTower(address,tuple,uint256,uint256)": EventFragment;
-    "UnstakeTower(address,tuple,uint256,uint256)": EventFragment;
+    "Capture(address,tuple)": EventFragment;
+    "ClaimReward(address,tuple)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "Capture"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ClaimReward"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "StakeTower"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "UnstakeTower"): EventFragment;
 }
 
+export type CaptureEvent = TypedEvent<
+  [string, PositionStructOutput],
+  { _player: string; _position: PositionStructOutput }
+>;
+
+export type CaptureEventFilter = TypedEventFilter<CaptureEvent>;
+
 export type ClaimRewardEvent = TypedEvent<
-  [string, PositionStructOutput, BigNumber, BigNumber, BigNumber],
-  {
-    _player: string;
-    _towerPos: PositionStructOutput;
-    _itemId: BigNumber;
-    _itemAmount: BigNumber;
-    _epoch: BigNumber;
-  }
+  [string, PositionStructOutput],
+  { _player: string; _position: PositionStructOutput }
 >;
 
 export type ClaimRewardEventFilter = TypedEventFilter<ClaimRewardEvent>;
-
-export type StakeTowerEvent = TypedEvent<
-  [string, PositionStructOutput, BigNumber, BigNumber],
-  {
-    _player: string;
-    _towerPos: PositionStructOutput;
-    _playerPoints: BigNumber;
-    _towerPoints: BigNumber;
-  }
->;
-
-export type StakeTowerEventFilter = TypedEventFilter<StakeTowerEvent>;
-
-export type UnstakeTowerEvent = TypedEvent<
-  [string, PositionStructOutput, BigNumber, BigNumber],
-  {
-    _player: string;
-    _towerPos: PositionStructOutput;
-    _playerPoints: BigNumber;
-    _towerPoints: BigNumber;
-  }
->;
-
-export type UnstakeTowerEventFilter = TypedEventFilter<UnstakeTowerEvent>;
 
 export interface TowerGame extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -181,12 +142,6 @@ export interface TowerGame extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    _modifyRewardByBlockLocation(
-      _reward: BigNumberish,
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     addTower(
       _position: PositionStruct,
       _tower: TowerStruct,
@@ -196,6 +151,11 @@ export interface TowerGame extends BaseContract {
     addTowerBulk(
       _positions: PositionStruct[],
       _towers: TowerStruct[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    capture(
+      _position: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -209,24 +169,12 @@ export interface TowerGame extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[TowerStructOutput]>;
 
-    stake(
+    isValidCapture(
+      _player: string,
       _position: PositionStruct,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    unstake(
-      _position: PositionStruct,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
   };
-
-  _modifyRewardByBlockLocation(
-    _reward: BigNumberish,
-    _pos: PositionStruct,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
 
   addTower(
     _position: PositionStruct,
@@ -240,6 +188,11 @@ export interface TowerGame extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  capture(
+    _position: PositionStruct,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   claimReward(
     _position: PositionStruct,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -250,25 +203,13 @@ export interface TowerGame extends BaseContract {
     overrides?: CallOverrides
   ): Promise<TowerStructOutput>;
 
-  stake(
+  isValidCapture(
+    _player: string,
     _position: PositionStruct,
-    _amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  unstake(
-    _position: PositionStruct,
-    _amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   callStatic: {
-    _modifyRewardByBlockLocation(
-      _reward: BigNumberish,
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     addTower(
       _position: PositionStruct,
       _tower: TowerStruct,
@@ -278,6 +219,11 @@ export interface TowerGame extends BaseContract {
     addTowerBulk(
       _positions: PositionStruct[],
       _towers: TowerStruct[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    capture(
+      _position: PositionStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -291,69 +237,28 @@ export interface TowerGame extends BaseContract {
       overrides?: CallOverrides
     ): Promise<TowerStructOutput>;
 
-    stake(
+    isValidCapture(
+      _player: string,
       _position: PositionStruct,
-      _amount: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<void>;
-
-    unstake(
-      _position: PositionStruct,
-      _amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<boolean>;
   };
 
   filters: {
-    "ClaimReward(address,tuple,uint256,uint256,uint256)"(
+    "Capture(address,tuple)"(
       _player?: null,
-      _towerPos?: null,
-      _itemId?: null,
-      _itemAmount?: null,
-      _epoch?: null
-    ): ClaimRewardEventFilter;
-    ClaimReward(
-      _player?: null,
-      _towerPos?: null,
-      _itemId?: null,
-      _itemAmount?: null,
-      _epoch?: null
-    ): ClaimRewardEventFilter;
+      _position?: null
+    ): CaptureEventFilter;
+    Capture(_player?: null, _position?: null): CaptureEventFilter;
 
-    "StakeTower(address,tuple,uint256,uint256)"(
+    "ClaimReward(address,tuple)"(
       _player?: null,
-      _towerPos?: null,
-      _playerPoints?: null,
-      _towerPoints?: null
-    ): StakeTowerEventFilter;
-    StakeTower(
-      _player?: null,
-      _towerPos?: null,
-      _playerPoints?: null,
-      _towerPoints?: null
-    ): StakeTowerEventFilter;
-
-    "UnstakeTower(address,tuple,uint256,uint256)"(
-      _player?: null,
-      _towerPos?: null,
-      _playerPoints?: null,
-      _towerPoints?: null
-    ): UnstakeTowerEventFilter;
-    UnstakeTower(
-      _player?: null,
-      _towerPos?: null,
-      _playerPoints?: null,
-      _towerPoints?: null
-    ): UnstakeTowerEventFilter;
+      _position?: null
+    ): ClaimRewardEventFilter;
+    ClaimReward(_player?: null, _position?: null): ClaimRewardEventFilter;
   };
 
   estimateGas: {
-    _modifyRewardByBlockLocation(
-      _reward: BigNumberish,
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     addTower(
       _position: PositionStruct,
       _tower: TowerStruct,
@@ -363,6 +268,11 @@ export interface TowerGame extends BaseContract {
     addTowerBulk(
       _positions: PositionStruct[],
       _towers: TowerStruct[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    capture(
+      _position: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -376,26 +286,14 @@ export interface TowerGame extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    stake(
+    isValidCapture(
+      _player: string,
       _position: PositionStruct,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    unstake(
-      _position: PositionStruct,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    _modifyRewardByBlockLocation(
-      _reward: BigNumberish,
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     addTower(
       _position: PositionStruct,
       _tower: TowerStruct,
@@ -405,6 +303,11 @@ export interface TowerGame extends BaseContract {
     addTowerBulk(
       _positions: PositionStruct[],
       _towers: TowerStruct[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    capture(
+      _position: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -418,16 +321,10 @@ export interface TowerGame extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    stake(
+    isValidCapture(
+      _player: string,
       _position: PositionStruct,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    unstake(
-      _position: PositionStruct,
-      _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
 }

@@ -151,8 +151,7 @@ const generateTowerSpecs = (towerLocations: position[]): TowerWithLocation[] => 
       tower: {
         rewardPerEpoch: getRandom(rewardWeights, rewardResults),
         itemId: getRandom(itemWeights, itemResults),
-        stakedAmount: 0,
-        stakedTime: 0,
+        lastCapturedEpoch: 0,
         owner: EMPTY_ADDRESS,
       },
     };
