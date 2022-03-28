@@ -8,25 +8,23 @@ import "./GameTypes.sol";
 /// @notice Getters provide bulk functions useful for fetching data from frontend
 
 contract Getters {
-    Game gameCore;
-    GameStorage utils;
-    uint256 public GET_MAP_INTERVAL = 10; // this should be variable
+    Game public gameCore;
+    GameStorage public utils;
+    uint256 public getMapInterval;
 
-    constructor(Game _gameCore, GameStorage _gameStorage) {
+    constructor(
+        Game _gameCore,
+        GameStorage _gameStorage,
+        uint256 _getMapInterval
+    ) {
         gameCore = _gameCore;
         utils = _gameStorage;
+        getMapInterval = _getMapInterval;
     }
 
     // bulk fetch all items and corresponding metadata (amount of material needed to craft and which materials)
-    function bulkGetAllItems()
-        external
-        view
-        returns (GameTypes.ItemWithMetadata[] memory)
-    {
-        GameTypes.ItemWithMetadata[]
-            memory allItems = new GameTypes.ItemWithMetadata[](
-                utils._getItemNonce()
-            );
+    function bulkGetAllItems() external view returns (GameTypes.ItemWithMetadata[] memory) {
+        GameTypes.ItemWithMetadata[] memory allItems = new GameTypes.ItemWithMetadata[](utils._getItemNonce());
 
         for (uint256 i = 0; i < utils._getItemNonce(); i++) {
             allItems[i] = utils._getItem(i);
@@ -36,15 +34,9 @@ contract Getters {
     }
 
     // bulk fetch all player data including location in an array
-    function bulkGetAllPlayerData()
-        external
-        view
-        returns (GameTypes.PlayerData[] memory)
-    {
+    function bulkGetAllPlayerData() external view returns (GameTypes.PlayerData[] memory) {
         address[] memory playerAddresses = utils._getAllPlayerAddresses();
-        GameTypes.PlayerData[] memory ret = new GameTypes.PlayerData[](
-            playerAddresses.length
-        );
+        GameTypes.PlayerData[] memory ret = new GameTypes.PlayerData[](playerAddresses.length);
 
         for (uint256 i = 0; i < playerAddresses.length; i++) {
             ret[i] = utils._getPlayer(playerAddresses[i]);
@@ -54,23 +46,16 @@ contract Getters {
     }
 
     // getter method to fetch tile chunk in 10x10 chunks.
-    function _getMap(GameTypes.Position memory _pos)
-        public
-        view
-        returns (GameTypes.Tile[] memory, GameTypes.Position[] memory)
-    {
-        uint256 size = GET_MAP_INTERVAL * GET_MAP_INTERVAL;
+    function _getMap(GameTypes.Position memory _pos) public view returns (GameTypes.Tile[] memory, GameTypes.Position[] memory) {
+        uint256 size = getMapInterval * getMapInterval;
 
         GameTypes.Tile[] memory allTiles = new GameTypes.Tile[](size);
         GameTypes.Position[] memory allPos = new GameTypes.Position[](size);
 
         uint256 nonce = 0;
-        for (uint256 x = _pos.x; x < _pos.x + GET_MAP_INTERVAL; x++) {
-            for (uint256 y = _pos.y; y < _pos.y + GET_MAP_INTERVAL; y++) {
-                GameTypes.Position memory _tempPos = GameTypes.Position({
-                    x: x,
-                    y: y
-                });
+        for (uint256 x = _pos.x; x < _pos.x + getMapInterval; x++) {
+            for (uint256 y = _pos.y; y < _pos.y + getMapInterval; y++) {
+                GameTypes.Position memory _tempPos = GameTypes.Position({x: x, y: y});
                 allTiles[nonce] = utils._getTileData(_tempPos);
                 allPos[nonce] = _tempPos;
                 nonce += 1;
@@ -81,24 +66,16 @@ contract Getters {
     }
 
     // this is called after _getMap is called. used to fetch metadata around blocks
-    function _getBlockChunkData(GameTypes.Position memory _pos)
-        public
-        view
-        returns (GameTypes.BlockData[] memory, GameTypes.Position[] memory)
-    {
-        uint256 size = GET_MAP_INTERVAL * GET_MAP_INTERVAL;
+    function _getBlockChunkData(GameTypes.Position memory _pos) public view returns (GameTypes.BlockData[] memory, GameTypes.Position[] memory) {
+        uint256 size = getMapInterval * getMapInterval;
 
-        GameTypes.BlockData[]
-            memory allBlockChunkData = new GameTypes.BlockData[](size);
+        GameTypes.BlockData[] memory allBlockChunkData = new GameTypes.BlockData[](size);
         GameTypes.Position[] memory allPos = new GameTypes.Position[](size);
 
         uint256 nonce = 0;
-        for (uint256 x = _pos.x; x < _pos.x + GET_MAP_INTERVAL; x++) {
-            for (uint256 y = _pos.y; y < _pos.y + GET_MAP_INTERVAL; y++) {
-                GameTypes.Position memory _tempPos = GameTypes.Position({
-                    x: x,
-                    y: y
-                });
+        for (uint256 x = _pos.x; x < _pos.x + getMapInterval; x++) {
+            for (uint256 y = _pos.y; y < _pos.y + getMapInterval; y++) {
+                GameTypes.Position memory _tempPos = GameTypes.Position({x: x, y: y});
                 allBlockChunkData[nonce] = utils._getBlockDataAtPos(_tempPos);
                 allPos[nonce] = _tempPos;
                 nonce += 1;

@@ -69,13 +69,11 @@ task('deploy', 'deploy contracts')
     const TowerContract = await deployProxy<TowerGame>('TowerGame', player1, hre, [GameStorage.address, Permissions.address, ironIdx], { Helper: GameHelper.address });
 
     console.log('✦ TowerContract deployed');
-    const GettersContract = await deployProxy<Getters>('Getters', player1, hre, [GameContract.address, GameStorage.address]);
+    const GettersContract = await deployProxy<Getters>('Getters', player1, hre, [GameContract.address, GameStorage.address, MAP_INTERVAL]);
     console.log('✦ GettersContract deployed');
 
     const EpochContract = await deployProxy<Epoch>('Epoch', player1, hre, [10]);
     console.log('✦ EpochContract deployed');
-
-    const GET_MAP_INTERVAL = (await GettersContract.GET_MAP_INTERVAL()).toNumber();
 
     // add contract permissions
     let tx = await Permissions.connect(player1).setPermission(GameContract.address, true);
@@ -179,7 +177,6 @@ task('deploy', 'deploy contracts')
       network: hre.network.name,
       rpcUrl: networkRPCs[0],
       wsRpcUrl: networkRPCs[1],
-      getMapInterval: GET_MAP_INTERVAL,
       blockIdToNameMapping: JSON.stringify(blockIdToNameMapping),
       deploymentId: `${hre.network.name}-${Date.now()}`,
     };
