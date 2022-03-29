@@ -136,17 +136,15 @@ export type PlayerDataStructOutput = [
 
 export interface GettersInterface extends utils.Interface {
   functions: {
-    "GET_MAP_INTERVAL()": FunctionFragment;
     "_getBlockChunkData((uint256,uint256))": FunctionFragment;
     "_getMap((uint256,uint256))": FunctionFragment;
     "bulkGetAllItems()": FunctionFragment;
     "bulkGetAllPlayerData()": FunctionFragment;
+    "gameCore()": FunctionFragment;
+    "getMapInterval()": FunctionFragment;
+    "utils()": FunctionFragment;
   };
 
-  encodeFunctionData(
-    functionFragment: "GET_MAP_INTERVAL",
-    values?: undefined
-  ): string;
   encodeFunctionData(
     functionFragment: "_getBlockChunkData",
     values: [PositionStruct]
@@ -163,11 +161,13 @@ export interface GettersInterface extends utils.Interface {
     functionFragment: "bulkGetAllPlayerData",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "gameCore", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "getMapInterval",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "utils", values?: undefined): string;
 
-  decodeFunctionResult(
-    functionFragment: "GET_MAP_INTERVAL",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "_getBlockChunkData",
     data: BytesLike
@@ -181,6 +181,12 @@ export interface GettersInterface extends utils.Interface {
     functionFragment: "bulkGetAllPlayerData",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "gameCore", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getMapInterval",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "utils", data: BytesLike): Result;
 
   events: {};
 }
@@ -212,8 +218,6 @@ export interface Getters extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    GET_MAP_INTERVAL(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     _getBlockChunkData(
       _pos: PositionStruct,
       overrides?: CallOverrides
@@ -231,9 +235,13 @@ export interface Getters extends BaseContract {
     bulkGetAllPlayerData(
       overrides?: CallOverrides
     ): Promise<[PlayerDataStructOutput[]]>;
-  };
 
-  GET_MAP_INTERVAL(overrides?: CallOverrides): Promise<BigNumber>;
+    gameCore(overrides?: CallOverrides): Promise<[string]>;
+
+    getMapInterval(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    utils(overrides?: CallOverrides): Promise<[string]>;
+  };
 
   _getBlockChunkData(
     _pos: PositionStruct,
@@ -253,9 +261,13 @@ export interface Getters extends BaseContract {
     overrides?: CallOverrides
   ): Promise<PlayerDataStructOutput[]>;
 
-  callStatic: {
-    GET_MAP_INTERVAL(overrides?: CallOverrides): Promise<BigNumber>;
+  gameCore(overrides?: CallOverrides): Promise<string>;
 
+  getMapInterval(overrides?: CallOverrides): Promise<BigNumber>;
+
+  utils(overrides?: CallOverrides): Promise<string>;
+
+  callStatic: {
     _getBlockChunkData(
       _pos: PositionStruct,
       overrides?: CallOverrides
@@ -273,13 +285,17 @@ export interface Getters extends BaseContract {
     bulkGetAllPlayerData(
       overrides?: CallOverrides
     ): Promise<PlayerDataStructOutput[]>;
+
+    gameCore(overrides?: CallOverrides): Promise<string>;
+
+    getMapInterval(overrides?: CallOverrides): Promise<BigNumber>;
+
+    utils(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {};
 
   estimateGas: {
-    GET_MAP_INTERVAL(overrides?: CallOverrides): Promise<BigNumber>;
-
     _getBlockChunkData(
       _pos: PositionStruct,
       overrides?: CallOverrides
@@ -293,11 +309,15 @@ export interface Getters extends BaseContract {
     bulkGetAllItems(overrides?: CallOverrides): Promise<BigNumber>;
 
     bulkGetAllPlayerData(overrides?: CallOverrides): Promise<BigNumber>;
+
+    gameCore(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getMapInterval(overrides?: CallOverrides): Promise<BigNumber>;
+
+    utils(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    GET_MAP_INTERVAL(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     _getBlockChunkData(
       _pos: PositionStruct,
       overrides?: CallOverrides
@@ -313,5 +333,11 @@ export interface Getters extends BaseContract {
     bulkGetAllPlayerData(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    gameCore(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getMapInterval(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    utils(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

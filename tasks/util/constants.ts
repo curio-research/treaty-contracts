@@ -200,8 +200,12 @@ export var masterItems: ItemMaster[] = [
   },
 ];
 
+// ------------------------------------------------
+// programmable blocks
+// ------------------------------------------------
+
 // door metadata
-export const blockMetadata: ItemWithMetadata = {
+export const doorBlockMetadata: ItemWithMetadata = {
   mineable: false,
   mineItemIds: [],
   health: 0,
@@ -216,6 +220,17 @@ export const blockMetadata: ItemWithMetadata = {
   attackRange: 0,
   attackCooldown: 0,
   moveCooldown: 0,
+};
+
+const doorProgrammableBlock: ItemMaster = {
+  name: 'Door',
+  item: { ...doorBlockMetadata },
+};
+
+export const allProgrammableBlocks: ItemMaster[] = [doorProgrammableBlock];
+
+export const generateAllBlocks = (): ItemMaster[] => {
+  return [...masterItems, ...allProgrammableBlocks];
 };
 
 export const generateBlockIdToNameMap = (items: ItemMaster[]): Record<number, string> => {

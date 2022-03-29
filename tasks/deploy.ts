@@ -9,14 +9,13 @@ import { task } from 'hardhat/config';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { deployProxy, getItemIndexByName, printDivider } from './util/deployHelper';
-import { LOCALHOST_RPC_URL, LOCALHOST_WS_RPC_URL, MAP_INTERVAL, masterItems, WORLD_HEIGHT, WORLD_WIDTH, blockMetadata, generateBlockIdToNameMap, ITEM_RATIO, DOOR_RATIO } from './util/constants';
+import { LOCALHOST_RPC_URL, LOCALHOST_WS_RPC_URL, MAP_INTERVAL, masterItems, WORLD_HEIGHT, WORLD_WIDTH, doorBlockMetadata, generateBlockIdToNameMap, ITEM_RATIO, DOOR_RATIO, generateAllBlocks } from './util/constants';
 import { generateAllGameArgs } from './util/allArgsGenerator';
 import { Getters, Game, GameStorage, Helper, Door } from '../typechain-types';
 import { TowerGame } from './../typechain-types/TowerGame';
 import { Permissions } from '../typechain-types';
 import { position } from '../util/types/common';
 import { gameItems, appendIpfsHashToMetadata } from './util/itemGenerator';
-import { flatten3dMapArray } from './util/mapGenerator';
 
 const { BACKEND_URL } = process.env;
 
@@ -49,13 +48,17 @@ task('deploy', 'deploy contracts')
     const GameStorage = await deployProxy<GameStorage>('GameStorage', player1, hre, [Permissions.address]);
     console.log('✦ GameStorage deployed');
 
+    // ---------------------------------
+    // put all programmable blocks here
+    // ---------------------------------
+
     // deploying programmable block contract, may be abstracted
     const doorIndex = gameItems.length; // since it will be the last item
     const DoorContract = await deployProxy<Door>('Door', player1, hre, [[player1.address], Permissions.address, GameStorage.address, doorIndex]);
     console.log('✦ Door programmable block deployed');
 
     const payload = await deployToIPFS(hre, 'Door');
-    const newGameItems = gameItems.concat(appendIpfsHashToMetadata(blockMetadata, payload.IpfsHash, DoorContract.address));
+    const newGameItems = gameItems.concat(appendIpfsHashToMetadata(doorBlockMetadata, payload.IpfsHash, DoorContract.address));
     const newItemRatio = ITEM_RATIO.concat(DOOR_RATIO);
     const allGameArgs = generateAllGameArgs(newGameItems, newItemRatio);
 
@@ -69,13 +72,11 @@ task('deploy', 'deploy contracts')
     const TowerContract = await deployProxy<TowerGame>('TowerGame', player1, hre, [GameStorage.address, Permissions.address, ironIdx], { Helper: GameHelper.address });
 
     console.log('✦ TowerContract deployed');
-    const GettersContract = await deployProxy<Getters>('Getters', player1, hre, [GameContract.address, GameStorage.address]);
+    const GettersContract = await deployProxy<Getters>('Getters', player1, hre, [GameContract.address, GameStorage.address, MAP_INTERVAL]);
     console.log('✦ GettersContract deployed');
 
     const EpochContract = await deployProxy<Epoch>('Epoch', player1, hre, [10]);
     console.log('✦ EpochContract deployed');
-
-    const GET_MAP_INTERVAL = (await GettersContract.GET_MAP_INTERVAL()).toNumber();
 
     // add contract permissions
     let tx = await Permissions.connect(player1).setPermission(GameContract.address, true);
@@ -155,18 +156,16 @@ task('deploy', 'deploy contracts')
     await towerTx.wait();
 
     // ---------------------------------
-    // porting files to frontend
+    // generate config files
+    // copies files and ports to frontend if it's a localhost, or publishes globally if its a global deployment
     // ---------------------------------
 
     const currentFileDir = path.join(__dirname);
 
     const networkRPCs = rpcUrlSelector(hre.network.name);
-    const programmableBlock = {
-      name: 'Door',
-      item: { ...blockMetadata },
-    };
 
-    const blockIdToNameMapping = generateBlockIdToNameMap(masterItems.concat(programmableBlock));
+    // perhaps this can also be on chain. lemme think - kevin
+    const blockIdToNameMapping = generateBlockIdToNameMap(generateAllBlocks());
 
     const configFile = {
       addresses: JSON.stringify({
@@ -179,7 +178,6 @@ task('deploy', 'deploy contracts')
       network: hre.network.name,
       rpcUrl: networkRPCs[0],
       wsRpcUrl: networkRPCs[1],
-      getMapInterval: GET_MAP_INTERVAL,
       blockIdToNameMapping: JSON.stringify(blockIdToNameMapping),
       deploymentId: `${hre.network.name}-${Date.now()}`,
     };
