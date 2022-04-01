@@ -327,8 +327,10 @@ contract GameStorage {
         s.worldBlocks[_worldBlockId].lastAttacked = block.timestamp;
     }
 
-    function _setLastMoved(uint256 _worldBlockId) public hasPermission {
-        s.worldBlocks[_worldBlockId].lastMoved = block.timestamp;
+    function _setLastBlockMoved(uint256 _worldBlockId) public hasPermission returns (uint256) {
+        uint256 time = block.timestamp;
+        s.worldBlocks[_worldBlockId].lastMoved = time;
+        return time;
     }
 
     // ------------------------------------------------------------

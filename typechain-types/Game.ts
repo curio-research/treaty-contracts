@@ -174,7 +174,7 @@ export interface GameInterface extends utils.Interface {
     "Craft(address,uint256)": EventFragment;
     "MineItem(address,tuple,uint256)": EventFragment;
     "Move(address,tuple)": EventFragment;
-    "MoveBlock(address,tuple,tuple,uint256)": EventFragment;
+    "MoveBlock(address,tuple,tuple,uint256,uint256)": EventFragment;
     "NewPlayer(address,tuple)": EventFragment;
     "Place(address,tuple,uint256,tuple)": EventFragment;
   };
@@ -245,12 +245,13 @@ export type MoveEvent = TypedEvent<
 export type MoveEventFilter = TypedEventFilter<MoveEvent>;
 
 export type MoveBlockEvent = TypedEvent<
-  [string, PositionStructOutput, PositionStructOutput, BigNumber],
+  [string, PositionStructOutput, PositionStructOutput, BigNumber, BigNumber],
   {
     _player: string;
     _startPos: PositionStructOutput;
     _endPos: PositionStructOutput;
     _worldBlockId: BigNumber;
+    _time: BigNumber;
   }
 >;
 
@@ -457,17 +458,19 @@ export interface Game extends BaseContract {
     "Move(address,tuple)"(_player?: null, _pos?: null): MoveEventFilter;
     Move(_player?: null, _pos?: null): MoveEventFilter;
 
-    "MoveBlock(address,tuple,tuple,uint256)"(
+    "MoveBlock(address,tuple,tuple,uint256,uint256)"(
       _player?: null,
       _startPos?: null,
       _endPos?: null,
-      _worldBlockId?: null
+      _worldBlockId?: null,
+      _time?: null
     ): MoveBlockEventFilter;
     MoveBlock(
       _player?: null,
       _startPos?: null,
       _endPos?: null,
-      _worldBlockId?: null
+      _worldBlockId?: null,
+      _time?: null
     ): MoveBlockEventFilter;
 
     "NewPlayer(address,tuple)"(

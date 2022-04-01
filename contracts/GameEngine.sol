@@ -27,8 +27,7 @@ contract Game {
     event Place(address _player, GameTypes.Position _pos, uint256 _worldBlockId, GameTypes.BlockData _blockData);
     event Craft(address _player, uint256 _blockId);
     event ChangeBlockStrength(address _player, GameTypes.Position _pos, uint256 _health, uint256 _resourceUsed);
-
-    event MoveBlock(address _player, GameTypes.Position _startPos, GameTypes.Position _endPos, uint256 _worldBlockId);
+    event MoveBlock(address _player, GameTypes.Position _startPos, GameTypes.Position _endPos, uint256 _worldBlockId, uint256 _time);
 
     // ------------------------------------------------------------
     // Constructor
@@ -143,6 +142,7 @@ contract Game {
      * @param _startPos starting position
      * @param _targetPos target position
      */
+    // input should include worldBlockId
     function moveBlock(GameTypes.Position memory _startPos, GameTypes.Position memory _targetPos) public {
         GameTypes.Tile memory startTile = utils._getTileData(_startPos);
         GameTypes.Tile memory targetTile = utils._getTileData(_targetPos);
@@ -162,14 +162,14 @@ contract Game {
 
         require(targetTile.worldBlockId == 0, "engine/target-tile-not-empty");
 
-        utils._setLastMoved(startTile.worldBlockId); // set last moved
+        uint256 time = utils._setLastBlockMoved(startTile.worldBlockId); // set last moved
 
         // set new worldId for each tile
         utils._setWorldBlockIdAtTile(_startPos, 0);
         utils._setWorldBlockIdAtTile(_targetPos, startTile.worldBlockId);
 
         // since stats don't change i don't think we need to emit block data
-        emit MoveBlock(msg.sender, _startPos, _targetPos, startTile.worldBlockId);
+        emit MoveBlock(msg.sender, _startPos, _targetPos, startTile.worldBlockId, time);
     }
 
     // mine item completely

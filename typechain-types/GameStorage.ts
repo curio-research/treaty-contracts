@@ -212,7 +212,8 @@ export interface GameStorageInterface extends utils.Interface {
     "_setConstants((uint256,uint256,uint256,uint256,uint256,uint256))": FunctionFragment;
     "_setItem(uint256,(bool,bool,bool,uint256,uint256[],uint256[],uint256[],uint256,uint256,uint256,uint256,bool,string,string))": FunctionFragment;
     "_setLastAttacked(uint256)": FunctionFragment;
-    "_setLastMoved(uint256)": FunctionFragment;
+    "_setLastBlockMoved(uint256)": FunctionFragment;
+    "_setLastMoved(address)": FunctionFragment;
     "_setMapRegion((uint256,uint256),uint256[][])": FunctionFragment;
     "_setOccupierAtPosition(address,(uint256,uint256))": FunctionFragment;
     "_setPlayer(address,(uint256,uint256))": FunctionFragment;
@@ -348,8 +349,12 @@ export interface GameStorageInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "_setLastMoved",
+    functionFragment: "_setLastBlockMoved",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_setLastMoved",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "_setMapRegion",
@@ -515,6 +520,10 @@ export interface GameStorageInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "_setItem", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_setLastAttacked",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_setLastBlockMoved",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -775,12 +784,12 @@ export interface GameStorage extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "_setLastMoved(uint256)"(
+    _setLastBlockMoved(
       _worldBlockId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    "_setLastMoved(address)"(
+    _setLastMoved(
       _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -1033,12 +1042,12 @@ export interface GameStorage extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "_setLastMoved(uint256)"(
+  _setLastBlockMoved(
     _worldBlockId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  "_setLastMoved(address)"(
+  _setLastMoved(
     _player: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -1289,15 +1298,12 @@ export interface GameStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    "_setLastMoved(uint256)"(
+    _setLastBlockMoved(
       _worldBlockId: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<BigNumber>;
 
-    "_setLastMoved(address)"(
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    _setLastMoved(_player: string, overrides?: CallOverrides): Promise<void>;
 
     _setMapRegion(
       _startPos: PositionStruct,
@@ -1564,12 +1570,12 @@ export interface GameStorage extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "_setLastMoved(uint256)"(
+    _setLastBlockMoved(
       _worldBlockId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    "_setLastMoved(address)"(
+    _setLastMoved(
       _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -1810,12 +1816,12 @@ export interface GameStorage extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "_setLastMoved(uint256)"(
+    _setLastBlockMoved(
       _worldBlockId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    "_setLastMoved(address)"(
+    _setLastMoved(
       _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
