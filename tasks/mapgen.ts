@@ -1,4 +1,4 @@
-import { createCellularMap } from './util/dungeonGenerator';
+import { createCellularMap, createDiggerMap } from './util/dungeonGenerator';
 import { gameItems } from './util/itemGenerator';
 import { task } from 'hardhat/config';
 import { generateAllGameArgs } from './util/allArgsGenerator';
@@ -10,7 +10,8 @@ import * as fs from 'fs';
 task('mapgen', 'Ports the map to render on frontend').setAction(async (args: any, hre: HardhatRuntimeEnvironment) => {
   //   let blocks = generateAllGameArgs(gameItems).blockMap;
 
-  const map = createCellularMap(200, 200);
+  const map = createCellularMap(50, 50);
+  //   const map = createDiggerMap(50, 50);
 
   // port
   await fsPromise.writeFile(path.join(path.join(__dirname), 'map.json'), JSON.stringify(map));

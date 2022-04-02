@@ -22,6 +22,7 @@ export enum MAP_MODE {
   PRIMS,
   PRIMS_CONNECTED,
   ROOMS_1,
+  CELLULAR,
 }
 
 // game specs - auto
@@ -289,10 +290,12 @@ export const MAP_ROOMS_1 = [
   [W, W, W, W, W, W, W, W, W, O, O, O, O, W],
   [W, W, W, W, W, W, W, W, W, W, W, W, W, W],
 ];
-export var customMapMapping: Record<MAP_MODE, number[][]> = {
+
+export var customMapMapping: any = {
   0: [],
   1: [],
   2: [],
   3: [],
 };
+
 customMapMapping[MAP_MODE.ROOMS_1] = MAP_ROOMS_1;

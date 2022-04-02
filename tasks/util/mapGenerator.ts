@@ -1,3 +1,4 @@
+import { createCellularMap } from './dungeonGenerator';
 import { EMPTY_ADDRESS } from './../../util/network/common';
 import { position } from './../../util/types/common';
 import { MasterGameSpecs, PrimsMapOutput } from './types/mapGenerator';
@@ -7,6 +8,95 @@ import { customMapMapping, MAP_MODE, masterItems } from './constants';
 import { addConnectivity, generatePrimsMap } from './primsMap';
 import { ItemMaster } from '../../util/types/getter';
 import { getItemIndexByName } from './deployHelper';
+
+// ---------------------------------
+// master map generation function
+// ---------------------------------
+
+export const generateMap = (worldWidth: number, worldHeight: number, roomWidth: number, masterItems: ItemMaster[], mapMode: MAP_MODE = MAP_MODE.DEFAULT): MasterGameSpecs => {
+  let map: number[][];
+  const wallIdx = getItemIndexByName(masterItems, 'Indestructible Wall');
+  const spaceIdx = getItemIndexByName(masterItems, 'Space');
+  const towerIdx = getItemIndexByName(masterItems, 'Tower');
+
+  let primsMapOutput: PrimsMapOutput;
+  switch (mapMode) {
+    case MAP_MODE.PRIMS:
+      primsMapOutput = generatePrimsMap(worldWidth, worldHeight);
+      map = primsMapOutput.map;
+      break;
+
+    case MAP_MODE.PRIMS_CONNECTED:
+      primsMapOutput = generatePrimsMap(worldWidth, worldHeight);
+      map = addConnectivity(primsMapOutput.map);
+      break;
+
+    case MAP_MODE.DEFAULT:
+      map = generateEmptyMap(worldWidth, worldHeight);
+      const walls = generateWallCoords(worldWidth, worldHeight, roomWidth);
+      walls.forEach((pos) => {
+        map[pos.x][pos.y] = wallIdx; // apply block coordinates to master map
+      });
+      break;
+
+    case MAP_MODE.CELLULAR:
+      map = createCellularMap(worldWidth, worldHeight);
+
+      break;
+
+    default:
+      // custom maps — skip tower specs later
+      map = customMapMapping[mapMode];
+      let towers: position[] = [];
+      for (let x = 0; x < map.length; x++) {
+        for (let y = 0; y < map[0].length; y++) {
+          if (map[x][y] === towerIdx) towers.push({ x, y });
+        }
+      }
+      const towerSpecs = generateTowerSpecs(towers);
+      return {
+        blocks: map,
+        towers: towerSpecs,
+      };
+  }
+
+  const towers = generateTowerCoords(worldWidth, worldHeight, roomWidth); // generate tower locations
+  const towerSpecs = generateTowerSpecs(towers);
+  let pos: position;
+  let x: number;
+  let y: number;
+  for (let k = 0; k < towers.length; k++) {
+    pos = towers[k];
+    x = pos.x;
+    y = pos.y;
+
+    // check no indestructible wall exists at tower coordinate
+    if (map[x][y] !== wallIdx) {
+      // clear tower surroundings
+      for (let i = -1; i <= 1; i++) {
+        for (let j = -1; j <= 1; j++) {
+          if (x + i >= 0 && x + i < worldWidth && y + j >= 0 && y + j < worldHeight) {
+            if (map[x + i][y + j] !== spaceIdx) map[x + i][y + j] = spaceIdx;
+          }
+        }
+      }
+
+      // set tower
+
+      map[x][y] = towerIdx;
+    } else {
+      // remove one from towers and towerSpecs arrays
+      towers.splice(k, 1);
+      towerSpecs.splice(k, 1);
+      k--;
+    }
+  }
+
+  return {
+    blocks: map,
+    towers: towerSpecs,
+  };
+};
 
 // Generate single room with starting coordinate
 const GenerateSingleRoom = (x: number, y: number, width: number, height: number, roomWidth: number): position[] => {
@@ -156,87 +246,6 @@ const generateTowerSpecs = (towerLocations: position[]): TowerWithLocation[] => 
       },
     };
   });
-};
-
-// ---------------------------------
-// master map generation function
-// ---------------------------------
-
-export const generateMap = (worldWidth: number, worldHeight: number, roomWidth: number, masterItems: ItemMaster[], mapMode: MAP_MODE = MAP_MODE.DEFAULT): MasterGameSpecs => {
-  let map: number[][];
-  const wallIdx = getItemIndexByName(masterItems, 'Indestructible Wall');
-  const spaceIdx = getItemIndexByName(masterItems, 'Space');
-  const towerIdx = getItemIndexByName(masterItems, 'Tower');
-
-  let primsMapOutput: PrimsMapOutput;
-  switch (mapMode) {
-    case MAP_MODE.PRIMS:
-      primsMapOutput = generatePrimsMap(worldWidth, worldHeight);
-      map = primsMapOutput.map;
-      break;
-    case MAP_MODE.PRIMS_CONNECTED:
-      primsMapOutput = generatePrimsMap(worldWidth, worldHeight);
-      map = addConnectivity(primsMapOutput.map);
-      break;
-    case MAP_MODE.DEFAULT:
-      map = generateEmptyMap(worldWidth, worldHeight);
-      const walls = generateWallCoords(worldWidth, worldHeight, roomWidth);
-      walls.forEach((pos) => {
-        map[pos.x][pos.y] = wallIdx; // apply block coordinates to master map
-      });
-      break;
-    default:
-      // custom maps — skip tower specs later
-      map = customMapMapping[mapMode];
-      let towers: position[] = [];
-      for (let x = 0; x < map.length; x++) {
-        for (let y = 0; y < map[0].length; y++) {
-          if (map[x][y] === towerIdx) towers.push({ x, y });
-        }
-      }
-      const towerSpecs = generateTowerSpecs(towers);
-      return {
-        blocks: map,
-        towers: towerSpecs,
-      };
-  }
-
-  const towers = generateTowerCoords(worldWidth, worldHeight, roomWidth); // generate tower locations
-  const towerSpecs = generateTowerSpecs(towers);
-  let pos: position;
-  let x: number;
-  let y: number;
-  for (let k = 0; k < towers.length; k++) {
-    pos = towers[k];
-    x = pos.x;
-    y = pos.y;
-
-    // check no indestructible wall exists at tower coordinate
-    if (map[x][y] !== wallIdx) {
-      // clear tower surroundings
-      for (let i = -1; i <= 1; i++) {
-        for (let j = -1; j <= 1; j++) {
-          if (x + i >= 0 && x + i < worldWidth && y + j >= 0 && y + j < worldHeight) {
-            if (map[x + i][y + j] !== spaceIdx) map[x + i][y + j] = spaceIdx;
-          }
-        }
-      }
-
-      // set tower
-
-      map[x][y] = towerIdx;
-    } else {
-      // remove one from towers and towerSpecs arrays
-      towers.splice(k, 1);
-      towerSpecs.splice(k, 1);
-      k--;
-    }
-  }
-
-  return {
-    blocks: map,
-    towers: towerSpecs,
-  };
 };
 
 // ---------------------------------
