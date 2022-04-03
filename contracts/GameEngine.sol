@@ -281,6 +281,7 @@ contract Game {
      */
     function mine(GameTypes.Position memory _pos) external {
         uint256 _worldBlockId = utils._getBlockAtPos(_pos);
+        uint256 _tempMineVar = 10;
         require(_worldBlockId != 0, "engine/nonexistent-block");
 
         require(utils._withinDistance(_pos, utils._getPlayer(msg.sender).position, 1), "engine/invalid-distance");
@@ -293,7 +294,7 @@ contract Game {
 
         require(_itemWithMetadata.mineable, "engine/not-mineable");
 
-        if (10 < _blockData.health) {
+        if (_tempMineVar < _blockData.health) {
             attackItem(_pos, msg.sender);
         } else {
             mineItem(_pos, msg.sender);

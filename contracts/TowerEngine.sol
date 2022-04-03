@@ -33,11 +33,11 @@ contract TowerGame {
     }
 
     // ------------------------
-    // main commands
+    // main functions
     // ------------------------
 
     // players can capture the tower if the monsters are the only ones parked next to the towers
-    function capture(GameTypes.Position memory _position) public {
+    function capture(GameTypes.Position memory _position) external {
         // scan surrounding area and if they're only yours you're the owner
         // you need at least 1 minion to capture
         require(isValidCapture(msg.sender, _position), "tower/invalid-capture");
@@ -52,7 +52,7 @@ contract TowerGame {
         emit Capture(msg.sender, _position);
     }
 
-    function claimReward(GameTypes.Position memory _position) public {
+    function claimReward(GameTypes.Position memory _position) external {
         string memory _towerId = Helper._encodePos(_position);
         GameTypes.Tower memory tower = utils._getTower(_towerId);
 
@@ -114,42 +114,4 @@ contract TowerGame {
         string memory _towerId = string(abi.encodePacked(_position.x, _position.y));
         return utils._getTower(_towerId);
     }
-
-    // function _modifyRewardByBlockLocation(uint256 _reward, GameTypes.Position memory _pos) public view returns (uint256) {
-    //     uint256 _blockId = utils._getBlockAtPos(_pos);
-
-    //     // update the list based on item mapping
-    //     if (_blockId == 5) {
-    //         return _reward * 2;
-    //     } else if (_blockId == 6) {
-    //         return 0;
-    //     }
-    //     return _reward;
-    // }
-
-    // claim reward for tower
-    // if we have a gamemode that the tower is occupiable, then when user claims reward we check if the creature belongs to them or not
-    // function claimReward(GameTypes.Position memory _position) external {
-    //     string memory _towerId = Helper._encodePos(_position);
-    //     GameTypes.Tower memory tower = utils._getTower(_towerId);
-
-    //     if (tower.owner != msg.sender) revert("tower/invalid-tower-owner");
-
-    //     // check the world block Id
-
-    //     uint256 currentEpoch = utils._getCurrentEpoch();
-    //     uint256 totalReward = (currentEpoch - tower.lastCapturedEpoch) * tower.rewardPerEpoch;
-
-    //     // we assume here towers aren't on map edges
-    //     uint256 _r1 = _modifyRewardByBlockLocation(totalReward, GameTypes.Position({x: _position.x - 1, y: _position.y}));
-    //     uint256 _r2 = _modifyRewardByBlockLocation(_r1, GameTypes.Position({x: _position.x + 1, y: _position.y}));
-    //     uint256 _r3 = _modifyRewardByBlockLocation(_r2, GameTypes.Position({x: _position.x, y: _position.y - 1}));
-    //     uint256 _rFinal = _modifyRewardByBlockLocation(_r3, GameTypes.Position({x: _position.x, y: _position.y + 1}));
-
-    //     utils._increaseItemInInventory(msg.sender, tower.itemId, _rFinal);
-    //     tower.stakedTime = currentEpoch;
-    //     utils._setTower(_towerId, tower);
-
-    //     emit ClaimReward(msg.sender, _position, tower.itemId, _rFinal, currentEpoch);
-    // }
 }

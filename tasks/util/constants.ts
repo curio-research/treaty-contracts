@@ -291,11 +291,12 @@ export const MAP_ROOMS_1 = [
   [W, W, W, W, W, W, W, W, W, W, W, W, W, W],
 ];
 
-export var customMapMapping: any = {
+export var customMapMapping: Record<MAP_MODE, number[][]> = {
   0: [],
   1: [],
   2: [],
   3: [],
+  4: [],
 };
 
 customMapMapping[MAP_MODE.ROOMS_1] = MAP_ROOMS_1;
