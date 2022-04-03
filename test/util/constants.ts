@@ -50,7 +50,6 @@ const ATTACK_RANGE = 1;
 const ATTACK_DAMAGE = 5;
 const ATTACK_WAITTIME = 5;
 const START_PLAYER_HEALTH = 100;
-const START_PLAYER_ENERGY = 100;
 
 const GAME_CONSTANTS = {
   worldWidth: WORLD_WIDTH,

@@ -16,7 +16,6 @@ import { TowerGame } from './../typechain-types/TowerGame';
 import { Permissions } from '../typechain-types';
 import { position } from '../util/types/common';
 import { gameItems, appendIpfsHashToMetadata } from './util/itemGenerator';
-
 const { BACKEND_URL } = process.env;
 
 // ---------------------------------
@@ -62,12 +61,12 @@ task('deploy', 'deploy contracts')
     const newItemRatio = ITEM_RATIO.concat(DOOR_RATIO);
     const allGameArgs = generateAllGameArgs(newGameItems, newItemRatio);
 
-    let blocks = allGameArgs.blockMap;
+    const blocks = allGameArgs.blockMap;
 
     // visualize map
     await fsPromise.writeFile(path.join(path.join(__dirname), 'map.json'), JSON.stringify(blocks));
 
-    const GameContract = await deployProxy<Game>('Game', player1, hre, [...allGameArgs.gameDeployArgs, GameStorage.address, Permissions.address]);
+    const GameContract = await deployProxy<Game>('Game', player1, hre, [allGameArgs.gameConstants, allGameArgs.allGameItems, GameStorage.address, Permissions.address]);
     console.log('✦ GameContract deployed');
     const TowerContract = await deployProxy<TowerGame>('TowerGame', player1, hre, [GameStorage.address, Permissions.address, ironIdx], { Helper: GameHelper.address });
 
@@ -131,6 +130,10 @@ task('deploy', 'deploy contracts')
 
       let tx;
       tx = await GameContract.connect(player1).initializePlayer(player1Pos, ironIdx); // initialize users
+      tx.wait();
+
+      // add some inventory items for testing
+      tx = await GameStorage._increaseItemInInventory(player1.address, getItemIndexByName(masterItems, 'Silver'), 100);
       tx.wait();
 
       tx = await GameContract.connect(player2).initializePlayer(player2Pos, ironIdx);

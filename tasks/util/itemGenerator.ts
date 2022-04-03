@@ -1,6 +1,6 @@
 import { PositionStruct } from '../../typechain-types/Game';
 import { ItemMaster, ItemWithMetadata } from '../../util/types/getter';
-import { ITEM_RATIO, masterItems, WORLD_HEIGHT, WORLD_WIDTH } from './constants';
+import { masterItems, WORLD_HEIGHT, WORLD_WIDTH } from './constants';
 
 // ------------------------------------------------
 // Generate all items with crafting recipes

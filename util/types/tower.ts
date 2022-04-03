@@ -1,10 +1,9 @@
-import { position } from "./common";
+import { position } from './common';
 
 export interface Tower {
   rewardPerEpoch: number;
   itemId: number;
-  stakedAmount: number;
-  stakedTime: number;
+  lastCapturedEpoch: number;
   owner: string;
 }
 

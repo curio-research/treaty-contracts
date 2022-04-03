@@ -15,12 +15,14 @@ export const ATTACK_RANGE = 1;
 export const ATTACK_DAMAGE = 5;
 export const ATTACK_WAITTIME = 5;
 export const START_PLAYER_HEALTH = 100;
+export const PLAYER_MOVE_COOLDOWN = 1; // player can move every x seconds
 export const MAP_INTERVAL = 10;
 export enum MAP_MODE {
   DEFAULT,
   PRIMS,
   PRIMS_CONNECTED,
   ROOMS_1,
+  CELLULAR,
 }
 
 // game specs - auto
@@ -31,13 +33,10 @@ export const generateGameConstants = () => {
   return {
     worldWidth: WORLD_WIDTH,
     worldHeight: WORLD_HEIGHT,
-    startingAttackDamage: ATTACK_DAMAGE,
-    startingAttackRange: ATTACK_RANGE,
-    startingAttackWaitTime: 0,
-    startPlayerHealth: 100,
-    startPlayerEnergy: 100,
+    startPlayerHealth: START_PLAYER_HEALTH,
     startingReach: 2,
     startingPlayerDefaultCurrencyAmount: 100,
+    playerMoveCooldown: PLAYER_MOVE_COOLDOWN,
   };
 };
 
@@ -118,6 +117,25 @@ export var masterItems: ItemMaster[] = [
       attackDamage: 5,
       attackRange: 1,
       attackCooldown: 10,
+      contractAddr: '',
+      moveCooldown: 10,
+    },
+  },
+  {
+    name: 'Archer',
+    item: {
+      mineable: true,
+      mineItemIds: [],
+      health: 40,
+      craftable: true,
+      craftItemIds: [1, 2],
+      craftItemAmounts: [20, 5],
+      occupiable: false,
+      programmable: false,
+      abiEncoding: '',
+      attackDamage: 5,
+      attackRange: 2,
+      attackCooldown: 5,
       contractAddr: '',
       moveCooldown: 10,
     },
@@ -243,7 +261,7 @@ export const generateBlockIdToNameMap = (items: ItemMaster[]): Record<number, st
 
 // number of each item to generate every 100 tiles
 // determines the rarity of items
-export const ITEM_RATIO = [0, 10, 3, 0, 0, 0, 0, 0];
+export const ITEM_RATIO = [0, 0, 0, 0, 0, 0, 0, 0];
 export const DOOR_RATIO = 0; // variable
 console.assert(masterItems.length == ITEM_RATIO.length);
 
@@ -272,10 +290,13 @@ export const MAP_ROOMS_1 = [
   [W, W, W, W, W, W, W, W, W, O, O, O, O, W],
   [W, W, W, W, W, W, W, W, W, W, W, W, W, W],
 ];
+
 export var customMapMapping: Record<MAP_MODE, number[][]> = {
   0: [],
   1: [],
   2: [],
   3: [],
+  4: [],
 };
+
 customMapMapping[MAP_MODE.ROOMS_1] = MAP_ROOMS_1;

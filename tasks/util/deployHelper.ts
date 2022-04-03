@@ -16,5 +16,5 @@ export const printDivider = () => {
 };
 
 export const getItemIndexByName = (masterItems: ItemMaster[], name: string): number => {
-  return masterItems.indexOf(masterItems.filter((im) => im.name === name)[0]);
+  return masterItems.indexOf(masterItems.filter((item) => item.name === name)[0]);
 };

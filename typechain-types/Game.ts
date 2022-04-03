@@ -20,19 +20,13 @@ import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 export type WorldConstantsStruct = {
   worldWidth: BigNumberish;
   worldHeight: BigNumberish;
-  startingAttackDamage: BigNumberish;
-  startingAttackRange: BigNumberish;
-  startingAttackWaitTime: BigNumberish;
   startPlayerHealth: BigNumberish;
-  startPlayerEnergy: BigNumberish;
   startingReach: BigNumberish;
   startingPlayerDefaultCurrencyAmount: BigNumberish;
+  playerMoveCooldown: BigNumberish;
 };
 
 export type WorldConstantsStructOutput = [
-  BigNumber,
-  BigNumber,
-  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -42,13 +36,10 @@ export type WorldConstantsStructOutput = [
 ] & {
   worldWidth: BigNumber;
   worldHeight: BigNumber;
-  startingAttackDamage: BigNumber;
-  startingAttackRange: BigNumber;
-  startingAttackWaitTime: BigNumber;
   startPlayerHealth: BigNumber;
-  startPlayerEnergy: BigNumber;
   startingReach: BigNumber;
   startingPlayerDefaultCurrencyAmount: BigNumber;
+  playerMoveCooldown: BigNumber;
 };
 
 export type ItemWithMetadataStruct = {
@@ -59,13 +50,13 @@ export type ItemWithMetadataStruct = {
   mineItemIds: BigNumberish[];
   craftItemIds: BigNumberish[];
   craftItemAmounts: BigNumberish[];
-  programmable: boolean;
-  abiEncoding: string;
-  contractAddr: string;
   moveCooldown: BigNumberish;
   attackDamage: BigNumberish;
   attackRange: BigNumberish;
   attackCooldown: BigNumberish;
+  programmable: boolean;
+  abiEncoding: string;
+  contractAddr: string;
 };
 
 export type ItemWithMetadataStructOutput = [
@@ -76,13 +67,13 @@ export type ItemWithMetadataStructOutput = [
   BigNumber[],
   BigNumber[],
   BigNumber[],
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
   boolean,
   string,
-  string,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber
+  string
 ] & {
   mineable: boolean;
   craftable: boolean;
@@ -91,13 +82,13 @@ export type ItemWithMetadataStructOutput = [
   mineItemIds: BigNumber[];
   craftItemIds: BigNumber[];
   craftItemAmounts: BigNumber[];
-  programmable: boolean;
-  abiEncoding: string;
-  contractAddr: string;
   moveCooldown: BigNumber;
   attackDamage: BigNumber;
   attackRange: BigNumber;
   attackCooldown: BigNumber;
+  programmable: boolean;
+  abiEncoding: string;
+  contractAddr: string;
 };
 
 export type PositionStruct = { x: BigNumberish; y: BigNumberish };
@@ -183,7 +174,7 @@ export interface GameInterface extends utils.Interface {
     "Craft(address,uint256)": EventFragment;
     "MineItem(address,tuple,uint256)": EventFragment;
     "Move(address,tuple)": EventFragment;
-    "MoveBlock(address,tuple,tuple,uint256)": EventFragment;
+    "MoveBlock(address,tuple,tuple,uint256,uint256)": EventFragment;
     "NewPlayer(address,tuple)": EventFragment;
     "Place(address,tuple,uint256,tuple)": EventFragment;
   };
@@ -254,12 +245,13 @@ export type MoveEvent = TypedEvent<
 export type MoveEventFilter = TypedEventFilter<MoveEvent>;
 
 export type MoveBlockEvent = TypedEvent<
-  [string, PositionStructOutput, PositionStructOutput, BigNumber],
+  [string, PositionStructOutput, PositionStructOutput, BigNumber, BigNumber],
   {
     _player: string;
     _startPos: PositionStructOutput;
     _endPos: PositionStructOutput;
     _worldBlockId: BigNumber;
+    _time: BigNumber;
   }
 >;
 
@@ -466,17 +458,19 @@ export interface Game extends BaseContract {
     "Move(address,tuple)"(_player?: null, _pos?: null): MoveEventFilter;
     Move(_player?: null, _pos?: null): MoveEventFilter;
 
-    "MoveBlock(address,tuple,tuple,uint256)"(
+    "MoveBlock(address,tuple,tuple,uint256,uint256)"(
       _player?: null,
       _startPos?: null,
       _endPos?: null,
-      _worldBlockId?: null
+      _worldBlockId?: null,
+      _time?: null
     ): MoveBlockEventFilter;
     MoveBlock(
       _player?: null,
       _startPos?: null,
       _endPos?: null,
-      _worldBlockId?: null
+      _worldBlockId?: null,
+      _time?: null
     ): MoveBlockEventFilter;
 
     "NewPlayer(address,tuple)"(

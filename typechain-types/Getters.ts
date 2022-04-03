@@ -59,13 +59,13 @@ export type ItemWithMetadataStruct = {
   mineItemIds: BigNumberish[];
   craftItemIds: BigNumberish[];
   craftItemAmounts: BigNumberish[];
-  programmable: boolean;
-  abiEncoding: string;
-  contractAddr: string;
   moveCooldown: BigNumberish;
   attackDamage: BigNumberish;
   attackRange: BigNumberish;
   attackCooldown: BigNumberish;
+  programmable: boolean;
+  abiEncoding: string;
+  contractAddr: string;
 };
 
 export type ItemWithMetadataStructOutput = [
@@ -76,13 +76,13 @@ export type ItemWithMetadataStructOutput = [
   BigNumber[],
   BigNumber[],
   BigNumber[],
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
   boolean,
   string,
-  string,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber
+  string
 ] & {
   mineable: boolean;
   craftable: boolean;
@@ -91,24 +91,22 @@ export type ItemWithMetadataStructOutput = [
   mineItemIds: BigNumber[];
   craftItemIds: BigNumber[];
   craftItemAmounts: BigNumber[];
-  programmable: boolean;
-  abiEncoding: string;
-  contractAddr: string;
   moveCooldown: BigNumber;
   attackDamage: BigNumber;
   attackRange: BigNumber;
   attackCooldown: BigNumber;
+  programmable: boolean;
+  abiEncoding: string;
+  contractAddr: string;
 };
 
 export type PlayerDataStruct = {
   initialized: boolean;
   initTimestamp: BigNumberish;
   playerAddr: string;
-  attackDamage: BigNumberish;
-  attackRange: BigNumberish;
   health: BigNumberish;
-  energy: BigNumberish;
   reach: BigNumberish;
+  lastMoved: BigNumberish;
   position: PositionStruct;
 };
 
@@ -119,18 +117,14 @@ export type PlayerDataStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
-  BigNumber,
-  BigNumber,
   PositionStructOutput
 ] & {
   initialized: boolean;
   initTimestamp: BigNumber;
   playerAddr: string;
-  attackDamage: BigNumber;
-  attackRange: BigNumber;
   health: BigNumber;
-  energy: BigNumber;
   reach: BigNumber;
+  lastMoved: BigNumber;
   position: PositionStructOutput;
 };
 

@@ -12,30 +12,25 @@ library GameTypes {
     struct WorldConstants {
         uint256 worldWidth;
         uint256 worldHeight;
-        uint256 startingAttackDamage;
-        uint256 startingAttackRange;
-        uint256 startingAttackWaitTime;
         uint256 startPlayerHealth;
-        uint256 startPlayerEnergy;
         uint256 startingReach;
         uint256 startingPlayerDefaultCurrencyAmount;
+        uint256 playerMoveCooldown; // time in seconds;
     }
 
     struct PlayerData {
         bool initialized;
         uint256 initTimestamp;
         address playerAddr;
-        uint256 attackDamage;
-        uint256 attackRange;
         uint256 health;
-        uint256 energy;
         uint256 reach;
+        uint256 lastMoved; // time in seconds
         Position position;
     }
 
     struct Tile {
         address occupier; // this should be the player OR blocks?
-        uint256 worldBlockId; // zero means its empty
+        uint256 worldBlockId; // zero'th block is always the "empty block"
     }
 
     // spawned block data
@@ -57,13 +52,13 @@ library GameTypes {
         uint256[] mineItemIds; // tools for mining
         uint256[] craftItemIds;
         uint256[] craftItemAmounts;
-        bool programmable; // programmable blocks
-        string abiEncoding;
-        string contractAddr;
         uint256 moveCooldown; // move cooldown for minions mostly
         uint256 attackDamage; // additional creature property
         uint256 attackRange;
         uint256 attackCooldown;
+        bool programmable; // programmable blocks. abstract to a enum here
+        string abiEncoding;
+        string contractAddr;
         // moveable?
         // uint256 defense;
         // uint256 health;
@@ -77,9 +72,8 @@ library GameTypes {
 
     struct Tower {
         uint256 rewardPerEpoch;
-        uint256 itemId;
-        uint256 stakedAmount;
-        uint256 stakedTime; // in epochs unit
+        uint256 itemId; // reward's itemID
+        uint256 lastCapturedEpoch; // in epoch units
         address owner;
     }
 
