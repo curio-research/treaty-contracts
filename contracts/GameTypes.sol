@@ -33,13 +33,15 @@ library GameTypes {
         uint256 worldBlockId; // zero'th block is always the "empty block"
     }
 
-    // spawned block data
+    // spawned block data ... I'm researching the entity-component system to beter express these things. For instance there's a lot of
+    // redunduncy between this prototype and the next one
     struct BlockData {
         uint256 blockId;
         uint256 health;
         address owner;
         uint256 lastAttacked; // "block data" stores the raw data unique to each game instane. Does this make sense?
         uint256 lastMoved;
+        bool occupiable;
         // Position position; // do we need this?
     }
 

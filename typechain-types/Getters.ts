@@ -28,6 +28,7 @@ export type BlockDataStruct = {
   owner: string;
   lastAttacked: BigNumberish;
   lastMoved: BigNumberish;
+  occupiable: boolean;
 };
 
 export type BlockDataStructOutput = [
@@ -35,13 +36,15 @@ export type BlockDataStructOutput = [
   BigNumber,
   string,
   BigNumber,
-  BigNumber
+  BigNumber,
+  boolean
 ] & {
   blockId: BigNumber;
   health: BigNumber;
   owner: string;
   lastAttacked: BigNumber;
   lastMoved: BigNumber;
+  occupiable: boolean;
 };
 
 export type TileStruct = { occupier: string; worldBlockId: BigNumberish };

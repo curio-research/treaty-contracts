@@ -60,17 +60,18 @@ contract Door {
         whitelist[player] = whitelisted;
     }
 
-    function open() public onlyWhitelist {
-        require(_hasDoorNearby(), "must have door nearby");
-        GameTypes.ItemWithMetadata memory door = utils._getItem(itemIdx);
-        door.occupiable = true;
-        utils._setItem(itemIdx, door);
+    // when the door is opened it should only affect a single door, hence changing the worldBlockData structure
+    function open(uint256 _worldBlockId) public onlyWhitelist {
+        // require(_hasDoorNearby(), "must have door nearby");
+        GameTypes.BlockData memory worldBlockData = utils._getWorldBlockData(_worldBlockId);
+        worldBlockData.occupiable = true;
+        utils._setWorldBlockProperty(_worldBlockId, worldBlockData);
     }
 
-    function close() public onlyWhitelist {
-        require(_hasDoorNearby(), "must have door nearby");
-        GameTypes.ItemWithMetadata memory door = utils._getItem(itemIdx);
-        door.occupiable = false;
-        utils._setItem(itemIdx, door);
+    function close(uint256 _worldBlockId) public onlyWhitelist {
+        // require(_hasDoorNearby(), "must have door nearby");
+        GameTypes.BlockData memory worldBlockData = utils._getWorldBlockData(_worldBlockId);
+        worldBlockData.occupiable = false;
+        utils._setWorldBlockProperty(_worldBlockId, worldBlockData);
     }
 }

@@ -13,20 +13,11 @@ contract GameStorage {
     Permissions private p;
 
     // ------------------------------------------------------------
-    // Modifier
-    // ------------------------------------------------------------
-    modifier hasPermission() {
-        require(p._hasContractPermission(msg.sender));
-        _;
-    }
-
-    // ------------------------------------------------------------
     // Events
     // ------------------------------------------------------------
 
     event Transfer(address _player, address _recipient, uint256 _id, uint256 _amount);
-
-    event ChangeBlockProperty(uint256 _blockId, GameTypes.ItemWithMetadata item);
+    event ChangeBlockProperty(uint256 _worldBlockId, GameTypes.BlockData _worldBlockData);
 
     // ------------------------------------------------------------
     // Initialization
@@ -74,7 +65,6 @@ contract GameStorage {
 
     function _setItem(uint256 _i, GameTypes.ItemWithMetadata memory _item) public hasPermission {
         s.itemsWithMetadata[_i] = _item;
-        emit ChangeBlockProperty(_i, _item);
     }
 
     function _getWorldConstants() public view returns (GameTypes.WorldConstants memory) {
@@ -132,10 +122,10 @@ contract GameStorage {
         // fetch the block data from the tile -> worldBlock. If it's zero it means its an empty block
         GameTypes.BlockData memory _blockData = _getWorldBlockDataOnPos(_pos);
 
-        GameTypes.ItemWithMetadata memory _itemWithMetadata = _getItem(_blockData.blockId);
+        // GameTypes.ItemWithMetadata memory _itemWithMetadata = _getItem(_blockData.blockId);
 
         // if block is ocupiable, immediately return fasle for "isOccupied"
-        if (_itemWithMetadata.occupiable) return false;
+        if (_blockData.occupiable) return false;
 
         // if it's a block, if it's occupiable then return true
         if (_blockData.blockId != 0) return true;
@@ -308,7 +298,7 @@ contract GameStorage {
         GameTypes.ItemWithMetadata memory _item = _getItem(_blockId);
 
         // initialize new world block
-        GameTypes.BlockData memory _newWorldBlock = GameTypes.BlockData({blockId: _blockId, health: _item.health, owner: _owner, lastAttacked: 0, lastMoved: 0});
+        GameTypes.BlockData memory _newWorldBlock = GameTypes.BlockData({blockId: _blockId, health: _item.health, owner: _owner, lastAttacked: 0, lastMoved: 0, occupiable: _item.occupiable});
 
         uint256 _newWorldBlockId = setWorldBlock(_newWorldBlock);
 
@@ -317,6 +307,11 @@ contract GameStorage {
 
     function _setWorldBlockHealth(uint256 _worldBlockId, uint256 _health) public hasPermission {
         s.worldBlocks[_worldBlockId].health = _health;
+    }
+
+    function _setWorldBlockProperty(uint256 _worldBlockId, GameTypes.BlockData memory _worldBlock) public hasPermission {
+        s.worldBlocks[_worldBlockId] = _worldBlock;
+        emit ChangeBlockProperty(_worldBlockId, _worldBlock);
     }
 
     function _removeWorldBlockId(uint256 _worldBlockId) public hasPermission {
@@ -401,5 +396,13 @@ contract GameStorage {
 
     function _getCurrentEpoch() public view returns (uint256) {
         return s.epochController.epoch();
+    }
+
+    // ------------------------------------------------------------
+    // Modifier
+    // ------------------------------------------------------------
+    modifier hasPermission() {
+        require(p._hasContractPermission(msg.sender));
+        _;
     }
 }
