@@ -1,5 +1,9 @@
 {
-  "name": "hardhat-project",
+  "name": "curio-contracts",
+  "private": true,
+  "scripts": {
+    "contract-size": "yarn run hardhat size-contracts"
+  },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.2",
     "@nomiclabs/hardhat-waffle": "^2.0.1",

@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 import "../Permissions.sol";
-import "../GameTypes.sol";
+import {Position, BlockData} from "../GameTypes.sol";
 import "../GameStorage.sol";
 
 contract Door {
@@ -39,18 +39,18 @@ contract Door {
     }
 
     function _hasDoorNearby() private view returns (bool) {
-        GameTypes.Position memory _playerPos = utils._getPlayer(msg.sender).position;
+        Position memory _playerPos = utils._getPlayer(msg.sender).position;
 
-        GameTypes.Position memory _leftPos = GameTypes.Position({x: _playerPos.x - 1, y: _playerPos.y});
+        Position memory _leftPos = Position({x: _playerPos.x - 1, y: _playerPos.y});
         if (utils._getBlockDataAtPos(_leftPos).blockId == itemIdx) return true;
 
-        GameTypes.Position memory _rightPos = GameTypes.Position({x: _playerPos.x + 1, y: _playerPos.y});
+        Position memory _rightPos = Position({x: _playerPos.x + 1, y: _playerPos.y});
         if (utils._getBlockDataAtPos(_rightPos).blockId == itemIdx) return true;
 
-        GameTypes.Position memory _abovePos = GameTypes.Position({x: _playerPos.x, y: _playerPos.y - 1});
+        Position memory _abovePos = Position({x: _playerPos.x, y: _playerPos.y - 1});
         if (utils._getBlockDataAtPos(_abovePos).blockId == itemIdx) return true;
 
-        GameTypes.Position memory _belowPos = GameTypes.Position({x: _playerPos.x, y: _playerPos.y + 1});
+        Position memory _belowPos = Position({x: _playerPos.x, y: _playerPos.y + 1});
         if (utils._getBlockDataAtPos(_belowPos).blockId == itemIdx) return true;
 
         return false;
@@ -63,14 +63,14 @@ contract Door {
     // when the door is opened it should only affect a single door, hence changing the worldBlockData structure
     function open(uint256 _worldBlockId) public onlyWhitelist {
         // require(_hasDoorNearby(), "must have door nearby");
-        GameTypes.BlockData memory worldBlockData = utils._getWorldBlockData(_worldBlockId);
+        BlockData memory worldBlockData = utils._getWorldBlockData(_worldBlockId);
         worldBlockData.occupiable = true;
         utils._setWorldBlockProperty(_worldBlockId, worldBlockData);
     }
 
     function close(uint256 _worldBlockId) public onlyWhitelist {
         // require(_hasDoorNearby(), "must have door nearby");
-        GameTypes.BlockData memory worldBlockData = utils._getWorldBlockData(_worldBlockId);
+        BlockData memory worldBlockData = utils._getWorldBlockData(_worldBlockId);
         worldBlockData.occupiable = false;
         utils._setWorldBlockProperty(_worldBlockId, worldBlockData);
     }

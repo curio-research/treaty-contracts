@@ -2,7 +2,7 @@
 pragma solidity ^0.8.4;
 
 import "./GameEngine.sol";
-import "./GameTypes.sol";
+import {ItemWithMetadata, Position, BlockData} from "./GameTypes.sol";
 
 /// @title Bulk getters
 /// @notice Getters provide bulk functions useful for fetching data from frontend
@@ -23,8 +23,8 @@ contract Getters {
     }
 
     // bulk fetch all items and corresponding metadata (amount of material needed to craft and which materials)
-    function bulkGetAllItems() external view returns (GameTypes.ItemWithMetadata[] memory) {
-        GameTypes.ItemWithMetadata[] memory allItems = new GameTypes.ItemWithMetadata[](utils._getItemNonce());
+    function bulkGetAllItems() external view returns (ItemWithMetadata[] memory) {
+        ItemWithMetadata[] memory allItems = new ItemWithMetadata[](utils._getItemNonce());
 
         for (uint256 i = 0; i < utils._getItemNonce(); i++) {
             allItems[i] = utils._getItem(i);
@@ -34,9 +34,9 @@ contract Getters {
     }
 
     // bulk fetch all player data including location in an array
-    function bulkGetAllPlayerData() external view returns (GameTypes.PlayerData[] memory) {
+    function bulkGetAllPlayerData() external view returns (PlayerData[] memory) {
         address[] memory playerAddresses = utils._getAllPlayerAddresses();
-        GameTypes.PlayerData[] memory ret = new GameTypes.PlayerData[](playerAddresses.length);
+        PlayerData[] memory ret = new PlayerData[](playerAddresses.length);
 
         for (uint256 i = 0; i < playerAddresses.length; i++) {
             ret[i] = utils._getPlayer(playerAddresses[i]);
@@ -46,16 +46,16 @@ contract Getters {
     }
 
     // getter method to fetch tile chunk in 10x10 chunks.
-    function _getMap(GameTypes.Position memory _pos) public view returns (GameTypes.Tile[] memory, GameTypes.Position[] memory) {
+    function _getMap(Position memory _pos) public view returns (Tile[] memory, Position[] memory) {
         uint256 size = getMapInterval * getMapInterval;
 
-        GameTypes.Tile[] memory allTiles = new GameTypes.Tile[](size);
-        GameTypes.Position[] memory allPos = new GameTypes.Position[](size);
+        Tile[] memory allTiles = new Tile[](size);
+        Position[] memory allPos = new Position[](size);
 
         uint256 nonce = 0;
         for (uint256 x = _pos.x; x < _pos.x + getMapInterval; x++) {
             for (uint256 y = _pos.y; y < _pos.y + getMapInterval; y++) {
-                GameTypes.Position memory _tempPos = GameTypes.Position({x: x, y: y});
+                Position memory _tempPos = Position({x: x, y: y});
                 allTiles[nonce] = utils._getTileData(_tempPos);
                 allPos[nonce] = _tempPos;
                 nonce += 1;
@@ -66,16 +66,16 @@ contract Getters {
     }
 
     // this is called after _getMap is called. used to fetch metadata around blocks
-    function _getBlockChunkData(GameTypes.Position memory _pos) public view returns (GameTypes.BlockData[] memory, GameTypes.Position[] memory) {
+    function _getBlockChunkData(Position memory _pos) public view returns (BlockData[] memory, Position[] memory) {
         uint256 size = getMapInterval * getMapInterval;
 
-        GameTypes.BlockData[] memory allBlockChunkData = new GameTypes.BlockData[](size);
-        GameTypes.Position[] memory allPos = new GameTypes.Position[](size);
+        BlockData[] memory allBlockChunkData = new BlockData[](size);
+        Position[] memory allPos = new Position[](size);
 
         uint256 nonce = 0;
         for (uint256 x = _pos.x; x < _pos.x + getMapInterval; x++) {
             for (uint256 y = _pos.y; y < _pos.y + getMapInterval; y++) {
-                GameTypes.Position memory _tempPos = GameTypes.Position({x: x, y: y});
+                Position memory _tempPos = Position({x: x, y: y});
                 allBlockChunkData[nonce] = utils._getBlockDataAtPos(_tempPos);
                 allPos[nonce] = _tempPos;
                 nonce += 1;

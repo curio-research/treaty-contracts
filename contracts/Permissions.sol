@@ -18,18 +18,11 @@ contract Permissions {
         return owner;
     }
 
-    function setPermission(address _contract, bool _permission)
-        public
-        onlyOwner
-    {
+    function setPermission(address _contract, bool _permission) public onlyOwner {
         contractPerms[_contract] = _permission;
     }
 
-    function _hasContractPermission(address _contract)
-        public
-        view
-        returns (bool)
-    {
+    function _hasContractPermission(address _contract) public view returns (bool) {
         return tx.origin == owner || contractPerms[_contract];
     }
 }

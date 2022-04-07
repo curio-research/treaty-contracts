@@ -263,7 +263,6 @@ export const generateBlockIdToNameMap = (items: ItemMaster[]): Record<number, st
 // determines the rarity of items
 export const ITEM_RATIO = [0, 0, 0, 0, 0, 0, 0, 0];
 export const DOOR_RATIO = 0; // variable
-console.assert(masterItems.length == ITEM_RATIO.length);
 
 // ------------------------------------------------
 // Some default maps
