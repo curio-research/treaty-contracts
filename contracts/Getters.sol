@@ -2,7 +2,7 @@
 pragma solidity ^0.8.4;
 
 import "./GameEngine.sol";
-import {ItemWithMetadata, Position, BlockData} from "./GameTypes.sol";
+import {Item, Position, BlockData} from "./GameTypes.sol";
 
 /// @title Bulk getters
 /// @notice Getters provide bulk functions useful for fetching data from frontend
@@ -23,8 +23,8 @@ contract Getters {
     }
 
     // bulk fetch all items and corresponding metadata (amount of material needed to craft and which materials)
-    function bulkGetAllItems() external view returns (ItemWithMetadata[] memory) {
-        ItemWithMetadata[] memory allItems = new ItemWithMetadata[](utils._getItemNonce());
+    function bulkGetAllItems() external view returns (Item[] memory) {
+        Item[] memory allItems = new Item[](utils._getItemNonce());
 
         for (uint256 i = 0; i < utils._getItemNonce(); i++) {
             allItems[i] = utils._getItem(i);

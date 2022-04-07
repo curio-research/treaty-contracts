@@ -59,7 +59,7 @@ export type RecipeStructOutput = [BigNumber[], BigNumber[]] & {
   craftItemAmounts: BigNumber[];
 };
 
-export type ItemWithMetadataStruct = {
+export type ItemStruct = {
   mineable: boolean;
   craftable: boolean;
   occupiable: boolean;
@@ -76,7 +76,7 @@ export type ItemWithMetadataStruct = {
   contractAddr: string;
 };
 
-export type ItemWithMetadataStructOutput = [
+export type ItemStructOutput = [
   boolean,
   boolean,
   boolean,
@@ -346,7 +346,7 @@ export interface GameStorageInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "_setItem",
-    values: [BigNumberish, ItemWithMetadataStruct]
+    values: [BigNumberish, ItemStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "_setLastAttacked",
@@ -685,7 +685,7 @@ export interface GameStorage extends BaseContract {
     _getItem(
       _blockId: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[ItemWithMetadataStructOutput]>;
+    ): Promise<[ItemStructOutput]>;
 
     _getItemAmountById(
       _player: string,
@@ -787,7 +787,7 @@ export interface GameStorage extends BaseContract {
 
     _setItem(
       _i: BigNumberish,
-      _item: ItemWithMetadataStruct,
+      _item: ItemStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -954,7 +954,7 @@ export interface GameStorage extends BaseContract {
   _getItem(
     _blockId: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<ItemWithMetadataStructOutput>;
+  ): Promise<ItemStructOutput>;
 
   _getItemAmountById(
     _player: string,
@@ -1051,7 +1051,7 @@ export interface GameStorage extends BaseContract {
 
   _setItem(
     _i: BigNumberish,
-    _item: ItemWithMetadataStruct,
+    _item: ItemStruct,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1220,7 +1220,7 @@ export interface GameStorage extends BaseContract {
     _getItem(
       _blockId: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<ItemWithMetadataStructOutput>;
+    ): Promise<ItemStructOutput>;
 
     _getItemAmountById(
       _player: string,
@@ -1313,7 +1313,7 @@ export interface GameStorage extends BaseContract {
 
     _setItem(
       _i: BigNumberish,
-      _item: ItemWithMetadataStruct,
+      _item: ItemStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1591,7 +1591,7 @@ export interface GameStorage extends BaseContract {
 
     _setItem(
       _i: BigNumberish,
-      _item: ItemWithMetadataStruct,
+      _item: ItemStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1843,7 +1843,7 @@ export interface GameStorage extends BaseContract {
 
     _setItem(
       _i: BigNumberish,
-      _item: ItemWithMetadataStruct,
+      _item: ItemStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

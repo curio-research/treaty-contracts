@@ -42,7 +42,7 @@ export type WorldConstantsStructOutput = [
   playerMoveCooldown: BigNumber;
 };
 
-export type ItemWithMetadataStruct = {
+export type ItemStruct = {
   mineable: boolean;
   craftable: boolean;
   occupiable: boolean;
@@ -59,7 +59,7 @@ export type ItemWithMetadataStruct = {
   contractAddr: string;
 };
 
-export type ItemWithMetadataStructOutput = [
+export type ItemStructOutput = [
   boolean,
   boolean,
   boolean,

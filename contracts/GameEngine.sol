@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import {BlockData, GameInfo, WorldConstants, Position, ItemWithMetadata, Tower, Recipe, Tile, PlayerData} from "./GameTypes.sol";
+import {BlockData, GameInfo, WorldConstants, Position, Item, Tower, Recipe, Tile, PlayerData} from "./GameTypes.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "./GameStorage.sol";
 import "./Permissions.sol";
@@ -35,7 +35,7 @@ contract Game {
 
     constructor(
         WorldConstants memory constants,
-        ItemWithMetadata[] memory _items,
+        Item[] memory _items,
         GameStorage _gameStorage,
         Permissions _permissions
     ) {
@@ -64,7 +64,7 @@ contract Game {
         BlockData memory _attackerWorldBlockData = utils._getWorldBlockData(_attackerTile.worldBlockId);
 
         // get item metadata
-        ItemWithMetadata memory _attackerBlockItem = utils._getItem(_attackerWorldBlockData.blockId);
+        Item memory _attackerBlockItem = utils._getItem(_attackerWorldBlockData.blockId);
 
         require(block.timestamp - _attackerWorldBlockData.lastAttacked >= _attackerBlockItem.attackCooldown, "engine/attack-not-ready");
 
@@ -123,8 +123,7 @@ contract Game {
     function move(Position memory _pos) external {
         require(utils._isValidMove(msg.sender, _pos), "engine/invalid-move");
 
-        // check if move cooldown is done
-        require(utils._isMoveCooled(msg.sender), "engine/move-not-cooled");
+        require(utils._isMoveCooled(msg.sender), "engine/move-not-cooled"); // check if move is cooled down
 
         utils._setLastMoved(msg.sender); // set last moved
 
@@ -149,7 +148,7 @@ contract Game {
 
         // check cooldown
         BlockData memory _startTileBlockData = utils._getWorldBlockData(startTile.worldBlockId);
-        ItemWithMetadata memory _startBlockMetadata = utils._getItem(_startTileBlockData.blockId);
+        Item memory _startBlockMetadata = utils._getItem(_startTileBlockData.blockId);
 
         require(block.timestamp - _startTileBlockData.lastMoved >= _startBlockMetadata.moveCooldown, "engine/move-cooldown");
 
@@ -179,10 +178,10 @@ contract Game {
         // can only mine with the needed tool
         BlockData memory _targetBlockData = utils._getBlockDataAtPos(_pos);
 
-        // itemWithMetadata on target position
-        ItemWithMetadata memory _itemWithMetadata = utils._getItem(_targetBlockData.blockId);
+        // Item on target position
+        Item memory _Item = utils._getItem(_targetBlockData.blockId);
 
-        uint256[] memory _mineItemIds = _itemWithMetadata.mineItemIds;
+        uint256[] memory _mineItemIds = _Item.mineItemIds;
 
         bool _canMine = false;
         if (_mineItemIds.length == 0) {
@@ -242,7 +241,7 @@ contract Game {
         require(_itemId <= utils._getItemNonce(), "engine/nonexistent-block"); // has to craft an existing item
 
         // loop through player inventory to check if player has all required ingredients to make a block
-        ItemWithMetadata memory _item = utils._getItem(_itemId);
+        Item memory _item = utils._getItem(_itemId);
 
         for (uint256 i = 0; i < _item.craftItemIds.length; i++) {
             uint256 craftItemId = _item.craftItemIds[i];
@@ -290,9 +289,9 @@ contract Game {
         BlockData memory _blockData = utils._getWorldBlockData(_worldBlockId);
 
         // get item with metadata from worldBlockId
-        ItemWithMetadata memory _itemWithMetadata = utils._getItem(_blockData.blockId);
+        Item memory _Item = utils._getItem(_blockData.blockId);
 
-        require(_itemWithMetadata.mineable, "engine/not-mineable");
+        require(_Item.mineable, "engine/not-mineable");
 
         if (_tempMineVar < _blockData.health) {
             attackItem(_pos, msg.sender);

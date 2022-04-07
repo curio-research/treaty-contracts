@@ -31,7 +31,7 @@ struct Tile {
 }
 
 // spawned block data ... I'm researching the entity-component system to beter express these things. For instance there's a lot of
-// redunduncy between this struct and the next one. BlockData is basically a subset of the ItemWithMetadata?
+// redunduncy between this struct and the next one. BlockData is basically a subset of the Item?
 struct BlockData {
     uint256 blockId;
     uint256 health;
@@ -43,7 +43,7 @@ struct BlockData {
 }
 
 // should creature be an item?
-struct ItemWithMetadata {
+struct Item {
     bool mineable;
     bool craftable;
     bool occupiable;
@@ -83,7 +83,7 @@ struct GameInfo {
     Tile[1000][1000] map;
     address admin; // game info
     bool paused;
-    mapping(uint256 => ItemWithMetadata) itemsWithMetadata;
+    mapping(uint256 => Item) itemsWithMetadata;
     uint256 itemNonce;
     address[] allPlayers; // running list of all initialized players
     mapping(address => PlayerData) players; // player data

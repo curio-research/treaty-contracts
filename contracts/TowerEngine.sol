@@ -17,7 +17,6 @@ contract TowerGame {
     Permissions private p;
     uint256 private defaultCurrencyIdx;
 
-    // new capture
     event Capture(address _player, Position _position);
     event ClaimReward(address _player, Position _position, uint256 _itemId, uint256 _itemAmount, uint256 _epoch);
 

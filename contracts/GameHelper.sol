@@ -25,4 +25,6 @@ library Helper {
     function _encodePos(Position memory _position) public pure returns (string memory) {
         return string(abi.encodePacked(_position.x, _position.y));
     }
+
+    // next, we might want to abstract getter functions to this contract to reduce the size of GameStorage
 }

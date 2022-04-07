@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import {BlockData, GameInfo, WorldConstants, Position, ItemWithMetadata, Tower, Recipe, Tile, PlayerData} from "./GameTypes.sol";
+import {BlockData, GameInfo, WorldConstants, Position, Item, Tower, Recipe, Tile, PlayerData} from "./GameTypes.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "./Permissions.sol";
 import "./Epoch.sol";
@@ -64,7 +64,7 @@ contract GameStorage {
         }
     }
 
-    function _setItem(uint256 _i, ItemWithMetadata memory _item) public hasPermission {
+    function _setItem(uint256 _i, Item memory _item) public hasPermission {
         s.itemsWithMetadata[_i] = _item;
     }
 
@@ -123,8 +123,6 @@ contract GameStorage {
         // fetch the block data from the tile -> worldBlock. If it's zero it means its an empty block
         BlockData memory _blockData = _getWorldBlockDataOnPos(_pos);
 
-        // ItemWithMetadata memory _itemWithMetadata = _getItem(_blockData.blockId);
-
         // if block is ocupiable, immediately return fasle for "isOccupied"
         if (_blockData.occupiable) return false;
 
@@ -137,8 +135,7 @@ contract GameStorage {
     // function _bulkGetWorldBlockData
 
     function _getWorldBlockDataOnPos(Position memory _pos) public view returns (BlockData memory) {
-        Tile memory _tile = _getTileData(_pos);
-        return _getWorldBlockData(_tile.worldBlockId);
+        return _getWorldBlockData(_getTileData(_pos).worldBlockId);
     }
 
     function _getWorldBlockData(uint256 _worldBlockIdx) public view returns (BlockData memory) {
@@ -180,7 +177,6 @@ contract GameStorage {
         s.players[_player].lastMoved = block.timestamp;
     }
 
-    // next abstract move cooldown as a stat to individual player
     function _isMoveCooled(address _player) public view returns (bool) {
         return (block.timestamp - s.players[_player].lastMoved) >= _getWorldConstants().playerMoveCooldown;
     }
@@ -296,7 +292,7 @@ contract GameStorage {
 
     // create a new world block that's "placed" in the world
     function _createNewWorldBlock(address _owner, uint256 _blockId) public hasPermission returns (uint256 worldBlockId, BlockData memory) {
-        ItemWithMetadata memory _item = _getItem(_blockId);
+        Item memory _item = _getItem(_blockId);
 
         // initialize new world block
         BlockData memory _newWorldBlock = BlockData({blockId: _blockId, health: _item.health, owner: _owner, lastAttacked: 0, lastMoved: 0, occupiable: _item.occupiable});
@@ -377,7 +373,7 @@ contract GameStorage {
         return s.itemNonce;
     }
 
-    function _getItem(uint256 _blockId) public view returns (ItemWithMetadata memory) {
+    function _getItem(uint256 _blockId) public view returns (Item memory) {
         return s.itemsWithMetadata[_blockId];
     }
 
