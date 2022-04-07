@@ -17,7 +17,49 @@ import { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
 import { Listener, Provider } from "@ethersproject/providers";
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
-export type ItemWithMetadataStruct = {
+export type BlockDataStruct = {
+  blockId: BigNumberish;
+  health: BigNumberish;
+  owner: string;
+  lastAttacked: BigNumberish;
+  lastMoved: BigNumberish;
+  occupiable: boolean;
+};
+
+export type BlockDataStructOutput = [
+  BigNumber,
+  BigNumber,
+  string,
+  BigNumber,
+  BigNumber,
+  boolean
+] & {
+  blockId: BigNumber;
+  health: BigNumber;
+  owner: string;
+  lastAttacked: BigNumber;
+  lastMoved: BigNumber;
+  occupiable: boolean;
+};
+
+export type PositionStruct = { x: BigNumberish; y: BigNumberish };
+
+export type PositionStructOutput = [BigNumber, BigNumber] & {
+  x: BigNumber;
+  y: BigNumber;
+};
+
+export type RecipeStruct = {
+  craftItemIds: BigNumberish[];
+  craftItemAmounts: BigNumberish[];
+};
+
+export type RecipeStructOutput = [BigNumber[], BigNumber[]] & {
+  craftItemIds: BigNumber[];
+  craftItemAmounts: BigNumber[];
+};
+
+export type ItemStruct = {
   mineable: boolean;
   craftable: boolean;
   occupiable: boolean;
@@ -34,7 +76,7 @@ export type ItemWithMetadataStruct = {
   contractAddr: string;
 };
 
-export type ItemWithMetadataStructOutput = [
+export type ItemStructOutput = [
   boolean,
   boolean,
   boolean,
@@ -64,45 +106,6 @@ export type ItemWithMetadataStructOutput = [
   programmable: boolean;
   abiEncoding: string;
   contractAddr: string;
-};
-
-export type BlockDataStruct = {
-  blockId: BigNumberish;
-  health: BigNumberish;
-  owner: string;
-  lastAttacked: BigNumberish;
-  lastMoved: BigNumberish;
-};
-
-export type BlockDataStructOutput = [
-  BigNumber,
-  BigNumber,
-  string,
-  BigNumber,
-  BigNumber
-] & {
-  blockId: BigNumber;
-  health: BigNumber;
-  owner: string;
-  lastAttacked: BigNumber;
-  lastMoved: BigNumber;
-};
-
-export type PositionStruct = { x: BigNumberish; y: BigNumberish };
-
-export type PositionStructOutput = [BigNumber, BigNumber] & {
-  x: BigNumber;
-  y: BigNumber;
-};
-
-export type RecipeStruct = {
-  craftItemIds: BigNumberish[];
-  craftItemAmounts: BigNumberish[];
-};
-
-export type RecipeStructOutput = [BigNumber[], BigNumber[]] & {
-  craftItemIds: BigNumber[];
-  craftItemAmounts: BigNumber[];
 };
 
 export type PlayerDataStruct = {
@@ -222,12 +225,13 @@ export interface GameStorageInterface extends utils.Interface {
     "_setTower(string,(uint256,uint256,uint256,address))": FunctionFragment;
     "_setWorldBlockHealth(uint256,uint256)": FunctionFragment;
     "_setWorldBlockIdAtTile((uint256,uint256),uint256)": FunctionFragment;
+    "_setWorldBlockProperty(uint256,(uint256,uint256,address,uint256,uint256,bool))": FunctionFragment;
     "_transfer(address,uint256,uint256)": FunctionFragment;
     "_withinDistance((uint256,uint256),(uint256,uint256),uint256)": FunctionFragment;
     "getWorldBlockNonce()": FunctionFragment;
     "s()": FunctionFragment;
     "setEpochController(address)": FunctionFragment;
-    "setWorldBlock((uint256,uint256,address,uint256,uint256))": FunctionFragment;
+    "setWorldBlock((uint256,uint256,address,uint256,uint256,bool))": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -342,7 +346,7 @@ export interface GameStorageInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "_setItem",
-    values: [BigNumberish, ItemWithMetadataStruct]
+    values: [BigNumberish, ItemStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "_setLastAttacked",
@@ -387,6 +391,10 @@ export interface GameStorageInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "_setWorldBlockIdAtTile",
     values: [PositionStruct, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_setWorldBlockProperty",
+    values: [BigNumberish, BlockDataStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "_transfer",
@@ -556,6 +564,10 @@ export interface GameStorageInterface extends utils.Interface {
     functionFragment: "_setWorldBlockIdAtTile",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "_setWorldBlockProperty",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "_transfer", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_withinDistance",
@@ -585,8 +597,8 @@ export interface GameStorageInterface extends utils.Interface {
 }
 
 export type ChangeBlockPropertyEvent = TypedEvent<
-  [BigNumber, ItemWithMetadataStructOutput],
-  { _blockId: BigNumber; item: ItemWithMetadataStructOutput }
+  [BigNumber, BlockDataStructOutput],
+  { _worldBlockId: BigNumber; _worldBlockData: BlockDataStructOutput }
 >;
 
 export type ChangeBlockPropertyEventFilter =
@@ -673,7 +685,7 @@ export interface GameStorage extends BaseContract {
     _getItem(
       _blockId: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[ItemWithMetadataStructOutput]>;
+    ): Promise<[ItemStructOutput]>;
 
     _getItemAmountById(
       _player: string,
@@ -775,7 +787,7 @@ export interface GameStorage extends BaseContract {
 
     _setItem(
       _i: BigNumberish,
-      _item: ItemWithMetadataStruct,
+      _item: ItemStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -839,6 +851,12 @@ export interface GameStorage extends BaseContract {
     _setWorldBlockIdAtTile(
       _position: PositionStruct,
       _worldBlockId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    _setWorldBlockProperty(
+      _worldBlockId: BigNumberish,
+      _worldBlock: BlockDataStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -936,7 +954,7 @@ export interface GameStorage extends BaseContract {
   _getItem(
     _blockId: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<ItemWithMetadataStructOutput>;
+  ): Promise<ItemStructOutput>;
 
   _getItemAmountById(
     _player: string,
@@ -1033,7 +1051,7 @@ export interface GameStorage extends BaseContract {
 
   _setItem(
     _i: BigNumberish,
-    _item: ItemWithMetadataStruct,
+    _item: ItemStruct,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1097,6 +1115,12 @@ export interface GameStorage extends BaseContract {
   _setWorldBlockIdAtTile(
     _position: PositionStruct,
     _worldBlockId: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  _setWorldBlockProperty(
+    _worldBlockId: BigNumberish,
+    _worldBlock: BlockDataStruct,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1196,7 +1220,7 @@ export interface GameStorage extends BaseContract {
     _getItem(
       _blockId: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<ItemWithMetadataStructOutput>;
+    ): Promise<ItemStructOutput>;
 
     _getItemAmountById(
       _player: string,
@@ -1289,7 +1313,7 @@ export interface GameStorage extends BaseContract {
 
     _setItem(
       _i: BigNumberish,
-      _item: ItemWithMetadataStruct,
+      _item: ItemStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1353,6 +1377,12 @@ export interface GameStorage extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    _setWorldBlockProperty(
+      _worldBlockId: BigNumberish,
+      _worldBlock: BlockDataStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     _transfer(
       _recipient: string,
       _itemId: BigNumberish,
@@ -1399,12 +1429,12 @@ export interface GameStorage extends BaseContract {
 
   filters: {
     "ChangeBlockProperty(uint256,tuple)"(
-      _blockId?: null,
-      item?: null
+      _worldBlockId?: null,
+      _worldBlockData?: null
     ): ChangeBlockPropertyEventFilter;
     ChangeBlockProperty(
-      _blockId?: null,
-      item?: null
+      _worldBlockId?: null,
+      _worldBlockData?: null
     ): ChangeBlockPropertyEventFilter;
 
     "Transfer(address,address,uint256,uint256)"(
@@ -1561,7 +1591,7 @@ export interface GameStorage extends BaseContract {
 
     _setItem(
       _i: BigNumberish,
-      _item: ItemWithMetadataStruct,
+      _item: ItemStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1625,6 +1655,12 @@ export interface GameStorage extends BaseContract {
     _setWorldBlockIdAtTile(
       _position: PositionStruct,
       _worldBlockId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    _setWorldBlockProperty(
+      _worldBlockId: BigNumberish,
+      _worldBlock: BlockDataStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1807,7 +1843,7 @@ export interface GameStorage extends BaseContract {
 
     _setItem(
       _i: BigNumberish,
-      _item: ItemWithMetadataStruct,
+      _item: ItemStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1871,6 +1907,12 @@ export interface GameStorage extends BaseContract {
     _setWorldBlockIdAtTile(
       _position: PositionStruct,
       _worldBlockId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    _setWorldBlockProperty(
+      _worldBlockId: BigNumberish,
+      _worldBlock: BlockDataStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

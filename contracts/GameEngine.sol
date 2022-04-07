@@ -1,9 +1,9 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
+import {BlockData, GameInfo, WorldConstants, Position, Item, Tower, Recipe, Tile, PlayerData} from "./GameTypes.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "./GameStorage.sol";
-import "./GameTypes.sol";
 import "./Permissions.sol";
 
 // ------------------------------------------------------------
@@ -20,22 +20,22 @@ contract Game {
     // Events
     // ------------------------------------------------------------
 
-    event NewPlayer(address _player, GameTypes.Position _pos);
-    event Move(address _player, GameTypes.Position _pos);
-    event MineItem(address _player, GameTypes.Position _pos, uint256 _itemId);
-    event AttackItem(address _player, GameTypes.Position _origin, GameTypes.Position _target, uint256 _attackerWorldBlockId, uint256 _targetWorldBlockId, uint256 _strength);
-    event Place(address _player, GameTypes.Position _pos, uint256 _worldBlockId, GameTypes.BlockData _blockData);
+    event NewPlayer(address _player, Position _pos);
+    event Move(address _player, Position _pos);
+    event MineItem(address _player, Position _pos, uint256 _itemId);
+    event AttackItem(address _player, Position _origin, Position _target, uint256 _attackerWorldBlockId, uint256 _targetWorldBlockId, uint256 _strength);
+    event Place(address _player, Position _pos, uint256 _worldBlockId, BlockData _blockData);
     event Craft(address _player, uint256 _blockId);
-    event ChangeBlockStrength(address _player, GameTypes.Position _pos, uint256 _health, uint256 _resourceUsed);
-    event MoveBlock(address _player, GameTypes.Position _startPos, GameTypes.Position _endPos, uint256 _worldBlockId, uint256 _time);
+    event ChangeBlockStrength(address _player, Position _pos, uint256 _health, uint256 _resourceUsed);
+    event MoveBlock(address _player, Position _startPos, Position _endPos, uint256 _worldBlockId, uint256 _time);
 
     // ------------------------------------------------------------
     // Constructor
     // ------------------------------------------------------------
 
     constructor(
-        GameTypes.WorldConstants memory constants,
-        GameTypes.ItemWithMetadata[] memory _items,
+        WorldConstants memory constants,
+        Item[] memory _items,
         GameStorage _gameStorage,
         Permissions _permissions
     ) {
@@ -56,15 +56,15 @@ contract Game {
 
     // let some blocks (eg. creatures) attack other blocks
     // perhaps this can be abstracted into the main attack function
-    function attack(GameTypes.Position memory _origin, GameTypes.Position memory _target) public {
+    function attack(Position memory _origin, Position memory _target) public {
         // check if the two are in the same range
-        GameTypes.Tile memory _attackerTile = utils._getTileData(_origin);
+        Tile memory _attackerTile = utils._getTileData(_origin);
 
         // get the worldBlock data from the tile
-        GameTypes.BlockData memory _attackerWorldBlockData = utils._getWorldBlockData(_attackerTile.worldBlockId);
+        BlockData memory _attackerWorldBlockData = utils._getWorldBlockData(_attackerTile.worldBlockId);
 
         // get item metadata
-        GameTypes.ItemWithMetadata memory _attackerBlockItem = utils._getItem(_attackerWorldBlockData.blockId);
+        Item memory _attackerBlockItem = utils._getItem(_attackerWorldBlockData.blockId);
 
         require(block.timestamp - _attackerWorldBlockData.lastAttacked >= _attackerBlockItem.attackCooldown, "engine/attack-not-ready");
 
@@ -72,12 +72,12 @@ contract Game {
         utils._setLastAttacked(_attackerTile.worldBlockId);
 
         // get target world block data
-        GameTypes.Tile memory _targetTile = utils._getTileData(_target);
+        Tile memory _targetTile = utils._getTileData(_target);
 
         // worldIds cannot attack themselves
         require(_attackerTile.worldBlockId != _targetTile.worldBlockId, "engine/attacker-same-as-target");
 
-        GameTypes.BlockData memory _targetBlockData = utils._getWorldBlockDataOnPos(_target);
+        BlockData memory _targetBlockData = utils._getWorldBlockDataOnPos(_target);
 
         // check range of attack
         require(utils._withinDistance(_origin, _target, _attackerBlockItem.attackRange));
@@ -102,7 +102,7 @@ contract Game {
      * initialize player
      * @param _pos position to initialize
      */
-    function initializePlayer(GameTypes.Position memory _pos, uint256 _defaultCurrencyIdx) public {
+    function initializePlayer(Position memory _pos, uint256 _defaultCurrencyIdx) public {
         require(!utils._getPlayer(msg.sender).initialized, "engine/player-already-initialized");
 
         require(!utils._isOccupied(_pos), "engine/location-occupied"); // if target coordinate already has a block or player, revert
@@ -120,15 +120,14 @@ contract Game {
      * move player
      * @param _pos target position
      */
-    function move(GameTypes.Position memory _pos) external {
+    function move(Position memory _pos) external {
         require(utils._isValidMove(msg.sender, _pos), "engine/invalid-move");
 
-        // check if move cooldown is done
-        require(utils._isMoveCooled(msg.sender), "engine/move-not-cooled");
+        require(utils._isMoveCooled(msg.sender), "engine/move-not-cooled"); // check if move is cooled down
 
         utils._setLastMoved(msg.sender); // set last moved
 
-        GameTypes.Position memory _prevPosition = utils._getPlayer(msg.sender).position;
+        Position memory _prevPosition = utils._getPlayer(msg.sender).position;
         utils._setOccupierAtPosition(address(0), _prevPosition); // remove occupier from previous position
 
         utils._setPlayerPosition(msg.sender, _pos);
@@ -143,13 +142,13 @@ contract Game {
      * @param _targetPos target position
      */
     // input should include worldBlockId
-    function moveBlock(GameTypes.Position memory _startPos, GameTypes.Position memory _targetPos) public {
-        GameTypes.Tile memory startTile = utils._getTileData(_startPos);
-        GameTypes.Tile memory targetTile = utils._getTileData(_targetPos);
+    function moveBlock(Position memory _startPos, Position memory _targetPos) public {
+        Tile memory startTile = utils._getTileData(_startPos);
+        Tile memory targetTile = utils._getTileData(_targetPos);
 
         // check cooldown
-        GameTypes.BlockData memory _startTileBlockData = utils._getWorldBlockData(startTile.worldBlockId);
-        GameTypes.ItemWithMetadata memory _startBlockMetadata = utils._getItem(_startTileBlockData.blockId);
+        BlockData memory _startTileBlockData = utils._getWorldBlockData(startTile.worldBlockId);
+        Item memory _startBlockMetadata = utils._getItem(_startTileBlockData.blockId);
 
         require(block.timestamp - _startTileBlockData.lastMoved >= _startBlockMetadata.moveCooldown, "engine/move-cooldown");
 
@@ -173,16 +172,16 @@ contract Game {
     }
 
     // mine item completely
-    function mineItem(GameTypes.Position memory _pos, address _playerAddr) internal {
-        GameTypes.Tile memory _targetTileData = utils._getTileData(_pos);
+    function mineItem(Position memory _pos, address _playerAddr) internal {
+        Tile memory _targetTileData = utils._getTileData(_pos);
 
         // can only mine with the needed tool
-        GameTypes.BlockData memory _targetBlockData = utils._getBlockDataAtPos(_pos);
+        BlockData memory _targetBlockData = utils._getBlockDataAtPos(_pos);
 
-        // itemWithMetadata on target position
-        GameTypes.ItemWithMetadata memory _itemWithMetadata = utils._getItem(_targetBlockData.blockId);
+        // Item on target position
+        Item memory _Item = utils._getItem(_targetBlockData.blockId);
 
-        uint256[] memory _mineItemIds = _itemWithMetadata.mineItemIds;
+        uint256[] memory _mineItemIds = _Item.mineItemIds;
 
         bool _canMine = false;
         if (_mineItemIds.length == 0) {
@@ -213,11 +212,11 @@ contract Game {
      * @param _pos position to place block at
      * @param _blockId blockId to place
      */
-    function place(GameTypes.Position memory _pos, uint256 _blockId) external {
+    function place(Position memory _pos, uint256 _blockId) external {
         // player needs sufficient inventory of item to place
         require(utils._getItemAmountById(msg.sender, _blockId) != 0, "engine/insufficient-inventory");
 
-        GameTypes.PlayerData memory _playerData = utils._getPlayer(msg.sender);
+        PlayerData memory _playerData = utils._getPlayer(msg.sender);
 
         require(_playerData.position.x != _pos.x || _playerData.position.y != _pos.y, "engine/cannot-stand-on-block");
 
@@ -226,7 +225,7 @@ contract Game {
         utils._decreaseItemInInventory(msg.sender, _blockId, 1);
 
         // create a worldBlockId by initiating the block into the world
-        (uint256 _worldBlockId, GameTypes.BlockData memory _worldBlockData) = utils._createNewWorldBlock(msg.sender, _blockId);
+        (uint256 _worldBlockId, BlockData memory _worldBlockData) = utils._createNewWorldBlock(msg.sender, _blockId);
 
         // set the newly created worldBlockId to tile
         utils._placeWorldBlockIdOnTile(_pos, _worldBlockId);
@@ -242,7 +241,7 @@ contract Game {
         require(_itemId <= utils._getItemNonce(), "engine/nonexistent-block"); // has to craft an existing item
 
         // loop through player inventory to check if player has all required ingredients to make a block
-        GameTypes.ItemWithMetadata memory _item = utils._getItem(_itemId);
+        Item memory _item = utils._getItem(_itemId);
 
         for (uint256 i = 0; i < _item.craftItemIds.length; i++) {
             uint256 craftItemId = _item.craftItemIds[i];
@@ -261,11 +260,11 @@ contract Game {
 
     // reduces item health
     // this is ONLY used when player is attacking a block
-    function attackItem(GameTypes.Position memory _targetPos, address _playerAddr) internal {
+    function attackItem(Position memory _targetPos, address _playerAddr) internal {
         // attack item
         uint256 _worldBlockId = utils._getBlockAtPos(_targetPos);
 
-        GameTypes.BlockData memory _targetBlockData = utils._getBlockDataAtPos(_targetPos);
+        BlockData memory _targetBlockData = utils._getBlockDataAtPos(_targetPos);
 
         uint256 _healthAfterAttack = _targetBlockData.health - 10; // Hardcode this shit for now
 
@@ -279,7 +278,7 @@ contract Game {
      * mine item
      * @param _pos position to mine item at
      */
-    function mine(GameTypes.Position memory _pos) external {
+    function mine(Position memory _pos) external {
         uint256 _worldBlockId = utils._getBlockAtPos(_pos);
         uint256 _tempMineVar = 10;
         require(_worldBlockId != 0, "engine/nonexistent-block");
@@ -287,12 +286,12 @@ contract Game {
         require(utils._withinDistance(_pos, utils._getPlayer(msg.sender).position, 1), "engine/invalid-distance");
 
         // get world block info
-        GameTypes.BlockData memory _blockData = utils._getWorldBlockData(_worldBlockId);
+        BlockData memory _blockData = utils._getWorldBlockData(_worldBlockId);
 
         // get item with metadata from worldBlockId
-        GameTypes.ItemWithMetadata memory _itemWithMetadata = utils._getItem(_blockData.blockId);
+        Item memory _Item = utils._getItem(_blockData.blockId);
 
-        require(_itemWithMetadata.mineable, "engine/not-mineable");
+        require(_Item.mineable, "engine/not-mineable");
 
         if (_tempMineVar < _blockData.health) {
             attackItem(_pos, msg.sender);

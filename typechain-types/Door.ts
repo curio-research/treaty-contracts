@@ -4,6 +4,7 @@
 import {
   BaseContract,
   BigNumber,
+  BigNumberish,
   BytesLike,
   CallOverrides,
   ContractTransaction,
@@ -18,13 +19,13 @@ import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
 export interface DoorInterface extends utils.Interface {
   functions: {
-    "close()": FunctionFragment;
-    "open()": FunctionFragment;
+    "close(uint256)": FunctionFragment;
+    "open(uint256)": FunctionFragment;
     "setWhitelistPlayer(address,bool)": FunctionFragment;
   };
 
-  encodeFunctionData(functionFragment: "close", values?: undefined): string;
-  encodeFunctionData(functionFragment: "open", values?: undefined): string;
+  encodeFunctionData(functionFragment: "close", values: [BigNumberish]): string;
+  encodeFunctionData(functionFragment: "open", values: [BigNumberish]): string;
   encodeFunctionData(
     functionFragment: "setWhitelistPlayer",
     values: [string, boolean]
@@ -68,10 +69,12 @@ export interface Door extends BaseContract {
 
   functions: {
     close(
+      _worldBlockId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     open(
+      _worldBlockId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -83,10 +86,12 @@ export interface Door extends BaseContract {
   };
 
   close(
+    _worldBlockId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   open(
+    _worldBlockId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -97,9 +102,12 @@ export interface Door extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    close(overrides?: CallOverrides): Promise<void>;
+    close(
+      _worldBlockId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    open(overrides?: CallOverrides): Promise<void>;
+    open(_worldBlockId: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
     setWhitelistPlayer(
       player: string,
@@ -112,10 +120,12 @@ export interface Door extends BaseContract {
 
   estimateGas: {
     close(
+      _worldBlockId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     open(
+      _worldBlockId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -128,10 +138,12 @@ export interface Door extends BaseContract {
 
   populateTransaction: {
     close(
+      _worldBlockId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     open(
+      _worldBlockId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

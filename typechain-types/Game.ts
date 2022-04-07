@@ -42,7 +42,7 @@ export type WorldConstantsStructOutput = [
   playerMoveCooldown: BigNumber;
 };
 
-export type ItemWithMetadataStruct = {
+export type ItemStruct = {
   mineable: boolean;
   craftable: boolean;
   occupiable: boolean;
@@ -59,7 +59,7 @@ export type ItemWithMetadataStruct = {
   contractAddr: string;
 };
 
-export type ItemWithMetadataStructOutput = [
+export type ItemStructOutput = [
   boolean,
   boolean,
   boolean,
@@ -104,6 +104,7 @@ export type BlockDataStruct = {
   owner: string;
   lastAttacked: BigNumberish;
   lastMoved: BigNumberish;
+  occupiable: boolean;
 };
 
 export type BlockDataStructOutput = [
@@ -111,13 +112,15 @@ export type BlockDataStructOutput = [
   BigNumber,
   string,
   BigNumber,
-  BigNumber
+  BigNumber,
+  boolean
 ] & {
   blockId: BigNumber;
   health: BigNumber;
   owner: string;
   lastAttacked: BigNumber;
   lastMoved: BigNumber;
+  occupiable: boolean;
 };
 
 export interface GameInterface extends utils.Interface {
