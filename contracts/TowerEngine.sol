@@ -60,7 +60,7 @@ contract TowerGame {
         uint256 totalReward = (epoch - tower.lastCapturedEpoch) * tower.rewardPerEpoch;
 
         utils._increaseItemInInventory(msg.sender, tower.itemId, totalReward);
-        tower.lastCapturedEpoch = block.timestamp;
+        tower.lastCapturedEpoch = epoch;
 
         utils._setTower(_towerId, tower);
 

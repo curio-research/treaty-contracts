@@ -47,11 +47,26 @@ export type BlockDataStructOutput = [
   occupiable: boolean;
 };
 
-export type TileStruct = { occupier: string; worldBlockId: BigNumberish };
+export type TileStruct = {
+  occupier: string;
+  worldBlockId: BigNumberish;
+  tileType: BigNumberish;
+  lastOccupied: BigNumberish;
+  tileContractId: BigNumberish;
+};
 
-export type TileStructOutput = [string, BigNumber] & {
+export type TileStructOutput = [
+  string,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber
+] & {
   occupier: string;
   worldBlockId: BigNumber;
+  tileType: BigNumber;
+  lastOccupied: BigNumber;
+  tileContractId: BigNumber;
 };
 
 export type ItemStruct = {

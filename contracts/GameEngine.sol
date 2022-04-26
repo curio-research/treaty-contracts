@@ -146,16 +146,15 @@ contract Game {
         Tile memory startTile = utils._getTileData(_startPos);
         Tile memory targetTile = utils._getTileData(_targetPos);
 
-        // check cooldown
         BlockData memory _startTileBlockData = utils._getWorldBlockData(startTile.worldBlockId);
+
         Item memory _startBlockMetadata = utils._getItem(_startTileBlockData.blockId);
 
-        require(block.timestamp - _startTileBlockData.lastMoved >= _startBlockMetadata.moveCooldown, "engine/move-cooldown");
+        require(block.timestamp - _startTileBlockData.lastMoved >= _startBlockMetadata.moveCooldown, "engine/move-cooldown"); // check cooldown
 
         require(targetTile.occupier == address(0), "engine/block is occupied");
 
-        // check if two are within same range
-        require(utils._withinDistance(_startPos, _targetPos, 1), "engine/invalid-distance");
+        require(utils._withinDistance(_startPos, _targetPos, 1), "engine/invalid-distance"); // check if two are within same range
 
         require(startTile.occupier == address(0), "engine/not-owner");
 
