@@ -17,80 +17,6 @@ import { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
 import { Listener, Provider } from "@ethersproject/providers";
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
-export type WorldConstantsStruct = {
-  worldWidth: BigNumberish;
-  worldHeight: BigNumberish;
-  startPlayerHealth: BigNumberish;
-  startingReach: BigNumberish;
-  startingPlayerDefaultCurrencyAmount: BigNumberish;
-  playerMoveCooldown: BigNumberish;
-};
-
-export type WorldConstantsStructOutput = [
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber
-] & {
-  worldWidth: BigNumber;
-  worldHeight: BigNumber;
-  startPlayerHealth: BigNumber;
-  startingReach: BigNumber;
-  startingPlayerDefaultCurrencyAmount: BigNumber;
-  playerMoveCooldown: BigNumber;
-};
-
-export type ItemStruct = {
-  mineable: boolean;
-  craftable: boolean;
-  occupiable: boolean;
-  health: BigNumberish;
-  mineItemIds: BigNumberish[];
-  craftItemIds: BigNumberish[];
-  craftItemAmounts: BigNumberish[];
-  moveCooldown: BigNumberish;
-  attackDamage: BigNumberish;
-  attackRange: BigNumberish;
-  attackCooldown: BigNumberish;
-  programmable: boolean;
-  abiEncoding: string;
-  contractAddr: string;
-};
-
-export type ItemStructOutput = [
-  boolean,
-  boolean,
-  boolean,
-  BigNumber,
-  BigNumber[],
-  BigNumber[],
-  BigNumber[],
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  boolean,
-  string,
-  string
-] & {
-  mineable: boolean;
-  craftable: boolean;
-  occupiable: boolean;
-  health: BigNumber;
-  mineItemIds: BigNumber[];
-  craftItemIds: BigNumber[];
-  craftItemAmounts: BigNumber[];
-  moveCooldown: BigNumber;
-  attackDamage: BigNumber;
-  attackRange: BigNumber;
-  attackCooldown: BigNumber;
-  programmable: boolean;
-  abiEncoding: string;
-  contractAddr: string;
-};
-
 export type PositionStruct = { x: BigNumberish; y: BigNumberish };
 
 export type PositionStructOutput = [BigNumber, BigNumber] & {
@@ -123,7 +49,7 @@ export type BlockDataStructOutput = [
   occupiable: boolean;
 };
 
-export interface GameInterface extends utils.Interface {
+export interface EngineFacetInterface extends utils.Interface {
   functions: {
     "attack((uint256,uint256),(uint256,uint256))": FunctionFragment;
     "craft(uint256)": FunctionFragment;
@@ -132,6 +58,7 @@ export interface GameInterface extends utils.Interface {
     "move((uint256,uint256))": FunctionFragment;
     "moveBlock((uint256,uint256),(uint256,uint256))": FunctionFragment;
     "place((uint256,uint256),uint256)": FunctionFragment;
+    "updateEpoch()": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -159,6 +86,10 @@ export interface GameInterface extends utils.Interface {
     functionFragment: "place",
     values: [PositionStruct, BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "updateEpoch",
+    values?: undefined
+  ): string;
 
   decodeFunctionResult(functionFragment: "attack", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "craft", data: BytesLike): Result;
@@ -170,29 +101,35 @@ export interface GameInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "move", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "moveBlock", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "place", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "updateEpoch",
+    data: BytesLike
+  ): Result;
 
   events: {
-    "AttackItem(address,tuple,tuple,uint256,uint256,uint256)": EventFragment;
-    "ChangeBlockStrength(address,tuple,uint256,uint256)": EventFragment;
-    "Craft(address,uint256)": EventFragment;
-    "MineItem(address,tuple,uint256)": EventFragment;
-    "Move(address,tuple)": EventFragment;
-    "MoveBlock(address,tuple,tuple,uint256,uint256)": EventFragment;
-    "NewPlayer(address,tuple)": EventFragment;
-    "Place(address,tuple,uint256,tuple)": EventFragment;
+    "EventAttackItemEvent(address,tuple,tuple,uint256,uint256,uint256)": EventFragment;
+    "EventChangeBlockStrength(address,tuple,uint256,uint256)": EventFragment;
+    "EventCraft(address,uint256)": EventFragment;
+    "EventEpochUpdate(address,uint256,uint256)": EventFragment;
+    "EventMineItem(address,tuple,uint256)": EventFragment;
+    "EventMove(address,tuple)": EventFragment;
+    "EventMoveBlock(address,tuple,tuple,uint256,uint256)": EventFragment;
+    "EventNewPlayer(address,tuple)": EventFragment;
+    "EventPlace(address,tuple,uint256,tuple)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "AttackItem"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ChangeBlockStrength"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Craft"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "MineItem"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Move"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "MoveBlock"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "NewPlayer"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Place"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "EventAttackItemEvent"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "EventChangeBlockStrength"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "EventCraft"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "EventEpochUpdate"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "EventMineItem"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "EventMove"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "EventMoveBlock"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "EventNewPlayer"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "EventPlace"): EventFragment;
 }
 
-export type AttackItemEvent = TypedEvent<
+export type EventAttackItemEventEvent = TypedEvent<
   [
     string,
     PositionStructOutput,
@@ -211,9 +148,10 @@ export type AttackItemEvent = TypedEvent<
   }
 >;
 
-export type AttackItemEventFilter = TypedEventFilter<AttackItemEvent>;
+export type EventAttackItemEventEventFilter =
+  TypedEventFilter<EventAttackItemEventEvent>;
 
-export type ChangeBlockStrengthEvent = TypedEvent<
+export type EventChangeBlockStrengthEvent = TypedEvent<
   [string, PositionStructOutput, BigNumber, BigNumber],
   {
     _player: string;
@@ -223,31 +161,39 @@ export type ChangeBlockStrengthEvent = TypedEvent<
   }
 >;
 
-export type ChangeBlockStrengthEventFilter =
-  TypedEventFilter<ChangeBlockStrengthEvent>;
+export type EventChangeBlockStrengthEventFilter =
+  TypedEventFilter<EventChangeBlockStrengthEvent>;
 
-export type CraftEvent = TypedEvent<
+export type EventCraftEvent = TypedEvent<
   [string, BigNumber],
   { _player: string; _blockId: BigNumber }
 >;
 
-export type CraftEventFilter = TypedEventFilter<CraftEvent>;
+export type EventCraftEventFilter = TypedEventFilter<EventCraftEvent>;
 
-export type MineItemEvent = TypedEvent<
+export type EventEpochUpdateEvent = TypedEvent<
+  [string, BigNumber, BigNumber],
+  { _player: string; _epoch: BigNumber; _time: BigNumber }
+>;
+
+export type EventEpochUpdateEventFilter =
+  TypedEventFilter<EventEpochUpdateEvent>;
+
+export type EventMineItemEvent = TypedEvent<
   [string, PositionStructOutput, BigNumber],
   { _player: string; _pos: PositionStructOutput; _itemId: BigNumber }
 >;
 
-export type MineItemEventFilter = TypedEventFilter<MineItemEvent>;
+export type EventMineItemEventFilter = TypedEventFilter<EventMineItemEvent>;
 
-export type MoveEvent = TypedEvent<
+export type EventMoveEvent = TypedEvent<
   [string, PositionStructOutput],
   { _player: string; _pos: PositionStructOutput }
 >;
 
-export type MoveEventFilter = TypedEventFilter<MoveEvent>;
+export type EventMoveEventFilter = TypedEventFilter<EventMoveEvent>;
 
-export type MoveBlockEvent = TypedEvent<
+export type EventMoveBlockEvent = TypedEvent<
   [string, PositionStructOutput, PositionStructOutput, BigNumber, BigNumber],
   {
     _player: string;
@@ -258,16 +204,16 @@ export type MoveBlockEvent = TypedEvent<
   }
 >;
 
-export type MoveBlockEventFilter = TypedEventFilter<MoveBlockEvent>;
+export type EventMoveBlockEventFilter = TypedEventFilter<EventMoveBlockEvent>;
 
-export type NewPlayerEvent = TypedEvent<
+export type EventNewPlayerEvent = TypedEvent<
   [string, PositionStructOutput],
   { _player: string; _pos: PositionStructOutput }
 >;
 
-export type NewPlayerEventFilter = TypedEventFilter<NewPlayerEvent>;
+export type EventNewPlayerEventFilter = TypedEventFilter<EventNewPlayerEvent>;
 
-export type PlaceEvent = TypedEvent<
+export type EventPlaceEvent = TypedEvent<
   [string, PositionStructOutput, BigNumber, BlockDataStructOutput],
   {
     _player: string;
@@ -277,14 +223,14 @@ export type PlaceEvent = TypedEvent<
   }
 >;
 
-export type PlaceEventFilter = TypedEventFilter<PlaceEvent>;
+export type EventPlaceEventFilter = TypedEventFilter<EventPlaceEvent>;
 
-export interface Game extends BaseContract {
+export interface EngineFacet extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: GameInterface;
+  interface: EngineFacetInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -344,6 +290,10 @@ export interface Game extends BaseContract {
       _blockId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    updateEpoch(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
   };
 
   attack(
@@ -385,6 +335,10 @@ export interface Game extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  updateEpoch(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
     attack(
       _origin: PositionStruct,
@@ -415,85 +369,108 @@ export interface Game extends BaseContract {
       _blockId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    updateEpoch(overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {
-    "AttackItem(address,tuple,tuple,uint256,uint256,uint256)"(
+    "EventAttackItemEvent(address,tuple,tuple,uint256,uint256,uint256)"(
       _player?: null,
       _origin?: null,
       _target?: null,
       _attackerWorldBlockId?: null,
       _targetWorldBlockId?: null,
       _strength?: null
-    ): AttackItemEventFilter;
-    AttackItem(
+    ): EventAttackItemEventEventFilter;
+    EventAttackItemEvent(
       _player?: null,
       _origin?: null,
       _target?: null,
       _attackerWorldBlockId?: null,
       _targetWorldBlockId?: null,
       _strength?: null
-    ): AttackItemEventFilter;
+    ): EventAttackItemEventEventFilter;
 
-    "ChangeBlockStrength(address,tuple,uint256,uint256)"(
+    "EventChangeBlockStrength(address,tuple,uint256,uint256)"(
       _player?: null,
       _pos?: null,
       _health?: null,
       _resourceUsed?: null
-    ): ChangeBlockStrengthEventFilter;
-    ChangeBlockStrength(
+    ): EventChangeBlockStrengthEventFilter;
+    EventChangeBlockStrength(
       _player?: null,
       _pos?: null,
       _health?: null,
       _resourceUsed?: null
-    ): ChangeBlockStrengthEventFilter;
+    ): EventChangeBlockStrengthEventFilter;
 
-    "Craft(address,uint256)"(_player?: null, _blockId?: null): CraftEventFilter;
-    Craft(_player?: null, _blockId?: null): CraftEventFilter;
+    "EventCraft(address,uint256)"(
+      _player?: null,
+      _blockId?: null
+    ): EventCraftEventFilter;
+    EventCraft(_player?: null, _blockId?: null): EventCraftEventFilter;
 
-    "MineItem(address,tuple,uint256)"(
+    "EventEpochUpdate(address,uint256,uint256)"(
+      _player?: null,
+      _epoch?: null,
+      _time?: null
+    ): EventEpochUpdateEventFilter;
+    EventEpochUpdate(
+      _player?: null,
+      _epoch?: null,
+      _time?: null
+    ): EventEpochUpdateEventFilter;
+
+    "EventMineItem(address,tuple,uint256)"(
       _player?: null,
       _pos?: null,
       _itemId?: null
-    ): MineItemEventFilter;
-    MineItem(_player?: null, _pos?: null, _itemId?: null): MineItemEventFilter;
-
-    "Move(address,tuple)"(_player?: null, _pos?: null): MoveEventFilter;
-    Move(_player?: null, _pos?: null): MoveEventFilter;
-
-    "MoveBlock(address,tuple,tuple,uint256,uint256)"(
+    ): EventMineItemEventFilter;
+    EventMineItem(
       _player?: null,
-      _startPos?: null,
-      _endPos?: null,
-      _worldBlockId?: null,
-      _time?: null
-    ): MoveBlockEventFilter;
-    MoveBlock(
-      _player?: null,
-      _startPos?: null,
-      _endPos?: null,
-      _worldBlockId?: null,
-      _time?: null
-    ): MoveBlockEventFilter;
+      _pos?: null,
+      _itemId?: null
+    ): EventMineItemEventFilter;
 
-    "NewPlayer(address,tuple)"(
+    "EventMove(address,tuple)"(
       _player?: null,
       _pos?: null
-    ): NewPlayerEventFilter;
-    NewPlayer(_player?: null, _pos?: null): NewPlayerEventFilter;
+    ): EventMoveEventFilter;
+    EventMove(_player?: null, _pos?: null): EventMoveEventFilter;
 
-    "Place(address,tuple,uint256,tuple)"(
+    "EventMoveBlock(address,tuple,tuple,uint256,uint256)"(
+      _player?: null,
+      _startPos?: null,
+      _endPos?: null,
+      _worldBlockId?: null,
+      _time?: null
+    ): EventMoveBlockEventFilter;
+    EventMoveBlock(
+      _player?: null,
+      _startPos?: null,
+      _endPos?: null,
+      _worldBlockId?: null,
+      _time?: null
+    ): EventMoveBlockEventFilter;
+
+    "EventNewPlayer(address,tuple)"(
+      _player?: null,
+      _pos?: null
+    ): EventNewPlayerEventFilter;
+    EventNewPlayer(_player?: null, _pos?: null): EventNewPlayerEventFilter;
+
+    "EventPlace(address,tuple,uint256,tuple)"(
       _player?: null,
       _pos?: null,
       _worldBlockId?: null,
       _blockData?: null
-    ): PlaceEventFilter;
-    Place(
+    ): EventPlaceEventFilter;
+    EventPlace(
       _player?: null,
       _pos?: null,
       _worldBlockId?: null,
       _blockData?: null
-    ): PlaceEventFilter;
+    ): EventPlaceEventFilter;
   };
 
   estimateGas: {
@@ -535,6 +512,10 @@ export interface Game extends BaseContract {
       _blockId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    updateEpoch(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -574,6 +555,10 @@ export interface Game extends BaseContract {
     place(
       _pos: PositionStruct,
       _blockId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    updateEpoch(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

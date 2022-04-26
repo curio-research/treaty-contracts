@@ -25,9 +25,6 @@ struct PlayerData {
     Position position;
 }
 
-// if i want to harvest a tower I basically go to a block, open its programmable panel
-// which is hooked into this (?)
-
 // tiles should also be programmable?
 struct Tile {
     address occupier; // this should be the player OR blocks?
@@ -66,10 +63,6 @@ struct Item {
     bool programmable; // programmable blocks. abstract to a enum here
     string abiEncoding;
     string contractAddr;
-    // moveable?
-    // uint256 defense;
-    // uint256 health;
-    // uint256 movesPerEpoch;
 }
 
 struct Recipe {
@@ -104,4 +97,8 @@ struct GameInfo {
     // every time we spawn a new block it's a new instance
     uint256 worldBlockNonce; // 0 denotes empty block on tile. >1 denotes real block
     mapping(uint256 => BlockData) worldBlocks;
+    // epoch info
+    uint256 epoch;
+    uint256 lastUpdated;
+    uint256 interval;
 }

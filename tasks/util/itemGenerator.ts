@@ -1,4 +1,4 @@
-import { PositionStruct } from '../../typechain-types/Game';
+import { PositionStruct } from './../../typechain-types/TowerFacet';
 import { ItemMaster, ItemWithMetadata } from '../../util/types/getter';
 import { masterItems, WORLD_HEIGHT, WORLD_WIDTH } from './constants';
 

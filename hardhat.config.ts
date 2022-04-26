@@ -1,3 +1,4 @@
+import 'hardhat-diamond-abi';
 import { task } from 'hardhat/config';
 import '@typechain/hardhat';
 import '@nomiclabs/hardhat-ethers';
@@ -29,6 +30,18 @@ export default {
         runs: 1000,
       },
     },
+  },
+  diamondAbi: {
+    // This plugin will combine all ABIs from any Smart Contract with `Facet` in the name or path and output it as `Curio.json`
+    name: 'Curio',
+    include: ['Facet'],
+    // We explicitly set `strict` to `true` because we want to validate our facets don't accidentally provide overlapping functions
+    // strict: true,
+    // We use our diamond utils to filter some functions we ignore from the combined ABI
+    // filter(abiElement, index, abi, fullyQualifiedName) {
+    //   const signature = diamondUtils.toSignature(abiElement);
+    //   return diamondUtils.isIncluded(fullyQualifiedName, signature);
+    // },
   },
 
   networks: {

@@ -146,15 +146,13 @@ export type PlayerDataStructOutput = [
   position: PositionStructOutput;
 };
 
-export interface GettersInterface extends utils.Interface {
+export interface GetterFacetInterface extends utils.Interface {
   functions: {
     "_getBlockChunkData((uint256,uint256))": FunctionFragment;
     "_getMap((uint256,uint256))": FunctionFragment;
     "bulkGetAllItems()": FunctionFragment;
     "bulkGetAllPlayerData()": FunctionFragment;
-    "gameCore()": FunctionFragment;
     "getMapInterval()": FunctionFragment;
-    "utils()": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -173,12 +171,10 @@ export interface GettersInterface extends utils.Interface {
     functionFragment: "bulkGetAllPlayerData",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "gameCore", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getMapInterval",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "utils", values?: undefined): string;
 
   decodeFunctionResult(
     functionFragment: "_getBlockChunkData",
@@ -193,22 +189,20 @@ export interface GettersInterface extends utils.Interface {
     functionFragment: "bulkGetAllPlayerData",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "gameCore", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getMapInterval",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "utils", data: BytesLike): Result;
 
   events: {};
 }
 
-export interface Getters extends BaseContract {
+export interface GetterFacet extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: GettersInterface;
+  interface: GetterFacetInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -246,11 +240,7 @@ export interface Getters extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[PlayerDataStructOutput[]]>;
 
-    gameCore(overrides?: CallOverrides): Promise<[string]>;
-
     getMapInterval(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    utils(overrides?: CallOverrides): Promise<[string]>;
   };
 
   _getBlockChunkData(
@@ -269,11 +259,7 @@ export interface Getters extends BaseContract {
     overrides?: CallOverrides
   ): Promise<PlayerDataStructOutput[]>;
 
-  gameCore(overrides?: CallOverrides): Promise<string>;
-
   getMapInterval(overrides?: CallOverrides): Promise<BigNumber>;
-
-  utils(overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
     _getBlockChunkData(
@@ -292,11 +278,7 @@ export interface Getters extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PlayerDataStructOutput[]>;
 
-    gameCore(overrides?: CallOverrides): Promise<string>;
-
     getMapInterval(overrides?: CallOverrides): Promise<BigNumber>;
-
-    utils(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {};
@@ -316,11 +298,7 @@ export interface Getters extends BaseContract {
 
     bulkGetAllPlayerData(overrides?: CallOverrides): Promise<BigNumber>;
 
-    gameCore(overrides?: CallOverrides): Promise<BigNumber>;
-
     getMapInterval(overrides?: CallOverrides): Promise<BigNumber>;
-
-    utils(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -340,10 +318,6 @@ export interface Getters extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    gameCore(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     getMapInterval(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    utils(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

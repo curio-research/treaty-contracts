@@ -3966,6 +3966,14 @@ hardhat-contract-sizer@^2.4.0:
     chalk "^4.0.0"
     cli-table3 "^0.6.0"
 
+hardhat-diamond-abi@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/hardhat-diamond-abi/-/hardhat-diamond-abi-2.0.0.tgz#4bbc45470710652632ea33122a5d6ecd4165efa2"
+  integrity sha512-HWEm01G7Q2+ebDR4i1q1GjZFZf1a3lzirSyHa7RX5Yt91Bo8AXH+klDBTy57m7qCm0gU7HFkYOfmCy3c0RAqmQ==
+  dependencies:
+    debug "^4.3.3"
+    ethers "^5.5.2"
+
 hardhat@^2.8.3:
   version "2.9.1"
   resolved "https://registry.yarnpkg.com/hardhat/-/hardhat-2.9.1.tgz#f69f82bb4d98e28744584779483caa7c5cfbde8b"

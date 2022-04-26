@@ -1,33 +1,23 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "./GameEngine.sol";
-import {Item, Position, BlockData} from "./GameTypes.sol";
+import {Item, Position, BlockData, PlayerData, Tile} from "../libraries/Types.sol";
+import {GameUtils} from "../libraries/GameUtil.sol";
+import "../libraries/Storage.sol";
 
 /// @title Bulk getters
-/// @notice Getters provide bulk functions useful for fetching data from frontend
+/// @notice Getters provide bulk functions useful for fetching data from the frontend
 
-contract Getters {
-    Game public gameCore;
-    GameStorage public utils;
-    uint256 public getMapInterval;
-
-    constructor(
-        Game _gameCore,
-        GameStorage _gameStorage,
-        uint256 _getMapInterval
-    ) {
-        gameCore = _gameCore;
-        utils = _gameStorage;
-        getMapInterval = _getMapInterval;
-    }
+contract GetterFacet is UseStorage {
+    uint256 public getMapInterval = 10; // what exactly is this value
 
     // bulk fetch all items and corresponding metadata (amount of material needed to craft and which materials)
     function bulkGetAllItems() external view returns (Item[] memory) {
-        Item[] memory allItems = new Item[](utils._getItemNonce());
+        uint256 _itemNonce = gs().itemNonce;
+        Item[] memory allItems = new Item[](_itemNonce);
 
-        for (uint256 i = 0; i < utils._getItemNonce(); i++) {
-            allItems[i] = utils._getItem(i);
+        for (uint256 i = 0; i < _itemNonce; i++) {
+            allItems[i] = GameUtils._getItem(i);
         }
 
         return allItems;
@@ -35,11 +25,11 @@ contract Getters {
 
     // bulk fetch all player data including location in an array
     function bulkGetAllPlayerData() external view returns (PlayerData[] memory) {
-        address[] memory playerAddresses = utils._getAllPlayerAddresses();
+        address[] memory playerAddresses = GameUtils._getAllPlayerAddresses();
         PlayerData[] memory ret = new PlayerData[](playerAddresses.length);
 
         for (uint256 i = 0; i < playerAddresses.length; i++) {
-            ret[i] = utils._getPlayer(playerAddresses[i]);
+            ret[i] = GameUtils._getPlayer(playerAddresses[i]);
         }
 
         return ret;
@@ -56,7 +46,7 @@ contract Getters {
         for (uint256 x = _pos.x; x < _pos.x + getMapInterval; x++) {
             for (uint256 y = _pos.y; y < _pos.y + getMapInterval; y++) {
                 Position memory _tempPos = Position({x: x, y: y});
-                allTiles[nonce] = utils._getTileData(_tempPos);
+                allTiles[nonce] = GameUtils._getTileData(_tempPos);
                 allPos[nonce] = _tempPos;
                 nonce += 1;
             }
@@ -76,7 +66,7 @@ contract Getters {
         for (uint256 x = _pos.x; x < _pos.x + getMapInterval; x++) {
             for (uint256 y = _pos.y; y < _pos.y + getMapInterval; y++) {
                 Position memory _tempPos = Position({x: x, y: y});
-                allBlockChunkData[nonce] = utils._getBlockDataAtPos(_tempPos);
+                allBlockChunkData[nonce] = GameUtils._getBlockDataAtPos(_tempPos);
                 allPos[nonce] = _tempPos;
                 nonce += 1;
             }
