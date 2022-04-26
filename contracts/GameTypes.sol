@@ -25,9 +25,17 @@ struct PlayerData {
     Position position;
 }
 
+// if i want to harvest a tower I basically go to a block, open its programmable panel
+// which is hooked into this (?)
+
+// tiles should also be programmable?
 struct Tile {
     address occupier; // this should be the player OR blocks?
-    uint256 worldBlockId; // zero'th block is always the "empty block"
+    uint256 worldBlockId;
+    uint256 tileType; // farm, barn, etc.
+    uint256 lastOccupied;
+    uint256 tileContractId; // can this also just be a worldBlockId? we can maybe have a contractID
+    // need to record lastOccupier?
 }
 
 // spawned block data ... I'm researching the entity-component system to beter express these things. For instance there's a lot of
@@ -69,6 +77,8 @@ struct Recipe {
     uint256[] craftItemAmounts;
 }
 
+// even tower should be a programmable block
+// TODO: Abstract this!
 struct Tower {
     uint256 rewardPerEpoch;
     uint256 itemId; // reward's itemID
@@ -78,7 +88,6 @@ struct Tower {
 
 // TODO: Pack this struct
 struct GameInfo {
-    // map info
     WorldConstants worldConstants;
     Tile[1000][1000] map;
     address admin; // game info

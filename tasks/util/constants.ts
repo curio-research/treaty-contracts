@@ -10,7 +10,7 @@ export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 
 // game specs - manual
 export const ROOM_LENGTH = 7;
-export const ROOMS_PER_DIMENSION = 2;
+export const ROOMS_PER_DIMENSION = 3;
 export const ATTACK_RANGE = 1;
 export const ATTACK_DAMAGE = 5;
 export const ATTACK_WAITTIME = 5;
@@ -107,18 +107,18 @@ export var masterItems: ItemMaster[] = [
     item: {
       mineable: true,
       mineItemIds: [],
-      health: 40,
+      health: 3,
       craftable: true,
       craftItemIds: [1],
       craftItemAmounts: [10],
       occupiable: false,
       programmable: false,
       abiEncoding: '',
-      attackDamage: 5,
+      attackDamage: 1,
       attackRange: 1,
       attackCooldown: 10,
       contractAddr: '',
-      moveCooldown: 10,
+      moveCooldown: 0,
     },
   },
   {
@@ -126,18 +126,37 @@ export var masterItems: ItemMaster[] = [
     item: {
       mineable: true,
       mineItemIds: [],
-      health: 40,
+      health: 8,
       craftable: true,
-      craftItemIds: [1, 2],
-      craftItemAmounts: [20, 5],
+      craftItemIds: [1],
+      craftItemAmounts: [15],
       occupiable: false,
       programmable: false,
       abiEncoding: '',
-      attackDamage: 5,
-      attackRange: 2,
+      attackDamage: 2,
+      attackRange: 1,
       attackCooldown: 5,
       contractAddr: '',
-      moveCooldown: 10,
+      moveCooldown: 0,
+    },
+  },
+  {
+    name: 'Giant',
+    item: {
+      mineable: true,
+      mineItemIds: [],
+      health: 12,
+      craftable: true,
+      craftItemIds: [1],
+      craftItemAmounts: [25],
+      occupiable: false,
+      programmable: false,
+      abiEncoding: '',
+      attackDamage: 3,
+      attackRange: 1,
+      attackCooldown: 5,
+      contractAddr: '',
+      moveCooldown: 0,
     },
   },
   {

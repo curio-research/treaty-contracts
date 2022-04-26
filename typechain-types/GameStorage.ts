@@ -136,11 +136,26 @@ export type PlayerDataStructOutput = [
   position: PositionStructOutput;
 };
 
-export type TileStruct = { occupier: string; worldBlockId: BigNumberish };
+export type TileStruct = {
+  occupier: string;
+  worldBlockId: BigNumberish;
+  tileType: BigNumberish;
+  lastOccupied: BigNumberish;
+  tileContractId: BigNumberish;
+};
 
-export type TileStructOutput = [string, BigNumber] & {
+export type TileStructOutput = [
+  string,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber
+] & {
   occupier: string;
   worldBlockId: BigNumber;
+  tileType: BigNumber;
+  lastOccupied: BigNumber;
+  tileContractId: BigNumber;
 };
 
 export type TowerStruct = {
@@ -221,7 +236,7 @@ export interface GameStorageInterface extends utils.Interface {
     "_setOccupierAtPosition(address,(uint256,uint256))": FunctionFragment;
     "_setPlayer(address,(uint256,uint256))": FunctionFragment;
     "_setPlayerPosition(address,(uint256,uint256))": FunctionFragment;
-    "_setTileData((uint256,uint256),(address,uint256))": FunctionFragment;
+    "_setTileData((uint256,uint256),(address,uint256,uint256,uint256,uint256))": FunctionFragment;
     "_setTower(string,(uint256,uint256,uint256,address))": FunctionFragment;
     "_setWorldBlockHealth(uint256,uint256)": FunctionFragment;
     "_setWorldBlockIdAtTile((uint256,uint256),uint256)": FunctionFragment;
