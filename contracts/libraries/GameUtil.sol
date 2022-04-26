@@ -15,16 +15,8 @@ library GameUtils {
     event Transfer(address _player, address _recipient, uint256 _id, uint256 _amount);
     event ChangeBlockProperty(uint256 _worldBlockId, BlockData _worldBlockData);
 
-    // ------------------------------------------------------------
-    // Initialization
-    // ------------------------------------------------------------
-
     function gs() internal pure returns (GameInfo storage) {
         return LibStorage.gameStorage();
-    }
-
-    function _setConstants(WorldConstants memory constants) public {
-        gs().worldConstants = constants;
     }
 
     function _setWorldBlockIdAtTile(Position memory _position, uint256 _worldBlockId) public {
@@ -57,10 +49,6 @@ library GameUtils {
                 }
             }
         }
-    }
-
-    function _setItem(uint256 _i, Item memory _item) public {
-        gs().itemsWithMetadata[_i] = _item;
     }
 
     function _getWorldConstants() public view returns (WorldConstants memory) {
@@ -160,16 +148,8 @@ library GameUtils {
         return true;
     }
 
-    function _setPlayerPosition(address _player, Position memory _pos) public {
-        gs().players[_player].position = _pos;
-    }
-
     function _setOccupierAtPosition(address _player, Position memory _pos) public {
         gs().map[_pos.x][_pos.y].occupier = _player;
-    }
-
-    function _setLastMoved(address _player) public {
-        gs().players[_player].lastMoved = block.timestamp;
     }
 
     function _isMoveCooled(address _player) public view returns (bool) {
@@ -297,27 +277,9 @@ library GameUtils {
         return (_newWorldBlockId, _newWorldBlock);
     }
 
-    function _setWorldBlockHealth(uint256 _worldBlockId, uint256 _health) public {
-        gs().worldBlocks[_worldBlockId].health = _health;
-    }
-
     function _setWorldBlockProperty(uint256 _worldBlockId, BlockData memory _worldBlock) public {
         gs().worldBlocks[_worldBlockId] = _worldBlock;
         emit ChangeBlockProperty(_worldBlockId, _worldBlock);
-    }
-
-    function _removeWorldBlockId(uint256 _worldBlockId) public {
-        delete gs().worldBlocks[_worldBlockId];
-    }
-
-    function _setLastAttacked(uint256 _worldBlockId) public {
-        gs().worldBlocks[_worldBlockId].lastAttacked = block.timestamp;
-    }
-
-    function _setLastBlockMoved(uint256 _worldBlockId) public returns (uint256) {
-        uint256 time = block.timestamp;
-        gs().worldBlocks[_worldBlockId].lastMoved = time;
-        return time;
     }
 
     // ------------------------------------------------------------
@@ -330,10 +292,6 @@ library GameUtils {
 
     function _getTower(string memory _towerId) public view returns (Tower memory) {
         return gs().towers[_towerId];
-    }
-
-    function _setTower(string memory _towerId, Tower memory _tower) public {
-        gs().towers[_towerId] = _tower;
     }
 
     // ------------------------------------------------------------
@@ -354,10 +312,6 @@ library GameUtils {
 
     function _getTileData(Position memory _pos) public view returns (Tile memory) {
         return gs().map[_pos.x][_pos.y];
-    }
-
-    function _setTileData(Position memory _pos, Tile memory _tile) public {
-        gs().map[_pos.x][_pos.y] = _tile;
     }
 
     function _getAllPlayerAddresses() public view returns (address[] memory) {

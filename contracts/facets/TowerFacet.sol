@@ -25,29 +25,27 @@ contract TowerFacet is UseStorage {
 
         // get and set tower's new owner and epoch
         string memory _towerId = GameUtils._encodePos(_position);
-        Tower memory tower = GameUtils._getTower(_towerId);
+        Tower memory tower = gs().towers[_towerId];
         tower.owner = msg.sender;
-        tower.lastCapturedEpoch = GameUtils._getCurrentEpoch();
-        GameUtils._setTower(_towerId, tower);
+        tower.lastCapturedEpoch = gs().epoch;
+        gs().towers[_towerId] = tower; // set tower
 
         emit Capture(msg.sender, _position);
     }
 
     function claimReward(Position memory _position) external {
         string memory _towerId = GameUtils._encodePos(_position);
-        Tower memory tower = GameUtils._getTower(_towerId);
+        Tower memory tower = gs().towers[_towerId];
 
         require(tower.owner == msg.sender, "tower/not-owner");
 
-        uint256 epoch = GameUtils._getCurrentEpoch();
+        uint256 epoch = gs().epoch;
         uint256 totalReward = (epoch - tower.lastCapturedEpoch) * tower.rewardPerEpoch;
 
         GameUtils._increaseItemInInventory(msg.sender, tower.itemId, totalReward);
         tower.lastCapturedEpoch = epoch;
 
-        GameUtils._setTower(_towerId, tower);
-
-        // add boosters in the future
+        gs().towers[_towerId] = tower; // set tower
 
         emit ClaimReward(msg.sender, _position, tower.itemId, totalReward, epoch);
     }
@@ -82,7 +80,7 @@ contract TowerFacet is UseStorage {
     // add tower to map. using this instead of constructor to avoid bloat
     function addTower(Position memory _position, Tower memory _tower) public {
         string memory _towerId = GameUtils._encodePos(_position);
-        GameUtils._setTower(_towerId, _tower);
+        gs().towers[_towerId] = _tower; // set tower
     }
 
     function addTowerBulk(Position[] memory _positions, Tower[] memory _towers) external {

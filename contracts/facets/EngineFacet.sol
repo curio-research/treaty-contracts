@@ -43,7 +43,7 @@ contract EngineFacet is UseStorage {
         require(block.timestamp - _attackerWorldBlockData.lastAttacked >= _attackerBlockItem.attackCooldown, "engine/attack-not-ready");
 
         // set attack cooldown time
-        GameUtils._setLastAttacked(_attackerTile.worldBlockId);
+        gs().worldBlocks[_attackerTile.worldBlockId].lastAttacked = block.timestamp;
 
         // get target world block data
         Tile memory _targetTile = GameUtils._getTileData(_target);
@@ -60,11 +60,11 @@ contract EngineFacet is UseStorage {
         uint256 healthAfterAttack = _targetBlockData.health - _attackerBlockItem.attackDamage;
 
         // decrease target block's health
-        GameUtils._setWorldBlockHealth(_targetTile.worldBlockId, healthAfterAttack);
+        gs().worldBlocks[_targetTile.worldBlockId].health = healthAfterAttack;
 
         // if health is zero, delete world block Id
         if (healthAfterAttack == 0) {
-            GameUtils._removeWorldBlockId(_targetTile.worldBlockId); // delete world block Id
+            delete gs().worldBlocks[_targetTile.worldBlockId]; // delete world block Id
             GameUtils._setWorldBlockIdAtTile(_target, 0);
         }
 
@@ -99,12 +99,12 @@ contract EngineFacet is UseStorage {
 
         require(GameUtils._isMoveCooled(msg.sender), "engine/move-not-cooled"); // check if move is cooled down
 
-        GameUtils._setLastMoved(msg.sender); // set last moved
+        gs().players[msg.sender].lastMoved = block.timestamp; // set last moved
 
         Position memory _prevPosition = GameUtils._getPlayer(msg.sender).position;
         GameUtils._setOccupierAtPosition(address(0), _prevPosition); // remove occupier from previous position
 
-        GameUtils._setPlayerPosition(msg.sender, _pos);
+        gs().players[msg.sender].position = _pos; // set player position
         GameUtils._setOccupierAtPosition(msg.sender, _pos);
 
         emit EventMove(msg.sender, _pos);
@@ -134,14 +134,14 @@ contract EngineFacet is UseStorage {
 
         require(targetTile.worldBlockId == 0, "engine/target-tile-not-empty");
 
-        uint256 time = GameUtils._setLastBlockMoved(startTile.worldBlockId); // set last moved
+        gs().worldBlocks[startTile.worldBlockId].lastMoved = block.timestamp;
 
         // set new worldId for each tile
         GameUtils._setWorldBlockIdAtTile(_startPos, 0);
         GameUtils._setWorldBlockIdAtTile(_targetPos, startTile.worldBlockId);
 
         // since stats don't change i don't think we need to emit block data
-        emit EventMoveBlock(msg.sender, _startPos, _targetPos, startTile.worldBlockId, time);
+        emit EventMoveBlock(msg.sender, _startPos, _targetPos, startTile.worldBlockId, block.timestamp);
     }
 
     // mine item completely
@@ -174,7 +174,7 @@ contract EngineFacet is UseStorage {
         GameUtils._increaseItemInInventory(_playerAddr, _targetBlockData.blockId, 1);
 
         // remove worldBlock
-        GameUtils._removeWorldBlockId(_targetTileData.worldBlockId); // delete world block Id
+        delete gs().worldBlocks[_targetTileData.worldBlockId]; // delete world block Id
         GameUtils._setWorldBlockIdAtTile(_pos, 0);
 
         emit EventMineItem(_playerAddr, _pos, _targetBlockData.blockId);
@@ -242,7 +242,7 @@ contract EngineFacet is UseStorage {
         uint256 _healthAfterAttack = _targetBlockData.health - 10; // Hardcode this shit for now
 
         // set new health for worldBlockId
-        GameUtils._setWorldBlockHealth(_worldBlockId, _healthAfterAttack);
+        gs().worldBlocks[_worldBlockId].health = _healthAfterAttack;
 
         emit EventChangeBlockStrength(_playerAddr, _targetPos, _healthAfterAttack, 1000000);
     }
