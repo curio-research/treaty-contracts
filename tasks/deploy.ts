@@ -117,19 +117,19 @@ task('deploy', 'deploy contracts')
     // console.log('Door         ', DoorContract.address);
     // printDivider();
 
-    // // initialize map
-    // console.log('✦ initializing map');
-    // let regionMap: number[][];
-    // for (let x = 0; x < WORLD_WIDTH; x += MAP_INTERVAL) {
-    //   for (let y = 0; y < WORLD_HEIGHT; y += MAP_INTERVAL) {
-    //     regionMap = blocks.slice(x, x + MAP_INTERVAL).map((col) => col.slice(y, y + MAP_INTERVAL));
+    // initialize map
+    console.log('✦ initializing map');
+    let regionMap: number[][];
+    for (let x = 0; x < WORLD_WIDTH; x += MAP_INTERVAL) {
+      for (let y = 0; y < WORLD_HEIGHT; y += MAP_INTERVAL) {
+        regionMap = blocks.slice(x, x + MAP_INTERVAL).map((col) => col.slice(y, y + MAP_INTERVAL));
 
-    //     let tx = await GameStorage._setMapRegion({ x, y }, regionMap);
-    //     tx.wait();
-    //   }
-    // }
+        let tx = await diamond.setMapRegion({ x, y }, regionMap);
+        tx.wait();
+      }
+    }
 
-    // // randomly initialize players only if we're on localhost
+    // randomly initialize players only if we're on localhost
     // if (isDev) {
     //   console.log('✦ initializing players');
     //   let x: number;
@@ -150,90 +150,92 @@ task('deploy', 'deploy contracts')
     //   } while (blocks[x][y] != 0);
 
     //   let tx;
-    //   tx = await GameContract.connect(player1).initializePlayer(player1Pos, ironIdx); // initialize users
+    //   tx = await diamond.connect(player1).initializePlayer(player1Pos, ironIdx); // initialize users
     //   tx.wait();
 
     //   // add some inventory items for testing
-    //   tx = await GameStorage._increaseItemInInventory(player1.address, getItemIndexByName(masterItems, 'Silver'), 100);
-    //   tx.wait();
+    //   //   tx = await GameStorage._increaseItemInInventory(player1.address, getItemIndexByName(masterItems, 'Silver'), 100);
+    //   //   tx.wait();
 
-    //   tx = await GameContract.connect(player2).initializePlayer(player2Pos, ironIdx);
-    //   tx.wait();
+    //   //   tx = await GameContract.connect(player2).initializePlayer(player2Pos, ironIdx);
+    //   //   tx.wait();
 
     //   await tx.wait();
     // }
 
+    // we don't need this anymore with diamond i think
     // console.log('✦ setting epoch controller');
     // tx = await GameStorage.setEpochController(EpochContract.address); // set epoch controller
     // tx.wait();
 
-    // // bulk initialize towers
-    // console.log('✦ initializing towers');
-    // const allTowerLocations: position[] = [];
-    // const allTowers: Tower[] = [];
-    // for (const tower of allGameArgs.allTowerArgs) {
-    //   allTowerLocations.push(tower.location);
-    //   allTowers.push(tower.tower);
-    // }
+    // bulk initialize towers
+    console.log('✦ initializing towers');
+    const allTowerLocations: position[] = [];
+    const allTowers: Tower[] = [];
+    for (const tower of allGameArgs.allTowerArgs) {
+      allTowerLocations.push(tower.location);
+      allTowers.push(tower.tower);
+    }
 
-    // const towerTx = await TowerContract.addTowerBulk(allTowerLocations, allTowers);
-    // await towerTx.wait();
+    const towerTx = await diamond.addTowerBulk(allTowerLocations, allTowers);
+    await towerTx.wait();
 
     // // ---------------------------------
     // // generate config files
     // // copies files and ports to frontend if it's a localhost, or publishes globally if its a global deployment
     // // ---------------------------------
 
-    // const currentFileDir = path.join(__dirname);
+    const currentFileDir = path.join(__dirname);
 
-    // const networkRPCs = rpcUrlSelector(hre.network.name);
+    const networkRPCs = rpcUrlSelector(hre.network.name);
 
-    // // perhaps this can also be on chain. lemme think - kevin
-    // const blockIdToNameMapping = generateBlockIdToNameMap(generateAllBlocks());
+    // perhaps this can also be on chain. lemme think - kevin
+    const blockIdToNameMapping = generateBlockIdToNameMap(generateAllBlocks());
 
-    // const configFile = {
-    //   addresses: JSON.stringify({
-    //     GAME_ADDRESS: GameContract.address,
-    //     TOWER_GAME_ADDRESS: TowerContract.address,
-    //     GAME_STORAGE_CONTRACT: GameStorage.address,
-    //     GETTERS_ADDRESS: GettersContract.address,
-    //     EPOCH_ADDRESS: EpochContract.address,
-    //   }),
-    //   network: hre.network.name,
-    //   rpcUrl: networkRPCs[0],
-    //   wsRpcUrl: networkRPCs[1],
-    //   blockIdToNameMapping: JSON.stringify(blockIdToNameMapping),
-    //   deploymentId: `${hre.network.name}-${Date.now()}`,
-    // };
+    const configFile = {
+      address: diamond.address,
+      //   addresses: JSON.stringify({
+      //     GAME_ADDRESS: GameContract.address,
+      //     TOWER_GAME_ADDRESS: TowerContract.address,
+      //     GAME_STORAGE_CONTRACT: GameStorage.address,
+      //     GETTERS_ADDRESS: GettersContract.address,
+      //     EPOCH_ADDRESS: EpochContract.address,
+      //   }),
+      network: hre.network.name,
+      rpcUrl: networkRPCs[0],
+      wsRpcUrl: networkRPCs[1],
+      blockIdToNameMapping: JSON.stringify(blockIdToNameMapping),
+      deploymentId: `${hre.network.name}-${Date.now()}`,
+    };
 
-    // const publish = args.publish;
+    const publish = args.publish;
 
-    // // publish the deployment to mongodb
-    // if (publish && !isDev) {
-    //   console.log('Backend URL', BACKEND_URL);
+    // publish the deployment to mongodb
+    if (publish && !isDev) {
+      console.log('Backend URL', BACKEND_URL);
 
-    //   // publish
-    //   const { data } = await axios.post(`${BACKEND_URL}/deployments/add`, configFile);
+      // publish
+      const { data } = await axios.post(`${BACKEND_URL}/deployments/add`, configFile);
 
-    //   if (data) {
-    //     console.log('Published successfully');
-    //   }
-    // }
+      if (data) {
+        console.log('Published successfully');
+      }
+    }
 
-    // // if we're in dev mode, port the files to the frontend.
-    // if (isDev) {
-    //   const configFileDir = path.join(currentFileDir, 'game.config.json');
+    // if we're in dev mode, port the files to the frontend.
+    if (isDev) {
+      const configFileDir = path.join(currentFileDir, 'game.config.json');
 
-    //   const existingDeployments = await fs.readFileSync(configFileDir).toString();
+      const existingDeployments = await fs.readFileSync(configFileDir).toString();
 
-    //   const existingDeploymentsArray = existingDeployments ? JSON.parse(existingDeployments) : [];
+      const existingDeploymentsArray = existingDeployments ? JSON.parse(existingDeployments) : [];
 
-    //   existingDeploymentsArray.push(configFile);
+      existingDeploymentsArray.push(configFile);
 
-    //   await fsPromise.writeFile(configFileDir, JSON.stringify(existingDeploymentsArray));
+      await fsPromise.writeFile(configFileDir, JSON.stringify(existingDeploymentsArray));
 
-    //   await hre.run('port'); // default to porting files
-    // }
+      await hre.run('port'); // default to porting files
+    }
   });
 
 export const rpcUrlSelector = (networkName: string): string[] => {

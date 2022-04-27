@@ -72,6 +72,10 @@ contract EngineFacet is UseStorage {
         emit EventAttackItemEvent(msg.sender, _origin, _target, _attackerTile.worldBlockId, _targetTile.worldBlockId, healthAfterAttack);
     }
 
+    function _setOccupierAtPosition(address _player, Position memory _pos) public {
+        gs().map[_pos.x][_pos.y].occupier = _player;
+    }
+
     /**
      * initialize player
      * @param _pos position to initialize
@@ -81,11 +85,15 @@ contract EngineFacet is UseStorage {
 
         require(!GameUtils._isOccupied(_pos), "engine/location-occupied"); // if target coordinate already has a block or player, revert
 
-        GameUtils._setPlayer(msg.sender, _pos);
-        GameUtils._setOccupierAtPosition(msg.sender, _pos);
+        // set player
+        WorldConstants memory constants = gs().worldConstants;
+        gs().players[msg.sender] = PlayerData({initialized: true, initTimestamp: block.timestamp, playerAddr: msg.sender, position: _pos, health: constants.startPlayerHealth, reach: constants.startingReach, lastMoved: 0});
+        gs().allPlayers.push(msg.sender);
+
+        _setOccupierAtPosition(msg.sender, _pos);
 
         // give users starting currency
-        GameUtils._increaseItemInInventory(msg.sender, _defaultCurrencyIdx, GameUtils._getWorldConstants().startingPlayerDefaultCurrencyAmount);
+        GameUtils._increaseItemInInventory(msg.sender, _defaultCurrencyIdx, gs().worldConstants.startingPlayerDefaultCurrencyAmount);
 
         emit EventNewPlayer(msg.sender, _pos);
     }
@@ -102,10 +110,10 @@ contract EngineFacet is UseStorage {
         gs().players[msg.sender].lastMoved = block.timestamp; // set last moved
 
         Position memory _prevPosition = GameUtils._getPlayer(msg.sender).position;
-        GameUtils._setOccupierAtPosition(address(0), _prevPosition); // remove occupier from previous position
+        _setOccupierAtPosition(address(0), _prevPosition); // remove occupier from previous position
 
         gs().players[msg.sender].position = _pos; // set player position
-        GameUtils._setOccupierAtPosition(msg.sender, _pos);
+        _setOccupierAtPosition(msg.sender, _pos);
 
         emit EventMove(msg.sender, _pos);
     }
@@ -279,5 +287,28 @@ contract EngineFacet is UseStorage {
         gs().lastUpdated = block.timestamp;
 
         emit EventEpochUpdate(msg.sender, gs().epoch, gs().lastUpdated);
+    }
+
+    function setMapRegion(Position memory _startPos, uint256[][] memory _blocks) external {
+        for (uint256 _xAdd = 0; _xAdd < _blocks.length; _xAdd++) {
+            for (uint256 _yAdd = 0; _yAdd < _blocks[0].length; _yAdd++) {
+                // calculate position based on offset
+                Position memory _pos = Position({x: _startPos.x + _xAdd, y: _startPos.y + _yAdd});
+
+                // get the blockId that needs to be initialized
+                uint256 _blockId = _blocks[_xAdd][_yAdd];
+
+                // if its zero, it means it's an empty blocks
+                if (_blockId == 0) {
+                    GameUtils._placeWorldBlockIdOnTile(_pos, 0);
+                } else {
+                    // first create new worldBlock
+                    (uint256 _newWorldBlockId, ) = GameUtils._createNewWorldBlock(msg.sender, _blockId);
+
+                    // then place worldBlock on map
+                    GameUtils._placeWorldBlockIdOnTile(_pos, _newWorldBlockId);
+                }
+            }
+        }
     }
 }

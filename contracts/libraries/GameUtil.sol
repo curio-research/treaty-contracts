@@ -23,47 +23,33 @@ library GameUtils {
         gs().map[_position.x][_position.y].worldBlockId = _worldBlockId;
     }
 
-    /**
-     * Set map blocks in NxN regions due to gas limitation.
-     * @param _startPos Top-left coordinate of region to start set
-     * @param _blocks NxN array of blocks for the region
-     */
-    function _setMapRegion(Position memory _startPos, uint256[][] memory _blocks) public {
-        for (uint256 _xAdd = 0; _xAdd < _blocks.length; _xAdd++) {
-            for (uint256 _yAdd = 0; _yAdd < _blocks[0].length; _yAdd++) {
-                // calculate position based on offset
-                Position memory _pos = Position({x: _startPos.x + _xAdd, y: _startPos.y + _yAdd});
+    // /**
+    //  * Set map blocks in NxN regions due to gas limitation.
+    //  * @param _startPos Top-left coordinate of region to start set
+    //  * @param _blocks NxN array of blocks for the region
+    //  */
+    // function _setMapRegion(Position memory _startPos, uint256[][] memory _blocks) public {
+    //     for (uint256 _xAdd = 0; _xAdd < _blocks.length; _xAdd++) {
+    //         for (uint256 _yAdd = 0; _yAdd < _blocks[0].length; _yAdd++) {
+    //             // calculate position based on offset
+    //             Position memory _pos = Position({x: _startPos.x + _xAdd, y: _startPos.y + _yAdd});
 
-                // get the blockId that needs to be initialized
-                uint256 _blockId = _blocks[_xAdd][_yAdd];
+    //             // get the blockId that needs to be initialized
+    //             uint256 _blockId = _blocks[_xAdd][_yAdd];
 
-                // if its zero, it means it's an empty blocks
-                if (_blockId == 0) {
-                    _placeWorldBlockIdOnTile(_pos, 0);
-                } else {
-                    // first create new worldBlock
-                    (uint256 _newWorldBlockId, ) = _createNewWorldBlock(msg.sender, _blockId);
+    //             // if its zero, it means it's an empty blocks
+    //             if (_blockId == 0) {
+    //                 _placeWorldBlockIdOnTile(_pos, 0);
+    //             } else {
+    //                 // first create new worldBlock
+    //                 (uint256 _newWorldBlockId, ) = _createNewWorldBlock(msg.sender, _blockId);
 
-                    // then place worldBlock on map
-                    _placeWorldBlockIdOnTile(_pos, _newWorldBlockId);
-                }
-            }
-        }
-    }
-
-    function _getWorldConstants() public view returns (WorldConstants memory) {
-        return gs().worldConstants;
-    }
-
-    function _setPlayer(address _player, Position memory _pos) public {
-        WorldConstants memory constants = _getWorldConstants();
-        gs().players[_player] = PlayerData({initialized: true, initTimestamp: block.timestamp, playerAddr: _player, position: _pos, health: constants.startPlayerHealth, reach: constants.startingReach, lastMoved: 0});
-        gs().allPlayers.push(_player);
-    }
-
-    function _increaseNonce() public {
-        gs().itemNonce += 1;
-    }
+    //                 // then place worldBlock on map
+    //                 _placeWorldBlockIdOnTile(_pos, _newWorldBlockId);
+    //             }
+    //         }
+    //     }
+    // }
 
     // check if its within a distance (need to refactor into distance)
     // allow character to only move 1 block at a time in either x or y direction
@@ -78,7 +64,7 @@ library GameUtils {
     }
 
     function _getPositionFromIndex(uint256 k) public view returns (Position memory) {
-        WorldConstants memory constants = _getWorldConstants();
+        WorldConstants memory constants = gs().worldConstants;
 
         (bool _xValid, uint256 _x) = SafeMath.tryDiv(k, constants.worldHeight);
         (bool _yValid, uint256 _y) = SafeMath.tryMod(k, constants.worldWidth);
@@ -89,7 +75,7 @@ library GameUtils {
     }
 
     function _getIndexFromPosition(Position memory _pos) public view returns (uint256) {
-        WorldConstants memory constants = _getWorldConstants();
+        WorldConstants memory constants = gs().worldConstants;
 
         (bool _aValid, uint256 _a) = SafeMath.tryMul(_pos.x, constants.worldHeight);
         (bool _bValid, uint256 _b) = SafeMath.tryAdd(_a, _pos.y);
@@ -115,8 +101,6 @@ library GameUtils {
         return false;
     }
 
-    // function _bulkGetWorldBlockData
-
     function _getWorldBlockDataOnPos(Position memory _pos) public view returns (BlockData memory) {
         return _getWorldBlockData(_getTileData(_pos).worldBlockId);
     }
@@ -132,7 +116,7 @@ library GameUtils {
     // checks distance between positions and whether player is in map
     function _isValidMove(address _player, Position memory _pos) public view returns (bool) {
         Position memory _position = _getPlayer(_player).position;
-        WorldConstants memory constants = _getWorldConstants();
+        WorldConstants memory constants = gs().worldConstants;
 
         // if player is within bounds of map
         bool _inMap = _pos.x < constants.worldWidth && _pos.y < constants.worldWidth && _pos.x >= 0 && _pos.y >= 0;
@@ -148,12 +132,8 @@ library GameUtils {
         return true;
     }
 
-    function _setOccupierAtPosition(address _player, Position memory _pos) public {
-        gs().map[_pos.x][_pos.y].occupier = _player;
-    }
-
     function _isMoveCooled(address _player) public view returns (bool) {
-        return (block.timestamp - gs().players[_player].lastMoved) >= _getWorldConstants().playerMoveCooldown;
+        return (block.timestamp - gs().players[_player].lastMoved) >= gs().worldConstants.playerMoveCooldown;
     }
 
     // ------------------------------------------------------------
@@ -277,18 +257,18 @@ library GameUtils {
         return (_newWorldBlockId, _newWorldBlock);
     }
 
-    function _setWorldBlockProperty(uint256 _worldBlockId, BlockData memory _worldBlock) public {
-        gs().worldBlocks[_worldBlockId] = _worldBlock;
-        emit ChangeBlockProperty(_worldBlockId, _worldBlock);
-    }
+    // function _setWorldBlockProperty(uint256 _worldBlockId, BlockData memory _worldBlock) public {
+    //     gs().worldBlocks[_worldBlockId] = _worldBlock;
+    //     emit ChangeBlockProperty(_worldBlockId, _worldBlock);
+    // }
 
     // ------------------------------------------------------------
     // Tower
     // ------------------------------------------------------------
 
-    function setEpochController(address _addr) external {
-        gs().epochController = _addr;
-    }
+    // function setEpochController(address _addr) external {
+    //     gs().epochController = _addr;
+    // }
 
     function _getTower(string memory _towerId) public view returns (Tower memory) {
         return gs().towers[_towerId];

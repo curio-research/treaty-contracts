@@ -58,6 +58,7 @@ export interface EngineFacetInterface extends utils.Interface {
     "move((uint256,uint256))": FunctionFragment;
     "moveBlock((uint256,uint256),(uint256,uint256))": FunctionFragment;
     "place((uint256,uint256),uint256)": FunctionFragment;
+    "setMapRegion((uint256,uint256),uint256[][])": FunctionFragment;
     "updateEpoch()": FunctionFragment;
   };
 
@@ -87,6 +88,10 @@ export interface EngineFacetInterface extends utils.Interface {
     values: [PositionStruct, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "setMapRegion",
+    values: [PositionStruct, BigNumberish[][]]
+  ): string;
+  encodeFunctionData(
     functionFragment: "updateEpoch",
     values?: undefined
   ): string;
@@ -101,6 +106,10 @@ export interface EngineFacetInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "move", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "moveBlock", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "place", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setMapRegion",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "updateEpoch",
     data: BytesLike
@@ -291,6 +300,12 @@ export interface EngineFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    setMapRegion(
+      _startPos: PositionStruct,
+      _blocks: BigNumberish[][],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     updateEpoch(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -335,6 +350,12 @@ export interface EngineFacet extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  setMapRegion(
+    _startPos: PositionStruct,
+    _blocks: BigNumberish[][],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   updateEpoch(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -367,6 +388,12 @@ export interface EngineFacet extends BaseContract {
     place(
       _pos: PositionStruct,
       _blockId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setMapRegion(
+      _startPos: PositionStruct,
+      _blocks: BigNumberish[][],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -513,6 +540,12 @@ export interface EngineFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    setMapRegion(
+      _startPos: PositionStruct,
+      _blocks: BigNumberish[][],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     updateEpoch(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -555,6 +588,12 @@ export interface EngineFacet extends BaseContract {
     place(
       _pos: PositionStruct,
       _blockId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setMapRegion(
+      _startPos: PositionStruct,
+      _blocks: BigNumberish[][],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
