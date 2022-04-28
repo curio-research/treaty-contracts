@@ -130,38 +130,38 @@ task('deploy', 'deploy contracts')
     }
 
     // randomly initialize players only if we're on localhost
-    // if (isDev) {
-    //   console.log('✦ initializing players');
-    //   let x: number;
-    //   let y: number;
+    if (isDev) {
+      console.log('✦ initializing players');
+      let x: number;
+      let y: number;
 
-    //   let player1Pos: position;
-    //   do {
-    //     x = Math.floor(Math.random() * WORLD_WIDTH);
-    //     y = Math.floor(Math.random() * WORLD_HEIGHT);
-    //     player1Pos = { x, y };
-    //   } while (blocks[x][y] != 0);
+      let player1Pos: position;
+      do {
+        x = Math.floor(Math.random() * WORLD_WIDTH);
+        y = Math.floor(Math.random() * WORLD_HEIGHT);
+        player1Pos = { x, y };
+      } while (blocks[x][y] != 0);
 
-    //   let player2Pos: position;
-    //   do {
-    //     x = Math.floor(Math.random() * WORLD_WIDTH);
-    //     y = Math.floor(Math.random() * WORLD_HEIGHT);
-    //     player2Pos = { x, y };
-    //   } while (blocks[x][y] != 0);
+      let player2Pos: position;
+      do {
+        x = Math.floor(Math.random() * WORLD_WIDTH);
+        y = Math.floor(Math.random() * WORLD_HEIGHT);
+        player2Pos = { x, y };
+      } while (blocks[x][y] != 0);
 
-    //   let tx;
-    //   tx = await diamond.connect(player1).initializePlayer(player1Pos, ironIdx); // initialize users
-    //   tx.wait();
+      let tx;
+      tx = await diamond.connect(player1).initializePlayer(player1Pos, ironIdx); // initialize users
+      tx.wait();
 
-    //   // add some inventory items for testing
-    //   //   tx = await GameStorage._increaseItemInInventory(player1.address, getItemIndexByName(masterItems, 'Silver'), 100);
-    //   //   tx.wait();
+      // add some inventory items for testing
+      //   tx = await GameStorage._increaseItemInInventory(player1.address, getItemIndexByName(masterItems, 'Silver'), 100);
+      //   tx.wait();
 
-    //   //   tx = await GameContract.connect(player2).initializePlayer(player2Pos, ironIdx);
-    //   //   tx.wait();
+      //   tx = await GameContract.connect(player2).initializePlayer(player2Pos, ironIdx);
+      //   tx.wait();
 
-    //   await tx.wait();
-    // }
+      await tx.wait();
+    }
 
     // we don't need this anymore with diamond i think
     // console.log('✦ setting epoch controller');

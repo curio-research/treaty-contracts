@@ -47,6 +47,16 @@ export type BlockDataStructOutput = [
   occupiable: boolean;
 };
 
+export type RecipeStruct = {
+  craftItemIds: BigNumberish[];
+  craftItemAmounts: BigNumberish[];
+};
+
+export type RecipeStructOutput = [BigNumber[], BigNumber[]] & {
+  craftItemIds: BigNumber[];
+  craftItemAmounts: BigNumber[];
+};
+
 export type TileStruct = {
   occupier: string;
   worldBlockId: BigNumberish;
@@ -67,6 +77,62 @@ export type TileStructOutput = [
   tileType: BigNumber;
   lastOccupied: BigNumber;
   tileContractId: BigNumber;
+};
+
+export type PlayerDataStruct = {
+  initialized: boolean;
+  initTimestamp: BigNumberish;
+  playerAddr: string;
+  health: BigNumberish;
+  reach: BigNumberish;
+  lastMoved: BigNumberish;
+  position: PositionStruct;
+};
+
+export type PlayerDataStructOutput = [
+  boolean,
+  BigNumber,
+  string,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  PositionStructOutput
+] & {
+  initialized: boolean;
+  initTimestamp: BigNumber;
+  playerAddr: string;
+  health: BigNumber;
+  reach: BigNumber;
+  lastMoved: BigNumber;
+  position: PositionStructOutput;
+};
+
+export type WorldConstantsStruct = {
+  worldWidth: BigNumberish;
+  worldHeight: BigNumberish;
+  startPlayerHealth: BigNumberish;
+  startingReach: BigNumberish;
+  startingPlayerDefaultCurrencyAmount: BigNumberish;
+  playerMoveCooldown: BigNumberish;
+  getMapInterval: BigNumberish;
+};
+
+export type WorldConstantsStructOutput = [
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber
+] & {
+  worldWidth: BigNumber;
+  worldHeight: BigNumber;
+  startPlayerHealth: BigNumber;
+  startingReach: BigNumber;
+  startingPlayerDefaultCurrencyAmount: BigNumber;
+  playerMoveCooldown: BigNumber;
+  getMapInterval: BigNumber;
 };
 
 export type ItemStruct = {
@@ -118,41 +184,20 @@ export type ItemStructOutput = [
   contractAddr: string;
 };
 
-export type PlayerDataStruct = {
-  initialized: boolean;
-  initTimestamp: BigNumberish;
-  playerAddr: string;
-  health: BigNumberish;
-  reach: BigNumberish;
-  lastMoved: BigNumberish;
-  position: PositionStruct;
-};
-
-export type PlayerDataStructOutput = [
-  boolean,
-  BigNumber,
-  string,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  PositionStructOutput
-] & {
-  initialized: boolean;
-  initTimestamp: BigNumber;
-  playerAddr: string;
-  health: BigNumber;
-  reach: BigNumber;
-  lastMoved: BigNumber;
-  position: PositionStructOutput;
-};
-
 export interface GetterFacetInterface extends utils.Interface {
   functions: {
     "_getBlockChunkData((uint256,uint256))": FunctionFragment;
+    "_getBlockDataAtPos((uint256,uint256))": FunctionFragment;
+    "_getCurrentEpoch()": FunctionFragment;
+    "_getInventoryByPlayer(address)": FunctionFragment;
     "_getMap((uint256,uint256))": FunctionFragment;
+    "_getPlayer(address)": FunctionFragment;
+    "_getTileData((uint256,uint256))": FunctionFragment;
+    "_getWorldBlockData(uint256)": FunctionFragment;
+    "_getWorldConstants()": FunctionFragment;
+    "_isOccupied((uint256,uint256))": FunctionFragment;
     "bulkGetAllItems()": FunctionFragment;
     "bulkGetAllPlayerData()": FunctionFragment;
-    "getMapInterval()": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -160,7 +205,36 @@ export interface GetterFacetInterface extends utils.Interface {
     values: [PositionStruct]
   ): string;
   encodeFunctionData(
+    functionFragment: "_getBlockDataAtPos",
+    values: [PositionStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getCurrentEpoch",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getInventoryByPlayer",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "_getMap",
+    values: [PositionStruct]
+  ): string;
+  encodeFunctionData(functionFragment: "_getPlayer", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "_getTileData",
+    values: [PositionStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getWorldBlockData",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getWorldConstants",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_isOccupied",
     values: [PositionStruct]
   ): string;
   encodeFunctionData(
@@ -171,26 +245,47 @@ export interface GetterFacetInterface extends utils.Interface {
     functionFragment: "bulkGetAllPlayerData",
     values?: undefined
   ): string;
-  encodeFunctionData(
-    functionFragment: "getMapInterval",
-    values?: undefined
-  ): string;
 
   decodeFunctionResult(
     functionFragment: "_getBlockChunkData",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "_getBlockDataAtPos",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_getCurrentEpoch",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_getInventoryByPlayer",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "_getMap", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "_getPlayer", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "_getTileData",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_getWorldBlockData",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_getWorldConstants",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_isOccupied",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "bulkGetAllItems",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "bulkGetAllPlayerData",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getMapInterval",
     data: BytesLike
   ): Result;
 
@@ -229,18 +324,54 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BlockDataStructOutput[], PositionStructOutput[]]>;
 
+    _getBlockDataAtPos(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<[BlockDataStructOutput]>;
+
+    _getCurrentEpoch(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    _getInventoryByPlayer(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<[RecipeStructOutput]>;
+
     _getMap(
       _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<[TileStructOutput[], PositionStructOutput[]]>;
+
+    _getPlayer(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<
+      [PlayerDataStructOutput] & { playerData: PlayerDataStructOutput }
+    >;
+
+    _getTileData(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<[TileStructOutput]>;
+
+    _getWorldBlockData(
+      _worldBlockIdx: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BlockDataStructOutput]>;
+
+    _getWorldConstants(
+      overrides?: CallOverrides
+    ): Promise<[WorldConstantsStructOutput]>;
+
+    _isOccupied(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     bulkGetAllItems(overrides?: CallOverrides): Promise<[ItemStructOutput[]]>;
 
     bulkGetAllPlayerData(
       overrides?: CallOverrides
     ): Promise<[PlayerDataStructOutput[]]>;
-
-    getMapInterval(overrides?: CallOverrides): Promise<[BigNumber]>;
   };
 
   _getBlockChunkData(
@@ -248,10 +379,46 @@ export interface GetterFacet extends BaseContract {
     overrides?: CallOverrides
   ): Promise<[BlockDataStructOutput[], PositionStructOutput[]]>;
 
+  _getBlockDataAtPos(
+    _pos: PositionStruct,
+    overrides?: CallOverrides
+  ): Promise<BlockDataStructOutput>;
+
+  _getCurrentEpoch(overrides?: CallOverrides): Promise<BigNumber>;
+
+  _getInventoryByPlayer(
+    _player: string,
+    overrides?: CallOverrides
+  ): Promise<RecipeStructOutput>;
+
   _getMap(
     _pos: PositionStruct,
     overrides?: CallOverrides
   ): Promise<[TileStructOutput[], PositionStructOutput[]]>;
+
+  _getPlayer(
+    _player: string,
+    overrides?: CallOverrides
+  ): Promise<PlayerDataStructOutput>;
+
+  _getTileData(
+    _pos: PositionStruct,
+    overrides?: CallOverrides
+  ): Promise<TileStructOutput>;
+
+  _getWorldBlockData(
+    _worldBlockIdx: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BlockDataStructOutput>;
+
+  _getWorldConstants(
+    overrides?: CallOverrides
+  ): Promise<WorldConstantsStructOutput>;
+
+  _isOccupied(
+    _pos: PositionStruct,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   bulkGetAllItems(overrides?: CallOverrides): Promise<ItemStructOutput[]>;
 
@@ -259,26 +426,58 @@ export interface GetterFacet extends BaseContract {
     overrides?: CallOverrides
   ): Promise<PlayerDataStructOutput[]>;
 
-  getMapInterval(overrides?: CallOverrides): Promise<BigNumber>;
-
   callStatic: {
     _getBlockChunkData(
       _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<[BlockDataStructOutput[], PositionStructOutput[]]>;
 
+    _getBlockDataAtPos(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BlockDataStructOutput>;
+
+    _getCurrentEpoch(overrides?: CallOverrides): Promise<BigNumber>;
+
+    _getInventoryByPlayer(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<RecipeStructOutput>;
+
     _getMap(
       _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<[TileStructOutput[], PositionStructOutput[]]>;
+
+    _getPlayer(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<PlayerDataStructOutput>;
+
+    _getTileData(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<TileStructOutput>;
+
+    _getWorldBlockData(
+      _worldBlockIdx: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BlockDataStructOutput>;
+
+    _getWorldConstants(
+      overrides?: CallOverrides
+    ): Promise<WorldConstantsStructOutput>;
+
+    _isOccupied(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     bulkGetAllItems(overrides?: CallOverrides): Promise<ItemStructOutput[]>;
 
     bulkGetAllPlayerData(
       overrides?: CallOverrides
     ): Promise<PlayerDataStructOutput[]>;
-
-    getMapInterval(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   filters: {};
@@ -289,7 +488,38 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _getBlockDataAtPos(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getCurrentEpoch(overrides?: CallOverrides): Promise<BigNumber>;
+
+    _getInventoryByPlayer(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     _getMap(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getPlayer(_player: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    _getTileData(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getWorldBlockData(
+      _worldBlockIdx: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getWorldConstants(overrides?: CallOverrides): Promise<BigNumber>;
+
+    _isOccupied(
       _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -297,8 +527,6 @@ export interface GetterFacet extends BaseContract {
     bulkGetAllItems(overrides?: CallOverrides): Promise<BigNumber>;
 
     bulkGetAllPlayerData(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getMapInterval(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -307,7 +535,43 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    _getBlockDataAtPos(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getCurrentEpoch(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    _getInventoryByPlayer(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     _getMap(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getPlayer(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getTileData(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getWorldBlockData(
+      _worldBlockIdx: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getWorldConstants(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _isOccupied(
       _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -317,7 +581,5 @@ export interface GetterFacet extends BaseContract {
     bulkGetAllPlayerData(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
-
-    getMapInterval(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

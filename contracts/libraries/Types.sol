@@ -12,7 +12,8 @@ struct WorldConstants {
     uint256 startPlayerHealth;
     uint256 startingReach;
     uint256 startingPlayerDefaultCurrencyAmount;
-    uint256 playerMoveCooldown; // time in seconds;
+    uint256 playerMoveCooldown; // refactor this into other struct
+    uint256 getMapInterval;
 }
 
 struct PlayerData {

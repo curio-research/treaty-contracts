@@ -18,15 +18,15 @@ contract EngineFacet is UseStorage {
     // Events
     // ------------------------------------------------------------
 
-    event EventNewPlayer(address _player, Position _pos);
-    event EventMove(address _player, Position _pos);
-    event EventMineItem(address _player, Position _pos, uint256 _itemId);
-    event EventAttackItemEvent(address _player, Position _origin, Position _target, uint256 _attackerWorldBlockId, uint256 _targetWorldBlockId, uint256 _strength);
-    event EventPlace(address _player, Position _pos, uint256 _worldBlockId, BlockData _blockData);
-    event EventCraft(address _player, uint256 _blockId);
-    event EventChangeBlockStrength(address _player, Position _pos, uint256 _health, uint256 _resourceUsed);
-    event EventMoveBlock(address _player, Position _startPos, Position _endPos, uint256 _worldBlockId, uint256 _time);
-    event EventEpochUpdate(address _player, uint256 _epoch, uint256 _time);
+    event NewPlayer(address _player, Position _pos);
+    event Move(address _player, Position _pos);
+    event MineItem(address _player, Position _pos, uint256 _itemId);
+    event AttackItem(address _player, Position _origin, Position _target, uint256 _attackerWorldBlockId, uint256 _targetWorldBlockId, uint256 _strength);
+    event Place(address _player, Position _pos, uint256 _worldBlockId, BlockData _blockData);
+    event Craft(address _player, uint256 _blockId);
+    event ChangeBlockStrength(address _player, Position _pos, uint256 _health, uint256 _resourceUsed);
+    event MoveBlock(address _player, Position _startPos, Position _endPos, uint256 _worldBlockId, uint256 _time);
+    event EpochUpdate(address _player, uint256 _epoch, uint256 _time);
 
     // let some blocks (eg. creatures) attack other blocks
     // perhaps this can be abstracted into the main attack function
@@ -69,7 +69,7 @@ contract EngineFacet is UseStorage {
         }
 
         // this should emit more info ? or nah
-        emit EventAttackItemEvent(msg.sender, _origin, _target, _attackerTile.worldBlockId, _targetTile.worldBlockId, healthAfterAttack);
+        emit AttackItem(msg.sender, _origin, _target, _attackerTile.worldBlockId, _targetTile.worldBlockId, healthAfterAttack);
     }
 
     function _setOccupierAtPosition(address _player, Position memory _pos) public {
@@ -82,7 +82,6 @@ contract EngineFacet is UseStorage {
      */
     function initializePlayer(Position memory _pos, uint256 _defaultCurrencyIdx) public {
         require(!GameUtils._getPlayer(msg.sender).initialized, "engine/player-already-initialized");
-
         require(!GameUtils._isOccupied(_pos), "engine/location-occupied"); // if target coordinate already has a block or player, revert
 
         // set player
@@ -95,7 +94,7 @@ contract EngineFacet is UseStorage {
         // give users starting currency
         GameUtils._increaseItemInInventory(msg.sender, _defaultCurrencyIdx, gs().worldConstants.startingPlayerDefaultCurrencyAmount);
 
-        emit EventNewPlayer(msg.sender, _pos);
+        emit NewPlayer(msg.sender, _pos);
     }
 
     /**
@@ -104,7 +103,6 @@ contract EngineFacet is UseStorage {
      */
     function move(Position memory _pos) external {
         require(GameUtils._isValidMove(msg.sender, _pos), "engine/invalid-move");
-
         require(GameUtils._isMoveCooled(msg.sender), "engine/move-not-cooled"); // check if move is cooled down
 
         gs().players[msg.sender].lastMoved = block.timestamp; // set last moved
@@ -115,7 +113,7 @@ contract EngineFacet is UseStorage {
         gs().players[msg.sender].position = _pos; // set player position
         _setOccupierAtPosition(msg.sender, _pos);
 
-        emit EventMove(msg.sender, _pos);
+        emit Move(msg.sender, _pos);
     }
 
     /**
@@ -149,7 +147,7 @@ contract EngineFacet is UseStorage {
         GameUtils._setWorldBlockIdAtTile(_targetPos, startTile.worldBlockId);
 
         // since stats don't change i don't think we need to emit block data
-        emit EventMoveBlock(msg.sender, _startPos, _targetPos, startTile.worldBlockId, block.timestamp);
+        emit MoveBlock(msg.sender, _startPos, _targetPos, startTile.worldBlockId, block.timestamp);
     }
 
     // mine item completely
@@ -185,7 +183,7 @@ contract EngineFacet is UseStorage {
         delete gs().worldBlocks[_targetTileData.worldBlockId]; // delete world block Id
         GameUtils._setWorldBlockIdAtTile(_pos, 0);
 
-        emit EventMineItem(_playerAddr, _pos, _targetBlockData.blockId);
+        emit MineItem(_playerAddr, _pos, _targetBlockData.blockId);
     }
 
     /**
@@ -211,7 +209,7 @@ contract EngineFacet is UseStorage {
         // set the newly created worldBlockId to tile
         GameUtils._placeWorldBlockIdOnTile(_pos, _worldBlockId);
 
-        emit EventPlace(msg.sender, _pos, _worldBlockId, _worldBlockData);
+        emit Place(msg.sender, _pos, _worldBlockId, _worldBlockData);
     }
 
     /**
@@ -219,7 +217,7 @@ contract EngineFacet is UseStorage {
      * @param _itemId item id to craft
      */
     function craft(uint256 _itemId) external {
-        require(_itemId <= GameUtils._getItemNonce(), "engine/nonexistent-block"); // has to craft an existing item
+        require(_itemId <= gs().itemNonce, "engine/nonexistent-block"); // has to craft an existing item
 
         // loop through player inventory to check if player has all required ingredients to make a block
         Item memory _item = GameUtils._getItem(_itemId);
@@ -236,7 +234,7 @@ contract EngineFacet is UseStorage {
 
         GameUtils._increaseItemInInventory(msg.sender, _itemId, 1);
 
-        emit EventCraft(msg.sender, _itemId);
+        emit Craft(msg.sender, _itemId);
     }
 
     // reduces item health
@@ -252,7 +250,7 @@ contract EngineFacet is UseStorage {
         // set new health for worldBlockId
         gs().worldBlocks[_worldBlockId].health = _healthAfterAttack;
 
-        emit EventChangeBlockStrength(_playerAddr, _targetPos, _healthAfterAttack, 1000000);
+        emit ChangeBlockStrength(_playerAddr, _targetPos, _healthAfterAttack, 1000000);
     }
 
     /**
@@ -286,7 +284,7 @@ contract EngineFacet is UseStorage {
         gs().epoch++;
         gs().lastUpdated = block.timestamp;
 
-        emit EventEpochUpdate(msg.sender, gs().epoch, gs().lastUpdated);
+        emit EpochUpdate(msg.sender, gs().epoch, gs().lastUpdated);
     }
 
     function setMapRegion(Position memory _startPos, uint256[][] memory _blocks) external {

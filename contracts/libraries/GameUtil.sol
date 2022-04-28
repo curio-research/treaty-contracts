@@ -298,10 +298,6 @@ library GameUtils {
         return gs().allPlayers;
     }
 
-    function _getItemNonce() public view returns (uint256) {
-        return gs().itemNonce;
-    }
-
     function _getItem(uint256 _blockId) public view returns (Item memory) {
         return gs().itemsWithMetadata[_blockId];
     }

@@ -9,7 +9,7 @@ import { ItemWithMetadata } from '../../util/types/getter';
 
 export const generateAllGameArgs = (allGameItems: ItemWithMetadata[], itemRatio: number[]): AllGameArgs => {
   const gameConstants: any = generateGameConstants();
-  const masterGameSpecs = generateMap(WORLD_WIDTH, WORLD_HEIGHT, ROOM_LENGTH, masterItems, MAP_MODE.ROOMS_1);
+  const masterGameSpecs = generateMap(WORLD_WIDTH, WORLD_HEIGHT, ROOM_LENGTH, masterItems, MAP_MODE.DEFAULT);
   const blockMap = generateItems(masterGameSpecs.blocks, itemRatio);
   return {
     gameConstants: gameConstants,

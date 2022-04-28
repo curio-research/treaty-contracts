@@ -24,9 +24,11 @@ export type WorldConstantsStruct = {
   startingReach: BigNumberish;
   startingPlayerDefaultCurrencyAmount: BigNumberish;
   playerMoveCooldown: BigNumberish;
+  getMapInterval: BigNumberish;
 };
 
 export type WorldConstantsStructOutput = [
+  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -40,6 +42,7 @@ export type WorldConstantsStructOutput = [
   startingReach: BigNumber;
   startingPlayerDefaultCurrencyAmount: BigNumber;
   playerMoveCooldown: BigNumber;
+  getMapInterval: BigNumber;
 };
 
 export type ItemStruct = {
@@ -93,7 +96,7 @@ export type ItemStructOutput = [
 
 export interface DiamondInitInterface extends utils.Interface {
   functions: {
-    "init((uint256,uint256,uint256,uint256,uint256,uint256),(bool,bool,bool,uint256,uint256[],uint256[],uint256[],uint256,uint256,uint256,uint256,bool,string,string)[])": FunctionFragment;
+    "init((uint256,uint256,uint256,uint256,uint256,uint256,uint256),(bool,bool,bool,uint256,uint256[],uint256[],uint256[],uint256,uint256,uint256,uint256,bool,string,string)[])": FunctionFragment;
   };
 
   encodeFunctionData(

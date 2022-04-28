@@ -170,31 +170,6 @@ export type TowerStructOutput = [BigNumber, BigNumber, BigNumber, string] & {
   owner: string;
 };
 
-export type WorldConstantsStruct = {
-  worldWidth: BigNumberish;
-  worldHeight: BigNumberish;
-  startPlayerHealth: BigNumberish;
-  startingReach: BigNumberish;
-  startingPlayerDefaultCurrencyAmount: BigNumberish;
-  playerMoveCooldown: BigNumberish;
-};
-
-export type WorldConstantsStructOutput = [
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber
-] & {
-  worldWidth: BigNumber;
-  worldHeight: BigNumber;
-  startPlayerHealth: BigNumber;
-  startingReach: BigNumber;
-  startingPlayerDefaultCurrencyAmount: BigNumber;
-  playerMoveCooldown: BigNumber;
-};
-
 export interface GameUtilsInterface extends utils.Interface {
   functions: {
     "_encodePos((uint256,uint256))": FunctionFragment;
@@ -206,14 +181,12 @@ export interface GameUtilsInterface extends utils.Interface {
     "_getInventoryByPlayer(address)": FunctionFragment;
     "_getItem(uint256)": FunctionFragment;
     "_getItemAmountById(address,uint256)": FunctionFragment;
-    "_getItemNonce()": FunctionFragment;
     "_getPlayer(address)": FunctionFragment;
     "_getPositionFromIndex(uint256)": FunctionFragment;
     "_getTileData((uint256,uint256))": FunctionFragment;
     "_getTower(string)": FunctionFragment;
     "_getWorldBlockData(uint256)": FunctionFragment;
     "_getWorldBlockDataOnPos((uint256,uint256))": FunctionFragment;
-    "_getWorldConstants()": FunctionFragment;
     "_isMoveCooled(address)": FunctionFragment;
     "_isOccupied((uint256,uint256))": FunctionFragment;
     "_isValidMove(address,(uint256,uint256))": FunctionFragment;
@@ -257,10 +230,6 @@ export interface GameUtilsInterface extends utils.Interface {
     functionFragment: "_getItemAmountById",
     values: [string, BigNumberish]
   ): string;
-  encodeFunctionData(
-    functionFragment: "_getItemNonce",
-    values?: undefined
-  ): string;
   encodeFunctionData(functionFragment: "_getPlayer", values: [string]): string;
   encodeFunctionData(
     functionFragment: "_getPositionFromIndex",
@@ -278,10 +247,6 @@ export interface GameUtilsInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "_getWorldBlockDataOnPos",
     values: [PositionStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getWorldConstants",
-    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "_isMoveCooled",
@@ -334,10 +299,6 @@ export interface GameUtilsInterface extends utils.Interface {
     functionFragment: "_getItemAmountById",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getItemNonce",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "_getPlayer", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_getPositionFromIndex",
@@ -354,10 +315,6 @@ export interface GameUtilsInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "_getWorldBlockDataOnPos",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getWorldConstants",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -472,8 +429,6 @@ export interface GameUtils extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    _getItemNonce(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     _getPlayer(
       _player: string,
       overrides?: CallOverrides
@@ -505,10 +460,6 @@ export interface GameUtils extends BaseContract {
       _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<[BlockDataStructOutput]>;
-
-    _getWorldConstants(
-      overrides?: CallOverrides
-    ): Promise<[WorldConstantsStructOutput]>;
 
     _isMoveCooled(
       _player: string,
@@ -576,8 +527,6 @@ export interface GameUtils extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  _getItemNonce(overrides?: CallOverrides): Promise<BigNumber>;
-
   _getPlayer(
     _player: string,
     overrides?: CallOverrides
@@ -607,10 +556,6 @@ export interface GameUtils extends BaseContract {
     _pos: PositionStruct,
     overrides?: CallOverrides
   ): Promise<BlockDataStructOutput>;
-
-  _getWorldConstants(
-    overrides?: CallOverrides
-  ): Promise<WorldConstantsStructOutput>;
 
   _isMoveCooled(_player: string, overrides?: CallOverrides): Promise<boolean>;
 
@@ -675,8 +620,6 @@ export interface GameUtils extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getItemNonce(overrides?: CallOverrides): Promise<BigNumber>;
-
     _getPlayer(
       _player: string,
       overrides?: CallOverrides
@@ -706,10 +649,6 @@ export interface GameUtils extends BaseContract {
       _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<BlockDataStructOutput>;
-
-    _getWorldConstants(
-      overrides?: CallOverrides
-    ): Promise<WorldConstantsStructOutput>;
 
     _isMoveCooled(_player: string, overrides?: CallOverrides): Promise<boolean>;
 
@@ -799,8 +738,6 @@ export interface GameUtils extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getItemNonce(overrides?: CallOverrides): Promise<BigNumber>;
-
     _getPlayer(_player: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     _getPositionFromIndex(
@@ -824,8 +761,6 @@ export interface GameUtils extends BaseContract {
       _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    _getWorldConstants(overrides?: CallOverrides): Promise<BigNumber>;
 
     _isMoveCooled(
       _player: string,
@@ -896,8 +831,6 @@ export interface GameUtils extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _getItemNonce(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     _getPlayer(
       _player: string,
       overrides?: CallOverrides
@@ -925,10 +858,6 @@ export interface GameUtils extends BaseContract {
 
     _getWorldBlockDataOnPos(
       _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getWorldConstants(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
