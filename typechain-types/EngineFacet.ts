@@ -17,80 +17,6 @@ import { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
 import { Listener, Provider } from "@ethersproject/providers";
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
-export type WorldConstantsStruct = {
-  worldWidth: BigNumberish;
-  worldHeight: BigNumberish;
-  startPlayerHealth: BigNumberish;
-  startingReach: BigNumberish;
-  startingPlayerDefaultCurrencyAmount: BigNumberish;
-  playerMoveCooldown: BigNumberish;
-};
-
-export type WorldConstantsStructOutput = [
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber
-] & {
-  worldWidth: BigNumber;
-  worldHeight: BigNumber;
-  startPlayerHealth: BigNumber;
-  startingReach: BigNumber;
-  startingPlayerDefaultCurrencyAmount: BigNumber;
-  playerMoveCooldown: BigNumber;
-};
-
-export type ItemStruct = {
-  mineable: boolean;
-  craftable: boolean;
-  occupiable: boolean;
-  health: BigNumberish;
-  mineItemIds: BigNumberish[];
-  craftItemIds: BigNumberish[];
-  craftItemAmounts: BigNumberish[];
-  moveCooldown: BigNumberish;
-  attackDamage: BigNumberish;
-  attackRange: BigNumberish;
-  attackCooldown: BigNumberish;
-  programmable: boolean;
-  abiEncoding: string;
-  contractAddr: string;
-};
-
-export type ItemStructOutput = [
-  boolean,
-  boolean,
-  boolean,
-  BigNumber,
-  BigNumber[],
-  BigNumber[],
-  BigNumber[],
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  boolean,
-  string,
-  string
-] & {
-  mineable: boolean;
-  craftable: boolean;
-  occupiable: boolean;
-  health: BigNumber;
-  mineItemIds: BigNumber[];
-  craftItemIds: BigNumber[];
-  craftItemAmounts: BigNumber[];
-  moveCooldown: BigNumber;
-  attackDamage: BigNumber;
-  attackRange: BigNumber;
-  attackCooldown: BigNumber;
-  programmable: boolean;
-  abiEncoding: string;
-  contractAddr: string;
-};
-
 export type PositionStruct = { x: BigNumberish; y: BigNumberish };
 
 export type PositionStructOutput = [BigNumber, BigNumber] & {
@@ -123,8 +49,9 @@ export type BlockDataStructOutput = [
   occupiable: boolean;
 };
 
-export interface GameInterface extends utils.Interface {
+export interface EngineFacetInterface extends utils.Interface {
   functions: {
+    "_setOccupierAtPosition(address,(uint256,uint256))": FunctionFragment;
     "attack((uint256,uint256),(uint256,uint256))": FunctionFragment;
     "craft(uint256)": FunctionFragment;
     "initializePlayer((uint256,uint256),uint256)": FunctionFragment;
@@ -132,8 +59,14 @@ export interface GameInterface extends utils.Interface {
     "move((uint256,uint256))": FunctionFragment;
     "moveBlock((uint256,uint256),(uint256,uint256))": FunctionFragment;
     "place((uint256,uint256),uint256)": FunctionFragment;
+    "setMapRegion((uint256,uint256),uint256[][])": FunctionFragment;
+    "updateEpoch()": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "_setOccupierAtPosition",
+    values: [string, PositionStruct]
+  ): string;
   encodeFunctionData(
     functionFragment: "attack",
     values: [PositionStruct, PositionStruct]
@@ -159,7 +92,19 @@ export interface GameInterface extends utils.Interface {
     functionFragment: "place",
     values: [PositionStruct, BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "setMapRegion",
+    values: [PositionStruct, BigNumberish[][]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "updateEpoch",
+    values?: undefined
+  ): string;
 
+  decodeFunctionResult(
+    functionFragment: "_setOccupierAtPosition",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "attack", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "craft", data: BytesLike): Result;
   decodeFunctionResult(
@@ -170,11 +115,20 @@ export interface GameInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "move", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "moveBlock", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "place", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setMapRegion",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateEpoch",
+    data: BytesLike
+  ): Result;
 
   events: {
     "AttackItem(address,tuple,tuple,uint256,uint256,uint256)": EventFragment;
     "ChangeBlockStrength(address,tuple,uint256,uint256)": EventFragment;
     "Craft(address,uint256)": EventFragment;
+    "EpochUpdate(address,uint256,uint256)": EventFragment;
     "MineItem(address,tuple,uint256)": EventFragment;
     "Move(address,tuple)": EventFragment;
     "MoveBlock(address,tuple,tuple,uint256,uint256)": EventFragment;
@@ -185,6 +139,7 @@ export interface GameInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "AttackItem"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ChangeBlockStrength"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Craft"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "EpochUpdate"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MineItem"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Move"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MoveBlock"): EventFragment;
@@ -233,6 +188,13 @@ export type CraftEvent = TypedEvent<
 
 export type CraftEventFilter = TypedEventFilter<CraftEvent>;
 
+export type EpochUpdateEvent = TypedEvent<
+  [string, BigNumber, BigNumber],
+  { _player: string; _epoch: BigNumber; _time: BigNumber }
+>;
+
+export type EpochUpdateEventFilter = TypedEventFilter<EpochUpdateEvent>;
+
 export type MineItemEvent = TypedEvent<
   [string, PositionStructOutput, BigNumber],
   { _player: string; _pos: PositionStructOutput; _itemId: BigNumber }
@@ -279,12 +241,12 @@ export type PlaceEvent = TypedEvent<
 
 export type PlaceEventFilter = TypedEventFilter<PlaceEvent>;
 
-export interface Game extends BaseContract {
+export interface EngineFacet extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: GameInterface;
+  interface: EngineFacetInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -306,6 +268,12 @@ export interface Game extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    _setOccupierAtPosition(
+      _player: string,
+      _pos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     attack(
       _origin: PositionStruct,
       _target: PositionStruct,
@@ -344,7 +312,23 @@ export interface Game extends BaseContract {
       _blockId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    setMapRegion(
+      _startPos: PositionStruct,
+      _blocks: BigNumberish[][],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    updateEpoch(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
   };
+
+  _setOccupierAtPosition(
+    _player: string,
+    _pos: PositionStruct,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   attack(
     _origin: PositionStruct,
@@ -385,7 +369,23 @@ export interface Game extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  setMapRegion(
+    _startPos: PositionStruct,
+    _blocks: BigNumberish[][],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  updateEpoch(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
+    _setOccupierAtPosition(
+      _player: string,
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     attack(
       _origin: PositionStruct,
       _target: PositionStruct,
@@ -415,6 +415,14 @@ export interface Game extends BaseContract {
       _blockId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    setMapRegion(
+      _startPos: PositionStruct,
+      _blocks: BigNumberish[][],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    updateEpoch(overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {
@@ -450,6 +458,17 @@ export interface Game extends BaseContract {
 
     "Craft(address,uint256)"(_player?: null, _blockId?: null): CraftEventFilter;
     Craft(_player?: null, _blockId?: null): CraftEventFilter;
+
+    "EpochUpdate(address,uint256,uint256)"(
+      _player?: null,
+      _epoch?: null,
+      _time?: null
+    ): EpochUpdateEventFilter;
+    EpochUpdate(
+      _player?: null,
+      _epoch?: null,
+      _time?: null
+    ): EpochUpdateEventFilter;
 
     "MineItem(address,tuple,uint256)"(
       _player?: null,
@@ -497,6 +516,12 @@ export interface Game extends BaseContract {
   };
 
   estimateGas: {
+    _setOccupierAtPosition(
+      _player: string,
+      _pos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     attack(
       _origin: PositionStruct,
       _target: PositionStruct,
@@ -533,11 +558,27 @@ export interface Game extends BaseContract {
     place(
       _pos: PositionStruct,
       _blockId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setMapRegion(
+      _startPos: PositionStruct,
+      _blocks: BigNumberish[][],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    updateEpoch(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    _setOccupierAtPosition(
+      _player: string,
+      _pos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     attack(
       _origin: PositionStruct,
       _target: PositionStruct,
@@ -574,6 +615,16 @@ export interface Game extends BaseContract {
     place(
       _pos: PositionStruct,
       _blockId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setMapRegion(
+      _startPos: PositionStruct,
+      _blocks: BigNumberish[][],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    updateEpoch(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

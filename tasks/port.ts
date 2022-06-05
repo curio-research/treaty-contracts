@@ -16,31 +16,32 @@ const copyFolderSync = (from: string, to: string) => {
   });
 };
 
-task('port', 'compile and port contracts over to frontend repo').setAction(
-  async (args: HardhatArguments, hre: HardhatRuntimeEnvironment) => {
-    console.log('✦ Porting files over ...');
+task('port', 'compile and port contracts over to frontend repo').setAction(async (args: HardhatArguments, hre: HardhatRuntimeEnvironment) => {
+  console.log('✦ Porting files over ...');
 
-    // read ABI from artifacts folder compiled by Hardhat
-    const gameAbi = JSON.stringify((await hre.artifacts.readArtifact('Game')).abi);
-    const gettersAbi = JSON.stringify((await hre.artifacts.readArtifact('Getters')).abi);
+  // TODO: Port over the master file. why did we neeed to port gameAbi and all that?
+  // read ABI from artifacts folder compiled by Hardhat
+  // const CurioAbi = JSON.stringify((await hre.artifacts.readArtifact('Curio')).abi);
 
-    const clientAbiDir = path.join(__dirname, '../../frontend/src/network/abi');
+  // const gameAbi = JSON.stringify((await hre.artifacts.readArtifact('Game')).abi);
+  // const gettersAbi = JSON.stringify((await hre.artifacts.readArtifact('Getters')).abi);
 
-    // save contract ABIs to client
-    await fsPromise.writeFile(path.join(clientAbiDir, 'Game.json'), gameAbi);
-    await fsPromise.writeFile(path.join(clientAbiDir, 'Getters.json'), gettersAbi);
+  // const clientAbiDir = path.join(__dirname, '../../frontend/src/network/abi');
 
-    // save typechain files
-    const clientTypechainDir = path.join(__dirname, '../../frontend/src/network/typechain-types');
-    const localTypechainDir = path.join(__dirname, '../typechain-types');
+  // save contract ABIs to client
+  // await fsPromise.writeFile(path.join(clientAbiDir, 'Game.json'), gameAbi);
+  // await fsPromise.writeFile(path.join(clientAbiDir, 'Getters.json'), gettersAbi);
 
-    await fs.rmdirSync(clientTypechainDir, { recursive: true });
-    copyFolderSync(localTypechainDir, clientTypechainDir);
+  // save typechain files
+  const clientTypechainDir = path.join(__dirname, '../../frontend/src/network/typechain-types');
+  const localTypechainDir = path.join(__dirname, '../typechain-types');
 
-    const configFileDir = path.join(__dirname, '/game.config.json');
-    const configClientDir = path.join(__dirname, '../../frontend/src/game.config.json');
+  await fs.rmdirSync(clientTypechainDir, { recursive: true });
+  copyFolderSync(localTypechainDir, clientTypechainDir);
 
-    await fs.copyFileSync(configFileDir, configClientDir);
-    console.log('✦ Porting complete!');
-  }
-);
+  const configFileDir = path.join(__dirname, '/game.config.json');
+  const configClientDir = path.join(__dirname, '../../frontend/src/game.config.json');
+
+  await fs.copyFileSync(configFileDir, configClientDir);
+  console.log('✦ Porting complete!');
+});

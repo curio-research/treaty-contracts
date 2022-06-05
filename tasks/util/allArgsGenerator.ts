@@ -1,4 +1,4 @@
-import { WorldConstantsStruct } from './../../typechain-types/Game';
+// import { WorldConstantsStruct } from './../../typechain-types/Game';
 import { generateMap } from './mapGenerator';
 import { TowerWithLocation } from './../../util/types/tower';
 import { generateItems } from './itemGenerator';
@@ -8,8 +8,8 @@ import { ItemWithMetadata } from '../../util/types/getter';
 // This generates all game parameters needed to deploy the GameEngine.sol contract
 
 export const generateAllGameArgs = (allGameItems: ItemWithMetadata[], itemRatio: number[]): AllGameArgs => {
-  const gameConstants: WorldConstantsStruct = generateGameConstants();
-  const masterGameSpecs = generateMap(WORLD_WIDTH, WORLD_HEIGHT, ROOM_LENGTH, masterItems, MAP_MODE.ROOMS_1);
+  const gameConstants: any = generateGameConstants();
+  const masterGameSpecs = generateMap(WORLD_WIDTH, WORLD_HEIGHT, ROOM_LENGTH, masterItems, MAP_MODE.DEFAULT);
   const blockMap = generateItems(masterGameSpecs.blocks, itemRatio);
   return {
     gameConstants: gameConstants,
@@ -20,7 +20,7 @@ export const generateAllGameArgs = (allGameItems: ItemWithMetadata[], itemRatio:
 };
 
 interface AllGameArgs {
-  gameConstants: WorldConstantsStruct;
+  gameConstants: any;
   allGameItems: ItemWithMetadata[];
   allTowerArgs: TowerWithLocation[];
   blockMap: number[][];

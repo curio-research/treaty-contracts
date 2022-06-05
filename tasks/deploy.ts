@@ -1,26 +1,28 @@
+import { GameUtils } from './../typechain-types/GameUtils';
+import { deployContract } from './../test/util/helper';
 import axios from 'axios';
 import * as path from 'path';
 import * as fsPromise from 'fs/promises';
 import * as fs from 'fs';
 import { Tower } from './../util/types/tower';
 import { deployToIPFS } from './util/programmableBlockDeployer';
-import { Epoch } from './../typechain-types/Epoch';
 import { task } from 'hardhat/config';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { deployProxy, getItemIndexByName, printDivider } from './util/deployHelper';
 import { LOCALHOST_RPC_URL, LOCALHOST_WS_RPC_URL, MAP_INTERVAL, masterItems, WORLD_HEIGHT, WORLD_WIDTH, doorBlockMetadata, generateBlockIdToNameMap, ITEM_RATIO, DOOR_RATIO, generateAllBlocks } from './util/constants';
 import { generateAllGameArgs } from './util/allArgsGenerator';
-import { Getters, Game, GameStorage, Helper, Door } from '../typechain-types';
-import { TowerGame } from './../typechain-types/TowerGame';
-import { Permissions } from '../typechain-types';
+// import { Getters, Game, GameStorage, Helper, Door } from '../typechain-types';
+// import { Permissions } from '../typechain-types';
 import { position } from '../util/types/common';
 import { gameItems, appendIpfsHashToMetadata } from './util/itemGenerator';
+import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
+
 const { BACKEND_URL } = process.env;
 
 // ---------------------------------
 // deploy script
-// npx hardhat deploy --network *NETWORK_NAME_HERE*
+// npx hardhat deploy --network NETWORK_NAME_HERE
 // ---------------------------------
 
 task('deploy', 'deploy contracts')
@@ -38,63 +40,82 @@ task('deploy', 'deploy contracts')
     [player1, player2] = await hre.ethers.getSigners();
     const ironIdx = getItemIndexByName(masterItems, 'Iron');
 
-    const GameHelper = await deployProxy<Helper>('Helper', player1, hre, []);
-    console.log('✦ GameHelper deployed');
-    const Permissions = await deployProxy<Permissions>('Permissions', player1, hre, [player1.address]);
-    console.log('✦ Permissions deployed');
+    // const GameHelper = await deployProxy<Helper>('Helper', player1, hre, []);
+    // console.log('✦ GameHelper deployed');
+    // const Permissions = await deployProxy<Permissions>('Permissions', player1, hre, [player1.address]);
+    // console.log('✦ Permissions deployed');
 
-    // initialize Game contracts
-    const GameStorage = await deployProxy<GameStorage>('GameStorage', player1, hre, [Permissions.address]);
-    console.log('✦ GameStorage deployed');
+    // // initialize Game contracts
+    // const GameStorage = await deployProxy<GameStorage>('GameStorage', player1, hre, [Permissions.address]);
+    // console.log('✦ GameStorage deployed');
 
-    // ---------------------------------
-    // put all programmable blocks here
-    // ---------------------------------
+    // // ---------------------------------
+    // // put all programmable blocks here
+    // // ---------------------------------
 
-    // deploying programmable block contract, may be abstracted
-    const doorIndex = gameItems.length; // since it will be the last item
-    const DoorContract = await deployProxy<Door>('Door', player1, hre, [[player1.address], Permissions.address, GameStorage.address, doorIndex]);
-    console.log('✦ Door programmable block deployed');
+    // // deploying programmable block contract, may be abstracted
+    // const doorIndex = gameItems.length; // since it will be the last item
+    // const DoorContract = await deployProxy<Door>('Door', player1, hre, [[player1.address], Permissions.address, GameStorage.address, doorIndex]);
+    // console.log('✦ Door programmable block deployed');
 
-    const payload = await deployToIPFS(hre, 'Door');
-    const newGameItems = gameItems.concat(appendIpfsHashToMetadata(doorBlockMetadata, payload.IpfsHash, DoorContract.address));
-    const newItemRatio = ITEM_RATIO.concat(DOOR_RATIO);
-    const allGameArgs = generateAllGameArgs(newGameItems, newItemRatio);
+    // const payload = await deployToIPFS(hre, 'Door');
+    // const newGameItems = gameItems.concat(appendIpfsHashToMetadata(doorBlockMetadata, payload.IpfsHash, DoorContract.address));
+    // const newItemRatio = ITEM_RATIO.concat(DOOR_RATIO);
+    const allGameArgs = generateAllGameArgs(gameItems, ITEM_RATIO);
+
+    const diamondAddress = await deployDiamond(hre, [allGameArgs.gameConstants, allGameArgs.allGameItems]);
+    console.log('Diamond deployed and initiated: ', diamondAddress);
+
+    // deploy util contracts
+    const gameUtil = await deployProxy<GameUtils>('GameUtils', player1, hre, []);
+    console.log(gameUtil.address);
+
+    // all facets
+    const facets = [
+      { name: 'EngineFacet', libraries: { GameUtils: gameUtil.address } },
+      { name: 'GetterFacet', libraries: { GameUtils: gameUtil.address } },
+      { name: 'TowerFacet', libraries: { GameUtils: gameUtil.address } },
+    ];
+
+    // deploy all facets
+    await deployFacets(hre, diamondAddress, facets, player1);
+
+    const diamond = await getDiamond(hre, diamondAddress);
 
     const blocks = allGameArgs.blockMap;
 
-    // visualize map
-    await fsPromise.writeFile(path.join(path.join(__dirname), 'map.json'), JSON.stringify(blocks));
+    // // visualize map
+    // await fsPromise.writeFile(path.join(path.join(__dirname), 'map.json'), JSON.stringify(blocks));
 
-    const GameContract = await deployProxy<Game>('Game', player1, hre, [allGameArgs.gameConstants, allGameArgs.allGameItems, GameStorage.address, Permissions.address]);
-    console.log('✦ GameContract deployed');
-    const TowerContract = await deployProxy<TowerGame>('TowerGame', player1, hre, [GameStorage.address, Permissions.address, ironIdx], { Helper: GameHelper.address });
+    // const GameContract = await deployProxy<Game>('Game', player1, hre, [allGameArgs.gameConstants, allGameArgs.allGameItems, GameStorage.address, Permissions.address]);
+    // console.log('✦ GameContract deployed');
+    // const TowerContract = await deployProxy<TowerGame>('TowerGame', player1, hre, [GameStorage.address, Permissions.address, ironIdx], { Helper: GameHelper.address });
 
-    console.log('✦ TowerContract deployed');
-    const GettersContract = await deployProxy<Getters>('Getters', player1, hre, [GameContract.address, GameStorage.address, MAP_INTERVAL]);
-    console.log('✦ GettersContract deployed');
+    // console.log('✦ TowerContract deployed');
+    // const GettersContract = await deployProxy<Getters>('Getters', player1, hre, [GameContract.address, GameStorage.address, MAP_INTERVAL]);
+    // console.log('✦ GettersContract deployed');
 
-    const EpochContract = await deployProxy<Epoch>('Epoch', player1, hre, [10]);
-    console.log('✦ EpochContract deployed');
+    // const EpochContract = await deployProxy<Epoch>('Epoch', player1, hre, [10]);
+    // console.log('✦ EpochContract deployed');
 
-    // add contract permissions
-    let tx = await Permissions.connect(player1).setPermission(GameContract.address, true);
-    tx.wait();
+    // // add contract permissions
+    // let tx = await Permissions.connect(player1).setPermission(GameContract.address, true);
+    // tx.wait();
 
-    tx = await Permissions.connect(player1).setPermission(TowerContract.address, true);
-    tx.wait();
+    // tx = await Permissions.connect(player1).setPermission(TowerContract.address, true);
+    // tx.wait();
 
-    // make this into a table
-    printDivider();
-    console.log('Game         ', GameContract.address);
-    console.log('Permissions  ', Permissions.address);
-    console.log('Getters      ', GettersContract.address);
-    console.log('Epoch        ', EpochContract.address);
-    console.log('Tower        ', TowerContract.address);
-    console.log('Storage      ', GameStorage.address);
-    console.log('GameHelper   ', GameHelper.address);
-    console.log('Door         ', DoorContract.address);
-    printDivider();
+    // // make this into a table
+    // printDivider();
+    // console.log('Game         ', GameContract.address);
+    // console.log('Permissions  ', Permissions.address);
+    // console.log('Getters      ', GettersContract.address);
+    // console.log('Epoch        ', EpochContract.address);
+    // console.log('Tower        ', TowerContract.address);
+    // console.log('Storage      ', GameStorage.address);
+    // console.log('GameHelper   ', GameHelper.address);
+    // console.log('Door         ', DoorContract.address);
+    // printDivider();
 
     // initialize map
     console.log('✦ initializing map');
@@ -103,7 +124,7 @@ task('deploy', 'deploy contracts')
       for (let y = 0; y < WORLD_HEIGHT; y += MAP_INTERVAL) {
         regionMap = blocks.slice(x, x + MAP_INTERVAL).map((col) => col.slice(y, y + MAP_INTERVAL));
 
-        let tx = await GameStorage._setMapRegion({ x, y }, regionMap);
+        let tx = await diamond.setMapRegion({ x, y }, regionMap);
         tx.wait();
       }
     }
@@ -129,22 +150,23 @@ task('deploy', 'deploy contracts')
       } while (blocks[x][y] != 0);
 
       let tx;
-      tx = await GameContract.connect(player1).initializePlayer(player1Pos, ironIdx); // initialize users
+      tx = await diamond.connect(player1).initializePlayer(player1Pos, ironIdx); // initialize users
       tx.wait();
 
       // add some inventory items for testing
-      tx = await GameStorage._increaseItemInInventory(player1.address, getItemIndexByName(masterItems, 'Silver'), 100);
-      tx.wait();
+      //   tx = await GameStorage._increaseItemInInventory(player1.address, getItemIndexByName(masterItems, 'Silver'), 100);
+      //   tx.wait();
 
-      tx = await GameContract.connect(player2).initializePlayer(player2Pos, ironIdx);
-      tx.wait();
+      //   tx = await GameContract.connect(player2).initializePlayer(player2Pos, ironIdx);
+      //   tx.wait();
 
       await tx.wait();
     }
 
-    console.log('✦ setting epoch controller');
-    tx = await GameStorage.setEpochController(EpochContract.address); // set epoch controller
-    tx.wait();
+    // we don't need this anymore with diamond i think
+    // console.log('✦ setting epoch controller');
+    // tx = await GameStorage.setEpochController(EpochContract.address); // set epoch controller
+    // tx.wait();
 
     // bulk initialize towers
     console.log('✦ initializing towers');
@@ -155,13 +177,13 @@ task('deploy', 'deploy contracts')
       allTowers.push(tower.tower);
     }
 
-    const towerTx = await TowerContract.addTowerBulk(allTowerLocations, allTowers);
+    const towerTx = await diamond.addTowerBulk(allTowerLocations, allTowers);
     await towerTx.wait();
 
-    // ---------------------------------
-    // generate config files
-    // copies files and ports to frontend if it's a localhost, or publishes globally if its a global deployment
-    // ---------------------------------
+    // // ---------------------------------
+    // // generate config files
+    // // copies files and ports to frontend if it's a localhost, or publishes globally if its a global deployment
+    // // ---------------------------------
 
     const currentFileDir = path.join(__dirname);
 
@@ -171,13 +193,14 @@ task('deploy', 'deploy contracts')
     const blockIdToNameMapping = generateBlockIdToNameMap(generateAllBlocks());
 
     const configFile = {
-      addresses: JSON.stringify({
-        GAME_ADDRESS: GameContract.address,
-        TOWER_GAME_ADDRESS: TowerContract.address,
-        GAME_STORAGE_CONTRACT: GameStorage.address,
-        GETTERS_ADDRESS: GettersContract.address,
-        EPOCH_ADDRESS: EpochContract.address,
-      }),
+      address: diamond.address,
+      //   addresses: JSON.stringify({
+      //     GAME_ADDRESS: GameContract.address,
+      //     TOWER_GAME_ADDRESS: TowerContract.address,
+      //     GAME_STORAGE_CONTRACT: GameStorage.address,
+      //     GETTERS_ADDRESS: GettersContract.address,
+      //     EPOCH_ADDRESS: EpochContract.address,
+      //   }),
       network: hre.network.name,
       rpcUrl: networkRPCs[0],
       wsRpcUrl: networkRPCs[1],

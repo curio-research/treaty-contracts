@@ -38,7 +38,7 @@ export type TowerStructOutput = [BigNumber, BigNumber, BigNumber, string] & {
   owner: string;
 };
 
-export interface TowerGameInterface extends utils.Interface {
+export interface TowerFacetInterface extends utils.Interface {
   functions: {
     "addTower((uint256,uint256),(uint256,uint256,uint256,address))": FunctionFragment;
     "addTowerBulk((uint256,uint256)[],(uint256,uint256,uint256,address)[])": FunctionFragment;
@@ -121,12 +121,12 @@ export type ClaimRewardEvent = TypedEvent<
 
 export type ClaimRewardEventFilter = TypedEventFilter<ClaimRewardEvent>;
 
-export interface TowerGame extends BaseContract {
+export interface TowerFacet extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: TowerGameInterface;
+  interface: TowerFacetInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,

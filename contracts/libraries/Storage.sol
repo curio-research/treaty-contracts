@@ -1,0 +1,23 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+import {GameInfo} from "./Types.sol";
+
+library LibStorage {
+    // storage positions
+    bytes32 constant GAME_STORAGE_POSITION = keccak256("curio.storage.game");
+
+    function gameStorage() internal pure returns (GameInfo storage gs) {
+        bytes32 position = GAME_STORAGE_POSITION;
+        assembly {
+            gs.slot := position
+        }
+    }
+}
+
+// this has to be internal
+contract UseStorage {
+    function gs() internal pure returns (GameInfo storage ret) {
+        return LibStorage.gameStorage();
+    }
+}

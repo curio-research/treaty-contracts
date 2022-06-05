@@ -13,78 +13,141 @@ import * as Contracts from ".";
 declare module "hardhat/types/runtime" {
   interface HardhatEthersHelpers extends HardhatEthersHelpersBase {
     getContractFactory(
-      name: "Epoch",
+      name: "Diamond",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Epoch__factory>;
+    ): Promise<Contracts.Diamond__factory>;
     getContractFactory(
-      name: "Game",
+      name: "DiamondCutFacet",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Game__factory>;
+    ): Promise<Contracts.DiamondCutFacet__factory>;
     getContractFactory(
-      name: "Helper",
+      name: "DiamondLoupeFacet",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Helper__factory>;
+    ): Promise<Contracts.DiamondLoupeFacet__factory>;
     getContractFactory(
-      name: "GameStorage",
+      name: "EngineFacet",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.GameStorage__factory>;
+    ): Promise<Contracts.EngineFacet__factory>;
     getContractFactory(
-      name: "Getters",
+      name: "GetterFacet",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Getters__factory>;
+    ): Promise<Contracts.GetterFacet__factory>;
     getContractFactory(
-      name: "Permissions",
+      name: "OwnershipFacet",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Permissions__factory>;
+    ): Promise<Contracts.OwnershipFacet__factory>;
     getContractFactory(
-      name: "Door",
+      name: "TowerFacet",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Door__factory>;
+    ): Promise<Contracts.TowerFacet__factory>;
     getContractFactory(
-      name: "TowerGame",
+      name: "IDiamondCut",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.TowerGame__factory>;
+    ): Promise<Contracts.IDiamondCut__factory>;
+    getContractFactory(
+      name: "IDiamondLoupe",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IDiamondLoupe__factory>;
+    getContractFactory(
+      name: "IERC165",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC165__factory>;
+    getContractFactory(
+      name: "IERC173",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC173__factory>;
+    getContractFactory(
+      name: "GameUtils",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.GameUtils__factory>;
+    getContractFactory(
+      name: "LibDiamond",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.LibDiamond__factory>;
+    getContractFactory(
+      name: "DiamondInit",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.DiamondInit__factory>;
+    getContractFactory(
+      name: "Curio",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Curio__factory>;
 
     getContractAt(
-      name: "Epoch",
+      name: "Diamond",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.Epoch>;
+    ): Promise<Contracts.Diamond>;
     getContractAt(
-      name: "Game",
+      name: "DiamondCutFacet",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.Game>;
+    ): Promise<Contracts.DiamondCutFacet>;
     getContractAt(
-      name: "Helper",
+      name: "DiamondLoupeFacet",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.Helper>;
+    ): Promise<Contracts.DiamondLoupeFacet>;
     getContractAt(
-      name: "GameStorage",
+      name: "EngineFacet",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.GameStorage>;
+    ): Promise<Contracts.EngineFacet>;
     getContractAt(
-      name: "Getters",
+      name: "GetterFacet",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.Getters>;
+    ): Promise<Contracts.GetterFacet>;
     getContractAt(
-      name: "Permissions",
+      name: "OwnershipFacet",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.Permissions>;
+    ): Promise<Contracts.OwnershipFacet>;
     getContractAt(
-      name: "Door",
+      name: "TowerFacet",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.Door>;
+    ): Promise<Contracts.TowerFacet>;
     getContractAt(
-      name: "TowerGame",
+      name: "IDiamondCut",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.TowerGame>;
+    ): Promise<Contracts.IDiamondCut>;
+    getContractAt(
+      name: "IDiamondLoupe",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IDiamondLoupe>;
+    getContractAt(
+      name: "IERC165",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC165>;
+    getContractAt(
+      name: "IERC173",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC173>;
+    getContractAt(
+      name: "GameUtils",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.GameUtils>;
+    getContractAt(
+      name: "LibDiamond",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.LibDiamond>;
+    getContractAt(
+      name: "DiamondInit",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.DiamondInit>;
+    getContractAt(
+      name: "Curio",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Curio>;
 
     // default types
     getContractFactory(
