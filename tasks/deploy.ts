@@ -5,7 +5,6 @@ import * as path from 'path';
 import * as fsPromise from 'fs/promises';
 import * as fs from 'fs';
 import { Tower } from './../util/types/tower';
-import { deployToIPFS } from './util/programmableBlockDeployer';
 import { task } from 'hardhat/config';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
