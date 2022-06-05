@@ -1,19 +1,43 @@
 name: Test Hook
 on: [push]
+
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
-  Explore-GitHub-Actions:
+  # Explore-GitHub-Actions:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+  #     - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub."
+  #     - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+  #     - name: Check out repository code
+  #       uses: actions/checkout@v2
+  #     - name: List files in the repository
+  #       run: |
+  #         ls ${{ github.workspace }}
+  #     - run: yarn add hardhat
+  #     - run: npx hardhat compile --force
+  #     # - run: npx hardhat deploy
+  #     - run: npx hardhat test
+  #     - run: echo "🍏 This job's status is ${{ job.status }}."
+  build:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
-      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub."
-      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
-      - name: Check out repository code
-        uses: actions/checkout@v2
-      - name: List files in the repository
-        run: |
-          ls ${{ github.workspace }}
-      - run: yarn add hardhat
-      - run: npx hardhat compile --force
-      # - run: npx hardhat deploy
-      - run: npx hardhat test
-      - run: echo "🍏 This job's status is ${{ job.status }}."
+      - uses: actions/checkout@v2
+      - name: Pushes to another repository
+        id: push_directory
+        uses: cpina/github-action-push-to-another-repository@v1.4.2
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        with:
+          source-directory: .
+          target-directory: /
+          destination-github-username: 'curio-eth'
+          destination-repository-name: 'engine-public' # change
+          user-email: yijia@0xcurio.com
+          commit-message: See ORIGIN_COMMIT from $GITHUB_REF
+          target-branch: main
+      - name: Test get variable exported by push-to-another-repository
+        run: echo $DESTINATION_CLONED_DIRECTORY
