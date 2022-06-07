@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 import "../libraries/Storage.sol";
 import {GameUtils} from "../libraries/GameUtil.sol";
 import {BlockData, GameInfo, WorldConstants, Position, Item, Tower, Recipe, Tile, PlayerData} from "../libraries/Types.sol";
