@@ -1,23 +1,14 @@
-// import { WorldConstantsStruct } from './../../typechain-types/Game';
-import { generateMap } from './deprecated/mapGenerator';
-import { TowerWithLocation } from './../../util/types/tower';
 import { generateItems } from './itemGenerator';
-import { generateGameConstants, WORLD_WIDTH, WORLD_HEIGHT, ROOM_LENGTH, ITEM_RATIO, masterItems, MAP_MODE } from './constants';
+import { generateGameConstants } from './constants';
 import { ItemWithMetadata } from '../../util/types/getter';
 import { assignDepthColor, generateNoiseMatrix, placePortsAndCities } from './mapUtils';
+import { AllGameArgs } from './types';
 
 // This generates all game parameters needed to deploy the GameEngine.sol contract
 
+// FIXME: implement
 export const generateAllGameArgs = (allGameItems: ItemWithMetadata[], itemRatio: number[]): AllGameArgs => {
-  const gameConstants: any = generateGameConstants();
-  const masterGameSpecs = generateMap(WORLD_WIDTH, WORLD_HEIGHT, ROOM_LENGTH, masterItems, MAP_MODE.DEFAULT);
-  const blockMap = generateItems(masterGameSpecs.blocks, itemRatio);
-  return {
-    gameConstants: gameConstants,
-    allGameItems: allGameItems,
-    allTowerArgs: masterGameSpecs.towers,
-    blockMap,
-  };
+  return { gameConstants: 1, blockMap: [[1]] }; // FIXME
 };
 
 /**
@@ -47,10 +38,3 @@ export const generateColorMap = (mapWidth: number, mapHeight: number, numPorts: 
 
   return colorMap;
 };
-
-interface AllGameArgs {
-  gameConstants: any;
-  allGameItems: ItemWithMetadata[];
-  allTowerArgs: TowerWithLocation[];
-  blockMap: number[][];
-}

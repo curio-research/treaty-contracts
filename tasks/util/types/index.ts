@@ -11,3 +11,9 @@ export interface TileMapOutput {
   portTiles: number[][];
   cityTiles: number[][];
 }
+
+// FIXME: implement
+export interface AllGameArgs {
+  gameConstants: any;
+  blockMap: number[][];
+}
