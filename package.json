@@ -34,6 +34,7 @@
     "prettier": "^2.4.1",
     "prettier-plugin-solidity": "^1.0.0-beta.18",
     "rot-js": "^2.2.0",
+    "simplex-noise": "^3.0.1",
     "typechain": "^6.0.2"
   }
 }

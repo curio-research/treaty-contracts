@@ -239,29 +239,11 @@ export var masterItems: ItemMaster[] = [
 ];
 
 // ------------------------------------------------
-// programmable blocks
+// Functions
 // ------------------------------------------------
 
-// door metadata
-export const doorBlockMetadata: ItemWithMetadata = {
-  mineable: false,
-  mineItemIds: [],
-  health: 0,
-  craftable: true,
-  craftItemIds: [1],
-  craftItemAmounts: [5],
-  occupiable: false,
-  programmable: true,
-  abiEncoding: '',
-  contractAddr: '',
-  attackDamage: 0,
-  attackRange: 0,
-  attackCooldown: 0,
-  moveCooldown: 0,
-};
-
 export const generateAllBlocks = (): ItemMaster[] => {
-  return [...masterItems];
+  return masterItems;
 };
 
 export const generateBlockIdToNameMap = (items: ItemMaster[]): Record<number, string> => {
