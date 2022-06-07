@@ -1,8 +1,8 @@
 import { assert } from 'console';
-import { position } from '../../util/types/common';
-import { WORLD_WIDTH } from './constants';
-import { printDivider } from './deployHelper';
-import { PrimsMapOutput } from './types/mapGenerator';
+import { position } from '../../../util/types/common';
+import { WORLD_WIDTH } from '../constants';
+import { printDivider } from '../deployHelper';
+import { PrimsMapOutput } from './mapTypes';
 
 type Position = {
   x: number;

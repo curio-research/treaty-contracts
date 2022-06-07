@@ -1,13 +1,13 @@
 import { createCellularMap } from './dungeonGenerator';
-import { EMPTY_ADDRESS } from './../../util/network/common';
-import { position } from './../../util/types/common';
-import { MasterGameSpecs, PrimsMapOutput } from './types/mapGenerator';
+import { EMPTY_ADDRESS } from '../../../util/network/common';
+import { position } from '../../../util/types/common';
+import { MasterGameSpecs, PrimsMapOutput } from './mapTypes';
 import _ from 'lodash';
-import { TowerWithLocation } from '../../util/types/tower';
-import { customMapMapping, MAP_MODE, masterItems } from './constants';
+import { TowerWithLocation } from '../../../util/types/tower';
+import { customMapMapping, MAP_MODE, masterItems } from '../constants';
 import { addConnectivity, generatePrimsMap } from './primsMap';
-import { ItemMaster } from '../../util/types/getter';
-import { getItemIndexByName } from './deployHelper';
+import { ItemMaster } from '../../../util/types/getter';
+import { getItemIndexByName } from '../deployHelper';
 
 // ---------------------------------
 // master map generation function

@@ -1,4 +1,4 @@
-import { createCellularMap, createDiggerMap } from './util/dungeonGenerator';
+import { createCellularMap, createDiggerMap } from './util/deprecated/dungeonGenerator';
 import { gameItems } from './util/itemGenerator';
 import { task } from 'hardhat/config';
 import { generateAllGameArgs } from './util/allArgsGenerator';

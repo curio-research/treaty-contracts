@@ -1,21 +1,19 @@
 import { GameUtils } from './../typechain-types/GameUtils';
-import { deployContract } from './../test/util/helper';
 import axios from 'axios';
 import * as path from 'path';
 import * as fsPromise from 'fs/promises';
 import * as fs from 'fs';
 import { Tower } from './../util/types/tower';
-import { deployToIPFS } from './util/programmableBlockDeployer';
 import { task } from 'hardhat/config';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { deployProxy, getItemIndexByName, printDivider } from './util/deployHelper';
-import { LOCALHOST_RPC_URL, LOCALHOST_WS_RPC_URL, MAP_INTERVAL, masterItems, WORLD_HEIGHT, WORLD_WIDTH, doorBlockMetadata, generateBlockIdToNameMap, ITEM_RATIO, DOOR_RATIO, generateAllBlocks } from './util/constants';
+import { LOCALHOST_RPC_URL, LOCALHOST_WS_RPC_URL, MAP_INTERVAL, masterItems, WORLD_HEIGHT, WORLD_WIDTH, generateBlockIdToNameMap, ITEM_RATIO, generateAllBlocks } from './util/constants';
 import { generateAllGameArgs } from './util/allArgsGenerator';
 // import { Getters, Game, GameStorage, Helper, Door } from '../typechain-types';
 // import { Permissions } from '../typechain-types';
 import { position } from '../util/types/common';
-import { gameItems, appendIpfsHashToMetadata } from './util/itemGenerator';
+import { gameItems } from './util/itemGenerator';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
 
 const { BACKEND_URL } = process.env;
