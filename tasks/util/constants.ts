@@ -260,15 +260,8 @@ export const doorBlockMetadata: ItemWithMetadata = {
   moveCooldown: 0,
 };
 
-const doorProgrammableBlock: ItemMaster = {
-  name: 'Door',
-  item: { ...doorBlockMetadata },
-};
-
-export const allProgrammableBlocks: ItemMaster[] = [doorProgrammableBlock];
-
 export const generateAllBlocks = (): ItemMaster[] => {
-  return [...masterItems, ...allProgrammableBlocks];
+  return [...masterItems];
 };
 
 export const generateBlockIdToNameMap = (items: ItemMaster[]): Record<number, string> => {
