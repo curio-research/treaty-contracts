@@ -22,6 +22,8 @@ export type { StdStorage } from "./StdStorage";
 export type { Test } from "./Test";
 export type { FoundryTest } from "./FoundryTest";
 export type { Vm } from "./Vm";
+export type { DiamondTest } from "./DiamondTest";
+export type { Sample } from "./Sample";
 
 export { Diamond__factory } from "./factories/Diamond__factory";
 export { DiamondCutFacet__factory } from "./factories/DiamondCutFacet__factory";
@@ -44,3 +46,5 @@ export { StdStorage__factory } from "./factories/StdStorage__factory";
 export { Test__factory } from "./factories/Test__factory";
 export { FoundryTest__factory } from "./factories/FoundryTest__factory";
 export { Vm__factory } from "./factories/Vm__factory";
+export { DiamondTest__factory } from "./factories/DiamondTest__factory";
+export { Sample__factory } from "./factories/Sample__factory";

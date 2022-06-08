@@ -913,7 +913,7 @@
         5122
       ],
       "SafeMath": [
-        26346
+        26252
       ],
       "Tile": [
         5070
@@ -947,7 +947,7 @@
         "nameLocation": "-1:-1:-1",
         "nodeType": "ImportDirective",
         "scope": 4122,
-        "sourceUnit": 26347,
+        "sourceUnit": 26253,
         "src": "56:66:12",
         "symbolAliases": [],
         "unitAlias": ""
@@ -1108,7 +1108,7 @@
               "id": 3130,
               "name": "SafeMath",
               "nodeType": "IdentifierPath",
-              "referencedDeclaration": 26346,
+              "referencedDeclaration": 26252,
               "src": "310:8:12"
             },
             "nodeType": "UsingForDirective",
@@ -2730,10 +2730,10 @@
                         "name": "SafeMath",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 26346,
+                        "referencedDeclaration": 26252,
                         "src": "2889:8:12",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_type$_t_contract$_SafeMath_$26346_$",
+                          "typeIdentifier": "t_type$_t_contract$_SafeMath_$26252_$",
                           "typeString": "type(library SafeMath)"
                         }
                       },
@@ -2744,7 +2744,7 @@
                       "lValueRequested": false,
                       "memberName": "tryDiv",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 26167,
+                      "referencedDeclaration": 26073,
                       "src": "2889:15:12",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_bool_$_t_uint256_$",
@@ -2889,10 +2889,10 @@
                         "name": "SafeMath",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 26346,
+                        "referencedDeclaration": 26252,
                         "src": "2969:8:12",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_type$_t_contract$_SafeMath_$26346_$",
+                          "typeIdentifier": "t_type$_t_contract$_SafeMath_$26252_$",
                           "typeString": "type(library SafeMath)"
                         }
                       },
@@ -2903,7 +2903,7 @@
                       "lValueRequested": false,
                       "memberName": "tryMod",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 26195,
+                      "referencedDeclaration": 26101,
                       "src": "2969:15:12",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_bool_$_t_uint256_$",
@@ -3456,10 +3456,10 @@
                         "name": "SafeMath",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 26346,
+                        "referencedDeclaration": 26252,
                         "src": "3314:8:12",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_type$_t_contract$_SafeMath_$26346_$",
+                          "typeIdentifier": "t_type$_t_contract$_SafeMath_$26252_$",
                           "typeString": "type(library SafeMath)"
                         }
                       },
@@ -3470,7 +3470,7 @@
                       "lValueRequested": false,
                       "memberName": "tryMul",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 26139,
+                      "referencedDeclaration": 26045,
                       "src": "3314:15:12",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_bool_$_t_uint256_$",
@@ -3615,10 +3615,10 @@
                         "name": "SafeMath",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 26346,
+                        "referencedDeclaration": 26252,
                         "src": "3399:8:12",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_type$_t_contract$_SafeMath_$26346_$",
+                          "typeIdentifier": "t_type$_t_contract$_SafeMath_$26252_$",
                           "typeString": "type(library SafeMath)"
                         }
                       },
@@ -3629,7 +3629,7 @@
                       "lValueRequested": false,
                       "memberName": "tryAdd",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 26069,
+                      "referencedDeclaration": 25975,
                       "src": "3399:15:12",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_bool_$_t_uint256_$",

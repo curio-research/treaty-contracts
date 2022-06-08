@@ -2,7 +2,9 @@
   "name": "curio-contracts",
   "private": true,
   "scripts": {
-    "contract-size": "yarn run hardhat size-contracts"
+    "contract-size": "yarn run hardhat size-contracts",
+    "sample": "npx ts-node test/util/sample.ts",
+    "forge-test": "forge test --ffi -vv"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.2",

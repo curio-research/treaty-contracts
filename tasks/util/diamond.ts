@@ -1,11 +1,13 @@
 // import { ethers } from 'hardhat';
+import { Interface } from '@ethersproject/abi';
 import ethers, { Contract } from 'ethers';
 
 export const FacetCutAction = { Add: 0, Replace: 1, Remove: 2 };
 
 // get function selectors from ABI
-export function getSelectors(contract: any) {
+export function getSelectors(contract: Contract) {
   const signatures = Object.keys(contract.interface.functions);
+
   const selectors: any = signatures.reduce((acc: any, val) => {
     if (val !== 'init(bytes)') {
       acc.push(contract.interface.getSighash(val));
@@ -17,6 +19,12 @@ export function getSelectors(contract: any) {
   selectors.get = get;
   return selectors;
 }
+
+// get solidity sig-hashes (ex: "0x15kd83")
+export const getSigHashes = (contractInterface: Interface): string[] => {
+  const res = Object.keys(contractInterface.functions).map((signature) => contractInterface.getSighash(signature));
+  return res;
+};
 
 // get function selector from function signature
 export function getSelector(func: any) {

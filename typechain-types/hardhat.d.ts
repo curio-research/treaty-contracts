@@ -189,9 +189,17 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Vm__factory>;
     getContractFactory(
+      name: "DiamondTest",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.DiamondTest__factory>;
+    getContractFactory(
       name: "FoundryTest",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.FoundryTest__factory>;
+    getContractFactory(
+      name: "Sample",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Sample__factory>;
     getContractFactory(
       name: "Vm",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -418,10 +426,20 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.Vm>;
     getContractAt(
+      name: "DiamondTest",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.DiamondTest>;
+    getContractAt(
       name: "FoundryTest",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.FoundryTest>;
+    getContractAt(
+      name: "Sample",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Sample>;
     getContractAt(
       name: "Vm",
       address: string,

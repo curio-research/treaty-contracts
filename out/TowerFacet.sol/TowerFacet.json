@@ -432,7 +432,7 @@
         5028
       ],
       "SafeMath": [
-        26346
+        26252
       ],
       "Tower": [
         5131
@@ -466,7 +466,7 @@
         "nameLocation": "-1:-1:-1",
         "nodeType": "ImportDirective",
         "scope": 3002,
-        "sourceUnit": 26347,
+        "sourceUnit": 26253,
         "src": "56:66:7",
         "symbolAliases": [],
         "unitAlias": ""
@@ -576,7 +576,7 @@
               "id": 2611,
               "name": "SafeMath",
               "nodeType": "IdentifierPath",
-              "referencedDeclaration": 26346,
+              "referencedDeclaration": 26252,
               "src": "461:8:7"
             },
             "nodeType": "UsingForDirective",
