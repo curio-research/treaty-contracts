@@ -17,6 +17,7 @@ contract EngineFacet is UseStorage {
     - Add events
     - Look for re-entrancy, overflow, and other potential security issues
     - Organize getters and setters into (multiple layers of) util fns, especially setters atm
+    - Add documentation
     */
 
     function initializePlayer(Position memory _pos, address _addr) external {
@@ -26,8 +27,12 @@ contract EngineFacet is UseStorage {
         gs().playerMap[_addr] = Player({initTime: now, active: true, pos: _pos});
     }
 
-    function increaseEpoch() external returns (uint256) {
-        // TODO: implement
+    // Currently implemented expecting real-time calls from client; can change to lazy if needed
+    function increaseEpoch() external {
+        if (now - gs().epochTime < gs().secondsPerTurn) revert("Not enough time has elapsed since last epoch");
+
+        gs().epoch++;
+        gs().epochTime = now;
     }
 
     function move(uint256 _troopId, Position memory _targetPos) external {
@@ -199,5 +204,17 @@ contract EngineFacet is UseStorage {
         gs().troopNonce++;
 
         return;
+    }
+
+    function repair(Position memory _pos) external {
+        Tile memory _targetTile = gs().map[_pos.x][_pos.y];
+        if (_targetTile.baseId == 0x0) revert("No base found");
+        if (Util._getOwner(_targetTile.baseId) != msg.sender) revert("Can only repair in own base");
+        if (_targetTile.troopId == 0x0) revert("No troop to repair");
+
+        Troop memory _troop = gs().troopIdMap[_targetTile.troopId];
+        if (_troop.health >= _troop.troopType.maxHealth) revert("Troop already at full health");
+
+        gs().troopIdMap[_targetTile.troopId].health++;
     }
 }

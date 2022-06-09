@@ -81,6 +81,7 @@ struct GameState {
     // mapping(address => uint256[]) playerTroopIdMap;
     Tile[1000][1000] map;
     uint256 epoch;
+    uint256 epochTime;
     mapping(uint256 => Production) baseProductionMap;
     Base[] bases;
     uint256 baseNonce;
