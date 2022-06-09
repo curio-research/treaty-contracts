@@ -80,7 +80,7 @@ export default {
   },
 };
 
-////////////////////////////
+// script copy pasta'd from Foundry book
 
 function getRemappings() {
   return fs

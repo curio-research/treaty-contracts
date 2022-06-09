@@ -1,11 +1,12 @@
 **/.vscode/
 node_modules
 
-#Hardhat files
+#Hardhat + Foundry files
 cache
 artifacts
 typechain-types/factories
 cache_hardhat
+out
 
 #local dev help
 *.txt
