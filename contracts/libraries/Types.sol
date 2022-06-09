@@ -27,7 +27,7 @@ struct Position {
 }
 
 struct Player {
-    uint256 initTime;
+    uint256 initEpoch;
     bool active;
     Position pos;
 }
@@ -74,7 +74,7 @@ struct TroopType {
 
 struct Production {
     uint256 troopTypeId;
-    uint256 startTime;
+    uint256 startEpoch;
 }
 
 struct GameState {
@@ -87,7 +87,7 @@ struct GameState {
     mapping(address => Player) playerMap;
     Tile[1000][1000] map;
     uint256 epoch;
-    uint256 epochTime;
+    uint256 lastTimestamp;
     mapping(uint256 => Production) baseProductionMap;
     uint256[] baseIds;
     mapping(uint256 => Base) baseIdMap;

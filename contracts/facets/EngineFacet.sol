@@ -10,9 +10,6 @@ contract EngineFacet is UseStorage {
     using SafeMath for uint256;
 
     /*
-    FIXME:
-    - Time vs. epochs
-
     TODO:
     - Add events
     - Look for re-entrancy, overflow, and other potential security issues
@@ -24,15 +21,15 @@ contract EngineFacet is UseStorage {
         if (Util._getBaseOwner(gs().map[_pos.x][_pos.y].baseId) == address(0x0)) revert("Base is taken");
 
         gs().players.push(_addr);
-        gs().playerMap[_addr] = Player({initTime: block.timestamp, active: true, pos: _pos});
+        gs().playerMap[_addr] = Player({initEpoch: gs().epoch, active: true, pos: _pos});
     }
 
     // Currently implemented expecting real-time calls from client; can change to lazy if needed
     function increaseEpoch() external {
-        if (block.timestamp - gs().epochTime < gs().secondsPerTurn) revert("Not enough time has elapsed since last epoch");
+        if (block.timestamp - gs().lastTimestamp < gs().secondsPerTurn) revert("Not enough time has elapsed since last epoch");
 
         gs().epoch++;
-        gs().epochTime = block.timestamp;
+        gs().lastTimestamp = block.timestamp;
     }
 
     function move(uint256 _troopId, Position memory _targetPos) external {
@@ -41,7 +38,7 @@ contract EngineFacet is UseStorage {
         Troop memory _troop = gs().troopIdMap[_troopId];
         if (Util._samePos(_troop.pos, _targetPos)) revert("Already at destination");
         if (!Util._withinDist(_troop.pos, _targetPos, Util._getSpeed(_troop.troopTypeId))) revert("Destination too far");
-        if (block.timestamp - _troop.lastMoved < Util._getMovementCooldown(_troop.troopTypeId)) revert("Moved too recently");
+        if (gs().epoch - _troop.lastMoved < Util._getMovementCooldown(_troop.troopTypeId)) revert("Moved too recently");
 
         Tile memory _targetTile = gs().map[_targetPos.x][_targetPos.y];
         if (Util._isArmy(_troop.troopTypeId)) {
@@ -80,7 +77,7 @@ contract EngineFacet is UseStorage {
         Troop memory _troop = gs().troopIdMap[_troopId];
         if (Util._samePos(_troop.pos, _targetPos)) revert("Already at destination");
         if (!Util._withinDist(_troop.pos, _targetPos, 1)) revert("Destination too far");
-        if (block.timestamp - _troop.lastAttacked < Util._getAttackCooldown(_troop.troopTypeId)) revert("Attacked too recently");
+        if (gs().epoch - _troop.lastAttacked < Util._getAttackCooldown(_troop.troopTypeId)) revert("Attacked too recently");
 
         Tile memory _targetTile = gs().map[_targetPos.x][_targetPos.y];
         bool _targetIsBase;
@@ -174,7 +171,7 @@ contract EngineFacet is UseStorage {
         if (!Util._hasPort(_targetTile) && !Util._isArmy(_troopTypeId)) revert("Only ports can produce water troops");
         if (gs().baseProductionMap[_targetTile.baseId].troopTypeId != 0x0) revert("Base already producing");
 
-        gs().baseProductionMap[_targetTile.baseId] = Production({troopTypeId: _troopTypeId, startTime: block.timestamp});
+        gs().baseProductionMap[_targetTile.baseId] = Production({troopTypeId: _troopTypeId, startEpoch: gs().epoch});
 
         return;
     }
@@ -188,14 +185,14 @@ contract EngineFacet is UseStorage {
 
         Production memory _production = gs().baseProductionMap[_targetTile.baseId];
         if (_production.troopTypeId == 0x0) revert("No production found in base");
-        if (Util._getEpochsToProduce(_production.troopTypeId) > block.timestamp - _production.startTime) revert("Troop needs more time for production");
+        if (Util._getEpochsToProduce(_production.troopTypeId) > gs().epoch - _production.startEpoch) revert("Troop needs more epochs for production");
 
         uint256[] memory _cargoTroopIds;
         Troop memory _troop = Troop({
             owner: msg.sender,
             troopTypeId: _production.troopTypeId,
-            lastMoved: block.timestamp,
-            lastAttacked: block.timestamp, // yo
+            lastMoved: gs().epoch,
+            lastAttacked: gs().epoch, // yo
             health: Util._getMaxHealth(_production.troopTypeId),
             pos: _pos,
             cargoTroopIds: _cargoTroopIds
