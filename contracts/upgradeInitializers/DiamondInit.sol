@@ -25,7 +25,7 @@ import "../libraries/Storage.sol";
 contract DiamondInit is UseStorage {
     // You can add parameters to this function in order to pass in
     // data to set your own state variables
-    function init() external {
+    function init(uint256 num) external {
         // adding ERC165 data
         LibDiamond.DiamondStorage storage ds = LibDiamond.diamondStorage();
         ds.supportedInterfaces[type(IERC165).interfaceId] = true;
@@ -51,6 +51,7 @@ contract DiamondInit is UseStorage {
 
         // start worldBlockNonce at 1 because 0 denotes an empty block
         // gs().worldBlockNonce++;
+        gs().sample = num;
     }
 }
 

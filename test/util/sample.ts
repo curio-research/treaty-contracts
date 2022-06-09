@@ -11,4 +11,5 @@ export const PosStruct = `tuple(
     uint256 y
 )`;
 
-process.stdout.write(ethers.utils.defaultAbiCoder.encode([PosStruct, 'string'], [examplePos, 'bruh moment']));
+// process.stdout.write(ethers.utils.defaultAbiCoder.encode([PosStruct, 'string'], [examplePos, 'bruh moment']));
+process.stdout.write(ethers.utils.defaultAbiCoder.encode(['uint256'], [12345]));

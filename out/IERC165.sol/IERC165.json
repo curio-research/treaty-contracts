@@ -34,15 +34,15 @@
     "absolutePath": "/Users/K.Z./Desktop/projects/engine/contracts/interfaces/IERC165.sol",
     "exportedSymbols": {
       "IERC165": [
-        3091
+        3101
       ]
     },
-    "id": 3092,
+    "id": 3102,
     "license": "MIT",
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 3082,
+        "id": 3092,
         "literals": [
           "solidity",
           "^",
@@ -58,9 +58,9 @@
         "contractDependencies": [],
         "contractKind": "interface",
         "fullyImplemented": false,
-        "id": 3091,
+        "id": 3101,
         "linearizedBaseContracts": [
-          3091
+          3101
         ],
         "name": "IERC165",
         "nameLocation": "67:7:10",
@@ -68,13 +68,13 @@
         "nodes": [
           {
             "documentation": {
-              "id": 3083,
+              "id": 3093,
               "nodeType": "StructuredDocumentation",
               "src": "81:373:10",
               "text": "@notice Query if a contract implements an interface\n @param interfaceId The interface identifier, as specified in ERC-165\n @dev Interface identification is specified in ERC-165. This function\n  uses less than 30,000 gas.\n @return `true` if the contract implements `interfaceID` and\n  `interfaceID` is not 0xffffffff, `false` otherwise"
             },
             "functionSelector": "01ffc9a7",
-            "id": 3090,
+            "id": 3100,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -82,17 +82,17 @@
             "nameLocation": "468:17:10",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 3086,
+              "id": 3096,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 3085,
+                  "id": 3095,
                   "mutability": "mutable",
                   "name": "interfaceId",
                   "nameLocation": "493:11:10",
                   "nodeType": "VariableDeclaration",
-                  "scope": 3090,
+                  "scope": 3100,
                   "src": "486:18:10",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -101,7 +101,7 @@
                     "typeString": "bytes4"
                   },
                   "typeName": {
-                    "id": 3084,
+                    "id": 3094,
                     "name": "bytes4",
                     "nodeType": "ElementaryTypeName",
                     "src": "486:6:10",
@@ -116,17 +116,17 @@
               "src": "485:20:10"
             },
             "returnParameters": {
-              "id": 3089,
+              "id": 3099,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 3088,
+                  "id": 3098,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 3090,
+                  "scope": 3100,
                   "src": "529:4:10",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -135,7 +135,7 @@
                     "typeString": "bool"
                   },
                   "typeName": {
-                    "id": 3087,
+                    "id": 3097,
                     "name": "bool",
                     "nodeType": "ElementaryTypeName",
                     "src": "529:4:10",
@@ -149,14 +149,14 @@
               ],
               "src": "528:6:10"
             },
-            "scope": 3091,
+            "scope": 3101,
             "src": "459:76:10",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
           }
         ],
-        "scope": 3092,
+        "scope": 3102,
         "src": "57:480:10",
         "usedErrors": []
       }

@@ -104,4 +104,8 @@ contract GetterFacet is UseStorage {
     function _getCurrentEpoch() external view returns (uint256) {
         return GameUtils._getCurrentEpoch();
     }
+
+    function _getSample() external view returns (uint256) {
+        return gs().sample;
+    }
 }
