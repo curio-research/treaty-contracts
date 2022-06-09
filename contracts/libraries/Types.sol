@@ -77,12 +77,17 @@ struct Production {
     uint256 startEpoch;
 }
 
-struct GameState {
+struct WorldConstants {
+    address admin;
     uint256 worldWidth;
     uint256 worldHeight;
+    uint256 mapInterval;
     uint256 secondsPerTurn;
     uint256 troopStackLimit;
-    address admin;
+}
+
+struct GameState {
+    WorldConstants worldConstants;
     address[] players;
     mapping(address => Player) playerMap;
     Tile[1000][1000] map;
