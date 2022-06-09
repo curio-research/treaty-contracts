@@ -18,7 +18,6 @@ struct Position {
 }
 
 struct Player {
-    address addr;
     uint256 initTime;
     bool active;
     Position pos;
@@ -27,7 +26,7 @@ struct Player {
 struct Base {
     // TODO: can add another struct named BaseType with all of the fields except ownerAddr
     BaseType baseType;
-    address ownerAddr;
+    address owner;
     uint256 attackFactor;
     uint256 defenseFactor;
     uint256 health;
@@ -40,13 +39,13 @@ struct Tile {
 }
 
 struct Troop {
-    address ownerAddr;
+    address owner;
     TroopType troopType;
     uint256 lastMoved;
     uint256 lastAttacked;
     uint256 health;
     Position pos;
-    Troop[] cargo; // only for Troop Transport
+    uint256[] cargoTroopIds; // only for Troop Transport
 }
 
 struct TroopType {
@@ -60,7 +59,7 @@ struct TroopType {
     uint256 turnsToProduce; // FIXME: turns are seconds or epochs?
     uint256 movementCooldown;
     uint256 attackCooldown;
-    bool canMoveOnWater;
+    bool isArmy;
     // bool canBombard;
 }
 

@@ -14,20 +14,40 @@ library GameUtil {
 
     // Game-related
 
-    function _canMoveOnWater(uint256 _troopId) public view returns (bool) {
-        return gs().troopIdMap[_troopId].troopType.canMoveOnWater;
+    function _removeTroop(uint256 _troopId) public {
+        uint256[] memory _cargoTroopIds = gs().troopIdMap[_troopId].cargoTroopIds;
+        for (uint256 i = 0; i < _cargoTroopIds.length; i++) {
+            gs().troopIdMap[_cargoTroopIds[i]] = 0x0;
+        }
+        gs().troopIdMap[_troopId] = 0x0;
+    }
+
+    function _getBaseOwner(uint256 _baseId) public view returns (address) {
+        return gs().baseIdMap[_baseId].ownerAddr;
+    }
+
+    function _hasTroopTransport(Tile memory _tile) public view returns (bool) {
+        return gs().troopIdMap[_tile.occupantId].troopType.cargoCapacity > 0;
+    }
+
+    function _getTroopPos(uint256 _troopId) public view returns (Position memory) {
+        return gs().troopIdMap[_troopId].pos;
+    }
+
+    function _isArmy(uint256 _troopId) public view returns (bool) {
+        return gs().troopIdMap[_troopId].troopType.isArmy;
     }
 
     function _isTaken(Position memory _p) public view returns (bool) {
-        return gs().map[_p.x][_p.y].base != 0x0 && gs().map[_p.x][_p.y].base.ownerAddr != address(0);
+        return gs().map[_p.x][_p.y].base.ownerAddr != address(0);
     }
 
     function _inBound(Position memory _p) public view returns (bool) {
         return _p.x >= 0 && _p.x < gs().worldWidth && _p.y >= 0 && _p.y < gs().worldHeight;
     }
 
-    function _isPort(Tile memory _tile) public view returns (bool) {
-        return _targetTile.baseId != 0x0 && gs().baseIdMap[_targetTile.baseId].baseType == BaseType.PORT;
+    function _hasPort(Tile memory _tile) public view returns (bool) {
+        return gs().baseIdMap[_targetTile.baseId].baseType == BaseType.PORT;
     }
 
     // Platonian
