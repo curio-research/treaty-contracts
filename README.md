@@ -1,10 +1,12 @@
-# Curio Game Engine
-
-We're building a crafting-based MMO game based on a gridded world. This is the game engine for that ...
+# Curio Smart Contracts
 
 Make sure that hardhat is installed globally.
-To run tests use `npx hardhat test`
-To deploy the contracts first spin up a local network using `npx hardhat node`
-Then use `npx hardhat run --network localhost tasks/deploy.ts` for deploying to local network.
 
-# engine
+Run `yarn install` first to install dependencies
+
+To run Hardhat tests use `npx hardhat test`
+To compile contracts run `forge build`. Compiled ABIs wil be in the `out` folder.
+To run Foundry tests use `yarn forge-test`
+
+To deploy the contracts first spin up a local network using `npx hardhat node`
+To deploy contracts use `npx hardhat deploy --network ${NETWORK_NAME}`
