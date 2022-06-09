@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import {Position, Tile} from "./Types.sol";
 import {LibStorage} from "./Storage.sol";
 
-library GameUtil {
+library Util {
     using SafeMath for uint256;
 
     function gs() internal pure returns (GameInfo storage) {
@@ -22,8 +22,12 @@ library GameUtil {
         gs().troopIdMap[_troopId] = 0x0;
     }
 
-    function _getBaseOwner(uint256 _baseId) public view returns (address) {
+    function _getOwner(uint256 _baseId) public view returns (address) {
         return gs().baseIdMap[_baseId].ownerAddr;
+    }
+
+    function _getOwner(uint256 _troopId) public view returns (address) {
+        return gs().troopIdMap[_troopId].ownerAddr;
     }
 
     function _hasTroopTransport(Tile memory _tile) public view returns (bool) {

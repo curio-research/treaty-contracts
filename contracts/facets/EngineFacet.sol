@@ -2,7 +2,7 @@
 pragma solidity ^0.8.4;
 
 import "../libraries/Storage.sol";
-import {GameUtil} from "../libraries/GameUtil.sol";
+import {Util} from "../libraries/GameUtil.sol";
 import {GameState, Position, Production, Terrain, Tile, Troop, TroopType} from "../libraries/Types.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
@@ -10,6 +10,9 @@ contract EngineFacet is UseStorage {
     using SafeMath for uint256;
 
     /*
+    FIXME:
+    - TroopType IDs
+
     TODO:
     - Add events
     - Look for re-entrancy, overflow, and other potential security issues
@@ -28,22 +31,22 @@ contract EngineFacet is UseStorage {
     }
 
     function move(uint256 _troopId, Position memory _targetPos) external {
-        if (!GameUtil._inBound(_targetPos)) revert("Target out of bound");
-        if (GameUtil._samePos(GameUtil._getTroopPos(_troopId), _targetPos)) revert("Already at destination");
-        if (!GameUtil._withinDist(GameUtil._getTroopPos(_troopId), _targetPos, _troop.troopType.speed)) revert("Destination too far");
+        if (!Util._inBound(_targetPos)) revert("Target out of bound");
+        if (Util._samePos(Util._getTroopPos(_troopId), _targetPos)) revert("Already at destination");
+        if (!Util._withinDist(Util._getTroopPos(_troopId), _targetPos, _troop.troopType.speed)) revert("Destination too far");
         if (now - _troop.lastMoved < _troop.troopType.movementCooldown) revert("Moved too recently");
 
         Tile memory _targetTile = gs().map[_targetPos.x][_targetPos.y];
-        if (GameUtil._isArmy(_troopId)) {
+        if (Util._isArmy(_troopId)) {
             if (_targetTile.terrain == Terrain.WATER) revert("Cannot move on water");
         } else {
             if (
-                _targetTile.terrain == Terrain.INLAND || (_targetTile.terrain == Terrain.COASTLINE && !GameUtil._hasPort(_targetTile)) // FIXME: autoscale
+                _targetTile.terrain == Terrain.INLAND || (_targetTile.terrain == Terrain.COASTLINE && !Util._hasPort(_targetTile)) // FIXME: autoscale
             ) revert("Cannot move on land");
         }
 
         if (_targetTile.occupantId != 0x0) {
-            if (!GameUtil._hasTroopTransport(_targetTile)) revert("Destination tile occupied");
+            if (!Util._hasTroopTransport(_targetTile)) revert("Destination tile occupied");
 
             // Load troop onto Troop Transport at target tile
             gs().troopIdMap[_targetTile.occupantId].cargo.push(_troopId);
@@ -67,9 +70,9 @@ contract EngineFacet is UseStorage {
     }
 
     function battle(uint256 _troopId, Position memory _targetPos) external {
-        if (!GameUtil._inBound(_targetPos)) revert("Target out of bound");
-        if (GameUtil._samePos(GameUtil._getTroopPos(_troopId), _targetPos)) revert("Already at destination");
-        if (!GameUtil._withinDist(GameUtil._getTroopPos(_troopId), _targetPos, 1)) revert("Destination too far");
+        if (!Util._inBound(_targetPos)) revert("Target out of bound");
+        if (Util._samePos(Util._getTroopPos(_troopId), _targetPos)) revert("Already at destination");
+        if (!Util._withinDist(Util._getTroopPos(_troopId), _targetPos, 1)) revert("Destination too far");
         if (now - _troop.lastAttacked < _troop.troopType.attackCooldown) revert("Attacked too recently");
 
         Tile memory _targetTile = gs().map[_targetPos.x][_targetPos.y];
@@ -103,7 +106,7 @@ contract EngineFacet is UseStorage {
 
         Troop memory _troop = gs().troopIdMap[_troopId];
 
-        uint256 _rand = GameUtil._random(_troop.health, 100); // FIXME: proper salt
+        uint256 _rand = Util._random(_troop.health, 100); // FIXME: proper salt
         if (_rand < _targetAttackFactor) {
             // Troop hits target
             if (_troop.troopType.damagePerHit >= _targetHealth) {
@@ -117,17 +120,17 @@ contract EngineFacet is UseStorage {
             } else {
                 gs().troopIdMap[_targetTile.occupantId].health = _targetHealth;
                 if (_targetHealth == 0) {
-                    GameUtil._removeTroop(_targetTile.troopId);
+                    Util._removeTroop(_targetTile.troopId);
                     gs().map[_targetPos.x][_targetPos.y].occupantId = 0x0;
                 } else {}
             }
         }
 
-        _rand = GameUtil._random(_troop.health, 100); // FIXME: proper salt
+        _rand = Util._random(_troop.health, 100); // FIXME: proper salt
         if (_rand < _targetDefenseFactor) {
             // Target hits troop
             if (_targetDamagePerHit >= _troop.health) {
-                GameUtil._removeTroop(_troopId);
+                Util._removeTroop(_troopId);
                 gs().map[_troop.pos.x][_troop.pos.y].occupantId = 0x0;
             } else {
                 gs().troopIdMap[_targetTile.occupantId].health -= _targetDamagePerHit;
@@ -138,9 +141,9 @@ contract EngineFacet is UseStorage {
     }
 
     function captureBase(uint256 _troopId, Position memory _targetPos) external {
-        if (!GameUtil._inBound(_targetPos)) revert("Target out of bound");
-        if (!GameUtil._withinDist(GameUtil._getTroopPos(_troopId), _targetPos, 1)) revert("Destination too far");
-        if (!GameUtil._isArmy(_troopId)) revert("Only an army can capture bases");
+        if (!Util._inBound(_targetPos)) revert("Target out of bound");
+        if (!Util._withinDist(Util._getTroopPos(_troopId), _targetPos, 1)) revert("Destination too far");
+        if (!Util._isArmy(_troopId)) revert("Only an army can capture bases");
 
         const _targetTile = gs().map[_targetPos.x][_targetPos.y];
         if (_targetTile.baseId == 0x0) revert("No base to capture");
@@ -148,9 +151,53 @@ contract EngineFacet is UseStorage {
         if (_targetTile.occupantId != 0x0) revert("Destination tile occupied");
         if (gs().baseIdMap[_targetTile.baseId].health > 0) revert("Need to attack first");
 
-        // Move and capture
+        // Move, capture, end production
         gs().map[_troop.pos.x][_troop.pos.y].occupantId = 0x0;
         gs().troopIdMap[_troopId].pos = _targetPos;
         gs().baseIdMap[_targetTile.baseId].owner = msg.sender;
+        gs().baseProductionMap[_targetTile.baseId] = 0x0;
+
+        return;
+    }
+
+    function startProduction(Position memory _pos, TroopType memory _troopType) external {
+        Tile memory _targetTile = gs().map[_pos.x][_pos.y];
+        if (_targetTile.baseId == 0x0) revert("No base found");
+        if (Util._getOwner(_targetTile.baseId) != msg.sender) revert("Can only produce in own base");
+        if (!Util._hasPort(_targetTile) && !_troopType.isArmy) revert("Only ports can produce water troops");
+        if (gs().baseProductionMap[_targetTile.baseId]) revert("Base already producing");
+
+        gs().baseProductionMap[_targetTile.baseId] = Production({troopType: _troopType, startTime: now});
+
+        return;
+    }
+
+    // Currently implemented expecting real-time calls from client; can change to lazy if needed
+    function endProduction(Position memory _pos) external {
+        Tile memory _targetTile = gs().map[_pos.x][_pos.y];
+        if (_targetTile.baseId == 0x0) revert("No base found");
+        if (Util._getOwner(_targetTile.baseId) != msg.sender) revert("Can only produce in own base");
+        if (_targetTile.occupantId != 0x0) revert("Base occupied by another troop");
+
+        Production memory _production = gs().baseProductionMap[_targetTile.baseId];
+        if (_production == 0x0) revert("No production found in base");
+        if (_production.troopType.turnsToProduce > now - _production.startTime) revert("Troop needs more time for production");
+
+        Troop memory _troop = Troop({
+            owner: msgSender,
+            troopType: _production.troopType,
+            lastMoved: now,
+            lastAttacked: now, // yo
+            health: _production.troopType.maxHealth,
+            pos: _pos,
+            cargoTroops: []
+        });
+
+        uint256 _troopId = gs().troopNonce;
+        gs().troops.push(_troop);
+        gs().troopIdMap[_troopId] = _troop;
+        gs().troopNonce++;
+
+        return;
     }
 }
