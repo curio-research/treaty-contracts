@@ -2,29 +2,35 @@
 pragma solidity ^0.8.4;
 
 import "forge-std/Test.sol";
-import {BlockData, GameInfo, WorldConstants, Position, Item, Tower, Recipe, Tile, PlayerData} from "../contracts/libraries/Types.sol";
-import {DiamondCutFacet} from "contracts/facets/DiamondCutFacet.sol";
+import "contracts/facets/DiamondCutFacet.sol";
 import "contracts/facets/DiamondLoupeFacet.sol";
 import "contracts/facets/OwnershipFacet.sol";
 import "contracts/diamond.sol";
-import {DiamondInit} from "contracts/upgradeInitializers/diamondInit.sol";
+import "contracts/upgradeInitializers/diamondInit.sol";
 import "contracts/interfaces/IDiamondCut.sol";
 import "contracts/libraries/GameUtil.sol";
 import "contracts/facets/GetterFacet.sol";
 import "forge-std/console.sol";
 
-// for some reason this file doesn't have syntax highlighting wtffff
+// TODO: fix syntax highlignting in this file
+
+// This contract sets up the diamond for testing and is inherited by other foundry test contracts.
+// In the future we can mimic different "fixtures" by extending upon this file.
 
 contract DiamondDeployTest is Test {
-    Diamond diamond;
-    DiamondCutFacet diamondCutFacet;
-    DiamondInit diamondInit;
-    DiamondLoupeFacet diamondLoupeFacet;
-    OwnershipFacet diamondOwnershipFacet;
-    GetterFacet getterFacet;
-    // GameUtil gameUtil;
+    address public diamond;
+    DiamondCutFacet public diamondCutFacet;
+    DiamondInit public diamondInit;
+    DiamondLoupeFacet public diamondLoupeFacet;
+    OwnershipFacet public diamondOwnershipFacet;
+    GetterFacet public getterFacet;
 
-    address internal deployer = address(1);
+    // diamond-contract-casted methods
+    GetterFacet public getter;
+
+    address public deployer = address(1);
+    address public player1 = address(2);
+    address public player2 = address(3);
 
     constructor() {}
 
@@ -36,20 +42,14 @@ contract DiamondDeployTest is Test {
 
     function setUp() public {
         diamondCutFacet = new DiamondCutFacet();
-
-        diamond = new Diamond(deployer, address(diamondCutFacet));
-
+        diamond = address(new Diamond(deployer, address(diamondCutFacet)));
         diamondInit = new DiamondInit();
-
         diamondLoupeFacet = new DiamondLoupeFacet();
         diamondOwnershipFacet = new OwnershipFacet();
 
-        // gameUtil = new GameUtil();
         getterFacet = new GetterFacet();
 
-        // fetch args from cli. craft payload for init deploy
-
-        bytes memory initData = abi.encodeWithSelector(bytes4(0xb7b0422d), getInitVal());
+        bytes memory initData = abi.encodeWithSelector(bytes4(0xb7b0422d), getInitVal()); // fetch args from cli. craft payload for init deploy
 
         IDiamondCut.FacetCut[] memory cuts = new IDiamondCut.FacetCut[](3);
         cuts[0] = IDiamondCut.FacetCut({facetAddress: address(diamondLoupeFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: LOUPE_SELECTORS});
@@ -57,12 +57,9 @@ contract DiamondDeployTest is Test {
         cuts[2] = IDiamondCut.FacetCut({facetAddress: address(getterFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: getSelectors("GetterFacet")});
 
         vm.prank(deployer);
-        IDiamondCut(address(diamond)).diamondCut(cuts, address(diamondInit), initData);
-    }
+        IDiamondCut(diamond).diamondCut(cuts, address(diamondInit), initData);
 
-    function testVal() public {
-        uint256 val = GetterFacet(address(diamond))._getSample();
-        assertEq(val, 12345);
+        getter = GetterFacet(diamond);
     }
 
     // generates values that need to be initialized from the cli and pipes it back into solidity! magic

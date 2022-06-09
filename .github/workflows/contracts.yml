@@ -14,6 +14,7 @@ jobs:
           ls ${{ github.workspace }}
       - run: yarn add hardhat
       - run: npx hardhat compile --force
-      # - run: npx hardhat deploy
       - run: npx hardhat test
       - run: echo "🍏 This job's status is ${{ job.status }}."
+      - name: Run foundry tests
+      - run: forge test --ffi -vv

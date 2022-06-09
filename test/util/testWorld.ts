@@ -1,13 +1,13 @@
-import { TowerGame } from "./../../typechain-types/TowerGame";
-import { GameStorage } from "./../../typechain-types/GameStorage";
-import { Epoch } from "./../../typechain-types/Epoch";
-import { expect } from "chai";
-import { deployContract } from "./helper";
-import { ethers } from "hardhat";
-import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { Game, Getters, Helper, Permissions } from "../../typechain-types";
-import { blocks, GAME_DEPLOY_TEST_ARGS, MAP_INTERVAL, REVERT_MESSAGES, WORLD_HEIGHT, WORLD_WIDTH } from "./constants";
-import { position } from "../../util/types/common";
+import { TowerGame } from './../../typechain-types/TowerGame';
+import { GameStorage } from './../../typechain-types/GameStorage';
+import { Epoch } from './../../typechain-types/Epoch';
+import { expect } from 'chai';
+import { deployContract } from './helper';
+import { ethers } from 'hardhat';
+import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
+import { Game, Getters, Helper, Permissions } from '../../typechain-types';
+import { blocks, GAME_DEPLOY_TEST_ARGS, MAP_INTERVAL, REVERT_MESSAGES, WORLD_HEIGHT, WORLD_WIDTH } from './constants';
+import { position } from '../../util/types/common';
 
 export interface AllContracts {
   Game: Game;
@@ -30,25 +30,23 @@ export const initializeWorld = async (): Promise<World> => {
   const [signer1, signer2, signer3] = await ethers.getSigners();
 
   // initialize contracts
-  const GameHelper = await deployContract<Helper>("Helper", []);
-  const Permissions = await deployContract<Permissions>("Permissions", [signer1.address]);
-  const GameStorage = await deployContract<GameStorage>("GameStorage", [Permissions.address]);
-  const GameContract = await deployContract<Game>("Game", [...GAME_DEPLOY_TEST_ARGS, GameStorage.address, Permissions.address]);
-  const TowerContract = await deployContract<TowerGame>("TowerGame", [GameStorage.address, Permissions.address], { Helper: GameHelper.address });
-  const GettersContract = await deployContract<Getters>("Getters", [GameContract.address, GameStorage.address]);
-  const EpochContract = await deployContract<Epoch>("Epoch", [EPOCH_INTERVAL]);
+  const GameHelper = await deployContract<Helper>('Helper', []);
+  const Permissions = await deployContract<Permissions>('Permissions', [signer1.address]);
+  const GameStorage = await deployContract<GameStorage>('GameStorage', [Permissions.address]);
+  const GameContract = await deployContract<Game>('Game', [...GAME_DEPLOY_TEST_ARGS, GameStorage.address, Permissions.address]);
+  const TowerContract = await deployContract<TowerGame>('TowerGame', [GameStorage.address, Permissions.address], { Helper: GameHelper.address });
+  const GettersContract = await deployContract<Getters>('Getters', [GameContract.address, GameStorage.address]);
+  const EpochContract = await deployContract<Epoch>('Epoch', [EPOCH_INTERVAL]);
 
   // initialize blocks
   let regionMap: number[][][];
-    for (let x = 0; x < WORLD_WIDTH; x += MAP_INTERVAL) {
-      for (let y = 0; y < WORLD_HEIGHT; y += MAP_INTERVAL) {
-        regionMap = blocks.slice(x, x + MAP_INTERVAL).map(
-          (col) => col.slice(y, y + MAP_INTERVAL)
-        );
+  for (let x = 0; x < WORLD_WIDTH; x += MAP_INTERVAL) {
+    for (let y = 0; y < WORLD_HEIGHT; y += MAP_INTERVAL) {
+      regionMap = blocks.slice(x, x + MAP_INTERVAL).map((col) => col.slice(y, y + MAP_INTERVAL));
 
-        GameStorage._setMapRegion({ x, y }, regionMap);
-      }
+      GameStorage._setMapRegion({ x, y }, regionMap);
     }
+  }
 
   // add contract permissions
   await Permissions.connect(signer1).setPermission(GameContract.address, true);

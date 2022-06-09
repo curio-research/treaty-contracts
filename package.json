@@ -3,8 +3,8 @@
   "private": true,
   "scripts": {
     "contract-size": "yarn run hardhat size-contracts",
-    "sample": "npx ts-node test/util/sample.ts",
-    "gen-selectors": "npx ts-node test/util/selector.ts",
+    "sample": "npx ts-node test/util/foundry/sample.ts",
+    "gen-selectors": "npx ts-node test/util/foundry/selector.ts",
     "forge-test": "forge test --ffi -vv"
   },
   "devDependencies": {

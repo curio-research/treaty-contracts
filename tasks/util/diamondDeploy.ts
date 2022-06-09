@@ -38,9 +38,6 @@ export async function deployDiamond(hre: HardhatRuntimeEnvironment, deployArgs: 
     const facet = await Facet.deploy();
     await facet.deployed();
 
-    console.log(FacetName);
-    // getSigHashes(facet);
-
     console.log(`${FacetName} deployed: ${facet.address}`);
     cut.push({
       facetAddress: facet.address,
