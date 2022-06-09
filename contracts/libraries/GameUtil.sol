@@ -69,9 +69,9 @@ library Util {
         return gs().troopIdMap[_troopId].pos;
     }
 
-    // function _getTroopOwner(uint256 _troopId) public view returns (address) {
-    //     return gs().troopIdMap[_troopId].owner;
-    // }
+    function _getTroopOwner(uint256 _troopId) public view returns (address) {
+        return gs().troopIdMap[_troopId].owner;
+    }
 
     function _getBaseOwner(uint256 _baseId) public view returns (address) {
         return gs().baseIdMap[_baseId].owner;
@@ -83,6 +83,11 @@ library Util {
 
     function _hasPort(Tile memory _tile) public view returns (bool) {
         return gs().baseIdMap[_tile.baseId].name == BaseName.PORT;
+    }
+
+    function _strike(uint256 _strikeFactor) public view returns (bool) {
+        uint256 _rand = _random(block.timestamp, 100); // FIXME: proper salt
+        return _rand < _strikeFactor;
     }
 
     function _inBound(Position memory _p) public view returns (bool) {
