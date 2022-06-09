@@ -11,9 +11,7 @@ contract EngineFacet is UseStorage {
 
     /*
     TODO:
-    - Look for re-entrancy, overflow, and other potential security issues
-    - Organize getters and setters into (multiple layers of) util fns, especially setters atm
-    - Add documentation
+    - Setters
     - Endgame and objectives
     */
 
@@ -27,6 +25,11 @@ contract EngineFacet is UseStorage {
     event ProductionFinished(address _player, uint256 _troopId, Position _pos);
     event Recovered(address _player, uint256 _troopId);
 
+    /**
+     * Initialize a player at a selected position.
+     * @param _pos position to initialize
+     * @param _player player address
+     */
     function initializePlayer(Position memory _pos, address _player) external {
         if (Util._getBaseOwner(gs().map[_pos.x][_pos.y].baseId) == address(0x0)) revert("Base is taken");
 
@@ -36,8 +39,11 @@ contract EngineFacet is UseStorage {
         emit NewPlayer(_player, _pos);
     }
 
-    // Currently implemented expecting real-time calls from client; can change to lazy if needed
+    /**
+     * Update epoch given enough time has elapsed.
+     */
     function updateEpoch() external {
+        // Currently implemented expecting real-time calls from client; can change to lazy if needed
         if (block.timestamp - gs().lastTimestamp < gs().secondsPerTurn) revert("Not enough time has elapsed since last epoch");
 
         gs().epoch++;
@@ -46,6 +52,11 @@ contract EngineFacet is UseStorage {
         emit EpochUpdate(gs().epoch, gs().lastTimestamp);
     }
 
+    /**
+     * Move a troop to a target position.
+     * @param _troopId identifier for troop
+     * @param _targetPos target position
+     */
     function move(uint256 _troopId, Position memory _targetPos) external {
         if (!Util._inBound(_targetPos)) revert("Target out of bound");
 
@@ -85,6 +96,11 @@ contract EngineFacet is UseStorage {
         emit Moved(msg.sender, _troopId, _targetPos);
     }
 
+    /**
+     * Battle a troop with an opponent base or troop at a target position.
+     * @param _troopId identifier for troop
+     * @param _targetPos target position
+     */
     function battle(uint256 _troopId, Position memory _targetPos) external {
         if (!Util._inBound(_targetPos)) revert("Target out of bound");
 
@@ -166,20 +182,26 @@ contract EngineFacet is UseStorage {
         return;
     }
 
+    /**
+     * Capture an opponent base using an army troop.
+     * @param _troopId identifier for troop
+     * @param _targetPos target position
+     */
     function captureBase(uint256 _troopId, Position memory _targetPos) external {
         if (!Util._inBound(_targetPos)) revert("Target out of bound");
-        if (!Util._withinDist(Util._getTroopPos(_troopId), _targetPos, 1)) revert("Destination too far");
-        if (!Util._isArmy(_troopId)) revert("Only an army can capture bases");
+
+        Troop memory _troop = gs().troopIdMap[_troopId];
+        if (!Util._withinDist(_troop.pos, _targetPos, 1)) revert("Destination too far");
+        if (!Util._isArmy(_troop.troopTypeId)) revert("Only an army can capture bases");
 
         Tile memory _targetTile = gs().map[_targetPos.x][_targetPos.y];
         if (_targetTile.baseId == 0x0) revert("No base to capture");
-        if (gs().baseIdMap[_targetTile.baseId].owner == msg.sender) revert("Base already captured");
+        if (Util._getBaseOwner(_targetTile.baseId) == msg.sender) revert("Base already captured");
         if (_targetTile.occupantId != 0x0) revert("Destination tile occupied");
-        if (gs().baseIdMap[_targetTile.baseId].health > 0) revert("Need to attack first");
+        if (Util._getBaseHealth(_targetTile.baseId) > 0) revert("Need to attack first");
 
         // Move, capture, end production
-        Position memory _troopPos = Util._getTroopPos(_troopId);
-        gs().map[_troopPos.x][_troopPos.y].occupantId = 0x0;
+        gs().map[_troop.pos.x][_troop.pos.y].occupantId = 0x0;
         gs().troopIdMap[_troopId].pos = _targetPos;
         gs().baseIdMap[_targetTile.baseId].owner = msg.sender;
         delete gs().baseProductionMap[_targetTile.baseId];
@@ -187,6 +209,11 @@ contract EngineFacet is UseStorage {
         emit BaseCaptured(msg.sender, _troopId, _targetTile.baseId);
     }
 
+    /**
+     * Start producing a troop from a base.
+     * @param _pos position of base
+     * @param _troopTypeId identifier for selected troop type
+     */
     function startProduction(Position memory _pos, uint256 _troopTypeId) external {
         Tile memory _tile = gs().map[_pos.x][_pos.y];
         if (_tile.baseId == 0x0) revert("No base found");
@@ -199,8 +226,12 @@ contract EngineFacet is UseStorage {
         emit ProductionStarted(msg.sender, _tile.baseId, _troopTypeId);
     }
 
-    // Currently implemented expecting real-time calls from client; can change to lazy if needed
+    /**
+     * Finish producing a troop from a base.
+     * @param _pos position of base
+     */
     function endProduction(Position memory _pos) external {
+        // Currently implemented expecting real-time calls from client; can change to lazy if needed
         Tile memory _tile = gs().map[_pos.x][_pos.y];
         if (_tile.baseId == 0x0) revert("No base found");
         if (Util._getBaseOwner(_tile.baseId) != msg.sender) revert("Can only produce in own base");
@@ -229,6 +260,10 @@ contract EngineFacet is UseStorage {
         emit ProductionFinished(msg.sender, _troopId, _pos);
     }
 
+    /**
+     * Restore 1 health to the troop in a base.
+     * @param _pos position of base
+     */
     function repair(Position memory _pos) external {
         Tile memory _tile = gs().map[_pos.x][_pos.y];
         if (_tile.baseId == 0x0) revert("No base found");

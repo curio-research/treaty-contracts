@@ -29,6 +29,14 @@ library Util {
         return gs().troopTypeIdMap[gs().troopIdMap[_troopId].troopTypeId].cargoCapacity;
     }
 
+    function _getTroopPos(uint256 _troopId) public view returns (Position memory) {
+        return gs().troopIdMap[_troopId].pos;
+    }
+
+    function _getTroopOwner(uint256 _troopId) public view returns (address) {
+        return gs().troopIdMap[_troopId].owner;
+    }
+
     function _getMaxHealth(uint256 _troopTypeId) public view returns (uint256) {
         return gs().troopTypeIdMap[_troopTypeId].maxHealth;
     }
@@ -65,12 +73,8 @@ library Util {
         return gs().troopTypeIdMap[_troopTypeId].isArmy;
     }
 
-    function _getTroopPos(uint256 _troopId) public view returns (Position memory) {
-        return gs().troopIdMap[_troopId].pos;
-    }
-
-    function _getTroopOwner(uint256 _troopId) public view returns (address) {
-        return gs().troopIdMap[_troopId].owner;
+    function _getBaseHealth(uint256 _baseId) public view returns (uint256) {
+        return gs().baseIdMap[_baseId].health;
     }
 
     function _getBaseOwner(uint256 _baseId) public view returns (address) {
@@ -86,7 +90,8 @@ library Util {
     }
 
     function _strike(uint256 _strikeFactor) public view returns (bool) {
-        uint256 _rand = _random(block.timestamp, 100); // FIXME: proper salt
+        uint256 _salt = 1; // FIXME: proper salt
+        uint256 _rand = _random(_salt, 100);
         return _rand < _strikeFactor;
     }
 
@@ -102,8 +107,8 @@ library Util {
         return _p1.x == _p2.x && _p1.y == _p2.y;
     }
 
-    function _random(uint256 _salt, uint256 _max) public pure returns (uint256) {
-        // TODO: implement
+    function _random(uint256 _salt, uint256 _max) public view returns (uint256) {
+        return uint256(keccak256(abi.encode(block.timestamp, block.difficulty, _salt))) % _max; // FIXME
     }
 
     function _withinDist(
