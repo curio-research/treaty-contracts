@@ -1,0 +1,166 @@
+{
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "bytes4",
+          "name": "interfaceId",
+          "type": "bytes4"
+        }
+      ],
+      "name": "supportsInterface",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": {
+    "object": "0x",
+    "sourceMap": "",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x",
+    "sourceMap": "",
+    "linkReferences": {}
+  },
+  "ast": {
+    "absolutePath": "/Users/K.Z./Desktop/projects/engine/contracts/interfaces/IERC165.sol",
+    "exportedSymbols": {
+      "IERC165": [
+        3101
+      ]
+    },
+    "id": 3102,
+    "license": "MIT",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 3092,
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "32:23:10"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "fullyImplemented": false,
+        "id": 3101,
+        "linearizedBaseContracts": [
+          3101
+        ],
+        "name": "IERC165",
+        "nameLocation": "67:7:10",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "documentation": {
+              "id": 3093,
+              "nodeType": "StructuredDocumentation",
+              "src": "81:373:10",
+              "text": "@notice Query if a contract implements an interface\n @param interfaceId The interface identifier, as specified in ERC-165\n @dev Interface identification is specified in ERC-165. This function\n  uses less than 30,000 gas.\n @return `true` if the contract implements `interfaceID` and\n  `interfaceID` is not 0xffffffff, `false` otherwise"
+            },
+            "functionSelector": "01ffc9a7",
+            "id": 3100,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "supportsInterface",
+            "nameLocation": "468:17:10",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 3096,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3095,
+                  "mutability": "mutable",
+                  "name": "interfaceId",
+                  "nameLocation": "493:11:10",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3100,
+                  "src": "486:18:10",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes4",
+                    "typeString": "bytes4"
+                  },
+                  "typeName": {
+                    "id": 3094,
+                    "name": "bytes4",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "486:6:10",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes4",
+                      "typeString": "bytes4"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "485:20:10"
+            },
+            "returnParameters": {
+              "id": 3099,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3098,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3100,
+                  "src": "529:4:10",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 3097,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "529:4:10",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "528:6:10"
+            },
+            "scope": 3101,
+            "src": "459:76:10",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "scope": 3102,
+        "src": "57:480:10",
+        "usedErrors": []
+      }
+    ],
+    "src": "32:506:10"
+  }
+}

@@ -1,7 +1,6 @@
 import { HardhatArguments, HardhatRuntimeEnvironment, RunSuperFunction, TaskArguments } from 'hardhat/types';
 import { task } from 'hardhat/config';
 import * as path from 'path';
-import * as fsPromise from 'fs/promises';
 import * as fs from 'fs';
 
 // copy folder

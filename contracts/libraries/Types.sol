@@ -102,4 +102,5 @@ struct GameInfo {
     uint256 epoch;
     uint256 lastUpdated;
     uint256 interval;
+    uint256 sample;
 }
