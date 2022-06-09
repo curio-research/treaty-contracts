@@ -44,7 +44,7 @@ contract EngineFacet is UseStorage {
      */
     function updateEpoch() external {
         // Currently implemented expecting real-time calls from client; can change to lazy if needed
-        if (block.timestamp - gs().lastTimestamp < gs().secondsPerTurn) revert("Not enough time has elapsed since last epoch");
+        if (block.timestamp - gs().lastTimestamp < gs().worldConstants.secondsPerTurn) revert("Not enough time has elapsed since last epoch");
 
         gs().epoch++;
         gs().lastTimestamp = block.timestamp;

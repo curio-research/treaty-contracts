@@ -102,4 +102,5 @@ struct GameState {
     uint256[] troopTypeIds;
     mapping(uint256 => TroopType) troopTypeIdMap;
     // mapping(address => uint256[]) playerTroopIdMap;
+    uint256 sample;
 }

@@ -1,60 +1,61 @@
 {
   "abi": [],
   "bytecode": {
-    "object": "0x60566037600b82828239805160001a607314602a57634e487b7160e01b600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea2646970667358221220a48eb778f44470bf79e4f8dcea06107491f5e2f945a8a25af630ea67376b42dc64736f6c63430008040033",
-    "sourceMap": "96:316:14:-:0;;;;;;;;;;;;;;;-1:-1:-1;;;96:316:14;;;;;;;;;;;;;;;;;",
+    "object": "0x60566037600b82828239805160001a607314602a57634e487b7160e01b600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea26469706673582212203dacc55e337f78b9b745994ef4abe958a0ddaf9973897bafd3ac2598283c619164736f6c63430008040033",
+    "sourceMap": "97:317:13:-:0;;;;;;;;;;;;;;;-1:-1:-1;;;97:317:13;;;;;;;;;;;;;;;;;",
     "linkReferences": {}
   },
   "deployedBytecode": {
-    "object": "0x73000000000000000000000000000000000000000030146080604052600080fdfea2646970667358221220a48eb778f44470bf79e4f8dcea06107491f5e2f945a8a25af630ea67376b42dc64736f6c63430008040033",
-    "sourceMap": "96:316:14:-:0;;;;;;;;",
+    "object": "0x73000000000000000000000000000000000000000030146080604052600080fdfea26469706673582212203dacc55e337f78b9b745994ef4abe958a0ddaf9973897bafd3ac2598283c619164736f6c63430008040033",
+    "sourceMap": "97:317:13:-:0;;;;;;;;",
     "linkReferences": {}
   },
+  "methodIdentifiers": {},
   "ast": {
-    "absolutePath": "/Users/K.Z./Desktop/projects/engine/contracts/libraries/Storage.sol",
+    "absolutePath": "contracts/libraries/Storage.sol",
+    "id": 4021,
     "exportedSymbols": {
-      "GameInfo": [
-        5204
+      "GameState": [
+        4184
       ],
       "LibStorage": [
-        5019
+        4008
       ],
       "UseStorage": [
-        5031
+        4020
       ]
     },
-    "id": 5032,
-    "license": "MIT",
     "nodeType": "SourceUnit",
+    "src": "32:548:13",
     "nodes": [
       {
-        "id": 4999,
+        "id": 3988,
+        "nodeType": "PragmaDirective",
+        "src": "32:23:13",
         "literals": [
           "solidity",
           "^",
           "0.8",
           ".0"
-        ],
-        "nodeType": "PragmaDirective",
-        "src": "32:23:14"
+        ]
       },
       {
-        "absolutePath": "/Users/K.Z./Desktop/projects/engine/contracts/libraries/Types.sol",
-        "file": "./Types.sol",
-        "id": 5001,
-        "nameLocation": "-1:-1:-1",
+        "id": 3990,
         "nodeType": "ImportDirective",
-        "scope": 5032,
-        "sourceUnit": 5205,
-        "src": "57:37:14",
+        "src": "57:38:13",
+        "absolutePath": "contracts/libraries/Types.sol",
+        "file": "./Types.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 4021,
+        "sourceUnit": 4185,
         "symbolAliases": [
           {
             "foreign": {
-              "id": 5000,
-              "name": "GameInfo",
+              "id": 3989,
+              "name": "GameState",
               "nodeType": "Identifier",
               "overloadedDeclarations": [],
-              "src": "65:8:14",
+              "src": "65:9:13",
               "typeDescriptions": {}
             },
             "nameLocation": "-1:-1:-1"
@@ -63,28 +64,19 @@
         "unitAlias": ""
       },
       {
-        "abstract": false,
-        "baseContracts": [],
-        "contractDependencies": [],
-        "contractKind": "library",
-        "fullyImplemented": true,
-        "id": 5019,
-        "linearizedBaseContracts": [
-          5019
-        ],
-        "name": "LibStorage",
-        "nameLocation": "104:10:14",
+        "id": 4008,
         "nodeType": "ContractDefinition",
+        "src": "97:317:13",
         "nodes": [
           {
+            "id": 3995,
+            "nodeType": "VariableDeclaration",
+            "src": "147:72:13",
             "constant": true,
-            "id": 5006,
             "mutability": "constant",
             "name": "GAME_STORAGE_POSITION",
-            "nameLocation": "163:21:14",
-            "nodeType": "VariableDeclaration",
-            "scope": 5019,
-            "src": "146:72:14",
+            "nameLocation": "164:21:13",
+            "scope": 4008,
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
@@ -92,10 +84,10 @@
               "typeString": "bytes32"
             },
             "typeName": {
-              "id": 5002,
+              "id": 3991,
               "name": "bytes32",
               "nodeType": "ElementaryTypeName",
-              "src": "146:7:14",
+              "src": "147:7:13",
               "typeDescriptions": {
                 "typeIdentifier": "t_bytes32",
                 "typeString": "bytes32"
@@ -105,14 +97,14 @@
               "arguments": [
                 {
                   "hexValue": "637572696f2e73746f726167652e67616d65",
-                  "id": 5004,
+                  "id": 3993,
                   "isConstant": false,
                   "isLValue": false,
                   "isPure": true,
                   "kind": "string",
                   "lValueRequested": false,
                   "nodeType": "Literal",
-                  "src": "197:20:14",
+                  "src": "198:20:13",
                   "typeDescriptions": {
                     "typeIdentifier": "t_stringliteral_8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e70fd20",
                     "typeString": "literal_string \"curio.storage.game\""
@@ -127,18 +119,18 @@
                     "typeString": "literal_string \"curio.storage.game\""
                   }
                 ],
-                "id": 5003,
+                "id": 3992,
                 "name": "keccak256",
                 "nodeType": "Identifier",
                 "overloadedDeclarations": [],
                 "referencedDeclaration": -8,
-                "src": "187:9:14",
+                "src": "188:9:13",
                 "typeDescriptions": {
                   "typeIdentifier": "t_function_keccak256_pure$_t_bytes_memory_ptr_$returns$_t_bytes32_$",
                   "typeString": "function (bytes memory) pure returns (bytes32)"
                 }
               },
-              "id": 5005,
+              "id": 3994,
               "isConstant": false,
               "isLValue": false,
               "isPure": true,
@@ -146,7 +138,7 @@
               "lValueRequested": false,
               "names": [],
               "nodeType": "FunctionCall",
-              "src": "187:31:14",
+              "src": "188:31:13",
               "tryCall": false,
               "typeDescriptions": {
                 "typeIdentifier": "t_bytes32",
@@ -156,25 +148,28 @@
             "visibility": "internal"
           },
           {
+            "id": 4007,
+            "nodeType": "FunctionDefinition",
+            "src": "226:186:13",
             "body": {
-              "id": 5017,
+              "id": 4006,
               "nodeType": "Block",
-              "src": "292:118:14",
+              "src": "294:118:13",
               "statements": [
                 {
                   "assignments": [
-                    5013
+                    4002
                   ],
                   "declarations": [
                     {
                       "constant": false,
-                      "id": 5013,
+                      "id": 4002,
                       "mutability": "mutable",
                       "name": "position",
-                      "nameLocation": "310:8:14",
+                      "nameLocation": "312:8:13",
                       "nodeType": "VariableDeclaration",
-                      "scope": 5017,
-                      "src": "302:16:14",
+                      "scope": 4006,
+                      "src": "304:16:13",
                       "stateVariable": false,
                       "storageLocation": "default",
                       "typeDescriptions": {
@@ -182,10 +177,10 @@
                         "typeString": "bytes32"
                       },
                       "typeName": {
-                        "id": 5012,
+                        "id": 4001,
                         "name": "bytes32",
                         "nodeType": "ElementaryTypeName",
-                        "src": "302:7:14",
+                        "src": "304:7:13",
                         "typeDescriptions": {
                           "typeIdentifier": "t_bytes32",
                           "typeString": "bytes32"
@@ -194,40 +189,40 @@
                       "visibility": "internal"
                     }
                   ],
-                  "id": 5015,
+                  "id": 4004,
                   "initialValue": {
-                    "id": 5014,
+                    "id": 4003,
                     "name": "GAME_STORAGE_POSITION",
                     "nodeType": "Identifier",
                     "overloadedDeclarations": [],
-                    "referencedDeclaration": 5006,
-                    "src": "321:21:14",
+                    "referencedDeclaration": 3995,
+                    "src": "323:21:13",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bytes32",
                       "typeString": "bytes32"
                     }
                   },
                   "nodeType": "VariableDeclarationStatement",
-                  "src": "302:40:14"
+                  "src": "304:40:13"
                 },
                 {
                   "AST": {
                     "nodeType": "YulBlock",
-                    "src": "361:43:14",
+                    "src": "363:43:13",
                     "statements": [
                       {
                         "nodeType": "YulAssignment",
-                        "src": "375:19:14",
+                        "src": "377:19:13",
                         "value": {
                           "name": "position",
                           "nodeType": "YulIdentifier",
-                          "src": "386:8:14"
+                          "src": "388:8:13"
                         },
                         "variableNames": [
                           {
                             "name": "gs.slot",
                             "nodeType": "YulIdentifier",
-                            "src": "375:7:14"
+                            "src": "377:7:13"
                           }
                         ]
                       }
@@ -236,111 +231,111 @@
                   "evmVersion": "istanbul",
                   "externalReferences": [
                     {
-                      "declaration": 5010,
+                      "declaration": 3999,
                       "isOffset": false,
                       "isSlot": true,
-                      "src": "375:7:14",
+                      "src": "377:7:13",
                       "suffix": "slot",
                       "valueSize": 1
                     },
                     {
-                      "declaration": 5013,
+                      "declaration": 4002,
                       "isOffset": false,
                       "isSlot": false,
-                      "src": "386:8:14",
+                      "src": "388:8:13",
                       "valueSize": 1
                     }
                   ],
-                  "id": 5016,
+                  "id": 4005,
                   "nodeType": "InlineAssembly",
-                  "src": "352:52:14"
+                  "src": "354:52:13"
                 }
               ]
             },
-            "id": 5018,
             "implemented": true,
             "kind": "function",
             "modifiers": [],
             "name": "gameStorage",
-            "nameLocation": "234:11:14",
-            "nodeType": "FunctionDefinition",
+            "nameLocation": "235:11:13",
             "parameters": {
-              "id": 5007,
+              "id": 3996,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "245:2:14"
+              "src": "246:2:13"
             },
             "returnParameters": {
-              "id": 5011,
+              "id": 4000,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 5010,
+                  "id": 3999,
                   "mutability": "mutable",
                   "name": "gs",
-                  "nameLocation": "288:2:14",
+                  "nameLocation": "290:2:13",
                   "nodeType": "VariableDeclaration",
-                  "scope": 5018,
-                  "src": "271:19:14",
+                  "scope": 4007,
+                  "src": "272:20:13",
                   "stateVariable": false,
                   "storageLocation": "storage",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_struct$_GameInfo_$5204_storage_ptr",
-                    "typeString": "struct GameInfo"
+                    "typeIdentifier": "t_struct$_GameState_$4184_storage_ptr",
+                    "typeString": "struct GameState"
                   },
                   "typeName": {
-                    "id": 5009,
+                    "id": 3998,
                     "nodeType": "UserDefinedTypeName",
                     "pathNode": {
-                      "id": 5008,
-                      "name": "GameInfo",
+                      "id": 3997,
+                      "name": "GameState",
                       "nodeType": "IdentifierPath",
-                      "referencedDeclaration": 5204,
-                      "src": "271:8:14"
+                      "referencedDeclaration": 4184,
+                      "src": "272:9:13"
                     },
-                    "referencedDeclaration": 5204,
-                    "src": "271:8:14",
+                    "referencedDeclaration": 4184,
+                    "src": "272:9:13",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_GameInfo_$5204_storage_ptr",
-                      "typeString": "struct GameInfo"
+                      "typeIdentifier": "t_struct$_GameState_$4184_storage_ptr",
+                      "typeString": "struct GameState"
                     }
                   },
                   "visibility": "internal"
                 }
               ],
-              "src": "270:21:14"
+              "src": "271:22:13"
             },
-            "scope": 5019,
-            "src": "225:185:14",
+            "scope": 4008,
             "stateMutability": "pure",
             "virtual": false,
             "visibility": "internal"
           }
         ],
-        "scope": 5032,
-        "src": "96:316:14",
-        "usedErrors": []
-      },
-      {
         "abstract": false,
         "baseContracts": [],
         "contractDependencies": [],
-        "contractKind": "contract",
+        "contractKind": "library",
         "fullyImplemented": true,
-        "id": 5031,
         "linearizedBaseContracts": [
-          5031
+          4008
         ],
-        "name": "UseStorage",
-        "nameLocation": "450:10:14",
+        "name": "LibStorage",
+        "nameLocation": "105:10:13",
+        "scope": 4021,
+        "usedErrors": []
+      },
+      {
+        "id": 4020,
         "nodeType": "ContractDefinition",
+        "src": "443:136:13",
         "nodes": [
           {
+            "id": 4019,
+            "nodeType": "FunctionDefinition",
+            "src": "469:108:13",
             "body": {
-              "id": 5029,
+              "id": 4018,
               "nodeType": "Block",
-              "src": "526:48:14",
+              "src": "529:48:13",
               "statements": [
                 {
                   "expression": {
@@ -348,32 +343,32 @@
                     "expression": {
                       "argumentTypes": [],
                       "expression": {
-                        "id": 5025,
+                        "id": 4014,
                         "name": "LibStorage",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 5019,
-                        "src": "543:10:14",
+                        "referencedDeclaration": 4008,
+                        "src": "546:10:13",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_type$_t_contract$_LibStorage_$5019_$",
+                          "typeIdentifier": "t_type$_t_contract$_LibStorage_$4008_$",
                           "typeString": "type(library LibStorage)"
                         }
                       },
-                      "id": 5026,
+                      "id": 4015,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
                       "lValueRequested": false,
                       "memberName": "gameStorage",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 5018,
-                      "src": "543:22:14",
+                      "referencedDeclaration": 4007,
+                      "src": "546:22:13",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_function_internal_pure$__$returns$_t_struct$_GameInfo_$5204_storage_ptr_$",
-                        "typeString": "function () pure returns (struct GameInfo storage pointer)"
+                        "typeIdentifier": "t_function_internal_pure$__$returns$_t_struct$_GameState_$4184_storage_ptr_$",
+                        "typeString": "function () pure returns (struct GameState storage pointer)"
                       }
                     },
-                    "id": 5027,
+                    "id": 4016,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -381,86 +376,93 @@
                     "lValueRequested": false,
                     "names": [],
                     "nodeType": "FunctionCall",
-                    "src": "543:24:14",
+                    "src": "546:24:13",
                     "tryCall": false,
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_GameInfo_$5204_storage_ptr",
-                      "typeString": "struct GameInfo storage pointer"
+                      "typeIdentifier": "t_struct$_GameState_$4184_storage_ptr",
+                      "typeString": "struct GameState storage pointer"
                     }
                   },
-                  "functionReturnParameters": 5024,
-                  "id": 5028,
+                  "functionReturnParameters": 4013,
+                  "id": 4017,
                   "nodeType": "Return",
-                  "src": "536:31:14"
+                  "src": "539:31:13"
                 }
               ]
             },
-            "id": 5030,
             "implemented": true,
             "kind": "function",
             "modifiers": [],
             "name": "gs",
-            "nameLocation": "476:2:14",
-            "nodeType": "FunctionDefinition",
+            "nameLocation": "478:2:13",
             "parameters": {
-              "id": 5020,
+              "id": 4009,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "478:2:14"
+              "src": "480:2:13"
             },
             "returnParameters": {
-              "id": 5024,
+              "id": 4013,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 5023,
+                  "id": 4012,
                   "mutability": "mutable",
                   "name": "ret",
-                  "nameLocation": "521:3:14",
+                  "nameLocation": "524:3:13",
                   "nodeType": "VariableDeclaration",
-                  "scope": 5030,
-                  "src": "504:20:14",
+                  "scope": 4019,
+                  "src": "506:21:13",
                   "stateVariable": false,
                   "storageLocation": "storage",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_struct$_GameInfo_$5204_storage_ptr",
-                    "typeString": "struct GameInfo"
+                    "typeIdentifier": "t_struct$_GameState_$4184_storage_ptr",
+                    "typeString": "struct GameState"
                   },
                   "typeName": {
-                    "id": 5022,
+                    "id": 4011,
                     "nodeType": "UserDefinedTypeName",
                     "pathNode": {
-                      "id": 5021,
-                      "name": "GameInfo",
+                      "id": 4010,
+                      "name": "GameState",
                       "nodeType": "IdentifierPath",
-                      "referencedDeclaration": 5204,
-                      "src": "504:8:14"
+                      "referencedDeclaration": 4184,
+                      "src": "506:9:13"
                     },
-                    "referencedDeclaration": 5204,
-                    "src": "504:8:14",
+                    "referencedDeclaration": 4184,
+                    "src": "506:9:13",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_GameInfo_$5204_storage_ptr",
-                      "typeString": "struct GameInfo"
+                      "typeIdentifier": "t_struct$_GameState_$4184_storage_ptr",
+                      "typeString": "struct GameState"
                     }
                   },
                   "visibility": "internal"
                 }
               ],
-              "src": "503:22:14"
+              "src": "505:23:13"
             },
-            "scope": 5031,
-            "src": "467:107:14",
+            "scope": 4020,
             "stateMutability": "pure",
             "virtual": false,
             "visibility": "internal"
           }
         ],
-        "scope": 5032,
-        "src": "441:135:14",
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "fullyImplemented": true,
+        "linearizedBaseContracts": [
+          4020
+        ],
+        "name": "UseStorage",
+        "nameLocation": "452:10:13",
+        "scope": 4021,
         "usedErrors": []
       }
     ],
-    "src": "32:545:14"
-  }
+    "license": "MIT"
+  },
+  "id": 13
 }

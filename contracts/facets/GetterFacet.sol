@@ -30,13 +30,17 @@ contract GetterFacet is UseStorage {
         for (uint256 x = _pos.x; x < _pos.x + _interval; x++) {
             for (uint256 y = _pos.y; y < _pos.y + _interval; y++) {
                 Position memory _tempPos = Position({x: x, y: y});
-                _allTiles[_nonce] = Util._getTileData(_tempPos);
+                _allTiles[_nonce] = gs().map[_pos.x][_pos.y];
                 _allPos[_nonce] = _tempPos;
                 _nonce += 1;
             }
         }
 
         return (_allTiles, _allPos);
+    }
+
+    function _getSample() external view returns (uint256) {
+        return gs().sample;
     }
 
     // // this is called after _getMap is called. used to fetch metadata around blocks

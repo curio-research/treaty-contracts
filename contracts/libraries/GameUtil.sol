@@ -96,7 +96,7 @@ library Util {
     }
 
     function _inBound(Position memory _p) public view returns (bool) {
-        return _p.x >= 0 && _p.x < gs().worldWidth && _p.y >= 0 && _p.y < gs().worldHeight;
+        return _p.x >= 0 && _p.x < gs().worldConstants.worldWidth && _p.y >= 0 && _p.y < gs().worldConstants.worldHeight;
     }
 
     // ----------------------------------------------------------

@@ -9,7 +9,7 @@ cache_hardhat
 out
 
 #local dev help
-*.txt
+*map.txt
 tasks/game.config.json
 map.json
 
