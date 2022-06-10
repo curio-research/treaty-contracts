@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import {BaseName, GameState, Position, Tile} from "./Types.sol";
+import {BASE_NAME, GameState, Position, Tile} from "./Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 import {LibStorage} from "./Storage.sol";
 
@@ -86,7 +86,11 @@ library Util {
     }
 
     function _hasPort(Tile memory _tile) public view returns (bool) {
-        return gs().baseIdMap[_tile.baseId].name == BaseName.PORT;
+        return gs().baseIdMap[_tile.baseId].name == BASE_NAME.PORT;
+    }
+
+    function _getTileAt(Position memory _pos) public view returns (Tile memory) {
+        return gs().map[_pos.x][_pos.y];
     }
 
     function _strike(uint256 _strikeFactor) public view returns (bool) {

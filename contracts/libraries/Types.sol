@@ -1,18 +1,18 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-enum BaseName {
+enum BASE_NAME {
     PORT,
     CITY
 }
 
-enum Terrain {
+enum TERRAIN {
     WATER,
     COASTLINE,
     INLAND
 }
 
-enum TroopName {
+enum TROOP_NAME {
     ARMY,
     TROOP_TRANSPORT,
     DESTROYER,
@@ -34,7 +34,7 @@ struct Player {
 
 struct Base {
     // TODO: can add another struct named BaseType with all of the fields except ownerAddr
-    BaseName name;
+    BASE_NAME name;
     address owner;
     uint256 attackFactor;
     uint256 defenseFactor;
@@ -42,7 +42,7 @@ struct Base {
 }
 
 struct Tile {
-    Terrain terrain;
+    TERRAIN terrain;
     uint256 occupantId; // a troop
     uint256 baseId;
 }
@@ -58,7 +58,7 @@ struct Troop {
 }
 
 struct TroopType {
-    TroopName name;
+    TROOP_NAME name;
     uint256 speed; // movement per epoch
     uint256 maxHealth;
     uint256 damagePerHit;
