@@ -14,10 +14,14 @@ contract EngineFacet is UseStorage {
     /*
     TODO:
     - Add movement cooldown epoch field
-    - Add permissions
     - Map upload speed
     - Endgame and objectives
     */
+
+    modifier onlyAdmin() {
+        require(msg.sender == gs().worldConstants.admin);
+        _;
+    }
 
     event NewPlayer(address _player, Position _pos);
     event EpochUpdate(uint256 _epoch, uint256 _time);
@@ -39,7 +43,7 @@ contract EngineFacet is UseStorage {
      * @param _pos position to initialize
      * @param _player player address
      */
-    function initializePlayer(Position memory _pos, address _player) external {
+    function initializePlayer(Position memory _pos, address _player) external onlyAdmin {
         uint256 _baseId = Util._getTileAt(_pos).baseId;
         if (Util._getBaseOwner(_baseId) != address(0)) revert("Base is taken");
 
@@ -60,7 +64,7 @@ contract EngineFacet is UseStorage {
         Position memory _pos,
         address _player,
         uint256 _troopTypeId
-    ) external {
+    ) external onlyAdmin {
         Tile memory _tile = Util._getTileAt(_pos);
         if (_tile.occupantId != NULL) revert("Tile occupied");
 
@@ -79,7 +83,7 @@ contract EngineFacet is UseStorage {
      * @param _startPos top-left position of chunk
      * @param _chunk a 2d, NxN chunk
      */
-    function setMapChunk(Position memory _startPos, uint256[][] memory _chunk) public {
+    function setMapChunk(Position memory _startPos, uint256[][] memory _chunk) external onlyAdmin {
         for (uint256 _dx = 0; _dx < _chunk.length; _dx++) {
             for (uint256 _dy = 0; _dy < _chunk[0].length; _dy++) {
                 Position memory _pos = Position({x: _startPos.x + _dx, y: _startPos.y + _dy});
@@ -95,19 +99,6 @@ contract EngineFacet is UseStorage {
                 gs().map[_pos.x][_pos.y].terrain = TERRAIN(_terrainId);
             }
         }
-    }
-
-    /**
-     * Update epoch given enough time has elapsed.
-     */
-    function updateEpoch() external {
-        // Currently implemented expecting real-time calls from client; can change to lazy if needed
-        if ((block.timestamp - gs().lastTimestamp) < gs().worldConstants.secondsPerTurn) revert("Not enough time has elapsed since last epoch");
-
-        gs().epoch++;
-        gs().lastTimestamp = block.timestamp;
-
-        emit EpochUpdate(gs().epoch, gs().lastTimestamp);
     }
 
     // ----------------------------------------------------------------------
@@ -291,6 +282,23 @@ contract EngineFacet is UseStorage {
         emit ProductionStarted(msg.sender, _tile.baseId, _troopTypeId);
     }
 
+    // ----------------------------------------------------------------------
+    // STATE FUNCTIONS
+    // ----------------------------------------------------------------------
+
+    /**
+     * Update epoch given enough time has elapsed.
+     */
+    function updateEpoch() external {
+        // Currently implemented expecting real-time calls from client; can change to lazy if needed
+        if ((block.timestamp - gs().lastTimestamp) < gs().worldConstants.secondsPerTurn) revert("Not enough time has elapsed since last epoch");
+
+        gs().epoch++;
+        gs().lastTimestamp = block.timestamp;
+
+        emit EpochUpdate(gs().epoch, gs().lastTimestamp);
+    }
+
     /**
      * Finish producing a troop from a base.
      * @param _pos position of base
@@ -325,6 +333,7 @@ contract EngineFacet is UseStorage {
         Troop memory _troop = gs().troopIdMap[_troopId];
         if (_troop.owner != msg.sender) revert("Can only repair own troop");
         if (_troop.health >= Util._getMaxHealth(_troop.troopTypeId)) revert("Troop already at full health");
+        if ((gs().epoch - _troop.lastRepaired) < 1) revert("Repaired too recently");
 
         _troop.health++;
         gs().troopIdMap[_troopId].health = _troop.health;
