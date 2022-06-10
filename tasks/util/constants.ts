@@ -6,20 +6,27 @@ export const LOCALHOST_RPC_URL = 'http://127.0.0.1:8545/';
 export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 
 // ----------------------------------------------------------
-// Game constants
+// Game constants (source of truth)
 // ----------------------------------------------------------
 
-export const ADMIN = '0xDEADBEEF'; // FIXME
-export const WORLD_WIDTH = 300;
-export const WORLD_HEIGHT = 240;
-export const NUM_PORTS = 300;
-export const NUM_CITIES = 300;
+export const WORLD_WIDTH = 100;
+export const WORLD_HEIGHT = 80;
+export const NUM_PORTS = 30;
+export const NUM_CITIES = 30;
 export const MAP_INTERVAL = 10;
 export const SECONDS_PER_TURN = 6;
 
+export enum TROOP_NAME {
+  ARMY,
+  TROOP_TRANSPORT,
+  DESTROYER,
+  CRUISER,
+  BATTLESHIP,
+  FIGHTER_JET,
+}
 export const TROOP_TYPES: TroopTypeStruct[] = [
   {
-    name: 'ARMY',
+    name: TROOP_NAME.ARMY,
     speed: 1,
     maxHealth: 1,
     damagePerHit: 1,
@@ -32,7 +39,7 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     isLandTroop: true,
   },
   {
-    name: 'TROOP_TRANSPORT',
+    name: TROOP_NAME.TROOP_TRANSPORT,
     speed: 2,
     maxHealth: 3,
     damagePerHit: 1,
@@ -40,12 +47,12 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     defenseFactor: 50,
     cargoCapacity: 6,
     epochsToProduce: 14,
-    movementCooldown: 0.5, // FIXME
+    movementCooldown: 1, // FIXME
     attackCooldown: 0,
     isLandTroop: false,
   },
   {
-    name: 'DESTROYER',
+    name: TROOP_NAME.DESTROYER,
     speed: 3,
     maxHealth: 3,
     damagePerHit: 1,
@@ -53,12 +60,12 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     defenseFactor: 100,
     cargoCapacity: 0,
     epochsToProduce: 20,
-    movementCooldown: 0.33, // FIXME
+    movementCooldown: 1, // FIXME
     attackCooldown: 0,
     isLandTroop: false,
   },
   {
-    name: 'CRUISER',
+    name: TROOP_NAME.CRUISER,
     speed: 2,
     maxHealth: 8,
     damagePerHit: 2,
@@ -66,12 +73,12 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     defenseFactor: 100,
     cargoCapacity: 0,
     epochsToProduce: 30,
-    movementCooldown: 0.5, // FIXME
+    movementCooldown: 1, // FIXME
     attackCooldown: 0,
     isLandTroop: false,
   },
   {
-    name: 'BATTLESHIP',
+    name: TROOP_NAME.BATTLESHIP,
     speed: 2,
     maxHealth: 12,
     damagePerHit: 3,
@@ -79,7 +86,7 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     defenseFactor: 100,
     cargoCapacity: 0,
     epochsToProduce: 50,
-    movementCooldown: 0.5, // FIXME
+    movementCooldown: 1, // FIXME
     attackCooldown: 0,
     isLandTroop: false,
   },
@@ -101,16 +108,10 @@ export const RENDER_CONSTANTS: RenderInput = {
 // Functions
 // ------------------------------------------------
 
-export const generateTroopTypeIndexToNameMap = (troopTypes: TroopTypeStruct[]): Record<number, string> => {
-  const res: Record<number, string> = {};
-  troopTypes.forEach((troopType, idx) => (res[idx] = troopType.name.toString()));
-  return res;
+export const getTroopNames = (): string[] => {
+  return Object.keys(TROOP_NAME).filter((item) => isNaN(Number(item)));
 };
 
-export const getTroopTypeIndexByName = (troopTypes: TroopTypeStruct[], name: string): number => {
-  return troopTypes.indexOf(troopTypes.filter((item) => item.name.toString() === name)[0]);
+export const getTroopTypeIndexByName = (troopTypes: TroopTypeStruct[], name: TROOP_NAME): number => {
+  return troopTypes.indexOf(troopTypes.filter((item) => item.name === name)[0]);
 };
-
-// ------------------------------------------------
-// Some default maps
-// ------------------------------------------------

@@ -2,7 +2,6 @@
 pragma solidity ^0.8.4;
 
 import {Position, Tile, Troop} from "contracts/libraries/Types.sol";
-import {Util} from "contracts/libraries/GameUtil.sol";
 import "contracts/libraries/Storage.sol";
 
 /// @title Bulk getters

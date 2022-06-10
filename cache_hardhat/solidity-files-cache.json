@@ -2,7 +2,7 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/Users/yijiachen/Documents/Blockchain/curio/tech/engine/contracts/libraries/Types.sol": {
-      "lastModificationDate": 1654839540347,
+      "lastModificationDate": 1654882326070,
       "contentHash": "ad3ef683899d26befa65d3acc9383ea6",
       "sourceName": "contracts/libraries/Types.sol",
       "solcConfig": {
@@ -28,7 +28,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363534383430333530373539"
+              "__CACHE_BREAKER__": "0x0000000000000031363534383835343139323938"
             }
           }
         }
@@ -40,7 +40,7 @@
       "artifacts": []
     },
     "/Users/yijiachen/Documents/Blockchain/curio/tech/engine/node_modules/hardhat-diamond-abi/dist/contract.sol": {
-      "lastModificationDate": 1654840356722,
+      "lastModificationDate": 1654885425293,
       "contentHash": "4bf715966cca40884b30214d74f59c46",
       "sourceName": "hardhat-diamond-abi/Curio.sol",
       "solcConfig": {
@@ -80,7 +80,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363534383430333530373539"
+              "__CACHE_BREAKER__": "0x0000000000000031363534383835343139323938"
             }
           }
         }
@@ -123,7 +123,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363534383430333530373539"
+              "__CACHE_BREAKER__": "0x0000000000000031363534383835343139323938"
             }
           }
         }
@@ -165,7 +165,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363534383430333530373539"
+              "__CACHE_BREAKER__": "0x0000000000000031363534383835343139323938"
             }
           }
         }
@@ -179,8 +179,8 @@
       ]
     },
     "/Users/yijiachen/Documents/Blockchain/curio/tech/engine/contracts/upgradeInitializers/DiamondInit.sol": {
-      "lastModificationDate": 1654839626671,
-      "contentHash": "6f9951717ee2b4be0ddd19d3f3a91a8b",
+      "lastModificationDate": 1654880361880,
+      "contentHash": "2147c2f6295864357a2fcec81efefb6f",
       "sourceName": "contracts/upgradeInitializers/DiamondInit.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -205,7 +205,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363534383430333530373539"
+              "__CACHE_BREAKER__": "0x0000000000000031363534383835343139323938"
             }
           }
         }
@@ -254,7 +254,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363534383430333530373539"
+              "__CACHE_BREAKER__": "0x0000000000000031363534383835343139323938"
             }
           }
         }
@@ -294,7 +294,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363534383430333530373539"
+              "__CACHE_BREAKER__": "0x0000000000000031363534383835343139323938"
             }
           }
         }
@@ -334,7 +334,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363534383430333530373539"
+              "__CACHE_BREAKER__": "0x0000000000000031363534383835343139323938"
             }
           }
         }
@@ -374,7 +374,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363534383430333530373539"
+              "__CACHE_BREAKER__": "0x0000000000000031363534383835343139323938"
             }
           }
         }
@@ -418,7 +418,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363534383430333530373539"
+              "__CACHE_BREAKER__": "0x0000000000000031363534383835343139323938"
             }
           }
         }
@@ -435,8 +435,8 @@
       ]
     },
     "/Users/yijiachen/Documents/Blockchain/curio/tech/engine/contracts/facets/GetterFacet.sol": {
-      "lastModificationDate": 1654839451143,
-      "contentHash": "e72ebec8f1159ec7d813cd2e0ef879cb",
+      "lastModificationDate": 1654883404935,
+      "contentHash": "d74636b83a14384dc382ad1b22e0db0e",
       "sourceName": "contracts/facets/GetterFacet.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -461,14 +461,13 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363534383430333530373539"
+              "__CACHE_BREAKER__": "0x0000000000000031363534383835343139323938"
             }
           }
         }
       },
       "imports": [
         "contracts/libraries/Types.sol",
-        "contracts/libraries/GameUtil.sol",
         "contracts/libraries/Storage.sol"
       ],
       "versionPragmas": [
@@ -479,8 +478,8 @@
       ]
     },
     "/Users/yijiachen/Documents/Blockchain/curio/tech/engine/contracts/facets/EngineFacet.sol": {
-      "lastModificationDate": 1654840078160,
-      "contentHash": "aa1a0d1fcac7bbb34ddc9fb9f6ad187a",
+      "lastModificationDate": 1654884626442,
+      "contentHash": "32e72283e43a8539ba0a908e7a506e1a",
       "sourceName": "contracts/facets/EngineFacet.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -505,7 +504,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363534383430333530373539"
+              "__CACHE_BREAKER__": "0x0000000000000031363534383835343139323938"
             }
           }
         }
@@ -550,7 +549,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363534383430333530373539"
+              "__CACHE_BREAKER__": "0x0000000000000031363534383835343139323938"
             }
           }
         }
@@ -594,7 +593,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363534383430333530373539"
+              "__CACHE_BREAKER__": "0x0000000000000031363534383835343139323938"
             }
           }
         }
@@ -637,7 +636,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363534383430333530373539"
+              "__CACHE_BREAKER__": "0x0000000000000031363534383835343139323938"
             }
           }
         }
@@ -680,7 +679,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363534383430333530373539"
+              "__CACHE_BREAKER__": "0x0000000000000031363534383835343139323938"
             }
           }
         }
@@ -720,7 +719,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363534383430333530373539"
+              "__CACHE_BREAKER__": "0x0000000000000031363534383835343139323938"
             }
           }
         }

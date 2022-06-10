@@ -20,12 +20,12 @@ const yIncrement = INCREMENT;
 
 export const generateEmptyMatrix = (mapWidth: number, mapHeight: number, defaultValue: any): any[][] => {
   const result: number[][] = [];
-  for (let i = 0; i < mapHeight; i++) {
-    const row: number[] = [];
-    for (let j = 0; j < mapWidth; j++) {
-      row.push(defaultValue);
+  for (let x = 0; x < mapWidth; x++) {
+    const col: number[] = [];
+    for (let y = 0; y < mapHeight; y++) {
+      col.push(defaultValue);
     }
-    result.push(row);
+    result.push(col);
   }
   return result;
 };
@@ -76,13 +76,13 @@ export const generateNoiseMap = (mapWidth: number, mapHeight: number, sizeFactor
 
   const _noiseMatrix: number[][] = [];
 
-  for (let x = 0; x < mapHeight * xIncrement; x += xIncrement) {
-    const row = [];
-    for (let y = 0; y < mapWidth * yIncrement; y += yIncrement) {
+  for (let x = 0; x < mapWidth * xIncrement; x += xIncrement) {
+    const col = [];
+    for (let y = 0; y < mapHeight * yIncrement; y += yIncrement) {
       const val = noise.noise2D(x / sizeFactor, y / sizeFactor);
-      row.push(Math.abs(scale(val, 0, 1)));
+      col.push(Math.abs(scale(val, 0, 1)));
     }
-    _noiseMatrix.push(row);
+    _noiseMatrix.push(col);
   }
   return _noiseMatrix;
 };
@@ -150,7 +150,7 @@ export const rgbArrayToString = (rgbArray: number[]): string => {
  * @returns a 2d matrix of tile types
  */
 export const placePortsAndCities = (colorMap: number[][][], numPorts: number, numCities: number): TileMapOutput => {
-  let tileMap: TILE_TYPE[][] = generateEmptyMatrix(colorMap[0].length, colorMap.length, TILE_TYPE.WATER);
+  let tileMap: TILE_TYPE[][] = generateEmptyMatrix(colorMap.length, colorMap[0].length, TILE_TYPE.WATER);
 
   // 1. Identify coastlines and inland areas.
   const coastlineTiles: number[][] = [];

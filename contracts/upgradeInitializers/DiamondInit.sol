@@ -27,7 +27,7 @@ contract DiamondInit is UseStorage {
     // data to set your own state variables
     function init(
         WorldConstants memory _constants,
-        Base[] memory _bases,
+        // Base[] memory _bases,
         TroopType[] memory _troopTypes
     ) external {
         // adding ERC165 data
@@ -47,11 +47,11 @@ contract DiamondInit is UseStorage {
         // set world constants
         gs().worldConstants = _constants;
 
-        // initialize bases
-        for (uint256 i = 0; i < _bases.length; i++) {
-            gs().baseIds.push(i + 1);
-            gs().baseIdMap[i + 1] = _bases[i];
-        }
+        // // initialize bases
+        // for (uint256 i = 0; i < _bases.length; i++) {
+        //     gs().baseIds.push(i + 1);
+        //     gs().baseIdMap[i + 1] = _bases[i];
+        // }
 
         // initialize troop types
         for (uint256 i = 0; i < _troopTypes.length; i++) {
@@ -63,35 +63,3 @@ contract DiamondInit is UseStorage {
         gs().troopNonce++;
     }
 }
-
-// contract DiamondInit is UseStorage {
-//     // You can add parameters to this function in order to pass in
-//     // data to set your own state variables
-//     function init(WorldConstants memory constants, Item[] memory _items) external {
-//         // adding ERC165 data
-//         LibDiamond.DiamondStorage storage ds = LibDiamond.diamondStorage();
-//         ds.supportedInterfaces[type(IERC165).interfaceId] = true;
-//         ds.supportedInterfaces[type(IDiamondCut).interfaceId] = true;
-//         ds.supportedInterfaces[type(IDiamondLoupe).interfaceId] = true;
-//         ds.supportedInterfaces[type(IERC173).interfaceId] = true;
-
-//         // add your own state variables
-//         // EIP-2535 specifies that the `diamondCut` function takes two optional
-//         // arguments: address _init and bytes calldata _calldata
-//         // These arguments are used to execute an arbitrary function using delegatecall
-//         // in order to set state variables in the diamond during deployment or an upgrade
-//         // More info here: https://eips.ethereum.org/EIPS/eip-2535#diamond-interface
-
-//         // set world constants
-//         gs().worldConstants = constants;
-
-//         // initialize items
-//         for (uint256 i = 0; i < _items.length; i++) {
-//             gs().itemsWithMetadata[i] = _items[i];
-//             gs().itemNonce += 1;
-//         }
-
-//         // start worldBlockNonce at 1 because 0 denotes an empty block
-//         gs().worldBlockNonce++;
-//     }
-// }

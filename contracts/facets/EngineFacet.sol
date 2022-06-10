@@ -34,7 +34,7 @@ contract EngineFacet is UseStorage {
      * @param _player player address
      */
     function initializePlayer(Position memory _pos, address _player) external {
-        if (Util._getBaseOwner(Util._getTileAt(_pos).baseId) == address(0)) revert("Base is taken");
+        if (Util._getBaseOwner(Util._getTileAt(_pos).baseId) != address(0)) revert("Base is taken");
 
         gs().players.push(_player);
         gs().playerMap[_player] = Player({initEpoch: gs().epoch, active: true, pos: _pos});

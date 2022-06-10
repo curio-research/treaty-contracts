@@ -32,7 +32,6 @@ export interface TileMapOutput {
   cityTiles: number[][];
 }
 
-// FIXME: implement
 export interface AllGameMapsOutput {
   tileMap: TILE_TYPE[][];
   colorMap: number[][][];
