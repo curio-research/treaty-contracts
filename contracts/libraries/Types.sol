@@ -7,9 +7,9 @@ enum BASE_NAME {
 }
 
 enum TERRAIN {
-    WATER,
     COASTLINE,
-    INLAND
+    INLAND,
+    WATER
 }
 
 enum TROOP_NAME {
@@ -29,7 +29,6 @@ struct Position {
 struct Player {
     uint256 initEpoch;
     bool active;
-    Position pos;
 }
 
 struct Base {
@@ -96,6 +95,7 @@ struct GameState {
     uint256 lastTimestamp;
     mapping(uint256 => Production) baseProductionMap;
     uint256[] baseIds;
+    uint256 baseNonce;
     mapping(uint256 => Base) baseIdMap;
     uint256[] troopIds;
     uint256 troopNonce;

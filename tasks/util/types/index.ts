@@ -6,6 +6,15 @@ export enum TILE_TYPE {
   CITY = 4,
 }
 
+export enum TROOP_NAME {
+  ARMY,
+  TROOP_TRANSPORT,
+  DESTROYER,
+  CRUISER,
+  BATTLESHIP,
+  FIGHTER_JET,
+}
+
 export interface MapInput {
   width: number;
   height: number;

@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/Users/yijiachen/Documents/Blockchain/curio/tech/engine/contracts/libraries/Types.sol": {
-      "lastModificationDate": 1654882326070,
-      "contentHash": "ad3ef683899d26befa65d3acc9383ea6",
+      "lastModificationDate": 1654900251714,
+      "contentHash": "5079ebde4318921c4be87fbd7ba8a74a",
       "sourceName": "contracts/libraries/Types.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -28,7 +28,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363534383835343139323938"
+              "__CACHE_BREAKER__": "0x0000000000000031363534393030333438323932"
             }
           }
         }
@@ -40,8 +40,8 @@
       "artifacts": []
     },
     "/Users/yijiachen/Documents/Blockchain/curio/tech/engine/node_modules/hardhat-diamond-abi/dist/contract.sol": {
-      "lastModificationDate": 1654885425293,
-      "contentHash": "4bf715966cca40884b30214d74f59c46",
+      "lastModificationDate": 1654900354819,
+      "contentHash": "b09df54193ce856d178364260e34660e",
       "sourceName": "hardhat-diamond-abi/Curio.sol",
       "solcConfig": {
         "version": "X.X.X",
@@ -80,7 +80,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363534383835343139323938"
+              "__CACHE_BREAKER__": "0x0000000000000031363534393030333438323932"
             }
           }
         }
@@ -123,7 +123,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363534383835343139323938"
+              "__CACHE_BREAKER__": "0x0000000000000031363534393030333438323932"
             }
           }
         }
@@ -165,7 +165,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363534383835343139323938"
+              "__CACHE_BREAKER__": "0x0000000000000031363534393030333438323932"
             }
           }
         }
@@ -205,7 +205,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363534383835343139323938"
+              "__CACHE_BREAKER__": "0x0000000000000031363534393030333438323932"
             }
           }
         }
@@ -254,7 +254,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363534383835343139323938"
+              "__CACHE_BREAKER__": "0x0000000000000031363534393030333438323932"
             }
           }
         }
@@ -294,7 +294,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363534383835343139323938"
+              "__CACHE_BREAKER__": "0x0000000000000031363534393030333438323932"
             }
           }
         }
@@ -334,7 +334,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363534383835343139323938"
+              "__CACHE_BREAKER__": "0x0000000000000031363534393030333438323932"
             }
           }
         }
@@ -348,8 +348,8 @@
       ]
     },
     "/Users/yijiachen/Documents/Blockchain/curio/tech/engine/contracts/libraries/GameUtil.sol": {
-      "lastModificationDate": 1654840070900,
-      "contentHash": "7e8459a1192bd0b99dd198bee474471a",
+      "lastModificationDate": 1654898160705,
+      "contentHash": "550cedfe355b88ed817cf3236119f5a1",
       "sourceName": "contracts/libraries/GameUtil.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -374,7 +374,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363534383835343139323938"
+              "__CACHE_BREAKER__": "0x0000000000000031363534393030333438323932"
             }
           }
         }
@@ -418,7 +418,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363534383835343139323938"
+              "__CACHE_BREAKER__": "0x0000000000000031363534393030333438323932"
             }
           }
         }
@@ -461,7 +461,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363534383835343139323938"
+              "__CACHE_BREAKER__": "0x0000000000000031363534393030333438323932"
             }
           }
         }
@@ -478,8 +478,8 @@
       ]
     },
     "/Users/yijiachen/Documents/Blockchain/curio/tech/engine/contracts/facets/EngineFacet.sol": {
-      "lastModificationDate": 1654884626442,
-      "contentHash": "32e72283e43a8539ba0a908e7a506e1a",
+      "lastModificationDate": 1654900307386,
+      "contentHash": "05b6943eb547d0b2b34ba716a6e52b4c",
       "sourceName": "contracts/facets/EngineFacet.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -504,7 +504,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363534383835343139323938"
+              "__CACHE_BREAKER__": "0x0000000000000031363534393030333438323932"
             }
           }
         }
@@ -513,7 +513,8 @@
         "contracts/libraries/Storage.sol",
         "contracts/libraries/GameUtil.sol",
         "contracts/libraries/Types.sol",
-        "@openzeppelin/contracts/utils/math/SafeMath.sol"
+        "@openzeppelin/contracts/utils/math/SafeMath.sol",
+        "hardhat/console.sol"
       ],
       "versionPragmas": [
         "^0.8.4"
@@ -549,7 +550,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363534383835343139323938"
+              "__CACHE_BREAKER__": "0x0000000000000031363534393030333438323932"
             }
           }
         }
@@ -593,7 +594,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363534383835343139323938"
+              "__CACHE_BREAKER__": "0x0000000000000031363534393030333438323932"
             }
           }
         }
@@ -636,7 +637,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363534383835343139323938"
+              "__CACHE_BREAKER__": "0x0000000000000031363534393030333438323932"
             }
           }
         }
@@ -679,7 +680,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363534383835343139323938"
+              "__CACHE_BREAKER__": "0x0000000000000031363534393030333438323932"
             }
           }
         }
@@ -719,7 +720,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363534383835343139323938"
+              "__CACHE_BREAKER__": "0x0000000000000031363534393030333438323932"
             }
           }
         }
@@ -730,6 +731,46 @@
       ],
       "artifacts": [
         "SafeMath"
+      ]
+    },
+    "/Users/yijiachen/Documents/Blockchain/curio/tech/engine/node_modules/hardhat/console.sol": {
+      "lastModificationDate": 1654562343179,
+      "contentHash": "cc4777addd464ea56fa35b1c45df0591",
+      "sourceName": "hardhat/console.sol",
+      "solcConfig": {
+        "version": "0.8.4",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          },
+          "libraries": {
+            "": {
+              "__CACHE_BREAKER__": "0x0000000000000031363534393030333438323932"
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.4.22 <0.9.0"
+      ],
+      "artifacts": [
+        "console"
       ]
     }
   }

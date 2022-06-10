@@ -47,12 +47,6 @@ contract DiamondInit is UseStorage {
         // set world constants
         gs().worldConstants = _constants;
 
-        // // initialize bases
-        // for (uint256 i = 0; i < _bases.length; i++) {
-        //     gs().baseIds.push(i + 1);
-        //     gs().baseIdMap[i + 1] = _bases[i];
-        // }
-
         // initialize troop types
         for (uint256 i = 0; i < _troopTypes.length; i++) {
             gs().troopTypeIds.push(i + 1);

@@ -1,6 +1,5 @@
-import { BigNumber } from 'ethers';
 import { TroopTypeStruct } from '../../typechain-types/DiamondInit';
-import { RenderInput } from './types';
+import { RenderInput, TROOP_NAME } from './types';
 
 export const LOCALHOST_RPC_URL = 'http://127.0.0.1:8545/';
 export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
@@ -16,14 +15,6 @@ export const NUM_CITIES = 30;
 export const MAP_INTERVAL = 10;
 export const SECONDS_PER_TURN = 6;
 
-export enum TROOP_NAME {
-  ARMY,
-  TROOP_TRANSPORT,
-  DESTROYER,
-  CRUISER,
-  BATTLESHIP,
-  FIGHTER_JET,
-}
 export const TROOP_TYPES: TroopTypeStruct[] = [
   {
     name: TROOP_NAME.ARMY,

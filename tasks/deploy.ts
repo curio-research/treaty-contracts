@@ -7,10 +7,10 @@ import { task } from 'hardhat/config';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { deployProxy, printDivider } from './util/deployHelper';
-import { LOCALHOST_RPC_URL, LOCALHOST_WS_RPC_URL, TROOP_TYPES, getTroopTypeIndexByName, RENDER_CONSTANTS, MAP_INTERVAL, NUM_CITIES, NUM_PORTS, SECONDS_PER_TURN, WORLD_HEIGHT, WORLD_WIDTH, TROOP_NAME, getTroopNames } from './util/constants';
+import { LOCALHOST_RPC_URL, LOCALHOST_WS_RPC_URL, TROOP_TYPES, getTroopTypeIndexByName, RENDER_CONSTANTS, MAP_INTERVAL, NUM_CITIES, NUM_PORTS, SECONDS_PER_TURN, WORLD_HEIGHT, WORLD_WIDTH, getTroopNames } from './util/constants';
 import { position } from '../util/types/common';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
-import { MapInput, TILE_TYPE } from './util/types';
+import { MapInput, TILE_TYPE, TROOP_NAME } from './util/types';
 import { WorldConstantsStruct } from '../typechain-types/DiamondInit';
 import { BigNumber } from 'ethers';
 import { generateGameMaps } from './util/mapHelper';
@@ -35,7 +35,7 @@ task('deploy', 'deploy contracts')
     let player1: SignerWithAddress;
     let player2: SignerWithAddress;
     [player1, player2] = await hre.ethers.getSigners();
-    const armyIndex = getTroopTypeIndexByName(TROOP_TYPES, TROOP_NAME.ARMY);
+    const armyTypeId = getTroopTypeIndexByName(TROOP_TYPES, TROOP_NAME.ARMY) + 1;
 
     // Set up game configs
     const worldConstants: WorldConstantsStruct = {
@@ -99,13 +99,18 @@ task('deploy', 'deploy contracts')
         x = Math.floor(Math.random() * WORLD_WIDTH);
         y = Math.floor(Math.random() * WORLD_HEIGHT);
         player2Pos = { x, y };
-      } while (tileMap[x][y] != TILE_TYPE.PORT);
+      } while (tileMap[x][y] != TILE_TYPE.PORT && player2Pos.x !== player1Pos.x && player2Pos.y !== player1Pos.y);
 
-      let tx = await diamond.connect(player1).initializePlayer(player1Pos, player1.address); // initialize users
+      // Give each player a port and an army to start with
+      let tx = await diamond.connect(player1).initializePlayer(player1Pos, player1.address);
+      await tx.wait();
+      tx = await diamond.connect(player1).initializePlayer(player2Pos, player2.address);
+      await tx.wait();
+      tx = await diamond.connect(player1).spawnTroop(player1Pos, player1.address, armyTypeId);
+      await tx.wait();
+      tx = await diamond.connect(player1).spawnTroop(player2Pos, player2.address, armyTypeId);
       await tx.wait();
     }
-
-    // TODO: bulk initialize ports and cities
 
     // ---------------------------------
     // generate config files
