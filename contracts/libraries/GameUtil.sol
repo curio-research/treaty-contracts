@@ -1,9 +1,9 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import {BASE_NAME, GameState, Position, Tile} from "./Types.sol";
+import {BASE_NAME, GameState, Position, Tile} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
-import {LibStorage} from "./Storage.sol";
+import {LibStorage} from "contracts/libraries/Storage.sol";
 
 library Util {
     using SafeMath for uint256;

@@ -2,9 +2,9 @@
 pragma solidity ^0.8.4;
 
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
-import "../libraries/Storage.sol";
-import {Util} from "../libraries/GameUtil.sol";
-import {Base, GameState, Player, Position, Production, TERRAIN, Tile, Troop, TroopType} from "../libraries/Types.sol";
+import "contracts/libraries/Storage.sol";
+import {Util} from "contracts/libraries/GameUtil.sol";
+import {Base, GameState, Player, Position, Production, TERRAIN, Tile, Troop, TroopType} from "contracts/libraries/Types.sol";
 
 contract EngineFacet is UseStorage {
     using SafeMath for uint256;

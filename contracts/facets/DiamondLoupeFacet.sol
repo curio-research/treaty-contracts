@@ -5,9 +5,9 @@ pragma solidity ^0.8.0;
 * EIP-2535 Diamonds: https://eips.ethereum.org/EIPS/eip-2535
 /******************************************************************************/
 
-import {LibDiamond} from "../libraries/LibDiamond.sol";
-import {IDiamondLoupe} from "../interfaces/IDiamondLoupe.sol";
-import {IERC165} from "../interfaces/IERC165.sol";
+import {LibDiamond} from "contracts/libraries/LibDiamond.sol";
+import {IDiamondLoupe} from "contracts/interfaces/IDiamondLoupe.sol";
+import {IERC165} from "contracts/interfaces/IERC165.sol";
 
 // The functions in DiamondLoupeFacet MUST be added to a diamond.
 // The EIP-2535 Diamond standard requires these functions
