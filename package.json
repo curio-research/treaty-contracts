@@ -2,7 +2,10 @@
   "name": "curio-contracts",
   "private": true,
   "scripts": {
-    "contract-size": "yarn run hardhat size-contracts"
+    "contract-size": "yarn run hardhat size-contracts",
+    "sample": "npx ts-node test/util/foundry/sample.ts",
+    "gen-selectors": "npx ts-node test/util/foundry/selector.ts",
+    "forge-test": "forge test --ffi -vv"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.2",
@@ -30,6 +33,7 @@
     "dotenv": "^16.0.0",
     "fs-extra": "^10.0.0",
     "hardhat-diamond-abi": "^2.0.0",
+    "hardhat-preprocessor": "^0.1.4",
     "lodash": "^4.17.21",
     "prettier": "^2.4.1",
     "prettier-plugin-solidity": "^1.0.0-beta.18",

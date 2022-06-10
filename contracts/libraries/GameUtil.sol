@@ -1,9 +1,9 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-import {BaseName, GameState, Position, Tile} from "./Types.sol";
-import {LibStorage} from "./Storage.sol";
+import {BASE_NAME, GameState, Position, Tile} from "contracts/libraries/Types.sol";
+import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
+import {LibStorage} from "contracts/libraries/Storage.sol";
 
 library Util {
     using SafeMath for uint256;
@@ -74,8 +74,8 @@ library Util {
         return gs().troopTypeIdMap[_troopTypeId].speed;
     }
 
-    function _isArmy(uint256 _troopTypeId) public view returns (bool) {
-        return gs().troopTypeIdMap[_troopTypeId].isArmy;
+    function _isLandTroop(uint256 _troopTypeId) public view returns (bool) {
+        return gs().troopTypeIdMap[_troopTypeId].isLandTroop;
     }
 
     function _getBaseHealth(uint256 _baseId) public view returns (uint256) {
@@ -91,7 +91,11 @@ library Util {
     }
 
     function _hasPort(Tile memory _tile) public view returns (bool) {
-        return gs().baseIdMap[_tile.baseId].name == BaseName.PORT;
+        return gs().baseIdMap[_tile.baseId].name == BASE_NAME.PORT;
+    }
+
+    function _getTileAt(Position memory _pos) public view returns (Tile memory) {
+        return gs().map[_pos.x][_pos.y];
     }
 
     function _strike(uint256 _strikeFactor) public view returns (bool) {

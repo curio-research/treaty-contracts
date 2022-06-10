@@ -39,23 +39,7 @@ contract GetterFacet is UseStorage {
         return (_allTiles, _allPos);
     }
 
-    // // this is called after _getMap is called. used to fetch metadata around blocks
-    // function _getBlockChunkData(Position memory _pos) external view returns (BlockData[] memory, Position[] memory) {
-    //     uint256 interval = gs().worldConstants.getMapInterval;
-
-    //     BlockData[] memory allBlockChunkData = new BlockData[](interval * interval);
-    //     Position[] memory allPos = new Position[](interval * interval);
-
-    //     uint256 nonce = 0;
-    //     for (uint256 x = _pos.x; x < _pos.x + interval; x++) {
-    //         for (uint256 y = _pos.y; y < _pos.y + interval; y++) {
-    //             Position memory _tempPos = Position({x: x, y: y});
-    //             allBlockChunkData[nonce] = GameUtils._getBlockDataAtPos(_tempPos);
-    //             allPos[nonce] = _tempPos;
-    //             nonce += 1;
-    //         }
-    //     }
-
-    //     return (allBlockChunkData, allPos);
-    // }
+    function _getSample() external view returns (uint256) {
+        return gs().sample;
+    }
 }

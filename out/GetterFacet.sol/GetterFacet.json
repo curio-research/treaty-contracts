@@ -1,0 +1,2518 @@
+{
+  "abi": [
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "x",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "y",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct Position",
+          "name": "_pos",
+          "type": "tuple"
+        }
+      ],
+      "name": "_getMapChunk",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "enum Terrain",
+              "name": "terrain",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint256",
+              "name": "occupantId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "baseId",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct Tile[]",
+          "name": "",
+          "type": "tuple[]"
+        },
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "x",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "y",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct Position[]",
+          "name": "",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "_getSample",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "bulkGetAllTroops",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "troopTypeId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "lastMoved",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "lastAttacked",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "health",
+              "type": "uint256"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "uint256",
+                  "name": "x",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "y",
+                  "type": "uint256"
+                }
+              ],
+              "internalType": "struct Position",
+              "name": "pos",
+              "type": "tuple"
+            },
+            {
+              "internalType": "uint256[]",
+              "name": "cargoTroopIds",
+              "type": "uint256[]"
+            }
+          ],
+          "internalType": "struct Troop[]",
+          "name": "",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": {
+    "object": "0x608060405234801561001057600080fd5b506108e8806100206000396000f3fe608060405234801561001057600080fd5b50600436106100415760003560e01c8063863eaa0b14610046578063af248a341461007b578063fa5ba3fb1461009c575b600080fd5b7f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e9ec3f2546040519081526020015b60405180910390f35b61008e610089366004610631565b6100b1565b6040516100729291906106d9565b6100a461039f565b6040516100729190610760565b7f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e70fd2354606090819060006100e48280610862565b67ffffffffffffffff81111561010a57634e487b7160e01b600052604160045260246000fd5b60405190808252806020026020018201604052801561016057816020015b61014d6040805160608101909152806000815260200160008152602001600081525090565b8152602001906001900390816101285790505b509050600061016f8380610862565b67ffffffffffffffff81111561019557634e487b7160e01b600052604160045260246000fd5b6040519080825280602002602001820160405280156101da57816020015b60408051808201909152600080825260208201528152602001906001900390816101b35790505b5086519091506000905b87516101f190869061084a565b8110156103925760208801515b85896020015161020e919061084a565b81101561037f57604080518082019091528281526020810182905289517f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e70fd28906103e8811061026c57634e487b7160e01b600052603260045260246000fd5b610bb802018a602001516103e8811061029557634e487b7160e01b600052603260045260246000fd5b6040805160608101909152600391909102919091018054829060ff1660028111156102d057634e487b7160e01b600052602160045260246000fd5b60028111156102ef57634e487b7160e01b600052602160045260246000fd5b81526020016001820154815260200160028201548152505086858151811061032757634e487b7160e01b600052603260045260246000fd5b60200260200101819052508085858151811061035357634e487b7160e01b600052603260045260246000fd5b602090810291909101015261036960018561084a565b935050808061037790610881565b9150506101fe565b508061038a81610881565b9150506101e4565b5091969095509350505050565b606060007f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e70fd20622dc6ce015467ffffffffffffffff8111156103f057634e487b7160e01b600052604160045260246000fd5b60405190808252806020026020018201604052801561042957816020015b6104166105d0565b81526020019060019003908161040e5790505b50905060005b7f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e9ec3ee548110156105ca577f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e9ec3ed80547f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e9ec3ef91600091849081106104be57634e487b7160e01b600052603260045260246000fd5b600091825260208083209091015483528281019390935260409182019020815160e08101835281546001600160a01b031681526001820154818501526002820154818401526003820154606082015260048201546080820152825180840184526005830154815260068301548186015260a08201526007820180548451818702810187019095528085529194929360c086019390929083018282801561058357602002820191906000526020600020905b81548152602001906001019080831161056f575b5050505050815250508282815181106105ac57634e487b7160e01b600052603260045260246000fd5b602002602001018190525080806105c290610881565b91505061042f565b50919050565b6040518060e0016040528060006001600160a01b0316815260200160008152602001600081526020016000815260200160008152602001610624604051806040016040528060008152602001600081525090565b8152602001606081525090565b600060408284031215610642578081fd5b6040516040810181811067ffffffffffffffff8211171561067157634e487b7160e01b83526041600452602483fd5b604052823581526020928301359281019290925250919050565b6000815180845260208085019450808401835b838110156106ce576106bb87835180518252602090810151910152565b604096909601959082019060010161069e565b509495945050505050565b6040808252835182820181905260009190606090818501906020808901865b8381101561074157815180516003811061072057634e487b7160e01b8a52602160045260248afd5b865280840151848701528701518786015293850193908201906001016106f8565b50508683039087015250610755818761068b565b979650505050505050565b60006020808301818452808551808352604092508286019150828160051b870101848801865b8381101561083c57888303603f19018552815180516001600160a01b0316845287810151888501528681015187850152606080820151908501526080808201519085015260a0808201518051918601919091526020015160c080860191909152015161010060e085018190528151908501819052908801906101208501908a905b808210156108275783518352928a0192918a019160019190910190610807565b50509588019593505090860190600101610786565b509098975050505050505050565b6000821982111561085d5761085d61089c565b500190565b600081600019048311821515161561087c5761087c61089c565b500290565b60006000198214156108955761089561089c565b5060010190565b634e487b7160e01b600052601160045260246000fdfea2646970667358221220a6bf64946c8645a09d6943bc0b951d4f403b74401daab6895f8dcf4a69e43a4c64736f6c63430008040033",
+    "sourceMap": "313:2145:5:-:0;;;;;;;;;;;;;;;;;;;",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x608060405234801561001057600080fd5b50600436106100415760003560e01c8063863eaa0b14610046578063af248a341461007b578063fa5ba3fb1461009c575b600080fd5b7f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e9ec3f2546040519081526020015b60405180910390f35b61008e610089366004610631565b6100b1565b6040516100729291906106d9565b6100a461039f565b6040516100729190610760565b7f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e70fd2354606090819060006100e48280610862565b67ffffffffffffffff81111561010a57634e487b7160e01b600052604160045260246000fd5b60405190808252806020026020018201604052801561016057816020015b61014d6040805160608101909152806000815260200160008152602001600081525090565b8152602001906001900390816101285790505b509050600061016f8380610862565b67ffffffffffffffff81111561019557634e487b7160e01b600052604160045260246000fd5b6040519080825280602002602001820160405280156101da57816020015b60408051808201909152600080825260208201528152602001906001900390816101b35790505b5086519091506000905b87516101f190869061084a565b8110156103925760208801515b85896020015161020e919061084a565b81101561037f57604080518082019091528281526020810182905289517f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e70fd28906103e8811061026c57634e487b7160e01b600052603260045260246000fd5b610bb802018a602001516103e8811061029557634e487b7160e01b600052603260045260246000fd5b6040805160608101909152600391909102919091018054829060ff1660028111156102d057634e487b7160e01b600052602160045260246000fd5b60028111156102ef57634e487b7160e01b600052602160045260246000fd5b81526020016001820154815260200160028201548152505086858151811061032757634e487b7160e01b600052603260045260246000fd5b60200260200101819052508085858151811061035357634e487b7160e01b600052603260045260246000fd5b602090810291909101015261036960018561084a565b935050808061037790610881565b9150506101fe565b508061038a81610881565b9150506101e4565b5091969095509350505050565b606060007f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e70fd20622dc6ce015467ffffffffffffffff8111156103f057634e487b7160e01b600052604160045260246000fd5b60405190808252806020026020018201604052801561042957816020015b6104166105d0565b81526020019060019003908161040e5790505b50905060005b7f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e9ec3ee548110156105ca577f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e9ec3ed80547f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e9ec3ef91600091849081106104be57634e487b7160e01b600052603260045260246000fd5b600091825260208083209091015483528281019390935260409182019020815160e08101835281546001600160a01b031681526001820154818501526002820154818401526003820154606082015260048201546080820152825180840184526005830154815260068301548186015260a08201526007820180548451818702810187019095528085529194929360c086019390929083018282801561058357602002820191906000526020600020905b81548152602001906001019080831161056f575b5050505050815250508282815181106105ac57634e487b7160e01b600052603260045260246000fd5b602002602001018190525080806105c290610881565b91505061042f565b50919050565b6040518060e0016040528060006001600160a01b0316815260200160008152602001600081526020016000815260200160008152602001610624604051806040016040528060008152602001600081525090565b8152602001606081525090565b600060408284031215610642578081fd5b6040516040810181811067ffffffffffffffff8211171561067157634e487b7160e01b83526041600452602483fd5b604052823581526020928301359281019290925250919050565b6000815180845260208085019450808401835b838110156106ce576106bb87835180518252602090810151910152565b604096909601959082019060010161069e565b509495945050505050565b6040808252835182820181905260009190606090818501906020808901865b8381101561074157815180516003811061072057634e487b7160e01b8a52602160045260248afd5b865280840151848701528701518786015293850193908201906001016106f8565b50508683039087015250610755818761068b565b979650505050505050565b60006020808301818452808551808352604092508286019150828160051b870101848801865b8381101561083c57888303603f19018552815180516001600160a01b0316845287810151888501528681015187850152606080820151908501526080808201519085015260a0808201518051918601919091526020015160c080860191909152015161010060e085018190528151908501819052908801906101208501908a905b808210156108275783518352928a0192918a019160019190910190610807565b50509588019593505090860190600101610786565b509098975050505050505050565b6000821982111561085d5761085d61089c565b500190565b600081600019048311821515161561087c5761087c61089c565b500290565b60006000198214156108955761089561089c565b5060010190565b634e487b7160e01b600052601160045260246000fdfea2646970667358221220a6bf64946c8645a09d6943bc0b951d4f403b74401daab6895f8dcf4a69e43a4c64736f6c63430008040033",
+    "sourceMap": "313:2145:5:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1442:89;1513:11;;1442:89;;4691:25:25;;;4679:2;4664:18;1442:89:5;;;;;;;;697:739;;;;;;:::i;:::-;;:::i;:::-;;;;;;;;:::i;354:298::-;;;:::i;:::-;;;;;;;:::i;697:739::-;828:31;;764:13;;;;808:17;907:21;828:31;;907:21;:::i;:::-;896:33;;;;;;-1:-1:-1;;;896:33:5;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;;;;;;;;;;;;;;;;;;;;;;;;;896:33:5;;;;;;;;;;;;;;;;-1:-1:-1;870:59:5;-1:-1:-1;939:25:5;982:21;994:9;;982:21;:::i;:::-;967:37;;;;;;-1:-1:-1;;;967:37:5;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;;;;;;;;;;;;;;;;967:37:5;;;;;;;;;;;;;;;-1:-1:-1;1060:6:5;;939:65;;-1:-1:-1;1015:14:5;;1043:349;1072:6;;:18;;1081:9;;1072:18;:::i;:::-;1068:1;:22;1043:349;;;1128:6;;;;1111:271;1149:9;1140:4;:6;;;:18;;;;:::i;:::-;1136:1;:22;1111:271;;;1210:22;;;;;;;;;;;;;;;;;;1279:6;;1270:8;;:16;;;;;-1:-1:-1;;;1270:16:5;;;;;;;;;;;;1287:4;:6;;;1270:24;;;;;-1:-1:-1;;;1270:24:5;;;;;;;;;1250:44;;;;;;;;;1270:24;;;;;;;;;1250:44;;;;;;;;;;;;-1:-1:-1;;;1250:44:5;;;;;;;;;;;;;;;-1:-1:-1;;;1250:44:5;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:9;1260:6;1250:17;;;;;;-1:-1:-1;;;1250:17:5;;;;;;;;;;;;;;:44;;;;1330:8;1312:7;1320:6;1312:15;;;;;;-1:-1:-1;;;1312:15:5;;;;;;;;;;;;;;;;;;:26;1356:11;1366:1;1356:11;;:::i;:::-;;;1111:271;1160:3;;;;;:::i;:::-;;;;1111:271;;;-1:-1:-1;1092:3:5;;;;:::i;:::-;;;;1043:349;;;-1:-1:-1;1410:9:5;;1421:7;;-1:-1:-1;697:739:5;-1:-1:-1;;;;697:739:5:o;354:298::-;405:14;431:25;188:31:13;471:15:5;;;459:28;;;;;;-1:-1:-1;;;459:28:5;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;459:28:5;;;;;;;;;;;;;;;;;431:56;;503:9;498:120;522:15;;518:19;;498:120;;;590:13;:16;;574:15;;:33;;604:1;;590:16;;;;-1:-1:-1;;;590:16:5;;;;;;;;;;;;;;;;;;;;;;574:33;;;;;;;;;;;;;;;558:49;;;;;;;;;-1:-1:-1;;;;;558:49:5;;;-1:-1:-1;558:49:5;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;558:49:5;;;;;;;;;;;;;;;;;;;;;;;;;574:33;;558:49;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:10;569:1;558:13;;;;;;-1:-1:-1;;;558:13:5;;;;;;;;;;;;;;:49;;;;539:3;;;;;:::i;:::-;;;;498:120;;;-1:-1:-1;635:10:5;354:298;-1:-1:-1;354:298:5:o;14:622:25:-;99:6;152:2;140:9;131:7;127:23;123:32;120:2;;;173:6;165;158:22;120:2;211;205:9;253:2;245:6;241:15;322:6;310:10;307:22;286:18;274:10;271:34;268:62;265:2;;;-1:-1:-1;;;353:36:25;;412:4;409:1;402:15;445:4;353:36;430:20;265:2;476;469:22;515:23;;500:39;;600:2;585:18;;;572:32;555:15;;;548:57;;;;-1:-1:-1;507:6:25;110:526;-1:-1:-1;110:526:25:o;641:467::-;702:3;740:5;734:12;767:6;762:3;755:19;793:4;822:2;817:3;813:12;806:19;;859:2;852:5;848:14;880:3;892:191;906:6;903:1;900:13;892:191;;;955:46;997:3;988:6;982:13;1187:12;;1175:25;;1249:4;1238:16;;;1232:23;1216:14;;1209:47;1165:97;955:46;1030:4;1021:14;;;;;1058:15;;;;928:1;921:9;892:191;;;-1:-1:-1;1099:3:25;;710:398;-1:-1:-1;;;;;710:398:25:o;1267:1297::-;1612:2;1664:21;;;1734:13;;1637:18;;;1756:22;;;1583:4;;1612:2;1797;;1815:18;;;;1852:4;1879:15;;;1583:4;1925:511;1939:6;1936:1;1933:13;1925:511;;;2004:6;1998:13;2040:2;2034:9;2073:1;2069:2;2066:9;2056:2;;-1:-1:-1;;;2107:34:25;;2168:4;2165:1;2158:15;2203:4;2107:34;2190:18;2056:2;2235:15;;2290:11;;;2284:18;2270:12;;;2263:40;2343:11;;2337:18;2323:12;;;2316:40;2376:12;;;;2411:15;;;;1961:1;1954:9;1925:511;;;-1:-1:-1;;2472:19:25;;;2452:18;;;2445:47;-1:-1:-1;2509:49:25;2476:3;2546:6;2509:49;:::i;:::-;2501:57;1592:972;-1:-1:-1;;;;;;;1592:972:25:o;2569:1971::-;2757:4;2786:2;2826;2815:9;2811:18;2856:2;2845:9;2838:21;2879:6;2914;2908:13;2945:6;2937;2930:22;2971:2;2961:12;;3004:2;2993:9;2989:18;2982:25;;3066:2;3056:6;3053:1;3049:14;3038:9;3034:30;3030:39;3104:2;3096:6;3092:15;3125:4;3138:1373;3152:6;3149:1;3146:13;3138:1373;;;3217:22;;;-1:-1:-1;;3213:36:25;3201:49;;3273:13;;3389:9;;-1:-1:-1;;;;;3385:35:25;3370:51;;3464:11;;;3458:18;3441:15;;;3434:43;3520:11;;;3514:18;3497:15;;;3490:43;3556:4;3603:11;;;3597:18;3580:15;;;3573:43;3639:4;3686:11;;;3680:18;3663:15;;;3656:43;-1:-1:-1;3765:11:25;;;3759:18;1187:12;;3831:15;;;1175:25;;;;1249:4;1238:16;1232:23;1216:14;;;;1209:47;;;;3888:13;3882:20;3309:6;3934:4;3922:17;;3915:29;;;4005:21;;3342:15;;;4039:24;;;4130:23;;;;4097:3;4085:16;;;4177:4;;4194:209;4210:8;4205:3;4202:17;4194:209;;;4287:15;;4273:30;;4372:17;;;;4329:14;;;;4238:1;4229:11;;;;;4194:209;;;-1:-1:-1;;4489:12:25;;;;4426:5;-1:-1:-1;;4454:15:25;;;;3174:1;3167:9;3138:1373;;;-1:-1:-1;4528:6:25;;2766:1774;-1:-1:-1;;;;;;;;2766:1774:25:o;4727:128::-;4767:3;4798:1;4794:6;4791:1;4788:13;4785:2;;;4804:18;;:::i;:::-;-1:-1:-1;4840:9:25;;4775:80::o;4860:168::-;4900:7;4966:1;4962;4958:6;4954:14;4951:1;4948:21;4943:1;4936:9;4929:17;4925:45;4922:2;;;4973:18;;:::i;:::-;-1:-1:-1;5013:9:25;;4912:116::o;5033:135::-;5072:3;-1:-1:-1;;5093:17:25;;5090:2;;;5113:18;;:::i;:::-;-1:-1:-1;5160:1:25;5149:13;;5080:88::o;5173:127::-;5234:10;5229:3;5225:20;5222:1;5215:31;5265:4;5262:1;5255:15;5289:4;5286:1;5279:15",
+    "linkReferences": {}
+  },
+  "methodIdentifiers": {
+    "_getMapChunk((uint256,uint256))": "af248a34",
+    "_getSample()": "863eaa0b",
+    "bulkGetAllTroops()": "fa5ba3fb"
+  },
+  "ast": {
+    "absolutePath": "contracts/facets/GetterFacet.sol",
+    "id": 2476,
+    "exportedSymbols": {
+      "GameState": [
+        4184
+      ],
+      "GetterFacet": [
+        2475
+      ],
+      "LibStorage": [
+        4008
+      ],
+      "Position": [
+        4041
+      ],
+      "Tile": [
+        4069
+      ],
+      "Troop": [
+        4086
+      ],
+      "UseStorage": [
+        4020
+      ],
+      "Util": [
+        3120
+      ]
+    },
+    "nodeType": "SourceUnit",
+    "src": "31:2428:5",
+    "nodes": [
+      {
+        "id": 2280,
+        "nodeType": "PragmaDirective",
+        "src": "31:23:5",
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".4"
+        ]
+      },
+      {
+        "id": 2284,
+        "nodeType": "ImportDirective",
+        "src": "56:61:5",
+        "absolutePath": "contracts/libraries/Types.sol",
+        "file": "../libraries/Types.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 2476,
+        "sourceUnit": 4185,
+        "symbolAliases": [
+          {
+            "foreign": {
+              "id": 2281,
+              "name": "Position",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": [],
+              "src": "64:8:5",
+              "typeDescriptions": {}
+            },
+            "nameLocation": "-1:-1:-1"
+          },
+          {
+            "foreign": {
+              "id": 2282,
+              "name": "Tile",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": [],
+              "src": "74:4:5",
+              "typeDescriptions": {}
+            },
+            "nameLocation": "-1:-1:-1"
+          },
+          {
+            "foreign": {
+              "id": 2283,
+              "name": "Troop",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": [],
+              "src": "80:5:5",
+              "typeDescriptions": {}
+            },
+            "nameLocation": "-1:-1:-1"
+          }
+        ],
+        "unitAlias": ""
+      },
+      {
+        "id": 2286,
+        "nodeType": "ImportDirective",
+        "src": "118:47:5",
+        "absolutePath": "contracts/libraries/GameUtil.sol",
+        "file": "../libraries/GameUtil.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 2476,
+        "sourceUnit": 3121,
+        "symbolAliases": [
+          {
+            "foreign": {
+              "id": 2285,
+              "name": "Util",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": [],
+              "src": "126:4:5",
+              "typeDescriptions": {}
+            },
+            "nameLocation": "-1:-1:-1"
+          }
+        ],
+        "unitAlias": ""
+      },
+      {
+        "id": 2287,
+        "nodeType": "ImportDirective",
+        "src": "166:34:5",
+        "absolutePath": "contracts/libraries/Storage.sol",
+        "file": "../libraries/Storage.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 2476,
+        "sourceUnit": 4021,
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "id": 2475,
+        "nodeType": "ContractDefinition",
+        "src": "313:2145:5",
+        "nodes": [
+          {
+            "id": 2342,
+            "nodeType": "FunctionDefinition",
+            "src": "354:298:5",
+            "body": {
+              "id": 2341,
+              "nodeType": "Block",
+              "src": "421:231:5",
+              "statements": [
+                {
+                  "assignments": [
+                    2301
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 2301,
+                      "mutability": "mutable",
+                      "name": "_allTroops",
+                      "nameLocation": "446:10:5",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 2341,
+                      "src": "431:25:5",
+                      "stateVariable": false,
+                      "storageLocation": "memory",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_array$_t_struct$_Troop_$4086_memory_ptr_$dyn_memory_ptr",
+                        "typeString": "struct Troop[]"
+                      },
+                      "typeName": {
+                        "baseType": {
+                          "id": 2299,
+                          "nodeType": "UserDefinedTypeName",
+                          "pathNode": {
+                            "id": 2298,
+                            "name": "Troop",
+                            "nodeType": "IdentifierPath",
+                            "referencedDeclaration": 4086,
+                            "src": "431:5:5"
+                          },
+                          "referencedDeclaration": 4086,
+                          "src": "431:5:5",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_Troop_$4086_storage_ptr",
+                            "typeString": "struct Troop"
+                          }
+                        },
+                        "id": 2300,
+                        "nodeType": "ArrayTypeName",
+                        "src": "431:7:5",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_array$_t_struct$_Troop_$4086_storage_$dyn_storage_ptr",
+                          "typeString": "struct Troop[]"
+                        }
+                      },
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 2310,
+                  "initialValue": {
+                    "arguments": [
+                      {
+                        "expression": {
+                          "arguments": [],
+                          "expression": {
+                            "argumentTypes": [],
+                            "id": 2306,
+                            "name": "gs",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 4019,
+                            "src": "471:2:5",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_internal_pure$__$returns$_t_struct$_GameState_$4184_storage_ptr_$",
+                              "typeString": "function () pure returns (struct GameState storage pointer)"
+                            }
+                          },
+                          "id": 2307,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "471:4:5",
+                          "tryCall": false,
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_GameState_$4184_storage_ptr",
+                            "typeString": "struct GameState storage pointer"
+                          }
+                        },
+                        "id": 2308,
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "troopNonce",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 4168,
+                        "src": "471:15:5",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      ],
+                      "id": 2305,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "lValueRequested": false,
+                      "nodeType": "NewExpression",
+                      "src": "459:11:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_objectcreation_pure$_t_uint256_$returns$_t_array$_t_struct$_Troop_$4086_memory_ptr_$dyn_memory_ptr_$",
+                        "typeString": "function (uint256) pure returns (struct Troop memory[] memory)"
+                      },
+                      "typeName": {
+                        "baseType": {
+                          "id": 2303,
+                          "nodeType": "UserDefinedTypeName",
+                          "pathNode": {
+                            "id": 2302,
+                            "name": "Troop",
+                            "nodeType": "IdentifierPath",
+                            "referencedDeclaration": 4086,
+                            "src": "463:5:5"
+                          },
+                          "referencedDeclaration": 4086,
+                          "src": "463:5:5",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_Troop_$4086_storage_ptr",
+                            "typeString": "struct Troop"
+                          }
+                        },
+                        "id": 2304,
+                        "nodeType": "ArrayTypeName",
+                        "src": "463:7:5",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_array$_t_struct$_Troop_$4086_storage_$dyn_storage_ptr",
+                          "typeString": "struct Troop[]"
+                        }
+                      }
+                    },
+                    "id": 2309,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "459:28:5",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_struct$_Troop_$4086_memory_ptr_$dyn_memory_ptr",
+                      "typeString": "struct Troop memory[] memory"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "431:56:5"
+                },
+                {
+                  "body": {
+                    "id": 2337,
+                    "nodeType": "Block",
+                    "src": "544:74:5",
+                    "statements": [
+                      {
+                        "expression": {
+                          "id": 2335,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "leftHandSide": {
+                            "baseExpression": {
+                              "id": 2323,
+                              "name": "_allTroops",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 2301,
+                              "src": "558:10:5",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_array$_t_struct$_Troop_$4086_memory_ptr_$dyn_memory_ptr",
+                                "typeString": "struct Troop memory[] memory"
+                              }
+                            },
+                            "id": 2325,
+                            "indexExpression": {
+                              "id": 2324,
+                              "name": "i",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 2312,
+                              "src": "569:1:5",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              }
+                            },
+                            "isConstant": false,
+                            "isLValue": true,
+                            "isPure": false,
+                            "lValueRequested": true,
+                            "nodeType": "IndexAccess",
+                            "src": "558:13:5",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_struct$_Troop_$4086_memory_ptr",
+                              "typeString": "struct Troop memory"
+                            }
+                          },
+                          "nodeType": "Assignment",
+                          "operator": "=",
+                          "rightHandSide": {
+                            "baseExpression": {
+                              "expression": {
+                                "arguments": [],
+                                "expression": {
+                                  "argumentTypes": [],
+                                  "id": 2326,
+                                  "name": "gs",
+                                  "nodeType": "Identifier",
+                                  "overloadedDeclarations": [],
+                                  "referencedDeclaration": 4019,
+                                  "src": "574:2:5",
+                                  "typeDescriptions": {
+                                    "typeIdentifier": "t_function_internal_pure$__$returns$_t_struct$_GameState_$4184_storage_ptr_$",
+                                    "typeString": "function () pure returns (struct GameState storage pointer)"
+                                  }
+                                },
+                                "id": 2327,
+                                "isConstant": false,
+                                "isLValue": false,
+                                "isPure": false,
+                                "kind": "functionCall",
+                                "lValueRequested": false,
+                                "names": [],
+                                "nodeType": "FunctionCall",
+                                "src": "574:4:5",
+                                "tryCall": false,
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_struct$_GameState_$4184_storage_ptr",
+                                  "typeString": "struct GameState storage pointer"
+                                }
+                              },
+                              "id": 2328,
+                              "isConstant": false,
+                              "isLValue": true,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "memberName": "troopIdMap",
+                              "nodeType": "MemberAccess",
+                              "referencedDeclaration": 4173,
+                              "src": "574:15:5",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_mapping$_t_uint256_$_t_struct$_Troop_$4086_storage_$",
+                                "typeString": "mapping(uint256 => struct Troop storage ref)"
+                              }
+                            },
+                            "id": 2334,
+                            "indexExpression": {
+                              "baseExpression": {
+                                "expression": {
+                                  "arguments": [],
+                                  "expression": {
+                                    "argumentTypes": [],
+                                    "id": 2329,
+                                    "name": "gs",
+                                    "nodeType": "Identifier",
+                                    "overloadedDeclarations": [],
+                                    "referencedDeclaration": 4019,
+                                    "src": "590:2:5",
+                                    "typeDescriptions": {
+                                      "typeIdentifier": "t_function_internal_pure$__$returns$_t_struct$_GameState_$4184_storage_ptr_$",
+                                      "typeString": "function () pure returns (struct GameState storage pointer)"
+                                    }
+                                  },
+                                  "id": 2330,
+                                  "isConstant": false,
+                                  "isLValue": false,
+                                  "isPure": false,
+                                  "kind": "functionCall",
+                                  "lValueRequested": false,
+                                  "names": [],
+                                  "nodeType": "FunctionCall",
+                                  "src": "590:4:5",
+                                  "tryCall": false,
+                                  "typeDescriptions": {
+                                    "typeIdentifier": "t_struct$_GameState_$4184_storage_ptr",
+                                    "typeString": "struct GameState storage pointer"
+                                  }
+                                },
+                                "id": 2331,
+                                "isConstant": false,
+                                "isLValue": true,
+                                "isPure": false,
+                                "lValueRequested": false,
+                                "memberName": "troopIds",
+                                "nodeType": "MemberAccess",
+                                "referencedDeclaration": 4166,
+                                "src": "590:13:5",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_array$_t_uint256_$dyn_storage",
+                                  "typeString": "uint256[] storage ref"
+                                }
+                              },
+                              "id": 2333,
+                              "indexExpression": {
+                                "id": 2332,
+                                "name": "i",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 2312,
+                                "src": "604:1:5",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_uint256",
+                                  "typeString": "uint256"
+                                }
+                              },
+                              "isConstant": false,
+                              "isLValue": true,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "nodeType": "IndexAccess",
+                              "src": "590:16:5",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              }
+                            },
+                            "isConstant": false,
+                            "isLValue": true,
+                            "isPure": false,
+                            "lValueRequested": false,
+                            "nodeType": "IndexAccess",
+                            "src": "574:33:5",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_struct$_Troop_$4086_storage",
+                              "typeString": "struct Troop storage ref"
+                            }
+                          },
+                          "src": "558:49:5",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_Troop_$4086_memory_ptr",
+                            "typeString": "struct Troop memory"
+                          }
+                        },
+                        "id": 2336,
+                        "nodeType": "ExpressionStatement",
+                        "src": "558:49:5"
+                      }
+                    ]
+                  },
+                  "condition": {
+                    "commonType": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    },
+                    "id": 2319,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftExpression": {
+                      "id": 2315,
+                      "name": "i",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 2312,
+                      "src": "518:1:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "nodeType": "BinaryOperation",
+                    "operator": "<",
+                    "rightExpression": {
+                      "expression": {
+                        "arguments": [],
+                        "expression": {
+                          "argumentTypes": [],
+                          "id": 2316,
+                          "name": "gs",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 4019,
+                          "src": "522:2:5",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_function_internal_pure$__$returns$_t_struct$_GameState_$4184_storage_ptr_$",
+                            "typeString": "function () pure returns (struct GameState storage pointer)"
+                          }
+                        },
+                        "id": 2317,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "kind": "functionCall",
+                        "lValueRequested": false,
+                        "names": [],
+                        "nodeType": "FunctionCall",
+                        "src": "522:4:5",
+                        "tryCall": false,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_GameState_$4184_storage_ptr",
+                          "typeString": "struct GameState storage pointer"
+                        }
+                      },
+                      "id": 2318,
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "troopNonce",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 4168,
+                      "src": "522:15:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "src": "518:19:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "id": 2338,
+                  "initializationExpression": {
+                    "assignments": [
+                      2312
+                    ],
+                    "declarations": [
+                      {
+                        "constant": false,
+                        "id": 2312,
+                        "mutability": "mutable",
+                        "name": "i",
+                        "nameLocation": "511:1:5",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 2338,
+                        "src": "503:9:5",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "typeName": {
+                          "id": 2311,
+                          "name": "uint256",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "503:7:5",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "visibility": "internal"
+                      }
+                    ],
+                    "id": 2314,
+                    "initialValue": {
+                      "hexValue": "30",
+                      "id": 2313,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "kind": "number",
+                      "lValueRequested": false,
+                      "nodeType": "Literal",
+                      "src": "515:1:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_rational_0_by_1",
+                        "typeString": "int_const 0"
+                      },
+                      "value": "0"
+                    },
+                    "nodeType": "VariableDeclarationStatement",
+                    "src": "503:13:5"
+                  },
+                  "loopExpression": {
+                    "expression": {
+                      "id": 2321,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "nodeType": "UnaryOperation",
+                      "operator": "++",
+                      "prefix": false,
+                      "src": "539:3:5",
+                      "subExpression": {
+                        "id": 2320,
+                        "name": "i",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 2312,
+                        "src": "539:1:5",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 2322,
+                    "nodeType": "ExpressionStatement",
+                    "src": "539:3:5"
+                  },
+                  "nodeType": "ForStatement",
+                  "src": "498:120:5"
+                },
+                {
+                  "expression": {
+                    "id": 2339,
+                    "name": "_allTroops",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 2301,
+                    "src": "635:10:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_struct$_Troop_$4086_memory_ptr_$dyn_memory_ptr",
+                      "typeString": "struct Troop memory[] memory"
+                    }
+                  },
+                  "functionReturnParameters": 2296,
+                  "id": 2340,
+                  "nodeType": "Return",
+                  "src": "628:17:5"
+                }
+              ]
+            },
+            "functionSelector": "fa5ba3fb",
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "bulkGetAllTroops",
+            "nameLocation": "363:16:5",
+            "parameters": {
+              "id": 2291,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "379:2:5"
+            },
+            "returnParameters": {
+              "id": 2296,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2295,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2342,
+                  "src": "405:14:5",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_struct$_Troop_$4086_memory_ptr_$dyn_memory_ptr",
+                    "typeString": "struct Troop[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 2293,
+                      "nodeType": "UserDefinedTypeName",
+                      "pathNode": {
+                        "id": 2292,
+                        "name": "Troop",
+                        "nodeType": "IdentifierPath",
+                        "referencedDeclaration": 4086,
+                        "src": "405:5:5"
+                      },
+                      "referencedDeclaration": 4086,
+                      "src": "405:5:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_Troop_$4086_storage_ptr",
+                        "typeString": "struct Troop"
+                      }
+                    },
+                    "id": 2294,
+                    "nodeType": "ArrayTypeName",
+                    "src": "405:7:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_struct$_Troop_$4086_storage_$dyn_storage_ptr",
+                      "typeString": "struct Troop[]"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "404:16:5"
+            },
+            "scope": 2475,
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 2464,
+            "nodeType": "FunctionDefinition",
+            "src": "697:739:5",
+            "body": {
+              "id": 2463,
+              "nodeType": "Block",
+              "src": "798:638:5",
+              "statements": [
+                {
+                  "assignments": [
+                    2357
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 2357,
+                      "mutability": "mutable",
+                      "name": "_interval",
+                      "nameLocation": "816:9:5",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 2463,
+                      "src": "808:17:5",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      },
+                      "typeName": {
+                        "id": 2356,
+                        "name": "uint256",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "808:7:5",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 2362,
+                  "initialValue": {
+                    "expression": {
+                      "expression": {
+                        "arguments": [],
+                        "expression": {
+                          "argumentTypes": [],
+                          "id": 2358,
+                          "name": "gs",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 4019,
+                          "src": "828:2:5",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_function_internal_pure$__$returns$_t_struct$_GameState_$4184_storage_ptr_$",
+                            "typeString": "function () pure returns (struct GameState storage pointer)"
+                          }
+                        },
+                        "id": 2359,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "kind": "functionCall",
+                        "lValueRequested": false,
+                        "names": [],
+                        "nodeType": "FunctionCall",
+                        "src": "828:4:5",
+                        "tryCall": false,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_GameState_$4184_storage_ptr",
+                          "typeString": "struct GameState storage pointer"
+                        }
+                      },
+                      "id": 2360,
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "worldConstants",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 4131,
+                      "src": "828:19:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_WorldConstants_$4128_storage",
+                        "typeString": "struct WorldConstants storage ref"
+                      }
+                    },
+                    "id": 2361,
+                    "isConstant": false,
+                    "isLValue": true,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "memberName": "mapInterval",
+                    "nodeType": "MemberAccess",
+                    "referencedDeclaration": 4123,
+                    "src": "828:31:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "808:51:5"
+                },
+                {
+                  "assignments": [
+                    2367
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 2367,
+                      "mutability": "mutable",
+                      "name": "_allTiles",
+                      "nameLocation": "884:9:5",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 2463,
+                      "src": "870:23:5",
+                      "stateVariable": false,
+                      "storageLocation": "memory",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_array$_t_struct$_Tile_$4069_memory_ptr_$dyn_memory_ptr",
+                        "typeString": "struct Tile[]"
+                      },
+                      "typeName": {
+                        "baseType": {
+                          "id": 2365,
+                          "nodeType": "UserDefinedTypeName",
+                          "pathNode": {
+                            "id": 2364,
+                            "name": "Tile",
+                            "nodeType": "IdentifierPath",
+                            "referencedDeclaration": 4069,
+                            "src": "870:4:5"
+                          },
+                          "referencedDeclaration": 4069,
+                          "src": "870:4:5",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_Tile_$4069_storage_ptr",
+                            "typeString": "struct Tile"
+                          }
+                        },
+                        "id": 2366,
+                        "nodeType": "ArrayTypeName",
+                        "src": "870:6:5",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_array$_t_struct$_Tile_$4069_storage_$dyn_storage_ptr",
+                          "typeString": "struct Tile[]"
+                        }
+                      },
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 2376,
+                  "initialValue": {
+                    "arguments": [
+                      {
+                        "commonType": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "id": 2374,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "leftExpression": {
+                          "id": 2372,
+                          "name": "_interval",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 2357,
+                          "src": "907:9:5",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "nodeType": "BinaryOperation",
+                        "operator": "*",
+                        "rightExpression": {
+                          "id": 2373,
+                          "name": "_interval",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 2357,
+                          "src": "919:9:5",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "src": "907:21:5",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      ],
+                      "id": 2371,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "lValueRequested": false,
+                      "nodeType": "NewExpression",
+                      "src": "896:10:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_objectcreation_pure$_t_uint256_$returns$_t_array$_t_struct$_Tile_$4069_memory_ptr_$dyn_memory_ptr_$",
+                        "typeString": "function (uint256) pure returns (struct Tile memory[] memory)"
+                      },
+                      "typeName": {
+                        "baseType": {
+                          "id": 2369,
+                          "nodeType": "UserDefinedTypeName",
+                          "pathNode": {
+                            "id": 2368,
+                            "name": "Tile",
+                            "nodeType": "IdentifierPath",
+                            "referencedDeclaration": 4069,
+                            "src": "900:4:5"
+                          },
+                          "referencedDeclaration": 4069,
+                          "src": "900:4:5",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_Tile_$4069_storage_ptr",
+                            "typeString": "struct Tile"
+                          }
+                        },
+                        "id": 2370,
+                        "nodeType": "ArrayTypeName",
+                        "src": "900:6:5",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_array$_t_struct$_Tile_$4069_storage_$dyn_storage_ptr",
+                          "typeString": "struct Tile[]"
+                        }
+                      }
+                    },
+                    "id": 2375,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "896:33:5",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_struct$_Tile_$4069_memory_ptr_$dyn_memory_ptr",
+                      "typeString": "struct Tile memory[] memory"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "870:59:5"
+                },
+                {
+                  "assignments": [
+                    2381
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 2381,
+                      "mutability": "mutable",
+                      "name": "_allPos",
+                      "nameLocation": "957:7:5",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 2463,
+                      "src": "939:25:5",
+                      "stateVariable": false,
+                      "storageLocation": "memory",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_array$_t_struct$_Position_$4041_memory_ptr_$dyn_memory_ptr",
+                        "typeString": "struct Position[]"
+                      },
+                      "typeName": {
+                        "baseType": {
+                          "id": 2379,
+                          "nodeType": "UserDefinedTypeName",
+                          "pathNode": {
+                            "id": 2378,
+                            "name": "Position",
+                            "nodeType": "IdentifierPath",
+                            "referencedDeclaration": 4041,
+                            "src": "939:8:5"
+                          },
+                          "referencedDeclaration": 4041,
+                          "src": "939:8:5",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_Position_$4041_storage_ptr",
+                            "typeString": "struct Position"
+                          }
+                        },
+                        "id": 2380,
+                        "nodeType": "ArrayTypeName",
+                        "src": "939:10:5",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_array$_t_struct$_Position_$4041_storage_$dyn_storage_ptr",
+                          "typeString": "struct Position[]"
+                        }
+                      },
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 2390,
+                  "initialValue": {
+                    "arguments": [
+                      {
+                        "commonType": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "id": 2388,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "leftExpression": {
+                          "id": 2386,
+                          "name": "_interval",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 2357,
+                          "src": "982:9:5",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "nodeType": "BinaryOperation",
+                        "operator": "*",
+                        "rightExpression": {
+                          "id": 2387,
+                          "name": "_interval",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 2357,
+                          "src": "994:9:5",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "src": "982:21:5",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      ],
+                      "id": 2385,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "lValueRequested": false,
+                      "nodeType": "NewExpression",
+                      "src": "967:14:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_objectcreation_pure$_t_uint256_$returns$_t_array$_t_struct$_Position_$4041_memory_ptr_$dyn_memory_ptr_$",
+                        "typeString": "function (uint256) pure returns (struct Position memory[] memory)"
+                      },
+                      "typeName": {
+                        "baseType": {
+                          "id": 2383,
+                          "nodeType": "UserDefinedTypeName",
+                          "pathNode": {
+                            "id": 2382,
+                            "name": "Position",
+                            "nodeType": "IdentifierPath",
+                            "referencedDeclaration": 4041,
+                            "src": "971:8:5"
+                          },
+                          "referencedDeclaration": 4041,
+                          "src": "971:8:5",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_Position_$4041_storage_ptr",
+                            "typeString": "struct Position"
+                          }
+                        },
+                        "id": 2384,
+                        "nodeType": "ArrayTypeName",
+                        "src": "971:10:5",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_array$_t_struct$_Position_$4041_storage_$dyn_storage_ptr",
+                          "typeString": "struct Position[]"
+                        }
+                      }
+                    },
+                    "id": 2389,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "967:37:5",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_struct$_Position_$4041_memory_ptr_$dyn_memory_ptr",
+                      "typeString": "struct Position memory[] memory"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "939:65:5"
+                },
+                {
+                  "assignments": [
+                    2392
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 2392,
+                      "mutability": "mutable",
+                      "name": "_nonce",
+                      "nameLocation": "1023:6:5",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 2463,
+                      "src": "1015:14:5",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      },
+                      "typeName": {
+                        "id": 2391,
+                        "name": "uint256",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "1015:7:5",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 2394,
+                  "initialValue": {
+                    "hexValue": "30",
+                    "id": 2393,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": true,
+                    "kind": "number",
+                    "lValueRequested": false,
+                    "nodeType": "Literal",
+                    "src": "1032:1:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_rational_0_by_1",
+                      "typeString": "int_const 0"
+                    },
+                    "value": "0"
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "1015:18:5"
+                },
+                {
+                  "body": {
+                    "id": 2457,
+                    "nodeType": "Block",
+                    "src": "1097:295:5",
+                    "statements": [
+                      {
+                        "body": {
+                          "id": 2455,
+                          "nodeType": "Block",
+                          "src": "1165:217:5",
+                          "statements": [
+                            {
+                              "assignments": [
+                                2425
+                              ],
+                              "declarations": [
+                                {
+                                  "constant": false,
+                                  "id": 2425,
+                                  "mutability": "mutable",
+                                  "name": "_tempPos",
+                                  "nameLocation": "1199:8:5",
+                                  "nodeType": "VariableDeclaration",
+                                  "scope": 2455,
+                                  "src": "1183:24:5",
+                                  "stateVariable": false,
+                                  "storageLocation": "memory",
+                                  "typeDescriptions": {
+                                    "typeIdentifier": "t_struct$_Position_$4041_memory_ptr",
+                                    "typeString": "struct Position"
+                                  },
+                                  "typeName": {
+                                    "id": 2424,
+                                    "nodeType": "UserDefinedTypeName",
+                                    "pathNode": {
+                                      "id": 2423,
+                                      "name": "Position",
+                                      "nodeType": "IdentifierPath",
+                                      "referencedDeclaration": 4041,
+                                      "src": "1183:8:5"
+                                    },
+                                    "referencedDeclaration": 4041,
+                                    "src": "1183:8:5",
+                                    "typeDescriptions": {
+                                      "typeIdentifier": "t_struct$_Position_$4041_storage_ptr",
+                                      "typeString": "struct Position"
+                                    }
+                                  },
+                                  "visibility": "internal"
+                                }
+                              ],
+                              "id": 2430,
+                              "initialValue": {
+                                "arguments": [
+                                  {
+                                    "id": 2427,
+                                    "name": "x",
+                                    "nodeType": "Identifier",
+                                    "overloadedDeclarations": [],
+                                    "referencedDeclaration": 2396,
+                                    "src": "1223:1:5",
+                                    "typeDescriptions": {
+                                      "typeIdentifier": "t_uint256",
+                                      "typeString": "uint256"
+                                    }
+                                  },
+                                  {
+                                    "id": 2428,
+                                    "name": "y",
+                                    "nodeType": "Identifier",
+                                    "overloadedDeclarations": [],
+                                    "referencedDeclaration": 2410,
+                                    "src": "1229:1:5",
+                                    "typeDescriptions": {
+                                      "typeIdentifier": "t_uint256",
+                                      "typeString": "uint256"
+                                    }
+                                  }
+                                ],
+                                "expression": {
+                                  "argumentTypes": [
+                                    {
+                                      "typeIdentifier": "t_uint256",
+                                      "typeString": "uint256"
+                                    },
+                                    {
+                                      "typeIdentifier": "t_uint256",
+                                      "typeString": "uint256"
+                                    }
+                                  ],
+                                  "id": 2426,
+                                  "name": "Position",
+                                  "nodeType": "Identifier",
+                                  "overloadedDeclarations": [],
+                                  "referencedDeclaration": 4041,
+                                  "src": "1210:8:5",
+                                  "typeDescriptions": {
+                                    "typeIdentifier": "t_type$_t_struct$_Position_$4041_storage_ptr_$",
+                                    "typeString": "type(struct Position storage pointer)"
+                                  }
+                                },
+                                "id": 2429,
+                                "isConstant": false,
+                                "isLValue": false,
+                                "isPure": false,
+                                "kind": "structConstructorCall",
+                                "lValueRequested": false,
+                                "names": [
+                                  "x",
+                                  "y"
+                                ],
+                                "nodeType": "FunctionCall",
+                                "src": "1210:22:5",
+                                "tryCall": false,
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_struct$_Position_$4041_memory_ptr",
+                                  "typeString": "struct Position memory"
+                                }
+                              },
+                              "nodeType": "VariableDeclarationStatement",
+                              "src": "1183:49:5"
+                            },
+                            {
+                              "expression": {
+                                "id": 2443,
+                                "isConstant": false,
+                                "isLValue": false,
+                                "isPure": false,
+                                "lValueRequested": false,
+                                "leftHandSide": {
+                                  "baseExpression": {
+                                    "id": 2431,
+                                    "name": "_allTiles",
+                                    "nodeType": "Identifier",
+                                    "overloadedDeclarations": [],
+                                    "referencedDeclaration": 2367,
+                                    "src": "1250:9:5",
+                                    "typeDescriptions": {
+                                      "typeIdentifier": "t_array$_t_struct$_Tile_$4069_memory_ptr_$dyn_memory_ptr",
+                                      "typeString": "struct Tile memory[] memory"
+                                    }
+                                  },
+                                  "id": 2433,
+                                  "indexExpression": {
+                                    "id": 2432,
+                                    "name": "_nonce",
+                                    "nodeType": "Identifier",
+                                    "overloadedDeclarations": [],
+                                    "referencedDeclaration": 2392,
+                                    "src": "1260:6:5",
+                                    "typeDescriptions": {
+                                      "typeIdentifier": "t_uint256",
+                                      "typeString": "uint256"
+                                    }
+                                  },
+                                  "isConstant": false,
+                                  "isLValue": true,
+                                  "isPure": false,
+                                  "lValueRequested": true,
+                                  "nodeType": "IndexAccess",
+                                  "src": "1250:17:5",
+                                  "typeDescriptions": {
+                                    "typeIdentifier": "t_struct$_Tile_$4069_memory_ptr",
+                                    "typeString": "struct Tile memory"
+                                  }
+                                },
+                                "nodeType": "Assignment",
+                                "operator": "=",
+                                "rightHandSide": {
+                                  "baseExpression": {
+                                    "baseExpression": {
+                                      "expression": {
+                                        "arguments": [],
+                                        "expression": {
+                                          "argumentTypes": [],
+                                          "id": 2434,
+                                          "name": "gs",
+                                          "nodeType": "Identifier",
+                                          "overloadedDeclarations": [],
+                                          "referencedDeclaration": 4019,
+                                          "src": "1270:2:5",
+                                          "typeDescriptions": {
+                                            "typeIdentifier": "t_function_internal_pure$__$returns$_t_struct$_GameState_$4184_storage_ptr_$",
+                                            "typeString": "function () pure returns (struct GameState storage pointer)"
+                                          }
+                                        },
+                                        "id": 2435,
+                                        "isConstant": false,
+                                        "isLValue": false,
+                                        "isPure": false,
+                                        "kind": "functionCall",
+                                        "lValueRequested": false,
+                                        "names": [],
+                                        "nodeType": "FunctionCall",
+                                        "src": "1270:4:5",
+                                        "tryCall": false,
+                                        "typeDescriptions": {
+                                          "typeIdentifier": "t_struct$_GameState_$4184_storage_ptr",
+                                          "typeString": "struct GameState storage pointer"
+                                        }
+                                      },
+                                      "id": 2436,
+                                      "isConstant": false,
+                                      "isLValue": true,
+                                      "isPure": false,
+                                      "lValueRequested": false,
+                                      "memberName": "map",
+                                      "nodeType": "MemberAccess",
+                                      "referencedDeclaration": 4146,
+                                      "src": "1270:8:5",
+                                      "typeDescriptions": {
+                                        "typeIdentifier": "t_array$_t_array$_t_struct$_Tile_$4069_storage_$1000_storage_$1000_storage",
+                                        "typeString": "struct Tile storage ref[1000] storage ref[1000] storage ref"
+                                      }
+                                    },
+                                    "id": 2439,
+                                    "indexExpression": {
+                                      "expression": {
+                                        "id": 2437,
+                                        "name": "_pos",
+                                        "nodeType": "Identifier",
+                                        "overloadedDeclarations": [],
+                                        "referencedDeclaration": 2345,
+                                        "src": "1279:4:5",
+                                        "typeDescriptions": {
+                                          "typeIdentifier": "t_struct$_Position_$4041_memory_ptr",
+                                          "typeString": "struct Position memory"
+                                        }
+                                      },
+                                      "id": 2438,
+                                      "isConstant": false,
+                                      "isLValue": true,
+                                      "isPure": false,
+                                      "lValueRequested": false,
+                                      "memberName": "x",
+                                      "nodeType": "MemberAccess",
+                                      "referencedDeclaration": 4038,
+                                      "src": "1279:6:5",
+                                      "typeDescriptions": {
+                                        "typeIdentifier": "t_uint256",
+                                        "typeString": "uint256"
+                                      }
+                                    },
+                                    "isConstant": false,
+                                    "isLValue": true,
+                                    "isPure": false,
+                                    "lValueRequested": false,
+                                    "nodeType": "IndexAccess",
+                                    "src": "1270:16:5",
+                                    "typeDescriptions": {
+                                      "typeIdentifier": "t_array$_t_struct$_Tile_$4069_storage_$1000_storage",
+                                      "typeString": "struct Tile storage ref[1000] storage ref"
+                                    }
+                                  },
+                                  "id": 2442,
+                                  "indexExpression": {
+                                    "expression": {
+                                      "id": 2440,
+                                      "name": "_pos",
+                                      "nodeType": "Identifier",
+                                      "overloadedDeclarations": [],
+                                      "referencedDeclaration": 2345,
+                                      "src": "1287:4:5",
+                                      "typeDescriptions": {
+                                        "typeIdentifier": "t_struct$_Position_$4041_memory_ptr",
+                                        "typeString": "struct Position memory"
+                                      }
+                                    },
+                                    "id": 2441,
+                                    "isConstant": false,
+                                    "isLValue": true,
+                                    "isPure": false,
+                                    "lValueRequested": false,
+                                    "memberName": "y",
+                                    "nodeType": "MemberAccess",
+                                    "referencedDeclaration": 4040,
+                                    "src": "1287:6:5",
+                                    "typeDescriptions": {
+                                      "typeIdentifier": "t_uint256",
+                                      "typeString": "uint256"
+                                    }
+                                  },
+                                  "isConstant": false,
+                                  "isLValue": true,
+                                  "isPure": false,
+                                  "lValueRequested": false,
+                                  "nodeType": "IndexAccess",
+                                  "src": "1270:24:5",
+                                  "typeDescriptions": {
+                                    "typeIdentifier": "t_struct$_Tile_$4069_storage",
+                                    "typeString": "struct Tile storage ref"
+                                  }
+                                },
+                                "src": "1250:44:5",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_struct$_Tile_$4069_memory_ptr",
+                                  "typeString": "struct Tile memory"
+                                }
+                              },
+                              "id": 2444,
+                              "nodeType": "ExpressionStatement",
+                              "src": "1250:44:5"
+                            },
+                            {
+                              "expression": {
+                                "id": 2449,
+                                "isConstant": false,
+                                "isLValue": false,
+                                "isPure": false,
+                                "lValueRequested": false,
+                                "leftHandSide": {
+                                  "baseExpression": {
+                                    "id": 2445,
+                                    "name": "_allPos",
+                                    "nodeType": "Identifier",
+                                    "overloadedDeclarations": [],
+                                    "referencedDeclaration": 2381,
+                                    "src": "1312:7:5",
+                                    "typeDescriptions": {
+                                      "typeIdentifier": "t_array$_t_struct$_Position_$4041_memory_ptr_$dyn_memory_ptr",
+                                      "typeString": "struct Position memory[] memory"
+                                    }
+                                  },
+                                  "id": 2447,
+                                  "indexExpression": {
+                                    "id": 2446,
+                                    "name": "_nonce",
+                                    "nodeType": "Identifier",
+                                    "overloadedDeclarations": [],
+                                    "referencedDeclaration": 2392,
+                                    "src": "1320:6:5",
+                                    "typeDescriptions": {
+                                      "typeIdentifier": "t_uint256",
+                                      "typeString": "uint256"
+                                    }
+                                  },
+                                  "isConstant": false,
+                                  "isLValue": true,
+                                  "isPure": false,
+                                  "lValueRequested": true,
+                                  "nodeType": "IndexAccess",
+                                  "src": "1312:15:5",
+                                  "typeDescriptions": {
+                                    "typeIdentifier": "t_struct$_Position_$4041_memory_ptr",
+                                    "typeString": "struct Position memory"
+                                  }
+                                },
+                                "nodeType": "Assignment",
+                                "operator": "=",
+                                "rightHandSide": {
+                                  "id": 2448,
+                                  "name": "_tempPos",
+                                  "nodeType": "Identifier",
+                                  "overloadedDeclarations": [],
+                                  "referencedDeclaration": 2425,
+                                  "src": "1330:8:5",
+                                  "typeDescriptions": {
+                                    "typeIdentifier": "t_struct$_Position_$4041_memory_ptr",
+                                    "typeString": "struct Position memory"
+                                  }
+                                },
+                                "src": "1312:26:5",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_struct$_Position_$4041_memory_ptr",
+                                  "typeString": "struct Position memory"
+                                }
+                              },
+                              "id": 2450,
+                              "nodeType": "ExpressionStatement",
+                              "src": "1312:26:5"
+                            },
+                            {
+                              "expression": {
+                                "id": 2453,
+                                "isConstant": false,
+                                "isLValue": false,
+                                "isPure": false,
+                                "lValueRequested": false,
+                                "leftHandSide": {
+                                  "id": 2451,
+                                  "name": "_nonce",
+                                  "nodeType": "Identifier",
+                                  "overloadedDeclarations": [],
+                                  "referencedDeclaration": 2392,
+                                  "src": "1356:6:5",
+                                  "typeDescriptions": {
+                                    "typeIdentifier": "t_uint256",
+                                    "typeString": "uint256"
+                                  }
+                                },
+                                "nodeType": "Assignment",
+                                "operator": "+=",
+                                "rightHandSide": {
+                                  "hexValue": "31",
+                                  "id": 2452,
+                                  "isConstant": false,
+                                  "isLValue": false,
+                                  "isPure": true,
+                                  "kind": "number",
+                                  "lValueRequested": false,
+                                  "nodeType": "Literal",
+                                  "src": "1366:1:5",
+                                  "typeDescriptions": {
+                                    "typeIdentifier": "t_rational_1_by_1",
+                                    "typeString": "int_const 1"
+                                  },
+                                  "value": "1"
+                                },
+                                "src": "1356:11:5",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_uint256",
+                                  "typeString": "uint256"
+                                }
+                              },
+                              "id": 2454,
+                              "nodeType": "ExpressionStatement",
+                              "src": "1356:11:5"
+                            }
+                          ]
+                        },
+                        "condition": {
+                          "commonType": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          },
+                          "id": 2419,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "leftExpression": {
+                            "id": 2414,
+                            "name": "y",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 2410,
+                            "src": "1136:1:5",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            }
+                          },
+                          "nodeType": "BinaryOperation",
+                          "operator": "<",
+                          "rightExpression": {
+                            "commonType": {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            },
+                            "id": 2418,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": false,
+                            "lValueRequested": false,
+                            "leftExpression": {
+                              "expression": {
+                                "id": 2415,
+                                "name": "_pos",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 2345,
+                                "src": "1140:4:5",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_struct$_Position_$4041_memory_ptr",
+                                  "typeString": "struct Position memory"
+                                }
+                              },
+                              "id": 2416,
+                              "isConstant": false,
+                              "isLValue": true,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "memberName": "y",
+                              "nodeType": "MemberAccess",
+                              "referencedDeclaration": 4040,
+                              "src": "1140:6:5",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              }
+                            },
+                            "nodeType": "BinaryOperation",
+                            "operator": "+",
+                            "rightExpression": {
+                              "id": 2417,
+                              "name": "_interval",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 2357,
+                              "src": "1149:9:5",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              }
+                            },
+                            "src": "1140:18:5",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            }
+                          },
+                          "src": "1136:22:5",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_bool",
+                            "typeString": "bool"
+                          }
+                        },
+                        "id": 2456,
+                        "initializationExpression": {
+                          "assignments": [
+                            2410
+                          ],
+                          "declarations": [
+                            {
+                              "constant": false,
+                              "id": 2410,
+                              "mutability": "mutable",
+                              "name": "y",
+                              "nameLocation": "1124:1:5",
+                              "nodeType": "VariableDeclaration",
+                              "scope": 2456,
+                              "src": "1116:9:5",
+                              "stateVariable": false,
+                              "storageLocation": "default",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              },
+                              "typeName": {
+                                "id": 2409,
+                                "name": "uint256",
+                                "nodeType": "ElementaryTypeName",
+                                "src": "1116:7:5",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_uint256",
+                                  "typeString": "uint256"
+                                }
+                              },
+                              "visibility": "internal"
+                            }
+                          ],
+                          "id": 2413,
+                          "initialValue": {
+                            "expression": {
+                              "id": 2411,
+                              "name": "_pos",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 2345,
+                              "src": "1128:4:5",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_struct$_Position_$4041_memory_ptr",
+                                "typeString": "struct Position memory"
+                              }
+                            },
+                            "id": 2412,
+                            "isConstant": false,
+                            "isLValue": true,
+                            "isPure": false,
+                            "lValueRequested": false,
+                            "memberName": "y",
+                            "nodeType": "MemberAccess",
+                            "referencedDeclaration": 4040,
+                            "src": "1128:6:5",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            }
+                          },
+                          "nodeType": "VariableDeclarationStatement",
+                          "src": "1116:18:5"
+                        },
+                        "loopExpression": {
+                          "expression": {
+                            "id": 2421,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": false,
+                            "lValueRequested": false,
+                            "nodeType": "UnaryOperation",
+                            "operator": "++",
+                            "prefix": false,
+                            "src": "1160:3:5",
+                            "subExpression": {
+                              "id": 2420,
+                              "name": "y",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 2410,
+                              "src": "1160:1:5",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              }
+                            },
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            }
+                          },
+                          "id": 2422,
+                          "nodeType": "ExpressionStatement",
+                          "src": "1160:3:5"
+                        },
+                        "nodeType": "ForStatement",
+                        "src": "1111:271:5"
+                      }
+                    ]
+                  },
+                  "condition": {
+                    "commonType": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    },
+                    "id": 2405,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftExpression": {
+                      "id": 2400,
+                      "name": "x",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 2396,
+                      "src": "1068:1:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "nodeType": "BinaryOperation",
+                    "operator": "<",
+                    "rightExpression": {
+                      "commonType": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      },
+                      "id": 2404,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "leftExpression": {
+                        "expression": {
+                          "id": 2401,
+                          "name": "_pos",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 2345,
+                          "src": "1072:4:5",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_Position_$4041_memory_ptr",
+                            "typeString": "struct Position memory"
+                          }
+                        },
+                        "id": 2402,
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "x",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 4038,
+                        "src": "1072:6:5",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      "nodeType": "BinaryOperation",
+                      "operator": "+",
+                      "rightExpression": {
+                        "id": 2403,
+                        "name": "_interval",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 2357,
+                        "src": "1081:9:5",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      "src": "1072:18:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "src": "1068:22:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "id": 2458,
+                  "initializationExpression": {
+                    "assignments": [
+                      2396
+                    ],
+                    "declarations": [
+                      {
+                        "constant": false,
+                        "id": 2396,
+                        "mutability": "mutable",
+                        "name": "x",
+                        "nameLocation": "1056:1:5",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 2458,
+                        "src": "1048:9:5",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "typeName": {
+                          "id": 2395,
+                          "name": "uint256",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "1048:7:5",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "visibility": "internal"
+                      }
+                    ],
+                    "id": 2399,
+                    "initialValue": {
+                      "expression": {
+                        "id": 2397,
+                        "name": "_pos",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 2345,
+                        "src": "1060:4:5",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_Position_$4041_memory_ptr",
+                          "typeString": "struct Position memory"
+                        }
+                      },
+                      "id": 2398,
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "x",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 4038,
+                      "src": "1060:6:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "nodeType": "VariableDeclarationStatement",
+                    "src": "1048:18:5"
+                  },
+                  "loopExpression": {
+                    "expression": {
+                      "id": 2407,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "nodeType": "UnaryOperation",
+                      "operator": "++",
+                      "prefix": false,
+                      "src": "1092:3:5",
+                      "subExpression": {
+                        "id": 2406,
+                        "name": "x",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 2396,
+                        "src": "1092:1:5",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 2408,
+                    "nodeType": "ExpressionStatement",
+                    "src": "1092:3:5"
+                  },
+                  "nodeType": "ForStatement",
+                  "src": "1043:349:5"
+                },
+                {
+                  "expression": {
+                    "components": [
+                      {
+                        "id": 2459,
+                        "name": "_allTiles",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 2367,
+                        "src": "1410:9:5",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_array$_t_struct$_Tile_$4069_memory_ptr_$dyn_memory_ptr",
+                          "typeString": "struct Tile memory[] memory"
+                        }
+                      },
+                      {
+                        "id": 2460,
+                        "name": "_allPos",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 2381,
+                        "src": "1421:7:5",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_array$_t_struct$_Position_$4041_memory_ptr_$dyn_memory_ptr",
+                          "typeString": "struct Position memory[] memory"
+                        }
+                      }
+                    ],
+                    "id": 2461,
+                    "isConstant": false,
+                    "isInlineArray": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "nodeType": "TupleExpression",
+                    "src": "1409:20:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$_t_array$_t_struct$_Tile_$4069_memory_ptr_$dyn_memory_ptr_$_t_array$_t_struct$_Position_$4041_memory_ptr_$dyn_memory_ptr_$",
+                      "typeString": "tuple(struct Tile memory[] memory,struct Position memory[] memory)"
+                    }
+                  },
+                  "functionReturnParameters": 2355,
+                  "id": 2462,
+                  "nodeType": "Return",
+                  "src": "1402:27:5"
+                }
+              ]
+            },
+            "functionSelector": "af248a34",
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "_getMapChunk",
+            "nameLocation": "706:12:5",
+            "parameters": {
+              "id": 2346,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2345,
+                  "mutability": "mutable",
+                  "name": "_pos",
+                  "nameLocation": "735:4:5",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2464,
+                  "src": "719:20:5",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_Position_$4041_memory_ptr",
+                    "typeString": "struct Position"
+                  },
+                  "typeName": {
+                    "id": 2344,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 2343,
+                      "name": "Position",
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 4041,
+                      "src": "719:8:5"
+                    },
+                    "referencedDeclaration": 4041,
+                    "src": "719:8:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_Position_$4041_storage_ptr",
+                      "typeString": "struct Position"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "718:22:5"
+            },
+            "returnParameters": {
+              "id": 2355,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2350,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2464,
+                  "src": "764:13:5",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_struct$_Tile_$4069_memory_ptr_$dyn_memory_ptr",
+                    "typeString": "struct Tile[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 2348,
+                      "nodeType": "UserDefinedTypeName",
+                      "pathNode": {
+                        "id": 2347,
+                        "name": "Tile",
+                        "nodeType": "IdentifierPath",
+                        "referencedDeclaration": 4069,
+                        "src": "764:4:5"
+                      },
+                      "referencedDeclaration": 4069,
+                      "src": "764:4:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_Tile_$4069_storage_ptr",
+                        "typeString": "struct Tile"
+                      }
+                    },
+                    "id": 2349,
+                    "nodeType": "ArrayTypeName",
+                    "src": "764:6:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_struct$_Tile_$4069_storage_$dyn_storage_ptr",
+                      "typeString": "struct Tile[]"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 2354,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2464,
+                  "src": "779:17:5",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_struct$_Position_$4041_memory_ptr_$dyn_memory_ptr",
+                    "typeString": "struct Position[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 2352,
+                      "nodeType": "UserDefinedTypeName",
+                      "pathNode": {
+                        "id": 2351,
+                        "name": "Position",
+                        "nodeType": "IdentifierPath",
+                        "referencedDeclaration": 4041,
+                        "src": "779:8:5"
+                      },
+                      "referencedDeclaration": 4041,
+                      "src": "779:8:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_Position_$4041_storage_ptr",
+                        "typeString": "struct Position"
+                      }
+                    },
+                    "id": 2353,
+                    "nodeType": "ArrayTypeName",
+                    "src": "779:10:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_struct$_Position_$4041_storage_$dyn_storage_ptr",
+                      "typeString": "struct Position[]"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "763:34:5"
+            },
+            "scope": 2475,
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 2474,
+            "nodeType": "FunctionDefinition",
+            "src": "1442:89:5",
+            "body": {
+              "id": 2473,
+              "nodeType": "Block",
+              "src": "1496:35:5",
+              "statements": [
+                {
+                  "expression": {
+                    "expression": {
+                      "arguments": [],
+                      "expression": {
+                        "argumentTypes": [],
+                        "id": 2469,
+                        "name": "gs",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 4019,
+                        "src": "1513:2:5",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_function_internal_pure$__$returns$_t_struct$_GameState_$4184_storage_ptr_$",
+                          "typeString": "function () pure returns (struct GameState storage pointer)"
+                        }
+                      },
+                      "id": 2470,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "kind": "functionCall",
+                      "lValueRequested": false,
+                      "names": [],
+                      "nodeType": "FunctionCall",
+                      "src": "1513:4:5",
+                      "tryCall": false,
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_GameState_$4184_storage_ptr",
+                        "typeString": "struct GameState storage pointer"
+                      }
+                    },
+                    "id": 2471,
+                    "isConstant": false,
+                    "isLValue": true,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "memberName": "sample",
+                    "nodeType": "MemberAccess",
+                    "referencedDeclaration": 4183,
+                    "src": "1513:11:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "functionReturnParameters": 2468,
+                  "id": 2472,
+                  "nodeType": "Return",
+                  "src": "1506:18:5"
+                }
+              ]
+            },
+            "functionSelector": "863eaa0b",
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "_getSample",
+            "nameLocation": "1451:10:5",
+            "parameters": {
+              "id": 2465,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1461:2:5"
+            },
+            "returnParameters": {
+              "id": 2468,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2467,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2474,
+                  "src": "1487:7:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 2466,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1487:7:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1486:9:5"
+            },
+            "scope": 2475,
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "abstract": false,
+        "baseContracts": [
+          {
+            "baseName": {
+              "id": 2289,
+              "name": "UseStorage",
+              "nodeType": "IdentifierPath",
+              "referencedDeclaration": 4020,
+              "src": "337:10:5"
+            },
+            "id": 2290,
+            "nodeType": "InheritanceSpecifier",
+            "src": "337:10:5"
+          }
+        ],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": {
+          "id": 2288,
+          "nodeType": "StructuredDocumentation",
+          "src": "202:110:5",
+          "text": "@title Bulk getters\n @notice Getters provide bulk functions useful for fetching data from the frontend"
+        },
+        "fullyImplemented": true,
+        "linearizedBaseContracts": [
+          2475,
+          4020
+        ],
+        "name": "GetterFacet",
+        "nameLocation": "322:11:5",
+        "scope": 2476,
+        "usedErrors": []
+      }
+    ],
+    "license": "MIT"
+  },
+  "id": 5
+}
