@@ -1,105 +1,106 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
+enum BASE_NAME {
+    PORT,
+    CITY
+}
+
+enum TERRAIN {
+    WATER,
+    COASTLINE,
+    INLAND
+}
+
+enum TROOP_NAME {
+    ARMY,
+    TROOP_TRANSPORT,
+    DESTROYER,
+    CRUISER,
+    BATTLESHIP,
+    FIGHTER_JET
+}
+
 struct Position {
     uint256 x;
     uint256 y;
 }
 
+struct Player {
+    uint256 initEpoch;
+    bool active;
+    Position pos;
+}
+
+struct Base {
+    // TODO: can add another struct named BaseType with all of the fields except ownerAddr
+    BASE_NAME name;
+    address owner;
+    uint256 attackFactor;
+    uint256 defenseFactor;
+    uint256 health;
+}
+
+struct Tile {
+    TERRAIN terrain;
+    uint256 occupantId; // a troop
+    uint256 baseId;
+}
+
+struct Troop {
+    address owner;
+    uint256 troopTypeId;
+    uint256 lastMoved;
+    uint256 lastAttacked;
+    uint256 health;
+    Position pos;
+    uint256[] cargoTroopIds; // only for Troop Transport
+}
+
+struct TroopType {
+    TROOP_NAME name;
+    uint256 speed; // movement per epoch
+    uint256 maxHealth;
+    uint256 damagePerHit;
+    uint256 attackFactor; // in the interval [0, 100]
+    uint256 defenseFactor; // in the interval [0, 100]
+    uint256 cargoCapacity;
+    uint256 epochsToProduce;
+    uint256 movementCooldown;
+    uint256 attackCooldown;
+    bool isLandTroop;
+    // bool canBombard; // only needed for Fighter Jets
+}
+
+struct Production {
+    uint256 troopTypeId;
+    uint256 startEpoch;
+}
+
 struct WorldConstants {
+    address admin;
     uint256 worldWidth;
     uint256 worldHeight;
-    uint256 startPlayerHealth;
-    uint256 startingReach;
-    uint256 startingPlayerDefaultCurrencyAmount;
-    uint256 playerMoveCooldown; // refactor this into other struct
-    uint256 getMapInterval;
+    uint256 mapInterval;
+    uint256 secondsPerTurn;
+    uint256 troopStackLimit;
 }
 
-struct PlayerData {
-    bool initialized;
-    uint256 initTimestamp;
-    address playerAddr;
-    uint256 health;
-    uint256 reach;
-    uint256 lastMoved; // time in seconds
-    Position position;
-}
-
-// tiles should also be programmable?
-struct Tile {
-    address occupier; // this should be the player OR blocks?
-    uint256 worldBlockId;
-    uint256 tileType; // farm, barn, etc.
-    uint256 lastOccupied;
-    uint256 tileContractId; // can this also just be a worldBlockId? we can maybe have a contractID
-    // need to record lastOccupier?
-}
-
-// spawned block data ... I'm researching the entity-component system to beter express these things. For instance there's a lot of
-// redunduncy between this struct and the next one. BlockData is basically a subset of the Item?
-struct BlockData {
-    uint256 blockId;
-    uint256 health;
-    address owner;
-    uint256 lastAttacked; // "block data" stores the raw data unique to each game instane. Does this make sense?
-    uint256 lastMoved;
-    bool occupiable;
-    // Position position; // do we need this?
-}
-
-// should creature be an item?
-struct Item {
-    bool mineable;
-    bool craftable;
-    bool occupiable;
-    uint256 health;
-    uint256[] mineItemIds; // tools for mining
-    uint256[] craftItemIds;
-    uint256[] craftItemAmounts;
-    uint256 moveCooldown; // move cooldown for minions mostly
-    uint256 attackDamage; // additional creature property
-    uint256 attackRange;
-    uint256 attackCooldown;
-    bool programmable; // programmable blocks. abstract to a enum here
-    string abiEncoding;
-    string contractAddr;
-}
-
-struct Recipe {
-    uint256[] craftItemIds;
-    uint256[] craftItemAmounts;
-}
-
-// even tower should be a programmable block
-// TODO: Abstract this!
-struct Tower {
-    uint256 rewardPerEpoch;
-    uint256 itemId; // reward's itemID
-    uint256 lastCapturedEpoch; // in epoch units
-    address owner;
-}
-
-// TODO: Pack this struct
-struct GameInfo {
+struct GameState {
     WorldConstants worldConstants;
+    address[] players;
+    mapping(address => Player) playerMap;
     Tile[1000][1000] map;
-    address admin; // game info
-    bool paused;
-    mapping(uint256 => Item) itemsWithMetadata;
-    uint256 itemNonce;
-    address[] allPlayers; // running list of all initialized players
-    mapping(address => PlayerData) players; // player data
-    mapping(address => mapping(uint256 => uint256)) inventory; // player => itemId => inventory
-    mapping(address => uint256[]) inventoryNonce; // array of all items in player inventory
-    // tower
-    address epochController;
-    mapping(string => Tower) towers; // towerId => Tower
-    // every time we spawn a new block it's a new instance
-    uint256 worldBlockNonce; // 0 denotes empty block on tile. >1 denotes real block
-    mapping(uint256 => BlockData) worldBlocks;
-    // epoch info
     uint256 epoch;
-    uint256 lastUpdated;
-    uint256 interval;
+    uint256 lastTimestamp;
+    mapping(uint256 => Production) baseProductionMap;
+    uint256[] baseIds;
+    mapping(uint256 => Base) baseIdMap;
+    uint256[] troopIds;
+    uint256 troopNonce;
+    mapping(uint256 => Troop) troopIdMap;
+    uint256[] troopTypeIds;
+    mapping(uint256 => TroopType) troopTypeIdMap;
+    // mapping(address => uint256[]) playerTroopIdMap;
+    uint256 sample;
 }

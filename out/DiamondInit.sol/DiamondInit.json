@@ -1,0 +1,1047 @@
+{
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "num",
+          "type": "uint256"
+        }
+      ],
+      "name": "init",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": {
+    "object": "0x608060405234801561001057600080fd5b5061018e806100206000396000f3fe608060405234801561001057600080fd5b506004361061002b5760003560e01c8063b7b0422d14610030575b600080fd5b61013e61003e366004610140565b7fc8fcad8db84d3cc18b4c41d551ea0ee66dd599cde068d998e57d5e09332c131f6020527f699d9daa71b280d05a152715774afa0a81a312594b2d731d6b0b2552b7d6f69f8054600160ff1991821681179092557ff97e938d8af42f52387bb74b8b526fda8f184cc2aa534340a8d75a88fbecc77580548216831790557f65d510a5d8f7ef134ec444f7f34ee808c8eeb5177cdfd16be0c40fe1ab43369580548216831790556307f5828d60e41b6000527f5622121b47b8cd0120c4efe45dd5483242f54a3d49bd7679be565d47694918c3805490911690911790557f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e9ec3f255565b005b600060208284031215610151578081fd5b503591905056fea264697066735822122000eb6189d2984f4b7e72e178ad327f5976889d943459181f24627f5f47cf592764736f6c63430008040033",
+    "sourceMap": "1053:1425:16:-:0;;;;;;;;;;;;;;;;;;;",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x608060405234801561001057600080fd5b506004361061002b5760003560e01c8063b7b0422d14610030575b600080fd5b61013e61003e366004610140565b7fc8fcad8db84d3cc18b4c41d551ea0ee66dd599cde068d998e57d5e09332c131f6020527f699d9daa71b280d05a152715774afa0a81a312594b2d731d6b0b2552b7d6f69f8054600160ff1991821681179092557ff97e938d8af42f52387bb74b8b526fda8f184cc2aa534340a8d75a88fbecc77580548216831790557f65d510a5d8f7ef134ec444f7f34ee808c8eeb5177cdfd16be0c40fe1ab43369580548216831790556307f5828d60e41b6000527f5622121b47b8cd0120c4efe45dd5483242f54a3d49bd7679be565d47694918c3805490911690911790557f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e9ec3f255565b005b600060208284031215610151578081fd5b503591905056fea264697066735822122000eb6189d2984f4b7e72e178ad327f5976889d943459181f24627f5f47cf592764736f6c63430008040033",
+    "sourceMap": "1053:1425:16:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1205:1271;;;;;;:::i;:::-;1357:22;:49;;;:56;;1409:4;-1:-1:-1;;1357:56:16;;;;;;;;1423:53;:60;;;;;;;;1493:55;:62;;;;;;;;-1:-1:-1;;;;1565:49:16;;:56;;;;;;;;;;2452:11;:17;1205:1271;;;14:190:25;73:6;126:2;114:9;105:7;101:23;97:32;94:2;;;147:6;139;132:22;94:2;-1:-1:-1;175:23:25;;84:120;-1:-1:-1;84:120:25:o",
+    "linkReferences": {}
+  },
+  "methodIdentifiers": {
+    "init(uint256)": "b7b0422d"
+  },
+  "ast": {
+    "absolutePath": "contracts/upgradeInitializers/diamondInit.sol",
+    "id": 4351,
+    "exportedSymbols": {
+      "DiamondInit": [
+        4350
+      ],
+      "GameState": [
+        4184
+      ],
+      "IDiamondCut": [
+        2553
+      ],
+      "IDiamondLoupe": [
+        2594
+      ],
+      "IERC165": [
+        2605
+      ],
+      "IERC173": [
+        2628
+      ],
+      "LibDiamond": [
+        3986
+      ],
+      "LibStorage": [
+        4008
+      ],
+      "UseStorage": [
+        4020
+      ],
+      "Util": [
+        3120
+      ]
+    },
+    "nodeType": "SourceUnit",
+    "src": "32:3952:16",
+    "nodes": [
+      {
+        "id": 4269,
+        "nodeType": "PragmaDirective",
+        "src": "32:23:16",
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".0"
+        ]
+      },
+      {
+        "id": 4271,
+        "nodeType": "ImportDirective",
+        "src": "395:55:16",
+        "absolutePath": "contracts/libraries/LibDiamond.sol",
+        "file": "../libraries/LibDiamond.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 4351,
+        "sourceUnit": 3987,
+        "symbolAliases": [
+          {
+            "foreign": {
+              "id": 4270,
+              "name": "LibDiamond",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": [],
+              "src": "403:10:16",
+              "typeDescriptions": {}
+            },
+            "nameLocation": "-1:-1:-1"
+          }
+        ],
+        "unitAlias": ""
+      },
+      {
+        "id": 4273,
+        "nodeType": "ImportDirective",
+        "src": "451:62:16",
+        "absolutePath": "contracts/interfaces/IDiamondLoupe.sol",
+        "file": "../interfaces/IDiamondLoupe.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 4351,
+        "sourceUnit": 2595,
+        "symbolAliases": [
+          {
+            "foreign": {
+              "id": 4272,
+              "name": "IDiamondLoupe",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": [],
+              "src": "459:13:16",
+              "typeDescriptions": {}
+            },
+            "nameLocation": "-1:-1:-1"
+          }
+        ],
+        "unitAlias": ""
+      },
+      {
+        "id": 4275,
+        "nodeType": "ImportDirective",
+        "src": "514:58:16",
+        "absolutePath": "contracts/interfaces/IDiamondCut.sol",
+        "file": "../interfaces/IDiamondCut.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 4351,
+        "sourceUnit": 2554,
+        "symbolAliases": [
+          {
+            "foreign": {
+              "id": 4274,
+              "name": "IDiamondCut",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": [],
+              "src": "522:11:16",
+              "typeDescriptions": {}
+            },
+            "nameLocation": "-1:-1:-1"
+          }
+        ],
+        "unitAlias": ""
+      },
+      {
+        "id": 4277,
+        "nodeType": "ImportDirective",
+        "src": "573:50:16",
+        "absolutePath": "contracts/interfaces/IERC173.sol",
+        "file": "../interfaces/IERC173.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 4351,
+        "sourceUnit": 2629,
+        "symbolAliases": [
+          {
+            "foreign": {
+              "id": 4276,
+              "name": "IERC173",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": [],
+              "src": "581:7:16",
+              "typeDescriptions": {}
+            },
+            "nameLocation": "-1:-1:-1"
+          }
+        ],
+        "unitAlias": ""
+      },
+      {
+        "id": 4279,
+        "nodeType": "ImportDirective",
+        "src": "624:50:16",
+        "absolutePath": "contracts/interfaces/IERC165.sol",
+        "file": "../interfaces/IERC165.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 4351,
+        "sourceUnit": 2606,
+        "symbolAliases": [
+          {
+            "foreign": {
+              "id": 4278,
+              "name": "IERC165",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": [],
+              "src": "632:7:16",
+              "typeDescriptions": {}
+            },
+            "nameLocation": "-1:-1:-1"
+          }
+        ],
+        "unitAlias": ""
+      },
+      {
+        "id": 4281,
+        "nodeType": "ImportDirective",
+        "src": "675:47:16",
+        "absolutePath": "contracts/libraries/GameUtil.sol",
+        "file": "../libraries/GameUtil.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 4351,
+        "sourceUnit": 3121,
+        "symbolAliases": [
+          {
+            "foreign": {
+              "id": 4280,
+              "name": "Util",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": [],
+              "src": "683:4:16",
+              "typeDescriptions": {}
+            },
+            "nameLocation": "-1:-1:-1"
+          }
+        ],
+        "unitAlias": ""
+      },
+      {
+        "id": 4282,
+        "nodeType": "ImportDirective",
+        "src": "723:34:16",
+        "absolutePath": "contracts/libraries/Storage.sol",
+        "file": "../libraries/Storage.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 4351,
+        "sourceUnit": 4021,
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "id": 4350,
+        "nodeType": "ContractDefinition",
+        "src": "1053:1425:16",
+        "nodes": [
+          {
+            "id": 4349,
+            "nodeType": "FunctionDefinition",
+            "src": "1205:1271:16",
+            "body": {
+              "id": 4348,
+              "nodeType": "Block",
+              "src": "1241:1235:16",
+              "statements": [
+                {
+                  "assignments": [
+                    4293
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 4293,
+                      "mutability": "mutable",
+                      "name": "ds",
+                      "nameLocation": "1315:2:16",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 4348,
+                      "src": "1281:36:16",
+                      "stateVariable": false,
+                      "storageLocation": "storage",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_DiamondStorage_$3146_storage_ptr",
+                        "typeString": "struct LibDiamond.DiamondStorage"
+                      },
+                      "typeName": {
+                        "id": 4292,
+                        "nodeType": "UserDefinedTypeName",
+                        "pathNode": {
+                          "id": 4291,
+                          "name": "LibDiamond.DiamondStorage",
+                          "nodeType": "IdentifierPath",
+                          "referencedDeclaration": 3146,
+                          "src": "1281:25:16"
+                        },
+                        "referencedDeclaration": 3146,
+                        "src": "1281:25:16",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_DiamondStorage_$3146_storage_ptr",
+                          "typeString": "struct LibDiamond.DiamondStorage"
+                        }
+                      },
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 4297,
+                  "initialValue": {
+                    "arguments": [],
+                    "expression": {
+                      "argumentTypes": [],
+                      "expression": {
+                        "id": 4294,
+                        "name": "LibDiamond",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 3986,
+                        "src": "1320:10:16",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_type$_t_contract$_LibDiamond_$3986_$",
+                          "typeString": "type(library LibDiamond)"
+                        }
+                      },
+                      "id": 4295,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "diamondStorage",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 3158,
+                      "src": "1320:25:16",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_pure$__$returns$_t_struct$_DiamondStorage_$3146_storage_ptr_$",
+                        "typeString": "function () pure returns (struct LibDiamond.DiamondStorage storage pointer)"
+                      }
+                    },
+                    "id": 4296,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1320:27:16",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_DiamondStorage_$3146_storage_ptr",
+                      "typeString": "struct LibDiamond.DiamondStorage storage pointer"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "1281:66:16"
+                },
+                {
+                  "expression": {
+                    "id": 4307,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "baseExpression": {
+                        "expression": {
+                          "id": 4298,
+                          "name": "ds",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 4293,
+                          "src": "1357:2:16",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_DiamondStorage_$3146_storage_ptr",
+                            "typeString": "struct LibDiamond.DiamondStorage storage pointer"
+                          }
+                        },
+                        "id": 4304,
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "supportedInterfaces",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 3143,
+                        "src": "1357:22:16",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_mapping$_t_bytes4_$_t_bool_$",
+                          "typeString": "mapping(bytes4 => bool)"
+                        }
+                      },
+                      "id": 4305,
+                      "indexExpression": {
+                        "expression": {
+                          "arguments": [
+                            {
+                              "id": 4301,
+                              "name": "IERC165",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 2605,
+                              "src": "1385:7:16",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_type$_t_contract$_IERC165_$2605_$",
+                                "typeString": "type(contract IERC165)"
+                              }
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": [
+                              {
+                                "typeIdentifier": "t_type$_t_contract$_IERC165_$2605_$",
+                                "typeString": "type(contract IERC165)"
+                              }
+                            ],
+                            "id": 4300,
+                            "name": "type",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": -27,
+                            "src": "1380:4:16",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_metatype_pure$__$returns$__$",
+                              "typeString": "function () pure"
+                            }
+                          },
+                          "id": 4302,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "1380:13:16",
+                          "tryCall": false,
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_magic_meta_type_t_contract$_IERC165_$2605",
+                            "typeString": "type(contract IERC165)"
+                          }
+                        },
+                        "id": 4303,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "lValueRequested": false,
+                        "memberName": "interfaceId",
+                        "nodeType": "MemberAccess",
+                        "src": "1380:25:16",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bytes4",
+                          "typeString": "bytes4"
+                        }
+                      },
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": true,
+                      "nodeType": "IndexAccess",
+                      "src": "1357:49:16",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bool",
+                        "typeString": "bool"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "hexValue": "74727565",
+                      "id": 4306,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "kind": "bool",
+                      "lValueRequested": false,
+                      "nodeType": "Literal",
+                      "src": "1409:4:16",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bool",
+                        "typeString": "bool"
+                      },
+                      "value": "true"
+                    },
+                    "src": "1357:56:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "id": 4308,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1357:56:16"
+                },
+                {
+                  "expression": {
+                    "id": 4318,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "baseExpression": {
+                        "expression": {
+                          "id": 4309,
+                          "name": "ds",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 4293,
+                          "src": "1423:2:16",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_DiamondStorage_$3146_storage_ptr",
+                            "typeString": "struct LibDiamond.DiamondStorage storage pointer"
+                          }
+                        },
+                        "id": 4315,
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "supportedInterfaces",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 3143,
+                        "src": "1423:22:16",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_mapping$_t_bytes4_$_t_bool_$",
+                          "typeString": "mapping(bytes4 => bool)"
+                        }
+                      },
+                      "id": 4316,
+                      "indexExpression": {
+                        "expression": {
+                          "arguments": [
+                            {
+                              "id": 4312,
+                              "name": "IDiamondCut",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 2553,
+                              "src": "1451:11:16",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_type$_t_contract$_IDiamondCut_$2553_$",
+                                "typeString": "type(contract IDiamondCut)"
+                              }
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": [
+                              {
+                                "typeIdentifier": "t_type$_t_contract$_IDiamondCut_$2553_$",
+                                "typeString": "type(contract IDiamondCut)"
+                              }
+                            ],
+                            "id": 4311,
+                            "name": "type",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": -27,
+                            "src": "1446:4:16",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_metatype_pure$__$returns$__$",
+                              "typeString": "function () pure"
+                            }
+                          },
+                          "id": 4313,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "1446:17:16",
+                          "tryCall": false,
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_magic_meta_type_t_contract$_IDiamondCut_$2553",
+                            "typeString": "type(contract IDiamondCut)"
+                          }
+                        },
+                        "id": 4314,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "lValueRequested": false,
+                        "memberName": "interfaceId",
+                        "nodeType": "MemberAccess",
+                        "src": "1446:29:16",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bytes4",
+                          "typeString": "bytes4"
+                        }
+                      },
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": true,
+                      "nodeType": "IndexAccess",
+                      "src": "1423:53:16",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bool",
+                        "typeString": "bool"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "hexValue": "74727565",
+                      "id": 4317,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "kind": "bool",
+                      "lValueRequested": false,
+                      "nodeType": "Literal",
+                      "src": "1479:4:16",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bool",
+                        "typeString": "bool"
+                      },
+                      "value": "true"
+                    },
+                    "src": "1423:60:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "id": 4319,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1423:60:16"
+                },
+                {
+                  "expression": {
+                    "id": 4329,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "baseExpression": {
+                        "expression": {
+                          "id": 4320,
+                          "name": "ds",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 4293,
+                          "src": "1493:2:16",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_DiamondStorage_$3146_storage_ptr",
+                            "typeString": "struct LibDiamond.DiamondStorage storage pointer"
+                          }
+                        },
+                        "id": 4326,
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "supportedInterfaces",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 3143,
+                        "src": "1493:22:16",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_mapping$_t_bytes4_$_t_bool_$",
+                          "typeString": "mapping(bytes4 => bool)"
+                        }
+                      },
+                      "id": 4327,
+                      "indexExpression": {
+                        "expression": {
+                          "arguments": [
+                            {
+                              "id": 4323,
+                              "name": "IDiamondLoupe",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 2594,
+                              "src": "1521:13:16",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_type$_t_contract$_IDiamondLoupe_$2594_$",
+                                "typeString": "type(contract IDiamondLoupe)"
+                              }
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": [
+                              {
+                                "typeIdentifier": "t_type$_t_contract$_IDiamondLoupe_$2594_$",
+                                "typeString": "type(contract IDiamondLoupe)"
+                              }
+                            ],
+                            "id": 4322,
+                            "name": "type",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": -27,
+                            "src": "1516:4:16",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_metatype_pure$__$returns$__$",
+                              "typeString": "function () pure"
+                            }
+                          },
+                          "id": 4324,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "1516:19:16",
+                          "tryCall": false,
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_magic_meta_type_t_contract$_IDiamondLoupe_$2594",
+                            "typeString": "type(contract IDiamondLoupe)"
+                          }
+                        },
+                        "id": 4325,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "lValueRequested": false,
+                        "memberName": "interfaceId",
+                        "nodeType": "MemberAccess",
+                        "src": "1516:31:16",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bytes4",
+                          "typeString": "bytes4"
+                        }
+                      },
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": true,
+                      "nodeType": "IndexAccess",
+                      "src": "1493:55:16",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bool",
+                        "typeString": "bool"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "hexValue": "74727565",
+                      "id": 4328,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "kind": "bool",
+                      "lValueRequested": false,
+                      "nodeType": "Literal",
+                      "src": "1551:4:16",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bool",
+                        "typeString": "bool"
+                      },
+                      "value": "true"
+                    },
+                    "src": "1493:62:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "id": 4330,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1493:62:16"
+                },
+                {
+                  "expression": {
+                    "id": 4340,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "baseExpression": {
+                        "expression": {
+                          "id": 4331,
+                          "name": "ds",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 4293,
+                          "src": "1565:2:16",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_DiamondStorage_$3146_storage_ptr",
+                            "typeString": "struct LibDiamond.DiamondStorage storage pointer"
+                          }
+                        },
+                        "id": 4337,
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "supportedInterfaces",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 3143,
+                        "src": "1565:22:16",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_mapping$_t_bytes4_$_t_bool_$",
+                          "typeString": "mapping(bytes4 => bool)"
+                        }
+                      },
+                      "id": 4338,
+                      "indexExpression": {
+                        "expression": {
+                          "arguments": [
+                            {
+                              "id": 4334,
+                              "name": "IERC173",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 2628,
+                              "src": "1593:7:16",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_type$_t_contract$_IERC173_$2628_$",
+                                "typeString": "type(contract IERC173)"
+                              }
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": [
+                              {
+                                "typeIdentifier": "t_type$_t_contract$_IERC173_$2628_$",
+                                "typeString": "type(contract IERC173)"
+                              }
+                            ],
+                            "id": 4333,
+                            "name": "type",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": -27,
+                            "src": "1588:4:16",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_metatype_pure$__$returns$__$",
+                              "typeString": "function () pure"
+                            }
+                          },
+                          "id": 4335,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "1588:13:16",
+                          "tryCall": false,
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_magic_meta_type_t_contract$_IERC173_$2628",
+                            "typeString": "type(contract IERC173)"
+                          }
+                        },
+                        "id": 4336,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "lValueRequested": false,
+                        "memberName": "interfaceId",
+                        "nodeType": "MemberAccess",
+                        "src": "1588:25:16",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bytes4",
+                          "typeString": "bytes4"
+                        }
+                      },
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": true,
+                      "nodeType": "IndexAccess",
+                      "src": "1565:49:16",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bool",
+                        "typeString": "bool"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "hexValue": "74727565",
+                      "id": 4339,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "kind": "bool",
+                      "lValueRequested": false,
+                      "nodeType": "Literal",
+                      "src": "1617:4:16",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bool",
+                        "typeString": "bool"
+                      },
+                      "value": "true"
+                    },
+                    "src": "1565:56:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "id": 4341,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1565:56:16"
+                },
+                {
+                  "expression": {
+                    "id": 4346,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "expression": {
+                        "arguments": [],
+                        "expression": {
+                          "argumentTypes": [],
+                          "id": 4342,
+                          "name": "gs",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 4019,
+                          "src": "2452:2:16",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_function_internal_pure$__$returns$_t_struct$_GameState_$4184_storage_ptr_$",
+                            "typeString": "function () pure returns (struct GameState storage pointer)"
+                          }
+                        },
+                        "id": 4343,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "kind": "functionCall",
+                        "lValueRequested": false,
+                        "names": [],
+                        "nodeType": "FunctionCall",
+                        "src": "2452:4:16",
+                        "tryCall": false,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_GameState_$4184_storage_ptr",
+                          "typeString": "struct GameState storage pointer"
+                        }
+                      },
+                      "id": 4344,
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": true,
+                      "memberName": "sample",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 4183,
+                      "src": "2452:11:16",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "id": 4345,
+                      "name": "num",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 4286,
+                      "src": "2466:3:16",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "src": "2452:17:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "id": 4347,
+                  "nodeType": "ExpressionStatement",
+                  "src": "2452:17:16"
+                }
+              ]
+            },
+            "functionSelector": "b7b0422d",
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "init",
+            "nameLocation": "1214:4:16",
+            "parameters": {
+              "id": 4287,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 4286,
+                  "mutability": "mutable",
+                  "name": "num",
+                  "nameLocation": "1227:3:16",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 4349,
+                  "src": "1219:11:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 4285,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1219:7:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1218:13:16"
+            },
+            "returnParameters": {
+              "id": 4288,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1241:0:16"
+            },
+            "scope": 4350,
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "abstract": false,
+        "baseContracts": [
+          {
+            "baseName": {
+              "id": 4283,
+              "name": "UseStorage",
+              "nodeType": "IdentifierPath",
+              "referencedDeclaration": 4020,
+              "src": "1077:10:16"
+            },
+            "id": 4284,
+            "nodeType": "InheritanceSpecifier",
+            "src": "1077:10:16"
+          }
+        ],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "fullyImplemented": true,
+        "linearizedBaseContracts": [
+          4350,
+          4020
+        ],
+        "name": "DiamondInit",
+        "nameLocation": "1062:11:16",
+        "scope": 4351,
+        "usedErrors": []
+      }
+    ],
+    "license": "MIT"
+  },
+  "id": 16
+}

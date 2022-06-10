@@ -8,8 +8,8 @@ pragma solidity ^0.8.0;
 * Implementation of a diamond.
 /******************************************************************************/
 
-import {LibDiamond} from "./libraries/LibDiamond.sol";
-import {IDiamondCut} from "./interfaces/IDiamondCut.sol";
+import {LibDiamond} from "contracts/libraries/LibDiamond.sol";
+import {IDiamondCut} from "contracts/interfaces/IDiamondCut.sol";
 
 // this is the main diamond contract which is the single access point for all.
 

@@ -1,17 +1,17 @@
+import fs from 'fs';
 import 'hardhat-diamond-abi';
 import { task } from 'hardhat/config';
 import '@typechain/hardhat';
 import '@nomiclabs/hardhat-ethers';
 import '@nomiclabs/hardhat-waffle';
 import 'hardhat-contract-sizer';
+import 'hardhat-preprocessor';
 require('dotenv').config();
 
 // tasks
-import './tasks/mapgen';
 import './tasks/port';
 import './tasks/deploy';
-import './tasks/simulate';
-import './tasks/poll';
+import './tasks/selector';
 
 // to get the smart contract file sizes, run:
 // yarn run hardhat size-contracts
@@ -58,9 +58,36 @@ export default {
       },
     },
   },
+
+  paths: {
+    cache: './cache_hardhat', // Use a different cache for Hardhat than Foundry
+  },
+
+  preprocess: {
+    eachLine: (hre: any) => ({
+      transform: (line: string) => {
+        if (line.match(/^\s*import /i)) {
+          getRemappings().forEach(([find, replace]) => {
+            if (line.match('"' + find)) {
+              line = line.replace('"' + find, '"' + replace);
+            }
+          });
+        }
+        return line;
+      },
+    }),
+  },
 };
 
-////////////////////////////
+// script copy pasta'd from Foundry book
+
+function getRemappings() {
+  return fs
+    .readFileSync('remappings.txt', 'utf8')
+    .split('\n')
+    .filter(Boolean)
+    .map((line) => line.trim().split('='));
+}
 
 task('accounts', 'Prints the list of accounts', async (taskArgs, hre) => {
   const accounts = await hre.ethers.getSigners();

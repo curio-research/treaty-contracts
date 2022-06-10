@@ -2,7 +2,7 @@ import { Curio } from './../../typechain-types/Curio';
 import { Signer } from 'ethers';
 import { deployProxy } from './deployHelper';
 import { HardhatRuntimeEnvironment, Libraries } from 'hardhat/types';
-import { getSelectors, FacetCutAction } from './diamond';
+import { getSelectors, FacetCutAction, getSigHashes } from './diamond';
 
 export async function deployDiamond(hre: HardhatRuntimeEnvironment, deployArgs: any[]) {
   const accounts = await hre.ethers.getSigners();
@@ -34,8 +34,10 @@ export async function deployDiamond(hre: HardhatRuntimeEnvironment, deployArgs: 
   const cut = [];
   for (const FacetName of FacetNames) {
     const Facet = await hre.ethers.getContractFactory(FacetName);
+
     const facet = await Facet.deploy();
     await facet.deployed();
+
     console.log(`${FacetName} deployed: ${facet.address}`);
     cut.push({
       facetAddress: facet.address,

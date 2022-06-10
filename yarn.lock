@@ -2781,6 +2781,11 @@ emoji-regex@^8.0.0:
   resolved "https://registry.yarnpkg.com/emoji-regex/-/emoji-regex-8.0.0.tgz#e818fd69ce5ccfcb404594f842963bf53164cc37"
   integrity sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==
 
+encode-utf8@^1.0.2:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/encode-utf8/-/encode-utf8-1.0.3.tgz#f30fdd31da07fb596f281beb2f6b027851994cda"
+  integrity sha512-ucAnuBEhUK4boH2HjVYG5Q2mQyPorvv0u/ocS+zhdw0S8AlHYY+GOFhP1Gio5z4icpP2ivFSvhtFjQi8+T9ppw==
+
 encodeurl@~1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/encodeurl/-/encodeurl-1.0.2.tgz#ad3ff4c86ec2d029322f5a02c3a9a606c95b3f59"
@@ -3615,6 +3620,13 @@ flow-stoplight@^1.0.0:
   resolved "https://registry.yarnpkg.com/flow-stoplight/-/flow-stoplight-1.0.0.tgz#4a292c5bcff8b39fa6cc0cb1a853d86f27eeff7b"
   integrity sha1-SiksW8/4s5+mzAyxqFPYbyfu/3s=
 
+fmix@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/fmix/-/fmix-0.1.0.tgz#c7bbf124dec42c9d191cfb947d0a9778dd986c0c"
+  integrity sha512-Y6hyofImk9JdzU8k5INtTXX1cu8LDlePWDFU5sftm9H+zKCr5SGrVjdhkvsim646cw5zD0nADj8oHyXMZmCZ9w==
+  dependencies:
+    imul "^1.0.0"
+
 follow-redirects@^1.12.1, follow-redirects@^1.14.0, follow-redirects@^1.14.8:
   version "1.14.9"
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.14.9.tgz#dd4ea157de7bfaf9ea9b3fbd85aa16951f78d8d7"
@@ -3974,6 +3986,13 @@ hardhat-diamond-abi@^2.0.0:
     debug "^4.3.3"
     ethers "^5.5.2"
 
+hardhat-preprocessor@^0.1.4:
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/hardhat-preprocessor/-/hardhat-preprocessor-0.1.4.tgz#daa3004c3d2cca2ce1b5555c0c9b1940670fd022"
+  integrity sha512-TeIi9y5xXf6oKa2BMqXAFQV0tAJRy9MKDElu0VrHMsEVpiUXRh47AEJqWkFpWr2lVLFweif40n1RGxGIEFOPXw==
+  dependencies:
+    murmur-128 "^0.2.1"
+
 hardhat@^2.8.3:
   version "2.9.1"
   resolved "https://registry.yarnpkg.com/hardhat/-/hardhat-2.9.1.tgz#f69f82bb4d98e28744584779483caa7c5cfbde8b"
@@ -4250,6 +4269,11 @@ immutable@^4.0.0-rc.12:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/immutable/-/immutable-4.0.0.tgz#b86f78de6adef3608395efb269a91462797e2c23"
   integrity sha512-zIE9hX70qew5qTUjSS7wi1iwj/l7+m54KWU247nhM3v806UdGj1yDndXj+IOYxxtW9zyLI+xqFNZjTuDaLUqFw==
+
+imul@^1.0.0:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/imul/-/imul-1.0.1.tgz#9d5867161e8b3de96c2c38d5dc7cb102f35e2ac9"
+  integrity sha512-WFAgfwPLAjU66EKt6vRdTlKj4nAgIDQzh29JonLa4Bqtl6D8JrIMvWjCnx7xEjVNmP3U0fM5o8ZObk7d0f62bA==
 
 indent-string@^4.0.0:
   version "4.0.0"
@@ -5581,6 +5605,15 @@ multihashes@^1.0.1:
     multibase "^1.0.1"
     varint "^5.0.0"
 
+murmur-128@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/murmur-128/-/murmur-128-0.2.1.tgz#a9f6568781d2350ecb1bf80c14968cadbeaa4b4d"
+  integrity sha512-WseEgiRkI6aMFBbj8Cg9yBj/y+OdipwVC7zUo3W2W1JAJITwouUOtpqsmGSg67EQmwwSyod7hsVsWY5LsrfQVg==
+  dependencies:
+    encode-utf8 "^1.0.2"
+    fmix "^0.1.0"
+    imul "^1.0.0"
+
 nano-json-stream-parser@^0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/nano-json-stream-parser/-/nano-json-stream-parser-0.1.2.tgz#0cc8f6d0e2b622b479c40d499c46d64b755c6f5f"
@@ -6758,6 +6791,11 @@ simple-get@^2.7.0:
     decompress-response "^3.3.0"
     once "^1.3.1"
     simple-concat "^1.0.0"
+
+simplex-noise@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/simplex-noise/-/simplex-noise-3.0.1.tgz#ad94e7bb6e53a973139e8999348cb6123b3347ba"
+  integrity sha512-eww0SFiWLyOaUKQMJ7gbdvQJvULeJdM/Y4BiC3rrOQnYHo+MSPh465/qeXSZkpTdB9/HthumpnYD3DobZweBBQ==
 
 slash@^1.0.0:
   version "1.0.0"
