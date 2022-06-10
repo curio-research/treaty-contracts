@@ -12,11 +12,6 @@ library Util {
         return LibStorage.gameStorage();
     }
 
-    // Set an NxN chunk for the tile map.
-    function _setMapChunk(Position memory _pos, uint256[][] memory _chunk) public {
-        // TODO
-    }
-
     // ----------------------------------------------------------
     // Game-related
     // ----------------------------------------------------------

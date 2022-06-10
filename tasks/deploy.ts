@@ -78,7 +78,7 @@ task('deploy', 'deploy contracts')
       for (let y = 0; y < WORLD_HEIGHT; y += MAP_INTERVAL) {
         regionMap = tileMap.slice(x, x + MAP_INTERVAL).map((col) => col.slice(y, y + MAP_INTERVAL));
 
-        let tx = await util._setMapChunk({ x, y }, regionMap);
+        let tx = await diamond.setMapChunk({ x, y }, regionMap);
         await tx.wait();
       }
     }

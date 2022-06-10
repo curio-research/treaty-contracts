@@ -46,15 +46,21 @@ export async function deployDiamond(hre: HardhatRuntimeEnvironment, deployArgs: 
     });
   }
 
+  console.log('AA');
+
   // upgrade diamond with facets
   const diamondCut = await hre.ethers.getContractAt('IDiamondCut', diamond.address);
   let tx;
   let receipt;
 
+  console.log('BB');
+
   // call to init function. add initial state setting parameters. this acts as the constructor essentially
   let functionCall = diamondInit.interface.encodeFunctionData('init', deployArgs); // encodes data functions into bytes i believe
   tx = await diamondCut.diamondCut(cut, diamondInit.address, functionCall);
   // console.log("Diamond cut tx: ", tx.hash);
+
+  console.log('CC');
 
   receipt = await tx.wait();
   if (!receipt.status) {

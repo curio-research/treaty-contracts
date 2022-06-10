@@ -3,7 +3,7 @@ pragma solidity ^0.8.4;
 
 import "contracts/libraries/Storage.sol";
 import {Util} from "contracts/libraries/GameUtil.sol";
-import {Base, GameState, Player, Position, Production, Terrain, Tile, Troop, TroopType} from "contracts/libraries/Types.sol";
+import {Base, GameState, Player, Position, Production, TERRAIN, Tile, Troop, TroopType} from "contracts/libraries/Types.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 contract EngineFacet is UseStorage {
@@ -48,6 +48,11 @@ contract EngineFacet is UseStorage {
      * @param _player player address
      */
     function initializeTroop(Position memory _pos, address _player) external {
+        // TODO
+    }
+
+    // Set an NxN chunk for the tile map.
+    function setMapChunk(Position memory _pos, uint256[][] memory _chunk) public {
         // TODO
     }
 

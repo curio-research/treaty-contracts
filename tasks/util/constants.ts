@@ -1,5 +1,5 @@
 import { BigNumber } from 'ethers';
-import { TroopTypeStruct, WorldConstantsStruct, WorldConstantsStructOutput } from '../../typechain-types/DiamondInit';
+import { TroopTypeStruct } from '../../typechain-types/DiamondInit';
 import { RenderInput } from './types';
 
 export const LOCALHOST_RPC_URL = 'http://127.0.0.1:8545/';
@@ -29,7 +29,7 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     epochsToProduce: 6,
     movementCooldown: 1,
     attackCooldown: 0,
-    isArmy: true,
+    isLandTroop: true,
   },
   {
     name: 'TROOP_TRANSPORT',
@@ -42,7 +42,7 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     epochsToProduce: 14,
     movementCooldown: 0.5, // FIXME
     attackCooldown: 0,
-    isArmy: false,
+    isLandTroop: false,
   },
   {
     name: 'DESTROYER',
@@ -55,7 +55,7 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     epochsToProduce: 20,
     movementCooldown: 0.33, // FIXME
     attackCooldown: 0,
-    isArmy: false,
+    isLandTroop: false,
   },
   {
     name: 'CRUISER',
@@ -68,7 +68,7 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     epochsToProduce: 30,
     movementCooldown: 0.5, // FIXME
     attackCooldown: 0,
-    isArmy: false,
+    isLandTroop: false,
   },
   {
     name: 'BATTLESHIP',
@@ -81,7 +81,7 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     epochsToProduce: 50,
     movementCooldown: 0.5, // FIXME
     attackCooldown: 0,
-    isArmy: false,
+    isLandTroop: false,
   },
 ];
 
