@@ -68,7 +68,7 @@ struct TroopType {
     uint256 epochsToProduce;
     uint256 movementCooldown;
     uint256 attackCooldown;
-    bool isArmy;
+    bool isLandTroop;
     // bool canBombard; // only needed for Fighter Jets
 }
 

@@ -69,8 +69,8 @@ library Util {
         return gs().troopTypeIdMap[_troopTypeId].speed;
     }
 
-    function _isArmy(uint256 _troopTypeId) public view returns (bool) {
-        return gs().troopTypeIdMap[_troopTypeId].isArmy;
+    function _isLandTroop(uint256 _troopTypeId) public view returns (bool) {
+        return gs().troopTypeIdMap[_troopTypeId].isLandTroop;
     }
 
     function _getBaseHealth(uint256 _baseId) public view returns (uint256) {

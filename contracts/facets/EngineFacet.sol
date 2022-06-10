@@ -69,7 +69,7 @@ contract EngineFacet is UseStorage {
         if ((gs().epoch - _troop.lastMoved) < Util._getMovementCooldown(_troop.troopTypeId)) revert("Moved too recently");
 
         Tile memory _targetTile = Util._getTileAt(_targetPos);
-        if (Util._isArmy(_troop.troopTypeId)) {
+        if (Util._isLandTroop(_troop.troopTypeId)) {
             if (_targetTile.terrain == TERRAIN.WATER) revert("Cannot move on water");
         } else {
             if (_targetTile.terrain != TERRAIN.WATER && !Util._hasPort(_targetTile)) revert("Cannot move on land");
@@ -190,7 +190,7 @@ contract EngineFacet is UseStorage {
     }
 
     /**
-     * Capture an opponent base using an army troop.
+     * Capture an opponent base using a land troop.
      * @param _troopId identifier for troop
      * @param _targetPos target position
      */
@@ -200,7 +200,7 @@ contract EngineFacet is UseStorage {
         Troop memory _troop = gs().troopIdMap[_troopId];
         if (_troop.owner != msg.sender) revert("Can only capture with own troop");
         if (!Util._withinDist(_troop.pos, _targetPos, 1)) revert("Destination too far");
-        if (!Util._isArmy(_troop.troopTypeId)) revert("Only an army can capture bases");
+        if (!Util._isLandTroop(_troop.troopTypeId)) revert("Only a land troop can capture bases");
 
         Tile memory _targetTile = Util._getTileAt(_targetPos);
         if (_targetTile.baseId == NULL) revert("No base to capture");
@@ -226,7 +226,7 @@ contract EngineFacet is UseStorage {
         Tile memory _tile = Util._getTileAt(_pos);
         if (_tile.baseId == NULL) revert("No base found");
         if (Util._getBaseOwner(_tile.baseId) != msg.sender) revert("Can only produce in own base");
-        if (!Util._hasPort(_tile) && !Util._isArmy(_troopTypeId)) revert("Only ports can produce water troops");
+        if (!Util._hasPort(_tile) && !Util._isLandTroop(_troopTypeId)) revert("Only ports can produce water troops");
         if (gs().baseProductionMap[_tile.baseId].troopTypeId != NULL) revert("Base already producing");
 
         gs().baseProductionMap[_tile.baseId] = Production({troopTypeId: _troopTypeId, startEpoch: gs().epoch});
