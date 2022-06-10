@@ -5,7 +5,6 @@ import '@typechain/hardhat';
 import '@nomiclabs/hardhat-ethers';
 import '@nomiclabs/hardhat-waffle';
 import 'hardhat-contract-sizer';
-import '@foundry-rs/hardhat-forge';
 import 'hardhat-preprocessor';
 require('dotenv').config();
 

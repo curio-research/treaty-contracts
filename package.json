@@ -22,7 +22,6 @@
     "typescript": "^4.4.4"
   },
   "dependencies": {
-    "@foundry-rs/hardhat-forge": "^0.1.6",
     "@openzeppelin/contracts": "^4.3.2",
     "@openzeppelin/contracts-upgradeable": "^4.3.2",
     "@pinata/sdk": "^1.1.23",

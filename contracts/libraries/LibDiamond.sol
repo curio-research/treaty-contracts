@@ -5,7 +5,7 @@ pragma solidity ^0.8.0;
 * Author: Nick Mudge <nick@perfectabstractions.com> (https://twitter.com/mudgen)
 * EIP-2535 Diamonds: https://eips.ethereum.org/EIPS/eip-2535
 /******************************************************************************/
-import { IDiamondCut } from "../interfaces/IDiamondCut.sol";
+import {IDiamondCut} from "contracts/interfaces/IDiamondCut.sol";
 
 // Remember to add the loupe functions from DiamondLoupeFacet to the diamond.
 // The loupe functions are required by the EIP2535 Diamonds standard
@@ -75,7 +75,7 @@ library LibDiamond {
         uint256 selectorCount = originalSelectorCount;
         bytes32 selectorSlot;
         // Check if last selector slot is not full
-        // "selectorCount & 7" is a gas efficient modulo by eight "selectorCount % 8" 
+        // "selectorCount & 7" is a gas efficient modulo by eight "selectorCount % 8"
         if (selectorCount & 7 > 0) {
             // get last selectorSlot
             // "selectorSlot >> 3" is a gas efficient division by 8 "selectorSlot / 8"
@@ -83,19 +83,13 @@ library LibDiamond {
         }
         // loop through diamond cut
         for (uint256 facetIndex; facetIndex < _diamondCut.length; facetIndex++) {
-            (selectorCount, selectorSlot) = addReplaceRemoveFacetSelectors(
-                selectorCount,
-                selectorSlot,
-                _diamondCut[facetIndex].facetAddress,
-                _diamondCut[facetIndex].action,
-                _diamondCut[facetIndex].functionSelectors
-            );
+            (selectorCount, selectorSlot) = addReplaceRemoveFacetSelectors(selectorCount, selectorSlot, _diamondCut[facetIndex].facetAddress, _diamondCut[facetIndex].action, _diamondCut[facetIndex].functionSelectors);
         }
         if (selectorCount != originalSelectorCount) {
             ds.selectorCount = uint16(selectorCount);
         }
         // If last selector slot is not full
-        // "selectorCount & 7" is a gas efficient modulo by eight "selectorCount % 8" 
+        // "selectorCount & 7" is a gas efficient modulo by eight "selectorCount % 8"
         if (selectorCount & 7 > 0) {
             // "selectorSlot >> 3" is a gas efficient division by 8 "selectorSlot / 8"
             ds.selectorSlots[selectorCount >> 3] = selectorSlot;
@@ -121,7 +115,7 @@ library LibDiamond {
                 require(address(bytes20(oldFacet)) == address(0), "LibDiamondCut: Can't add function that already exists");
                 // add facet for selector
                 ds.facets[selector] = bytes20(_newFacetAddress) | bytes32(_selectorCount);
-                // "_selectorCount & 7" is a gas efficient modulo by eight "_selectorCount % 8" 
+                // "_selectorCount & 7" is a gas efficient modulo by eight "_selectorCount % 8"
                 uint256 selectorInSlotPosition = (_selectorCount & 7) << 5;
                 // clear selector position in slot and add selector
                 _selectorSlot = (_selectorSlot & ~(CLEAR_SELECTOR_MASK >> selectorInSlotPosition)) | (bytes32(selector) >> selectorInSlotPosition);
@@ -150,7 +144,7 @@ library LibDiamond {
             require(_newFacetAddress == address(0), "LibDiamondCut: Remove facet address must be address(0)");
             // "_selectorCount >> 3" is a gas efficient division by 8 "_selectorCount / 8"
             uint256 selectorSlotCount = _selectorCount >> 3;
-            // "_selectorCount & 7" is a gas efficient modulo by eight "_selectorCount % 8" 
+            // "_selectorCount & 7" is a gas efficient modulo by eight "_selectorCount % 8"
             uint256 selectorInSlotIndex = _selectorCount & 7;
             for (uint256 selectorIndex; selectorIndex < _selectors.length; selectorIndex++) {
                 if (_selectorSlot == 0) {
@@ -182,22 +176,18 @@ library LibDiamond {
                     uint256 oldSelectorCount = uint16(uint256(oldFacet));
                     // "oldSelectorCount >> 3" is a gas efficient division by 8 "oldSelectorCount / 8"
                     oldSelectorsSlotCount = oldSelectorCount >> 3;
-                    // "oldSelectorCount & 7" is a gas efficient modulo by eight "oldSelectorCount % 8" 
+                    // "oldSelectorCount & 7" is a gas efficient modulo by eight "oldSelectorCount % 8"
                     oldSelectorInSlotPosition = (oldSelectorCount & 7) << 5;
                 }
                 if (oldSelectorsSlotCount != selectorSlotCount) {
                     bytes32 oldSelectorSlot = ds.selectorSlots[oldSelectorsSlotCount];
                     // clears the selector we are deleting and puts the last selector in its place.
-                    oldSelectorSlot =
-                        (oldSelectorSlot & ~(CLEAR_SELECTOR_MASK >> oldSelectorInSlotPosition)) |
-                        (bytes32(lastSelector) >> oldSelectorInSlotPosition);
+                    oldSelectorSlot = (oldSelectorSlot & ~(CLEAR_SELECTOR_MASK >> oldSelectorInSlotPosition)) | (bytes32(lastSelector) >> oldSelectorInSlotPosition);
                     // update storage with the modified slot
                     ds.selectorSlots[oldSelectorsSlotCount] = oldSelectorSlot;
                 } else {
                     // clears the selector we are deleting and puts the last selector in its place.
-                    _selectorSlot =
-                        (_selectorSlot & ~(CLEAR_SELECTOR_MASK >> oldSelectorInSlotPosition)) |
-                        (bytes32(lastSelector) >> oldSelectorInSlotPosition);
+                    _selectorSlot = (_selectorSlot & ~(CLEAR_SELECTOR_MASK >> oldSelectorInSlotPosition)) | (bytes32(lastSelector) >> oldSelectorInSlotPosition);
                 }
                 if (selectorInSlotIndex == 0) {
                     delete ds.selectorSlots[selectorSlotCount];
