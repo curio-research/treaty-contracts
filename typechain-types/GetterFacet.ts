@@ -22,270 +22,67 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
   y: BigNumber;
 };
 
-export type BlockDataStruct = {
-  blockId: BigNumberish;
-  health: BigNumberish;
-  owner: string;
-  lastAttacked: BigNumberish;
-  lastMoved: BigNumberish;
-  occupiable: boolean;
-};
-
-export type BlockDataStructOutput = [
-  BigNumber,
-  BigNumber,
-  string,
-  BigNumber,
-  BigNumber,
-  boolean
-] & {
-  blockId: BigNumber;
-  health: BigNumber;
-  owner: string;
-  lastAttacked: BigNumber;
-  lastMoved: BigNumber;
-  occupiable: boolean;
-};
-
-export type RecipeStruct = {
-  craftItemIds: BigNumberish[];
-  craftItemAmounts: BigNumberish[];
-};
-
-export type RecipeStructOutput = [BigNumber[], BigNumber[]] & {
-  craftItemIds: BigNumber[];
-  craftItemAmounts: BigNumber[];
-};
-
 export type TileStruct = {
-  occupier: string;
-  worldBlockId: BigNumberish;
-  tileType: BigNumberish;
-  lastOccupied: BigNumberish;
-  tileContractId: BigNumberish;
+  terrain: BigNumberish;
+  occupantId: BigNumberish;
+  baseId: BigNumberish;
 };
 
-export type TileStructOutput = [
-  string,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber
-] & {
-  occupier: string;
-  worldBlockId: BigNumber;
-  tileType: BigNumber;
-  lastOccupied: BigNumber;
-  tileContractId: BigNumber;
+export type TileStructOutput = [number, BigNumber, BigNumber] & {
+  terrain: number;
+  occupantId: BigNumber;
+  baseId: BigNumber;
 };
 
-export type PlayerDataStruct = {
-  initialized: boolean;
-  initTimestamp: BigNumberish;
-  playerAddr: string;
-  health: BigNumberish;
-  reach: BigNumberish;
+export type TroopStruct = {
+  owner: string;
+  troopTypeId: BigNumberish;
   lastMoved: BigNumberish;
-  position: PositionStruct;
-};
-
-export type PlayerDataStructOutput = [
-  boolean,
-  BigNumber,
-  string,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  PositionStructOutput
-] & {
-  initialized: boolean;
-  initTimestamp: BigNumber;
-  playerAddr: string;
-  health: BigNumber;
-  reach: BigNumber;
-  lastMoved: BigNumber;
-  position: PositionStructOutput;
-};
-
-export type WorldConstantsStruct = {
-  worldWidth: BigNumberish;
-  worldHeight: BigNumberish;
-  startPlayerHealth: BigNumberish;
-  startingReach: BigNumberish;
-  startingPlayerDefaultCurrencyAmount: BigNumberish;
-  playerMoveCooldown: BigNumberish;
-  getMapInterval: BigNumberish;
-};
-
-export type WorldConstantsStructOutput = [
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber
-] & {
-  worldWidth: BigNumber;
-  worldHeight: BigNumber;
-  startPlayerHealth: BigNumber;
-  startingReach: BigNumber;
-  startingPlayerDefaultCurrencyAmount: BigNumber;
-  playerMoveCooldown: BigNumber;
-  getMapInterval: BigNumber;
-};
-
-export type ItemStruct = {
-  mineable: boolean;
-  craftable: boolean;
-  occupiable: boolean;
+  lastAttacked: BigNumberish;
   health: BigNumberish;
-  mineItemIds: BigNumberish[];
-  craftItemIds: BigNumberish[];
-  craftItemAmounts: BigNumberish[];
-  moveCooldown: BigNumberish;
-  attackDamage: BigNumberish;
-  attackRange: BigNumberish;
-  attackCooldown: BigNumberish;
-  programmable: boolean;
-  abiEncoding: string;
-  contractAddr: string;
+  pos: PositionStruct;
+  cargoTroopIds: BigNumberish[];
 };
 
-export type ItemStructOutput = [
-  boolean,
-  boolean,
-  boolean,
-  BigNumber,
-  BigNumber[],
-  BigNumber[],
-  BigNumber[],
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  boolean,
+export type TroopStructOutput = [
   string,
-  string
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  PositionStructOutput,
+  BigNumber[]
 ] & {
-  mineable: boolean;
-  craftable: boolean;
-  occupiable: boolean;
+  owner: string;
+  troopTypeId: BigNumber;
+  lastMoved: BigNumber;
+  lastAttacked: BigNumber;
   health: BigNumber;
-  mineItemIds: BigNumber[];
-  craftItemIds: BigNumber[];
-  craftItemAmounts: BigNumber[];
-  moveCooldown: BigNumber;
-  attackDamage: BigNumber;
-  attackRange: BigNumber;
-  attackCooldown: BigNumber;
-  programmable: boolean;
-  abiEncoding: string;
-  contractAddr: string;
+  pos: PositionStructOutput;
+  cargoTroopIds: BigNumber[];
 };
 
 export interface GetterFacetInterface extends utils.Interface {
   functions: {
-    "_getBlockChunkData((uint256,uint256))": FunctionFragment;
-    "_getBlockDataAtPos((uint256,uint256))": FunctionFragment;
-    "_getCurrentEpoch()": FunctionFragment;
-    "_getInventoryByPlayer(address)": FunctionFragment;
-    "_getMap((uint256,uint256))": FunctionFragment;
-    "_getPlayer(address)": FunctionFragment;
-    "_getTileData((uint256,uint256))": FunctionFragment;
-    "_getWorldBlockData(uint256)": FunctionFragment;
-    "_getWorldConstants()": FunctionFragment;
-    "_isOccupied((uint256,uint256))": FunctionFragment;
-    "bulkGetAllItems()": FunctionFragment;
-    "bulkGetAllPlayerData()": FunctionFragment;
+    "_getMapChunk((uint256,uint256))": FunctionFragment;
+    "bulkGetAllTroops()": FunctionFragment;
   };
 
   encodeFunctionData(
-    functionFragment: "_getBlockChunkData",
+    functionFragment: "_getMapChunk",
     values: [PositionStruct]
   ): string;
   encodeFunctionData(
-    functionFragment: "_getBlockDataAtPos",
-    values: [PositionStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getCurrentEpoch",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getInventoryByPlayer",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getMap",
-    values: [PositionStruct]
-  ): string;
-  encodeFunctionData(functionFragment: "_getPlayer", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "_getTileData",
-    values: [PositionStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getWorldBlockData",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getWorldConstants",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_isOccupied",
-    values: [PositionStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "bulkGetAllItems",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "bulkGetAllPlayerData",
+    functionFragment: "bulkGetAllTroops",
     values?: undefined
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "_getBlockChunkData",
+    functionFragment: "_getMapChunk",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "_getBlockDataAtPos",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getCurrentEpoch",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getInventoryByPlayer",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "_getMap", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "_getPlayer", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "_getTileData",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getWorldBlockData",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getWorldConstants",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_isOccupied",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "bulkGetAllItems",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "bulkGetAllPlayerData",
+    functionFragment: "bulkGetAllTroops",
     data: BytesLike
   ): Result;
 
@@ -319,267 +116,47 @@ export interface GetterFacet extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    _getBlockChunkData(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<[BlockDataStructOutput[], PositionStructOutput[]]>;
-
-    _getBlockDataAtPos(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<[BlockDataStructOutput]>;
-
-    _getCurrentEpoch(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    _getInventoryByPlayer(
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<[RecipeStructOutput]>;
-
-    _getMap(
+    _getMapChunk(
       _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<[TileStructOutput[], PositionStructOutput[]]>;
 
-    _getPlayer(
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<
-      [PlayerDataStructOutput] & { playerData: PlayerDataStructOutput }
-    >;
-
-    _getTileData(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<[TileStructOutput]>;
-
-    _getWorldBlockData(
-      _worldBlockIdx: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BlockDataStructOutput]>;
-
-    _getWorldConstants(
-      overrides?: CallOverrides
-    ): Promise<[WorldConstantsStructOutput]>;
-
-    _isOccupied(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    bulkGetAllItems(overrides?: CallOverrides): Promise<[ItemStructOutput[]]>;
-
-    bulkGetAllPlayerData(
-      overrides?: CallOverrides
-    ): Promise<[PlayerDataStructOutput[]]>;
+    bulkGetAllTroops(overrides?: CallOverrides): Promise<[TroopStructOutput[]]>;
   };
 
-  _getBlockChunkData(
-    _pos: PositionStruct,
-    overrides?: CallOverrides
-  ): Promise<[BlockDataStructOutput[], PositionStructOutput[]]>;
-
-  _getBlockDataAtPos(
-    _pos: PositionStruct,
-    overrides?: CallOverrides
-  ): Promise<BlockDataStructOutput>;
-
-  _getCurrentEpoch(overrides?: CallOverrides): Promise<BigNumber>;
-
-  _getInventoryByPlayer(
-    _player: string,
-    overrides?: CallOverrides
-  ): Promise<RecipeStructOutput>;
-
-  _getMap(
+  _getMapChunk(
     _pos: PositionStruct,
     overrides?: CallOverrides
   ): Promise<[TileStructOutput[], PositionStructOutput[]]>;
 
-  _getPlayer(
-    _player: string,
-    overrides?: CallOverrides
-  ): Promise<PlayerDataStructOutput>;
-
-  _getTileData(
-    _pos: PositionStruct,
-    overrides?: CallOverrides
-  ): Promise<TileStructOutput>;
-
-  _getWorldBlockData(
-    _worldBlockIdx: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BlockDataStructOutput>;
-
-  _getWorldConstants(
-    overrides?: CallOverrides
-  ): Promise<WorldConstantsStructOutput>;
-
-  _isOccupied(
-    _pos: PositionStruct,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  bulkGetAllItems(overrides?: CallOverrides): Promise<ItemStructOutput[]>;
-
-  bulkGetAllPlayerData(
-    overrides?: CallOverrides
-  ): Promise<PlayerDataStructOutput[]>;
+  bulkGetAllTroops(overrides?: CallOverrides): Promise<TroopStructOutput[]>;
 
   callStatic: {
-    _getBlockChunkData(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<[BlockDataStructOutput[], PositionStructOutput[]]>;
-
-    _getBlockDataAtPos(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<BlockDataStructOutput>;
-
-    _getCurrentEpoch(overrides?: CallOverrides): Promise<BigNumber>;
-
-    _getInventoryByPlayer(
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<RecipeStructOutput>;
-
-    _getMap(
+    _getMapChunk(
       _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<[TileStructOutput[], PositionStructOutput[]]>;
 
-    _getPlayer(
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<PlayerDataStructOutput>;
-
-    _getTileData(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<TileStructOutput>;
-
-    _getWorldBlockData(
-      _worldBlockIdx: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BlockDataStructOutput>;
-
-    _getWorldConstants(
-      overrides?: CallOverrides
-    ): Promise<WorldConstantsStructOutput>;
-
-    _isOccupied(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    bulkGetAllItems(overrides?: CallOverrides): Promise<ItemStructOutput[]>;
-
-    bulkGetAllPlayerData(
-      overrides?: CallOverrides
-    ): Promise<PlayerDataStructOutput[]>;
+    bulkGetAllTroops(overrides?: CallOverrides): Promise<TroopStructOutput[]>;
   };
 
   filters: {};
 
   estimateGas: {
-    _getBlockChunkData(
+    _getMapChunk(
       _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getBlockDataAtPos(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getCurrentEpoch(overrides?: CallOverrides): Promise<BigNumber>;
-
-    _getInventoryByPlayer(
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getMap(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getPlayer(_player: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    _getTileData(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getWorldBlockData(
-      _worldBlockIdx: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getWorldConstants(overrides?: CallOverrides): Promise<BigNumber>;
-
-    _isOccupied(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    bulkGetAllItems(overrides?: CallOverrides): Promise<BigNumber>;
-
-    bulkGetAllPlayerData(overrides?: CallOverrides): Promise<BigNumber>;
+    bulkGetAllTroops(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    _getBlockChunkData(
+    _getMapChunk(
       _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _getBlockDataAtPos(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getCurrentEpoch(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    _getInventoryByPlayer(
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getMap(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getPlayer(
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getTileData(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getWorldBlockData(
-      _worldBlockIdx: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getWorldConstants(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _isOccupied(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    bulkGetAllItems(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    bulkGetAllPlayerData(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    bulkGetAllTroops(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

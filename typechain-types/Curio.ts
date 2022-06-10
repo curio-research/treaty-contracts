@@ -46,180 +46,44 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
   y: BigNumber;
 };
 
-export type BlockDataStruct = {
-  blockId: BigNumberish;
-  health: BigNumberish;
-  owner: string;
-  lastAttacked: BigNumberish;
-  lastMoved: BigNumberish;
-  occupiable: boolean;
-};
-
-export type BlockDataStructOutput = [
-  BigNumber,
-  BigNumber,
-  string,
-  BigNumber,
-  BigNumber,
-  boolean
-] & {
-  blockId: BigNumber;
-  health: BigNumber;
-  owner: string;
-  lastAttacked: BigNumber;
-  lastMoved: BigNumber;
-  occupiable: boolean;
-};
-
-export type RecipeStruct = {
-  craftItemIds: BigNumberish[];
-  craftItemAmounts: BigNumberish[];
-};
-
-export type RecipeStructOutput = [BigNumber[], BigNumber[]] & {
-  craftItemIds: BigNumber[];
-  craftItemAmounts: BigNumber[];
-};
-
 export type TileStruct = {
-  occupier: string;
-  worldBlockId: BigNumberish;
-  tileType: BigNumberish;
-  lastOccupied: BigNumberish;
-  tileContractId: BigNumberish;
+  terrain: BigNumberish;
+  occupantId: BigNumberish;
+  baseId: BigNumberish;
 };
 
-export type TileStructOutput = [
-  string,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber
-] & {
-  occupier: string;
-  worldBlockId: BigNumber;
-  tileType: BigNumber;
-  lastOccupied: BigNumber;
-  tileContractId: BigNumber;
+export type TileStructOutput = [number, BigNumber, BigNumber] & {
+  terrain: number;
+  occupantId: BigNumber;
+  baseId: BigNumber;
 };
 
-export type PlayerDataStruct = {
-  initialized: boolean;
-  initTimestamp: BigNumberish;
-  playerAddr: string;
-  health: BigNumberish;
-  reach: BigNumberish;
+export type TroopStruct = {
+  owner: string;
+  troopTypeId: BigNumberish;
   lastMoved: BigNumberish;
-  position: PositionStruct;
-};
-
-export type PlayerDataStructOutput = [
-  boolean,
-  BigNumber,
-  string,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  PositionStructOutput
-] & {
-  initialized: boolean;
-  initTimestamp: BigNumber;
-  playerAddr: string;
-  health: BigNumber;
-  reach: BigNumber;
-  lastMoved: BigNumber;
-  position: PositionStructOutput;
-};
-
-export type WorldConstantsStruct = {
-  worldWidth: BigNumberish;
-  worldHeight: BigNumberish;
-  startPlayerHealth: BigNumberish;
-  startingReach: BigNumberish;
-  startingPlayerDefaultCurrencyAmount: BigNumberish;
-  playerMoveCooldown: BigNumberish;
-  getMapInterval: BigNumberish;
-};
-
-export type WorldConstantsStructOutput = [
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber
-] & {
-  worldWidth: BigNumber;
-  worldHeight: BigNumber;
-  startPlayerHealth: BigNumber;
-  startingReach: BigNumber;
-  startingPlayerDefaultCurrencyAmount: BigNumber;
-  playerMoveCooldown: BigNumber;
-  getMapInterval: BigNumber;
-};
-
-export type ItemStruct = {
-  mineable: boolean;
-  craftable: boolean;
-  occupiable: boolean;
+  lastAttacked: BigNumberish;
   health: BigNumberish;
-  mineItemIds: BigNumberish[];
-  craftItemIds: BigNumberish[];
-  craftItemAmounts: BigNumberish[];
-  moveCooldown: BigNumberish;
-  attackDamage: BigNumberish;
-  attackRange: BigNumberish;
-  attackCooldown: BigNumberish;
-  programmable: boolean;
-  abiEncoding: string;
-  contractAddr: string;
+  pos: PositionStruct;
+  cargoTroopIds: BigNumberish[];
 };
 
-export type ItemStructOutput = [
-  boolean,
-  boolean,
-  boolean,
-  BigNumber,
-  BigNumber[],
-  BigNumber[],
-  BigNumber[],
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  boolean,
+export type TroopStructOutput = [
   string,
-  string
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  PositionStructOutput,
+  BigNumber[]
 ] & {
-  mineable: boolean;
-  craftable: boolean;
-  occupiable: boolean;
+  owner: string;
+  troopTypeId: BigNumber;
+  lastMoved: BigNumber;
+  lastAttacked: BigNumber;
   health: BigNumber;
-  mineItemIds: BigNumber[];
-  craftItemIds: BigNumber[];
-  craftItemAmounts: BigNumber[];
-  moveCooldown: BigNumber;
-  attackDamage: BigNumber;
-  attackRange: BigNumber;
-  attackCooldown: BigNumber;
-  programmable: boolean;
-  abiEncoding: string;
-  contractAddr: string;
-};
-
-export type TowerStruct = {
-  rewardPerEpoch: BigNumberish;
-  itemId: BigNumberish;
-  lastCapturedEpoch: BigNumberish;
-  owner: string;
-};
-
-export type TowerStructOutput = [BigNumber, BigNumber, BigNumber, string] & {
-  rewardPerEpoch: BigNumber;
-  itemId: BigNumber;
-  lastCapturedEpoch: BigNumber;
-  owner: string;
+  pos: PositionStructOutput;
+  cargoTroopIds: BigNumber[];
 };
 
 export interface CurioInterface extends utils.Interface {
@@ -230,36 +94,18 @@ export interface CurioInterface extends utils.Interface {
     "facetFunctionSelectors(address)": FunctionFragment;
     "facets()": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
-    "_setOccupierAtPosition(address,(uint256,uint256))": FunctionFragment;
-    "attack((uint256,uint256),(uint256,uint256))": FunctionFragment;
-    "craft(uint256)": FunctionFragment;
-    "initializePlayer((uint256,uint256),uint256)": FunctionFragment;
-    "mine((uint256,uint256))": FunctionFragment;
-    "move((uint256,uint256))": FunctionFragment;
-    "moveBlock((uint256,uint256),(uint256,uint256))": FunctionFragment;
-    "place((uint256,uint256),uint256)": FunctionFragment;
-    "setMapRegion((uint256,uint256),uint256[][])": FunctionFragment;
+    "battle(uint256,(uint256,uint256))": FunctionFragment;
+    "captureBase(uint256,(uint256,uint256))": FunctionFragment;
+    "endProduction((uint256,uint256))": FunctionFragment;
+    "initializePlayer((uint256,uint256),address)": FunctionFragment;
+    "move(uint256,(uint256,uint256))": FunctionFragment;
+    "repair((uint256,uint256))": FunctionFragment;
+    "startProduction((uint256,uint256),uint256)": FunctionFragment;
     "updateEpoch()": FunctionFragment;
-    "_getBlockChunkData((uint256,uint256))": FunctionFragment;
-    "_getBlockDataAtPos((uint256,uint256))": FunctionFragment;
-    "_getCurrentEpoch()": FunctionFragment;
-    "_getInventoryByPlayer(address)": FunctionFragment;
-    "_getMap((uint256,uint256))": FunctionFragment;
-    "_getPlayer(address)": FunctionFragment;
-    "_getTileData((uint256,uint256))": FunctionFragment;
-    "_getWorldBlockData(uint256)": FunctionFragment;
-    "_getWorldConstants()": FunctionFragment;
-    "_isOccupied((uint256,uint256))": FunctionFragment;
-    "bulkGetAllItems()": FunctionFragment;
-    "bulkGetAllPlayerData()": FunctionFragment;
+    "_getMapChunk((uint256,uint256))": FunctionFragment;
+    "bulkGetAllTroops()": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
-    "addTower((uint256,uint256),(uint256,uint256,uint256,address))": FunctionFragment;
-    "addTowerBulk((uint256,uint256)[],(uint256,uint256,uint256,address)[])": FunctionFragment;
-    "capture((uint256,uint256))": FunctionFragment;
-    "claimReward((uint256,uint256))": FunctionFragment;
-    "getTowerById((uint256,uint256))": FunctionFragment;
-    "isValidCapture(address,(uint256,uint256))": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -284,115 +130,49 @@ export interface CurioInterface extends utils.Interface {
     values: [BytesLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "_setOccupierAtPosition",
-    values: [string, PositionStruct]
+    functionFragment: "battle",
+    values: [BigNumberish, PositionStruct]
   ): string;
   encodeFunctionData(
-    functionFragment: "attack",
-    values: [PositionStruct, PositionStruct]
+    functionFragment: "captureBase",
+    values: [BigNumberish, PositionStruct]
   ): string;
-  encodeFunctionData(functionFragment: "craft", values: [BigNumberish]): string;
+  encodeFunctionData(
+    functionFragment: "endProduction",
+    values: [PositionStruct]
+  ): string;
   encodeFunctionData(
     functionFragment: "initializePlayer",
-    values: [PositionStruct, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "mine",
-    values: [PositionStruct]
+    values: [PositionStruct, string]
   ): string;
   encodeFunctionData(
     functionFragment: "move",
+    values: [BigNumberish, PositionStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "repair",
     values: [PositionStruct]
   ): string;
   encodeFunctionData(
-    functionFragment: "moveBlock",
-    values: [PositionStruct, PositionStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "place",
+    functionFragment: "startProduction",
     values: [PositionStruct, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setMapRegion",
-    values: [PositionStruct, BigNumberish[][]]
   ): string;
   encodeFunctionData(
     functionFragment: "updateEpoch",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "_getBlockChunkData",
+    functionFragment: "_getMapChunk",
     values: [PositionStruct]
   ): string;
   encodeFunctionData(
-    functionFragment: "_getBlockDataAtPos",
-    values: [PositionStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getCurrentEpoch",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getInventoryByPlayer",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getMap",
-    values: [PositionStruct]
-  ): string;
-  encodeFunctionData(functionFragment: "_getPlayer", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "_getTileData",
-    values: [PositionStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getWorldBlockData",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getWorldConstants",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_isOccupied",
-    values: [PositionStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "bulkGetAllItems",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "bulkGetAllPlayerData",
+    functionFragment: "bulkGetAllTroops",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "addTower",
-    values: [PositionStruct, TowerStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "addTowerBulk",
-    values: [PositionStruct[], TowerStruct[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "capture",
-    values: [PositionStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "claimReward",
-    values: [PositionStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getTowerById",
-    values: [PositionStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "isValidCapture",
-    values: [string, PositionStruct]
   ): string;
 
   decodeFunctionResult(functionFragment: "diamondCut", data: BytesLike): Result;
@@ -413,22 +193,23 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "supportsInterface",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "battle", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "_setOccupierAtPosition",
+    functionFragment: "captureBase",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "attack", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "craft", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "endProduction",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "initializePlayer",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "mine", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "move", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "moveBlock", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "place", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "repair", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "setMapRegion",
+    functionFragment: "startProduction",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -436,45 +217,11 @@ export interface CurioInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "_getBlockChunkData",
+    functionFragment: "_getMapChunk",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "_getBlockDataAtPos",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getCurrentEpoch",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getInventoryByPlayer",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "_getMap", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "_getPlayer", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "_getTileData",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getWorldBlockData",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getWorldConstants",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_isOccupied",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "bulkGetAllItems",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "bulkGetAllPlayerData",
+    functionFragment: "bulkGetAllTroops",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
@@ -482,54 +229,32 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "addTower", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "addTowerBulk",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "capture", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "claimReward",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getTowerById",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "isValidCapture",
-    data: BytesLike
-  ): Result;
 
   events: {
     "DiamondCut(tuple[],address,bytes)": EventFragment;
-    "AttackItem(address,tuple,tuple,uint256,uint256,uint256)": EventFragment;
-    "ChangeBlockStrength(address,tuple,uint256,uint256)": EventFragment;
-    "Craft(address,uint256)": EventFragment;
-    "EpochUpdate(address,uint256,uint256)": EventFragment;
-    "MineItem(address,tuple,uint256)": EventFragment;
-    "Move(address,tuple)": EventFragment;
-    "MoveBlock(address,tuple,tuple,uint256,uint256)": EventFragment;
+    "Attacked(address,uint256,address,uint256)": EventFragment;
+    "BaseCaptured(address,uint256,uint256)": EventFragment;
+    "Death(address,uint256)": EventFragment;
+    "EpochUpdate(uint256,uint256)": EventFragment;
+    "Moved(address,uint256,tuple)": EventFragment;
     "NewPlayer(address,tuple)": EventFragment;
-    "Place(address,tuple,uint256,tuple)": EventFragment;
+    "ProductionFinished(address,uint256,tuple)": EventFragment;
+    "ProductionStarted(address,uint256,uint256)": EventFragment;
+    "Recovered(address,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
-    "Capture(address,tuple)": EventFragment;
-    "ClaimReward(address,tuple,uint256,uint256,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "DiamondCut"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "AttackItem"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ChangeBlockStrength"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Craft"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Attacked"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "BaseCaptured"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Death"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "EpochUpdate"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "MineItem"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Move"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "MoveBlock"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Moved"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NewPlayer"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Place"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ProductionFinished"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ProductionStarted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Recovered"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Capture"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ClaimReward"): EventFragment;
 }
 
 export type DiamondCutEvent = TypedEvent<
@@ -539,80 +264,45 @@ export type DiamondCutEvent = TypedEvent<
 
 export type DiamondCutEventFilter = TypedEventFilter<DiamondCutEvent>;
 
-export type AttackItemEvent = TypedEvent<
-  [
-    string,
-    PositionStructOutput,
-    PositionStructOutput,
-    BigNumber,
-    BigNumber,
-    BigNumber
-  ],
+export type AttackedEvent = TypedEvent<
+  [string, BigNumber, string, BigNumber],
   {
     _player: string;
-    _origin: PositionStructOutput;
-    _target: PositionStructOutput;
-    _attackerWorldBlockId: BigNumber;
-    _targetWorldBlockId: BigNumber;
-    _strength: BigNumber;
+    _troopId: BigNumber;
+    _targetPlayer: string;
+    _targetId: BigNumber;
   }
 >;
 
-export type AttackItemEventFilter = TypedEventFilter<AttackItemEvent>;
+export type AttackedEventFilter = TypedEventFilter<AttackedEvent>;
 
-export type ChangeBlockStrengthEvent = TypedEvent<
-  [string, PositionStructOutput, BigNumber, BigNumber],
-  {
-    _player: string;
-    _pos: PositionStructOutput;
-    _health: BigNumber;
-    _resourceUsed: BigNumber;
-  }
+export type BaseCapturedEvent = TypedEvent<
+  [string, BigNumber, BigNumber],
+  { _player: string; _troopId: BigNumber; _baseId: BigNumber }
 >;
 
-export type ChangeBlockStrengthEventFilter =
-  TypedEventFilter<ChangeBlockStrengthEvent>;
+export type BaseCapturedEventFilter = TypedEventFilter<BaseCapturedEvent>;
 
-export type CraftEvent = TypedEvent<
+export type DeathEvent = TypedEvent<
   [string, BigNumber],
-  { _player: string; _blockId: BigNumber }
+  { _player: string; _troopId: BigNumber }
 >;
 
-export type CraftEventFilter = TypedEventFilter<CraftEvent>;
+export type DeathEventFilter = TypedEventFilter<DeathEvent>;
 
 export type EpochUpdateEvent = TypedEvent<
-  [string, BigNumber, BigNumber],
-  { _player: string; _epoch: BigNumber; _time: BigNumber }
+  [BigNumber, BigNumber],
+  { _epoch: BigNumber; _time: BigNumber }
 >;
 
 export type EpochUpdateEventFilter = TypedEventFilter<EpochUpdateEvent>;
 
-export type MineItemEvent = TypedEvent<
-  [string, PositionStructOutput, BigNumber],
-  { _player: string; _pos: PositionStructOutput; _itemId: BigNumber }
+export type MovedEvent = TypedEvent<
+  [string, BigNumber, PositionStructOutput],
+  { _player: string; _troopId: BigNumber; _pos: PositionStructOutput }
 >;
 
-export type MineItemEventFilter = TypedEventFilter<MineItemEvent>;
-
-export type MoveEvent = TypedEvent<
-  [string, PositionStructOutput],
-  { _player: string; _pos: PositionStructOutput }
->;
-
-export type MoveEventFilter = TypedEventFilter<MoveEvent>;
-
-export type MoveBlockEvent = TypedEvent<
-  [string, PositionStructOutput, PositionStructOutput, BigNumber, BigNumber],
-  {
-    _player: string;
-    _startPos: PositionStructOutput;
-    _endPos: PositionStructOutput;
-    _worldBlockId: BigNumber;
-    _time: BigNumber;
-  }
->;
-
-export type MoveBlockEventFilter = TypedEventFilter<MoveBlockEvent>;
+export type MovedEventFilter = TypedEventFilter<MovedEvent>;
 
 export type NewPlayerEvent = TypedEvent<
   [string, PositionStructOutput],
@@ -621,17 +311,28 @@ export type NewPlayerEvent = TypedEvent<
 
 export type NewPlayerEventFilter = TypedEventFilter<NewPlayerEvent>;
 
-export type PlaceEvent = TypedEvent<
-  [string, PositionStructOutput, BigNumber, BlockDataStructOutput],
-  {
-    _player: string;
-    _pos: PositionStructOutput;
-    _worldBlockId: BigNumber;
-    _blockData: BlockDataStructOutput;
-  }
+export type ProductionFinishedEvent = TypedEvent<
+  [string, BigNumber, PositionStructOutput],
+  { _player: string; _troopId: BigNumber; _pos: PositionStructOutput }
 >;
 
-export type PlaceEventFilter = TypedEventFilter<PlaceEvent>;
+export type ProductionFinishedEventFilter =
+  TypedEventFilter<ProductionFinishedEvent>;
+
+export type ProductionStartedEvent = TypedEvent<
+  [string, BigNumber, BigNumber],
+  { _player: string; _baseId: BigNumber; _troopTypeId: BigNumber }
+>;
+
+export type ProductionStartedEventFilter =
+  TypedEventFilter<ProductionStartedEvent>;
+
+export type RecoveredEvent = TypedEvent<
+  [string, BigNumber],
+  { _player: string; _troopId: BigNumber }
+>;
+
+export type RecoveredEventFilter = TypedEventFilter<RecoveredEvent>;
 
 export type OwnershipTransferredEvent = TypedEvent<
   [string, string],
@@ -640,26 +341,6 @@ export type OwnershipTransferredEvent = TypedEvent<
 
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
-
-export type CaptureEvent = TypedEvent<
-  [string, PositionStructOutput],
-  { _player: string; _position: PositionStructOutput }
->;
-
-export type CaptureEventFilter = TypedEventFilter<CaptureEvent>;
-
-export type ClaimRewardEvent = TypedEvent<
-  [string, PositionStructOutput, BigNumber, BigNumber, BigNumber],
-  {
-    _player: string;
-    _position: PositionStructOutput;
-    _itemId: BigNumber;
-    _itemAmount: BigNumber;
-    _epoch: BigNumber;
-  }
->;
-
-export type ClaimRewardEventFilter = TypedEventFilter<ClaimRewardEvent>;
 
 export interface Curio extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -718,54 +399,43 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    _setOccupierAtPosition(
-      _player: string,
+    battle(
+      _troopId: BigNumberish,
+      _targetPos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    captureBase(
+      _troopId: BigNumberish,
+      _targetPos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    endProduction(
       _pos: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    attack(
-      _origin: PositionStruct,
-      _target: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    craft(
-      _itemId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     initializePlayer(
       _pos: PositionStruct,
-      _defaultCurrencyIdx: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    mine(
-      _pos: PositionStruct,
+      _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     move(
-      _pos: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    moveBlock(
-      _startPos: PositionStruct,
+      _troopId: BigNumberish,
       _targetPos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    place(
+    repair(
       _pos: PositionStruct,
-      _blockId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    setMapRegion(
-      _startPos: PositionStruct,
-      _blocks: BigNumberish[][],
+    startProduction(
+      _pos: PositionStruct,
+      _troopTypeId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -773,59 +443,12 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    _getBlockChunkData(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<[BlockDataStructOutput[], PositionStructOutput[]]>;
-
-    _getBlockDataAtPos(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<[BlockDataStructOutput]>;
-
-    _getCurrentEpoch(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    _getInventoryByPlayer(
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<[RecipeStructOutput]>;
-
-    _getMap(
+    _getMapChunk(
       _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<[TileStructOutput[], PositionStructOutput[]]>;
 
-    _getPlayer(
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<
-      [PlayerDataStructOutput] & { playerData: PlayerDataStructOutput }
-    >;
-
-    _getTileData(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<[TileStructOutput]>;
-
-    _getWorldBlockData(
-      _worldBlockIdx: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BlockDataStructOutput]>;
-
-    _getWorldConstants(
-      overrides?: CallOverrides
-    ): Promise<[WorldConstantsStructOutput]>;
-
-    _isOccupied(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    bulkGetAllItems(overrides?: CallOverrides): Promise<[ItemStructOutput[]]>;
-
-    bulkGetAllPlayerData(
-      overrides?: CallOverrides
-    ): Promise<[PlayerDataStructOutput[]]>;
+    bulkGetAllTroops(overrides?: CallOverrides): Promise<[TroopStructOutput[]]>;
 
     owner(overrides?: CallOverrides): Promise<[string] & { owner_: string }>;
 
@@ -833,39 +456,6 @@ export interface Curio extends BaseContract {
       _newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
-
-    addTower(
-      _position: PositionStruct,
-      _tower: TowerStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    addTowerBulk(
-      _positions: PositionStruct[],
-      _towers: TowerStruct[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    capture(
-      _position: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    claimReward(
-      _position: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    getTowerById(
-      _position: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<[TowerStructOutput]>;
-
-    isValidCapture(
-      _player: string,
-      _position: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
   };
 
   diamondCut(
@@ -894,54 +484,43 @@ export interface Curio extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  _setOccupierAtPosition(
-    _player: string,
+  battle(
+    _troopId: BigNumberish,
+    _targetPos: PositionStruct,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  captureBase(
+    _troopId: BigNumberish,
+    _targetPos: PositionStruct,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  endProduction(
     _pos: PositionStruct,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  attack(
-    _origin: PositionStruct,
-    _target: PositionStruct,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  craft(
-    _itemId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   initializePlayer(
     _pos: PositionStruct,
-    _defaultCurrencyIdx: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  mine(
-    _pos: PositionStruct,
+    _player: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   move(
-    _pos: PositionStruct,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  moveBlock(
-    _startPos: PositionStruct,
+    _troopId: BigNumberish,
     _targetPos: PositionStruct,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  place(
+  repair(
     _pos: PositionStruct,
-    _blockId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setMapRegion(
-    _startPos: PositionStruct,
-    _blocks: BigNumberish[][],
+  startProduction(
+    _pos: PositionStruct,
+    _troopTypeId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -949,57 +528,12 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  _getBlockChunkData(
-    _pos: PositionStruct,
-    overrides?: CallOverrides
-  ): Promise<[BlockDataStructOutput[], PositionStructOutput[]]>;
-
-  _getBlockDataAtPos(
-    _pos: PositionStruct,
-    overrides?: CallOverrides
-  ): Promise<BlockDataStructOutput>;
-
-  _getCurrentEpoch(overrides?: CallOverrides): Promise<BigNumber>;
-
-  _getInventoryByPlayer(
-    _player: string,
-    overrides?: CallOverrides
-  ): Promise<RecipeStructOutput>;
-
-  _getMap(
+  _getMapChunk(
     _pos: PositionStruct,
     overrides?: CallOverrides
   ): Promise<[TileStructOutput[], PositionStructOutput[]]>;
 
-  _getPlayer(
-    _player: string,
-    overrides?: CallOverrides
-  ): Promise<PlayerDataStructOutput>;
-
-  _getTileData(
-    _pos: PositionStruct,
-    overrides?: CallOverrides
-  ): Promise<TileStructOutput>;
-
-  _getWorldBlockData(
-    _worldBlockIdx: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BlockDataStructOutput>;
-
-  _getWorldConstants(
-    overrides?: CallOverrides
-  ): Promise<WorldConstantsStructOutput>;
-
-  _isOccupied(
-    _pos: PositionStruct,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  bulkGetAllItems(overrides?: CallOverrides): Promise<ItemStructOutput[]>;
-
-  bulkGetAllPlayerData(
-    overrides?: CallOverrides
-  ): Promise<PlayerDataStructOutput[]>;
+  bulkGetAllTroops(overrides?: CallOverrides): Promise<TroopStructOutput[]>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
@@ -1007,39 +541,6 @@ export interface Curio extends BaseContract {
     _newOwner: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
-
-  addTower(
-    _position: PositionStruct,
-    _tower: TowerStruct,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  addTowerBulk(
-    _positions: PositionStruct[],
-    _towers: TowerStruct[],
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  capture(
-    _position: PositionStruct,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  claimReward(
-    _position: PositionStruct,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  getTowerById(
-    _position: PositionStruct,
-    overrides?: CallOverrides
-  ): Promise<TowerStructOutput>;
-
-  isValidCapture(
-    _player: string,
-    _position: PositionStruct,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
 
   callStatic: {
     diamondCut(
@@ -1068,101 +569,51 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    _setOccupierAtPosition(
-      _player: string,
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    attack(
-      _origin: PositionStruct,
-      _target: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    craft(_itemId: BigNumberish, overrides?: CallOverrides): Promise<void>;
-
-    initializePlayer(
-      _pos: PositionStruct,
-      _defaultCurrencyIdx: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    mine(_pos: PositionStruct, overrides?: CallOverrides): Promise<void>;
-
-    move(_pos: PositionStruct, overrides?: CallOverrides): Promise<void>;
-
-    moveBlock(
-      _startPos: PositionStruct,
+    battle(
+      _troopId: BigNumberish,
       _targetPos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    place(
-      _pos: PositionStruct,
-      _blockId: BigNumberish,
+    captureBase(
+      _troopId: BigNumberish,
+      _targetPos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setMapRegion(
-      _startPos: PositionStruct,
-      _blocks: BigNumberish[][],
+    endProduction(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    initializePlayer(
+      _pos: PositionStruct,
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    move(
+      _troopId: BigNumberish,
+      _targetPos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    repair(_pos: PositionStruct, overrides?: CallOverrides): Promise<void>;
+
+    startProduction(
+      _pos: PositionStruct,
+      _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     updateEpoch(overrides?: CallOverrides): Promise<void>;
 
-    _getBlockChunkData(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<[BlockDataStructOutput[], PositionStructOutput[]]>;
-
-    _getBlockDataAtPos(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<BlockDataStructOutput>;
-
-    _getCurrentEpoch(overrides?: CallOverrides): Promise<BigNumber>;
-
-    _getInventoryByPlayer(
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<RecipeStructOutput>;
-
-    _getMap(
+    _getMapChunk(
       _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<[TileStructOutput[], PositionStructOutput[]]>;
 
-    _getPlayer(
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<PlayerDataStructOutput>;
-
-    _getTileData(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<TileStructOutput>;
-
-    _getWorldBlockData(
-      _worldBlockIdx: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BlockDataStructOutput>;
-
-    _getWorldConstants(
-      overrides?: CallOverrides
-    ): Promise<WorldConstantsStructOutput>;
-
-    _isOccupied(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    bulkGetAllItems(overrides?: CallOverrides): Promise<ItemStructOutput[]>;
-
-    bulkGetAllPlayerData(
-      overrides?: CallOverrides
-    ): Promise<PlayerDataStructOutput[]>;
+    bulkGetAllTroops(overrides?: CallOverrides): Promise<TroopStructOutput[]>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
@@ -1170,39 +621,6 @@ export interface Curio extends BaseContract {
       _newOwner: string,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    addTower(
-      _position: PositionStruct,
-      _tower: TowerStruct,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    addTowerBulk(
-      _positions: PositionStruct[],
-      _towers: TowerStruct[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    capture(
-      _position: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    claimReward(
-      _position: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    getTowerById(
-      _position: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<TowerStructOutput>;
-
-    isValidCapture(
-      _player: string,
-      _position: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
   };
 
   filters: {
@@ -1217,74 +635,45 @@ export interface Curio extends BaseContract {
       _calldata?: null
     ): DiamondCutEventFilter;
 
-    "AttackItem(address,tuple,tuple,uint256,uint256,uint256)"(
+    "Attacked(address,uint256,address,uint256)"(
       _player?: null,
-      _origin?: null,
-      _target?: null,
-      _attackerWorldBlockId?: null,
-      _targetWorldBlockId?: null,
-      _strength?: null
-    ): AttackItemEventFilter;
-    AttackItem(
+      _troopId?: null,
+      _targetPlayer?: null,
+      _targetId?: null
+    ): AttackedEventFilter;
+    Attacked(
       _player?: null,
-      _origin?: null,
-      _target?: null,
-      _attackerWorldBlockId?: null,
-      _targetWorldBlockId?: null,
-      _strength?: null
-    ): AttackItemEventFilter;
+      _troopId?: null,
+      _targetPlayer?: null,
+      _targetId?: null
+    ): AttackedEventFilter;
 
-    "ChangeBlockStrength(address,tuple,uint256,uint256)"(
+    "BaseCaptured(address,uint256,uint256)"(
       _player?: null,
-      _pos?: null,
-      _health?: null,
-      _resourceUsed?: null
-    ): ChangeBlockStrengthEventFilter;
-    ChangeBlockStrength(
+      _troopId?: null,
+      _baseId?: null
+    ): BaseCapturedEventFilter;
+    BaseCaptured(
       _player?: null,
-      _pos?: null,
-      _health?: null,
-      _resourceUsed?: null
-    ): ChangeBlockStrengthEventFilter;
+      _troopId?: null,
+      _baseId?: null
+    ): BaseCapturedEventFilter;
 
-    "Craft(address,uint256)"(_player?: null, _blockId?: null): CraftEventFilter;
-    Craft(_player?: null, _blockId?: null): CraftEventFilter;
+    "Death(address,uint256)"(_player?: null, _troopId?: null): DeathEventFilter;
+    Death(_player?: null, _troopId?: null): DeathEventFilter;
 
-    "EpochUpdate(address,uint256,uint256)"(
-      _player?: null,
+    "EpochUpdate(uint256,uint256)"(
       _epoch?: null,
       _time?: null
     ): EpochUpdateEventFilter;
-    EpochUpdate(
-      _player?: null,
-      _epoch?: null,
-      _time?: null
-    ): EpochUpdateEventFilter;
+    EpochUpdate(_epoch?: null, _time?: null): EpochUpdateEventFilter;
 
-    "MineItem(address,tuple,uint256)"(
+    "Moved(address,uint256,tuple)"(
       _player?: null,
-      _pos?: null,
-      _itemId?: null
-    ): MineItemEventFilter;
-    MineItem(_player?: null, _pos?: null, _itemId?: null): MineItemEventFilter;
-
-    "Move(address,tuple)"(_player?: null, _pos?: null): MoveEventFilter;
-    Move(_player?: null, _pos?: null): MoveEventFilter;
-
-    "MoveBlock(address,tuple,tuple,uint256,uint256)"(
-      _player?: null,
-      _startPos?: null,
-      _endPos?: null,
-      _worldBlockId?: null,
-      _time?: null
-    ): MoveBlockEventFilter;
-    MoveBlock(
-      _player?: null,
-      _startPos?: null,
-      _endPos?: null,
-      _worldBlockId?: null,
-      _time?: null
-    ): MoveBlockEventFilter;
+      _troopId?: null,
+      _pos?: null
+    ): MovedEventFilter;
+    Moved(_player?: null, _troopId?: null, _pos?: null): MovedEventFilter;
 
     "NewPlayer(address,tuple)"(
       _player?: null,
@@ -1292,18 +681,33 @@ export interface Curio extends BaseContract {
     ): NewPlayerEventFilter;
     NewPlayer(_player?: null, _pos?: null): NewPlayerEventFilter;
 
-    "Place(address,tuple,uint256,tuple)"(
+    "ProductionFinished(address,uint256,tuple)"(
       _player?: null,
-      _pos?: null,
-      _worldBlockId?: null,
-      _blockData?: null
-    ): PlaceEventFilter;
-    Place(
+      _troopId?: null,
+      _pos?: null
+    ): ProductionFinishedEventFilter;
+    ProductionFinished(
       _player?: null,
-      _pos?: null,
-      _worldBlockId?: null,
-      _blockData?: null
-    ): PlaceEventFilter;
+      _troopId?: null,
+      _pos?: null
+    ): ProductionFinishedEventFilter;
+
+    "ProductionStarted(address,uint256,uint256)"(
+      _player?: null,
+      _baseId?: null,
+      _troopTypeId?: null
+    ): ProductionStartedEventFilter;
+    ProductionStarted(
+      _player?: null,
+      _baseId?: null,
+      _troopTypeId?: null
+    ): ProductionStartedEventFilter;
+
+    "Recovered(address,uint256)"(
+      _player?: null,
+      _troopId?: null
+    ): RecoveredEventFilter;
+    Recovered(_player?: null, _troopId?: null): RecoveredEventFilter;
 
     "OwnershipTransferred(address,address)"(
       previousOwner?: string | null,
@@ -1313,27 +717,6 @@ export interface Curio extends BaseContract {
       previousOwner?: string | null,
       newOwner?: string | null
     ): OwnershipTransferredEventFilter;
-
-    "Capture(address,tuple)"(
-      _player?: null,
-      _position?: null
-    ): CaptureEventFilter;
-    Capture(_player?: null, _position?: null): CaptureEventFilter;
-
-    "ClaimReward(address,tuple,uint256,uint256,uint256)"(
-      _player?: null,
-      _position?: null,
-      _itemId?: null,
-      _itemAmount?: null,
-      _epoch?: null
-    ): ClaimRewardEventFilter;
-    ClaimReward(
-      _player?: null,
-      _position?: null,
-      _itemId?: null,
-      _itemAmount?: null,
-      _epoch?: null
-    ): ClaimRewardEventFilter;
   };
 
   estimateGas: {
@@ -1363,54 +746,43 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _setOccupierAtPosition(
-      _player: string,
+    battle(
+      _troopId: BigNumberish,
+      _targetPos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    captureBase(
+      _troopId: BigNumberish,
+      _targetPos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    endProduction(
       _pos: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    attack(
-      _origin: PositionStruct,
-      _target: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    craft(
-      _itemId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     initializePlayer(
       _pos: PositionStruct,
-      _defaultCurrencyIdx: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    mine(
-      _pos: PositionStruct,
+      _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     move(
-      _pos: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    moveBlock(
-      _startPos: PositionStruct,
+      _troopId: BigNumberish,
       _targetPos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    place(
+    repair(
       _pos: PositionStruct,
-      _blockId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    setMapRegion(
-      _startPos: PositionStruct,
-      _blocks: BigNumberish[][],
+    startProduction(
+      _pos: PositionStruct,
+      _troopTypeId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1418,89 +790,18 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    _getBlockChunkData(
+    _getMapChunk(
       _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getBlockDataAtPos(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getCurrentEpoch(overrides?: CallOverrides): Promise<BigNumber>;
-
-    _getInventoryByPlayer(
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getMap(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getPlayer(_player: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    _getTileData(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getWorldBlockData(
-      _worldBlockIdx: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getWorldConstants(overrides?: CallOverrides): Promise<BigNumber>;
-
-    _isOccupied(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    bulkGetAllItems(overrides?: CallOverrides): Promise<BigNumber>;
-
-    bulkGetAllPlayerData(overrides?: CallOverrides): Promise<BigNumber>;
+    bulkGetAllTroops(overrides?: CallOverrides): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferOwnership(
       _newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    addTower(
-      _position: PositionStruct,
-      _tower: TowerStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    addTowerBulk(
-      _positions: PositionStruct[],
-      _towers: TowerStruct[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    capture(
-      _position: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    claimReward(
-      _position: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    getTowerById(
-      _position: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    isValidCapture(
-      _player: string,
-      _position: PositionStruct,
-      overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
@@ -1531,54 +832,43 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _setOccupierAtPosition(
-      _player: string,
+    battle(
+      _troopId: BigNumberish,
+      _targetPos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    captureBase(
+      _troopId: BigNumberish,
+      _targetPos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    endProduction(
       _pos: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    attack(
-      _origin: PositionStruct,
-      _target: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    craft(
-      _itemId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     initializePlayer(
       _pos: PositionStruct,
-      _defaultCurrencyIdx: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    mine(
-      _pos: PositionStruct,
+      _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     move(
-      _pos: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    moveBlock(
-      _startPos: PositionStruct,
+      _troopId: BigNumberish,
       _targetPos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    place(
+    repair(
       _pos: PositionStruct,
-      _blockId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    setMapRegion(
-      _startPos: PositionStruct,
-      _blocks: BigNumberish[][],
+    startProduction(
+      _pos: PositionStruct,
+      _troopTypeId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1586,96 +876,18 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    _getBlockChunkData(
+    _getMapChunk(
       _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _getBlockDataAtPos(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getCurrentEpoch(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    _getInventoryByPlayer(
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getMap(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getPlayer(
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getTileData(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getWorldBlockData(
-      _worldBlockIdx: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getWorldConstants(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _isOccupied(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    bulkGetAllItems(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    bulkGetAllPlayerData(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    bulkGetAllTroops(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     transferOwnership(
       _newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    addTower(
-      _position: PositionStruct,
-      _tower: TowerStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    addTowerBulk(
-      _positions: PositionStruct[],
-      _towers: TowerStruct[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    capture(
-      _position: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    claimReward(
-      _position: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    getTowerById(
-      _position: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    isValidCapture(
-      _player: string,
-      _position: PositionStruct,
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
 }

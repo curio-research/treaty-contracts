@@ -7,11 +7,8 @@ import 'hardhat-contract-sizer';
 require('dotenv').config();
 
 // tasks
-import './tasks/mapgen';
 import './tasks/port';
 import './tasks/deploy';
-import './tasks/simulate';
-import './tasks/poll';
 
 // to get the smart contract file sizes, run:
 // yarn run hardhat size-contracts

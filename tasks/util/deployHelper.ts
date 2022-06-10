@@ -1,6 +1,5 @@
 import { Signer, Contract } from 'ethers';
 import { FactoryOptions, HardhatRuntimeEnvironment } from 'hardhat/types';
-import { ItemMaster } from '../../util/types/getter';
 
 // deploy proxy used in hre
 export const deployProxy = async <C extends Contract>(contractName: string, signer: Signer, hre: HardhatRuntimeEnvironment, contractArgs: unknown[], libs?: FactoryOptions['libraries']): Promise<C> => {
@@ -13,8 +12,4 @@ export const deployProxy = async <C extends Contract>(contractName: string, sign
 
 export const printDivider = () => {
   console.log('------------------------------------');
-};
-
-export const getItemIndexByName = (masterItems: ItemMaster[], name: string): number => {
-  return masterItems.indexOf(masterItems.filter((item) => item.name === name)[0]);
 };

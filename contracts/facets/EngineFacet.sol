@@ -1,9 +1,9 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "../libraries/Storage.sol";
-import {Util} from "../libraries/GameUtil.sol";
-import {Base, GameState, Player, Position, Production, Terrain, Tile, Troop, TroopType} from "../libraries/Types.sol";
+import "contracts/libraries/Storage.sol";
+import {Util} from "contracts/libraries/GameUtil.sol";
+import {Base, GameState, Player, Position, Production, Terrain, Tile, Troop, TroopType} from "contracts/libraries/Types.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 contract EngineFacet is UseStorage {
@@ -11,6 +11,8 @@ contract EngineFacet is UseStorage {
 
     /*
     TODO:
+    - Add movement cooldown epoch field
+    - Add permissions
     - Setters
     - Endgame and objectives
     */
@@ -22,11 +24,11 @@ contract EngineFacet is UseStorage {
     event Death(address _player, uint256 _troopId);
     event BaseCaptured(address _player, uint256 _troopId, uint256 _baseId);
     event ProductionStarted(address _player, uint256 _baseId, uint256 _troopTypeId);
-    event ProductionFinished(address _player, uint256 _troopId, Position _pos);
+    event Produced(address _player, uint256 _troopId, Position _pos);
     event Recovered(address _player, uint256 _troopId);
 
     /**
-     * Initialize a player at a selected position.
+     * Initialize a player by ownership of a base at a selected position.
      * @param _pos position to initialize
      * @param _player player address
      */
@@ -40,11 +42,20 @@ contract EngineFacet is UseStorage {
     }
 
     /**
+     * Initialize a troop at a selected position.
+     * @param _pos position
+     * @param _player player address
+     */
+    function initializeTroop(Position memory _pos, address _player) external {
+        // TODO
+    }
+
+    /**
      * Update epoch given enough time has elapsed.
      */
     function updateEpoch() external {
         // Currently implemented expecting real-time calls from client; can change to lazy if needed
-        if (block.timestamp - gs().lastTimestamp < gs().secondsPerTurn) revert("Not enough time has elapsed since last epoch");
+        if (block.timestamp - gs().lastTimestamp < gs().worldConstants.secondsPerTurn) revert("Not enough time has elapsed since last epoch");
 
         gs().epoch++;
         gs().lastTimestamp = block.timestamp;
@@ -257,7 +268,7 @@ contract EngineFacet is UseStorage {
         gs().troopIdMap[_troopId] = _troop;
         gs().troopNonce++;
 
-        emit ProductionFinished(msg.sender, _troopId, _pos);
+        emit Produced(msg.sender, _troopId, _pos);
     }
 
     /**

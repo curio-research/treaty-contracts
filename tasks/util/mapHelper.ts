@@ -1,5 +1,6 @@
+import { BigNumberish, BigNumber } from 'ethers';
 import SimplexNoise from 'simplex-noise';
-import { ColorInput, ColorsAndCutoffs, TileMapOutput, TILE_TYPE } from './types';
+import { RenderInput, ColorsAndCutoffs, TileMapOutput, TILE_TYPE, AllGameMapsOutput, MapInput } from './types';
 
 //////////////////////////////////////////////////////////////////////
 ///////////////////////////// CONSTANTS //////////////////////////////
@@ -29,6 +30,36 @@ export const generateEmptyMatrix = (mapWidth: number, mapHeight: number, default
   return result;
 };
 
+// This generates all game parameters needed to deploy the GameEngine.sol contract
+export const getValue = (v: BigNumberish) => (v as BigNumber).toNumber();
+
+/**
+ * Generate two 2d maps of tiles, one representing tile types and the other representing colors in RGB.
+ * @param mapInput
+ * @param renderInput
+ * @returns a 2d matrix of tile types and a 2d matrix of RGB values
+ */
+export const generateGameMaps = (mapInput: MapInput, renderInput: RenderInput): AllGameMapsOutput => {
+  const noiseMap: number[][] = generateNoiseMap(mapInput.width, mapInput.height, renderInput.sizeFactor);
+  const colorsAndCutoffs: ColorsAndCutoffs = getColorsAndCutoffs(renderInput);
+  const colorMap: number[][][] = noiseMap.map((row: number[]) => {
+    return row.map((val: number) => assignDepthColor(val, colorsAndCutoffs));
+  });
+  const { tileMap, portTiles, cityTiles } = placePortsAndCities(colorMap, mapInput.numPorts, mapInput.numCities);
+
+  let tile: number[];
+  for (let k = 0; k < portTiles.length; k++) {
+    tile = portTiles[k];
+    colorMap[tile[0]][tile[1]] = [100, 0, 0];
+  }
+  for (let k = 0; k < cityTiles.length; k++) {
+    tile = cityTiles[k];
+    colorMap[tile[0]][tile[1]] = [100, 100, 100];
+  }
+
+  return { tileMap, colorMap };
+};
+
 /**
  * Generate noise matrix from Perlin noise.
  * @param mapWidth
@@ -36,7 +67,7 @@ export const generateEmptyMatrix = (mapWidth: number, mapHeight: number, default
  * @param sizeFactor determines average sizes of continents and oceans
  * @returns a 2d matrix of numbers between 0 and 1
  */
-export const generateNoiseMatrix = (mapWidth: number, mapHeight: number, sizeFactor: number): number[][] => {
+export const generateNoiseMap = (mapWidth: number, mapHeight: number, sizeFactor: number): number[][] => {
   const noise = new SimplexNoise();
 
   const scale = (val: number, min: number, max: number) => {
@@ -61,7 +92,7 @@ export const generateNoiseMatrix = (mapWidth: number, mapHeight: number, sizeFac
  * @param colorInput
  * @returns an array of noise level cutoffs and an array of corresponding RGB values
  */
-export const getColorsAndCutoffs = (colorInput: ColorInput): ColorsAndCutoffs => {
+export const getColorsAndCutoffs = (colorInput: RenderInput): ColorsAndCutoffs => {
   const { numLandColors, numWaterColors, waterNoiseCutoff, colorLowestPercent } = colorInput;
 
   const noiseCutoffs: number[] = [];

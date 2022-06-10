@@ -24,99 +24,68 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
   y: BigNumber;
 };
 
-export type BlockDataStruct = {
-  blockId: BigNumberish;
-  health: BigNumberish;
-  owner: string;
-  lastAttacked: BigNumberish;
-  lastMoved: BigNumberish;
-  occupiable: boolean;
-};
-
-export type BlockDataStructOutput = [
-  BigNumber,
-  BigNumber,
-  string,
-  BigNumber,
-  BigNumber,
-  boolean
-] & {
-  blockId: BigNumber;
-  health: BigNumber;
-  owner: string;
-  lastAttacked: BigNumber;
-  lastMoved: BigNumber;
-  occupiable: boolean;
-};
-
 export interface EngineFacetInterface extends utils.Interface {
   functions: {
-    "_setOccupierAtPosition(address,(uint256,uint256))": FunctionFragment;
-    "attack((uint256,uint256),(uint256,uint256))": FunctionFragment;
-    "craft(uint256)": FunctionFragment;
-    "initializePlayer((uint256,uint256),uint256)": FunctionFragment;
-    "mine((uint256,uint256))": FunctionFragment;
-    "move((uint256,uint256))": FunctionFragment;
-    "moveBlock((uint256,uint256),(uint256,uint256))": FunctionFragment;
-    "place((uint256,uint256),uint256)": FunctionFragment;
-    "setMapRegion((uint256,uint256),uint256[][])": FunctionFragment;
+    "battle(uint256,(uint256,uint256))": FunctionFragment;
+    "captureBase(uint256,(uint256,uint256))": FunctionFragment;
+    "endProduction((uint256,uint256))": FunctionFragment;
+    "initializePlayer((uint256,uint256),address)": FunctionFragment;
+    "move(uint256,(uint256,uint256))": FunctionFragment;
+    "repair((uint256,uint256))": FunctionFragment;
+    "startProduction((uint256,uint256),uint256)": FunctionFragment;
     "updateEpoch()": FunctionFragment;
   };
 
   encodeFunctionData(
-    functionFragment: "_setOccupierAtPosition",
-    values: [string, PositionStruct]
+    functionFragment: "battle",
+    values: [BigNumberish, PositionStruct]
   ): string;
   encodeFunctionData(
-    functionFragment: "attack",
-    values: [PositionStruct, PositionStruct]
+    functionFragment: "captureBase",
+    values: [BigNumberish, PositionStruct]
   ): string;
-  encodeFunctionData(functionFragment: "craft", values: [BigNumberish]): string;
+  encodeFunctionData(
+    functionFragment: "endProduction",
+    values: [PositionStruct]
+  ): string;
   encodeFunctionData(
     functionFragment: "initializePlayer",
-    values: [PositionStruct, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "mine",
-    values: [PositionStruct]
+    values: [PositionStruct, string]
   ): string;
   encodeFunctionData(
     functionFragment: "move",
+    values: [BigNumberish, PositionStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "repair",
     values: [PositionStruct]
   ): string;
   encodeFunctionData(
-    functionFragment: "moveBlock",
-    values: [PositionStruct, PositionStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "place",
+    functionFragment: "startProduction",
     values: [PositionStruct, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setMapRegion",
-    values: [PositionStruct, BigNumberish[][]]
   ): string;
   encodeFunctionData(
     functionFragment: "updateEpoch",
     values?: undefined
   ): string;
 
+  decodeFunctionResult(functionFragment: "battle", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "_setOccupierAtPosition",
+    functionFragment: "captureBase",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "attack", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "craft", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "endProduction",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "initializePlayer",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "mine", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "move", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "moveBlock", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "place", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "repair", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "setMapRegion",
+    functionFragment: "startProduction",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -125,102 +94,67 @@ export interface EngineFacetInterface extends utils.Interface {
   ): Result;
 
   events: {
-    "AttackItem(address,tuple,tuple,uint256,uint256,uint256)": EventFragment;
-    "ChangeBlockStrength(address,tuple,uint256,uint256)": EventFragment;
-    "Craft(address,uint256)": EventFragment;
-    "EpochUpdate(address,uint256,uint256)": EventFragment;
-    "MineItem(address,tuple,uint256)": EventFragment;
-    "Move(address,tuple)": EventFragment;
-    "MoveBlock(address,tuple,tuple,uint256,uint256)": EventFragment;
+    "Attacked(address,uint256,address,uint256)": EventFragment;
+    "BaseCaptured(address,uint256,uint256)": EventFragment;
+    "Death(address,uint256)": EventFragment;
+    "EpochUpdate(uint256,uint256)": EventFragment;
+    "Moved(address,uint256,tuple)": EventFragment;
     "NewPlayer(address,tuple)": EventFragment;
-    "Place(address,tuple,uint256,tuple)": EventFragment;
+    "ProductionFinished(address,uint256,tuple)": EventFragment;
+    "ProductionStarted(address,uint256,uint256)": EventFragment;
+    "Recovered(address,uint256)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "AttackItem"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ChangeBlockStrength"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Craft"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Attacked"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "BaseCaptured"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Death"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "EpochUpdate"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "MineItem"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Move"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "MoveBlock"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Moved"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NewPlayer"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Place"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ProductionFinished"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ProductionStarted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Recovered"): EventFragment;
 }
 
-export type AttackItemEvent = TypedEvent<
-  [
-    string,
-    PositionStructOutput,
-    PositionStructOutput,
-    BigNumber,
-    BigNumber,
-    BigNumber
-  ],
+export type AttackedEvent = TypedEvent<
+  [string, BigNumber, string, BigNumber],
   {
     _player: string;
-    _origin: PositionStructOutput;
-    _target: PositionStructOutput;
-    _attackerWorldBlockId: BigNumber;
-    _targetWorldBlockId: BigNumber;
-    _strength: BigNumber;
+    _troopId: BigNumber;
+    _targetPlayer: string;
+    _targetId: BigNumber;
   }
 >;
 
-export type AttackItemEventFilter = TypedEventFilter<AttackItemEvent>;
+export type AttackedEventFilter = TypedEventFilter<AttackedEvent>;
 
-export type ChangeBlockStrengthEvent = TypedEvent<
-  [string, PositionStructOutput, BigNumber, BigNumber],
-  {
-    _player: string;
-    _pos: PositionStructOutput;
-    _health: BigNumber;
-    _resourceUsed: BigNumber;
-  }
+export type BaseCapturedEvent = TypedEvent<
+  [string, BigNumber, BigNumber],
+  { _player: string; _troopId: BigNumber; _baseId: BigNumber }
 >;
 
-export type ChangeBlockStrengthEventFilter =
-  TypedEventFilter<ChangeBlockStrengthEvent>;
+export type BaseCapturedEventFilter = TypedEventFilter<BaseCapturedEvent>;
 
-export type CraftEvent = TypedEvent<
+export type DeathEvent = TypedEvent<
   [string, BigNumber],
-  { _player: string; _blockId: BigNumber }
+  { _player: string; _troopId: BigNumber }
 >;
 
-export type CraftEventFilter = TypedEventFilter<CraftEvent>;
+export type DeathEventFilter = TypedEventFilter<DeathEvent>;
 
 export type EpochUpdateEvent = TypedEvent<
-  [string, BigNumber, BigNumber],
-  { _player: string; _epoch: BigNumber; _time: BigNumber }
+  [BigNumber, BigNumber],
+  { _epoch: BigNumber; _time: BigNumber }
 >;
 
 export type EpochUpdateEventFilter = TypedEventFilter<EpochUpdateEvent>;
 
-export type MineItemEvent = TypedEvent<
-  [string, PositionStructOutput, BigNumber],
-  { _player: string; _pos: PositionStructOutput; _itemId: BigNumber }
+export type MovedEvent = TypedEvent<
+  [string, BigNumber, PositionStructOutput],
+  { _player: string; _troopId: BigNumber; _pos: PositionStructOutput }
 >;
 
-export type MineItemEventFilter = TypedEventFilter<MineItemEvent>;
-
-export type MoveEvent = TypedEvent<
-  [string, PositionStructOutput],
-  { _player: string; _pos: PositionStructOutput }
->;
-
-export type MoveEventFilter = TypedEventFilter<MoveEvent>;
-
-export type MoveBlockEvent = TypedEvent<
-  [string, PositionStructOutput, PositionStructOutput, BigNumber, BigNumber],
-  {
-    _player: string;
-    _startPos: PositionStructOutput;
-    _endPos: PositionStructOutput;
-    _worldBlockId: BigNumber;
-    _time: BigNumber;
-  }
->;
-
-export type MoveBlockEventFilter = TypedEventFilter<MoveBlockEvent>;
+export type MovedEventFilter = TypedEventFilter<MovedEvent>;
 
 export type NewPlayerEvent = TypedEvent<
   [string, PositionStructOutput],
@@ -229,17 +163,28 @@ export type NewPlayerEvent = TypedEvent<
 
 export type NewPlayerEventFilter = TypedEventFilter<NewPlayerEvent>;
 
-export type PlaceEvent = TypedEvent<
-  [string, PositionStructOutput, BigNumber, BlockDataStructOutput],
-  {
-    _player: string;
-    _pos: PositionStructOutput;
-    _worldBlockId: BigNumber;
-    _blockData: BlockDataStructOutput;
-  }
+export type ProductionFinishedEvent = TypedEvent<
+  [string, BigNumber, PositionStructOutput],
+  { _player: string; _troopId: BigNumber; _pos: PositionStructOutput }
 >;
 
-export type PlaceEventFilter = TypedEventFilter<PlaceEvent>;
+export type ProductionFinishedEventFilter =
+  TypedEventFilter<ProductionFinishedEvent>;
+
+export type ProductionStartedEvent = TypedEvent<
+  [string, BigNumber, BigNumber],
+  { _player: string; _baseId: BigNumber; _troopTypeId: BigNumber }
+>;
+
+export type ProductionStartedEventFilter =
+  TypedEventFilter<ProductionStartedEvent>;
+
+export type RecoveredEvent = TypedEvent<
+  [string, BigNumber],
+  { _player: string; _troopId: BigNumber }
+>;
+
+export type RecoveredEventFilter = TypedEventFilter<RecoveredEvent>;
 
 export interface EngineFacet extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -268,54 +213,43 @@ export interface EngineFacet extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    _setOccupierAtPosition(
-      _player: string,
+    battle(
+      _troopId: BigNumberish,
+      _targetPos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    captureBase(
+      _troopId: BigNumberish,
+      _targetPos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    endProduction(
       _pos: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    attack(
-      _origin: PositionStruct,
-      _target: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    craft(
-      _itemId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     initializePlayer(
       _pos: PositionStruct,
-      _defaultCurrencyIdx: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    mine(
-      _pos: PositionStruct,
+      _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     move(
-      _pos: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    moveBlock(
-      _startPos: PositionStruct,
+      _troopId: BigNumberish,
       _targetPos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    place(
+    repair(
       _pos: PositionStruct,
-      _blockId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    setMapRegion(
-      _startPos: PositionStruct,
-      _blocks: BigNumberish[][],
+    startProduction(
+      _pos: PositionStruct,
+      _troopTypeId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -324,54 +258,43 @@ export interface EngineFacet extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
-  _setOccupierAtPosition(
-    _player: string,
+  battle(
+    _troopId: BigNumberish,
+    _targetPos: PositionStruct,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  captureBase(
+    _troopId: BigNumberish,
+    _targetPos: PositionStruct,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  endProduction(
     _pos: PositionStruct,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  attack(
-    _origin: PositionStruct,
-    _target: PositionStruct,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  craft(
-    _itemId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   initializePlayer(
     _pos: PositionStruct,
-    _defaultCurrencyIdx: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  mine(
-    _pos: PositionStruct,
+    _player: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   move(
-    _pos: PositionStruct,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  moveBlock(
-    _startPos: PositionStruct,
+    _troopId: BigNumberish,
     _targetPos: PositionStruct,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  place(
+  repair(
     _pos: PositionStruct,
-    _blockId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setMapRegion(
-    _startPos: PositionStruct,
-    _blocks: BigNumberish[][],
+  startProduction(
+    _pos: PositionStruct,
+    _troopTypeId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -380,45 +303,40 @@ export interface EngineFacet extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    _setOccupierAtPosition(
-      _player: string,
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    attack(
-      _origin: PositionStruct,
-      _target: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    craft(_itemId: BigNumberish, overrides?: CallOverrides): Promise<void>;
-
-    initializePlayer(
-      _pos: PositionStruct,
-      _defaultCurrencyIdx: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    mine(_pos: PositionStruct, overrides?: CallOverrides): Promise<void>;
-
-    move(_pos: PositionStruct, overrides?: CallOverrides): Promise<void>;
-
-    moveBlock(
-      _startPos: PositionStruct,
+    battle(
+      _troopId: BigNumberish,
       _targetPos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    place(
-      _pos: PositionStruct,
-      _blockId: BigNumberish,
+    captureBase(
+      _troopId: BigNumberish,
+      _targetPos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setMapRegion(
-      _startPos: PositionStruct,
-      _blocks: BigNumberish[][],
+    endProduction(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    initializePlayer(
+      _pos: PositionStruct,
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    move(
+      _troopId: BigNumberish,
+      _targetPos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    repair(_pos: PositionStruct, overrides?: CallOverrides): Promise<void>;
+
+    startProduction(
+      _pos: PositionStruct,
+      _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -426,74 +344,45 @@ export interface EngineFacet extends BaseContract {
   };
 
   filters: {
-    "AttackItem(address,tuple,tuple,uint256,uint256,uint256)"(
+    "Attacked(address,uint256,address,uint256)"(
       _player?: null,
-      _origin?: null,
-      _target?: null,
-      _attackerWorldBlockId?: null,
-      _targetWorldBlockId?: null,
-      _strength?: null
-    ): AttackItemEventFilter;
-    AttackItem(
+      _troopId?: null,
+      _targetPlayer?: null,
+      _targetId?: null
+    ): AttackedEventFilter;
+    Attacked(
       _player?: null,
-      _origin?: null,
-      _target?: null,
-      _attackerWorldBlockId?: null,
-      _targetWorldBlockId?: null,
-      _strength?: null
-    ): AttackItemEventFilter;
+      _troopId?: null,
+      _targetPlayer?: null,
+      _targetId?: null
+    ): AttackedEventFilter;
 
-    "ChangeBlockStrength(address,tuple,uint256,uint256)"(
+    "BaseCaptured(address,uint256,uint256)"(
       _player?: null,
-      _pos?: null,
-      _health?: null,
-      _resourceUsed?: null
-    ): ChangeBlockStrengthEventFilter;
-    ChangeBlockStrength(
+      _troopId?: null,
+      _baseId?: null
+    ): BaseCapturedEventFilter;
+    BaseCaptured(
       _player?: null,
-      _pos?: null,
-      _health?: null,
-      _resourceUsed?: null
-    ): ChangeBlockStrengthEventFilter;
+      _troopId?: null,
+      _baseId?: null
+    ): BaseCapturedEventFilter;
 
-    "Craft(address,uint256)"(_player?: null, _blockId?: null): CraftEventFilter;
-    Craft(_player?: null, _blockId?: null): CraftEventFilter;
+    "Death(address,uint256)"(_player?: null, _troopId?: null): DeathEventFilter;
+    Death(_player?: null, _troopId?: null): DeathEventFilter;
 
-    "EpochUpdate(address,uint256,uint256)"(
-      _player?: null,
+    "EpochUpdate(uint256,uint256)"(
       _epoch?: null,
       _time?: null
     ): EpochUpdateEventFilter;
-    EpochUpdate(
-      _player?: null,
-      _epoch?: null,
-      _time?: null
-    ): EpochUpdateEventFilter;
+    EpochUpdate(_epoch?: null, _time?: null): EpochUpdateEventFilter;
 
-    "MineItem(address,tuple,uint256)"(
+    "Moved(address,uint256,tuple)"(
       _player?: null,
-      _pos?: null,
-      _itemId?: null
-    ): MineItemEventFilter;
-    MineItem(_player?: null, _pos?: null, _itemId?: null): MineItemEventFilter;
-
-    "Move(address,tuple)"(_player?: null, _pos?: null): MoveEventFilter;
-    Move(_player?: null, _pos?: null): MoveEventFilter;
-
-    "MoveBlock(address,tuple,tuple,uint256,uint256)"(
-      _player?: null,
-      _startPos?: null,
-      _endPos?: null,
-      _worldBlockId?: null,
-      _time?: null
-    ): MoveBlockEventFilter;
-    MoveBlock(
-      _player?: null,
-      _startPos?: null,
-      _endPos?: null,
-      _worldBlockId?: null,
-      _time?: null
-    ): MoveBlockEventFilter;
+      _troopId?: null,
+      _pos?: null
+    ): MovedEventFilter;
+    Moved(_player?: null, _troopId?: null, _pos?: null): MovedEventFilter;
 
     "NewPlayer(address,tuple)"(
       _player?: null,
@@ -501,69 +390,73 @@ export interface EngineFacet extends BaseContract {
     ): NewPlayerEventFilter;
     NewPlayer(_player?: null, _pos?: null): NewPlayerEventFilter;
 
-    "Place(address,tuple,uint256,tuple)"(
+    "ProductionFinished(address,uint256,tuple)"(
       _player?: null,
-      _pos?: null,
-      _worldBlockId?: null,
-      _blockData?: null
-    ): PlaceEventFilter;
-    Place(
+      _troopId?: null,
+      _pos?: null
+    ): ProductionFinishedEventFilter;
+    ProductionFinished(
       _player?: null,
-      _pos?: null,
-      _worldBlockId?: null,
-      _blockData?: null
-    ): PlaceEventFilter;
+      _troopId?: null,
+      _pos?: null
+    ): ProductionFinishedEventFilter;
+
+    "ProductionStarted(address,uint256,uint256)"(
+      _player?: null,
+      _baseId?: null,
+      _troopTypeId?: null
+    ): ProductionStartedEventFilter;
+    ProductionStarted(
+      _player?: null,
+      _baseId?: null,
+      _troopTypeId?: null
+    ): ProductionStartedEventFilter;
+
+    "Recovered(address,uint256)"(
+      _player?: null,
+      _troopId?: null
+    ): RecoveredEventFilter;
+    Recovered(_player?: null, _troopId?: null): RecoveredEventFilter;
   };
 
   estimateGas: {
-    _setOccupierAtPosition(
-      _player: string,
+    battle(
+      _troopId: BigNumberish,
+      _targetPos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    captureBase(
+      _troopId: BigNumberish,
+      _targetPos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    endProduction(
       _pos: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    attack(
-      _origin: PositionStruct,
-      _target: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    craft(
-      _itemId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     initializePlayer(
       _pos: PositionStruct,
-      _defaultCurrencyIdx: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    mine(
-      _pos: PositionStruct,
+      _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     move(
-      _pos: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    moveBlock(
-      _startPos: PositionStruct,
+      _troopId: BigNumberish,
       _targetPos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    place(
+    repair(
       _pos: PositionStruct,
-      _blockId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    setMapRegion(
-      _startPos: PositionStruct,
-      _blocks: BigNumberish[][],
+    startProduction(
+      _pos: PositionStruct,
+      _troopTypeId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -573,54 +466,43 @@ export interface EngineFacet extends BaseContract {
   };
 
   populateTransaction: {
-    _setOccupierAtPosition(
-      _player: string,
+    battle(
+      _troopId: BigNumberish,
+      _targetPos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    captureBase(
+      _troopId: BigNumberish,
+      _targetPos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    endProduction(
       _pos: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    attack(
-      _origin: PositionStruct,
-      _target: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    craft(
-      _itemId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     initializePlayer(
       _pos: PositionStruct,
-      _defaultCurrencyIdx: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    mine(
-      _pos: PositionStruct,
+      _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     move(
-      _pos: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    moveBlock(
-      _startPos: PositionStruct,
+      _troopId: BigNumberish,
       _targetPos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    place(
+    repair(
       _pos: PositionStruct,
-      _blockId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    setMapRegion(
-      _startPos: PositionStruct,
-      _blocks: BigNumberish[][],
+    startProduction(
+      _pos: PositionStruct,
+      _troopTypeId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

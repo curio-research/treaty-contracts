@@ -1,9 +1,9 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import {Position, Tile, Troop} from "../libraries/Types.sol";
-import {Util} from "../libraries/GameUtil.sol";
-import "../libraries/Storage.sol";
+import {Position, Tile, Troop} from "contracts/libraries/Types.sol";
+import {Util} from "contracts/libraries/GameUtil.sol";
+import "contracts/libraries/Storage.sol";
 
 /// @title Bulk getters
 /// @notice Getters provide bulk functions useful for fetching data from the frontend
@@ -19,7 +19,7 @@ contract GetterFacet is UseStorage {
         return _allTroops;
     }
 
-    // Fetch tile chunk in NxN chunks.
+    // Fetch tile map in NxN chunks.
     function _getMapChunk(Position memory _pos) external view returns (Tile[] memory, Position[] memory) {
         uint256 _interval = gs().worldConstants.mapInterval;
 
@@ -30,7 +30,7 @@ contract GetterFacet is UseStorage {
         for (uint256 x = _pos.x; x < _pos.x + _interval; x++) {
             for (uint256 y = _pos.y; y < _pos.y + _interval; y++) {
                 Position memory _tempPos = Position({x: x, y: y});
-                _allTiles[_nonce] = Util._getTileData(_tempPos);
+                _allTiles[_nonce] = gs().map[_pos.x][_pos.y];
                 _allPos[_nonce] = _tempPos;
                 _nonce += 1;
             }

@@ -37,10 +37,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.OwnershipFacet__factory>;
     getContractFactory(
-      name: "TowerFacet",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.TowerFacet__factory>;
-    getContractFactory(
       name: "IDiamondCut",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IDiamondCut__factory>;
@@ -57,9 +53,9 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC173__factory>;
     getContractFactory(
-      name: "GameUtils",
+      name: "Util",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.GameUtils__factory>;
+    ): Promise<Contracts.Util__factory>;
     getContractFactory(
       name: "LibDiamond",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -104,11 +100,6 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.OwnershipFacet>;
     getContractAt(
-      name: "TowerFacet",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.TowerFacet>;
-    getContractAt(
       name: "IDiamondCut",
       address: string,
       signer?: ethers.Signer
@@ -129,10 +120,10 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IERC173>;
     getContractAt(
-      name: "GameUtils",
+      name: "Util",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.GameUtils>;
+    ): Promise<Contracts.Util>;
     getContractAt(
       name: "LibDiamond",
       address: string,

@@ -81,9 +81,10 @@ struct WorldConstants {
     address admin;
     uint256 worldWidth;
     uint256 worldHeight;
+    uint256 numPorts;
+    uint256 numCities;
     uint256 mapInterval;
     uint256 secondsPerTurn;
-    uint256 troopStackLimit;
 }
 
 struct GameState {

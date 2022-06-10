@@ -18,17 +18,17 @@ import { Listener, Provider } from "@ethersproject/providers";
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
 export type WorldConstantsStruct = {
+  admin: string;
   worldWidth: BigNumberish;
   worldHeight: BigNumberish;
-  startPlayerHealth: BigNumberish;
-  startingReach: BigNumberish;
-  startingPlayerDefaultCurrencyAmount: BigNumberish;
-  playerMoveCooldown: BigNumberish;
-  getMapInterval: BigNumberish;
+  numPorts: BigNumberish;
+  numCities: BigNumberish;
+  mapInterval: BigNumberish;
+  secondsPerTurn: BigNumberish;
 };
 
 export type WorldConstantsStructOutput = [
-  BigNumber,
+  string,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -36,72 +36,85 @@ export type WorldConstantsStructOutput = [
   BigNumber,
   BigNumber
 ] & {
+  admin: string;
   worldWidth: BigNumber;
   worldHeight: BigNumber;
-  startPlayerHealth: BigNumber;
-  startingReach: BigNumber;
-  startingPlayerDefaultCurrencyAmount: BigNumber;
-  playerMoveCooldown: BigNumber;
-  getMapInterval: BigNumber;
+  numPorts: BigNumber;
+  numCities: BigNumber;
+  mapInterval: BigNumber;
+  secondsPerTurn: BigNumber;
 };
 
-export type ItemStruct = {
-  mineable: boolean;
-  craftable: boolean;
-  occupiable: boolean;
+export type BaseStruct = {
+  name: BigNumberish;
+  owner: string;
+  attackFactor: BigNumberish;
+  defenseFactor: BigNumberish;
   health: BigNumberish;
-  mineItemIds: BigNumberish[];
-  craftItemIds: BigNumberish[];
-  craftItemAmounts: BigNumberish[];
-  moveCooldown: BigNumberish;
-  attackDamage: BigNumberish;
-  attackRange: BigNumberish;
-  attackCooldown: BigNumberish;
-  programmable: boolean;
-  abiEncoding: string;
-  contractAddr: string;
 };
 
-export type ItemStructOutput = [
-  boolean,
-  boolean,
-  boolean,
-  BigNumber,
-  BigNumber[],
-  BigNumber[],
-  BigNumber[],
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  boolean,
+export type BaseStructOutput = [
+  number,
   string,
-  string
+  BigNumber,
+  BigNumber,
+  BigNumber
 ] & {
-  mineable: boolean;
-  craftable: boolean;
-  occupiable: boolean;
+  name: number;
+  owner: string;
+  attackFactor: BigNumber;
+  defenseFactor: BigNumber;
   health: BigNumber;
-  mineItemIds: BigNumber[];
-  craftItemIds: BigNumber[];
-  craftItemAmounts: BigNumber[];
-  moveCooldown: BigNumber;
-  attackDamage: BigNumber;
-  attackRange: BigNumber;
+};
+
+export type TroopTypeStruct = {
+  name: BigNumberish;
+  speed: BigNumberish;
+  maxHealth: BigNumberish;
+  damagePerHit: BigNumberish;
+  attackFactor: BigNumberish;
+  defenseFactor: BigNumberish;
+  cargoCapacity: BigNumberish;
+  epochsToProduce: BigNumberish;
+  movementCooldown: BigNumberish;
+  attackCooldown: BigNumberish;
+  isArmy: boolean;
+};
+
+export type TroopTypeStructOutput = [
+  number,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  boolean
+] & {
+  name: number;
+  speed: BigNumber;
+  maxHealth: BigNumber;
+  damagePerHit: BigNumber;
+  attackFactor: BigNumber;
+  defenseFactor: BigNumber;
+  cargoCapacity: BigNumber;
+  epochsToProduce: BigNumber;
+  movementCooldown: BigNumber;
   attackCooldown: BigNumber;
-  programmable: boolean;
-  abiEncoding: string;
-  contractAddr: string;
+  isArmy: boolean;
 };
 
 export interface DiamondInitInterface extends utils.Interface {
   functions: {
-    "init((uint256,uint256,uint256,uint256,uint256,uint256,uint256),(bool,bool,bool,uint256,uint256[],uint256[],uint256[],uint256,uint256,uint256,uint256,bool,string,string)[])": FunctionFragment;
+    "init((address,uint256,uint256,uint256,uint256,uint256,uint256),(uint8,address,uint256,uint256,uint256)[],(uint8,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,bool)[])": FunctionFragment;
   };
 
   encodeFunctionData(
     functionFragment: "init",
-    values: [WorldConstantsStruct, ItemStruct[]]
+    values: [WorldConstantsStruct, BaseStruct[], TroopTypeStruct[]]
   ): string;
 
   decodeFunctionResult(functionFragment: "init", data: BytesLike): Result;
@@ -137,22 +150,25 @@ export interface DiamondInit extends BaseContract {
 
   functions: {
     init(
-      constants: WorldConstantsStruct,
-      _items: ItemStruct[],
+      _constants: WorldConstantsStruct,
+      _bases: BaseStruct[],
+      _troopTypes: TroopTypeStruct[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
 
   init(
-    constants: WorldConstantsStruct,
-    _items: ItemStruct[],
+    _constants: WorldConstantsStruct,
+    _bases: BaseStruct[],
+    _troopTypes: TroopTypeStruct[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
     init(
-      constants: WorldConstantsStruct,
-      _items: ItemStruct[],
+      _constants: WorldConstantsStruct,
+      _bases: BaseStruct[],
+      _troopTypes: TroopTypeStruct[],
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -161,16 +177,18 @@ export interface DiamondInit extends BaseContract {
 
   estimateGas: {
     init(
-      constants: WorldConstantsStruct,
-      _items: ItemStruct[],
+      _constants: WorldConstantsStruct,
+      _bases: BaseStruct[],
+      _troopTypes: TroopTypeStruct[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     init(
-      constants: WorldConstantsStruct,
-      _items: ItemStruct[],
+      _constants: WorldConstantsStruct,
+      _bases: BaseStruct[],
+      _troopTypes: TroopTypeStruct[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };
