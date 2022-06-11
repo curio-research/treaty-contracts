@@ -38,6 +38,7 @@ library Util {
             owner: _owner,
             troopTypeId: _troopTypeId,
             lastMoved: gs().epoch,
+            movesLeftInEpoch: _getMovesPerEpoch(_troopTypeId),
             lastAttacked: gs().epoch, // yo
             lastRepaired: gs().epoch,
             health: _getMaxHealth(_troopTypeId),
@@ -108,8 +109,8 @@ library Util {
         return gs().troopTypeIdMap[_troopTypeId].movementCooldown;
     }
 
-    function _getSpeed(uint256 _troopTypeId) public view returns (uint256) {
-        return gs().troopTypeIdMap[_troopTypeId].speed;
+    function _getMovesPerEpoch(uint256 _troopTypeId) public view returns (uint256) {
+        return gs().troopTypeIdMap[_troopTypeId].movesPerEpoch;
     }
 
     function _isLandTroop(uint256 _troopTypeId) public view returns (bool) {

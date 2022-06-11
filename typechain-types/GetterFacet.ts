@@ -38,6 +38,7 @@ export type TroopStruct = {
   owner: string;
   troopTypeId: BigNumberish;
   lastMoved: BigNumberish;
+  movesLeftInEpoch: BigNumberish;
   lastAttacked: BigNumberish;
   lastRepaired: BigNumberish;
   health: BigNumberish;
@@ -52,12 +53,14 @@ export type TroopStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
+  BigNumber,
   PositionStructOutput,
   BigNumber[]
 ] & {
   owner: string;
   troopTypeId: BigNumber;
   lastMoved: BigNumber;
+  movesLeftInEpoch: BigNumber;
   lastAttacked: BigNumber;
   lastRepaired: BigNumber;
   health: BigNumber;

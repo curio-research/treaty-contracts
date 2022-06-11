@@ -12,7 +12,6 @@ contract EngineFacet is UseStorage {
 
     /*
     TODO:
-    - Add movement cooldown epoch field
     - Map upload speed
     - Endgame and objectives
     */
@@ -115,8 +114,15 @@ contract EngineFacet is UseStorage {
         Troop memory _troop = gs().troopIdMap[_troopId];
         if (_troop.owner != msg.sender) revert("Can only move own troop");
         if (Util._samePos(_troop.pos, _targetPos)) revert("Already at destination");
-        if (!Util._withinDist(_troop.pos, _targetPos, Util._getSpeed(_troop.troopTypeId))) revert("Destination too far");
-        if ((gs().epoch - _troop.lastMoved) < Util._getMovementCooldown(_troop.troopTypeId)) revert("Moved too recently");
+        if (!Util._withinDist(_troop.pos, _targetPos, 1)) revert("Destination too far");
+
+        uint256 _movesLeftInEpoch = _troop.movesLeftInEpoch;
+        if ((gs().epoch - _troop.lastMoved) >= Util._getMovementCooldown(_troop.troopTypeId)) {
+            // Lazy update for moves left in epoch
+            _movesLeftInEpoch = Util._getMovesPerEpoch(_troop.troopTypeId);
+            gs().troopIdMap[_troopId].movesLeftInEpoch = _movesLeftInEpoch;
+        }
+        if (_troop.movesLeftInEpoch == 0) revert("No moves left this epoch");
 
         Tile memory _targetTile = Util._getTileAt(_targetPos);
         if (Util._isLandTroop(_troop.troopTypeId)) {
