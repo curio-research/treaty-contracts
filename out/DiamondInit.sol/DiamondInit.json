@@ -128,75 +128,44 @@
   },
   "ast": {
     "absolutePath": "contracts/upgradeInitializers/diamondInit.sol",
-    "id": 4807,
+    "id": 4819,
     "exportedSymbols": {
-      "Base": [
-        4413
-      ],
-      "DiamondInit": [
-        4806
-      ],
-      "GameState": [
-        4544
-      ],
-      "IDiamondCut": [
-        2719
-      ],
-      "IDiamondLoupe": [
-        2760
-      ],
-      "IERC165": [
-        2771
-      ],
-      "IERC173": [
-        2794
-      ],
-      "LibDiamond": [
-        4341
-      ],
-      "LibStorage": [
-        4363
-      ],
-      "TroopType": [
-        4466
-      ],
-      "UseStorage": [
-        4375
-      ],
-      "Util": [
-        3475
-      ],
-      "WorldConstants": [
-        4486
-      ]
+      "Base": [4425],
+      "DiamondInit": [4818],
+      "GameState": [4556],
+      "IDiamondCut": [2731],
+      "IDiamondLoupe": [2772],
+      "IERC165": [2783],
+      "IERC173": [2806],
+      "LibDiamond": [4353],
+      "LibStorage": [4375],
+      "TroopType": [4478],
+      "UseStorage": [4387],
+      "Util": [3487],
+      "WorldConstants": [4498]
     },
     "nodeType": "SourceUnit",
     "src": "32:2606:15",
     "nodes": [
       {
-        "id": 4677,
+        "id": 4689,
         "nodeType": "PragmaDirective",
         "src": "32:23:15",
-        "literals": [
-          "solidity",
-          "^",
-          "0.8",
-          ".0"
-        ]
+        "literals": ["solidity", "^", "0.8", ".0"]
       },
       {
-        "id": 4681,
+        "id": 4693,
         "nodeType": "ImportDirective",
         "src": "395:78:15",
         "absolutePath": "contracts/libraries/Types.sol",
         "file": "contracts/libraries/Types.sol",
         "nameLocation": "-1:-1:-1",
-        "scope": 4807,
-        "sourceUnit": 4545,
+        "scope": 4819,
+        "sourceUnit": 4557,
         "symbolAliases": [
           {
             "foreign": {
-              "id": 4678,
+              "id": 4690,
               "name": "Base",
               "nodeType": "Identifier",
               "overloadedDeclarations": [],
@@ -207,7 +176,7 @@
           },
           {
             "foreign": {
-              "id": 4679,
+              "id": 4691,
               "name": "TroopType",
               "nodeType": "Identifier",
               "overloadedDeclarations": [],
@@ -218,7 +187,7 @@
           },
           {
             "foreign": {
-              "id": 4680,
+              "id": 4692,
               "name": "WorldConstants",
               "nodeType": "Identifier",
               "overloadedDeclarations": [],
@@ -231,18 +200,18 @@
         "unitAlias": ""
       },
       {
-        "id": 4683,
+        "id": 4695,
         "nodeType": "ImportDirective",
         "src": "474:62:15",
         "absolutePath": "contracts/libraries/LibDiamond.sol",
         "file": "contracts/libraries/LibDiamond.sol",
         "nameLocation": "-1:-1:-1",
-        "scope": 4807,
-        "sourceUnit": 4342,
+        "scope": 4819,
+        "sourceUnit": 4354,
         "symbolAliases": [
           {
             "foreign": {
-              "id": 4682,
+              "id": 4694,
               "name": "LibDiamond",
               "nodeType": "Identifier",
               "overloadedDeclarations": [],
@@ -255,18 +224,18 @@
         "unitAlias": ""
       },
       {
-        "id": 4685,
+        "id": 4697,
         "nodeType": "ImportDirective",
         "src": "537:69:15",
         "absolutePath": "contracts/interfaces/IDiamondLoupe.sol",
         "file": "contracts/interfaces/IDiamondLoupe.sol",
         "nameLocation": "-1:-1:-1",
-        "scope": 4807,
-        "sourceUnit": 2761,
+        "scope": 4819,
+        "sourceUnit": 2773,
         "symbolAliases": [
           {
             "foreign": {
-              "id": 4684,
+              "id": 4696,
               "name": "IDiamondLoupe",
               "nodeType": "Identifier",
               "overloadedDeclarations": [],
@@ -279,18 +248,18 @@
         "unitAlias": ""
       },
       {
-        "id": 4687,
+        "id": 4699,
         "nodeType": "ImportDirective",
         "src": "607:65:15",
         "absolutePath": "contracts/interfaces/IDiamondCut.sol",
         "file": "contracts/interfaces/IDiamondCut.sol",
         "nameLocation": "-1:-1:-1",
-        "scope": 4807,
-        "sourceUnit": 2720,
+        "scope": 4819,
+        "sourceUnit": 2732,
         "symbolAliases": [
           {
             "foreign": {
-              "id": 4686,
+              "id": 4698,
               "name": "IDiamondCut",
               "nodeType": "Identifier",
               "overloadedDeclarations": [],
@@ -303,18 +272,18 @@
         "unitAlias": ""
       },
       {
-        "id": 4689,
+        "id": 4701,
         "nodeType": "ImportDirective",
         "src": "673:57:15",
         "absolutePath": "contracts/interfaces/IERC173.sol",
         "file": "contracts/interfaces/IERC173.sol",
         "nameLocation": "-1:-1:-1",
-        "scope": 4807,
-        "sourceUnit": 2795,
+        "scope": 4819,
+        "sourceUnit": 2807,
         "symbolAliases": [
           {
             "foreign": {
-              "id": 4688,
+              "id": 4700,
               "name": "IERC173",
               "nodeType": "Identifier",
               "overloadedDeclarations": [],
@@ -327,18 +296,18 @@
         "unitAlias": ""
       },
       {
-        "id": 4691,
+        "id": 4703,
         "nodeType": "ImportDirective",
         "src": "731:57:15",
         "absolutePath": "contracts/interfaces/IERC165.sol",
         "file": "contracts/interfaces/IERC165.sol",
         "nameLocation": "-1:-1:-1",
-        "scope": 4807,
-        "sourceUnit": 2772,
+        "scope": 4819,
+        "sourceUnit": 2784,
         "symbolAliases": [
           {
             "foreign": {
-              "id": 4690,
+              "id": 4702,
               "name": "IERC165",
               "nodeType": "Identifier",
               "overloadedDeclarations": [],
@@ -351,18 +320,18 @@
         "unitAlias": ""
       },
       {
-        "id": 4693,
+        "id": 4705,
         "nodeType": "ImportDirective",
         "src": "789:54:15",
         "absolutePath": "contracts/libraries/GameUtil.sol",
         "file": "contracts/libraries/GameUtil.sol",
         "nameLocation": "-1:-1:-1",
-        "scope": 4807,
-        "sourceUnit": 3476,
+        "scope": 4819,
+        "sourceUnit": 3488,
         "symbolAliases": [
           {
             "foreign": {
-              "id": 4692,
+              "id": 4704,
               "name": "Util",
               "nodeType": "Identifier",
               "overloadedDeclarations": [],
@@ -375,103 +344,101 @@
         "unitAlias": ""
       },
       {
-        "id": 4694,
+        "id": 4706,
         "nodeType": "ImportDirective",
         "src": "844:41:15",
         "absolutePath": "contracts/libraries/Storage.sol",
         "file": "contracts/libraries/Storage.sol",
         "nameLocation": "-1:-1:-1",
-        "scope": 4807,
-        "sourceUnit": 4376,
+        "scope": 4819,
+        "sourceUnit": 4388,
         "symbolAliases": [],
         "unitAlias": ""
       },
       {
-        "id": 4806,
+        "id": 4818,
         "nodeType": "ContractDefinition",
         "src": "1181:1456:15",
         "nodes": [
           {
-            "id": 4805,
+            "id": 4817,
             "nodeType": "FunctionDefinition",
             "src": "1333:1302:15",
             "body": {
-              "id": 4804,
+              "id": 4816,
               "nodeType": "Block",
               "src": "1422:1213:15",
               "statements": [
                 {
-                  "assignments": [
-                    4710
-                  ],
+                  "assignments": [4722],
                   "declarations": [
                     {
                       "constant": false,
-                      "id": 4710,
+                      "id": 4722,
                       "mutability": "mutable",
                       "name": "ds",
                       "nameLocation": "1496:2:15",
                       "nodeType": "VariableDeclaration",
-                      "scope": 4804,
+                      "scope": 4816,
                       "src": "1462:36:15",
                       "stateVariable": false,
                       "storageLocation": "storage",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_struct$_DiamondStorage_$3501_storage_ptr",
+                        "typeIdentifier": "t_struct$_DiamondStorage_$3513_storage_ptr",
                         "typeString": "struct LibDiamond.DiamondStorage"
                       },
                       "typeName": {
-                        "id": 4709,
+                        "id": 4721,
                         "nodeType": "UserDefinedTypeName",
                         "pathNode": {
-                          "id": 4708,
+                          "id": 4720,
                           "name": "LibDiamond.DiamondStorage",
                           "nodeType": "IdentifierPath",
-                          "referencedDeclaration": 3501,
+                          "referencedDeclaration": 3513,
                           "src": "1462:25:15"
                         },
-                        "referencedDeclaration": 3501,
+                        "referencedDeclaration": 3513,
                         "src": "1462:25:15",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_struct$_DiamondStorage_$3501_storage_ptr",
+                          "typeIdentifier": "t_struct$_DiamondStorage_$3513_storage_ptr",
                           "typeString": "struct LibDiamond.DiamondStorage"
                         }
                       },
                       "visibility": "internal"
                     }
                   ],
-                  "id": 4714,
+                  "id": 4726,
                   "initialValue": {
                     "arguments": [],
                     "expression": {
                       "argumentTypes": [],
                       "expression": {
-                        "id": 4711,
+                        "id": 4723,
                         "name": "LibDiamond",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 4341,
+                        "referencedDeclaration": 4353,
                         "src": "1501:10:15",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_type$_t_contract$_LibDiamond_$4341_$",
+                          "typeIdentifier": "t_type$_t_contract$_LibDiamond_$4353_$",
                           "typeString": "type(library LibDiamond)"
                         }
                       },
-                      "id": 4712,
+                      "id": 4724,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
                       "lValueRequested": false,
                       "memberName": "diamondStorage",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 3513,
+                      "referencedDeclaration": 3525,
                       "src": "1501:25:15",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_function_internal_pure$__$returns$_t_struct$_DiamondStorage_$3501_storage_ptr_$",
+                        "typeIdentifier": "t_function_internal_pure$__$returns$_t_struct$_DiamondStorage_$3513_storage_ptr_$",
                         "typeString": "function () pure returns (struct LibDiamond.DiamondStorage storage pointer)"
                       }
                     },
-                    "id": 4713,
+                    "id": 4725,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -482,7 +449,7 @@
                     "src": "1501:27:15",
                     "tryCall": false,
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_DiamondStorage_$3501_storage_ptr",
+                      "typeIdentifier": "t_struct$_DiamondStorage_$3513_storage_ptr",
                       "typeString": "struct LibDiamond.DiamondStorage storage pointer"
                     }
                   },
@@ -491,7 +458,7 @@
                 },
                 {
                   "expression": {
-                    "id": 4724,
+                    "id": 4736,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -499,44 +466,44 @@
                     "leftHandSide": {
                       "baseExpression": {
                         "expression": {
-                          "id": 4715,
+                          "id": 4727,
                           "name": "ds",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 4710,
+                          "referencedDeclaration": 4722,
                           "src": "1538:2:15",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_struct$_DiamondStorage_$3501_storage_ptr",
+                            "typeIdentifier": "t_struct$_DiamondStorage_$3513_storage_ptr",
                             "typeString": "struct LibDiamond.DiamondStorage storage pointer"
                           }
                         },
-                        "id": 4721,
+                        "id": 4733,
                         "isConstant": false,
                         "isLValue": true,
                         "isPure": false,
                         "lValueRequested": false,
                         "memberName": "supportedInterfaces",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 3498,
+                        "referencedDeclaration": 3510,
                         "src": "1538:22:15",
                         "typeDescriptions": {
                           "typeIdentifier": "t_mapping$_t_bytes4_$_t_bool_$",
                           "typeString": "mapping(bytes4 => bool)"
                         }
                       },
-                      "id": 4722,
+                      "id": 4734,
                       "indexExpression": {
                         "expression": {
                           "arguments": [
                             {
-                              "id": 4718,
+                              "id": 4730,
                               "name": "IERC165",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 2771,
+                              "referencedDeclaration": 2783,
                               "src": "1566:7:15",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_type$_t_contract$_IERC165_$2771_$",
+                                "typeIdentifier": "t_type$_t_contract$_IERC165_$2783_$",
                                 "typeString": "type(contract IERC165)"
                               }
                             }
@@ -544,11 +511,11 @@
                           "expression": {
                             "argumentTypes": [
                               {
-                                "typeIdentifier": "t_type$_t_contract$_IERC165_$2771_$",
+                                "typeIdentifier": "t_type$_t_contract$_IERC165_$2783_$",
                                 "typeString": "type(contract IERC165)"
                               }
                             ],
-                            "id": 4717,
+                            "id": 4729,
                             "name": "type",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
@@ -559,7 +526,7 @@
                               "typeString": "function () pure"
                             }
                           },
-                          "id": 4719,
+                          "id": 4731,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
@@ -570,11 +537,11 @@
                           "src": "1561:13:15",
                           "tryCall": false,
                           "typeDescriptions": {
-                            "typeIdentifier": "t_magic_meta_type_t_contract$_IERC165_$2771",
+                            "typeIdentifier": "t_magic_meta_type_t_contract$_IERC165_$2783",
                             "typeString": "type(contract IERC165)"
                           }
                         },
-                        "id": 4720,
+                        "id": 4732,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": true,
@@ -602,7 +569,7 @@
                     "operator": "=",
                     "rightHandSide": {
                       "hexValue": "74727565",
-                      "id": 4723,
+                      "id": 4735,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": true,
@@ -622,13 +589,13 @@
                       "typeString": "bool"
                     }
                   },
-                  "id": 4725,
+                  "id": 4737,
                   "nodeType": "ExpressionStatement",
                   "src": "1538:56:15"
                 },
                 {
                   "expression": {
-                    "id": 4735,
+                    "id": 4747,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -636,44 +603,44 @@
                     "leftHandSide": {
                       "baseExpression": {
                         "expression": {
-                          "id": 4726,
+                          "id": 4738,
                           "name": "ds",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 4710,
+                          "referencedDeclaration": 4722,
                           "src": "1604:2:15",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_struct$_DiamondStorage_$3501_storage_ptr",
+                            "typeIdentifier": "t_struct$_DiamondStorage_$3513_storage_ptr",
                             "typeString": "struct LibDiamond.DiamondStorage storage pointer"
                           }
                         },
-                        "id": 4732,
+                        "id": 4744,
                         "isConstant": false,
                         "isLValue": true,
                         "isPure": false,
                         "lValueRequested": false,
                         "memberName": "supportedInterfaces",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 3498,
+                        "referencedDeclaration": 3510,
                         "src": "1604:22:15",
                         "typeDescriptions": {
                           "typeIdentifier": "t_mapping$_t_bytes4_$_t_bool_$",
                           "typeString": "mapping(bytes4 => bool)"
                         }
                       },
-                      "id": 4733,
+                      "id": 4745,
                       "indexExpression": {
                         "expression": {
                           "arguments": [
                             {
-                              "id": 4729,
+                              "id": 4741,
                               "name": "IDiamondCut",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 2719,
+                              "referencedDeclaration": 2731,
                               "src": "1632:11:15",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_type$_t_contract$_IDiamondCut_$2719_$",
+                                "typeIdentifier": "t_type$_t_contract$_IDiamondCut_$2731_$",
                                 "typeString": "type(contract IDiamondCut)"
                               }
                             }
@@ -681,11 +648,11 @@
                           "expression": {
                             "argumentTypes": [
                               {
-                                "typeIdentifier": "t_type$_t_contract$_IDiamondCut_$2719_$",
+                                "typeIdentifier": "t_type$_t_contract$_IDiamondCut_$2731_$",
                                 "typeString": "type(contract IDiamondCut)"
                               }
                             ],
-                            "id": 4728,
+                            "id": 4740,
                             "name": "type",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
@@ -696,7 +663,7 @@
                               "typeString": "function () pure"
                             }
                           },
-                          "id": 4730,
+                          "id": 4742,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
@@ -707,11 +674,11 @@
                           "src": "1627:17:15",
                           "tryCall": false,
                           "typeDescriptions": {
-                            "typeIdentifier": "t_magic_meta_type_t_contract$_IDiamondCut_$2719",
+                            "typeIdentifier": "t_magic_meta_type_t_contract$_IDiamondCut_$2731",
                             "typeString": "type(contract IDiamondCut)"
                           }
                         },
-                        "id": 4731,
+                        "id": 4743,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": true,
@@ -739,7 +706,7 @@
                     "operator": "=",
                     "rightHandSide": {
                       "hexValue": "74727565",
-                      "id": 4734,
+                      "id": 4746,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": true,
@@ -759,13 +726,13 @@
                       "typeString": "bool"
                     }
                   },
-                  "id": 4736,
+                  "id": 4748,
                   "nodeType": "ExpressionStatement",
                   "src": "1604:60:15"
                 },
                 {
                   "expression": {
-                    "id": 4746,
+                    "id": 4758,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -773,44 +740,44 @@
                     "leftHandSide": {
                       "baseExpression": {
                         "expression": {
-                          "id": 4737,
+                          "id": 4749,
                           "name": "ds",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 4710,
+                          "referencedDeclaration": 4722,
                           "src": "1674:2:15",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_struct$_DiamondStorage_$3501_storage_ptr",
+                            "typeIdentifier": "t_struct$_DiamondStorage_$3513_storage_ptr",
                             "typeString": "struct LibDiamond.DiamondStorage storage pointer"
                           }
                         },
-                        "id": 4743,
+                        "id": 4755,
                         "isConstant": false,
                         "isLValue": true,
                         "isPure": false,
                         "lValueRequested": false,
                         "memberName": "supportedInterfaces",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 3498,
+                        "referencedDeclaration": 3510,
                         "src": "1674:22:15",
                         "typeDescriptions": {
                           "typeIdentifier": "t_mapping$_t_bytes4_$_t_bool_$",
                           "typeString": "mapping(bytes4 => bool)"
                         }
                       },
-                      "id": 4744,
+                      "id": 4756,
                       "indexExpression": {
                         "expression": {
                           "arguments": [
                             {
-                              "id": 4740,
+                              "id": 4752,
                               "name": "IDiamondLoupe",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 2760,
+                              "referencedDeclaration": 2772,
                               "src": "1702:13:15",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_type$_t_contract$_IDiamondLoupe_$2760_$",
+                                "typeIdentifier": "t_type$_t_contract$_IDiamondLoupe_$2772_$",
                                 "typeString": "type(contract IDiamondLoupe)"
                               }
                             }
@@ -818,11 +785,11 @@
                           "expression": {
                             "argumentTypes": [
                               {
-                                "typeIdentifier": "t_type$_t_contract$_IDiamondLoupe_$2760_$",
+                                "typeIdentifier": "t_type$_t_contract$_IDiamondLoupe_$2772_$",
                                 "typeString": "type(contract IDiamondLoupe)"
                               }
                             ],
-                            "id": 4739,
+                            "id": 4751,
                             "name": "type",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
@@ -833,7 +800,7 @@
                               "typeString": "function () pure"
                             }
                           },
-                          "id": 4741,
+                          "id": 4753,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
@@ -844,11 +811,11 @@
                           "src": "1697:19:15",
                           "tryCall": false,
                           "typeDescriptions": {
-                            "typeIdentifier": "t_magic_meta_type_t_contract$_IDiamondLoupe_$2760",
+                            "typeIdentifier": "t_magic_meta_type_t_contract$_IDiamondLoupe_$2772",
                             "typeString": "type(contract IDiamondLoupe)"
                           }
                         },
-                        "id": 4742,
+                        "id": 4754,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": true,
@@ -876,7 +843,7 @@
                     "operator": "=",
                     "rightHandSide": {
                       "hexValue": "74727565",
-                      "id": 4745,
+                      "id": 4757,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": true,
@@ -896,13 +863,13 @@
                       "typeString": "bool"
                     }
                   },
-                  "id": 4747,
+                  "id": 4759,
                   "nodeType": "ExpressionStatement",
                   "src": "1674:62:15"
                 },
                 {
                   "expression": {
-                    "id": 4757,
+                    "id": 4769,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -910,44 +877,44 @@
                     "leftHandSide": {
                       "baseExpression": {
                         "expression": {
-                          "id": 4748,
+                          "id": 4760,
                           "name": "ds",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 4710,
+                          "referencedDeclaration": 4722,
                           "src": "1746:2:15",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_struct$_DiamondStorage_$3501_storage_ptr",
+                            "typeIdentifier": "t_struct$_DiamondStorage_$3513_storage_ptr",
                             "typeString": "struct LibDiamond.DiamondStorage storage pointer"
                           }
                         },
-                        "id": 4754,
+                        "id": 4766,
                         "isConstant": false,
                         "isLValue": true,
                         "isPure": false,
                         "lValueRequested": false,
                         "memberName": "supportedInterfaces",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 3498,
+                        "referencedDeclaration": 3510,
                         "src": "1746:22:15",
                         "typeDescriptions": {
                           "typeIdentifier": "t_mapping$_t_bytes4_$_t_bool_$",
                           "typeString": "mapping(bytes4 => bool)"
                         }
                       },
-                      "id": 4755,
+                      "id": 4767,
                       "indexExpression": {
                         "expression": {
                           "arguments": [
                             {
-                              "id": 4751,
+                              "id": 4763,
                               "name": "IERC173",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 2794,
+                              "referencedDeclaration": 2806,
                               "src": "1774:7:15",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_type$_t_contract$_IERC173_$2794_$",
+                                "typeIdentifier": "t_type$_t_contract$_IERC173_$2806_$",
                                 "typeString": "type(contract IERC173)"
                               }
                             }
@@ -955,11 +922,11 @@
                           "expression": {
                             "argumentTypes": [
                               {
-                                "typeIdentifier": "t_type$_t_contract$_IERC173_$2794_$",
+                                "typeIdentifier": "t_type$_t_contract$_IERC173_$2806_$",
                                 "typeString": "type(contract IERC173)"
                               }
                             ],
-                            "id": 4750,
+                            "id": 4762,
                             "name": "type",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
@@ -970,7 +937,7 @@
                               "typeString": "function () pure"
                             }
                           },
-                          "id": 4752,
+                          "id": 4764,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
@@ -981,11 +948,11 @@
                           "src": "1769:13:15",
                           "tryCall": false,
                           "typeDescriptions": {
-                            "typeIdentifier": "t_magic_meta_type_t_contract$_IERC173_$2794",
+                            "typeIdentifier": "t_magic_meta_type_t_contract$_IERC173_$2806",
                             "typeString": "type(contract IERC173)"
                           }
                         },
-                        "id": 4753,
+                        "id": 4765,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": true,
@@ -1013,7 +980,7 @@
                     "operator": "=",
                     "rightHandSide": {
                       "hexValue": "74727565",
-                      "id": 4756,
+                      "id": 4768,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": true,
@@ -1033,13 +1000,13 @@
                       "typeString": "bool"
                     }
                   },
-                  "id": 4758,
+                  "id": 4770,
                   "nodeType": "ExpressionStatement",
                   "src": "1746:56:15"
                 },
                 {
                   "expression": {
-                    "id": 4763,
+                    "id": 4775,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -1049,18 +1016,18 @@
                         "arguments": [],
                         "expression": {
                           "argumentTypes": [],
-                          "id": 4759,
+                          "id": 4771,
                           "name": "gs",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 4374,
+                          "referencedDeclaration": 4386,
                           "src": "2293:2:15",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_function_internal_pure$__$returns$_t_struct$_GameState_$4544_storage_ptr_$",
+                            "typeIdentifier": "t_function_internal_pure$__$returns$_t_struct$_GameState_$4556_storage_ptr_$",
                             "typeString": "function () pure returns (struct GameState storage pointer)"
                           }
                         },
-                        "id": 4760,
+                        "id": 4772,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -1071,51 +1038,51 @@
                         "src": "2293:4:15",
                         "tryCall": false,
                         "typeDescriptions": {
-                          "typeIdentifier": "t_struct$_GameState_$4544_storage_ptr",
+                          "typeIdentifier": "t_struct$_GameState_$4556_storage_ptr",
                           "typeString": "struct GameState storage pointer"
                         }
                       },
-                      "id": 4761,
+                      "id": 4773,
                       "isConstant": false,
                       "isLValue": true,
                       "isPure": false,
                       "lValueRequested": true,
                       "memberName": "worldConstants",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 4489,
+                      "referencedDeclaration": 4501,
                       "src": "2293:19:15",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_struct$_WorldConstants_$4486_storage",
+                        "typeIdentifier": "t_struct$_WorldConstants_$4498_storage",
                         "typeString": "struct WorldConstants storage ref"
                       }
                     },
                     "nodeType": "Assignment",
                     "operator": "=",
                     "rightHandSide": {
-                      "id": 4762,
+                      "id": 4774,
                       "name": "_constants",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 4699,
+                      "referencedDeclaration": 4711,
                       "src": "2315:10:15",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_struct$_WorldConstants_$4486_memory_ptr",
+                        "typeIdentifier": "t_struct$_WorldConstants_$4498_memory_ptr",
                         "typeString": "struct WorldConstants memory"
                       }
                     },
                     "src": "2293:32:15",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_WorldConstants_$4486_storage",
+                      "typeIdentifier": "t_struct$_WorldConstants_$4498_storage",
                       "typeString": "struct WorldConstants storage ref"
                     }
                   },
-                  "id": 4764,
+                  "id": 4776,
                   "nodeType": "ExpressionStatement",
                   "src": "2293:32:15"
                 },
                 {
                   "body": {
-                    "id": 4797,
+                    "id": 4809,
                     "nodeType": "Block",
                     "src": "2419:111:15",
                     "statements": [
@@ -1127,17 +1094,17 @@
                                 "typeIdentifier": "t_uint256",
                                 "typeString": "uint256"
                               },
-                              "id": 4782,
+                              "id": 4794,
                               "isConstant": false,
                               "isLValue": false,
                               "isPure": false,
                               "lValueRequested": false,
                               "leftExpression": {
-                                "id": 4780,
+                                "id": 4792,
                                 "name": "i",
                                 "nodeType": "Identifier",
                                 "overloadedDeclarations": [],
-                                "referencedDeclaration": 4766,
+                                "referencedDeclaration": 4778,
                                 "src": "2456:1:15",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_uint256",
@@ -1148,7 +1115,7 @@
                               "operator": "+",
                               "rightExpression": {
                                 "hexValue": "31",
-                                "id": 4781,
+                                "id": 4793,
                                 "isConstant": false,
                                 "isLValue": false,
                                 "isPure": true,
@@ -1181,18 +1148,18 @@
                                 "arguments": [],
                                 "expression": {
                                   "argumentTypes": [],
-                                  "id": 4776,
+                                  "id": 4788,
                                   "name": "gs",
                                   "nodeType": "Identifier",
                                   "overloadedDeclarations": [],
-                                  "referencedDeclaration": 4374,
+                                  "referencedDeclaration": 4386,
                                   "src": "2433:2:15",
                                   "typeDescriptions": {
-                                    "typeIdentifier": "t_function_internal_pure$__$returns$_t_struct$_GameState_$4544_storage_ptr_$",
+                                    "typeIdentifier": "t_function_internal_pure$__$returns$_t_struct$_GameState_$4556_storage_ptr_$",
                                     "typeString": "function () pure returns (struct GameState storage pointer)"
                                   }
                                 },
-                                "id": 4777,
+                                "id": 4789,
                                 "isConstant": false,
                                 "isLValue": false,
                                 "isPure": false,
@@ -1203,25 +1170,25 @@
                                 "src": "2433:4:15",
                                 "tryCall": false,
                                 "typeDescriptions": {
-                                  "typeIdentifier": "t_struct$_GameState_$4544_storage_ptr",
+                                  "typeIdentifier": "t_struct$_GameState_$4556_storage_ptr",
                                   "typeString": "struct GameState storage pointer"
                                 }
                               },
-                              "id": 4778,
+                              "id": 4790,
                               "isConstant": false,
                               "isLValue": true,
                               "isPure": false,
                               "lValueRequested": false,
                               "memberName": "troopTypeIds",
                               "nodeType": "MemberAccess",
-                              "referencedDeclaration": 4536,
+                              "referencedDeclaration": 4548,
                               "src": "2433:17:15",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_array$_t_uint256_$dyn_storage",
                                 "typeString": "uint256[] storage ref"
                               }
                             },
-                            "id": 4779,
+                            "id": 4791,
                             "isConstant": false,
                             "isLValue": false,
                             "isPure": false,
@@ -1234,7 +1201,7 @@
                               "typeString": "function (uint256[] storage pointer,uint256)"
                             }
                           },
-                          "id": 4783,
+                          "id": 4795,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": false,
@@ -1249,13 +1216,13 @@
                             "typeString": "tuple()"
                           }
                         },
-                        "id": 4784,
+                        "id": 4796,
                         "nodeType": "ExpressionStatement",
                         "src": "2433:29:15"
                       },
                       {
                         "expression": {
-                          "id": 4795,
+                          "id": 4807,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": false,
@@ -1266,18 +1233,18 @@
                                 "arguments": [],
                                 "expression": {
                                   "argumentTypes": [],
-                                  "id": 4785,
+                                  "id": 4797,
                                   "name": "gs",
                                   "nodeType": "Identifier",
                                   "overloadedDeclarations": [],
-                                  "referencedDeclaration": 4374,
+                                  "referencedDeclaration": 4386,
                                   "src": "2476:2:15",
                                   "typeDescriptions": {
-                                    "typeIdentifier": "t_function_internal_pure$__$returns$_t_struct$_GameState_$4544_storage_ptr_$",
+                                    "typeIdentifier": "t_function_internal_pure$__$returns$_t_struct$_GameState_$4556_storage_ptr_$",
                                     "typeString": "function () pure returns (struct GameState storage pointer)"
                                   }
                                 },
-                                "id": 4786,
+                                "id": 4798,
                                 "isConstant": false,
                                 "isLValue": false,
                                 "isPure": false,
@@ -1288,41 +1255,41 @@
                                 "src": "2476:4:15",
                                 "tryCall": false,
                                 "typeDescriptions": {
-                                  "typeIdentifier": "t_struct$_GameState_$4544_storage_ptr",
+                                  "typeIdentifier": "t_struct$_GameState_$4556_storage_ptr",
                                   "typeString": "struct GameState storage pointer"
                                 }
                               },
-                              "id": 4787,
+                              "id": 4799,
                               "isConstant": false,
                               "isLValue": true,
                               "isPure": false,
                               "lValueRequested": false,
                               "memberName": "troopTypeIdMap",
                               "nodeType": "MemberAccess",
-                              "referencedDeclaration": 4541,
+                              "referencedDeclaration": 4553,
                               "src": "2476:19:15",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_mapping$_t_uint256_$_t_struct$_TroopType_$4466_storage_$",
+                                "typeIdentifier": "t_mapping$_t_uint256_$_t_struct$_TroopType_$4478_storage_$",
                                 "typeString": "mapping(uint256 => struct TroopType storage ref)"
                               }
                             },
-                            "id": 4791,
+                            "id": 4803,
                             "indexExpression": {
                               "commonType": {
                                 "typeIdentifier": "t_uint256",
                                 "typeString": "uint256"
                               },
-                              "id": 4790,
+                              "id": 4802,
                               "isConstant": false,
                               "isLValue": false,
                               "isPure": false,
                               "lValueRequested": false,
                               "leftExpression": {
-                                "id": 4788,
+                                "id": 4800,
                                 "name": "i",
                                 "nodeType": "Identifier",
                                 "overloadedDeclarations": [],
-                                "referencedDeclaration": 4766,
+                                "referencedDeclaration": 4778,
                                 "src": "2496:1:15",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_uint256",
@@ -1333,7 +1300,7 @@
                               "operator": "+",
                               "rightExpression": {
                                 "hexValue": "31",
-                                "id": 4789,
+                                "id": 4801,
                                 "isConstant": false,
                                 "isLValue": false,
                                 "isPure": true,
@@ -1360,7 +1327,7 @@
                             "nodeType": "IndexAccess",
                             "src": "2476:26:15",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_struct$_TroopType_$4466_storage",
+                              "typeIdentifier": "t_struct$_TroopType_$4478_storage",
                               "typeString": "struct TroopType storage ref"
                             }
                           },
@@ -1368,24 +1335,24 @@
                           "operator": "=",
                           "rightHandSide": {
                             "baseExpression": {
-                              "id": 4792,
+                              "id": 4804,
                               "name": "_troopTypes",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 4703,
+                              "referencedDeclaration": 4715,
                               "src": "2505:11:15",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_array$_t_struct$_TroopType_$4466_memory_ptr_$dyn_memory_ptr",
+                                "typeIdentifier": "t_array$_t_struct$_TroopType_$4478_memory_ptr_$dyn_memory_ptr",
                                 "typeString": "struct TroopType memory[] memory"
                               }
                             },
-                            "id": 4794,
+                            "id": 4806,
                             "indexExpression": {
-                              "id": 4793,
+                              "id": 4805,
                               "name": "i",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 4766,
+                              "referencedDeclaration": 4778,
                               "src": "2517:1:15",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_uint256",
@@ -1399,17 +1366,17 @@
                             "nodeType": "IndexAccess",
                             "src": "2505:14:15",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_struct$_TroopType_$4466_memory_ptr",
+                              "typeIdentifier": "t_struct$_TroopType_$4478_memory_ptr",
                               "typeString": "struct TroopType memory"
                             }
                           },
                           "src": "2476:43:15",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_struct$_TroopType_$4466_storage",
+                            "typeIdentifier": "t_struct$_TroopType_$4478_storage",
                             "typeString": "struct TroopType storage ref"
                           }
                         },
-                        "id": 4796,
+                        "id": 4808,
                         "nodeType": "ExpressionStatement",
                         "src": "2476:43:15"
                       }
@@ -1420,17 +1387,17 @@
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
                     },
-                    "id": 4772,
+                    "id": 4784,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
                     "lValueRequested": false,
                     "leftExpression": {
-                      "id": 4769,
+                      "id": 4781,
                       "name": "i",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 4766,
+                      "referencedDeclaration": 4778,
                       "src": "2390:1:15",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
@@ -1441,18 +1408,18 @@
                     "operator": "<",
                     "rightExpression": {
                       "expression": {
-                        "id": 4770,
+                        "id": 4782,
                         "name": "_troopTypes",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 4703,
+                        "referencedDeclaration": 4715,
                         "src": "2394:11:15",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_array$_t_struct$_TroopType_$4466_memory_ptr_$dyn_memory_ptr",
+                          "typeIdentifier": "t_array$_t_struct$_TroopType_$4478_memory_ptr_$dyn_memory_ptr",
                           "typeString": "struct TroopType memory[] memory"
                         }
                       },
-                      "id": 4771,
+                      "id": 4783,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
@@ -1471,20 +1438,18 @@
                       "typeString": "bool"
                     }
                   },
-                  "id": 4798,
+                  "id": 4810,
                   "initializationExpression": {
-                    "assignments": [
-                      4766
-                    ],
+                    "assignments": [4778],
                     "declarations": [
                       {
                         "constant": false,
-                        "id": 4766,
+                        "id": 4778,
                         "mutability": "mutable",
                         "name": "i",
                         "nameLocation": "2383:1:15",
                         "nodeType": "VariableDeclaration",
-                        "scope": 4798,
+                        "scope": 4810,
                         "src": "2375:9:15",
                         "stateVariable": false,
                         "storageLocation": "default",
@@ -1493,7 +1458,7 @@
                           "typeString": "uint256"
                         },
                         "typeName": {
-                          "id": 4765,
+                          "id": 4777,
                           "name": "uint256",
                           "nodeType": "ElementaryTypeName",
                           "src": "2375:7:15",
@@ -1505,10 +1470,10 @@
                         "visibility": "internal"
                       }
                     ],
-                    "id": 4768,
+                    "id": 4780,
                     "initialValue": {
                       "hexValue": "30",
-                      "id": 4767,
+                      "id": 4779,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": true,
@@ -1527,7 +1492,7 @@
                   },
                   "loopExpression": {
                     "expression": {
-                      "id": 4774,
+                      "id": 4786,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
@@ -1537,11 +1502,11 @@
                       "prefix": false,
                       "src": "2414:3:15",
                       "subExpression": {
-                        "id": 4773,
+                        "id": 4785,
                         "name": "i",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 4766,
+                        "referencedDeclaration": 4778,
                         "src": "2414:1:15",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint256",
@@ -1553,7 +1518,7 @@
                         "typeString": "uint256"
                       }
                     },
-                    "id": 4775,
+                    "id": 4787,
                     "nodeType": "ExpressionStatement",
                     "src": "2414:3:15"
                   },
@@ -1562,7 +1527,7 @@
                 },
                 {
                   "expression": {
-                    "id": 4802,
+                    "id": 4814,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -1576,18 +1541,18 @@
                         "arguments": [],
                         "expression": {
                           "argumentTypes": [],
-                          "id": 4799,
+                          "id": 4811,
                           "name": "gs",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 4374,
+                          "referencedDeclaration": 4386,
                           "src": "2611:2:15",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_function_internal_pure$__$returns$_t_struct$_GameState_$4544_storage_ptr_$",
+                            "typeIdentifier": "t_function_internal_pure$__$returns$_t_struct$_GameState_$4556_storage_ptr_$",
                             "typeString": "function () pure returns (struct GameState storage pointer)"
                           }
                         },
-                        "id": 4800,
+                        "id": 4812,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -1598,18 +1563,18 @@
                         "src": "2611:4:15",
                         "tryCall": false,
                         "typeDescriptions": {
-                          "typeIdentifier": "t_struct$_GameState_$4544_storage_ptr",
+                          "typeIdentifier": "t_struct$_GameState_$4556_storage_ptr",
                           "typeString": "struct GameState storage pointer"
                         }
                       },
-                      "id": 4801,
+                      "id": 4813,
                       "isConstant": false,
                       "isLValue": true,
                       "isPure": false,
                       "lValueRequested": true,
                       "memberName": "troopNonce",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 4528,
+                      "referencedDeclaration": 4540,
                       "src": "2611:15:15",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
@@ -1621,7 +1586,7 @@
                       "typeString": "uint256"
                     }
                   },
-                  "id": 4803,
+                  "id": 4815,
                   "nodeType": "ExpressionStatement",
                   "src": "2611:17:15"
                 }
@@ -1634,38 +1599,38 @@
             "name": "init",
             "nameLocation": "1342:4:15",
             "parameters": {
-              "id": 4704,
+              "id": 4716,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 4699,
+                  "id": 4711,
                   "mutability": "mutable",
                   "name": "_constants",
                   "nameLocation": "1369:10:15",
                   "nodeType": "VariableDeclaration",
-                  "scope": 4805,
+                  "scope": 4817,
                   "src": "1347:32:15",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_struct$_WorldConstants_$4486_memory_ptr",
+                    "typeIdentifier": "t_struct$_WorldConstants_$4498_memory_ptr",
                     "typeString": "struct WorldConstants"
                   },
                   "typeName": {
-                    "id": 4698,
+                    "id": 4710,
                     "nodeType": "UserDefinedTypeName",
                     "pathNode": {
-                      "id": 4697,
+                      "id": 4709,
                       "name": "WorldConstants",
                       "nodeType": "IdentifierPath",
-                      "referencedDeclaration": 4486,
+                      "referencedDeclaration": 4498,
                       "src": "1347:14:15"
                     },
-                    "referencedDeclaration": 4486,
+                    "referencedDeclaration": 4498,
                     "src": "1347:14:15",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_WorldConstants_$4486_storage_ptr",
+                      "typeIdentifier": "t_struct$_WorldConstants_$4498_storage_ptr",
                       "typeString": "struct WorldConstants"
                     }
                   },
@@ -1673,42 +1638,42 @@
                 },
                 {
                   "constant": false,
-                  "id": 4703,
+                  "id": 4715,
                   "mutability": "mutable",
                   "name": "_troopTypes",
                   "nameLocation": "1400:11:15",
                   "nodeType": "VariableDeclaration",
-                  "scope": 4805,
+                  "scope": 4817,
                   "src": "1381:30:15",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_array$_t_struct$_TroopType_$4466_memory_ptr_$dyn_memory_ptr",
+                    "typeIdentifier": "t_array$_t_struct$_TroopType_$4478_memory_ptr_$dyn_memory_ptr",
                     "typeString": "struct TroopType[]"
                   },
                   "typeName": {
                     "baseType": {
-                      "id": 4701,
+                      "id": 4713,
                       "nodeType": "UserDefinedTypeName",
                       "pathNode": {
-                        "id": 4700,
+                        "id": 4712,
                         "name": "TroopType",
                         "nodeType": "IdentifierPath",
-                        "referencedDeclaration": 4466,
+                        "referencedDeclaration": 4478,
                         "src": "1381:9:15"
                       },
-                      "referencedDeclaration": 4466,
+                      "referencedDeclaration": 4478,
                       "src": "1381:9:15",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_struct$_TroopType_$4466_storage_ptr",
+                        "typeIdentifier": "t_struct$_TroopType_$4478_storage_ptr",
                         "typeString": "struct TroopType"
                       }
                     },
-                    "id": 4702,
+                    "id": 4714,
                     "nodeType": "ArrayTypeName",
                     "src": "1381:11:15",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_array$_t_struct$_TroopType_$4466_storage_$dyn_storage_ptr",
+                      "typeIdentifier": "t_array$_t_struct$_TroopType_$4478_storage_$dyn_storage_ptr",
                       "typeString": "struct TroopType[]"
                     }
                   },
@@ -1718,12 +1683,12 @@
               "src": "1346:66:15"
             },
             "returnParameters": {
-              "id": 4705,
+              "id": 4717,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "1422:0:15"
             },
-            "scope": 4806,
+            "scope": 4818,
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "external"
@@ -1733,13 +1698,13 @@
         "baseContracts": [
           {
             "baseName": {
-              "id": 4695,
+              "id": 4707,
               "name": "UseStorage",
               "nodeType": "IdentifierPath",
-              "referencedDeclaration": 4375,
+              "referencedDeclaration": 4387,
               "src": "1205:10:15"
             },
-            "id": 4696,
+            "id": 4708,
             "nodeType": "InheritanceSpecifier",
             "src": "1205:10:15"
           }
@@ -1747,13 +1712,10 @@
         "contractDependencies": [],
         "contractKind": "contract",
         "fullyImplemented": true,
-        "linearizedBaseContracts": [
-          4806,
-          4375
-        ],
+        "linearizedBaseContracts": [4818, 4387],
         "name": "DiamondInit",
         "nameLocation": "1190:11:15",
-        "scope": 4807,
+        "scope": 4819,
         "usedErrors": []
       }
     ],

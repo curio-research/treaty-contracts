@@ -1,16 +1,19 @@
+import { WorldConstantsStruct } from './../../../typechain-types/Curio';
 import { ethers } from 'ethers';
-import { _worldConstants } from '../../../tasks/deploy';
+import { WORLD_WIDTH, WORLD_HEIGHT, NUM_PORTS, NUM_CITIES, MAP_INTERVAL, SECONDS_PER_TURN } from '../../../tasks/util/constants';
+const hre = require('hardhat');
 
-const examplePos = {
-  x: 346234,
-  y: 234,
+// here we must manually define structs as strings
+
+export const worldConstants: WorldConstantsStruct = {
+  admin: '0x0000000000000000000000000000000000000000',
+  worldWidth: WORLD_WIDTH,
+  worldHeight: WORLD_HEIGHT,
+  numPorts: NUM_PORTS,
+  numCities: NUM_CITIES,
+  mapInterval: MAP_INTERVAL,
+  secondsPerTurn: SECONDS_PER_TURN,
 };
-
-// here we must manually define structs as a string
-export const PosStruct = `tuple(
-    uint256 x,
-    uint256 y
-)`;
 
 export const WorldConstants = `tuple(
   address admin,
@@ -36,11 +39,7 @@ export const TroopTypes = `tuple(
   bool isLandTroop
 )[]`;
 
-// export const TroopTypes = `TroopType[]`;
-
-const worldConstants = _worldConstants;
 const troopTypes: number[] = [];
 
 // WorldConstants memory _constants, TroopType[] memory _troopTypes
-
 process.stdout.write(ethers.utils.defaultAbiCoder.encode([WorldConstants, TroopTypes], [worldConstants, troopTypes]));

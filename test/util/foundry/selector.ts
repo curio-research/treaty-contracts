@@ -1,5 +1,4 @@
 import { Interface } from '@ethersproject/abi';
-import { artifacts } from 'hardhat';
 const hre = require('hardhat');
 
 // code attribution: written by https://github.com/Timidan

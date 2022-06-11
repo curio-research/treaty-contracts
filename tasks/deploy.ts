@@ -18,7 +18,7 @@ import { generateGameMaps } from './util/mapHelper';
 const { BACKEND_URL } = process.env;
 
 export const _worldConstants: WorldConstantsStruct = {
-  admin: '0x0',
+  admin: '0',
   worldWidth: BigNumber.from(WORLD_WIDTH),
   worldHeight: BigNumber.from(WORLD_HEIGHT),
   numPorts: BigNumber.from(NUM_PORTS),
