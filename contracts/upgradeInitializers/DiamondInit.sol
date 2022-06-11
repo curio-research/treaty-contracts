@@ -25,11 +25,7 @@ import "contracts/libraries/Storage.sol";
 contract DiamondInit is UseStorage {
     // You can add parameters to this function in order to pass in
     // data to set your own state variables
-    function init(
-        WorldConstants memory _constants,
-        // Base[] memory _bases,
-        TroopType[] memory _troopTypes
-    ) external {
+    function init(WorldConstants memory _constants, TroopType[] memory _troopTypes) external {
         // adding ERC165 data
         LibDiamond.DiamondStorage storage ds = LibDiamond.diamondStorage();
         ds.supportedInterfaces[type(IERC165).interfaceId] = true;

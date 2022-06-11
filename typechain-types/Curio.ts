@@ -92,6 +92,34 @@ export type TroopStructOutput = [
   cargoTroopIds: BigNumber[];
 };
 
+export type WorldConstantsStruct = {
+  admin: string;
+  worldWidth: BigNumberish;
+  worldHeight: BigNumberish;
+  numPorts: BigNumberish;
+  numCities: BigNumberish;
+  mapInterval: BigNumberish;
+  secondsPerTurn: BigNumberish;
+};
+
+export type WorldConstantsStructOutput = [
+  string,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber
+] & {
+  admin: string;
+  worldWidth: BigNumber;
+  worldHeight: BigNumber;
+  numPorts: BigNumber;
+  numCities: BigNumber;
+  mapInterval: BigNumber;
+  secondsPerTurn: BigNumber;
+};
+
 export interface CurioInterface extends utils.Interface {
   functions: {
     "diamondCut((address,uint8,bytes4[])[],address,bytes)": FunctionFragment;
@@ -113,6 +141,7 @@ export interface CurioInterface extends utils.Interface {
     "_getMapChunk((uint256,uint256))": FunctionFragment;
     "_getSample()": FunctionFragment;
     "_getTroopAt((uint256,uint256))": FunctionFragment;
+    "_getWorldConstants()": FunctionFragment;
     "bulkGetAllTroops()": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
@@ -192,6 +221,10 @@ export interface CurioInterface extends utils.Interface {
     values: [PositionStruct]
   ): string;
   encodeFunctionData(
+    functionFragment: "_getWorldConstants",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "bulkGetAllTroops",
     values?: undefined
   ): string;
@@ -254,6 +287,10 @@ export interface CurioInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "_getSample", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_getTroopAt",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_getWorldConstants",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -512,6 +549,10 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[TroopStructOutput]>;
 
+    _getWorldConstants(
+      overrides?: CallOverrides
+    ): Promise<[WorldConstantsStructOutput]>;
+
     bulkGetAllTroops(overrides?: CallOverrides): Promise<[TroopStructOutput[]]>;
 
     owner(overrides?: CallOverrides): Promise<[string] & { owner_: string }>;
@@ -617,6 +658,10 @@ export interface Curio extends BaseContract {
     overrides?: CallOverrides
   ): Promise<TroopStructOutput>;
 
+  _getWorldConstants(
+    overrides?: CallOverrides
+  ): Promise<WorldConstantsStructOutput>;
+
   bulkGetAllTroops(overrides?: CallOverrides): Promise<TroopStructOutput[]>;
 
   owner(overrides?: CallOverrides): Promise<string>;
@@ -716,6 +761,10 @@ export interface Curio extends BaseContract {
       _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<TroopStructOutput>;
+
+    _getWorldConstants(
+      overrides?: CallOverrides
+    ): Promise<WorldConstantsStructOutput>;
 
     bulkGetAllTroops(overrides?: CallOverrides): Promise<TroopStructOutput[]>;
 
@@ -926,6 +975,8 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _getWorldConstants(overrides?: CallOverrides): Promise<BigNumber>;
+
     bulkGetAllTroops(overrides?: CallOverrides): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1029,6 +1080,10 @@ export interface Curio extends BaseContract {
 
     _getTroopAt(
       _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getWorldConstants(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

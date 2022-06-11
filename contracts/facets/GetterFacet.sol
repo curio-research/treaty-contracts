@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import {Position, Tile, Troop} from "contracts/libraries/Types.sol";
+import {Position, Tile, Troop, WorldConstants} from "contracts/libraries/Types.sol";
 import {Util} from "contracts/libraries/GameUtil.sol";
 import "contracts/libraries/Storage.sol";
 
@@ -45,5 +45,9 @@ contract GetterFacet is UseStorage {
 
     function _getSample() external view returns (uint256) {
         return gs().sample;
+    }
+
+    function _getWorldConstants() external view returns (WorldConstants memory) {
+        return gs().worldConstants;
     }
 }

@@ -6,14 +6,14 @@ const hre = require('hardhat');
 // this file is ran by Foundry tests to pipe js input back into solidity files
 
 // interfaces
-import TowerFacetInterface from '../../../out/TowerFacet.sol/TowerFacet.json';
 import GetterFacetInterface from '../../../out/GetterFacet.sol/GetterFacet.json';
 import EngineFacetInterface from '../../../out/EngineFacet.sol/EngineFacet.json';
+import DiamondInitInerface from '../../../out/DiamondInit.sol/DiamondInit.json';
 
 const nameToAbiMapping: any = {
-  TowerFacet: TowerFacetInterface,
   GetterFacet: GetterFacetInterface,
-  EngineFacetInterface: EngineFacetInterface,
+  EngineFacet: EngineFacetInterface,
+  DiamondInit: DiamondInitInerface,
 };
 
 const args = process.argv.slice(2);

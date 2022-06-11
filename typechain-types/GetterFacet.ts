@@ -68,11 +68,40 @@ export type TroopStructOutput = [
   cargoTroopIds: BigNumber[];
 };
 
+export type WorldConstantsStruct = {
+  admin: string;
+  worldWidth: BigNumberish;
+  worldHeight: BigNumberish;
+  numPorts: BigNumberish;
+  numCities: BigNumberish;
+  mapInterval: BigNumberish;
+  secondsPerTurn: BigNumberish;
+};
+
+export type WorldConstantsStructOutput = [
+  string,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber
+] & {
+  admin: string;
+  worldWidth: BigNumber;
+  worldHeight: BigNumber;
+  numPorts: BigNumber;
+  numCities: BigNumber;
+  mapInterval: BigNumber;
+  secondsPerTurn: BigNumber;
+};
+
 export interface GetterFacetInterface extends utils.Interface {
   functions: {
     "_getMapChunk((uint256,uint256))": FunctionFragment;
     "_getSample()": FunctionFragment;
     "_getTroopAt((uint256,uint256))": FunctionFragment;
+    "_getWorldConstants()": FunctionFragment;
     "bulkGetAllTroops()": FunctionFragment;
   };
 
@@ -89,6 +118,10 @@ export interface GetterFacetInterface extends utils.Interface {
     values: [PositionStruct]
   ): string;
   encodeFunctionData(
+    functionFragment: "_getWorldConstants",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "bulkGetAllTroops",
     values?: undefined
   ): string;
@@ -100,6 +133,10 @@ export interface GetterFacetInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "_getSample", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_getTroopAt",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_getWorldConstants",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -149,6 +186,10 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[TroopStructOutput]>;
 
+    _getWorldConstants(
+      overrides?: CallOverrides
+    ): Promise<[WorldConstantsStructOutput]>;
+
     bulkGetAllTroops(overrides?: CallOverrides): Promise<[TroopStructOutput[]]>;
   };
 
@@ -164,6 +205,10 @@ export interface GetterFacet extends BaseContract {
     overrides?: CallOverrides
   ): Promise<TroopStructOutput>;
 
+  _getWorldConstants(
+    overrides?: CallOverrides
+  ): Promise<WorldConstantsStructOutput>;
+
   bulkGetAllTroops(overrides?: CallOverrides): Promise<TroopStructOutput[]>;
 
   callStatic: {
@@ -178,6 +223,10 @@ export interface GetterFacet extends BaseContract {
       _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<TroopStructOutput>;
+
+    _getWorldConstants(
+      overrides?: CallOverrides
+    ): Promise<WorldConstantsStructOutput>;
 
     bulkGetAllTroops(overrides?: CallOverrides): Promise<TroopStructOutput[]>;
   };
@@ -197,6 +246,8 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _getWorldConstants(overrides?: CallOverrides): Promise<BigNumber>;
+
     bulkGetAllTroops(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
@@ -210,6 +261,10 @@ export interface GetterFacet extends BaseContract {
 
     _getTroopAt(
       _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getWorldConstants(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

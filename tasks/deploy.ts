@@ -17,6 +17,16 @@ import { generateGameMaps } from './util/mapHelper';
 
 const { BACKEND_URL } = process.env;
 
+export const _worldConstants: WorldConstantsStruct = {
+  admin: '0x0',
+  worldWidth: BigNumber.from(WORLD_WIDTH),
+  worldHeight: BigNumber.from(WORLD_HEIGHT),
+  numPorts: BigNumber.from(NUM_PORTS),
+  numCities: BigNumber.from(NUM_CITIES),
+  mapInterval: BigNumber.from(MAP_INTERVAL),
+  secondsPerTurn: BigNumber.from(SECONDS_PER_TURN),
+};
+
 // ---------------------------------
 // deploy script
 // npx hardhat deploy --network NETWORK_NAME_HERE

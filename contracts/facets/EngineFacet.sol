@@ -145,6 +145,7 @@ contract EngineFacet is UseStorage {
         // Move
         gs().map[_troop.pos.x][_troop.pos.y].occupantId = NULL;
         gs().troopIdMap[_troopId].pos = _targetPos;
+        gs().troopIdMap[_troopId].movesLeftInEpoch--;
 
         uint256[] memory _cargoTroopIds = gs().troopIdMap[_troopId].cargoTroopIds;
         if (_cargoTroopIds.length > 0) {
