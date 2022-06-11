@@ -47,7 +47,7 @@ export type WorldConstantsStructOutput = [
 
 export type TroopTypeStruct = {
   name: BigNumberish;
-  speed: BigNumberish;
+  movesPerEpoch: BigNumberish;
   maxHealth: BigNumberish;
   damagePerHit: BigNumberish;
   attackFactor: BigNumberish;
@@ -73,7 +73,7 @@ export type TroopTypeStructOutput = [
   boolean
 ] & {
   name: number;
-  speed: BigNumber;
+  movesPerEpoch: BigNumber;
   maxHealth: BigNumber;
   damagePerHit: BigNumber;
   attackFactor: BigNumber;

@@ -50,6 +50,7 @@ struct Troop {
     address owner;
     uint256 troopTypeId;
     uint256 lastMoved;
+    uint256 movesLeftInEpoch;
     uint256 lastAttacked;
     uint256 lastRepaired;
     uint256 health;
@@ -59,7 +60,7 @@ struct Troop {
 
 struct TroopType {
     TROOP_NAME name;
-    uint256 speed; // movement per epoch
+    uint256 movesPerEpoch;
     uint256 maxHealth;
     uint256 damagePerHit;
     uint256 attackFactor; // in the interval [0, 100]

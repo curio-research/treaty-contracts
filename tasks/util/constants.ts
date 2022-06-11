@@ -18,7 +18,7 @@ export const SECONDS_PER_TURN = 6;
 export const TROOP_TYPES: TroopTypeStruct[] = [
   {
     name: TROOP_NAME.ARMY,
-    speed: 1,
+    movesPerEpoch: 1,
     maxHealth: 1,
     damagePerHit: 1,
     attackFactor: 100,
@@ -26,12 +26,12 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     cargoCapacity: 0,
     epochsToProduce: 6,
     movementCooldown: 1,
-    attackCooldown: 0,
+    attackCooldown: 1,
     isLandTroop: true,
   },
   {
     name: TROOP_NAME.TROOP_TRANSPORT,
-    speed: 2,
+    movesPerEpoch: 2,
     maxHealth: 3,
     damagePerHit: 1,
     attackFactor: 50,
@@ -39,12 +39,12 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     cargoCapacity: 6,
     epochsToProduce: 14,
     movementCooldown: 1, // FIXME
-    attackCooldown: 0,
+    attackCooldown: 1,
     isLandTroop: false,
   },
   {
     name: TROOP_NAME.DESTROYER,
-    speed: 3,
+    movesPerEpoch: 3,
     maxHealth: 3,
     damagePerHit: 1,
     attackFactor: 100,
@@ -52,12 +52,12 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     cargoCapacity: 0,
     epochsToProduce: 20,
     movementCooldown: 1, // FIXME
-    attackCooldown: 0,
+    attackCooldown: 1,
     isLandTroop: false,
   },
   {
     name: TROOP_NAME.CRUISER,
-    speed: 2,
+    movesPerEpoch: 2,
     maxHealth: 8,
     damagePerHit: 2,
     attackFactor: 100,
@@ -65,12 +65,12 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     cargoCapacity: 0,
     epochsToProduce: 30,
     movementCooldown: 1, // FIXME
-    attackCooldown: 0,
+    attackCooldown: 1,
     isLandTroop: false,
   },
   {
     name: TROOP_NAME.BATTLESHIP,
-    speed: 2,
+    movesPerEpoch: 2,
     maxHealth: 12,
     damagePerHit: 3,
     attackFactor: 100,
@@ -78,7 +78,7 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     cargoCapacity: 0,
     epochsToProduce: 50,
     movementCooldown: 1, // FIXME
-    attackCooldown: 0,
+    attackCooldown: 1,
     isLandTroop: false,
   },
 ];

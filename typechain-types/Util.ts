@@ -46,7 +46,7 @@ export interface UtilInterface extends utils.Interface {
     "_getEpochsToProduce(uint256)": FunctionFragment;
     "_getMaxHealth(uint256)": FunctionFragment;
     "_getMovementCooldown(uint256)": FunctionFragment;
-    "_getSpeed(uint256)": FunctionFragment;
+    "_getMovesPerEpoch(uint256)": FunctionFragment;
     "_getTileAt((uint256,uint256))": FunctionFragment;
     "_getTroopOwner(uint256)": FunctionFragment;
     "_getTroopPos(uint256)": FunctionFragment;
@@ -101,7 +101,7 @@ export interface UtilInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "_getSpeed",
+    functionFragment: "_getMovesPerEpoch",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
@@ -189,7 +189,10 @@ export interface UtilInterface extends utils.Interface {
     functionFragment: "_getMovementCooldown",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "_getSpeed", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "_getMovesPerEpoch",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "_getTileAt", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_getTroopOwner",
@@ -297,7 +300,7 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    _getSpeed(
+    _getMovesPerEpoch(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
@@ -406,7 +409,7 @@ export interface Util extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  _getSpeed(
+  _getMovesPerEpoch(
     _troopTypeId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
@@ -515,7 +518,7 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getSpeed(
+    _getMovesPerEpoch(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -627,7 +630,7 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getSpeed(
+    _getMovesPerEpoch(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -737,7 +740,7 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _getSpeed(
+    _getMovesPerEpoch(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
