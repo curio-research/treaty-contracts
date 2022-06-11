@@ -19,15 +19,13 @@ library Util {
     // Setters
 
     function _removeTroop(Position memory _pos, uint256 _troopId) public {
-        uint256 NULL = 0;
-
         // TODO: consider whether or not to remove Troop from gs().troops
         uint256[] memory _cargoTroopIds = gs().troopIdMap[_troopId].cargoTroopIds;
         for (uint256 i = 0; i < _cargoTroopIds.length; i++) {
             delete gs().troopIdMap[_cargoTroopIds[i]];
         }
         delete gs().troopIdMap[_troopId];
-        gs().map[_pos.x][_pos.y].occupantId = NULL;
+        delete gs().map[_pos.x][_pos.y].occupantId;
     }
 
     function _addTroop(
@@ -41,6 +39,7 @@ library Util {
             troopTypeId: _troopTypeId,
             lastMoved: gs().epoch,
             lastAttacked: gs().epoch, // yo
+            lastRepaired: gs().epoch,
             health: _getMaxHealth(_troopTypeId),
             pos: _pos,
             cargoTroopIds: _cargoTroopIds

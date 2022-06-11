@@ -7,7 +7,7 @@ import { task } from 'hardhat/config';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { deployProxy, printDivider } from './util/deployHelper';
-import { LOCALHOST_RPC_URL, LOCALHOST_WS_RPC_URL, TROOP_TYPES, getTroopTypeIndexByName, RENDER_CONSTANTS, MAP_INTERVAL, NUM_CITIES, NUM_PORTS, SECONDS_PER_TURN, WORLD_HEIGHT, WORLD_WIDTH, getTroopNames } from './util/constants';
+import { TROOP_TYPES, getTroopTypeIndexByName, RENDER_CONSTANTS, MAP_INTERVAL, NUM_CITIES, NUM_PORTS, SECONDS_PER_TURN, WORLD_HEIGHT, WORLD_WIDTH, getTroopNames } from './util/constants';
 import { position } from '../util/types/common';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
 import { MapInput, TILE_TYPE, TROOP_NAME } from './util/types';
@@ -64,7 +64,10 @@ task('deploy', 'deploy contracts')
     // Deploy diamond and facets
     const diamondAddr = await deployDiamond(hre, [worldConstants, TROOP_TYPES]);
     console.log('✦ Diamond deployed and initiated:', diamondAddr);
-    const facets = [{ name: 'EngineFacet', libraries: { Util: util.address } }, { name: 'GetterFacet' }];
+    const facets = [
+      { name: 'EngineFacet', libraries: { Util: util.address } },
+      { name: 'GetterFacet', libraries: { Util: util.address } },
+    ];
     await deployFacets(hre, diamondAddr, facets, player1);
     const diamond = await getDiamond(hre, diamondAddr);
     printDivider();
@@ -74,7 +77,7 @@ task('deploy', 'deploy contracts')
     let mapChunk: TILE_TYPE[][];
     for (let x = 0; x < WORLD_WIDTH; x += MAP_INTERVAL) {
       for (let y = 0; y < WORLD_HEIGHT; y += MAP_INTERVAL) {
-        mapChunk = tileMap.slice(x, x + MAP_INTERVAL).map((col) => col.slice(y, y + MAP_INTERVAL));
+        mapChunk = tileMap.slice(x, x + MAP_INTERVAL).map((col: TILE_TYPE[]) => col.slice(y, y + MAP_INTERVAL));
 
         let tx = await diamond.setMapChunk({ x, y }, mapChunk);
         tx.wait();
@@ -110,6 +113,12 @@ task('deploy', 'deploy contracts')
       await tx.wait();
       tx = await diamond.connect(player1).spawnTroop(player2Pos, player2.address, armyTypeId);
       await tx.wait();
+
+      // Basic checks
+      const player1Army = await diamond._getTroopAt(player1Pos);
+      if (player1Army.owner !== player1.address) throw new Error('Something is wrong');
+      const player2Army = await diamond._getTroopAt(player2Pos);
+      if (player2Army.troopTypeId.toNumber() !== armyTypeId) throw new Error('Something went wrong');
     }
 
     // ---------------------------------
@@ -117,14 +126,9 @@ task('deploy', 'deploy contracts')
     // copies files and ports to frontend if it's a localhost, or publishes globally if its a global deployment
     // ---------------------------------
 
-    const currentFileDir = path.join(__dirname);
-    const networkRPCs = rpcUrlSelector(hre.network.name);
-
     const configFile = {
       address: diamond.address,
       network: hre.network.name,
-      rpcUrl: networkRPCs[0],
-      wsRpcUrl: networkRPCs[1],
       troopNames: getTroopNames(),
       deploymentId: `${hre.network.name}-${Date.now()}`,
     };
@@ -142,7 +146,7 @@ task('deploy', 'deploy contracts')
 
     // If we're in dev mode, port the files to the frontend.
     if (isDev) {
-      const configFileDir = path.join(currentFileDir, 'game.config.json');
+      const configFileDir = path.join(path.join(__dirname), 'game.config.json');
       const raw = fs.readFileSync(configFileDir).toString();
       const existingDeployments = raw ? JSON.parse(raw) : [];
       existingDeployments.push(configFile);
@@ -151,12 +155,3 @@ task('deploy', 'deploy contracts')
       await hre.run('port'); // default to porting files
     }
   });
-
-export const rpcUrlSelector = (networkName: string): string[] => {
-  if (networkName === 'localhost') {
-    return [LOCALHOST_RPC_URL, LOCALHOST_WS_RPC_URL];
-  } else if (networkName === 'optimismKovan') {
-    return [process.env.KOVAN_RPC_URL!, process.env.KOVAN_WS_RPC_URL!];
-  }
-  return [];
-};

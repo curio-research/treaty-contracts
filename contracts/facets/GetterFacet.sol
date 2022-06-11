@@ -2,6 +2,7 @@
 pragma solidity ^0.8.4;
 
 import {Position, Tile, Troop} from "contracts/libraries/Types.sol";
+import {Util} from "contracts/libraries/GameUtil.sol";
 import "contracts/libraries/Storage.sol";
 
 /// @title Bulk getters
@@ -36,6 +37,10 @@ contract GetterFacet is UseStorage {
         }
 
         return (_allTiles, _allPos);
+    }
+
+    function _getTroopAt(Position memory _pos) external view returns (Troop memory) {
+        return gs().troopIdMap[Util._getTileAt(_pos).occupantId];
     }
 
     function _getSample() external view returns (uint256) {
