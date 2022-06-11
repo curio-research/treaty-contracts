@@ -1,5 +1,4 @@
-import { ContractFactory } from 'ethers';
-import { getSigHashes } from './util/diamond';
+import { getSigHashes } from './util/diamondHelper';
 import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment, HardhatArguments } from 'hardhat/types';
 

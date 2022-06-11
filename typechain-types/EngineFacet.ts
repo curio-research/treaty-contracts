@@ -32,6 +32,8 @@ export interface EngineFacetInterface extends utils.Interface {
     "initializePlayer((uint256,uint256),address)": FunctionFragment;
     "move(uint256,(uint256,uint256))": FunctionFragment;
     "repair((uint256,uint256))": FunctionFragment;
+    "setMapChunk((uint256,uint256),uint256[][])": FunctionFragment;
+    "spawnTroop((uint256,uint256),address,uint256)": FunctionFragment;
     "startProduction((uint256,uint256),uint256)": FunctionFragment;
     "updateEpoch()": FunctionFragment;
   };
@@ -61,6 +63,14 @@ export interface EngineFacetInterface extends utils.Interface {
     values: [PositionStruct]
   ): string;
   encodeFunctionData(
+    functionFragment: "setMapChunk",
+    values: [PositionStruct, BigNumberish[][]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "spawnTroop",
+    values: [PositionStruct, string, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "startProduction",
     values: [PositionStruct, BigNumberish]
   ): string;
@@ -85,6 +95,11 @@ export interface EngineFacetInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "move", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "repair", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "setMapChunk",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "spawnTroop", data: BytesLike): Result;
+  decodeFunctionResult(
     functionFragment: "startProduction",
     data: BytesLike
   ): Result;
@@ -100,9 +115,10 @@ export interface EngineFacetInterface extends utils.Interface {
     "EpochUpdate(uint256,uint256)": EventFragment;
     "Moved(address,uint256,tuple)": EventFragment;
     "NewPlayer(address,tuple)": EventFragment;
-    "ProductionFinished(address,uint256,tuple)": EventFragment;
+    "NewTroop(address,uint256,tuple)": EventFragment;
     "ProductionStarted(address,uint256,uint256)": EventFragment;
     "Recovered(address,uint256)": EventFragment;
+    "Repaired(address,uint256,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Attacked"): EventFragment;
@@ -111,9 +127,10 @@ export interface EngineFacetInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "EpochUpdate"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Moved"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NewPlayer"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ProductionFinished"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "NewTroop"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ProductionStarted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Recovered"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Repaired"): EventFragment;
 }
 
 export type AttackedEvent = TypedEvent<
@@ -163,13 +180,12 @@ export type NewPlayerEvent = TypedEvent<
 
 export type NewPlayerEventFilter = TypedEventFilter<NewPlayerEvent>;
 
-export type ProductionFinishedEvent = TypedEvent<
+export type NewTroopEvent = TypedEvent<
   [string, BigNumber, PositionStructOutput],
   { _player: string; _troopId: BigNumber; _pos: PositionStructOutput }
 >;
 
-export type ProductionFinishedEventFilter =
-  TypedEventFilter<ProductionFinishedEvent>;
+export type NewTroopEventFilter = TypedEventFilter<NewTroopEvent>;
 
 export type ProductionStartedEvent = TypedEvent<
   [string, BigNumber, BigNumber],
@@ -185,6 +201,13 @@ export type RecoveredEvent = TypedEvent<
 >;
 
 export type RecoveredEventFilter = TypedEventFilter<RecoveredEvent>;
+
+export type RepairedEvent = TypedEvent<
+  [string, BigNumber, BigNumber],
+  { _player: string; _troopId: BigNumber; _health: BigNumber }
+>;
+
+export type RepairedEventFilter = TypedEventFilter<RepairedEvent>;
 
 export interface EngineFacet extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -247,6 +270,19 @@ export interface EngineFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    setMapChunk(
+      _startPos: PositionStruct,
+      _chunk: BigNumberish[][],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    spawnTroop(
+      _pos: PositionStruct,
+      _player: string,
+      _troopTypeId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     startProduction(
       _pos: PositionStruct,
       _troopTypeId: BigNumberish,
@@ -292,6 +328,19 @@ export interface EngineFacet extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  setMapChunk(
+    _startPos: PositionStruct,
+    _chunk: BigNumberish[][],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  spawnTroop(
+    _pos: PositionStruct,
+    _player: string,
+    _troopTypeId: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   startProduction(
     _pos: PositionStruct,
     _troopTypeId: BigNumberish,
@@ -333,6 +382,19 @@ export interface EngineFacet extends BaseContract {
     ): Promise<void>;
 
     repair(_pos: PositionStruct, overrides?: CallOverrides): Promise<void>;
+
+    setMapChunk(
+      _startPos: PositionStruct,
+      _chunk: BigNumberish[][],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    spawnTroop(
+      _pos: PositionStruct,
+      _player: string,
+      _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     startProduction(
       _pos: PositionStruct,
@@ -390,16 +452,12 @@ export interface EngineFacet extends BaseContract {
     ): NewPlayerEventFilter;
     NewPlayer(_player?: null, _pos?: null): NewPlayerEventFilter;
 
-    "ProductionFinished(address,uint256,tuple)"(
+    "NewTroop(address,uint256,tuple)"(
       _player?: null,
       _troopId?: null,
       _pos?: null
-    ): ProductionFinishedEventFilter;
-    ProductionFinished(
-      _player?: null,
-      _troopId?: null,
-      _pos?: null
-    ): ProductionFinishedEventFilter;
+    ): NewTroopEventFilter;
+    NewTroop(_player?: null, _troopId?: null, _pos?: null): NewTroopEventFilter;
 
     "ProductionStarted(address,uint256,uint256)"(
       _player?: null,
@@ -417,6 +475,17 @@ export interface EngineFacet extends BaseContract {
       _troopId?: null
     ): RecoveredEventFilter;
     Recovered(_player?: null, _troopId?: null): RecoveredEventFilter;
+
+    "Repaired(address,uint256,uint256)"(
+      _player?: null,
+      _troopId?: null,
+      _health?: null
+    ): RepairedEventFilter;
+    Repaired(
+      _player?: null,
+      _troopId?: null,
+      _health?: null
+    ): RepairedEventFilter;
   };
 
   estimateGas: {
@@ -451,6 +520,19 @@ export interface EngineFacet extends BaseContract {
 
     repair(
       _pos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setMapChunk(
+      _startPos: PositionStruct,
+      _chunk: BigNumberish[][],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    spawnTroop(
+      _pos: PositionStruct,
+      _player: string,
+      _troopTypeId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -497,6 +579,19 @@ export interface EngineFacet extends BaseContract {
 
     repair(
       _pos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setMapChunk(
+      _startPos: PositionStruct,
+      _chunk: BigNumberish[][],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    spawnTroop(
+      _pos: PositionStruct,
+      _player: string,
+      _troopTypeId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

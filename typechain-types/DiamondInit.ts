@@ -17,12 +17,83 @@ import { FunctionFragment, Result } from "@ethersproject/abi";
 import { Listener, Provider } from "@ethersproject/providers";
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
+export type WorldConstantsStruct = {
+  admin: string;
+  worldWidth: BigNumberish;
+  worldHeight: BigNumberish;
+  numPorts: BigNumberish;
+  numCities: BigNumberish;
+  mapInterval: BigNumberish;
+  secondsPerTurn: BigNumberish;
+};
+
+export type WorldConstantsStructOutput = [
+  string,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber
+] & {
+  admin: string;
+  worldWidth: BigNumber;
+  worldHeight: BigNumber;
+  numPorts: BigNumber;
+  numCities: BigNumber;
+  mapInterval: BigNumber;
+  secondsPerTurn: BigNumber;
+};
+
+export type TroopTypeStruct = {
+  name: BigNumberish;
+  speed: BigNumberish;
+  maxHealth: BigNumberish;
+  damagePerHit: BigNumberish;
+  attackFactor: BigNumberish;
+  defenseFactor: BigNumberish;
+  cargoCapacity: BigNumberish;
+  epochsToProduce: BigNumberish;
+  movementCooldown: BigNumberish;
+  attackCooldown: BigNumberish;
+  isLandTroop: boolean;
+};
+
+export type TroopTypeStructOutput = [
+  number,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  boolean
+] & {
+  name: number;
+  speed: BigNumber;
+  maxHealth: BigNumber;
+  damagePerHit: BigNumber;
+  attackFactor: BigNumber;
+  defenseFactor: BigNumber;
+  cargoCapacity: BigNumber;
+  epochsToProduce: BigNumber;
+  movementCooldown: BigNumber;
+  attackCooldown: BigNumber;
+  isLandTroop: boolean;
+};
+
 export interface DiamondInitInterface extends utils.Interface {
   functions: {
-    "init(uint256)": FunctionFragment;
+    "init((address,uint256,uint256,uint256,uint256,uint256,uint256),(uint8,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,bool)[])": FunctionFragment;
   };
 
-  encodeFunctionData(functionFragment: "init", values: [BigNumberish]): string;
+  encodeFunctionData(
+    functionFragment: "init",
+    values: [WorldConstantsStruct, TroopTypeStruct[]]
+  ): string;
 
   decodeFunctionResult(functionFragment: "init", data: BytesLike): Result;
 
@@ -57,32 +128,40 @@ export interface DiamondInit extends BaseContract {
 
   functions: {
     init(
-      num: BigNumberish,
+      _constants: WorldConstantsStruct,
+      _troopTypes: TroopTypeStruct[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
 
   init(
-    num: BigNumberish,
+    _constants: WorldConstantsStruct,
+    _troopTypes: TroopTypeStruct[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    init(num: BigNumberish, overrides?: CallOverrides): Promise<void>;
+    init(
+      _constants: WorldConstantsStruct,
+      _troopTypes: TroopTypeStruct[],
+      overrides?: CallOverrides
+    ): Promise<void>;
   };
 
   filters: {};
 
   estimateGas: {
     init(
-      num: BigNumberish,
+      _constants: WorldConstantsStruct,
+      _troopTypes: TroopTypeStruct[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     init(
-      num: BigNumberish,
+      _constants: WorldConstantsStruct,
+      _troopTypes: TroopTypeStruct[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

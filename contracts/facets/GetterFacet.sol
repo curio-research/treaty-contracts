@@ -19,7 +19,7 @@ contract GetterFacet is UseStorage {
         return _allTroops;
     }
 
-    // Fetch tile chunk in NxN chunks.
+    // Fetch tile map in NxN chunks.
     function _getMapChunk(Position memory _pos) external view returns (Tile[] memory, Position[] memory) {
         uint256 _interval = gs().worldConstants.mapInterval;
 
@@ -37,6 +37,10 @@ contract GetterFacet is UseStorage {
         }
 
         return (_allTiles, _allPos);
+    }
+
+    function _getTroopAt(Position memory _pos) external view returns (Troop memory) {
+        return gs().troopIdMap[Util._getTileAt(_pos).occupantId];
     }
 
     function _getSample() external view returns (uint256) {

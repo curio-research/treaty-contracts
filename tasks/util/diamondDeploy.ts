@@ -1,8 +1,8 @@
-import { Curio } from './../../typechain-types/Curio';
+import { Curio } from '../../typechain-types/Curio';
 import { Signer } from 'ethers';
 import { deployProxy } from './deployHelper';
 import { HardhatRuntimeEnvironment, Libraries } from 'hardhat/types';
-import { getSelectors, FacetCutAction, getSigHashes } from './diamond';
+import { getSelectors, FacetCutAction } from './diamondHelper';
 
 export async function deployDiamond(hre: HardhatRuntimeEnvironment, deployArgs: any[]) {
   const accounts = await hre.ethers.getSigners();
@@ -12,13 +12,13 @@ export async function deployDiamond(hre: HardhatRuntimeEnvironment, deployArgs: 
   const DiamondCutFacet = await hre.ethers.getContractFactory('DiamondCutFacet');
   const diamondCutFacet = await DiamondCutFacet.deploy();
   await diamondCutFacet.deployed();
-  console.log('DiamondCutFacet deployed:', diamondCutFacet.address);
+  console.log('✦ DiamondCutFacet deployed:', diamondCutFacet.address);
 
   // deploy Diamond
   const Diamond = await hre.ethers.getContractFactory('Diamond');
   const diamond = await Diamond.deploy(contractOwner.address, diamondCutFacet.address);
   await diamond.deployed();
-  console.log('Diamond deployed:', diamond.address);
+  console.log('✦ Diamond deployed:', diamond.address);
 
   // deploy DiamondInit
   // DiamondInit provides a function that is called when the diamond is upgraded to initialize state variables
@@ -26,7 +26,7 @@ export async function deployDiamond(hre: HardhatRuntimeEnvironment, deployArgs: 
   const DiamondInit = await hre.ethers.getContractFactory('DiamondInit');
   const diamondInit = await DiamondInit.deploy();
   await diamondInit.deployed();
-  // console.log("DiamondInit deployed:", diamondInit.address);
+  // console.log("✦ DiamondInit deployed:", diamondInit.address);
 
   // deploy facets
   // console.log("Deploying facets");
@@ -38,7 +38,7 @@ export async function deployDiamond(hre: HardhatRuntimeEnvironment, deployArgs: 
     const facet = await Facet.deploy();
     await facet.deployed();
 
-    console.log(`${FacetName} deployed: ${facet.address}`);
+    console.log(`✦ ${FacetName} deployed: ${facet.address}`);
     cut.push({
       facetAddress: facet.address,
       action: FacetCutAction.Add,
@@ -54,13 +54,12 @@ export async function deployDiamond(hre: HardhatRuntimeEnvironment, deployArgs: 
   // call to init function. add initial state setting parameters. this acts as the constructor essentially
   let functionCall = diamondInit.interface.encodeFunctionData('init', deployArgs); // encodes data functions into bytes i believe
   tx = await diamondCut.diamondCut(cut, diamondInit.address, functionCall);
-  // console.log("Diamond cut tx: ", tx.hash);
+  // console.log("✦ Diamond cut tx: ", tx.hash);
 
   receipt = await tx.wait();
   if (!receipt.status) {
     throw Error(`Diamond upgrade failed: ${tx.hash}`);
   }
-  // console.log("Completed diamond cut");
   return diamond.address;
 }
 
@@ -68,7 +67,7 @@ export async function deployDiamond(hre: HardhatRuntimeEnvironment, deployArgs: 
 
 interface Facet {
   name: string;
-  libraries: Libraries;
+  libraries?: Libraries;
 }
 
 export const deployFacets = async (hre: HardhatRuntimeEnvironment, diamondAddress: string, facets: Facet[], signer: Signer) => {

@@ -6,15 +6,24 @@ export enum TILE_TYPE {
   CITY = 4,
 }
 
+export enum TROOP_NAME {
+  ARMY,
+  TROOP_TRANSPORT,
+  DESTROYER,
+  CRUISER,
+  BATTLESHIP,
+  FIGHTER_JET,
+}
+
 export interface MapInput {
   width: number;
   height: number;
-  sizeFactor: number; // larger values correspond to larger continents and oceans
   numPorts: number;
   numCities: number;
 }
 
-export interface ColorInput {
+export interface RenderInput {
+  sizeFactor: number; // larger values correspond to larger continents and oceans
   numLandColors: number;
   numWaterColors: number;
   waterNoiseCutoff: number; // must be in the interval (0, 1)
@@ -32,9 +41,7 @@ export interface TileMapOutput {
   cityTiles: number[][];
 }
 
-// FIXME: implement
-export interface AllGameArgs {
-  gameConstants: any;
-  blockMap: number[][];
+export interface AllGameMapsOutput {
+  tileMap: TILE_TYPE[][];
   colorMap: number[][][];
 }
