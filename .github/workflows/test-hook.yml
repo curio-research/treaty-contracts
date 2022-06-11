@@ -24,8 +24,8 @@ jobs:
       - run: npx hardhat test
       - run: echo "🍏 This job's status is ${{ job.status }}."
       - name: Run foundry tests
-      - run: forge test --ffi -vv
-  Explore-GitHub-Actions:
+        run: forge test --ffi -vv
+  port-to-public-repo:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
