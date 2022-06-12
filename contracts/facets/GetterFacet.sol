@@ -43,10 +43,6 @@ contract GetterFacet is UseStorage {
         return gs().troopIdMap[Util._getTileAt(_pos).occupantId];
     }
 
-    function _getSample() external view returns (uint256) {
-        return gs().sample;
-    }
-
     function _getWorldConstants() external view returns (WorldConstants memory) {
         return gs().worldConstants;
     }

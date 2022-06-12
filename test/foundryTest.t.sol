@@ -11,6 +11,5 @@ contract FoundryTest is Test, DiamondDeployTest {
     function testWorldSize() public {
         WorldConstants memory _worldConstants = getter._getWorldConstants();
         assertEq(_worldConstants.worldWidth, 100);
-        assertEq(_worldConstants.worldHeight, 80);
     }
 }

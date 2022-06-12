@@ -1,17 +1,10 @@
+import { EMPTY_ADDRESS } from '../../../util/network/common';
 import { ethers } from 'ethers';
-import { _worldConstants } from '../../../tasks/deploy';
+import { generateWorldConstants, TROOP_TYPES } from '../../../tasks/util/constants';
 
-const examplePos = {
-  x: 346234,
-  y: 234,
-};
+// here we must manually define structs as strings
 
-// here we must manually define structs as a string
-export const PosStruct = `tuple(
-    uint256 x,
-    uint256 y
-)`;
-
+// TODO: figure out way to not hardcode this
 export const WorldConstants = `tuple(
   address admin,
   uint256 worldWidth,
@@ -36,11 +29,7 @@ export const TroopTypes = `tuple(
   bool isLandTroop
 )[]`;
 
-// export const TroopTypes = `TroopType[]`;
-
-const worldConstants = _worldConstants;
-const troopTypes: number[] = [];
-
-// WorldConstants memory _constants, TroopType[] memory _troopTypes
+const worldConstants = generateWorldConstants(EMPTY_ADDRESS);
+const troopTypes = TROOP_TYPES;
 
 process.stdout.write(ethers.utils.defaultAbiCoder.encode([WorldConstants, TroopTypes], [worldConstants, troopTypes]));
