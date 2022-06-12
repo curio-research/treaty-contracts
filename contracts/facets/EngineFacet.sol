@@ -6,6 +6,7 @@ import {Util} from "contracts/libraries/GameUtil.sol";
 import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {BASE_NAME, Base, GameState, Player, Position, Production, TERRAIN, Tile, Troop, TroopType} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
+import "forge-std/console.sol";
 
 error Unauthorized();
 
@@ -287,7 +288,7 @@ contract EngineFacet is UseStorage {
         Tile memory _tile = Util._getTileAt(_pos);
         if (_tile.baseId == NULL) revert("No base found");
         if (Util._getBaseOwner(_tile.baseId) != msg.sender) revert("Can only produce in own base");
-        if (!Util._hasPort(_tile) && !Util._isLandTroop(_troopTypeId)) revert("Only ports can produce water troops");
+        if (Util._isLandTroop(_troopTypeId) && !Util._hasPort(_tile)) revert("Only ports can produce water troops");
         if (gs().baseProductionMap[_tile.baseId].troopTypeId != NULL) revert("Base already producing");
 
         gs().baseProductionMap[_tile.baseId] = Production({troopTypeId: _troopTypeId, startEpoch: gs().epoch});

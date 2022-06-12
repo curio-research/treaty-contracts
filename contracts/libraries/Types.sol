@@ -69,7 +69,6 @@ struct TroopType {
     uint256 movementCooldown;
     uint256 attackCooldown;
     bool isLandTroop;
-    // bool canBombard; // only needed for Fighter Jets
 }
 
 struct Production {
@@ -86,12 +85,6 @@ struct WorldConstants {
     uint256 mapInterval;
     uint256 secondsPerTurn;
 }
-
-// struct BaseConstants {
-//     uint256 attackFactor;
-//     uint256 defenseFactor;
-//     uint256 maxHealth;
-// }
 
 struct GameState {
     WorldConstants worldConstants;

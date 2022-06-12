@@ -36,12 +36,91 @@ contract DiamondDeployTest is Test {
     address public deployer = address(0);
     address public player1 = address(1);
     address public player2 = address(2);
+    address public player3 = address(3);
+
+    Position public _player1Pos = Position({x: 6, y: 1});
+    Position public _player2Pos = Position({x: 6, y: 3});
+    Position public _player3Pos = Position({x: 5, y: 2});
+
+    // troop types
+    TroopType public armyTroopType =
+        TroopType({
+            name: TROOP_NAME.ARMY,
+            movesPerEpoch: 1,
+            maxHealth: 1,
+            damagePerHit: 1, // yo
+            attackFactor: 100,
+            defenseFactor: 100,
+            cargoCapacity: 0,
+            epochsToProduce: 6,
+            movementCooldown: 1,
+            attackCooldown: 1,
+            isLandTroop: true
+        });
+    TroopType public troopTransportTroopType =
+        TroopType({
+            name: TROOP_NAME.TROOP_TRANSPORT,
+            movesPerEpoch: 2,
+            maxHealth: 3,
+            damagePerHit: 1,
+            attackFactor: 50,
+            defenseFactor: 50,
+            cargoCapacity: 6,
+            epochsToProduce: 14,
+            movementCooldown: 1, // FIXME
+            attackCooldown: 1,
+            isLandTroop: false
+        });
+    TroopType public destroyerTroopType =
+        TroopType({
+            name: TROOP_NAME.DESTROYER,
+            movesPerEpoch: 3,
+            maxHealth: 3,
+            damagePerHit: 1,
+            attackFactor: 100,
+            defenseFactor: 100,
+            cargoCapacity: 0,
+            epochsToProduce: 20,
+            movementCooldown: 1, // FIXME
+            attackCooldown: 1,
+            isLandTroop: false
+        });
+    TroopType public cruiserTroopType =
+        TroopType({
+            name: TROOP_NAME.CRUISER,
+            movesPerEpoch: 2,
+            maxHealth: 8,
+            damagePerHit: 2,
+            attackFactor: 100,
+            defenseFactor: 100,
+            cargoCapacity: 0,
+            epochsToProduce: 30,
+            movementCooldown: 1, // FIXME
+            attackCooldown: 1,
+            isLandTroop: false
+        });
+    TroopType public battleshipTroopType =
+        TroopType({
+            name: TROOP_NAME.BATTLESHIP,
+            movesPerEpoch: 2,
+            maxHealth: 12,
+            damagePerHit: 3,
+            attackFactor: 100,
+            defenseFactor: 100,
+            cargoCapacity: 0,
+            epochsToProduce: 50,
+            movementCooldown: 1, // FIXME
+            attackCooldown: 1,
+            isLandTroop: false
+        });
 
     // we assume these two facet selectors do not change. If they do however, we should use getSelectors
     bytes4[] OWNERSHIP_SELECTORS = [bytes4(0xf2fde38b), 0x8da5cb5b];
     bytes4[] LOUPE_SELECTORS = [bytes4(0xcdffacc6), 0x52ef6b2c, 0xadfca15e, 0x7a0ed627, 0x01ffc9a7];
 
     function setUp() public {
+        vm.startPrank(deployer);
+
         diamondCutFacet = new DiamondCutFacet();
         diamond = address(new Diamond(deployer, address(diamondCutFacet)));
         diamondInit = new DiamondInit();
@@ -60,22 +139,31 @@ contract DiamondDeployTest is Test {
         IDiamondCut.FacetCut[] memory cuts = new IDiamondCut.FacetCut[](4);
         cuts[0] = IDiamondCut.FacetCut({facetAddress: address(diamondLoupeFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: LOUPE_SELECTORS});
         cuts[1] = IDiamondCut.FacetCut({facetAddress: address(diamondOwnershipFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: OWNERSHIP_SELECTORS});
-        // cuts[2] = IDiamondCut.FacetCut({facetAddress: address(getterFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: getSelectors("GetterFacet")});
-        // cuts[3] = IDiamondCut.FacetCut({facetAddress: address(engineFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: getSelectors("EngineFacet")});
+        cuts[2] = IDiamondCut.FacetCut({facetAddress: address(getterFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: getSelectors("GetterFacet")});
+        cuts[3] = IDiamondCut.FacetCut({facetAddress: address(engineFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: getSelectors("EngineFacet")});
 
-        // vm.prank(deployer);
-        // IDiamondCut(diamond).diamondCut(cuts, address(diamondInit), initData);
+        IDiamondCut(diamond).diamondCut(cuts, address(diamondInit), initData);
 
-        // getter = GetterFacet(diamond);
-        // engine = EngineFacet(diamond);
-        // ownership = OwnershipFacet(diamond);
+        getter = GetterFacet(diamond);
+        engine = EngineFacet(diamond);
+        ownership = OwnershipFacet(diamond);
 
-        // // initialize map
-        // Position memory _startPos = Position({x: 0, y: 0});
-        // uint256[][] memory _chunk = generateMapChunk(_worldConstants.mapInterval);
+        // initialize map
+        Position memory _startPos = Position({x: 0, y: 0});
 
-        // vm.prank(deployer);
-        // engine.setMapChunk(_startPos, _chunk);
+        // uint256[][] memory _chunk = getTestMap();
+        uint256[][] memory _chunk = generateMapChunk(_worldConstants.mapInterval);
+
+        engine.setMapChunk(_startPos, _chunk);
+
+        // initialize players
+        // TODO: Upgrade logic such that everyone can initialize themselves. figure out if we want a whitelist or something
+
+        engine.initializePlayer(_player1Pos, player1);
+        engine.initializePlayer(_player2Pos, player2);
+        engine.initializePlayer(_player3Pos, player3);
+
+        vm.stopPrank();
     }
 
     // FIXME: hardcoded
@@ -88,84 +176,18 @@ contract DiamondDeployTest is Test {
                 numPorts: 15,
                 numCities: 15, // yo
                 mapInterval: 10,
-                secondsPerTurn: 6
+                secondsPerTurn: 1 // easiser for testing
             });
     }
 
     // FIXME: hardcoded
-    function _generateTroopTypes() internal pure returns (TroopType[] memory) {
-        TroopType memory _armyTroopType = TroopType({
-            name: TROOP_NAME.ARMY,
-            movesPerEpoch: 1,
-            maxHealth: 1,
-            damagePerHit: 1, // yo
-            attackFactor: 100,
-            defenseFactor: 100,
-            cargoCapacity: 0,
-            epochsToProduce: 6,
-            movementCooldown: 1,
-            attackCooldown: 1,
-            isLandTroop: true
-        });
-        TroopType memory _troopTransportTroopType = TroopType({
-            name: TROOP_NAME.TROOP_TRANSPORT,
-            movesPerEpoch: 2,
-            maxHealth: 3,
-            damagePerHit: 1,
-            attackFactor: 50,
-            defenseFactor: 50,
-            cargoCapacity: 6,
-            epochsToProduce: 14,
-            movementCooldown: 1, // FIXME
-            attackCooldown: 1,
-            isLandTroop: false
-        });
-        TroopType memory _destroyerTroopType = TroopType({
-            name: TROOP_NAME.DESTROYER,
-            movesPerEpoch: 3,
-            maxHealth: 3,
-            damagePerHit: 1,
-            attackFactor: 100,
-            defenseFactor: 100,
-            cargoCapacity: 0,
-            epochsToProduce: 20,
-            movementCooldown: 1, // FIXME
-            attackCooldown: 1,
-            isLandTroop: false
-        });
-        TroopType memory _cruiserTroopType = TroopType({
-            name: TROOP_NAME.CRUISER,
-            movesPerEpoch: 2,
-            maxHealth: 8,
-            damagePerHit: 2,
-            attackFactor: 100,
-            defenseFactor: 100,
-            cargoCapacity: 0,
-            epochsToProduce: 30,
-            movementCooldown: 1, // FIXME
-            attackCooldown: 1,
-            isLandTroop: false
-        });
-        TroopType memory _battleshipTroopType = TroopType({
-            name: TROOP_NAME.BATTLESHIP,
-            movesPerEpoch: 2,
-            maxHealth: 12,
-            damagePerHit: 3,
-            attackFactor: 100,
-            defenseFactor: 100,
-            cargoCapacity: 0,
-            epochsToProduce: 50,
-            movementCooldown: 1, // FIXME
-            attackCooldown: 1,
-            isLandTroop: false
-        });
-
+    function _generateTroopTypes() internal view returns (TroopType[] memory) {
         TroopType[] memory _troopTypes = new TroopType[](5);
-        _troopTypes[0] = _armyTroopType;
-        _troopTypes[1] = _troopTransportTroopType;
-        _troopTypes[2] = _destroyerTroopType;
-        _troopTypes[3] = _cruiserTroopType;
-        _troopTypes[4] = _battleshipTroopType;
+        _troopTypes[0] = armyTroopType;
+        _troopTypes[1] = troopTransportTroopType;
+        _troopTypes[2] = destroyerTroopType;
+        _troopTypes[3] = cruiserTroopType;
+        _troopTypes[4] = battleshipTroopType;
         return _troopTypes;
     }
 
@@ -210,9 +232,9 @@ contract DiamondDeployTest is Test {
         runJsInputs[2] = "run";
         runJsInputs[3] = "getInitParams";
 
-        bytes memory jsResult = vm.ffi(runJsInputs);
+        bytes memory res = vm.ffi(runJsInputs);
 
-        (_constants, _troopTypes) = abi.decode(jsResult, (WorldConstants, TroopType[]));
+        (_constants, _troopTypes) = abi.decode(res, (WorldConstants, TroopType[]));
     }
 
     function getSelectors(string memory _facetName) internal returns (bytes4[] memory selectors) {
@@ -225,4 +247,32 @@ contract DiamondDeployTest is Test {
         bytes memory res = vm.ffi(cmd);
         selectors = abi.decode(res, (bytes4[]));
     }
+
+    // function getTestMap() internal returns (uint256[][] memory) {
+    //     string[] memory runJsInputs = new string[](4);
+    //     runJsInputs[0] = "yarn";
+    //     runJsInputs[1] = "--silent";
+    //     runJsInputs[2] = "run";
+    //     runJsInputs[3] = "getTestMap";
+
+    //     bytes memory res = vm.ffi(runJsInputs);
+
+    //     uint256[5][5] memory resMap = abi.decode(res, (uint256[5][5]));
+
+    //     uint256[][] memory mapChunk = new uint256[][](5);
+
+    //     for (uint256 i = 0; i < resMap.length; i++) {
+    //         // row
+
+    //         mapChunk[i] = resMap[i];
+
+    //         // for (uint256 j = 0; j < resMap[0].length; j++) {
+    //         //     console.log(resMap[i][j]);
+
+    //         //     mapChunk[j][i] = map[j][i];
+    //         // }
+    //     }
+
+    //     return mapChunk;
+    // }
 }
