@@ -4,10 +4,9 @@ import * as path from 'path';
 import * as fsPromise from 'fs/promises';
 import * as fs from 'fs';
 import { task } from 'hardhat/config';
-import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { deployProxy, printDivider } from './util/deployHelper';
-import { TROOP_TYPES, getTroopTypeIndexByName, RENDER_CONSTANTS, MAP_INTERVAL, NUM_CITIES, NUM_PORTS, SECONDS_PER_TURN, WORLD_HEIGHT, WORLD_WIDTH, getTroopNames } from './util/constants';
+import { TROOP_TYPES, getTroopTypeIndexByName, RENDER_CONSTANTS, MAP_INTERVAL, NUM_CITIES, NUM_PORTS, SECONDS_PER_TURN, WORLD_HEIGHT, WORLD_WIDTH, getTroopNames, generateWorldConstants } from './util/constants';
 import { position } from '../util/types/common';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
 import { MapInput, TILE_TYPE, TROOP_NAME } from './util/types';
@@ -16,16 +15,6 @@ import { BigNumber } from 'ethers';
 import { generateGameMaps } from './util/mapHelper';
 
 const { BACKEND_URL } = process.env;
-
-export const _worldConstants: WorldConstantsStruct = {
-  admin: '0',
-  worldWidth: BigNumber.from(WORLD_WIDTH),
-  worldHeight: BigNumber.from(WORLD_HEIGHT),
-  numPorts: BigNumber.from(NUM_PORTS),
-  numCities: BigNumber.from(NUM_CITIES),
-  mapInterval: BigNumber.from(MAP_INTERVAL),
-  secondsPerTurn: BigNumber.from(SECONDS_PER_TURN),
-};
 
 // ---------------------------------
 // deploy script
@@ -42,21 +31,12 @@ task('deploy', 'deploy contracts')
     const isDev = hre.network.name === 'localhost' || hre.network.name === 'hardhat';
     console.log('Network:', hre.network.name);
 
-    let player1: SignerWithAddress;
-    let player2: SignerWithAddress;
-    [player1, player2] = await hre.ethers.getSigners();
+    let [player1, player2] = await hre.ethers.getSigners();
     const armyTypeId = getTroopTypeIndexByName(TROOP_TYPES, TROOP_NAME.ARMY) + 1;
 
     // Set up game configs
-    const worldConstants: WorldConstantsStruct = {
-      admin: player1.address,
-      worldWidth: BigNumber.from(WORLD_WIDTH),
-      worldHeight: BigNumber.from(WORLD_HEIGHT),
-      numPorts: BigNumber.from(NUM_PORTS),
-      numCities: BigNumber.from(NUM_CITIES),
-      mapInterval: BigNumber.from(MAP_INTERVAL),
-      secondsPerTurn: BigNumber.from(SECONDS_PER_TURN),
-    };
+    const worldConstants = generateWorldConstants(player1.address);
+
     const { tileMap, colorMap } = generateGameMaps(
       {
         width: WORLD_WIDTH,
@@ -139,7 +119,6 @@ task('deploy', 'deploy contracts')
     const configFile = {
       address: diamond.address,
       network: hre.network.name,
-      troopNames: getTroopNames(),
       deploymentId: `${hre.network.name}-${Date.now()}`,
     };
 

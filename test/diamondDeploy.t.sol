@@ -93,11 +93,10 @@ contract DiamondDeployTest is Test {
         runJsInputs[0] = "yarn";
         runJsInputs[1] = "--silent";
         runJsInputs[2] = "run";
-        runJsInputs[3] = "sample";
+        runJsInputs[3] = "getInitParams";
 
         bytes memory jsResult = vm.ffi(runJsInputs);
 
-        // abi.decode the jsResult here
         (_constants, _troopTypes) = abi.decode(jsResult, (WorldConstants, TroopType[]));
     }
 
@@ -114,7 +113,7 @@ contract DiamondDeployTest is Test {
         cmd[0] = "yarn";
         cmd[1] = "--silent";
         cmd[2] = "run";
-        cmd[3] = "gen-selectors";
+        cmd[3] = "getFuncSelectors";
         cmd[4] = _facetName;
         bytes memory res = vm.ffi(cmd);
         selectors = abi.decode(res, (bytes4[]));

@@ -1,3 +1,5 @@
+import { WorldConstantsStruct } from './../../typechain-types/Curio';
+import { AddressType } from 'typechain';
 import { TroopTypeStruct } from '../../typechain-types/DiamondInit';
 import { RenderInput, TROOP_NAME } from './types';
 
@@ -82,6 +84,18 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     isLandTroop: false,
   },
 ];
+
+export const generateWorldConstants = (adminAddr: string): WorldConstantsStruct => {
+  return {
+    admin: adminAddr,
+    worldWidth: WORLD_WIDTH,
+    worldHeight: WORLD_HEIGHT,
+    numPorts: NUM_PORTS,
+    numCities: NUM_CITIES,
+    mapInterval: MAP_INTERVAL,
+    secondsPerTurn: SECONDS_PER_TURN,
+  };
+};
 
 // ----------------------------------------------------------
 // Rendering constants
