@@ -247,32 +247,4 @@ contract DiamondDeployTest is Test {
         bytes memory res = vm.ffi(cmd);
         selectors = abi.decode(res, (bytes4[]));
     }
-
-    // function getTestMap() internal returns (uint256[][] memory) {
-    //     string[] memory runJsInputs = new string[](4);
-    //     runJsInputs[0] = "yarn";
-    //     runJsInputs[1] = "--silent";
-    //     runJsInputs[2] = "run";
-    //     runJsInputs[3] = "getTestMap";
-
-    //     bytes memory res = vm.ffi(runJsInputs);
-
-    //     uint256[5][5] memory resMap = abi.decode(res, (uint256[5][5]));
-
-    //     uint256[][] memory mapChunk = new uint256[][](5);
-
-    //     for (uint256 i = 0; i < resMap.length; i++) {
-    //         // row
-
-    //         mapChunk[i] = resMap[i];
-
-    //         // for (uint256 j = 0; j < resMap[0].length; j++) {
-    //         //     console.log(resMap[i][j]);
-
-    //         //     mapChunk[j][i] = map[j][i];
-    //         // }
-    //     }
-
-    //     return mapChunk;
-    // }
 }

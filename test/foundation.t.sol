@@ -214,6 +214,16 @@ contract FoundryTest is Test, DiamondDeployTest {
         vm.stopPrank();
     }
 
+    // function testSuccessCaptureBase() public {
+    //     // produce an army
+    //     produceTroop(_player1Pos, 1, player1);
+
+    //     vm.startPrank(player1);
+
+    //     // capture base below
+    //     engine.captureBase(1, Position({x: 6, y: 2}));
+    // }
+
     function testBattle() public {}
 
     // ------------------------------------------------

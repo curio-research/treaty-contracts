@@ -5,7 +5,6 @@
     "contract-size": "yarn run hardhat size-contracts",
     "getInitParams": "npx ts-node test/util/foundry/getInitParams.ts",
     "getFuncSelectors": "npx ts-node test/util/foundry/getFuncSelectors.ts",
-    "getTestMap": "npx ts-node test/util/foundry/getInitMap.ts",
     "forge-test": "forge test --ffi -vv"
   },
   "devDependencies": {
