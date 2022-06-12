@@ -1,6 +1,6 @@
 import { EMPTY_ADDRESS } from '../../../util/network/common';
 import { ethers } from 'ethers';
-import { generateWorldConstants } from '../../../tasks/util/constants';
+import { generateWorldConstants, TROOP_TYPES } from '../../../tasks/util/constants';
 
 // here we must manually define structs as strings
 
@@ -30,6 +30,6 @@ export const TroopTypes = `tuple(
 )[]`;
 
 const worldConstants = generateWorldConstants(EMPTY_ADDRESS);
-const troopTypes: number[] = [];
+const troopTypes = TROOP_TYPES;
 
 process.stdout.write(ethers.utils.defaultAbiCoder.encode([WorldConstants, TroopTypes], [worldConstants, troopTypes]));
