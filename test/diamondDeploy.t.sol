@@ -60,22 +60,22 @@ contract DiamondDeployTest is Test {
         IDiamondCut.FacetCut[] memory cuts = new IDiamondCut.FacetCut[](4);
         cuts[0] = IDiamondCut.FacetCut({facetAddress: address(diamondLoupeFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: LOUPE_SELECTORS});
         cuts[1] = IDiamondCut.FacetCut({facetAddress: address(diamondOwnershipFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: OWNERSHIP_SELECTORS});
-        cuts[2] = IDiamondCut.FacetCut({facetAddress: address(getterFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: getSelectors("GetterFacet")});
-        cuts[3] = IDiamondCut.FacetCut({facetAddress: address(engineFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: getSelectors("EngineFacet")});
+        // cuts[2] = IDiamondCut.FacetCut({facetAddress: address(getterFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: getSelectors("GetterFacet")});
+        // cuts[3] = IDiamondCut.FacetCut({facetAddress: address(engineFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: getSelectors("EngineFacet")});
 
-        vm.prank(deployer);
-        IDiamondCut(diamond).diamondCut(cuts, address(diamondInit), initData);
+        // vm.prank(deployer);
+        // IDiamondCut(diamond).diamondCut(cuts, address(diamondInit), initData);
 
-        getter = GetterFacet(diamond);
-        engine = EngineFacet(diamond);
-        ownership = OwnershipFacet(diamond);
+        // getter = GetterFacet(diamond);
+        // engine = EngineFacet(diamond);
+        // ownership = OwnershipFacet(diamond);
 
-        // initialize map
-        Position memory _startPos = Position({x: 0, y: 0});
-        uint256[][] memory _chunk = generateMapChunk(_worldConstants.mapInterval);
+        // // initialize map
+        // Position memory _startPos = Position({x: 0, y: 0});
+        // uint256[][] memory _chunk = generateMapChunk(_worldConstants.mapInterval);
 
-        vm.prank(deployer);
-        engine.setMapChunk(_startPos, _chunk);
+        // vm.prank(deployer);
+        // engine.setMapChunk(_startPos, _chunk);
     }
 
     // FIXME: hardcoded
