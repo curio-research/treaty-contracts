@@ -1,7 +1,7 @@
 export enum TILE_TYPE {
-  WATER = 0,
-  COASTLINE = 1,
-  INLAND = 2,
+  COAST = 0,
+  INLAND = 1,
+  WATER = 2,
   PORT = 3,
   CITY = 4,
 }

@@ -22,18 +22,6 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
   y: BigNumber;
 };
 
-export type TileStruct = {
-  terrain: BigNumberish;
-  occupantId: BigNumberish;
-  baseId: BigNumberish;
-};
-
-export type TileStructOutput = [number, BigNumber, BigNumber] & {
-  terrain: number;
-  occupantId: BigNumber;
-  baseId: BigNumber;
-};
-
 export type TroopStruct = {
   owner: string;
   troopTypeId: BigNumberish;
@@ -68,6 +56,40 @@ export type TroopStructOutput = [
   cargoTroopIds: BigNumber[];
 };
 
+export type BaseStruct = {
+  name: BigNumberish;
+  owner: string;
+  attackFactor: BigNumberish;
+  defenseFactor: BigNumberish;
+  health: BigNumberish;
+};
+
+export type BaseStructOutput = [
+  number,
+  string,
+  BigNumber,
+  BigNumber,
+  BigNumber
+] & {
+  name: number;
+  owner: string;
+  attackFactor: BigNumber;
+  defenseFactor: BigNumber;
+  health: BigNumber;
+};
+
+export type TileStruct = {
+  terrain: BigNumberish;
+  occupantId: BigNumberish;
+  baseId: BigNumberish;
+};
+
+export type TileStructOutput = [number, BigNumber, BigNumber] & {
+  terrain: number;
+  occupantId: BigNumber;
+  baseId: BigNumber;
+};
+
 export type WorldConstantsStruct = {
   admin: string;
   worldWidth: BigNumberish;
@@ -98,49 +120,61 @@ export type WorldConstantsStructOutput = [
 
 export interface GetterFacetInterface extends utils.Interface {
   functions: {
-    "_getMapChunk((uint256,uint256))": FunctionFragment;
-    "_getSample()": FunctionFragment;
-    "_getTroopAt((uint256,uint256))": FunctionFragment;
-    "_getWorldConstants()": FunctionFragment;
     "bulkGetAllTroops()": FunctionFragment;
+    "getBaseAt((uint256,uint256))": FunctionFragment;
+    "getBaseById(uint256)": FunctionFragment;
+    "getMapChunk((uint256,uint256))": FunctionFragment;
+    "getTileAt((uint256,uint256))": FunctionFragment;
+    "getTroopAt((uint256,uint256))": FunctionFragment;
+    "getWorldConstants()": FunctionFragment;
   };
 
   encodeFunctionData(
-    functionFragment: "_getMapChunk",
-    values: [PositionStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getSample",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getTroopAt",
-    values: [PositionStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getWorldConstants",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "bulkGetAllTroops",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getBaseAt",
+    values: [PositionStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getBaseById",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getMapChunk",
+    values: [PositionStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTileAt",
+    values: [PositionStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTroopAt",
+    values: [PositionStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getWorldConstants",
     values?: undefined
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "_getMapChunk",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "_getSample", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "_getTroopAt",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getWorldConstants",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "bulkGetAllTroops",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "getBaseAt", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getBaseById",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getMapChunk",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "getTileAt", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "getTroopAt", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getWorldConstants",
     data: BytesLike
   ): Result;
 
@@ -174,100 +208,163 @@ export interface GetterFacet extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    _getMapChunk(
+    bulkGetAllTroops(overrides?: CallOverrides): Promise<[TroopStructOutput[]]>;
+
+    getBaseAt(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<[BaseStructOutput]>;
+
+    getBaseById(
+      _id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BaseStructOutput]>;
+
+    getMapChunk(
       _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<[TileStructOutput[], PositionStructOutput[]]>;
 
-    _getSample(overrides?: CallOverrides): Promise<[BigNumber]>;
+    getTileAt(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<[TileStructOutput]>;
 
-    _getTroopAt(
+    getTroopAt(
       _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<[TroopStructOutput]>;
 
-    _getWorldConstants(
+    getWorldConstants(
       overrides?: CallOverrides
     ): Promise<[WorldConstantsStructOutput]>;
-
-    bulkGetAllTroops(overrides?: CallOverrides): Promise<[TroopStructOutput[]]>;
   };
 
-  _getMapChunk(
+  bulkGetAllTroops(overrides?: CallOverrides): Promise<TroopStructOutput[]>;
+
+  getBaseAt(
+    _pos: PositionStruct,
+    overrides?: CallOverrides
+  ): Promise<BaseStructOutput>;
+
+  getBaseById(
+    _id: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BaseStructOutput>;
+
+  getMapChunk(
     _pos: PositionStruct,
     overrides?: CallOverrides
   ): Promise<[TileStructOutput[], PositionStructOutput[]]>;
 
-  _getSample(overrides?: CallOverrides): Promise<BigNumber>;
+  getTileAt(
+    _pos: PositionStruct,
+    overrides?: CallOverrides
+  ): Promise<TileStructOutput>;
 
-  _getTroopAt(
+  getTroopAt(
     _pos: PositionStruct,
     overrides?: CallOverrides
   ): Promise<TroopStructOutput>;
 
-  _getWorldConstants(
+  getWorldConstants(
     overrides?: CallOverrides
   ): Promise<WorldConstantsStructOutput>;
 
-  bulkGetAllTroops(overrides?: CallOverrides): Promise<TroopStructOutput[]>;
-
   callStatic: {
-    _getMapChunk(
+    bulkGetAllTroops(overrides?: CallOverrides): Promise<TroopStructOutput[]>;
+
+    getBaseAt(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BaseStructOutput>;
+
+    getBaseById(
+      _id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BaseStructOutput>;
+
+    getMapChunk(
       _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<[TileStructOutput[], PositionStructOutput[]]>;
 
-    _getSample(overrides?: CallOverrides): Promise<BigNumber>;
+    getTileAt(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<TileStructOutput>;
 
-    _getTroopAt(
+    getTroopAt(
       _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<TroopStructOutput>;
 
-    _getWorldConstants(
+    getWorldConstants(
       overrides?: CallOverrides
     ): Promise<WorldConstantsStructOutput>;
-
-    bulkGetAllTroops(overrides?: CallOverrides): Promise<TroopStructOutput[]>;
   };
 
   filters: {};
 
   estimateGas: {
-    _getMapChunk(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getSample(overrides?: CallOverrides): Promise<BigNumber>;
-
-    _getTroopAt(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getWorldConstants(overrides?: CallOverrides): Promise<BigNumber>;
-
     bulkGetAllTroops(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getBaseAt(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getBaseById(
+      _id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getMapChunk(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getTileAt(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getTroopAt(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getWorldConstants(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    _getMapChunk(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getSample(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    _getTroopAt(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getWorldConstants(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     bulkGetAllTroops(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getBaseAt(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getBaseById(
+      _id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getMapChunk(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getTileAt(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getTroopAt(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getWorldConstants(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import {Position, Tile, Troop, WorldConstants} from "contracts/libraries/Types.sol";
+import {Base, Position, Tile, Troop, WorldConstants} from "contracts/libraries/Types.sol";
 import {Util} from "contracts/libraries/GameUtil.sol";
 import "contracts/libraries/Storage.sol";
 
@@ -20,7 +20,7 @@ contract GetterFacet is UseStorage {
     }
 
     // Fetch tile map in NxN chunks.
-    function _getMapChunk(Position memory _pos) external view returns (Tile[] memory, Position[] memory) {
+    function getMapChunk(Position memory _pos) external view returns (Tile[] memory, Position[] memory) {
         uint256 _interval = gs().worldConstants.mapInterval;
 
         Tile[] memory _allTiles = new Tile[](_interval * _interval);
@@ -39,11 +39,23 @@ contract GetterFacet is UseStorage {
         return (_allTiles, _allPos);
     }
 
-    function _getTroopAt(Position memory _pos) external view returns (Troop memory) {
+    function getTileAt(Position memory _pos) external view returns (Tile memory) {
+        return Util._getTileAt(_pos);
+    }
+
+    function getBaseById(uint256 _id) external view returns (Base memory) {
+        return gs().baseIdMap[_id];
+    }
+
+    function getTroopAt(Position memory _pos) external view returns (Troop memory) {
         return gs().troopIdMap[Util._getTileAt(_pos).occupantId];
     }
 
-    function _getWorldConstants() external view returns (WorldConstants memory) {
+    function getBaseAt(Position memory _pos) external view returns (Base memory) {
+        return gs().baseIdMap[Util._getTileAt(_pos).baseId];
+    }
+
+    function getWorldConstants() external view returns (WorldConstants memory) {
         return gs().worldConstants;
     }
 }

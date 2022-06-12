@@ -163,7 +163,7 @@ export const placePortsAndCities = (colorMap: number[][][], numPorts: number, nu
       if (colorMap[x][y][1] > 0) {
         // land
         if ((x > 0 && colorMap[x - 1][y][1] == 0) || (x < colorMap.length - 1 && colorMap[x + 1][y][1] == 0) || (y > 0 && colorMap[x][y - 1][1] == 0) || (y < colorMap[0].length - 1 && colorMap[x][y + 1][1] == 0)) {
-          tileMap[x][y] = TILE_TYPE.COASTLINE;
+          tileMap[x][y] = TILE_TYPE.COAST;
           coastlineTiles.push([x, y]);
         } else {
           tileMap[x][y] = TILE_TYPE.INLAND;

@@ -56,7 +56,14 @@ library Util {
     }
 
     function _addBase(Position memory _pos, BASE_NAME _baseName) public returns (uint256) {
-        Base memory _base = Base({owner: address(0), name: _baseName, attackFactor: 1, defenseFactor: 1, health: 1});
+        // BaseConstants memory _baseConstants = gs().baseConstants;
+        Base memory _base = Base({
+            owner: address(0),
+            name: _baseName,
+            attackFactor: 100,
+            defenseFactor: 100,
+            health: 1 // FIXME: change to base constants
+        });
 
         uint256 _baseId = gs().baseNonce;
         gs().baseIds.push(_baseId);

@@ -3,12 +3,17 @@ pragma solidity ^0.8.4;
 
 import "contracts/libraries/Storage.sol";
 import {Util} from "contracts/libraries/GameUtil.sol";
+import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {BASE_NAME, Base, GameState, Player, Position, Production, TERRAIN, Tile, Troop, TroopType} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
+import "forge-std/console.sol";
+
+error Unauthorized();
 
 contract EngineFacet is UseStorage {
     using SafeMath for uint256;
     uint256 NULL = 0;
+    address ZERO_ADDR = address(0x0000000000000000000000000000000000000000);
 
     /*
     TODO:
@@ -17,7 +22,8 @@ contract EngineFacet is UseStorage {
     */
 
     modifier onlyAdmin() {
-        require(msg.sender == gs().worldConstants.admin);
+        // require(msg.sender == gs().worldConstants.admin, "Only admin can perform this action");
+        if (msg.sender != gs().worldConstants.admin) revert Unauthorized();
         _;
     }
 
@@ -35,6 +41,29 @@ contract EngineFacet is UseStorage {
     // ----------------------------------------------------------------------
     // ADMIN FUNCTIONS
     // ----------------------------------------------------------------------
+
+    /**
+     * Set an NxN chunk of the tile map.
+     * @param _startPos top-left position of chunk
+     * @param _chunk a 2d, NxN chunk
+     */
+    function setMapChunk(Position memory _startPos, uint256[][] memory _chunk) external onlyAdmin {
+        for (uint256 _dx = 0; _dx < _chunk.length; _dx++) {
+            for (uint256 _dy = 0; _dy < _chunk[0].length; _dy++) {
+                Position memory _pos = Position({x: _startPos.x + _dx, y: _startPos.y + _dy});
+                uint256 _terrainId = _chunk[_dx][_dy];
+
+                if (_terrainId >= 3) {
+                    // Note: temporary way to set base
+                    BASE_NAME _baseName = _terrainId == 3 ? BASE_NAME.PORT : BASE_NAME.CITY;
+                    Util._addBase(_pos, _baseName);
+                    _terrainId -= 3;
+                }
+
+                gs().map[_pos.x][_pos.y].terrain = TERRAIN(_terrainId);
+            }
+        }
+    }
 
     /**
      * Initialize a player at a selected position.
@@ -74,29 +103,6 @@ contract EngineFacet is UseStorage {
 
         uint256 _troopId = Util._addTroop(_pos, _troopTypeId, _player);
         emit NewTroop(_player, _troopId, _pos);
-    }
-
-    /**
-     * Set an NxN chunk of the tile map.
-     * @param _startPos top-left position of chunk
-     * @param _chunk a 2d, NxN chunk
-     */
-    function setMapChunk(Position memory _startPos, uint256[][] memory _chunk) external onlyAdmin {
-        for (uint256 _dx = 0; _dx < _chunk.length; _dx++) {
-            for (uint256 _dy = 0; _dy < _chunk[0].length; _dy++) {
-                Position memory _pos = Position({x: _startPos.x + _dx, y: _startPos.y + _dy});
-                uint256 _terrainId = _chunk[_dx][_dy];
-
-                if (_terrainId >= 3) {
-                    // Note: temporary way to set base
-                    BASE_NAME _baseName = _terrainId == 3 ? BASE_NAME.PORT : BASE_NAME.CITY;
-                    Util._addBase(_pos, _baseName);
-                    _terrainId -= 3;
-                }
-
-                gs().map[_pos.x][_pos.y].terrain = TERRAIN(_terrainId);
-            }
-        }
     }
 
     // ----------------------------------------------------------------------

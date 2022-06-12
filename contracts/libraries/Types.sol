@@ -7,7 +7,7 @@ enum BASE_NAME {
 }
 
 enum TERRAIN {
-    COASTLINE,
+    COAST,
     INLAND,
     WATER
 }
@@ -32,7 +32,6 @@ struct Player {
 }
 
 struct Base {
-    // TODO: can add another struct named BaseType with all of the fields except ownerAddr
     BASE_NAME name;
     address owner;
     uint256 attackFactor;
@@ -88,8 +87,15 @@ struct WorldConstants {
     uint256 secondsPerTurn;
 }
 
+// struct BaseConstants {
+//     uint256 attackFactor;
+//     uint256 defenseFactor;
+//     uint256 maxHealth;
+// }
+
 struct GameState {
     WorldConstants worldConstants;
+    // BaseConstants baseConstants;
     address[] players;
     mapping(address => Player) playerMap;
     Tile[1000][1000] map;
