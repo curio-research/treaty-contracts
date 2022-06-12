@@ -28,7 +28,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363535303135303733323038"
+              "__CACHE_BREAKER__": "0x0000000000000031363535303136343634353432"
             }
           }
         }
@@ -71,7 +71,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363535303135303733323038"
+              "__CACHE_BREAKER__": "0x0000000000000031363535303136343634353432"
             }
           }
         }
@@ -113,7 +113,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363535303135303733323038"
+              "__CACHE_BREAKER__": "0x0000000000000031363535303136343634353432"
             }
           }
         }
@@ -153,7 +153,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363535303135303733323038"
+              "__CACHE_BREAKER__": "0x0000000000000031363535303136343634353432"
             }
           }
         }
@@ -202,7 +202,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363535303135303733323038"
+              "__CACHE_BREAKER__": "0x0000000000000031363535303136343634353432"
             }
           }
         }
@@ -240,7 +240,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363535303135303733323038"
+              "__CACHE_BREAKER__": "0x0000000000000031363535303136343634353432"
             }
           }
         }
@@ -280,7 +280,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363535303135303733323038"
+              "__CACHE_BREAKER__": "0x0000000000000031363535303136343634353432"
             }
           }
         }
@@ -320,7 +320,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363535303135303733323038"
+              "__CACHE_BREAKER__": "0x0000000000000031363535303136343634353432"
             }
           }
         }
@@ -334,8 +334,8 @@
       ]
     },
     "/Users/K.Z./Desktop/projects/engine/contracts/libraries/GameUtil.sol": {
-      "lastModificationDate": 1655014220019,
-      "contentHash": "27f182b2448da4f4202796859709e504",
+      "lastModificationDate": 1655016310090,
+      "contentHash": "e1ae88e877310804386806261497cb0a",
       "sourceName": "contracts/libraries/GameUtil.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -360,7 +360,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363535303135303733323038"
+              "__CACHE_BREAKER__": "0x0000000000000031363535303136343634353432"
             }
           }
         }
@@ -368,8 +368,7 @@
       "imports": [
         "contracts/libraries/Types.sol",
         "contracts/libraries/Storage.sol",
-        "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol",
-        "lib/forge-std/src/console.sol"
+        "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol"
       ],
       "versionPragmas": [
         "^0.8.4"
@@ -405,7 +404,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363535303135303733323038"
+              "__CACHE_BREAKER__": "0x0000000000000031363535303136343634353432"
             }
           }
         }
@@ -448,7 +447,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363535303135303733323038"
+              "__CACHE_BREAKER__": "0x0000000000000031363535303136343634353432"
             }
           }
         }
@@ -459,46 +458,6 @@
       ],
       "artifacts": [
         "SafeMath"
-      ]
-    },
-    "/Users/K.Z./Desktop/projects/engine/lib/forge-std/src/console.sol": {
-      "lastModificationDate": 1654989505201,
-      "contentHash": "100b8a33b917da1147740d7ab8b0ded3",
-      "sourceName": "lib/forge-std/src/console.sol",
-      "solcConfig": {
-        "version": "0.8.4",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 1000
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          },
-          "libraries": {
-            "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363535303135303733323038"
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        ">=0.4.22 <0.9.0"
-      ],
-      "artifacts": [
-        "console"
       ]
     },
     "/Users/K.Z./Desktop/projects/engine/contracts/facets/GetterFacet.sol": {
@@ -528,7 +487,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363535303135303733323038"
+              "__CACHE_BREAKER__": "0x0000000000000031363535303136343634353432"
             }
           }
         }
@@ -546,8 +505,8 @@
       ]
     },
     "/Users/K.Z./Desktop/projects/engine/contracts/facets/EngineFacet.sol": {
-      "lastModificationDate": 1655014959183,
-      "contentHash": "bce521264c3747f55208610d84aadc5d",
+      "lastModificationDate": 1655016299421,
+      "contentHash": "7914269cb7735834e3d0d4505d9ef284",
       "sourceName": "contracts/facets/EngineFacet.sol",
       "solcConfig": {
         "version": "0.8.4",
@@ -572,7 +531,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363535303135303733323038"
+              "__CACHE_BREAKER__": "0x0000000000000031363535303136343634353432"
             }
           }
         }
@@ -582,8 +541,7 @@
         "contracts/libraries/GameUtil.sol",
         "contracts/facets/GetterFacet.sol",
         "contracts/libraries/Types.sol",
-        "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol",
-        "lib/forge-std/src/console.sol"
+        "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol"
       ],
       "versionPragmas": [
         "^0.8.4"
@@ -619,7 +577,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363535303135303733323038"
+              "__CACHE_BREAKER__": "0x0000000000000031363535303136343634353432"
             }
           }
         }
@@ -663,7 +621,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363535303135303733323038"
+              "__CACHE_BREAKER__": "0x0000000000000031363535303136343634353432"
             }
           }
         }
@@ -706,7 +664,7 @@
           },
           "libraries": {
             "": {
-              "__CACHE_BREAKER__": "0x0000000000000031363535303135303733323038"
+              "__CACHE_BREAKER__": "0x0000000000000031363535303136343634353432"
             }
           }
         }
@@ -723,7 +681,7 @@
       ]
     },
     "/Users/K.Z./Desktop/projects/engine/node_modules/hardhat-diamond-abi/dist/contract.sol": {
-      "lastModificationDate": 1655015080035,
+      "lastModificationDate": 1655016470493,
       "contentHash": "7b5e74ed67d69fa34133a49521f9ea07",
       "sourceName": "hardhat-diamond-abi/Curio.sol",
       "solcConfig": {

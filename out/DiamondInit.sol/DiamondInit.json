@@ -114,12 +114,12 @@
     }
   ],
   "bytecode": {
-    "object": "0x608060405234801561001057600080fd5b5061071d806100206000396000f3fe608060405234801561001057600080fd5b506004361061002b5760003560e01c8063747b43cc14610030575b600080fd5b61004361003e366004610557565b610045565b005b7fc8fcad8db84d3cc18b4c41d551ea0ee66dd599cde068d998e57d5e09332c131f60209081527f699d9daa71b280d05a152715774afa0a81a312594b2d731d6b0b2552b7d6f69f8054600160ff1991821681179092557ff97e938d8af42f52387bb74b8b526fda8f184cc2aa534340a8d75a88fbecc77580548216831790557f65d510a5d8f7ef134ec444f7f34ee808c8eeb5177cdfd16be0c40fe1ab43369580548216831790556307f5828d60e41b60009081527f5622121b47b8cd0120c4efe45dd5483242f54a3d49bd7679be565d47694918c38054909216909217905583517f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e70fd2080546001600160a01b0319166001600160a01b03909216919091179055908301517f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e70fd215560408301517f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e70fd225560608301517f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e70fd235560808301517f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e70fd245560a08301517f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e70fd255560c08301517f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e70fd26557fc8fcad8db84d3cc18b4c41d551ea0ee66dd599cde068d998e57d5e09332c131c905b82518110156103e9577f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e9ec3f26102a6826001610688565b8154600181018355600092835260209092209091015582518390829081106102de57634e487b7160e01b600052603260045260246000fd5b602002602001015161030d7f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e70fd2090565b622dc6d301600061031f846001610688565b8152602081019190915260400160002081518154829060ff1916600183600581111561035b57634e487b7160e01b600052602160045260246000fd5b02179055506020820151600182015560408201516002820155606082015160038201556080820151600482015560a0820151600582015560c0820151600682015560e082015160078201556101008201516008820155610120820151600982015561014090910151600a909101805460ff1916911515919091179055806103e1816106a0565b915050610271565b507f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e9ec3f08054906000610419836106a0565b9190505550505050565b600082601f830112610433578081fd5b8135602067ffffffffffffffff82111561044f5761044f6106d1565b61045d818360051b01610657565b828152818101908583016101608086028801850189101561047c578687fd5b865b868110156105255781838b031215610494578788fd5b61049c61060a565b6104a584610548565b8152838701358782015260408085013590820152606080850135908201526080808501359082015260a0808501359082015260c0808501359082015260e080850135908201526101008085013590820152610120808501359082015261014061050f818601610533565b908201528552938501939181019160010161047e565b509198975050505050505050565b8035801515811461054357600080fd5b919050565b80356006811061054357600080fd5b60008082840361010081121561056b578283fd5b60e0811215610578578283fd5b50610581610634565b83356001600160a01b0381168114610597578384fd5b808252506020840135602082015260408401356040820152606084013560608201526080840135608082015260a084013560a082015260c084013560c08201528092505060e083013567ffffffffffffffff8111156105f4578182fd5b61060085828601610423565b9150509250929050565b604051610160810167ffffffffffffffff8111828210171561062e5761062e6106d1565b60405290565b60405160e0810167ffffffffffffffff8111828210171561062e5761062e6106d1565b604051601f8201601f1916810167ffffffffffffffff81118282101715610680576106806106d1565b604052919050565b6000821982111561069b5761069b6106bb565b500190565b60006000198214156106b4576106b46106bb565b5060010190565b634e487b7160e01b600052601160045260246000fd5b634e487b7160e01b600052604160045260246000fdfea264697066735822122005a563e7dc801ea4f8b89ae613fff284bc6e4b1c29c764122092b60c9f420f4364736f6c63430008040033",
+    "object": "0x608060405234801561001057600080fd5b5061071d806100206000396000f3fe608060405234801561001057600080fd5b506004361061002b5760003560e01c8063747b43cc14610030575b600080fd5b61004361003e366004610557565b610045565b005b7fc8fcad8db84d3cc18b4c41d551ea0ee66dd599cde068d998e57d5e09332c131f60209081527f699d9daa71b280d05a152715774afa0a81a312594b2d731d6b0b2552b7d6f69f8054600160ff1991821681179092557ff97e938d8af42f52387bb74b8b526fda8f184cc2aa534340a8d75a88fbecc77580548216831790557f65d510a5d8f7ef134ec444f7f34ee808c8eeb5177cdfd16be0c40fe1ab43369580548216831790556307f5828d60e41b60009081527f5622121b47b8cd0120c4efe45dd5483242f54a3d49bd7679be565d47694918c38054909216909217905583517f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e70fd2080546001600160a01b0319166001600160a01b03909216919091179055908301517f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e70fd215560408301517f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e70fd225560608301517f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e70fd235560808301517f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e70fd245560a08301517f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e70fd255560c08301517f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e70fd26557fc8fcad8db84d3cc18b4c41d551ea0ee66dd599cde068d998e57d5e09332c131c905b82518110156103e9577f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e9ec3f26102a6826001610688565b8154600181018355600092835260209092209091015582518390829081106102de57634e487b7160e01b600052603260045260246000fd5b602002602001015161030d7f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e70fd2090565b622dc6d301600061031f846001610688565b8152602081019190915260400160002081518154829060ff1916600183600581111561035b57634e487b7160e01b600052602160045260246000fd5b02179055506020820151600182015560408201516002820155606082015160038201556080820151600482015560a0820151600582015560c0820151600682015560e082015160078201556101008201516008820155610120820151600982015561014090910151600a909101805460ff1916911515919091179055806103e1816106a0565b915050610271565b507f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e9ec3f08054906000610419836106a0565b9190505550505050565b600082601f830112610433578081fd5b8135602067ffffffffffffffff82111561044f5761044f6106d1565b61045d818360051b01610657565b828152818101908583016101608086028801850189101561047c578687fd5b865b868110156105255781838b031215610494578788fd5b61049c61060a565b6104a584610548565b8152838701358782015260408085013590820152606080850135908201526080808501359082015260a0808501359082015260c0808501359082015260e080850135908201526101008085013590820152610120808501359082015261014061050f818601610533565b908201528552938501939181019160010161047e565b509198975050505050505050565b8035801515811461054357600080fd5b919050565b80356006811061054357600080fd5b60008082840361010081121561056b578283fd5b60e0811215610578578283fd5b50610581610634565b83356001600160a01b0381168114610597578384fd5b808252506020840135602082015260408401356040820152606084013560608201526080840135608082015260a084013560a082015260c084013560c08201528092505060e083013567ffffffffffffffff8111156105f4578182fd5b61060085828601610423565b9150509250929050565b604051610160810167ffffffffffffffff8111828210171561062e5761062e6106d1565b60405290565b60405160e0810167ffffffffffffffff8111828210171561062e5761062e6106d1565b604051601f8201601f1916810167ffffffffffffffff81118282101715610680576106806106d1565b604052919050565b6000821982111561069b5761069b6106bb565b500190565b60006000198214156106b4576106b46106bb565b5060010190565b634e487b7160e01b600052601160045260246000fd5b634e487b7160e01b600052604160045260246000fdfea2646970667358221220254de5dcc9a03431c4a6da2ce8e51f12d363e9cd7b6755c906902c10ecd8dd5e64736f6c63430008040033",
     "sourceMap": "1181:1584:15:-:0;;;;;;;;;;;;;;;;;;;",
     "linkReferences": {}
   },
   "deployedBytecode": {
-    "object": "0x608060405234801561001057600080fd5b506004361061002b5760003560e01c8063747b43cc14610030575b600080fd5b61004361003e366004610557565b610045565b005b7fc8fcad8db84d3cc18b4c41d551ea0ee66dd599cde068d998e57d5e09332c131f60209081527f699d9daa71b280d05a152715774afa0a81a312594b2d731d6b0b2552b7d6f69f8054600160ff1991821681179092557ff97e938d8af42f52387bb74b8b526fda8f184cc2aa534340a8d75a88fbecc77580548216831790557f65d510a5d8f7ef134ec444f7f34ee808c8eeb5177cdfd16be0c40fe1ab43369580548216831790556307f5828d60e41b60009081527f5622121b47b8cd0120c4efe45dd5483242f54a3d49bd7679be565d47694918c38054909216909217905583517f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e70fd2080546001600160a01b0319166001600160a01b03909216919091179055908301517f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e70fd215560408301517f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e70fd225560608301517f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e70fd235560808301517f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e70fd245560a08301517f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e70fd255560c08301517f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e70fd26557fc8fcad8db84d3cc18b4c41d551ea0ee66dd599cde068d998e57d5e09332c131c905b82518110156103e9577f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e9ec3f26102a6826001610688565b8154600181018355600092835260209092209091015582518390829081106102de57634e487b7160e01b600052603260045260246000fd5b602002602001015161030d7f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e70fd2090565b622dc6d301600061031f846001610688565b8152602081019190915260400160002081518154829060ff1916600183600581111561035b57634e487b7160e01b600052602160045260246000fd5b02179055506020820151600182015560408201516002820155606082015160038201556080820151600482015560a0820151600582015560c0820151600682015560e082015160078201556101008201516008820155610120820151600982015561014090910151600a909101805460ff1916911515919091179055806103e1816106a0565b915050610271565b507f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e9ec3f08054906000610419836106a0565b9190505550505050565b600082601f830112610433578081fd5b8135602067ffffffffffffffff82111561044f5761044f6106d1565b61045d818360051b01610657565b828152818101908583016101608086028801850189101561047c578687fd5b865b868110156105255781838b031215610494578788fd5b61049c61060a565b6104a584610548565b8152838701358782015260408085013590820152606080850135908201526080808501359082015260a0808501359082015260c0808501359082015260e080850135908201526101008085013590820152610120808501359082015261014061050f818601610533565b908201528552938501939181019160010161047e565b509198975050505050505050565b8035801515811461054357600080fd5b919050565b80356006811061054357600080fd5b60008082840361010081121561056b578283fd5b60e0811215610578578283fd5b50610581610634565b83356001600160a01b0381168114610597578384fd5b808252506020840135602082015260408401356040820152606084013560608201526080840135608082015260a084013560a082015260c084013560c08201528092505060e083013567ffffffffffffffff8111156105f4578182fd5b61060085828601610423565b9150509250929050565b604051610160810167ffffffffffffffff8111828210171561062e5761062e6106d1565b60405290565b60405160e0810167ffffffffffffffff8111828210171561062e5761062e6106d1565b604051601f8201601f1916810167ffffffffffffffff81118282101715610680576106806106d1565b604052919050565b6000821982111561069b5761069b6106bb565b500190565b60006000198214156106b4576106b46106bb565b5060010190565b634e487b7160e01b600052601160045260246000fd5b634e487b7160e01b600052604160045260246000fdfea264697066735822122005a563e7dc801ea4f8b89ae613fff284bc6e4b1c29c764122092b60c9f420f4364736f6c63430008040033",
+    "object": "0x608060405234801561001057600080fd5b506004361061002b5760003560e01c8063747b43cc14610030575b600080fd5b61004361003e366004610557565b610045565b005b7fc8fcad8db84d3cc18b4c41d551ea0ee66dd599cde068d998e57d5e09332c131f60209081527f699d9daa71b280d05a152715774afa0a81a312594b2d731d6b0b2552b7d6f69f8054600160ff1991821681179092557ff97e938d8af42f52387bb74b8b526fda8f184cc2aa534340a8d75a88fbecc77580548216831790557f65d510a5d8f7ef134ec444f7f34ee808c8eeb5177cdfd16be0c40fe1ab43369580548216831790556307f5828d60e41b60009081527f5622121b47b8cd0120c4efe45dd5483242f54a3d49bd7679be565d47694918c38054909216909217905583517f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e70fd2080546001600160a01b0319166001600160a01b03909216919091179055908301517f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e70fd215560408301517f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e70fd225560608301517f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e70fd235560808301517f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e70fd245560a08301517f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e70fd255560c08301517f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e70fd26557fc8fcad8db84d3cc18b4c41d551ea0ee66dd599cde068d998e57d5e09332c131c905b82518110156103e9577f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e9ec3f26102a6826001610688565b8154600181018355600092835260209092209091015582518390829081106102de57634e487b7160e01b600052603260045260246000fd5b602002602001015161030d7f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e70fd2090565b622dc6d301600061031f846001610688565b8152602081019190915260400160002081518154829060ff1916600183600581111561035b57634e487b7160e01b600052602160045260246000fd5b02179055506020820151600182015560408201516002820155606082015160038201556080820151600482015560a0820151600582015560c0820151600682015560e082015160078201556101008201516008820155610120820151600982015561014090910151600a909101805460ff1916911515919091179055806103e1816106a0565b915050610271565b507f8d1bebda6a12a792ffba01f92494c5be0cd4ce8e2d8e46d2c616016d7e9ec3f08054906000610419836106a0565b9190505550505050565b600082601f830112610433578081fd5b8135602067ffffffffffffffff82111561044f5761044f6106d1565b61045d818360051b01610657565b828152818101908583016101608086028801850189101561047c578687fd5b865b868110156105255781838b031215610494578788fd5b61049c61060a565b6104a584610548565b8152838701358782015260408085013590820152606080850135908201526080808501359082015260a0808501359082015260c0808501359082015260e080850135908201526101008085013590820152610120808501359082015261014061050f818601610533565b908201528552938501939181019160010161047e565b509198975050505050505050565b8035801515811461054357600080fd5b919050565b80356006811061054357600080fd5b60008082840361010081121561056b578283fd5b60e0811215610578578283fd5b50610581610634565b83356001600160a01b0381168114610597578384fd5b808252506020840135602082015260408401356040820152606084013560608201526080840135608082015260a084013560a082015260c084013560c08201528092505060e083013567ffffffffffffffff8111156105f4578182fd5b61060085828601610423565b9150509250929050565b604051610160810167ffffffffffffffff8111828210171561062e5761062e6106d1565b60405290565b60405160e0810167ffffffffffffffff8111828210171561062e5761062e6106d1565b604051601f8201601f1916810167ffffffffffffffff81118282101715610680576106806106d1565b604052919050565b6000821982111561069b5761069b6106bb565b500190565b60006000198214156106b4576106b46106bb565b5060010190565b634e487b7160e01b600052601160045260246000fd5b634e487b7160e01b600052604160045260246000fdfea2646970667358221220254de5dcc9a03431c4a6da2ce8e51f12d363e9cd7b6755c906902c10ecd8dd5e64736f6c63430008040033",
     "sourceMap": "1181:1584:15:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1333:1430;;;;;;:::i;:::-;;:::i;:::-;;;1613:22;:49;;;;;:56;;1665:4;-1:-1:-1;;1613:56:15;;;;;;;;1679:53;:60;;;;;;;;1749:55;:62;;;;;;;;-1:-1:-1;;;;1821:49:15;;;;:56;;;;;;;;;;2368:37;;206:31:12;2368:37:15;;-1:-1:-1;;;;;;2368:37:15;-1:-1:-1;;;;;2368:37:15;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;2368:37:15;;;;;;;;;;;645:45:11;;2498:160:15;2522:11;:18;2518:1;:22;2498:160;;;2561:17;2584:5;:1;2588;2584:5;:::i;:::-;2561:29;;;;;;;-1:-1:-1;2561:29:15;;;;;;;;;;;2633:14;;:11;;2645:1;;2633:14;;;;-1:-1:-1;;;2633:14:15;;;;;;;;;;;;;;;2604:4;206:31:12;;487:108;2604:4:15;:19;;:26;2624:5;:1;2628;2624:5;:::i;:::-;2604:26;;;;;;;;;;;-1:-1:-1;2604:26:15;:43;;;;:26;;-1:-1:-1;;2604:43:15;;;;;;;;;-1:-1:-1;;;2604:43:15;;;;;;;;;;;;;-1:-1:-1;2604:43:15;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;2604:43:15;;;;;;;;;;2542:3;;;;:::i;:::-;;;;2498:160;;;-1:-1:-1;2739:15:15;:17;;;:15;:17;;;:::i;:::-;;;;;;1333:1430;;;:::o;14:1796:24:-;77:5;130:3;123:4;115:6;111:17;107:27;97:2;;152:5;145;138:20;97:2;192:6;179:20;218:4;241:18;237:2;234:26;231:2;;;263:18;;:::i;:::-;303:36;335:2;330;327:1;323:10;319:19;303:36;:::i;:::-;373:15;;;404:12;;;;436:15;;;470:6;507:11;;;495:24;;491:33;;488:42;-1:-1:-1;485:2:24;;;547:5;540;533:20;485:2;573:5;587:1194;601:2;598:1;595:9;587:1194;;;668:2;662:3;657;653:13;649:22;646:2;;;688:5;681;674:20;646:2;722:21;;:::i;:::-;770:31;797:3;770:31;:::i;:::-;756:46;;851:12;;;838:26;822:14;;;815:50;888:2;939:12;;;926:26;910:14;;;903:50;976:2;1027:12;;;1014:26;998:14;;;991:50;1064:3;1116:12;;;1103:26;1087:14;;;1080:50;1153:3;1205:12;;;1192:26;1176:14;;;1169:50;1242:3;1294:12;;;1281:26;1265:14;;;1258:50;1331:3;1383:12;;;1370:26;1354:14;;;1347:50;1421:3;1474:13;;;1461:27;1444:15;;;1437:52;1513:3;1566:13;;;1553:27;1536:15;;;1529:52;1605:3;1645:30;1661:13;;;1645:30;:::i;:::-;1628:15;;;1621:55;1689:18;;1727:12;;;;1759;;;;619:1;612:9;587:1194;;;-1:-1:-1;1799:5:24;;87:1723;-1:-1:-1;;;;;;;;87:1723:24:o;1815:160::-;1880:20;;1936:13;;1929:21;1919:32;;1909:2;;1965:1;1962;1955:12;1909:2;1861:114;;;:::o;1980:151::-;2056:20;;2105:1;2095:12;;2085:2;;2121:1;2118;2111:12;2136:1172;2288:6;2296;2340:9;2331:7;2327:23;2370:3;2366:2;2362:12;2359:2;;;2392:6;2384;2377:22;2359:2;2421:4;2417:2;2413:13;2410:2;;;2444:6;2436;2429:22;2410:2;;2475:21;;:::i;:::-;2520:23;;-1:-1:-1;;;;;2574:33:24;;2562:46;;2552:2;;2627:6;2619;2612:22;2552:2;2659:7;2652:5;2645:22;;2727:2;2716:9;2712:18;2699:32;2694:2;2687:5;2683:14;2676:56;2792:2;2781:9;2777:18;2764:32;2759:2;2752:5;2748:14;2741:56;2857:2;2846:9;2842:18;2829:32;2824:2;2817:5;2813:14;2806:56;2923:3;2912:9;2908:19;2895:33;2889:3;2882:5;2878:15;2871:58;2990:3;2979:9;2975:19;2962:33;2956:3;2949:5;2945:15;2938:58;3057:3;3046:9;3042:19;3029:33;3023:3;3016:5;3012:15;3005:58;3082:5;3072:15;;;3138:4;3127:9;3123:20;3110:34;3167:18;3159:6;3156:30;3153:2;;;3204:6;3196;3189:22;3153:2;3232:70;3294:7;3285:6;3274:9;3270:22;3232:70;:::i;:::-;3222:80;;;2307:1001;;;;;:::o;3313:254::-;3384:2;3378:9;3426:6;3414:19;;3463:18;3448:34;;3484:22;;;3445:62;3442:2;;;3510:18;;:::i;:::-;3546:2;3539:22;3358:209;:::o;3572:252::-;3643:2;3637:9;3685:4;3673:17;;3720:18;3705:34;;3741:22;;;3702:62;3699:2;;;3767:18;;:::i;3829:275::-;3900:2;3894:9;-1:-1:-1;3946:13:24;;-1:-1:-1;;3942:27:24;3930:40;;4000:18;3985:34;;4021:22;;;3982:62;3979:2;;;4047:18;;:::i;:::-;4083:2;4076:22;3874:230;;-1:-1:-1;3874:230:24:o;4109:128::-;4149:3;4180:1;4176:6;4173:1;4170:13;4167:2;;;4186:18;;:::i;:::-;-1:-1:-1;4222:9:24;;4157:80::o;4242:135::-;4281:3;-1:-1:-1;;4302:17:24;;4299:2;;;4322:18;;:::i;:::-;-1:-1:-1;4369:1:24;4358:13;;4289:88::o;4382:127::-;4443:10;4438:3;4434:20;4431:1;4424:31;4474:4;4471:1;4464:15;4498:4;4495:1;4488:15;4514:127;4575:10;4570:3;4566:20;4563:1;4556:31;4606:4;4603:1;4596:15;4630:4;4627:1;4620:15",
     "linkReferences": {}
   },
@@ -128,53 +128,53 @@
   },
   "ast": {
     "absolutePath": "contracts/upgradeInitializers/diamondInit.sol",
-    "id": 4872,
+    "id": 4870,
     "exportedSymbols": {
       "Base": [
-        4480
+        4478
       ],
       "DiamondInit": [
-        4871
+        4869
       ],
       "GameState": [
-        4609
+        4607
       ],
       "IDiamondCut": [
-        2784
+        2783
       ],
       "IDiamondLoupe": [
-        2825
+        2824
       ],
       "IERC165": [
-        2836
+        2835
       ],
       "IERC173": [
-        2859
+        2858
       ],
       "LibDiamond": [
-        4408
+        4406
       ],
       "LibStorage": [
-        4430
+        4428
       ],
       "TroopType": [
-        4533
+        4531
       ],
       "UseStorage": [
-        4442
+        4440
       ],
       "Util": [
-        3542
+        3540
       ],
       "WorldConstants": [
-        4553
+        4551
       ]
     },
     "nodeType": "SourceUnit",
     "src": "32:2734:15",
     "nodes": [
       {
-        "id": 4742,
+        "id": 4740,
         "nodeType": "PragmaDirective",
         "src": "32:23:15",
         "literals": [
@@ -185,18 +185,18 @@
         ]
       },
       {
-        "id": 4746,
+        "id": 4744,
         "nodeType": "ImportDirective",
         "src": "395:78:15",
         "absolutePath": "contracts/libraries/Types.sol",
         "file": "contracts/libraries/Types.sol",
         "nameLocation": "-1:-1:-1",
-        "scope": 4872,
-        "sourceUnit": 4610,
+        "scope": 4870,
+        "sourceUnit": 4608,
         "symbolAliases": [
           {
             "foreign": {
-              "id": 4743,
+              "id": 4741,
               "name": "Base",
               "nodeType": "Identifier",
               "overloadedDeclarations": [],
@@ -207,7 +207,7 @@
           },
           {
             "foreign": {
-              "id": 4744,
+              "id": 4742,
               "name": "TroopType",
               "nodeType": "Identifier",
               "overloadedDeclarations": [],
@@ -218,7 +218,7 @@
           },
           {
             "foreign": {
-              "id": 4745,
+              "id": 4743,
               "name": "WorldConstants",
               "nodeType": "Identifier",
               "overloadedDeclarations": [],
@@ -231,18 +231,18 @@
         "unitAlias": ""
       },
       {
-        "id": 4748,
+        "id": 4746,
         "nodeType": "ImportDirective",
         "src": "474:62:15",
         "absolutePath": "contracts/libraries/LibDiamond.sol",
         "file": "contracts/libraries/LibDiamond.sol",
         "nameLocation": "-1:-1:-1",
-        "scope": 4872,
-        "sourceUnit": 4409,
+        "scope": 4870,
+        "sourceUnit": 4407,
         "symbolAliases": [
           {
             "foreign": {
-              "id": 4747,
+              "id": 4745,
               "name": "LibDiamond",
               "nodeType": "Identifier",
               "overloadedDeclarations": [],
@@ -255,18 +255,18 @@
         "unitAlias": ""
       },
       {
-        "id": 4750,
+        "id": 4748,
         "nodeType": "ImportDirective",
         "src": "537:69:15",
         "absolutePath": "contracts/interfaces/IDiamondLoupe.sol",
         "file": "contracts/interfaces/IDiamondLoupe.sol",
         "nameLocation": "-1:-1:-1",
-        "scope": 4872,
-        "sourceUnit": 2826,
+        "scope": 4870,
+        "sourceUnit": 2825,
         "symbolAliases": [
           {
             "foreign": {
-              "id": 4749,
+              "id": 4747,
               "name": "IDiamondLoupe",
               "nodeType": "Identifier",
               "overloadedDeclarations": [],
@@ -279,18 +279,18 @@
         "unitAlias": ""
       },
       {
-        "id": 4752,
+        "id": 4750,
         "nodeType": "ImportDirective",
         "src": "607:65:15",
         "absolutePath": "contracts/interfaces/IDiamondCut.sol",
         "file": "contracts/interfaces/IDiamondCut.sol",
         "nameLocation": "-1:-1:-1",
-        "scope": 4872,
-        "sourceUnit": 2785,
+        "scope": 4870,
+        "sourceUnit": 2784,
         "symbolAliases": [
           {
             "foreign": {
-              "id": 4751,
+              "id": 4749,
               "name": "IDiamondCut",
               "nodeType": "Identifier",
               "overloadedDeclarations": [],
@@ -303,18 +303,18 @@
         "unitAlias": ""
       },
       {
-        "id": 4754,
+        "id": 4752,
         "nodeType": "ImportDirective",
         "src": "673:57:15",
         "absolutePath": "contracts/interfaces/IERC173.sol",
         "file": "contracts/interfaces/IERC173.sol",
         "nameLocation": "-1:-1:-1",
-        "scope": 4872,
-        "sourceUnit": 2860,
+        "scope": 4870,
+        "sourceUnit": 2859,
         "symbolAliases": [
           {
             "foreign": {
-              "id": 4753,
+              "id": 4751,
               "name": "IERC173",
               "nodeType": "Identifier",
               "overloadedDeclarations": [],
@@ -327,18 +327,18 @@
         "unitAlias": ""
       },
       {
-        "id": 4756,
+        "id": 4754,
         "nodeType": "ImportDirective",
         "src": "731:57:15",
         "absolutePath": "contracts/interfaces/IERC165.sol",
         "file": "contracts/interfaces/IERC165.sol",
         "nameLocation": "-1:-1:-1",
-        "scope": 4872,
-        "sourceUnit": 2837,
+        "scope": 4870,
+        "sourceUnit": 2836,
         "symbolAliases": [
           {
             "foreign": {
-              "id": 4755,
+              "id": 4753,
               "name": "IERC165",
               "nodeType": "Identifier",
               "overloadedDeclarations": [],
@@ -351,18 +351,18 @@
         "unitAlias": ""
       },
       {
-        "id": 4758,
+        "id": 4756,
         "nodeType": "ImportDirective",
         "src": "789:54:15",
         "absolutePath": "contracts/libraries/GameUtil.sol",
         "file": "contracts/libraries/GameUtil.sol",
         "nameLocation": "-1:-1:-1",
-        "scope": 4872,
-        "sourceUnit": 3543,
+        "scope": 4870,
+        "sourceUnit": 3541,
         "symbolAliases": [
           {
             "foreign": {
-              "id": 4757,
+              "id": 4755,
               "name": "Util",
               "nodeType": "Identifier",
               "overloadedDeclarations": [],
@@ -375,103 +375,103 @@
         "unitAlias": ""
       },
       {
-        "id": 4759,
+        "id": 4757,
         "nodeType": "ImportDirective",
         "src": "844:41:15",
         "absolutePath": "contracts/libraries/Storage.sol",
         "file": "contracts/libraries/Storage.sol",
         "nameLocation": "-1:-1:-1",
-        "scope": 4872,
-        "sourceUnit": 4443,
+        "scope": 4870,
+        "sourceUnit": 4441,
         "symbolAliases": [],
         "unitAlias": ""
       },
       {
-        "id": 4871,
+        "id": 4869,
         "nodeType": "ContractDefinition",
         "src": "1181:1584:15",
         "nodes": [
           {
-            "id": 4870,
+            "id": 4868,
             "nodeType": "FunctionDefinition",
             "src": "1333:1430:15",
             "body": {
-              "id": 4869,
+              "id": 4867,
               "nodeType": "Block",
               "src": "1497:1266:15",
               "statements": [
                 {
                   "assignments": [
-                    4775
+                    4773
                   ],
                   "declarations": [
                     {
                       "constant": false,
-                      "id": 4775,
+                      "id": 4773,
                       "mutability": "mutable",
                       "name": "ds",
                       "nameLocation": "1571:2:15",
                       "nodeType": "VariableDeclaration",
-                      "scope": 4869,
+                      "scope": 4867,
                       "src": "1537:36:15",
                       "stateVariable": false,
                       "storageLocation": "storage",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_struct$_DiamondStorage_$3568_storage_ptr",
+                        "typeIdentifier": "t_struct$_DiamondStorage_$3566_storage_ptr",
                         "typeString": "struct LibDiamond.DiamondStorage"
                       },
                       "typeName": {
-                        "id": 4774,
+                        "id": 4772,
                         "nodeType": "UserDefinedTypeName",
                         "pathNode": {
-                          "id": 4773,
+                          "id": 4771,
                           "name": "LibDiamond.DiamondStorage",
                           "nodeType": "IdentifierPath",
-                          "referencedDeclaration": 3568,
+                          "referencedDeclaration": 3566,
                           "src": "1537:25:15"
                         },
-                        "referencedDeclaration": 3568,
+                        "referencedDeclaration": 3566,
                         "src": "1537:25:15",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_struct$_DiamondStorage_$3568_storage_ptr",
+                          "typeIdentifier": "t_struct$_DiamondStorage_$3566_storage_ptr",
                           "typeString": "struct LibDiamond.DiamondStorage"
                         }
                       },
                       "visibility": "internal"
                     }
                   ],
-                  "id": 4779,
+                  "id": 4777,
                   "initialValue": {
                     "arguments": [],
                     "expression": {
                       "argumentTypes": [],
                       "expression": {
-                        "id": 4776,
+                        "id": 4774,
                         "name": "LibDiamond",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 4408,
+                        "referencedDeclaration": 4406,
                         "src": "1576:10:15",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_type$_t_contract$_LibDiamond_$4408_$",
+                          "typeIdentifier": "t_type$_t_contract$_LibDiamond_$4406_$",
                           "typeString": "type(library LibDiamond)"
                         }
                       },
-                      "id": 4777,
+                      "id": 4775,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
                       "lValueRequested": false,
                       "memberName": "diamondStorage",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 3580,
+                      "referencedDeclaration": 3578,
                       "src": "1576:25:15",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_function_internal_pure$__$returns$_t_struct$_DiamondStorage_$3568_storage_ptr_$",
+                        "typeIdentifier": "t_function_internal_pure$__$returns$_t_struct$_DiamondStorage_$3566_storage_ptr_$",
                         "typeString": "function () pure returns (struct LibDiamond.DiamondStorage storage pointer)"
                       }
                     },
-                    "id": 4778,
+                    "id": 4776,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -482,7 +482,7 @@
                     "src": "1576:27:15",
                     "tryCall": false,
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_DiamondStorage_$3568_storage_ptr",
+                      "typeIdentifier": "t_struct$_DiamondStorage_$3566_storage_ptr",
                       "typeString": "struct LibDiamond.DiamondStorage storage pointer"
                     }
                   },
@@ -491,7 +491,7 @@
                 },
                 {
                   "expression": {
-                    "id": 4789,
+                    "id": 4787,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -499,44 +499,44 @@
                     "leftHandSide": {
                       "baseExpression": {
                         "expression": {
-                          "id": 4780,
+                          "id": 4778,
                           "name": "ds",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 4775,
+                          "referencedDeclaration": 4773,
                           "src": "1613:2:15",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_struct$_DiamondStorage_$3568_storage_ptr",
+                            "typeIdentifier": "t_struct$_DiamondStorage_$3566_storage_ptr",
                             "typeString": "struct LibDiamond.DiamondStorage storage pointer"
                           }
                         },
-                        "id": 4786,
+                        "id": 4784,
                         "isConstant": false,
                         "isLValue": true,
                         "isPure": false,
                         "lValueRequested": false,
                         "memberName": "supportedInterfaces",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 3565,
+                        "referencedDeclaration": 3563,
                         "src": "1613:22:15",
                         "typeDescriptions": {
                           "typeIdentifier": "t_mapping$_t_bytes4_$_t_bool_$",
                           "typeString": "mapping(bytes4 => bool)"
                         }
                       },
-                      "id": 4787,
+                      "id": 4785,
                       "indexExpression": {
                         "expression": {
                           "arguments": [
                             {
-                              "id": 4783,
+                              "id": 4781,
                               "name": "IERC165",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 2836,
+                              "referencedDeclaration": 2835,
                               "src": "1641:7:15",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_type$_t_contract$_IERC165_$2836_$",
+                                "typeIdentifier": "t_type$_t_contract$_IERC165_$2835_$",
                                 "typeString": "type(contract IERC165)"
                               }
                             }
@@ -544,11 +544,11 @@
                           "expression": {
                             "argumentTypes": [
                               {
-                                "typeIdentifier": "t_type$_t_contract$_IERC165_$2836_$",
+                                "typeIdentifier": "t_type$_t_contract$_IERC165_$2835_$",
                                 "typeString": "type(contract IERC165)"
                               }
                             ],
-                            "id": 4782,
+                            "id": 4780,
                             "name": "type",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
@@ -559,7 +559,7 @@
                               "typeString": "function () pure"
                             }
                           },
-                          "id": 4784,
+                          "id": 4782,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
@@ -570,11 +570,11 @@
                           "src": "1636:13:15",
                           "tryCall": false,
                           "typeDescriptions": {
-                            "typeIdentifier": "t_magic_meta_type_t_contract$_IERC165_$2836",
+                            "typeIdentifier": "t_magic_meta_type_t_contract$_IERC165_$2835",
                             "typeString": "type(contract IERC165)"
                           }
                         },
-                        "id": 4785,
+                        "id": 4783,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": true,
@@ -602,7 +602,7 @@
                     "operator": "=",
                     "rightHandSide": {
                       "hexValue": "74727565",
-                      "id": 4788,
+                      "id": 4786,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": true,
@@ -622,13 +622,13 @@
                       "typeString": "bool"
                     }
                   },
-                  "id": 4790,
+                  "id": 4788,
                   "nodeType": "ExpressionStatement",
                   "src": "1613:56:15"
                 },
                 {
                   "expression": {
-                    "id": 4800,
+                    "id": 4798,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -636,44 +636,44 @@
                     "leftHandSide": {
                       "baseExpression": {
                         "expression": {
-                          "id": 4791,
+                          "id": 4789,
                           "name": "ds",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 4775,
+                          "referencedDeclaration": 4773,
                           "src": "1679:2:15",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_struct$_DiamondStorage_$3568_storage_ptr",
+                            "typeIdentifier": "t_struct$_DiamondStorage_$3566_storage_ptr",
                             "typeString": "struct LibDiamond.DiamondStorage storage pointer"
                           }
                         },
-                        "id": 4797,
+                        "id": 4795,
                         "isConstant": false,
                         "isLValue": true,
                         "isPure": false,
                         "lValueRequested": false,
                         "memberName": "supportedInterfaces",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 3565,
+                        "referencedDeclaration": 3563,
                         "src": "1679:22:15",
                         "typeDescriptions": {
                           "typeIdentifier": "t_mapping$_t_bytes4_$_t_bool_$",
                           "typeString": "mapping(bytes4 => bool)"
                         }
                       },
-                      "id": 4798,
+                      "id": 4796,
                       "indexExpression": {
                         "expression": {
                           "arguments": [
                             {
-                              "id": 4794,
+                              "id": 4792,
                               "name": "IDiamondCut",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 2784,
+                              "referencedDeclaration": 2783,
                               "src": "1707:11:15",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_type$_t_contract$_IDiamondCut_$2784_$",
+                                "typeIdentifier": "t_type$_t_contract$_IDiamondCut_$2783_$",
                                 "typeString": "type(contract IDiamondCut)"
                               }
                             }
@@ -681,11 +681,11 @@
                           "expression": {
                             "argumentTypes": [
                               {
-                                "typeIdentifier": "t_type$_t_contract$_IDiamondCut_$2784_$",
+                                "typeIdentifier": "t_type$_t_contract$_IDiamondCut_$2783_$",
                                 "typeString": "type(contract IDiamondCut)"
                               }
                             ],
-                            "id": 4793,
+                            "id": 4791,
                             "name": "type",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
@@ -696,7 +696,7 @@
                               "typeString": "function () pure"
                             }
                           },
-                          "id": 4795,
+                          "id": 4793,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
@@ -707,11 +707,11 @@
                           "src": "1702:17:15",
                           "tryCall": false,
                           "typeDescriptions": {
-                            "typeIdentifier": "t_magic_meta_type_t_contract$_IDiamondCut_$2784",
+                            "typeIdentifier": "t_magic_meta_type_t_contract$_IDiamondCut_$2783",
                             "typeString": "type(contract IDiamondCut)"
                           }
                         },
-                        "id": 4796,
+                        "id": 4794,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": true,
@@ -739,7 +739,7 @@
                     "operator": "=",
                     "rightHandSide": {
                       "hexValue": "74727565",
-                      "id": 4799,
+                      "id": 4797,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": true,
@@ -759,13 +759,13 @@
                       "typeString": "bool"
                     }
                   },
-                  "id": 4801,
+                  "id": 4799,
                   "nodeType": "ExpressionStatement",
                   "src": "1679:60:15"
                 },
                 {
                   "expression": {
-                    "id": 4811,
+                    "id": 4809,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -773,44 +773,44 @@
                     "leftHandSide": {
                       "baseExpression": {
                         "expression": {
-                          "id": 4802,
+                          "id": 4800,
                           "name": "ds",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 4775,
+                          "referencedDeclaration": 4773,
                           "src": "1749:2:15",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_struct$_DiamondStorage_$3568_storage_ptr",
+                            "typeIdentifier": "t_struct$_DiamondStorage_$3566_storage_ptr",
                             "typeString": "struct LibDiamond.DiamondStorage storage pointer"
                           }
                         },
-                        "id": 4808,
+                        "id": 4806,
                         "isConstant": false,
                         "isLValue": true,
                         "isPure": false,
                         "lValueRequested": false,
                         "memberName": "supportedInterfaces",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 3565,
+                        "referencedDeclaration": 3563,
                         "src": "1749:22:15",
                         "typeDescriptions": {
                           "typeIdentifier": "t_mapping$_t_bytes4_$_t_bool_$",
                           "typeString": "mapping(bytes4 => bool)"
                         }
                       },
-                      "id": 4809,
+                      "id": 4807,
                       "indexExpression": {
                         "expression": {
                           "arguments": [
                             {
-                              "id": 4805,
+                              "id": 4803,
                               "name": "IDiamondLoupe",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 2825,
+                              "referencedDeclaration": 2824,
                               "src": "1777:13:15",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_type$_t_contract$_IDiamondLoupe_$2825_$",
+                                "typeIdentifier": "t_type$_t_contract$_IDiamondLoupe_$2824_$",
                                 "typeString": "type(contract IDiamondLoupe)"
                               }
                             }
@@ -818,11 +818,11 @@
                           "expression": {
                             "argumentTypes": [
                               {
-                                "typeIdentifier": "t_type$_t_contract$_IDiamondLoupe_$2825_$",
+                                "typeIdentifier": "t_type$_t_contract$_IDiamondLoupe_$2824_$",
                                 "typeString": "type(contract IDiamondLoupe)"
                               }
                             ],
-                            "id": 4804,
+                            "id": 4802,
                             "name": "type",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
@@ -833,7 +833,7 @@
                               "typeString": "function () pure"
                             }
                           },
-                          "id": 4806,
+                          "id": 4804,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
@@ -844,11 +844,11 @@
                           "src": "1772:19:15",
                           "tryCall": false,
                           "typeDescriptions": {
-                            "typeIdentifier": "t_magic_meta_type_t_contract$_IDiamondLoupe_$2825",
+                            "typeIdentifier": "t_magic_meta_type_t_contract$_IDiamondLoupe_$2824",
                             "typeString": "type(contract IDiamondLoupe)"
                           }
                         },
-                        "id": 4807,
+                        "id": 4805,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": true,
@@ -876,7 +876,7 @@
                     "operator": "=",
                     "rightHandSide": {
                       "hexValue": "74727565",
-                      "id": 4810,
+                      "id": 4808,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": true,
@@ -896,13 +896,13 @@
                       "typeString": "bool"
                     }
                   },
-                  "id": 4812,
+                  "id": 4810,
                   "nodeType": "ExpressionStatement",
                   "src": "1749:62:15"
                 },
                 {
                   "expression": {
-                    "id": 4822,
+                    "id": 4820,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -910,44 +910,44 @@
                     "leftHandSide": {
                       "baseExpression": {
                         "expression": {
-                          "id": 4813,
+                          "id": 4811,
                           "name": "ds",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 4775,
+                          "referencedDeclaration": 4773,
                           "src": "1821:2:15",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_struct$_DiamondStorage_$3568_storage_ptr",
+                            "typeIdentifier": "t_struct$_DiamondStorage_$3566_storage_ptr",
                             "typeString": "struct LibDiamond.DiamondStorage storage pointer"
                           }
                         },
-                        "id": 4819,
+                        "id": 4817,
                         "isConstant": false,
                         "isLValue": true,
                         "isPure": false,
                         "lValueRequested": false,
                         "memberName": "supportedInterfaces",
                         "nodeType": "MemberAccess",
-                        "referencedDeclaration": 3565,
+                        "referencedDeclaration": 3563,
                         "src": "1821:22:15",
                         "typeDescriptions": {
                           "typeIdentifier": "t_mapping$_t_bytes4_$_t_bool_$",
                           "typeString": "mapping(bytes4 => bool)"
                         }
                       },
-                      "id": 4820,
+                      "id": 4818,
                       "indexExpression": {
                         "expression": {
                           "arguments": [
                             {
-                              "id": 4816,
+                              "id": 4814,
                               "name": "IERC173",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 2859,
+                              "referencedDeclaration": 2858,
                               "src": "1849:7:15",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_type$_t_contract$_IERC173_$2859_$",
+                                "typeIdentifier": "t_type$_t_contract$_IERC173_$2858_$",
                                 "typeString": "type(contract IERC173)"
                               }
                             }
@@ -955,11 +955,11 @@
                           "expression": {
                             "argumentTypes": [
                               {
-                                "typeIdentifier": "t_type$_t_contract$_IERC173_$2859_$",
+                                "typeIdentifier": "t_type$_t_contract$_IERC173_$2858_$",
                                 "typeString": "type(contract IERC173)"
                               }
                             ],
-                            "id": 4815,
+                            "id": 4813,
                             "name": "type",
                             "nodeType": "Identifier",
                             "overloadedDeclarations": [],
@@ -970,7 +970,7 @@
                               "typeString": "function () pure"
                             }
                           },
-                          "id": 4817,
+                          "id": 4815,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": true,
@@ -981,11 +981,11 @@
                           "src": "1844:13:15",
                           "tryCall": false,
                           "typeDescriptions": {
-                            "typeIdentifier": "t_magic_meta_type_t_contract$_IERC173_$2859",
+                            "typeIdentifier": "t_magic_meta_type_t_contract$_IERC173_$2858",
                             "typeString": "type(contract IERC173)"
                           }
                         },
-                        "id": 4818,
+                        "id": 4816,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": true,
@@ -1013,7 +1013,7 @@
                     "operator": "=",
                     "rightHandSide": {
                       "hexValue": "74727565",
-                      "id": 4821,
+                      "id": 4819,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": true,
@@ -1033,13 +1033,13 @@
                       "typeString": "bool"
                     }
                   },
-                  "id": 4823,
+                  "id": 4821,
                   "nodeType": "ExpressionStatement",
                   "src": "1821:56:15"
                 },
                 {
                   "expression": {
-                    "id": 4828,
+                    "id": 4826,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -1049,18 +1049,18 @@
                         "arguments": [],
                         "expression": {
                           "argumentTypes": [],
-                          "id": 4824,
+                          "id": 4822,
                           "name": "gs",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 4441,
+                          "referencedDeclaration": 4439,
                           "src": "2368:2:15",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_function_internal_pure$__$returns$_t_struct$_GameState_$4609_storage_ptr_$",
+                            "typeIdentifier": "t_function_internal_pure$__$returns$_t_struct$_GameState_$4607_storage_ptr_$",
                             "typeString": "function () pure returns (struct GameState storage pointer)"
                           }
                         },
-                        "id": 4825,
+                        "id": 4823,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -1071,51 +1071,51 @@
                         "src": "2368:4:15",
                         "tryCall": false,
                         "typeDescriptions": {
-                          "typeIdentifier": "t_struct$_GameState_$4609_storage_ptr",
+                          "typeIdentifier": "t_struct$_GameState_$4607_storage_ptr",
                           "typeString": "struct GameState storage pointer"
                         }
                       },
-                      "id": 4826,
+                      "id": 4824,
                       "isConstant": false,
                       "isLValue": true,
                       "isPure": false,
                       "lValueRequested": true,
                       "memberName": "worldConstants",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 4556,
+                      "referencedDeclaration": 4554,
                       "src": "2368:19:15",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_struct$_WorldConstants_$4553_storage",
+                        "typeIdentifier": "t_struct$_WorldConstants_$4551_storage",
                         "typeString": "struct WorldConstants storage ref"
                       }
                     },
                     "nodeType": "Assignment",
                     "operator": "=",
                     "rightHandSide": {
-                      "id": 4827,
+                      "id": 4825,
                       "name": "_worldConstants",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 4764,
+                      "referencedDeclaration": 4762,
                       "src": "2390:15:15",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_struct$_WorldConstants_$4553_memory_ptr",
+                        "typeIdentifier": "t_struct$_WorldConstants_$4551_memory_ptr",
                         "typeString": "struct WorldConstants memory"
                       }
                     },
                     "src": "2368:37:15",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_WorldConstants_$4553_storage",
+                      "typeIdentifier": "t_struct$_WorldConstants_$4551_storage",
                       "typeString": "struct WorldConstants storage ref"
                     }
                   },
-                  "id": 4829,
+                  "id": 4827,
                   "nodeType": "ExpressionStatement",
                   "src": "2368:37:15"
                 },
                 {
                   "body": {
-                    "id": 4862,
+                    "id": 4860,
                     "nodeType": "Block",
                     "src": "2547:111:15",
                     "statements": [
@@ -1127,17 +1127,17 @@
                                 "typeIdentifier": "t_uint256",
                                 "typeString": "uint256"
                               },
-                              "id": 4847,
+                              "id": 4845,
                               "isConstant": false,
                               "isLValue": false,
                               "isPure": false,
                               "lValueRequested": false,
                               "leftExpression": {
-                                "id": 4845,
+                                "id": 4843,
                                 "name": "i",
                                 "nodeType": "Identifier",
                                 "overloadedDeclarations": [],
-                                "referencedDeclaration": 4831,
+                                "referencedDeclaration": 4829,
                                 "src": "2584:1:15",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_uint256",
@@ -1148,7 +1148,7 @@
                               "operator": "+",
                               "rightExpression": {
                                 "hexValue": "31",
-                                "id": 4846,
+                                "id": 4844,
                                 "isConstant": false,
                                 "isLValue": false,
                                 "isPure": true,
@@ -1181,18 +1181,18 @@
                                 "arguments": [],
                                 "expression": {
                                   "argumentTypes": [],
-                                  "id": 4841,
+                                  "id": 4839,
                                   "name": "gs",
                                   "nodeType": "Identifier",
                                   "overloadedDeclarations": [],
-                                  "referencedDeclaration": 4441,
+                                  "referencedDeclaration": 4439,
                                   "src": "2561:2:15",
                                   "typeDescriptions": {
-                                    "typeIdentifier": "t_function_internal_pure$__$returns$_t_struct$_GameState_$4609_storage_ptr_$",
+                                    "typeIdentifier": "t_function_internal_pure$__$returns$_t_struct$_GameState_$4607_storage_ptr_$",
                                     "typeString": "function () pure returns (struct GameState storage pointer)"
                                   }
                                 },
-                                "id": 4842,
+                                "id": 4840,
                                 "isConstant": false,
                                 "isLValue": false,
                                 "isPure": false,
@@ -1203,25 +1203,25 @@
                                 "src": "2561:4:15",
                                 "tryCall": false,
                                 "typeDescriptions": {
-                                  "typeIdentifier": "t_struct$_GameState_$4609_storage_ptr",
+                                  "typeIdentifier": "t_struct$_GameState_$4607_storage_ptr",
                                   "typeString": "struct GameState storage pointer"
                                 }
                               },
-                              "id": 4843,
+                              "id": 4841,
                               "isConstant": false,
                               "isLValue": true,
                               "isPure": false,
                               "lValueRequested": false,
                               "memberName": "troopTypeIds",
                               "nodeType": "MemberAccess",
-                              "referencedDeclaration": 4603,
+                              "referencedDeclaration": 4601,
                               "src": "2561:17:15",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_array$_t_uint256_$dyn_storage",
                                 "typeString": "uint256[] storage ref"
                               }
                             },
-                            "id": 4844,
+                            "id": 4842,
                             "isConstant": false,
                             "isLValue": false,
                             "isPure": false,
@@ -1234,7 +1234,7 @@
                               "typeString": "function (uint256[] storage pointer,uint256)"
                             }
                           },
-                          "id": 4848,
+                          "id": 4846,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": false,
@@ -1249,13 +1249,13 @@
                             "typeString": "tuple()"
                           }
                         },
-                        "id": 4849,
+                        "id": 4847,
                         "nodeType": "ExpressionStatement",
                         "src": "2561:29:15"
                       },
                       {
                         "expression": {
-                          "id": 4860,
+                          "id": 4858,
                           "isConstant": false,
                           "isLValue": false,
                           "isPure": false,
@@ -1266,18 +1266,18 @@
                                 "arguments": [],
                                 "expression": {
                                   "argumentTypes": [],
-                                  "id": 4850,
+                                  "id": 4848,
                                   "name": "gs",
                                   "nodeType": "Identifier",
                                   "overloadedDeclarations": [],
-                                  "referencedDeclaration": 4441,
+                                  "referencedDeclaration": 4439,
                                   "src": "2604:2:15",
                                   "typeDescriptions": {
-                                    "typeIdentifier": "t_function_internal_pure$__$returns$_t_struct$_GameState_$4609_storage_ptr_$",
+                                    "typeIdentifier": "t_function_internal_pure$__$returns$_t_struct$_GameState_$4607_storage_ptr_$",
                                     "typeString": "function () pure returns (struct GameState storage pointer)"
                                   }
                                 },
-                                "id": 4851,
+                                "id": 4849,
                                 "isConstant": false,
                                 "isLValue": false,
                                 "isPure": false,
@@ -1288,41 +1288,41 @@
                                 "src": "2604:4:15",
                                 "tryCall": false,
                                 "typeDescriptions": {
-                                  "typeIdentifier": "t_struct$_GameState_$4609_storage_ptr",
+                                  "typeIdentifier": "t_struct$_GameState_$4607_storage_ptr",
                                   "typeString": "struct GameState storage pointer"
                                 }
                               },
-                              "id": 4852,
+                              "id": 4850,
                               "isConstant": false,
                               "isLValue": true,
                               "isPure": false,
                               "lValueRequested": false,
                               "memberName": "troopTypeIdMap",
                               "nodeType": "MemberAccess",
-                              "referencedDeclaration": 4608,
+                              "referencedDeclaration": 4606,
                               "src": "2604:19:15",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_mapping$_t_uint256_$_t_struct$_TroopType_$4533_storage_$",
+                                "typeIdentifier": "t_mapping$_t_uint256_$_t_struct$_TroopType_$4531_storage_$",
                                 "typeString": "mapping(uint256 => struct TroopType storage ref)"
                               }
                             },
-                            "id": 4856,
+                            "id": 4854,
                             "indexExpression": {
                               "commonType": {
                                 "typeIdentifier": "t_uint256",
                                 "typeString": "uint256"
                               },
-                              "id": 4855,
+                              "id": 4853,
                               "isConstant": false,
                               "isLValue": false,
                               "isPure": false,
                               "lValueRequested": false,
                               "leftExpression": {
-                                "id": 4853,
+                                "id": 4851,
                                 "name": "i",
                                 "nodeType": "Identifier",
                                 "overloadedDeclarations": [],
-                                "referencedDeclaration": 4831,
+                                "referencedDeclaration": 4829,
                                 "src": "2624:1:15",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_uint256",
@@ -1333,7 +1333,7 @@
                               "operator": "+",
                               "rightExpression": {
                                 "hexValue": "31",
-                                "id": 4854,
+                                "id": 4852,
                                 "isConstant": false,
                                 "isLValue": false,
                                 "isPure": true,
@@ -1360,7 +1360,7 @@
                             "nodeType": "IndexAccess",
                             "src": "2604:26:15",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_struct$_TroopType_$4533_storage",
+                              "typeIdentifier": "t_struct$_TroopType_$4531_storage",
                               "typeString": "struct TroopType storage ref"
                             }
                           },
@@ -1368,24 +1368,24 @@
                           "operator": "=",
                           "rightHandSide": {
                             "baseExpression": {
-                              "id": 4857,
+                              "id": 4855,
                               "name": "_troopTypes",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 4768,
+                              "referencedDeclaration": 4766,
                               "src": "2633:11:15",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_array$_t_struct$_TroopType_$4533_memory_ptr_$dyn_memory_ptr",
+                                "typeIdentifier": "t_array$_t_struct$_TroopType_$4531_memory_ptr_$dyn_memory_ptr",
                                 "typeString": "struct TroopType memory[] memory"
                               }
                             },
-                            "id": 4859,
+                            "id": 4857,
                             "indexExpression": {
-                              "id": 4858,
+                              "id": 4856,
                               "name": "i",
                               "nodeType": "Identifier",
                               "overloadedDeclarations": [],
-                              "referencedDeclaration": 4831,
+                              "referencedDeclaration": 4829,
                               "src": "2645:1:15",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_uint256",
@@ -1399,17 +1399,17 @@
                             "nodeType": "IndexAccess",
                             "src": "2633:14:15",
                             "typeDescriptions": {
-                              "typeIdentifier": "t_struct$_TroopType_$4533_memory_ptr",
+                              "typeIdentifier": "t_struct$_TroopType_$4531_memory_ptr",
                               "typeString": "struct TroopType memory"
                             }
                           },
                           "src": "2604:43:15",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_struct$_TroopType_$4533_storage",
+                            "typeIdentifier": "t_struct$_TroopType_$4531_storage",
                             "typeString": "struct TroopType storage ref"
                           }
                         },
-                        "id": 4861,
+                        "id": 4859,
                         "nodeType": "ExpressionStatement",
                         "src": "2604:43:15"
                       }
@@ -1420,17 +1420,17 @@
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
                     },
-                    "id": 4837,
+                    "id": 4835,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
                     "lValueRequested": false,
                     "leftExpression": {
-                      "id": 4834,
+                      "id": 4832,
                       "name": "i",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 4831,
+                      "referencedDeclaration": 4829,
                       "src": "2518:1:15",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
@@ -1441,18 +1441,18 @@
                     "operator": "<",
                     "rightExpression": {
                       "expression": {
-                        "id": 4835,
+                        "id": 4833,
                         "name": "_troopTypes",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 4768,
+                        "referencedDeclaration": 4766,
                         "src": "2522:11:15",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_array$_t_struct$_TroopType_$4533_memory_ptr_$dyn_memory_ptr",
+                          "typeIdentifier": "t_array$_t_struct$_TroopType_$4531_memory_ptr_$dyn_memory_ptr",
                           "typeString": "struct TroopType memory[] memory"
                         }
                       },
-                      "id": 4836,
+                      "id": 4834,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
@@ -1471,20 +1471,20 @@
                       "typeString": "bool"
                     }
                   },
-                  "id": 4863,
+                  "id": 4861,
                   "initializationExpression": {
                     "assignments": [
-                      4831
+                      4829
                     ],
                     "declarations": [
                       {
                         "constant": false,
-                        "id": 4831,
+                        "id": 4829,
                         "mutability": "mutable",
                         "name": "i",
                         "nameLocation": "2511:1:15",
                         "nodeType": "VariableDeclaration",
-                        "scope": 4863,
+                        "scope": 4861,
                         "src": "2503:9:15",
                         "stateVariable": false,
                         "storageLocation": "default",
@@ -1493,7 +1493,7 @@
                           "typeString": "uint256"
                         },
                         "typeName": {
-                          "id": 4830,
+                          "id": 4828,
                           "name": "uint256",
                           "nodeType": "ElementaryTypeName",
                           "src": "2503:7:15",
@@ -1505,10 +1505,10 @@
                         "visibility": "internal"
                       }
                     ],
-                    "id": 4833,
+                    "id": 4831,
                     "initialValue": {
                       "hexValue": "30",
-                      "id": 4832,
+                      "id": 4830,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": true,
@@ -1527,7 +1527,7 @@
                   },
                   "loopExpression": {
                     "expression": {
-                      "id": 4839,
+                      "id": 4837,
                       "isConstant": false,
                       "isLValue": false,
                       "isPure": false,
@@ -1537,11 +1537,11 @@
                       "prefix": false,
                       "src": "2542:3:15",
                       "subExpression": {
-                        "id": 4838,
+                        "id": 4836,
                         "name": "i",
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
-                        "referencedDeclaration": 4831,
+                        "referencedDeclaration": 4829,
                         "src": "2542:1:15",
                         "typeDescriptions": {
                           "typeIdentifier": "t_uint256",
@@ -1553,7 +1553,7 @@
                         "typeString": "uint256"
                       }
                     },
-                    "id": 4840,
+                    "id": 4838,
                     "nodeType": "ExpressionStatement",
                     "src": "2542:3:15"
                   },
@@ -1562,7 +1562,7 @@
                 },
                 {
                   "expression": {
-                    "id": 4867,
+                    "id": 4865,
                     "isConstant": false,
                     "isLValue": false,
                     "isPure": false,
@@ -1576,18 +1576,18 @@
                         "arguments": [],
                         "expression": {
                           "argumentTypes": [],
-                          "id": 4864,
+                          "id": 4862,
                           "name": "gs",
                           "nodeType": "Identifier",
                           "overloadedDeclarations": [],
-                          "referencedDeclaration": 4441,
+                          "referencedDeclaration": 4439,
                           "src": "2739:2:15",
                           "typeDescriptions": {
-                            "typeIdentifier": "t_function_internal_pure$__$returns$_t_struct$_GameState_$4609_storage_ptr_$",
+                            "typeIdentifier": "t_function_internal_pure$__$returns$_t_struct$_GameState_$4607_storage_ptr_$",
                             "typeString": "function () pure returns (struct GameState storage pointer)"
                           }
                         },
-                        "id": 4865,
+                        "id": 4863,
                         "isConstant": false,
                         "isLValue": false,
                         "isPure": false,
@@ -1598,18 +1598,18 @@
                         "src": "2739:4:15",
                         "tryCall": false,
                         "typeDescriptions": {
-                          "typeIdentifier": "t_struct$_GameState_$4609_storage_ptr",
+                          "typeIdentifier": "t_struct$_GameState_$4607_storage_ptr",
                           "typeString": "struct GameState storage pointer"
                         }
                       },
-                      "id": 4866,
+                      "id": 4864,
                       "isConstant": false,
                       "isLValue": true,
                       "isPure": false,
                       "lValueRequested": true,
                       "memberName": "troopNonce",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 4595,
+                      "referencedDeclaration": 4593,
                       "src": "2739:15:15",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
@@ -1621,7 +1621,7 @@
                       "typeString": "uint256"
                     }
                   },
-                  "id": 4868,
+                  "id": 4866,
                   "nodeType": "ExpressionStatement",
                   "src": "2739:17:15"
                 }
@@ -1634,38 +1634,38 @@
             "name": "init",
             "nameLocation": "1342:4:15",
             "parameters": {
-              "id": 4769,
+              "id": 4767,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 4764,
+                  "id": 4762,
                   "mutability": "mutable",
                   "name": "_worldConstants",
                   "nameLocation": "1378:15:15",
                   "nodeType": "VariableDeclaration",
-                  "scope": 4870,
+                  "scope": 4868,
                   "src": "1356:37:15",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_struct$_WorldConstants_$4553_memory_ptr",
+                    "typeIdentifier": "t_struct$_WorldConstants_$4551_memory_ptr",
                     "typeString": "struct WorldConstants"
                   },
                   "typeName": {
-                    "id": 4763,
+                    "id": 4761,
                     "nodeType": "UserDefinedTypeName",
                     "pathNode": {
-                      "id": 4762,
+                      "id": 4760,
                       "name": "WorldConstants",
                       "nodeType": "IdentifierPath",
-                      "referencedDeclaration": 4553,
+                      "referencedDeclaration": 4551,
                       "src": "1356:14:15"
                     },
-                    "referencedDeclaration": 4553,
+                    "referencedDeclaration": 4551,
                     "src": "1356:14:15",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_struct$_WorldConstants_$4553_storage_ptr",
+                      "typeIdentifier": "t_struct$_WorldConstants_$4551_storage_ptr",
                       "typeString": "struct WorldConstants"
                     }
                   },
@@ -1673,42 +1673,42 @@
                 },
                 {
                   "constant": false,
-                  "id": 4768,
+                  "id": 4766,
                   "mutability": "mutable",
                   "name": "_troopTypes",
                   "nameLocation": "1470:11:15",
                   "nodeType": "VariableDeclaration",
-                  "scope": 4870,
+                  "scope": 4868,
                   "src": "1451:30:15",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_array$_t_struct$_TroopType_$4533_memory_ptr_$dyn_memory_ptr",
+                    "typeIdentifier": "t_array$_t_struct$_TroopType_$4531_memory_ptr_$dyn_memory_ptr",
                     "typeString": "struct TroopType[]"
                   },
                   "typeName": {
                     "baseType": {
-                      "id": 4766,
+                      "id": 4764,
                       "nodeType": "UserDefinedTypeName",
                       "pathNode": {
-                        "id": 4765,
+                        "id": 4763,
                         "name": "TroopType",
                         "nodeType": "IdentifierPath",
-                        "referencedDeclaration": 4533,
+                        "referencedDeclaration": 4531,
                         "src": "1451:9:15"
                       },
-                      "referencedDeclaration": 4533,
+                      "referencedDeclaration": 4531,
                       "src": "1451:9:15",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_struct$_TroopType_$4533_storage_ptr",
+                        "typeIdentifier": "t_struct$_TroopType_$4531_storage_ptr",
                         "typeString": "struct TroopType"
                       }
                     },
-                    "id": 4767,
+                    "id": 4765,
                     "nodeType": "ArrayTypeName",
                     "src": "1451:11:15",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_array$_t_struct$_TroopType_$4533_storage_$dyn_storage_ptr",
+                      "typeIdentifier": "t_array$_t_struct$_TroopType_$4531_storage_$dyn_storage_ptr",
                       "typeString": "struct TroopType[]"
                     }
                   },
@@ -1718,12 +1718,12 @@
               "src": "1346:141:15"
             },
             "returnParameters": {
-              "id": 4770,
+              "id": 4768,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "1497:0:15"
             },
-            "scope": 4871,
+            "scope": 4869,
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "external"
@@ -1733,13 +1733,13 @@
         "baseContracts": [
           {
             "baseName": {
-              "id": 4760,
+              "id": 4758,
               "name": "UseStorage",
               "nodeType": "IdentifierPath",
-              "referencedDeclaration": 4442,
+              "referencedDeclaration": 4440,
               "src": "1205:10:15"
             },
-            "id": 4761,
+            "id": 4759,
             "nodeType": "InheritanceSpecifier",
             "src": "1205:10:15"
           }
@@ -1748,12 +1748,12 @@
         "contractKind": "contract",
         "fullyImplemented": true,
         "linearizedBaseContracts": [
-          4871,
-          4442
+          4869,
+          4440
         ],
         "name": "DiamondInit",
         "nameLocation": "1190:11:15",
-        "scope": 4872,
+        "scope": 4870,
         "usedErrors": []
       }
     ],
