@@ -18,8 +18,6 @@ contract FoundryTest is Test, DiamondDeployTest {
     event Repaired(address _player, uint256 _troopId, uint256 _health);
     event Recovered(address _player, uint256 _troopId);
 
-    uint256 public NULL = 0;
-
     // ----------------------------------------------------------------------
     // BASIC TESTS
     // ----------------------------------------------------------------------
@@ -31,13 +29,6 @@ contract FoundryTest is Test, DiamondDeployTest {
     }
 
     function testSetMapChunk() public {
-        WorldConstants memory _worldConstants = getter.getWorldConstants();
-        Position memory _startPos = Position({x: 0, y: 0});
-        uint256[][] memory _chunk = generateMapChunk(_worldConstants.mapInterval);
-
-        vm.prank(deployer);
-        engine.setMapChunk(_startPos, _chunk);
-
         Tile memory _coastTile = getter.getTileAt(Position({x: 8, y: 2}));
         assertTrue(_coastTile.terrain == TERRAIN.COAST);
         assertEq(_coastTile.occupantId, NULL);
@@ -87,18 +78,27 @@ contract FoundryTest is Test, DiamondDeployTest {
         Position memory _player1Pos = Position({x: 6, y: 1});
         Position memory _player2Pos = Position({x: 6, y: 3});
 
-        // FIXME
-        // vm.prank(deployer);
-        // engine.initializePlayer(_player1Pos, player1);
-        // vm.prank(deployer);
-        // engine.initializePlayer(_player2Pos, player2);
+        // TODO: Upgrade logic such that everyone can initialize themselves. figure out if we want a whitelist or something
 
-        // Base memory _player1Port = getter.getBaseAt(_player1Pos);
-        // assertTrue(_player1Port.name == BASE_NAME.PORT);
-        // assertEq(_player1Port.owner, player1);
+        vm.prank(deployer);
+        engine.initializePlayer(_player1Pos, player1);
+        vm.prank(deployer);
+        engine.initializePlayer(_player2Pos, player2);
 
-        // Base memory _player2Port = getter.getBaseAt(_player2Pos);
-        // assertTrue(_player2Port.name == BASE_NAME.PORT);
-        // assertEq(_player2Port.owner, player2);
+        Base memory _player1Port = getter.getBaseAt(_player1Pos);
+        assertTrue(_player1Port.name == BASE_NAME.PORT);
+        assertEq(_player1Port.owner, player1);
+
+        Base memory _player2Port = getter.getBaseAt(_player2Pos);
+        assertTrue(_player2Port.name == BASE_NAME.PORT);
+        assertEq(_player2Port.owner, player2);
+    }
+
+    function testTransferDiamondOwnership() public {
+        vm.prank(deployer);
+        ownership.transferOwnership(player1);
+
+        address _owner = ownership.owner();
+        assertEq(_owner, player1);
     }
 }

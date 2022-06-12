@@ -72,6 +72,7 @@ contract EngineFacet is UseStorage {
      */
     function initializePlayer(Position memory _pos, address _player) external onlyAdmin {
         uint256 _baseId = Util._getTileAt(_pos).baseId;
+
         if (Util._getBaseOwner(_baseId) != address(0)) revert("Base is taken");
 
         gs().players.push(_player);

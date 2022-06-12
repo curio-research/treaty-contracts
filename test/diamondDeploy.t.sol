@@ -29,6 +29,9 @@ contract DiamondDeployTest is Test {
     // diamond-contract-casted methods
     GetterFacet public getter;
     EngineFacet public engine;
+    OwnershipFacet public ownership;
+
+    uint256 public NULL = 0;
 
     address public deployer = address(0);
     address public player1 = address(1);
@@ -49,7 +52,6 @@ contract DiamondDeployTest is Test {
         engineFacet = new EngineFacet();
 
         WorldConstants memory _worldConstants = _generateWorldConstants();
-        // BaseConstants memory _baseConstants = _generateBaseConstants();
         TroopType[] memory _troopTypes = _generateTroopTypes();
 
         // fetch args from cli. craft payload for init deploy
@@ -66,6 +68,14 @@ contract DiamondDeployTest is Test {
 
         getter = GetterFacet(diamond);
         engine = EngineFacet(diamond);
+        ownership = OwnershipFacet(diamond);
+
+        // initialize map
+        Position memory _startPos = Position({x: 0, y: 0});
+        uint256[][] memory _chunk = generateMapChunk(_worldConstants.mapInterval);
+
+        vm.prank(deployer);
+        engine.setMapChunk(_startPos, _chunk);
     }
 
     // FIXME: hardcoded
@@ -81,10 +91,6 @@ contract DiamondDeployTest is Test {
                 secondsPerTurn: 6
             });
     }
-
-    // function _generateBaseConstants() internal pure returns (BaseConstants memory) {
-    //     return BaseConstants({attackFactor: 1, defenseFactor: 1, maxHealth: 1});
-    // }
 
     // FIXME: hardcoded
     function _generateTroopTypes() internal pure returns (TroopType[] memory) {
@@ -193,6 +199,8 @@ contract DiamondDeployTest is Test {
 
         return _chunk;
     }
+
+    // helper functions
 
     // generates values that need to be initialized from the cli and pipes it back into solidity! magic
     function getInitVal() public returns (WorldConstants memory _constants, TroopType[] memory _troopTypes) {

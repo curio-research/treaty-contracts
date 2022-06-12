@@ -2,8 +2,9 @@
 pragma solidity ^0.8.4;
 
 import {BASE_NAME, Base, GameState, Position, Tile, Troop} from "contracts/libraries/Types.sol";
-import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 import {LibStorage} from "contracts/libraries/Storage.sol";
+import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
+import "forge-std/console.sol";
 
 library Util {
     using SafeMath for uint256;
@@ -56,7 +57,6 @@ library Util {
     }
 
     function _addBase(Position memory _pos, BASE_NAME _baseName) public returns (uint256) {
-        // BaseConstants memory _baseConstants = gs().baseConstants;
         Base memory _base = Base({
             owner: address(0),
             name: _baseName,
@@ -66,9 +66,11 @@ library Util {
         });
 
         uint256 _baseId = gs().baseNonce;
+        // console.log(_baseId);
         gs().baseIds.push(_baseId);
         gs().baseIdMap[_baseId] = _base;
-        gs().baseNonce++;
+        gs().baseNonce += 1;
+        // console.log(_pos.x, _pos.y);
         gs().map[_pos.x][_pos.y].baseId = _baseId;
 
         return _baseId;
