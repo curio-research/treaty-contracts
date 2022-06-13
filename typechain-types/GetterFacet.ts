@@ -99,7 +99,6 @@ export type WorldConstantsStructOutput = [
 export interface GetterFacetInterface extends utils.Interface {
   functions: {
     "_getMapChunk((uint256,uint256))": FunctionFragment;
-    "_getSample()": FunctionFragment;
     "_getTroopAt((uint256,uint256))": FunctionFragment;
     "_getWorldConstants()": FunctionFragment;
     "bulkGetAllTroops()": FunctionFragment;
@@ -108,10 +107,6 @@ export interface GetterFacetInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "_getMapChunk",
     values: [PositionStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getSample",
-    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "_getTroopAt",
@@ -130,7 +125,6 @@ export interface GetterFacetInterface extends utils.Interface {
     functionFragment: "_getMapChunk",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "_getSample", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_getTroopAt",
     data: BytesLike
@@ -179,8 +173,6 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[TileStructOutput[], PositionStructOutput[]]>;
 
-    _getSample(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     _getTroopAt(
       _pos: PositionStruct,
       overrides?: CallOverrides
@@ -198,8 +190,6 @@ export interface GetterFacet extends BaseContract {
     overrides?: CallOverrides
   ): Promise<[TileStructOutput[], PositionStructOutput[]]>;
 
-  _getSample(overrides?: CallOverrides): Promise<BigNumber>;
-
   _getTroopAt(
     _pos: PositionStruct,
     overrides?: CallOverrides
@@ -216,8 +206,6 @@ export interface GetterFacet extends BaseContract {
       _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<[TileStructOutput[], PositionStructOutput[]]>;
-
-    _getSample(overrides?: CallOverrides): Promise<BigNumber>;
 
     _getTroopAt(
       _pos: PositionStruct,
@@ -239,8 +227,6 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getSample(overrides?: CallOverrides): Promise<BigNumber>;
-
     _getTroopAt(
       _pos: PositionStruct,
       overrides?: CallOverrides
@@ -256,8 +242,6 @@ export interface GetterFacet extends BaseContract {
       _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
-
-    _getSample(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     _getTroopAt(
       _pos: PositionStruct,

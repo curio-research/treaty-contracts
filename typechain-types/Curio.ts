@@ -139,7 +139,6 @@ export interface CurioInterface extends utils.Interface {
     "startProduction((uint256,uint256),uint256)": FunctionFragment;
     "updateEpoch()": FunctionFragment;
     "_getMapChunk((uint256,uint256))": FunctionFragment;
-    "_getSample()": FunctionFragment;
     "_getTroopAt((uint256,uint256))": FunctionFragment;
     "_getWorldConstants()": FunctionFragment;
     "bulkGetAllTroops()": FunctionFragment;
@@ -213,10 +212,6 @@ export interface CurioInterface extends utils.Interface {
     values: [PositionStruct]
   ): string;
   encodeFunctionData(
-    functionFragment: "_getSample",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "_getTroopAt",
     values: [PositionStruct]
   ): string;
@@ -284,7 +279,6 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "_getMapChunk",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "_getSample", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_getTroopAt",
     data: BytesLike
@@ -542,8 +536,6 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[TileStructOutput[], PositionStructOutput[]]>;
 
-    _getSample(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     _getTroopAt(
       _pos: PositionStruct,
       overrides?: CallOverrides
@@ -651,8 +643,6 @@ export interface Curio extends BaseContract {
     overrides?: CallOverrides
   ): Promise<[TileStructOutput[], PositionStructOutput[]]>;
 
-  _getSample(overrides?: CallOverrides): Promise<BigNumber>;
-
   _getTroopAt(
     _pos: PositionStruct,
     overrides?: CallOverrides
@@ -754,8 +744,6 @@ export interface Curio extends BaseContract {
       _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<[TileStructOutput[], PositionStructOutput[]]>;
-
-    _getSample(overrides?: CallOverrides): Promise<BigNumber>;
 
     _getTroopAt(
       _pos: PositionStruct,
@@ -968,8 +956,6 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getSample(overrides?: CallOverrides): Promise<BigNumber>;
-
     _getTroopAt(
       _pos: PositionStruct,
       overrides?: CallOverrides
@@ -1075,8 +1061,6 @@ export interface Curio extends BaseContract {
       _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
-
-    _getSample(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     _getTroopAt(
       _pos: PositionStruct,
