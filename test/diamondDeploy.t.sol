@@ -176,7 +176,7 @@ contract DiamondDeployTest is Test {
                 numPorts: 15,
                 numCities: 15, // yo
                 mapInterval: 10,
-                secondsPerTurn: 1 // easiser for testing
+                secondsPerTurn: 10 // easiser for testing
             });
     }
 

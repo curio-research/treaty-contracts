@@ -100,6 +100,10 @@ contract FoundryTest is Test, DiamondDeployTest {
         engine.updateEpoch();
         assertEq(getter.getEpoch(), 1);
 
+        vm.warp(105);
+        vm.expectRevert(bytes("Not enough time has elapsed since last epoch"));
+        engine.updateEpoch();
+
         vm.warp(200);
         engine.updateEpoch();
         assertEq(getter.getEpoch(), 2);
@@ -243,8 +247,8 @@ contract FoundryTest is Test, DiamondDeployTest {
         // fast foward a few epochs
         uint256 startTime = 100;
 
-        for (uint256 i = 1; i < troopTypeInfo.epochsToProduce + 1; i++) {
-            vm.warp(startTime + i); // increase time by a few seconds;
+        for (uint256 i = 1; i <= troopTypeInfo.epochsToProduce; i++) {
+            vm.warp(startTime + i * 10); // increase time by a few seconds;
             engine.updateEpoch();
         }
 
