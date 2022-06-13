@@ -24,7 +24,7 @@ export type WorldConstantsStruct = {
   numPorts: BigNumberish;
   numCities: BigNumberish;
   mapInterval: BigNumberish;
-  secondsPerTurn: BigNumberish;
+  secondsPerEpoch: BigNumberish;
 };
 
 export type WorldConstantsStructOutput = [
@@ -42,7 +42,7 @@ export type WorldConstantsStructOutput = [
   numPorts: BigNumber;
   numCities: BigNumber;
   mapInterval: BigNumber;
-  secondsPerTurn: BigNumber;
+  secondsPerEpoch: BigNumber;
 };
 
 export type TroopTypeStruct = {

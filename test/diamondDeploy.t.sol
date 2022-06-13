@@ -32,15 +32,21 @@ contract DiamondDeployTest is Test {
     OwnershipFacet public ownership;
 
     uint256 public NULL = 0;
+    address public NULL_ADDR = address(0);
 
     address public deployer = address(0);
     address public player1 = address(1);
     address public player2 = address(2);
     address public player3 = address(3);
 
-    Position public _player1Pos = Position({x: 6, y: 1});
-    Position public _player2Pos = Position({x: 6, y: 3});
-    Position public _player3Pos = Position({x: 5, y: 2});
+    Position public player1Pos = Position({x: 6, y: 1});
+    Position public player2Pos = Position({x: 6, y: 3});
+    Position public player3Pos = Position({x: 5, y: 2});
+
+    uint256 public initTroopNonce = 1;
+
+    uint256 public armyTroopTypeId = indexToId(uint256(TROOP_NAME.ARMY));
+    uint256 public troopTransportTroopTypeId = indexToId(uint256(TROOP_NAME.TROOP_TRANSPORT));
 
     // troop types
     TroopType public armyTroopType =
@@ -159,9 +165,9 @@ contract DiamondDeployTest is Test {
         // initialize players
         // TODO: Upgrade logic such that everyone can initialize themselves. figure out if we want a whitelist or something
 
-        engine.initializePlayer(_player1Pos, player1);
-        engine.initializePlayer(_player2Pos, player2);
-        engine.initializePlayer(_player3Pos, player3);
+        engine.initializePlayer(player1Pos, player1);
+        engine.initializePlayer(player2Pos, player2);
+        engine.initializePlayer(player3Pos, player3);
 
         vm.stopPrank();
     }
@@ -176,7 +182,7 @@ contract DiamondDeployTest is Test {
                 numPorts: 15,
                 numCities: 15, // yo
                 mapInterval: 10,
-                secondsPerTurn: 10 // easiser for testing
+                secondsPerEpoch: 10 // easiser for testing
             });
     }
 
@@ -246,5 +252,10 @@ contract DiamondDeployTest is Test {
         cmd[4] = _facetName;
         bytes memory res = vm.ffi(cmd);
         selectors = abi.decode(res, (bytes4[]));
+    }
+
+    // FIXME: change to 999
+    function indexToId(uint256 _index) public pure returns (uint256) {
+        return _index + 1;
     }
 }

@@ -83,7 +83,7 @@ struct WorldConstants {
     uint256 numPorts;
     uint256 numCities;
     uint256 mapInterval;
-    uint256 secondsPerTurn;
+    uint256 secondsPerEpoch;
 }
 
 struct GameState {

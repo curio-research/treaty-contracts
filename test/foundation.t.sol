@@ -47,9 +47,9 @@ contract FoundryTest is Test, DiamondDeployTest {
         Tile memory _portTile = getter.getTileAt(Position({x: 6, y: 5}));
         assertTrue(_portTile.terrain == TERRAIN.COAST);
         assertEq(_portTile.occupantId, NULL);
-        Base memory _port = getter.getBaseById(_portTile.baseId);
+        Base memory _port = getter.getBase(_portTile.baseId);
         assertTrue(_port.name == BASE_NAME.PORT);
-        assertEq(_port.owner, address(0));
+        assertEq(_port.owner, NULL_ADDR);
         assertEq(_port.attackFactor, 100);
         assertEq(_port.defenseFactor, 100);
         assertEq(_port.health, 1);
@@ -57,9 +57,9 @@ contract FoundryTest is Test, DiamondDeployTest {
         Tile memory _cityTile = getter.getTileAt(Position({x: 5, y: 8}));
         assertTrue(_cityTile.terrain == TERRAIN.INLAND);
         assertEq(_cityTile.occupantId, NULL);
-        Base memory _city = getter.getBaseById(_cityTile.baseId);
+        Base memory _city = getter.getBase(_cityTile.baseId);
         assertTrue(_city.name == BASE_NAME.CITY);
-        assertEq(_city.owner, address(0));
+        assertEq(_city.owner, NULL_ADDR);
         assertEq(_city.attackFactor, 100);
         assertEq(_city.defenseFactor, 100);
         assertEq(_city.health, 1);
@@ -67,7 +67,7 @@ contract FoundryTest is Test, DiamondDeployTest {
 
     function testOnlyAdmin() public {
         Position memory _pos = Position({x: 3, y: 3});
-        uint256 _armyTroopTypeId = 0;
+        uint256 _armyTroopTypeId = indexToId(uint256(TROOP_NAME.ARMY));
 
         vm.expectRevert(Unauthorized.selector);
         vm.prank(player2);
@@ -75,13 +75,19 @@ contract FoundryTest is Test, DiamondDeployTest {
     }
 
     function testInitializePlayer() public {
-        Base memory _player1Port = getter.getBaseAt(_player1Pos);
+        Base memory _player1Port = getter.getBaseAt(player1Pos);
         assertTrue(_player1Port.name == BASE_NAME.PORT);
         assertEq(_player1Port.owner, player1);
 
-        Base memory _player2Port = getter.getBaseAt(_player2Pos);
+        Player memory _player1 = getter.getPlayer(player1);
+        assertTrue(_player1.active);
+
+        Base memory _player2Port = getter.getBaseAt(player2Pos);
         assertTrue(_player2Port.name == BASE_NAME.PORT);
         assertEq(_player2Port.owner, player2);
+
+        Player memory _player2 = getter.getPlayer(player2);
+        assertTrue(_player2.active);
     }
 
     function testTransferDiamondOwnership() public {
@@ -109,82 +115,113 @@ contract FoundryTest is Test, DiamondDeployTest {
         assertEq(getter.getEpoch(), 2);
     }
 
-    function testStartProduction() public {
+    // ----------------------------------------------------------------------
+    // LOGIC TESTS
+    // ----------------------------------------------------------------------
+
+    function testProductionFailure() public {
         // fail: start production on invalid location
         vm.expectRevert(bytes("No base found"));
-        engine.startProduction(Position({x: 100, y: 100}), 0);
+        engine.startProduction(Position({x: 100, y: 100}), armyTroopTypeId);
 
         // fail: player2 attempting to produce in other's base
         vm.prank(player2);
         vm.expectRevert(bytes("Can only produce in own base"));
-        engine.startProduction(_player1Pos, 1);
+        engine.startProduction(player1Pos, armyTroopTypeId);
 
         // fail: player3 in a city attempting to produce a troop transport (water troop)
         vm.prank(player3);
         vm.expectRevert(bytes("Only ports can produce water troops"));
-        engine.startProduction(_player3Pos, 2);
+        engine.startProduction(player3Pos, troopTransportTroopTypeId);
 
-        // test when base is already producing troop
+        // fail: base is already producing troop
         // player1 starts producing and attempts to produce something again on same location
         vm.startPrank(player1);
-        engine.startProduction(_player1Pos, 2);
+        engine.startProduction(player1Pos, troopTransportTroopTypeId);
         vm.expectRevert(bytes("Base already producing"));
-        engine.startProduction(_player1Pos, 2);
+        engine.startProduction(player1Pos, troopTransportTroopTypeId);
+
+        // fail: player1 attempting to end production before enough epochs
+        uint256 _startTime = 20;
+        vm.warp(_startTime);
+        engine.updateEpoch();
+        vm.expectRevert(bytes("Troop needs more epochs for production"));
+        engine.endProduction(player1Pos);
         vm.stopPrank();
+
+        // fail: player1 finish producing troop on an occupied base
+        vm.prank(deployer);
+        engine.spawnTroop(player1Pos, player1, armyTroopTypeId);
+        for (uint256 i = 1; i <= troopTransportTroopType.epochsToProduce; i++) {
+            vm.warp(_startTime + i * 10); // increase time by a few seconds
+            engine.updateEpoch();
+        }
+        vm.prank(player1);
+        vm.expectRevert(bytes("Base occupied by another troop"));
+        engine.endProduction(player1Pos);
     }
 
-    function testSuccessfulProduction() public {
+    function testProductionSuccess() public {
         // player1 produce troop transport
         vm.warp(10);
         engine.updateEpoch();
         assertEq(getter.getEpoch(), 1);
 
-        produceTroop(_player1Pos, 2, player1);
+        produceTroop(player1Pos, troopTransportTroopTypeId, player1);
 
         // success: verify troop's basic information
-        Troop memory _troop = getter.getTroopAt(_player1Pos);
+        Troop memory _troop = getter.getTroopAt(player1Pos);
         assertEq(_troop.owner, player1);
-        assertEq(_troop.troopTypeId, 2);
-        assertEq(_troop.pos.x, _player1Pos.x);
-        assertEq(_troop.pos.y, _player1Pos.y);
+        assertEq(_troop.troopTypeId, troopTransportTroopTypeId);
+        assertEq(_troop.pos.x, player1Pos.x);
+        assertEq(_troop.pos.y, player1Pos.y);
 
         // success: verify that troop ID was registered correctly
-        _troop = getter.getTroopById(1);
-        assertEq(_troop.pos.x, _player1Pos.x);
-        assertEq(_troop.pos.y, _player1Pos.y);
+        _troop = getter.getTroop(initTroopNonce);
+        assertEq(_troop.pos.x, player1Pos.x);
+        assertEq(_troop.pos.y, player1Pos.y);
 
         // success: verify the troopType is correct
-        TroopType memory _troopType = getter.getTroopType(1);
+        TroopType memory _troopType = getter.getTroopType(armyTroopTypeId);
         assertTrue(_troopType.isLandTroop);
     }
 
-    function testMoveTroop() public {
-        // produce troop at player1 location
-        produceTroop(_player1Pos, 2, player1);
+    function testMoveFailure() public {
+        // spawn troop at player1 location
+        vm.prank(deployer);
+        engine.spawnTroop(player1Pos, player1, troopTransportTroopTypeId);
+        uint256 _troopId = initTroopNonce;
 
         vm.startPrank(player1);
 
         // fail: move to same location
         vm.expectRevert(bytes("Already at destination"));
-        engine.move(1, _player1Pos);
-
-        // fail: move outside the map
-        vm.expectRevert(bytes("Destination too far"));
-        engine.move(1, Position({x: 0, y: 0}));
+        engine.move(_troopId, player1Pos);
 
         // fail: move to a far location
-        vm.expectRevert(bytes("Target out of bound"));
-        engine.move(1, Position({x: 100, y: 100}));
+        vm.expectRevert(bytes("Destination too far"));
+        engine.move(_troopId, Position({x: 0, y: 0}));
 
-        // fail: attempting to move transporter to a city tile
+        // fail: move outside of map
+        vm.expectRevert(bytes("Target out of bound"));
+        engine.move(_troopId, Position({x: 100, y: 100}));
+
+        // fail: attempting to move transport to a city tile
         vm.expectRevert(bytes("Cannot move on land"));
-        engine.move(1, Position({x: 5, y: 0}));
+        engine.move(_troopId, Position({x: 5, y: 0}));
+
+        // fail: move onto an opponent's base
+        engine.move(_troopId, Position({x: 7, y: 2}));
+        vm.expectRevert(bytes("Cannot move onto opponent base"));
+        engine.move(_troopId, player2Pos);
 
         vm.stopPrank();
     }
 
     function testTooManyMovesPerEpoch() public {
-        produceTroop(_player1Pos, 2, player1);
+        vm.prank(deployer);
+        engine.spawnTroop(player1Pos, player1, troopTransportTroopTypeId);
+        uint256 _troopId = initTroopNonce;
 
         vm.startPrank(player1);
 
@@ -192,18 +229,20 @@ contract FoundryTest is Test, DiamondDeployTest {
         Position memory _target = Position({x: 7, y: 1});
 
         // first move
-        engine.move(1, _target);
-        engine.move(1, _player1Pos);
+        engine.move(_troopId, _target);
+        engine.move(_troopId, player1Pos);
 
         vm.expectRevert(bytes("No moves left this epoch"));
-        engine.move(1, _target);
+        engine.move(_troopId, _target);
 
         vm.stopPrank();
     }
 
-    function testSuccessMoveTransportTroop() public {
+    function testMoveSuccess() public {
         // produce a troop transport
-        produceTroop(_player1Pos, 2, player1);
+        vm.prank(deployer);
+        engine.spawnTroop(player1Pos, player1, troopTransportTroopTypeId);
+
         vm.startPrank(player1);
 
         // success: move transport to 7, 1
@@ -211,16 +250,16 @@ contract FoundryTest is Test, DiamondDeployTest {
         engine.move(1, _target);
 
         // verify position
-        Troop memory _troop = getter.getTroopById(1);
+        Troop memory _troop = getter.getTroop(1);
         assertEq(_troop.pos.x, _target.x);
         assertEq(_troop.pos.y, _target.y);
 
         vm.stopPrank();
     }
 
-    // function testSuccessCaptureBase() public {
+    // function testCaptureBaseSuccess() public {
     //     // produce an army
-    //     produceTroop(_player1Pos, 1, player1);
+    //     produceTroop(player1Pos, 1, player1);
 
     //     vm.startPrank(player1);
 
@@ -242,13 +281,13 @@ contract FoundryTest is Test, DiamondDeployTest {
     ) internal {
         vm.startPrank(_player);
         TroopType memory troopTypeInfo = getter.getTroopType(_troopTypeId);
-        engine.startProduction(_location, _troopTypeId); // start production at 1 epoch;
+        engine.startProduction(_location, _troopTypeId); // start production at 1 epoch
 
         // fast foward a few epochs
         uint256 startTime = 100;
 
         for (uint256 i = 1; i <= troopTypeInfo.epochsToProduce; i++) {
-            vm.warp(startTime + i * 10); // increase time by a few seconds;
+            vm.warp(startTime + i * 10); // increase time by a few seconds
             engine.updateEpoch();
         }
 

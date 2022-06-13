@@ -15,7 +15,7 @@ export const WORLD_HEIGHT = 20;
 export const NUM_PORTS = 15;
 export const NUM_CITIES = 15;
 export const MAP_INTERVAL = 10;
-export const SECONDS_PER_TURN = 6;
+export const SECONDS_PER_EPOCH = 6;
 export const BASE_ATTACK_FACTOR = 1;
 export const BASE_DEFENSE_FACTOR = 1;
 export const BASE_MAX_HEALTH = 1;
@@ -96,7 +96,7 @@ export const generateWorldConstants = (adminAddr: string): WorldConstantsStruct 
     numPorts: NUM_PORTS,
     numCities: NUM_CITIES,
     mapInterval: MAP_INTERVAL,
-    secondsPerTurn: SECONDS_PER_TURN,
+    secondsPerEpoch: SECONDS_PER_EPOCH,
   };
 };
 

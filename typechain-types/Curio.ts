@@ -114,6 +114,13 @@ export type TileStructOutput = [number, BigNumber, BigNumber] & {
   baseId: BigNumber;
 };
 
+export type PlayerStruct = { initEpoch: BigNumberish; active: boolean };
+
+export type PlayerStructOutput = [BigNumber, boolean] & {
+  initEpoch: BigNumber;
+  active: boolean;
+};
+
 export type TroopTypeStruct = {
   name: BigNumberish;
   movesPerEpoch: BigNumberish;
@@ -161,7 +168,7 @@ export type WorldConstantsStruct = {
   numPorts: BigNumberish;
   numCities: BigNumberish;
   mapInterval: BigNumberish;
-  secondsPerTurn: BigNumberish;
+  secondsPerEpoch: BigNumberish;
 };
 
 export type WorldConstantsStructOutput = [
@@ -179,7 +186,7 @@ export type WorldConstantsStructOutput = [
   numPorts: BigNumber;
   numCities: BigNumber;
   mapInterval: BigNumber;
-  secondsPerTurn: BigNumber;
+  secondsPerEpoch: BigNumber;
 };
 
 export interface CurioInterface extends utils.Interface {
@@ -205,6 +212,7 @@ export interface CurioInterface extends utils.Interface {
     "getBaseById(uint256)": FunctionFragment;
     "getEpoch()": FunctionFragment;
     "getMapChunk((uint256,uint256))": FunctionFragment;
+    "getPlayer(address)": FunctionFragment;
     "getTileAt((uint256,uint256))": FunctionFragment;
     "getTroopAt((uint256,uint256))": FunctionFragment;
     "getTroopById(uint256)": FunctionFragment;
@@ -292,6 +300,7 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "getMapChunk",
     values: [PositionStruct]
   ): string;
+  encodeFunctionData(functionFragment: "getPlayer", values: [string]): string;
   encodeFunctionData(
     functionFragment: "getTileAt",
     values: [PositionStruct]
@@ -378,6 +387,7 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "getMapChunk",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getPlayer", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getTileAt", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getTroopAt", data: BytesLike): Result;
   decodeFunctionResult(
@@ -651,6 +661,11 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[TileStructOutput[], PositionStructOutput[]]>;
 
+    getPlayer(
+      _addr: string,
+      overrides?: CallOverrides
+    ): Promise<[PlayerStructOutput]>;
+
     getTileAt(
       _pos: PositionStruct,
       overrides?: CallOverrides
@@ -785,6 +800,11 @@ export interface Curio extends BaseContract {
     overrides?: CallOverrides
   ): Promise<[TileStructOutput[], PositionStructOutput[]]>;
 
+  getPlayer(
+    _addr: string,
+    overrides?: CallOverrides
+  ): Promise<PlayerStructOutput>;
+
   getTileAt(
     _pos: PositionStruct,
     overrides?: CallOverrides
@@ -913,6 +933,11 @@ export interface Curio extends BaseContract {
       _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<[TileStructOutput[], PositionStructOutput[]]>;
+
+    getPlayer(
+      _addr: string,
+      overrides?: CallOverrides
+    ): Promise<PlayerStructOutput>;
 
     getTileAt(
       _pos: PositionStruct,
@@ -1152,6 +1177,8 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getPlayer(_addr: string, overrides?: CallOverrides): Promise<BigNumber>;
+
     getTileAt(
       _pos: PositionStruct,
       overrides?: CallOverrides
@@ -1282,6 +1309,11 @@ export interface Curio extends BaseContract {
 
     getMapChunk(
       _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getPlayer(
+      _addr: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
