@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import {Base, Position, Tile, Troop, WorldConstants} from "contracts/libraries/Types.sol";
+import {Base, Position, Tile, Troop, WorldConstants, TroopType} from "contracts/libraries/Types.sol";
 import {Util} from "contracts/libraries/GameUtil.sol";
 import "contracts/libraries/Storage.sol";
 
@@ -51,11 +51,23 @@ contract GetterFacet is UseStorage {
         return gs().troopIdMap[Util._getTileAt(_pos).occupantId];
     }
 
+    function getTroopById(uint256 _troopId) external view returns (Troop memory) {
+        return gs().troopIdMap[_troopId];
+    }
+
+    function getTroopType(uint256 _troopTypeId) external view returns (TroopType memory) {
+        return gs().troopTypeIdMap[_troopTypeId];
+    }
+
     function getBaseAt(Position memory _pos) external view returns (Base memory) {
         return gs().baseIdMap[Util._getTileAt(_pos).baseId];
     }
 
     function getWorldConstants() external view returns (WorldConstants memory) {
         return gs().worldConstants;
+    }
+
+    function getEpoch() external view returns (uint256) {
+        return gs().epoch;
     }
 }

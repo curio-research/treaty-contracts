@@ -114,6 +114,46 @@ export type TileStructOutput = [number, BigNumber, BigNumber] & {
   baseId: BigNumber;
 };
 
+export type TroopTypeStruct = {
+  name: BigNumberish;
+  movesPerEpoch: BigNumberish;
+  maxHealth: BigNumberish;
+  damagePerHit: BigNumberish;
+  attackFactor: BigNumberish;
+  defenseFactor: BigNumberish;
+  cargoCapacity: BigNumberish;
+  epochsToProduce: BigNumberish;
+  movementCooldown: BigNumberish;
+  attackCooldown: BigNumberish;
+  isLandTroop: boolean;
+};
+
+export type TroopTypeStructOutput = [
+  number,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  boolean
+] & {
+  name: number;
+  movesPerEpoch: BigNumber;
+  maxHealth: BigNumber;
+  damagePerHit: BigNumber;
+  attackFactor: BigNumber;
+  defenseFactor: BigNumber;
+  cargoCapacity: BigNumber;
+  epochsToProduce: BigNumber;
+  movementCooldown: BigNumber;
+  attackCooldown: BigNumber;
+  isLandTroop: boolean;
+};
+
 export type WorldConstantsStruct = {
   admin: string;
   worldWidth: BigNumberish;
@@ -163,9 +203,12 @@ export interface CurioInterface extends utils.Interface {
     "bulkGetAllTroops()": FunctionFragment;
     "getBaseAt((uint256,uint256))": FunctionFragment;
     "getBaseById(uint256)": FunctionFragment;
+    "getEpoch()": FunctionFragment;
     "getMapChunk((uint256,uint256))": FunctionFragment;
     "getTileAt((uint256,uint256))": FunctionFragment;
     "getTroopAt((uint256,uint256))": FunctionFragment;
+    "getTroopById(uint256)": FunctionFragment;
+    "getTroopType(uint256)": FunctionFragment;
     "getWorldConstants()": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
@@ -244,6 +287,7 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "getBaseById",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "getEpoch", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getMapChunk",
     values: [PositionStruct]
@@ -255,6 +299,14 @@ export interface CurioInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getTroopAt",
     values: [PositionStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTroopById",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTroopType",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getWorldConstants",
@@ -321,12 +373,21 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "getBaseById",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getEpoch", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getMapChunk",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getTileAt", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getTroopAt", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getTroopById",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTroopType",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getWorldConstants",
     data: BytesLike
@@ -583,6 +644,8 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BaseStructOutput]>;
 
+    getEpoch(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     getMapChunk(
       _pos: PositionStruct,
       overrides?: CallOverrides
@@ -597,6 +660,16 @@ export interface Curio extends BaseContract {
       _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<[TroopStructOutput]>;
+
+    getTroopById(
+      _troopId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[TroopStructOutput]>;
+
+    getTroopType(
+      _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[TroopTypeStructOutput]>;
 
     getWorldConstants(
       overrides?: CallOverrides
@@ -705,6 +778,8 @@ export interface Curio extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BaseStructOutput>;
 
+  getEpoch(overrides?: CallOverrides): Promise<BigNumber>;
+
   getMapChunk(
     _pos: PositionStruct,
     overrides?: CallOverrides
@@ -719,6 +794,16 @@ export interface Curio extends BaseContract {
     _pos: PositionStruct,
     overrides?: CallOverrides
   ): Promise<TroopStructOutput>;
+
+  getTroopById(
+    _troopId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<TroopStructOutput>;
+
+  getTroopType(
+    _troopTypeId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<TroopTypeStructOutput>;
 
   getWorldConstants(
     overrides?: CallOverrides
@@ -822,6 +907,8 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BaseStructOutput>;
 
+    getEpoch(overrides?: CallOverrides): Promise<BigNumber>;
+
     getMapChunk(
       _pos: PositionStruct,
       overrides?: CallOverrides
@@ -836,6 +923,16 @@ export interface Curio extends BaseContract {
       _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<TroopStructOutput>;
+
+    getTroopById(
+      _troopId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<TroopStructOutput>;
+
+    getTroopType(
+      _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<TroopTypeStructOutput>;
 
     getWorldConstants(
       overrides?: CallOverrides
@@ -1048,6 +1145,8 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getEpoch(overrides?: CallOverrides): Promise<BigNumber>;
+
     getMapChunk(
       _pos: PositionStruct,
       overrides?: CallOverrides
@@ -1060,6 +1159,16 @@ export interface Curio extends BaseContract {
 
     getTroopAt(
       _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getTroopById(
+      _troopId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getTroopType(
+      _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1169,6 +1278,8 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getEpoch(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     getMapChunk(
       _pos: PositionStruct,
       overrides?: CallOverrides
@@ -1181,6 +1292,16 @@ export interface Curio extends BaseContract {
 
     getTroopAt(
       _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getTroopById(
+      _troopId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getTroopType(
+      _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
