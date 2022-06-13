@@ -11,7 +11,6 @@ require('dotenv').config();
 // tasks
 import './tasks/port';
 import './tasks/deploy';
-import './tasks/selector';
 
 // to get the smart contract file sizes, run:
 // yarn run hardhat size-contracts
@@ -36,7 +35,7 @@ export default {
     name: 'Curio',
     include: ['Facet'],
     // We explicitly set `strict` to `true` because we want to validate our facets don't accidentally provide overlapping functions
-    // strict: true,
+    strict: true,
     // We use our diamond utils to filter some functions we ignore from the combined ABI
     // filter(abiElement, index, abi, fullyQualifiedName) {
     //   const signature = diamondUtils.toSignature(abiElement);
