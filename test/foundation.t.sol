@@ -113,19 +113,19 @@ contract FoundryTest is Test, DiamondDeployTest {
         // fail: player2 attempting to produce in other's base
         vm.prank(player2);
         vm.expectRevert(bytes("Can only produce in own base"));
-        engine.startProduction(_player1Pos, 0);
+        engine.startProduction(_player1Pos, 1);
 
         // fail: player3 in a city attempting to produce a troop transport (water troop)
         vm.prank(player3);
         vm.expectRevert(bytes("Only ports can produce water troops"));
-        engine.startProduction(_player3Pos, 1);
+        engine.startProduction(_player3Pos, 2);
 
         // test when base is already producing troop
         // player1 starts producing and attempts to produce something again on same location
         vm.startPrank(player1);
-        engine.startProduction(_player1Pos, 1);
+        engine.startProduction(_player1Pos, 2);
         vm.expectRevert(bytes("Base already producing"));
-        engine.startProduction(_player1Pos, 1);
+        engine.startProduction(_player1Pos, 2);
         vm.stopPrank();
     }
 
@@ -135,12 +135,12 @@ contract FoundryTest is Test, DiamondDeployTest {
         engine.updateEpoch();
         assertEq(getter.getEpoch(), 1);
 
-        produceTroop(_player1Pos, 1, player1);
+        produceTroop(_player1Pos, 2, player1);
 
         // success: verify troop's basic information
         Troop memory _troop = getter.getTroopAt(_player1Pos);
         assertEq(_troop.owner, player1);
-        assertEq(_troop.troopTypeId, 1);
+        assertEq(_troop.troopTypeId, 2);
         assertEq(_troop.pos.x, _player1Pos.x);
         assertEq(_troop.pos.y, _player1Pos.y);
 
@@ -151,7 +151,7 @@ contract FoundryTest is Test, DiamondDeployTest {
 
         // success: verify the troopType is correct
         TroopType memory _troopType = getter.getTroopType(1);
-        assertEq(_troopType.isLandTroop, true);
+        assertTrue(_troopType.isLandTroop);
     }
 
     function testMoveTroop() public {
@@ -233,12 +233,12 @@ contract FoundryTest is Test, DiamondDeployTest {
     // produces 1 troop at a desired location
     function produceTroop(
         Position memory _location,
-        uint256 _troopType,
+        uint256 _troopTypeId,
         address _player
     ) internal {
         vm.startPrank(_player);
-        TroopType memory troopTypeInfo = getter.getTroopType(_troopType);
-        engine.startProduction(_location, _troopType); // start production at 1 epoch;
+        TroopType memory troopTypeInfo = getter.getTroopType(_troopTypeId);
+        engine.startProduction(_location, _troopTypeId); // start production at 1 epoch;
 
         // fast foward a few epochs
         uint256 startTime = 100;
