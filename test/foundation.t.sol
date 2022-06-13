@@ -257,15 +257,76 @@ contract FoundryTest is Test, DiamondDeployTest {
         vm.stopPrank();
     }
 
-    // function testCaptureBaseSuccess() public {
-    //     // produce an army
-    //     produceTroop(player1Pos, 1, player1);
+    function testBattleFailure() public {}
 
-    //     vm.startPrank(player1);
+    function testBattleSuccess() public {}
 
-    //     // capture base below
-    //     engine.captureBase(1, Position({x: 6, y: 2}));
-    // }
+    function testCaptureBaseFailure() public {
+        vm.startPrank(deployer);
+        engine.spawnTroop(Position({x: 5, y: 1}), player1, armyTroopTypeId);
+        uint256 _armyId = initTroopNonce;
+        engine.spawnTroop(Position({x: 7, y: 3}), player1, destroyerTroopTypeId);
+        uint256 _destroyerId = initTroopNonce + 1;
+        vm.stopPrank();
+
+        vm.prank(player2);
+        vm.expectRevert(bytes("Can only capture with own troop"));
+        engine.captureBase(_armyId, player3Pos);
+
+        vm.startPrank(player1);
+        vm.expectRevert(bytes("Destination too far"));
+        engine.captureBase(_armyId, player2Pos);
+
+        vm.expectRevert(bytes("Only a land troop can capture bases"));
+        engine.captureBase(_destroyerId, player2Pos);
+
+        vm.expectRevert(bytes("No base to capture"));
+        engine.captureBase(_armyId, Position({x: 4, y: 2}));
+
+        vm.expectRevert(bytes("Base already owned"));
+        engine.captureBase(_armyId, player1Pos);
+
+        vm.expectRevert(bytes("Need to attack first"));
+        engine.captureBase(_armyId, player3Pos);
+        vm.stopPrank();
+
+        vm.prank(deployer);
+        engine.spawnTroop(player3Pos, player3, armyTroopTypeId);
+        vm.prank(player1);
+        vm.expectRevert(bytes("Destination tile occupied"));
+        engine.captureBase(_armyId, player3Pos);
+    }
+
+    function testCaptureBaseSuccess() public {
+        vm.startPrank(deployer);
+        engine.spawnTroop(Position({x: 6, y: 2}), player1, armyTroopTypeId);
+        uint256 _armyId = initTroopNonce;
+        engine.spawnTroop(Position({x: 7, y: 3}), player1, destroyerTroopTypeId);
+        uint256 _destroyerId = initTroopNonce + 1;
+        vm.stopPrank();
+
+        Base memory _base = getter.getBaseAt(player2Pos);
+        assertEq(_base.owner, player2);
+
+        vm.warp(20);
+        engine.updateEpoch();
+        assertEq(getter.getEpoch(), 1);
+
+        vm.startPrank(player1);
+        engine.battle(_destroyerId, player2Pos);
+        engine.captureBase(_armyId, player2Pos);
+        vm.stopPrank();
+
+        Troop memory _army = getter.getTroop(_armyId);
+        assertEq(_army.pos.x, player2Pos.x);
+        assertEq(_army.pos.y, player2Pos.y);
+        assertEq(_army.health, getter.getTroopType(armyTroopTypeId).maxHealth);
+
+        _base = getter.getBaseAt(player2Pos);
+        assertEq(_base.owner, player1);
+
+        vm.coinbase(deployer);
+    }
 
     function testBattle() public {}
 

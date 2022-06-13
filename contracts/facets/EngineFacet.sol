@@ -98,7 +98,7 @@ contract EngineFacet is UseStorage {
 
         if (_tile.baseId != NULL) {
             Base memory _base = gs().baseIdMap[_tile.baseId];
-            if (_base.owner != _player) revert("Can only spawn troop in player's base");
+            if (_base.owner != _player && _base.owner != address(0)) revert("Can only spawn troop in player's base"); // FIXME: the address(0) part is a bit of privilege
             if (!Util._isLandTroop(_troopTypeId) && _base.name != BASE_NAME.PORT) revert("Can only spawn water troops in ports");
         }
 
@@ -266,7 +266,7 @@ contract EngineFacet is UseStorage {
 
         Tile memory _targetTile = Util._getTileAt(_targetPos);
         if (_targetTile.baseId == NULL) revert("No base to capture");
-        if (Util._getBaseOwner(_targetTile.baseId) == msg.sender) revert("Base already captured");
+        if (Util._getBaseOwner(_targetTile.baseId) == msg.sender) revert("Base already owned");
         if (_targetTile.occupantId != NULL) revert("Destination tile occupied");
         if (Util._getBaseHealth(_targetTile.baseId) > 0) revert("Need to attack first");
 
