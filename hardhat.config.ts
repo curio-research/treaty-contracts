@@ -36,7 +36,7 @@ export default {
     name: 'Curio',
     include: ['Facet'],
     // We explicitly set `strict` to `true` because we want to validate our facets don't accidentally provide overlapping functions
-    // strict: true,
+    strict: true,
     // We use our diamond utils to filter some functions we ignore from the combined ABI
     // filter(abiElement, index, abi, fullyQualifiedName) {
     //   const signature = diamondUtils.toSignature(abiElement);
