@@ -399,7 +399,7 @@ contract FoundryTest is Test, DiamondDeployTest {
         engine.captureBase(_armyId, player3Pos);
     }
 
-    function testCaptureBaseSuccess() public {
+    function testCaptureBase() public {
         vm.startPrank(deployer);
         engine.spawnTroop(Position({x: 6, y: 2}), player1, armyTroopTypeId);
         uint256 _armyId = initTroopNonce;
@@ -429,6 +429,72 @@ contract FoundryTest is Test, DiamondDeployTest {
         assertEq(_base.owner, player1);
 
         vm.coinbase(deployer);
+    }
+
+    function testRepairFailure() public {
+        vm.startPrank(player1);
+        vm.expectRevert("No base found");
+        engine.repair(Position({x: 0, y: 0}));
+
+        vm.expectRevert("Can only repair in own base");
+        engine.repair(player2Pos);
+
+        vm.expectRevert("No troop to repair");
+        engine.repair(player1Pos);
+        vm.stopPrank();
+
+        uint256 _player1DestroyerId = initTroopNonce;
+        Position memory _player2DestroyerPos = Position({x: 7, y: 0});
+        vm.startPrank(deployer);
+        engine.spawnTroop(player1Pos, player1, destroyerTroopTypeId);
+        engine.spawnTroop(_player2DestroyerPos, player2, destroyerTroopTypeId);
+        vm.stopPrank();
+
+        vm.startPrank(player1);
+        vm.expectRevert("Troop already at full health");
+        engine.repair(player1Pos);
+
+        // battle twice with an adjacent destroyer
+        vm.warp(20);
+        engine.updateEpoch();
+        engine.battle(_player1DestroyerId, _player2DestroyerPos);
+        vm.warp(50);
+        engine.updateEpoch();
+        engine.battle(_player1DestroyerId, _player2DestroyerPos);
+
+        Troop memory _player1Destroyer = getter.getTroopAt(player1Pos);
+        assertEq(_player1Destroyer.health, 1);
+
+        engine.repair(player1Pos);
+        vm.expectRevert("Repaired too recently");
+        engine.repair(player1Pos);
+
+        vm.stopPrank();
+    }
+
+    function testRepair() public {
+        uint256 _player1DestroyerId = initTroopNonce;
+        Position memory _player2DestroyerPos = Position({x: 7, y: 0});
+        vm.startPrank(deployer);
+        engine.spawnTroop(player1Pos, player1, destroyerTroopTypeId);
+        engine.spawnTroop(_player2DestroyerPos, player2, destroyerTroopTypeId);
+        vm.stopPrank();
+
+        // battle once with an adjacent destroyer
+        vm.warp(20);
+        engine.updateEpoch();
+        vm.startPrank(player1);
+        engine.battle(_player1DestroyerId, _player2DestroyerPos);
+
+        Troop memory _player1Destroyer = getter.getTroopAt(player1Pos);
+        assertEq(_player1Destroyer.health, getter.getTroopType(destroyerTroopTypeId).maxHealth - 1);
+        vm.warp(20);
+        engine.repair(player1Pos);
+
+        _player1Destroyer = getter.getTroopAt(player1Pos);
+        assertEq(_player1Destroyer.health, getter.getTroopType(destroyerTroopTypeId).maxHealth);
+
+        vm.stopPrank();
     }
 
     // ------------------------------------------------

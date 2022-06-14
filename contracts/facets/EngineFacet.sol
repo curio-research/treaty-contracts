@@ -179,6 +179,8 @@ contract EngineFacet is UseStorage {
         if (!Util._withinDist(_troop.pos, _targetPos, 1)) revert("Destination too far");
         if ((gs().epoch - _troop.lastAttacked) < Util._getAttackCooldown(_troop.troopTypeId)) revert("Attacked too recently");
 
+        gs().troopIdMap[_troopId].lastAttacked = gs().epoch;
+
         Tile memory _targetTile = Util._getTileAt(_targetPos);
         bool _targetIsBase;
         uint256 _targetAttackFactor;
@@ -350,6 +352,7 @@ contract EngineFacet is UseStorage {
 
         _troop.health++;
         gs().troopIdMap[_troopId].health = _troop.health;
+        gs().troopIdMap[_troopId].lastRepaired = gs().epoch;
         emit Repaired(msg.sender, _tile.occupantId, _troop.health);
         if (_troop.health == Util._getMaxHealth(_troop.troopTypeId)) emit Recovered(msg.sender, _troopId);
     }
