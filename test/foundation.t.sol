@@ -115,10 +115,6 @@ contract FoundryTest is Test, DiamondDeployTest {
         assertEq(getter.getEpoch(), 2);
     }
 
-    function testSalt() public {
-        // TODO
-    }
-
     // ----------------------------------------------------------------------
     // LOGIC TESTS
     // ----------------------------------------------------------------------
