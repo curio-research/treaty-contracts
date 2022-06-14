@@ -1,8 +1,8 @@
-import { Util } from './../typechain-types/Util';
 import axios from 'axios';
 import * as path from 'path';
 import * as fsPromise from 'fs/promises';
 import * as fs from 'fs';
+import { Util } from './../typechain-types/Util';
 import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { deployProxy, printDivider } from './util/deployHelper';
@@ -10,8 +10,6 @@ import { TROOP_TYPES, getTroopTypeIndexByName, RENDER_CONSTANTS, MAP_INTERVAL, N
 import { position } from '../util/types/common';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
 import { MapInput, TILE_TYPE, TROOP_NAME } from './util/types';
-import { WorldConstantsStruct } from '../typechain-types/DiamondInit';
-import { BigNumber } from 'ethers';
 import { generateGameMaps } from './util/mapHelper';
 
 const { BACKEND_URL } = process.env;
