@@ -2,8 +2,8 @@
 pragma solidity ^0.8.4;
 
 import {BASE_NAME, Base, GameState, Position, Tile, Troop} from "contracts/libraries/Types.sol";
-import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 import {LibStorage} from "contracts/libraries/Storage.sol";
+import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 
 library Util {
     using SafeMath for uint256;
@@ -56,12 +56,18 @@ library Util {
     }
 
     function _addBase(Position memory _pos, BASE_NAME _baseName) public returns (uint256) {
-        Base memory _base = Base({owner: address(0), name: _baseName, attackFactor: 1, defenseFactor: 1, health: 1});
+        Base memory _base = Base({
+            owner: address(0),
+            name: _baseName,
+            attackFactor: 100,
+            defenseFactor: 100,
+            health: 1 // FIXME: change to base constants
+        });
 
         uint256 _baseId = gs().baseNonce;
         gs().baseIds.push(_baseId);
         gs().baseIdMap[_baseId] = _base;
-        gs().baseNonce++;
+        gs().baseNonce += 1;
         gs().map[_pos.x][_pos.y].baseId = _baseId;
 
         return _baseId;
@@ -138,7 +144,7 @@ library Util {
     }
 
     function _strike(uint256 _strikeFactor) public view returns (bool) {
-        uint256 _salt = 1; // FIXME: proper salt
+        uint256 _salt = 2; // FIXME: proper salt
         uint256 _rand = _random(_salt, 100);
         return _rand < _strikeFactor;
     }

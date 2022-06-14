@@ -24,7 +24,7 @@ export type WorldConstantsStruct = {
   numPorts: BigNumberish;
   numCities: BigNumberish;
   mapInterval: BigNumberish;
-  secondsPerTurn: BigNumberish;
+  secondsPerEpoch: BigNumberish;
 };
 
 export type WorldConstantsStructOutput = [
@@ -42,7 +42,7 @@ export type WorldConstantsStructOutput = [
   numPorts: BigNumber;
   numCities: BigNumber;
   mapInterval: BigNumber;
-  secondsPerTurn: BigNumber;
+  secondsPerEpoch: BigNumber;
 };
 
 export type TroopTypeStruct = {
@@ -128,21 +128,21 @@ export interface DiamondInit extends BaseContract {
 
   functions: {
     init(
-      _constants: WorldConstantsStruct,
+      _worldConstants: WorldConstantsStruct,
       _troopTypes: TroopTypeStruct[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
 
   init(
-    _constants: WorldConstantsStruct,
+    _worldConstants: WorldConstantsStruct,
     _troopTypes: TroopTypeStruct[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
     init(
-      _constants: WorldConstantsStruct,
+      _worldConstants: WorldConstantsStruct,
       _troopTypes: TroopTypeStruct[],
       overrides?: CallOverrides
     ): Promise<void>;
@@ -152,7 +152,7 @@ export interface DiamondInit extends BaseContract {
 
   estimateGas: {
     init(
-      _constants: WorldConstantsStruct,
+      _worldConstants: WorldConstantsStruct,
       _troopTypes: TroopTypeStruct[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -160,7 +160,7 @@ export interface DiamondInit extends BaseContract {
 
   populateTransaction: {
     init(
-      _constants: WorldConstantsStruct,
+      _worldConstants: WorldConstantsStruct,
       _troopTypes: TroopTypeStruct[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;

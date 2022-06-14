@@ -10,12 +10,15 @@ export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 // Game constants (source of truth)
 // ----------------------------------------------------------
 
-export const WORLD_WIDTH = 100;
-export const WORLD_HEIGHT = 80;
-export const NUM_PORTS = 30;
-export const NUM_CITIES = 30;
+export const WORLD_WIDTH = 30;
+export const WORLD_HEIGHT = 20;
+export const NUM_PORTS = 15;
+export const NUM_CITIES = 15;
 export const MAP_INTERVAL = 10;
-export const SECONDS_PER_TURN = 6;
+export const SECONDS_PER_EPOCH = 6;
+export const BASE_ATTACK_FACTOR = 1;
+export const BASE_DEFENSE_FACTOR = 1;
+export const BASE_MAX_HEALTH = 1;
 
 export const TROOP_TYPES: TroopTypeStruct[] = [
   {
@@ -93,9 +96,11 @@ export const generateWorldConstants = (adminAddr: string): WorldConstantsStruct 
     numPorts: NUM_PORTS,
     numCities: NUM_CITIES,
     mapInterval: MAP_INTERVAL,
-    secondsPerTurn: SECONDS_PER_TURN,
+    secondsPerEpoch: SECONDS_PER_EPOCH,
   };
 };
+
+// export const generateBaseConstants = (): BaseConstantsStruct => {};
 
 // ----------------------------------------------------------
 // Rendering constants

@@ -3,12 +3,17 @@ pragma solidity ^0.8.4;
 
 import "contracts/libraries/Storage.sol";
 import {Util} from "contracts/libraries/GameUtil.sol";
+import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {BASE_NAME, Base, GameState, Player, Position, Production, TERRAIN, Tile, Troop, TroopType} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
+import "forge-std/console.sol";
+
+error Unauthorized();
 
 contract EngineFacet is UseStorage {
     using SafeMath for uint256;
     uint256 NULL = 0;
+    address ZERO_ADDR = address(0x0000000000000000000000000000000000000000);
 
     /*
     TODO:
@@ -17,7 +22,8 @@ contract EngineFacet is UseStorage {
     */
 
     modifier onlyAdmin() {
-        require(msg.sender == gs().worldConstants.admin);
+        // require(msg.sender == gs().worldConstants.admin, "Only admin can perform this action");
+        if (msg.sender != gs().worldConstants.admin) revert Unauthorized();
         _;
     }
 
@@ -37,12 +43,36 @@ contract EngineFacet is UseStorage {
     // ----------------------------------------------------------------------
 
     /**
+     * Set an NxN chunk of the tile map.
+     * @param _startPos top-left position of chunk
+     * @param _chunk a 2d, NxN chunk
+     */
+    function setMapChunk(Position memory _startPos, uint256[][] memory _chunk) external onlyAdmin {
+        for (uint256 _dx = 0; _dx < _chunk.length; _dx++) {
+            for (uint256 _dy = 0; _dy < _chunk[0].length; _dy++) {
+                Position memory _pos = Position({x: _startPos.x + _dx, y: _startPos.y + _dy});
+                uint256 _terrainId = _chunk[_dx][_dy];
+
+                if (_terrainId >= 3) {
+                    // Note: temporary way to set base
+                    BASE_NAME _baseName = _terrainId == 3 ? BASE_NAME.PORT : BASE_NAME.CITY;
+                    Util._addBase(_pos, _baseName);
+                    _terrainId -= 3;
+                }
+
+                gs().map[_pos.x][_pos.y].terrain = TERRAIN(_terrainId);
+            }
+        }
+    }
+
+    /**
      * Initialize a player at a selected position.
      * @param _pos position to initialize
      * @param _player player address
      */
     function initializePlayer(Position memory _pos, address _player) external onlyAdmin {
         uint256 _baseId = Util._getTileAt(_pos).baseId;
+
         if (Util._getBaseOwner(_baseId) != address(0)) revert("Base is taken");
 
         gs().players.push(_player);
@@ -68,35 +98,12 @@ contract EngineFacet is UseStorage {
 
         if (_tile.baseId != NULL) {
             Base memory _base = gs().baseIdMap[_tile.baseId];
-            if (_base.owner != _player) revert("Can only spawn troop in player's base");
+            if (_base.owner != _player && _base.owner != address(0)) revert("Can only spawn troop in player's base"); // FIXME: the address(0) part is a bit of privilege
             if (!Util._isLandTroop(_troopTypeId) && _base.name != BASE_NAME.PORT) revert("Can only spawn water troops in ports");
         }
 
         uint256 _troopId = Util._addTroop(_pos, _troopTypeId, _player);
         emit NewTroop(_player, _troopId, _pos);
-    }
-
-    /**
-     * Set an NxN chunk of the tile map.
-     * @param _startPos top-left position of chunk
-     * @param _chunk a 2d, NxN chunk
-     */
-    function setMapChunk(Position memory _startPos, uint256[][] memory _chunk) external onlyAdmin {
-        for (uint256 _dx = 0; _dx < _chunk.length; _dx++) {
-            for (uint256 _dy = 0; _dy < _chunk[0].length; _dy++) {
-                Position memory _pos = Position({x: _startPos.x + _dx, y: _startPos.y + _dy});
-                uint256 _terrainId = _chunk[_dx][_dy];
-
-                if (_terrainId >= 3) {
-                    // Note: temporary way to set base
-                    BASE_NAME _baseName = _terrainId == 3 ? BASE_NAME.PORT : BASE_NAME.CITY;
-                    Util._addBase(_pos, _baseName);
-                    _terrainId -= 3;
-                }
-
-                gs().map[_pos.x][_pos.y].terrain = TERRAIN(_terrainId);
-            }
-        }
     }
 
     // ----------------------------------------------------------------------
@@ -172,6 +179,8 @@ contract EngineFacet is UseStorage {
         if (!Util._withinDist(_troop.pos, _targetPos, 1)) revert("Destination too far");
         if ((gs().epoch - _troop.lastAttacked) < Util._getAttackCooldown(_troop.troopTypeId)) revert("Attacked too recently");
 
+        gs().troopIdMap[_troopId].lastAttacked = gs().epoch;
+
         Tile memory _targetTile = Util._getTileAt(_targetPos);
         bool _targetIsBase;
         uint256 _targetAttackFactor;
@@ -225,6 +234,8 @@ contract EngineFacet is UseStorage {
             }
         }
 
+        if (_targetHealth == 0) return; // target cannot attack back if it has zero health
+
         // Target attacks troop
         if (Util._strike(_targetDefenseFactor)) {
             if (_targetIsBase) {
@@ -237,11 +248,9 @@ contract EngineFacet is UseStorage {
                 Util._removeTroop(_troop.pos, _troopId);
                 emit Death(msg.sender, _troopId);
             } else {
-                gs().troopIdMap[_targetTile.occupantId].health -= _targetDamagePerHit;
+                gs().troopIdMap[_troopId].health -= _targetDamagePerHit;
             }
         }
-
-        return;
     }
 
     /**
@@ -259,7 +268,7 @@ contract EngineFacet is UseStorage {
 
         Tile memory _targetTile = Util._getTileAt(_targetPos);
         if (_targetTile.baseId == NULL) revert("No base to capture");
-        if (Util._getBaseOwner(_targetTile.baseId) == msg.sender) revert("Base already captured");
+        if (Util._getBaseOwner(_targetTile.baseId) == msg.sender) revert("Base already owned");
         if (_targetTile.occupantId != NULL) revert("Destination tile occupied");
         if (Util._getBaseHealth(_targetTile.baseId) > 0) revert("Need to attack first");
 
@@ -281,7 +290,7 @@ contract EngineFacet is UseStorage {
         Tile memory _tile = Util._getTileAt(_pos);
         if (_tile.baseId == NULL) revert("No base found");
         if (Util._getBaseOwner(_tile.baseId) != msg.sender) revert("Can only produce in own base");
-        if (!Util._hasPort(_tile) && !Util._isLandTroop(_troopTypeId)) revert("Only ports can produce water troops");
+        if (!Util._isLandTroop(_troopTypeId) && !Util._hasPort(_tile)) revert("Only ports can produce water troops");
         if (gs().baseProductionMap[_tile.baseId].troopTypeId != NULL) revert("Base already producing");
 
         gs().baseProductionMap[_tile.baseId] = Production({troopTypeId: _troopTypeId, startEpoch: gs().epoch});
@@ -297,7 +306,7 @@ contract EngineFacet is UseStorage {
      */
     function updateEpoch() external {
         // Currently implemented expecting real-time calls from client; can change to lazy if needed
-        if ((block.timestamp - gs().lastTimestamp) < gs().worldConstants.secondsPerTurn) revert("Not enough time has elapsed since last epoch");
+        if ((block.timestamp - gs().lastTimestamp) < gs().worldConstants.secondsPerEpoch) revert("Not enough time has elapsed since last epoch");
 
         gs().epoch++;
         gs().lastTimestamp = block.timestamp;
@@ -343,6 +352,7 @@ contract EngineFacet is UseStorage {
 
         _troop.health++;
         gs().troopIdMap[_troopId].health = _troop.health;
+        gs().troopIdMap[_troopId].lastRepaired = gs().epoch;
         emit Repaired(msg.sender, _tile.occupantId, _troop.health);
         if (_troop.health == Util._getMaxHealth(_troop.troopTypeId)) emit Recovered(msg.sender, _troopId);
     }
