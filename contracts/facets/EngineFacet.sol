@@ -232,6 +232,8 @@ contract EngineFacet is UseStorage {
             }
         }
 
+        if (_targetHealth == 0) return; // target cannot attack back if it has zero health
+
         // Target attacks troop
         if (Util._strike(_targetDefenseFactor)) {
             if (_targetIsBase) {
@@ -244,11 +246,9 @@ contract EngineFacet is UseStorage {
                 Util._removeTroop(_troop.pos, _troopId);
                 emit Death(msg.sender, _troopId);
             } else {
-                gs().troopIdMap[_targetTile.occupantId].health -= _targetDamagePerHit;
+                gs().troopIdMap[_troopId].health -= _targetDamagePerHit;
             }
         }
-
-        return;
     }
 
     /**

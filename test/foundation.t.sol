@@ -115,6 +115,10 @@ contract FoundryTest is Test, DiamondDeployTest {
         assertEq(getter.getEpoch(), 2);
     }
 
+    function testSalt() public {
+        // TODO
+    }
+
     // ----------------------------------------------------------------------
     // LOGIC TESTS
     // ----------------------------------------------------------------------
@@ -161,7 +165,7 @@ contract FoundryTest is Test, DiamondDeployTest {
         engine.endProduction(player1Pos);
     }
 
-    function testProductionSuccess() public {
+    function testProduction() public {
         // player1 produce troop transport
         vm.warp(10);
         engine.updateEpoch();
@@ -238,7 +242,7 @@ contract FoundryTest is Test, DiamondDeployTest {
         vm.stopPrank();
     }
 
-    function testMoveSuccess() public {
+    function testMove() public {
         // produce a troop transport
         vm.prank(deployer);
         engine.spawnTroop(player1Pos, player1, troopTransportTroopTypeId);
@@ -257,9 +261,107 @@ contract FoundryTest is Test, DiamondDeployTest {
         vm.stopPrank();
     }
 
-    function testBattleFailure() public {}
+    function testBattleFailure() public {
+        // TODO (lower priority)
+    }
 
-    function testBattleSuccess() public {}
+    function testBattleBase() public {
+        Position memory _destroyerPos = Position({x: 7, y: 3});
+
+        vm.prank(deployer);
+        engine.spawnTroop(_destroyerPos, player1, destroyerTroopTypeId);
+        uint256 _destroyerId = initTroopNonce;
+
+        // increase epoch
+        vm.warp(20);
+        engine.updateEpoch();
+        assertEq(getter.getEpoch(), 1);
+
+        vm.prank(player1);
+        engine.battle(_destroyerId, player2Pos);
+
+        Troop memory _destroyer = getter.getTroopAt(_destroyerPos);
+        assertEq(_destroyer.owner, player1);
+        assertEq(_destroyer.health, getter.getTroopType(destroyerTroopTypeId).maxHealth); // port did not attack back
+
+        Tile memory _tile = getter.getTileAt(player2Pos);
+        assertEq(_tile.occupantId, NULL); // troop did not move to target tile
+        assertTrue(_tile.baseId != NULL);
+
+        Base memory _port = getter.getBaseAt(player2Pos);
+        assertEq(_port.owner, player2);
+        assertEq(_port.health, 0);
+    }
+
+    function testBattleTroop() public {
+        Position memory _armyPos = Position({x: 8, y: 4});
+        Position memory _destroyerPos = Position({x: 7, y: 3});
+
+        vm.startPrank(deployer);
+        engine.spawnTroop(_armyPos, player2, armyTroopTypeId);
+        uint256 _armyId = initTroopNonce;
+        engine.spawnTroop(_destroyerPos, player1, destroyerTroopTypeId);
+        vm.stopPrank();
+
+        Troop memory _destroyer = getter.getTroopAt(_destroyerPos);
+        assertEq(_destroyer.owner, player1);
+        assertEq(_destroyer.health, getter.getTroopType(destroyerTroopTypeId).maxHealth);
+
+        // increase epoch
+        vm.warp(20);
+        engine.updateEpoch();
+        assertEq(getter.getEpoch(), 1);
+
+        vm.prank(player2);
+        engine.battle(_armyId, _destroyerPos);
+
+        // destroyer reduced by 1 health
+        _destroyer = getter.getTroopAt(_destroyerPos);
+        assertEq(_destroyer.owner, player1);
+        assertEq(_destroyer.health, getter.getTroopType(destroyerTroopTypeId).maxHealth - 1);
+
+        // army eliminated
+        assertEq(getter.getTileAt(_armyPos).occupantId, NULL);
+        Troop memory _nonexistentArmy = getter.getTroop(_armyId);
+        assertTrue(_nonexistentArmy.owner != player2);
+        assertEq(_nonexistentArmy.health, 0);
+    }
+
+    // FIXME: actual probability test?
+    function testBattleTroopProbabilistic() public {
+        Position memory _armyPos = Position({x: 8, y: 4});
+        Position memory _troopTransportPos = Position({x: 7, y: 3});
+
+        vm.startPrank(deployer);
+        engine.spawnTroop(_armyPos, player2, armyTroopTypeId);
+        uint256 _armyId = initTroopNonce;
+        engine.spawnTroop(_troopTransportPos, player1, troopTransportTroopTypeId);
+        vm.stopPrank();
+
+        // increase epoch
+        vm.warp(20);
+        engine.updateEpoch();
+        assertEq(getter.getEpoch(), 1);
+
+        vm.prank(player2);
+        engine.battle(_armyId, _troopTransportPos);
+
+        // destroyer reduced by 1 health
+        Troop memory _troopTransport = getter.getTroopAt(_troopTransportPos);
+        assertEq(_troopTransport.owner, player1);
+        assertEq(_troopTransport.health, getter.getTroopType(troopTransportTroopTypeId).maxHealth - 1);
+
+        // army either intact or eliminated
+        Troop memory _schoedingersArmy = getter.getTroop(_armyId);
+        if (_schoedingersArmy.health == 0) {
+            assertEq(getter.getTileAt(_armyPos).occupantId, NULL);
+            assertTrue(_schoedingersArmy.owner != player2);
+        } else {
+            assertEq(_schoedingersArmy.health, getter.getTroopType(armyTroopTypeId).maxHealth);
+            assertEq(getter.getTileAt(_armyPos).occupantId, _armyId);
+            assertTrue(_schoedingersArmy.owner == player2);
+        }
+    }
 
     function testCaptureBaseFailure() public {
         vm.startPrank(deployer);
@@ -308,6 +410,7 @@ contract FoundryTest is Test, DiamondDeployTest {
         Base memory _base = getter.getBaseAt(player2Pos);
         assertEq(_base.owner, player2);
 
+        // increase epoch
         vm.warp(20);
         engine.updateEpoch();
         assertEq(getter.getEpoch(), 1);
@@ -327,8 +430,6 @@ contract FoundryTest is Test, DiamondDeployTest {
 
         vm.coinbase(deployer);
     }
-
-    function testBattle() public {}
 
     // ------------------------------------------------
     // helper functions
