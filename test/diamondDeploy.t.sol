@@ -14,8 +14,8 @@ import "contracts/facets/GetterFacet.sol";
 import "contracts/facets/EngineFacet.sol";
 import "contracts/libraries/Types.sol";
 
-// This contract sets up the diamond for testing and is inherited by other foundry test contracts.
-// In the future we can mimic different "fixtures" by extending upon this file.
+/// @title diamond deploy foundry template
+/// @notice This contract sets up the diamond for testing and is inherited by other foundry test contracts.
 
 contract DiamondDeployTest is Test {
     address public diamond;

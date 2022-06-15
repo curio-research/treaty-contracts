@@ -10,10 +10,10 @@ export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 // Game constants (source of truth)
 // ----------------------------------------------------------
 
-export const WORLD_WIDTH = 30;
+export const WORLD_WIDTH = 20;
 export const WORLD_HEIGHT = 20;
-export const NUM_PORTS = 15;
-export const NUM_CITIES = 15;
+export const NUM_PORTS = 5;
+export const NUM_CITIES = 5;
 export const MAP_INTERVAL = 10;
 export const SECONDS_PER_EPOCH = 6;
 export const BASE_ATTACK_FACTOR = 1;

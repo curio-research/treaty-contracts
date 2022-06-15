@@ -210,6 +210,8 @@ export interface CurioInterface extends utils.Interface {
     "bulkGetAllTroops()": FunctionFragment;
     "getBase(uint256)": FunctionFragment;
     "getBaseAt((uint256,uint256))": FunctionFragment;
+    "getBaseNonce()": FunctionFragment;
+    "getBulkBase(uint256,uint256)": FunctionFragment;
     "getEpoch()": FunctionFragment;
     "getMapChunk((uint256,uint256))": FunctionFragment;
     "getPlayer(address)": FunctionFragment;
@@ -295,6 +297,14 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "getBaseAt",
     values: [PositionStruct]
   ): string;
+  encodeFunctionData(
+    functionFragment: "getBaseNonce",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getBulkBase",
+    values: [BigNumberish, BigNumberish]
+  ): string;
   encodeFunctionData(functionFragment: "getEpoch", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getMapChunk",
@@ -379,6 +389,14 @@ export interface CurioInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "getBase", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getBaseAt", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getBaseNonce",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getBulkBase",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getEpoch", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getMapChunk",
@@ -648,6 +666,14 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BaseStructOutput]>;
 
+    getBaseNonce(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    getBulkBase(
+      _startId: BigNumberish,
+      _endId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BaseStructOutput[]]>;
+
     getEpoch(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getMapChunk(
@@ -787,6 +813,14 @@ export interface Curio extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BaseStructOutput>;
 
+  getBaseNonce(overrides?: CallOverrides): Promise<BigNumber>;
+
+  getBulkBase(
+    _startId: BigNumberish,
+    _endId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BaseStructOutput[]>;
+
   getEpoch(overrides?: CallOverrides): Promise<BigNumber>;
 
   getMapChunk(
@@ -920,6 +954,14 @@ export interface Curio extends BaseContract {
       _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<BaseStructOutput>;
+
+    getBaseNonce(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getBulkBase(
+      _startId: BigNumberish,
+      _endId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BaseStructOutput[]>;
 
     getEpoch(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1161,6 +1203,14 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getBaseNonce(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getBulkBase(
+      _startId: BigNumberish,
+      _endId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getEpoch(overrides?: CallOverrides): Promise<BigNumber>;
 
     getMapChunk(
@@ -1293,6 +1343,14 @@ export interface Curio extends BaseContract {
 
     getBaseAt(
       _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getBaseNonce(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getBulkBase(
+      _startId: BigNumberish,
+      _endId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

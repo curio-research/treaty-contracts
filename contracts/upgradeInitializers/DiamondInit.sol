@@ -54,7 +54,10 @@ contract DiamondInit is UseStorage {
             gs().troopTypeIdMap[i + 1] = _troopTypes[i];
         }
 
-        // start worldBlockNonce at 1 because 0 denotes an empty block
+        // start troop nonce at 1. 0 denotes no troops
         gs().troopNonce++;
+
+        // start base nonce should start at 1. 0 denotes no base
+        gs().baseNonce += 1;
     }
 }
