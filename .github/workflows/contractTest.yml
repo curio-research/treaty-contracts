@@ -13,6 +13,8 @@ jobs:
         uses: foundry-rs/foundry-toolchain@v1
         with:
           version: nightly
+      - name: Install dependencies
+        run: yarn install
 
       - name: Run tests
         run: forge test --ffi -vv
