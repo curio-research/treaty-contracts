@@ -30,7 +30,7 @@ contract GetterFacet is UseStorage {
         for (uint256 x = _pos.x; x < _pos.x + _interval; x++) {
             for (uint256 y = _pos.y; y < _pos.y + _interval; y++) {
                 Position memory _tempPos = Position({x: x, y: y});
-                _allTiles[_nonce] = gs().map[_pos.x][_pos.y];
+                _allTiles[_nonce] = gs().map[x][y];
                 _allPos[_nonce] = _tempPos;
                 _nonce += 1;
             }
@@ -73,5 +73,21 @@ contract GetterFacet is UseStorage {
 
     function getPlayer(address _addr) external view returns (Player memory) {
         return gs().playerMap[_addr];
+    }
+
+    function getBaseNonce() external view returns (uint256) {
+        return gs().baseNonce;
+    }
+
+    // _startId: inclusive
+    // endId: inclusive
+    function getBulkBase(uint256 _startId, uint256 _endId) external view returns (Base[] memory) {
+        Base[] memory bases = new Base[](_endId - _startId + 1);
+
+        for (uint256 i = _startId; i < _endId; i++) {
+            bases[i] = gs().baseIdMap[i];
+        }
+
+        return bases;
     }
 }

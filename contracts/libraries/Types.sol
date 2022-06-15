@@ -88,7 +88,6 @@ struct WorldConstants {
 
 struct GameState {
     WorldConstants worldConstants;
-    // BaseConstants baseConstants;
     address[] players;
     mapping(address => Player) playerMap;
     Tile[1000][1000] map;
@@ -103,5 +102,4 @@ struct GameState {
     mapping(uint256 => Troop) troopIdMap;
     uint256[] troopTypeIds;
     mapping(uint256 => TroopType) troopTypeIdMap;
-    // mapping(address => uint256[]) playerTroopIdMap;
 }

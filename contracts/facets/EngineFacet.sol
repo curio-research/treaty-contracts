@@ -6,14 +6,15 @@ import {Util} from "contracts/libraries/GameUtil.sol";
 import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {BASE_NAME, Base, GameState, Player, Position, Production, TERRAIN, Tile, Troop, TroopType} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
-import "forge-std/console.sol";
 
 error Unauthorized();
+
+/// @title Engine facet
+/// @notice Contains main game logic like movement and battling
 
 contract EngineFacet is UseStorage {
     using SafeMath for uint256;
     uint256 NULL = 0;
-    address ZERO_ADDR = address(0x0000000000000000000000000000000000000000);
 
     /*
     TODO:
