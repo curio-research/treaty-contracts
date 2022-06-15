@@ -4,15 +4,17 @@ pragma solidity ^0.8.4;
 import {Base, Player, Position, Tile, Troop, WorldConstants, TroopType} from "contracts/libraries/Types.sol";
 import {Util} from "contracts/libraries/GameUtil.sol";
 import "contracts/libraries/Storage.sol";
+import "forge-std/console.sol";
 
 /// @title Bulk getters
 /// @notice Getters provide bulk functions useful for fetching data from the frontend
 
 contract GetterFacet is UseStorage {
     function bulkGetAllTroops() external view returns (Troop[] memory) {
-        Troop[] memory _allTroops = new Troop[](gs().troopNonce);
+        Troop[] memory _allTroops = new Troop[](gs().troopNonce - 1);
 
-        for (uint256 i = 0; i < gs().troopNonce; i++) {
+        console.log(gs().troopNonce);
+        for (uint256 i = 0; i < gs().troopNonce - 1; i++) {
             _allTroops[i] = gs().troopIdMap[gs().troopIds[i]];
         }
 

@@ -498,7 +498,39 @@ contract FoundryTest is Test, DiamondDeployTest {
     // ----------------------------------------------------------------------
 
     function testBulkGetAllTroops() public {
-        // TODO
+        vm.startPrank(deployer);
+        engine.spawnTroop(Position({x: 1, y: 3}), player1, armyTroopTypeId);
+        engine.spawnTroop(Position({x: 1, y: 4}), player1, armyTroopTypeId);
+        engine.spawnTroop(Position({x: 2, y: 3}), player2, armyTroopTypeId);
+        engine.spawnTroop(Position({x: 2, y: 4}), player2, armyTroopTypeId);
+        engine.spawnTroop(Position({x: 7, y: 5}), player3, destroyerTroopTypeId);
+        vm.stopPrank();
+
+        Troop[] memory _allTroops = getter.bulkGetAllTroops();
+        assertEq(_allTroops.length, 5);
+        assertEq(_allTroops[0].owner, player1);
+        assertEq(_allTroops[1].pos.x, 1);
+        assertEq(_allTroops[1].pos.y, 4);
+        assertEq(_allTroops[2].troopTypeId, armyTroopTypeId);
+        assertEq(_allTroops[2].owner, player2);
+        assertEq(_allTroops[4].troopTypeId, destroyerTroopTypeId);
+
+        vm.warp(20);
+        engine.updateEpoch();
+        assertEq(getter.getEpoch(), 1);
+
+        vm.prank(player1);
+        engine.battle(1, Position({x: 2, y: 3})); // player2's first army dies
+
+        // verify that all troops remain the same except player2's dead army
+        _allTroops = getter.bulkGetAllTroops();
+        assertEq(_allTroops.length, 5);
+        assertEq(_allTroops[0].owner, player1);
+        assertEq(_allTroops[1].pos.x, 1);
+        assertEq(_allTroops[1].pos.y, 4);
+        assertEq(_allTroops[2].troopTypeId, NULL);
+        assertEq(_allTroops[2].owner, address(0));
+        assertEq(_allTroops[4].troopTypeId, destroyerTroopTypeId);
     }
 
     function testGetMapChunk() public {

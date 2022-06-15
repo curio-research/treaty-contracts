@@ -314,7 +314,7 @@ export interface GetterFacet extends BaseContract {
     getEpoch(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getMapChunk(
-      _pos: PositionStruct,
+      _startPos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<[TileStructOutput[], PositionStructOutput[]]>;
 
@@ -371,7 +371,7 @@ export interface GetterFacet extends BaseContract {
   getEpoch(overrides?: CallOverrides): Promise<BigNumber>;
 
   getMapChunk(
-    _pos: PositionStruct,
+    _startPos: PositionStruct,
     overrides?: CallOverrides
   ): Promise<[TileStructOutput[], PositionStructOutput[]]>;
 
@@ -428,7 +428,7 @@ export interface GetterFacet extends BaseContract {
     getEpoch(overrides?: CallOverrides): Promise<BigNumber>;
 
     getMapChunk(
-      _pos: PositionStruct,
+      _startPos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<[TileStructOutput[], PositionStructOutput[]]>;
 
@@ -485,7 +485,7 @@ export interface GetterFacet extends BaseContract {
     getEpoch(overrides?: CallOverrides): Promise<BigNumber>;
 
     getMapChunk(
-      _pos: PositionStruct,
+      _startPos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -538,7 +538,7 @@ export interface GetterFacet extends BaseContract {
     getEpoch(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getMapChunk(
-      _pos: PositionStruct,
+      _startPos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
