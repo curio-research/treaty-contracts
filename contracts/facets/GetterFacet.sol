@@ -20,18 +20,18 @@ contract GetterFacet is UseStorage {
     }
 
     // Fetch tile map in NxN chunks.
-    function getMapChunk(Position memory _pos) external view returns (Tile[] memory, Position[] memory) {
+    function getMapChunk(Position memory _startPos) external view returns (Tile[] memory, Position[] memory) {
         uint256 _interval = gs().worldConstants.mapInterval;
 
         Tile[] memory _allTiles = new Tile[](_interval * _interval);
         Position[] memory _allPos = new Position[](_interval * _interval);
 
         uint256 _nonce = 0;
-        for (uint256 x = _pos.x; x < _pos.x + _interval; x++) {
-            for (uint256 y = _pos.y; y < _pos.y + _interval; y++) {
-                Position memory _tempPos = Position({x: x, y: y});
-                _allTiles[_nonce] = gs().map[_pos.x][_pos.y];
-                _allPos[_nonce] = _tempPos;
+        for (uint256 x = _startPos.x; x < _startPos.x + _interval; x++) {
+            for (uint256 y = _startPos.y; y < _startPos.y + _interval; y++) {
+                Position memory _pos = Position({x: x, y: y});
+                _allTiles[_nonce] = gs().map[x][y];
+                _allPos[_nonce] = _pos;
                 _nonce += 1;
             }
         }

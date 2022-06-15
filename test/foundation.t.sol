@@ -493,6 +493,30 @@ contract FoundryTest is Test, DiamondDeployTest {
         vm.stopPrank();
     }
 
+    // ----------------------------------------------------------------------
+    // GETTER TESTS
+    // ----------------------------------------------------------------------
+
+    function testBulkGetAllTroops() public {
+        // TODO
+    }
+
+    function testGetMapChunk() public {
+        uint256 _interval = getter.getWorldConstants().mapInterval;
+        (Tile[] memory _allTiles, Position[] memory _allPos) = getter.getMapChunk(Position({x: 0, y: 0}));
+        assertEq(_allTiles.length, 100);
+        assertEq(_allPos.length, _interval * _interval);
+
+        assertTrue(_allTiles[0].terrain == TERRAIN.WATER);
+        assertEq(_allTiles[0].baseId, NULL);
+        assertTrue(_allTiles[20].terrain == TERRAIN.COAST);
+        assertTrue(_allTiles[20].baseId != NULL);
+        assertTrue(_allTiles[40].terrain == TERRAIN.INLAND);
+        assertEq(_allTiles[40].baseId, NULL);
+        assertTrue(_allTiles[50].terrain == TERRAIN.INLAND);
+        assertTrue(_allTiles[50].baseId != NULL);
+    }
+
     // ------------------------------------------------
     // helper functions
     // ------------------------------------------------
