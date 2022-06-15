@@ -40,13 +40,19 @@ export const getValue = (v: BigNumberish) => (v as BigNumber).toNumber();
  * @returns a 2d matrix of tile types and a 2d matrix of RGB values
  */
 export const generateGameMaps = (mapInput: MapInput, renderInput: RenderInput): AllGameMapsOutput => {
-  const noiseMap: number[][] = generateNoiseMap(mapInput.width, mapInput.height, renderInput.sizeFactor);
+  // Use multiple layers of Perlin noise to generate randomized continents and oceans with plate tectonics
+  const microNoiseMap: number[][] = generateNoiseMap(mapInput.width, mapInput.height, renderInput.sizeFactor);
+  const plateNoiseMap: number[][] = generateNoiseMap(mapInput.width, mapInput.height, renderInput.sizeFactor * renderInput.plateSizeMultiplier);
+  const noiseMap: number[][] = superpose([microNoiseMap, plateNoiseMap], renderInput.superpositionRatio);
+
+  // Generate colors, cutoffs, and tile map
   const colorsAndCutoffs: ColorsAndCutoffs = getColorsAndCutoffs(renderInput);
   const colorMap: number[][][] = noiseMap.map((row: number[]) => {
     return row.map((val: number) => assignDepthColor(val, colorsAndCutoffs));
   });
   const { tileMap, portTiles, cityTiles } = placePortsAndCities(colorMap, mapInput.numPorts, mapInput.numCities);
 
+  // Update colorMap with ports and cities
   let tile: number[];
   for (let k = 0; k < portTiles.length; k++) {
     tile = portTiles[k];
@@ -105,7 +111,7 @@ export const getColorsAndCutoffs = (colorInput: RenderInput): ColorsAndCutoffs =
   for (let i = 1; i <= numWaterColors; i++) {
     // land is green
     noiseCutoffs.push(waterNoiseIncrement * i);
-    colors.push([0, 0, 100 - colorLowestPercent + waterColorIncrement * (i - 1)]);
+    colors.push([0, 0, colorLowestPercent + waterColorIncrement * (i - 1)]);
   }
   for (let i = 1; i <= numLandColors; i++) {
     // water is blue
@@ -202,4 +208,33 @@ export const placePortsAndCities = (colorMap: number[][][], numPorts: number, nu
   }
 
   return { tileMap, portTiles, cityTiles };
+};
+
+//////////////////////////////////////////////////////////////////////
+////////////////////////////// HELPERS ///////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+/**
+ * Superpose an array of 2d matrices based on a given ratio.
+ * @param matrices
+ * @param ratio
+ * @returns a 2d matrix as the superposition result
+ */
+export const superpose = (matrices: number[][][], ratio: number[]): number[][] => {
+  if (ratio.reduce((a, b) => a + b, 0) !== 1) throw new Error('Ratio must sum up to 1');
+
+  const sum: number[][] = [];
+  for (let i = 0; i < matrices[0].length; i++) {
+    const col: number[] = [];
+    for (let j = 0; j < matrices[0][0].length; j++) {
+      let val = 0;
+      for (let k = 0; k < matrices.length; k++) {
+        val += matrices[k][i][j] * ratio[k];
+      }
+      col.push(val);
+    }
+    sum.push(col);
+  }
+
+  return sum;
 };

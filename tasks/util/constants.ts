@@ -110,8 +110,10 @@ export const RENDER_CONSTANTS: RenderInput = {
   sizeFactor: 50,
   numLandColors: 5,
   numWaterColors: 2,
-  waterNoiseCutoff: 0.4,
+  waterNoiseCutoff: 0.55,
   colorLowestPercent: 40,
+  plateSizeMultiplier: 6,
+  superpositionRatio: [0.4, 0.6],
 };
 
 // ------------------------------------------------
