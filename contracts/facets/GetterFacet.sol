@@ -13,7 +13,6 @@ contract GetterFacet is UseStorage {
     function bulkGetAllTroops() external view returns (Troop[] memory) {
         Troop[] memory _allTroops = new Troop[](gs().troopNonce - 1);
 
-        console.log(gs().troopNonce);
         for (uint256 i = 0; i < gs().troopNonce - 1; i++) {
             _allTroops[i] = gs().troopIdMap[gs().troopIds[i]];
         }
