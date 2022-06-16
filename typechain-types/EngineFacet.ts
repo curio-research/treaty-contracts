@@ -24,6 +24,40 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
   y: BigNumber;
 };
 
+export type TroopStruct = {
+  owner: string;
+  troopTypeId: BigNumberish;
+  lastMoved: BigNumberish;
+  movesLeftInEpoch: BigNumberish;
+  lastAttacked: BigNumberish;
+  lastRepaired: BigNumberish;
+  health: BigNumberish;
+  pos: PositionStruct;
+  cargoTroopIds: BigNumberish[];
+};
+
+export type TroopStructOutput = [
+  string,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  PositionStructOutput,
+  BigNumber[]
+] & {
+  owner: string;
+  troopTypeId: BigNumber;
+  lastMoved: BigNumber;
+  movesLeftInEpoch: BigNumber;
+  lastAttacked: BigNumber;
+  lastRepaired: BigNumber;
+  health: BigNumber;
+  pos: PositionStructOutput;
+  cargoTroopIds: BigNumber[];
+};
+
 export interface EngineFacetInterface extends utils.Interface {
   functions: {
     "battle(uint256,(uint256,uint256))": FunctionFragment;
@@ -115,7 +149,7 @@ export interface EngineFacetInterface extends utils.Interface {
     "EpochUpdate(uint256,uint256)": EventFragment;
     "Moved(address,uint256,tuple)": EventFragment;
     "NewPlayer(address,tuple)": EventFragment;
-    "NewTroop(address,uint256,tuple)": EventFragment;
+    "NewTroop(address,uint256,tuple,tuple)": EventFragment;
     "ProductionStarted(address,uint256,uint256)": EventFragment;
     "Recovered(address,uint256)": EventFragment;
     "Repaired(address,uint256,uint256)": EventFragment;
@@ -181,8 +215,13 @@ export type NewPlayerEvent = TypedEvent<
 export type NewPlayerEventFilter = TypedEventFilter<NewPlayerEvent>;
 
 export type NewTroopEvent = TypedEvent<
-  [string, BigNumber, PositionStructOutput],
-  { _player: string; _troopId: BigNumber; _pos: PositionStructOutput }
+  [string, BigNumber, TroopStructOutput, PositionStructOutput],
+  {
+    _player: string;
+    _troopId: BigNumber;
+    _troop: TroopStructOutput;
+    _pos: PositionStructOutput;
+  }
 >;
 
 export type NewTroopEventFilter = TypedEventFilter<NewTroopEvent>;
@@ -452,12 +491,18 @@ export interface EngineFacet extends BaseContract {
     ): NewPlayerEventFilter;
     NewPlayer(_player?: null, _pos?: null): NewPlayerEventFilter;
 
-    "NewTroop(address,uint256,tuple)"(
+    "NewTroop(address,uint256,tuple,tuple)"(
       _player?: null,
       _troopId?: null,
+      _troop?: null,
       _pos?: null
     ): NewTroopEventFilter;
-    NewTroop(_player?: null, _troopId?: null, _pos?: null): NewTroopEventFilter;
+    NewTroop(
+      _player?: null,
+      _troopId?: null,
+      _troop?: null,
+      _pos?: null
+    ): NewTroopEventFilter;
 
     "ProductionStarted(address,uint256,uint256)"(
       _player?: null,

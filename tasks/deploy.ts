@@ -139,6 +139,35 @@ task('deploy', 'deploy contracts')
         const player2Army = await diamond.getTroopAt(player2Pos);
         if (player2Army.troopTypeId.toNumber() !== armyTroopTypeId) throw new Error('Something went wrong');
       }
+      let player1Pos: position;
+      do {
+        x = Math.floor(Math.random() * WORLD_WIDTH);
+        y = Math.floor(Math.random() * WORLD_HEIGHT);
+        player1Pos = { x, y };
+      } while (tileMap[x][y] != TILE_TYPE.PORT);
+
+      let player2Pos: position;
+      do {
+        x = Math.floor(Math.random() * WORLD_WIDTH);
+        y = Math.floor(Math.random() * WORLD_HEIGHT);
+        player2Pos = { x, y };
+      } while (tileMap[x][y] != TILE_TYPE.PORT || player2Pos.x === player1Pos.x || player2Pos.y === player1Pos.y);
+
+      // Give each player a port and an army to start with
+      let tx = await diamond.connect(player1).initializePlayer(player1Pos, player1.address);
+      await tx.wait();
+      tx = await diamond.connect(player1).initializePlayer(player2Pos, player2.address);
+      await tx.wait();
+      tx = await diamond.connect(player1).spawnTroop(player1Pos, player1.address, armyTypeId);
+      await tx.wait();
+      tx = await diamond.connect(player1).spawnTroop(player2Pos, player2.address, armyTypeId);
+      await tx.wait();
+
+      // Basic checks
+      const player1Army = await diamond.getTroopAt(player1Pos);
+      if (player1Army.owner !== player1.address) throw new Error('Something is wrong');
+      const player2Army = await diamond.getTroopAt(player2Pos);
+      if (player2Army.troopTypeId.toNumber() !== armyTypeId) throw new Error('Something went wrong');
     }
 
     // ---------------------------------

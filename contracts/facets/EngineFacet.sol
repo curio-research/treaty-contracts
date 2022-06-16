@@ -35,7 +35,7 @@ contract EngineFacet is UseStorage {
     event Death(address _player, uint256 _troopId);
     event BaseCaptured(address _player, uint256 _troopId, uint256 _baseId);
     event ProductionStarted(address _player, uint256 _baseId, uint256 _troopTypeId);
-    event NewTroop(address _player, uint256 _troopId, Position _pos);
+    event NewTroop(address _player, uint256 _troopId, Troop _troop, Position _pos);
     event Repaired(address _player, uint256 _troopId, uint256 _health);
     event Recovered(address _player, uint256 _troopId);
 
@@ -103,8 +103,9 @@ contract EngineFacet is UseStorage {
             if (!Util._isLandTroop(_troopTypeId) && _base.name != BASE_NAME.PORT) revert("Can only spawn water troops in ports");
         }
 
-        uint256 _troopId = Util._addTroop(_pos, _troopTypeId, _player);
-        emit NewTroop(_player, _troopId, _pos);
+        (uint256 _troopId, Troop memory _troop) = Util._addTroop(_pos, _troopTypeId, _player);
+
+        emit NewTroop(_player, _troopId, _troop, _pos);
     }
 
     // ----------------------------------------------------------------------
@@ -331,9 +332,9 @@ contract EngineFacet is UseStorage {
         if (_production.troopTypeId == NULL) revert("No production found in base");
         if (Util._getEpochsToProduce(_production.troopTypeId) > (gs().epoch - _production.startEpoch)) revert("Troop needs more epochs for production");
 
-        uint256 _troopId = Util._addTroop(_pos, _production.troopTypeId, msg.sender);
+        (uint256 _troopId, Troop memory _troop) = Util._addTroop(_pos, _production.troopTypeId, msg.sender);
         delete gs().baseProductionMap[_tile.baseId];
-        emit NewTroop(msg.sender, _troopId, _pos);
+        emit NewTroop(msg.sender, _troopId, _troop, _pos);
     }
 
     /**

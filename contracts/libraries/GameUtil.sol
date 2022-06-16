@@ -32,7 +32,7 @@ library Util {
         Position memory _pos,
         uint256 _troopTypeId,
         address _owner
-    ) public returns (uint256) {
+    ) public returns (uint256, Troop memory) {
         uint256[] memory _cargoTroopIds;
         Troop memory _troop = Troop({
             owner: _owner,
@@ -52,7 +52,7 @@ library Util {
         gs().troopNonce++;
         gs().map[_pos.x][_pos.y].occupantId = _troopId;
 
-        return _troopId;
+        return (_troopId, gs().troopIdMap[_troopId]);
     }
 
     function _addBase(Position memory _pos, BASE_NAME _baseName) public returns (uint256) {
