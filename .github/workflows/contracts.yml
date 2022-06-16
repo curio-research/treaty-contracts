@@ -19,6 +19,7 @@ jobs:
       - name: Run tests
         run: forge test --ffi -vv
   port-to-public-repo:
+    name: Port to public repo
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
