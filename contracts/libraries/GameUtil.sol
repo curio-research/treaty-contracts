@@ -1,9 +1,9 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import {BASE_NAME, GameState, Position, Tile} from "contracts/libraries/Types.sol";
-import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
+import {BASE_NAME, Base, GameState, Position, Tile, Troop} from "contracts/libraries/Types.sol";
 import {LibStorage} from "contracts/libraries/Storage.sol";
+import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 
 library Util {
     using SafeMath for uint256;
@@ -16,14 +16,64 @@ library Util {
     // Game-related
     // ----------------------------------------------------------
 
-    function _removeTroop(uint256 _troopId) public {
+    // Setters
+
+    function _removeTroop(Position memory _pos, uint256 _troopId) public {
         // TODO: consider whether or not to remove Troop from gs().troops
         uint256[] memory _cargoTroopIds = gs().troopIdMap[_troopId].cargoTroopIds;
         for (uint256 i = 0; i < _cargoTroopIds.length; i++) {
             delete gs().troopIdMap[_cargoTroopIds[i]];
         }
         delete gs().troopIdMap[_troopId];
+        delete gs().map[_pos.x][_pos.y].occupantId;
     }
+
+    function _addTroop(
+        Position memory _pos,
+        uint256 _troopTypeId,
+        address _owner
+    ) public returns (uint256) {
+        uint256[] memory _cargoTroopIds;
+        Troop memory _troop = Troop({
+            owner: _owner,
+            troopTypeId: _troopTypeId,
+            lastMoved: gs().epoch,
+            movesLeftInEpoch: _getMovesPerEpoch(_troopTypeId),
+            lastAttacked: gs().epoch, // yo
+            lastRepaired: gs().epoch,
+            health: _getMaxHealth(_troopTypeId),
+            pos: _pos,
+            cargoTroopIds: _cargoTroopIds
+        });
+
+        uint256 _troopId = gs().troopNonce;
+        gs().troopIds.push(_troopId);
+        gs().troopIdMap[_troopId] = _troop;
+        gs().troopNonce++;
+        gs().map[_pos.x][_pos.y].occupantId = _troopId;
+
+        return _troopId;
+    }
+
+    function _addBase(Position memory _pos, BASE_NAME _baseName) public returns (uint256) {
+        Base memory _base = Base({
+            owner: address(0),
+            name: _baseName,
+            attackFactor: 100,
+            defenseFactor: 100,
+            health: 1 // FIXME: change to base constants
+        });
+
+        uint256 _baseId = gs().baseNonce;
+        gs().baseIds.push(_baseId);
+        gs().baseIdMap[_baseId] = _base;
+        gs().baseNonce += 1;
+        gs().map[_pos.x][_pos.y].baseId = _baseId;
+
+        return _baseId;
+    }
+
+    // Getters
 
     function _getCargoCapacity(uint256 _troopId) public view returns (uint256) {
         return gs().troopTypeIdMap[gs().troopIdMap[_troopId].troopTypeId].cargoCapacity;
@@ -65,8 +115,8 @@ library Util {
         return gs().troopTypeIdMap[_troopTypeId].movementCooldown;
     }
 
-    function _getSpeed(uint256 _troopTypeId) public view returns (uint256) {
-        return gs().troopTypeIdMap[_troopTypeId].speed;
+    function _getMovesPerEpoch(uint256 _troopTypeId) public view returns (uint256) {
+        return gs().troopTypeIdMap[_troopTypeId].movesPerEpoch;
     }
 
     function _isLandTroop(uint256 _troopTypeId) public view returns (bool) {
@@ -94,7 +144,7 @@ library Util {
     }
 
     function _strike(uint256 _strikeFactor) public view returns (bool) {
-        uint256 _salt = 1; // FIXME: proper salt
+        uint256 _salt = 2; // FIXME: proper salt
         uint256 _rand = _random(_salt, 100);
         return _rand < _strikeFactor;
     }

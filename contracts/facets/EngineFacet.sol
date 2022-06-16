@@ -1,10 +1,16 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 import "contracts/libraries/Storage.sol";
 import {Util} from "contracts/libraries/GameUtil.sol";
-import {Base, GameState, Player, Position, Production, TERRAIN, Tile, Troop, TroopType} from "contracts/libraries/Types.sol";
+import {GetterFacet} from "contracts/facets/GetterFacet.sol";
+import {BASE_NAME, Base, GameState, Player, Position, Production, TERRAIN, Tile, Troop, TroopType} from "contracts/libraries/Types.sol";
+import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
+
+error Unauthorized();
+
+/// @title Engine facet
+/// @notice Contains main game logic like movement and battling
 
 contract EngineFacet is UseStorage {
     using SafeMath for uint256;
@@ -12,9 +18,15 @@ contract EngineFacet is UseStorage {
 
     /*
     TODO:
-    - Setters
+    - Map upload speed
     - Endgame and objectives
     */
+
+    modifier onlyAdmin() {
+        // require(msg.sender == gs().worldConstants.admin, "Only admin can perform this action");
+        if (msg.sender != gs().worldConstants.admin) revert Unauthorized();
+        _;
+    }
 
     event NewPlayer(address _player, Position _pos);
     event EpochUpdate(uint256 _epoch, uint256 _time);
@@ -23,36 +35,81 @@ contract EngineFacet is UseStorage {
     event Death(address _player, uint256 _troopId);
     event BaseCaptured(address _player, uint256 _troopId, uint256 _baseId);
     event ProductionStarted(address _player, uint256 _baseId, uint256 _troopTypeId);
-    event ProductionFinished(address _player, uint256 _troopId, Position _pos);
+    event NewTroop(address _player, uint256 _troopId, Position _pos);
     event Repaired(address _player, uint256 _troopId, uint256 _health);
     event Recovered(address _player, uint256 _troopId);
+
+    // ----------------------------------------------------------------------
+    // ADMIN FUNCTIONS
+    // ----------------------------------------------------------------------
+
+    /**
+     * Set an NxN chunk of the tile map.
+     * @param _startPos top-left position of chunk
+     * @param _chunk a 2d, NxN chunk
+     */
+    function setMapChunk(Position memory _startPos, uint256[][] memory _chunk) external onlyAdmin {
+        for (uint256 _dx = 0; _dx < _chunk.length; _dx++) {
+            for (uint256 _dy = 0; _dy < _chunk[0].length; _dy++) {
+                Position memory _pos = Position({x: _startPos.x + _dx, y: _startPos.y + _dy});
+                uint256 _terrainId = _chunk[_dx][_dy];
+
+                if (_terrainId >= 3) {
+                    // Note: temporary way to set base
+                    BASE_NAME _baseName = _terrainId == 3 ? BASE_NAME.PORT : BASE_NAME.CITY;
+                    Util._addBase(_pos, _baseName);
+                    _terrainId -= 3;
+                }
+
+                gs().map[_pos.x][_pos.y].terrain = TERRAIN(_terrainId);
+            }
+        }
+    }
 
     /**
      * Initialize a player at a selected position.
      * @param _pos position to initialize
      * @param _player player address
      */
-    function initializePlayer(Position memory _pos, address _player) external {
-        if (Util._getBaseOwner(gs().map[_pos.x][_pos.y].baseId) == address(0)) revert("Base is taken");
+    function initializePlayer(Position memory _pos, address _player) external onlyAdmin {
+        uint256 _baseId = Util._getTileAt(_pos).baseId;
+
+        if (Util._getBaseOwner(_baseId) != address(0)) revert("Base is taken");
 
         gs().players.push(_player);
-        gs().playerMap[_player] = Player({initEpoch: gs().epoch, active: true, pos: _pos});
+        gs().playerMap[_player] = Player({initEpoch: gs().epoch, active: true});
+        gs().baseIdMap[_baseId].owner = _player;
 
         emit NewPlayer(_player, _pos);
     }
 
     /**
-     * Update epoch given enough time has elapsed.
+     * Spawn a troop at a selected position, typically upon initialization of a player.
+     * @param _pos position
+     * @param _player player address
+     * @param _troopTypeId identifier for desired troop type
      */
-    function updateEpoch() external {
-        // Currently implemented expecting real-time calls from client; can change to lazy if needed
-        if ((block.timestamp - gs().lastTimestamp) < gs().worldConstants.secondsPerTurn) revert("Not enough time has elapsed since last epoch");
+    function spawnTroop(
+        Position memory _pos,
+        address _player,
+        uint256 _troopTypeId
+    ) external onlyAdmin {
+        Tile memory _tile = Util._getTileAt(_pos);
+        if (_tile.occupantId != NULL) revert("Tile occupied");
 
-        gs().epoch++;
-        gs().lastTimestamp = block.timestamp;
+        if (_tile.baseId != NULL) {
+            Base memory _base = gs().baseIdMap[_tile.baseId];
+            if (_base.owner != _player && _base.owner != address(0)) revert("Can only spawn troop in player's base"); // FIXME: the address(0) part is a bit of privilege
+            if (!Util._isLandTroop(_troopTypeId) && _base.name != BASE_NAME.PORT) revert("Can only spawn water troops in ports");
+        }
 
-        emit EpochUpdate(gs().epoch, gs().lastTimestamp);
+        uint256 _troopId = Util._addTroop(_pos, _troopTypeId, _player);
+        emit NewTroop(_player, _troopId, _pos);
     }
+
+    // ----------------------------------------------------------------------
+    // PLAYER FUNCTIONS
+    // ----------------------------------------------------------------------
 
     /**
      * Move a troop to a target position.
@@ -65,8 +122,15 @@ contract EngineFacet is UseStorage {
         Troop memory _troop = gs().troopIdMap[_troopId];
         if (_troop.owner != msg.sender) revert("Can only move own troop");
         if (Util._samePos(_troop.pos, _targetPos)) revert("Already at destination");
-        if (!Util._withinDist(_troop.pos, _targetPos, Util._getSpeed(_troop.troopTypeId))) revert("Destination too far");
-        if ((gs().epoch - _troop.lastMoved) < Util._getMovementCooldown(_troop.troopTypeId)) revert("Moved too recently");
+        if (!Util._withinDist(_troop.pos, _targetPos, 1)) revert("Destination too far");
+
+        uint256 _movesLeftInEpoch = _troop.movesLeftInEpoch;
+        if ((gs().epoch - _troop.lastMoved) >= Util._getMovementCooldown(_troop.troopTypeId)) {
+            // Lazy update for moves left in epoch
+            _movesLeftInEpoch = Util._getMovesPerEpoch(_troop.troopTypeId);
+            gs().troopIdMap[_troopId].movesLeftInEpoch = _movesLeftInEpoch;
+        }
+        if (_movesLeftInEpoch == 0) revert("No moves left this epoch");
 
         Tile memory _targetTile = Util._getTileAt(_targetPos);
         if (Util._isLandTroop(_troop.troopTypeId)) {
@@ -89,6 +153,7 @@ contract EngineFacet is UseStorage {
         // Move
         gs().map[_troop.pos.x][_troop.pos.y].occupantId = NULL;
         gs().troopIdMap[_troopId].pos = _targetPos;
+        gs().troopIdMap[_troopId].movesLeftInEpoch--;
 
         uint256[] memory _cargoTroopIds = gs().troopIdMap[_troopId].cargoTroopIds;
         if (_cargoTroopIds.length > 0) {
@@ -114,6 +179,8 @@ contract EngineFacet is UseStorage {
         if (Util._samePos(_troop.pos, _targetPos)) revert("Already at destination");
         if (!Util._withinDist(_troop.pos, _targetPos, 1)) revert("Destination too far");
         if ((gs().epoch - _troop.lastAttacked) < Util._getAttackCooldown(_troop.troopTypeId)) revert("Attacked too recently");
+
+        gs().troopIdMap[_troopId].lastAttacked = gs().epoch;
 
         Tile memory _targetTile = Util._getTileAt(_targetPos);
         bool _targetIsBase;
@@ -162,12 +229,13 @@ contract EngineFacet is UseStorage {
                 emit Attacked(msg.sender, _troopId, Util._getTroopOwner(_targetTile.occupantId), _targetTile.occupantId);
 
                 if (_targetHealth == 0) {
-                    Util._removeTroop(_targetTile.occupantId);
-                    gs().map[_targetPos.x][_targetPos.y].occupantId = NULL;
+                    Util._removeTroop(_targetPos, _targetTile.occupantId);
                     emit Death(Util._getBaseOwner(_targetTile.occupantId), _targetTile.occupantId);
                 }
             }
         }
+
+        if (_targetHealth == 0) return; // target cannot attack back if it has zero health
 
         // Target attacks troop
         if (Util._strike(_targetDefenseFactor)) {
@@ -178,15 +246,12 @@ contract EngineFacet is UseStorage {
             }
 
             if (_targetDamagePerHit >= _troop.health) {
-                Util._removeTroop(_troopId);
-                gs().map[_troop.pos.x][_troop.pos.y].occupantId = NULL;
+                Util._removeTroop(_troop.pos, _troopId);
                 emit Death(msg.sender, _troopId);
             } else {
-                gs().troopIdMap[_targetTile.occupantId].health -= _targetDamagePerHit;
+                gs().troopIdMap[_troopId].health -= _targetDamagePerHit;
             }
         }
-
-        return;
     }
 
     /**
@@ -204,7 +269,7 @@ contract EngineFacet is UseStorage {
 
         Tile memory _targetTile = Util._getTileAt(_targetPos);
         if (_targetTile.baseId == NULL) revert("No base to capture");
-        if (Util._getBaseOwner(_targetTile.baseId) == msg.sender) revert("Base already captured");
+        if (Util._getBaseOwner(_targetTile.baseId) == msg.sender) revert("Base already owned");
         if (_targetTile.occupantId != NULL) revert("Destination tile occupied");
         if (Util._getBaseHealth(_targetTile.baseId) > 0) revert("Need to attack first");
 
@@ -226,12 +291,28 @@ contract EngineFacet is UseStorage {
         Tile memory _tile = Util._getTileAt(_pos);
         if (_tile.baseId == NULL) revert("No base found");
         if (Util._getBaseOwner(_tile.baseId) != msg.sender) revert("Can only produce in own base");
-        if (!Util._hasPort(_tile) && !Util._isLandTroop(_troopTypeId)) revert("Only ports can produce water troops");
+        if (!Util._isLandTroop(_troopTypeId) && !Util._hasPort(_tile)) revert("Only ports can produce water troops");
         if (gs().baseProductionMap[_tile.baseId].troopTypeId != NULL) revert("Base already producing");
 
         gs().baseProductionMap[_tile.baseId] = Production({troopTypeId: _troopTypeId, startEpoch: gs().epoch});
-
         emit ProductionStarted(msg.sender, _tile.baseId, _troopTypeId);
+    }
+
+    // ----------------------------------------------------------------------
+    // STATE FUNCTIONS
+    // ----------------------------------------------------------------------
+
+    /**
+     * Update epoch given enough time has elapsed.
+     */
+    function updateEpoch() external {
+        // Currently implemented expecting real-time calls from client; can change to lazy if needed
+        if ((block.timestamp - gs().lastTimestamp) < gs().worldConstants.secondsPerEpoch) revert("Not enough time has elapsed since last epoch");
+
+        gs().epoch++;
+        gs().lastTimestamp = block.timestamp;
+
+        emit EpochUpdate(gs().epoch, gs().lastTimestamp);
     }
 
     /**
@@ -249,23 +330,8 @@ contract EngineFacet is UseStorage {
         if (_production.troopTypeId == NULL) revert("No production found in base");
         if (Util._getEpochsToProduce(_production.troopTypeId) > (gs().epoch - _production.startEpoch)) revert("Troop needs more epochs for production");
 
-        uint256[] memory _cargoTroopIds;
-        Troop memory _troop = Troop({
-            owner: msg.sender,
-            troopTypeId: _production.troopTypeId,
-            lastMoved: gs().epoch,
-            lastAttacked: gs().epoch, // yo
-            health: Util._getMaxHealth(_production.troopTypeId),
-            pos: _pos,
-            cargoTroopIds: _cargoTroopIds
-        });
-
-        uint256 _troopId = gs().troopNonce;
-        gs().troopIds.push(_troopId);
-        gs().troopIdMap[_troopId] = _troop;
-        gs().troopNonce++;
-
-        emit ProductionFinished(msg.sender, _troopId, _pos);
+        uint256 _troopId = Util._addTroop(_pos, _production.troopTypeId, msg.sender);
+        emit NewTroop(msg.sender, _troopId, _pos);
     }
 
     /**
@@ -283,9 +349,11 @@ contract EngineFacet is UseStorage {
         Troop memory _troop = gs().troopIdMap[_troopId];
         if (_troop.owner != msg.sender) revert("Can only repair own troop");
         if (_troop.health >= Util._getMaxHealth(_troop.troopTypeId)) revert("Troop already at full health");
+        if ((gs().epoch - _troop.lastRepaired) < 1) revert("Repaired too recently");
 
         _troop.health++;
         gs().troopIdMap[_troopId].health = _troop.health;
+        gs().troopIdMap[_troopId].lastRepaired = gs().epoch;
         emit Repaired(msg.sender, _tile.occupantId, _troop.health);
         if (_troop.health == Util._getMaxHealth(_troop.troopTypeId)) emit Recovered(msg.sender, _troopId);
     }

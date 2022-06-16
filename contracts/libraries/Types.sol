@@ -7,9 +7,9 @@ enum BASE_NAME {
 }
 
 enum TERRAIN {
-    WATER,
-    COASTLINE,
-    INLAND
+    COAST,
+    INLAND,
+    WATER
 }
 
 enum TROOP_NAME {
@@ -29,11 +29,9 @@ struct Position {
 struct Player {
     uint256 initEpoch;
     bool active;
-    Position pos;
 }
 
 struct Base {
-    // TODO: can add another struct named BaseType with all of the fields except ownerAddr
     BASE_NAME name;
     address owner;
     uint256 attackFactor;
@@ -51,7 +49,9 @@ struct Troop {
     address owner;
     uint256 troopTypeId;
     uint256 lastMoved;
+    uint256 movesLeftInEpoch;
     uint256 lastAttacked;
+    uint256 lastRepaired;
     uint256 health;
     Position pos;
     uint256[] cargoTroopIds; // only for Troop Transport
@@ -59,7 +59,7 @@ struct Troop {
 
 struct TroopType {
     TROOP_NAME name;
-    uint256 speed; // movement per epoch
+    uint256 movesPerEpoch;
     uint256 maxHealth;
     uint256 damagePerHit;
     uint256 attackFactor; // in the interval [0, 100]
@@ -69,7 +69,6 @@ struct TroopType {
     uint256 movementCooldown;
     uint256 attackCooldown;
     bool isLandTroop;
-    // bool canBombard; // only needed for Fighter Jets
 }
 
 struct Production {
@@ -81,9 +80,10 @@ struct WorldConstants {
     address admin;
     uint256 worldWidth;
     uint256 worldHeight;
+    uint256 numPorts;
+    uint256 numCities;
     uint256 mapInterval;
-    uint256 secondsPerTurn;
-    uint256 troopStackLimit;
+    uint256 secondsPerEpoch;
 }
 
 struct GameState {
@@ -95,12 +95,11 @@ struct GameState {
     uint256 lastTimestamp;
     mapping(uint256 => Production) baseProductionMap;
     uint256[] baseIds;
+    uint256 baseNonce;
     mapping(uint256 => Base) baseIdMap;
     uint256[] troopIds;
     uint256 troopNonce;
     mapping(uint256 => Troop) troopIdMap;
     uint256[] troopTypeIds;
     mapping(uint256 => TroopType) troopTypeIdMap;
-    // mapping(address => uint256[]) playerTroopIdMap;
-    uint256 sample;
 }

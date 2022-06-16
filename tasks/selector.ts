@@ -1,17 +1,15 @@
-import { ContractFactory } from 'ethers';
-import { getSigHashes } from './util/diamond';
+import { getSigHashes } from './util/diamondHelper';
 import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment, HardhatArguments } from 'hardhat/types';
 
 // interfaces
-import TowerFacetInterface from '../out/TowerFacet.sol/TowerFacet.json';
 import GetterFacetInterface from '../out/GetterFacet.sol/GetterFacet.json';
 import EngineFacetInterface from '../out/EngineFacet.sol/EngineFacet.json';
 
 task('selector', 'get function selectors and print them').setAction(async (args: HardhatArguments, hre: HardhatRuntimeEnvironment) => {
   //   hre.run('compile'); // first compile all contracts
 
-  const contracts = [EngineFacetInterface, GetterFacetInterface, TowerFacetInterface];
+  const contracts = [EngineFacetInterface, GetterFacetInterface];
   // const contracts = ['EngineFacet', 'GetterFacet', 'TowerFacet'];
 
   for (const contract of contracts) {

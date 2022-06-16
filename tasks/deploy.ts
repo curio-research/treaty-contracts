@@ -1,17 +1,16 @@
-import { GameUtils } from './../typechain-types/GameUtils';
 import axios from 'axios';
 import * as path from 'path';
 import * as fsPromise from 'fs/promises';
 import * as fs from 'fs';
+import { Util } from './../typechain-types/Util';
 import { task } from 'hardhat/config';
-import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
-import { deployProxy, getItemIndexByName, printDivider } from './util/deployHelper';
-import { LOCALHOST_RPC_URL, LOCALHOST_WS_RPC_URL, MAP_INTERVAL, masterItems, WORLD_HEIGHT, WORLD_WIDTH, generateBlockIdToNameMap, ITEM_RATIO, generateAllBlocks } from './util/constants';
-import { generateAllGameArgs } from './util/allArgsGenerator';
+import { deployProxy, printDivider } from './util/deployHelper';
+import { TROOP_TYPES, getTroopTypeIndexByName, RENDER_CONSTANTS, MAP_INTERVAL, NUM_CITIES, NUM_PORTS, SECONDS_PER_EPOCH, WORLD_HEIGHT, WORLD_WIDTH, getTroopNames, generateWorldConstants } from './util/constants';
 import { position } from '../util/types/common';
-import { gameItems } from './util/itemGenerator';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
+import { MapInput, TILE_TYPE, TROOP_NAME } from './util/types';
+import { generateGameMaps } from './util/mapHelper';
 
 const { BACKEND_URL } = process.env;
 
@@ -25,53 +24,56 @@ task('deploy', 'deploy contracts')
   .addFlag('publish', 'Publish deployment to game launcher') // default is to call publish
   .setAction(async (args: any, hre: HardhatRuntimeEnvironment) => {
     await hre.run('compile');
-    const isDev = hre.network.name === 'localhost' || hre.network.name === 'hardhat';
-
     printDivider();
+
+    const isDev = hre.network.name === 'localhost' || hre.network.name === 'hardhat';
     console.log('Network:', hre.network.name);
 
-    let player1: SignerWithAddress;
-    let player2: SignerWithAddress;
-    [player1, player2] = await hre.ethers.getSigners();
-    const ironIdx = getItemIndexByName(masterItems, 'Iron');
+    let [player1, player2] = await hre.ethers.getSigners();
+    const armyTypeId = getTroopTypeIndexByName(TROOP_TYPES, TROOP_NAME.ARMY) + 1;
 
-    const allGameArgs = generateAllGameArgs(gameItems, ITEM_RATIO);
+    // Set up game configs
+    const worldConstants = generateWorldConstants(player1.address);
 
-    const diamondAddress = await deployDiamond(hre, [allGameArgs.gameConstants]);
-    console.log('Diamond deployed and initiated: ', diamondAddress);
+    const { tileMap, colorMap } = generateGameMaps(
+      {
+        width: WORLD_WIDTH,
+        height: WORLD_HEIGHT,
+        numPorts: NUM_PORTS,
+        numCities: NUM_CITIES,
+      } as MapInput,
+      RENDER_CONSTANTS
+    );
 
-    // deploy util contracts
-    const gameUtil = await deployProxy<GameUtils>('GameUtils', player1, hre, []);
-    console.log(gameUtil.address);
+    // Deploy util contracts
+    const util = await deployProxy<Util>('Util', player1, hre, []);
+    console.log('✦ Util deployed:', util.address);
 
-    // all facets
+    // Deploy diamond and facets
+    const diamondAddr = await deployDiamond(hre, [worldConstants, TROOP_TYPES]);
+    console.log('✦ Diamond deployed and initiated:', diamondAddr);
     const facets = [
-      { name: 'EngineFacet', libraries: { GameUtils: gameUtil.address } },
-      { name: 'GetterFacet', libraries: { GameUtils: gameUtil.address } },
-      { name: 'TowerFacet', libraries: { GameUtils: gameUtil.address } },
+      { name: 'EngineFacet', libraries: { Util: util.address } },
+      { name: 'GetterFacet', libraries: { Util: util.address } },
     ];
+    await deployFacets(hre, diamondAddr, facets, player1);
+    const diamond = await getDiamond(hre, diamondAddr);
+    printDivider();
 
-    // deploy all facets
-    await deployFacets(hre, diamondAddress, facets, player1);
-
-    const diamond = await getDiamond(hre, diamondAddress);
-
-    const blocks = allGameArgs.blockMap;
-
-    // initialize map
+    // Initialize map
     console.log('✦ initializing map');
-    let regionMap: number[][];
+    let mapChunk: TILE_TYPE[][];
     for (let x = 0; x < WORLD_WIDTH; x += MAP_INTERVAL) {
       for (let y = 0; y < WORLD_HEIGHT; y += MAP_INTERVAL) {
-        regionMap = blocks.slice(x, x + MAP_INTERVAL).map((col) => col.slice(y, y + MAP_INTERVAL));
+        mapChunk = tileMap.slice(x, x + MAP_INTERVAL).map((col: TILE_TYPE[]) => col.slice(y, y + MAP_INTERVAL));
 
-        let tx = await diamond.setMapRegion({ x, y }, regionMap);
+        let tx = await diamond.setMapChunk({ x, y }, mapChunk);
         tx.wait();
       }
     }
 
-    // randomly initialize players only if we're on localhost
     if (isDev) {
+      // Randomly initialize players only if we're on localhost
       console.log('✦ initializing players');
       let x: number;
       let y: number;
@@ -81,59 +83,47 @@ task('deploy', 'deploy contracts')
         x = Math.floor(Math.random() * WORLD_WIDTH);
         y = Math.floor(Math.random() * WORLD_HEIGHT);
         player1Pos = { x, y };
-      } while (blocks[x][y] != 0);
+      } while (tileMap[x][y] != TILE_TYPE.PORT);
 
       let player2Pos: position;
       do {
         x = Math.floor(Math.random() * WORLD_WIDTH);
         y = Math.floor(Math.random() * WORLD_HEIGHT);
         player2Pos = { x, y };
-      } while (blocks[x][y] != 0);
+      } while (tileMap[x][y] != TILE_TYPE.PORT && player2Pos.x !== player1Pos.x && player2Pos.y !== player1Pos.y);
 
-      let tx;
-      tx = await diamond.connect(player1).initializePlayer(player1Pos, ironIdx); // initialize users
-      tx.wait();
-
+      // Give each player a port and an army to start with
+      let tx = await diamond.connect(player1).initializePlayer(player1Pos, player1.address);
       await tx.wait();
+      tx = await diamond.connect(player1).initializePlayer(player2Pos, player2.address);
+      await tx.wait();
+      tx = await diamond.connect(player1).spawnTroop(player1Pos, player1.address, armyTypeId);
+      await tx.wait();
+      tx = await diamond.connect(player1).spawnTroop(player2Pos, player2.address, armyTypeId);
+      await tx.wait();
+
+      // Basic checks
+      const player1Army = await diamond.getTroopAt(player1Pos);
+      if (player1Army.owner !== player1.address) throw new Error('Something is wrong');
+      const player2Army = await diamond.getTroopAt(player2Pos);
+      if (player2Army.troopTypeId.toNumber() !== armyTypeId) throw new Error('Something went wrong');
     }
 
-    // TODO: bulk initialize ports and cities
-
-    // // ---------------------------------
-    // // generate config files
-    // // copies files and ports to frontend if it's a localhost, or publishes globally if its a global deployment
-    // // ---------------------------------
-
-    const currentFileDir = path.join(__dirname);
-
-    const networkRPCs = rpcUrlSelector(hre.network.name);
-
-    // perhaps this can also be on chain. lemme think - kevin
-    const blockIdToNameMapping = generateBlockIdToNameMap(generateAllBlocks());
+    // ---------------------------------
+    // generate config files
+    // copies files and ports to frontend if it's a localhost, or publishes globally if its a global deployment
+    // ---------------------------------
 
     const configFile = {
       address: diamond.address,
-      //   addresses: JSON.stringify({
-      //     GAME_ADDRESS: GameContract.address,
-      //     TOWER_GAME_ADDRESS: TowerContract.address,
-      //     GAME_STORAGE_CONTRACT: GameStorage.address,
-      //     GETTERS_ADDRESS: GettersContract.address,
-      //     EPOCH_ADDRESS: EpochContract.address,
-      //   }),
       network: hre.network.name,
-      rpcUrl: networkRPCs[0],
-      wsRpcUrl: networkRPCs[1],
-      blockIdToNameMapping: JSON.stringify(blockIdToNameMapping),
       deploymentId: `${hre.network.name}-${Date.now()}`,
     };
 
+    // Publish the deployment to mongodb
     const publish = args.publish;
-
-    // publish the deployment to mongodb
     if (publish && !isDev) {
       console.log('Backend URL', BACKEND_URL);
-
-      // publish
       const { data } = await axios.post(`${BACKEND_URL}/deployments/add`, configFile);
 
       if (data) {
@@ -141,27 +131,14 @@ task('deploy', 'deploy contracts')
       }
     }
 
-    // if we're in dev mode, port the files to the frontend.
+    // If we're in dev mode, port the files to the frontend.
     if (isDev) {
-      const configFileDir = path.join(currentFileDir, 'game.config.json');
+      const configFileDir = path.join(path.join(__dirname), 'game.config.json');
+      const raw = fs.readFileSync(configFileDir).toString();
+      const existingDeployments = raw ? JSON.parse(raw) : [];
+      existingDeployments.push(configFile);
 
-      const existingDeployments = await fs.readFileSync(configFileDir).toString();
-
-      const existingDeploymentsArray = existingDeployments ? JSON.parse(existingDeployments) : [];
-
-      existingDeploymentsArray.push(configFile);
-
-      await fsPromise.writeFile(configFileDir, JSON.stringify(existingDeploymentsArray));
-
+      await fsPromise.writeFile(configFileDir, JSON.stringify(existingDeployments));
       await hre.run('port'); // default to porting files
     }
   });
-
-export const rpcUrlSelector = (networkName: string): string[] => {
-  if (networkName === 'localhost') {
-    return [LOCALHOST_RPC_URL, LOCALHOST_WS_RPC_URL];
-  } else if (networkName === 'optimismKovan') {
-    return [process.env.KOVAN_RPC_URL!, process.env.KOVAN_WS_RPC_URL!];
-  }
-  return [];
-};

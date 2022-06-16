@@ -1,296 +1,129 @@
-import { ItemWithMetadata } from './../../util/types/getter';
-import { ItemMaster } from '../../util/types/getter';
-import { getItemIndexByName } from './deployHelper';
+import { WorldConstantsStruct } from './../../typechain-types/Curio';
+import { AddressType } from 'typechain';
+import { TroopTypeStruct } from '../../typechain-types/DiamondInit';
+import { RenderInput, TROOP_NAME } from './types';
+
 export const LOCALHOST_RPC_URL = 'http://127.0.0.1:8545/';
 export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 
-// ------------------------------------------------
-// General constants
-// ------------------------------------------------
+// ----------------------------------------------------------
+// Game constants (source of truth)
+// ----------------------------------------------------------
 
-// game specs - manual
-export const ROOM_LENGTH = 7;
-export const ROOMS_PER_DIMENSION = 1;
-export const ATTACK_RANGE = 1;
-export const ATTACK_DAMAGE = 5;
-export const ATTACK_WAITTIME = 5;
-export const START_PLAYER_HEALTH = 100;
-export const PLAYER_MOVE_COOLDOWN = 1; // player can move every x seconds
+export const WORLD_WIDTH = 20;
+export const WORLD_HEIGHT = 20;
+export const NUM_PORTS = 5;
+export const NUM_CITIES = 5;
 export const MAP_INTERVAL = 10;
-export enum MAP_MODE {
-  DEFAULT,
-  PRIMS,
-  PRIMS_CONNECTED,
-  ROOMS_1,
-  CELLULAR,
-}
+export const SECONDS_PER_EPOCH = 6;
+export const BASE_ATTACK_FACTOR = 1;
+export const BASE_DEFENSE_FACTOR = 1;
+export const BASE_MAX_HEALTH = 1;
 
-// game specs - auto
-export const WORLD_WIDTH = (ROOM_LENGTH - 1) * ROOMS_PER_DIMENSION + 1; // due to shared walls
-export const WORLD_HEIGHT = (ROOM_LENGTH - 1) * ROOMS_PER_DIMENSION + 1;
+export const TROOP_TYPES: TroopTypeStruct[] = [
+  {
+    name: TROOP_NAME.ARMY,
+    movesPerEpoch: 1,
+    maxHealth: 1,
+    damagePerHit: 1,
+    attackFactor: 100,
+    defenseFactor: 100,
+    cargoCapacity: 0,
+    epochsToProduce: 6,
+    movementCooldown: 1,
+    attackCooldown: 1,
+    isLandTroop: true,
+  },
+  {
+    name: TROOP_NAME.TROOP_TRANSPORT,
+    movesPerEpoch: 2,
+    maxHealth: 3,
+    damagePerHit: 1,
+    attackFactor: 50,
+    defenseFactor: 50,
+    cargoCapacity: 6,
+    epochsToProduce: 14,
+    movementCooldown: 1, // FIXME
+    attackCooldown: 1,
+    isLandTroop: false,
+  },
+  {
+    name: TROOP_NAME.DESTROYER,
+    movesPerEpoch: 3,
+    maxHealth: 3,
+    damagePerHit: 1,
+    attackFactor: 100,
+    defenseFactor: 100,
+    cargoCapacity: 0,
+    epochsToProduce: 20,
+    movementCooldown: 1, // FIXME
+    attackCooldown: 1,
+    isLandTroop: false,
+  },
+  {
+    name: TROOP_NAME.CRUISER,
+    movesPerEpoch: 2,
+    maxHealth: 8,
+    damagePerHit: 2,
+    attackFactor: 100,
+    defenseFactor: 100,
+    cargoCapacity: 0,
+    epochsToProduce: 30,
+    movementCooldown: 1, // FIXME
+    attackCooldown: 1,
+    isLandTroop: false,
+  },
+  {
+    name: TROOP_NAME.BATTLESHIP,
+    movesPerEpoch: 2,
+    maxHealth: 12,
+    damagePerHit: 3,
+    attackFactor: 100,
+    defenseFactor: 100,
+    cargoCapacity: 0,
+    epochsToProduce: 50,
+    movementCooldown: 1, // FIXME
+    attackCooldown: 1,
+    isLandTroop: false,
+  },
+];
 
-export const generateGameConstants = () => {
+export const generateWorldConstants = (adminAddr: string): WorldConstantsStruct => {
   return {
+    admin: adminAddr,
     worldWidth: WORLD_WIDTH,
     worldHeight: WORLD_HEIGHT,
-    startPlayerHealth: START_PLAYER_HEALTH,
-    startingReach: 2,
-    startingPlayerDefaultCurrencyAmount: 100,
-    playerMoveCooldown: PLAYER_MOVE_COOLDOWN,
-    getMapInterval: 10,
+    numPorts: NUM_PORTS,
+    numCities: NUM_CITIES,
+    mapInterval: MAP_INTERVAL,
+    secondsPerEpoch: SECONDS_PER_EPOCH,
   };
 };
 
-// ------------------------------------------------
-// Item constants for game deployment
-// ------------------------------------------------
+// export const generateBaseConstants = (): BaseConstantsStruct => {};
 
-export var masterItems: ItemMaster[] = [
-  {
-    name: 'Space',
-    item: {
-      mineable: false,
-      mineItemIds: [],
-      health: 0,
-      craftable: false,
-      craftItemIds: [],
-      craftItemAmounts: [],
-      occupiable: false,
-      programmable: false,
-      abiEncoding: '',
-      contractAddr: '',
-      attackDamage: 0,
-      attackRange: 0,
-      attackCooldown: 0,
-      moveCooldown: 0,
-    },
-  },
-  {
-    name: 'Iron',
-    item: {
-      mineable: true,
-      mineItemIds: [],
-      health: 10,
-      craftable: false,
-      craftItemIds: [],
-      craftItemAmounts: [],
-      occupiable: false,
-      programmable: false,
-      abiEncoding: '',
-      attackDamage: 0,
-      attackRange: 0,
-      attackCooldown: 0,
-      contractAddr: '',
-      moveCooldown: 0,
-    },
-  },
-  {
-    name: 'Silver',
-    item: {
-      mineable: true,
-      mineItemIds: [],
-      health: 10,
-      craftable: false,
-      craftItemIds: [],
-      craftItemAmounts: [],
-      occupiable: false,
-      programmable: false,
-      abiEncoding: '',
-      attackDamage: 0,
-      attackRange: 0,
-      attackCooldown: 0,
-      contractAddr: '',
-      moveCooldown: 0,
-    },
-  },
-  {
-    name: 'Minion',
-    item: {
-      mineable: true,
-      mineItemIds: [],
-      health: 3,
-      craftable: true,
-      craftItemIds: [1],
-      craftItemAmounts: [10],
-      occupiable: false,
-      programmable: false,
-      abiEncoding: '',
-      attackDamage: 1,
-      attackRange: 1,
-      attackCooldown: 10,
-      contractAddr: '',
-      moveCooldown: 0,
-    },
-  },
-  {
-    name: 'Archer',
-    item: {
-      mineable: true,
-      mineItemIds: [],
-      health: 8,
-      craftable: true,
-      craftItemIds: [1],
-      craftItemAmounts: [15],
-      occupiable: false,
-      programmable: false,
-      abiEncoding: '',
-      attackDamage: 2,
-      attackRange: 1,
-      attackCooldown: 5,
-      contractAddr: '',
-      moveCooldown: 0,
-    },
-  },
-  {
-    name: 'Giant',
-    item: {
-      mineable: true,
-      mineItemIds: [],
-      health: 12,
-      craftable: true,
-      craftItemIds: [1],
-      craftItemAmounts: [25],
-      occupiable: false,
-      programmable: false,
-      abiEncoding: '',
-      attackDamage: 3,
-      attackRange: 1,
-      attackCooldown: 5,
-      contractAddr: '',
-      moveCooldown: 0,
-    },
-  },
-  {
-    name: 'Tower',
-    item: {
-      mineable: false,
-      mineItemIds: [],
-      health: 0,
-      craftable: false,
-      craftItemIds: [],
-      craftItemAmounts: [],
-      occupiable: false,
-      programmable: false,
-      abiEncoding: '',
-      attackDamage: 0,
-      attackRange: 0,
-      attackCooldown: 0,
-      contractAddr: '',
-      moveCooldown: 0,
-    },
-  },
-  {
-    name: 'Turbo',
-    item: {
-      mineable: true,
-      mineItemIds: [],
-      health: 50,
-      craftable: true,
-      craftItemIds: [1, 2],
-      craftItemAmounts: [20, 10],
-      occupiable: false,
-      programmable: false,
-      abiEncoding: '',
-      attackDamage: 0,
-      attackRange: 0,
-      attackCooldown: 0,
-      contractAddr: '',
-      moveCooldown: 0,
-    },
-  },
-  {
-    name: 'Block',
-    item: {
-      mineable: true,
-      mineItemIds: [],
-      health: 50,
-      craftable: true,
-      craftItemIds: [1, 2],
-      craftItemAmounts: [40, 20],
-      occupiable: false,
-      programmable: false,
-      abiEncoding: '',
-      attackDamage: 0,
-      attackRange: 0,
-      attackCooldown: 0,
-      contractAddr: '',
-      moveCooldown: 0,
-    },
-  },
-  {
-    name: 'Indestructible Wall',
-    item: {
-      mineable: false,
-      mineItemIds: [],
-      health: 0,
-      craftable: false,
-      craftItemIds: [],
-      craftItemAmounts: [],
-      occupiable: false,
-      programmable: false,
-      abiEncoding: '',
-      attackDamage: 0,
-      attackRange: 0,
-      attackCooldown: 0,
-      contractAddr: '',
-      moveCooldown: 0,
-    },
-  },
-];
+// ----------------------------------------------------------
+// Rendering constants
+// ----------------------------------------------------------
+
+export const RENDER_CONSTANTS: RenderInput = {
+  sizeFactor: 50,
+  numLandColors: 5,
+  numWaterColors: 2,
+  waterNoiseCutoff: 0.55,
+  colorLowestPercent: 40,
+  plateSizeMultiplier: 6,
+  superpositionRatio: [0.4, 0.6],
+};
 
 // ------------------------------------------------
 // Functions
 // ------------------------------------------------
 
-export const generateAllBlocks = (): ItemMaster[] => {
-  return masterItems;
+export const getTroopNames = (): string[] => {
+  return Object.keys(TROOP_NAME).filter((item) => isNaN(Number(item)));
 };
 
-export const generateBlockIdToNameMap = (items: ItemMaster[]): Record<number, string> => {
-  const res: Record<number, string> = {};
-  items.forEach((item, idx) => {
-    res[idx] = item.name;
-  });
-  return res;
+export const getTroopTypeIndexByName = (troopTypes: TroopTypeStruct[], name: TROOP_NAME): number => {
+  return troopTypes.indexOf(troopTypes.filter((item) => item.name === name)[0]);
 };
-
-// number of each item to generate every 100 tiles
-// determines the rarity of items
-export const ITEM_RATIO = [0, 0, 0, 0, 0, 0, 0, 0];
-export const DOOR_RATIO = 0; // variable
-
-// ------------------------------------------------
-// Some default maps
-// ------------------------------------------------
-
-const W = getItemIndexByName(masterItems, 'Indestructible Wall');
-const O = getItemIndexByName(masterItems, 'Space');
-const T = getItemIndexByName(masterItems, 'Tower');
-const D = masterItems.length; // because door will be next item
-
-export const MAP_ROOMS_1 = [
-  [W, W, W, W, W, W, W, W, W, W, W, W, W, W],
-  [W, O, O, O, O, W, W, W, W, O, O, W, W, W],
-  [W, O, T, O, O, O, O, W, W, O, O, O, O, W],
-  [W, O, O, O, O, T, O, O, O, O, O, O, O, W],
-  [W, O, O, O, O, O, O, O, O, T, O, W, O, W],
-  [W, W, W, O, W, O, O, O, O, O, O, W, O, W],
-  [W, W, W, O, W, O, O, T, O, O, W, W, O, W],
-  [W, W, O, O, O, O, O, O, O, O, O, O, O, W],
-  [W, W, O, T, O, O, O, W, W, W, W, D, W, W],
-  [W, W, O, O, O, O, W, W, O, O, O, O, O, W],
-  [W, W, W, W, W, W, W, W, O, T, O, O, O, W],
-  [W, W, W, W, W, W, W, W, O, O, O, T, O, W],
-  [W, W, W, W, W, W, W, W, W, O, O, O, O, W],
-  [W, W, W, W, W, W, W, W, W, W, W, W, W, W],
-];
-
-export var customMapMapping: Record<MAP_MODE, number[][]> = {
-  0: [],
-  1: [],
-  2: [],
-  3: [],
-  4: [],
-};
-
-customMapMapping[MAP_MODE.ROOMS_1] = MAP_ROOMS_1;

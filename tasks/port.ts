@@ -18,18 +18,7 @@ const copyFolderSync = (from: string, to: string) => {
 task('port', 'compile and port contracts over to frontend repo').setAction(async (args: HardhatArguments, hre: HardhatRuntimeEnvironment) => {
   console.log('✦ Porting files over ...');
 
-  // TODO: Port over the master file. why did we neeed to port gameAbi and all that?
-  // read ABI from artifacts folder compiled by Hardhat
-  // const CurioAbi = JSON.stringify((await hre.artifacts.readArtifact('Curio')).abi);
-
-  // const gameAbi = JSON.stringify((await hre.artifacts.readArtifact('Game')).abi);
-  // const gettersAbi = JSON.stringify((await hre.artifacts.readArtifact('Getters')).abi);
-
-  // const clientAbiDir = path.join(__dirname, '../../frontend/src/network/abi');
-
-  // save contract ABIs to client
-  // await fsPromise.writeFile(path.join(clientAbiDir, 'Game.json'), gameAbi);
-  // await fsPromise.writeFile(path.join(clientAbiDir, 'Getters.json'), gettersAbi);
+  // NICE-TO-HAVE: Selectively port files, search by file names in the subdirectories
 
   // save typechain files
   const clientTypechainDir = path.join(__dirname, '../../frontend/src/network/typechain-types');
