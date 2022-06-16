@@ -107,7 +107,7 @@ export const generateWorldConstants = (adminAddr: string): WorldConstantsStruct 
 // ----------------------------------------------------------
 
 export const RENDER_CONSTANTS: RenderInput = {
-  sizeFactor: 50,
+  sizeFactor: 10,
   numLandColors: 5,
   numWaterColors: 2,
   waterNoiseCutoff: 0.55,
@@ -127,3 +127,20 @@ export const getTroopNames = (): string[] => {
 export const getTroopTypeIndexByName = (troopTypes: TroopTypeStruct[], name: TROOP_NAME): number => {
   return troopTypes.indexOf(troopTypes.filter((item) => item.name === name)[0]);
 };
+
+// ------------------------------------------------
+// Default maps
+// ------------------------------------------------
+
+export const ligmap: number[][] = [
+  [1, 1, 4, 1, 3, 2, 2, 2, 2, 2],
+  [1, 1, 1, 1, 1, 2, 2, 2, 2, 2],
+  [4, 1, 1, 1, 3, 2, 2, 2, 2, 2],
+  [1, 1, 1, 1, 1, 2, 2, 2, 2, 2],
+  [3, 1, 3, 1, 1, 2, 2, 2, 2, 2],
+  [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+  [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+  [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+  [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+  [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+];
