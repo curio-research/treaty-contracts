@@ -2,11 +2,10 @@
 pragma solidity ^0.8.4;
 
 import "forge-std/Test.sol";
-import "./diamondDeploy.t.sol";
-import "contracts/facets/GetterFacet.sol";
+import "test/DiamondDeploy.t.sol";
 
-// This foundry tests inherits DiamondDeployTest, which sets up the contracts for testing.
-contract FoundryTest is Test, DiamondDeployTest {
+contract LogicTest is Test, DiamondDeployTest {
+    // TODO: add tests for events
     event NewPlayer(address _player, Position _pos);
     event EpochUpdate(uint256 _epoch, uint256 _time);
     event Moved(address _player, uint256 _troopId, Position _pos);
@@ -18,107 +17,7 @@ contract FoundryTest is Test, DiamondDeployTest {
     event Repaired(address _player, uint256 _troopId, uint256 _health);
     event Recovered(address _player, uint256 _troopId);
 
-    // ----------------------------------------------------------------------
-    // BASIC TESTS
-    // ----------------------------------------------------------------------
-
-    function testWorldSize() public {
-        WorldConstants memory _worldConstants = getter.getWorldConstants();
-        assertEq(_worldConstants.worldWidth, 30);
-        assertEq(_worldConstants.worldHeight, 20);
-    }
-
-    function testSetMapChunk() public {
-        Tile memory _coastTile = getter.getTileAt(Position({x: 8, y: 2}));
-        assertTrue(_coastTile.terrain == TERRAIN.COAST);
-        assertEq(_coastTile.occupantId, NULL);
-        assertEq(_coastTile.baseId, NULL);
-
-        Tile memory _landTile = getter.getTileAt(Position({x: 3, y: 3}));
-        assertTrue(_landTile.terrain == TERRAIN.INLAND);
-        assertEq(_landTile.occupantId, NULL);
-        assertEq(_landTile.baseId, NULL);
-
-        Tile memory _waterTile = getter.getTileAt(Position({x: 0, y: 1}));
-        assertTrue(_waterTile.terrain == TERRAIN.WATER);
-        assertEq(_waterTile.occupantId, NULL);
-        assertEq(_waterTile.baseId, NULL);
-
-        Tile memory _portTile = getter.getTileAt(Position({x: 6, y: 5}));
-        assertTrue(_portTile.terrain == TERRAIN.COAST);
-        assertEq(_portTile.occupantId, NULL);
-        Base memory _port = getter.getBase(_portTile.baseId);
-        assertTrue(_port.name == BASE_NAME.PORT);
-        assertEq(_port.owner, NULL_ADDR);
-        assertEq(_port.attackFactor, 100);
-        assertEq(_port.defenseFactor, 100);
-        assertEq(_port.health, 1);
-
-        Tile memory _cityTile = getter.getTileAt(Position({x: 5, y: 8}));
-        assertTrue(_cityTile.terrain == TERRAIN.INLAND);
-        assertEq(_cityTile.occupantId, NULL);
-        Base memory _city = getter.getBase(_cityTile.baseId);
-        assertTrue(_city.name == BASE_NAME.CITY);
-        assertEq(_city.owner, NULL_ADDR);
-        assertEq(_city.attackFactor, 100);
-        assertEq(_city.defenseFactor, 100);
-        assertEq(_city.health, 1);
-    }
-
-    function testOnlyAdmin() public {
-        Position memory _pos = Position({x: 3, y: 3});
-        uint256 _armyTroopTypeId = indexToId(uint256(TROOP_NAME.ARMY));
-
-        vm.expectRevert(Unauthorized.selector);
-        vm.prank(player2);
-        engine.spawnTroop(_pos, player2, _armyTroopTypeId);
-    }
-
-    function testInitializePlayer() public {
-        Base memory _player1Port = getter.getBaseAt(player1Pos);
-        assertTrue(_player1Port.name == BASE_NAME.PORT);
-        assertEq(_player1Port.owner, player1);
-
-        Player memory _player1 = getter.getPlayer(player1);
-        assertTrue(_player1.active);
-
-        Base memory _player2Port = getter.getBaseAt(player2Pos);
-        assertTrue(_player2Port.name == BASE_NAME.PORT);
-        assertEq(_player2Port.owner, player2);
-
-        Player memory _player2 = getter.getPlayer(player2);
-        assertTrue(_player2.active);
-    }
-
-    function testTransferDiamondOwnership() public {
-        vm.prank(deployer);
-        ownership.transferOwnership(player1);
-
-        address _owner = ownership.owner();
-        assertEq(_owner, player1);
-    }
-
-    function testEpoch() public {
-        uint256 epoch = getter.getEpoch();
-        assertEq(epoch, 0);
-
-        vm.warp(100); // set block.timestamp to 100 seconds;
-        engine.updateEpoch();
-        assertEq(getter.getEpoch(), 1);
-
-        vm.warp(105);
-        vm.expectRevert(bytes("Not enough time has elapsed since last epoch"));
-        engine.updateEpoch();
-
-        vm.warp(200);
-        engine.updateEpoch();
-        assertEq(getter.getEpoch(), 2);
-    }
-
-    // ----------------------------------------------------------------------
-    // LOGIC TESTS
-    // ----------------------------------------------------------------------
-
+    // Production
     function testProductionFailure() public {
         // fail: start production on invalid location
         vm.expectRevert(bytes("No base found"));
@@ -186,6 +85,7 @@ contract FoundryTest is Test, DiamondDeployTest {
         assertTrue(_troopType.isLandTroop);
     }
 
+    // Move
     function testMoveFailure() public {
         // spawn troop at player1 location
         vm.prank(deployer);
@@ -218,7 +118,7 @@ contract FoundryTest is Test, DiamondDeployTest {
         vm.stopPrank();
     }
 
-    function testTooManyMovesPerEpoch() public {
+    function testMoveTooManyTimesPerEpoch() public {
         vm.prank(deployer);
         engine.spawnTroop(player1Pos, player1, troopTransportTroopTypeId);
         uint256 _troopId = initTroopNonce;
@@ -257,8 +157,9 @@ contract FoundryTest is Test, DiamondDeployTest {
         vm.stopPrank();
     }
 
+    // Battle
     function testBattleFailure() public {
-        // TODO (lower priority)
+        // TODO (lower priority, as it couples with failure cases of move and captureBase)
     }
 
     function testBattleBase() public {
@@ -359,6 +260,7 @@ contract FoundryTest is Test, DiamondDeployTest {
         }
     }
 
+    // Capture base
     function testCaptureBaseFailure() public {
         vm.startPrank(deployer);
         engine.spawnTroop(Position({x: 5, y: 1}), player1, armyTroopTypeId);
@@ -427,6 +329,7 @@ contract FoundryTest is Test, DiamondDeployTest {
         vm.coinbase(deployer);
     }
 
+    // Repair
     function testRepairFailure() public {
         vm.startPrank(player1);
         vm.expectRevert("No base found");
@@ -493,64 +396,8 @@ contract FoundryTest is Test, DiamondDeployTest {
         vm.stopPrank();
     }
 
-    // ----------------------------------------------------------------------
-    // GETTER TESTS
-    // ----------------------------------------------------------------------
-
-    function testBulkGetAllTroops() public {
-        vm.startPrank(deployer);
-        engine.spawnTroop(Position({x: 1, y: 3}), player1, armyTroopTypeId);
-        engine.spawnTroop(Position({x: 1, y: 4}), player1, armyTroopTypeId);
-        engine.spawnTroop(Position({x: 2, y: 3}), player2, armyTroopTypeId);
-        engine.spawnTroop(Position({x: 2, y: 4}), player2, armyTroopTypeId);
-        engine.spawnTroop(Position({x: 7, y: 5}), player3, destroyerTroopTypeId);
-        vm.stopPrank();
-
-        Troop[] memory _allTroops = getter.bulkGetAllTroops();
-        assertEq(_allTroops.length, 5);
-        assertEq(_allTroops[0].owner, player1);
-        assertEq(_allTroops[1].pos.x, 1);
-        assertEq(_allTroops[1].pos.y, 4);
-        assertEq(_allTroops[2].troopTypeId, armyTroopTypeId);
-        assertEq(_allTroops[2].owner, player2);
-        assertEq(_allTroops[4].troopTypeId, destroyerTroopTypeId);
-
-        vm.warp(20);
-        engine.updateEpoch();
-        assertEq(getter.getEpoch(), 1);
-
-        vm.prank(player1);
-        engine.battle(1, Position({x: 2, y: 3})); // player2's first army dies
-
-        // verify that all troops remain the same except player2's dead army
-        _allTroops = getter.bulkGetAllTroops();
-        assertEq(_allTroops.length, 5);
-        assertEq(_allTroops[0].owner, player1);
-        assertEq(_allTroops[1].pos.x, 1);
-        assertEq(_allTroops[1].pos.y, 4);
-        assertEq(_allTroops[2].troopTypeId, NULL);
-        assertEq(_allTroops[2].owner, address(0));
-        assertEq(_allTroops[4].troopTypeId, destroyerTroopTypeId);
-    }
-
-    function testGetMapChunk() public {
-        uint256 _interval = getter.getWorldConstants().mapInterval;
-        (Tile[] memory _allTiles, Position[] memory _allPos) = getter.getMapChunk(Position({x: 0, y: 0}));
-        assertEq(_allTiles.length, 100);
-        assertEq(_allPos.length, _interval * _interval);
-
-        assertTrue(_allTiles[0].terrain == TERRAIN.WATER);
-        assertEq(_allTiles[0].baseId, NULL);
-        assertTrue(_allTiles[20].terrain == TERRAIN.COAST);
-        assertTrue(_allTiles[20].baseId != NULL);
-        assertTrue(_allTiles[40].terrain == TERRAIN.INLAND);
-        assertEq(_allTiles[40].baseId, NULL);
-        assertTrue(_allTiles[50].terrain == TERRAIN.INLAND);
-        assertTrue(_allTiles[50].baseId != NULL);
-    }
-
     // ------------------------------------------------
-    // helper functions
+    // Helpers
     // ------------------------------------------------
 
     // produces 1 troop at a desired location

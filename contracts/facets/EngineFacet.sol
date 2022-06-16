@@ -130,7 +130,7 @@ contract EngineFacet is UseStorage {
             _movesLeftInEpoch = Util._getMovesPerEpoch(_troop.troopTypeId);
             gs().troopIdMap[_troopId].movesLeftInEpoch = _movesLeftInEpoch;
         }
-        if (_troop.movesLeftInEpoch == 0) revert("No moves left this epoch");
+        if (_movesLeftInEpoch == 0) revert("No moves left this epoch");
 
         Tile memory _targetTile = Util._getTileAt(_targetPos);
         if (Util._isLandTroop(_troop.troopTypeId)) {

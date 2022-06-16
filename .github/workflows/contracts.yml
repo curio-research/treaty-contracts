@@ -1,0 +1,38 @@
+name: Test Hook
+on: [push]
+jobs:
+  foundry-test:
+    name: Foundry tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: stable
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Run tests
+        run: forge test --ffi -vv
+  port-to-public-repo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Pushes to public repo
+        uses: cpina/github-action-push-to-another-repository@v1.4.2
+        env:
+          SSH_DEPLOY_KEY: ${{ secrets.SSH_DEPLOY_KEY }}
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        with:
+          source-directory: .
+          target-directory: /
+          destination-github-username: 'curio-eth'
+          destination-repository-name: 'engine-public' # change
+          user-email: yijia@curio.gg
+          commit-message: See ORIGIN_COMMIT from $GITHUB_REF
+          target-branch: main
