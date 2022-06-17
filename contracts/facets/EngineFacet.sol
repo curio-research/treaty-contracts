@@ -31,7 +31,8 @@ contract EngineFacet is UseStorage {
     event NewPlayer(address _player, Position _pos);
     event EpochUpdate(uint256 _epoch, uint256 _time);
     event Moved(address _player, uint256 _troopId, Position _pos);
-    event Attacked(address _player, uint256 _troopId, address _targetPlayer, uint256 _targetId);
+    event AttackedTroop(address _player, uint256 _troopId, Troop _troopInfo, uint256 _targetTroopId, Troop _targetTroopInfo);
+    event AttackedBase(address _player, uint256 _troopId, Troop _troopInfo, uint256 _targetBaseId, Base _targetBaseInfo);
     event Death(address _player, uint256 _troopId);
     event BaseCaptured(address _player, uint256 _troopId, uint256 _baseId);
     event ProductionStarted(address _player, uint256 _baseId, uint256 _troopTypeId);
@@ -224,10 +225,11 @@ contract EngineFacet is UseStorage {
 
             if (_targetIsBase) {
                 gs().baseIdMap[_targetTile.baseId].health = _targetHealth;
-                emit Attacked(msg.sender, _troopId, Util._getBaseOwner(_targetTile.baseId), _targetTile.baseId);
+                emit AttackedBase(msg.sender, _troopId, Util._getTroop(_troopId), _targetTile.baseId, Util._getBase(_targetTile.baseId));
             } else {
+                // normal troop
                 gs().troopIdMap[_targetTile.occupantId].health = _targetHealth;
-                emit Attacked(msg.sender, _troopId, Util._getTroopOwner(_targetTile.occupantId), _targetTile.occupantId);
+                emit AttackedTroop(msg.sender, _troopId, Util._getTroop(_troopId), _targetTile.occupantId, Util._getTroop(_targetTile.occupantId));
 
                 if (_targetHealth == 0) {
                     Util._removeTroop(_targetPos, _targetTile.occupantId);
@@ -240,17 +242,25 @@ contract EngineFacet is UseStorage {
 
         // Target attacks troop
         if (Util._strike(_targetDefenseFactor)) {
-            if (_targetIsBase) {
-                emit Attacked(Util._getBaseOwner(_targetTile.baseId), _targetTile.baseId, msg.sender, _troopId);
-            } else {
-                emit Attacked(Util._getTroopOwner(_targetTile.occupantId), _targetTile.occupantId, msg.sender, _troopId);
-            }
-
+            // enemy troop attacks back
             if (_targetDamagePerHit >= _troop.health) {
                 Util._removeTroop(_troop.pos, _troopId);
-                emit Death(msg.sender, _troopId);
             } else {
                 gs().troopIdMap[_troopId].health -= _targetDamagePerHit;
+            }
+
+            if (_targetIsBase) {
+                // base
+                emit AttackedBase(msg.sender, _troopId, Util._getTroop(_troopId), _targetTile.baseId, Util._getBase(_targetTile.baseId));
+            } else {
+                // attacked troop
+                emit AttackedTroop(msg.sender, _troopId, Util._getTroop(_troopId), _targetTile.occupantId, Util._getTroop(_targetTile.occupantId));
+            }
+
+            // emit death event
+            // we need to emit this as the last event
+            if (_targetDamagePerHit >= _troop.health) {
+                emit Death(msg.sender, _troopId);
             }
         }
     }

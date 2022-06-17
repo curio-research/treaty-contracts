@@ -79,12 +79,8 @@ library Util {
         return gs().troopTypeIdMap[gs().troopIdMap[_troopId].troopTypeId].cargoCapacity;
     }
 
-    function _getTroopPos(uint256 _troopId) public view returns (Position memory) {
-        return gs().troopIdMap[_troopId].pos;
-    }
-
-    function _getTroopOwner(uint256 _troopId) public view returns (address) {
-        return gs().troopIdMap[_troopId].owner;
+    function _getTroop(uint256 _troopId) public view returns (Troop memory) {
+        return gs().troopIdMap[_troopId];
     }
 
     function _getMaxHealth(uint256 _troopTypeId) public view returns (uint256) {
@@ -129,6 +125,10 @@ library Util {
 
     function _getBaseOwner(uint256 _baseId) public view returns (address) {
         return gs().baseIdMap[_baseId].owner;
+    }
+
+    function _getBase(uint256 _id) external view returns (Base memory) {
+        return gs().baseIdMap[_id];
     }
 
     function _hasTroopTransport(Tile memory _tile) public view returns (bool) {
