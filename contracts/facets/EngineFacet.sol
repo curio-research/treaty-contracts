@@ -141,7 +141,7 @@ contract EngineFacet is UseStorage {
 
         if (_targetTile.baseId != NULL && Util._getBaseOwner(_targetTile.baseId) != msg.sender) revert("Cannot move onto opponent base");
         if (_targetTile.occupantId != NULL) {
-            if (!Util._hasTroopTransport(_targetTile)) revert("Destination tile occupied");
+            if (!Util._hasTroopTransport(_targetTile) || !Util._isLandTroop(_troop.troopTypeId)) revert("Destination tile occupied");
             if (Util._getTroopOwner(_targetTile.occupantId) != msg.sender) revert("Cannot move onto opponent troop transport");
 
             // Load troop onto Troop Transport at target tile
@@ -277,6 +277,7 @@ contract EngineFacet is UseStorage {
         gs().map[_troop.pos.x][_troop.pos.y].occupantId = NULL;
         gs().troopIdMap[_troopId].pos = _targetPos;
         gs().baseIdMap[_targetTile.baseId].owner = msg.sender;
+        gs().baseIdMap[_targetTile.baseId].health = 1; // FIXME: change to BaseConstants.maxHealth
         delete gs().baseProductionMap[_targetTile.baseId];
 
         emit BaseCaptured(msg.sender, _troopId, _targetTile.baseId);
