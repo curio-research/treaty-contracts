@@ -5,7 +5,8 @@
     "contract-size": "yarn run hardhat size-contracts",
     "getInitParams": "npx ts-node test/util/foundry/getInitParams.ts",
     "getFuncSelectors": "npx ts-node test/util/foundry/getFuncSelectors.ts",
-    "forge-test": "forge test --ffi -vv"
+    "forge-test": "forge test --ffi -vv",
+    "ft": "forge test --ffi -vv"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.2",

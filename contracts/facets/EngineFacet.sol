@@ -144,7 +144,7 @@ contract EngineFacet is UseStorage {
         if (_targetTile.baseId != NULL && Util._getBaseOwner(_targetTile.baseId) != msg.sender) revert("Cannot move onto opponent base");
         if (_targetTile.occupantId != NULL) {
             if (!Util._hasTroopTransport(_targetTile) || !Util._isLandTroop(_troop.troopTypeId)) revert("Destination tile occupied");
-            if (Util._getTroopOwner(_targetTile.occupantId) != msg.sender) revert("Cannot move onto opponent troop transport");
+            if (Util._getTroop(_targetTile.occupantId).owner != msg.sender) revert("Cannot move onto opponent troop transport");
 
             // Load troop onto Troop Transport at target tile
             gs().troopIdMap[_targetTile.occupantId].cargoTroopIds.push(_troopId);
