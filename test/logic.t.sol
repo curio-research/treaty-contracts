@@ -100,8 +100,10 @@ contract LogicTest is Test, DiamondDeployTest {
     // Move
     function testMoveFailure() public {
         // spawn troop at player1 location
-        vm.prank(deployer);
+        vm.startPrank(deployer);
         engine.spawnTroop(player1Pos, player1, troopTransportTroopTypeId);
+        engine.spawnTroop(Position({x: 7, y: 1}), player1, troopTransportTroopTypeId);
+        vm.stopPrank();
         uint256 _troopId = initTroopNonce;
 
         vm.startPrank(player1);
@@ -126,6 +128,10 @@ contract LogicTest is Test, DiamondDeployTest {
         engine.move(_troopId, Position({x: 7, y: 2}));
         vm.expectRevert(bytes("Cannot move onto opponent base"));
         engine.move(_troopId, player2Pos);
+
+        // fail: move a troop transport onto a troop transport
+        vm.expectRevert(bytes("Destination tile occupied"));
+        engine.move(_troopId, Position({x: 7, y: 1}));
 
         vm.stopPrank();
     }
@@ -315,6 +321,8 @@ contract LogicTest is Test, DiamondDeployTest {
         uint256 _armyId = initTroopNonce;
         engine.spawnTroop(Position({x: 7, y: 3}), player1, destroyerTroopTypeId);
         uint256 _destroyerId = initTroopNonce + 1;
+        engine.spawnTroop(Position({x: 6, y: 4}), player2, armyTroopTypeId);
+        uint256 _player2ArmyId = initTroopNonce + 2;
         vm.stopPrank();
 
         Base memory _base = getter.getBaseAt(player2Pos);
@@ -337,6 +345,11 @@ contract LogicTest is Test, DiamondDeployTest {
 
         _base = getter.getBaseAt(player2Pos);
         assertEq(_base.owner, player1);
+
+        // test that base recovers health
+        vm.prank(player2);
+        vm.expectRevert(bytes("Need to attack first"));
+        engine.captureBase(_player2ArmyId, player2Pos);
 
         vm.coinbase(deployer);
     }
