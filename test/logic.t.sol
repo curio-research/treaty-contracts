@@ -66,7 +66,7 @@ contract LogicTest is Test, DiamondDeployTest {
         engine.updateEpoch();
         assertEq(getter.getEpoch(), 1);
 
-        produceTroop(player1Pos, troopTransportTroopTypeId, player1);
+        produceTroop(player1Pos, troopTransportTroopTypeId, player1, 100);
 
         // success: verify troop's basic information
         Troop memory _troop = getter.getTroopAt(player1Pos);
@@ -81,8 +81,20 @@ contract LogicTest is Test, DiamondDeployTest {
         assertEq(_troop.pos.y, player1Pos.y);
 
         // success: verify the troopType is correct
-        TroopType memory _troopType = getter.getTroopType(armyTroopTypeId);
-        assertTrue(_troopType.isLandTroop);
+        TroopType memory _troopType = getter.getTroopType(_troop.troopTypeId);
+        assertTrue(!_troopType.isLandTroop);
+
+        // immediately produce another troop, which should succeed
+        vm.prank(player1);
+        engine.move(initTroopNonce, Position({x: 7, y: 1}));
+        produceTroop(player1Pos, troopTransportTroopTypeId, player1, 10000);
+
+        // success: verify troop's basic information
+        _troop = getter.getTroopAt(player1Pos);
+        assertEq(_troop.owner, player1);
+        assertEq(_troop.troopTypeId, troopTransportTroopTypeId);
+        assertEq(_troop.pos.x, player1Pos.x);
+        assertEq(_troop.pos.y, player1Pos.y);
     }
 
     // Move
@@ -404,17 +416,17 @@ contract LogicTest is Test, DiamondDeployTest {
     function produceTroop(
         Position memory _location,
         uint256 _troopTypeId,
-        address _player
+        address _player,
+        uint256 _startTime
     ) internal {
         vm.startPrank(_player);
         TroopType memory troopTypeInfo = getter.getTroopType(_troopTypeId);
         engine.startProduction(_location, _troopTypeId); // start production at 1 epoch
 
         // fast foward a few epochs
-        uint256 startTime = 100;
 
         for (uint256 i = 1; i <= troopTypeInfo.epochsToProduce; i++) {
-            vm.warp(startTime + i * 10); // increase time by a few seconds
+            vm.warp(_startTime + i * 10); // increase time by a few seconds
             engine.updateEpoch();
         }
 

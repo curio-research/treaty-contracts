@@ -331,6 +331,7 @@ contract EngineFacet is UseStorage {
         if (Util._getEpochsToProduce(_production.troopTypeId) > (gs().epoch - _production.startEpoch)) revert("Troop needs more epochs for production");
 
         uint256 _troopId = Util._addTroop(_pos, _production.troopTypeId, msg.sender);
+        delete gs().baseProductionMap[_tile.baseId];
         emit NewTroop(msg.sender, _troopId, _pos);
     }
 
