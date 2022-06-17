@@ -102,25 +102,6 @@ export type BaseStructOutput = [
   health: BigNumber;
 };
 
-export type TileStruct = {
-  terrain: BigNumberish;
-  occupantId: BigNumberish;
-  baseId: BigNumberish;
-};
-
-export type TileStructOutput = [number, BigNumber, BigNumber] & {
-  terrain: number;
-  occupantId: BigNumber;
-  baseId: BigNumber;
-};
-
-export type PlayerStruct = { initEpoch: BigNumberish; active: boolean };
-
-export type PlayerStructOutput = [BigNumber, boolean] & {
-  initEpoch: BigNumber;
-  active: boolean;
-};
-
 export type TroopTypeStruct = {
   name: BigNumberish;
   movesPerEpoch: BigNumberish;
@@ -159,6 +140,25 @@ export type TroopTypeStructOutput = [
   movementCooldown: BigNumber;
   attackCooldown: BigNumber;
   isLandTroop: boolean;
+};
+
+export type TileStruct = {
+  terrain: BigNumberish;
+  occupantId: BigNumberish;
+  baseId: BigNumberish;
+};
+
+export type TileStructOutput = [number, BigNumber, BigNumber] & {
+  terrain: number;
+  occupantId: BigNumber;
+  baseId: BigNumber;
+};
+
+export type PlayerStruct = { initEpoch: BigNumberish; active: boolean };
+
+export type PlayerStructOutput = [BigNumber, boolean] & {
+  initEpoch: BigNumber;
+  active: boolean;
 };
 
 export type WorldConstantsStruct = {
@@ -212,6 +212,7 @@ export interface CurioInterface extends utils.Interface {
     "getBaseAt((uint256,uint256))": FunctionFragment;
     "getBaseNonce()": FunctionFragment;
     "getBulkBase(uint256,uint256)": FunctionFragment;
+    "getBulkTroopTypes(uint256,uint256)": FunctionFragment;
     "getEpoch()": FunctionFragment;
     "getMapChunk((uint256,uint256))": FunctionFragment;
     "getPlayer(address)": FunctionFragment;
@@ -305,6 +306,10 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "getBulkBase",
     values: [BigNumberish, BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "getBulkTroopTypes",
+    values: [BigNumberish, BigNumberish]
+  ): string;
   encodeFunctionData(functionFragment: "getEpoch", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getMapChunk",
@@ -395,6 +400,10 @@ export interface CurioInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getBulkBase",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getBulkTroopTypes",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getEpoch", data: BytesLike): Result;
@@ -679,6 +688,12 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BaseStructOutput[]]>;
 
+    getBulkTroopTypes(
+      _startId: BigNumberish,
+      _endId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[TroopTypeStructOutput[]]>;
+
     getEpoch(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getMapChunk(
@@ -826,6 +841,12 @@ export interface Curio extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BaseStructOutput[]>;
 
+  getBulkTroopTypes(
+    _startId: BigNumberish,
+    _endId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<TroopTypeStructOutput[]>;
+
   getEpoch(overrides?: CallOverrides): Promise<BigNumber>;
 
   getMapChunk(
@@ -967,6 +988,12 @@ export interface Curio extends BaseContract {
       _endId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BaseStructOutput[]>;
+
+    getBulkTroopTypes(
+      _startId: BigNumberish,
+      _endId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<TroopTypeStructOutput[]>;
 
     getEpoch(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1222,6 +1249,12 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getBulkTroopTypes(
+      _startId: BigNumberish,
+      _endId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getEpoch(overrides?: CallOverrides): Promise<BigNumber>;
 
     getMapChunk(
@@ -1360,6 +1393,12 @@ export interface Curio extends BaseContract {
     getBaseNonce(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getBulkBase(
+      _startId: BigNumberish,
+      _endId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getBulkTroopTypes(
       _startId: BigNumberish,
       _endId: BigNumberish,
       overrides?: CallOverrides
