@@ -35,7 +35,7 @@ contract EngineFacet is UseStorage {
     event AttackedBase(address _player, uint256 _troopId, Troop _troopInfo, uint256 _targetBaseId, Base _targetBaseInfo);
     event Death(address _player, uint256 _troopId);
     event BaseCaptured(address _player, uint256 _troopId, uint256 _baseId);
-    event ProductionStarted(address _player, uint256 _baseId, uint256 _troopTypeId);
+    event ProductionStarted(address _player, uint256 _baseId, Production _production);
     event NewTroop(address _player, uint256 _troopId, Troop _troop, Position _pos);
     event Repaired(address _player, uint256 _troopId, uint256 _health);
     event Recovered(address _player, uint256 _troopId);
@@ -306,8 +306,9 @@ contract EngineFacet is UseStorage {
         if (!Util._isLandTroop(_troopTypeId) && !Util._hasPort(_tile)) revert("Only ports can produce water troops");
         if (gs().baseProductionMap[_tile.baseId].troopTypeId != NULL) revert("Base already producing");
 
-        gs().baseProductionMap[_tile.baseId] = Production({troopTypeId: _troopTypeId, startEpoch: gs().epoch});
-        emit ProductionStarted(msg.sender, _tile.baseId, _troopTypeId);
+        Production memory production = Production({troopTypeId: _troopTypeId, startEpoch: gs().epoch});
+        gs().baseProductionMap[_tile.baseId] = production;
+        emit ProductionStarted(msg.sender, _tile.baseId, production);
     }
 
     // ----------------------------------------------------------------------

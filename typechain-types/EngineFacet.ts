@@ -58,6 +58,38 @@ export type TroopStructOutput = [
   cargoTroopIds: BigNumber[];
 };
 
+export type BaseStruct = {
+  name: BigNumberish;
+  owner: string;
+  attackFactor: BigNumberish;
+  defenseFactor: BigNumberish;
+  health: BigNumberish;
+};
+
+export type BaseStructOutput = [
+  number,
+  string,
+  BigNumber,
+  BigNumber,
+  BigNumber
+] & {
+  name: number;
+  owner: string;
+  attackFactor: BigNumber;
+  defenseFactor: BigNumber;
+  health: BigNumber;
+};
+
+export type ProductionStruct = {
+  troopTypeId: BigNumberish;
+  startEpoch: BigNumberish;
+};
+
+export type ProductionStructOutput = [BigNumber, BigNumber] & {
+  troopTypeId: BigNumber;
+  startEpoch: BigNumber;
+};
+
 export interface EngineFacetInterface extends utils.Interface {
   functions: {
     "battle(uint256,(uint256,uint256))": FunctionFragment;
@@ -143,19 +175,21 @@ export interface EngineFacetInterface extends utils.Interface {
   ): Result;
 
   events: {
-    "Attacked(address,uint256,address,uint256)": EventFragment;
+    "AttackedBase(address,uint256,tuple,uint256,tuple)": EventFragment;
+    "AttackedTroop(address,uint256,tuple,uint256,tuple)": EventFragment;
     "BaseCaptured(address,uint256,uint256)": EventFragment;
     "Death(address,uint256)": EventFragment;
     "EpochUpdate(uint256,uint256)": EventFragment;
     "Moved(address,uint256,tuple)": EventFragment;
     "NewPlayer(address,tuple)": EventFragment;
     "NewTroop(address,uint256,tuple,tuple)": EventFragment;
-    "ProductionStarted(address,uint256,uint256)": EventFragment;
+    "ProductionStarted(address,uint256,tuple)": EventFragment;
     "Recovered(address,uint256)": EventFragment;
     "Repaired(address,uint256,uint256)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "Attacked"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "AttackedBase"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "AttackedTroop"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BaseCaptured"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Death"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "EpochUpdate"): EventFragment;
@@ -167,17 +201,31 @@ export interface EngineFacetInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "Repaired"): EventFragment;
 }
 
-export type AttackedEvent = TypedEvent<
-  [string, BigNumber, string, BigNumber],
+export type AttackedBaseEvent = TypedEvent<
+  [string, BigNumber, TroopStructOutput, BigNumber, BaseStructOutput],
   {
     _player: string;
     _troopId: BigNumber;
-    _targetPlayer: string;
-    _targetId: BigNumber;
+    _troopInfo: TroopStructOutput;
+    _targetBaseId: BigNumber;
+    _targetBaseInfo: BaseStructOutput;
   }
 >;
 
-export type AttackedEventFilter = TypedEventFilter<AttackedEvent>;
+export type AttackedBaseEventFilter = TypedEventFilter<AttackedBaseEvent>;
+
+export type AttackedTroopEvent = TypedEvent<
+  [string, BigNumber, TroopStructOutput, BigNumber, TroopStructOutput],
+  {
+    _player: string;
+    _troopId: BigNumber;
+    _troopInfo: TroopStructOutput;
+    _targetTroopId: BigNumber;
+    _targetTroopInfo: TroopStructOutput;
+  }
+>;
+
+export type AttackedTroopEventFilter = TypedEventFilter<AttackedTroopEvent>;
 
 export type BaseCapturedEvent = TypedEvent<
   [string, BigNumber, BigNumber],
@@ -227,8 +275,8 @@ export type NewTroopEvent = TypedEvent<
 export type NewTroopEventFilter = TypedEventFilter<NewTroopEvent>;
 
 export type ProductionStartedEvent = TypedEvent<
-  [string, BigNumber, BigNumber],
-  { _player: string; _baseId: BigNumber; _troopTypeId: BigNumber }
+  [string, BigNumber, ProductionStructOutput],
+  { _player: string; _baseId: BigNumber; _production: ProductionStructOutput }
 >;
 
 export type ProductionStartedEventFilter =
@@ -445,18 +493,35 @@ export interface EngineFacet extends BaseContract {
   };
 
   filters: {
-    "Attacked(address,uint256,address,uint256)"(
+    "AttackedBase(address,uint256,tuple,uint256,tuple)"(
       _player?: null,
       _troopId?: null,
-      _targetPlayer?: null,
-      _targetId?: null
-    ): AttackedEventFilter;
-    Attacked(
+      _troopInfo?: null,
+      _targetBaseId?: null,
+      _targetBaseInfo?: null
+    ): AttackedBaseEventFilter;
+    AttackedBase(
       _player?: null,
       _troopId?: null,
-      _targetPlayer?: null,
-      _targetId?: null
-    ): AttackedEventFilter;
+      _troopInfo?: null,
+      _targetBaseId?: null,
+      _targetBaseInfo?: null
+    ): AttackedBaseEventFilter;
+
+    "AttackedTroop(address,uint256,tuple,uint256,tuple)"(
+      _player?: null,
+      _troopId?: null,
+      _troopInfo?: null,
+      _targetTroopId?: null,
+      _targetTroopInfo?: null
+    ): AttackedTroopEventFilter;
+    AttackedTroop(
+      _player?: null,
+      _troopId?: null,
+      _troopInfo?: null,
+      _targetTroopId?: null,
+      _targetTroopInfo?: null
+    ): AttackedTroopEventFilter;
 
     "BaseCaptured(address,uint256,uint256)"(
       _player?: null,
@@ -504,15 +569,15 @@ export interface EngineFacet extends BaseContract {
       _pos?: null
     ): NewTroopEventFilter;
 
-    "ProductionStarted(address,uint256,uint256)"(
+    "ProductionStarted(address,uint256,tuple)"(
       _player?: null,
       _baseId?: null,
-      _troopTypeId?: null
+      _production?: null
     ): ProductionStartedEventFilter;
     ProductionStarted(
       _player?: null,
       _baseId?: null,
-      _troopTypeId?: null
+      _production?: null
     ): ProductionStartedEventFilter;
 
     "Recovered(address,uint256)"(
