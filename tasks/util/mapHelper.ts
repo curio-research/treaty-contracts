@@ -195,7 +195,9 @@ export const placePortsAndCities = (colorMap: number[][][], numPorts: number, nu
     numPorts--;
   }
 
+  console.log(numCities);
   while (numCities) {
+    console.log('yo');
     if (!inlandTiles) throw new Error('Out of tiles for cities');
 
     tileIndex = Math.floor(Math.random() * inlandTiles.length);

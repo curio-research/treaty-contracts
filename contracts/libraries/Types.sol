@@ -84,6 +84,7 @@ struct WorldConstants {
     uint256 numCities;
     uint256 mapInterval;
     uint256 secondsPerEpoch;
+    uint256 combatEfficiency; // in the interval [0, 100]
 }
 
 struct GameState {

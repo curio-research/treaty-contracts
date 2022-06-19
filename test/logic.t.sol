@@ -197,7 +197,6 @@ contract LogicTest is Test, DiamondDeployTest {
 
         Troop memory _destroyer = getter.getTroopAt(_destroyerPos);
         assertEq(_destroyer.owner, player1);
-        assertEq(_destroyer.health, getter.getTroopType(destroyerTroopTypeId).maxHealth); // port did not attack back
 
         Tile memory _tile = getter.getTileAt(player2Pos);
         assertEq(_tile.occupantId, NULL); // troop did not move to target tile
@@ -205,7 +204,15 @@ contract LogicTest is Test, DiamondDeployTest {
 
         Base memory _port = getter.getBaseAt(player2Pos);
         assertEq(_port.owner, player2);
-        assertEq(_port.health, 0);
+
+        bool _strike = _port.health == 0;
+        if (_strike) {
+            assertEq(_destroyer.health, getter.getTroopType(destroyerTroopTypeId).maxHealth); // port did not attack back
+        } else {
+            bool _cond1 = _destroyer.health == getter.getTroopType(destroyerTroopTypeId).maxHealth;
+            bool _cond2 = _destroyer.health == getter.getTroopType(destroyerTroopTypeId).maxHealth - 1;
+            assertTrue(_cond1 || _cond2);
+        }
     }
 
     function testBattleTroop() public {
@@ -230,16 +237,23 @@ contract LogicTest is Test, DiamondDeployTest {
         vm.prank(player2);
         engine.battle(_armyId, _destroyerPos);
 
-        // destroyer reduced by 1 health
+        // destroyer reduced by 1 health if army strikes
         _destroyer = getter.getTroopAt(_destroyerPos);
         assertEq(_destroyer.owner, player1);
-        assertEq(_destroyer.health, getter.getTroopType(destroyerTroopTypeId).maxHealth - 1);
+        bool _destroyerCond1 = _destroyer.health == getter.getTroopType(destroyerTroopTypeId).maxHealth;
+        bool _destroyerCond2 = _destroyer.health == getter.getTroopType(destroyerTroopTypeId).maxHealth - 1;
+        assertTrue(_destroyerCond1 || _destroyerCond2);
 
-        // army eliminated
-        assertEq(getter.getTileAt(_armyPos).occupantId, NULL);
-        Troop memory _nonexistentArmy = getter.getTroop(_armyId);
-        assertTrue(_nonexistentArmy.owner != player2);
-        assertEq(_nonexistentArmy.health, 0);
+        // army eliminated if destroyer strikes
+        Troop memory _schoedingersArmy = getter.getTroop(_armyId);
+        bool _armyEliminated = getter.getTileAt(_armyPos).occupantId == NULL;
+        if (_armyEliminated) {
+            assertTrue(_schoedingersArmy.owner != player2);
+            assertEq(_schoedingersArmy.health, 0);
+        } else {
+            assertEq(_schoedingersArmy.owner, player2);
+            assertEq(_schoedingersArmy.health, 1);
+        }
     }
 
     // FIXME: actual probability test?
@@ -261,10 +275,12 @@ contract LogicTest is Test, DiamondDeployTest {
         vm.prank(player2);
         engine.battle(_armyId, _troopTransportPos);
 
-        // destroyer reduced by 1 health
+        // transport reduced by 1 health if army strikes
         Troop memory _troopTransport = getter.getTroopAt(_troopTransportPos);
         assertEq(_troopTransport.owner, player1);
-        assertEq(_troopTransport.health, getter.getTroopType(troopTransportTroopTypeId).maxHealth - 1);
+        bool _troopTransportCond1 = _troopTransport.health == getter.getTroopType(troopTransportTroopTypeId).maxHealth;
+        bool _troopTransportCond2 = _troopTransport.health == getter.getTroopType(troopTransportTroopTypeId).maxHealth - 1;
+        assertTrue(_troopTransportCond1 || _troopTransportCond2);
 
         // army either intact or eliminated
         Troop memory _schoedingersArmy = getter.getTroop(_armyId);

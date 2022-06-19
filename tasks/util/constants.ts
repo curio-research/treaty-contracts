@@ -1,5 +1,4 @@
 import { WorldConstantsStruct } from './../../typechain-types/Curio';
-import { AddressType } from 'typechain';
 import { TroopTypeStruct } from '../../typechain-types/DiamondInit';
 import { RenderInput, TROOP_NAME } from './types';
 
@@ -16,6 +15,7 @@ export const NUM_PORTS = 5;
 export const NUM_CITIES = 5;
 export const MAP_INTERVAL = 10;
 export const SECONDS_PER_EPOCH = 6;
+export const COMBAT_EFFICIENCY = 50;
 export const BASE_ATTACK_FACTOR = 1;
 export const BASE_DEFENSE_FACTOR = 1;
 export const BASE_MAX_HEALTH = 1;
@@ -97,6 +97,7 @@ export const generateWorldConstants = (adminAddr: string): WorldConstantsStruct 
     numCities: NUM_CITIES,
     mapInterval: MAP_INTERVAL,
     secondsPerEpoch: SECONDS_PER_EPOCH,
+    combatEfficiency: COMBAT_EFFICIENCY,
   };
 };
 

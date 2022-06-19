@@ -19,6 +19,7 @@ task('port', 'compile and port contracts over to frontend repo').setAction(async
   console.log('✦ Porting files over ...');
 
   // NICE-TO-HAVE: Selectively port files, search by file names in the subdirectories
+  // TODO: create directory if it doesn't exist in frontend
 
   // save typechain files
   const clientTypechainDir = path.join(__dirname, '../../frontend/src/network/typechain-types');
