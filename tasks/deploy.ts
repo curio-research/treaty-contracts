@@ -91,23 +91,26 @@ task('deploy', 'deploy contracts')
         const player1Pos = { x: 2, y: 4 };
         const player2Pos = { x: 4, y: 2 };
         const player1ArmyPos = { x: 3, y: 3 };
+        const player1ArmyPos2 = { x: 2, y: 3 };
+        const player1ArmyPos3 = { x: 1, y: 3 };
         const player2ArmyPos = { x: 3, y: 2 };
+        const player2ArmyPos2 = { x: 2, y: 2 };
+        const player2ArmyPos3 = { x: 1, y: 2 };
         const player1TroopTransportPos = { x: 5, y: 3 };
         const player2DestroyerPos = { x: 5, y: 4 };
 
-        let tx;
-        tx = await diamond.connect(player1).initializePlayer(player1Pos, player1.address);
-        await tx.wait();
-        tx = await diamond.connect(player1).initializePlayer(player2Pos, player2.address);
-        await tx.wait();
-        tx = await diamond.connect(player1).spawnTroop(player1ArmyPos, player1.address, armyTroopTypeId);
-        await tx.wait();
-        tx = await diamond.connect(player1).spawnTroop(player2ArmyPos, player2.address, armyTroopTypeId);
-        await tx.wait();
-        tx = await diamond.connect(player1).spawnTroop(player1TroopTransportPos, player1.address, troopTransportTroopTypeId);
-        await tx.wait();
-        tx = await diamond.connect(player1).spawnTroop(player2DestroyerPos, player2.address, destroyerTroopTypeId);
-        await tx.wait();
+        await (await diamond.connect(player1).initializePlayer(player1Pos, player1.address)).wait();
+        await (await diamond.connect(player1).initializePlayer(player2Pos, player2.address)).wait();
+
+        // spawn testing troops
+        await (await diamond.connect(player1).spawnTroop(player1ArmyPos, player1.address, armyTroopTypeId)).wait();
+        await (await diamond.connect(player1).spawnTroop(player1ArmyPos2, player1.address, armyTroopTypeId)).wait();
+        await (await diamond.connect(player1).spawnTroop(player1ArmyPos3, player1.address, armyTroopTypeId)).wait();
+        await (await diamond.connect(player1).spawnTroop(player2ArmyPos, player2.address, armyTroopTypeId)).wait();
+        await (await diamond.connect(player1).spawnTroop(player2ArmyPos2, player2.address, armyTroopTypeId)).wait();
+        await (await diamond.connect(player1).spawnTroop(player2ArmyPos3, player2.address, armyTroopTypeId)).wait();
+        await (await diamond.connect(player1).spawnTroop(player1TroopTransportPos, player1.address, troopTransportTroopTypeId)).wait();
+        await (await diamond.connect(player1).spawnTroop(player2DestroyerPos, player2.address, destroyerTroopTypeId)).wait();
       } else {
         let player1Pos: position;
         let player2Pos: position;
