@@ -394,20 +394,20 @@ contract LogicTest is Test, DiamondDeployTest {
         vm.expectRevert("Troop already at full health");
         engine.repair(player1Pos);
 
-        // battle twice with an adjacent destroyer
-        vm.warp(20);
-        engine.updateEpoch();
-        engine.battle(_player1DestroyerId, _player2DestroyerPos);
-        vm.warp(50);
-        engine.updateEpoch();
-        engine.battle(_player1DestroyerId, _player2DestroyerPos);
+        // battle with an adjacent destroyer until 2 damage points taken or until player2's destroyer dies
+        uint256 _time = 20;
+        while (getter.getTroopAt(player1Pos).health > 1 && getter.getTroopAt(_player2DestroyerPos).owner == player2) {
+            vm.warp(_time);
+            engine.updateEpoch();
+            engine.battle(_player1DestroyerId, _player2DestroyerPos);
+            _time += 20;
+        }
 
-        Troop memory _player1Destroyer = getter.getTroopAt(player1Pos);
-        assertEq(_player1Destroyer.health, 1);
-
-        engine.repair(player1Pos);
-        vm.expectRevert("Repaired too recently");
-        engine.repair(player1Pos);
+        if (getter.getTroopAt(player1Pos).health == 1) {
+            engine.repair(player1Pos);
+            vm.expectRevert("Repaired too recently");
+            engine.repair(player1Pos);
+        }
 
         vm.stopPrank();
     }
@@ -420,11 +420,18 @@ contract LogicTest is Test, DiamondDeployTest {
         engine.spawnTroop(_player2DestroyerPos, player2, destroyerTroopTypeId);
         vm.stopPrank();
 
-        // battle once with an adjacent destroyer
-        vm.warp(20);
-        engine.updateEpoch();
+        // battle with an adjacent destroyer until 1 damage points taken or until player2's destroyer dies
+        uint256 _time = 20;
         vm.startPrank(player1);
-        engine.battle(_player1DestroyerId, _player2DestroyerPos);
+        while (getter.getTroopAt(player1Pos).health > 2 && getter.getTroopAt(_player2DestroyerPos).owner == player2) {
+            vm.warp(_time);
+            engine.updateEpoch();
+            engine.battle(_player1DestroyerId, _player2DestroyerPos);
+            _time += 20;
+        }
+
+        // skip if player2's destroyer dies
+        if (getter.getTroopAt(_player2DestroyerPos).owner == address(0)) return;
 
         Troop memory _player1Destroyer = getter.getTroopAt(player1Pos);
         assertEq(_player1Destroyer.health, getter.getTroopType(destroyerTroopTypeId).maxHealth - 1);
