@@ -145,10 +145,12 @@ export type WorldConstantsStruct = {
   numCities: BigNumberish;
   mapInterval: BigNumberish;
   secondsPerEpoch: BigNumberish;
+  combatEfficiency: BigNumberish;
 };
 
 export type WorldConstantsStructOutput = [
   string,
+  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -163,6 +165,7 @@ export type WorldConstantsStructOutput = [
   numCities: BigNumber;
   mapInterval: BigNumber;
   secondsPerEpoch: BigNumber;
+  combatEfficiency: BigNumber;
 };
 
 export interface GetterFacetInterface extends utils.Interface {

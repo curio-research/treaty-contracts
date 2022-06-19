@@ -183,7 +183,8 @@ contract DiamondDeployTest is Test {
                 numPorts: 15,
                 numCities: 15, // yo
                 mapInterval: 10,
-                secondsPerEpoch: 10 // easiser for testing
+                secondsPerEpoch: 10,
+                combatEfficiency: 50
             });
     }
 
