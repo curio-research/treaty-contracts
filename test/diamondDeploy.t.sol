@@ -141,7 +141,7 @@ contract DiamondDeployTest is Test {
         TroopType[] memory _troopTypes = _generateTroopTypes();
 
         // fetch args from cli. craft payload for init deploy
-        bytes memory initData = abi.encodeWithSelector(bytes4(0x747b43cc), _worldConstants, _troopTypes);
+        bytes memory initData = abi.encodeWithSelector(getSelectors("DiamondInit")[0], _worldConstants, _troopTypes);
 
         IDiamondCut.FacetCut[] memory cuts = new IDiamondCut.FacetCut[](4);
         cuts[0] = IDiamondCut.FacetCut({facetAddress: address(diamondLoupeFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: LOUPE_SELECTORS});
