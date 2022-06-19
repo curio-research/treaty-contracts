@@ -76,6 +76,7 @@ contract EngineFacet is UseStorage {
         uint256 _baseId = Util._getTileAt(_pos).baseId;
 
         if (Util._getBaseOwner(_baseId) != address(0)) revert("Base is taken");
+        if (gs().playerMap[_player].active) revert("Player already initialized");
 
         gs().players.push(_player);
         gs().playerMap[_player] = Player({initEpoch: gs().epoch, active: true});
