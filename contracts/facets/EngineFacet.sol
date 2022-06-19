@@ -249,16 +249,15 @@ contract EngineFacet is UseStorage {
                 gs().troopIdMap[_troopId].health -= _targetDamagePerHit;
             }
 
+            Troop memory _targetTroop = Util._getTroop(_troopId);
             if (_targetIsBase) {
                 // base
-                emit AttackedBase(msg.sender, _troopId, Util._getTroop(_troopId), _targetTile.baseId, Util._getBase(_targetTile.baseId));
+                emit AttackedBase(msg.sender, _troopId, _targetTroop, _targetTile.baseId, Util._getBase(_targetTile.baseId));
             } else {
                 // attacked troop
-                emit AttackedTroop(msg.sender, _troopId, Util._getTroop(_troopId), _targetTile.occupantId, Util._getTroop(_targetTile.occupantId));
+                emit AttackedTroop(msg.sender, _troopId, _targetTroop, _targetTile.occupantId, Util._getTroop(_targetTile.occupantId));
             }
 
-            // emit death event
-            // we need to emit this as the last event
             if (_targetDamagePerHit >= _troop.health) {
                 emit Death(msg.sender, _troopId);
             }
@@ -306,9 +305,9 @@ contract EngineFacet is UseStorage {
         if (!Util._isLandTroop(_troopTypeId) && !Util._hasPort(_tile)) revert("Only ports can produce water troops");
         if (gs().baseProductionMap[_tile.baseId].troopTypeId != NULL) revert("Base already producing");
 
-        Production memory production = Production({troopTypeId: _troopTypeId, startEpoch: gs().epoch});
-        gs().baseProductionMap[_tile.baseId] = production;
-        emit ProductionStarted(msg.sender, _tile.baseId, production);
+        Production memory _production = Production({troopTypeId: _troopTypeId, startEpoch: gs().epoch});
+        gs().baseProductionMap[_tile.baseId] = _production;
+        emit ProductionStarted(msg.sender, _tile.baseId, _production);
     }
 
     // ----------------------------------------------------------------------
