@@ -146,7 +146,7 @@ library Util {
     function _strike(uint256 _strikeFactor) public view returns (bool) {
         uint256 _salt = 2; // FIXME: proper salt
         uint256 _rand = _random(_salt, 100);
-        return _rand < _strikeFactor;
+        return _rand * gs().worldConstants.combatEfficiency < _strikeFactor * 100;
     }
 
     function _inBound(Position memory _p) public view returns (bool) {
