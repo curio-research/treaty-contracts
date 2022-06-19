@@ -31,11 +31,12 @@ contract EngineFacet is UseStorage {
     event NewPlayer(address _player, Position _pos);
     event EpochUpdate(uint256 _epoch, uint256 _time);
     event Moved(address _player, uint256 _troopId, Position _pos);
-    event Attacked(address _player, uint256 _troopId, address _targetPlayer, uint256 _targetId);
+    event AttackedTroop(address _player, uint256 _troopId, Troop _troopInfo, uint256 _targetTroopId, Troop _targetTroopInfo);
+    event AttackedBase(address _player, uint256 _troopId, Troop _troopInfo, uint256 _targetBaseId, Base _targetBaseInfo);
     event Death(address _player, uint256 _troopId);
     event BaseCaptured(address _player, uint256 _troopId, uint256 _baseId);
-    event ProductionStarted(address _player, uint256 _baseId, uint256 _troopTypeId);
-    event NewTroop(address _player, uint256 _troopId, Position _pos);
+    event ProductionStarted(address _player, uint256 _baseId, Production _production);
+    event NewTroop(address _player, uint256 _troopId, Troop _troop, Position _pos);
     event Repaired(address _player, uint256 _troopId, uint256 _health);
     event Recovered(address _player, uint256 _troopId);
 
@@ -103,8 +104,9 @@ contract EngineFacet is UseStorage {
             if (!Util._isLandTroop(_troopTypeId) && _base.name != BASE_NAME.PORT) revert("Can only spawn water troops in ports");
         }
 
-        uint256 _troopId = Util._addTroop(_pos, _troopTypeId, _player);
-        emit NewTroop(_player, _troopId, _pos);
+        (uint256 _troopId, Troop memory _troop) = Util._addTroop(_pos, _troopTypeId, _player);
+
+        emit NewTroop(_player, _troopId, _troop, _pos);
     }
 
     // ----------------------------------------------------------------------
@@ -142,7 +144,7 @@ contract EngineFacet is UseStorage {
         if (_targetTile.baseId != NULL && Util._getBaseOwner(_targetTile.baseId) != msg.sender) revert("Cannot move onto opponent base");
         if (_targetTile.occupantId != NULL) {
             if (!Util._hasTroopTransport(_targetTile) || !Util._isLandTroop(_troop.troopTypeId)) revert("Destination tile occupied");
-            if (Util._getTroopOwner(_targetTile.occupantId) != msg.sender) revert("Cannot move onto opponent troop transport");
+            if (Util._getTroop(_targetTile.occupantId).owner != msg.sender) revert("Cannot move onto opponent troop transport");
 
             // Load troop onto Troop Transport at target tile
             gs().troopIdMap[_targetTile.occupantId].cargoTroopIds.push(_troopId);
@@ -223,10 +225,11 @@ contract EngineFacet is UseStorage {
 
             if (_targetIsBase) {
                 gs().baseIdMap[_targetTile.baseId].health = _targetHealth;
-                emit Attacked(msg.sender, _troopId, Util._getBaseOwner(_targetTile.baseId), _targetTile.baseId);
+                emit AttackedBase(msg.sender, _troopId, Util._getTroop(_troopId), _targetTile.baseId, Util._getBase(_targetTile.baseId));
             } else {
+                // normal troop
                 gs().troopIdMap[_targetTile.occupantId].health = _targetHealth;
-                emit Attacked(msg.sender, _troopId, Util._getTroopOwner(_targetTile.occupantId), _targetTile.occupantId);
+                emit AttackedTroop(msg.sender, _troopId, Util._getTroop(_troopId), _targetTile.occupantId, Util._getTroop(_targetTile.occupantId));
 
                 if (_targetHealth == 0) {
                     Util._removeTroop(_targetPos, _targetTile.occupantId);
@@ -239,17 +242,24 @@ contract EngineFacet is UseStorage {
 
         // Target attacks troop
         if (Util._strike(_targetDefenseFactor)) {
-            if (_targetIsBase) {
-                emit Attacked(Util._getBaseOwner(_targetTile.baseId), _targetTile.baseId, msg.sender, _troopId);
+            // enemy troop attacks back
+            if (_targetDamagePerHit >= _troop.health) {
+                Util._removeTroop(_troop.pos, _troopId);
             } else {
-                emit Attacked(Util._getTroopOwner(_targetTile.occupantId), _targetTile.occupantId, msg.sender, _troopId);
+                gs().troopIdMap[_troopId].health -= _targetDamagePerHit;
+            }
+
+            Troop memory _targetTroop = Util._getTroop(_troopId);
+            if (_targetIsBase) {
+                // base
+                emit AttackedBase(msg.sender, _troopId, _targetTroop, _targetTile.baseId, Util._getBase(_targetTile.baseId));
+            } else {
+                // attacked troop
+                emit AttackedTroop(msg.sender, _troopId, _targetTroop, _targetTile.occupantId, Util._getTroop(_targetTile.occupantId));
             }
 
             if (_targetDamagePerHit >= _troop.health) {
-                Util._removeTroop(_troop.pos, _troopId);
                 emit Death(msg.sender, _troopId);
-            } else {
-                gs().troopIdMap[_troopId].health -= _targetDamagePerHit;
             }
         }
     }
@@ -295,8 +305,9 @@ contract EngineFacet is UseStorage {
         if (!Util._isLandTroop(_troopTypeId) && !Util._hasPort(_tile)) revert("Only ports can produce water troops");
         if (gs().baseProductionMap[_tile.baseId].troopTypeId != NULL) revert("Base already producing");
 
-        gs().baseProductionMap[_tile.baseId] = Production({troopTypeId: _troopTypeId, startEpoch: gs().epoch});
-        emit ProductionStarted(msg.sender, _tile.baseId, _troopTypeId);
+        Production memory _production = Production({troopTypeId: _troopTypeId, startEpoch: gs().epoch});
+        gs().baseProductionMap[_tile.baseId] = _production;
+        emit ProductionStarted(msg.sender, _tile.baseId, _production);
     }
 
     // ----------------------------------------------------------------------
@@ -331,9 +342,9 @@ contract EngineFacet is UseStorage {
         if (_production.troopTypeId == NULL) revert("No production found in base");
         if (Util._getEpochsToProduce(_production.troopTypeId) > (gs().epoch - _production.startEpoch)) revert("Troop needs more epochs for production");
 
-        uint256 _troopId = Util._addTroop(_pos, _production.troopTypeId, msg.sender);
+        (uint256 _troopId, Troop memory _troop) = Util._addTroop(_pos, _production.troopTypeId, msg.sender);
         delete gs().baseProductionMap[_tile.baseId];
-        emit NewTroop(msg.sender, _troopId, _pos);
+        emit NewTroop(msg.sender, _troopId, _troop, _pos);
     }
 
     /**

@@ -45,7 +45,7 @@ contract GetterFacet is UseStorage {
     }
 
     function getBase(uint256 _id) external view returns (Base memory) {
-        return gs().baseIdMap[_id];
+        return Util._getBase(_id);
     }
 
     function getTroopAt(Position memory _pos) external view returns (Troop memory) {
@@ -81,14 +81,26 @@ contract GetterFacet is UseStorage {
     }
 
     // _startId: inclusive
-    // endId: inclusive
+    // _endId: inclusive
     function getBulkBase(uint256 _startId, uint256 _endId) external view returns (Base[] memory) {
-        Base[] memory bases = new Base[](_endId - _startId + 1);
+        Base[] memory _bases = new Base[](_endId - _startId + 1);
 
-        for (uint256 i = _startId; i < _endId; i++) {
-            bases[i] = gs().baseIdMap[i];
+        for (uint256 i = 0; i < _endId; i++) {
+            _bases[i] = gs().baseIdMap[i + _startId];
         }
 
-        return bases;
+        return _bases;
+    }
+
+    // _startId: inclusive
+    // _endId: inclusive
+    function getBulkTroopTypes(uint256 _startId, uint256 _endId) external view returns (TroopType[] memory) {
+        TroopType[] memory _troops = new TroopType[](_endId - _startId + 1);
+
+        for (uint256 i = 0; i < _endId; i++) {
+            _troops[i] = gs().troopTypeIdMap[_startId + i];
+        }
+
+        return _troops;
     }
 }

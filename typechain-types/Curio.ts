@@ -102,23 +102,14 @@ export type BaseStructOutput = [
   health: BigNumber;
 };
 
-export type TileStruct = {
-  terrain: BigNumberish;
-  occupantId: BigNumberish;
-  baseId: BigNumberish;
+export type ProductionStruct = {
+  troopTypeId: BigNumberish;
+  startEpoch: BigNumberish;
 };
 
-export type TileStructOutput = [number, BigNumber, BigNumber] & {
-  terrain: number;
-  occupantId: BigNumber;
-  baseId: BigNumber;
-};
-
-export type PlayerStruct = { initEpoch: BigNumberish; active: boolean };
-
-export type PlayerStructOutput = [BigNumber, boolean] & {
-  initEpoch: BigNumber;
-  active: boolean;
+export type ProductionStructOutput = [BigNumber, BigNumber] & {
+  troopTypeId: BigNumber;
+  startEpoch: BigNumber;
 };
 
 export type TroopTypeStruct = {
@@ -159,6 +150,25 @@ export type TroopTypeStructOutput = [
   movementCooldown: BigNumber;
   attackCooldown: BigNumber;
   isLandTroop: boolean;
+};
+
+export type TileStruct = {
+  terrain: BigNumberish;
+  occupantId: BigNumberish;
+  baseId: BigNumberish;
+};
+
+export type TileStructOutput = [number, BigNumber, BigNumber] & {
+  terrain: number;
+  occupantId: BigNumber;
+  baseId: BigNumber;
+};
+
+export type PlayerStruct = { initEpoch: BigNumberish; active: boolean };
+
+export type PlayerStructOutput = [BigNumber, boolean] & {
+  initEpoch: BigNumber;
+  active: boolean;
 };
 
 export type WorldConstantsStruct = {
@@ -212,6 +222,7 @@ export interface CurioInterface extends utils.Interface {
     "getBaseAt((uint256,uint256))": FunctionFragment;
     "getBaseNonce()": FunctionFragment;
     "getBulkBase(uint256,uint256)": FunctionFragment;
+    "getBulkTroopTypes(uint256,uint256)": FunctionFragment;
     "getEpoch()": FunctionFragment;
     "getMapChunk((uint256,uint256))": FunctionFragment;
     "getPlayer(address)": FunctionFragment;
@@ -303,6 +314,10 @@ export interface CurioInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getBulkBase",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getBulkTroopTypes",
     values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "getEpoch", values?: undefined): string;
@@ -397,6 +412,10 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "getBulkBase",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "getBulkTroopTypes",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getEpoch", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getMapChunk",
@@ -422,21 +441,23 @@ export interface CurioInterface extends utils.Interface {
 
   events: {
     "DiamondCut(tuple[],address,bytes)": EventFragment;
-    "Attacked(address,uint256,address,uint256)": EventFragment;
+    "AttackedBase(address,uint256,tuple,uint256,tuple)": EventFragment;
+    "AttackedTroop(address,uint256,tuple,uint256,tuple)": EventFragment;
     "BaseCaptured(address,uint256,uint256)": EventFragment;
     "Death(address,uint256)": EventFragment;
     "EpochUpdate(uint256,uint256)": EventFragment;
     "Moved(address,uint256,tuple)": EventFragment;
     "NewPlayer(address,tuple)": EventFragment;
-    "NewTroop(address,uint256,tuple)": EventFragment;
-    "ProductionStarted(address,uint256,uint256)": EventFragment;
+    "NewTroop(address,uint256,tuple,tuple)": EventFragment;
+    "ProductionStarted(address,uint256,tuple)": EventFragment;
     "Recovered(address,uint256)": EventFragment;
     "Repaired(address,uint256,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "DiamondCut"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Attacked"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "AttackedBase"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "AttackedTroop"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BaseCaptured"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Death"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "EpochUpdate"): EventFragment;
@@ -456,17 +477,31 @@ export type DiamondCutEvent = TypedEvent<
 
 export type DiamondCutEventFilter = TypedEventFilter<DiamondCutEvent>;
 
-export type AttackedEvent = TypedEvent<
-  [string, BigNumber, string, BigNumber],
+export type AttackedBaseEvent = TypedEvent<
+  [string, BigNumber, TroopStructOutput, BigNumber, BaseStructOutput],
   {
     _player: string;
     _troopId: BigNumber;
-    _targetPlayer: string;
-    _targetId: BigNumber;
+    _troopInfo: TroopStructOutput;
+    _targetBaseId: BigNumber;
+    _targetBaseInfo: BaseStructOutput;
   }
 >;
 
-export type AttackedEventFilter = TypedEventFilter<AttackedEvent>;
+export type AttackedBaseEventFilter = TypedEventFilter<AttackedBaseEvent>;
+
+export type AttackedTroopEvent = TypedEvent<
+  [string, BigNumber, TroopStructOutput, BigNumber, TroopStructOutput],
+  {
+    _player: string;
+    _troopId: BigNumber;
+    _troopInfo: TroopStructOutput;
+    _targetTroopId: BigNumber;
+    _targetTroopInfo: TroopStructOutput;
+  }
+>;
+
+export type AttackedTroopEventFilter = TypedEventFilter<AttackedTroopEvent>;
 
 export type BaseCapturedEvent = TypedEvent<
   [string, BigNumber, BigNumber],
@@ -504,15 +539,20 @@ export type NewPlayerEvent = TypedEvent<
 export type NewPlayerEventFilter = TypedEventFilter<NewPlayerEvent>;
 
 export type NewTroopEvent = TypedEvent<
-  [string, BigNumber, PositionStructOutput],
-  { _player: string; _troopId: BigNumber; _pos: PositionStructOutput }
+  [string, BigNumber, TroopStructOutput, PositionStructOutput],
+  {
+    _player: string;
+    _troopId: BigNumber;
+    _troop: TroopStructOutput;
+    _pos: PositionStructOutput;
+  }
 >;
 
 export type NewTroopEventFilter = TypedEventFilter<NewTroopEvent>;
 
 export type ProductionStartedEvent = TypedEvent<
-  [string, BigNumber, BigNumber],
-  { _player: string; _baseId: BigNumber; _troopTypeId: BigNumber }
+  [string, BigNumber, ProductionStructOutput],
+  { _player: string; _baseId: BigNumber; _production: ProductionStructOutput }
 >;
 
 export type ProductionStartedEventFilter =
@@ -674,6 +714,12 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BaseStructOutput[]]>;
 
+    getBulkTroopTypes(
+      _startId: BigNumberish,
+      _endId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[TroopTypeStructOutput[]]>;
+
     getEpoch(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getMapChunk(
@@ -821,6 +867,12 @@ export interface Curio extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BaseStructOutput[]>;
 
+  getBulkTroopTypes(
+    _startId: BigNumberish,
+    _endId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<TroopTypeStructOutput[]>;
+
   getEpoch(overrides?: CallOverrides): Promise<BigNumber>;
 
   getMapChunk(
@@ -963,6 +1015,12 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BaseStructOutput[]>;
 
+    getBulkTroopTypes(
+      _startId: BigNumberish,
+      _endId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<TroopTypeStructOutput[]>;
+
     getEpoch(overrides?: CallOverrides): Promise<BigNumber>;
 
     getMapChunk(
@@ -1019,18 +1077,35 @@ export interface Curio extends BaseContract {
       _calldata?: null
     ): DiamondCutEventFilter;
 
-    "Attacked(address,uint256,address,uint256)"(
+    "AttackedBase(address,uint256,tuple,uint256,tuple)"(
       _player?: null,
       _troopId?: null,
-      _targetPlayer?: null,
-      _targetId?: null
-    ): AttackedEventFilter;
-    Attacked(
+      _troopInfo?: null,
+      _targetBaseId?: null,
+      _targetBaseInfo?: null
+    ): AttackedBaseEventFilter;
+    AttackedBase(
       _player?: null,
       _troopId?: null,
-      _targetPlayer?: null,
-      _targetId?: null
-    ): AttackedEventFilter;
+      _troopInfo?: null,
+      _targetBaseId?: null,
+      _targetBaseInfo?: null
+    ): AttackedBaseEventFilter;
+
+    "AttackedTroop(address,uint256,tuple,uint256,tuple)"(
+      _player?: null,
+      _troopId?: null,
+      _troopInfo?: null,
+      _targetTroopId?: null,
+      _targetTroopInfo?: null
+    ): AttackedTroopEventFilter;
+    AttackedTroop(
+      _player?: null,
+      _troopId?: null,
+      _troopInfo?: null,
+      _targetTroopId?: null,
+      _targetTroopInfo?: null
+    ): AttackedTroopEventFilter;
 
     "BaseCaptured(address,uint256,uint256)"(
       _player?: null,
@@ -1065,22 +1140,28 @@ export interface Curio extends BaseContract {
     ): NewPlayerEventFilter;
     NewPlayer(_player?: null, _pos?: null): NewPlayerEventFilter;
 
-    "NewTroop(address,uint256,tuple)"(
+    "NewTroop(address,uint256,tuple,tuple)"(
       _player?: null,
       _troopId?: null,
+      _troop?: null,
       _pos?: null
     ): NewTroopEventFilter;
-    NewTroop(_player?: null, _troopId?: null, _pos?: null): NewTroopEventFilter;
+    NewTroop(
+      _player?: null,
+      _troopId?: null,
+      _troop?: null,
+      _pos?: null
+    ): NewTroopEventFilter;
 
-    "ProductionStarted(address,uint256,uint256)"(
+    "ProductionStarted(address,uint256,tuple)"(
       _player?: null,
       _baseId?: null,
-      _troopTypeId?: null
+      _production?: null
     ): ProductionStartedEventFilter;
     ProductionStarted(
       _player?: null,
       _baseId?: null,
-      _troopTypeId?: null
+      _production?: null
     ): ProductionStartedEventFilter;
 
     "Recovered(address,uint256)"(
@@ -1206,6 +1287,12 @@ export interface Curio extends BaseContract {
     getBaseNonce(overrides?: CallOverrides): Promise<BigNumber>;
 
     getBulkBase(
+      _startId: BigNumberish,
+      _endId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getBulkTroopTypes(
       _startId: BigNumberish,
       _endId: BigNumberish,
       overrides?: CallOverrides
@@ -1349,6 +1436,12 @@ export interface Curio extends BaseContract {
     getBaseNonce(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getBulkBase(
+      _startId: BigNumberish,
+      _endId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getBulkTroopTypes(
       _startId: BigNumberish,
       _endId: BigNumberish,
       overrides?: CallOverrides
