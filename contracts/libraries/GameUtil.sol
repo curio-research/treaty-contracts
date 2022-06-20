@@ -165,6 +165,8 @@ library Util {
         return uint256(keccak256(abi.encode(block.timestamp, block.difficulty, _salt))) % _max; // FIXME
     }
 
+    // Note: The current version treats a diagonal movement as two movements.
+    // For treating as one, use `xDist <= _dist && yDist <= _dist` as return condition.
     function _withinDist(
         Position memory _p1,
         Position memory _p2,
@@ -172,6 +174,6 @@ library Util {
     ) public pure returns (bool) {
         uint256 _xDist = _p1.x >= _p2.x ? _p1.x - _p2.x : _p2.x - _p1.x;
         uint256 _yDist = _p1.y >= _p2.y ? _p1.y - _p2.y : _p2.y - _p1.y;
-        return _xDist <= _dist && _yDist <= _dist;
+        return (_xDist + _yDist) <= _dist;
     }
 }
