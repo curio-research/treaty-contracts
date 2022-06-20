@@ -102,7 +102,7 @@ contract LogicTest is Test, DiamondDeployTest {
         // spawn troop at player1 location
         vm.startPrank(deployer);
         engine.spawnTroop(player1Pos, player1, troopTransportTroopTypeId);
-        engine.spawnTroop(Position({x: 7, y: 1}), player1, troopTransportTroopTypeId);
+        engine.spawnTroop(Position({x: 7, y: 4}), player1, troopTransportTroopTypeId);
         vm.stopPrank();
         uint256 _troopId = initTroopNonce;
 
@@ -122,16 +122,22 @@ contract LogicTest is Test, DiamondDeployTest {
 
         // fail: attempting to move transport to a city tile
         vm.expectRevert(bytes("Cannot move on land"));
-        engine.move(_troopId, Position({x: 5, y: 0}));
+        engine.move(_troopId, Position({x: 5, y: 1}));
 
         // fail: move onto an opponent's base
+        engine.move(_troopId, Position({x: 7, y: 1}));
+        vm.warp(20);
+        engine.updateEpoch();
         engine.move(_troopId, Position({x: 7, y: 2}));
+        vm.warp(40);
+        engine.updateEpoch();
+        engine.move(_troopId, Position({x: 7, y: 3}));
         vm.expectRevert(bytes("Cannot move onto opponent base"));
         engine.move(_troopId, player2Pos);
 
         // fail: move a troop transport onto a troop transport
         vm.expectRevert(bytes("Destination tile occupied"));
-        engine.move(_troopId, Position({x: 7, y: 1}));
+        engine.move(_troopId, Position({x: 7, y: 4}));
 
         vm.stopPrank();
     }
@@ -255,7 +261,7 @@ contract LogicTest is Test, DiamondDeployTest {
             _army = getter.getTroop(_armyId);
             assertEq(_army.owner, NULL_ADDR);
         } else {
-            engine.move(_armyId, Position({x: 8, y: 3}));
+            engine.move(_armyId, Position({x: 8, y: 2}));
             _troopTransport2 = getter.getTroopAt(_troopTransport2Pos);
             assertEq(_troopTransport2.cargoTroopIds.length, 0);
         }
@@ -304,7 +310,7 @@ contract LogicTest is Test, DiamondDeployTest {
     }
 
     function testBattleTroop() public {
-        Position memory _armyPos = Position({x: 8, y: 4});
+        Position memory _armyPos = Position({x: 8, y: 3});
         Position memory _destroyerPos = Position({x: 7, y: 3});
 
         vm.startPrank(deployer);
@@ -346,7 +352,7 @@ contract LogicTest is Test, DiamondDeployTest {
 
     // FIXME: actual probability test?
     function testBattleTroopProbabilistic() public {
-        Position memory _armyPos = Position({x: 8, y: 4});
+        Position memory _armyPos = Position({x: 8, y: 3});
         Position memory _troopTransportPos = Position({x: 7, y: 3});
 
         vm.startPrank(deployer);
@@ -403,7 +409,7 @@ contract LogicTest is Test, DiamondDeployTest {
         engine.captureBase(_destroyerId, player2Pos);
 
         vm.expectRevert(bytes("No base to capture"));
-        engine.captureBase(_armyId, Position({x: 4, y: 2}));
+        engine.captureBase(_armyId, Position({x: 4, y: 1}));
 
         vm.expectRevert(bytes("Base already owned"));
         engine.captureBase(_armyId, player1Pos);
@@ -472,7 +478,7 @@ contract LogicTest is Test, DiamondDeployTest {
         vm.stopPrank();
 
         uint256 _player1DestroyerId = initTroopNonce;
-        Position memory _player2DestroyerPos = Position({x: 7, y: 0});
+        Position memory _player2DestroyerPos = Position({x: 7, y: 1});
         vm.startPrank(deployer);
         engine.spawnTroop(player1Pos, player1, destroyerTroopTypeId);
         engine.spawnTroop(_player2DestroyerPos, player2, destroyerTroopTypeId);
@@ -502,7 +508,7 @@ contract LogicTest is Test, DiamondDeployTest {
 
     function testRepair() public {
         uint256 _player1DestroyerId = initTroopNonce;
-        Position memory _player2DestroyerPos = Position({x: 7, y: 0});
+        Position memory _player2DestroyerPos = Position({x: 7, y: 1});
         vm.startPrank(deployer);
         engine.spawnTroop(player1Pos, player1, destroyerTroopTypeId);
         engine.spawnTroop(_player2DestroyerPos, player2, destroyerTroopTypeId);
