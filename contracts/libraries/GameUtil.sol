@@ -166,7 +166,7 @@ library Util {
     }
 
     // Note: The current version treats a diagonal movement as two movements.
-    // For treating as one, use `xDist <= _dist || yDist <= _dist` as return condition.
+    // For treating as one, use `xDist <= _dist && yDist <= _dist` as return condition.
     function _withinDist(
         Position memory _p1,
         Position memory _p2,
