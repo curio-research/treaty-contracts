@@ -98,4 +98,14 @@ contract BasicTest is Test, DiamondDeployTest {
         engine.updateEpoch();
         assertEq(getter.getEpoch(), 2);
     }
+
+    function testTransferBaseOwnership() public {
+        Position memory _pos = Position({x: 6, y: 6});
+        assertEq(getter.getBaseAt(_pos).owner, NULL_ADDR);
+
+        vm.prank(deployer);
+        engine.transferBaseOwnership(_pos, player1);
+
+        assertEq(getter.getBaseAt(_pos).owner, player1);
+    }
 }

@@ -76,6 +76,7 @@ contract EngineFacet is UseStorage {
         uint256 _baseId = Util._getTileAt(_pos).baseId;
 
         if (Util._getBaseOwner(_baseId) != address(0)) revert("Base is taken");
+        if (gs().playerMap[_player].active) revert("Player already initialized");
 
         gs().players.push(_player);
         gs().playerMap[_player] = Player({initEpoch: gs().epoch, active: true});
@@ -109,6 +110,22 @@ contract EngineFacet is UseStorage {
         emit NewTroop(_player, _troopId, _troop, _pos);
     }
 
+    /**
+     * Transfer a base at a selected position to a player, typically upon initialization.
+     * @param _pos base position
+     * @param _player player to give ownership to
+     */
+    function transferBaseOwnership(Position memory _pos, address _player) external onlyAdmin {
+        Tile memory _tile = Util._getTileAt(_pos);
+        if (_tile.baseId == NULL) revert("No base found");
+        if (_tile.occupantId != NULL) revert("Tile occupied");
+
+        Base memory _base = Util._getBase(_tile.baseId);
+        if (_base.owner == _player) revert("Base already belongs to player");
+
+        gs().baseIdMap[_tile.baseId].owner = _player;
+    }
+
     // ----------------------------------------------------------------------
     // PLAYER FUNCTIONS
     // ----------------------------------------------------------------------
@@ -135,7 +152,7 @@ contract EngineFacet is UseStorage {
         if (_movesLeftInEpoch == 0) revert("No moves left this epoch");
 
         Tile memory _targetTile = Util._getTileAt(_targetPos);
-        if (Util._isLandTroop(_troop.troopTypeId)) {
+        if (Util._isLandTroop(_troop.troopTypeId) && !Util._hasTroopTransport(_targetTile)) {
             if (_targetTile.terrain == TERRAIN.WATER) revert("Cannot move on water");
         } else {
             if (_targetTile.terrain != TERRAIN.WATER && !Util._hasPort(_targetTile)) revert("Cannot move on land");

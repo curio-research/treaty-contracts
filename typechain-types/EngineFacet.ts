@@ -101,6 +101,7 @@ export interface EngineFacetInterface extends utils.Interface {
     "setMapChunk((uint256,uint256),uint256[][])": FunctionFragment;
     "spawnTroop((uint256,uint256),address,uint256)": FunctionFragment;
     "startProduction((uint256,uint256),uint256)": FunctionFragment;
+    "transferBaseOwnership((uint256,uint256),address)": FunctionFragment;
     "updateEpoch()": FunctionFragment;
   };
 
@@ -141,6 +142,10 @@ export interface EngineFacetInterface extends utils.Interface {
     values: [PositionStruct, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "transferBaseOwnership",
+    values: [PositionStruct, string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "updateEpoch",
     values?: undefined
   ): string;
@@ -167,6 +172,10 @@ export interface EngineFacetInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "spawnTroop", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "startProduction",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "transferBaseOwnership",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -376,6 +385,12 @@ export interface EngineFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    transferBaseOwnership(
+      _pos: PositionStruct,
+      _player: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     updateEpoch(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -434,6 +449,12 @@ export interface EngineFacet extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  transferBaseOwnership(
+    _pos: PositionStruct,
+    _player: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   updateEpoch(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -486,6 +507,12 @@ export interface EngineFacet extends BaseContract {
     startProduction(
       _pos: PositionStruct,
       _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    transferBaseOwnership(
+      _pos: PositionStruct,
+      _player: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -652,6 +679,12 @@ export interface EngineFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    transferBaseOwnership(
+      _pos: PositionStruct,
+      _player: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     updateEpoch(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -708,6 +741,12 @@ export interface EngineFacet extends BaseContract {
     startProduction(
       _pos: PositionStruct,
       _troopTypeId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    transferBaseOwnership(
+      _pos: PositionStruct,
+      _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
