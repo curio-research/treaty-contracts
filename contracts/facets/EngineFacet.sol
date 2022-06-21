@@ -187,8 +187,7 @@ contract EngineFacet is UseStorage {
         if (Util._samePos(_troop.pos, _targetPos)) revert("Already at destination");
         if (!Util._withinDist(_troop.pos, _targetPos, 1)) revert("Destination too far");
 
-        uint256 _epoch = gs().epoch;
-        if ((_epoch - _troop.lastAttacked) < Util._getAttackCooldown(_troop.troopTypeId)) revert("Attacked too recently");
+        if ((gs().epoch - _troop.lastAttacked) < Util._getAttackCooldown(_troop.troopTypeId)) revert("Attacked too recently");
 
         gs().troopIdMap[_troopId].lastAttacked = gs().epoch;
 
@@ -224,10 +223,10 @@ contract EngineFacet is UseStorage {
             _targetHealth = _targetBase.health;
         }
 
-        gs().troopIdMap[_troopId].lastAttacked = _epoch;
+        gs().troopIdMap[_troopId].lastAttacked = gs().epoch;
 
         // Loop till one side dies
-        while (Util._getTroop(_troopId).owner == msg.sender && Util._getTileAt(_targetPos).occupantId != NULL) {
+        while (Util._getTroop(_troopId).health > 0 && Util._getTroop(_targetTile.occupantId).health > 0) {
             // Troop attacks target
             if (Util._strike(_targetAttackFactor)) {
                 uint256 _damagePerHit = Util._getDamagePerHit(_troop.troopTypeId);
@@ -242,7 +241,7 @@ contract EngineFacet is UseStorage {
                 }
             }
 
-            if (_targetHealth == 0) return; // target cannot attack back if it has zero health
+            if (_targetHealth == 0) break; // target cannot attack back if it has zero health
 
             // Target attacks troop
             if (Util._strike(_targetDefenseFactor)) {
@@ -262,6 +261,7 @@ contract EngineFacet is UseStorage {
             _troop = Util._getTroop(_troopId);
 
             if (_targetIsBase) {
+                gs().baseIdMap[_targetTile.baseId].health = 0;
                 _targetBase = Util._getBase(_targetTile.baseId);
                 emit Util.AttackedBase(msg.sender, _troopId, _troop, _targetTile.baseId, _targetBase);
             } else {

@@ -158,7 +158,7 @@ library Util {
     }
 
     function _strike(uint256 _strikeFactor) public view returns (bool) {
-        uint256 _salt = 2; // FIXME: proper salt
+        uint256 _salt = 4; // FIXME: proper salt
         uint256 _rand = _random(_salt, 100);
         return _rand * 100 < _strikeFactor * gs().worldConstants.combatEfficiency;
     }
