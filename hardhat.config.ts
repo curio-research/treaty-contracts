@@ -16,7 +16,7 @@ import './tasks/deploy';
 // yarn run hardhat size-contracts
 
 // Add this
-const { USER1_PK, USER2_PK, KOVAN_RPC_URL } = process.env;
+const { USER1_PK, USER2_PK, KOVAN_RPC_URL, GNOSIS_OPTIMISM_RPC_URL } = process.env;
 
 export default {
   defaultNetwork: 'localhost',
@@ -48,6 +48,11 @@ export default {
       url: KOVAN_RPC_URL,
       accounts: [USER1_PK, USER2_PK],
       chainId: 69,
+    },
+    gnosisOptimism: {
+      url: GNOSIS_OPTIMISM_RPC_URL,
+      accounts: [USER1_PK, USER2_PK],
+      chainId: 300,
     },
     hardhat: {
       chainId: 1337,
