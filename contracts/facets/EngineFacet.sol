@@ -2,7 +2,7 @@
 pragma solidity ^0.8.4;
 
 import "contracts/libraries/Storage.sol";
-import {Unauthorized, Util} from "contracts/libraries/GameUtil.sol";
+import {Util} from "contracts/libraries/GameUtil.sol";
 import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {BASE_NAME, Base, GameState, Player, Position, Production, TERRAIN, Tile, Troop, TroopType} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
@@ -22,7 +22,7 @@ contract EngineFacet is UseStorage {
 
     modifier onlyAdmin() {
         // require(msg.sender == gs().worldConstants.admin, "Only admin can perform this action");
-        if (msg.sender != gs().worldConstants.admin) revert Unauthorized();
+        if (msg.sender != gs().worldConstants.admin) revert("Unauthorized");
         _;
     }
 

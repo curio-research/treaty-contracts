@@ -5,7 +5,7 @@ import {BASE_NAME, Base, GameState, Position, Production, Tile, Troop} from "con
 import {LibStorage} from "contracts/libraries/Storage.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 
-error Unauthorized();
+// error Unauthorized();
 
 library Util {
     using SafeMath for uint256;

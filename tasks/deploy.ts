@@ -76,7 +76,7 @@ task('deploy', 'deploy contracts')
       for (let y = 0; y < WORLD_HEIGHT; y += MAP_INTERVAL) {
         mapChunk = tileMap.slice(x, x + MAP_INTERVAL).map((col: TILE_TYPE[]) => col.slice(y, y + MAP_INTERVAL));
 
-        let tx = await diamond.setMapChunk({ x, y }, mapChunk);
+        let tx = await diamond.connect(player1).setMapChunk({ x, y }, mapChunk);
         tx.wait();
       }
     }
