@@ -7,8 +7,6 @@ import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {BASE_NAME, Base, GameState, Player, Position, Production, TERRAIN, Tile, Troop, TroopType} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 
-error Unauthorized();
-
 /// @title Engine facet
 /// @notice Contains main game logic like movement and battling
 
@@ -24,21 +22,9 @@ contract EngineFacet is UseStorage {
 
     modifier onlyAdmin() {
         // require(msg.sender == gs().worldConstants.admin, "Only admin can perform this action");
-        if (msg.sender != gs().worldConstants.admin) revert Unauthorized();
+        if (msg.sender != gs().worldConstants.admin) revert("Unauthorized");
         _;
     }
-
-    event NewPlayer(address _player, Position _pos);
-    event EpochUpdate(uint256 _epoch, uint256 _time);
-    event Moved(address _player, uint256 _troopId, Position _pos);
-    event AttackedTroop(address _player, uint256 _troopId, Troop _troopInfo, uint256 _targetTroopId, Troop _targetTroopInfo);
-    event AttackedBase(address _player, uint256 _troopId, Troop _troopInfo, uint256 _targetBaseId, Base _targetBaseInfo);
-    event Death(address _player, uint256 _troopId);
-    event BaseCaptured(address _player, uint256 _troopId, uint256 _baseId);
-    event ProductionStarted(address _player, uint256 _baseId, Production _production);
-    event NewTroop(address _player, uint256 _troopId, Troop _troop, Position _pos);
-    event Repaired(address _player, uint256 _troopId, uint256 _health);
-    event Recovered(address _player, uint256 _troopId);
 
     // ----------------------------------------------------------------------
     // ADMIN FUNCTIONS
@@ -82,7 +68,7 @@ contract EngineFacet is UseStorage {
         gs().playerMap[_player] = Player({initEpoch: gs().epoch, active: true});
         gs().baseIdMap[_baseId].owner = _player;
 
-        emit NewPlayer(_player, _pos);
+        emit Util.NewPlayer(_player, _pos);
     }
 
     /**
@@ -107,7 +93,7 @@ contract EngineFacet is UseStorage {
 
         (uint256 _troopId, Troop memory _troop) = Util._addTroop(_pos, _troopTypeId, _player);
 
-        emit NewTroop(_player, _troopId, _troop, _pos);
+        emit Util.NewTroop(_player, _troopId, _troop, _pos);
     }
 
     /**
@@ -124,6 +110,7 @@ contract EngineFacet is UseStorage {
         if (_base.owner == _player) revert("Base already belongs to player");
 
         gs().baseIdMap[_tile.baseId].owner = _player;
+        emit Util.BaseCaptured(_player, NULL, _tile.baseId);
     }
 
     // ----------------------------------------------------------------------
@@ -184,7 +171,7 @@ contract EngineFacet is UseStorage {
             }
         }
 
-        emit Moved(msg.sender, _troopId, _targetPos);
+        emit Util.Moved(msg.sender, _troopId, _targetPos);
     }
 
     /**
@@ -200,8 +187,7 @@ contract EngineFacet is UseStorage {
         if (Util._samePos(_troop.pos, _targetPos)) revert("Already at destination");
         if (!Util._withinDist(_troop.pos, _targetPos, 1)) revert("Destination too far");
 
-        uint256 _epoch = gs().epoch;
-        if ((_epoch - _troop.lastAttacked) < Util._getAttackCooldown(_troop.troopTypeId)) revert("Attacked too recently");
+        if ((gs().epoch - _troop.lastAttacked) < Util._getAttackCooldown(_troop.troopTypeId)) revert("Attacked too recently");
 
         gs().troopIdMap[_troopId].lastAttacked = gs().epoch;
 
@@ -211,10 +197,12 @@ contract EngineFacet is UseStorage {
         uint256 _targetDefenseFactor;
         uint256 _targetDamagePerHit;
         uint256 _targetHealth;
+        Troop memory _targetTroop;
+        Base memory _targetBase;
 
         if (_targetTile.occupantId != NULL) {
             // Note: If an opponent base has a troop, currently our troop battles the troop not the base. Can change later
-            Troop memory _targetTroop = gs().troopIdMap[_targetTile.occupantId];
+            _targetTroop = gs().troopIdMap[_targetTile.occupantId];
             if (_targetTroop.owner == msg.sender) revert("Cannot attack own troop");
 
             _targetIsBase = false;
@@ -225,7 +213,7 @@ contract EngineFacet is UseStorage {
         } else {
             if (_targetTile.baseId == NULL) revert("No target to attack");
 
-            Base memory _targetBase = gs().baseIdMap[_targetTile.baseId];
+            _targetBase = gs().baseIdMap[_targetTile.baseId];
             if (_targetBase.owner == msg.sender) revert("Cannot attack own base");
 
             _targetIsBase = true;
@@ -235,56 +223,65 @@ contract EngineFacet is UseStorage {
             _targetHealth = _targetBase.health;
         }
 
-        // Troop attacks target
-        if (Util._strike(_targetAttackFactor)) {
-            uint256 _damagePerHit = Util._getDamagePerHit(_troop.troopTypeId);
-            if (_damagePerHit >= _targetHealth) {
-                _targetHealth = 0;
-            } else {
-                _targetHealth -= _damagePerHit;
+        gs().troopIdMap[_troopId].lastAttacked = gs().epoch;
+
+        // Loop till one side dies
+        while (Util._getTroop(_troopId).health > 0 && Util._getTroop(_targetTile.occupantId).health > 0) {
+            // Troop attacks target
+            if (Util._strike(_targetAttackFactor)) {
+                uint256 _damagePerHit = Util._getDamagePerHit(_troop.troopTypeId);
+                if (_damagePerHit < _targetHealth) {
+                    _targetHealth -= _damagePerHit;
+                } else {
+                    _targetHealth = 0;
+                    if (!_targetIsBase) {
+                        Util._removeTroop(_targetPos, _targetTile.occupantId);
+                        emit Util.Death(Util._getBaseOwner(_targetTile.occupantId), _targetTile.occupantId);
+                    }
+                }
             }
 
-            if (_targetIsBase) {
-                gs().baseIdMap[_targetTile.baseId].health = _targetHealth;
-                emit AttackedBase(msg.sender, _troopId, Util._getTroop(_troopId), _targetTile.baseId, Util._getBase(_targetTile.baseId));
-            } else {
-                // normal troop
-                gs().troopIdMap[_targetTile.occupantId].health = _targetHealth;
-                emit AttackedTroop(msg.sender, _troopId, Util._getTroop(_troopId), _targetTile.occupantId, Util._getTroop(_targetTile.occupantId));
+            if (_targetHealth == 0) break; // target cannot attack back if it has zero health
 
-                if (_targetHealth == 0) {
-                    Util._removeTroop(_targetPos, _targetTile.occupantId);
-                    emit Death(Util._getBaseOwner(_targetTile.occupantId), _targetTile.occupantId);
+            // Target attacks troop
+            if (Util._strike(_targetDefenseFactor)) {
+                // enemy troop attacks back
+                if (_targetDamagePerHit < _troop.health) {
+                    _troop.health -= _targetDamagePerHit;
+                } else {
+                    Util._removeTroop(_troop.pos, _troopId);
+                    emit Util.Death(msg.sender, _troopId);
                 }
             }
         }
 
-        if (_targetHealth == 0) return; // target cannot attack back if it has zero health
+        if (Util._getTroop(_troopId).owner == msg.sender) {
+            // Troop survives
+            gs().troopIdMap[_troopId].health = _troop.health;
+            _troop = Util._getTroop(_troopId);
 
-        // Target attacks troop
-        if (Util._strike(_targetDefenseFactor)) {
-            // enemy troop attacks back
-            if (_targetDamagePerHit >= _troop.health) {
-                Util._removeTroop(_troop.pos, _troopId);
-            } else {
-                gs().troopIdMap[_troopId].health -= _targetDamagePerHit;
-            }
-
-            Troop memory _targetTroop = Util._getTroop(_troopId);
             if (_targetIsBase) {
-                // base
-                emit AttackedBase(msg.sender, _troopId, _targetTroop, _targetTile.baseId, Util._getBase(_targetTile.baseId));
+                gs().baseIdMap[_targetTile.baseId].health = 0;
+                _targetBase = Util._getBase(_targetTile.baseId);
+                emit Util.AttackedBase(msg.sender, _troopId, _troop, _targetTile.baseId, _targetBase);
             } else {
-                // attacked troop
-                emit AttackedTroop(msg.sender, _troopId, _targetTroop, _targetTile.occupantId, Util._getTroop(_targetTile.occupantId));
+                _targetTroop = Util._getTroop(_targetTile.occupantId);
+                emit Util.AttackedTroop(msg.sender, _troopId, _troop, _targetTile.occupantId, _targetTroop);
             }
+        } else {
+            _troop = Util._getTroop(_troopId);
 
-            if (_targetDamagePerHit >= _troop.health) {
-                emit Death(msg.sender, _troopId);
+            // Target survives
+            if (_targetIsBase) {
+                gs().baseIdMap[_targetTile.baseId].health = _targetHealth;
+                _targetBase = Util._getBase(_targetTile.baseId);
+                emit Util.AttackedBase(msg.sender, _troopId, _troop, _targetTile.baseId, _targetBase);
+            } else {
+                gs().troopIdMap[_targetTile.occupantId].health = _targetHealth;
+                _targetTroop = Util._getTroop(_targetTile.occupantId);
+                emit Util.AttackedTroop(msg.sender, _troopId, _troop, _targetTile.occupantId, _targetTroop);
             }
         }
-
-        gs().troopIdMap[_troopId].lastAttacked = _epoch;
     }
 
     /**
@@ -313,7 +310,7 @@ contract EngineFacet is UseStorage {
         gs().baseIdMap[_targetTile.baseId].health = 1; // FIXME: change to BaseConstants.maxHealth
         delete gs().baseProductionMap[_targetTile.baseId];
 
-        emit BaseCaptured(msg.sender, _troopId, _targetTile.baseId);
+        emit Util.BaseCaptured(msg.sender, _troopId, _targetTile.baseId);
     }
 
     /**
@@ -330,7 +327,7 @@ contract EngineFacet is UseStorage {
 
         Production memory _production = Production({troopTypeId: _troopTypeId, startEpoch: gs().epoch});
         gs().baseProductionMap[_tile.baseId] = _production;
-        emit ProductionStarted(msg.sender, _tile.baseId, _production);
+        emit Util.ProductionStarted(msg.sender, _tile.baseId, _production);
     }
 
     // ----------------------------------------------------------------------
@@ -347,7 +344,7 @@ contract EngineFacet is UseStorage {
         gs().epoch++;
         gs().lastTimestamp = block.timestamp;
 
-        emit EpochUpdate(gs().epoch, gs().lastTimestamp);
+        emit Util.EpochUpdate(gs().epoch, gs().lastTimestamp);
     }
 
     /**
@@ -367,7 +364,7 @@ contract EngineFacet is UseStorage {
 
         (uint256 _troopId, Troop memory _troop) = Util._addTroop(_pos, _production.troopTypeId, msg.sender);
         delete gs().baseProductionMap[_tile.baseId];
-        emit NewTroop(msg.sender, _troopId, _troop, _pos);
+        emit Util.NewTroop(msg.sender, _troopId, _troop, _pos);
     }
 
     /**
@@ -390,7 +387,7 @@ contract EngineFacet is UseStorage {
         _troop.health++;
         gs().troopIdMap[_troopId].health = _troop.health;
         gs().troopIdMap[_troopId].lastRepaired = gs().epoch;
-        emit Repaired(msg.sender, _tile.occupantId, _troop.health);
-        if (_troop.health == Util._getMaxHealth(_troop.troopTypeId)) emit Recovered(msg.sender, _troopId);
+        emit Util.Repaired(msg.sender, _tile.occupantId, _troop.health);
+        if (_troop.health == Util._getMaxHealth(_troop.troopTypeId)) emit Util.Recovered(msg.sender, _troopId);
     }
 }

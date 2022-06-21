@@ -258,12 +258,10 @@ contract LogicTest is Test, DiamondDeployTest {
         assertEq(_army.pos.y, 2);
         assertEq(getter.getTileAt(_newPos).occupantId, _troopTransport2Id);
 
-        // fight enemy destroyer until one dies
+        // battle enemy destroyer
         vm.warp(100);
         engine.updateEpoch();
-        while (getter.getTileAt(_newPos).occupantId == NULL || getter.getTileAt(_enemyPos).occupantId == NULL) {
-            engine.battle(_troopTransport2Id, _enemyPos);
-        }
+        engine.battle(_troopTransport2Id, _enemyPos);
 
         // if troop transport dies, verify cargo army also dies
         vm.warp(120);
@@ -284,11 +282,12 @@ contract LogicTest is Test, DiamondDeployTest {
     function testBattleFailure() public {
         // TODO: add more
         Position memory _troopPos = Position({x: 7, y: 6});
-        Position memory _enemyPos = Position({x: 7, y: 7});
+        Position memory _enemy1Pos = Position({x: 7, y: 7});
+        Position memory _enemy2Pos = Position({x: 7, y: 5});
 
         vm.startPrank(deployer);
         engine.spawnTroop(_troopPos, player1, destroyerTroopTypeId);
-        engine.spawnTroop(_enemyPos, player2, destroyerTroopTypeId);
+        engine.spawnTroop(_enemy1Pos, player2, troopTransportTroopTypeId); // a weaker enemy
         vm.stopPrank();
 
         uint256 _player1DestroyerId = initTroopNonce;
@@ -299,9 +298,11 @@ contract LogicTest is Test, DiamondDeployTest {
         vm.startPrank(player1);
 
         // fail: 2 attacks in 1 epoch
-        engine.battle(_player1DestroyerId, _enemyPos);
-        vm.expectRevert(bytes("Attacked too recently"));
-        engine.battle(_player1DestroyerId, _enemyPos);
+        engine.battle(_player1DestroyerId, _enemy1Pos);
+        if (getter.getTroop(_player1DestroyerId).owner == player1) {
+            vm.expectRevert(bytes("Attacked too recently"));
+            engine.battle(_player1DestroyerId, _enemy2Pos);
+        }
 
         vm.stopPrank();
     }
@@ -321,6 +322,11 @@ contract LogicTest is Test, DiamondDeployTest {
         vm.prank(player1);
         engine.battle(_destroyerId, player2Pos);
 
+        if (getter.getTroop(_destroyerId).owner != player1) {
+            console.log("[testBattleBase] Warning: unlikely outcome");
+            return; // destroyer dies while battling port, a 1/64 (unlikely) outcome
+        }
+
         Troop memory _destroyer = getter.getTroopAt(_destroyerPos);
         assertEq(_destroyer.owner, player1);
 
@@ -330,15 +336,7 @@ contract LogicTest is Test, DiamondDeployTest {
 
         Base memory _port = getter.getBaseAt(player2Pos);
         assertEq(_port.owner, player2);
-
-        bool _strike = _port.health == 0;
-        if (_strike) {
-            assertEq(_destroyer.health, getter.getTroopType(destroyerTroopTypeId).maxHealth); // port did not attack back
-        } else {
-            bool _cond1 = _destroyer.health == getter.getTroopType(destroyerTroopTypeId).maxHealth;
-            bool _cond2 = _destroyer.health == getter.getTroopType(destroyerTroopTypeId).maxHealth - 1;
-            assertTrue(_cond1 || _cond2);
-        }
+        assertEq(_port.health, 0);
     }
 
     function testBattleTroop() public {
@@ -351,6 +349,7 @@ contract LogicTest is Test, DiamondDeployTest {
         engine.spawnTroop(_destroyerPos, player1, destroyerTroopTypeId);
         vm.stopPrank();
 
+        Troop memory _army;
         Troop memory _destroyer = getter.getTroopAt(_destroyerPos);
         assertEq(_destroyer.owner, player1);
         assertEq(_destroyer.health, getter.getTroopType(destroyerTroopTypeId).maxHealth);
@@ -363,60 +362,20 @@ contract LogicTest is Test, DiamondDeployTest {
         vm.prank(player2);
         engine.battle(_armyId, _destroyerPos);
 
-        // destroyer reduced by 1 health if army strikes
         _destroyer = getter.getTroopAt(_destroyerPos);
-        assertEq(_destroyer.owner, player1);
-        bool _destroyerCond1 = _destroyer.health == getter.getTroopType(destroyerTroopTypeId).maxHealth;
-        bool _destroyerCond2 = _destroyer.health == getter.getTroopType(destroyerTroopTypeId).maxHealth - 1;
-        assertTrue(_destroyerCond1 || _destroyerCond2);
+        _army = getter.getTroop(_armyId);
+        bool _destroyerKilled = _destroyer.owner == NULL_ADDR; // destroyer dies
+        bool _armyKilled = _army.owner == NULL_ADDR; // army dies
+        assertTrue(_destroyerKilled || _armyKilled);
 
-        // army eliminated if destroyer strikes
-        Troop memory _schoedingersArmy = getter.getTroop(_armyId);
-        bool _armyEliminated = getter.getTileAt(_armyPos).occupantId == NULL;
-        if (_armyEliminated) {
-            assertTrue(_schoedingersArmy.owner != player2);
-            assertEq(_schoedingersArmy.health, 0);
+        // either side dies but not both
+        if (_destroyerKilled) {
+            assertTrue(!_armyKilled);
+            assertEq(_army.health, 1);
+            assertEq(_army.owner, player2);
         } else {
-            assertEq(_schoedingersArmy.owner, player2);
-            assertEq(_schoedingersArmy.health, 1);
-        }
-    }
-
-    // FIXME: actual probability test?
-    function testBattleTroopProbabilistic() public {
-        Position memory _armyPos = Position({x: 8, y: 3});
-        Position memory _troopTransportPos = Position({x: 7, y: 3});
-
-        vm.startPrank(deployer);
-        engine.spawnTroop(_armyPos, player2, armyTroopTypeId);
-        uint256 _armyId = initTroopNonce;
-        engine.spawnTroop(_troopTransportPos, player1, troopTransportTroopTypeId);
-        vm.stopPrank();
-
-        // increase epoch
-        vm.warp(20);
-        engine.updateEpoch();
-        assertEq(getter.getEpoch(), 1);
-
-        vm.prank(player2);
-        engine.battle(_armyId, _troopTransportPos);
-
-        // transport reduced by 1 health if army strikes
-        Troop memory _troopTransport = getter.getTroopAt(_troopTransportPos);
-        assertEq(_troopTransport.owner, player1);
-        bool _troopTransportCond1 = _troopTransport.health == getter.getTroopType(troopTransportTroopTypeId).maxHealth;
-        bool _troopTransportCond2 = _troopTransport.health == getter.getTroopType(troopTransportTroopTypeId).maxHealth - 1;
-        assertTrue(_troopTransportCond1 || _troopTransportCond2);
-
-        // army either intact or eliminated
-        Troop memory _schoedingersArmy = getter.getTroop(_armyId);
-        if (_schoedingersArmy.health == 0) {
-            assertEq(getter.getTileAt(_armyPos).occupantId, NULL);
-            assertTrue(_schoedingersArmy.owner != player2);
-        } else {
-            assertEq(_schoedingersArmy.health, getter.getTroopType(armyTroopTypeId).maxHealth);
-            assertEq(getter.getTileAt(_armyPos).occupantId, _armyId);
-            assertTrue(_schoedingersArmy.owner == player2);
+            assertTrue(!_destroyerKilled);
+            assertEq(_destroyer.owner, player1);
         }
     }
 
@@ -477,6 +436,10 @@ contract LogicTest is Test, DiamondDeployTest {
 
         vm.startPrank(player1);
         engine.battle(_destroyerId, player2Pos);
+        if (getter.getTroop(_destroyerId).owner == NULL_ADDR) {
+            console.log("[testCaptureBase] Warning: unlikely outcome");
+            return; // destroyer dies while battling port, a 1/64 (unlikely) outcome
+        }
         engine.captureBase(_armyId, player2Pos);
         vm.stopPrank();
 
@@ -520,19 +483,27 @@ contract LogicTest is Test, DiamondDeployTest {
         vm.expectRevert("Troop already at full health");
         engine.repair(player1Pos);
 
-        // battle with an adjacent destroyer until 2 damage points taken or until player2's destroyer dies
-        uint256 _time = 20;
-        while (getter.getTroopAt(player1Pos).health > 1 && getter.getTroopAt(_player2DestroyerPos).owner == player2) {
-            vm.warp(_time);
-            engine.updateEpoch();
-            engine.battle(_player1DestroyerId, _player2DestroyerPos);
-            _time += 20;
-        }
+        vm.warp(20);
+        engine.updateEpoch();
+        engine.battle(_player1DestroyerId, _player2DestroyerPos);
 
-        if (getter.getTroopAt(player1Pos).health == 1) {
+        // try to replicate "repaired too recently" error on both players' destroyers
+        Troop memory _player1Destroyer = getter.getTroopAt(player1Pos);
+        if (_player1Destroyer.owner == player1 && _player1Destroyer.health == 1) {
             engine.repair(player1Pos);
             vm.expectRevert("Repaired too recently");
             engine.repair(player1Pos);
+        }
+
+        vm.stopPrank();
+
+        vm.startPrank(player2);
+
+        Troop memory _player2Destroyer = getter.getTroopAt(_player2DestroyerPos);
+        if (_player2Destroyer.owner == player2 && _player2Destroyer.health == 1) {
+            engine.repair(_player2DestroyerPos);
+            vm.expectRevert("Repaired too recently");
+            engine.repair(_player2DestroyerPos);
         }
 
         vm.stopPrank();
@@ -546,26 +517,29 @@ contract LogicTest is Test, DiamondDeployTest {
         engine.spawnTroop(_player2DestroyerPos, player2, destroyerTroopTypeId);
         vm.stopPrank();
 
-        // battle with an adjacent destroyer until 1 damage points taken or until player2's destroyer dies
-        uint256 _time = 20;
         vm.startPrank(player1);
-        while (getter.getTroopAt(player1Pos).health > 2 && getter.getTroopAt(_player2DestroyerPos).owner == player2) {
-            vm.warp(_time);
-            engine.updateEpoch();
-            engine.battle(_player1DestroyerId, _player2DestroyerPos);
-            _time += 20;
-        }
-
-        // skip if player2's destroyer dies
-        if (getter.getTroopAt(_player2DestroyerPos).owner == address(0)) return;
+        vm.warp(20);
+        engine.updateEpoch();
+        engine.battle(_player1DestroyerId, _player2DestroyerPos);
 
         Troop memory _player1Destroyer = getter.getTroopAt(player1Pos);
-        assertEq(_player1Destroyer.health, getter.getTroopType(destroyerTroopTypeId).maxHealth - 1);
-        vm.warp(20);
-        engine.repair(player1Pos);
+        if (_player1Destroyer.owner == player1 && _player1Destroyer.health < 3) {
+            uint256 _health = _player1Destroyer.health;
+            vm.warp(20);
+            engine.repair(player1Pos);
+            assertEq(getter.getTroopAt(player1Pos).health, _health + 1);
+        }
 
-        _player1Destroyer = getter.getTroopAt(player1Pos);
-        assertEq(_player1Destroyer.health, getter.getTroopType(destroyerTroopTypeId).maxHealth);
+        vm.stopPrank();
+        vm.startPrank(player2);
+
+        Troop memory _player2Destroyer = getter.getTroopAt(_player2DestroyerPos);
+        if (_player2Destroyer.owner == player2 && _player2Destroyer.health < 3) {
+            uint256 _health = _player2Destroyer.health;
+            vm.warp(20);
+            engine.repair(_player2DestroyerPos);
+            assertEq(getter.getTroopAt(_player2DestroyerPos).health, _health + 1);
+        }
 
         vm.stopPrank();
     }
