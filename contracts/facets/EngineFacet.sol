@@ -144,7 +144,8 @@ contract EngineFacet is UseStorage {
         if (!Util._withinDist(_troop.pos, _targetPos, 1)) revert("Destination too far");
 
         uint256 _movesLeftInEpoch = _troop.movesLeftInEpoch;
-        if ((gs().epoch - _troop.lastMoved) >= Util._getMovementCooldown(_troop.troopTypeId)) {
+        uint256 _epoch = gs().epoch;
+        if ((_epoch - _troop.lastMoved) >= Util._getMovementCooldown(_troop.troopTypeId)) {
             // Lazy update for moves left in epoch
             _movesLeftInEpoch = Util._getMovesPerEpoch(_troop.troopTypeId);
             gs().troopIdMap[_troopId].movesLeftInEpoch = _movesLeftInEpoch;
@@ -173,6 +174,7 @@ contract EngineFacet is UseStorage {
         gs().map[_troop.pos.x][_troop.pos.y].occupantId = NULL;
         gs().troopIdMap[_troopId].pos = _targetPos;
         gs().troopIdMap[_troopId].movesLeftInEpoch--;
+        gs().troopIdMap[_troopId].lastMoved = _epoch;
 
         uint256[] memory _cargoTroopIds = gs().troopIdMap[_troopId].cargoTroopIds;
         if (_cargoTroopIds.length > 0) {
@@ -197,7 +199,9 @@ contract EngineFacet is UseStorage {
         if (_troop.owner != msg.sender) revert("Can only battle using own troop");
         if (Util._samePos(_troop.pos, _targetPos)) revert("Already at destination");
         if (!Util._withinDist(_troop.pos, _targetPos, 1)) revert("Destination too far");
-        if ((gs().epoch - _troop.lastAttacked) < Util._getAttackCooldown(_troop.troopTypeId)) revert("Attacked too recently");
+
+        uint256 _epoch = gs().epoch;
+        if ((_epoch - _troop.lastAttacked) < Util._getAttackCooldown(_troop.troopTypeId)) revert("Attacked too recently");
 
         gs().troopIdMap[_troopId].lastAttacked = gs().epoch;
 
@@ -279,6 +283,8 @@ contract EngineFacet is UseStorage {
                 emit Death(msg.sender, _troopId);
             }
         }
+
+        gs().troopIdMap[_troopId].lastAttacked = _epoch;
     }
 
     /**
