@@ -171,7 +171,7 @@ contract EngineFacet is UseStorage {
             }
         }
 
-        emit Util.Moved(msg.sender, _troopId, _targetPos);
+        emit Util.Moved(msg.sender, _troopId, _epoch, _troop.pos, _targetPos);
     }
 
     /**
@@ -226,9 +226,11 @@ contract EngineFacet is UseStorage {
         gs().troopIdMap[_troopId].lastAttacked = gs().epoch;
 
         // Loop till one side dies
+        uint256 _salt = 0;
         while (Util._getTroop(_troopId).health > 0 && Util._getTroop(_targetTile.occupantId).health > 0) {
             // Troop attacks target
-            if (Util._strike(_targetAttackFactor)) {
+            _salt += 1;
+            if (Util._strike(_targetAttackFactor, _salt)) {
                 uint256 _damagePerHit = Util._getDamagePerHit(_troop.troopTypeId);
                 if (_damagePerHit < _targetHealth) {
                     _targetHealth -= _damagePerHit;
@@ -244,7 +246,8 @@ contract EngineFacet is UseStorage {
             if (_targetHealth == 0) break; // target cannot attack back if it has zero health
 
             // Target attacks troop
-            if (Util._strike(_targetDefenseFactor)) {
+            _salt += 1;
+            if (Util._strike(_targetDefenseFactor, _salt)) {
                 // enemy troop attacks back
                 if (_targetDamagePerHit < _troop.health) {
                     _troop.health -= _targetDamagePerHit;

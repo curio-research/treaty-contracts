@@ -16,7 +16,7 @@ library Util {
 
     event NewPlayer(address _player, Position _pos);
     event EpochUpdate(uint256 _epoch, uint256 _time);
-    event Moved(address _player, uint256 _troopId, Position _pos);
+    event Moved(address _player, uint256 _troopId, uint256 _epoch, Position _startPos, Position _targetPos);
     event AttackedTroop(address _player, uint256 _troopId, Troop _troopInfo, uint256 _targetTroopId, Troop _targetTroopInfo);
     event AttackedBase(address _player, uint256 _troopId, Troop _troopInfo, uint256 _targetBaseId, Base _targetBaseInfo);
     event Death(address _player, uint256 _troopId);
@@ -157,8 +157,8 @@ library Util {
         return gs().map[_pos.x][_pos.y];
     }
 
-    function _strike(uint256 _strikeFactor) public view returns (bool) {
-        uint256 _rand = _random(100);
+    function _strike(uint256 _strikeFactor, uint256 _salt) public view returns (bool) {
+        uint256 _rand = _random(100, _salt);
         return _rand * 100 < _strikeFactor * gs().worldConstants.combatEfficiency;
     }
 
@@ -166,9 +166,9 @@ library Util {
         return _p.x >= 0 && _p.x < gs().worldConstants.worldWidth && _p.y >= 0 && _p.y < gs().worldConstants.worldHeight;
     }
 
-    function _random(uint256 _max) public view returns (uint256) {
+    function _random(uint256 _max, uint256 _salt) public view returns (uint256) {
         // FIXME: use truly random from Chainlink VRF or equivalent
-        return uint256(keccak256(abi.encode(block.timestamp, block.difficulty, gs().troopIds))) % _max;
+        return uint256(keccak256(abi.encode(block.timestamp, block.difficulty, _salt))) % _max;
     }
 
     // ----------------------------------------------------------

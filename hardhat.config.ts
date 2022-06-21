@@ -33,7 +33,7 @@ export default {
   diamondAbi: {
     // This plugin will combine all ABIs from any Smart Contract with `Facet` in the name or path and output it as `Curio.json`
     name: 'Curio',
-    include: ['Facet'],
+    include: ['Facet', 'Util'],
     // We explicitly set `strict` to `true` because we want to validate our facets don't accidentally provide overlapping functions
     strict: true,
     // We use our diamond utils to filter some functions we ignore from the combined ABI
@@ -57,8 +57,8 @@ export default {
     hardhat: {
       chainId: 1337,
       mining: {
-        auto: false,
-        interval: 500,
+        auto: true,
+        // interval: 500,
       },
     },
   },
