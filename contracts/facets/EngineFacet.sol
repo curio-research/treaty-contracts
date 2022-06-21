@@ -2,12 +2,10 @@
 pragma solidity ^0.8.4;
 
 import "contracts/libraries/Storage.sol";
-import {Util} from "contracts/libraries/GameUtil.sol";
+import {Unauthorized, Util} from "contracts/libraries/GameUtil.sol";
 import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {BASE_NAME, Base, GameState, Player, Position, Production, TERRAIN, Tile, Troop, TroopType} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
-
-error Unauthorized();
 
 /// @title Engine facet
 /// @notice Contains main game logic like movement and battling
@@ -226,16 +224,13 @@ contract EngineFacet is UseStorage {
             _targetHealth = _targetBase.health;
         }
 
-        uint256 _damagePerHit;
-        uint256 _health;
-
         gs().troopIdMap[_troopId].lastAttacked = _epoch;
 
         // Loop till one side dies
         while (Util._getTroop(_troopId).owner == msg.sender && Util._getTileAt(_targetPos).occupantId != NULL) {
             // Troop attacks target
             if (Util._strike(_targetAttackFactor)) {
-                _damagePerHit = Util._getDamagePerHit(_troop.troopTypeId);
+                uint256 _damagePerHit = Util._getDamagePerHit(_troop.troopTypeId);
                 if (_damagePerHit < _targetHealth) {
                     _targetHealth -= _damagePerHit;
                 } else {
@@ -252,8 +247,8 @@ contract EngineFacet is UseStorage {
             // Target attacks troop
             if (Util._strike(_targetDefenseFactor)) {
                 // enemy troop attacks back
-                if (_targetDamagePerHit < _health) {
-                    _health -= _targetDamagePerHit;
+                if (_targetDamagePerHit < _troop.health) {
+                    _troop.health -= _targetDamagePerHit;
                 } else {
                     Util._removeTroop(_troop.pos, _troopId);
                     emit Util.Death(msg.sender, _troopId);
@@ -263,7 +258,7 @@ contract EngineFacet is UseStorage {
 
         if (Util._getTroop(_troopId).owner == msg.sender) {
             // Troop survives
-            gs().troopIdMap[_troopId].health = _health;
+            gs().troopIdMap[_troopId].health = _troop.health;
             _troop = Util._getTroop(_troopId);
 
             if (_targetIsBase) {

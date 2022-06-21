@@ -11,49 +11,15 @@ import {
   Signer,
   utils,
 } from "ethers";
-import { FunctionFragment, Result } from "@ethersproject/abi";
+import { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
 import { Listener, Provider } from "@ethersproject/providers";
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
-
-export type BaseStruct = {
-  name: BigNumberish;
-  owner: string;
-  attackFactor: BigNumberish;
-  defenseFactor: BigNumberish;
-  health: BigNumberish;
-};
-
-export type BaseStructOutput = [
-  number,
-  string,
-  BigNumber,
-  BigNumber,
-  BigNumber
-] & {
-  name: number;
-  owner: string;
-  attackFactor: BigNumber;
-  defenseFactor: BigNumber;
-  health: BigNumber;
-};
 
 export type PositionStruct = { x: BigNumberish; y: BigNumberish };
 
 export type PositionStructOutput = [BigNumber, BigNumber] & {
   x: BigNumber;
   y: BigNumber;
-};
-
-export type TileStruct = {
-  terrain: BigNumberish;
-  occupantId: BigNumberish;
-  baseId: BigNumberish;
-};
-
-export type TileStructOutput = [number, BigNumber, BigNumber] & {
-  terrain: number;
-  occupantId: BigNumber;
-  baseId: BigNumber;
 };
 
 export type TroopStruct = {
@@ -88,6 +54,50 @@ export type TroopStructOutput = [
   health: BigNumber;
   pos: PositionStructOutput;
   cargoTroopIds: BigNumber[];
+};
+
+export type BaseStruct = {
+  name: BigNumberish;
+  owner: string;
+  attackFactor: BigNumberish;
+  defenseFactor: BigNumberish;
+  health: BigNumberish;
+};
+
+export type BaseStructOutput = [
+  number,
+  string,
+  BigNumber,
+  BigNumber,
+  BigNumber
+] & {
+  name: number;
+  owner: string;
+  attackFactor: BigNumber;
+  defenseFactor: BigNumber;
+  health: BigNumber;
+};
+
+export type ProductionStruct = {
+  troopTypeId: BigNumberish;
+  startEpoch: BigNumberish;
+};
+
+export type ProductionStructOutput = [BigNumber, BigNumber] & {
+  troopTypeId: BigNumber;
+  startEpoch: BigNumber;
+};
+
+export type TileStruct = {
+  terrain: BigNumberish;
+  occupantId: BigNumberish;
+  baseId: BigNumberish;
+};
+
+export type TileStructOutput = [number, BigNumber, BigNumber] & {
+  terrain: number;
+  occupantId: BigNumber;
+  baseId: BigNumber;
 };
 
 export interface UtilInterface extends utils.Interface {
@@ -270,8 +280,127 @@ export interface UtilInterface extends utils.Interface {
     data: BytesLike
   ): Result;
 
-  events: {};
+  events: {
+    "AttackedBase(address,uint256,tuple,uint256,tuple)": EventFragment;
+    "AttackedTroop(address,uint256,tuple,uint256,tuple)": EventFragment;
+    "BaseCaptured(address,uint256,uint256)": EventFragment;
+    "Death(address,uint256)": EventFragment;
+    "EpochUpdate(uint256,uint256)": EventFragment;
+    "Moved(address,uint256,tuple)": EventFragment;
+    "NewPlayer(address,tuple)": EventFragment;
+    "NewTroop(address,uint256,tuple,tuple)": EventFragment;
+    "ProductionStarted(address,uint256,tuple)": EventFragment;
+    "Recovered(address,uint256)": EventFragment;
+    "Repaired(address,uint256,uint256)": EventFragment;
+  };
+
+  getEvent(nameOrSignatureOrTopic: "AttackedBase"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "AttackedTroop"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "BaseCaptured"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Death"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "EpochUpdate"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Moved"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "NewPlayer"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "NewTroop"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ProductionStarted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Recovered"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Repaired"): EventFragment;
 }
+
+export type AttackedBaseEvent = TypedEvent<
+  [string, BigNumber, TroopStructOutput, BigNumber, BaseStructOutput],
+  {
+    _player: string;
+    _troopId: BigNumber;
+    _troopInfo: TroopStructOutput;
+    _targetBaseId: BigNumber;
+    _targetBaseInfo: BaseStructOutput;
+  }
+>;
+
+export type AttackedBaseEventFilter = TypedEventFilter<AttackedBaseEvent>;
+
+export type AttackedTroopEvent = TypedEvent<
+  [string, BigNumber, TroopStructOutput, BigNumber, TroopStructOutput],
+  {
+    _player: string;
+    _troopId: BigNumber;
+    _troopInfo: TroopStructOutput;
+    _targetTroopId: BigNumber;
+    _targetTroopInfo: TroopStructOutput;
+  }
+>;
+
+export type AttackedTroopEventFilter = TypedEventFilter<AttackedTroopEvent>;
+
+export type BaseCapturedEvent = TypedEvent<
+  [string, BigNumber, BigNumber],
+  { _player: string; _troopId: BigNumber; _baseId: BigNumber }
+>;
+
+export type BaseCapturedEventFilter = TypedEventFilter<BaseCapturedEvent>;
+
+export type DeathEvent = TypedEvent<
+  [string, BigNumber],
+  { _player: string; _troopId: BigNumber }
+>;
+
+export type DeathEventFilter = TypedEventFilter<DeathEvent>;
+
+export type EpochUpdateEvent = TypedEvent<
+  [BigNumber, BigNumber],
+  { _epoch: BigNumber; _time: BigNumber }
+>;
+
+export type EpochUpdateEventFilter = TypedEventFilter<EpochUpdateEvent>;
+
+export type MovedEvent = TypedEvent<
+  [string, BigNumber, PositionStructOutput],
+  { _player: string; _troopId: BigNumber; _pos: PositionStructOutput }
+>;
+
+export type MovedEventFilter = TypedEventFilter<MovedEvent>;
+
+export type NewPlayerEvent = TypedEvent<
+  [string, PositionStructOutput],
+  { _player: string; _pos: PositionStructOutput }
+>;
+
+export type NewPlayerEventFilter = TypedEventFilter<NewPlayerEvent>;
+
+export type NewTroopEvent = TypedEvent<
+  [string, BigNumber, TroopStructOutput, PositionStructOutput],
+  {
+    _player: string;
+    _troopId: BigNumber;
+    _troop: TroopStructOutput;
+    _pos: PositionStructOutput;
+  }
+>;
+
+export type NewTroopEventFilter = TypedEventFilter<NewTroopEvent>;
+
+export type ProductionStartedEvent = TypedEvent<
+  [string, BigNumber, ProductionStructOutput],
+  { _player: string; _baseId: BigNumber; _production: ProductionStructOutput }
+>;
+
+export type ProductionStartedEventFilter =
+  TypedEventFilter<ProductionStartedEvent>;
+
+export type RecoveredEvent = TypedEvent<
+  [string, BigNumber],
+  { _player: string; _troopId: BigNumber }
+>;
+
+export type RecoveredEventFilter = TypedEventFilter<RecoveredEvent>;
+
+export type RepairedEvent = TypedEvent<
+  [string, BigNumber, BigNumber],
+  { _player: string; _troopId: BigNumber; _health: BigNumber }
+>;
+
+export type RepairedEventFilter = TypedEventFilter<RepairedEvent>;
 
 export interface Util extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -627,7 +756,111 @@ export interface Util extends BaseContract {
     ): Promise<boolean>;
   };
 
-  filters: {};
+  filters: {
+    "AttackedBase(address,uint256,tuple,uint256,tuple)"(
+      _player?: null,
+      _troopId?: null,
+      _troopInfo?: null,
+      _targetBaseId?: null,
+      _targetBaseInfo?: null
+    ): AttackedBaseEventFilter;
+    AttackedBase(
+      _player?: null,
+      _troopId?: null,
+      _troopInfo?: null,
+      _targetBaseId?: null,
+      _targetBaseInfo?: null
+    ): AttackedBaseEventFilter;
+
+    "AttackedTroop(address,uint256,tuple,uint256,tuple)"(
+      _player?: null,
+      _troopId?: null,
+      _troopInfo?: null,
+      _targetTroopId?: null,
+      _targetTroopInfo?: null
+    ): AttackedTroopEventFilter;
+    AttackedTroop(
+      _player?: null,
+      _troopId?: null,
+      _troopInfo?: null,
+      _targetTroopId?: null,
+      _targetTroopInfo?: null
+    ): AttackedTroopEventFilter;
+
+    "BaseCaptured(address,uint256,uint256)"(
+      _player?: null,
+      _troopId?: null,
+      _baseId?: null
+    ): BaseCapturedEventFilter;
+    BaseCaptured(
+      _player?: null,
+      _troopId?: null,
+      _baseId?: null
+    ): BaseCapturedEventFilter;
+
+    "Death(address,uint256)"(_player?: null, _troopId?: null): DeathEventFilter;
+    Death(_player?: null, _troopId?: null): DeathEventFilter;
+
+    "EpochUpdate(uint256,uint256)"(
+      _epoch?: null,
+      _time?: null
+    ): EpochUpdateEventFilter;
+    EpochUpdate(_epoch?: null, _time?: null): EpochUpdateEventFilter;
+
+    "Moved(address,uint256,tuple)"(
+      _player?: null,
+      _troopId?: null,
+      _pos?: null
+    ): MovedEventFilter;
+    Moved(_player?: null, _troopId?: null, _pos?: null): MovedEventFilter;
+
+    "NewPlayer(address,tuple)"(
+      _player?: null,
+      _pos?: null
+    ): NewPlayerEventFilter;
+    NewPlayer(_player?: null, _pos?: null): NewPlayerEventFilter;
+
+    "NewTroop(address,uint256,tuple,tuple)"(
+      _player?: null,
+      _troopId?: null,
+      _troop?: null,
+      _pos?: null
+    ): NewTroopEventFilter;
+    NewTroop(
+      _player?: null,
+      _troopId?: null,
+      _troop?: null,
+      _pos?: null
+    ): NewTroopEventFilter;
+
+    "ProductionStarted(address,uint256,tuple)"(
+      _player?: null,
+      _baseId?: null,
+      _production?: null
+    ): ProductionStartedEventFilter;
+    ProductionStarted(
+      _player?: null,
+      _baseId?: null,
+      _production?: null
+    ): ProductionStartedEventFilter;
+
+    "Recovered(address,uint256)"(
+      _player?: null,
+      _troopId?: null
+    ): RecoveredEventFilter;
+    Recovered(_player?: null, _troopId?: null): RecoveredEventFilter;
+
+    "Repaired(address,uint256,uint256)"(
+      _player?: null,
+      _troopId?: null,
+      _health?: null
+    ): RepairedEventFilter;
+    Repaired(
+      _player?: null,
+      _troopId?: null,
+      _health?: null
+    ): RepairedEventFilter;
+  };
 
   estimateGas: {
     _getAttackCooldown(

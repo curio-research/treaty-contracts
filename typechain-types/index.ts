@@ -7,6 +7,7 @@ export type { DiamondLoupeFacet } from "./DiamondLoupeFacet";
 export type { EngineFacet } from "./EngineFacet";
 export type { GetterFacet } from "./GetterFacet";
 export type { OwnershipFacet } from "./OwnershipFacet";
+export type { SetterFacet } from "./SetterFacet";
 export type { IDiamondCut } from "./IDiamondCut";
 export type { IDiamondLoupe } from "./IDiamondLoupe";
 export type { IERC165 } from "./IERC165";
@@ -22,6 +23,7 @@ export { DiamondLoupeFacet__factory } from "./factories/DiamondLoupeFacet__facto
 export { EngineFacet__factory } from "./factories/EngineFacet__factory";
 export { GetterFacet__factory } from "./factories/GetterFacet__factory";
 export { OwnershipFacet__factory } from "./factories/OwnershipFacet__factory";
+export { SetterFacet__factory } from "./factories/SetterFacet__factory";
 export { IDiamondCut__factory } from "./factories/IDiamondCut__factory";
 export { IDiamondLoupe__factory } from "./factories/IDiamondLoupe__factory";
 export { IERC165__factory } from "./factories/IERC165__factory";
