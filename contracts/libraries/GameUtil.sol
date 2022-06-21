@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import {BASE_NAME, Base, GameState, Position, Tile, Troop} from "contracts/libraries/Types.sol";
+import {BASE_NAME, Base, GameState, Position, Production, Tile, Troop} from "contracts/libraries/Types.sol";
 import {LibStorage} from "contracts/libraries/Storage.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 
@@ -11,6 +11,18 @@ library Util {
     function gs() internal pure returns (GameState storage) {
         return LibStorage.gameStorage();
     }
+
+    event NewPlayer(address _player, Position _pos);
+    event EpochUpdate(uint256 _epoch, uint256 _time);
+    event Moved(address _player, uint256 _troopId, Position _pos);
+    event AttackedTroop(address _player, uint256 _troopId, Troop _troopInfo, uint256 _targetTroopId, Troop _targetTroopInfo);
+    event AttackedBase(address _player, uint256 _troopId, Troop _troopInfo, uint256 _targetBaseId, Base _targetBaseInfo);
+    event Death(address _player, uint256 _troopId);
+    event BaseCaptured(address _player, uint256 _troopId, uint256 _baseId);
+    event ProductionStarted(address _player, uint256 _baseId, Production _production);
+    event NewTroop(address _player, uint256 _troopId, Troop _troop, Position _pos);
+    event Repaired(address _player, uint256 _troopId, uint256 _health);
+    event Recovered(address _player, uint256 _troopId);
 
     // ----------------------------------------------------------
     // Game-related
