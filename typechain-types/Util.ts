@@ -120,7 +120,7 @@ export interface UtilInterface extends utils.Interface {
     "_hasTroopTransport((uint8,uint256,uint256))": FunctionFragment;
     "_inBound((uint256,uint256))": FunctionFragment;
     "_isLandTroop(uint256)": FunctionFragment;
-    "_random(uint256,uint256)": FunctionFragment;
+    "_random(uint256)": FunctionFragment;
     "_samePos((uint256,uint256),(uint256,uint256))": FunctionFragment;
     "_strike(uint256)": FunctionFragment;
     "_withinDist((uint256,uint256),(uint256,uint256),uint256)": FunctionFragment;
@@ -200,7 +200,7 @@ export interface UtilInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "_random",
-    values: [BigNumberish, BigNumberish]
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "_samePos",
@@ -514,7 +514,6 @@ export interface Util extends BaseContract {
     ): Promise<[boolean]>;
 
     _random(
-      _salt: BigNumberish,
       _max: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
@@ -622,11 +621,7 @@ export interface Util extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  _random(
-    _salt: BigNumberish,
-    _max: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  _random(_max: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
   _samePos(
     _p1: PositionStruct,
@@ -731,11 +726,7 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    _random(
-      _salt: BigNumberish,
-      _max: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    _random(_max: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
     _samePos(
       _p1: PositionStruct,
@@ -944,11 +935,7 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _random(
-      _salt: BigNumberish,
-      _max: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    _random(_max: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
     _samePos(
       _p1: PositionStruct,
@@ -1061,7 +1048,6 @@ export interface Util extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     _random(
-      _salt: BigNumberish,
       _max: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

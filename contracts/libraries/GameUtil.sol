@@ -158,13 +158,17 @@ library Util {
     }
 
     function _strike(uint256 _strikeFactor) public view returns (bool) {
-        uint256 _salt = 4; // FIXME: proper salt
-        uint256 _rand = _random(_salt, 100);
+        uint256 _rand = _random(100);
         return _rand * 100 < _strikeFactor * gs().worldConstants.combatEfficiency;
     }
 
     function _inBound(Position memory _p) public view returns (bool) {
         return _p.x >= 0 && _p.x < gs().worldConstants.worldWidth && _p.y >= 0 && _p.y < gs().worldConstants.worldHeight;
+    }
+
+    function _random(uint256 _max) public view returns (uint256) {
+        // FIXME: use truly random from Chainlink VRF or equivalent
+        return uint256(keccak256(abi.encode(block.timestamp, block.difficulty, gs().troopIds))) % _max;
     }
 
     // ----------------------------------------------------------
@@ -173,10 +177,6 @@ library Util {
 
     function _samePos(Position memory _p1, Position memory _p2) public pure returns (bool) {
         return _p1.x == _p2.x && _p1.y == _p2.y;
-    }
-
-    function _random(uint256 _salt, uint256 _max) public view returns (uint256) {
-        return uint256(keccak256(abi.encode(block.timestamp, block.difficulty, _salt))) % _max; // FIXME
     }
 
     // Note: The current version treats a diagonal movement as two movements.
