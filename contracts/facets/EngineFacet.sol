@@ -211,10 +211,12 @@ contract EngineFacet is UseStorage {
         uint256 _targetDefenseFactor;
         uint256 _targetDamagePerHit;
         uint256 _targetHealth;
+        Troop memory _targetTroop;
+        Base memory _targetBase;
 
         if (_targetTile.occupantId != NULL) {
             // Note: If an opponent base has a troop, currently our troop battles the troop not the base. Can change later
-            Troop memory _targetTroop = gs().troopIdMap[_targetTile.occupantId];
+            _targetTroop = gs().troopIdMap[_targetTile.occupantId];
             if (_targetTroop.owner == msg.sender) revert("Cannot attack own troop");
 
             _targetIsBase = false;
@@ -225,7 +227,7 @@ contract EngineFacet is UseStorage {
         } else {
             if (_targetTile.baseId == NULL) revert("No target to attack");
 
-            Base memory _targetBase = gs().baseIdMap[_targetTile.baseId];
+            _targetBase = gs().baseIdMap[_targetTile.baseId];
             if (_targetBase.owner == msg.sender) revert("Cannot attack own base");
 
             _targetIsBase = true;
@@ -235,56 +237,67 @@ contract EngineFacet is UseStorage {
             _targetHealth = _targetBase.health;
         }
 
-        // Troop attacks target
-        if (Util._strike(_targetAttackFactor)) {
-            uint256 _damagePerHit = Util._getDamagePerHit(_troop.troopTypeId);
-            if (_damagePerHit >= _targetHealth) {
-                _targetHealth = 0;
-            } else {
-                _targetHealth -= _damagePerHit;
+        uint256 _damagePerHit;
+        uint256 _health;
+
+        gs().troopIdMap[_troopId].lastAttacked = _epoch;
+
+        // Loop till one side dies
+        while (Util._getTroop(_troopId).owner == msg.sender && Util._getTileAt(_targetPos).occupantId != NULL) {
+            // Troop attacks target
+            if (Util._strike(_targetAttackFactor)) {
+                _damagePerHit = Util._getDamagePerHit(_troop.troopTypeId);
+                if (_damagePerHit < _targetHealth) {
+                    _targetHealth -= _damagePerHit;
+                } else {
+                    _targetHealth = 0;
+                    if (!_targetIsBase) {
+                        Util._removeTroop(_targetPos, _targetTile.occupantId);
+                        emit Death(Util._getBaseOwner(_targetTile.occupantId), _targetTile.occupantId);
+                    }
+                }
             }
 
-            if (_targetIsBase) {
-                gs().baseIdMap[_targetTile.baseId].health = _targetHealth;
-                emit AttackedBase(msg.sender, _troopId, Util._getTroop(_troopId), _targetTile.baseId, Util._getBase(_targetTile.baseId));
-            } else {
-                // normal troop
-                gs().troopIdMap[_targetTile.occupantId].health = _targetHealth;
-                emit AttackedTroop(msg.sender, _troopId, Util._getTroop(_troopId), _targetTile.occupantId, Util._getTroop(_targetTile.occupantId));
+            if (_targetHealth == 0) return; // target cannot attack back if it has zero health
 
-                if (_targetHealth == 0) {
-                    Util._removeTroop(_targetPos, _targetTile.occupantId);
-                    emit Death(Util._getBaseOwner(_targetTile.occupantId), _targetTile.occupantId);
+            // Target attacks troop
+            if (Util._strike(_targetDefenseFactor)) {
+                // enemy troop attacks back
+                if (_targetDamagePerHit < _health) {
+                    _health -= _targetDamagePerHit;
+                } else {
+                    Util._removeTroop(_troop.pos, _troopId);
+                    emit Death(msg.sender, _troopId);
                 }
             }
         }
 
-        if (_targetHealth == 0) return; // target cannot attack back if it has zero health
+        if (Util._getTroop(_troopId).owner == msg.sender) {
+            // Troop survives
+            gs().troopIdMap[_troopId].health = _health;
+            _troop = Util._getTroop(_troopId);
 
-        // Target attacks troop
-        if (Util._strike(_targetDefenseFactor)) {
-            // enemy troop attacks back
-            if (_targetDamagePerHit >= _troop.health) {
-                Util._removeTroop(_troop.pos, _troopId);
-            } else {
-                gs().troopIdMap[_troopId].health -= _targetDamagePerHit;
-            }
-
-            Troop memory _targetTroop = Util._getTroop(_troopId);
             if (_targetIsBase) {
-                // base
-                emit AttackedBase(msg.sender, _troopId, _targetTroop, _targetTile.baseId, Util._getBase(_targetTile.baseId));
+                _targetBase = Util._getBase(_targetTile.baseId);
+                emit AttackedBase(msg.sender, _troopId, _troop, _targetTile.baseId, _targetBase);
             } else {
-                // attacked troop
-                emit AttackedTroop(msg.sender, _troopId, _targetTroop, _targetTile.occupantId, Util._getTroop(_targetTile.occupantId));
+                _targetTroop = Util._getTroop(_targetTile.occupantId);
+                emit AttackedTroop(msg.sender, _troopId, _troop, _targetTile.occupantId, _targetTroop);
             }
+        } else {
+            _troop = Util._getTroop(_troopId);
 
-            if (_targetDamagePerHit >= _troop.health) {
-                emit Death(msg.sender, _troopId);
+            // Target survives
+            if (_targetIsBase) {
+                gs().baseIdMap[_targetTile.baseId].health = _targetHealth;
+                _targetBase = Util._getBase(_targetTile.baseId);
+                emit AttackedBase(msg.sender, _troopId, _troop, _targetTile.baseId, _targetBase);
+            } else {
+                gs().troopIdMap[_targetTile.occupantId].health = _targetHealth;
+                _targetTroop = Util._getTroop(_targetTile.occupantId);
+                emit AttackedTroop(msg.sender, _troopId, _troop, _targetTile.occupantId, _targetTroop);
             }
         }
-
-        gs().troopIdMap[_troopId].lastAttacked = _epoch;
     }
 
     /**
