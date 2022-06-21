@@ -47,7 +47,7 @@ contract DiamondDeployTest is Test {
 
     uint256 public armyTroopTypeId = indexToId(uint256(TROOP_NAME.ARMY));
     uint256 public troopTransportTroopTypeId = indexToId(uint256(TROOP_NAME.TROOP_TRANSPORT));
-    uint256 public destroyerTroopTypeId = indexToId(uint256(TROOP_NAME.TROOP_TRANSPORT));
+    uint256 public destroyerTroopTypeId = indexToId(uint256(TROOP_NAME.DESTROYER));
 
     // troop types
     TroopType public armyTroopType =

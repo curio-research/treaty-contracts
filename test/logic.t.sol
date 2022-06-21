@@ -144,20 +144,31 @@ contract LogicTest is Test, DiamondDeployTest {
 
     function testMoveTooManyTimesPerEpoch() public {
         vm.prank(deployer);
-        engine.spawnTroop(player1Pos, player1, troopTransportTroopTypeId);
-        uint256 _troopId = initTroopNonce;
+        engine.spawnTroop(Position({x: 0, y: 9}), player1, destroyerTroopTypeId);
+        uint256 _destroyerId = initTroopNonce;
 
         vm.startPrank(player1);
 
-        // fail: too many moves in 1 epoch
-        Position memory _target = Position({x: 7, y: 1});
+        assertEq(getter.getTroop(_destroyerId).movesLeftInEpoch, 3);
+        engine.move(_destroyerId, Position({x: 0, y: 8}));
+        assertEq(getter.getTroop(_destroyerId).movesLeftInEpoch, 2);
+        engine.move(_destroyerId, Position({x: 0, y: 7}));
+        assertEq(getter.getTroop(_destroyerId).movesLeftInEpoch, 1);
 
-        // first move
-        engine.move(_troopId, _target);
-        engine.move(_troopId, player1Pos);
+        vm.warp(20);
+        engine.updateEpoch();
+
+        // lazy update! move has not been called yet so movesLeftInEpoch remains unchanged
+        assertEq(getter.getTroop(_destroyerId).movesLeftInEpoch, 1);
+        engine.move(_destroyerId, Position({x: 0, y: 6}));
+        assertEq(getter.getTroop(_destroyerId).movesLeftInEpoch, 2);
+        engine.move(_destroyerId, Position({x: 0, y: 5}));
+        assertEq(getter.getTroop(_destroyerId).movesLeftInEpoch, 1);
+        engine.move(_destroyerId, Position({x: 0, y: 4}));
+        assertEq(getter.getTroop(_destroyerId).movesLeftInEpoch, 0);
 
         vm.expectRevert(bytes("No moves left this epoch"));
-        engine.move(_troopId, _target);
+        engine.move(_destroyerId, Position({x: 0, y: 3}));
 
         vm.stopPrank();
     }
@@ -271,7 +282,28 @@ contract LogicTest is Test, DiamondDeployTest {
 
     // Battle
     function testBattleFailure() public {
-        // TODO (lower priority, as it couples with failure cases of move and captureBase)
+        // TODO: add more
+        Position memory _troopPos = Position({x: 7, y: 6});
+        Position memory _enemyPos = Position({x: 7, y: 7});
+
+        vm.startPrank(deployer);
+        engine.spawnTroop(_troopPos, player1, destroyerTroopTypeId);
+        engine.spawnTroop(_enemyPos, player2, destroyerTroopTypeId);
+        vm.stopPrank();
+
+        uint256 _player1DestroyerId = initTroopNonce;
+
+        vm.warp(20);
+        engine.updateEpoch();
+
+        vm.startPrank(player1);
+
+        // fail: 2 attacks in 1 epoch
+        engine.battle(_player1DestroyerId, _enemyPos);
+        vm.expectRevert(bytes("Attacked too recently"));
+        engine.battle(_player1DestroyerId, _enemyPos);
+
+        vm.stopPrank();
     }
 
     function testBattleBase() public {
