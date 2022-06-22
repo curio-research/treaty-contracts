@@ -82,10 +82,12 @@ contract GetterFacet is UseStorage {
 
     // _startId: inclusive
     // _endId: inclusive
+
+    // 11 20
     function getBulkBase(uint256 _startId, uint256 _endId) external view returns (Base[] memory) {
         Base[] memory _bases = new Base[](_endId - _startId + 1);
 
-        for (uint256 i = 0; i < _endId; i++) {
+        for (uint256 i = 0; i < _endId - _startId; i++) {
             _bases[i] = gs().baseIdMap[i + _startId];
         }
 
@@ -97,8 +99,8 @@ contract GetterFacet is UseStorage {
     function getBulkTroopTypes(uint256 _startId, uint256 _endId) external view returns (TroopType[] memory) {
         TroopType[] memory _troops = new TroopType[](_endId - _startId + 1);
 
-        for (uint256 i = 0; i < _endId; i++) {
-            _troops[i] = gs().troopTypeIdMap[_startId + i];
+        for (uint256 i = 0; i < _endId - _startId; i++) {
+            _troops[i] = gs().troopTypeIdMap[i + _startId];
         }
 
         return _troops;
