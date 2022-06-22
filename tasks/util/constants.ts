@@ -11,8 +11,8 @@ export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 
 export const WORLD_WIDTH = 20;
 export const WORLD_HEIGHT = 20;
-export const NUM_PORTS = 10;
-export const NUM_CITIES = 10;
+export const NUM_PORTS = 6;
+export const NUM_CITIES = 6;
 export const MAP_INTERVAL = 10;
 export const SECONDS_PER_EPOCH = 2;
 export const COMBAT_EFFICIENCY = 50;
