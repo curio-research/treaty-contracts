@@ -10,7 +10,7 @@ import { TROOP_TYPES, getTroopTypeIndexByName, RENDER_CONSTANTS, MAP_INTERVAL, N
 import { position } from '../util/types/common';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
 import { MapInput, TILE_TYPE, TROOP_NAME } from './util/types';
-import { generateGameMaps } from './util/mapHelper';
+import { encodeTileMap, generateGameMaps } from './util/mapHelper';
 
 const { BACKEND_URL } = process.env;
 
@@ -82,9 +82,8 @@ task('deploy', 'deploy contracts')
     }
     const time2 = performance.now();
     console.log(`✦ direct set ${WORLD_WIDTH}x${WORLD_HEIGHT} map took ${time2 - time1} milliseconds`);
-    for (let x = 0; x < WORLD_WIDTH; x++) {
-      await (await diamond.storeRawMapCol(x, tileMap[x])).wait();
-    }
+    const encodedTileMap = encodeTileMap(tileMap);
+    await (await diamond.storeEncodedRawMapCols(encodedTileMap)).wait();
     const time3 = performance.now();
     console.log(`✦ lazy set ${WORLD_WIDTH}x${WORLD_HEIGHT} map took ${time3 - time2} milliseconds`);
 

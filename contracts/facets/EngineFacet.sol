@@ -67,12 +67,12 @@ contract EngineFacet is UseStorage {
         }
     }
 
-    // function storeRawMap(uint256[][] memory _rawMap) external onlyAdmin {
-    //     gs().rawMap = _rawMap;
-    // }
-
     function storeRawMapCol(uint256 _x, uint256[] memory _col) external onlyAdmin {
         gs().rawMap[_x] = _col;
+    }
+
+    function storeEncodedRawMapCols(uint256[] memory _cols) external onlyAdmin {
+        gs().encodedRawMapCols = _cols;
     }
 
     /**

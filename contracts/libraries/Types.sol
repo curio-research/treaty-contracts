@@ -106,4 +106,5 @@ struct GameState {
     mapping(uint256 => TroopType) troopTypeIdMap;
     // experiment
     uint256[][100] rawMap;
+    uint256[] encodedRawMapCols;
 }

@@ -14,24 +14,36 @@ const INCREMENT = 1;
 const xIncrement = INCREMENT;
 const yIncrement = INCREMENT;
 
+const PRIMES = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199, 211, 223, 227, 229];
+const MAX_UINT256 = Math.pow(2, 256) - 1;
+
 //////////////////////////////////////////////////////////////////////
 ///////////////////////////// FUNCTIONS //////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
-export const generateEmptyMatrix = (mapWidth: number, mapHeight: number, defaultValue: any): any[][] => {
-  const result: number[][] = [];
-  for (let x = 0; x < mapWidth; x++) {
-    const col: number[] = [];
-    for (let y = 0; y < mapHeight; y++) {
-      col.push(defaultValue);
+/**
+ * Encode columns of a tile map using unique prime factorization.
+ * @param tileMap
+ * @returns a 1d array of encoded columns
+ */
+export const encodeTileMap = (tileMap: TILE_TYPE[][]): number[] => {
+  if (tileMap[0].length > PRIMES.length) throw new Error('Column being encoded is too long');
+  const result: number[] = [];
+
+  let col;
+  let encodedCol;
+  for (let x = 0; x < tileMap.length; x++) {
+    col = tileMap[x];
+    encodedCol = 1;
+    for (let y = 0; y < col.length; y++) {
+      encodedCol *= Math.pow(PRIMES[y], col[y]);
     }
-    result.push(col);
+    if (encodedCol >= MAX_UINT256) throw new Error('Encoding exceeds uint256 max size');
+    result.push(encodedCol);
   }
+
   return result;
 };
-
-// This generates all game parameters needed to deploy the GameEngine.sol contract
-export const getValue = (v: BigNumberish) => (v as BigNumber).toNumber();
 
 /**
  * Generate two 2d maps of tiles, one representing tile types and the other representing colors in RGB.
@@ -65,6 +77,21 @@ export const generateGameMaps = (mapInput: MapInput, renderInput: RenderInput): 
 
   return { tileMap, colorMap };
 };
+
+export const generateEmptyMatrix = (mapWidth: number, mapHeight: number, defaultValue: any): any[][] => {
+  const result: number[][] = [];
+  for (let x = 0; x < mapWidth; x++) {
+    const col: number[] = [];
+    for (let y = 0; y < mapHeight; y++) {
+      col.push(defaultValue);
+    }
+    result.push(col);
+  }
+  return result;
+};
+
+// This generates all game parameters needed to deploy the GameEngine.sol contract
+export const getValue = (v: BigNumberish) => (v as BigNumber).toNumber();
 
 /**
  * Generate noise matrix from Perlin noise.
@@ -195,7 +222,6 @@ export const placePortsAndCities = (colorMap: number[][][], numPorts: number, nu
     numPorts--;
   }
 
-  console.log(numCities);
   while (numCities) {
     if (!inlandTiles) throw new Error('Out of tiles for cities');
 

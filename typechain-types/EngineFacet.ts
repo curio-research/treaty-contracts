@@ -101,6 +101,7 @@ export interface EngineFacetInterface extends utils.Interface {
     "setMapChunk((uint256,uint256),uint256[][])": FunctionFragment;
     "spawnTroop((uint256,uint256),address,uint256)": FunctionFragment;
     "startProduction((uint256,uint256),uint256)": FunctionFragment;
+    "storeEncodedRawMapCols(uint256[])": FunctionFragment;
     "storeRawMapCol(uint256,uint256[])": FunctionFragment;
     "transferBaseOwnership((uint256,uint256),address)": FunctionFragment;
     "updateEpoch()": FunctionFragment;
@@ -143,6 +144,10 @@ export interface EngineFacetInterface extends utils.Interface {
     values: [PositionStruct, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "storeEncodedRawMapCols",
+    values: [BigNumberish[]]
+  ): string;
+  encodeFunctionData(
     functionFragment: "storeRawMapCol",
     values: [BigNumberish, BigNumberish[]]
   ): string;
@@ -177,6 +182,10 @@ export interface EngineFacetInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "spawnTroop", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "startProduction",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "storeEncodedRawMapCols",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -394,6 +403,11 @@ export interface EngineFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    storeEncodedRawMapCols(
+      _cols: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     storeRawMapCol(
       _x: BigNumberish,
       _col: BigNumberish[],
@@ -464,6 +478,11 @@ export interface EngineFacet extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  storeEncodedRawMapCols(
+    _cols: BigNumberish[],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   storeRawMapCol(
     _x: BigNumberish,
     _col: BigNumberish[],
@@ -528,6 +547,11 @@ export interface EngineFacet extends BaseContract {
     startProduction(
       _pos: PositionStruct,
       _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    storeEncodedRawMapCols(
+      _cols: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -706,6 +730,11 @@ export interface EngineFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    storeEncodedRawMapCols(
+      _cols: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     storeRawMapCol(
       _x: BigNumberish,
       _col: BigNumberish[],
@@ -774,6 +803,11 @@ export interface EngineFacet extends BaseContract {
     startProduction(
       _pos: PositionStruct,
       _troopTypeId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    storeEncodedRawMapCols(
+      _cols: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
