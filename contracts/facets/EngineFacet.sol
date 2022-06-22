@@ -67,6 +67,14 @@ contract EngineFacet is UseStorage {
         }
     }
 
+    // function storeRawMap(uint256[][] memory _rawMap) external onlyAdmin {
+    //     gs().rawMap = _rawMap;
+    // }
+
+    function storeRawMapCol(uint256 _x, uint256[] memory _col) external onlyAdmin {
+        gs().rawMap[_x] = _col;
+    }
+
     /**
      * Initialize a player at a selected position.
      * @param _pos position to initialize

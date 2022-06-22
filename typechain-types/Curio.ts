@@ -153,12 +153,14 @@ export type TroopTypeStructOutput = [
 };
 
 export type TileStruct = {
+  isInitialized: boolean;
   terrain: BigNumberish;
   occupantId: BigNumberish;
   baseId: BigNumberish;
 };
 
-export type TileStructOutput = [number, BigNumber, BigNumber] & {
+export type TileStructOutput = [boolean, number, BigNumber, BigNumber] & {
+  isInitialized: boolean;
   terrain: number;
   occupantId: BigNumber;
   baseId: BigNumber;
@@ -219,6 +221,7 @@ export interface CurioInterface extends utils.Interface {
     "setMapChunk((uint256,uint256),uint256[][])": FunctionFragment;
     "spawnTroop((uint256,uint256),address,uint256)": FunctionFragment;
     "startProduction((uint256,uint256),uint256)": FunctionFragment;
+    "storeRawMapCol(uint256,uint256[])": FunctionFragment;
     "transferBaseOwnership((uint256,uint256),address)": FunctionFragment;
     "updateEpoch()": FunctionFragment;
     "bulkGetAllTroops()": FunctionFragment;
@@ -295,6 +298,10 @@ export interface CurioInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "startProduction",
     values: [PositionStruct, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "storeRawMapCol",
+    values: [BigNumberish, BigNumberish[]]
   ): string;
   encodeFunctionData(
     functionFragment: "transferBaseOwnership",
@@ -400,6 +407,10 @@ export interface CurioInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "spawnTroop", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "startProduction",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "storeRawMapCol",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -702,6 +713,12 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    storeRawMapCol(
+      _x: BigNumberish,
+      _col: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     transferBaseOwnership(
       _pos: PositionStruct,
       _player: string,
@@ -861,6 +878,12 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  storeRawMapCol(
+    _x: BigNumberish,
+    _col: BigNumberish[],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   transferBaseOwnership(
     _pos: PositionStruct,
     _player: string,
@@ -1014,6 +1037,12 @@ export interface Curio extends BaseContract {
     startProduction(
       _pos: PositionStruct,
       _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    storeRawMapCol(
+      _x: BigNumberish,
+      _col: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1301,6 +1330,12 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    storeRawMapCol(
+      _x: BigNumberish,
+      _col: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     transferBaseOwnership(
       _pos: PositionStruct,
       _player: string,
@@ -1450,6 +1485,12 @@ export interface Curio extends BaseContract {
     startProduction(
       _pos: PositionStruct,
       _troopTypeId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    storeRawMapCol(
+      _x: BigNumberish,
+      _col: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

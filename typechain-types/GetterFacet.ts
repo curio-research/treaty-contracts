@@ -119,12 +119,14 @@ export type TroopTypeStructOutput = [
 };
 
 export type TileStruct = {
+  isInitialized: boolean;
   terrain: BigNumberish;
   occupantId: BigNumberish;
   baseId: BigNumberish;
 };
 
-export type TileStructOutput = [number, BigNumber, BigNumber] & {
+export type TileStructOutput = [boolean, number, BigNumber, BigNumber] & {
+  isInitialized: boolean;
   terrain: number;
   occupantId: BigNumber;
   baseId: BigNumber;

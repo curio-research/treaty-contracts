@@ -45,12 +45,14 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
 };
 
 export type TileStruct = {
+  isInitialized: boolean;
   terrain: BigNumberish;
   occupantId: BigNumberish;
   baseId: BigNumberish;
 };
 
-export type TileStructOutput = [number, BigNumber, BigNumber] & {
+export type TileStructOutput = [boolean, number, BigNumber, BigNumber] & {
+  isInitialized: boolean;
   terrain: number;
   occupantId: BigNumber;
   baseId: BigNumber;
@@ -106,8 +108,8 @@ export interface UtilInterface extends utils.Interface {
     "_getMovesPerEpoch(uint256)": FunctionFragment;
     "_getTileAt((uint256,uint256))": FunctionFragment;
     "_getTroop(uint256)": FunctionFragment;
-    "_hasPort((uint8,uint256,uint256))": FunctionFragment;
-    "_hasTroopTransport((uint8,uint256,uint256))": FunctionFragment;
+    "_hasPort((bool,uint8,uint256,uint256))": FunctionFragment;
+    "_hasTroopTransport((bool,uint8,uint256,uint256))": FunctionFragment;
     "_inBound((uint256,uint256))": FunctionFragment;
     "_isLandTroop(uint256)": FunctionFragment;
     "_random(uint256,uint256)": FunctionFragment;

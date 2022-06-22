@@ -101,6 +101,7 @@ export interface EngineFacetInterface extends utils.Interface {
     "setMapChunk((uint256,uint256),uint256[][])": FunctionFragment;
     "spawnTroop((uint256,uint256),address,uint256)": FunctionFragment;
     "startProduction((uint256,uint256),uint256)": FunctionFragment;
+    "storeRawMapCol(uint256,uint256[])": FunctionFragment;
     "transferBaseOwnership((uint256,uint256),address)": FunctionFragment;
     "updateEpoch()": FunctionFragment;
   };
@@ -142,6 +143,10 @@ export interface EngineFacetInterface extends utils.Interface {
     values: [PositionStruct, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "storeRawMapCol",
+    values: [BigNumberish, BigNumberish[]]
+  ): string;
+  encodeFunctionData(
     functionFragment: "transferBaseOwnership",
     values: [PositionStruct, string]
   ): string;
@@ -172,6 +177,10 @@ export interface EngineFacetInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "spawnTroop", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "startProduction",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "storeRawMapCol",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -385,6 +394,12 @@ export interface EngineFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    storeRawMapCol(
+      _x: BigNumberish,
+      _col: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     transferBaseOwnership(
       _pos: PositionStruct,
       _player: string,
@@ -449,6 +464,12 @@ export interface EngineFacet extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  storeRawMapCol(
+    _x: BigNumberish,
+    _col: BigNumberish[],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   transferBaseOwnership(
     _pos: PositionStruct,
     _player: string,
@@ -507,6 +528,12 @@ export interface EngineFacet extends BaseContract {
     startProduction(
       _pos: PositionStruct,
       _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    storeRawMapCol(
+      _x: BigNumberish,
+      _col: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -679,6 +706,12 @@ export interface EngineFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    storeRawMapCol(
+      _x: BigNumberish,
+      _col: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     transferBaseOwnership(
       _pos: PositionStruct,
       _player: string,
@@ -741,6 +774,12 @@ export interface EngineFacet extends BaseContract {
     startProduction(
       _pos: PositionStruct,
       _troopTypeId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    storeRawMapCol(
+      _x: BigNumberish,
+      _col: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
