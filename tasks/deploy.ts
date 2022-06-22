@@ -87,68 +87,68 @@ task('deploy', 'deploy contracts')
     const time3 = performance.now();
     console.log(`✦ lazy set ${WORLD_WIDTH}x${WORLD_HEIGHT} map took ${time3 - time2} milliseconds`);
 
-    // if (isDev) {
-    //   // Randomly initialize players only if we're on localhost
-    //   console.log('✦ initializing players');
-    //   let x: number;
-    //   let y: number;
+    if (isDev) {
+      // Randomly initialize players only if we're on localhost
+      console.log('✦ initializing players');
+      let x: number;
+      let y: number;
 
-    // if (fixMap) {
-    //   const player1Pos = { x: 2, y: 4 };
-    //   const player2Pos = { x: 4, y: 2 };
-    //   const player1ArmyPos = { x: 3, y: 3 };
-    //   const player1ArmyPos2 = { x: 2, y: 3 };
-    //   const player1ArmyPos3 = { x: 1, y: 3 };
-    //   const player2ArmyPos = { x: 3, y: 2 };
-    //   const player2ArmyPos2 = { x: 2, y: 2 };
-    //   const player2ArmyPos3 = { x: 1, y: 2 };
-    //   const player1TroopTransportPos = { x: 5, y: 3 };
-    //   const player2DestroyerPos = { x: 5, y: 4 };
+      if (fixMap) {
+        const player1Pos = { x: 2, y: 4 };
+        const player2Pos = { x: 4, y: 2 };
+        const player1ArmyPos = { x: 3, y: 3 };
+        const player1ArmyPos2 = { x: 2, y: 3 };
+        const player1ArmyPos3 = { x: 1, y: 3 };
+        const player2ArmyPos = { x: 3, y: 2 };
+        const player2ArmyPos2 = { x: 2, y: 2 };
+        const player2ArmyPos3 = { x: 1, y: 2 };
+        const player1TroopTransportPos = { x: 5, y: 3 };
+        const player2DestroyerPos = { x: 5, y: 4 };
 
-    //   await (await diamond.connect(player1).initializePlayer(player1Pos, player1.address)).wait();
-    //   await (await diamond.connect(player1).initializePlayer(player2Pos, player2.address)).wait();
+        await (await diamond.connect(player1).initializePlayer(player1Pos, player1.address)).wait();
+        await (await diamond.connect(player1).initializePlayer(player2Pos, player2.address)).wait();
 
-    //   // spawn testing troops
-    //   await (await diamond.connect(player1).spawnTroop(player1ArmyPos, player1.address, armyTroopTypeId)).wait();
-    //   await (await diamond.connect(player1).spawnTroop(player1ArmyPos2, player1.address, armyTroopTypeId)).wait();
-    //   await (await diamond.connect(player1).spawnTroop(player1ArmyPos3, player1.address, armyTroopTypeId)).wait();
-    //   await (await diamond.connect(player1).spawnTroop(player2ArmyPos, player2.address, armyTroopTypeId)).wait();
-    //   await (await diamond.connect(player1).spawnTroop(player2ArmyPos2, player2.address, armyTroopTypeId)).wait();
-    //   await (await diamond.connect(player1).spawnTroop(player2ArmyPos3, player2.address, armyTroopTypeId)).wait();
-    //   await (await diamond.connect(player1).spawnTroop(player1TroopTransportPos, player1.address, troopTransportTroopTypeId)).wait();
-    //   await (await diamond.connect(player1).spawnTroop(player2DestroyerPos, player2.address, destroyerTroopTypeId)).wait();
-    // } else {
-    //   let player1Pos: position;
-    //   let player2Pos: position;
-    //   do {
-    //     x = Math.floor(Math.random() * WORLD_WIDTH);
-    //     y = Math.floor(Math.random() * WORLD_HEIGHT);
-    //     player1Pos = { x, y };
-    //   } while (tileMap[x][y] != TILE_TYPE.PORT);
+        // spawn testing troops
+        await (await diamond.connect(player1).spawnTroop(player1ArmyPos, player1.address, armyTroopTypeId)).wait();
+        await (await diamond.connect(player1).spawnTroop(player1ArmyPos2, player1.address, armyTroopTypeId)).wait();
+        await (await diamond.connect(player1).spawnTroop(player1ArmyPos3, player1.address, armyTroopTypeId)).wait();
+        await (await diamond.connect(player1).spawnTroop(player2ArmyPos, player2.address, armyTroopTypeId)).wait();
+        await (await diamond.connect(player1).spawnTroop(player2ArmyPos2, player2.address, armyTroopTypeId)).wait();
+        await (await diamond.connect(player1).spawnTroop(player2ArmyPos3, player2.address, armyTroopTypeId)).wait();
+        await (await diamond.connect(player1).spawnTroop(player1TroopTransportPos, player1.address, troopTransportTroopTypeId)).wait();
+        await (await diamond.connect(player1).spawnTroop(player2DestroyerPos, player2.address, destroyerTroopTypeId)).wait();
+      } else {
+        let player1Pos: position;
+        let player2Pos: position;
+        do {
+          x = Math.floor(Math.random() * WORLD_WIDTH);
+          y = Math.floor(Math.random() * WORLD_HEIGHT);
+          player1Pos = { x, y };
+        } while (tileMap[x][y] != TILE_TYPE.PORT);
 
-    //   do {
-    //     x = Math.floor(Math.random() * WORLD_WIDTH);
-    //     y = Math.floor(Math.random() * WORLD_HEIGHT);
-    //     player2Pos = { x, y };
-    //   } while (tileMap[x][y] != TILE_TYPE.PORT && player2Pos.x !== player1Pos.x && player2Pos.y !== player1Pos.y);
+        do {
+          x = Math.floor(Math.random() * WORLD_WIDTH);
+          y = Math.floor(Math.random() * WORLD_HEIGHT);
+          player2Pos = { x, y };
+        } while (tileMap[x][y] != TILE_TYPE.PORT && player2Pos.x !== player1Pos.x && player2Pos.y !== player1Pos.y);
 
-    //   // Give each player a port and an army to start with
-    //   let tx = await diamond.connect(player1).initializePlayer(player1Pos, player1.address);
-    //   await tx.wait();
-    //   tx = await diamond.connect(player1).initializePlayer(player2Pos, player2.address);
-    //   await tx.wait();
-    //   tx = await diamond.connect(player1).spawnTroop(player1Pos, player1.address, armyTroopTypeId);
-    //   await tx.wait();
-    //   tx = await diamond.connect(player1).spawnTroop(player2Pos, player2.address, armyTroopTypeId);
-    //   await tx.wait();
+        // Give each player a port and an army to start with
+        let tx = await diamond.connect(player1).initializePlayer(player1Pos, player1.address);
+        await tx.wait();
+        tx = await diamond.connect(player1).initializePlayer(player2Pos, player2.address);
+        await tx.wait();
+        tx = await diamond.connect(player1).spawnTroop(player1Pos, player1.address, armyTroopTypeId);
+        await tx.wait();
+        tx = await diamond.connect(player1).spawnTroop(player2Pos, player2.address, armyTroopTypeId);
+        await tx.wait();
 
-    //   // Basic checks
-    //   const player1Army = await diamond.getTroopAt(player1Pos);
-    //   if (player1Army.owner !== player1.address) throw new Error('Something is wrong');
-    //   const player2Army = await diamond.getTroopAt(player2Pos);
-    //   if (player2Army.troopTypeId.toNumber() !== armyTroopTypeId) throw new Error('Something went wrong');
-    // }
-    // }
+        // Basic checks
+        const player1Army = await diamond.getTroopAt(player1Pos);
+        if (player1Army.owner !== player1.address) throw new Error('Something is wrong');
+        const player2Army = await diamond.getTroopAt(player2Pos);
+        if (player2Army.troopTypeId.toNumber() !== armyTroopTypeId) throw new Error('Something went wrong');
+      }
+    }
 
     // ---------------------------------
     // generate config files

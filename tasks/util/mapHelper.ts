@@ -23,23 +23,24 @@ const MAX_UINT256 = Math.pow(2, 256) - 1;
 
 /**
  * Encode columns of a tile map using unique prime factorization.
+ * Note: Currently only support column sizes less than 50
  * @param tileMap
  * @returns a 1d array of encoded columns
  */
-export const encodeTileMap = (tileMap: TILE_TYPE[][]): number[] => {
+export const encodeTileMap = (tileMap: TILE_TYPE[][]): string[] => {
   if (tileMap[0].length > PRIMES.length) throw new Error('Column being encoded is too long');
-  const result: number[] = [];
+  const result: string[] = [];
 
-  let col;
-  let encodedCol;
+  let col: number[];
+  let encodedCol: bigint;
   for (let x = 0; x < tileMap.length; x++) {
     col = tileMap[x];
-    encodedCol = 1;
+    encodedCol = BigInt(1);
     for (let y = 0; y < col.length; y++) {
-      encodedCol *= Math.pow(PRIMES[y], col[y]);
+      encodedCol *= BigInt(Math.pow(PRIMES[y], col[y]));
     }
     if (encodedCol >= MAX_UINT256) throw new Error('Encoding exceeds uint256 max size');
-    result.push(encodedCol);
+    result.push(encodedCol.toString());
   }
 
   return result;
