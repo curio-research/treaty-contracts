@@ -155,26 +155,59 @@ contract DiamondDeployTest is Test {
         engine = EngineFacet(diamond);
         ownership = OwnershipFacet(diamond);
 
-        // initialize map
-        Position memory _startPos = Position({x: 0, y: 0});
+        // // initialize map
+        // Position memory _startPos = Position({x: 0, y: 0});
+        // uint256[][] memory _chunk = generateMapChunk(_worldConstants.mapInterval);
+        // engine.setMapChunk(_startPos, _chunk);
 
-        // uint256[][] memory _chunk = getTestMap();
-        uint256[][] memory _chunk = generateMapChunk(_worldConstants.mapInterval);
-
-        engine.setMapChunk(_startPos, _chunk);
+        // initialize map using lazy + encoding
+        uint256[][] memory _map = generateMap(_worldConstants.worldWidth, _worldConstants.worldHeight, _worldConstants.mapInterval);
+        uint256[] memory _encodedMapCols = _encodeTileMap(_map);
+        engine.storeEncodedRawMapCols(_encodedMapCols);
 
         // initialize players
-        // TODO: Upgrade logic such that everyone can initialize themselves. figure out if we want a whitelist or something
 
         engine.initializePlayer(player1Pos, player1);
+        console.log("passed first initialize player");
         engine.initializePlayer(player2Pos, player2);
+        console.log("passed second initialize player");
         engine.initializePlayer(player3Pos, player3);
+        console.log("passed third initialize player");
 
         vm.stopPrank();
     }
 
+    function _encodeTileMap(uint256[][] memory _tileMap) internal view returns (uint256[] memory) {
+        uint256[50] memory _primes = getter.getWorldConstants().primes;
+
+        if (_tileMap[0].length > _primes.length) revert("Column being encoded is too long");
+        uint256[] memory _result = new uint256[](_tileMap.length);
+
+        uint256[] memory _col = new uint256[](_tileMap[0].length);
+        uint256 _encodedCol;
+        uint256 _temp;
+
+        for (uint256 x = 0; x < _tileMap.length; x++) {
+            _col = _tileMap[x];
+            _encodedCol = 1;
+            console.log("ylen", _tileMap[0].length);
+            for (uint256 y = 0; y < _tileMap[0].length; y++) {
+                console.log("primes", _primes[y]);
+                console.log("col", _col[y]);
+                _temp = _encodedCol * _primes[y]**_col[y];
+                if (_encodedCol > _temp) revert("Integer overflow");
+                _encodedCol = _temp;
+            }
+            _result[x] = _encodedCol;
+            console.log("encodedCol", _encodedCol);
+        }
+
+        return _result;
+    }
+
     // FIXME: hardcoded
     function _generateWorldConstants() internal view returns (WorldConstants memory) {
+        uint256[50] memory _primes = [uint256(2), 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199, 211, 223, 227, 229];
         return
             WorldConstants({
                 admin: deployer,
@@ -184,7 +217,8 @@ contract DiamondDeployTest is Test {
                 numCities: 15, // yo
                 mapInterval: 10,
                 secondsPerEpoch: 10,
-                combatEfficiency: 50
+                combatEfficiency: 50,
+                primes: _primes
             });
     }
 
@@ -228,6 +262,43 @@ contract DiamondDeployTest is Test {
         _chunk[9] = _landCol;
 
         return _chunk;
+    }
+
+    // FIXME: hardcoded
+    function generateMap(
+        uint256 _width,
+        uint256 _height,
+        uint256 _interval
+    ) public pure returns (uint256[][] memory) {
+        uint256[] memory _coastCol = new uint256[](_height);
+        uint256[] memory _landCol = new uint256[](_height);
+        uint256[] memory _waterCol = new uint256[](_height);
+        uint256[] memory _portCol = new uint256[](_height);
+        uint256[] memory _cityCol = new uint256[](_height);
+
+        for (uint256 j = 0; j < _height; j++) {
+            _coastCol[j] = 0;
+            _landCol[j] = 1;
+            _waterCol[j] = 2;
+            _portCol[j] = 3;
+            _cityCol[j] = 4;
+        }
+
+        uint256[][] memory _map = new uint256[][](_width);
+        for (uint256 k = 0; k < _width / _interval; k += _interval) {
+            _map[k] = _waterCol;
+            _map[k + 1] = _waterCol;
+            _map[k + 2] = _portCol;
+            _map[k + 3] = _landCol;
+            _map[k + 4] = _landCol;
+            _map[k + 5] = _cityCol;
+            _map[k + 6] = _portCol;
+            _map[k + 7] = _waterCol;
+            _map[k + 8] = _coastCol;
+            _map[k + 9] = _landCol;
+        }
+
+        return _map;
     }
 
     // helper functions

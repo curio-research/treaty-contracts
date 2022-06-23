@@ -69,19 +69,19 @@ task('deploy', 'deploy contracts')
     const diamond = await getDiamond(hre, diamondAddr);
     printDivider();
 
-    // Initialize map
-    const time1 = performance.now();
-    console.log('✦ initializing map');
-    let mapChunk: TILE_TYPE[][];
-    for (let x = 0; x < WORLD_WIDTH; x += MAP_INTERVAL) {
-      for (let y = 0; y < WORLD_HEIGHT; y += MAP_INTERVAL) {
-        mapChunk = tileMap.slice(x, x + MAP_INTERVAL).map((col: TILE_TYPE[]) => col.slice(y, y + MAP_INTERVAL));
+    // // Initialize map
+    // const time1 = performance.now();
+    // console.log('✦ initializing map');
+    // let mapChunk: TILE_TYPE[][];
+    // for (let x = 0; x < WORLD_WIDTH; x += MAP_INTERVAL) {
+    //   for (let y = 0; y < WORLD_HEIGHT; y += MAP_INTERVAL) {
+    //     mapChunk = tileMap.slice(x, x + MAP_INTERVAL).map((col: TILE_TYPE[]) => col.slice(y, y + MAP_INTERVAL));
 
-        await (await diamond.setMapChunk({ x, y }, mapChunk)).wait();
-      }
-    }
+    //     await (await diamond.setMapChunk({ x, y }, mapChunk)).wait();
+    //   }
+    // }
     const time2 = performance.now();
-    console.log(`✦ direct set ${WORLD_WIDTH}x${WORLD_HEIGHT} map took ${time2 - time1} milliseconds`);
+    // console.log(`✦ direct set ${WORLD_WIDTH}x${WORLD_HEIGHT} map took ${time2 - time1} milliseconds`);
     const encodedTileMap = encodeTileMap(tileMap);
     await (await diamond.storeEncodedRawMapCols(encodedTileMap)).wait();
     const time3 = performance.now();
@@ -133,20 +133,17 @@ task('deploy', 'deploy contracts')
         } while (tileMap[x][y] != TILE_TYPE.PORT && player2Pos.x !== player1Pos.x && player2Pos.y !== player1Pos.y);
 
         // Give each player a port and an army to start with
-        let tx = await diamond.connect(player1).initializePlayer(player1Pos, player1.address);
-        await tx.wait();
-        tx = await diamond.connect(player1).initializePlayer(player2Pos, player2.address);
-        await tx.wait();
-        tx = await diamond.connect(player1).spawnTroop(player1Pos, player1.address, armyTroopTypeId);
-        await tx.wait();
-        tx = await diamond.connect(player1).spawnTroop(player2Pos, player2.address, armyTroopTypeId);
-        await tx.wait();
+        await (await diamond.connect(player1).initializePlayer(player1Pos, player1.address)).wait();
+        await (await diamond.connect(player1).initializePlayer(player2Pos, player2.address)).wait();
+        await (await diamond.connect(player1).spawnTroop(player1Pos, player1.address, armyTroopTypeId)).wait();
+        await (await diamond.connect(player1).spawnTroop(player2Pos, player2.address, armyTroopTypeId)).wait();
 
         // Basic checks
         const player1Army = await diamond.getTroopAt(player1Pos);
         if (player1Army.owner !== player1.address) throw new Error('Something is wrong');
         const player2Army = await diamond.getTroopAt(player2Pos);
         if (player2Army.troopTypeId.toNumber() !== armyTroopTypeId) throw new Error('Something went wrong');
+        console.log('✦ basic checks pass');
       }
     }
 

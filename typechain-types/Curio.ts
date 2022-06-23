@@ -182,6 +182,7 @@ export type WorldConstantsStruct = {
   mapInterval: BigNumberish;
   secondsPerEpoch: BigNumberish;
   combatEfficiency: BigNumberish;
+  primes: BigNumberish[];
 };
 
 export type WorldConstantsStructOutput = [
@@ -192,7 +193,8 @@ export type WorldConstantsStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
-  BigNumber
+  BigNumber,
+  BigNumber[]
 ] & {
   admin: string;
   worldWidth: BigNumber;
@@ -202,6 +204,7 @@ export type WorldConstantsStructOutput = [
   mapInterval: BigNumber;
   secondsPerEpoch: BigNumber;
   combatEfficiency: BigNumber;
+  primes: BigNumber[];
 };
 
 export interface CurioInterface extends utils.Interface {
@@ -218,11 +221,9 @@ export interface CurioInterface extends utils.Interface {
     "initializePlayer((uint256,uint256),address)": FunctionFragment;
     "move(uint256,(uint256,uint256))": FunctionFragment;
     "repair((uint256,uint256))": FunctionFragment;
-    "setMapChunk((uint256,uint256),uint256[][])": FunctionFragment;
     "spawnTroop((uint256,uint256),address,uint256)": FunctionFragment;
     "startProduction((uint256,uint256),uint256)": FunctionFragment;
     "storeEncodedRawMapCols(uint256[])": FunctionFragment;
-    "storeRawMapCol(uint256,uint256[])": FunctionFragment;
     "transferBaseOwnership((uint256,uint256),address)": FunctionFragment;
     "updateEpoch()": FunctionFragment;
     "bulkGetAllTroops()": FunctionFragment;
@@ -289,10 +290,6 @@ export interface CurioInterface extends utils.Interface {
     values: [PositionStruct]
   ): string;
   encodeFunctionData(
-    functionFragment: "setMapChunk",
-    values: [PositionStruct, BigNumberish[][]]
-  ): string;
-  encodeFunctionData(
     functionFragment: "spawnTroop",
     values: [PositionStruct, string, BigNumberish]
   ): string;
@@ -303,10 +300,6 @@ export interface CurioInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "storeEncodedRawMapCols",
     values: [BigNumberish[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "storeRawMapCol",
-    values: [BigNumberish, BigNumberish[]]
   ): string;
   encodeFunctionData(
     functionFragment: "transferBaseOwnership",
@@ -405,10 +398,6 @@ export interface CurioInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "move", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "repair", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "setMapChunk",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "spawnTroop", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "startProduction",
@@ -416,10 +405,6 @@ export interface CurioInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "storeEncodedRawMapCols",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "storeRawMapCol",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -703,12 +688,6 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    setMapChunk(
-      _startPos: PositionStruct,
-      _chunk: BigNumberish[][],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     spawnTroop(
       _pos: PositionStruct,
       _player: string,
@@ -724,12 +703,6 @@ export interface Curio extends BaseContract {
 
     storeEncodedRawMapCols(
       _cols: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    storeRawMapCol(
-      _x: BigNumberish,
-      _col: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -873,12 +846,6 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setMapChunk(
-    _startPos: PositionStruct,
-    _chunk: BigNumberish[][],
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   spawnTroop(
     _pos: PositionStruct,
     _player: string,
@@ -894,12 +861,6 @@ export interface Curio extends BaseContract {
 
   storeEncodedRawMapCols(
     _cols: BigNumberish[],
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  storeRawMapCol(
-    _x: BigNumberish,
-    _col: BigNumberish[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1040,12 +1001,6 @@ export interface Curio extends BaseContract {
 
     repair(_pos: PositionStruct, overrides?: CallOverrides): Promise<void>;
 
-    setMapChunk(
-      _startPos: PositionStruct,
-      _chunk: BigNumberish[][],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     spawnTroop(
       _pos: PositionStruct,
       _player: string,
@@ -1061,12 +1016,6 @@ export interface Curio extends BaseContract {
 
     storeEncodedRawMapCols(
       _cols: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    storeRawMapCol(
-      _x: BigNumberish,
-      _col: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1335,12 +1284,6 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    setMapChunk(
-      _startPos: PositionStruct,
-      _chunk: BigNumberish[][],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     spawnTroop(
       _pos: PositionStruct,
       _player: string,
@@ -1356,12 +1299,6 @@ export interface Curio extends BaseContract {
 
     storeEncodedRawMapCols(
       _cols: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    storeRawMapCol(
-      _x: BigNumberish,
-      _col: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1498,12 +1435,6 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    setMapChunk(
-      _startPos: PositionStruct,
-      _chunk: BigNumberish[][],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     spawnTroop(
       _pos: PositionStruct,
       _player: string,
@@ -1519,12 +1450,6 @@ export interface Curio extends BaseContract {
 
     storeEncodedRawMapCols(
       _cols: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    storeRawMapCol(
-      _x: BigNumberish,
-      _col: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
