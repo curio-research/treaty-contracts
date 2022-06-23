@@ -53,7 +53,7 @@ contract BasicTest is Test, DiamondDeployTest {
         Position memory _pos = Position({x: 3, y: 3});
         uint256 _armyTroopTypeId = indexToId(uint256(TROOP_NAME.ARMY));
 
-        vm.expectRevert(Unauthorized.selector);
+        vm.expectRevert(bytes("Unauthorized"));
         vm.prank(player2);
         engine.spawnTroop(_pos, player2, _armyTroopTypeId);
     }

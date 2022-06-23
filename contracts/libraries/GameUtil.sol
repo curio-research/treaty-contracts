@@ -2,7 +2,7 @@
 pragma solidity ^0.8.4;
 
 import "forge-std/console.sol";
-import {BASE_NAME, Base, GameState, Position, TERRAIN, Tile, Troop} from "contracts/libraries/Types.sol";
+import {BASE_NAME, Base, GameState, Position, Production, TERRAIN, Tile, Troop} from "contracts/libraries/Types.sol";
 import {LibStorage} from "contracts/libraries/Storage.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 
@@ -13,6 +13,18 @@ library Util {
     function gs() internal pure returns (GameState storage) {
         return LibStorage.gameStorage();
     }
+
+    event NewPlayer(address _player, Position _pos);
+    event EpochUpdate(uint256 _epoch, uint256 _time);
+    event Moved(address _player, uint256 _troopId, Position _pos);
+    event AttackedTroop(address _player, uint256 _troopId, Troop _troopInfo, uint256 _targetTroopId, Troop _targetTroopInfo);
+    event AttackedBase(address _player, uint256 _troopId, Troop _troopInfo, uint256 _targetBaseId, Base _targetBaseInfo);
+    event Death(address _player, uint256 _troopId);
+    event BaseCaptured(address _player, uint256 _troopId, uint256 _baseId);
+    event ProductionStarted(address _player, uint256 _baseId, Production _production);
+    event NewTroop(address _player, uint256 _troopId, Troop _troop, Position _pos);
+    event Repaired(address _player, uint256 _troopId, uint256 _health);
+    event Recovered(address _player, uint256 _troopId);
 
     // ----------------------------------------------------------
     // Game-related
@@ -164,13 +176,17 @@ library Util {
     }
 
     function _strike(uint256 _strikeFactor) public view returns (bool) {
-        uint256 _salt = 2; // FIXME: proper salt
-        uint256 _rand = _random(_salt, 100);
+        uint256 _rand = _random(100);
         return _rand * 100 < _strikeFactor * gs().worldConstants.combatEfficiency;
     }
 
     function _inBound(Position memory _p) public view returns (bool) {
         return _p.x >= 0 && _p.x < gs().worldConstants.worldWidth && _p.y >= 0 && _p.y < gs().worldConstants.worldHeight;
+    }
+
+    function _random(uint256 _max) public view returns (uint256) {
+        // FIXME: use truly random from Chainlink VRF or equivalent
+        return uint256(keccak256(abi.encode(block.timestamp, block.difficulty, gs().troopIds))) % _max;
     }
 
     // ----------------------------------------------------------
@@ -179,10 +195,6 @@ library Util {
 
     function _samePos(Position memory _p1, Position memory _p2) public pure returns (bool) {
         return _p1.x == _p2.x && _p1.y == _p2.y;
-    }
-
-    function _random(uint256 _salt, uint256 _max) public view returns (uint256) {
-        return uint256(keccak256(abi.encode(block.timestamp, block.difficulty, _salt))) % _max; // FIXME
     }
 
     // Note: The current version treats a diagonal movement as two movements.
