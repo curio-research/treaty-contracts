@@ -21,18 +21,12 @@ library Util {
     // Setters
 
     function _initializeTile(Position memory _pos) public {
-        uint256 _encodedRawCol = gs().encodedRawMapCols[_pos.x];
-        uint256 _primeFactor = gs().worldConstants.primes[_pos.y];
+        uint256 _numInitTerrainTypes = gs().worldConstants.numInitTerrainTypes;
 
-        uint256 _terrainId = 0;
-        console.log("[Util] _encodedRawCol", _encodedRawCol);
-        console.log("[Util] _primeFactor", _primeFactor);
-        while (_encodedRawCol % _primeFactor == 0) {
-            _encodedRawCol /= _primeFactor;
-            _terrainId++;
-        }
+        uint256 _encodedRawCol = gs().encodedRawMapCols[_pos.x] % (_numInitTerrainTypes**(_pos.y + 1));
+        uint256 _divFactor = _numInitTerrainTypes**_pos.y;
+        uint256 _terrainId = _encodedRawCol / _divFactor;
 
-        console.log("[Util] terrainId is", _terrainId);
         if (_terrainId >= 3) {
             // Note: temporary way to set base
             BASE_NAME _baseName = _terrainId == 3 ? BASE_NAME.PORT : BASE_NAME.CITY;

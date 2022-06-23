@@ -148,7 +148,7 @@ export type WorldConstantsStruct = {
   mapInterval: BigNumberish;
   secondsPerEpoch: BigNumberish;
   combatEfficiency: BigNumberish;
-  primes: BigNumberish[];
+  numInitTerrainTypes: BigNumberish;
 };
 
 export type WorldConstantsStructOutput = [
@@ -160,7 +160,7 @@ export type WorldConstantsStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
-  BigNumber[]
+  BigNumber
 ] & {
   admin: string;
   worldWidth: BigNumber;
@@ -170,7 +170,7 @@ export type WorldConstantsStructOutput = [
   mapInterval: BigNumber;
   secondsPerEpoch: BigNumber;
   combatEfficiency: BigNumber;
-  primes: BigNumber[];
+  numInitTerrainTypes: BigNumber;
 };
 
 export interface GetterFacetInterface extends utils.Interface {

@@ -20,7 +20,7 @@ contract LogicTest is Test, DiamondDeployTest {
     // Production
     function testProductionFailure() public {
         // fail: start production on invalid location
-        vm.expectRevert(bytes("No base found"));
+        vm.expectRevert(bytes("Out of bound"));
         engine.startProduction(Position({x: 100, y: 100}), armyTroopTypeId);
 
         // fail: player2 attempting to produce in other's base

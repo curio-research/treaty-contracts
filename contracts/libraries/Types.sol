@@ -86,7 +86,7 @@ struct WorldConstants {
     uint256 mapInterval;
     uint256 secondsPerEpoch;
     uint256 combatEfficiency; // in the interval [0, 100]
-    uint256[50] primes;
+    uint256 numInitTerrainTypes; // default is 5
 }
 
 struct GameState {

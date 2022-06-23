@@ -1,6 +1,6 @@
 import { BigNumberish, BigNumber } from 'ethers';
 import SimplexNoise from 'simplex-noise';
-import { PRIMES } from './constants';
+import { NUM_INIT_TERRAIN_TYPES } from './constants';
 import { RenderInput, ColorsAndCutoffs, TileMapOutput, TILE_TYPE, AllGameMapsOutput, MapInput } from './types';
 
 //////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@ const INCREMENT = 1;
 const xIncrement = INCREMENT;
 const yIncrement = INCREMENT;
 
-const MAX_UINT256 = Math.pow(2, 256) - 1;
+const MAX_UINT256 = BigInt(Math.pow(2, 256)) - BigInt(1);
 
 //////////////////////////////////////////////////////////////////////
 ///////////////////////////// FUNCTIONS //////////////////////////////
@@ -28,16 +28,15 @@ const MAX_UINT256 = Math.pow(2, 256) - 1;
  * @returns a 1d array of encoded columns
  */
 export const encodeTileMap = (tileMap: TILE_TYPE[][]): string[] => {
-  if (tileMap[0].length > PRIMES.length) throw new Error('Column being encoded is too long');
   const result: string[] = [];
 
   let col: number[];
   let encodedCol: bigint;
   for (let x = 0; x < tileMap.length; x++) {
     col = tileMap[x];
-    encodedCol = BigInt(1);
+    encodedCol = BigInt(0);
     for (let y = 0; y < col.length; y++) {
-      encodedCol *= BigInt(Math.pow(PRIMES[y], col[y]));
+      encodedCol += BigInt(col[y]) * BigInt(NUM_INIT_TERRAIN_TYPES) ** BigInt(y);
     }
     if (encodedCol >= MAX_UINT256) throw new Error('Encoding exceeds uint256 max size');
     result.push(encodedCol.toString());

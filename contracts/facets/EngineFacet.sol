@@ -79,11 +79,10 @@ contract EngineFacet is UseStorage {
      * @param _player player address
      */
     function initializePlayer(Position memory _pos, address _player) external onlyAdmin {
-        console.log("[Engine] initializing player...");
-
+        if (!Util._inBound(_pos)) revert("Out of bound");
         if (!Util._getTileAt(_pos).isInitialized) Util._initializeTile(_pos);
-        uint256 _baseId = Util._getTileAt(_pos).baseId;
 
+        uint256 _baseId = Util._getTileAt(_pos).baseId;
         if (Util._getBaseOwner(_baseId) != address(0)) revert("Base is taken");
         if (gs().playerMap[_player].active) revert("Player already initialized");
 
@@ -105,6 +104,7 @@ contract EngineFacet is UseStorage {
         address _player,
         uint256 _troopTypeId
     ) external onlyAdmin {
+        if (!Util._inBound(_pos)) revert("Out of bound");
         if (!Util._getTileAt(_pos).isInitialized) Util._initializeTile(_pos);
 
         Tile memory _tile = Util._getTileAt(_pos);
@@ -127,6 +127,7 @@ contract EngineFacet is UseStorage {
      * @param _player player to give ownership to
      */
     function transferBaseOwnership(Position memory _pos, address _player) external onlyAdmin {
+        if (!Util._inBound(_pos)) revert("Out of bound");
         if (!Util._getTileAt(_pos).isInitialized) Util._initializeTile(_pos);
 
         Tile memory _tile = Util._getTileAt(_pos);
@@ -149,9 +150,8 @@ contract EngineFacet is UseStorage {
      * @param _targetPos target position
      */
     function move(uint256 _troopId, Position memory _targetPos) external {
-        if (!Util._getTileAt(_targetPos).isInitialized) Util._initializeTile(_targetPos);
-
         if (!Util._inBound(_targetPos)) revert("Target out of bound");
+        if (!Util._getTileAt(_targetPos).isInitialized) Util._initializeTile(_targetPos);
 
         Troop memory _troop = gs().troopIdMap[_troopId];
         if (_troop.owner != msg.sender) revert("Can only move own troop");
@@ -208,8 +208,8 @@ contract EngineFacet is UseStorage {
      * @param _targetPos target position
      */
     function battle(uint256 _troopId, Position memory _targetPos) external {
-        if (!Util._getTileAt(_targetPos).isInitialized) Util._initializeTile(_targetPos);
         if (!Util._inBound(_targetPos)) revert("Target out of bound");
+        if (!Util._getTileAt(_targetPos).isInitialized) Util._initializeTile(_targetPos);
 
         Troop memory _troop = gs().troopIdMap[_troopId];
         if (_troop.owner != msg.sender) revert("Can only battle using own troop");
@@ -309,8 +309,8 @@ contract EngineFacet is UseStorage {
      * @param _targetPos target position
      */
     function captureBase(uint256 _troopId, Position memory _targetPos) external {
-        if (!Util._getTileAt(_targetPos).isInitialized) Util._initializeTile(_targetPos);
         if (!Util._inBound(_targetPos)) revert("Target out of bound");
+        if (!Util._getTileAt(_targetPos).isInitialized) Util._initializeTile(_targetPos);
 
         Troop memory _troop = gs().troopIdMap[_troopId];
         if (_troop.owner != msg.sender) revert("Can only capture with own troop");
@@ -339,6 +339,7 @@ contract EngineFacet is UseStorage {
      * @param _troopTypeId identifier for selected troop type
      */
     function startProduction(Position memory _pos, uint256 _troopTypeId) external {
+        if (!Util._inBound(_pos)) revert("Out of bound");
         if (!Util._getTileAt(_pos).isInitialized) Util._initializeTile(_pos);
 
         Tile memory _tile = Util._getTileAt(_pos);
@@ -374,6 +375,7 @@ contract EngineFacet is UseStorage {
      * @param _pos position of base
      */
     function endProduction(Position memory _pos) external {
+        if (!Util._inBound(_pos)) revert("Out of bound");
         if (!Util._getTileAt(_pos).isInitialized) Util._initializeTile(_pos);
 
         // Currently implemented expecting real-time calls from client; can change to lazy if needed
@@ -396,6 +398,7 @@ contract EngineFacet is UseStorage {
      * @param _pos position of base
      */
     function repair(Position memory _pos) external {
+        if (!Util._inBound(_pos)) revert("Out of bound");
         if (!Util._getTileAt(_pos).isInitialized) Util._initializeTile(_pos);
 
         Tile memory _tile = Util._getTileAt(_pos);
