@@ -1,5 +1,9 @@
 name: Test Hook
 on: [push]
+
+env:
+  FOUNDRY_PROFILE: ci
+
 jobs:
   check:
     name: Foundry tests
