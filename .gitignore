@@ -6,7 +6,6 @@ cache
 artifacts
 typechain-types/factories
 cache_hardhat
-out
 
 #local dev help
 *map.txt

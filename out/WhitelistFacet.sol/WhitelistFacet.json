@@ -1,0 +1,92 @@
+{
+  "abi": [],
+  "bytecode": {
+    "object": "0x6080604052348015600f57600080fd5b50603f80601d6000396000f3fe6080604052600080fdfea2646970667358221220b9d8fa1bef655ba65a2613f4c9d5dec1ea2fdaa8ed0587143408da92cdf678e664736f6c63430008040033",
+    "sourceMap": "145:42:6:-:0;;;;;;;;;;;;;;;;;;;",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x6080604052600080fdfea2646970667358221220b9d8fa1bef655ba65a2613f4c9d5dec1ea2fdaa8ed0587143408da92cdf678e664736f6c63430008040033",
+    "sourceMap": "145:42:6:-:0;;;;;",
+    "linkReferences": {}
+  },
+  "methodIdentifiers": {},
+  "ast": {
+    "absolutePath": "contracts/facets/WhitelistFacet.sol",
+    "id": 3127,
+    "exportedSymbols": {
+      "GameState": [
+        5005
+      ],
+      "LibStorage": [
+        4824
+      ],
+      "UseStorage": [
+        4836
+      ],
+      "WhitelistFacet": [
+        3126
+      ]
+    },
+    "nodeType": "SourceUnit",
+    "src": "31:157:6",
+    "nodes": [
+      {
+        "id": 3122,
+        "nodeType": "PragmaDirective",
+        "src": "31:23:6",
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".4"
+        ]
+      },
+      {
+        "id": 3123,
+        "nodeType": "ImportDirective",
+        "src": "56:41:6",
+        "absolutePath": "contracts/libraries/Storage.sol",
+        "file": "contracts/libraries/Storage.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 3127,
+        "sourceUnit": 4837,
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "id": 3126,
+        "nodeType": "ContractDefinition",
+        "src": "145:42:6",
+        "abstract": false,
+        "baseContracts": [
+          {
+            "baseName": {
+              "id": 3124,
+              "name": "UseStorage",
+              "nodeType": "IdentifierPath",
+              "referencedDeclaration": 4836,
+              "src": "172:10:6"
+            },
+            "id": 3125,
+            "nodeType": "InheritanceSpecifier",
+            "src": "172:10:6"
+          }
+        ],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "fullyImplemented": true,
+        "linearizedBaseContracts": [
+          3126,
+          4836
+        ],
+        "name": "WhitelistFacet",
+        "nameLocation": "154:14:6",
+        "scope": 3127,
+        "usedErrors": []
+      }
+    ],
+    "license": "MIT"
+  },
+  "id": 6
+}

@@ -1,0 +1,20 @@
+{
+  "abi": [],
+  "bytecode": {
+    "object": "0x",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x",
+    "linkReferences": {}
+  },
+  "ast": {
+    "absolutePath": "test/foundryTest.t.sol",
+    "id": 26935,
+    "exportedSymbols": {},
+    "nodeType": "SourceUnit",
+    "src": "4867:0:22",
+    "license": "MIT"
+  },
+  "id": 22
+}
