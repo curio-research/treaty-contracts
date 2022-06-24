@@ -24,4 +24,4 @@ jobs:
         run: forge install
 
       - name: Run tests
-        run: yarn ft
+        run: ${{ github.action_path }}/forge test --ffi -vv
