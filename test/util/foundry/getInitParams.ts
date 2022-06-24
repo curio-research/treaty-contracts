@@ -1,5 +1,5 @@
 import { EMPTY_ADDRESS } from '../../../util/network/common';
-import { ethers } from 'ethers';
+import ethers from 'ethers';
 import { generateWorldConstants, TROOP_TYPES } from '../../../tasks/util/constants';
 
 // here we must manually define structs as strings
