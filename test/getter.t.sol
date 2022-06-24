@@ -2,7 +2,7 @@
 pragma solidity ^0.8.4;
 
 import "forge-std/Test.sol";
-import "./DiamondDeploy.t.sol";
+import "test/DiamondDeploy.t.sol";
 
 contract GetterTest is Test, DiamondDeployTest {
     function testBulkGetAllTroops() public {
