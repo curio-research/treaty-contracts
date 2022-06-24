@@ -29,5 +29,4 @@ jobs:
           version: nightly
 
       - name: Run tests
-        working-directory: ./src
         run: yarn ft
