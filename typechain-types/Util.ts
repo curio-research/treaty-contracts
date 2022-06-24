@@ -289,6 +289,7 @@ export interface UtilInterface extends utils.Interface {
     "Moved(address,uint256,uint256,tuple,tuple)": EventFragment;
     "NewPlayer(address,tuple)": EventFragment;
     "NewTroop(address,uint256,tuple,tuple)": EventFragment;
+    "ProductionEnded(address,uint256)": EventFragment;
     "ProductionStarted(address,uint256,tuple)": EventFragment;
     "Recovered(address,uint256)": EventFragment;
     "Repaired(address,uint256,uint256)": EventFragment;
@@ -302,6 +303,7 @@ export interface UtilInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "Moved"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NewPlayer"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NewTroop"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ProductionEnded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ProductionStarted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Recovered"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Repaired"): EventFragment;
@@ -385,6 +387,13 @@ export type NewTroopEvent = TypedEvent<
 >;
 
 export type NewTroopEventFilter = TypedEventFilter<NewTroopEvent>;
+
+export type ProductionEndedEvent = TypedEvent<
+  [string, BigNumber],
+  { _player: string; _baseId: BigNumber }
+>;
+
+export type ProductionEndedEventFilter = TypedEventFilter<ProductionEndedEvent>;
 
 export type ProductionStartedEvent = TypedEvent<
   [string, BigNumber, ProductionStructOutput],
@@ -849,6 +858,12 @@ export interface Util extends BaseContract {
       _troop?: null,
       _pos?: null
     ): NewTroopEventFilter;
+
+    "ProductionEnded(address,uint256)"(
+      _player?: null,
+      _baseId?: null
+    ): ProductionEndedEventFilter;
+    ProductionEnded(_player?: null, _baseId?: null): ProductionEndedEventFilter;
 
     "ProductionStarted(address,uint256,tuple)"(
       _player?: null,

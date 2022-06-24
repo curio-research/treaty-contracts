@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import {Base, Player, Position, Tile, Troop, WorldConstants, TroopType} from "contracts/libraries/Types.sol";
+import {Base, Player, Position, Tile, Troop, WorldConstants, TroopType, Production} from "contracts/libraries/Types.sol";
 import {Util} from "contracts/libraries/GameUtil.sol";
 import "contracts/libraries/Storage.sol";
 import "forge-std/console.sol";
@@ -82,8 +82,6 @@ contract GetterFacet is UseStorage {
 
     // _startId: inclusive
     // _endId: inclusive
-
-    // 11 20
     function getBulkBase(uint256 _startId, uint256 _endId) external view returns (Base[] memory) {
         Base[] memory _bases = new Base[](_endId - _startId + 1);
 
@@ -104,5 +102,22 @@ contract GetterFacet is UseStorage {
         }
 
         return _troops;
+    }
+
+    // fetches single production
+    function getProduction(uint256 _baseId) public view returns (Production memory) {
+        return gs().baseProductionMap[_baseId];
+    }
+
+    // _baseIds: list of base Ids
+    function getBulkProductions(uint256[] memory _baseIds) external view returns (Production[] memory) {
+        Production[] memory _productions = new Production[](_baseIds.length);
+
+        for (uint256 i = 0; i < _baseIds.length; i++) {
+            uint256 _baseId = _baseIds[i];
+            _productions[i] = getProduction(_baseId);
+        }
+
+        return _productions;
     }
 }

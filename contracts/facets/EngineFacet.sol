@@ -367,6 +367,8 @@ contract EngineFacet is UseStorage {
 
         (uint256 _troopId, Troop memory _troop) = Util._addTroop(_pos, _production.troopTypeId, msg.sender);
         delete gs().baseProductionMap[_tile.baseId];
+
+        emit Util.ProductionEnded(msg.sender, _tile.baseId);
         emit Util.NewTroop(msg.sender, _troopId, _troop, _pos);
     }
 

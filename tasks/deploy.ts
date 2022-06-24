@@ -171,7 +171,7 @@ task('deploy', 'deploy contracts')
 
     // Publish the deployment to mongodb
     const publish = args.publish;
-    if (!isDev) {
+    if (isDev || true) {
       console.log('Backend URL', BACKEND_URL);
       const { data } = await axios.post(`${BACKEND_URL}/deployments/add`, configFile);
 
@@ -181,7 +181,7 @@ task('deploy', 'deploy contracts')
     }
 
     // If we're in dev mode, port the files to the frontend.
-    if (isDev) {
+    if (isDev || true) {
       const configFileDir = path.join(path.join(__dirname), 'game.config.json');
       const raw = fs.readFileSync(configFileDir).toString();
       const existingDeployments = raw ? JSON.parse(raw) : [];

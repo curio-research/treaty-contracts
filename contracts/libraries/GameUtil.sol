@@ -20,6 +20,7 @@ library Util {
     event Death(address _player, uint256 _troopId);
     event BaseCaptured(address _player, uint256 _troopId, uint256 _baseId);
     event ProductionStarted(address _player, uint256 _baseId, Production _production);
+    event ProductionEnded(address _player, uint256 _baseId);
     event NewTroop(address _player, uint256 _troopId, Troop _troop, Position _pos);
     event Repaired(address _player, uint256 _troopId, uint256 _health);
     event Recovered(address _player, uint256 _troopId);
