@@ -22,6 +22,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+        with:
+          submodules: recursive
 
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
@@ -32,4 +34,5 @@ jobs:
         run: forge install
 
       - name: Run tests
+        # working-directory:
         run: yarn ft
