@@ -7,7 +7,7 @@ import "contracts/facets/DiamondCutFacet.sol";
 import "contracts/facets/DiamondLoupeFacet.sol";
 import "contracts/facets/OwnershipFacet.sol";
 import "contracts/Diamond.sol";
-import "contracts/upgradeInitializers/diamondInit.sol";
+import "contracts/upgradeInitializers/DiamondInit.sol";
 import "contracts/interfaces/IDiamondCut.sol";
 import "contracts/libraries/GameUtil.sol";
 import "contracts/facets/GetterFacet.sol";
