@@ -171,7 +171,7 @@ task('deploy', 'deploy contracts')
 
     // Publish the deployment to mongodb
     const publish = args.publish;
-    if (isDev || true) {
+    if (!isDev) {
       console.log('Backend URL', BACKEND_URL);
       const { data } = await axios.post(`${BACKEND_URL}/deployments/add`, configFile);
 
