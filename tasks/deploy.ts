@@ -56,11 +56,10 @@ task('deploy', 'deploy contracts')
 
     // Deploy util contracts
     const util = await deployProxy<Util>('Util', player1, hre, []);
-    console.log('✦ Util deployed:', util.address);
+    console.log('✦ Util:', util.address);
 
     // Deploy diamond and facets
     const diamondAddr = await deployDiamond(hre, [worldConstants, TROOP_TYPES]);
-    console.log('✦ Diamond deployed and initiated:', diamondAddr);
     const facets = [
       { name: 'EngineFacet', libraries: { Util: util.address } },
       { name: 'GetterFacet', libraries: { Util: util.address } },
@@ -111,6 +110,9 @@ task('deploy', 'deploy contracts')
         await (await diamond.connect(player1).spawnTroop(player2ArmyPos3, player2.address, armyTroopTypeId)).wait();
         await (await diamond.connect(player1).spawnTroop(player1TroopTransportPos, player1.address, troopTransportTroopTypeId)).wait();
         await (await diamond.connect(player1).spawnTroop(player2DestroyerPos, player2.address, destroyerTroopTypeId)).wait();
+
+        // advance epoch
+        await (await diamond.connect(player1).updateEpoch()).wait();
       } else {
         let player1Pos: position;
         let player2Pos: position;
@@ -124,7 +126,7 @@ task('deploy', 'deploy contracts')
           x = Math.floor(Math.random() * WORLD_WIDTH);
           y = Math.floor(Math.random() * WORLD_HEIGHT);
           player2Pos = { x, y };
-        } while (tileMap[x][y] != TILE_TYPE.PORT && player2Pos.x !== player1Pos.x && player2Pos.y !== player1Pos.y);
+        } while (tileMap[x][y] !== TILE_TYPE.PORT || player2Pos.x === player1Pos.x || player2Pos.y === player1Pos.y);
 
         // Give each player a port and an army to start with
         let tx = await diamond.connect(player1).initializePlayer(player1Pos, player1.address);
@@ -142,6 +144,18 @@ task('deploy', 'deploy contracts')
         const player2Army = await diamond.getTroopAt(player2Pos);
         if (player2Army.troopTypeId.toNumber() !== armyTroopTypeId) throw new Error('Something went wrong');
       }
+
+      // start the epoch pinging server
+      // fix this
+
+      // const { data } = await axios.post(`${BACKEND_URL}/increaseEpoch`, {
+      //   network: 'localhost',
+      //   address: diamond.address,
+      // });
+
+      // if (data) {
+      //   console.log('Epoch is increasing automatically');
+      // }
     }
 
     // ---------------------------------
@@ -157,7 +171,7 @@ task('deploy', 'deploy contracts')
 
     // Publish the deployment to mongodb
     const publish = args.publish;
-    if (publish && !isDev) {
+    if (!isDev) {
       console.log('Backend URL', BACKEND_URL);
       const { data } = await axios.post(`${BACKEND_URL}/deployments/add`, configFile);
 
@@ -167,7 +181,7 @@ task('deploy', 'deploy contracts')
     }
 
     // If we're in dev mode, port the files to the frontend.
-    if (isDev) {
+    if (isDev || true) {
       const configFileDir = path.join(path.join(__dirname), 'game.config.json');
       const raw = fs.readFileSync(configFileDir).toString();
       const existingDeployments = raw ? JSON.parse(raw) : [];

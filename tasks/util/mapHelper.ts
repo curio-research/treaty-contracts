@@ -195,7 +195,6 @@ export const placePortsAndCities = (colorMap: number[][][], numPorts: number, nu
     numPorts--;
   }
 
-  console.log(numCities);
   while (numCities) {
     if (!inlandTiles) throw new Error('Out of tiles for cities');
 

@@ -120,9 +120,9 @@ export interface UtilInterface extends utils.Interface {
     "_hasTroopTransport((uint8,uint256,uint256))": FunctionFragment;
     "_inBound((uint256,uint256))": FunctionFragment;
     "_isLandTroop(uint256)": FunctionFragment;
-    "_random(uint256)": FunctionFragment;
+    "_random(uint256,uint256)": FunctionFragment;
     "_samePos((uint256,uint256),(uint256,uint256))": FunctionFragment;
-    "_strike(uint256)": FunctionFragment;
+    "_strike(uint256,uint256)": FunctionFragment;
     "_withinDist((uint256,uint256),(uint256,uint256),uint256)": FunctionFragment;
   };
 
@@ -200,7 +200,7 @@ export interface UtilInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "_random",
-    values: [BigNumberish]
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "_samePos",
@@ -208,7 +208,7 @@ export interface UtilInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "_strike",
-    values: [BigNumberish]
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "_withinDist",
@@ -286,9 +286,10 @@ export interface UtilInterface extends utils.Interface {
     "BaseCaptured(address,uint256,uint256)": EventFragment;
     "Death(address,uint256)": EventFragment;
     "EpochUpdate(uint256,uint256)": EventFragment;
-    "Moved(address,uint256,tuple)": EventFragment;
+    "Moved(address,uint256,uint256,tuple,tuple)": EventFragment;
     "NewPlayer(address,tuple)": EventFragment;
     "NewTroop(address,uint256,tuple,tuple)": EventFragment;
+    "ProductionEnded(address,uint256)": EventFragment;
     "ProductionStarted(address,uint256,tuple)": EventFragment;
     "Recovered(address,uint256)": EventFragment;
     "Repaired(address,uint256,uint256)": EventFragment;
@@ -302,6 +303,7 @@ export interface UtilInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "Moved"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NewPlayer"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NewTroop"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ProductionEnded"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ProductionStarted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Recovered"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Repaired"): EventFragment;
@@ -355,8 +357,14 @@ export type EpochUpdateEvent = TypedEvent<
 export type EpochUpdateEventFilter = TypedEventFilter<EpochUpdateEvent>;
 
 export type MovedEvent = TypedEvent<
-  [string, BigNumber, PositionStructOutput],
-  { _player: string; _troopId: BigNumber; _pos: PositionStructOutput }
+  [string, BigNumber, BigNumber, PositionStructOutput, PositionStructOutput],
+  {
+    _player: string;
+    _troopId: BigNumber;
+    _epoch: BigNumber;
+    _startPos: PositionStructOutput;
+    _targetPos: PositionStructOutput;
+  }
 >;
 
 export type MovedEventFilter = TypedEventFilter<MovedEvent>;
@@ -379,6 +387,13 @@ export type NewTroopEvent = TypedEvent<
 >;
 
 export type NewTroopEventFilter = TypedEventFilter<NewTroopEvent>;
+
+export type ProductionEndedEvent = TypedEvent<
+  [string, BigNumber],
+  { _player: string; _baseId: BigNumber }
+>;
+
+export type ProductionEndedEventFilter = TypedEventFilter<ProductionEndedEvent>;
 
 export type ProductionStartedEvent = TypedEvent<
   [string, BigNumber, ProductionStructOutput],
@@ -515,6 +530,7 @@ export interface Util extends BaseContract {
 
     _random(
       _max: BigNumberish,
+      _salt: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -526,6 +542,7 @@ export interface Util extends BaseContract {
 
     _strike(
       _strikeFactor: BigNumberish,
+      _salt: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
@@ -621,7 +638,11 @@ export interface Util extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  _random(_max: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+  _random(
+    _max: BigNumberish,
+    _salt: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   _samePos(
     _p1: PositionStruct,
@@ -631,6 +652,7 @@ export interface Util extends BaseContract {
 
   _strike(
     _strikeFactor: BigNumberish,
+    _salt: BigNumberish,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
@@ -726,7 +748,11 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    _random(_max: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+    _random(
+      _max: BigNumberish,
+      _salt: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     _samePos(
       _p1: PositionStruct,
@@ -736,6 +762,7 @@ export interface Util extends BaseContract {
 
     _strike(
       _strikeFactor: BigNumberish,
+      _salt: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -798,12 +825,20 @@ export interface Util extends BaseContract {
     ): EpochUpdateEventFilter;
     EpochUpdate(_epoch?: null, _time?: null): EpochUpdateEventFilter;
 
-    "Moved(address,uint256,tuple)"(
+    "Moved(address,uint256,uint256,tuple,tuple)"(
       _player?: null,
       _troopId?: null,
-      _pos?: null
+      _epoch?: null,
+      _startPos?: null,
+      _targetPos?: null
     ): MovedEventFilter;
-    Moved(_player?: null, _troopId?: null, _pos?: null): MovedEventFilter;
+    Moved(
+      _player?: null,
+      _troopId?: null,
+      _epoch?: null,
+      _startPos?: null,
+      _targetPos?: null
+    ): MovedEventFilter;
 
     "NewPlayer(address,tuple)"(
       _player?: null,
@@ -823,6 +858,12 @@ export interface Util extends BaseContract {
       _troop?: null,
       _pos?: null
     ): NewTroopEventFilter;
+
+    "ProductionEnded(address,uint256)"(
+      _player?: null,
+      _baseId?: null
+    ): ProductionEndedEventFilter;
+    ProductionEnded(_player?: null, _baseId?: null): ProductionEndedEventFilter;
 
     "ProductionStarted(address,uint256,tuple)"(
       _player?: null,
@@ -935,7 +976,11 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _random(_max: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+    _random(
+      _max: BigNumberish,
+      _salt: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     _samePos(
       _p1: PositionStruct,
@@ -945,6 +990,7 @@ export interface Util extends BaseContract {
 
     _strike(
       _strikeFactor: BigNumberish,
+      _salt: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1049,6 +1095,7 @@ export interface Util extends BaseContract {
 
     _random(
       _max: BigNumberish,
+      _salt: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1060,6 +1107,7 @@ export interface Util extends BaseContract {
 
     _strike(
       _strikeFactor: BigNumberish,
+      _salt: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
