@@ -2,7 +2,7 @@
 pragma solidity ^0.8.4;
 
 import "forge-std/Test.sol";
-import "test/DiamondDeploy.t.sol";
+import "./DiamondDeploy.t.sol";
 
 contract ExperimentTest is Test, DiamondDeployTest {
     function testSetMapChunkGas() public {

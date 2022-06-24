@@ -2,7 +2,7 @@
 pragma solidity ^0.8.4;
 
 import "forge-std/Test.sol";
-import "test/DiamondDeploy.t.sol";
+import "./DiamondDeploy.t.sol";
 
 // This foundry tests inherits DiamondDeployTest, which sets up the contracts for testing.
 contract BasicTest is Test, DiamondDeployTest {

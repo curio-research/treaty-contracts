@@ -2,7 +2,7 @@
 pragma solidity ^0.8.4;
 
 import "forge-std/Test.sol";
-import "test/DiamondDeploy.t.sol";
+import "./DiamondDeploy.t.sol";
 
 contract LogicTest is Test, DiamondDeployTest {
     // TODO: add tests for events
