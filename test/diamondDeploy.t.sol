@@ -6,7 +6,7 @@ import "forge-std/console.sol";
 import "contracts/facets/DiamondCutFacet.sol";
 import "contracts/facets/DiamondLoupeFacet.sol";
 import "contracts/facets/OwnershipFacet.sol";
-import "contracts/diamond.sol";
+import "contracts/Diamond.sol";
 import "contracts/upgradeInitializers/diamondInit.sol";
 import "contracts/interfaces/IDiamondCut.sol";
 import "contracts/libraries/GameUtil.sol";
