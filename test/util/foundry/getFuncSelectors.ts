@@ -1,5 +1,6 @@
 import { Interface } from '@ethersproject/abi';
-const hre = require('hardhat');
+// const hre = require('hardhat');
+import hre from 'hardhat';
 
 // code attribution: written by https://github.com/Timidan
 // this file is ran by Foundry tests to pipe js input back into solidity files
