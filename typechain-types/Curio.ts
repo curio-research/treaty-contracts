@@ -202,6 +202,16 @@ export type WorldConstantsStructOutput = [
   combatEfficiency: BigNumber;
 };
 
+export type ProductionStruct = {
+  troopTypeId: BigNumberish;
+  startEpoch: BigNumberish;
+};
+
+export type ProductionStructOutput = [BigNumber, BigNumber] & {
+  troopTypeId: BigNumber;
+  startEpoch: BigNumber;
+};
+
 export interface CurioInterface extends utils.Interface {
   functions: {
     "diamondCut((address,uint8,bytes4[])[],address,bytes)": FunctionFragment;
@@ -257,9 +267,15 @@ export interface CurioInterface extends utils.Interface {
     "_hasTroopTransport((uint8,uint256,uint256))": FunctionFragment;
     "_inBound((uint256,uint256))": FunctionFragment;
     "_isLandTroop(uint256)": FunctionFragment;
+<<<<<<< HEAD
     "_random(uint256,uint256)": FunctionFragment;
     "_samePos((uint256,uint256),(uint256,uint256))": FunctionFragment;
     "_strike(uint256,uint256)": FunctionFragment;
+=======
+    "_random(uint256)": FunctionFragment;
+    "_samePos((uint256,uint256),(uint256,uint256))": FunctionFragment;
+    "_strike(uint256)": FunctionFragment;
+>>>>>>> 5d96500 (Initial)
     "_withinDist((uint256,uint256),(uint256,uint256),uint256)": FunctionFragment;
   };
 
@@ -465,7 +481,11 @@ export interface CurioInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "_random",
+<<<<<<< HEAD
     values: [BigNumberish, BigNumberish]
+=======
+    values: [BigNumberish]
+>>>>>>> 5d96500 (Initial)
   ): string;
   encodeFunctionData(
     functionFragment: "_samePos",
@@ -473,7 +493,11 @@ export interface CurioInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "_strike",
+<<<<<<< HEAD
     values: [BigNumberish, BigNumberish]
+=======
+    values: [BigNumberish]
+>>>>>>> 5d96500 (Initial)
   ): string;
   encodeFunctionData(
     functionFragment: "_withinDist",
@@ -651,10 +675,16 @@ export interface CurioInterface extends utils.Interface {
     "BaseCaptured(address,uint256,uint256)": EventFragment;
     "Death(address,uint256)": EventFragment;
     "EpochUpdate(uint256,uint256)": EventFragment;
+<<<<<<< HEAD
     "Moved(address,uint256,uint256,tuple,tuple)": EventFragment;
     "NewPlayer(address,tuple)": EventFragment;
     "NewTroop(address,uint256,tuple,tuple)": EventFragment;
     "ProductionEnded(address,uint256)": EventFragment;
+=======
+    "Moved(address,uint256,tuple)": EventFragment;
+    "NewPlayer(address,tuple)": EventFragment;
+    "NewTroop(address,uint256,tuple,tuple)": EventFragment;
+>>>>>>> 5d96500 (Initial)
     "ProductionStarted(address,uint256,tuple)": EventFragment;
     "Recovered(address,uint256)": EventFragment;
     "Repaired(address,uint256,uint256)": EventFragment;
@@ -670,7 +700,10 @@ export interface CurioInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "Moved"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NewPlayer"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NewTroop"): EventFragment;
+<<<<<<< HEAD
   getEvent(nameOrSignatureOrTopic: "ProductionEnded"): EventFragment;
+=======
+>>>>>>> 5d96500 (Initial)
   getEvent(nameOrSignatureOrTopic: "ProductionStarted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Recovered"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Repaired"): EventFragment;
@@ -739,6 +772,7 @@ export type EpochUpdateEvent = TypedEvent<
 export type EpochUpdateEventFilter = TypedEventFilter<EpochUpdateEvent>;
 
 export type MovedEvent = TypedEvent<
+<<<<<<< HEAD
   [string, BigNumber, BigNumber, PositionStructOutput, PositionStructOutput],
   {
     _player: string;
@@ -747,6 +781,10 @@ export type MovedEvent = TypedEvent<
     _startPos: PositionStructOutput;
     _targetPos: PositionStructOutput;
   }
+=======
+  [string, BigNumber, PositionStructOutput],
+  { _player: string; _troopId: BigNumber; _pos: PositionStructOutput }
+>>>>>>> 5d96500 (Initial)
 >;
 
 export type MovedEventFilter = TypedEventFilter<MovedEvent>;
@@ -770,6 +808,7 @@ export type NewTroopEvent = TypedEvent<
 
 export type NewTroopEventFilter = TypedEventFilter<NewTroopEvent>;
 
+<<<<<<< HEAD
 export type ProductionEndedEvent = TypedEvent<
   [string, BigNumber],
   { _player: string; _baseId: BigNumber }
@@ -777,6 +816,8 @@ export type ProductionEndedEvent = TypedEvent<
 
 export type ProductionEndedEventFilter = TypedEventFilter<ProductionEndedEvent>;
 
+=======
+>>>>>>> 5d96500 (Initial)
 export type ProductionStartedEvent = TypedEvent<
   [string, BigNumber, ProductionStructOutput],
   { _player: string; _baseId: BigNumber; _production: ProductionStructOutput }
@@ -1084,7 +1125,10 @@ export interface Curio extends BaseContract {
 
     _random(
       _max: BigNumberish,
+<<<<<<< HEAD
       _salt: BigNumberish,
+=======
+>>>>>>> 5d96500 (Initial)
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -1096,7 +1140,10 @@ export interface Curio extends BaseContract {
 
     _strike(
       _strikeFactor: BigNumberish,
+<<<<<<< HEAD
       _salt: BigNumberish,
+=======
+>>>>>>> 5d96500 (Initial)
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
@@ -1280,6 +1327,116 @@ export interface Curio extends BaseContract {
     _troopTypeId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+<<<<<<< HEAD
+=======
+
+  _getAttackFactor(
+    _troopTypeId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  _getBase(
+    _id: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BaseStructOutput>;
+
+  _getBaseHealth(
+    _baseId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  _getBaseOwner(
+    _baseId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  _getCargoCapacity(
+    _troopId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  _getDamagePerHit(
+    _troopTypeId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  _getDefenseFactor(
+    _troopTypeId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  _getEpochsToProduce(
+    _troopTypeId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  _getMaxHealth(
+    _troopTypeId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  _getMovementCooldown(
+    _troopTypeId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  _getMovesPerEpoch(
+    _troopTypeId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  _getTileAt(
+    _pos: PositionStruct,
+    overrides?: CallOverrides
+  ): Promise<TileStructOutput>;
+
+  _getTroop(
+    _troopId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<TroopStructOutput>;
+
+  _hasPort(_tile: TileStruct, overrides?: CallOverrides): Promise<boolean>;
+
+  _hasTroopTransport(
+    _tile: TileStruct,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<boolean>;
+
+  _isLandTroop(
+    _troopTypeId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  _random(_max: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
+  _samePos(
+    _p1: PositionStruct,
+    _p2: PositionStruct,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  _strike(
+    _strikeFactor: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  _withinDist(
+    _p1: PositionStruct,
+    _p2: PositionStruct,
+    _dist: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  callStatic: {
+    diamondCut(
+      _diamondCut: FacetCutStruct[],
+      _init: string,
+      _calldata: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+>>>>>>> 5d96500 (Initial)
 
   _getAttackFactor(
     _troopTypeId: BigNumberish,
@@ -1633,11 +1790,15 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+<<<<<<< HEAD
     _random(
       _max: BigNumberish,
       _salt: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+=======
+    _random(_max: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+>>>>>>> 5d96500 (Initial)
 
     _samePos(
       _p1: PositionStruct,
@@ -1647,7 +1808,10 @@ export interface Curio extends BaseContract {
 
     _strike(
       _strikeFactor: BigNumberish,
+<<<<<<< HEAD
       _salt: BigNumberish,
+=======
+>>>>>>> 5d96500 (Initial)
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -1730,6 +1894,7 @@ export interface Curio extends BaseContract {
     ): EpochUpdateEventFilter;
     EpochUpdate(_epoch?: null, _time?: null): EpochUpdateEventFilter;
 
+<<<<<<< HEAD
     "Moved(address,uint256,uint256,tuple,tuple)"(
       _player?: null,
       _troopId?: null,
@@ -1744,6 +1909,14 @@ export interface Curio extends BaseContract {
       _startPos?: null,
       _targetPos?: null
     ): MovedEventFilter;
+=======
+    "Moved(address,uint256,tuple)"(
+      _player?: null,
+      _troopId?: null,
+      _pos?: null
+    ): MovedEventFilter;
+    Moved(_player?: null, _troopId?: null, _pos?: null): MovedEventFilter;
+>>>>>>> 5d96500 (Initial)
 
     "NewPlayer(address,tuple)"(
       _player?: null,
@@ -1764,12 +1937,15 @@ export interface Curio extends BaseContract {
       _pos?: null
     ): NewTroopEventFilter;
 
+<<<<<<< HEAD
     "ProductionEnded(address,uint256)"(
       _player?: null,
       _baseId?: null
     ): ProductionEndedEventFilter;
     ProductionEnded(_player?: null, _baseId?: null): ProductionEndedEventFilter;
 
+=======
+>>>>>>> 5d96500 (Initial)
     "ProductionStarted(address,uint256,tuple)"(
       _player?: null,
       _baseId?: null,
@@ -2041,11 +2217,15 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+<<<<<<< HEAD
     _random(
       _max: BigNumberish,
       _salt: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+=======
+    _random(_max: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+>>>>>>> 5d96500 (Initial)
 
     _samePos(
       _p1: PositionStruct,
@@ -2055,7 +2235,10 @@ export interface Curio extends BaseContract {
 
     _strike(
       _strikeFactor: BigNumberish,
+<<<<<<< HEAD
       _salt: BigNumberish,
+=======
+>>>>>>> 5d96500 (Initial)
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -2326,7 +2509,10 @@ export interface Curio extends BaseContract {
 
     _random(
       _max: BigNumberish,
+<<<<<<< HEAD
       _salt: BigNumberish,
+=======
+>>>>>>> 5d96500 (Initial)
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2338,7 +2524,10 @@ export interface Curio extends BaseContract {
 
     _strike(
       _strikeFactor: BigNumberish,
+<<<<<<< HEAD
       _salt: BigNumberish,
+=======
+>>>>>>> 5d96500 (Initial)
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

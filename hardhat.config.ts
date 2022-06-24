@@ -63,7 +63,11 @@ export default {
       chainId: 1337,
       mining: {
         auto: true,
+<<<<<<< HEAD
         // interval: 500,
+=======
+        // interval: false,
+>>>>>>> 5d96500 (Initial)
       },
     },
   },

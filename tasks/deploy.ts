@@ -1,3 +1,4 @@
+import { publishDeployment } from './../api/deployment';
 import axios from 'axios';
 import * as path from 'path';
 import * as fsPromise from 'fs/promises';
@@ -11,6 +12,7 @@ import { position } from '../util/types/common';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
 import { MapInput, TILE_TYPE, TROOP_NAME } from './util/types';
 import { generateGameMaps } from './util/mapHelper';
+import { gameConfig } from '../api/types';
 
 const { BACKEND_URL } = process.env;
 
@@ -163,22 +165,27 @@ task('deploy', 'deploy contracts')
     // copies files and ports to frontend if it's a localhost, or publishes globally if its a global deployment
     // ---------------------------------
 
-    const configFile = {
+    const configFile: gameConfig = {
       address: diamond.address,
       network: hre.network.name,
       deploymentId: `${hre.network.name}-${Date.now()}`,
+      map: tileMap,
     };
 
-    // Publish the deployment to mongodb
     const publish = args.publish;
-    if (!isDev) {
-      console.log('Backend URL', BACKEND_URL);
-      const { data } = await axios.post(`${BACKEND_URL}/deployments/add`, configFile);
 
-      if (data) {
-        console.log('Published successfully');
-      }
-    }
+    // publish deployment
+    await publishDeployment(configFile);
+
+    // if (publish  !isDev) {
+
+    //   console.log('Backend URL', BACKEND_URL);
+    //   const { data } = await axios.post(`${BACKEND_URL}/deployments/add`, configFile);
+
+    //   if (data) {
+    //     console.log('Published successfully');
+    //   }
+    // }
 
     // If we're in dev mode, port the files to the frontend.
     if (isDev || true) {
