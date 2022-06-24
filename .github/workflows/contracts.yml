@@ -32,5 +32,5 @@ jobs:
         run: forge install
 
       - name: Run tests
-        working-directory: ./
+        working-directory: ../
         run: yarn ft
