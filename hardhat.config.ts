@@ -11,6 +11,7 @@ require('dotenv').config();
 // tasks
 import './tasks/port';
 import './tasks/deploy';
+import './tasks/epoch';
 
 // to get the smart contract file sizes, run:
 // yarn run hardhat size-contracts
@@ -63,11 +64,7 @@ export default {
       chainId: 1337,
       mining: {
         auto: true,
-<<<<<<< HEAD
         // interval: 500,
-=======
-        // interval: false,
->>>>>>> 5d96500 (Initial)
       },
     },
   },

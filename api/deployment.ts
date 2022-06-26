@@ -17,3 +17,26 @@ export const publishDeployment = async (gameConfig: gameConfig) => {
     console.log(err);
   }
 };
+
+export const addTask = async (task: any) => {
+  try {
+    const { data } = await axios.post(`${BACKEND_URL}/task/add`, task);
+
+    if (data) {
+      // check for data flags
+      console.log('Added task successfully');
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+interface setTaskActive {}
+
+export const setTaskActiveMode = async (network: string, address: string, status: string) => {
+  try {
+    const { data } = await axios.post(`${BACKEND_URL}/task/setStatus`, { network: network, address: address, status: status });
+  } catch (err) {
+    console.log(err);
+  }
+};
