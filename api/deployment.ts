@@ -1,12 +1,12 @@
 import axios from 'axios';
 import { gameConfig } from './types/index';
 
-const { BACKEND_URL } = process.env;
+const api = axios.create();
+api.defaults.baseURL = process.env.BACKEND_URL;
 
 export const publishDeployment = async (gameConfig: gameConfig) => {
   try {
-    console.log('Backend URL', BACKEND_URL);
-    const { data } = await axios.post(`${BACKEND_URL}/deployments/add`, gameConfig);
+    const { data } = await api.post(`/deployments/add`, gameConfig);
 
     if (data) {
       // check for data flags
@@ -20,10 +20,9 @@ export const publishDeployment = async (gameConfig: gameConfig) => {
 
 export const addTask = async (task: any) => {
   try {
-    const { data } = await axios.post(`${BACKEND_URL}/task/add`, task);
+    const { data } = await api.post(`/task/add`, task);
 
     if (data) {
-      // check for data flags
       console.log('Added task successfully');
     }
   } catch (err) {
@@ -35,7 +34,10 @@ interface setTaskActive {}
 
 export const setTaskActiveMode = async (network: string, address: string, status: string) => {
   try {
-    const { data } = await axios.post(`${BACKEND_URL}/task/setStatus`, { network: network, address: address, status: status });
+    const { data } = await api.post(`/task/setStatus`, { network: network, address: address, status: status });
+    if (data) {
+      console.log(`Set task from ${address} on network ${network} to ${status} mode successful!`);
+    }
   } catch (err) {
     console.log(err);
   }

@@ -192,7 +192,7 @@ task('deploy', 'deploy contracts')
 
       if (isDev) {
         // start the epoch increaser
-        const task = { type: 'inteval', time: 0, interval: 1, functionSig: 'updateEpoch', network: hre.network.name, address: diamond.address, params: [], status: 'active', lastExecuted: 0 };
+        const task = { type: 'inteval', time: 0, interval: 1, functionSig: 'updateEpoch', network: hre.network.name, address: diamond.address, params: [], status: 'inactive', lastExecuted: 0 };
         await addTask(task);
       }
     } catch (err) {

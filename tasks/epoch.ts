@@ -2,6 +2,11 @@ import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { setTaskActiveMode } from '../api/deployment';
 
+// responsible for setting the "active" in a task
+// chain: name of network
+// address: address of game
+// active: "active" or "inactive"
+
 task('epoch', 'deploy contracts')
   .addParam('chain', 'which chain') // default is to call port
   .addParam('address', 'which address') // default is to call publish
