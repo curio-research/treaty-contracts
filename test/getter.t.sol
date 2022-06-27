@@ -30,15 +30,17 @@ contract GetterTest is Test, DiamondDeployTest {
         vm.prank(player1);
         engine.battle(1, Position({x: 2, y: 3})); // player2's first army dies
 
-        // verify that all troops remain the same except player2's dead army
-        _allTroops = getter.bulkGetAllTroops();
-        assertEq(_allTroops.length, 5);
-        assertEq(_allTroops[0].owner, player1);
-        assertEq(_allTroops[1].pos.x, 1);
-        assertEq(_allTroops[1].pos.y, 4);
-        assertEq(_allTroops[2].troopTypeId, NULL);
-        assertEq(_allTroops[2].owner, address(0));
-        assertEq(_allTroops[4].troopTypeId, destroyerTroopTypeId);
+        if (getter.getTroopAt(Position({x: 2, y: 3})).health == 0) {
+            // verify that all troops remain the same except player2's dead army
+            _allTroops = getter.bulkGetAllTroops();
+            assertEq(_allTroops.length, 5);
+            assertEq(_allTroops[0].owner, player1);
+            assertEq(_allTroops[1].pos.x, 1);
+            assertEq(_allTroops[1].pos.y, 4);
+            assertEq(_allTroops[2].troopTypeId, NULL);
+            assertEq(_allTroops[2].owner, address(0));
+            assertEq(_allTroops[4].troopTypeId, destroyerTroopTypeId);
+        }
     }
 
     function testGetMapChunk() public {
