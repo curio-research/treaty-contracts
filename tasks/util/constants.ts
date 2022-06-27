@@ -12,7 +12,7 @@ export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 export const WORLD_WIDTH = 30;
 export const WORLD_HEIGHT = 20;
 export const NUM_PORTS = 10;
-export const NUM_CITIES = 10;
+export const NUM_CITIES = 4;
 export const MAP_INTERVAL = 10;
 export const SECONDS_PER_EPOCH = 2;
 export const COMBAT_EFFICIENCY = 50;
@@ -114,7 +114,7 @@ export const RENDER_CONSTANTS: RenderInput = {
   waterNoiseCutoff: 0.55,
   colorLowestPercent: 40,
   plateSizeMultiplier: 6,
-  superpositionRatio: [0.4, 0.6],
+  superpositionRatio: [0.5, 0.5],
 };
 
 // ------------------------------------------------
