@@ -30,8 +30,6 @@ export const addTask = async (task: any) => {
   }
 };
 
-interface setTaskActive {}
-
 export const setTaskActiveMode = async (network: string, address: string, status: string) => {
   try {
     const { data } = await api.post(`/task/setStatus`, { network: network, address: address, status: status });

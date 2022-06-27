@@ -9,12 +9,12 @@ export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 // Game constants (source of truth)
 // ----------------------------------------------------------
 
-export const WORLD_WIDTH = 20;
-export const WORLD_HEIGHT = 20;
-export const NUM_PORTS = 10;
-export const NUM_CITIES = 4;
+export const WORLD_WIDTH = 15;
+export const WORLD_HEIGHT = 15;
+export const NUM_PORTS = 17;
+export const NUM_CITIES = 0;
 export const MAP_INTERVAL = 10;
-export const SECONDS_PER_EPOCH = 2;
+export const SECONDS_PER_EPOCH = 5;
 export const COMBAT_EFFICIENCY = 50;
 export const BASE_ATTACK_FACTOR = 1;
 export const BASE_DEFENSE_FACTOR = 1;
@@ -36,7 +36,7 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
   },
   {
     name: TROOP_NAME.TROOP_TRANSPORT,
-    movesPerEpoch: 2,
+    movesPerEpoch: 1,
     maxHealth: 3,
     damagePerHit: 1,
     attackFactor: 50,
@@ -49,7 +49,7 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
   },
   {
     name: TROOP_NAME.DESTROYER,
-    movesPerEpoch: 3,
+    movesPerEpoch: 1,
     maxHealth: 3,
     damagePerHit: 1,
     attackFactor: 100,
@@ -62,7 +62,7 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
   },
   {
     name: TROOP_NAME.CRUISER,
-    movesPerEpoch: 2,
+    movesPerEpoch: 1,
     maxHealth: 8,
     damagePerHit: 2,
     attackFactor: 100,
@@ -75,7 +75,7 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
   },
   {
     name: TROOP_NAME.BATTLESHIP,
-    movesPerEpoch: 2,
+    movesPerEpoch: 1,
     maxHealth: 12,
     damagePerHit: 3,
     attackFactor: 100,
@@ -108,13 +108,13 @@ export const generateWorldConstants = (adminAddr: string): WorldConstantsStruct 
 // ----------------------------------------------------------
 
 export const RENDER_CONSTANTS: RenderInput = {
-  sizeFactor: 10,
+  sizeFactor: 5,
   numLandColors: 5,
   numWaterColors: 2,
-  waterNoiseCutoff: 0.55,
+  waterNoiseCutoff: 0.5,
   colorLowestPercent: 40,
   plateSizeMultiplier: 6,
-  superpositionRatio: [0.5, 0.5],
+  superpositionRatio: [0.7, 0.3],
 };
 
 // ------------------------------------------------

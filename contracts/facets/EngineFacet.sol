@@ -298,7 +298,7 @@ contract EngineFacet is UseStorage {
         Troop memory _troop = gs().troopIdMap[_troopId];
         if (_troop.owner != msg.sender) revert("CURIO: Can only capture with own troop");
         if (!Util._withinDist(_troop.pos, _targetPos, 1)) revert("CURIO: Destination too far");
-        if (!Util._isLandTroop(_troop.troopTypeId)) revert("CURIO: Only a land troop can capture bases");
+        // if (!Util._isLandTroop(_troop.troopTypeId)) revert("CURIO: Only a land troop can capture bases");
 
         Tile memory _targetTile = Util._getTileAt(_targetPos);
         if (_targetTile.baseId == NULL) revert("CURIO: No base to capture");

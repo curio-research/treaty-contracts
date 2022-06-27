@@ -190,11 +190,9 @@ task('deploy', 'deploy contracts')
         await hre.run('port'); // default to porting files
       }
 
-      if (isDev) {
-        // start the epoch increaser
-        const task = { type: 'inteval', time: 0, interval: 1, functionSig: 'updateEpoch', network: hre.network.name, address: diamond.address, params: [], status: 'inactive', lastExecuted: 0 };
-        await addTask(task);
-      }
+      // start the epoch increaser
+      const task = { type: 'interval', time: 0, interval: Number(worldConstants.secondsPerEpoch) + 1, functionSig: 'updateEpoch', network: hre.network.name, address: diamond.address, params: [], status: 'inactive', lastExecuted: 0 };
+      await addTask(task);
     } catch (err) {
       console.log(err);
     }
