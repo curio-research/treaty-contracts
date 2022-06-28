@@ -230,7 +230,6 @@ export const placePortsAndCities = (colorMap: number[][][], numPorts: number, nu
   let tile: number[];
 
   const { islandID, islandIDMarkerMap } = islandIDMapCreator(JSON.parse(JSON.stringify(tileMap)));
-  // console.log(islandIDMarkerMap);
 
   const islandIdToMapping: Map<number, position[]> = new Map();
 
@@ -258,6 +257,7 @@ export const placePortsAndCities = (colorMap: number[][][], numPorts: number, nu
     const positionsByIslandID = islandIdToMapping.get(i);
     if (positionsByIslandID) {
       const randomIslandTilePosition = positionsByIslandID[Math.floor(Math.random() * positionsByIslandID.length)];
+      tileMap[randomIslandTilePosition.x][randomIslandTilePosition.y] = TILE_TYPE.PORT;
       portTiles.push([randomIslandTilePosition.x, randomIslandTilePosition.y]);
     }
   }
