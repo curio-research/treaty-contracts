@@ -230,9 +230,9 @@ export const placePortsAndCities = (colorMap: number[][][], numPorts: number, nu
 
   // loop through coastline tiles
   for (let i = 0; i < coastlineTiles.length; i++) {
-    const coastLineTile = coastlineTiles[i];
-    const x = coastLineTile[0];
-    const y = coastLineTile[1];
+    const coastlineTile = coastlineTiles[i];
+    const x = coastlineTile[0];
+    const y = coastlineTile[1];
     const coastLineTilePos = { x, y };
     const islandID = islandIDMarkerMap[x][y];
 
