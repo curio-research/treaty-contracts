@@ -50,7 +50,7 @@ contract LogicTest is Test, DiamondDeployTest {
 
         // fail: player1 finish producing troop on an occupied base
         vm.prank(deployer);
-        engine.spawnTroop(player1Pos, player1, armyTroopTypeId);
+        admin.spawnTroop(player1Pos, player1, armyTroopTypeId);
         for (uint256 i = 1; i <= troopTransportTroopType.epochsToProduce; i++) {
             vm.warp(_startTime + i * 10); // increase time by a few seconds
             engine.updateEpoch();
@@ -101,8 +101,8 @@ contract LogicTest is Test, DiamondDeployTest {
     function testMoveFailure() public {
         // spawn troop at player1 location
         vm.startPrank(deployer);
-        engine.spawnTroop(player1Pos, player1, troopTransportTroopTypeId);
-        engine.spawnTroop(Position({x: 7, y: 4}), player1, troopTransportTroopTypeId);
+        admin.spawnTroop(player1Pos, player1, troopTransportTroopTypeId);
+        admin.spawnTroop(Position({x: 7, y: 4}), player1, troopTransportTroopTypeId);
         vm.stopPrank();
         uint256 _troopId = initTroopNonce;
 
@@ -144,7 +144,7 @@ contract LogicTest is Test, DiamondDeployTest {
 
     function testMoveTooManyTimesPerEpoch() public {
         vm.prank(deployer);
-        engine.spawnTroop(Position({x: 0, y: 9}), player1, destroyerTroopTypeId);
+        admin.spawnTroop(Position({x: 0, y: 9}), player1, destroyerTroopTypeId);
         uint256 _destroyerId = initTroopNonce;
 
         vm.startPrank(player1);
@@ -176,7 +176,7 @@ contract LogicTest is Test, DiamondDeployTest {
     function testMove() public {
         // produce a troop transport
         vm.prank(deployer);
-        engine.spawnTroop(player1Pos, player1, troopTransportTroopTypeId);
+        admin.spawnTroop(player1Pos, player1, troopTransportTroopTypeId);
 
         vm.startPrank(player1);
 
@@ -199,11 +199,11 @@ contract LogicTest is Test, DiamondDeployTest {
 
         // two troop transports, one in a port, one on ocean, next to an army
         vm.startPrank(deployer);
-        engine.transferBaseOwnership(_troopTransport2Pos, player1);
-        engine.spawnTroop(player1Pos, player1, armyTroopTypeId);
-        engine.spawnTroop(_troopTransport1Pos, player1, troopTransportTroopTypeId);
-        engine.spawnTroop(_troopTransport2Pos, player1, troopTransportTroopTypeId);
-        engine.spawnTroop(_enemyPos, player2, destroyerTroopTypeId);
+        admin.transferBaseOwnership(_troopTransport2Pos, player1);
+        admin.spawnTroop(player1Pos, player1, armyTroopTypeId);
+        admin.spawnTroop(_troopTransport1Pos, player1, troopTransportTroopTypeId);
+        admin.spawnTroop(_troopTransport2Pos, player1, troopTransportTroopTypeId);
+        admin.spawnTroop(_enemyPos, player2, destroyerTroopTypeId);
         vm.stopPrank();
 
         // verify that initial states are correct
@@ -286,8 +286,8 @@ contract LogicTest is Test, DiamondDeployTest {
         Position memory _enemy2Pos = Position({x: 7, y: 5});
 
         vm.startPrank(deployer);
-        engine.spawnTroop(_troopPos, player1, destroyerTroopTypeId);
-        engine.spawnTroop(_enemy1Pos, player2, troopTransportTroopTypeId); // a weaker enemy
+        admin.spawnTroop(_troopPos, player1, destroyerTroopTypeId);
+        admin.spawnTroop(_enemy1Pos, player2, troopTransportTroopTypeId); // a weaker enemy
         vm.stopPrank();
 
         uint256 _player1DestroyerId = initTroopNonce;
@@ -311,7 +311,7 @@ contract LogicTest is Test, DiamondDeployTest {
         Position memory _destroyerPos = Position({x: 7, y: 3});
 
         vm.prank(deployer);
-        engine.spawnTroop(_destroyerPos, player1, destroyerTroopTypeId);
+        admin.spawnTroop(_destroyerPos, player1, destroyerTroopTypeId);
         uint256 _destroyerId = initTroopNonce;
 
         // increase epoch
@@ -344,9 +344,9 @@ contract LogicTest is Test, DiamondDeployTest {
         Position memory _destroyerPos = Position({x: 7, y: 3});
 
         vm.startPrank(deployer);
-        engine.spawnTroop(_armyPos, player2, armyTroopTypeId);
+        admin.spawnTroop(_armyPos, player2, armyTroopTypeId);
         uint256 _armyId = initTroopNonce;
-        engine.spawnTroop(_destroyerPos, player1, destroyerTroopTypeId);
+        admin.spawnTroop(_destroyerPos, player1, destroyerTroopTypeId);
         vm.stopPrank();
 
         Troop memory _army;
@@ -382,9 +382,9 @@ contract LogicTest is Test, DiamondDeployTest {
     // Capture base
     function testCaptureBaseFailure() public {
         vm.startPrank(deployer);
-        engine.spawnTroop(Position({x: 5, y: 1}), player1, armyTroopTypeId);
+        admin.spawnTroop(Position({x: 5, y: 1}), player1, armyTroopTypeId);
         uint256 _armyId = initTroopNonce;
-        engine.spawnTroop(Position({x: 7, y: 3}), player1, destroyerTroopTypeId);
+        admin.spawnTroop(Position({x: 7, y: 3}), player1, destroyerTroopTypeId);
         uint256 _destroyerId = initTroopNonce + 1;
         vm.stopPrank();
 
@@ -410,7 +410,7 @@ contract LogicTest is Test, DiamondDeployTest {
         vm.stopPrank();
 
         vm.prank(deployer);
-        engine.spawnTroop(player3Pos, player3, armyTroopTypeId);
+        admin.spawnTroop(player3Pos, player3, armyTroopTypeId);
         vm.prank(player1);
         vm.expectRevert(bytes("CURIO: Destination tile occupied"));
         engine.captureBase(_armyId, player3Pos);
@@ -418,11 +418,11 @@ contract LogicTest is Test, DiamondDeployTest {
 
     function testCaptureBase() public {
         vm.startPrank(deployer);
-        engine.spawnTroop(Position({x: 6, y: 2}), player1, armyTroopTypeId);
+        admin.spawnTroop(Position({x: 6, y: 2}), player1, armyTroopTypeId);
         uint256 _armyId = initTroopNonce;
-        engine.spawnTroop(Position({x: 7, y: 3}), player1, destroyerTroopTypeId);
+        admin.spawnTroop(Position({x: 7, y: 3}), player1, destroyerTroopTypeId);
         uint256 _destroyerId = initTroopNonce + 1;
-        engine.spawnTroop(Position({x: 6, y: 4}), player2, armyTroopTypeId);
+        admin.spawnTroop(Position({x: 6, y: 4}), player2, armyTroopTypeId);
         uint256 _player2ArmyId = initTroopNonce + 2;
         vm.stopPrank();
 
@@ -475,8 +475,8 @@ contract LogicTest is Test, DiamondDeployTest {
         uint256 _player1DestroyerId = initTroopNonce;
         Position memory _player2DestroyerPos = Position({x: 7, y: 1});
         vm.startPrank(deployer);
-        engine.spawnTroop(player1Pos, player1, destroyerTroopTypeId);
-        engine.spawnTroop(_player2DestroyerPos, player2, destroyerTroopTypeId);
+        admin.spawnTroop(player1Pos, player1, destroyerTroopTypeId);
+        admin.spawnTroop(_player2DestroyerPos, player2, destroyerTroopTypeId);
         vm.stopPrank();
 
         vm.startPrank(player1);
@@ -513,8 +513,8 @@ contract LogicTest is Test, DiamondDeployTest {
         uint256 _player1DestroyerId = initTroopNonce;
         Position memory _player2DestroyerPos = Position({x: 7, y: 1});
         vm.startPrank(deployer);
-        engine.spawnTroop(player1Pos, player1, destroyerTroopTypeId);
-        engine.spawnTroop(_player2DestroyerPos, player2, destroyerTroopTypeId);
+        admin.spawnTroop(player1Pos, player1, destroyerTroopTypeId);
+        admin.spawnTroop(_player2DestroyerPos, player2, destroyerTroopTypeId);
         vm.stopPrank();
 
         vm.startPrank(player1);

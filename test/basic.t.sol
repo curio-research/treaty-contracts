@@ -55,7 +55,7 @@ contract BasicTest is Test, DiamondDeployTest {
 
         vm.expectRevert(bytes("CURIO: Unauthorized"));
         vm.prank(player2);
-        engine.spawnTroop(_pos, player2, _armyTroopTypeId);
+        admin.spawnTroop(_pos, player2, _armyTroopTypeId);
     }
 
     function testInitializePlayer() public {
@@ -104,7 +104,7 @@ contract BasicTest is Test, DiamondDeployTest {
         assertEq(getter.getBaseAt(_pos).owner, NULL_ADDR);
 
         vm.prank(deployer);
-        engine.transferBaseOwnership(_pos, player1);
+        admin.transferBaseOwnership(_pos, player1);
 
         assertEq(getter.getBaseAt(_pos).owner, player1);
     }

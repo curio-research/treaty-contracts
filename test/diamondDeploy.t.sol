@@ -10,6 +10,7 @@ import "contracts/diamond.sol";
 import "contracts/upgradeInitializers/diamondInit.sol";
 import "contracts/interfaces/IDiamondCut.sol";
 import "contracts/libraries/GameUtil.sol";
+import "contracts/facets/AdminFacet.sol";
 import "contracts/facets/GetterFacet.sol";
 import "contracts/facets/EngineFacet.sol";
 import "contracts/libraries/Types.sol";
@@ -23,10 +24,12 @@ contract DiamondDeployTest is Test {
     DiamondInit public diamondInit;
     DiamondLoupeFacet public diamondLoupeFacet;
     OwnershipFacet public diamondOwnershipFacet;
+    AdminFacet public adminFacet;
     GetterFacet public getterFacet;
     EngineFacet public engineFacet;
 
     // diamond-contract-casted methods
+    AdminFacet public admin;
     GetterFacet public getter;
     EngineFacet public engine;
     OwnershipFacet public ownership;
@@ -134,6 +137,7 @@ contract DiamondDeployTest is Test {
         diamondLoupeFacet = new DiamondLoupeFacet();
         diamondOwnershipFacet = new OwnershipFacet();
 
+        adminFacet = new AdminFacet();
         getterFacet = new GetterFacet();
         engineFacet = new EngineFacet();
 
@@ -143,19 +147,21 @@ contract DiamondDeployTest is Test {
         // fetch args from cli. craft payload for init deploy
         bytes memory initData = abi.encodeWithSelector(getSelectors("DiamondInit")[0], _worldConstants, _troopTypes);
 
-        IDiamondCut.FacetCut[] memory cuts = new IDiamondCut.FacetCut[](4);
+        IDiamondCut.FacetCut[] memory cuts = new IDiamondCut.FacetCut[](5);
         cuts[0] = IDiamondCut.FacetCut({facetAddress: address(diamondLoupeFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: LOUPE_SELECTORS});
         cuts[1] = IDiamondCut.FacetCut({facetAddress: address(diamondOwnershipFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: OWNERSHIP_SELECTORS});
         cuts[2] = IDiamondCut.FacetCut({facetAddress: address(getterFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: getSelectors("GetterFacet")});
         cuts[3] = IDiamondCut.FacetCut({facetAddress: address(engineFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: getSelectors("EngineFacet")});
+        cuts[4] = IDiamondCut.FacetCut({facetAddress: address(adminFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: getSelectors("AdminFacet")});
 
         IDiamondCut(diamond).diamondCut(cuts, address(diamondInit), initData);
 
+        admin = AdminFacet(diamond);
         getter = GetterFacet(diamond);
         engine = EngineFacet(diamond);
         ownership = OwnershipFacet(diamond);
 
-        // // initialize map
+        // // initialize map (outdated)
         // Position memory _startPos = Position({x: 0, y: 0});
         // uint256[][] memory _chunk = generateMapChunk(_worldConstants.mapInterval);
         // engine.setMapChunk(_startPos, _chunk);
@@ -163,13 +169,12 @@ contract DiamondDeployTest is Test {
         // initialize map using lazy + encoding
         uint256[][] memory _map = generateMap(_worldConstants.worldWidth, _worldConstants.worldHeight, _worldConstants.mapInterval);
         uint256[] memory _encodedMapCols = _encodeTileMap(_worldConstants.numInitTerrainTypes, _map);
-        engine.storeEncodedRawMapCols(_encodedMapCols);
+        admin.storeEncodedRawMapCols(_encodedMapCols);
 
         // initialize players
-
-        engine.initializePlayer(player1Pos, player1);
-        engine.initializePlayer(player2Pos, player2);
-        engine.initializePlayer(player3Pos, player3);
+        admin.initializePlayer(player1Pos, player1);
+        admin.initializePlayer(player2Pos, player2);
+        admin.initializePlayer(player3Pos, player3);
 
         vm.stopPrank();
     }
@@ -190,7 +195,6 @@ contract DiamondDeployTest is Test {
                 _encodedCol = _temp;
             }
             _result[x] = _encodedCol;
-            // console.log("encodedCol", _encodedCol);
         }
 
         return _result;
