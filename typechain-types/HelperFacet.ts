@@ -26,6 +26,7 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
 
 export interface HelperFacetInterface extends utils.Interface {
   functions: {
+    "bulkInitializeTiles((uint256,uint256)[])": FunctionFragment;
     "endProduction((uint256,uint256))": FunctionFragment;
     "initializePlayer((uint256,uint256),address)": FunctionFragment;
     "repair((uint256,uint256))": FunctionFragment;
@@ -35,6 +36,10 @@ export interface HelperFacetInterface extends utils.Interface {
     "updateEpoch()": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "bulkInitializeTiles",
+    values: [PositionStruct[]]
+  ): string;
   encodeFunctionData(
     functionFragment: "endProduction",
     values: [PositionStruct]
@@ -64,6 +69,10 @@ export interface HelperFacetInterface extends utils.Interface {
     values?: undefined
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "bulkInitializeTiles",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "endProduction",
     data: BytesLike
@@ -117,6 +126,11 @@ export interface HelperFacet extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    bulkInitializeTiles(
+      _positions: PositionStruct[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     endProduction(
       _pos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -155,6 +169,11 @@ export interface HelperFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
+
+  bulkInitializeTiles(
+    _positions: PositionStruct[],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   endProduction(
     _pos: PositionStruct,
@@ -195,6 +214,11 @@ export interface HelperFacet extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    bulkInitializeTiles(
+      _positions: PositionStruct[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     endProduction(
       _pos: PositionStruct,
       overrides?: CallOverrides
@@ -232,6 +256,11 @@ export interface HelperFacet extends BaseContract {
   filters: {};
 
   estimateGas: {
+    bulkInitializeTiles(
+      _positions: PositionStruct[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     endProduction(
       _pos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -272,6 +301,11 @@ export interface HelperFacet extends BaseContract {
   };
 
   populateTransaction: {
+    bulkInitializeTiles(
+      _positions: PositionStruct[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     endProduction(
       _pos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }

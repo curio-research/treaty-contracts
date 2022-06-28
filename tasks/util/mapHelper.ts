@@ -75,7 +75,7 @@ export const generateGameMaps = (mapInput: MapInput, renderInput: RenderInput): 
     colorMap[cityTile[0]][cityTile[1]] = [100, 100, 100];
   });
 
-  return { tileMap, colorMap };
+  return { tileMap, portTiles, cityTiles, colorMap };
 };
 
 export const generateEmptyMatrix = (mapWidth: number, mapHeight: number, defaultValue: any): any[][] => {

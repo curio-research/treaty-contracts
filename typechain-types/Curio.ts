@@ -235,6 +235,7 @@ export interface CurioInterface extends utils.Interface {
     "getTroopAt((uint256,uint256))": FunctionFragment;
     "getTroopType(uint256)": FunctionFragment;
     "getWorldConstants()": FunctionFragment;
+    "bulkInitializeTiles((uint256,uint256)[])": FunctionFragment;
     "endProduction((uint256,uint256))": FunctionFragment;
     "initializePlayer((uint256,uint256),address)": FunctionFragment;
     "repair((uint256,uint256))": FunctionFragment;
@@ -362,6 +363,10 @@ export interface CurioInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getWorldConstants",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "bulkInitializeTiles",
+    values: [PositionStruct[]]
   ): string;
   encodeFunctionData(
     functionFragment: "endProduction",
@@ -554,6 +559,10 @@ export interface CurioInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getWorldConstants",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "bulkInitializeTiles",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -957,6 +966,11 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[WorldConstantsStructOutput]>;
 
+    bulkInitializeTiles(
+      _positions: PositionStruct[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     endProduction(
       _pos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1234,6 +1248,11 @@ export interface Curio extends BaseContract {
     overrides?: CallOverrides
   ): Promise<WorldConstantsStructOutput>;
 
+  bulkInitializeTiles(
+    _positions: PositionStruct[],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   endProduction(
     _pos: PositionStruct,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -1510,6 +1529,11 @@ export interface Curio extends BaseContract {
     getWorldConstants(
       overrides?: CallOverrides
     ): Promise<WorldConstantsStructOutput>;
+
+    bulkInitializeTiles(
+      _positions: PositionStruct[],
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     endProduction(
       _pos: PositionStruct,
@@ -1916,6 +1940,11 @@ export interface Curio extends BaseContract {
 
     getWorldConstants(overrides?: CallOverrides): Promise<BigNumber>;
 
+    bulkInitializeTiles(
+      _positions: PositionStruct[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     endProduction(
       _pos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -2188,6 +2217,11 @@ export interface Curio extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getWorldConstants(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    bulkInitializeTiles(
+      _positions: PositionStruct[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     endProduction(
       _pos: PositionStruct,

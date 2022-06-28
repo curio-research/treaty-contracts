@@ -164,4 +164,10 @@ contract HelperFacet is UseStorage {
         emit Util.Repaired(msg.sender, _tile.occupantId, _troop.health);
         if (_troop.health == Util._getMaxHealth(_troop.troopTypeId)) emit Util.Recovered(msg.sender, _troopId);
     }
+
+    function bulkInitializeTiles(Position[] memory _positions) external onlyAdmin {
+        for (uint256 i = 0; i < _positions.length; i++) {
+            Util._initializeTile(_positions[i]);
+        }
+    }
 }
