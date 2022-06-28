@@ -1,3 +1,4 @@
+import { position } from './../../util/types/common';
 import { BigNumberish, BigNumber } from 'ethers';
 import SimplexNoise from 'simplex-noise';
 import { RenderInput, ColorsAndCutoffs, TileMapOutput, TILE_TYPE, AllGameMapsOutput, MapInput } from './types';
@@ -51,8 +52,6 @@ export const generateGameMaps = (mapInput: MapInput, renderInput: RenderInput): 
     return row.map((val: number) => assignDepthColor(val, colorsAndCutoffs));
   });
 
-  console.log(colorMap);
-
   const { tileMap, portTiles, cityTiles } = placePortsAndCities(colorMap, mapInput.numPorts, mapInput.numCities);
 
   // Update colorMap with ports and cities
@@ -66,52 +65,51 @@ export const generateGameMaps = (mapInput: MapInput, renderInput: RenderInput): 
     colorMap[tile[0]][tile[1]] = [100, 100, 100];
   }
 
-  // run bfs
-  console.log(tileMap);
-
-  numberOfIslands(tileMap);
-
   return { tileMap, colorMap };
 };
 
-const validLand = [1, 2, 4, 5];
+const validLand = [TILE_TYPE.CITY, TILE_TYPE.COAST, TILE_TYPE.INLAND, TILE_TYPE.PORT];
 
-const numberOfIslands = (map: number[][]) => {
+interface islandIDMapCreatorRes {
+  islandID: number;
+  islandIDMarkerMap: number[][];
+}
+// DFS
+const islandIDMapCreator = (map: number[][]): islandIDMapCreatorRes => {
+  const islandIDMarkerMap: number[][] = new Array(map.length).fill(null).map(() => new Array(map[0].length).fill(0));
+  let islandID = 0;
+
+  // don't explore if its out of bounds or: already explored, comin
+  const explore = (row: number, col: number, grid: number[][], islandID: number) => {
+    if (row < 0 || col < 0 || row >= grid.length || col >= grid[row].length || grid[row][col] === TILE_TYPE.WATER || grid[row][col] === 69) {
+      return;
+    }
+
+    //Otherwise, we should explore it
+    grid[row][col] = 69;
+    islandIDMarkerMap[row][col] = islandID;
+
+    explore(row, col + 1, grid, islandID);
+    explore(row, col - 1, grid, islandID);
+    explore(row + 1, col, grid, islandID);
+    explore(row - 1, col, grid, islandID);
+  };
+
   let count = 0; // the counted islands
   //Go though each cell of the 2d array/grid
   for (let row = 0; row < map.length; row++) {
     for (let col = 0; col < map[row].length; col++) {
       if (validLand.includes(map[row][col])) {
         count++;
-        explore(row, col, map);
+        islandID++;
+        explore(row, col, map, islandID);
       }
     }
   }
-  console.log('Number of islands: ', count);
-  return count;
-};
-// Takes a cell in a grid with a “1” , turns it into a “0” and explores (DFS) any of the left, right, up, down 1’s
-const explore = (row: any, col: any, grid: any) => {
-  //Let's return IF
-  // row < 0 OR col < 0 OR row is out of bounds(meaning the row is larger than the number of arrays in the 2d array) OR col is at/out of bounds (meaning the current col is at/over the number of elements a row has.)
-  if (row < 0 || col < 0 || row >= grid.length || col >= grid[row].length || grid[row][col] === 3 || grid[row][col] === 0 || grid[row][col] === 69) {
-    return;
-  }
 
-  //Otherwise, we should explore it!
-  //First let's set the current spot to "0"
-  grid[row][col] = 69;
+  // console.log(islandIDMarkerMap);
 
-  //Possibilites:
-  // 1) 1 to the right, left, top, bottom
-  //right
-  explore(row, col + 1, grid);
-  //Left
-  explore(row, col - 1, grid);
-  //Down
-  explore(row + 1, col, grid);
-  //Up
-  explore(row - 1, col, grid);
+  return { islandID, islandIDMarkerMap };
 };
 
 /**
@@ -230,6 +228,39 @@ export const placePortsAndCities = (colorMap: number[][][], numPorts: number, nu
   // 2. Randomly place ports and cities.
   let tileIndex: number;
   let tile: number[];
+
+  const { islandID, islandIDMarkerMap } = islandIDMapCreator(JSON.parse(JSON.stringify(tileMap)));
+  // console.log(islandIDMarkerMap);
+
+  const islandIdToMapping: Map<number, position[]> = new Map();
+
+  // loop through coastline tiles
+  for (let i = 0; i < coastlineTiles.length; i++) {
+    const coastLineTile = coastlineTiles[i];
+    const x = coastLineTile[0];
+    const y = coastLineTile[1];
+    const coastLineTilePos = { x, y };
+    const islandID = islandIDMarkerMap[x][y];
+
+    const islandArr = islandIdToMapping.get(islandID);
+    if (!islandArr) {
+      islandIdToMapping.set(islandID, [coastLineTilePos]);
+    } else {
+      islandArr.push(coastLineTilePos);
+      islandIdToMapping.set(islandID, islandArr);
+    }
+  }
+
+  // go through each island number
+  // pick a random coast tile on each island and then add it to the island array.
+  // this ensures that theres at least one city on each island!
+  for (let i = 1; i < islandID + 1; i++) {
+    const positionsByIslandID = islandIdToMapping.get(i);
+    if (positionsByIslandID) {
+      const randomIslandTilePosition = positionsByIslandID[Math.floor(Math.random() * positionsByIslandID.length)];
+      portTiles.push([randomIslandTilePosition.x, randomIslandTilePosition.y]);
+    }
+  }
 
   while (numPorts) {
     if (!coastlineTiles) throw new Error('Out of tiles for ports');
