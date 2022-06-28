@@ -220,6 +220,7 @@ export interface CurioInterface extends utils.Interface {
     "endProduction((uint256,uint256))": FunctionFragment;
     "initializePlayer((uint256,uint256),address)": FunctionFragment;
     "move(uint256,(uint256,uint256))": FunctionFragment;
+    "repair((uint256,uint256))": FunctionFragment;
     "spawnTroop((uint256,uint256),address,uint256)": FunctionFragment;
     "startProduction((uint256,uint256),uint256)": FunctionFragment;
     "storeEncodedRawMapCols(uint256[])": FunctionFragment;
@@ -306,6 +307,10 @@ export interface CurioInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "move",
     values: [BigNumberish, PositionStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "repair",
+    values: [PositionStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "spawnTroop",
@@ -507,6 +512,7 @@ export interface CurioInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "move", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "repair", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "spawnTroop", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "startProduction",
@@ -875,6 +881,11 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    repair(
+      _pos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     spawnTroop(
       _pos: PositionStruct,
       _player: string,
@@ -1138,6 +1149,11 @@ export interface Curio extends BaseContract {
   move(
     _troopId: BigNumberish,
     _targetPos: PositionStruct,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  repair(
+    _pos: PositionStruct,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1406,6 +1422,8 @@ export interface Curio extends BaseContract {
       _targetPos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    repair(_pos: PositionStruct, overrides?: CallOverrides): Promise<void>;
 
     spawnTroop(
       _pos: PositionStruct,
@@ -1812,6 +1830,11 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    repair(
+      _pos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     spawnTroop(
       _pos: PositionStruct,
       _player: string,
@@ -2065,6 +2088,11 @@ export interface Curio extends BaseContract {
     move(
       _troopId: BigNumberish,
       _targetPos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    repair(
+      _pos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -97,7 +97,7 @@ contract GetterFacet is UseStorage {
     function getBulkTroopTypes(uint256 _startId, uint256 _endId) external view returns (TroopType[] memory) {
         TroopType[] memory _troops = new TroopType[](_endId - _startId + 1);
 
-        for (uint256 i = 0; i < _endId - _startId; i++) {
+        for (uint256 i = 0; i < _endId - _startId + 1; i++) {
             _troops[i] = gs().troopTypeIdMap[i + _startId];
         }
 

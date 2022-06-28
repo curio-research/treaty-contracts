@@ -53,7 +53,7 @@ contract BasicTest is Test, DiamondDeployTest {
         Position memory _pos = Position({x: 3, y: 3});
         uint256 _armyTroopTypeId = indexToId(uint256(TROOP_NAME.ARMY));
 
-        vm.expectRevert(bytes("Unauthorized"));
+        vm.expectRevert(bytes("CURIO: Unauthorized"));
         vm.prank(player2);
         engine.spawnTroop(_pos, player2, _armyTroopTypeId);
     }
@@ -91,7 +91,7 @@ contract BasicTest is Test, DiamondDeployTest {
         assertEq(getter.getEpoch(), 1);
 
         vm.warp(105);
-        vm.expectRevert(bytes("Not enough time has elapsed since last epoch"));
+        vm.expectRevert(bytes("CURIO: Not enough time has elapsed since last epoch"));
         engine.updateEpoch();
 
         vm.warp(200);

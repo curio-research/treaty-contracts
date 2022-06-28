@@ -11,6 +11,7 @@ require('dotenv').config();
 // tasks
 import './tasks/port';
 import './tasks/deploy';
+import './tasks/epoch';
 
 // to get the smart contract file sizes, run:
 // yarn run hardhat size-contracts
