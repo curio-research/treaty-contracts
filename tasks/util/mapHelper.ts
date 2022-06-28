@@ -50,6 +50,9 @@ export const generateGameMaps = (mapInput: MapInput, renderInput: RenderInput): 
   const colorMap: number[][][] = noiseMap.map((row: number[]) => {
     return row.map((val: number) => assignDepthColor(val, colorsAndCutoffs));
   });
+
+  console.log(colorMap);
+
   const { tileMap, portTiles, cityTiles } = placePortsAndCities(colorMap, mapInput.numPorts, mapInput.numCities);
 
   // Update colorMap with ports and cities
@@ -63,7 +66,52 @@ export const generateGameMaps = (mapInput: MapInput, renderInput: RenderInput): 
     colorMap[tile[0]][tile[1]] = [100, 100, 100];
   }
 
+  // run bfs
+  console.log(tileMap);
+
+  numberOfIslands(tileMap);
+
   return { tileMap, colorMap };
+};
+
+const validLand = [1, 2, 4, 5];
+
+const numberOfIslands = (map: number[][]) => {
+  let count = 0; // the counted islands
+  //Go though each cell of the 2d array/grid
+  for (let row = 0; row < map.length; row++) {
+    for (let col = 0; col < map[row].length; col++) {
+      if (validLand.includes(map[row][col])) {
+        count++;
+        explore(row, col, map);
+      }
+    }
+  }
+  console.log('Number of islands: ', count);
+  return count;
+};
+// Takes a cell in a grid with a “1” , turns it into a “0” and explores (DFS) any of the left, right, up, down 1’s
+const explore = (row: any, col: any, grid: any) => {
+  //Let's return IF
+  // row < 0 OR col < 0 OR row is out of bounds(meaning the row is larger than the number of arrays in the 2d array) OR col is at/out of bounds (meaning the current col is at/over the number of elements a row has.)
+  if (row < 0 || col < 0 || row >= grid.length || col >= grid[row].length || grid[row][col] === 3 || grid[row][col] === 0 || grid[row][col] === 69) {
+    return;
+  }
+
+  //Otherwise, we should explore it!
+  //First let's set the current spot to "0"
+  grid[row][col] = 69;
+
+  //Possibilites:
+  // 1) 1 to the right, left, top, bottom
+  //right
+  explore(row, col + 1, grid);
+  //Left
+  explore(row, col - 1, grid);
+  //Down
+  explore(row + 1, col, grid);
+  //Up
+  explore(row - 1, col, grid);
 };
 
 /**
