@@ -27,8 +27,8 @@ task('port', 'compile and port contracts over to frontend repo').setAction(async
   const localTypechainDir = path.join(__dirname, '../typechain-types');
 
   // delete existing directories
-  await fs.rmdirSync(clientTypechainDir, { recursive: true });
-  await fs.rmdirSync(backendTypechainDir, { recursive: true });
+  await fs.rmSync(clientTypechainDir, { recursive: true });
+  await fs.rmSync(backendTypechainDir, { recursive: true });
 
   copyFolderSync(localTypechainDir, clientTypechainDir);
   copyFolderSync(localTypechainDir, backendTypechainDir);
