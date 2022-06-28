@@ -146,18 +146,6 @@ task('deploy', 'deploy contracts')
           const player2Army = await diamond.getTroopAt(player2Pos);
           if (player2Army.troopTypeId.toNumber() !== armyTroopTypeId) throw new Error('Something went wrong');
         }
-
-        // start the epoch pinging server
-        // fix this
-
-        // const { data } = await axios.post(`${BACKEND_URL}/increaseEpoch`, {
-        //   network: 'localhost',
-        //   address: diamond.address,
-        // });
-
-        // if (data) {
-        //   console.log('Epoch is increasing automatically');
-        // }
       }
 
       // ---------------------------------
