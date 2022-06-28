@@ -6,14 +6,12 @@ import { Util } from './../typechain-types/Util';
 import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { deployProxy, printDivider } from './util/deployHelper';
-import { TROOP_TYPES, getTroopTypeIndexByName, RENDER_CONSTANTS, MAP_INTERVAL, NUM_CITIES, NUM_PORTS, SECONDS_PER_EPOCH, WORLD_HEIGHT, WORLD_WIDTH, getTroopNames, generateWorldConstants, ligmap } from './util/constants';
+import { TROOP_TYPES, getTroopTypeIndexByName, RENDER_CONSTANTS, NUM_CITIES, NUM_PORTS, WORLD_HEIGHT, WORLD_WIDTH, generateWorldConstants, ligmap } from './util/constants';
 import { position } from '../util/types/common';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
 import { MapInput, TILE_TYPE, TROOP_NAME } from './util/types';
-import { generateGameMaps } from './util/mapHelper';
+import { encodeTileMap, generateGameMaps } from './util/mapHelper';
 import { gameConfig } from '../api/types';
-
-const { BACKEND_URL } = process.env;
 
 // ---------------------------------
 // deploy script
@@ -43,18 +41,22 @@ task('deploy', 'deploy contracts')
       // Set up game configs
       const worldConstants = generateWorldConstants(player1.address);
 
-      let tileMap: TILE_TYPE[][];
-      tileMap = fixMap
-        ? ligmap
-        : (tileMap = generateGameMaps(
-            {
-              width: WORLD_WIDTH,
-              height: WORLD_HEIGHT,
-              numPorts: NUM_PORTS,
-              numCities: NUM_CITIES,
-            } as MapInput,
-            RENDER_CONSTANTS
-          ).tileMap);
+      let deployMap: TILE_TYPE[][];
+      const { tileMap, portTiles, cityTiles } = generateGameMaps(
+        {
+          width: WORLD_WIDTH,
+          height: WORLD_HEIGHT,
+          numPorts: NUM_PORTS,
+          numCities: NUM_CITIES,
+        } as MapInput,
+        RENDER_CONSTANTS
+      );
+
+      if (fixMap) {
+        deployMap = ligmap;
+      } else {
+        deployMap = tileMap;
+      }
 
       // Deploy util contracts
       const util = await deployProxy<Util>('Util', player1, hre, []);
@@ -65,6 +67,7 @@ task('deploy', 'deploy contracts')
       const facets = [
         { name: 'EngineFacet', libraries: { Util: util.address } },
         { name: 'GetterFacet', libraries: { Util: util.address } },
+        { name: 'HelperFacet', libraries: { Util: util.address } },
       ];
       await deployFacets(hre, diamondAddr, facets, player1);
       const diamond = await getDiamond(hre, diamondAddr);
@@ -72,15 +75,18 @@ task('deploy', 'deploy contracts')
 
       // Initialize map
       console.log('✦ initializing map');
-      let mapChunk: TILE_TYPE[][];
-      for (let x = 0; x < WORLD_WIDTH; x += MAP_INTERVAL) {
-        for (let y = 0; y < WORLD_HEIGHT; y += MAP_INTERVAL) {
-          mapChunk = tileMap.slice(x, x + MAP_INTERVAL).map((col: TILE_TYPE[]) => col.slice(y, y + MAP_INTERVAL));
+      const time1 = performance.now();
+      // console.log(`✦ direct set ${WORLD_WIDTH}x${WORLD_HEIGHT} map took ${time2 - time1} milliseconds`);
+      const encodedTileMap = encodeTileMap(tileMap);
+      await (await diamond.storeEncodedRawMapCols(encodedTileMap)).wait();
+      const time2 = performance.now();
+      console.log(`✦ lazy set ${WORLD_WIDTH}x${WORLD_HEIGHT} map took ${time2 - time1} milliseconds`);
 
-          let tx = await diamond.connect(player1).setMapChunk({ x, y }, mapChunk);
-          tx.wait();
-        }
-      }
+      const portTilePositions = portTiles.map((portTile) => ({ x: portTile[0], y: portTile[1] }));
+      const cityTilePositions = cityTiles.map((cityTile) => ({ x: cityTile[0], y: cityTile[1] }));
+
+      // initialize bases
+      await await diamond.bulkInitializeTiles([...portTilePositions, ...cityTilePositions]);
 
       if (isDev) {
         // Randomly initialize players only if we're on localhost
@@ -122,13 +128,13 @@ task('deploy', 'deploy contracts')
             x = Math.floor(Math.random() * WORLD_WIDTH);
             y = Math.floor(Math.random() * WORLD_HEIGHT);
             player1Pos = { x, y };
-          } while (tileMap[x][y] != TILE_TYPE.PORT);
+          } while (deployMap[x][y] != TILE_TYPE.PORT);
 
           do {
             x = Math.floor(Math.random() * WORLD_WIDTH);
             y = Math.floor(Math.random() * WORLD_HEIGHT);
             player2Pos = { x, y };
-          } while (tileMap[x][y] !== TILE_TYPE.PORT || player2Pos.x === player1Pos.x || player2Pos.y === player1Pos.y);
+          } while (deployMap[x][y] !== TILE_TYPE.PORT || player2Pos.x === player1Pos.x || player2Pos.y === player1Pos.y);
 
           // Give each player a port and an army to start with
           let tx = await diamond.connect(player1).initializePlayer(player1Pos, player1.address);
@@ -157,7 +163,7 @@ task('deploy', 'deploy contracts')
         address: diamond.address,
         network: hre.network.name,
         deploymentId: `${hre.network.name}-${Date.now()}`,
-        map: tileMap,
+        map: deployMap,
       };
 
       const publish = args.publish;

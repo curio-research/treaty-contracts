@@ -1,6 +1,7 @@
 import { position } from './../../util/types/common';
 import { BigNumberish, BigNumber } from 'ethers';
 import SimplexNoise from 'simplex-noise';
+import { NUM_INIT_TERRAIN_TYPES } from './constants';
 import { RenderInput, ColorsAndCutoffs, TileMapOutput, TILE_TYPE, AllGameMapsOutput, MapInput } from './types';
 
 //////////////////////////////////////////////////////////////////////
@@ -15,24 +16,35 @@ const INCREMENT = 1;
 const xIncrement = INCREMENT;
 const yIncrement = INCREMENT;
 
+const MAX_UINT256 = BigInt(Math.pow(2, 256)) - BigInt(1);
+
 //////////////////////////////////////////////////////////////////////
 ///////////////////////////// FUNCTIONS //////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
-export const generateEmptyMatrix = (mapWidth: number, mapHeight: number, defaultValue: any): any[][] => {
-  const result: number[][] = [];
-  for (let x = 0; x < mapWidth; x++) {
-    const col: number[] = [];
-    for (let y = 0; y < mapHeight; y++) {
-      col.push(defaultValue);
+/**
+ * Encode columns of a tile map using unique prime factorization.
+ * Note: Currently only support column sizes less than 50
+ * @param tileMap
+ * @returns a 1d array of encoded columns
+ */
+export const encodeTileMap = (tileMap: TILE_TYPE[][]): string[] => {
+  const result: string[] = [];
+
+  let col: number[];
+  let encodedCol: bigint;
+  for (let x = 0; x < tileMap.length; x++) {
+    col = tileMap[x];
+    encodedCol = BigInt(0);
+    for (let y = 0; y < col.length; y++) {
+      encodedCol += BigInt(col[y]) * BigInt(NUM_INIT_TERRAIN_TYPES) ** BigInt(y);
     }
-    result.push(col);
+    if (encodedCol >= MAX_UINT256) throw new Error('Encoding exceeds uint256 max size');
+    result.push(encodedCol.toString());
   }
+
   return result;
 };
-
-// This generates all game parameters needed to deploy the GameEngine.sol contract
-export const getValue = (v: BigNumberish) => (v as BigNumber).toNumber();
 
 /**
  * Generate two 2d maps of tiles, one representing tile types and the other representing colors in RGB.
@@ -63,17 +75,37 @@ export const generateGameMaps = (mapInput: MapInput, renderInput: RenderInput): 
     colorMap[cityTile[0]][cityTile[1]] = [100, 100, 100];
   });
 
-  return { tileMap, colorMap };
+  return { tileMap, portTiles, cityTiles, colorMap };
 };
+
+export const generateEmptyMatrix = (mapWidth: number, mapHeight: number, defaultValue: any): any[][] => {
+  const result: number[][] = [];
+  for (let x = 0; x < mapWidth; x++) {
+    const col: number[] = [];
+    for (let y = 0; y < mapHeight; y++) {
+      col.push(defaultValue);
+    }
+    result.push(col);
+  }
+  return result;
+};
+
+// This generates all game parameters needed to deploy the GameEngine.sol contract
+export const getValue = (v: BigNumberish) => (v as BigNumber).toNumber();
 
 interface islandIDMapCreatorRes {
   islandID: number;
   islandIDMarkerMap: number[][];
 }
-// DFS
-const islandIDMapCreator = (map: number[][]): islandIDMapCreatorRes => {
+
+/**
+ * Mark the islands and the corresponding tiles on a map.
+ * @param tileMap
+ * @returns number of islands as well as mapping to tiles
+ */
+const islandIDMapCreator = (tileMap: number[][]): islandIDMapCreatorRes => {
   const validLand = [TILE_TYPE.CITY, TILE_TYPE.COAST, TILE_TYPE.INLAND, TILE_TYPE.PORT];
-  const islandIDMarkerMap: number[][] = new Array(map.length).fill(null).map(() => new Array(map[0].length).fill(0)); // a 2D number array marked with number the islandID
+  const islandIDMarkerMap: number[][] = new Array(tileMap.length).fill(null).map(() => new Array(tileMap[0].length).fill(0)); // a 2D number array marked with number the islandID
   let islandID = 0; // number of islands on the map
 
   // don't explore if its out of bounds, already explored, or is a water tile.
@@ -92,12 +124,12 @@ const islandIDMapCreator = (map: number[][]): islandIDMapCreatorRes => {
     explore(row - 1, col, grid, islandID);
   };
 
-  //Go though each cell of the 2d array/grid
-  for (let row = 0; row < map.length; row++) {
-    for (let col = 0; col < map[row].length; col++) {
-      if (validLand.includes(map[row][col])) {
+  // go though each cell of the 2d array/grid
+  for (let row = 0; row < tileMap.length; row++) {
+    for (let col = 0; col < tileMap[row].length; col++) {
+      if (validLand.includes(tileMap[row][col])) {
         islandID++;
-        explore(row, col, map, islandID);
+        explore(row, col, tileMap, islandID);
       }
     }
   }

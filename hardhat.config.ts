@@ -51,11 +51,11 @@ export default {
       accounts: [USER1_PK, USER2_PK],
       chainId: 69,
     },
-    tailscale: {
-      url: 'http://100.108.189.54:8545',
-      accounts: [LOCALHOST_USER1_PK, LOCALHOST_USER2_PK],
-      chainId: 1337,
-    },
+    // tailscale: {
+    //   url: 'http://100.108.189.54:8545',
+    //   accounts: [LOCALHOST_USER1_PK, LOCALHOST_USER2_PK],
+    //   chainId: 1337,
+    // },
     gnosisOptimism: {
       url: GNOSIS_OPTIMISM_RPC_URL,
       accounts: [USER1_PK, USER2_PK],

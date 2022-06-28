@@ -129,12 +129,14 @@ export type TroopTypeStructOutput = [
 };
 
 export type TileStruct = {
+  isInitialized: boolean;
   terrain: BigNumberish;
   occupantId: BigNumberish;
   baseId: BigNumberish;
 };
 
-export type TileStructOutput = [number, BigNumber, BigNumber] & {
+export type TileStructOutput = [boolean, number, BigNumber, BigNumber] & {
+  isInitialized: boolean;
   terrain: number;
   occupantId: BigNumber;
   baseId: BigNumber;
@@ -156,10 +158,12 @@ export type WorldConstantsStruct = {
   mapInterval: BigNumberish;
   secondsPerEpoch: BigNumberish;
   combatEfficiency: BigNumberish;
+  numInitTerrainTypes: BigNumberish;
 };
 
 export type WorldConstantsStructOutput = [
   string,
+  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -176,6 +180,7 @@ export type WorldConstantsStructOutput = [
   mapInterval: BigNumber;
   secondsPerEpoch: BigNumber;
   combatEfficiency: BigNumber;
+  numInitTerrainTypes: BigNumber;
 };
 
 export interface GetterFacetInterface extends utils.Interface {

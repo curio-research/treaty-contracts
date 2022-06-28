@@ -1,6 +1,6 @@
 import { WorldConstantsStruct } from './../../typechain-types/Curio';
 import { TroopTypeStruct } from '../../typechain-types/DiamondInit';
-import { RenderInput, TROOP_NAME } from './types';
+import { RenderInput, TILE_TYPE, TROOP_NAME } from './types';
 
 export const LOCALHOST_RPC_URL = 'http://127.0.0.1:8545/';
 export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
@@ -19,6 +19,7 @@ export const COMBAT_EFFICIENCY = 50;
 export const BASE_ATTACK_FACTOR = 1;
 export const BASE_DEFENSE_FACTOR = 1;
 export const BASE_MAX_HEALTH = 1;
+export const NUM_INIT_TERRAIN_TYPES = Object.keys(TILE_TYPE).length;
 
 export const TROOP_TYPES: TroopTypeStruct[] = [
   {
@@ -98,10 +99,9 @@ export const generateWorldConstants = (adminAddr: string): WorldConstantsStruct 
     mapInterval: MAP_INTERVAL,
     secondsPerEpoch: SECONDS_PER_EPOCH,
     combatEfficiency: COMBAT_EFFICIENCY,
+    numInitTerrainTypes: NUM_INIT_TERRAIN_TYPES,
   };
 };
-
-// export const generateBaseConstants = (): BaseConstantsStruct => {};
 
 // ----------------------------------------------------------
 // Rendering constants

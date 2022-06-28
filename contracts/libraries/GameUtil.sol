@@ -1,10 +1,12 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import {BASE_NAME, Base, GameState, Position, Production, Tile, Troop} from "contracts/libraries/Types.sol";
+import "forge-std/console.sol";
+import {BASE_NAME, Base, GameState, Position, Production, TERRAIN, Tile, Troop} from "contracts/libraries/Types.sol";
 import {LibStorage} from "contracts/libraries/Storage.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 
+// Note: Util functions generally do not verify correctness of conditions. Make sure to verify in higher-level functions such as those in Engine.
 library Util {
     using SafeMath for uint256;
 
@@ -30,6 +32,24 @@ library Util {
     // ----------------------------------------------------------
 
     // Setters
+
+    function _initializeTile(Position memory _pos) public {
+        uint256 _numInitTerrainTypes = gs().worldConstants.numInitTerrainTypes;
+
+        uint256 _encodedRawCol = gs().encodedRawMapCols[_pos.x] % (_numInitTerrainTypes**(_pos.y + 1));
+        uint256 _divFactor = _numInitTerrainTypes**_pos.y;
+        uint256 _terrainId = _encodedRawCol / _divFactor;
+
+        if (_terrainId >= 3) {
+            // Note: temporary way to set base
+            BASE_NAME _baseName = _terrainId == 3 ? BASE_NAME.PORT : BASE_NAME.CITY;
+            _addBase(_pos, _baseName);
+            _terrainId -= 3;
+        }
+
+        gs().map[_pos.x][_pos.y].isInitialized = true;
+        gs().map[_pos.x][_pos.y].terrain = TERRAIN(_terrainId);
+    }
 
     function _removeTroop(Position memory _pos, uint256 _troopId) public {
         // TODO: consider whether or not to remove Troop from gs().troops

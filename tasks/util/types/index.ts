@@ -68,5 +68,7 @@ export interface TileMapOutput {
 
 export interface AllGameMapsOutput {
   tileMap: TILE_TYPE[][];
+  portTiles: number[][];
+  cityTiles: number[][];
   colorMap: number[][][];
 }

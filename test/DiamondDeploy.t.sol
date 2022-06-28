@@ -12,6 +12,7 @@ import "contracts/interfaces/IDiamondCut.sol";
 import "contracts/libraries/GameUtil.sol";
 import "contracts/facets/GetterFacet.sol";
 import "contracts/facets/EngineFacet.sol";
+import "contracts/facets/HelperFacet.sol";
 import "contracts/libraries/Types.sol";
 
 /// @title diamond deploy foundry template
@@ -23,12 +24,14 @@ contract DiamondDeployTest is Test {
     DiamondInit public diamondInit;
     DiamondLoupeFacet public diamondLoupeFacet;
     OwnershipFacet public diamondOwnershipFacet;
-    GetterFacet public getterFacet;
     EngineFacet public engineFacet;
+    GetterFacet public getterFacet;
+    HelperFacet public helperFacet;
 
     // diamond-contract-casted methods
-    GetterFacet public getter;
     EngineFacet public engine;
+    GetterFacet public getter;
+    HelperFacet public helper;
     OwnershipFacet public ownership;
 
     uint256 public NULL = 0;
@@ -134,8 +137,9 @@ contract DiamondDeployTest is Test {
         diamondLoupeFacet = new DiamondLoupeFacet();
         diamondOwnershipFacet = new OwnershipFacet();
 
-        getterFacet = new GetterFacet();
+        helperFacet = new HelperFacet();
         engineFacet = new EngineFacet();
+        getterFacet = new GetterFacet();
 
         WorldConstants memory _worldConstants = _generateWorldConstants();
         TroopType[] memory _troopTypes = _generateTroopTypes();
@@ -143,34 +147,57 @@ contract DiamondDeployTest is Test {
         // fetch args from cli. craft payload for init deploy
         bytes memory initData = abi.encodeWithSelector(getSelectors("DiamondInit")[0], _worldConstants, _troopTypes);
 
-        IDiamondCut.FacetCut[] memory cuts = new IDiamondCut.FacetCut[](4);
+        IDiamondCut.FacetCut[] memory cuts = new IDiamondCut.FacetCut[](5);
         cuts[0] = IDiamondCut.FacetCut({facetAddress: address(diamondLoupeFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: LOUPE_SELECTORS});
         cuts[1] = IDiamondCut.FacetCut({facetAddress: address(diamondOwnershipFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: OWNERSHIP_SELECTORS});
-        cuts[2] = IDiamondCut.FacetCut({facetAddress: address(getterFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: getSelectors("GetterFacet")});
-        cuts[3] = IDiamondCut.FacetCut({facetAddress: address(engineFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: getSelectors("EngineFacet")});
+        cuts[2] = IDiamondCut.FacetCut({facetAddress: address(engineFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: getSelectors("EngineFacet")});
+        cuts[3] = IDiamondCut.FacetCut({facetAddress: address(getterFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: getSelectors("GetterFacet")});
+        cuts[4] = IDiamondCut.FacetCut({facetAddress: address(helperFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: getSelectors("HelperFacet")});
 
         IDiamondCut(diamond).diamondCut(cuts, address(diamondInit), initData);
 
+        helper = HelperFacet(diamond);
         getter = GetterFacet(diamond);
         engine = EngineFacet(diamond);
         ownership = OwnershipFacet(diamond);
 
-        // initialize map
-        Position memory _startPos = Position({x: 0, y: 0});
+        // // initialize map (outdated)
+        // Position memory _startPos = Position({x: 0, y: 0});
+        // uint256[][] memory _chunk = generateMapChunk(_worldConstants.mapInterval);
+        // engine.setMapChunk(_startPos, _chunk);
 
-        // uint256[][] memory _chunk = getTestMap();
-        uint256[][] memory _chunk = generateMapChunk(_worldConstants.mapInterval);
-
-        engine.setMapChunk(_startPos, _chunk);
+        // initialize map using lazy + encoding
+        uint256[][] memory _map = generateMap(_worldConstants.worldWidth, _worldConstants.worldHeight, _worldConstants.mapInterval);
+        uint256[] memory _encodedMapCols = _encodeTileMap(_worldConstants.numInitTerrainTypes, _map);
+        helper.storeEncodedRawMapCols(_encodedMapCols);
 
         // initialize players
-        // TODO: Upgrade logic such that everyone can initialize themselves. figure out if we want a whitelist or something
-
-        engine.initializePlayer(player1Pos, player1);
-        engine.initializePlayer(player2Pos, player2);
-        engine.initializePlayer(player3Pos, player3);
+        helper.initializePlayer(player1Pos, player1);
+        helper.initializePlayer(player2Pos, player2);
+        helper.initializePlayer(player3Pos, player3);
 
         vm.stopPrank();
+    }
+
+    function _encodeTileMap(uint256 _numInitTerrainTypes, uint256[][] memory _tileMap) internal pure returns (uint256[] memory) {
+        uint256[] memory _result = new uint256[](_tileMap.length);
+
+        uint256[] memory _col = new uint256[](_tileMap[0].length);
+        uint256 _encodedCol;
+        uint256 _temp;
+
+        for (uint256 x = 0; x < _tileMap.length; x++) {
+            _col = _tileMap[x];
+            _encodedCol = 0;
+            for (uint256 y = 0; y < _col.length; y++) {
+                _temp = _encodedCol + _col[y] * _numInitTerrainTypes**y;
+                if (_temp < _encodedCol) revert("Integer overflow");
+                _encodedCol = _temp;
+            }
+            _result[x] = _encodedCol;
+        }
+
+        return _result;
     }
 
     // FIXME: hardcoded
@@ -184,7 +211,8 @@ contract DiamondDeployTest is Test {
                 numCities: 15, // yo
                 mapInterval: 10,
                 secondsPerEpoch: 10,
-                combatEfficiency: 50
+                combatEfficiency: 50,
+                numInitTerrainTypes: 5
             });
     }
 
@@ -200,14 +228,18 @@ contract DiamondDeployTest is Test {
     }
 
     // FIXME: hardcoded
-    function generateMapChunk(uint256 _interval) public pure returns (uint256[][] memory) {
-        uint256[] memory _coastCol = new uint256[](_interval);
-        uint256[] memory _landCol = new uint256[](_interval);
-        uint256[] memory _waterCol = new uint256[](_interval);
-        uint256[] memory _portCol = new uint256[](_interval);
-        uint256[] memory _cityCol = new uint256[](_interval);
+    function generateMap(
+        uint256 _width,
+        uint256 _height,
+        uint256 _interval
+    ) public pure returns (uint256[][] memory) {
+        uint256[] memory _coastCol = new uint256[](_height);
+        uint256[] memory _landCol = new uint256[](_height);
+        uint256[] memory _waterCol = new uint256[](_height);
+        uint256[] memory _portCol = new uint256[](_height);
+        uint256[] memory _cityCol = new uint256[](_height);
 
-        for (uint256 j = 0; j < _interval; j++) {
+        for (uint256 j = 0; j < _height; j++) {
             _coastCol[j] = 0;
             _landCol[j] = 1;
             _waterCol[j] = 2;
@@ -215,19 +247,21 @@ contract DiamondDeployTest is Test {
             _cityCol[j] = 4;
         }
 
-        uint256[][] memory _chunk = new uint256[][](_interval);
-        _chunk[0] = _waterCol;
-        _chunk[1] = _waterCol;
-        _chunk[2] = _portCol;
-        _chunk[3] = _landCol;
-        _chunk[4] = _landCol;
-        _chunk[5] = _cityCol;
-        _chunk[6] = _portCol;
-        _chunk[7] = _waterCol;
-        _chunk[8] = _coastCol;
-        _chunk[9] = _landCol;
+        uint256[][] memory _map = new uint256[][](_width);
+        for (uint256 k = 0; k < _width; k += _interval) {
+            _map[k] = _waterCol;
+            _map[k + 1] = _waterCol;
+            _map[k + 2] = _portCol;
+            _map[k + 3] = _landCol;
+            _map[k + 4] = _landCol;
+            _map[k + 5] = _cityCol;
+            _map[k + 6] = _portCol;
+            _map[k + 7] = _waterCol;
+            _map[k + 8] = _coastCol;
+            _map[k + 9] = _landCol;
+        }
 
-        return _chunk;
+        return _map;
     }
 
     // helper functions
