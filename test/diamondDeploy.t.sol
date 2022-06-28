@@ -227,37 +227,6 @@ contract DiamondDeployTest is Test {
         return _troopTypes;
     }
 
-    // // FIXME: hardcoded
-    // function generateMapChunk(uint256 _interval) public pure returns (uint256[][] memory) {
-    //     uint256[] memory _coastCol = new uint256[](_interval);
-    //     uint256[] memory _landCol = new uint256[](_interval);
-    //     uint256[] memory _waterCol = new uint256[](_interval);
-    //     uint256[] memory _portCol = new uint256[](_interval);
-    //     uint256[] memory _cityCol = new uint256[](_interval);
-
-    //     for (uint256 j = 0; j < _interval; j++) {
-    //         _coastCol[j] = 0;
-    //         _landCol[j] = 1;
-    //         _waterCol[j] = 2;
-    //         _portCol[j] = 3;
-    //         _cityCol[j] = 4;
-    //     }
-
-    //     uint256[][] memory _chunk = new uint256[][](_interval);
-    //     _chunk[0] = _waterCol;
-    //     _chunk[1] = _waterCol;
-    //     _chunk[2] = _portCol;
-    //     _chunk[3] = _landCol;
-    //     _chunk[4] = _landCol;
-    //     _chunk[5] = _cityCol;
-    //     _chunk[6] = _portCol;
-    //     _chunk[7] = _waterCol;
-    //     _chunk[8] = _coastCol;
-    //     _chunk[9] = _landCol;
-
-    //     return _chunk;
-    // }
-
     // FIXME: hardcoded
     function generateMap(
         uint256 _width,

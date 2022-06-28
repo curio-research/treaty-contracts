@@ -6,14 +6,12 @@ import { Util } from './../typechain-types/Util';
 import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { deployProxy, printDivider } from './util/deployHelper';
-import { TROOP_TYPES, getTroopTypeIndexByName, RENDER_CONSTANTS, MAP_INTERVAL, NUM_CITIES, NUM_PORTS, SECONDS_PER_EPOCH, WORLD_HEIGHT, WORLD_WIDTH, getTroopNames, generateWorldConstants, ligmap } from './util/constants';
+import { TROOP_TYPES, getTroopTypeIndexByName, RENDER_CONSTANTS, NUM_CITIES, NUM_PORTS, WORLD_HEIGHT, WORLD_WIDTH, generateWorldConstants, ligmap } from './util/constants';
 import { position } from '../util/types/common';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
 import { MapInput, TILE_TYPE, TROOP_NAME } from './util/types';
 import { encodeTileMap, generateGameMaps } from './util/mapHelper';
 import { gameConfig } from '../api/types';
-
-const { BACKEND_URL } = process.env;
 
 // ---------------------------------
 // deploy script
@@ -73,21 +71,12 @@ task('deploy', 'deploy contracts')
 
       // Initialize map
       console.log('✦ initializing map');
-      // let mapChunk: TILE_TYPE[][];
-      // for (let x = 0; x < WORLD_WIDTH; x += MAP_INTERVAL) {
-      //   for (let y = 0; y < WORLD_HEIGHT; y += MAP_INTERVAL) {
-      //     mapChunk = tileMap.slice(x, x + MAP_INTERVAL).map((col: TILE_TYPE[]) => col.slice(y, y + MAP_INTERVAL));
-
-      //     let tx = await diamond.connect(player1).setMapChunk({ x, y }, mapChunk);
-      //     tx.wait();
-      //   }
-      // }
-      const time2 = performance.now();
+      const time1 = performance.now();
       // console.log(`✦ direct set ${WORLD_WIDTH}x${WORLD_HEIGHT} map took ${time2 - time1} milliseconds`);
       const encodedTileMap = encodeTileMap(tileMap);
       await (await diamond.storeEncodedRawMapCols(encodedTileMap)).wait();
-      const time3 = performance.now();
-      console.log(`✦ lazy set ${WORLD_WIDTH}x${WORLD_HEIGHT} map took ${time3 - time2} milliseconds`);
+      const time2 = performance.now();
+      console.log(`✦ lazy set ${WORLD_WIDTH}x${WORLD_HEIGHT} map took ${time2 - time1} milliseconds`);
 
       if (isDev) {
         // Randomly initialize players only if we're on localhost
