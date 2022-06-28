@@ -161,11 +161,6 @@ contract DiamondDeployTest is Test {
         engine = EngineFacet(diamond);
         ownership = OwnershipFacet(diamond);
 
-        // // initialize map (outdated)
-        // Position memory _startPos = Position({x: 0, y: 0});
-        // uint256[][] memory _chunk = generateMapChunk(_worldConstants.mapInterval);
-        // engine.setMapChunk(_startPos, _chunk);
-
         // initialize map using lazy + encoding
         uint256[][] memory _map = generateMap(_worldConstants.worldWidth, _worldConstants.worldHeight, _worldConstants.mapInterval);
         uint256[] memory _encodedMapCols = _encodeTileMap(_worldConstants.numInitTerrainTypes, _map);

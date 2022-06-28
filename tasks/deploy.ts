@@ -76,10 +76,10 @@ task('deploy', 'deploy contracts')
       // Initialize map
       console.log('✦ initializing map');
       const time1 = performance.now();
-      // console.log(`✦ direct set ${WORLD_WIDTH}x${WORLD_HEIGHT} map took ${time2 - time1} milliseconds`);
       const encodedTileMap = encodeTileMap(tileMap);
       await (await diamond.storeEncodedRawMapCols(encodedTileMap)).wait();
       const time2 = performance.now();
+
       console.log(`✦ lazy set ${WORLD_WIDTH}x${WORLD_HEIGHT} map took ${time2 - time1} milliseconds`);
 
       const portTilePositions = portTiles.map((portTile) => ({ x: portTile[0], y: portTile[1] }));
