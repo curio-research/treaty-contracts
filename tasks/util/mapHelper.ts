@@ -1,3 +1,4 @@
+import { position } from './../../util/types/common';
 import { BigNumberish, BigNumber } from 'ethers';
 import SimplexNoise from 'simplex-noise';
 import { NUM_INIT_TERRAIN_TYPES } from './constants';
@@ -62,18 +63,17 @@ export const generateGameMaps = (mapInput: MapInput, renderInput: RenderInput): 
   const colorMap: number[][][] = noiseMap.map((row: number[]) => {
     return row.map((val: number) => assignDepthColor(val, colorsAndCutoffs));
   });
+
   const { tileMap, portTiles, cityTiles } = placePortsAndCities(colorMap, mapInput.numPorts, mapInput.numCities);
 
   // Update colorMap with ports and cities
-  let tile: number[];
-  for (let k = 0; k < portTiles.length; k++) {
-    tile = portTiles[k];
-    colorMap[tile[0]][tile[1]] = [100, 0, 0];
-  }
-  for (let k = 0; k < cityTiles.length; k++) {
-    tile = cityTiles[k];
-    colorMap[tile[0]][tile[1]] = [100, 100, 100];
-  }
+  portTiles.forEach((portTile) => {
+    colorMap[portTile[0]][portTile[1]] = [100, 0, 0];
+  });
+
+  cityTiles.forEach((cityTile) => {
+    colorMap[cityTile[0]][cityTile[1]] = [100, 100, 100];
+  });
 
   return { tileMap, colorMap };
 };
@@ -92,6 +92,50 @@ export const generateEmptyMatrix = (mapWidth: number, mapHeight: number, default
 
 // This generates all game parameters needed to deploy the GameEngine.sol contract
 export const getValue = (v: BigNumberish) => (v as BigNumber).toNumber();
+
+interface islandIDMapCreatorRes {
+  islandID: number;
+  islandIDMarkerMap: number[][];
+}
+
+/**
+ * Mark the islands and the corresponding tiles on a map.
+ * @param tileMap
+ * @returns number of islands as well as mapping to tiles
+ */
+const islandIDMapCreator = (tileMap: number[][]): islandIDMapCreatorRes => {
+  const validLand = [TILE_TYPE.CITY, TILE_TYPE.COAST, TILE_TYPE.INLAND, TILE_TYPE.PORT];
+  const islandIDMarkerMap: number[][] = new Array(tileMap.length).fill(null).map(() => new Array(tileMap[0].length).fill(0)); // a 2D number array marked with number the islandID
+  let islandID = 0; // number of islands on the map
+
+  // don't explore if its out of bounds, already explored, or is a water tile.
+  const explore = (row: number, col: number, grid: number[][], islandID: number) => {
+    if (row < 0 || col < 0 || row >= grid.length || col >= grid[row].length || grid[row][col] === TILE_TYPE.WATER || grid[row][col] === -1) {
+      return;
+    }
+
+    // otherwise, proceed with DFS
+    grid[row][col] = -1;
+    islandIDMarkerMap[row][col] = islandID;
+
+    explore(row, col + 1, grid, islandID);
+    explore(row, col - 1, grid, islandID);
+    explore(row + 1, col, grid, islandID);
+    explore(row - 1, col, grid, islandID);
+  };
+
+  // go though each cell of the 2d array/grid
+  for (let row = 0; row < tileMap.length; row++) {
+    for (let col = 0; col < tileMap[row].length; col++) {
+      if (validLand.includes(tileMap[row][col])) {
+        islandID++;
+        explore(row, col, tileMap, islandID);
+      }
+    }
+  }
+
+  return { islandID, islandIDMarkerMap };
+};
 
 /**
  * Generate noise matrix from Perlin noise.
@@ -194,7 +238,6 @@ export const placePortsAndCities = (colorMap: number[][][], numPorts: number, nu
   for (let x = 0; x < colorMap.length * xIncrement; x += xIncrement) {
     for (let y = 0; y < colorMap[0].length * yIncrement; y += yIncrement) {
       if (colorMap[x][y][1] > 0) {
-        // land
         if ((x > 0 && colorMap[x - 1][y][1] == 0) || (x < colorMap.length - 1 && colorMap[x + 1][y][1] == 0) || (y > 0 && colorMap[x][y - 1][1] == 0) || (y < colorMap[0].length - 1 && colorMap[x][y + 1][1] == 0)) {
           tileMap[x][y] = TILE_TYPE.COAST;
           coastlineTiles.push([x, y]);
@@ -210,8 +253,44 @@ export const placePortsAndCities = (colorMap: number[][][], numPorts: number, nu
   let tileIndex: number;
   let tile: number[];
 
+  // ---------------------------
+  // ensure that every island has at least one coast
+  // ---------------------------
+
+  const { islandID, islandIDMarkerMap } = islandIDMapCreator(JSON.parse(JSON.stringify(tileMap)));
+  const islandIdToMapping: Map<number, position[]> = new Map();
+
+  // loop through coastline tiles
+  for (let i = 0; i < coastlineTiles.length; i++) {
+    const coastlineTile = coastlineTiles[i];
+    const x = coastlineTile[0];
+    const y = coastlineTile[1];
+    const coastLineTilePos = { x, y };
+    const islandID = islandIDMarkerMap[x][y];
+
+    const islandArr = islandIdToMapping.get(islandID);
+    if (!islandArr) {
+      islandIdToMapping.set(islandID, [coastLineTilePos]);
+    } else {
+      islandArr.push(coastLineTilePos);
+      islandIdToMapping.set(islandID, islandArr);
+    }
+  }
+
+  // go through each island number
+  // pick a random coast tile on each island and then add it to the island array.
+  // this ensures that theres at least one city on each island!
+  for (let i = 1; i < islandID + 1; i++) {
+    const positionsByIslandID = islandIdToMapping.get(i);
+    if (positionsByIslandID) {
+      const randomIslandTilePosition = positionsByIslandID[Math.floor(Math.random() * positionsByIslandID.length)];
+      tileMap[randomIslandTilePosition.x][randomIslandTilePosition.y] = TILE_TYPE.PORT;
+      portTiles.push([randomIslandTilePosition.x, randomIslandTilePosition.y]);
+    }
+  }
+
   while (numPorts) {
-    if (!coastlineTiles) throw new Error('Out of tiles for ports');
+    if (!coastlineTiles || coastlineTiles.length === 0) break;
 
     tileIndex = Math.floor(Math.random() * coastlineTiles.length);
     tile = coastlineTiles[tileIndex];
@@ -223,14 +302,15 @@ export const placePortsAndCities = (colorMap: number[][][], numPorts: number, nu
   }
 
   while (numCities) {
-    if (!inlandTiles) throw new Error('Out of tiles for cities');
+    if (!inlandTiles || inlandTiles.length === 0) break;
 
-    tileIndex = Math.floor(Math.random() * inlandTiles.length);
-    tile = inlandTiles[tileIndex];
-    tileMap[tile[0]][tile[1]] = TILE_TYPE.CITY;
+    const inlandTileIdx = Math.floor(Math.random() * inlandTiles.length);
+    const inlandTile = inlandTiles[inlandTileIdx];
 
-    cityTiles.push(tile);
-    inlandTiles.splice(tileIndex, 1);
+    tileMap[inlandTile[0]][inlandTile[1]] = TILE_TYPE.CITY;
+
+    cityTiles.push(inlandTile);
+    inlandTiles.splice(inlandTileIdx, 1);
     numCities--;
   }
 

@@ -1,7 +1,6 @@
 import { Interface } from '@ethersproject/abi';
 const hre = require('hardhat');
 
-// code attribution: written by https://github.com/Timidan
 // this file is ran by Foundry tests to pipe js input back into solidity files
 
 // interfaces
@@ -38,3 +37,5 @@ async function getSelectors(contractName: string) {
 }
 
 getSelectors(args[0]);
+
+// code attribution: inspired by https://github.com/Timidan
