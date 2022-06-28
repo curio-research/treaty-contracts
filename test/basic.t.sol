@@ -55,7 +55,7 @@ contract BasicTest is Test, DiamondDeployTest {
 
         vm.expectRevert(bytes("CURIO: Unauthorized"));
         vm.prank(player2);
-        admin.spawnTroop(_pos, player2, _armyTroopTypeId);
+        helper.spawnTroop(_pos, player2, _armyTroopTypeId);
     }
 
     function testInitializePlayer() public {
@@ -87,15 +87,15 @@ contract BasicTest is Test, DiamondDeployTest {
         assertEq(epoch, 0);
 
         vm.warp(100); // set block.timestamp to 100 seconds;
-        engine.updateEpoch();
+        helper.updateEpoch();
         assertEq(getter.getEpoch(), 1);
 
         vm.warp(105);
         vm.expectRevert(bytes("CURIO: Not enough time has elapsed since last epoch"));
-        engine.updateEpoch();
+        helper.updateEpoch();
 
         vm.warp(200);
-        engine.updateEpoch();
+        helper.updateEpoch();
         assertEq(getter.getEpoch(), 2);
     }
 
@@ -104,7 +104,7 @@ contract BasicTest is Test, DiamondDeployTest {
         assertEq(getter.getBaseAt(_pos).owner, NULL_ADDR);
 
         vm.prank(deployer);
-        admin.transferBaseOwnership(_pos, player1);
+        helper.transferBaseOwnership(_pos, player1);
 
         assertEq(getter.getBaseAt(_pos).owner, player1);
     }

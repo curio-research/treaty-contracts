@@ -7,11 +7,11 @@ import "test/DiamondDeploy.t.sol";
 contract GetterTest is Test, DiamondDeployTest {
     function testBulkGetAllTroops() public {
         vm.startPrank(deployer);
-        admin.spawnTroop(Position({x: 1, y: 3}), player1, armyTroopTypeId);
-        admin.spawnTroop(Position({x: 1, y: 4}), player1, armyTroopTypeId);
-        admin.spawnTroop(Position({x: 2, y: 3}), player2, armyTroopTypeId);
-        admin.spawnTroop(Position({x: 2, y: 4}), player2, armyTroopTypeId);
-        admin.spawnTroop(Position({x: 7, y: 5}), player3, destroyerTroopTypeId);
+        helper.spawnTroop(Position({x: 1, y: 3}), player1, armyTroopTypeId);
+        helper.spawnTroop(Position({x: 1, y: 4}), player1, armyTroopTypeId);
+        helper.spawnTroop(Position({x: 2, y: 3}), player2, armyTroopTypeId);
+        helper.spawnTroop(Position({x: 2, y: 4}), player2, armyTroopTypeId);
+        helper.spawnTroop(Position({x: 7, y: 5}), player3, destroyerTroopTypeId);
         vm.stopPrank();
 
         Troop[] memory _allTroops = getter.bulkGetAllTroops();
@@ -24,7 +24,7 @@ contract GetterTest is Test, DiamondDeployTest {
         assertEq(_allTroops[4].troopTypeId, destroyerTroopTypeId);
 
         vm.warp(20);
-        engine.updateEpoch();
+        helper.updateEpoch();
         assertEq(getter.getEpoch(), 1);
 
         vm.prank(player1);

@@ -24,17 +24,28 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
   y: BigNumber;
 };
 
-export interface AdminFacetInterface extends utils.Interface {
+export interface HelperFacetInterface extends utils.Interface {
   functions: {
+    "endProduction((uint256,uint256))": FunctionFragment;
     "initializePlayer((uint256,uint256),address)": FunctionFragment;
+    "repair((uint256,uint256))": FunctionFragment;
     "spawnTroop((uint256,uint256),address,uint256)": FunctionFragment;
     "storeEncodedRawMapCols(uint256[])": FunctionFragment;
     "transferBaseOwnership((uint256,uint256),address)": FunctionFragment;
+    "updateEpoch()": FunctionFragment;
   };
 
   encodeFunctionData(
+    functionFragment: "endProduction",
+    values: [PositionStruct]
+  ): string;
+  encodeFunctionData(
     functionFragment: "initializePlayer",
     values: [PositionStruct, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "repair",
+    values: [PositionStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "spawnTroop",
@@ -48,11 +59,20 @@ export interface AdminFacetInterface extends utils.Interface {
     functionFragment: "transferBaseOwnership",
     values: [PositionStruct, string]
   ): string;
+  encodeFunctionData(
+    functionFragment: "updateEpoch",
+    values?: undefined
+  ): string;
 
+  decodeFunctionResult(
+    functionFragment: "endProduction",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "initializePlayer",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "repair", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "spawnTroop", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "storeEncodedRawMapCols",
@@ -62,16 +82,20 @@ export interface AdminFacetInterface extends utils.Interface {
     functionFragment: "transferBaseOwnership",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateEpoch",
+    data: BytesLike
+  ): Result;
 
   events: {};
 }
 
-export interface AdminFacet extends BaseContract {
+export interface HelperFacet extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: AdminFacetInterface;
+  interface: HelperFacetInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -93,9 +117,19 @@ export interface AdminFacet extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    endProduction(
+      _pos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     initializePlayer(
       _pos: PositionStruct,
       _player: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    repair(
+      _pos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -116,11 +150,25 @@ export interface AdminFacet extends BaseContract {
       _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    updateEpoch(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
   };
+
+  endProduction(
+    _pos: PositionStruct,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   initializePlayer(
     _pos: PositionStruct,
     _player: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  repair(
+    _pos: PositionStruct,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -142,12 +190,23 @@ export interface AdminFacet extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  updateEpoch(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
+    endProduction(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     initializePlayer(
       _pos: PositionStruct,
       _player: string,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    repair(_pos: PositionStruct, overrides?: CallOverrides): Promise<void>;
 
     spawnTroop(
       _pos: PositionStruct,
@@ -166,14 +225,26 @@ export interface AdminFacet extends BaseContract {
       _player: string,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    updateEpoch(overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {};
 
   estimateGas: {
+    endProduction(
+      _pos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     initializePlayer(
       _pos: PositionStruct,
       _player: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    repair(
+      _pos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -192,14 +263,28 @@ export interface AdminFacet extends BaseContract {
     transferBaseOwnership(
       _pos: PositionStruct,
       _player: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    updateEpoch(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    endProduction(
+      _pos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     initializePlayer(
       _pos: PositionStruct,
       _player: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    repair(
+      _pos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -218,6 +303,10 @@ export interface AdminFacet extends BaseContract {
     transferBaseOwnership(
       _pos: PositionStruct,
       _player: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    updateEpoch(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

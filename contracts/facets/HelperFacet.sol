@@ -7,12 +7,16 @@ import {Util} from "contracts/libraries/GameUtil.sol";
 import {BASE_NAME, Base, GameState, Player, Position, Production, TERRAIN, Tile, Troop, TroopType} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 
-/// @title Setter facet
-/// @notice Contains admin functions which initialize and set game states
+/// @title Helper facet
+/// @notice Contains admin functions and state functions, both should be out of scope for players
 
-contract AdminFacet is UseStorage {
+contract HelperFacet is UseStorage {
     using SafeMath for uint256;
     uint256 NULL = 0;
+
+    // ----------------------------------------------------------------------
+    // ADMIN FUNCTIONS
+    // ----------------------------------------------------------------------
 
     modifier onlyAdmin() {
         if (msg.sender != gs().worldConstants.admin) revert("CURIO: Unauthorized");
@@ -90,5 +94,74 @@ contract AdminFacet is UseStorage {
 
         gs().baseIdMap[_tile.baseId].owner = _player;
         emit Util.BaseCaptured(_player, NULL, _tile.baseId);
+    }
+
+    // ----------------------------------------------------------------------
+    // STATE FUNCTIONS
+    // ----------------------------------------------------------------------
+
+    /**
+     * Update epoch given enough time has elapsed.
+     */
+    function updateEpoch() external {
+        // Currently implemented expecting real-time calls from client; can change to lazy if needed
+        if ((block.timestamp - gs().lastTimestamp) < gs().worldConstants.secondsPerEpoch) revert("CURIO: Not enough time has elapsed since last epoch");
+
+        gs().epoch++;
+        gs().lastTimestamp = block.timestamp;
+
+        emit Util.EpochUpdate(gs().epoch, gs().lastTimestamp);
+    }
+
+    /**
+     * Finish producing a troop from a base.
+     * @param _pos position of base
+     */
+    function endProduction(Position memory _pos) external {
+        if (!Util._inBound(_pos)) revert("CURIO: Out of bound");
+        if (!Util._getTileAt(_pos).isInitialized) Util._initializeTile(_pos);
+
+        // Currently implemented expecting real-time calls from client; can change to lazy if needed
+        Tile memory _tile = Util._getTileAt(_pos);
+        if (_tile.baseId == NULL) revert("CURIO: No base found");
+        if (Util._getBaseOwner(_tile.baseId) != msg.sender) revert("CURIO: Can only produce in own base");
+        if (_tile.occupantId != NULL) revert("CURIO: Base occupied by another troop");
+
+        Production memory _production = gs().baseProductionMap[_tile.baseId];
+        if (_production.troopTypeId == NULL) revert("CURIO: No production found in base");
+        if (Util._getEpochsToProduce(_production.troopTypeId) > (gs().epoch - _production.startEpoch)) revert("CURIO: Troop needs more epochs for production");
+
+        (uint256 _troopId, Troop memory _troop) = Util._addTroop(_pos, _production.troopTypeId, msg.sender);
+        delete gs().baseProductionMap[_tile.baseId];
+
+        emit Util.ProductionEnded(msg.sender, _tile.baseId);
+        emit Util.NewTroop(msg.sender, _troopId, _troop, _pos);
+    }
+
+    /**
+     * Restore 1 health to the troop in a base.
+     * @param _pos position of base
+     */
+    function repair(Position memory _pos) external {
+        if (!Util._inBound(_pos)) revert("CURIO: Out of bound");
+        if (!Util._getTileAt(_pos).isInitialized) Util._initializeTile(_pos);
+
+        Tile memory _tile = Util._getTileAt(_pos);
+        if (_tile.baseId == NULL) revert("CURIO: No base found");
+        if (Util._getBaseOwner(_tile.baseId) != msg.sender) revert("CURIO: Can only repair in own base");
+
+        uint256 _troopId = _tile.occupantId;
+        if (_troopId == NULL) revert("CURIO: No troop to repair");
+
+        Troop memory _troop = gs().troopIdMap[_troopId];
+        if (_troop.owner != msg.sender) revert("CURIO: Can only repair own troop");
+        if (_troop.health >= Util._getMaxHealth(_troop.troopTypeId)) revert("CURIO: Troop already at full health");
+        if ((gs().epoch - _troop.lastRepaired) < 1) revert("CURIO: Repaired too recently");
+
+        _troop.health++;
+        gs().troopIdMap[_troopId].health = _troop.health;
+        gs().troopIdMap[_troopId].lastRepaired = gs().epoch;
+        emit Util.Repaired(msg.sender, _tile.occupantId, _troop.health);
+        if (_troop.health == Util._getMaxHealth(_troop.troopTypeId)) emit Util.Recovered(msg.sender, _troopId);
     }
 }

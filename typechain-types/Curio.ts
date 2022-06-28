@@ -17,13 +17,6 @@ import { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
 import { Listener, Provider } from "@ethersproject/providers";
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
-export type PositionStruct = { x: BigNumberish; y: BigNumberish };
-
-export type PositionStructOutput = [BigNumber, BigNumber] & {
-  x: BigNumber;
-  y: BigNumber;
-};
-
 export type FacetCutStruct = {
   facetAddress: string;
   action: BigNumberish;
@@ -44,6 +37,13 @@ export type FacetStruct = {
 export type FacetStructOutput = [string, string[]] & {
   facetAddress: string;
   functionSelectors: string[];
+};
+
+export type PositionStruct = { x: BigNumberish; y: BigNumberish };
+
+export type PositionStructOutput = [BigNumber, BigNumber] & {
+  x: BigNumber;
+  y: BigNumber;
 };
 
 export type TroopStruct = {
@@ -209,10 +209,6 @@ export type WorldConstantsStructOutput = [
 
 export interface CurioInterface extends utils.Interface {
   functions: {
-    "initializePlayer((uint256,uint256),address)": FunctionFragment;
-    "spawnTroop((uint256,uint256),address,uint256)": FunctionFragment;
-    "storeEncodedRawMapCols(uint256[])": FunctionFragment;
-    "transferBaseOwnership((uint256,uint256),address)": FunctionFragment;
     "diamondCut((address,uint8,bytes4[])[],address,bytes)": FunctionFragment;
     "facetAddress(bytes4)": FunctionFragment;
     "facetAddresses()": FunctionFragment;
@@ -221,11 +217,8 @@ export interface CurioInterface extends utils.Interface {
     "supportsInterface(bytes4)": FunctionFragment;
     "battle(uint256,(uint256,uint256))": FunctionFragment;
     "captureBase(uint256,(uint256,uint256))": FunctionFragment;
-    "endProduction((uint256,uint256))": FunctionFragment;
     "move(uint256,(uint256,uint256))": FunctionFragment;
-    "repair((uint256,uint256))": FunctionFragment;
     "startProduction((uint256,uint256),uint256)": FunctionFragment;
-    "updateEpoch()": FunctionFragment;
     "bulkGetAllTroops()": FunctionFragment;
     "getBase(uint256)": FunctionFragment;
     "getBaseAt((uint256,uint256))": FunctionFragment;
@@ -242,6 +235,13 @@ export interface CurioInterface extends utils.Interface {
     "getTroopAt((uint256,uint256))": FunctionFragment;
     "getTroopType(uint256)": FunctionFragment;
     "getWorldConstants()": FunctionFragment;
+    "endProduction((uint256,uint256))": FunctionFragment;
+    "initializePlayer((uint256,uint256),address)": FunctionFragment;
+    "repair((uint256,uint256))": FunctionFragment;
+    "spawnTroop((uint256,uint256),address,uint256)": FunctionFragment;
+    "storeEncodedRawMapCols(uint256[])": FunctionFragment;
+    "transferBaseOwnership((uint256,uint256),address)": FunctionFragment;
+    "updateEpoch()": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "_getAttackCooldown(uint256)": FunctionFragment;
@@ -268,22 +268,6 @@ export interface CurioInterface extends utils.Interface {
     "_withinDist((uint256,uint256),(uint256,uint256),uint256)": FunctionFragment;
   };
 
-  encodeFunctionData(
-    functionFragment: "initializePlayer",
-    values: [PositionStruct, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "spawnTroop",
-    values: [PositionStruct, string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "storeEncodedRawMapCols",
-    values: [BigNumberish[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "transferBaseOwnership",
-    values: [PositionStruct, string]
-  ): string;
   encodeFunctionData(
     functionFragment: "diamondCut",
     values: [FacetCutStruct[], string, BytesLike]
@@ -314,24 +298,12 @@ export interface CurioInterface extends utils.Interface {
     values: [BigNumberish, PositionStruct]
   ): string;
   encodeFunctionData(
-    functionFragment: "endProduction",
-    values: [PositionStruct]
-  ): string;
-  encodeFunctionData(
     functionFragment: "move",
     values: [BigNumberish, PositionStruct]
   ): string;
   encodeFunctionData(
-    functionFragment: "repair",
-    values: [PositionStruct]
-  ): string;
-  encodeFunctionData(
     functionFragment: "startProduction",
     values: [PositionStruct, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "updateEpoch",
-    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "bulkGetAllTroops",
@@ -389,6 +361,34 @@ export interface CurioInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getWorldConstants",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "endProduction",
+    values: [PositionStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "initializePlayer",
+    values: [PositionStruct, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "repair",
+    values: [PositionStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "spawnTroop",
+    values: [PositionStruct, string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "storeEncodedRawMapCols",
+    values: [BigNumberish[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "transferBaseOwnership",
+    values: [PositionStruct, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "updateEpoch",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
@@ -485,19 +485,6 @@ export interface CurioInterface extends utils.Interface {
     values: [PositionStruct, PositionStruct, BigNumberish]
   ): string;
 
-  decodeFunctionResult(
-    functionFragment: "initializePlayer",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "spawnTroop", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "storeEncodedRawMapCols",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "transferBaseOwnership",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "diamondCut", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "facetAddress",
@@ -521,18 +508,9 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "captureBase",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "endProduction",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "move", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "repair", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "startProduction",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "updateEpoch",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -576,6 +554,28 @@ export interface CurioInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getWorldConstants",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "endProduction",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "initializePlayer",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "repair", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "spawnTroop", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "storeEncodedRawMapCols",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "transferBaseOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateEpoch",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
@@ -831,30 +831,6 @@ export interface Curio extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    initializePlayer(
-      _pos: PositionStruct,
-      _player: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    spawnTroop(
-      _pos: PositionStruct,
-      _player: string,
-      _troopTypeId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    storeEncodedRawMapCols(
-      _cols: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    transferBaseOwnership(
-      _pos: PositionStruct,
-      _player: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     diamondCut(
       _diamondCut: FacetCutStruct[],
       _init: string,
@@ -897,29 +873,15 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    endProduction(
-      _pos: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     move(
       _troopId: BigNumberish,
       _targetPos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    repair(
-      _pos: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     startProduction(
       _pos: PositionStruct,
       _troopTypeId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    updateEpoch(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -994,6 +956,44 @@ export interface Curio extends BaseContract {
     getWorldConstants(
       overrides?: CallOverrides
     ): Promise<[WorldConstantsStructOutput]>;
+
+    endProduction(
+      _pos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    initializePlayer(
+      _pos: PositionStruct,
+      _player: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    repair(
+      _pos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    spawnTroop(
+      _pos: PositionStruct,
+      _player: string,
+      _troopTypeId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    storeEncodedRawMapCols(
+      _cols: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    transferBaseOwnership(
+      _pos: PositionStruct,
+      _player: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    updateEpoch(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     owner(overrides?: CallOverrides): Promise<[string] & { owner_: string }>;
 
@@ -1112,30 +1112,6 @@ export interface Curio extends BaseContract {
     ): Promise<[boolean]>;
   };
 
-  initializePlayer(
-    _pos: PositionStruct,
-    _player: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  spawnTroop(
-    _pos: PositionStruct,
-    _player: string,
-    _troopTypeId: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  storeEncodedRawMapCols(
-    _cols: BigNumberish[],
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  transferBaseOwnership(
-    _pos: PositionStruct,
-    _player: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   diamondCut(
     _diamondCut: FacetCutStruct[],
     _init: string,
@@ -1174,29 +1150,15 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  endProduction(
-    _pos: PositionStruct,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   move(
     _troopId: BigNumberish,
     _targetPos: PositionStruct,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  repair(
-    _pos: PositionStruct,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   startProduction(
     _pos: PositionStruct,
     _troopTypeId: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  updateEpoch(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1271,6 +1233,44 @@ export interface Curio extends BaseContract {
   getWorldConstants(
     overrides?: CallOverrides
   ): Promise<WorldConstantsStructOutput>;
+
+  endProduction(
+    _pos: PositionStruct,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  initializePlayer(
+    _pos: PositionStruct,
+    _player: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  repair(
+    _pos: PositionStruct,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  spawnTroop(
+    _pos: PositionStruct,
+    _player: string,
+    _troopTypeId: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  storeEncodedRawMapCols(
+    _cols: BigNumberish[],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  transferBaseOwnership(
+    _pos: PositionStruct,
+    _player: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  updateEpoch(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
@@ -1389,30 +1389,6 @@ export interface Curio extends BaseContract {
   ): Promise<boolean>;
 
   callStatic: {
-    initializePlayer(
-      _pos: PositionStruct,
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    spawnTroop(
-      _pos: PositionStruct,
-      _player: string,
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    storeEncodedRawMapCols(
-      _cols: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    transferBaseOwnership(
-      _pos: PositionStruct,
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     diamondCut(
       _diamondCut: FacetCutStruct[],
       _init: string,
@@ -1451,26 +1427,17 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    endProduction(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     move(
       _troopId: BigNumberish,
       _targetPos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    repair(_pos: PositionStruct, overrides?: CallOverrides): Promise<void>;
-
     startProduction(
       _pos: PositionStruct,
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    updateEpoch(overrides?: CallOverrides): Promise<void>;
 
     bulkGetAllTroops(overrides?: CallOverrides): Promise<TroopStructOutput[]>;
 
@@ -1543,6 +1510,39 @@ export interface Curio extends BaseContract {
     getWorldConstants(
       overrides?: CallOverrides
     ): Promise<WorldConstantsStructOutput>;
+
+    endProduction(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    initializePlayer(
+      _pos: PositionStruct,
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    repair(_pos: PositionStruct, overrides?: CallOverrides): Promise<void>;
+
+    spawnTroop(
+      _pos: PositionStruct,
+      _player: string,
+      _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    storeEncodedRawMapCols(
+      _cols: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    transferBaseOwnership(
+      _pos: PositionStruct,
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    updateEpoch(overrides?: CallOverrides): Promise<void>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
@@ -1802,30 +1802,6 @@ export interface Curio extends BaseContract {
   };
 
   estimateGas: {
-    initializePlayer(
-      _pos: PositionStruct,
-      _player: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    spawnTroop(
-      _pos: PositionStruct,
-      _player: string,
-      _troopTypeId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    storeEncodedRawMapCols(
-      _cols: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    transferBaseOwnership(
-      _pos: PositionStruct,
-      _player: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     diamondCut(
       _diamondCut: FacetCutStruct[],
       _init: string,
@@ -1864,29 +1840,15 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    endProduction(
-      _pos: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     move(
       _troopId: BigNumberish,
       _targetPos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    repair(
-      _pos: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     startProduction(
       _pos: PositionStruct,
       _troopTypeId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    updateEpoch(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1953,6 +1915,44 @@ export interface Curio extends BaseContract {
     ): Promise<BigNumber>;
 
     getWorldConstants(overrides?: CallOverrides): Promise<BigNumber>;
+
+    endProduction(
+      _pos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    initializePlayer(
+      _pos: PositionStruct,
+      _player: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    repair(
+      _pos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    spawnTroop(
+      _pos: PositionStruct,
+      _player: string,
+      _troopTypeId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    storeEncodedRawMapCols(
+      _cols: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    transferBaseOwnership(
+      _pos: PositionStruct,
+      _player: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    updateEpoch(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -2069,30 +2069,6 @@ export interface Curio extends BaseContract {
   };
 
   populateTransaction: {
-    initializePlayer(
-      _pos: PositionStruct,
-      _player: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    spawnTroop(
-      _pos: PositionStruct,
-      _player: string,
-      _troopTypeId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    storeEncodedRawMapCols(
-      _cols: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    transferBaseOwnership(
-      _pos: PositionStruct,
-      _player: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     diamondCut(
       _diamondCut: FacetCutStruct[],
       _init: string,
@@ -2131,29 +2107,15 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    endProduction(
-      _pos: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     move(
       _troopId: BigNumberish,
       _targetPos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    repair(
-      _pos: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     startProduction(
       _pos: PositionStruct,
       _troopTypeId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    updateEpoch(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2226,6 +2188,44 @@ export interface Curio extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getWorldConstants(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    endProduction(
+      _pos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    initializePlayer(
+      _pos: PositionStruct,
+      _player: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    repair(
+      _pos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    spawnTroop(
+      _pos: PositionStruct,
+      _player: string,
+      _troopTypeId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    storeEncodedRawMapCols(
+      _cols: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    transferBaseOwnership(
+      _pos: PositionStruct,
+      _player: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    updateEpoch(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

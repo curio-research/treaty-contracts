@@ -10,9 +10,9 @@ import "contracts/diamond.sol";
 import "contracts/upgradeInitializers/diamondInit.sol";
 import "contracts/interfaces/IDiamondCut.sol";
 import "contracts/libraries/GameUtil.sol";
-import "contracts/facets/AdminFacet.sol";
 import "contracts/facets/GetterFacet.sol";
 import "contracts/facets/EngineFacet.sol";
+import "contracts/facets/HelperFacet.sol";
 import "contracts/libraries/Types.sol";
 
 /// @title diamond deploy foundry template
@@ -24,14 +24,14 @@ contract DiamondDeployTest is Test {
     DiamondInit public diamondInit;
     DiamondLoupeFacet public diamondLoupeFacet;
     OwnershipFacet public diamondOwnershipFacet;
-    AdminFacet public adminFacet;
-    GetterFacet public getterFacet;
     EngineFacet public engineFacet;
+    GetterFacet public getterFacet;
+    HelperFacet public helperFacet;
 
     // diamond-contract-casted methods
-    AdminFacet public admin;
-    GetterFacet public getter;
     EngineFacet public engine;
+    GetterFacet public getter;
+    HelperFacet public helper;
     OwnershipFacet public ownership;
 
     uint256 public NULL = 0;
@@ -137,9 +137,9 @@ contract DiamondDeployTest is Test {
         diamondLoupeFacet = new DiamondLoupeFacet();
         diamondOwnershipFacet = new OwnershipFacet();
 
-        adminFacet = new AdminFacet();
-        getterFacet = new GetterFacet();
+        helperFacet = new HelperFacet();
         engineFacet = new EngineFacet();
+        getterFacet = new GetterFacet();
 
         WorldConstants memory _worldConstants = _generateWorldConstants();
         TroopType[] memory _troopTypes = _generateTroopTypes();
@@ -150,13 +150,13 @@ contract DiamondDeployTest is Test {
         IDiamondCut.FacetCut[] memory cuts = new IDiamondCut.FacetCut[](5);
         cuts[0] = IDiamondCut.FacetCut({facetAddress: address(diamondLoupeFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: LOUPE_SELECTORS});
         cuts[1] = IDiamondCut.FacetCut({facetAddress: address(diamondOwnershipFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: OWNERSHIP_SELECTORS});
-        cuts[2] = IDiamondCut.FacetCut({facetAddress: address(getterFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: getSelectors("GetterFacet")});
-        cuts[3] = IDiamondCut.FacetCut({facetAddress: address(engineFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: getSelectors("EngineFacet")});
-        cuts[4] = IDiamondCut.FacetCut({facetAddress: address(adminFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: getSelectors("AdminFacet")});
+        cuts[2] = IDiamondCut.FacetCut({facetAddress: address(engineFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: getSelectors("EngineFacet")});
+        cuts[3] = IDiamondCut.FacetCut({facetAddress: address(getterFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: getSelectors("GetterFacet")});
+        cuts[4] = IDiamondCut.FacetCut({facetAddress: address(helperFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: getSelectors("HelperFacet")});
 
         IDiamondCut(diamond).diamondCut(cuts, address(diamondInit), initData);
 
-        admin = AdminFacet(diamond);
+        helper = HelperFacet(diamond);
         getter = GetterFacet(diamond);
         engine = EngineFacet(diamond);
         ownership = OwnershipFacet(diamond);
@@ -169,12 +169,12 @@ contract DiamondDeployTest is Test {
         // initialize map using lazy + encoding
         uint256[][] memory _map = generateMap(_worldConstants.worldWidth, _worldConstants.worldHeight, _worldConstants.mapInterval);
         uint256[] memory _encodedMapCols = _encodeTileMap(_worldConstants.numInitTerrainTypes, _map);
-        admin.storeEncodedRawMapCols(_encodedMapCols);
+        helper.storeEncodedRawMapCols(_encodedMapCols);
 
         // initialize players
-        admin.initializePlayer(player1Pos, player1);
-        admin.initializePlayer(player2Pos, player2);
-        admin.initializePlayer(player3Pos, player3);
+        helper.initializePlayer(player1Pos, player1);
+        helper.initializePlayer(player2Pos, player2);
+        helper.initializePlayer(player3Pos, player3);
 
         vm.stopPrank();
     }
