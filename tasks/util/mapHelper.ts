@@ -68,25 +68,24 @@ export const generateGameMaps = (mapInput: MapInput, renderInput: RenderInput): 
   return { tileMap, colorMap };
 };
 
-const validLand = [TILE_TYPE.CITY, TILE_TYPE.COAST, TILE_TYPE.INLAND, TILE_TYPE.PORT];
-
 interface islandIDMapCreatorRes {
   islandID: number;
   islandIDMarkerMap: number[][];
 }
 // DFS
 const islandIDMapCreator = (map: number[][]): islandIDMapCreatorRes => {
+  const validLand = [TILE_TYPE.CITY, TILE_TYPE.COAST, TILE_TYPE.INLAND, TILE_TYPE.PORT];
   const islandIDMarkerMap: number[][] = new Array(map.length).fill(null).map(() => new Array(map[0].length).fill(0));
   let islandID = 0;
 
-  // don't explore if its out of bounds or: already explored, comin
+  // don't explore if its out of bounds, already explored, or is a water tile.
   const explore = (row: number, col: number, grid: number[][], islandID: number) => {
-    if (row < 0 || col < 0 || row >= grid.length || col >= grid[row].length || grid[row][col] === TILE_TYPE.WATER || grid[row][col] === 69) {
+    if (row < 0 || col < 0 || row >= grid.length || col >= grid[row].length || grid[row][col] === TILE_TYPE.WATER || grid[row][col] === -1) {
       return;
     }
 
-    //Otherwise, we should explore it
-    grid[row][col] = 69;
+    // otherwise, proceed with DFS
+    grid[row][col] = -1;
     islandIDMarkerMap[row][col] = islandID;
 
     explore(row, col + 1, grid, islandID);
@@ -95,19 +94,15 @@ const islandIDMapCreator = (map: number[][]): islandIDMapCreatorRes => {
     explore(row - 1, col, grid, islandID);
   };
 
-  let count = 0; // the counted islands
   //Go though each cell of the 2d array/grid
   for (let row = 0; row < map.length; row++) {
     for (let col = 0; col < map[row].length; col++) {
       if (validLand.includes(map[row][col])) {
-        count++;
         islandID++;
         explore(row, col, map, islandID);
       }
     }
   }
-
-  // console.log(islandIDMarkerMap);
 
   return { islandID, islandIDMarkerMap };
 };
@@ -229,8 +224,11 @@ export const placePortsAndCities = (colorMap: number[][][], numPorts: number, nu
   let tileIndex: number;
   let tile: number[];
 
-  const { islandID, islandIDMarkerMap } = islandIDMapCreator(JSON.parse(JSON.stringify(tileMap)));
+  // ---------------------------
+  // ensure that every island has at least one coast
+  // ---------------------------
 
+  const { islandID, islandIDMarkerMap } = islandIDMapCreator(JSON.parse(JSON.stringify(tileMap)));
   const islandIdToMapping: Map<number, position[]> = new Map();
 
   // loop through coastline tiles
