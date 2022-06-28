@@ -10,8 +10,8 @@ task('map', 'map tests')
       {
         width: 20,
         height: 20,
-        numPorts: 10,
-        numCities: 10,
+        numPorts: 100,
+        numCities: 100,
       },
       RENDER_CONSTANTS
     );

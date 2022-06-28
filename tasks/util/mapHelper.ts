@@ -55,15 +55,13 @@ export const generateGameMaps = (mapInput: MapInput, renderInput: RenderInput): 
   const { tileMap, portTiles, cityTiles } = placePortsAndCities(colorMap, mapInput.numPorts, mapInput.numCities);
 
   // Update colorMap with ports and cities
-  let tile: number[];
-  for (let k = 0; k < portTiles.length; k++) {
-    tile = portTiles[k];
-    colorMap[tile[0]][tile[1]] = [100, 0, 0];
-  }
-  for (let k = 0; k < cityTiles.length; k++) {
-    tile = cityTiles[k];
-    colorMap[tile[0]][tile[1]] = [100, 100, 100];
-  }
+  portTiles.forEach((portTile) => {
+    colorMap[portTile[0]][portTile[1]] = [100, 0, 0];
+  });
+
+  cityTiles.forEach((cityTile) => {
+    colorMap[cityTile[0]][cityTile[1]] = [100, 100, 100];
+  });
 
   return { tileMap, colorMap };
 };
@@ -75,8 +73,8 @@ interface islandIDMapCreatorRes {
 // DFS
 const islandIDMapCreator = (map: number[][]): islandIDMapCreatorRes => {
   const validLand = [TILE_TYPE.CITY, TILE_TYPE.COAST, TILE_TYPE.INLAND, TILE_TYPE.PORT];
-  const islandIDMarkerMap: number[][] = new Array(map.length).fill(null).map(() => new Array(map[0].length).fill(0));
-  let islandID = 0;
+  const islandIDMarkerMap: number[][] = new Array(map.length).fill(null).map(() => new Array(map[0].length).fill(0)); // a 2D number array marked with number the islandID
+  let islandID = 0; // number of islands on the map
 
   // don't explore if its out of bounds, already explored, or is a water tile.
   const explore = (row: number, col: number, grid: number[][], islandID: number) => {
@@ -208,7 +206,6 @@ export const placePortsAndCities = (colorMap: number[][][], numPorts: number, nu
   for (let x = 0; x < colorMap.length * xIncrement; x += xIncrement) {
     for (let y = 0; y < colorMap[0].length * yIncrement; y += yIncrement) {
       if (colorMap[x][y][1] > 0) {
-        // land
         if ((x > 0 && colorMap[x - 1][y][1] == 0) || (x < colorMap.length - 1 && colorMap[x + 1][y][1] == 0) || (y > 0 && colorMap[x][y - 1][1] == 0) || (y < colorMap[0].length - 1 && colorMap[x][y + 1][1] == 0)) {
           tileMap[x][y] = TILE_TYPE.COAST;
           coastlineTiles.push([x, y]);
@@ -261,7 +258,7 @@ export const placePortsAndCities = (colorMap: number[][][], numPorts: number, nu
   }
 
   while (numPorts) {
-    if (!coastlineTiles) throw new Error('Out of tiles for ports');
+    if (!coastlineTiles || coastlineTiles.length === 0) break;
 
     tileIndex = Math.floor(Math.random() * coastlineTiles.length);
     tile = coastlineTiles[tileIndex];
@@ -273,14 +270,15 @@ export const placePortsAndCities = (colorMap: number[][][], numPorts: number, nu
   }
 
   while (numCities) {
-    if (!inlandTiles) throw new Error('Out of tiles for cities');
+    if (!inlandTiles || inlandTiles.length === 0) break;
 
-    tileIndex = Math.floor(Math.random() * inlandTiles.length);
-    tile = inlandTiles[tileIndex];
-    tileMap[tile[0]][tile[1]] = TILE_TYPE.CITY;
+    const inlandTileIdx = Math.floor(Math.random() * inlandTiles.length);
+    const inlandTile = inlandTiles[inlandTileIdx];
 
-    cityTiles.push(tile);
-    inlandTiles.splice(tileIndex, 1);
+    tileMap[inlandTile[0]][inlandTile[1]] = TILE_TYPE.CITY;
+
+    cityTiles.push(inlandTile);
+    inlandTiles.splice(inlandTileIdx, 1);
     numCities--;
   }
 
