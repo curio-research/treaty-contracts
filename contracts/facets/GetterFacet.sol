@@ -4,7 +4,6 @@ pragma solidity ^0.8.4;
 import {Base, Player, Position, Tile, Troop, WorldConstants, TroopType, Production} from "contracts/libraries/Types.sol";
 import {Util} from "contracts/libraries/GameUtil.sol";
 import "contracts/libraries/Storage.sol";
-import "forge-std/console.sol";
 
 /// @title Bulk getters
 /// @notice Getters provide bulk functions useful for fetching data from the frontend
