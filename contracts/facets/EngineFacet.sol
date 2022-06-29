@@ -37,8 +37,8 @@ contract EngineFacet is UseStorage {
         if (_movesLeftInEpoch == 0) revert("CURIO: No moves left this epoch");
 
         Tile memory _targetTile = Util._getTileAt(_targetPos);
-        if (Util._isLandTroop(_troop.troopTypeId) && !Util._hasTroopTransport(_targetTile)) {
-            if (_targetTile.terrain == TERRAIN.WATER) revert("CURIO: Cannot move on water");
+        if (Util._isLandTroop(_troop.troopTypeId)) {
+            if (_targetTile.terrain == TERRAIN.WATER && !Util._hasTroopTransport(_targetTile)) revert("CURIO: Cannot move on water");
         } else {
             if (_targetTile.terrain != TERRAIN.WATER && !Util._hasPort(_targetTile)) revert("CURIO: Cannot move on land");
         }
