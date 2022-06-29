@@ -51,6 +51,7 @@ struct Troop {
     uint256 troopTypeId;
     uint256 lastMoved;
     uint256 movesLeftInEpoch;
+    bool largeActionTakenThisEpoch;
     uint256 lastAttacked;
     uint256 lastRepaired;
     uint256 health;
