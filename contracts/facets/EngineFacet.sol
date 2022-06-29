@@ -55,7 +55,14 @@ contract EngineFacet is UseStorage {
         }
 
         // Move
-        gs().map[_troop.pos.x][_troop.pos.y].occupantId = NULL;
+        Tile memory _sourceTile = Util._getTileAt(_troop.pos);
+        if (_sourceTile.occupantId != _troopId) {
+            if (!Util._hasTroopTransport(_sourceTile)) revert("CURIO: Undefined behavior");
+            // Troop is on troop transport
+            Util._unloadTroopFromTransport(_sourceTile.occupantId, _troopId);
+        } else {
+            gs().map[_troop.pos.x][_troop.pos.y].occupantId = NULL;
+        }
         gs().troopIdMap[_troopId].pos = _targetPos;
         gs().troopIdMap[_troopId].movesLeftInEpoch--;
         gs().troopIdMap[_troopId].lastMoved = _epoch;

@@ -32,6 +32,18 @@ library Util {
     // ----------------------------------------------------------
 
     // Setters
+    function _unloadTroopFromTransport(uint256 _troopTransportId, uint256 _cargoTroopId) public {
+        uint256[] memory _cargoTroopIds = gs().troopIdMap[_troopTransportId].cargoTroopIds;
+        uint256 _cargoSize = _cargoTroopIds.length;
+        uint256 _index = 0;
+        while (_index < _cargoSize) {
+            if (_cargoTroopIds[_index] == _cargoTroopId) break;
+            _index++;
+        }
+
+        gs().troopIdMap[_troopTransportId].cargoTroopIds[_index] = _cargoTroopIds[_cargoSize - 1];
+        gs().troopIdMap[_troopTransportId].cargoTroopIds.pop();
+    }
 
     function _initializeTile(Position memory _pos) public {
         uint256 _numInitTerrainTypes = gs().worldConstants.numInitTerrainTypes;
