@@ -1,6 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
+import "forge-std/console.sol";
 import "contracts/libraries/Storage.sol";
 import {Util} from "contracts/libraries/GameUtil.sol";
 import {BASE_NAME, Base, GameState, Player, Position, Production, TERRAIN, Tile, Troop, TroopType} from "contracts/libraries/Types.sol";
@@ -37,8 +38,8 @@ contract EngineFacet is UseStorage {
         if (_movesLeftInEpoch == 0) revert("CURIO: No moves left this epoch");
 
         Tile memory _targetTile = Util._getTileAt(_targetPos);
-        if (Util._isLandTroop(_troop.troopTypeId) && !Util._hasTroopTransport(_targetTile)) {
-            if (_targetTile.terrain == TERRAIN.WATER) revert("CURIO: Cannot move on water");
+        if (Util._isLandTroop(_troop.troopTypeId)) {
+            if (_targetTile.terrain == TERRAIN.WATER && !Util._hasTroopTransport(_targetTile)) revert("CURIO: Cannot move on water");
         } else {
             if (_targetTile.terrain != TERRAIN.WATER && !Util._hasPort(_targetTile)) revert("CURIO: Cannot move on land");
         }
@@ -55,7 +56,14 @@ contract EngineFacet is UseStorage {
         }
 
         // Move
-        gs().map[_troop.pos.x][_troop.pos.y].occupantId = NULL;
+        Tile memory _sourceTile = Util._getTileAt(_troop.pos);
+        if (_sourceTile.occupantId != _troopId) {
+            if (!Util._hasTroopTransport(_sourceTile)) revert("CURIO: Undefined behavior");
+            // Troop is on troop transport
+            Util._unloadTroopFromTransport(_sourceTile.occupantId, _troopId);
+        } else {
+            gs().map[_troop.pos.x][_troop.pos.y].occupantId = NULL;
+        }
         gs().troopIdMap[_troopId].pos = _targetPos;
         gs().troopIdMap[_troopId].movesLeftInEpoch--;
         gs().troopIdMap[_troopId].lastMoved = _epoch;

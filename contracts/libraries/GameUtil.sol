@@ -32,6 +32,18 @@ library Util {
     // ----------------------------------------------------------
 
     // Setters
+    function _unloadTroopFromTransport(uint256 _troopTransportId, uint256 _cargoTroopId) public {
+        uint256[] memory _cargoTroopIds = gs().troopIdMap[_troopTransportId].cargoTroopIds;
+        uint256 _cargoSize = _cargoTroopIds.length;
+        uint256 _index = 0;
+        while (_index < _cargoSize) {
+            if (_cargoTroopIds[_index] == _cargoTroopId) break;
+            _index++;
+        }
+
+        gs().troopIdMap[_troopTransportId].cargoTroopIds[_index] = _cargoTroopIds[_cargoSize - 1];
+        gs().troopIdMap[_troopTransportId].cargoTroopIds.pop();
+    }
 
     function _initializeTile(Position memory _pos) public {
         uint256 _numInitTerrainTypes = gs().worldConstants.numInitTerrainTypes;
@@ -169,7 +181,7 @@ library Util {
     }
 
     function _hasPort(Tile memory _tile) public view returns (bool) {
-        return gs().baseIdMap[_tile.baseId].name == BASE_NAME.PORT;
+        return _tile.baseId != _NULL() && gs().baseIdMap[_tile.baseId].name == BASE_NAME.PORT;
     }
 
     function _getTileAt(Position memory _pos) public view returns (Tile memory) {
@@ -208,5 +220,9 @@ library Util {
         uint256 _xDist = _p1.x >= _p2.x ? _p1.x - _p2.x : _p2.x - _p1.x;
         uint256 _yDist = _p1.y >= _p2.y ? _p1.y - _p2.y : _p2.y - _p1.y;
         return (_xDist + _yDist) <= _dist;
+    }
+
+    function _NULL() internal pure returns (uint256) {
+        return 0;
     }
 }
