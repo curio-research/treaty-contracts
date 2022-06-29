@@ -12,13 +12,14 @@ import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 contract HelperFacet is UseStorage {
     using SafeMath for uint256;
     uint256 NULL = 0;
+    address NULL_ADDR = address(0);
 
     // ----------------------------------------------------------------------
     // ADMIN FUNCTIONS
     // ----------------------------------------------------------------------
 
     modifier onlyAdmin() {
-        if (msg.sender != gs().worldConstants.admin) revert("CURIO: Unauthorized");
+        require(msg.sender == gs().worldConstants.admin, "CURIO: Unauthorized");
         _;
     }
 
@@ -33,12 +34,12 @@ contract HelperFacet is UseStorage {
      * @param _player player address
      */
     function initializePlayer(Position memory _pos, address _player) external {
-        if (!Util._inBound(_pos)) revert("Out of bound");
+        require(Util._inBound(_pos), "CURIO: Out of bound");
         if (!Util._getTileAt(_pos).isInitialized) Util._initializeTile(_pos);
 
         uint256 _baseId = Util._getTileAt(_pos).baseId;
-        if (Util._getBaseOwner(_baseId) != address(0)) revert("CURIO: Base is taken");
-        if (gs().playerMap[_player].active) revert("CURIO: Player already initialized");
+        require(Util._getBaseOwner(_baseId) == NULL_ADDR, "CURIO: Base is taken");
+        require(!gs().playerMap[_player].active, "CURIO: Player already initialized");
 
         gs().players.push(_player);
         gs().playerMap[_player] = Player({initEpoch: gs().epoch, active: true});
@@ -58,16 +59,16 @@ contract HelperFacet is UseStorage {
         address _player,
         uint256 _troopTypeId
     ) external onlyAdmin {
-        if (!Util._inBound(_pos)) revert("Out of bound");
+        require(Util._inBound(_pos), "CURIO: Out of bound");
         if (!Util._getTileAt(_pos).isInitialized) Util._initializeTile(_pos);
 
         Tile memory _tile = Util._getTileAt(_pos);
-        if (_tile.occupantId != NULL) revert("CURIO: Tile occupied");
+        require(_tile.occupantId == NULL, "CURIO: Tile occupied");
 
         if (_tile.baseId != NULL) {
             Base memory _base = gs().baseIdMap[_tile.baseId];
-            if (_base.owner != _player && _base.owner != address(0)) revert("CURIO: Can only spawn troop in player's base"); // FIXME: the address(0) part is a bit of privilege
-            if (!Util._isLandTroop(_troopTypeId) && _base.name != BASE_NAME.PORT) revert("CURIO: Can only spawn water troops in ports");
+            require(_base.owner == _player || _base.owner == NULL_ADDR, "CURIO: Can only spawn troop in player's base"); // FIXME: the NULL_ADDR part is a bit of privilege
+            require(Util._isLandTroop(_troopTypeId) || _base.name == BASE_NAME.PORT, "CURIO: Can only spawn water troops in ports");
         }
 
         (uint256 _troopId, Troop memory _troop) = Util._addTroop(_pos, _troopTypeId, _player);
@@ -81,15 +82,15 @@ contract HelperFacet is UseStorage {
      * @param _player player to give ownership to
      */
     function transferBaseOwnership(Position memory _pos, address _player) external onlyAdmin {
-        if (!Util._inBound(_pos)) revert("CURIO: Out of bound");
+        require(Util._inBound(_pos), "CURIO: Out of bound");
         if (!Util._getTileAt(_pos).isInitialized) Util._initializeTile(_pos);
 
         Tile memory _tile = Util._getTileAt(_pos);
-        if (_tile.baseId == NULL) revert("CURIO: No base found");
-        if (_tile.occupantId != NULL) revert("CURIO: Tile occupied");
+        require(_tile.baseId != NULL, "CURIO: No base found");
+        require(_tile.occupantId == NULL, "CURIO: Tile occupied");
 
         Base memory _base = Util._getBase(_tile.baseId);
-        if (_base.owner == _player) revert("CURIO: Base already belongs to player");
+        require(_base.owner != _player, "CURIO: Base already belongs to player");
 
         gs().baseIdMap[_tile.baseId].owner = _player;
         emit Util.BaseCaptured(_player, NULL, _tile.baseId);
@@ -104,7 +105,7 @@ contract HelperFacet is UseStorage {
      */
     function updateEpoch() external {
         // Currently implemented expecting real-time calls from client; can change to lazy if needed
-        if ((block.timestamp - gs().lastTimestamp) < gs().worldConstants.secondsPerEpoch) revert("CURIO: Not enough time has elapsed since last epoch");
+        require((block.timestamp - gs().lastTimestamp) >= gs().worldConstants.secondsPerEpoch, "CURIO: Not enough time has elapsed since last epoch");
 
         gs().epoch++;
         gs().lastTimestamp = block.timestamp;
@@ -117,18 +118,18 @@ contract HelperFacet is UseStorage {
      * @param _pos position of base
      */
     function endProduction(Position memory _pos) external {
-        if (!Util._inBound(_pos)) revert("CURIO: Out of bound");
+        require(Util._inBound(_pos), "CURIO: Out of bound");
         if (!Util._getTileAt(_pos).isInitialized) Util._initializeTile(_pos);
 
         // Currently implemented expecting real-time calls from client; can change to lazy if needed
         Tile memory _tile = Util._getTileAt(_pos);
-        if (_tile.baseId == NULL) revert("CURIO: No base found");
-        if (Util._getBaseOwner(_tile.baseId) != msg.sender) revert("CURIO: Can only produce in own base");
-        if (_tile.occupantId != NULL) revert("CURIO: Base occupied by another troop");
+        require(_tile.baseId != NULL, "CURIO: No base found");
+        require(Util._getBaseOwner(_tile.baseId) == msg.sender, "CURIO: Can only produce in own base");
+        require(_tile.occupantId == NULL, "CURIO: Base occupied by another troop");
 
         Production memory _production = gs().baseProductionMap[_tile.baseId];
-        if (_production.troopTypeId == NULL) revert("CURIO: No production found in base");
-        if (Util._getEpochsToProduce(_production.troopTypeId) > (gs().epoch - _production.startEpoch)) revert("CURIO: Troop needs more epochs for production");
+        require(_production.troopTypeId != NULL, "CURIO: No production found in base");
+        require(Util._getEpochsToProduce(_production.troopTypeId) <= (gs().epoch - _production.startEpoch), "CURIO: Troop needs more epochs for production");
 
         (uint256 _troopId, Troop memory _troop) = Util._addTroop(_pos, _production.troopTypeId, msg.sender);
         delete gs().baseProductionMap[_tile.baseId];
@@ -142,20 +143,20 @@ contract HelperFacet is UseStorage {
      * @param _pos position of base
      */
     function repair(Position memory _pos) external {
-        if (!Util._inBound(_pos)) revert("CURIO: Out of bound");
+        require(Util._inBound(_pos), "CURIO: Out of bound");
         if (!Util._getTileAt(_pos).isInitialized) Util._initializeTile(_pos);
 
         Tile memory _tile = Util._getTileAt(_pos);
-        if (_tile.baseId == NULL) revert("CURIO: No base found");
-        if (Util._getBaseOwner(_tile.baseId) != msg.sender) revert("CURIO: Can only repair in own base");
+        require(_tile.baseId != NULL, "CURIO: No base found");
+        require(Util._getBaseOwner(_tile.baseId) == msg.sender, "CURIO: Can only repair in own base");
 
         uint256 _troopId = _tile.occupantId;
-        if (_troopId == NULL) revert("CURIO: No troop to repair");
+        require(_troopId != NULL, "CURIO: No troop to repair");
 
         Troop memory _troop = gs().troopIdMap[_troopId];
-        if (_troop.owner != msg.sender) revert("CURIO: Can only repair own troop");
-        if (_troop.health >= Util._getMaxHealth(_troop.troopTypeId)) revert("CURIO: Troop already at full health");
-        if ((gs().epoch - _troop.lastRepaired) < 1) revert("CURIO: Repaired too recently");
+        require(_troop.owner == msg.sender, "CURIO: Can only repair own troop");
+        require(_troop.health < Util._getMaxHealth(_troop.troopTypeId), "CURIO: Troop already at full health");
+        require((gs().epoch - _troop.lastRepaired) >= 1, "CURIO: Repaired too recently");
 
         _troop.health++;
         gs().troopIdMap[_troopId].health = _troop.health;
