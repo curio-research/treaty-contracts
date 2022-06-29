@@ -78,23 +78,14 @@ export type BaseStructOutput = [
   health: BigNumber;
 };
 
-export type TileStruct = {
-  terrain: BigNumberish;
-  occupantId: BigNumberish;
-  baseId: BigNumberish;
+export type ProductionStruct = {
+  troopTypeId: BigNumberish;
+  startEpoch: BigNumberish;
 };
 
-export type TileStructOutput = [number, BigNumber, BigNumber] & {
-  terrain: number;
-  occupantId: BigNumber;
-  baseId: BigNumber;
-};
-
-export type PlayerStruct = { initEpoch: BigNumberish; active: boolean };
-
-export type PlayerStructOutput = [BigNumber, boolean] & {
-  initEpoch: BigNumber;
-  active: boolean;
+export type ProductionStructOutput = [BigNumber, BigNumber] & {
+  troopTypeId: BigNumber;
+  startEpoch: BigNumber;
 };
 
 export type TroopTypeStruct = {
@@ -137,6 +128,27 @@ export type TroopTypeStructOutput = [
   isLandTroop: boolean;
 };
 
+export type TileStruct = {
+  isInitialized: boolean;
+  terrain: BigNumberish;
+  occupantId: BigNumberish;
+  baseId: BigNumberish;
+};
+
+export type TileStructOutput = [boolean, number, BigNumber, BigNumber] & {
+  isInitialized: boolean;
+  terrain: number;
+  occupantId: BigNumber;
+  baseId: BigNumber;
+};
+
+export type PlayerStruct = { initEpoch: BigNumberish; active: boolean };
+
+export type PlayerStructOutput = [BigNumber, boolean] & {
+  initEpoch: BigNumber;
+  active: boolean;
+};
+
 export type WorldConstantsStruct = {
   admin: string;
   worldWidth: BigNumberish;
@@ -145,10 +157,14 @@ export type WorldConstantsStruct = {
   numCities: BigNumberish;
   mapInterval: BigNumberish;
   secondsPerEpoch: BigNumberish;
+  combatEfficiency: BigNumberish;
+  numInitTerrainTypes: BigNumberish;
 };
 
 export type WorldConstantsStructOutput = [
   string,
+  BigNumber,
+  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -163,6 +179,8 @@ export type WorldConstantsStructOutput = [
   numCities: BigNumber;
   mapInterval: BigNumber;
   secondsPerEpoch: BigNumber;
+  combatEfficiency: BigNumber;
+  numInitTerrainTypes: BigNumber;
 };
 
 export interface GetterFacetInterface extends utils.Interface {
@@ -172,9 +190,12 @@ export interface GetterFacetInterface extends utils.Interface {
     "getBaseAt((uint256,uint256))": FunctionFragment;
     "getBaseNonce()": FunctionFragment;
     "getBulkBase(uint256,uint256)": FunctionFragment;
+    "getBulkProductions(uint256[])": FunctionFragment;
+    "getBulkTroopTypes(uint256,uint256)": FunctionFragment;
     "getEpoch()": FunctionFragment;
     "getMapChunk((uint256,uint256))": FunctionFragment;
     "getPlayer(address)": FunctionFragment;
+    "getProduction(uint256)": FunctionFragment;
     "getTileAt((uint256,uint256))": FunctionFragment;
     "getTroop(uint256)": FunctionFragment;
     "getTroopAt((uint256,uint256))": FunctionFragment;
@@ -202,12 +223,24 @@ export interface GetterFacetInterface extends utils.Interface {
     functionFragment: "getBulkBase",
     values: [BigNumberish, BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "getBulkProductions",
+    values: [BigNumberish[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getBulkTroopTypes",
+    values: [BigNumberish, BigNumberish]
+  ): string;
   encodeFunctionData(functionFragment: "getEpoch", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getMapChunk",
     values: [PositionStruct]
   ): string;
   encodeFunctionData(functionFragment: "getPlayer", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "getProduction",
+    values: [BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "getTileAt",
     values: [PositionStruct]
@@ -243,12 +276,24 @@ export interface GetterFacetInterface extends utils.Interface {
     functionFragment: "getBulkBase",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "getBulkProductions",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getBulkTroopTypes",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getEpoch", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getMapChunk",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getPlayer", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getProduction",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getTileAt", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getTroop", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getTroopAt", data: BytesLike): Result;
@@ -311,6 +356,17 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BaseStructOutput[]]>;
 
+    getBulkProductions(
+      _baseIds: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<[ProductionStructOutput[]]>;
+
+    getBulkTroopTypes(
+      _startId: BigNumberish,
+      _endId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[TroopTypeStructOutput[]]>;
+
     getEpoch(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getMapChunk(
@@ -322,6 +378,11 @@ export interface GetterFacet extends BaseContract {
       _addr: string,
       overrides?: CallOverrides
     ): Promise<[PlayerStructOutput]>;
+
+    getProduction(
+      _baseId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[ProductionStructOutput]>;
 
     getTileAt(
       _pos: PositionStruct,
@@ -368,6 +429,17 @@ export interface GetterFacet extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BaseStructOutput[]>;
 
+  getBulkProductions(
+    _baseIds: BigNumberish[],
+    overrides?: CallOverrides
+  ): Promise<ProductionStructOutput[]>;
+
+  getBulkTroopTypes(
+    _startId: BigNumberish,
+    _endId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<TroopTypeStructOutput[]>;
+
   getEpoch(overrides?: CallOverrides): Promise<BigNumber>;
 
   getMapChunk(
@@ -379,6 +451,11 @@ export interface GetterFacet extends BaseContract {
     _addr: string,
     overrides?: CallOverrides
   ): Promise<PlayerStructOutput>;
+
+  getProduction(
+    _baseId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<ProductionStructOutput>;
 
   getTileAt(
     _pos: PositionStruct,
@@ -425,6 +502,17 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BaseStructOutput[]>;
 
+    getBulkProductions(
+      _baseIds: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<ProductionStructOutput[]>;
+
+    getBulkTroopTypes(
+      _startId: BigNumberish,
+      _endId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<TroopTypeStructOutput[]>;
+
     getEpoch(overrides?: CallOverrides): Promise<BigNumber>;
 
     getMapChunk(
@@ -436,6 +524,11 @@ export interface GetterFacet extends BaseContract {
       _addr: string,
       overrides?: CallOverrides
     ): Promise<PlayerStructOutput>;
+
+    getProduction(
+      _baseId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<ProductionStructOutput>;
 
     getTileAt(
       _pos: PositionStruct,
@@ -482,6 +575,17 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getBulkProductions(
+      _baseIds: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getBulkTroopTypes(
+      _startId: BigNumberish,
+      _endId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getEpoch(overrides?: CallOverrides): Promise<BigNumber>;
 
     getMapChunk(
@@ -490,6 +594,11 @@ export interface GetterFacet extends BaseContract {
     ): Promise<BigNumber>;
 
     getPlayer(_addr: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    getProduction(
+      _baseId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     getTileAt(
       _pos: PositionStruct,
@@ -535,6 +644,17 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getBulkProductions(
+      _baseIds: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getBulkTroopTypes(
+      _startId: BigNumberish,
+      _endId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getEpoch(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getMapChunk(
@@ -544,6 +664,11 @@ export interface GetterFacet extends BaseContract {
 
     getPlayer(
       _addr: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getProduction(
+      _baseId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

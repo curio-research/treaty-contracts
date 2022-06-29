@@ -11,7 +11,7 @@ import {
   Signer,
   utils,
 } from "ethers";
-import { FunctionFragment, Result } from "@ethersproject/abi";
+import { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
 import { Listener, Provider } from "@ethersproject/providers";
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
@@ -22,13 +22,81 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
   y: BigNumber;
 };
 
+export type TroopStruct = {
+  owner: string;
+  troopTypeId: BigNumberish;
+  lastMoved: BigNumberish;
+  movesLeftInEpoch: BigNumberish;
+  lastAttacked: BigNumberish;
+  lastRepaired: BigNumberish;
+  health: BigNumberish;
+  pos: PositionStruct;
+  cargoTroopIds: BigNumberish[];
+};
+
+export type TroopStructOutput = [
+  string,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  PositionStructOutput,
+  BigNumber[]
+] & {
+  owner: string;
+  troopTypeId: BigNumber;
+  lastMoved: BigNumber;
+  movesLeftInEpoch: BigNumber;
+  lastAttacked: BigNumber;
+  lastRepaired: BigNumber;
+  health: BigNumber;
+  pos: PositionStructOutput;
+  cargoTroopIds: BigNumber[];
+};
+
+export type BaseStruct = {
+  name: BigNumberish;
+  owner: string;
+  attackFactor: BigNumberish;
+  defenseFactor: BigNumberish;
+  health: BigNumberish;
+};
+
+export type BaseStructOutput = [
+  number,
+  string,
+  BigNumber,
+  BigNumber,
+  BigNumber
+] & {
+  name: number;
+  owner: string;
+  attackFactor: BigNumber;
+  defenseFactor: BigNumber;
+  health: BigNumber;
+};
+
+export type ProductionStruct = {
+  troopTypeId: BigNumberish;
+  startEpoch: BigNumberish;
+};
+
+export type ProductionStructOutput = [BigNumber, BigNumber] & {
+  troopTypeId: BigNumber;
+  startEpoch: BigNumber;
+};
+
 export type TileStruct = {
+  isInitialized: boolean;
   terrain: BigNumberish;
   occupantId: BigNumberish;
   baseId: BigNumberish;
 };
 
-export type TileStructOutput = [number, BigNumber, BigNumber] & {
+export type TileStructOutput = [boolean, number, BigNumber, BigNumber] & {
+  isInitialized: boolean;
   terrain: number;
   occupantId: BigNumber;
   baseId: BigNumber;
@@ -38,6 +106,7 @@ export interface UtilInterface extends utils.Interface {
   functions: {
     "_getAttackCooldown(uint256)": FunctionFragment;
     "_getAttackFactor(uint256)": FunctionFragment;
+    "_getBase(uint256)": FunctionFragment;
     "_getBaseHealth(uint256)": FunctionFragment;
     "_getBaseOwner(uint256)": FunctionFragment;
     "_getCargoCapacity(uint256)": FunctionFragment;
@@ -48,15 +117,14 @@ export interface UtilInterface extends utils.Interface {
     "_getMovementCooldown(uint256)": FunctionFragment;
     "_getMovesPerEpoch(uint256)": FunctionFragment;
     "_getTileAt((uint256,uint256))": FunctionFragment;
-    "_getTroopOwner(uint256)": FunctionFragment;
-    "_getTroopPos(uint256)": FunctionFragment;
-    "_hasPort((uint8,uint256,uint256))": FunctionFragment;
-    "_hasTroopTransport((uint8,uint256,uint256))": FunctionFragment;
+    "_getTroop(uint256)": FunctionFragment;
+    "_hasPort((bool,uint8,uint256,uint256))": FunctionFragment;
+    "_hasTroopTransport((bool,uint8,uint256,uint256))": FunctionFragment;
     "_inBound((uint256,uint256))": FunctionFragment;
     "_isLandTroop(uint256)": FunctionFragment;
     "_random(uint256,uint256)": FunctionFragment;
     "_samePos((uint256,uint256),(uint256,uint256))": FunctionFragment;
-    "_strike(uint256)": FunctionFragment;
+    "_strike(uint256,uint256)": FunctionFragment;
     "_withinDist((uint256,uint256),(uint256,uint256),uint256)": FunctionFragment;
   };
 
@@ -66,6 +134,10 @@ export interface UtilInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "_getAttackFactor",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getBase",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
@@ -109,11 +181,7 @@ export interface UtilInterface extends utils.Interface {
     values: [PositionStruct]
   ): string;
   encodeFunctionData(
-    functionFragment: "_getTroopOwner",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getTroopPos",
+    functionFragment: "_getTroop",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
@@ -142,7 +210,7 @@ export interface UtilInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "_strike",
-    values: [BigNumberish]
+    values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "_withinDist",
@@ -157,6 +225,7 @@ export interface UtilInterface extends utils.Interface {
     functionFragment: "_getAttackFactor",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "_getBase", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_getBaseHealth",
     data: BytesLike
@@ -194,14 +263,7 @@ export interface UtilInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "_getTileAt", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "_getTroopOwner",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getTroopPos",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "_getTroop", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "_hasPort", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_hasTroopTransport",
@@ -220,8 +282,142 @@ export interface UtilInterface extends utils.Interface {
     data: BytesLike
   ): Result;
 
-  events: {};
+  events: {
+    "AttackedBase(address,uint256,tuple,uint256,tuple)": EventFragment;
+    "AttackedTroop(address,uint256,tuple,uint256,tuple)": EventFragment;
+    "BaseCaptured(address,uint256,uint256)": EventFragment;
+    "Death(address,uint256)": EventFragment;
+    "EpochUpdate(uint256,uint256)": EventFragment;
+    "Moved(address,uint256,uint256,tuple,tuple)": EventFragment;
+    "NewPlayer(address,tuple)": EventFragment;
+    "NewTroop(address,uint256,tuple,tuple)": EventFragment;
+    "ProductionEnded(address,uint256)": EventFragment;
+    "ProductionStarted(address,uint256,tuple)": EventFragment;
+    "Recovered(address,uint256)": EventFragment;
+    "Repaired(address,uint256,uint256)": EventFragment;
+  };
+
+  getEvent(nameOrSignatureOrTopic: "AttackedBase"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "AttackedTroop"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "BaseCaptured"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Death"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "EpochUpdate"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Moved"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "NewPlayer"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "NewTroop"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ProductionEnded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ProductionStarted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Recovered"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Repaired"): EventFragment;
 }
+
+export type AttackedBaseEvent = TypedEvent<
+  [string, BigNumber, TroopStructOutput, BigNumber, BaseStructOutput],
+  {
+    _player: string;
+    _troopId: BigNumber;
+    _troopInfo: TroopStructOutput;
+    _targetBaseId: BigNumber;
+    _targetBaseInfo: BaseStructOutput;
+  }
+>;
+
+export type AttackedBaseEventFilter = TypedEventFilter<AttackedBaseEvent>;
+
+export type AttackedTroopEvent = TypedEvent<
+  [string, BigNumber, TroopStructOutput, BigNumber, TroopStructOutput],
+  {
+    _player: string;
+    _troopId: BigNumber;
+    _troopInfo: TroopStructOutput;
+    _targetTroopId: BigNumber;
+    _targetTroopInfo: TroopStructOutput;
+  }
+>;
+
+export type AttackedTroopEventFilter = TypedEventFilter<AttackedTroopEvent>;
+
+export type BaseCapturedEvent = TypedEvent<
+  [string, BigNumber, BigNumber],
+  { _player: string; _troopId: BigNumber; _baseId: BigNumber }
+>;
+
+export type BaseCapturedEventFilter = TypedEventFilter<BaseCapturedEvent>;
+
+export type DeathEvent = TypedEvent<
+  [string, BigNumber],
+  { _player: string; _troopId: BigNumber }
+>;
+
+export type DeathEventFilter = TypedEventFilter<DeathEvent>;
+
+export type EpochUpdateEvent = TypedEvent<
+  [BigNumber, BigNumber],
+  { _epoch: BigNumber; _time: BigNumber }
+>;
+
+export type EpochUpdateEventFilter = TypedEventFilter<EpochUpdateEvent>;
+
+export type MovedEvent = TypedEvent<
+  [string, BigNumber, BigNumber, PositionStructOutput, PositionStructOutput],
+  {
+    _player: string;
+    _troopId: BigNumber;
+    _epoch: BigNumber;
+    _startPos: PositionStructOutput;
+    _targetPos: PositionStructOutput;
+  }
+>;
+
+export type MovedEventFilter = TypedEventFilter<MovedEvent>;
+
+export type NewPlayerEvent = TypedEvent<
+  [string, PositionStructOutput],
+  { _player: string; _pos: PositionStructOutput }
+>;
+
+export type NewPlayerEventFilter = TypedEventFilter<NewPlayerEvent>;
+
+export type NewTroopEvent = TypedEvent<
+  [string, BigNumber, TroopStructOutput, PositionStructOutput],
+  {
+    _player: string;
+    _troopId: BigNumber;
+    _troop: TroopStructOutput;
+    _pos: PositionStructOutput;
+  }
+>;
+
+export type NewTroopEventFilter = TypedEventFilter<NewTroopEvent>;
+
+export type ProductionEndedEvent = TypedEvent<
+  [string, BigNumber],
+  { _player: string; _baseId: BigNumber }
+>;
+
+export type ProductionEndedEventFilter = TypedEventFilter<ProductionEndedEvent>;
+
+export type ProductionStartedEvent = TypedEvent<
+  [string, BigNumber, ProductionStructOutput],
+  { _player: string; _baseId: BigNumber; _production: ProductionStructOutput }
+>;
+
+export type ProductionStartedEventFilter =
+  TypedEventFilter<ProductionStartedEvent>;
+
+export type RecoveredEvent = TypedEvent<
+  [string, BigNumber],
+  { _player: string; _troopId: BigNumber }
+>;
+
+export type RecoveredEventFilter = TypedEventFilter<RecoveredEvent>;
+
+export type RepairedEvent = TypedEvent<
+  [string, BigNumber, BigNumber],
+  { _player: string; _troopId: BigNumber; _health: BigNumber }
+>;
+
+export type RepairedEventFilter = TypedEventFilter<RepairedEvent>;
 
 export interface Util extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -259,6 +455,11 @@ export interface Util extends BaseContract {
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    _getBase(
+      _id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BaseStructOutput]>;
 
     _getBaseHealth(
       _baseId: BigNumberish,
@@ -310,15 +511,10 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[TileStructOutput]>;
 
-    _getTroopOwner(
+    _getTroop(
       _troopId: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    _getTroopPos(
-      _troopId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[PositionStructOutput]>;
+    ): Promise<[TroopStructOutput]>;
 
     _hasPort(_tile: TileStruct, overrides?: CallOverrides): Promise<[boolean]>;
 
@@ -335,8 +531,8 @@ export interface Util extends BaseContract {
     ): Promise<[boolean]>;
 
     _random(
-      _salt: BigNumberish,
       _max: BigNumberish,
+      _salt: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -348,6 +544,7 @@ export interface Util extends BaseContract {
 
     _strike(
       _strikeFactor: BigNumberish,
+      _salt: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
@@ -368,6 +565,11 @@ export interface Util extends BaseContract {
     _troopTypeId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  _getBase(
+    _id: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BaseStructOutput>;
 
   _getBaseHealth(
     _baseId: BigNumberish,
@@ -419,15 +621,10 @@ export interface Util extends BaseContract {
     overrides?: CallOverrides
   ): Promise<TileStructOutput>;
 
-  _getTroopOwner(
+  _getTroop(
     _troopId: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<string>;
-
-  _getTroopPos(
-    _troopId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<PositionStructOutput>;
+  ): Promise<TroopStructOutput>;
 
   _hasPort(_tile: TileStruct, overrides?: CallOverrides): Promise<boolean>;
 
@@ -444,8 +641,8 @@ export interface Util extends BaseContract {
   ): Promise<boolean>;
 
   _random(
-    _salt: BigNumberish,
     _max: BigNumberish,
+    _salt: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -457,6 +654,7 @@ export interface Util extends BaseContract {
 
   _strike(
     _strikeFactor: BigNumberish,
+    _salt: BigNumberish,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
@@ -477,6 +675,11 @@ export interface Util extends BaseContract {
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    _getBase(
+      _id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BaseStructOutput>;
 
     _getBaseHealth(
       _baseId: BigNumberish,
@@ -528,15 +731,10 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<TileStructOutput>;
 
-    _getTroopOwner(
+    _getTroop(
       _troopId: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<string>;
-
-    _getTroopPos(
-      _troopId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PositionStructOutput>;
+    ): Promise<TroopStructOutput>;
 
     _hasPort(_tile: TileStruct, overrides?: CallOverrides): Promise<boolean>;
 
@@ -553,8 +751,8 @@ export interface Util extends BaseContract {
     ): Promise<boolean>;
 
     _random(
-      _salt: BigNumberish,
       _max: BigNumberish,
+      _salt: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -566,6 +764,7 @@ export interface Util extends BaseContract {
 
     _strike(
       _strikeFactor: BigNumberish,
+      _salt: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -577,7 +776,125 @@ export interface Util extends BaseContract {
     ): Promise<boolean>;
   };
 
-  filters: {};
+  filters: {
+    "AttackedBase(address,uint256,tuple,uint256,tuple)"(
+      _player?: null,
+      _troopId?: null,
+      _troopInfo?: null,
+      _targetBaseId?: null,
+      _targetBaseInfo?: null
+    ): AttackedBaseEventFilter;
+    AttackedBase(
+      _player?: null,
+      _troopId?: null,
+      _troopInfo?: null,
+      _targetBaseId?: null,
+      _targetBaseInfo?: null
+    ): AttackedBaseEventFilter;
+
+    "AttackedTroop(address,uint256,tuple,uint256,tuple)"(
+      _player?: null,
+      _troopId?: null,
+      _troopInfo?: null,
+      _targetTroopId?: null,
+      _targetTroopInfo?: null
+    ): AttackedTroopEventFilter;
+    AttackedTroop(
+      _player?: null,
+      _troopId?: null,
+      _troopInfo?: null,
+      _targetTroopId?: null,
+      _targetTroopInfo?: null
+    ): AttackedTroopEventFilter;
+
+    "BaseCaptured(address,uint256,uint256)"(
+      _player?: null,
+      _troopId?: null,
+      _baseId?: null
+    ): BaseCapturedEventFilter;
+    BaseCaptured(
+      _player?: null,
+      _troopId?: null,
+      _baseId?: null
+    ): BaseCapturedEventFilter;
+
+    "Death(address,uint256)"(_player?: null, _troopId?: null): DeathEventFilter;
+    Death(_player?: null, _troopId?: null): DeathEventFilter;
+
+    "EpochUpdate(uint256,uint256)"(
+      _epoch?: null,
+      _time?: null
+    ): EpochUpdateEventFilter;
+    EpochUpdate(_epoch?: null, _time?: null): EpochUpdateEventFilter;
+
+    "Moved(address,uint256,uint256,tuple,tuple)"(
+      _player?: null,
+      _troopId?: null,
+      _epoch?: null,
+      _startPos?: null,
+      _targetPos?: null
+    ): MovedEventFilter;
+    Moved(
+      _player?: null,
+      _troopId?: null,
+      _epoch?: null,
+      _startPos?: null,
+      _targetPos?: null
+    ): MovedEventFilter;
+
+    "NewPlayer(address,tuple)"(
+      _player?: null,
+      _pos?: null
+    ): NewPlayerEventFilter;
+    NewPlayer(_player?: null, _pos?: null): NewPlayerEventFilter;
+
+    "NewTroop(address,uint256,tuple,tuple)"(
+      _player?: null,
+      _troopId?: null,
+      _troop?: null,
+      _pos?: null
+    ): NewTroopEventFilter;
+    NewTroop(
+      _player?: null,
+      _troopId?: null,
+      _troop?: null,
+      _pos?: null
+    ): NewTroopEventFilter;
+
+    "ProductionEnded(address,uint256)"(
+      _player?: null,
+      _baseId?: null
+    ): ProductionEndedEventFilter;
+    ProductionEnded(_player?: null, _baseId?: null): ProductionEndedEventFilter;
+
+    "ProductionStarted(address,uint256,tuple)"(
+      _player?: null,
+      _baseId?: null,
+      _production?: null
+    ): ProductionStartedEventFilter;
+    ProductionStarted(
+      _player?: null,
+      _baseId?: null,
+      _production?: null
+    ): ProductionStartedEventFilter;
+
+    "Recovered(address,uint256)"(
+      _player?: null,
+      _troopId?: null
+    ): RecoveredEventFilter;
+    Recovered(_player?: null, _troopId?: null): RecoveredEventFilter;
+
+    "Repaired(address,uint256,uint256)"(
+      _player?: null,
+      _troopId?: null,
+      _health?: null
+    ): RepairedEventFilter;
+    Repaired(
+      _player?: null,
+      _troopId?: null,
+      _health?: null
+    ): RepairedEventFilter;
+  };
 
   estimateGas: {
     _getAttackCooldown(
@@ -589,6 +906,8 @@ export interface Util extends BaseContract {
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    _getBase(_id: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
     _getBaseHealth(
       _baseId: BigNumberish,
@@ -640,12 +959,7 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getTroopOwner(
-      _troopId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getTroopPos(
+    _getTroop(
       _troopId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -665,8 +979,8 @@ export interface Util extends BaseContract {
     ): Promise<BigNumber>;
 
     _random(
-      _salt: BigNumberish,
       _max: BigNumberish,
+      _salt: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -678,6 +992,7 @@ export interface Util extends BaseContract {
 
     _strike(
       _strikeFactor: BigNumberish,
+      _salt: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -700,6 +1015,11 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    _getBase(
+      _id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     _getBaseHealth(
       _baseId: BigNumberish,
       overrides?: CallOverrides
@@ -750,12 +1070,7 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _getTroopOwner(
-      _troopId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getTroopPos(
+    _getTroop(
       _troopId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -781,8 +1096,8 @@ export interface Util extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     _random(
-      _salt: BigNumberish,
       _max: BigNumberish,
+      _salt: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -794,6 +1109,7 @@ export interface Util extends BaseContract {
 
     _strike(
       _strikeFactor: BigNumberish,
+      _salt: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

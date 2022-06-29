@@ -1,10 +1,9 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import {Base, Player, Position, Tile, Troop, WorldConstants, TroopType} from "contracts/libraries/Types.sol";
+import {Base, Player, Position, Tile, Troop, WorldConstants, TroopType, Production} from "contracts/libraries/Types.sol";
 import {Util} from "contracts/libraries/GameUtil.sol";
 import "contracts/libraries/Storage.sol";
-import "forge-std/console.sol";
 
 /// @title Bulk getters
 /// @notice Getters provide bulk functions useful for fetching data from the frontend
@@ -45,7 +44,7 @@ contract GetterFacet is UseStorage {
     }
 
     function getBase(uint256 _id) external view returns (Base memory) {
-        return gs().baseIdMap[_id];
+        return Util._getBase(_id);
     }
 
     function getTroopAt(Position memory _pos) external view returns (Troop memory) {
@@ -81,14 +80,43 @@ contract GetterFacet is UseStorage {
     }
 
     // _startId: inclusive
-    // endId: inclusive
+    // _endId: inclusive
     function getBulkBase(uint256 _startId, uint256 _endId) external view returns (Base[] memory) {
-        Base[] memory bases = new Base[](_endId - _startId + 1);
+        Base[] memory _bases = new Base[](_endId - _startId + 1);
 
-        for (uint256 i = _startId; i < _endId; i++) {
-            bases[i] = gs().baseIdMap[i];
+        for (uint256 i = 0; i < _endId - _startId; i++) {
+            _bases[i] = gs().baseIdMap[i + _startId];
         }
 
-        return bases;
+        return _bases;
+    }
+
+    // _startId: inclusive
+    // _endId: inclusive
+    function getBulkTroopTypes(uint256 _startId, uint256 _endId) external view returns (TroopType[] memory) {
+        TroopType[] memory _troops = new TroopType[](_endId - _startId + 1);
+
+        for (uint256 i = 0; i < _endId - _startId + 1; i++) {
+            _troops[i] = gs().troopTypeIdMap[i + _startId];
+        }
+
+        return _troops;
+    }
+
+    // fetches single production
+    function getProduction(uint256 _baseId) public view returns (Production memory) {
+        return gs().baseProductionMap[_baseId];
+    }
+
+    // _baseIds: list of base Ids
+    function getBulkProductions(uint256[] memory _baseIds) external view returns (Production[] memory) {
+        Production[] memory _productions = new Production[](_baseIds.length);
+
+        for (uint256 i = 0; i < _baseIds.length; i++) {
+            uint256 _baseId = _baseIds[i];
+            _productions[i] = getProduction(_baseId);
+        }
+
+        return _productions;
     }
 }

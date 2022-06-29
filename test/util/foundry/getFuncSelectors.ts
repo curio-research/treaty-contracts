@@ -1,18 +1,19 @@
 import { Interface } from '@ethersproject/abi';
 const hre = require('hardhat');
 
-// code attribution: written by https://github.com/Timidan
 // this file is ran by Foundry tests to pipe js input back into solidity files
 
 // interfaces
+import HelperFacetInterface from '../../../out/HelperFacet.sol/HelperFacet.json';
 import GetterFacetInterface from '../../../out/GetterFacet.sol/GetterFacet.json';
 import EngineFacetInterface from '../../../out/EngineFacet.sol/EngineFacet.json';
 import DiamondInitInerface from '../../../out/DiamondInit.sol/DiamondInit.json';
 
 const nameToAbiMapping: any = {
-  GetterFacet: GetterFacetInterface,
-  EngineFacet: EngineFacetInterface,
   DiamondInit: DiamondInitInerface,
+  EngineFacet: EngineFacetInterface,
+  GetterFacet: GetterFacetInterface,
+  HelperFacet: HelperFacetInterface,
 };
 
 const args = process.argv.slice(2);
@@ -36,3 +37,5 @@ async function getSelectors(contractName: string) {
 }
 
 getSelectors(args[0]);
+
+// code attribution: inspired by https://github.com/Timidan

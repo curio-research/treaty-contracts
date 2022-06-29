@@ -40,6 +40,7 @@ struct Base {
 }
 
 struct Tile {
+    bool isInitialized;
     TERRAIN terrain;
     uint256 occupantId; // a troop
     uint256 baseId;
@@ -84,6 +85,8 @@ struct WorldConstants {
     uint256 numCities;
     uint256 mapInterval;
     uint256 secondsPerEpoch;
+    uint256 combatEfficiency; // in the interval [0, 100]
+    uint256 numInitTerrainTypes; // default is 5
 }
 
 struct GameState {
@@ -102,4 +105,5 @@ struct GameState {
     mapping(uint256 => Troop) troopIdMap;
     uint256[] troopTypeIds;
     mapping(uint256 => TroopType) troopTypeIdMap;
+    uint256[] encodedRawMapCols;
 }
