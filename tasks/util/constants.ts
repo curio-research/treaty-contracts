@@ -14,7 +14,7 @@ export const WORLD_HEIGHT = 20;
 export const NUM_PORTS = 0;
 export const NUM_CITIES = 0;
 export const MAP_INTERVAL = 10;
-export const SECONDS_PER_EPOCH = 5;
+export const SECONDS_PER_EPOCH = 0;
 export const COMBAT_EFFICIENCY = 50;
 export const BASE_ATTACK_FACTOR = 1;
 export const BASE_DEFENSE_FACTOR = 1;
@@ -108,10 +108,10 @@ export const generateWorldConstants = (adminAddr: string): WorldConstantsStruct 
 // ----------------------------------------------------------
 
 export const RENDER_CONSTANTS: RenderInput = {
-  sizeFactor: 5,
+  sizeFactor: 8,
   numLandColors: 5,
   numWaterColors: 2,
-  waterNoiseCutoff: 0.5,
+  waterNoiseCutoff: 0.45,
   colorLowestPercent: 40,
   plateSizeMultiplier: 6,
   superpositionRatio: [0.7, 0.3],
