@@ -4,19 +4,7 @@ pragma solidity ^0.8.4;
 import "forge-std/Test.sol";
 import "test/DiamondDeploy.t.sol";
 
-contract LogicTest is Test, DiamondDeployTest {
-    // TODO: add tests for events
-    event NewPlayer(address _player, Position _pos);
-    event EpochUpdate(uint256 _epoch, uint256 _time);
-    event Moved(address _player, uint256 _troopId, Position _pos);
-    event Attacked(address _player, uint256 _troopId, address _targetPlayer, uint256 _targetId);
-    event Death(address _player, uint256 _troopId);
-    event BaseCaptured(address _player, uint256 _troopId, uint256 _baseId);
-    event ProductionStarted(address _player, uint256 _baseId, uint256 _troopTypeId);
-    event NewTroop(address _player, uint256 _troopId, Position _pos);
-    event Repaired(address _player, uint256 _troopId, uint256 _health);
-    event Recovered(address _player, uint256 _troopId);
-
+contract ScenarioTest is Test, DiamondDeployTest {
     function testTroopTransport() public {
         Position memory _enemyPos = Position({x: 7, y: 3});
 
@@ -138,14 +126,21 @@ contract LogicTest is Test, DiamondDeployTest {
         helper.updateEpoch();
         Position memory _newPos = Position({x: 7, y: 2});
         engine.move(_troopTransport2Id, _newPos);
+        _troopTransport2 = getter.getTroop(_troopTransport2Id);
         _armyAlice = getter.getTroop(_armyAliceId);
+        assertEq(_troopTransport2.pos.x, 7);
+        assertEq(_troopTransport2.pos.y, 2);
         assertEq(_armyAlice.pos.x, 7);
         assertEq(_armyAlice.pos.y, 2);
         assertEq(getter.getTileAt(_newPos).occupantId, _troopTransport2Id);
 
-        // battle enemy destroyer
+        // failure: try to move transport onto coast
         vm.warp(160);
         helper.updateEpoch();
+        vm.expectRevert("CURIO: Cannot move on land");
+        engine.move(_troopTransport2Id, Position({x: 8, y: 2}));
+
+        // battle enemy destroyer
         engine.battle(_troopTransport2Id, _enemyPos);
 
         // if troop transport dies, verify cargo army also dies

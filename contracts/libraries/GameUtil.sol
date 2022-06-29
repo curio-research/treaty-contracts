@@ -181,7 +181,7 @@ library Util {
     }
 
     function _hasPort(Tile memory _tile) public view returns (bool) {
-        return gs().baseIdMap[_tile.baseId].name == BASE_NAME.PORT;
+        return _tile.baseId != _NULL() && gs().baseIdMap[_tile.baseId].name == BASE_NAME.PORT;
     }
 
     function _getTileAt(Position memory _pos) public view returns (Tile memory) {
@@ -220,5 +220,9 @@ library Util {
         uint256 _xDist = _p1.x >= _p2.x ? _p1.x - _p2.x : _p2.x - _p1.x;
         uint256 _yDist = _p1.y >= _p2.y ? _p1.y - _p2.y : _p2.y - _p1.y;
         return (_xDist + _yDist) <= _dist;
+    }
+
+    function _NULL() internal pure returns (uint256) {
+        return 0;
     }
 }
