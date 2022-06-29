@@ -1,6 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
+import "forge-std/console.sol";
 import "contracts/libraries/Storage.sol";
 import {Util} from "contracts/libraries/GameUtil.sol";
 import {BASE_NAME, Base, GameState, Player, Position, Production, TERRAIN, Tile, Troop, TroopType} from "contracts/libraries/Types.sol";
@@ -18,16 +19,15 @@ contract EngineFacet is UseStorage {
      * @param _troopId identifier for troop
      * @param _targetPos target position
      */
-    function march(uint256 _troopId, Position memory _targetPos) external {
-        
+    function move(uint256 _troopId, Position memory _targetPos) external {
         /* Condition Check: Distance and Attacking Range (same thing for now) */
-        if (!Util._inBound(_targetPos)) revert("CURIO: Target out of bound");
+        require(Util._inBound(_targetPos), "CURIO: Target out of bound");
         if (!Util._getTileAt(_targetPos).isInitialized) Util._initializeTile(_targetPos);
 
         Troop memory _troop = gs().troopIdMap[_troopId];
-        if (_troop.owner != msg.sender) revert("CURIO: Can only move own troop");
-        if (Util._samePos(_troop.pos, _targetPos)) revert("CURIO: Already at destination");
-        if (!Util._withinDist(_troop.pos, _targetPos, 1)) revert("CURIO: Destination too far");
+        require(_troop.owner == msg.sender, "CURIO: Can only move own troop");
+        require(Util._withinDist(_troop.pos, _targetPos, 1), "CURIO: Destination too far");
+        require(!Util._samePos(_troop.pos, _targetPos), "CURIO: Already at destination");
 
         /* Condition Check: Moves Left */
         uint256 _movesLeftInEpoch = _troop.movesLeftInEpoch;
@@ -37,14 +37,14 @@ contract EngineFacet is UseStorage {
             _movesLeftInEpoch = Util._getMovesPerEpoch(_troop.troopTypeId);
             gs().troopIdMap[_troopId].movesLeftInEpoch = _movesLeftInEpoch;
         }
-        if (_movesLeftInEpoch == 0) revert("CURIO: No moves left this epoch");
+        require(_movesLeftInEpoch > 0, "CURIO: No moves left this epoch");
 
         /* Condition Check: Geographic Limits */
         Tile memory _targetTile = Util._getTileAt(_targetPos);
-        if (Util._isLandTroop(_troop.troopTypeId) && !Util._hasTroopTransport(_targetTile)) {
-            if (_targetTile.terrain == TERRAIN.WATER) revert("CURIO: Cannot move on water");
+        if (Util._isLandTroop(_troop.troopTypeId)) {
+            require(_targetTile.terrain != TERRAIN.WATER || Util._hasTroopTransport(_targetTile), "CURIO: Cannot move on water");
         } else {
-            if (_targetTile.terrain != TERRAIN.WATER && !Util._hasPort(_targetTile)) revert("CURIO: Cannot move on land");
+            require(_targetTile.terrain == TERRAIN.WATER || Util._hasPort(_targetTile), "CURIO: Cannot move on land");
         }
 
         /* Condition Check: If _targetTile is a base owned by an enemy */
