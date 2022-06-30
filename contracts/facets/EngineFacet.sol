@@ -132,9 +132,9 @@ contract EngineFacet is UseStorage {
 
         // Loop till one side dies
         uint256 _salt = 0;
-        while (Util._getTroop(_troopId).health > 0 && Util._getTroop(_targetTile.occupantId).health > 0) {
+        while (_troop.health > 0) {
             // Troop attacks target
-            _salt += 1;
+            _salt++;
             if (Util._strike(_targetAttackFactor, _salt)) {
                 uint256 _damagePerHit = Util._getDamagePerHit(_troop.troopTypeId);
                 if (_damagePerHit < _targetHealth) {
@@ -151,19 +151,20 @@ contract EngineFacet is UseStorage {
             if (_targetHealth == 0) break; // target cannot attack back if it has zero health
 
             // Target attacks troop
-            _salt += 1;
+            _salt++;
             if (Util._strike(_targetDefenseFactor, _salt)) {
                 // enemy troop attacks back
                 if (_targetDamagePerHit < _troop.health) {
                     _troop.health -= _targetDamagePerHit;
                 } else {
+                    _troop.health = 0;
                     Util._removeTroop(_troop.pos, _troopId);
                     emit Util.Death(msg.sender, _troopId);
                 }
             }
         }
 
-        if (Util._getTroop(_troopId).owner == msg.sender) {
+        if (_troop.health > 0) {
             // Troop survives
             gs().troopIdMap[_troopId].health = _troop.health;
             _troop = Util._getTroop(_troopId);
@@ -177,9 +178,9 @@ contract EngineFacet is UseStorage {
                 emit Util.AttackedTroop(msg.sender, _troopId, _troop, _targetTile.occupantId, _targetTroop);
             }
         } else {
+            // Target survives
             _troop = Util._getTroop(_troopId);
 
-            // Target survives
             if (_targetIsBase) {
                 gs().baseIdMap[_targetTile.baseId].health = _targetHealth;
                 _targetBase = Util._getBase(_targetTile.baseId);
