@@ -23,10 +23,15 @@ task('port', 'compile and port contracts over to frontend repo').setAction(async
 
   // save typechain files
   const clientTypechainDir = path.join(__dirname, '../../frontend/src/network/typechain-types');
+  const backendTypechainDir = path.join(__dirname, '../../faucet/src/typechain-types');
   const localTypechainDir = path.join(__dirname, '../typechain-types');
 
-  await fs.rmdirSync(clientTypechainDir, { recursive: true });
+  // delete existing directories
+  await fs.rmSync(clientTypechainDir, { recursive: true });
+  await fs.rmSync(backendTypechainDir, { recursive: true });
+
   copyFolderSync(localTypechainDir, clientTypechainDir);
+  copyFolderSync(localTypechainDir, backendTypechainDir);
 
   const configFileDir = path.join(__dirname, '/game.config.json');
   const configClientDir = path.join(__dirname, '../../frontend/src/game.config.json');

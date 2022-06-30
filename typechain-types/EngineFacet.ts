@@ -28,15 +28,8 @@ export interface EngineFacetInterface extends utils.Interface {
   functions: {
     "battle(uint256,(uint256,uint256))": FunctionFragment;
     "captureBase(uint256,(uint256,uint256))": FunctionFragment;
-    "endProduction((uint256,uint256))": FunctionFragment;
-    "initializePlayer((uint256,uint256),address)": FunctionFragment;
     "move(uint256,(uint256,uint256))": FunctionFragment;
-    "repair((uint256,uint256))": FunctionFragment;
-    "setMapChunk((uint256,uint256),uint256[][])": FunctionFragment;
-    "spawnTroop((uint256,uint256),address,uint256)": FunctionFragment;
     "startProduction((uint256,uint256),uint256)": FunctionFragment;
-    "transferBaseOwnership((uint256,uint256),address)": FunctionFragment;
-    "updateEpoch()": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -48,40 +41,12 @@ export interface EngineFacetInterface extends utils.Interface {
     values: [BigNumberish, PositionStruct]
   ): string;
   encodeFunctionData(
-    functionFragment: "endProduction",
-    values: [PositionStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "initializePlayer",
-    values: [PositionStruct, string]
-  ): string;
-  encodeFunctionData(
     functionFragment: "move",
     values: [BigNumberish, PositionStruct]
   ): string;
   encodeFunctionData(
-    functionFragment: "repair",
-    values: [PositionStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setMapChunk",
-    values: [PositionStruct, BigNumberish[][]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "spawnTroop",
-    values: [PositionStruct, string, BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "startProduction",
     values: [PositionStruct, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "transferBaseOwnership",
-    values: [PositionStruct, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "updateEpoch",
-    values?: undefined
   ): string;
 
   decodeFunctionResult(functionFragment: "battle", data: BytesLike): Result;
@@ -89,31 +54,9 @@ export interface EngineFacetInterface extends utils.Interface {
     functionFragment: "captureBase",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "endProduction",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "initializePlayer",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "move", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "repair", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "setMapChunk",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "spawnTroop", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "startProduction",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "transferBaseOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "updateEpoch",
     data: BytesLike
   ): Result;
 
@@ -159,54 +102,15 @@ export interface EngineFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    endProduction(
-      _pos: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    initializePlayer(
-      _pos: PositionStruct,
-      _player: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     move(
       _troopId: BigNumberish,
       _targetPos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    repair(
-      _pos: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    setMapChunk(
-      _startPos: PositionStruct,
-      _chunk: BigNumberish[][],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    spawnTroop(
-      _pos: PositionStruct,
-      _player: string,
-      _troopTypeId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     startProduction(
       _pos: PositionStruct,
       _troopTypeId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    transferBaseOwnership(
-      _pos: PositionStruct,
-      _player: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    updateEpoch(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
@@ -223,54 +127,15 @@ export interface EngineFacet extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  endProduction(
-    _pos: PositionStruct,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  initializePlayer(
-    _pos: PositionStruct,
-    _player: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   move(
     _troopId: BigNumberish,
     _targetPos: PositionStruct,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  repair(
-    _pos: PositionStruct,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setMapChunk(
-    _startPos: PositionStruct,
-    _chunk: BigNumberish[][],
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  spawnTroop(
-    _pos: PositionStruct,
-    _player: string,
-    _troopTypeId: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   startProduction(
     _pos: PositionStruct,
     _troopTypeId: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  transferBaseOwnership(
-    _pos: PositionStruct,
-    _player: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  updateEpoch(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -287,35 +152,9 @@ export interface EngineFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    endProduction(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    initializePlayer(
-      _pos: PositionStruct,
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     move(
       _troopId: BigNumberish,
       _targetPos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    repair(_pos: PositionStruct, overrides?: CallOverrides): Promise<void>;
-
-    setMapChunk(
-      _startPos: PositionStruct,
-      _chunk: BigNumberish[][],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    spawnTroop(
-      _pos: PositionStruct,
-      _player: string,
-      _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -324,14 +163,6 @@ export interface EngineFacet extends BaseContract {
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    transferBaseOwnership(
-      _pos: PositionStruct,
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    updateEpoch(overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {};
@@ -349,54 +180,15 @@ export interface EngineFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    endProduction(
-      _pos: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    initializePlayer(
-      _pos: PositionStruct,
-      _player: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     move(
       _troopId: BigNumberish,
       _targetPos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    repair(
-      _pos: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setMapChunk(
-      _startPos: PositionStruct,
-      _chunk: BigNumberish[][],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    spawnTroop(
-      _pos: PositionStruct,
-      _player: string,
-      _troopTypeId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     startProduction(
       _pos: PositionStruct,
       _troopTypeId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    transferBaseOwnership(
-      _pos: PositionStruct,
-      _player: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    updateEpoch(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
@@ -414,54 +206,15 @@ export interface EngineFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    endProduction(
-      _pos: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    initializePlayer(
-      _pos: PositionStruct,
-      _player: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     move(
       _troopId: BigNumberish,
       _targetPos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    repair(
-      _pos: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setMapChunk(
-      _startPos: PositionStruct,
-      _chunk: BigNumberish[][],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    spawnTroop(
-      _pos: PositionStruct,
-      _player: string,
-      _troopTypeId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     startProduction(
       _pos: PositionStruct,
       _troopTypeId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    transferBaseOwnership(
-      _pos: PositionStruct,
-      _player: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    updateEpoch(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };
