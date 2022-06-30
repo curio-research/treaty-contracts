@@ -58,7 +58,7 @@ contract EngineFacet is UseStorage {
         // Move
         Tile memory _sourceTile = Util._getTileAt(_troop.pos);
         if (_sourceTile.occupantId != _troopId) {
-            assert(Util._hasTroopTransport(_sourceTile)); // something is wrong if failed
+            require(Util._hasTroopTransport(_sourceTile), "CURIO: not troop transport"); // something is wrong if failed
             // Troop is on troop transport
             Util._unloadTroopFromTransport(_sourceTile.occupantId, _troopId);
         } else {
@@ -204,7 +204,7 @@ contract EngineFacet is UseStorage {
         Troop memory _troop = gs().troopIdMap[_troopId];
         require(_troop.owner == msg.sender, "CURIO: Can only capture with own troop");
         require(Util._withinDist(_troop.pos, _targetPos, 1), "CURIO: Destination too far");
-        require(Util._isLandTroop(_troop.troopTypeId), "CURIO: Only a land troop can capture bases");
+        // require(Util._isLandTroop(_troop.troopTypeId), "CURIO: Only a land troop can capture bases");
 
         Tile memory _targetTile = Util._getTileAt(_targetPos);
         require(_targetTile.baseId != NULL, "CURIO: No base to capture");
@@ -215,6 +215,7 @@ contract EngineFacet is UseStorage {
         // Move, capture, end production
         gs().map[_troop.pos.x][_troop.pos.y].occupantId = NULL;
         gs().troopIdMap[_troopId].pos = _targetPos;
+        gs().map[_targetPos.x][_targetPos.y].occupantId = _troopId;
         gs().baseIdMap[_targetTile.baseId].owner = msg.sender;
         gs().baseIdMap[_targetTile.baseId].health = 1; // FIXME: change to BaseConstants.maxHealth
         delete gs().baseProductionMap[_targetTile.baseId];
