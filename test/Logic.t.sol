@@ -299,7 +299,6 @@ contract LogicTest is Test, DiamondDeployTest {
         helper.spawnTroop(Position({x: 5, y: 1}), player1, armyTroopTypeId);
         uint256 _armyId = initTroopNonce;
         helper.spawnTroop(Position({x: 7, y: 3}), player1, destroyerTroopTypeId);
-        uint256 _destroyerId = initTroopNonce + 1;
         vm.stopPrank();
 
         vm.prank(player2);
@@ -310,8 +309,8 @@ contract LogicTest is Test, DiamondDeployTest {
         vm.expectRevert(bytes("CURIO: Destination too far"));
         engine.captureBase(_armyId, player2Pos);
 
-        vm.expectRevert(bytes("CURIO: Only a land troop can capture bases"));
-        engine.captureBase(_destroyerId, player2Pos);
+        // vm.expectRevert(bytes("CURIO: Only a land troop can capture bases"));
+        // engine.captureBase(_destroyerId, player2Pos);
 
         vm.expectRevert(bytes("CURIO: No base to capture"));
         engine.captureBase(_armyId, Position({x: 4, y: 1}));
@@ -365,9 +364,8 @@ contract LogicTest is Test, DiamondDeployTest {
         _base = getter.getBaseAt(player2Pos);
         assertEq(_base.owner, player1);
 
-        // test that base recovers health
         vm.prank(player2);
-        vm.expectRevert(bytes("CURIO: Need to attack first"));
+        vm.expectRevert(bytes("CURIO: Destination tile occupied"));
         engine.captureBase(_player2ArmyId, player2Pos);
 
         vm.coinbase(deployer);
