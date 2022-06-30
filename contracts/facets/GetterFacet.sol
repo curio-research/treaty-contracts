@@ -84,7 +84,7 @@ contract GetterFacet is UseStorage {
     function getBulkBase(uint256 _startId, uint256 _endId) external view returns (Base[] memory) {
         Base[] memory _bases = new Base[](_endId - _startId + 1);
 
-        for (uint256 i = 0; i < _endId - _startId; i++) {
+        for (uint256 i = 0; i < _endId - _startId + 1; i++) {
             _bases[i] = gs().baseIdMap[i + _startId];
         }
 
