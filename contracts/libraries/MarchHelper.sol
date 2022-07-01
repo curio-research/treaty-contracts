@@ -20,9 +20,8 @@ library MarchHelper {
         uint256 _epoch = gs().epoch;
         Tile memory _targetTile = Util._getTileAt(_targetPos);
 
-        if (!_hasTroopTransport(_targetTile)) {
+        if (!Util._hasTroopTransport(_targetTile)) {
             gs().map[_targetPos.x][_targetPos.y].occupantId = _troopId;
-            
         }
 
         // Move
@@ -50,7 +49,6 @@ library MarchHelper {
 
     function loadModule(uint256 _troopId, Position memory _targetPos) public {
         Tile memory _targetTile = Util._getTileAt(_targetPos);
-        Troop memory _troop = gs().troopIdMap[_troopId];
 
         // Load troop onto Troop Transport at target tile
         gs().troopIdMap[_targetTile.occupantId].cargoTroopIds.push(_troopId);
@@ -123,14 +121,15 @@ library MarchHelper {
             if (!Util._isLandTroop(_troop.troopTypeId)) {
                 emit Util.AttackedBase(msg.sender, _troopId, _troop, _targetTile.baseId, _targetBase);
             } else {
-                // Move, capture, end production
-                gs().map[_troop.pos.x][_troop.pos.y].occupantId = 0;
-                gs().troopIdMap[_troopId].pos = _targetPos;
+                
+                // capture and end production
                 gs().baseIdMap[_targetTile.baseId].owner = msg.sender;
                 gs().baseIdMap[_targetTile.baseId].health = 1; // FIXME: change to BaseConstants.maxHealth
                 delete gs().baseProductionMap[_targetTile.baseId];
-
                 emit Util.BaseCaptured(msg.sender, _troopId, _targetTile.baseId);
+
+                // move
+                moveModule(_troopId, _targetPos);
             }
         } else {
             // Target survives

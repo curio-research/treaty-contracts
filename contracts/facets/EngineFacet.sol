@@ -67,7 +67,7 @@ contract EngineFacet is UseStorage {
 
                     MarchHelper.moveModule(_troopId, _targetPos);
                 } else {
-                    // Note: battleBase Module (will capture if won and _troop is landtroop)
+                    // Note: battleBase Module (will capture&move if won and _troop is landtroop)
                     MarchHelper.battleBaseModule(_troopId, _targetPos);
                 }
             }
