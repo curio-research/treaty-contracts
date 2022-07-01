@@ -20,10 +20,10 @@ library MarchHelper {
         uint256 _epoch = gs().epoch;
         Tile memory _targetTile = Util._getTileAt(_targetPos);
 
-        if (_hasTroopTransport(_targetTile)) {
+        if (!_hasTroopTransport(_targetTile)) {
+            gs().map[_targetPos.x][_targetPos.y].occupantId = _troopId;
             
         }
-        gs().map[_targetPos.x][_targetPos.y].occupantId = _troopId;
 
         // Move
         Tile memory _sourceTile = Util._getTileAt(_troop.pos);
