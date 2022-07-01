@@ -303,11 +303,11 @@ contract LogicTest is Test, DiamondDeployTest {
         vm.stopPrank();
 
         vm.prank(player2);
-        vm.expectRevert(bytes("CURIO: Can only capture with own troop"));
+        vm.expectRevert(bytes("CURIO: Can only march own troop"));
         engine.march(_armyId, player3Pos);
 
         vm.startPrank(player1);
-        vm.expectRevert(bytes("CURIO: Destination too far"));
+        vm.expectRevert(bytes("CURIO: Target not in Firing Range"));
         engine.march(_armyId, player2Pos);
 
         vm.expectRevert(bytes("CURIO: Only a land troop can capture bases"));
@@ -342,11 +342,13 @@ contract LogicTest is Test, DiamondDeployTest {
 
         Base memory _base = getter.getBaseAt(player2Pos);
         assertEq(_base.owner, player2);
+        console.log("pass line 345");
 
         // increase epoch
         vm.warp(20);
         helper.updateEpoch();
         assertEq(getter.getEpoch(), 1);
+        console.log("pass line 351");
 
         vm.startPrank(player1);
         engine.march(_destroyerId, player2Pos);
@@ -359,8 +361,11 @@ contract LogicTest is Test, DiamondDeployTest {
 
         Troop memory _army = getter.getTroop(_armyId);
         assertEq(_army.pos.x, player2Pos.x);
+        console.log("pass line 364");
         assertEq(_army.pos.y, player2Pos.y);
+        console.log("pass line 366");
         assertEq(_army.health, getter.getTroopType(armyTroopTypeId).maxHealth);
+        console.log("pass line 368");
 
         _base = getter.getBaseAt(player2Pos);
         assertEq(_base.owner, player1);
