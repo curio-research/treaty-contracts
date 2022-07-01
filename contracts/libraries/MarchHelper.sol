@@ -65,7 +65,6 @@ library MarchHelper {
         uint256 _targetDefenseFactor;
         uint256 _targetDamagePerHit;
         uint256 _targetHealth;
-        Troop memory _targetTroop;
         Base memory _targetBase;
 
         require(_targetTile.baseId != 0, "CURIO: No target to attack");
@@ -82,7 +81,7 @@ library MarchHelper {
 
         // Loop till one side dies
         uint256 _salt = 0;
-        while (Util._getTroop(_troopId).health > 0 && Util._getTroop(_targetTile.occupantId).health > 0) {
+        while (_troop.health > 0) {
             // Troop attacks target
             _salt += 1;
             if (Util._strike(_targetAttackFactor, _salt)) {
@@ -105,13 +104,14 @@ library MarchHelper {
                 if (_targetDamagePerHit < _troop.health) {
                     _troop.health -= _targetDamagePerHit;
                 } else {
+                    _troop.health = 0;
                     Util._removeTroop(_troop.pos, _troopId);
                     emit Util.Death(msg.sender, _troopId);
                 }
             }
         }
 
-        if (Util._getTroop(_troopId).owner == msg.sender) {
+        if (_troop.health == 0) {
             // Troop survives
             gs().troopIdMap[_troopId].health = _troop.health;
             gs().baseIdMap[_targetTile.baseId].health = 0;
@@ -151,7 +151,6 @@ library MarchHelper {
         uint256 _targetDamagePerHit;
         uint256 _targetHealth;
         Troop memory _targetTroop;
-        Base memory _targetBase;
 
         _targetTroop = gs().troopIdMap[_targetTile.occupantId];
         require(_targetTroop.owner != msg.sender, "CURIO: Cannot attack own troop");
@@ -163,7 +162,7 @@ library MarchHelper {
 
         // Loop till one side dies
         uint256 _salt = 0;
-        while (Util._getTroop(_troopId).health > 0 && Util._getTroop(_targetTile.occupantId).health > 0) {
+        while (_troop.health > 0) {
             // Troop attacks target
             _salt += 1;
             if (Util._strike(_targetAttackFactor, _salt)) {
@@ -186,6 +185,7 @@ library MarchHelper {
                 if (_targetDamagePerHit < _troop.health) {
                     _troop.health -= _targetDamagePerHit;
                 } else {
+                    _troop.health = 0;
                     Util._removeTroop(_troop.pos, _troopId);
                     emit Util.Death(msg.sender, _troopId);
                 }

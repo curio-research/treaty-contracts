@@ -179,6 +179,7 @@ library Util {
     }
 
     function _hasTroopTransport(Tile memory _tile) public view returns (bool) {
+        // Fixme: Cargo Max Capacity
         return _getCargoCapacity(_tile.occupantId) > 0;
     }
 

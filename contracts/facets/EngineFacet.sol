@@ -39,7 +39,7 @@ contract EngineFacet is UseStorage {
             // Lazy update for large action taken in epoch
             gs().troopIdMap[_troopId].largeActionTakenThisEpoch = false;
         }
-        require(_troop.largeActionTakenThisEpoch, "CURIO: Large action taken this epoch");
+        require(!_troop.largeActionTakenThisEpoch, "CURIO: Large action taken this epoch");
 
         console.log("passed action check");
 
@@ -50,8 +50,6 @@ contract EngineFacet is UseStorage {
                 if (Util._isLandTroop(_troop.troopTypeId)) {
                     require(_targetTile.terrain != TERRAIN.WATER || Util._hasTroopTransport(_targetTile), "CURIO: Cannot move on water");
                 } else {
-                    console.log(_targetPos.x);
-                    console.log(_targetTile.terrain == TERRAIN.COAST);
                     require(_targetTile.terrain == TERRAIN.WATER || Util._hasPort(_targetTile), "CURIO: Cannot move on land");
                 }
                 console.log("passed geography check");
@@ -63,8 +61,6 @@ contract EngineFacet is UseStorage {
                     if (Util._isLandTroop(_troop.troopTypeId)) {
                         require(_targetTile.terrain != TERRAIN.WATER || Util._hasTroopTransport(_targetTile), "CURIO: Cannot move on water");
                     } else {
-                        console.log(_targetPos.x);
-                        console.log(_targetTile.terrain == TERRAIN.COAST);
                         require(_targetTile.terrain == TERRAIN.WATER || Util._hasPort(_targetTile), "CURIO: Cannot move on land");
                     }
                     console.log("passed geography check");
