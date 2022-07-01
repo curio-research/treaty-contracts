@@ -45,7 +45,8 @@ contract EngineFacet is UseStorage {
 
         if (_targetTile.occupantId == NULL) {
             if (_targetTile.baseId == NULL) {
-                // seperate geographicCheck from move module because some scenerios you won't worry abt it
+                // Note: move Module
+                // Geography Check
                 if (Util._isLandTroop(_troop.troopTypeId)) {
                     require(_targetTile.terrain != TERRAIN.WATER || Util._hasTroopTransport(_targetTile), "CURIO: Cannot move on water");
                 } else {
@@ -54,11 +55,20 @@ contract EngineFacet is UseStorage {
                     require(_targetTile.terrain == TERRAIN.WATER || Util._hasPort(_targetTile), "CURIO: Cannot move on land");
                 }
                 console.log("passed geography check");
-                // Note: move Module
                 MarchHelper.moveModule(_troopId, _targetPos);
             } else {
                 if (Util._getBaseOwner(_targetTile.baseId) == msg.sender) {
                     // Note: move Module
+                    // Geography Check
+                    if (Util._isLandTroop(_troop.troopTypeId)) {
+                        require(_targetTile.terrain != TERRAIN.WATER || Util._hasTroopTransport(_targetTile), "CURIO: Cannot move on water");
+                    } else {
+                        console.log(_targetPos.x);
+                        console.log(_targetTile.terrain == TERRAIN.COAST);
+                        require(_targetTile.terrain == TERRAIN.WATER || Util._hasPort(_targetTile), "CURIO: Cannot move on land");
+                    }
+                    console.log("passed geography check");
+
                     MarchHelper.moveModule(_troopId, _targetPos);
                 } else {
                     // Note: battleBase Module (will capture if won and _troop is landtroop)
