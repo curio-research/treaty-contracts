@@ -18,7 +18,11 @@ library MarchHelper {
     function moveModule(uint256 _troopId, Position memory _targetPos) public {
         Troop memory _troop = gs().troopIdMap[_troopId];
         uint256 _epoch = gs().epoch;
+        Tile memory _targetTile = Util._getTileAt(_targetPos);
 
+        if (_hasTroopTransport(_targetTile)) {
+            
+        }
         gs().map[_targetPos.x][_targetPos.y].occupantId = _troopId;
 
         // Move
