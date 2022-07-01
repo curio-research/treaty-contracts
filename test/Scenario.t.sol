@@ -37,7 +37,7 @@ contract ScenarioTest is Test, DiamondDeployTest {
         // move transport north
         vm.warp(20);
         helper.updateEpoch();
-        engine.move(_troopTransport1Id, Position({x: 7, y: 0}));
+        engine.march(_troopTransport1Id, Position({x: 7, y: 0}));
         _troopTransport1 = getter.getTroop(_troopTransport1Id);
         assertEq(_troopTransport1.pos.x, 7);
         assertEq(_troopTransport1.pos.y, 0);
@@ -46,7 +46,7 @@ contract ScenarioTest is Test, DiamondDeployTest {
         // load an army
         vm.warp(40);
         helper.updateEpoch();
-        engine.move(_armyAliceId, Position({x: 7, y: 0}));
+        engine.march(_armyAliceId, Position({x: 7, y: 0}));
         _troopTransport1 = getter.getTroop(_troopTransport1Id);
         _armyAlice = getter.getTroop(_armyAliceId);
         assertEq(_troopTransport1.cargoTroopIds.length, 1);
@@ -60,10 +60,10 @@ contract ScenarioTest is Test, DiamondDeployTest {
         vm.warp(60);
         helper.updateEpoch();
         vm.expectRevert("CURIO: Cannot move on water");
-        engine.move(_armyAliceId, Position({x: 7, y: 1}));
+        engine.march(_armyAliceId, Position({x: 7, y: 1}));
 
         // move transport along with Alice back to starting position
-        engine.move(_troopTransport1Id, Position({x: 7, y: 1}));
+        engine.march(_troopTransport1Id, Position({x: 7, y: 1}));
         _troopTransport1 = getter.getTroop(_troopTransport1Id);
         _armyAlice = getter.getTroop(_armyAliceId);
         assertEq(_troopTransport1.cargoTroopIds.length, 1);
@@ -76,7 +76,7 @@ contract ScenarioTest is Test, DiamondDeployTest {
         // load Bob onto troop transport on ocean
         vm.warp(80);
         helper.updateEpoch();
-        engine.move(_armyBobId, Position({x: 7, y: 1}));
+        engine.march(_armyBobId, Position({x: 7, y: 1}));
         _troopTransport1 = getter.getTroop(_troopTransport1Id);
         _armyAlice = getter.getTroop(_armyAliceId);
         _armyBob = getter.getTroop(_armyBobId);
@@ -94,7 +94,7 @@ contract ScenarioTest is Test, DiamondDeployTest {
         // unload Alice from transport back into home port
         vm.warp(100);
         helper.updateEpoch();
-        engine.move(_armyAliceId, player1Pos);
+        engine.march(_armyAliceId, player1Pos);
         _troopTransport1 = getter.getTroop(_troopTransport1Id);
         _armyAlice = getter.getTroop(_armyAliceId);
         _armyBob = getter.getTroop(_armyBobId);
@@ -111,7 +111,7 @@ contract ScenarioTest is Test, DiamondDeployTest {
         // move Alice onto troop transport in adjacent port
         vm.warp(120);
         helper.updateEpoch();
-        engine.move(_armyAliceId, Position({x: 6, y: 2}));
+        engine.march(_armyAliceId, Position({x: 6, y: 2}));
         _troopTransport2 = getter.getTroop(_troopTransport2Id);
         _armyAlice = getter.getTroop(_armyAliceId);
         assertEq(_troopTransport2.cargoTroopIds.length, 1);
@@ -125,7 +125,7 @@ contract ScenarioTest is Test, DiamondDeployTest {
         vm.warp(140);
         helper.updateEpoch();
         Position memory _newPos = Position({x: 7, y: 2});
-        engine.move(_troopTransport2Id, _newPos);
+        engine.march(_troopTransport2Id, _newPos);
         _troopTransport2 = getter.getTroop(_troopTransport2Id);
         _armyAlice = getter.getTroop(_armyAliceId);
         assertEq(_troopTransport2.pos.x, 7);
@@ -138,10 +138,10 @@ contract ScenarioTest is Test, DiamondDeployTest {
         vm.warp(160);
         helper.updateEpoch();
         vm.expectRevert("CURIO: Cannot move on land");
-        engine.move(_troopTransport2Id, Position({x: 8, y: 2}));
+        engine.march(_troopTransport2Id, Position({x: 8, y: 2}));
 
         // battle enemy destroyer
-        engine.battle(_troopTransport2Id, _enemyPos);
+        engine.march(_troopTransport2Id, _enemyPos);
 
         // if troop transport dies, verify cargo army also dies
         vm.warp(180);
@@ -150,7 +150,7 @@ contract ScenarioTest is Test, DiamondDeployTest {
             _armyAlice = getter.getTroop(_armyAliceId);
             assertEq(_armyAlice.owner, NULL_ADDR);
         } else {
-            engine.move(_armyAliceId, Position({x: 8, y: 2}));
+            engine.march(_armyAliceId, Position({x: 8, y: 2}));
             _troopTransport2 = getter.getTroop(_troopTransport2Id);
             assertEq(_troopTransport2.cargoTroopIds.length, 0);
             assertEq(getter.getTileAt(Position({x: 7, y: 2})).occupantId, _troopTransport2Id);

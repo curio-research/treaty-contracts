@@ -4,6 +4,7 @@ pragma solidity ^0.8.4;
 import "forge-std/console.sol";
 import "contracts/libraries/Storage.sol";
 import {Util} from "contracts/libraries/GameUtil.sol";
+import {MarchHelper} from "contracts/libraries/MarchHelper.sol";
 import {BASE_NAME, Base, GameState, Player, Position, Production, TERRAIN, Tile, Troop, TroopType} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 
@@ -19,75 +20,83 @@ contract EngineFacet is UseStorage {
      * @param _troopId identifier for troop
      * @param _targetPos target position
      */
-    function move(uint256 _troopId, Position memory _targetPos) external {
-        /* Condition Check: Distance and Attacking Range (same thing for now) */
-        require(Util._inBound(_targetPos), "CURIO: Target out of bound");
-        if (!Util._getTileAt(_targetPos).isInitialized) Util._initializeTile(_targetPos);
-
+    function march(uint256 _troopId, Position memory _targetPos) external {
         Troop memory _troop = gs().troopIdMap[_troopId];
-        require(_troop.owner == msg.sender, "CURIO: Can only move own troop");
-        require(Util._withinDist(_troop.pos, _targetPos, 1), "CURIO: Destination too far");
+        uint256 _epoch = gs().epoch;
+
+        // basic check
+        if (!Util._getTileAt(_targetPos).isInitialized) Util._initializeTile(_targetPos);
+        Tile memory _targetTile = Util._getTileAt(_targetPos);
+
+        require(Util._inBound(_targetPos), "CURIO: Target out of bound");
+        require(_troop.owner == msg.sender, "CURIO: Can only march own troop");
         require(!Util._samePos(_troop.pos, _targetPos), "CURIO: Already at destination");
 
-        /* Condition Check: Moves Left */
-        uint256 _movesLeftInEpoch = _troop.movesLeftInEpoch;
-        uint256 _epoch = gs().epoch;
-        if ((_epoch - _troop.lastMoved) >= Util._getMovementCooldown(_troop.troopTypeId)) {
-            // Lazy update for moves left in epoch
-            _movesLeftInEpoch = Util._getMovesPerEpoch(_troop.troopTypeId);
-            gs().troopIdMap[_troopId].movesLeftInEpoch = _movesLeftInEpoch;
-        }
-        require(_movesLeftInEpoch > 0, "CURIO: No moves left this epoch");
+        console.log("passed basic check");
 
-        /* Condition Check: Geographic Limits */
-        Tile memory _targetTile = Util._getTileAt(_targetPos);
-        if (Util._isLandTroop(_troop.troopTypeId)) {
-            require(_targetTile.terrain != TERRAIN.WATER || Util._hasTroopTransport(_targetTile), "CURIO: Cannot move on water");
+        // large action check
+        if ((_epoch - _troop.lastLargeActionTaken) >= Util._getMovementCooldown(_troop.troopTypeId)) {
+            // Lazy update for large action taken in epoch
+            gs().troopIdMap[_troopId].largeActionTakenThisEpoch = false;
+        }
+        require(_troop.largeActionTakenThisEpoch, "CURIO: Large action taken this epoch");
+
+        console.log("passed action check");
+
+        if (_targetTile.occupantId == NULL) {
+            if (_targetTile.baseId == NULL) {
+                // seperate geographicCheck from move module because some scenerios you won't worry abt it
+                if (Util._isLandTroop(_troop.troopTypeId)) {
+                    require(_targetTile.terrain != TERRAIN.WATER || Util._hasTroopTransport(_targetTile), "CURIO: Cannot move on water");
+                } else {
+                    console.log(_targetPos.x);
+                    console.log(_targetTile.terrain == TERRAIN.COAST);
+                    require(_targetTile.terrain == TERRAIN.WATER || Util._hasPort(_targetTile), "CURIO: Cannot move on land");
+                }
+                console.log("passed geography check");
+                // Note: move Module
+                MarchHelper.moveModule(_troopId, _targetPos);
+            } else {
+                if (Util._getBaseOwner(_targetTile.baseId) == msg.sender) {
+                    // Note: move Module
+                    MarchHelper.moveModule(_troopId, _targetPos);
+                } else {
+                    // Note: battleBase Module (will capture if won and _troop is landtroop)
+                    MarchHelper.battleBaseModule(_troopId, _targetPos);
+                }
+            }
         } else {
-            require(_targetTile.terrain == TERRAIN.WATER || Util._hasPort(_targetTile), "CURIO: Cannot move on land");
-        }
-
-        /* Condition Check: If _targetTile is a base owned by an enemy */
-        if (_targetTile.baseId != 0 && Util._getBaseOwner(_targetTile.baseId) != msg.sender) {
-        /* Condition: true */
-        // Note: move battle logic here: battle against a base
-            
-        }
-
-
-
-
-        /* Condition Check: If _targetTile (not a base) is occupied */
-        if (_targetTile.occupantId != 0) {
-            /* Condition: _targetTile occupied by trooptransport but _troop is not army */
-            // Fixme: _isLandTroop should be changed to _isloadable in the future
-            if (!Util._hasTroopTransport(_targetTile) || !Util._isLandTroop(_troop.troopTypeId)) revert("CURIO: Destination tile occupied");
-            /* Condition: _targetTile occupied by enemey */
-            if (Util._getTroop(_targetTile.occupantId).owner != msg.sender) revert("CURIO: Cannot move onto opponent troop transport");
-            // Note: move battle logic here: battle against a troop
-
-            /* Condition: _targetTile occupied by trooptransport and _troop is army (loadable) */
-            gs().troopIdMap[_targetTile.occupantId].cargoTroopIds.push(_troopId);
-        } else {
-            /* Condition Check: _targetTile not occupied */
-            // Note: move logic here
-            gs().map[_targetPos.x][_targetPos.y].occupantId = _troopId;
-        }
-
-        // Note: migrated from move in Engine. Universally applied to move, battle, captureBase
-        gs().map[_troop.pos.x][_troop.pos.y].occupantId = 0;
-        gs().troopIdMap[_troopId].pos = _targetPos;
-        gs().troopIdMap[_troopId].movesLeftInEpoch--;
-        gs().troopIdMap[_troopId].lastMoved = _epoch;
-
-        uint256[] memory _cargoTroopIds = gs().troopIdMap[_troopId].cargoTroopIds;
-        if (_cargoTroopIds.length > 0) {
-            // Troop is a Troop Transport — move its cargo troops
-            for (uint256 i = 0; i < _cargoTroopIds.length; i++) {
-                gs().troopIdMap[_cargoTroopIds[i]].pos = _targetPos;
+            if (_troop.owner == msg.sender) {
+                if (Util._hasTroopTransport(_targetTile)) {
+                    MarchHelper.loadModule(_troopId, _targetPos);
+                    MarchHelper.moveModule(_troopId, _targetPos);
+                } else {
+                    revert("CURIO: Destination tile occupied");
+                }
+            } else {
+                // Note: battleTroop Module
+                MarchHelper.battleTroopModule(_troopId, _targetPos);
             }
         }
+    }
 
-        emit Util.Moved(msg.sender, _troopId, _epoch, _troop.pos, _targetPos);
+    /**
+     * Start producing a troop from a base.
+     * @param _pos position of base
+     * @param _troopTypeId identifier for selected troop type
+     */
+    function startProduction(Position memory _pos, uint256 _troopTypeId) external {
+        require(Util._inBound(_pos), "CURIO: Out of bound");
+        if (!Util._getTileAt(_pos).isInitialized) Util._initializeTile(_pos);
+
+        Tile memory _tile = Util._getTileAt(_pos);
+        require(_tile.baseId != NULL, "CURIO: No base found");
+        require(Util._getBaseOwner(_tile.baseId) == msg.sender, "CURIO: Can only produce in own base");
+        require(Util._isLandTroop(_troopTypeId) || Util._hasPort(_tile), "CURIO: Only ports can produce water troops");
+        require(gs().baseProductionMap[_tile.baseId].troopTypeId == NULL, "CURIO: Base already producing");
+
+        Production memory _production = Production({troopTypeId: _troopTypeId, startEpoch: gs().epoch});
+        gs().baseProductionMap[_tile.baseId] = _production;
+        emit Util.ProductionStarted(msg.sender, _tile.baseId, _production);
     }
 }

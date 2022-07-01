@@ -84,7 +84,9 @@ library Util {
             troopTypeId: _troopTypeId,
             lastMoved: gs().epoch,
             movesLeftInEpoch: _getMovesPerEpoch(_troopTypeId),
+            largeActionTakenThisEpoch: true,
             lastAttacked: gs().epoch, // yo
+            lastLargeActionTaken: gs().epoch,
             lastRepaired: gs().epoch,
             health: _getMaxHealth(_troopTypeId),
             pos: _pos,

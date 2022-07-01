@@ -28,7 +28,7 @@ contract GetterTest is Test, DiamondDeployTest {
         assertEq(getter.getEpoch(), 1);
 
         vm.prank(player1);
-        engine.battle(1, Position({x: 2, y: 3})); // player2's first army dies
+        engine.march(1, Position({x: 2, y: 3})); // player2's first army dies
 
         if (getter.getTroopAt(Position({x: 2, y: 3})).health == 0) {
             // verify that all troops remain the same except player2's dead army

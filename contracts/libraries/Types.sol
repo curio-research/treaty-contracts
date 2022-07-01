@@ -53,6 +53,7 @@ struct Troop {
     uint256 movesLeftInEpoch;
     bool largeActionTakenThisEpoch;
     uint256 lastAttacked;
+    uint256 lastLargeActionTaken;
     uint256 lastRepaired;
     uint256 health;
     Position pos;
