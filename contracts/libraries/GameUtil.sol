@@ -84,7 +84,7 @@ library Util {
             troopTypeId: _troopTypeId,
             lastMoved: gs().epoch,
             movesLeftInEpoch: _getMovesPerEpoch(_troopTypeId),
-            largeActionTakenThisEpoch: true,
+            largeActionTakenThisEpoch: false, // Fixme: update all test and then change to true
             lastAttacked: gs().epoch, // yo
             lastLargeActionTaken: gs().epoch,
             lastRepaired: gs().epoch,

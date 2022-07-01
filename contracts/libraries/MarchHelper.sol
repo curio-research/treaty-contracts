@@ -48,7 +48,6 @@ library MarchHelper {
         Tile memory _targetTile = Util._getTileAt(_targetPos);
         Troop memory _troop = gs().troopIdMap[_troopId];
 
-        require(Util._hasTroopTransport(_targetTile) && Util._isLandTroop(_troop.troopTypeId), "CURIO: Destination tile occupied");
         // Load troop onto Troop Transport at target tile
         gs().troopIdMap[_targetTile.occupantId].cargoTroopIds.push(_troopId);
     }

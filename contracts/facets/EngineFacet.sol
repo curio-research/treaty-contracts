@@ -73,7 +73,7 @@ contract EngineFacet is UseStorage {
             }
         } else {
             if (_troop.owner == msg.sender) {
-                if (Util._hasTroopTransport(_targetTile)) {
+                if (Util._hasTroopTransport(_targetTile) && Util._isLandTroop(_troop.troopTypeId)) {
                     MarchHelper.loadModule(_troopId, _targetPos);
                     MarchHelper.moveModule(_troopId, _targetPos);
                 } else {
