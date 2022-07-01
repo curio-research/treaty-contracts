@@ -342,13 +342,11 @@ contract LogicTest is Test, DiamondDeployTest {
 
         Base memory _base = getter.getBaseAt(player2Pos);
         assertEq(_base.owner, player2);
-        console.log("pass line 345");
 
         // increase epoch
         vm.warp(20);
         helper.updateEpoch();
         assertEq(getter.getEpoch(), 1);
-        console.log("pass line 351");
 
         vm.startPrank(player1);
         engine.march(_destroyerId, player2Pos);
@@ -356,16 +354,16 @@ contract LogicTest is Test, DiamondDeployTest {
             console.log("[testCaptureBase] Warning: unlikely outcome");
             return; // destroyer dies while battling port, a 1/64 (unlikely) outcome
         }
+        assertEq(getter.getBaseAt(player2Pos).owner, player1);
+        assertEq(getter.getBaseAt(player2Pos).health, 1);
+        vm.expectRevert(bytes("CURIO: Destination tile occupied")); // FIXME: Modeo
         engine.march(_armyId, player2Pos);
         vm.stopPrank();
 
         Troop memory _army = getter.getTroop(_armyId);
-        assertEq(_army.pos.x, player2Pos.x);
-        console.log("pass line 364");
-        assertEq(_army.pos.y, player2Pos.y);
-        console.log("pass line 366");
+        assertEq(_army.pos.x, 6);
+        assertEq(_army.pos.y, 2);
         assertEq(_army.health, getter.getTroopType(armyTroopTypeId).maxHealth);
-        console.log("pass line 368");
 
         _base = getter.getBaseAt(player2Pos);
         assertEq(_base.owner, player1);

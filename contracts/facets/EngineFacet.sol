@@ -32,16 +32,12 @@ contract EngineFacet is UseStorage {
         require(_troop.owner == msg.sender, "CURIO: Can only march own troop");
         require(!Util._samePos(_troop.pos, _targetPos), "CURIO: Already at destination");
 
-        console.log("passed basic check");
-
         // large action check
         if ((_epoch - _troop.lastLargeActionTaken) >= Util._getMovementCooldown(_troop.troopTypeId)) {
             // Lazy update for large action taken in epoch
             gs().troopIdMap[_troopId].largeActionTakenThisEpoch = false;
         }
         require(!_troop.largeActionTakenThisEpoch, "CURIO: Large action taken this epoch");
-
-        console.log("passed action check");
 
         if (_targetTile.occupantId == NULL) {
             if (_targetTile.baseId == NULL) {
@@ -52,7 +48,6 @@ contract EngineFacet is UseStorage {
                 } else {
                     require(_targetTile.terrain == TERRAIN.WATER || Util._hasPort(_targetTile), "CURIO: Cannot move on land");
                 }
-                console.log("passed geography check");
                 MarchHelper.moveModule(_troopId, _targetPos);
             } else {
                 if (Util._getBaseOwner(_targetTile.baseId) == msg.sender) {
@@ -63,7 +58,6 @@ contract EngineFacet is UseStorage {
                     } else {
                         require(_targetTile.terrain == TERRAIN.WATER || Util._hasPort(_targetTile), "CURIO: Cannot move on land");
                     }
-                    console.log("passed geography check");
 
                     MarchHelper.moveModule(_troopId, _targetPos);
                 } else {
