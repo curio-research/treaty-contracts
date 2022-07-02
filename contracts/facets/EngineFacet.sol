@@ -21,24 +21,25 @@ contract EngineFacet is UseStorage {
      * @param _targetPos target position
      */
     function march(uint256 _troopId, Position memory _targetPos) external {
-        Troop memory _troop = gs().troopIdMap[_troopId];
-        uint256 _epoch = gs().epoch;
-
-        // basic check
-        if (!Util._getTileAt(_targetPos).isInitialized) Util._initializeTile(_targetPos);
-        Tile memory _targetTile = Util._getTileAt(_targetPos);
-
         require(Util._inBound(_targetPos), "CURIO: Target out of bound");
+
+        if (!Util._getTileAt(_targetPos).isInitialized) Util._initializeTile(_targetPos);
+
+        // Basic check
+        Troop memory _troop = gs().troopIdMap[_troopId];
         require(_troop.owner == msg.sender, "CURIO: Can only march own troop");
         require(!Util._samePos(_troop.pos, _targetPos), "CURIO: Already at destination");
 
-        // large action check
+        // Lazy update for large action taken in epoch
+        uint256 _epoch = gs().epoch;
         if ((_epoch - _troop.lastLargeActionTaken) >= Util._getMovementCooldown(_troop.troopTypeId)) {
-            // Lazy update for large action taken in epoch
+            // FIXME: change to large action cooldown
+            // FIXME: add Util function that gets large action info
             gs().troopIdMap[_troopId].largeActionTakenThisEpoch = false;
         }
         require(!_troop.largeActionTakenThisEpoch, "CURIO: Large action taken this epoch");
 
+        Tile memory _targetTile = Util._getTileAt(_targetPos);
         if (_targetTile.occupantId == NULL) {
             if (_targetTile.baseId == NULL) {
                 // Note: move Module

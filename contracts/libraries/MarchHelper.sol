@@ -20,6 +20,12 @@ library MarchHelper {
         uint256 _epoch = gs().epoch;
         Tile memory _targetTile = Util._getTileAt(_targetPos);
 
+        // Lazy update for movement taken in epoch
+        if ((_epoch - _troop.lastMoved) >= Util._getMovementCooldown(_troop.troopTypeId)) {
+            gs().troopIdMap[_troopId].movesLeftInEpoch = Util._getMovesPerEpoch(_troop.troopTypeId);
+        }
+        require(gs().troopIdMap[_troopId].movesLeftInEpoch > 0, "CURIO: No moves left this epoch");
+
         if (!Util._hasTroopTransport(_targetTile)) {
             gs().map[_targetPos.x][_targetPos.y].occupantId = _troopId;
         }
@@ -112,25 +118,22 @@ library MarchHelper {
             }
         }
 
-        if (_troop.health == 0) {
+        if (_targetHealth == 0) {
             // Troop survives
             gs().troopIdMap[_troopId].health = _troop.health;
             gs().baseIdMap[_targetTile.baseId].health = 0;
             _targetBase = Util._getBase(_targetTile.baseId);
 
-            if (!Util._isLandTroop(_troop.troopTypeId)) {
-                emit Util.AttackedBase(msg.sender, _troopId, _troop, _targetTile.baseId, _targetBase);
-            } else {
-                
-                // capture and end production
-                gs().baseIdMap[_targetTile.baseId].owner = msg.sender;
-                gs().baseIdMap[_targetTile.baseId].health = 1; // FIXME: change to BaseConstants.maxHealth
-                delete gs().baseProductionMap[_targetTile.baseId];
-                emit Util.BaseCaptured(msg.sender, _troopId, _targetTile.baseId);
+            emit Util.AttackedBase(msg.sender, _troopId, _troop, _targetTile.baseId, _targetBase);
 
-                // move
-                moveModule(_troopId, _targetPos);
-            }
+            // capture and end production
+            gs().baseIdMap[_targetTile.baseId].owner = msg.sender;
+            gs().baseIdMap[_targetTile.baseId].health = 1; // FIXME: change to BaseConstants.maxHealth
+            delete gs().baseProductionMap[_targetTile.baseId];
+            emit Util.BaseCaptured(msg.sender, _troopId, _targetTile.baseId);
+
+            // move
+            moveModule(_troopId, _targetPos);
         } else {
             // Target survives
             gs().baseIdMap[_targetTile.baseId].health = _targetHealth;
@@ -194,7 +197,7 @@ library MarchHelper {
             }
         }
 
-        if (Util._getTroop(_troopId).owner == msg.sender) {
+        if (_targetHealth == 0) {
             // Troop survives
             gs().troopIdMap[_troopId].health = _troop.health;
             _troop = Util._getTroop(_troopId);
