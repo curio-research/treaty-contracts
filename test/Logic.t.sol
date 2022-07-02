@@ -241,16 +241,16 @@ contract LogicTest is Test, DiamondDeployTest {
             return; // destroyer dies while battling port, a 1/64 (unlikely) outcome
         }
 
-        Troop memory _destroyer = getter.getTroopAt(_destroyerPos);
+        Troop memory _destroyer = getter.getTroopAt(player2Pos);
         assertEq(_destroyer.owner, player1);
 
         Tile memory _tile = getter.getTileAt(player2Pos);
-        assertEq(_tile.occupantId, NULL); // troop did not move to target tile
+        assertEq(_tile.occupantId, _destroyerId);
         assertTrue(_tile.baseId != NULL);
 
         Base memory _port = getter.getBaseAt(player2Pos);
-        assertEq(_port.owner, player2);
-        assertEq(_port.health, 0);
+        assertEq(_port.owner, player1);
+        assertEq(_port.health, 1);
     }
 
     function testbattleTroop() public {
@@ -299,7 +299,7 @@ contract LogicTest is Test, DiamondDeployTest {
         helper.spawnTroop(Position({x: 5, y: 1}), player1, armyTroopTypeId);
         uint256 _armyId = initTroopNonce;
         helper.spawnTroop(Position({x: 7, y: 3}), player1, destroyerTroopTypeId);
-        uint256 _destroyerId = initTroopNonce + 1;
+        // uint256 _destroyerId = initTroopNonce + 1;
         vm.stopPrank();
 
         vm.prank(player2);
