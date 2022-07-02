@@ -32,7 +32,7 @@ contract EngineFacet is UseStorage {
 
         // Lazy update for large action taken in epoch
         uint256 _epoch = gs().epoch;
-        if ((_epoch - _troop.lastLargeActionTaken) >= Util._getMovementCooldown(_troop.troopTypeId)) {
+        if ((_epoch - _troop.lastLargeActionTaken) >= Util._getLargeActionCooldown(_troop.troopTypeId)) {
             gs().troopIdMap[_troopId].largeActionTakenThisEpoch = false;
         }
         require(!_troop.largeActionTakenThisEpoch, "CURIO: Large action taken this epoch");
