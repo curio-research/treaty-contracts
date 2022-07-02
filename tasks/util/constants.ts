@@ -32,6 +32,7 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     cargoCapacity: 0,
     epochsToProduce: 6,
     movementCooldown: 1,
+    largeActionCooldown: 1,
     attackCooldown: 1,
     isLandTroop: true,
   },
@@ -45,6 +46,7 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     cargoCapacity: 6,
     epochsToProduce: 14,
     movementCooldown: 1, // FIXME
+    largeActionCooldown: 1,
     attackCooldown: 1,
     isLandTroop: false,
   },
@@ -58,6 +60,7 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     cargoCapacity: 0,
     epochsToProduce: 20,
     movementCooldown: 1, // FIXME
+    largeActionCooldown: 1,
     attackCooldown: 1,
     isLandTroop: false,
   },
@@ -71,6 +74,7 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     cargoCapacity: 0,
     epochsToProduce: 30,
     movementCooldown: 1, // FIXME
+    largeActionCooldown: 1,
     attackCooldown: 1,
     isLandTroop: false,
   },
@@ -84,6 +88,7 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     cargoCapacity: 0,
     epochsToProduce: 50,
     movementCooldown: 1, // FIXME
+    largeActionCooldown: 1,
     attackCooldown: 1,
     isLandTroop: false,
   },

@@ -7,7 +7,6 @@ import {LibStorage} from "contracts/libraries/Storage.sol";
 import {Util} from "contracts/libraries/GameUtil.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 
-// Note: Util functions generally do not verify correctness of conditions. Make sure to verify in higher-level functions such as those in Engine.
 library MarchHelper {
     using SafeMath for uint256;
 
