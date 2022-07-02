@@ -293,7 +293,6 @@ contract LogicTest is Test, DiamondDeployTest {
             assertEq(_army.health, 1);
             assertEq(_army.owner, player2);
         } else {
-            assertTrue(!_destroyerKilled);
             assertEq(_destroyer.owner, player1);
         }
     }

@@ -142,16 +142,6 @@ task('deploy', 'deploy contracts')
           await tx.wait();
           tx = await diamond.connect(player1).initializePlayer(player2Pos, player2.address);
           await tx.wait();
-          tx = await diamond.connect(player1).spawnTroop(player1Pos, player1.address, armyTroopTypeId);
-          await tx.wait();
-          tx = await diamond.connect(player1).spawnTroop(player2Pos, player2.address, armyTroopTypeId);
-          await tx.wait();
-
-          // Basic checks
-          const player1Army = await diamond.getTroopAt(player1Pos);
-          if (player1Army.owner !== player1.address) throw new Error('Something is wrong');
-          const player2Army = await diamond.getTroopAt(player2Pos);
-          if (player2Army.troopTypeId.toNumber() !== armyTroopTypeId) throw new Error('Something went wrong');
         }
       }
 
