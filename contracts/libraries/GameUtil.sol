@@ -182,7 +182,7 @@ library Util {
         return gs().baseIdMap[_id];
     }
 
-    function _canTroopTransport(Tile memory _tile) public view returns (bool) {
+    function _canTransportTroop(Tile memory _tile) public view returns (bool) {
         return (_getCargoCapacity(_tile.occupantId) > 0) &&  (gs().troopIdMap[_tile.occupantId].cargoTroopIds.length < _getCargoCapacity(_tile.occupantId));
     }
 

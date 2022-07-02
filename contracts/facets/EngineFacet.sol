@@ -43,38 +43,38 @@ contract EngineFacet is UseStorage {
                 // Note: move Module
                 // Geography Check
                 if (Util._isLandTroop(_troop.troopTypeId)) {
-                    require(_targetTile.terrain != TERRAIN.WATER || Util._canTroopTransport(_targetTile), "CURIO: Cannot move on water");
+                    require(_targetTile.terrain != TERRAIN.WATER || Util._canTransportTroop(_targetTile), "CURIO: Cannot move on water");
                 } else {
                     require(_targetTile.terrain == TERRAIN.WATER || Util._hasPort(_targetTile), "CURIO: Cannot move on land");
                 }
-                MarchHelper.moveModule(_troopId, _targetPos);
+                MarchHelper._moveModule(_troopId, _targetPos);
             } else {
                 if (Util._getBaseOwner(_targetTile.baseId) == msg.sender) {
                     // Note: move Module
                     // Geography Check
                     if (Util._isLandTroop(_troop.troopTypeId)) {
-                        require(_targetTile.terrain != TERRAIN.WATER || Util._canTroopTransport(_targetTile), "CURIO: Cannot move on water");
+                        require(_targetTile.terrain != TERRAIN.WATER || Util._canTransportTroop(_targetTile), "CURIO: Cannot move on water");
                     } else {
                         require(_targetTile.terrain == TERRAIN.WATER || Util._hasPort(_targetTile), "CURIO: Cannot move on land");
                     }
 
-                    MarchHelper.moveModule(_troopId, _targetPos);
+                    MarchHelper._moveModule(_troopId, _targetPos);
                 } else {
                     // Note: battleBase Module (will capture&move if won and _troop is landtroop)
-                    MarchHelper.battleBaseModule(_troopId, _targetPos);
+                    MarchHelper._battleBaseModule(_troopId, _targetPos);
                 }
             }
         } else {
             if (gs().troopIdMap[_targetTile.occupantId].owner == msg.sender) {
-                if (Util._canTroopTransport(_targetTile) && Util._isLandTroop(_troop.troopTypeId)) {
-                    MarchHelper.loadModule(_troopId, _targetPos);
-                    MarchHelper.moveModule(_troopId, _targetPos);
+                if (Util._canTransportTroop(_targetTile) && Util._isLandTroop(_troop.troopTypeId)) {
+                    MarchHelper._loadModule(_troopId, _targetPos);
+                    MarchHelper._moveModule(_troopId, _targetPos);
                 } else {
                     revert("CURIO: Destination tile occupied");
                 }
             } else {
                 // Note: battleTroop Module
-                MarchHelper.battleTroopModule(_troopId, _targetPos);
+                MarchHelper._battleTroopModule(_troopId, _targetPos);
             }
         }
     }
