@@ -33,8 +33,6 @@ contract EngineFacet is UseStorage {
         // Lazy update for large action taken in epoch
         uint256 _epoch = gs().epoch;
         if ((_epoch - _troop.lastLargeActionTaken) >= Util._getMovementCooldown(_troop.troopTypeId)) {
-            // FIXME: change to large action cooldown
-            // FIXME: add Util function that gets large action info
             gs().troopIdMap[_troopId].largeActionTakenThisEpoch = false;
         }
         require(!_troop.largeActionTakenThisEpoch, "CURIO: Large action taken this epoch");
@@ -45,7 +43,7 @@ contract EngineFacet is UseStorage {
                 // Note: move Module
                 // Geography Check
                 if (Util._isLandTroop(_troop.troopTypeId)) {
-                    require(_targetTile.terrain != TERRAIN.WATER || Util._hasTroopTransport(_targetTile), "CURIO: Cannot move on water");
+                    require(_targetTile.terrain != TERRAIN.WATER || Util._canTroopTransport(_targetTile), "CURIO: Cannot move on water");
                 } else {
                     require(_targetTile.terrain == TERRAIN.WATER || Util._hasPort(_targetTile), "CURIO: Cannot move on land");
                 }
@@ -55,7 +53,7 @@ contract EngineFacet is UseStorage {
                     // Note: move Module
                     // Geography Check
                     if (Util._isLandTroop(_troop.troopTypeId)) {
-                        require(_targetTile.terrain != TERRAIN.WATER || Util._hasTroopTransport(_targetTile), "CURIO: Cannot move on water");
+                        require(_targetTile.terrain != TERRAIN.WATER || Util._canTroopTransport(_targetTile), "CURIO: Cannot move on water");
                     } else {
                         require(_targetTile.terrain == TERRAIN.WATER || Util._hasPort(_targetTile), "CURIO: Cannot move on land");
                     }
@@ -68,7 +66,7 @@ contract EngineFacet is UseStorage {
             }
         } else {
             if (gs().troopIdMap[_targetTile.occupantId].owner == msg.sender) {
-                if (Util._hasTroopTransport(_targetTile) && Util._isLandTroop(_troop.troopTypeId)) {
+                if (Util._canTroopTransport(_targetTile) && Util._isLandTroop(_troop.troopTypeId)) {
                     MarchHelper.loadModule(_troopId, _targetPos);
                     MarchHelper.moveModule(_troopId, _targetPos);
                 } else {

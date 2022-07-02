@@ -26,14 +26,14 @@ library MarchHelper {
         }
         require(gs().troopIdMap[_troopId].movesLeftInEpoch > 0, "CURIO: No moves left this epoch");
 
-        if (!Util._hasTroopTransport(_targetTile)) {
+        if (!Util._canTroopTransport(_targetTile)) {
             gs().map[_targetPos.x][_targetPos.y].occupantId = _troopId;
         }
 
         // Move
         Tile memory _sourceTile = Util._getTileAt(_troop.pos);
         if (_sourceTile.occupantId != _troopId) {
-            assert(Util._hasTroopTransport(_sourceTile)); // something is wrong if failed
+            assert(Util._canTroopTransport(_sourceTile)); // something is wrong if failed
             // Troop is on troop transport
             Util._unloadTroopFromTransport(_sourceTile.occupantId, _troopId);
         } else {

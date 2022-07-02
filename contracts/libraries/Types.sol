@@ -69,6 +69,7 @@ struct TroopType {
     uint256 defenseFactor; // in the interval [0, 100]
     uint256 cargoCapacity;
     uint256 epochsToProduce;
+    uint256 largeActionCooldown;
     uint256 movementCooldown;
     uint256 attackCooldown;
     bool isLandTroop;

@@ -63,6 +63,7 @@ contract DiamondDeployTest is Test {
             defenseFactor: 100,
             cargoCapacity: 0,
             epochsToProduce: 6,
+            largeActionCooldown: 1,
             movementCooldown: 1,
             attackCooldown: 1,
             isLandTroop: true
@@ -77,6 +78,7 @@ contract DiamondDeployTest is Test {
             defenseFactor: 50,
             cargoCapacity: 6,
             epochsToProduce: 14,
+            largeActionCooldown: 1,
             movementCooldown: 1, // FIXME
             attackCooldown: 1,
             isLandTroop: false
@@ -90,6 +92,7 @@ contract DiamondDeployTest is Test {
             attackFactor: 100,
             defenseFactor: 100,
             cargoCapacity: 0,
+            largeActionCooldown: 1,
             epochsToProduce: 20,
             movementCooldown: 1, // FIXME
             attackCooldown: 1,
@@ -105,6 +108,7 @@ contract DiamondDeployTest is Test {
             defenseFactor: 100,
             cargoCapacity: 0,
             epochsToProduce: 30,
+            largeActionCooldown: 1,
             movementCooldown: 1, // FIXME
             attackCooldown: 1,
             isLandTroop: false
@@ -119,6 +123,7 @@ contract DiamondDeployTest is Test {
             defenseFactor: 100,
             cargoCapacity: 0,
             epochsToProduce: 50,
+            largeActionCooldown: 1,
             movementCooldown: 1, // FIXME
             attackCooldown: 1,
             isLandTroop: false
