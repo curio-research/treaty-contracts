@@ -27,7 +27,9 @@ export type TroopStruct = {
   troopTypeId: BigNumberish;
   lastMoved: BigNumberish;
   movesLeftInEpoch: BigNumberish;
+  largeActionTakenThisEpoch: boolean;
   lastAttacked: BigNumberish;
+  lastLargeActionTaken: BigNumberish;
   lastRepaired: BigNumberish;
   health: BigNumberish;
   pos: PositionStruct;
@@ -39,6 +41,8 @@ export type TroopStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
+  boolean,
+  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -49,7 +53,9 @@ export type TroopStructOutput = [
   troopTypeId: BigNumber;
   lastMoved: BigNumber;
   movesLeftInEpoch: BigNumber;
+  largeActionTakenThisEpoch: boolean;
   lastAttacked: BigNumber;
+  lastLargeActionTaken: BigNumber;
   lastRepaired: BigNumber;
   health: BigNumber;
   pos: PositionStructOutput;
@@ -104,6 +110,7 @@ export type TileStructOutput = [boolean, number, BigNumber, BigNumber] & {
 
 export interface UtilInterface extends utils.Interface {
   functions: {
+    "_canTransportTroop((bool,uint8,uint256,uint256))": FunctionFragment;
     "_getAttackCooldown(uint256)": FunctionFragment;
     "_getAttackFactor(uint256)": FunctionFragment;
     "_getBase(uint256)": FunctionFragment;
@@ -113,13 +120,13 @@ export interface UtilInterface extends utils.Interface {
     "_getDamagePerHit(uint256)": FunctionFragment;
     "_getDefenseFactor(uint256)": FunctionFragment;
     "_getEpochsToProduce(uint256)": FunctionFragment;
+    "_getLargeActionCooldown(uint256)": FunctionFragment;
     "_getMaxHealth(uint256)": FunctionFragment;
     "_getMovementCooldown(uint256)": FunctionFragment;
     "_getMovesPerEpoch(uint256)": FunctionFragment;
     "_getTileAt((uint256,uint256))": FunctionFragment;
     "_getTroop(uint256)": FunctionFragment;
     "_hasPort((bool,uint8,uint256,uint256))": FunctionFragment;
-    "_hasTroopTransport((bool,uint8,uint256,uint256))": FunctionFragment;
     "_inBound((uint256,uint256))": FunctionFragment;
     "_isLandTroop(uint256)": FunctionFragment;
     "_random(uint256,uint256)": FunctionFragment;
@@ -128,6 +135,10 @@ export interface UtilInterface extends utils.Interface {
     "_withinDist((uint256,uint256),(uint256,uint256),uint256)": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "_canTransportTroop",
+    values: [TileStruct]
+  ): string;
   encodeFunctionData(
     functionFragment: "_getAttackCooldown",
     values: [BigNumberish]
@@ -165,6 +176,10 @@ export interface UtilInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "_getLargeActionCooldown",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "_getMaxHealth",
     values: [BigNumberish]
   ): string;
@@ -186,10 +201,6 @@ export interface UtilInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "_hasPort",
-    values: [TileStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_hasTroopTransport",
     values: [TileStruct]
   ): string;
   encodeFunctionData(
@@ -217,6 +228,10 @@ export interface UtilInterface extends utils.Interface {
     values: [PositionStruct, PositionStruct, BigNumberish]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "_canTransportTroop",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "_getAttackCooldown",
     data: BytesLike
@@ -251,6 +266,10 @@ export interface UtilInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "_getLargeActionCooldown",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "_getMaxHealth",
     data: BytesLike
   ): Result;
@@ -265,10 +284,6 @@ export interface UtilInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "_getTileAt", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "_getTroop", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "_hasPort", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "_hasTroopTransport",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "_inBound", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_isLandTroop",
@@ -446,6 +461,11 @@ export interface Util extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    _canTransportTroop(
+      _tile: TileStruct,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     _getAttackCooldown(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
@@ -491,6 +511,11 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    _getLargeActionCooldown(
+      _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     _getMaxHealth(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
@@ -517,11 +542,6 @@ export interface Util extends BaseContract {
     ): Promise<[TroopStructOutput]>;
 
     _hasPort(_tile: TileStruct, overrides?: CallOverrides): Promise<[boolean]>;
-
-    _hasTroopTransport(
-      _tile: TileStruct,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
 
     _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<[boolean]>;
 
@@ -555,6 +575,11 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
   };
+
+  _canTransportTroop(
+    _tile: TileStruct,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   _getAttackCooldown(
     _troopTypeId: BigNumberish,
@@ -601,6 +626,11 @@ export interface Util extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  _getLargeActionCooldown(
+    _troopTypeId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   _getMaxHealth(
     _troopTypeId: BigNumberish,
     overrides?: CallOverrides
@@ -627,11 +657,6 @@ export interface Util extends BaseContract {
   ): Promise<TroopStructOutput>;
 
   _hasPort(_tile: TileStruct, overrides?: CallOverrides): Promise<boolean>;
-
-  _hasTroopTransport(
-    _tile: TileStruct,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
 
   _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<boolean>;
 
@@ -666,6 +691,11 @@ export interface Util extends BaseContract {
   ): Promise<boolean>;
 
   callStatic: {
+    _canTransportTroop(
+      _tile: TileStruct,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     _getAttackCooldown(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
@@ -711,6 +741,11 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _getLargeActionCooldown(
+      _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     _getMaxHealth(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
@@ -737,11 +772,6 @@ export interface Util extends BaseContract {
     ): Promise<TroopStructOutput>;
 
     _hasPort(_tile: TileStruct, overrides?: CallOverrides): Promise<boolean>;
-
-    _hasTroopTransport(
-      _tile: TileStruct,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
 
     _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<boolean>;
 
@@ -897,6 +927,11 @@ export interface Util extends BaseContract {
   };
 
   estimateGas: {
+    _canTransportTroop(
+      _tile: TileStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     _getAttackCooldown(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
@@ -939,6 +974,11 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _getLargeActionCooldown(
+      _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     _getMaxHealth(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
@@ -965,11 +1005,6 @@ export interface Util extends BaseContract {
     ): Promise<BigNumber>;
 
     _hasPort(_tile: TileStruct, overrides?: CallOverrides): Promise<BigNumber>;
-
-    _hasTroopTransport(
-      _tile: TileStruct,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1005,6 +1040,11 @@ export interface Util extends BaseContract {
   };
 
   populateTransaction: {
+    _canTransportTroop(
+      _tile: TileStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     _getAttackCooldown(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
@@ -1050,6 +1090,11 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    _getLargeActionCooldown(
+      _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     _getMaxHealth(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
@@ -1076,11 +1121,6 @@ export interface Util extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     _hasPort(
-      _tile: TileStruct,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _hasTroopTransport(
       _tile: TileStruct,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

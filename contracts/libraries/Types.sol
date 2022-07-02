@@ -51,7 +51,9 @@ struct Troop {
     uint256 troopTypeId;
     uint256 lastMoved;
     uint256 movesLeftInEpoch;
+    bool largeActionTakenThisEpoch;
     uint256 lastAttacked;
+    uint256 lastLargeActionTaken;
     uint256 lastRepaired;
     uint256 health;
     Position pos;
@@ -67,6 +69,7 @@ struct TroopType {
     uint256 defenseFactor; // in the interval [0, 100]
     uint256 cargoCapacity;
     uint256 epochsToProduce;
+    uint256 largeActionCooldown;
     uint256 movementCooldown;
     uint256 attackCooldown;
     bool isLandTroop;

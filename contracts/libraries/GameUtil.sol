@@ -84,7 +84,9 @@ library Util {
             troopTypeId: _troopTypeId,
             lastMoved: gs().epoch,
             movesLeftInEpoch: _getMovesPerEpoch(_troopTypeId),
+            largeActionTakenThisEpoch: false, // Fixme: update all test and then change to true
             lastAttacked: gs().epoch, // yo
+            lastLargeActionTaken: gs().epoch,
             lastRepaired: gs().epoch,
             health: _getMaxHealth(_troopTypeId),
             pos: _pos,
@@ -152,6 +154,10 @@ library Util {
         return gs().troopTypeIdMap[_troopTypeId].attackCooldown;
     }
 
+    function _getLargeActionCooldown(uint256 _troopTypeId) public view returns (uint256) {
+        return gs().troopTypeIdMap[_troopTypeId].largeActionCooldown;
+    }
+
     function _getMovementCooldown(uint256 _troopTypeId) public view returns (uint256) {
         return gs().troopTypeIdMap[_troopTypeId].movementCooldown;
     }
@@ -176,8 +182,8 @@ library Util {
         return gs().baseIdMap[_id];
     }
 
-    function _hasTroopTransport(Tile memory _tile) public view returns (bool) {
-        return _getCargoCapacity(_tile.occupantId) > 0;
+    function _canTransportTroop(Tile memory _tile) public view returns (bool) {
+        return (_getCargoCapacity(_tile.occupantId) > 0) &&  (gs().troopIdMap[_tile.occupantId].cargoTroopIds.length < _getCargoCapacity(_tile.occupantId));
     }
 
     function _hasPort(Tile memory _tile) public view returns (bool) {

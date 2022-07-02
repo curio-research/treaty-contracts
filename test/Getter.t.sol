@@ -30,7 +30,7 @@ contract GetterTest is Test, DiamondDeployTest {
         assertEq(getter.getEpoch(), 1);
 
         vm.prank(player1);
-        engine.battle(1, Position({x: 2, y: 3}));
+        engine.march(1, Position({x: 2, y: 3}));
 
         assertTrue(getter.getTroop(1).health > 0 || getter.getTroop(3).health > 0); // one army must survive
 

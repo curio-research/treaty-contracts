@@ -60,6 +60,7 @@ task('deploy', 'deploy contracts')
 
       // Deploy util contracts
       const util = await deployProxy<Util>('Util', player1, hre, []);
+      // const marchHelper = await deployProxy<MarchHelper>('MarchHelper', player1, hre, []);
       console.log('✦ Util:', util.address);
 
       // Deploy diamond and facets

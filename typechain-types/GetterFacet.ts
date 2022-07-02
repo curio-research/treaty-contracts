@@ -27,7 +27,9 @@ export type TroopStruct = {
   troopTypeId: BigNumberish;
   lastMoved: BigNumberish;
   movesLeftInEpoch: BigNumberish;
+  largeActionTakenThisEpoch: boolean;
   lastAttacked: BigNumberish;
+  lastLargeActionTaken: BigNumberish;
   lastRepaired: BigNumberish;
   health: BigNumberish;
   pos: PositionStruct;
@@ -39,6 +41,8 @@ export type TroopStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
+  boolean,
+  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -49,7 +53,9 @@ export type TroopStructOutput = [
   troopTypeId: BigNumber;
   lastMoved: BigNumber;
   movesLeftInEpoch: BigNumber;
+  largeActionTakenThisEpoch: boolean;
   lastAttacked: BigNumber;
+  lastLargeActionTaken: BigNumber;
   lastRepaired: BigNumber;
   health: BigNumber;
   pos: PositionStructOutput;
@@ -97,6 +103,7 @@ export type TroopTypeStruct = {
   defenseFactor: BigNumberish;
   cargoCapacity: BigNumberish;
   epochsToProduce: BigNumberish;
+  largeActionCooldown: BigNumberish;
   movementCooldown: BigNumberish;
   attackCooldown: BigNumberish;
   isLandTroop: boolean;
@@ -104,6 +111,7 @@ export type TroopTypeStruct = {
 
 export type TroopTypeStructOutput = [
   number,
+  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -123,6 +131,7 @@ export type TroopTypeStructOutput = [
   defenseFactor: BigNumber;
   cargoCapacity: BigNumber;
   epochsToProduce: BigNumber;
+  largeActionCooldown: BigNumber;
   movementCooldown: BigNumber;
   attackCooldown: BigNumber;
   isLandTroop: boolean;
