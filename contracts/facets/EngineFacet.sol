@@ -101,9 +101,10 @@ contract EngineFacet is UseStorage {
 
         // Lazy update for movement taken within second
         if ((block.timestamp - _troop.lastMoved) >= Util._getMovementCooldown(_troop.troopTypeId)) {
-            gs().troopIdMap[_troopId].movesLeftInSecond = Util._getMovesPerSecond(_troop.troopTypeId);
+            _troop.movesLeftInSecond = Util._getMovesPerSecond(_troop.troopTypeId);
+            gs().troopIdMap[_troopId].movesLeftInSecond = _troop.movesLeftInSecond;
         }
-        require(gs().troopIdMap[_troopId].movesLeftInSecond > 0, "CURIO: Moved too recently");
+        require(_troop.movesLeftInSecond > 0, "CURIO: Moved too recently");
 
         if (!Util._canTransportTroop(_targetTile)) {
             gs().map[_targetPos.x][_targetPos.y].occupantId = _troopId;
