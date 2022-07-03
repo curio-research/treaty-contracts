@@ -137,16 +137,12 @@ library Util {
         return gs().troopTypeIdMap[_troopTypeId].attackFactor;
     }
 
-    function _getAttackCooldown(uint256 _troopTypeId) public view returns (uint256) {
-        return gs().troopTypeIdMap[_troopTypeId].attackCooldown;
+    function _getMovementCooldown(uint256 _troopTypeId) public view returns (uint256) {
+        return gs().troopTypeIdMap[_troopTypeId].movementCooldown;
     }
 
     function _getLargeActionCooldown(uint256 _troopTypeId) public view returns (uint256) {
         return gs().troopTypeIdMap[_troopTypeId].largeActionCooldown;
-    }
-
-    function _getMovementCooldown(uint256 _troopTypeId) public view returns (uint256) {
-        return gs().troopTypeIdMap[_troopTypeId].movementCooldown;
     }
 
     function _getMovesPerSecond(uint256 _troopTypeId) public view returns (uint256) {
