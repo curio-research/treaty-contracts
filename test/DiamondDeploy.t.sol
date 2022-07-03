@@ -56,77 +56,72 @@ contract DiamondDeployTest is Test {
     TroopType public armyTroopType =
         TroopType({
             name: TROOP_NAME.ARMY,
-            movesPerEpoch: 1,
+            isLandTroop: true,
             maxHealth: 1,
             damagePerHit: 1, // yo
             attackFactor: 100,
             defenseFactor: 100,
             cargoCapacity: 0,
-            epochsToProduce: 6,
-            largeActionCooldown: 1,
+            movesPerSecond: 1,
             movementCooldown: 1,
-            attackCooldown: 1,
-            isLandTroop: true
+            largeActionCooldown: 1,
+            productionCooldown: 6
         });
     TroopType public troopTransportTroopType =
         TroopType({
             name: TROOP_NAME.TROOP_TRANSPORT,
-            movesPerEpoch: 2,
+            isLandTroop: false,
             maxHealth: 3,
             damagePerHit: 1,
             attackFactor: 50,
             defenseFactor: 50,
             cargoCapacity: 6,
-            epochsToProduce: 14,
-            largeActionCooldown: 1,
+            movesPerSecond: 2,
             movementCooldown: 1, // FIXME
-            attackCooldown: 1,
-            isLandTroop: false
+            largeActionCooldown: 1,
+            productionCooldown: 14
         });
     TroopType public destroyerTroopType =
         TroopType({
             name: TROOP_NAME.DESTROYER,
-            movesPerEpoch: 3,
+            isLandTroop: false,
             maxHealth: 3,
             damagePerHit: 1,
             attackFactor: 100,
             defenseFactor: 100,
             cargoCapacity: 0,
-            largeActionCooldown: 1,
-            epochsToProduce: 20,
+            movesPerSecond: 3,
             movementCooldown: 1, // FIXME
-            attackCooldown: 1,
-            isLandTroop: false
+            largeActionCooldown: 1,
+            productionCooldown: 20
         });
     TroopType public cruiserTroopType =
         TroopType({
             name: TROOP_NAME.CRUISER,
-            movesPerEpoch: 2,
+            isLandTroop: false,
             maxHealth: 8,
             damagePerHit: 2,
             attackFactor: 100,
             defenseFactor: 100,
             cargoCapacity: 0,
-            epochsToProduce: 30,
-            largeActionCooldown: 1,
+            movesPerSecond: 2,
             movementCooldown: 1, // FIXME
-            attackCooldown: 1,
-            isLandTroop: false
+            largeActionCooldown: 1,
+            productionCooldown: 30
         });
     TroopType public battleshipTroopType =
         TroopType({
             name: TROOP_NAME.BATTLESHIP,
-            movesPerEpoch: 2,
+            isLandTroop: false,
             maxHealth: 12,
             damagePerHit: 3,
             attackFactor: 100,
             defenseFactor: 100,
             cargoCapacity: 0,
-            epochsToProduce: 50,
-            largeActionCooldown: 1,
+            movesPerSecond: 2,
             movementCooldown: 1, // FIXME
-            attackCooldown: 1,
-            isLandTroop: false
+            largeActionCooldown: 1,
+            productionCooldown: 50
         });
 
     // we assume these two facet selectors do not change. If they do however, we should use getSelectors
@@ -215,7 +210,6 @@ contract DiamondDeployTest is Test {
                 numPorts: 15,
                 numCities: 15, // yo
                 mapInterval: 10,
-                secondsPerEpoch: 10,
                 combatEfficiency: 50,
                 numInitTerrainTypes: 5
             });

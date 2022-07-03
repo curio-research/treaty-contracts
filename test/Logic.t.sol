@@ -7,7 +7,6 @@ import "test/DiamondDeploy.t.sol";
 contract LogicTest is Test, DiamondDeployTest {
     // TODO: add tests for events
     event NewPlayer(address _player, Position _pos);
-    event EpochUpdate(uint256 _epoch, uint256 _time);
     event Moved(address _player, uint256 _troopId, Position _pos);
     event Attacked(address _player, uint256 _troopId, address _targetPlayer, uint256 _targetId);
     event Death(address _player, uint256 _troopId);
@@ -40,20 +39,18 @@ contract LogicTest is Test, DiamondDeployTest {
         vm.expectRevert(bytes("CURIO: Base already producing"));
         engine.startProduction(player1Pos, troopTransportTroopTypeId);
 
-        // fail: player1 attempting to end production before enough epochs
-        uint256 _startTime = 20;
+        // fail: player1 attempting to end production before enough time
+        uint256 _startTime = 2;
         vm.warp(_startTime);
-        helper.updateEpoch();
-        vm.expectRevert(bytes("CURIO: Troop needs more epochs for production"));
+        vm.expectRevert(bytes("CURIO: Troop needs more time for production"));
         helper.endProduction(player1Pos);
         vm.stopPrank();
 
         // fail: player1 finish producing troop on an occupied base
         vm.prank(deployer);
         helper.spawnTroop(player1Pos, player1, armyTroopTypeId);
-        for (uint256 i = 1; i <= troopTransportTroopType.epochsToProduce; i++) {
-            vm.warp(_startTime + i * 10); // increase time by a few seconds
-            helper.updateEpoch();
+        for (uint256 i = 1; i <= troopTransportTroopType.productionCooldown; i++) {
+            vm.warp(_startTime + i); // increase time by a few seconds
         }
         vm.prank(player1);
         vm.expectRevert(bytes("CURIO: Base occupied by another troop"));
@@ -62,11 +59,8 @@ contract LogicTest is Test, DiamondDeployTest {
 
     function testProduction() public {
         // player1 produce troop transport
-        vm.warp(10);
-        helper.updateEpoch();
-        assertEq(getter.getEpoch(), 1);
-
-        produceTroop(player1Pos, troopTransportTroopTypeId, player1, 100);
+        vm.warp(1);
+        produceTroop(player1Pos, troopTransportTroopTypeId, player1, 2);
 
         // success: verify troop's basic information
         Troop memory _troop = getter.getTroopAt(player1Pos);
@@ -84,7 +78,8 @@ contract LogicTest is Test, DiamondDeployTest {
         TroopType memory _troopType = getter.getTroopType(_troop.troopTypeId);
         assertTrue(!_troopType.isLandTroop);
 
-        // immediately produce another troop, which should succeed
+        // success: produce another troop
+        vm.warp(100);
         vm.prank(player1);
         // Note: move functionality
         engine.march(initTroopNonce, Position({x: 7, y: 1}));
@@ -107,6 +102,7 @@ contract LogicTest is Test, DiamondDeployTest {
         vm.stopPrank();
         uint256 _troopId = initTroopNonce;
 
+        vm.warp(2);
         vm.startPrank(player1);
 
         // fail: move to same location
@@ -125,16 +121,11 @@ contract LogicTest is Test, DiamondDeployTest {
         // vm.expectRevert(bytes("CURIO: Cannot move on land"));
         // engine.march(_troopId, Position({x: 5, y: 1}));
 
-        // fail: move onto an opponent's base
         engine.march(_troopId, Position({x: 7, y: 1}));
-        vm.warp(20);
-        helper.updateEpoch();
+        vm.warp(4);
         engine.march(_troopId, Position({x: 7, y: 2}));
-        vm.warp(40);
-        helper.updateEpoch();
+        vm.warp(6);
         engine.march(_troopId, Position({x: 7, y: 3}));
-        // vm.expectRevert(bytes("CURIO: Cannot move onto opponent base"));
-        // engine.march(_troopId, player2Pos);
 
         // fail: move a troop transport onto a troop transport
         // vm.expectRevert(bytes("CURIO: Destination tile occupied"));
@@ -144,59 +135,39 @@ contract LogicTest is Test, DiamondDeployTest {
     }
 
     // Note: Everything tests only the move functionality
-    function testMoveTooManyTimesPerEpoch() public {
+    function testMoveTooManyTimesPerSecond() public {
         vm.prank(deployer);
         helper.spawnTroop(Position({x: 0, y: 9}), player1, destroyerTroopTypeId);
         uint256 _destroyerId = initTroopNonce;
 
+        vm.warp(2);
         vm.startPrank(player1);
 
-        assertEq(getter.getTroop(_destroyerId).movesLeftInEpoch, 3);
+        assertEq(getter.getTroop(_destroyerId).movesLeftInSecond, 3);
         engine.march(_destroyerId, Position({x: 0, y: 8}));
-        assertEq(getter.getTroop(_destroyerId).movesLeftInEpoch, 2);
+        assertEq(getter.getTroop(_destroyerId).movesLeftInSecond, 2);
         engine.march(_destroyerId, Position({x: 0, y: 7}));
-        assertEq(getter.getTroop(_destroyerId).movesLeftInEpoch, 1);
+        assertEq(getter.getTroop(_destroyerId).movesLeftInSecond, 1);
 
-        vm.warp(20);
-        helper.updateEpoch();
+        vm.warp(3);
 
-        // lazy update! move has not been called yet so movesLeftInEpoch remains unchanged
-        assertEq(getter.getTroop(_destroyerId).movesLeftInEpoch, 1);
+        // lazy update! move has not been called yet so movesLeftInSecond remains unchanged
+        assertEq(getter.getTroop(_destroyerId).movesLeftInSecond, 1);
         engine.march(_destroyerId, Position({x: 0, y: 6}));
-        assertEq(getter.getTroop(_destroyerId).movesLeftInEpoch, 2);
+        assertEq(getter.getTroop(_destroyerId).movesLeftInSecond, 2);
         engine.march(_destroyerId, Position({x: 0, y: 5}));
-        assertEq(getter.getTroop(_destroyerId).movesLeftInEpoch, 1);
+        assertEq(getter.getTroop(_destroyerId).movesLeftInSecond, 1);
         engine.march(_destroyerId, Position({x: 0, y: 4}));
-        assertEq(getter.getTroop(_destroyerId).movesLeftInEpoch, 0);
+        assertEq(getter.getTroop(_destroyerId).movesLeftInSecond, 0);
 
-        vm.expectRevert(bytes("CURIO: No moves left this epoch"));
+        vm.expectRevert(bytes("CURIO: Moved too recently"));
         engine.march(_destroyerId, Position({x: 0, y: 3}));
 
         vm.stopPrank();
     }
 
-    // Note: test move functionality
-    function testMoveDamnIt() public {
-        // produce a troop transport
-        vm.prank(deployer);
-        helper.spawnTroop(player1Pos, player1, troopTransportTroopTypeId);
-
-        vm.startPrank(player1);
-
-        // success: move transport to 7, 1
-        Position memory _target = Position({x: 7, y: 1});
-        engine.march(1, _target);
-
-        // verify position
-        Troop memory _troop = getter.getTroop(1);
-        assertEq(_troop.pos.x, _target.x);
-        assertEq(_troop.pos.y, _target.y);
-
-        vm.stopPrank();
-    }
-
     // battle
-    function testmarchFailure() public {
+    function testMarchFailure() public {
         // TODO: add more
         Position memory _troopPos = Position({x: 7, y: 6});
         Position memory _enemy1Pos = Position({x: 7, y: 7});
@@ -209,15 +180,14 @@ contract LogicTest is Test, DiamondDeployTest {
 
         uint256 _player1DestroyerId = initTroopNonce;
 
-        vm.warp(20);
-        helper.updateEpoch();
+        vm.warp(2);
 
         vm.startPrank(player1);
 
-        // fail: 2 attacks in 1 epoch
+        // fail: 2 attacks in 1 second
         engine.march(_player1DestroyerId, _enemy1Pos);
         if (getter.getTroop(_player1DestroyerId).owner == player1) {
-            vm.expectRevert(bytes("CURIO: Attacked too recently"));
+            vm.expectRevert(bytes("CURIO: Large action taken too recently"));
             engine.march(_player1DestroyerId, _enemy2Pos);
         }
 
@@ -231,10 +201,8 @@ contract LogicTest is Test, DiamondDeployTest {
         helper.spawnTroop(_destroyerPos, player1, destroyerTroopTypeId);
         uint256 _destroyerId = initTroopNonce;
 
-        // increase epoch
+        // increase time
         vm.warp(20);
-        helper.updateEpoch();
-        assertEq(getter.getEpoch(), 1);
 
         vm.prank(player1);
         // Note: battle functionality
@@ -272,10 +240,8 @@ contract LogicTest is Test, DiamondDeployTest {
         assertEq(_destroyer.owner, player1);
         assertEq(_destroyer.health, getter.getTroopType(destroyerTroopTypeId).maxHealth);
 
-        // increase epoch
-        vm.warp(20);
-        helper.updateEpoch();
-        assertEq(getter.getEpoch(), 1);
+        // increase time
+        vm.warp(2);
 
         vm.prank(player2);
         // Note: Battle functionality
@@ -307,6 +273,7 @@ contract LogicTest is Test, DiamondDeployTest {
         // uint256 _destroyerId = initTroopNonce + 1;
         vm.stopPrank();
 
+        vm.warp(2);
         vm.prank(player2);
         vm.expectRevert(bytes("CURIO: Can only march own troop"));
         engine.march(_armyId, player3Pos);
@@ -328,9 +295,9 @@ contract LogicTest is Test, DiamondDeployTest {
         // engine.march(_armyId, player3Pos);
         vm.stopPrank();
 
-        vm.prank(deployer);
-        helper.spawnTroop(player3Pos, player3, armyTroopTypeId);
-        vm.prank(player1);
+        // vm.prank(deployer);
+        // helper.spawnTroop(player3Pos, player3, armyTroopTypeId);
+        // vm.prank(player1);
         // vm.expectRevert(bytes("CURIO: Destination tile occupied"));
         // engine.march(_armyId, player3Pos);
     }
@@ -347,10 +314,8 @@ contract LogicTest is Test, DiamondDeployTest {
         Base memory _base = getter.getBaseAt(player2Pos);
         assertEq(_base.owner, player2);
 
-        // increase epoch
-        vm.warp(20);
-        helper.updateEpoch();
-        assertEq(getter.getEpoch(), 1);
+        // increase time
+        vm.warp(2);
 
         vm.startPrank(player1);
         // Note: Battle functionality
@@ -402,9 +367,8 @@ contract LogicTest is Test, DiamondDeployTest {
         vm.expectRevert("CURIO: Troop already at full health");
         helper.repair(player1Pos);
 
-        vm.warp(20);
-        helper.updateEpoch();
         // Note: test battle functionality
+        vm.warp(2);
         engine.march(_player1DestroyerId, _player2DestroyerPos);
 
         // try to replicate "repaired too recently" error on both players' destroyers
@@ -438,8 +402,7 @@ contract LogicTest is Test, DiamondDeployTest {
         vm.stopPrank();
 
         vm.startPrank(player1);
-        vm.warp(20);
-        helper.updateEpoch();
+        vm.warp(2);
         // Note: test battle functionality
         engine.march(_player1DestroyerId, _player2DestroyerPos);
 
@@ -478,13 +441,12 @@ contract LogicTest is Test, DiamondDeployTest {
     ) internal {
         vm.startPrank(_player);
         TroopType memory troopTypeInfo = getter.getTroopType(_troopTypeId);
-        engine.startProduction(_location, _troopTypeId); // start production at 1 epoch
+        engine.startProduction(_location, _troopTypeId);
 
-        // fast foward a few epochs
+        // fast foward a few seconds
 
-        for (uint256 i = 1; i <= troopTypeInfo.epochsToProduce; i++) {
-            vm.warp(_startTime + i * 10); // increase time by a few seconds
-            helper.updateEpoch();
+        for (uint256 i = 1; i <= troopTypeInfo.productionCooldown; i++) {
+            vm.warp(_startTime + i); // increase time by a few seconds
         }
 
         helper.endProduction(_location);
