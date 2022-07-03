@@ -65,12 +65,19 @@ library Util {
 
     function _removeTroop(Position memory _pos, uint256 _troopId) public {
         // TODO: consider whether or not to remove Troop from gs().troops
-        uint256[] memory _cargoTroopIds = gs().troopIdMap[_troopId].cargoTroopIds;
-        for (uint256 i = 0; i < _cargoTroopIds.length; i++) {
-            delete gs().troopIdMap[_cargoTroopIds[i]];
+
+        Troop memory _troop = gs().troopIdMap[_troopId];
+        for (uint256 i = 0; i < _troop.cargoTroopIds.length; i++) {
+            delete gs().troopIdMap[_troop.cargoTroopIds[i]];
         }
         delete gs().troopIdMap[_troopId];
-        delete gs().map[_pos.x][_pos.y].occupantId;
+
+        Tile memory _tile = _getTileAt(_troop.pos);
+        if (_canTransportTroop(_tile)) {
+            _unloadTroopFromTransport(_tile.occupantId, _troopId);
+        } else {
+            delete gs().map[_pos.x][_pos.y].occupantId;
+        }
     }
 
     function _addTroop(
@@ -183,7 +190,7 @@ library Util {
     }
 
     function _canTransportTroop(Tile memory _tile) public view returns (bool) {
-        return (_getCargoCapacity(_tile.occupantId) > 0) &&  (gs().troopIdMap[_tile.occupantId].cargoTroopIds.length < _getCargoCapacity(_tile.occupantId));
+        return (_getCargoCapacity(_tile.occupantId) > 0) && (gs().troopIdMap[_tile.occupantId].cargoTroopIds.length < _getCargoCapacity(_tile.occupantId));
     }
 
     function _hasPort(Tile memory _tile) public view returns (bool) {

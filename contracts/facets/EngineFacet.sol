@@ -153,15 +153,11 @@ contract EngineFacet is UseStorage {
         gs().troopIdMap[_troopId].largeActionTakenThisEpoch = true;
 
         Tile memory _targetTile = Util._getTileAt(_targetPos);
-
-        Base memory _targetBase;
-
         require(_targetTile.baseId != NULL, "CURIO: No target to attack");
 
+        Base memory _targetBase;
         _targetBase = gs().baseIdMap[_targetTile.baseId];
         require(_targetBase.owner != msg.sender, "CURIO: Cannot attack own base");
-
-        _targetBase = gs().baseIdMap[_targetTile.baseId];
 
         // Loop till one side dies
         uint256 _salt = 0;
