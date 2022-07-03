@@ -25,10 +25,8 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
 export type TroopStruct = {
   owner: string;
   troopTypeId: BigNumberish;
+  movesLeftInSecond: BigNumberish;
   lastMoved: BigNumberish;
-  movesLeftInEpoch: BigNumberish;
-  largeActionTakenThisEpoch: boolean;
-  lastAttacked: BigNumberish;
   lastLargeActionTaken: BigNumberish;
   lastRepaired: BigNumberish;
   health: BigNumberish;
@@ -41,8 +39,6 @@ export type TroopStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
-  boolean,
-  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -51,10 +47,8 @@ export type TroopStructOutput = [
 ] & {
   owner: string;
   troopTypeId: BigNumber;
+  movesLeftInSecond: BigNumber;
   lastMoved: BigNumber;
-  movesLeftInEpoch: BigNumber;
-  largeActionTakenThisEpoch: boolean;
-  lastAttacked: BigNumber;
   lastLargeActionTaken: BigNumber;
   lastRepaired: BigNumber;
   health: BigNumber;
@@ -86,12 +80,12 @@ export type BaseStructOutput = [
 
 export type ProductionStruct = {
   troopTypeId: BigNumberish;
-  startEpoch: BigNumberish;
+  startTimestamp: BigNumberish;
 };
 
 export type ProductionStructOutput = [BigNumber, BigNumber] & {
   troopTypeId: BigNumber;
-  startEpoch: BigNumber;
+  startTimestamp: BigNumber;
 };
 
 export type TileStruct = {
@@ -111,7 +105,6 @@ export type TileStructOutput = [boolean, number, BigNumber, BigNumber] & {
 export interface UtilInterface extends utils.Interface {
   functions: {
     "_canTransportTroop((bool,uint8,uint256,uint256))": FunctionFragment;
-    "_getAttackCooldown(uint256)": FunctionFragment;
     "_getAttackFactor(uint256)": FunctionFragment;
     "_getBase(uint256)": FunctionFragment;
     "_getBaseHealth(uint256)": FunctionFragment;
@@ -119,11 +112,11 @@ export interface UtilInterface extends utils.Interface {
     "_getCargoCapacity(uint256)": FunctionFragment;
     "_getDamagePerHit(uint256)": FunctionFragment;
     "_getDefenseFactor(uint256)": FunctionFragment;
-    "_getEpochsToProduce(uint256)": FunctionFragment;
     "_getLargeActionCooldown(uint256)": FunctionFragment;
     "_getMaxHealth(uint256)": FunctionFragment;
     "_getMovementCooldown(uint256)": FunctionFragment;
-    "_getMovesPerEpoch(uint256)": FunctionFragment;
+    "_getMovesPerSecond(uint256)": FunctionFragment;
+    "_getProductionCooldown(uint256)": FunctionFragment;
     "_getTileAt((uint256,uint256))": FunctionFragment;
     "_getTroop(uint256)": FunctionFragment;
     "_hasPort((bool,uint8,uint256,uint256))": FunctionFragment;
@@ -138,10 +131,6 @@ export interface UtilInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "_canTransportTroop",
     values: [TileStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getAttackCooldown",
-    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "_getAttackFactor",
@@ -172,10 +161,6 @@ export interface UtilInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "_getEpochsToProduce",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "_getLargeActionCooldown",
     values: [BigNumberish]
   ): string;
@@ -188,7 +173,11 @@ export interface UtilInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "_getMovesPerEpoch",
+    functionFragment: "_getMovesPerSecond",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getProductionCooldown",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
@@ -233,10 +222,6 @@ export interface UtilInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "_getAttackCooldown",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "_getAttackFactor",
     data: BytesLike
   ): Result;
@@ -262,10 +247,6 @@ export interface UtilInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "_getEpochsToProduce",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "_getLargeActionCooldown",
     data: BytesLike
   ): Result;
@@ -278,7 +259,11 @@ export interface UtilInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "_getMovesPerEpoch",
+    functionFragment: "_getMovesPerSecond",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_getProductionCooldown",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "_getTileAt", data: BytesLike): Result;
@@ -302,7 +287,6 @@ export interface UtilInterface extends utils.Interface {
     "AttackedTroop(address,uint256,tuple,uint256,tuple)": EventFragment;
     "BaseCaptured(address,uint256,uint256)": EventFragment;
     "Death(address,uint256)": EventFragment;
-    "EpochUpdate(uint256,uint256)": EventFragment;
     "Moved(address,uint256,uint256,tuple,tuple)": EventFragment;
     "NewPlayer(address,tuple)": EventFragment;
     "NewTroop(address,uint256,tuple,tuple)": EventFragment;
@@ -316,7 +300,6 @@ export interface UtilInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "AttackedTroop"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BaseCaptured"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Death"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "EpochUpdate"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Moved"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NewPlayer"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NewTroop"): EventFragment;
@@ -365,13 +348,6 @@ export type DeathEvent = TypedEvent<
 >;
 
 export type DeathEventFilter = TypedEventFilter<DeathEvent>;
-
-export type EpochUpdateEvent = TypedEvent<
-  [BigNumber, BigNumber],
-  { _epoch: BigNumber; _time: BigNumber }
->;
-
-export type EpochUpdateEventFilter = TypedEventFilter<EpochUpdateEvent>;
 
 export type MovedEvent = TypedEvent<
   [string, BigNumber, BigNumber, PositionStructOutput, PositionStructOutput],
@@ -466,11 +442,6 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    _getAttackCooldown(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     _getAttackFactor(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
@@ -506,11 +477,6 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    _getEpochsToProduce(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     _getLargeActionCooldown(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
@@ -526,7 +492,12 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    _getMovesPerEpoch(
+    _getMovesPerSecond(
+      _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    _getProductionCooldown(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
@@ -581,11 +552,6 @@ export interface Util extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  _getAttackCooldown(
-    _troopTypeId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   _getAttackFactor(
     _troopTypeId: BigNumberish,
     overrides?: CallOverrides
@@ -621,11 +587,6 @@ export interface Util extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  _getEpochsToProduce(
-    _troopTypeId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   _getLargeActionCooldown(
     _troopTypeId: BigNumberish,
     overrides?: CallOverrides
@@ -641,7 +602,12 @@ export interface Util extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  _getMovesPerEpoch(
+  _getMovesPerSecond(
+    _troopTypeId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  _getProductionCooldown(
     _troopTypeId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
@@ -696,11 +662,6 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    _getAttackCooldown(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     _getAttackFactor(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
@@ -736,11 +697,6 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getEpochsToProduce(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     _getLargeActionCooldown(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
@@ -756,7 +712,12 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getMovesPerEpoch(
+    _getMovesPerSecond(
+      _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getProductionCooldown(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -851,12 +812,6 @@ export interface Util extends BaseContract {
     "Death(address,uint256)"(_player?: null, _troopId?: null): DeathEventFilter;
     Death(_player?: null, _troopId?: null): DeathEventFilter;
 
-    "EpochUpdate(uint256,uint256)"(
-      _epoch?: null,
-      _time?: null
-    ): EpochUpdateEventFilter;
-    EpochUpdate(_epoch?: null, _time?: null): EpochUpdateEventFilter;
-
     "Moved(address,uint256,uint256,tuple,tuple)"(
       _player?: null,
       _troopId?: null,
@@ -932,11 +887,6 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getAttackCooldown(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     _getAttackFactor(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
@@ -969,11 +919,6 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getEpochsToProduce(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     _getLargeActionCooldown(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
@@ -989,7 +934,12 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getMovesPerEpoch(
+    _getMovesPerSecond(
+      _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getProductionCooldown(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1045,11 +995,6 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _getAttackCooldown(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     _getAttackFactor(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
@@ -1085,11 +1030,6 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _getEpochsToProduce(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     _getLargeActionCooldown(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
@@ -1105,7 +1045,12 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _getMovesPerEpoch(
+    _getMovesPerSecond(
+      _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getProductionCooldown(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
