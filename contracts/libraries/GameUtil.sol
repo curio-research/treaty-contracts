@@ -15,7 +15,6 @@ library Util {
     }
 
     event NewPlayer(address _player, Position _pos);
-    event EpochUpdate(uint256 _epoch, uint256 _time);
     event Moved(address _player, uint256 _troopId, uint256 _epoch, Position _startPos, Position _targetPos);
     event AttackedTroop(address _player, uint256 _troopId, Troop _troopInfo, uint256 _targetTroopId, Troop _targetTroopInfo);
     event AttackedBase(address _player, uint256 _troopId, Troop _troopInfo, uint256 _targetBaseId, Base _targetBaseInfo);
@@ -79,19 +78,7 @@ library Util {
         address _owner
     ) public returns (uint256, Troop memory) {
         uint256[] memory _cargoTroopIds;
-        Troop memory _troop = Troop({
-            owner: _owner,
-            troopTypeId: _troopTypeId,
-            lastMoved: gs().epoch,
-            movesLeftInEpoch: _getMovesPerEpoch(_troopTypeId),
-            largeActionTakenThisEpoch: false, // Fixme: update all test and then change to true
-            lastAttacked: gs().epoch, // yo
-            lastLargeActionTaken: gs().epoch,
-            lastRepaired: gs().epoch,
-            health: _getMaxHealth(_troopTypeId),
-            pos: _pos,
-            cargoTroopIds: _cargoTroopIds
-        });
+        Troop memory _troop = Troop({owner: _owner, troopTypeId: _troopTypeId, movesLeftInSecond: _getMovesPerSecond(_troopTypeId), lastMoved: block.timestamp, lastLargeActionTaken: block.timestamp, lastRepaired: block.timestamp, health: _getMaxHealth(_troopTypeId), pos: _pos, cargoTroopIds: _cargoTroopIds});
 
         uint256 _troopId = gs().troopNonce;
         gs().troopIds.push(_troopId);
@@ -134,8 +121,8 @@ library Util {
         return gs().troopTypeIdMap[_troopTypeId].maxHealth;
     }
 
-    function _getEpochsToProduce(uint256 _troopTypeId) public view returns (uint256) {
-        return gs().troopTypeIdMap[_troopTypeId].epochsToProduce;
+    function _getProductionCooldown(uint256 _troopTypeId) public view returns (uint256) {
+        return gs().troopTypeIdMap[_troopTypeId].productionCooldown;
     }
 
     function _getDamagePerHit(uint256 _troopTypeId) public view returns (uint256) {
@@ -162,8 +149,8 @@ library Util {
         return gs().troopTypeIdMap[_troopTypeId].movementCooldown;
     }
 
-    function _getMovesPerEpoch(uint256 _troopTypeId) public view returns (uint256) {
-        return gs().troopTypeIdMap[_troopTypeId].movesPerEpoch;
+    function _getMovesPerSecond(uint256 _troopTypeId) public view returns (uint256) {
+        return gs().troopTypeIdMap[_troopTypeId].movesPerSecond;
     }
 
     function _isLandTroop(uint256 _troopTypeId) public view returns (bool) {
@@ -183,7 +170,7 @@ library Util {
     }
 
     function _canTransportTroop(Tile memory _tile) public view returns (bool) {
-        return (_getCargoCapacity(_tile.occupantId) > 0) &&  (gs().troopIdMap[_tile.occupantId].cargoTroopIds.length < _getCargoCapacity(_tile.occupantId));
+        return (_getCargoCapacity(_tile.occupantId) > 0) && (gs().troopIdMap[_tile.occupantId].cargoTroopIds.length < _getCargoCapacity(_tile.occupantId));
     }
 
     function _hasPort(Tile memory _tile) public view returns (bool) {
