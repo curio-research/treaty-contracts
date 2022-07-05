@@ -2,7 +2,7 @@
 pragma solidity ^0.8.4;
 
 import "forge-std/console.sol";
-import {BASE_NAME, Base, GameState, Position, Production, TERRAIN, Tile, Troop} from "contracts/libraries/Types.sol";
+import {BASE_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop} from "contracts/libraries/Types.sol";
 import {LibStorage} from "contracts/libraries/Storage.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 
@@ -15,13 +15,12 @@ library Util {
     }
 
     event NewPlayer(address _player, Position _pos);
+    event Bankruptcy(address _player);
     event Moved(address _player, uint256 _troopId, uint256 _epoch, Position _startPos, Position _targetPos);
     event AttackedTroop(address _player, uint256 _troopId, Troop _troopInfo, uint256 _targetTroopId, Troop _targetTroopInfo);
     event AttackedBase(address _player, uint256 _troopId, Troop _troopInfo, uint256 _targetBaseId, Base _targetBaseInfo);
     event Death(address _player, uint256 _troopId);
     event BaseCaptured(address _player, uint256 _troopId, uint256 _baseId);
-    event ProductionStarted(address _player, uint256 _baseId, Production _production);
-    event ProductionEnded(address _player, uint256 _baseId);
     event NewTroop(address _player, uint256 _troopId, Troop _troop, Position _pos);
     event Repaired(address _player, uint256 _troopId, uint256 _health);
     event Recovered(address _player, uint256 _troopId);
@@ -31,6 +30,31 @@ library Util {
     // ----------------------------------------------------------
 
     // Setters
+
+    function _updatePlayerBalance(address _addr) public {
+        Player memory _player = gs().playerMap[_addr];
+        uint256 _timeElapsed = block.timestamp - _player.balanceLastUpdated;
+
+        if (_player.totalGoldGenerationPerUpdate >= _player.totalTroopExpensePerUpdate) {
+            // Gain
+            _player.balance += (_player.totalGoldGenerationPerUpdate - _player.totalTroopExpensePerUpdate) * _timeElapsed;
+        } else {
+            // Loss
+            uint256 _reduction = (_player.totalTroopExpensePerUpdate - _player.totalGoldGenerationPerUpdate) * _timeElapsed;
+            if (_reduction >= _player.balance) {
+                // Bankruptcy
+                _player.balance = 0;
+                _player.active = false; // optional
+                emit Bankruptcy(_addr);
+            } else {
+                _player.balance -= _reduction;
+            }
+        }
+
+        _player.balanceLastUpdated = block.timestamp;
+        gs().playerMap[_addr] = _player;
+    }
+
     function _unloadTroopFromTransport(uint256 _troopTransportId, uint256 _cargoTroopId) public {
         uint256[] memory _cargoTroopIds = gs().troopIdMap[_troopTransportId].cargoTroopIds;
         uint256 _cargoSize = _cargoTroopIds.length;
@@ -62,20 +86,34 @@ library Util {
         gs().map[_pos.x][_pos.y].terrain = TERRAIN(_terrainId);
     }
 
-    function _removeTroop(Position memory _pos, uint256 _troopId) public {
+    function _removeTroop(
+        address _owner,
+        Position memory _pos,
+        uint256 _troopId
+    ) public {
         // TODO: consider whether or not to remove Troop from gs().troops
+        uint256 _totalTroopExpensePerUpdate = gs().playerMap[_owner].totalTroopExpensePerUpdate;
+
         uint256[] memory _cargoTroopIds = gs().troopIdMap[_troopId].cargoTroopIds;
         for (uint256 i = 0; i < _cargoTroopIds.length; i++) {
-            delete gs().troopIdMap[_cargoTroopIds[i]];
+            uint256 _cargoId = _cargoTroopIds[i];
+            _totalTroopExpensePerUpdate -= _getExpensePerSecond(_getTroop(_cargoId).troopTypeId);
+            delete gs().troopIdMap[_cargoId];
         }
+
+        _totalTroopExpensePerUpdate -= _getExpensePerSecond(_getTroop(_troopId).troopTypeId);
         delete gs().troopIdMap[_troopId];
+
+        _updatePlayerBalance(_owner);
+        gs().playerMap[_owner].totalTroopExpensePerUpdate = _totalTroopExpensePerUpdate;
+
         delete gs().map[_pos.x][_pos.y].occupantId;
     }
 
     function _addTroop(
+        address _owner,
         Position memory _pos,
-        uint256 _troopTypeId,
-        address _owner
+        uint256 _troopTypeId
     ) public returns (uint256, Troop memory) {
         uint256[] memory _cargoTroopIds;
         Troop memory _troop = Troop({owner: _owner, troopTypeId: _troopTypeId, movesLeftInSecond: _getMovesPerSecond(_troopTypeId), lastMoved: block.timestamp, lastLargeActionTaken: block.timestamp, lastRepaired: block.timestamp, health: _getMaxHealth(_troopTypeId), pos: _pos, cargoTroopIds: _cargoTroopIds});
@@ -86,6 +124,9 @@ library Util {
         gs().troopNonce++;
         gs().map[_pos.x][_pos.y].occupantId = _troopId;
 
+        _updatePlayerBalance(_owner);
+        gs().playerMap[_owner].totalTroopExpensePerUpdate += _getExpensePerSecond(_troopTypeId);
+
         return (_troopId, gs().troopIdMap[_troopId]);
     }
 
@@ -95,7 +136,8 @@ library Util {
             name: _baseName,
             attackFactor: 100,
             defenseFactor: 100,
-            health: 1 // FIXME: change to base constants
+            health: 1, // FIXME: change to base constants
+            goldGenerationPerSecond: gs().worldConstants.defaultBaseGoldGeneratePerSecond
         });
 
         uint256 _baseId = gs().baseNonce;
@@ -109,20 +151,28 @@ library Util {
 
     // Getters
 
+    function _getPlayerBalance(address _player) public view returns (uint256) {
+        return gs().playerMap[_player].balance;
+    }
+
     function _getCargoCapacity(uint256 _troopId) public view returns (uint256) {
         return gs().troopTypeIdMap[gs().troopIdMap[_troopId].troopTypeId].cargoCapacity;
     }
 
-    function _getTroop(uint256 _troopId) public view returns (Troop memory) {
-        return gs().troopIdMap[_troopId];
+    function _getTroop(uint256 _id) public view returns (Troop memory) {
+        return gs().troopIdMap[_id];
+    }
+
+    function _getExpensePerSecond(uint256 _troopTypeId) public view returns (uint256) {
+        return gs().troopTypeIdMap[_troopTypeId].expensePerSecond;
     }
 
     function _getMaxHealth(uint256 _troopTypeId) public view returns (uint256) {
         return gs().troopTypeIdMap[_troopTypeId].maxHealth;
     }
 
-    function _getProductionExpense(uint256 _troopTypeId) public view returns (uint256) {
-        return gs().troopTypeIdMap[_troopTypeId].productionExpense;
+    function _getTroopCost(uint256 _troopTypeId) public view returns (uint256) {
+        return gs().troopTypeIdMap[_troopTypeId].cost;
     }
 
     function _getDamagePerHit(uint256 _troopTypeId) public view returns (uint256) {

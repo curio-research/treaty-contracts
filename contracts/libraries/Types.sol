@@ -30,8 +30,9 @@ struct Player {
     uint256 initTimestamp;
     bool active;
     uint256 balance;
-    uint256 goldProductionPerUpdate;
-    uint256 troopExpensePerUpdate;
+    uint256 totalGoldGenerationPerUpdate;
+    uint256 totalTroopExpensePerUpdate;
+    uint256 balanceLastUpdated;
 }
 
 struct Base {
@@ -40,6 +41,7 @@ struct Base {
     uint256 attackFactor;
     uint256 defenseFactor;
     uint256 health;
+    uint256 goldGenerationPerSecond;
 }
 
 struct Tile {
@@ -72,7 +74,7 @@ struct TroopType {
     uint256 movesPerSecond;
     uint256 movementCooldown;
     uint256 largeActionCooldown;
-    uint256 productionExpense;
+    uint256 cost;
     uint256 expensePerSecond;
 }
 
@@ -90,6 +92,8 @@ struct WorldConstants {
     uint256 mapInterval;
     uint256 combatEfficiency; // in the interval [0, 100]
     uint256 numInitTerrainTypes; // default is 5
+    uint256 initPlayerBalance;
+    uint256 defaultBaseGoldGeneratePerSecond;
 }
 
 struct GameState {

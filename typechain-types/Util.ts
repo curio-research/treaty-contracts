@@ -62,11 +62,13 @@ export type BaseStruct = {
   attackFactor: BigNumberish;
   defenseFactor: BigNumberish;
   health: BigNumberish;
+  goldGenerationPerSecond: BigNumberish;
 };
 
 export type BaseStructOutput = [
   number,
   string,
+  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber
@@ -76,16 +78,7 @@ export type BaseStructOutput = [
   attackFactor: BigNumber;
   defenseFactor: BigNumber;
   health: BigNumber;
-};
-
-export type ProductionStruct = {
-  troopTypeId: BigNumberish;
-  startTimestamp: BigNumberish;
-};
-
-export type ProductionStructOutput = [BigNumber, BigNumber] & {
-  troopTypeId: BigNumber;
-  startTimestamp: BigNumber;
+  goldGenerationPerSecond: BigNumber;
 };
 
 export type TileStruct = {
@@ -112,13 +105,15 @@ export interface UtilInterface extends utils.Interface {
     "_getCargoCapacity(uint256)": FunctionFragment;
     "_getDamagePerHit(uint256)": FunctionFragment;
     "_getDefenseFactor(uint256)": FunctionFragment;
+    "_getExpensePerSecond(uint256)": FunctionFragment;
     "_getLargeActionCooldown(uint256)": FunctionFragment;
     "_getMaxHealth(uint256)": FunctionFragment;
     "_getMovementCooldown(uint256)": FunctionFragment;
     "_getMovesPerSecond(uint256)": FunctionFragment;
-    "_getProductionCooldown(uint256)": FunctionFragment;
+    "_getPlayerBalance(address)": FunctionFragment;
     "_getTileAt((uint256,uint256))": FunctionFragment;
     "_getTroop(uint256)": FunctionFragment;
+    "_getTroopCost(uint256)": FunctionFragment;
     "_hasPort((bool,uint8,uint256,uint256))": FunctionFragment;
     "_inBound((uint256,uint256))": FunctionFragment;
     "_isLandTroop(uint256)": FunctionFragment;
@@ -161,6 +156,10 @@ export interface UtilInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "_getExpensePerSecond",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "_getLargeActionCooldown",
     values: [BigNumberish]
   ): string;
@@ -177,8 +176,8 @@ export interface UtilInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "_getProductionCooldown",
-    values: [BigNumberish]
+    functionFragment: "_getPlayerBalance",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "_getTileAt",
@@ -186,6 +185,10 @@ export interface UtilInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "_getTroop",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getTroopCost",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
@@ -247,6 +250,10 @@ export interface UtilInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "_getExpensePerSecond",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "_getLargeActionCooldown",
     data: BytesLike
   ): Result;
@@ -263,11 +270,15 @@ export interface UtilInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "_getProductionCooldown",
+    functionFragment: "_getPlayerBalance",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "_getTileAt", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "_getTroop", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "_getTroopCost",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "_hasPort", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "_inBound", data: BytesLike): Result;
   decodeFunctionResult(
@@ -285,26 +296,24 @@ export interface UtilInterface extends utils.Interface {
   events: {
     "AttackedBase(address,uint256,tuple,uint256,tuple)": EventFragment;
     "AttackedTroop(address,uint256,tuple,uint256,tuple)": EventFragment;
+    "Bankruptcy(address)": EventFragment;
     "BaseCaptured(address,uint256,uint256)": EventFragment;
     "Death(address,uint256)": EventFragment;
     "Moved(address,uint256,uint256,tuple,tuple)": EventFragment;
     "NewPlayer(address,tuple)": EventFragment;
     "NewTroop(address,uint256,tuple,tuple)": EventFragment;
-    "ProductionEnded(address,uint256)": EventFragment;
-    "ProductionStarted(address,uint256,tuple)": EventFragment;
     "Recovered(address,uint256)": EventFragment;
     "Repaired(address,uint256,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "AttackedBase"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "AttackedTroop"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Bankruptcy"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BaseCaptured"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Death"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Moved"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NewPlayer"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NewTroop"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ProductionEnded"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ProductionStarted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Recovered"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Repaired"): EventFragment;
 }
@@ -334,6 +343,10 @@ export type AttackedTroopEvent = TypedEvent<
 >;
 
 export type AttackedTroopEventFilter = TypedEventFilter<AttackedTroopEvent>;
+
+export type BankruptcyEvent = TypedEvent<[string], { _player: string }>;
+
+export type BankruptcyEventFilter = TypedEventFilter<BankruptcyEvent>;
 
 export type BaseCapturedEvent = TypedEvent<
   [string, BigNumber, BigNumber],
@@ -380,21 +393,6 @@ export type NewTroopEvent = TypedEvent<
 >;
 
 export type NewTroopEventFilter = TypedEventFilter<NewTroopEvent>;
-
-export type ProductionEndedEvent = TypedEvent<
-  [string, BigNumber],
-  { _player: string; _baseId: BigNumber }
->;
-
-export type ProductionEndedEventFilter = TypedEventFilter<ProductionEndedEvent>;
-
-export type ProductionStartedEvent = TypedEvent<
-  [string, BigNumber, ProductionStructOutput],
-  { _player: string; _baseId: BigNumber; _production: ProductionStructOutput }
->;
-
-export type ProductionStartedEventFilter =
-  TypedEventFilter<ProductionStartedEvent>;
 
 export type RecoveredEvent = TypedEvent<
   [string, BigNumber],
@@ -477,6 +475,11 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    _getExpensePerSecond(
+      _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     _getLargeActionCooldown(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
@@ -497,8 +500,8 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    _getProductionCooldown(
-      _troopTypeId: BigNumberish,
+    _getPlayerBalance(
+      _player: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -508,9 +511,14 @@ export interface Util extends BaseContract {
     ): Promise<[TileStructOutput]>;
 
     _getTroop(
-      _troopId: BigNumberish,
+      _id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[TroopStructOutput]>;
+
+    _getTroopCost(
+      _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     _hasPort(_tile: TileStruct, overrides?: CallOverrides): Promise<[boolean]>;
 
@@ -587,6 +595,11 @@ export interface Util extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  _getExpensePerSecond(
+    _troopTypeId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   _getLargeActionCooldown(
     _troopTypeId: BigNumberish,
     overrides?: CallOverrides
@@ -607,8 +620,8 @@ export interface Util extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  _getProductionCooldown(
-    _troopTypeId: BigNumberish,
+  _getPlayerBalance(
+    _player: string,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -618,9 +631,14 @@ export interface Util extends BaseContract {
   ): Promise<TileStructOutput>;
 
   _getTroop(
-    _troopId: BigNumberish,
+    _id: BigNumberish,
     overrides?: CallOverrides
   ): Promise<TroopStructOutput>;
+
+  _getTroopCost(
+    _troopTypeId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   _hasPort(_tile: TileStruct, overrides?: CallOverrides): Promise<boolean>;
 
@@ -697,6 +715,11 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _getExpensePerSecond(
+      _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     _getLargeActionCooldown(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
@@ -717,8 +740,8 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getProductionCooldown(
-      _troopTypeId: BigNumberish,
+    _getPlayerBalance(
+      _player: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -728,9 +751,14 @@ export interface Util extends BaseContract {
     ): Promise<TileStructOutput>;
 
     _getTroop(
-      _troopId: BigNumberish,
+      _id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<TroopStructOutput>;
+
+    _getTroopCost(
+      _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     _hasPort(_tile: TileStruct, overrides?: CallOverrides): Promise<boolean>;
 
@@ -798,6 +826,9 @@ export interface Util extends BaseContract {
       _targetTroopInfo?: null
     ): AttackedTroopEventFilter;
 
+    "Bankruptcy(address)"(_player?: null): BankruptcyEventFilter;
+    Bankruptcy(_player?: null): BankruptcyEventFilter;
+
     "BaseCaptured(address,uint256,uint256)"(
       _player?: null,
       _troopId?: null,
@@ -845,23 +876,6 @@ export interface Util extends BaseContract {
       _troop?: null,
       _pos?: null
     ): NewTroopEventFilter;
-
-    "ProductionEnded(address,uint256)"(
-      _player?: null,
-      _baseId?: null
-    ): ProductionEndedEventFilter;
-    ProductionEnded(_player?: null, _baseId?: null): ProductionEndedEventFilter;
-
-    "ProductionStarted(address,uint256,tuple)"(
-      _player?: null,
-      _baseId?: null,
-      _production?: null
-    ): ProductionStartedEventFilter;
-    ProductionStarted(
-      _player?: null,
-      _baseId?: null,
-      _production?: null
-    ): ProductionStartedEventFilter;
 
     "Recovered(address,uint256)"(
       _player?: null,
@@ -919,6 +933,11 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _getExpensePerSecond(
+      _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     _getLargeActionCooldown(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
@@ -939,8 +958,8 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getProductionCooldown(
-      _troopTypeId: BigNumberish,
+    _getPlayerBalance(
+      _player: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -949,8 +968,10 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getTroop(
-      _troopId: BigNumberish,
+    _getTroop(_id: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
+    _getTroopCost(
+      _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1030,6 +1051,11 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    _getExpensePerSecond(
+      _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     _getLargeActionCooldown(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
@@ -1050,8 +1076,8 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _getProductionCooldown(
-      _troopTypeId: BigNumberish,
+    _getPlayerBalance(
+      _player: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1061,7 +1087,12 @@ export interface Util extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     _getTroop(
-      _troopId: BigNumberish,
+      _id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getTroopCost(
+      _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
