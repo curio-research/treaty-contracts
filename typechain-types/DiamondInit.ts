@@ -27,7 +27,7 @@ export type WorldConstantsStruct = {
   combatEfficiency: BigNumberish;
   numInitTerrainTypes: BigNumberish;
   initPlayerBalance: BigNumberish;
-  defaultBaseGoldGeneratePerSecond: BigNumberish;
+  defaultBaseGoldGenerationPerSecond: BigNumberish;
 };
 
 export type WorldConstantsStructOutput = [
@@ -51,7 +51,7 @@ export type WorldConstantsStructOutput = [
   combatEfficiency: BigNumber;
   numInitTerrainTypes: BigNumber;
   initPlayerBalance: BigNumber;
-  defaultBaseGoldGeneratePerSecond: BigNumber;
+  defaultBaseGoldGenerationPerSecond: BigNumber;
 };
 
 export type TroopTypeStruct = {

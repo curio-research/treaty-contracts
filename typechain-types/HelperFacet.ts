@@ -32,6 +32,7 @@ export interface HelperFacetInterface extends utils.Interface {
     "spawnTroop((uint256,uint256),address,uint256)": FunctionFragment;
     "storeEncodedRawMapCols(uint256[])": FunctionFragment;
     "transferBaseOwnership((uint256,uint256),address)": FunctionFragment;
+    "updatePlayerBalance(address)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -58,6 +59,10 @@ export interface HelperFacetInterface extends utils.Interface {
     functionFragment: "transferBaseOwnership",
     values: [PositionStruct, string]
   ): string;
+  encodeFunctionData(
+    functionFragment: "updatePlayerBalance",
+    values: [string]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "bulkInitializeTiles",
@@ -75,6 +80,10 @@ export interface HelperFacetInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "transferBaseOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updatePlayerBalance",
     data: BytesLike
   ): Result;
 
@@ -141,6 +150,11 @@ export interface HelperFacet extends BaseContract {
       _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    updatePlayerBalance(
+      _player: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
   };
 
   bulkInitializeTiles(
@@ -177,6 +191,11 @@ export interface HelperFacet extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  updatePlayerBalance(
+    _player: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
     bulkInitializeTiles(
       _positions: PositionStruct[],
@@ -205,6 +224,11 @@ export interface HelperFacet extends BaseContract {
 
     transferBaseOwnership(
       _pos: PositionStruct,
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    updatePlayerBalance(
       _player: string,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -246,6 +270,11 @@ export interface HelperFacet extends BaseContract {
       _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    updatePlayerBalance(
+      _player: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -279,6 +308,11 @@ export interface HelperFacet extends BaseContract {
 
     transferBaseOwnership(
       _pos: PositionStruct,
+      _player: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    updatePlayerBalance(
       _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;

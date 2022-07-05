@@ -142,7 +142,7 @@ library Util {
             attackFactor: 100,
             defenseFactor: 100,
             health: 1, // FIXME: change to base constants
-            goldGenerationPerSecond: gs().worldConstants.defaultBaseGoldGeneratePerSecond
+            goldGenerationPerSecond: gs().worldConstants.defaultBaseGoldGenerationPerSecond
         });
 
         uint256 _baseId = gs().baseNonce;
@@ -158,6 +158,10 @@ library Util {
 
     function _getPlayerBalance(address _player) public view returns (uint256) {
         return gs().playerMap[_player].balance;
+    }
+
+    function _getTotalGoldGenerationPerUpdate(address _player) public view returns (uint256) {
+        return gs().playerMap[_player].totalGoldGenerationPerUpdate;
     }
 
     function _getCargoCapacity(uint256 _troopId) public view returns (uint256) {

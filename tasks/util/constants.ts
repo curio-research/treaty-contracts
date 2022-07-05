@@ -105,7 +105,7 @@ export const generateWorldConstants = (adminAddr: string): WorldConstantsStruct 
     combatEfficiency: COMBAT_EFFICIENCY,
     numInitTerrainTypes: NUM_INIT_TERRAIN_TYPES,
     initPlayerBalance: 20,
-    defaultBaseGoldGeneratePerSecond: 5,
+    defaultBaseGoldGenerationPerSecond: 5,
   };
 };
 

@@ -51,7 +51,7 @@ contract HelperFacet is UseStorage {
             initTimestamp: block.timestamp, // yo
             active: true,
             balance: _worldConstants.initPlayerBalance,
-            totalGoldGenerationPerUpdate: _worldConstants.defaultBaseGoldGeneratePerSecond,
+            totalGoldGenerationPerUpdate: _worldConstants.defaultBaseGoldGenerationPerSecond,
             totalTroopExpensePerUpdate: 0,
             balanceLastUpdated: block.timestamp
         });
@@ -124,6 +124,10 @@ contract HelperFacet is UseStorage {
     // ----------------------------------------------------------------------
     // STATE FUNCTIONS
     // ----------------------------------------------------------------------
+
+    function updatePlayerBalance(address _player) external {
+        Util._updatePlayerBalance(_player);
+    }
 
     /**
      * Restore 1 health to the troop in a base.

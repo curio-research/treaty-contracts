@@ -207,7 +207,7 @@ export type WorldConstantsStruct = {
   combatEfficiency: BigNumberish;
   numInitTerrainTypes: BigNumberish;
   initPlayerBalance: BigNumberish;
-  defaultBaseGoldGeneratePerSecond: BigNumberish;
+  defaultBaseGoldGenerationPerSecond: BigNumberish;
 };
 
 export type WorldConstantsStructOutput = [
@@ -231,7 +231,7 @@ export type WorldConstantsStructOutput = [
   combatEfficiency: BigNumber;
   numInitTerrainTypes: BigNumber;
   initPlayerBalance: BigNumber;
-  defaultBaseGoldGeneratePerSecond: BigNumber;
+  defaultBaseGoldGenerationPerSecond: BigNumber;
 };
 
 export interface CurioInterface extends utils.Interface {
@@ -265,6 +265,7 @@ export interface CurioInterface extends utils.Interface {
     "spawnTroop((uint256,uint256),address,uint256)": FunctionFragment;
     "storeEncodedRawMapCols(uint256[])": FunctionFragment;
     "transferBaseOwnership((uint256,uint256),address)": FunctionFragment;
+    "updatePlayerBalance(address)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "_canTransportTroop((bool,uint8,uint256,uint256))": FunctionFragment;
@@ -282,6 +283,7 @@ export interface CurioInterface extends utils.Interface {
     "_getMovesPerSecond(uint256)": FunctionFragment;
     "_getPlayerBalance(address)": FunctionFragment;
     "_getTileAt((uint256,uint256))": FunctionFragment;
+    "_getTotalGoldGenerationPerUpdate(address)": FunctionFragment;
     "_getTroop(uint256)": FunctionFragment;
     "_getTroopCost(uint256)": FunctionFragment;
     "_hasPort((bool,uint8,uint256,uint256))": FunctionFragment;
@@ -403,6 +405,10 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "transferBaseOwnership",
     values: [PositionStruct, string]
   ): string;
+  encodeFunctionData(
+    functionFragment: "updatePlayerBalance",
+    values: [string]
+  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
@@ -467,6 +473,10 @@ export interface CurioInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "_getTileAt",
     values: [PositionStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getTotalGoldGenerationPerUpdate",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "_getTroop",
@@ -588,6 +598,10 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "transferBaseOwnership",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "updatePlayerBalance",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
@@ -647,6 +661,10 @@ export interface CurioInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "_getTileAt", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "_getTotalGoldGenerationPerUpdate",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "_getTroop", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_getTroopCost",
@@ -973,6 +991,11 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    updatePlayerBalance(
+      _player: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     owner(overrides?: CallOverrides): Promise<[string] & { owner_: string }>;
 
     transferOwnership(
@@ -1054,6 +1077,11 @@ export interface Curio extends BaseContract {
       _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<[TileStructOutput]>;
+
+    _getTotalGoldGenerationPerUpdate(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     _getTroop(
       _id: BigNumberish,
@@ -1242,6 +1270,11 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  updatePlayerBalance(
+    _player: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   owner(overrides?: CallOverrides): Promise<string>;
 
   transferOwnership(
@@ -1323,6 +1356,11 @@ export interface Curio extends BaseContract {
     _pos: PositionStruct,
     overrides?: CallOverrides
   ): Promise<TileStructOutput>;
+
+  _getTotalGoldGenerationPerUpdate(
+    _player: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   _getTroop(
     _id: BigNumberish,
@@ -1508,6 +1546,11 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    updatePlayerBalance(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     owner(overrides?: CallOverrides): Promise<string>;
 
     transferOwnership(
@@ -1589,6 +1632,11 @@ export interface Curio extends BaseContract {
       _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<TileStructOutput>;
+
+    _getTotalGoldGenerationPerUpdate(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     _getTroop(
       _id: BigNumberish,
@@ -1890,6 +1938,11 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    updatePlayerBalance(
+      _player: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferOwnership(
@@ -1966,6 +2019,11 @@ export interface Curio extends BaseContract {
 
     _getTileAt(
       _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getTotalGoldGenerationPerUpdate(
+      _player: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -2152,6 +2210,11 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    updatePlayerBalance(
+      _player: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     transferOwnership(
@@ -2231,6 +2294,11 @@ export interface Curio extends BaseContract {
 
     _getTileAt(
       _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getTotalGoldGenerationPerUpdate(
+      _player: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

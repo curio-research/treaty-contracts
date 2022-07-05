@@ -51,6 +51,7 @@ contract DiamondDeployTest is Test {
     uint256 public armyTroopTypeId = indexToId(uint256(TROOP_NAME.ARMY));
     uint256 public troopTransportTroopTypeId = indexToId(uint256(TROOP_NAME.TROOP_TRANSPORT));
     uint256 public destroyerTroopTypeId = indexToId(uint256(TROOP_NAME.DESTROYER));
+    uint256 public battleshipTroopTypeId = indexToId(uint256(TROOP_NAME.BATTLESHIP));
 
     // troop types
     TroopType public armyTroopType =
@@ -165,11 +166,6 @@ contract DiamondDeployTest is Test {
         getter = GetterFacet(diamond);
         engine = EngineFacet(diamond);
         ownership = OwnershipFacet(diamond);
-
-        // // initialize map (outdated)
-        // Position memory _startPos = Position({x: 0, y: 0});
-        // uint256[][] memory _chunk = generateMapChunk(_worldConstants.mapInterval);
-        // engine.setMapChunk(_startPos, _chunk);
 
         // initialize map using lazy + encoding
         uint256[][] memory _map = generateMap(_worldConstants.worldWidth, _worldConstants.worldHeight, _worldConstants.mapInterval);

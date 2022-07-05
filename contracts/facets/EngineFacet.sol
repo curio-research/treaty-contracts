@@ -92,7 +92,7 @@ contract EngineFacet is UseStorage {
         require(Util._getTroopCost(_troopTypeId) <= Util._getPlayerBalance(msg.sender), "CURIO: Insufficient balance");
 
         (uint256 _troopId, Troop memory _troop) = Util._addTroop(msg.sender, _pos, _troopTypeId);
-        gs().playerMap[msg.sender].totalTroopExpensePerUpdate += Util._getExpensePerSecond(_troopTypeId);
+        gs().playerMap[msg.sender].balance -= Util._getTroopCost(_troopTypeId);
 
         emit Util.NewTroop(msg.sender, _troopId, _troop, _pos);
     }
@@ -191,6 +191,7 @@ contract EngineFacet is UseStorage {
 
         if (_targetBase.health == 0) {
             // Troop survives
+            address _targetPlayer = _targetBase.owner;
             gs().troopIdMap[_troopId].health = _troop.health;
             gs().baseIdMap[_targetTile.baseId].health = 0;
             _targetBase = Util._getBase(_targetTile.baseId);
@@ -202,7 +203,6 @@ contract EngineFacet is UseStorage {
             gs().baseIdMap[_targetTile.baseId].health = 1; // FIXME: change to BaseConstants.maxHealth
             emit Util.BaseCaptured(msg.sender, _troopId, _targetTile.baseId);
 
-            address _targetPlayer = Util._getBaseOwner(_targetTile.baseId);
             Util._updatePlayerBalance(_targetPlayer);
             Util._updatePlayerBalance(msg.sender);
             gs().playerMap[_targetPlayer].totalGoldGenerationPerUpdate -= _targetBase.goldGenerationPerSecond;

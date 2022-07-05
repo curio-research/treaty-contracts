@@ -93,7 +93,7 @@ struct WorldConstants {
     uint256 combatEfficiency; // in the interval [0, 100]
     uint256 numInitTerrainTypes; // default is 5
     uint256 initPlayerBalance;
-    uint256 defaultBaseGoldGeneratePerSecond;
+    uint256 defaultBaseGoldGenerationPerSecond;
 }
 
 struct GameState {

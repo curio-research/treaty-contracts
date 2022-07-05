@@ -112,6 +112,7 @@ export interface UtilInterface extends utils.Interface {
     "_getMovesPerSecond(uint256)": FunctionFragment;
     "_getPlayerBalance(address)": FunctionFragment;
     "_getTileAt((uint256,uint256))": FunctionFragment;
+    "_getTotalGoldGenerationPerUpdate(address)": FunctionFragment;
     "_getTroop(uint256)": FunctionFragment;
     "_getTroopCost(uint256)": FunctionFragment;
     "_hasPort((bool,uint8,uint256,uint256))": FunctionFragment;
@@ -182,6 +183,10 @@ export interface UtilInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "_getTileAt",
     values: [PositionStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getTotalGoldGenerationPerUpdate",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "_getTroop",
@@ -274,6 +279,10 @@ export interface UtilInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "_getTileAt", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "_getTotalGoldGenerationPerUpdate",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "_getTroop", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_getTroopCost",
@@ -510,6 +519,11 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[TileStructOutput]>;
 
+    _getTotalGoldGenerationPerUpdate(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     _getTroop(
       _id: BigNumberish,
       overrides?: CallOverrides
@@ -630,6 +644,11 @@ export interface Util extends BaseContract {
     overrides?: CallOverrides
   ): Promise<TileStructOutput>;
 
+  _getTotalGoldGenerationPerUpdate(
+    _player: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   _getTroop(
     _id: BigNumberish,
     overrides?: CallOverrides
@@ -749,6 +768,11 @@ export interface Util extends BaseContract {
       _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<TileStructOutput>;
+
+    _getTotalGoldGenerationPerUpdate(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     _getTroop(
       _id: BigNumberish,
@@ -968,6 +992,11 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _getTotalGoldGenerationPerUpdate(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     _getTroop(_id: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
     _getTroopCost(
@@ -1083,6 +1112,11 @@ export interface Util extends BaseContract {
 
     _getTileAt(
       _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getTotalGoldGenerationPerUpdate(
+      _player: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
