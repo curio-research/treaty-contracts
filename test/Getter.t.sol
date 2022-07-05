@@ -25,10 +25,7 @@ contract GetterTest is Test, DiamondDeployTest {
         assertEq(getter.getTileAt(Position({x: 1, y: 3})).occupantId, 1);
         assertEq(getter.getTileAt(Position({x: 2, y: 3})).occupantId, 3);
 
-        vm.warp(20);
-        helper.updateEpoch();
-        assertEq(getter.getEpoch(), 1);
-
+        vm.warp(2);
         vm.prank(player1);
         engine.march(1, Position({x: 2, y: 3}));
 

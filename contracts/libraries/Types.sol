@@ -27,7 +27,7 @@ struct Position {
 }
 
 struct Player {
-    uint256 initEpoch;
+    uint256 initTimestamp;
     bool active;
 }
 
@@ -49,10 +49,8 @@ struct Tile {
 struct Troop {
     address owner;
     uint256 troopTypeId;
+    uint256 movesLeftInSecond;
     uint256 lastMoved;
-    uint256 movesLeftInEpoch;
-    bool largeActionTakenThisEpoch;
-    uint256 lastAttacked;
     uint256 lastLargeActionTaken;
     uint256 lastRepaired;
     uint256 health;
@@ -62,22 +60,21 @@ struct Troop {
 
 struct TroopType {
     TROOP_NAME name;
-    uint256 movesPerEpoch;
+    bool isLandTroop;
     uint256 maxHealth;
     uint256 damagePerHit;
     uint256 attackFactor; // in the interval [0, 100]
     uint256 defenseFactor; // in the interval [0, 100]
     uint256 cargoCapacity;
-    uint256 epochsToProduce;
-    uint256 largeActionCooldown;
+    uint256 movesPerSecond;
     uint256 movementCooldown;
-    uint256 attackCooldown;
-    bool isLandTroop;
+    uint256 largeActionCooldown;
+    uint256 productionCooldown;
 }
 
 struct Production {
     uint256 troopTypeId;
-    uint256 startEpoch;
+    uint256 startTimestamp;
 }
 
 struct WorldConstants {
@@ -87,7 +84,6 @@ struct WorldConstants {
     uint256 numPorts;
     uint256 numCities;
     uint256 mapInterval;
-    uint256 secondsPerEpoch;
     uint256 combatEfficiency; // in the interval [0, 100]
     uint256 numInitTerrainTypes; // default is 5
 }
@@ -97,8 +93,6 @@ struct GameState {
     address[] players;
     mapping(address => Player) playerMap;
     Tile[1000][1000] map;
-    uint256 epoch;
-    uint256 lastTimestamp;
     mapping(uint256 => Production) baseProductionMap;
     uint256[] baseIds;
     uint256 baseNonce;

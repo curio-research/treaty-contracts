@@ -42,7 +42,7 @@ contract HelperFacet is UseStorage {
         require(!gs().playerMap[_player].active, "CURIO: Player already initialized");
 
         gs().players.push(_player);
-        gs().playerMap[_player] = Player({initEpoch: gs().epoch, active: true});
+        gs().playerMap[_player] = Player({initTimestamp: block.timestamp, active: true});
         gs().baseIdMap[_baseId].owner = _player;
 
         emit Util.NewPlayer(_player, _pos);
@@ -101,19 +101,6 @@ contract HelperFacet is UseStorage {
     // ----------------------------------------------------------------------
 
     /**
-     * Update epoch given enough time has elapsed.
-     */
-    function updateEpoch() external {
-        // Currently implemented expecting real-time calls from client; can change to lazy if needed
-        require((block.timestamp - gs().lastTimestamp) >= gs().worldConstants.secondsPerEpoch, "CURIO: Not enough time has elapsed since last epoch");
-
-        gs().epoch++;
-        gs().lastTimestamp = block.timestamp;
-
-        emit Util.EpochUpdate(gs().epoch, gs().lastTimestamp);
-    }
-
-    /**
      * Finish producing a troop from a base.
      * @param _pos position of base
      */
@@ -129,7 +116,7 @@ contract HelperFacet is UseStorage {
 
         Production memory _production = gs().baseProductionMap[_tile.baseId];
         require(_production.troopTypeId != NULL, "CURIO: No production found in base");
-        require(Util._getEpochsToProduce(_production.troopTypeId) <= (gs().epoch - _production.startEpoch), "CURIO: Troop needs more epochs for production");
+        require(Util._getProductionCooldown(_production.troopTypeId) <= (block.timestamp - _production.startTimestamp), "CURIO: Troop needs more time for production");
 
         (uint256 _troopId, Troop memory _troop) = Util._addTroop(_pos, _production.troopTypeId, msg.sender);
         delete gs().baseProductionMap[_tile.baseId];
@@ -156,11 +143,11 @@ contract HelperFacet is UseStorage {
         Troop memory _troop = gs().troopIdMap[_troopId];
         require(_troop.owner == msg.sender, "CURIO: Can only repair own troop");
         require(_troop.health < Util._getMaxHealth(_troop.troopTypeId), "CURIO: Troop already at full health");
-        require((gs().epoch - _troop.lastRepaired) >= 1, "CURIO: Repaired too recently");
+        require((block.timestamp - _troop.lastRepaired) >= 1, "CURIO: Repaired too recently");
 
         _troop.health++;
         gs().troopIdMap[_troopId].health = _troop.health;
-        gs().troopIdMap[_troopId].lastRepaired = gs().epoch;
+        gs().troopIdMap[_troopId].lastRepaired = block.timestamp;
         emit Util.Repaired(msg.sender, _tile.occupantId, _troop.health);
         if (_troop.health == Util._getMaxHealth(_troop.troopTypeId)) emit Util.Recovered(msg.sender, _troopId);
     }

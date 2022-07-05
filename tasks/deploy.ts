@@ -119,9 +119,6 @@ task('deploy', 'deploy contracts')
           await (await diamond.connect(player1).spawnTroop(player2ArmyPos3, player2.address, armyTroopTypeId)).wait();
           await (await diamond.connect(player1).spawnTroop(player1TroopTransportPos, player1.address, troopTransportTroopTypeId)).wait();
           await (await diamond.connect(player1).spawnTroop(player2DestroyerPos, player2.address, destroyerTroopTypeId)).wait();
-
-          // advance epoch
-          await (await diamond.connect(player1).updateEpoch()).wait();
         } else {
           let player1Pos: position;
           let player2Pos: position;
@@ -175,9 +172,9 @@ task('deploy', 'deploy contracts')
         await hre.run('port'); // default to porting files
       }
 
-      // start the epoch increaser
-      const task = { type: 'interval', time: 0, interval: Number(worldConstants.secondsPerEpoch) + 1, functionSig: 'updateEpoch', network: hre.network.name, address: diamond.address, params: [], status: 'inactive', lastExecuted: 0 };
-      await addTask(task);
+      // // start the epoch increaser
+      // const task = { type: 'interval', time: 0, interval: Number(1) + 1, functionSig: 'updateEpoch', network: hre.network.name, address: diamond.address, params: [], status: 'inactive', lastExecuted: 0 };
+      // await addTask(task);
     } catch (err) {
       console.log(err);
     }

@@ -67,10 +67,6 @@ contract GetterFacet is UseStorage {
         return gs().worldConstants;
     }
 
-    function getEpoch() external view returns (uint256) {
-        return gs().epoch;
-    }
-
     function getPlayer(address _addr) external view returns (Player memory) {
         return gs().playerMap[_addr];
     }

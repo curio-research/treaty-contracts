@@ -28,13 +28,7 @@ contract EngineFacet is UseStorage {
         Troop memory _troop = gs().troopIdMap[_troopId];
         require(_troop.owner == msg.sender, "CURIO: Can only march own troop");
         require(!Util._samePos(_troop.pos, _targetPos), "CURIO: Already at destination");
-
-        // Lazy update for large action taken in epoch
-        uint256 _epoch = gs().epoch;
-        if ((_epoch - _troop.lastLargeActionTaken) >= Util._getLargeActionCooldown(_troop.troopTypeId)) {
-            gs().troopIdMap[_troopId].largeActionTakenThisEpoch = false;
-        }
-        require(!_troop.largeActionTakenThisEpoch, "CURIO: Large action taken this epoch");
+        require((block.timestamp - _troop.lastLargeActionTaken) >= Util._getLargeActionCooldown(_troop.troopTypeId), "CURIO: Large action taken too recently");
 
         Tile memory _targetTile = Util._getTileAt(_targetPos);
         if (_targetTile.occupantId == NULL) {
@@ -93,7 +87,7 @@ contract EngineFacet is UseStorage {
         require(Util._isLandTroop(_troopTypeId) || Util._hasPort(_tile), "CURIO: Only ports can produce water troops");
         require(gs().baseProductionMap[_tile.baseId].troopTypeId == NULL, "CURIO: Base already producing");
 
-        Production memory _production = Production({troopTypeId: _troopTypeId, startEpoch: gs().epoch});
+        Production memory _production = Production({troopTypeId: _troopTypeId, startTimestamp: block.timestamp});
         gs().baseProductionMap[_tile.baseId] = _production;
         emit Util.ProductionStarted(msg.sender, _tile.baseId, _production);
     }
@@ -103,14 +97,14 @@ contract EngineFacet is UseStorage {
     /////////////////////////////////////////
     function _moveModule(uint256 _troopId, Position memory _targetPos) internal {
         Troop memory _troop = gs().troopIdMap[_troopId];
-        uint256 _epoch = gs().epoch;
         Tile memory _targetTile = Util._getTileAt(_targetPos);
 
-        // Lazy update for movement taken in epoch
-        if ((_epoch - _troop.lastMoved) >= Util._getMovementCooldown(_troop.troopTypeId)) {
-            gs().troopIdMap[_troopId].movesLeftInEpoch = Util._getMovesPerEpoch(_troop.troopTypeId);
+        // Lazy update for movement taken within second
+        if ((block.timestamp - _troop.lastMoved) >= Util._getMovementCooldown(_troop.troopTypeId)) {
+            _troop.movesLeftInSecond = Util._getMovesPerSecond(_troop.troopTypeId);
+            gs().troopIdMap[_troopId].movesLeftInSecond = _troop.movesLeftInSecond;
         }
-        require(gs().troopIdMap[_troopId].movesLeftInEpoch > 0, "CURIO: No moves left this epoch");
+        require(_troop.movesLeftInSecond > 0, "CURIO: Moved too recently");
 
         if (!Util._canTransportTroop(_targetTile)) {
             gs().map[_targetPos.x][_targetPos.y].occupantId = _troopId;
@@ -126,8 +120,8 @@ contract EngineFacet is UseStorage {
             gs().map[_troop.pos.x][_troop.pos.y].occupantId = NULL;
         }
         gs().troopIdMap[_troopId].pos = _targetPos;
-        gs().troopIdMap[_troopId].movesLeftInEpoch--;
-        gs().troopIdMap[_troopId].lastMoved = _epoch;
+        gs().troopIdMap[_troopId].movesLeftInSecond--;
+        gs().troopIdMap[_troopId].lastMoved = block.timestamp;
 
         uint256[] memory _cargoTroopIds = gs().troopIdMap[_troopId].cargoTroopIds;
         if (_cargoTroopIds.length > 0) {
@@ -136,7 +130,7 @@ contract EngineFacet is UseStorage {
                 gs().troopIdMap[_cargoTroopIds[i]].pos = _targetPos;
             }
         }
-        emit Util.Moved(msg.sender, _troopId, _epoch, _troop.pos, _targetPos);
+        emit Util.Moved(msg.sender, _troopId, block.timestamp, _troop.pos, _targetPos);
     }
 
     function _loadModule(uint256 _troopId, Position memory _targetPos) internal {
@@ -148,9 +142,9 @@ contract EngineFacet is UseStorage {
 
     function _battleBaseModule(uint256 _troopId, Position memory _targetPos) internal {
         Troop memory _troop = gs().troopIdMap[_troopId];
-        //Fixme: replace withinDist with withinFiringDist
+        // FIXME: replace withinDist with withinFiringDist
         require(Util._withinDist(_troop.pos, _targetPos, 1), "CURIO: Target not in Firing Range");
-        gs().troopIdMap[_troopId].largeActionTakenThisEpoch = true;
+        gs().troopIdMap[_troopId].lastLargeActionTaken = block.timestamp;
 
         Tile memory _targetTile = Util._getTileAt(_targetPos);
         require(_targetTile.baseId != NULL, "CURIO: No target to attack");
@@ -221,7 +215,7 @@ contract EngineFacet is UseStorage {
         Troop memory _troop = gs().troopIdMap[_troopId];
         //Fixme: replace withinDist with withinFiringDist
         require(Util._withinDist(_troop.pos, _targetPos, 1), "CURIO: Target not in Firing Range");
-        gs().troopIdMap[_troopId].largeActionTakenThisEpoch = true;
+        gs().troopIdMap[_troopId].lastLargeActionTaken = block.timestamp;
 
         Tile memory _targetTile = Util._getTileAt(_targetPos);
         Troop memory _targetTroop;

@@ -25,10 +25,8 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
 export type TroopStruct = {
   owner: string;
   troopTypeId: BigNumberish;
+  movesLeftInSecond: BigNumberish;
   lastMoved: BigNumberish;
-  movesLeftInEpoch: BigNumberish;
-  largeActionTakenThisEpoch: boolean;
-  lastAttacked: BigNumberish;
   lastLargeActionTaken: BigNumberish;
   lastRepaired: BigNumberish;
   health: BigNumberish;
@@ -41,8 +39,6 @@ export type TroopStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
-  boolean,
-  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -51,10 +47,8 @@ export type TroopStructOutput = [
 ] & {
   owner: string;
   troopTypeId: BigNumber;
+  movesLeftInSecond: BigNumber;
   lastMoved: BigNumber;
-  movesLeftInEpoch: BigNumber;
-  largeActionTakenThisEpoch: boolean;
-  lastAttacked: BigNumber;
   lastLargeActionTaken: BigNumber;
   lastRepaired: BigNumber;
   health: BigNumber;
@@ -86,31 +80,31 @@ export type BaseStructOutput = [
 
 export type ProductionStruct = {
   troopTypeId: BigNumberish;
-  startEpoch: BigNumberish;
+  startTimestamp: BigNumberish;
 };
 
 export type ProductionStructOutput = [BigNumber, BigNumber] & {
   troopTypeId: BigNumber;
-  startEpoch: BigNumber;
+  startTimestamp: BigNumber;
 };
 
 export type TroopTypeStruct = {
   name: BigNumberish;
-  movesPerEpoch: BigNumberish;
+  isLandTroop: boolean;
   maxHealth: BigNumberish;
   damagePerHit: BigNumberish;
   attackFactor: BigNumberish;
   defenseFactor: BigNumberish;
   cargoCapacity: BigNumberish;
-  epochsToProduce: BigNumberish;
-  largeActionCooldown: BigNumberish;
+  movesPerSecond: BigNumberish;
   movementCooldown: BigNumberish;
-  attackCooldown: BigNumberish;
-  isLandTroop: boolean;
+  largeActionCooldown: BigNumberish;
+  productionCooldown: BigNumberish;
 };
 
 export type TroopTypeStructOutput = [
   number,
+  boolean,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -119,22 +113,19 @@ export type TroopTypeStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
-  BigNumber,
-  BigNumber,
-  boolean
+  BigNumber
 ] & {
   name: number;
-  movesPerEpoch: BigNumber;
+  isLandTroop: boolean;
   maxHealth: BigNumber;
   damagePerHit: BigNumber;
   attackFactor: BigNumber;
   defenseFactor: BigNumber;
   cargoCapacity: BigNumber;
-  epochsToProduce: BigNumber;
-  largeActionCooldown: BigNumber;
+  movesPerSecond: BigNumber;
   movementCooldown: BigNumber;
-  attackCooldown: BigNumber;
-  isLandTroop: boolean;
+  largeActionCooldown: BigNumber;
+  productionCooldown: BigNumber;
 };
 
 export type TileStruct = {
@@ -151,10 +142,10 @@ export type TileStructOutput = [boolean, number, BigNumber, BigNumber] & {
   baseId: BigNumber;
 };
 
-export type PlayerStruct = { initEpoch: BigNumberish; active: boolean };
+export type PlayerStruct = { initTimestamp: BigNumberish; active: boolean };
 
 export type PlayerStructOutput = [BigNumber, boolean] & {
-  initEpoch: BigNumber;
+  initTimestamp: BigNumber;
   active: boolean;
 };
 
@@ -165,14 +156,12 @@ export type WorldConstantsStruct = {
   numPorts: BigNumberish;
   numCities: BigNumberish;
   mapInterval: BigNumberish;
-  secondsPerEpoch: BigNumberish;
   combatEfficiency: BigNumberish;
   numInitTerrainTypes: BigNumberish;
 };
 
 export type WorldConstantsStructOutput = [
   string,
-  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -187,7 +176,6 @@ export type WorldConstantsStructOutput = [
   numPorts: BigNumber;
   numCities: BigNumber;
   mapInterval: BigNumber;
-  secondsPerEpoch: BigNumber;
   combatEfficiency: BigNumber;
   numInitTerrainTypes: BigNumber;
 };
@@ -201,7 +189,6 @@ export interface GetterFacetInterface extends utils.Interface {
     "getBulkBase(uint256,uint256)": FunctionFragment;
     "getBulkProductions(uint256[])": FunctionFragment;
     "getBulkTroopTypes(uint256,uint256)": FunctionFragment;
-    "getEpoch()": FunctionFragment;
     "getMapChunk((uint256,uint256))": FunctionFragment;
     "getPlayer(address)": FunctionFragment;
     "getProduction(uint256)": FunctionFragment;
@@ -240,7 +227,6 @@ export interface GetterFacetInterface extends utils.Interface {
     functionFragment: "getBulkTroopTypes",
     values: [BigNumberish, BigNumberish]
   ): string;
-  encodeFunctionData(functionFragment: "getEpoch", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getMapChunk",
     values: [PositionStruct]
@@ -293,7 +279,6 @@ export interface GetterFacetInterface extends utils.Interface {
     functionFragment: "getBulkTroopTypes",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "getEpoch", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getMapChunk",
     data: BytesLike
@@ -376,8 +361,6 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[TroopTypeStructOutput[]]>;
 
-    getEpoch(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     getMapChunk(
       _startPos: PositionStruct,
       overrides?: CallOverrides
@@ -448,8 +431,6 @@ export interface GetterFacet extends BaseContract {
     _endId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<TroopTypeStructOutput[]>;
-
-  getEpoch(overrides?: CallOverrides): Promise<BigNumber>;
 
   getMapChunk(
     _startPos: PositionStruct,
@@ -522,8 +503,6 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<TroopTypeStructOutput[]>;
 
-    getEpoch(overrides?: CallOverrides): Promise<BigNumber>;
-
     getMapChunk(
       _startPos: PositionStruct,
       overrides?: CallOverrides
@@ -595,8 +574,6 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getEpoch(overrides?: CallOverrides): Promise<BigNumber>;
-
     getMapChunk(
       _startPos: PositionStruct,
       overrides?: CallOverrides
@@ -663,8 +640,6 @@ export interface GetterFacet extends BaseContract {
       _endId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
-
-    getEpoch(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getMapChunk(
       _startPos: PositionStruct,

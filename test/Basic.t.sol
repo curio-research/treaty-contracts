@@ -45,23 +45,6 @@ contract BasicTest is Test, DiamondDeployTest {
         assertEq(_owner, player1);
     }
 
-    function testEpoch() public {
-        uint256 epoch = getter.getEpoch();
-        assertEq(epoch, 0);
-
-        vm.warp(100); // set block.timestamp to 100 seconds;
-        helper.updateEpoch();
-        assertEq(getter.getEpoch(), 1);
-
-        vm.warp(105);
-        vm.expectRevert(bytes("CURIO: Not enough time has elapsed since last epoch"));
-        helper.updateEpoch();
-
-        vm.warp(200);
-        helper.updateEpoch();
-        assertEq(getter.getEpoch(), 2);
-    }
-
     function testTransferBaseOwnership() public {
         Position memory _pos = Position({x: 6, y: 6});
         assertEq(getter.getBaseAt(_pos).owner, NULL_ADDR);
