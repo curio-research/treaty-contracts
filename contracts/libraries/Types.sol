@@ -29,6 +29,9 @@ struct Position {
 struct Player {
     uint256 initTimestamp;
     bool active;
+    uint256 balance;
+    uint256 goldProductionPerUpdate;
+    uint256 troopExpensePerUpdate;
 }
 
 struct Base {
@@ -69,7 +72,8 @@ struct TroopType {
     uint256 movesPerSecond;
     uint256 movementCooldown;
     uint256 largeActionCooldown;
-    uint256 productionCooldown;
+    uint256 productionExpense;
+    uint256 expensePerSecond;
 }
 
 struct Production {

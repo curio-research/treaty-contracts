@@ -121,8 +121,8 @@ library Util {
         return gs().troopTypeIdMap[_troopTypeId].maxHealth;
     }
 
-    function _getProductionCooldown(uint256 _troopTypeId) public view returns (uint256) {
-        return gs().troopTypeIdMap[_troopTypeId].productionCooldown;
+    function _getProductionExpense(uint256 _troopTypeId) public view returns (uint256) {
+        return gs().troopTypeIdMap[_troopTypeId].productionExpense;
     }
 
     function _getDamagePerHit(uint256 _troopTypeId) public view returns (uint256) {
