@@ -65,7 +65,8 @@ contract DiamondDeployTest is Test {
             movesPerSecond: 1,
             movementCooldown: 1,
             largeActionCooldown: 1,
-            productionCooldown: 6
+            cost: 6,
+            expensePerSecond: 0
         });
     TroopType public troopTransportTroopType =
         TroopType({
@@ -79,7 +80,8 @@ contract DiamondDeployTest is Test {
             movesPerSecond: 2,
             movementCooldown: 1, // FIXME
             largeActionCooldown: 1,
-            productionCooldown: 14
+            cost: 14,
+            expensePerSecond: 1
         });
     TroopType public destroyerTroopType =
         TroopType({
@@ -93,7 +95,8 @@ contract DiamondDeployTest is Test {
             movesPerSecond: 3,
             movementCooldown: 1, // FIXME
             largeActionCooldown: 1,
-            productionCooldown: 20
+            cost: 20,
+            expensePerSecond: 1
         });
     TroopType public cruiserTroopType =
         TroopType({
@@ -107,7 +110,8 @@ contract DiamondDeployTest is Test {
             movesPerSecond: 2,
             movementCooldown: 1, // FIXME
             largeActionCooldown: 1,
-            productionCooldown: 30
+            cost: 30,
+            expensePerSecond: 1
         });
     TroopType public battleshipTroopType =
         TroopType({
@@ -121,7 +125,8 @@ contract DiamondDeployTest is Test {
             movesPerSecond: 2,
             movementCooldown: 1, // FIXME
             largeActionCooldown: 1,
-            productionCooldown: 50
+            cost: 50,
+            expensePerSecond: 2
         });
 
     // we assume these two facet selectors do not change. If they do however, we should use getSelectors
@@ -211,7 +216,9 @@ contract DiamondDeployTest is Test {
                 numCities: 15, // yo
                 mapInterval: 10,
                 combatEfficiency: 50,
-                numInitTerrainTypes: 5
+                numInitTerrainTypes: 5,
+                initPlayerBalance: 20,
+                defaultBaseGoldGenerationPerSecond: 5
             });
     }
 
