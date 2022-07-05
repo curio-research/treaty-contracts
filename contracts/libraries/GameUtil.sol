@@ -94,20 +94,25 @@ library Util {
         // TODO: consider whether or not to remove Troop from gs().troops
         uint256 _totalTroopExpensePerUpdate = gs().playerMap[_owner].totalTroopExpensePerUpdate;
 
-        uint256[] memory _cargoTroopIds = gs().troopIdMap[_troopId].cargoTroopIds;
-        for (uint256 i = 0; i < _cargoTroopIds.length; i++) {
-            uint256 _cargoId = _cargoTroopIds[i];
+        Troop memory _troop = _getTroop(_troopId);
+        for (uint256 i = 0; i < _troop.cargoTroopIds.length; i++) {
+            uint256 _cargoId = _troop.cargoTroopIds[i];
             _totalTroopExpensePerUpdate -= _getExpensePerSecond(_getTroop(_cargoId).troopTypeId);
             delete gs().troopIdMap[_cargoId];
         }
 
-        _totalTroopExpensePerUpdate -= _getExpensePerSecond(_getTroop(_troopId).troopTypeId);
+        _totalTroopExpensePerUpdate -= _getExpensePerSecond(_troop.troopTypeId);
         delete gs().troopIdMap[_troopId];
 
         _updatePlayerBalance(_owner);
         gs().playerMap[_owner].totalTroopExpensePerUpdate = _totalTroopExpensePerUpdate;
 
-        delete gs().map[_pos.x][_pos.y].occupantId;
+        Tile memory _tile = _getTileAt(_troop.pos);
+        if (_canTransportTroop(_tile)) {
+            _unloadTroopFromTransport(_tile.occupantId, _troopId);
+        } else {
+            delete gs().map[_pos.x][_pos.y].occupantId;
+        }
     }
 
     function _addTroop(

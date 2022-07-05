@@ -158,8 +158,6 @@ contract EngineFacet is UseStorage {
         _targetBase = gs().baseIdMap[_targetTile.baseId];
         require(_targetBase.owner != msg.sender, "CURIO: Cannot attack own base");
 
-        _targetBase = gs().baseIdMap[_targetTile.baseId];
-
         // Loop till one side dies
         uint256 _salt = 0;
         while (_troop.health > 0) {
