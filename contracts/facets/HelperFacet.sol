@@ -35,7 +35,6 @@ contract HelperFacet is UseStorage {
      * @param _player player address
      */
     function initializePlayer(Position memory _pos, address _player) external {
-        console.log("where did it fail?");
         require(Util._inBound(_pos), "CURIO: Out of bound");
         if (!Util._getTileAt(_pos).isInitialized) Util._initializeTile(_pos);
 

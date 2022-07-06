@@ -134,38 +134,6 @@ contract LogicTest is Test, DiamondDeployTest {
         vm.stopPrank();
     }
 
-    // Note: Everything tests only the move functionality
-    function testMoveTooManyTimesPerSecond() public {
-        vm.prank(deployer);
-        helper.spawnTroop(Position({x: 0, y: 9}), player1, destroyerTroopTypeId);
-        uint256 _destroyerId = initTroopNonce;
-
-        vm.warp(2);
-        vm.startPrank(player1);
-
-        assertEq(getter.getTroop(_destroyerId).movesLeftInSecond, 3);
-        engine.march(_destroyerId, Position({x: 0, y: 8}));
-        assertEq(getter.getTroop(_destroyerId).movesLeftInSecond, 2);
-        engine.march(_destroyerId, Position({x: 0, y: 7}));
-        assertEq(getter.getTroop(_destroyerId).movesLeftInSecond, 1);
-
-        vm.warp(3);
-
-        // lazy update! move has not been called yet so movesLeftInSecond remains unchanged
-        assertEq(getter.getTroop(_destroyerId).movesLeftInSecond, 1);
-        engine.march(_destroyerId, Position({x: 0, y: 6}));
-        assertEq(getter.getTroop(_destroyerId).movesLeftInSecond, 2);
-        engine.march(_destroyerId, Position({x: 0, y: 5}));
-        assertEq(getter.getTroop(_destroyerId).movesLeftInSecond, 1);
-        engine.march(_destroyerId, Position({x: 0, y: 4}));
-        assertEq(getter.getTroop(_destroyerId).movesLeftInSecond, 0);
-
-        vm.expectRevert(bytes("CURIO: Moved too recently"));
-        engine.march(_destroyerId, Position({x: 0, y: 3}));
-
-        vm.stopPrank();
-    }
-
     // battle
     function testMarchFailure() public {
         // TODO: add more
