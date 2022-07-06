@@ -12,7 +12,6 @@ import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
 import { MapInput, TILE_TYPE, TROOP_NAME } from './util/types';
 import { encodeTileMap, generateGameMaps } from './util/mapHelper';
 import { gameConfig } from '../api/types';
-import { assert } from 'console';
 
 // ---------------------------------
 // deploy script
