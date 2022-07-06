@@ -25,10 +25,6 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
 export type TroopStruct = {
   owner: string;
   troopTypeId: BigNumberish;
-<<<<<<< HEAD
-=======
-  movesLeftInSecond: BigNumberish;
->>>>>>> ca3f58f (Remove legacy files)
   lastMoved: BigNumberish;
   lastLargeActionTaken: BigNumberish;
   lastRepaired: BigNumberish;
@@ -44,19 +40,11 @@ export type TroopStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
-<<<<<<< HEAD
-=======
-  BigNumber,
->>>>>>> ca3f58f (Remove legacy files)
   PositionStructOutput,
   BigNumber[]
 ] & {
   owner: string;
   troopTypeId: BigNumber;
-<<<<<<< HEAD
-=======
-  movesLeftInSecond: BigNumber;
->>>>>>> ca3f58f (Remove legacy files)
   lastMoved: BigNumber;
   lastLargeActionTaken: BigNumber;
   lastRepaired: BigNumber;
@@ -71,10 +59,7 @@ export type BaseStruct = {
   attackFactor: BigNumberish;
   defenseFactor: BigNumberish;
   health: BigNumberish;
-<<<<<<< HEAD
   goldGenerationPerSecond: BigNumberish;
-=======
->>>>>>> ca3f58f (Remove legacy files)
 };
 
 export type BaseStructOutput = [
@@ -82,10 +67,7 @@ export type BaseStructOutput = [
   string,
   BigNumber,
   BigNumber,
-<<<<<<< HEAD
   BigNumber,
-=======
->>>>>>> ca3f58f (Remove legacy files)
   BigNumber
 ] & {
   name: number;
@@ -93,20 +75,7 @@ export type BaseStructOutput = [
   attackFactor: BigNumber;
   defenseFactor: BigNumber;
   health: BigNumber;
-<<<<<<< HEAD
   goldGenerationPerSecond: BigNumber;
-=======
-};
-
-export type ProductionStruct = {
-  troopTypeId: BigNumberish;
-  startTimestamp: BigNumberish;
-};
-
-export type ProductionStructOutput = [BigNumber, BigNumber] & {
-  troopTypeId: BigNumber;
-  startTimestamp: BigNumber;
->>>>>>> ca3f58f (Remove legacy files)
 };
 
 export type TileStruct = {
@@ -133,7 +102,6 @@ export interface UtilInterface extends utils.Interface {
     "_getCargoCapacity(uint256)": FunctionFragment;
     "_getDamagePerHit(uint256)": FunctionFragment;
     "_getDefenseFactor(uint256)": FunctionFragment;
-<<<<<<< HEAD
     "_getExpensePerSecond(uint256)": FunctionFragment;
     "_getLargeActionCooldown(uint256)": FunctionFragment;
     "_getMaxHealth(uint256)": FunctionFragment;
@@ -143,15 +111,6 @@ export interface UtilInterface extends utils.Interface {
     "_getTotalGoldGenerationPerUpdate(address)": FunctionFragment;
     "_getTroop(uint256)": FunctionFragment;
     "_getTroopCost(uint256)": FunctionFragment;
-=======
-    "_getLargeActionCooldown(uint256)": FunctionFragment;
-    "_getMaxHealth(uint256)": FunctionFragment;
-    "_getMovementCooldown(uint256)": FunctionFragment;
-    "_getMovesPerSecond(uint256)": FunctionFragment;
-    "_getProductionCooldown(uint256)": FunctionFragment;
-    "_getTileAt((uint256,uint256))": FunctionFragment;
-    "_getTroop(uint256)": FunctionFragment;
->>>>>>> ca3f58f (Remove legacy files)
     "_hasPort((bool,uint8,uint256,uint256))": FunctionFragment;
     "_inBound((uint256,uint256))": FunctionFragment;
     "_isLandTroop(uint256)": FunctionFragment;
@@ -194,13 +153,10 @@ export interface UtilInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-<<<<<<< HEAD
     functionFragment: "_getExpensePerSecond",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-=======
->>>>>>> ca3f58f (Remove legacy files)
     functionFragment: "_getLargeActionCooldown",
     values: [BigNumberish]
   ): string;
@@ -213,7 +169,6 @@ export interface UtilInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-<<<<<<< HEAD
     functionFragment: "_getPlayerBalance",
     values: [string]
   ): string;
@@ -224,31 +179,16 @@ export interface UtilInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "_getTotalGoldGenerationPerUpdate",
     values: [string]
-=======
-    functionFragment: "_getMovesPerSecond",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getProductionCooldown",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getTileAt",
-    values: [PositionStruct]
->>>>>>> ca3f58f (Remove legacy files)
   ): string;
   encodeFunctionData(
     functionFragment: "_getTroop",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-<<<<<<< HEAD
     functionFragment: "_getTroopCost",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-=======
->>>>>>> ca3f58f (Remove legacy files)
     functionFragment: "_hasPort",
     values: [TileStruct]
   ): string;
@@ -307,13 +247,10 @@ export interface UtilInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-<<<<<<< HEAD
     functionFragment: "_getExpensePerSecond",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-=======
->>>>>>> ca3f58f (Remove legacy files)
     functionFragment: "_getLargeActionCooldown",
     data: BytesLike
   ): Result;
@@ -326,7 +263,6 @@ export interface UtilInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-<<<<<<< HEAD
     functionFragment: "_getPlayerBalance",
     data: BytesLike
   ): Result;
@@ -340,17 +276,6 @@ export interface UtilInterface extends utils.Interface {
     functionFragment: "_getTroopCost",
     data: BytesLike
   ): Result;
-=======
-    functionFragment: "_getMovesPerSecond",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getProductionCooldown",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "_getTileAt", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "_getTroop", data: BytesLike): Result;
->>>>>>> ca3f58f (Remove legacy files)
   decodeFunctionResult(functionFragment: "_hasPort", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "_inBound", data: BytesLike): Result;
   decodeFunctionResult(
@@ -368,42 +293,26 @@ export interface UtilInterface extends utils.Interface {
   events: {
     "AttackedBase(address,uint256,tuple,uint256,tuple)": EventFragment;
     "AttackedTroop(address,uint256,tuple,uint256,tuple)": EventFragment;
-<<<<<<< HEAD
-    "Bankruptcy(address)": EventFragment;
-=======
->>>>>>> ca3f58f (Remove legacy files)
     "BaseCaptured(address,uint256,uint256)": EventFragment;
     "Death(address,uint256)": EventFragment;
     "Moved(address,uint256,uint256,tuple,tuple)": EventFragment;
     "NewPlayer(address,tuple)": EventFragment;
     "NewTroop(address,uint256,tuple,tuple)": EventFragment;
-<<<<<<< HEAD
-=======
-    "ProductionEnded(address,uint256)": EventFragment;
-    "ProductionStarted(address,uint256,tuple)": EventFragment;
->>>>>>> ca3f58f (Remove legacy files)
     "Recovered(address,uint256)": EventFragment;
     "Repaired(address,uint256,uint256)": EventFragment;
+    "UpdatePlayerBalance(address,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "AttackedBase"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "AttackedTroop"): EventFragment;
-<<<<<<< HEAD
-  getEvent(nameOrSignatureOrTopic: "Bankruptcy"): EventFragment;
-=======
->>>>>>> ca3f58f (Remove legacy files)
   getEvent(nameOrSignatureOrTopic: "BaseCaptured"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Death"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Moved"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NewPlayer"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NewTroop"): EventFragment;
-<<<<<<< HEAD
-=======
-  getEvent(nameOrSignatureOrTopic: "ProductionEnded"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ProductionStarted"): EventFragment;
->>>>>>> ca3f58f (Remove legacy files)
   getEvent(nameOrSignatureOrTopic: "Recovered"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Repaired"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "UpdatePlayerBalance"): EventFragment;
 }
 
 export type AttackedBaseEvent = TypedEvent<
@@ -432,13 +341,6 @@ export type AttackedTroopEvent = TypedEvent<
 
 export type AttackedTroopEventFilter = TypedEventFilter<AttackedTroopEvent>;
 
-<<<<<<< HEAD
-export type BankruptcyEvent = TypedEvent<[string], { _player: string }>;
-
-export type BankruptcyEventFilter = TypedEventFilter<BankruptcyEvent>;
-
-=======
->>>>>>> ca3f58f (Remove legacy files)
 export type BaseCapturedEvent = TypedEvent<
   [string, BigNumber, BigNumber],
   { _player: string; _troopId: BigNumber; _baseId: BigNumber }
@@ -458,7 +360,7 @@ export type MovedEvent = TypedEvent<
   {
     _player: string;
     _troopId: BigNumber;
-    time: BigNumber;
+    _epoch: BigNumber;
     _startPos: PositionStructOutput;
     _targetPos: PositionStructOutput;
   }
@@ -485,24 +387,6 @@ export type NewTroopEvent = TypedEvent<
 
 export type NewTroopEventFilter = TypedEventFilter<NewTroopEvent>;
 
-<<<<<<< HEAD
-=======
-export type ProductionEndedEvent = TypedEvent<
-  [string, BigNumber],
-  { _player: string; _baseId: BigNumber }
->;
-
-export type ProductionEndedEventFilter = TypedEventFilter<ProductionEndedEvent>;
-
-export type ProductionStartedEvent = TypedEvent<
-  [string, BigNumber, ProductionStructOutput],
-  { _player: string; _baseId: BigNumber; _production: ProductionStructOutput }
->;
-
-export type ProductionStartedEventFilter =
-  TypedEventFilter<ProductionStartedEvent>;
-
->>>>>>> ca3f58f (Remove legacy files)
 export type RecoveredEvent = TypedEvent<
   [string, BigNumber],
   { _player: string; _troopId: BigNumber }
@@ -516,6 +400,14 @@ export type RepairedEvent = TypedEvent<
 >;
 
 export type RepairedEventFilter = TypedEventFilter<RepairedEvent>;
+
+export type UpdatePlayerBalanceEvent = TypedEvent<
+  [string, BigNumber],
+  { _player: string; _amount: BigNumber }
+>;
+
+export type UpdatePlayerBalanceEventFilter =
+  TypedEventFilter<UpdatePlayerBalanceEvent>;
 
 export interface Util extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -584,49 +476,28 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-<<<<<<< HEAD
     _getExpensePerSecond(
-=======
+      _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     _getLargeActionCooldown(
->>>>>>> ca3f58f (Remove legacy files)
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-<<<<<<< HEAD
-    _getLargeActionCooldown(
-=======
     _getMaxHealth(
->>>>>>> ca3f58f (Remove legacy files)
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-<<<<<<< HEAD
-    _getMaxHealth(
-=======
     _getMovementCooldown(
->>>>>>> ca3f58f (Remove legacy files)
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-<<<<<<< HEAD
-    _getMovementCooldown(
-=======
-    _getMovesPerSecond(
->>>>>>> ca3f58f (Remove legacy files)
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-<<<<<<< HEAD
     _getPlayerBalance(
       _player: string,
-=======
-    _getProductionCooldown(
-      _troopTypeId: BigNumberish,
->>>>>>> ca3f58f (Remove legacy files)
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -635,7 +506,6 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[TileStructOutput]>;
 
-<<<<<<< HEAD
     _getTotalGoldGenerationPerUpdate(
       _player: string,
       overrides?: CallOverrides
@@ -651,13 +521,6 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-=======
-    _getTroop(
-      _troopId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[TroopStructOutput]>;
-
->>>>>>> ca3f58f (Remove legacy files)
     _hasPort(_tile: TileStruct, overrides?: CallOverrides): Promise<[boolean]>;
 
     _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<[boolean]>;
@@ -733,49 +596,28 @@ export interface Util extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-<<<<<<< HEAD
   _getExpensePerSecond(
-=======
+    _troopTypeId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   _getLargeActionCooldown(
->>>>>>> ca3f58f (Remove legacy files)
     _troopTypeId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-<<<<<<< HEAD
-  _getLargeActionCooldown(
-=======
   _getMaxHealth(
->>>>>>> ca3f58f (Remove legacy files)
     _troopTypeId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-<<<<<<< HEAD
-  _getMaxHealth(
-=======
   _getMovementCooldown(
->>>>>>> ca3f58f (Remove legacy files)
     _troopTypeId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-<<<<<<< HEAD
-  _getMovementCooldown(
-=======
-  _getMovesPerSecond(
->>>>>>> ca3f58f (Remove legacy files)
-    _troopTypeId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-<<<<<<< HEAD
   _getPlayerBalance(
     _player: string,
-=======
-  _getProductionCooldown(
-    _troopTypeId: BigNumberish,
->>>>>>> ca3f58f (Remove legacy files)
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -784,7 +626,6 @@ export interface Util extends BaseContract {
     overrides?: CallOverrides
   ): Promise<TileStructOutput>;
 
-<<<<<<< HEAD
   _getTotalGoldGenerationPerUpdate(
     _player: string,
     overrides?: CallOverrides
@@ -800,13 +641,6 @@ export interface Util extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-=======
-  _getTroop(
-    _troopId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<TroopStructOutput>;
-
->>>>>>> ca3f58f (Remove legacy files)
   _hasPort(_tile: TileStruct, overrides?: CallOverrides): Promise<boolean>;
 
   _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<boolean>;
@@ -882,49 +716,28 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-<<<<<<< HEAD
     _getExpensePerSecond(
-=======
+      _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     _getLargeActionCooldown(
->>>>>>> ca3f58f (Remove legacy files)
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-<<<<<<< HEAD
-    _getLargeActionCooldown(
-=======
     _getMaxHealth(
->>>>>>> ca3f58f (Remove legacy files)
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-<<<<<<< HEAD
-    _getMaxHealth(
-=======
     _getMovementCooldown(
->>>>>>> ca3f58f (Remove legacy files)
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-<<<<<<< HEAD
-    _getMovementCooldown(
-=======
-    _getMovesPerSecond(
->>>>>>> ca3f58f (Remove legacy files)
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-<<<<<<< HEAD
     _getPlayerBalance(
       _player: string,
-=======
-    _getProductionCooldown(
-      _troopTypeId: BigNumberish,
->>>>>>> ca3f58f (Remove legacy files)
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -933,7 +746,6 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<TileStructOutput>;
 
-<<<<<<< HEAD
     _getTotalGoldGenerationPerUpdate(
       _player: string,
       overrides?: CallOverrides
@@ -949,13 +761,6 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-=======
-    _getTroop(
-      _troopId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<TroopStructOutput>;
-
->>>>>>> ca3f58f (Remove legacy files)
     _hasPort(_tile: TileStruct, overrides?: CallOverrides): Promise<boolean>;
 
     _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<boolean>;
@@ -1022,12 +827,6 @@ export interface Util extends BaseContract {
       _targetTroopInfo?: null
     ): AttackedTroopEventFilter;
 
-<<<<<<< HEAD
-    "Bankruptcy(address)"(_player?: null): BankruptcyEventFilter;
-    Bankruptcy(_player?: null): BankruptcyEventFilter;
-
-=======
->>>>>>> ca3f58f (Remove legacy files)
     "BaseCaptured(address,uint256,uint256)"(
       _player?: null,
       _troopId?: null,
@@ -1045,14 +844,14 @@ export interface Util extends BaseContract {
     "Moved(address,uint256,uint256,tuple,tuple)"(
       _player?: null,
       _troopId?: null,
-      time?: null,
+      _epoch?: null,
       _startPos?: null,
       _targetPos?: null
     ): MovedEventFilter;
     Moved(
       _player?: null,
       _troopId?: null,
-      time?: null,
+      _epoch?: null,
       _startPos?: null,
       _targetPos?: null
     ): MovedEventFilter;
@@ -1076,26 +875,6 @@ export interface Util extends BaseContract {
       _pos?: null
     ): NewTroopEventFilter;
 
-<<<<<<< HEAD
-=======
-    "ProductionEnded(address,uint256)"(
-      _player?: null,
-      _baseId?: null
-    ): ProductionEndedEventFilter;
-    ProductionEnded(_player?: null, _baseId?: null): ProductionEndedEventFilter;
-
-    "ProductionStarted(address,uint256,tuple)"(
-      _player?: null,
-      _baseId?: null,
-      _production?: null
-    ): ProductionStartedEventFilter;
-    ProductionStarted(
-      _player?: null,
-      _baseId?: null,
-      _production?: null
-    ): ProductionStartedEventFilter;
-
->>>>>>> ca3f58f (Remove legacy files)
     "Recovered(address,uint256)"(
       _player?: null,
       _troopId?: null
@@ -1112,6 +891,15 @@ export interface Util extends BaseContract {
       _troopId?: null,
       _health?: null
     ): RepairedEventFilter;
+
+    "UpdatePlayerBalance(address,uint256)"(
+      _player?: null,
+      _amount?: null
+    ): UpdatePlayerBalanceEventFilter;
+    UpdatePlayerBalance(
+      _player?: null,
+      _amount?: null
+    ): UpdatePlayerBalanceEventFilter;
   };
 
   estimateGas: {
@@ -1152,14 +940,11 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-<<<<<<< HEAD
     _getExpensePerSecond(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-=======
->>>>>>> ca3f58f (Remove legacy files)
     _getLargeActionCooldown(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
@@ -1175,7 +960,6 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-<<<<<<< HEAD
     _getPlayerBalance(
       _player: string,
       overrides?: CallOverrides
@@ -1195,25 +979,6 @@ export interface Util extends BaseContract {
 
     _getTroopCost(
       _troopTypeId: BigNumberish,
-=======
-    _getMovesPerSecond(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getProductionCooldown(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getTileAt(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getTroop(
-      _troopId: BigNumberish,
->>>>>>> ca3f58f (Remove legacy files)
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1293,14 +1058,11 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-<<<<<<< HEAD
     _getExpensePerSecond(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-=======
->>>>>>> ca3f58f (Remove legacy files)
     _getLargeActionCooldown(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
@@ -1316,7 +1078,6 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-<<<<<<< HEAD
     _getPlayerBalance(
       _player: string,
       overrides?: CallOverrides
@@ -1329,34 +1090,16 @@ export interface Util extends BaseContract {
 
     _getTotalGoldGenerationPerUpdate(
       _player: string,
-=======
-    _getMovesPerSecond(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getProductionCooldown(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getTileAt(
-      _pos: PositionStruct,
->>>>>>> ca3f58f (Remove legacy files)
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     _getTroop(
-<<<<<<< HEAD
       _id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     _getTroopCost(
       _troopTypeId: BigNumberish,
-=======
-      _troopId: BigNumberish,
->>>>>>> ca3f58f (Remove legacy files)
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

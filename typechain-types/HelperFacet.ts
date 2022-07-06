@@ -27,19 +27,12 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
 export interface HelperFacetInterface extends utils.Interface {
   functions: {
     "bulkInitializeTiles((uint256,uint256)[])": FunctionFragment;
-<<<<<<< HEAD
-=======
-    "endProduction((uint256,uint256))": FunctionFragment;
->>>>>>> ca3f58f (Remove legacy files)
     "initializePlayer((uint256,uint256),address)": FunctionFragment;
     "repair((uint256,uint256))": FunctionFragment;
     "spawnTroop((uint256,uint256),address,uint256)": FunctionFragment;
     "storeEncodedRawMapCols(uint256[])": FunctionFragment;
     "transferBaseOwnership((uint256,uint256),address)": FunctionFragment;
-<<<<<<< HEAD
     "updatePlayerBalance(address)": FunctionFragment;
-=======
->>>>>>> ca3f58f (Remove legacy files)
   };
 
   encodeFunctionData(
@@ -47,13 +40,6 @@ export interface HelperFacetInterface extends utils.Interface {
     values: [PositionStruct[]]
   ): string;
   encodeFunctionData(
-<<<<<<< HEAD
-=======
-    functionFragment: "endProduction",
-    values: [PositionStruct]
-  ): string;
-  encodeFunctionData(
->>>>>>> ca3f58f (Remove legacy files)
     functionFragment: "initializePlayer",
     values: [PositionStruct, string]
   ): string;
@@ -73,26 +59,16 @@ export interface HelperFacetInterface extends utils.Interface {
     functionFragment: "transferBaseOwnership",
     values: [PositionStruct, string]
   ): string;
-<<<<<<< HEAD
   encodeFunctionData(
     functionFragment: "updatePlayerBalance",
     values: [string]
   ): string;
-=======
->>>>>>> ca3f58f (Remove legacy files)
 
   decodeFunctionResult(
     functionFragment: "bulkInitializeTiles",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-<<<<<<< HEAD
-=======
-    functionFragment: "endProduction",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
->>>>>>> ca3f58f (Remove legacy files)
     functionFragment: "initializePlayer",
     data: BytesLike
   ): Result;
@@ -106,13 +82,10 @@ export interface HelperFacetInterface extends utils.Interface {
     functionFragment: "transferBaseOwnership",
     data: BytesLike
   ): Result;
-<<<<<<< HEAD
   decodeFunctionResult(
     functionFragment: "updatePlayerBalance",
     data: BytesLike
   ): Result;
-=======
->>>>>>> ca3f58f (Remove legacy files)
 
   events: {};
 }
@@ -149,14 +122,6 @@ export interface HelperFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-<<<<<<< HEAD
-=======
-    endProduction(
-      _pos: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
->>>>>>> ca3f58f (Remove legacy files)
     initializePlayer(
       _pos: PositionStruct,
       _player: string,
@@ -185,14 +150,11 @@ export interface HelperFacet extends BaseContract {
       _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
-<<<<<<< HEAD
 
     updatePlayerBalance(
       _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
-=======
->>>>>>> ca3f58f (Remove legacy files)
   };
 
   bulkInitializeTiles(
@@ -200,14 +162,6 @@ export interface HelperFacet extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-<<<<<<< HEAD
-=======
-  endProduction(
-    _pos: PositionStruct,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
->>>>>>> ca3f58f (Remove legacy files)
   initializePlayer(
     _pos: PositionStruct,
     _player: string,
@@ -237,28 +191,17 @@ export interface HelperFacet extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-<<<<<<< HEAD
   updatePlayerBalance(
     _player: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-=======
->>>>>>> ca3f58f (Remove legacy files)
   callStatic: {
     bulkInitializeTiles(
       _positions: PositionStruct[],
       overrides?: CallOverrides
     ): Promise<void>;
 
-<<<<<<< HEAD
-=======
-    endProduction(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
->>>>>>> ca3f58f (Remove legacy files)
     initializePlayer(
       _pos: PositionStruct,
       _player: string,
@@ -284,14 +227,11 @@ export interface HelperFacet extends BaseContract {
       _player: string,
       overrides?: CallOverrides
     ): Promise<void>;
-<<<<<<< HEAD
 
     updatePlayerBalance(
       _player: string,
       overrides?: CallOverrides
     ): Promise<void>;
-=======
->>>>>>> ca3f58f (Remove legacy files)
   };
 
   filters: {};
@@ -302,14 +242,6 @@ export interface HelperFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-<<<<<<< HEAD
-=======
-    endProduction(
-      _pos: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
->>>>>>> ca3f58f (Remove legacy files)
     initializePlayer(
       _pos: PositionStruct,
       _player: string,
@@ -338,14 +270,11 @@ export interface HelperFacet extends BaseContract {
       _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
-<<<<<<< HEAD
 
     updatePlayerBalance(
       _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
-=======
->>>>>>> ca3f58f (Remove legacy files)
   };
 
   populateTransaction: {
@@ -354,14 +283,6 @@ export interface HelperFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-<<<<<<< HEAD
-=======
-    endProduction(
-      _pos: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
->>>>>>> ca3f58f (Remove legacy files)
     initializePlayer(
       _pos: PositionStruct,
       _player: string,
@@ -390,13 +311,10 @@ export interface HelperFacet extends BaseContract {
       _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
-<<<<<<< HEAD
 
     updatePlayerBalance(
       _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
-=======
->>>>>>> ca3f58f (Remove legacy files)
   };
 }

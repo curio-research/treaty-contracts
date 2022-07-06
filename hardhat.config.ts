@@ -11,7 +11,6 @@ require('dotenv').config();
 // tasks
 import './tasks/port';
 import './tasks/deploy';
-import './tasks/epoch';
 import './tasks/mapGen';
 
 // to get the smart contract file sizes, run:
@@ -64,8 +63,8 @@ export default {
     hardhat: {
       chainId: 1337,
       mining: {
-        auto: false,
-        interval: 800,
+        auto: true,
+        // interval: 800,
       },
     },
   },

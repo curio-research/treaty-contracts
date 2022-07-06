@@ -26,11 +26,8 @@ export type WorldConstantsStruct = {
   mapInterval: BigNumberish;
   combatEfficiency: BigNumberish;
   numInitTerrainTypes: BigNumberish;
-<<<<<<< HEAD
   initPlayerBalance: BigNumberish;
   defaultBaseGoldGenerationPerSecond: BigNumberish;
-=======
->>>>>>> ca3f58f (Remove legacy files)
 };
 
 export type WorldConstantsStructOutput = [
@@ -41,11 +38,8 @@ export type WorldConstantsStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
-<<<<<<< HEAD
   BigNumber,
   BigNumber,
-=======
->>>>>>> ca3f58f (Remove legacy files)
   BigNumber
 ] & {
   admin: string;
@@ -56,11 +50,8 @@ export type WorldConstantsStructOutput = [
   mapInterval: BigNumber;
   combatEfficiency: BigNumber;
   numInitTerrainTypes: BigNumber;
-<<<<<<< HEAD
   initPlayerBalance: BigNumber;
   defaultBaseGoldGenerationPerSecond: BigNumber;
-=======
->>>>>>> ca3f58f (Remove legacy files)
 };
 
 export type TroopTypeStruct = {
@@ -71,17 +62,10 @@ export type TroopTypeStruct = {
   attackFactor: BigNumberish;
   defenseFactor: BigNumberish;
   cargoCapacity: BigNumberish;
-<<<<<<< HEAD
   movementCooldown: BigNumberish;
   largeActionCooldown: BigNumberish;
   cost: BigNumberish;
   expensePerSecond: BigNumberish;
-=======
-  movesPerSecond: BigNumberish;
-  movementCooldown: BigNumberish;
-  largeActionCooldown: BigNumberish;
-  productionCooldown: BigNumberish;
->>>>>>> ca3f58f (Remove legacy files)
 };
 
 export type TroopTypeStructOutput = [
@@ -104,26 +88,15 @@ export type TroopTypeStructOutput = [
   attackFactor: BigNumber;
   defenseFactor: BigNumber;
   cargoCapacity: BigNumber;
-<<<<<<< HEAD
   movementCooldown: BigNumber;
   largeActionCooldown: BigNumber;
   cost: BigNumber;
   expensePerSecond: BigNumber;
-=======
-  movesPerSecond: BigNumber;
-  movementCooldown: BigNumber;
-  largeActionCooldown: BigNumber;
-  productionCooldown: BigNumber;
->>>>>>> ca3f58f (Remove legacy files)
 };
 
 export interface DiamondInitInterface extends utils.Interface {
   functions: {
-<<<<<<< HEAD
     "init((address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),(uint8,bool,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256)[])": FunctionFragment;
-=======
-    "init((address,uint256,uint256,uint256,uint256,uint256,uint256,uint256),(uint8,bool,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256)[])": FunctionFragment;
->>>>>>> ca3f58f (Remove legacy files)
   };
 
   encodeFunctionData(
