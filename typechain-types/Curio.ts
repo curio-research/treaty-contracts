@@ -102,16 +102,6 @@ export type BaseStructOutput = [
   goldGenerationPerSecond: BigNumber;
 };
 
-export type ProductionStruct = {
-  troopTypeId: BigNumberish;
-  startTimestamp: BigNumberish;
-};
-
-export type ProductionStructOutput = [BigNumber, BigNumber] & {
-  troopTypeId: BigNumber;
-  startTimestamp: BigNumber;
-};
-
 export type TroopTypeStruct = {
   name: BigNumberish;
   isLandTroop: boolean;
@@ -243,11 +233,9 @@ export interface CurioInterface extends utils.Interface {
     "getBaseAt((uint256,uint256))": FunctionFragment;
     "getBaseNonce()": FunctionFragment;
     "getBulkBase(uint256,uint256)": FunctionFragment;
-    "getBulkProductions(uint256[])": FunctionFragment;
     "getBulkTroopTypes(uint256,uint256)": FunctionFragment;
     "getMapChunk((uint256,uint256))": FunctionFragment;
     "getPlayer(address)": FunctionFragment;
-    "getProduction(uint256)": FunctionFragment;
     "getTileAt((uint256,uint256))": FunctionFragment;
     "getTroop(uint256)": FunctionFragment;
     "getTroopAt((uint256,uint256))": FunctionFragment;
@@ -338,10 +326,6 @@ export interface CurioInterface extends utils.Interface {
     values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "getBulkProductions",
-    values: [BigNumberish[]]
-  ): string;
-  encodeFunctionData(
     functionFragment: "getBulkTroopTypes",
     values: [BigNumberish, BigNumberish]
   ): string;
@@ -350,10 +334,6 @@ export interface CurioInterface extends utils.Interface {
     values: [PositionStruct]
   ): string;
   encodeFunctionData(functionFragment: "getPlayer", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "getProduction",
-    values: [BigNumberish]
-  ): string;
   encodeFunctionData(
     functionFragment: "getTileAt",
     values: [PositionStruct]
@@ -542,10 +522,6 @@ export interface CurioInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getBulkProductions",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "getBulkTroopTypes",
     data: BytesLike
   ): Result;
@@ -554,10 +530,6 @@ export interface CurioInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getPlayer", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "getProduction",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "getTileAt", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getTroop", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getTroopAt", data: BytesLike): Result;
@@ -674,7 +646,6 @@ export interface CurioInterface extends utils.Interface {
     "OwnershipTransferred(address,address)": EventFragment;
     "AttackedBase(address,uint256,tuple,uint256,tuple)": EventFragment;
     "AttackedTroop(address,uint256,tuple,uint256,tuple)": EventFragment;
-    "Bankruptcy(address)": EventFragment;
     "BaseCaptured(address,uint256,uint256)": EventFragment;
     "Death(address,uint256)": EventFragment;
     "Moved(address,uint256,uint256,tuple,tuple)": EventFragment;
@@ -682,13 +653,13 @@ export interface CurioInterface extends utils.Interface {
     "NewTroop(address,uint256,tuple,tuple)": EventFragment;
     "Recovered(address,uint256)": EventFragment;
     "Repaired(address,uint256,uint256)": EventFragment;
+    "UpdatePlayerBalance(address,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "DiamondCut"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "AttackedBase"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "AttackedTroop"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Bankruptcy"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BaseCaptured"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Death"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Moved"): EventFragment;
@@ -696,6 +667,7 @@ export interface CurioInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "NewTroop"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Recovered"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Repaired"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "UpdatePlayerBalance"): EventFragment;
 }
 
 export type DiamondCutEvent = TypedEvent<
@@ -738,10 +710,6 @@ export type AttackedTroopEvent = TypedEvent<
 >;
 
 export type AttackedTroopEventFilter = TypedEventFilter<AttackedTroopEvent>;
-
-export type BankruptcyEvent = TypedEvent<[string], { _player: string }>;
-
-export type BankruptcyEventFilter = TypedEventFilter<BankruptcyEvent>;
 
 export type BaseCapturedEvent = TypedEvent<
   [string, BigNumber, BigNumber],
@@ -802,6 +770,14 @@ export type RepairedEvent = TypedEvent<
 >;
 
 export type RepairedEventFilter = TypedEventFilter<RepairedEvent>;
+
+export type UpdatePlayerBalanceEvent = TypedEvent<
+  [string, BigNumber],
+  { _player: string; _amount: BigNumber }
+>;
+
+export type UpdatePlayerBalanceEventFilter =
+  TypedEventFilter<UpdatePlayerBalanceEvent>;
 
 export interface Curio extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -892,11 +868,6 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BaseStructOutput[]]>;
 
-    getBulkProductions(
-      _baseIds: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<[ProductionStructOutput[]]>;
-
     getBulkTroopTypes(
       _startId: BigNumberish,
       _endId: BigNumberish,
@@ -912,11 +883,6 @@ export interface Curio extends BaseContract {
       _addr: string,
       overrides?: CallOverrides
     ): Promise<[PlayerStructOutput]>;
-
-    getProduction(
-      _baseId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[ProductionStructOutput]>;
 
     getTileAt(
       _pos: PositionStruct,
@@ -1166,11 +1132,6 @@ export interface Curio extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BaseStructOutput[]>;
 
-  getBulkProductions(
-    _baseIds: BigNumberish[],
-    overrides?: CallOverrides
-  ): Promise<ProductionStructOutput[]>;
-
   getBulkTroopTypes(
     _startId: BigNumberish,
     _endId: BigNumberish,
@@ -1186,11 +1147,6 @@ export interface Curio extends BaseContract {
     _addr: string,
     overrides?: CallOverrides
   ): Promise<PlayerStructOutput>;
-
-  getProduction(
-    _baseId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<ProductionStructOutput>;
 
   getTileAt(
     _pos: PositionStruct,
@@ -1440,11 +1396,6 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BaseStructOutput[]>;
 
-    getBulkProductions(
-      _baseIds: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<ProductionStructOutput[]>;
-
     getBulkTroopTypes(
       _startId: BigNumberish,
       _endId: BigNumberish,
@@ -1460,11 +1411,6 @@ export interface Curio extends BaseContract {
       _addr: string,
       overrides?: CallOverrides
     ): Promise<PlayerStructOutput>;
-
-    getProduction(
-      _baseId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<ProductionStructOutput>;
 
     getTileAt(
       _pos: PositionStruct,
@@ -1704,9 +1650,6 @@ export interface Curio extends BaseContract {
       _targetTroopInfo?: null
     ): AttackedTroopEventFilter;
 
-    "Bankruptcy(address)"(_player?: null): BankruptcyEventFilter;
-    Bankruptcy(_player?: null): BankruptcyEventFilter;
-
     "BaseCaptured(address,uint256,uint256)"(
       _player?: null,
       _troopId?: null,
@@ -1771,6 +1714,15 @@ export interface Curio extends BaseContract {
       _troopId?: null,
       _health?: null
     ): RepairedEventFilter;
+
+    "UpdatePlayerBalance(address,uint256)"(
+      _player?: null,
+      _amount?: null
+    ): UpdatePlayerBalanceEventFilter;
+    UpdatePlayerBalance(
+      _player?: null,
+      _amount?: null
+    ): UpdatePlayerBalanceEventFilter;
   };
 
   estimateGas: {
@@ -1829,11 +1781,6 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getBulkProductions(
-      _baseIds: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     getBulkTroopTypes(
       _startId: BigNumberish,
       _endId: BigNumberish,
@@ -1846,11 +1793,6 @@ export interface Curio extends BaseContract {
     ): Promise<BigNumber>;
 
     getPlayer(_addr: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    getProduction(
-      _baseId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     getTileAt(
       _pos: PositionStruct,
@@ -2093,11 +2035,6 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getBulkProductions(
-      _baseIds: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     getBulkTroopTypes(
       _startId: BigNumberish,
       _endId: BigNumberish,
@@ -2111,11 +2048,6 @@ export interface Curio extends BaseContract {
 
     getPlayer(
       _addr: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getProduction(
-      _baseId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

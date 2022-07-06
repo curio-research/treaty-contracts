@@ -293,7 +293,6 @@ export interface UtilInterface extends utils.Interface {
   events: {
     "AttackedBase(address,uint256,tuple,uint256,tuple)": EventFragment;
     "AttackedTroop(address,uint256,tuple,uint256,tuple)": EventFragment;
-    "Bankruptcy(address)": EventFragment;
     "BaseCaptured(address,uint256,uint256)": EventFragment;
     "Death(address,uint256)": EventFragment;
     "Moved(address,uint256,uint256,tuple,tuple)": EventFragment;
@@ -301,11 +300,11 @@ export interface UtilInterface extends utils.Interface {
     "NewTroop(address,uint256,tuple,tuple)": EventFragment;
     "Recovered(address,uint256)": EventFragment;
     "Repaired(address,uint256,uint256)": EventFragment;
+    "UpdatePlayerBalance(address,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "AttackedBase"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "AttackedTroop"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Bankruptcy"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BaseCaptured"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Death"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Moved"): EventFragment;
@@ -313,6 +312,7 @@ export interface UtilInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "NewTroop"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Recovered"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Repaired"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "UpdatePlayerBalance"): EventFragment;
 }
 
 export type AttackedBaseEvent = TypedEvent<
@@ -340,10 +340,6 @@ export type AttackedTroopEvent = TypedEvent<
 >;
 
 export type AttackedTroopEventFilter = TypedEventFilter<AttackedTroopEvent>;
-
-export type BankruptcyEvent = TypedEvent<[string], { _player: string }>;
-
-export type BankruptcyEventFilter = TypedEventFilter<BankruptcyEvent>;
 
 export type BaseCapturedEvent = TypedEvent<
   [string, BigNumber, BigNumber],
@@ -404,6 +400,14 @@ export type RepairedEvent = TypedEvent<
 >;
 
 export type RepairedEventFilter = TypedEventFilter<RepairedEvent>;
+
+export type UpdatePlayerBalanceEvent = TypedEvent<
+  [string, BigNumber],
+  { _player: string; _amount: BigNumber }
+>;
+
+export type UpdatePlayerBalanceEventFilter =
+  TypedEventFilter<UpdatePlayerBalanceEvent>;
 
 export interface Util extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -823,9 +827,6 @@ export interface Util extends BaseContract {
       _targetTroopInfo?: null
     ): AttackedTroopEventFilter;
 
-    "Bankruptcy(address)"(_player?: null): BankruptcyEventFilter;
-    Bankruptcy(_player?: null): BankruptcyEventFilter;
-
     "BaseCaptured(address,uint256,uint256)"(
       _player?: null,
       _troopId?: null,
@@ -890,6 +891,15 @@ export interface Util extends BaseContract {
       _troopId?: null,
       _health?: null
     ): RepairedEventFilter;
+
+    "UpdatePlayerBalance(address,uint256)"(
+      _player?: null,
+      _amount?: null
+    ): UpdatePlayerBalanceEventFilter;
+    UpdatePlayerBalance(
+      _player?: null,
+      _amount?: null
+    ): UpdatePlayerBalanceEventFilter;
   };
 
   estimateGas: {

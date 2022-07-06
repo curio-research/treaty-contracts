@@ -76,11 +76,6 @@ struct TroopType {
     uint256 expensePerSecond;
 }
 
-struct Production {
-    uint256 troopTypeId;
-    uint256 startTimestamp;
-}
-
 struct WorldConstants {
     address admin;
     uint256 worldWidth;
@@ -99,7 +94,6 @@ struct GameState {
     address[] players;
     mapping(address => Player) playerMap;
     Tile[1000][1000] map;
-    mapping(uint256 => Production) baseProductionMap;
     uint256[] baseIds;
     uint256 baseNonce;
     mapping(uint256 => Base) baseIdMap;
