@@ -78,16 +78,6 @@ export type BaseStructOutput = [
   goldGenerationPerSecond: BigNumber;
 };
 
-export type ProductionStruct = {
-  troopTypeId: BigNumberish;
-  startTimestamp: BigNumberish;
-};
-
-export type ProductionStructOutput = [BigNumber, BigNumber] & {
-  troopTypeId: BigNumber;
-  startTimestamp: BigNumber;
-};
-
 export type TroopTypeStruct = {
   name: BigNumberish;
   isLandTroop: boolean;
@@ -211,11 +201,9 @@ export interface GetterFacetInterface extends utils.Interface {
     "getBaseAt((uint256,uint256))": FunctionFragment;
     "getBaseNonce()": FunctionFragment;
     "getBulkBase(uint256,uint256)": FunctionFragment;
-    "getBulkProductions(uint256[])": FunctionFragment;
     "getBulkTroopTypes(uint256,uint256)": FunctionFragment;
     "getMapChunk((uint256,uint256))": FunctionFragment;
     "getPlayer(address)": FunctionFragment;
-    "getProduction(uint256)": FunctionFragment;
     "getTileAt((uint256,uint256))": FunctionFragment;
     "getTroop(uint256)": FunctionFragment;
     "getTroopAt((uint256,uint256))": FunctionFragment;
@@ -244,10 +232,6 @@ export interface GetterFacetInterface extends utils.Interface {
     values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "getBulkProductions",
-    values: [BigNumberish[]]
-  ): string;
-  encodeFunctionData(
     functionFragment: "getBulkTroopTypes",
     values: [BigNumberish, BigNumberish]
   ): string;
@@ -256,10 +240,6 @@ export interface GetterFacetInterface extends utils.Interface {
     values: [PositionStruct]
   ): string;
   encodeFunctionData(functionFragment: "getPlayer", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "getProduction",
-    values: [BigNumberish]
-  ): string;
   encodeFunctionData(
     functionFragment: "getTileAt",
     values: [PositionStruct]
@@ -296,10 +276,6 @@ export interface GetterFacetInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getBulkProductions",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "getBulkTroopTypes",
     data: BytesLike
   ): Result;
@@ -308,10 +284,6 @@ export interface GetterFacetInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getPlayer", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "getProduction",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "getTileAt", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getTroop", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getTroopAt", data: BytesLike): Result;
@@ -374,11 +346,6 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BaseStructOutput[]]>;
 
-    getBulkProductions(
-      _baseIds: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<[ProductionStructOutput[]]>;
-
     getBulkTroopTypes(
       _startId: BigNumberish,
       _endId: BigNumberish,
@@ -394,11 +361,6 @@ export interface GetterFacet extends BaseContract {
       _addr: string,
       overrides?: CallOverrides
     ): Promise<[PlayerStructOutput]>;
-
-    getProduction(
-      _baseId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[ProductionStructOutput]>;
 
     getTileAt(
       _pos: PositionStruct,
@@ -445,11 +407,6 @@ export interface GetterFacet extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BaseStructOutput[]>;
 
-  getBulkProductions(
-    _baseIds: BigNumberish[],
-    overrides?: CallOverrides
-  ): Promise<ProductionStructOutput[]>;
-
   getBulkTroopTypes(
     _startId: BigNumberish,
     _endId: BigNumberish,
@@ -465,11 +422,6 @@ export interface GetterFacet extends BaseContract {
     _addr: string,
     overrides?: CallOverrides
   ): Promise<PlayerStructOutput>;
-
-  getProduction(
-    _baseId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<ProductionStructOutput>;
 
   getTileAt(
     _pos: PositionStruct,
@@ -516,11 +468,6 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BaseStructOutput[]>;
 
-    getBulkProductions(
-      _baseIds: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<ProductionStructOutput[]>;
-
     getBulkTroopTypes(
       _startId: BigNumberish,
       _endId: BigNumberish,
@@ -536,11 +483,6 @@ export interface GetterFacet extends BaseContract {
       _addr: string,
       overrides?: CallOverrides
     ): Promise<PlayerStructOutput>;
-
-    getProduction(
-      _baseId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<ProductionStructOutput>;
 
     getTileAt(
       _pos: PositionStruct,
@@ -587,11 +529,6 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getBulkProductions(
-      _baseIds: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     getBulkTroopTypes(
       _startId: BigNumberish,
       _endId: BigNumberish,
@@ -604,11 +541,6 @@ export interface GetterFacet extends BaseContract {
     ): Promise<BigNumber>;
 
     getPlayer(_addr: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    getProduction(
-      _baseId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     getTileAt(
       _pos: PositionStruct,
@@ -654,11 +586,6 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getBulkProductions(
-      _baseIds: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     getBulkTroopTypes(
       _startId: BigNumberish,
       _endId: BigNumberish,
@@ -672,11 +599,6 @@ export interface GetterFacet extends BaseContract {
 
     getPlayer(
       _addr: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getProduction(
-      _baseId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
