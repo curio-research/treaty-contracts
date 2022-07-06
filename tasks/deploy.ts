@@ -25,9 +25,6 @@ task('deploy', 'deploy contracts')
   .setAction(async (args: any, hre: HardhatRuntimeEnvironment) => {
     try {
       await hre.run('compile');
-
-      console.log(hre.network.provider);
-
       printDivider();
 
       const isDev = hre.network.name === 'localhost' || hre.network.name === 'hardhat';
