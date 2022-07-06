@@ -14,8 +14,12 @@ library Util {
     }
 
     event NewPlayer(address _player, Position _pos);
+<<<<<<< HEAD
     event Bankruptcy(address _player);
     event Moved(address _player, uint256 _troopId, uint256 _epoch, Position _startPos, Position _targetPos);
+=======
+    event Moved(address _player, uint256 _troopId, uint256 time, Position _startPos, Position _targetPos);
+>>>>>>> 274a580 (Only port the relevant 3 files)
     event AttackedTroop(address _player, uint256 _troopId, Troop _troopInfo, uint256 _targetTroopId, Troop _targetTroopInfo);
     event AttackedBase(address _player, uint256 _troopId, Troop _troopInfo, uint256 _targetBaseId, Base _targetBaseInfo);
     event Death(address _player, uint256 _troopId);

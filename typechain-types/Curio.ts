@@ -916,7 +916,7 @@ export type MovedEvent = TypedEvent<
   {
     _player: string;
     _troopId: BigNumber;
-    _epoch: BigNumber;
+    time: BigNumber;
     _startPos: PositionStructOutput;
     _targetPos: PositionStructOutput;
   }
@@ -2031,14 +2031,14 @@ export interface Curio extends BaseContract {
     "Moved(address,uint256,uint256,tuple,tuple)"(
       _player?: null,
       _troopId?: null,
-      _epoch?: null,
+      time?: null,
       _startPos?: null,
       _targetPos?: null
     ): MovedEventFilter;
     Moved(
       _player?: null,
       _troopId?: null,
-      _epoch?: null,
+      time?: null,
       _startPos?: null,
       _targetPos?: null
     ): MovedEventFilter;
