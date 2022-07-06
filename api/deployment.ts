@@ -19,17 +19,6 @@ export const publishDeployment = async (gameConfig: gameConfig) => {
   }
 };
 
-export const setTaskActiveMode = async (network: string, address: string, status: string) => {
-  try {
-    const { data } = await api.post(`/task/setStatus`, { network: network, address: address, status: status });
-    if (data) {
-      console.log(`Set task from ${address} on network ${network} to ${status} mode successful!`);
-    }
-  } catch (err) {
-    console.log(err);
-  }
-};
-
 export const isConnectionLive = async (): Promise<boolean> => {
   try {
     const { data } = await api.get(`/check`);
