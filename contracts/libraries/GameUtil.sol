@@ -1,7 +1,6 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "forge-std/console.sol";
 import {BASE_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop} from "contracts/libraries/Types.sol";
 import {LibStorage} from "contracts/libraries/Storage.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";

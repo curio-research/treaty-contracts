@@ -1,7 +1,6 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "forge-std/console.sol";
 import "contracts/libraries/Storage.sol";
 import {Util} from "contracts/libraries/GameUtil.sol";
 import {BASE_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop, TroopType} from "contracts/libraries/Types.sol";
@@ -88,11 +87,12 @@ contract EngineFacet is UseStorage {
         require(Util._isLandTroop(_troopTypeId) || Util._hasPort(_tile), "CURIO: Only ports can purchase water troops");
         require(_tile.occupantId == NULL, "CURIO: Base occupied by another troop");
 
+        uint256 _troopCost = Util._getTroopCost(_troopTypeId);
         Util._updatePlayerBalance(msg.sender);
-        require(Util._getTroopCost(_troopTypeId) <= Util._getPlayerBalance(msg.sender), "CURIO: Insufficient balance");
+        require(_troopCost <= Util._getPlayerBalance(msg.sender), "CURIO: Insufficient balance");
 
         (uint256 _troopId, Troop memory _troop) = Util._addTroop(msg.sender, _pos, _troopTypeId);
-        gs().playerMap[msg.sender].balance -= Util._getTroopCost(_troopTypeId);
+        gs().playerMap[msg.sender].balance -= _troopCost;
 
         emit Util.NewTroop(msg.sender, _troopId, _troop, _pos);
     }
