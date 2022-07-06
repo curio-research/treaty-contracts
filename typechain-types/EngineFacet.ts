@@ -27,7 +27,11 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
 export interface EngineFacetInterface extends utils.Interface {
   functions: {
     "march(uint256,(uint256,uint256))": FunctionFragment;
+<<<<<<< HEAD
     "purchaseTroop((uint256,uint256),uint256)": FunctionFragment;
+=======
+    "startProduction((uint256,uint256),uint256)": FunctionFragment;
+>>>>>>> ca3f58f (Remove legacy files)
   };
 
   encodeFunctionData(
@@ -35,13 +39,21 @@ export interface EngineFacetInterface extends utils.Interface {
     values: [BigNumberish, PositionStruct]
   ): string;
   encodeFunctionData(
+<<<<<<< HEAD
     functionFragment: "purchaseTroop",
+=======
+    functionFragment: "startProduction",
+>>>>>>> ca3f58f (Remove legacy files)
     values: [PositionStruct, BigNumberish]
   ): string;
 
   decodeFunctionResult(functionFragment: "march", data: BytesLike): Result;
   decodeFunctionResult(
+<<<<<<< HEAD
     functionFragment: "purchaseTroop",
+=======
+    functionFragment: "startProduction",
+>>>>>>> ca3f58f (Remove legacy files)
     data: BytesLike
   ): Result;
 
@@ -81,7 +93,11 @@ export interface EngineFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+<<<<<<< HEAD
     purchaseTroop(
+=======
+    startProduction(
+>>>>>>> ca3f58f (Remove legacy files)
       _pos: PositionStruct,
       _troopTypeId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -94,7 +110,11 @@ export interface EngineFacet extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+<<<<<<< HEAD
   purchaseTroop(
+=======
+  startProduction(
+>>>>>>> ca3f58f (Remove legacy files)
     _pos: PositionStruct,
     _troopTypeId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -107,7 +127,11 @@ export interface EngineFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+<<<<<<< HEAD
     purchaseTroop(
+=======
+    startProduction(
+>>>>>>> ca3f58f (Remove legacy files)
       _pos: PositionStruct,
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
@@ -123,7 +147,11 @@ export interface EngineFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+<<<<<<< HEAD
     purchaseTroop(
+=======
+    startProduction(
+>>>>>>> ca3f58f (Remove legacy files)
       _pos: PositionStruct,
       _troopTypeId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -137,7 +165,11 @@ export interface EngineFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+<<<<<<< HEAD
     purchaseTroop(
+=======
+    startProduction(
+>>>>>>> ca3f58f (Remove legacy files)
       _pos: PositionStruct,
       _troopTypeId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }

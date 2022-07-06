@@ -49,6 +49,10 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
 export type TroopStruct = {
   owner: string;
   troopTypeId: BigNumberish;
+<<<<<<< HEAD
+=======
+  movesLeftInSecond: BigNumberish;
+>>>>>>> ca3f58f (Remove legacy files)
   lastMoved: BigNumberish;
   lastLargeActionTaken: BigNumberish;
   lastRepaired: BigNumberish;
@@ -64,11 +68,19 @@ export type TroopStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
+<<<<<<< HEAD
+=======
+  BigNumber,
+>>>>>>> ca3f58f (Remove legacy files)
   PositionStructOutput,
   BigNumber[]
 ] & {
   owner: string;
   troopTypeId: BigNumber;
+<<<<<<< HEAD
+=======
+  movesLeftInSecond: BigNumber;
+>>>>>>> ca3f58f (Remove legacy files)
   lastMoved: BigNumber;
   lastLargeActionTaken: BigNumber;
   lastRepaired: BigNumber;
@@ -83,7 +95,10 @@ export type BaseStruct = {
   attackFactor: BigNumberish;
   defenseFactor: BigNumberish;
   health: BigNumberish;
+<<<<<<< HEAD
   goldGenerationPerSecond: BigNumberish;
+=======
+>>>>>>> ca3f58f (Remove legacy files)
 };
 
 export type BaseStructOutput = [
@@ -91,7 +106,10 @@ export type BaseStructOutput = [
   string,
   BigNumber,
   BigNumber,
+<<<<<<< HEAD
   BigNumber,
+=======
+>>>>>>> ca3f58f (Remove legacy files)
   BigNumber
 ] & {
   name: number;
@@ -99,7 +117,10 @@ export type BaseStructOutput = [
   attackFactor: BigNumber;
   defenseFactor: BigNumber;
   health: BigNumber;
+<<<<<<< HEAD
   goldGenerationPerSecond: BigNumber;
+=======
+>>>>>>> ca3f58f (Remove legacy files)
 };
 
 export type ProductionStruct = {
@@ -120,10 +141,17 @@ export type TroopTypeStruct = {
   attackFactor: BigNumberish;
   defenseFactor: BigNumberish;
   cargoCapacity: BigNumberish;
+<<<<<<< HEAD
   movementCooldown: BigNumberish;
   largeActionCooldown: BigNumberish;
   cost: BigNumberish;
   expensePerSecond: BigNumberish;
+=======
+  movesPerSecond: BigNumberish;
+  movementCooldown: BigNumberish;
+  largeActionCooldown: BigNumberish;
+  productionCooldown: BigNumberish;
+>>>>>>> ca3f58f (Remove legacy files)
 };
 
 export type TroopTypeStructOutput = [
@@ -146,10 +174,17 @@ export type TroopTypeStructOutput = [
   attackFactor: BigNumber;
   defenseFactor: BigNumber;
   cargoCapacity: BigNumber;
+<<<<<<< HEAD
   movementCooldown: BigNumber;
   largeActionCooldown: BigNumber;
   cost: BigNumber;
   expensePerSecond: BigNumber;
+=======
+  movesPerSecond: BigNumber;
+  movementCooldown: BigNumber;
+  largeActionCooldown: BigNumber;
+  productionCooldown: BigNumber;
+>>>>>>> ca3f58f (Remove legacy files)
 };
 
 export type TileStruct = {
@@ -166,6 +201,7 @@ export type TileStructOutput = [boolean, number, BigNumber, BigNumber] & {
   baseId: BigNumber;
 };
 
+<<<<<<< HEAD
 export type PlayerStruct = {
   initTimestamp: BigNumberish;
   active: boolean;
@@ -189,6 +225,13 @@ export type PlayerStructOutput = [
   totalGoldGenerationPerUpdate: BigNumber;
   totalTroopExpensePerUpdate: BigNumber;
   balanceLastUpdated: BigNumber;
+=======
+export type PlayerStruct = { initTimestamp: BigNumberish; active: boolean };
+
+export type PlayerStructOutput = [BigNumber, boolean] & {
+  initTimestamp: BigNumber;
+  active: boolean;
+>>>>>>> ca3f58f (Remove legacy files)
 };
 
 export type WorldConstantsStruct = {
@@ -200,8 +243,11 @@ export type WorldConstantsStruct = {
   mapInterval: BigNumberish;
   combatEfficiency: BigNumberish;
   numInitTerrainTypes: BigNumberish;
+<<<<<<< HEAD
   initPlayerBalance: BigNumberish;
   defaultBaseGoldGenerationPerSecond: BigNumberish;
+=======
+>>>>>>> ca3f58f (Remove legacy files)
 };
 
 export type WorldConstantsStructOutput = [
@@ -212,8 +258,11 @@ export type WorldConstantsStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
+<<<<<<< HEAD
   BigNumber,
   BigNumber,
+=======
+>>>>>>> ca3f58f (Remove legacy files)
   BigNumber
 ] & {
   admin: string;
@@ -224,8 +273,11 @@ export type WorldConstantsStructOutput = [
   mapInterval: BigNumber;
   combatEfficiency: BigNumber;
   numInitTerrainTypes: BigNumber;
+<<<<<<< HEAD
   initPlayerBalance: BigNumber;
   defaultBaseGoldGenerationPerSecond: BigNumber;
+=======
+>>>>>>> ca3f58f (Remove legacy files)
 };
 
 export interface CurioInterface extends utils.Interface {
@@ -237,7 +289,11 @@ export interface CurioInterface extends utils.Interface {
     "facets()": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "march(uint256,(uint256,uint256))": FunctionFragment;
+<<<<<<< HEAD
     "purchaseTroop((uint256,uint256),uint256)": FunctionFragment;
+=======
+    "startProduction((uint256,uint256),uint256)": FunctionFragment;
+>>>>>>> ca3f58f (Remove legacy files)
     "bulkGetAllTroops()": FunctionFragment;
     "getBase(uint256)": FunctionFragment;
     "getBaseAt((uint256,uint256))": FunctionFragment;
@@ -254,12 +310,19 @@ export interface CurioInterface extends utils.Interface {
     "getTroopType(uint256)": FunctionFragment;
     "getWorldConstants()": FunctionFragment;
     "bulkInitializeTiles((uint256,uint256)[])": FunctionFragment;
+<<<<<<< HEAD
+=======
+    "endProduction((uint256,uint256))": FunctionFragment;
+>>>>>>> ca3f58f (Remove legacy files)
     "initializePlayer((uint256,uint256),address)": FunctionFragment;
     "repair((uint256,uint256))": FunctionFragment;
     "spawnTroop((uint256,uint256),address,uint256)": FunctionFragment;
     "storeEncodedRawMapCols(uint256[])": FunctionFragment;
     "transferBaseOwnership((uint256,uint256),address)": FunctionFragment;
+<<<<<<< HEAD
     "updatePlayerBalance(address)": FunctionFragment;
+=======
+>>>>>>> ca3f58f (Remove legacy files)
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "_canTransportTroop((bool,uint8,uint256,uint256))": FunctionFragment;
@@ -270,6 +333,7 @@ export interface CurioInterface extends utils.Interface {
     "_getCargoCapacity(uint256)": FunctionFragment;
     "_getDamagePerHit(uint256)": FunctionFragment;
     "_getDefenseFactor(uint256)": FunctionFragment;
+<<<<<<< HEAD
     "_getExpensePerSecond(uint256)": FunctionFragment;
     "_getLargeActionCooldown(uint256)": FunctionFragment;
     "_getMaxHealth(uint256)": FunctionFragment;
@@ -279,6 +343,15 @@ export interface CurioInterface extends utils.Interface {
     "_getTotalGoldGenerationPerUpdate(address)": FunctionFragment;
     "_getTroop(uint256)": FunctionFragment;
     "_getTroopCost(uint256)": FunctionFragment;
+=======
+    "_getLargeActionCooldown(uint256)": FunctionFragment;
+    "_getMaxHealth(uint256)": FunctionFragment;
+    "_getMovementCooldown(uint256)": FunctionFragment;
+    "_getMovesPerSecond(uint256)": FunctionFragment;
+    "_getProductionCooldown(uint256)": FunctionFragment;
+    "_getTileAt((uint256,uint256))": FunctionFragment;
+    "_getTroop(uint256)": FunctionFragment;
+>>>>>>> ca3f58f (Remove legacy files)
     "_hasPort((bool,uint8,uint256,uint256))": FunctionFragment;
     "_inBound((uint256,uint256))": FunctionFragment;
     "_isLandTroop(uint256)": FunctionFragment;
@@ -314,7 +387,11 @@ export interface CurioInterface extends utils.Interface {
     values: [BigNumberish, PositionStruct]
   ): string;
   encodeFunctionData(
+<<<<<<< HEAD
     functionFragment: "purchaseTroop",
+=======
+    functionFragment: "startProduction",
+>>>>>>> ca3f58f (Remove legacy files)
     values: [PositionStruct, BigNumberish]
   ): string;
   encodeFunctionData(
@@ -379,6 +456,13 @@ export interface CurioInterface extends utils.Interface {
     values: [PositionStruct[]]
   ): string;
   encodeFunctionData(
+<<<<<<< HEAD
+=======
+    functionFragment: "endProduction",
+    values: [PositionStruct]
+  ): string;
+  encodeFunctionData(
+>>>>>>> ca3f58f (Remove legacy files)
     functionFragment: "initializePlayer",
     values: [PositionStruct, string]
   ): string;
@@ -398,10 +482,13 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "transferBaseOwnership",
     values: [PositionStruct, string]
   ): string;
+<<<<<<< HEAD
   encodeFunctionData(
     functionFragment: "updatePlayerBalance",
     values: [string]
   ): string;
+=======
+>>>>>>> ca3f58f (Remove legacy files)
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
@@ -440,10 +527,13 @@ export interface CurioInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+<<<<<<< HEAD
     functionFragment: "_getExpensePerSecond",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+=======
+>>>>>>> ca3f58f (Remove legacy files)
     functionFragment: "_getLargeActionCooldown",
     values: [BigNumberish]
   ): string;
@@ -456,6 +546,7 @@ export interface CurioInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+<<<<<<< HEAD
     functionFragment: "_getPlayerBalance",
     values: [string]
   ): string;
@@ -466,16 +557,31 @@ export interface CurioInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "_getTotalGoldGenerationPerUpdate",
     values: [string]
+=======
+    functionFragment: "_getMovesPerSecond",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getProductionCooldown",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getTileAt",
+    values: [PositionStruct]
+>>>>>>> ca3f58f (Remove legacy files)
   ): string;
   encodeFunctionData(
     functionFragment: "_getTroop",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+<<<<<<< HEAD
     functionFragment: "_getTroopCost",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+=======
+>>>>>>> ca3f58f (Remove legacy files)
     functionFragment: "_hasPort",
     values: [TileStruct]
   ): string;
@@ -524,7 +630,11 @@ export interface CurioInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "march", data: BytesLike): Result;
   decodeFunctionResult(
+<<<<<<< HEAD
     functionFragment: "purchaseTroop",
+=======
+    functionFragment: "startProduction",
+>>>>>>> ca3f58f (Remove legacy files)
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -574,6 +684,13 @@ export interface CurioInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+<<<<<<< HEAD
+=======
+    functionFragment: "endProduction",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+>>>>>>> ca3f58f (Remove legacy files)
     functionFragment: "initializePlayer",
     data: BytesLike
   ): Result;
@@ -587,10 +704,13 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "transferBaseOwnership",
     data: BytesLike
   ): Result;
+<<<<<<< HEAD
   decodeFunctionResult(
     functionFragment: "updatePlayerBalance",
     data: BytesLike
   ): Result;
+=======
+>>>>>>> ca3f58f (Remove legacy files)
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
@@ -626,10 +746,13 @@ export interface CurioInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+<<<<<<< HEAD
     functionFragment: "_getExpensePerSecond",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+=======
+>>>>>>> ca3f58f (Remove legacy files)
     functionFragment: "_getLargeActionCooldown",
     data: BytesLike
   ): Result;
@@ -642,6 +765,7 @@ export interface CurioInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+<<<<<<< HEAD
     functionFragment: "_getPlayerBalance",
     data: BytesLike
   ): Result;
@@ -655,6 +779,17 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "_getTroopCost",
     data: BytesLike
   ): Result;
+=======
+    functionFragment: "_getMovesPerSecond",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_getProductionCooldown",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "_getTileAt", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "_getTroop", data: BytesLike): Result;
+>>>>>>> ca3f58f (Remove legacy files)
   decodeFunctionResult(functionFragment: "_hasPort", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "_inBound", data: BytesLike): Result;
   decodeFunctionResult(
@@ -674,12 +809,20 @@ export interface CurioInterface extends utils.Interface {
     "OwnershipTransferred(address,address)": EventFragment;
     "AttackedBase(address,uint256,tuple,uint256,tuple)": EventFragment;
     "AttackedTroop(address,uint256,tuple,uint256,tuple)": EventFragment;
+<<<<<<< HEAD
     "Bankruptcy(address)": EventFragment;
+=======
+>>>>>>> ca3f58f (Remove legacy files)
     "BaseCaptured(address,uint256,uint256)": EventFragment;
     "Death(address,uint256)": EventFragment;
     "Moved(address,uint256,uint256,tuple,tuple)": EventFragment;
     "NewPlayer(address,tuple)": EventFragment;
     "NewTroop(address,uint256,tuple,tuple)": EventFragment;
+<<<<<<< HEAD
+=======
+    "ProductionEnded(address,uint256)": EventFragment;
+    "ProductionStarted(address,uint256,tuple)": EventFragment;
+>>>>>>> ca3f58f (Remove legacy files)
     "Recovered(address,uint256)": EventFragment;
     "Repaired(address,uint256,uint256)": EventFragment;
   };
@@ -688,12 +831,20 @@ export interface CurioInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "AttackedBase"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "AttackedTroop"): EventFragment;
+<<<<<<< HEAD
   getEvent(nameOrSignatureOrTopic: "Bankruptcy"): EventFragment;
+=======
+>>>>>>> ca3f58f (Remove legacy files)
   getEvent(nameOrSignatureOrTopic: "BaseCaptured"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Death"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Moved"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NewPlayer"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NewTroop"): EventFragment;
+<<<<<<< HEAD
+=======
+  getEvent(nameOrSignatureOrTopic: "ProductionEnded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ProductionStarted"): EventFragment;
+>>>>>>> ca3f58f (Remove legacy files)
   getEvent(nameOrSignatureOrTopic: "Recovered"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Repaired"): EventFragment;
 }
@@ -739,10 +890,13 @@ export type AttackedTroopEvent = TypedEvent<
 
 export type AttackedTroopEventFilter = TypedEventFilter<AttackedTroopEvent>;
 
+<<<<<<< HEAD
 export type BankruptcyEvent = TypedEvent<[string], { _player: string }>;
 
 export type BankruptcyEventFilter = TypedEventFilter<BankruptcyEvent>;
 
+=======
+>>>>>>> ca3f58f (Remove legacy files)
 export type BaseCapturedEvent = TypedEvent<
   [string, BigNumber, BigNumber],
   { _player: string; _troopId: BigNumber; _baseId: BigNumber }
@@ -789,6 +943,24 @@ export type NewTroopEvent = TypedEvent<
 
 export type NewTroopEventFilter = TypedEventFilter<NewTroopEvent>;
 
+<<<<<<< HEAD
+=======
+export type ProductionEndedEvent = TypedEvent<
+  [string, BigNumber],
+  { _player: string; _baseId: BigNumber }
+>;
+
+export type ProductionEndedEventFilter = TypedEventFilter<ProductionEndedEvent>;
+
+export type ProductionStartedEvent = TypedEvent<
+  [string, BigNumber, ProductionStructOutput],
+  { _player: string; _baseId: BigNumber; _production: ProductionStructOutput }
+>;
+
+export type ProductionStartedEventFilter =
+  TypedEventFilter<ProductionStartedEvent>;
+
+>>>>>>> ca3f58f (Remove legacy files)
 export type RecoveredEvent = TypedEvent<
   [string, BigNumber],
   { _player: string; _troopId: BigNumber }
@@ -866,7 +1038,11 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+<<<<<<< HEAD
     purchaseTroop(
+=======
+    startProduction(
+>>>>>>> ca3f58f (Remove legacy files)
       _pos: PositionStruct,
       _troopTypeId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -947,6 +1123,14 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+<<<<<<< HEAD
+=======
+    endProduction(
+      _pos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+>>>>>>> ca3f58f (Remove legacy files)
     initializePlayer(
       _pos: PositionStruct,
       _player: string,
@@ -976,11 +1160,14 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+<<<<<<< HEAD
     updatePlayerBalance(
       _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+=======
+>>>>>>> ca3f58f (Remove legacy files)
     owner(overrides?: CallOverrides): Promise<[string] & { owner_: string }>;
 
     transferOwnership(
@@ -1028,28 +1215,49 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+<<<<<<< HEAD
     _getExpensePerSecond(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
+=======
     _getLargeActionCooldown(
+>>>>>>> ca3f58f (Remove legacy files)
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+<<<<<<< HEAD
+    _getLargeActionCooldown(
+=======
     _getMaxHealth(
+>>>>>>> ca3f58f (Remove legacy files)
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+<<<<<<< HEAD
+    _getMaxHealth(
+=======
     _getMovementCooldown(
+>>>>>>> ca3f58f (Remove legacy files)
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+<<<<<<< HEAD
+    _getMovementCooldown(
+=======
+    _getMovesPerSecond(
+>>>>>>> ca3f58f (Remove legacy files)
+      _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+<<<<<<< HEAD
     _getPlayerBalance(
       _player: string,
+=======
+    _getProductionCooldown(
+      _troopTypeId: BigNumberish,
+>>>>>>> ca3f58f (Remove legacy files)
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -1058,6 +1266,7 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[TileStructOutput]>;
 
+<<<<<<< HEAD
     _getTotalGoldGenerationPerUpdate(
       _player: string,
       overrides?: CallOverrides
@@ -1073,6 +1282,13 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+=======
+    _getTroop(
+      _troopId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[TroopStructOutput]>;
+
+>>>>>>> ca3f58f (Remove legacy files)
     _hasPort(_tile: TileStruct, overrides?: CallOverrides): Promise<[boolean]>;
 
     _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<[boolean]>;
@@ -1140,7 +1356,11 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+<<<<<<< HEAD
   purchaseTroop(
+=======
+  startProduction(
+>>>>>>> ca3f58f (Remove legacy files)
     _pos: PositionStruct,
     _troopTypeId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -1221,6 +1441,14 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+<<<<<<< HEAD
+=======
+  endProduction(
+    _pos: PositionStruct,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+>>>>>>> ca3f58f (Remove legacy files)
   initializePlayer(
     _pos: PositionStruct,
     _player: string,
@@ -1250,11 +1478,14 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+<<<<<<< HEAD
   updatePlayerBalance(
     _player: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+=======
+>>>>>>> ca3f58f (Remove legacy files)
   owner(overrides?: CallOverrides): Promise<string>;
 
   transferOwnership(
@@ -1302,28 +1533,49 @@ export interface Curio extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+<<<<<<< HEAD
   _getExpensePerSecond(
-    _troopTypeId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
+=======
   _getLargeActionCooldown(
+>>>>>>> ca3f58f (Remove legacy files)
     _troopTypeId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+<<<<<<< HEAD
+  _getLargeActionCooldown(
+=======
   _getMaxHealth(
+>>>>>>> ca3f58f (Remove legacy files)
     _troopTypeId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+<<<<<<< HEAD
+  _getMaxHealth(
+=======
   _getMovementCooldown(
+>>>>>>> ca3f58f (Remove legacy files)
     _troopTypeId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+<<<<<<< HEAD
+  _getMovementCooldown(
+=======
+  _getMovesPerSecond(
+>>>>>>> ca3f58f (Remove legacy files)
+    _troopTypeId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+<<<<<<< HEAD
   _getPlayerBalance(
     _player: string,
+=======
+  _getProductionCooldown(
+    _troopTypeId: BigNumberish,
+>>>>>>> ca3f58f (Remove legacy files)
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -1332,6 +1584,7 @@ export interface Curio extends BaseContract {
     overrides?: CallOverrides
   ): Promise<TileStructOutput>;
 
+<<<<<<< HEAD
   _getTotalGoldGenerationPerUpdate(
     _player: string,
     overrides?: CallOverrides
@@ -1347,6 +1600,13 @@ export interface Curio extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+=======
+  _getTroop(
+    _troopId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<TroopStructOutput>;
+
+>>>>>>> ca3f58f (Remove legacy files)
   _hasPort(_tile: TileStruct, overrides?: CallOverrides): Promise<boolean>;
 
   _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<boolean>;
@@ -1414,7 +1674,11 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+<<<<<<< HEAD
     purchaseTroop(
+=======
+    startProduction(
+>>>>>>> ca3f58f (Remove legacy files)
       _pos: PositionStruct,
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
@@ -1495,6 +1759,14 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+<<<<<<< HEAD
+=======
+    endProduction(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+>>>>>>> ca3f58f (Remove legacy files)
     initializePlayer(
       _pos: PositionStruct,
       _player: string,
@@ -1521,11 +1793,14 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+<<<<<<< HEAD
     updatePlayerBalance(
       _player: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
+=======
+>>>>>>> ca3f58f (Remove legacy files)
     owner(overrides?: CallOverrides): Promise<string>;
 
     transferOwnership(
@@ -1573,28 +1848,49 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+<<<<<<< HEAD
     _getExpensePerSecond(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
+=======
     _getLargeActionCooldown(
+>>>>>>> ca3f58f (Remove legacy files)
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+<<<<<<< HEAD
+    _getLargeActionCooldown(
+=======
     _getMaxHealth(
+>>>>>>> ca3f58f (Remove legacy files)
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+<<<<<<< HEAD
+    _getMaxHealth(
+=======
     _getMovementCooldown(
+>>>>>>> ca3f58f (Remove legacy files)
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+<<<<<<< HEAD
+    _getMovementCooldown(
+=======
+    _getMovesPerSecond(
+>>>>>>> ca3f58f (Remove legacy files)
+      _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+<<<<<<< HEAD
     _getPlayerBalance(
       _player: string,
+=======
+    _getProductionCooldown(
+      _troopTypeId: BigNumberish,
+>>>>>>> ca3f58f (Remove legacy files)
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1603,6 +1899,7 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<TileStructOutput>;
 
+<<<<<<< HEAD
     _getTotalGoldGenerationPerUpdate(
       _player: string,
       overrides?: CallOverrides
@@ -1618,6 +1915,13 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+=======
+    _getTroop(
+      _troopId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<TroopStructOutput>;
+
+>>>>>>> ca3f58f (Remove legacy files)
     _hasPort(_tile: TileStruct, overrides?: CallOverrides): Promise<boolean>;
 
     _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<boolean>;
@@ -1704,9 +2008,12 @@ export interface Curio extends BaseContract {
       _targetTroopInfo?: null
     ): AttackedTroopEventFilter;
 
+<<<<<<< HEAD
     "Bankruptcy(address)"(_player?: null): BankruptcyEventFilter;
     Bankruptcy(_player?: null): BankruptcyEventFilter;
 
+=======
+>>>>>>> ca3f58f (Remove legacy files)
     "BaseCaptured(address,uint256,uint256)"(
       _player?: null,
       _troopId?: null,
@@ -1755,6 +2062,26 @@ export interface Curio extends BaseContract {
       _pos?: null
     ): NewTroopEventFilter;
 
+<<<<<<< HEAD
+=======
+    "ProductionEnded(address,uint256)"(
+      _player?: null,
+      _baseId?: null
+    ): ProductionEndedEventFilter;
+    ProductionEnded(_player?: null, _baseId?: null): ProductionEndedEventFilter;
+
+    "ProductionStarted(address,uint256,tuple)"(
+      _player?: null,
+      _baseId?: null,
+      _production?: null
+    ): ProductionStartedEventFilter;
+    ProductionStarted(
+      _player?: null,
+      _baseId?: null,
+      _production?: null
+    ): ProductionStartedEventFilter;
+
+>>>>>>> ca3f58f (Remove legacy files)
     "Recovered(address,uint256)"(
       _player?: null,
       _troopId?: null
@@ -1806,7 +2133,11 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+<<<<<<< HEAD
     purchaseTroop(
+=======
+    startProduction(
+>>>>>>> ca3f58f (Remove legacy files)
       _pos: PositionStruct,
       _troopTypeId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1879,6 +2210,14 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+<<<<<<< HEAD
+=======
+    endProduction(
+      _pos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+>>>>>>> ca3f58f (Remove legacy files)
     initializePlayer(
       _pos: PositionStruct,
       _player: string,
@@ -1908,11 +2247,14 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+<<<<<<< HEAD
     updatePlayerBalance(
       _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+=======
+>>>>>>> ca3f58f (Remove legacy files)
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferOwnership(
@@ -1957,11 +2299,14 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+<<<<<<< HEAD
     _getExpensePerSecond(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+=======
+>>>>>>> ca3f58f (Remove legacy files)
     _getLargeActionCooldown(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
@@ -1977,6 +2322,7 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+<<<<<<< HEAD
     _getPlayerBalance(
       _player: string,
       overrides?: CallOverrides
@@ -1996,6 +2342,25 @@ export interface Curio extends BaseContract {
 
     _getTroopCost(
       _troopTypeId: BigNumberish,
+=======
+    _getMovesPerSecond(
+      _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getProductionCooldown(
+      _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getTileAt(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getTroop(
+      _troopId: BigNumberish,
+>>>>>>> ca3f58f (Remove legacy files)
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -2067,7 +2432,11 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+<<<<<<< HEAD
     purchaseTroop(
+=======
+    startProduction(
+>>>>>>> ca3f58f (Remove legacy files)
       _pos: PositionStruct,
       _troopTypeId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -2146,6 +2515,14 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+<<<<<<< HEAD
+=======
+    endProduction(
+      _pos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+>>>>>>> ca3f58f (Remove legacy files)
     initializePlayer(
       _pos: PositionStruct,
       _player: string,
@@ -2175,11 +2552,14 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+<<<<<<< HEAD
     updatePlayerBalance(
       _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+=======
+>>>>>>> ca3f58f (Remove legacy files)
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     transferOwnership(
@@ -2227,11 +2607,14 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+<<<<<<< HEAD
     _getExpensePerSecond(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+=======
+>>>>>>> ca3f58f (Remove legacy files)
     _getLargeActionCooldown(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
@@ -2247,6 +2630,7 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+<<<<<<< HEAD
     _getPlayerBalance(
       _player: string,
       overrides?: CallOverrides
@@ -2259,16 +2643,34 @@ export interface Curio extends BaseContract {
 
     _getTotalGoldGenerationPerUpdate(
       _player: string,
+=======
+    _getMovesPerSecond(
+      _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getProductionCooldown(
+      _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getTileAt(
+      _pos: PositionStruct,
+>>>>>>> ca3f58f (Remove legacy files)
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     _getTroop(
+<<<<<<< HEAD
       _id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     _getTroopCost(
       _troopTypeId: BigNumberish,
+=======
+      _troopId: BigNumberish,
+>>>>>>> ca3f58f (Remove legacy files)
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

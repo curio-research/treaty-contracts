@@ -25,6 +25,10 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
 export type TroopStruct = {
   owner: string;
   troopTypeId: BigNumberish;
+<<<<<<< HEAD
+=======
+  movesLeftInSecond: BigNumberish;
+>>>>>>> ca3f58f (Remove legacy files)
   lastMoved: BigNumberish;
   lastLargeActionTaken: BigNumberish;
   lastRepaired: BigNumberish;
@@ -40,11 +44,19 @@ export type TroopStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
+<<<<<<< HEAD
+=======
+  BigNumber,
+>>>>>>> ca3f58f (Remove legacy files)
   PositionStructOutput,
   BigNumber[]
 ] & {
   owner: string;
   troopTypeId: BigNumber;
+<<<<<<< HEAD
+=======
+  movesLeftInSecond: BigNumber;
+>>>>>>> ca3f58f (Remove legacy files)
   lastMoved: BigNumber;
   lastLargeActionTaken: BigNumber;
   lastRepaired: BigNumber;
@@ -59,7 +71,10 @@ export type BaseStruct = {
   attackFactor: BigNumberish;
   defenseFactor: BigNumberish;
   health: BigNumberish;
+<<<<<<< HEAD
   goldGenerationPerSecond: BigNumberish;
+=======
+>>>>>>> ca3f58f (Remove legacy files)
 };
 
 export type BaseStructOutput = [
@@ -67,7 +82,10 @@ export type BaseStructOutput = [
   string,
   BigNumber,
   BigNumber,
+<<<<<<< HEAD
   BigNumber,
+=======
+>>>>>>> ca3f58f (Remove legacy files)
   BigNumber
 ] & {
   name: number;
@@ -75,7 +93,10 @@ export type BaseStructOutput = [
   attackFactor: BigNumber;
   defenseFactor: BigNumber;
   health: BigNumber;
+<<<<<<< HEAD
   goldGenerationPerSecond: BigNumber;
+=======
+>>>>>>> ca3f58f (Remove legacy files)
 };
 
 export type ProductionStruct = {
@@ -96,10 +117,17 @@ export type TroopTypeStruct = {
   attackFactor: BigNumberish;
   defenseFactor: BigNumberish;
   cargoCapacity: BigNumberish;
+<<<<<<< HEAD
   movementCooldown: BigNumberish;
   largeActionCooldown: BigNumberish;
   cost: BigNumberish;
   expensePerSecond: BigNumberish;
+=======
+  movesPerSecond: BigNumberish;
+  movementCooldown: BigNumberish;
+  largeActionCooldown: BigNumberish;
+  productionCooldown: BigNumberish;
+>>>>>>> ca3f58f (Remove legacy files)
 };
 
 export type TroopTypeStructOutput = [
@@ -122,10 +150,17 @@ export type TroopTypeStructOutput = [
   attackFactor: BigNumber;
   defenseFactor: BigNumber;
   cargoCapacity: BigNumber;
+<<<<<<< HEAD
   movementCooldown: BigNumber;
   largeActionCooldown: BigNumber;
   cost: BigNumber;
   expensePerSecond: BigNumber;
+=======
+  movesPerSecond: BigNumber;
+  movementCooldown: BigNumber;
+  largeActionCooldown: BigNumber;
+  productionCooldown: BigNumber;
+>>>>>>> ca3f58f (Remove legacy files)
 };
 
 export type TileStruct = {
@@ -142,6 +177,7 @@ export type TileStructOutput = [boolean, number, BigNumber, BigNumber] & {
   baseId: BigNumber;
 };
 
+<<<<<<< HEAD
 export type PlayerStruct = {
   initTimestamp: BigNumberish;
   active: boolean;
@@ -165,6 +201,13 @@ export type PlayerStructOutput = [
   totalGoldGenerationPerUpdate: BigNumber;
   totalTroopExpensePerUpdate: BigNumber;
   balanceLastUpdated: BigNumber;
+=======
+export type PlayerStruct = { initTimestamp: BigNumberish; active: boolean };
+
+export type PlayerStructOutput = [BigNumber, boolean] & {
+  initTimestamp: BigNumber;
+  active: boolean;
+>>>>>>> ca3f58f (Remove legacy files)
 };
 
 export type WorldConstantsStruct = {
@@ -176,8 +219,11 @@ export type WorldConstantsStruct = {
   mapInterval: BigNumberish;
   combatEfficiency: BigNumberish;
   numInitTerrainTypes: BigNumberish;
+<<<<<<< HEAD
   initPlayerBalance: BigNumberish;
   defaultBaseGoldGenerationPerSecond: BigNumberish;
+=======
+>>>>>>> ca3f58f (Remove legacy files)
 };
 
 export type WorldConstantsStructOutput = [
@@ -188,8 +234,11 @@ export type WorldConstantsStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
+<<<<<<< HEAD
   BigNumber,
   BigNumber,
+=======
+>>>>>>> ca3f58f (Remove legacy files)
   BigNumber
 ] & {
   admin: string;
@@ -200,8 +249,11 @@ export type WorldConstantsStructOutput = [
   mapInterval: BigNumber;
   combatEfficiency: BigNumber;
   numInitTerrainTypes: BigNumber;
+<<<<<<< HEAD
   initPlayerBalance: BigNumber;
   defaultBaseGoldGenerationPerSecond: BigNumber;
+=======
+>>>>>>> ca3f58f (Remove legacy files)
 };
 
 export interface GetterFacetInterface extends utils.Interface {
