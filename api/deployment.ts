@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { assert } from 'console';
 import { gameConfig } from './types/index';
 
 const api = axios.create();
@@ -38,5 +39,14 @@ export const setTaskActiveMode = async (network: string, address: string, status
     }
   } catch (err) {
     console.log(err);
+  }
+};
+
+export const isConnectionLive = async (): Promise<boolean> => {
+  try {
+    const { data } = await api.get(`/check`);
+    return data.status === 'success';
+  } catch (err: any) {
+    throw new Error(err.message);
   }
 };
