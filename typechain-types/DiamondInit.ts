@@ -26,10 +26,14 @@ export type WorldConstantsStruct = {
   mapInterval: BigNumberish;
   combatEfficiency: BigNumberish;
   numInitTerrainTypes: BigNumberish;
+  initPlayerBalance: BigNumberish;
+  defaultBaseGoldGenerationPerSecond: BigNumberish;
 };
 
 export type WorldConstantsStructOutput = [
   string,
+  BigNumber,
+  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -46,6 +50,8 @@ export type WorldConstantsStructOutput = [
   mapInterval: BigNumber;
   combatEfficiency: BigNumber;
   numInitTerrainTypes: BigNumber;
+  initPlayerBalance: BigNumber;
+  defaultBaseGoldGenerationPerSecond: BigNumber;
 };
 
 export type TroopTypeStruct = {
@@ -56,10 +62,10 @@ export type TroopTypeStruct = {
   attackFactor: BigNumberish;
   defenseFactor: BigNumberish;
   cargoCapacity: BigNumberish;
-  movesPerSecond: BigNumberish;
   movementCooldown: BigNumberish;
   largeActionCooldown: BigNumberish;
-  productionCooldown: BigNumberish;
+  cost: BigNumberish;
+  expensePerSecond: BigNumberish;
 };
 
 export type TroopTypeStructOutput = [
@@ -82,15 +88,15 @@ export type TroopTypeStructOutput = [
   attackFactor: BigNumber;
   defenseFactor: BigNumber;
   cargoCapacity: BigNumber;
-  movesPerSecond: BigNumber;
   movementCooldown: BigNumber;
   largeActionCooldown: BigNumber;
-  productionCooldown: BigNumber;
+  cost: BigNumber;
+  expensePerSecond: BigNumber;
 };
 
 export interface DiamondInitInterface extends utils.Interface {
   functions: {
-    "init((address,uint256,uint256,uint256,uint256,uint256,uint256,uint256),(uint8,bool,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256)[])": FunctionFragment;
+    "init((address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),(uint8,bool,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256)[])": FunctionFragment;
   };
 
   encodeFunctionData(

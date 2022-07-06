@@ -2,7 +2,6 @@
 pragma solidity ^0.8.4;
 
 import "forge-std/Test.sol";
-import "forge-std/console.sol";
 import "contracts/facets/DiamondCutFacet.sol";
 import "contracts/facets/DiamondLoupeFacet.sol";
 import "contracts/facets/OwnershipFacet.sol";
@@ -51,6 +50,7 @@ contract DiamondDeployTest is Test {
     uint256 public armyTroopTypeId = indexToId(uint256(TROOP_NAME.ARMY));
     uint256 public troopTransportTroopTypeId = indexToId(uint256(TROOP_NAME.TROOP_TRANSPORT));
     uint256 public destroyerTroopTypeId = indexToId(uint256(TROOP_NAME.DESTROYER));
+    uint256 public battleshipTroopTypeId = indexToId(uint256(TROOP_NAME.BATTLESHIP));
 
     // troop types
     TroopType public armyTroopType =
@@ -62,10 +62,10 @@ contract DiamondDeployTest is Test {
             attackFactor: 100,
             defenseFactor: 100,
             cargoCapacity: 0,
-            movesPerSecond: 1,
             movementCooldown: 1,
             largeActionCooldown: 1,
-            productionCooldown: 6
+            cost: 6,
+            expensePerSecond: 0
         });
     TroopType public troopTransportTroopType =
         TroopType({
@@ -76,10 +76,10 @@ contract DiamondDeployTest is Test {
             attackFactor: 50,
             defenseFactor: 50,
             cargoCapacity: 6,
-            movesPerSecond: 2,
             movementCooldown: 1, // FIXME
             largeActionCooldown: 1,
-            productionCooldown: 14
+            cost: 14,
+            expensePerSecond: 1
         });
     TroopType public destroyerTroopType =
         TroopType({
@@ -90,10 +90,10 @@ contract DiamondDeployTest is Test {
             attackFactor: 100,
             defenseFactor: 100,
             cargoCapacity: 0,
-            movesPerSecond: 3,
             movementCooldown: 1, // FIXME
             largeActionCooldown: 1,
-            productionCooldown: 20
+            cost: 20,
+            expensePerSecond: 1
         });
     TroopType public cruiserTroopType =
         TroopType({
@@ -104,10 +104,10 @@ contract DiamondDeployTest is Test {
             attackFactor: 100,
             defenseFactor: 100,
             cargoCapacity: 0,
-            movesPerSecond: 2,
             movementCooldown: 1, // FIXME
             largeActionCooldown: 1,
-            productionCooldown: 30
+            cost: 30,
+            expensePerSecond: 1
         });
     TroopType public battleshipTroopType =
         TroopType({
@@ -118,10 +118,10 @@ contract DiamondDeployTest is Test {
             attackFactor: 100,
             defenseFactor: 100,
             cargoCapacity: 0,
-            movesPerSecond: 2,
             movementCooldown: 1, // FIXME
             largeActionCooldown: 1,
-            productionCooldown: 50
+            cost: 50,
+            expensePerSecond: 2
         });
 
     // we assume these two facet selectors do not change. If they do however, we should use getSelectors
@@ -160,11 +160,6 @@ contract DiamondDeployTest is Test {
         getter = GetterFacet(diamond);
         engine = EngineFacet(diamond);
         ownership = OwnershipFacet(diamond);
-
-        // // initialize map (outdated)
-        // Position memory _startPos = Position({x: 0, y: 0});
-        // uint256[][] memory _chunk = generateMapChunk(_worldConstants.mapInterval);
-        // engine.setMapChunk(_startPos, _chunk);
 
         // initialize map using lazy + encoding
         uint256[][] memory _map = generateMap(_worldConstants.worldWidth, _worldConstants.worldHeight, _worldConstants.mapInterval);
@@ -211,7 +206,9 @@ contract DiamondDeployTest is Test {
                 numCities: 15, // yo
                 mapInterval: 10,
                 combatEfficiency: 50,
-                numInitTerrainTypes: 5
+                numInitTerrainTypes: 5,
+                initPlayerBalance: 20,
+                defaultBaseGoldGenerationPerSecond: 5
             });
     }
 

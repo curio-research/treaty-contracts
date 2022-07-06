@@ -3,7 +3,7 @@ pragma solidity ^0.8.4;
 
 import "contracts/libraries/Storage.sol";
 import {Util} from "contracts/libraries/GameUtil.sol";
-import {BASE_NAME, Base, GameState, Player, Position, Production, TERRAIN, Tile, Troop, TroopType} from "contracts/libraries/Types.sol";
+import {BASE_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop, TroopType, WorldConstants} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 
 /// @title Helper facet
@@ -23,6 +23,10 @@ contract HelperFacet is UseStorage {
         _;
     }
 
+    /**
+     * Store an array of encoded raw map columns containing information of all tiles, for efficient storage.
+     * @param _cols map columns encoded with N-ary arithmetic
+     */
     function storeEncodedRawMapCols(uint256[] memory _cols) external onlyAdmin {
         gs().encodedRawMapCols = _cols;
     }
@@ -41,8 +45,16 @@ contract HelperFacet is UseStorage {
         require(Util._getBaseOwner(_baseId) == NULL_ADDR, "CURIO: Base is taken");
         require(!gs().playerMap[_player].active, "CURIO: Player already initialized");
 
+        WorldConstants memory _worldConstants = gs().worldConstants;
         gs().players.push(_player);
-        gs().playerMap[_player] = Player({initTimestamp: block.timestamp, active: true});
+        gs().playerMap[_player] = Player({
+            initTimestamp: block.timestamp, // yo
+            active: true,
+            balance: _worldConstants.initPlayerBalance,
+            totalGoldGenerationPerUpdate: _worldConstants.defaultBaseGoldGenerationPerSecond,
+            totalTroopExpensePerUpdate: 0,
+            balanceLastUpdated: block.timestamp
+        });
         gs().baseIdMap[_baseId].owner = _player;
 
         emit Util.NewPlayer(_player, _pos);
@@ -71,7 +83,7 @@ contract HelperFacet is UseStorage {
             require(Util._isLandTroop(_troopTypeId) || _base.name == BASE_NAME.PORT, "CURIO: Can only spawn water troops in ports");
         }
 
-        (uint256 _troopId, Troop memory _troop) = Util._addTroop(_pos, _troopTypeId, _player);
+        (uint256 _troopId, Troop memory _troop) = Util._addTroop(_player, _pos, _troopTypeId);
 
         emit Util.NewTroop(_player, _troopId, _troop, _pos);
     }
@@ -90,39 +102,31 @@ contract HelperFacet is UseStorage {
         require(_tile.occupantId == NULL, "CURIO: Tile occupied");
 
         Base memory _base = Util._getBase(_tile.baseId);
-        require(_base.owner != _player, "CURIO: Base already belongs to player");
+        require(_base.owner == NULL_ADDR, "CURIO: Base is owned");
 
         gs().baseIdMap[_tile.baseId].owner = _player;
+        Util._updatePlayerBalance(_player);
+        gs().playerMap[_player].totalGoldGenerationPerUpdate += _base.goldGenerationPerSecond;
+
         emit Util.BaseCaptured(_player, NULL, _tile.baseId);
+    }
+
+    /**
+     * Initialize all tiles from an array of positions.
+     * @param _positions all positions
+     */
+    function bulkInitializeTiles(Position[] memory _positions) external onlyAdmin {
+        for (uint256 i = 0; i < _positions.length; i++) {
+            Util._initializeTile(_positions[i]);
+        }
     }
 
     // ----------------------------------------------------------------------
     // STATE FUNCTIONS
     // ----------------------------------------------------------------------
 
-    /**
-     * Finish producing a troop from a base.
-     * @param _pos position of base
-     */
-    function endProduction(Position memory _pos) external {
-        require(Util._inBound(_pos), "CURIO: Out of bound");
-        if (!Util._getTileAt(_pos).isInitialized) Util._initializeTile(_pos);
-
-        // Currently implemented expecting real-time calls from client; can change to lazy if needed
-        Tile memory _tile = Util._getTileAt(_pos);
-        require(_tile.baseId != NULL, "CURIO: No base found");
-        require(Util._getBaseOwner(_tile.baseId) == msg.sender, "CURIO: Can only produce in own base");
-        require(_tile.occupantId == NULL, "CURIO: Base occupied by another troop");
-
-        Production memory _production = gs().baseProductionMap[_tile.baseId];
-        require(_production.troopTypeId != NULL, "CURIO: No production found in base");
-        require(Util._getProductionCooldown(_production.troopTypeId) <= (block.timestamp - _production.startTimestamp), "CURIO: Troop needs more time for production");
-
-        (uint256 _troopId, Troop memory _troop) = Util._addTroop(_pos, _production.troopTypeId, msg.sender);
-        delete gs().baseProductionMap[_tile.baseId];
-
-        emit Util.ProductionEnded(msg.sender, _tile.baseId);
-        emit Util.NewTroop(msg.sender, _troopId, _troop, _pos);
+    function updatePlayerBalance(address _player) external {
+        Util._updatePlayerBalance(_player);
     }
 
     /**
@@ -150,11 +154,5 @@ contract HelperFacet is UseStorage {
         gs().troopIdMap[_troopId].lastRepaired = block.timestamp;
         emit Util.Repaired(msg.sender, _tile.occupantId, _troop.health);
         if (_troop.health == Util._getMaxHealth(_troop.troopTypeId)) emit Util.Recovered(msg.sender, _troopId);
-    }
-
-    function bulkInitializeTiles(Position[] memory _positions) external onlyAdmin {
-        for (uint256 i = 0; i < _positions.length; i++) {
-            Util._initializeTile(_positions[i]);
-        }
     }
 }

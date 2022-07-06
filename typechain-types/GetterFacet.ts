@@ -25,7 +25,6 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
 export type TroopStruct = {
   owner: string;
   troopTypeId: BigNumberish;
-  movesLeftInSecond: BigNumberish;
   lastMoved: BigNumberish;
   lastLargeActionTaken: BigNumberish;
   lastRepaired: BigNumberish;
@@ -41,13 +40,11 @@ export type TroopStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
-  BigNumber,
   PositionStructOutput,
   BigNumber[]
 ] & {
   owner: string;
   troopTypeId: BigNumber;
-  movesLeftInSecond: BigNumber;
   lastMoved: BigNumber;
   lastLargeActionTaken: BigNumber;
   lastRepaired: BigNumber;
@@ -62,11 +59,13 @@ export type BaseStruct = {
   attackFactor: BigNumberish;
   defenseFactor: BigNumberish;
   health: BigNumberish;
+  goldGenerationPerSecond: BigNumberish;
 };
 
 export type BaseStructOutput = [
   number,
   string,
+  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber
@@ -76,6 +75,7 @@ export type BaseStructOutput = [
   attackFactor: BigNumber;
   defenseFactor: BigNumber;
   health: BigNumber;
+  goldGenerationPerSecond: BigNumber;
 };
 
 export type ProductionStruct = {
@@ -96,10 +96,10 @@ export type TroopTypeStruct = {
   attackFactor: BigNumberish;
   defenseFactor: BigNumberish;
   cargoCapacity: BigNumberish;
-  movesPerSecond: BigNumberish;
   movementCooldown: BigNumberish;
   largeActionCooldown: BigNumberish;
-  productionCooldown: BigNumberish;
+  cost: BigNumberish;
+  expensePerSecond: BigNumberish;
 };
 
 export type TroopTypeStructOutput = [
@@ -122,10 +122,10 @@ export type TroopTypeStructOutput = [
   attackFactor: BigNumber;
   defenseFactor: BigNumber;
   cargoCapacity: BigNumber;
-  movesPerSecond: BigNumber;
   movementCooldown: BigNumber;
   largeActionCooldown: BigNumber;
-  productionCooldown: BigNumber;
+  cost: BigNumber;
+  expensePerSecond: BigNumber;
 };
 
 export type TileStruct = {
@@ -142,11 +142,29 @@ export type TileStructOutput = [boolean, number, BigNumber, BigNumber] & {
   baseId: BigNumber;
 };
 
-export type PlayerStruct = { initTimestamp: BigNumberish; active: boolean };
+export type PlayerStruct = {
+  initTimestamp: BigNumberish;
+  active: boolean;
+  balance: BigNumberish;
+  totalGoldGenerationPerUpdate: BigNumberish;
+  totalTroopExpensePerUpdate: BigNumberish;
+  balanceLastUpdated: BigNumberish;
+};
 
-export type PlayerStructOutput = [BigNumber, boolean] & {
+export type PlayerStructOutput = [
+  BigNumber,
+  boolean,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber
+] & {
   initTimestamp: BigNumber;
   active: boolean;
+  balance: BigNumber;
+  totalGoldGenerationPerUpdate: BigNumber;
+  totalTroopExpensePerUpdate: BigNumber;
+  balanceLastUpdated: BigNumber;
 };
 
 export type WorldConstantsStruct = {
@@ -158,10 +176,14 @@ export type WorldConstantsStruct = {
   mapInterval: BigNumberish;
   combatEfficiency: BigNumberish;
   numInitTerrainTypes: BigNumberish;
+  initPlayerBalance: BigNumberish;
+  defaultBaseGoldGenerationPerSecond: BigNumberish;
 };
 
 export type WorldConstantsStructOutput = [
   string,
+  BigNumber,
+  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -178,6 +200,8 @@ export type WorldConstantsStructOutput = [
   mapInterval: BigNumber;
   combatEfficiency: BigNumber;
   numInitTerrainTypes: BigNumber;
+  initPlayerBalance: BigNumber;
+  defaultBaseGoldGenerationPerSecond: BigNumber;
 };
 
 export interface GetterFacetInterface extends utils.Interface {

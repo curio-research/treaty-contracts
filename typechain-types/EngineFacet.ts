@@ -27,7 +27,7 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
 export interface EngineFacetInterface extends utils.Interface {
   functions: {
     "march(uint256,(uint256,uint256))": FunctionFragment;
-    "startProduction((uint256,uint256),uint256)": FunctionFragment;
+    "purchaseTroop((uint256,uint256),uint256)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -35,13 +35,13 @@ export interface EngineFacetInterface extends utils.Interface {
     values: [BigNumberish, PositionStruct]
   ): string;
   encodeFunctionData(
-    functionFragment: "startProduction",
+    functionFragment: "purchaseTroop",
     values: [PositionStruct, BigNumberish]
   ): string;
 
   decodeFunctionResult(functionFragment: "march", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "startProduction",
+    functionFragment: "purchaseTroop",
     data: BytesLike
   ): Result;
 
@@ -81,7 +81,7 @@ export interface EngineFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    startProduction(
+    purchaseTroop(
       _pos: PositionStruct,
       _troopTypeId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -94,7 +94,7 @@ export interface EngineFacet extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  startProduction(
+  purchaseTroop(
     _pos: PositionStruct,
     _troopTypeId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -107,7 +107,7 @@ export interface EngineFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    startProduction(
+    purchaseTroop(
       _pos: PositionStruct,
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
@@ -123,7 +123,7 @@ export interface EngineFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    startProduction(
+    purchaseTroop(
       _pos: PositionStruct,
       _troopTypeId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -137,7 +137,7 @@ export interface EngineFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    startProduction(
+    purchaseTroop(
       _pos: PositionStruct,
       _troopTypeId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }

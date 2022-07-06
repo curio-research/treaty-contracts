@@ -30,10 +30,10 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     attackFactor: 100,
     defenseFactor: 100,
     cargoCapacity: 0,
-    movesPerSecond: 1,
     movementCooldown: 1,
     largeActionCooldown: 1,
-    productionCooldown: 6,
+    cost: 6,
+    expensePerSecond: 0,
   },
   {
     name: TROOP_NAME.TROOP_TRANSPORT,
@@ -43,10 +43,10 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     attackFactor: 50,
     defenseFactor: 50,
     cargoCapacity: 6,
-    movesPerSecond: 2,
     movementCooldown: 1, // FIXME
     largeActionCooldown: 1,
-    productionCooldown: 14,
+    cost: 14,
+    expensePerSecond: 1,
   },
   {
     name: TROOP_NAME.DESTROYER,
@@ -56,10 +56,10 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     attackFactor: 100,
     defenseFactor: 100,
     cargoCapacity: 0,
-    movesPerSecond: 1,
     movementCooldown: 1, // FIXME
     largeActionCooldown: 1,
-    productionCooldown: 20,
+    cost: 20,
+    expensePerSecond: 1,
   },
   {
     name: TROOP_NAME.CRUISER,
@@ -69,10 +69,10 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     attackFactor: 100,
     defenseFactor: 100,
     cargoCapacity: 0,
-    movesPerSecond: 1,
     movementCooldown: 1, // FIXME
     largeActionCooldown: 1,
-    productionCooldown: 30,
+    cost: 30,
+    expensePerSecond: 1,
   },
   {
     name: TROOP_NAME.BATTLESHIP,
@@ -82,10 +82,10 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     attackFactor: 100,
     defenseFactor: 100,
     cargoCapacity: 0,
-    movesPerSecond: 1,
     movementCooldown: 1, // FIXME
     largeActionCooldown: 1,
-    productionCooldown: 50,
+    cost: 50,
+    expensePerSecond: 2,
   },
 ];
 
@@ -99,6 +99,8 @@ export const generateWorldConstants = (adminAddr: string): WorldConstantsStruct 
     mapInterval: MAP_INTERVAL,
     combatEfficiency: COMBAT_EFFICIENCY,
     numInitTerrainTypes: NUM_INIT_TERRAIN_TYPES,
+    initPlayerBalance: 20,
+    defaultBaseGoldGenerationPerSecond: 5,
   };
 };
 
