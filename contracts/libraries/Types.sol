@@ -102,5 +102,5 @@ struct GameState {
     mapping(uint256 => Troop) troopIdMap;
     uint256[] troopTypeIds;
     mapping(uint256 => TroopType) troopTypeIdMap;
-    uint256[] encodedRawMapCols;
+    uint256[][] encodedColumnBatches;
 }

@@ -1,6 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
+import "forge-std/console.sol";
 import "contracts/libraries/Storage.sol";
 import {Util} from "contracts/libraries/GameUtil.sol";
 import {BASE_NAME, Base, GameState, Player, Position, Production, TERRAIN, Tile, Troop, TroopType} from "contracts/libraries/Types.sol";
@@ -23,8 +24,8 @@ contract HelperFacet is UseStorage {
         _;
     }
 
-    function storeEncodedRawMapCols(uint256[] memory _cols) external onlyAdmin {
-        gs().encodedRawMapCols = _cols;
+    function storeEncodedColumnBatches(uint256[][] memory _colBatches) external onlyAdmin {
+        gs().encodedColumnBatches = _colBatches;
     }
 
     /**
@@ -34,6 +35,7 @@ contract HelperFacet is UseStorage {
      * @param _player player address
      */
     function initializePlayer(Position memory _pos, address _player) external {
+        console.log("where did it fail?");
         require(Util._inBound(_pos), "CURIO: Out of bound");
         if (!Util._getTileAt(_pos).isInitialized) Util._initializeTile(_pos);
 

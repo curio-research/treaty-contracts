@@ -168,33 +168,50 @@ contract DiamondDeployTest is Test {
 
         // initialize map using lazy + encoding
         uint256[][] memory _map = generateMap(_worldConstants.worldWidth, _worldConstants.worldHeight, _worldConstants.mapInterval);
-        uint256[] memory _encodedMapCols = _encodeTileMap(_worldConstants.numInitTerrainTypes, _map);
-        helper.storeEncodedRawMapCols(_encodedMapCols);
+        uint256[][] memory _encodedColumnBatches = _encodeTileMap(_worldConstants.numInitTerrainTypes, _map);
+        helper.storeEncodedColumnBatches(_encodedColumnBatches);
 
         // initialize players
+        console.log("AA");
         helper.initializePlayer(player1Pos, player1);
+        console.log("BB");
         helper.initializePlayer(player2Pos, player2);
+        console.log("CC");
         helper.initializePlayer(player3Pos, player3);
 
         vm.stopPrank();
     }
 
-    function _encodeTileMap(uint256 _numInitTerrainTypes, uint256[][] memory _tileMap) internal pure returns (uint256[] memory) {
-        uint256[] memory _result = new uint256[](_tileMap.length);
+    function _encodeTileMap(uint256 _numInitTerrainTypes, uint256[][] memory _tileMap) internal pure returns (uint256[][] memory) {
+        uint256 _batchSize = 100;
+        uint256[][] memory _result = new uint256[][](_tileMap.length);
+        uint256 _numBatchPerCol = _tileMap[0].length / _batchSize;
 
         uint256[] memory _col = new uint256[](_tileMap[0].length);
-        uint256 _encodedCol;
+        uint256[] memory _encodedBatch = new uint256[](_numBatchPerCol + 1);
+        uint256 _lastBatchSize = _col.length % _batchSize;
         uint256 _temp;
+        uint256 k;
 
         for (uint256 x = 0; x < _tileMap.length; x++) {
             _col = _tileMap[x];
-            _encodedCol = 0;
-            for (uint256 y = 0; y < _col.length; y++) {
-                _temp = _encodedCol + _col[y] * _numInitTerrainTypes**y;
-                if (_temp < _encodedCol) revert("Integer overflow");
-                _encodedCol = _temp;
+            for (k = 0; k < _numBatchPerCol; k++) {
+                _encodedBatch[k] = 0;
+                for (uint256 y = k * _batchSize; y < k * (_batchSize + 1); y++) {
+                    _temp = _encodedBatch[k] + _col[y] * _numInitTerrainTypes**y;
+                    if (_temp < _encodedBatch[k]) revert("Integer overflow");
+                    _encodedBatch[k] = _temp;
+                }
             }
-            _result[x] = _encodedCol;
+            if (_lastBatchSize > 0) {
+                _encodedBatch[k] = 0;
+                for (uint256 y = k * _batchSize; y < _col.length; y++) {
+                    _temp = _encodedBatch[k] + _col[y] * _numInitTerrainTypes**y;
+                    if (_temp < _encodedBatch[k]) revert("Integer overflow");
+                    _encodedBatch[k] = _temp;
+                }
+            }
+            _result[x] = _encodedBatch;
         }
 
         return _result;
