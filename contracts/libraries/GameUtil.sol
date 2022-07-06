@@ -120,7 +120,7 @@ library Util {
         uint256 _troopTypeId
     ) public returns (uint256, Troop memory) {
         uint256[] memory _cargoTroopIds;
-        Troop memory _troop = Troop({owner: _owner, troopTypeId: _troopTypeId, movesLeftInSecond: _getMovesPerSecond(_troopTypeId), lastMoved: block.timestamp, lastLargeActionTaken: block.timestamp, lastRepaired: block.timestamp, health: _getMaxHealth(_troopTypeId), pos: _pos, cargoTroopIds: _cargoTroopIds});
+        Troop memory _troop = Troop({owner: _owner, troopTypeId: _troopTypeId, lastMoved: block.timestamp, lastLargeActionTaken: block.timestamp, lastRepaired: block.timestamp, health: _getMaxHealth(_troopTypeId), pos: _pos, cargoTroopIds: _cargoTroopIds});
 
         uint256 _troopId = gs().troopNonce;
         gs().troopIds.push(_troopId);
@@ -201,10 +201,6 @@ library Util {
 
     function _getLargeActionCooldown(uint256 _troopTypeId) public view returns (uint256) {
         return gs().troopTypeIdMap[_troopTypeId].largeActionCooldown;
-    }
-
-    function _getMovesPerSecond(uint256 _troopTypeId) public view returns (uint256) {
-        return gs().troopTypeIdMap[_troopTypeId].movesPerSecond;
     }
 
     function _isLandTroop(uint256 _troopTypeId) public view returns (bool) {

@@ -49,7 +49,6 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
 export type TroopStruct = {
   owner: string;
   troopTypeId: BigNumberish;
-  movesLeftInSecond: BigNumberish;
   lastMoved: BigNumberish;
   lastLargeActionTaken: BigNumberish;
   lastRepaired: BigNumberish;
@@ -65,13 +64,11 @@ export type TroopStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
-  BigNumber,
   PositionStructOutput,
   BigNumber[]
 ] & {
   owner: string;
   troopTypeId: BigNumber;
-  movesLeftInSecond: BigNumber;
   lastMoved: BigNumber;
   lastLargeActionTaken: BigNumber;
   lastRepaired: BigNumber;
@@ -123,7 +120,6 @@ export type TroopTypeStruct = {
   attackFactor: BigNumberish;
   defenseFactor: BigNumberish;
   cargoCapacity: BigNumberish;
-  movesPerSecond: BigNumberish;
   movementCooldown: BigNumberish;
   largeActionCooldown: BigNumberish;
   cost: BigNumberish;
@@ -141,7 +137,6 @@ export type TroopTypeStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
-  BigNumber,
   BigNumber
 ] & {
   name: number;
@@ -151,7 +146,6 @@ export type TroopTypeStructOutput = [
   attackFactor: BigNumber;
   defenseFactor: BigNumber;
   cargoCapacity: BigNumber;
-  movesPerSecond: BigNumber;
   movementCooldown: BigNumber;
   largeActionCooldown: BigNumber;
   cost: BigNumber;
@@ -280,7 +274,6 @@ export interface CurioInterface extends utils.Interface {
     "_getLargeActionCooldown(uint256)": FunctionFragment;
     "_getMaxHealth(uint256)": FunctionFragment;
     "_getMovementCooldown(uint256)": FunctionFragment;
-    "_getMovesPerSecond(uint256)": FunctionFragment;
     "_getPlayerBalance(address)": FunctionFragment;
     "_getTileAt((uint256,uint256))": FunctionFragment;
     "_getTotalGoldGenerationPerUpdate(address)": FunctionFragment;
@@ -460,10 +453,6 @@ export interface CurioInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "_getMovementCooldown",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getMovesPerSecond",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
@@ -650,10 +639,6 @@ export interface CurioInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "_getMovementCooldown",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getMovesPerSecond",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -1063,11 +1048,6 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    _getMovesPerSecond(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     _getPlayerBalance(
       _player: string,
       overrides?: CallOverrides
@@ -1342,11 +1322,6 @@ export interface Curio extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  _getMovesPerSecond(
-    _troopTypeId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   _getPlayerBalance(
     _player: string,
     overrides?: CallOverrides
@@ -1614,11 +1589,6 @@ export interface Curio extends BaseContract {
     ): Promise<BigNumber>;
 
     _getMovementCooldown(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getMovesPerSecond(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -2007,11 +1977,6 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getMovesPerSecond(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     _getPlayerBalance(
       _player: string,
       overrides?: CallOverrides
@@ -2278,11 +2243,6 @@ export interface Curio extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     _getMovementCooldown(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getMovesPerSecond(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

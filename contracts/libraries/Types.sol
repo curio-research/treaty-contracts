@@ -54,7 +54,6 @@ struct Tile {
 struct Troop {
     address owner;
     uint256 troopTypeId;
-    uint256 movesLeftInSecond;
     uint256 lastMoved;
     uint256 lastLargeActionTaken;
     uint256 lastRepaired;
@@ -71,7 +70,6 @@ struct TroopType {
     uint256 attackFactor; // in the interval [0, 100]
     uint256 defenseFactor; // in the interval [0, 100]
     uint256 cargoCapacity;
-    uint256 movesPerSecond;
     uint256 movementCooldown;
     uint256 largeActionCooldown;
     uint256 cost;

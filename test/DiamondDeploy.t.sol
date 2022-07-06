@@ -2,7 +2,6 @@
 pragma solidity ^0.8.4;
 
 import "forge-std/Test.sol";
-import "forge-std/console.sol";
 import "contracts/facets/DiamondCutFacet.sol";
 import "contracts/facets/DiamondLoupeFacet.sol";
 import "contracts/facets/OwnershipFacet.sol";
@@ -63,7 +62,6 @@ contract DiamondDeployTest is Test {
             attackFactor: 100,
             defenseFactor: 100,
             cargoCapacity: 0,
-            movesPerSecond: 1,
             movementCooldown: 1,
             largeActionCooldown: 1,
             cost: 6,
@@ -78,7 +76,6 @@ contract DiamondDeployTest is Test {
             attackFactor: 50,
             defenseFactor: 50,
             cargoCapacity: 6,
-            movesPerSecond: 2,
             movementCooldown: 1, // FIXME
             largeActionCooldown: 1,
             cost: 14,
@@ -93,7 +90,6 @@ contract DiamondDeployTest is Test {
             attackFactor: 100,
             defenseFactor: 100,
             cargoCapacity: 0,
-            movesPerSecond: 3,
             movementCooldown: 1, // FIXME
             largeActionCooldown: 1,
             cost: 20,
@@ -108,7 +104,6 @@ contract DiamondDeployTest is Test {
             attackFactor: 100,
             defenseFactor: 100,
             cargoCapacity: 0,
-            movesPerSecond: 2,
             movementCooldown: 1, // FIXME
             largeActionCooldown: 1,
             cost: 30,
@@ -123,7 +118,6 @@ contract DiamondDeployTest is Test {
             attackFactor: 100,
             defenseFactor: 100,
             cargoCapacity: 0,
-            movesPerSecond: 2,
             movementCooldown: 1, // FIXME
             largeActionCooldown: 1,
             cost: 50,

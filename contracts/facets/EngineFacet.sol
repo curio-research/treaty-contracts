@@ -20,7 +20,6 @@ contract EngineFacet is UseStorage {
      */
     function march(uint256 _troopId, Position memory _targetPos) external {
         require(Util._inBound(_targetPos), "CURIO: Target out of bound");
-
         if (!Util._getTileAt(_targetPos).isInitialized) Util._initializeTile(_targetPos);
 
         // Basic check
@@ -104,12 +103,7 @@ contract EngineFacet is UseStorage {
         Troop memory _troop = gs().troopIdMap[_troopId];
         Tile memory _targetTile = Util._getTileAt(_targetPos);
 
-        // Lazy update for movement taken within second
-        if ((block.timestamp - _troop.lastMoved) >= Util._getMovementCooldown(_troop.troopTypeId)) {
-            _troop.movesLeftInSecond = Util._getMovesPerSecond(_troop.troopTypeId);
-            gs().troopIdMap[_troopId].movesLeftInSecond = _troop.movesLeftInSecond;
-        }
-        require(_troop.movesLeftInSecond > 0, "CURIO: Moved too recently");
+        require((block.timestamp - _troop.lastMoved) >= Util._getMovementCooldown(_troop.troopTypeId), "CURIO: Moved too recently");
 
         if (!Util._canTransportTroop(_targetTile)) {
             gs().map[_targetPos.x][_targetPos.y].occupantId = _troopId;
@@ -125,7 +119,6 @@ contract EngineFacet is UseStorage {
             gs().map[_troop.pos.x][_troop.pos.y].occupantId = NULL;
         }
         gs().troopIdMap[_troopId].pos = _targetPos;
-        gs().troopIdMap[_troopId].movesLeftInSecond--;
         gs().troopIdMap[_troopId].lastMoved = block.timestamp;
 
         uint256[] memory _cargoTroopIds = gs().troopIdMap[_troopId].cargoTroopIds;

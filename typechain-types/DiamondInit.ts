@@ -62,7 +62,6 @@ export type TroopTypeStruct = {
   attackFactor: BigNumberish;
   defenseFactor: BigNumberish;
   cargoCapacity: BigNumberish;
-  movesPerSecond: BigNumberish;
   movementCooldown: BigNumberish;
   largeActionCooldown: BigNumberish;
   cost: BigNumberish;
@@ -80,7 +79,6 @@ export type TroopTypeStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
-  BigNumber,
   BigNumber
 ] & {
   name: number;
@@ -90,7 +88,6 @@ export type TroopTypeStructOutput = [
   attackFactor: BigNumber;
   defenseFactor: BigNumber;
   cargoCapacity: BigNumber;
-  movesPerSecond: BigNumber;
   movementCooldown: BigNumber;
   largeActionCooldown: BigNumber;
   cost: BigNumber;
@@ -99,7 +96,7 @@ export type TroopTypeStructOutput = [
 
 export interface DiamondInitInterface extends utils.Interface {
   functions: {
-    "init((address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),(uint8,bool,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256)[])": FunctionFragment;
+    "init((address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),(uint8,bool,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256)[])": FunctionFragment;
   };
 
   encodeFunctionData(

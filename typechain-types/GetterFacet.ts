@@ -25,7 +25,6 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
 export type TroopStruct = {
   owner: string;
   troopTypeId: BigNumberish;
-  movesLeftInSecond: BigNumberish;
   lastMoved: BigNumberish;
   lastLargeActionTaken: BigNumberish;
   lastRepaired: BigNumberish;
@@ -41,13 +40,11 @@ export type TroopStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
-  BigNumber,
   PositionStructOutput,
   BigNumber[]
 ] & {
   owner: string;
   troopTypeId: BigNumber;
-  movesLeftInSecond: BigNumber;
   lastMoved: BigNumber;
   lastLargeActionTaken: BigNumber;
   lastRepaired: BigNumber;
@@ -99,7 +96,6 @@ export type TroopTypeStruct = {
   attackFactor: BigNumberish;
   defenseFactor: BigNumberish;
   cargoCapacity: BigNumberish;
-  movesPerSecond: BigNumberish;
   movementCooldown: BigNumberish;
   largeActionCooldown: BigNumberish;
   cost: BigNumberish;
@@ -117,7 +113,6 @@ export type TroopTypeStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
-  BigNumber,
   BigNumber
 ] & {
   name: number;
@@ -127,7 +122,6 @@ export type TroopTypeStructOutput = [
   attackFactor: BigNumber;
   defenseFactor: BigNumber;
   cargoCapacity: BigNumber;
-  movesPerSecond: BigNumber;
   movementCooldown: BigNumber;
   largeActionCooldown: BigNumber;
   cost: BigNumber;

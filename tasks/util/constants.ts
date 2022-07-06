@@ -30,7 +30,6 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     attackFactor: 100,
     defenseFactor: 100,
     cargoCapacity: 0,
-    movesPerSecond: 1,
     movementCooldown: 1,
     largeActionCooldown: 1,
     cost: 6,
@@ -44,7 +43,6 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     attackFactor: 50,
     defenseFactor: 50,
     cargoCapacity: 6,
-    movesPerSecond: 2,
     movementCooldown: 1, // FIXME
     largeActionCooldown: 1,
     cost: 14,
@@ -58,7 +56,6 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     attackFactor: 100,
     defenseFactor: 100,
     cargoCapacity: 0,
-    movesPerSecond: 1,
     movementCooldown: 1, // FIXME
     largeActionCooldown: 1,
     cost: 20,
@@ -72,7 +69,6 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     attackFactor: 100,
     defenseFactor: 100,
     cargoCapacity: 0,
-    movesPerSecond: 1,
     movementCooldown: 1, // FIXME
     largeActionCooldown: 1,
     cost: 30,
@@ -86,7 +82,6 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     attackFactor: 100,
     defenseFactor: 100,
     cargoCapacity: 0,
-    movesPerSecond: 1,
     movementCooldown: 1, // FIXME
     largeActionCooldown: 1,
     cost: 50,
