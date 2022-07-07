@@ -8,8 +8,8 @@ import "test/DiamondDeploy.t.sol";
 contract BasicTest is Test, DiamondDeployTest {
     function testWorldSize() public {
         WorldConstants memory _worldConstants = getter.getWorldConstants();
-        assertEq(_worldConstants.worldWidth, 30);
-        assertEq(_worldConstants.worldHeight, 20);
+        assertEq(_worldConstants.worldWidth, 10);
+        assertEq(_worldConstants.worldHeight, 10);
     }
 
     function testOnlyAdmin() public {

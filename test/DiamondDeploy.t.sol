@@ -162,7 +162,7 @@ contract DiamondDeployTest is Test {
         ownership = OwnershipFacet(diamond);
 
         // initialize map using lazy + encoding
-        uint256[][] memory _map = generateMap(_worldConstants.worldWidth, _worldConstants.worldHeight, _worldConstants.mapInterval);
+        uint256[][] memory _map = _generateMap(_worldConstants.worldWidth, _worldConstants.worldHeight, _worldConstants.mapInterval);
         uint256[][] memory _encodedColumnBatches = _encodeTileMap(_worldConstants.numInitTerrainTypes, _map);
         helper.storeEncodedColumnBatches(_encodedColumnBatches);
 
@@ -197,9 +197,8 @@ contract DiamondDeployTest is Test {
             }
             if (_lastBatchSize > 0) {
                 _encodedBatch[k] = 0;
-                for (uint256 y = 0; y < _col.length - k * _batchSize; y++) {
+                for (uint256 y = 0; y < _lastBatchSize; y++) {
                     _temp = _encodedBatch[k] + _col[k * _batchSize + y] * _numInitTerrainTypes**y;
-                    console.log(_temp);
                     if (_temp < _encodedBatch[k]) revert("Integer overflow");
                     _encodedBatch[k] = _temp;
                 }
@@ -216,8 +215,8 @@ contract DiamondDeployTest is Test {
         return
             WorldConstants({
                 admin: deployer,
-                worldWidth: 30,
-                worldHeight: 20,
+                worldWidth: 10,
+                worldHeight: 10,
                 numPorts: 15,
                 numCities: 15, // yo
                 mapInterval: 10,
@@ -238,7 +237,7 @@ contract DiamondDeployTest is Test {
     }
 
     // FIXME: hardcoded
-    function generateMap(
+    function _generateMap(
         uint256 _width,
         uint256 _height,
         uint256 _interval
