@@ -29,6 +29,10 @@ struct Position {
 struct Player {
     uint256 initTimestamp;
     bool active;
+    uint256 balance;
+    uint256 totalGoldGenerationPerUpdate;
+    uint256 totalTroopExpensePerUpdate;
+    uint256 balanceLastUpdated;
 }
 
 struct Base {
@@ -37,6 +41,7 @@ struct Base {
     uint256 attackFactor;
     uint256 defenseFactor;
     uint256 health;
+    uint256 goldGenerationPerSecond;
 }
 
 struct Tile {
@@ -49,7 +54,6 @@ struct Tile {
 struct Troop {
     address owner;
     uint256 troopTypeId;
-    uint256 movesLeftInSecond;
     uint256 lastMoved;
     uint256 lastLargeActionTaken;
     uint256 lastRepaired;
@@ -66,15 +70,10 @@ struct TroopType {
     uint256 attackFactor; // in the interval [0, 100]
     uint256 defenseFactor; // in the interval [0, 100]
     uint256 cargoCapacity;
-    uint256 movesPerSecond;
     uint256 movementCooldown;
     uint256 largeActionCooldown;
-    uint256 productionCooldown;
-}
-
-struct Production {
-    uint256 troopTypeId;
-    uint256 startTimestamp;
+    uint256 cost;
+    uint256 expensePerSecond;
 }
 
 struct WorldConstants {
@@ -87,6 +86,8 @@ struct WorldConstants {
     uint256 combatEfficiency; // in the interval [0, 100]
     uint256 numInitTerrainTypes; // default is 5
     uint256 initBatchSize; // default is 100 if numInitTerrainTypes = 5
+    uint256 initPlayerBalance;
+    uint256 defaultBaseGoldGenerationPerSecond;
 }
 
 struct GameState {
@@ -94,7 +95,6 @@ struct GameState {
     address[] players;
     mapping(address => Player) playerMap;
     Tile[1000][1000] map;
-    mapping(uint256 => Production) baseProductionMap;
     uint256[] baseIds;
     uint256 baseNonce;
     mapping(uint256 => Base) baseIdMap;

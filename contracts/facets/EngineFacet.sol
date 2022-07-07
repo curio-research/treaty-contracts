@@ -1,10 +1,9 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "forge-std/console.sol";
 import "contracts/libraries/Storage.sol";
 import {Util} from "contracts/libraries/GameUtil.sol";
-import {BASE_NAME, Base, GameState, Player, Position, Production, TERRAIN, Tile, Troop, TroopType} from "contracts/libraries/Types.sol";
+import {BASE_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop, TroopType} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 
 /// @title Engine facet
@@ -21,7 +20,6 @@ contract EngineFacet is UseStorage {
      */
     function march(uint256 _troopId, Position memory _targetPos) external {
         require(Util._inBound(_targetPos), "CURIO: Target out of bound");
-
         if (!Util._getTileAt(_targetPos).isInitialized) Util._initializeTile(_targetPos);
 
         // Basic check
@@ -73,23 +71,29 @@ contract EngineFacet is UseStorage {
     }
 
     /**
-     * Start producing a troop from a base.
+     * Purchase a troop at a base.
      * @param _pos position of base
      * @param _troopTypeId identifier for selected troop type
      */
-    function startProduction(Position memory _pos, uint256 _troopTypeId) external {
+    function purchaseTroop(Position memory _pos, uint256 _troopTypeId) external {
         require(Util._inBound(_pos), "CURIO: Out of bound");
         if (!Util._getTileAt(_pos).isInitialized) Util._initializeTile(_pos);
 
+        // Currently implemented expecting real-time calls from client; can change to lazy if needed
         Tile memory _tile = Util._getTileAt(_pos);
         require(_tile.baseId != NULL, "CURIO: No base found");
-        require(Util._getBaseOwner(_tile.baseId) == msg.sender, "CURIO: Can only produce in own base");
-        require(Util._isLandTroop(_troopTypeId) || Util._hasPort(_tile), "CURIO: Only ports can produce water troops");
-        require(gs().baseProductionMap[_tile.baseId].troopTypeId == NULL, "CURIO: Base already producing");
+        require(Util._getBaseOwner(_tile.baseId) == msg.sender, "CURIO: Can only purchase in own base");
+        require(Util._isLandTroop(_troopTypeId) || Util._hasPort(_tile), "CURIO: Only ports can purchase water troops");
+        require(_tile.occupantId == NULL, "CURIO: Base occupied by another troop");
 
-        Production memory _production = Production({troopTypeId: _troopTypeId, startTimestamp: block.timestamp});
-        gs().baseProductionMap[_tile.baseId] = _production;
-        emit Util.ProductionStarted(msg.sender, _tile.baseId, _production);
+        uint256 _troopCost = Util._getTroopCost(_troopTypeId);
+        Util._updatePlayerBalance(msg.sender);
+        require(_troopCost <= Util._getPlayerBalance(msg.sender), "CURIO: Insufficient balance");
+
+        (uint256 _troopId, Troop memory _troop) = Util._addTroop(msg.sender, _pos, _troopTypeId);
+        gs().playerMap[msg.sender].balance -= _troopCost;
+
+        emit Util.NewTroop(msg.sender, _troopId, _troop, _pos);
     }
 
     /////////////////////////////////////////
@@ -99,12 +103,7 @@ contract EngineFacet is UseStorage {
         Troop memory _troop = gs().troopIdMap[_troopId];
         Tile memory _targetTile = Util._getTileAt(_targetPos);
 
-        // Lazy update for movement taken within second
-        if ((block.timestamp - _troop.lastMoved) >= Util._getMovementCooldown(_troop.troopTypeId)) {
-            _troop.movesLeftInSecond = Util._getMovesPerSecond(_troop.troopTypeId);
-            gs().troopIdMap[_troopId].movesLeftInSecond = _troop.movesLeftInSecond;
-        }
-        require(_troop.movesLeftInSecond > 0, "CURIO: Moved too recently");
+        require((block.timestamp - _troop.lastMoved) >= Util._getMovementCooldown(_troop.troopTypeId), "CURIO: Moved too recently");
 
         if (!Util._canTransportTroop(_targetTile)) {
             gs().map[_targetPos.x][_targetPos.y].occupantId = _troopId;
@@ -120,7 +119,6 @@ contract EngineFacet is UseStorage {
             gs().map[_troop.pos.x][_troop.pos.y].occupantId = NULL;
         }
         gs().troopIdMap[_troopId].pos = _targetPos;
-        gs().troopIdMap[_troopId].movesLeftInSecond--;
         gs().troopIdMap[_troopId].lastMoved = block.timestamp;
 
         uint256[] memory _cargoTroopIds = gs().troopIdMap[_troopId].cargoTroopIds;
@@ -164,8 +162,6 @@ contract EngineFacet is UseStorage {
                     _targetBase.health -= _damagePerHit;
                 } else {
                     _targetBase.health = 0;
-                    Util._removeTroop(_targetPos, _targetTile.occupantId);
-                    emit Util.Death(Util._getBaseOwner(_targetTile.occupantId), _targetTile.occupantId);
                 }
             }
 
@@ -180,7 +176,7 @@ contract EngineFacet is UseStorage {
                     _troop.health -= 1;
                 } else {
                     _troop.health = 0;
-                    Util._removeTroop(_troop.pos, _troopId);
+                    Util._removeTroop(msg.sender, _troop.pos, _troopId);
                     emit Util.Death(msg.sender, _troopId);
                 }
             }
@@ -188,19 +184,24 @@ contract EngineFacet is UseStorage {
 
         if (_targetBase.health == 0) {
             // Troop survives
+            address _targetPlayer = _targetBase.owner;
             gs().troopIdMap[_troopId].health = _troop.health;
             gs().baseIdMap[_targetTile.baseId].health = 0;
             _targetBase = Util._getBase(_targetTile.baseId);
 
             emit Util.AttackedBase(msg.sender, _troopId, _troop, _targetTile.baseId, _targetBase);
 
-            // capture and end production
+            // Capture and update gold production
             gs().baseIdMap[_targetTile.baseId].owner = msg.sender;
             gs().baseIdMap[_targetTile.baseId].health = 1; // FIXME: change to BaseConstants.maxHealth
-            delete gs().baseProductionMap[_targetTile.baseId];
             emit Util.BaseCaptured(msg.sender, _troopId, _targetTile.baseId);
 
-            // move
+            Util._updatePlayerBalance(_targetPlayer);
+            Util._updatePlayerBalance(msg.sender);
+            gs().playerMap[_targetPlayer].totalGoldGenerationPerUpdate -= _targetBase.goldGenerationPerSecond;
+            gs().playerMap[msg.sender].totalGoldGenerationPerUpdate += _targetBase.goldGenerationPerSecond;
+
+            // Move
             _moveModule(_troopId, _targetPos);
         } else {
             // Target survives
@@ -234,7 +235,7 @@ contract EngineFacet is UseStorage {
                     _targetTroop.health -= _damagePerHit;
                 } else {
                     _targetTroop.health = 0;
-                    Util._removeTroop(_targetTroop.pos, _targetTile.occupantId);
+                    Util._removeTroop(_targetTroop.owner, _targetTroop.pos, _targetTile.occupantId);
                     emit Util.Death(_targetTroop.owner, _targetTile.occupantId);
                 }
             }
@@ -244,12 +245,11 @@ contract EngineFacet is UseStorage {
             // Target attacks troop
             _salt += 1;
             if (Util._strike(Util._getDefenseFactor(_targetTroop.troopTypeId), _salt)) {
-                // enemy troop attacks back
                 if (Util._getDamagePerHit(_targetTroop.troopTypeId) < _troop.health) {
                     _troop.health -= Util._getDamagePerHit(_targetTroop.troopTypeId);
                 } else {
                     _troop.health = 0;
-                    Util._removeTroop(_troop.pos, _troopId);
+                    Util._removeTroop(msg.sender, _troop.pos, _troopId);
                     emit Util.Death(msg.sender, _troopId);
                 }
             }

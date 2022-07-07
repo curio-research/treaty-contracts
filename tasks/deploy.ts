@@ -1,4 +1,4 @@
-import { publishDeployment, addTask } from './../api/deployment';
+import { publishDeployment, isConnectionLive } from './../api/deployment';
 import * as path from 'path';
 import * as fsPromise from 'fs/promises';
 import * as fs from 'fs';
@@ -30,6 +30,11 @@ task('deploy', 'deploy contracts')
 
       const isDev = hre.network.name === 'localhost' || hre.network.name === 'hardhat';
       console.log('Network:', hre.network.name);
+
+      // check connection with faucet to make sure deployment will post
+      if (!isDev) {
+        await isConnectionLive();
+      }
 
       const fixMap = args.fixmap;
       if (fixMap) console.log('Using deterministic map');
@@ -78,11 +83,10 @@ task('deploy', 'deploy contracts')
       // Initialize map
       console.log('✦ initializing map');
       const time1 = performance.now();
-      // console.log(`✦ direct set ${WORLD_WIDTH}x${WORLD_HEIGHT} map took ${time2 - time1} milliseconds`);
       const encodedTileMap = encodeTileMap(tileMap);
       await (await diamond.storeEncodedColumnBatches(encodedTileMap)).wait();
       const time2 = performance.now();
-      console.log(`✦ lazy set ${WORLD_WIDTH}x${WORLD_HEIGHT} map took ${time2 - time1} milliseconds`);
+      console.log(`✦ lazy set ${WORLD_WIDTH}x${WORLD_HEIGHT} map took ${time2 - time1} ms`);
 
       const portTilePositions = portTiles.map((portTile) => ({ x: portTile[0], y: portTile[1] }));
       const cityTilePositions = cityTiles.map((cityTile) => ({ x: cityTile[0], y: cityTile[1] }));
@@ -171,10 +175,6 @@ task('deploy', 'deploy contracts')
         await fsPromise.writeFile(configFileDir, JSON.stringify(existingDeployments));
         await hre.run('port'); // default to porting files
       }
-
-      // // start the epoch increaser
-      // const task = { type: 'interval', time: 0, interval: Number(1) + 1, functionSig: 'updateEpoch', network: hre.network.name, address: diamond.address, params: [], status: 'inactive', lastExecuted: 0 };
-      // await addTask(task);
     } catch (err) {
       console.log(err);
     }
