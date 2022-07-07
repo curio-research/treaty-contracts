@@ -2,7 +2,6 @@
 pragma solidity ^0.8.4;
 
 import "forge-std/Test.sol";
-import "forge-std/console.sol";
 import "contracts/facets/DiamondCutFacet.sol";
 import "contracts/facets/DiamondLoupeFacet.sol";
 import "contracts/facets/OwnershipFacet.sol";
@@ -163,7 +162,7 @@ contract DiamondDeployTest is Test {
 
         // initialize map using lazy + encoding
         uint256[][] memory _map = _generateMap(_worldConstants.worldWidth, _worldConstants.worldHeight, _worldConstants.mapInterval);
-        uint256[][] memory _encodedColumnBatches = _encodeTileMap(_worldConstants.numInitTerrainTypes, _map);
+        uint256[][] memory _encodedColumnBatches = _encodeTileMap(_map, _worldConstants.numInitTerrainTypes, _worldConstants.initBatchSize);
         helper.storeEncodedColumnBatches(_encodedColumnBatches);
 
         // initialize players
@@ -174,45 +173,39 @@ contract DiamondDeployTest is Test {
         vm.stopPrank();
     }
 
-    function _encodeTileMap(uint256 _numInitTerrainTypes, uint256[][] memory _tileMap) internal view returns (uint256[][] memory) {
-        uint256 _batchSize = 100;
+    function _encodeTileMap(
+        uint256[][] memory _tileMap,
+        uint256 _numInitTerrainTypes,
+        uint256 _batchSize
+    ) internal pure returns (uint256[][] memory) {
         uint256[][] memory _result = new uint256[][](_tileMap.length);
         uint256 _numBatchPerCol = _tileMap[0].length / _batchSize;
+        uint256 _lastBatchSize = _tileMap[0].length % _batchSize;
 
-        uint256[] memory _col = new uint256[](_tileMap[0].length);
-        uint256[] memory _encodedBatch = new uint256[](_numBatchPerCol + 1);
-        uint256 _lastBatchSize = _col.length % _batchSize;
+        uint256[] memory _encodedCol;
         uint256 _temp;
         uint256 k;
 
         for (uint256 x = 0; x < _tileMap.length; x++) {
-            _col = _tileMap[x];
+            _encodedCol = new uint256[](_numBatchPerCol + 1);
             for (k = 0; k < _numBatchPerCol; k++) {
-                _encodedBatch[k] = 0;
+                _encodedCol[k] = 0;
                 for (uint256 y = 0; y < _batchSize; y++) {
-                    _temp = _encodedBatch[k] + _col[k * _batchSize + y] * _numInitTerrainTypes**y;
-                    if (_temp < _encodedBatch[k]) revert("Integer overflow");
-                    _encodedBatch[k] = _temp;
+                    _temp = _encodedCol[k] + _tileMap[x][k * _batchSize + y] * _numInitTerrainTypes**y;
+                    if (_temp < _encodedCol[k]) revert("Integer overflow");
+                    _encodedCol[k] = _temp;
                 }
             }
             if (_lastBatchSize > 0) {
-                _encodedBatch[k] = 0;
+                _encodedCol[k] = 0;
                 for (uint256 y = 0; y < _lastBatchSize; y++) {
-                    _temp = _encodedBatch[k] + _col[k * _batchSize + y] * _numInitTerrainTypes**y;
-                    if (_temp < _encodedBatch[k]) revert("Integer overflow");
-                    _encodedBatch[k] = _temp;
+                    _temp = _encodedCol[k] + _tileMap[x][k * _batchSize + y] * _numInitTerrainTypes**y;
+                    if (_temp < _encodedCol[k]) revert("Integer overflow");
+                    _encodedCol[k] = _temp;
                 }
-                _encodedBatch[k] = _temp;
+                _encodedCol[k] = _temp;
             }
-            _result[x] = _encodedBatch;
-        }
-
-        console.log("The truth manifests");
-        for (uint256 x = 0; x < _result.length; x++) {
-            console.log("A new X");
-            for (k = 0; k < _result[0].length; k++) {
-                console.log(_result[x][k]);
-            }
+            _result[x] = _encodedCol;
         }
 
         return _result;
@@ -223,13 +216,14 @@ contract DiamondDeployTest is Test {
         return
             WorldConstants({
                 admin: deployer,
-                worldWidth: 10,
-                worldHeight: 10,
+                worldWidth: 50,
+                worldHeight: 50,
                 numPorts: 15,
                 numCities: 15, // yo
                 mapInterval: 10,
                 combatEfficiency: 50,
-                numInitTerrainTypes: 5
+                numInitTerrainTypes: 5,
+                initBatchSize: 100
             });
     }
 

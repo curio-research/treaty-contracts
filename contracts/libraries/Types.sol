@@ -86,6 +86,7 @@ struct WorldConstants {
     uint256 mapInterval;
     uint256 combatEfficiency; // in the interval [0, 100]
     uint256 numInitTerrainTypes; // default is 5
+    uint256 initBatchSize; // default is 100 if numInitTerrainTypes = 5
 }
 
 struct GameState {
