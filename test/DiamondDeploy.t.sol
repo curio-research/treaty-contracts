@@ -217,8 +217,8 @@ contract DiamondDeployTest is Test {
         return
             WorldConstants({
                 admin: deployer,
-                worldWidth: 50,
-                worldHeight: 50,
+                worldWidth: 120,
+                worldHeight: 120,
                 numPorts: 15,
                 numCities: 15, // yo
                 mapInterval: 10,

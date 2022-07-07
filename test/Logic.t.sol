@@ -21,7 +21,7 @@ contract LogicTest is Test, DiamondDeployTest {
     function testPurchaseTroopFailure() public {
         // fail: purchase on invalid location
         vm.expectRevert(bytes("CURIO: Out of bound"));
-        engine.purchaseTroop(Position({x: 100, y: 100}), armyTroopTypeId);
+        engine.purchaseTroop(Position({x: 200, y: 200}), armyTroopTypeId);
 
         // fail: player2 attempting to produce in other's base
         vm.prank(player2);
