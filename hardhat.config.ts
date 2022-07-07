@@ -63,8 +63,8 @@ export default {
     hardhat: {
       chainId: 1337,
       mining: {
-        auto: true,
-        // interval: 800,
+        auto: false,
+        interval: 800,
       },
     },
   },
