@@ -94,7 +94,7 @@ struct GameState {
     WorldConstants worldConstants;
     address[] players;
     mapping(address => Player) playerMap;
-    Tile[1000][1000] map;
+    Tile[5000][5000] map;
     uint256[] baseIds;
     uint256 baseNonce;
     mapping(uint256 => Base) baseIdMap;

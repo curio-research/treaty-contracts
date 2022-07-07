@@ -33,7 +33,7 @@ contract HelperFacet is UseStorage {
 
     /**
      * Initialize a player at a selected position.
-     * TODO: Upgrade logic such that everyone can initialize themselves. figure out if we want a whitelist or something
+     * TODO: figure out if we want a whitelist or something
      * @param _pos position to initialize
      * @param _player player address
      */

@@ -58,14 +58,14 @@ contract DiamondDeployTest is Test {
             name: TROOP_NAME.ARMY,
             isLandTroop: true,
             maxHealth: 1,
-            damagePerHit: 1, // yo
+            damagePerHit: 1,
             attackFactor: 100,
             defenseFactor: 100,
             cargoCapacity: 0,
             movementCooldown: 1,
             largeActionCooldown: 1,
             cost: 6,
-            expensePerSecond: 0
+            expensePerSecond: 0 // DO NOT REMOVE THIS COMMENT
         });
     TroopType public troopTransportTroopType =
         TroopType({
@@ -76,10 +76,10 @@ contract DiamondDeployTest is Test {
             attackFactor: 50,
             defenseFactor: 50,
             cargoCapacity: 6,
-            movementCooldown: 1, // FIXME
+            movementCooldown: 1,
             largeActionCooldown: 1,
             cost: 14,
-            expensePerSecond: 1
+            expensePerSecond: 1 //
         });
     TroopType public destroyerTroopType =
         TroopType({
@@ -90,10 +90,10 @@ contract DiamondDeployTest is Test {
             attackFactor: 100,
             defenseFactor: 100,
             cargoCapacity: 0,
-            movementCooldown: 1, // FIXME
+            movementCooldown: 1,
             largeActionCooldown: 1,
             cost: 20,
-            expensePerSecond: 1
+            expensePerSecond: 1 //
         });
     TroopType public cruiserTroopType =
         TroopType({
@@ -104,10 +104,10 @@ contract DiamondDeployTest is Test {
             attackFactor: 100,
             defenseFactor: 100,
             cargoCapacity: 0,
-            movementCooldown: 1, // FIXME
+            movementCooldown: 1,
             largeActionCooldown: 1,
             cost: 30,
-            expensePerSecond: 1
+            expensePerSecond: 1 //
         });
     TroopType public battleshipTroopType =
         TroopType({
@@ -118,10 +118,10 @@ contract DiamondDeployTest is Test {
             attackFactor: 100,
             defenseFactor: 100,
             cargoCapacity: 0,
-            movementCooldown: 1, // FIXME
+            movementCooldown: 1,
             largeActionCooldown: 1,
             cost: 50,
-            expensePerSecond: 2
+            expensePerSecond: 2 //
         });
 
     // we assume these two facet selectors do not change. If they do however, we should use getSelectors
@@ -212,13 +212,13 @@ contract DiamondDeployTest is Test {
         return _result;
     }
 
-    // FIXME: hardcoded
+    // Note: hardcoded
     function _generateWorldConstants() internal view returns (WorldConstants memory) {
         return
             WorldConstants({
                 admin: deployer,
-                worldWidth: 120,
-                worldHeight: 120,
+                worldWidth: 1000,
+                worldHeight: 1000,
                 numPorts: 15,
                 numCities: 15, // yo
                 mapInterval: 10,
@@ -230,7 +230,7 @@ contract DiamondDeployTest is Test {
             });
     }
 
-    // FIXME: hardcoded
+    // Note: hardcoded
     function _generateTroopTypes() internal view returns (TroopType[] memory) {
         TroopType[] memory _troopTypes = new TroopType[](5);
         _troopTypes[0] = armyTroopType;
@@ -241,7 +241,7 @@ contract DiamondDeployTest is Test {
         return _troopTypes;
     }
 
-    // FIXME: hardcoded
+    // Note: hardcoded
     function _generateMap(
         uint256 _width,
         uint256 _height,

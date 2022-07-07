@@ -8,8 +8,8 @@ import "test/DiamondDeploy.t.sol";
 contract BasicTest is Test, DiamondDeployTest {
     function testWorldSize() public {
         WorldConstants memory _worldConstants = getter.getWorldConstants();
-        assertEq(_worldConstants.worldWidth, 120);
-        assertEq(_worldConstants.worldHeight, 120);
+        assertEq(_worldConstants.worldWidth, 1000);
+        assertEq(_worldConstants.worldHeight, 1000);
     }
 
     function testOnlyAdmin() public {
@@ -95,9 +95,9 @@ contract BasicTest is Test, DiamondDeployTest {
     }
 
     function testInitializeMapBatches() public {
-        Position memory _pos1 = Position({x: 116, y: 115});
-        Position memory _pos2 = Position({x: 71, y: 108});
-        Position memory _pos3 = Position({x: 105, y: 45});
+        Position memory _pos1 = Position({x: 176, y: 485});
+        Position memory _pos2 = Position({x: 371, y: 838});
+        Position memory _pos3 = Position({x: 995, y: 645});
         Position[] memory _temp = new Position[](1);
         _temp[0] = _pos3;
 
@@ -131,7 +131,7 @@ contract BasicTest is Test, DiamondDeployTest {
         assertEq(_tile3.occupantId, NULL);
 
         // verify that another arbitrary tile is not initialized
-        Tile memory _mysteriousTile = getter.getTileAt(Position({x: 119, y: 119}));
+        Tile memory _mysteriousTile = getter.getTileAt(Position({x: 129, y: 289}));
         assertTrue(!_mysteriousTile.isInitialized);
     }
 }
