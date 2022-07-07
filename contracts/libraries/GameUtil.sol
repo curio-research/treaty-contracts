@@ -52,13 +52,13 @@ library Util {
         uint256 _divFactor = _numInitTerrainTypes**(_pos.y % _batchSize);
         uint256 _terrainId = _encodedCol / _divFactor;
 
-        console.log("[initializeTile]");
-        console.log(gs().encodedColumnBatches[_pos.x][_pos.y / _batchSize]);
-        console.log(_pos.x);
-        console.log(_pos.y);
-        console.log(_encodedCol);
-        console.log(_terrainId);
-        console.log("[da end]");
+        // console.log("[initializeTile]");
+        // console.log(gs().encodedColumnBatches[_pos.x][_pos.y / _batchSize]);
+        // console.log(_pos.x);
+        // console.log(_pos.y);
+        // console.log(_encodedCol);
+        // console.log(_terrainId);
+        // console.log("[da end]");
 
         if (_terrainId >= 3) {
             // Note: temporary way to set base

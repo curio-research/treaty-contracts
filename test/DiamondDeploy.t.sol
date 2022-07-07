@@ -207,6 +207,14 @@ contract DiamondDeployTest is Test {
             _result[x] = _encodedBatch;
         }
 
+        console.log("The truth manifests");
+        for (uint256 x = 0; x < _result.length; x++) {
+            console.log("A new X");
+            for (k = 0; k < _result[0].length; k++) {
+                console.log(_result[x][k]);
+            }
+        }
+
         return _result;
     }
 
@@ -248,26 +256,26 @@ contract DiamondDeployTest is Test {
         uint256[] memory _portCol = new uint256[](_height);
         uint256[] memory _cityCol = new uint256[](_height);
 
-        for (uint256 j = 0; j < _height; j++) {
-            _coastCol[j] = 0;
-            _landCol[j] = 1;
-            _waterCol[j] = 2;
-            _portCol[j] = 3;
-            _cityCol[j] = 4;
+        for (uint256 y = 0; y < _height; y++) {
+            _coastCol[y] = 0;
+            _landCol[y] = 1;
+            _waterCol[y] = 2;
+            _portCol[y] = 3;
+            _cityCol[y] = 4;
         }
 
         uint256[][] memory _map = new uint256[][](_width);
-        for (uint256 k = 0; k < _width; k += _interval) {
-            _map[k] = _waterCol;
-            _map[k + 1] = _waterCol;
-            _map[k + 2] = _portCol;
-            _map[k + 3] = _landCol;
-            _map[k + 4] = _landCol;
-            _map[k + 5] = _cityCol;
-            _map[k + 6] = _portCol;
-            _map[k + 7] = _waterCol;
-            _map[k + 8] = _coastCol;
-            _map[k + 9] = _landCol;
+        for (uint256 x = 0; x < _width; x += _interval) {
+            _map[x] = _waterCol;
+            _map[x + 1] = _waterCol;
+            _map[x + 2] = _portCol;
+            _map[x + 3] = _landCol;
+            _map[x + 4] = _landCol;
+            _map[x + 5] = _cityCol;
+            _map[x + 6] = _portCol;
+            _map[x + 7] = _waterCol;
+            _map[x + 8] = _coastCol;
+            _map[x + 9] = _landCol;
         }
 
         return _map;
