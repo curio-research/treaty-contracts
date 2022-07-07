@@ -1,7 +1,6 @@
 import { position } from './../../util/types/common';
 import { BigNumberish, BigNumber } from 'ethers';
 import SimplexNoise from 'simplex-noise';
-import { NUM_INIT_TERRAIN_TYPES } from './constants';
 import { RenderInput, ColorsAndCutoffs, TileMapOutput, TILE_TYPE, AllGameMapsOutput, MapInput } from './types';
 
 //////////////////////////////////////////////////////////////////////
@@ -24,23 +23,39 @@ const MAX_UINT256 = BigInt(Math.pow(2, 256)) - BigInt(1);
 
 /**
  * Encode columns of a tile map using unique prime factorization.
- * Note: Currently only support column sizes less than 50
  * @param tileMap
- * @returns a 1d array of encoded columns
+ * @param numInitTerrainTypes
+ * @param batchSize
+ * @returns a 2d array of encoded columns, each in batches
  */
-export const encodeTileMap = (tileMap: TILE_TYPE[][]): string[] => {
-  const result: string[] = [];
+export const encodeTileMap = (tileMap: TILE_TYPE[][], numInitTerrainTypes: number = 5, batchSize: number = 100): string[][] => {
+  const result: string[][] = [];
+  const numBatchPerCol = Math.floor(tileMap[0].length / batchSize);
+  const lastBatchSize = tileMap[0].length % batchSize;
 
-  let col: number[];
-  let encodedCol: bigint;
+  let encodedCol: string[];
+  let tempBatch: bigint;
+  let k: number;
+
   for (let x = 0; x < tileMap.length; x++) {
-    col = tileMap[x];
-    encodedCol = BigInt(0);
-    for (let y = 0; y < col.length; y++) {
-      encodedCol += BigInt(col[y]) * BigInt(NUM_INIT_TERRAIN_TYPES) ** BigInt(y);
+    encodedCol = [];
+    for (k = 0; k < numBatchPerCol; k++) {
+      tempBatch = BigInt(0);
+      for (let y = 0; y < batchSize; y++) {
+        tempBatch += BigInt(tileMap[x][y]) * BigInt(numInitTerrainTypes) ** BigInt(y);
+        if (tempBatch >= MAX_UINT256) throw new Error('Encoding exceeds uint256 max size');
+      }
+      encodedCol.push(tempBatch.toString());
     }
-    if (encodedCol >= MAX_UINT256) throw new Error('Encoding exceeds uint256 max size');
-    result.push(encodedCol.toString());
+    if (lastBatchSize > 0) {
+      tempBatch = BigInt(0);
+      for (let y = 0; y < lastBatchSize; y++) {
+        tempBatch += BigInt(tileMap[x][y]) * BigInt(numInitTerrainTypes) ** BigInt(y);
+        if (tempBatch >= MAX_UINT256) throw new Error('Encoding exceeds uint256 max size');
+      }
+      encodedCol.push(tempBatch.toString());
+    }
+    result.push(encodedCol);
   }
 
   return result;
@@ -282,10 +297,11 @@ export const placePortsAndCities = (colorMap: number[][][], numPorts: number, nu
   // this ensures that theres at least one city on each island!
   for (let i = 1; i < islandID + 1; i++) {
     const positionsByIslandID = islandIdToMapping.get(i);
-    if (positionsByIslandID) {
+    if (positionsByIslandID && numPorts) {
       const randomIslandTilePosition = positionsByIslandID[Math.floor(Math.random() * positionsByIslandID.length)];
       tileMap[randomIslandTilePosition.x][randomIslandTilePosition.y] = TILE_TYPE.PORT;
       portTiles.push([randomIslandTilePosition.x, randomIslandTilePosition.y]);
+      numPorts--;
     }
   }
 

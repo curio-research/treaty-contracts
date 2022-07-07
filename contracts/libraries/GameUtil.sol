@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import {BASE_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop} from "contracts/libraries/Types.sol";
+import {BASE_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop, WorldConstants} from "contracts/libraries/Types.sol";
 import {LibStorage} from "contracts/libraries/Storage.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 
@@ -68,11 +68,13 @@ library Util {
     }
 
     function _initializeTile(Position memory _pos) public {
-        uint256 _numInitTerrainTypes = gs().worldConstants.numInitTerrainTypes;
+        WorldConstants memory _worldConstants = gs().worldConstants;
+        uint256 _batchSize = _worldConstants.initBatchSize;
+        uint256 _numInitTerrainTypes = _worldConstants.numInitTerrainTypes;
 
-        uint256 _encodedRawCol = gs().encodedRawMapCols[_pos.x] % (_numInitTerrainTypes**(_pos.y + 1));
-        uint256 _divFactor = _numInitTerrainTypes**_pos.y;
-        uint256 _terrainId = _encodedRawCol / _divFactor;
+        uint256 _encodedCol = gs().encodedColumnBatches[_pos.x][_pos.y / _batchSize] % (_numInitTerrainTypes**((_pos.y % _batchSize) + 1));
+        uint256 _divFactor = _numInitTerrainTypes**(_pos.y % _batchSize);
+        uint256 _terrainId = _encodedCol / _divFactor;
 
         if (_terrainId >= 3) {
             // Note: temporary way to set base

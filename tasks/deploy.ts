@@ -12,6 +12,7 @@ import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
 import { MapInput, TILE_TYPE, TROOP_NAME } from './util/types';
 import { encodeTileMap, generateGameMaps } from './util/mapHelper';
 import { gameConfig } from '../api/types';
+import _ from 'lodash';
 
 // ---------------------------------
 // deploy script
@@ -83,7 +84,7 @@ task('deploy', 'deploy contracts')
       console.log('✦ initializing map');
       const time1 = performance.now();
       const encodedTileMap = encodeTileMap(tileMap);
-      await (await diamond.storeEncodedRawMapCols(encodedTileMap)).wait();
+      await (await diamond.storeEncodedColumnBatches(encodedTileMap)).wait();
       const time2 = performance.now();
       console.log(`✦ lazy set ${WORLD_WIDTH}x${WORLD_HEIGHT} map took ${time2 - time1} ms`);
 
@@ -91,7 +92,8 @@ task('deploy', 'deploy contracts')
       const cityTilePositions = cityTiles.map((cityTile) => ({ x: cityTile[0], y: cityTile[1] }));
 
       // initialize bases
-      await await diamond.bulkInitializeTiles([...portTilePositions, ...cityTilePositions]);
+      console.log('✦ initializing bases');
+      await (await diamond.bulkInitializeTiles([...portTilePositions, ...cityTilePositions])).wait();
 
       if (isDev) {
         // Randomly initialize players only if we're on localhost
@@ -139,10 +141,8 @@ task('deploy', 'deploy contracts')
           } while (deployMap[x][y] !== TILE_TYPE.PORT || player2Pos.x === player1Pos.x || player2Pos.y === player1Pos.y);
 
           // Give each player a port and an army to start with
-          let tx = await diamond.connect(player1).initializePlayer(player1Pos, player1.address);
-          await tx.wait();
-          tx = await diamond.connect(player1).initializePlayer(player2Pos, player2.address);
-          await tx.wait();
+          await (await diamond.connect(player1).initializePlayer(player1Pos, player1.address)).wait();
+          await (await diamond.connect(player1).initializePlayer(player2Pos, player2.address)).wait();
         }
       }
 

@@ -8,8 +8,8 @@ import "test/DiamondDeploy.t.sol";
 contract BasicTest is Test, DiamondDeployTest {
     function testWorldSize() public {
         WorldConstants memory _worldConstants = getter.getWorldConstants();
-        assertEq(_worldConstants.worldWidth, 30);
-        assertEq(_worldConstants.worldHeight, 20);
+        assertEq(_worldConstants.worldWidth, 1000);
+        assertEq(_worldConstants.worldHeight, 1000);
     }
 
     function testOnlyAdmin() public {
@@ -92,5 +92,46 @@ contract BasicTest is Test, DiamondDeployTest {
         vm.warp(4);
         helper.updatePlayerBalance(player1);
         assertEq(getter.getPlayer(player1).balance, 26);
+    }
+
+    function testInitializeMapBatches() public {
+        Position memory _pos1 = Position({x: 176, y: 485});
+        Position memory _pos2 = Position({x: 371, y: 838});
+        Position memory _pos3 = Position({x: 995, y: 645});
+        Position[] memory _temp = new Position[](1);
+        _temp[0] = _pos3;
+
+        // activate far-flung map regions set not using the first batch
+        vm.startPrank(deployer);
+        helper.transferBaseOwnership(_pos1, player1);
+        helper.spawnTroop(_pos2, player2, troopTransportTroopTypeId);
+        helper.bulkInitializeTiles(_temp);
+        vm.stopPrank();
+
+        // verify that all three tiles are initialized correctly
+        Tile memory _tile1 = getter.getTileAt(_pos1);
+        assertTrue(_tile1.isInitialized);
+        assertTrue(_tile1.terrain == TERRAIN.COAST);
+        assertTrue(_tile1.baseId != NULL);
+        assertEq(getter.getBaseAt(_pos1).owner, player1);
+        assertEq(_tile1.occupantId, NULL);
+
+        Tile memory _tile2 = getter.getTileAt(_pos2);
+        assertTrue(_tile2.isInitialized);
+        assertTrue(_tile2.terrain == TERRAIN.WATER);
+        assertTrue(_tile2.occupantId != NULL);
+        assertEq(getter.getTroopAt(_pos2).owner, player2);
+        assertEq(_tile2.baseId, NULL);
+
+        Tile memory _tile3 = getter.getTileAt(_pos3);
+        assertTrue(_tile3.isInitialized);
+        assertTrue(_tile3.terrain == TERRAIN.INLAND);
+        assertTrue(_tile3.baseId != NULL);
+        assertEq(getter.getBaseAt(_pos3).owner, NULL_ADDR);
+        assertEq(_tile3.occupantId, NULL);
+
+        // verify that another arbitrary tile is not initialized
+        Tile memory _mysteriousTile = getter.getTileAt(Position({x: 129, y: 289}));
+        assertTrue(!_mysteriousTile.isInitialized);
     }
 }

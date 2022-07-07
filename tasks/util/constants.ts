@@ -9,9 +9,9 @@ export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 // Game constants (souhardrce of truth)
 // ----------------------------------------------------------
 
-export const WORLD_WIDTH = 15;
-export const WORLD_HEIGHT = 15;
-export const NUM_PORTS = 8;
+export const WORLD_WIDTH = 30;
+export const WORLD_HEIGHT = 20;
+export const NUM_PORTS = 50;
 export const NUM_CITIES = 0;
 export const MAP_INTERVAL = 10;
 export const SECONDS_PER_EPOCH = 0;
@@ -19,7 +19,8 @@ export const COMBAT_EFFICIENCY = 50;
 export const BASE_ATTACK_FACTOR = 1;
 export const BASE_DEFENSE_FACTOR = 1;
 export const BASE_MAX_HEALTH = 1;
-export const NUM_INIT_TERRAIN_TYPES = Object.keys(TILE_TYPE).length;
+export const NUM_INIT_TERRAIN_TYPES = 5;
+export const INIT_BATCH_SIZE = 100;
 
 export const TROOP_TYPES: TroopTypeStruct[] = [
   {
@@ -99,6 +100,7 @@ export const generateWorldConstants = (adminAddr: string): WorldConstantsStruct 
     mapInterval: MAP_INTERVAL,
     combatEfficiency: COMBAT_EFFICIENCY,
     numInitTerrainTypes: NUM_INIT_TERRAIN_TYPES,
+    initBatchSize: INIT_BATCH_SIZE,
     initPlayerBalance: 20,
     defaultBaseGoldGenerationPerSecond: 5,
   };
@@ -109,7 +111,7 @@ export const generateWorldConstants = (adminAddr: string): WorldConstantsStruct 
 // ----------------------------------------------------------
 
 export const RENDER_CONSTANTS: RenderInput = {
-  sizeFactor: 3,
+  sizeFactor: 10,
   numLandColors: 5,
   numWaterColors: 2,
   waterNoiseCutoff: 0.5,

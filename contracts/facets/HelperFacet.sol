@@ -25,15 +25,15 @@ contract HelperFacet is UseStorage {
 
     /**
      * Store an array of encoded raw map columns containing information of all tiles, for efficient storage.
-     * @param _cols map columns encoded with N-ary arithmetic
+     * @param _colBatches map columns in batches, encoded with N-ary arithmetic
      */
-    function storeEncodedRawMapCols(uint256[] memory _cols) external onlyAdmin {
-        gs().encodedRawMapCols = _cols;
+    function storeEncodedColumnBatches(uint256[][] memory _colBatches) external onlyAdmin {
+        gs().encodedColumnBatches = _colBatches;
     }
 
     /**
      * Initialize a player at a selected position.
-     * TODO: Upgrade logic such that everyone can initialize themselves. figure out if we want a whitelist or something
+     * TODO: figure out if we want a whitelist or something
      * @param _pos position to initialize
      * @param _player player address
      */

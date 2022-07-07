@@ -85,6 +85,7 @@ struct WorldConstants {
     uint256 mapInterval;
     uint256 combatEfficiency; // in the interval [0, 100]
     uint256 numInitTerrainTypes; // default is 5
+    uint256 initBatchSize; // default is 100 if numInitTerrainTypes = 5
     uint256 initPlayerBalance;
     uint256 defaultBaseGoldGenerationPerSecond;
 }
@@ -93,7 +94,7 @@ struct GameState {
     WorldConstants worldConstants;
     address[] players;
     mapping(address => Player) playerMap;
-    Tile[1000][1000] map;
+    Tile[5000][5000] map;
     uint256[] baseIds;
     uint256 baseNonce;
     mapping(uint256 => Base) baseIdMap;
@@ -102,5 +103,5 @@ struct GameState {
     mapping(uint256 => Troop) troopIdMap;
     uint256[] troopTypeIds;
     mapping(uint256 => TroopType) troopTypeIdMap;
-    uint256[] encodedRawMapCols;
+    uint256[][] encodedColumnBatches;
 }
