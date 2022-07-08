@@ -136,7 +136,7 @@ export const getTroopTypeIndexByName = (troopTypes: TroopTypeStruct[], name: TRO
 // Default maps
 // ------------------------------------------------
 
-export const ligmap: number[][] = [
+export const ligmap: TILE_TYPE[][] = [
   [1, 1, 4, 1, 3, 2, 2, 2, 2, 2],
   [1, 1, 1, 1, 1, 2, 2, 2, 2, 2],
   [4, 1, 1, 1, 3, 2, 2, 2, 2, 2],
@@ -147,4 +147,14 @@ export const ligmap: number[][] = [
   [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
   [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
   [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+];
+export const ligmapPortTiles: number[][] = [
+  [0, 4],
+  [2, 4],
+  [4, 2],
+  [4, 0],
+];
+export const ligmapCityTiles: number[][] = [
+  [0, 2],
+  [2, 0],
 ];
