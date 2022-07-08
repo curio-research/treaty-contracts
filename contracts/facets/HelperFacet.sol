@@ -25,16 +25,26 @@ contract HelperFacet is UseStorage {
 
     function pauseGame() external onlyAdmin {
         require(!gs().isPaused, "CURIO: Game is paused");
+
         gs().isPaused = true;
         emit Util.GamePaused();
     }
 
     function resumeGame() external onlyAdmin {
         require(gs().isPaused, "CURIO: Game is active");
+
         gs().isPaused = false;
         emit Util.GameResumed();
 
         // FIXME: update all gold production and military expense time
+    }
+
+    function reactivatePlayer(address _player) external onlyAdmin {
+        require(!Util._isPlayerActive(_player), "CURIO: Player is active");
+
+        gs().playerMap[_player].active = true;
+        gs().playerMap[_player].balance = 50;
+        emit Util.PlayerReactivated(_player);
     }
 
     /**
@@ -67,7 +77,9 @@ contract HelperFacet is UseStorage {
             balance: _worldConstants.initPlayerBalance,
             totalGoldGenerationPerUpdate: _worldConstants.defaultBaseGoldGenerationPerSecond,
             totalTroopExpensePerUpdate: 0,
-            balanceLastUpdated: block.timestamp
+            balanceLastUpdated: block.timestamp,
+            numOwnedBases: 1,
+            numOwnedTroops: 0
         });
         gs().baseIdMap[_baseId].owner = _player;
 

@@ -19,7 +19,12 @@ contract LogicTest is Test, DiamondDeployTest {
 
     // Purchase
     function testPurchaseTroopFailure() public {
+        // fail: purchase by inactive address
+        vm.expectRevert(bytes("CURIO: Player is inactive"));
+        engine.purchaseTroop(Position({x: 100, y: 50}), armyTroopTypeId);
+
         // fail: purchase on invalid location
+        vm.prank(player2);
         vm.expectRevert(bytes("CURIO: Out of bound"));
         engine.purchaseTroop(Position({x: 6000, y: 6000}), armyTroopTypeId);
 

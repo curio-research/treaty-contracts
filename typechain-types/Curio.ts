@@ -163,11 +163,15 @@ export type PlayerStruct = {
   totalGoldGenerationPerUpdate: BigNumberish;
   totalTroopExpensePerUpdate: BigNumberish;
   balanceLastUpdated: BigNumberish;
+  numOwnedBases: BigNumberish;
+  numOwnedTroops: BigNumberish;
 };
 
 export type PlayerStructOutput = [
   BigNumber,
   boolean,
+  BigNumber,
+  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -179,6 +183,8 @@ export type PlayerStructOutput = [
   totalGoldGenerationPerUpdate: BigNumber;
   totalTroopExpensePerUpdate: BigNumber;
   balanceLastUpdated: BigNumber;
+  numOwnedBases: BigNumber;
+  numOwnedTroops: BigNumber;
 };
 
 export type WorldConstantsStruct = {
@@ -247,6 +253,7 @@ export interface CurioInterface extends utils.Interface {
     "bulkInitializeTiles((uint256,uint256)[])": FunctionFragment;
     "initializePlayer((uint256,uint256),address)": FunctionFragment;
     "pauseGame()": FunctionFragment;
+    "reactivatePlayer(address)": FunctionFragment;
     "repair((uint256,uint256))": FunctionFragment;
     "resumeGame()": FunctionFragment;
     "spawnTroop((uint256,uint256),address,uint256)": FunctionFragment;
@@ -275,6 +282,7 @@ export interface CurioInterface extends utils.Interface {
     "_hasPort((bool,uint8,uint256,uint256))": FunctionFragment;
     "_inBound((uint256,uint256))": FunctionFragment;
     "_isLandTroop(uint256)": FunctionFragment;
+    "_isPlayerActive(address)": FunctionFragment;
     "_random(uint256,uint256)": FunctionFragment;
     "_samePos((uint256,uint256),(uint256,uint256))": FunctionFragment;
     "_strike(uint256,uint256)": FunctionFragment;
@@ -368,6 +376,10 @@ export interface CurioInterface extends utils.Interface {
     values: [PositionStruct, string]
   ): string;
   encodeFunctionData(functionFragment: "pauseGame", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "reactivatePlayer",
+    values: [string]
+  ): string;
   encodeFunctionData(
     functionFragment: "repair",
     values: [PositionStruct]
@@ -478,6 +490,10 @@ export interface CurioInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "_isPlayerActive",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "_random",
     values: [BigNumberish, BigNumberish]
   ): string;
@@ -560,6 +576,10 @@ export interface CurioInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "pauseGame", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "reactivatePlayer",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "repair", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "resumeGame", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "spawnTroop", data: BytesLike): Result;
@@ -645,6 +665,10 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "_isLandTroop",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "_isPlayerActive",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "_random", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "_samePos", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "_strike", data: BytesLike): Result;
@@ -665,6 +689,7 @@ export interface CurioInterface extends utils.Interface {
     "Moved(address,uint256,uint256,tuple,tuple)": EventFragment;
     "NewPlayer(address,tuple)": EventFragment;
     "NewTroop(address,uint256,tuple,tuple)": EventFragment;
+    "PlayerReactivated(address)": EventFragment;
     "Recovered(address,uint256)": EventFragment;
     "Repaired(address,uint256,uint256)": EventFragment;
     "UpdatePlayerBalance(address,uint256)": EventFragment;
@@ -681,6 +706,7 @@ export interface CurioInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "Moved"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NewPlayer"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NewTroop"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PlayerReactivated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Recovered"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Repaired"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "UpdatePlayerBalance"): EventFragment;
@@ -780,6 +806,11 @@ export type NewTroopEvent = TypedEvent<
 >;
 
 export type NewTroopEventFilter = TypedEventFilter<NewTroopEvent>;
+
+export type PlayerReactivatedEvent = TypedEvent<[string], { _player: string }>;
+
+export type PlayerReactivatedEventFilter =
+  TypedEventFilter<PlayerReactivatedEvent>;
 
 export type RecoveredEvent = TypedEvent<
   [string, BigNumber],
@@ -947,6 +978,11 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    reactivatePlayer(
+      _player: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     repair(
       _pos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1077,6 +1113,11 @@ export interface Curio extends BaseContract {
 
     _isLandTroop(
       _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    _isPlayerActive(
+      _player: string,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
@@ -1219,6 +1260,11 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  reactivatePlayer(
+    _player: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   repair(
     _pos: PositionStruct,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -1351,6 +1397,8 @@ export interface Curio extends BaseContract {
     _troopTypeId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<boolean>;
+
+  _isPlayerActive(_player: string, overrides?: CallOverrides): Promise<boolean>;
 
   _random(
     _max: BigNumberish,
@@ -1489,6 +1537,8 @@ export interface Curio extends BaseContract {
 
     pauseGame(overrides?: CallOverrides): Promise<void>;
 
+    reactivatePlayer(_player: string, overrides?: CallOverrides): Promise<void>;
+
     repair(_pos: PositionStruct, overrides?: CallOverrides): Promise<void>;
 
     resumeGame(overrides?: CallOverrides): Promise<void>;
@@ -1614,6 +1664,11 @@ export interface Curio extends BaseContract {
 
     _isLandTroop(
       _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    _isPlayerActive(
+      _player: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -1748,6 +1803,9 @@ export interface Curio extends BaseContract {
       _pos?: null
     ): NewTroopEventFilter;
 
+    "PlayerReactivated(address)"(_player?: null): PlayerReactivatedEventFilter;
+    PlayerReactivated(_player?: null): PlayerReactivatedEventFilter;
+
     "Recovered(address,uint256)"(
       _player?: null,
       _troopId?: null
@@ -1881,6 +1939,11 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    reactivatePlayer(
+      _player: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     repair(
       _pos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -2005,6 +2068,11 @@ export interface Curio extends BaseContract {
 
     _isLandTroop(
       _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _isPlayerActive(
+      _player: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -2146,6 +2214,11 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    reactivatePlayer(
+      _player: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     repair(
       _pos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -2282,6 +2355,11 @@ export interface Curio extends BaseContract {
 
     _isLandTroop(
       _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _isPlayerActive(
+      _player: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

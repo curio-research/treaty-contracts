@@ -15,6 +15,7 @@ library Util {
 
     event GamePaused();
     event GameResumed();
+    event PlayerReactivated(address _player);
     event NewPlayer(address _player, Position _pos);
     event UpdatePlayerBalance(address _player, uint256 _amount);
     event Moved(address _player, uint256 _troopId, uint256 _epoch, Position _startPos, Position _targetPos);
@@ -108,6 +109,7 @@ library Util {
         delete gs().troopIdMap[_troopId];
 
         _updatePlayerBalance(_owner);
+        gs().playerMap[_owner].numOwnedTroops--;
         gs().playerMap[_owner].totalTroopExpensePerUpdate = _totalTroopExpensePerUpdate;
 
         Tile memory _tile = _getTileAt(_troop.pos);
@@ -133,6 +135,7 @@ library Util {
         gs().map[_pos.x][_pos.y].occupantId = _troopId;
 
         _updatePlayerBalance(_owner);
+        gs().playerMap[_owner].numOwnedTroops++;
         gs().playerMap[_owner].totalTroopExpensePerUpdate += _getExpensePerSecond(_troopTypeId);
 
         return (_troopId, gs().troopIdMap[_troopId]);
@@ -158,6 +161,10 @@ library Util {
     }
 
     // Getters
+
+    function _isPlayerActive(address _player) public view returns (bool) {
+        return gs().playerMap[_player].active;
+    }
 
     function _getPlayerBalance(address _player) public view returns (uint256) {
         return gs().playerMap[_player].balance;

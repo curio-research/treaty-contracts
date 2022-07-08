@@ -20,6 +20,7 @@ contract EngineFacet is UseStorage {
      */
     function march(uint256 _troopId, Position memory _targetPos) external {
         require(!gs().isPaused, "CURIO: Game is paused");
+        require(Util._isPlayerActive(msg.sender), "CURIO: Player is inactive");
 
         require(Util._inBound(_targetPos), "CURIO: Target out of bound");
         if (!Util._getTileAt(_targetPos).isInitialized) Util._initializeTile(_targetPos);
@@ -79,6 +80,7 @@ contract EngineFacet is UseStorage {
      */
     function purchaseTroop(Position memory _pos, uint256 _troopTypeId) external {
         require(!gs().isPaused, "CURIO: Game is paused");
+        require(Util._isPlayerActive(msg.sender), "CURIO: Player is inactive");
 
         require(Util._inBound(_pos), "CURIO: Out of bound");
         if (!Util._getTileAt(_pos).isInitialized) Util._initializeTile(_pos);
@@ -202,7 +204,9 @@ contract EngineFacet is UseStorage {
 
             Util._updatePlayerBalance(_targetPlayer);
             Util._updatePlayerBalance(msg.sender);
+            gs().playerMap[_targetPlayer].numOwnedBases--;
             gs().playerMap[_targetPlayer].totalGoldGenerationPerUpdate -= _targetBase.goldGenerationPerSecond;
+            gs().playerMap[msg.sender].numOwnedBases++;
             gs().playerMap[msg.sender].totalGoldGenerationPerUpdate += _targetBase.goldGenerationPerSecond;
 
             // Move

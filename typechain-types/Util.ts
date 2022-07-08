@@ -114,6 +114,7 @@ export interface UtilInterface extends utils.Interface {
     "_hasPort((bool,uint8,uint256,uint256))": FunctionFragment;
     "_inBound((uint256,uint256))": FunctionFragment;
     "_isLandTroop(uint256)": FunctionFragment;
+    "_isPlayerActive(address)": FunctionFragment;
     "_random(uint256,uint256)": FunctionFragment;
     "_samePos((uint256,uint256),(uint256,uint256))": FunctionFragment;
     "_strike(uint256,uint256)": FunctionFragment;
@@ -201,6 +202,10 @@ export interface UtilInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "_isPlayerActive",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "_random",
     values: [BigNumberish, BigNumberish]
   ): string;
@@ -282,6 +287,10 @@ export interface UtilInterface extends utils.Interface {
     functionFragment: "_isLandTroop",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "_isPlayerActive",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "_random", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "_samePos", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "_strike", data: BytesLike): Result;
@@ -300,6 +309,7 @@ export interface UtilInterface extends utils.Interface {
     "Moved(address,uint256,uint256,tuple,tuple)": EventFragment;
     "NewPlayer(address,tuple)": EventFragment;
     "NewTroop(address,uint256,tuple,tuple)": EventFragment;
+    "PlayerReactivated(address)": EventFragment;
     "Recovered(address,uint256)": EventFragment;
     "Repaired(address,uint256,uint256)": EventFragment;
     "UpdatePlayerBalance(address,uint256)": EventFragment;
@@ -314,6 +324,7 @@ export interface UtilInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "Moved"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NewPlayer"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NewTroop"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PlayerReactivated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Recovered"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Repaired"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "UpdatePlayerBalance"): EventFragment;
@@ -398,6 +409,11 @@ export type NewTroopEvent = TypedEvent<
 >;
 
 export type NewTroopEventFilter = TypedEventFilter<NewTroopEvent>;
+
+export type PlayerReactivatedEvent = TypedEvent<[string], { _player: string }>;
+
+export type PlayerReactivatedEventFilter =
+  TypedEventFilter<PlayerReactivatedEvent>;
 
 export type RecoveredEvent = TypedEvent<
   [string, BigNumber],
@@ -542,6 +558,11 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    _isPlayerActive(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     _random(
       _max: BigNumberish,
       _salt: BigNumberish,
@@ -661,6 +682,8 @@ export interface Util extends BaseContract {
     _troopTypeId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<boolean>;
+
+  _isPlayerActive(_player: string, overrides?: CallOverrides): Promise<boolean>;
 
   _random(
     _max: BigNumberish,
@@ -782,6 +805,11 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    _isPlayerActive(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     _random(
       _max: BigNumberish,
       _salt: BigNumberish,
@@ -892,6 +920,9 @@ export interface Util extends BaseContract {
       _troop?: null,
       _pos?: null
     ): NewTroopEventFilter;
+
+    "PlayerReactivated(address)"(_player?: null): PlayerReactivatedEventFilter;
+    PlayerReactivated(_player?: null): PlayerReactivatedEventFilter;
 
     "Recovered(address,uint256)"(
       _player?: null,
@@ -1006,6 +1037,11 @@ export interface Util extends BaseContract {
 
     _isLandTroop(
       _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _isPlayerActive(
+      _player: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1133,6 +1169,11 @@ export interface Util extends BaseContract {
 
     _isLandTroop(
       _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _isPlayerActive(
+      _player: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

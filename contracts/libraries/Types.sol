@@ -33,6 +33,8 @@ struct Player {
     uint256 totalGoldGenerationPerUpdate;
     uint256 totalTroopExpensePerUpdate;
     uint256 balanceLastUpdated;
+    uint256 numOwnedBases;
+    uint256 numOwnedTroops;
 }
 
 struct Base {
