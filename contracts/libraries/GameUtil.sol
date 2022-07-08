@@ -96,20 +96,24 @@ library Util {
         uint256 _troopId
     ) public {
         // TODO: consider whether or not to remove Troop from gs().troops
+        uint256 _numOwnedTroops = gs().playerMap[_owner].numOwnedTroops;
         uint256 _totalTroopExpensePerUpdate = gs().playerMap[_owner].totalTroopExpensePerUpdate;
 
         Troop memory _troop = _getTroop(_troopId);
         for (uint256 i = 0; i < _troop.cargoTroopIds.length; i++) {
             uint256 _cargoId = _troop.cargoTroopIds[i];
+
+            _numOwnedTroops--;
             _totalTroopExpensePerUpdate -= _getExpensePerSecond(_getTroop(_cargoId).troopTypeId);
             delete gs().troopIdMap[_cargoId];
         }
 
+        _numOwnedTroops--;
         _totalTroopExpensePerUpdate -= _getExpensePerSecond(_troop.troopTypeId);
         delete gs().troopIdMap[_troopId];
 
         _updatePlayerBalance(_owner);
-        gs().playerMap[_owner].numOwnedTroops--;
+        gs().playerMap[_owner].numOwnedTroops = _numOwnedTroops;
         gs().playerMap[_owner].totalTroopExpensePerUpdate = _totalTroopExpensePerUpdate;
 
         Tile memory _tile = _getTileAt(_troop.pos);

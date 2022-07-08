@@ -31,6 +31,8 @@ contract BasicTest is Test, DiamondDeployTest {
         assertEq(_player1.balance, 20);
         assertEq(_player1.totalGoldGenerationPerUpdate, 5);
         assertEq(_player1.totalTroopExpensePerUpdate, 0);
+        assertEq(_player1.numOwnedBases, 1);
+        assertEq(_player1.numOwnedTroops, 0);
 
         Base memory _player2Port = getter.getBaseAt(player2Pos);
         assertTrue(_player2Port.name == BASE_NAME.PORT);
@@ -51,17 +53,20 @@ contract BasicTest is Test, DiamondDeployTest {
     function testTransferBaseOwnership() public {
         Position memory _pos = Position({x: 6, y: 6});
         assertEq(getter.getBaseAt(_pos).owner, NULL_ADDR);
+        assertEq(getter.getPlayer(player1).numOwnedBases, 1);
 
         vm.prank(deployer);
         helper.transferBaseOwnership(_pos, player1);
 
         assertEq(getter.getBaseAt(_pos).owner, player1);
+        assertEq(getter.getPlayer(player1).numOwnedBases, 2);
     }
 
     function testUpdatePlayerBalance() public {
         assertEq(getter.getPlayer(player1).balance, 20);
         assertEq(getter.getPlayer(player1).totalGoldGenerationPerUpdate, 5);
         assertEq(getter.getPlayer(player1).totalTroopExpensePerUpdate, 0);
+        assertEq(getter.getPlayer(player1).numOwnedTroops, 0);
 
         vm.warp(2);
         helper.updatePlayerBalance(player1);
@@ -75,6 +80,7 @@ contract BasicTest is Test, DiamondDeployTest {
         helper.spawnTroop(Position({x: 0, y: 3}), player1, battleshipTroopTypeId);
         assertEq(getter.getPlayer(player1).totalGoldGenerationPerUpdate, 5);
         assertEq(getter.getPlayer(player1).totalTroopExpensePerUpdate, 6);
+        assertEq(getter.getPlayer(player1).numOwnedTroops, 4);
         vm.stopPrank();
 
         vm.warp(3);

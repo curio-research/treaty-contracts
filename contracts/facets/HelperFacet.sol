@@ -132,6 +132,7 @@ contract HelperFacet is UseStorage {
 
         gs().baseIdMap[_tile.baseId].owner = _player;
         Util._updatePlayerBalance(_player);
+        gs().playerMap[_player].numOwnedBases++;
         gs().playerMap[_player].totalGoldGenerationPerUpdate += _base.goldGenerationPerSecond;
 
         emit Util.BaseCaptured(_player, NULL, _tile.baseId);

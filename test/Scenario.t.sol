@@ -7,6 +7,8 @@ import "test/DiamondDeploy.t.sol";
 contract ScenarioTest is Test, DiamondDeployTest {
     function testTroopTransport() public {
         Position memory _enemyPos = Position({x: 7, y: 3});
+        assertEq(getter.getPlayer(player1).numOwnedBases, 1);
+        assertEq(getter.getPlayer(player1).numOwnedTroops, 0);
 
         // two troop transports, one in a port, one on ocean, next to an army
         vm.startPrank(deployer);
@@ -29,9 +31,12 @@ contract ScenarioTest is Test, DiamondDeployTest {
         assertEq(getter.getPlayer(player1).balance, 20);
         assertEq(getter.getPlayer(player1).totalGoldGenerationPerUpdate, 15);
         assertEq(getter.getPlayer(player1).totalTroopExpensePerUpdate, 2);
+        assertEq(getter.getPlayer(player1).numOwnedBases, 3);
+        assertEq(getter.getPlayer(player1).numOwnedTroops, 4);
         assertEq(getter.getPlayer(player2).balance, 20);
         assertEq(getter.getPlayer(player2).totalGoldGenerationPerUpdate, 5);
         assertEq(getter.getPlayer(player2).totalTroopExpensePerUpdate, 1);
+        assertEq(getter.getPlayer(player2).numOwnedTroops, 1);
 
         uint256 _armyBobId = initTroopNonce;
         uint256 _troopTransport1Id = initTroopNonce + 1;
@@ -212,11 +217,15 @@ contract ScenarioTest is Test, DiamondDeployTest {
         if (getter.getTileAt(_newPos).occupantId == NULL) {
             _armyAlice = getter.getTroop(_armyAliceId);
             assertEq(_armyAlice.owner, NULL_ADDR);
+            assertEq(getter.getPlayer(player1).numOwnedTroops, 2); // numOwnedTroop reduced by 2 due to cargo army death
+            assertEq(getter.getPlayer(player2).numOwnedTroops, 1);
         } else {
             engine.march(_armyAliceId, Position({x: 8, y: 2}));
             _troopTransport2 = getter.getTroop(_troopTransport2Id);
             assertEq(_troopTransport2.cargoTroopIds.length, 0);
             assertEq(getter.getTileAt(Position({x: 7, y: 2})).occupantId, _troopTransport2Id);
+            assertEq(getter.getPlayer(player1).numOwnedTroops, 4);
+            assertEq(getter.getPlayer(player2).numOwnedTroops, 0);
         }
 
         vm.stopPrank();

@@ -53,6 +53,7 @@ contract LogicTest is Test, DiamondDeployTest {
 
     function testPurchaseTroop() public {
         assertEq(getter.getPlayer(player1).balance, 20);
+        assertEq(getter.getPlayer(player1).numOwnedTroops, 0);
 
         // player1 purchase troop transport
         vm.startPrank(player1);
@@ -75,11 +76,13 @@ contract LogicTest is Test, DiamondDeployTest {
         TroopType memory _troopType = getter.getTroopType(_troop.troopTypeId);
         assertTrue(!_troopType.isLandTroop);
 
+        // success: verify balance and troop count
         assertEq(getter.getPlayer(player1).balance, 20 - 14);
         assertEq(getter.getPlayer(player1).totalGoldGenerationPerUpdate, 5);
         assertEq(getter.getPlayer(player1).totalTroopExpensePerUpdate, 1);
+        assertEq(getter.getPlayer(player1).numOwnedTroops, 1);
 
-        // // success: purchase another troop
+        // success: purchase another troop
         vm.warp(3);
         engine.march(initTroopNonce, Position({x: 7, y: 1}));
         engine.purchaseTroop(player1Pos, troopTransportTroopTypeId);
@@ -156,8 +159,10 @@ contract LogicTest is Test, DiamondDeployTest {
         assertEq(getter.getPlayer(player1).balance, 20);
         assertEq(getter.getPlayer(player1).totalGoldGenerationPerUpdate, 5);
         assertEq(getter.getPlayer(player1).totalTroopExpensePerUpdate, 1);
+        assertEq(getter.getPlayer(player1).numOwnedBases, 1);
         assertEq(getter.getPlayer(player2).totalGoldGenerationPerUpdate, 5);
         assertEq(getter.getPlayer(player2).totalTroopExpensePerUpdate, 0);
+        assertEq(getter.getPlayer(player2).numOwnedBases, 1);
         uint256 _destroyerId = initTroopNonce;
 
         // increase time
@@ -187,8 +192,10 @@ contract LogicTest is Test, DiamondDeployTest {
         assertEq(getter.getPlayer(player1).balance, 28);
         assertEq(getter.getPlayer(player1).totalGoldGenerationPerUpdate, 10);
         assertEq(getter.getPlayer(player1).totalTroopExpensePerUpdate, 1);
+        assertEq(getter.getPlayer(player1).numOwnedBases, 2);
         assertEq(getter.getPlayer(player2).totalGoldGenerationPerUpdate, 0);
         assertEq(getter.getPlayer(player2).totalTroopExpensePerUpdate, 0);
+        assertEq(getter.getPlayer(player2).numOwnedBases, 0);
     }
 
     function testBattleTroop() public {
@@ -205,6 +212,8 @@ contract LogicTest is Test, DiamondDeployTest {
         Troop memory _destroyer = getter.getTroopAt(_destroyerPos);
         assertEq(_destroyer.owner, player1);
         assertEq(_destroyer.health, getter.getTroopType(destroyerTroopTypeId).maxHealth);
+        assertEq(getter.getPlayer(player1).numOwnedTroops, 1);
+        assertEq(getter.getPlayer(player2).numOwnedTroops, 1);
 
         // increase time
         vm.warp(3);
@@ -228,14 +237,18 @@ contract LogicTest is Test, DiamondDeployTest {
             assertEq(_army.owner, player2);
             assertEq(getter.getPlayer(player1).totalGoldGenerationPerUpdate, 5);
             assertEq(getter.getPlayer(player1).totalTroopExpensePerUpdate, 0);
+            assertEq(getter.getPlayer(player1).numOwnedTroops, 0);
             assertEq(getter.getPlayer(player2).totalGoldGenerationPerUpdate, 5);
             assertEq(getter.getPlayer(player2).totalTroopExpensePerUpdate, 0);
+            assertEq(getter.getPlayer(player2).numOwnedTroops, 1);
         } else {
             assertEq(_destroyer.owner, player1);
             assertEq(getter.getPlayer(player1).totalGoldGenerationPerUpdate, 5);
             assertEq(getter.getPlayer(player1).totalTroopExpensePerUpdate, 1);
+            assertEq(getter.getPlayer(player1).numOwnedTroops, 1);
             assertEq(getter.getPlayer(player2).totalGoldGenerationPerUpdate, 5);
             assertEq(getter.getPlayer(player2).totalTroopExpensePerUpdate, 0);
+            assertEq(getter.getPlayer(player2).numOwnedTroops, 0);
         }
     }
 
@@ -271,6 +284,8 @@ contract LogicTest is Test, DiamondDeployTest {
 
         Base memory _base = getter.getBaseAt(player2Pos);
         assertEq(_base.owner, player2);
+        assertEq(getter.getPlayer(player1).numOwnedBases, 1);
+        assertEq(getter.getPlayer(player2).numOwnedBases, 1);
 
         // increase time
         vm.warp(3);
@@ -285,6 +300,8 @@ contract LogicTest is Test, DiamondDeployTest {
         assertEq(getter.getBaseAt(player2Pos).owner, player1);
         assertEq(getter.getBaseAt(player2Pos).health, 1);
         assertEq(getter.getTileAt(player2Pos).occupantId, _destroyerId);
+        assertEq(getter.getPlayer(player2).numOwnedBases, 0);
+        assertEq(getter.getPlayer(player1).numOwnedBases, 2);
         vm.expectRevert(bytes("CURIO: Destination tile occupied"));
         // Note: captureBase functionality
         engine.march(_armyId, player2Pos);
