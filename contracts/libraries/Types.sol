@@ -91,6 +91,8 @@ struct WorldConstants {
 }
 
 struct GameState {
+    bool isPaused;
+    uint256 lastResumed;
     WorldConstants worldConstants;
     address[] players;
     mapping(address => Player) playerMap;

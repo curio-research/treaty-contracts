@@ -23,6 +23,20 @@ contract HelperFacet is UseStorage {
         _;
     }
 
+    function pauseGame() external onlyAdmin {
+        require(!gs().isPaused, "CURIO: Game is paused");
+        gs().isPaused = true;
+        emit Util.GamePaused();
+    }
+
+    function resumeGame() external onlyAdmin {
+        require(gs().isPaused, "CURIO: Game is active");
+        gs().isPaused = false;
+        emit Util.GameResumed();
+
+        // FIXME: update all gold production and military expense time
+    }
+
     /**
      * Store an array of encoded raw map columns containing information of all tiles, for efficient storage.
      * @param _colBatches map columns in batches, encoded with N-ary arithmetic

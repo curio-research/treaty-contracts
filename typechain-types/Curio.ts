@@ -246,7 +246,9 @@ export interface CurioInterface extends utils.Interface {
     "getWorldConstants()": FunctionFragment;
     "bulkInitializeTiles((uint256,uint256)[])": FunctionFragment;
     "initializePlayer((uint256,uint256),address)": FunctionFragment;
+    "pauseGame()": FunctionFragment;
     "repair((uint256,uint256))": FunctionFragment;
+    "resumeGame()": FunctionFragment;
     "spawnTroop((uint256,uint256),address,uint256)": FunctionFragment;
     "storeEncodedColumnBatches(uint256[][])": FunctionFragment;
     "transferBaseOwnership((uint256,uint256),address)": FunctionFragment;
@@ -365,9 +367,14 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "initializePlayer",
     values: [PositionStruct, string]
   ): string;
+  encodeFunctionData(functionFragment: "pauseGame", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "repair",
     values: [PositionStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "resumeGame",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "spawnTroop",
@@ -552,7 +559,9 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "initializePlayer",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "pauseGame", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "repair", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "resumeGame", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "spawnTroop", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "storeEncodedColumnBatches",
@@ -651,6 +660,8 @@ export interface CurioInterface extends utils.Interface {
     "AttackedTroop(address,uint256,tuple,uint256,tuple)": EventFragment;
     "BaseCaptured(address,uint256,uint256)": EventFragment;
     "Death(address,uint256)": EventFragment;
+    "GamePaused()": EventFragment;
+    "GameResumed()": EventFragment;
     "Moved(address,uint256,uint256,tuple,tuple)": EventFragment;
     "NewPlayer(address,tuple)": EventFragment;
     "NewTroop(address,uint256,tuple,tuple)": EventFragment;
@@ -665,6 +676,8 @@ export interface CurioInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "AttackedTroop"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BaseCaptured"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Death"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "GamePaused"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "GameResumed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Moved"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NewPlayer"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NewTroop"): EventFragment;
@@ -727,6 +740,14 @@ export type DeathEvent = TypedEvent<
 >;
 
 export type DeathEventFilter = TypedEventFilter<DeathEvent>;
+
+export type GamePausedEvent = TypedEvent<[], {}>;
+
+export type GamePausedEventFilter = TypedEventFilter<GamePausedEvent>;
+
+export type GameResumedEvent = TypedEvent<[], {}>;
+
+export type GameResumedEventFilter = TypedEventFilter<GameResumedEvent>;
 
 export type MovedEvent = TypedEvent<
   [string, BigNumber, BigNumber, PositionStructOutput, PositionStructOutput],
@@ -922,8 +943,16 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    pauseGame(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     repair(
       _pos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    resumeGame(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -1186,8 +1215,16 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  pauseGame(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   repair(
     _pos: PositionStruct,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  resumeGame(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1450,7 +1487,11 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    pauseGame(overrides?: CallOverrides): Promise<void>;
+
     repair(_pos: PositionStruct, overrides?: CallOverrides): Promise<void>;
+
+    resumeGame(overrides?: CallOverrides): Promise<void>;
 
     spawnTroop(
       _pos: PositionStruct,
@@ -1667,6 +1708,12 @@ export interface Curio extends BaseContract {
     "Death(address,uint256)"(_player?: null, _troopId?: null): DeathEventFilter;
     Death(_player?: null, _troopId?: null): DeathEventFilter;
 
+    "GamePaused()"(): GamePausedEventFilter;
+    GamePaused(): GamePausedEventFilter;
+
+    "GameResumed()"(): GameResumedEventFilter;
+    GameResumed(): GameResumedEventFilter;
+
     "Moved(address,uint256,uint256,tuple,tuple)"(
       _player?: null,
       _troopId?: null,
@@ -1830,8 +1877,16 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    pauseGame(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     repair(
       _pos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    resumeGame(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -2087,8 +2142,16 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    pauseGame(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     repair(
       _pos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    resumeGame(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

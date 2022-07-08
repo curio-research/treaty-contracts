@@ -19,6 +19,8 @@ contract EngineFacet is UseStorage {
      * @param _targetPos target position
      */
     function march(uint256 _troopId, Position memory _targetPos) external {
+        require(!gs().isPaused, "CURIO: Game is paused");
+
         require(Util._inBound(_targetPos), "CURIO: Target out of bound");
         if (!Util._getTileAt(_targetPos).isInitialized) Util._initializeTile(_targetPos);
 
@@ -76,6 +78,8 @@ contract EngineFacet is UseStorage {
      * @param _troopTypeId identifier for selected troop type
      */
     function purchaseTroop(Position memory _pos, uint256 _troopTypeId) external {
+        require(!gs().isPaused, "CURIO: Game is paused");
+
         require(Util._inBound(_pos), "CURIO: Out of bound");
         if (!Util._getTileAt(_pos).isInitialized) Util._initializeTile(_pos);
 

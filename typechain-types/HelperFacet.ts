@@ -28,7 +28,9 @@ export interface HelperFacetInterface extends utils.Interface {
   functions: {
     "bulkInitializeTiles((uint256,uint256)[])": FunctionFragment;
     "initializePlayer((uint256,uint256),address)": FunctionFragment;
+    "pauseGame()": FunctionFragment;
     "repair((uint256,uint256))": FunctionFragment;
+    "resumeGame()": FunctionFragment;
     "spawnTroop((uint256,uint256),address,uint256)": FunctionFragment;
     "storeEncodedColumnBatches(uint256[][])": FunctionFragment;
     "transferBaseOwnership((uint256,uint256),address)": FunctionFragment;
@@ -43,9 +45,14 @@ export interface HelperFacetInterface extends utils.Interface {
     functionFragment: "initializePlayer",
     values: [PositionStruct, string]
   ): string;
+  encodeFunctionData(functionFragment: "pauseGame", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "repair",
     values: [PositionStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "resumeGame",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "spawnTroop",
@@ -72,7 +79,9 @@ export interface HelperFacetInterface extends utils.Interface {
     functionFragment: "initializePlayer",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "pauseGame", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "repair", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "resumeGame", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "spawnTroop", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "storeEncodedColumnBatches",
@@ -128,8 +137,16 @@ export interface HelperFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    pauseGame(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     repair(
       _pos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    resumeGame(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -168,8 +185,16 @@ export interface HelperFacet extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  pauseGame(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   repair(
     _pos: PositionStruct,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  resumeGame(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -208,7 +233,11 @@ export interface HelperFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    pauseGame(overrides?: CallOverrides): Promise<void>;
+
     repair(_pos: PositionStruct, overrides?: CallOverrides): Promise<void>;
+
+    resumeGame(overrides?: CallOverrides): Promise<void>;
 
     spawnTroop(
       _pos: PositionStruct,
@@ -248,8 +277,16 @@ export interface HelperFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    pauseGame(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     repair(
       _pos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    resumeGame(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -289,8 +326,16 @@ export interface HelperFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    pauseGame(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     repair(
       _pos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    resumeGame(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -13,6 +13,8 @@ library Util {
         return LibStorage.gameStorage();
     }
 
+    event GamePaused();
+    event GameResumed();
     event NewPlayer(address _player, Position _pos);
     event UpdatePlayerBalance(address _player, uint256 _amount);
     event Moved(address _player, uint256 _troopId, uint256 _epoch, Position _startPos, Position _targetPos);

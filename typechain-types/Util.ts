@@ -295,6 +295,8 @@ export interface UtilInterface extends utils.Interface {
     "AttackedTroop(address,uint256,tuple,uint256,tuple)": EventFragment;
     "BaseCaptured(address,uint256,uint256)": EventFragment;
     "Death(address,uint256)": EventFragment;
+    "GamePaused()": EventFragment;
+    "GameResumed()": EventFragment;
     "Moved(address,uint256,uint256,tuple,tuple)": EventFragment;
     "NewPlayer(address,tuple)": EventFragment;
     "NewTroop(address,uint256,tuple,tuple)": EventFragment;
@@ -307,6 +309,8 @@ export interface UtilInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "AttackedTroop"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BaseCaptured"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Death"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "GamePaused"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "GameResumed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Moved"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NewPlayer"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NewTroop"): EventFragment;
@@ -354,6 +358,14 @@ export type DeathEvent = TypedEvent<
 >;
 
 export type DeathEventFilter = TypedEventFilter<DeathEvent>;
+
+export type GamePausedEvent = TypedEvent<[], {}>;
+
+export type GamePausedEventFilter = TypedEventFilter<GamePausedEvent>;
+
+export type GameResumedEvent = TypedEvent<[], {}>;
+
+export type GameResumedEventFilter = TypedEventFilter<GameResumedEvent>;
 
 export type MovedEvent = TypedEvent<
   [string, BigNumber, BigNumber, PositionStructOutput, PositionStructOutput],
@@ -840,6 +852,12 @@ export interface Util extends BaseContract {
 
     "Death(address,uint256)"(_player?: null, _troopId?: null): DeathEventFilter;
     Death(_player?: null, _troopId?: null): DeathEventFilter;
+
+    "GamePaused()"(): GamePausedEventFilter;
+    GamePaused(): GamePausedEventFilter;
+
+    "GameResumed()"(): GameResumedEventFilter;
+    GameResumed(): GameResumedEventFilter;
 
     "Moved(address,uint256,uint256,tuple,tuple)"(
       _player?: null,
