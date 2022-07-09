@@ -13,6 +13,9 @@ library Util {
         return LibStorage.gameStorage();
     }
 
+    event GamePaused();
+    event GameResumed();
+    event PlayerReactivated(address _player);
     event NewPlayer(address _player, Position _pos);
     event UpdatePlayerBalance(address _player, uint256 _amount);
     event Moved(address _player, uint256 _troopId, uint256 _epoch, Position _startPos, Position _targetPos);
@@ -93,19 +96,24 @@ library Util {
         uint256 _troopId
     ) public {
         // TODO: consider whether or not to remove Troop from gs().troops
+        uint256 _numOwnedTroops = gs().playerMap[_owner].numOwnedTroops;
         uint256 _totalTroopExpensePerUpdate = gs().playerMap[_owner].totalTroopExpensePerUpdate;
 
         Troop memory _troop = _getTroop(_troopId);
         for (uint256 i = 0; i < _troop.cargoTroopIds.length; i++) {
             uint256 _cargoId = _troop.cargoTroopIds[i];
+
+            _numOwnedTroops--;
             _totalTroopExpensePerUpdate -= _getExpensePerSecond(_getTroop(_cargoId).troopTypeId);
             delete gs().troopIdMap[_cargoId];
         }
 
+        _numOwnedTroops--;
         _totalTroopExpensePerUpdate -= _getExpensePerSecond(_troop.troopTypeId);
         delete gs().troopIdMap[_troopId];
 
         _updatePlayerBalance(_owner);
+        gs().playerMap[_owner].numOwnedTroops = _numOwnedTroops;
         gs().playerMap[_owner].totalTroopExpensePerUpdate = _totalTroopExpensePerUpdate;
 
         Tile memory _tile = _getTileAt(_troop.pos);
@@ -131,6 +139,7 @@ library Util {
         gs().map[_pos.x][_pos.y].occupantId = _troopId;
 
         _updatePlayerBalance(_owner);
+        gs().playerMap[_owner].numOwnedTroops++;
         gs().playerMap[_owner].totalTroopExpensePerUpdate += _getExpensePerSecond(_troopTypeId);
 
         return (_troopId, gs().troopIdMap[_troopId]);
@@ -156,6 +165,18 @@ library Util {
     }
 
     // Getters
+
+    function _isPlayerInitialized(address _player) public view returns (bool) {
+        address[] memory _allPlayers = gs().players;
+        for (uint256 i = 0; i < _allPlayers.length; i++) {
+            if (_allPlayers[i] == _player) return true;
+        }
+        return false;
+    }
+
+    function _isPlayerActive(address _player) public view returns (bool) {
+        return gs().playerMap[_player].active;
+    }
 
     function _getPlayerBalance(address _player) public view returns (uint256) {
         return gs().playerMap[_player].balance;

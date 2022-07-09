@@ -139,11 +139,15 @@ export type PlayerStruct = {
   totalGoldGenerationPerUpdate: BigNumberish;
   totalTroopExpensePerUpdate: BigNumberish;
   balanceLastUpdated: BigNumberish;
+  numOwnedBases: BigNumberish;
+  numOwnedTroops: BigNumberish;
 };
 
 export type PlayerStructOutput = [
   BigNumber,
   boolean,
+  BigNumber,
+  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -155,6 +159,8 @@ export type PlayerStructOutput = [
   totalGoldGenerationPerUpdate: BigNumber;
   totalTroopExpensePerUpdate: BigNumber;
   balanceLastUpdated: BigNumber;
+  numOwnedBases: BigNumber;
+  numOwnedTroops: BigNumber;
 };
 
 export type WorldConstantsStruct = {

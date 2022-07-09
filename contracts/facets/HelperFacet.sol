@@ -24,6 +24,50 @@ contract HelperFacet is UseStorage {
     }
 
     /**
+     * Pause an ongoing game.
+     */
+    function pauseGame() external onlyAdmin {
+        require(!gs().isPaused, "CURIO: Game is paused");
+
+        address[] memory _allPlayers = gs().players;
+        for (uint256 i = 0; i < _allPlayers.length; i++) {
+            Util._updatePlayerBalance(_allPlayers[i]);
+        }
+
+        gs().isPaused = true;
+        gs().lastPaused = block.timestamp;
+        emit Util.GamePaused();
+    }
+
+    /**
+     * Resume a paused game.
+     */
+    function resumeGame() external onlyAdmin {
+        require(gs().isPaused, "CURIO: Game is ongoing");
+
+        for (uint256 i = 0; i < gs().players.length; i++) {
+            gs().playerMap[gs().players[i]].balanceLastUpdated = block.timestamp;
+        }
+
+        gs().isPaused = false;
+        emit Util.GameResumed();
+    }
+
+    /**
+     * Reactivate an inactive player.
+     * TODO: add a reactivation cooldown for all players, or for each player
+     * @param _player player address
+     */
+    function reactivatePlayer(address _player) external onlyAdmin {
+        require(!Util._isPlayerInitialized(_player), "CURIO: Player already initialized");
+        require(!Util._isPlayerActive(_player), "CURIO: Player is active");
+
+        gs().playerMap[_player].active = true;
+        gs().playerMap[_player].balance = 50; // reload balance, FIXME: make more scalable
+        emit Util.PlayerReactivated(_player);
+    }
+
+    /**
      * Store an array of encoded raw map columns containing information of all tiles, for efficient storage.
      * @param _colBatches map columns in batches, encoded with N-ary arithmetic
      */
@@ -43,7 +87,7 @@ contract HelperFacet is UseStorage {
 
         uint256 _baseId = Util._getTileAt(_pos).baseId;
         require(Util._getBaseOwner(_baseId) == NULL_ADDR, "CURIO: Base is taken");
-        require(!gs().playerMap[_player].active, "CURIO: Player already initialized");
+        require(!Util._isPlayerInitialized(_player), "CURIO: Player already initialized");
 
         WorldConstants memory _worldConstants = gs().worldConstants;
         gs().players.push(_player);
@@ -53,7 +97,9 @@ contract HelperFacet is UseStorage {
             balance: _worldConstants.initPlayerBalance,
             totalGoldGenerationPerUpdate: _worldConstants.defaultBaseGoldGenerationPerSecond,
             totalTroopExpensePerUpdate: 0,
-            balanceLastUpdated: block.timestamp
+            balanceLastUpdated: block.timestamp,
+            numOwnedBases: 1,
+            numOwnedTroops: 0
         });
         gs().baseIdMap[_baseId].owner = _player;
 
@@ -106,6 +152,7 @@ contract HelperFacet is UseStorage {
 
         gs().baseIdMap[_tile.baseId].owner = _player;
         Util._updatePlayerBalance(_player);
+        gs().playerMap[_player].numOwnedBases++;
         gs().playerMap[_player].totalGoldGenerationPerUpdate += _base.goldGenerationPerSecond;
 
         emit Util.BaseCaptured(_player, NULL, _tile.baseId);
