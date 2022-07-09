@@ -115,6 +115,7 @@ export interface UtilInterface extends utils.Interface {
     "_inBound((uint256,uint256))": FunctionFragment;
     "_isLandTroop(uint256)": FunctionFragment;
     "_isPlayerActive(address)": FunctionFragment;
+    "_isPlayerInitialized(address)": FunctionFragment;
     "_random(uint256,uint256)": FunctionFragment;
     "_samePos((uint256,uint256),(uint256,uint256))": FunctionFragment;
     "_strike(uint256,uint256)": FunctionFragment;
@@ -206,6 +207,10 @@ export interface UtilInterface extends utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
+    functionFragment: "_isPlayerInitialized",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "_random",
     values: [BigNumberish, BigNumberish]
   ): string;
@@ -289,6 +294,10 @@ export interface UtilInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "_isPlayerActive",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_isPlayerInitialized",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "_random", data: BytesLike): Result;
@@ -563,6 +572,11 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    _isPlayerInitialized(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     _random(
       _max: BigNumberish,
       _salt: BigNumberish,
@@ -685,6 +699,11 @@ export interface Util extends BaseContract {
 
   _isPlayerActive(_player: string, overrides?: CallOverrides): Promise<boolean>;
 
+  _isPlayerInitialized(
+    _player: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   _random(
     _max: BigNumberish,
     _salt: BigNumberish,
@@ -806,6 +825,11 @@ export interface Util extends BaseContract {
     ): Promise<boolean>;
 
     _isPlayerActive(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    _isPlayerInitialized(
       _player: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
@@ -1045,6 +1069,11 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _isPlayerInitialized(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     _random(
       _max: BigNumberish,
       _salt: BigNumberish,
@@ -1173,6 +1202,11 @@ export interface Util extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     _isPlayerActive(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _isPlayerInitialized(
       _player: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
