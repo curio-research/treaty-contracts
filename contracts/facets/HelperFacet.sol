@@ -23,22 +23,41 @@ contract HelperFacet is UseStorage {
         _;
     }
 
+    /**
+     * Pause an ongoing game.
+     */
     function pauseGame() external onlyAdmin {
         require(!gs().isPaused, "CURIO: Game is paused");
 
+        address[] memory _allPlayers = gs().players;
+        for (uint256 i = 0; i < _allPlayers.length; i++) {
+            Util._updatePlayerBalance(_allPlayers[i]);
+        }
+
         gs().isPaused = true;
+        gs().lastPaused = block.timestamp;
         emit Util.GamePaused();
     }
 
+    /**
+     * Resume a paused game.
+     */
     function resumeGame() external onlyAdmin {
-        require(gs().isPaused, "CURIO: Game is active");
+        require(gs().isPaused, "CURIO: Game is ongoing");
+
+        for (uint256 i = 0; i < gs().players.length; i++) {
+            gs().playerMap[gs().players[i]].balanceLastUpdated = block.timestamp;
+        }
 
         gs().isPaused = false;
         emit Util.GameResumed();
-
-        // FIXME: update all gold production and military expense time
     }
 
+    /**
+     * Reactivate an inactive player.
+     * TODO: add a reactivation cooldown for all players, or for each player
+     * @param _player player address
+     */
     function reactivatePlayer(address _player) external onlyAdmin {
         require(!Util._isPlayerActive(_player), "CURIO: Player is active");
 

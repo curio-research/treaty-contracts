@@ -140,4 +140,74 @@ contract BasicTest is Test, DiamondDeployTest {
         Tile memory _mysteriousTile = getter.getTileAt(Position({x: 129, y: 289}));
         assertTrue(!_mysteriousTile.isInitialized);
     }
+
+    function testPauseGame() public {
+        vm.expectRevert(bytes("CURIO: Game is ongoing"));
+        vm.prank(deployer);
+        helper.resumeGame();
+
+        vm.expectRevert(bytes("CURIO: Unauthorized"));
+        vm.prank(player3);
+        helper.pauseGame();
+
+        // initialize with 3 troops for player1
+        vm.startPrank(deployer);
+        helper.spawnTroop(Position({x: 0, y: 4}), player1, destroyerTroopTypeId);
+        helper.spawnTroop(Position({x: 7, y: 5}), player1, troopTransportTroopTypeId);
+        helper.spawnTroop(Position({x: 3, y: 6}), player1, armyTroopTypeId); // no expense
+        vm.stopPrank();
+
+        // verify initial states
+        Player memory _player1Data = getter.getPlayer(player1);
+        assertEq(block.timestamp, 1);
+        assertEq(_player1Data.numOwnedBases, 1);
+        assertEq(_player1Data.numOwnedTroops, 3);
+        assertEq(_player1Data.totalGoldGenerationPerUpdate, 5);
+        assertEq(_player1Data.totalTroopExpensePerUpdate, 2);
+        assertEq(_player1Data.balance, 20);
+
+        // verify balance after 4 seconds
+        vm.warp(5);
+        assertEq(getter.getPlayer(player1).balance, 20);
+        helper.updatePlayerBalance(player1);
+        assertEq(block.timestamp, 5);
+        assertEq(getter.getPlayer(player1).balance, 32); // 20 + (5-2) * 4
+
+        // pause game after another 2 seconds
+        vm.warp(7);
+        assertEq(getter.getPlayer(player1).balance, 32);
+        vm.prank(deployer);
+        helper.pauseGame();
+
+        // verify player balance update
+        assertEq(getter.getPlayer(player1).balance, 38); // 32 + (5-2) * 2;
+
+        // verify that player functions can no longer be called
+        vm.startPrank(player1);
+        vm.expectRevert(bytes("CURIO: Game is paused"));
+        engine.march(1, Position({x: 0, y: 5}));
+        vm.expectRevert(bytes("CURIO: Game is paused"));
+        engine.purchaseTroop(Position({x: 0, y: 5}), destroyerTroopTypeId);
+        vm.stopPrank();
+
+        // verify that admin functions are unaffected
+        vm.prank(deployer);
+        helper.spawnTroop(Position({x: 0, y: 5}), player2, destroyerTroopTypeId);
+        assertEq(getter.getTroopAt(Position({x: 0, y: 5})).owner, player2);
+        assertEq(getter.getTroopAt(Position({x: 0, y: 5})).troopTypeId, destroyerTroopTypeId);
+
+        // resume game after another 3 seconds
+        vm.warp(10);
+        assertEq(getter.getPlayer(player1).balance, 38);
+        vm.prank(deployer);
+        helper.resumeGame();
+
+        // verify that player balance remains unchanged over paused interval
+        assertEq(getter.getPlayer(player1).balance, 38);
+        vm.warp(11);
+        helper.updatePlayerBalance(player1);
+        _player1Data = getter.getPlayer(player1);
+        assertEq(_player1Data.balance, 41); // 38 + (5-2)
+        assertEq(_player1Data.numOwnedTroops, 3);
+    }
 }
