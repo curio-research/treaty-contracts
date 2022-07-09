@@ -59,10 +59,11 @@ contract HelperFacet is UseStorage {
      * @param _player player address
      */
     function reactivatePlayer(address _player) external onlyAdmin {
+        require(!Util._isPlayerInitialized(_player), "CURIO: Player already initialized");
         require(!Util._isPlayerActive(_player), "CURIO: Player is active");
 
         gs().playerMap[_player].active = true;
-        gs().playerMap[_player].balance = 50;
+        gs().playerMap[_player].balance = 50; // reload balance, FIXME: make more scalable
         emit Util.PlayerReactivated(_player);
     }
 
@@ -86,7 +87,7 @@ contract HelperFacet is UseStorage {
 
         uint256 _baseId = Util._getTileAt(_pos).baseId;
         require(Util._getBaseOwner(_baseId) == NULL_ADDR, "CURIO: Base is taken");
-        require(!gs().playerMap[_player].active, "CURIO: Player already initialized");
+        require(!Util._isPlayerInitialized(_player), "CURIO: Player already initialized");
 
         WorldConstants memory _worldConstants = gs().worldConstants;
         gs().players.push(_player);

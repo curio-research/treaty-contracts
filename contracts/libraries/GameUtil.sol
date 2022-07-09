@@ -166,6 +166,14 @@ library Util {
 
     // Getters
 
+    function _isPlayerInitialized(address _player) public view returns (bool) {
+        address[] memory _allPlayers = gs().players;
+        for (uint256 i = 0; i < _allPlayers.length; i++) {
+            if (_allPlayers[i] == _player) return true;
+        }
+        return false;
+    }
+
     function _isPlayerActive(address _player) public view returns (bool) {
         return gs().playerMap[_player].active;
     }
