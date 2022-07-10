@@ -62,10 +62,6 @@ task('deploy', 'deploy contracts')
           tileMap = MEDITERRAINEAN_MAP.tileMap;
           portTiles = MEDITERRAINEAN_MAP.portTiles;
           cityTiles = MEDITERRAINEAN_MAP.cityTiles;
-          console.log(tileMap);
-          console.log('\nYO\n');
-          console.log(portTiles);
-          console.log(cityTiles);
         } else {
           // default is ligmap
           tileMap = ligmapTileOutput.tileMap;
