@@ -698,6 +698,7 @@ export interface CurioInterface extends utils.Interface {
     "Moved(address,uint256,uint256,tuple,tuple)": EventFragment;
     "NewPlayer(address,tuple)": EventFragment;
     "NewTroop(address,uint256,tuple,tuple)": EventFragment;
+    "PlayerInfo(address,tuple)": EventFragment;
     "PlayerReactivated(address)": EventFragment;
     "Recovered(address,uint256)": EventFragment;
     "Repaired(address,uint256,uint256)": EventFragment;
@@ -715,6 +716,7 @@ export interface CurioInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "Moved"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NewPlayer"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NewTroop"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PlayerInfo"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PlayerReactivated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Recovered"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Repaired"): EventFragment;
@@ -815,6 +817,13 @@ export type NewTroopEvent = TypedEvent<
 >;
 
 export type NewTroopEventFilter = TypedEventFilter<NewTroopEvent>;
+
+export type PlayerInfoEvent = TypedEvent<
+  [string, PlayerStructOutput],
+  { _addr: string; _player: PlayerStructOutput }
+>;
+
+export type PlayerInfoEventFilter = TypedEventFilter<PlayerInfoEvent>;
 
 export type PlayerReactivatedEvent = TypedEvent<[string], { _player: string }>;
 
@@ -1826,6 +1835,12 @@ export interface Curio extends BaseContract {
       _troop?: null,
       _pos?: null
     ): NewTroopEventFilter;
+
+    "PlayerInfo(address,tuple)"(
+      _addr?: null,
+      _player?: null
+    ): PlayerInfoEventFilter;
+    PlayerInfo(_addr?: null, _player?: null): PlayerInfoEventFilter;
 
     "PlayerReactivated(address)"(_player?: null): PlayerReactivatedEventFilter;
     PlayerReactivated(_player?: null): PlayerReactivatedEventFilter;

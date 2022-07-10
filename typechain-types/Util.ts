@@ -78,6 +78,37 @@ export type BaseStructOutput = [
   goldGenerationPerSecond: BigNumber;
 };
 
+export type PlayerStruct = {
+  initTimestamp: BigNumberish;
+  active: boolean;
+  balance: BigNumberish;
+  totalGoldGenerationPerUpdate: BigNumberish;
+  totalTroopExpensePerUpdate: BigNumberish;
+  balanceLastUpdated: BigNumberish;
+  numOwnedBases: BigNumberish;
+  numOwnedTroops: BigNumberish;
+};
+
+export type PlayerStructOutput = [
+  BigNumber,
+  boolean,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber
+] & {
+  initTimestamp: BigNumber;
+  active: boolean;
+  balance: BigNumber;
+  totalGoldGenerationPerUpdate: BigNumber;
+  totalTroopExpensePerUpdate: BigNumber;
+  balanceLastUpdated: BigNumber;
+  numOwnedBases: BigNumber;
+  numOwnedTroops: BigNumber;
+};
+
 export type TileStruct = {
   isInitialized: boolean;
   terrain: BigNumberish;
@@ -318,6 +349,7 @@ export interface UtilInterface extends utils.Interface {
     "Moved(address,uint256,uint256,tuple,tuple)": EventFragment;
     "NewPlayer(address,tuple)": EventFragment;
     "NewTroop(address,uint256,tuple,tuple)": EventFragment;
+    "PlayerInfo(address,tuple)": EventFragment;
     "PlayerReactivated(address)": EventFragment;
     "Recovered(address,uint256)": EventFragment;
     "Repaired(address,uint256,uint256)": EventFragment;
@@ -333,6 +365,7 @@ export interface UtilInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "Moved"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NewPlayer"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NewTroop"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PlayerInfo"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PlayerReactivated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Recovered"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Repaired"): EventFragment;
@@ -418,6 +451,13 @@ export type NewTroopEvent = TypedEvent<
 >;
 
 export type NewTroopEventFilter = TypedEventFilter<NewTroopEvent>;
+
+export type PlayerInfoEvent = TypedEvent<
+  [string, PlayerStructOutput],
+  { _addr: string; _player: PlayerStructOutput }
+>;
+
+export type PlayerInfoEventFilter = TypedEventFilter<PlayerInfoEvent>;
 
 export type PlayerReactivatedEvent = TypedEvent<[string], { _player: string }>;
 
@@ -944,6 +984,12 @@ export interface Util extends BaseContract {
       _troop?: null,
       _pos?: null
     ): NewTroopEventFilter;
+
+    "PlayerInfo(address,tuple)"(
+      _addr?: null,
+      _player?: null
+    ): PlayerInfoEventFilter;
+    PlayerInfo(_addr?: null, _player?: null): PlayerInfoEventFilter;
 
     "PlayerReactivated(address)"(_player?: null): PlayerReactivatedEventFilter;
     PlayerReactivated(_player?: null): PlayerReactivatedEventFilter;

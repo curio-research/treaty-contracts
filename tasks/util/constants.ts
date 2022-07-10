@@ -47,7 +47,7 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     movementCooldown: 1, // FIXME
     largeActionCooldown: 1,
     cost: 14,
-    expensePerSecond: 1,
+    expensePerSecond: 0,
   },
   {
     name: TROOP_NAME.DESTROYER,
@@ -60,7 +60,7 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     movementCooldown: 1, // FIXME
     largeActionCooldown: 1,
     cost: 20,
-    expensePerSecond: 1,
+    expensePerSecond: 0,
   },
   {
     name: TROOP_NAME.CRUISER,
@@ -73,7 +73,7 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     movementCooldown: 1, // FIXME
     largeActionCooldown: 1,
     cost: 30,
-    expensePerSecond: 1,
+    expensePerSecond: 0,
   },
   {
     name: TROOP_NAME.BATTLESHIP,
@@ -86,7 +86,7 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     movementCooldown: 1, // FIXME
     largeActionCooldown: 1,
     cost: 50,
-    expensePerSecond: 2,
+    expensePerSecond: 0,
   },
 ];
 
@@ -102,7 +102,7 @@ export const generateWorldConstants = (adminAddr: string): WorldConstantsStruct 
     numInitTerrainTypes: NUM_INIT_TERRAIN_TYPES,
     initBatchSize: INIT_BATCH_SIZE,
     initPlayerBalance: 20,
-    defaultBaseGoldGenerationPerSecond: 5,
+    defaultBaseGoldGenerationPerSecond: 1,
   };
 };
 
