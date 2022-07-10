@@ -120,7 +120,7 @@ library Util {
         if (_canTransportTroop(_tile)) {
             _unloadTroopFromTransport(_tile.occupantId, _troopId);
         } else {
-            delete gs().map[_pos.x][_pos.y].occupantId;
+            gs().map[_pos.x][_pos.y].occupantId = _NULL();
         }
     }
 
