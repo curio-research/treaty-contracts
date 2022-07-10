@@ -1,6 +1,6 @@
 import { WorldConstantsStruct } from './../../typechain-types/Curio';
 import { TroopTypeStruct } from '../../typechain-types/DiamondInit';
-import { RenderInput, TILE_TYPE, TROOP_NAME } from './types';
+import { Position, RenderInput, TileMapOutput, TILE_TYPE, TROOP_NAME } from './types';
 
 export const LOCALHOST_RPC_URL = 'http://127.0.0.1:8545/';
 export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
@@ -136,26 +136,3 @@ export const getTroopTypeIndexByName = (troopTypes: TroopTypeStruct[], name: TRO
 // ------------------------------------------------
 // Default maps
 // ------------------------------------------------
-
-export const ligmap: TILE_TYPE[][] = [
-  [1, 1, 4, 1, 3, 2, 2, 2, 2, 2],
-  [1, 1, 1, 1, 1, 2, 2, 2, 2, 2],
-  [4, 1, 1, 1, 3, 2, 2, 2, 2, 2],
-  [1, 1, 1, 1, 1, 2, 2, 2, 2, 2],
-  [3, 1, 3, 1, 1, 2, 2, 2, 2, 2],
-  [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
-  [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
-  [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
-  [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
-  [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
-];
-export const ligmapPortTiles: number[][] = [
-  [0, 4],
-  [2, 4],
-  [4, 2],
-  [4, 0],
-];
-export const ligmapCityTiles: number[][] = [
-  [0, 2],
-  [2, 0],
-];

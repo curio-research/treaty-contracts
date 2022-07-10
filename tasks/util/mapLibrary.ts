@@ -1,9 +1,42 @@
+import { Position, TileMapOutput, TILE_TYPE } from './types';
 // Contains fixed maps for game
 
-interface Position {
-  x: number;
-  y: number;
-}
+/////////////////////////////////////////////////////////////
+// LIGMAP
+/////////////////////////////////////////////////////////////
+
+const ligmap: TILE_TYPE[][] = [
+  [1, 1, 4, 1, 3, 2, 2, 2, 2, 2],
+  [1, 1, 1, 1, 1, 2, 2, 2, 2, 2],
+  [4, 1, 1, 1, 3, 2, 2, 2, 2, 2],
+  [1, 1, 1, 1, 1, 2, 2, 2, 2, 2],
+  [3, 1, 3, 1, 1, 2, 2, 2, 2, 2],
+  [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+  [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+  [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+  [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+  [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+];
+const ligmapPortTiles: Position[] = [
+  { x: 0, y: 4 },
+  { x: 2, y: 4 },
+  { x: 4, y: 2 },
+  { x: 4, y: 0 },
+];
+const ligmapCityTiles: Position[] = [
+  { x: 0, y: 2 },
+  { x: 2, y: 0 },
+];
+export const ligmapTileOutput: TileMapOutput = {
+  tileMap: ligmap,
+  portTiles: ligmapPortTiles,
+  cityTiles: ligmapCityTiles,
+};
+
+/////////////////////////////////////////////////////////////
+// MEDITERRAINEAN MAP
+/////////////////////////////////////////////////////////////
+
 interface Stronghold {
   name: string;
   position: Position;
@@ -12,7 +45,7 @@ interface Stronghold {
 const W = 2;
 const L = 1;
 const C = 0;
-const B = 3;
+const P = 3;
 const I = 4;
 
 const MEDITERRAINEAN_GEOGRAPHY = [
@@ -59,6 +92,7 @@ const MEDITERRAINEAN_GEOGRAPHY = [
   [L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, L],
   [L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, L],
 ];
+
 const tier1Strongholds: Stronghold[] = [
   { name: 'Madrid', position: { x: 5, y: 7 } },
   { name: 'Carthage', position: { x: 16, y: 11 } },
@@ -67,6 +101,7 @@ const tier1Strongholds: Stronghold[] = [
   { name: 'Constantinople', position: { x: 30, y: 6 } },
   { name: 'Cairo', position: { x: 33, y: 16 } },
 ];
+
 const tier2Strongholds: Stronghold[] = [
   { name: 'Rabat', position: { x: 3, y: 14 } },
   { name: 'Barcelona', position: { x: 10, y: 5 } },
@@ -81,13 +116,44 @@ const tier2Strongholds: Stronghold[] = [
   { name: 'Jerusalem', position: { x: 36, y: 15 } },
   { name: 'Damascus', position: { x: 38, y: 13 } },
 ];
+
 const addCoasts = (map: number[][]): number[][] => {
-  // TODO: implement
-  return [];
-};
-const addStrongholds = (map: number[][], strongholds: Stronghold[]): number[][] => {
-  strongholds.forEach((s) => (map[s.position.x][s.position.y] = map[s.position.x][s.position.y] === C ? B : I));
+  const width = map.length;
+  const height = map[0].length;
+  let lW: boolean, rW: boolean, uW: boolean, dW: boolean;
+
+  for (let x = 0; x < width; x++) {
+    for (let y = 0; y < height; y++) {
+      if (map[x][y] !== L) continue;
+
+      lW = x > 0 && map[x - 1][y] === W;
+      rW = x < width - 1 && map[x + 1][y] === W;
+      uW = y > 0 && map[x][y - 1] === W;
+      dW = y < height - 1 && map[x][y + 1] === W;
+      if (lW || rW || uW || dW) {
+        map[x][y] = C;
+      }
+    }
+  }
+
   return map;
 };
 
-export const MEDITERRAINERAN_MAP = addStrongholds(addCoasts(MEDITERRAINEAN_GEOGRAPHY), [...tier1Strongholds, ...tier2Strongholds]);
+const addStrongholds = (map: number[][], strongholds: Stronghold[]): TileMapOutput => {
+  const portTiles: Position[] = [];
+  const cityTiles: Position[] = [];
+
+  strongholds.forEach((s) => {
+    if (map[s.position.x][s.position.y] === C) {
+      map[s.position.x][s.position.y] = P;
+      portTiles.push(s.position);
+    } else {
+      map[s.position.x][s.position.y] = I;
+      cityTiles.push(s.position);
+    }
+  });
+
+  return { tileMap: map, portTiles, cityTiles };
+};
+
+export const MEDITERRAINEAN_MAP = addStrongholds(addCoasts(MEDITERRAINEAN_GEOGRAPHY), [...tier1Strongholds, ...tier2Strongholds]);
