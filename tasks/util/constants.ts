@@ -10,17 +10,18 @@ export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 // ----------------------------------------------------------
 
 export const WORLD_WIDTH = 30;
-export const WORLD_HEIGHT = 20;
+export const WORLD_HEIGHT = 30;
 export const NUM_PORTS = 50;
 export const NUM_CITIES = 0;
 export const MAP_INTERVAL = 10;
-export const SECONDS_PER_EPOCH = 0;
 export const COMBAT_EFFICIENCY = 50;
 export const BASE_ATTACK_FACTOR = 1;
 export const BASE_DEFENSE_FACTOR = 1;
 export const BASE_MAX_HEALTH = 1;
 export const NUM_INIT_TERRAIN_TYPES = 5;
 export const INIT_BATCH_SIZE = 100;
+export const INIT_PLAYER_BALANCE = 20;
+export const DEFAULT_BASE_GOLD_GENERATION_PER_SECOND = 5;
 
 export const TROOP_TYPES: TroopTypeStruct[] = [
   {
@@ -101,8 +102,8 @@ export const generateWorldConstants = (adminAddr: string): WorldConstantsStruct 
     combatEfficiency: COMBAT_EFFICIENCY,
     numInitTerrainTypes: NUM_INIT_TERRAIN_TYPES,
     initBatchSize: INIT_BATCH_SIZE,
-    initPlayerBalance: 20,
-    defaultBaseGoldGenerationPerSecond: 5,
+    initPlayerBalance: INIT_PLAYER_BALANCE,
+    defaultBaseGoldGenerationPerSecond: DEFAULT_BASE_GOLD_GENERATION_PER_SECOND,
   };
 };
 
