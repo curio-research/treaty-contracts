@@ -131,7 +131,7 @@ library Util {
         uint256 _troopTypeId
     ) public returns (uint256, Troop memory) {
         uint256[] memory _cargoTroopIds;
-        Troop memory _troop = Troop({owner: _owner, troopTypeId: _troopTypeId, lastMoved: block.timestamp, lastLargeActionTaken: block.timestamp, lastRepaired: block.timestamp, health: _getMaxHealth(_troopTypeId), pos: _pos, cargoTroopIds: _cargoTroopIds});
+        Troop memory _troop = Troop({owner: _owner, troopTypeId: _troopTypeId, lastMoved: block.timestamp, lastLargeActionTaken: 0, lastRepaired: block.timestamp, health: _getMaxHealth(_troopTypeId), pos: _pos, cargoTroopIds: _cargoTroopIds});
 
         uint256 _troopId = gs().troopNonce;
         gs().troopIds.push(_troopId);
