@@ -18,6 +18,7 @@ library Util {
     event PlayerReactivated(address _player);
     event NewPlayer(address _player, Position _pos);
     event UpdatePlayerBalance(address _player, uint256 _amount);
+    event PlayerInfo(address _addr, Player _player);
     event Moved(address _player, uint256 _troopId, uint256 _epoch, Position _startPos, Position _targetPos);
     event AttackedTroop(address _player, uint256 _troopId, Troop _troopInfo, uint256 _targetTroopId, Troop _targetTroopInfo);
     event AttackedBase(address _player, uint256 _troopId, Troop _troopInfo, uint256 _targetBaseId, Base _targetBaseInfo);
@@ -54,7 +55,7 @@ library Util {
         _player.balanceLastUpdated = block.timestamp;
         gs().playerMap[_addr] = _player;
 
-        emit UpdatePlayerBalance(_addr, _player.balance);
+        // emit UpdatePlayerBalance(_addr, _player.balance);
     }
 
     function _unloadTroopFromTransport(uint256 _troopTransportId, uint256 _cargoTroopId) public {
@@ -130,7 +131,7 @@ library Util {
         uint256 _troopTypeId
     ) public returns (uint256, Troop memory) {
         uint256[] memory _cargoTroopIds;
-        Troop memory _troop = Troop({owner: _owner, troopTypeId: _troopTypeId, lastMoved: block.timestamp, lastLargeActionTaken: block.timestamp, lastRepaired: block.timestamp, health: _getMaxHealth(_troopTypeId), pos: _pos, cargoTroopIds: _cargoTroopIds});
+        Troop memory _troop = Troop({owner: _owner, troopTypeId: _troopTypeId, lastMoved: block.timestamp, lastLargeActionTaken: 0, lastRepaired: block.timestamp, health: _getMaxHealth(_troopTypeId), pos: _pos, cargoTroopIds: _cargoTroopIds});
 
         uint256 _troopId = gs().troopNonce;
         gs().troopIds.push(_troopId);
@@ -266,6 +267,10 @@ library Util {
     function _random(uint256 _max, uint256 _salt) public view returns (uint256) {
         // FIXME: use truly random from Chainlink VRF or equivalent
         return uint256(keccak256(abi.encode(block.timestamp, block.difficulty, _salt))) % _max;
+    }
+
+    function emitPlayerInfo(address _player) external {
+        emit PlayerInfo(_player, gs().playerMap[_player]);
     }
 
     // ----------------------------------------------------------
