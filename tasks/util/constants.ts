@@ -102,7 +102,7 @@ export const generateWorldConstants = (adminAddr: string): WorldConstantsStruct 
     numInitTerrainTypes: NUM_INIT_TERRAIN_TYPES,
     initBatchSize: INIT_BATCH_SIZE,
     initPlayerBalance: 20,
-    defaultBaseGoldGenerationPerSecond: 5,
+    defaultBaseGoldGenerationPerSecond: 1,
   };
 };
 
