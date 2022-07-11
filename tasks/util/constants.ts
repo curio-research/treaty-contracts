@@ -1,6 +1,6 @@
 import { WorldConstantsStruct } from './../../typechain-types/Curio';
 import { TroopTypeStruct } from '../../typechain-types/DiamondInit';
-import { RenderInput, TILE_TYPE, TROOP_NAME } from './types';
+import { Position, RenderInput, TileMapOutput, TILE_TYPE, TROOP_NAME } from './types';
 
 export const LOCALHOST_RPC_URL = 'http://127.0.0.1:8545/';
 export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
@@ -10,17 +10,18 @@ export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 // ----------------------------------------------------------
 
 export const WORLD_WIDTH = 30;
-export const WORLD_HEIGHT = 20;
+export const WORLD_HEIGHT = 30;
 export const NUM_PORTS = 50;
 export const NUM_CITIES = 0;
 export const MAP_INTERVAL = 10;
-export const SECONDS_PER_EPOCH = 0;
 export const COMBAT_EFFICIENCY = 50;
 export const BASE_ATTACK_FACTOR = 1;
 export const BASE_DEFENSE_FACTOR = 1;
 export const BASE_MAX_HEALTH = 1;
 export const NUM_INIT_TERRAIN_TYPES = 5;
 export const INIT_BATCH_SIZE = 100;
+export const INIT_PLAYER_BALANCE = 20;
+export const DEFAULT_BASE_GOLD_GENERATION_PER_SECOND = 5;
 
 export const TROOP_TYPES: TroopTypeStruct[] = [
   {
@@ -101,8 +102,8 @@ export const generateWorldConstants = (adminAddr: string): WorldConstantsStruct 
     combatEfficiency: COMBAT_EFFICIENCY,
     numInitTerrainTypes: NUM_INIT_TERRAIN_TYPES,
     initBatchSize: INIT_BATCH_SIZE,
-    initPlayerBalance: 20,
-    defaultBaseGoldGenerationPerSecond: 1,
+    initPlayerBalance: INIT_PLAYER_BALANCE,
+    defaultBaseGoldGenerationPerSecond: DEFAULT_BASE_GOLD_GENERATION_PER_SECOND,
   };
 };
 
@@ -135,26 +136,3 @@ export const getTroopTypeIndexByName = (troopTypes: TroopTypeStruct[], name: TRO
 // ------------------------------------------------
 // Default maps
 // ------------------------------------------------
-
-export const ligmap: TILE_TYPE[][] = [
-  [1, 1, 4, 1, 3, 2, 2, 2, 2, 2],
-  [1, 1, 1, 1, 1, 2, 2, 2, 2, 2],
-  [4, 1, 1, 1, 3, 2, 2, 2, 2, 2],
-  [1, 1, 1, 1, 1, 2, 2, 2, 2, 2],
-  [3, 1, 3, 1, 1, 2, 2, 2, 2, 2],
-  [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
-  [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
-  [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
-  [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
-  [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
-];
-export const ligmapPortTiles: number[][] = [
-  [0, 4],
-  [2, 4],
-  [4, 2],
-  [4, 0],
-];
-export const ligmapCityTiles: number[][] = [
-  [0, 2],
-  [2, 0],
-];

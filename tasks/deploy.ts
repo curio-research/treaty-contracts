@@ -6,12 +6,13 @@ import { Util } from './../typechain-types/Util';
 import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { deployProxy, printDivider } from './util/deployHelper';
-import { TROOP_TYPES, getTroopTypeIndexByName, RENDER_CONSTANTS, NUM_CITIES, NUM_PORTS, WORLD_HEIGHT, WORLD_WIDTH, generateWorldConstants, ligmap, ligmapPortTiles, ligmapCityTiles } from './util/constants';
+import { TROOP_TYPES, getTroopTypeIndexByName, RENDER_CONSTANTS, NUM_CITIES, NUM_PORTS, WORLD_HEIGHT, WORLD_WIDTH, generateWorldConstants } from './util/constants';
 import { position } from '../util/types/common';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
-import { MapInput, TILE_TYPE, TROOP_NAME } from './util/types';
+import { MapInput, Position, TILE_TYPE, TROOP_NAME } from './util/types';
 import { encodeTileMap, generateGameMaps } from './util/mapHelper';
 import { gameConfig } from '../api/types';
+import { MEDITERRAINEAN_MAP, ligmapTileOutput } from './util/mapLibrary';
 
 // ---------------------------------
 // deploy script
@@ -22,6 +23,7 @@ task('deploy', 'deploy contracts')
   .addFlag('noport', "Don't port files to frontend") // default is to call port
   .addFlag('publish', 'Publish deployment to game launcher') // default is to call publish
   .addFlag('fixmap', 'Use deterministic map') // default is non-deterministic maps; deterministic maps are mainly used for client development
+  .addOptionalParam('name', 'Name of fixed map', 'Hello, World!')
   .setAction(async (args: any, hre: HardhatRuntimeEnvironment) => {
     try {
       // Compile contracts
@@ -34,6 +36,8 @@ task('deploy', 'deploy contracts')
       const fixMap = args.fixmap;
       if (fixMap) console.log('Using deterministic map');
       const publish = args.publish;
+      let mapName = args.name;
+      if (!mapName) mapName = 'LIGMAP';
 
       // Check connection with faucet to make sure deployment will post
       if (!isDev) {
@@ -50,13 +54,20 @@ task('deploy', 'deploy contracts')
       const worldConstants = generateWorldConstants(player1.address);
 
       let tileMap: TILE_TYPE[][];
-      let portTiles: number[][];
-      let cityTiles: number[][];
+      let portTiles: Position[];
+      let cityTiles: Position[];
 
       if (fixMap) {
-        tileMap = ligmap;
-        portTiles = ligmapPortTiles;
-        cityTiles = ligmapCityTiles;
+        if (mapName === 'MEDITERRAINEAN') {
+          tileMap = MEDITERRAINEAN_MAP.tileMap;
+          portTiles = MEDITERRAINEAN_MAP.portTiles;
+          cityTiles = MEDITERRAINEAN_MAP.cityTiles;
+        } else {
+          // default is ligmap
+          tileMap = ligmapTileOutput.tileMap;
+          portTiles = ligmapTileOutput.portTiles;
+          cityTiles = ligmapTileOutput.cityTiles;
+        }
       } else {
         const gameMaps = generateGameMaps(
           {
@@ -95,12 +106,8 @@ task('deploy', 'deploy contracts')
       const time2 = performance.now();
       console.log(`✦ lazy set ${tileMap.length}x${tileMap[0].length} map took ${time2 - time1} ms`);
 
-      // Initialize tiles with base
-      const portTilePositions = portTiles.map((portTile) => ({ x: portTile[0], y: portTile[1] }));
-      const cityTilePositions = cityTiles.map((cityTile) => ({ x: cityTile[0], y: cityTile[1] }));
-
       console.log('✦ initializing bases');
-      await (await diamond.bulkInitializeTiles([...portTilePositions, ...cityTilePositions])).wait();
+      await (await diamond.bulkInitializeTiles([...portTiles, ...cityTiles])).wait();
 
       // Randomly initialize players if on localhost
       if (isDev) {
@@ -108,7 +115,7 @@ task('deploy', 'deploy contracts')
         let x: number;
         let y: number;
 
-        if (fixMap) {
+        if (fixMap && mapName === 'LIGMAP') {
           // Primary setting for client development
           const player1Pos = { x: 2, y: 4 };
           const player2Pos = { x: 4, y: 2 };

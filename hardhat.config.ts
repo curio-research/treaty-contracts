@@ -69,8 +69,8 @@ export default {
       chainId: 1337,
       blockGasLimit: 100000000000,
       mining: {
-        // auto: true,
-        interval: 800,
+        auto: true,
+        // interval: 800,
       },
     },
   },
