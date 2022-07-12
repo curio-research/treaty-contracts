@@ -46,6 +46,7 @@ task('deploy', 'deploy contracts')
 
       // Set up deployer and some local variables
       let [player1, player2] = await hre.ethers.getSigners();
+
       const armyTroopTypeId = getTroopTypeIndexByName(TROOP_TYPES, TROOP_NAME.ARMY) + 1;
       const troopTransportTroopTypeId = getTroopTypeIndexByName(TROOP_TYPES, TROOP_NAME.TROOP_TRANSPORT) + 1;
       const destroyerTroopTypeId = getTroopTypeIndexByName(TROOP_TYPES, TROOP_NAME.DESTROYER) + 1;
