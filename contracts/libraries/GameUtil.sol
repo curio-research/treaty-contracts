@@ -265,8 +265,7 @@ library Util {
     }
 
     function _random(uint256 _max, uint256 _salt) public view returns (uint256) {
-        // return uint256(keccak256(abi.encode(block.timestamp, block.difficulty, _salt))) % _max;
-        return 0; // FIXME: temporary, essentially deterministic battle
+        return uint256(keccak256(abi.encode(block.timestamp, block.difficulty, _salt))) % _max;
     }
 
     // ----------------------------------------------------------
