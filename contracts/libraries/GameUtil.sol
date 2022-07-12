@@ -265,12 +265,8 @@ library Util {
     }
 
     function _random(uint256 _max, uint256 _salt) public view returns (uint256) {
-        // FIXME: use truly random from Chainlink VRF or equivalent
-        return uint256(keccak256(abi.encode(block.timestamp, block.difficulty, _salt))) % _max;
-    }
-
-    function emitPlayerInfo(address _player) external {
-        emit PlayerInfo(_player, gs().playerMap[_player]);
+        // return uint256(keccak256(abi.encode(block.timestamp, block.difficulty, _salt))) % _max;
+        return 0; // FIXME: temporary, essentially deterministic battle
     }
 
     // ----------------------------------------------------------

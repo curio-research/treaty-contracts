@@ -12,6 +12,7 @@ import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 contract EngineFacet is UseStorage {
     using SafeMath for uint256;
     uint256 NULL = 0;
+    address NULL_ADDR = address(0);
 
     /**
      * Troop march to a target position (combining move, battle, captureBase)
@@ -72,7 +73,7 @@ contract EngineFacet is UseStorage {
             }
         }
 
-        Util.emitPlayerInfo(msg.sender);
+        emit Util.PlayerInfo(msg.sender, gs().playerMap[msg.sender]);
     }
 
     /**
@@ -101,7 +102,7 @@ contract EngineFacet is UseStorage {
         (uint256 _troopId, Troop memory _troop) = Util._addTroop(msg.sender, _pos, _troopTypeId);
         gs().playerMap[msg.sender].balance -= _troopCost;
 
-        Util.emitPlayerInfo(msg.sender);
+        emit Util.PlayerInfo(msg.sender, gs().playerMap[msg.sender]);
         emit Util.NewTroop(msg.sender, _troopId, _troop, _pos);
     }
 
@@ -138,7 +139,6 @@ contract EngineFacet is UseStorage {
             }
         }
 
-        Util.emitPlayerInfo(msg.sender);
         emit Util.Moved(msg.sender, _troopId, block.timestamp, _troop.pos, _targetPos);
     }
 
@@ -209,8 +209,10 @@ contract EngineFacet is UseStorage {
 
             Util._updatePlayerBalance(_targetPlayer);
             Util._updatePlayerBalance(msg.sender);
-            gs().playerMap[_targetPlayer].numOwnedBases--;
-            gs().playerMap[_targetPlayer].totalGoldGenerationPerUpdate -= _targetBase.goldGenerationPerSecond;
+            if (_targetPlayer != NULL_ADDR) {
+                gs().playerMap[_targetPlayer].numOwnedBases--;
+                gs().playerMap[_targetPlayer].totalGoldGenerationPerUpdate -= _targetBase.goldGenerationPerSecond;
+            }
             gs().playerMap[msg.sender].numOwnedBases++;
             gs().playerMap[msg.sender].totalGoldGenerationPerUpdate += _targetBase.goldGenerationPerSecond;
 
