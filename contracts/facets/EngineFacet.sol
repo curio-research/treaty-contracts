@@ -200,8 +200,6 @@ contract EngineFacet is UseStorage {
             gs().baseIdMap[_targetTile.baseId].health = 0;
             _targetBase = Util._getBase(_targetTile.baseId);
 
-            emit Util.AttackedBase(msg.sender, _troopId, _troop, _targetTile.baseId, _targetBase);
-
             // Capture and update gold production
             gs().baseIdMap[_targetTile.baseId].owner = msg.sender;
             gs().baseIdMap[_targetTile.baseId].health = 1; // FIXME: change to BaseConstants.maxHealth
