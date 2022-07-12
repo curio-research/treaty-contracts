@@ -73,7 +73,7 @@ contract EngineFacet is UseStorage {
             }
         }
 
-        Util.emitPlayerInfo(msg.sender);
+        emit Util.PlayerInfo(msg.sender, gs().playerMap[msg.sender]);
     }
 
     /**
@@ -102,7 +102,7 @@ contract EngineFacet is UseStorage {
         (uint256 _troopId, Troop memory _troop) = Util._addTroop(msg.sender, _pos, _troopTypeId);
         gs().playerMap[msg.sender].balance -= _troopCost;
 
-        Util.emitPlayerInfo(msg.sender);
+        emit Util.PlayerInfo(msg.sender, gs().playerMap[msg.sender]);
         emit Util.NewTroop(msg.sender, _troopId, _troop, _pos);
     }
 
@@ -139,7 +139,6 @@ contract EngineFacet is UseStorage {
             }
         }
 
-        Util.emitPlayerInfo(msg.sender);
         emit Util.Moved(msg.sender, _troopId, block.timestamp, _troop.pos, _targetPos);
     }
 
