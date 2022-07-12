@@ -75,7 +75,7 @@ export default {
       blockGasLimit: 100000000000,
       mining: {
         auto: false,
-        interval: 300,
+        interval: 200,
       },
     },
   },

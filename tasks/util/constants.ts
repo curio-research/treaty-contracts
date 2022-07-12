@@ -9,8 +9,8 @@ export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 // Game constants (souhardrce of truth)
 // ----------------------------------------------------------
 
-export const WORLD_WIDTH = 20;
-export const WORLD_HEIGHT = 20;
+export const WORLD_WIDTH = 30;
+export const WORLD_HEIGHT = 30;
 export const NUM_PORTS = 50;
 export const NUM_CITIES = 0;
 export const MAP_INTERVAL = 10;
@@ -32,8 +32,8 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     attackFactor: 100,
     defenseFactor: 100,
     cargoCapacity: 0,
-    movementCooldown: 0,
-    largeActionCooldown: 0,
+    movementCooldown: 1,
+    largeActionCooldown: 1,
     cost: 6,
     expensePerSecond: 0,
   },
@@ -45,8 +45,8 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     attackFactor: 50,
     defenseFactor: 50,
     cargoCapacity: 6,
-    movementCooldown: 0,
-    largeActionCooldown: 0,
+    movementCooldown: 1,
+    largeActionCooldown: 1,
     cost: 14,
     expensePerSecond: 0,
   },
@@ -58,8 +58,8 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     attackFactor: 100,
     defenseFactor: 100,
     cargoCapacity: 0,
-    movementCooldown: 0,
-    largeActionCooldown: 0,
+    movementCooldown: 1,
+    largeActionCooldown: 1,
     cost: 20,
     expensePerSecond: 0,
   },
@@ -71,8 +71,8 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     attackFactor: 100,
     defenseFactor: 100,
     cargoCapacity: 0,
-    movementCooldown: 0,
-    largeActionCooldown: 0,
+    movementCooldown: 1,
+    largeActionCooldown: 1,
     cost: 30,
     expensePerSecond: 0,
   },
@@ -84,8 +84,8 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     attackFactor: 100,
     defenseFactor: 100,
     cargoCapacity: 0,
-    movementCooldown: 0,
-    largeActionCooldown: 0,
+    movementCooldown: 1,
+    largeActionCooldown: 1,
     cost: 50,
     expensePerSecond: 0,
   },
