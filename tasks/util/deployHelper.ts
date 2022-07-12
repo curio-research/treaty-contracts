@@ -33,8 +33,14 @@ export const LOCAL_MAP_PREFIX = 'MAP-';
 export const saveMapToLocal = async (tileMapOutput: TileMapOutput) => {
   const mapsDir = path.join(path.join(__dirname), '..', 'maps');
   if (!fs.existsSync(mapsDir)) fs.mkdirSync(mapsDir);
-  const numFiles = (await fsPromise.readdir(mapsDir)).length;
-  const mapPath = path.join(mapsDir, `${LOCAL_MAP_PREFIX}${numFiles}.json`); // files start with index 0
+
+  let mapIndex = (await fsPromise.readdir(mapsDir)).length;
+  let mapPath: string;
+  do {
+    mapPath = path.join(mapsDir, `${LOCAL_MAP_PREFIX}${mapIndex}.json`);
+    mapIndex++;
+  } while (fs.existsSync(mapPath));
+
   await fsPromise.writeFile(mapPath, JSON.stringify(tileMapOutput));
 };
 
