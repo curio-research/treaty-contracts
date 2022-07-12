@@ -21,7 +21,7 @@ export const BASE_MAX_HEALTH = 1;
 export const NUM_INIT_TERRAIN_TYPES = 5;
 export const INIT_BATCH_SIZE = 100;
 export const INIT_PLAYER_BALANCE = 20;
-export const DEFAULT_BASE_GOLD_GENERATION_PER_SECOND = 5;
+export const DEFAULT_BASE_GOLD_GENERATION_PER_SECOND = 1;
 
 export const TROOP_TYPES: TroopTypeStruct[] = [
   {
@@ -45,7 +45,7 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     attackFactor: 50,
     defenseFactor: 50,
     cargoCapacity: 6,
-    movementCooldown: 1, // FIXME
+    movementCooldown: 1,
     largeActionCooldown: 1,
     cost: 14,
     expensePerSecond: 0,
@@ -58,7 +58,7 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     attackFactor: 100,
     defenseFactor: 100,
     cargoCapacity: 0,
-    movementCooldown: 1, // FIXME
+    movementCooldown: 1,
     largeActionCooldown: 1,
     cost: 20,
     expensePerSecond: 0,
@@ -71,7 +71,7 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     attackFactor: 100,
     defenseFactor: 100,
     cargoCapacity: 0,
-    movementCooldown: 1, // FIXME
+    movementCooldown: 1,
     largeActionCooldown: 1,
     cost: 30,
     expensePerSecond: 0,
@@ -84,7 +84,7 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     attackFactor: 100,
     defenseFactor: 100,
     cargoCapacity: 0,
-    movementCooldown: 1, // FIXME
+    movementCooldown: 1,
     largeActionCooldown: 1,
     cost: 50,
     expensePerSecond: 0,
