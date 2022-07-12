@@ -1,6 +1,6 @@
 import { WorldConstantsStruct } from './../../typechain-types/Curio';
 import { TroopTypeStruct } from '../../typechain-types/DiamondInit';
-import { Position, RenderInput, TileMapOutput, TILE_TYPE, TROOP_NAME } from './types';
+import { RenderInput, TROOP_NAME } from './types';
 
 export const LOCALHOST_RPC_URL = 'http://127.0.0.1:8545/';
 export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
@@ -9,10 +9,10 @@ export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 // Game constants (souhardrce of truth)
 // ----------------------------------------------------------
 
-export const WORLD_WIDTH = 30;
-export const WORLD_HEIGHT = 30;
-export const NUM_PORTS = 50;
-export const NUM_CITIES = 0;
+export const WORLD_WIDTH = 20;
+export const WORLD_HEIGHT = 20;
+export const NUM_PORTS = 15;
+export const NUM_CITIES = 5;
 export const MAP_INTERVAL = 10;
 export const COMBAT_EFFICIENCY = 50;
 export const BASE_ATTACK_FACTOR = 1;
@@ -132,7 +132,3 @@ export const getTroopNames = (): string[] => {
 export const getTroopTypeIndexByName = (troopTypes: TroopTypeStruct[], name: TROOP_NAME): number => {
   return troopTypes.indexOf(troopTypes.filter((item) => item.name === name)[0]);
 };
-
-// ------------------------------------------------
-// Default maps
-// ------------------------------------------------

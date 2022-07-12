@@ -10,7 +10,7 @@ import { TROOP_TYPES, getTroopTypeIndexByName, RENDER_CONSTANTS, NUM_CITIES, NUM
 import { position } from '../util/types/common';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
 import { MapInput, Position, TILE_TYPE, TROOP_NAME } from './util/types';
-import { encodeTileMap, generateGameMaps } from './util/mapHelper';
+import { encodeTileMap, generateGameMaps, getOrderedBasePositions } from './util/mapHelper';
 import { GameConfig } from '../api/types';
 import { MEDITERRAINEAN_MAP, ligmapTileOutput } from './util/mapLibrary';
 
@@ -126,9 +126,6 @@ task('deploy', 'deploy contracts')
       const time2 = performance.now();
       console.log(`✦ lazy set ${tileMap.length}x${tileMap[0].length} map took ${time2 - time1} ms`);
 
-      console.log('✦ initializing bases');
-      await (await diamond.bulkInitializeTiles([...portTiles, ...cityTiles])).wait();
-
       // Randomly initialize players if on localhost
       if (isDev) {
         console.log('✦ initializing players');
@@ -186,6 +183,7 @@ task('deploy', 'deploy contracts')
         network: hre.network.name,
         deploymentId: `${hre.network.name}-${Date.now()}`,
         map: tileMap,
+        bases: getOrderedBasePositions(tileMap),
       };
 
       // Port files to frontend if on localhost

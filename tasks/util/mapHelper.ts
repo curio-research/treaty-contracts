@@ -359,3 +359,20 @@ export const superpose = (matrices: number[][][], ratio: number[]): number[][] =
 
   return sum;
 };
+
+/**
+ * From a tile map, return the ordered list of positions of bases.
+ * @param tileMap
+ * @returns an array of positions with bases
+ */
+export const getOrderedBasePositions = (tileMap: TILE_TYPE[][]): Position[] => {
+  const basePositions: Position[] = [];
+  for (let x = 0; x < tileMap.length; x++) {
+    for (let y = 0; y < tileMap[0].length; y++) {
+      if (tileMap[x][y] === TILE_TYPE.PORT || tileMap[x][y] === TILE_TYPE.CITY) {
+        basePositions.push({ x, y });
+      }
+    }
+  }
+  return basePositions;
+};
