@@ -5,13 +5,13 @@ import * as fs from 'fs';
 import { Util } from './../typechain-types/Util';
 import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
-import { deployProxy, printDivider } from './util/deployHelper';
+import { deployProxy, loadLocalMap, LOCAL_MAP_PREFIX, printDivider, saveMapToLocal } from './util/deployHelper';
 import { TROOP_TYPES, getTroopTypeIndexByName, RENDER_CONSTANTS, NUM_CITIES, NUM_PORTS, WORLD_HEIGHT, WORLD_WIDTH, generateWorldConstants } from './util/constants';
 import { position } from '../util/types/common';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
 import { MapInput, Position, TILE_TYPE, TROOP_NAME } from './util/types';
 import { encodeTileMap, generateGameMaps } from './util/mapHelper';
-import { gameConfig } from '../api/types';
+import { GameConfig } from '../api/types';
 import { MEDITERRAINEAN_MAP, ligmapTileOutput } from './util/mapLibrary';
 
 // ---------------------------------
@@ -19,11 +19,20 @@ import { MEDITERRAINEAN_MAP, ligmapTileOutput } from './util/mapLibrary';
 // npx hardhat deploy --network NETWORK_NAME_HERE
 // ---------------------------------
 
+/**
+ * Deploy game instance and port configs to frontend.
+ *
+ * Examples:
+ * `npx hardhat deploy --savemap`: deploy on localhost and save map to local
+ * `npx hardhat deploy --network OptimismKovan --fixmap --name MAP-0`: deploy on Optimism Kovan and use the first saved random map
+ * `npx hardhat deploy --noport --fixmap --name MEDITERRAINEAN`: deploy on localhost, use the hardcoded Mediterrainean map, and do not port files to frontend
+ */
 task('deploy', 'deploy contracts')
   .addFlag('noport', "Don't port files to frontend") // default is to call port
   .addFlag('publish', 'Publish deployment to game launcher') // default is to call publish
   .addFlag('fixmap', 'Use deterministic map') // default is non-deterministic maps; deterministic maps are mainly used for client development
   .addOptionalParam('name', 'Name of fixed map', 'Hello, World!')
+  .addFlag('savemap', 'Save map to local') // default is not to save
   .setAction(async (args: any, hre: HardhatRuntimeEnvironment) => {
     try {
       // Compile contracts
@@ -37,7 +46,7 @@ task('deploy', 'deploy contracts')
       if (fixMap) console.log('Using deterministic map');
       const publish = args.publish;
       let mapName = args.name;
-      if (!mapName) mapName = 'LIGMAP';
+      const saveMap = args.savemap;
 
       // Check connection with faucet to make sure deployment will post
       if (!isDev) {
@@ -59,17 +68,26 @@ task('deploy', 'deploy contracts')
 
       if (fixMap) {
         if (mapName === 'MEDITERRAINEAN') {
+          // hardcoded map: Mediterrainean 42x18
           tileMap = MEDITERRAINEAN_MAP.tileMap;
           portTiles = MEDITERRAINEAN_MAP.portTiles;
           cityTiles = MEDITERRAINEAN_MAP.cityTiles;
+        } else if (mapName.length > LOCAL_MAP_PREFIX.length && mapName.substring(0, LOCAL_MAP_PREFIX.length) === LOCAL_MAP_PREFIX) {
+          // saved maps from random generation
+          const index = Number(mapName.substring(LOCAL_MAP_PREFIX.length, mapName.length));
+          const tileMapOutput = loadLocalMap(index);
+          tileMap = tileMapOutput.tileMap;
+          portTiles = tileMapOutput.portTiles;
+          cityTiles = tileMapOutput.cityTiles;
         } else {
-          // default is ligmap
+          // default: ligmap 10x10
+          mapName = 'LIGMAP';
           tileMap = ligmapTileOutput.tileMap;
           portTiles = ligmapTileOutput.portTiles;
           cityTiles = ligmapTileOutput.cityTiles;
         }
       } else {
-        const gameMaps = generateGameMaps(
+        const gameMapOutput = generateGameMaps(
           {
             width: WORLD_WIDTH,
             height: WORLD_HEIGHT,
@@ -78,10 +96,12 @@ task('deploy', 'deploy contracts')
           } as MapInput,
           RENDER_CONSTANTS
         );
-        tileMap = gameMaps.tileMap;
-        portTiles = gameMaps.portTiles;
-        cityTiles = gameMaps.cityTiles;
+        tileMap = gameMapOutput.tileMap;
+        portTiles = gameMapOutput.portTiles;
+        cityTiles = gameMapOutput.cityTiles;
       }
+
+      if (saveMap) saveMapToLocal({ tileMap, portTiles, cityTiles });
 
       // Deploy util contracts
       const util = await deployProxy<Util>('Util', player1, hre, []);
@@ -161,7 +181,7 @@ task('deploy', 'deploy contracts')
       }
 
       // Generate config files
-      const configFile: gameConfig = {
+      const configFile: GameConfig = {
         address: diamond.address,
         network: hre.network.name,
         deploymentId: `${hre.network.name}-${Date.now()}`,
@@ -170,12 +190,15 @@ task('deploy', 'deploy contracts')
 
       // Port files to frontend if on localhost
       if (isDev) {
-        const configFileDir = path.join(path.join(__dirname), 'game.config.json');
-        const raw = fs.readFileSync(configFileDir).toString();
-        const existingDeployments = raw ? JSON.parse(raw) : [];
+        const configFilePath = path.join(path.join(__dirname), 'game.config.json');
+        let existingDeployments = [];
+        if (fs.existsSync(configFilePath)) {
+          const raw = fs.readFileSync(configFilePath).toString();
+          existingDeployments = raw ? JSON.parse(raw) : [];
+        }
         existingDeployments.push(configFile);
 
-        await fsPromise.writeFile(configFileDir, JSON.stringify(existingDeployments));
+        await fsPromise.writeFile(configFilePath, JSON.stringify(existingDeployments));
         await hre.run('port'); // default to porting files
       }
 
