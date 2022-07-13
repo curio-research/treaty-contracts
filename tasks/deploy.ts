@@ -165,17 +165,19 @@ task('deploy', 'deploy contracts')
           await (await diamond.connect(player1).spawnTroop(player2DestroyerPos, player2.address, destroyerTroopTypeId)).wait();
         } else {
           // Primary setting for local playtesting
+          const mapWidth = tileMap.length;
+          const mapHeight = tileMap[0].length;
           let player1Pos: position;
           let player2Pos: position;
           do {
-            x = Math.floor(Math.random() * WORLD_WIDTH);
-            y = Math.floor(Math.random() * WORLD_HEIGHT);
+            x = Math.floor(Math.random() * mapWidth);
+            y = Math.floor(Math.random() * mapHeight);
             player1Pos = { x, y };
           } while (tileMap[x][y] != TILE_TYPE.PORT);
 
           do {
-            x = Math.floor(Math.random() * WORLD_WIDTH);
-            y = Math.floor(Math.random() * WORLD_HEIGHT);
+            x = Math.floor(Math.random() * mapWidth);
+            y = Math.floor(Math.random() * mapHeight);
             player2Pos = { x, y };
           } while (tileMap[x][y] !== TILE_TYPE.PORT || player2Pos.x === player1Pos.x || player2Pos.y === player1Pos.y);
 

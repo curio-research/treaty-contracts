@@ -1,6 +1,6 @@
 import { WorldConstantsStruct } from './../../typechain-types/Curio';
 import { TroopTypeStruct } from '../../typechain-types/DiamondInit';
-import { Position, RenderInput, TileMapOutput, TILE_TYPE, TROOP_NAME } from './types';
+import { RenderInput, TROOP_NAME } from './types';
 
 export const LOCALHOST_RPC_URL = 'http://127.0.0.1:8545/';
 export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
