@@ -90,6 +90,8 @@ struct WorldConstants {
     uint256 initBatchSize; // default is 100 if numInitTerrainTypes = 5
     uint256 initPlayerBalance;
     uint256 defaultBaseGoldGenerationPerSecond;
+    uint256 maxBaseCountPerPlayer;
+    uint256 maxTroopCountPerPlayer;
 }
 
 struct GameState {
