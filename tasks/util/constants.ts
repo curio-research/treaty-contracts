@@ -6,7 +6,7 @@ export const LOCALHOST_RPC_URL = 'http://127.0.0.1:8545/';
 export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 
 // ----------------------------------------------------------
-// Game constants (souhardrce of truth)
+// Game constants (source of truth)
 // ----------------------------------------------------------
 
 export const WORLD_WIDTH = 30;
