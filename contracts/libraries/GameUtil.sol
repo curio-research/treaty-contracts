@@ -130,6 +130,8 @@ library Util {
         Position memory _pos,
         uint256 _troopTypeId
     ) public returns (uint256, Troop memory) {
+        require(_getPlayer(_owner).numOwnedTroops < gs().worldConstants.maxTroopCountPerPlayer, "CURIO: Max troop count exceeded");
+
         uint256[] memory _cargoTroopIds;
         Troop memory _troop = Troop({owner: _owner, troopTypeId: _troopTypeId, lastMoved: block.timestamp, lastLargeActionTaken: 0, lastRepaired: block.timestamp, health: _getMaxHealth(_troopTypeId), pos: _pos, cargoTroopIds: _cargoTroopIds});
 
@@ -173,6 +175,10 @@ library Util {
             if (_allPlayers[i] == _player) return true;
         }
         return false;
+    }
+
+    function _getPlayer(address _player) public view returns (Player memory) {
+        return gs().playerMap[_player];
     }
 
     function _isPlayerActive(address _player) public view returns (bool) {

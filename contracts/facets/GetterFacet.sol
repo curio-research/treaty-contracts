@@ -68,7 +68,7 @@ contract GetterFacet is UseStorage {
     }
 
     function getPlayer(address _addr) external view returns (Player memory) {
-        return gs().playerMap[_addr];
+        return Util._getPlayer(_addr);
     }
 
     function getBaseNonce() external view returns (uint256) {

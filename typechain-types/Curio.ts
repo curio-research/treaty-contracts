@@ -199,10 +199,14 @@ export type WorldConstantsStruct = {
   initBatchSize: BigNumberish;
   initPlayerBalance: BigNumberish;
   defaultBaseGoldGenerationPerSecond: BigNumberish;
+  maxBaseCountPerPlayer: BigNumberish;
+  maxTroopCountPerPlayer: BigNumberish;
 };
 
 export type WorldConstantsStructOutput = [
   string,
+  BigNumber,
+  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -225,6 +229,8 @@ export type WorldConstantsStructOutput = [
   initBatchSize: BigNumber;
   initPlayerBalance: BigNumber;
   defaultBaseGoldGenerationPerSecond: BigNumber;
+  maxBaseCountPerPlayer: BigNumber;
+  maxTroopCountPerPlayer: BigNumber;
 };
 
 export interface CurioInterface extends utils.Interface {
@@ -274,6 +280,7 @@ export interface CurioInterface extends utils.Interface {
     "_getLargeActionCooldown(uint256)": FunctionFragment;
     "_getMaxHealth(uint256)": FunctionFragment;
     "_getMovementCooldown(uint256)": FunctionFragment;
+    "_getPlayer(address)": FunctionFragment;
     "_getPlayerBalance(address)": FunctionFragment;
     "_getTileAt((uint256,uint256))": FunctionFragment;
     "_getTotalGoldGenerationPerUpdate(address)": FunctionFragment;
@@ -458,6 +465,7 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "_getMovementCooldown",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "_getPlayer", values: [string]): string;
   encodeFunctionData(
     functionFragment: "_getPlayerBalance",
     values: [string]
@@ -650,6 +658,7 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "_getMovementCooldown",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "_getPlayer", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_getPlayerBalance",
     data: BytesLike
@@ -1100,6 +1109,11 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    _getPlayer(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<[PlayerStructOutput]>;
+
     _getPlayerBalance(
       _player: string,
       overrides?: CallOverrides
@@ -1387,6 +1401,11 @@ export interface Curio extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  _getPlayer(
+    _player: string,
+    overrides?: CallOverrides
+  ): Promise<PlayerStructOutput>;
+
   _getPlayerBalance(
     _player: string,
     overrides?: CallOverrides
@@ -1660,6 +1679,11 @@ export interface Curio extends BaseContract {
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    _getPlayer(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<PlayerStructOutput>;
 
     _getPlayerBalance(
       _player: string,
@@ -2079,6 +2103,8 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _getPlayer(_player: string, overrides?: CallOverrides): Promise<BigNumber>;
+
     _getPlayerBalance(
       _player: string,
       overrides?: CallOverrides
@@ -2359,6 +2385,11 @@ export interface Curio extends BaseContract {
 
     _getMovementCooldown(
       _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getPlayer(
+      _player: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

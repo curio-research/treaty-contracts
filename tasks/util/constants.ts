@@ -22,6 +22,8 @@ export const NUM_INIT_TERRAIN_TYPES = 5;
 export const INIT_BATCH_SIZE = 100;
 export const INIT_PLAYER_BALANCE = 20;
 export const DEFAULT_BASE_GOLD_GENERATION_PER_SECOND = 1;
+export const MAX_BASE_COUNT_PER_PLAYER = 20;
+export const MAX_TROOP_COUNT_PER_PLAYER = 20;
 
 export const TROOP_TYPES: TroopTypeStruct[] = [
   {
@@ -104,6 +106,8 @@ export const generateWorldConstants = (adminAddr: string): WorldConstantsStruct 
     initBatchSize: INIT_BATCH_SIZE,
     initPlayerBalance: INIT_PLAYER_BALANCE,
     defaultBaseGoldGenerationPerSecond: DEFAULT_BASE_GOLD_GENERATION_PER_SECOND,
+    maxBaseCountPerPlayer: MAX_BASE_COUNT_PER_PLAYER,
+    maxTroopCountPerPlayer: MAX_TROOP_COUNT_PER_PLAYER,
   };
 };
 

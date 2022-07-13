@@ -226,7 +226,9 @@ contract DiamondDeployTest is Test {
                 numInitTerrainTypes: 5,
                 initBatchSize: 100,
                 initPlayerBalance: 20,
-                defaultBaseGoldGenerationPerSecond: 5
+                defaultBaseGoldGenerationPerSecond: 5,
+                maxBaseCountPerPlayer: 20,
+                maxTroopCountPerPlayer: 20
             });
     }
 

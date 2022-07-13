@@ -29,10 +29,14 @@ export type WorldConstantsStruct = {
   initBatchSize: BigNumberish;
   initPlayerBalance: BigNumberish;
   defaultBaseGoldGenerationPerSecond: BigNumberish;
+  maxBaseCountPerPlayer: BigNumberish;
+  maxTroopCountPerPlayer: BigNumberish;
 };
 
 export type WorldConstantsStructOutput = [
   string,
+  BigNumber,
+  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -55,6 +59,8 @@ export type WorldConstantsStructOutput = [
   initBatchSize: BigNumber;
   initPlayerBalance: BigNumber;
   defaultBaseGoldGenerationPerSecond: BigNumber;
+  maxBaseCountPerPlayer: BigNumber;
+  maxTroopCountPerPlayer: BigNumber;
 };
 
 export type TroopTypeStruct = {
@@ -99,7 +105,7 @@ export type TroopTypeStructOutput = [
 
 export interface DiamondInitInterface extends utils.Interface {
   functions: {
-    "init((address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),(uint8,bool,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256)[])": FunctionFragment;
+    "init((address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),(uint8,bool,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256)[])": FunctionFragment;
   };
 
   encodeFunctionData(

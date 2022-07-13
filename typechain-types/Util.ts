@@ -137,6 +137,7 @@ export interface UtilInterface extends utils.Interface {
     "_getLargeActionCooldown(uint256)": FunctionFragment;
     "_getMaxHealth(uint256)": FunctionFragment;
     "_getMovementCooldown(uint256)": FunctionFragment;
+    "_getPlayer(address)": FunctionFragment;
     "_getPlayerBalance(address)": FunctionFragment;
     "_getTileAt((uint256,uint256))": FunctionFragment;
     "_getTotalGoldGenerationPerUpdate(address)": FunctionFragment;
@@ -201,6 +202,7 @@ export interface UtilInterface extends utils.Interface {
     functionFragment: "_getMovementCooldown",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "_getPlayer", values: [string]): string;
   encodeFunctionData(
     functionFragment: "_getPlayerBalance",
     values: [string]
@@ -303,6 +305,7 @@ export interface UtilInterface extends utils.Interface {
     functionFragment: "_getMovementCooldown",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "_getPlayer", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_getPlayerBalance",
     data: BytesLike
@@ -573,6 +576,11 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    _getPlayer(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<[PlayerStructOutput]>;
+
     _getPlayerBalance(
       _player: string,
       overrides?: CallOverrides
@@ -703,6 +711,11 @@ export interface Util extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  _getPlayer(
+    _player: string,
+    overrides?: CallOverrides
+  ): Promise<PlayerStructOutput>;
+
   _getPlayerBalance(
     _player: string,
     overrides?: CallOverrides
@@ -829,6 +842,11 @@ export interface Util extends BaseContract {
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    _getPlayer(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<PlayerStructOutput>;
 
     _getPlayerBalance(
       _player: string,
@@ -1079,6 +1097,8 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _getPlayer(_player: string, overrides?: CallOverrides): Promise<BigNumber>;
+
     _getPlayerBalance(
       _player: string,
       overrides?: CallOverrides
@@ -1204,6 +1224,11 @@ export interface Util extends BaseContract {
 
     _getMovementCooldown(
       _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getPlayer(
+      _player: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

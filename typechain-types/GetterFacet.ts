@@ -175,10 +175,14 @@ export type WorldConstantsStruct = {
   initBatchSize: BigNumberish;
   initPlayerBalance: BigNumberish;
   defaultBaseGoldGenerationPerSecond: BigNumberish;
+  maxBaseCountPerPlayer: BigNumberish;
+  maxTroopCountPerPlayer: BigNumberish;
 };
 
 export type WorldConstantsStructOutput = [
   string,
+  BigNumber,
+  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -201,6 +205,8 @@ export type WorldConstantsStructOutput = [
   initBatchSize: BigNumber;
   initPlayerBalance: BigNumber;
   defaultBaseGoldGenerationPerSecond: BigNumber;
+  maxBaseCountPerPlayer: BigNumber;
+  maxTroopCountPerPlayer: BigNumber;
 };
 
 export interface GetterFacetInterface extends utils.Interface {

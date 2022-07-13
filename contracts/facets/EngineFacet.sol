@@ -201,6 +201,8 @@ contract EngineFacet is UseStorage {
 
             // Capture and update gold production if troop is army
             if (Util._isLandTroop(_troop.troopTypeId)) {
+                require(Util._getPlayer(msg.sender).numOwnedBases < gs().worldConstants.maxBaseCountPerPlayer, "CURIO: Max base count exceeded");
+
                 _targetBase = Util._getBase(_targetTile.baseId);
                 gs().baseIdMap[_targetTile.baseId].owner = msg.sender;
                 gs().baseIdMap[_targetTile.baseId].health = 1; // FIXME: change to BaseConstants.maxHealth
