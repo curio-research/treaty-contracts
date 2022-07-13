@@ -198,24 +198,26 @@ contract EngineFacet is UseStorage {
             address _targetPlayer = _targetBase.owner;
             gs().troopIdMap[_troopId].health = _troop.health;
             gs().baseIdMap[_targetTile.baseId].health = 0;
-            _targetBase = Util._getBase(_targetTile.baseId);
 
-            // Capture and update gold production
-            gs().baseIdMap[_targetTile.baseId].owner = msg.sender;
-            gs().baseIdMap[_targetTile.baseId].health = 1; // FIXME: change to BaseConstants.maxHealth
-            emit Util.BaseCaptured(msg.sender, _troopId, _targetTile.baseId);
+            // Capture and update gold production if troop is army
+            if (Util._isLandTroop(_troop.troopTypeId)) {
+                _targetBase = Util._getBase(_targetTile.baseId);
+                gs().baseIdMap[_targetTile.baseId].owner = msg.sender;
+                gs().baseIdMap[_targetTile.baseId].health = 1; // FIXME: change to BaseConstants.maxHealth
+                emit Util.BaseCaptured(msg.sender, _troopId, _targetTile.baseId);
 
-            Util._updatePlayerBalance(_targetPlayer);
-            Util._updatePlayerBalance(msg.sender);
-            if (_targetPlayer != NULL_ADDR) {
-                gs().playerMap[_targetPlayer].numOwnedBases--;
-                gs().playerMap[_targetPlayer].totalGoldGenerationPerUpdate -= _targetBase.goldGenerationPerSecond;
+                Util._updatePlayerBalance(_targetPlayer);
+                Util._updatePlayerBalance(msg.sender);
+                if (_targetPlayer != NULL_ADDR) {
+                    gs().playerMap[_targetPlayer].numOwnedBases--;
+                    gs().playerMap[_targetPlayer].totalGoldGenerationPerUpdate -= _targetBase.goldGenerationPerSecond;
+                }
+                gs().playerMap[msg.sender].numOwnedBases++;
+                gs().playerMap[msg.sender].totalGoldGenerationPerUpdate += _targetBase.goldGenerationPerSecond;
+
+                // Move
+                _moveModule(_troopId, _targetPos);
             }
-            gs().playerMap[msg.sender].numOwnedBases++;
-            gs().playerMap[msg.sender].totalGoldGenerationPerUpdate += _targetBase.goldGenerationPerSecond;
-
-            // Move
-            _moveModule(_troopId, _targetPos);
         } else {
             // Target survives
             gs().baseIdMap[_targetTile.baseId].health = _targetBase.health;

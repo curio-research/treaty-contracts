@@ -124,10 +124,15 @@ task('deploy', 'deploy contracts')
       const encodedTileMap = encodeTileMap(tileMap);
       await (await diamond.storeEncodedColumnBatches(encodedTileMap)).wait();
       const time2 = performance.now();
-      console.log(`✦ lazy set ${tileMap.length}x${tileMap[0].length} map took ${time2 - time1} ms`);
+      console.log(`✦ lazy setting ${tileMap.length}x${tileMap[0].length} map took ${time2 - time1} ms`);
 
       console.log('✦ initializing bases');
-      await (await diamond.bulkInitializeTiles([...portTiles, ...cityTiles])).wait();
+      const baseTiles = [...portTiles, ...cityTiles];
+      for (let i = 0; i < baseTiles.length; i += 100) {
+        await (await diamond.bulkInitializeTiles(baseTiles.slice(i, i + 100))).wait();
+      }
+      const time3 = performance.now();
+      console.log(`✦ initializing ${baseTiles.length} bases took ${time3 - time2} ms`);
 
       // Randomly initialize players if on localhost
       if (isDev) {
@@ -160,17 +165,19 @@ task('deploy', 'deploy contracts')
           await (await diamond.connect(player1).spawnTroop(player2DestroyerPos, player2.address, destroyerTroopTypeId)).wait();
         } else {
           // Primary setting for local playtesting
+          const mapWidth = tileMap.length;
+          const mapHeight = tileMap[0].length;
           let player1Pos: position;
           let player2Pos: position;
           do {
-            x = Math.floor(Math.random() * WORLD_WIDTH);
-            y = Math.floor(Math.random() * WORLD_HEIGHT);
+            x = Math.floor(Math.random() * mapWidth);
+            y = Math.floor(Math.random() * mapHeight);
             player1Pos = { x, y };
           } while (tileMap[x][y] != TILE_TYPE.PORT);
 
           do {
-            x = Math.floor(Math.random() * WORLD_WIDTH);
-            y = Math.floor(Math.random() * WORLD_HEIGHT);
+            x = Math.floor(Math.random() * mapWidth);
+            y = Math.floor(Math.random() * mapHeight);
             player2Pos = { x, y };
           } while (tileMap[x][y] !== TILE_TYPE.PORT || player2Pos.x === player1Pos.x || player2Pos.y === player1Pos.y);
 
