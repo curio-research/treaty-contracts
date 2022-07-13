@@ -124,10 +124,15 @@ task('deploy', 'deploy contracts')
       const encodedTileMap = encodeTileMap(tileMap);
       await (await diamond.storeEncodedColumnBatches(encodedTileMap)).wait();
       const time2 = performance.now();
-      console.log(`✦ lazy set ${tileMap.length}x${tileMap[0].length} map took ${time2 - time1} ms`);
+      console.log(`✦ lazy setting ${tileMap.length}x${tileMap[0].length} map took ${time2 - time1} ms`);
 
       console.log('✦ initializing bases');
-      await (await diamond.bulkInitializeTiles([...portTiles, ...cityTiles])).wait();
+      const baseTiles = [...portTiles, ...cityTiles];
+      for (let i = 0; i < baseTiles.length; i += 100) {
+        await (await diamond.bulkInitializeTiles(baseTiles.slice(i, i + 100))).wait();
+      }
+      const time3 = performance.now();
+      console.log(`✦ initializing ${baseTiles.length} bases took ${time3 - time2} ms`);
 
       // Randomly initialize players if on localhost
       if (isDev) {
