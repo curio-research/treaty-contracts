@@ -1,4 +1,4 @@
-import { publishDeployment, isConnectionLive } from './../api/deployment';
+import { publishDeployment } from './../api/deployment';
 import * as path from 'path';
 import * as fsPromise from 'fs/promises';
 import * as fs from 'fs';
@@ -13,6 +13,7 @@ import { MapInput, Position, TILE_TYPE, TROOP_NAME } from './util/types';
 import { encodeTileMap, generateGameMaps } from './util/mapHelper';
 import { GameConfig } from '../api/types';
 import { MEDITERRAINEAN_MAP, ligmapTileOutput } from './util/mapLibrary';
+import { WorldConstantsStruct } from '../typechain-types/Curio';
 
 // ---------------------------------
 // deploy script
@@ -40,7 +41,7 @@ task('deploy', 'deploy contracts')
       printDivider();
 
       // Read variables from run flags
-      const isDev = hre.network.name === 'localhost' || hre.network.name === 'hardhat';
+      const isDev = hre.network.name === 'localhost' || hre.network.name === 'hardhat' || hre.network.name === 'constellation';
       console.log('Network:', hre.network.name);
       const fixMap = args.fixmap;
       if (fixMap) console.log('Using deterministic map');
@@ -48,23 +49,24 @@ task('deploy', 'deploy contracts')
       let mapName = args.name;
       const saveMap = args.savemap;
 
-      // Check connection with faucet to make sure deployment will post
-      if (!isDev) {
-        await isConnectionLive();
-      }
+      // // Check connection with faucet to make sure deployment will post
+      // if (!isDev) {
+      //   await isConnectionLive();
+      // }
 
       // Set up deployer and some local variables
       let [player1, player2] = await hre.ethers.getSigners();
+      console.log('✦ player1 address is:', player1.address);
+      // console.log('✦ player2 address is:', player2.address);
       const armyTroopTypeId = getTroopTypeIndexByName(TROOP_TYPES, TROOP_NAME.ARMY) + 1;
       const troopTransportTroopTypeId = getTroopTypeIndexByName(TROOP_TYPES, TROOP_NAME.TROOP_TRANSPORT) + 1;
       const destroyerTroopTypeId = getTroopTypeIndexByName(TROOP_TYPES, TROOP_NAME.DESTROYER) + 1;
 
       // Set up game configs and map
-      const worldConstants = generateWorldConstants(player1.address);
-
       let tileMap: TILE_TYPE[][];
       let portTiles: Position[];
       let cityTiles: Position[];
+      let worldConstants: WorldConstantsStruct;
 
       if (fixMap) {
         if (mapName === 'MEDITERRAINEAN') {
@@ -72,6 +74,7 @@ task('deploy', 'deploy contracts')
           tileMap = MEDITERRAINEAN_MAP.tileMap;
           portTiles = MEDITERRAINEAN_MAP.portTiles;
           cityTiles = MEDITERRAINEAN_MAP.cityTiles;
+          worldConstants = generateWorldConstants(player1.address, { width: tileMap.length, height: tileMap[0].length, numPorts: portTiles.length, numCities: cityTiles.length });
         } else if (mapName.length > LOCAL_MAP_PREFIX.length && mapName.substring(0, LOCAL_MAP_PREFIX.length) === LOCAL_MAP_PREFIX) {
           // saved maps from random generation
           const index = Number(mapName.substring(LOCAL_MAP_PREFIX.length, mapName.length));
@@ -79,12 +82,14 @@ task('deploy', 'deploy contracts')
           tileMap = tileMapOutput.tileMap;
           portTiles = tileMapOutput.portTiles;
           cityTiles = tileMapOutput.cityTiles;
+          worldConstants = generateWorldConstants(player1.address, { width: tileMap.length, height: tileMap[0].length, numPorts: portTiles.length, numCities: cityTiles.length });
         } else {
           // default: ligmap 10x10
           mapName = 'LIGMAP';
           tileMap = ligmapTileOutput.tileMap;
           portTiles = ligmapTileOutput.portTiles;
           cityTiles = ligmapTileOutput.cityTiles;
+          worldConstants = generateWorldConstants(player1.address, { width: tileMap.length, height: tileMap[0].length, numPorts: portTiles.length, numCities: cityTiles.length });
         }
       } else {
         const gameMapOutput = generateGameMaps(
@@ -99,6 +104,7 @@ task('deploy', 'deploy contracts')
         tileMap = gameMapOutput.tileMap;
         portTiles = gameMapOutput.portTiles;
         cityTiles = gameMapOutput.cityTiles;
+        worldConstants = generateWorldConstants(player1.address);
       }
 
       if (saveMap) saveMapToLocal({ tileMap, portTiles, cityTiles });
@@ -183,7 +189,7 @@ task('deploy', 'deploy contracts')
 
           // Give each player a port to start with
           await (await diamond.connect(player1).initializePlayer(player1Pos, player1.address)).wait();
-          await (await diamond.connect(player1).initializePlayer(player2Pos, player2.address)).wait();
+          // await (await diamond.connect(player1).initializePlayer(player2Pos, player2.address)).wait();
         }
       }
 

@@ -1,6 +1,6 @@
 import { WorldConstantsStruct } from './../../typechain-types/Curio';
 import { TroopTypeStruct } from '../../typechain-types/DiamondInit';
-import { RenderInput, TROOP_NAME } from './types';
+import { MapInput, RenderInput, TROOP_NAME } from './types';
 
 export const LOCALHOST_RPC_URL = 'http://127.0.0.1:8545/';
 export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
@@ -21,9 +21,9 @@ export const BASE_MAX_HEALTH = 1;
 export const NUM_INIT_TERRAIN_TYPES = 5;
 export const INIT_BATCH_SIZE = 100;
 export const INIT_PLAYER_BALANCE = 20;
-export const DEFAULT_BASE_GOLD_GENERATION_PER_SECOND = 1;
+export const DEFAULT_BASE_GOLD_GENERATION_PER_SECOND = 4;
 export const MAX_BASE_COUNT_PER_PLAYER = 20;
-export const MAX_TROOP_COUNT_PER_PLAYER = 20;
+export const MAX_TROOP_COUNT_PER_PLAYER = 30;
 
 export const TROOP_TYPES: TroopTypeStruct[] = [
   {
@@ -34,8 +34,8 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     attackFactor: 100,
     defenseFactor: 100,
     cargoCapacity: 0,
-    movementCooldown: 1,
-    largeActionCooldown: 1,
+    movementCooldown: 0,
+    largeActionCooldown: 0,
     cost: 6,
     expensePerSecond: 0,
   },
@@ -47,10 +47,10 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     attackFactor: 50,
     defenseFactor: 50,
     cargoCapacity: 6,
-    movementCooldown: 1,
-    largeActionCooldown: 1,
+    movementCooldown: 0,
+    largeActionCooldown: 0,
     cost: 14,
-    expensePerSecond: 0,
+    expensePerSecond: 1,
   },
   {
     name: TROOP_NAME.DESTROYER,
@@ -60,10 +60,10 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     attackFactor: 100,
     defenseFactor: 100,
     cargoCapacity: 0,
-    movementCooldown: 1,
-    largeActionCooldown: 1,
+    movementCooldown: 0,
+    largeActionCooldown: 0,
     cost: 20,
-    expensePerSecond: 0,
+    expensePerSecond: 1,
   },
   {
     name: TROOP_NAME.CRUISER,
@@ -73,10 +73,10 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     attackFactor: 100,
     defenseFactor: 100,
     cargoCapacity: 0,
-    movementCooldown: 1,
-    largeActionCooldown: 1,
+    movementCooldown: 0,
+    largeActionCooldown: 0,
     cost: 30,
-    expensePerSecond: 0,
+    expensePerSecond: 1,
   },
   {
     name: TROOP_NAME.BATTLESHIP,
@@ -86,20 +86,20 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     attackFactor: 100,
     defenseFactor: 100,
     cargoCapacity: 0,
-    movementCooldown: 1,
-    largeActionCooldown: 1,
+    movementCooldown: 0,
+    largeActionCooldown: 0,
     cost: 50,
-    expensePerSecond: 0,
+    expensePerSecond: 2,
   },
 ];
 
-export const generateWorldConstants = (adminAddr: string): WorldConstantsStruct => {
+export const generateWorldConstants = (adminAddr: string, mapInput?: MapInput): WorldConstantsStruct => {
   return {
     admin: adminAddr,
-    worldWidth: WORLD_WIDTH,
-    worldHeight: WORLD_HEIGHT,
-    numPorts: NUM_PORTS,
-    numCities: NUM_CITIES,
+    worldWidth: mapInput?.width ?? WORLD_WIDTH,
+    worldHeight: mapInput?.height ?? WORLD_HEIGHT,
+    numPorts: mapInput?.numPorts ?? NUM_PORTS,
+    numCities: mapInput?.numCities ?? NUM_CITIES,
     mapInterval: MAP_INTERVAL,
     combatEfficiency: COMBAT_EFFICIENCY,
     numInitTerrainTypes: NUM_INIT_TERRAIN_TYPES,

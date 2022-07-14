@@ -115,14 +115,13 @@ contract EngineFacet is UseStorage {
 
         require((block.timestamp - _troop.lastMoved) >= Util._getMovementCooldown(_troop.troopTypeId), "CURIO: Moved too recently");
 
-        if (!Util._canTransportTroop(_targetTile)) {
+        if (Util._getTroop(_targetTile.occupantId).cargoTroopIds.length == 0) {
             gs().map[_targetPos.x][_targetPos.y].occupantId = _troopId;
         }
 
         // Move
         Tile memory _sourceTile = Util._getTileAt(_troop.pos);
         if (_sourceTile.occupantId != _troopId) {
-            assert(Util._canTransportTroop(_sourceTile)); // something is wrong if failed
             // Troop is on troop transport
             Util._unloadTroopFromTransport(_sourceTile.occupantId, _troopId);
         } else {

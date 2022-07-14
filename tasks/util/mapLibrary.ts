@@ -49,48 +49,49 @@ const P = 3;
 const I = 4;
 
 const MEDITERRAINEAN_GEOGRAPHY = [
-  [W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W],
-  [W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, L],
-  [W, W, W, W, L, L, L, L, L, L, L, W, W, W, W, L, L, L],
-  [W, W, W, W, L, L, L, L, L, L, L, W, W, W, L, L, L, L],
-  [W, W, W, W, L, L, L, L, L, L, L, W, L, L, L, L, L, L],
-  [W, W, W, W, L, L, L, L, L, L, L, W, W, L, L, L, L, L],
-  [W, W, W, W, L, L, L, L, L, L, L, W, W, L, L, L, L, L],
-  [L, L, L, L, L, L, L, L, L, L, W, W, L, L, L, L, L, L],
-  [L, L, L, L, L, L, L, W, W, W, W, W, L, L, L, L, L, L],
-  [L, L, L, L, L, L, W, W, W, W, W, L, L, L, L, L, L, L],
-  [L, L, L, L, W, W, W, W, W, W, W, L, L, L, L, L, L, L],
-  [L, L, L, L, W, W, W, W, W, W, W, L, L, L, L, L, L, L],
-  [L, L, L, L, W, W, W, W, W, W, W, L, L, L, L, L, L, L],
-  [L, L, L, L, W, W, W, W, W, W, W, L, L, L, L, L, L, L],
-  [L, L, L, W, W, L, W, L, L, W, W, L, L, L, L, L, L, L],
-  [L, L, L, W, W, W, W, W, W, W, W, L, L, W, L, L, L, L],
-  [L, L, L, L, L, W, W, W, W, W, W, W, W, W, W, L, L, L],
-  [L, L, W, L, L, L, W, W, W, W, W, W, W, W, W, L, L, L],
-  [L, L, W, W, L, L, L, W, W, W, L, W, W, W, W, L, L, L],
-  [L, L, L, W, W, L, L, L, W, W, L, W, W, W, W, W, L, L],
-  [L, L, L, L, W, W, L, L, L, L, W, W, W, W, W, W, W, L],
-  [L, L, L, L, L, W, W, L, W, W, W, W, W, W, W, W, W, L],
-  [L, L, L, L, L, W, W, W, W, W, W, W, W, W, W, W, W, L],
-  [L, L, L, L, L, L, L, L, W, W, W, W, W, W, W, W, W, L],
-  [L, L, L, L, L, L, L, L, L, L, W, W, W, W, W, L, L, L],
-  [L, L, L, L, L, L, L, L, L, L, L, W, W, W, W, L, L, L],
-  [L, L, L, L, L, L, L, W, W, L, W, W, W, W, W, W, L, L],
-  [L, L, L, L, L, L, L, W, W, W, W, W, L, W, W, W, L, L],
-  [L, L, L, L, L, L, L, W, W, W, W, W, W, W, W, W, L, L],
-  [L, L, L, L, W, W, L, W, L, L, L, W, W, W, W, W, W, L],
-  [L, L, W, W, W, W, W, W, L, L, L, W, W, W, W, W, W, L],
-  [L, W, W, W, W, W, W, L, L, L, L, W, W, W, W, W, L, L],
-  [L, W, W, W, W, W, W, L, L, L, L, W, W, W, W, W, L, L],
-  [L, W, W, W, W, W, L, L, L, L, L, L, W, L, W, W, W, L],
-  [L, L, L, W, W, W, L, L, L, L, L, W, W, W, W, W, L, L],
-  [L, W, L, W, W, W, L, L, L, L, L, W, W, W, L, L, L, L],
-  [W, W, W, W, W, W, W, L, L, L, L, L, L, L, L, L, L, L],
-  [W, W, L, W, W, W, W, L, L, L, L, L, L, L, L, L, L, L],
-  [L, L, L, L, W, W, W, L, L, L, L, L, L, L, L, L, L, L],
-  [L, L, L, L, L, W, W, L, L, L, L, L, L, L, L, L, L, L],
-  [L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, L],
-  [L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, L],
+  [W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, L, L],
+  [W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, L, L, L],
+  [W, W, W, W, L, L, L, L, L, L, L, W, W, W, W, L, L, L, L, L],
+  [W, W, W, W, L, L, L, L, L, L, L, W, W, W, L, L, L, L, L, L],
+  [W, W, W, W, L, L, L, L, L, L, L, W, L, L, L, L, L, L, L, L],
+  [W, W, W, W, L, L, L, L, L, L, L, W, W, L, L, L, L, L, L, L],
+  [W, W, W, W, L, L, L, L, L, L, L, W, W, L, L, L, L, L, L, L],
+  [W, W, W, W, L, L, L, L, L, L, W, W, W, L, L, L, L, L, L, L],
+  [L, L, L, L, L, L, L, L, L, L, W, W, L, L, L, L, L, L, L, L],
+  [L, L, L, L, L, L, L, W, W, W, W, W, L, L, L, L, L, L, L, L],
+  [L, L, L, L, L, L, W, W, W, W, W, L, L, L, L, L, L, L, L, L],
+  [L, L, L, L, W, W, W, W, W, W, W, L, L, L, L, L, L, L, L, L],
+  [L, L, L, L, W, W, W, W, W, W, W, L, L, L, L, L, L, L, L, L],
+  [L, L, L, L, W, W, W, W, W, W, W, L, L, L, L, L, L, L, L, L],
+  [L, L, L, L, W, W, W, W, W, W, W, L, L, L, L, L, L, L, L, L],
+  [L, L, L, W, W, L, W, L, L, W, W, L, L, L, L, L, L, L, L, L],
+  [L, L, L, L, W, W, W, W, W, W, W, L, L, W, L, L, L, L, L, L],
+  [L, L, L, L, L, W, W, W, W, W, W, W, W, W, W, L, L, L, L, L],
+  [L, L, W, L, L, L, W, W, W, W, W, W, W, W, W, L, L, L, L, L],
+  [L, L, W, W, L, L, L, W, W, W, L, W, W, W, W, L, L, L, L, L],
+  [L, L, L, W, W, L, L, L, W, W, L, W, W, W, W, W, L, L, L, L],
+  [L, L, L, L, W, W, L, L, L, L, W, W, W, W, W, W, W, L, L, L],
+  [L, L, L, L, L, W, W, L, W, W, W, W, W, W, W, W, W, L, L, L],
+  [L, L, L, L, L, W, W, W, W, W, W, W, W, W, W, W, W, L, L, L],
+  [L, L, L, L, L, L, L, L, W, W, W, W, W, W, W, W, W, L, L, L],
+  [L, L, L, L, L, L, L, L, L, L, W, W, W, W, W, L, L, L, L, L],
+  [L, L, L, L, L, L, L, L, L, L, L, W, W, W, W, L, L, L, L, L],
+  [L, L, L, L, L, L, L, W, W, L, W, W, W, W, W, W, L, L, L, L],
+  [L, L, L, L, L, L, L, W, W, W, W, W, L, W, W, W, L, L, L, L],
+  [L, L, L, L, L, L, L, W, W, W, W, W, W, W, W, W, L, L, L, L],
+  [L, L, L, L, W, W, L, W, L, L, L, W, W, W, W, W, W, L, L, L],
+  [L, L, W, W, W, W, W, W, L, L, L, W, W, W, W, W, W, L, L, L],
+  [L, W, W, W, W, W, W, L, L, L, L, W, W, W, W, W, L, L, L, L],
+  [L, W, W, W, W, W, W, L, L, L, L, W, W, W, W, W, L, L, L, L],
+  [L, W, W, W, W, W, L, L, L, L, L, L, W, L, W, W, W, W, L, L],
+  [L, L, L, W, W, W, L, L, L, L, L, W, W, W, W, W, L, L, L, L],
+  [L, W, L, W, W, W, L, L, L, L, L, W, W, W, L, L, L, L, L, L],
+  [W, W, W, W, W, W, W, L, L, L, L, L, L, L, L, L, L, L, L, L],
+  [W, W, L, W, W, W, W, L, L, L, L, L, L, L, L, L, L, L, L, L],
+  [L, L, L, L, W, W, W, L, L, L, L, L, L, L, L, L, L, L, L, L],
+  [L, L, L, L, L, W, W, L, L, L, L, L, L, L, L, L, L, L, L, L],
+  // [L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, L],
+  // [L, L, L, L, L, L, L, L, L, W, L, L, L, L, L, L, L, L, L, L],
 ];
 
 const tier1Strongholds: Stronghold[] = [
@@ -124,14 +125,14 @@ const addCoasts = (map: number[][]): number[][] => {
 
   for (let x = 0; x < width; x++) {
     for (let y = 0; y < height; y++) {
-      if (map[x][y] !== L) continue;
-
-      lW = x > 0 && map[x - 1][y] === W;
-      rW = x < width - 1 && map[x + 1][y] === W;
-      uW = y > 0 && map[x][y - 1] === W;
-      dW = y < height - 1 && map[x][y + 1] === W;
-      if (lW || rW || uW || dW) {
-        map[x][y] = C;
+      if (map[x][y] === L) {
+        lW = x > 0 && map[x - 1][y] === W;
+        rW = x < width - 1 && map[x + 1][y] === W;
+        uW = y > 0 && map[x][y - 1] === W;
+        dW = y < height - 1 && map[x][y + 1] === W;
+        if (lW || rW || uW || dW) {
+          map[x][y] = C;
+        }
       }
     }
   }
