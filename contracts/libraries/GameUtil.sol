@@ -177,6 +177,10 @@ library Util {
         return false;
     }
 
+    function _getPlayerCount() public view returns (uint256) {
+        return gs().players.length;
+    }
+
     function _getPlayer(address _player) public view returns (Player memory) {
         return gs().playerMap[_player];
     }

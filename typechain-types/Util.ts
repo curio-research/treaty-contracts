@@ -139,6 +139,7 @@ export interface UtilInterface extends utils.Interface {
     "_getMovementCooldown(uint256)": FunctionFragment;
     "_getPlayer(address)": FunctionFragment;
     "_getPlayerBalance(address)": FunctionFragment;
+    "_getPlayerCount()": FunctionFragment;
     "_getTileAt((uint256,uint256))": FunctionFragment;
     "_getTotalGoldGenerationPerUpdate(address)": FunctionFragment;
     "_getTroop(uint256)": FunctionFragment;
@@ -206,6 +207,10 @@ export interface UtilInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "_getPlayerBalance",
     values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getPlayerCount",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "_getTileAt",
@@ -308,6 +313,10 @@ export interface UtilInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "_getPlayer", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_getPlayerBalance",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_getPlayerCount",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "_getTileAt", data: BytesLike): Result;
@@ -586,6 +595,8 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    _getPlayerCount(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     _getTileAt(
       _pos: PositionStruct,
       overrides?: CallOverrides
@@ -721,6 +732,8 @@ export interface Util extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  _getPlayerCount(overrides?: CallOverrides): Promise<BigNumber>;
+
   _getTileAt(
     _pos: PositionStruct,
     overrides?: CallOverrides
@@ -852,6 +865,8 @@ export interface Util extends BaseContract {
       _player: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    _getPlayerCount(overrides?: CallOverrides): Promise<BigNumber>;
 
     _getTileAt(
       _pos: PositionStruct,
@@ -1104,6 +1119,8 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _getPlayerCount(overrides?: CallOverrides): Promise<BigNumber>;
+
     _getTileAt(
       _pos: PositionStruct,
       overrides?: CallOverrides
@@ -1236,6 +1253,8 @@ export interface Util extends BaseContract {
       _player: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    _getPlayerCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     _getTileAt(
       _pos: PositionStruct,
