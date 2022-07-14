@@ -11,14 +11,13 @@ require('dotenv').config();
 // tasks
 import './tasks/port';
 import './tasks/deploy';
-import './tasks/epoch';
 import './tasks/mapGen';
 
 // to get the smart contract file sizes, run:
 // yarn run hardhat size-contracts
 
 // Add this
-const { USER1_PK, USER2_PK, KOVAN_RPC_URL, GNOSIS_OPTIMISM_RPC_URL, LOCALHOST_USER1_PK, LOCALHOST_USER2_PK } = process.env;
+const { USER1_PK, USER2_PK, OPTIMISM_KOVAN_RPC_URL, GNOSIS_OPTIMISM_RPC_URL, GNOSIS_RPC_URL, LOCALHOST_USER1_PK, LOCALHOST_USER2_PK, CONSTELLATION_RPC_URL } = process.env;
 
 export default {
   defaultNetwork: 'localhost',
@@ -47,25 +46,36 @@ export default {
 
   networks: {
     optimismKovan: {
-      url: KOVAN_RPC_URL,
+      url: OPTIMISM_KOVAN_RPC_URL,
       accounts: [USER1_PK, USER2_PK],
       chainId: 69,
     },
-    // tailscale: {
-    //   url: 'http://100.108.189.54:8545',
-    //   accounts: [LOCALHOST_USER1_PK, LOCALHOST_USER2_PK],
-    //   chainId: 1337,
-    // },
+    tailscale: {
+      url: 'http://100.117.164.103:8545',
+      accounts: [LOCALHOST_USER1_PK, LOCALHOST_USER2_PK],
+      chainId: 1337,
+    },
     gnosisOptimism: {
       url: GNOSIS_OPTIMISM_RPC_URL,
       accounts: [USER1_PK, USER2_PK],
       chainId: 300,
     },
+    gnosis: {
+      url: GNOSIS_RPC_URL,
+      accounts: [USER1_PK, USER2_PK],
+      chainId: 100,
+    },
+    constellation: {
+      url: CONSTELLATION_RPC_URL,
+      accounts: [USER1_PK, USER2_PK],
+      chainId: 2901,
+    },
     hardhat: {
       chainId: 1337,
+      blockGasLimit: 100000000000,
       mining: {
-        auto: true,
-        // interval: 500,
+        auto: false,
+        interval: 200,
       },
     },
   },

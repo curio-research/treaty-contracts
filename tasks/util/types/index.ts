@@ -62,13 +62,18 @@ export interface ColorsAndCutoffs {
 
 export interface TileMapOutput {
   tileMap: TILE_TYPE[][];
-  portTiles: number[][];
-  cityTiles: number[][];
+  portTiles: Position[];
+  cityTiles: Position[];
 }
 
 export interface AllGameMapsOutput {
   tileMap: TILE_TYPE[][];
-  portTiles: number[][];
-  cityTiles: number[][];
+  portTiles: Position[];
+  cityTiles: Position[];
   colorMap: number[][][];
+}
+
+export interface Position {
+  x: number;
+  y: number;
 }

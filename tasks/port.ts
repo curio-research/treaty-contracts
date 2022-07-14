@@ -1,7 +1,51 @@
+import fs from 'fs-extra';
+import path from 'path';
 import { HardhatArguments, HardhatRuntimeEnvironment, RunSuperFunction, TaskArguments } from 'hardhat/types';
 import { task } from 'hardhat/config';
-import * as path from 'path';
-import * as fs from 'fs';
+
+task('port', 'compile and port contracts over to frontend repo').setAction(async (args: HardhatArguments, hre: HardhatRuntimeEnvironment) => {
+  try {
+    // delete items in existing directories
+    await fs.emptydirSync(getDir('frontend', ''));
+    await fs.emptydirSync(getDir('faucet', ''));
+
+    // create factory folders in each
+    await fs.mkdirSync(getDir('frontend', '/factories'));
+    await fs.mkdirSync(getDir('faucet', '/factories'));
+
+    // since hardhat-diamond-abi compiles all files into one, We need to port common.ts, Curio.ts, and Curio__factory.ts
+    // NICE-TO-HAVE: selectively port files, search by file names in the subdirectories
+
+    await portFile('/Curio.ts');
+    await portFile('/common.ts');
+    await portFile('/factories/Curio__factory.ts');
+
+    // copy game configs
+    const configFileDir = path.join(__dirname, '/game.config.json');
+    const configClientDir = path.join(__dirname, '../../frontend/src/game.config.json');
+
+    await fs.copyFileSync(configFileDir, configClientDir);
+    console.log('✦ Porting complete!');
+  } catch (err: any) {
+    console.log(err.message);
+  }
+});
+
+// helpers
+
+const getDir = (repositoryName: string, filePath: string): string => {
+  const prefixSelector = (repoName: string) => {
+    if (repoName === 'local') return '../typechain-types';
+    if (repoName === 'frontend') return '../../frontend/src/network/typechain-types';
+    if (repoName === 'faucet') return '../../faucet/src/typechain-types';
+  };
+  return path.join(__dirname, `${prefixSelector(repositoryName)}${filePath}`);
+};
+
+const portFile = async (filePath: string): Promise<void> => {
+  await fs.copyFileSync(getDir('local', filePath), getDir('frontend', filePath));
+  await fs.copyFileSync(getDir('local', filePath), getDir('faucet', filePath));
+};
 
 // copy folder
 const copyFolderSync = (from: string, to: string) => {
@@ -14,28 +58,3 @@ const copyFolderSync = (from: string, to: string) => {
     }
   });
 };
-
-task('port', 'compile and port contracts over to frontend repo').setAction(async (args: HardhatArguments, hre: HardhatRuntimeEnvironment) => {
-  console.log('✦ Porting files over ...');
-
-  // NICE-TO-HAVE: Selectively port files, search by file names in the subdirectories
-  // TODO: create directory if it doesn't exist in frontend
-
-  // save typechain files
-  const clientTypechainDir = path.join(__dirname, '../../frontend/src/network/typechain-types');
-  const backendTypechainDir = path.join(__dirname, '../../faucet/src/typechain-types');
-  const localTypechainDir = path.join(__dirname, '../typechain-types');
-
-  // delete existing directories
-  await fs.rmSync(clientTypechainDir, { recursive: true });
-  await fs.rmSync(backendTypechainDir, { recursive: true });
-
-  copyFolderSync(localTypechainDir, clientTypechainDir);
-  copyFolderSync(localTypechainDir, backendTypechainDir);
-
-  const configFileDir = path.join(__dirname, '/game.config.json');
-  const configClientDir = path.join(__dirname, '../../frontend/src/game.config.json');
-
-  await fs.copyFileSync(configFileDir, configClientDir);
-  console.log('✦ Porting complete!');
-});

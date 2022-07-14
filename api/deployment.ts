@@ -1,10 +1,11 @@
 import axios from 'axios';
-import { gameConfig } from './types/index';
+import { assert } from 'console';
+import { GameConfig } from './types/index';
 
 const api = axios.create();
 api.defaults.baseURL = process.env.BACKEND_URL;
 
-export const publishDeployment = async (gameConfig: gameConfig) => {
+export const publishDeployment = async (gameConfig: GameConfig) => {
   try {
     const { data } = await api.post(`/deployments/add`, gameConfig);
 
@@ -18,25 +19,11 @@ export const publishDeployment = async (gameConfig: gameConfig) => {
   }
 };
 
-export const addTask = async (task: any) => {
+export const isConnectionLive = async (): Promise<boolean> => {
   try {
-    const { data } = await api.post(`/task/add`, task);
-
-    if (data) {
-      console.log('Added task successfully');
-    }
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-export const setTaskActiveMode = async (network: string, address: string, status: string) => {
-  try {
-    const { data } = await api.post(`/task/setStatus`, { network: network, address: address, status: status });
-    if (data) {
-      console.log(`Set task from ${address} on network ${network} to ${status} mode successful!`);
-    }
-  } catch (err) {
-    console.log(err);
+    const { data } = await api.get(`/check`);
+    return data.status === 'success';
+  } catch (err: any) {
+    throw new Error(err.message);
   }
 };

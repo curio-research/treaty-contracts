@@ -1,8 +1,6 @@
-import { position } from './../../util/types/common';
 import { BigNumberish, BigNumber } from 'ethers';
 import SimplexNoise from 'simplex-noise';
-import { NUM_INIT_TERRAIN_TYPES } from './constants';
-import { RenderInput, ColorsAndCutoffs, TileMapOutput, TILE_TYPE, AllGameMapsOutput, MapInput } from './types';
+import { RenderInput, ColorsAndCutoffs, TileMapOutput, TILE_TYPE, AllGameMapsOutput, MapInput, Position } from './types';
 
 //////////////////////////////////////////////////////////////////////
 ///////////////////////////// CONSTANTS //////////////////////////////
@@ -24,23 +22,39 @@ const MAX_UINT256 = BigInt(Math.pow(2, 256)) - BigInt(1);
 
 /**
  * Encode columns of a tile map using unique prime factorization.
- * Note: Currently only support column sizes less than 50
  * @param tileMap
- * @returns a 1d array of encoded columns
+ * @param numInitTerrainTypes
+ * @param batchSize
+ * @returns a 2d array of encoded columns, each in batches
  */
-export const encodeTileMap = (tileMap: TILE_TYPE[][]): string[] => {
-  const result: string[] = [];
+export const encodeTileMap = (tileMap: TILE_TYPE[][], numInitTerrainTypes: number = 5, batchSize: number = 100): string[][] => {
+  const result: string[][] = [];
+  const numBatchPerCol = Math.floor(tileMap[0].length / batchSize);
+  const lastBatchSize = tileMap[0].length % batchSize;
 
-  let col: number[];
-  let encodedCol: bigint;
+  let encodedCol: string[];
+  let tempBatch: bigint;
+  let k: number;
+
   for (let x = 0; x < tileMap.length; x++) {
-    col = tileMap[x];
-    encodedCol = BigInt(0);
-    for (let y = 0; y < col.length; y++) {
-      encodedCol += BigInt(col[y]) * BigInt(NUM_INIT_TERRAIN_TYPES) ** BigInt(y);
+    encodedCol = [];
+    for (k = 0; k < numBatchPerCol; k++) {
+      tempBatch = BigInt(0);
+      for (let y = 0; y < batchSize; y++) {
+        tempBatch += BigInt(tileMap[x][y]) * BigInt(numInitTerrainTypes) ** BigInt(y);
+        if (tempBatch >= MAX_UINT256) throw new Error('Encoding exceeds uint256 max size');
+      }
+      encodedCol.push(tempBatch.toString());
     }
-    if (encodedCol >= MAX_UINT256) throw new Error('Encoding exceeds uint256 max size');
-    result.push(encodedCol.toString());
+    if (lastBatchSize > 0) {
+      tempBatch = BigInt(0);
+      for (let y = 0; y < lastBatchSize; y++) {
+        tempBatch += BigInt(tileMap[x][y]) * BigInt(numInitTerrainTypes) ** BigInt(y);
+        if (tempBatch >= MAX_UINT256) throw new Error('Encoding exceeds uint256 max size');
+      }
+      encodedCol.push(tempBatch.toString());
+    }
+    result.push(encodedCol);
   }
 
   return result;
@@ -68,11 +82,11 @@ export const generateGameMaps = (mapInput: MapInput, renderInput: RenderInput): 
 
   // Update colorMap with ports and cities
   portTiles.forEach((portTile) => {
-    colorMap[portTile[0]][portTile[1]] = [100, 0, 0];
+    colorMap[portTile.x][portTile.y] = [100, 0, 0];
   });
 
   cityTiles.forEach((cityTile) => {
-    colorMap[cityTile[0]][cityTile[1]] = [100, 100, 100];
+    colorMap[cityTile.x][cityTile.y] = [100, 100, 100];
   });
 
   return { tileMap, portTiles, cityTiles, colorMap };
@@ -230,20 +244,20 @@ export const placePortsAndCities = (colorMap: number[][][], numPorts: number, nu
   let tileMap: TILE_TYPE[][] = generateEmptyMatrix(colorMap.length, colorMap[0].length, TILE_TYPE.WATER);
 
   // 1. Identify coastlines and inland areas.
-  const coastlineTiles: number[][] = [];
-  const inlandTiles: number[][] = [];
-  const portTiles: number[][] = [];
-  const cityTiles: number[][] = [];
+  const coastlineTiles: Position[] = [];
+  const inlandTiles: Position[] = [];
+  const portTiles: Position[] = [];
+  const cityTiles: Position[] = [];
 
   for (let x = 0; x < colorMap.length * xIncrement; x += xIncrement) {
     for (let y = 0; y < colorMap[0].length * yIncrement; y += yIncrement) {
       if (colorMap[x][y][1] > 0) {
         if ((x > 0 && colorMap[x - 1][y][1] == 0) || (x < colorMap.length - 1 && colorMap[x + 1][y][1] == 0) || (y > 0 && colorMap[x][y - 1][1] == 0) || (y < colorMap[0].length - 1 && colorMap[x][y + 1][1] == 0)) {
           tileMap[x][y] = TILE_TYPE.COAST;
-          coastlineTiles.push([x, y]);
+          coastlineTiles.push({ x, y });
         } else {
           tileMap[x][y] = TILE_TYPE.INLAND;
-          inlandTiles.push([x, y]);
+          inlandTiles.push({ x, y });
         }
       }
     }
@@ -251,28 +265,27 @@ export const placePortsAndCities = (colorMap: number[][][], numPorts: number, nu
 
   // 2. Randomly place ports and cities.
   let tileIndex: number;
-  let tile: number[];
+  let tile: Position;
 
   // ---------------------------
   // ensure that every island has at least one coast
   // ---------------------------
 
   const { islandID, islandIDMarkerMap } = islandIDMapCreator(JSON.parse(JSON.stringify(tileMap)));
-  const islandIdToMapping: Map<number, position[]> = new Map();
+  const islandIdToMapping: Map<number, Position[]> = new Map();
 
   // loop through coastline tiles
   for (let i = 0; i < coastlineTiles.length; i++) {
     const coastlineTile = coastlineTiles[i];
-    const x = coastlineTile[0];
-    const y = coastlineTile[1];
-    const coastLineTilePos = { x, y };
+    const x = coastlineTile.x;
+    const y = coastlineTile.y;
     const islandID = islandIDMarkerMap[x][y];
 
     const islandArr = islandIdToMapping.get(islandID);
     if (!islandArr) {
-      islandIdToMapping.set(islandID, [coastLineTilePos]);
+      islandIdToMapping.set(islandID, [coastlineTile]);
     } else {
-      islandArr.push(coastLineTilePos);
+      islandArr.push(coastlineTile);
       islandIdToMapping.set(islandID, islandArr);
     }
   }
@@ -282,10 +295,11 @@ export const placePortsAndCities = (colorMap: number[][][], numPorts: number, nu
   // this ensures that theres at least one city on each island!
   for (let i = 1; i < islandID + 1; i++) {
     const positionsByIslandID = islandIdToMapping.get(i);
-    if (positionsByIslandID) {
+    if (positionsByIslandID && numPorts) {
       const randomIslandTilePosition = positionsByIslandID[Math.floor(Math.random() * positionsByIslandID.length)];
       tileMap[randomIslandTilePosition.x][randomIslandTilePosition.y] = TILE_TYPE.PORT;
-      portTiles.push([randomIslandTilePosition.x, randomIslandTilePosition.y]);
+      portTiles.push({ x: randomIslandTilePosition.x, y: randomIslandTilePosition.y });
+      numPorts--;
     }
   }
 
@@ -294,7 +308,7 @@ export const placePortsAndCities = (colorMap: number[][][], numPorts: number, nu
 
     tileIndex = Math.floor(Math.random() * coastlineTiles.length);
     tile = coastlineTiles[tileIndex];
-    tileMap[tile[0]][tile[1]] = TILE_TYPE.PORT;
+    tileMap[tile.x][tile.y] = TILE_TYPE.PORT;
 
     portTiles.push(tile);
     coastlineTiles.splice(tileIndex, 1);
@@ -307,7 +321,7 @@ export const placePortsAndCities = (colorMap: number[][][], numPorts: number, nu
     const inlandTileIdx = Math.floor(Math.random() * inlandTiles.length);
     const inlandTile = inlandTiles[inlandTileIdx];
 
-    tileMap[inlandTile[0]][inlandTile[1]] = TILE_TYPE.CITY;
+    tileMap[inlandTile.x][inlandTile.y] = TILE_TYPE.CITY;
 
     cityTiles.push(inlandTile);
     inlandTiles.splice(inlandTileIdx, 1);

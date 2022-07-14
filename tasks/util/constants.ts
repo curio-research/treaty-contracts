@@ -1,6 +1,6 @@
 import { WorldConstantsStruct } from './../../typechain-types/Curio';
 import { TroopTypeStruct } from '../../typechain-types/DiamondInit';
-import { RenderInput, TILE_TYPE, TROOP_NAME } from './types';
+import { RenderInput, TROOP_NAME } from './types';
 
 export const LOCALHOST_RPC_URL = 'http://127.0.0.1:8545/';
 export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
@@ -9,83 +9,87 @@ export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 // Game constants (source of truth)
 // ----------------------------------------------------------
 
-export const WORLD_WIDTH = 20;
-export const WORLD_HEIGHT = 20;
-export const NUM_PORTS = 0;
-export const NUM_CITIES = 0;
+export const WORLD_WIDTH = 30;
+export const WORLD_HEIGHT = 30;
+export const NUM_PORTS = 30;
+export const NUM_CITIES = 15;
 export const MAP_INTERVAL = 10;
-export const SECONDS_PER_EPOCH = 5;
 export const COMBAT_EFFICIENCY = 50;
 export const BASE_ATTACK_FACTOR = 1;
 export const BASE_DEFENSE_FACTOR = 1;
 export const BASE_MAX_HEALTH = 1;
-export const NUM_INIT_TERRAIN_TYPES = Object.keys(TILE_TYPE).length;
+export const NUM_INIT_TERRAIN_TYPES = 5;
+export const INIT_BATCH_SIZE = 100;
+export const INIT_PLAYER_BALANCE = 20;
+export const DEFAULT_BASE_GOLD_GENERATION_PER_SECOND = 1;
+export const MAX_BASE_COUNT_PER_PLAYER = 20;
+export const MAX_TROOP_COUNT_PER_PLAYER = 20;
 
 export const TROOP_TYPES: TroopTypeStruct[] = [
   {
     name: TROOP_NAME.ARMY,
-    movesPerEpoch: 1,
+    isLandTroop: true,
     maxHealth: 1,
     damagePerHit: 1,
     attackFactor: 100,
     defenseFactor: 100,
     cargoCapacity: 0,
-    epochsToProduce: 6,
     movementCooldown: 1,
-    attackCooldown: 1,
-    isLandTroop: true,
+    largeActionCooldown: 1,
+    cost: 6,
+    expensePerSecond: 0,
   },
   {
     name: TROOP_NAME.TROOP_TRANSPORT,
-    movesPerEpoch: 1,
+    isLandTroop: false,
     maxHealth: 3,
     damagePerHit: 1,
     attackFactor: 50,
     defenseFactor: 50,
     cargoCapacity: 6,
-    epochsToProduce: 14,
-    movementCooldown: 1, // FIXME
-    attackCooldown: 1,
-    isLandTroop: false,
+    movementCooldown: 1,
+    largeActionCooldown: 1,
+    cost: 14,
+    expensePerSecond: 0,
   },
   {
     name: TROOP_NAME.DESTROYER,
-    movesPerEpoch: 1,
+    isLandTroop: false,
     maxHealth: 3,
     damagePerHit: 1,
     attackFactor: 100,
     defenseFactor: 100,
     cargoCapacity: 0,
-    epochsToProduce: 20,
-    movementCooldown: 1, // FIXME
-    attackCooldown: 1,
-    isLandTroop: false,
+    movementCooldown: 1,
+    largeActionCooldown: 1,
+    cost: 20,
+    expensePerSecond: 0,
   },
   {
     name: TROOP_NAME.CRUISER,
-    movesPerEpoch: 1,
+    isLandTroop: false,
     maxHealth: 8,
     damagePerHit: 2,
     attackFactor: 100,
     defenseFactor: 100,
     cargoCapacity: 0,
-    epochsToProduce: 30,
-    movementCooldown: 1, // FIXME
-    attackCooldown: 1,
-    isLandTroop: false,
+    movementCooldown: 1,
+    largeActionCooldown: 1,
+    cost: 30,
+    expensePerSecond: 0,
   },
   {
     name: TROOP_NAME.BATTLESHIP,
-    movesPerEpoch: 1,
+    isLandTroop: false,
     maxHealth: 12,
     damagePerHit: 3,
     attackFactor: 100,
     defenseFactor: 100,
     cargoCapacity: 0,
-    epochsToProduce: 50,
-    movementCooldown: 1, // FIXME
-    attackCooldown: 1,
-    isLandTroop: false,
+    movementCooldown: 1,
+    largeActionCooldown: 1,
+    cost: 50,
+    expensePerSecond: 0,
   },
 ];
 
@@ -97,9 +101,13 @@ export const generateWorldConstants = (adminAddr: string): WorldConstantsStruct 
     numPorts: NUM_PORTS,
     numCities: NUM_CITIES,
     mapInterval: MAP_INTERVAL,
-    secondsPerEpoch: SECONDS_PER_EPOCH,
     combatEfficiency: COMBAT_EFFICIENCY,
     numInitTerrainTypes: NUM_INIT_TERRAIN_TYPES,
+    initBatchSize: INIT_BATCH_SIZE,
+    initPlayerBalance: INIT_PLAYER_BALANCE,
+    defaultBaseGoldGenerationPerSecond: DEFAULT_BASE_GOLD_GENERATION_PER_SECOND,
+    maxBaseCountPerPlayer: MAX_BASE_COUNT_PER_PLAYER,
+    maxTroopCountPerPlayer: MAX_TROOP_COUNT_PER_PLAYER,
   };
 };
 
@@ -108,7 +116,7 @@ export const generateWorldConstants = (adminAddr: string): WorldConstantsStruct 
 // ----------------------------------------------------------
 
 export const RENDER_CONSTANTS: RenderInput = {
-  sizeFactor: 5,
+  sizeFactor: 10,
   numLandColors: 5,
   numWaterColors: 2,
   waterNoiseCutoff: 0.5,
@@ -132,16 +140,3 @@ export const getTroopTypeIndexByName = (troopTypes: TroopTypeStruct[], name: TRO
 // ------------------------------------------------
 // Default maps
 // ------------------------------------------------
-
-export const ligmap: number[][] = [
-  [1, 1, 4, 1, 3, 2, 2, 2, 2, 2],
-  [1, 1, 1, 1, 1, 2, 2, 2, 2, 2],
-  [4, 1, 1, 1, 3, 2, 2, 2, 2, 2],
-  [1, 1, 1, 1, 1, 2, 2, 2, 2, 2],
-  [3, 1, 3, 1, 1, 2, 2, 2, 2, 2],
-  [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
-  [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
-  [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
-  [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
-  [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
-];

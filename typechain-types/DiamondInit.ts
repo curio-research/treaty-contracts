@@ -24,13 +24,21 @@ export type WorldConstantsStruct = {
   numPorts: BigNumberish;
   numCities: BigNumberish;
   mapInterval: BigNumberish;
-  secondsPerEpoch: BigNumberish;
   combatEfficiency: BigNumberish;
   numInitTerrainTypes: BigNumberish;
+  initBatchSize: BigNumberish;
+  initPlayerBalance: BigNumberish;
+  defaultBaseGoldGenerationPerSecond: BigNumberish;
+  maxBaseCountPerPlayer: BigNumberish;
+  maxTroopCountPerPlayer: BigNumberish;
 };
 
 export type WorldConstantsStructOutput = [
   string,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -46,27 +54,32 @@ export type WorldConstantsStructOutput = [
   numPorts: BigNumber;
   numCities: BigNumber;
   mapInterval: BigNumber;
-  secondsPerEpoch: BigNumber;
   combatEfficiency: BigNumber;
   numInitTerrainTypes: BigNumber;
+  initBatchSize: BigNumber;
+  initPlayerBalance: BigNumber;
+  defaultBaseGoldGenerationPerSecond: BigNumber;
+  maxBaseCountPerPlayer: BigNumber;
+  maxTroopCountPerPlayer: BigNumber;
 };
 
 export type TroopTypeStruct = {
   name: BigNumberish;
-  movesPerEpoch: BigNumberish;
+  isLandTroop: boolean;
   maxHealth: BigNumberish;
   damagePerHit: BigNumberish;
   attackFactor: BigNumberish;
   defenseFactor: BigNumberish;
   cargoCapacity: BigNumberish;
-  epochsToProduce: BigNumberish;
   movementCooldown: BigNumberish;
-  attackCooldown: BigNumberish;
-  isLandTroop: boolean;
+  largeActionCooldown: BigNumberish;
+  cost: BigNumberish;
+  expensePerSecond: BigNumberish;
 };
 
 export type TroopTypeStructOutput = [
   number,
+  boolean,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -75,25 +88,24 @@ export type TroopTypeStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
-  BigNumber,
-  boolean
+  BigNumber
 ] & {
   name: number;
-  movesPerEpoch: BigNumber;
+  isLandTroop: boolean;
   maxHealth: BigNumber;
   damagePerHit: BigNumber;
   attackFactor: BigNumber;
   defenseFactor: BigNumber;
   cargoCapacity: BigNumber;
-  epochsToProduce: BigNumber;
   movementCooldown: BigNumber;
-  attackCooldown: BigNumber;
-  isLandTroop: boolean;
+  largeActionCooldown: BigNumber;
+  cost: BigNumber;
+  expensePerSecond: BigNumber;
 };
 
 export interface DiamondInitInterface extends utils.Interface {
   functions: {
-    "init((address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),(uint8,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,bool)[])": FunctionFragment;
+    "init((address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),(uint8,bool,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256)[])": FunctionFragment;
   };
 
   encodeFunctionData(

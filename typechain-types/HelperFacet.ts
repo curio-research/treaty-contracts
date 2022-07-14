@@ -27,13 +27,15 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
 export interface HelperFacetInterface extends utils.Interface {
   functions: {
     "bulkInitializeTiles((uint256,uint256)[])": FunctionFragment;
-    "endProduction((uint256,uint256))": FunctionFragment;
     "initializePlayer((uint256,uint256),address)": FunctionFragment;
+    "pauseGame()": FunctionFragment;
+    "reactivatePlayer(address)": FunctionFragment;
     "repair((uint256,uint256))": FunctionFragment;
+    "resumeGame()": FunctionFragment;
     "spawnTroop((uint256,uint256),address,uint256)": FunctionFragment;
-    "storeEncodedRawMapCols(uint256[])": FunctionFragment;
+    "storeEncodedColumnBatches(uint256[][])": FunctionFragment;
     "transferBaseOwnership((uint256,uint256),address)": FunctionFragment;
-    "updateEpoch()": FunctionFragment;
+    "updatePlayerBalance(address)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -41,32 +43,37 @@ export interface HelperFacetInterface extends utils.Interface {
     values: [PositionStruct[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "endProduction",
-    values: [PositionStruct]
-  ): string;
-  encodeFunctionData(
     functionFragment: "initializePlayer",
     values: [PositionStruct, string]
+  ): string;
+  encodeFunctionData(functionFragment: "pauseGame", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "reactivatePlayer",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "repair",
     values: [PositionStruct]
   ): string;
   encodeFunctionData(
+    functionFragment: "resumeGame",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "spawnTroop",
     values: [PositionStruct, string, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "storeEncodedRawMapCols",
-    values: [BigNumberish[]]
+    functionFragment: "storeEncodedColumnBatches",
+    values: [BigNumberish[][]]
   ): string;
   encodeFunctionData(
     functionFragment: "transferBaseOwnership",
     values: [PositionStruct, string]
   ): string;
   encodeFunctionData(
-    functionFragment: "updateEpoch",
-    values?: undefined
+    functionFragment: "updatePlayerBalance",
+    values: [string]
   ): string;
 
   decodeFunctionResult(
@@ -74,17 +81,19 @@ export interface HelperFacetInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "endProduction",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "initializePlayer",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "pauseGame", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "reactivatePlayer",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "repair", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "resumeGame", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "spawnTroop", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "storeEncodedRawMapCols",
+    functionFragment: "storeEncodedColumnBatches",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -92,7 +101,7 @@ export interface HelperFacetInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "updateEpoch",
+    functionFragment: "updatePlayerBalance",
     data: BytesLike
   ): Result;
 
@@ -131,19 +140,27 @@ export interface HelperFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    endProduction(
-      _pos: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     initializePlayer(
       _pos: PositionStruct,
       _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    pauseGame(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    reactivatePlayer(
+      _player: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     repair(
       _pos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    resumeGame(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -154,8 +171,8 @@ export interface HelperFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    storeEncodedRawMapCols(
-      _cols: BigNumberish[],
+    storeEncodedColumnBatches(
+      _colBatches: BigNumberish[][],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -165,7 +182,8 @@ export interface HelperFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    updateEpoch(
+    updatePlayerBalance(
+      _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
@@ -175,19 +193,27 @@ export interface HelperFacet extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  endProduction(
-    _pos: PositionStruct,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   initializePlayer(
     _pos: PositionStruct,
     _player: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  pauseGame(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  reactivatePlayer(
+    _player: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   repair(
     _pos: PositionStruct,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  resumeGame(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -198,8 +224,8 @@ export interface HelperFacet extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  storeEncodedRawMapCols(
-    _cols: BigNumberish[],
+  storeEncodedColumnBatches(
+    _colBatches: BigNumberish[][],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -209,7 +235,8 @@ export interface HelperFacet extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  updateEpoch(
+  updatePlayerBalance(
+    _player: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -219,18 +246,19 @@ export interface HelperFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    endProduction(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     initializePlayer(
       _pos: PositionStruct,
       _player: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
+    pauseGame(overrides?: CallOverrides): Promise<void>;
+
+    reactivatePlayer(_player: string, overrides?: CallOverrides): Promise<void>;
+
     repair(_pos: PositionStruct, overrides?: CallOverrides): Promise<void>;
+
+    resumeGame(overrides?: CallOverrides): Promise<void>;
 
     spawnTroop(
       _pos: PositionStruct,
@@ -239,8 +267,8 @@ export interface HelperFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    storeEncodedRawMapCols(
-      _cols: BigNumberish[],
+    storeEncodedColumnBatches(
+      _colBatches: BigNumberish[][],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -250,7 +278,10 @@ export interface HelperFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    updateEpoch(overrides?: CallOverrides): Promise<void>;
+    updatePlayerBalance(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
   };
 
   filters: {};
@@ -261,19 +292,27 @@ export interface HelperFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    endProduction(
-      _pos: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     initializePlayer(
       _pos: PositionStruct,
       _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    pauseGame(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    reactivatePlayer(
+      _player: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     repair(
       _pos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    resumeGame(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -284,8 +323,8 @@ export interface HelperFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    storeEncodedRawMapCols(
-      _cols: BigNumberish[],
+    storeEncodedColumnBatches(
+      _colBatches: BigNumberish[][],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -295,7 +334,8 @@ export interface HelperFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    updateEpoch(
+    updatePlayerBalance(
+      _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
@@ -306,19 +346,27 @@ export interface HelperFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    endProduction(
-      _pos: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     initializePlayer(
       _pos: PositionStruct,
       _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    pauseGame(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    reactivatePlayer(
+      _player: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     repair(
       _pos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    resumeGame(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -329,8 +377,8 @@ export interface HelperFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    storeEncodedRawMapCols(
-      _cols: BigNumberish[],
+    storeEncodedColumnBatches(
+      _colBatches: BigNumberish[][],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -340,7 +388,8 @@ export interface HelperFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    updateEpoch(
+    updatePlayerBalance(
+      _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

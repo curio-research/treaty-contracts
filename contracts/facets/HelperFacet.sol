@@ -3,7 +3,7 @@ pragma solidity ^0.8.4;
 
 import "contracts/libraries/Storage.sol";
 import {Util} from "contracts/libraries/GameUtil.sol";
-import {BASE_NAME, Base, GameState, Player, Position, Production, TERRAIN, Tile, Troop, TroopType} from "contracts/libraries/Types.sol";
+import {BASE_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop, TroopType, WorldConstants} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 
 /// @title Helper facet
@@ -23,13 +23,61 @@ contract HelperFacet is UseStorage {
         _;
     }
 
-    function storeEncodedRawMapCols(uint256[] memory _cols) external onlyAdmin {
-        gs().encodedRawMapCols = _cols;
+    /**
+     * Pause an ongoing game.
+     */
+    function pauseGame() external onlyAdmin {
+        require(!gs().isPaused, "CURIO: Game is paused");
+
+        address[] memory _allPlayers = gs().players;
+        for (uint256 i = 0; i < _allPlayers.length; i++) {
+            Util._updatePlayerBalance(_allPlayers[i]);
+        }
+
+        gs().isPaused = true;
+        gs().lastPaused = block.timestamp;
+        emit Util.GamePaused();
+    }
+
+    /**
+     * Resume a paused game.
+     */
+    function resumeGame() external onlyAdmin {
+        require(gs().isPaused, "CURIO: Game is ongoing");
+
+        for (uint256 i = 0; i < gs().players.length; i++) {
+            gs().playerMap[gs().players[i]].balanceLastUpdated = block.timestamp;
+        }
+
+        gs().isPaused = false;
+        emit Util.GameResumed();
+    }
+
+    /**
+     * Reactivate an inactive player.
+     * TODO: add a reactivation cooldown for all players, or for each player
+     * @param _player player address
+     */
+    function reactivatePlayer(address _player) external onlyAdmin {
+        require(!Util._isPlayerInitialized(_player), "CURIO: Player already initialized");
+        require(!Util._isPlayerActive(_player), "CURIO: Player is active");
+
+        gs().playerMap[_player].active = true;
+        gs().playerMap[_player].balance = 50; // reload balance, FIXME: make more scalable
+        emit Util.PlayerReactivated(_player);
+    }
+
+    /**
+     * Store an array of encoded raw map columns containing information of all tiles, for efficient storage.
+     * @param _colBatches map columns in batches, encoded with N-ary arithmetic
+     */
+    function storeEncodedColumnBatches(uint256[][] memory _colBatches) external onlyAdmin {
+        gs().encodedColumnBatches = _colBatches;
     }
 
     /**
      * Initialize a player at a selected position.
-     * TODO: Upgrade logic such that everyone can initialize themselves. figure out if we want a whitelist or something
+     * TODO: figure out if we want a whitelist or something
      * @param _pos position to initialize
      * @param _player player address
      */
@@ -39,10 +87,20 @@ contract HelperFacet is UseStorage {
 
         uint256 _baseId = Util._getTileAt(_pos).baseId;
         require(Util._getBaseOwner(_baseId) == NULL_ADDR, "CURIO: Base is taken");
-        require(!gs().playerMap[_player].active, "CURIO: Player already initialized");
+        require(!Util._isPlayerInitialized(_player), "CURIO: Player already initialized");
 
+        WorldConstants memory _worldConstants = gs().worldConstants;
         gs().players.push(_player);
-        gs().playerMap[_player] = Player({initEpoch: gs().epoch, active: true});
+        gs().playerMap[_player] = Player({
+            initTimestamp: block.timestamp, // yo
+            active: true,
+            balance: _worldConstants.initPlayerBalance,
+            totalGoldGenerationPerUpdate: _worldConstants.defaultBaseGoldGenerationPerSecond,
+            totalTroopExpensePerUpdate: 0,
+            balanceLastUpdated: block.timestamp,
+            numOwnedBases: 1,
+            numOwnedTroops: 0
+        });
         gs().baseIdMap[_baseId].owner = _player;
 
         emit Util.NewPlayer(_player, _pos);
@@ -71,7 +129,7 @@ contract HelperFacet is UseStorage {
             require(Util._isLandTroop(_troopTypeId) || _base.name == BASE_NAME.PORT, "CURIO: Can only spawn water troops in ports");
         }
 
-        (uint256 _troopId, Troop memory _troop) = Util._addTroop(_pos, _troopTypeId, _player);
+        (uint256 _troopId, Troop memory _troop) = Util._addTroop(_player, _pos, _troopTypeId);
 
         emit Util.NewTroop(_player, _troopId, _troop, _pos);
     }
@@ -90,52 +148,32 @@ contract HelperFacet is UseStorage {
         require(_tile.occupantId == NULL, "CURIO: Tile occupied");
 
         Base memory _base = Util._getBase(_tile.baseId);
-        require(_base.owner != _player, "CURIO: Base already belongs to player");
+        require(_base.owner == NULL_ADDR, "CURIO: Base is owned");
 
         gs().baseIdMap[_tile.baseId].owner = _player;
+        Util._updatePlayerBalance(_player);
+        gs().playerMap[_player].numOwnedBases++;
+        gs().playerMap[_player].totalGoldGenerationPerUpdate += _base.goldGenerationPerSecond;
+
         emit Util.BaseCaptured(_player, NULL, _tile.baseId);
+    }
+
+    /**
+     * Initialize all tiles from an array of positions.
+     * @param _positions all positions
+     */
+    function bulkInitializeTiles(Position[] memory _positions) external onlyAdmin {
+        for (uint256 i = 0; i < _positions.length; i++) {
+            Util._initializeTile(_positions[i]);
+        }
     }
 
     // ----------------------------------------------------------------------
     // STATE FUNCTIONS
     // ----------------------------------------------------------------------
 
-    /**
-     * Update epoch given enough time has elapsed.
-     */
-    function updateEpoch() external {
-        // Currently implemented expecting real-time calls from client; can change to lazy if needed
-        require((block.timestamp - gs().lastTimestamp) >= gs().worldConstants.secondsPerEpoch, "CURIO: Not enough time has elapsed since last epoch");
-
-        gs().epoch++;
-        gs().lastTimestamp = block.timestamp;
-
-        emit Util.EpochUpdate(gs().epoch, gs().lastTimestamp);
-    }
-
-    /**
-     * Finish producing a troop from a base.
-     * @param _pos position of base
-     */
-    function endProduction(Position memory _pos) external {
-        require(Util._inBound(_pos), "CURIO: Out of bound");
-        if (!Util._getTileAt(_pos).isInitialized) Util._initializeTile(_pos);
-
-        // Currently implemented expecting real-time calls from client; can change to lazy if needed
-        Tile memory _tile = Util._getTileAt(_pos);
-        require(_tile.baseId != NULL, "CURIO: No base found");
-        require(Util._getBaseOwner(_tile.baseId) == msg.sender, "CURIO: Can only produce in own base");
-        require(_tile.occupantId == NULL, "CURIO: Base occupied by another troop");
-
-        Production memory _production = gs().baseProductionMap[_tile.baseId];
-        require(_production.troopTypeId != NULL, "CURIO: No production found in base");
-        require(Util._getEpochsToProduce(_production.troopTypeId) <= (gs().epoch - _production.startEpoch), "CURIO: Troop needs more epochs for production");
-
-        (uint256 _troopId, Troop memory _troop) = Util._addTroop(_pos, _production.troopTypeId, msg.sender);
-        delete gs().baseProductionMap[_tile.baseId];
-
-        emit Util.ProductionEnded(msg.sender, _tile.baseId);
-        emit Util.NewTroop(msg.sender, _troopId, _troop, _pos);
+    function updatePlayerBalance(address _player) external {
+        Util._updatePlayerBalance(_player);
     }
 
     /**
@@ -156,18 +194,12 @@ contract HelperFacet is UseStorage {
         Troop memory _troop = gs().troopIdMap[_troopId];
         require(_troop.owner == msg.sender, "CURIO: Can only repair own troop");
         require(_troop.health < Util._getMaxHealth(_troop.troopTypeId), "CURIO: Troop already at full health");
-        require((gs().epoch - _troop.lastRepaired) >= 1, "CURIO: Repaired too recently");
+        require((block.timestamp - _troop.lastRepaired) >= 1, "CURIO: Repaired too recently");
 
         _troop.health++;
         gs().troopIdMap[_troopId].health = _troop.health;
-        gs().troopIdMap[_troopId].lastRepaired = gs().epoch;
+        gs().troopIdMap[_troopId].lastRepaired = block.timestamp;
         emit Util.Repaired(msg.sender, _tile.occupantId, _troop.health);
         if (_troop.health == Util._getMaxHealth(_troop.troopTypeId)) emit Util.Recovered(msg.sender, _troopId);
-    }
-
-    function bulkInitializeTiles(Position[] memory _positions) external onlyAdmin {
-        for (uint256 i = 0; i < _positions.length; i++) {
-            Util._initializeTile(_positions[i]);
-        }
     }
 }

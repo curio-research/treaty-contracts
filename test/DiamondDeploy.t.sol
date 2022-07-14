@@ -2,7 +2,6 @@
 pragma solidity ^0.8.4;
 
 import "forge-std/Test.sol";
-import "forge-std/console.sol";
 import "contracts/facets/DiamondCutFacet.sol";
 import "contracts/facets/DiamondLoupeFacet.sol";
 import "contracts/facets/OwnershipFacet.sol";
@@ -51,77 +50,78 @@ contract DiamondDeployTest is Test {
     uint256 public armyTroopTypeId = indexToId(uint256(TROOP_NAME.ARMY));
     uint256 public troopTransportTroopTypeId = indexToId(uint256(TROOP_NAME.TROOP_TRANSPORT));
     uint256 public destroyerTroopTypeId = indexToId(uint256(TROOP_NAME.DESTROYER));
+    uint256 public battleshipTroopTypeId = indexToId(uint256(TROOP_NAME.BATTLESHIP));
 
     // troop types
     TroopType public armyTroopType =
         TroopType({
             name: TROOP_NAME.ARMY,
-            movesPerEpoch: 1,
+            isLandTroop: true,
             maxHealth: 1,
-            damagePerHit: 1, // yo
+            damagePerHit: 1,
             attackFactor: 100,
             defenseFactor: 100,
             cargoCapacity: 0,
-            epochsToProduce: 6,
             movementCooldown: 1,
-            attackCooldown: 1,
-            isLandTroop: true
+            largeActionCooldown: 1,
+            cost: 6,
+            expensePerSecond: 0 // DO NOT REMOVE THIS COMMENT
         });
     TroopType public troopTransportTroopType =
         TroopType({
             name: TROOP_NAME.TROOP_TRANSPORT,
-            movesPerEpoch: 2,
+            isLandTroop: false,
             maxHealth: 3,
             damagePerHit: 1,
             attackFactor: 50,
             defenseFactor: 50,
             cargoCapacity: 6,
-            epochsToProduce: 14,
-            movementCooldown: 1, // FIXME
-            attackCooldown: 1,
-            isLandTroop: false
+            movementCooldown: 1,
+            largeActionCooldown: 1,
+            cost: 14,
+            expensePerSecond: 1 //
         });
     TroopType public destroyerTroopType =
         TroopType({
             name: TROOP_NAME.DESTROYER,
-            movesPerEpoch: 3,
+            isLandTroop: false,
             maxHealth: 3,
             damagePerHit: 1,
             attackFactor: 100,
             defenseFactor: 100,
             cargoCapacity: 0,
-            epochsToProduce: 20,
-            movementCooldown: 1, // FIXME
-            attackCooldown: 1,
-            isLandTroop: false
+            movementCooldown: 1,
+            largeActionCooldown: 1,
+            cost: 20,
+            expensePerSecond: 1 //
         });
     TroopType public cruiserTroopType =
         TroopType({
             name: TROOP_NAME.CRUISER,
-            movesPerEpoch: 2,
+            isLandTroop: false,
             maxHealth: 8,
             damagePerHit: 2,
             attackFactor: 100,
             defenseFactor: 100,
             cargoCapacity: 0,
-            epochsToProduce: 30,
-            movementCooldown: 1, // FIXME
-            attackCooldown: 1,
-            isLandTroop: false
+            movementCooldown: 1,
+            largeActionCooldown: 1,
+            cost: 30,
+            expensePerSecond: 1 //
         });
     TroopType public battleshipTroopType =
         TroopType({
             name: TROOP_NAME.BATTLESHIP,
-            movesPerEpoch: 2,
+            isLandTroop: false,
             maxHealth: 12,
             damagePerHit: 3,
             attackFactor: 100,
             defenseFactor: 100,
             cargoCapacity: 0,
-            epochsToProduce: 50,
-            movementCooldown: 1, // FIXME
-            attackCooldown: 1,
-            isLandTroop: false
+            movementCooldown: 1,
+            largeActionCooldown: 1,
+            cost: 50,
+            expensePerSecond: 2 //
         });
 
     // we assume these two facet selectors do not change. If they do however, we should use getSelectors
@@ -161,15 +161,10 @@ contract DiamondDeployTest is Test {
         engine = EngineFacet(diamond);
         ownership = OwnershipFacet(diamond);
 
-        // // initialize map (outdated)
-        // Position memory _startPos = Position({x: 0, y: 0});
-        // uint256[][] memory _chunk = generateMapChunk(_worldConstants.mapInterval);
-        // engine.setMapChunk(_startPos, _chunk);
-
         // initialize map using lazy + encoding
-        uint256[][] memory _map = generateMap(_worldConstants.worldWidth, _worldConstants.worldHeight, _worldConstants.mapInterval);
-        uint256[] memory _encodedMapCols = _encodeTileMap(_worldConstants.numInitTerrainTypes, _map);
-        helper.storeEncodedRawMapCols(_encodedMapCols);
+        uint256[][] memory _map = _generateMap(_worldConstants.worldWidth, _worldConstants.worldHeight, _worldConstants.mapInterval);
+        uint256[][] memory _encodedColumnBatches = _encodeTileMap(_map, _worldConstants.numInitTerrainTypes, _worldConstants.initBatchSize);
+        helper.storeEncodedColumnBatches(_encodedColumnBatches);
 
         // initialize players
         helper.initializePlayer(player1Pos, player1);
@@ -179,20 +174,37 @@ contract DiamondDeployTest is Test {
         vm.stopPrank();
     }
 
-    function _encodeTileMap(uint256 _numInitTerrainTypes, uint256[][] memory _tileMap) internal pure returns (uint256[] memory) {
-        uint256[] memory _result = new uint256[](_tileMap.length);
+    function _encodeTileMap(
+        uint256[][] memory _tileMap,
+        uint256 _numInitTerrainTypes,
+        uint256 _batchSize
+    ) internal pure returns (uint256[][] memory) {
+        uint256[][] memory _result = new uint256[][](_tileMap.length);
+        uint256 _numBatchPerCol = _tileMap[0].length / _batchSize;
+        uint256 _lastBatchSize = _tileMap[0].length % _batchSize;
 
-        uint256[] memory _col = new uint256[](_tileMap[0].length);
-        uint256 _encodedCol;
+        uint256[] memory _encodedCol;
         uint256 _temp;
+        uint256 k;
 
         for (uint256 x = 0; x < _tileMap.length; x++) {
-            _col = _tileMap[x];
-            _encodedCol = 0;
-            for (uint256 y = 0; y < _col.length; y++) {
-                _temp = _encodedCol + _col[y] * _numInitTerrainTypes**y;
-                if (_temp < _encodedCol) revert("Integer overflow");
-                _encodedCol = _temp;
+            _encodedCol = new uint256[](_numBatchPerCol + 1);
+            for (k = 0; k < _numBatchPerCol; k++) {
+                _encodedCol[k] = 0;
+                for (uint256 y = 0; y < _batchSize; y++) {
+                    _temp = _encodedCol[k] + _tileMap[x][k * _batchSize + y] * _numInitTerrainTypes**y;
+                    if (_temp < _encodedCol[k]) revert("Integer overflow");
+                    _encodedCol[k] = _temp;
+                }
+            }
+            if (_lastBatchSize > 0) {
+                _encodedCol[k] = 0;
+                for (uint256 y = 0; y < _lastBatchSize; y++) {
+                    _temp = _encodedCol[k] + _tileMap[x][k * _batchSize + y] * _numInitTerrainTypes**y;
+                    if (_temp < _encodedCol[k]) revert("Integer overflow");
+                    _encodedCol[k] = _temp;
+                }
+                _encodedCol[k] = _temp;
             }
             _result[x] = _encodedCol;
         }
@@ -200,23 +212,27 @@ contract DiamondDeployTest is Test {
         return _result;
     }
 
-    // FIXME: hardcoded
+    // Note: hardcoded
     function _generateWorldConstants() internal view returns (WorldConstants memory) {
         return
             WorldConstants({
                 admin: deployer,
-                worldWidth: 30,
-                worldHeight: 20,
+                worldWidth: 1000,
+                worldHeight: 1000,
                 numPorts: 15,
                 numCities: 15, // yo
                 mapInterval: 10,
-                secondsPerEpoch: 10,
                 combatEfficiency: 50,
-                numInitTerrainTypes: 5
+                numInitTerrainTypes: 5,
+                initBatchSize: 100,
+                initPlayerBalance: 20,
+                defaultBaseGoldGenerationPerSecond: 5,
+                maxBaseCountPerPlayer: 20,
+                maxTroopCountPerPlayer: 20
             });
     }
 
-    // FIXME: hardcoded
+    // Note: hardcoded
     function _generateTroopTypes() internal view returns (TroopType[] memory) {
         TroopType[] memory _troopTypes = new TroopType[](5);
         _troopTypes[0] = armyTroopType;
@@ -227,8 +243,8 @@ contract DiamondDeployTest is Test {
         return _troopTypes;
     }
 
-    // FIXME: hardcoded
-    function generateMap(
+    // Note: hardcoded
+    function _generateMap(
         uint256 _width,
         uint256 _height,
         uint256 _interval
@@ -239,26 +255,26 @@ contract DiamondDeployTest is Test {
         uint256[] memory _portCol = new uint256[](_height);
         uint256[] memory _cityCol = new uint256[](_height);
 
-        for (uint256 j = 0; j < _height; j++) {
-            _coastCol[j] = 0;
-            _landCol[j] = 1;
-            _waterCol[j] = 2;
-            _portCol[j] = 3;
-            _cityCol[j] = 4;
+        for (uint256 y = 0; y < _height; y++) {
+            _coastCol[y] = 0;
+            _landCol[y] = 1;
+            _waterCol[y] = 2;
+            _portCol[y] = 3;
+            _cityCol[y] = 4;
         }
 
         uint256[][] memory _map = new uint256[][](_width);
-        for (uint256 k = 0; k < _width; k += _interval) {
-            _map[k] = _waterCol;
-            _map[k + 1] = _waterCol;
-            _map[k + 2] = _portCol;
-            _map[k + 3] = _landCol;
-            _map[k + 4] = _landCol;
-            _map[k + 5] = _cityCol;
-            _map[k + 6] = _portCol;
-            _map[k + 7] = _waterCol;
-            _map[k + 8] = _coastCol;
-            _map[k + 9] = _landCol;
+        for (uint256 x = 0; x < _width; x += _interval) {
+            _map[x] = _waterCol;
+            _map[x + 1] = _waterCol;
+            _map[x + 2] = _portCol;
+            _map[x + 3] = _landCol;
+            _map[x + 4] = _landCol;
+            _map[x + 5] = _cityCol;
+            _map[x + 6] = _portCol;
+            _map[x + 7] = _waterCol;
+            _map[x + 8] = _coastCol;
+            _map[x + 9] = _landCol;
         }
 
         return _map;

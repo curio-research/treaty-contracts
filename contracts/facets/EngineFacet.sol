@@ -1,10 +1,9 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "forge-std/console.sol";
 import "contracts/libraries/Storage.sol";
 import {Util} from "contracts/libraries/GameUtil.sol";
-import {BASE_NAME, Base, GameState, Player, Position, Production, TERRAIN, Tile, Troop, TroopType} from "contracts/libraries/Types.sol";
+import {BASE_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop, TroopType} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 
 /// @title Engine facet
@@ -13,60 +12,124 @@ import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 contract EngineFacet is UseStorage {
     using SafeMath for uint256;
     uint256 NULL = 0;
+    address NULL_ADDR = address(0);
 
     /**
-     * Move a troop to a target position.
+     * Troop march to a target position (combining move, battle, captureBase)
      * @param _troopId identifier for troop
      * @param _targetPos target position
      */
-    function move(uint256 _troopId, Position memory _targetPos) external {
+    function march(uint256 _troopId, Position memory _targetPos) external {
+        require(!gs().isPaused, "CURIO: Game is paused");
+        require(Util._isPlayerActive(msg.sender), "CURIO: Player is inactive");
+
         require(Util._inBound(_targetPos), "CURIO: Target out of bound");
         if (!Util._getTileAt(_targetPos).isInitialized) Util._initializeTile(_targetPos);
 
+        // Basic check
         Troop memory _troop = gs().troopIdMap[_troopId];
-        require(_troop.owner == msg.sender, "CURIO: Can only move own troop");
-        require(Util._withinDist(_troop.pos, _targetPos, 1), "CURIO: Destination too far");
+        require(_troop.owner == msg.sender, "CURIO: Can only march own troop");
         require(!Util._samePos(_troop.pos, _targetPos), "CURIO: Already at destination");
-
-        uint256 _movesLeftInEpoch = _troop.movesLeftInEpoch;
-        uint256 _epoch = gs().epoch;
-        if ((_epoch - _troop.lastMoved) >= Util._getMovementCooldown(_troop.troopTypeId)) {
-            // Lazy update for moves left in epoch
-            _movesLeftInEpoch = Util._getMovesPerEpoch(_troop.troopTypeId);
-            gs().troopIdMap[_troopId].movesLeftInEpoch = _movesLeftInEpoch;
-        }
-        require(_movesLeftInEpoch > 0, "CURIO: No moves left this epoch");
+        require((block.timestamp - _troop.lastLargeActionTaken) >= Util._getLargeActionCooldown(_troop.troopTypeId), "CURIO: Large action taken too recently");
 
         Tile memory _targetTile = Util._getTileAt(_targetPos);
-        if (Util._isLandTroop(_troop.troopTypeId)) {
-            require(_targetTile.terrain != TERRAIN.WATER || Util._hasTroopTransport(_targetTile), "CURIO: Cannot move on water");
+        if (_targetTile.occupantId == NULL) {
+            if (_targetTile.baseId == NULL) {
+                // Note: move Module
+                // Geography Check
+                if (Util._isLandTroop(_troop.troopTypeId)) {
+                    require(_targetTile.terrain != TERRAIN.WATER || Util._canTransportTroop(_targetTile), "CURIO: Cannot move on water");
+                } else {
+                    require(_targetTile.terrain == TERRAIN.WATER || Util._hasPort(_targetTile), "CURIO: Cannot move on land");
+                }
+                _moveModule(_troopId, _targetPos);
+            } else {
+                if (Util._getBaseOwner(_targetTile.baseId) == msg.sender) {
+                    // Note: move Module
+                    // Geography Check
+                    if (Util._isLandTroop(_troop.troopTypeId)) {
+                        require(_targetTile.terrain != TERRAIN.WATER || Util._canTransportTroop(_targetTile), "CURIO: Cannot move on water");
+                    } else {
+                        require(_targetTile.terrain == TERRAIN.WATER || Util._hasPort(_targetTile), "CURIO: Cannot move on land");
+                    }
+
+                    _moveModule(_troopId, _targetPos);
+                } else {
+                    // Note: battleBase Module (will capture&move if won and _troop is land troop)
+                    _battleBaseModule(_troopId, _targetPos);
+                }
+            }
         } else {
-            require(_targetTile.terrain == TERRAIN.WATER || Util._hasPort(_targetTile), "CURIO: Cannot move on land");
+            if (gs().troopIdMap[_targetTile.occupantId].owner == msg.sender) {
+                if (Util._canTransportTroop(_targetTile) && Util._isLandTroop(_troop.troopTypeId)) {
+                    _loadModule(_troopId, _targetPos);
+                    _moveModule(_troopId, _targetPos);
+                } else {
+                    revert("CURIO: Destination tile occupied");
+                }
+            } else {
+                // Note: battleTroop Module
+                _battleTroopModule(_troopId, _targetPos);
+            }
         }
 
-        require(_targetTile.baseId == NULL || Util._getBaseOwner(_targetTile.baseId) == msg.sender, "CURIO: Cannot move onto opponent base");
-        if (_targetTile.occupantId != NULL) {
-            require(Util._hasTroopTransport(_targetTile) && Util._isLandTroop(_troop.troopTypeId), "CURIO: Destination tile occupied");
-            require(Util._getTroop(_targetTile.occupantId).owner == msg.sender, "CURIO: Cannot move onto opponent troop transport");
+        emit Util.PlayerInfo(msg.sender, gs().playerMap[msg.sender]);
+    }
 
-            // Load troop onto Troop Transport at target tile
-            gs().troopIdMap[_targetTile.occupantId].cargoTroopIds.push(_troopId);
-        } else {
+    /**
+     * Purchase a troop at a base.
+     * @param _pos position of base
+     * @param _troopTypeId identifier for selected troop type
+     */
+    function purchaseTroop(Position memory _pos, uint256 _troopTypeId) external {
+        require(!gs().isPaused, "CURIO: Game is paused");
+        require(Util._isPlayerActive(msg.sender), "CURIO: Player is inactive");
+
+        require(Util._inBound(_pos), "CURIO: Out of bound");
+        if (!Util._getTileAt(_pos).isInitialized) Util._initializeTile(_pos);
+
+        // Currently implemented expecting real-time calls from client; can change to lazy if needed
+        Tile memory _tile = Util._getTileAt(_pos);
+        require(_tile.baseId != NULL, "CURIO: No base found");
+        require(Util._getBaseOwner(_tile.baseId) == msg.sender, "CURIO: Can only purchase in own base");
+        require(Util._isLandTroop(_troopTypeId) || Util._hasPort(_tile), "CURIO: Only ports can purchase water troops");
+        require(_tile.occupantId == NULL, "CURIO: Base occupied by another troop");
+
+        uint256 _troopCost = Util._getTroopCost(_troopTypeId);
+        Util._updatePlayerBalance(msg.sender);
+        require(_troopCost <= Util._getPlayerBalance(msg.sender), "CURIO: Insufficient balance");
+
+        (uint256 _troopId, Troop memory _troop) = Util._addTroop(msg.sender, _pos, _troopTypeId);
+        gs().playerMap[msg.sender].balance -= _troopCost;
+
+        emit Util.PlayerInfo(msg.sender, gs().playerMap[msg.sender]);
+        emit Util.NewTroop(msg.sender, _troopId, _troop, _pos);
+    }
+
+    /////////////////////////////////////////
+    // Modules for march
+    /////////////////////////////////////////
+    function _moveModule(uint256 _troopId, Position memory _targetPos) internal {
+        Troop memory _troop = gs().troopIdMap[_troopId];
+        Tile memory _targetTile = Util._getTileAt(_targetPos);
+
+        require((block.timestamp - _troop.lastMoved) >= Util._getMovementCooldown(_troop.troopTypeId), "CURIO: Moved too recently");
+
+        if (!Util._canTransportTroop(_targetTile)) {
             gs().map[_targetPos.x][_targetPos.y].occupantId = _troopId;
         }
 
         // Move
         Tile memory _sourceTile = Util._getTileAt(_troop.pos);
         if (_sourceTile.occupantId != _troopId) {
-            assert(Util._hasTroopTransport(_sourceTile)); // something is wrong if failed
+            assert(Util._canTransportTroop(_sourceTile)); // something is wrong if failed
             // Troop is on troop transport
             Util._unloadTroopFromTransport(_sourceTile.occupantId, _troopId);
         } else {
             gs().map[_troop.pos.x][_troop.pos.y].occupantId = NULL;
         }
         gs().troopIdMap[_troopId].pos = _targetPos;
-        gs().troopIdMap[_troopId].movesLeftInEpoch--;
-        gs().troopIdMap[_troopId].lastMoved = _epoch;
+        gs().troopIdMap[_troopId].lastMoved = block.timestamp;
 
         uint256[] memory _cargoTroopIds = gs().troopIdMap[_troopId].cargoTroopIds;
         if (_cargoTroopIds.length > 0) {
@@ -76,169 +139,154 @@ contract EngineFacet is UseStorage {
             }
         }
 
-        emit Util.Moved(msg.sender, _troopId, _epoch, _troop.pos, _targetPos);
+        emit Util.Moved(msg.sender, _troopId, block.timestamp, _troop.pos, _targetPos);
     }
 
-    /**
-     * Battle a troop with an opponent base or troop at a target position.
-     * @param _troopId identifier for troop
-     * @param _targetPos target position
-     */
-    function battle(uint256 _troopId, Position memory _targetPos) external {
-        require(Util._inBound(_targetPos), "CURIO: Target out of bound");
-        if (!Util._getTileAt(_targetPos).isInitialized) Util._initializeTile(_targetPos);
+    function _loadModule(uint256 _troopId, Position memory _targetPos) internal {
+        Tile memory _targetTile = Util._getTileAt(_targetPos);
 
+        // Load troop onto Troop Transport at target tile
+        gs().troopIdMap[_targetTile.occupantId].cargoTroopIds.push(_troopId);
+    }
+
+    function _battleBaseModule(uint256 _troopId, Position memory _targetPos) internal {
         Troop memory _troop = gs().troopIdMap[_troopId];
-        require(_troop.owner == msg.sender, "CURIO: Can only battle using own troop");
-        require(Util._withinDist(_troop.pos, _targetPos, 1), "CURIO: Destination too far");
-        require(!Util._samePos(_troop.pos, _targetPos), "CURIO: Already at destination");
-        require((gs().epoch - _troop.lastAttacked) >= Util._getAttackCooldown(_troop.troopTypeId), "CURIO: Attacked too recently");
-
-        gs().troopIdMap[_troopId].lastAttacked = gs().epoch;
+        // FIXME: replace withinDist with withinFiringDist
+        require(Util._withinDist(_troop.pos, _targetPos, 1), "CURIO: Target not in Firing Range");
+        gs().troopIdMap[_troopId].lastLargeActionTaken = block.timestamp;
 
         Tile memory _targetTile = Util._getTileAt(_targetPos);
-        bool _targetIsBase;
-        uint256 _targetAttackFactor;
-        uint256 _targetDefenseFactor;
-        uint256 _targetDamagePerHit;
-        uint256 _targetHealth;
-        Troop memory _targetTroop;
+        require(_targetTile.baseId != NULL, "CURIO: No target to attack");
+
         Base memory _targetBase;
-
-        if (_targetTile.occupantId != NULL) {
-            // Note: If an opponent base has a troop, currently our troop battles the troop not the base. Can change later
-            _targetTroop = gs().troopIdMap[_targetTile.occupantId];
-            require(_targetTroop.owner != msg.sender, "CURIO: Cannot attack own troop");
-
-            _targetIsBase = false;
-            _targetAttackFactor = Util._getAttackFactor(_targetTroop.troopTypeId);
-            _targetDefenseFactor = Util._getDefenseFactor(_targetTroop.troopTypeId);
-            _targetDamagePerHit = Util._getDamagePerHit(_targetTroop.troopTypeId);
-            _targetHealth = _targetTroop.health;
-        } else {
-            require(_targetTile.baseId != NULL, "CURIO: No target to attack");
-
-            _targetBase = gs().baseIdMap[_targetTile.baseId];
-            require(_targetBase.owner != msg.sender, "CURIO: Cannot attack own base");
-
-            _targetIsBase = true;
-            _targetAttackFactor = _targetBase.attackFactor;
-            _targetDefenseFactor = _targetBase.defenseFactor;
-            _targetDamagePerHit = 0;
-            _targetHealth = _targetBase.health;
-        }
-
-        gs().troopIdMap[_troopId].lastAttacked = gs().epoch;
+        _targetBase = gs().baseIdMap[_targetTile.baseId];
+        require(_targetBase.owner != msg.sender, "CURIO: Cannot attack own base");
 
         // Loop till one side dies
         uint256 _salt = 0;
-        while (Util._getTroop(_troopId).health > 0 && Util._getTroop(_targetTile.occupantId).health > 0) {
+        while (_troop.health > 0) {
             // Troop attacks target
             _salt += 1;
-            if (Util._strike(_targetAttackFactor, _salt)) {
+            if (Util._strike(_targetBase.attackFactor, _salt)) {
                 uint256 _damagePerHit = Util._getDamagePerHit(_troop.troopTypeId);
-                if (_damagePerHit < _targetHealth) {
-                    _targetHealth -= _damagePerHit;
+                if (_damagePerHit < _targetBase.health) {
+                    _targetBase.health -= _damagePerHit;
                 } else {
-                    _targetHealth = 0;
-                    if (!_targetIsBase) {
-                        Util._removeTroop(_targetPos, _targetTile.occupantId);
-                        emit Util.Death(Util._getBaseOwner(_targetTile.occupantId), _targetTile.occupantId);
-                    }
+                    _targetBase.health = 0;
                 }
             }
 
-            if (_targetHealth == 0) break; // target cannot attack back if it has zero health
+            if (_targetBase.health == 0) break; // target cannot attack back if it has zero health
 
             // Target attacks troop
             _salt += 1;
-            if (Util._strike(_targetDefenseFactor, _salt)) {
+            if (Util._strike(_targetBase.defenseFactor, _salt)) {
                 // enemy troop attacks back
-                if (_targetDamagePerHit < _troop.health) {
-                    _troop.health -= _targetDamagePerHit;
+                // Fixme: base damage per hit hardcoded
+                if (_troop.health > 1) {
+                    _troop.health -= 1;
                 } else {
-                    Util._removeTroop(_troop.pos, _troopId);
+                    _troop.health = 0;
+                    Util._removeTroop(msg.sender, _troop.pos, _troopId);
                     emit Util.Death(msg.sender, _troopId);
                 }
             }
         }
 
-        if (Util._getTroop(_troopId).owner == msg.sender) {
+        if (_targetBase.health == 0) {
+            // Troop survives
+            address _targetPlayer = _targetBase.owner;
+            gs().troopIdMap[_troopId].health = _troop.health;
+            gs().baseIdMap[_targetTile.baseId].health = 0;
+
+            // Capture and update gold production if troop is army
+            if (Util._isLandTroop(_troop.troopTypeId)) {
+                require(Util._getPlayer(msg.sender).numOwnedBases < gs().worldConstants.maxBaseCountPerPlayer, "CURIO: Max base count exceeded");
+
+                _targetBase = Util._getBase(_targetTile.baseId);
+                gs().baseIdMap[_targetTile.baseId].owner = msg.sender;
+                gs().baseIdMap[_targetTile.baseId].health = 1; // FIXME: change to BaseConstants.maxHealth
+                emit Util.BaseCaptured(msg.sender, _troopId, _targetTile.baseId);
+
+                Util._updatePlayerBalance(_targetPlayer);
+                Util._updatePlayerBalance(msg.sender);
+                if (_targetPlayer != NULL_ADDR) {
+                    gs().playerMap[_targetPlayer].numOwnedBases--;
+                    gs().playerMap[_targetPlayer].totalGoldGenerationPerUpdate -= _targetBase.goldGenerationPerSecond;
+                }
+                gs().playerMap[msg.sender].numOwnedBases++;
+                gs().playerMap[msg.sender].totalGoldGenerationPerUpdate += _targetBase.goldGenerationPerSecond;
+
+                // Move
+                _moveModule(_troopId, _targetPos);
+            }
+        } else {
+            // Target survives
+            gs().baseIdMap[_targetTile.baseId].health = _targetBase.health;
+            _targetBase = Util._getBase(_targetTile.baseId);
+
+            emit Util.AttackedBase(msg.sender, _troopId, _troop, _targetTile.baseId, _targetBase);
+        }
+    }
+
+    function _battleTroopModule(uint256 _troopId, Position memory _targetPos) internal {
+        Troop memory _troop = gs().troopIdMap[_troopId];
+        //Fixme: replace withinDist with withinFiringDist
+        require(Util._withinDist(_troop.pos, _targetPos, 1), "CURIO: Target not in Firing Range");
+        gs().troopIdMap[_troopId].lastLargeActionTaken = block.timestamp;
+
+        Tile memory _targetTile = Util._getTileAt(_targetPos);
+        Troop memory _targetTroop;
+
+        _targetTroop = gs().troopIdMap[_targetTile.occupantId];
+        require(_targetTroop.owner != msg.sender, "CURIO: Cannot attack own troop");
+
+        // Loop till one side dies
+        uint256 _salt = 0;
+        while (_troop.health > 0) {
+            // Troop attacks target
+            _salt += 1;
+            if (Util._strike(Util._getAttackFactor(_targetTroop.troopTypeId), _salt)) {
+                uint256 _damagePerHit = Util._getDamagePerHit(_troop.troopTypeId);
+                if (_damagePerHit < _targetTroop.health) {
+                    _targetTroop.health -= _damagePerHit;
+                } else {
+                    _targetTroop.health = 0;
+                    Util._removeTroop(_targetTroop.owner, _targetTroop.pos, _targetTile.occupantId);
+                    emit Util.Death(_targetTroop.owner, _targetTile.occupantId);
+                }
+            }
+
+            if (_targetTroop.health == 0) break; // target cannot attack back if it has zero health
+
+            // Target attacks troop
+            _salt += 1;
+            if (Util._strike(Util._getDefenseFactor(_targetTroop.troopTypeId), _salt)) {
+                if (Util._getDamagePerHit(_targetTroop.troopTypeId) < _troop.health) {
+                    _troop.health -= Util._getDamagePerHit(_targetTroop.troopTypeId);
+                } else {
+                    _troop.health = 0;
+                    Util._removeTroop(msg.sender, _troop.pos, _troopId);
+                    emit Util.Death(msg.sender, _troopId);
+                }
+            }
+        }
+
+        if (_targetTroop.health == 0) {
             // Troop survives
             gs().troopIdMap[_troopId].health = _troop.health;
             _troop = Util._getTroop(_troopId);
 
-            if (_targetIsBase) {
-                gs().baseIdMap[_targetTile.baseId].health = 0;
-                _targetBase = Util._getBase(_targetTile.baseId);
-                emit Util.AttackedBase(msg.sender, _troopId, _troop, _targetTile.baseId, _targetBase);
-            } else {
-                _targetTroop = Util._getTroop(_targetTile.occupantId);
-                emit Util.AttackedTroop(msg.sender, _troopId, _troop, _targetTile.occupantId, _targetTroop);
-            }
+            _targetTroop = Util._getTroop(_targetTile.occupantId);
+
+            emit Util.AttackedTroop(msg.sender, _troopId, _troop, _targetTile.occupantId, _targetTroop);
         } else {
-            _troop = Util._getTroop(_troopId);
-
             // Target survives
-            if (_targetIsBase) {
-                gs().baseIdMap[_targetTile.baseId].health = _targetHealth;
-                _targetBase = Util._getBase(_targetTile.baseId);
-                emit Util.AttackedBase(msg.sender, _troopId, _troop, _targetTile.baseId, _targetBase);
-            } else {
-                gs().troopIdMap[_targetTile.occupantId].health = _targetHealth;
-                _targetTroop = Util._getTroop(_targetTile.occupantId);
-                emit Util.AttackedTroop(msg.sender, _troopId, _troop, _targetTile.occupantId, _targetTroop);
-            }
+            gs().troopIdMap[_targetTile.occupantId].health = _targetTroop.health;
+
+            _targetTroop = Util._getTroop(_targetTile.occupantId);
+
+            emit Util.AttackedTroop(msg.sender, _troopId, _troop, _targetTile.occupantId, _targetTroop);
         }
-    }
-
-    /**
-     * Capture an opponent base using a land troop.
-     * @param _troopId identifier for troop
-     * @param _targetPos target position
-     */
-    function captureBase(uint256 _troopId, Position memory _targetPos) external {
-        require(Util._inBound(_targetPos), "CURIO: Target out of bound");
-        if (!Util._getTileAt(_targetPos).isInitialized) Util._initializeTile(_targetPos);
-
-        Troop memory _troop = gs().troopIdMap[_troopId];
-        require(_troop.owner == msg.sender, "CURIO: Can only capture with own troop");
-        require(Util._withinDist(_troop.pos, _targetPos, 1), "CURIO: Destination too far");
-        require(Util._isLandTroop(_troop.troopTypeId), "CURIO: Only a land troop can capture bases");
-
-        Tile memory _targetTile = Util._getTileAt(_targetPos);
-        require(_targetTile.baseId != NULL, "CURIO: No base to capture");
-        require(Util._getBaseOwner(_targetTile.baseId) != msg.sender, "CURIO: Base already owned");
-        require(_targetTile.occupantId == NULL, "CURIO: Destination tile occupied");
-        require(Util._getBaseHealth(_targetTile.baseId) == 0, "CURIO: Need to attack first");
-
-        // Move, capture, end production
-        gs().map[_troop.pos.x][_troop.pos.y].occupantId = NULL;
-        gs().troopIdMap[_troopId].pos = _targetPos;
-        gs().baseIdMap[_targetTile.baseId].owner = msg.sender;
-        gs().baseIdMap[_targetTile.baseId].health = 1; // FIXME: change to BaseConstants.maxHealth
-        delete gs().baseProductionMap[_targetTile.baseId];
-
-        emit Util.BaseCaptured(msg.sender, _troopId, _targetTile.baseId);
-    }
-
-    /**
-     * Start producing a troop from a base.
-     * @param _pos position of base
-     * @param _troopTypeId identifier for selected troop type
-     */
-    function startProduction(Position memory _pos, uint256 _troopTypeId) external {
-        require(Util._inBound(_pos), "CURIO: Out of bound");
-        if (!Util._getTileAt(_pos).isInitialized) Util._initializeTile(_pos);
-
-        Tile memory _tile = Util._getTileAt(_pos);
-        require(_tile.baseId != NULL, "CURIO: No base found");
-        require(Util._getBaseOwner(_tile.baseId) == msg.sender, "CURIO: Can only produce in own base");
-        require(Util._isLandTroop(_troopTypeId) || Util._hasPort(_tile), "CURIO: Only ports can produce water troops");
-        require(gs().baseProductionMap[_tile.baseId].troopTypeId == NULL, "CURIO: Base already producing");
-
-        Production memory _production = Production({troopTypeId: _troopTypeId, startEpoch: gs().epoch});
-        gs().baseProductionMap[_tile.baseId] = _production;
-        emit Util.ProductionStarted(msg.sender, _tile.baseId, _production);
     }
 }

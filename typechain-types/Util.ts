@@ -26,8 +26,7 @@ export type TroopStruct = {
   owner: string;
   troopTypeId: BigNumberish;
   lastMoved: BigNumberish;
-  movesLeftInEpoch: BigNumberish;
-  lastAttacked: BigNumberish;
+  lastLargeActionTaken: BigNumberish;
   lastRepaired: BigNumberish;
   health: BigNumberish;
   pos: PositionStruct;
@@ -41,15 +40,13 @@ export type TroopStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
-  BigNumber,
   PositionStructOutput,
   BigNumber[]
 ] & {
   owner: string;
   troopTypeId: BigNumber;
   lastMoved: BigNumber;
-  movesLeftInEpoch: BigNumber;
-  lastAttacked: BigNumber;
+  lastLargeActionTaken: BigNumber;
   lastRepaired: BigNumber;
   health: BigNumber;
   pos: PositionStructOutput;
@@ -62,11 +59,13 @@ export type BaseStruct = {
   attackFactor: BigNumberish;
   defenseFactor: BigNumberish;
   health: BigNumberish;
+  goldGenerationPerSecond: BigNumberish;
 };
 
 export type BaseStructOutput = [
   number,
   string,
+  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber
@@ -76,16 +75,38 @@ export type BaseStructOutput = [
   attackFactor: BigNumber;
   defenseFactor: BigNumber;
   health: BigNumber;
+  goldGenerationPerSecond: BigNumber;
 };
 
-export type ProductionStruct = {
-  troopTypeId: BigNumberish;
-  startEpoch: BigNumberish;
+export type PlayerStruct = {
+  initTimestamp: BigNumberish;
+  active: boolean;
+  balance: BigNumberish;
+  totalGoldGenerationPerUpdate: BigNumberish;
+  totalTroopExpensePerUpdate: BigNumberish;
+  balanceLastUpdated: BigNumberish;
+  numOwnedBases: BigNumberish;
+  numOwnedTroops: BigNumberish;
 };
 
-export type ProductionStructOutput = [BigNumber, BigNumber] & {
-  troopTypeId: BigNumber;
-  startEpoch: BigNumber;
+export type PlayerStructOutput = [
+  BigNumber,
+  boolean,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber
+] & {
+  initTimestamp: BigNumber;
+  active: boolean;
+  balance: BigNumber;
+  totalGoldGenerationPerUpdate: BigNumber;
+  totalTroopExpensePerUpdate: BigNumber;
+  balanceLastUpdated: BigNumber;
+  numOwnedBases: BigNumber;
+  numOwnedTroops: BigNumber;
 };
 
 export type TileStruct = {
@@ -104,7 +125,7 @@ export type TileStructOutput = [boolean, number, BigNumber, BigNumber] & {
 
 export interface UtilInterface extends utils.Interface {
   functions: {
-    "_getAttackCooldown(uint256)": FunctionFragment;
+    "_canTransportTroop((bool,uint8,uint256,uint256))": FunctionFragment;
     "_getAttackFactor(uint256)": FunctionFragment;
     "_getBase(uint256)": FunctionFragment;
     "_getBaseHealth(uint256)": FunctionFragment;
@@ -112,16 +133,21 @@ export interface UtilInterface extends utils.Interface {
     "_getCargoCapacity(uint256)": FunctionFragment;
     "_getDamagePerHit(uint256)": FunctionFragment;
     "_getDefenseFactor(uint256)": FunctionFragment;
-    "_getEpochsToProduce(uint256)": FunctionFragment;
+    "_getExpensePerSecond(uint256)": FunctionFragment;
+    "_getLargeActionCooldown(uint256)": FunctionFragment;
     "_getMaxHealth(uint256)": FunctionFragment;
     "_getMovementCooldown(uint256)": FunctionFragment;
-    "_getMovesPerEpoch(uint256)": FunctionFragment;
+    "_getPlayer(address)": FunctionFragment;
+    "_getPlayerBalance(address)": FunctionFragment;
     "_getTileAt((uint256,uint256))": FunctionFragment;
+    "_getTotalGoldGenerationPerUpdate(address)": FunctionFragment;
     "_getTroop(uint256)": FunctionFragment;
+    "_getTroopCost(uint256)": FunctionFragment;
     "_hasPort((bool,uint8,uint256,uint256))": FunctionFragment;
-    "_hasTroopTransport((bool,uint8,uint256,uint256))": FunctionFragment;
     "_inBound((uint256,uint256))": FunctionFragment;
     "_isLandTroop(uint256)": FunctionFragment;
+    "_isPlayerActive(address)": FunctionFragment;
+    "_isPlayerInitialized(address)": FunctionFragment;
     "_random(uint256,uint256)": FunctionFragment;
     "_samePos((uint256,uint256),(uint256,uint256))": FunctionFragment;
     "_strike(uint256,uint256)": FunctionFragment;
@@ -129,8 +155,8 @@ export interface UtilInterface extends utils.Interface {
   };
 
   encodeFunctionData(
-    functionFragment: "_getAttackCooldown",
-    values: [BigNumberish]
+    functionFragment: "_canTransportTroop",
+    values: [TileStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "_getAttackFactor",
@@ -161,7 +187,11 @@ export interface UtilInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "_getEpochsToProduce",
+    functionFragment: "_getExpensePerSecond",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getLargeActionCooldown",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
@@ -172,24 +202,29 @@ export interface UtilInterface extends utils.Interface {
     functionFragment: "_getMovementCooldown",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "_getPlayer", values: [string]): string;
   encodeFunctionData(
-    functionFragment: "_getMovesPerEpoch",
-    values: [BigNumberish]
+    functionFragment: "_getPlayerBalance",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "_getTileAt",
     values: [PositionStruct]
   ): string;
   encodeFunctionData(
+    functionFragment: "_getTotalGoldGenerationPerUpdate",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "_getTroop",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "_hasPort",
-    values: [TileStruct]
+    functionFragment: "_getTroopCost",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "_hasTroopTransport",
+    functionFragment: "_hasPort",
     values: [TileStruct]
   ): string;
   encodeFunctionData(
@@ -199,6 +234,14 @@ export interface UtilInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "_isLandTroop",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_isPlayerActive",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_isPlayerInitialized",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "_random",
@@ -218,7 +261,7 @@ export interface UtilInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "_getAttackCooldown",
+    functionFragment: "_canTransportTroop",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -247,7 +290,11 @@ export interface UtilInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "_getEpochsToProduce",
+    functionFragment: "_getExpensePerSecond",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_getLargeActionCooldown",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -258,20 +305,33 @@ export interface UtilInterface extends utils.Interface {
     functionFragment: "_getMovementCooldown",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "_getPlayer", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "_getMovesPerEpoch",
+    functionFragment: "_getPlayerBalance",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "_getTileAt", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "_getTroop", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "_hasPort", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "_hasTroopTransport",
+    functionFragment: "_getTotalGoldGenerationPerUpdate",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "_getTroop", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "_getTroopCost",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "_hasPort", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "_inBound", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_isLandTroop",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_isPlayerActive",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_isPlayerInitialized",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "_random", data: BytesLike): Result;
@@ -287,28 +347,32 @@ export interface UtilInterface extends utils.Interface {
     "AttackedTroop(address,uint256,tuple,uint256,tuple)": EventFragment;
     "BaseCaptured(address,uint256,uint256)": EventFragment;
     "Death(address,uint256)": EventFragment;
-    "EpochUpdate(uint256,uint256)": EventFragment;
+    "GamePaused()": EventFragment;
+    "GameResumed()": EventFragment;
     "Moved(address,uint256,uint256,tuple,tuple)": EventFragment;
     "NewPlayer(address,tuple)": EventFragment;
     "NewTroop(address,uint256,tuple,tuple)": EventFragment;
-    "ProductionEnded(address,uint256)": EventFragment;
-    "ProductionStarted(address,uint256,tuple)": EventFragment;
+    "PlayerInfo(address,tuple)": EventFragment;
+    "PlayerReactivated(address)": EventFragment;
     "Recovered(address,uint256)": EventFragment;
     "Repaired(address,uint256,uint256)": EventFragment;
+    "UpdatePlayerBalance(address,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "AttackedBase"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "AttackedTroop"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BaseCaptured"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Death"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "EpochUpdate"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "GamePaused"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "GameResumed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Moved"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NewPlayer"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NewTroop"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ProductionEnded"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ProductionStarted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PlayerInfo"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PlayerReactivated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Recovered"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Repaired"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "UpdatePlayerBalance"): EventFragment;
 }
 
 export type AttackedBaseEvent = TypedEvent<
@@ -351,12 +415,13 @@ export type DeathEvent = TypedEvent<
 
 export type DeathEventFilter = TypedEventFilter<DeathEvent>;
 
-export type EpochUpdateEvent = TypedEvent<
-  [BigNumber, BigNumber],
-  { _epoch: BigNumber; _time: BigNumber }
->;
+export type GamePausedEvent = TypedEvent<[], {}>;
 
-export type EpochUpdateEventFilter = TypedEventFilter<EpochUpdateEvent>;
+export type GamePausedEventFilter = TypedEventFilter<GamePausedEvent>;
+
+export type GameResumedEvent = TypedEvent<[], {}>;
+
+export type GameResumedEventFilter = TypedEventFilter<GameResumedEvent>;
 
 export type MovedEvent = TypedEvent<
   [string, BigNumber, BigNumber, PositionStructOutput, PositionStructOutput],
@@ -390,20 +455,17 @@ export type NewTroopEvent = TypedEvent<
 
 export type NewTroopEventFilter = TypedEventFilter<NewTroopEvent>;
 
-export type ProductionEndedEvent = TypedEvent<
-  [string, BigNumber],
-  { _player: string; _baseId: BigNumber }
+export type PlayerInfoEvent = TypedEvent<
+  [string, PlayerStructOutput],
+  { _addr: string; _player: PlayerStructOutput }
 >;
 
-export type ProductionEndedEventFilter = TypedEventFilter<ProductionEndedEvent>;
+export type PlayerInfoEventFilter = TypedEventFilter<PlayerInfoEvent>;
 
-export type ProductionStartedEvent = TypedEvent<
-  [string, BigNumber, ProductionStructOutput],
-  { _player: string; _baseId: BigNumber; _production: ProductionStructOutput }
->;
+export type PlayerReactivatedEvent = TypedEvent<[string], { _player: string }>;
 
-export type ProductionStartedEventFilter =
-  TypedEventFilter<ProductionStartedEvent>;
+export type PlayerReactivatedEventFilter =
+  TypedEventFilter<PlayerReactivatedEvent>;
 
 export type RecoveredEvent = TypedEvent<
   [string, BigNumber],
@@ -418,6 +480,14 @@ export type RepairedEvent = TypedEvent<
 >;
 
 export type RepairedEventFilter = TypedEventFilter<RepairedEvent>;
+
+export type UpdatePlayerBalanceEvent = TypedEvent<
+  [string, BigNumber],
+  { _player: string; _amount: BigNumber }
+>;
+
+export type UpdatePlayerBalanceEventFilter =
+  TypedEventFilter<UpdatePlayerBalanceEvent>;
 
 export interface Util extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -446,10 +516,10 @@ export interface Util extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    _getAttackCooldown(
-      _troopTypeId: BigNumberish,
+    _canTransportTroop(
+      _tile: TileStruct,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<[boolean]>;
 
     _getAttackFactor(
       _troopTypeId: BigNumberish,
@@ -486,7 +556,12 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    _getEpochsToProduce(
+    _getExpensePerSecond(
+      _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    _getLargeActionCooldown(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
@@ -501,8 +576,13 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    _getMovesPerEpoch(
-      _troopTypeId: BigNumberish,
+    _getPlayer(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<[PlayerStructOutput]>;
+
+    _getPlayerBalance(
+      _player: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -511,22 +591,37 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[TileStructOutput]>;
 
+    _getTotalGoldGenerationPerUpdate(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     _getTroop(
-      _troopId: BigNumberish,
+      _id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[TroopStructOutput]>;
 
-    _hasPort(_tile: TileStruct, overrides?: CallOverrides): Promise<[boolean]>;
-
-    _hasTroopTransport(
-      _tile: TileStruct,
+    _getTroopCost(
+      _troopTypeId: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    ): Promise<[BigNumber]>;
+
+    _hasPort(_tile: TileStruct, overrides?: CallOverrides): Promise<[boolean]>;
 
     _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<[boolean]>;
 
     _isLandTroop(
       _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    _isPlayerActive(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    _isPlayerInitialized(
+      _player: string,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
@@ -556,10 +651,10 @@ export interface Util extends BaseContract {
     ): Promise<[boolean]>;
   };
 
-  _getAttackCooldown(
-    _troopTypeId: BigNumberish,
+  _canTransportTroop(
+    _tile: TileStruct,
     overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  ): Promise<boolean>;
 
   _getAttackFactor(
     _troopTypeId: BigNumberish,
@@ -596,7 +691,12 @@ export interface Util extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  _getEpochsToProduce(
+  _getExpensePerSecond(
+    _troopTypeId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  _getLargeActionCooldown(
     _troopTypeId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
@@ -611,8 +711,13 @@ export interface Util extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  _getMovesPerEpoch(
-    _troopTypeId: BigNumberish,
+  _getPlayer(
+    _player: string,
+    overrides?: CallOverrides
+  ): Promise<PlayerStructOutput>;
+
+  _getPlayerBalance(
+    _player: string,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -621,22 +726,34 @@ export interface Util extends BaseContract {
     overrides?: CallOverrides
   ): Promise<TileStructOutput>;
 
+  _getTotalGoldGenerationPerUpdate(
+    _player: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   _getTroop(
-    _troopId: BigNumberish,
+    _id: BigNumberish,
     overrides?: CallOverrides
   ): Promise<TroopStructOutput>;
 
-  _hasPort(_tile: TileStruct, overrides?: CallOverrides): Promise<boolean>;
-
-  _hasTroopTransport(
-    _tile: TileStruct,
+  _getTroopCost(
+    _troopTypeId: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<boolean>;
+  ): Promise<BigNumber>;
+
+  _hasPort(_tile: TileStruct, overrides?: CallOverrides): Promise<boolean>;
 
   _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<boolean>;
 
   _isLandTroop(
     _troopTypeId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  _isPlayerActive(_player: string, overrides?: CallOverrides): Promise<boolean>;
+
+  _isPlayerInitialized(
+    _player: string,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
@@ -666,10 +783,10 @@ export interface Util extends BaseContract {
   ): Promise<boolean>;
 
   callStatic: {
-    _getAttackCooldown(
-      _troopTypeId: BigNumberish,
+    _canTransportTroop(
+      _tile: TileStruct,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<boolean>;
 
     _getAttackFactor(
       _troopTypeId: BigNumberish,
@@ -706,7 +823,12 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getEpochsToProduce(
+    _getExpensePerSecond(
+      _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getLargeActionCooldown(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -721,8 +843,13 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getMovesPerEpoch(
-      _troopTypeId: BigNumberish,
+    _getPlayer(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<PlayerStructOutput>;
+
+    _getPlayerBalance(
+      _player: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -731,22 +858,37 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<TileStructOutput>;
 
+    _getTotalGoldGenerationPerUpdate(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     _getTroop(
-      _troopId: BigNumberish,
+      _id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<TroopStructOutput>;
 
-    _hasPort(_tile: TileStruct, overrides?: CallOverrides): Promise<boolean>;
-
-    _hasTroopTransport(
-      _tile: TileStruct,
+    _getTroopCost(
+      _troopTypeId: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<BigNumber>;
+
+    _hasPort(_tile: TileStruct, overrides?: CallOverrides): Promise<boolean>;
 
     _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<boolean>;
 
     _isLandTroop(
       _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    _isPlayerActive(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    _isPlayerInitialized(
+      _player: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -821,11 +963,11 @@ export interface Util extends BaseContract {
     "Death(address,uint256)"(_player?: null, _troopId?: null): DeathEventFilter;
     Death(_player?: null, _troopId?: null): DeathEventFilter;
 
-    "EpochUpdate(uint256,uint256)"(
-      _epoch?: null,
-      _time?: null
-    ): EpochUpdateEventFilter;
-    EpochUpdate(_epoch?: null, _time?: null): EpochUpdateEventFilter;
+    "GamePaused()"(): GamePausedEventFilter;
+    GamePaused(): GamePausedEventFilter;
+
+    "GameResumed()"(): GameResumedEventFilter;
+    GameResumed(): GameResumedEventFilter;
 
     "Moved(address,uint256,uint256,tuple,tuple)"(
       _player?: null,
@@ -861,22 +1003,14 @@ export interface Util extends BaseContract {
       _pos?: null
     ): NewTroopEventFilter;
 
-    "ProductionEnded(address,uint256)"(
-      _player?: null,
-      _baseId?: null
-    ): ProductionEndedEventFilter;
-    ProductionEnded(_player?: null, _baseId?: null): ProductionEndedEventFilter;
+    "PlayerInfo(address,tuple)"(
+      _addr?: null,
+      _player?: null
+    ): PlayerInfoEventFilter;
+    PlayerInfo(_addr?: null, _player?: null): PlayerInfoEventFilter;
 
-    "ProductionStarted(address,uint256,tuple)"(
-      _player?: null,
-      _baseId?: null,
-      _production?: null
-    ): ProductionStartedEventFilter;
-    ProductionStarted(
-      _player?: null,
-      _baseId?: null,
-      _production?: null
-    ): ProductionStartedEventFilter;
+    "PlayerReactivated(address)"(_player?: null): PlayerReactivatedEventFilter;
+    PlayerReactivated(_player?: null): PlayerReactivatedEventFilter;
 
     "Recovered(address,uint256)"(
       _player?: null,
@@ -894,11 +1028,20 @@ export interface Util extends BaseContract {
       _troopId?: null,
       _health?: null
     ): RepairedEventFilter;
+
+    "UpdatePlayerBalance(address,uint256)"(
+      _player?: null,
+      _amount?: null
+    ): UpdatePlayerBalanceEventFilter;
+    UpdatePlayerBalance(
+      _player?: null,
+      _amount?: null
+    ): UpdatePlayerBalanceEventFilter;
   };
 
   estimateGas: {
-    _getAttackCooldown(
-      _troopTypeId: BigNumberish,
+    _canTransportTroop(
+      _tile: TileStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -934,7 +1077,12 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getEpochsToProduce(
+    _getExpensePerSecond(
+      _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getLargeActionCooldown(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -949,8 +1097,10 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getMovesPerEpoch(
-      _troopTypeId: BigNumberish,
+    _getPlayer(_player: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    _getPlayerBalance(
+      _player: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -959,22 +1109,34 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getTroop(
-      _troopId: BigNumberish,
+    _getTotalGoldGenerationPerUpdate(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getTroop(_id: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
+    _getTroopCost(
+      _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     _hasPort(_tile: TileStruct, overrides?: CallOverrides): Promise<BigNumber>;
 
-    _hasTroopTransport(
-      _tile: TileStruct,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<BigNumber>;
 
     _isLandTroop(
       _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _isPlayerActive(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _isPlayerInitialized(
+      _player: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1005,8 +1167,8 @@ export interface Util extends BaseContract {
   };
 
   populateTransaction: {
-    _getAttackCooldown(
-      _troopTypeId: BigNumberish,
+    _canTransportTroop(
+      _tile: TileStruct,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1045,7 +1207,12 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _getEpochsToProduce(
+    _getExpensePerSecond(
+      _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getLargeActionCooldown(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -1060,8 +1227,13 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _getMovesPerEpoch(
-      _troopTypeId: BigNumberish,
+    _getPlayer(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getPlayerBalance(
+      _player: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1070,17 +1242,22 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    _getTotalGoldGenerationPerUpdate(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     _getTroop(
-      _troopId: BigNumberish,
+      _id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getTroopCost(
+      _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     _hasPort(
-      _tile: TileStruct,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _hasTroopTransport(
       _tile: TileStruct,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -1092,6 +1269,16 @@ export interface Util extends BaseContract {
 
     _isLandTroop(
       _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _isPlayerActive(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _isPlayerInitialized(
+      _player: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
