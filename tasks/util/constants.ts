@@ -6,7 +6,7 @@ export const LOCALHOST_RPC_URL = 'http://127.0.0.1:8545/';
 export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 
 // ----------------------------------------------------------
-// Game constants (source of truth)
+// GAME CONSTANTS
 // ----------------------------------------------------------
 
 export const LOCAL_MAP_INPUT: MapInput = {
@@ -122,7 +122,7 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): W
 };
 
 // ----------------------------------------------------------
-// Rendering constants
+// RENDERING CONSTANTS
 // ----------------------------------------------------------
 
 export const RENDER_CONSTANTS: RenderInput = {
@@ -136,7 +136,7 @@ export const RENDER_CONSTANTS: RenderInput = {
 };
 
 // ------------------------------------------------
-// Functions
+// FUNCTIONS
 // ------------------------------------------------
 
 export const getTroopNames = (): string[] => {
@@ -146,7 +146,3 @@ export const getTroopNames = (): string[] => {
 export const getTroopTypeIndexByName = (troopTypes: TroopTypeStruct[], name: TROOP_NAME): number => {
   return troopTypes.indexOf(troopTypes.filter((item) => item.name === name)[0]);
 };
-
-// ------------------------------------------------
-// Default maps
-// ------------------------------------------------

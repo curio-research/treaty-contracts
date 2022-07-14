@@ -1,6 +1,8 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
+/// Data structures for game
+
 enum BASE_NAME {
     PORT,
     CITY

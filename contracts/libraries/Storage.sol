@@ -4,7 +4,6 @@ pragma solidity ^0.8.0;
 import {GameState} from "contracts/libraries/Types.sol";
 
 library LibStorage {
-    // storage positions
     bytes32 constant GAME_STORAGE_POSITION = keccak256("curio.storage.game");
 
     function gameStorage() internal pure returns (GameState storage gs) {
@@ -15,7 +14,6 @@ library LibStorage {
     }
 }
 
-// this has to be internal
 contract UseStorage {
     function gs() internal pure returns (GameState storage ret) {
         return LibStorage.gameStorage();
