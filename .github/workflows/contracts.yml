@@ -34,11 +34,11 @@ jobs:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
         with:
           source-directory: .
-          destination-github-username: curio-eth
+          destination-github-username: Yijia-Chen
           destination-repository-name: engine-public # change
           user-email: yijiachenmain@gmail.com
           user-name: Yijia-Chen
-          destination-repository-username: Yijia-Chen
+          destination-repository-username: curio-eth
           target-branch: main
           target-directory: /
           commit-message: See ORIGIN_COMMIT from $GITHUB_REF
