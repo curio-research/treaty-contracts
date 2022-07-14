@@ -244,6 +244,7 @@ export interface CurioInterface extends utils.Interface {
     "facetFunctionSelectors(address)": FunctionFragment;
     "facets()": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
+    "initializePlayer((uint256,uint256))": FunctionFragment;
     "march(uint256,(uint256,uint256))": FunctionFragment;
     "purchaseTroop((uint256,uint256),uint256)": FunctionFragment;
     "bulkGetAllTroops()": FunctionFragment;
@@ -260,7 +261,6 @@ export interface CurioInterface extends utils.Interface {
     "getTroopType(uint256)": FunctionFragment;
     "getWorldConstants()": FunctionFragment;
     "bulkInitializeTiles((uint256,uint256)[])": FunctionFragment;
-    "initializePlayer((uint256,uint256),address)": FunctionFragment;
     "pauseGame()": FunctionFragment;
     "reactivatePlayer(address)": FunctionFragment;
     "repair((uint256,uint256))": FunctionFragment;
@@ -323,6 +323,10 @@ export interface CurioInterface extends utils.Interface {
     values: [BytesLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "initializePlayer",
+    values: [PositionStruct]
+  ): string;
+  encodeFunctionData(
     functionFragment: "march",
     values: [BigNumberish, PositionStruct]
   ): string;
@@ -382,10 +386,6 @@ export interface CurioInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "bulkInitializeTiles",
     values: [PositionStruct[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "initializePlayer",
-    values: [PositionStruct, string]
   ): string;
   encodeFunctionData(functionFragment: "pauseGame", values?: undefined): string;
   encodeFunctionData(
@@ -549,6 +549,10 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "supportsInterface",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "initializePlayer",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "march", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "purchaseTroop",
@@ -590,10 +594,6 @@ export interface CurioInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "bulkInitializeTiles",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "initializePlayer",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "pauseGame", data: BytesLike): Result;
@@ -930,6 +930,11 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    initializePlayer(
+      _pos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     march(
       _troopId: BigNumberish,
       _targetPos: PositionStruct,
@@ -1004,12 +1009,6 @@ export interface Curio extends BaseContract {
 
     bulkInitializeTiles(
       _positions: PositionStruct[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    initializePlayer(
-      _pos: PositionStruct,
-      _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -1224,6 +1223,11 @@ export interface Curio extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  initializePlayer(
+    _pos: PositionStruct,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   march(
     _troopId: BigNumberish,
     _targetPos: PositionStruct,
@@ -1298,12 +1302,6 @@ export interface Curio extends BaseContract {
 
   bulkInitializeTiles(
     _positions: PositionStruct[],
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  initializePlayer(
-    _pos: PositionStruct,
-    _player: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1515,6 +1513,11 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    initializePlayer(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     march(
       _troopId: BigNumberish,
       _targetPos: PositionStruct,
@@ -1589,12 +1592,6 @@ export interface Curio extends BaseContract {
 
     bulkInitializeTiles(
       _positions: PositionStruct[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    initializePlayer(
-      _pos: PositionStruct,
-      _player: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1941,6 +1938,11 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    initializePlayer(
+      _pos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     march(
       _troopId: BigNumberish,
       _targetPos: PositionStruct,
@@ -2007,12 +2009,6 @@ export interface Curio extends BaseContract {
 
     bulkInitializeTiles(
       _positions: PositionStruct[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    initializePlayer(
-      _pos: PositionStruct,
-      _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -2219,6 +2215,11 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    initializePlayer(
+      _pos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     march(
       _troopId: BigNumberish,
       _targetPos: PositionStruct,
@@ -2291,12 +2292,6 @@ export interface Curio extends BaseContract {
 
     bulkInitializeTiles(
       _positions: PositionStruct[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    initializePlayer(
-      _pos: PositionStruct,
-      _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

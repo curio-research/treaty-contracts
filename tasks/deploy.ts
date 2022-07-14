@@ -9,16 +9,11 @@ import { deployProxy, loadLocalMap, LOCAL_MAP_PREFIX, printDivider, saveMapToLoc
 import { TROOP_TYPES, getTroopTypeIndexByName, RENDER_CONSTANTS, generateWorldConstants, LOCAL_MAP_INPUT, SANDBOX_MAP_INPUT } from './util/constants';
 import { position } from '../util/types/common';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
-import { MapInput, Position, TILE_TYPE, TROOP_NAME } from './util/types';
+import { Position, TILE_TYPE, TROOP_NAME } from './util/types';
 import { encodeTileMap, generateGameMaps } from './util/mapHelper';
 import { GameConfig } from '../api/types';
 import { MEDITERRAINEAN_MAP, ligmapTileOutput } from './util/mapLibrary';
 import { WorldConstantsStruct } from '../typechain-types/Curio';
-
-// ---------------------------------
-// deploy script
-// npx hardhat deploy --network NETWORK_NAME_HERE
-// ---------------------------------
 
 /**
  * Deploy game instance and port configs to frontend.
@@ -49,11 +44,6 @@ task('deploy', 'deploy contracts')
       const publish = args.publish;
       let mapName = args.name;
       const saveMap = args.savemap;
-
-      // // Check connection with faucet to make sure deployment will post
-      // if (!isDev) {
-      //   await isConnectionLive();
-      // }
 
       // Set up deployer and some local variables
       let [player1, player2] = await hre.ethers.getSigners();
@@ -154,8 +144,8 @@ task('deploy', 'deploy contracts')
           const player1TroopTransportPos = { x: 5, y: 3 };
           const player2DestroyerPos = { x: 5, y: 4 };
 
-          await (await diamond.connect(player1).initializePlayer(player1Pos, player1.address)).wait();
-          await (await diamond.connect(player1).initializePlayer(player2Pos, player2.address)).wait();
+          await (await diamond.connect(player1).initializePlayer(player1Pos)).wait();
+          await (await diamond.connect(player2).initializePlayer(player2Pos)).wait();
           await (await diamond.connect(player1).spawnTroop(player1ArmyPos, player1.address, armyTroopTypeId)).wait();
           await (await diamond.connect(player1).spawnTroop(player1ArmyPos2, player1.address, armyTroopTypeId)).wait();
           await (await diamond.connect(player1).spawnTroop(player1ArmyPos3, player1.address, armyTroopTypeId)).wait();
@@ -183,8 +173,8 @@ task('deploy', 'deploy contracts')
           } while (tileMap[x][y] !== TILE_TYPE.PORT || player2Pos.x === player1Pos.x || player2Pos.y === player1Pos.y);
 
           // Give each player a port to start with
-          await (await diamond.connect(player1).initializePlayer(player1Pos, player1.address)).wait();
-          // await (await diamond.connect(player1).initializePlayer(player2Pos, player2.address)).wait();
+          await (await diamond.connect(player1).initializePlayer(player1Pos)).wait();
+          // await (await diamond.connect(player2).initializePlayer(player2Pos)).wait();
         }
       }
 

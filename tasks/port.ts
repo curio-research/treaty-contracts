@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
 import path from 'path';
-import { HardhatArguments, HardhatRuntimeEnvironment, RunSuperFunction, TaskArguments } from 'hardhat/types';
+import { HardhatArguments, HardhatRuntimeEnvironment } from 'hardhat/types';
 import { task } from 'hardhat/config';
 
 task('port', 'compile and port contracts over to frontend repo').setAction(async (args: HardhatArguments, hre: HardhatRuntimeEnvironment) => {
@@ -13,18 +13,18 @@ task('port', 'compile and port contracts over to frontend repo').setAction(async
     await fs.mkdirSync(getDir('frontend', '/factories'));
     await fs.mkdirSync(getDir('faucet', '/factories'));
 
-    // since hardhat-diamond-abi compiles all files into one, We need to port common.ts, Curio.ts, and Curio__factory.ts
+    // since hardhat-diamond-abi compiles all files into one, We need to port common.ts, Game.ts, and Game__factory.ts
     // NICE-TO-HAVE: selectively port files, search by file names in the subdirectories
 
-    await portFile('/Curio.ts');
+    await portFile('/Game.ts');
     await portFile('/common.ts');
-    await portFile('/factories/Curio__factory.ts');
+    await portFile('/factories/Game__factory.ts');
 
     // copy game configs
-    const configFileDir = path.join(__dirname, '/game.config.json');
-    const configClientDir = path.join(__dirname, '../../frontend/src/game.config.json');
+    const configFilePath = path.join(__dirname, '/game.config.json');
+    const configClientPath = path.join(__dirname, '../../frontend/src/game.config.json');
 
-    await fs.copyFileSync(configFileDir, configClientDir);
+    await fs.copyFileSync(configFilePath, configClientPath);
     console.log('✦ Porting complete!');
   } catch (err: any) {
     console.log(err.message);
