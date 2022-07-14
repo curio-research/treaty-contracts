@@ -236,7 +236,7 @@ export type WorldConstantsStructOutput = [
   maxPlayerCount: BigNumber;
 };
 
-export interface CurioInterface extends utils.Interface {
+export interface GameInterface extends utils.Interface {
   functions: {
     "diamondCut((address,uint8,bytes4[])[],address,bytes)": FunctionFragment;
     "facetAddress(bytes4)": FunctionFragment;
@@ -873,12 +873,12 @@ export type UpdatePlayerBalanceEvent = TypedEvent<
 export type UpdatePlayerBalanceEventFilter =
   TypedEventFilter<UpdatePlayerBalanceEvent>;
 
-export interface Curio extends BaseContract {
+export interface Game extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: CurioInterface;
+  interface: GameInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
