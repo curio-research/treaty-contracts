@@ -30,13 +30,15 @@ jobs:
         id: push_direcory
         uses: cpina/github-action-push-to-another-repository@main
         env:
-          SSH_DEPLOY_KEY: ${{ secrets.SSH_DEPLOY_KEY }}
+          # SSH_DEPLOY_KEY: ${{ secrets.SSH_DEPLOY_KEY }}
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
         with:
           source-directory: .
-          target-directory: /
-          destination-github-username: 'curio-eth'
-          destination-repository-name: 'engine-public' # change
+          destination-github-username: Yijia-Chen
+          destination-repository-name: engine-public # change
           user-email: yijiachenmain@gmail.com
-          commit-message: See ORIGIN_COMMIT from $GITHUB_REF
+          user-name: Yijia-Chen
+          destination-repository-username: curio-eth
           target-branch: main
+          target-directory: /
+          commit-message: See ORIGIN_COMMIT from $GITHUB_REF
