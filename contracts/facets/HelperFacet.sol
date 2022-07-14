@@ -82,6 +82,8 @@ contract HelperFacet is UseStorage {
      * @param _player player address
      */
     function initializePlayer(Position memory _pos, address _player) external {
+        require(Util._getPlayerCount() < gs().worldConstants.maxPlayerCount, "CURIO: Max player count exceeded");
+
         require(Util._inBound(_pos), "CURIO: Out of bound");
         if (!Util._getTileAt(_pos).isInitialized) Util._initializeTile(_pos);
 

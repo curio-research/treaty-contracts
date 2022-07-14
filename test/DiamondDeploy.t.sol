@@ -228,7 +228,8 @@ contract DiamondDeployTest is Test {
                 initPlayerBalance: 20,
                 defaultBaseGoldGenerationPerSecond: 5,
                 maxBaseCountPerPlayer: 20,
-                maxTroopCountPerPlayer: 20
+                maxTroopCountPerPlayer: 20,
+                maxPlayerCount: 50
             });
     }
 

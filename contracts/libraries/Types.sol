@@ -92,6 +92,7 @@ struct WorldConstants {
     uint256 defaultBaseGoldGenerationPerSecond;
     uint256 maxBaseCountPerPlayer;
     uint256 maxTroopCountPerPlayer;
+    uint256 maxPlayerCount;
 }
 
 struct GameState {
