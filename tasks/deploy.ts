@@ -6,7 +6,7 @@ import { Util } from './../typechain-types/Util';
 import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { deployProxy, loadLocalMap, LOCAL_MAP_PREFIX, printDivider, saveMapToLocal } from './util/deployHelper';
-import { TROOP_TYPES, getTroopTypeIndexByName, RENDER_CONSTANTS, NUM_CITIES, NUM_PORTS, WORLD_HEIGHT, WORLD_WIDTH, generateWorldConstants } from './util/constants';
+import { TROOP_TYPES, getTroopTypeIndexByName, RENDER_CONSTANTS, generateWorldConstants, LOCAL_MAP_INPUT, SANDBOX_MAP_INPUT } from './util/constants';
 import { position } from '../util/types/common';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
 import { MapInput, Position, TILE_TYPE, TROOP_NAME } from './util/types';
@@ -24,9 +24,10 @@ import { WorldConstantsStruct } from '../typechain-types/Curio';
  * Deploy game instance and port configs to frontend.
  *
  * Examples:
- * `npx hardhat deploy --savemap`: deploy on localhost and save map to local
+ * `npx hardhat deploy --savemap`: randomly generate small map, deploy on localhost, and save map to local
  * `npx hardhat deploy --network OptimismKovan --fixmap --name MAP-0`: deploy on Optimism Kovan and use the first saved random map
  * `npx hardhat deploy --noport --fixmap --name MEDITERRAINEAN`: deploy on localhost, use the hardcoded Mediterrainean map, and do not port files to frontend
+ * `npx hardhat deploy --name SANDBOX --network constellation`: randomly generate sandbox map and deploy on Constellation
  */
 task('deploy', 'deploy contracts')
   .addFlag('noport', "Don't port files to frontend") // default is to call port
@@ -92,19 +93,13 @@ task('deploy', 'deploy contracts')
           worldConstants = generateWorldConstants(player1.address, { width: tileMap.length, height: tileMap[0].length, numPorts: portTiles.length, numCities: cityTiles.length });
         }
       } else {
-        const gameMapOutput = generateGameMaps(
-          {
-            width: WORLD_WIDTH,
-            height: WORLD_HEIGHT,
-            numPorts: NUM_PORTS,
-            numCities: NUM_CITIES,
-          } as MapInput,
-          RENDER_CONSTANTS
-        );
+        // two modes of randomly-generated maps: local (small) or sandbox (big)
+        const mapInput = mapName === 'SANDBOX' ? SANDBOX_MAP_INPUT : LOCAL_MAP_INPUT;
+        const gameMapOutput = generateGameMaps(mapInput, RENDER_CONSTANTS);
         tileMap = gameMapOutput.tileMap;
         portTiles = gameMapOutput.portTiles;
         cityTiles = gameMapOutput.cityTiles;
-        worldConstants = generateWorldConstants(player1.address);
+        worldConstants = generateWorldConstants(player1.address, mapInput);
       }
 
       if (saveMap) saveMapToLocal({ tileMap, portTiles, cityTiles });
@@ -134,8 +129,8 @@ task('deploy', 'deploy contracts')
 
       console.log('✦ initializing bases');
       const baseTiles = [...portTiles, ...cityTiles];
-      for (let i = 0; i < baseTiles.length; i += 100) {
-        await (await diamond.bulkInitializeTiles(baseTiles.slice(i, i + 100))).wait();
+      for (let i = 0; i < baseTiles.length; i += 20) {
+        await (await diamond.bulkInitializeTiles(baseTiles.slice(i, i + 20))).wait();
       }
       const time3 = performance.now();
       console.log(`✦ initializing ${baseTiles.length} bases took ${time3 - time2} ms`);

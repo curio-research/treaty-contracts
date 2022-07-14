@@ -9,10 +9,18 @@ export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 // Game constants (source of truth)
 // ----------------------------------------------------------
 
-export const WORLD_WIDTH = 30;
-export const WORLD_HEIGHT = 30;
-export const NUM_PORTS = 30;
-export const NUM_CITIES = 15;
+export const LOCAL_MAP_INPUT: MapInput = {
+  width: 30,
+  height: 30,
+  numPorts: 30,
+  numCities: 15,
+};
+export const SANDBOX_MAP_INPUT: MapInput = {
+  width: 200,
+  height: 150,
+  numPorts: 1200,
+  numCities: 300,
+};
 export const MAP_INTERVAL = 10;
 export const COMBAT_EFFICIENCY = 50;
 export const BASE_ATTACK_FACTOR = 1;
@@ -21,7 +29,7 @@ export const BASE_MAX_HEALTH = 1;
 export const NUM_INIT_TERRAIN_TYPES = 5;
 export const INIT_BATCH_SIZE = 100;
 export const INIT_PLAYER_BALANCE = 20;
-export const DEFAULT_BASE_GOLD_GENERATION_PER_SECOND = 4;
+export const DEFAULT_BASE_GOLD_GENERATION_PER_SECOND = 3;
 export const MAX_BASE_COUNT_PER_PLAYER = 20;
 export const MAX_TROOP_COUNT_PER_PLAYER = 30;
 
@@ -37,7 +45,7 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     movementCooldown: 0,
     largeActionCooldown: 0,
     cost: 6,
-    expensePerSecond: 0,
+    expensePerSecond: 1,
   },
   {
     name: TROOP_NAME.TROOP_TRANSPORT,
@@ -93,13 +101,13 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
   },
 ];
 
-export const generateWorldConstants = (adminAddr: string, mapInput?: MapInput): WorldConstantsStruct => {
+export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): WorldConstantsStruct => {
   return {
     admin: adminAddr,
-    worldWidth: mapInput?.width ?? WORLD_WIDTH,
-    worldHeight: mapInput?.height ?? WORLD_HEIGHT,
-    numPorts: mapInput?.numPorts ?? NUM_PORTS,
-    numCities: mapInput?.numCities ?? NUM_CITIES,
+    worldWidth: mapInput.width,
+    worldHeight: mapInput.height,
+    numPorts: mapInput.numPorts,
+    numCities: mapInput.numCities,
     mapInterval: MAP_INTERVAL,
     combatEfficiency: COMBAT_EFFICIENCY,
     numInitTerrainTypes: NUM_INIT_TERRAIN_TYPES,
