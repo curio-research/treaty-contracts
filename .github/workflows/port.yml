@@ -1,4 +1,4 @@
-name: Test Hook
+name: Port Hook
 on:
   push:
     branches: [release]
@@ -6,29 +6,8 @@ on:
     branches: [release]
 
 jobs:
-  tests:
-    name: Foundry tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Install Foundry
-        uses: foundry-rs/foundry-toolchain@v1
-        with:
-          version: nightly
-
-      - name: Yarn install
-        run: yarn install --frozen-lockfile
-
-      - name: Install deps
-        run: forge install
-
-      - name: Run tests
-        run: ${{ github.action_path }} forge test --ffi -vv
-
   port-to-public-repo:
-    name: Port to public repo
+    name: Port to Public Repo
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
