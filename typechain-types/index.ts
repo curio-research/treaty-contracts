@@ -15,7 +15,7 @@ export type { IERC173 } from "./IERC173";
 export type { Util } from "./Util";
 export type { LibDiamond } from "./LibDiamond";
 export type { DiamondInit } from "./DiamondInit";
-export type { Game } from "./Game";
+export type { Curio } from "./Curio";
 
 export { Diamond__factory } from "./factories/Diamond__factory";
 export { DiamondCutFacet__factory } from "./factories/DiamondCutFacet__factory";
@@ -31,4 +31,4 @@ export { IERC173__factory } from "./factories/IERC173__factory";
 export { Util__factory } from "./factories/Util__factory";
 export { LibDiamond__factory } from "./factories/LibDiamond__factory";
 export { DiamondInit__factory } from "./factories/DiamondInit__factory";
-export { Game__factory } from "./factories/Game__factory";
+export { Curio__factory } from "./factories/Curio__factory";

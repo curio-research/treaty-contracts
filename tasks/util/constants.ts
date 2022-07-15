@@ -1,4 +1,4 @@
-import { WorldConstantsStruct } from './../../typechain-types/Game';
+import { WorldConstantsStruct } from './../../typechain-types/Curio';
 import { TroopTypeStruct } from '../../typechain-types/DiamondInit';
 import { MapInput, RenderInput, TROOP_NAME } from './types';
 

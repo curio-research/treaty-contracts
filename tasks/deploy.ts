@@ -13,7 +13,7 @@ import { Position, TILE_TYPE, TROOP_NAME } from './util/types';
 import { encodeTileMap, generateGameMaps } from './util/mapHelper';
 import { GameConfig } from '../api/types';
 import { MEDITERRAINEAN_MAP, ligmapTileOutput } from './util/mapLibrary';
-import { WorldConstantsStruct } from '../typechain-types/Game';
+import { WorldConstantsStruct } from '../typechain-types/Curio';
 
 /**
  * Deploy game instance and port configs to frontend.

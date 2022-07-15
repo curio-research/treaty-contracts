@@ -32,8 +32,8 @@ export default {
     },
   },
   diamondAbi: {
-    // This plugin will combine all ABIs from any Smart Contract with `Facet` in the name or path and output it as `Game.json`
-    name: 'Game',
+    // This plugin will combine all ABIs from any Smart Contract with `Facet` in the name or path and output it as `Curio.json`
+    name: 'Curio',
     include: ['Facet', 'Util'],
     // We explicitly set `strict` to `true` because we want to validate our facets don't accidentally provide overlapping functions
     strict: true,

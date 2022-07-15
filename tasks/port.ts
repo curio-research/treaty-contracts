@@ -13,12 +13,12 @@ task('port', 'compile and port contracts over to frontend repo').setAction(async
     await fs.mkdirSync(getDir('frontend', '/factories'));
     await fs.mkdirSync(getDir('faucet', '/factories'));
 
-    // since hardhat-diamond-abi compiles all files into one, We need to port common.ts, Game.ts, and Game__factory.ts
+    // since hardhat-diamond-abi compiles all files into one, We need to port common.ts, Curio.ts, and Curio__factory.ts
     // NICE-TO-HAVE: selectively port files, search by file names in the subdirectories
 
-    await portFile('/Game.ts');
+    await portFile('/Curio.ts');
     await portFile('/common.ts');
-    await portFile('/factories/Game__factory.ts');
+    await portFile('/factories/Curio__factory.ts');
 
     // copy game configs
     const configFilePath = path.join(__dirname, '/game.config.json');

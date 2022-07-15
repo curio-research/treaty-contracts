@@ -1,4 +1,4 @@
-import { Game } from '../../typechain-types/Game';
+import { Curio } from '../../typechain-types/Curio';
 import { Signer } from 'ethers';
 import { deployProxy } from './deployHelper';
 import { HardhatRuntimeEnvironment, Libraries } from 'hardhat/types';
@@ -81,7 +81,7 @@ export const deployFacets = async (hre: HardhatRuntimeEnvironment, diamondAddres
     facetContracts.push(facet);
   }
 
-  const diamond = await hre.ethers.getContractAt('Game', diamondAddress);
+  const diamond = await hre.ethers.getContractAt('Curio', diamondAddress);
   const addresses = [];
 
   // loop through all facets
@@ -118,7 +118,7 @@ export const deployFacets = async (hre: HardhatRuntimeEnvironment, diamondAddres
   }
 };
 
-export const getDiamond = async (hre: HardhatRuntimeEnvironment, diamondAddress: string): Promise<Game> => {
-  const res: any = await hre.ethers.getContractAt('Game', diamondAddress);
+export const getDiamond = async (hre: HardhatRuntimeEnvironment, diamondAddress: string): Promise<Curio> => {
+  const res: any = await hre.ethers.getContractAt('Curio', diamondAddress);
   return res;
 };
