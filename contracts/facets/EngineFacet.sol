@@ -174,6 +174,8 @@ contract EngineFacet is UseStorage {
             }
         }
 
+        Util._updatePlayerBalance(msg.sender);
+
         emit Util.Moved(msg.sender, _troopId, block.timestamp, _troop.pos, _targetPos);
     }
 
