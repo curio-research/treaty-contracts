@@ -60,7 +60,7 @@ export type BaseStruct = {
   defenseFactor: BigNumberish;
   health: BigNumberish;
   goldGenerationPerSecond: BigNumberish;
-  position: PositionStruct;
+  pos: PositionStruct;
 };
 
 export type BaseStructOutput = [
@@ -78,7 +78,7 @@ export type BaseStructOutput = [
   defenseFactor: BigNumber;
   health: BigNumber;
   goldGenerationPerSecond: BigNumber;
-  position: PositionStructOutput;
+  pos: PositionStructOutput;
 };
 
 export type TroopTypeStruct = {
@@ -227,6 +227,7 @@ export interface GetterFacetInterface extends utils.Interface {
     "getTroopAt((uint256,uint256))": FunctionFragment;
     "getTroopType(uint256)": FunctionFragment;
     "getWorldConstants()": FunctionFragment;
+    "isPlayerInitialized(address)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -278,6 +279,10 @@ export interface GetterFacetInterface extends utils.Interface {
     functionFragment: "getWorldConstants",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "isPlayerInitialized",
+    values: [string]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "bulkGetAllTroops",
@@ -311,6 +316,10 @@ export interface GetterFacetInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getWorldConstants",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "isPlayerInitialized",
     data: BytesLike
   ): Result;
 
@@ -404,6 +413,11 @@ export interface GetterFacet extends BaseContract {
     getWorldConstants(
       overrides?: CallOverrides
     ): Promise<[WorldConstantsStructOutput]>;
+
+    isPlayerInitialized(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
   };
 
   bulkGetAllTroops(overrides?: CallOverrides): Promise<TroopStructOutput[]>;
@@ -467,6 +481,11 @@ export interface GetterFacet extends BaseContract {
     overrides?: CallOverrides
   ): Promise<WorldConstantsStructOutput>;
 
+  isPlayerInitialized(
+    _player: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   callStatic: {
     bulkGetAllTroops(overrides?: CallOverrides): Promise<TroopStructOutput[]>;
 
@@ -528,6 +547,11 @@ export interface GetterFacet extends BaseContract {
     getWorldConstants(
       overrides?: CallOverrides
     ): Promise<WorldConstantsStructOutput>;
+
+    isPlayerInitialized(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
   };
 
   filters: {};
@@ -585,6 +609,11 @@ export interface GetterFacet extends BaseContract {
     ): Promise<BigNumber>;
 
     getWorldConstants(overrides?: CallOverrides): Promise<BigNumber>;
+
+    isPlayerInitialized(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -646,5 +675,10 @@ export interface GetterFacet extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getWorldConstants(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    isPlayerInitialized(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
   };
 }

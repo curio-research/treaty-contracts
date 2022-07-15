@@ -48,7 +48,7 @@ task('deploy', 'deploy contracts')
       let mapName = args.name;
       const saveMap = args.savemap;
 
-      // // Check connection with faucet to make sure deployment will post
+      // Check connection with faucet to make sure deployment will post
       if (!isDev) {
         await isConnectionLive();
       }

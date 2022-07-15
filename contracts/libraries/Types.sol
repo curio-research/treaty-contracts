@@ -46,7 +46,7 @@ struct Base {
     uint256 defenseFactor;
     uint256 health;
     uint256 goldGenerationPerSecond;
-    Position position;
+    Position pos;
 }
 
 struct Tile {

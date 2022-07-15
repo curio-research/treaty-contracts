@@ -84,7 +84,7 @@ export type BaseStruct = {
   defenseFactor: BigNumberish;
   health: BigNumberish;
   goldGenerationPerSecond: BigNumberish;
-  position: PositionStruct;
+  pos: PositionStruct;
 };
 
 export type BaseStructOutput = [
@@ -102,7 +102,7 @@ export type BaseStructOutput = [
   defenseFactor: BigNumber;
   health: BigNumber;
   goldGenerationPerSecond: BigNumber;
-  position: PositionStructOutput;
+  pos: PositionStructOutput;
 };
 
 export type TroopTypeStruct = {
@@ -261,8 +261,8 @@ export interface CurioInterface extends utils.Interface {
     "getTroopAt((uint256,uint256))": FunctionFragment;
     "getTroopType(uint256)": FunctionFragment;
     "getWorldConstants()": FunctionFragment;
-    "bulkInitializeTiles((uint256,uint256)[])": FunctionFragment;
     "isPlayerInitialized(address)": FunctionFragment;
+    "bulkInitializeTiles((uint256,uint256)[])": FunctionFragment;
     "pauseGame()": FunctionFragment;
     "reactivatePlayer(address)": FunctionFragment;
     "repair((uint256,uint256))": FunctionFragment;
@@ -390,12 +390,12 @@ export interface CurioInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "bulkInitializeTiles",
-    values: [PositionStruct[]]
-  ): string;
-  encodeFunctionData(
     functionFragment: "isPlayerInitialized",
     values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "bulkInitializeTiles",
+    values: [PositionStruct[]]
   ): string;
   encodeFunctionData(functionFragment: "pauseGame", values?: undefined): string;
   encodeFunctionData(
@@ -607,11 +607,11 @@ export interface CurioInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "bulkInitializeTiles",
+    functionFragment: "isPlayerInitialized",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "isPlayerInitialized",
+    functionFragment: "bulkInitializeTiles",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "pauseGame", data: BytesLike): Result;
@@ -1031,15 +1031,15 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[WorldConstantsStructOutput]>;
 
-    bulkInitializeTiles(
-      _positions: PositionStruct[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     isPlayerInitialized(
       _player: string,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
+
+    bulkInitializeTiles(
+      _positions: PositionStruct[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     pauseGame(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1335,15 +1335,15 @@ export interface Curio extends BaseContract {
     overrides?: CallOverrides
   ): Promise<WorldConstantsStructOutput>;
 
-  bulkInitializeTiles(
-    _positions: PositionStruct[],
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   isPlayerInitialized(
     _player: string,
     overrides?: CallOverrides
   ): Promise<boolean>;
+
+  bulkInitializeTiles(
+    _positions: PositionStruct[],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   pauseGame(
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -1636,15 +1636,15 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<WorldConstantsStructOutput>;
 
-    bulkInitializeTiles(
-      _positions: PositionStruct[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     isPlayerInitialized(
       _player: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    bulkInitializeTiles(
+      _positions: PositionStruct[],
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     pauseGame(overrides?: CallOverrides): Promise<void>;
 
@@ -2064,14 +2064,14 @@ export interface Curio extends BaseContract {
 
     getWorldConstants(overrides?: CallOverrides): Promise<BigNumber>;
 
-    bulkInitializeTiles(
-      _positions: PositionStruct[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     isPlayerInitialized(
       _player: string,
       overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    bulkInitializeTiles(
+      _positions: PositionStruct[],
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     pauseGame(
@@ -2358,14 +2358,14 @@ export interface Curio extends BaseContract {
 
     getWorldConstants(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    bulkInitializeTiles(
-      _positions: PositionStruct[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     isPlayerInitialized(
       _player: string,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    bulkInitializeTiles(
+      _positions: PositionStruct[],
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     pauseGame(

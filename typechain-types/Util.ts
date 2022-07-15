@@ -60,7 +60,7 @@ export type BaseStruct = {
   defenseFactor: BigNumberish;
   health: BigNumberish;
   goldGenerationPerSecond: BigNumberish;
-  position: PositionStruct;
+  pos: PositionStruct;
 };
 
 export type BaseStructOutput = [
@@ -78,7 +78,7 @@ export type BaseStructOutput = [
   defenseFactor: BigNumber;
   health: BigNumber;
   goldGenerationPerSecond: BigNumber;
-  position: PositionStructOutput;
+  pos: PositionStructOutput;
 };
 
 export type PlayerStruct = {

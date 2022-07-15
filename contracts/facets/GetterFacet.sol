@@ -102,4 +102,8 @@ contract GetterFacet is UseStorage {
     function getBaseNonce() external view returns (uint256) {
         return gs().baseNonce;
     }
+
+    function isPlayerInitialized(address _player) external view returns (bool) {
+        return Util._isPlayerInitialized(_player);
+    }
 }
