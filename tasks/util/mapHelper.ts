@@ -296,6 +296,7 @@ export const placePortsAndCities = (colorMap: number[][][], numPorts: number, nu
   for (let i = 1; i < islandID + 1; i++) {
     const positionsByIslandID = islandIdToMapping.get(i);
     if (positionsByIslandID && numPorts > 0) {
+      // Note: remove the `numPorts > 0` part to generate a port on every landmass regardless of specified port number
       const randomIslandTilePosition = positionsByIslandID[Math.floor(Math.random() * positionsByIslandID.length)];
       tileMap[randomIslandTilePosition.x][randomIslandTilePosition.y] = TILE_TYPE.PORT;
       portTiles.push({ x: randomIslandTilePosition.x, y: randomIslandTilePosition.y });
