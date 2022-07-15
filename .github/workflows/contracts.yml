@@ -6,24 +6,26 @@ on:
     branches: [release]
 
 jobs:
-  foundry-test:
+  tests:
     name: Foundry tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-        with:
-          submodules: recursive
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
         with:
           version: nightly
 
-      - name: Install dependencies
-        run: yarn install
+      - name: Yarn install
+        run: yarn install --frozen-lockfile
+
+      - name: Install deps
+        run: forge install
 
       - name: Run tests
-        run: forge test --ffi -vv
+        run: ${{ github.action_path }} forge test --ffi -vv
 
   port-to-public-repo:
     name: Port to public repo
