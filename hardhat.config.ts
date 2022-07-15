@@ -6,7 +6,6 @@ import '@nomiclabs/hardhat-ethers';
 import '@nomiclabs/hardhat-waffle';
 import 'hardhat-contract-sizer';
 import 'hardhat-preprocessor';
-import 'hardhat-gas-reporter';
 require('dotenv').config();
 
 // tasks
@@ -14,11 +13,10 @@ import './tasks/port';
 import './tasks/deploy';
 import './tasks/mapGen';
 
-// to get the smart contract file sizes, run:
+// to get the file size of each smart contract, run:
 // yarn run hardhat size-contracts
 
-// Add this
-const { USER1_PK, USER2_PK, OPTIMISM_KOVAN_RPC_URL, GNOSIS_OPTIMISM_RPC_URL, GNOSIS_RPC_URL, LOCALHOST_USER1_PK, LOCALHOST_USER2_PK, CONSTELLATION_RPC_URL } = process.env;
+const { USER1_PK, USER2_PK, OPTIMISM_KOVAN_RPC_URL, GNOSIS_OPTIMISM_RPC_URL, GNOSIS_RPC_URL, LOCALHOST_USER1_PK, LOCALHOST_USER2_PK, CONSTELLATION_RPC_URL, TAILSCALE_MAIN } = process.env;
 
 export default {
   defaultNetwork: 'localhost',
@@ -33,16 +31,9 @@ export default {
     },
   },
   diamondAbi: {
-    // This plugin will combine all ABIs from any Smart Contract with `Facet` in the name or path and output it as `Curio.json`
     name: 'Curio',
     include: ['Facet', 'Util'],
-    // We explicitly set `strict` to `true` because we want to validate our facets don't accidentally provide overlapping functions
-    strict: true,
-    // We use our diamond utils to filter some functions we ignore from the combined ABI
-    // filter(abiElement, index, abi, fullyQualifiedName) {
-    //   const signature = diamondUtils.toSignature(abiElement);
-    //   return diamondUtils.isIncluded(fullyQualifiedName, signature);
-    // },
+    strict: true, // check for overlapping function names
   },
 
   networks: {
@@ -52,7 +43,7 @@ export default {
       chainId: 69,
     },
     tailscale: {
-      url: 'http://100.117.164.103:8545',
+      url: `http://${TAILSCALE_MAIN}:8545`,
       accounts: [LOCALHOST_USER1_PK, LOCALHOST_USER2_PK],
       chainId: 1337,
     },
@@ -101,7 +92,6 @@ export default {
     }),
   },
 };
-
 // script copy pasta'd from Foundry book
 
 function getRemappings() {

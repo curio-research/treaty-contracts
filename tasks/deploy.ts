@@ -181,7 +181,7 @@ task('deploy', 'deploy contracts')
 
           // Give each player a port to start with
           await (await diamond.connect(player1).initializePlayer(player1Pos)).wait();
-          // await (await diamond.connect(player2).initializePlayer(player2Pos)).wait();
+          await (await diamond.connect(player2).initializePlayer(player2Pos)).wait();
         }
       }
 
