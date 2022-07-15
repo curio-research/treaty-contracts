@@ -197,7 +197,7 @@ contract LogicTest is Test, DiamondDeployTest {
 
         // fail: player1 attempting to purchase a troop over budget
         vm.prank(player1);
-        vm.expectRevert(bytes("CURIO: Insufficient balance"));
+        vm.expectRevert(bytes("CURIO: Insufficient balance (consider deleting some troops!)"));
         engine.purchaseTroop(player1Pos, battleshipTroopTypeId);
 
         // fail: player1 finish producing troop on an occupied base

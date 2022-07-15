@@ -90,7 +90,7 @@ contract EngineFacet is UseStorage {
 
         uint256 _troopCost = Util._getTroopCost(_troopTypeId);
         Util._updatePlayerBalance(msg.sender);
-        require(_troopCost <= Util._getPlayerBalance(msg.sender), "CURIO: Insufficient balance");
+        require(_troopCost <= Util._getPlayerBalance(msg.sender), "CURIO: Insufficient balance (consider deleting some troops!)");
 
         (uint256 _troopId, Troop memory _troop) = Util._addTroop(msg.sender, _pos, _troopTypeId);
         gs().playerMap[msg.sender].balance -= _troopCost;
