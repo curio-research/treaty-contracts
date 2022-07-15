@@ -82,7 +82,6 @@ task('deploy', 'deploy contracts')
           cityTiles = tileMapOutput.cityTiles;
           worldConstants = generateWorldConstants(player1.address, { width: tileMap.length, height: tileMap[0].length, numPorts: portTiles.length, numCities: cityTiles.length });
         } else {
-          // default: ligmap 10x10
           mapName = 'LIGMAP';
           tileMap = ligmapTileOutput.tileMap;
           portTiles = ligmapTileOutput.portTiles;
