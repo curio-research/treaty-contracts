@@ -253,6 +253,8 @@ contract EngineFacet is UseStorage {
 
                 // Move
                 _moveModule(_troopId, _targetPos);
+            } else {
+                emit Util.AttackedBase(msg.sender, _troopId, _troop, _targetTile.baseId, _targetBase);
             }
         } else {
             // Troop dies

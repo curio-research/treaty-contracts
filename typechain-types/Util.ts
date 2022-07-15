@@ -60,6 +60,7 @@ export type BaseStruct = {
   defenseFactor: BigNumberish;
   health: BigNumberish;
   goldGenerationPerSecond: BigNumberish;
+  pos: PositionStruct;
 };
 
 export type BaseStructOutput = [
@@ -68,7 +69,8 @@ export type BaseStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
-  BigNumber
+  BigNumber,
+  PositionStructOutput
 ] & {
   name: number;
   owner: string;
@@ -76,6 +78,7 @@ export type BaseStructOutput = [
   defenseFactor: BigNumber;
   health: BigNumber;
   goldGenerationPerSecond: BigNumber;
+  pos: PositionStructOutput;
 };
 
 export type PlayerStruct = {
@@ -437,7 +440,7 @@ export type MovedEvent = TypedEvent<
   {
     _player: string;
     _troopId: BigNumber;
-    _epoch: BigNumber;
+    _timestamp: BigNumber;
     _startPos: PositionStructOutput;
     _targetPos: PositionStructOutput;
   }
@@ -987,14 +990,14 @@ export interface Util extends BaseContract {
     "Moved(address,uint256,uint256,tuple,tuple)"(
       _player?: null,
       _troopId?: null,
-      _epoch?: null,
+      _timestamp?: null,
       _startPos?: null,
       _targetPos?: null
     ): MovedEventFilter;
     Moved(
       _player?: null,
       _troopId?: null,
-      _epoch?: null,
+      _timestamp?: null,
       _startPos?: null,
       _targetPos?: null
     ): MovedEventFilter;

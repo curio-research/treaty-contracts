@@ -2,10 +2,10 @@ import { Position, TileMapOutput, TILE_TYPE } from './types';
 // Contains fixed maps for game
 
 /////////////////////////////////////////////////////////////
-// LIGMAP
+// testingMap
 /////////////////////////////////////////////////////////////
 
-const ligmap: TILE_TYPE[][] = [
+const testingMap: TILE_TYPE[][] = [
   [1, 1, 4, 1, 3, 2, 2, 2, 2, 2],
   [1, 1, 1, 1, 1, 2, 2, 2, 2, 2],
   [4, 1, 1, 1, 3, 2, 2, 2, 2, 2],
@@ -17,20 +17,20 @@ const ligmap: TILE_TYPE[][] = [
   [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
   [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
 ];
-const ligmapPortTiles: Position[] = [
+const testingMapPortTiles: Position[] = [
   { x: 0, y: 4 },
   { x: 2, y: 4 },
   { x: 4, y: 2 },
   { x: 4, y: 0 },
 ];
-const ligmapCityTiles: Position[] = [
+const testingMapCityTiles: Position[] = [
   { x: 0, y: 2 },
   { x: 2, y: 0 },
 ];
-export const ligmapTileOutput: TileMapOutput = {
-  tileMap: ligmap,
-  portTiles: ligmapPortTiles,
-  cityTiles: ligmapCityTiles,
+export const testingMapTileOutput: TileMapOutput = {
+  tileMap: testingMap,
+  portTiles: testingMapPortTiles,
+  cityTiles: testingMapCityTiles,
 };
 
 /////////////////////////////////////////////////////////////
