@@ -1,4 +1,4 @@
-import { publishDeployment } from './../api/deployment';
+import { publishDeployment, isConnectionLive } from './../api/deployment';
 import * as path from 'path';
 import * as fsPromise from 'fs/promises';
 import * as fs from 'fs';
@@ -24,9 +24,11 @@ import { WorldConstantsStruct } from '../typechain-types/Curio';
  * `npx hardhat deploy --noport --fixmap --name MEDITERRAINEAN`: deploy on localhost, use the hardcoded Mediterrainean map, and do not port files to frontend
  * `npx hardhat deploy --name SANDBOX --network constellation`: randomly generate sandbox map and deploy on Constellation
  */
+
 task('deploy', 'deploy contracts')
   .addFlag('noport', "Don't port files to frontend") // default is to call port
   .addFlag('publish', 'Publish deployment to game launcher') // default is to call publish
+  .addFlag('release', 'Publish deployment to official release') // default is to call publish
   .addFlag('fixmap', 'Use deterministic map') // default is non-deterministic maps; deterministic maps are mainly used for client development
   .addOptionalParam('name', 'Name of fixed map', 'Hello, World!')
   .addFlag('savemap', 'Save map to local') // default is not to save
@@ -42,13 +44,18 @@ task('deploy', 'deploy contracts')
       const fixMap = args.fixmap;
       if (fixMap) console.log('Using deterministic map');
       const publish = args.publish;
+      const isRelease = args.release;
       let mapName = args.name;
       const saveMap = args.savemap;
+
+      // // Check connection with faucet to make sure deployment will post
+      if (!isDev) {
+        await isConnectionLive();
+      }
 
       // Set up deployer and some local variables
       let [player1, player2] = await hre.ethers.getSigners();
       console.log('✦ player1 address is:', player1.address);
-      // console.log('✦ player2 address is:', player2.address);
       const armyTroopTypeId = getTroopTypeIndexByName(TROOP_TYPES, TROOP_NAME.ARMY) + 1;
       const troopTransportTroopTypeId = getTroopTypeIndexByName(TROOP_TYPES, TROOP_NAME.TROOP_TRANSPORT) + 1;
       const destroyerTroopTypeId = getTroopTypeIndexByName(TROOP_TYPES, TROOP_NAME.DESTROYER) + 1;
@@ -115,7 +122,7 @@ task('deploy', 'deploy contracts')
       const encodedTileMap = encodeTileMap(tileMap);
       await (await diamond.storeEncodedColumnBatches(encodedTileMap)).wait();
       const time2 = performance.now();
-      console.log(`✦ lazy setting ${tileMap.length}x${tileMap[0].length} map took ${time2 - time1} ms`);
+      console.log(`✦ lazy setting ${tileMap.length}x${tileMap[0].length} map took ${Math.floor(time2 - time1)} ms`);
 
       console.log('✦ initializing bases');
       const baseTiles = [...portTiles, ...cityTiles];
@@ -124,7 +131,7 @@ task('deploy', 'deploy contracts')
       }
 
       const time3 = performance.now();
-      console.log(`✦ initializing ${baseTiles.length} bases took ${time3 - time2} ms`);
+      console.log(`✦ initializing ${baseTiles.length} bases took ${Math.floor(time3 - time2)} ms`);
 
       // Randomly initialize players if on localhost
       if (isDev) {
@@ -183,7 +190,7 @@ task('deploy', 'deploy contracts')
       const configFile: GameConfig = {
         address: diamond.address,
         network: hre.network.name,
-        deploymentId: `${hre.network.name}-${Date.now()}`,
+        deploymentId: `${isRelease ? 'release' : ''}${hre.network.name}-${Date.now()}`,
         map: tileMap,
       };
 
@@ -201,11 +208,11 @@ task('deploy', 'deploy contracts')
         await hre.run('port'); // default to porting files
       }
 
-      // Publish deployment if on network
+      // Publish deployment
       if (publish || !isDev) {
         await publishDeployment(configFile);
       }
-    } catch (err) {
-      console.log(err);
+    } catch (err: any) {
+      console.log(err.message);
     }
   });

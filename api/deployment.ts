@@ -10,11 +10,11 @@ export const publishDeployment = async (gameConfig: GameConfig) => {
     const { data } = await api.post(`/deployments/add`, gameConfig);
 
     if (data) {
-      // check for data flags
+      // TODO: more rigorous check for data flags
       console.log('Published successfully');
     }
   } catch (err) {
-    // check for data flags
+    // TODO: more rigorous check for data flags
     console.log(err);
   }
 };
