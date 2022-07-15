@@ -50,9 +50,7 @@ contract GetterFacet is UseStorage {
      * Fetch tile map in NxN chunks, where N is the map interval.
      * @param _startPos top-left position of chunk
      */
-    function getMapChunk(Position memory _startPos) external view returns (Tile[] memory, Position[] memory) {
-        uint256 _interval = gs().worldConstants.mapInterval;
-
+    function getMapChunk(Position memory _startPos, uint256 _interval) external view returns (Tile[] memory, Position[] memory) {
         Tile[] memory _allTiles = new Tile[](_interval * _interval);
         Position[] memory _allPos = new Position[](_interval * _interval);
 

@@ -23,7 +23,6 @@ export type WorldConstantsStruct = {
   worldHeight: BigNumberish;
   numPorts: BigNumberish;
   numCities: BigNumberish;
-  mapInterval: BigNumberish;
   combatEfficiency: BigNumberish;
   numInitTerrainTypes: BigNumberish;
   initBatchSize: BigNumberish;
@@ -47,7 +46,6 @@ export type WorldConstantsStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
-  BigNumber,
   BigNumber
 ] & {
   admin: string;
@@ -55,7 +53,6 @@ export type WorldConstantsStructOutput = [
   worldHeight: BigNumber;
   numPorts: BigNumber;
   numCities: BigNumber;
-  mapInterval: BigNumber;
   combatEfficiency: BigNumber;
   numInitTerrainTypes: BigNumber;
   initBatchSize: BigNumber;
@@ -108,7 +105,7 @@ export type TroopTypeStructOutput = [
 
 export interface DiamondInitInterface extends utils.Interface {
   functions: {
-    "init((address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),(uint8,bool,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256)[])": FunctionFragment;
+    "init((address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),(uint8,bool,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256)[])": FunctionFragment;
   };
 
   encodeFunctionData(

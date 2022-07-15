@@ -111,7 +111,6 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): W
     worldHeight: mapInput.height,
     numPorts: mapInput.numPorts,
     numCities: mapInput.numCities,
-    mapInterval: MAP_INTERVAL,
     combatEfficiency: COMBAT_EFFICIENCY,
     numInitTerrainTypes: NUM_INIT_TERRAIN_TYPES,
     initBatchSize: INIT_BATCH_SIZE,

@@ -196,7 +196,6 @@ export type WorldConstantsStruct = {
   worldHeight: BigNumberish;
   numPorts: BigNumberish;
   numCities: BigNumberish;
-  mapInterval: BigNumberish;
   combatEfficiency: BigNumberish;
   numInitTerrainTypes: BigNumberish;
   initBatchSize: BigNumberish;
@@ -220,7 +219,6 @@ export type WorldConstantsStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
-  BigNumber,
   BigNumber
 ] & {
   admin: string;
@@ -228,7 +226,6 @@ export type WorldConstantsStructOutput = [
   worldHeight: BigNumber;
   numPorts: BigNumber;
   numCities: BigNumber;
-  mapInterval: BigNumber;
   combatEfficiency: BigNumber;
   numInitTerrainTypes: BigNumber;
   initBatchSize: BigNumber;
@@ -257,7 +254,7 @@ export interface CurioInterface extends utils.Interface {
     "getBaseNonce()": FunctionFragment;
     "getBulkBase(uint256,uint256)": FunctionFragment;
     "getBulkTroopTypes(uint256,uint256)": FunctionFragment;
-    "getMapChunk((uint256,uint256))": FunctionFragment;
+    "getMapChunk((uint256,uint256),uint256)": FunctionFragment;
     "getPlayer(address)": FunctionFragment;
     "getTileAt((uint256,uint256))": FunctionFragment;
     "getTroop(uint256)": FunctionFragment;
@@ -369,7 +366,7 @@ export interface CurioInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getMapChunk",
-    values: [PositionStruct]
+    values: [PositionStruct, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "getPlayer", values: [string]): string;
   encodeFunctionData(
@@ -1001,6 +998,7 @@ export interface Curio extends BaseContract {
 
     getMapChunk(
       _startPos: PositionStruct,
+      _interval: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[TileStructOutput[], PositionStructOutput[]]>;
 
@@ -1304,6 +1302,7 @@ export interface Curio extends BaseContract {
 
   getMapChunk(
     _startPos: PositionStruct,
+    _interval: BigNumberish,
     overrides?: CallOverrides
   ): Promise<[TileStructOutput[], PositionStructOutput[]]>;
 
@@ -1604,6 +1603,7 @@ export interface Curio extends BaseContract {
 
     getMapChunk(
       _startPos: PositionStruct,
+      _interval: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[TileStructOutput[], PositionStructOutput[]]>;
 
@@ -2036,6 +2036,7 @@ export interface Curio extends BaseContract {
 
     getMapChunk(
       _startPos: PositionStruct,
+      _interval: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -2326,6 +2327,7 @@ export interface Curio extends BaseContract {
 
     getMapChunk(
       _startPos: PositionStruct,
+      _interval: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
