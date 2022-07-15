@@ -25,4 +25,4 @@ jobs:
         run: forge install
 
       - name: Run tests
-        run: ${{ github.action_path }} forge test --ffi -vv
+        run: forge test --ffi -vv
