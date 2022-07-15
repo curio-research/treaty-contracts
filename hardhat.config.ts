@@ -76,8 +76,8 @@ export default {
       allowUnlimitedContractSize: true,
       blockGasLimit: 100000000000,
       mining: {
-        auto: false,
-        interval: 200,
+        auto: true,
+        // interval: 200,
       },
     },
   },
