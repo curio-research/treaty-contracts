@@ -295,7 +295,8 @@ export const placePortsAndCities = (colorMap: number[][][], numPorts: number, nu
   // this ensures that theres at least one city on each island!
   for (let i = 1; i < islandID + 1; i++) {
     const positionsByIslandID = islandIdToMapping.get(i);
-    if (positionsByIslandID && numPorts) {
+    if (positionsByIslandID && numPorts > 0) {
+      // Note: remove the `numPorts > 0` part to generate a port on every landmass regardless of specified port number
       const randomIslandTilePosition = positionsByIslandID[Math.floor(Math.random() * positionsByIslandID.length)];
       tileMap[randomIslandTilePosition.x][randomIslandTilePosition.y] = TILE_TYPE.PORT;
       portTiles.push({ x: randomIslandTilePosition.x, y: randomIslandTilePosition.y });
@@ -303,7 +304,7 @@ export const placePortsAndCities = (colorMap: number[][][], numPorts: number, nu
     }
   }
 
-  while (numPorts) {
+  while (numPorts > 0) {
     if (!coastlineTiles || coastlineTiles.length === 0) break;
 
     tileIndex = Math.floor(Math.random() * coastlineTiles.length);
