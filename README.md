@@ -1,4 +1,4 @@
-# Curio Smart Contracts
+# Game Smart Contracts
 
 Make sure that hardhat is installed globally.
 

@@ -5,57 +5,136 @@ import "forge-std/Test.sol";
 import "test/DiamondDeploy.t.sol";
 
 contract LogicTest is Test, DiamondDeployTest {
-    // TODO: add tests for events
-    event NewPlayer(address _player, Position _pos);
-    event Bankruptcy(address _player);
-    event Moved(address _player, uint256 _troopId, uint256 _epoch, Position _startPos, Position _targetPos);
-    event AttackedTroop(address _player, uint256 _troopId, Troop _troopInfo, uint256 _targetTroopId, Troop _targetTroopInfo);
-    event AttackedBase(address _player, uint256 _troopId, Troop _troopInfo, uint256 _targetBaseId, Base _targetBaseInfo);
-    event Death(address _player, uint256 _troopId);
-    event BaseCaptured(address _player, uint256 _troopId, uint256 _baseId);
-    event NewTroop(address _player, uint256 _troopId, Troop _troop, Position _pos);
-    event Repaired(address _player, uint256 _troopId, uint256 _health);
-    event Recovered(address _player, uint256 _troopId);
+    // ----------------------------------------------------------
+    // MARCH TESTS
+    // ----------------------------------------------------------
 
-    function testDeleteTroop() public {
-        assertEq(block.timestamp, 1);
-
+    function testMoveFailure() public {
+        // spawn troop at player1 location
         vm.startPrank(deployer);
-        helper.spawnTroop(Position({x: 7, y: 2}), player1, destroyerTroopTypeId);
-        helper.spawnTroop(Position({x: 7, y: 3}), player1, troopTransportTroopTypeId);
+        helper.spawnTroop(player1Pos, player1, troopTransportTroopTypeId);
+        helper.spawnTroop(Position({x: 7, y: 4}), player1, troopTransportTroopTypeId);
         vm.stopPrank();
-
-        Player memory _player1Info = getter.getPlayer(player1);
-        assertEq(_player1Info.numOwnedTroops, 2);
-        assertEq(_player1Info.totalTroopExpensePerUpdate, 2);
-        assertEq(_player1Info.balance, 20);
+        uint256 _troopId = initTroopNonce;
 
         vm.warp(2);
-        helper.updatePlayerBalance(player1);
-        _player1Info = getter.getPlayer(player1);
-        assertEq(_player1Info.balance, 23);
+        vm.startPrank(player1);
 
-        vm.prank(player2);
-        vm.expectRevert(bytes("CURIO: Can only delete own troop"));
-        engine.deleteTroop(1);
+        // fail: move to same location
+        vm.expectRevert(bytes("CURIO: Already at destination"));
+        engine.march(_troopId, player1Pos);
 
-        vm.prank(player1);
-        engine.deleteTroop(1);
-        _player1Info = getter.getPlayer(player1);
-        Troop memory _firstDestroyer = getter.getTroop(1);
-        assertEq(_firstDestroyer.owner, NULL_ADDR);
-        assertEq(_firstDestroyer.health, 0);
-        assertEq(_firstDestroyer.pos.y, 0);
-        assertEq(_player1Info.numOwnedTroops, 1);
-        assertEq(_player1Info.totalTroopExpensePerUpdate, 1);
+        vm.warp(4);
+        engine.march(_troopId, Position({x: 7, y: 2}));
+        vm.warp(6);
+        engine.march(_troopId, Position({x: 7, y: 3}));
 
-        vm.warp(3);
-        helper.updatePlayerBalance(player1);
-        _player1Info = getter.getPlayer(player1);
-        assertEq(_player1Info.balance, 27);
+        vm.stopPrank();
     }
 
-    // Purchase
+    function testMarchFailure() public {
+        Position memory _troopPos = Position({x: 7, y: 6});
+        Position memory _enemy1Pos = Position({x: 7, y: 7});
+        Position memory _enemy2Pos = Position({x: 7, y: 5});
+
+        vm.startPrank(deployer);
+        helper.spawnTroop(_troopPos, player1, destroyerTroopTypeId);
+        helper.spawnTroop(_enemy1Pos, player2, troopTransportTroopTypeId); // a weaker enemy
+        vm.stopPrank();
+
+        uint256 _player1DestroyerId = initTroopNonce;
+
+        vm.warp(2);
+
+        vm.startPrank(player1);
+
+        // fail: 2 attacks in 1 second
+        engine.march(_player1DestroyerId, _enemy1Pos);
+        if (getter.getTroop(_player1DestroyerId).owner == player1) {
+            vm.expectRevert(bytes("CURIO: Large action taken too recently"));
+            engine.march(_player1DestroyerId, _enemy2Pos);
+        }
+
+        vm.stopPrank();
+    }
+
+    function testBattleTroop() public {
+        Position memory _armyPos = Position({x: 8, y: 3});
+        Position memory _destroyerPos = Position({x: 7, y: 3});
+
+        vm.startPrank(deployer);
+        helper.spawnTroop(_armyPos, player2, armyTroopTypeId);
+        uint256 _armyId = initTroopNonce;
+        helper.spawnTroop(_destroyerPos, player1, destroyerTroopTypeId);
+        vm.stopPrank();
+
+        Troop memory _army;
+        Troop memory _destroyer = getter.getTroopAt(_destroyerPos);
+        assertEq(_destroyer.owner, player1);
+        assertEq(_destroyer.health, getter.getTroopType(destroyerTroopTypeId).maxHealth);
+        assertEq(getter.getPlayer(player1).numOwnedTroops, 1);
+        assertEq(getter.getPlayer(player2).numOwnedTroops, 1);
+
+        // increase time
+        vm.warp(3);
+
+        vm.prank(player2);
+        // Note: Battle functionality
+        engine.march(_armyId, _destroyerPos);
+
+        _destroyer = getter.getTroopAt(_destroyerPos);
+        _army = getter.getTroop(_armyId);
+        bool _destroyerKilled = _destroyer.owner == NULL_ADDR; // destroyer dies
+        bool _armyKilled = _army.owner == NULL_ADDR; // army dies
+        assertTrue(_destroyerKilled || _armyKilled);
+        helper.updatePlayerBalance(player1);
+        assertEq(getter.getPlayer(player1).balance, 28);
+
+        // either side dies but not both
+        if (_destroyerKilled) {
+            assertTrue(!_armyKilled);
+            assertEq(_army.health, 1);
+            assertEq(_army.owner, player2);
+            assertEq(getter.getPlayer(player1).totalGoldGenerationPerUpdate, 5);
+            assertEq(getter.getPlayer(player1).totalTroopExpensePerUpdate, 0);
+            assertEq(getter.getPlayer(player1).numOwnedTroops, 0);
+            assertEq(getter.getPlayer(player2).totalGoldGenerationPerUpdate, 5);
+            assertEq(getter.getPlayer(player2).totalTroopExpensePerUpdate, 0);
+            assertEq(getter.getPlayer(player2).numOwnedTroops, 1);
+        } else {
+            assertEq(_destroyer.owner, player1);
+            assertEq(getter.getPlayer(player1).totalGoldGenerationPerUpdate, 5);
+            assertEq(getter.getPlayer(player1).totalTroopExpensePerUpdate, 1);
+            assertEq(getter.getPlayer(player1).numOwnedTroops, 1);
+            assertEq(getter.getPlayer(player2).totalGoldGenerationPerUpdate, 5);
+            assertEq(getter.getPlayer(player2).totalTroopExpensePerUpdate, 0);
+            assertEq(getter.getPlayer(player2).numOwnedTroops, 0);
+        }
+    }
+
+    function testCaptureBaseFailure() public {
+        vm.startPrank(deployer);
+        helper.transferBaseOwnership(Position({x: 5, y: 1}), player1);
+        helper.spawnTroop(Position({x: 5, y: 1}), player1, armyTroopTypeId);
+        uint256 _armyId = initTroopNonce;
+        helper.spawnTroop(Position({x: 7, y: 3}), player1, destroyerTroopTypeId);
+        // uint256 _destroyerId = initTroopNonce + 1;
+        vm.stopPrank();
+
+        vm.warp(2);
+        vm.prank(player2);
+        vm.expectRevert(bytes("CURIO: Can only march own troop"));
+        engine.march(_armyId, player3Pos);
+
+        vm.startPrank(player1);
+        vm.expectRevert(bytes("CURIO: Target not in firing range"));
+        engine.march(_armyId, player2Pos);
+        vm.stopPrank();
+    }
+
+    // ----------------------------------------------------------
+    // PURCHASE TESTS
+    // ----------------------------------------------------------
     function testPurchaseTroopFailure() public {
         // fail: purchase by inactive address
         vm.expectRevert(bytes("CURIO: Player is inactive"));
@@ -137,232 +216,10 @@ contract LogicTest is Test, DiamondDeployTest {
         vm.stopPrank();
     }
 
-    // Note: Everything tests only the move functionality
-    function testMoveFailure() public {
-        // spawn troop at player1 location
-        vm.startPrank(deployer);
-        helper.spawnTroop(player1Pos, player1, troopTransportTroopTypeId);
-        helper.spawnTroop(Position({x: 7, y: 4}), player1, troopTransportTroopTypeId);
-        vm.stopPrank();
-        uint256 _troopId = initTroopNonce;
+    // ----------------------------------------------------------
+    // REPAIR TESTS
+    // ----------------------------------------------------------
 
-        vm.warp(2);
-        vm.startPrank(player1);
-
-        // fail: move to same location
-        vm.expectRevert(bytes("CURIO: Already at destination"));
-        engine.march(_troopId, player1Pos);
-
-        vm.warp(4);
-        engine.march(_troopId, Position({x: 7, y: 2}));
-        vm.warp(6);
-        engine.march(_troopId, Position({x: 7, y: 3}));
-
-        vm.stopPrank();
-    }
-
-    // battle
-    function testMarchFailure() public {
-        Position memory _troopPos = Position({x: 7, y: 6});
-        Position memory _enemy1Pos = Position({x: 7, y: 7});
-        Position memory _enemy2Pos = Position({x: 7, y: 5});
-
-        vm.startPrank(deployer);
-        helper.spawnTroop(_troopPos, player1, destroyerTroopTypeId);
-        helper.spawnTroop(_enemy1Pos, player2, troopTransportTroopTypeId); // a weaker enemy
-        vm.stopPrank();
-
-        uint256 _player1DestroyerId = initTroopNonce;
-
-        vm.warp(2);
-
-        vm.startPrank(player1);
-
-        // fail: 2 attacks in 1 second
-        engine.march(_player1DestroyerId, _enemy1Pos);
-        if (getter.getTroop(_player1DestroyerId).owner == player1) {
-            vm.expectRevert(bytes("CURIO: Large action taken too recently"));
-            engine.march(_player1DestroyerId, _enemy2Pos);
-        }
-
-        vm.stopPrank();
-    }
-
-    // function testBattleBase() public {
-    //     Position memory _destroyerPos = Position({x: 7, y: 3});
-
-    //     vm.prank(deployer);
-    //     helper.spawnTroop(_destroyerPos, player1, destroyerTroopTypeId);
-    //     helper.updatePlayerBalance(player1);
-    //     assertEq(getter.getPlayer(player1).balance, 20);
-    //     assertEq(getter.getPlayer(player1).totalGoldGenerationPerUpdate, 5);
-    //     assertEq(getter.getPlayer(player1).totalTroopExpensePerUpdate, 1);
-    //     assertEq(getter.getPlayer(player1).numOwnedBases, 1);
-    //     assertEq(getter.getPlayer(player2).totalGoldGenerationPerUpdate, 5);
-    //     assertEq(getter.getPlayer(player2).totalTroopExpensePerUpdate, 0);
-    //     assertEq(getter.getPlayer(player2).numOwnedBases, 1);
-    //     uint256 _destroyerId = initTroopNonce;
-
-    //     // increase time
-    //     vm.warp(3);
-
-    //     vm.prank(player1);
-    //     // Note: battle functionality
-    //     engine.march(_destroyerId, player2Pos);
-
-    //     if (getter.getTroop(_destroyerId).owner != player1) {
-    //         console.log("[testbattleBase] Warning: unlikely outcome");
-    //         return; // destroyer dies while battling port, a 1/64 (unlikely) outcome
-    //     }
-
-    //     Troop memory _destroyer = getter.getTroopAt(player2Pos);
-    //     assertEq(_destroyer.owner, player1);
-
-    //     Tile memory _tile = getter.getTileAt(player2Pos);
-    //     assertEq(_tile.occupantId, _destroyerId);
-    //     assertTrue(_tile.baseId != NULL);
-
-    //     Base memory _port = getter.getBaseAt(player2Pos);
-    //     assertEq(_port.owner, player1);
-    //     assertEq(_port.health, 1);
-
-    //     helper.updatePlayerBalance(player1);
-    //     assertEq(getter.getPlayer(player1).balance, 28);
-    //     assertEq(getter.getPlayer(player1).totalGoldGenerationPerUpdate, 10);
-    //     assertEq(getter.getPlayer(player1).totalTroopExpensePerUpdate, 1);
-    //     assertEq(getter.getPlayer(player1).numOwnedBases, 2);
-    //     assertEq(getter.getPlayer(player2).totalGoldGenerationPerUpdate, 0);
-    //     assertEq(getter.getPlayer(player2).totalTroopExpensePerUpdate, 0);
-    //     assertEq(getter.getPlayer(player2).numOwnedBases, 0);
-    // }
-
-    function testBattleTroop() public {
-        Position memory _armyPos = Position({x: 8, y: 3});
-        Position memory _destroyerPos = Position({x: 7, y: 3});
-
-        vm.startPrank(deployer);
-        helper.spawnTroop(_armyPos, player2, armyTroopTypeId);
-        uint256 _armyId = initTroopNonce;
-        helper.spawnTroop(_destroyerPos, player1, destroyerTroopTypeId);
-        vm.stopPrank();
-
-        Troop memory _army;
-        Troop memory _destroyer = getter.getTroopAt(_destroyerPos);
-        assertEq(_destroyer.owner, player1);
-        assertEq(_destroyer.health, getter.getTroopType(destroyerTroopTypeId).maxHealth);
-        assertEq(getter.getPlayer(player1).numOwnedTroops, 1);
-        assertEq(getter.getPlayer(player2).numOwnedTroops, 1);
-
-        // increase time
-        vm.warp(3);
-
-        vm.prank(player2);
-        // Note: Battle functionality
-        engine.march(_armyId, _destroyerPos);
-
-        _destroyer = getter.getTroopAt(_destroyerPos);
-        _army = getter.getTroop(_armyId);
-        bool _destroyerKilled = _destroyer.owner == NULL_ADDR; // destroyer dies
-        bool _armyKilled = _army.owner == NULL_ADDR; // army dies
-        assertTrue(_destroyerKilled || _armyKilled);
-        helper.updatePlayerBalance(player1);
-        assertEq(getter.getPlayer(player1).balance, 28);
-
-        // either side dies but not both
-        if (_destroyerKilled) {
-            assertTrue(!_armyKilled);
-            assertEq(_army.health, 1);
-            assertEq(_army.owner, player2);
-            assertEq(getter.getPlayer(player1).totalGoldGenerationPerUpdate, 5);
-            assertEq(getter.getPlayer(player1).totalTroopExpensePerUpdate, 0);
-            assertEq(getter.getPlayer(player1).numOwnedTroops, 0);
-            assertEq(getter.getPlayer(player2).totalGoldGenerationPerUpdate, 5);
-            assertEq(getter.getPlayer(player2).totalTroopExpensePerUpdate, 0);
-            assertEq(getter.getPlayer(player2).numOwnedTroops, 1);
-        } else {
-            assertEq(_destroyer.owner, player1);
-            assertEq(getter.getPlayer(player1).totalGoldGenerationPerUpdate, 5);
-            assertEq(getter.getPlayer(player1).totalTroopExpensePerUpdate, 1);
-            assertEq(getter.getPlayer(player1).numOwnedTroops, 1);
-            assertEq(getter.getPlayer(player2).totalGoldGenerationPerUpdate, 5);
-            assertEq(getter.getPlayer(player2).totalTroopExpensePerUpdate, 0);
-            assertEq(getter.getPlayer(player2).numOwnedTroops, 0);
-        }
-    }
-
-    // Capture base
-    // Note: all march test capturebase functionality
-    function testCaptureBaseFailure() public {
-        vm.startPrank(deployer);
-        helper.spawnTroop(Position({x: 5, y: 1}), player1, armyTroopTypeId);
-        uint256 _armyId = initTroopNonce;
-        helper.spawnTroop(Position({x: 7, y: 3}), player1, destroyerTroopTypeId);
-        // uint256 _destroyerId = initTroopNonce + 1;
-        vm.stopPrank();
-
-        vm.warp(2);
-        vm.prank(player2);
-        vm.expectRevert(bytes("CURIO: Can only march own troop"));
-        engine.march(_armyId, player3Pos);
-
-        vm.startPrank(player1);
-        vm.expectRevert(bytes("CURIO: Target not in Firing Range"));
-        engine.march(_armyId, player2Pos);
-        vm.stopPrank();
-    }
-
-    // function testCaptureBase() public {
-    //     vm.startPrank(deployer);
-    //     helper.spawnTroop(Position({x: 6, y: 2}), player1, armyTroopTypeId);
-    //     uint256 _armyId = initTroopNonce;
-    //     helper.spawnTroop(Position({x: 7, y: 3}), player1, destroyerTroopTypeId);
-    //     uint256 _destroyerId = initTroopNonce + 1;
-    //     helper.spawnTroop(Position({x: 6, y: 4}), player2, armyTroopTypeId);
-    //     vm.stopPrank();
-
-    //     Base memory _base = getter.getBaseAt(player2Pos);
-    //     assertEq(_base.owner, player2);
-    //     assertEq(getter.getPlayer(player1).numOwnedBases, 1);
-    //     assertEq(getter.getPlayer(player2).numOwnedBases, 1);
-
-    //     // increase time
-    //     vm.warp(3);
-
-    //     vm.startPrank(player1);
-    //     // Note: Battle functionality
-    //     engine.march(_destroyerId, player2Pos);
-    //     if (getter.getTroop(_destroyerId).owner == NULL_ADDR) {
-    //         console.log("[testCaptureBase] Warning: unlikely outcome");
-    //         return; // destroyer dies while battling port, a 1/64 (unlikely) outcome
-    //     }
-    //     assertEq(getter.getBaseAt(player2Pos).owner, player1);
-    //     assertEq(getter.getBaseAt(player2Pos).health, 1);
-    //     assertEq(getter.getTileAt(player2Pos).occupantId, _destroyerId);
-    //     assertEq(getter.getPlayer(player2).numOwnedBases, 0);
-    //     assertEq(getter.getPlayer(player1).numOwnedBases, 2);
-    //     // vm.expectRevert(bytes("CURIO: Destination tile occupied"));
-    //     // Note: captureBase functionality
-    //     engine.march(_armyId, player2Pos);
-    //     vm.stopPrank();
-
-    //     Troop memory _army = getter.getTroop(_armyId);
-    //     assertEq(_army.pos.x, 6);
-    //     assertEq(_army.pos.y, 2);
-    //     assertEq(_army.health, getter.getTroopType(armyTroopTypeId).maxHealth);
-
-    //     _base = getter.getBaseAt(player2Pos);
-    //     assertEq(_base.owner, player1);
-
-    //     assertEq(getter.getPlayer(player1).balance, 28);
-    //     assertEq(getter.getPlayer(player1).totalGoldGenerationPerUpdate, 10);
-    //     assertEq(getter.getPlayer(player1).totalTroopExpensePerUpdate, 1);
-    //     assertEq(getter.getPlayer(player2).totalGoldGenerationPerUpdate, 0);
-    //     assertEq(getter.getPlayer(player2).totalTroopExpensePerUpdate, 0);
-
-    //     vm.coinbase(deployer);
-    // }
-
-    // Repair
     function testRepairFailure() public {
         vm.startPrank(player1);
         vm.expectRevert("CURIO: No base found");
@@ -446,4 +303,151 @@ contract LogicTest is Test, DiamondDeployTest {
 
         vm.stopPrank();
     }
+
+    // ----------------------------------------------------------
+    // DELETE TROOP TESTS
+    // ----------------------------------------------------------
+
+    function testDeleteTroop() public {
+        assertEq(block.timestamp, 1);
+
+        vm.startPrank(deployer);
+        helper.spawnTroop(Position({x: 7, y: 2}), player1, destroyerTroopTypeId);
+        helper.spawnTroop(Position({x: 7, y: 3}), player1, troopTransportTroopTypeId);
+        vm.stopPrank();
+
+        Player memory _player1Info = getter.getPlayer(player1);
+        assertEq(_player1Info.numOwnedTroops, 2);
+        assertEq(_player1Info.totalTroopExpensePerUpdate, 2);
+        assertEq(_player1Info.balance, 20);
+
+        vm.warp(2);
+        helper.updatePlayerBalance(player1);
+        _player1Info = getter.getPlayer(player1);
+        assertEq(_player1Info.balance, 23);
+
+        vm.prank(player2);
+        vm.expectRevert(bytes("CURIO: Can only delete own troop"));
+        engine.deleteTroop(1);
+
+        vm.prank(player1);
+        engine.deleteTroop(1);
+        _player1Info = getter.getPlayer(player1);
+        Troop memory _firstDestroyer = getter.getTroop(1);
+        assertEq(_firstDestroyer.owner, NULL_ADDR);
+        assertEq(_firstDestroyer.health, 0);
+        assertEq(_firstDestroyer.pos.y, 0);
+        assertEq(_player1Info.numOwnedTroops, 1);
+        assertEq(_player1Info.totalTroopExpensePerUpdate, 1);
+
+        vm.warp(3);
+        helper.updatePlayerBalance(player1);
+        _player1Info = getter.getPlayer(player1);
+        assertEq(_player1Info.balance, 27);
+    }
+
+    // ----------------------------------------------------------------
+    // Note: enable tests below for when ship capturing base is enabled
+    // ----------------------------------------------------------------
+
+    // function testBattleBaseNaval() public {
+    //     Position memory _destroyerPos = Position({x: 7, y: 3});
+
+    //     vm.prank(deployer);
+    //     helper.spawnTroop(_destroyerPos, player1, destroyerTroopTypeId);
+    //     helper.updatePlayerBalance(player1);
+    //     assertEq(getter.getPlayer(player1).balance, 20);
+    //     assertEq(getter.getPlayer(player1).totalGoldGenerationPerUpdate, 5);
+    //     assertEq(getter.getPlayer(player1).totalTroopExpensePerUpdate, 1);
+    //     assertEq(getter.getPlayer(player1).numOwnedBases, 1);
+    //     assertEq(getter.getPlayer(player2).totalGoldGenerationPerUpdate, 5);
+    //     assertEq(getter.getPlayer(player2).totalTroopExpensePerUpdate, 0);
+    //     assertEq(getter.getPlayer(player2).numOwnedBases, 1);
+    //     uint256 _destroyerId = initTroopNonce;
+
+    //     // increase time
+    //     vm.warp(3);
+
+    //     vm.prank(player1);
+    //     // Note: battle functionality
+    //     engine.march(_destroyerId, player2Pos);
+
+    //     if (getter.getTroop(_destroyerId).owner != player1) {
+    //         console.log("[testbattleBase] Warning: unlikely outcome");
+    //         return; // destroyer dies while battling port, a 1/64 (unlikely) outcome
+    //     }
+
+    //     Troop memory _destroyer = getter.getTroopAt(player2Pos);
+    //     assertEq(_destroyer.owner, player1);
+
+    //     Tile memory _tile = getter.getTileAt(player2Pos);
+    //     assertEq(_tile.occupantId, _destroyerId);
+    //     assertTrue(_tile.baseId != NULL);
+
+    //     Base memory _port = getter.getBaseAt(player2Pos);
+    //     assertEq(_port.owner, player1);
+    //     assertEq(_port.health, 1);
+
+    //     helper.updatePlayerBalance(player1);
+    //     assertEq(getter.getPlayer(player1).balance, 28);
+    //     assertEq(getter.getPlayer(player1).totalGoldGenerationPerUpdate, 10);
+    //     assertEq(getter.getPlayer(player1).totalTroopExpensePerUpdate, 1);
+    //     assertEq(getter.getPlayer(player1).numOwnedBases, 2);
+    //     assertEq(getter.getPlayer(player2).totalGoldGenerationPerUpdate, 0);
+    //     assertEq(getter.getPlayer(player2).totalTroopExpensePerUpdate, 0);
+    //     assertEq(getter.getPlayer(player2).numOwnedBases, 0);
+    // }
+
+    // function testCaptureBaseNaval() public {
+    //     vm.startPrank(deployer);
+    //     helper.transferBaseOwnership(Position({x: 6, y: 2}), player1);
+    //     helper.spawnTroop(Position({x: 6, y: 2}), player1, armyTroopTypeId);
+    //     uint256 _armyId = initTroopNonce;
+    //     helper.spawnTroop(Position({x: 7, y: 3}), player1, destroyerTroopTypeId);
+    //     uint256 _destroyerId = initTroopNonce + 1;
+    //     helper.transferBaseOwnership(Position({x: 6, y: 4}), player2);
+    //     helper.spawnTroop(Position({x: 6, y: 4}), player2, armyTroopTypeId);
+    //     vm.stopPrank();
+
+    //     Base memory _base = getter.getBaseAt(player2Pos);
+    //     assertEq(_base.owner, player2);
+    //     assertEq(getter.getPlayer(player1).numOwnedBases, 1);
+    //     assertEq(getter.getPlayer(player2).numOwnedBases, 1);
+
+    //     // increase time
+    //     vm.warp(3);
+
+    //     vm.startPrank(player1);
+    //     // Note: Battle functionality
+    //     engine.march(_destroyerId, player2Pos);
+    //     if (getter.getTroop(_destroyerId).owner == NULL_ADDR) {
+    //         console.log("[testCaptureBase] Warning: unlikely outcome");
+    //         return; // destroyer dies while battling port, a 1/64 (unlikely) outcome
+    //     }
+    //     assertEq(getter.getBaseAt(player2Pos).owner, player1);
+    //     assertEq(getter.getBaseAt(player2Pos).health, 1);
+    //     assertEq(getter.getTileAt(player2Pos).occupantId, _destroyerId);
+    //     assertEq(getter.getPlayer(player2).numOwnedBases, 1);
+    //     assertEq(getter.getPlayer(player1).numOwnedBases, 2);
+    //     vm.expectRevert(bytes("CURIO: Destination tile occupied"));
+    //     // Note: captureBase functionality
+    //     engine.march(_armyId, player2Pos);
+    //     vm.stopPrank();
+
+    //     Troop memory _army = getter.getTroop(_armyId);
+    //     assertEq(_army.pos.x, 6);
+    //     assertEq(_army.pos.y, 3);
+    //     assertEq(_army.health, getter.getTroopType(armyTroopTypeId).maxHealth);
+
+    //     _base = getter.getBaseAt(player2Pos);
+    //     assertEq(_base.owner, player1);
+
+    //     assertEq(getter.getPlayer(player1).balance, 28);
+    //     assertEq(getter.getPlayer(player1).totalGoldGenerationPerUpdate, 10);
+    //     assertEq(getter.getPlayer(player1).totalTroopExpensePerUpdate, 1);
+    //     assertEq(getter.getPlayer(player2).totalGoldGenerationPerUpdate, 0);
+    //     assertEq(getter.getPlayer(player2).totalTroopExpensePerUpdate, 0);
+
+    //     vm.coinbase(deployer);
+    // }
 }

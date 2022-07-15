@@ -1,5 +1,5 @@
 {
-  "name": "curio-contracts",
+  "name": "game-contracts",
   "private": true,
   "scripts": {
     "contract-size": "yarn run hardhat size-contracts",

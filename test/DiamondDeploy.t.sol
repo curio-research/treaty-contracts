@@ -65,7 +65,7 @@ contract DiamondDeployTest is Test {
             movementCooldown: 1,
             largeActionCooldown: 1,
             cost: 6,
-            expensePerSecond: 0 // DO NOT REMOVE THIS COMMENT
+            expensePerSecond: 0 //
         });
     TroopType public troopTransportTroopType =
         TroopType({
@@ -166,12 +166,15 @@ contract DiamondDeployTest is Test {
         uint256[][] memory _encodedColumnBatches = _encodeTileMap(_map, _worldConstants.numInitTerrainTypes, _worldConstants.initBatchSize);
         helper.storeEncodedColumnBatches(_encodedColumnBatches);
 
-        // initialize players
-        helper.initializePlayer(player1Pos, player1);
-        helper.initializePlayer(player2Pos, player2);
-        helper.initializePlayer(player3Pos, player3);
-
         vm.stopPrank();
+
+        // initialize players
+        vm.prank(player1);
+        engine.initializePlayer(player1Pos);
+        vm.prank(player2);
+        engine.initializePlayer(player2Pos);
+        vm.prank(player3);
+        engine.initializePlayer(player3Pos);
     }
 
     function _encodeTileMap(

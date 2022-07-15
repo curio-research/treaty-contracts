@@ -26,10 +26,20 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
 
 export interface EngineFacetInterface extends utils.Interface {
   functions: {
+    "deleteTroop(uint256)": FunctionFragment;
+    "initializePlayer((uint256,uint256))": FunctionFragment;
     "march(uint256,(uint256,uint256))": FunctionFragment;
     "purchaseTroop((uint256,uint256),uint256)": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "deleteTroop",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "initializePlayer",
+    values: [PositionStruct]
+  ): string;
   encodeFunctionData(
     functionFragment: "march",
     values: [BigNumberish, PositionStruct]
@@ -39,6 +49,14 @@ export interface EngineFacetInterface extends utils.Interface {
     values: [PositionStruct, BigNumberish]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "deleteTroop",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "initializePlayer",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "march", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "purchaseTroop",
@@ -75,6 +93,16 @@ export interface EngineFacet extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    deleteTroop(
+      _troopId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    initializePlayer(
+      _pos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     march(
       _troopId: BigNumberish,
       _targetPos: PositionStruct,
@@ -87,6 +115,16 @@ export interface EngineFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
+
+  deleteTroop(
+    _troopId: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  initializePlayer(
+    _pos: PositionStruct,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   march(
     _troopId: BigNumberish,
@@ -101,6 +139,16 @@ export interface EngineFacet extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    deleteTroop(
+      _troopId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    initializePlayer(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     march(
       _troopId: BigNumberish,
       _targetPos: PositionStruct,
@@ -117,6 +165,16 @@ export interface EngineFacet extends BaseContract {
   filters: {};
 
   estimateGas: {
+    deleteTroop(
+      _troopId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    initializePlayer(
+      _pos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     march(
       _troopId: BigNumberish,
       _targetPos: PositionStruct,
@@ -131,6 +189,16 @@ export interface EngineFacet extends BaseContract {
   };
 
   populateTransaction: {
+    deleteTroop(
+      _troopId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    initializePlayer(
+      _pos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     march(
       _troopId: BigNumberish,
       _targetPos: PositionStruct,

@@ -7,7 +7,7 @@ import {BASE_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop, Troo
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 
 /// @title Helper facet
-/// @notice Contains admin functions and state functions, both should be out of scope for players
+/// @notice Contains admin functions and state functions, both of which should be out of scope for players
 
 contract HelperFacet is UseStorage {
     using SafeMath for uint256;
@@ -55,7 +55,6 @@ contract HelperFacet is UseStorage {
 
     /**
      * Reactivate an inactive player.
-     * TODO: add a reactivation cooldown for all players, or for each player
      * @param _player player address
      */
     function reactivatePlayer(address _player) external onlyAdmin {
@@ -63,7 +62,7 @@ contract HelperFacet is UseStorage {
         require(!Util._isPlayerActive(_player), "CURIO: Player is active");
 
         gs().playerMap[_player].active = true;
-        gs().playerMap[_player].balance = 50; // reload balance, FIXME: make more scalable
+        gs().playerMap[_player].balance = gs().worldConstants.initPlayerBalance; // reload balance
         emit Util.PlayerReactivated(_player);
     }
 
@@ -73,39 +72,6 @@ contract HelperFacet is UseStorage {
      */
     function storeEncodedColumnBatches(uint256[][] memory _colBatches) external onlyAdmin {
         gs().encodedColumnBatches = _colBatches;
-    }
-
-    /**
-     * Initialize a player at a selected position.
-     * TODO: figure out if we want a whitelist or something
-     * @param _pos position to initialize
-     * @param _player player address
-     */
-    function initializePlayer(Position memory _pos, address _player) external {
-        require(Util._getPlayerCount() < gs().worldConstants.maxPlayerCount, "CURIO: Max player count exceeded");
-
-        require(Util._inBound(_pos), "CURIO: Out of bound");
-        if (!Util._getTileAt(_pos).isInitialized) Util._initializeTile(_pos);
-
-        uint256 _baseId = Util._getTileAt(_pos).baseId;
-        require(Util._getBaseOwner(_baseId) == NULL_ADDR, "CURIO: Base is taken");
-        require(!Util._isPlayerInitialized(_player), "CURIO: Player already initialized");
-
-        WorldConstants memory _worldConstants = gs().worldConstants;
-        gs().players.push(_player);
-        gs().playerMap[_player] = Player({
-            initTimestamp: block.timestamp, // yo
-            active: true,
-            balance: _worldConstants.initPlayerBalance,
-            totalGoldGenerationPerUpdate: _worldConstants.defaultBaseGoldGenerationPerSecond,
-            totalTroopExpensePerUpdate: 0,
-            balanceLastUpdated: block.timestamp,
-            numOwnedBases: 1,
-            numOwnedTroops: 0
-        });
-        gs().baseIdMap[_baseId].owner = _player;
-
-        emit Util.NewPlayer(_player, _pos);
     }
 
     /**
@@ -127,7 +93,7 @@ contract HelperFacet is UseStorage {
 
         if (_tile.baseId != NULL) {
             Base memory _base = gs().baseIdMap[_tile.baseId];
-            require(_base.owner == _player || _base.owner == NULL_ADDR, "CURIO: Can only spawn troop in player's base"); // FIXME: the NULL_ADDR part is a bit of privilege
+            require(_base.owner == _player, "CURIO: Can only spawn troop in player's base");
             require(Util._isLandTroop(_troopTypeId) || _base.name == BASE_NAME.PORT, "CURIO: Can only spawn water troops in ports");
         }
 
@@ -174,6 +140,10 @@ contract HelperFacet is UseStorage {
     // STATE FUNCTIONS
     // ----------------------------------------------------------------------
 
+    /**
+     * Update player's balance to most recent state.
+     * @param _player player address
+     */
     function updatePlayerBalance(address _player) external {
         Util._updatePlayerBalance(_player);
     }
