@@ -32,12 +32,12 @@ jobs:
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
         with:
-          source-directory: contracts
-          destination-github-username: Yijia-Chen
-          destination-repository-name: engine-public
-          user-email: yijiachenmain@gmail.com
-          user-name: Yijia-Chen
-          destination-repository-username: curio-eth
-          target-branch: main
+          source-directory: .
+          destination-github-username: curio-bot
+          destination-repository-name: test-release # `contracts` for release and `test-release` for test
+          user-email: yijia@curio.gg
+          user-name: curio-bot
+          destination-repository-username: curio-research
+          target-branch: release
           target-directory: /
           commit-message: Release
