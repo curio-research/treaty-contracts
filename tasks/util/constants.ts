@@ -16,10 +16,10 @@ export const LOCAL_MAP_INPUT: MapInput = {
   numCities: 15,
 };
 export const SANDBOX_MAP_INPUT: MapInput = {
-  width: 200,
-  height: 150,
-  numPorts: 1200,
-  numCities: 300,
+  width: 70,
+  height: 70,
+  numPorts: 200,
+  numCities: 50,
 };
 export const MAP_INTERVAL = 10;
 export const COMBAT_EFFICIENCY = 50;
@@ -32,7 +32,7 @@ export const INIT_PLAYER_BALANCE = 50;
 export const DEFAULT_BASE_GOLD_GENERATION_PER_SECOND = 2;
 export const MAX_BASE_COUNT_PER_PLAYER = 20;
 export const MAX_TROOP_COUNT_PER_PLAYER = 30;
-export const MAX_PLAYER_COUNT = 50;
+export const MAX_PLAYER_COUNT = 20;
 
 export const TROOP_TYPES: TroopTypeStruct[] = [
   {

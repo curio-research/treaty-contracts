@@ -65,7 +65,7 @@ contract DiamondDeployTest is Test {
             movementCooldown: 1,
             largeActionCooldown: 1,
             cost: 6,
-            expensePerSecond: 0 // DO NOT REMOVE THIS COMMENT
+            expensePerSecond: 0 //
         });
     TroopType public troopTransportTroopType =
         TroopType({
