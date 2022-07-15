@@ -21,6 +21,7 @@ export const SANDBOX_MAP_INPUT: MapInput = {
   numPorts: 200,
   numCities: 50,
 };
+
 export const MAP_INTERVAL = 10;
 export const COMBAT_EFFICIENCY = 50;
 export const BASE_ATTACK_FACTOR = 1;

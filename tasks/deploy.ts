@@ -122,6 +122,7 @@ task('deploy', 'deploy contracts')
       for (let i = 0; i < baseTiles.length; i += 20) {
         await (await diamond.bulkInitializeTiles(baseTiles.slice(i, i + 20))).wait();
       }
+
       const time3 = performance.now();
       console.log(`✦ initializing ${baseTiles.length} bases took ${time3 - time2} ms`);
 

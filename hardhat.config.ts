@@ -6,6 +6,7 @@ import '@nomiclabs/hardhat-ethers';
 import '@nomiclabs/hardhat-waffle';
 import 'hardhat-contract-sizer';
 import 'hardhat-preprocessor';
+import 'hardhat-gas-reporter';
 require('dotenv').config();
 
 // tasks
@@ -72,6 +73,7 @@ export default {
     },
     hardhat: {
       chainId: 1337,
+      allowUnlimitedContractSize: true,
       blockGasLimit: 100000000000,
       mining: {
         auto: false,

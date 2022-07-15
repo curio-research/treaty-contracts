@@ -46,12 +46,13 @@ struct Base {
     uint256 defenseFactor;
     uint256 health;
     uint256 goldGenerationPerSecond;
+    Position position;
 }
 
 struct Tile {
     bool isInitialized;
     TERRAIN terrain;
-    uint256 occupantId; // a troop
+    uint256 occupantId; // troopID
     uint256 baseId;
 }
 

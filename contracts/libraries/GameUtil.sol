@@ -165,8 +165,9 @@ library Util {
             name: _baseName,
             attackFactor: 100,
             defenseFactor: 100,
-            health: 1, //
-            goldGenerationPerSecond: gs().worldConstants.defaultBaseGoldGenerationPerSecond
+            health: 1, // FIXME: change to base constants
+            goldGenerationPerSecond: gs().worldConstants.defaultBaseGoldGenerationPerSecond,
+            position: _pos
         });
 
         uint256 _baseId = gs().baseNonce;

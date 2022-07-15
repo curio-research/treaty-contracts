@@ -60,6 +60,7 @@ export type BaseStruct = {
   defenseFactor: BigNumberish;
   health: BigNumberish;
   goldGenerationPerSecond: BigNumberish;
+  position: PositionStruct;
 };
 
 export type BaseStructOutput = [
@@ -68,7 +69,8 @@ export type BaseStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
-  BigNumber
+  BigNumber,
+  PositionStructOutput
 ] & {
   name: number;
   owner: string;
@@ -76,6 +78,7 @@ export type BaseStructOutput = [
   defenseFactor: BigNumber;
   health: BigNumber;
   goldGenerationPerSecond: BigNumber;
+  position: PositionStructOutput;
 };
 
 export type TroopTypeStruct = {
