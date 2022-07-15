@@ -174,4 +174,8 @@ contract HelperFacet is UseStorage {
         emit Util.Repaired(msg.sender, _tile.occupantId, _troop.health);
         if (_troop.health == Util._getMaxHealth(_troop.troopTypeId)) emit Util.Recovered(msg.sender, _troopId);
     }
+
+    function isPlayerInitialized(address _player) external view returns (bool) {
+        return Util._isPlayerInitialized(_player);
+    }
 }
