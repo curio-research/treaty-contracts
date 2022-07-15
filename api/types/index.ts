@@ -1,4 +1,3 @@
-import { position } from './../../util/types/common';
 import { TILE_TYPE } from './../../tasks/util/types/index';
 
 export interface GameConfig {
@@ -6,5 +5,4 @@ export interface GameConfig {
   network: string;
   deploymentId: string;
   map: TILE_TYPE[][];
-  // basePositions: position[];
 }
