@@ -35,7 +35,7 @@ jobs:
           source-directory: contracts
           destination-github-username: Yijia-Chen
           destination-repository-name: engine-public
-          user-email: yijiachenmain@gmail.com
+          user-email: yijiachenmain@gmail.com # this should work
           user-name: Yijia-Chen
           destination-repository-username: curio-eth
           target-branch: main
