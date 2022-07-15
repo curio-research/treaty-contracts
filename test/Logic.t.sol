@@ -112,13 +112,34 @@ contract LogicTest is Test, DiamondDeployTest {
         }
     }
 
+    function testBattleBaseNoCapture() public {
+        Position memory _pos = Position({x: 7, y: 3});
+
+        vm.startPrank(deployer);
+        helper.spawnTroop(_pos, player1, destroyerTroopTypeId);
+        vm.stopPrank();
+
+        vm.warp(3);
+        vm.prank(player1);
+        engine.march(1, player2Pos);
+
+        Base memory _targetBase = getter.getBaseAt(player2Pos);
+        assertEq(_targetBase.health, 0);
+        assertEq(_targetBase.owner, player2);
+        assertEq(getter.getTileAt(player2Pos).occupantId, NULL);
+
+        Troop memory _troop = getter.getTroopAt(_pos);
+        assertEq(_troop.owner, player1);
+        assertEq(_troop.troopTypeId, destroyerTroopTypeId);
+        assertEq(_troop.lastLargeActionTaken, 3);
+    }
+
     function testCaptureBaseFailure() public {
         vm.startPrank(deployer);
         helper.transferBaseOwnership(Position({x: 5, y: 1}), player1);
         helper.spawnTroop(Position({x: 5, y: 1}), player1, armyTroopTypeId);
         uint256 _armyId = initTroopNonce;
         helper.spawnTroop(Position({x: 7, y: 3}), player1, destroyerTroopTypeId);
-        // uint256 _destroyerId = initTroopNonce + 1;
         vm.stopPrank();
 
         vm.warp(2);
