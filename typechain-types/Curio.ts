@@ -244,6 +244,7 @@ export interface CurioInterface extends utils.Interface {
     "facetFunctionSelectors(address)": FunctionFragment;
     "facets()": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
+    "deleteTroop(uint256)": FunctionFragment;
     "initializePlayer((uint256,uint256))": FunctionFragment;
     "march(uint256,(uint256,uint256))": FunctionFragment;
     "purchaseTroop((uint256,uint256),uint256)": FunctionFragment;
@@ -321,6 +322,10 @@ export interface CurioInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "supportsInterface",
     values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "deleteTroop",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "initializePlayer",
@@ -547,6 +552,10 @@ export interface CurioInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "facets", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "deleteTroop",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -930,6 +939,11 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    deleteTroop(
+      _troopId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     initializePlayer(
       _pos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1223,6 +1237,11 @@ export interface Curio extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  deleteTroop(
+    _troopId: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   initializePlayer(
     _pos: PositionStruct,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -1512,6 +1531,11 @@ export interface Curio extends BaseContract {
       _interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    deleteTroop(
+      _troopId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     initializePlayer(
       _pos: PositionStruct,
@@ -1938,6 +1962,11 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    deleteTroop(
+      _troopId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     initializePlayer(
       _pos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -2213,6 +2242,11 @@ export interface Curio extends BaseContract {
     supportsInterface(
       _interfaceId: BytesLike,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    deleteTroop(
+      _troopId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     initializePlayer(

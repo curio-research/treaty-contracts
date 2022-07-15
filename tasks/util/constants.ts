@@ -30,8 +30,8 @@ export const NUM_INIT_TERRAIN_TYPES = 5;
 export const INIT_BATCH_SIZE = 100;
 export const INIT_PLAYER_BALANCE = 50;
 export const DEFAULT_BASE_GOLD_GENERATION_PER_SECOND = 2;
-export const MAX_BASE_COUNT_PER_PLAYER = 20;
-export const MAX_TROOP_COUNT_PER_PLAYER = 30;
+export const MAX_BASE_COUNT_PER_PLAYER = 30;
+export const MAX_TROOP_COUNT_PER_PLAYER = 100000;
 export const MAX_PLAYER_COUNT = 20;
 
 export const TROOP_TYPES: TroopTypeStruct[] = [

@@ -6,91 +6,6 @@ import "test/DiamondDeploy.t.sol";
 
 contract LogicTest is Test, DiamondDeployTest {
     // ----------------------------------------------------------
-    // PURCHASE TESTS
-    // ----------------------------------------------------------
-
-    function testPurchaseTroopFailure() public {
-        // fail: purchase by inactive address
-        vm.expectRevert(bytes("CURIO: Player is inactive"));
-        engine.purchaseTroop(Position({x: 100, y: 50}), armyTroopTypeId);
-
-        // fail: purchase on invalid location
-        vm.prank(player2);
-        vm.expectRevert(bytes("CURIO: Out of bound"));
-        engine.purchaseTroop(Position({x: 6000, y: 6000}), armyTroopTypeId);
-
-        // fail: player2 attempting to produce in other's base
-        vm.prank(player2);
-        vm.expectRevert(bytes("CURIO: Can only purchase in own base"));
-        engine.purchaseTroop(player1Pos, armyTroopTypeId);
-
-        // fail: player3 in a city attempting to purchase a troop transport (water troop)
-        vm.prank(player3);
-        vm.expectRevert(bytes("CURIO: Only ports can purchase water troops"));
-        engine.purchaseTroop(player3Pos, troopTransportTroopTypeId);
-
-        // fail: player1 attempting to purchase a troop over budget
-        vm.prank(player1);
-        vm.expectRevert(bytes("CURIO: Insufficient balance"));
-        engine.purchaseTroop(player1Pos, battleshipTroopTypeId);
-
-        // fail: player1 finish producing troop on an occupied base
-        vm.prank(deployer);
-        helper.spawnTroop(player1Pos, player1, armyTroopTypeId);
-        vm.prank(player1);
-        vm.expectRevert(bytes("CURIO: Base occupied by another troop"));
-        engine.purchaseTroop(player1Pos, troopTransportTroopTypeId);
-    }
-
-    function testPurchaseTroop() public {
-        assertEq(getter.getPlayer(player1).balance, 20);
-        assertEq(getter.getPlayer(player1).numOwnedTroops, 0);
-
-        // player1 purchase troop transport
-        vm.startPrank(player1);
-        assertEq(getter.getPlayer(player1).totalTroopExpensePerUpdate, 0);
-        engine.purchaseTroop(player1Pos, troopTransportTroopTypeId);
-
-        // success: verify troop's basic information
-        Troop memory _troop = getter.getTroopAt(player1Pos);
-        assertEq(_troop.owner, player1);
-        assertEq(_troop.troopTypeId, troopTransportTroopTypeId);
-        assertEq(_troop.pos.x, player1Pos.x);
-        assertEq(_troop.pos.y, player1Pos.y);
-
-        // success: verify that troop ID was registered correctly
-        _troop = getter.getTroop(initTroopNonce);
-        assertEq(_troop.pos.x, player1Pos.x);
-        assertEq(_troop.pos.y, player1Pos.y);
-
-        // success: verify the troopType is correct
-        TroopType memory _troopType = getter.getTroopType(_troop.troopTypeId);
-        assertTrue(!_troopType.isLandTroop);
-
-        // success: verify balance and troop count
-        assertEq(getter.getPlayer(player1).balance, 20 - 14);
-        assertEq(getter.getPlayer(player1).totalGoldGenerationPerUpdate, 5);
-        assertEq(getter.getPlayer(player1).totalTroopExpensePerUpdate, 1);
-        assertEq(getter.getPlayer(player1).numOwnedTroops, 1);
-
-        // success: purchase another troop
-        vm.warp(3);
-        engine.march(initTroopNonce, Position({x: 7, y: 1}));
-        engine.purchaseTroop(player1Pos, troopTransportTroopTypeId);
-
-        // success: verify troop's basic information
-        _troop = getter.getTroopAt(player1Pos);
-        assertEq(_troop.owner, player1);
-        assertEq(_troop.troopTypeId, troopTransportTroopTypeId);
-        assertEq(_troop.pos.x, player1Pos.x);
-        assertEq(_troop.pos.y, player1Pos.y);
-
-        assertEq(getter.getPlayer(player1).balance, 6 + 2 * (5 - 1) - 14);
-
-        vm.stopPrank();
-    }
-
-    // ----------------------------------------------------------
     // MARCH TESTS
     // ----------------------------------------------------------
 
@@ -197,13 +112,53 @@ contract LogicTest is Test, DiamondDeployTest {
         }
     }
 
+    function testBattleBaseNoCapture() public {
+        Position memory _pos1 = Position({x: 7, y: 3});
+        Position memory _pos2 = Position({x: 5, y: 3});
+
+        vm.startPrank(deployer);
+        helper.spawnTroop(_pos1, player1, destroyerTroopTypeId);
+        helper.transferBaseOwnership(Position({x: 5, y: 3}), player1);
+        helper.spawnTroop(_pos2, player1, armyTroopTypeId);
+        vm.stopPrank();
+
+        vm.warp(3);
+        vm.prank(player1);
+        engine.march(1, player2Pos);
+
+        Base memory _targetBase = getter.getBaseAt(player2Pos);
+        assertEq(_targetBase.health, 0);
+        assertEq(_targetBase.owner, player2);
+        assertEq(getter.getTileAt(player2Pos).occupantId, NULL);
+        Troop memory _destroyer = getter.getTroop(1);
+        assertEq(_destroyer.owner, player1);
+        assertEq(_destroyer.troopTypeId, destroyerTroopTypeId);
+        assertEq(_destroyer.lastLargeActionTaken, 3);
+        assertEq(_destroyer.troopTypeId, destroyerTroopTypeId);
+
+        vm.warp(4);
+        vm.prank(player1);
+        vm.expectRevert(bytes("CURIO: Can only capture base with land troop"));
+        engine.march(1, player2Pos);
+
+        vm.prank(player1);
+        engine.march(2, player2Pos);
+
+        _targetBase = getter.getBaseAt(player2Pos);
+        assertEq(_targetBase.health, 1);
+        assertEq(_targetBase.owner, player1);
+        assertEq(getter.getTileAt(player2Pos).occupantId, 2);
+        Troop memory _army = getter.getTroopAt(player2Pos);
+        assertEq(_army.health, 1);
+        assertEq(_army.owner, player1);
+    }
+
     function testCaptureBaseFailure() public {
         vm.startPrank(deployer);
         helper.transferBaseOwnership(Position({x: 5, y: 1}), player1);
         helper.spawnTroop(Position({x: 5, y: 1}), player1, armyTroopTypeId);
         uint256 _armyId = initTroopNonce;
         helper.spawnTroop(Position({x: 7, y: 3}), player1, destroyerTroopTypeId);
-        // uint256 _destroyerId = initTroopNonce + 1;
         vm.stopPrank();
 
         vm.warp(2);
@@ -214,6 +169,90 @@ contract LogicTest is Test, DiamondDeployTest {
         vm.startPrank(player1);
         vm.expectRevert(bytes("CURIO: Target not in firing range"));
         engine.march(_armyId, player2Pos);
+        vm.stopPrank();
+    }
+
+    // ----------------------------------------------------------
+    // PURCHASE TESTS
+    // ----------------------------------------------------------
+    function testPurchaseTroopFailure() public {
+        // fail: purchase by inactive address
+        vm.expectRevert(bytes("CURIO: Player is inactive"));
+        engine.purchaseTroop(Position({x: 100, y: 50}), armyTroopTypeId);
+
+        // fail: purchase on invalid location
+        vm.prank(player2);
+        vm.expectRevert(bytes("CURIO: Out of bound"));
+        engine.purchaseTroop(Position({x: 6000, y: 6000}), armyTroopTypeId);
+
+        // fail: player2 attempting to produce in other's base
+        vm.prank(player2);
+        vm.expectRevert(bytes("CURIO: Can only purchase in own base"));
+        engine.purchaseTroop(player1Pos, armyTroopTypeId);
+
+        // fail: player3 in a city attempting to purchase a troop transport (water troop)
+        vm.prank(player3);
+        vm.expectRevert(bytes("CURIO: Only ports can purchase water troops"));
+        engine.purchaseTroop(player3Pos, troopTransportTroopTypeId);
+
+        // fail: player1 attempting to purchase a troop over budget
+        vm.prank(player1);
+        vm.expectRevert(bytes("CURIO: Insufficient balance (consider deleting some troops!)"));
+        engine.purchaseTroop(player1Pos, battleshipTroopTypeId);
+
+        // fail: player1 finish producing troop on an occupied base
+        vm.prank(deployer);
+        helper.spawnTroop(player1Pos, player1, armyTroopTypeId);
+        vm.prank(player1);
+        vm.expectRevert(bytes("CURIO: Base occupied by another troop"));
+        engine.purchaseTroop(player1Pos, troopTransportTroopTypeId);
+    }
+
+    function testPurchaseTroop() public {
+        assertEq(getter.getPlayer(player1).balance, 20);
+        assertEq(getter.getPlayer(player1).numOwnedTroops, 0);
+
+        // player1 purchase troop transport
+        vm.startPrank(player1);
+        assertEq(getter.getPlayer(player1).totalTroopExpensePerUpdate, 0);
+        engine.purchaseTroop(player1Pos, troopTransportTroopTypeId);
+
+        // success: verify troop's basic information
+        Troop memory _troop = getter.getTroopAt(player1Pos);
+        assertEq(_troop.owner, player1);
+        assertEq(_troop.troopTypeId, troopTransportTroopTypeId);
+        assertEq(_troop.pos.x, player1Pos.x);
+        assertEq(_troop.pos.y, player1Pos.y);
+
+        // success: verify that troop ID was registered correctly
+        _troop = getter.getTroop(initTroopNonce);
+        assertEq(_troop.pos.x, player1Pos.x);
+        assertEq(_troop.pos.y, player1Pos.y);
+
+        // success: verify the troopType is correct
+        TroopType memory _troopType = getter.getTroopType(_troop.troopTypeId);
+        assertTrue(!_troopType.isLandTroop);
+
+        // success: verify balance and troop count
+        assertEq(getter.getPlayer(player1).balance, 20 - 14);
+        assertEq(getter.getPlayer(player1).totalGoldGenerationPerUpdate, 5);
+        assertEq(getter.getPlayer(player1).totalTroopExpensePerUpdate, 1);
+        assertEq(getter.getPlayer(player1).numOwnedTroops, 1);
+
+        // success: purchase another troop
+        vm.warp(3);
+        engine.march(initTroopNonce, Position({x: 7, y: 1}));
+        engine.purchaseTroop(player1Pos, troopTransportTroopTypeId);
+
+        // success: verify troop's basic information
+        _troop = getter.getTroopAt(player1Pos);
+        assertEq(_troop.owner, player1);
+        assertEq(_troop.troopTypeId, troopTransportTroopTypeId);
+        assertEq(_troop.pos.x, player1Pos.x);
+        assertEq(_troop.pos.y, player1Pos.y);
+
+        assertEq(getter.getPlayer(player1).balance, 6 + 2 * (5 - 1) - 14);
+
         vm.stopPrank();
     }
 
@@ -303,6 +342,48 @@ contract LogicTest is Test, DiamondDeployTest {
         }
 
         vm.stopPrank();
+    }
+
+    // ----------------------------------------------------------
+    // DELETE TROOP TESTS
+    // ----------------------------------------------------------
+
+    function testDeleteTroop() public {
+        assertEq(block.timestamp, 1);
+
+        vm.startPrank(deployer);
+        helper.spawnTroop(Position({x: 7, y: 2}), player1, destroyerTroopTypeId);
+        helper.spawnTroop(Position({x: 7, y: 3}), player1, troopTransportTroopTypeId);
+        vm.stopPrank();
+
+        Player memory _player1Info = getter.getPlayer(player1);
+        assertEq(_player1Info.numOwnedTroops, 2);
+        assertEq(_player1Info.totalTroopExpensePerUpdate, 2);
+        assertEq(_player1Info.balance, 20);
+
+        vm.warp(2);
+        helper.updatePlayerBalance(player1);
+        _player1Info = getter.getPlayer(player1);
+        assertEq(_player1Info.balance, 23);
+
+        vm.prank(player2);
+        vm.expectRevert(bytes("CURIO: Can only delete own troop"));
+        engine.deleteTroop(1);
+
+        vm.prank(player1);
+        engine.deleteTroop(1);
+        _player1Info = getter.getPlayer(player1);
+        Troop memory _firstDestroyer = getter.getTroop(1);
+        assertEq(_firstDestroyer.owner, NULL_ADDR);
+        assertEq(_firstDestroyer.health, 0);
+        assertEq(_firstDestroyer.pos.y, 0);
+        assertEq(_player1Info.numOwnedTroops, 1);
+        assertEq(_player1Info.totalTroopExpensePerUpdate, 1);
+
+        vm.warp(3);
+        helper.updatePlayerBalance(player1);
+        _player1Info = getter.getPlayer(player1);
+        assertEq(_player1Info.balance, 27);
     }
 
     // ----------------------------------------------------------------
