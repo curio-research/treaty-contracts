@@ -192,9 +192,9 @@ contract EngineFacet is UseStorage {
         Tile memory _targetTile = Util._getTileAt(_targetPos);
         require(_targetTile.baseId != NULL, "CURIO: No target to attack");
 
-        Base memory _targetBase;
-        _targetBase = gs().baseIdMap[_targetTile.baseId];
+        Base memory _targetBase = gs().baseIdMap[_targetTile.baseId];
         require(_targetBase.owner != msg.sender, "CURIO: Cannot attack own base");
+        require(Util._isLandTroop(_troop.troopTypeId) || _targetBase.health > 0, "CURIO: Can only capture base with land troop");
 
         // Exchange fire until one side dies
         uint256 _salt = 0;

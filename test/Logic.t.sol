@@ -113,10 +113,13 @@ contract LogicTest is Test, DiamondDeployTest {
     }
 
     function testBattleBaseNoCapture() public {
-        Position memory _pos = Position({x: 7, y: 3});
+        Position memory _pos1 = Position({x: 7, y: 3});
+        Position memory _pos2 = Position({x: 5, y: 3});
 
         vm.startPrank(deployer);
-        helper.spawnTroop(_pos, player1, destroyerTroopTypeId);
+        helper.spawnTroop(_pos1, player1, destroyerTroopTypeId);
+        helper.transferBaseOwnership(Position({x: 5, y: 3}), player1);
+        helper.spawnTroop(_pos2, player1, armyTroopTypeId);
         vm.stopPrank();
 
         vm.warp(3);
@@ -127,11 +130,27 @@ contract LogicTest is Test, DiamondDeployTest {
         assertEq(_targetBase.health, 0);
         assertEq(_targetBase.owner, player2);
         assertEq(getter.getTileAt(player2Pos).occupantId, NULL);
+        Troop memory _destroyer = getter.getTroop(1);
+        assertEq(_destroyer.owner, player1);
+        assertEq(_destroyer.troopTypeId, destroyerTroopTypeId);
+        assertEq(_destroyer.lastLargeActionTaken, 3);
+        assertEq(_destroyer.troopTypeId, destroyerTroopTypeId);
 
-        Troop memory _troop = getter.getTroopAt(_pos);
-        assertEq(_troop.owner, player1);
-        assertEq(_troop.troopTypeId, destroyerTroopTypeId);
-        assertEq(_troop.lastLargeActionTaken, 3);
+        vm.warp(4);
+        vm.prank(player1);
+        vm.expectRevert(bytes("CURIO: Can only capture base with land troop"));
+        engine.march(1, player2Pos);
+
+        vm.prank(player1);
+        engine.march(2, player2Pos);
+
+        _targetBase = getter.getBaseAt(player2Pos);
+        assertEq(_targetBase.health, 1);
+        assertEq(_targetBase.owner, player1);
+        assertEq(getter.getTileAt(player2Pos).occupantId, 2);
+        Troop memory _army = getter.getTroopAt(player2Pos);
+        assertEq(_army.health, 1);
+        assertEq(_army.owner, player1);
     }
 
     function testCaptureBaseFailure() public {
