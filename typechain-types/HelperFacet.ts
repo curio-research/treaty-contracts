@@ -27,7 +27,6 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
 export interface HelperFacetInterface extends utils.Interface {
   functions: {
     "bulkInitializeTiles((uint256,uint256)[])": FunctionFragment;
-    "initializePlayer((uint256,uint256),address)": FunctionFragment;
     "pauseGame()": FunctionFragment;
     "reactivatePlayer(address)": FunctionFragment;
     "repair((uint256,uint256))": FunctionFragment;
@@ -41,10 +40,6 @@ export interface HelperFacetInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "bulkInitializeTiles",
     values: [PositionStruct[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "initializePlayer",
-    values: [PositionStruct, string]
   ): string;
   encodeFunctionData(functionFragment: "pauseGame", values?: undefined): string;
   encodeFunctionData(
@@ -78,10 +73,6 @@ export interface HelperFacetInterface extends utils.Interface {
 
   decodeFunctionResult(
     functionFragment: "bulkInitializeTiles",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "initializePlayer",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "pauseGame", data: BytesLike): Result;
@@ -140,12 +131,6 @@ export interface HelperFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    initializePlayer(
-      _pos: PositionStruct,
-      _player: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     pauseGame(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -190,12 +175,6 @@ export interface HelperFacet extends BaseContract {
 
   bulkInitializeTiles(
     _positions: PositionStruct[],
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  initializePlayer(
-    _pos: PositionStruct,
-    _player: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -246,12 +225,6 @@ export interface HelperFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    initializePlayer(
-      _pos: PositionStruct,
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     pauseGame(overrides?: CallOverrides): Promise<void>;
 
     reactivatePlayer(_player: string, overrides?: CallOverrides): Promise<void>;
@@ -289,12 +262,6 @@ export interface HelperFacet extends BaseContract {
   estimateGas: {
     bulkInitializeTiles(
       _positions: PositionStruct[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    initializePlayer(
-      _pos: PositionStruct,
-      _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -343,12 +310,6 @@ export interface HelperFacet extends BaseContract {
   populateTransaction: {
     bulkInitializeTiles(
       _positions: PositionStruct[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    initializePlayer(
-      _pos: PositionStruct,
-      _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
 import path from 'path';
-import { HardhatArguments, HardhatRuntimeEnvironment, RunSuperFunction, TaskArguments } from 'hardhat/types';
+import { HardhatArguments, HardhatRuntimeEnvironment } from 'hardhat/types';
 import { task } from 'hardhat/config';
 
 task('port', 'compile and port contracts over to frontend repo').setAction(async (args: HardhatArguments, hre: HardhatRuntimeEnvironment) => {
@@ -21,10 +21,10 @@ task('port', 'compile and port contracts over to frontend repo').setAction(async
     await portFile('/factories/Curio__factory.ts');
 
     // copy game configs
-    const configFileDir = path.join(__dirname, '/game.config.json');
-    const configClientDir = path.join(__dirname, '../../frontend/src/game.config.json');
+    const configFilePath = path.join(__dirname, '/game.config.json');
+    const configClientPath = path.join(__dirname, '../../frontend/src/game.config.json');
 
-    await fs.copyFileSync(configFileDir, configClientDir);
+    await fs.copyFileSync(configFilePath, configClientPath);
     console.log('✦ Porting complete!');
   } catch (err: any) {
     console.log(err.message);

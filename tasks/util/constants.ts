@@ -6,7 +6,7 @@ export const LOCALHOST_RPC_URL = 'http://127.0.0.1:8545/';
 export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 
 // ----------------------------------------------------------
-// Game constants (source of truth)
+// GAME CONSTANTS
 // ----------------------------------------------------------
 
 export const LOCAL_MAP_INPUT: MapInput = {
@@ -16,10 +16,10 @@ export const LOCAL_MAP_INPUT: MapInput = {
   numCities: 15,
 };
 export const SANDBOX_MAP_INPUT: MapInput = {
-  width: 200,
-  height: 150,
-  numPorts: 1200,
-  numCities: 300,
+  width: 70,
+  height: 70,
+  numPorts: 200,
+  numCities: 50,
 };
 export const MAP_INTERVAL = 10;
 export const COMBAT_EFFICIENCY = 50;
@@ -32,7 +32,7 @@ export const INIT_PLAYER_BALANCE = 50;
 export const DEFAULT_BASE_GOLD_GENERATION_PER_SECOND = 2;
 export const MAX_BASE_COUNT_PER_PLAYER = 20;
 export const MAX_TROOP_COUNT_PER_PLAYER = 30;
-export const MAX_PLAYER_COUNT = 50;
+export const MAX_PLAYER_COUNT = 20;
 
 export const TROOP_TYPES: TroopTypeStruct[] = [
   {
@@ -122,7 +122,7 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): W
 };
 
 // ----------------------------------------------------------
-// Rendering constants
+// RENDERING CONSTANTS
 // ----------------------------------------------------------
 
 export const RENDER_CONSTANTS: RenderInput = {
@@ -136,7 +136,7 @@ export const RENDER_CONSTANTS: RenderInput = {
 };
 
 // ------------------------------------------------
-// Functions
+// FUNCTIONS
 // ------------------------------------------------
 
 export const getTroopNames = (): string[] => {
@@ -146,7 +146,3 @@ export const getTroopNames = (): string[] => {
 export const getTroopTypeIndexByName = (troopTypes: TroopTypeStruct[], name: TROOP_NAME): number => {
   return troopTypes.indexOf(troopTypes.filter((item) => item.name === name)[0]);
 };
-
-// ------------------------------------------------
-// Default maps
-// ------------------------------------------------
