@@ -12,7 +12,7 @@ import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
 import { Position, TILE_TYPE, TROOP_NAME } from './util/types';
 import { encodeTileMap, generateGameMaps } from './util/mapHelper';
 import { GameConfig } from '../api/types';
-import { MEDITERRAINEAN_MAP, ligmapTileOutput } from './util/mapLibrary';
+import { MEDITERRAINEAN_MAP, testingMapTileOutput } from './util/mapLibrary';
 import { WorldConstantsStruct } from '../typechain-types/Curio';
 
 /**
@@ -67,7 +67,7 @@ task('deploy', 'deploy contracts')
       let worldConstants: WorldConstantsStruct;
 
       if (fixMap) {
-        if (mapName === 'MEDITERRAINEAN') {
+        if (mapName.toLowerCase() === 'mediterranean') {
           // hardcoded map: Mediterrainean 42x18
           tileMap = MEDITERRAINEAN_MAP.tileMap;
           portTiles = MEDITERRAINEAN_MAP.portTiles;
@@ -82,15 +82,15 @@ task('deploy', 'deploy contracts')
           cityTiles = tileMapOutput.cityTiles;
           worldConstants = generateWorldConstants(player1.address, { width: tileMap.length, height: tileMap[0].length, numPorts: portTiles.length, numCities: cityTiles.length });
         } else {
-          mapName = 'LIGMAP';
-          tileMap = ligmapTileOutput.tileMap;
-          portTiles = ligmapTileOutput.portTiles;
-          cityTiles = ligmapTileOutput.cityTiles;
+          mapName = 'testingMap';
+          tileMap = testingMapTileOutput.tileMap;
+          portTiles = testingMapTileOutput.portTiles;
+          cityTiles = testingMapTileOutput.cityTiles;
           worldConstants = generateWorldConstants(player1.address, { width: tileMap.length, height: tileMap[0].length, numPorts: portTiles.length, numCities: cityTiles.length });
         }
       } else {
         // two modes of randomly-generated maps: local (small) or sandbox (big)
-        const mapInput = mapName === 'SANDBOX' ? SANDBOX_MAP_INPUT : LOCAL_MAP_INPUT;
+        const mapInput = mapName.toLowerCase() === 'sandbox' ? SANDBOX_MAP_INPUT : LOCAL_MAP_INPUT;
         const gameMapOutput = generateGameMaps(mapInput, RENDER_CONSTANTS);
         tileMap = gameMapOutput.tileMap;
         portTiles = gameMapOutput.portTiles;
@@ -138,7 +138,7 @@ task('deploy', 'deploy contracts')
         let x: number;
         let y: number;
 
-        if (fixMap && mapName === 'LIGMAP') {
+        if (fixMap && mapName === 'testingMap') {
           // Primary setting for client development
           const player1Pos = { x: 2, y: 4 };
           const player2Pos = { x: 4, y: 2 };
