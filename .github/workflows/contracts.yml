@@ -1,5 +1,10 @@
 name: Test Hook
-on: [push]
+on:
+  push:
+    branches: [release]
+  pull_request:
+    branches: [release]
+
 jobs:
   foundry-test:
     name: Foundry tests
@@ -34,10 +39,10 @@ jobs:
         with:
           source-directory: .
           destination-github-username: curio-bot
-          destination-repository-name: test-release # `contracts` for release and `test-release` for test
+          destination-repository-name: contracts
           user-email: yijia@curio.gg
           user-name: curio-bot
           destination-repository-username: curio-research
           target-branch: release
           target-directory: /
-          commit-message: Release
+          commit-message: release
