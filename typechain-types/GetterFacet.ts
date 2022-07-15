@@ -60,6 +60,7 @@ export type BaseStruct = {
   defenseFactor: BigNumberish;
   health: BigNumberish;
   goldGenerationPerSecond: BigNumberish;
+  pos: PositionStruct;
 };
 
 export type BaseStructOutput = [
@@ -68,7 +69,8 @@ export type BaseStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
-  BigNumber
+  BigNumber,
+  PositionStructOutput
 ] & {
   name: number;
   owner: string;
@@ -76,6 +78,7 @@ export type BaseStructOutput = [
   defenseFactor: BigNumber;
   health: BigNumber;
   goldGenerationPerSecond: BigNumber;
+  pos: PositionStructOutput;
 };
 
 export type TroopTypeStruct = {
@@ -169,7 +172,6 @@ export type WorldConstantsStruct = {
   worldHeight: BigNumberish;
   numPorts: BigNumberish;
   numCities: BigNumberish;
-  mapInterval: BigNumberish;
   combatEfficiency: BigNumberish;
   numInitTerrainTypes: BigNumberish;
   initBatchSize: BigNumberish;
@@ -193,7 +195,6 @@ export type WorldConstantsStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
-  BigNumber,
   BigNumber
 ] & {
   admin: string;
@@ -201,7 +202,6 @@ export type WorldConstantsStructOutput = [
   worldHeight: BigNumber;
   numPorts: BigNumber;
   numCities: BigNumber;
-  mapInterval: BigNumber;
   combatEfficiency: BigNumber;
   numInitTerrainTypes: BigNumber;
   initBatchSize: BigNumber;
@@ -220,13 +220,14 @@ export interface GetterFacetInterface extends utils.Interface {
     "getBaseNonce()": FunctionFragment;
     "getBulkBase(uint256,uint256)": FunctionFragment;
     "getBulkTroopTypes(uint256,uint256)": FunctionFragment;
-    "getMapChunk((uint256,uint256))": FunctionFragment;
+    "getMapChunk((uint256,uint256),uint256)": FunctionFragment;
     "getPlayer(address)": FunctionFragment;
     "getTileAt((uint256,uint256))": FunctionFragment;
     "getTroop(uint256)": FunctionFragment;
     "getTroopAt((uint256,uint256))": FunctionFragment;
     "getTroopType(uint256)": FunctionFragment;
     "getWorldConstants()": FunctionFragment;
+    "isPlayerInitialized(address)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -255,7 +256,7 @@ export interface GetterFacetInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getMapChunk",
-    values: [PositionStruct]
+    values: [PositionStruct, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "getPlayer", values: [string]): string;
   encodeFunctionData(
@@ -277,6 +278,10 @@ export interface GetterFacetInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getWorldConstants",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isPlayerInitialized",
+    values: [string]
   ): string;
 
   decodeFunctionResult(
@@ -311,6 +316,10 @@ export interface GetterFacetInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getWorldConstants",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "isPlayerInitialized",
     data: BytesLike
   ): Result;
 
@@ -372,6 +381,7 @@ export interface GetterFacet extends BaseContract {
 
     getMapChunk(
       _startPos: PositionStruct,
+      _interval: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[TileStructOutput[], PositionStructOutput[]]>;
 
@@ -403,6 +413,11 @@ export interface GetterFacet extends BaseContract {
     getWorldConstants(
       overrides?: CallOverrides
     ): Promise<[WorldConstantsStructOutput]>;
+
+    isPlayerInitialized(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
   };
 
   bulkGetAllTroops(overrides?: CallOverrides): Promise<TroopStructOutput[]>;
@@ -433,6 +448,7 @@ export interface GetterFacet extends BaseContract {
 
   getMapChunk(
     _startPos: PositionStruct,
+    _interval: BigNumberish,
     overrides?: CallOverrides
   ): Promise<[TileStructOutput[], PositionStructOutput[]]>;
 
@@ -465,6 +481,11 @@ export interface GetterFacet extends BaseContract {
     overrides?: CallOverrides
   ): Promise<WorldConstantsStructOutput>;
 
+  isPlayerInitialized(
+    _player: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   callStatic: {
     bulkGetAllTroops(overrides?: CallOverrides): Promise<TroopStructOutput[]>;
 
@@ -494,6 +515,7 @@ export interface GetterFacet extends BaseContract {
 
     getMapChunk(
       _startPos: PositionStruct,
+      _interval: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[TileStructOutput[], PositionStructOutput[]]>;
 
@@ -525,6 +547,11 @@ export interface GetterFacet extends BaseContract {
     getWorldConstants(
       overrides?: CallOverrides
     ): Promise<WorldConstantsStructOutput>;
+
+    isPlayerInitialized(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
   };
 
   filters: {};
@@ -555,6 +582,7 @@ export interface GetterFacet extends BaseContract {
 
     getMapChunk(
       _startPos: PositionStruct,
+      _interval: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -581,6 +609,11 @@ export interface GetterFacet extends BaseContract {
     ): Promise<BigNumber>;
 
     getWorldConstants(overrides?: CallOverrides): Promise<BigNumber>;
+
+    isPlayerInitialized(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -612,6 +645,7 @@ export interface GetterFacet extends BaseContract {
 
     getMapChunk(
       _startPos: PositionStruct,
+      _interval: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -641,5 +675,10 @@ export interface GetterFacet extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getWorldConstants(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    isPlayerInitialized(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
   };
 }

@@ -26,7 +26,7 @@ library Util {
     event Death(address _player, uint256 _troopId);
     event GamePaused();
     event GameResumed();
-    event Moved(address _player, uint256 _troopId, uint256 _epoch, Position _startPos, Position _targetPos);
+    event Moved(address _player, uint256 _troopId, uint256 _timestamp, Position _startPos, Position _targetPos);
     event NewPlayer(address _player, Position _pos);
     event NewTroop(address _player, uint256 _troopId, Troop _troop, Position _pos);
     event PlayerInfo(address _addr, Player _player);
@@ -49,7 +49,7 @@ library Util {
         uint256 _terrainId = _encodedCol / _divFactor;
 
         if (_terrainId >= 3) {
-            BASE_NAME _baseName = _terrainId == 3 ? BASE_NAME.PORT : BASE_NAME.CITY; // temporary way to set base
+            BASE_NAME _baseName = _terrainId == 3 ? BASE_NAME.PORT : BASE_NAME.CITY;
             _addBase(_pos, _baseName);
             _terrainId -= 3;
         }
@@ -165,8 +165,9 @@ library Util {
             name: _baseName,
             attackFactor: 100,
             defenseFactor: 100,
-            health: 1, //
-            goldGenerationPerSecond: gs().worldConstants.defaultBaseGoldGenerationPerSecond
+            health: 1, // FIXME: change to base constants
+            goldGenerationPerSecond: gs().worldConstants.defaultBaseGoldGenerationPerSecond,
+            pos: _pos
         });
 
         uint256 _baseId = gs().baseNonce;
