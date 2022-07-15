@@ -32,7 +32,7 @@ jobs:
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
         with:
-          source-directory: contracts
+          source-directory: .
           destination-github-username: Yijia-Chen
           destination-repository-name: engine-public
           user-email: yijiachenmain@gmail.com
