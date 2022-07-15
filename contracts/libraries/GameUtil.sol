@@ -91,16 +91,14 @@ library Util {
         gs().map[_pos.x][_pos.y].terrain = TERRAIN(_terrainId);
     }
 
-    function _removeTroop(
-        address _owner,
-        Position memory _pos,
-        uint256 _troopId
-    ) public {
-        // TODO: consider whether or not to remove Troop from gs().troops
+    function _removeTroop(uint256 _troopId) public {
+        Troop memory _troop = _getTroop(_troopId);
+        address _owner = _troop.owner;
+        Position memory _pos = _troop.pos;
+
         uint256 _numOwnedTroops = gs().playerMap[_owner].numOwnedTroops;
         uint256 _totalTroopExpensePerUpdate = gs().playerMap[_owner].totalTroopExpensePerUpdate;
 
-        Troop memory _troop = _getTroop(_troopId);
         for (uint256 i = 0; i < _troop.cargoTroopIds.length; i++) {
             uint256 _cargoId = _troop.cargoTroopIds[i];
 

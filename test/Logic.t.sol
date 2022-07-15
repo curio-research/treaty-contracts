@@ -17,6 +17,44 @@ contract LogicTest is Test, DiamondDeployTest {
     event Repaired(address _player, uint256 _troopId, uint256 _health);
     event Recovered(address _player, uint256 _troopId);
 
+    function testDeleteTroop() public {
+        assertEq(block.timestamp, 1);
+
+        vm.startPrank(deployer);
+        helper.spawnTroop(Position({x: 7, y: 2}), player1, destroyerTroopTypeId);
+        helper.spawnTroop(Position({x: 7, y: 3}), player1, troopTransportTroopTypeId);
+        vm.stopPrank();
+
+        Player memory _player1Info = getter.getPlayer(player1);
+        assertEq(_player1Info.numOwnedTroops, 2);
+        assertEq(_player1Info.totalTroopExpensePerUpdate, 2);
+        assertEq(_player1Info.balance, 20);
+
+        vm.warp(2);
+        helper.updatePlayerBalance(player1);
+        _player1Info = getter.getPlayer(player1);
+        assertEq(_player1Info.balance, 23);
+
+        vm.prank(player2);
+        vm.expectRevert(bytes("CURIO: Can only delete own troop"));
+        engine.deleteTroop(1);
+
+        vm.prank(player1);
+        engine.deleteTroop(1);
+        _player1Info = getter.getPlayer(player1);
+        Troop memory _firstDestroyer = getter.getTroop(1);
+        assertEq(_firstDestroyer.owner, NULL_ADDR);
+        assertEq(_firstDestroyer.health, 0);
+        assertEq(_firstDestroyer.pos.y, 0);
+        assertEq(_player1Info.numOwnedTroops, 1);
+        assertEq(_player1Info.totalTroopExpensePerUpdate, 1);
+
+        vm.warp(3);
+        helper.updatePlayerBalance(player1);
+        _player1Info = getter.getPlayer(player1);
+        assertEq(_player1Info.balance, 27);
+    }
+
     // Purchase
     function testPurchaseTroopFailure() public {
         // fail: purchase by inactive address

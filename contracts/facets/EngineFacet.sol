@@ -5,6 +5,7 @@ import "contracts/libraries/Storage.sol";
 import {Util} from "contracts/libraries/GameUtil.sol";
 import {BASE_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop, TroopType} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
+import "forge-std/console.sol";
 
 /// @title Engine facet
 /// @notice Contains player functions including movement and battling
@@ -106,6 +107,18 @@ contract EngineFacet is UseStorage {
         emit Util.NewTroop(msg.sender, _troopId, _troop, _pos);
     }
 
+    /**
+     * Delete an owned troop (often to reduce expense).
+     * @param _troopId identifier for troop
+     */
+    function deleteTroop(uint256 _troopId) external {
+        require(Util._getTroop(_troopId).owner == msg.sender, "CURIO: Can only delete own troop");
+
+        Util._removeTroop(_troopId);
+
+        emit Util.Death(msg.sender, _troopId);
+    }
+
     /////////////////////////////////////////
     // Modules for march
     /////////////////////////////////////////
@@ -186,7 +199,7 @@ contract EngineFacet is UseStorage {
                     _troop.health -= 1;
                 } else {
                     _troop.health = 0;
-                    Util._removeTroop(msg.sender, _troop.pos, _troopId);
+                    Util._removeTroop(_troopId);
                     emit Util.Death(msg.sender, _troopId);
                 }
             }
@@ -194,6 +207,7 @@ contract EngineFacet is UseStorage {
 
         if (_targetBase.health == 0) {
             // Troop survives
+            console.log("BAAAASE");
             address _targetPlayer = _targetBase.owner;
             gs().troopIdMap[_troopId].health = _troop.health;
             gs().baseIdMap[_targetTile.baseId].health = 0;
@@ -251,7 +265,7 @@ contract EngineFacet is UseStorage {
                     _targetTroop.health -= _damagePerHit;
                 } else {
                     _targetTroop.health = 0;
-                    Util._removeTroop(_targetTroop.owner, _targetTroop.pos, _targetTile.occupantId);
+                    Util._removeTroop(_targetTile.occupantId);
                     emit Util.Death(_targetTroop.owner, _targetTile.occupantId);
                 }
             }
@@ -265,7 +279,7 @@ contract EngineFacet is UseStorage {
                     _troop.health -= Util._getDamagePerHit(_targetTroop.troopTypeId);
                 } else {
                     _troop.health = 0;
-                    Util._removeTroop(msg.sender, _troop.pos, _troopId);
+                    Util._removeTroop(_troopId);
                     emit Util.Death(msg.sender, _troopId);
                 }
             }
