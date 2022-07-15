@@ -39,5 +39,5 @@ jobs:
           user-name: Yijia-Chen
           destination-repository-username: curio-eth
           target-branch: main
-          target-directory: .
+          target-directory: /
           commit-message: See ORIGIN_COMMIT from $GITHUB_REF
