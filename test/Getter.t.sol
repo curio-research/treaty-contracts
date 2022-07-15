@@ -9,7 +9,9 @@ contract GetterTest is Test, DiamondDeployTest {
         vm.startPrank(deployer);
         helper.spawnTroop(Position({x: 1, y: 3}), player1, armyTroopTypeId);
         helper.spawnTroop(Position({x: 1, y: 4}), player1, armyTroopTypeId);
+        helper.transferBaseOwnership(Position({x: 2, y: 3}), player2);
         helper.spawnTroop(Position({x: 2, y: 3}), player2, armyTroopTypeId);
+        helper.transferBaseOwnership(Position({x: 2, y: 4}), player2);
         helper.spawnTroop(Position({x: 2, y: 4}), player2, armyTroopTypeId);
         helper.spawnTroop(Position({x: 7, y: 5}), player3, destroyerTroopTypeId);
         vm.stopPrank();

@@ -1,11 +1,14 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
+import "contracts/libraries/Storage.sol";
 import {BASE_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop, WorldConstants} from "contracts/libraries/Types.sol";
-import {LibStorage} from "contracts/libraries/Storage.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 
-// Note: Util functions generally do not verify correctness of conditions. Make sure to verify in higher-level functions such as those in Engine.
+/// @title Util library
+/// @notice Contains all events as well as lower-level setters and getters
+/// Util functions generally do not verify correctness of conditions. Make sure to verify in higher-level functions such as those in Engine.
+
 library Util {
     using SafeMath for uint256;
 
@@ -13,26 +16,47 @@ library Util {
         return LibStorage.gameStorage();
     }
 
+    // ----------------------------------------------------------
+    // EVENTS
+    // ----------------------------------------------------------
+
+    event AttackedBase(address _player, uint256 _troopId, Troop _troopInfo, uint256 _targetBaseId, Base _targetBaseInfo);
+    event AttackedTroop(address _player, uint256 _troopId, Troop _troopInfo, uint256 _targetTroopId, Troop _targetTroopInfo);
+    event BaseCaptured(address _player, uint256 _troopId, uint256 _baseId);
+    event Death(address _player, uint256 _troopId);
     event GamePaused();
     event GameResumed();
-    event PlayerReactivated(address _player);
-    event NewPlayer(address _player, Position _pos);
-    event UpdatePlayerBalance(address _player, uint256 _amount);
-    event PlayerInfo(address _addr, Player _player);
     event Moved(address _player, uint256 _troopId, uint256 _epoch, Position _startPos, Position _targetPos);
-    event AttackedTroop(address _player, uint256 _troopId, Troop _troopInfo, uint256 _targetTroopId, Troop _targetTroopInfo);
-    event AttackedBase(address _player, uint256 _troopId, Troop _troopInfo, uint256 _targetBaseId, Base _targetBaseInfo);
-    event Death(address _player, uint256 _troopId);
-    event BaseCaptured(address _player, uint256 _troopId, uint256 _baseId);
+    event NewPlayer(address _player, Position _pos);
     event NewTroop(address _player, uint256 _troopId, Troop _troop, Position _pos);
-    event Repaired(address _player, uint256 _troopId, uint256 _health);
+    event PlayerInfo(address _addr, Player _player);
+    event PlayerReactivated(address _player);
     event Recovered(address _player, uint256 _troopId);
+    event Repaired(address _player, uint256 _troopId, uint256 _health);
+    event UpdatePlayerBalance(address _player, uint256 _amount);
 
     // ----------------------------------------------------------
-    // Game-related
+    // SETTERS
     // ----------------------------------------------------------
 
-    // Setters
+    function _initializeTile(Position memory _pos) public {
+        WorldConstants memory _worldConstants = gs().worldConstants;
+        uint256 _batchSize = _worldConstants.initBatchSize;
+        uint256 _numInitTerrainTypes = _worldConstants.numInitTerrainTypes;
+
+        uint256 _encodedCol = gs().encodedColumnBatches[_pos.x][_pos.y / _batchSize] % (_numInitTerrainTypes**((_pos.y % _batchSize) + 1));
+        uint256 _divFactor = _numInitTerrainTypes**(_pos.y % _batchSize);
+        uint256 _terrainId = _encodedCol / _divFactor;
+
+        if (_terrainId >= 3) {
+            BASE_NAME _baseName = _terrainId == 3 ? BASE_NAME.PORT : BASE_NAME.CITY; // temporary way to set base
+            _addBase(_pos, _baseName);
+            _terrainId -= 3;
+        }
+
+        gs().map[_pos.x][_pos.y].isInitialized = true;
+        gs().map[_pos.x][_pos.y].terrain = TERRAIN(_terrainId);
+    }
 
     function _updatePlayerBalance(address _addr) public {
         Player memory _player = gs().playerMap[_addr];
@@ -46,7 +70,7 @@ library Util {
             uint256 _reduction = (_player.totalTroopExpensePerUpdate - _player.totalGoldGenerationPerUpdate) * _timeElapsed;
             if (_reduction >= _player.balance) {
                 _player.balance = 0;
-                _player.active = false; // optional
+                _player.active = false;
             } else {
                 _player.balance -= _reduction;
             }
@@ -54,8 +78,6 @@ library Util {
 
         _player.balanceLastUpdated = block.timestamp;
         gs().playerMap[_addr] = _player;
-
-        // emit UpdatePlayerBalance(_addr, _player.balance);
     }
 
     function _unloadTroopFromTransport(uint256 _troopTransportId, uint256 _cargoTroopId) public {
@@ -71,36 +93,14 @@ library Util {
         gs().troopIdMap[_troopTransportId].cargoTroopIds.pop();
     }
 
-    function _initializeTile(Position memory _pos) public {
-        WorldConstants memory _worldConstants = gs().worldConstants;
-        uint256 _batchSize = _worldConstants.initBatchSize;
-        uint256 _numInitTerrainTypes = _worldConstants.numInitTerrainTypes;
+    function _removeTroop(uint256 _troopId) public {
+        Troop memory _troop = _getTroop(_troopId);
+        address _owner = _troop.owner;
+        Position memory _pos = _troop.pos;
 
-        uint256 _encodedCol = gs().encodedColumnBatches[_pos.x][_pos.y / _batchSize] % (_numInitTerrainTypes**((_pos.y % _batchSize) + 1));
-        uint256 _divFactor = _numInitTerrainTypes**(_pos.y % _batchSize);
-        uint256 _terrainId = _encodedCol / _divFactor;
-
-        if (_terrainId >= 3) {
-            // Note: temporary way to set base
-            BASE_NAME _baseName = _terrainId == 3 ? BASE_NAME.PORT : BASE_NAME.CITY;
-            _addBase(_pos, _baseName);
-            _terrainId -= 3;
-        }
-
-        gs().map[_pos.x][_pos.y].isInitialized = true;
-        gs().map[_pos.x][_pos.y].terrain = TERRAIN(_terrainId);
-    }
-
-    function _removeTroop(
-        address _owner,
-        Position memory _pos,
-        uint256 _troopId
-    ) public {
-        // TODO: consider whether or not to remove Troop from gs().troops
         uint256 _numOwnedTroops = gs().playerMap[_owner].numOwnedTroops;
         uint256 _totalTroopExpensePerUpdate = gs().playerMap[_owner].totalTroopExpensePerUpdate;
 
-        Troop memory _troop = _getTroop(_troopId);
         for (uint256 i = 0; i < _troop.cargoTroopIds.length; i++) {
             uint256 _cargoId = _troop.cargoTroopIds[i];
 
@@ -133,14 +133,25 @@ library Util {
         require(_getPlayer(_owner).numOwnedTroops < gs().worldConstants.maxTroopCountPerPlayer, "CURIO: Max troop count exceeded");
 
         uint256[] memory _cargoTroopIds;
-        Troop memory _troop = Troop({owner: _owner, troopTypeId: _troopTypeId, lastMoved: block.timestamp, lastLargeActionTaken: 0, lastRepaired: block.timestamp, health: _getMaxHealth(_troopTypeId), pos: _pos, cargoTroopIds: _cargoTroopIds});
+        Troop memory _troop = Troop({
+            owner: _owner,
+            troopTypeId: _troopTypeId,
+            lastMoved: block.timestamp,
+            lastLargeActionTaken: 0,
+            lastRepaired: block.timestamp,
+            health: _getMaxHealth(_troopTypeId),
+            pos: _pos,
+            cargoTroopIds: _cargoTroopIds //
+        });
 
+        // Update map info
         uint256 _troopId = gs().troopNonce;
         gs().troopIds.push(_troopId);
         gs().troopIdMap[_troopId] = _troop;
         gs().troopNonce++;
         gs().map[_pos.x][_pos.y].occupantId = _troopId;
 
+        // Update gold info
         _updatePlayerBalance(_owner);
         gs().playerMap[_owner].numOwnedTroops++;
         gs().playerMap[_owner].totalTroopExpensePerUpdate += _getExpensePerSecond(_troopTypeId);
@@ -154,7 +165,7 @@ library Util {
             name: _baseName,
             attackFactor: 100,
             defenseFactor: 100,
-            health: 1, // FIXME: change to base constants
+            health: 1, //
             goldGenerationPerSecond: gs().worldConstants.defaultBaseGoldGenerationPerSecond
         });
 
@@ -167,7 +178,9 @@ library Util {
         return _baseId;
     }
 
-    // Getters
+    // ----------------------------------------------------------
+    // GETTERS
+    // ----------------------------------------------------------
 
     function _isPlayerInitialized(address _player) public view returns (bool) {
         address[] memory _allPlayers = gs().players;
@@ -175,6 +188,10 @@ library Util {
             if (_allPlayers[i] == _player) return true;
         }
         return false;
+    }
+
+    function _getPlayerCount() public view returns (uint256) {
+        return gs().players.length;
     }
 
     function _getPlayer(address _player) public view returns (Player memory) {
@@ -273,10 +290,6 @@ library Util {
     function _random(uint256 _max, uint256 _salt) public view returns (uint256) {
         return uint256(keccak256(abi.encode(block.timestamp, block.difficulty, _salt))) % _max;
     }
-
-    // ----------------------------------------------------------
-    // Platonian
-    // ----------------------------------------------------------
 
     function _samePos(Position memory _p1, Position memory _p2) public pure returns (bool) {
         return _p1.x == _p2.x && _p1.y == _p2.y;

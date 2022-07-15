@@ -201,10 +201,12 @@ export type WorldConstantsStruct = {
   defaultBaseGoldGenerationPerSecond: BigNumberish;
   maxBaseCountPerPlayer: BigNumberish;
   maxTroopCountPerPlayer: BigNumberish;
+  maxPlayerCount: BigNumberish;
 };
 
 export type WorldConstantsStructOutput = [
   string,
+  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -231,6 +233,7 @@ export type WorldConstantsStructOutput = [
   defaultBaseGoldGenerationPerSecond: BigNumber;
   maxBaseCountPerPlayer: BigNumber;
   maxTroopCountPerPlayer: BigNumber;
+  maxPlayerCount: BigNumber;
 };
 
 export interface CurioInterface extends utils.Interface {
@@ -241,6 +244,8 @@ export interface CurioInterface extends utils.Interface {
     "facetFunctionSelectors(address)": FunctionFragment;
     "facets()": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
+    "deleteTroop(uint256)": FunctionFragment;
+    "initializePlayer((uint256,uint256))": FunctionFragment;
     "march(uint256,(uint256,uint256))": FunctionFragment;
     "purchaseTroop((uint256,uint256),uint256)": FunctionFragment;
     "bulkGetAllTroops()": FunctionFragment;
@@ -257,7 +262,6 @@ export interface CurioInterface extends utils.Interface {
     "getTroopType(uint256)": FunctionFragment;
     "getWorldConstants()": FunctionFragment;
     "bulkInitializeTiles((uint256,uint256)[])": FunctionFragment;
-    "initializePlayer((uint256,uint256),address)": FunctionFragment;
     "pauseGame()": FunctionFragment;
     "reactivatePlayer(address)": FunctionFragment;
     "repair((uint256,uint256))": FunctionFragment;
@@ -282,6 +286,7 @@ export interface CurioInterface extends utils.Interface {
     "_getMovementCooldown(uint256)": FunctionFragment;
     "_getPlayer(address)": FunctionFragment;
     "_getPlayerBalance(address)": FunctionFragment;
+    "_getPlayerCount()": FunctionFragment;
     "_getTileAt((uint256,uint256))": FunctionFragment;
     "_getTotalGoldGenerationPerUpdate(address)": FunctionFragment;
     "_getTroop(uint256)": FunctionFragment;
@@ -317,6 +322,14 @@ export interface CurioInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "supportsInterface",
     values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "deleteTroop",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "initializePlayer",
+    values: [PositionStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "march",
@@ -378,10 +391,6 @@ export interface CurioInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "bulkInitializeTiles",
     values: [PositionStruct[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "initializePlayer",
-    values: [PositionStruct, string]
   ): string;
   encodeFunctionData(functionFragment: "pauseGame", values?: undefined): string;
   encodeFunctionData(
@@ -471,6 +480,10 @@ export interface CurioInterface extends utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
+    functionFragment: "_getPlayerCount",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "_getTileAt",
     values: [PositionStruct]
   ): string;
@@ -541,6 +554,14 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "supportsInterface",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "deleteTroop",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "initializePlayer",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "march", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "purchaseTroop",
@@ -582,10 +603,6 @@ export interface CurioInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "bulkInitializeTiles",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "initializePlayer",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "pauseGame", data: BytesLike): Result;
@@ -661,6 +678,10 @@ export interface CurioInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "_getPlayer", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_getPlayerBalance",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_getPlayerCount",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "_getTileAt", data: BytesLike): Result;
@@ -918,6 +939,16 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    deleteTroop(
+      _troopId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    initializePlayer(
+      _pos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     march(
       _troopId: BigNumberish,
       _targetPos: PositionStruct,
@@ -992,12 +1023,6 @@ export interface Curio extends BaseContract {
 
     bulkInitializeTiles(
       _positions: PositionStruct[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    initializePlayer(
-      _pos: PositionStruct,
-      _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -1119,6 +1144,8 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    _getPlayerCount(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     _getTileAt(
       _pos: PositionStruct,
       overrides?: CallOverrides
@@ -1210,6 +1237,16 @@ export interface Curio extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  deleteTroop(
+    _troopId: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  initializePlayer(
+    _pos: PositionStruct,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   march(
     _troopId: BigNumberish,
     _targetPos: PositionStruct,
@@ -1284,12 +1321,6 @@ export interface Curio extends BaseContract {
 
   bulkInitializeTiles(
     _positions: PositionStruct[],
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  initializePlayer(
-    _pos: PositionStruct,
-    _player: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1411,6 +1442,8 @@ export interface Curio extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  _getPlayerCount(overrides?: CallOverrides): Promise<BigNumber>;
+
   _getTileAt(
     _pos: PositionStruct,
     overrides?: CallOverrides
@@ -1499,6 +1532,16 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    deleteTroop(
+      _troopId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    initializePlayer(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     march(
       _troopId: BigNumberish,
       _targetPos: PositionStruct,
@@ -1573,12 +1616,6 @@ export interface Curio extends BaseContract {
 
     bulkInitializeTiles(
       _positions: PositionStruct[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    initializePlayer(
-      _pos: PositionStruct,
-      _player: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1689,6 +1726,8 @@ export interface Curio extends BaseContract {
       _player: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    _getPlayerCount(overrides?: CallOverrides): Promise<BigNumber>;
 
     _getTileAt(
       _pos: PositionStruct,
@@ -1923,6 +1962,16 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    deleteTroop(
+      _troopId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    initializePlayer(
+      _pos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     march(
       _troopId: BigNumberish,
       _targetPos: PositionStruct,
@@ -1989,12 +2038,6 @@ export interface Curio extends BaseContract {
 
     bulkInitializeTiles(
       _positions: PositionStruct[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    initializePlayer(
-      _pos: PositionStruct,
-      _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -2110,6 +2153,8 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _getPlayerCount(overrides?: CallOverrides): Promise<BigNumber>;
+
     _getTileAt(
       _pos: PositionStruct,
       overrides?: CallOverrides
@@ -2199,6 +2244,16 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    deleteTroop(
+      _troopId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    initializePlayer(
+      _pos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     march(
       _troopId: BigNumberish,
       _targetPos: PositionStruct,
@@ -2271,12 +2326,6 @@ export interface Curio extends BaseContract {
 
     bulkInitializeTiles(
       _positions: PositionStruct[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    initializePlayer(
-      _pos: PositionStruct,
-      _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2397,6 +2446,8 @@ export interface Curio extends BaseContract {
       _player: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    _getPlayerCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     _getTileAt(
       _pos: PositionStruct,

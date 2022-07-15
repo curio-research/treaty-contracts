@@ -1,6 +1,8 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
+/// Data structures for game
+
 enum BASE_NAME {
     PORT,
     CITY
@@ -92,6 +94,7 @@ struct WorldConstants {
     uint256 defaultBaseGoldGenerationPerSecond;
     uint256 maxBaseCountPerPlayer;
     uint256 maxTroopCountPerPlayer;
+    uint256 maxPlayerCount;
 }
 
 struct GameState {

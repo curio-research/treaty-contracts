@@ -1,4 +1,4 @@
-import { publishDeployment, isConnectionLive } from './../api/deployment';
+import { publishDeployment } from './../api/deployment';
 import * as path from 'path';
 import * as fsPromise from 'fs/promises';
 import * as fs from 'fs';
@@ -6,26 +6,23 @@ import { Util } from './../typechain-types/Util';
 import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { deployProxy, loadLocalMap, LOCAL_MAP_PREFIX, printDivider, saveMapToLocal } from './util/deployHelper';
-import { TROOP_TYPES, getTroopTypeIndexByName, RENDER_CONSTANTS, NUM_CITIES, NUM_PORTS, WORLD_HEIGHT, WORLD_WIDTH, generateWorldConstants } from './util/constants';
+import { TROOP_TYPES, getTroopTypeIndexByName, RENDER_CONSTANTS, generateWorldConstants, LOCAL_MAP_INPUT, SANDBOX_MAP_INPUT } from './util/constants';
 import { position } from '../util/types/common';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
-import { MapInput, Position, TILE_TYPE, TROOP_NAME } from './util/types';
+import { Position, TILE_TYPE, TROOP_NAME } from './util/types';
 import { encodeTileMap, generateGameMaps } from './util/mapHelper';
 import { GameConfig } from '../api/types';
 import { MEDITERRAINEAN_MAP, ligmapTileOutput } from './util/mapLibrary';
-
-// ---------------------------------
-// deploy script
-// npx hardhat deploy --network NETWORK_NAME_HERE
-// ---------------------------------
+import { WorldConstantsStruct } from '../typechain-types/Curio';
 
 /**
  * Deploy game instance and port configs to frontend.
  *
  * Examples:
- * `npx hardhat deploy --savemap`: deploy on localhost and save map to local
+ * `npx hardhat deploy --savemap`: randomly generate small map, deploy on localhost, and save map to local
  * `npx hardhat deploy --network OptimismKovan --fixmap --name MAP-0`: deploy on Optimism Kovan and use the first saved random map
  * `npx hardhat deploy --noport --fixmap --name MEDITERRAINEAN`: deploy on localhost, use the hardcoded Mediterrainean map, and do not port files to frontend
+ * `npx hardhat deploy --name SANDBOX --network constellation`: randomly generate sandbox map and deploy on Constellation
  */
 task('deploy', 'deploy contracts')
   .addFlag('noport', "Don't port files to frontend") // default is to call port
@@ -40,7 +37,7 @@ task('deploy', 'deploy contracts')
       printDivider();
 
       // Read variables from run flags
-      const isDev = hre.network.name === 'localhost' || hre.network.name === 'hardhat';
+      const isDev = hre.network.name === 'localhost' || hre.network.name === 'hardhat' || hre.network.name === 'constellation';
       console.log('Network:', hre.network.name);
       const fixMap = args.fixmap;
       if (fixMap) console.log('Using deterministic map');
@@ -48,23 +45,19 @@ task('deploy', 'deploy contracts')
       let mapName = args.name;
       const saveMap = args.savemap;
 
-      // Check connection with faucet to make sure deployment will post
-      if (!isDev) {
-        await isConnectionLive();
-      }
-
       // Set up deployer and some local variables
       let [player1, player2] = await hre.ethers.getSigners();
+      console.log('✦ player1 address is:', player1.address);
+      // console.log('✦ player2 address is:', player2.address);
       const armyTroopTypeId = getTroopTypeIndexByName(TROOP_TYPES, TROOP_NAME.ARMY) + 1;
       const troopTransportTroopTypeId = getTroopTypeIndexByName(TROOP_TYPES, TROOP_NAME.TROOP_TRANSPORT) + 1;
       const destroyerTroopTypeId = getTroopTypeIndexByName(TROOP_TYPES, TROOP_NAME.DESTROYER) + 1;
 
       // Set up game configs and map
-      const worldConstants = generateWorldConstants(player1.address);
-
       let tileMap: TILE_TYPE[][];
       let portTiles: Position[];
       let cityTiles: Position[];
+      let worldConstants: WorldConstantsStruct;
 
       if (fixMap) {
         if (mapName === 'MEDITERRAINEAN') {
@@ -72,6 +65,7 @@ task('deploy', 'deploy contracts')
           tileMap = MEDITERRAINEAN_MAP.tileMap;
           portTiles = MEDITERRAINEAN_MAP.portTiles;
           cityTiles = MEDITERRAINEAN_MAP.cityTiles;
+          worldConstants = generateWorldConstants(player1.address, { width: tileMap.length, height: tileMap[0].length, numPorts: portTiles.length, numCities: cityTiles.length });
         } else if (mapName.length > LOCAL_MAP_PREFIX.length && mapName.substring(0, LOCAL_MAP_PREFIX.length) === LOCAL_MAP_PREFIX) {
           // saved maps from random generation
           const index = Number(mapName.substring(LOCAL_MAP_PREFIX.length, mapName.length));
@@ -79,26 +73,23 @@ task('deploy', 'deploy contracts')
           tileMap = tileMapOutput.tileMap;
           portTiles = tileMapOutput.portTiles;
           cityTiles = tileMapOutput.cityTiles;
+          worldConstants = generateWorldConstants(player1.address, { width: tileMap.length, height: tileMap[0].length, numPorts: portTiles.length, numCities: cityTiles.length });
         } else {
           // default: ligmap 10x10
           mapName = 'LIGMAP';
           tileMap = ligmapTileOutput.tileMap;
           portTiles = ligmapTileOutput.portTiles;
           cityTiles = ligmapTileOutput.cityTiles;
+          worldConstants = generateWorldConstants(player1.address, { width: tileMap.length, height: tileMap[0].length, numPorts: portTiles.length, numCities: cityTiles.length });
         }
       } else {
-        const gameMapOutput = generateGameMaps(
-          {
-            width: WORLD_WIDTH,
-            height: WORLD_HEIGHT,
-            numPorts: NUM_PORTS,
-            numCities: NUM_CITIES,
-          } as MapInput,
-          RENDER_CONSTANTS
-        );
+        // two modes of randomly-generated maps: local (small) or sandbox (big)
+        const mapInput = mapName === 'SANDBOX' ? SANDBOX_MAP_INPUT : LOCAL_MAP_INPUT;
+        const gameMapOutput = generateGameMaps(mapInput, RENDER_CONSTANTS);
         tileMap = gameMapOutput.tileMap;
         portTiles = gameMapOutput.portTiles;
         cityTiles = gameMapOutput.cityTiles;
+        worldConstants = generateWorldConstants(player1.address, mapInput);
       }
 
       if (saveMap) saveMapToLocal({ tileMap, portTiles, cityTiles });
@@ -128,8 +119,8 @@ task('deploy', 'deploy contracts')
 
       console.log('✦ initializing bases');
       const baseTiles = [...portTiles, ...cityTiles];
-      for (let i = 0; i < baseTiles.length; i += 100) {
-        await (await diamond.bulkInitializeTiles(baseTiles.slice(i, i + 100))).wait();
+      for (let i = 0; i < baseTiles.length; i += 20) {
+        await (await diamond.bulkInitializeTiles(baseTiles.slice(i, i + 20))).wait();
       }
       const time3 = performance.now();
       console.log(`✦ initializing ${baseTiles.length} bases took ${time3 - time2} ms`);
@@ -153,8 +144,8 @@ task('deploy', 'deploy contracts')
           const player1TroopTransportPos = { x: 5, y: 3 };
           const player2DestroyerPos = { x: 5, y: 4 };
 
-          await (await diamond.connect(player1).initializePlayer(player1Pos, player1.address)).wait();
-          await (await diamond.connect(player1).initializePlayer(player2Pos, player2.address)).wait();
+          await (await diamond.connect(player1).initializePlayer(player1Pos)).wait();
+          await (await diamond.connect(player2).initializePlayer(player2Pos)).wait();
           await (await diamond.connect(player1).spawnTroop(player1ArmyPos, player1.address, armyTroopTypeId)).wait();
           await (await diamond.connect(player1).spawnTroop(player1ArmyPos2, player1.address, armyTroopTypeId)).wait();
           await (await diamond.connect(player1).spawnTroop(player1ArmyPos3, player1.address, armyTroopTypeId)).wait();
@@ -182,8 +173,8 @@ task('deploy', 'deploy contracts')
           } while (tileMap[x][y] !== TILE_TYPE.PORT || player2Pos.x === player1Pos.x || player2Pos.y === player1Pos.y);
 
           // Give each player a port to start with
-          await (await diamond.connect(player1).initializePlayer(player1Pos, player1.address)).wait();
-          await (await diamond.connect(player1).initializePlayer(player2Pos, player2.address)).wait();
+          await (await diamond.connect(player1).initializePlayer(player1Pos)).wait();
+          // await (await diamond.connect(player2).initializePlayer(player2Pos)).wait();
         }
       }
 

@@ -25,11 +25,7 @@ import "contracts/libraries/Storage.sol";
 contract DiamondInit is UseStorage {
     // You can add parameters to this function in order to pass in
     // data to set your own state variables
-    function init(
-        WorldConstants memory _worldConstants,
-        // BaseConstants memory _baseConstants,
-        TroopType[] memory _troopTypes
-    ) external {
+    function init(WorldConstants memory _worldConstants, TroopType[] memory _troopTypes) external {
         // adding ERC165 data
         LibDiamond.DiamondStorage storage ds = LibDiamond.diamondStorage();
         ds.supportedInterfaces[type(IERC165).interfaceId] = true;
@@ -46,7 +42,6 @@ contract DiamondInit is UseStorage {
 
         // set world constants
         gs().worldConstants = _worldConstants;
-        // gs().baseConstants = _baseConstants;
 
         // initialize troop types
         for (uint256 i = 0; i < _troopTypes.length; i++) {
@@ -57,7 +52,7 @@ contract DiamondInit is UseStorage {
         // start troop nonce at 1. 0 denotes no troops
         gs().troopNonce++;
 
-        // start base nonce should start at 1. 0 denotes no base
-        gs().baseNonce += 1;
+        // start base nonce at 1. 0 denotes no base
+        gs().baseNonce++;
     }
 }
