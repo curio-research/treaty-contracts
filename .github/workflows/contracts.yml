@@ -35,9 +35,9 @@ jobs:
           source-directory: contracts
           destination-github-username: Yijia-Chen
           destination-repository-name: engine-public
-          user-email: yijiachenmain@gmail.com # this should work
+          user-email: yijiachenmain@gmail.com
           user-name: Yijia-Chen
           destination-repository-username: curio-eth
           target-branch: main
           target-directory: /
-          commit-message: See ORIGIN_COMMIT from $GITHUB_REF
+          commit-message: Release
