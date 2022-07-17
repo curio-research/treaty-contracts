@@ -222,6 +222,7 @@ export interface GetterFacetInterface extends utils.Interface {
     "getBulkTroopTypes(uint256,uint256)": FunctionFragment;
     "getMapChunk((uint256,uint256),uint256)": FunctionFragment;
     "getPlayer(address)": FunctionFragment;
+    "getPlayerCount()": FunctionFragment;
     "getTileAt((uint256,uint256))": FunctionFragment;
     "getTroop(uint256)": FunctionFragment;
     "getTroopAt((uint256,uint256))": FunctionFragment;
@@ -259,6 +260,10 @@ export interface GetterFacetInterface extends utils.Interface {
     values: [PositionStruct, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "getPlayer", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "getPlayerCount",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "getTileAt",
     values: [PositionStruct]
@@ -307,6 +312,10 @@ export interface GetterFacetInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getPlayer", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getPlayerCount",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getTileAt", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getTroop", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getTroopAt", data: BytesLike): Result;
@@ -390,6 +399,8 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[PlayerStructOutput]>;
 
+    getPlayerCount(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     getTileAt(
       _pos: PositionStruct,
       overrides?: CallOverrides
@@ -456,6 +467,8 @@ export interface GetterFacet extends BaseContract {
     _addr: string,
     overrides?: CallOverrides
   ): Promise<PlayerStructOutput>;
+
+  getPlayerCount(overrides?: CallOverrides): Promise<BigNumber>;
 
   getTileAt(
     _pos: PositionStruct,
@@ -524,6 +537,8 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PlayerStructOutput>;
 
+    getPlayerCount(overrides?: CallOverrides): Promise<BigNumber>;
+
     getTileAt(
       _pos: PositionStruct,
       overrides?: CallOverrides
@@ -587,6 +602,8 @@ export interface GetterFacet extends BaseContract {
     ): Promise<BigNumber>;
 
     getPlayer(_addr: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    getPlayerCount(overrides?: CallOverrides): Promise<BigNumber>;
 
     getTileAt(
       _pos: PositionStruct,
@@ -653,6 +670,8 @@ export interface GetterFacet extends BaseContract {
       _addr: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    getPlayerCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getTileAt(
       _pos: PositionStruct,

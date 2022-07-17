@@ -256,6 +256,7 @@ export interface CurioInterface extends utils.Interface {
     "getBulkTroopTypes(uint256,uint256)": FunctionFragment;
     "getMapChunk((uint256,uint256),uint256)": FunctionFragment;
     "getPlayer(address)": FunctionFragment;
+    "getPlayerCount()": FunctionFragment;
     "getTileAt((uint256,uint256))": FunctionFragment;
     "getTroop(uint256)": FunctionFragment;
     "getTroopAt((uint256,uint256))": FunctionFragment;
@@ -369,6 +370,10 @@ export interface CurioInterface extends utils.Interface {
     values: [PositionStruct, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "getPlayer", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "getPlayerCount",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "getTileAt",
     values: [PositionStruct]
@@ -595,6 +600,10 @@ export interface CurioInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getPlayer", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getPlayerCount",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getTileAt", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getTroop", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getTroopAt", data: BytesLike): Result;
@@ -1007,6 +1016,8 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[PlayerStructOutput]>;
 
+    getPlayerCount(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     getTileAt(
       _pos: PositionStruct,
       overrides?: CallOverrides
@@ -1311,6 +1322,8 @@ export interface Curio extends BaseContract {
     overrides?: CallOverrides
   ): Promise<PlayerStructOutput>;
 
+  getPlayerCount(overrides?: CallOverrides): Promise<BigNumber>;
+
   getTileAt(
     _pos: PositionStruct,
     overrides?: CallOverrides
@@ -1611,6 +1624,8 @@ export interface Curio extends BaseContract {
       _addr: string,
       overrides?: CallOverrides
     ): Promise<PlayerStructOutput>;
+
+    getPlayerCount(overrides?: CallOverrides): Promise<BigNumber>;
 
     getTileAt(
       _pos: PositionStruct,
@@ -2042,6 +2057,8 @@ export interface Curio extends BaseContract {
 
     getPlayer(_addr: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+    getPlayerCount(overrides?: CallOverrides): Promise<BigNumber>;
+
     getTileAt(
       _pos: PositionStruct,
       overrides?: CallOverrides
@@ -2335,6 +2352,8 @@ export interface Curio extends BaseContract {
       _addr: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    getPlayerCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getTileAt(
       _pos: PositionStruct,
