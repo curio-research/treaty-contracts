@@ -24,8 +24,5 @@ jobs:
       - name: Install deps
         run: forge install
 
-      - name: Go back
-        run: cd ..
-
       - name: Run tests
         run: ${{ github.action_path }} forge test --ffi -vv
