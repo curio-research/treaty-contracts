@@ -90,8 +90,8 @@ const MEDITERRAINEAN_GEOGRAPHY = [
   [W, W, L, W, W, W, W, L, L, L, L, L, L, L, L, L, L, L, L, L],
   [L, L, L, L, W, W, W, L, L, L, L, L, L, L, L, L, L, L, L, L],
   [L, L, L, L, L, W, W, L, L, L, L, L, L, L, L, L, L, L, L, L],
-  // [L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, L],
-  // [L, L, L, L, L, L, L, L, L, W, L, L, L, L, L, L, L, L, L, L],
+  [L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, L, L],
+  [L, L, L, L, L, L, L, L, L, W, L, L, L, L, L, L, L, L, L, L],
 ];
 
 const tier1Strongholds: Stronghold[] = [
