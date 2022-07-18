@@ -4,5 +4,5 @@ for i in {1..$1}
 do
     echo "####################################"
     echo "DEPLOYING GAME $i"
-    npx hardhat deploy --network constellation --name sandbox
+    npx hardhat deploy --network constellation --name sandbox --publish --release
 done

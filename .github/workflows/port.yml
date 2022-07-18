@@ -2,8 +2,6 @@ name: Port Hook
 on:
   push:
     branches: [release]
-  pull_request:
-    branches: [release]
 
 jobs:
   port-to-public-repo:
