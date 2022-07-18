@@ -106,4 +106,8 @@ contract GetterFacet is UseStorage {
     function isPlayerInitialized(address _player) external view returns (bool) {
         return Util._isPlayerInitialized(_player);
     }
+
+    function getPlayerCount() external view returns (uint256) {
+        return Util._getPlayerCount();
+    }
 }
