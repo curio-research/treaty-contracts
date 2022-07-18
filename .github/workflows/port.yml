@@ -1,0 +1,27 @@
+name: Port Hook
+on:
+  push:
+    branches: [release]
+
+jobs:
+  port-to-public-repo:
+    name: Port to Public Repo
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Pushes to public repo
+        id: push_direcory
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        with:
+          source-directory: public
+          destination-github-username: curio-bot
+          destination-repository-name: contracts
+          user-email: yijia@curio.gg
+          user-name: curio-bot
+          destination-repository-username: curio-research
+          target-branch: release
+          target-directory: /
+          commit-message: release
