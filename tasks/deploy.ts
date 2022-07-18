@@ -68,7 +68,7 @@ task('deploy', 'deploy contracts')
 
       if (fixMap) {
         if (mapName.toLowerCase() === 'mediterranean') {
-          // hardcoded map: Mediterrainean 42x18
+          // hardcoded map: Mediterrainean 42x20
           tileMap = MEDITERRAINEAN_MAP.tileMap;
           portTiles = MEDITERRAINEAN_MAP.portTiles;
           cityTiles = MEDITERRAINEAN_MAP.cityTiles;

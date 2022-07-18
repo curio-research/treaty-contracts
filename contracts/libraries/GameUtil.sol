@@ -70,7 +70,7 @@ library Util {
             uint256 _reduction = (_player.totalTroopExpensePerUpdate - _player.totalGoldGenerationPerUpdate) * _timeElapsed;
             if (_reduction >= _player.balance) {
                 _player.balance = 0;
-                _player.active = false;
+                // _player.active = false; // Note: disabled for now, allowing negative balances
             } else {
                 _player.balance -= _reduction;
             }
