@@ -18,7 +18,7 @@ jobs:
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
         with:
-          source-directory: .
+          source-directory: public
           destination-github-username: curio-bot
           destination-repository-name: contracts
           user-email: yijia@curio.gg
