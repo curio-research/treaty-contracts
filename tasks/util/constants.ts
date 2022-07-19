@@ -15,23 +15,24 @@ export const LOCAL_MAP_INPUT: MapInput = {
   numPorts: 30,
   numCities: 15,
 };
+
 export const SANDBOX_MAP_INPUT: MapInput = {
   width: 70,
   height: 70,
   numPorts: 200,
   numCities: 50,
 };
-export const MAP_INTERVAL = 10;
+
 export const COMBAT_EFFICIENCY = 50;
 export const BASE_ATTACK_FACTOR = 1;
 export const BASE_DEFENSE_FACTOR = 1;
 export const BASE_MAX_HEALTH = 1;
 export const NUM_INIT_TERRAIN_TYPES = 5;
 export const INIT_BATCH_SIZE = 100;
-export const INIT_PLAYER_BALANCE = 50;
+export const INIT_PLAYER_BALANCE = 30;
 export const DEFAULT_BASE_GOLD_GENERATION_PER_SECOND = 2;
-export const MAX_BASE_COUNT_PER_PLAYER = 20;
-export const MAX_TROOP_COUNT_PER_PLAYER = 30;
+export const MAX_BASE_COUNT_PER_PLAYER = 30;
+export const MAX_TROOP_COUNT_PER_PLAYER = 100000;
 export const MAX_PLAYER_COUNT = 20;
 
 export const TROOP_TYPES: TroopTypeStruct[] = [
@@ -109,7 +110,6 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): W
     worldHeight: mapInput.height,
     numPorts: mapInput.numPorts,
     numCities: mapInput.numCities,
-    mapInterval: MAP_INTERVAL,
     combatEfficiency: COMBAT_EFFICIENCY,
     numInitTerrainTypes: NUM_INIT_TERRAIN_TYPES,
     initBatchSize: INIT_BATCH_SIZE,

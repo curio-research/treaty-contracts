@@ -162,7 +162,7 @@ contract DiamondDeployTest is Test {
         ownership = OwnershipFacet(diamond);
 
         // initialize map using lazy + encoding
-        uint256[][] memory _map = _generateMap(_worldConstants.worldWidth, _worldConstants.worldHeight, _worldConstants.mapInterval);
+        uint256[][] memory _map = _generateMap(_worldConstants.worldWidth, _worldConstants.worldHeight, 10);
         uint256[][] memory _encodedColumnBatches = _encodeTileMap(_map, _worldConstants.numInitTerrainTypes, _worldConstants.initBatchSize);
         helper.storeEncodedColumnBatches(_encodedColumnBatches);
 
@@ -224,7 +224,6 @@ contract DiamondDeployTest is Test {
                 worldHeight: 1000,
                 numPorts: 15,
                 numCities: 15, // yo
-                mapInterval: 10,
                 combatEfficiency: 50,
                 numInitTerrainTypes: 5,
                 initBatchSize: 100,

@@ -90,13 +90,25 @@ contract EngineFacet is UseStorage {
 
         uint256 _troopCost = Util._getTroopCost(_troopTypeId);
         Util._updatePlayerBalance(msg.sender);
-        require(_troopCost <= Util._getPlayerBalance(msg.sender), "CURIO: Insufficient balance");
+        require(_troopCost <= Util._getPlayerBalance(msg.sender), "CURIO: Insufficient balance (consider deleting some troops!)");
 
         (uint256 _troopId, Troop memory _troop) = Util._addTroop(msg.sender, _pos, _troopTypeId);
         gs().playerMap[msg.sender].balance -= _troopCost;
 
         emit Util.PlayerInfo(msg.sender, gs().playerMap[msg.sender]);
         emit Util.NewTroop(msg.sender, _troopId, _troop, _pos);
+    }
+
+    /**
+     * Delete an owned troop (often to reduce expense).
+     * @param _troopId identifier for troop
+     */
+    function deleteTroop(uint256 _troopId) external {
+        require(Util._getTroop(_troopId).owner == msg.sender, "CURIO: Can only delete own troop");
+
+        Util._removeTroop(_troopId);
+
+        emit Util.Death(msg.sender, _troopId);
     }
 
     /**
@@ -162,6 +174,8 @@ contract EngineFacet is UseStorage {
             }
         }
 
+        Util._updatePlayerBalance(msg.sender);
+
         emit Util.Moved(msg.sender, _troopId, block.timestamp, _troop.pos, _targetPos);
     }
 
@@ -180,9 +194,9 @@ contract EngineFacet is UseStorage {
         Tile memory _targetTile = Util._getTileAt(_targetPos);
         require(_targetTile.baseId != NULL, "CURIO: No target to attack");
 
-        Base memory _targetBase;
-        _targetBase = gs().baseIdMap[_targetTile.baseId];
+        Base memory _targetBase = gs().baseIdMap[_targetTile.baseId];
         require(_targetBase.owner != msg.sender, "CURIO: Cannot attack own base");
+        require(Util._isLandTroop(_troop.troopTypeId) || _targetBase.health > 0, "CURIO: Can only capture base with land troop");
 
         // Exchange fire until one side dies
         uint256 _salt = 0;
@@ -207,7 +221,7 @@ contract EngineFacet is UseStorage {
                     _troop.health -= 1;
                 } else {
                     _troop.health = 0;
-                    Util._removeTroop(msg.sender, _troop.pos, _troopId);
+                    Util._removeTroop(_troopId);
                     emit Util.Death(msg.sender, _troopId);
                 }
             }
@@ -239,6 +253,8 @@ contract EngineFacet is UseStorage {
 
                 // Move
                 _moveModule(_troopId, _targetPos);
+            } else {
+                emit Util.AttackedBase(msg.sender, _troopId, _troop, _targetTile.baseId, _targetBase);
             }
         } else {
             // Troop dies
@@ -271,7 +287,7 @@ contract EngineFacet is UseStorage {
                     _targetTroop.health -= _damagePerHit;
                 } else {
                     _targetTroop.health = 0;
-                    Util._removeTroop(_targetTroop.owner, _targetTroop.pos, _targetTile.occupantId);
+                    Util._removeTroop(_targetTile.occupantId);
                     emit Util.Death(_targetTroop.owner, _targetTile.occupantId);
                 }
             }
@@ -285,7 +301,7 @@ contract EngineFacet is UseStorage {
                     _troop.health -= Util._getDamagePerHit(_targetTroop.troopTypeId);
                 } else {
                     _troop.health = 0;
-                    Util._removeTroop(msg.sender, _troop.pos, _troopId);
+                    Util._removeTroop(_troopId);
                     emit Util.Death(msg.sender, _troopId);
                 }
             }

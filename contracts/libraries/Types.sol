@@ -46,12 +46,13 @@ struct Base {
     uint256 defenseFactor;
     uint256 health;
     uint256 goldGenerationPerSecond;
+    Position pos;
 }
 
 struct Tile {
     bool isInitialized;
     TERRAIN terrain;
-    uint256 occupantId; // a troop
+    uint256 occupantId; // troopID
     uint256 baseId;
 }
 
@@ -65,8 +66,6 @@ struct Troop {
     Position pos;
     uint256[] cargoTroopIds; // only for Troop Transport
 }
-
-struct 
 
 struct TroopType {
     TROOP_NAME name;
@@ -88,7 +87,6 @@ struct WorldConstants {
     uint256 worldHeight;
     uint256 numPorts;
     uint256 numCities;
-    uint256 mapInterval;
     uint256 combatEfficiency; // in the interval [0, 100]
     uint256 numInitTerrainTypes; // default is 5
     uint256 initBatchSize; // default is 100 if numInitTerrainTypes = 5
