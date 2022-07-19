@@ -28,14 +28,14 @@ contract ScenarioTest is Test, DiamondDeployTest {
         Troop memory _armyAlice = getter.getTroopAt(Position({x: 6, y: 0}));
         assertEq(_troopTransport1.cargoTroopIds.length, 0);
         assertEq(_troopTransport2.cargoTroopIds.length, 0);
-        assertEq(getter.getPlayer(player1).balance, 20);
+        assertEq(getter.getPlayer(player1).goldBalance, 20);
         assertEq(getter.getPlayer(player1).totalGoldGenerationPerUpdate, 15);
-        assertEq(getter.getPlayer(player1).totalTroopExpensePerUpdate, 2);
+        assertEq(getter.getPlayer(player1).totalOilConsumptionPerUpdate, 2);
         assertEq(getter.getPlayer(player1).numOwnedBases, 3);
         assertEq(getter.getPlayer(player1).numOwnedTroops, 4);
-        assertEq(getter.getPlayer(player2).balance, 20);
+        assertEq(getter.getPlayer(player2).goldBalance, 20);
         assertEq(getter.getPlayer(player2).totalGoldGenerationPerUpdate, 5);
-        assertEq(getter.getPlayer(player2).totalTroopExpensePerUpdate, 1);
+        assertEq(getter.getPlayer(player2).totalOilConsumptionPerUpdate, 1);
         assertEq(getter.getPlayer(player2).numOwnedTroops, 1);
 
         uint256 _armyBobId = initTroopNonce;

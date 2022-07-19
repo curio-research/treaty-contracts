@@ -4,6 +4,7 @@ export enum TILE_TYPE {
   WATER = 2,
   PORT = 3,
   CITY = 4,
+  OIL_WELL = 5,
 }
 
 export enum TROOP_NAME {

@@ -249,9 +249,11 @@ contract EngineFacet is UseStorage {
                 if (_targetPlayer != NULL_ADDR) {
                     gs().playerMap[_targetPlayer].numOwnedBases--;
                     gs().playerMap[_targetPlayer].totalGoldGenerationPerUpdate -= _targetBase.goldGenerationPerSecond;
+                    gs().playerMap[_targetPlayer].totalOilGenerationPerUpdate -= _targetBase.oilGenerationPerSecond;
                 }
                 gs().playerMap[msg.sender].numOwnedBases++;
                 gs().playerMap[msg.sender].totalGoldGenerationPerUpdate += _targetBase.goldGenerationPerSecond;
+                gs().playerMap[msg.sender].totalOilGenerationPerUpdate += _targetBase.oilGenerationPerSecond;
 
                 // Move
                 _moveModule(_troopId, _targetPos);

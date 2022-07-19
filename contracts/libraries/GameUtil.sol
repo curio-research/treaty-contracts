@@ -49,7 +49,7 @@ library Util {
         uint256 _terrainId = _encodedCol / _divFactor;
 
         if (_terrainId >= 3) {
-            BASE_NAME _baseName = _terrainId == 3 ? BASE_NAME.PORT : BASE_NAME.CITY;
+            BASE_NAME _baseName = BASE_NAME(_terrainId - 3);
             _addBase(_pos, _baseName);
             _terrainId -= 3;
         }
@@ -155,7 +155,7 @@ library Util {
         gs().troopNonce++;
         gs().map[_pos.x][_pos.y].occupantId = _troopId;
 
-        // Update gold info
+        // Update balances
         _updatePlayerBalances(_owner);
         gs().playerMap[_owner].numOwnedTroops++;
         gs().playerMap[_owner].totalOilConsumptionPerUpdate += _getOilConsumptionPerSecond(_troopTypeId);
@@ -164,15 +164,19 @@ library Util {
     }
 
     function _addBase(Position memory _pos, BASE_NAME _baseName) public returns (uint256) {
+        bool _isOilWell = _baseName == BASE_NAME.OIL_WELL;
+        uint256 _goldGenerationPerSecond = _isOilWell ? 0 : gs().worldConstants.defaultBaseGoldGenerationPerSecond;
+        uint256 _oilGenerationPerSecond = _isOilWell ? gs().worldConstants.defaultWellOilGenerationPerSecond : 0;
+
         Base memory _base = Base({
             owner: address(0),
             name: _baseName,
             attackFactor: 100,
             defenseFactor: 100,
-            health: 1, // FIXME: change to base constants
-            goldGenerationPerSecond: gs().worldConstants.defaultBaseGoldGenerationPerSecond,
-            oilGenerationPerSecond: gs().worldConstants.defaultWellOilGenerationPerSecond,
-            pos: _pos
+            health: 1,
+            goldGenerationPerSecond: _goldGenerationPerSecond,
+            oilGenerationPerSecond: _oilGenerationPerSecond,
+            pos: _pos //
         });
 
         uint256 _baseId = gs().baseNonce;

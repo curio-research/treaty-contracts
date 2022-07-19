@@ -27,7 +27,7 @@ const MAX_UINT256 = BigInt(Math.pow(2, 256)) - BigInt(1);
  * @param batchSize
  * @returns a 2d array of encoded columns, each in batches
  */
-export const encodeTileMap = (tileMap: TILE_TYPE[][], numInitTerrainTypes: number = 5, batchSize: number = 100): string[][] => {
+export const encodeTileMap = (tileMap: TILE_TYPE[][], numInitTerrainTypes: number = 6, batchSize: number = 50): string[][] => {
   const result: string[][] = [];
   const numBatchPerCol = Math.floor(tileMap[0].length / batchSize);
   const lastBatchSize = tileMap[0].length % batchSize;
