@@ -5,8 +5,11 @@ pragma solidity ^0.8.4;
 
 enum BASE_NAME {
     PORT,
-    CITY
+    CITY,
+    OIL_WELL
 }
+
+// TODO: allow bases to consume oil
 
 enum TERRAIN {
     COAST,
@@ -31,9 +34,11 @@ struct Position {
 struct Player {
     uint256 initTimestamp;
     bool active;
-    uint256 balance;
+    uint256 goldBalance;
+    uint256 oilBalance;
     uint256 totalGoldGenerationPerUpdate;
-    uint256 totalTroopExpensePerUpdate;
+    uint256 totalOilGenerationPerUpdate;
+    uint256 totalOilConsumptionPerUpdate;
     uint256 balanceLastUpdated;
     uint256 numOwnedBases;
     uint256 numOwnedTroops;
@@ -46,6 +51,7 @@ struct Base {
     uint256 defenseFactor;
     uint256 health;
     uint256 goldGenerationPerSecond;
+    uint256 oilGenerationPerSecond;
     Position pos;
 }
 
@@ -77,8 +83,8 @@ struct TroopType {
     uint256 cargoCapacity;
     uint256 movementCooldown;
     uint256 largeActionCooldown;
-    uint256 cost;
-    uint256 expensePerSecond;
+    uint256 goldPrice;
+    uint256 oilConsumptionPerSecond;
 }
 
 struct WorldConstants {
@@ -90,11 +96,13 @@ struct WorldConstants {
     uint256 combatEfficiency; // in the interval [0, 100]
     uint256 numInitTerrainTypes; // default is 5
     uint256 initBatchSize; // default is 100 if numInitTerrainTypes = 5
-    uint256 initPlayerBalance;
-    uint256 defaultBaseGoldGenerationPerSecond;
+    uint256 initPlayerGoldBalance;
+    uint256 initPlayerOilBalance;
     uint256 maxBaseCountPerPlayer;
     uint256 maxTroopCountPerPlayer;
     uint256 maxPlayerCount;
+    uint256 defaultBaseGoldGenerationPerSecond;
+    uint256 defaultWellOilGenerationPerSecond;
 }
 
 struct GameState {

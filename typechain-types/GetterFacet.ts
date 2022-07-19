@@ -60,12 +60,14 @@ export type BaseStruct = {
   defenseFactor: BigNumberish;
   health: BigNumberish;
   goldGenerationPerSecond: BigNumberish;
+  oilGenerationPerSecond: BigNumberish;
   pos: PositionStruct;
 };
 
 export type BaseStructOutput = [
   number,
   string,
+  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -78,6 +80,7 @@ export type BaseStructOutput = [
   defenseFactor: BigNumber;
   health: BigNumber;
   goldGenerationPerSecond: BigNumber;
+  oilGenerationPerSecond: BigNumber;
   pos: PositionStructOutput;
 };
 
@@ -91,8 +94,8 @@ export type TroopTypeStruct = {
   cargoCapacity: BigNumberish;
   movementCooldown: BigNumberish;
   largeActionCooldown: BigNumberish;
-  cost: BigNumberish;
-  expensePerSecond: BigNumberish;
+  goldPrice: BigNumberish;
+  oilConsumptionPerSecond: BigNumberish;
 };
 
 export type TroopTypeStructOutput = [
@@ -117,8 +120,8 @@ export type TroopTypeStructOutput = [
   cargoCapacity: BigNumber;
   movementCooldown: BigNumber;
   largeActionCooldown: BigNumber;
-  cost: BigNumber;
-  expensePerSecond: BigNumber;
+  goldPrice: BigNumber;
+  oilConsumptionPerSecond: BigNumber;
 };
 
 export type TileStruct = {
@@ -138,9 +141,11 @@ export type TileStructOutput = [boolean, number, BigNumber, BigNumber] & {
 export type PlayerStruct = {
   initTimestamp: BigNumberish;
   active: boolean;
-  balance: BigNumberish;
+  goldBalance: BigNumberish;
+  oilBalance: BigNumberish;
   totalGoldGenerationPerUpdate: BigNumberish;
-  totalTroopExpensePerUpdate: BigNumberish;
+  totalOilGenerationPerUpdate: BigNumberish;
+  totalOilConsumptionPerUpdate: BigNumberish;
   balanceLastUpdated: BigNumberish;
   numOwnedBases: BigNumberish;
   numOwnedTroops: BigNumberish;
@@ -154,13 +159,17 @@ export type PlayerStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
+  BigNumber,
+  BigNumber,
   BigNumber
 ] & {
   initTimestamp: BigNumber;
   active: boolean;
-  balance: BigNumber;
+  goldBalance: BigNumber;
+  oilBalance: BigNumber;
   totalGoldGenerationPerUpdate: BigNumber;
-  totalTroopExpensePerUpdate: BigNumber;
+  totalOilGenerationPerUpdate: BigNumber;
+  totalOilConsumptionPerUpdate: BigNumber;
   balanceLastUpdated: BigNumber;
   numOwnedBases: BigNumber;
   numOwnedTroops: BigNumber;
@@ -175,15 +184,19 @@ export type WorldConstantsStruct = {
   combatEfficiency: BigNumberish;
   numInitTerrainTypes: BigNumberish;
   initBatchSize: BigNumberish;
-  initPlayerBalance: BigNumberish;
-  defaultBaseGoldGenerationPerSecond: BigNumberish;
+  initPlayerGoldBalance: BigNumberish;
+  initPlayerOilBalance: BigNumberish;
   maxBaseCountPerPlayer: BigNumberish;
   maxTroopCountPerPlayer: BigNumberish;
   maxPlayerCount: BigNumberish;
+  defaultBaseGoldGenerationPerSecond: BigNumberish;
+  defaultWellOilGenerationPerSecond: BigNumberish;
 };
 
 export type WorldConstantsStructOutput = [
   string,
+  BigNumber,
+  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -205,11 +218,13 @@ export type WorldConstantsStructOutput = [
   combatEfficiency: BigNumber;
   numInitTerrainTypes: BigNumber;
   initBatchSize: BigNumber;
-  initPlayerBalance: BigNumber;
-  defaultBaseGoldGenerationPerSecond: BigNumber;
+  initPlayerGoldBalance: BigNumber;
+  initPlayerOilBalance: BigNumber;
   maxBaseCountPerPlayer: BigNumber;
   maxTroopCountPerPlayer: BigNumber;
   maxPlayerCount: BigNumber;
+  defaultBaseGoldGenerationPerSecond: BigNumber;
+  defaultWellOilGenerationPerSecond: BigNumber;
 };
 
 export interface GetterFacetInterface extends utils.Interface {

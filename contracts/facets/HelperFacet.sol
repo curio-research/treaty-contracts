@@ -31,7 +31,7 @@ contract HelperFacet is UseStorage {
 
         address[] memory _allPlayers = gs().players;
         for (uint256 i = 0; i < _allPlayers.length; i++) {
-            Util._updatePlayerBalance(_allPlayers[i]);
+            Util._updatePlayerBalances(_allPlayers[i]);
         }
 
         gs().isPaused = true;
@@ -62,7 +62,7 @@ contract HelperFacet is UseStorage {
         require(!Util._isPlayerActive(_player), "CURIO: Player is active");
 
         gs().playerMap[_player].active = true;
-        gs().playerMap[_player].balance = gs().worldConstants.initPlayerBalance; // reload balance
+        gs().playerMap[_player].goldBalance = gs().worldConstants.initPlayerGoldBalance; // reload balance
         emit Util.PlayerReactivated(_player);
     }
 
@@ -119,7 +119,7 @@ contract HelperFacet is UseStorage {
         require(_base.owner == NULL_ADDR, "CURIO: Base is owned");
 
         gs().baseIdMap[_tile.baseId].owner = _player;
-        Util._updatePlayerBalance(_player);
+        Util._updatePlayerBalances(_player);
         gs().playerMap[_player].numOwnedBases++;
         gs().playerMap[_player].totalGoldGenerationPerUpdate += _base.goldGenerationPerSecond;
 
@@ -141,11 +141,11 @@ contract HelperFacet is UseStorage {
     // ----------------------------------------------------------------------
 
     /**
-     * Update player's balance to most recent state.
+     * Update player's balances to the latest state.
      * @param _player player address
      */
-    function updatePlayerBalance(address _player) external {
-        Util._updatePlayerBalance(_player);
+    function updatePlayerBalances(address _player) external {
+        Util._updatePlayerBalances(_player);
     }
 
     /**

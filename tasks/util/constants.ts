@@ -29,11 +29,13 @@ export const BASE_DEFENSE_FACTOR = 1;
 export const BASE_MAX_HEALTH = 1;
 export const NUM_INIT_TERRAIN_TYPES = 5;
 export const INIT_BATCH_SIZE = 100;
-export const INIT_PLAYER_BALANCE = 30;
-export const DEFAULT_BASE_GOLD_GENERATION_PER_SECOND = 2;
+export const INIT_PLAYER_GOLD_BALANCE = 30;
+export const INIT_PLAYER_OIL_BALANCE = 30; // FIXME
 export const MAX_BASE_COUNT_PER_PLAYER = 30;
 export const MAX_TROOP_COUNT_PER_PLAYER = 100000;
 export const MAX_PLAYER_COUNT = 20;
+export const DEFAULT_BASE_GOLD_GENERATION_PER_SECOND = 1;
+export const DEFAULT_WELL_OIL_GENERATION_PER_SECOND = 2;
 
 export const TROOP_TYPES: TroopTypeStruct[] = [
   {
@@ -46,8 +48,8 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     cargoCapacity: 0,
     movementCooldown: 0,
     largeActionCooldown: 0,
-    cost: 6,
-    expensePerSecond: 1,
+    goldPrice: 6,
+    oilConsumptionPerSecond: 1,
   },
   {
     name: TROOP_NAME.TROOP_TRANSPORT,
@@ -59,8 +61,8 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     cargoCapacity: 6,
     movementCooldown: 0,
     largeActionCooldown: 0,
-    cost: 14,
-    expensePerSecond: 1,
+    goldPrice: 14,
+    oilConsumptionPerSecond: 1,
   },
   {
     name: TROOP_NAME.DESTROYER,
@@ -72,8 +74,8 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     cargoCapacity: 0,
     movementCooldown: 0,
     largeActionCooldown: 0,
-    cost: 20,
-    expensePerSecond: 1,
+    goldPrice: 20,
+    oilConsumptionPerSecond: 1,
   },
   {
     name: TROOP_NAME.CRUISER,
@@ -85,8 +87,8 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     cargoCapacity: 0,
     movementCooldown: 0,
     largeActionCooldown: 0,
-    cost: 30,
-    expensePerSecond: 1,
+    goldPrice: 30,
+    oilConsumptionPerSecond: 1,
   },
   {
     name: TROOP_NAME.BATTLESHIP,
@@ -98,8 +100,8 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     cargoCapacity: 0,
     movementCooldown: 0,
     largeActionCooldown: 0,
-    cost: 50,
-    expensePerSecond: 2,
+    goldPrice: 50,
+    oilConsumptionPerSecond: 2,
   },
 ];
 
@@ -113,11 +115,13 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): W
     combatEfficiency: COMBAT_EFFICIENCY,
     numInitTerrainTypes: NUM_INIT_TERRAIN_TYPES,
     initBatchSize: INIT_BATCH_SIZE,
-    initPlayerBalance: INIT_PLAYER_BALANCE,
-    defaultBaseGoldGenerationPerSecond: DEFAULT_BASE_GOLD_GENERATION_PER_SECOND,
+    initPlayerGoldBalance: INIT_PLAYER_GOLD_BALANCE,
+    initPlayerOilBalance: INIT_PLAYER_OIL_BALANCE,
     maxBaseCountPerPlayer: MAX_BASE_COUNT_PER_PLAYER,
     maxTroopCountPerPlayer: MAX_TROOP_COUNT_PER_PLAYER,
     maxPlayerCount: MAX_PLAYER_COUNT,
+    defaultBaseGoldGenerationPerSecond: DEFAULT_BASE_GOLD_GENERATION_PER_SECOND,
+    defaultWellOilGenerationPerSecond: DEFAULT_WELL_OIL_GENERATION_PER_SECOND,
   };
 };
 
