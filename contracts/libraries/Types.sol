@@ -15,7 +15,7 @@ enum TERRAIN {
 }
 
 enum TROOP_NAME {
-    ARMY,
+    INFANTRY,
     TROOP_TRANSPORT,
     DESTROYER,
     CRUISER,
@@ -65,6 +65,8 @@ struct Troop {
     Position pos;
     uint256[] cargoTroopIds; // only for Troop Transport
 }
+
+struct 
 
 struct TroopType {
     TROOP_NAME name;

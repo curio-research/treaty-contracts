@@ -36,7 +36,7 @@ export const MAX_PLAYER_COUNT = 20;
 
 export const TROOP_TYPES: TroopTypeStruct[] = [
   {
-    name: TROOP_NAME.ARMY,
+    name: TROOP_NAME.INFANTRY,
     isLandTroop: true,
     maxHealth: 1,
     damagePerHit: 1,
