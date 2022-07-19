@@ -13,11 +13,11 @@ contract BasicTest is Test, DiamondDeployTest {
 
     function testOnlyAdmin() public {
         Position memory _pos = Position({x: 3, y: 3});
-        uint256 _armyTroopTypeId = indexToId(uint256(TROOP_NAME.ARMY));
+        uint256 _infantryTroopTypeId = indexToId(uint256(TROOP_NAME.INFANTRY));
 
         vm.expectRevert(bytes("CURIO: Unauthorized"));
         vm.prank(player2);
-        helper.spawnTroop(_pos, player2, _armyTroopTypeId);
+        helper.spawnTroop(_pos, player2, _infantryTroopTypeId);
     }
 
     function testInitializePlayer() public {
@@ -88,7 +88,7 @@ contract BasicTest is Test, DiamondDeployTest {
 
         vm.startPrank(deployer);
         helper.transferBaseOwnership(Position({x: 2, y: 0}), player1);
-        helper.spawnTroop(Position({x: 3, y: 0}), player1, armyTroopTypeId);
+        helper.spawnTroop(Position({x: 3, y: 0}), player1, infantryTroopTypeId);
         helper.spawnTroop(Position({x: 0, y: 4}), player1, battleshipTroopTypeId);
         assertEq(getter.getPlayer(player1).totalGoldGenerationPerUpdate, 10);
         assertEq(getter.getPlayer(player1).totalTroopExpensePerUpdate, 8);
@@ -153,7 +153,7 @@ contract BasicTest is Test, DiamondDeployTest {
         vm.startPrank(deployer);
         helper.spawnTroop(Position({x: 0, y: 4}), player1, destroyerTroopTypeId);
         helper.spawnTroop(Position({x: 7, y: 5}), player1, troopTransportTroopTypeId);
-        helper.spawnTroop(Position({x: 3, y: 6}), player1, armyTroopTypeId); // no expense
+        helper.spawnTroop(Position({x: 3, y: 6}), player1, infantryTroopTypeId); // no expense
         vm.stopPrank();
 
         // verify initial states

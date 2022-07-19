@@ -56,7 +56,7 @@ task('deploy', 'deploy contracts')
       // Set up deployer and some local variables
       let [player1, player2] = await hre.ethers.getSigners();
       console.log('✦ player1 address is:', player1.address);
-      const armyTroopTypeId = getTroopTypeIndexByName(TROOP_TYPES, TROOP_NAME.ARMY) + 1;
+      const infantryTroopTypeId = getTroopTypeIndexByName(TROOP_TYPES, TROOP_NAME.INFANTRY) + 1;
       const troopTransportTroopTypeId = getTroopTypeIndexByName(TROOP_TYPES, TROOP_NAME.TROOP_TRANSPORT) + 1;
       const destroyerTroopTypeId = getTroopTypeIndexByName(TROOP_TYPES, TROOP_NAME.DESTROYER) + 1;
 
@@ -142,23 +142,23 @@ task('deploy', 'deploy contracts')
           // Primary setting for client development
           const player1Pos = { x: 2, y: 4 };
           const player2Pos = { x: 4, y: 2 };
-          const player1ArmyPos = { x: 3, y: 3 };
-          const player1ArmyPos2 = { x: 2, y: 3 };
-          const player1ArmyPos3 = { x: 1, y: 3 };
-          const player2ArmyPos = { x: 3, y: 2 };
-          const player2ArmyPos2 = { x: 2, y: 2 };
-          const player2ArmyPos3 = { x: 1, y: 2 };
+          const player1InfantryPos = { x: 3, y: 3 };
+          const player1InfantryPos2 = { x: 2, y: 3 };
+          const player1InfantryPos3 = { x: 1, y: 3 };
+          const player2InfantryPos = { x: 3, y: 2 };
+          const player2InfantryPos2 = { x: 2, y: 2 };
+          const player2InfantryPos3 = { x: 1, y: 2 };
           const player1TroopTransportPos = { x: 5, y: 3 };
           const player2DestroyerPos = { x: 5, y: 4 };
 
           await (await diamond.connect(player1).initializePlayer(player1Pos)).wait();
           await (await diamond.connect(player2).initializePlayer(player2Pos)).wait();
-          await (await diamond.connect(player1).spawnTroop(player1ArmyPos, player1.address, armyTroopTypeId)).wait();
-          await (await diamond.connect(player1).spawnTroop(player1ArmyPos2, player1.address, armyTroopTypeId)).wait();
-          await (await diamond.connect(player1).spawnTroop(player1ArmyPos3, player1.address, armyTroopTypeId)).wait();
-          await (await diamond.connect(player1).spawnTroop(player2ArmyPos, player2.address, armyTroopTypeId)).wait();
-          await (await diamond.connect(player1).spawnTroop(player2ArmyPos2, player2.address, armyTroopTypeId)).wait();
-          await (await diamond.connect(player1).spawnTroop(player2ArmyPos3, player2.address, armyTroopTypeId)).wait();
+          await (await diamond.connect(player1).spawnTroop(player1InfantryPos, player1.address, infantryTroopTypeId)).wait();
+          await (await diamond.connect(player1).spawnTroop(player1InfantryPos2, player1.address, infantryTroopTypeId)).wait();
+          await (await diamond.connect(player1).spawnTroop(player1InfantryPos3, player1.address, infantryTroopTypeId)).wait();
+          await (await diamond.connect(player1).spawnTroop(player2InfantryPos, player2.address, infantryTroopTypeId)).wait();
+          await (await diamond.connect(player1).spawnTroop(player2InfantryPos2, player2.address, infantryTroopTypeId)).wait();
+          await (await diamond.connect(player1).spawnTroop(player2InfantryPos3, player2.address, infantryTroopTypeId)).wait();
           await (await diamond.connect(player1).spawnTroop(player1TroopTransportPos, player1.address, troopTransportTroopTypeId)).wait();
           await (await diamond.connect(player1).spawnTroop(player2DestroyerPos, player2.address, destroyerTroopTypeId)).wait();
         } else {

@@ -233,7 +233,7 @@ contract EngineFacet is UseStorage {
             gs().troopIdMap[_troopId].health = _troop.health;
             gs().baseIdMap[_targetTile.baseId].health = 0;
 
-            // Capture and move onto base if troop is army
+            // Capture and move onto base if troop is infantry
             if (Util._isLandTroop(_troop.troopTypeId)) {
                 require(Util._getPlayer(msg.sender).numOwnedBases < gs().worldConstants.maxBaseCountPerPlayer, "CURIO: Max base count exceeded");
 
