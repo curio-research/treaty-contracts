@@ -84,9 +84,11 @@ contract EngineFacet is UseStorage {
 
         Tile memory _tile = Util._getTileAt(_pos);
         require(_tile.baseId != NULL, "CURIO: No base found");
-        require(Util._getBaseOwner(_tile.baseId) == msg.sender, "CURIO: Can only purchase in own base");
-        require(Util._isLandTroop(_troopTypeId) || Util._hasPort(_tile), "CURIO: Only ports can purchase water troops");
         require(_tile.occupantId == NULL, "CURIO: Base occupied by another troop");
+
+        Base memory _base = Util._getBase(_tile.baseId);
+        require(_base.owner == msg.sender, "CURIO: Can only purchase in own base");
+        require(_base.name == BASE_NAME.PORT || (_base.name == BASE_NAME.CITY && Util._isLandTroop(_troopTypeId)), "CURIO: Base cannot purchase selected troop type");
 
         uint256 _troopPrice = Util._getTroopGoldPrice(_troopTypeId);
         Util._updatePlayerBalances(msg.sender);

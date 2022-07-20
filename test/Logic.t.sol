@@ -188,14 +188,14 @@ contract LogicTest is Test, DiamondDeployTest {
         vm.expectRevert(bytes("CURIO: Out of bound"));
         engine.purchaseTroop(Position({x: 6000, y: 6000}), infantryTroopTypeId);
 
-        // fail: player2 attempting to produce in other's base
+        // fail: player2 attempting to purchase in other's base
         vm.prank(player2);
         vm.expectRevert(bytes("CURIO: Can only purchase in own base"));
         engine.purchaseTroop(player1Pos, infantryTroopTypeId);
 
         // fail: player3 in a city attempting to purchase a troop transport (water troop)
         vm.prank(player3);
-        vm.expectRevert(bytes("CURIO: Only ports can purchase water troops"));
+        vm.expectRevert(bytes("CURIO: Base cannot purchase selected troop type"));
         engine.purchaseTroop(player3Pos, troopTransportTroopTypeId);
 
         // fail: player1 attempting to purchase a troop over budget
