@@ -7,12 +7,12 @@ import "test/DiamondDeploy.t.sol";
 contract GetterTest is Test, DiamondDeployTest {
     function testBulkGetAllTroops() public {
         vm.startPrank(deployer);
-        helper.spawnTroop(Position({x: 1, y: 3}), player1, armyTroopTypeId);
-        helper.spawnTroop(Position({x: 1, y: 4}), player1, armyTroopTypeId);
+        helper.spawnTroop(Position({x: 1, y: 3}), player1, infantryTroopTypeId);
+        helper.spawnTroop(Position({x: 1, y: 4}), player1, infantryTroopTypeId);
         helper.transferBaseOwnership(Position({x: 2, y: 3}), player2);
-        helper.spawnTroop(Position({x: 2, y: 3}), player2, armyTroopTypeId);
+        helper.spawnTroop(Position({x: 2, y: 3}), player2, infantryTroopTypeId);
         helper.transferBaseOwnership(Position({x: 2, y: 4}), player2);
-        helper.spawnTroop(Position({x: 2, y: 4}), player2, armyTroopTypeId);
+        helper.spawnTroop(Position({x: 2, y: 4}), player2, infantryTroopTypeId);
         helper.spawnTroop(Position({x: 7, y: 5}), player3, destroyerTroopTypeId);
         vm.stopPrank();
 
@@ -21,7 +21,7 @@ contract GetterTest is Test, DiamondDeployTest {
         assertEq(_allTroops[0].owner, player1);
         assertEq(_allTroops[1].pos.x, 1);
         assertEq(_allTroops[1].pos.y, 4);
-        assertEq(_allTroops[2].troopTypeId, armyTroopTypeId);
+        assertEq(_allTroops[2].troopTypeId, infantryTroopTypeId);
         assertEq(_allTroops[2].owner, player2);
         assertEq(_allTroops[4].troopTypeId, destroyerTroopTypeId);
         assertEq(getter.getTileAt(Position({x: 1, y: 3})).occupantId, 1);
@@ -31,10 +31,10 @@ contract GetterTest is Test, DiamondDeployTest {
         vm.prank(player1);
         engine.march(1, Position({x: 2, y: 3}));
 
-        assertTrue(getter.getTroop(1).health > 0 || getter.getTroop(3).health > 0); // one army must survive
+        assertTrue(getter.getTroop(1).health > 0 || getter.getTroop(3).health > 0); // one infantry must survive
 
         if (getter.getTroop(3).health == 0) {
-            // verify that all troops remain the same except player2's dead army
+            // verify that all troops remain the same except player2's dead infantry
             _allTroops = getter.bulkGetAllTroops();
             assertEq(_allTroops.length, 5);
             assertEq(_allTroops[0].owner, player1);
@@ -44,7 +44,7 @@ contract GetterTest is Test, DiamondDeployTest {
             assertEq(_allTroops[2].owner, address(0));
             assertEq(_allTroops[4].troopTypeId, destroyerTroopTypeId);
         } else {
-            // verify that all troops remain the same except player1's dead army
+            // verify that all troops remain the same except player1's dead infantry
             _allTroops = getter.bulkGetAllTroops();
             assertEq(_allTroops.length, 5);
             assertEq(_allTroops[0].owner, address(0));

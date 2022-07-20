@@ -39,7 +39,7 @@ export const DEFAULT_WELL_OIL_GENERATION_PER_SECOND = 2;
 
 export const TROOP_TYPES: TroopTypeStruct[] = [
   {
-    name: TROOP_NAME.ARMY,
+    name: TROOP_NAME.INFANTRY,
     isLandTroop: true,
     maxHealth: 1,
     damagePerHit: 1,

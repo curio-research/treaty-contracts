@@ -18,7 +18,7 @@ enum TERRAIN {
 }
 
 enum TROOP_NAME {
-    ARMY,
+    INFANTRY,
     TROOP_TRANSPORT,
     DESTROYER,
     CRUISER,

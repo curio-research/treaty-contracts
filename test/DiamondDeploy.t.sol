@@ -47,15 +47,15 @@ contract DiamondDeployTest is Test {
 
     uint256 public initTroopNonce = 1;
 
-    uint256 public armyTroopTypeId = indexToId(uint256(TROOP_NAME.ARMY));
+    uint256 public infantryTroopTypeId = indexToId(uint256(TROOP_NAME.INFANTRY));
     uint256 public troopTransportTroopTypeId = indexToId(uint256(TROOP_NAME.TROOP_TRANSPORT));
     uint256 public destroyerTroopTypeId = indexToId(uint256(TROOP_NAME.DESTROYER));
     uint256 public battleshipTroopTypeId = indexToId(uint256(TROOP_NAME.BATTLESHIP));
 
     // troop types
-    TroopType public armyTroopType =
+    TroopType public infantryTroopType =
         TroopType({
-            name: TROOP_NAME.ARMY,
+            name: TROOP_NAME.INFANTRY,
             isLandTroop: true,
             maxHealth: 1,
             damagePerHit: 1,
@@ -240,7 +240,7 @@ contract DiamondDeployTest is Test {
     // Note: hardcoded
     function _generateTroopTypes() internal view returns (TroopType[] memory) {
         TroopType[] memory _troopTypes = new TroopType[](5);
-        _troopTypes[0] = armyTroopType;
+        _troopTypes[0] = infantryTroopType;
         _troopTypes[1] = troopTransportTroopType;
         _troopTypes[2] = destroyerTroopType;
         _troopTypes[3] = cruiserTroopType;

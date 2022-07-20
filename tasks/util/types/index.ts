@@ -8,7 +8,7 @@ export enum TILE_TYPE {
 }
 
 export enum TROOP_NAME {
-  ARMY,
+  INFANTRY,
   TROOP_TRANSPORT,
   DESTROYER,
   CRUISER,
