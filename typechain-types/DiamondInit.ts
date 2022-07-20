@@ -26,15 +26,19 @@ export type WorldConstantsStruct = {
   combatEfficiency: BigNumberish;
   numInitTerrainTypes: BigNumberish;
   initBatchSize: BigNumberish;
-  initPlayerBalance: BigNumberish;
-  defaultBaseGoldGenerationPerSecond: BigNumberish;
+  initPlayerGoldBalance: BigNumberish;
+  initPlayerOilBalance: BigNumberish;
   maxBaseCountPerPlayer: BigNumberish;
   maxTroopCountPerPlayer: BigNumberish;
   maxPlayerCount: BigNumberish;
+  defaultBaseGoldGenerationPerSecond: BigNumberish;
+  defaultWellOilGenerationPerSecond: BigNumberish;
 };
 
 export type WorldConstantsStructOutput = [
   string,
+  BigNumber,
+  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -56,11 +60,13 @@ export type WorldConstantsStructOutput = [
   combatEfficiency: BigNumber;
   numInitTerrainTypes: BigNumber;
   initBatchSize: BigNumber;
-  initPlayerBalance: BigNumber;
-  defaultBaseGoldGenerationPerSecond: BigNumber;
+  initPlayerGoldBalance: BigNumber;
+  initPlayerOilBalance: BigNumber;
   maxBaseCountPerPlayer: BigNumber;
   maxTroopCountPerPlayer: BigNumber;
   maxPlayerCount: BigNumber;
+  defaultBaseGoldGenerationPerSecond: BigNumber;
+  defaultWellOilGenerationPerSecond: BigNumber;
 };
 
 export type TroopTypeStruct = {
@@ -73,8 +79,8 @@ export type TroopTypeStruct = {
   cargoCapacity: BigNumberish;
   movementCooldown: BigNumberish;
   largeActionCooldown: BigNumberish;
-  cost: BigNumberish;
-  expensePerSecond: BigNumberish;
+  goldPrice: BigNumberish;
+  oilConsumptionPerSecond: BigNumberish;
 };
 
 export type TroopTypeStructOutput = [
@@ -99,13 +105,13 @@ export type TroopTypeStructOutput = [
   cargoCapacity: BigNumber;
   movementCooldown: BigNumber;
   largeActionCooldown: BigNumber;
-  cost: BigNumber;
-  expensePerSecond: BigNumber;
+  goldPrice: BigNumber;
+  oilConsumptionPerSecond: BigNumber;
 };
 
 export interface DiamondInitInterface extends utils.Interface {
   functions: {
-    "init((address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),(uint8,bool,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256)[])": FunctionFragment;
+    "init((address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),(uint8,bool,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256)[])": FunctionFragment;
   };
 
   encodeFunctionData(

@@ -12,6 +12,7 @@ task('map', 'map tests')
         height: 20,
         numPorts: 100,
         numCities: 100,
+        numOilWells: 20,
       },
       RENDER_CONSTANTS
     );

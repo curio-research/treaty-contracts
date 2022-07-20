@@ -4,6 +4,7 @@ export enum TILE_TYPE {
   WATER = 2,
   PORT = 3,
   CITY = 4,
+  OIL_WELL = 5,
 }
 
 export enum TROOP_NAME {
@@ -20,6 +21,7 @@ export interface MapInput {
   height: number;
   numPorts: number;
   numCities: number;
+  numOilWells: number;
 }
 
 export interface RenderInput {
@@ -60,16 +62,18 @@ export interface ColorsAndCutoffs {
   colors: number[][];
 }
 
-export interface TileMapOutput {
+export interface GameMapConfig {
   tileMap: TILE_TYPE[][];
   portTiles: Position[];
   cityTiles: Position[];
+  oilWellTiles: Position[];
 }
 
-export interface AllGameMapsOutput {
+export interface GameMapConfigWithColor {
   tileMap: TILE_TYPE[][];
   portTiles: Position[];
   cityTiles: Position[];
+  oilWellTiles: Position[];
   colorMap: number[][][];
 }
 

@@ -49,7 +49,7 @@ library Util {
         uint256 _terrainId = _encodedCol / _divFactor;
 
         if (_terrainId >= 3) {
-            BASE_NAME _baseName = _terrainId == 3 ? BASE_NAME.PORT : BASE_NAME.CITY;
+            BASE_NAME _baseName = BASE_NAME(_terrainId - 3);
             _addBase(_pos, _baseName);
             _terrainId -= 3;
         }
@@ -58,21 +58,25 @@ library Util {
         gs().map[_pos.x][_pos.y].terrain = TERRAIN(_terrainId);
     }
 
-    function _updatePlayerBalance(address _addr) public {
+    function _updatePlayerBalances(address _addr) public {
         Player memory _player = gs().playerMap[_addr];
         uint256 _timeElapsed = block.timestamp - _player.balanceLastUpdated;
 
-        if (_player.totalGoldGenerationPerUpdate >= _player.totalTroopExpensePerUpdate) {
+        // Update gold balance
+        _player.goldBalance += _player.totalGoldGenerationPerUpdate * _timeElapsed;
+
+        // Update oil balance
+        if (_player.totalOilGenerationPerUpdate >= _player.totalOilConsumptionPerUpdate) {
             // Gain
-            _player.balance += (_player.totalGoldGenerationPerUpdate - _player.totalTroopExpensePerUpdate) * _timeElapsed;
+            _player.oilBalance += (_player.totalOilGenerationPerUpdate - _player.totalOilConsumptionPerUpdate) * _timeElapsed;
         } else {
             // Loss
-            uint256 _reduction = (_player.totalTroopExpensePerUpdate - _player.totalGoldGenerationPerUpdate) * _timeElapsed;
-            if (_reduction >= _player.balance) {
-                _player.balance = 0;
+            uint256 _reduction = (_player.totalOilConsumptionPerUpdate - _player.totalOilGenerationPerUpdate) * _timeElapsed;
+            if (_reduction >= _player.oilBalance) {
+                _player.oilBalance = 0;
                 // _player.active = false; // Note: disabled for now, allowing negative balances
             } else {
-                _player.balance -= _reduction;
+                _player.oilBalance -= _reduction;
             }
         }
 
@@ -99,23 +103,23 @@ library Util {
         Position memory _pos = _troop.pos;
 
         uint256 _numOwnedTroops = gs().playerMap[_owner].numOwnedTroops;
-        uint256 _totalTroopExpensePerUpdate = gs().playerMap[_owner].totalTroopExpensePerUpdate;
+        uint256 _totalOilConsumptionPerUpdate = gs().playerMap[_owner].totalOilConsumptionPerUpdate;
 
         for (uint256 i = 0; i < _troop.cargoTroopIds.length; i++) {
             uint256 _cargoId = _troop.cargoTroopIds[i];
 
             _numOwnedTroops--;
-            _totalTroopExpensePerUpdate -= _getExpensePerSecond(_getTroop(_cargoId).troopTypeId);
+            _totalOilConsumptionPerUpdate -= _getOilConsumptionPerSecond(_getTroop(_cargoId).troopTypeId);
             delete gs().troopIdMap[_cargoId];
         }
 
         _numOwnedTroops--;
-        _totalTroopExpensePerUpdate -= _getExpensePerSecond(_troop.troopTypeId);
+        _totalOilConsumptionPerUpdate -= _getOilConsumptionPerSecond(_troop.troopTypeId);
         delete gs().troopIdMap[_troopId];
 
-        _updatePlayerBalance(_owner);
+        _updatePlayerBalances(_owner);
         gs().playerMap[_owner].numOwnedTroops = _numOwnedTroops;
-        gs().playerMap[_owner].totalTroopExpensePerUpdate = _totalTroopExpensePerUpdate;
+        gs().playerMap[_owner].totalOilConsumptionPerUpdate = _totalOilConsumptionPerUpdate;
 
         Tile memory _tile = _getTileAt(_troop.pos);
         if (_canTransportTroop(_tile)) {
@@ -151,23 +155,28 @@ library Util {
         gs().troopNonce++;
         gs().map[_pos.x][_pos.y].occupantId = _troopId;
 
-        // Update gold info
-        _updatePlayerBalance(_owner);
+        // Update balances
+        _updatePlayerBalances(_owner);
         gs().playerMap[_owner].numOwnedTroops++;
-        gs().playerMap[_owner].totalTroopExpensePerUpdate += _getExpensePerSecond(_troopTypeId);
+        gs().playerMap[_owner].totalOilConsumptionPerUpdate += _getOilConsumptionPerSecond(_troopTypeId);
 
         return (_troopId, gs().troopIdMap[_troopId]);
     }
 
     function _addBase(Position memory _pos, BASE_NAME _baseName) public returns (uint256) {
+        bool _isOilWell = _baseName == BASE_NAME.OIL_WELL;
+        uint256 _goldGenerationPerSecond = _isOilWell ? 0 : gs().worldConstants.defaultBaseGoldGenerationPerSecond;
+        uint256 _oilGenerationPerSecond = _isOilWell ? gs().worldConstants.defaultWellOilGenerationPerSecond : 0;
+
         Base memory _base = Base({
             owner: address(0),
             name: _baseName,
             attackFactor: 100,
             defenseFactor: 100,
-            health: 1, // FIXME: change to base constants
-            goldGenerationPerSecond: gs().worldConstants.defaultBaseGoldGenerationPerSecond,
-            pos: _pos
+            health: 1,
+            goldGenerationPerSecond: _goldGenerationPerSecond,
+            oilGenerationPerSecond: _oilGenerationPerSecond,
+            pos: _pos //
         });
 
         uint256 _baseId = gs().baseNonce;
@@ -203,8 +212,12 @@ library Util {
         return gs().playerMap[_player].active;
     }
 
-    function _getPlayerBalance(address _player) public view returns (uint256) {
-        return gs().playerMap[_player].balance;
+    function _getPlayerGoldBalance(address _player) public view returns (uint256) {
+        return gs().playerMap[_player].goldBalance;
+    }
+
+    function _getPlayerOilBalance(address _player) public view returns (uint256) {
+        return gs().playerMap[_player].oilBalance;
     }
 
     function _getTotalGoldGenerationPerUpdate(address _player) public view returns (uint256) {
@@ -219,16 +232,16 @@ library Util {
         return gs().troopIdMap[_id];
     }
 
-    function _getExpensePerSecond(uint256 _troopTypeId) public view returns (uint256) {
-        return gs().troopTypeIdMap[_troopTypeId].expensePerSecond;
+    function _getOilConsumptionPerSecond(uint256 _troopTypeId) public view returns (uint256) {
+        return gs().troopTypeIdMap[_troopTypeId].oilConsumptionPerSecond;
     }
 
     function _getMaxHealth(uint256 _troopTypeId) public view returns (uint256) {
         return gs().troopTypeIdMap[_troopTypeId].maxHealth;
     }
 
-    function _getTroopCost(uint256 _troopTypeId) public view returns (uint256) {
-        return gs().troopTypeIdMap[_troopTypeId].cost;
+    function _getTroopGoldPrice(uint256 _troopTypeId) public view returns (uint256) {
+        return gs().troopTypeIdMap[_troopTypeId].goldPrice;
     }
 
     function _getDamagePerHit(uint256 _troopTypeId) public view returns (uint256) {
