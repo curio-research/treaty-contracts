@@ -1,4 +1,4 @@
-import { Position, TileMapOutput, TILE_TYPE } from './types';
+import { Position, GameMapConfig, TILE_TYPE } from './types';
 // Contains fixed maps for game
 
 /////////////////////////////////////////////////////////////
@@ -27,10 +27,15 @@ const testingMapCityTiles: Position[] = [
   { x: 0, y: 2 },
   { x: 2, y: 0 },
 ];
-export const testingMapTileOutput: TileMapOutput = {
+const testingMapOilWellTiles: Position[] = [
+  { x: 2, y: 2 },
+  { x: 7, y: 7 },
+];
+export const testingMapConfig: GameMapConfig = {
   tileMap: testingMap,
   portTiles: testingMapPortTiles,
   cityTiles: testingMapCityTiles,
+  oilWellTiles: testingMapOilWellTiles,
 };
 
 /////////////////////////////////////////////////////////////
@@ -42,11 +47,12 @@ interface Stronghold {
   position: Position;
 }
 
-const W = 2;
-const L = 1;
-const C = 0;
-const P = 3;
-const I = 4;
+const W = 2; // Water
+const L = 1; // inLand
+const C = 0; // Coast
+const P = 3; // Port
+const I = 4; // cIty
+const O = 5; // Oil well
 
 const MEDITERRAINEAN_GEOGRAPHY = [
   [W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, L, L],
@@ -140,9 +146,10 @@ const addCoasts = (map: number[][]): number[][] => {
   return map;
 };
 
-const addStrongholds = (map: number[][], strongholds: Stronghold[]): TileMapOutput => {
+const addStrongholds = (map: number[][], strongholds: Stronghold[]): GameMapConfig => {
   const portTiles: Position[] = [];
   const cityTiles: Position[] = [];
+  const oilWellTiles: Position[] = []; // FIXME: assign
 
   strongholds.forEach((s) => {
     if (map[s.position.x][s.position.y] === C) {
@@ -154,7 +161,7 @@ const addStrongholds = (map: number[][], strongholds: Stronghold[]): TileMapOutp
     }
   });
 
-  return { tileMap: map, portTiles, cityTiles };
+  return { tileMap: map, portTiles, cityTiles, oilWellTiles };
 };
 
-export const MEDITERRAINEAN_MAP = addStrongholds(addCoasts(MEDITERRAINEAN_GEOGRAPHY), [...tier1Strongholds, ...tier2Strongholds]);
+export const MEDITERRAINEAN_MAP_CONFIG = addStrongholds(addCoasts(MEDITERRAINEAN_GEOGRAPHY), [...tier1Strongholds, ...tier2Strongholds]);

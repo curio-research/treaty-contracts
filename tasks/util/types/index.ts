@@ -21,6 +21,7 @@ export interface MapInput {
   height: number;
   numPorts: number;
   numCities: number;
+  numOilWells: number;
 }
 
 export interface RenderInput {
@@ -61,16 +62,18 @@ export interface ColorsAndCutoffs {
   colors: number[][];
 }
 
-export interface TileMapOutput {
+export interface GameMapConfig {
   tileMap: TILE_TYPE[][];
   portTiles: Position[];
   cityTiles: Position[];
+  oilWellTiles: Position[];
 }
 
-export interface AllGameMapsOutput {
+export interface GameMapConfigWithColor {
   tileMap: TILE_TYPE[][];
   portTiles: Position[];
   cityTiles: Position[];
+  oilWellTiles: Position[];
   colorMap: number[][][];
 }
 

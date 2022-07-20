@@ -1,7 +1,7 @@
 import { Signer, Contract } from 'ethers';
 import { FactoryOptions, HardhatRuntimeEnvironment } from 'hardhat/types';
 import { LOCALHOST_RPC_URL, LOCALHOST_WS_RPC_URL } from './constants';
-import { TileMapOutput } from './types';
+import { GameMapConfig } from './types';
 import * as path from 'path';
 import * as fsPromise from 'fs/promises';
 import * as fs from 'fs';
@@ -30,7 +30,7 @@ export const rpcUrlSelector = (networkName: string): string[] => {
 
 export const LOCAL_MAP_PREFIX = 'MAP-';
 
-export const saveMapToLocal = async (tileMapOutput: TileMapOutput) => {
+export const saveMapToLocal = async (tileMapOutput: GameMapConfig) => {
   const mapsDir = path.join(path.join(__dirname), '..', 'maps');
   if (!fs.existsSync(mapsDir)) fs.mkdirSync(mapsDir);
 
@@ -44,7 +44,7 @@ export const saveMapToLocal = async (tileMapOutput: TileMapOutput) => {
   await fsPromise.writeFile(mapPath, JSON.stringify(tileMapOutput));
 };
 
-export const loadLocalMap = (mapIndex: number): TileMapOutput => {
+export const loadLocalMapConfig = (mapIndex: number): GameMapConfig => {
   const mapsDir = path.join(path.join(__dirname), '..', 'maps');
   const mapPath = path.join(mapsDir, `${LOCAL_MAP_PREFIX}${mapIndex}.json`);
   if (!fs.existsSync(mapsDir) || !fs.existsSync(mapPath)) {

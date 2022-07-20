@@ -14,6 +14,7 @@ export const LOCAL_MAP_INPUT: MapInput = {
   height: 30,
   numPorts: 30,
   numCities: 15,
+  numOilWells: 3,
 };
 
 export const SANDBOX_MAP_INPUT: MapInput = {
@@ -21,6 +22,7 @@ export const SANDBOX_MAP_INPUT: MapInput = {
   height: 70,
   numPorts: 200,
   numCities: 50,
+  numOilWells: 10,
 };
 
 export const COMBAT_EFFICIENCY = 50;

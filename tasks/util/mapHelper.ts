@@ -1,6 +1,6 @@
 import { BigNumberish, BigNumber } from 'ethers';
 import SimplexNoise from 'simplex-noise';
-import { RenderInput, ColorsAndCutoffs, TileMapOutput, TILE_TYPE, AllGameMapsOutput, MapInput, Position } from './types';
+import { RenderInput, ColorsAndCutoffs, GameMapConfig, TILE_TYPE, GameMapConfigWithColor, MapInput, Position } from './types';
 
 //////////////////////////////////////////////////////////////////////
 ///////////////////////////// CONSTANTS //////////////////////////////
@@ -66,7 +66,7 @@ export const encodeTileMap = (tileMap: TILE_TYPE[][], numInitTerrainTypes: numbe
  * @param renderInput
  * @returns a 2d matrix of tile types and a 2d matrix of RGB values
  */
-export const generateGameMaps = (mapInput: MapInput, renderInput: RenderInput): AllGameMapsOutput => {
+export const generateGameMaps = (mapInput: MapInput, renderInput: RenderInput): GameMapConfigWithColor => {
   // Use multiple layers of Perlin noise to generate randomized continents and oceans with plate tectonics
   const microNoiseMap: number[][] = generateNoiseMap(mapInput.width, mapInput.height, renderInput.sizeFactor);
   const plateNoiseMap: number[][] = generateNoiseMap(mapInput.width, mapInput.height, renderInput.sizeFactor * renderInput.plateSizeMultiplier);
@@ -78,7 +78,7 @@ export const generateGameMaps = (mapInput: MapInput, renderInput: RenderInput): 
     return row.map((val: number) => assignDepthColor(val, colorsAndCutoffs));
   });
 
-  const { tileMap, portTiles, cityTiles } = placePortsAndCities(colorMap, mapInput.numPorts, mapInput.numCities);
+  const { tileMap, portTiles, cityTiles, oilWellTiles } = placePortsAndCities(colorMap, mapInput.numPorts, mapInput.numCities, mapInput.numOilWells);
 
   // Update colorMap with ports and cities
   portTiles.forEach((portTile) => {
@@ -89,7 +89,7 @@ export const generateGameMaps = (mapInput: MapInput, renderInput: RenderInput): 
     colorMap[cityTile.x][cityTile.y] = [100, 100, 100];
   });
 
-  return { tileMap, portTiles, cityTiles, colorMap };
+  return { tileMap, portTiles, cityTiles, oilWellTiles, colorMap };
 };
 
 export const generateEmptyMatrix = (mapWidth: number, mapHeight: number, defaultValue: any): any[][] => {
@@ -240,7 +240,7 @@ export const rgbArrayToString = (rgbArray: number[]): string => {
  * @param numCities
  * @returns a 2d matrix of tile types
  */
-export const placePortsAndCities = (colorMap: number[][][], numPorts: number, numCities: number): TileMapOutput => {
+export const placePortsAndCities = (colorMap: number[][][], numPorts: number, numCities: number, numOilWells: number): GameMapConfig => {
   let tileMap: TILE_TYPE[][] = generateEmptyMatrix(colorMap.length, colorMap[0].length, TILE_TYPE.WATER);
 
   // 1. Identify coastlines and inland areas.
@@ -248,6 +248,7 @@ export const placePortsAndCities = (colorMap: number[][][], numPorts: number, nu
   const inlandTiles: Position[] = [];
   const portTiles: Position[] = [];
   const cityTiles: Position[] = [];
+  const oilWellTiles: Position[] = [];
 
   for (let x = 0; x < colorMap.length * xIncrement; x += xIncrement) {
     for (let y = 0; y < colorMap[0].length * yIncrement; y += yIncrement) {
@@ -292,7 +293,7 @@ export const placePortsAndCities = (colorMap: number[][][], numPorts: number, nu
 
   // go through each island number
   // pick a random coast tile on each island and then add it to the island array.
-  // this ensures that theres at least one city on each island!
+  // this ensures that there's at least one port on each island!
   for (let i = 1; i < islandID + 1; i++) {
     const positionsByIslandID = islandIdToMapping.get(i);
     if (positionsByIslandID && numPorts > 0) {
@@ -316,7 +317,7 @@ export const placePortsAndCities = (colorMap: number[][][], numPorts: number, nu
     numPorts--;
   }
 
-  while (numCities) {
+  while (numCities > 0) {
     if (!inlandTiles || inlandTiles.length === 0) break;
 
     const inlandTileIdx = Math.floor(Math.random() * inlandTiles.length);
@@ -329,7 +330,19 @@ export const placePortsAndCities = (colorMap: number[][][], numPorts: number, nu
     numCities--;
   }
 
-  return { tileMap, portTiles, cityTiles };
+  while (numOilWells > 0) {
+    const x = Math.floor(Math.random() * tileMap.length);
+    const y = Math.floor(Math.random() * tileMap[0].length);
+
+    if (tileMap[x][y] === TILE_TYPE.PORT || tileMap[x][y] === TILE_TYPE.CITY) continue;
+
+    tileMap[x][y] = TILE_TYPE.OIL_WELL;
+
+    oilWellTiles.push({ x, y });
+    numOilWells--;
+  }
+
+  return { tileMap, portTiles, cityTiles, oilWellTiles };
 };
 
 //////////////////////////////////////////////////////////////////////
