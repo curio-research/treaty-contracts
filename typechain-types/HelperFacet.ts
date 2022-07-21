@@ -34,7 +34,7 @@ export interface HelperFacetInterface extends utils.Interface {
     "spawnTroop((uint256,uint256),address,uint256)": FunctionFragment;
     "storeEncodedColumnBatches(uint256[][])": FunctionFragment;
     "transferBaseOwnership((uint256,uint256),address)": FunctionFragment;
-    "updatePlayerBalance(address)": FunctionFragment;
+    "updatePlayerBalances(address)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -67,7 +67,7 @@ export interface HelperFacetInterface extends utils.Interface {
     values: [PositionStruct, string]
   ): string;
   encodeFunctionData(
-    functionFragment: "updatePlayerBalance",
+    functionFragment: "updatePlayerBalances",
     values: [string]
   ): string;
 
@@ -92,7 +92,7 @@ export interface HelperFacetInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "updatePlayerBalance",
+    functionFragment: "updatePlayerBalances",
     data: BytesLike
   ): Result;
 
@@ -167,7 +167,7 @@ export interface HelperFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    updatePlayerBalance(
+    updatePlayerBalances(
       _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -214,7 +214,7 @@ export interface HelperFacet extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  updatePlayerBalance(
+  updatePlayerBalances(
     _player: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -251,7 +251,7 @@ export interface HelperFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    updatePlayerBalance(
+    updatePlayerBalances(
       _player: string,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -301,7 +301,7 @@ export interface HelperFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    updatePlayerBalance(
+    updatePlayerBalances(
       _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -349,7 +349,7 @@ export interface HelperFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    updatePlayerBalance(
+    updatePlayerBalances(
       _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;

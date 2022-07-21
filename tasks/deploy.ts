@@ -5,14 +5,14 @@ import * as fs from 'fs';
 import { Util } from './../typechain-types/Util';
 import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
-import { deployProxy, loadLocalMap, LOCAL_MAP_PREFIX, printDivider, saveMapToLocal } from './util/deployHelper';
+import { deployProxy, loadLocalMapConfig, LOCAL_MAP_PREFIX, printDivider, saveMapToLocal } from './util/deployHelper';
 import { TROOP_TYPES, getTroopTypeIndexByName, RENDER_CONSTANTS, generateWorldConstants, LOCAL_MAP_INPUT, SANDBOX_MAP_INPUT } from './util/constants';
 import { position } from '../util/types/common';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
-import { Position, TILE_TYPE, TROOP_NAME } from './util/types';
+import { Position, GameMapConfig, TILE_TYPE, TROOP_NAME } from './util/types';
 import { encodeTileMap, generateGameMaps } from './util/mapHelper';
 import { GameConfig } from '../api/types';
-import { MEDITERRAINEAN_MAP, testingMapTileOutput } from './util/mapLibrary';
+import { MEDITERRAINEAN_MAP_CONFIG, testingMapConfig } from './util/mapLibrary';
 import { WorldConstantsStruct } from '../typechain-types/Curio';
 
 /**
@@ -60,45 +60,43 @@ task('deploy', 'deploy contracts')
       const troopTransportTroopTypeId = getTroopTypeIndexByName(TROOP_TYPES, TROOP_NAME.TROOP_TRANSPORT) + 1;
       const destroyerTroopTypeId = getTroopTypeIndexByName(TROOP_TYPES, TROOP_NAME.DESTROYER) + 1;
 
-      // Set up game configs and map
+      // Set up game and map configs
+      let gameMapConfig: GameMapConfig;
       let tileMap: TILE_TYPE[][];
       let portTiles: Position[];
       let cityTiles: Position[];
+      let oilWellTiles: Position[];
       let worldConstants: WorldConstantsStruct;
 
       if (fixMap) {
         if (mapName.toLowerCase() === 'mediterranean') {
           // hardcoded map: Mediterrainean 42x20
-          tileMap = MEDITERRAINEAN_MAP.tileMap;
-          portTiles = MEDITERRAINEAN_MAP.portTiles;
-          cityTiles = MEDITERRAINEAN_MAP.cityTiles;
-          worldConstants = generateWorldConstants(player1.address, { width: tileMap.length, height: tileMap[0].length, numPorts: portTiles.length, numCities: cityTiles.length });
+          gameMapConfig = MEDITERRAINEAN_MAP_CONFIG;
         } else if (mapName.length > LOCAL_MAP_PREFIX.length && mapName.substring(0, LOCAL_MAP_PREFIX.length) === LOCAL_MAP_PREFIX) {
           // saved maps from random generation
           const index = Number(mapName.substring(LOCAL_MAP_PREFIX.length, mapName.length));
-          const tileMapOutput = loadLocalMap(index);
-          tileMap = tileMapOutput.tileMap;
-          portTiles = tileMapOutput.portTiles;
-          cityTiles = tileMapOutput.cityTiles;
-          worldConstants = generateWorldConstants(player1.address, { width: tileMap.length, height: tileMap[0].length, numPorts: portTiles.length, numCities: cityTiles.length });
+          gameMapConfig = loadLocalMapConfig(index);
         } else {
           mapName = 'testingMap';
-          tileMap = testingMapTileOutput.tileMap;
-          portTiles = testingMapTileOutput.portTiles;
-          cityTiles = testingMapTileOutput.cityTiles;
-          worldConstants = generateWorldConstants(player1.address, { width: tileMap.length, height: tileMap[0].length, numPorts: portTiles.length, numCities: cityTiles.length });
+          gameMapConfig = testingMapConfig;
         }
+        tileMap = gameMapConfig.tileMap;
+        portTiles = gameMapConfig.portTiles;
+        cityTiles = gameMapConfig.cityTiles;
+        oilWellTiles = gameMapConfig.oilWellTiles;
+        worldConstants = generateWorldConstants(player1.address, { width: tileMap.length, height: tileMap[0].length, numPorts: portTiles.length, numCities: cityTiles.length, numOilWells: oilWellTiles.length });
       } else {
         // two modes of randomly-generated maps: local (small) or sandbox (big)
         const mapInput = mapName.toLowerCase() === 'sandbox' ? SANDBOX_MAP_INPUT : LOCAL_MAP_INPUT;
-        const gameMapOutput = generateGameMaps(mapInput, RENDER_CONSTANTS);
-        tileMap = gameMapOutput.tileMap;
-        portTiles = gameMapOutput.portTiles;
-        cityTiles = gameMapOutput.cityTiles;
+        const gameMapConfigWithColor = generateGameMaps(mapInput, RENDER_CONSTANTS);
+        tileMap = gameMapConfigWithColor.tileMap;
+        portTiles = gameMapConfigWithColor.portTiles;
+        cityTiles = gameMapConfigWithColor.cityTiles;
+        oilWellTiles = gameMapConfigWithColor.oilWellTiles;
         worldConstants = generateWorldConstants(player1.address, mapInput);
       }
 
-      if (saveMap) saveMapToLocal({ tileMap, portTiles, cityTiles });
+      if (saveMap) saveMapToLocal({ tileMap, portTiles, cityTiles, oilWellTiles });
 
       // Deploy util contracts
       const util = await deployProxy<Util>('Util', player1, hre, []);

@@ -50,7 +50,7 @@ contract EngineFacet is UseStorage {
 
                     _moveModule(_troopId, _targetPos);
                 } else {
-                    _battleBaseModule(_troopId, _targetPos); // will capture and move if won and troop is land troop
+                    _battleBaseModule(_troopId, _targetPos); // will capture and move if conditions are met
                 }
             }
         } else {
@@ -84,16 +84,18 @@ contract EngineFacet is UseStorage {
 
         Tile memory _tile = Util._getTileAt(_pos);
         require(_tile.baseId != NULL, "CURIO: No base found");
-        require(Util._getBaseOwner(_tile.baseId) == msg.sender, "CURIO: Can only purchase in own base");
-        require(Util._isLandTroop(_troopTypeId) || Util._hasPort(_tile), "CURIO: Only ports can purchase water troops");
         require(_tile.occupantId == NULL, "CURIO: Base occupied by another troop");
 
-        uint256 _troopCost = Util._getTroopCost(_troopTypeId);
-        Util._updatePlayerBalance(msg.sender);
-        require(_troopCost <= Util._getPlayerBalance(msg.sender), "CURIO: Insufficient balance (consider deleting some troops!)");
+        Base memory _base = Util._getBase(_tile.baseId);
+        require(_base.owner == msg.sender, "CURIO: Can only purchase in own base");
+        require(_base.name == BASE_NAME.PORT || (_base.name == BASE_NAME.CITY && Util._isLandTroop(_troopTypeId)), "CURIO: Base cannot purchase selected troop type");
+
+        uint256 _troopPrice = Util._getTroopGoldPrice(_troopTypeId);
+        Util._updatePlayerBalances(msg.sender);
+        require(_troopPrice <= Util._getPlayerGoldBalance(msg.sender), "CURIO: Insufficient gold balance (capture more bases!)");
 
         (uint256 _troopId, Troop memory _troop) = Util._addTroop(msg.sender, _pos, _troopTypeId);
-        gs().playerMap[msg.sender].balance -= _troopCost;
+        gs().playerMap[msg.sender].goldBalance -= _troopPrice;
 
         emit Util.PlayerInfo(msg.sender, gs().playerMap[msg.sender]);
         emit Util.NewTroop(msg.sender, _troopId, _troop, _pos);
@@ -131,9 +133,11 @@ contract EngineFacet is UseStorage {
         gs().playerMap[msg.sender] = Player({
             initTimestamp: block.timestamp,
             active: true,
-            balance: _worldConstants.initPlayerBalance,
+            goldBalance: _worldConstants.initPlayerGoldBalance,
+            oilBalance: _worldConstants.initPlayerOilBalance,
             totalGoldGenerationPerUpdate: _worldConstants.defaultBaseGoldGenerationPerSecond,
-            totalTroopExpensePerUpdate: 0,
+            totalOilGenerationPerUpdate: 0,
+            totalOilConsumptionPerUpdate: 0,
             balanceLastUpdated: block.timestamp,
             numOwnedBases: 1,
             numOwnedTroops: 0 //
@@ -174,7 +178,7 @@ contract EngineFacet is UseStorage {
             }
         }
 
-        Util._updatePlayerBalance(msg.sender);
+        Util._updatePlayerBalances(msg.sender);
 
         emit Util.Moved(msg.sender, _troopId, block.timestamp, _troop.pos, _targetPos);
     }
@@ -196,7 +200,7 @@ contract EngineFacet is UseStorage {
 
         Base memory _targetBase = gs().baseIdMap[_targetTile.baseId];
         require(_targetBase.owner != msg.sender, "CURIO: Cannot attack own base");
-        require(Util._isLandTroop(_troop.troopTypeId) || _targetBase.health > 0, "CURIO: Can only capture base with land troop");
+        require(Util._isLandTroop(_troop.troopTypeId) || _targetBase.health > 0 || _targetBase.name == BASE_NAME.OIL_WELL, "CURIO: Can only capture base with land troop");
 
         // Exchange fire until one side dies
         uint256 _salt = 0;
@@ -233,8 +237,8 @@ contract EngineFacet is UseStorage {
             gs().troopIdMap[_troopId].health = _troop.health;
             gs().baseIdMap[_targetTile.baseId].health = 0;
 
-            // Capture and move onto base if troop is infantry
-            if (Util._isLandTroop(_troop.troopTypeId)) {
+            // Capture and move onto base if troop is infantry or if base is oil well
+            if (Util._isLandTroop(_troop.troopTypeId) || _targetBase.name == BASE_NAME.OIL_WELL) {
                 require(Util._getPlayer(msg.sender).numOwnedBases < gs().worldConstants.maxBaseCountPerPlayer, "CURIO: Max base count exceeded");
 
                 _targetBase = Util._getBase(_targetTile.baseId);
@@ -242,14 +246,16 @@ contract EngineFacet is UseStorage {
                 gs().baseIdMap[_targetTile.baseId].health = 1;
                 emit Util.BaseCaptured(msg.sender, _troopId, _targetTile.baseId);
 
-                Util._updatePlayerBalance(_targetPlayer);
-                Util._updatePlayerBalance(msg.sender);
+                Util._updatePlayerBalances(_targetPlayer);
+                Util._updatePlayerBalances(msg.sender);
                 if (_targetPlayer != NULL_ADDR) {
                     gs().playerMap[_targetPlayer].numOwnedBases--;
                     gs().playerMap[_targetPlayer].totalGoldGenerationPerUpdate -= _targetBase.goldGenerationPerSecond;
+                    gs().playerMap[_targetPlayer].totalOilGenerationPerUpdate -= _targetBase.oilGenerationPerSecond;
                 }
                 gs().playerMap[msg.sender].numOwnedBases++;
                 gs().playerMap[msg.sender].totalGoldGenerationPerUpdate += _targetBase.goldGenerationPerSecond;
+                gs().playerMap[msg.sender].totalOilGenerationPerUpdate += _targetBase.oilGenerationPerSecond;
 
                 // Move
                 _moveModule(_troopId, _targetPos);
