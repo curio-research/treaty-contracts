@@ -79,6 +79,8 @@ struct TroopType {
     uint256 largeActionCooldown;
     uint256 cost;
     uint256 expensePerSecond;
+    uint256[] troopIdsUnderArmy; // Army => group of division(s)
+    bool isBasic;
 }
 
 struct WorldConstants {
