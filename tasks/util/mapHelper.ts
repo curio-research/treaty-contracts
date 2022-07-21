@@ -334,7 +334,9 @@ export const placePortsAndCities = (colorMap: number[][][], numPorts: number, nu
     const x = Math.floor(Math.random() * tileMap.length);
     const y = Math.floor(Math.random() * tileMap[0].length);
 
-    if (tileMap[x][y] === TILE_TYPE.PORT || tileMap[x][y] === TILE_TYPE.CITY) continue;
+    const tileType = tileMap[x][y];
+
+    if (tileType === TILE_TYPE.PORT || tileType === TILE_TYPE.CITY || tileType === TILE_TYPE.WATER || tileType === TILE_TYPE.INLAND) continue;
 
     tileMap[x][y] = TILE_TYPE.OIL_WELL;
 

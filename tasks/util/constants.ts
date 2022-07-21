@@ -12,9 +12,9 @@ export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 export const LOCAL_MAP_INPUT: MapInput = {
   width: 30,
   height: 30,
-  numPorts: 30,
-  numCities: 15,
-  numOilWells: 3,
+  numPorts: 10,
+  numCities: 10,
+  numOilWells: 40,
 };
 
 export const SANDBOX_MAP_INPUT: MapInput = {
@@ -112,8 +112,6 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): W
     admin: adminAddr,
     worldWidth: mapInput.width,
     worldHeight: mapInput.height,
-    numPorts: mapInput.numPorts,
-    numCities: mapInput.numCities,
     combatEfficiency: COMBAT_EFFICIENCY,
     numInitTerrainTypes: NUM_INIT_TERRAIN_TYPES,
     initBatchSize: INIT_BATCH_SIZE,

@@ -203,8 +203,6 @@ export type WorldConstantsStruct = {
   admin: string;
   worldWidth: BigNumberish;
   worldHeight: BigNumberish;
-  numPorts: BigNumberish;
-  numCities: BigNumberish;
   combatEfficiency: BigNumberish;
   numInitTerrainTypes: BigNumberish;
   initBatchSize: BigNumberish;
@@ -230,15 +228,11 @@ export type WorldConstantsStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
-  BigNumber,
-  BigNumber,
   BigNumber
 ] & {
   admin: string;
   worldWidth: BigNumber;
   worldHeight: BigNumber;
-  numPorts: BigNumber;
-  numCities: BigNumber;
   combatEfficiency: BigNumber;
   numInitTerrainTypes: BigNumber;
   initBatchSize: BigNumber;

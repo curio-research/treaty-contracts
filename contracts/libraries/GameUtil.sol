@@ -51,7 +51,12 @@ library Util {
         if (_terrainId >= 3) {
             BASE_NAME _baseName = BASE_NAME(_terrainId - 3);
             _addBase(_pos, _baseName);
-            _terrainId -= 3;
+
+            if (BASE_NAME(_terrainId - 3) == BASE_NAME.OIL_WELL) {
+                _terrainId = 0;
+            } else {
+                _terrainId -= 3;
+            }
         }
 
         gs().map[_pos.x][_pos.y].isInitialized = true;

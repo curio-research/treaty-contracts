@@ -222,8 +222,6 @@ contract DiamondDeployTest is Test {
                 admin: deployer,
                 worldWidth: 1000,
                 worldHeight: 1000,
-                numPorts: 15,
-                numCities: 15,
                 combatEfficiency: 50,
                 numInitTerrainTypes: 6,
                 initBatchSize: 50,
