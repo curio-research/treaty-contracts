@@ -71,6 +71,7 @@ struct Troop {
     uint256 health;
     Position pos;
     uint256[] cargoTroopIds; // only for Troop Transport
+    bool isUnderArmy;
 }
 
 struct TroopType {
@@ -85,6 +86,8 @@ struct TroopType {
     uint256 largeActionCooldown;
     uint256 goldPrice;
     uint256 oilConsumptionPerSecond;
+    uint256[] armyTroopIds;
+    bool isBasic; // basic type [infantry ...]
 }
 
 struct WorldConstants {

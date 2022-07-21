@@ -145,7 +145,8 @@ library Util {
             lastRepaired: block.timestamp,
             health: _getMaxHealth(_troopTypeId),
             pos: _pos,
-            cargoTroopIds: _cargoTroopIds //
+            cargoTroopIds: _cargoTroopIds, //
+            isUnderArmy: false
         });
 
         // Update map info
@@ -232,6 +233,10 @@ library Util {
         return gs().troopIdMap[_id];
     }
 
+    function _getArmyTroopIds(uint256 _troopId) public view returns (uint256[] memory) {
+        return gs().troopTypeIdMap[gs().troopIdMap[_troopId].troopTypeId].armyTroopIds;
+    }
+
     function _getOilConsumptionPerSecond(uint256 _troopTypeId) public view returns (uint256) {
         return gs().troopTypeIdMap[_troopTypeId].oilConsumptionPerSecond;
     }
@@ -266,6 +271,10 @@ library Util {
 
     function _isLandTroop(uint256 _troopTypeId) public view returns (bool) {
         return gs().troopTypeIdMap[_troopTypeId].isLandTroop;
+    }
+
+    function _isBasicTroop(uint256 _troopTypeId) public view returns (bool) {
+        return gs().troopTypeIdMap[_troopTypeId].isBasic;
     }
 
     function _getBaseHealth(uint256 _baseId) public view returns (uint256) {

@@ -65,7 +65,9 @@ contract DiamondDeployTest is Test {
             movementCooldown: 1,
             largeActionCooldown: 1,
             goldPrice: 6,
-            oilConsumptionPerSecond: 0 //
+            oilConsumptionPerSecond: 0, //
+            armyTroopIds: new uint[](5),
+            isBasic: true
         });
     TroopType public troopTransportTroopType =
         TroopType({
@@ -79,7 +81,9 @@ contract DiamondDeployTest is Test {
             movementCooldown: 1,
             largeActionCooldown: 1,
             goldPrice: 14,
-            oilConsumptionPerSecond: 1 //
+            oilConsumptionPerSecond: 1, //
+            armyTroopIds: new uint[](5),
+            isBasic: false
         });
     TroopType public destroyerTroopType =
         TroopType({
@@ -93,7 +97,9 @@ contract DiamondDeployTest is Test {
             movementCooldown: 1,
             largeActionCooldown: 1,
             goldPrice: 20,
-            oilConsumptionPerSecond: 1 //
+            oilConsumptionPerSecond: 1, //
+            armyTroopIds: new uint[](5),
+            isBasic: true
         });
     TroopType public cruiserTroopType =
         TroopType({
@@ -107,7 +113,9 @@ contract DiamondDeployTest is Test {
             movementCooldown: 1,
             largeActionCooldown: 1,
             goldPrice: 30,
-            oilConsumptionPerSecond: 1 //
+            oilConsumptionPerSecond: 1, //
+            armyTroopIds: new uint[](5),
+            isBasic: true
         });
     TroopType public battleshipTroopType =
         TroopType({
@@ -121,7 +129,9 @@ contract DiamondDeployTest is Test {
             movementCooldown: 1,
             largeActionCooldown: 1,
             goldPrice: 50,
-            oilConsumptionPerSecond: 2 //
+            oilConsumptionPerSecond: 1, //
+            armyTroopIds: new uint[](5),
+            isBasic: true
         });
 
     // we assume these two facet selectors do not change. If they do however, we should use getSelectors

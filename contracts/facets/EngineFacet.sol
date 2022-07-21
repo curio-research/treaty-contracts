@@ -79,6 +79,8 @@ contract EngineFacet is UseStorage {
         require(!gs().isPaused, "CURIO: Game is paused");
         require(Util._isPlayerActive(msg.sender), "CURIO: Player is inactive");
 
+        require(Util._isBasicTroop(_troopTypeId), "CURIO: Can only produce a basic troop");
+
         require(Util._inBound(_pos), "CURIO: Out of bound");
         if (!Util._getTileAt(_pos).isInitialized) Util._initializeTile(_pos);
 
@@ -153,11 +155,20 @@ contract EngineFacet is UseStorage {
     function _moveModule(uint256 _troopId, Position memory _targetPos) internal {
         Troop memory _troop = gs().troopIdMap[_troopId];
         Tile memory _targetTile = Util._getTileAt(_targetPos);
+        require(_troop.isUnderArmy == false, "CURIO: Remove this Troop From Army first");
 
         require((block.timestamp - _troop.lastMoved) >= Util._getMovementCooldown(_troop.troopTypeId), "CURIO: Moved too recently");
 
+        // core functionality here: change location of troop(s) to target pos
         if (Util._getTroop(_targetTile.occupantId).cargoTroopIds.length == 0) {
             gs().map[_targetPos.x][_targetPos.y].occupantId = _troopId;
+            // if _troop is an army, move all troops under it
+            if (!Util._isBasicTroop(_troop.troopTypeId)) {
+                uint256[] memory _armyTroopIds = Util._getArmyTroopIds(_troopId);
+                for (uint256 i = 0; i < _armyTroopIds.length; i++) {
+                    gs().troopIdMap[_armyTroopIds[i]].pos = _targetPos;
+                }
+            }
         }
 
         Tile memory _sourceTile = Util._getTileAt(_troop.pos);
@@ -185,9 +196,19 @@ contract EngineFacet is UseStorage {
 
     function _loadModule(uint256 _troopId, Position memory _targetPos) internal {
         Tile memory _targetTile = Util._getTileAt(_targetPos);
+        Troop memory _troop = gs().troopIdMap[_troopId];
+        uint256[] memory _cargoTroopIds = gs().troopIdMap[_targetTile.occupantId].cargoTroopIds;
+        Troop memory _FirstTroopOnTransport = gs().troopIdMap[_cargoTroopIds[0]];
 
-        // Load troop onto troop transport at target tile
-        gs().troopIdMap[_targetTile.occupantId].cargoTroopIds.push(_troopId);
+        if (Util._isBasicTroop(_troop.troopTypeId)) {
+            require (Util._isBasicTroop(_FirstTroopOnTransport.troopTypeId), "CURIO: Transport can only load one Army");
+                // Load troop onto troop transport at target tile
+                gs().troopIdMap[_targetTile.occupantId].cargoTroopIds.push(_troopId);
+        } else {
+            require(_cargoTroopIds.length == 0, "CURIO: Transport can only load one Army");
+            // Load troop onto troop transport at target tile
+            gs().troopIdMap[_targetTile.occupantId].cargoTroopIds.push(_troopId);
+        }
     }
 
     function _battleBaseModule(uint256 _troopId, Position memory _targetPos) internal {
