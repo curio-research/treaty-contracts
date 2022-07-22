@@ -47,10 +47,12 @@ contract Set {
 // Prototyping a tagging system ...
 
 contract CurioOS {
-    // intersection function
-
     uint256 public componentID;
     mapping(uint256 => Set) public components;
+    // do we need component names ?
+
+    uint256 public entityID;
+    mapping(uint256 => bool) public entities;
 
     function addComponent() public {
         Set newComponent = new Set();
@@ -67,9 +69,7 @@ contract CurioOS {
 
     function addEntity() public {}
 
-    // helper variable when using intersection ...
-    // mapping(uint256 => bool) private searchedItems; // componentID => has Searched ?
-
+    // intersection function
     function intersection(uint256 componentID1, uint256 componentID2) public returns (uint256[] memory) {
         Set set1 = components[componentID1];
         Set set2 = components[componentID2];
@@ -122,7 +122,25 @@ contract CurioOS {
         return res;
     }
 
-    function upgradeShip() public {
-        // get all component IDs with ships
+    function moveInBay(uint256 _shipID) public {
+        // create new component called "Sharpness"
+
+        // sharpness is component # 0
+        // assume shipID = entityID
+
+        Set sharpnessComponent = components[0];
+        sharpnessComponent.add(_shipID);
+    }
+
+    function upgradeShips() public {
+        // Set sharpnessComponent = components[0];
+
+        // get all entityIDs with sharpenss aka component 0
+        uint256[] memory troopIDsWithSharpness = intersection(0, 0);
+
+        // Now you only loop over relevant troopIDs, as opposed to all troop IDs!
+        for (uint256 i = 0; i < troopIDsWithSharpness.length; i++) {
+            // apply updates to each troop
+        }
     }
 }
