@@ -2,7 +2,7 @@
 pragma solidity ^0.8.4;
 
 import "contracts/libraries/Storage.sol";
-import {BASE_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop, WorldConstants} from "contracts/libraries/Types.sol";
+import {BASE_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop, TroopType, WorldConstants} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 
 /// @title Util library
@@ -100,6 +100,25 @@ library Util {
 
         gs().troopIdMap[_troopTransportId].cargoTroopIds[_index] = _cargoTroopIds[_cargoSize - 1];
         gs().troopIdMap[_troopTransportId].cargoTroopIds.pop();
+    }
+
+    function _armyTroopsInOut(
+        uint256 _armyId,
+        uint256 _troopId,
+        bool isIn
+    ) public {
+        Troop memory _army = _getTroop(_armyId);
+        Troop memory _troop = _getTroop(_troopId);
+
+        if (isIn) {
+            // Push troop into army
+            gs().troopTypeIdMap[_army.troopTypeId].armyTroopIds.push(_troopId);
+            _troop.isUnderArmy = true;
+            gs().troopIdMap[_troopId] = _troop;
+
+            gs().troopTypeIdMap[_army.troopTypeId].maxHealth -= _troop.maxHealth;
+
+        }
     }
 
     function _removeTroop(uint256 _troopId) public {

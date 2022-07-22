@@ -271,8 +271,35 @@ contract EngineFacet is UseStorage {
         // army can have one transport at most, but minimum size is 2
         require(Util._getCargoCapacity(_troopId) == 0, "CURIO: If Army has TroopTransport, it can have only one other troopType");
 
-        gs().troopIdMap[_armyId].cargoTroopIds.push(_troopId);
-        
+        // _troop join _army
+        gs().troopTypeIdMap[_army.troopTypeId].armyTroopIds.push(_troopId);
+        _troop.isUnderArmy = true;
+        gs().troopIdMap[_troopId] = _troop;
+        MarchModules._moveModule(_troopId, _army.pos);
+    }
 
+    function seperateFromArmy(uint256 _armyId, uint256 _troopId, Position memory _pos) external {
+        // basic check
+        require(!gs().isPaused, "CURIO: Game is paused");
+        require(Util._isPlayerActive(msg.sender), "CURIO: Player is inactive");
+
+        Troop memory _army = Util._getTroop(_armyId);
+        Troop memory _troop = Util._getTroop(_troopId);
+        uint256[] memory _armyTroopIds = gs().troopTypeIdMap[_army.troopTypeId].armyTroopIds;
+        
+        // large action check & update
+        require(_army.owner == msg.sender, "CURIO: Can only combine own troop");
+        require((block.timestamp - _army.lastLargeActionTaken) >= Util._getLargeActionCooldown(_army.troopTypeId), "CURIO: Large action taken too recently");
+        gs().troopIdMap[_armyId].lastLargeActionTaken = block.timestamp;
+
+        require(_troop.owner == msg.sender, "CURIO: Can only combine own troop");
+        require((block.timestamp - _troop.lastLargeActionTaken) >= Util._getLargeActionCooldown(_troop.troopTypeId), "CURIO: Large action taken too recently");
+        gs().troopIdMap[_troopId].lastLargeActionTaken = block.timestamp;
+
+        uint _armySize = _armyTroopIds.length;
+        // minimum troop size of Army is two
+        if (_armySize >= 3) {
+
+        }
     }
 }
