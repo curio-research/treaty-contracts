@@ -58,6 +58,8 @@ contract CurioOS {
     mapping(uint256 => bool) public entities; // we can start with TroopIDs
 
     function addComponent(string memory _name) public returns (uint256) {
+        require(componentName[_name] == 0, "Component with same name exists");
+
         componentID++;
         Set newComponent = new Set();
         components[componentID] = newComponent;
@@ -133,13 +135,42 @@ contract CurioOS {
 
         // copy the unknown size array to the calculated one
         uint256[] memory res = new uint256[](itemCount);
-
         for (uint256 i = 0; i < itemCount; i++) {
             res[i] = temp[i];
         }
-
         return res;
     }
+
+    // definitino of difference: set of all elements of A that are not elements of B
+    // example: i want all ships that are NOT in a port
+
+    function difference(uint256 componentID1, uint256 componentID2) public view returns (uint256[] memory) {
+        Set set1 = components[componentID1];
+        Set set2 = components[componentID2];
+
+        uint256[] memory temp = new uint256[](set1.size());
+        uint256 itemCount = 0;
+
+        // loop through first set
+        for (uint256 i = 0; i < set1.size(); i++) {
+            uint256 _item = set1.items(i);
+
+            // check if the item is in the secone set
+
+            if (!set2.includes(_item)) {
+                temp[itemCount] = _item;
+                itemCount++;
+            }
+        }
+
+        uint256[] memory res = new uint256[](itemCount);
+        for (uint256 i = 0; i < itemCount; i++) {
+            res[i] = temp[i];
+        }
+        return res;
+    }
+
+    //////////////////////////////////////////////////////////////////////
 
     function moveInBay(uint256 _shipID) public {
         // create new component called "Sharpness"

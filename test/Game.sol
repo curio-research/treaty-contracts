@@ -9,18 +9,21 @@ contract Game is Test {
     CurioOS public game;
 
     function setUp() public {
+        string memory shipComponent = "ship";
+        string memory inPortComponent = "inPort";
+
         game = new CurioOS(); // create new OS
-        game.addComponent("ship"); // 1: ships
-        game.addComponent("inPort"); // 2: in port
+        game.addComponent(shipComponent); // 1: ships
+        game.addComponent(inPortComponent); // 2: in port
 
         // (0, 1, 2) (1, 2)
         // add entities (troopIDs in our game) to components
-        game.addEntityToComponentByName(0, "ship");
-        game.addEntityToComponentByName(1, "ship");
-        game.addEntityToComponentByName(2, "ship");
+        game.addEntityToComponentByName(0, shipComponent);
+        game.addEntityToComponentByName(1, shipComponent);
+        game.addEntityToComponentByName(2, shipComponent);
 
-        game.addEntityToComponentByName(1, "inPort");
-        game.addEntityToComponentByName(2, "inPort");
+        game.addEntityToComponentByName(1, inPortComponent);
+        game.addEntityToComponentByName(2, inPortComponent);
     }
 
     function testSet() public {
@@ -81,12 +84,34 @@ contract Game is Test {
         assertEq(res.length, 0);
     }
 
+    function testDifference() public {
+        CurioOS _game = new CurioOS(); // create new OS
+        _game.addComponent("ship"); // 0: ships
+        _game.addComponent("inPort"); // 1: in port
+
+        // (1, 2, 3) (2, 3, 4)
+        _game.addEntityToComponent(1, 1);
+        _game.addEntityToComponent(2, 1);
+        _game.addEntityToComponent(3, 1);
+
+        _game.addEntityToComponent(2, 2);
+        _game.addEntityToComponent(3, 2);
+        _game.addEntityToComponent(4, 2);
+
+        uint256[] memory res = _game.difference(1, 2);
+        assertEq(res.length, 1);
+
+        // for (uint256 i = 0; i < res.length; i++) {
+        //     console.log(res[i]);
+        // }
+    }
+
     function testSample() public {
         string memory encoded = encodeUint(10);
 
         uint256 decoded = decodeUint(encoded);
 
-        console.log(decoded);
+        assertEq(decoded, 10);
     }
 
     // ----------------------------
