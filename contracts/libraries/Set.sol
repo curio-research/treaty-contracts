@@ -7,13 +7,15 @@ contract Set {
 
     function add(uint256 _val) public {
         if (itemMapping[_val]) return; // check if it exists
+        items.push(_val);
         itemMapping[_val] = true;
     }
 
     function remove(uint256 _val) public {
-        if (!itemMapping[_val]) return; // check if it exists first
+        if (!itemMapping[_val]) return; // check if value exists
+        if (items.length == 0) return;
 
-        // find idx of item
+        // find idx of item // should be more efficient prob ...
 
         uint256 idx;
         for (uint256 i = 0; i < items.length; i++) {
@@ -22,32 +24,33 @@ contract Set {
             }
         }
 
-        delete items[idx];
-        itemMapping[_val] = false; // remove existance
-
-        // get the last item and move it over to fill the gap
+        // swap the item with the last item
         uint256 lastItemIdx = items.length - 1;
         uint256 lastItem = items[lastItemIdx];
         items[idx] = lastItem;
 
-        delete items[lastItemIdx];
+        itemMapping[_val] = false; // remove existance
+
+        // // pop the last item
+        items.pop();
     }
 
-    function size() public returns (uint256) {
+    function size() public view returns (uint256) {
         return items.length;
+    }
+
+    function includes(uint256 _item) public view returns (bool) {
+        return itemMapping[_item] == true;
     }
 }
 
-contract System {
+// Prototyping a tagging system ...
+
+contract CurioOS {
     // intersection function
 
-    uint256 componentID;
-    mapping(uint256 => Set) components;
-
-    constructor() {
-        addComponent(); // 0: ships
-        addComponent(); // 1: in port
-    }
+    uint256 public componentID;
+    mapping(uint256 => Set) public components;
 
     function addComponent() public {
         Set newComponent = new Set();
@@ -56,16 +59,26 @@ contract System {
         componentID++;
     }
 
+    function addEntityToComponent(uint256 _entityID, uint256 _componentID) public {
+        Set component = components[_componentID];
+
+        component.add(_entityID);
+    }
+
+    function addEntity() public {}
+
     // helper variable when using intersection ...
-    mapping(uint256 => bool) private hasSearched; // componentID => has Searched ?
+    // mapping(uint256 => bool) private searchedItems; // componentID => has Searched ?
 
     function intersection(uint256 componentID1, uint256 componentID2) public returns (uint256[] memory) {
         Set set1 = components[componentID1];
         Set set2 = components[componentID2];
 
+        Set searchedItems = new Set();
+
         // first initiate an array with a crazy size then copy to right size?
 
-        uint256[] memory temp = new uint256[](1000);
+        uint256[] memory temp = new uint256[](set1.size() + set2.size());
         uint256 itemCount = 0;
 
         // loop through first set
@@ -73,12 +86,14 @@ contract System {
             uint256 _item = set1.items(i);
 
             // check if the item is in the secone set
-            if (set2.itemMapping(_item)) {
-                temp[itemCount] = _item;
-                itemCount++;
+            if (!searchedItems.includes(_item)) {
+                if (set2.includes(_item)) {
+                    temp[itemCount] = _item;
+                    itemCount++;
+                }
             }
 
-            hasSearched[_item] = true;
+            searchedItems.add(_item);
         }
 
         // loop through second set
@@ -87,15 +102,17 @@ contract System {
             uint256 _item = set2.items(i);
 
             // check if the item is in the first set
-            if (set1.itemMapping(_item)) {
-                temp[itemCount] = _item;
-                itemCount++;
+            if (!searchedItems.includes(_item)) {
+                if (set1.includes(_item)) {
+                    temp[itemCount] = _item;
+                    itemCount++;
+                }
             }
 
-            hasSearched[_item] = true;
+            searchedItems.add(_item);
         }
 
-        // copy the large size  array to this appropriate one
+        // copy the unknown size array to the calculated one
         uint256[] memory res = new uint256[](itemCount);
 
         for (uint256 i = 0; i < itemCount; i++) {
