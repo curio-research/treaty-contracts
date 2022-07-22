@@ -155,13 +155,20 @@ contract EngineFacet is UseStorage {
      * @param _troops array of troops to be combined
      */
     function combine(uint256[] memory _troops) external {
+        // basic check
         require(!gs().isPaused, "CURIO: Game is paused");
         require(Util._isPlayerActive(msg.sender), "CURIO: Player is inactive");
+        require(_troops.length > 1, "CURIO: Army must have more than one troop");
 
         Troop memory _firstTroop = Util._getTroop(_troops[0]);
-
-        require(Util._inBound(_firstTroop.pos), "CURIO: Out of bound");
+        require(Util._inBound(_firstTroop.pos), "CURIO: Target out of bound");
         if (!Util._getTileAt(_firstTroop.pos).isInitialized) Util._initializeTile(_firstTroop.pos);
+
+        require(_firstTroop.owner == msg.sender, "CURIO: Can only combine own troop");
+
+        // large action check & update
+        require((block.timestamp - _firstTroop.lastLargeActionTaken) >= Util._getLargeActionCooldown(_firstTroop.troopTypeId), "CURIO: Large action taken too recently");
+        gs().troopIdMap[_troops[0]].lastLargeActionTaken = block.timestamp;
 
         TroopType memory CustomArmyType = TroopType({
             name: TROOP_NAME.ARMY,
@@ -183,15 +190,23 @@ contract EngineFacet is UseStorage {
         uint256 troopTransportCount = Util._getCargoCapacity(_troops[0]) != 0 ? 1 : 0;
 
         for (uint256 i = 1; i < _troops.length; i++) {
-            Troop memory _troop = Util._getTroop(_troops[i]);
-
+            // taking the slowest of all troops
             uint256 _troopMovementCooldown = Util._getMovementCooldown(_troops[i]);
             if (_troopMovementCooldown > longestMovementCooldown) {
                 longestMovementCooldown = _troopMovementCooldown;
             }
+            
+            // basic check
+            Troop memory _troop = Util._getTroop(_troops[i]);
+            require(_troop.owner == msg.sender, "CURIO: Can only combine own troop");
 
-            // largeActionCooldown, isLandTroop and isBasic remain the same
+            // distance check
+            require(Util._withinDist(_firstTroop.pos, _troop.pos, 1), "CURIO: Troops should be next to each other");
+
+            // large action check & update
             require((block.timestamp - _troop.lastLargeActionTaken) >= Util._getLargeActionCooldown(_troop.troopTypeId), "CURIO: Large action taken too recently");
+            gs().troopIdMap[_troops[i]].lastLargeActionTaken = block.timestamp;
+
             require(Util._isLandTroop(_troops[i]) == CustomArmyType.isLandTroop, "CURIO: Can only combine either LandTroop or SeaTroop");
             require(Util._isBasicTroop(_troops[i]), "CURIO: Army cannot be combined into an Army");
 
@@ -201,6 +216,7 @@ contract EngineFacet is UseStorage {
             }
             require(troopTransportCount < 2, "CURIO: Army can have at most one trooptransport");
 
+            // largeActionCooldown, isLandTroop and isBasic remain the same
             CustomArmyType.maxHealth += Util._getMaxHealth(_troops[i]);
             CustomArmyType.damagePerHit += Util._getDamagePerHit(_troops[i]);
             CustomArmyType.attackFactor += Util._getAttackFactor(_troops[i]);
@@ -209,6 +225,7 @@ contract EngineFacet is UseStorage {
             CustomArmyType.goldPrice += Util._getTroopGoldPrice(_troops[i]);
             CustomArmyType.oilConsumptionPerSecond += Util._getOilConsumptionPerSecond(_troops[i]);
 
+            // will check movement cooldown here
             MarchModules._moveModule(_troops[i], _firstTroop.pos);
         }
 
@@ -225,6 +242,37 @@ contract EngineFacet is UseStorage {
     }
 
     function joinArmy(uint256 _armyId, uint256 _troopId) external {
+        // basic check
+        require(!gs().isPaused, "CURIO: Game is paused");
+        require(Util._isPlayerActive(msg.sender), "CURIO: Player is inactive");
+
+        Troop memory _army = Util._getTroop(_armyId);
+        Troop memory _troop = Util._getTroop(_troopId);
+
+        // distance check
+        require(Util._withinDist(_army.pos, _troop.pos, 1), "CURIO: Troops should be next to each other");
+
+        require(Util._inBound(_army.pos), "CURIO: Out of bound");
+        if (!Util._getTileAt(_army.pos).isInitialized) Util._initializeTile(_army.pos);
+
+        // large action check & update
+        require(_army.owner == msg.sender, "CURIO: Can only combine own troop");
+        require((block.timestamp - _army.lastLargeActionTaken) >= Util._getLargeActionCooldown(_army.troopTypeId), "CURIO: Large action taken too recently");
+        gs().troopIdMap[_armyId].lastLargeActionTaken = block.timestamp;
+
+        require(_troop.owner == msg.sender, "CURIO: Can only combine own troop");
+        require((block.timestamp - _troop.lastLargeActionTaken) >= Util._getLargeActionCooldown(_troop.troopTypeId), "CURIO: Large action taken too recently");
+        gs().troopIdMap[_troopId].lastLargeActionTaken = block.timestamp;
+
+        // must be land or sea army; _troop must be basic to join
+        require(Util._isLandTroop(_troopId) == Util._isLandTroop(_armyId), "CURIO: Can only combine either LandTroop or SeaTroop");
+        require(Util._isBasicTroop(_troopId), "CURIO: Army cannot be combined into an Army");
+
+        // army can have one transport at most, but minimum size is 2
+        require(Util._getCargoCapacity(_troopId) == 0, "CURIO: If Army has TroopTransport, it can have only one other troopType");
+
+        gs().troopIdMap[_armyId].cargoTroopIds.push(_troopId);
+        
 
     }
 }
