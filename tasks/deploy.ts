@@ -40,6 +40,7 @@ task('deploy', 'deploy contracts')
 
       // Read variables from run flags
       const isDev = hre.network.name === 'localhost' || hre.network.name === 'hardhat' || hre.network.name === 'constellation';
+
       console.log('Network:', hre.network.name);
       const fixMap = args.fixmap;
       if (fixMap) console.log('Using deterministic map');
@@ -122,7 +123,7 @@ task('deploy', 'deploy contracts')
       console.log(`✦ lazy setting ${tileMap.length}x${tileMap[0].length} map took ${Math.floor(time2 - time1)} ms`);
 
       console.log('✦ initializing bases');
-      const baseTiles = [...portTiles, ...cityTiles];
+      const baseTiles = [...portTiles, ...cityTiles, ...oilWellTiles];
       for (let i = 0; i < baseTiles.length; i += 20) {
         await (await diamond.bulkInitializeTiles(baseTiles.slice(i, i + 20))).wait();
       }

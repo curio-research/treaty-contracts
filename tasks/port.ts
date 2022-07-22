@@ -21,7 +21,7 @@ task('port', 'compile and port contracts over to frontend repo').setAction(async
     await portFile('/factories/Curio__factory.ts');
 
     // copy game configs
-    const configFilePath = path.join(__dirname, '/game.config.json');
+    const configFilePath = path.join(__dirname, './game.config.json');
     const configClientPath = path.join(__dirname, '../../frontend/src/game.config.json');
 
     await fs.copyFileSync(configFilePath, configClientPath);
