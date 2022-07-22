@@ -154,9 +154,11 @@ contract DiamondDeployTest is Test {
         WorldConstants memory _worldConstants = _generateWorldConstants();
         TroopType[] memory _troopTypes = _generateTroopTypes();
 
+        console.log("AA");
         // fetch args from cli. craft payload for init deploy
         bytes memory initData = abi.encodeWithSelector(getSelectors("DiamondInit")[0], _worldConstants, _troopTypes);
 
+        console.log("BB");
         IDiamondCut.FacetCut[] memory cuts = new IDiamondCut.FacetCut[](5);
         cuts[0] = IDiamondCut.FacetCut({facetAddress: address(diamondLoupeFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: LOUPE_SELECTORS});
         cuts[1] = IDiamondCut.FacetCut({facetAddress: address(diamondOwnershipFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: OWNERSHIP_SELECTORS});
@@ -164,6 +166,7 @@ contract DiamondDeployTest is Test {
         cuts[3] = IDiamondCut.FacetCut({facetAddress: address(getterFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: getSelectors("GetterFacet")});
         cuts[4] = IDiamondCut.FacetCut({facetAddress: address(helperFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: getSelectors("HelperFacet")});
 
+        console.log("CC");
         IDiamondCut(diamond).diamondCut(cuts, address(diamondInit), initData);
 
         helper = HelperFacet(diamond);

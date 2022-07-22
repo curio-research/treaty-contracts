@@ -23,7 +23,8 @@ enum TROOP_NAME {
     DESTROYER,
     CRUISER,
     BATTLESHIP,
-    FIGHTER_JET
+    FIGHTER_JET,
+    ARMY
 }
 
 struct Position {
@@ -120,6 +121,7 @@ struct GameState {
     mapping(uint256 => Base) baseIdMap;
     uint256[] troopIds;
     uint256 troopNonce;
+    uint256 TroopTypeNonce;
     mapping(uint256 => Troop) troopIdMap;
     uint256[] troopTypeIds;
     mapping(uint256 => TroopType) troopTypeIdMap;

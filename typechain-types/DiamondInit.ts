@@ -81,6 +81,8 @@ export type TroopTypeStruct = {
   largeActionCooldown: BigNumberish;
   goldPrice: BigNumberish;
   oilConsumptionPerSecond: BigNumberish;
+  armyTroopIds: BigNumberish[];
+  isBasic: boolean;
 };
 
 export type TroopTypeStructOutput = [
@@ -94,7 +96,9 @@ export type TroopTypeStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
-  BigNumber
+  BigNumber,
+  BigNumber[],
+  boolean
 ] & {
   name: number;
   isLandTroop: boolean;
@@ -107,11 +111,13 @@ export type TroopTypeStructOutput = [
   largeActionCooldown: BigNumber;
   goldPrice: BigNumber;
   oilConsumptionPerSecond: BigNumber;
+  armyTroopIds: BigNumber[];
+  isBasic: boolean;
 };
 
 export interface DiamondInitInterface extends utils.Interface {
   functions: {
-    "init((address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),(uint8,bool,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256)[])": FunctionFragment;
+    "init((address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),(uint8,bool,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256[],bool)[])": FunctionFragment;
   };
 
   encodeFunctionData(

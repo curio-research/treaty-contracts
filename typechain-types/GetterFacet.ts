@@ -31,6 +31,7 @@ export type TroopStruct = {
   health: BigNumberish;
   pos: PositionStruct;
   cargoTroopIds: BigNumberish[];
+  isUnderArmy: boolean;
 };
 
 export type TroopStructOutput = [
@@ -41,7 +42,8 @@ export type TroopStructOutput = [
   BigNumber,
   BigNumber,
   PositionStructOutput,
-  BigNumber[]
+  BigNumber[],
+  boolean
 ] & {
   owner: string;
   troopTypeId: BigNumber;
@@ -51,6 +53,7 @@ export type TroopStructOutput = [
   health: BigNumber;
   pos: PositionStructOutput;
   cargoTroopIds: BigNumber[];
+  isUnderArmy: boolean;
 };
 
 export type BaseStruct = {
@@ -96,6 +99,8 @@ export type TroopTypeStruct = {
   largeActionCooldown: BigNumberish;
   goldPrice: BigNumberish;
   oilConsumptionPerSecond: BigNumberish;
+  armyTroopIds: BigNumberish[];
+  isBasic: boolean;
 };
 
 export type TroopTypeStructOutput = [
@@ -109,7 +114,9 @@ export type TroopTypeStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
-  BigNumber
+  BigNumber,
+  BigNumber[],
+  boolean
 ] & {
   name: number;
   isLandTroop: boolean;
@@ -122,6 +129,8 @@ export type TroopTypeStructOutput = [
   largeActionCooldown: BigNumber;
   goldPrice: BigNumber;
   oilConsumptionPerSecond: BigNumber;
+  armyTroopIds: BigNumber[];
+  isBasic: boolean;
 };
 
 export type TileStruct = {
