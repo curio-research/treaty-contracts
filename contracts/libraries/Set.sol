@@ -1,5 +1,6 @@
-// set of integers
-// can use in set of components
+// ----------------------------
+// tagging system
+// ----------------------------
 
 contract Set {
     uint256[] public items;
@@ -44,21 +45,25 @@ contract Set {
     }
 }
 
-// Prototyping a tagging system ...
+// ----------------------------
+// tagging system
+// ----------------------------
 
 contract CurioOS {
     uint256 public componentID;
     mapping(uint256 => Set) public components;
-    // do we need component names ?
+    mapping(string => uint256) public componentName; // name => uint256 // do we need component names ?
 
     uint256 public entityID;
-    mapping(uint256 => bool) public entities;
+    mapping(uint256 => bool) public entities; // we can start with TroopIDs
 
-    function addComponent() public {
+    function addComponent(string memory _name) public returns (uint256) {
+        componentID++;
         Set newComponent = new Set();
         components[componentID] = newComponent;
+        componentName[_name] = componentID;
 
-        componentID++;
+        return componentID;
     }
 
     function addEntityToComponent(uint256 _entityID, uint256 _componentID) public {
@@ -67,17 +72,31 @@ contract CurioOS {
         component.add(_entityID);
     }
 
+    function addEntityToComponentByName(uint256 _entityID, string memory _componentName) public {
+        uint256 _componentID = componentName[_componentName];
+        Set component = components[_componentID];
+
+        component.add(_entityID);
+    }
+
     function addEntity() public {}
 
-    // intersection function
+    // find the intersection of component sets!
+
     function intersection(uint256 componentID1, uint256 componentID2) public returns (uint256[] memory) {
+        // make sure two components are registered and valid
+        if (componentID1 > componentID || componentID2 > componentID) {
+            uint256[] memory _temp = new uint256[](0);
+            return _temp;
+        }
+
         Set set1 = components[componentID1];
         Set set2 = components[componentID2];
 
         Set searchedItems = new Set();
 
-        // first initiate an array with a crazy size then copy to right size?
-
+        // first initiate an array with a crazy size then copy to right size lol
+        // the max size of the sum of the two sets is the sum of the two raw sets themselves
         uint256[] memory temp = new uint256[](set1.size() + set2.size());
         uint256 itemCount = 0;
 
@@ -141,6 +160,7 @@ contract CurioOS {
         // Now you only loop over relevant troopIDs, as opposed to all troop IDs!
         for (uint256 i = 0; i < troopIDsWithSharpness.length; i++) {
             // apply updates to each troop
+            // ideally this should be variable too?
         }
     }
 }

@@ -5,23 +5,22 @@ import "forge-std/Test.sol";
 import "test/DiamondDeploy.t.sol";
 import "contracts/libraries/Set.sol";
 
-// (0, 1, 2) (1, 2)
-
 contract Game is Test {
     CurioOS public game;
 
     function setUp() public {
         game = new CurioOS(); // create new OS
-        game.addComponent(); // 0: ships
-        game.addComponent(); // 1: in port
+        game.addComponent("ship"); // 1: ships
+        game.addComponent("inPort"); // 2: in port
 
-        // add entities to components
-        game.addEntityToComponent(0, 0);
-        game.addEntityToComponent(1, 0);
-        game.addEntityToComponent(2, 0);
+        // (0, 1, 2) (1, 2)
+        // add entities (troopIDs in our game) to components
+        game.addEntityToComponentByName(0, "ship");
+        game.addEntityToComponentByName(1, "ship");
+        game.addEntityToComponentByName(2, "ship");
 
-        game.addEntityToComponent(1, 1);
-        game.addEntityToComponent(2, 1);
+        game.addEntityToComponentByName(1, "inPort");
+        game.addEntityToComponentByName(2, "inPort");
     }
 
     function testSet() public {
@@ -47,7 +46,7 @@ contract Game is Test {
     }
 
     function testIntersectionSimple() public {
-        uint256[] memory res = game.intersection(0, 1);
+        uint256[] memory res = game.intersection(2, 2);
 
         assertEq(res.length, 2);
     }
@@ -55,23 +54,58 @@ contract Game is Test {
     function testIntersectionEdge() public {
         // (0), ()
         CurioOS _game = new CurioOS(); // create new OS
-        _game.addComponent(); // 0: ships
-        _game.addComponent(); // 1: in port
+        _game.addComponent("ship"); // 0: ships
+        _game.addComponent("inPort"); // 1: in port
 
         // add entities to components
-        _game.addEntityToComponent(0, 0);
+        _game.addEntityToComponent(0, 1);
 
-        uint256[] memory res = _game.intersection(0, 1);
+        uint256[] memory res = _game.intersection(1, 2);
         assertEq(res.length, 0);
 
         // (0, 1, 2) (3, 4)
-        _game.addEntityToComponent(1, 0);
-        _game.addEntityToComponent(2, 0);
+        _game.addEntityToComponent(1, 1);
+        _game.addEntityToComponent(2, 1);
 
-        _game.addEntityToComponent(3, 1);
-        _game.addEntityToComponent(4, 1);
+        _game.addEntityToComponent(3, 2);
+        _game.addEntityToComponent(4, 2);
 
-        uint256[] memory res1 = _game.intersection(0, 1);
+        uint256[] memory res1 = _game.intersection(1, 2);
         assertEq(res1.length, 0);
     }
+
+    function testIntersectionUnregisteredComponents() public {
+        CurioOS _game = new CurioOS(); // create new OS
+
+        uint256[] memory res = _game.intersection(10, 11);
+        assertEq(res.length, 0);
+    }
+
+    function testSample() public {
+        string memory encoded = encodeUint(10);
+
+        uint256 decoded = decodeUint(encoded);
+
+        console.log(decoded);
+    }
+
+    // ----------------------------
+    // encoders and decoders
+    // ----------------------------
+
+    function encodeUint(uint256 _val) public pure returns (string memory) {
+        return string(abi.encode(_val));
+    }
+
+    function decodeUint(string memory _val) public pure returns (uint256) {
+        return abi.decode(bytes(_val), (uint256));
+    }
+
+    function compareStrings(string memory _a, string memory _b) public pure returns (bool) {
+        return (keccak256(abi.encodePacked((_a))) == keccak256(abi.encodePacked((_b))));
+    }
+
+    // function areBytesSame(bytes memory _bytes1, bytes memory _bytes2) public returns (bool) {
+    //     return _bytes1.equals(_bytes2); // string(_bytes1) == string(_bytes2);
+    // }
 }
