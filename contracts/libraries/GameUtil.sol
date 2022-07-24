@@ -2,7 +2,7 @@
 pragma solidity ^0.8.4;
 
 import "contracts/libraries/Storage.sol";
-import {BASE_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop, WorldConstants} from "contracts/libraries/Types.sol";
+import {BASE_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop, Army, WorldConstants} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 
 /// @title Util library
@@ -28,7 +28,7 @@ library Util {
     event GameResumed();
     event Moved(address _player, uint256 _troopId, uint256 _timestamp, Position _startPos, Position _targetPos);
     event NewPlayer(address _player, Position _pos);
-    event NewTroop(address _player, uint256 _troopId, Troop _troop, Position _pos);
+    event NewTroop(address _player, uint256 _armyId, Army _army, Position _pos);
     event PlayerInfo(address _addr, Player _player);
     event PlayerReactivated(address _player);
     event Recovered(address _player, uint256 _troopId);
@@ -89,33 +89,26 @@ library Util {
         gs().playerMap[_addr] = _player;
     }
 
-    function _unloadTroopFromTransport(uint256 _troopTransportId, uint256 _cargoTroopId) public {
-        uint256[] memory _cargoTroopIds = gs().troopIdMap[_troopTransportId].cargoTroopIds;
-        uint256 _cargoSize = _cargoTroopIds.length;
-        uint256 _index = 0;
-        while (_index < _cargoSize) {
-            if (_cargoTroopIds[_index] == _cargoTroopId) break;
-            _index++;
-        }
-
-        gs().troopIdMap[_troopTransportId].cargoTroopIds[_index] = _cargoTroopIds[_cargoSize - 1];
-        gs().troopIdMap[_troopTransportId].cargoTroopIds.pop();
+    function _unloadArmyFromTransport(uint256 _troopTransportId) public {
+        // todo: unload army and update state
+        gs().troopIdMap[_troopTransportId].cargoArmyId = _NULL();
     }
 
     function _removeTroop(uint256 _troopId) public {
         Troop memory _troop = _getTroop(_troopId);
-        address _owner = _troop.owner;
-        Position memory _pos = _troop.pos;
+        Army memory _army = _getArmy(_troop.armyId);
+
+        address _owner = _army.owner;
+        Position memory _pos = _army.pos;
 
         uint256 _numOwnedTroops = gs().playerMap[_owner].numOwnedTroops;
         uint256 _totalOilConsumptionPerUpdate = gs().playerMap[_owner].totalOilConsumptionPerUpdate;
 
-        for (uint256 i = 0; i < _troop.cargoTroopIds.length; i++) {
-            uint256 _cargoId = _troop.cargoTroopIds[i];
-
+        // remove carried army if it's transport
+        if (_troop.cargoArmyId != 0) {
             _numOwnedTroops--;
-            _totalOilConsumptionPerUpdate -= _getOilConsumptionPerSecond(_getTroop(_cargoId).troopTypeId);
-            delete gs().troopIdMap[_cargoId];
+            _totalOilConsumptionPerUpdate -= _getOilConsumptionPerSecond(_getTroop(_troop.cargoArmyId).troopTypeId);
+            delete gs().armyIdMap[_troop.cargoArmyId];
         }
 
         _numOwnedTroops--;
@@ -126,11 +119,27 @@ library Util {
         gs().playerMap[_owner].numOwnedTroops = _numOwnedTroops;
         gs().playerMap[_owner].totalOilConsumptionPerUpdate = _totalOilConsumptionPerUpdate;
 
-        Tile memory _tile = _getTileAt(_troop.pos);
-        if (_canTransportTroop(_tile)) {
-            _unloadTroopFromTransport(_tile.occupantId, _troopId);
-        } else {
-            gs().map[_pos.x][_pos.y].occupantId = _NULL();
+        // remove troop from armyTroopIds
+        uint256 _armyTroopSize = _army.armyTroopIds.length;
+        uint256 _index = 0;
+        while (_index < _armyTroopSize) {
+            if (_army.armyTroopIds[_index] == _troopId) break;
+            _index++;
+        }
+        gs().armyIdMap[_troop.armyId].armyTroopIds[_index] = _army.armyTroopIds[_armyTroopSize - 1];
+        gs().armyIdMap[_troop.armyId].armyTroopIds.pop();
+
+        // If army has no troop, remove army from tile or transport
+        Tile memory _tile = _getTileAt(_army.pos);
+        uint256 _troopTransportId;
+        if (gs().armyIdMap[_troop.armyId].armyTroopIds.length == 0) {
+            _troopTransportId = _getTransportFromArmy(_troop.armyId);
+            // army has transport (the only one)
+            if (_troopTransportId != 0) {
+                _unloadArmyFromTransport(_troopTransportId);
+            } else {
+                gs().map[_pos.x][_pos.y].occupantId = _NULL();
+            }
         }
     }
 
@@ -138,34 +147,35 @@ library Util {
         address _owner,
         Position memory _pos,
         uint256 _troopTypeId
-    ) public returns (uint256, Troop memory) {
+    ) public returns (uint256, Army memory) {
         require(_getPlayer(_owner).numOwnedTroops < gs().worldConstants.maxTroopCountPerPlayer, "CURIO: Max troop count exceeded");
 
-        uint256[] memory _cargoTroopIds;
-        Troop memory _troop = Troop({
-            owner: _owner,
-            troopTypeId: _troopTypeId,
-            lastMoved: block.timestamp,
-            lastLargeActionTaken: 0,
-            lastRepaired: block.timestamp,
-            health: _getMaxHealth(_troopTypeId),
-            pos: _pos,
-            cargoTroopIds: _cargoTroopIds //
-        });
-
-        // Update map info
+        // Generate Troop and Army id
         uint256 _troopId = gs().troopNonce;
         gs().troopIds.push(_troopId);
-        gs().troopIdMap[_troopId] = _troop;
         gs().troopNonce++;
-        gs().map[_pos.x][_pos.y].occupantId = _troopId;
+
+        uint256 _armyId = gs().armyNonce;
+        gs().armyIds.push(_armyId);
+        gs().armyNonce++;
+        gs().map[_pos.x][_pos.y].occupantId = _armyId;
+
+        Troop memory _troop = Troop({armyId: _armyId, troopTypeId: _troopTypeId, health: _getMaxHealth(_troopTypeId), cargoArmyId: 0});
+
+        uint256[] memory _armyTroopIds;
+
+        Army memory _army = Army({owner: _owner, armyTroopIds: _armyTroopIds, lastMoved: block.timestamp, lastLargeActionTaken: block.timestamp, lastRepaired: block.timestamp, pos: _pos});
+
+        // Update mappings
+        gs().troopIdMap[_troopId] = _troop;
+        gs().armyIdMap[_armyId] = _army;
 
         // Update balances
         _updatePlayerBalances(_owner);
         gs().playerMap[_owner].numOwnedTroops++;
         gs().playerMap[_owner].totalOilConsumptionPerUpdate += _getOilConsumptionPerSecond(_troopTypeId);
 
-        return (_troopId, gs().troopIdMap[_troopId]);
+        return (_armyId, gs().armyIdMap[_armyId]);
     }
 
     function _addBase(Position memory _pos, BASE_NAME _baseName) public returns (uint256) {
@@ -229,12 +239,20 @@ library Util {
         return gs().playerMap[_player].totalGoldGenerationPerUpdate;
     }
 
-    function _getCargoCapacity(uint256 _troopId) public view returns (uint256) {
-        return gs().troopTypeIdMap[gs().troopIdMap[_troopId].troopTypeId].cargoCapacity;
+    function _getTroop(uint256 _troopId) public view returns (Troop memory) {
+        return gs().troopIdMap[_troopId];
     }
 
-    function _getTroop(uint256 _id) public view returns (Troop memory) {
-        return gs().troopIdMap[_id];
+    function _getArmy(uint256 _armyId) public view returns (Army memory) {
+        return gs().armyIdMap[_armyId];
+    }
+
+    function _getTransportFromArmy(uint256 _armyId) public view returns (uint256) {
+        Army memory _army = _getArmy(_armyId);
+        for (uint256 i = 0; i < _army.armyTroopIds.length; i++) {
+            if (_getTroop(_army.armyTroopIds[i]).cargoArmyId != 0) return _army.armyTroopIds[i];
+        }
+        return 0;
     }
 
     function _getOilConsumptionPerSecond(uint256 _troopTypeId) public view returns (uint256) {
@@ -285,8 +303,10 @@ library Util {
         return gs().baseIdMap[_id];
     }
 
+    // rule is that the army on that tile must have a troop transport
+    // also that the troop transport is vacant
     function _canTransportTroop(Tile memory _tile) public view returns (bool) {
-        return (_getCargoCapacity(_tile.occupantId) > 0) && (gs().troopIdMap[_tile.occupantId].cargoTroopIds.length < _getCargoCapacity(_tile.occupantId));
+        return ((_getTransportFromArmy(_tile.occupantId) != 0) && (gs().troopIdMap[_tile.occupantId].cargoArmyId == _NULL()));
     }
 
     function _hasPort(Tile memory _tile) public view returns (bool) {

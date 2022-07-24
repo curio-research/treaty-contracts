@@ -3,7 +3,7 @@ pragma solidity ^0.8.4;
 
 import "contracts/libraries/Storage.sol";
 import {Util} from "contracts/libraries/GameUtil.sol";
-import {BASE_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop, TroopType, WorldConstants} from "contracts/libraries/Types.sol";
+import {BASE_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop, Army, TroopType, WorldConstants} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 
 /// @title Engine facet
@@ -94,21 +94,22 @@ contract EngineFacet is UseStorage {
         Util._updatePlayerBalances(msg.sender);
         require(_troopPrice <= Util._getPlayerGoldBalance(msg.sender), "CURIO: Insufficient gold balance (capture more bases!)");
 
-        (uint256 _troopId, Troop memory _troop) = Util._addTroop(msg.sender, _pos, _troopTypeId);
+        (uint256 _armyId, Army memory _army) = Util._addTroop(msg.sender, _pos, _troopTypeId);
         gs().playerMap[msg.sender].goldBalance -= _troopPrice;
 
         emit Util.PlayerInfo(msg.sender, gs().playerMap[msg.sender]);
-        emit Util.NewTroop(msg.sender, _troopId, _troop, _pos);
+        emit Util.NewTroop(msg.sender, _armyId, _army, _pos);
     }
 
     /**
      * Delete an owned troop (often to reduce expense).
      * @param _troopId identifier for troop
      */
-    function deleteTroop(uint256 _troopId) external {
+
+    function deleteTroop(uint256 _troopId, uint256 _transportTroopId) external {
         require(Util._getTroop(_troopId).owner == msg.sender, "CURIO: Can only delete own troop");
 
-        Util._removeTroop(_troopId);
+        Util._removeTroop(_troopId, _transportTroopId);
 
         emit Util.Death(msg.sender, _troopId);
     }
@@ -150,37 +151,50 @@ contract EngineFacet is UseStorage {
     // ----------------------------------------------------------------------
     // MODULES FOR MARCH
     // ----------------------------------------------------------------------
-    function _moveModule(uint256 _troopId, Position memory _targetPos) internal {
-        Troop memory _troop = gs().troopIdMap[_troopId];
+    function _moveModule(uint256 _armyId, Position memory _targetPos) internal {
+        Army memory _army = Util._getArmy(_armyId);
         Tile memory _targetTile = Util._getTileAt(_targetPos);
 
-        require((block.timestamp - _troop.lastMoved) >= Util._getMovementCooldown(_troop.troopTypeId), "CURIO: Moved too recently");
+        // todo: util funciton
+        // temporary: get the longest Movementcooldown from army
+        uint256 _movementCooldown;
 
-        if (Util._getTroop(_targetTile.occupantId).cargoTroopIds.length == 0) {
-            gs().map[_targetPos.x][_targetPos.y].occupantId = _troopId;
-        }
-
-        Tile memory _sourceTile = Util._getTileAt(_troop.pos);
-        if (_sourceTile.occupantId != _troopId) {
-            // Troop is on troop transport
-            Util._unloadTroopFromTransport(_sourceTile.occupantId, _troopId);
-        } else {
-            gs().map[_troop.pos.x][_troop.pos.y].occupantId = NULL;
-        }
-        gs().troopIdMap[_troopId].pos = _targetPos;
-        gs().troopIdMap[_troopId].lastMoved = block.timestamp;
-
-        uint256[] memory _cargoTroopIds = gs().troopIdMap[_troopId].cargoTroopIds;
-        if (_cargoTroopIds.length > 0) {
-            // Troop is a troop transport — move its cargo troops
-            for (uint256 i = 0; i < _cargoTroopIds.length; i++) {
-                gs().troopIdMap[_cargoTroopIds[i]].pos = _targetPos;
+        for (uint256 i = 0; i < _army.armyTroopIds.length; i++) {
+            uint256 _troopMovementCooldown = Util._getMovementCooldown((Util._getTroop(_army.armyTroopIds[i]).troopTypeId));
+            if (_troopMovementCooldown > _movementCooldown) {
+                _movementCooldown = _troopMovementCooldown;
             }
+        }
+
+        require((block.timestamp - _army.lastMoved) >= _movementCooldown, "CURIO: Moved too recently");
+
+        // state change
+        if (Util._getTroop(_targetTile.occupantId).cargoTroopIds.length == 0) {
+            gs().map[_targetPos.x][_targetPos.y].occupantId = _armyId;
+        }
+
+        Tile memory _sourceTile = Util._getTileAt(_army.pos);
+        if (_sourceTile.occupantId != _army) {
+            // Army is on Army transport
+            Util._unloadArmyFromArmyTransport(_sourceTile.occupantId, _army);
+        } else {
+            gs().map[_army.pos.x][_army.pos.y].occupantId = NULL;
+        }
+
+        // state change
+        gs().armyIdMap[_armyId].pos = _targetPos;
+        gs().armyIdMap[_armyId].lastMoved = block.timestamp;
+
+        uint256[] memory _cargoArmyId = gs().troopIdMap[_army].cargoTroopIds;
+        if (_cargoArmyId) {
+            // Troop is a troop transport — move its army
+            // Transport can load up to one army
+            gs().armyIdMap[_cargoArmyId].pos = _targetPos;
         }
 
         Util._updatePlayerBalances(msg.sender);
 
-        emit Util.Moved(msg.sender, _troopId, block.timestamp, _troop.pos, _targetPos);
+        emit Util.Moved(msg.sender, _armyId, block.timestamp, _army.pos, _targetPos);
     }
 
     function _loadModule(uint256 _troopId, Position memory _targetPos) internal {

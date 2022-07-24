@@ -3,7 +3,7 @@ pragma solidity ^0.8.4;
 
 import "contracts/libraries/Storage.sol";
 import {Util} from "contracts/libraries/GameUtil.sol";
-import {BASE_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop, TroopType, WorldConstants} from "contracts/libraries/Types.sol";
+import {BASE_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop, Army, TroopType, WorldConstants} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 
 /// @title Helper facet
@@ -97,9 +97,9 @@ contract HelperFacet is UseStorage {
             require(Util._isLandTroop(_troopTypeId) || _base.name == BASE_NAME.PORT, "CURIO: Can only spawn water troops in ports");
         }
 
-        (uint256 _troopId, Troop memory _troop) = Util._addTroop(_player, _pos, _troopTypeId);
+        (uint256 _armyId, Army memory _army) = Util._addArmyTroop(_player, _pos, _troopTypeId);
 
-        emit Util.NewTroop(_player, _troopId, _troop, _pos);
+        emit Util.NewArmyTroop(_player, _armyId, _army, _pos);
     }
 
     /**

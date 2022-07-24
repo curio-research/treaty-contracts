@@ -62,15 +62,20 @@ struct Tile {
     uint256 baseId;
 }
 
-struct Troop {
+struct Army {
     address owner;
-    uint256 troopTypeId;
+    uint256[] armyTroopIds;
     uint256 lastMoved;
     uint256 lastLargeActionTaken;
     uint256 lastRepaired;
-    uint256 health;
     Position pos;
-    uint256[] cargoTroopIds; // only for Troop Transport
+}
+
+struct Troop {
+    uint256 armyId;
+    uint256 troopTypeId;
+    uint256 health;
+    uint256 cargoArmyId; // only for Troop Transport
 }
 
 struct TroopType {
@@ -80,7 +85,7 @@ struct TroopType {
     uint256 damagePerHit;
     uint256 attackFactor; // in the interval [0, 100]
     uint256 defenseFactor; // in the interval [0, 100]
-    uint256 cargoCapacity;
+    bool canTransportArmy;
     uint256 movementCooldown;
     uint256 largeActionCooldown;
     uint256 goldPrice;
@@ -114,8 +119,11 @@ struct GameState {
     uint256 baseNonce;
     mapping(uint256 => Base) baseIdMap;
     uint256[] troopIds;
+    uint256[] armyIds;
     uint256 troopNonce;
+    uint256 armyNonce;
     mapping(uint256 => Troop) troopIdMap;
+    mapping(uint256 => Army) armyIdMap;
     uint256[] troopTypeIds;
     mapping(uint256 => TroopType) troopTypeIdMap;
     uint256[][] encodedColumnBatches;
