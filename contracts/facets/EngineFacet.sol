@@ -57,7 +57,7 @@ contract EngineFacet is UseStorage {
             if (gs().armyIdMap[_targetTile.occupantId].owner == msg.sender) {
                 if (Util._canTransportTroop(_targetTile) && Util._isLandArmy(_armyId)) {
                     // Load troop onto transport
-                    _loadModule(_armyId, _targetPos);
+                    _loadModule(_armyId, _targetTile);
                     _moveModule(_armyId, _targetPos);
                 } else {
                     revert("CURIO: Destination tile occupied");
@@ -105,7 +105,6 @@ contract EngineFacet is UseStorage {
      * Delete an owned troop (often to reduce expense).
      * @param _troopId identifier for troop
      */
-
     function deleteTroop(uint256 _troopId) external {
         Troop memory _troop = Util._getTroop(_troopId);
         Army memory _army = Util._getArmy(_troop.armyId);
@@ -179,9 +178,8 @@ contract EngineFacet is UseStorage {
         gs().armyIdMap[_armyId].lastMoved = block.timestamp;
 
         uint256 _cargoArmyId = Util._getTransportFromArmy(_armyId);
-        if (_cargoArmyId != 0) {
+        if (_cargoArmyId != Util._NULL()) {
             // Army has a troop troopTransport — move its cargo army
-            // Transport can load up to one army
             gs().armyIdMap[_cargoArmyId].pos = _targetPos;
         }
 
@@ -190,11 +188,9 @@ contract EngineFacet is UseStorage {
         emit Util.Moved(msg.sender, _armyId, block.timestamp, _army.pos, _targetPos);
     }
 
-    function _loadModule(uint256 _armyId, Position memory _targetPos) internal {
-        Tile memory _targetTile = Util._getTileAt(_targetPos);
+    function _loadModule(uint256 _armyId, Tile memory _targetTile) internal {
         Army memory _targetArmy = Util._getArmy(_targetTile.occupantId);
-        // rule: if an army contains troop transport, it cannot load onto it
-        require(!_targetArmy.hasTransport, "CURIO: Army can have up to one TroopTransport");
+        require(Util._getTransportFromArmy(_armyId) == Util._NULL(), "CURIO: cargo army cannot contain trooptransport");
 
         uint256 _troopTransportId = Util._getTransportFromArmy(_targetTile.occupantId);
         Troop memory _troopTransport = Util._getTroop(_troopTransportId);
@@ -300,7 +296,7 @@ contract EngineFacet is UseStorage {
 
         _targetArmy = gs().armyIdMap[_targetTile.occupantId];
         require(_targetArmy.owner != msg.sender, "CURIO: Cannot attack own troop");
-        
+
         uint256 _armyHealth = Util._getArmyHealth(_army.armyTroopIds);
         uint256 _targetHealth = Util._getArmyHealth(_targetArmy.armyTroopIds);
 

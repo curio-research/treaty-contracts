@@ -68,7 +68,7 @@ struct Army {
     uint256 lastMoved;
     uint256 lastLargeActionTaken;
     Position pos;
-    bool hasTransport;
+    bool hasTransport; // temporary; may be unnecessary
 }
 
 struct Troop {
