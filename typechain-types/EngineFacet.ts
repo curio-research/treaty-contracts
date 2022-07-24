@@ -104,7 +104,7 @@ export interface EngineFacet extends BaseContract {
     ): Promise<ContractTransaction>;
 
     march(
-      _troopId: BigNumberish,
+      _armyId: BigNumberish,
       _targetPos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -127,7 +127,7 @@ export interface EngineFacet extends BaseContract {
   ): Promise<ContractTransaction>;
 
   march(
-    _troopId: BigNumberish,
+    _armyId: BigNumberish,
     _targetPos: PositionStruct,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -150,7 +150,7 @@ export interface EngineFacet extends BaseContract {
     ): Promise<void>;
 
     march(
-      _troopId: BigNumberish,
+      _armyId: BigNumberish,
       _targetPos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -176,7 +176,7 @@ export interface EngineFacet extends BaseContract {
     ): Promise<BigNumber>;
 
     march(
-      _troopId: BigNumberish,
+      _armyId: BigNumberish,
       _targetPos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -200,7 +200,7 @@ export interface EngineFacet extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     march(
-      _troopId: BigNumberish,
+      _armyId: BigNumberish,
       _targetPos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;

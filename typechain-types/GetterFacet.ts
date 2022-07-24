@@ -15,42 +15,33 @@ import { FunctionFragment, Result } from "@ethersproject/abi";
 import { Listener, Provider } from "@ethersproject/providers";
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
+export type TroopStruct = {
+  armyId: BigNumberish;
+  troopTypeId: BigNumberish;
+  health: BigNumberish;
+  lastRepaired: BigNumberish;
+  cargoArmyId: BigNumberish;
+};
+
+export type TroopStructOutput = [
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber
+] & {
+  armyId: BigNumber;
+  troopTypeId: BigNumber;
+  health: BigNumber;
+  lastRepaired: BigNumber;
+  cargoArmyId: BigNumber;
+};
+
 export type PositionStruct = { x: BigNumberish; y: BigNumberish };
 
 export type PositionStructOutput = [BigNumber, BigNumber] & {
   x: BigNumber;
   y: BigNumber;
-};
-
-export type TroopStruct = {
-  owner: string;
-  troopTypeId: BigNumberish;
-  lastMoved: BigNumberish;
-  lastLargeActionTaken: BigNumberish;
-  lastRepaired: BigNumberish;
-  health: BigNumberish;
-  pos: PositionStruct;
-  cargoTroopIds: BigNumberish[];
-};
-
-export type TroopStructOutput = [
-  string,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  PositionStructOutput,
-  BigNumber[]
-] & {
-  owner: string;
-  troopTypeId: BigNumber;
-  lastMoved: BigNumber;
-  lastLargeActionTaken: BigNumber;
-  lastRepaired: BigNumber;
-  health: BigNumber;
-  pos: PositionStructOutput;
-  cargoTroopIds: BigNumber[];
 };
 
 export type BaseStruct = {
@@ -91,7 +82,7 @@ export type TroopTypeStruct = {
   damagePerHit: BigNumberish;
   attackFactor: BigNumberish;
   defenseFactor: BigNumberish;
-  cargoCapacity: BigNumberish;
+  isTypeTransport: boolean;
   movementCooldown: BigNumberish;
   largeActionCooldown: BigNumberish;
   goldPrice: BigNumberish;
@@ -105,7 +96,7 @@ export type TroopTypeStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
-  BigNumber,
+  boolean,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -117,7 +108,7 @@ export type TroopTypeStructOutput = [
   damagePerHit: BigNumber;
   attackFactor: BigNumber;
   defenseFactor: BigNumber;
-  cargoCapacity: BigNumber;
+  isTypeTransport: boolean;
   movementCooldown: BigNumber;
   largeActionCooldown: BigNumber;
   goldPrice: BigNumber;
