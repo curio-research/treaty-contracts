@@ -69,6 +69,7 @@ struct Army {
     uint256 lastLargeActionTaken;
     uint256 lastRepaired;
     Position pos;
+    bool hasTransport;
 }
 
 struct Troop {
@@ -85,7 +86,7 @@ struct TroopType {
     uint256 damagePerHit;
     uint256 attackFactor; // in the interval [0, 100]
     uint256 defenseFactor; // in the interval [0, 100]
-    bool canTransportArmy;
+    bool isTypeTransport;
     uint256 movementCooldown;
     uint256 largeActionCooldown;
     uint256 goldPrice;

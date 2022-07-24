@@ -20,10 +20,12 @@ library Util {
     // EVENTS
     // ----------------------------------------------------------
 
-    event AttackedBase(address _player, uint256 _troopId, Troop _troopInfo, uint256 _targetBaseId, Base _targetBaseInfo);
-    event AttackedTroop(address _player, uint256 _troopId, Troop _troopInfo, uint256 _targetTroopId, Troop _targetTroopInfo);
+    event AttackedBase(address _player, uint256 _armyId, Army _armyInfo, uint256 _targetBaseId, Base _targetBaseInfo);
+    event AttackedArmy(address _player, uint256 _armyId, Army _armyInfo, uint256 _targetArmy, Army _targetArmyInfo);
     event BaseCaptured(address _player, uint256 _troopId, uint256 _baseId);
-    event Death(address _player, uint256 _troopId);
+    event TroopDeath(address _player, uint256 _troopId);
+    // temporary
+    event ArmyDeath(address _player, uint256 _armyId);
     event GamePaused();
     event GameResumed();
     event Moved(address _player, uint256 _troopId, uint256 _timestamp, Position _startPos, Position _targetPos);
@@ -94,6 +96,37 @@ library Util {
         gs().troopIdMap[_troopTransportId].cargoArmyId = _NULL();
     }
 
+    function _removeArmy(uint256 _armyId) public {
+        Army memory _army = _getArmy(_armyId);
+        address _owner = _army.owner;
+        Position memory _pos = _army.pos;
+
+        uint256 _numOwnedTroops = gs().playerMap[_owner].numOwnedTroops;
+        uint256 _totalOilConsumptionPerUpdate = gs().playerMap[_owner].totalOilConsumptionPerUpdate;
+
+        for (uint256 i = 0; i < _army.armyTroopIds.length; i++) {
+            uint256 _troopId = _army.armyTroopIds[i];
+
+            _numOwnedTroops--;
+            _totalOilConsumptionPerUpdate -= _getOilConsumptionPerSecond(_getTroop(_troopId).troopTypeId);
+            delete gs().troopIdMap[_troopId];
+        }
+
+        delete gs().armyIdMap[_armyId];
+
+        _updatePlayerBalances(_owner);
+        gs().playerMap[_owner].numOwnedTroops = _numOwnedTroops;
+        gs().playerMap[_owner].totalOilConsumptionPerUpdate = _totalOilConsumptionPerUpdate;
+
+        Tile memory _tile = _getTileAt(_army.pos);
+        // if the removed army is on troop transport, remove it from transport, otherwise from tile
+        if (_hasTransportTroop(_tile)) {
+            _unloadArmyFromTransport(_getTransportFromArmy(_tile.occupantId));
+        } else {
+            gs().map[_pos.x][_pos.y].occupantId = _NULL();
+        }
+    }
+
     function _removeTroop(uint256 _troopId) public {
         Troop memory _troop = _getTroop(_troopId);
         Army memory _army = _getArmy(_troop.armyId);
@@ -129,8 +162,6 @@ library Util {
         gs().armyIdMap[_troop.armyId].armyTroopIds[_index] = _army.armyTroopIds[_armyTroopSize - 1];
         gs().armyIdMap[_troop.armyId].armyTroopIds.pop();
 
-        // If army has no troop, remove army from tile or transport
-        Tile memory _tile = _getTileAt(_army.pos);
         uint256 _troopTransportId;
         if (gs().armyIdMap[_troop.armyId].armyTroopIds.length == 0) {
             _troopTransportId = _getTransportFromArmy(_troop.armyId);
@@ -161,10 +192,11 @@ library Util {
         gs().map[_pos.x][_pos.y].occupantId = _armyId;
 
         Troop memory _troop = Troop({armyId: _armyId, troopTypeId: _troopTypeId, health: _getMaxHealth(_troopTypeId), cargoArmyId: 0});
+        bool _isTypeTransport = gs().troopTypeIdMap[_troopTypeId].isTypeTransport;
 
         uint256[] memory _armyTroopIds;
 
-        Army memory _army = Army({owner: _owner, armyTroopIds: _armyTroopIds, lastMoved: block.timestamp, lastLargeActionTaken: block.timestamp, lastRepaired: block.timestamp, pos: _pos});
+        Army memory _army = Army({owner: _owner, armyTroopIds: _armyTroopIds, lastMoved: block.timestamp, lastLargeActionTaken: block.timestamp, lastRepaired: block.timestamp, pos: _pos, hasTransport: _isTypeTransport? true:false});
 
         // Update mappings
         gs().troopIdMap[_troopId] = _troop;
@@ -249,10 +281,11 @@ library Util {
 
     function _getTransportFromArmy(uint256 _armyId) public view returns (uint256) {
         Army memory _army = _getArmy(_armyId);
+        // todo: scary computation: 5 * 6
         for (uint256 i = 0; i < _army.armyTroopIds.length; i++) {
-            if (_getTroop(_army.armyTroopIds[i]).cargoArmyId != 0) return _army.armyTroopIds[i];
+            if (gs().troopTypeIdMap[_getTroop(_army.armyTroopIds[i]).troopTypeId].isTypeTransport) return _army.armyTroopIds[i];
         }
-        return 0;
+        return _NULL();
     }
 
     function _getOilConsumptionPerSecond(uint256 _troopTypeId) public view returns (uint256) {
@@ -287,8 +320,89 @@ library Util {
         return gs().troopTypeIdMap[_troopTypeId].largeActionCooldown;
     }
 
+    function _getArmyHealth(uint256[] memory _armyTroopIds) public view returns (uint256) {
+        // take the sum
+        uint256 _health;
+
+        for (uint256 i = 0; i < _armyTroopIds.length; i++) {
+            Troop memory _troop = _getTroop(_armyTroopIds[i]);
+            uint256 _troopHealth = _getMaxHealth(_troop.troopTypeId);
+            _health += _troopHealth;
+        }
+        return _health;
+    }
+
+    function _getArmyMovementCooldown(uint256[] memory _armyTroopIds) public view returns (uint256) {
+        // take the longest cooldown
+        uint256 _movementCooldown;
+
+        for (uint256 i = 0; i < _armyTroopIds.length; i++) {
+            Troop memory _troop = _getTroop(_armyTroopIds[i]);
+            uint256 _troopMovementCooldown = _getMovementCooldown(_troop.troopTypeId);
+            if (_troopMovementCooldown > _movementCooldown) {
+                _movementCooldown = _troopMovementCooldown;
+            }
+        }
+        return _movementCooldown;
+    }
+
+    function _getArmyLargeActionCooldown(uint256[] memory _armyTroopIds) public view returns (uint256) {
+        // take the longest cooldown
+        uint256 _largeActionCooldown;
+
+        for (uint256 i = 0; i < _armyTroopIds.length; i++) {
+            Troop memory _troop = _getTroop(_armyTroopIds[i]);
+            uint256 _troopLargeActionCooldown = _getMovementCooldown(_troop.troopTypeId);
+            if (_troopLargeActionCooldown > _largeActionCooldown) {
+                _largeActionCooldown = _troopLargeActionCooldown;
+            }
+        }
+        return _largeActionCooldown;
+    }
+
+    function _getArmyAttackFactor(uint256[] memory _armyTroopIds) public view returns (uint256) {
+        // take the sum
+        uint256 _attackFactor;
+
+        for (uint256 i = 0; i < _armyTroopIds.length; i++) {
+            Troop memory _troop = _getTroop(_armyTroopIds[i]);
+            uint256 _troopAttackFactor = _getMovementCooldown(_troop.troopTypeId);
+            _attackFactor += _troopAttackFactor;
+        }
+        return _attackFactor;
+    }
+
+    function _getArmyDefenseFactor(uint256[] memory _armyTroopIds) public view returns (uint256) {
+        // take the sum
+        uint256 _defenseFactor;
+
+        for (uint256 i = 0; i < _armyTroopIds.length; i++) {
+            Troop memory _troop = _getTroop(_armyTroopIds[i]);
+            uint256 _troopDefenseFactor = _getMovementCooldown(_troop.troopTypeId);
+            _defenseFactor += _troopDefenseFactor;
+        }
+        return _defenseFactor;
+    }
+
+    function _getArmyDamagePerHit(uint256[] memory _armyTroopIds) public view returns (uint256) {
+        // take the sum
+        uint256 _damagePerHit;
+
+        for (uint256 i = 0; i < _armyTroopIds.length; i++) {
+            Troop memory _troop = _getTroop(_armyTroopIds[i]);
+            uint256 _troopDamagePerhit = _getMovementCooldown(_troop.troopTypeId);
+            _damagePerHit += _troopDamagePerhit;
+        }
+        return _damagePerHit;
+    }
+
     function _isLandTroop(uint256 _troopTypeId) public view returns (bool) {
         return gs().troopTypeIdMap[_troopTypeId].isLandTroop;
+    }
+
+    function _isLandArmy(uint256 _armyId) public view returns (bool) {
+        Troop memory _troop = _getTroop(gs().armyIdMap[_armyId].armyTroopIds[0]);
+        return _isLandTroop(_troop.troopTypeId);
     }
 
     function _getBaseHealth(uint256 _baseId) public view returns (uint256) {
@@ -306,7 +420,12 @@ library Util {
     // rule is that the army on that tile must have a troop transport
     // also that the troop transport is vacant
     function _canTransportTroop(Tile memory _tile) public view returns (bool) {
-        return ((_getTransportFromArmy(_tile.occupantId) != 0) && (gs().troopIdMap[_tile.occupantId].cargoArmyId == _NULL()));
+        uint256 _troopTransportId = _getTransportFromArmy(_tile.occupantId);
+        return ((_getTransportFromArmy(_tile.occupantId) != 0) && (gs().troopIdMap[_troopTransportId].cargoArmyId == _NULL()));
+    }
+
+    function _hasTransportTroop(Tile memory _tile) public view returns (bool) {
+        return ((_getTransportFromArmy(_tile.occupantId) != 0));
     }
 
     function _hasPort(Tile memory _tile) public view returns (bool) {

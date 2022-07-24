@@ -16,54 +16,54 @@ contract EngineFacet is UseStorage {
 
     /**
      * March troop to a target position (combining move, battle, capture).
-     * @param _troopId identifier for troop
+     * @param _armyId identifier for troop
      * @param _targetPos target position
      */
-    function march(uint256 _troopId, Position memory _targetPos) external {
+    function march(uint256 _armyId, Position memory _targetPos) external {
         require(!gs().isPaused, "CURIO: Game is paused");
         require(Util._isPlayerActive(msg.sender), "CURIO: Player is inactive");
 
         require(Util._inBound(_targetPos), "CURIO: Target out of bound");
         if (!Util._getTileAt(_targetPos).isInitialized) Util._initializeTile(_targetPos);
 
-        Troop memory _troop = gs().troopIdMap[_troopId];
-        require(_troop.owner == msg.sender, "CURIO: Can only march own troop");
-        require(!Util._samePos(_troop.pos, _targetPos), "CURIO: Already at destination");
-        require((block.timestamp - _troop.lastLargeActionTaken) >= Util._getLargeActionCooldown(_troop.troopTypeId), "CURIO: Large action taken too recently");
+        Army memory _army = gs().armyIdMap[_armyId];
+        require(_army.owner == msg.sender, "CURIO: Can only march own troop");
+        require(!Util._samePos(_army.pos, _targetPos), "CURIO: Already at destination");
+        require((block.timestamp - _army.lastLargeActionTaken) >= Util._getArmyLargeActionCooldown(_army.armyTroopIds), "CURIO: Large action taken too recently");
 
         Tile memory _targetTile = Util._getTileAt(_targetPos);
         if (_targetTile.occupantId == NULL) {
             if (_targetTile.baseId == NULL) {
-                if (Util._isLandTroop(_troop.troopTypeId)) {
+                if (Util._isLandArmy(_armyId)) {
                     require(_targetTile.terrain != TERRAIN.WATER || Util._canTransportTroop(_targetTile), "CURIO: Cannot move on water");
                 } else {
                     require(_targetTile.terrain == TERRAIN.WATER || Util._hasPort(_targetTile), "CURIO: Cannot move on land");
                 }
-                _moveModule(_troopId, _targetPos);
+                _moveModule(_armyId, _targetPos);
             } else {
                 if (Util._getBaseOwner(_targetTile.baseId) == msg.sender) {
-                    if (Util._isLandTroop(_troop.troopTypeId)) {
+                    if (Util._isLandArmy(_armyId)) {
                         require(_targetTile.terrain != TERRAIN.WATER || Util._canTransportTroop(_targetTile), "CURIO: Cannot move on water");
                     } else {
                         require(_targetTile.terrain == TERRAIN.WATER || Util._hasPort(_targetTile), "CURIO: Cannot move on land");
                     }
 
-                    _moveModule(_troopId, _targetPos);
+                    _moveModule(_armyId, _targetPos);
                 } else {
-                    _battleBaseModule(_troopId, _targetPos); // will capture and move if conditions are met
+                    _battleBaseModule(_armyId, _targetPos); // will capture and move if conditions are met
                 }
             }
         } else {
-            if (gs().troopIdMap[_targetTile.occupantId].owner == msg.sender) {
-                if (Util._canTransportTroop(_targetTile) && Util._isLandTroop(_troop.troopTypeId)) {
+            if (gs().armyIdMap[_targetTile.occupantId].owner == msg.sender) {
+                if (Util._canTransportTroop(_targetTile) && Util._isLandArmy(_armyId)) {
                     // Load troop onto transport
-                    _loadModule(_troopId, _targetPos);
-                    _moveModule(_troopId, _targetPos);
+                    _loadModule(_armyId, _targetPos);
+                    _moveModule(_armyId, _targetPos);
                 } else {
                     revert("CURIO: Destination tile occupied");
                 }
             } else {
-                _battleTroopModule(_troopId, _targetPos);
+                _battleTroopModule(_armyId, _targetPos);
             }
         }
 
@@ -106,12 +106,14 @@ contract EngineFacet is UseStorage {
      * @param _troopId identifier for troop
      */
 
-    function deleteTroop(uint256 _troopId, uint256 _transportTroopId) external {
-        require(Util._getTroop(_troopId).owner == msg.sender, "CURIO: Can only delete own troop");
+    function deleteTroop(uint256 _troopId) external {
+        Troop memory _troop = Util._getTroop(_troopId);
+        Army memory _army = Util._getArmy(_troop.armyId);
+        require(_army.owner == msg.sender, "CURIO: Can only delete own troop");
 
-        Util._removeTroop(_troopId, _transportTroopId);
+        Util._removeTroop(_troopId);
 
-        emit Util.Death(msg.sender, _troopId);
+        emit Util.TroopDeath(msg.sender, _troopId);
     }
 
     /**
@@ -155,28 +157,19 @@ contract EngineFacet is UseStorage {
         Army memory _army = Util._getArmy(_armyId);
         Tile memory _targetTile = Util._getTileAt(_targetPos);
 
-        // todo: util funciton
-        // temporary: get the longest Movementcooldown from army
-        uint256 _movementCooldown;
-
-        for (uint256 i = 0; i < _army.armyTroopIds.length; i++) {
-            uint256 _troopMovementCooldown = Util._getMovementCooldown((Util._getTroop(_army.armyTroopIds[i]).troopTypeId));
-            if (_troopMovementCooldown > _movementCooldown) {
-                _movementCooldown = _troopMovementCooldown;
-            }
-        }
-
+        uint256 _movementCooldown = Util._getArmyMovementCooldown(_army.armyTroopIds);
         require((block.timestamp - _army.lastMoved) >= _movementCooldown, "CURIO: Moved too recently");
 
+        uint256 _sourceTileTroopTransportId = Util._getTransportFromArmy(_targetTile.occupantId);
         // state change
-        if (Util._getTroop(_targetTile.occupantId).cargoTroopIds.length == 0) {
+        if (_sourceTileTroopTransportId == 0) {
             gs().map[_targetPos.x][_targetPos.y].occupantId = _armyId;
         }
 
         Tile memory _sourceTile = Util._getTileAt(_army.pos);
-        if (_sourceTile.occupantId != _army) {
+        if (_sourceTile.occupantId != _armyId) {
             // Army is on Army transport
-            Util._unloadArmyFromArmyTransport(_sourceTile.occupantId, _army);
+            Util._unloadArmyFromTransport(_sourceTileTroopTransportId);
         } else {
             gs().map[_army.pos.x][_army.pos.y].occupantId = NULL;
         }
@@ -185,9 +178,9 @@ contract EngineFacet is UseStorage {
         gs().armyIdMap[_armyId].pos = _targetPos;
         gs().armyIdMap[_armyId].lastMoved = block.timestamp;
 
-        uint256[] memory _cargoArmyId = gs().troopIdMap[_army].cargoTroopIds;
-        if (_cargoArmyId) {
-            // Troop is a troop transport — move its army
+        uint256 _cargoArmyId = Util._getTransportFromArmy(_armyId);
+        if (_cargoArmyId != 0) {
+            // Army has a troop troopTransport — move its cargo army
             // Transport can load up to one army
             gs().armyIdMap[_cargoArmyId].pos = _targetPos;
         }
@@ -197,32 +190,44 @@ contract EngineFacet is UseStorage {
         emit Util.Moved(msg.sender, _armyId, block.timestamp, _army.pos, _targetPos);
     }
 
-    function _loadModule(uint256 _troopId, Position memory _targetPos) internal {
+    function _loadModule(uint256 _armyId, Position memory _targetPos) internal {
         Tile memory _targetTile = Util._getTileAt(_targetPos);
+        Army memory _targetArmy = Util._getArmy(_targetTile.occupantId);
+        // rule: if an army contains troop transport, it cannot load onto it
+        require(!_targetArmy.hasTransport, "CURIO: Army can have up to one TroopTransport");
 
-        // Load troop onto troop transport at target tile
-        gs().troopIdMap[_targetTile.occupantId].cargoTroopIds.push(_troopId);
+        uint256 _troopTransportId = Util._getTransportFromArmy(_targetTile.occupantId);
+        Troop memory _troopTransport = Util._getTroop(_troopTransportId);
+        _troopTransport.cargoArmyId = _armyId;
+        _targetArmy.hasTransport = true;
+
+        //update state: both army and troop
+        gs().troopIdMap[_troopTransportId] = _troopTransport;
+        gs().armyIdMap[_targetTile.occupantId] = _targetArmy;
     }
 
-    function _battleBaseModule(uint256 _troopId, Position memory _targetPos) internal {
-        Troop memory _troop = gs().troopIdMap[_troopId];
-        require(Util._withinDist(_troop.pos, _targetPos, 1), "CURIO: Target not in firing range");
-        gs().troopIdMap[_troopId].lastLargeActionTaken = block.timestamp;
+    function _battleBaseModule(uint256 _armyId, Position memory _targetPos) internal {
+        Army memory _army = gs().armyIdMap[_armyId];
+        require(Util._withinDist(_army.pos, _targetPos, 1), "CURIO: Target not in firing range");
+        gs().armyIdMap[_armyId].lastLargeActionTaken = block.timestamp;
 
         Tile memory _targetTile = Util._getTileAt(_targetPos);
         require(_targetTile.baseId != NULL, "CURIO: No target to attack");
 
         Base memory _targetBase = gs().baseIdMap[_targetTile.baseId];
         require(_targetBase.owner != msg.sender, "CURIO: Cannot attack own base");
-        require(Util._isLandTroop(_troop.troopTypeId) || _targetBase.health > 0 || _targetBase.name == BASE_NAME.OIL_WELL, "CURIO: Can only capture base with land troop");
+        require(Util._isLandArmy(_armyId) || _targetBase.health > 0 || _targetBase.name == BASE_NAME.OIL_WELL, "CURIO: Can only capture base with land troop");
 
         // Exchange fire until one side dies
         uint256 _salt = 0;
-        while (_troop.health > 0) {
+        // todo: distribute damage to all troops
+        uint256 _armyHealth = Util._getArmyHealth(_army.armyTroopIds);
+
+        while (_armyHealth > 0) {
             // Troop attacks target
             _salt += 1;
             if (Util._strike(_targetBase.attackFactor, _salt)) {
-                uint256 _damagePerHit = Util._getDamagePerHit(_troop.troopTypeId);
+                uint256 _damagePerHit = Util._getArmyDamagePerHit(_army.armyTroopIds);
                 if (_damagePerHit < _targetBase.health) {
                     _targetBase.health -= _damagePerHit;
                 } else {
@@ -235,12 +240,12 @@ contract EngineFacet is UseStorage {
             // Target attacks troop
             _salt += 1;
             if (Util._strike(_targetBase.defenseFactor, _salt)) {
-                if (_troop.health > 1) {
-                    _troop.health -= 1;
+                if (_armyHealth > 1) {
+                    _armyHealth -= 1;
                 } else {
-                    _troop.health = 0;
-                    Util._removeTroop(_troopId);
-                    emit Util.Death(msg.sender, _troopId);
+                    _armyHealth = 0;
+                    Util._removeArmy(_armyId);
+                    emit Util.ArmyDeath(msg.sender, _armyId);
                 }
             }
         }
@@ -248,17 +253,17 @@ contract EngineFacet is UseStorage {
         if (_targetBase.health == 0) {
             // Target base dies
             address _targetPlayer = _targetBase.owner;
-            gs().troopIdMap[_troopId].health = _troop.health;
+            // todo: update health for troops
             gs().baseIdMap[_targetTile.baseId].health = 0;
 
             // Capture and move onto base if troop is infantry or if base is oil well
-            if (Util._isLandTroop(_troop.troopTypeId) || _targetBase.name == BASE_NAME.OIL_WELL) {
+            if (Util._isLandArmy(_armyId) || _targetBase.name == BASE_NAME.OIL_WELL) {
                 require(Util._getPlayer(msg.sender).numOwnedBases < gs().worldConstants.maxBaseCountPerPlayer, "CURIO: Max base count exceeded");
 
                 _targetBase = Util._getBase(_targetTile.baseId);
                 gs().baseIdMap[_targetTile.baseId].owner = msg.sender;
                 gs().baseIdMap[_targetTile.baseId].health = 1;
-                emit Util.BaseCaptured(msg.sender, _troopId, _targetTile.baseId);
+                emit Util.BaseCaptured(msg.sender, _armyId, _targetTile.baseId);
 
                 Util._updatePlayerBalances(_targetPlayer);
                 Util._updatePlayerBalances(msg.sender);
@@ -272,76 +277,76 @@ contract EngineFacet is UseStorage {
                 gs().playerMap[msg.sender].totalOilGenerationPerUpdate += _targetBase.oilGenerationPerSecond;
 
                 // Move
-                _moveModule(_troopId, _targetPos);
+                _moveModule(_armyId, _targetPos);
             } else {
-                emit Util.AttackedBase(msg.sender, _troopId, _troop, _targetTile.baseId, _targetBase);
+                emit Util.AttackedBase(msg.sender, _armyId, _army, _targetTile.baseId, _targetBase);
             }
         } else {
             // Troop dies
             gs().baseIdMap[_targetTile.baseId].health = _targetBase.health;
             _targetBase = Util._getBase(_targetTile.baseId);
 
-            emit Util.AttackedBase(msg.sender, _troopId, _troop, _targetTile.baseId, _targetBase);
+            emit Util.AttackedBase(msg.sender, _armyId, _army, _targetTile.baseId, _targetBase);
         }
     }
 
-    function _battleTroopModule(uint256 _troopId, Position memory _targetPos) internal {
-        Troop memory _troop = gs().troopIdMap[_troopId];
-        require(Util._withinDist(_troop.pos, _targetPos, 1), "CURIO: Target not in firing range");
-        gs().troopIdMap[_troopId].lastLargeActionTaken = block.timestamp;
+    function _battleTroopModule(uint256 _armyId, Position memory _targetPos) internal {
+        Army memory _army = gs().armyIdMap[_armyId];
+        require(Util._withinDist(_army.pos, _targetPos, 1), "CURIO: Target not in firing range");
+        gs().armyIdMap[_armyId].lastLargeActionTaken = block.timestamp;
 
         Tile memory _targetTile = Util._getTileAt(_targetPos);
-        Troop memory _targetTroop;
+        Army memory _targetArmy;
 
-        _targetTroop = gs().troopIdMap[_targetTile.occupantId];
-        require(_targetTroop.owner != msg.sender, "CURIO: Cannot attack own troop");
+        _targetArmy = gs().armyIdMap[_targetTile.occupantId];
+        require(_targetArmy.owner != msg.sender, "CURIO: Cannot attack own troop");
+        
+        uint256 _armyHealth = Util._getArmyHealth(_army.armyTroopIds);
+        uint256 _targetHealth = Util._getArmyHealth(_targetArmy.armyTroopIds);
 
+        // todo: distribute damage to individual troops
         // Exchange fire until one side dies
         uint256 _salt = 0;
-        while (_troop.health > 0) {
+        while (_armyHealth > 0) {
             // Troop attacks target
             _salt += 1;
-            if (Util._strike(Util._getAttackFactor(_targetTroop.troopTypeId), _salt)) {
-                uint256 _damagePerHit = Util._getDamagePerHit(_troop.troopTypeId);
-                if (_damagePerHit < _targetTroop.health) {
-                    _targetTroop.health -= _damagePerHit;
+            if (Util._strike(Util._getArmyAttackFactor(_targetArmy.armyTroopIds), _salt)) {
+                uint256 _damagePerHit = Util._getArmyDamagePerHit(_army.armyTroopIds);
+                if (_damagePerHit < _targetHealth) {
+                    _targetHealth -= _damagePerHit;
                 } else {
-                    _targetTroop.health = 0;
-                    Util._removeTroop(_targetTile.occupantId);
-                    emit Util.Death(_targetTroop.owner, _targetTile.occupantId);
+                    _targetHealth = 0;
+                    Util._removeArmy(_targetTile.occupantId);
+                    emit Util.ArmyDeath(_targetArmy.owner, _targetTile.occupantId);
                 }
             }
 
-            if (_targetTroop.health == 0) break; // target cannot attack back if it has zero health
+            if (_targetHealth == 0) break; // target cannot attack back if it has zero health
 
-            // Target attacks troop
+            // Target attacks Army
             _salt += 1;
-            if (Util._strike(Util._getDefenseFactor(_targetTroop.troopTypeId), _salt)) {
-                if (Util._getDamagePerHit(_targetTroop.troopTypeId) < _troop.health) {
-                    _troop.health -= Util._getDamagePerHit(_targetTroop.troopTypeId);
+            if (Util._strike(Util._getArmyDefenseFactor(_targetArmy.armyTroopIds), _salt)) {
+                if (Util._getArmyDamagePerHit(_targetArmy.armyTroopIds) < _armyHealth) {
+                    _armyHealth -= Util._getArmyDamagePerHit(_targetArmy.armyTroopIds);
                 } else {
-                    _troop.health = 0;
-                    Util._removeTroop(_troopId);
-                    emit Util.Death(msg.sender, _troopId);
+                    _armyHealth = 0;
+                    Util._removeArmy(_armyId);
+                    emit Util.ArmyDeath(msg.sender, _armyId);
                 }
             }
         }
 
-        if (_targetTroop.health == 0) {
-            // Target troop dies
-            gs().troopIdMap[_troopId].health = _troop.health;
-            _troop = Util._getTroop(_troopId);
+        if (_targetHealth == 0) {
+            // todo: distribute damage to troops
+            _army = Util._getArmy(_armyId);
 
-            _targetTroop = Util._getTroop(_targetTile.occupantId);
+            _targetArmy = Util._getArmy(_targetTile.occupantId);
 
-            emit Util.AttackedTroop(msg.sender, _troopId, _troop, _targetTile.occupantId, _targetTroop);
+            emit Util.AttackedArmy(msg.sender, _armyId, _army, _targetTile.occupantId, _targetArmy);
         } else {
-            // Troop dies
-            gs().troopIdMap[_targetTile.occupantId].health = _targetTroop.health;
+            _targetArmy = Util._getArmy(_targetTile.occupantId);
 
-            _targetTroop = Util._getTroop(_targetTile.occupantId);
-
-            emit Util.AttackedTroop(msg.sender, _troopId, _troop, _targetTile.occupantId, _targetTroop);
+            emit Util.AttackedArmy(msg.sender, _armyId, _army, _targetTile.occupantId, _targetArmy);
         }
     }
 }
