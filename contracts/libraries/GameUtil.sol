@@ -123,7 +123,7 @@ library Util {
         Tile memory _tile = _getTileAt(_army.pos);
         Army memory _tileArmy = _getArmy(_tile.occupantId);
         uint256 _troopTransportId = _getTransportFromArmyTroops(_tileArmy.armyTroopIds);
-        if (_troopTransportId != _NULL() && _tile.occupantId != _armyId) {
+        if (_troopTransportId != _NULL()) {
             // army 1 is empty but "army 2" has transport => army 1 was on army 2
             _unloadArmyFromTransport(_troopTransportId);
         } else {
@@ -132,6 +132,7 @@ library Util {
     }
 
     function _removeArmyOnly(uint256 _armyId) public {
+        // used when detaching army
         Army memory _army = _getArmy(_armyId);
         Position memory _pos = _army.pos;
 
@@ -139,7 +140,7 @@ library Util {
         Tile memory _tile = _getTileAt(_army.pos);
         Army memory _tileArmy = _getArmy(_tile.occupantId);
         uint256 _troopTransportId = _getTransportFromArmyTroops(_tileArmy.armyTroopIds);
-        if (_troopTransportId != _NULL() && _tile.occupantId != _armyId) {
+        if (_troopTransportId != _NULL()) {
             // army 1 is empty but "army 2" has transport => army 1 was on army 2
             _unloadArmyFromTransport(_troopTransportId);
         } else {

@@ -159,7 +159,6 @@ contract EngineFacet is UseStorage {
         // basic check
         require(!gs().isPaused, "CURIO: Game is paused");
         require(Util._isPlayerActive(msg.sender), "CURIO: Player is inactive");
-        require(_joiningArmyIds.length >= 1, "CURIO: Must have at least one joining army");
 
         Army memory _mainArmy = Util._getArmy(_mainArmyId);
         require(Util._inBound(_mainArmy.pos), "CURIO: Target out of bound");
@@ -167,26 +166,21 @@ contract EngineFacet is UseStorage {
 
         require(_mainArmy.owner == msg.sender, "CURIO: Can only combine own troop");
 
+        // army size pre-check; _joiningArmyIds are armies not troops but each has at least one troop
+        uint256 troopCounter = _mainArmy.armyTroopIds.length;
+        bool hasTransport = Util._getTransportFromArmyTroops(_mainArmy.armyTroopIds) == NULL;
+        require((hasTransport && (troopCounter + _joiningArmyIds.length) == 2) || (!hasTransport && (troopCounter + _joiningArmyIds.length) <= 5 && (troopCounter + _joiningArmyIds.length) >= 2), "CURIO: Army can have up to five troops, or two with one transport");
+
         // large action check & update
         require((block.timestamp - _mainArmy.lastLargeActionTaken) >= Util._getArmyLargeActionCooldown(_mainArmy.armyTroopIds), "CURIO: Large action taken too recently");
         gs().armyIdMap[_mainArmyId].lastLargeActionTaken = block.timestamp;
 
-        uint256 troopCounter = _mainArmy.armyTroopIds.length;
-        require(troopCounter < 5, "CURIO: Army can have at most five troops");
-
         bool isLandArmy = Util._isLandArmy(_mainArmyId);
-
-        // an army must have up to one troopTransport
-        bool hasTransport = Util._getTransportFromArmyTroops(_mainArmy.armyTroopIds) == NULL;
-        require((hasTransport && troopCounter < 2) || (!hasTransport && troopCounter < 5), "CURIO: Army can have at most five troops, or two with one transport");
 
         for (uint256 i = 0; i < _joiningArmyIds.length; i++) {
             uint256 _joiningArmyId = _joiningArmyIds[i];
             require(isLandArmy == Util._isLandArmy(_joiningArmyId), "CURIO: Can only combine army of same type");
             Army memory _joiningArmy = Util._getArmy(_joiningArmyId);
-
-            require(Util._inBound(_mainArmy.pos), "CURIO: Target out of bound");
-            if (!Util._getTileAt(_mainArmy.pos).isInitialized) Util._initializeTile(_mainArmy.pos);
 
             require(_joiningArmy.owner == msg.sender, "CURIO: Can only combine own troop");
             require(Util._withinDist(_mainArmy.pos, _joiningArmy.pos, 1), "CURIO: Combining armies must stay next to each other");
@@ -198,11 +192,13 @@ contract EngineFacet is UseStorage {
             require((block.timestamp - _joiningArmy.lastLargeActionTaken) >= Util._getArmyLargeActionCooldown(_joiningArmy.armyTroopIds), "CURIO: Large action taken too recently");
             gs().armyIdMap[_joiningArmyId].lastLargeActionTaken = block.timestamp;
 
+            // real army size check
             troopCounter += _joiningArmy.armyTroopIds.length;
             if (Util._getTransportFromArmyTroops(_mainArmy.armyTroopIds) != NULL) {
+                require(hasTransport == false, "CURIO: Army can have up to five troops, or two with one transport");
                 hasTransport == true;
             }
-            require((hasTransport && troopCounter < 2) || (!hasTransport && troopCounter < 5), "CURIO: Army can have at most five troops, or two with one transport");
+            require((hasTransport && troopCounter <= 2) || (!hasTransport && troopCounter <= 5), "CURIO: Army can have at most five troops, or two with one transport");
 
             // combining troops
             for (uint256 j = 0; j < _joiningArmy.armyTroopIds.length; j++) {
@@ -238,24 +234,25 @@ contract EngineFacet is UseStorage {
         uint256 _movementCooldown = Util._getArmyMovementCooldown(_mainArmy.armyTroopIds);
         require((block.timestamp - _mainArmy.lastMoved) >= _movementCooldown, "CURIO: Moved too recently");
 
-        bool leavingTroopshaveTransport = Util._getTransportFromArmyTroops(_leavingTroopIds) != NULL;
-        require((leavingTroopshaveTransport && _leavingTroopIds.length <= 2) || !leavingTroopshaveTransport, "CURIO: Army can have at most five troops, or two with one transport");
-        Army memory _Newarmy = Army({owner: _mainArmy.owner, armyTroopIds: _leavingTroopIds, lastMoved: block.timestamp, lastLargeActionTaken: block.timestamp, pos: _targetPos});
+        // army size check
+        bool leavingTroopsHaveTransport = Util._getTransportFromArmyTroops(_leavingTroopIds) != NULL;
+        require((leavingTroopsHaveTransport && _leavingTroopIds.length <= 2) || (!leavingTroopsHaveTransport && _leavingTroopIds.length <= 5), "CURIO: Army can have at most five troops, or two with one transport");
+        Army memory _newArmy = Army({owner: _mainArmy.owner, armyTroopIds: _leavingTroopIds, lastMoved: block.timestamp, lastLargeActionTaken: block.timestamp, pos: _targetPos});
 
         // state changes for new army
-        uint256 _NewArmyId = gs().armyNonce;
-        gs().armyIds.push(_NewArmyId);
+        uint256 _newArmyId = gs().armyNonce;
+        gs().armyIds.push(_newArmyId);
         gs().armyNonce++;
-        gs().map[_targetPos.x][_targetPos.y].occupantId = _NewArmyId;
-        gs().armyIdMap[_NewArmyId] = _Newarmy;
+        gs().map[_targetPos.x][_targetPos.y].occupantId = _newArmyId;
+        gs().armyIdMap[_newArmyId] = _newArmy;
 
         for (uint256 i = 0; i < _leavingTroopIds.length; i++) {
             // state changes for leaving troops
             Troop memory _troop = gs().troopIdMap[_leavingTroopIds[i]];
-            _troop.armyId = _NewArmyId;
+            _troop.armyId = _newArmyId;
 
             // state changes for main army: clean up leaving troops
-            // note: easier here if we make a new map linking troopId with armyId
+            // note: easier here if we create a new map linking troopId with armyId
             uint256 _index = 0;
             while (_index < _mainArmy.armyTroopIds.length) {
                 if (_mainArmy.armyTroopIds[_index] == _leavingTroopIds[i]) break;
