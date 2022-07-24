@@ -1,3 +1,6 @@
+//SPDX-License-Identifier: MIT
+pragma solidity ^0.8.4;
+
 // ----------------------------
 // tagging system
 // ----------------------------
@@ -5,6 +8,9 @@
 contract Set {
     uint256[] public items;
     mapping(uint256 => bool) public itemMapping;
+
+    // need item => value mapping
+    // example: item => Position. Should store as struct or bytes?
 
     function add(uint256 _val) public {
         if (itemMapping[_val]) return; // check if it exists
@@ -79,6 +85,12 @@ contract CurioOS {
         Set component = components[_componentID];
 
         component.add(_entityID);
+    }
+
+    function removeEntityFromComponent(uint256 _entityID, uint256 _componentID) public {
+        Set component = components[_componentID];
+
+        component.remove(_entityID);
     }
 
     function addEntity() public {}
@@ -170,6 +182,8 @@ contract CurioOS {
         return res;
     }
 
+    function union(uint256 componentID1, uint256 componentID2) public view returns (uint256[] memory) {}
+
     //////////////////////////////////////////////////////////////////////
 
     function moveInBay(uint256 _shipID) public {
@@ -190,7 +204,7 @@ contract CurioOS {
 
         // Now you only loop over relevant troopIDs, as opposed to all troop IDs!
         for (uint256 i = 0; i < troopIDsWithSharpness.length; i++) {
-            // apply updates to each troop
+            // apply updates to each troop ...
             // ideally this should be variable too?
         }
     }

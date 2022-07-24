@@ -20,6 +20,7 @@ import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 export interface SetInterface extends utils.Interface {
   functions: {
     "add(uint256)": FunctionFragment;
+    "includes(uint256)": FunctionFragment;
     "itemMapping(uint256)": FunctionFragment;
     "items(uint256)": FunctionFragment;
     "remove(uint256)": FunctionFragment;
@@ -27,6 +28,10 @@ export interface SetInterface extends utils.Interface {
   };
 
   encodeFunctionData(functionFragment: "add", values: [BigNumberish]): string;
+  encodeFunctionData(
+    functionFragment: "includes",
+    values: [BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "itemMapping",
     values: [BigNumberish]
@@ -39,6 +44,7 @@ export interface SetInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "size", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "add", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "includes", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "itemMapping",
     data: BytesLike
@@ -82,6 +88,11 @@ export interface Set extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    includes(
+      _item: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     itemMapping(
       arg0: BigNumberish,
       overrides?: CallOverrides
@@ -102,6 +113,8 @@ export interface Set extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  includes(_item: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
+
   itemMapping(arg0: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
 
   items(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
@@ -115,6 +128,8 @@ export interface Set extends BaseContract {
 
   callStatic: {
     add(_val: BigNumberish, overrides?: CallOverrides): Promise<void>;
+
+    includes(_item: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
 
     itemMapping(
       arg0: BigNumberish,
@@ -136,6 +151,11 @@ export interface Set extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    includes(
+      _item: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     itemMapping(
       arg0: BigNumberish,
       overrides?: CallOverrides
@@ -155,6 +175,11 @@ export interface Set extends BaseContract {
     add(
       _val: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    includes(
+      _item: BigNumberish,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     itemMapping(
