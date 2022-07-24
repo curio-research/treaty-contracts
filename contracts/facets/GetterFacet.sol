@@ -75,7 +75,7 @@ contract GetterFacet is UseStorage {
         return Util._getBase(_id);
     }
 
-    function getTroopAt(Position memory _pos) external view returns (Troop memory) {
+    function getArmyAt(Position memory _pos) external view returns (Troop memory) {
         return gs().troopIdMap[Util._getTileAt(_pos).occupantId];
     }
 
