@@ -24,9 +24,14 @@ library MarchModules {
         uint256 _movementCooldown = Util._getArmyMovementCooldown(_army.armyTroopIds);
         require((block.timestamp - _army.lastMoved) >= _movementCooldown, "CURIO: Moved too recently");
 
-        Army memory _targetTileArmy = Util._getArmy(_targetTile.occupantId);
-        uint256 _targetTileTroopTransportId = Util._getTransportFromArmyTroops(_targetTileArmy.armyTroopIds);
-        // state change
+        Army memory _targetTileArmy;
+        uint256 _targetTileTroopTransportId;
+        if (_targetTile.occupantId != _NULL()) {
+            _targetTileArmy = Util._getArmy(_targetTile.occupantId);
+        }
+
+        // state change - if targetTile doesn't have transport
+        _targetTileTroopTransportId = Util._getTransportFromArmyTroops(_targetTileArmy.armyTroopIds);
         if (_targetTileTroopTransportId == _NULL()) {
             gs().map[_targetPos.x][_targetPos.y].occupantId = _armyId;
         }
@@ -34,7 +39,7 @@ library MarchModules {
         Tile memory _sourceTile = Util._getTileAt(_army.pos);
         Army memory _sourceTileArmy = Util._getArmy(_sourceTile.occupantId);
         if (_sourceTile.occupantId != _armyId) {
-            // Army is on Army transport
+            // Army was on Army transport
             uint256 _sourceTileTroopTransportId = Util._getTransportFromArmyTroops(_sourceTileArmy.armyTroopIds); 
             Util._unloadArmyFromTransport(_sourceTileTroopTransportId);
         } else {
@@ -46,7 +51,7 @@ library MarchModules {
         gs().armyIdMap[_armyId].lastMoved = block.timestamp;
 
         uint256 _cargoArmyId = Util._getTransportFromArmyTroops(_army.armyTroopIds);
-        if (_cargoArmyId != Util._NULL()) {
+        if (_cargoArmyId != _NULL()) {
             // Army has a troop troopTransport — move its cargo army
             gs().armyIdMap[_cargoArmyId].pos = _targetPos;
         }
@@ -60,14 +65,13 @@ library MarchModules {
         Army memory _army = Util._getArmy(_armyId);
         Army memory _targetArmy = Util._getArmy(_targetTile.occupantId);
         uint256 _troopTransportId = Util._getTransportFromArmyTroops(_targetArmy.armyTroopIds);
-        require(Util._getTransportFromArmyTroops(_army.armyTroopIds) == Util._NULL(), "CURIO: cargo army cannot contain trooptransport");
+        require(Util._getTransportFromArmyTroops(_army.armyTroopIds) == _NULL(), "CURIO: cargo army cannot contain trooptransport");
 
         Troop memory _troopTransport = Util._getTroop(_troopTransportId);
         _troopTransport.cargoArmyId = _armyId;
 
-        //update state: both army and troop
+        //update state for troop; no need for army
         gs().troopIdMap[_troopTransportId] = _troopTransport;
-        gs().armyIdMap[_targetTile.occupantId] = _targetArmy;
     }
 
     function _battleBaseModule(uint256 _armyId, Position memory _targetPos) internal {
