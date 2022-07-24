@@ -98,7 +98,7 @@ library Util {
         gs().troopIdMap[_troopTransportId].cargoArmyId = _NULL();
     }
 
-    function _removeArmy(uint256 _armyId) public {
+    function _removeEntireArmy(uint256 _armyId) public {
         Army memory _army = _getArmy(_armyId);
         address _owner = _army.owner;
         Position memory _pos = _army.pos;
@@ -121,8 +121,25 @@ library Util {
         gs().playerMap[_owner].totalOilConsumptionPerUpdate = _totalOilConsumptionPerUpdate;
 
         Tile memory _tile = _getTileAt(_army.pos);
-        uint256 _troopTransportId = _getTransportFromArmy(_tile.occupantId);
-        if (_troopTransportId != _NULL()) {
+        Army memory _tileArmy = _getArmy(_tile.occupantId);
+        uint256 _troopTransportId = _getTransportFromArmyTroops(_tileArmy.armyTroopIds);
+        if (_troopTransportId != _NULL() && _tile.occupantId != _armyId) {
+            // army 1 is empty but "army 2" has transport => army 1 was on army 2
+            _unloadArmyFromTransport(_troopTransportId);
+        } else {
+            gs().map[_pos.x][_pos.y].occupantId = _NULL();
+        }
+    }
+
+    function _removeArmyOnly(uint256 _armyId) public {
+        Army memory _army = _getArmy(_armyId);
+        Position memory _pos = _army.pos;
+
+        delete gs().armyIdMap[_armyId];
+        Tile memory _tile = _getTileAt(_army.pos);
+        Army memory _tileArmy = _getArmy(_tile.occupantId);
+        uint256 _troopTransportId = _getTransportFromArmyTroops(_tileArmy.armyTroopIds);
+        if (_troopTransportId != _NULL() && _tile.occupantId != _armyId) {
             // army 1 is empty but "army 2" has transport => army 1 was on army 2
             _unloadArmyFromTransport(_troopTransportId);
         } else {
@@ -167,10 +184,11 @@ library Util {
         gs().armyIdMap[_troop.armyId].armyTroopIds.pop();
 
         Tile memory _tile = _getTileAt(_pos);
+        Army memory _tileArmy = _getArmy(_tile.occupantId);
         // deal with when army contains zero troop; either remove army from transport or tile
         uint256 _troopTransportId;
         if (gs().armyIdMap[_troop.armyId].armyTroopIds.length == 0) {
-            _troopTransportId = _getTransportFromArmy(_tile.occupantId);
+            _troopTransportId = _getTransportFromArmyTroops(_tileArmy.armyTroopIds);
             if (_troopTransportId != _NULL()) {
                 // army 1 is empty but "army 2" has transport => army 1 was on army 2
                 _unloadArmyFromTransport(_troopTransportId);
@@ -198,10 +216,9 @@ library Util {
         gs().map[_pos.x][_pos.y].occupantId = _armyId;
 
         Troop memory _troop = Troop({armyId: _armyId, troopTypeId: _troopTypeId, health: _getMaxHealth(_troopTypeId), lastRepaired: block.timestamp, cargoArmyId: 0});
-        bool _isTypeTransport = gs().troopTypeIdMap[_troopTypeId].isTypeTransport;
 
         uint256[] memory _armyTroopIds;
-        Army memory _army = Army({owner: _owner, armyTroopIds: _armyTroopIds, lastMoved: block.timestamp, lastLargeActionTaken: block.timestamp, pos: _pos, hasTransport: _isTypeTransport ? true : false});
+        Army memory _army = Army({owner: _owner, armyTroopIds: _armyTroopIds, lastMoved: block.timestamp, lastLargeActionTaken: block.timestamp, pos: _pos});
 
         // Update mappings
         gs().troopIdMap[_troopId] = _troop;
@@ -284,11 +301,10 @@ library Util {
         return gs().armyIdMap[_armyId];
     }
 
-    function _getTransportFromArmy(uint256 _armyId) public view returns (uint256) {
-        Army memory _army = _getArmy(_armyId);
+    function _getTransportFromArmyTroops(uint256[] memory _armyTroopIds) public view returns (uint256) {
         // pre-check ensures this function is called only when there is a transport
-        for (uint256 i = 0; i < _army.armyTroopIds.length; i++) {
-            if (gs().troopTypeIdMap[_getTroop(_army.armyTroopIds[i]).troopTypeId].isTypeTransport) return _army.armyTroopIds[i];
+        for (uint256 i = 0; i < _armyTroopIds.length; i++) {
+            if (gs().troopTypeIdMap[_getTroop(_armyTroopIds[i]).troopTypeId].isTypeTransport) return _armyTroopIds[i];
         }
         return _NULL();
     }
@@ -432,10 +448,10 @@ library Util {
     }
 
     function _canTransportTroop(Tile memory _tile) public view returns (bool) {
-    // rule is that the army on that tile must have a troop transport
-    //the troop transport is vacant; also that the carrying army must have up to one other troop
-        uint256 _troopTransportId = _getTransportFromArmy(_tile.occupantId);
+        // rule is that the army on that tile must have a troop transport
+        //the troop transport is vacant; also that the carrying army must have up to one other troop
         Army memory _army = _getArmy(_tile.occupantId);
+        uint256 _troopTransportId = _getTransportFromArmyTroops(_army.armyTroopIds);
         if (_troopTransportId != _NULL()) {
             return ((gs().troopIdMap[_troopTransportId].cargoArmyId == _NULL()) && _army.armyTroopIds.length < 2);
         } else {
@@ -482,6 +498,10 @@ library Util {
 
     function _NULL() internal pure returns (uint256) {
         return 0;
+    }
+
+    function _NULLADRESS() internal pure returns (address) {
+        return address(0);
     }
 }
 >>>>>>> 3e2cb96 (repair)
