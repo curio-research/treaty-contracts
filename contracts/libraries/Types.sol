@@ -67,7 +67,6 @@ struct Army {
     uint256[] armyTroopIds;
     uint256 lastMoved;
     uint256 lastLargeActionTaken;
-    uint256 lastRepaired;
     Position pos;
     bool hasTransport;
 }
@@ -76,6 +75,7 @@ struct Troop {
     uint256 armyId;
     uint256 troopTypeId;
     uint256 health;
+    uint256 lastRepaired;
     uint256 cargoArmyId; // only for Troop Transport
 }
 

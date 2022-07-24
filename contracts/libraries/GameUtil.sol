@@ -191,12 +191,12 @@ library Util {
         gs().armyNonce++;
         gs().map[_pos.x][_pos.y].occupantId = _armyId;
 
-        Troop memory _troop = Troop({armyId: _armyId, troopTypeId: _troopTypeId, health: _getMaxHealth(_troopTypeId), cargoArmyId: 0});
+        Troop memory _troop = Troop({armyId: _armyId, troopTypeId: _troopTypeId, health: _getMaxHealth(_troopTypeId), lastRepaired: block.timestamp, cargoArmyId: 0});
         bool _isTypeTransport = gs().troopTypeIdMap[_troopTypeId].isTypeTransport;
 
         uint256[] memory _armyTroopIds;
 
-        Army memory _army = Army({owner: _owner, armyTroopIds: _armyTroopIds, lastMoved: block.timestamp, lastLargeActionTaken: block.timestamp, lastRepaired: block.timestamp, pos: _pos, hasTransport: _isTypeTransport? true:false});
+        Army memory _army = Army({owner: _owner, armyTroopIds: _armyTroopIds, lastMoved: block.timestamp, lastLargeActionTaken: block.timestamp, pos: _pos, hasTransport: _isTypeTransport ? true : false});
 
         // Update mappings
         gs().troopIdMap[_troopId] = _troop;

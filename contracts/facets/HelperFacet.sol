@@ -97,9 +97,9 @@ contract HelperFacet is UseStorage {
             require(Util._isLandTroop(_troopTypeId) || _base.name == BASE_NAME.PORT, "CURIO: Can only spawn water troops in ports");
         }
 
-        (uint256 _armyId, Army memory _army) = Util._addArmyTroop(_player, _pos, _troopTypeId);
+        (uint256 _armyId, Army memory _army) = Util._addTroop(_player, _pos, _troopTypeId);
 
-        emit Util.NewArmyTroop(_player, _armyId, _army, _pos);
+        emit Util.NewTroop(_player, _armyId, _army, _pos);
     }
 
     /**
@@ -161,18 +161,21 @@ contract HelperFacet is UseStorage {
         require(_tile.baseId != NULL, "CURIO: No base found");
         require(Util._getBaseOwner(_tile.baseId) == msg.sender, "CURIO: Can only repair in own base");
 
-        uint256 _troopId = _tile.occupantId;
-        require(_troopId != NULL, "CURIO: No troop to repair");
+        uint256 _armyId = _tile.occupantId;
+        require(_armyId != NULL, "CURIO: No troop to repair");
 
-        Troop memory _troop = gs().troopIdMap[_troopId];
-        require(_troop.owner == msg.sender, "CURIO: Can only repair own troop");
-        require(_troop.health < Util._getMaxHealth(_troop.troopTypeId), "CURIO: Troop already at full health");
-        require((block.timestamp - _troop.lastRepaired) >= 1, "CURIO: Repaired too recently");
+        Army memory _army = gs().armyIdMap[_armyId];
+        require(_army.owner == msg.sender, "CURIO: Can only repair own troop");
 
-        _troop.health++;
-        gs().troopIdMap[_troopId].health = _troop.health;
-        gs().troopIdMap[_troopId].lastRepaired = block.timestamp;
-        emit Util.Repaired(msg.sender, _tile.occupantId, _troop.health);
-        if (_troop.health == Util._getMaxHealth(_troop.troopTypeId)) emit Util.Recovered(msg.sender, _troopId);
+        for (uint256 i = 0; i < _army.armyTroopIds.length; i++) {
+            Troop memory _troop = gs().troopIdMap[_army.armyTroopIds[i]];
+            if ((_troop.health < Util._getMaxHealth(_troop.troopTypeId)) && (block.timestamp - _troop.lastRepaired) >= 1) {
+                _troop.health++;
+                gs().troopIdMap[_army.armyTroopIds[i]].health = _troop.health;
+                gs().troopIdMap[_army.armyTroopIds[i]].lastRepaired = block.timestamp;
+                emit Util.Repaired(msg.sender, _tile.occupantId, _troop.health);
+                if (_troop.health == Util._getMaxHealth(_troop.troopTypeId)) emit Util.Recovered(msg.sender, _army.armyTroopIds[i]);
+            }
+        }
     }
 }
