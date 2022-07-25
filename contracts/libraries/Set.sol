@@ -6,17 +6,17 @@ pragma solidity ^0.8.4;
 // ----------------------------
 
 contract Set {
-    uint256[] public items;
-    mapping(uint256 => bool) public itemMapping;
-    mapping(uint256 => bytes) public entityIDToValue; //
+    uint256[] private items;
+    mapping(uint256 => uint256) private itemToIndex;
 
     // need item => value mapping
     // example: item => Position. Should store as struct or bytes?
 
-    function add(uint256 _val) public {
-        if (itemMapping[_val]) return; // check if it exists
-        items.push(_val);
-        itemMapping[_val] = true;
+    function add(uint256 _item) public {
+        if (itemToIndex[_item]) return; // check if it exists
+
+        itemToIndex[_item] = items.length;
+        items.push(_item);
     }
 
     function remove(uint256 _val) public {
@@ -51,9 +51,9 @@ contract Set {
         return itemMapping[_item] == true;
     }
 
-    // function getValue() public returns (bytes) {
-
-    // }
+    function getItems() public view returns (uint256[] memory) {
+        return items;
+    }
 }
 
 contract HealthComponent is Set {
