@@ -6,7 +6,17 @@ import {MapSet} from "./MapSet.sol";
 import {World} from "./World.sol";
 
 contract Component {
-    address public world;
+    /**
+     * Sample components
+     * - Health
+     * - Position
+     * TODO: Question
+     * - Permission management for component value modification
+     * - Is there value to having a nonce count how many components there are in an ordered fashion?
+     * - Do we need componentId?
+     */
+
+    address public world; // FIXME: can this just be `EngineFacet`?
     address public owner;
 
     Set private entities;
@@ -20,16 +30,16 @@ contract Component {
         valueToEntities = new MapSet();
     }
 
-    modifier onlyOwner() {
-        require(msg.sender == owner, "only owner");
-        _;
-    }
+    // modifier onlyOwner() {
+    //     require(msg.sender == owner, "only owner");
+    //     _;
+    // }
 
-    function transferOwnership(address newOwner) public onlyOwner {
-        owner = newOwner;
-    }
+    // function transferOwnership(address newOwner) public onlyOwner {
+    //     owner = newOwner;
+    // }
 
-    function set(uint256 entity, bytes memory value) public onlyOwner {
+    function set(uint256 entity, bytes memory value) public {
         // Store the entity
         entities.add(entity);
 
@@ -46,7 +56,7 @@ contract Component {
         World(world).registerComponentValueSet(address(this), entity, value);
     }
 
-    function remove(uint256 entity) public onlyOwner {
+    function remove(uint256 entity) public {
         // Remove the entity from the reverse mapping
         valueToEntities.remove(uint256(keccak256(entityToValue[entity])), entity);
 

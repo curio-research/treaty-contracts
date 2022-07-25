@@ -331,7 +331,28 @@ contract EngineFacet is UseStorage {
         }
     }
 
-    function purchaseTroopNew(uint256 _position, uint256 _troopID) public {
+    function purchaseTroopNew(Position memory _position, uint256 _troopTemplateId) public {
+        // 1. Check whether game is ongoing
+        require(!gs().isPaused, "CURIO: Game is paused");
+
+        // 2. Check whether player is active
+        uint256 _playerId = Utils.getPlayerId(msg.sender);
+        uint256 _isActive = Utils.getComponent("IsActive").getRawValue(_playerId);
+        require(_isActive == abi.encode(true), "CURIO: Player is inactive");
+
+        // 3. Check whether position is in bound
+        require(Util._inBound(_position), "CURIO: Out of bound");
+
+        // TODO: consider `initializeTile` here
+
+        // 4. Check whether a "base" is present
+        uint256[] _entitiesWithCanPurchase = Utils.getComponent("CanPurchase").getEntitiesWithValue(abi.encode(true));
+        uint256[] _entitiesWithGivenPosition = Utils.getComponent("Position").getEntitiesWithValue(abi.encode(_position));
+        uint256[] _intersectEntities = Util.intersection(_entitiesWithCanPurchase, _entitiesWithGivenPosition);
+        require(_intersectEntities.length == 1, "CURIO: No base found");
+        uint256 _baseId = _intersectEntities[0];
+
+
         // fetch goldBalance which is a component
         // player is an entity
 

@@ -121,14 +121,6 @@ struct GameState {
     uint256[][] encodedColumnBatches;
     //
 
-    // each component is a address
-    mapping(string => address) components; // component ID to address
-    // mapping(string => address) componentNameTo
-
-    // is there value to having a nonce count how many components there are in an ordered fashion?
-    // do we need componentID
-
-    // example components
-    // 0: health
-    // 1: position
+    mapping(string => address) components; // component name to contract address
+    mapping(address => uint256) playerIdMap; // FIXME: update when initialized
 }

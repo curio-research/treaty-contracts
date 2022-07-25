@@ -4,6 +4,7 @@ pragma solidity ^0.8.4;
 import "contracts/libraries/Storage.sol";
 import {BASE_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop, WorldConstants} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
+import {Component} from "contracts/libraries/Component.sol";
 
 /// @title Util library
 /// @notice Contains all events as well as lower-level setters and getters
@@ -34,6 +35,95 @@ library Util {
     event Recovered(address _player, uint256 _troopId);
     event Repaired(address _player, uint256 _troopId, uint256 _health);
     event UpdatePlayerBalance(address _player, uint256 _amount);
+
+    // ----------------------------------------------------------
+    // ECS (temporary)
+    // ----------------------------------------------------------
+
+    // FIXME: is this correct? does it trigger the constructor instead?
+    function getComponent(string memory _name) public view returns (Component memory) {
+        return Component(gs().components[_name]);
+    }
+
+    function getPlayerId(address _playerAddr) public view returns (uint256) {
+        return gs().playerIdMap[_playerAddr];
+    }
+
+    function intersection(Set memory set1, Set memory set2) public returns (uint256[] memory) {
+        Set searchedItems = new Set();
+
+        // first initiate an array with a crazy size then copy to right size lol
+        // the max size of the sum of the two sets is the sum of the two raw sets themselves
+        uint256[] memory temp = new uint256[](set1.size() + set2.size());
+        uint256 itemCount = 0;
+
+        // loop through first set
+        for (uint256 i = 0; i < set1.size(); i++) {
+            uint256 _item = set1.getItems()[i];
+
+            // check if the item is in the secone set
+            if (!searchedItems.has(_item)) {
+                if (set2.has(_item)) {
+                    temp[itemCount] = _item;
+                    itemCount++;
+                }
+            }
+
+            searchedItems.add(_item);
+        }
+
+        // loop through second set
+
+        for (uint256 i = 0; i < set2.size(); i++) {
+            uint256 _item = set2.getItems()[i];
+
+            // check if the item is in the first set
+            if (!searchedItems.has(_item)) {
+                if (set1.has(_item)) {
+                    temp[itemCount] = _item;
+                    itemCount++;
+                }
+            }
+
+            searchedItems.add(_item);
+        }
+
+        // copy the unknown size array to the calculated one
+        uint256[] memory res = new uint256[](itemCount);
+        for (uint256 i = 0; i < itemCount; i++) {
+            res[i] = temp[i];
+        }
+        return res;
+    }
+
+    // definitino of difference: set of all elements of A that are not elements of B
+    // example: i want all ships that are NOT in a port
+    function difference(Set memory set1, Set memory set2) public view returns (uint256[] memory) {
+        uint256[] memory temp = new uint256[](set1.size());
+        uint256 itemCount = 0;
+
+        // loop through first set
+        for (uint256 i = 0; i < set1.size(); i++) {
+            uint256 _item = set1.getItems()[i];
+
+            // check if the item is in the secone set
+
+            if (!set2.has(_item)) {
+                temp[itemCount] = _item;
+                itemCount++;
+            }
+        }
+
+        uint256[] memory res = new uint256[](itemCount);
+        for (uint256 i = 0; i < itemCount; i++) {
+            res[i] = temp[i];
+        }
+        return res;
+    }
+
+    function union(Set memory set1, Set memory set2) public view returns (uint256[] memory) {
+        // TODO: implement
+    }
 
     // ----------------------------------------------------------
     // SETTERS

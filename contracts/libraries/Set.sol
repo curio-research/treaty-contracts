@@ -1,10 +1,6 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-// ----------------------------
-// tagging system
-// ----------------------------
-
 contract Set {
     uint256[] private items;
     mapping(uint256 => uint256) private itemToIndex;
@@ -13,33 +9,25 @@ contract Set {
     // example: item => Position. Should store as struct or bytes?
 
     function add(uint256 _item) public {
-        if (itemToIndex[_item]) return; // check if it exists
+        if (has(_item)) return;
 
         itemToIndex[_item] = items.length;
         items.push(_item);
     }
 
-    function remove(uint256 _val) public {
-        if (!itemMapping[_val]) return; // check if value exists
-        if (items.length == 0) return;
+    function remove(uint256 _item) public {
+        if (!has(_item)) return;
 
-        // find idx of item // should be more efficient prob ...
+        // Copy the last item to the given item's index
+        items[itemToIndex[_item]] = items[items.length - 1];
 
-        uint256 idx;
-        for (uint256 i = 0; i < items.length; i++) {
-            if (_val == items[i]) {
-                idx = i;
-            }
-        }
+        // Update the moved item's stored index to the new index
+        itemToIndex[items[itemToIndex[_item]]] = itemToIndex[_item];
 
-        // swap the item with the last item
-        uint256 lastItemIdx = items.length - 1;
-        uint256 lastItem = items[lastItemIdx];
-        items[idx] = lastItem;
+        // Remove the given item's stored index
+        delete itemToIndex[_item];
 
-        itemMapping[_val] = false; // remove existance
-
-        // // pop the last item
+        // Remove the last item
         items.pop();
     }
 
@@ -47,25 +35,18 @@ contract Set {
         return items.length;
     }
 
-    function includes(uint256 _item) public view returns (bool) {
-        return itemMapping[_item] == true;
+    function has(uint256 _item) public view returns (bool) {
+        if (items.length == 0) return false;
+
+        // Check needed because null index is also 0, not -1 conventionally
+        if (itemToIndex[_item] == 0) return items[0] == _item;
+        return itemToIndex[_item] != 0;
     }
 
     function getItems() public view returns (uint256[] memory) {
         return items;
     }
 }
-
-contract HealthComponent is Set {
-    function getValue() returns (uint256) {
-        // fetc hfrom the set mapping entityIDToValue
-        // returns it
-    }
-}
-
-// ----------------------------
-// tagging system
-// ----------------------------
 
 contract CurioOS {
     uint256 public componentID;
@@ -127,11 +108,11 @@ contract CurioOS {
 
         // loop through first set
         for (uint256 i = 0; i < set1.size(); i++) {
-            uint256 _item = set1.items(i);
+            uint256 _item = set1.getItems()[i];
 
             // check if the item is in the secone set
-            if (!searchedItems.includes(_item)) {
-                if (set2.includes(_item)) {
+            if (!searchedItems.has(_item)) {
+                if (set2.has(_item)) {
                     temp[itemCount] = _item;
                     itemCount++;
                 }
@@ -143,11 +124,11 @@ contract CurioOS {
         // loop through second set
 
         for (uint256 i = 0; i < set2.size(); i++) {
-            uint256 _item = set2.items(i);
+            uint256 _item = set2.getItems()[i];
 
             // check if the item is in the first set
-            if (!searchedItems.includes(_item)) {
-                if (set1.includes(_item)) {
+            if (!searchedItems.has(_item)) {
+                if (set1.has(_item)) {
                     temp[itemCount] = _item;
                     itemCount++;
                 }
@@ -176,11 +157,11 @@ contract CurioOS {
 
         // loop through first set
         for (uint256 i = 0; i < set1.size(); i++) {
-            uint256 _item = set1.items(i);
+            uint256 _item = set1.getItems()[i];
 
             // check if the item is in the secone set
 
-            if (!set2.includes(_item)) {
+            if (!set2.has(_item)) {
                 temp[itemCount] = _item;
                 itemCount++;
             }
@@ -193,7 +174,9 @@ contract CurioOS {
         return res;
     }
 
-    function union(uint256 componentID1, uint256 componentID2) public view returns (uint256[] memory) {}
+    function union(uint256 componentID1, uint256 componentID2) public view returns (uint256[] memory) {
+        // TODO: implement
+    }
 
     //////////////////////////////////////////////////////////////////////
 
