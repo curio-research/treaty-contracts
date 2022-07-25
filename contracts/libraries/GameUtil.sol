@@ -122,7 +122,7 @@ library Util {
 
         Tile memory _tile = _getTileAt(_army.pos);
         Army memory _tileArmy = _getArmy(_tile.occupantId);
-        uint256 _troopTransportId = _getTransportFromArmyTroops(_tileArmy.armyTroopIds);
+        uint256 _troopTransportId = _getTransportIDFromArmy(_tileArmy.armyTroopIds);
         if (_troopTransportId != _NULL()) {
             // army 1 is empty but "army 2" has transport => army 1 was on army 2
             _unloadArmyFromTransport(_troopTransportId);
@@ -139,7 +139,7 @@ library Util {
         delete gs().armyIdMap[_armyId];
         Tile memory _tile = _getTileAt(_army.pos);
         Army memory _tileArmy = _getArmy(_tile.occupantId);
-        uint256 _troopTransportId = _getTransportFromArmyTroops(_tileArmy.armyTroopIds);
+        uint256 _troopTransportId = _getTransportIDFromArmy(_tileArmy.armyTroopIds);
         if (_troopTransportId != _NULL()) {
             // army 1 is empty but "army 2" has transport => army 1 was on army 2
             _unloadArmyFromTransport(_troopTransportId);
@@ -189,7 +189,7 @@ library Util {
         // deal with when army contains zero troop; either remove army from transport or tile
         uint256 _troopTransportId;
         if (gs().armyIdMap[_troop.armyId].armyTroopIds.length == 0) {
-            _troopTransportId = _getTransportFromArmyTroops(_tileArmy.armyTroopIds);
+            _troopTransportId = _getTransportIDFromArmy(_tileArmy.armyTroopIds);
             if (_troopTransportId != _NULL()) {
                 // army 1 is empty but "army 2" has transport => army 1 was on army 2
                 _unloadArmyFromTransport(_troopTransportId);
@@ -216,7 +216,7 @@ library Util {
         gs().armyNonce++;
         gs().map[_pos.x][_pos.y].occupantId = _armyId;
 
-        Troop memory _troop = Troop({armyId: _armyId, troopTypeId: _troopTypeId, health: _getMaxHealth(_troopTypeId), lastRepaired: block.timestamp, cargoArmyId: 0});
+        Troop memory _troop = Troop({armyId: _armyId, troopTypeId: _troopTypeId, health: _getMaxHealth(_troopTypeId), lastRepaired: block.timestamp, cargoArmyId: 0, pos: _pos});
 
         uint256[] memory _armyTroopIds;
         Army memory _army = Army({owner: _owner, armyTroopIds: _armyTroopIds, lastMoved: block.timestamp, lastLargeActionTaken: block.timestamp, pos: _pos});
@@ -231,6 +231,27 @@ library Util {
         gs().playerMap[_owner].totalOilConsumptionPerUpdate += _getOilConsumptionPerSecond(_troopTypeId);
 
         return (_armyId, gs().armyIdMap[_armyId]);
+    }
+
+    // returns armyID
+    function _createNewArmyFromTroop(uint256 _troopID) public returns (uint256) {
+        require(_getPlayer(msg.sender).numOwnedTroops < gs().worldConstants.maxTroopCountPerPlayer, "CURIO: Max troop count exceeded");
+
+        uint256 _armyId = gs().armyNonce;
+        gs().armyIds.push(_armyId);
+        gs().armyNonce++;
+
+        Troop memory _troop = _getTroop(_troopID);
+
+        uint256[] memory _armyTroopIds;
+        Army memory _army = Army({owner: msg.sender, armyTroopIds: _armyTroopIds, lastMoved: block.timestamp, lastLargeActionTaken: block.timestamp, pos: _troop.pos});
+
+        // Update mappings
+        gs().armyIdMap[_armyId] = _army;
+
+        gs().armyIdMap[_armyId].armyTroopIds.push(_troopID);
+
+        return _armyId;
     }
 
     function _addBase(Position memory _pos, BASE_NAME _baseName) public returns (uint256) {
@@ -302,7 +323,7 @@ library Util {
         return gs().armyIdMap[_armyId];
     }
 
-    function _getTransportFromArmyTroops(uint256[] memory _armyTroopIds) public view returns (uint256) {
+    function _getTransportIDFromArmy(uint256[] memory _armyTroopIds) public view returns (uint256) {
         // pre-check ensures this function is called only when there is a transport
         for (uint256 i = 0; i < _armyTroopIds.length; i++) {
             if (gs().troopTypeIdMap[_getTroop(_armyTroopIds[i]).troopTypeId].name == TROOP_NAME.TROOP_TRANSPORT) return _armyTroopIds[i];
@@ -452,7 +473,7 @@ library Util {
         // rule is that the army on that tile must have a troop transport
         //the troop transport is vacant; also that the carrying army must have up to one other troop
         Army memory _army = _getArmy(_tile.occupantId);
-        uint256 _troopTransportId = _getTransportFromArmyTroops(_army.armyTroopIds);
+        uint256 _troopTransportId = _getTransportIDFromArmy(_army.armyTroopIds);
         if (_troopTransportId != _NULL()) {
             return ((gs().troopIdMap[_troopTransportId].cargoArmyId == _NULL()) && _army.armyTroopIds.length < 2);
         } else {

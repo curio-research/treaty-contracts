@@ -31,7 +31,7 @@ library MarchModules {
         }
 
         // state change - if targetTile doesn't have transport
-        _targetTileTroopTransportId = Util._getTransportFromArmyTroops(_targetTileArmy.armyTroopIds);
+        _targetTileTroopTransportId = Util._getTransportIDFromArmy(_targetTileArmy.armyTroopIds);
         if (_targetTileTroopTransportId == _NULL()) {
             gs().map[_targetPos.x][_targetPos.y].occupantId = _armyId;
         }
@@ -40,7 +40,7 @@ library MarchModules {
         Army memory _sourceTileArmy = Util._getArmy(_sourceTile.occupantId);
         if (_sourceTile.occupantId != _armyId) {
             // Army was on Army transport
-            uint256 _sourceTileTroopTransportId = Util._getTransportFromArmyTroops(_sourceTileArmy.armyTroopIds); 
+            uint256 _sourceTileTroopTransportId = Util._getTransportIDFromArmy(_sourceTileArmy.armyTroopIds);
             Util._unloadArmyFromTransport(_sourceTileTroopTransportId);
         } else {
             gs().map[_army.pos.x][_army.pos.y].occupantId = _NULL();
@@ -50,7 +50,7 @@ library MarchModules {
         gs().armyIdMap[_armyId].pos = _targetPos;
         gs().armyIdMap[_armyId].lastMoved = block.timestamp;
 
-        uint256 _cargoArmyId = Util._getTransportFromArmyTroops(_army.armyTroopIds);
+        uint256 _cargoArmyId = Util._getTransportIDFromArmy(_army.armyTroopIds);
         if (_cargoArmyId != _NULL()) {
             // Army has a troop troopTransport — move its cargo army
             gs().armyIdMap[_cargoArmyId].pos = _targetPos;
@@ -64,14 +64,97 @@ library MarchModules {
     function _loadModule(uint256 _armyId, Tile memory _targetTile) internal {
         Army memory _army = Util._getArmy(_armyId);
         Army memory _targetArmy = Util._getArmy(_targetTile.occupantId);
-        uint256 _troopTransportId = Util._getTransportFromArmyTroops(_targetArmy.armyTroopIds);
-        require(Util._getTransportFromArmyTroops(_army.armyTroopIds) == _NULL(), "CURIO: cargo army cannot contain trooptransport");
+        uint256 _troopTransportId = Util._getTransportIDFromArmy(_targetArmy.armyTroopIds);
+        require(Util._getTransportIDFromArmy(_army.armyTroopIds) == _NULL(), "CURIO: cargo army cannot contain trooptransport");
 
         Troop memory _troopTransport = Util._getTroop(_troopTransportId);
         _troopTransport.cargoArmyId = _armyId;
 
         //update state for troop; no need for army
         gs().troopIdMap[_troopTransportId] = _troopTransport;
+    }
+
+    function _loadInfrantryOnTransport(uint256 _troopID, uint256 _troopTransportID) internal {
+        // if it's the first one, create army ahdn then load
+        Troop memory _transportTroop = Util._getTroop(_troopTransportID);
+
+        // create a new army with 1 troopID
+        uint256 _armyId = Util._createNewArmyFromTroop(_troopID);
+
+        Tile memory _targetTile = Util._getTileAt(_transportTroop.pos);
+
+        // if there's no cargoArmyID, you're the first to load on to the troop transport
+        if (_transportTroop.cargoArmyId == 0) {
+            MarchModules._loadModule(_armyId, _targetTile);
+            MarchModules._moveModule(_armyId, _transportTroop.pos);
+        } else {
+            // if there's an existing army on troop transport, load directly
+            uint256[] memory _newArmyIds = new uint256[](1);
+            _newArmyIds[0] = _armyId;
+
+            // TODO: continue this logic
+        }
+    }
+
+    /**
+     * combine multiple armies into one; move troops from joining army into main army
+     * @param _mainArmyId identifier for the army that the others are joining
+     * @param _joiningArmyIds identifiers for joining armies
+     */
+
+    function _combineArmy(uint256 _mainArmyId, uint256[] memory _joiningArmyIds) public {
+        // basic check
+        require(!gs().isPaused, "CURIO: Game is paused");
+        require(Util._isPlayerActive(msg.sender), "CURIO: Player is inactive");
+
+        Army memory _mainArmy = Util._getArmy(_mainArmyId);
+        require(Util._inBound(_mainArmy.pos), "CURIO: Target out of bound");
+        if (!Util._getTileAt(_mainArmy.pos).isInitialized) Util._initializeTile(_mainArmy.pos);
+
+        require(_mainArmy.owner == msg.sender, "CURIO: Can only combine own troop");
+
+        // army size pre-check; _joiningArmyIds are armies not troops but each has at least one troop
+        uint256 troopCounter = _mainArmy.armyTroopIds.length;
+        bool hasTransport = Util._getTransportIDFromArmy(_mainArmy.armyTroopIds) == 0;
+        require((hasTransport && (troopCounter + _joiningArmyIds.length) == 2) || (!hasTransport && (troopCounter + _joiningArmyIds.length) <= 5 && (troopCounter + _joiningArmyIds.length) >= 2), "CURIO: Army can have up to five troops, or two with one transport");
+
+        // large action check & update
+        require((block.timestamp - _mainArmy.lastLargeActionTaken) >= Util._getArmyLargeActionCooldown(_mainArmy.armyTroopIds), "CURIO: Large action taken too recently");
+        gs().armyIdMap[_mainArmyId].lastLargeActionTaken = block.timestamp;
+
+        bool isLandArmy = Util._isLandArmy(_mainArmyId);
+
+        for (uint256 i = 0; i < _joiningArmyIds.length; i++) {
+            uint256 _joiningArmyId = _joiningArmyIds[i];
+            require(isLandArmy == Util._isLandArmy(_joiningArmyId), "CURIO: Can only combine army of same type");
+            Army memory _joiningArmy = Util._getArmy(_joiningArmyId);
+
+            require(_joiningArmy.owner == msg.sender, "CURIO: Can only combine own troop");
+            require(Util._withinDist(_mainArmy.pos, _joiningArmy.pos, 1), "CURIO: Combining armies must stay next to each other");
+
+            uint256 _movementCooldown = Util._getArmyMovementCooldown(_joiningArmy.armyTroopIds);
+            require((block.timestamp - _joiningArmy.lastMoved) >= _movementCooldown, "CURIO: Moved too recently");
+
+            // large action check & update
+            require((block.timestamp - _joiningArmy.lastLargeActionTaken) >= Util._getArmyLargeActionCooldown(_joiningArmy.armyTroopIds), "CURIO: Large action taken too recently");
+            gs().armyIdMap[_joiningArmyId].lastLargeActionTaken = block.timestamp;
+
+            // real army size check
+            troopCounter += _joiningArmy.armyTroopIds.length;
+            if (Util._getTransportIDFromArmy(_mainArmy.armyTroopIds) != 0) {
+                require(hasTransport == false, "CURIO: Army can have up to five troops, or two with one transport");
+                hasTransport == true;
+            }
+            require((hasTransport && troopCounter <= 2) || (!hasTransport && troopCounter <= 5), "CURIO: Army can have at most five troops, or two with one transport");
+
+            // combining troops
+            for (uint256 j = 0; j < _joiningArmy.armyTroopIds.length; j++) {
+                gs().troopIdMap[_joiningArmy.armyTroopIds[j]].armyId = _mainArmyId;
+                gs().armyIdMap[_mainArmyId].armyTroopIds.push(_joiningArmy.armyTroopIds[j]);
+            }
+
+            Util._removeArmyOnly(_joiningArmyId);
+        }
     }
 
     function _battleBaseModule(uint256 _armyId, Position memory _targetPos) internal {

@@ -58,7 +58,7 @@ struct Base {
 struct Tile {
     bool isInitialized;
     TERRAIN terrain;
-    uint256 occupantId; // troopID
+    uint256 occupantId; // armyID
     uint256 baseId;
 }
 
@@ -76,6 +76,7 @@ struct Troop {
     uint256 health;
     uint256 lastRepaired;
     uint256 cargoArmyId; // only for Troop Transport
+    Position pos;
 }
 
 struct TroopType {
