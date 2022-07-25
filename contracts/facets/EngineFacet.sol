@@ -330,4 +330,72 @@ contract EngineFacet is UseStorage {
             emit Util.AttackedTroop(msg.sender, _troopId, _troop, _targetTile.occupantId, _targetTroop);
         }
     }
+
+    function purchaseTroopNew(uint256 _position, uint256 _troopID) public {
+        // fetch goldBalance which is a component
+        // player is an entity
+
+        // get player ID from mapping of an address to ID
+        uint256 playerBalance = gs().goldBalanceComponent.getValue(playerID); // fetching from the mapping of entity to value
+
+        // check for goldBalance
+
+        // require(....)
+
+        // subtract goldBalance
+        // maybe encode step
+        gs().goldBalanceComponent.setValue(playerID, NEW_BALANCE)
+
+        // spawn new troop
+        // add new entity to the world! 
+        addTroopEntity();
+
+        // add info to map
+
+        // Tile component also has occupandID
+
+        // change the occupantID component to Tile entity
+        gs().positionComponent.setValue(tileEntityID, troopEntityID);
+    }
+
+    function addTroopEntity(Position memory pos) {
+        // Util.addNewEntity() ...
+        // add attack component
+        // add move component
+        // add position component
+        // add health component
+        // add capture component
+
+        // emit event for entity creation
+    }
+
+    // example policy: "Troop that has 20 health or above gain 1 more attack"
+    function buffPolicy () {
+        // QUESTION: isTroop is a strict subset of health. Inefficient intersection
+        uint256[] troopEntityIDs = gs().entityIntersection("isTroop", "health");
+
+        for(uint256 i = 0; i < troopEntityIDs.length; i++){
+            troopEntityID = troopEntityIDs[i];
+            uint256 healthValForEntity = gs().healthEntity().getValue(troopEntityID);
+
+            if(healthValForEntity > 20) {
+                gs().attackFactorComponent().increaseValue();
+            }
+        }
+
+    }
+
+    // TODO: filter system? 
+    // TODO: figure out string system;
+
+    // ---------------------------------
+
+    // Use case that is impossible right now !! 
+    // turning a base into a moving troop
+        // add movement cooldown component
+    
+    function move(uint256 previousBaseEntityID, Position memory _target) public {
+        gs().positionComponent().setValue(previousBaseEntityID, _target);        
+    }
+
 }

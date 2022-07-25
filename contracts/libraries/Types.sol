@@ -119,4 +119,11 @@ struct GameState {
     uint256[] troopTypeIds;
     mapping(uint256 => TroopType) troopTypeIdMap;
     uint256[][] encodedColumnBatches;
+
+    // new
+    // all components
+    // componentID
+    // .....
+    // entityID
+    // .....
 }
