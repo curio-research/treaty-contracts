@@ -8,6 +8,7 @@ pragma solidity ^0.8.4;
 contract Set {
     uint256[] public items;
     mapping(uint256 => bool) public itemMapping;
+    mapping(uint256 => bytes) public entityIDToValue; //
 
     // need item => value mapping
     // example: item => Position. Should store as struct or bytes?
@@ -49,6 +50,17 @@ contract Set {
     function includes(uint256 _item) public view returns (bool) {
         return itemMapping[_item] == true;
     }
+
+    // function getValue() public returns (bytes) {
+
+    // }
+}
+
+contract HealthComponent is Set {
+    function getValue() returns (uint256) {
+        // fetc hfrom the set mapping entityIDToValue
+        // returns it
+    }
 }
 
 // ----------------------------
@@ -61,7 +73,6 @@ contract CurioOS {
     mapping(string => uint256) public componentName; // name => uint256 // do we need component names ?
 
     uint256 public entityID;
-    mapping(uint256 => bool) public entities; // we can start with TroopIDs
 
     function addComponent(string memory _name) public returns (uint256) {
         require(componentName[_name] == 0, "Component with same name exists");
@@ -207,5 +218,14 @@ contract CurioOS {
             // apply updates to each troop ...
             // ideally this should be variable too?
         }
+
+        // get everything with health
+        // loop through, check
+
+        // component Health {
+
+        // }
+
+        // i need to get the health of entityID 1
     }
 }
