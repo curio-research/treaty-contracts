@@ -336,7 +336,8 @@ contract EngineFacet is UseStorage {
         // player is an entity
 
         // get player ID from mapping of an address to ID
-        uint256 playerBalance = gs().goldBalanceComponent.getValue(playerID); // fetching from the mapping of entity to value
+        address goldComponent = gs().components[0];
+        uint256 playerBalance = gs().GoldComponent(getComponent("health")).goldComponent.getValue(playerID); // fetching from the mapping of entity to value
 
         // check for goldBalance
 
@@ -396,6 +397,13 @@ contract EngineFacet is UseStorage {
     
     function move(uint256 previousBaseEntityID, Position memory _target) public {
         gs().positionComponent().setValue(previousBaseEntityID, _target);        
+    }
+
+    // TODO: FUTURE PROBLEM 
+    function addComponent() {
+        // check name string conflict first
+
+        // new Component
     }
 
 }
