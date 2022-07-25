@@ -168,7 +168,7 @@ contract EngineFacet is UseStorage {
 
         // army size pre-check; _joiningArmyIds are armies not troops but each has at least one troop
         uint256 troopCounter = _mainArmy.armyTroopIds.length;
-        bool hasTransport = Util._getTransportFromArmyTroops(_mainArmy.armyTroopIds) == NULL;
+        bool hasTransport = Util._getTransportIDFromArmy(_mainArmy.armyTroopIds) == NULL;
         require((hasTransport && (troopCounter + _joiningArmyIds.length) == 2) || (!hasTransport && (troopCounter + _joiningArmyIds.length) <= 5 && (troopCounter + _joiningArmyIds.length) >= 2), "CURIO: Army can have up to five troops, or two with one transport");
 
         // large action check & update
@@ -194,7 +194,7 @@ contract EngineFacet is UseStorage {
 
             // real army size check
             troopCounter += _joiningArmy.armyTroopIds.length;
-            if (Util._getTransportFromArmyTroops(_mainArmy.armyTroopIds) != NULL) {
+            if (Util._getTransportIDFromArmy(_mainArmy.armyTroopIds) != NULL) {
                 require(hasTransport == false, "CURIO: Army can have up to five troops, or two with one transport");
                 hasTransport == true;
             }
@@ -235,7 +235,7 @@ contract EngineFacet is UseStorage {
         require((block.timestamp - _mainArmy.lastMoved) >= _movementCooldown, "CURIO: Moved too recently");
 
         // army size check
-        bool leavingTroopsHaveTransport = Util._getTransportFromArmyTroops(_leavingTroopIds) != NULL;
+        bool leavingTroopsHaveTransport = Util._getTransportIDFromArmy(_leavingTroopIds) != NULL;
         require((leavingTroopsHaveTransport && _leavingTroopIds.length <= 2) || (!leavingTroopsHaveTransport && _leavingTroopIds.length <= 5), "CURIO: Army can have at most five troops, or two with one transport");
         Army memory _newArmy = Army({owner: _mainArmy.owner, armyTroopIds: _leavingTroopIds, lastMoved: block.timestamp, lastLargeActionTaken: block.timestamp, pos: _targetPos});
 
@@ -260,6 +260,50 @@ contract EngineFacet is UseStorage {
             }
             gs().armyIdMap[_mainArmyId].armyTroopIds[_index] = _mainArmy.armyTroopIds[_mainArmy.armyTroopIds.length - 1];
             gs().armyIdMap[_mainArmyId].armyTroopIds.pop();
+        }
+    }
+
+    // spec
+    // allow user to move one troop to another square
+    function moveCombineTroop(
+        uint256 _troopID,
+        Position memory _targetTile,
+        bool shouldCombine
+    ) public {
+        // basic check
+        require(!gs().isPaused, "CURIO: Game is paused");
+        require(Util._isPlayerActive(msg.sender), "CURIO: Player is inactive");
+
+        // check if it's an enemy owned tile
+
+        //  get troop information
+        Troop memory _troop = Util._getTroop(_troopID);
+        Tile memory _targetTile = Util._getTileAt(_targetTile);
+
+        Army memory _targetTileArmy = Util._getArmy(_targetTile.occupantId);
+
+        // if the moving troop is an infrantry
+        if (Util._isLandTroop(_troopID)) {
+            uint256 troopTransportID = Util._getTransportIDFromArmy(_targetTileArmy.armyTroopIds);
+
+            if (_targetTile.terrain == TERRAIN.WATER) {
+                // if it's moving to water, check if there's a troop transport
+                require(troopTransportID != 0, "CURIO: Target doesn't have a troop transport");
+                // if there is a troop transport already, move it there
+                MarchModules._loadInfrantryOnTransport(_troopID, troopTransportID);
+            } else {
+                // infantry is moving onto land
+                // bunch of checkers here for
+            }
+
+            // check if target tile has troop transport
+            // if so check if it's full already
+            // if not check if it has land
+            // check if this is the last troop in the army, if so, do X (Abstract ot another function because it will be used underneath)
+        } else {
+            // ships
+            // troop tranport
+            // otherships
         }
     }
 }
