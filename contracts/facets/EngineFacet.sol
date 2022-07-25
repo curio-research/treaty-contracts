@@ -293,7 +293,10 @@ contract EngineFacet is UseStorage {
                 MarchModules._loadInfrantryOnTransport(_troopID, troopTransportID);
             } else {
                 // infantry is moving onto land
-                // bunch of checkers here for
+                // depends on what's on that land
+                // completely empty
+                // there's your army on target tile, check if it's troop transport
+                // a function that checks the size of the army depending on if there's troop transport or not
             }
 
             // check if target tile has troop transport
