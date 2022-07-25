@@ -106,7 +106,6 @@ export type TroopTypeStruct = {
   damagePerHit: BigNumberish;
   attackFactor: BigNumberish;
   defenseFactor: BigNumberish;
-  isTypeTransport: boolean;
   movementCooldown: BigNumberish;
   largeActionCooldown: BigNumberish;
   goldPrice: BigNumberish;
@@ -120,7 +119,6 @@ export type TroopTypeStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
-  boolean,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -132,7 +130,6 @@ export type TroopTypeStructOutput = [
   damagePerHit: BigNumber;
   attackFactor: BigNumber;
   defenseFactor: BigNumber;
-  isTypeTransport: boolean;
   movementCooldown: BigNumber;
   largeActionCooldown: BigNumber;
   goldPrice: BigNumber;
@@ -242,7 +239,6 @@ export type ArmyStruct = {
   lastMoved: BigNumberish;
   lastLargeActionTaken: BigNumberish;
   pos: PositionStruct;
-  hasTransport: boolean;
 };
 
 export type ArmyStructOutput = [
@@ -250,15 +246,13 @@ export type ArmyStructOutput = [
   BigNumber[],
   BigNumber,
   BigNumber,
-  PositionStructOutput,
-  boolean
+  PositionStructOutput
 ] & {
   owner: string;
   armyTroopIds: BigNumber[];
   lastMoved: BigNumber;
   lastLargeActionTaken: BigNumber;
   pos: PositionStructOutput;
-  hasTransport: boolean;
 };
 
 export interface CurioInterface extends utils.Interface {
@@ -269,11 +263,14 @@ export interface CurioInterface extends utils.Interface {
     "facetFunctionSelectors(address)": FunctionFragment;
     "facets()": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
+    "combineArmy(uint256,uint256[])": FunctionFragment;
     "deleteTroop(uint256)": FunctionFragment;
+    "detachTroopsFromArmy(uint256,uint256[],(uint256,uint256))": FunctionFragment;
     "initializePlayer((uint256,uint256))": FunctionFragment;
     "march(uint256,(uint256,uint256))": FunctionFragment;
     "purchaseTroop((uint256,uint256),uint256)": FunctionFragment;
     "bulkGetAllTroops()": FunctionFragment;
+    "getArmyAt((uint256,uint256))": FunctionFragment;
     "getBase(uint256)": FunctionFragment;
     "getBaseAt((uint256,uint256))": FunctionFragment;
     "getBaseNonce()": FunctionFragment;
@@ -284,7 +281,6 @@ export interface CurioInterface extends utils.Interface {
     "getPlayerCount()": FunctionFragment;
     "getTileAt((uint256,uint256))": FunctionFragment;
     "getTroop(uint256)": FunctionFragment;
-    "getTroopAt((uint256,uint256))": FunctionFragment;
     "getTroopType(uint256)": FunctionFragment;
     "getWorldConstants()": FunctionFragment;
     "isPlayerInitialized(address)": FunctionFragment;
@@ -324,7 +320,7 @@ export interface CurioInterface extends utils.Interface {
     "_getPlayerOilBalance(address)": FunctionFragment;
     "_getTileAt((uint256,uint256))": FunctionFragment;
     "_getTotalGoldGenerationPerUpdate(address)": FunctionFragment;
-    "_getTransportFromArmy(uint256)": FunctionFragment;
+    "_getTransportFromArmyTroops(uint256[])": FunctionFragment;
     "_getTroop(uint256)": FunctionFragment;
     "_getTroopGoldPrice(uint256)": FunctionFragment;
     "_hasPort((bool,uint8,uint256,uint256))": FunctionFragment;
@@ -361,8 +357,16 @@ export interface CurioInterface extends utils.Interface {
     values: [BytesLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "combineArmy",
+    values: [BigNumberish, BigNumberish[]]
+  ): string;
+  encodeFunctionData(
     functionFragment: "deleteTroop",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "detachTroopsFromArmy",
+    values: [BigNumberish, BigNumberish[], PositionStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "initializePlayer",
@@ -379,6 +383,10 @@ export interface CurioInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "bulkGetAllTroops",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getArmyAt",
+    values: [PositionStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "getBase",
@@ -416,10 +424,6 @@ export interface CurioInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getTroop",
     values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getTroopAt",
-    values: [PositionStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "getTroopType",
@@ -569,8 +573,8 @@ export interface CurioInterface extends utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "_getTransportFromArmy",
-    values: [BigNumberish]
+    functionFragment: "_getTransportFromArmyTroops",
+    values: [BigNumberish[]]
   ): string;
   encodeFunctionData(
     functionFragment: "_getTroop",
@@ -640,7 +644,15 @@ export interface CurioInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "combineArmy",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "deleteTroop",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "detachTroopsFromArmy",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -656,6 +668,7 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "bulkGetAllTroops",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getArmyAt", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getBase", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getBaseAt", data: BytesLike): Result;
   decodeFunctionResult(
@@ -681,7 +694,6 @@ export interface CurioInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "getTileAt", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getTroop", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "getTroopAt", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getTroopType",
     data: BytesLike
@@ -812,7 +824,7 @@ export interface CurioInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "_getTransportFromArmy",
+    functionFragment: "_getTransportFromArmyTroops",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "_getTroop", data: BytesLike): Result;
@@ -1078,8 +1090,21 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    combineArmy(
+      _mainArmyId: BigNumberish,
+      _joiningArmyIds: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     deleteTroop(
       _troopId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    detachTroopsFromArmy(
+      _mainArmyId: BigNumberish,
+      _leavingTroopIds: BigNumberish[],
+      _targetPos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -1101,6 +1126,11 @@ export interface Curio extends BaseContract {
     ): Promise<ContractTransaction>;
 
     bulkGetAllTroops(overrides?: CallOverrides): Promise<[TroopStructOutput[]]>;
+
+    getArmyAt(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<[TroopStructOutput]>;
 
     getBase(
       _id: BigNumberish,
@@ -1146,11 +1176,6 @@ export interface Curio extends BaseContract {
 
     getTroop(
       _troopId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[TroopStructOutput]>;
-
-    getTroopAt(
-      _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<[TroopStructOutput]>;
 
@@ -1343,8 +1368,8 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    _getTransportFromArmy(
-      _armyId: BigNumberish,
+    _getTransportFromArmyTroops(
+      _armyTroopIds: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -1434,8 +1459,21 @@ export interface Curio extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  combineArmy(
+    _mainArmyId: BigNumberish,
+    _joiningArmyIds: BigNumberish[],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   deleteTroop(
     _troopId: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  detachTroopsFromArmy(
+    _mainArmyId: BigNumberish,
+    _leavingTroopIds: BigNumberish[],
+    _targetPos: PositionStruct,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1457,6 +1495,11 @@ export interface Curio extends BaseContract {
   ): Promise<ContractTransaction>;
 
   bulkGetAllTroops(overrides?: CallOverrides): Promise<TroopStructOutput[]>;
+
+  getArmyAt(
+    _pos: PositionStruct,
+    overrides?: CallOverrides
+  ): Promise<TroopStructOutput>;
 
   getBase(
     _id: BigNumberish,
@@ -1502,11 +1545,6 @@ export interface Curio extends BaseContract {
 
   getTroop(
     _troopId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<TroopStructOutput>;
-
-  getTroopAt(
-    _pos: PositionStruct,
     overrides?: CallOverrides
   ): Promise<TroopStructOutput>;
 
@@ -1699,8 +1737,8 @@ export interface Curio extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  _getTransportFromArmy(
-    _armyId: BigNumberish,
+  _getTransportFromArmyTroops(
+    _armyTroopIds: BigNumberish[],
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -1787,8 +1825,21 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    combineArmy(
+      _mainArmyId: BigNumberish,
+      _joiningArmyIds: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     deleteTroop(
       _troopId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    detachTroopsFromArmy(
+      _mainArmyId: BigNumberish,
+      _leavingTroopIds: BigNumberish[],
+      _targetPos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1810,6 +1861,11 @@ export interface Curio extends BaseContract {
     ): Promise<void>;
 
     bulkGetAllTroops(overrides?: CallOverrides): Promise<TroopStructOutput[]>;
+
+    getArmyAt(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<TroopStructOutput>;
 
     getBase(
       _id: BigNumberish,
@@ -1855,11 +1911,6 @@ export interface Curio extends BaseContract {
 
     getTroop(
       _troopId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<TroopStructOutput>;
-
-    getTroopAt(
-      _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<TroopStructOutput>;
 
@@ -2042,8 +2093,8 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getTransportFromArmy(
-      _armyId: BigNumberish,
+    _getTransportFromArmyTroops(
+      _armyTroopIds: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -2284,8 +2335,21 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    combineArmy(
+      _mainArmyId: BigNumberish,
+      _joiningArmyIds: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     deleteTroop(
       _troopId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    detachTroopsFromArmy(
+      _mainArmyId: BigNumberish,
+      _leavingTroopIds: BigNumberish[],
+      _targetPos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -2307,6 +2371,11 @@ export interface Curio extends BaseContract {
     ): Promise<BigNumber>;
 
     bulkGetAllTroops(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getArmyAt(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     getBase(_id: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -2346,11 +2415,6 @@ export interface Curio extends BaseContract {
 
     getTroop(
       _troopId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getTroopAt(
-      _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -2535,8 +2599,8 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getTransportFromArmy(
-      _armyId: BigNumberish,
+    _getTransportFromArmyTroops(
+      _armyTroopIds: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -2627,8 +2691,21 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    combineArmy(
+      _mainArmyId: BigNumberish,
+      _joiningArmyIds: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     deleteTroop(
       _troopId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    detachTroopsFromArmy(
+      _mainArmyId: BigNumberish,
+      _leavingTroopIds: BigNumberish[],
+      _targetPos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2650,6 +2727,11 @@ export interface Curio extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     bulkGetAllTroops(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getArmyAt(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     getBase(
       _id: BigNumberish,
@@ -2695,11 +2777,6 @@ export interface Curio extends BaseContract {
 
     getTroop(
       _troopId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getTroopAt(
-      _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -2890,8 +2967,8 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _getTransportFromArmy(
-      _armyId: BigNumberish,
+    _getTransportFromArmyTroops(
+      _armyTroopIds: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

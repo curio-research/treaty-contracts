@@ -85,7 +85,6 @@ struct TroopType {
     uint256 damagePerHit;
     uint256 attackFactor; // in the interval [0, 100]
     uint256 defenseFactor; // in the interval [0, 100]
-    bool isTypeTransport;
     uint256 movementCooldown;
     uint256 largeActionCooldown;
     uint256 goldPrice;

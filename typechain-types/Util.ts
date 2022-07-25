@@ -28,7 +28,6 @@ export type ArmyStruct = {
   lastMoved: BigNumberish;
   lastLargeActionTaken: BigNumberish;
   pos: PositionStruct;
-  hasTransport: boolean;
 };
 
 export type ArmyStructOutput = [
@@ -36,15 +35,13 @@ export type ArmyStructOutput = [
   BigNumber[],
   BigNumber,
   BigNumber,
-  PositionStructOutput,
-  boolean
+  PositionStructOutput
 ] & {
   owner: string;
   armyTroopIds: BigNumber[];
   lastMoved: BigNumber;
   lastLargeActionTaken: BigNumber;
   pos: PositionStructOutput;
-  hasTransport: boolean;
 };
 
 export type BaseStruct = {
@@ -178,7 +175,7 @@ export interface UtilInterface extends utils.Interface {
     "_getPlayerOilBalance(address)": FunctionFragment;
     "_getTileAt((uint256,uint256))": FunctionFragment;
     "_getTotalGoldGenerationPerUpdate(address)": FunctionFragment;
-    "_getTransportFromArmy(uint256)": FunctionFragment;
+    "_getTransportFromArmyTroops(uint256[])": FunctionFragment;
     "_getTroop(uint256)": FunctionFragment;
     "_getTroopGoldPrice(uint256)": FunctionFragment;
     "_hasPort((bool,uint8,uint256,uint256))": FunctionFragment;
@@ -291,8 +288,8 @@ export interface UtilInterface extends utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "_getTransportFromArmy",
-    values: [BigNumberish]
+    functionFragment: "_getTransportFromArmyTroops",
+    values: [BigNumberish[]]
   ): string;
   encodeFunctionData(
     functionFragment: "_getTroop",
@@ -432,7 +429,7 @@ export interface UtilInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "_getTransportFromArmy",
+    functionFragment: "_getTransportFromArmyTroops",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "_getTroop", data: BytesLike): Result;
@@ -771,8 +768,8 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    _getTransportFromArmy(
-      _armyId: BigNumberish,
+    _getTransportFromArmyTroops(
+      _armyTroopIds: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -958,8 +955,8 @@ export interface Util extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  _getTransportFromArmy(
-    _armyId: BigNumberish,
+  _getTransportFromArmyTroops(
+    _armyTroopIds: BigNumberish[],
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -1142,8 +1139,8 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getTransportFromArmy(
-      _armyId: BigNumberish,
+    _getTransportFromArmyTroops(
+      _armyTroopIds: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1454,8 +1451,8 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getTransportFromArmy(
-      _armyId: BigNumberish,
+    _getTransportFromArmyTroops(
+      _armyTroopIds: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1642,8 +1639,8 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _getTransportFromArmy(
-      _armyId: BigNumberish,
+    _getTransportFromArmyTroops(
+      _armyTroopIds: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

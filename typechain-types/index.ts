@@ -14,6 +14,8 @@ export type { IERC165 } from "./IERC165";
 export type { IERC173 } from "./IERC173";
 export type { Util } from "./Util";
 export type { LibDiamond } from "./LibDiamond";
+export type { CurioOS } from "./CurioOS";
+export type { Set } from "./Set";
 export type { DiamondInit } from "./DiamondInit";
 export type { Curio } from "./Curio";
 
@@ -30,5 +32,7 @@ export { IERC165__factory } from "./factories/IERC165__factory";
 export { IERC173__factory } from "./factories/IERC173__factory";
 export { Util__factory } from "./factories/Util__factory";
 export { LibDiamond__factory } from "./factories/LibDiamond__factory";
+export { CurioOS__factory } from "./factories/CurioOS__factory";
+export { Set__factory } from "./factories/Set__factory";
 export { DiamondInit__factory } from "./factories/DiamondInit__factory";
 export { Curio__factory } from "./factories/Curio__factory";

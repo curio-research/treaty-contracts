@@ -2,7 +2,7 @@
 pragma solidity ^0.8.4;
 
 import "contracts/libraries/Storage.sol";
-import {BASE_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop, Army, WorldConstants} from "contracts/libraries/Types.sol";
+import {BASE_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop, Army, WorldConstants, TROOP_NAME} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 
 /// @title Util library
@@ -303,7 +303,7 @@ library Util {
     function _getTransportFromArmyTroops(uint256[] memory _armyTroopIds) public view returns (uint256) {
         // pre-check ensures this function is called only when there is a transport
         for (uint256 i = 0; i < _armyTroopIds.length; i++) {
-            if (gs().troopTypeIdMap[_getTroop(_armyTroopIds[i]).troopTypeId].isTypeTransport) return _armyTroopIds[i];
+            if (gs().troopTypeIdMap[_getTroop(_armyTroopIds[i]).troopTypeId].name == TROOP_NAME.TROOP_TRANSPORT) return _armyTroopIds[i];
         }
         return _NULL();
     }

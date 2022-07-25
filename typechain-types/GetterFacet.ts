@@ -82,7 +82,6 @@ export type TroopTypeStruct = {
   damagePerHit: BigNumberish;
   attackFactor: BigNumberish;
   defenseFactor: BigNumberish;
-  isTypeTransport: boolean;
   movementCooldown: BigNumberish;
   largeActionCooldown: BigNumberish;
   goldPrice: BigNumberish;
@@ -96,7 +95,6 @@ export type TroopTypeStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
-  boolean,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -108,7 +106,6 @@ export type TroopTypeStructOutput = [
   damagePerHit: BigNumber;
   attackFactor: BigNumber;
   defenseFactor: BigNumber;
-  isTypeTransport: boolean;
   movementCooldown: BigNumber;
   largeActionCooldown: BigNumber;
   goldPrice: BigNumber;
@@ -215,6 +212,7 @@ export type WorldConstantsStructOutput = [
 export interface GetterFacetInterface extends utils.Interface {
   functions: {
     "bulkGetAllTroops()": FunctionFragment;
+    "getArmyAt((uint256,uint256))": FunctionFragment;
     "getBase(uint256)": FunctionFragment;
     "getBaseAt((uint256,uint256))": FunctionFragment;
     "getBaseNonce()": FunctionFragment;
@@ -225,7 +223,6 @@ export interface GetterFacetInterface extends utils.Interface {
     "getPlayerCount()": FunctionFragment;
     "getTileAt((uint256,uint256))": FunctionFragment;
     "getTroop(uint256)": FunctionFragment;
-    "getTroopAt((uint256,uint256))": FunctionFragment;
     "getTroopType(uint256)": FunctionFragment;
     "getWorldConstants()": FunctionFragment;
     "isPlayerInitialized(address)": FunctionFragment;
@@ -234,6 +231,10 @@ export interface GetterFacetInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "bulkGetAllTroops",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getArmyAt",
+    values: [PositionStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "getBase",
@@ -273,10 +274,6 @@ export interface GetterFacetInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "getTroopAt",
-    values: [PositionStruct]
-  ): string;
-  encodeFunctionData(
     functionFragment: "getTroopType",
     values: [BigNumberish]
   ): string;
@@ -293,6 +290,7 @@ export interface GetterFacetInterface extends utils.Interface {
     functionFragment: "bulkGetAllTroops",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getArmyAt", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getBase", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getBaseAt", data: BytesLike): Result;
   decodeFunctionResult(
@@ -318,7 +316,6 @@ export interface GetterFacetInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "getTileAt", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getTroop", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "getTroopAt", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getTroopType",
     data: BytesLike
@@ -363,6 +360,11 @@ export interface GetterFacet extends BaseContract {
 
   functions: {
     bulkGetAllTroops(overrides?: CallOverrides): Promise<[TroopStructOutput[]]>;
+
+    getArmyAt(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<[TroopStructOutput]>;
 
     getBase(
       _id: BigNumberish,
@@ -411,11 +413,6 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[TroopStructOutput]>;
 
-    getTroopAt(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<[TroopStructOutput]>;
-
     getTroopType(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
@@ -432,6 +429,11 @@ export interface GetterFacet extends BaseContract {
   };
 
   bulkGetAllTroops(overrides?: CallOverrides): Promise<TroopStructOutput[]>;
+
+  getArmyAt(
+    _pos: PositionStruct,
+    overrides?: CallOverrides
+  ): Promise<TroopStructOutput>;
 
   getBase(
     _id: BigNumberish,
@@ -480,11 +482,6 @@ export interface GetterFacet extends BaseContract {
     overrides?: CallOverrides
   ): Promise<TroopStructOutput>;
 
-  getTroopAt(
-    _pos: PositionStruct,
-    overrides?: CallOverrides
-  ): Promise<TroopStructOutput>;
-
   getTroopType(
     _troopTypeId: BigNumberish,
     overrides?: CallOverrides
@@ -501,6 +498,11 @@ export interface GetterFacet extends BaseContract {
 
   callStatic: {
     bulkGetAllTroops(overrides?: CallOverrides): Promise<TroopStructOutput[]>;
+
+    getArmyAt(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<TroopStructOutput>;
 
     getBase(
       _id: BigNumberish,
@@ -549,11 +551,6 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<TroopStructOutput>;
 
-    getTroopAt(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<TroopStructOutput>;
-
     getTroopType(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
@@ -573,6 +570,11 @@ export interface GetterFacet extends BaseContract {
 
   estimateGas: {
     bulkGetAllTroops(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getArmyAt(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     getBase(_id: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -615,11 +617,6 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getTroopAt(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     getTroopType(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
@@ -635,6 +632,11 @@ export interface GetterFacet extends BaseContract {
 
   populateTransaction: {
     bulkGetAllTroops(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getArmyAt(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     getBase(
       _id: BigNumberish,
@@ -680,11 +682,6 @@ export interface GetterFacet extends BaseContract {
 
     getTroop(
       _troopId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getTroopAt(
-      _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

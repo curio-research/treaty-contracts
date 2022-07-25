@@ -26,15 +26,25 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
 
 export interface EngineFacetInterface extends utils.Interface {
   functions: {
+    "combineArmy(uint256,uint256[])": FunctionFragment;
     "deleteTroop(uint256)": FunctionFragment;
+    "detachTroopsFromArmy(uint256,uint256[],(uint256,uint256))": FunctionFragment;
     "initializePlayer((uint256,uint256))": FunctionFragment;
     "march(uint256,(uint256,uint256))": FunctionFragment;
     "purchaseTroop((uint256,uint256),uint256)": FunctionFragment;
   };
 
   encodeFunctionData(
+    functionFragment: "combineArmy",
+    values: [BigNumberish, BigNumberish[]]
+  ): string;
+  encodeFunctionData(
     functionFragment: "deleteTroop",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "detachTroopsFromArmy",
+    values: [BigNumberish, BigNumberish[], PositionStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "initializePlayer",
@@ -50,7 +60,15 @@ export interface EngineFacetInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(
+    functionFragment: "combineArmy",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "deleteTroop",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "detachTroopsFromArmy",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -93,8 +111,21 @@ export interface EngineFacet extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    combineArmy(
+      _mainArmyId: BigNumberish,
+      _joiningArmyIds: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     deleteTroop(
       _troopId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    detachTroopsFromArmy(
+      _mainArmyId: BigNumberish,
+      _leavingTroopIds: BigNumberish[],
+      _targetPos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -116,8 +147,21 @@ export interface EngineFacet extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
+  combineArmy(
+    _mainArmyId: BigNumberish,
+    _joiningArmyIds: BigNumberish[],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   deleteTroop(
     _troopId: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  detachTroopsFromArmy(
+    _mainArmyId: BigNumberish,
+    _leavingTroopIds: BigNumberish[],
+    _targetPos: PositionStruct,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -139,8 +183,21 @@ export interface EngineFacet extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    combineArmy(
+      _mainArmyId: BigNumberish,
+      _joiningArmyIds: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     deleteTroop(
       _troopId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    detachTroopsFromArmy(
+      _mainArmyId: BigNumberish,
+      _leavingTroopIds: BigNumberish[],
+      _targetPos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -165,8 +222,21 @@ export interface EngineFacet extends BaseContract {
   filters: {};
 
   estimateGas: {
+    combineArmy(
+      _mainArmyId: BigNumberish,
+      _joiningArmyIds: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     deleteTroop(
       _troopId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    detachTroopsFromArmy(
+      _mainArmyId: BigNumberish,
+      _leavingTroopIds: BigNumberish[],
+      _targetPos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -189,8 +259,21 @@ export interface EngineFacet extends BaseContract {
   };
 
   populateTransaction: {
+    combineArmy(
+      _mainArmyId: BigNumberish,
+      _joiningArmyIds: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     deleteTroop(
       _troopId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    detachTroopsFromArmy(
+      _mainArmyId: BigNumberish,
+      _leavingTroopIds: BigNumberish[],
+      _targetPos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

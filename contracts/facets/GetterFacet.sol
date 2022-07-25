@@ -3,7 +3,7 @@ pragma solidity ^0.8.4;
 
 import "contracts/libraries/Storage.sol";
 import {Util} from "contracts/libraries/GameUtil.sol";
-import {Base, Player, Position, Tile, Troop, WorldConstants, TroopType} from "contracts/libraries/Types.sol";
+import {Base, Player, Position, Tile, Troop, WorldConstants, TroopType, Army} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 
 /// @title Bulk getters
@@ -75,8 +75,8 @@ contract GetterFacet is UseStorage {
         return Util._getBase(_id);
     }
 
-    function getArmyAt(Position memory _pos) external view returns (Troop memory) {
-        return gs().troopIdMap[Util._getTileAt(_pos).occupantId];
+    function getArmyAt(Position memory _pos) external view returns (Army memory) {
+        return gs().armyIdMap[Util._getTileAt(_pos).occupantId];
     }
 
     function getTroop(uint256 _troopId) external view returns (Troop memory) {
