@@ -234,14 +234,12 @@ library Util {
     }
 
     // returns armyID
-    function _createNewArmyFromTroop(uint256 _troopID) public returns (uint256) {
+    function _createNewArmyFromTroop(uint256 _troopID, Position memory _pos) public returns (uint256) {
         require(_getPlayer(msg.sender).numOwnedTroops < gs().worldConstants.maxTroopCountPerPlayer, "CURIO: Max troop count exceeded");
 
         uint256 _armyId = gs().armyNonce;
         gs().armyIds.push(_armyId);
         gs().armyNonce++;
-
-        Troop memory _troop = _getTroop(_troopID);
 
         uint256[] memory _armyTroopIds;
         Army memory _army = Army({owner: msg.sender, armyTroopIds: _armyTroopIds, lastMoved: block.timestamp, lastLargeActionTaken: block.timestamp, pos: _pos});
