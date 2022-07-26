@@ -341,8 +341,8 @@ contract EngineFacet is UseStorage {
     // Question: rn all the intersections are hardcoded over lists. how do you have efficient set intersections?
     // BIG TODO: implement systems. rn all attributes are components in gs(), which is confusing AF
     function purchaseTroopNew(Position memory _position, uint256 _troopTemplateId) public {
-        Set memory _set1 = new Set();
-        Set memory _set2 = new Set();
+        Set _set1 = new Set();
+        Set _set2 = new Set();
 
         // 0. Verify that parametric entity exists
         require(Set(gs().entities).has(_troopTemplateId), "CURIO: Troop template not found");
@@ -352,13 +352,11 @@ contract EngineFacet is UseStorage {
 
         // 2. Verify that player is active
         uint256 _playerId = Util.getPlayerId(msg.sender);
-        uint256 _isActive = Util.getComponent("IsActive").getRawValue(_playerId);
-        require(_isActive == abi.encode(true), "CURIO: Player is inactive");
+        require(Util.getComponent("IsActive").has(_playerId), "CURIO: Player is inactive");
 
-        // 3. Verify that position is in bound
+        // 3. Verify that position is in bound, and initialize tile
         require(Util._inBound(_position), "CURIO: Out of bound");
-
-        // TODO: reconsider `initializeTile` here
+        if (!Util._getTileAt(_position).isInitialized) Util._initializeTile(_position);
 
         // 4. Verify that a "base" (aka. an entity which can purchase) is present
         uint256[] memory _entitiesWithGivenPosition = Util.getComponent("Position").getEntitiesWithValue(abi.encode(_position));
@@ -370,82 +368,79 @@ contract EngineFacet is UseStorage {
         uint256 _baseId = _intersection[0];
 
         // 5. Verify that player owns the "base"
-        uint256 _owner = Util.getComponent("Owner").getRawValue(_baseId);
-        require(_owner == abi.encode(msg.sender), "CURIO: Can only purchase in own base");
+        require(abi.decode(Util.getComponent("Owner").getRawValue(_baseId), (uint256)) == _playerId, "CURIO: Can only purchase in own base");
 
         // 6. Verify that no "troop" (aka. a movable entity) is present
         uint256[] memory _entitiesWithCanMove = Util.getComponent("CanMove").getEntitiesWithValue(abi.encode(false));
         _set2 = new Set();
         _set2.addArray(_entitiesWithCanMove);
-        _intersection = Util.intersection(_set1, _set2);
-        require(_intersection.length == 0, "CURIO: Base occupied by another troop");
+        require(Util.intersection(_set1, _set2).length == 0, "CURIO: Base occupied by another troop");
 
         // 7. Verify that the "base" can purchase the given type of "troop"
-        uint256 _isLandTroop = Util.getComponent("IsLandTroop").getRawValue(_troopTemplateId);
-        if (!_isLandTroop) {
+        if (!Util.getComponent("IsLandTroop").has(_troopTemplateId)) {
             Position[] memory _neighbors = Util._getNeighbors(_position);
             bool _positionAdjacentToWater;
             for (uint256 i = 0; i < _neighbors.length; i++) {
-                uint256 _isWater = Util.getComponent("Terrain").getRawValue(_neighbors[i]);
-                if (_isWater == abi.encode(TERRAIN.WATER)) _positionAdjacentToWater = true;
+                TERRAIN _terrain = Util._getTileAt(_position).terrain;
+                if (_terrain == TERRAIN.WATER) _positionAdjacentToWater = true;
             }
             require(_positionAdjacentToWater, "CURIO: Base cannot purchase selected troop type");
         }
 
         // 8. Fetch player gold balance and verify that it is enough
-        Component memory _goldComponent = Util.getComponent("Gold");
-        uint256 _troopGoldPrice = abi.decode(_goldComponent.getRawValue(_troopTemplateId));
-        uint256 _playerGoldBalance = abi.decode(_goldComponent.getRawValue(_playerId));
+        Component _goldComponent = Util.getComponent("Gold");
+        uint256 _troopGoldPrice = abi.decode(_goldComponent.getRawValue(_troopTemplateId), (uint256));
+        uint256 _playerGoldBalance = abi.decode(_goldComponent.getRawValue(_playerId), (uint256));
         require(_playerGoldBalance > _troopGoldPrice, "CURIO: Insufficient gold balance");
 
         // 9. Set new player gold balance
-        _goldComponent.set(_playerId, _playerGoldBalance - _troopGoldPrice);
+        _goldComponent.set(_playerId, abi.encode(_playerGoldBalance - _troopGoldPrice));
 
         // 10. Add troop
         Util.addTroopEntity(_playerId, _position, _troopTemplateId);
     }
 
-    function addTroopEntity(Position memory pos) {
-        // Util.addNewEntity() ...
-        // add attack component
-        // add move component
-        // add position component
-        // add health component
-        // add capture component
-        // emit event for entity creation
-    }
+    // function addTroopEntity(Position memory pos) {
+    //     // Util.addNewEntity() ...
+    //     // add attack component
+    //     // add move component
+    //     // add position component
+    //     // add health component
+    //     // add capture component
+    //     // emit event for entity creation
+    // }
 
-    // example policy: "Troop that has 20 health or above gain 1 more attack"
-    function buffPolicy() {
-        // QUESTION: isTroop is a strict subset of health. Inefficient intersection
-        uint256[] troopEntityIDs = gs().entityIntersection("isTroop", "health");
+    // // example policy: "Troop that has 20 health or above gain 1 more attack"
+    // function buffPolicy() {
+    //     // QUESTION: isTroop is a strict subset of health. Inefficient intersection
+    //     uint256[] troopEntityIDs = gs().entityIntersection("isTroop", "health");
 
-        for (uint256 i = 0; i < troopEntityIDs.length; i++) {
-            troopEntityID = troopEntityIDs[i];
-            uint256 healthValForEntity = gs().healthEntity().getValue(troopEntityID);
+    //     for (uint256 i = 0; i < troopEntityIDs.length; i++) {
+    //         troopEntityID = troopEntityIDs[i];
+    //         uint256 healthValForEntity = gs().healthEntity().getValue(troopEntityID);
 
-            if (healthValForEntity > 20) {
-                gs().attackFactorComponent().increaseValue();
-            }
-        }
-    }
+    //         if (healthValForEntity > 20) {
+    //             gs().attackFactorComponent().increaseValue();
+    //         }
+    //     }
+    // }
 
-    // TODO: filter system?
-    // TODO: figure out string system;
+    // // TODO: filter system?
+    // // TODO: figure out string system;
 
-    // ---------------------------------
+    // // ---------------------------------
 
-    // Use case that is impossible right now !!
-    // turning a base into a moving troop
-    // add movement cooldown component
+    // // Use case that is impossible right now !!
+    // // turning a base into a moving troop
+    // // add movement cooldown component
 
-    function move(uint256 previousBaseEntityID, Position memory _target) public {
-        gs().positionComponent().setValue(previousBaseEntityID, _target);
-    }
+    // function move(uint256 previousBaseEntityID, Position memory _target) public {
+    //     gs().positionComponent().setValue(previousBaseEntityID, _target);
+    // }
 
-    // TODO: FUTURE PROBLEM
-    function addComponent() {
-        // check name string conflict first
-        // new Component
-    }
+    // // TODO: FUTURE PROBLEM
+    // function addComponent() {
+    //     // check name string conflict first
+    //     // new Component
+    // }
 }

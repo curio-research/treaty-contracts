@@ -46,8 +46,8 @@ library Util {
         uint256 _batchSize = _worldConstants.initBatchSize;
         uint256 _numInitTerrainTypes = _worldConstants.numInitTerrainTypes;
 
-        uint256 _encodedCol = gs().encodedColumnBatches[_pos.x][_pos.y / _batchSize] % (_numInitTerrainTypes**((_pos.y % _batchSize) + 1));
-        uint256 _divFactor = _numInitTerrainTypes**(_pos.y % _batchSize);
+        uint256 _encodedCol = gs().encodedColumnBatches[_position.x][_position.y / _batchSize] % (_numInitTerrainTypes**((_position.y % _batchSize) + 1));
+        uint256 _divFactor = _numInitTerrainTypes**(_position.y % _batchSize);
         uint256 _terrainId = _encodedCol / _divFactor;
 
         if (_terrainId >= 3) {
@@ -81,12 +81,12 @@ library Util {
             }
         }
 
-        gs().map[_pos.x][_pos.y].isInitialized = true;
-        gs().map[_pos.x][_pos.y].terrain = TERRAIN(_terrainId);
+        gs().map[_position.x][_position.y].isInitialized = true;
+        gs().map[_position.x][_position.y].terrain = TERRAIN(_terrainId);
     }
 
     // FIXME: is this correct? does it trigger the constructor instead?
-    function getComponent(string memory _name) public view returns (Component memory) {
+    function getComponent(string memory _name) public view returns (Component) {
         return Component(gs().components[_name]);
     }
 
@@ -129,7 +129,7 @@ library Util {
         addComponentEntityValue("LargeActionCooldown", _troopId, getComponent("LargeActionCooldown").getRawValue(_troopTemplateId));
         addComponentEntityValue("Gold", _troopId, getComponent("Gold").getRawValue(_troopTemplateId));
         addComponentEntityValue("OilPerSecond", _troopId, getComponent("OilPerSecond").getRawValue(_troopTemplateId));
-        Component memory _cargoCapacityComponent = getComponent("CargoCapacity");
+        Component _cargoCapacityComponent = getComponent("CargoCapacity");
         if (_cargoCapacityComponent.has(_troopTemplateId)) {
             addComponentEntityValue("CargoCapacity", _troopId, _cargoCapacityComponent.getRawValue(_troopTemplateId));
         }
@@ -145,7 +145,7 @@ library Util {
     }
 
     function addEntity() public returns (uint256) {
-        Set memory _entities = Set(gs().entities);
+        Set _entities = Set(gs().entities);
         uint256 _newEntity = _entities.size();
         _entities.add(_newEntity);
         return _newEntity;
@@ -154,7 +154,7 @@ library Util {
     function addComponentEntityValue(
         string memory _componentName,
         uint256 _entity,
-        bytes calldata _value
+        bytes memory _value
     ) public {
         getComponent(_componentName).set(_entity, _value);
     }
@@ -167,7 +167,7 @@ library Util {
     //     _component.set(_entity, _value);
     // }
 
-    function getPlayerTroopCount(uint256 _playerId) public view returns (uint256) {
+    function getPlayerTroopCount(uint256 _playerId) public returns (uint256) {
         Set _set1 = new Set();
         Set _set2 = new Set();
         uint256[] memory _entitiesOwnedByPlayer = getComponent("Owner").getEntitiesWithValue(abi.encode(_playerId));
@@ -177,7 +177,7 @@ library Util {
         return intersection(_set1, _set2).length;
     }
 
-    function intersection(Set memory set1, Set memory set2) public returns (uint256[] memory) {
+    function intersection(Set set1, Set set2) public returns (uint256[] memory) {
         Set searchedItems = new Set();
 
         // first initiate an array with a crazy size then copy to right size lol
@@ -226,7 +226,7 @@ library Util {
 
     // definitino of difference: set of all elements of A that are not elements of B
     // example: i want all ships that are NOT in a port
-    function difference(Set memory set1, Set memory set2) public view returns (uint256[] memory) {
+    function difference(Set set1, Set set2) public view returns (uint256[] memory) {
         uint256[] memory temp = new uint256[](set1.size());
         uint256 itemCount = 0;
 
@@ -249,7 +249,7 @@ library Util {
         return res;
     }
 
-    function union(Set memory set1, Set memory set2) public view returns (uint256[] memory) {
+    function union(Set set1, Set set2) public view returns (uint256[] memory) {
         // TODO: implement
     }
 
@@ -529,14 +529,14 @@ library Util {
     }
 
     function _getNeighbors(Position memory _pos) public view returns (Position[] memory) {
-        uint256[] memory _result = new uint256[]();
+        Position[] memory _result = new Position[](4); // FIXME: how to create and append to a dynamic array?
         uint256 _x = _pos.x;
         uint256 _y = _pos.y;
 
-        if (_x > 0) _result.push(Position({x: _x - 1, y: _y}));
-        if (_x < gs().worldWidth - 1) result.push(Position({x: _x + 1, y: _y}));
-        if (_y > 0) _result.push(Position({x: _x, y: _y - 1}));
-        if (y < gs().worldHeight - 1) result.push(Position({x: _x, y: _y + 1}));
+        if (_x > 0) _result[0] = (Position({x: _x - 1, y: _y}));
+        if (_x < gs().worldConstants.worldWidth - 1) _result[1] = (Position({x: _x + 1, y: _y}));
+        if (_y > 0) _result[2] = (Position({x: _x, y: _y - 1}));
+        if (_y < gs().worldConstants.worldHeight - 1) _result[3] = (Position({x: _x, y: _y + 1}));
 
         return _result;
     }

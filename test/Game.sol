@@ -3,7 +3,8 @@ pragma solidity ^0.8.4;
 
 import "forge-std/Test.sol";
 import "test/DiamondDeploy.t.sol";
-import "contracts/libraries/Set.sol";
+import {Set} from "contracts/libraries/Set.sol";
+import {CurioOS} from "contracts/libraries/CurioOS.sol";
 
 contract Game is Test {
     CurioOS public game;
@@ -34,15 +35,15 @@ contract Game is Test {
         set.add(3);
 
         // test inclusion
-        assertEq(set.includes(1), true);
-        assertEq(set.includes(2), true);
+        assertEq(set.has(1), true);
+        assertEq(set.has(2), true);
 
-        assertEq(set.includes(0), false);
-        assertEq(set.includes(11), false);
+        assertEq(set.has(0), false);
+        assertEq(set.has(11), false);
 
         // test removal
         set.remove(1);
-        assertEq(set.includes(1), false);
+        assertEq(set.has(1), false);
 
         // test size
         assertEq(set.size(), 2);
