@@ -114,11 +114,11 @@ contract StackingTest is Test, DiamondDeployTest {
         vm.startPrank(deployer);
         helper.spawnTroop(player1Pos, player1, infantryTroopTypeId); // spawn an infrantry. troop # 1
         Position memory destroyerPosition = Position({x: 7, y: 1});
-        helper.spawnTroop(destroyerPosition, player1, infantryTroopTypeId); // spawn an infrantry. troop #2
+        helper.spawnTroop(destroyerPosition, player1, destroyerTroopTypeId); // spawn an destroyer. troop #2
         vm.stopPrank();
 
         vm.startPrank(player1);
-        engine.moveTroop(1, destroyerPosition);
+        engine.moveTroop(1, destroyerPosition); // move infantry to destroyer
 
         Tile memory tile = getter.getTileAt(destroyerPosition); // where march moved to
         assertEq(tile.occupantId, 2);
@@ -126,12 +126,7 @@ contract StackingTest is Test, DiamondDeployTest {
         Army memory army = getter.getArmyAt(destroyerPosition);
         assertEq(army.armyTroopIds.length, 2); // new tile should have infantry + destroyer
 
-        // try moving the army back
-
-        // vm.expectRevert();
-        engine.march(2, player1Pos);
-
-        // move right 1
-        engine.march(2, getRightPos(player1Pos));
+        vm.expectRevert(bytes("CURIO: Troops and land types not compatible"));
+        engine.march(2, getRightPos(destroyerPosition));
     }
 }

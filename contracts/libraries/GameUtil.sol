@@ -416,6 +416,53 @@ library Util {
         return false;
     }
 
+    function _geographicCheckTroop(uint256 _troopTypeId, Tile memory _tile) public view returns (bool) {
+        // no base
+        if (_tile.baseId == 0) {
+            if (_troopTypeId == 1) {
+                // infantry
+                return true;
+            } else {
+                // ships can only move onto water
+                if (_tile.terrain == TERRAIN.WATER) return true;
+                return false;
+            }
+        } else {
+            // base
+            Base memory base = _getBase(_tile.baseId);
+            if (base.name == BASE_NAME.PORT) {
+                //  everyone can move into the port
+                return true;
+            } else if (base.name == BASE_NAME.CITY) {
+                if (_troopTypeId == 1) {
+                    // only infantry can move into cities
+                    return true;
+                } else {
+                    return false;
+                }
+            } else if (base.name == BASE_NAME.OIL_WELL) {
+                if (_troopTypeId == 1) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
+    }
+
+    function _geographicCheckArmy(uint256 _armyId, Tile memory _tile) public view returns (bool) {
+        Army memory army = _getArmy(_armyId);
+
+        for (uint256 i = 0; i < army.armyTroopIds.length; i++) {
+            uint256 troopId = army.armyTroopIds[i];
+            Troop memory troop = _getTroop(troopId);
+            if (!_geographicCheckTroop(troop.troopTypeId, _tile)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     // if all the troops inside army can move onto land
     function _canArmyMoveLand(uint256 _armyId) public view returns (bool) {
         Army memory army = _getArmy(_armyId);
@@ -446,7 +493,7 @@ library Util {
         return gs().baseIdMap[_baseId].owner;
     }
 
-    function _getBase(uint256 _id) external view returns (Base memory) {
+    function _getBase(uint256 _id) public view returns (Base memory) {
         return gs().baseIdMap[_id];
     }
 

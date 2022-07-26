@@ -33,29 +33,21 @@ contract EngineFacet is UseStorage {
         // require((block.timestamp - _army.lastLargeActionTaken) >= Util._getArmyLargeActionCooldown(_army.armyTroopIds), "CURIO: Large action taken too recently");
 
         Tile memory _targetTile = Util._getTileAt(_targetPos);
+        require(Util._geographicCheckArmy(_armyId, _targetTile), "CURIO: Troops and land types not compatible"); // check if each troop can move onto the tile
+
         // target has no army. empty.
         if (_targetTile.occupantId == NULL) {
             // if target tile has no base
             if (_targetTile.baseId == NULL) {
-                if (_targetTile.terrain == TERRAIN.INLAND) require(Util._canTroopMoveLand(_troop.troopTypeId), "CURIO: All troops must be able to move onto land in army");
-
-                if (Util._canArmyMoveLand(_armyId)) {
-                    require(_targetTile.terrain != TERRAIN.WATER, "CURIO: Cannot move on water");
-                } else {
-                    require(_targetTile.terrain == TERRAIN.WATER || Util._hasPort(_targetTile), "CURIO: Cannot move on land");
-                }
-
                 EngineModules._moveArmy(_armyId, _targetPos);
             } else {
                 // if target tile has base
 
                 // if it's your base
                 if (Util._getBaseOwner(_targetTile.baseId) == msg.sender) {
-                    if (_targetTile.terrain == TERRAIN.INLAND) require(Util._canArmyMoveLand(_armyId));
-
                     EngineModules._moveArmy(_armyId, _targetPos);
                 } else {
-                    // if it's not your base
+                    // if it's not your base, battle
                     EngineModules._battleBase(_armyId, _targetPos); // will capture and move if conditions are met
                 }
             }
