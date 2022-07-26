@@ -371,8 +371,8 @@ contract EngineFacet is UseStorage {
         require(_intersectEntities.length == 0, "CURIO: Base occupied by another troop");
 
         // 7. Verify that the "base" can purchase the given type of "troop"
-        uint256 _isTroopNavy = Util.getComponent("CanMoveOnWater").getRawValue(_troopTemplateId);
-        if (_isTroopNavy) {
+        uint256 _isLandTroop = Util.getComponent("IsLandTroop").getRawValue(_troopTemplateId);
+        if (!_isLandTroop) {
             Position[] memory _neighbors = Util._getNeighbors(_position);
             bool _positionAdjacentToWater;
             for (uint256 i = 0; i < _neighbors.length; i++) {
@@ -393,9 +393,6 @@ contract EngineFacet is UseStorage {
 
         // 10. Add troop
         Util.addTroopEntity(_playerId, _position, _troopTemplateId);
-
-        // change the occupantID component to Tile entity
-        Util.getComponent("Tile").set(tileEntityID, troopEntityID);
     }
 
     function addTroopEntity(Position memory pos) {

@@ -54,15 +54,41 @@ library Util {
         uint256 _playerId,
         Position memory _position,
         uint256 _troopTemplateId
-    ) public {
+    ) public returns (uint256) {
         // 1. Get number of player-owned troops and verify size
         uint256 _playerTroopCount = getPlayerTroopCount(_playerId);
         require(_playerTroopCount < gs().worldConstants.maxTroopCountPerPlayer, "CURIO: Max troop count exceeded");
 
         // 2. Create new troop entity globally and in corresponding components
-        uint256 _troopEntity = addEntity();
-        addComponentEntityValue("Owner", _troopEntity, abi.encode(_playerId));
-        // TODO: left here
+        uint256 _troopId = addEntity();
+        addComponentEntityValue("Owner", _troopId, abi.encode(_playerId));
+        addComponentEntityValue("LastMoved", _troopId, abi.encode(block.timestamp));
+        addComponentEntityValue("LastLargeActionTaken", _troopId, abi.encode(0));
+        addComponentEntityValue("LastRepaired", _troopId, abi.encode(block.timestamp));
+        addComponentEntityValue("Health", _troopId, getComponent("MaxHealth").getRawValue(_troopTemplateId));
+        addComponentEntityValue("Position", _troopId, abi.encode(_position));
+        addComponentEntityValue("IsLandTroop", _troopId, getComponent("IsLandTroop").getRawValue(_troopTemplateId));
+        addComponentEntityValue("MaxHealth", _troopId, getComponent("MaxHealth").getRawValue(_troopTemplateId));
+        addComponentEntityValue("DamagePerHit", _troopId, getComponent("DamagePerHit").getRawValue(_troopTemplateId));
+        addComponentEntityValue("AttackFactor", _troopId, getComponent("AttackFactor").getRawValue(_troopTemplateId));
+        addComponentEntityValue("DefenseFactor", _troopId, getComponent("DefenseFactor").getRawValue(_troopTemplateId));
+        addComponentEntityValue("MovementCooldown", _troopId, getComponent("MovementCooldown").getRawValue(_troopTemplateId));
+        addComponentEntityValue("LargeActionCooldown", _troopId, getComponent("LargeActionCooldown").getRawValue(_troopTemplateId));
+        addComponentEntityValue("Gold", _troopId, getComponent("Gold").getRawValue(_troopTemplateId));
+        addComponentEntityValue("OilPerSecond", _troopId, getComponent("OilPerSecond").getRawValue(_troopTemplateId));
+        Component memory _cargoCapacityComponent = getComponent("CargoCapacity");
+        if (_cargoCapacityComponent.has(_troopTemplateId)) {
+            addComponentEntityValue("CargoCapacity", _troopId, _cargoCapacityComponent.getRawValue(_troopTemplateId));
+        }
+
+        // 3. Update map info
+        // FIXME: is this even needed? if so, how to get the tile info from position?
+        // asking because using
+
+        // 4. Update balances
+        // FIXME: also not needed, for the same reason above
+
+        return _troopId;
     }
 
     function addEntity() public returns (uint256) {
@@ -78,6 +104,14 @@ library Util {
         bytes calldata _value
     ) public {
         getComponent(_componentName).set(_entity, _value);
+    }
+
+    function addComponentEntityValue(
+        Component memory _component,
+        uint256 _entity,
+        bytes calldata _value
+    ) public {
+        _component.set(_entity, _value);
     }
 
     function getPlayerTroopCount(uint256 _playerId) public view returns (uint256) {
