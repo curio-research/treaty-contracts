@@ -219,6 +219,8 @@ library Util {
         gs().armyIdMap[_armyId] = _army;
         gs().armyIdMap[_armyId].armyTroopIds.push(_troopID);
 
+        gs().troopIdMap[_troopID].armyId = _armyId;
+
         return _armyId;
     }
 
@@ -428,10 +430,10 @@ library Util {
         return true;
     }
 
-    function _canTroopMoveToTileTile(uint256 _troopTypeId, TERRAIN _terrain) public pure returns (bool) {
+    function _canTroopMoveToTile(uint256 _troopTypeId, TERRAIN _terrain) public pure returns (bool) {
         // infantry can move onto any tile. no need to check
 
-        // if the tropo type is a type if ship, it cannot move onto land tiles
+        // if the tropo type is a type of ship, it cannot move onto land tiles
         if (_troopTypeId == 1 || _troopTypeId == 2 || _troopTypeId == 3) {
             if (_terrain == TERRAIN.INLAND) return false;
         }

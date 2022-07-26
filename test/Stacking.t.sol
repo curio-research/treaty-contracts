@@ -61,18 +61,18 @@ contract StackingTest is Test, DiamondDeployTest {
         Tile memory tile = getter.getTileAt(player1Pos);
         assertEq(tile.occupantId, 0);
 
-        // check that the original army #1 is deleted
+        // // check that the original army #1 is deleted
         // Army memory army1 = getter.getArmy(1);
-        // TODO: figure out what happens to a deleted key value pair in mapping
+        // // TODO: figure out what happens to a deleted key value pair in mapping
 
-        // verify target army's details
+        // // verify target army's details
         Army memory targetArmy = getter.getArmyAt(army2position);
         assertEq(targetArmy.armyTroopIds.length, 2); // check that the new army has 2 troops inside
         assertEq(targetArmy.armyTroopIds[0], 2); // new army contains troop #1 and #2
         assertEq(targetArmy.armyTroopIds[1], 1);
 
-        // ------------------------------------------------
-        // move troop1 back to original tile
+        // // ------------------------------------------------
+        // // move troop1 back to original tile
 
         vm.startPrank(player1);
         engine.moveTroop(1, player1Pos);
@@ -87,23 +87,54 @@ contract StackingTest is Test, DiamondDeployTest {
         assertEq(army2.armyTroopIds[0], 2); // troop #2 in old tile
     }
 
-    function testTroopTransport() public {
+    function testMarch() public {
+        // spawn two troops and combine them
         vm.startPrank(deployer);
         helper.spawnTroop(player1Pos, player1, infantryTroopTypeId); // spawn an infrantry. troop # 1
-        Position memory troopTransportPosition = Position({x: 6, y: 2});
-        helper.spawnTroop(troopTransportPosition, player1, troopTransportTroopTypeId); // spawn a troop transport. troop #2
+        Position memory army2position = Position({x: 6, y: 2});
+        helper.spawnTroop(army2position, player1, infantryTroopTypeId); // spawn an infrantry. troop #2
         vm.stopPrank();
 
         vm.startPrank(player1);
-        engine.moveTroop(1, troopTransportPosition); // move infantry to troop transport
+        engine.moveTroop(1, army2position);
         vm.stopPrank();
 
-        Army memory army2 = getter.getArmyAt(troopTransportPosition);
-        assertEq(army2.armyTroopIds.length, 1);
+        // march
+        vm.startPrank(player1);
+        engine.march(2, player1Pos);
+        vm.stopPrank();
 
-        Troop memory troop = getter.getTroop(1);
-        console.log(troop.cargoArmyId);
-        assertEq(troop.cargoArmyId, 2);
+        Tile memory tile1 = getter.getTileAt(player1Pos); // where march moved to
+        assertEq(tile1.occupantId, 2);
+
+        Tile memory tile2 = getter.getTileAt(army2position); // where the troops left from
+        assertEq(tile2.occupantId, 0);
+    }
+
+    function testInfantryMove() public {
+        // spawn 1 infantry 1 destroyer and combine them
+        vm.startPrank(deployer);
+        helper.spawnTroop(player1Pos, player1, infantryTroopTypeId); // spawn an infrantry. troop # 1
+        Position memory destroyerPosition = Position({x: 7, y: 1});
+        helper.spawnTroop(destroyerPosition, player1, infantryTroopTypeId); // spawn an infrantry. troop #2
+        vm.stopPrank();
+
+        vm.startPrank(player1);
+        engine.moveTroop(1, destroyerPosition);
+
+        Tile memory tile = getter.getTileAt(destroyerPosition); // where march moved to
+        assertEq(tile.occupantId, 2);
+
+        Army memory army = getter.getArmyAt(destroyerPosition);
+        assertEq(army.armyTroopIds.length, 2); // new tile should have infantry + destroyer
+
+        // try moving the army back
+
+        // vm.expectRevert();
+        engine.march(2, player1Pos);
+
+        // move right 1
+        engine.march(2, getRightPos(player1Pos));
     }
 }
 >>>>>>> 87f4ab6 (Basic testing)

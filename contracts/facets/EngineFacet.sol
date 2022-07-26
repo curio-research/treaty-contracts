@@ -37,11 +37,14 @@ contract EngineFacet is UseStorage {
         if (_targetTile.occupantId == NULL) {
             // if target tile has no base
             if (_targetTile.baseId == NULL) {
+                if (_targetTile.terrain == TERRAIN.INLAND) require(Util._canTroopMoveLand(_troop.troopTypeId), "CURIO: All troops must be able to move onto land in army");
+
                 if (Util._canArmyMoveLand(_armyId)) {
                     require(_targetTile.terrain != TERRAIN.WATER, "CURIO: Cannot move on water");
                 } else {
                     require(_targetTile.terrain == TERRAIN.WATER || Util._hasPort(_targetTile), "CURIO: Cannot move on land");
                 }
+
                 EngineModules._moveArmy(_armyId, _targetPos);
             } else {
                 // if target tile has base
@@ -57,9 +60,9 @@ contract EngineFacet is UseStorage {
                 }
             }
         } else {
-            // you cannot march onto a tile with your own troop
-            require(gs().armyIdMap[_targetTile.occupantId].owner != msg.sender, "CURIO: Destination tile occupied");
+            // target has army.
 
+            require(gs().armyIdMap[_targetTile.occupantId].owner != msg.sender, "CURIO: Destination tile occupied"); // you cannot march onto a tile with your own troop
             EngineModules._battleArmy(_armyId, _targetPos);
         }
 
@@ -102,14 +105,16 @@ contract EngineFacet is UseStorage {
 
             uint256 _newArmyId = Util._createNewArmyFromTroop(_troopId, _army.pos); // create new army
 
+            // deleted thing here
             EngineModules._moveArmy(_newArmyId, _targetPos);
+            gs().map[_army.pos.x][_army.pos.y].occupantId = _troop.armyId;
         } else {
             // target tile has occupants
             require(_targetArmy.owner == msg.sender, "CURIO: Cannot directly attack with troops");
             // four cases depending on troop and army type
 
             EngineModules._troopJoinArmySizeCheck(_targetArmy, _troop); // check if the target tile has enough space
-            Util._canTroopMoveToTileTile(_troop.troopTypeId, _targetTile.terrain); // check if troop can move onto the land type
+            Util._canTroopMoveToTile(_troop.troopTypeId, _targetTile.terrain); // check if troop can move onto the land type
 
             EngineModules._moveTroopToArmy(_targetTile.occupantId, _troopId);
         }
