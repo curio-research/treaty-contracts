@@ -17,6 +17,8 @@ library EngineModules {
         return LibStorage.gameStorage();
     }
 
+    // calls when target position is empty
+    // assumes that target tile is empty
     function _moveArmy(uint256 _armyId, Position memory _targetPos) public {
         Army memory _army = Util._getArmy(_armyId);
         Tile memory _targetTile = Util._getTileAt(_targetPos);
@@ -30,48 +32,13 @@ library EngineModules {
             _targetTileArmy = Util._getArmy(_targetTile.occupantId);
         }
 
-        // state change - if targetTile doesn't have transport
-        _targetTileTroopTransportId = Util._getTransportIdFromArmy(_targetTileArmy.armyTroopIds);
-        if (_targetTileTroopTransportId == _NULL()) {
-            gs().map[_targetPos.x][_targetPos.y].occupantId = _armyId;
-        }
+        gs().map[_targetPos.x][_targetPos.y].occupantId = _armyId; // set armyID of new tile
+        gs().map[_army.pos.x][_army.pos.y].occupantId = _NULL();
 
-        Tile memory _sourceTile = Util._getTileAt(_army.pos);
-        Army memory _sourceTileArmy = Util._getArmy(_sourceTile.occupantId);
-        if (_sourceTile.occupantId != _armyId) {
-            // Army was on Army transport
-            uint256 _sourceTileTroopTransportId = Util._getTransportIdFromArmy(_sourceTileArmy.armyTroopIds);
-            Util._unloadArmyFromTransport(_sourceTileTroopTransportId);
-        } else {
-            gs().map[_army.pos.x][_army.pos.y].occupantId = _NULL();
-        }
-
-        // state change
         gs().armyIdMap[_armyId].pos = _targetPos;
         gs().armyIdMap[_armyId].lastMoved = block.timestamp;
 
-        uint256 _cargoArmyId = Util._getTransportIdFromArmy(_army.armyTroopIds);
-        if (_cargoArmyId != _NULL()) {
-            // Army has a troop troopTransport — move its cargo army
-            gs().armyIdMap[_cargoArmyId].pos = _targetPos;
-        }
-
-        Util._updatePlayerBalances(msg.sender);
-
         emit Util.Moved(msg.sender, _armyId, block.timestamp, _army.pos, _targetPos);
-    }
-
-    function _loadArmy(uint256 _armyId, Tile memory _targetTile) public {
-        Army memory _army = Util._getArmy(_armyId);
-        Army memory _targetArmy = Util._getArmy(_targetTile.occupantId);
-        uint256 _troopTransportId = Util._getTransportIdFromArmy(_targetArmy.armyTroopIds);
-        require(Util._getTransportIdFromArmy(_army.armyTroopIds) == _NULL(), "CURIO: cargo army cannot contain trooptransport");
-
-        Troop memory _troopTransport = Util._getTroop(_troopTransportId);
-        _troopTransport.cargoArmyId = _armyId;
-
-        //update state for troop; no need for army
-        gs().troopIdMap[_troopTransportId] = _troopTransport;
     }
 
     function _battleBase(uint256 _armyId, Position memory _targetPos) public {
@@ -84,7 +51,7 @@ library EngineModules {
 
         Base memory _targetBase = gs().baseIdMap[_targetTile.baseId];
         require(_targetBase.owner != msg.sender, "CURIO: Cannot attack own base");
-        require(Util._isLandArmy(_armyId) || _targetBase.health > 0 || _targetBase.name == BASE_NAME.OIL_WELL, "CURIO: Can only capture base with land troop");
+        require(Util._canArmyMoveLand(_armyId) || _targetBase.health > 0 || _targetBase.name == BASE_NAME.OIL_WELL, "CURIO: Can only capture base with land troop");
 
         // Exchange fire until one side dies
         uint256 _salt = 0;
@@ -125,7 +92,7 @@ library EngineModules {
             gs().baseIdMap[_targetTile.baseId].health = 0;
 
             // Capture and move onto base if troop is infantry or if base is oil well
-            if (Util._isLandArmy(_armyId) || _targetBase.name == BASE_NAME.OIL_WELL) {
+            if (Util._canTroopMoveLand(_armyId) || _targetBase.name == BASE_NAME.OIL_WELL) {
                 require(Util._getPlayer(msg.sender).numOwnedBases < gs().worldConstants.maxBaseCountPerPlayer, "CURIO: Max base count exceeded");
 
                 _targetBase = Util._getBase(_targetTile.baseId);
@@ -218,40 +185,14 @@ library EngineModules {
         }
     }
 
-    function _loadTroop(uint256 _troopId, Position memory _targetPos) public {
-        Tile memory _targetTile = Util._getTileAt(_targetPos);
-        Troop memory _troopTransport = Util._getTroop(_targetTile.occupantId);
-        require(gs().troopTypeIdMap[_targetTile.occupantId].name == TROOP_NAME.TROOP_TRANSPORT, "CURIO: No troopTransport on target Tile");
-        require(gs().troopTypeIdMap[_troopId].name != TROOP_NAME.TROOP_TRANSPORT, "CURIO: Transport cannot load Transport");
-
-        if (_troopTransport.cargoArmyId == _NULL()) {
-            // create a new army to load
-            uint256 _newArmyId = Util._createNewArmyFromTroop(_troopId, _targetPos);
-            _loadArmy(_newArmyId, _targetTile);
-            // temporarily change occupantId for Move Module to work
-            // note: may sub with a moveNewArmyModule that doesn't check sourceTile
-            gs().map[_targetPos.x][_targetPos.y].occupantId = _newArmyId;
-            _moveArmy(_newArmyId, _targetPos);
-            gs().map[_targetPos.x][_targetPos.y].occupantId = _targetTile.occupantId;
-        } else {
-            // if there's an existing army on troop transport, push troop individually to that army
-            // checker is in engine
-            gs().armyIdMap[_troopTransport.cargoArmyId].armyTroopIds.push(_troopId);
-        }
-    }
-
     // note: may consider move this module to moveTroopToArmy
     // check army size based on troop transport: Army can have up to five troops, or two with one transport
     function _troopJoinArmySizeCheck(Army memory _mainArmy, Troop memory _joiningTroop) public view {
         uint256 troopCounter = _mainArmy.armyTroopIds.length + 1;
-        bool mainArmyHasTransport = Util._getTransportIdFromArmy(_mainArmy.armyTroopIds) != 0;
-        bool isJoiningTroopTransport = _joiningTroop.troopTypeId == 2; // note: hardcoded
-
-        require(!(mainArmyHasTransport == true && isJoiningTroopTransport == true), "CURIO: Army can have up to five troops, or two with one transport");
         require(troopCounter <= 5, "CURIO: Army can have up to five troops, or two with one transport");
     }
 
-    // used when two army/troop types are the same
+    // used when two army / troop types are the same
     function _moveTroopToArmy(uint256 _mainArmyId, uint256 _joiningTroopId) public {
         Troop memory _joiningTroop = Util._getTroop(_joiningTroopId);
         Army memory _sourceArmy = Util._getArmy(_joiningTroop.armyId);

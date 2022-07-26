@@ -33,39 +33,34 @@ contract EngineFacet is UseStorage {
         // require((block.timestamp - _army.lastLargeActionTaken) >= Util._getArmyLargeActionCooldown(_army.armyTroopIds), "CURIO: Large action taken too recently");
 
         Tile memory _targetTile = Util._getTileAt(_targetPos);
+        // target has no army. empty.
         if (_targetTile.occupantId == NULL) {
+            // if target tile has no base
             if (_targetTile.baseId == NULL) {
-                if (Util._isLandArmy(_armyId)) {
-                    require(_targetTile.terrain != TERRAIN.WATER || Util._canTransportArmy(_targetTile), "CURIO: Cannot move on water");
+                if (Util._canArmyMoveLand(_armyId)) {
+                    require(_targetTile.terrain != TERRAIN.WATER, "CURIO: Cannot move on water");
                 } else {
                     require(_targetTile.terrain == TERRAIN.WATER || Util._hasPort(_targetTile), "CURIO: Cannot move on land");
                 }
                 EngineModules._moveArmy(_armyId, _targetPos);
             } else {
+                // if target tile has base
+
+                // if it's your base
                 if (Util._getBaseOwner(_targetTile.baseId) == msg.sender) {
-                    if (Util._isLandArmy(_armyId)) {
-                        require(_targetTile.terrain != TERRAIN.WATER || Util._canTransportArmy(_targetTile), "CURIO: Cannot move on water");
-                    } else {
-                        require(_targetTile.terrain == TERRAIN.WATER || Util._hasPort(_targetTile), "CURIO: Cannot move on land");
-                    }
+                    if (_targetTile.terrain == TERRAIN.INLAND) require(Util._canArmyMoveLand(_armyId));
 
                     EngineModules._moveArmy(_armyId, _targetPos);
                 } else {
+                    // if it's not your base
                     EngineModules._battleBase(_armyId, _targetPos); // will capture and move if conditions are met
                 }
             }
         } else {
-            if (gs().armyIdMap[_targetTile.occupantId].owner == msg.sender) {
-                if (Util._canTransportArmy(_targetTile) && Util._isLandArmy(_armyId)) {
-                    // Load troop onto transport
-                    EngineModules._loadArmy(_armyId, _targetTile);
-                    EngineModules._moveArmy(_armyId, _targetPos);
-                } else {
-                    revert("CURIO: Destination tile occupied");
-                }
-            } else {
-                EngineModules._battleArmy(_armyId, _targetPos);
-            }
+            // you cannot march onto a tile with your own troop
+            require(gs().armyIdMap[_targetTile.occupantId].owner != msg.sender, "CURIO: Destination tile occupied");
+
+            EngineModules._battleArmy(_armyId, _targetPos);
         }
 
         // emit Util.PlayerInfo(msg.sender, gs().playerMap[msg.sender]);
@@ -99,55 +94,26 @@ contract EngineFacet is UseStorage {
         require(!Util._samePos(_army.pos, _targetPos), "CURIO: Already at destination");
         // require((block.timestamp - _army.lastLargeActionTaken) >= Util._getArmyLargeActionCooldown(_army.armyTroopIds), "CURIO: Large action taken too recently");
 
-        // check _troop is not on transport
-        uint256 _troopTransportId = Util._getTransportIdFromArmy(_targetArmy.armyTroopIds);
-        if (_troopTransportId != NULL) {
-            Troop memory _TroopTransport = Util._getTroop(_troopTransportId);
-            require(_TroopTransport.cargoArmyId != _troop.armyId, "CURIO: Cannot directly move troops from transport");
-        }
-
+        // if the targe tile has no occupants currently
         if (_targetTile.occupantId == NULL) {
             require(Util._getBaseOwner(_targetTile.baseId) == msg.sender || _targetTile.baseId == NULL, "CURIO: Cannot directly attack with troops");
-            // geographic check
-            if (Util._isLandTroop(_troop.troopTypeId)) {
-                require(_targetTile.terrain != TERRAIN.WATER, "CURIO: Cannot move on water");
-            } else {
-                require(_targetTile.terrain == TERRAIN.WATER || Util._hasPort(_targetTile), "CURIO: Cannot move on land");
-            }
-            // generates a new army and moves it to the target position
-            uint256 _newArmyId = Util._createNewArmyFromTroop(_troopId, _army.pos);
-            // temporarily change occupantId for Move Module to work
-            // note: may sub with a moveNewArmyModule that doesn't check sourceTile
-            gs().map[_army.pos.x][_army.pos.y].occupantId = _newArmyId;
+            // if the target tile is land, all troops must be able to move onto land
+            if (_targetTile.terrain == TERRAIN.INLAND) require(Util._canTroopMoveLand(_troop.troopTypeId), "CURIO: All troops must be able to move onto land in army");
+
+            uint256 _newArmyId = Util._createNewArmyFromTroop(_troopId, _army.pos); // create new army
+
             EngineModules._moveArmy(_newArmyId, _targetPos);
-            gs().map[_army.pos.x][_army.pos.y].occupantId = _troop.armyId;
         } else {
+            // target tile has occupants
             require(_targetArmy.owner == msg.sender, "CURIO: Cannot directly attack with troops");
             // four cases depending on troop and army type
-            if (Util._isLandTroop(_troop.troopTypeId)) {
-                if (Util._isLandArmy(_targetTile.occupantId)) {
-                    // Case I: _troop is landtype & _targetArmy is landtype
-                    // Combined Army Size Check
-                    EngineModules._troopJoinArmySizeCheck(_targetArmy, _troop);
-                    // Combine Troop with Target Army
-                    EngineModules._moveTroopToArmy(_targetTile.occupantId, _troopId);
-                } else {
-                    // Case II: _troop is landtype & _targetArmy is oceantype
-                    // geographic check: there must be troopTransport
-                    require(Util._canTransportTroop(_targetTile) == true, "CURIO: No vacant spot on troop transport");
-                    // Load troop onto transport
-                    // move_module is used within _loadTroop
-                    EngineModules._loadTroop(_troopId, _targetPos);
-                }
-            } else {
-                require(!Util._isLandArmy(_targetTile.occupantId), "CURIO: Cannot merge navy with army");
-                // Case III: _troop is oceantype & _targetArmy is oceantype
-                // Combined Army Size Check
-                EngineModules._troopJoinArmySizeCheck(_targetArmy, _troop);
-                // Combine Troop with Target Army
-                EngineModules._moveTroopToArmy(_targetTile.occupantId, _troopId);
-            }
+
+            EngineModules._troopJoinArmySizeCheck(_targetArmy, _troop); // check if the target tile has enough space
+            Util._canTroopMoveToTileTile(_troop.troopTypeId, _targetTile.terrain); // check if troop can move onto the land type
+
+            EngineModules._moveTroopToArmy(_targetTile.occupantId, _troopId);
         }
+
         EngineModules._clearTroopFromSourceArmy(_troop.armyId, _troopId);
     }
 
@@ -169,7 +135,7 @@ contract EngineFacet is UseStorage {
 
         Base memory _base = Util._getBase(_tile.baseId);
         require(_base.owner == msg.sender, "CURIO: Can only purchase in own base");
-        require(_base.name == BASE_NAME.PORT || (_base.name == BASE_NAME.CITY && Util._isLandTroop(_troopTypeId)), "CURIO: Base cannot purchase selected troop type");
+        require(_base.name == BASE_NAME.PORT || (_base.name == BASE_NAME.CITY && Util._canTroopMoveLand(_troopTypeId)), "CURIO: Base cannot purchase selected troop type");
 
         uint256 _troopPrice = Util._getTroopGoldPrice(_troopTypeId);
         Util._updatePlayerBalances(msg.sender);
