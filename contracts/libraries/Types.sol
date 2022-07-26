@@ -76,7 +76,6 @@ struct Troop {
     uint256 health;
     uint256 lastRepaired;
     uint256 cargoArmyId; // only for Troop Transport
-    Position pos;
 }
 
 struct TroopType {

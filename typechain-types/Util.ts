@@ -109,7 +109,7 @@ export type TroopStructOutput = [BigNumber, BigNumber, BigNumber, BigNumber, Big
 
 export interface UtilInterface extends utils.Interface {
   functions: {
-    '_canTransportTroop((bool,uint8,uint256,uint256))': FunctionFragment;
+    '_canTransportArmy((bool,uint8,uint256,uint256))': FunctionFragment;
     '_getArmy(uint256)': FunctionFragment;
     '_getArmyAttackFactor(uint256[])': FunctionFragment;
     '_getArmyDamagePerHit(uint256[])': FunctionFragment;
@@ -134,7 +134,7 @@ export interface UtilInterface extends utils.Interface {
     '_getPlayerOilBalance(address)': FunctionFragment;
     '_getTileAt((uint256,uint256))': FunctionFragment;
     '_getTotalGoldGenerationPerUpdate(address)': FunctionFragment;
-    '_getTransportIDFromArmy(uint256[])': FunctionFragment;
+    '_getTransportIdFromArmy(uint256[])': FunctionFragment;
     '_getTroop(uint256)': FunctionFragment;
     '_getTroopGoldPrice(uint256)': FunctionFragment;
     '_hasPort((bool,uint8,uint256,uint256))': FunctionFragment;
@@ -149,7 +149,7 @@ export interface UtilInterface extends utils.Interface {
     '_withinDist((uint256,uint256),(uint256,uint256),uint256)': FunctionFragment;
   };
 
-  encodeFunctionData(functionFragment: '_canTransportTroop', values: [TileStruct]): string;
+  encodeFunctionData(functionFragment: '_canTransportArmy', values: [TileStruct]): string;
   encodeFunctionData(functionFragment: '_getArmy', values: [BigNumberish]): string;
   encodeFunctionData(functionFragment: '_getArmyAttackFactor', values: [BigNumberish[]]): string;
   encodeFunctionData(functionFragment: '_getArmyDamagePerHit', values: [BigNumberish[]]): string;
@@ -174,7 +174,7 @@ export interface UtilInterface extends utils.Interface {
   encodeFunctionData(functionFragment: '_getPlayerOilBalance', values: [string]): string;
   encodeFunctionData(functionFragment: '_getTileAt', values: [PositionStruct]): string;
   encodeFunctionData(functionFragment: '_getTotalGoldGenerationPerUpdate', values: [string]): string;
-  encodeFunctionData(functionFragment: '_getTransportIDFromArmy', values: [BigNumberish[]]): string;
+  encodeFunctionData(functionFragment: '_getTransportIdFromArmy', values: [BigNumberish[]]): string;
   encodeFunctionData(functionFragment: '_getTroop', values: [BigNumberish]): string;
   encodeFunctionData(functionFragment: '_getTroopGoldPrice', values: [BigNumberish]): string;
   encodeFunctionData(functionFragment: '_hasPort', values: [TileStruct]): string;
@@ -188,7 +188,7 @@ export interface UtilInterface extends utils.Interface {
   encodeFunctionData(functionFragment: '_strike', values: [BigNumberish, BigNumberish]): string;
   encodeFunctionData(functionFragment: '_withinDist', values: [PositionStruct, PositionStruct, BigNumberish]): string;
 
-  decodeFunctionResult(functionFragment: '_canTransportTroop', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: '_canTransportArmy', data: BytesLike): Result;
   decodeFunctionResult(functionFragment: '_getArmy', data: BytesLike): Result;
   decodeFunctionResult(functionFragment: '_getArmyAttackFactor', data: BytesLike): Result;
   decodeFunctionResult(functionFragment: '_getArmyDamagePerHit', data: BytesLike): Result;
@@ -213,7 +213,7 @@ export interface UtilInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: '_getPlayerOilBalance', data: BytesLike): Result;
   decodeFunctionResult(functionFragment: '_getTileAt', data: BytesLike): Result;
   decodeFunctionResult(functionFragment: '_getTotalGoldGenerationPerUpdate', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: '_getTransportIDFromArmy', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: '_getTransportIdFromArmy', data: BytesLike): Result;
   decodeFunctionResult(functionFragment: '_getTroop', data: BytesLike): Result;
   decodeFunctionResult(functionFragment: '_getTroopGoldPrice', data: BytesLike): Result;
   decodeFunctionResult(functionFragment: '_hasPort', data: BytesLike): Result;
@@ -376,7 +376,7 @@ export interface Util extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    _canTransportTroop(_tile: TileStruct, overrides?: CallOverrides): Promise<[boolean]>;
+    _canTransportArmy(_tile: TileStruct, overrides?: CallOverrides): Promise<[boolean]>;
 
     _getArmy(_armyId: BigNumberish, overrides?: CallOverrides): Promise<[ArmyStructOutput]>;
 
@@ -426,7 +426,7 @@ export interface Util extends BaseContract {
 
     _getTotalGoldGenerationPerUpdate(_player: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    _getTransportIDFromArmy(_armyTroopIds: BigNumberish[], overrides?: CallOverrides): Promise<[BigNumber]>;
+    _getTransportIdFromArmy(_armyTroopIds: BigNumberish[], overrides?: CallOverrides): Promise<[BigNumber]>;
 
     _getTroop(_troopId: BigNumberish, overrides?: CallOverrides): Promise<[TroopStructOutput]>;
 
@@ -453,7 +453,7 @@ export interface Util extends BaseContract {
     _withinDist(_p1: PositionStruct, _p2: PositionStruct, _dist: BigNumberish, overrides?: CallOverrides): Promise<[boolean]>;
   };
 
-  _canTransportTroop(_tile: TileStruct, overrides?: CallOverrides): Promise<boolean>;
+  _canTransportArmy(_tile: TileStruct, overrides?: CallOverrides): Promise<boolean>;
 
   _getArmy(_armyId: BigNumberish, overrides?: CallOverrides): Promise<ArmyStructOutput>;
 
@@ -503,7 +503,7 @@ export interface Util extends BaseContract {
 
   _getTotalGoldGenerationPerUpdate(_player: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-  _getTransportIDFromArmy(_armyTroopIds: BigNumberish[], overrides?: CallOverrides): Promise<BigNumber>;
+  _getTransportIdFromArmy(_armyTroopIds: BigNumberish[], overrides?: CallOverrides): Promise<BigNumber>;
 
   _getTroop(_troopId: BigNumberish, overrides?: CallOverrides): Promise<TroopStructOutput>;
 
@@ -530,7 +530,7 @@ export interface Util extends BaseContract {
   _withinDist(_p1: PositionStruct, _p2: PositionStruct, _dist: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
 
   callStatic: {
-    _canTransportTroop(_tile: TileStruct, overrides?: CallOverrides): Promise<boolean>;
+    _canTransportArmy(_tile: TileStruct, overrides?: CallOverrides): Promise<boolean>;
 
     _getArmy(_armyId: BigNumberish, overrides?: CallOverrides): Promise<ArmyStructOutput>;
 
@@ -580,7 +580,7 @@ export interface Util extends BaseContract {
 
     _getTotalGoldGenerationPerUpdate(_player: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-    _getTransportIDFromArmy(_armyTroopIds: BigNumberish[], overrides?: CallOverrides): Promise<BigNumber>;
+    _getTransportIdFromArmy(_armyTroopIds: BigNumberish[], overrides?: CallOverrides): Promise<BigNumber>;
 
     _getTroop(_troopId: BigNumberish, overrides?: CallOverrides): Promise<TroopStructOutput>;
 
@@ -655,7 +655,7 @@ export interface Util extends BaseContract {
   };
 
   estimateGas: {
-    _canTransportTroop(_tile: TileStruct, overrides?: CallOverrides): Promise<BigNumber>;
+    _canTransportArmy(_tile: TileStruct, overrides?: CallOverrides): Promise<BigNumber>;
 
     _getArmy(_armyId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -705,7 +705,7 @@ export interface Util extends BaseContract {
 
     _getTotalGoldGenerationPerUpdate(_player: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-    _getTransportIDFromArmy(_armyTroopIds: BigNumberish[], overrides?: CallOverrides): Promise<BigNumber>;
+    _getTransportIdFromArmy(_armyTroopIds: BigNumberish[], overrides?: CallOverrides): Promise<BigNumber>;
 
     _getTroop(_troopId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -733,7 +733,7 @@ export interface Util extends BaseContract {
   };
 
   populateTransaction: {
-    _canTransportTroop(_tile: TileStruct, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    _canTransportArmy(_tile: TileStruct, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     _getArmy(_armyId: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -783,7 +783,7 @@ export interface Util extends BaseContract {
 
     _getTotalGoldGenerationPerUpdate(_player: string, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    _getTransportIDFromArmy(_armyTroopIds: BigNumberish[], overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    _getTransportIdFromArmy(_armyTroopIds: BigNumberish[], overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     _getTroop(_troopId: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
