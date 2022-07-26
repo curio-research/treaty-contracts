@@ -241,19 +241,17 @@ library EngineModules {
     }
 
     // note: may consider move this module to moveTroopToArmy
-    function _troopJoinArmySizeCheck(Army memory _mainArmy, Troop memory _JoiningTroop) public view {
+    // check army size based on troop transport: Army can have up to five troops, or two with one transport
+    function _troopJoinArmySizeCheck(Army memory _mainArmy, Troop memory _joiningTroop) public view {
         uint256 troopCounter = _mainArmy.armyTroopIds.length + 1;
-        bool mainHasTransport = Util._getTransportIdFromArmy(_mainArmy.armyTroopIds) == 0;
-        bool joiningIsTransport = _JoiningTroop.troopTypeId == 2; // note: hardcoded
+        bool mainArmyHasTransport = Util._getTransportIdFromArmy(_mainArmy.armyTroopIds) != 0;
+        bool isJoiningTroopTransport = _joiningTroop.troopTypeId == 2; // note: hardcoded
 
-        require(!(mainHasTransport == true && joiningIsTransport == true), "CURIO: Army can have up to five troops, or two with one transport");
-        if (mainHasTransport == true || joiningIsTransport == true) {
-            require(troopCounter == 2, "CURIO: Army can have up to five troops, or two with one transport");
-        } else {
-            require(troopCounter <= 5, "CURIO: Army can have up to five troops, or two with one transport");
-        }
+        require(!(mainArmyHasTransport == true && isJoiningTroopTransport == true), "CURIO: Army can have up to five troops, or two with one transport");
+        require(troopCounter <= 5, "CURIO: Army can have up to five troops, or two with one transport");
     }
 
+    // used when two army/troop types are the same
     function _moveTroopToArmy(uint256 _mainArmyId, uint256 _joiningTroopId) public {
         Troop memory _joiningTroop = Util._getTroop(_joiningTroopId);
         Army memory _sourceArmy = Util._getArmy(_joiningTroop.armyId);
