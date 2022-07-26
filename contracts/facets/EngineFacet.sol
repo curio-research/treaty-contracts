@@ -3,7 +3,7 @@ pragma solidity ^0.8.4;
 
 import "contracts/libraries/Storage.sol";
 import {Util} from "contracts/libraries/GameUtil.sol";
-import {EngineModules} from "contracts/libraries/MarchModules.sol";
+import {EngineModules} from "contracts/libraries/EngineModules.sol";
 import {BASE_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop, Army, TroopType, WorldConstants} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 
@@ -72,7 +72,7 @@ contract EngineFacet is UseStorage {
     }
 
     /**
-     * dispatch troop to a target position (_moveArmy, _loadTroop, mov_clearTroopFromSourceArmy etc.).
+     * Dispatch troop to a target position (_moveArmy, _loadTroop, mov_clearTroopFromSourceArmy etc.).
      * @param _troopId identifier for troop
      * @param _targetPos target position
      */
@@ -126,13 +126,13 @@ contract EngineFacet is UseStorage {
             // four cases depending on troop and army type
             if (Util._isLandTroop(_troop.troopTypeId)) {
                 if (Util._isLandArmy(_targetTile.occupantId)) {
-                    // Case I: _troop is land & _targetArmy is landtype
+                    // Case I: _troop is landtype & _targetArmy is landtype
                     // Combined Army Size Check
                     EngineModules._troopJoinArmySizeCheck(_targetArmy, _troop);
                     // Combine Troop with Target Army
                     EngineModules._moveTroopToArmy(_targetTile.occupantId, _troopId);
                 } else {
-                    // Case II: _troop is land & _targetArmy is oceantype
+                    // Case II: _troop is landtype & _targetArmy is oceantype
                     // geographic check: there must be troopTransport
                     require(Util._canTransportTroop(_targetTile) == true, "CURIO: No vacant spot on troop transport");
                     // Load troop onto transport
@@ -141,7 +141,7 @@ contract EngineFacet is UseStorage {
                 }
             } else {
                 require(!Util._isLandArmy(_targetTile.occupantId), "CURIO: Cannot merge navy with army");
-                // Case III: _troop is ocean & _targetArmy is ocean
+                // Case III: _troop is oceantype & _targetArmy is oceantype
                 // Combined Army Size Check
                 EngineModules._troopJoinArmySizeCheck(_targetArmy, _troop);
                 // Combine Troop with Target Army
