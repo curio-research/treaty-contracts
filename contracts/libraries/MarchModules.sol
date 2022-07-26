@@ -6,9 +6,9 @@ import {Util} from "contracts/libraries/GameUtil.sol";
 import {BASE_NAME, TROOP_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop, Army, WorldConstants} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 
-/// @title Util library
-/// @notice Contains all events as well as lower-level setters and getters
-/// Util functions generally do not verify correctness of conditions. Make sure to verify in higher-level functions such as those in Engine.
+/// @title EngineModules library
+/// @notice Composable parts for engine functions
+/// functions generally do not verify correctness of conditions. Make sure to verify in higher-level functions such as those in Engine.
 
 library EngineModules {
     using SafeMath for uint256;
@@ -17,11 +17,6 @@ library EngineModules {
         return LibStorage.gameStorage();
     }
 
-    /**
-     * update position of Army; mainly when marching an entire army
-     * @param _armyId identifier for the army that the others are joining
-     * @param _targetPos identifier for target position
-     */
     function _moveArmy(uint256 _armyId, Position memory _targetPos) public {
         Army memory _army = Util._getArmy(_armyId);
         Tile memory _targetTile = Util._getTileAt(_targetPos);
@@ -226,7 +221,6 @@ library EngineModules {
     function _loadTroop(uint256 _troopId, Position memory _targetPos) public {
         Tile memory _targetTile = Util._getTileAt(_targetPos);
         Troop memory _troopTransport = Util._getTroop(_targetTile.occupantId);
-        Troop memory _troop = Util._getTroop(_troopId);
         require(gs().troopTypeIdMap[_targetTile.occupantId].name == TROOP_NAME.TROOP_TRANSPORT, "CURIO: No troopTransport on target Tile");
         require(gs().troopTypeIdMap[_troopId].name != TROOP_NAME.TROOP_TRANSPORT, "CURIO: Transport cannot load Transport");
 
@@ -236,18 +230,18 @@ library EngineModules {
             _loadArmy(_newArmyId, _targetTile);
             // temporarily change occupantId for Move Module to work
             // note: may sub with a moveNewArmyModule that doesn't check sourceTile
-            gs().map[_troopTransport.pos.x][_troopTransport.pos.y].occupantId = _newArmyId;
-            _moveArmy(_newArmyId, _troopTransport.pos);
-            gs().map[_troopTransport.pos.x][_troopTransport.pos.y].occupantId = _targetTile.occupantId;
+            gs().map[_targetPos.x][_targetPos.y].occupantId = _newArmyId;
+            _moveArmy(_newArmyId, _targetPos);
+            gs().map[_targetPos.x][_targetPos.y].occupantId = _targetTile.occupantId;
         } else {
             // if there's an existing army on troop transport, push troop individually to that army
-            Army memory _cargoArmy = Util._getArmy(_troopTransport.cargoArmyId);
+            // checker is in engine
             gs().armyIdMap[_troopTransport.cargoArmyId].armyTroopIds.push(_troopId);
         }
     }
 
     // note: may consider move this module to moveTroopToArmy
-    function _troopJoinArmySizeCheck(Army memory _mainArmy, Troop memory _JoiningTroop) public view returns (bool) {
+    function _troopJoinArmySizeCheck(Army memory _mainArmy, Troop memory _JoiningTroop) public view {
         uint256 troopCounter = _mainArmy.armyTroopIds.length + 1;
         bool mainHasTransport = Util._getTransportIdFromArmy(_mainArmy.armyTroopIds) == 0;
         bool joiningIsTransport = _JoiningTroop.troopTypeId == 2; // note: hardcoded
@@ -260,12 +254,6 @@ library EngineModules {
         }
     }
 
-    /**
-     * move troops from joining army into main army; clears up source armyState
-     * update main army state
-     * @param _mainArmyId identifier for the army that the others are joining
-     * @param _joiningTroopId identifiers for joining armies
-     */
     function _moveTroopToArmy(uint256 _mainArmyId, uint256 _joiningTroopId) public {
         Troop memory _joiningTroop = Util._getTroop(_joiningTroopId);
         Army memory _sourceArmy = Util._getArmy(_joiningTroop.armyId);
@@ -292,120 +280,6 @@ library EngineModules {
         // deal with when _sourceArmy is empty
         if (gs().armyIdMap[_sourceArmyId].armyTroopIds.length == 0) {
             Util._removeArmyOnly(_sourceArmyId);
-        }
-    }
-
-    /**
-     * combine multiple armies into one; move troops from joining army into main army
-     * @param _mainArmyId identifier for the army that the others are joining
-     * @param _joiningArmyIds identifiers for joining armies
-     */
-    function _combineArmy(uint256 _mainArmyId, uint256[] memory _joiningArmyIds) public {
-        // basic check
-        require(!gs().isPaused, "CURIO: Game is paused");
-        require(Util._isPlayerActive(msg.sender), "CURIO: Player is inactive");
-
-        Army memory _mainArmy = Util._getArmy(_mainArmyId);
-        require(Util._inBound(_mainArmy.pos), "CURIO: Target out of bound");
-        if (!Util._getTileAt(_mainArmy.pos).isInitialized) Util._initializeTile(_mainArmy.pos);
-
-        require(_mainArmy.owner == msg.sender, "CURIO: Can only combine own troop");
-
-        // army size pre-check; _joiningArmyIds are armies not troops but each has at least one troop
-        uint256 troopCounter = _mainArmy.armyTroopIds.length;
-        bool hasTransport = Util._getTransportIdFromArmy(_mainArmy.armyTroopIds) == 0;
-        require((hasTransport && (troopCounter + _joiningArmyIds.length) == 2) || (!hasTransport && (troopCounter + _joiningArmyIds.length) <= 5 && (troopCounter + _joiningArmyIds.length) >= 2), "CURIO: Army can have up to five troops, or two with one transport");
-
-        // large action check & update
-        require((block.timestamp - _mainArmy.lastLargeActionTaken) >= Util._getArmyLargeActionCooldown(_mainArmy.armyTroopIds), "CURIO: Large action taken too recently");
-        gs().armyIdMap[_mainArmyId].lastLargeActionTaken = block.timestamp;
-
-        bool isLandArmy = Util._isLandArmy(_mainArmyId);
-
-        for (uint256 i = 0; i < _joiningArmyIds.length; i++) {
-            uint256 _joiningArmyId = _joiningArmyIds[i];
-            require(isLandArmy == Util._isLandArmy(_joiningArmyId), "CURIO: Can only combine army of same type");
-            Army memory _joiningArmy = Util._getArmy(_joiningArmyId);
-
-            require(_joiningArmy.owner == msg.sender, "CURIO: Can only combine own troop");
-            require(Util._withinDist(_mainArmy.pos, _joiningArmy.pos, 1), "CURIO: Combining armies must stay next to each other");
-
-            uint256 _movementCooldown = Util._getArmyMovementCooldown(_joiningArmy.armyTroopIds);
-            require((block.timestamp - _joiningArmy.lastMoved) >= _movementCooldown, "CURIO: Moved too recently");
-
-            // large action check & update
-            require((block.timestamp - _joiningArmy.lastLargeActionTaken) >= Util._getArmyLargeActionCooldown(_joiningArmy.armyTroopIds), "CURIO: Large action taken too recently");
-            gs().armyIdMap[_joiningArmyId].lastLargeActionTaken = block.timestamp;
-
-            // real army size check
-            troopCounter += _joiningArmy.armyTroopIds.length;
-            if (Util._getTransportIdFromArmy(_mainArmy.armyTroopIds) != 0) {
-                require(hasTransport == false, "CURIO: Army can have up to five troops, or two with one transport");
-                hasTransport == true;
-            }
-            require((hasTransport && troopCounter <= 2) || (!hasTransport && troopCounter <= 5), "CURIO: Army can have at most five troops, or two with one transport");
-
-            // combining troops
-            for (uint256 j = 0; j < _joiningArmy.armyTroopIds.length; j++) {
-                gs().troopIdMap[_joiningArmy.armyTroopIds[j]].armyId = _mainArmyId;
-                gs().armyIdMap[_mainArmyId].armyTroopIds.push(_joiningArmy.armyTroopIds[j]);
-            }
-
-            Util._removeArmyOnly(_joiningArmyId);
-        }
-    }
-
-    // todo: change input to one troopId
-    function _detachTroopFromArmy(
-        uint256 _mainArmyId,
-        uint256[] memory _leavingTroopIds,
-        Position memory _targetPos
-    ) external {
-        // basic check
-        require(!gs().isPaused, "CURIO: Game is paused");
-        require(Util._isPlayerActive(msg.sender), "CURIO: Player is inactive");
-
-        Army memory _mainArmy = Util._getArmy(_mainArmyId);
-        require(_mainArmy.owner == msg.sender, "CURIO: Can only detach own troop");
-        require(Util._inBound(_targetPos), "CURIO: Target out of bound");
-        if (!Util._getTileAt(_targetPos).isInitialized) Util._initializeTile(_targetPos);
-
-        require(_leavingTroopIds.length >= 1 && _leavingTroopIds.length < 5, "CURIO: Army must have at least one troop and at most five troops");
-        require(Util._withinDist(_mainArmy.pos, _targetPos, 1), "CURIO: Taget distance beyond 1 tile");
-
-        // large action check & update
-        require((block.timestamp - _mainArmy.lastLargeActionTaken) >= Util._getArmyLargeActionCooldown(_mainArmy.armyTroopIds), "CURIO: Large action taken too recently");
-        gs().armyIdMap[_mainArmyId].lastLargeActionTaken = block.timestamp;
-
-        uint256 _movementCooldown = Util._getArmyMovementCooldown(_mainArmy.armyTroopIds);
-        require((block.timestamp - _mainArmy.lastMoved) >= _movementCooldown, "CURIO: Moved too recently");
-
-        // army size check
-        bool leavingTroopsHaveTransport = Util._getTransportIdFromArmy(_leavingTroopIds) != _NULL();
-        require((leavingTroopsHaveTransport && _leavingTroopIds.length <= 2) || (!leavingTroopsHaveTransport && _leavingTroopIds.length <= 5), "CURIO: Army can have at most five troops, or two with one transport");
-        Army memory _newArmy = Army({owner: _mainArmy.owner, armyTroopIds: _leavingTroopIds, lastMoved: block.timestamp, lastLargeActionTaken: block.timestamp, pos: _targetPos});
-
-        // state changes for new army
-        uint256 _newArmyId = gs().armyNonce;
-        gs().armyIds.push(_newArmyId);
-        gs().armyNonce++;
-        gs().map[_targetPos.x][_targetPos.y].occupantId = _newArmyId;
-        gs().armyIdMap[_newArmyId] = _newArmy;
-
-        for (uint256 i = 0; i < _leavingTroopIds.length; i++) {
-            // state changes for leaving troops
-            Troop memory _troop = gs().troopIdMap[_leavingTroopIds[i]];
-            _troop.armyId = _newArmyId;
-
-            // state changes for main army: clean up leaving troops
-            // note: easier here if we create a new map linking troopId with armyId
-            uint256 _index = 0;
-            while (_index < _mainArmy.armyTroopIds.length) {
-                if (_mainArmy.armyTroopIds[_index] == _leavingTroopIds[i]) break;
-                _index++;
-            }
-            gs().armyIdMap[_mainArmyId].armyTroopIds[_index] = _mainArmy.armyTroopIds[_mainArmy.armyTroopIds.length - 1];
-            gs().armyIdMap[_mainArmyId].armyTroopIds.pop();
         }
     }
 
