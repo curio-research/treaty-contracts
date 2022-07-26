@@ -96,7 +96,7 @@ contract HelperFacet is UseStorage {
 
         if (_tile.baseId != NULL) {
             Base memory _base = gs().baseIdMap[_tile.baseId];
-            require(_base.owner == _player, "CURIO: Can only spawn troop in player's base");
+            // require(_base.owner == _player, "CURIO: Can only spawn troop in player's base");
             require(Util._isLandTroop(_troopTypeId) || _base.name == BASE_NAME.PORT, "CURIO: Can only spawn water troops in ports");
         }
 

@@ -15,6 +15,7 @@ import { FunctionFragment, Result } from "@ethersproject/abi";
 import { Listener, Provider } from "@ethersproject/providers";
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
+<<<<<<< HEAD
 export type TileStruct = {
   isInitialized: boolean;
   terrain: BigNumberish;
@@ -27,10 +28,62 @@ export type TileStructOutput = [boolean, number, BigNumber, BigNumber] & {
   terrain: number;
   occupantId: BigNumber;
   baseId: BigNumber;
+=======
+export type PositionStruct = { x: BigNumberish; y: BigNumberish };
+
+export type PositionStructOutput = [BigNumber, BigNumber] & {
+  x: BigNumber;
+  y: BigNumber;
+};
+
+export type ArmyStruct = {
+  owner: string;
+  armyTroopIds: BigNumberish[];
+  lastMoved: BigNumberish;
+  lastLargeActionTaken: BigNumberish;
+  pos: PositionStruct;
+};
+
+export type ArmyStructOutput = [
+  string,
+  BigNumber[],
+  BigNumber,
+  BigNumber,
+  PositionStructOutput
+] & {
+  owner: string;
+  armyTroopIds: BigNumber[];
+  lastMoved: BigNumber;
+  lastLargeActionTaken: BigNumber;
+  pos: PositionStructOutput;
+};
+
+export type TroopStruct = {
+  armyId: BigNumberish;
+  troopTypeId: BigNumberish;
+  health: BigNumberish;
+  lastRepaired: BigNumberish;
+  cargoArmyId: BigNumberish;
+};
+
+export type TroopStructOutput = [
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber
+] & {
+  armyId: BigNumber;
+  troopTypeId: BigNumber;
+  health: BigNumber;
+  lastRepaired: BigNumber;
+  cargoArmyId: BigNumber;
+>>>>>>> 87f4ab6 (Basic testing)
 };
 
 export interface EngineModulesInterface extends utils.Interface {
   functions: {
+<<<<<<< HEAD
     "_geographicCheckArmy(uint256,(bool,uint8,uint256,uint256))": FunctionFragment;
     "_geographicCheckTroop(uint256,(bool,uint8,uint256,uint256))": FunctionFragment;
   };
@@ -50,6 +103,18 @@ export interface EngineModulesInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "_geographicCheckTroop",
+=======
+    "_troopJoinArmySizeCheck((address,uint256[],uint256,uint256,(uint256,uint256)),(uint256,uint256,uint256,uint256,uint256))": FunctionFragment;
+  };
+
+  encodeFunctionData(
+    functionFragment: "_troopJoinArmySizeCheck",
+    values: [ArmyStruct, TroopStruct]
+  ): string;
+
+  decodeFunctionResult(
+    functionFragment: "_troopJoinArmySizeCheck",
+>>>>>>> 87f4ab6 (Basic testing)
     data: BytesLike
   ): Result;
 
@@ -83,6 +148,7 @@ export interface EngineModules extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+<<<<<<< HEAD
     _geographicCheckArmy(
       _armyId: BigNumberish,
       _tile: TileStruct,
@@ -120,11 +186,33 @@ export interface EngineModules extends BaseContract {
       _tile: TileStruct,
       overrides?: CallOverrides
     ): Promise<boolean>;
+=======
+    _troopJoinArmySizeCheck(
+      _mainArmy: ArmyStruct,
+      _JoiningTroop: TroopStruct,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
+  };
+
+  _troopJoinArmySizeCheck(
+    _mainArmy: ArmyStruct,
+    _JoiningTroop: TroopStruct,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
+  callStatic: {
+    _troopJoinArmySizeCheck(
+      _mainArmy: ArmyStruct,
+      _JoiningTroop: TroopStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
+>>>>>>> 87f4ab6 (Basic testing)
   };
 
   filters: {};
 
   estimateGas: {
+<<<<<<< HEAD
     _geographicCheckArmy(
       _armyId: BigNumberish,
       _tile: TileStruct,
@@ -134,11 +222,17 @@ export interface EngineModules extends BaseContract {
     _geographicCheckTroop(
       _troopTypeId: BigNumberish,
       _tile: TileStruct,
+=======
+    _troopJoinArmySizeCheck(
+      _mainArmy: ArmyStruct,
+      _JoiningTroop: TroopStruct,
+>>>>>>> 87f4ab6 (Basic testing)
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
+<<<<<<< HEAD
     _geographicCheckArmy(
       _armyId: BigNumberish,
       _tile: TileStruct,
@@ -148,6 +242,11 @@ export interface EngineModules extends BaseContract {
     _geographicCheckTroop(
       _troopTypeId: BigNumberish,
       _tile: TileStruct,
+=======
+    _troopJoinArmySizeCheck(
+      _mainArmy: ArmyStruct,
+      _JoiningTroop: TroopStruct,
+>>>>>>> 87f4ab6 (Basic testing)
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
