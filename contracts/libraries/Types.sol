@@ -64,7 +64,7 @@ struct Tile {
 
 struct Army {
     address owner;
-    uint256[] armyTroopIds;
+    uint256[] armyTroopIds; // troopIds
     uint256 lastMoved;
     uint256 lastLargeActionTaken;
     Position pos;
@@ -75,7 +75,7 @@ struct Troop {
     uint256 troopTypeId;
     uint256 health;
     uint256 lastRepaired;
-    uint256 cargoArmyId; // only for Troop Transport
+    uint256 cargoArmyId; // the armyID to the troop transport it belongs to
 }
 
 struct TroopType {

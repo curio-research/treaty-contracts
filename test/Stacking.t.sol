@@ -86,5 +86,24 @@ contract StackingTest is Test, DiamondDeployTest {
         assertEq(army2.armyTroopIds.length, 1);
         assertEq(army2.armyTroopIds[0], 2); // troop #2 in old tile
     }
+
+    function testTroopTransport() public {
+        vm.startPrank(deployer);
+        helper.spawnTroop(player1Pos, player1, infantryTroopTypeId); // spawn an infrantry. troop # 1
+        Position memory troopTransportPosition = Position({x: 6, y: 2});
+        helper.spawnTroop(troopTransportPosition, player1, troopTransportTroopTypeId); // spawn a troop transport. troop #2
+        vm.stopPrank();
+
+        vm.startPrank(player1);
+        engine.moveTroop(1, troopTransportPosition); // move infantry to troop transport
+        vm.stopPrank();
+
+        Army memory army2 = getter.getArmyAt(troopTransportPosition);
+        assertEq(army2.armyTroopIds.length, 1);
+
+        Troop memory troop = getter.getTroop(1);
+        console.log(troop.cargoArmyId);
+        assertEq(troop.cargoArmyId, 2);
+    }
 }
 >>>>>>> 87f4ab6 (Basic testing)
