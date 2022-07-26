@@ -129,4 +129,92 @@ contract StackingTest is Test, DiamondDeployTest {
         vm.expectRevert(bytes("CURIO: Troops and land types not compatible"));
         engine.march(2, getRightPos(destroyerPosition));
     }
+
+    function testArmyBattle() public {
+        // spawn 1 infantry 1 destroyer and combine them
+        vm.startPrank(deployer);
+
+        helper.spawnTroop(player1Pos, player1, infantryTroopTypeId); // spawn an infrantry. troop # 1
+        Position memory destroyerPosition = Position({x: 7, y: 1});
+        helper.spawnTroop(destroyerPosition, player1, destroyerTroopTypeId); // spawn an destroyer. troop #2
+
+        helper.spawnTroop(player2Pos, player2, infantryTroopTypeId);
+        Position memory battleshipPosition = Position({x: 7, y: 3});
+        helper.spawnTroop(battleshipPosition, player2, battleshipTroopTypeId);
+
+        vm.stopPrank();
+
+        // preparing for battle
+        vm.startPrank(player1);
+        engine.moveTroop(1, destroyerPosition); // move infantry to destroyer
+        engine.march(2, Position({x: 7, y: 2}));
+        vm.stopPrank();
+
+        vm.startPrank(player2);
+        engine.moveTroop(3, battleshipPosition); // move infantry to battleship
+        Tile memory newPlayer2Tile = getter.getTileAt(battleshipPosition);
+        uint256 player2ArmyId = newPlayer2Tile.occupantId;
+
+        // battle
+        engine.march(player2ArmyId, Position({x: 7, y: 2}));
+
+        // check battle results - unlikely destroyer gonna win but could happen
+        Army memory winningArmy = getter.getArmyAt(battleshipPosition);
+        assertEq(winningArmy.armyTroopIds.length, 2);
+        Tile memory targetTile = getter.getTileAt(Position({x: 7, y: 2}));
+        assertEq(targetTile.occupantId, 0);
+        vm.stopPrank();
+    }
+
+    function testMoveTroopEdgeCases() public {
+        // spawn 1 infantry 1 destroyer and combine them
+        vm.startPrank(deployer);
+
+        helper.spawnTroop(player1Pos, player1, infantryTroopTypeId); // spawn an infrantry. troop # 1
+        Position memory pos2 = Position({x: 7, y: 1});
+        Position memory pos3 = Position({x: 6, y: 0});
+        Position memory pos4 = Position({x: 6, y: 2});
+        Position memory pos5 = Position({x: 5, y: 1});
+
+        // center position is (6, 1)
+        helper.spawnTroop(pos2, player1, infantryTroopTypeId); // spawn an destroyer. troop #2
+        helper.spawnTroop(pos3, player1, infantryTroopTypeId);
+        helper.spawnTroop(pos4, player1, infantryTroopTypeId);
+        helper.spawnTroop(pos5, player1, infantryTroopTypeId);
+        vm.stopPrank();
+
+
+        // move all player one's troop to (player1Pos which is (6, 1))
+        vm.startPrank(player1);
+        engine.moveTroop(2, player1Pos);
+        engine.moveTroop(3, player1Pos);
+        engine.moveTroop(4, player1Pos);
+        engine.moveTroop(5, player1Pos);
+        vm.stopPrank();
+
+        Army memory _targetArmy = getter.getArmy(1);
+        assertEq(_targetArmy.armyTroopIds.length, 5);
+
+        // spawn extra troop
+        vm.startPrank(deployer);
+        helper.spawnTroop(pos2, player1, infantryTroopTypeId);
+        vm.stopPrank();
+
+        // move extra troop to army
+        vm.startPrank(player1);
+        vm.expectRevert("CURIO: Army can have up to five troops, or two with one transport");
+        engine.moveTroop(6, player1Pos);
+        vm.stopPrank();
+
+        // player 2 move troop to player 1's army -- to the one generated as extra
+        vm.startPrank(deployer);
+        helper.spawnTroop(Position({x: 7, y: 2}), player2, infantryTroopTypeId);
+        vm.stopPrank();
+
+        // move extra troop to army
+        vm.startPrank(player2);
+        vm.expectRevert("CURIO: Can only combine with own troop");
+        engine.moveTroop(6, pos2);
+        vm.stopPrank();
+    }
 }

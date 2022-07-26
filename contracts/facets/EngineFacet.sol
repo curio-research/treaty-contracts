@@ -101,10 +101,7 @@ contract EngineFacet is UseStorage {
             EngineModules._moveArmy(_newArmyId, _targetPos);
             gs().map[_army.pos.x][_army.pos.y].occupantId = _troop.armyId;
         } else {
-            // target tile has occupants
-            require(_targetArmy.owner == msg.sender, "CURIO: Cannot directly attack with troops");
             // four cases depending on troop and army type
-
             EngineModules._troopJoinArmySizeCheck(_targetArmy, _troop); // check if the target tile has enough space
             Util._canTroopMoveToTile(_troop.troopTypeId, _targetTile.terrain); // check if troop can move onto the land type
 
