@@ -61,6 +61,11 @@ library Util {
 
         // 2. Create new troop entity globally and in corresponding components
         uint256 _troopId = addEntity();
+        addComponentEntityValue("IsActive", _troopId, abi.encode(true));
+        addComponentEntityValue("CanMove", _troopId, abi.encode(true));
+        if (getComponent("CanCapture").has(_troopTemplateId)) {
+            addComponentEntityValue("CanCapture", _troopId, abi.encode(true));
+        }
         addComponentEntityValue("Owner", _troopId, abi.encode(_playerId));
         addComponentEntityValue("LastMoved", _troopId, abi.encode(block.timestamp));
         addComponentEntityValue("LastLargeActionTaken", _troopId, abi.encode(0));
@@ -82,11 +87,11 @@ library Util {
         }
 
         // 3. Update map info
-        // FIXME: is this even needed? if so, how to get the tile info from position?
-        // asking because using
+        // no longer need `occupantId` for tile; can reverse-fetch from position
 
         // 4. Update balances
-        // FIXME: also not needed, for the same reason above
+        // no longer need `totalOilPerSecond` for player
+        // no longer need `troopCount` for player
 
         return _troopId;
     }

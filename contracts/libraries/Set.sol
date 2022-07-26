@@ -8,6 +8,12 @@ contract Set {
     // need item => value mapping
     // example: item => Position. Should store as struct or bytes?
 
+    function addArray(uint256[] memory _items) public {
+        for (uint256 i = 0; i < _items.length; i++) {
+            add(_items[i]);
+        }
+    }
+
     function add(uint256 _item) public {
         if (has(_item)) return;
 

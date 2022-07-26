@@ -5,6 +5,8 @@ import "contracts/libraries/Storage.sol";
 import {Util} from "contracts/libraries/GameUtil.sol";
 import {BASE_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop, TroopType, WorldConstants} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
+import {Component} from "contracts/libraries/Component.sol";
+import {Set} from "contracts/libraries/Set.sol";
 
 /// @title Engine facet
 /// @notice Contains player functions such as march, purchaseTroop, initializePlayer
@@ -336,10 +338,14 @@ contract EngineFacet is UseStorage {
     // Question: TroopType now is just a troop without owner, position, or isActive; aka a template
     // Question: should past structs like `Base` or `Troop` be their own boolean components? Or should they be differentiated solely from "functional" components?
     // Question: what is entityId? can it just increase with a nonce?
+    // Question: rn all the intersections are hardcoded over lists. how do you have efficient set intersections?
     // BIG TODO: implement systems. rn all attributes are components in gs(), which is confusing AF
-    // BIG FIXME: rn all the intersections are wrong cuz they're over lists. how do you have only set intersections? convert lists to sets?
     function purchaseTroopNew(Position memory _position, uint256 _troopTemplateId) public {
-        // 0. Verify that both parameter entities exist
+        Set memory _set1 = new Set();
+        Set memory _set2 = new Set();
+
+        // 0. Verify that parametric entity exists
+        require(Set(gs().entities).has(_troopTemplateId), "CURIO: Troop template not found");
 
         // 1. Verify that game is ongoing
         require(!gs().isPaused, "CURIO: Game is paused");
@@ -354,21 +360,25 @@ contract EngineFacet is UseStorage {
 
         // TODO: reconsider `initializeTile` here
 
-        // 4. Verify that a "base" is present
+        // 4. Verify that a "base" (aka. an entity which can purchase) is present
         uint256[] memory _entitiesWithGivenPosition = Util.getComponent("Position").getEntitiesWithValue(abi.encode(_position));
         uint256[] memory _entitiesWithCanPurchase = Util.getComponent("CanPurchase").getEntitiesWithValue(abi.encode(true));
-        uint256[] memory _intersectEntities = Util.intersection(_entitiesWithCanPurchase, _entitiesWithGivenPosition);
-        require(_intersectEntities.length == 1, "CURIO: No base found");
-        uint256 _baseId = _intersectEntities[0];
+        _set1.addArray(_entitiesWithGivenPosition);
+        _set2.addArray(_entitiesWithCanPurchase);
+        uint256[] memory _intersection = Util.intersection(_set1, _set2);
+        require(_intersection.length == 1, "CURIO: No base found");
+        uint256 _baseId = _intersection[0];
 
         // 5. Verify that player owns the "base"
         uint256 _owner = Util.getComponent("Owner").getRawValue(_baseId);
         require(_owner == abi.encode(msg.sender), "CURIO: Can only purchase in own base");
 
-        // 6. Verify that no "troop" is present
-        uint256[] memory _entitiesWithCanCapture = Util.getComponent("CanCapture").getEntitiesWithValue(abi.encode(false));
-        _intersectEntities = Util.intersection(_entitiesWithCanCapture, _entitiesWithGivenPosition);
-        require(_intersectEntities.length == 0, "CURIO: Base occupied by another troop");
+        // 6. Verify that no "troop" (aka. a movable entity) is present
+        uint256[] memory _entitiesWithCanMove = Util.getComponent("CanMove").getEntitiesWithValue(abi.encode(false));
+        _set2 = new Set();
+        _set2.addArray(_entitiesWithCanMove);
+        _intersection = Util.intersection(_set1, _set2);
+        require(_intersection.length == 0, "CURIO: Base occupied by another troop");
 
         // 7. Verify that the "base" can purchase the given type of "troop"
         uint256 _isLandTroop = Util.getComponent("IsLandTroop").getRawValue(_troopTemplateId);
