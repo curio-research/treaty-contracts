@@ -19,11 +19,9 @@ enum TERRAIN {
 
 enum TROOP_NAME {
     INFANTRY,
-    TROOP_TRANSPORT,
     DESTROYER,
     CRUISER,
-    BATTLESHIP,
-    FIGHTER_JET
+    BATTLESHIP
 }
 
 struct Position {
@@ -75,12 +73,10 @@ struct Troop {
     uint256 troopTypeId;
     uint256 health;
     uint256 lastRepaired;
-    uint256 cargoArmyId; // the armyID to the troop transport it belongs to
 }
 
 struct TroopType {
     TROOP_NAME name;
-    bool isLandTroop;
     uint256 maxHealth;
     uint256 damagePerHit;
     uint256 attackFactor; // in the interval [0, 100]
