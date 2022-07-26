@@ -121,6 +121,7 @@ struct GameState {
     uint256[][] encodedColumnBatches;
     //
 
+    address entities; // address(new Set())
     mapping(string => address) components; // component name to contract address
     mapping(address => uint256) playerIdMap; // FIXME: update when initialized
 }

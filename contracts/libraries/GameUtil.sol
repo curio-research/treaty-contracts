@@ -5,6 +5,7 @@ import "contracts/libraries/Storage.sol";
 import {BASE_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop, WorldConstants} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 import {Component} from "contracts/libraries/Component.sol";
+import {Set} from "contracts/libraries/Set.sol";
 
 /// @title Util library
 /// @notice Contains all events as well as lower-level setters and getters
@@ -47,6 +48,42 @@ library Util {
 
     function getPlayerId(address _playerAddr) public view returns (uint256) {
         return gs().playerIdMap[_playerAddr];
+    }
+
+    function addTroopEntity(
+        uint256 _playerId,
+        Position memory _position,
+        uint256 _troopTemplateId
+    ) public {
+        // 1. Get number of player-owned troops and verify size
+        uint256 _playerTroopCount = getPlayerTroopCount(_playerId);
+        require(_playerTroopCount < gs().worldConstants.maxTroopCountPerPlayer, "CURIO: Max troop count exceeded");
+
+        // 2. Create new troop entity globally and in corresponding components
+        uint256 _troopEntity = addEntity();
+        addComponentEntityValue("Owner", _troopEntity, abi.encode(_playerId));
+        // TODO: left here
+    }
+
+    function addEntity() public returns (uint256) {
+        Set memory _entities = Set(gs().entities);
+        uint256 _newEntity = _entities.size();
+        _entities.add(_newEntity);
+        return _newEntity;
+    }
+
+    function addComponentEntityValue(
+        string memory _componentName,
+        uint256 _entity,
+        bytes calldata _value
+    ) public {
+        getComponent(_componentName).set(_entity, _value);
+    }
+
+    function getPlayerTroopCount(uint256 _playerId) public view returns (uint256) {
+        uint256[] memory _entitiesOwnedByPlayer = getComponent("Owner").getEntitiesWithValue(abi.encode(_playerId));
+        uint256[] memory _allTroops = getComponent("IsTroop").getEntities();
+        return intersection(_entitiesOwnedByPlayer, _allTroops).length;
     }
 
     function intersection(Set memory set1, Set memory set2) public returns (uint256[] memory) {
@@ -398,6 +435,19 @@ library Util {
 
     function _random(uint256 _max, uint256 _salt) public view returns (uint256) {
         return uint256(keccak256(abi.encode(block.timestamp, block.difficulty, _salt))) % _max;
+    }
+
+    function _getNeighbors(Position memory _pos) public view returns (Position[] memory) {
+        uint256[] memory _result = new uint256[]();
+        uint256 _x = _pos.x;
+        uint256 _y = _pos.y;
+
+        if (_x > 0) _result.push(Position({x: _x - 1, y: _y}));
+        if (_x < gs().worldWidth - 1) result.push(Position({x: _x + 1, y: _y}));
+        if (_y > 0) _result.push(Position({x: _x, y: _y - 1}));
+        if (y < gs().worldHeight - 1) result.push(Position({x: _x, y: _y + 1}));
+
+        return _result;
     }
 
     function _samePos(Position memory _p1, Position memory _p2) public pure returns (bool) {
