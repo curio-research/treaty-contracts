@@ -26,17 +26,14 @@ library EngineModules {
         uint256 _movementCooldown = Util._getArmyMovementCooldown(_army.armyTroopIds);
         // require((block.timestamp - _army.lastMoved) >= _movementCooldown, "CURIO: Moved too recently");
 
-        Army memory _targetTileArmy;
-        uint256 _targetTileTroopTransportId;
-        if (_targetTile.occupantId != _NULL()) {
-            _targetTileArmy = Util._getArmy(_targetTile.occupantId);
-        }
-
-        gs().map[_targetPos.x][_targetPos.y].occupantId = _armyId; // set armyID of new tile
-        gs().map[_army.pos.x][_army.pos.y].occupantId = _NULL();
+        gs().map[_targetPos.x][_targetPos.y].occupantId = _armyId;
 
         gs().armyIdMap[_armyId].pos = _targetPos;
         gs().armyIdMap[_armyId].lastMoved = block.timestamp;
+
+        gs().map[_army.pos.x][_army.pos.y].occupantId = _NULL(); // clear source tile's occupant ID
+
+        Util._updatePlayerBalances(msg.sender);
 
         emit Util.Moved(msg.sender, _armyId, block.timestamp, _army.pos, _targetPos);
     }
@@ -187,12 +184,11 @@ library EngineModules {
 
     // note: may consider move this module to moveTroopToArmy
     // check army size based on troop transport: Army can have up to five troops, or two with one transport
-    function _troopJoinArmySizeCheck(Army memory _mainArmy, Troop memory _joiningTroop) public view {
+    function _troopJoinArmySizeCheck(Army memory _mainArmy, Troop memory _joiningTroop) public pure {
         uint256 troopCounter = _mainArmy.armyTroopIds.length + 1;
         require(troopCounter <= 5, "CURIO: Army can have up to five troops, or two with one transport");
     }
 
-    // used when two army / troop types are the same
     function _moveTroopToArmy(uint256 _mainArmyId, uint256 _joiningTroopId) public {
         Troop memory _joiningTroop = Util._getTroop(_joiningTroopId);
         Army memory _sourceArmy = Util._getArmy(_joiningTroop.armyId);
@@ -208,13 +204,13 @@ library EngineModules {
 
     function _clearTroopFromSourceArmy(uint256 _sourceArmyId, uint256 _troopId) public {
         // state changes for source army: clean up leaving troops
-        Army memory _sourceArmy = Util._getArmy(_sourceArmyId);
+        Army memory sourceArmy = Util._getArmy(_sourceArmyId);
         uint256 _index = 0;
-        while (_index < _sourceArmy.armyTroopIds.length) {
-            if (_sourceArmy.armyTroopIds[_index] == _troopId) break;
+        while (_index < sourceArmy.armyTroopIds.length) {
+            if (sourceArmy.armyTroopIds[_index] == _troopId) break;
             _index++;
         }
-        gs().armyIdMap[_sourceArmyId].armyTroopIds[_index] = _sourceArmy.armyTroopIds[_sourceArmy.armyTroopIds.length - 1];
+        gs().armyIdMap[_sourceArmyId].armyTroopIds[_index] = sourceArmy.armyTroopIds[sourceArmy.armyTroopIds.length - 1];
         gs().armyIdMap[_sourceArmyId].armyTroopIds.pop();
         // deal with when _sourceArmy is empty
         if (gs().armyIdMap[_sourceArmyId].armyTroopIds.length == 0) {
