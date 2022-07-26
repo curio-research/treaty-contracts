@@ -41,6 +41,50 @@ library Util {
     // ECS (temporary)
     // ----------------------------------------------------------
 
+    function initializeTileECS(Position memory _position) public {
+        WorldConstants memory _worldConstants = gs().worldConstants;
+        uint256 _batchSize = _worldConstants.initBatchSize;
+        uint256 _numInitTerrainTypes = _worldConstants.numInitTerrainTypes;
+
+        uint256 _encodedCol = gs().encodedColumnBatches[_pos.x][_pos.y / _batchSize] % (_numInitTerrainTypes**((_pos.y % _batchSize) + 1));
+        uint256 _divFactor = _numInitTerrainTypes**(_pos.y % _batchSize);
+        uint256 _terrainId = _encodedCol / _divFactor;
+
+        if (_terrainId >= 3) {
+            uint256 _baseId = addEntity();
+            addComponentEntityValue("IsActive", _baseId, abi.encode(true));
+            addComponentEntityValue("Position", _baseId, abi.encode(_position));
+            addComponentEntityValue("Health", _baseId, abi.encode(1));
+            addComponentEntityValue("CanAttack", _baseId, abi.encode(true));
+            addComponentEntityValue("AttackFactor", _baseId, abi.encode(100));
+            addComponentEntityValue("DefenseFactor", _baseId, abi.encode(100));
+            if (_terrainId == 3) {
+                // Port
+                addComponentEntityValue("Name", _baseId, abi.encode(BASE_NAME.PORT));
+                addComponentEntityValue("GoldPerSecond", _baseId, abi.encode(_worldConstants.defaultBaseGoldGenerationPerSecond));
+                addComponentEntityValue("GoldRatePositive", _baseId, abi.encode(true));
+                _terrainId = 0;
+            } else if (_terrainId == 4) {
+                // City
+                // Note: Now cities and ports are the same except their terrain sitting on!
+                // Troop type produced now depends on the terrain, not on their nature any more.
+                addComponentEntityValue("Name", _baseId, abi.encode(BASE_NAME.CITY));
+                addComponentEntityValue("GoldPerSecond", _baseId, abi.encode(_worldConstants.defaultBaseGoldGenerationPerSecond));
+                addComponentEntityValue("GoldRatePositive", _baseId, abi.encode(true));
+                _terrainId = 1;
+            } else if (_terrainId == 5) {
+                // Oil well
+                addComponentEntityValue("Name", _baseId, abi.encode(BASE_NAME.OIL_WELL));
+                addComponentEntityValue("OilPerSecond", _baseId, abi.encode(_worldConstants.defaultWellOilGenerationPerSecond));
+                addComponentEntityValue("OilRatePositive", _baseId, abi.encode(true));
+                _terrainId = 0;
+            }
+        }
+
+        gs().map[_pos.x][_pos.y].isInitialized = true;
+        gs().map[_pos.x][_pos.y].terrain = TERRAIN(_terrainId);
+    }
+
     // FIXME: is this correct? does it trigger the constructor instead?
     function getComponent(string memory _name) public view returns (Component memory) {
         return Component(gs().components[_name]);
@@ -61,17 +105,21 @@ library Util {
 
         // 2. Create new troop entity globally and in corresponding components
         uint256 _troopId = addEntity();
-        addComponentEntityValue("IsActive", _troopId, abi.encode(true));
+        // struct property fields
         addComponentEntityValue("CanMove", _troopId, abi.encode(true));
         if (getComponent("CanCapture").has(_troopTemplateId)) {
             addComponentEntityValue("CanCapture", _troopId, abi.encode(true));
         }
+        // troop fields
+        addComponentEntityValue("IsActive", _troopId, abi.encode(true));
         addComponentEntityValue("Owner", _troopId, abi.encode(_playerId));
         addComponentEntityValue("LastMoved", _troopId, abi.encode(block.timestamp));
         addComponentEntityValue("LastLargeActionTaken", _troopId, abi.encode(0));
         addComponentEntityValue("LastRepaired", _troopId, abi.encode(block.timestamp));
         addComponentEntityValue("Health", _troopId, getComponent("MaxHealth").getRawValue(_troopTemplateId));
         addComponentEntityValue("Position", _troopId, abi.encode(_position));
+        // troop type fields
+        addComponentEntityValue("Name", _troopId, getComponent("Name").getRawValue(_troopTemplateId));
         addComponentEntityValue("IsLandTroop", _troopId, getComponent("IsLandTroop").getRawValue(_troopTemplateId));
         addComponentEntityValue("MaxHealth", _troopId, getComponent("MaxHealth").getRawValue(_troopTemplateId));
         addComponentEntityValue("DamagePerHit", _troopId, getComponent("DamagePerHit").getRawValue(_troopTemplateId));
@@ -111,18 +159,22 @@ library Util {
         getComponent(_componentName).set(_entity, _value);
     }
 
-    function addComponentEntityValue(
-        Component memory _component,
-        uint256 _entity,
-        bytes calldata _value
-    ) public {
-        _component.set(_entity, _value);
-    }
+    // function addComponentEntityValue(
+    //     Component memory _component,
+    //     uint256 _entity,
+    //     bytes calldata _value
+    // ) public {
+    //     _component.set(_entity, _value);
+    // }
 
     function getPlayerTroopCount(uint256 _playerId) public view returns (uint256) {
+        Set _set1 = new Set();
+        Set _set2 = new Set();
         uint256[] memory _entitiesOwnedByPlayer = getComponent("Owner").getEntitiesWithValue(abi.encode(_playerId));
         uint256[] memory _allTroops = getComponent("IsTroop").getEntities();
-        return intersection(_entitiesOwnedByPlayer, _allTroops).length;
+        _set1.addArray(_entitiesOwnedByPlayer);
+        _set2.addArray(_allTroops);
+        return intersection(_set1, _set2).length;
     }
 
     function intersection(Set memory set1, Set memory set2) public returns (uint256[] memory) {

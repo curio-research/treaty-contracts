@@ -386,8 +386,8 @@ contract EngineFacet is UseStorage {
             Position[] memory _neighbors = Util._getNeighbors(_position);
             bool _positionAdjacentToWater;
             for (uint256 i = 0; i < _neighbors.length; i++) {
-                uint256 _isWater = Util.getComponent("IsWater").getRawValue(_neighbors[i]);
-                if (_isWater == abi.encode(true)) _positionAdjacentToWater = true;
+                uint256 _isWater = Util.getComponent("Terrain").getRawValue(_neighbors[i]);
+                if (_isWater == abi.encode(TERRAIN.WATER)) _positionAdjacentToWater = true;
             }
             require(_positionAdjacentToWater, "CURIO: Base cannot purchase selected troop type");
         }

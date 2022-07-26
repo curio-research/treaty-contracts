@@ -13,7 +13,6 @@ contract Component {
      * TODO: Question
      * - Permission management for component value modification
      * - Is there value to having a nonce count how many components there are in an ordered fashion?
-     * - Do we need componentId?
      */
 
     address public world; // FIXME: can this just be `EngineFacet`?
@@ -71,7 +70,7 @@ contract Component {
     }
 
     function has(uint256 entity) public view returns (bool) {
-        return entities.includes(entity);
+        return entities.has(entity);
     }
 
     function getRawValue(uint256 entity) public view returns (bytes memory) {
