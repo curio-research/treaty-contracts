@@ -30,7 +30,7 @@ contract EngineFacet is UseStorage {
         Army memory _army = gs().armyIdMap[_armyId];
         require(_army.owner == msg.sender, "CURIO: Can only march own troop");
         require(!Util._samePos(_army.pos, _targetPos), "CURIO: Already at destination");
-        require((block.timestamp - _army.lastLargeActionTaken) >= Util._getArmyLargeActionCooldown(_army.armyTroopIds), "CURIO: Large action taken too recently");
+        // require((block.timestamp - _army.lastLargeActionTaken) >= Util._getArmyLargeActionCooldown(_army.armyTroopIds), "CURIO: Large action taken too recently");
 
         Tile memory _targetTile = Util._getTileAt(_targetPos);
         if (_targetTile.occupantId == NULL) {
@@ -68,7 +68,7 @@ contract EngineFacet is UseStorage {
             }
         }
 
-        emit Util.PlayerInfo(msg.sender, gs().playerMap[msg.sender]);
+        // emit Util.PlayerInfo(msg.sender, gs().playerMap[msg.sender]);
     }
 
     /**
@@ -97,7 +97,7 @@ contract EngineFacet is UseStorage {
         require(Util._withinDist(_army.pos, _targetPos, 1), "CURIO: can only dispatch troop to the near tile");
         require(_army.owner == msg.sender, "CURIO: Can only dispatch own troop");
         require(!Util._samePos(_army.pos, _targetPos), "CURIO: Already at destination");
-        require((block.timestamp - _army.lastLargeActionTaken) >= Util._getArmyLargeActionCooldown(_army.armyTroopIds), "CURIO: Large action taken too recently");
+        // require((block.timestamp - _army.lastLargeActionTaken) >= Util._getArmyLargeActionCooldown(_army.armyTroopIds), "CURIO: Large action taken too recently");
 
         // check _troop is not on transport
         uint256 _troopTransportId = Util._getTransportIdFromArmy(_targetArmy.armyTroopIds);

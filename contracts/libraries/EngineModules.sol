@@ -22,7 +22,7 @@ library EngineModules {
         Tile memory _targetTile = Util._getTileAt(_targetPos);
 
         uint256 _movementCooldown = Util._getArmyMovementCooldown(_army.armyTroopIds);
-        require((block.timestamp - _army.lastMoved) >= _movementCooldown, "CURIO: Moved too recently");
+        // require((block.timestamp - _army.lastMoved) >= _movementCooldown, "CURIO: Moved too recently");
 
         Army memory _targetTileArmy;
         uint256 _targetTileTroopTransportId;
@@ -258,7 +258,7 @@ library EngineModules {
 
         // movementCooldown check and update
         uint256 _movementCooldown = Util._getArmyMovementCooldown(_sourceArmy.armyTroopIds);
-        require((block.timestamp - _sourceArmy.lastMoved) >= _movementCooldown, "CURIO: Moved too recently");
+        // require((block.timestamp - _sourceArmy.lastMoved) >= _movementCooldown, "CURIO: Moved too recently");
         gs().armyIdMap[_joiningTroop.armyId].lastMoved = block.timestamp;
 
         gs().troopIdMap[_joiningTroopId].armyId = _mainArmyId;

@@ -205,8 +205,8 @@ library Util {
         require(_getPlayer(_owner).numOwnedTroops < gs().worldConstants.maxTroopCountPerPlayer, "CURIO: Max troop count exceeded");
 
         // Generate Troop and Army id
-        uint256 _troopId = gs().troopNonce;
-        gs().troopIds.push(_troopId);
+        uint256 troopId = gs().troopNonce;
+        gs().troopIds.push(troopId);
         gs().troopNonce++;
 
         uint256 _armyId = gs().armyNonce;
@@ -220,8 +220,11 @@ library Util {
         Army memory _army = Army({owner: _owner, armyTroopIds: _armyTroopIds, lastMoved: block.timestamp, lastLargeActionTaken: block.timestamp, pos: _pos});
 
         // Update mappings
-        gs().troopIdMap[_troopId] = _troop;
+        gs().troopIdMap[troopId] = _troop;
         gs().armyIdMap[_armyId] = _army;
+
+        // push new troopID into army
+        gs().armyIdMap[_armyId].armyTroopIds.push(troopId);
 
         // Update balances
         _updatePlayerBalances(_owner);
