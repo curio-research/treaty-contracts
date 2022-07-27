@@ -175,80 +175,101 @@ library Util {
         return intersection(_set1, _set2).length;
     }
 
-    function intersection(Set set1, Set set2) public returns (uint256[] memory) {
-        Set searchedItems = new Set();
+    // Set-theoretic intersection
+    function intersection(Set _set1, Set _set2) public returns (uint256[] memory) {
+        Set _searchedItems = new Set();
 
-        // first initiate an array with a crazy size then copy to right size lol
-        // the max size of the sum of the two sets is the sum of the two raw sets themselves
-        uint256[] memory temp = new uint256[](set1.size() + set2.size());
-        uint256 itemCount = 0;
+        uint256[] memory _temp = new uint256[](_set1.size() + _set2.size());
+        uint256 _itemCount = 0;
 
-        // loop through first set
-        for (uint256 i = 0; i < set1.size(); i++) {
-            uint256 _item = set1.getItems()[i];
+        // Loop through first set
+        for (uint256 i = 0; i < _set1.size(); i++) {
+            uint256 _item = _set1.getItems()[i];
 
-            // check if the item is in the secone set
-            if (!searchedItems.has(_item)) {
-                if (set2.has(_item)) {
-                    temp[itemCount] = _item;
-                    itemCount++;
+            // Check if item is in second set
+            if (!_searchedItems.has(_item)) {
+                if (_set2.has(_item)) {
+                    _temp[_itemCount] = _item;
+                    _itemCount++;
                 }
             }
 
-            searchedItems.add(_item);
+            _searchedItems.add(_item);
         }
 
-        // loop through second set
+        // Loop through second set
+        for (uint256 i = 0; i < _set2.size(); i++) {
+            uint256 _item = _set2.getItems()[i];
 
-        for (uint256 i = 0; i < set2.size(); i++) {
-            uint256 _item = set2.getItems()[i];
-
-            // check if the item is in the first set
-            if (!searchedItems.has(_item)) {
-                if (set1.has(_item)) {
-                    temp[itemCount] = _item;
-                    itemCount++;
+            // Check if item is in first set
+            if (!_searchedItems.has(_item)) {
+                if (_set1.has(_item)) {
+                    _temp[_itemCount] = _item;
+                    _itemCount++;
                 }
             }
 
-            searchedItems.add(_item);
+            _searchedItems.add(_item);
         }
 
-        // copy the unknown size array to the calculated one
-        uint256[] memory res = new uint256[](itemCount);
-        for (uint256 i = 0; i < itemCount; i++) {
-            res[i] = temp[i];
+        // Copy result to array with known length
+        uint256[] memory _result = new uint256[](_itemCount);
+        for (uint256 i = 0; i < _itemCount; i++) {
+            _result[i] = _temp[i];
         }
-        return res;
+
+        return _result;
     }
 
-    // definitino of difference: set of all elements of A that are not elements of B
-    // example: i want all ships that are NOT in a port
+    // Set-theoretic difference
     function difference(Set set1, Set set2) public view returns (uint256[] memory) {
-        uint256[] memory temp = new uint256[](set1.size());
-        uint256 itemCount = 0;
+        uint256[] memory _temp = new uint256[](set1.size());
+        uint256 _itemCount = 0;
 
-        // loop through first set
+        // Loop through first set
         for (uint256 i = 0; i < set1.size(); i++) {
             uint256 _item = set1.getItems()[i];
 
-            // check if the item is in the secone set
-
+            // Check if item is in second set
             if (!set2.has(_item)) {
-                temp[itemCount] = _item;
-                itemCount++;
+                _temp[_itemCount] = _item;
+                _itemCount++;
             }
         }
 
-        uint256[] memory res = new uint256[](itemCount);
-        for (uint256 i = 0; i < itemCount; i++) {
-            res[i] = temp[i];
+        uint256[] memory _result = new uint256[](_itemCount);
+        for (uint256 i = 0; i < _itemCount; i++) {
+            _result[i] = _temp[i];
         }
-        return res;
+
+        return _result;
     }
 
-    function union(Set set1, Set set2) public view returns (uint256[] memory) {
-        // TODO: implement
+    // Set-theoretic union
+    function union(Set _set1, Set _set2) public view returns (uint256[] memory) {
+        uint256[] memory _arr1 = difference(_set1, _set2);
+        uint256[] memory _arr2 = intersection(_set1, _set2);
+        uint256[] memory _arr3 = difference(_set2, _set1);
+
+        return concatenate(concatenate(_arr1, _arr2), _arr3);
+    }
+
+    function concatenate(uint256[] memory _arr1, uint256 memory _arr2) public pure returns (uint256[] memory) {
+        uint256[] memory _result = new uint256[](_arr1.length + _arr2.length);
+
+        for (uint256 i = 0; i < arr1.length; i++) {
+            _result[i] = _arr1[i];
+        }
+        for (uint256 i = 0; i < arr2.length; i++) {
+            _result[_arr1.length + i] = _arr2[i];
+        }
+
+        return _result;
+    }
+
+    function newSets() public pure returns (Set, Set) {
+        return new Set();
+        return new Set();
     }
 
     // ----------------------------------------------------------

@@ -337,6 +337,7 @@ contract EngineFacet is UseStorage {
     // ECS FUNCTIONS (temp)
     // ----------------------------------------------------------------------
 
+    // TODO: ECS events
     // Question: Is intersection the best way to find entities which satisfy multiple component conditions?
     // Question: Does simplicity outweigh slight obfuscation? e.g. Gold component assigned to both player balance and troop price
     // Question: Should past structs like Base or Troop be their own boolean components? Or should they be differentiated solely from "functional" components such as `canMove`?
@@ -412,10 +413,8 @@ contract EngineFacet is UseStorage {
         if (!Util._getTileAt(_position).isInitializedECS) Util.initializeTileECS(_position);
 
         // Verify that a "base" (aka. an entity which can purchase) is present
-        uint256[] memory _entitiesWithGivenPosition = Util.getComponent("Position").getEntitiesWithValue(abi.encode(_position));
-        uint256[] memory _entitiesWithCanPurchase = Util.getComponent("CanPurchase").getEntitiesWithValue(abi.encode(true));
-        _set1.addArray(_entitiesWithGivenPosition);
-        _set2.addArray(_entitiesWithCanPurchase);
+        _set1.addArray(Util.getComponent("Position").getEntitiesWithValue(abi.encode(_position)));
+        _set2.addArray(Util.getComponent("CanPurchase").getEntities());
         uint256[] memory _intersection = Util.intersection(_set1, _set2);
         require(_intersection.length == 1, "CURIO: No base found");
         uint256 _baseId = _intersection[0];
@@ -441,37 +440,67 @@ contract EngineFacet is UseStorage {
         return _playerId;
     }
 
-    // // example policy: "Troop that has 20 health or above gain 1 more attack"
-    // function buffPolicy() {
-    //     // QUESTION: isTroop is a strict subset of health. Inefficient intersection
-    //     uint256[] troopEntityIDs = gs().entityIntersection("isTroop", "health");
+    /**
+     * @dev Policy: All navies with 5+ health gain 100% attackFactor.
+     * TODO: Range condition for components of common types such as uint256, for example for Health greater than 5 instead of checking every value between 5 and 12.
+     *       This is essentially `.filter()`.
+     * TODO: Location-based condition: "... navies in ports/next to oil wells with ..."
+     * TODO: Time-bound condition: "... attackFactor within the next 10 seconds." (require backend)
+     */
+    function sampleBuffPolicy() external {
+        // Get navies
+        Set _set1 = new Set();
+        Set _set2 = new Set();
+        _set1.addArray(Util.getComponent("CanMove").getEntities());
+        _set2.addArray(Util.getComponent("IsLandTroop").getEntities());
+        uint256[] memory _navies = Util.difference(_set1, _set2);
+        _set1 = new Set();
+        _set1.addArray(_navies);
 
-    //     for (uint256 i = 0; i < troopEntityIDs.length; i++) {
-    //         troopEntityID = troopEntityIDs[i];
-    //         uint256 healthValForEntity = gs().healthEntity().getValue(troopEntityID);
+        // Get navies with 5-12 health
+        uint256[] memory _naviesWithFivePlusHealth = new uint256[](0);
+        for (uint256 _health = 5; _health <= 12; _health++) {
+            _set2 = new Set();
+            _set2.addArray(Util.getComponent("Health").getEntitiesWithValue(abi.encode(_health)));
+            _naviesWithFivePlusHealth = Util.concatenate(_naviesWithFivePlusHealth, Util.intersection(_set1, _set2));
+        }
 
-    //         if (healthValForEntity > 20) {
-    //             gs().attackFactorComponent().increaseValue();
-    //         }
-    //     }
-    // }
+        // Double attack factor for all such navies
+        Component _attackFactorComponent = Util.getComponent("AttackFactor");
+        uint256 _troopId;
+        uint256 _attackFactor;
+        for (uint256 i = 0; i < _naviesWithFivePlusHealth.length; i++) {
+            _troopId = _naviesWithFivePlusHealth[i];
+            _attackFactor = abi.decode(_attackFactorComponent.getRawValue(_troopId), (uint256));
+            _attackFactorComponent.set(_troopId, abi.encode(_attackFactor * 2));
+        }
+    }
 
-    // // TODO: filter system?
-    // // TODO: figure out string system;
+    /**
+     * @dev Policy: The player's ports and cities gain movement ability, but they change from producing to consuming gold.
+     */
+    function sampleImpossiblePolicy() external {
+        // Get player's ports and cities
+        Set _set1 = new Set();
+        Set _set2 = new Set();
+        _set1.addArray(Util.getComponent("CanPurchase").getEntities());
+        _set2.addArray(Util.getComponent("Owner").getEntitiesWithValue(abi.encode(msg.sender)));
+        uint256 _playerBases = Util.intersection(_set1, _set2);
 
-    // // ---------------------------------
+        // Update desired properties
+        Component _canMoveComponent = Util.getComponent("CanMove");
+        Component _goldRatePositiveComponent = Util.getComponent("GoldRatePositive");
+        uint256 _baseId;
+        for (uint256 i = 0; i < _playerBases.length; i++) {
+            _baseId = _playerBases[i];
+            _canMoveComponent.set(_baseId, abi.encode(true));
+            _goldRatePositiveComponent.remove(_baseId);
+        }
+    }
 
-    // // Use case that is impossible right now !!
-    // // turning a base into a moving troop
-    // // add movement cooldown component
-
-    // function move(uint256 previousBaseEntityID, Position memory _target) public {
-    //     gs().positionComponent().setValue(previousBaseEntityID, _target);
-    // }
-
-    // // TODO: FUTURE PROBLEM
+    // TODO: (future) allowing real-time, in-game addition of components
     // function addComponent() {
     //     // check name string conflict first
-    //     // new Component
+    //     // new Component()
     // }
 }
