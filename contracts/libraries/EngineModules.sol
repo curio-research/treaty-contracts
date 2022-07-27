@@ -76,7 +76,7 @@ library EngineModules {
                     _armyHealth -= 1;
                 } else {
                     _armyHealth = 0;
-                    Util._removeEntireArmy(_armyId);
+                    Util._removeArmyWithTroops(_armyId);
                     emit Util.ArmyDeath(msg.sender, _armyId);
                 }
             }
