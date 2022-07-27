@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity >=0.8.0;
-import {Component} from "./Component.sol";
+import {Component} from "contracts/Component.sol";
 
 enum QueryType {
     Has,

@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import {Set} from "contracts/libraries/Set.sol";
+import {Set} from "contracts/Set.sol";
 
 contract CurioOS {
     uint256 public componentID;

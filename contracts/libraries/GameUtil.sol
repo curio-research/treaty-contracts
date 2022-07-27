@@ -4,8 +4,8 @@ pragma solidity ^0.8.4;
 import "contracts/libraries/Storage.sol";
 import {BASE_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop, WorldConstants} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
-import {Component} from "contracts/libraries/Component.sol";
-import {Set} from "contracts/libraries/Set.sol";
+import {Component} from "contracts/Component.sol";
+import {Set} from "contracts/Set.sol";
 
 /// @title Util library
 /// @notice Contains all events as well as lower-level setters and getters
@@ -246,7 +246,7 @@ library Util {
     }
 
     // Set-theoretic union
-    function union(Set _set1, Set _set2) public view returns (uint256[] memory) {
+    function union(Set _set1, Set _set2) public returns (uint256[] memory) {
         uint256[] memory _arr1 = difference(_set1, _set2);
         uint256[] memory _arr2 = intersection(_set1, _set2);
         uint256[] memory _arr3 = difference(_set2, _set1);
@@ -254,22 +254,21 @@ library Util {
         return concatenate(concatenate(_arr1, _arr2), _arr3);
     }
 
-    function concatenate(uint256[] memory _arr1, uint256 memory _arr2) public pure returns (uint256[] memory) {
+    function concatenate(uint256[] memory _arr1, uint256[] memory _arr2) public pure returns (uint256[] memory) {
         uint256[] memory _result = new uint256[](_arr1.length + _arr2.length);
 
-        for (uint256 i = 0; i < arr1.length; i++) {
+        for (uint256 i = 0; i < _arr1.length; i++) {
             _result[i] = _arr1[i];
         }
-        for (uint256 i = 0; i < arr2.length; i++) {
+        for (uint256 i = 0; i < _arr2.length; i++) {
             _result[_arr1.length + i] = _arr2[i];
         }
 
         return _result;
     }
 
-    function newSets() public pure returns (Set, Set) {
-        return new Set();
-        return new Set();
+    function newSets() public returns (Set, Set) {
+        return (new Set(), new Set());
     }
 
     // ----------------------------------------------------------

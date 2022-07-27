@@ -5,8 +5,8 @@ import "contracts/libraries/Storage.sol";
 import {Util} from "contracts/libraries/GameUtil.sol";
 import {BASE_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop, TroopType, WorldConstants} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
-import {Component} from "contracts/libraries/Component.sol";
-import {Set} from "contracts/libraries/Set.sol";
+import {Component} from "contracts/Component.sol";
+import {Set} from "contracts/Set.sol";
 
 /// @title Engine facet
 /// @notice Contains player functions such as march, purchaseTroop, initializePlayer
@@ -485,7 +485,7 @@ contract EngineFacet is UseStorage {
         Set _set2 = new Set();
         _set1.addArray(Util.getComponent("CanPurchase").getEntities());
         _set2.addArray(Util.getComponent("Owner").getEntitiesWithValue(abi.encode(msg.sender)));
-        uint256 _playerBases = Util.intersection(_set1, _set2);
+        uint256[] memory _playerBases = Util.intersection(_set1, _set2);
 
         // Update desired properties
         Component _canMoveComponent = Util.getComponent("CanMove");

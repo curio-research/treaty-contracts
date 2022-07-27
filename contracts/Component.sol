@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: Unlicense
-pragma solidity >=0.8.0;
+pragma solidity ^0.8.4;
 
-import {Set} from "./Set.sol";
-import {MapSet} from "./MapSet.sol";
+import {Set} from "contracts/Set.sol";
+import {MapSet} from "contracts/MapSet.sol";
 
 contract Component {
     /**

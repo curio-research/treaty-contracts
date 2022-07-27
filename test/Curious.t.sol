@@ -3,8 +3,8 @@ pragma solidity ^0.8.4;
 
 import "forge-std/Test.sol";
 import "test/DiamondDeploy.t.sol";
-import {Set} from "contracts/libraries/Set.sol";
-import {CurioOS} from "contracts/libraries/CurioOS.sol";
+import {Set} from "contracts/Set.sol";
+import {CurioOS} from "contracts/CurioOS.sol";
 
 contract Curious is Test {
     CurioOS public game;

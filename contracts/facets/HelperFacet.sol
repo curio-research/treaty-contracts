@@ -5,8 +5,8 @@ import "contracts/libraries/Storage.sol";
 import {Util} from "contracts/libraries/GameUtil.sol";
 import {BASE_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop, TroopType, WorldConstants} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
-import {Component} from "contracts/libraries/Component.sol";
-import {Set} from "contracts/libraries/Set.sol";
+import {Component} from "contracts/Component.sol";
+import {Set} from "contracts/Set.sol";
 
 /// @title Helper facet
 /// @notice Contains admin functions and state functions, both of which should be out of scope for players

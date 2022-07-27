@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: Unlicense
-pragma solidity >=0.8.0;
-import {console} from "forge-std/console.sol";
+pragma solidity ^0.8.4;
 
 contract MapSet {
     mapping(uint256 => uint256[]) private items;

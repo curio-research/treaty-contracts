@@ -3,8 +3,8 @@ pragma solidity ^0.8.4;
 
 import "forge-std/Test.sol";
 import "test/DiamondDeploy.t.sol";
-import {Component} from "contracts/libraries/Component.sol";
-import {Set} from "contracts/libraries/Set.sol";
+import {Component} from "contracts/Component.sol";
+import {Set} from "contracts/Set.sol";
 
 contract ECS is Test, DiamondDeployTest {
     function testPurchaseTroopEntity() public {
