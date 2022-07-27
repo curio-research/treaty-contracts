@@ -57,7 +57,7 @@ contract EngineFacet is UseStorage {
     }
 
     /**
-     * Dispatch troop to a target position (_moveArmy, _loadTroop, mov_clearTroopFromSourceArmy etc.).
+     * Dispatch troop to a target position (_moveArmy, _loadTroop, _clearTroopFromSourceArmy etc.).
      * @param _troopId identifier for troop
      * @param _targetPos target position
      */

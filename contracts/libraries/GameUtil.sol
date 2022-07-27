@@ -91,7 +91,7 @@ library Util {
         gs().playerMap[_addr] = _player;
     }
 
-    function _removeEntireArmy(uint256 _armyId) public {
+    function _removeArmyWithTroops(uint256 _armyId) public {
         Army memory _army = _getArmy(_armyId);
         address _owner = _army.owner;
         Position memory _pos = _army.pos;
@@ -115,7 +115,7 @@ library Util {
         gs().map[_pos.x][_pos.y].occupantId = _NULL();
     }
 
-    function _removeArmyOnly(uint256 _armyId) public {
+    function _removeArmy(uint256 _armyId) public {
         // used when detaching army
         Army memory _army = _getArmy(_armyId);
         Position memory _pos = _army.pos;
@@ -410,7 +410,7 @@ library Util {
     }
 
     // if all the troops inside army can move onto land
-    function _canArmyMoveLand(uint256 _armyId) public view returns (bool) {
+    function _canArmyMoveOnLand(uint256 _armyId) public view returns (bool) {
         Army memory army = _getArmy(_armyId);
 
         for (uint256 i = 0; i < army.armyTroopIds.length; i++) {
@@ -474,7 +474,7 @@ library Util {
         return 0;
     }
 
-    function _NULLADRESS() internal pure returns (address) {
+    function _NULL_ADRESS() internal pure returns (address) {
         return address(0);
     }
 }

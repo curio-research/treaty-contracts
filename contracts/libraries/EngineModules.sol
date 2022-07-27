@@ -48,7 +48,7 @@ library EngineModules {
 
         Base memory _targetBase = gs().baseIdMap[_targetTile.baseId];
         require(_targetBase.owner != msg.sender, "CURIO: Cannot attack own base");
-        require(Util._canArmyMoveLand(_armyId) || _targetBase.health > 0 || _targetBase.name == BASE_NAME.OIL_WELL, "CURIO: Can only capture base with land troop");
+        require(Util._canArmyMoveOnLand(_armyId) || _targetBase.health > 0 || _targetBase.name == BASE_NAME.OIL_WELL, "CURIO: Can only capture base with land troop");
 
         // Exchange fire until one side dies
         uint256 _salt = 0;
@@ -148,7 +148,7 @@ library EngineModules {
                     _targetHealth -= _damagePerHit;
                 } else {
                     _targetHealth = 0;
-                    Util._removeEntireArmy(_targetTile.occupantId);
+                    Util._removeArmyWithTroops(_targetTile.occupantId);
                     emit Util.ArmyDeath(_targetArmy.owner, _targetTile.occupantId);
                 }
             }
@@ -162,7 +162,7 @@ library EngineModules {
                     _armyHealth -= Util._getArmyDamagePerHit(_targetArmy.armyTroopIds);
                 } else {
                     _armyHealth = 0;
-                    Util._removeEntireArmy(_armyId);
+                    Util._removeArmyWithTroops(_armyId);
                     emit Util.ArmyDeath(msg.sender, _armyId);
                 }
             }
@@ -182,6 +182,7 @@ library EngineModules {
         }
     }
 
+    // check if all troops in the army is compatiable with target tile geographics
     function _geographicCheckArmy(uint256 _armyId, Tile memory _tile) public view returns (bool) {
         Army memory _army = Util._getArmy(_armyId);
 
@@ -194,6 +195,7 @@ library EngineModules {
         }
         return true;
     }
+
     // ----------------------------------------------------------------------
     // MODULES FOR MOVETROOP
     // ----------------------------------------------------------------------
@@ -240,11 +242,12 @@ library EngineModules {
         gs().armyIdMap[_sourceArmyId].armyTroopIds.pop();
         // deal with when _sourceArmy is empty
         if (gs().armyIdMap[_sourceArmyId].armyTroopIds.length == 0) {
-            Util._removeArmyOnly(_sourceArmyId);
+            Util._removeArmy(_sourceArmyId);
         }
     }
 
-        function _geographicCheckTroop(uint256 _troopTypeId, Tile memory _tile) public view returns (bool) {
+    // checks if troop is compatiable with target tile geographics
+    function _geographicCheckTroop(uint256 _troopTypeId, Tile memory _tile) public view returns (bool) {
         // no base
         if (_tile.baseId == 0) {
             if (_troopTypeId == 1) {
@@ -262,18 +265,9 @@ library EngineModules {
                 //  everyone can move into the port
                 return true;
             } else if (_base.name == BASE_NAME.CITY) {
-                if (_troopTypeId == 1) {
-                    // only infantry can move into cities
-                    return true;
-                } else {
-                    return false;
-                }
+                return _troopTypeId == 1;
             } else if (_base.name == BASE_NAME.OIL_WELL) {
-                if (_troopTypeId == 1) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return _troopTypeId == 1;
             }
         }
     }
