@@ -24,10 +24,8 @@ library Util {
 
     event AttackedBase(address _player, uint256 _armyId, Army _armyInfo, uint256 _targetBaseId, Base _targetBaseInfo);
     event AttackedArmy(address _player, uint256 _armyId, Army _armyInfo, uint256 _targetArmy, Army _targetArmyInfo);
-    event MovedArmy(address _player, uint256 timestamp, uint256 _startTileArmyId, Army _startTileArmy, uint256 _targetTileArmyId, Army _targetTileArmy);
-    // event MovedTroop(address _player, uint256 _troopId, uint256 _timestamp, Position _startPos, Position _targetPos);
-    // event NewArmy(address _player, uint256 _armyId, Army _army);
-    // event NewTroop(address _player, uint256 _armyId, Army _army, Position _pos);
+    event MovedArmy(address _player, uint256 timestamp, Position _startPos, uint256 _startTileArmyId, Army _startTileArmy, Position _endPos, uint256 _targetTileArmyId, Army _targetTileArmy);
+    event NewTroop(address _player, uint256 _troopId, Troop _troop, uint256 _armyId, Army _army);
     event BaseCaptured(address _player, uint256 _armyId, uint256 _baseId);
     event ArmyDeath(address _player, uint256 _armyId);
     event TroopDeath(address _player, uint256 _troopId);
@@ -168,6 +166,7 @@ library Util {
         }
     }
 
+    // function to add troop, while creating an army
     function _addTroop(
         address _owner,
         Position memory _pos,
@@ -185,14 +184,14 @@ library Util {
         gs().armyNonce++;
         gs().map[_pos.x][_pos.y].occupantId = armyId;
 
-        Troop memory _troop = Troop({armyId: armyId, troopTypeId: _troopTypeId, health: _getMaxHealth(_troopTypeId)});
+        Troop memory troop = Troop({armyId: armyId, troopTypeId: _troopTypeId, health: _getMaxHealth(_troopTypeId)});
 
         uint256[] memory troopIds = new uint256[](1);
         troopIds[0] = troopId;
 
         Army memory _army = Army({owner: _owner, troopIds: troopIds, lastMoved: block.timestamp, lastLargeActionTaken: block.timestamp, pos: _pos});
 
-        gs().troopIdMap[troopId] = _troop;
+        gs().troopIdMap[troopId] = troop;
         gs().armyIdMap[armyId] = _army;
 
         // Update balances
@@ -200,7 +199,7 @@ library Util {
         gs().playerMap[_owner].numOwnedTroops++;
         gs().playerMap[_owner].totalOilConsumptionPerUpdate += _getOilConsumptionPerSecond(_troopTypeId);
 
-        // emit NewArmy(msg.sender, armyId, _army);
+        emit NewTroop(msg.sender, troopId, troop, armyId, _army);
 
         return (armyId, _army);
     }
@@ -472,7 +471,7 @@ library Util {
         Army memory army1 = _getArmy(tile1.occupantId);
         Army memory army2 = _getArmy(tile2.occupantId);
 
-        emit Util.MovedArmy(msg.sender, block.timestamp, tile1.occupantId, army1, tile2.occupantId, army2);
+        emit Util.MovedArmy(msg.sender, block.timestamp, _pos1, tile1.occupantId, army1, _pos2, tile2.occupantId, army2);
     }
 
     // if all the troops inside army can move onto land

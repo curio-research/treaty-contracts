@@ -860,8 +860,9 @@ export interface CurioInterface extends utils.Interface {
     "BaseCaptured(address,uint256,uint256)": EventFragment;
     "GamePaused()": EventFragment;
     "GameResumed()": EventFragment;
-    "MovedArmy(address,uint256,uint256,tuple,uint256,tuple)": EventFragment;
+    "MovedArmy(address,uint256,tuple,uint256,tuple,tuple,uint256,tuple)": EventFragment;
     "NewPlayer(address,tuple)": EventFragment;
+    "NewTroop(address,uint256,tuple,uint256,tuple)": EventFragment;
     "PlayerInfo(address,tuple)": EventFragment;
     "PlayerReactivated(address)": EventFragment;
     "TroopDeath(address,uint256)": EventFragment;
@@ -878,6 +879,7 @@ export interface CurioInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "GameResumed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MovedArmy"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NewPlayer"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "NewTroop"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PlayerInfo"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PlayerReactivated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TroopDeath"): EventFragment;
@@ -948,12 +950,23 @@ export type GameResumedEvent = TypedEvent<[], {}>;
 export type GameResumedEventFilter = TypedEventFilter<GameResumedEvent>;
 
 export type MovedArmyEvent = TypedEvent<
-  [string, BigNumber, BigNumber, ArmyStructOutput, BigNumber, ArmyStructOutput],
+  [
+    string,
+    BigNumber,
+    PositionStructOutput,
+    BigNumber,
+    ArmyStructOutput,
+    PositionStructOutput,
+    BigNumber,
+    ArmyStructOutput
+  ],
   {
     _player: string;
     timestamp: BigNumber;
+    _startPos: PositionStructOutput;
     _startTileArmyId: BigNumber;
     _startTileArmy: ArmyStructOutput;
+    _endPos: PositionStructOutput;
     _targetTileArmyId: BigNumber;
     _targetTileArmy: ArmyStructOutput;
   }
@@ -967,6 +980,19 @@ export type NewPlayerEvent = TypedEvent<
 >;
 
 export type NewPlayerEventFilter = TypedEventFilter<NewPlayerEvent>;
+
+export type NewTroopEvent = TypedEvent<
+  [string, BigNumber, TroopStructOutput, BigNumber, ArmyStructOutput],
+  {
+    _player: string;
+    _troopId: BigNumber;
+    _troop: TroopStructOutput;
+    _armyId: BigNumber;
+    _army: ArmyStructOutput;
+  }
+>;
+
+export type NewTroopEventFilter = TypedEventFilter<NewTroopEvent>;
 
 export type PlayerInfoEvent = TypedEvent<
   [string, PlayerStructOutput],
@@ -2206,19 +2232,23 @@ export interface Curio extends BaseContract {
     "GameResumed()"(): GameResumedEventFilter;
     GameResumed(): GameResumedEventFilter;
 
-    "MovedArmy(address,uint256,uint256,tuple,uint256,tuple)"(
+    "MovedArmy(address,uint256,tuple,uint256,tuple,tuple,uint256,tuple)"(
       _player?: null,
       timestamp?: null,
+      _startPos?: null,
       _startTileArmyId?: null,
       _startTileArmy?: null,
+      _endPos?: null,
       _targetTileArmyId?: null,
       _targetTileArmy?: null
     ): MovedArmyEventFilter;
     MovedArmy(
       _player?: null,
       timestamp?: null,
+      _startPos?: null,
       _startTileArmyId?: null,
       _startTileArmy?: null,
+      _endPos?: null,
       _targetTileArmyId?: null,
       _targetTileArmy?: null
     ): MovedArmyEventFilter;
@@ -2228,6 +2258,21 @@ export interface Curio extends BaseContract {
       _pos?: null
     ): NewPlayerEventFilter;
     NewPlayer(_player?: null, _pos?: null): NewPlayerEventFilter;
+
+    "NewTroop(address,uint256,tuple,uint256,tuple)"(
+      _player?: null,
+      _troopId?: null,
+      _troop?: null,
+      _armyId?: null,
+      _army?: null
+    ): NewTroopEventFilter;
+    NewTroop(
+      _player?: null,
+      _troopId?: null,
+      _troop?: null,
+      _armyId?: null,
+      _army?: null
+    ): NewTroopEventFilter;
 
     "PlayerInfo(address,tuple)"(
       _addr?: null,

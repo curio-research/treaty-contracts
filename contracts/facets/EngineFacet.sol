@@ -58,7 +58,7 @@ contract EngineFacet is UseStorage {
             EngineModules._battleArmy(_armyId, _targetPos);
         }
 
-        // emit Util.PlayerInfo(msg.sender, gs().playerMap[msg.sender]);
+        Util.updateArmy(_army.pos, _targetPos);
     }
 
     /**
@@ -143,8 +143,9 @@ contract EngineFacet is UseStorage {
         (uint256 _armyId, Army memory _army) = Util._addTroop(msg.sender, _pos, _troopTypeId);
         gs().playerMap[msg.sender].goldBalance -= _troopPrice;
 
-        emit Util.PlayerInfo(msg.sender, gs().playerMap[msg.sender]);
-        // emit Util.NewTroop(msg.sender, _armyId, _army, _pos);
+        // emit Util.PlayerInfo(msg.sender, gs().playerMap[msg.sender]);
+
+        // Util.updateArmy(_pos, _pos);
     }
 
     /**

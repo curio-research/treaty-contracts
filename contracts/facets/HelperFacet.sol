@@ -98,8 +98,6 @@ contract HelperFacet is UseStorage {
         }
 
         (uint256 _armyId, Army memory _army) = Util._addTroop(_player, _pos, _troopTypeId);
-
-        // emit Util.NewTroop(_player, _armyId, _army, _pos);
     }
 
     /**
