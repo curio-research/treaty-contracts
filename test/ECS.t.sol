@@ -49,18 +49,18 @@ contract ECS is Test, DiamondDeployTest {
 
         // Initialize a troop template (destroyer)
         uint256 _destroyerTemplateId = helper.addEntity();
-        helper.addComponentEntityValue("IsActive", _destroyerTemplateId, abi.encode(true));
-        helper.addComponentEntityValue("CanMove", _destroyerTemplateId, abi.encode(true));
-        helper.addComponentEntityValue("CanAttack", _destroyerTemplateId, abi.encode(true));
-        helper.addComponentEntityValue("Name", _destroyerTemplateId, abi.encode("Destroyer"));
-        helper.addComponentEntityValue("MaxHealth", _destroyerTemplateId, abi.encode(3));
-        helper.addComponentEntityValue("DamagePerHit", _destroyerTemplateId, abi.encode(1));
-        helper.addComponentEntityValue("AttackFactor", _destroyerTemplateId, abi.encode(100));
-        helper.addComponentEntityValue("DefenseFactor", _destroyerTemplateId, abi.encode(100));
-        helper.addComponentEntityValue("MovementCooldown", _destroyerTemplateId, abi.encode(1));
-        helper.addComponentEntityValue("LargeActionCooldown", _destroyerTemplateId, abi.encode(1));
-        helper.addComponentEntityValue("Gold", _destroyerTemplateId, abi.encode(19));
-        helper.addComponentEntityValue("OilPerSecond", _destroyerTemplateId, abi.encode(1));
+        helper.setComponentValue("IsActive", _destroyerTemplateId, abi.encode(true));
+        helper.setComponentValue("CanMove", _destroyerTemplateId, abi.encode(true));
+        helper.setComponentValue("CanAttack", _destroyerTemplateId, abi.encode(true));
+        helper.setComponentValue("Name", _destroyerTemplateId, abi.encode("Destroyer"));
+        helper.setComponentValue("MaxHealth", _destroyerTemplateId, abi.encode(3));
+        helper.setComponentValue("DamagePerHit", _destroyerTemplateId, abi.encode(1));
+        helper.setComponentValue("AttackFactor", _destroyerTemplateId, abi.encode(100));
+        helper.setComponentValue("DefenseFactor", _destroyerTemplateId, abi.encode(100));
+        helper.setComponentValue("MovementCooldown", _destroyerTemplateId, abi.encode(1));
+        helper.setComponentValue("LargeActionCooldown", _destroyerTemplateId, abi.encode(1));
+        helper.setComponentValue("Gold", _destroyerTemplateId, abi.encode(19));
+        helper.setComponentValue("OilPerSecond", _destroyerTemplateId, abi.encode(1));
 
         vm.stopPrank();
         vm.startPrank(player1);

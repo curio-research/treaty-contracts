@@ -355,41 +355,41 @@ contract EngineFacet is UseStorage {
         require(!gs().isPaused, "CURIO: Game is paused");
 
         // 3. Verify that player is active
-        uint256 _playerId = Util.getPlayerId(msg.sender);
-        require(Util.getComponent("IsActive").has(_playerId), "CURIO: Player is inactive");
+        uint256 _playerId = Util._getPlayerId(msg.sender);
+        require(Util._getComponent("IsActive").has(_playerId), "CURIO: Player is inactive");
 
         // 4. Verify that position is in bound, and initialize tile
         require(Util._inBound(_position), "CURIO: Out of bound");
-        if (!Util._getTileAt(_position).isInitializedECS) Util.initializeTileECS(_position);
+        if (!Util._getTileAt(_position).isInitializedECS) Util._initializeTileECS(_position);
 
         // 5. Verify that a "base" (aka. an entity which can purchase) is present
-        _set1.addArray(Util.getComponent("Position").getEntitiesWithValue(abi.encode(_position)));
-        _set2.addArray(Util.getComponent("CanPurchase").getEntities());
-        uint256[] memory _intersection = Util.intersection(_set1, _set2);
+        _set1.addArray(Util._getComponent("Position").getEntitiesWithValue(abi.encode(_position)));
+        _set2.addArray(Util._getComponent("CanPurchase").getEntities());
+        uint256[] memory _intersection = Util._intersection(_set1, _set2);
         require(_intersection.length == 1, "CURIO: No base found");
         uint256 _baseId = _intersection[0];
 
         // 6. Verify that player owns the "base"
-        require(abi.decode(Util.getComponent("Owner").getRawValue(_baseId), (uint256)) == _playerId, "CURIO: Can only purchase in own base");
+        require(abi.decode(Util._getComponent("Owner").getRawValue(_baseId), (uint256)) == _playerId, "CURIO: Can only purchase in own base");
 
         // 7. Verify that no "troop" (aka. a movable entity) is present
         _set2 = new Set();
-        _set2.addArray(Util.getComponent("CanMove").getEntities());
-        require(Util.intersection(_set1, _set2).length == 0, "CURIO: Base occupied by another troop");
+        _set2.addArray(Util._getComponent("CanMove").getEntities());
+        require(Util._intersection(_set1, _set2).length == 0, "CURIO: Base occupied by another troop");
 
         // 8. Verify that the "base" can purchase the given type of "troop"
-        if (!Util.getComponent("IsLandTroop").has(_troopTemplateId)) {
+        if (!Util._getComponent("IsLandTroop").has(_troopTemplateId)) {
             Position[] memory _neighbors = Util._getNeighbors(_position);
             bool _positionAdjacentToWater;
             for (uint256 i = 0; i < _neighbors.length; i++) {
-                if (!Util._getTileAt(_neighbors[i]).isInitializedECS) Util.initializeTileECS(_neighbors[i]);
+                if (!Util._getTileAt(_neighbors[i]).isInitializedECS) Util._initializeTileECS(_neighbors[i]);
                 if (Util._getTileAt(_neighbors[i]).terrain == TERRAIN.WATER) _positionAdjacentToWater = true;
             }
             require(_positionAdjacentToWater, "CURIO: Base cannot purchase selected troop type");
         }
 
         // 9. Fetch player gold balance and verify sufficience
-        Component _goldComponent = Util.getComponent("Gold");
+        Component _goldComponent = Util._getComponent("Gold");
         uint256 _troopGoldPrice = abi.decode(_goldComponent.getRawValue(_troopTemplateId), (uint256));
         uint256 _playerGoldBalance = abi.decode(_goldComponent.getRawValue(_playerId), (uint256));
         require(_playerGoldBalance > _troopGoldPrice, "CURIO: Insufficient gold balance");
@@ -398,7 +398,7 @@ contract EngineFacet is UseStorage {
         _goldComponent.set(_playerId, abi.encode(_playerGoldBalance - _troopGoldPrice));
 
         // 11. Add troop
-        return Util.addTroopEntity(_playerId, _position, _troopTemplateId);
+        return Util._addTroopEntity(_playerId, _position, _troopTemplateId);
     }
 
     function initializePlayerECS(Position memory _position, string memory _name) external returns (uint256) {
@@ -410,32 +410,32 @@ contract EngineFacet is UseStorage {
         require(Util._getPlayerCount() < gs().worldConstants.maxPlayerCount, "CURIO: Max player count exceeded");
         require(gs().playerIdMap[msg.sender] == NULL, "CURIO: Player already initialized");
         require(Util._inBound(_position), "CURIO: Out of bound");
-        if (!Util._getTileAt(_position).isInitializedECS) Util.initializeTileECS(_position);
+        if (!Util._getTileAt(_position).isInitializedECS) Util._initializeTileECS(_position);
 
         // Verify that a "base" (aka. an entity which can purchase) is present
-        _set1.addArray(Util.getComponent("Position").getEntitiesWithValue(abi.encode(_position)));
-        _set2.addArray(Util.getComponent("CanPurchase").getEntities());
-        uint256[] memory _intersection = Util.intersection(_set1, _set2);
+        _set1.addArray(Util._getComponent("Position").getEntitiesWithValue(abi.encode(_position)));
+        _set2.addArray(Util._getComponent("CanPurchase").getEntities());
+        uint256[] memory _intersection = Util._intersection(_set1, _set2);
         require(_intersection.length == 1, "CURIO: No base found");
         uint256 _baseId = _intersection[0];
 
         // Verify that base is not taken
-        require(!Util.getComponent("Owner").has(_baseId), "CURIO: Base is taken");
+        require(!Util._getComponent("Owner").has(_baseId), "CURIO: Base is taken");
 
         // Spawn player
         WorldConstants memory _worldConstants = gs().worldConstants;
-        uint256 _playerId = Util.addEntity();
-        Util.addComponentEntityValue("IsActive", _playerId, abi.encode(true));
-        Util.addComponentEntityValue("Name", _playerId, abi.encode(_name));
-        Util.addComponentEntityValue("Gold", _playerId, abi.encode(_worldConstants.initPlayerGoldBalance));
-        Util.addComponentEntityValue("Oil", _playerId, abi.encode(_worldConstants.initPlayerOilBalance));
-        Util.addComponentEntityValue("InitTimestamp", _playerId, abi.encode(block.timestamp));
-        Util.addComponentEntityValue("BalanceLastUpdated", _playerId, abi.encode(block.timestamp));
+        uint256 _playerId = Util._addEntity();
+        Util._setComponentValue("IsActive", _playerId, abi.encode(true));
+        Util._setComponentValue("Name", _playerId, abi.encode(_name));
+        Util._setComponentValue("Gold", _playerId, abi.encode(_worldConstants.initPlayerGoldBalance));
+        Util._setComponentValue("Oil", _playerId, abi.encode(_worldConstants.initPlayerOilBalance));
+        Util._setComponentValue("InitTimestamp", _playerId, abi.encode(block.timestamp));
+        Util._setComponentValue("BalanceLastUpdated", _playerId, abi.encode(block.timestamp));
         gs().players.push(msg.sender);
         gs().playerIdMap[msg.sender] = _playerId;
 
         // Transfer base ownership
-        Util.getComponent("Owner").set(_baseId, abi.encode(_playerId));
+        Util._getComponent("Owner").set(_baseId, abi.encode(_playerId));
 
         return _playerId;
     }
@@ -451,9 +451,9 @@ contract EngineFacet is UseStorage {
         // Get navies
         Set _set1 = new Set();
         Set _set2 = new Set();
-        _set1.addArray(Util.getComponent("CanMove").getEntities());
-        _set2.addArray(Util.getComponent("IsLandTroop").getEntities());
-        uint256[] memory _navies = Util.difference(_set1, _set2);
+        _set1.addArray(Util._getComponent("CanMove").getEntities());
+        _set2.addArray(Util._getComponent("IsLandTroop").getEntities());
+        uint256[] memory _navies = Util._difference(_set1, _set2);
         _set1 = new Set();
         _set1.addArray(_navies);
 
@@ -461,12 +461,12 @@ contract EngineFacet is UseStorage {
         uint256[] memory _naviesWithFivePlusHealth = new uint256[](0);
         for (uint256 _health = 5; _health <= 12; _health++) {
             _set2 = new Set();
-            _set2.addArray(Util.getComponent("Health").getEntitiesWithValue(abi.encode(_health)));
-            _naviesWithFivePlusHealth = Util.concatenate(_naviesWithFivePlusHealth, Util.intersection(_set1, _set2));
+            _set2.addArray(Util._getComponent("Health").getEntitiesWithValue(abi.encode(_health)));
+            _naviesWithFivePlusHealth = Util._concatenate(_naviesWithFivePlusHealth, Util._intersection(_set1, _set2));
         }
 
         // Double attack factor for all such navies
-        Component _attackFactorComponent = Util.getComponent("AttackFactor");
+        Component _attackFactorComponent = Util._getComponent("AttackFactor");
         uint256 _troopId;
         uint256 _attackFactor;
         for (uint256 i = 0; i < _naviesWithFivePlusHealth.length; i++) {
@@ -483,13 +483,13 @@ contract EngineFacet is UseStorage {
         // Get player's ports and cities
         Set _set1 = new Set();
         Set _set2 = new Set();
-        _set1.addArray(Util.getComponent("CanPurchase").getEntities());
-        _set2.addArray(Util.getComponent("Owner").getEntitiesWithValue(abi.encode(msg.sender)));
-        uint256[] memory _playerBases = Util.intersection(_set1, _set2);
+        _set1.addArray(Util._getComponent("CanPurchase").getEntities());
+        _set2.addArray(Util._getComponent("Owner").getEntitiesWithValue(abi.encode(msg.sender)));
+        uint256[] memory _playerBases = Util._intersection(_set1, _set2);
 
         // Update desired properties
-        Component _canMoveComponent = Util.getComponent("CanMove");
-        Component _goldRatePositiveComponent = Util.getComponent("GoldRatePositive");
+        Component _canMoveComponent = Util._getComponent("CanMove");
+        Component _goldRatePositiveComponent = Util._getComponent("GoldRatePositive");
         uint256 _baseId;
         for (uint256 i = 0; i < _playerBases.length; i++) {
             _baseId = _playerBases[i];

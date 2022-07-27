@@ -5,40 +5,40 @@ contract MapSet {
     mapping(uint256 => uint256[]) private items;
     mapping(uint256 => mapping(uint256 => uint256)) private itemToIndex;
 
-    function add(uint256 setKey, uint256 item) public {
-        if (has(setKey, item)) return;
+    function add(uint256 _setKey, uint256 _item) public {
+        if (has(_setKey, _item)) return;
 
-        itemToIndex[setKey][item] = items[setKey].length;
-        items[setKey].push(item);
+        itemToIndex[_setKey][_item] = items[_setKey].length;
+        items[_setKey].push(_item);
     }
 
-    function remove(uint256 setKey, uint256 item) public {
-        if (!has(setKey, item)) return;
+    function remove(uint256 _setKey, uint256 _item) public {
+        if (!has(_setKey, _item)) return;
 
         // Copy the last item to the given item's index
-        items[setKey][itemToIndex[setKey][item]] = items[setKey][items[setKey].length - 1];
+        items[_setKey][itemToIndex[_setKey][_item]] = items[_setKey][items[_setKey].length - 1];
 
         // Update the moved item's stored index to the new index
-        itemToIndex[setKey][items[setKey][itemToIndex[setKey][item]]] = itemToIndex[setKey][item];
+        itemToIndex[_setKey][items[_setKey][itemToIndex[_setKey][_item]]] = itemToIndex[_setKey][_item];
 
         // Remove the given item's stored index
-        delete itemToIndex[setKey][item];
+        delete itemToIndex[_setKey][_item];
 
         // Remove the last item
-        items[setKey].pop();
+        items[_setKey].pop();
     }
 
-    function has(uint256 setKey, uint256 item) public view returns (bool) {
-        if (items[setKey].length == 0) return false;
-        if (itemToIndex[setKey][item] == 0) return items[setKey][0] == item;
-        return itemToIndex[setKey][item] != 0;
+    function has(uint256 _setKey, uint256 _item) public view returns (bool) {
+        if (items[_setKey].length == 0) return false;
+        if (itemToIndex[_setKey][_item] == 0) return items[_setKey][0] == _item;
+        return itemToIndex[_setKey][_item] != 0;
     }
 
-    function getItems(uint256 setKey) public view returns (uint256[] memory) {
-        return items[setKey];
+    function getItems(uint256 _setKey) public view returns (uint256[] memory) {
+        return items[_setKey];
     }
 
-    function size(uint256 setKey) public view returns (uint256) {
-        return items[setKey].length;
+    function size(uint256 _setKey) public view returns (uint256) {
+        return items[_setKey].length;
     }
 }

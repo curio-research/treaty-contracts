@@ -41,7 +41,7 @@ library Util {
     // ECS UTIL FUNCTIONS (temp)
     // ----------------------------------------------------------
 
-    function initializeTileECS(Position memory _position) public {
+    function _initializeTileECS(Position memory _position) public {
         WorldConstants memory _worldConstants = gs().worldConstants;
         uint256 _batchSize = _worldConstants.initBatchSize;
         uint256 _numInitTerrainTypes = _worldConstants.numInitTerrainTypes;
@@ -52,33 +52,33 @@ library Util {
 
         // Add base
         if (_terrainId >= 3) {
-            uint256 _baseId = addEntity();
-            addComponentEntityValue("IsActive", _baseId, abi.encode(true));
-            addComponentEntityValue("Position", _baseId, abi.encode(_position));
-            addComponentEntityValue("Health", _baseId, abi.encode(1));
-            addComponentEntityValue("CanAttack", _baseId, abi.encode(true));
-            addComponentEntityValue("CanPurchase", _baseId, abi.encode(true));
-            addComponentEntityValue("AttackFactor", _baseId, abi.encode(100));
-            addComponentEntityValue("DefenseFactor", _baseId, abi.encode(100));
+            uint256 _baseId = _addEntity();
+            _setComponentValue("IsActive", _baseId, abi.encode(true));
+            _setComponentValue("Position", _baseId, abi.encode(_position));
+            _setComponentValue("Health", _baseId, abi.encode(1));
+            _setComponentValue("CanAttack", _baseId, abi.encode(true));
+            _setComponentValue("CanPurchase", _baseId, abi.encode(true));
+            _setComponentValue("AttackFactor", _baseId, abi.encode(100));
+            _setComponentValue("DefenseFactor", _baseId, abi.encode(100));
             if (_terrainId == 3) {
                 // Port
-                addComponentEntityValue("Name", _baseId, abi.encode(BASE_NAME.PORT));
-                addComponentEntityValue("GoldPerSecond", _baseId, abi.encode(_worldConstants.defaultBaseGoldGenerationPerSecond));
-                addComponentEntityValue("GoldRatePositive", _baseId, abi.encode(true));
+                _setComponentValue("Name", _baseId, abi.encode(BASE_NAME.PORT));
+                _setComponentValue("GoldPerSecond", _baseId, abi.encode(_worldConstants.defaultBaseGoldGenerationPerSecond));
+                _setComponentValue("GoldRatePositive", _baseId, abi.encode(true));
                 _terrainId = 0;
             } else if (_terrainId == 4) {
                 // City
                 // Note: Now cities and ports are the same except their terrain sitting on!
                 // Troop type produced now depends on the terrain, not on their nature any more.
-                addComponentEntityValue("Name", _baseId, abi.encode(BASE_NAME.CITY));
-                addComponentEntityValue("GoldPerSecond", _baseId, abi.encode(_worldConstants.defaultBaseGoldGenerationPerSecond));
-                addComponentEntityValue("GoldRatePositive", _baseId, abi.encode(true));
+                _setComponentValue("Name", _baseId, abi.encode(BASE_NAME.CITY));
+                _setComponentValue("GoldPerSecond", _baseId, abi.encode(_worldConstants.defaultBaseGoldGenerationPerSecond));
+                _setComponentValue("GoldRatePositive", _baseId, abi.encode(true));
                 _terrainId = 1;
             } else if (_terrainId == 5) {
                 // Oil well
-                addComponentEntityValue("Name", _baseId, abi.encode(BASE_NAME.OIL_WELL));
-                addComponentEntityValue("OilPerSecond", _baseId, abi.encode(_worldConstants.defaultWellOilGenerationPerSecond));
-                addComponentEntityValue("OilRatePositive", _baseId, abi.encode(true));
+                _setComponentValue("Name", _baseId, abi.encode(BASE_NAME.OIL_WELL));
+                _setComponentValue("OilPerSecond", _baseId, abi.encode(_worldConstants.defaultWellOilGenerationPerSecond));
+                _setComponentValue("OilRatePositive", _baseId, abi.encode(true));
                 _terrainId = 0;
             }
         }
@@ -88,60 +88,60 @@ library Util {
         gs().map[_position.x][_position.y].terrain = TERRAIN(_terrainId);
     }
 
-    function getComponent(string memory _name) public view returns (Component) {
+    function _getComponent(string memory _name) public view returns (Component) {
         address _componentAddr = gs().components[_name];
         require(_componentAddr != address(0), "CURIO: Component not found");
 
         return Component(_componentAddr);
     }
 
-    function getPlayerId(address _playerAddr) public view returns (uint256) {
+    function _getPlayerId(address _playerAddr) public view returns (uint256) {
         return gs().playerIdMap[_playerAddr];
     }
 
     // Note: `occupantId` no longer needed thanks to Position component
     // TODO: Implement balance updates
-    function addTroopEntity(
+    function _addTroopEntity(
         uint256 _playerId,
         Position memory _position,
         uint256 _troopTemplateId
     ) public returns (uint256) {
         // 1. Get number of player-owned troops and verify size
-        uint256 _playerTroopCount = getPlayerTroopCount(_playerId);
+        uint256 _playerTroopCount = _getPlayerTroopCount(_playerId);
         require(_playerTroopCount < gs().worldConstants.maxTroopCountPerPlayer, "CURIO: Max troop count exceeded");
 
         // 2. Create new troop entity globally and in corresponding components
-        uint256 _troopId = addEntity();
+        uint256 _troopId = _addEntity();
         // troop fields
-        addComponentEntityValue("IsActive", _troopId, abi.encode(true));
-        addComponentEntityValue("Owner", _troopId, abi.encode(_playerId));
-        addComponentEntityValue("LastMoved", _troopId, abi.encode(block.timestamp));
-        addComponentEntityValue("LastLargeActionTaken", _troopId, abi.encode(0));
-        addComponentEntityValue("LastRepaired", _troopId, abi.encode(block.timestamp));
-        addComponentEntityValue("Health", _troopId, getComponent("MaxHealth").getRawValue(_troopTemplateId));
-        addComponentEntityValue("Position", _troopId, abi.encode(_position));
+        _setComponentValue("IsActive", _troopId, abi.encode(true));
+        _setComponentValue("Owner", _troopId, abi.encode(_playerId));
+        _setComponentValue("LastMoved", _troopId, abi.encode(block.timestamp));
+        _setComponentValue("LastLargeActionTaken", _troopId, abi.encode(0));
+        _setComponentValue("LastRepaired", _troopId, abi.encode(block.timestamp));
+        _setComponentValue("Health", _troopId, _getComponent("MaxHealth").getRawValue(_troopTemplateId));
+        _setComponentValue("Position", _troopId, abi.encode(_position));
         // struct property fields
-        addComponentEntityValue("CanMove", _troopId, abi.encode(true));
-        addComponentEntityValue("CanAttack", _troopId, abi.encode(true));
-        if (getComponent("CanCapture").has(_troopTemplateId)) {
-            addComponentEntityValue("CanCapture", _troopId, abi.encode(true));
+        _setComponentValue("CanMove", _troopId, abi.encode(true));
+        _setComponentValue("CanAttack", _troopId, abi.encode(true));
+        if (_getComponent("CanCapture").has(_troopTemplateId)) {
+            _setComponentValue("CanCapture", _troopId, abi.encode(true));
         }
         // troop type fields
-        addComponentEntityValue("Name", _troopId, getComponent("Name").getRawValue(_troopTemplateId));
-        if (getComponent("IsLandTroop").has(_troopTemplateId)) {
-            addComponentEntityValue("IsLandTroop", _troopId, abi.encode(true));
+        _setComponentValue("Name", _troopId, _getComponent("Name").getRawValue(_troopTemplateId));
+        if (_getComponent("IsLandTroop").has(_troopTemplateId)) {
+            _setComponentValue("IsLandTroop", _troopId, abi.encode(true));
         }
-        addComponentEntityValue("MaxHealth", _troopId, getComponent("MaxHealth").getRawValue(_troopTemplateId));
-        addComponentEntityValue("DamagePerHit", _troopId, getComponent("DamagePerHit").getRawValue(_troopTemplateId));
-        addComponentEntityValue("AttackFactor", _troopId, getComponent("AttackFactor").getRawValue(_troopTemplateId));
-        addComponentEntityValue("DefenseFactor", _troopId, getComponent("DefenseFactor").getRawValue(_troopTemplateId));
-        addComponentEntityValue("MovementCooldown", _troopId, getComponent("MovementCooldown").getRawValue(_troopTemplateId));
-        addComponentEntityValue("LargeActionCooldown", _troopId, getComponent("LargeActionCooldown").getRawValue(_troopTemplateId));
-        // addComponentEntityValue("Gold", _troopId, getComponent("Gold").getRawValue(_troopTemplateId));
-        addComponentEntityValue("OilPerSecond", _troopId, getComponent("OilPerSecond").getRawValue(_troopTemplateId));
-        Component _cargoCapacityComponent = getComponent("CargoCapacity");
+        _setComponentValue("MaxHealth", _troopId, _getComponent("MaxHealth").getRawValue(_troopTemplateId));
+        _setComponentValue("DamagePerHit", _troopId, _getComponent("DamagePerHit").getRawValue(_troopTemplateId));
+        _setComponentValue("AttackFactor", _troopId, _getComponent("AttackFactor").getRawValue(_troopTemplateId));
+        _setComponentValue("DefenseFactor", _troopId, _getComponent("DefenseFactor").getRawValue(_troopTemplateId));
+        _setComponentValue("MovementCooldown", _troopId, _getComponent("MovementCooldown").getRawValue(_troopTemplateId));
+        _setComponentValue("LargeActionCooldown", _troopId, _getComponent("LargeActionCooldown").getRawValue(_troopTemplateId));
+        // _setComponentValue("Gold", _troopId, _getComponent("Gold").getRawValue(_troopTemplateId));
+        _setComponentValue("OilPerSecond", _troopId, _getComponent("OilPerSecond").getRawValue(_troopTemplateId));
+        Component _cargoCapacityComponent = _getComponent("CargoCapacity");
         if (_cargoCapacityComponent.has(_troopTemplateId)) {
-            addComponentEntityValue("CargoCapacity", _troopId, _cargoCapacityComponent.getRawValue(_troopTemplateId));
+            _setComponentValue("CargoCapacity", _troopId, _cargoCapacityComponent.getRawValue(_troopTemplateId));
         }
 
         // 4. Update balances
@@ -150,33 +150,34 @@ library Util {
         return _troopId;
     }
 
-    function addEntity() public returns (uint256) {
+    function _addEntity() public returns (uint256) {
         Set _entities = Set(gs().entities);
         uint256 _newEntity = _entities.size() + 1;
         _entities.add(_newEntity);
         return _newEntity;
     }
 
-    function addComponentEntityValue(
+    // FIXME: not too useful, can remove
+    function _setComponentValue(
         string memory _componentName,
         uint256 _entity,
         bytes memory _value
     ) public {
-        getComponent(_componentName).set(_entity, _value);
+        _getComponent(_componentName).set(_entity, _value);
     }
 
-    function getPlayerTroopCount(uint256 _playerId) public returns (uint256) {
+    function _getPlayerTroopCount(uint256 _playerId) public returns (uint256) {
         Set _set1 = new Set();
         Set _set2 = new Set();
-        uint256[] memory _entitiesOwnedByPlayer = getComponent("Owner").getEntitiesWithValue(abi.encode(_playerId));
-        uint256[] memory _allTroops = getComponent("CanMove").getEntities();
+        uint256[] memory _entitiesOwnedByPlayer = _getComponent("Owner").getEntitiesWithValue(abi.encode(_playerId));
+        uint256[] memory _allTroops = _getComponent("CanMove").getEntities();
         _set1.addArray(_entitiesOwnedByPlayer);
         _set2.addArray(_allTroops);
-        return intersection(_set1, _set2).length;
+        return _intersection(_set1, _set2).length;
     }
 
     // Set-theoretic intersection
-    function intersection(Set _set1, Set _set2) public returns (uint256[] memory) {
+    function _intersection(Set _set1, Set _set2) public returns (uint256[] memory) {
         Set _searchedItems = new Set();
 
         uint256[] memory _temp = new uint256[](_set1.size() + _set2.size());
@@ -222,7 +223,7 @@ library Util {
     }
 
     // Set-theoretic difference
-    function difference(Set set1, Set set2) public view returns (uint256[] memory) {
+    function _difference(Set set1, Set set2) public view returns (uint256[] memory) {
         uint256[] memory _temp = new uint256[](set1.size());
         uint256 _itemCount = 0;
 
@@ -246,15 +247,15 @@ library Util {
     }
 
     // Set-theoretic union
-    function union(Set _set1, Set _set2) public returns (uint256[] memory) {
-        uint256[] memory _arr1 = difference(_set1, _set2);
-        uint256[] memory _arr2 = intersection(_set1, _set2);
-        uint256[] memory _arr3 = difference(_set2, _set1);
+    function _union(Set _set1, Set _set2) public returns (uint256[] memory) {
+        uint256[] memory _arr1 = _difference(_set1, _set2);
+        uint256[] memory _arr2 = _intersection(_set1, _set2);
+        uint256[] memory _arr3 = _difference(_set2, _set1);
 
-        return concatenate(concatenate(_arr1, _arr2), _arr3);
+        return _concatenate(_concatenate(_arr1, _arr2), _arr3);
     }
 
-    function concatenate(uint256[] memory _arr1, uint256[] memory _arr2) public pure returns (uint256[] memory) {
+    function _concatenate(uint256[] memory _arr1, uint256[] memory _arr2) public pure returns (uint256[] memory) {
         uint256[] memory _result = new uint256[](_arr1.length + _arr2.length);
 
         for (uint256 i = 0; i < _arr1.length; i++) {
@@ -267,7 +268,7 @@ library Util {
         return _result;
     }
 
-    function newSets() public returns (Set, Set) {
+    function _newSets() public returns (Set, Set) {
         return (new Set(), new Set());
     }
 

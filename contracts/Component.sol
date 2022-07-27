@@ -16,74 +16,65 @@ contract Component {
      */
 
     address public game; // game diamond
-    address public owner;
+    address public admin;
 
     Set private entities;
     MapSet private valueToEntities;
     mapping(uint256 => bytes) private entityToValue;
 
     constructor(address _game) {
-        owner = msg.sender;
+        admin = msg.sender;
         game = _game;
         entities = new Set();
         valueToEntities = new MapSet();
     }
 
-    // modifier onlyOwner() {
-    //     require(msg.sender == owner, "only owner");
-    //     _;
-    // }
-
-    // function transferOwnership(address newOwner) public onlyOwner {
-    //     owner = newOwner;
-    // }
-
-    function set(uint256 entity, bytes memory value) public {
+    function set(uint256 _entity, bytes memory _value) public {
         // Store the entity
-        entities.add(entity);
+        entities.add(_entity);
 
         // Remove the entitiy from the previous reverse mapping if there is one
-        valueToEntities.remove(uint256(keccak256(entityToValue[entity])), entity);
+        valueToEntities.remove(uint256(keccak256(entityToValue[_entity])), _entity);
 
         // Store the entity's value;
-        entityToValue[entity] = value;
+        entityToValue[_entity] = _value;
 
         // Add the entity to the new reverse mapping
-        valueToEntities.add(uint256(keccak256(value)), entity);
+        valueToEntities.add(uint256(keccak256(_value)), _entity);
 
         // // Emit global event
         // World(world).registerComponentValueSet(address(this), entity, value);
     }
 
-    function remove(uint256 entity) public {
+    function remove(uint256 _entity) public {
         // Remove the entity from the reverse mapping
-        valueToEntities.remove(uint256(keccak256(entityToValue[entity])), entity);
+        valueToEntities.remove(uint256(keccak256(entityToValue[_entity])), _entity);
 
         // Remove the entity from the entity list
-        entities.remove(entity);
+        entities.remove(_entity);
 
         // Remove the entity from the mapping
-        delete entityToValue[entity];
+        delete entityToValue[_entity];
 
         // // Emit global event
         // World(world).registerComponentValueRemoved(address(this), entity);
     }
 
-    function has(uint256 entity) public view returns (bool) {
-        return entities.has(entity);
+    function has(uint256 _entity) public view returns (bool) {
+        return entities.has(_entity);
     }
 
-    function getRawValue(uint256 entity) public view returns (bytes memory) {
+    function getRawValue(uint256 _entity) public view returns (bytes memory) {
         // Return the entity's component value
-        return entityToValue[entity];
+        return entityToValue[_entity];
     }
 
     function getEntities() public view returns (uint256[] memory) {
         return entities.getItems();
     }
 
-    function getEntitiesWithValue(bytes memory value) public view returns (uint256[] memory) {
+    function getEntitiesWithValue(bytes memory _value) public view returns (uint256[] memory) {
         // Return all entities with this component value
-        return valueToEntities.getItems(uint256(keccak256(value)));
+        return valueToEntities.getItems(uint256(keccak256(_value)));
     }
 }

@@ -189,14 +189,14 @@ contract HelperFacet is UseStorage {
     }
 
     function addEntity() external onlyAdmin returns (uint256) {
-        return Util.addEntity();
+        return Util._addEntity();
     }
 
-    function addComponentEntityValue(
+    function setComponentValue(
         string memory _componentName,
         uint256 _entity,
         bytes memory _value
     ) external onlyAdmin {
-        Util.addComponentEntityValue(_componentName, _entity, _value);
+        Util._setComponentValue(_componentName, _entity, _value);
     }
 }

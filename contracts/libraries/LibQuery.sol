@@ -15,55 +15,55 @@ struct QueryFragment {
 }
 
 library LibQuery {
-    function query(QueryFragment[] memory fragments) internal view returns (uint256[] memory) {
-        require(fragments[0].queryType == QueryType.Has || fragments[0].queryType == QueryType.HasValue, "Has/HasValue required");
+    function query(QueryFragment[] memory _fragments) internal view returns (uint256[] memory) {
+        require(_fragments[0].queryType == QueryType.Has || _fragments[0].queryType == QueryType.HasValue, "Has/HasValue required");
 
-        uint256[] memory firstFragmentEntities = fragments[0].queryType == QueryType.HasValue ? fragments[0].component.getEntitiesWithValue(fragments[0].value) : fragments[0].component.getEntities();
+        uint256[] memory _firstFragmentEntities = _fragments[0].queryType == QueryType.HasValue ? _fragments[0].component.getEntitiesWithValue(_fragments[0].value) : _fragments[0].component.getEntities();
 
         // If only one fragment is given, return immediately
-        if (fragments.length == 1) return firstFragmentEntities;
+        if (_fragments.length == 1) return _firstFragmentEntities;
 
-        uint256[] memory tempEntities = new uint256[](firstFragmentEntities.length);
-        uint256 numEntities = 0;
+        uint256[] memory _tempEntities = new uint256[](_firstFragmentEntities.length);
+        uint256 _numEntities = 0;
 
         // Iterate through firstFragmentEntities to discard entities that don't meet the requirements
-        for (uint256 i = 0; i < firstFragmentEntities.length; i++) {
-            uint256 entity = firstFragmentEntities[i];
-            bool include = true;
+        for (uint256 i = 0; i < _firstFragmentEntities.length; i++) {
+            uint256 _entity = _firstFragmentEntities[i];
+            bool _include = true;
 
-            for (uint256 j = 1; j < fragments.length; j++) {
-                QueryFragment memory fragment = fragments[j];
+            for (uint256 j = 1; j < _fragments.length; j++) {
+                QueryFragment memory _fragment = _fragments[j];
 
                 // For Has fragments, include entity if it is included in the component
-                if (fragment.queryType == QueryType.Has) {
-                    include = fragment.component.has(entity);
+                if (_fragment.queryType == QueryType.Has) {
+                    _include = _fragment.component.has(_entity);
                 }
 
                 // For Not fragments, include entity if it is not included in the component
-                if (fragment.queryType == QueryType.Not) {
-                    include = !fragment.component.has(entity);
+                if (_fragment.queryType == QueryType.Not) {
+                    _include = !_fragment.component.has(_entity);
                 }
 
                 // For HasValue fragments, include entity if it has the requested value
-                if (fragment.queryType == QueryType.HasValue) {
-                    include = keccak256(fragment.value) == keccak256(fragment.component.getRawValue(entity));
+                if (_fragment.queryType == QueryType.HasValue) {
+                    _include = keccak256(_fragment.value) == keccak256(_fragment.component.getRawValue(_entity));
                 }
 
-                if (!include) break;
+                if (!_include) break;
             }
 
-            if (include) {
-                tempEntities[numEntities] = entity;
-                numEntities++;
+            if (_include) {
+                _tempEntities[_numEntities] = _entity;
+                _numEntities++;
             }
         }
 
         // Copy to array of correct length
-        uint256[] memory entities = new uint256[](numEntities);
-        for (uint256 i; i < numEntities; i++) {
-            entities[i] = tempEntities[i];
+        uint256[] memory _entities = new uint256[](_numEntities);
+        for (uint256 i; i < _numEntities; i++) {
+            _entities[i] = _tempEntities[i];
         }
 
-        return entities;
+        return _entities;
     }
 }

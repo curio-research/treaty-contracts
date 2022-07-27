@@ -18,7 +18,7 @@ contract GetterFacet is UseStorage {
     // ----------------------------------------------------------------------
 
     function getComponent(string memory _name) external view returns (Component) {
-        return Util.getComponent(_name);
+        return Util._getComponent(_name);
     }
 
     // ----------------------------------------------------------------------
