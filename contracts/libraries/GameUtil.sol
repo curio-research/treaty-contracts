@@ -197,7 +197,6 @@ library Util {
         return (_armyId, gs().armyIdMap[_armyId]);
     }
 
-    // returns armyID
     function _createNewArmyFromTroop(uint256 _troopID, Position memory _pos) public returns (uint256) {
         require(_getPlayer(msg.sender).numOwnedTroops < gs().worldConstants.maxTroopCountPerPlayer, "CURIO: Max troop count exceeded");
 
@@ -418,16 +417,6 @@ library Util {
             if (!_canTroopMoveLand(army.armyTroopIds[i])) {
                 return false;
             }
-        }
-        return true;
-    }
-
-    function _canTroopMoveToTile(uint256 _troopTypeId, TERRAIN _terrain) public pure returns (bool) {
-        // infantry can move onto any tile. no need to check
-
-        // if the tropo type is a type of ship, it cannot move onto land tiles
-        if (_troopTypeId == 1 || _troopTypeId == 2 || _troopTypeId == 3) {
-            if (_terrain == TERRAIN.INLAND) return false;
         }
         return true;
     }

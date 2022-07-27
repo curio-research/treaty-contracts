@@ -22,20 +22,20 @@ library EngineModules {
     // ----------------------------------------------------------------------
 
     function _moveArmy(uint256 armyId, Position memory _targetPos) public {
-        Army memory army = Util._getArmy(armyId);
+        Army memory _army = Util._getArmy(armyId);
 
-        uint256 _movementCooldown = Util._getArmyMovementCooldown(army.armyTroopIds);
-        require((block.timestamp - army.lastMoved) >= _movementCooldown, "CURIO: Moved too recently");
+        uint256 _movementCooldown = Util._getArmyMovementCooldown(_army.armyTroopIds);
+        require((block.timestamp - _army.lastMoved) >= _movementCooldown, "CURIO: Moved too recently");
 
         // state change
         gs().map[_targetPos.x][_targetPos.y].occupantId = armyId;
         gs().armyIdMap[armyId].pos = _targetPos;
         gs().armyIdMap[armyId].lastMoved = block.timestamp;
-        gs().map[army.pos.x][army.pos.y].occupantId = _NULL(); // clear source tile's occupant ID
+        gs().map[_army.pos.x][_army.pos.y].occupantId = _NULL(); // clear source tile's occupant ID
 
         Util._updatePlayerBalances(msg.sender);
 
-        emit Util.Moved(msg.sender, armyId, block.timestamp, army.pos, _targetPos);
+        emit Util.Moved(msg.sender, armyId, block.timestamp, _army.pos, _targetPos);
     }
 
     function _battleBase(uint256 _armyId, Position memory _targetPos) public {
@@ -183,10 +183,10 @@ library EngineModules {
     }
 
     function _geographicCheckArmy(uint256 _armyId, Tile memory _tile) public view returns (bool) {
-        Army memory army = Util._getArmy(_armyId);
+        Army memory _army = Util._getArmy(_armyId);
 
-        for (uint256 i = 0; i < army.armyTroopIds.length; i++) {
-            uint256 troopId = army.armyTroopIds[i];
+        for (uint256 i = 0; i < _army.armyTroopIds.length; i++) {
+            uint256 troopId = _army.armyTroopIds[i];
             Troop memory troop = Util._getTroop(troopId);
             if (!_geographicCheckTroop(troop.troopTypeId, _tile)) {
                 return false;
@@ -199,13 +199,13 @@ library EngineModules {
     // ----------------------------------------------------------------------
 
     function _moveTroopToArmy(uint256 _mainArmyId, uint256 _joiningTroopId) public {
-        Troop memory joiningTroop = Util._getTroop(_joiningTroopId);
-        Army memory sourceArmy = Util._getArmy(joiningTroop.armyId);
+        Troop memory _joiningTroop = Util._getTroop(_joiningTroopId);
+        Army memory _sourceArmy = Util._getArmy(_joiningTroop.armyId);
 
         // movementCooldown check and update
-        uint256 _movementCooldown = Util._getArmyMovementCooldown(sourceArmy.armyTroopIds);
-        require((block.timestamp - sourceArmy.lastMoved) >= _movementCooldown, "CURIO: Moved too recently");
-        gs().armyIdMap[joiningTroop.armyId].lastMoved = block.timestamp;
+        uint256 _movementCooldown = Util._getArmyMovementCooldown(_sourceArmy.armyTroopIds);
+        require((block.timestamp - _sourceArmy.lastMoved) >= _movementCooldown, "CURIO: Moved too recently");
+        gs().armyIdMap[_joiningTroop.armyId].lastMoved = block.timestamp;
 
         gs().troopIdMap[_joiningTroopId].armyId = _mainArmyId;
         gs().armyIdMap[_mainArmyId].armyTroopIds.push(_joiningTroopId);
@@ -213,10 +213,10 @@ library EngineModules {
 
     // does not clear out source tile
     function _moveNewArmyToEmptyTile(uint256 _newArmyId, Position memory _targetPos) public {
-        Army memory army = Util._getArmy(_newArmyId);
+        Army memory _army = Util._getArmy(_newArmyId);
 
-        uint256 _movementCooldown = Util._getArmyMovementCooldown(army.armyTroopIds);
-        require((block.timestamp - army.lastMoved) >= _movementCooldown, "CURIO: Moved too recently");
+        uint256 _movementCooldown = Util._getArmyMovementCooldown(_army.armyTroopIds);
+        require((block.timestamp - _army.lastMoved) >= _movementCooldown, "CURIO: Moved too recently");
 
         // state change
         gs().map[_targetPos.x][_targetPos.y].occupantId = _newArmyId;
@@ -225,18 +225,18 @@ library EngineModules {
 
         Util._updatePlayerBalances(msg.sender);
 
-        emit Util.Moved(msg.sender, _newArmyId, block.timestamp, army.pos, _targetPos);
+        emit Util.Moved(msg.sender, _newArmyId, block.timestamp, _army.pos, _targetPos);
     }
 
     function _clearTroopFromSourceArmy(uint256 _sourceArmyId, uint256 _troopId) public {
         // state changes for source army: clean up leaving troops
-        Army memory sourceArmy = Util._getArmy(_sourceArmyId);
+        Army memory _sourceArmy = Util._getArmy(_sourceArmyId);
         uint256 _index = 0;
-        while (_index < sourceArmy.armyTroopIds.length) {
-            if (sourceArmy.armyTroopIds[_index] == _troopId) break;
+        while (_index < _sourceArmy.armyTroopIds.length) {
+            if (_sourceArmy.armyTroopIds[_index] == _troopId) break;
             _index++;
         }
-        gs().armyIdMap[_sourceArmyId].armyTroopIds[_index] = sourceArmy.armyTroopIds[sourceArmy.armyTroopIds.length - 1];
+        gs().armyIdMap[_sourceArmyId].armyTroopIds[_index] = _sourceArmy.armyTroopIds[_sourceArmy.armyTroopIds.length - 1];
         gs().armyIdMap[_sourceArmyId].armyTroopIds.pop();
         // deal with when _sourceArmy is empty
         if (gs().armyIdMap[_sourceArmyId].armyTroopIds.length == 0) {
@@ -257,18 +257,18 @@ library EngineModules {
             }
         } else {
             // base
-            Base memory base = Util._getBase(_tile.baseId);
-            if (base.name == BASE_NAME.PORT) {
+            Base memory _base = Util._getBase(_tile.baseId);
+            if (_base.name == BASE_NAME.PORT) {
                 //  everyone can move into the port
                 return true;
-            } else if (base.name == BASE_NAME.CITY) {
+            } else if (_base.name == BASE_NAME.CITY) {
                 if (_troopTypeId == 1) {
                     // only infantry can move into cities
                     return true;
                 } else {
                     return false;
                 }
-            } else if (base.name == BASE_NAME.OIL_WELL) {
+            } else if (_base.name == BASE_NAME.OIL_WELL) {
                 if (_troopTypeId == 1) {
                     return true;
                 } else {
