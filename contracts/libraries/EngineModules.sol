@@ -8,7 +8,7 @@ import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 
 /// @title EngineModules library
 /// @notice Composable parts for engine functions
-/// functions generally do not verify correctness of conditions. Make sure to verify in higher-level functions such as those in Engine.
+/// functions generally do not verify correctness of conditions. Make sure to verify in higher-level checkers.
 
 library EngineModules {
     using SafeMath for uint256;
@@ -17,25 +17,25 @@ library EngineModules {
         return LibStorage.gameStorage();
     }
 
-    // calls when target position is empty
-    // assumes that target tile is empty
-    function _moveArmy(uint256 _armyId, Position memory _targetPos) public {
-        Army memory _army = Util._getArmy(_armyId);
-        Tile memory _targetTile = Util._getTileAt(_targetPos);
+    // ----------------------------------------------------------------------
+    // MODULES FOR MARCH
+    // ----------------------------------------------------------------------
 
-        uint256 _movementCooldown = Util._getArmyMovementCooldown(_army.armyTroopIds);
-        // require((block.timestamp - _army.lastMoved) >= _movementCooldown, "CURIO: Moved too recently");
+    function _moveArmy(uint256 armyId, Position memory _targetPos) public {
+        Army memory army = Util._getArmy(armyId);
 
-        gs().map[_targetPos.x][_targetPos.y].occupantId = _armyId;
+        uint256 _movementCooldown = Util._getArmyMovementCooldown(army.armyTroopIds);
+        require((block.timestamp - army.lastMoved) >= _movementCooldown, "CURIO: Moved too recently");
 
-        gs().armyIdMap[_armyId].pos = _targetPos;
-        gs().armyIdMap[_armyId].lastMoved = block.timestamp;
-
-        gs().map[_army.pos.x][_army.pos.y].occupantId = _NULL(); // clear source tile's occupant ID
+        // state change
+        gs().map[_targetPos.x][_targetPos.y].occupantId = armyId;
+        gs().armyIdMap[armyId].pos = _targetPos;
+        gs().armyIdMap[armyId].lastMoved = block.timestamp;
+        gs().map[army.pos.x][army.pos.y].occupantId = _NULL(); // clear source tile's occupant ID
 
         Util._updatePlayerBalances(msg.sender);
 
-        emit Util.Moved(msg.sender, _armyId, block.timestamp, _army.pos, _targetPos);
+        emit Util.Moved(msg.sender, armyId, block.timestamp, army.pos, _targetPos);
     }
 
     function _battleBase(uint256 _armyId, Position memory _targetPos) public {
@@ -182,24 +182,50 @@ library EngineModules {
         }
     }
 
-    // note: may consider move this module to moveTroopToArmy
-    // check army size based on troop transport: Army can have up to five troops, or two with one transport
-    function _troopJoinArmySizeCheck(Army memory _mainArmy, Troop memory _joiningTroop) public pure {
-        uint256 troopCounter = _mainArmy.armyTroopIds.length + 1;
-        require(troopCounter <= 5, "CURIO: Army can have up to five troops, or two with one transport");
+    function _geographicCheckArmy(uint256 _armyId, Tile memory _tile) public view returns (bool) {
+        Army memory army = Util._getArmy(_armyId);
+
+        for (uint256 i = 0; i < army.armyTroopIds.length; i++) {
+            uint256 troopId = army.armyTroopIds[i];
+            Troop memory troop = Util._getTroop(troopId);
+            if (!_geographicCheckTroop(troop.troopTypeId, _tile)) {
+                return false;
+            }
+        }
+        return true;
     }
+    // ----------------------------------------------------------------------
+    // MODULES FOR MOVETROOP
+    // ----------------------------------------------------------------------
 
     function _moveTroopToArmy(uint256 _mainArmyId, uint256 _joiningTroopId) public {
-        Troop memory _joiningTroop = Util._getTroop(_joiningTroopId);
-        Army memory _sourceArmy = Util._getArmy(_joiningTroop.armyId);
+        Troop memory joiningTroop = Util._getTroop(_joiningTroopId);
+        Army memory sourceArmy = Util._getArmy(joiningTroop.armyId);
 
         // movementCooldown check and update
-        uint256 _movementCooldown = Util._getArmyMovementCooldown(_sourceArmy.armyTroopIds);
-        // require((block.timestamp - _sourceArmy.lastMoved) >= _movementCooldown, "CURIO: Moved too recently");
-        gs().armyIdMap[_joiningTroop.armyId].lastMoved = block.timestamp;
+        uint256 _movementCooldown = Util._getArmyMovementCooldown(sourceArmy.armyTroopIds);
+        require((block.timestamp - sourceArmy.lastMoved) >= _movementCooldown, "CURIO: Moved too recently");
+        gs().armyIdMap[joiningTroop.armyId].lastMoved = block.timestamp;
 
         gs().troopIdMap[_joiningTroopId].armyId = _mainArmyId;
         gs().armyIdMap[_mainArmyId].armyTroopIds.push(_joiningTroopId);
+    }
+
+    // does not clear out source tile
+    function _moveNewArmyToEmptyTile(uint256 _newArmyId, Position memory _targetPos) public {
+        Army memory army = Util._getArmy(_newArmyId);
+
+        uint256 _movementCooldown = Util._getArmyMovementCooldown(army.armyTroopIds);
+        require((block.timestamp - army.lastMoved) >= _movementCooldown, "CURIO: Moved too recently");
+
+        // state change
+        gs().map[_targetPos.x][_targetPos.y].occupantId = _newArmyId;
+        gs().armyIdMap[_newArmyId].pos = _targetPos;
+        gs().armyIdMap[_newArmyId].lastMoved = block.timestamp;
+
+        Util._updatePlayerBalances(msg.sender);
+
+        emit Util.Moved(msg.sender, _newArmyId, block.timestamp, army.pos, _targetPos);
     }
 
     function _clearTroopFromSourceArmy(uint256 _sourceArmyId, uint256 _troopId) public {
@@ -215,6 +241,40 @@ library EngineModules {
         // deal with when _sourceArmy is empty
         if (gs().armyIdMap[_sourceArmyId].armyTroopIds.length == 0) {
             Util._removeArmyOnly(_sourceArmyId);
+        }
+    }
+
+        function _geographicCheckTroop(uint256 _troopTypeId, Tile memory _tile) public view returns (bool) {
+        // no base
+        if (_tile.baseId == 0) {
+            if (_troopTypeId == 1) {
+                // infantry
+                return true;
+            } else {
+                // ships can only move onto water
+                if (_tile.terrain == TERRAIN.WATER) return true;
+                return false;
+            }
+        } else {
+            // base
+            Base memory base = Util._getBase(_tile.baseId);
+            if (base.name == BASE_NAME.PORT) {
+                //  everyone can move into the port
+                return true;
+            } else if (base.name == BASE_NAME.CITY) {
+                if (_troopTypeId == 1) {
+                    // only infantry can move into cities
+                    return true;
+                } else {
+                    return false;
+                }
+            } else if (base.name == BASE_NAME.OIL_WELL) {
+                if (_troopTypeId == 1) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
         }
     }
 

@@ -112,10 +112,6 @@ library Util {
         _updatePlayerBalances(_owner);
         gs().playerMap[_owner].numOwnedTroops = _numOwnedTroops;
         gs().playerMap[_owner].totalOilConsumptionPerUpdate = _totalOilConsumptionPerUpdate;
-
-        Tile memory _tile = _getTileAt(_army.pos);
-        Army memory _tileArmy = _getArmy(_tile.occupantId);
-
         gs().map[_pos.x][_pos.y].occupantId = _NULL();
     }
 
@@ -125,8 +121,6 @@ library Util {
         Position memory _pos = _army.pos;
 
         delete gs().armyIdMap[_armyId];
-        Tile memory _tile = _getTileAt(_army.pos);
-        Army memory _tileArmy = _getArmy(_tile.occupantId);
 
         gs().map[_pos.x][_pos.y].occupantId = _NULL();
     }
@@ -212,7 +206,7 @@ library Util {
         gs().armyNonce++;
 
         uint256[] memory _armyTroopIds;
-        Army memory _army = Army({owner: msg.sender, armyTroopIds: _armyTroopIds, lastMoved: block.timestamp, lastLargeActionTaken: block.timestamp, pos: _pos});
+        Army memory _army = Army({owner: msg.sender, armyTroopIds: _armyTroopIds, lastMoved: 0, lastLargeActionTaken: block.timestamp, pos: _pos});
 
         gs().armyIdMap[_armyId] = _army;
         gs().armyIdMap[_armyId].armyTroopIds.push(_troopID);
@@ -414,53 +408,6 @@ library Util {
             return true;
         }
         return false;
-    }
-
-    function _geographicCheckTroop(uint256 _troopTypeId, Tile memory _tile) public view returns (bool) {
-        // no base
-        if (_tile.baseId == 0) {
-            if (_troopTypeId == 1) {
-                // infantry
-                return true;
-            } else {
-                // ships can only move onto water
-                if (_tile.terrain == TERRAIN.WATER) return true;
-                return false;
-            }
-        } else {
-            // base
-            Base memory base = _getBase(_tile.baseId);
-            if (base.name == BASE_NAME.PORT) {
-                //  everyone can move into the port
-                return true;
-            } else if (base.name == BASE_NAME.CITY) {
-                if (_troopTypeId == 1) {
-                    // only infantry can move into cities
-                    return true;
-                } else {
-                    return false;
-                }
-            } else if (base.name == BASE_NAME.OIL_WELL) {
-                if (_troopTypeId == 1) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        }
-    }
-
-    function _geographicCheckArmy(uint256 _armyId, Tile memory _tile) public view returns (bool) {
-        Army memory army = _getArmy(_armyId);
-
-        for (uint256 i = 0; i < army.armyTroopIds.length; i++) {
-            uint256 troopId = army.armyTroopIds[i];
-            Troop memory troop = _getTroop(troopId);
-            if (!_geographicCheckTroop(troop.troopTypeId, _tile)) {
-                return false;
-            }
-        }
-        return true;
     }
 
     // if all the troops inside army can move onto land
