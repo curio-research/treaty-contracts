@@ -57,6 +57,14 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC173__factory>;
     getContractFactory(
+      name: "Component",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Component__factory>;
+    getContractFactory(
+      name: "CurioOS",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.CurioOS__factory>;
+    getContractFactory(
       name: "Util",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Util__factory>;
@@ -65,13 +73,17 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.LibDiamond__factory>;
     getContractFactory(
-      name: "CurioOS",
+      name: "MapSet",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.CurioOS__factory>;
+    ): Promise<Contracts.MapSet__factory>;
     getContractFactory(
       name: "Set",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Set__factory>;
+    getContractFactory(
+      name: "World",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.World__factory>;
     getContractFactory(
       name: "DiamondInit",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -137,6 +149,16 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IERC173>;
     getContractAt(
+      name: "Component",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Component>;
+    getContractAt(
+      name: "CurioOS",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.CurioOS>;
+    getContractAt(
       name: "Util",
       address: string,
       signer?: ethers.Signer
@@ -147,15 +169,20 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.LibDiamond>;
     getContractAt(
-      name: "CurioOS",
+      name: "MapSet",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.CurioOS>;
+    ): Promise<Contracts.MapSet>;
     getContractAt(
       name: "Set",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Set>;
+    getContractAt(
+      name: "World",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.World>;
     getContractAt(
       name: "DiamondInit",
       address: string,

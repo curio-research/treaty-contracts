@@ -6,6 +6,7 @@ import {BASE_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop, Worl
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 import {Component} from "contracts/libraries/Component.sol";
 import {Set} from "contracts/libraries/Set.sol";
+import "forge-std/console.sol";
 
 /// @title Util library
 /// @notice Contains all events as well as lower-level setters and getters
@@ -50,12 +51,14 @@ library Util {
         uint256 _divFactor = _numInitTerrainTypes**(_position.y % _batchSize);
         uint256 _terrainId = _encodedCol / _divFactor;
 
+        // Add base
         if (_terrainId >= 3) {
             uint256 _baseId = addEntity();
             addComponentEntityValue("IsActive", _baseId, abi.encode(true));
             addComponentEntityValue("Position", _baseId, abi.encode(_position));
             addComponentEntityValue("Health", _baseId, abi.encode(1));
             addComponentEntityValue("CanAttack", _baseId, abi.encode(true));
+            addComponentEntityValue("CanPurchase", _baseId, abi.encode(true));
             addComponentEntityValue("AttackFactor", _baseId, abi.encode(100));
             addComponentEntityValue("DefenseFactor", _baseId, abi.encode(100));
             if (_terrainId == 3) {
@@ -81,13 +84,16 @@ library Util {
             }
         }
 
-        gs().map[_position.x][_position.y].isInitialized = true;
+        // Update terrain
+        gs().map[_position.x][_position.y].isInitializedECS = true;
         gs().map[_position.x][_position.y].terrain = TERRAIN(_terrainId);
     }
 
-    // FIXME: is this correct? does it trigger the constructor instead?
     function getComponent(string memory _name) public view returns (Component) {
-        return Component(gs().components[_name]);
+        address _componentAddr = gs().components[_name];
+        require(_componentAddr != address(0), "CURIO: Component not found");
+
+        return Component(_componentAddr);
     }
 
     function getPlayerId(address _playerAddr) public view returns (uint256) {
@@ -105,11 +111,6 @@ library Util {
 
         // 2. Create new troop entity globally and in corresponding components
         uint256 _troopId = addEntity();
-        // struct property fields
-        addComponentEntityValue("CanMove", _troopId, abi.encode(true));
-        if (getComponent("CanCapture").has(_troopTemplateId)) {
-            addComponentEntityValue("CanCapture", _troopId, abi.encode(true));
-        }
         // troop fields
         addComponentEntityValue("IsActive", _troopId, abi.encode(true));
         addComponentEntityValue("Owner", _troopId, abi.encode(_playerId));
@@ -118,16 +119,24 @@ library Util {
         addComponentEntityValue("LastRepaired", _troopId, abi.encode(block.timestamp));
         addComponentEntityValue("Health", _troopId, getComponent("MaxHealth").getRawValue(_troopTemplateId));
         addComponentEntityValue("Position", _troopId, abi.encode(_position));
+        // struct property fields
+        addComponentEntityValue("CanMove", _troopId, abi.encode(true));
+        addComponentEntityValue("CanAttack", _troopId, abi.encode(true));
+        if (getComponent("CanCapture").has(_troopTemplateId)) {
+            addComponentEntityValue("CanCapture", _troopId, abi.encode(true));
+        }
         // troop type fields
         addComponentEntityValue("Name", _troopId, getComponent("Name").getRawValue(_troopTemplateId));
-        addComponentEntityValue("IsLandTroop", _troopId, getComponent("IsLandTroop").getRawValue(_troopTemplateId));
+        if (getComponent("IsLandTroop").has(_troopTemplateId)) {
+            addComponentEntityValue("IsLandTroop", _troopId, abi.encode(true));
+        }
         addComponentEntityValue("MaxHealth", _troopId, getComponent("MaxHealth").getRawValue(_troopTemplateId));
         addComponentEntityValue("DamagePerHit", _troopId, getComponent("DamagePerHit").getRawValue(_troopTemplateId));
         addComponentEntityValue("AttackFactor", _troopId, getComponent("AttackFactor").getRawValue(_troopTemplateId));
         addComponentEntityValue("DefenseFactor", _troopId, getComponent("DefenseFactor").getRawValue(_troopTemplateId));
         addComponentEntityValue("MovementCooldown", _troopId, getComponent("MovementCooldown").getRawValue(_troopTemplateId));
         addComponentEntityValue("LargeActionCooldown", _troopId, getComponent("LargeActionCooldown").getRawValue(_troopTemplateId));
-        addComponentEntityValue("Gold", _troopId, getComponent("Gold").getRawValue(_troopTemplateId));
+        // addComponentEntityValue("Gold", _troopId, getComponent("Gold").getRawValue(_troopTemplateId));
         addComponentEntityValue("OilPerSecond", _troopId, getComponent("OilPerSecond").getRawValue(_troopTemplateId));
         Component _cargoCapacityComponent = getComponent("CargoCapacity");
         if (_cargoCapacityComponent.has(_troopTemplateId)) {
@@ -146,7 +155,7 @@ library Util {
 
     function addEntity() public returns (uint256) {
         Set _entities = Set(gs().entities);
-        uint256 _newEntity = _entities.size();
+        uint256 _newEntity = _entities.size() + 1;
         _entities.add(_newEntity);
         return _newEntity;
     }
@@ -171,7 +180,7 @@ library Util {
         Set _set1 = new Set();
         Set _set2 = new Set();
         uint256[] memory _entitiesOwnedByPlayer = getComponent("Owner").getEntitiesWithValue(abi.encode(_playerId));
-        uint256[] memory _allTroops = getComponent("IsTroop").getEntities();
+        uint256[] memory _allTroops = getComponent("CanMove").getEntities();
         _set1.addArray(_entitiesOwnedByPlayer);
         _set2.addArray(_allTroops);
         return intersection(_set1, _set2).length;

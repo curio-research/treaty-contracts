@@ -57,6 +57,7 @@ struct Base {
 
 struct Tile {
     bool isInitialized;
+    bool isInitializedECS;
     TERRAIN terrain;
     uint256 occupantId; // troopID
     uint256 baseId;

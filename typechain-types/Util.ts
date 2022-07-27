@@ -148,6 +148,7 @@ export interface UtilInterface extends utils.Interface {
     "_getLargeActionCooldown(uint256)": FunctionFragment;
     "_getMaxHealth(uint256)": FunctionFragment;
     "_getMovementCooldown(uint256)": FunctionFragment;
+    "_getNeighbors((uint256,uint256))": FunctionFragment;
     "_getOilConsumptionPerSecond(uint256)": FunctionFragment;
     "_getPlayer(address)": FunctionFragment;
     "_getPlayerCount()": FunctionFragment;
@@ -166,6 +167,10 @@ export interface UtilInterface extends utils.Interface {
     "_samePos((uint256,uint256),(uint256,uint256))": FunctionFragment;
     "_strike(uint256,uint256)": FunctionFragment;
     "_withinDist((uint256,uint256),(uint256,uint256),uint256)": FunctionFragment;
+    "difference(Set,Set)": FunctionFragment;
+    "getComponent(string)": FunctionFragment;
+    "getPlayerId(address)": FunctionFragment;
+    "union(Set,Set)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -211,6 +216,10 @@ export interface UtilInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "_getMovementCooldown",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getNeighbors",
+    values: [PositionStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "_getOilConsumptionPerSecond",
@@ -281,6 +290,19 @@ export interface UtilInterface extends utils.Interface {
     functionFragment: "_withinDist",
     values: [PositionStruct, PositionStruct, BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "difference",
+    values: [string, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getComponent",
+    values: [string]
+  ): string;
+  encodeFunctionData(functionFragment: "getPlayerId", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "union",
+    values: [string, string]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "_canTransportTroop",
@@ -321,6 +343,10 @@ export interface UtilInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "_getMovementCooldown",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_getNeighbors",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -371,6 +397,16 @@ export interface UtilInterface extends utils.Interface {
     functionFragment: "_withinDist",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "difference", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getComponent",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getPlayerId",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "union", data: BytesLike): Result;
 
   events: {
     "AttackedBase(address,uint256,tuple,uint256,tuple)": EventFragment;
@@ -601,6 +637,11 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    _getNeighbors(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<[PositionStructOutput[]]>;
+
     _getOilConsumptionPerSecond(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
@@ -686,6 +727,25 @@ export interface Util extends BaseContract {
       _dist: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
+
+    difference(
+      set1: string,
+      set2: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
+
+    getComponent(_name: string, overrides?: CallOverrides): Promise<[string]>;
+
+    getPlayerId(
+      _playerAddr: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    union(
+      set1: string,
+      set2: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
   };
 
   _canTransportTroop(
@@ -742,6 +802,11 @@ export interface Util extends BaseContract {
     _troopTypeId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  _getNeighbors(
+    _pos: PositionStruct,
+    overrides?: CallOverrides
+  ): Promise<PositionStructOutput[]>;
 
   _getOilConsumptionPerSecond(
     _troopTypeId: BigNumberish,
@@ -826,6 +891,25 @@ export interface Util extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  difference(
+    set1: string,
+    set2: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
+  getComponent(_name: string, overrides?: CallOverrides): Promise<string>;
+
+  getPlayerId(
+    _playerAddr: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  union(
+    set1: string,
+    set2: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
   callStatic: {
     _canTransportTroop(
       _tile: TileStruct,
@@ -881,6 +965,11 @@ export interface Util extends BaseContract {
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    _getNeighbors(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PositionStructOutput[]>;
 
     _getOilConsumptionPerSecond(
       _troopTypeId: BigNumberish,
@@ -967,6 +1056,25 @@ export interface Util extends BaseContract {
       _dist: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    difference(
+      set1: string,
+      set2: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
+
+    getComponent(_name: string, overrides?: CallOverrides): Promise<string>;
+
+    getPlayerId(
+      _playerAddr: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    union(
+      set1: string,
+      set2: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
   };
 
   filters: {
@@ -1143,6 +1251,11 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _getNeighbors(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     _getOilConsumptionPerSecond(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
@@ -1222,6 +1335,25 @@ export interface Util extends BaseContract {
       _dist: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    difference(
+      set1: string,
+      set2: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getComponent(_name: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    getPlayerId(
+      _playerAddr: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    union(
+      set1: string,
+      set2: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -1277,6 +1409,11 @@ export interface Util extends BaseContract {
 
     _getMovementCooldown(
       _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getNeighbors(
+      _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1369,6 +1506,28 @@ export interface Util extends BaseContract {
       _p1: PositionStruct,
       _p2: PositionStruct,
       _dist: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    difference(
+      set1: string,
+      set2: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getComponent(
+      _name: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getPlayerId(
+      _playerAddr: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    union(
+      set1: string,
+      set2: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

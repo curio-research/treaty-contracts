@@ -333,6 +333,10 @@ contract EngineFacet is UseStorage {
         }
     }
 
+    // ----------------------------------------------------------------------
+    // ECS FUNCTIONS (temp)
+    // ----------------------------------------------------------------------
+
     // Question: is intersection the best way to find entities which satisfy multiple components?
     // Question: is obfuscation acceptable given simplicity? for example, assigning `Gold` component to both player and troop, one as balance and the other as cost
     // Question: TroopType now is just a troop without owner, position, or isActive; aka a template
@@ -340,7 +344,7 @@ contract EngineFacet is UseStorage {
     // Question: what is entityId? can it just increase with a nonce?
     // Question: rn all the intersections are hardcoded over lists. how do you have efficient set intersections?
     // BIG TODO: implement systems. rn all attributes are components in gs(), which is confusing AF
-    function purchaseTroopNew(Position memory _position, uint256 _troopTemplateId) public {
+    function purchaseTroopECS(Position memory _position, uint256 _troopTemplateId) public returns (uint256) {
         Set _set1 = new Set();
         Set _set2 = new Set();
 
@@ -356,12 +360,12 @@ contract EngineFacet is UseStorage {
 
         // 3. Verify that position is in bound, and initialize tile
         require(Util._inBound(_position), "CURIO: Out of bound");
-        if (!Util._getTileAt(_position).isInitialized) Util._initializeTile(_position);
+        if (!Util._getTileAt(_position).isInitializedECS) Util.initializeTileECS(_position);
 
         // 4. Verify that a "base" (aka. an entity which can purchase) is present
-        uint256[] memory _entitiesWithGivenPosition = Util.getComponent("Position").getEntitiesWithValue(abi.encode(_position));
+        // uint256[] memory _entitiesWithGivenPosition = Util.getComponent("Position").getEntitiesWithValue(abi.encode(_position));
         uint256[] memory _entitiesWithCanPurchase = Util.getComponent("CanPurchase").getEntitiesWithValue(abi.encode(true));
-        _set1.addArray(_entitiesWithGivenPosition);
+        _set1.addArray(Util.getComponent("Position").getEntitiesWithValue(abi.encode(_position)));
         _set2.addArray(_entitiesWithCanPurchase);
         uint256[] memory _intersection = Util.intersection(_set1, _set2);
         require(_intersection.length == 1, "CURIO: No base found");
@@ -381,13 +385,13 @@ contract EngineFacet is UseStorage {
             Position[] memory _neighbors = Util._getNeighbors(_position);
             bool _positionAdjacentToWater;
             for (uint256 i = 0; i < _neighbors.length; i++) {
-                TERRAIN _terrain = Util._getTileAt(_position).terrain;
-                if (_terrain == TERRAIN.WATER) _positionAdjacentToWater = true;
+                if (!Util._getTileAt(_neighbors[i]).isInitializedECS) Util.initializeTileECS(_neighbors[i]);
+                if (Util._getTileAt(_neighbors[i]).terrain == TERRAIN.WATER) _positionAdjacentToWater = true;
             }
             require(_positionAdjacentToWater, "CURIO: Base cannot purchase selected troop type");
         }
 
-        // 8. Fetch player gold balance and verify that it is enough
+        // 8. Fetch player gold balance and verify sufficience
         Component _goldComponent = Util.getComponent("Gold");
         uint256 _troopGoldPrice = abi.decode(_goldComponent.getRawValue(_troopTemplateId), (uint256));
         uint256 _playerGoldBalance = abi.decode(_goldComponent.getRawValue(_playerId), (uint256));
@@ -397,7 +401,7 @@ contract EngineFacet is UseStorage {
         _goldComponent.set(_playerId, abi.encode(_playerGoldBalance - _troopGoldPrice));
 
         // 10. Add troop
-        Util.addTroopEntity(_playerId, _position, _troopTemplateId);
+        return Util.addTroopEntity(_playerId, _position, _troopTemplateId);
     }
 
     // function addTroopEntity(Position memory pos) {

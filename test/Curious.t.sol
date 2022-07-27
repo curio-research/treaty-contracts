@@ -6,7 +6,7 @@ import "test/DiamondDeploy.t.sol";
 import {Set} from "contracts/libraries/Set.sol";
 import {CurioOS} from "contracts/libraries/CurioOS.sol";
 
-contract Game is Test {
+contract Curious is Test {
     CurioOS public game;
 
     function setUp() public {

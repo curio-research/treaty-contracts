@@ -257,6 +257,7 @@ export interface CurioInterface extends utils.Interface {
     "initializePlayer((uint256,uint256))": FunctionFragment;
     "march(uint256,(uint256,uint256))": FunctionFragment;
     "purchaseTroop((uint256,uint256),uint256)": FunctionFragment;
+    "purchaseTroopNew((uint256,uint256),uint256)": FunctionFragment;
     "bulkGetAllTroops()": FunctionFragment;
     "getBase(uint256)": FunctionFragment;
     "getBaseAt((uint256,uint256))": FunctionFragment;
@@ -294,6 +295,7 @@ export interface CurioInterface extends utils.Interface {
     "_getLargeActionCooldown(uint256)": FunctionFragment;
     "_getMaxHealth(uint256)": FunctionFragment;
     "_getMovementCooldown(uint256)": FunctionFragment;
+    "_getNeighbors((uint256,uint256))": FunctionFragment;
     "_getOilConsumptionPerSecond(uint256)": FunctionFragment;
     "_getPlayer(address)": FunctionFragment;
     "_getPlayerCount()": FunctionFragment;
@@ -312,6 +314,10 @@ export interface CurioInterface extends utils.Interface {
     "_samePos((uint256,uint256),(uint256,uint256))": FunctionFragment;
     "_strike(uint256,uint256)": FunctionFragment;
     "_withinDist((uint256,uint256),(uint256,uint256),uint256)": FunctionFragment;
+    "difference(Set,Set)": FunctionFragment;
+    "getComponent(string)": FunctionFragment;
+    "getPlayerId(address)": FunctionFragment;
+    "union(Set,Set)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -349,6 +355,10 @@ export interface CurioInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "purchaseTroop",
+    values: [PositionStruct, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "purchaseTroopNew",
     values: [PositionStruct, BigNumberish]
   ): string;
   encodeFunctionData(
@@ -491,6 +501,10 @@ export interface CurioInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "_getNeighbors",
+    values: [PositionStruct]
+  ): string;
+  encodeFunctionData(
     functionFragment: "_getOilConsumptionPerSecond",
     values: [BigNumberish]
   ): string;
@@ -559,6 +573,19 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "_withinDist",
     values: [PositionStruct, PositionStruct, BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "difference",
+    values: [string, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getComponent",
+    values: [string]
+  ): string;
+  encodeFunctionData(functionFragment: "getPlayerId", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "union",
+    values: [string, string]
+  ): string;
 
   decodeFunctionResult(functionFragment: "diamondCut", data: BytesLike): Result;
   decodeFunctionResult(
@@ -589,6 +616,10 @@ export interface CurioInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "march", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "purchaseTroop",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "purchaseTroopNew",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -704,6 +735,10 @@ export interface CurioInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "_getNeighbors",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "_getOilConsumptionPerSecond",
     data: BytesLike
   ): Result;
@@ -751,6 +786,16 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "_withinDist",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "difference", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getComponent",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getPlayerId",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "union", data: BytesLike): Result;
 
   events: {
     "DiamondCut(tuple[],address,bytes)": EventFragment;
@@ -997,6 +1042,12 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    purchaseTroopNew(
+      _position: PositionStruct,
+      _troopTemplateId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     bulkGetAllTroops(overrides?: CallOverrides): Promise<[TroopStructOutput[]]>;
 
     getBase(
@@ -1173,6 +1224,11 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    _getNeighbors(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<[PositionStructOutput[]]>;
+
     _getOilConsumptionPerSecond(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
@@ -1258,6 +1314,25 @@ export interface Curio extends BaseContract {
       _dist: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
+
+    difference(
+      set1: string,
+      set2: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
+
+    getComponent(_name: string, overrides?: CallOverrides): Promise<[string]>;
+
+    getPlayerId(
+      _playerAddr: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    union(
+      set1: string,
+      set2: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
   };
 
   diamondCut(
@@ -1305,6 +1380,12 @@ export interface Curio extends BaseContract {
   purchaseTroop(
     _pos: PositionStruct,
     _troopTypeId: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  purchaseTroopNew(
+    _position: PositionStruct,
+    _troopTemplateId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1484,6 +1565,11 @@ export interface Curio extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  _getNeighbors(
+    _pos: PositionStruct,
+    overrides?: CallOverrides
+  ): Promise<PositionStructOutput[]>;
+
   _getOilConsumptionPerSecond(
     _troopTypeId: BigNumberish,
     overrides?: CallOverrides
@@ -1567,6 +1653,25 @@ export interface Curio extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  difference(
+    set1: string,
+    set2: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
+  getComponent(_name: string, overrides?: CallOverrides): Promise<string>;
+
+  getPlayerId(
+    _playerAddr: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  union(
+    set1: string,
+    set2: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
   callStatic: {
     diamondCut(
       _diamondCut: FacetCutStruct[],
@@ -1613,6 +1718,12 @@ export interface Curio extends BaseContract {
     purchaseTroop(
       _pos: PositionStruct,
       _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    purchaseTroopNew(
+      _position: PositionStruct,
+      _troopTemplateId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1782,6 +1893,11 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _getNeighbors(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PositionStructOutput[]>;
+
     _getOilConsumptionPerSecond(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
@@ -1867,6 +1983,25 @@ export interface Curio extends BaseContract {
       _dist: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    difference(
+      set1: string,
+      set2: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
+
+    getComponent(_name: string, overrides?: CallOverrides): Promise<string>;
+
+    getPlayerId(
+      _playerAddr: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    union(
+      set1: string,
+      set2: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
   };
 
   filters: {
@@ -2059,6 +2194,12 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    purchaseTroopNew(
+      _position: PositionStruct,
+      _troopTemplateId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     bulkGetAllTroops(overrides?: CallOverrides): Promise<BigNumber>;
 
     getBase(_id: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
@@ -2224,6 +2365,11 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _getNeighbors(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     _getOilConsumptionPerSecond(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
@@ -2303,6 +2449,25 @@ export interface Curio extends BaseContract {
       _dist: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    difference(
+      set1: string,
+      set2: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getComponent(_name: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    getPlayerId(
+      _playerAddr: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    union(
+      set1: string,
+      set2: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -2351,6 +2516,12 @@ export interface Curio extends BaseContract {
     purchaseTroop(
       _pos: PositionStruct,
       _troopTypeId: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    purchaseTroopNew(
+      _position: PositionStruct,
+      _troopTemplateId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2528,6 +2699,11 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    _getNeighbors(
+      _pos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     _getOilConsumptionPerSecond(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
@@ -2617,6 +2793,28 @@ export interface Curio extends BaseContract {
       _p1: PositionStruct,
       _p2: PositionStruct,
       _dist: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    difference(
+      set1: string,
+      set2: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getComponent(
+      _name: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getPlayerId(
+      _playerAddr: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    union(
+      set1: string,
+      set2: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

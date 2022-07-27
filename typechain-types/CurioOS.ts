@@ -27,7 +27,6 @@ export interface CurioOSInterface extends utils.Interface {
     "componentName(string)": FunctionFragment;
     "components(uint256)": FunctionFragment;
     "difference(uint256,uint256)": FunctionFragment;
-    "entities(uint256)": FunctionFragment;
     "entityID()": FunctionFragment;
     "intersection(uint256,uint256)": FunctionFragment;
     "moveInBay(uint256)": FunctionFragment;
@@ -64,10 +63,6 @@ export interface CurioOSInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "difference",
     values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "entities",
-    values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "entityID", values?: undefined): string;
   encodeFunctionData(
@@ -114,7 +109,6 @@ export interface CurioOSInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "components", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "difference", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "entities", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "entityID", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "intersection",
@@ -200,8 +194,6 @@ export interface CurioOS extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
 
-    entities(arg0: BigNumberish, overrides?: CallOverrides): Promise<[boolean]>;
-
     entityID(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     intersection(
@@ -265,8 +257,6 @@ export interface CurioOS extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
-  entities(arg0: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
-
   entityID(overrides?: CallOverrides): Promise<BigNumber>;
 
   intersection(
@@ -324,8 +314,6 @@ export interface CurioOS extends BaseContract {
       componentID2: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
-
-    entities(arg0: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
 
     entityID(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -390,8 +378,6 @@ export interface CurioOS extends BaseContract {
       componentID2: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    entities(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
     entityID(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -460,11 +446,6 @@ export interface CurioOS extends BaseContract {
     difference(
       componentID1: BigNumberish,
       componentID2: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    entities(
-      arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

@@ -4,6 +4,7 @@ pragma solidity >=0.8.0;
 import {Set} from "./Set.sol";
 import {MapSet} from "./MapSet.sol";
 import {World} from "./World.sol";
+import "forge-std/console.sol";
 
 contract Component {
     /**
@@ -51,8 +52,8 @@ contract Component {
         // Add the entity to the new reverse mapping
         valueToEntities.add(uint256(keccak256(value)), entity);
 
-        // Emit global event
-        World(world).registerComponentValueSet(address(this), entity, value);
+        // // Emit global event
+        // World(world).registerComponentValueSet(address(this), entity, value);
     }
 
     function remove(uint256 entity) public {

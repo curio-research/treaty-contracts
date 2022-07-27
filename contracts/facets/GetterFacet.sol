@@ -5,12 +5,25 @@ import "contracts/libraries/Storage.sol";
 import {Util} from "contracts/libraries/GameUtil.sol";
 import {Base, Player, Position, Tile, Troop, WorldConstants, TroopType} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
+import {Component} from "contracts/libraries/Component.sol";
 
 /// @title Bulk getters
 /// @notice Getters provide bulk functions useful for fetching data from the frontend
 
 contract GetterFacet is UseStorage {
     using SafeMath for uint256;
+
+    // ----------------------------------------------------------------------
+    // ECS GETTERS (temp)
+    // ----------------------------------------------------------------------
+
+    function getComponent(string memory _name) external view returns (Component) {
+        return Util.getComponent(_name);
+    }
+
+    // ----------------------------------------------------------------------
+    // GETTERS
+    // ----------------------------------------------------------------------
 
     function bulkGetAllTroops() external view returns (Troop[] memory) {
         Troop[] memory _allTroops = new Troop[](gs().troopNonce - 1);

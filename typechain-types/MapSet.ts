@@ -17,31 +17,34 @@ import { FunctionFragment, Result } from "@ethersproject/abi";
 import { Listener, Provider } from "@ethersproject/providers";
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
-export interface SetInterface extends utils.Interface {
+export interface MapSetInterface extends utils.Interface {
   functions: {
-    "add(uint256)": FunctionFragment;
-    "addArray(uint256[])": FunctionFragment;
-    "getItems()": FunctionFragment;
-    "has(uint256)": FunctionFragment;
-    "remove(uint256)": FunctionFragment;
-    "size()": FunctionFragment;
+    "add(uint256,uint256)": FunctionFragment;
+    "getItems(uint256)": FunctionFragment;
+    "has(uint256,uint256)": FunctionFragment;
+    "remove(uint256,uint256)": FunctionFragment;
+    "size(uint256)": FunctionFragment;
   };
 
-  encodeFunctionData(functionFragment: "add", values: [BigNumberish]): string;
   encodeFunctionData(
-    functionFragment: "addArray",
-    values: [BigNumberish[]]
+    functionFragment: "add",
+    values: [BigNumberish, BigNumberish]
   ): string;
-  encodeFunctionData(functionFragment: "getItems", values?: undefined): string;
-  encodeFunctionData(functionFragment: "has", values: [BigNumberish]): string;
   encodeFunctionData(
-    functionFragment: "remove",
+    functionFragment: "getItems",
     values: [BigNumberish]
   ): string;
-  encodeFunctionData(functionFragment: "size", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "has",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "remove",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(functionFragment: "size", values: [BigNumberish]): string;
 
   decodeFunctionResult(functionFragment: "add", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "addArray", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getItems", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "has", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "remove", data: BytesLike): Result;
@@ -50,12 +53,12 @@ export interface SetInterface extends utils.Interface {
   events: {};
 }
 
-export interface Set extends BaseContract {
+export interface MapSet extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: SetInterface;
+  interface: MapSetInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -78,110 +81,139 @@ export interface Set extends BaseContract {
 
   functions: {
     add(
-      _item: BigNumberish,
+      setKey: BigNumberish,
+      item: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    addArray(
-      _items: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+    getItems(
+      setKey: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
 
-    getItems(overrides?: CallOverrides): Promise<[BigNumber[]]>;
-
-    has(_item: BigNumberish, overrides?: CallOverrides): Promise<[boolean]>;
+    has(
+      setKey: BigNumberish,
+      item: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     remove(
-      _item: BigNumberish,
+      setKey: BigNumberish,
+      item: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    size(overrides?: CallOverrides): Promise<[BigNumber]>;
+    size(setKey: BigNumberish, overrides?: CallOverrides): Promise<[BigNumber]>;
   };
 
   add(
-    _item: BigNumberish,
+    setKey: BigNumberish,
+    item: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  addArray(
-    _items: BigNumberish[],
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+  getItems(
+    setKey: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
 
-  getItems(overrides?: CallOverrides): Promise<BigNumber[]>;
-
-  has(_item: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
+  has(
+    setKey: BigNumberish,
+    item: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   remove(
-    _item: BigNumberish,
+    setKey: BigNumberish,
+    item: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  size(overrides?: CallOverrides): Promise<BigNumber>;
+  size(setKey: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
   callStatic: {
-    add(_item: BigNumberish, overrides?: CallOverrides): Promise<void>;
+    add(
+      setKey: BigNumberish,
+      item: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    addArray(_items: BigNumberish[], overrides?: CallOverrides): Promise<void>;
+    getItems(
+      setKey: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
 
-    getItems(overrides?: CallOverrides): Promise<BigNumber[]>;
+    has(
+      setKey: BigNumberish,
+      item: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
-    has(_item: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
+    remove(
+      setKey: BigNumberish,
+      item: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    remove(_item: BigNumberish, overrides?: CallOverrides): Promise<void>;
-
-    size(overrides?: CallOverrides): Promise<BigNumber>;
+    size(setKey: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   filters: {};
 
   estimateGas: {
     add(
-      _item: BigNumberish,
+      setKey: BigNumberish,
+      item: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    addArray(
-      _items: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+    getItems(
+      setKey: BigNumberish,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getItems(overrides?: CallOverrides): Promise<BigNumber>;
-
-    has(_item: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+    has(
+      setKey: BigNumberish,
+      item: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     remove(
-      _item: BigNumberish,
+      setKey: BigNumberish,
+      item: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    size(overrides?: CallOverrides): Promise<BigNumber>;
+    size(setKey: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
     add(
-      _item: BigNumberish,
+      setKey: BigNumberish,
+      item: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    addArray(
-      _items: BigNumberish[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+    getItems(
+      setKey: BigNumberish,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
-
-    getItems(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     has(
-      _item: BigNumberish,
+      setKey: BigNumberish,
+      item: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     remove(
-      _item: BigNumberish,
+      setKey: BigNumberish,
+      item: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    size(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    size(
+      setKey: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
   };
 }
