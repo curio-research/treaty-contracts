@@ -48,7 +48,6 @@ contract DiamondDeployTest is Test {
     uint256 public initTroopNonce = 1;
 
     uint256 public infantryTroopTypeId = indexToId(uint256(TROOP_NAME.INFANTRY));
-    uint256 public troopTransportTroopTypeId = indexToId(uint256(TROOP_NAME.TROOP_TRANSPORT));
     uint256 public destroyerTroopTypeId = indexToId(uint256(TROOP_NAME.DESTROYER));
     uint256 public battleshipTroopTypeId = indexToId(uint256(TROOP_NAME.BATTLESHIP));
 
@@ -56,40 +55,22 @@ contract DiamondDeployTest is Test {
     TroopType public infantryTroopType =
         TroopType({
             name: TROOP_NAME.INFANTRY,
-            isLandTroop: true,
             maxHealth: 1,
             damagePerHit: 1,
             attackFactor: 100,
             defenseFactor: 100,
-            cargoCapacity: 0,
             movementCooldown: 1,
             largeActionCooldown: 1,
             goldPrice: 6,
             oilConsumptionPerSecond: 0 //
         });
-    TroopType public troopTransportTroopType =
-        TroopType({
-            name: TROOP_NAME.TROOP_TRANSPORT,
-            isLandTroop: false,
-            maxHealth: 3,
-            damagePerHit: 1,
-            attackFactor: 50,
-            defenseFactor: 50,
-            cargoCapacity: 6,
-            movementCooldown: 1,
-            largeActionCooldown: 1,
-            goldPrice: 14,
-            oilConsumptionPerSecond: 1 //
-        });
     TroopType public destroyerTroopType =
         TroopType({
             name: TROOP_NAME.DESTROYER,
-            isLandTroop: false,
             maxHealth: 3,
             damagePerHit: 1,
             attackFactor: 100,
             defenseFactor: 100,
-            cargoCapacity: 0,
             movementCooldown: 1,
             largeActionCooldown: 1,
             goldPrice: 20,
@@ -98,12 +79,10 @@ contract DiamondDeployTest is Test {
     TroopType public cruiserTroopType =
         TroopType({
             name: TROOP_NAME.CRUISER,
-            isLandTroop: false,
             maxHealth: 8,
             damagePerHit: 2,
             attackFactor: 100,
             defenseFactor: 100,
-            cargoCapacity: 0,
             movementCooldown: 1,
             largeActionCooldown: 1,
             goldPrice: 30,
@@ -112,12 +91,10 @@ contract DiamondDeployTest is Test {
     TroopType public battleshipTroopType =
         TroopType({
             name: TROOP_NAME.BATTLESHIP,
-            isLandTroop: false,
             maxHealth: 12,
             damagePerHit: 3,
             attackFactor: 100,
             defenseFactor: 100,
-            cargoCapacity: 0,
             movementCooldown: 1,
             largeActionCooldown: 1,
             goldPrice: 50,
@@ -239,10 +216,9 @@ contract DiamondDeployTest is Test {
     function _generateTroopTypes() internal view returns (TroopType[] memory) {
         TroopType[] memory _troopTypes = new TroopType[](5);
         _troopTypes[0] = infantryTroopType;
-        _troopTypes[1] = troopTransportTroopType;
-        _troopTypes[2] = destroyerTroopType;
-        _troopTypes[3] = cruiserTroopType;
-        _troopTypes[4] = battleshipTroopType;
+        _troopTypes[1] = destroyerTroopType;
+        _troopTypes[2] = cruiserTroopType;
+        _troopTypes[3] = battleshipTroopType;
         return _troopTypes;
     }
 
@@ -316,5 +292,10 @@ contract DiamondDeployTest is Test {
 
     function indexToId(uint256 _index) public pure returns (uint256) {
         return _index + 1;
+    }
+
+    // helpers
+    function getRightPos(Position memory _pos) public pure returns (Position memory) {
+        return Position({x: _pos.x + 1, y: _pos.y});
     }
 }
