@@ -42,7 +42,6 @@ export const DEFAULT_WELL_OIL_GENERATION_PER_SECOND = 5;
 export const TROOP_TYPES: TroopTypeStruct[] = [
   {
     name: TROOP_NAME.INFANTRY,
-    isLandTroop: true,
     maxHealth: 1,
     damagePerHit: 1,
     attackFactor: 100,
@@ -54,7 +53,6 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
   },
   {
     name: TROOP_NAME.TROOP_TRANSPORT,
-    isLandTroop: false,
     maxHealth: 3,
     damagePerHit: 1,
     attackFactor: 50,
@@ -66,7 +64,6 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
   },
   {
     name: TROOP_NAME.DESTROYER,
-    isLandTroop: false,
     maxHealth: 3,
     damagePerHit: 1,
     attackFactor: 100,
@@ -78,7 +75,6 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
   },
   {
     name: TROOP_NAME.CRUISER,
-    isLandTroop: false,
     maxHealth: 8,
     damagePerHit: 2,
     attackFactor: 100,
@@ -90,7 +86,6 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
   },
   {
     name: TROOP_NAME.BATTLESHIP,
-    isLandTroop: false,
     maxHealth: 12,
     damagePerHit: 3,
     attackFactor: 100,

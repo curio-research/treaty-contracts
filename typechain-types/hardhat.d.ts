@@ -57,6 +57,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC173__factory>;
     getContractFactory(
+      name: "EngineModules",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.EngineModules__factory>;
+    getContractFactory(
       name: "Util",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Util__factory>;
@@ -64,14 +68,6 @@ declare module "hardhat/types/runtime" {
       name: "LibDiamond",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.LibDiamond__factory>;
-    getContractFactory(
-      name: "CurioOS",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.CurioOS__factory>;
-    getContractFactory(
-      name: "Set",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Set__factory>;
     getContractFactory(
       name: "DiamondInit",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -137,6 +133,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IERC173>;
     getContractAt(
+      name: "EngineModules",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.EngineModules>;
+    getContractAt(
       name: "Util",
       address: string,
       signer?: ethers.Signer
@@ -146,16 +147,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.LibDiamond>;
-    getContractAt(
-      name: "CurioOS",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.CurioOS>;
-    getContractAt(
-      name: "Set",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.Set>;
     getContractAt(
       name: "DiamondInit",
       address: string,
