@@ -46,23 +46,9 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
   y: BigNumber;
 };
 
-export type TroopStruct = {
-  armyId: BigNumberish;
-  troopTypeId: BigNumberish;
-  health: BigNumberish;
-  lastRepaired: BigNumberish;
-};
-
-export type TroopStructOutput = [BigNumber, BigNumber, BigNumber, BigNumber] & {
-  armyId: BigNumber;
-  troopTypeId: BigNumber;
-  health: BigNumber;
-  lastRepaired: BigNumber;
-};
-
 export type ArmyStruct = {
   owner: string;
-  armyTroopIds: BigNumberish[];
+  troopIds: BigNumberish[];
   lastMoved: BigNumberish;
   lastLargeActionTaken: BigNumberish;
   pos: PositionStruct;
@@ -76,10 +62,22 @@ export type ArmyStructOutput = [
   PositionStructOutput
 ] & {
   owner: string;
-  armyTroopIds: BigNumber[];
+  troopIds: BigNumber[];
   lastMoved: BigNumber;
   lastLargeActionTaken: BigNumber;
   pos: PositionStructOutput;
+};
+
+export type TroopStruct = {
+  armyId: BigNumberish;
+  troopTypeId: BigNumberish;
+  health: BigNumberish;
+};
+
+export type TroopStructOutput = [BigNumber, BigNumber, BigNumber] & {
+  armyId: BigNumber;
+  troopTypeId: BigNumber;
+  health: BigNumber;
 };
 
 export type BaseStruct = {
@@ -257,6 +255,7 @@ export interface CurioInterface extends utils.Interface {
     "march(uint256,(uint256,uint256))": FunctionFragment;
     "moveTroop(uint256,(uint256,uint256))": FunctionFragment;
     "purchaseTroop((uint256,uint256),uint256)": FunctionFragment;
+    "bulkGetAllArmies()": FunctionFragment;
     "bulkGetAllTroops()": FunctionFragment;
     "getArmy(uint256)": FunctionFragment;
     "getArmyAt((uint256,uint256))": FunctionFragment;
@@ -276,7 +275,6 @@ export interface CurioInterface extends utils.Interface {
     "bulkInitializeTiles((uint256,uint256)[])": FunctionFragment;
     "pauseGame()": FunctionFragment;
     "reactivatePlayer(address)": FunctionFragment;
-    "repair((uint256,uint256))": FunctionFragment;
     "resumeGame()": FunctionFragment;
     "spawnTroop((uint256,uint256),address,uint256)": FunctionFragment;
     "storeEncodedColumnBatches(uint256[][])": FunctionFragment;
@@ -367,6 +365,10 @@ export interface CurioInterface extends utils.Interface {
     values: [PositionStruct, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "bulkGetAllArmies",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "bulkGetAllTroops",
     values?: undefined
   ): string;
@@ -435,10 +437,6 @@ export interface CurioInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "reactivatePlayer",
     values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "repair",
-    values: [PositionStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "resumeGame",
@@ -652,6 +650,10 @@ export interface CurioInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "bulkGetAllArmies",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "bulkGetAllTroops",
     data: BytesLike
   ): Result;
@@ -703,7 +705,6 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "reactivatePlayer",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "repair", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "resumeGame", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "spawnTroop", data: BytesLike): Result;
   decodeFunctionResult(
@@ -859,13 +860,10 @@ export interface CurioInterface extends utils.Interface {
     "BaseCaptured(address,uint256,uint256)": EventFragment;
     "GamePaused()": EventFragment;
     "GameResumed()": EventFragment;
-    "Moved(address,uint256,uint256,tuple,tuple)": EventFragment;
+    "MovedArmy(address,uint256,uint256,tuple,uint256,tuple)": EventFragment;
     "NewPlayer(address,tuple)": EventFragment;
-    "NewTroop(address,uint256,tuple,tuple)": EventFragment;
     "PlayerInfo(address,tuple)": EventFragment;
     "PlayerReactivated(address)": EventFragment;
-    "Recovered(address,uint256)": EventFragment;
-    "Repaired(address,uint256,uint256)": EventFragment;
     "TroopDeath(address,uint256)": EventFragment;
     "UpdatePlayerBalance(address,uint256)": EventFragment;
   };
@@ -878,13 +876,10 @@ export interface CurioInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "BaseCaptured"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "GamePaused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "GameResumed"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Moved"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "MovedArmy"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NewPlayer"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "NewTroop"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PlayerInfo"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PlayerReactivated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Recovered"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "Repaired"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TroopDeath"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "UpdatePlayerBalance"): EventFragment;
 }
@@ -939,7 +934,7 @@ export type AttackedBaseEventFilter = TypedEventFilter<AttackedBaseEvent>;
 
 export type BaseCapturedEvent = TypedEvent<
   [string, BigNumber, BigNumber],
-  { _player: string; _troopId: BigNumber; _baseId: BigNumber }
+  { _player: string; _armyId: BigNumber; _baseId: BigNumber }
 >;
 
 export type BaseCapturedEventFilter = TypedEventFilter<BaseCapturedEvent>;
@@ -952,18 +947,19 @@ export type GameResumedEvent = TypedEvent<[], {}>;
 
 export type GameResumedEventFilter = TypedEventFilter<GameResumedEvent>;
 
-export type MovedEvent = TypedEvent<
-  [string, BigNumber, BigNumber, PositionStructOutput, PositionStructOutput],
+export type MovedArmyEvent = TypedEvent<
+  [string, BigNumber, BigNumber, ArmyStructOutput, BigNumber, ArmyStructOutput],
   {
     _player: string;
-    _troopId: BigNumber;
-    _timestamp: BigNumber;
-    _startPos: PositionStructOutput;
-    _targetPos: PositionStructOutput;
+    timestamp: BigNumber;
+    _startTileArmyId: BigNumber;
+    _startTileArmy: ArmyStructOutput;
+    _targetTileArmyId: BigNumber;
+    _targetTileArmy: ArmyStructOutput;
   }
 >;
 
-export type MovedEventFilter = TypedEventFilter<MovedEvent>;
+export type MovedArmyEventFilter = TypedEventFilter<MovedArmyEvent>;
 
 export type NewPlayerEvent = TypedEvent<
   [string, PositionStructOutput],
@@ -971,18 +967,6 @@ export type NewPlayerEvent = TypedEvent<
 >;
 
 export type NewPlayerEventFilter = TypedEventFilter<NewPlayerEvent>;
-
-export type NewTroopEvent = TypedEvent<
-  [string, BigNumber, ArmyStructOutput, PositionStructOutput],
-  {
-    _player: string;
-    _armyId: BigNumber;
-    _army: ArmyStructOutput;
-    _pos: PositionStructOutput;
-  }
->;
-
-export type NewTroopEventFilter = TypedEventFilter<NewTroopEvent>;
 
 export type PlayerInfoEvent = TypedEvent<
   [string, PlayerStructOutput],
@@ -995,20 +979,6 @@ export type PlayerReactivatedEvent = TypedEvent<[string], { _player: string }>;
 
 export type PlayerReactivatedEventFilter =
   TypedEventFilter<PlayerReactivatedEvent>;
-
-export type RecoveredEvent = TypedEvent<
-  [string, BigNumber],
-  { _player: string; _troopId: BigNumber }
->;
-
-export type RecoveredEventFilter = TypedEventFilter<RecoveredEvent>;
-
-export type RepairedEvent = TypedEvent<
-  [string, BigNumber, BigNumber],
-  { _player: string; _troopId: BigNumber; _health: BigNumber }
->;
-
-export type RepairedEventFilter = TypedEventFilter<RepairedEvent>;
 
 export type TroopDeathEvent = TypedEvent<
   [string, BigNumber],
@@ -1110,6 +1080,8 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    bulkGetAllArmies(overrides?: CallOverrides): Promise<[ArmyStructOutput[]]>;
+
     bulkGetAllTroops(overrides?: CallOverrides): Promise<[TroopStructOutput[]]>;
 
     getArmy(
@@ -1194,11 +1166,6 @@ export interface Curio extends BaseContract {
 
     reactivatePlayer(
       _player: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    repair(
-      _pos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -1485,6 +1452,8 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  bulkGetAllArmies(overrides?: CallOverrides): Promise<ArmyStructOutput[]>;
+
   bulkGetAllTroops(overrides?: CallOverrides): Promise<TroopStructOutput[]>;
 
   getArmy(
@@ -1569,11 +1538,6 @@ export interface Curio extends BaseContract {
 
   reactivatePlayer(
     _player: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  repair(
-    _pos: PositionStruct,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1857,6 +1821,8 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    bulkGetAllArmies(overrides?: CallOverrides): Promise<ArmyStructOutput[]>;
+
     bulkGetAllTroops(overrides?: CallOverrides): Promise<TroopStructOutput[]>;
 
     getArmy(
@@ -1938,8 +1904,6 @@ export interface Curio extends BaseContract {
     pauseGame(overrides?: CallOverrides): Promise<void>;
 
     reactivatePlayer(_player: string, overrides?: CallOverrides): Promise<void>;
-
-    repair(_pos: PositionStruct, overrides?: CallOverrides): Promise<void>;
 
     resumeGame(overrides?: CallOverrides): Promise<void>;
 
@@ -2227,12 +2191,12 @@ export interface Curio extends BaseContract {
 
     "BaseCaptured(address,uint256,uint256)"(
       _player?: null,
-      _troopId?: null,
+      _armyId?: null,
       _baseId?: null
     ): BaseCapturedEventFilter;
     BaseCaptured(
       _player?: null,
-      _troopId?: null,
+      _armyId?: null,
       _baseId?: null
     ): BaseCapturedEventFilter;
 
@@ -2242,39 +2206,28 @@ export interface Curio extends BaseContract {
     "GameResumed()"(): GameResumedEventFilter;
     GameResumed(): GameResumedEventFilter;
 
-    "Moved(address,uint256,uint256,tuple,tuple)"(
+    "MovedArmy(address,uint256,uint256,tuple,uint256,tuple)"(
       _player?: null,
-      _troopId?: null,
-      _timestamp?: null,
-      _startPos?: null,
-      _targetPos?: null
-    ): MovedEventFilter;
-    Moved(
+      timestamp?: null,
+      _startTileArmyId?: null,
+      _startTileArmy?: null,
+      _targetTileArmyId?: null,
+      _targetTileArmy?: null
+    ): MovedArmyEventFilter;
+    MovedArmy(
       _player?: null,
-      _troopId?: null,
-      _timestamp?: null,
-      _startPos?: null,
-      _targetPos?: null
-    ): MovedEventFilter;
+      timestamp?: null,
+      _startTileArmyId?: null,
+      _startTileArmy?: null,
+      _targetTileArmyId?: null,
+      _targetTileArmy?: null
+    ): MovedArmyEventFilter;
 
     "NewPlayer(address,tuple)"(
       _player?: null,
       _pos?: null
     ): NewPlayerEventFilter;
     NewPlayer(_player?: null, _pos?: null): NewPlayerEventFilter;
-
-    "NewTroop(address,uint256,tuple,tuple)"(
-      _player?: null,
-      _armyId?: null,
-      _army?: null,
-      _pos?: null
-    ): NewTroopEventFilter;
-    NewTroop(
-      _player?: null,
-      _armyId?: null,
-      _army?: null,
-      _pos?: null
-    ): NewTroopEventFilter;
 
     "PlayerInfo(address,tuple)"(
       _addr?: null,
@@ -2284,23 +2237,6 @@ export interface Curio extends BaseContract {
 
     "PlayerReactivated(address)"(_player?: null): PlayerReactivatedEventFilter;
     PlayerReactivated(_player?: null): PlayerReactivatedEventFilter;
-
-    "Recovered(address,uint256)"(
-      _player?: null,
-      _troopId?: null
-    ): RecoveredEventFilter;
-    Recovered(_player?: null, _troopId?: null): RecoveredEventFilter;
-
-    "Repaired(address,uint256,uint256)"(
-      _player?: null,
-      _troopId?: null,
-      _health?: null
-    ): RepairedEventFilter;
-    Repaired(
-      _player?: null,
-      _troopId?: null,
-      _health?: null
-    ): RepairedEventFilter;
 
     "TroopDeath(address,uint256)"(
       _player?: null,
@@ -2372,6 +2308,8 @@ export interface Curio extends BaseContract {
       _troopTypeId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    bulkGetAllArmies(overrides?: CallOverrides): Promise<BigNumber>;
 
     bulkGetAllTroops(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -2449,11 +2387,6 @@ export interface Curio extends BaseContract {
 
     reactivatePlayer(
       _player: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    repair(
-      _pos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -2735,6 +2668,8 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    bulkGetAllArmies(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     bulkGetAllTroops(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getArmy(
@@ -2817,11 +2752,6 @@ export interface Curio extends BaseContract {
 
     reactivatePlayer(
       _player: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    repair(
-      _pos: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

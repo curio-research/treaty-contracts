@@ -30,7 +30,7 @@ contract EngineFacet is UseStorage {
         Army memory _army = gs().armyIdMap[_armyId];
         require(_army.owner == msg.sender, "CURIO: Can only march own troop");
         require(!Util._samePos(_army.pos, _targetPos), "CURIO: Already at destination");
-        // require((block.timestamp - _army.lastLargeActionTaken) >= Util._getArmyLargeActionCooldown(_army.armyTroopIds), "CURIO: Large action taken too recently");
+        // require((block.timestamp - _army.lastLargeActionTaken) >= Util._getArmyLargeActionCooldown(_army.troopIds), "CURIO: Large action taken too recently");
 
         Tile memory _targetTile = Util._getTileAt(_targetPos);
         require(Util._geographicCheckArmy(_armyId, _targetTile), "CURIO: Troops and land types not compatible"); // check if each troop can move onto the tile
@@ -75,6 +75,7 @@ contract EngineFacet is UseStorage {
 
         Troop memory _troop = gs().troopIdMap[_troopId];
         Army memory _army = gs().armyIdMap[_troop.armyId];
+        Position memory startPos = _army.pos;
         Army memory _targetArmy;
         Tile memory _targetTile = Util._getTileAt(_targetPos);
 
@@ -87,7 +88,7 @@ contract EngineFacet is UseStorage {
         require(Util._withinDist(_army.pos, _targetPos, 1), "CURIO: can only dispatch troop to the near tile");
         require(_army.owner == msg.sender, "CURIO: Can only dispatch own troop");
         require(!Util._samePos(_army.pos, _targetPos), "CURIO: Already at destination");
-        // require((block.timestamp - _army.lastLargeActionTaken) >= Util._getArmyLargeActionCooldown(_army.armyTroopIds), "CURIO: Large action taken too recently");
+        // require((block.timestamp - _army.lastLargeActionTaken) >= Util._getArmyLargeActionCooldown(_army.troopIds), "CURIO: Large action taken too recently");
 
         // if the targe tile has no occupants currently
         if (_targetTile.occupantId == NULL) {
@@ -97,7 +98,6 @@ contract EngineFacet is UseStorage {
 
             uint256 _newArmyId = Util._createNewArmyFromTroop(_troopId, _army.pos); // create new army
 
-            // deleted thing here
             EngineModules._moveArmy(_newArmyId, _targetPos);
             gs().map[_army.pos.x][_army.pos.y].occupantId = _troop.armyId;
         } else {
@@ -112,6 +112,8 @@ contract EngineFacet is UseStorage {
         }
 
         EngineModules._clearTroopFromSourceArmy(_troop.armyId, _troopId);
+
+        Util.updateArmy(startPos, _targetPos);
     }
 
     /**
@@ -142,7 +144,7 @@ contract EngineFacet is UseStorage {
         gs().playerMap[msg.sender].goldBalance -= _troopPrice;
 
         emit Util.PlayerInfo(msg.sender, gs().playerMap[msg.sender]);
-        emit Util.NewTroop(msg.sender, _armyId, _army, _pos);
+        // emit Util.NewTroop(msg.sender, _armyId, _army, _pos);
     }
 
     /**

@@ -21,9 +21,8 @@ library EngineModules {
     // assumes that target tile is empty
     function _moveArmy(uint256 _armyId, Position memory _targetPos) public {
         Army memory _army = Util._getArmy(_armyId);
-        Tile memory _targetTile = Util._getTileAt(_targetPos);
 
-        uint256 _movementCooldown = Util._getArmyMovementCooldown(_army.armyTroopIds);
+        uint256 _movementCooldown = Util._getArmyMovementCooldown(_army.troopIds);
         // require((block.timestamp - _army.lastMoved) >= _movementCooldown, "CURIO: Moved too recently");
 
         gs().map[_targetPos.x][_targetPos.y].occupantId = _armyId;
@@ -35,7 +34,7 @@ library EngineModules {
 
         Util._updatePlayerBalances(msg.sender);
 
-        emit Util.Moved(msg.sender, _armyId, block.timestamp, _army.pos, _targetPos);
+        // emit Util.MovedArmy(msg.sender, _armyId, block.timestamp, _army.pos, _targetPos);
     }
 
     function _battleBase(uint256 _armyId, Position memory _targetPos) public {
@@ -53,13 +52,13 @@ library EngineModules {
         // Exchange fire until one side dies
         uint256 _salt = 0;
         // todo: distribute damage to all troops
-        uint256 _armyHealth = Util._getArmyHealth(_army.armyTroopIds);
+        uint256 _armyHealth = Util._getArmyHealth(_army.troopIds);
 
         while (_armyHealth > 0) {
             // Troop attacks target
             _salt += 1;
             if (Util._strike(_targetBase.attackFactor, _salt)) {
-                uint256 _damagePerHit = Util._getArmyDamagePerHit(_army.armyTroopIds);
+                uint256 _damagePerHit = Util._getArmyDamagePerHit(_army.troopIds);
                 if (_damagePerHit < _targetBase.health) {
                     _targetBase.health -= _damagePerHit;
                 } else {
@@ -133,8 +132,8 @@ library EngineModules {
         _targetArmy = gs().armyIdMap[_targetTile.occupantId];
         require(_targetArmy.owner != msg.sender, "CURIO: Cannot attack own troop");
 
-        uint256 _armyHealth = Util._getArmyHealth(_army.armyTroopIds);
-        uint256 _targetHealth = Util._getArmyHealth(_targetArmy.armyTroopIds);
+        uint256 _armyHealth = Util._getArmyHealth(_army.troopIds);
+        uint256 _targetHealth = Util._getArmyHealth(_targetArmy.troopIds);
 
         // todo: distribute damage to individual troops
         // Exchange fire until one side dies
@@ -142,8 +141,8 @@ library EngineModules {
         while (_armyHealth > 0) {
             // Troop attacks target
             _salt += 1;
-            if (Util._strike(Util._getArmyAttackFactor(_targetArmy.armyTroopIds), _salt)) {
-                uint256 _damagePerHit = Util._getArmyDamagePerHit(_army.armyTroopIds);
+            if (Util._strike(Util._getArmyAttackFactor(_targetArmy.troopIds), _salt)) {
+                uint256 _damagePerHit = Util._getArmyDamagePerHit(_army.troopIds);
                 if (_damagePerHit < _targetHealth) {
                     _targetHealth -= _damagePerHit;
                 } else {
@@ -157,9 +156,9 @@ library EngineModules {
 
             // Target attacks Army
             _salt += 1;
-            if (Util._strike(Util._getArmyDefenseFactor(_targetArmy.armyTroopIds), _salt)) {
-                if (Util._getArmyDamagePerHit(_targetArmy.armyTroopIds) < _armyHealth) {
-                    _armyHealth -= Util._getArmyDamagePerHit(_targetArmy.armyTroopIds);
+            if (Util._strike(Util._getArmyDefenseFactor(_targetArmy.troopIds), _salt)) {
+                if (Util._getArmyDamagePerHit(_targetArmy.troopIds) < _armyHealth) {
+                    _armyHealth -= Util._getArmyDamagePerHit(_targetArmy.troopIds);
                 } else {
                     _armyHealth = 0;
                     Util._removeEntireArmy(_armyId);
@@ -185,7 +184,7 @@ library EngineModules {
     // note: may consider move this module to moveTroopToArmy
     // check army size based on troop transport: Army can have up to five troops, or two with one transport
     function _troopJoinArmySizeCheck(Army memory _mainArmy, Troop memory _joiningTroop) public pure {
-        uint256 troopCounter = _mainArmy.armyTroopIds.length + 1;
+        uint256 troopCounter = _mainArmy.troopIds.length + 1;
         require(troopCounter <= 5, "CURIO: Army can have up to five troops, or two with one transport");
     }
 
@@ -194,26 +193,26 @@ library EngineModules {
         Army memory _sourceArmy = Util._getArmy(_joiningTroop.armyId);
 
         // movementCooldown check and update
-        uint256 _movementCooldown = Util._getArmyMovementCooldown(_sourceArmy.armyTroopIds);
+        uint256 _movementCooldown = Util._getArmyMovementCooldown(_sourceArmy.troopIds);
         // require((block.timestamp - _sourceArmy.lastMoved) >= _movementCooldown, "CURIO: Moved too recently");
         gs().armyIdMap[_joiningTroop.armyId].lastMoved = block.timestamp;
 
         gs().troopIdMap[_joiningTroopId].armyId = _mainArmyId;
-        gs().armyIdMap[_mainArmyId].armyTroopIds.push(_joiningTroopId);
+        gs().armyIdMap[_mainArmyId].troopIds.push(_joiningTroopId);
     }
 
     function _clearTroopFromSourceArmy(uint256 _sourceArmyId, uint256 _troopId) public {
         // state changes for source army: clean up leaving troops
         Army memory sourceArmy = Util._getArmy(_sourceArmyId);
         uint256 _index = 0;
-        while (_index < sourceArmy.armyTroopIds.length) {
-            if (sourceArmy.armyTroopIds[_index] == _troopId) break;
+        while (_index < sourceArmy.troopIds.length) {
+            if (sourceArmy.troopIds[_index] == _troopId) break;
             _index++;
         }
-        gs().armyIdMap[_sourceArmyId].armyTroopIds[_index] = sourceArmy.armyTroopIds[sourceArmy.armyTroopIds.length - 1];
-        gs().armyIdMap[_sourceArmyId].armyTroopIds.pop();
+        gs().armyIdMap[_sourceArmyId].troopIds[_index] = sourceArmy.troopIds[sourceArmy.troopIds.length - 1];
+        gs().armyIdMap[_sourceArmyId].troopIds.pop();
         // deal with when _sourceArmy is empty
-        if (gs().armyIdMap[_sourceArmyId].armyTroopIds.length == 0) {
+        if (gs().armyIdMap[_sourceArmyId].troopIds.length == 0) {
             Util._removeArmyOnly(_sourceArmyId);
         }
     }

@@ -27,7 +27,7 @@ contract StackingTest is Test, DiamondDeployTest {
 
         Army memory army1 = getter.getArmyAt(player1Pos);
 
-        assertEq(army1.armyTroopIds.length, 1);
+        assertEq(army1.troopIds.length, 1);
     }
 
     function testMoveArmyWithSingleTroop() public {
@@ -43,7 +43,7 @@ contract StackingTest is Test, DiamondDeployTest {
         Army memory army1 = getter.getArmyAt(targetPos);
         assertEq(army1.pos.x, army1.pos.x); // check position
         assertEq(army1.pos.y, army1.pos.y);
-        assertEq(army1.armyTroopIds.length, 1); // check the troop is inside
+        assertEq(army1.troopIds.length, 1); // check the troop is inside
     }
 
     function testMoveTroop() public {
@@ -67,9 +67,9 @@ contract StackingTest is Test, DiamondDeployTest {
 
         // // verify target army's details
         Army memory targetArmy = getter.getArmyAt(army2position);
-        assertEq(targetArmy.armyTroopIds.length, 2); // check that the new army has 2 troops inside
-        assertEq(targetArmy.armyTroopIds[0], 2); // new army contains troop #1 and #2
-        assertEq(targetArmy.armyTroopIds[1], 1);
+        assertEq(targetArmy.troopIds.length, 2); // check that the new army has 2 troops inside
+        assertEq(targetArmy.troopIds[0], 2); // new army contains troop #1 and #2
+        assertEq(targetArmy.troopIds[1], 1);
 
         // // ------------------------------------------------
         // // move troop1 back to original tile
@@ -79,12 +79,12 @@ contract StackingTest is Test, DiamondDeployTest {
         vm.stopPrank();
 
         Army memory separatedArmy = getter.getArmyAt(player1Pos);
-        assertEq(separatedArmy.armyTroopIds.length, 1);
-        assertEq(separatedArmy.armyTroopIds[0], 1); // troop #1 moved out
+        assertEq(separatedArmy.troopIds.length, 1);
+        assertEq(separatedArmy.troopIds[0], 1); // troop #1 moved out
 
         Army memory army2 = getter.getArmyAt(army2position);
-        assertEq(army2.armyTroopIds.length, 1);
-        assertEq(army2.armyTroopIds[0], 2); // troop #2 in old tile
+        assertEq(army2.troopIds.length, 1);
+        assertEq(army2.troopIds[0], 2); // troop #2 in old tile
     }
 
     function testMarch() public {
@@ -126,7 +126,7 @@ contract StackingTest is Test, DiamondDeployTest {
         assertEq(tile.occupantId, 2);
 
         Army memory army = getter.getArmyAt(destroyerPosition);
-        assertEq(army.armyTroopIds.length, 2); // new tile should have infantry + destroyer
+        assertEq(army.troopIds.length, 2); // new tile should have infantry + destroyer
 
         vm.expectRevert(bytes("CURIO: Troops and land types not compatible"));
         engine.march(2, getRightPos(destroyerPosition));
