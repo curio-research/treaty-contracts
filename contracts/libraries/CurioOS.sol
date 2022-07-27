@@ -6,7 +6,7 @@ import {Set} from "contracts/libraries/Set.sol";
 contract CurioOS {
     uint256 public componentID;
     mapping(uint256 => Set) public components;
-    mapping(string => uint256) public componentName; // name => uint256 // do we need component names ?
+    mapping(string => uint256) public componentName;
 
     uint256 public entityID;
 

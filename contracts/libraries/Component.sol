@@ -3,29 +3,27 @@ pragma solidity >=0.8.0;
 
 import {Set} from "./Set.sol";
 import {MapSet} from "./MapSet.sol";
-import {World} from "./World.sol";
-import "forge-std/console.sol";
 
 contract Component {
     /**
      * Sample components
      * - Health
      * - Position
-     * TODO: Question
-     * - Permission management for component value modification
-     * - Is there value to having a nonce count how many components there are in an ordered fashion?
+     *
+     * Question: Permission management for component value modification
+     * Question: Is there value to having a nonce count how many components there are in an ordered fashion?
      */
 
-    address public world; // FIXME: can this just be `EngineFacet`?
+    address public game; // game diamond
     address public owner;
 
     Set private entities;
     MapSet private valueToEntities;
     mapping(uint256 => bytes) private entityToValue;
 
-    constructor(address _world) {
+    constructor(address _game) {
         owner = msg.sender;
-        world = _world;
+        game = _game;
         entities = new Set();
         valueToEntities = new MapSet();
     }
@@ -66,8 +64,8 @@ contract Component {
         // Remove the entity from the mapping
         delete entityToValue[entity];
 
-        // Emit global event
-        World(world).registerComponentValueRemoved(address(this), entity);
+        // // Emit global event
+        // World(world).registerComponentValueRemoved(address(this), entity);
     }
 
     function has(uint256 entity) public view returns (bool) {

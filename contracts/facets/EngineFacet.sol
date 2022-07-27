@@ -337,50 +337,46 @@ contract EngineFacet is UseStorage {
     // ECS FUNCTIONS (temp)
     // ----------------------------------------------------------------------
 
-    // Question: is intersection the best way to find entities which satisfy multiple components?
-    // Question: is obfuscation acceptable given simplicity? for example, assigning `Gold` component to both player and troop, one as balance and the other as cost
-    // Question: TroopType now is just a troop without owner, position, or isActive; aka a template
-    // Question: should past structs like `Base` or `Troop` be their own boolean components? Or should they be differentiated solely from "functional" components?
-    // Question: what is entityId? can it just increase with a nonce?
-    // Question: rn all the intersections are hardcoded over lists. how do you have efficient set intersections?
-    // BIG TODO: implement systems. rn all attributes are components in gs(), which is confusing AF
+    // Question: Is intersection the best way to find entities which satisfy multiple component conditions?
+    // Question: Does simplicity outweigh slight obfuscation? e.g. Gold component assigned to both player balance and troop price
+    // Question: Should past structs like Base or Troop be their own boolean components? Or should they be differentiated solely from "functional" components such as `canMove`?
+    // Question: Should entityId increase with nonce or be randomly generated?
+    // Question: How, if possible, can we have more efficient array intersections without creating sets first?
+    // Note: TroopType now is just a template Troop, without Owner, Position, or isActive
     function purchaseTroopECS(Position memory _position, uint256 _troopTemplateId) public returns (uint256) {
         Set _set1 = new Set();
         Set _set2 = new Set();
 
-        // 0. Verify that parametric entity exists
+        // 1. Verify that parametric entity exists
         require(Set(gs().entities).has(_troopTemplateId), "CURIO: Troop template not found");
 
-        // 1. Verify that game is ongoing
+        // 2. Verify that game is ongoing
         require(!gs().isPaused, "CURIO: Game is paused");
 
-        // 2. Verify that player is active
+        // 3. Verify that player is active
         uint256 _playerId = Util.getPlayerId(msg.sender);
         require(Util.getComponent("IsActive").has(_playerId), "CURIO: Player is inactive");
 
-        // 3. Verify that position is in bound, and initialize tile
+        // 4. Verify that position is in bound, and initialize tile
         require(Util._inBound(_position), "CURIO: Out of bound");
         if (!Util._getTileAt(_position).isInitializedECS) Util.initializeTileECS(_position);
 
-        // 4. Verify that a "base" (aka. an entity which can purchase) is present
-        // uint256[] memory _entitiesWithGivenPosition = Util.getComponent("Position").getEntitiesWithValue(abi.encode(_position));
-        uint256[] memory _entitiesWithCanPurchase = Util.getComponent("CanPurchase").getEntitiesWithValue(abi.encode(true));
+        // 5. Verify that a "base" (aka. an entity which can purchase) is present
         _set1.addArray(Util.getComponent("Position").getEntitiesWithValue(abi.encode(_position)));
-        _set2.addArray(_entitiesWithCanPurchase);
+        _set2.addArray(Util.getComponent("CanPurchase").getEntities());
         uint256[] memory _intersection = Util.intersection(_set1, _set2);
         require(_intersection.length == 1, "CURIO: No base found");
         uint256 _baseId = _intersection[0];
 
-        // 5. Verify that player owns the "base"
+        // 6. Verify that player owns the "base"
         require(abi.decode(Util.getComponent("Owner").getRawValue(_baseId), (uint256)) == _playerId, "CURIO: Can only purchase in own base");
 
-        // 6. Verify that no "troop" (aka. a movable entity) is present
-        uint256[] memory _entitiesWithCanMove = Util.getComponent("CanMove").getEntitiesWithValue(abi.encode(false));
+        // 7. Verify that no "troop" (aka. a movable entity) is present
         _set2 = new Set();
-        _set2.addArray(_entitiesWithCanMove);
+        _set2.addArray(Util.getComponent("CanMove").getEntities());
         require(Util.intersection(_set1, _set2).length == 0, "CURIO: Base occupied by another troop");
 
-        // 7. Verify that the "base" can purchase the given type of "troop"
+        // 8. Verify that the "base" can purchase the given type of "troop"
         if (!Util.getComponent("IsLandTroop").has(_troopTemplateId)) {
             Position[] memory _neighbors = Util._getNeighbors(_position);
             bool _positionAdjacentToWater;
@@ -391,28 +387,59 @@ contract EngineFacet is UseStorage {
             require(_positionAdjacentToWater, "CURIO: Base cannot purchase selected troop type");
         }
 
-        // 8. Fetch player gold balance and verify sufficience
+        // 9. Fetch player gold balance and verify sufficience
         Component _goldComponent = Util.getComponent("Gold");
         uint256 _troopGoldPrice = abi.decode(_goldComponent.getRawValue(_troopTemplateId), (uint256));
         uint256 _playerGoldBalance = abi.decode(_goldComponent.getRawValue(_playerId), (uint256));
         require(_playerGoldBalance > _troopGoldPrice, "CURIO: Insufficient gold balance");
 
-        // 9. Set new player gold balance
+        // 10. Set new player gold balance
         _goldComponent.set(_playerId, abi.encode(_playerGoldBalance - _troopGoldPrice));
 
-        // 10. Add troop
+        // 11. Add troop
         return Util.addTroopEntity(_playerId, _position, _troopTemplateId);
     }
 
-    // function addTroopEntity(Position memory pos) {
-    //     // Util.addNewEntity() ...
-    //     // add attack component
-    //     // add move component
-    //     // add position component
-    //     // add health component
-    //     // add capture component
-    //     // emit event for entity creation
-    // }
+    function initializePlayerECS(Position memory _position, string memory _name) external returns (uint256) {
+        Set _set1 = new Set();
+        Set _set2 = new Set();
+
+        // Checkers
+        require(!gs().isPaused, "CURIO: Game is paused");
+        require(Util._getPlayerCount() < gs().worldConstants.maxPlayerCount, "CURIO: Max player count exceeded");
+        require(gs().playerIdMap[msg.sender] == NULL, "CURIO: Player already initialized");
+        require(Util._inBound(_position), "CURIO: Out of bound");
+        if (!Util._getTileAt(_position).isInitializedECS) Util.initializeTileECS(_position);
+
+        // Verify that a "base" (aka. an entity which can purchase) is present
+        uint256[] memory _entitiesWithGivenPosition = Util.getComponent("Position").getEntitiesWithValue(abi.encode(_position));
+        uint256[] memory _entitiesWithCanPurchase = Util.getComponent("CanPurchase").getEntitiesWithValue(abi.encode(true));
+        _set1.addArray(_entitiesWithGivenPosition);
+        _set2.addArray(_entitiesWithCanPurchase);
+        uint256[] memory _intersection = Util.intersection(_set1, _set2);
+        require(_intersection.length == 1, "CURIO: No base found");
+        uint256 _baseId = _intersection[0];
+
+        // Verify that base is not taken
+        require(!Util.getComponent("Owner").has(_baseId), "CURIO: Base is taken");
+
+        // Spawn player
+        WorldConstants memory _worldConstants = gs().worldConstants;
+        uint256 _playerId = Util.addEntity();
+        Util.addComponentEntityValue("IsActive", _playerId, abi.encode(true));
+        Util.addComponentEntityValue("Name", _playerId, abi.encode(_name));
+        Util.addComponentEntityValue("Gold", _playerId, abi.encode(_worldConstants.initPlayerGoldBalance));
+        Util.addComponentEntityValue("Oil", _playerId, abi.encode(_worldConstants.initPlayerOilBalance));
+        Util.addComponentEntityValue("InitTimestamp", _playerId, abi.encode(block.timestamp));
+        Util.addComponentEntityValue("BalanceLastUpdated", _playerId, abi.encode(block.timestamp));
+        gs().players.push(msg.sender);
+        gs().playerIdMap[msg.sender] = _playerId;
+
+        // Transfer base ownership
+        Util.getComponent("Owner").set(_baseId, abi.encode(_playerId));
+
+        return _playerId;
+    }
 
     // // example policy: "Troop that has 20 health or above gain 1 more attack"
     // function buffPolicy() {

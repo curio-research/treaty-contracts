@@ -5,11 +5,11 @@ import "forge-std/Test.sol";
 import "test/DiamondDeploy.t.sol";
 import {Component} from "contracts/libraries/Component.sol";
 import {Set} from "contracts/libraries/Set.sol";
-import "forge-std/console.sol";
 
 contract ECS is Test, DiamondDeployTest {
     function testPurchaseTroopEntity() public {
         // List of all component names
+        // FIXME: array length hardcoded
         // TODO: separate into systems
         string[28] memory _componentNameList = [
             "Name",
@@ -66,9 +66,10 @@ contract ECS is Test, DiamondDeployTest {
         vm.startPrank(player1);
 
         // Initialize player1 and its home port
-        uint256 _player1Id = helper.initializePlayerECS(player1Pos, "Bob");
+        uint256 _player1Id = engine.initializePlayerECS(player1Pos, "Bob");
 
         // Verify pre-conditions
+        assertEq(_player1Id, 3);
         assertTrue(getter.getComponent("DefenseFactor").has(_destroyerTemplateId));
         assertTrue(!getter.getComponent("DefenseFactor").has(_player1Id));
         assertEq(getter.getComponent("IsActive").getEntities().length, 3);
@@ -77,7 +78,7 @@ contract ECS is Test, DiamondDeployTest {
         assertEq(getter.getComponent("Gold").getEntitiesWithValue(abi.encode(19))[0], _destroyerTemplateId);
         assertEq(getter.getComponent("Position").getEntitiesWithValue(abi.encode(player1Pos)).length, 1);
         assertEq(getter.getComponent("CanPurchase").getEntities().length, 1);
-        assertEq(_player1Id, 3);
+        assertEq(getter.getComponent("Name").getEntitiesWithValue(abi.encode("Bob"))[0], _player1Id);
         vm.expectRevert(bytes("CURIO: Component not found"));
         getter.getComponent("NonexistentComponent");
 
@@ -96,8 +97,8 @@ contract ECS is Test, DiamondDeployTest {
         assertEq(_baseIds.length, 4); // because nearby city and 2 ports are also initialized in neighbor search
         assertEq(abi.decode(getter.getComponent("Owner").getRawValue(_baseIds[0]), (uint256)), _player1Id);
 
-        // Verify insufficient gold balance to buy another destroyer
-        vm.expectRevert(bytes("CURIO: Insufficient gold balance"));
+        // Verify inability to buy another destroyer before moving destroyer away
+        vm.expectRevert(bytes("CURIO: Base occupied by another troop"));
         engine.purchaseTroopECS(player1Pos, _destroyerTemplateId);
 
         vm.stopPrank();

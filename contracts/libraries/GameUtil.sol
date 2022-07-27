@@ -6,7 +6,6 @@ import {BASE_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop, Worl
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 import {Component} from "contracts/libraries/Component.sol";
 import {Set} from "contracts/libraries/Set.sol";
-import "forge-std/console.sol";
 
 /// @title Util library
 /// @notice Contains all events as well as lower-level setters and getters
@@ -39,7 +38,7 @@ library Util {
     event UpdatePlayerBalance(address _player, uint256 _amount);
 
     // ----------------------------------------------------------
-    // ECS (temporary)
+    // ECS UTIL FUNCTIONS (temp)
     // ----------------------------------------------------------
 
     function initializeTileECS(Position memory _position) public {
@@ -100,6 +99,8 @@ library Util {
         return gs().playerIdMap[_playerAddr];
     }
 
+    // Note: `occupantId` no longer needed thanks to Position component
+    // TODO: Implement balance updates
     function addTroopEntity(
         uint256 _playerId,
         Position memory _position,
@@ -143,12 +144,8 @@ library Util {
             addComponentEntityValue("CargoCapacity", _troopId, _cargoCapacityComponent.getRawValue(_troopTemplateId));
         }
 
-        // 3. Update map info
-        // no longer need `occupantId` for tile; can reverse-fetch from position
-
         // 4. Update balances
-        // no longer need `totalOilPerSecond` for player
-        // no longer need `troopCount` for player
+        // TODO: implement
 
         return _troopId;
     }
@@ -167,14 +164,6 @@ library Util {
     ) public {
         getComponent(_componentName).set(_entity, _value);
     }
-
-    // function addComponentEntityValue(
-    //     Component memory _component,
-    //     uint256 _entity,
-    //     bytes calldata _value
-    // ) public {
-    //     _component.set(_entity, _value);
-    // }
 
     function getPlayerTroopCount(uint256 _playerId) public returns (uint256) {
         Set _set1 = new Set();
