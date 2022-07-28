@@ -4,6 +4,7 @@ pragma solidity ^0.8.4;
 import "contracts/libraries/Storage.sol";
 import {BASE_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop, Army, WorldConstants, TROOP_NAME, TroopType} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
+import "forge-std/console.sol";
 
 /// @title Util library
 /// @notice Contains all events as well as lower-level setters and getters

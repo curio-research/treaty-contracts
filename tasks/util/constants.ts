@@ -14,7 +14,7 @@ export const LOCAL_MAP_INPUT: MapInput = {
   height: 30,
   numPorts: 10,
   numCities: 10,
-  numOilWells: 40,
+  numOilWells: 30,
 };
 
 export const SANDBOX_MAP_INPUT: MapInput = {
@@ -31,7 +31,7 @@ export const BASE_DEFENSE_FACTOR = 1;
 export const BASE_MAX_HEALTH = 1;
 export const NUM_INIT_TERRAIN_TYPES = 6;
 export const INIT_BATCH_SIZE = 50;
-export const INIT_PLAYER_GOLD_BALANCE = 30;
+export const INIT_PLAYER_GOLD_BALANCE = 100000; // temp, for local deployment against hardhat negative gold issue
 export const INIT_PLAYER_OIL_BALANCE = 30; // FIXME
 export const MAX_BASE_COUNT_PER_PLAYER = 30;
 export const MAX_TROOP_COUNT_PER_PLAYER = 100000;

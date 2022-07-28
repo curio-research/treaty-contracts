@@ -3,6 +3,7 @@ pragma solidity ^0.8.4;
 
 import "forge-std/Test.sol";
 import "test/DiamondDeploy.t.sol";
+import "forge-std/console.sol";
 
 contract StackingTest is Test, DiamondDeployTest {
     function testArmyBasics() public {
@@ -34,15 +35,64 @@ contract StackingTest is Test, DiamondDeployTest {
         vm.stopPrank();
 
         vm.startPrank(player1);
-        Position memory targetPos = Position({x: 7, y: 1});
+        Position memory _targetPos = Position({x: 7, y: 1});
 
         vm.warp(2);
-        engine.march(1, targetPos); // move army to (7, 1);
+        engine.march(1, _targetPos); // move army to (7, 1);
 
-        Army memory army1 = getter.getArmyAt(targetPos);
-        assertEq(army1.pos.x, targetPos.x); // check position
-        assertEq(army1.pos.y, targetPos.y);
-        assertEq(army1.troopIds.length, 1); // check the troop is inside
+        Army memory _army1 = getter.getArmyAt(_targetPos);
+        assertEq(_army1.pos.x, _targetPos.x); // check position
+        assertEq(_army1.pos.y, _targetPos.y);
+        assertEq(_army1.troopIds.length, 1); // check the troop is inside
+    }
+
+    function testBattleBaseWithSingleTroop() public {
+        Position memory _targetPos = Position({x: 6, y: 2});
+
+        Position[] memory _tiles = new Position[](1);
+        _tiles[0] = _targetPos;
+
+        vm.prank(deployer);
+        helper.bulkInitializeTiles(_tiles);
+
+        Tile memory _tile = getter.getTileAt(_targetPos);
+        Base memory _base = getter.getBase(_tile.baseId);
+        assertEq(_tile.occupantId, 0);
+        assertEq(_base.owner, NULL_ADDR);
+        assertEq(_base.health, 1);
+
+        vm.startPrank(deployer);
+        helper.spawnTroop(player1Pos, player1, infantryTroopTypeId); // spawn an infantry
+        vm.stopPrank();
+
+        vm.startPrank(player1);
+
+        vm.warp(2);
+        engine.march(1, _targetPos); // move army to (6, 2);
+
+        if (getter.getTroop(1).health == 1) {
+            // infantry won
+            Army memory _army1 = getter.getArmyAt(_targetPos);
+            assertEq(_army1.pos.x, _targetPos.x); // check position
+            assertEq(_army1.pos.y, _targetPos.y);
+            assertEq(_army1.troopIds.length, 1); // check the troop is inside
+            _tile = getter.getTileAt(_targetPos);
+            _base = getter.getBase(_tile.baseId);
+            assertEq(_tile.occupantId, 1);
+            assertEq(_base.owner, player1);
+            assertEq(_base.health, 1);
+        } else {
+            // port won
+            Army memory _army1 = getter.getArmy(1);
+            assertEq(_army1.owner, NULL_ADDR);
+            assertEq(_army1.troopIds.length, 0);
+            assertEq(getter.getTroop(1).health, 0);
+            _tile = getter.getTileAt(_targetPos);
+            _base = getter.getBase(_tile.baseId);
+            assertEq(_tile.occupantId, 0);
+            assertEq(_base.owner, NULL_ADDR);
+            assertEq(_base.health, 1);
+        }
     }
 
     function testMoveTroop() public {

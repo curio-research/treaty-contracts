@@ -5,6 +5,7 @@ import "contracts/libraries/Storage.sol";
 import {Util} from "contracts/libraries/GameUtil.sol";
 import {BASE_NAME, TROOP_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop, Army, WorldConstants} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
+import "forge-std/console.sol";
 
 /// @title EngineModules library
 /// @notice Composable parts for engine functions
