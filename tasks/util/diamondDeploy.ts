@@ -65,7 +65,7 @@ export async function deployDiamond(hre: HardhatRuntimeEnvironment, deployArgs: 
 
 interface Facet {
   name: string;
-  libraries?: Libraries;
+  libraries?: any;
 }
 
 export const deployFacets = async (hre: HardhatRuntimeEnvironment, diamondAddress: string, facets: Facet[], signer: Signer) => {
@@ -108,13 +108,6 @@ export const deployFacets = async (hre: HardhatRuntimeEnvironment, diamondAddres
     if (!receipt.status) {
       throw Error(`Diamond upgrade failed: ${tx.hash}`);
     }
-
-    // result = await diamondLoupeFacet.facetFunctionSelectors(
-    //   currentFacet.address
-    // );
-
-    // const result = await diamond.facetFunctionSelectors(currentFacet.address);
-    // console.log(result);
   }
 };
 

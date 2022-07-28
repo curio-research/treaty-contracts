@@ -22,20 +22,18 @@ library Util {
 
     event AttackedBase(address _player, uint256 _armyId, Army _armyInfo, uint256 _targetBaseId, Base _targetBaseInfo);
     event AttackedArmy(address _player, uint256 _armyId, Army _armyInfo, uint256 _targetArmy, Army _targetArmyInfo);
-    event BaseCaptured(address _player, uint256 _troopId, uint256 _baseId);
-    event TroopDeath(address _player, uint256 _troopId);
-    // temporary
+    event MovedArmy(address _player, uint256 timestamp, Position _startPos, uint256 _startTileArmyId, Army _startTileArmy, Position _endPos, uint256 _targetTileArmyId, Army _targetTileArmy);
+    event NewTroop(address _player, uint256 _troopId, Troop _troop, uint256 _armyId, Army _army);
+    event BaseCaptured(address _player, uint256 _armyId, uint256 _baseId);
     event ArmyDeath(address _player, uint256 _armyId);
-    event GamePaused();
-    event GameResumed();
-    event Moved(address _player, uint256 _troopId, uint256 _timestamp, Position _startPos, Position _targetPos);
+    event TroopDeath(address _player, uint256 _troopId);
     event NewPlayer(address _player, Position _pos);
-    event NewTroop(address _player, uint256 _armyId, Army _army, Position _pos);
     event PlayerInfo(address _addr, Player _player);
     event PlayerReactivated(address _player);
-    event Recovered(address _player, uint256 _troopId);
-    event Repaired(address _player, uint256 _troopId, uint256 _health);
     event UpdatePlayerBalance(address _player, uint256 _amount);
+
+    event GamePaused();
+    event GameResumed();
 
     // ----------------------------------------------------------
     // SETTERS
@@ -99,11 +97,11 @@ library Util {
         uint256 _numOwnedTroops = gs().playerMap[_owner].numOwnedTroops;
         uint256 _totalOilConsumptionPerUpdate = gs().playerMap[_owner].totalOilConsumptionPerUpdate;
 
-        for (uint256 i = 0; i < _army.armyTroopIds.length; i++) {
-            uint256 _troopId = _army.armyTroopIds[i];
+        for (uint256 i = 0; i < _army.troopIds.length; i++) {
+            uint256 _troopId = _army.troopIds[i];
 
             _numOwnedTroops--;
-            _totalOilConsumptionPerUpdate -= _getArmyOilConsumptionPerSecond(_army.armyTroopIds);
+            _totalOilConsumptionPerUpdate -= _getArmyOilConsumptionPerSecond(_army.troopIds);
             delete gs().troopIdMap[_troopId];
         }
 
@@ -143,19 +141,19 @@ library Util {
         gs().playerMap[_owner].numOwnedTroops = _numOwnedTroops;
         gs().playerMap[_owner].totalOilConsumptionPerUpdate = _totalOilConsumptionPerUpdate;
 
-        // remove troop from armyTroopIds
-        uint256 _armyTroopSize = _army.armyTroopIds.length;
+        // remove troop from troopIds
+        uint256 _armyTroopSize = _army.troopIds.length;
         uint256 _index = 0;
         while (_index < _armyTroopSize) {
-            if (_army.armyTroopIds[_index] == _troopId) break;
+            if (_army.troopIds[_index] == _troopId) break;
             _index++;
         }
 
-        gs().armyIdMap[_troop.armyId].armyTroopIds[_index] = _army.armyTroopIds[_armyTroopSize - 1];
-        gs().armyIdMap[_troop.armyId].armyTroopIds.pop();
+        gs().armyIdMap[_troop.armyId].troopIds[_index] = _army.troopIds[_armyTroopSize - 1];
+        gs().armyIdMap[_troop.armyId].troopIds.pop();
 
         // deal with when army contains zero troop; either remove army from transport or tile
-        if (gs().armyIdMap[_troop.armyId].armyTroopIds.length == 0) {
+        if (gs().armyIdMap[_troop.armyId].troopIds.length == 0) {
             gs().map[_pos.x][_pos.y].occupantId = _NULL();
         }
     }
@@ -182,29 +180,29 @@ library Util {
         gs().troopIds.push(troopId);
         gs().troopNonce++;
 
-        uint256 _armyId = gs().armyNonce;
-        gs().armyIds.push(_armyId);
+        uint256 armyId = gs().armyNonce;
+        gs().armyIds.push(armyId);
         gs().armyNonce++;
-        gs().map[_pos.x][_pos.y].occupantId = _armyId;
+        gs().map[_pos.x][_pos.y].occupantId = armyId;
 
-        Troop memory _troop = Troop({armyId: _armyId, troopTypeId: _troopTypeId, health: _getMaxHealth(_troopTypeId), lastRepaired: block.timestamp});
+        Troop memory _troop = Troop({armyId: armyId, troopTypeId: _troopTypeId, health: _getMaxHealth(_troopTypeId)});
 
-        uint256[] memory _armyTroopIds;
-        Army memory _army = Army({owner: _owner, armyTroopIds: _armyTroopIds, lastMoved: block.timestamp, lastLargeActionTaken: block.timestamp, pos: _pos});
+        uint256[] memory troopIds = new uint256[](1);
+        troopIds[0] = troopId;
 
-        // Update mappings
+        Army memory _army = Army({owner: _owner, troopIds: troopIds, lastMoved: block.timestamp, lastLargeActionTaken: block.timestamp, pos: _pos});
+
         gs().troopIdMap[troopId] = _troop;
-        gs().armyIdMap[_armyId] = _army;
-
-        // push new troopID into army
-        gs().armyIdMap[_armyId].armyTroopIds.push(troopId);
+        gs().armyIdMap[armyId] = _army;
 
         // Update balances
         _updatePlayerBalances(_owner);
         gs().playerMap[_owner].numOwnedTroops++;
         gs().playerMap[_owner].totalOilConsumptionPerUpdate += _getOilConsumptionPerSecond(_troopTypeId);
 
-        return (_armyId, gs().armyIdMap[_armyId]);
+        emit NewTroop(msg.sender, troopId, _troop, armyId, _army);
+
+        return (armyId, _army);
     }
 
     function _createNewArmyFromTroop(uint256 _troopID, Position memory _pos) public returns (uint256) {
@@ -215,10 +213,10 @@ library Util {
         gs().armyNonce++;
 
         uint256[] memory _armyTroopIds;
-        Army memory _army = Army({owner: msg.sender, armyTroopIds: _armyTroopIds, lastMoved: 0, lastLargeActionTaken: block.timestamp, pos: _pos});
+        Army memory _army = Army({owner: msg.sender, troopIds: _armyTroopIds, lastMoved: 0, lastLargeActionTaken: block.timestamp, pos: _pos});
 
         gs().armyIdMap[_armyId] = _army;
-        gs().armyIdMap[_armyId].armyTroopIds.push(_troopID);
+        gs().armyIdMap[_armyId].troopIds.push(_troopID);
 
         gs().troopIdMap[_troopID].armyId = _armyId;
 
@@ -248,6 +246,15 @@ library Util {
         gs().map[_pos.x][_pos.y].baseId = _baseId;
 
         return _baseId;
+    }
+
+    function updateArmy(Position memory _pos1, Position memory _pos2) public {
+        Tile memory _tile1 = _getTileAt(_pos1);
+        Tile memory _tile2 = _getTileAt(_pos2);
+        Army memory _army1 = _getArmy(_tile1.occupantId);
+        Army memory _army2 = _getArmy(_tile2.occupantId);
+
+        emit Util.MovedArmy(msg.sender, block.timestamp, _pos1, _tile1.occupantId, _army1, _pos2, _tile2.occupantId, _army2);
     }
 
     // ----------------------------------------------------------
@@ -423,8 +430,8 @@ library Util {
     function _canArmyMoveOnLand(uint256 _armyId) public view returns (bool) {
         Army memory army = _getArmy(_armyId);
 
-        for (uint256 i = 0; i < army.armyTroopIds.length; i++) {
-            if (!_canTroopMoveLand(army.armyTroopIds[i])) {
+        for (uint256 i = 0; i < army.troopIds.length; i++) {
+            if (!_canTroopMoveLand(army.troopIds[i])) {
                 return false;
             }
         }

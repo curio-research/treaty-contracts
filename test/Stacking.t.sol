@@ -25,7 +25,7 @@ contract StackingTest is Test, DiamondDeployTest {
 
         Army memory _army1 = getter.getArmyAt(player1Pos);
 
-        assertEq(_army1.armyTroopIds.length, 1);
+        assertEq(_army1.troopIds.length, 1);
     }
 
     function testMoveArmyWithSingleTroop() public {
@@ -39,10 +39,10 @@ contract StackingTest is Test, DiamondDeployTest {
         vm.warp(2);
         engine.march(1, targetPos); // move army to (6, 2);
 
-        Army memory _army1 = getter.getArmyAt(targetPos);
-        // assertEq(_army1.pos.x, _army1.pos.x); // check position
-        // assertEq(_army1.pos.y, _army1.pos.y);
-        // assertEq(_army1.armyTroopIds.length, 1); // check the troop is inside
+        Army memory army1 = getter.getArmyAt(targetPos);
+        assertEq(army1.pos.x, targetPos.x); // check position
+        assertEq(army1.pos.y, targetPos.y);
+        assertEq(army1.troopIds.length, 1); // check the troop is inside
     }
 
     function testMoveTroop() public {
@@ -67,9 +67,9 @@ contract StackingTest is Test, DiamondDeployTest {
 
         // // verify target army's details
         Army memory targetArmy = getter.getArmyAt(army2position);
-        assertEq(targetArmy.armyTroopIds.length, 2); // check that the new army has 2 troops inside
-        assertEq(targetArmy.armyTroopIds[0], 2); // new army contains troop #1 and #2
-        assertEq(targetArmy.armyTroopIds[1], 1);
+        assertEq(targetArmy.troopIds.length, 2); // check that the new army has 2 troops inside
+        assertEq(targetArmy.troopIds[0], 2); // new army contains troop #1 and #2
+        assertEq(targetArmy.troopIds[1], 1);
 
         // // ------------------------------------------------
         // // move troop1 back to original tile
@@ -80,12 +80,12 @@ contract StackingTest is Test, DiamondDeployTest {
         vm.stopPrank();
 
         Army memory separatedArmy = getter.getArmyAt(player1Pos);
-        assertEq(separatedArmy.armyTroopIds.length, 1);
-        assertEq(separatedArmy.armyTroopIds[0], 1); // troop #1 moved out
+        assertEq(separatedArmy.troopIds.length, 1);
+        assertEq(separatedArmy.troopIds[0], 1); // troop #1 moved out
 
         Army memory army2 = getter.getArmyAt(army2position);
-        assertEq(army2.armyTroopIds.length, 1);
-        assertEq(army2.armyTroopIds[0], 2); // troop #2 in old tile
+        assertEq(army2.troopIds.length, 1);
+        assertEq(army2.troopIds[0], 2); // troop #2 in old tile
     }
 
     function testMarch() public {
@@ -129,8 +129,8 @@ contract StackingTest is Test, DiamondDeployTest {
         Tile memory _tile = getter.getTileAt(destroyerPosition); // where march moved to
         assertEq(_tile.occupantId, 2);
 
-        Army memory _army = getter.getArmyAt(destroyerPosition);
-        assertEq(_army.armyTroopIds.length, 2); // new tile should have infantry + destroyer
+        Army memory army = getter.getArmyAt(destroyerPosition);
+        assertEq(army.troopIds.length, 2); // new tile should have infantry + destroyer
 
         vm.warp(4);
         vm.expectRevert(bytes("CURIO: Troops and land type not compatible"));
@@ -169,10 +169,10 @@ contract StackingTest is Test, DiamondDeployTest {
         engine.march(player2ArmyId, Position({x: 7, y: 2}));
 
         // check battle results - unlikely destroyer gonna win but could happen
-        Army memory _winningArmy = getter.getArmyAt(battleshipPosition);
-        assertEq(_winningArmy.armyTroopIds.length, 2);
-        Tile memory _targetTile = getter.getTileAt(Position({x: 7, y: 2}));
-        assertEq(_targetTile.occupantId, 0);
+        Army memory winningArmy = getter.getArmyAt(battleshipPosition);
+        assertEq(winningArmy.troopIds.length, 2);
+        Tile memory targetTile = getter.getTileAt(Position({x: 7, y: 2}));
+        assertEq(targetTile.occupantId, 0);
         vm.stopPrank();
     }
 
@@ -203,7 +203,7 @@ contract StackingTest is Test, DiamondDeployTest {
         vm.stopPrank();
 
         Army memory _targetArmy = getter.getArmy(1);
-        assertEq(_targetArmy.armyTroopIds.length, 5);
+        assertEq(_targetArmy.troopIds.length, 5);
 
         // spawn extra troop
         vm.startPrank(deployer);
@@ -247,13 +247,13 @@ contract StackingTest is Test, DiamondDeployTest {
         assertEq(_tile.occupantId, 2);
 
         Army memory _army = getter.getArmyAt(battleshipPosition);
-        assertEq(_army.armyTroopIds.length, 2); // new tile should have infantry + destroyer
+        assertEq(_army.troopIds.length, 2); // new tile should have infantry + destroyer
 
         // test battling => player1 most likely to win; at least its first troop health decreases
         vm.warp(4);
         engine.march(2, Position({x: 7, y: 2}));
         Army memory _winnerArmy = getter.getArmyAt(battleshipPosition);
-        Troop memory _firstTroop = getter.getTroop(_winnerArmy.armyTroopIds[0]);
+        Troop memory _firstTroop = getter.getTroop(_winnerArmy.troopIds[0]);
         uint256 firstTroopMaxHealth = getter.getTroopType(_firstTroop.troopTypeId).maxHealth;
         assertEq(_firstTroop.health != firstTroopMaxHealth, true);
     }

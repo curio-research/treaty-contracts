@@ -52,17 +52,6 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     oilConsumptionPerSecond: 1,
   },
   {
-    name: TROOP_NAME.TROOP_TRANSPORT,
-    maxHealth: 3,
-    damagePerHit: 1,
-    attackFactor: 50,
-    defenseFactor: 50,
-    movementCooldown: 0,
-    largeActionCooldown: 0,
-    goldPrice: 14,
-    oilConsumptionPerSecond: 1,
-  },
-  {
     name: TROOP_NAME.DESTROYER,
     maxHealth: 3,
     damagePerHit: 1,
