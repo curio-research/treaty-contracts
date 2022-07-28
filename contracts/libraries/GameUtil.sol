@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
@@ -553,4 +551,3 @@ library Util {
         return address(0);
     }
 }
->>>>>>> 3e2cb96 (repair)

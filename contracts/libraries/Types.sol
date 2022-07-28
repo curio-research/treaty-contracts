@@ -8,9 +8,6 @@ enum BASE_NAME {
     CITY,
     OIL_WELL
 }
-
-// TODO: allow bases to consume oil
-
 enum TERRAIN {
     COAST,
     INLAND,

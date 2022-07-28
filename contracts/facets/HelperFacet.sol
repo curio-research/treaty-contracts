@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-\
-=======
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
@@ -147,4 +144,3 @@ contract HelperFacet is UseStorage {
         Util._updatePlayerBalances(_player);
     }
 }
->>>>>>> 3e2cb96 (repair)
