@@ -94,23 +94,15 @@ library Util {
         address _owner = _army.owner;
         Position memory _pos = _army.pos;
 
-        uint256 _numOwnedTroops = gs().playerMap[_owner].numOwnedTroops;
-        uint256 _totalOilConsumptionPerUpdate = gs().playerMap[_owner].totalOilConsumptionPerUpdate;
+        _updatePlayerBalances(_owner);
+        gs().playerMap[_owner].numOwnedTroops -= _army.troopIds.length;
+        gs().playerMap[_owner].totalOilConsumptionPerUpdate -= _getArmyOilConsumptionPerSecond(_army.troopIds);
+        gs().map[_pos.x][_pos.y].occupantId = _NULL();
 
         for (uint256 i = 0; i < _army.troopIds.length; i++) {
-            uint256 _troopId = _army.troopIds[i];
-
-            _numOwnedTroops--;
-            _totalOilConsumptionPerUpdate -= _getArmyOilConsumptionPerSecond(_army.troopIds);
-            delete gs().troopIdMap[_troopId];
+            delete gs().troopIdMap[_army.troopIds[i]];
         }
-
         delete gs().armyIdMap[_armyId];
-
-        _updatePlayerBalances(_owner);
-        gs().playerMap[_owner].numOwnedTroops = _numOwnedTroops;
-        gs().playerMap[_owner].totalOilConsumptionPerUpdate = _totalOilConsumptionPerUpdate;
-        gs().map[_pos.x][_pos.y].occupantId = _NULL();
     }
 
     function _removeArmy(uint256 _armyId) public {

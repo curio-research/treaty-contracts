@@ -62,7 +62,7 @@ contract DiamondDeployTest is Test {
             movementCooldown: 1,
             largeActionCooldown: 1,
             goldPrice: 6,
-            oilConsumptionPerSecond: 0 //
+            oilConsumptionPerSecond: 1 //
         });
     TroopType public destroyerTroopType =
         TroopType({

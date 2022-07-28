@@ -14,7 +14,7 @@ export const LOCAL_MAP_INPUT: MapInput = {
   height: 30,
   numPorts: 10,
   numCities: 10,
-  numOilWells: 40,
+  numOilWells: 30,
 };
 
 export const SANDBOX_MAP_INPUT: MapInput = {
