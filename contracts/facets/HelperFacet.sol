@@ -97,7 +97,7 @@ contract HelperFacet is UseStorage {
             require(Util._canTroopMoveLand(_troopTypeId) || _base.name == BASE_NAME.PORT, "CURIO: Can only spawn water troops in ports");
         }
 
-        (uint256 _armyId, Army memory _army) = Util._addTroop(_player, _pos, _troopTypeId);
+        Util._addTroop(_player, _pos, _troopTypeId);
     }
 
     /**

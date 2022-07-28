@@ -34,10 +34,10 @@ contract StackingTest is Test, DiamondDeployTest {
         vm.stopPrank();
 
         vm.startPrank(player1);
-        Position memory targetPos = Position({x: 6, y: 2});
+        Position memory targetPos = Position({x: 7, y: 1});
 
         vm.warp(2);
-        engine.march(1, targetPos); // move army to (6, 2);
+        engine.march(1, targetPos); // move army to (7, 1);
 
         Army memory army1 = getter.getArmyAt(targetPos);
         assertEq(army1.pos.x, targetPos.x); // check position

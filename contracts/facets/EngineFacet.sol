@@ -130,7 +130,7 @@ contract EngineFacet is UseStorage {
         Util._updatePlayerBalances(msg.sender);
         require(_troopPrice <= Util._getPlayerGoldBalance(msg.sender), "CURIO: Insufficient gold balance (capture more bases!)");
 
-        (uint256 _armyId, Army memory _army) = Util._addTroop(msg.sender, _pos, _troopTypeId);
+        Util._addTroop(msg.sender, _pos, _troopTypeId);
         gs().playerMap[msg.sender].goldBalance -= _troopPrice;
     }
 

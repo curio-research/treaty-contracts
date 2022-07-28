@@ -50,7 +50,6 @@ library EngineModules {
 
         // Exchange fire until one side dies
         uint256 _salt = 0;
-        // todo: distribute damage to all troops
         uint256 _armyHealth = Util._getArmyHealth(_army.troopIds);
 
         while (_armyHealth > 0) {
@@ -90,6 +89,7 @@ library EngineModules {
             for (uint256 i = 0; i < _army.troopIds.length; i++) {
                 if (_damageToDistribute == 0) break;
                 Util._distributeDamageToTroop(_army.troopIds[i]);
+                _damageToDistribute--;
             }
 
             // Capture and move onto base if troop is infantry or if base is oil well
@@ -140,7 +140,6 @@ library EngineModules {
         uint256 _armyHealth = Util._getArmyHealth(_army.troopIds);
         uint256 _targetHealth = Util._getArmyHealth(_targetArmy.troopIds);
 
-        // todo: distribute damage to individual troops
         // Exchange fire until one side dies
         uint256 _salt = 0;
         while (_armyHealth > 0) {
@@ -178,6 +177,7 @@ library EngineModules {
             for (uint256 i = 0; i < _army.troopIds.length; i++) {
                 if (_damageToDistribute == 0) break;
                 Util._distributeDamageToTroop(_army.troopIds[i]);
+                _damageToDistribute--;
             }
             _army = Util._getArmy(_armyId);
 
@@ -277,6 +277,8 @@ library EngineModules {
                 return _troopTypeId == 1;
             }
         }
+
+        return true;
     }
 
     function _NULL() internal pure returns (uint256) {
