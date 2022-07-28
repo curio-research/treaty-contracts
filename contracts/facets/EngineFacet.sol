@@ -32,7 +32,7 @@ contract EngineFacet is UseStorage {
         require(Util._withinDist(_army.pos, _targetPos, 1), "CURIO: You can only dispatch troop to the near tile");
         require(_army.owner == msg.sender, "CURIO: Can only march own troop");
         require(!Util._samePos(_army.pos, _targetPos), "CURIO: Already at destination");
-        // require((block.timestamp - _army.lastLargeActionTaken) >= Util._getArmyLargeActionCooldown(_army.troopIds), "CURIO: Large action taken too recently");
+        require((block.timestamp - _army.lastLargeActionTaken) >= Util._getArmyLargeActionCooldown(_army.troopIds), "CURIO: Large action taken too recently");
 
         Tile memory _targetTile = Util._getTileAt(_targetPos);
         require(Util._geographicCheckArmy(_armyId, _targetTile), "CURIO: Troops and land types not compatible"); // check if each troop can move onto the tile
