@@ -5,7 +5,6 @@ import "contracts/libraries/Storage.sol";
 import {Util} from "contracts/libraries/GameUtil.sol";
 import {BASE_NAME, TROOP_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop, Army, WorldConstants} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
-import "forge-std/console.sol";
 
 /// @title EngineModules library
 /// @notice Composable parts for engine functions
@@ -50,12 +49,12 @@ library EngineModules {
         require(Util._canArmyMoveOnLand(_armyId) || _targetBase.health > 0 || _targetBase.name == BASE_NAME.OIL_WELL, "CURIO: Can only capture base with land troop");
 
         // Exchange fire until one side dies
-        uint256 _salt = 0;
+        uint256 _salt = 1;
         uint256 _armyHealth = Util._getArmyHealth(_army.troopIds);
 
         while (_armyHealth > 0) {
             // Troop attacks target
-            _salt += 1;
+            _salt++;
             if (Util._strike(_targetBase.attackFactor, _salt)) {
                 uint256 _damagePerHit = Util._getArmyDamagePerHit(_army.troopIds);
                 if (_damagePerHit < _targetBase.health) {
@@ -68,7 +67,7 @@ library EngineModules {
             if (_targetBase.health == 0) break; // target cannot attack back if it has zero health
 
             // Target attacks troop
-            _salt += 1;
+            _salt++;
             if (Util._strike(_targetBase.defenseFactor, _salt)) {
                 if (_armyHealth > 1) {
                     _armyHealth -= 1;
