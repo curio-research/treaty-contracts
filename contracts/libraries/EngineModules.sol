@@ -87,10 +87,10 @@ library EngineModules {
             address _targetPlayer = _targetBase.owner;
             gs().baseIdMap[_targetTile.baseId].health = 0;
 
-            uint256 _DamageToDistribute = Util._getArmyHealth(_army.armyTroopIds) - _armyHealth;
+            uint256 _damageToDistribute = Util._getArmyHealth(_army.armyTroopIds) - _armyHealth;
             // distribute damage to individual troops
             for (uint256 i = 0; i < _army.armyTroopIds.length; i++) {
-                if (_DamageToDistribute == 0) break;
+                if (_damageToDistribute == 0) break;
                 Util._distributeDamageToTroop(_army.armyTroopIds[i]);
             }
 
@@ -175,10 +175,10 @@ library EngineModules {
         }
 
         if (_targetHealth == 0) {
-            uint256 _DamageToDistribute = Util._getArmyHealth(_army.armyTroopIds) - _armyHealth;
+            uint256 _damageToDistribute = Util._getArmyHealth(_army.armyTroopIds) - _armyHealth;
             // distribute damage to individual troops
             for (uint256 i = 0; i < _army.armyTroopIds.length; i++) {
-                if (_DamageToDistribute == 0) break;
+                if (_damageToDistribute == 0) break;
                 Util._distributeDamageToTroop(_army.armyTroopIds[i]);
             }
             _army = Util._getArmy(_armyId);
