@@ -25,9 +25,11 @@ contract EngineFacet is UseStorage {
         require(Util._isPlayerActive(msg.sender), "CURIO: Player is inactive");
 
         require(Util._inBound(_targetPos), "CURIO: Target out of bound");
+
         if (!Util._getTileAt(_targetPos).isInitialized) Util._initializeTile(_targetPos);
 
         Army memory _army = gs().armyIdMap[_armyId];
+        require(Util._withinDist(_army.pos, _targetPos, 1), "CURIO: You can only dispatch troop to the near tile");
         require(_army.owner == msg.sender, "CURIO: Can only march own troop");
         require(!Util._samePos(_army.pos, _targetPos), "CURIO: Already at destination");
         // require((block.timestamp - _army.lastLargeActionTaken) >= Util._getArmyLargeActionCooldown(_army.troopIds), "CURIO: Large action taken too recently");
@@ -85,8 +87,8 @@ contract EngineFacet is UseStorage {
         }
 
         // basic check
-        require(Util._withinDist(_army.pos, _targetPos, 1), "CURIO: can only dispatch troop to the near tile");
-        require(_army.owner == msg.sender, "CURIO: Can only dispatch own troop");
+        require(Util._withinDist(_army.pos, _targetPos, 1), "CURIO: You can only dispatch troop to the near tile");
+        require(_army.owner == msg.sender, "CURIO: You can only dispatch your own troop");
         require(!Util._samePos(_army.pos, _targetPos), "CURIO: Already at destination");
         // require((block.timestamp - _army.lastLargeActionTaken) >= Util._getArmyLargeActionCooldown(_army.troopIds), "CURIO: Large action taken too recently");
 
