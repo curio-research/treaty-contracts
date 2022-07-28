@@ -8,6 +8,9 @@ enum BASE_NAME {
     CITY,
     OIL_WELL
 }
+
+// TODO: allow bases to consume oil
+
 enum TERRAIN {
     COAST,
     INLAND,
@@ -59,7 +62,7 @@ struct Tile {
 
 struct Army {
     address owner;
-    uint256[] troopIds; // troopIds
+    uint256[] armyTroopIds; // troopIds
     uint256 lastMoved;
     uint256 lastLargeActionTaken;
     Position pos;
@@ -69,6 +72,7 @@ struct Troop {
     uint256 armyId;
     uint256 troopTypeId;
     uint256 health;
+    uint256 lastRepaired;
 }
 
 struct TroopType {
