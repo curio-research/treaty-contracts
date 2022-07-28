@@ -71,7 +71,7 @@ contract EngineFacet is UseStorage {
 
         Troop memory _troop = gs().troopIdMap[_troopId];
         Army memory _army = gs().armyIdMap[_troop.armyId];
-        Position memory startPos = _army.pos;
+        Position memory _startPos = _army.pos;
         Army memory _targetArmy;
         Tile memory _targetTile = Util._getTileAt(_targetPos);
 
@@ -82,9 +82,9 @@ contract EngineFacet is UseStorage {
         }
 
         // basic check
-        require(Util._withinDist(startPos, _targetPos, 1), "CURIO: Can only dispatch troop to the near tile");
+        require(Util._withinDist(_startPos, _targetPos, 1), "CURIO: Can only dispatch troop to the near tile");
         require(_army.owner == msg.sender, "CURIO: Can only dispatch own troop");
-        require(!Util._samePos(startPos, _targetPos), "CURIO: Already at destination");
+        require(!Util._samePos(_startPos, _targetPos), "CURIO: Already at destination");
         require((block.timestamp - _army.lastLargeActionTaken) >= Util._getArmyLargeActionCooldown(_army.troopIds), "CURIO: Large action taken too recently");
 
         // geographic check
@@ -94,7 +94,7 @@ contract EngineFacet is UseStorage {
             // CaseI: Target Tile has no enemy base or enemy army
             require(Util._getBaseOwner(_targetTile.baseId) == msg.sender || _targetTile.baseId == NULL, "CURIO: Cannot directly attack with troops");
 
-            uint256 _newArmyId = Util._createNewArmyFromTroop(_troopId, startPos);
+            uint256 _newArmyId = Util._createNewArmyFromTroop(_troopId, _startPos);
             EngineModules._moveNewArmyToEmptyTile(_newArmyId, _targetPos);
         } else {
             // CaseII: Target Tile has own army
@@ -103,7 +103,7 @@ contract EngineFacet is UseStorage {
         }
         EngineModules._clearTroopFromSourceArmy(_troop.armyId, _troopId);
 
-        Util.updateArmy(startPos, _targetPos);
+        Util.updateArmy(_startPos, _targetPos);
     }
 
     /**

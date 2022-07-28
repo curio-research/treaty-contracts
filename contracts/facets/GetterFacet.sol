@@ -13,10 +13,10 @@ contract GetterFacet is UseStorage {
     using SafeMath for uint256;
 
     function bulkGetAllTroops() external view returns (Troop[] memory) {
-        uint256 troopNonce = gs().troopNonce;
-        Troop[] memory _allTroops = new Troop[](troopNonce - 1);
+        uint256 _troopNonce = gs().troopNonce;
+        Troop[] memory _allTroops = new Troop[](_troopNonce - 1);
 
-        for (uint256 i = 0; i < troopNonce - 1; i++) {
+        for (uint256 i = 0; i < _troopNonce - 1; i++) {
             // _allTroops[i] = gs().troopIdMap[gs().troopIds[i]];
             _allTroops[i] = gs().troopIdMap[i + 1];
         }
@@ -25,10 +25,10 @@ contract GetterFacet is UseStorage {
     }
 
     function bulkGetAllArmies() external view returns (Army[] memory) {
-        uint256 armyNonce = gs().armyNonce;
-        Army[] memory _allArmies = new Army[](armyNonce - 1);
+        uint256 _armyNonce = gs().armyNonce;
+        Army[] memory _allArmies = new Army[](_armyNonce - 1);
 
-        for (uint256 i = 0; i < armyNonce - 1; i++) {
+        for (uint256 i = 0; i < _armyNonce - 1; i++) {
             _allArmies[i] = gs().armyIdMap[i + 1];
         }
 

@@ -185,14 +185,14 @@ library Util {
         gs().armyNonce++;
         gs().map[_pos.x][_pos.y].occupantId = armyId;
 
-        Troop memory troop = Troop({armyId: armyId, troopTypeId: _troopTypeId, health: _getMaxHealth(_troopTypeId)});
+        Troop memory _troop = Troop({armyId: armyId, troopTypeId: _troopTypeId, health: _getMaxHealth(_troopTypeId)});
 
         uint256[] memory troopIds = new uint256[](1);
         troopIds[0] = troopId;
 
         Army memory _army = Army({owner: _owner, troopIds: troopIds, lastMoved: block.timestamp, lastLargeActionTaken: block.timestamp, pos: _pos});
 
-        gs().troopIdMap[troopId] = troop;
+        gs().troopIdMap[troopId] = _troop;
         gs().armyIdMap[armyId] = _army;
 
         // Update balances
@@ -200,7 +200,7 @@ library Util {
         gs().playerMap[_owner].numOwnedTroops++;
         gs().playerMap[_owner].totalOilConsumptionPerUpdate += _getOilConsumptionPerSecond(_troopTypeId);
 
-        emit NewTroop(msg.sender, troopId, troop, armyId, _army);
+        emit NewTroop(msg.sender, troopId, _troop, armyId, _army);
 
         return (armyId, _army);
     }
@@ -249,12 +249,12 @@ library Util {
     }
 
     function updateArmy(Position memory _pos1, Position memory _pos2) public {
-        Tile memory tile1 = _getTileAt(_pos1);
-        Tile memory tile2 = _getTileAt(_pos2);
-        Army memory army1 = _getArmy(tile1.occupantId);
-        Army memory army2 = _getArmy(tile2.occupantId);
+        Tile memory _tile1 = _getTileAt(_pos1);
+        Tile memory _tile2 = _getTileAt(_pos2);
+        Army memory _army1 = _getArmy(_tile1.occupantId);
+        Army memory _army2 = _getArmy(_tile2.occupantId);
 
-        emit Util.MovedArmy(msg.sender, block.timestamp, _pos1, tile1.occupantId, army1, _pos2, tile2.occupantId, army2);
+        emit Util.MovedArmy(msg.sender, block.timestamp, _pos1, _tile1.occupantId, _army1, _pos2, _tile2.occupantId, _army2);
     }
 
     // ----------------------------------------------------------
