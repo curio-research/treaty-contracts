@@ -160,6 +160,16 @@ library Util {
         }
     }
 
+    function _distributeDamageToTroop(uint256 _troopId) public {
+        Troop memory _troop = gs().troopIdMap[_troopId];
+        _troop.health -= 1;
+        if (_troop.health == 0) {
+            _removeTroop(_troopId);
+        } else {
+            gs().troopIdMap[_troopId] = _troop;
+        }
+    }
+
     function _addTroop(
         address _owner,
         Position memory _pos,

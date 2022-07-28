@@ -85,8 +85,14 @@ library EngineModules {
         if (_targetBase.health == 0) {
             // Target base dies
             address _targetPlayer = _targetBase.owner;
-            // todo: update health for troops
             gs().baseIdMap[_targetTile.baseId].health = 0;
+
+            uint256 _damageToDistribute = Util._getArmyHealth(_army.armyTroopIds) - _armyHealth;
+            // distribute damage to individual troops
+            for (uint256 i = 0; i < _army.armyTroopIds.length; i++) {
+                if (_damageToDistribute == 0) break;
+                Util._distributeDamageToTroop(_army.armyTroopIds[i]);
+            }
 
             // Capture and move onto base if troop is infantry or if base is oil well
             if (Util._canTroopMoveLand(_armyId) || _targetBase.name == BASE_NAME.OIL_WELL) {
@@ -169,7 +175,12 @@ library EngineModules {
         }
 
         if (_targetHealth == 0) {
-            // todo: distribute damage to troops
+            uint256 _damageToDistribute = Util._getArmyHealth(_army.armyTroopIds) - _armyHealth;
+            // distribute damage to individual troops
+            for (uint256 i = 0; i < _army.armyTroopIds.length; i++) {
+                if (_damageToDistribute == 0) break;
+                Util._distributeDamageToTroop(_army.armyTroopIds[i]);
+            }
             _army = Util._getArmy(_armyId);
 
             _targetArmy = Util._getArmy(_targetTile.occupantId);
