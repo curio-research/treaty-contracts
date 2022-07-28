@@ -22,20 +22,18 @@ library Util {
 
     event AttackedBase(address _player, uint256 _armyId, Army _armyInfo, uint256 _targetBaseId, Base _targetBaseInfo);
     event AttackedArmy(address _player, uint256 _armyId, Army _armyInfo, uint256 _targetArmy, Army _targetArmyInfo);
-    event BaseCaptured(address _player, uint256 _troopId, uint256 _baseId);
-    event TroopDeath(address _player, uint256 _troopId);
-    // temporary
+    event MovedArmy(address _player, uint256 timestamp, Position _startPos, uint256 _startTileArmyId, Army _startTileArmy, Position _endPos, uint256 _targetTileArmyId, Army _targetTileArmy);
+    event NewTroop(address _player, uint256 _troopId, Troop _troop, uint256 _armyId, Army _army);
+    event BaseCaptured(address _player, uint256 _armyId, uint256 _baseId);
     event ArmyDeath(address _player, uint256 _armyId);
-    event GamePaused();
-    event GameResumed();
-    event Moved(address _player, uint256 _troopId, uint256 _timestamp, Position _startPos, Position _targetPos);
+    event TroopDeath(address _player, uint256 _troopId);
     event NewPlayer(address _player, Position _pos);
-    event NewTroop(address _player, uint256 _armyId, Army _army, Position _pos);
     event PlayerInfo(address _addr, Player _player);
     event PlayerReactivated(address _player);
-    event Recovered(address _player, uint256 _troopId);
-    event Repaired(address _player, uint256 _troopId, uint256 _health);
     event UpdatePlayerBalance(address _player, uint256 _amount);
+
+    event GamePaused();
+    event GameResumed();
 
     // ----------------------------------------------------------
     // SETTERS
@@ -91,7 +89,7 @@ library Util {
         gs().playerMap[_addr] = _player;
     }
 
-    function _removeArmyWithTroops(uint256 _armyId) public {
+    function _removeEntireArmy(uint256 _armyId) public {
         Army memory _army = _getArmy(_armyId);
         address _owner = _army.owner;
         Position memory _pos = _army.pos;
@@ -99,11 +97,11 @@ library Util {
         uint256 _numOwnedTroops = gs().playerMap[_owner].numOwnedTroops;
         uint256 _totalOilConsumptionPerUpdate = gs().playerMap[_owner].totalOilConsumptionPerUpdate;
 
-        for (uint256 i = 0; i < _army.armyTroopIds.length; i++) {
-            uint256 _troopId = _army.armyTroopIds[i];
+        for (uint256 i = 0; i < _army.troopIds.length; i++) {
+            uint256 _troopId = _army.troopIds[i];
 
             _numOwnedTroops--;
-            _totalOilConsumptionPerUpdate -= _getArmyOilConsumptionPerSecond(_army.armyTroopIds);
+            _totalOilConsumptionPerUpdate -= _getArmyOilConsumptionPerSecond(_army.troopIds);
             delete gs().troopIdMap[_troopId];
         }
 
@@ -112,15 +110,21 @@ library Util {
         _updatePlayerBalances(_owner);
         gs().playerMap[_owner].numOwnedTroops = _numOwnedTroops;
         gs().playerMap[_owner].totalOilConsumptionPerUpdate = _totalOilConsumptionPerUpdate;
+
+        Tile memory _tile = _getTileAt(_army.pos);
+        Army memory _tileArmy = _getArmy(_tile.occupantId);
+
         gs().map[_pos.x][_pos.y].occupantId = _NULL();
     }
 
-    function _removeArmy(uint256 _armyId) public {
+    function _removeArmyOnly(uint256 _armyId) public {
         // used when detaching army
         Army memory _army = _getArmy(_armyId);
         Position memory _pos = _army.pos;
 
         delete gs().armyIdMap[_armyId];
+        Tile memory _tile = _getTileAt(_army.pos);
+        Army memory _tileArmy = _getArmy(_tile.occupantId);
 
         gs().map[_pos.x][_pos.y].occupantId = _NULL();
     }
@@ -143,23 +147,24 @@ library Util {
         gs().playerMap[_owner].numOwnedTroops = _numOwnedTroops;
         gs().playerMap[_owner].totalOilConsumptionPerUpdate = _totalOilConsumptionPerUpdate;
 
-        // remove troop from armyTroopIds
-        uint256 _armyTroopSize = _army.armyTroopIds.length;
+        // remove troop from troopIds
+        uint256 _armyTroopSize = _army.troopIds.length;
         uint256 _index = 0;
         while (_index < _armyTroopSize) {
-            if (_army.armyTroopIds[_index] == _troopId) break;
+            if (_army.troopIds[_index] == _troopId) break;
             _index++;
         }
 
-        gs().armyIdMap[_troop.armyId].armyTroopIds[_index] = _army.armyTroopIds[_armyTroopSize - 1];
-        gs().armyIdMap[_troop.armyId].armyTroopIds.pop();
+        gs().armyIdMap[_troop.armyId].troopIds[_index] = _army.troopIds[_armyTroopSize - 1];
+        gs().armyIdMap[_troop.armyId].troopIds.pop();
 
         // deal with when army contains zero troop; either remove army from transport or tile
-        if (gs().armyIdMap[_troop.armyId].armyTroopIds.length == 0) {
+        if (gs().armyIdMap[_troop.armyId].troopIds.length == 0) {
             gs().map[_pos.x][_pos.y].occupantId = _NULL();
         }
     }
 
+    // function to add troop, while creating an army
     function _addTroop(
         address _owner,
         Position memory _pos,
@@ -172,45 +177,47 @@ library Util {
         gs().troopIds.push(troopId);
         gs().troopNonce++;
 
-        uint256 _armyId = gs().armyNonce;
-        gs().armyIds.push(_armyId);
+        uint256 armyId = gs().armyNonce;
+        gs().armyIds.push(armyId);
         gs().armyNonce++;
-        gs().map[_pos.x][_pos.y].occupantId = _armyId;
+        gs().map[_pos.x][_pos.y].occupantId = armyId;
 
-        Troop memory _troop = Troop({armyId: _armyId, troopTypeId: _troopTypeId, health: _getMaxHealth(_troopTypeId), lastRepaired: block.timestamp});
+        Troop memory troop = Troop({armyId: armyId, troopTypeId: _troopTypeId, health: _getMaxHealth(_troopTypeId)});
 
-        uint256[] memory _armyTroopIds;
-        Army memory _army = Army({owner: _owner, armyTroopIds: _armyTroopIds, lastMoved: block.timestamp, lastLargeActionTaken: block.timestamp, pos: _pos});
+        uint256[] memory troopIds = new uint256[](1);
+        troopIds[0] = troopId;
 
-        // Update mappings
-        gs().troopIdMap[troopId] = _troop;
-        gs().armyIdMap[_armyId] = _army;
+        Army memory _army = Army({owner: _owner, troopIds: troopIds, lastMoved: block.timestamp, lastLargeActionTaken: block.timestamp, pos: _pos});
 
-        // push new troopID into army
-        gs().armyIdMap[_armyId].armyTroopIds.push(troopId);
+        gs().troopIdMap[troopId] = troop;
+        gs().armyIdMap[armyId] = _army;
 
         // Update balances
         _updatePlayerBalances(_owner);
         gs().playerMap[_owner].numOwnedTroops++;
         gs().playerMap[_owner].totalOilConsumptionPerUpdate += _getOilConsumptionPerSecond(_troopTypeId);
 
-        return (_armyId, gs().armyIdMap[_armyId]);
+        emit NewTroop(msg.sender, troopId, troop, armyId, _army);
+
+        return (armyId, _army);
     }
 
-    function _createNewArmyFromTroop(uint256 _troopID, Position memory _pos) public returns (uint256) {
+    // returns armyID
+    function _createNewArmyFromTroop(uint256 _troopId, Position memory _pos) public returns (uint256) {
         require(_getPlayer(msg.sender).numOwnedTroops < gs().worldConstants.maxTroopCountPerPlayer, "CURIO: Max troop count exceeded");
 
         uint256 _armyId = gs().armyNonce;
         gs().armyIds.push(_armyId);
         gs().armyNonce++;
 
-        uint256[] memory _armyTroopIds;
-        Army memory _army = Army({owner: msg.sender, armyTroopIds: _armyTroopIds, lastMoved: 0, lastLargeActionTaken: block.timestamp, pos: _pos});
+        uint256[] memory _armyTroopIds = new uint256[](1);
+        _armyTroopIds[0] = _troopId;
+        Army memory newArmy = Army({owner: msg.sender, troopIds: _armyTroopIds, lastMoved: block.timestamp, lastLargeActionTaken: block.timestamp, pos: _pos});
 
-        gs().armyIdMap[_armyId] = _army;
-        gs().armyIdMap[_armyId].armyTroopIds.push(_troopID);
+        gs().armyIdMap[_armyId] = newArmy;
+        gs().troopIdMap[_troopId].armyId = _armyId;
 
-        gs().troopIdMap[_troopID].armyId = _armyId;
+        // emit NewArmy(msg.sender, _armyId, newArmy);
 
         return _armyId;
     }
@@ -409,14 +416,80 @@ library Util {
         return false;
     }
 
-    // if all the troops inside army can move onto land
-    function _canArmyMoveOnLand(uint256 _armyId) public view returns (bool) {
-        Army memory army = _getArmy(_armyId);
-
-        for (uint256 i = 0; i < army.armyTroopIds.length; i++) {
-            if (!_canTroopMoveLand(army.armyTroopIds[i])) {
+    function _geographicCheckTroop(uint256 _troopTypeId, Tile memory _tile) public view returns (bool) {
+        // no base
+        if (_tile.baseId == 0) {
+            if (_troopTypeId == 1) {
+                // infantry
+                return true;
+            } else {
+                // ships can only move onto water
+                if (_tile.terrain == TERRAIN.WATER) return true;
                 return false;
             }
+        } else {
+            // base
+            Base memory base = _getBase(_tile.baseId);
+            if (base.name == BASE_NAME.PORT) {
+                //  everyone can move into the port
+                return true;
+            } else if (base.name == BASE_NAME.CITY) {
+                if (_troopTypeId == 1) {
+                    // only infantry can move into cities
+                    return true;
+                } else {
+                    return false;
+                }
+            } else if (base.name == BASE_NAME.OIL_WELL) {
+                if (_troopTypeId == 1) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
+    }
+
+    function _geographicCheckArmy(uint256 _armyId, Tile memory _tile) public view returns (bool) {
+        Army memory army = _getArmy(_armyId);
+
+        for (uint256 i = 0; i < army.troopIds.length; i++) {
+            uint256 troopId = army.troopIds[i];
+            Troop memory troop = _getTroop(troopId);
+            if (!_geographicCheckTroop(troop.troopTypeId, _tile)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function updateArmy(Position memory _pos1, Position memory _pos2) public {
+        Tile memory tile1 = _getTileAt(_pos1);
+        Tile memory tile2 = _getTileAt(_pos2);
+        Army memory army1 = _getArmy(tile1.occupantId);
+        Army memory army2 = _getArmy(tile2.occupantId);
+
+        emit Util.MovedArmy(msg.sender, block.timestamp, _pos1, tile1.occupantId, army1, _pos2, tile2.occupantId, army2);
+    }
+
+    // if all the troops inside army can move onto land
+    function _canArmyMoveLand(uint256 _armyId) public view returns (bool) {
+        Army memory army = _getArmy(_armyId);
+
+        for (uint256 i = 0; i < army.troopIds.length; i++) {
+            if (!_canTroopMoveLand(army.troopIds[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function _canTroopMoveToTile(uint256 _troopTypeId, TERRAIN _terrain) public pure returns (bool) {
+        // infantry can move onto any tile. no need to check
+
+        // if the tropo type is a type of ship, it cannot move onto land tiles
+        if (_troopTypeId == 1 || _troopTypeId == 2 || _troopTypeId == 3) {
+            if (_terrain == TERRAIN.INLAND) return false;
         }
         return true;
     }
@@ -474,7 +547,7 @@ library Util {
         return 0;
     }
 
-    function _NULL_ADRESS() internal pure returns (address) {
+    function _NULLADRESS() internal pure returns (address) {
         return address(0);
     }
 }

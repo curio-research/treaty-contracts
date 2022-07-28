@@ -30,9 +30,6 @@ contract HelperFacet is UseStorage {
         require(!gs().isPaused, "CURIO: Game is paused");
 
         address[] memory _allPlayers = gs().players;
-        for (uint256 i = 0; i < _allPlayers.length; i++) {
-            Util._updatePlayerBalances(_allPlayers[i]);
-        }
 
         gs().isPaused = true;
         gs().lastPaused = block.timestamp;
@@ -98,8 +95,6 @@ contract HelperFacet is UseStorage {
         }
 
         (uint256 _armyId, Army memory _army) = Util._addTroop(_player, _pos, _troopTypeId);
-
-        emit Util.NewTroop(_player, _armyId, _army, _pos);
     }
 
     /**
@@ -147,35 +142,5 @@ contract HelperFacet is UseStorage {
      */
     function updatePlayerBalances(address _player) external {
         Util._updatePlayerBalances(_player);
-    }
-
-    /**
-     * Restore 1 health to the troop in a base.
-     * @param _pos position of base
-     */
-    function repair(Position memory _pos) external {
-        require(Util._inBound(_pos), "CURIO: Out of bound");
-        if (!Util._getTileAt(_pos).isInitialized) Util._initializeTile(_pos);
-
-        Tile memory _tile = Util._getTileAt(_pos);
-        require(_tile.baseId != NULL, "CURIO: No base found");
-        require(Util._getBaseOwner(_tile.baseId) == msg.sender, "CURIO: Can only repair in own base");
-
-        uint256 _armyId = _tile.occupantId;
-        require(_armyId != NULL, "CURIO: No troop to repair");
-
-        Army memory _army = gs().armyIdMap[_armyId];
-        require(_army.owner == msg.sender, "CURIO: Can only repair own troop");
-
-        for (uint256 i = 0; i < _army.armyTroopIds.length; i++) {
-            Troop memory _troop = gs().troopIdMap[_army.armyTroopIds[i]];
-            if ((_troop.health < Util._getMaxHealth(_troop.troopTypeId)) && (block.timestamp - _troop.lastRepaired) >= 1) {
-                _troop.health++;
-                gs().troopIdMap[_army.armyTroopIds[i]].health = _troop.health;
-                gs().troopIdMap[_army.armyTroopIds[i]].lastRepaired = block.timestamp;
-                emit Util.Repaired(msg.sender, _tile.occupantId, _troop.health);
-                if (_troop.health == Util._getMaxHealth(_troop.troopTypeId)) emit Util.Recovered(msg.sender, _army.armyTroopIds[i]);
-            }
-        }
     }
 }

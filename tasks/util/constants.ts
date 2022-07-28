@@ -36,7 +36,7 @@ export const INIT_PLAYER_OIL_BALANCE = 30; // FIXME
 export const MAX_BASE_COUNT_PER_PLAYER = 30;
 export const MAX_TROOP_COUNT_PER_PLAYER = 100000;
 export const MAX_PLAYER_COUNT = 20;
-export const DEFAULT_BASE_GOLD_GENERATION_PER_SECOND = 1;
+export const DEFAULT_BASE_GOLD_GENERATION_PER_SECOND = 20;
 export const DEFAULT_WELL_OIL_GENERATION_PER_SECOND = 5;
 
 export const TROOP_TYPES: TroopTypeStruct[] = [
@@ -49,17 +49,6 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     movementCooldown: 0,
     largeActionCooldown: 0,
     goldPrice: 6,
-    oilConsumptionPerSecond: 1,
-  },
-  {
-    name: TROOP_NAME.TROOP_TRANSPORT,
-    maxHealth: 3,
-    damagePerHit: 1,
-    attackFactor: 50,
-    defenseFactor: 50,
-    movementCooldown: 0,
-    largeActionCooldown: 0,
-    goldPrice: 14,
     oilConsumptionPerSecond: 1,
   },
   {

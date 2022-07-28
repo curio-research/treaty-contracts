@@ -52,7 +52,6 @@ export async function deployDiamond(hre: HardhatRuntimeEnvironment, deployArgs: 
   // call to init function. add initial state setting parameters. this acts as the constructor essentially
   let functionCall = diamondInit.interface.encodeFunctionData('init', deployArgs); // encodes data functions into bytes i believe
   tx = await diamondCut.diamondCut(cut, diamondInit.address, functionCall);
-  // console.log("✦ Diamond cut tx: ", tx.hash);
 
   receipt = await tx.wait();
   if (!receipt.status) {
@@ -65,7 +64,7 @@ export async function deployDiamond(hre: HardhatRuntimeEnvironment, deployArgs: 
 
 interface Facet {
   name: string;
-  libraries?: Libraries;
+  libraries?: any;
 }
 
 export const deployFacets = async (hre: HardhatRuntimeEnvironment, diamondAddress: string, facets: Facet[], signer: Signer) => {
@@ -108,13 +107,6 @@ export const deployFacets = async (hre: HardhatRuntimeEnvironment, diamondAddres
     if (!receipt.status) {
       throw Error(`Diamond upgrade failed: ${tx.hash}`);
     }
-
-    // result = await diamondLoupeFacet.facetFunctionSelectors(
-    //   currentFacet.address
-    // );
-
-    // const result = await diamond.facetFunctionSelectors(currentFacet.address);
-    // console.log(result);
   }
 };
 
