@@ -229,5 +229,32 @@ contract StackingTest is Test, DiamondDeployTest {
         engine.moveTroop(6, pos2);
         vm.stopPrank();
     }
-    
+
+    function testDistributeDamage() public {
+        // spawn 1 infantry 1 destroyer and combine them
+        vm.startPrank(deployer);
+        helper.spawnTroop(player1Pos, player1, infantryTroopTypeId); // spawn an infrantry. troop # 1
+        Position memory battleshipPosition = Position({x: 7, y: 1});
+        helper.spawnTroop(battleshipPosition, player1, battleshipTroopTypeId); // spawn an destroyer. troop #2
+        helper.spawnTroop(Position({x: 7, y: 2}), player2, battleshipTroopTypeId);
+        vm.stopPrank();
+
+        vm.startPrank(player1);
+        vm.warp(2);
+        engine.moveTroop(1, battleshipPosition); // move infantry to destroyer
+
+        Tile memory tile = getter.getTileAt(battleshipPosition); // where march moved to
+        assertEq(tile.occupantId, 2);
+
+        Army memory army = getter.getArmyAt(battleshipPosition);
+        assertEq(army.armyTroopIds.length, 2); // new tile should have infantry + destroyer
+
+        // test battling => player1 most likely to win; at least its first troop health decreases
+        vm.warp(4);
+        engine.march(2, Position({x: 7, y: 2}));
+        Army memory winnerArmy = getter.getArmyAt(battleshipPosition);
+        Troop memory firstTroop = getter.getTroop(winnerArmy.armyTroopIds[0]);
+        uint256 firstTroopMaxHealth = getter.getTroopType(firstTroop.troopTypeId).maxHealth;
+        assertEq(firstTroop.health != firstTroopMaxHealth, true);
+    }
 }
