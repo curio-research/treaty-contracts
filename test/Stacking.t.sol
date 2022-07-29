@@ -59,14 +59,12 @@ contract StackingTest is Test, DiamondDeployTest {
         assertEq(_tile.occupantId, 0);
         assertEq(_base.owner, NULL_ADDR);
         assertEq(_base.health, 1);
-        helper.updatePlayerBalances(player1);
         assertEq(getter.getPlayer(player1).totalOilConsumptionPerUpdate, 0);
 
         vm.startPrank(deployer);
         helper.spawnTroop(player1Pos, player1, infantryTroopTypeId); // spawn an infantry
         vm.stopPrank();
 
-        helper.updatePlayerBalances(player1);
         assertEq(getter.getPlayer(player1).totalOilConsumptionPerUpdate, 1);
 
         vm.startPrank(player1);
@@ -76,7 +74,6 @@ contract StackingTest is Test, DiamondDeployTest {
 
         if (getter.getTroop(1).health == 1) {
             // infantry won
-            helper.updatePlayerBalances(player1);
             assertEq(getter.getPlayer(player1).totalOilConsumptionPerUpdate, 1);
             Army memory _army1 = getter.getArmyAt(_targetPos);
             assertEq(_army1.pos.x, _targetPos.x); // check position
@@ -89,7 +86,6 @@ contract StackingTest is Test, DiamondDeployTest {
             assertEq(_base.health, 1);
         } else {
             // port won
-            helper.updatePlayerBalances(player1);
             assertEq(getter.getPlayer(player1).totalOilConsumptionPerUpdate, 0);
             Army memory _army1 = getter.getArmy(1);
             assertEq(_army1.owner, NULL_ADDR);
@@ -104,7 +100,6 @@ contract StackingTest is Test, DiamondDeployTest {
     }
 
     function testMoveTroop() public {
-        helper.updatePlayerBalances(player1);
         assertEq(getter.getPlayer(player1).totalOilGenerationPerUpdate, 0);
         assertEq(getter.getPlayer(player1).totalOilConsumptionPerUpdate, 0);
 
@@ -114,7 +109,6 @@ contract StackingTest is Test, DiamondDeployTest {
         helper.spawnTroop(army2position, player1, infantryTroopTypeId); // spawn an infrantry. troop #2
         vm.stopPrank();
 
-        helper.updatePlayerBalances(player1);
         assertEq(getter.getPlayer(player1).totalOilGenerationPerUpdate, 0);
         assertEq(getter.getPlayer(player1).totalOilConsumptionPerUpdate, 2);
 

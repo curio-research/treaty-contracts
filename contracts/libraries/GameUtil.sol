@@ -366,7 +366,7 @@ library Util {
 
         for (uint256 i = 0; i < _armyTroopIds.length; i++) {
             Troop memory _troop = _getTroop(_armyTroopIds[i]);
-            uint256 _troopLargeActionCooldown = _getMovementCooldown(_troop.troopTypeId);
+            uint256 _troopLargeActionCooldown = _getLargeActionCooldown(_troop.troopTypeId);
             if (_troopLargeActionCooldown > _largeActionCooldown) {
                 _largeActionCooldown = _troopLargeActionCooldown;
             }
@@ -380,7 +380,7 @@ library Util {
 
         for (uint256 i = 0; i < _armyTroopIds.length; i++) {
             Troop memory _troop = _getTroop(_armyTroopIds[i]);
-            uint256 _troopAttackFactor = _getMovementCooldown(_troop.troopTypeId);
+            uint256 _troopAttackFactor = _getAttackFactor(_troop.troopTypeId);
             _attackFactor += _troopAttackFactor;
         }
         return _attackFactor;
@@ -392,7 +392,7 @@ library Util {
 
         for (uint256 i = 0; i < _armyTroopIds.length; i++) {
             Troop memory _troop = _getTroop(_armyTroopIds[i]);
-            uint256 _troopDefenseFactor = _getMovementCooldown(_troop.troopTypeId);
+            uint256 _troopDefenseFactor = _getDefenseFactor(_troop.troopTypeId);
             _defenseFactor += _troopDefenseFactor;
         }
         return _defenseFactor;
@@ -404,7 +404,7 @@ library Util {
 
         for (uint256 i = 0; i < _armyTroopIds.length; i++) {
             Troop memory _troop = _getTroop(_armyTroopIds[i]);
-            uint256 _troopDamagePerhit = _getMovementCooldown(_troop.troopTypeId);
+            uint256 _troopDamagePerhit = _getDamagePerHit(_troop.troopTypeId);
             _damagePerHit += _troopDamagePerhit;
         }
         return _damagePerHit;
