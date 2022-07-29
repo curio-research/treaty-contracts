@@ -55,6 +55,7 @@ contract EngineFacet is UseStorage {
         }
 
         Util.updateArmy(_army.pos, _targetPos);
+        Util.emitPlayerInfo(msg.sender);
     }
 
     /**
@@ -104,6 +105,7 @@ contract EngineFacet is UseStorage {
         EngineModules._clearTroopFromSourceArmy(_troop.armyId, _troopId);
 
         Util.updateArmy(_startPos, _targetPos);
+        Util.emitPlayerInfo(msg.sender);
     }
 
     /**
@@ -132,6 +134,8 @@ contract EngineFacet is UseStorage {
 
         Util._addTroop(msg.sender, _pos, _troopTypeId);
         gs().playerMap[msg.sender].goldBalance -= _troopPrice;
+
+        Util.emitPlayerInfo(msg.sender);
     }
 
     /**
@@ -144,8 +148,6 @@ contract EngineFacet is UseStorage {
         require(_army.owner == msg.sender, "CURIO: Can only delete own troop");
 
         Util._removeTroop(_troopId);
-
-        emit Util.TroopDeath(msg.sender, _troopId);
     }
 
     /**
@@ -169,7 +171,6 @@ contract EngineFacet is UseStorage {
             initTimestamp: block.timestamp,
             active: true,
             goldBalance: _worldConstants.initPlayerGoldBalance,
-            oilBalance: _worldConstants.initPlayerOilBalance,
             totalGoldGenerationPerUpdate: _worldConstants.defaultBaseGoldGenerationPerSecond,
             totalOilGenerationPerUpdate: 0,
             totalOilConsumptionPerUpdate: 0,
@@ -181,5 +182,7 @@ contract EngineFacet is UseStorage {
         gs().baseIdMap[_baseId].owner = msg.sender;
 
         emit Util.NewPlayer(msg.sender, _pos);
+
+        Util.emitPlayerInfo(msg.sender);
     }
 }

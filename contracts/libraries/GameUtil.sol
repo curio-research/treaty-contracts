@@ -20,17 +20,19 @@ library Util {
     // EVENTS
     // ----------------------------------------------------------
 
-    event AttackedBase(address _player, uint256 _armyId, Army _armyInfo, uint256 _targetBaseId, Base _targetBaseInfo);
-    event AttackedArmy(address _player, uint256 _armyId, Army _armyInfo, uint256 _targetArmy, Army _targetArmyInfo);
     event MovedArmy(address _player, uint256 timestamp, Position _startPos, uint256 _startTileArmyId, Army _startTileArmy, Position _endPos, uint256 _targetTileArmyId, Army _targetTileArmy);
     event NewTroop(address _player, uint256 _troopId, Troop _troop, uint256 _armyId, Army _army);
-    event BaseCaptured(address _player, uint256 _armyId, uint256 _baseId);
-    event ArmyDeath(address _player, uint256 _armyId);
-    event TroopDeath(address _player, uint256 _troopId);
     event NewPlayer(address _player, Position _pos);
     event PlayerInfo(address _addr, Player _player);
-    event PlayerReactivated(address _player);
+    event ArmyDeath(address _player, uint256 _armyId);
+    event AttackedArmy(address _player, uint256 _armyId, Army _armyInfo, Troop[] _armyTroops, uint256 _targetArmy, Army _targetArmyInfo, Troop[] _targetArmyTroops);
+    event TroopDeath(address _player, uint256 _troopId);
 
+    event AttackedTroop(address _player, uint256[] _troopIds, uint256[] _healths);
+    event AttackedBase(address _player, uint256 _armyId, Army _armyInfo, uint256 _targetBaseId, Base _targetBaseInfo);
+    event BaseCaptured(address _player, uint256 _armyId, uint256 _baseId);
+
+    event PlayerReactivated(address _player);
     event GamePaused();
     event GameResumed();
 
@@ -68,25 +70,8 @@ library Util {
 
         // Update gold balance
         _player.goldBalance += _player.totalGoldGenerationPerUpdate * _timeElapsed;
-
-        // Update oil balance
-        if (_player.totalOilGenerationPerUpdate >= _player.totalOilConsumptionPerUpdate) {
-            // Gain
-            _player.oilBalance += (_player.totalOilGenerationPerUpdate - _player.totalOilConsumptionPerUpdate) * _timeElapsed;
-            gs().playerMap[_addr].isDebuffed = false;
-        } else {
-            // Loss
-            uint256 _reduction = (_player.totalOilConsumptionPerUpdate - _player.totalOilGenerationPerUpdate) * _timeElapsed;
-            if (_reduction >= _player.oilBalance) {
-                _player.oilBalance = 0;
-                // _player.active = false; // Note: disabled for now, allowing negative balances
-            } else {
-                _player.oilBalance -= _reduction;
-            }
-            gs().playerMap[_addr].isDebuffed = true;
-        }
-
         _player.balanceLastUpdated = block.timestamp;
+
         gs().playerMap[_addr] = _player;
     }
 
@@ -160,6 +145,8 @@ library Util {
         if (gs().armyIdMap[_troop.armyId].troopIds.length == 0) {
             gs().map[_pos.x][_pos.y].occupantId = _NULL();
         }
+
+        emit TroopDeath(msg.sender, _troopId);
     }
 
     function _distributeDamageToTroop(uint256 _troopId) public {
@@ -259,7 +246,13 @@ library Util {
         Army memory _army1 = _getArmy(_tile1.occupantId);
         Army memory _army2 = _getArmy(_tile2.occupantId);
 
-        emit Util.MovedArmy(msg.sender, block.timestamp, _pos1, _tile1.occupantId, _army1, _pos2, _tile2.occupantId, _army2);
+        emit MovedArmy(msg.sender, block.timestamp, _pos1, _tile1.occupantId, _army1, _pos2, _tile2.occupantId, _army2);
+    }
+
+    function emitPlayerInfo(address _player) public {
+        Player memory _playerInfo = _getPlayer(_player);
+
+        emit PlayerInfo(msg.sender, _playerInfo);
     }
 
     // ----------------------------------------------------------
@@ -288,10 +281,6 @@ library Util {
 
     function _getPlayerGoldBalance(address _player) public view returns (uint256) {
         return gs().playerMap[_player].goldBalance;
-    }
-
-    function _getPlayerOilBalance(address _player) public view returns (uint256) {
-        return gs().playerMap[_player].oilBalance;
     }
 
     function _getTotalGoldGenerationPerUpdate(address _player) public view returns (uint256) {

@@ -103,8 +103,9 @@ library EngineModules {
                 gs().baseIdMap[_targetTile.baseId].health = 100;
                 emit Util.BaseCaptured(msg.sender, _armyId, _targetTile.baseId);
 
-                Util._updatePlayerBalances(_targetPlayer);
-                Util._updatePlayerBalances(msg.sender);
+                // necesssary?
+                // Util._updatePlayerBalances(_targetPlayer);
+                // Util._updatePlayerBalances(msg.sender);
                 if (_targetPlayer != _NULL_ADRRESS()) {
                     gs().playerMap[_targetPlayer].numOwnedBases--;
                     gs().playerMap[_targetPlayer].totalGoldGenerationPerUpdate -= _targetBase.goldGenerationPerSecond;
@@ -180,6 +181,7 @@ library EngineModules {
             }
         }
 
+        // enemy army died
         if (_targetHealth == 0) {
             uint256 _damageToDistribute = Util._getArmyHealth(_army.troopIds) - _armyHealth;
             // distribute damage to individual troops
@@ -192,12 +194,36 @@ library EngineModules {
 
             _targetArmy = Util._getArmy(_targetTile.occupantId);
 
-            emit Util.AttackedArmy(msg.sender, _armyId, _army, _targetTile.occupantId, _targetArmy);
+            // emit Util.AttackedArmy(msg.sender, _armyId, _army, _targetTile.occupantId, _targetArmy);
         } else {
             _targetArmy = Util._getArmy(_targetTile.occupantId);
 
-            emit Util.AttackedArmy(msg.sender, _armyId, _army, _targetTile.occupantId, _targetArmy);
+            // emit Util.AttackedArmy(msg.sender, _armyId, _army, _targetTile.occupantId, _targetArmy);
         }
+
+        updateAttackedArmy(_armyId, _targetTile.occupantId);
+
+        // attacked army in start position
+        // attacked army in target position
+    }
+
+    // emits the necessary events to update the army
+    function updateAttackedArmy(uint256 _army1Id, uint256 _army2Id) public {
+        (Army memory _army1, Troop[] memory _troops1) = getArmyAndTroops(_army1Id);
+        (Army memory _army2, Troop[] memory _troops2) = getArmyAndTroops(_army2Id);
+
+        emit Util.AttackedArmy(msg.sender, _army1Id, _army1, _troops1, _army2Id, _army2, _troops2);
+    }
+
+    function getArmyAndTroops(uint256 _armyId) public view returns (Army memory, Troop[] memory) {
+        Army memory _army = Util._getArmy(_armyId);
+
+        Troop[] memory _troops = new Troop[](_army.troopIds.length);
+        for (uint256 i = 0; i < _army.troopIds.length; i++) {
+            _troops[i] = Util._getTroop(_army.troopIds[i]);
+        }
+
+        return (_army, _troops);
     }
 
     // check if all troops in the army is compatiable with target tile geographics

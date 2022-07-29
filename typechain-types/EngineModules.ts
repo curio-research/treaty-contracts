@@ -29,10 +29,52 @@ export type TileStructOutput = [boolean, number, BigNumber, BigNumber] & {
   baseId: BigNumber;
 };
 
+export type PositionStruct = { x: BigNumberish; y: BigNumberish };
+
+export type PositionStructOutput = [BigNumber, BigNumber] & {
+  x: BigNumber;
+  y: BigNumber;
+};
+
+export type ArmyStruct = {
+  owner: string;
+  troopIds: BigNumberish[];
+  lastMoved: BigNumberish;
+  lastLargeActionTaken: BigNumberish;
+  pos: PositionStruct;
+};
+
+export type ArmyStructOutput = [
+  string,
+  BigNumber[],
+  BigNumber,
+  BigNumber,
+  PositionStructOutput
+] & {
+  owner: string;
+  troopIds: BigNumber[];
+  lastMoved: BigNumber;
+  lastLargeActionTaken: BigNumber;
+  pos: PositionStructOutput;
+};
+
+export type TroopStruct = {
+  armyId: BigNumberish;
+  troopTypeId: BigNumberish;
+  health: BigNumberish;
+};
+
+export type TroopStructOutput = [BigNumber, BigNumber, BigNumber] & {
+  armyId: BigNumber;
+  troopTypeId: BigNumber;
+  health: BigNumber;
+};
+
 export interface EngineModulesInterface extends utils.Interface {
   functions: {
     "_geographicCheckArmy(uint256,(bool,uint8,uint256,uint256))": FunctionFragment;
     "_geographicCheckTroop(uint256,(bool,uint8,uint256,uint256))": FunctionFragment;
+    "getArmyAndTroops(uint256)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -43,6 +85,10 @@ export interface EngineModulesInterface extends utils.Interface {
     functionFragment: "_geographicCheckTroop",
     values: [BigNumberish, TileStruct]
   ): string;
+  encodeFunctionData(
+    functionFragment: "getArmyAndTroops",
+    values: [BigNumberish]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "_geographicCheckArmy",
@@ -50,6 +96,10 @@ export interface EngineModulesInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "_geographicCheckTroop",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getArmyAndTroops",
     data: BytesLike
   ): Result;
 
@@ -94,6 +144,11 @@ export interface EngineModules extends BaseContract {
       _tile: TileStruct,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
+
+    getArmyAndTroops(
+      _armyId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[ArmyStructOutput, TroopStructOutput[]]>;
   };
 
   _geographicCheckArmy(
@@ -108,6 +163,11 @@ export interface EngineModules extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  getArmyAndTroops(
+    _armyId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<[ArmyStructOutput, TroopStructOutput[]]>;
+
   callStatic: {
     _geographicCheckArmy(
       _armyId: BigNumberish,
@@ -120,6 +180,11 @@ export interface EngineModules extends BaseContract {
       _tile: TileStruct,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    getArmyAndTroops(
+      _armyId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[ArmyStructOutput, TroopStructOutput[]]>;
   };
 
   filters: {};
@@ -136,6 +201,11 @@ export interface EngineModules extends BaseContract {
       _tile: TileStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    getArmyAndTroops(
+      _armyId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -148,6 +218,11 @@ export interface EngineModules extends BaseContract {
     _geographicCheckTroop(
       _troopTypeId: BigNumberish,
       _tile: TileStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getArmyAndTroops(
+      _armyId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
