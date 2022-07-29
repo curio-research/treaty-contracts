@@ -122,6 +122,7 @@ library EngineModules {
             _targetBase = Util._getBase(_targetTile.baseId);
         }
 
+        _updateAttackedArmy(_armyId, _armyId);
         _baseUpdate(_targetTile.baseId);
     }
 
@@ -203,14 +204,11 @@ library EngineModules {
             // emit Util.AttackedArmy(msg.sender, _armyId, _army, _targetTile.occupantId, _targetArmy);
         }
 
-        updateAttackedArmy(_armyId, _targetTile.occupantId);
-
-        // attacked army in start position
-        // attacked army in target position
+        _updateAttackedArmy(_armyId, _targetTile.occupantId);
     }
 
     // emits the necessary events to update the army
-    function updateAttackedArmy(uint256 _army1Id, uint256 _army2Id) public {
+    function _updateAttackedArmy(uint256 _army1Id, uint256 _army2Id) public {
         (Army memory _army1, Troop[] memory _troops1) = getArmyAndTroops(_army1Id);
         (Army memory _army2, Troop[] memory _troops2) = getArmyAndTroops(_army2Id);
 

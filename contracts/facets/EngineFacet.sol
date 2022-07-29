@@ -54,8 +54,8 @@ contract EngineFacet is UseStorage {
             EngineModules._battleArmy(_armyId, _targetPos);
         }
 
-        Util.updateArmy(_army.pos, _targetPos);
-        Util.emitPlayerInfo(msg.sender);
+        Util.updateArmy(_army.pos, _targetPos); // update army info on start tile and end tile
+        Util.emitPlayerInfo(msg.sender); // updates player info
     }
 
     /**
