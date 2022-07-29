@@ -43,8 +43,8 @@ export const DEBUFF_FACTOR = 80;
 export const TROOP_TYPES: TroopTypeStruct[] = [
   {
     name: TROOP_NAME.INFANTRY,
-    maxHealth: 1,
-    damagePerHit: 1,
+    maxHealth: 100,
+    damagePerHit: 100,
     attackFactor: 100,
     defenseFactor: 100,
     movementCooldown: 0,
@@ -54,8 +54,8 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
   },
   {
     name: TROOP_NAME.DESTROYER,
-    maxHealth: 3,
-    damagePerHit: 1,
+    maxHealth: 300,
+    damagePerHit: 100,
     attackFactor: 100,
     defenseFactor: 100,
     movementCooldown: 0,
@@ -65,8 +65,8 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
   },
   {
     name: TROOP_NAME.CRUISER,
-    maxHealth: 8,
-    damagePerHit: 2,
+    maxHealth: 800,
+    damagePerHit: 200,
     attackFactor: 100,
     defenseFactor: 100,
     movementCooldown: 0,
@@ -76,8 +76,8 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
   },
   {
     name: TROOP_NAME.BATTLESHIP,
-    maxHealth: 12,
-    damagePerHit: 3,
+    maxHealth: 1200,
+    damagePerHit: 300,
     attackFactor: 100,
     defenseFactor: 100,
     movementCooldown: 0,

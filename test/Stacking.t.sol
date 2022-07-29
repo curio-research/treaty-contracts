@@ -56,9 +56,9 @@ contract StackingTest is Test, DiamondDeployTest {
 
         Tile memory _tile = getter.getTileAt(_targetPos);
         Base memory _base = getter.getBase(_tile.baseId);
-        assertEq(_tile.occupantId, 0);
+        assertEq(_tile.occupantId, NULL);
         assertEq(_base.owner, NULL_ADDR);
-        assertEq(_base.health, 1);
+        assertEq(_base.health, 100);
         assertEq(getter.getPlayer(player1).totalOilConsumptionPerUpdate, 0);
 
         vm.startPrank(deployer);
@@ -72,7 +72,7 @@ contract StackingTest is Test, DiamondDeployTest {
         vm.warp(2);
         engine.march(1, _targetPos); // move army to (6, 2);
 
-        if (getter.getTroop(1).health == 1) {
+        if (getter.getTroop(1).health == 100) {
             // infantry won
             assertEq(getter.getPlayer(player1).totalOilConsumptionPerUpdate, 1);
             Army memory _army1 = getter.getArmyAt(_targetPos);
@@ -83,7 +83,7 @@ contract StackingTest is Test, DiamondDeployTest {
             _base = getter.getBase(_tile.baseId);
             assertEq(_tile.occupantId, 1);
             assertEq(_base.owner, player1);
-            assertEq(_base.health, 1);
+            assertEq(_base.health, 100);
         } else {
             // port won
             assertEq(getter.getPlayer(player1).totalOilConsumptionPerUpdate, 0);
@@ -93,9 +93,9 @@ contract StackingTest is Test, DiamondDeployTest {
             assertEq(getter.getTroop(1).health, 0);
             _tile = getter.getTileAt(_targetPos);
             _base = getter.getBase(_tile.baseId);
-            assertEq(_tile.occupantId, 0);
+            assertEq(_tile.occupantId, NULL);
             assertEq(_base.owner, NULL_ADDR);
-            assertEq(_base.health, 1);
+            assertEq(_base.health, 100);
         }
     }
 

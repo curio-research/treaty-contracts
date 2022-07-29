@@ -71,8 +71,8 @@ library EngineModules {
             // Target attacks troop
             _salt++;
             if (Util._strike(_targetBase.defenseFactor, _salt)) {
-                if (_armyHealth > 1) {
-                    _armyHealth -= 1;
+                if (_armyHealth > 100) {
+                    _armyHealth -= 100;
                 } else {
                     _armyHealth = 0;
                     Util._removeArmyWithTroops(_armyId);
@@ -100,7 +100,7 @@ library EngineModules {
 
                 _targetBase = Util._getBase(_targetTile.baseId);
                 gs().baseIdMap[_targetTile.baseId].owner = msg.sender;
-                gs().baseIdMap[_targetTile.baseId].health = 1;
+                gs().baseIdMap[_targetTile.baseId].health = 100;
                 emit Util.BaseCaptured(msg.sender, _armyId, _targetTile.baseId);
 
                 Util._updatePlayerBalances(_targetPlayer);

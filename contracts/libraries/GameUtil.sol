@@ -239,7 +239,7 @@ library Util {
             name: _baseName,
             attackFactor: 100,
             defenseFactor: 100,
-            health: 1,
+            health: 100,
             goldGenerationPerSecond: _goldGenerationPerSecond,
             oilGenerationPerSecond: _oilGenerationPerSecond,
             pos: _pos //
