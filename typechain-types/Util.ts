@@ -171,6 +171,7 @@ export interface UtilInterface extends utils.Interface {
     "_getTotalGoldGenerationPerUpdate(address)": FunctionFragment;
     "_getTroop(uint256)": FunctionFragment;
     "_getTroopGoldPrice(uint256)": FunctionFragment;
+    "_getTroopName(uint256)": FunctionFragment;
     "_hasPort((bool,uint8,uint256,uint256))": FunctionFragment;
     "_inBound((uint256,uint256))": FunctionFragment;
     "_isDebuffed(address)": FunctionFragment;
@@ -289,6 +290,10 @@ export interface UtilInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "_getTroopGoldPrice",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getTroopName",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
@@ -420,6 +425,10 @@ export interface UtilInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "_getTroop", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_getTroopGoldPrice",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_getTroopName",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "_hasPort", data: BytesLike): Result;
@@ -759,6 +768,11 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    _getTroopName(
+      _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[number]>;
+
     _hasPort(_tile: TileStruct, overrides?: CallOverrides): Promise<[boolean]>;
 
     _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<[boolean]>;
@@ -938,6 +952,11 @@ export interface Util extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  _getTroopName(
+    _troopTypeId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<number>;
+
   _hasPort(_tile: TileStruct, overrides?: CallOverrides): Promise<boolean>;
 
   _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<boolean>;
@@ -1113,6 +1132,11 @@ export interface Util extends BaseContract {
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    _getTroopName(
+      _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<number>;
 
     _hasPort(_tile: TileStruct, overrides?: CallOverrides): Promise<boolean>;
 
@@ -1409,6 +1433,11 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _getTroopName(
+      _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     _hasPort(_tile: TileStruct, overrides?: CallOverrides): Promise<BigNumber>;
 
     _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<BigNumber>;
@@ -1585,6 +1614,11 @@ export interface Util extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     _getTroopGoldPrice(
+      _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getTroopName(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

@@ -5,6 +5,7 @@ import "contracts/libraries/Storage.sol";
 import {Util} from "contracts/libraries/GameUtil.sol";
 import {BASE_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop, Army, TroopType, WorldConstants} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
+import {EngineModules} from "contracts/libraries/EngineModules.sol";
 
 /// @title Helper facet
 /// @notice Contains admin functions and state functions, both of which should be out of scope for players
@@ -92,9 +93,8 @@ contract HelperFacet is UseStorage {
         require(_tile.occupantId == NULL, "CURIO: Tile occupied");
 
         if (_tile.baseId != NULL) {
-            Base memory _base = gs().baseIdMap[_tile.baseId];
-            // require(_base.owner == _player, "CURIO: Can only spawn troop in player's base");
-            require(Util._canTroopMoveOnLand(_troopTypeId) || _base.name == BASE_NAME.PORT, "CURIO: Can only spawn water troops in ports");
+            // require(Util._getBaseOwner(_tile.baseId) == _player, "CURIO: Can only spawn troop in player's base");
+            require(EngineModules._geographicCheckTroop(_troopTypeId, _tile), "CURIO: Can only spawn water troops in ports");
         }
 
         Util._addTroop(_player, _pos, _troopTypeId);
