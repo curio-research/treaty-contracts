@@ -30,7 +30,6 @@ library Util {
     event NewPlayer(address _player, Position _pos);
     event PlayerInfo(address _addr, Player _player);
     event PlayerReactivated(address _player);
-    event UpdatePlayerBalance(address _player, uint256 _amount);
 
     event GamePaused();
     event GameResumed();
