@@ -40,7 +40,7 @@ struct Player {
     uint256 balanceLastUpdated;
     uint256 numOwnedBases;
     uint256 numOwnedTroops;
-    bool debuffed;
+    bool isDebuffed;
 }
 
 struct Base {
@@ -101,6 +101,7 @@ struct WorldConstants {
     uint256 maxPlayerCount;
     uint256 defaultBaseGoldGenerationPerSecond;
     uint256 defaultWellOilGenerationPerSecond;
+    uint256 debuffFactor; // in the interval [0, 100]. 100 means losing everything, 0 means debuff affects nothing
 }
 
 struct GameState {
@@ -109,6 +110,7 @@ struct GameState {
     WorldConstants worldConstants;
     address[] players;
     mapping(address => Player) playerMap;
+    mapping(address => uint256[]) playerTroopIdMap;
     Tile[5000][5000] map;
     uint256[] baseIds;
     uint256 baseNonce;

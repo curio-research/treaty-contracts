@@ -38,6 +38,7 @@ export const MAX_TROOP_COUNT_PER_PLAYER = 100000;
 export const MAX_PLAYER_COUNT = 20;
 export const DEFAULT_BASE_GOLD_GENERATION_PER_SECOND = 1;
 export const DEFAULT_WELL_OIL_GENERATION_PER_SECOND = 5;
+export const DEBUFF_FACTOR = 80;
 
 export const TROOP_TYPES: TroopTypeStruct[] = [
   {
@@ -101,6 +102,7 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): W
     maxPlayerCount: MAX_PLAYER_COUNT,
     defaultBaseGoldGenerationPerSecond: DEFAULT_BASE_GOLD_GENERATION_PER_SECOND,
     defaultWellOilGenerationPerSecond: DEFAULT_WELL_OIL_GENERATION_PER_SECOND,
+    debuffFactor: DEBUFF_FACTOR,
   };
 };
 

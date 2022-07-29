@@ -74,7 +74,7 @@ library Util {
         if (_player.totalOilGenerationPerUpdate >= _player.totalOilConsumptionPerUpdate) {
             // Gain
             _player.oilBalance += (_player.totalOilGenerationPerUpdate - _player.totalOilConsumptionPerUpdate) * _timeElapsed;
-            if (_player.debuffed) _rebuffPlayerTroops(_addr);
+            gs().playerMap[_addr].isDebuffed = false;
         } else {
             // Loss
             uint256 _reduction = (_player.totalOilConsumptionPerUpdate - _player.totalOilGenerationPerUpdate) * _timeElapsed;
@@ -84,19 +84,11 @@ library Util {
             } else {
                 _player.oilBalance -= _reduction;
             }
-            if (!_player.debuffed) _debuffPlayerTroops(_addr);
+            gs().playerMap[_addr].isDebuffed = true;
         }
 
         _player.balanceLastUpdated = block.timestamp;
         gs().playerMap[_addr] = _player;
-    }
-
-    function _debuffPlayerTroops(address _addr) public {
-        // TODO
-    }
-
-    function _rebuffPlayerTroops(address _addr) public {
-        // TODO
     }
 
     function _removeArmyWithTroops(uint256 _armyId) public {
@@ -109,8 +101,17 @@ library Util {
         gs().playerMap[_owner].totalOilConsumptionPerUpdate -= _getArmyOilConsumptionPerSecond(_army.troopIds);
         gs().map[_pos.x][_pos.y].occupantId = _NULL();
 
+        uint256 _troopId;
         for (uint256 i = 0; i < _army.troopIds.length; i++) {
-            delete gs().troopIdMap[_army.troopIds[i]];
+            _troopId = _army.troopIds[i];
+
+            // Update player troops
+            uint256[] memory _playerTroopIds = gs().playerTroopIdMap[_owner];
+            uint256 _index = _getIndex(_troopId, _playerTroopIds);
+            gs().playerTroopIdMap[_owner][_index] = _playerTroopIds[_playerTroopIds.length - 1];
+            gs().playerTroopIdMap[_owner].pop();
+
+            delete gs().troopIdMap[_troopId];
         }
         delete gs().armyIdMap[_armyId];
     }
@@ -118,6 +119,8 @@ library Util {
     function _removeArmy(uint256 _armyId) public {
         // used when detaching army
         Army memory _army = _getArmy(_armyId);
+        require(_army.troopIds.length == 0, "CURIO: Undefined behavior in _removeArmy");
+
         Position memory _pos = _army.pos;
 
         delete gs().armyIdMap[_armyId];
@@ -143,18 +146,18 @@ library Util {
         gs().playerMap[_owner].numOwnedTroops = _numOwnedTroops;
         gs().playerMap[_owner].totalOilConsumptionPerUpdate = _totalOilConsumptionPerUpdate;
 
-        // remove troop from troopIds
-        uint256 _armyTroopSize = _army.troopIds.length;
-        uint256 _index = 0;
-        while (_index < _armyTroopSize) {
-            if (_army.troopIds[_index] == _troopId) break;
-            _index++;
-        }
+        // Update player troops
+        uint256[] memory _playerTroopIds = gs().playerTroopIdMap[_owner];
+        uint256 _index = _getIndex(_troopId, _playerTroopIds);
+        gs().playerTroopIdMap[_owner][_index] = _playerTroopIds[_playerTroopIds.length - 1];
+        gs().playerTroopIdMap[_owner].pop();
 
-        gs().armyIdMap[_troop.armyId].troopIds[_index] = _army.troopIds[_armyTroopSize - 1];
+        // Update army troops
+        _index = _getIndex(_troopId, _army.troopIds);
+        gs().armyIdMap[_troop.armyId].troopIds[_index] = _army.troopIds[_army.troopIds.length - 1];
         gs().armyIdMap[_troop.armyId].troopIds.pop();
 
-        // deal with when army contains zero troop; either remove army from transport or tile
+        // If army contains no troop, remove army from transport or tile
         if (gs().armyIdMap[_troop.armyId].troopIds.length == 0) {
             gs().map[_pos.x][_pos.y].occupantId = _NULL();
         }
@@ -178,33 +181,34 @@ library Util {
         require(_getPlayer(_owner).numOwnedTroops < gs().worldConstants.maxTroopCountPerPlayer, "CURIO: Max troop count exceeded");
 
         // Generate Troop and Army id
-        uint256 troopId = gs().troopNonce;
-        gs().troopIds.push(troopId);
+        uint256 _troopId = gs().troopNonce;
+        gs().troopIds.push(_troopId);
         gs().troopNonce++;
 
-        uint256 armyId = gs().armyNonce;
-        gs().armyIds.push(armyId);
+        uint256 _armyId = gs().armyNonce;
+        gs().armyIds.push(_armyId);
         gs().armyNonce++;
-        gs().map[_pos.x][_pos.y].occupantId = armyId;
+        gs().map[_pos.x][_pos.y].occupantId = _armyId;
 
-        Troop memory _troop = Troop({armyId: armyId, troopTypeId: _troopTypeId, health: _getMaxHealth(_troopTypeId)});
+        Troop memory _troop = Troop({armyId: _armyId, troopTypeId: _troopTypeId, health: _getMaxHealth(_troopTypeId)});
 
         uint256[] memory troopIds = new uint256[](1);
-        troopIds[0] = troopId;
+        troopIds[0] = _troopId;
 
         Army memory _army = Army({owner: _owner, troopIds: troopIds, lastMoved: block.timestamp, lastLargeActionTaken: block.timestamp, pos: _pos});
 
-        gs().troopIdMap[troopId] = _troop;
-        gs().armyIdMap[armyId] = _army;
+        gs().troopIdMap[_troopId] = _troop;
+        gs().armyIdMap[_armyId] = _army;
 
         // Update balances
         _updatePlayerBalances(_owner);
         gs().playerMap[_owner].numOwnedTroops++;
         gs().playerMap[_owner].totalOilConsumptionPerUpdate += _getOilConsumptionPerSecond(_troopTypeId);
+        gs().playerTroopIdMap[_owner].push(_troopId);
 
-        emit NewTroop(msg.sender, troopId, _troop, armyId, _army);
+        emit NewTroop(msg.sender, _troopId, _troop, _armyId, _army);
 
-        return (armyId, _army);
+        return (_armyId, _army);
     }
 
     function _createNewArmyFromTroop(uint256 _troopID, Position memory _pos) public returns (uint256) {
@@ -293,6 +297,10 @@ library Util {
 
     function _getTotalGoldGenerationPerUpdate(address _player) public view returns (uint256) {
         return gs().playerMap[_player].totalGoldGenerationPerUpdate;
+    }
+
+    function _isDebuffed(address _player) public view returns (bool) {
+        return gs().playerMap[_player].isDebuffed;
     }
 
     function _getTroop(uint256 _troopId) public view returns (Troop memory) {
@@ -495,5 +503,14 @@ library Util {
 
     function _NULL_ADRESS() internal pure returns (address) {
         return address(0);
+    }
+
+    function _getIndex(uint256 _item, uint256[] memory _arr) internal pure returns (uint256) {
+        uint256 _index = 0;
+        while (_index < _arr.length) {
+            if (_arr[_index] == _item) break;
+            _index++;
+        }
+        return _index;
     }
 }

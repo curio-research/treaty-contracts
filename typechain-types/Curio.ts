@@ -170,7 +170,7 @@ export type PlayerStruct = {
   balanceLastUpdated: BigNumberish;
   numOwnedBases: BigNumberish;
   numOwnedTroops: BigNumberish;
-  debuffed: boolean;
+  isDebuffed: boolean;
 };
 
 export type PlayerStructOutput = [
@@ -196,7 +196,7 @@ export type PlayerStructOutput = [
   balanceLastUpdated: BigNumber;
   numOwnedBases: BigNumber;
   numOwnedTroops: BigNumber;
-  debuffed: boolean;
+  isDebuffed: boolean;
 };
 
 export type WorldConstantsStruct = {
@@ -213,10 +213,12 @@ export type WorldConstantsStruct = {
   maxPlayerCount: BigNumberish;
   defaultBaseGoldGenerationPerSecond: BigNumberish;
   defaultWellOilGenerationPerSecond: BigNumberish;
+  debuffFactor: BigNumberish;
 };
 
 export type WorldConstantsStructOutput = [
   string,
+  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -243,6 +245,7 @@ export type WorldConstantsStructOutput = [
   maxPlayerCount: BigNumber;
   defaultBaseGoldGenerationPerSecond: BigNumber;
   defaultWellOilGenerationPerSecond: BigNumber;
+  debuffFactor: BigNumber;
 };
 
 export interface CurioInterface extends utils.Interface {
@@ -315,6 +318,7 @@ export interface CurioInterface extends utils.Interface {
     "_getTroopGoldPrice(uint256)": FunctionFragment;
     "_hasPort((bool,uint8,uint256,uint256))": FunctionFragment;
     "_inBound((uint256,uint256))": FunctionFragment;
+    "_isDebuffed(address)": FunctionFragment;
     "_isPlayerActive(address)": FunctionFragment;
     "_isPlayerInitialized(address)": FunctionFragment;
     "_random(uint256,uint256)": FunctionFragment;
@@ -580,6 +584,7 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "_inBound",
     values: [PositionStruct]
   ): string;
+  encodeFunctionData(functionFragment: "_isDebuffed", values: [string]): string;
   encodeFunctionData(
     functionFragment: "_isPlayerActive",
     values: [string]
@@ -811,6 +816,10 @@ export interface CurioInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "_hasPort", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "_inBound", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "_isDebuffed",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "_isPlayerActive",
     data: BytesLike
@@ -1346,6 +1355,8 @@ export interface Curio extends BaseContract {
 
     _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<[boolean]>;
 
+    _isDebuffed(_player: string, overrides?: CallOverrides): Promise<[boolean]>;
+
     _isPlayerActive(
       _player: string,
       overrides?: CallOverrides
@@ -1700,6 +1711,8 @@ export interface Curio extends BaseContract {
 
   _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<boolean>;
 
+  _isDebuffed(_player: string, overrides?: CallOverrides): Promise<boolean>;
+
   _isPlayerActive(_player: string, overrides?: CallOverrides): Promise<boolean>;
 
   _isPlayerInitialized(
@@ -2043,6 +2056,8 @@ export interface Curio extends BaseContract {
     _hasPort(_tile: TileStruct, overrides?: CallOverrides): Promise<boolean>;
 
     _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<boolean>;
+
+    _isDebuffed(_player: string, overrides?: CallOverrides): Promise<boolean>;
 
     _isPlayerActive(
       _player: string,
@@ -2526,6 +2541,8 @@ export interface Curio extends BaseContract {
 
     _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<BigNumber>;
 
+    _isDebuffed(_player: string, overrides?: CallOverrides): Promise<BigNumber>;
+
     _isPlayerActive(
       _player: string,
       overrides?: CallOverrides
@@ -2882,6 +2899,11 @@ export interface Curio extends BaseContract {
 
     _inBound(
       _p: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _isDebuffed(
+      _player: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

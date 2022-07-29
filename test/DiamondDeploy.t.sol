@@ -208,7 +208,8 @@ contract DiamondDeployTest is Test {
                 maxTroopCountPerPlayer: 20,
                 maxPlayerCount: 50,
                 defaultBaseGoldGenerationPerSecond: 5,
-                defaultWellOilGenerationPerSecond: 5 //
+                defaultWellOilGenerationPerSecond: 5,
+                debuffFactor: 80 //
             });
     }
 
