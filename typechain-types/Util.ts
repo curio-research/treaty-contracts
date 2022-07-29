@@ -98,6 +98,7 @@ export type PlayerStruct = {
   balanceLastUpdated: BigNumberish;
   numOwnedBases: BigNumberish;
   numOwnedTroops: BigNumberish;
+  isDebuffed: boolean;
 };
 
 export type PlayerStructOutput = [
@@ -110,7 +111,8 @@ export type PlayerStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
-  BigNumber
+  BigNumber,
+  boolean
 ] & {
   initTimestamp: BigNumber;
   active: boolean;
@@ -122,6 +124,7 @@ export type PlayerStructOutput = [
   balanceLastUpdated: BigNumber;
   numOwnedBases: BigNumber;
   numOwnedTroops: BigNumber;
+  isDebuffed: boolean;
 };
 
 export type TileStruct = {
@@ -170,6 +173,7 @@ export interface UtilInterface extends utils.Interface {
     "_getTroopGoldPrice(uint256)": FunctionFragment;
     "_hasPort((bool,uint8,uint256,uint256))": FunctionFragment;
     "_inBound((uint256,uint256))": FunctionFragment;
+    "_isDebuffed(address)": FunctionFragment;
     "_isPlayerActive(address)": FunctionFragment;
     "_isPlayerInitialized(address)": FunctionFragment;
     "_random(uint256,uint256)": FunctionFragment;
@@ -295,6 +299,7 @@ export interface UtilInterface extends utils.Interface {
     functionFragment: "_inBound",
     values: [PositionStruct]
   ): string;
+  encodeFunctionData(functionFragment: "_isDebuffed", values: [string]): string;
   encodeFunctionData(
     functionFragment: "_isPlayerActive",
     values: [string]
@@ -419,6 +424,10 @@ export interface UtilInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "_hasPort", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "_inBound", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "_isDebuffed",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "_isPlayerActive",
     data: BytesLike
@@ -754,6 +763,8 @@ export interface Util extends BaseContract {
 
     _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<[boolean]>;
 
+    _isDebuffed(_player: string, overrides?: CallOverrides): Promise<[boolean]>;
+
     _isPlayerActive(
       _player: string,
       overrides?: CallOverrides
@@ -931,6 +942,8 @@ export interface Util extends BaseContract {
 
   _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<boolean>;
 
+  _isDebuffed(_player: string, overrides?: CallOverrides): Promise<boolean>;
+
   _isPlayerActive(_player: string, overrides?: CallOverrides): Promise<boolean>;
 
   _isPlayerInitialized(
@@ -1104,6 +1117,8 @@ export interface Util extends BaseContract {
     _hasPort(_tile: TileStruct, overrides?: CallOverrides): Promise<boolean>;
 
     _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<boolean>;
+
+    _isDebuffed(_player: string, overrides?: CallOverrides): Promise<boolean>;
 
     _isPlayerActive(
       _player: string,
@@ -1398,6 +1413,8 @@ export interface Util extends BaseContract {
 
     _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<BigNumber>;
 
+    _isDebuffed(_player: string, overrides?: CallOverrides): Promise<BigNumber>;
+
     _isPlayerActive(
       _player: string,
       overrides?: CallOverrides
@@ -1579,6 +1596,11 @@ export interface Util extends BaseContract {
 
     _inBound(
       _p: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _isDebuffed(
+      _player: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

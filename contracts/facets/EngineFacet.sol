@@ -175,7 +175,8 @@ contract EngineFacet is UseStorage {
             totalOilConsumptionPerUpdate: 0,
             balanceLastUpdated: block.timestamp,
             numOwnedBases: 1,
-            numOwnedTroops: 0 //
+            numOwnedTroops: 0,
+            isDebuffed: false //
         });
         gs().baseIdMap[_baseId].owner = msg.sender;
 

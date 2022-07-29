@@ -38,12 +38,13 @@ export const MAX_TROOP_COUNT_PER_PLAYER = 100000;
 export const MAX_PLAYER_COUNT = 20;
 export const DEFAULT_BASE_GOLD_GENERATION_PER_SECOND = 1;
 export const DEFAULT_WELL_OIL_GENERATION_PER_SECOND = 5;
+export const DEBUFF_FACTOR = 80;
 
 export const TROOP_TYPES: TroopTypeStruct[] = [
   {
     name: TROOP_NAME.INFANTRY,
-    maxHealth: 1,
-    damagePerHit: 1,
+    maxHealth: 100,
+    damagePerHit: 100,
     attackFactor: 100,
     defenseFactor: 100,
     movementCooldown: 0,
@@ -53,8 +54,8 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
   },
   {
     name: TROOP_NAME.DESTROYER,
-    maxHealth: 3,
-    damagePerHit: 1,
+    maxHealth: 300,
+    damagePerHit: 100,
     attackFactor: 100,
     defenseFactor: 100,
     movementCooldown: 0,
@@ -64,8 +65,8 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
   },
   {
     name: TROOP_NAME.CRUISER,
-    maxHealth: 8,
-    damagePerHit: 2,
+    maxHealth: 800,
+    damagePerHit: 200,
     attackFactor: 100,
     defenseFactor: 100,
     movementCooldown: 0,
@@ -75,8 +76,8 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
   },
   {
     name: TROOP_NAME.BATTLESHIP,
-    maxHealth: 12,
-    damagePerHit: 3,
+    maxHealth: 1200,
+    damagePerHit: 300,
     attackFactor: 100,
     defenseFactor: 100,
     movementCooldown: 0,
@@ -101,6 +102,7 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): W
     maxPlayerCount: MAX_PLAYER_COUNT,
     defaultBaseGoldGenerationPerSecond: DEFAULT_BASE_GOLD_GENERATION_PER_SECOND,
     defaultWellOilGenerationPerSecond: DEFAULT_WELL_OIL_GENERATION_PER_SECOND,
+    debuffFactor: DEBUFF_FACTOR,
   };
 };
 

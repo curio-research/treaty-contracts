@@ -146,6 +146,7 @@ export type PlayerStruct = {
   balanceLastUpdated: BigNumberish;
   numOwnedBases: BigNumberish;
   numOwnedTroops: BigNumberish;
+  isDebuffed: boolean;
 };
 
 export type PlayerStructOutput = [
@@ -158,7 +159,8 @@ export type PlayerStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
-  BigNumber
+  BigNumber,
+  boolean
 ] & {
   initTimestamp: BigNumber;
   active: boolean;
@@ -170,6 +172,7 @@ export type PlayerStructOutput = [
   balanceLastUpdated: BigNumber;
   numOwnedBases: BigNumber;
   numOwnedTroops: BigNumber;
+  isDebuffed: boolean;
 };
 
 export type WorldConstantsStruct = {
@@ -186,10 +189,12 @@ export type WorldConstantsStruct = {
   maxPlayerCount: BigNumberish;
   defaultBaseGoldGenerationPerSecond: BigNumberish;
   defaultWellOilGenerationPerSecond: BigNumberish;
+  debuffFactor: BigNumberish;
 };
 
 export type WorldConstantsStructOutput = [
   string,
+  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -216,6 +221,7 @@ export type WorldConstantsStructOutput = [
   maxPlayerCount: BigNumber;
   defaultBaseGoldGenerationPerSecond: BigNumber;
   defaultWellOilGenerationPerSecond: BigNumber;
+  debuffFactor: BigNumber;
 };
 
 export interface GetterFacetInterface extends utils.Interface {

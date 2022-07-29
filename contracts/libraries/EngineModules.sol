@@ -43,8 +43,8 @@ library EngineModules {
 
         Tile memory _targetTile = Util._getTileAt(_targetPos);
         require(_targetTile.baseId != _NULL(), "CURIO: No target to attack");
-
         Base memory _targetBase = gs().baseIdMap[_targetTile.baseId];
+
         require(_targetBase.owner != msg.sender, "CURIO: Cannot attack own base");
         require(Util._canArmyMoveOnLand(_armyId) || _targetBase.health > 0 || _targetBase.name == BASE_NAME.OIL_WELL, "CURIO: Can only capture base with land troop");
 
@@ -56,7 +56,9 @@ library EngineModules {
             // Troop attacks target
             _salt++;
             if (Util._strike(_targetBase.attackFactor, _salt)) {
-                uint256 _damagePerHit = Util._getArmyDamagePerHit(_army.troopIds);
+                uint256 _debuffFactor = Util._isDebuffed(_army.owner) ? gs().worldConstants.debuffFactor : 0;
+                uint256 _damagePerHit = (Util._getArmyDamagePerHit(_army.troopIds) * (100 - _debuffFactor)) / 100;
+
                 if (_damagePerHit < _targetBase.health) {
                     _targetBase.health -= _damagePerHit;
                 } else {
@@ -69,8 +71,8 @@ library EngineModules {
             // Target attacks troop
             _salt++;
             if (Util._strike(_targetBase.defenseFactor, _salt)) {
-                if (_armyHealth > 1) {
-                    _armyHealth -= 1;
+                if (_armyHealth > 100) {
+                    _armyHealth -= 100;
                 } else {
                     _armyHealth = 0;
                     Util._removeArmyWithTroops(_armyId);
@@ -98,7 +100,7 @@ library EngineModules {
 
                 _targetBase = Util._getBase(_targetTile.baseId);
                 gs().baseIdMap[_targetTile.baseId].owner = msg.sender;
-                gs().baseIdMap[_targetTile.baseId].health = 1;
+                gs().baseIdMap[_targetTile.baseId].health = 100;
                 emit Util.BaseCaptured(msg.sender, _armyId, _targetTile.baseId);
 
                 Util._updatePlayerBalances(_targetPlayer);
@@ -142,11 +144,15 @@ library EngineModules {
 
         // Exchange fire until one side dies
         uint256 _salt = 0;
+        uint256 _debuffFactor;
+        uint256 _damagePerHit;
         while (_armyHealth > 0) {
             // Troop attacks target
             _salt += 1;
             if (Util._strike(Util._getArmyAttackFactor(_targetArmy.troopIds), _salt)) {
-                uint256 _damagePerHit = Util._getArmyDamagePerHit(_army.troopIds);
+                _debuffFactor = Util._isDebuffed(_army.owner) ? gs().worldConstants.debuffFactor : 0;
+                _damagePerHit = (Util._getArmyDamagePerHit(_army.troopIds) * (100 - _debuffFactor)) / 100;
+
                 if (_damagePerHit < _targetHealth) {
                     _targetHealth -= _damagePerHit;
                 } else {
@@ -161,8 +167,11 @@ library EngineModules {
             // Target attacks Army
             _salt += 1;
             if (Util._strike(Util._getArmyDefenseFactor(_targetArmy.troopIds), _salt)) {
-                if (Util._getArmyDamagePerHit(_targetArmy.troopIds) < _armyHealth) {
-                    _armyHealth -= Util._getArmyDamagePerHit(_targetArmy.troopIds);
+                _debuffFactor = Util._isDebuffed(_targetArmy.owner) ? gs().worldConstants.debuffFactor : 0;
+                _damagePerHit = (Util._getArmyDamagePerHit(_targetArmy.troopIds) * (100 - _debuffFactor)) / 100;
+
+                if (_damagePerHit < _armyHealth) {
+                    _armyHealth -= _damagePerHit;
                 } else {
                     _armyHealth = 0;
                     Util._removeArmyWithTroops(_armyId);

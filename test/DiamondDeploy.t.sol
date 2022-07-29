@@ -55,8 +55,8 @@ contract DiamondDeployTest is Test {
     TroopType public infantryTroopType =
         TroopType({
             name: TROOP_NAME.INFANTRY,
-            maxHealth: 1,
-            damagePerHit: 1,
+            maxHealth: 100,
+            damagePerHit: 100,
             attackFactor: 100,
             defenseFactor: 100,
             movementCooldown: 1,
@@ -67,8 +67,8 @@ contract DiamondDeployTest is Test {
     TroopType public destroyerTroopType =
         TroopType({
             name: TROOP_NAME.DESTROYER,
-            maxHealth: 3,
-            damagePerHit: 1,
+            maxHealth: 300,
+            damagePerHit: 100,
             attackFactor: 100,
             defenseFactor: 100,
             movementCooldown: 1,
@@ -79,8 +79,8 @@ contract DiamondDeployTest is Test {
     TroopType public cruiserTroopType =
         TroopType({
             name: TROOP_NAME.CRUISER,
-            maxHealth: 8,
-            damagePerHit: 2,
+            maxHealth: 800,
+            damagePerHit: 200,
             attackFactor: 100,
             defenseFactor: 100,
             movementCooldown: 1,
@@ -91,8 +91,8 @@ contract DiamondDeployTest is Test {
     TroopType public battleshipTroopType =
         TroopType({
             name: TROOP_NAME.BATTLESHIP,
-            maxHealth: 12,
-            damagePerHit: 3,
+            maxHealth: 1200,
+            damagePerHit: 300,
             attackFactor: 100,
             defenseFactor: 100,
             movementCooldown: 1,
@@ -208,7 +208,8 @@ contract DiamondDeployTest is Test {
                 maxTroopCountPerPlayer: 20,
                 maxPlayerCount: 50,
                 defaultBaseGoldGenerationPerSecond: 5,
-                defaultWellOilGenerationPerSecond: 5 //
+                defaultWellOilGenerationPerSecond: 5,
+                debuffFactor: 80 //
             });
     }
 
