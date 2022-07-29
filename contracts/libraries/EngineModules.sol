@@ -196,12 +196,8 @@ library EngineModules {
             _army = Util._getArmy(_armyId);
 
             _targetArmy = Util._getArmy(_targetTile.occupantId);
-
-            // emit Util.AttackedArmy(msg.sender, _armyId, _army, _targetTile.occupantId, _targetArmy);
         } else {
             _targetArmy = Util._getArmy(_targetTile.occupantId);
-
-            // emit Util.AttackedArmy(msg.sender, _armyId, _army, _targetTile.occupantId, _targetArmy);
         }
 
         _updateAttackedArmy(_armyId, _targetTile.occupantId);
