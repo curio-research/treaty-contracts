@@ -28,9 +28,11 @@ library Util {
     event AttackedArmy(address _player, uint256 _armyId, Army _armyInfo, Troop[] _armyTroops, uint256 _targetArmy, Army _targetArmyInfo, Troop[] _targetArmyTroops);
     event TroopDeath(address _player, uint256 _troopId);
 
-    event AttackedTroop(address _player, uint256[] _troopIds, uint256[] _healths);
-    event AttackedBase(address _player, uint256 _armyId, Army _armyInfo, uint256 _targetBaseId, Base _targetBaseInfo);
-    event BaseCaptured(address _player, uint256 _armyId, uint256 _baseId);
+    // update base info?
+    event BaseInfo(address _player, uint256 _baseId, Base _Base);
+
+    // event AttackedBase(address _player, uint256 _armyId, Army _armyInfo, uint256 _targetBaseId, Base _targetBaseInfo);
+    // event BaseCaptured(address _player, uint256 _armyId, uint256 _baseId);
 
     event PlayerReactivated(address _player);
     event GamePaused();
@@ -406,7 +408,7 @@ library Util {
 
     function _getArmyDamagePerHit(uint256[] memory _armyTroopIds) public view returns (uint256) {
         // take the sum
-        uint256 _damagePerHit;
+        uint256 _damagePerHit = 0;
 
         for (uint256 i = 0; i < _armyTroopIds.length; i++) {
             Troop memory _troop = _getTroop(_armyTroopIds[i]);

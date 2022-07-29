@@ -100,8 +100,7 @@ library EngineModules {
 
                 _targetBase = Util._getBase(_targetTile.baseId);
                 gs().baseIdMap[_targetTile.baseId].owner = msg.sender;
-                gs().baseIdMap[_targetTile.baseId].health = 100;
-                emit Util.BaseCaptured(msg.sender, _armyId, _targetTile.baseId);
+                gs().baseIdMap[_targetTile.baseId].health = 1;
 
                 // necesssary?
                 // Util._updatePlayerBalances(_targetPlayer);
@@ -118,15 +117,24 @@ library EngineModules {
                 // Move
                 _moveArmy(_armyId, _targetPos);
             } else {
-                emit Util.AttackedBase(msg.sender, _armyId, _army, _targetTile.baseId, _targetBase);
+                // emit Util.AttackedBase(msg.sender, _armyId, _army, _targetTile.baseId, _targetBase);
             }
         } else {
             // Troop dies
             gs().baseIdMap[_targetTile.baseId].health = _targetBase.health;
             _targetBase = Util._getBase(_targetTile.baseId);
 
-            emit Util.AttackedBase(msg.sender, _armyId, _army, _targetTile.baseId, _targetBase);
+            // emit Util.AttackedBase(msg.sender, _armyId, _army, _targetTile.baseId, _targetBase);
         }
+
+        // EMIT ATTACKEDBASE
+        _baseUpdate(_targetTile.baseId);
+    }
+
+    function _baseUpdate(uint256 _baseId) public {
+        Base memory _base = Util._getBase(_baseId);
+
+        emit Util.BaseInfo(msg.sender, _baseId, _base);
     }
 
     function _battleArmy(uint256 _armyId, Position memory _targetPos) public {
