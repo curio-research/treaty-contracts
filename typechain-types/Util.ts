@@ -98,6 +98,7 @@ export type PlayerStruct = {
   balanceLastUpdated: BigNumberish;
   numOwnedBases: BigNumberish;
   numOwnedTroops: BigNumberish;
+  debuffed: boolean;
 };
 
 export type PlayerStructOutput = [
@@ -110,7 +111,8 @@ export type PlayerStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
-  BigNumber
+  BigNumber,
+  boolean
 ] & {
   initTimestamp: BigNumber;
   active: boolean;
@@ -122,6 +124,7 @@ export type PlayerStructOutput = [
   balanceLastUpdated: BigNumber;
   numOwnedBases: BigNumber;
   numOwnedTroops: BigNumber;
+  debuffed: boolean;
 };
 
 export type TileStruct = {

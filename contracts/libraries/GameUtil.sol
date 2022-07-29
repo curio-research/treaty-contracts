@@ -74,6 +74,7 @@ library Util {
         if (_player.totalOilGenerationPerUpdate >= _player.totalOilConsumptionPerUpdate) {
             // Gain
             _player.oilBalance += (_player.totalOilGenerationPerUpdate - _player.totalOilConsumptionPerUpdate) * _timeElapsed;
+            if (_player.debuffed) _rebuffPlayerTroops(_addr);
         } else {
             // Loss
             uint256 _reduction = (_player.totalOilConsumptionPerUpdate - _player.totalOilGenerationPerUpdate) * _timeElapsed;
@@ -83,10 +84,19 @@ library Util {
             } else {
                 _player.oilBalance -= _reduction;
             }
+            if (!_player.debuffed) _debuffPlayerTroops(_addr);
         }
 
         _player.balanceLastUpdated = block.timestamp;
         gs().playerMap[_addr] = _player;
+    }
+
+    function _debuffPlayerTroops(address _addr) public {
+        // TODO
+    }
+
+    function _rebuffPlayerTroops(address _addr) public {
+        // TODO
     }
 
     function _removeArmyWithTroops(uint256 _armyId) public {

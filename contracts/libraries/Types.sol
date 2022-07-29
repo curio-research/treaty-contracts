@@ -40,6 +40,7 @@ struct Player {
     uint256 balanceLastUpdated;
     uint256 numOwnedBases;
     uint256 numOwnedTroops;
+    bool debuffed;
 }
 
 struct Base {
