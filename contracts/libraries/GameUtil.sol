@@ -67,8 +67,14 @@ library Util {
 
         // Update gold balance
         _player.goldBalance += _player.totalGoldGenerationPerUpdate * _timeElapsed;
-        _player.balanceLastUpdated = block.timestamp;
 
+        if (_player.totalOilGenerationPerUpdate >= _player.totalOilConsumptionPerUpdate) {
+            gs().playerMap[_addr].isDebuffed = false;
+        } else {
+            gs().playerMap[_addr].isDebuffed = true;
+        }
+
+        _player.balanceLastUpdated = block.timestamp;
         gs().playerMap[_addr] = _player;
     }
 
