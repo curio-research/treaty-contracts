@@ -102,9 +102,8 @@ library EngineModules {
                 gs().baseIdMap[_targetTile.baseId].owner = msg.sender;
                 gs().baseIdMap[_targetTile.baseId].health = 1;
 
-                // necesssary?
-                // Util._updatePlayerBalances(_targetPlayer);
-                // Util._updatePlayerBalances(msg.sender);
+                Util._updatePlayerBalances(_targetPlayer);
+                Util._updatePlayerBalances(msg.sender);
                 if (_targetPlayer != _NULL_ADRRESS()) {
                     gs().playerMap[_targetPlayer].numOwnedBases--;
                     gs().playerMap[_targetPlayer].totalGoldGenerationPerUpdate -= _targetBase.goldGenerationPerSecond;
@@ -116,18 +115,13 @@ library EngineModules {
 
                 // Move
                 _moveArmy(_armyId, _targetPos);
-            } else {
-                // emit Util.AttackedBase(msg.sender, _armyId, _army, _targetTile.baseId, _targetBase);
             }
         } else {
             // Troop dies
             gs().baseIdMap[_targetTile.baseId].health = _targetBase.health;
             _targetBase = Util._getBase(_targetTile.baseId);
-
-            // emit Util.AttackedBase(msg.sender, _armyId, _army, _targetTile.baseId, _targetBase);
         }
 
-        // EMIT ATTACKEDBASE
         _baseUpdate(_targetTile.baseId);
     }
 

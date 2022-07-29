@@ -29,9 +29,6 @@ library Util {
     event TroopDeath(address _player, uint256 _troopId);
     event BaseInfo(address _player, uint256 _baseId, Base _Base);
 
-    // event AttackedBase(address _player, uint256 _armyId, Army _armyInfo, uint256 _targetBaseId, Base _targetBaseInfo);
-    // event BaseCaptured(address _player, uint256 _armyId, uint256 _baseId);
-
     event PlayerReactivated(address _player);
     event GamePaused();
     event GameResumed();
