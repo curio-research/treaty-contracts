@@ -288,8 +288,6 @@ export interface CurioInterface extends utils.Interface {
     "updatePlayerBalances(address)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
-    "_canArmyMoveOnLand(uint256)": FunctionFragment;
-    "_canTroopMoveOnLand(uint256)": FunctionFragment;
     "_getArmy(uint256)": FunctionFragment;
     "_getArmyAttackFactor(uint256[])": FunctionFragment;
     "_getArmyDamagePerHit(uint256[])": FunctionFragment;
@@ -467,14 +465,6 @@ export interface CurioInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_canArmyMoveOnLand",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_canTroopMoveOnLand",
-    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "_getArmy",
@@ -720,14 +710,6 @@ export interface CurioInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_canArmyMoveOnLand",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_canTroopMoveOnLand",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "_getArmy", data: BytesLike): Result;
@@ -1223,16 +1205,6 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    _canArmyMoveOnLand(
-      _armyId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    _canTroopMoveOnLand(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
     _getArmy(
       _armyId: BigNumberish,
       overrides?: CallOverrides
@@ -1584,16 +1556,6 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  _canArmyMoveOnLand(
-    _armyId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  _canTroopMoveOnLand(
-    _troopTypeId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
   _getArmy(
     _armyId: BigNumberish,
     overrides?: CallOverrides
@@ -1934,16 +1896,6 @@ export interface Curio extends BaseContract {
       _newOwner: string,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    _canArmyMoveOnLand(
-      _armyId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    _canTroopMoveOnLand(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
 
     _getArmy(
       _armyId: BigNumberish,
@@ -2430,16 +2382,6 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    _canArmyMoveOnLand(
-      _armyId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _canTroopMoveOnLand(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     _getArmy(
       _armyId: BigNumberish,
       overrides?: CallOverrides
@@ -2782,16 +2724,6 @@ export interface Curio extends BaseContract {
     transferOwnership(
       _newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    _canArmyMoveOnLand(
-      _armyId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _canTroopMoveOnLand(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     _getArmy(

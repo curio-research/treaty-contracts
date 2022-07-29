@@ -143,8 +143,6 @@ export type TileStructOutput = [boolean, number, BigNumber, BigNumber] & {
 
 export interface UtilInterface extends utils.Interface {
   functions: {
-    "_canArmyMoveOnLand(uint256)": FunctionFragment;
-    "_canTroopMoveOnLand(uint256)": FunctionFragment;
     "_getArmy(uint256)": FunctionFragment;
     "_getArmyAttackFactor(uint256[])": FunctionFragment;
     "_getArmyDamagePerHit(uint256[])": FunctionFragment;
@@ -183,14 +181,6 @@ export interface UtilInterface extends utils.Interface {
     "_withinDist((uint256,uint256),(uint256,uint256),uint256)": FunctionFragment;
   };
 
-  encodeFunctionData(
-    functionFragment: "_canArmyMoveOnLand",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_canTroopMoveOnLand",
-    values: [BigNumberish]
-  ): string;
   encodeFunctionData(
     functionFragment: "_getArmy",
     values: [BigNumberish]
@@ -330,14 +320,6 @@ export interface UtilInterface extends utils.Interface {
     values: [PositionStruct, PositionStruct, BigNumberish]
   ): string;
 
-  decodeFunctionResult(
-    functionFragment: "_canArmyMoveOnLand",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_canTroopMoveOnLand",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "_getArmy", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_getArmyAttackFactor",
@@ -631,16 +613,6 @@ export interface Util extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    _canArmyMoveOnLand(
-      _armyId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    _canTroopMoveOnLand(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
     _getArmy(
       _armyId: BigNumberish,
       overrides?: CallOverrides
@@ -815,16 +787,6 @@ export interface Util extends BaseContract {
     ): Promise<[boolean]>;
   };
 
-  _canArmyMoveOnLand(
-    _armyId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  _canTroopMoveOnLand(
-    _troopTypeId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
   _getArmy(
     _armyId: BigNumberish,
     overrides?: CallOverrides
@@ -996,16 +958,6 @@ export interface Util extends BaseContract {
   ): Promise<boolean>;
 
   callStatic: {
-    _canArmyMoveOnLand(
-      _armyId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    _canTroopMoveOnLand(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
     _getArmy(
       _armyId: BigNumberish,
       overrides?: CallOverrides
@@ -1302,16 +1254,6 @@ export interface Util extends BaseContract {
   };
 
   estimateGas: {
-    _canArmyMoveOnLand(
-      _armyId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _canTroopMoveOnLand(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     _getArmy(
       _armyId: BigNumberish,
       overrides?: CallOverrides
@@ -1481,16 +1423,6 @@ export interface Util extends BaseContract {
   };
 
   populateTransaction: {
-    _canArmyMoveOnLand(
-      _armyId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _canTroopMoveOnLand(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     _getArmy(
       _armyId: BigNumberish,
       overrides?: CallOverrides

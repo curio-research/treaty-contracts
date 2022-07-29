@@ -111,7 +111,7 @@ task('deploy', 'deploy contracts')
       const facets = [
         { name: 'EngineFacet', libraries: { Util: util.address, EngineModules: engineModules.address } },
         { name: 'GetterFacet', libraries: { Util: util.address } },
-        { name: 'HelperFacet', libraries: { Util: util.address } },
+        { name: 'HelperFacet', libraries: { Util: util.address, EngineModules: engineModules.address } },
       ];
       await deployFacets(hre, diamondAddr, facets, player1);
       const diamond = await getDiamond(hre, diamondAddr);
