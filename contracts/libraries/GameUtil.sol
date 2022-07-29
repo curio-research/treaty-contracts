@@ -428,7 +428,7 @@ library Util {
         return _damagePerHit;
     }
 
-    function _canTroopMoveLand(uint256 _troopTypeId) public view returns (bool) {
+    function _canTroopMoveOnLand(uint256 _troopTypeId) public view returns (bool) {
         TroopType memory troopType = gs().troopTypeIdMap[_troopTypeId];
         if (troopType.name == TROOP_NAME.INFANTRY) {
             return true;
@@ -441,7 +441,7 @@ library Util {
         Army memory army = _getArmy(_armyId);
 
         for (uint256 i = 0; i < army.troopIds.length; i++) {
-            if (!_canTroopMoveLand(army.troopIds[i])) {
+            if (!_canTroopMoveOnLand(army.troopIds[i])) {
                 return false;
             }
         }

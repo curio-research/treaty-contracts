@@ -25,20 +25,24 @@ export const SANDBOX_MAP_INPUT: MapInput = {
   numOilWells: 10,
 };
 
-export const COMBAT_EFFICIENCY = 50;
-export const BASE_ATTACK_FACTOR = 1;
-export const BASE_DEFENSE_FACTOR = 1;
-export const BASE_MAX_HEALTH = 1;
-export const NUM_INIT_TERRAIN_TYPES = 6;
-export const INIT_BATCH_SIZE = 50;
-export const INIT_PLAYER_GOLD_BALANCE = 30;
-export const INIT_PLAYER_OIL_BALANCE = 30; // FIXME
-export const MAX_BASE_COUNT_PER_PLAYER = 30;
-export const MAX_TROOP_COUNT_PER_PLAYER = 100000;
-export const MAX_PLAYER_COUNT = 20;
-export const DEFAULT_BASE_GOLD_GENERATION_PER_SECOND = 1;
-export const DEFAULT_WELL_OIL_GENERATION_PER_SECOND = 5;
-export const DEBUFF_FACTOR = 80;
+export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): WorldConstantsStruct => {
+  return {
+    admin: adminAddr,
+    worldWidth: mapInput.width,
+    worldHeight: mapInput.height,
+    combatEfficiency: 50,
+    numInitTerrainTypes: 6,
+    initBatchSize: 50,
+    initPlayerGoldBalance: 30,
+    initPlayerOilBalance: 30,
+    maxBaseCountPerPlayer: 30,
+    maxTroopCountPerPlayer: 100000,
+    maxPlayerCount: 20,
+    defaultBaseGoldGenerationPerSecond: 1,
+    defaultWellOilGenerationPerSecond: 5,
+    debuffFactor: 80,
+  };
+};
 
 export const TROOP_TYPES: TroopTypeStruct[] = [
   {
@@ -86,25 +90,6 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     oilConsumptionPerSecond: 2,
   },
 ];
-
-export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): WorldConstantsStruct => {
-  return {
-    admin: adminAddr,
-    worldWidth: mapInput.width,
-    worldHeight: mapInput.height,
-    combatEfficiency: COMBAT_EFFICIENCY,
-    numInitTerrainTypes: NUM_INIT_TERRAIN_TYPES,
-    initBatchSize: INIT_BATCH_SIZE,
-    initPlayerGoldBalance: INIT_PLAYER_GOLD_BALANCE,
-    initPlayerOilBalance: INIT_PLAYER_OIL_BALANCE,
-    maxBaseCountPerPlayer: MAX_BASE_COUNT_PER_PLAYER,
-    maxTroopCountPerPlayer: MAX_TROOP_COUNT_PER_PLAYER,
-    maxPlayerCount: MAX_PLAYER_COUNT,
-    defaultBaseGoldGenerationPerSecond: DEFAULT_BASE_GOLD_GENERATION_PER_SECOND,
-    defaultWellOilGenerationPerSecond: DEFAULT_WELL_OIL_GENERATION_PER_SECOND,
-    debuffFactor: DEBUFF_FACTOR,
-  };
-};
 
 // ----------------------------------------------------------
 // RENDERING CONSTANTS

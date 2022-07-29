@@ -144,7 +144,7 @@ export type TileStructOutput = [boolean, number, BigNumber, BigNumber] & {
 export interface UtilInterface extends utils.Interface {
   functions: {
     "_canArmyMoveOnLand(uint256)": FunctionFragment;
-    "_canTroopMoveLand(uint256)": FunctionFragment;
+    "_canTroopMoveOnLand(uint256)": FunctionFragment;
     "_getArmy(uint256)": FunctionFragment;
     "_getArmyAttackFactor(uint256[])": FunctionFragment;
     "_getArmyDamagePerHit(uint256[])": FunctionFragment;
@@ -187,7 +187,7 @@ export interface UtilInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "_canTroopMoveLand",
+    functionFragment: "_canTroopMoveOnLand",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
@@ -330,7 +330,7 @@ export interface UtilInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "_canTroopMoveLand",
+    functionFragment: "_canTroopMoveOnLand",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "_getArmy", data: BytesLike): Result;
@@ -627,7 +627,7 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    _canTroopMoveLand(
+    _canTroopMoveOnLand(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
@@ -806,7 +806,7 @@ export interface Util extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  _canTroopMoveLand(
+  _canTroopMoveOnLand(
     _troopTypeId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<boolean>;
@@ -982,7 +982,7 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    _canTroopMoveLand(
+    _canTroopMoveOnLand(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
@@ -1283,7 +1283,7 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _canTroopMoveLand(
+    _canTroopMoveOnLand(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1457,7 +1457,7 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _canTroopMoveLand(
+    _canTroopMoveOnLand(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

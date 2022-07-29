@@ -95,7 +95,7 @@ library EngineModules {
             }
 
             // Capture and move onto base if troop is infantry or if base is oil well
-            if (Util._canTroopMoveLand(_armyId) || _targetBase.name == BASE_NAME.OIL_WELL) {
+            if (Util._canTroopMoveOnLand(_armyId) || _targetBase.name == BASE_NAME.OIL_WELL) {
                 require(Util._getPlayer(msg.sender).numOwnedBases < gs().worldConstants.maxBaseCountPerPlayer, "CURIO: Max base count exceeded");
 
                 _targetBase = Util._getBase(_targetTile.baseId);
