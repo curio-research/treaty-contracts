@@ -14,7 +14,7 @@ export const LOCAL_MAP_INPUT: MapInput = {
   height: 30,
   numPorts: 10,
   numCities: 10,
-  numOilWells: 30,
+  numOilWells: 20,
 };
 
 export const SANDBOX_MAP_INPUT: MapInput = {
@@ -96,7 +96,7 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
 // ----------------------------------------------------------
 
 export const RENDER_CONSTANTS: RenderInput = {
-  sizeFactor: 10,
+  sizeFactor: 15,
   numLandColors: 5,
   numWaterColors: 2,
   waterNoiseCutoff: 0.5,

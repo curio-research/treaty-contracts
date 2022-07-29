@@ -53,7 +53,7 @@ library Util {
             _addBase(_pos, _baseName);
 
             if (BASE_NAME(_terrainId - 3) == BASE_NAME.OIL_WELL) {
-                _terrainId = 0;
+                _terrainId = 1;
             } else {
                 _terrainId -= 3;
             }
