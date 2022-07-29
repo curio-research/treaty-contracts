@@ -27,8 +27,6 @@ library Util {
     event ArmyDeath(address _player, uint256 _armyId);
     event AttackedArmy(address _player, uint256 _armyId, Army _armyInfo, Troop[] _armyTroops, uint256 _targetArmy, Army _targetArmyInfo, Troop[] _targetArmyTroops);
     event TroopDeath(address _player, uint256 _troopId);
-
-    // update base info?
     event BaseInfo(address _player, uint256 _baseId, Base _Base);
 
     // event AttackedBase(address _player, uint256 _armyId, Army _armyInfo, uint256 _targetBaseId, Base _targetBaseInfo);
