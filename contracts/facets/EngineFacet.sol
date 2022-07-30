@@ -55,7 +55,7 @@ contract EngineFacet is UseStorage {
         }
 
         Util.updateArmy(_army.pos, _targetPos); // update army info on start tile and end tile
-        Util.emitPlayerInfo(msg.sender); // updates player info
+        Util._emitPlayerInfo(msg.sender); // updates player info
     }
 
     /**
@@ -105,7 +105,7 @@ contract EngineFacet is UseStorage {
         EngineModules._clearTroopFromSourceArmy(_troop.armyId, _troopId);
 
         Util.updateArmy(_startPos, _targetPos);
-        Util.emitPlayerInfo(msg.sender);
+        Util._emitPlayerInfo(msg.sender);
     }
 
     /**
@@ -135,7 +135,7 @@ contract EngineFacet is UseStorage {
         Util._addTroop(msg.sender, _pos, _troopTypeId);
         gs().playerMap[msg.sender].goldBalance -= _troopPrice;
 
-        Util.emitPlayerInfo(msg.sender);
+        Util._emitPlayerInfo(msg.sender);
     }
 
     /**
@@ -183,6 +183,6 @@ contract EngineFacet is UseStorage {
 
         emit Util.NewPlayer(msg.sender, _pos);
 
-        Util.emitPlayerInfo(msg.sender);
+        Util._emitPlayerInfo(msg.sender);
     }
 }

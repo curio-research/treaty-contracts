@@ -252,7 +252,7 @@ library Util {
         emit MovedArmy(msg.sender, block.timestamp, _pos1, _tile1.occupantId, _army1, _pos2, _tile2.occupantId, _army2);
     }
 
-    function emitPlayerInfo(address _player) public {
+    function _emitPlayerInfo(address _player) public {
         Player memory _playerInfo = _getPlayer(_player);
 
         emit PlayerInfo(msg.sender, _playerInfo);
