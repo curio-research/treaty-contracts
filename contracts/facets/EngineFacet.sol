@@ -79,12 +79,12 @@ contract EngineFacet is UseStorage {
         // should use function march to attack
         if (_targetTile.occupantId != NULL) {
             _targetArmy = Util._getArmy(_targetTile.occupantId);
-            require(_targetArmy.owner == msg.sender, "CURIO: Can only combine with own troop");
+            require(_targetArmy.owner == msg.sender, "CURIO: You can only combine with own troop");
         }
 
         // basic check
-        require(Util._withinDist(_startPos, _targetPos, 1), "CURIO: Can only dispatch troop to the near tile");
-        require(_army.owner == msg.sender, "CURIO: Can only dispatch own troop");
+        require(Util._withinDist(_startPos, _targetPos, 1), "CURIO: You can only dispatch troop to the near tile");
+        require(_army.owner == msg.sender, "CURIO: You can only dispatch own troop");
         require(!Util._samePos(_startPos, _targetPos), "CURIO: Already at destination");
         require((block.timestamp - _army.lastLargeActionTaken) >= Util._getArmyLargeActionCooldown(_army.troopIds), "CURIO: Large action taken too recently");
 
@@ -148,6 +148,10 @@ contract EngineFacet is UseStorage {
         require(_army.owner == msg.sender, "CURIO: Can only delete own troop");
 
         Util._removeTroop(_troopId);
+
+        EngineModules._updateAttackedArmy(_troop.armyId, _troop.armyId);
+
+        // emit Util.TroopDeath(msg.sender, _troopId);
     }
 
     /**
