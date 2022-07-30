@@ -54,7 +54,8 @@ contract EngineFacet is UseStorage {
             EngineModules._battleArmy(_armyId, _targetPos);
         }
 
-        Util.updateArmy(_army.pos, _targetPos);
+        Util.updateArmy(_army.pos, _targetPos); // update army info on start tile and end tile
+        Util._emitPlayerInfo(msg.sender); // updates player info
     }
 
     /**
@@ -104,6 +105,7 @@ contract EngineFacet is UseStorage {
         EngineModules._clearTroopFromSourceArmy(_troop.armyId, _troopId);
 
         Util.updateArmy(_startPos, _targetPos);
+        Util._emitPlayerInfo(msg.sender);
     }
 
     /**
@@ -128,10 +130,12 @@ contract EngineFacet is UseStorage {
 
         uint256 _troopPrice = Util._getTroopGoldPrice(_troopTypeId);
         Util._updatePlayerBalances(msg.sender);
-        require(_troopPrice <= Util._getPlayerGoldBalance(msg.sender), "CURIO: Insufficient gold balance (capture more bases!)");
+        require(_troopPrice <= Util._getPlayerGoldBalance(msg.sender), "CURIO: Insufficient gold balance");
 
         Util._addTroop(msg.sender, _pos, _troopTypeId);
         gs().playerMap[msg.sender].goldBalance -= _troopPrice;
+
+        Util._emitPlayerInfo(msg.sender);
     }
 
     /**
@@ -144,8 +148,6 @@ contract EngineFacet is UseStorage {
         require(_army.owner == msg.sender, "CURIO: Can only delete own troop");
 
         Util._removeTroop(_troopId);
-
-        emit Util.TroopDeath(msg.sender, _troopId);
     }
 
     /**
@@ -169,7 +171,6 @@ contract EngineFacet is UseStorage {
             initTimestamp: block.timestamp,
             active: true,
             goldBalance: _worldConstants.initPlayerGoldBalance,
-            oilBalance: _worldConstants.initPlayerOilBalance,
             totalGoldGenerationPerUpdate: _worldConstants.defaultBaseGoldGenerationPerSecond,
             totalOilGenerationPerUpdate: 0,
             totalOilConsumptionPerUpdate: 0,
@@ -181,5 +182,7 @@ contract EngineFacet is UseStorage {
         gs().baseIdMap[_baseId].owner = msg.sender;
 
         emit Util.NewPlayer(msg.sender, _pos);
+
+        Util._emitPlayerInfo(msg.sender);
     }
 }

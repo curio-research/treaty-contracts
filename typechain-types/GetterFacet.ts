@@ -139,7 +139,6 @@ export type PlayerStruct = {
   initTimestamp: BigNumberish;
   active: boolean;
   goldBalance: BigNumberish;
-  oilBalance: BigNumberish;
   totalGoldGenerationPerUpdate: BigNumberish;
   totalOilGenerationPerUpdate: BigNumberish;
   totalOilConsumptionPerUpdate: BigNumberish;
@@ -159,13 +158,11 @@ export type PlayerStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
-  BigNumber,
   boolean
 ] & {
   initTimestamp: BigNumber;
   active: boolean;
   goldBalance: BigNumber;
-  oilBalance: BigNumber;
   totalGoldGenerationPerUpdate: BigNumber;
   totalOilGenerationPerUpdate: BigNumber;
   totalOilConsumptionPerUpdate: BigNumber;
