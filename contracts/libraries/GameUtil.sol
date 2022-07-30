@@ -2,7 +2,7 @@
 pragma solidity ^0.8.4;
 
 import "contracts/libraries/Storage.sol";
-import {BASE_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop, Army, WorldConstants, TROOP_NAME, TroopType} from "contracts/libraries/Types.sol";
+import {BASE_NAME, TROOP_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop, Army, WorldConstants, TroopType} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 
 /// @title Util library
@@ -51,7 +51,7 @@ library Util {
             _addBase(_pos, _baseName);
 
             if (BASE_NAME(_terrainId - 3) == BASE_NAME.OIL_WELL) {
-                _terrainId = 0;
+                _terrainId = 1;
             } else {
                 _terrainId -= 3;
             }
@@ -319,6 +319,10 @@ library Util {
         return gs().troopTypeIdMap[_troopTypeId].maxHealth;
     }
 
+    function _getTroopName(uint256 _troopTypeId) public view returns (TROOP_NAME) {
+        return gs().troopTypeIdMap[_troopTypeId].name;
+    }
+
     function _getTroopGoldPrice(uint256 _troopTypeId) public view returns (uint256) {
         return gs().troopTypeIdMap[_troopTypeId].goldPrice;
     }
@@ -417,26 +421,6 @@ library Util {
             _damagePerHit += _troopDamagePerhit;
         }
         return _damagePerHit;
-    }
-
-    function _canTroopMoveLand(uint256 _troopTypeId) public view returns (bool) {
-        TroopType memory troopType = gs().troopTypeIdMap[_troopTypeId];
-        if (troopType.name == TROOP_NAME.INFANTRY) {
-            return true;
-        }
-        return false;
-    }
-
-    // if all the troops inside army can move onto land
-    function _canArmyMoveOnLand(uint256 _armyId) public view returns (bool) {
-        Army memory army = _getArmy(_armyId);
-
-        for (uint256 i = 0; i < army.troopIds.length; i++) {
-            if (!_canTroopMoveLand(army.troopIds[i])) {
-                return false;
-            }
-        }
-        return true;
     }
 
     function _getBaseHealth(uint256 _baseId) public view returns (uint256) {

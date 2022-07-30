@@ -285,8 +285,6 @@ export interface CurioInterface extends utils.Interface {
     "updatePlayerBalances(address)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
-    "_canArmyMoveOnLand(uint256)": FunctionFragment;
-    "_canTroopMoveLand(uint256)": FunctionFragment;
     "_getArmy(uint256)": FunctionFragment;
     "_getArmyAttackFactor(uint256[])": FunctionFragment;
     "_getArmyDamagePerHit(uint256[])": FunctionFragment;
@@ -312,6 +310,7 @@ export interface CurioInterface extends utils.Interface {
     "_getTotalGoldGenerationPerUpdate(address)": FunctionFragment;
     "_getTroop(uint256)": FunctionFragment;
     "_getTroopGoldPrice(uint256)": FunctionFragment;
+    "_getTroopName(uint256)": FunctionFragment;
     "_hasPort((bool,uint8,uint256,uint256))": FunctionFragment;
     "_inBound((uint256,uint256))": FunctionFragment;
     "_isDebuffed(address)": FunctionFragment;
@@ -464,14 +463,6 @@ export interface CurioInterface extends utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "_canArmyMoveOnLand",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_canTroopMoveLand",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "_getArmy",
     values: [BigNumberish]
   ): string;
@@ -566,6 +557,10 @@ export interface CurioInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "_getTroopGoldPrice",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getTroopName",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
@@ -709,14 +704,6 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "_canArmyMoveOnLand",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_canTroopMoveLand",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "_getArmy", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_getArmyAttackFactor",
@@ -800,6 +787,10 @@ export interface CurioInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "_getTroop", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_getTroopGoldPrice",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_getTroopName",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "_hasPort", data: BytesLike): Result;
@@ -1187,16 +1178,6 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    _canArmyMoveOnLand(
-      _armyId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    _canTroopMoveLand(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
     _getArmy(
       _armyId: BigNumberish,
       overrides?: CallOverrides
@@ -1318,6 +1299,11 @@ export interface Curio extends BaseContract {
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    _getTroopName(
+      _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[number]>;
 
     _hasPort(_tile: TileStruct, overrides?: CallOverrides): Promise<[boolean]>;
 
@@ -1538,16 +1524,6 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  _canArmyMoveOnLand(
-    _armyId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  _canTroopMoveLand(
-    _troopTypeId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
   _getArmy(
     _armyId: BigNumberish,
     overrides?: CallOverrides
@@ -1669,6 +1645,11 @@ export interface Curio extends BaseContract {
     _troopTypeId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  _getTroopName(
+    _troopTypeId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<number>;
 
   _hasPort(_tile: TileStruct, overrides?: CallOverrides): Promise<boolean>;
 
@@ -1879,16 +1860,6 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    _canArmyMoveOnLand(
-      _armyId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    _canTroopMoveLand(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
     _getArmy(
       _armyId: BigNumberish,
       overrides?: CallOverrides
@@ -2010,6 +1981,11 @@ export interface Curio extends BaseContract {
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    _getTroopName(
+      _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<number>;
 
     _hasPort(_tile: TileStruct, overrides?: CallOverrides): Promise<boolean>;
 
@@ -2340,16 +2316,6 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    _canArmyMoveOnLand(
-      _armyId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _canTroopMoveLand(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     _getArmy(
       _armyId: BigNumberish,
       overrides?: CallOverrides
@@ -2462,6 +2428,11 @@ export interface Curio extends BaseContract {
     ): Promise<BigNumber>;
 
     _getTroopGoldPrice(
+      _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getTroopName(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -2684,16 +2655,6 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    _canArmyMoveOnLand(
-      _armyId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _canTroopMoveLand(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     _getArmy(
       _armyId: BigNumberish,
       overrides?: CallOverrides
@@ -2812,6 +2773,11 @@ export interface Curio extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     _getTroopGoldPrice(
+      _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getTroopName(
       _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

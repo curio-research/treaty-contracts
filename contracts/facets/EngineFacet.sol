@@ -126,7 +126,7 @@ contract EngineFacet is UseStorage {
 
         Base memory _base = Util._getBase(_tile.baseId);
         require(_base.owner == msg.sender, "CURIO: Can only purchase in own base");
-        require(_base.name == BASE_NAME.PORT || (_base.name == BASE_NAME.CITY && Util._canTroopMoveLand(_troopTypeId)), "CURIO: Base cannot purchase selected troop type");
+        require(EngineModules._geographicCheckTroop(_troopTypeId, _tile), "CURIO: Base cannot purchase selected troop type");
 
         uint256 _troopPrice = Util._getTroopGoldPrice(_troopTypeId);
         Util._updatePlayerBalances(msg.sender);

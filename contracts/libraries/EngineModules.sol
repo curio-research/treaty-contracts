@@ -3,7 +3,7 @@ pragma solidity ^0.8.4;
 
 import "contracts/libraries/Storage.sol";
 import {Util} from "contracts/libraries/GameUtil.sol";
-import {BASE_NAME, TROOP_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop, Army, WorldConstants} from "contracts/libraries/Types.sol";
+import {BASE_NAME, TROOP_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop, TroopType, Army, WorldConstants} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 
 /// @title EngineModules library
@@ -46,7 +46,6 @@ library EngineModules {
         Base memory _targetBase = gs().baseIdMap[_targetTile.baseId];
 
         require(_targetBase.owner != msg.sender, "CURIO: Cannot attack own base");
-        require(Util._canArmyMoveOnLand(_armyId) || _targetBase.health > 0 || _targetBase.name == BASE_NAME.OIL_WELL, "CURIO: Can only capture base with land troop");
 
         // Exchange fire until one side dies
         uint256 _salt = 1;
@@ -95,27 +94,25 @@ library EngineModules {
             }
 
             // Capture and move onto base if troop is infantry or if base is oil well
-            if (Util._canTroopMoveLand(_armyId) || _targetBase.name == BASE_NAME.OIL_WELL) {
-                require(Util._getPlayer(msg.sender).numOwnedBases < gs().worldConstants.maxBaseCountPerPlayer, "CURIO: Max base count exceeded");
+            require(Util._getPlayer(msg.sender).numOwnedBases < gs().worldConstants.maxBaseCountPerPlayer, "CURIO: Max base count exceeded");
 
-                _targetBase = Util._getBase(_targetTile.baseId);
-                gs().baseIdMap[_targetTile.baseId].owner = msg.sender;
-                gs().baseIdMap[_targetTile.baseId].health = 100;
+            _targetBase = Util._getBase(_targetTile.baseId);
+            gs().baseIdMap[_targetTile.baseId].owner = msg.sender;
+            gs().baseIdMap[_targetTile.baseId].health = 100;
 
-                Util._updatePlayerBalances(_targetPlayer);
-                Util._updatePlayerBalances(msg.sender);
-                if (_targetPlayer != _NULL_ADRRESS()) {
-                    gs().playerMap[_targetPlayer].numOwnedBases--;
-                    gs().playerMap[_targetPlayer].totalGoldGenerationPerUpdate -= _targetBase.goldGenerationPerSecond;
-                    gs().playerMap[_targetPlayer].totalOilGenerationPerUpdate -= _targetBase.oilGenerationPerSecond;
-                }
-                gs().playerMap[msg.sender].numOwnedBases++;
-                gs().playerMap[msg.sender].totalGoldGenerationPerUpdate += _targetBase.goldGenerationPerSecond;
-                gs().playerMap[msg.sender].totalOilGenerationPerUpdate += _targetBase.oilGenerationPerSecond;
-
-                // Move
-                _moveArmy(_armyId, _targetPos);
+            Util._updatePlayerBalances(_targetPlayer);
+            Util._updatePlayerBalances(msg.sender);
+            if (_targetPlayer != _NULL_ADRRESS()) {
+                gs().playerMap[_targetPlayer].numOwnedBases--;
+                gs().playerMap[_targetPlayer].totalGoldGenerationPerUpdate -= _targetBase.goldGenerationPerSecond;
+                gs().playerMap[_targetPlayer].totalOilGenerationPerUpdate -= _targetBase.oilGenerationPerSecond;
             }
+            gs().playerMap[msg.sender].numOwnedBases++;
+            gs().playerMap[msg.sender].totalGoldGenerationPerUpdate += _targetBase.goldGenerationPerSecond;
+            gs().playerMap[msg.sender].totalOilGenerationPerUpdate += _targetBase.oilGenerationPerSecond;
+
+            // Move
+            _moveArmy(_armyId, _targetPos);
         } else {
             // Troop dies
             gs().baseIdMap[_targetTile.baseId].health = _targetBase.health;
@@ -222,22 +219,31 @@ library EngineModules {
         return (_army, _troops);
     }
 
-    // check if all troops in the army is compatiable with target tile geographics
+    // Check if all troops in army are compatible with tile terrain
     function _geographicCheckArmy(uint256 _armyId, Tile memory _tile) public view returns (bool) {
         Army memory _army = Util._getArmy(_armyId);
 
+        if (_tile.terrain == TERRAIN.WATER) return true; // water tiles are accessible to any troop
+        if (_tile.baseId != _NULL() && Util._getBase(_tile.baseId).name == BASE_NAME.PORT) return true; // ports are accessible to any troop
+
         for (uint256 i = 0; i < _army.troopIds.length; i++) {
-            uint256 troopId = _army.troopIds[i];
-            Troop memory troop = Util._getTroop(troopId);
-            if (!_geographicCheckTroop(troop.troopTypeId, _tile)) {
-                return false;
-            }
+            if (Util._getTroopName(Util._getTroop(_army.troopIds[i]).troopTypeId) != TROOP_NAME.INFANTRY) return false;
         }
+
         return true;
     }
 
+    // Check if troop is compatible with tile terrain
+    function _geographicCheckTroop(uint256 _troopTypeId, Tile memory _tile) public view returns (bool) {
+        if (_tile.terrain == TERRAIN.WATER) return true; // water tiles are accessible to any troop
+        if (_tile.baseId != _NULL() && Util._getBase(_tile.baseId).name == BASE_NAME.PORT) return true; // ports are accessible to any troop
+        if (Util._getTroopName(_troopTypeId) == TROOP_NAME.INFANTRY) return true; // infantries can move anywhere
+
+        return false;
+    }
+
     // ----------------------------------------------------------------------
-    // MODULES FOR MOVETROOP
+    // MODULES FOR MOVE TROOP
     // ----------------------------------------------------------------------
 
     function _moveTroopToArmy(uint256 _mainArmyId, uint256 _joiningTroopId) public {
@@ -282,34 +288,6 @@ library EngineModules {
         if (gs().armyIdMap[_sourceArmyId].troopIds.length == 0) {
             Util._removeArmy(_sourceArmyId);
         }
-    }
-
-    // checks if troop is compatiable with target tile geographics
-    function _geographicCheckTroop(uint256 _troopTypeId, Tile memory _tile) public view returns (bool) {
-        // no base
-        if (_tile.baseId == 0) {
-            if (_troopTypeId == 1) {
-                // infantry
-                return true;
-            } else {
-                // ships can only move onto water
-                if (_tile.terrain == TERRAIN.WATER) return true;
-                return false;
-            }
-        } else {
-            // base
-            Base memory _base = Util._getBase(_tile.baseId);
-            if (_base.name == BASE_NAME.PORT) {
-                //  everyone can move into the port
-                return true;
-            } else if (_base.name == BASE_NAME.CITY) {
-                return _troopTypeId == 1;
-            } else if (_base.name == BASE_NAME.OIL_WELL) {
-                return _troopTypeId == 1;
-            }
-        }
-
-        return true;
     }
 
     function _NULL() internal pure returns (uint256) {
