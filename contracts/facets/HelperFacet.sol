@@ -121,8 +121,6 @@ contract HelperFacet is UseStorage {
         gs().playerMap[_player].numOwnedBases++;
         gs().playerMap[_player].totalGoldGenerationPerUpdate += _base.goldGenerationPerSecond;
         gs().playerMap[_player].totalOilGenerationPerUpdate += _base.oilGenerationPerSecond;
-
-        emit Util.BaseCaptured(_player, NULL, _tile.baseId);
     }
 
     /**

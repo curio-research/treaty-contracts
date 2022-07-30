@@ -44,6 +44,18 @@ export type ArmyStructOutput = [
   pos: PositionStructOutput;
 };
 
+export type TroopStruct = {
+  armyId: BigNumberish;
+  troopTypeId: BigNumberish;
+  health: BigNumberish;
+};
+
+export type TroopStructOutput = [BigNumber, BigNumber, BigNumber] & {
+  armyId: BigNumber;
+  troopTypeId: BigNumber;
+  health: BigNumber;
+};
+
 export type BaseStruct = {
   name: BigNumberish;
   owner: string;
@@ -75,23 +87,10 @@ export type BaseStructOutput = [
   pos: PositionStructOutput;
 };
 
-export type TroopStruct = {
-  armyId: BigNumberish;
-  troopTypeId: BigNumberish;
-  health: BigNumberish;
-};
-
-export type TroopStructOutput = [BigNumber, BigNumber, BigNumber] & {
-  armyId: BigNumber;
-  troopTypeId: BigNumber;
-  health: BigNumber;
-};
-
 export type PlayerStruct = {
   initTimestamp: BigNumberish;
   active: boolean;
   goldBalance: BigNumberish;
-  oilBalance: BigNumberish;
   totalGoldGenerationPerUpdate: BigNumberish;
   totalOilGenerationPerUpdate: BigNumberish;
   totalOilConsumptionPerUpdate: BigNumberish;
@@ -111,13 +110,11 @@ export type PlayerStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
-  BigNumber,
   boolean
 ] & {
   initTimestamp: BigNumber;
   active: boolean;
   goldBalance: BigNumber;
-  oilBalance: BigNumber;
   totalGoldGenerationPerUpdate: BigNumber;
   totalOilGenerationPerUpdate: BigNumber;
   totalOilConsumptionPerUpdate: BigNumber;
@@ -166,7 +163,6 @@ export interface UtilInterface extends utils.Interface {
     "_getPlayer(address)": FunctionFragment;
     "_getPlayerCount()": FunctionFragment;
     "_getPlayerGoldBalance(address)": FunctionFragment;
-    "_getPlayerOilBalance(address)": FunctionFragment;
     "_getTileAt((uint256,uint256))": FunctionFragment;
     "_getTotalGoldGenerationPerUpdate(address)": FunctionFragment;
     "_getTroop(uint256)": FunctionFragment;
@@ -269,10 +265,6 @@ export interface UtilInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "_getPlayerGoldBalance",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getPlayerOilBalance",
     values: [string]
   ): string;
   encodeFunctionData(
@@ -408,10 +400,6 @@ export interface UtilInterface extends utils.Interface {
     functionFragment: "_getPlayerGoldBalance",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getPlayerOilBalance",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "_getTileAt", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_getTotalGoldGenerationPerUpdate",
@@ -446,9 +434,8 @@ export interface UtilInterface extends utils.Interface {
 
   events: {
     "ArmyDeath(address,uint256)": EventFragment;
-    "AttackedArmy(address,uint256,tuple,uint256,tuple)": EventFragment;
-    "AttackedBase(address,uint256,tuple,uint256,tuple)": EventFragment;
-    "BaseCaptured(address,uint256,uint256)": EventFragment;
+    "AttackedArmy(address,uint256,tuple,tuple[],uint256,tuple,tuple[])": EventFragment;
+    "BaseInfo(address,uint256,tuple)": EventFragment;
     "GamePaused()": EventFragment;
     "GameResumed()": EventFragment;
     "MovedArmy(address,uint256,tuple,uint256,tuple,tuple,uint256,tuple)": EventFragment;
@@ -457,13 +444,11 @@ export interface UtilInterface extends utils.Interface {
     "PlayerInfo(address,tuple)": EventFragment;
     "PlayerReactivated(address)": EventFragment;
     "TroopDeath(address,uint256)": EventFragment;
-    "UpdatePlayerBalance(address,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "ArmyDeath"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "AttackedArmy"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "AttackedBase"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "BaseCaptured"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "BaseInfo"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "GamePaused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "GameResumed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MovedArmy"): EventFragment;
@@ -472,7 +457,6 @@ export interface UtilInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "PlayerInfo"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PlayerReactivated"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TroopDeath"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "UpdatePlayerBalance"): EventFragment;
 }
 
 export type ArmyDeathEvent = TypedEvent<
@@ -483,37 +467,34 @@ export type ArmyDeathEvent = TypedEvent<
 export type ArmyDeathEventFilter = TypedEventFilter<ArmyDeathEvent>;
 
 export type AttackedArmyEvent = TypedEvent<
-  [string, BigNumber, ArmyStructOutput, BigNumber, ArmyStructOutput],
+  [
+    string,
+    BigNumber,
+    ArmyStructOutput,
+    TroopStructOutput[],
+    BigNumber,
+    ArmyStructOutput,
+    TroopStructOutput[]
+  ],
   {
     _player: string;
     _armyId: BigNumber;
     _armyInfo: ArmyStructOutput;
+    _armyTroops: TroopStructOutput[];
     _targetArmy: BigNumber;
     _targetArmyInfo: ArmyStructOutput;
+    _targetArmyTroops: TroopStructOutput[];
   }
 >;
 
 export type AttackedArmyEventFilter = TypedEventFilter<AttackedArmyEvent>;
 
-export type AttackedBaseEvent = TypedEvent<
-  [string, BigNumber, ArmyStructOutput, BigNumber, BaseStructOutput],
-  {
-    _player: string;
-    _armyId: BigNumber;
-    _armyInfo: ArmyStructOutput;
-    _targetBaseId: BigNumber;
-    _targetBaseInfo: BaseStructOutput;
-  }
+export type BaseInfoEvent = TypedEvent<
+  [string, BigNumber, BaseStructOutput],
+  { _player: string; _baseId: BigNumber; _Base: BaseStructOutput }
 >;
 
-export type AttackedBaseEventFilter = TypedEventFilter<AttackedBaseEvent>;
-
-export type BaseCapturedEvent = TypedEvent<
-  [string, BigNumber, BigNumber],
-  { _player: string; _armyId: BigNumber; _baseId: BigNumber }
->;
-
-export type BaseCapturedEventFilter = TypedEventFilter<BaseCapturedEvent>;
+export type BaseInfoEventFilter = TypedEventFilter<BaseInfoEvent>;
 
 export type GamePausedEvent = TypedEvent<[], {}>;
 
@@ -586,14 +567,6 @@ export type TroopDeathEvent = TypedEvent<
 >;
 
 export type TroopDeathEventFilter = TypedEventFilter<TroopDeathEvent>;
-
-export type UpdatePlayerBalanceEvent = TypedEvent<
-  [string, BigNumber],
-  { _player: string; _amount: BigNumber }
->;
-
-export type UpdatePlayerBalanceEventFilter =
-  TypedEventFilter<UpdatePlayerBalanceEvent>;
 
 export interface Util extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -730,11 +703,6 @@ export interface Util extends BaseContract {
     _getPlayerCount(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     _getPlayerGoldBalance(
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    _getPlayerOilBalance(
       _player: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
@@ -913,11 +881,6 @@ export interface Util extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  _getPlayerOilBalance(
-    _player: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   _getTileAt(
     _pos: PositionStruct,
     overrides?: CallOverrides
@@ -1089,11 +1052,6 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getPlayerOilBalance(
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     _getTileAt(
       _pos: PositionStruct,
       overrides?: CallOverrides
@@ -1163,46 +1121,31 @@ export interface Util extends BaseContract {
     ): ArmyDeathEventFilter;
     ArmyDeath(_player?: null, _armyId?: null): ArmyDeathEventFilter;
 
-    "AttackedArmy(address,uint256,tuple,uint256,tuple)"(
+    "AttackedArmy(address,uint256,tuple,tuple[],uint256,tuple,tuple[])"(
       _player?: null,
       _armyId?: null,
       _armyInfo?: null,
+      _armyTroops?: null,
       _targetArmy?: null,
-      _targetArmyInfo?: null
+      _targetArmyInfo?: null,
+      _targetArmyTroops?: null
     ): AttackedArmyEventFilter;
     AttackedArmy(
       _player?: null,
       _armyId?: null,
       _armyInfo?: null,
+      _armyTroops?: null,
       _targetArmy?: null,
-      _targetArmyInfo?: null
+      _targetArmyInfo?: null,
+      _targetArmyTroops?: null
     ): AttackedArmyEventFilter;
 
-    "AttackedBase(address,uint256,tuple,uint256,tuple)"(
+    "BaseInfo(address,uint256,tuple)"(
       _player?: null,
-      _armyId?: null,
-      _armyInfo?: null,
-      _targetBaseId?: null,
-      _targetBaseInfo?: null
-    ): AttackedBaseEventFilter;
-    AttackedBase(
-      _player?: null,
-      _armyId?: null,
-      _armyInfo?: null,
-      _targetBaseId?: null,
-      _targetBaseInfo?: null
-    ): AttackedBaseEventFilter;
-
-    "BaseCaptured(address,uint256,uint256)"(
-      _player?: null,
-      _armyId?: null,
-      _baseId?: null
-    ): BaseCapturedEventFilter;
-    BaseCaptured(
-      _player?: null,
-      _armyId?: null,
-      _baseId?: null
-    ): BaseCapturedEventFilter;
+      _baseId?: null,
+      _Base?: null
+    ): BaseInfoEventFilter;
+    BaseInfo(_player?: null, _baseId?: null, _Base?: null): BaseInfoEventFilter;
 
     "GamePaused()"(): GamePausedEventFilter;
     GamePaused(): GamePausedEventFilter;
@@ -1266,15 +1209,6 @@ export interface Util extends BaseContract {
       _troopId?: null
     ): TroopDeathEventFilter;
     TroopDeath(_player?: null, _troopId?: null): TroopDeathEventFilter;
-
-    "UpdatePlayerBalance(address,uint256)"(
-      _player?: null,
-      _amount?: null
-    ): UpdatePlayerBalanceEventFilter;
-    UpdatePlayerBalance(
-      _player?: null,
-      _amount?: null
-    ): UpdatePlayerBalanceEventFilter;
   };
 
   estimateGas: {
@@ -1380,11 +1314,6 @@ export interface Util extends BaseContract {
     _getPlayerCount(overrides?: CallOverrides): Promise<BigNumber>;
 
     _getPlayerGoldBalance(
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getPlayerOilBalance(
       _player: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1560,11 +1489,6 @@ export interface Util extends BaseContract {
     _getPlayerCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     _getPlayerGoldBalance(
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getPlayerOilBalance(
       _player: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

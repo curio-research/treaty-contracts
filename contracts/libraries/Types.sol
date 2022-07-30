@@ -33,7 +33,6 @@ struct Player {
     uint256 initTimestamp;
     bool active;
     uint256 goldBalance;
-    uint256 oilBalance;
     uint256 totalGoldGenerationPerUpdate;
     uint256 totalOilGenerationPerUpdate;
     uint256 totalOilConsumptionPerUpdate;
