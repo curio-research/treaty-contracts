@@ -135,9 +135,7 @@ library EngineModules {
         gs().armyIdMap[_armyId].lastLargeActionTaken = block.timestamp;
 
         Tile memory _targetTile = Util._getTileAt(_targetPos);
-        Army memory _targetArmy;
-
-        _targetArmy = gs().armyIdMap[_targetTile.occupantId];
+        Army memory _targetArmy = gs().armyIdMap[_targetTile.occupantId];
         require(_targetArmy.owner != msg.sender, "CURIO: Cannot attack own troop");
 
         uint256 _armyHealth = Util._getArmyHealth(_army.troopIds);
@@ -190,10 +188,19 @@ library EngineModules {
                 Util._distributeDamageToTroop(_army.troopIds[i]);
                 _damageToDistribute--;
             }
-            _army = Util._getArmy(_armyId);
 
+            _army = Util._getArmy(_armyId);
             _targetArmy = Util._getArmy(_targetTile.occupantId);
         } else {
+            uint256 _damageToDistribute = Util._getArmyHealth(_targetArmy.troopIds) - _targetHealth;
+            // distribute damage to individual troops
+            for (uint256 i = 0; i < _targetArmy.troopIds.length; i++) {
+                if (_damageToDistribute == 0) break;
+                Util._distributeDamageToTroop(_targetArmy.troopIds[i]);
+                _damageToDistribute--;
+            }
+
+            _army = Util._getArmy(_armyId);
             _targetArmy = Util._getArmy(_targetTile.occupantId);
         }
 
