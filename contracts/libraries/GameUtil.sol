@@ -302,6 +302,27 @@ library Util {
         return gs().armyIdMap[_armyId];
     }
 
+    function _getDebuffedArmyDamagePerHit(uint256[] memory _armyTroopIds) public view returns (uint256) {
+        uint256 _infantryPercentage = _getArmyInfantryPercentage(_armyTroopIds);
+        uint256 _debuffFactor = (gs().worldConstants.debuffFactor * (100 - _infantryPercentage)) / 100; // Only non-infantries are debuffed
+        return (_getArmyDamagePerHit(_armyTroopIds) * (100 - _debuffFactor)) / 100;
+    }
+
+    function _getArmyInfantryPercentage(uint256[] memory _armyTroopIds) public view returns (uint256) {
+        require(_armyTroopIds.length > 0, "CURIO: Cannot calculate percentage for empty army");
+
+        uint256 _percentagePerTroop = 100 / _armyTroopIds.length;
+        uint256 _result = 0;
+
+        for (uint256 i = 0; i < _armyTroopIds.length; i++) {
+            if (_getTroopName(_armyTroopIds[i]) == TROOP_NAME.INFANTRY) {
+                _result += _percentagePerTroop;
+            }
+        }
+
+        return _result;
+    }
+
     function _getOilConsumptionPerSecond(uint256 _troopTypeId) public view returns (uint256) {
         return gs().troopTypeIdMap[_troopTypeId].oilConsumptionPerSecond;
     }

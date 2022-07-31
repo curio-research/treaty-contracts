@@ -55,8 +55,12 @@ library EngineModules {
             // Troop attacks target
             _salt++;
             if (Util._strike(_targetBase.attackFactor, _salt)) {
-                uint256 _debuffFactor = Util._isDebuffed(_army.owner) ? gs().worldConstants.debuffFactor : 0;
-                uint256 _damagePerHit = (Util._getArmyDamagePerHit(_army.troopIds) * (100 - _debuffFactor)) / 100;
+                uint256 _damagePerHit;
+                if (Util._isDebuffed(_army.owner)) {
+                    _damagePerHit = Util._getDebuffedArmyDamagePerHit(_army.troopIds);
+                } else {
+                    _damagePerHit = Util._getArmyDamagePerHit(_army.troopIds);
+                }
 
                 if (_damagePerHit < _targetBase.health) {
                     _targetBase.health -= _damagePerHit;
@@ -143,14 +147,16 @@ library EngineModules {
 
         // Exchange fire until one side dies
         uint256 _salt = 0;
-        uint256 _debuffFactor;
         uint256 _damagePerHit;
         while (_armyHealth > 0) {
             // Troop attacks target
             _salt += 1;
             if (Util._strike(Util._getArmyAttackFactor(_targetArmy.troopIds), _salt)) {
-                _debuffFactor = Util._isDebuffed(_army.owner) ? gs().worldConstants.debuffFactor : 0;
-                _damagePerHit = (Util._getArmyDamagePerHit(_army.troopIds) * (100 - _debuffFactor)) / 100;
+                if (Util._isDebuffed(_army.owner)) {
+                    _damagePerHit = Util._getDebuffedArmyDamagePerHit(_army.troopIds);
+                } else {
+                    _damagePerHit = Util._getArmyDamagePerHit(_army.troopIds);
+                }
 
                 if (_damagePerHit < _targetHealth) {
                     _targetHealth -= _damagePerHit;
@@ -166,8 +172,11 @@ library EngineModules {
             // Target attacks Army
             _salt += 1;
             if (Util._strike(Util._getArmyDefenseFactor(_targetArmy.troopIds), _salt)) {
-                _debuffFactor = Util._isDebuffed(_targetArmy.owner) ? gs().worldConstants.debuffFactor : 0;
-                _damagePerHit = (Util._getArmyDamagePerHit(_targetArmy.troopIds) * (100 - _debuffFactor)) / 100;
+                if (Util._isDebuffed(_army.owner)) {
+                    _damagePerHit = Util._getDebuffedArmyDamagePerHit(_army.troopIds);
+                } else {
+                    _damagePerHit = Util._getArmyDamagePerHit(_army.troopIds);
+                }
 
                 if (_damagePerHit < _armyHealth) {
                     _armyHealth -= _damagePerHit;
