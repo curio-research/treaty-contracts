@@ -66,6 +66,7 @@ contract EngineFacet is UseStorage {
         require(Util._inBound(_targetPos), "CURIO: Target out of bound");
         if (!Util._getTileAt(_targetPos).isInitialized) Util._initializeTile(_targetPos);
 
+        //
         Troop memory _troop = gs().troopIdMap[_troopId];
         Army memory _army = gs().armyIdMap[_troop.armyId];
         Position memory _startPos = _army.pos;
