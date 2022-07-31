@@ -91,8 +91,8 @@ struct WorldConstants {
     uint256 worldWidth;
     uint256 worldHeight;
     uint256 combatEfficiency; // in the interval [0, 100]
-    uint256 numInitTerrainTypes; // default is 5
-    uint256 initBatchSize; // default is 100 if numInitTerrainTypes = 5
+    uint256 numInitTerrainTypes; // default is 6
+    uint256 initBatchSize; // default is 50 if numInitTerrainTypes = 6
     uint256 initPlayerGoldBalance;
     uint256 initPlayerOilBalance;
     uint256 maxBaseCountPerPlayer;

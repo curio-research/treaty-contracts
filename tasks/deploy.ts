@@ -120,7 +120,7 @@ task('deploy', 'deploy contracts')
       // Initialize map
       console.log('✦ initializing map');
       const time1 = performance.now();
-      const encodedTileMap = encodeTileMap(tileMap);
+      const encodedTileMap = encodeTileMap(tileMap, 6, 50);
       await (await diamond.storeEncodedColumnBatches(encodedTileMap)).wait();
       const time2 = performance.now();
       console.log(`✦ lazy setting ${tileMap.length}x${tileMap[0].length} map took ${Math.floor(time2 - time1)} ms`);
