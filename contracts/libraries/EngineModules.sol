@@ -55,8 +55,12 @@ library EngineModules {
             // Troop attacks target
             _salt++;
             if (Util._strike(_targetBase.attackFactor, _salt)) {
-                uint256 _debuffFactor = Util._isDebuffed(_army.owner) ? gs().worldConstants.debuffFactor : 0;
-                uint256 _damagePerHit = (Util._getArmyDamagePerHit(_army.troopIds) * (100 - _debuffFactor)) / 100;
+                uint256 _damagePerHit;
+                if (Util._isDebuffed(_army.owner)) {
+                    _damagePerHit = Util._getDebuffedArmyDamagePerHit(_army.troopIds);
+                } else {
+                    _damagePerHit = Util._getArmyDamagePerHit(_army.troopIds);
+                }
 
                 if (_damagePerHit < _targetBase.health) {
                     _targetBase.health -= _damagePerHit;
@@ -135,9 +139,7 @@ library EngineModules {
         gs().armyIdMap[_armyId].lastLargeActionTaken = block.timestamp;
 
         Tile memory _targetTile = Util._getTileAt(_targetPos);
-        Army memory _targetArmy;
-
-        _targetArmy = gs().armyIdMap[_targetTile.occupantId];
+        Army memory _targetArmy = gs().armyIdMap[_targetTile.occupantId];
         require(_targetArmy.owner != msg.sender, "CURIO: Cannot attack own troop");
 
         uint256 _armyHealth = Util._getArmyHealth(_army.troopIds);
@@ -145,14 +147,16 @@ library EngineModules {
 
         // Exchange fire until one side dies
         uint256 _salt = 0;
-        uint256 _debuffFactor;
         uint256 _damagePerHit;
         while (_armyHealth > 0) {
             // Troop attacks target
             _salt += 1;
             if (Util._strike(Util._getArmyAttackFactor(_targetArmy.troopIds), _salt)) {
-                _debuffFactor = Util._isDebuffed(_army.owner) ? gs().worldConstants.debuffFactor : 0;
-                _damagePerHit = (Util._getArmyDamagePerHit(_army.troopIds) * (100 - _debuffFactor)) / 100;
+                if (Util._isDebuffed(_army.owner)) {
+                    _damagePerHit = Util._getDebuffedArmyDamagePerHit(_army.troopIds);
+                } else {
+                    _damagePerHit = Util._getArmyDamagePerHit(_army.troopIds);
+                }
 
                 if (_damagePerHit < _targetHealth) {
                     _targetHealth -= _damagePerHit;
@@ -168,8 +172,11 @@ library EngineModules {
             // Target attacks Army
             _salt += 1;
             if (Util._strike(Util._getArmyDefenseFactor(_targetArmy.troopIds), _salt)) {
-                _debuffFactor = Util._isDebuffed(_targetArmy.owner) ? gs().worldConstants.debuffFactor : 0;
-                _damagePerHit = (Util._getArmyDamagePerHit(_targetArmy.troopIds) * (100 - _debuffFactor)) / 100;
+                if (Util._isDebuffed(_army.owner)) {
+                    _damagePerHit = Util._getDebuffedArmyDamagePerHit(_army.troopIds);
+                } else {
+                    _damagePerHit = Util._getArmyDamagePerHit(_army.troopIds);
+                }
 
                 if (_damagePerHit < _armyHealth) {
                     _armyHealth -= _damagePerHit;
@@ -190,10 +197,19 @@ library EngineModules {
                 Util._distributeDamageToTroop(_army.troopIds[i]);
                 _damageToDistribute--;
             }
-            _army = Util._getArmy(_armyId);
 
+            _army = Util._getArmy(_armyId);
             _targetArmy = Util._getArmy(_targetTile.occupantId);
         } else {
+            uint256 _damageToDistribute = Util._getArmyHealth(_targetArmy.troopIds) - _targetHealth;
+            // distribute damage to individual troops
+            for (uint256 i = 0; i < _targetArmy.troopIds.length; i++) {
+                if (_damageToDistribute == 0) break;
+                Util._distributeDamageToTroop(_targetArmy.troopIds[i]);
+                _damageToDistribute--;
+            }
+
+            _army = Util._getArmy(_armyId);
             _targetArmy = Util._getArmy(_targetTile.occupantId);
         }
 

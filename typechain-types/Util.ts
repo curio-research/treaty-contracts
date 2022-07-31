@@ -145,6 +145,7 @@ export interface UtilInterface extends utils.Interface {
     "_getArmyDamagePerHit(uint256[])": FunctionFragment;
     "_getArmyDefenseFactor(uint256[])": FunctionFragment;
     "_getArmyHealth(uint256[])": FunctionFragment;
+    "_getArmyInfantryPercentage(uint256[])": FunctionFragment;
     "_getArmyLargeActionCooldown(uint256[])": FunctionFragment;
     "_getArmyMovementCooldown(uint256[])": FunctionFragment;
     "_getArmyOilConsumptionPerSecond(uint256[])": FunctionFragment;
@@ -153,6 +154,7 @@ export interface UtilInterface extends utils.Interface {
     "_getBaseHealth(uint256)": FunctionFragment;
     "_getBaseOwner(uint256)": FunctionFragment;
     "_getDamagePerHit(uint256)": FunctionFragment;
+    "_getDebuffedArmyDamagePerHit(uint256[])": FunctionFragment;
     "_getDefenseFactor(uint256)": FunctionFragment;
     "_getLargeActionCooldown(uint256)": FunctionFragment;
     "_getMaxHealth(uint256)": FunctionFragment;
@@ -198,6 +200,10 @@ export interface UtilInterface extends utils.Interface {
     values: [BigNumberish[]]
   ): string;
   encodeFunctionData(
+    functionFragment: "_getArmyInfantryPercentage",
+    values: [BigNumberish[]]
+  ): string;
+  encodeFunctionData(
     functionFragment: "_getArmyLargeActionCooldown",
     values: [BigNumberish[]]
   ): string;
@@ -228,6 +234,10 @@ export interface UtilInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "_getDamagePerHit",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getDebuffedArmyDamagePerHit",
+    values: [BigNumberish[]]
   ): string;
   encodeFunctionData(
     functionFragment: "_getDefenseFactor",
@@ -330,6 +340,10 @@ export interface UtilInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "_getArmyInfantryPercentage",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "_getArmyLargeActionCooldown",
     data: BytesLike
   ): Result;
@@ -356,6 +370,10 @@ export interface UtilInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "_getDamagePerHit",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_getDebuffedArmyDamagePerHit",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -611,6 +629,11 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    _getArmyInfantryPercentage(
+      _armyTroopIds: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     _getArmyLargeActionCooldown(
       _armyTroopIds: BigNumberish[],
       overrides?: CallOverrides
@@ -648,6 +671,11 @@ export interface Util extends BaseContract {
 
     _getDamagePerHit(
       _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    _getDebuffedArmyDamagePerHit(
+      _armyTroopIds: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -780,6 +808,11 @@ export interface Util extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  _getArmyInfantryPercentage(
+    _armyTroopIds: BigNumberish[],
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   _getArmyLargeActionCooldown(
     _armyTroopIds: BigNumberish[],
     overrides?: CallOverrides
@@ -817,6 +850,11 @@ export interface Util extends BaseContract {
 
   _getDamagePerHit(
     _troopTypeId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  _getDebuffedArmyDamagePerHit(
+    _armyTroopIds: BigNumberish[],
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -946,6 +984,11 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _getArmyInfantryPercentage(
+      _armyTroopIds: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     _getArmyLargeActionCooldown(
       _armyTroopIds: BigNumberish[],
       overrides?: CallOverrides
@@ -983,6 +1026,11 @@ export interface Util extends BaseContract {
 
     _getDamagePerHit(
       _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getDebuffedArmyDamagePerHit(
+      _armyTroopIds: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1213,6 +1261,11 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _getArmyInfantryPercentage(
+      _armyTroopIds: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     _getArmyLargeActionCooldown(
       _armyTroopIds: BigNumberish[],
       overrides?: CallOverrides
@@ -1247,6 +1300,11 @@ export interface Util extends BaseContract {
 
     _getDamagePerHit(
       _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getDebuffedArmyDamagePerHit(
+      _armyTroopIds: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1377,6 +1435,11 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    _getArmyInfantryPercentage(
+      _armyTroopIds: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     _getArmyLargeActionCooldown(
       _armyTroopIds: BigNumberish[],
       overrides?: CallOverrides
@@ -1414,6 +1477,11 @@ export interface Util extends BaseContract {
 
     _getDamagePerHit(
       _troopTypeId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getDebuffedArmyDamagePerHit(
+      _armyTroopIds: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
