@@ -1,24 +1,18 @@
-//SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
 import "contracts/libraries/Storage.sol";
-import {BASE_NAME, TROOP_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop, Army, WorldConstants, TroopType} from "contracts/libraries/Types.sol";
+import {Army, BASE_NAME, Base, GameState, Player, Position, TERRAIN, TROOP_NAME, Tile, Troop, TroopType, WorldConstants} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 
 /// @title Util library
 /// @notice Contains all events as well as lower-level setters and getters
 /// Util functions generally do not verify correctness of conditions. Make sure to verify in higher-level functions such as those in Engine.
-
 library Util {
     using SafeMath for uint256;
 
     function gs() internal pure returns (GameState storage) {
         return LibStorage.gameStorage();
     }
-
-    // ----------------------------------------------------------
-    // EVENTS
-    // ----------------------------------------------------------
 
     event MovedArmy(address _player, uint256 timestamp, Position _startPos, uint256 _startTileArmyId, Army _startTileArmy, Position _endPos, uint256 _targetTileArmyId, Army _targetTileArmy);
     event NewTroop(address _player, uint256 _troopId, Troop _troop, uint256 _armyId, Army _army);
@@ -32,10 +26,6 @@ library Util {
     event PlayerReactivated(address _player);
     event GamePaused();
     event GameResumed();
-
-    // ----------------------------------------------------------
-    // SETTERS
-    // ----------------------------------------------------------
 
     function _initializeTile(Position memory _pos) public {
         WorldConstants memory _worldConstants = gs().worldConstants;
@@ -65,7 +55,6 @@ library Util {
         Player memory _player = gs().playerMap[_addr];
         uint256 _timeElapsed = block.timestamp - _player.balanceLastUpdated;
 
-        // Update gold balance
         _player.goldBalance += _player.totalGoldGenerationPerUpdate * _timeElapsed;
 
         if (_player.totalOilGenerationPerUpdate >= _player.totalOilConsumptionPerUpdate) {
@@ -104,7 +93,6 @@ library Util {
     }
 
     function _removeArmy(uint256 _armyId) public {
-        // used when detaching army
         Army memory _army = _getArmy(_armyId);
         require(_army.troopIds.length == 0, "CURIO: Undefined behavior in _removeArmy");
 
@@ -133,18 +121,15 @@ library Util {
         gs().playerMap[_owner].numOwnedTroops = _numOwnedTroops;
         gs().playerMap[_owner].totalOilConsumptionPerUpdate = _totalOilConsumptionPerUpdate;
 
-        // Update player troops
         uint256[] memory _playerTroopIds = gs().playerTroopIdMap[_owner];
         uint256 _index = _getIndex(_troopId, _playerTroopIds);
         gs().playerTroopIdMap[_owner][_index] = _playerTroopIds[_playerTroopIds.length - 1];
         gs().playerTroopIdMap[_owner].pop();
 
-        // Update army troops
         _index = _getIndex(_troopId, _army.troopIds);
         gs().armyIdMap[_troop.armyId].troopIds[_index] = _army.troopIds[_army.troopIds.length - 1];
         gs().armyIdMap[_troop.armyId].troopIds.pop();
 
-        // If army contains no troop, remove army from transport or tile
         if (gs().armyIdMap[_troop.armyId].troopIds.length == 0) {
             gs().map[_pos.x][_pos.y].occupantId = _NULL();
         }
@@ -167,7 +152,6 @@ library Util {
     ) public returns (uint256, Army memory) {
         require(_getPlayer(_owner).numOwnedTroops < gs().worldConstants.maxTroopCountPerPlayer, "CURIO: Max troop count exceeded");
 
-        // Generate Troop and Army id
         uint256 _troopId = gs().troopNonce;
         gs().troopIds.push(_troopId);
         gs().troopNonce++;
@@ -187,7 +171,6 @@ library Util {
         gs().troopIdMap[_troopId] = _troop;
         gs().armyIdMap[_armyId] = _army;
 
-        // Update balances
         _updatePlayerBalances(_owner);
         gs().playerMap[_owner].numOwnedTroops++;
         gs().playerMap[_owner].totalOilConsumptionPerUpdate += _getOilConsumptionPerSecond(_troopTypeId);
@@ -255,10 +238,6 @@ library Util {
 
         emit PlayerInfo(msg.sender, _playerInfo);
     }
-
-    // ----------------------------------------------------------
-    // GETTERS
-    // ----------------------------------------------------------
 
     function _isPlayerInitialized(address _player) public view returns (bool) {
         address[] memory _allPlayers = gs().players;
@@ -367,7 +346,6 @@ library Util {
     }
 
     function _getArmyHealth(uint256[] memory _armyTroopIds) public view returns (uint256) {
-        // take the sum
         uint256 _health;
 
         for (uint256 i = 0; i < _armyTroopIds.length; i++) {
@@ -379,7 +357,6 @@ library Util {
     }
 
     function _getArmyMovementCooldown(uint256[] memory _armyTroopIds) public view returns (uint256) {
-        // take the longest cooldown
         uint256 _movementCooldown;
 
         for (uint256 i = 0; i < _armyTroopIds.length; i++) {
@@ -393,7 +370,6 @@ library Util {
     }
 
     function _getArmyLargeActionCooldown(uint256[] memory _armyTroopIds) public view returns (uint256) {
-        // take the longest cooldown
         uint256 _largeActionCooldown;
 
         for (uint256 i = 0; i < _armyTroopIds.length; i++) {
@@ -407,7 +383,6 @@ library Util {
     }
 
     function _getArmyAttackFactor(uint256[] memory _armyTroopIds) public view returns (uint256) {
-        // take the sum
         uint256 _attackFactor;
 
         for (uint256 i = 0; i < _armyTroopIds.length; i++) {
@@ -419,7 +394,6 @@ library Util {
     }
 
     function _getArmyDefenseFactor(uint256[] memory _armyTroopIds) public view returns (uint256) {
-        // take the sum
         uint256 _defenseFactor;
 
         for (uint256 i = 0; i < _armyTroopIds.length; i++) {
@@ -431,7 +405,6 @@ library Util {
     }
 
     function _getArmyDamagePerHit(uint256[] memory _armyTroopIds) public view returns (uint256) {
-        // take the sum
         uint256 _damagePerHit = 0;
 
         for (uint256 i = 0; i < _armyTroopIds.length; i++) {
@@ -479,8 +452,6 @@ library Util {
         return _p1.x == _p2.x && _p1.y == _p2.y;
     }
 
-    // Note: The current version treats a diagonal movement as two movements.
-    // For treating as one, use `xDist <= _dist && yDist <= _dist` as return condition.
     function _withinDist(
         Position memory _p1,
         Position memory _p2,

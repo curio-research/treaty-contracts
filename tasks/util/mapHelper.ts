@@ -296,7 +296,7 @@ export const placePortsAndCities = (colorMap: number[][][], numPorts: number, nu
   // this ensures that there's at least one port on each island!
   for (let i = 1; i < islandID + 1; i++) {
     const positionsByIslandID = islandIdToMapping.get(i);
-    if (positionsByIslandID && numPorts > 0) {
+    if (positionsByIslandID) {
       // Note: remove the `numPorts > 0` part to generate a port on every landmass regardless of specified port number
       const randomIslandTilePosition = positionsByIslandID[Math.floor(Math.random() * positionsByIslandID.length)];
       tileMap[randomIslandTilePosition.x][randomIslandTilePosition.y] = TILE_TYPE.PORT;
@@ -331,16 +331,26 @@ export const placePortsAndCities = (colorMap: number[][][], numPorts: number, nu
   }
 
   while (numOilWells > 0) {
-    const x = Math.floor(Math.random() * tileMap.length);
-    const y = Math.floor(Math.random() * tileMap[0].length);
+    // place oil wells inland
+    if (!inlandTiles || inlandTiles.length === 0) break;
 
-    const tileType = tileMap[x][y];
+    const inlandTileIdx = Math.floor(Math.random() * inlandTiles.length);
+    const inlandTile = inlandTiles[inlandTileIdx];
 
-    if (tileType === TILE_TYPE.PORT || tileType === TILE_TYPE.CITY || tileType === TILE_TYPE.WATER || tileType === TILE_TYPE.COAST) continue;
+    // if there's already something on the block, skip
 
-    tileMap[x][y] = TILE_TYPE.OIL_WELL;
+    if (tileMap[inlandTile.x][inlandTile.y] !== TILE_TYPE.INLAND) continue;
 
-    oilWellTiles.push({ x, y });
+    // const x = Math.floor(Math.random() * tileMap.length);
+    // const y = Math.floor(Math.random() * tileMap[0].length);
+
+    // const tileType = tileMap[x][y];
+
+    // if (tileType === TILE_TYPE.PORT || tileType === TILE_TYPE.CITY || tileType === TILE_TYPE.WATER || tileType === TILE_TYPE.COAST) continue;
+
+    tileMap[inlandTile.x][inlandTile.y] = TILE_TYPE.OIL_WELL;
+
+    oilWellTiles.push(inlandTile);
     numOilWells--;
   }
 

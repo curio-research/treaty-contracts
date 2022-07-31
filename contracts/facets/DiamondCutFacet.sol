@@ -1,16 +1,11 @@
-// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 /******************************************************************************\
 * Author: Nick Mudge <nick@perfectabstractions.com> (https://twitter.com/mudgen)
 * EIP-2535 Diamonds: https://eips.ethereum.org/EIPS/eip-2535
 /******************************************************************************/
-
 import {IDiamondCut} from "contracts/interfaces/IDiamondCut.sol";
 import {LibDiamond} from "contracts/libraries/LibDiamond.sol";
-
-// Remember to add the loupe functions from DiamondLoupeFacet to the diamond.
-// The loupe functions are required by the EIP2535 Diamonds standard
 
 contract DiamondCutFacet is IDiamondCut {
     /// @notice Add/replace/remove any number of functions and optionally execute
@@ -29,22 +24,20 @@ contract DiamondCutFacet is IDiamondCut {
         uint256 originalSelectorCount = ds.selectorCount;
         uint256 selectorCount = originalSelectorCount;
         bytes32 selectorSlot;
-        // Check if last selector slot is not full
-        // "selectorCount & 7" is a gas efficient modulo by eight "selectorCount % 8"
+
         if (selectorCount & 7 > 0) {
             // get last selectorSlot
             // "selectorCount >> 3" is a gas efficient division by 8 "selectorCount / 8"
             selectorSlot = ds.selectorSlots[selectorCount >> 3];
         }
-        // loop through diamond cut
+
         for (uint256 facetIndex; facetIndex < _diamondCut.length; facetIndex++) {
             (selectorCount, selectorSlot) = LibDiamond.addReplaceRemoveFacetSelectors(selectorCount, selectorSlot, _diamondCut[facetIndex].facetAddress, _diamondCut[facetIndex].action, _diamondCut[facetIndex].functionSelectors);
         }
         if (selectorCount != originalSelectorCount) {
             ds.selectorCount = uint16(selectorCount);
         }
-        // If last selector slot is not full
-        // "selectorCount & 7" is a gas efficient modulo by eight "selectorCount % 8"
+
         if (selectorCount & 7 > 0) {
             // "selectorCount >> 3" is a gas efficient division by 8 "selectorCount / 8"
             ds.selectorSlots[selectorCount >> 3] = selectorSlot;

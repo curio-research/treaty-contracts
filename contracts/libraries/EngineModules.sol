@@ -25,7 +25,7 @@ library EngineModules {
         Army memory _army = Util._getArmy(armyId);
 
         uint256 _movementCooldown = Util._getArmyMovementCooldown(_army.troopIds);
-        require((block.timestamp - _army.lastMoved) >= _movementCooldown, "CURIO: Moved too recently");
+        // require((block.timestamp - _army.lastMoved) >= _movementCooldown, "CURIO: Moved too recently");
 
         // state change
         gs().map[_targetPos.x][_targetPos.y].occupantId = armyId;
@@ -268,7 +268,7 @@ library EngineModules {
 
         // movementCooldown check and update
         uint256 _movementCooldown = Util._getArmyMovementCooldown(_sourceArmy.troopIds);
-        require((block.timestamp - _sourceArmy.lastMoved) >= _movementCooldown, "CURIO: Moved too recently");
+        // require((block.timestamp - _sourceArmy.lastMoved) >= _movementCooldown, "CURIO: Moved too recently");
         gs().armyIdMap[_joiningTroop.armyId].lastMoved = block.timestamp;
 
         gs().troopIdMap[_joiningTroopId].armyId = _mainArmyId;
@@ -280,7 +280,7 @@ library EngineModules {
         Army memory _army = Util._getArmy(_newArmyId);
 
         uint256 _movementCooldown = Util._getArmyMovementCooldown(_army.troopIds);
-        require((block.timestamp - _army.lastMoved) >= _movementCooldown, "CURIO: Moved too recently");
+        // require((block.timestamp - _army.lastMoved) >= _movementCooldown, "CURIO: Moved too recently");
 
         // state change
         gs().map[_targetPos.x][_targetPos.y].occupantId = _newArmyId;

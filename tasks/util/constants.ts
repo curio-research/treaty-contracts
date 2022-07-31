@@ -12,9 +12,9 @@ export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 export const LOCAL_MAP_INPUT: MapInput = {
   width: 30,
   height: 30,
-  numPorts: 10,
-  numCities: 10,
-  numOilWells: 20,
+  numPorts: 20,
+  numCities: 20,
+  numOilWells: 10,
 };
 
 export const SANDBOX_MAP_INPUT: MapInput = {
@@ -51,7 +51,7 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     damagePerHit: 100,
     attackFactor: 100,
     defenseFactor: 100,
-    movementCooldown: 0,
+    movementCooldown: 2,
     largeActionCooldown: 0,
     goldPrice: 6,
     oilConsumptionPerSecond: 1,
@@ -62,7 +62,7 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     damagePerHit: 100,
     attackFactor: 100,
     defenseFactor: 100,
-    movementCooldown: 0,
+    movementCooldown: 2,
     largeActionCooldown: 0,
     goldPrice: 20,
     oilConsumptionPerSecond: 1,
@@ -73,7 +73,7 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     damagePerHit: 200,
     attackFactor: 100,
     defenseFactor: 100,
-    movementCooldown: 0,
+    movementCooldown: 2,
     largeActionCooldown: 0,
     goldPrice: 30,
     oilConsumptionPerSecond: 1,
@@ -84,8 +84,8 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     damagePerHit: 300,
     attackFactor: 100,
     defenseFactor: 100,
-    movementCooldown: 0,
-    largeActionCooldown: 0,
+    movementCooldown: 2,
+    largeActionCooldown: 2,
     goldPrice: 50,
     oilConsumptionPerSecond: 2,
   },
@@ -96,10 +96,10 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
 // ----------------------------------------------------------
 
 export const RENDER_CONSTANTS: RenderInput = {
-  sizeFactor: 15,
+  sizeFactor: 12,
   numLandColors: 5,
   numWaterColors: 2,
-  waterNoiseCutoff: 0.5,
+  waterNoiseCutoff: 0.45,
   colorLowestPercent: 40,
   plateSizeMultiplier: 6,
   superpositionRatio: [0.7, 0.3],
