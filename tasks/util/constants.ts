@@ -33,7 +33,7 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): W
     combatEfficiency: 50,
     numInitTerrainTypes: 6,
     initBatchSize: 50,
-    initPlayerGoldBalance: 100000000,
+    initPlayerGoldBalance: 30,
     initPlayerOilBalance: 30,
     maxBaseCountPerPlayer: 30,
     maxTroopCountPerPlayer: 100000,
