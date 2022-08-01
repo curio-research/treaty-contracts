@@ -29,8 +29,8 @@ library EngineModules {
     ) public {
         Army memory _army = Util._getArmy(armyId);
 
-        uint256 _movementCooldown = Util._getArmyMovementCooldown(_army.troopIds);
-        require((block.timestamp - _army.lastMoved) >= _movementCooldown, "CURIO: Moved too recently");
+        // uint256 _movementCooldown = Util._getArmyMovementCooldown(_army.troopIds);
+        // require((block.timestamp - _army.lastMoved) >= _movementCooldown, "CURIO: Moved too recently");
 
         // state change
         gs().map[_targetPos.x][_targetPos.y].occupantId = armyId;
@@ -267,11 +267,11 @@ library EngineModules {
 
     function _moveTroopToArmy(uint256 _mainArmyId, uint256 _joiningTroopId) public {
         Troop memory _joiningTroop = Util._getTroop(_joiningTroopId);
-        Army memory _sourceArmy = Util._getArmy(_joiningTroop.armyId);
 
         // movementCooldown check and update
-        uint256 _movementCooldown = Util._getArmyMovementCooldown(_sourceArmy.troopIds);
-        require((block.timestamp - _sourceArmy.lastMoved) >= _movementCooldown, "CURIO: Moved too recently");
+        // Army memory _sourceArmy = Util._getArmy(_joiningTroop.armyId);
+        // uint256 _movementCooldown = Util._getArmyMovementCooldown(_sourceArmy.troopIds);
+        // require((block.timestamp - _sourceArmy.lastMoved) >= _movementCooldown, "CURIO: Moved too recently");
         gs().armyIdMap[_joiningTroop.armyId].lastMoved = block.timestamp;
 
         gs().troopIdMap[_joiningTroopId].armyId = _mainArmyId;
@@ -280,10 +280,9 @@ library EngineModules {
 
     // does not clear out source tile
     function _moveNewArmyToEmptyTile(uint256 _newArmyId, Position memory _targetPos) public {
-        Army memory _army = Util._getArmy(_newArmyId);
-
-        uint256 _movementCooldown = Util._getArmyMovementCooldown(_army.troopIds);
-        require((block.timestamp - _army.lastMoved) >= _movementCooldown, "CURIO: Moved too recently");
+        // Army memory _army = Util._getArmy(_newArmyId);
+        // uint256 _movementCooldown = Util._getArmyMovementCooldown(_army.troopIds);
+        // require((block.timestamp - _army.lastMoved) >= _movementCooldown, "CURIO: Moved too recently");
 
         // state change
         gs().map[_targetPos.x][_targetPos.y].occupantId = _newArmyId;

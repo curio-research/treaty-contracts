@@ -284,7 +284,7 @@ contract StackingTest is Test, DiamondDeployTest {
 
         // move extra troop to army
         vm.startPrank(player2);
-        vm.expectRevert("CURIO: Can only combine with own troop");
+        vm.expectRevert("CURIO: You can only combine with own troop");
         vm.warp(6);
         engine.moveTroop(6, _pos2);
         vm.stopPrank();

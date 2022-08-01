@@ -161,8 +161,6 @@ library Util {
         if (gs().armyIdMap[_troop.armyId].troopIds.length == 0) {
             gs().map[_pos.x][_pos.y].occupantId = _NULL();
         }
-
-        emit TroopDeath(_army.owner, _troopId);
     }
 
     function _damageTroop(uint256 _damage, uint256 _troopId) public {
