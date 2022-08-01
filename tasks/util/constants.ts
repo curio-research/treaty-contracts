@@ -12,8 +12,8 @@ export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 export const LOCAL_MAP_INPUT: MapInput = {
   width: 30,
   height: 30,
-  numPorts: 10,
-  numCities: 10,
+  numPorts: 20,
+  numCities: 20,
   numOilWells: 20,
 };
 
@@ -33,7 +33,7 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): W
     combatEfficiency: 50,
     numInitTerrainTypes: 6,
     initBatchSize: 50,
-    initPlayerGoldBalance: 30,
+    initPlayerGoldBalance: 100000000,
     initPlayerOilBalance: 30,
     maxBaseCountPerPlayer: 30,
     maxTroopCountPerPlayer: 100000,

@@ -8,6 +8,7 @@ import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 /// @title Util library
 /// @notice Contains all events as well as lower-level setters and getters
 /// Util functions generally do not verify correctness of conditions. Make sure to verify in higher-level functions such as those in Engine.
+/// Note: This file should not have any occurrences of `msg.sender`. Pass in player addresses to use them.
 
 library Util {
     using SafeMath for uint256;
@@ -68,10 +69,11 @@ library Util {
         // Update gold balance
         _player.goldBalance += _player.totalGoldGenerationPerUpdate * _timeElapsed;
 
+        // Update debuff status based on oil rate
         if (_player.totalOilGenerationPerUpdate >= _player.totalOilConsumptionPerUpdate) {
-            gs().playerMap[_addr].isDebuffed = false;
+            _player.isDebuffed = false;
         } else {
-            gs().playerMap[_addr].isDebuffed = true;
+            _player.isDebuffed = true;
         }
 
         _player.balanceLastUpdated = block.timestamp;
@@ -160,7 +162,7 @@ library Util {
             gs().map[_pos.x][_pos.y].occupantId = _NULL();
         }
 
-        emit TroopDeath(msg.sender, _troopId);
+        emit TroopDeath(_army.owner, _troopId);
     }
 
     function _damageTroop(uint256 _damage, uint256 _troopId) public {
@@ -206,20 +208,24 @@ library Util {
         gs().playerMap[_owner].totalOilConsumptionPerUpdate += _getOilConsumptionPerSecond(_troopTypeId);
         gs().playerTroopIdMap[_owner].push(_troopId);
 
-        emit NewTroop(msg.sender, _troopId, _troop, _armyId, _army);
+        emit NewTroop(_owner, _troopId, _troop, _armyId, _army);
 
         return (_armyId, _army);
     }
 
-    function _createNewArmyFromTroop(uint256 _troopID, Position memory _pos) public returns (uint256) {
-        require(_getPlayer(msg.sender).numOwnedTroops < gs().worldConstants.maxTroopCountPerPlayer, "CURIO: Max troop count exceeded");
+    function _createNewArmyFromTroop(
+        address _owner,
+        uint256 _troopID,
+        Position memory _pos
+    ) public returns (uint256) {
+        require(_getPlayer(_owner).numOwnedTroops < gs().worldConstants.maxTroopCountPerPlayer, "CURIO: Max troop count exceeded");
 
         uint256 _armyId = gs().armyNonce;
         gs().armyIds.push(_armyId);
         gs().armyNonce++;
 
         uint256[] memory _armyTroopIds;
-        Army memory _army = Army({owner: msg.sender, troopIds: _armyTroopIds, lastMoved: 0, lastLargeActionTaken: block.timestamp, pos: _pos});
+        Army memory _army = Army({owner: _owner, troopIds: _armyTroopIds, lastMoved: 0, lastLargeActionTaken: block.timestamp, pos: _pos});
 
         gs().armyIdMap[_armyId] = _army;
         gs().armyIdMap[_armyId].troopIds.push(_troopID);
@@ -254,19 +260,23 @@ library Util {
         return _baseId;
     }
 
-    function updateArmy(Position memory _pos1, Position memory _pos2) public {
+    function _updateArmy(
+        address _owner,
+        Position memory _pos1,
+        Position memory _pos2
+    ) public {
         Tile memory _tile1 = _getTileAt(_pos1);
         Tile memory _tile2 = _getTileAt(_pos2);
         Army memory _army1 = _getArmy(_tile1.occupantId);
         Army memory _army2 = _getArmy(_tile2.occupantId);
 
-        emit MovedArmy(msg.sender, block.timestamp, _pos1, _tile1.occupantId, _army1, _pos2, _tile2.occupantId, _army2);
+        emit MovedArmy(_owner, block.timestamp, _pos1, _tile1.occupantId, _army1, _pos2, _tile2.occupantId, _army2);
     }
 
     function _emitPlayerInfo(address _player) public {
         Player memory _playerInfo = _getPlayer(_player);
 
-        emit PlayerInfo(msg.sender, _playerInfo);
+        emit PlayerInfo(_player, _playerInfo);
     }
 
     // ----------------------------------------------------------

@@ -74,7 +74,7 @@ export interface EngineModulesInterface extends utils.Interface {
   functions: {
     "_geographicCheckArmy(uint256,(bool,uint8,uint256,uint256))": FunctionFragment;
     "_geographicCheckTroop(uint256,(bool,uint8,uint256,uint256))": FunctionFragment;
-    "getArmyAndTroops(uint256)": FunctionFragment;
+    "_getArmyAndTroops(uint256)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -86,7 +86,7 @@ export interface EngineModulesInterface extends utils.Interface {
     values: [BigNumberish, TileStruct]
   ): string;
   encodeFunctionData(
-    functionFragment: "getArmyAndTroops",
+    functionFragment: "_getArmyAndTroops",
     values: [BigNumberish]
   ): string;
 
@@ -99,7 +99,7 @@ export interface EngineModulesInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getArmyAndTroops",
+    functionFragment: "_getArmyAndTroops",
     data: BytesLike
   ): Result;
 
@@ -145,7 +145,7 @@ export interface EngineModules extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    getArmyAndTroops(
+    _getArmyAndTroops(
       _armyId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[ArmyStructOutput, TroopStructOutput[]]>;
@@ -163,7 +163,7 @@ export interface EngineModules extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  getArmyAndTroops(
+  _getArmyAndTroops(
     _armyId: BigNumberish,
     overrides?: CallOverrides
   ): Promise<[ArmyStructOutput, TroopStructOutput[]]>;
@@ -181,7 +181,7 @@ export interface EngineModules extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    getArmyAndTroops(
+    _getArmyAndTroops(
       _armyId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[ArmyStructOutput, TroopStructOutput[]]>;
@@ -202,7 +202,7 @@ export interface EngineModules extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getArmyAndTroops(
+    _getArmyAndTroops(
       _armyId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -221,7 +221,7 @@ export interface EngineModules extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getArmyAndTroops(
+    _getArmyAndTroops(
       _armyId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

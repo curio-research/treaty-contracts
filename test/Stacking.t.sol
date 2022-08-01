@@ -230,7 +230,7 @@ contract StackingTest is Test, DiamondDeployTest {
 
         // check battle results - unlikely destroyer gonna win but could happen
         Army memory winningArmy = getter.getArmyAt(battleshipPosition);
-        assertEq(winningArmy.troopIds.length, 2);
+        assertEq(winningArmy.owner, player2);
         Tile memory targetTile = getter.getTileAt(Position({x: 7, y: 2}));
         assertEq(targetTile.occupantId, 0);
         vm.stopPrank();
