@@ -8,6 +8,7 @@ import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 /// @title Util library
 /// @notice Contains all events as well as lower-level setters and getters
 /// Util functions generally do not verify correctness of conditions. Make sure to verify in higher-level functions such as those in Engine.
+/// Note: This file should not have any occurrences of `msg.sender`. Pass in player addresses to use them.
 
 library Util {
     using SafeMath for uint256;
@@ -68,10 +69,11 @@ library Util {
         // Update gold balance
         _player.goldBalance += _player.totalGoldGenerationPerUpdate * _timeElapsed;
 
+        // Update debuff status based on oil rate
         if (_player.totalOilGenerationPerUpdate >= _player.totalOilConsumptionPerUpdate) {
-            gs().playerMap[_addr].isDebuffed = false;
+            _player.isDebuffed = false;
         } else {
-            gs().playerMap[_addr].isDebuffed = true;
+            _player.isDebuffed = true;
         }
 
         _player.balanceLastUpdated = block.timestamp;
@@ -115,6 +117,17 @@ library Util {
         gs().map[_pos.x][_pos.y].occupantId = _NULL();
     }
 
+    function _damageArmy(uint256 _totalDamage, uint256[] memory _armyTroopIds) public {
+        uint256 _individualDamage = _totalDamage / _armyTroopIds.length;
+        uint256 _remainingDamage = _totalDamage % _armyTroopIds.length;
+
+        for (uint256 i = 0; i < _armyTroopIds.length; i++) {
+            uint256 _damage = _remainingDamage > 0 ? _individualDamage + 1 : _individualDamage;
+            _damageTroop(_damage, _armyTroopIds[i]);
+            if (_remainingDamage > 0) _remainingDamage--;
+        }
+    }
+
     function _removeTroop(uint256 _troopId) public {
         Troop memory _troop = _getTroop(_troopId);
         Army memory _army = _getArmy(_troop.armyId);
@@ -150,13 +163,13 @@ library Util {
         }
     }
 
-    function _distributeDamageToTroop(uint256 _troopId) public {
-        Troop memory _troop = gs().troopIdMap[_troopId];
-        _troop.health -= 1;
-        if (_troop.health == 0) {
+    function _damageTroop(uint256 _damage, uint256 _troopId) public {
+        uint256 _health = gs().troopIdMap[_troopId].health;
+
+        if (_damage >= _health) {
             _removeTroop(_troopId);
         } else {
-            gs().troopIdMap[_troopId] = _troop;
+            gs().troopIdMap[_troopId].health = _health - _damage;
         }
     }
 
@@ -193,20 +206,24 @@ library Util {
         gs().playerMap[_owner].totalOilConsumptionPerUpdate += _getOilConsumptionPerSecond(_troopTypeId);
         gs().playerTroopIdMap[_owner].push(_troopId);
 
-        emit NewTroop(msg.sender, _troopId, _troop, _armyId, _army);
+        emit NewTroop(_owner, _troopId, _troop, _armyId, _army);
 
         return (_armyId, _army);
     }
 
-    function _createNewArmyFromTroop(uint256 _troopID, Position memory _pos) public returns (uint256) {
-        require(_getPlayer(msg.sender).numOwnedTroops < gs().worldConstants.maxTroopCountPerPlayer, "CURIO: Max troop count exceeded");
+    function _createNewArmyFromTroop(
+        address _owner,
+        uint256 _troopID,
+        Position memory _pos
+    ) public returns (uint256) {
+        require(_getPlayer(_owner).numOwnedTroops < gs().worldConstants.maxTroopCountPerPlayer, "CURIO: Max troop count exceeded");
 
         uint256 _armyId = gs().armyNonce;
         gs().armyIds.push(_armyId);
         gs().armyNonce++;
 
         uint256[] memory _armyTroopIds;
-        Army memory _army = Army({owner: msg.sender, troopIds: _armyTroopIds, lastMoved: 0, lastLargeActionTaken: block.timestamp, pos: _pos});
+        Army memory _army = Army({owner: _owner, troopIds: _armyTroopIds, lastMoved: 0, lastLargeActionTaken: block.timestamp, pos: _pos});
 
         gs().armyIdMap[_armyId] = _army;
         gs().armyIdMap[_armyId].troopIds.push(_troopID);
@@ -241,19 +258,23 @@ library Util {
         return _baseId;
     }
 
-    function updateArmy(Position memory _pos1, Position memory _pos2) public {
+    function _updateArmy(
+        address _owner,
+        Position memory _pos1,
+        Position memory _pos2
+    ) public {
         Tile memory _tile1 = _getTileAt(_pos1);
         Tile memory _tile2 = _getTileAt(_pos2);
         Army memory _army1 = _getArmy(_tile1.occupantId);
         Army memory _army2 = _getArmy(_tile2.occupantId);
 
-        emit MovedArmy(msg.sender, block.timestamp, _pos1, _tile1.occupantId, _army1, _pos2, _tile2.occupantId, _army2);
+        emit MovedArmy(_owner, block.timestamp, _pos1, _tile1.occupantId, _army1, _pos2, _tile2.occupantId, _army2);
     }
 
     function _emitPlayerInfo(address _player) public {
         Player memory _playerInfo = _getPlayer(_player);
 
-        emit PlayerInfo(msg.sender, _playerInfo);
+        emit PlayerInfo(_player, _playerInfo);
     }
 
     // ----------------------------------------------------------
@@ -394,52 +415,49 @@ library Util {
 
     function _getArmyLargeActionCooldown(uint256[] memory _armyTroopIds) public view returns (uint256) {
         // take the longest cooldown
-        uint256 _largeActionCooldown;
+        uint256 _longestLargeActionCooldown;
 
         for (uint256 i = 0; i < _armyTroopIds.length; i++) {
-            Troop memory _troop = _getTroop(_armyTroopIds[i]);
-            uint256 _troopLargeActionCooldown = _getLargeActionCooldown(_troop.troopTypeId);
-            if (_troopLargeActionCooldown > _largeActionCooldown) {
-                _largeActionCooldown = _troopLargeActionCooldown;
+            uint256 _troopLargeActionCooldown = _getLargeActionCooldown(_getTroop(_armyTroopIds[i]).troopTypeId);
+            if (_troopLargeActionCooldown > _longestLargeActionCooldown) {
+                _longestLargeActionCooldown = _troopLargeActionCooldown;
             }
         }
-        return _largeActionCooldown;
+
+        return _longestLargeActionCooldown;
     }
 
     function _getArmyAttackFactor(uint256[] memory _armyTroopIds) public view returns (uint256) {
-        // take the sum
-        uint256 _attackFactor;
+        // take the average
+        uint256 _attackFactorSum;
 
         for (uint256 i = 0; i < _armyTroopIds.length; i++) {
-            Troop memory _troop = _getTroop(_armyTroopIds[i]);
-            uint256 _troopAttackFactor = _getAttackFactor(_troop.troopTypeId);
-            _attackFactor += _troopAttackFactor;
+            _attackFactorSum += _getAttackFactor(_getTroop(_armyTroopIds[i]).troopTypeId);
         }
-        return _attackFactor;
+
+        return _attackFactorSum / _armyTroopIds.length;
     }
 
     function _getArmyDefenseFactor(uint256[] memory _armyTroopIds) public view returns (uint256) {
-        // take the sum
-        uint256 _defenseFactor;
+        // take the average
+        uint256 _defenseFactorSum;
 
         for (uint256 i = 0; i < _armyTroopIds.length; i++) {
-            Troop memory _troop = _getTroop(_armyTroopIds[i]);
-            uint256 _troopDefenseFactor = _getDefenseFactor(_troop.troopTypeId);
-            _defenseFactor += _troopDefenseFactor;
+            _defenseFactorSum += _getDefenseFactor(_getTroop(_armyTroopIds[i]).troopTypeId);
         }
-        return _defenseFactor;
+
+        return _defenseFactorSum / _armyTroopIds.length;
     }
 
     function _getArmyDamagePerHit(uint256[] memory _armyTroopIds) public view returns (uint256) {
         // take the sum
-        uint256 _damagePerHit = 0;
+        uint256 _totalDamagePerHit = 0;
 
         for (uint256 i = 0; i < _armyTroopIds.length; i++) {
-            Troop memory _troop = _getTroop(_armyTroopIds[i]);
-            uint256 _troopDamagePerhit = _getDamagePerHit(_troop.troopTypeId);
-            _damagePerHit += _troopDamagePerhit;
+            _totalDamagePerHit += _getDamagePerHit(_getTroop(_armyTroopIds[i]).troopTypeId);
         }
-        return _damagePerHit;
+
+        return _totalDamagePerHit;
     }
 
     function _getBaseHealth(uint256 _baseId) public view returns (uint256) {

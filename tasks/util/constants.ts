@@ -12,8 +12,8 @@ export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 export const LOCAL_MAP_INPUT: MapInput = {
   width: 30,
   height: 30,
-  numPorts: 10,
-  numCities: 10,
+  numPorts: 20,
+  numCities: 20,
   numOilWells: 20,
 };
 

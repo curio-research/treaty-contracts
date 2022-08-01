@@ -38,23 +38,23 @@ contract EngineFacet is UseStorage {
         if (_targetTile.occupantId == NULL) {
             if (_targetTile.baseId == NULL) {
                 // CaseI: move army when target tile has no base or army
-                EngineModules._moveArmy(_armyId, _targetPos);
+                EngineModules._moveArmy(msg.sender, _armyId, _targetPos);
             } else {
                 if (Util._getBaseOwner(_targetTile.baseId) == msg.sender) {
                     // CaseII: move army when target tile has your base but no army
-                    EngineModules._moveArmy(_armyId, _targetPos);
+                    EngineModules._moveArmy(msg.sender, _armyId, _targetPos);
                 } else {
                     // CaseIII: attack base when target tile has enemy base but no army
-                    EngineModules._battleBase(_armyId, _targetPos);
+                    EngineModules._battleBase(msg.sender, _armyId, _targetPos);
                 }
             }
         } else {
             // CaseIV: battle enemy army when target tile has one
             require(gs().armyIdMap[_targetTile.occupantId].owner != msg.sender, "CURIO: Destination tile occupied");
-            EngineModules._battleArmy(_armyId, _targetPos);
+            EngineModules._battleArmy(msg.sender, _armyId, _targetPos);
         }
 
-        Util.updateArmy(_army.pos, _targetPos); // update army info on start tile and end tile
+        Util._updateArmy(msg.sender, _army.pos, _targetPos); // update army info on start tile and end tile
         Util._emitPlayerInfo(msg.sender); // updates player info
     }
 
@@ -92,7 +92,7 @@ contract EngineFacet is UseStorage {
             // CaseI: Target Tile has no enemy base or enemy army
             require(Util._getBaseOwner(_targetTile.baseId) == msg.sender || _targetTile.baseId == NULL, "CURIO: Cannot directly attack with troops");
 
-            uint256 _newArmyId = Util._createNewArmyFromTroop(_troopId, _startPos);
+            uint256 _newArmyId = Util._createNewArmyFromTroop(msg.sender, _troopId, _startPos);
             EngineModules._moveNewArmyToEmptyTile(_newArmyId, _targetPos);
         } else {
             // CaseII: Target Tile has own army
@@ -101,7 +101,7 @@ contract EngineFacet is UseStorage {
         }
         EngineModules._clearTroopFromSourceArmy(_troop.armyId, _troopId);
 
-        Util.updateArmy(_startPos, _targetPos);
+        Util._updateArmy(msg.sender, _startPos, _targetPos);
         Util._emitPlayerInfo(msg.sender);
     }
 
@@ -125,11 +125,11 @@ contract EngineFacet is UseStorage {
         require(_base.owner == msg.sender, "CURIO: Can only purchase in own base");
         require(EngineModules._geographicCheckTroop(_troopTypeId, _tile), "CURIO: Base cannot purchase selected troop type");
 
+        Util._addTroop(msg.sender, _pos, _troopTypeId);
+
         uint256 _troopPrice = Util._getTroopGoldPrice(_troopTypeId);
         Util._updatePlayerBalances(msg.sender);
         require(_troopPrice <= Util._getPlayerGoldBalance(msg.sender), "CURIO: Insufficient gold balance");
-
-        Util._addTroop(msg.sender, _pos, _troopTypeId);
         gs().playerMap[msg.sender].goldBalance -= _troopPrice;
 
         Util._emitPlayerInfo(msg.sender);
@@ -145,7 +145,7 @@ contract EngineFacet is UseStorage {
         require(_army.owner == msg.sender, "CURIO: Can only delete own troop");
 
         Util._removeTroop(_troopId);
-        EngineModules._updateAttackedArmy(_troop.armyId, _troop.armyId);
+        EngineModules._updateAttackedArmy(msg.sender, _troop.armyId, _troop.armyId);
     }
 
     /**

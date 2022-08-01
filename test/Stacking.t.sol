@@ -230,7 +230,7 @@ contract StackingTest is Test, DiamondDeployTest {
 
         // check battle results - unlikely destroyer gonna win but could happen
         Army memory winningArmy = getter.getArmyAt(battleshipPosition);
-        assertEq(winningArmy.troopIds.length, 2);
+        assertEq(winningArmy.owner, player2);
         Tile memory targetTile = getter.getTileAt(Position({x: 7, y: 2}));
         assertEq(targetTile.occupantId, 0);
         vm.stopPrank();
@@ -284,7 +284,7 @@ contract StackingTest is Test, DiamondDeployTest {
 
         // move extra troop to army
         vm.startPrank(player2);
-        vm.expectRevert("CURIO: Can only combine with own troop");
+        vm.expectRevert("CURIO: You can only combine with own troop");
         vm.warp(6);
         engine.moveTroop(6, _pos2);
         vm.stopPrank();
