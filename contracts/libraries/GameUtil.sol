@@ -417,52 +417,49 @@ library Util {
 
     function _getArmyLargeActionCooldown(uint256[] memory _armyTroopIds) public view returns (uint256) {
         // take the longest cooldown
-        uint256 _largeActionCooldown;
+        uint256 _longestLargeActionCooldown;
 
         for (uint256 i = 0; i < _armyTroopIds.length; i++) {
-            Troop memory _troop = _getTroop(_armyTroopIds[i]);
-            uint256 _troopLargeActionCooldown = _getLargeActionCooldown(_troop.troopTypeId);
-            if (_troopLargeActionCooldown > _largeActionCooldown) {
-                _largeActionCooldown = _troopLargeActionCooldown;
+            uint256 _troopLargeActionCooldown = _getLargeActionCooldown(_getTroop(_armyTroopIds[i]).troopTypeId);
+            if (_troopLargeActionCooldown > _longestLargeActionCooldown) {
+                _longestLargeActionCooldown = _troopLargeActionCooldown;
             }
         }
-        return _largeActionCooldown;
+
+        return _longestLargeActionCooldown;
     }
 
     function _getArmyAttackFactor(uint256[] memory _armyTroopIds) public view returns (uint256) {
-        // take the sum
-        uint256 _attackFactor;
+        // take the average
+        uint256 _attackFactorSum;
 
         for (uint256 i = 0; i < _armyTroopIds.length; i++) {
-            Troop memory _troop = _getTroop(_armyTroopIds[i]);
-            uint256 _troopAttackFactor = _getAttackFactor(_troop.troopTypeId);
-            _attackFactor += _troopAttackFactor;
+            _attackFactorSum += _getAttackFactor(_getTroop(_armyTroopIds[i]).troopTypeId);
         }
-        return _attackFactor;
+
+        return _attackFactorSum / _armyTroopIds.length;
     }
 
     function _getArmyDefenseFactor(uint256[] memory _armyTroopIds) public view returns (uint256) {
-        // take the sum
-        uint256 _defenseFactor;
+        // take the average
+        uint256 _defenseFactorSum;
 
         for (uint256 i = 0; i < _armyTroopIds.length; i++) {
-            Troop memory _troop = _getTroop(_armyTroopIds[i]);
-            uint256 _troopDefenseFactor = _getDefenseFactor(_troop.troopTypeId);
-            _defenseFactor += _troopDefenseFactor;
+            _defenseFactorSum += _getDefenseFactor(_getTroop(_armyTroopIds[i]).troopTypeId);
         }
-        return _defenseFactor;
+
+        return _defenseFactorSum / _armyTroopIds.length;
     }
 
     function _getArmyDamagePerHit(uint256[] memory _armyTroopIds) public view returns (uint256) {
         // take the sum
-        uint256 _damagePerHit = 0;
+        uint256 _totalDamagePerHit = 0;
 
         for (uint256 i = 0; i < _armyTroopIds.length; i++) {
-            Troop memory _troop = _getTroop(_armyTroopIds[i]);
-            uint256 _troopDamagePerhit = _getDamagePerHit(_troop.troopTypeId);
-            _damagePerHit += _troopDamagePerhit;
+            _totalDamagePerHit += _getDamagePerHit(_getTroop(_armyTroopIds[i]).troopTypeId);
         }
-        return _damagePerHit;
+
+        return _totalDamagePerHit;
     }
 
     function _getBaseHealth(uint256 _baseId) public view returns (uint256) {
