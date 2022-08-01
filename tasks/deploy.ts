@@ -202,7 +202,7 @@ task('deploy', 'deploy contracts')
       const configFile: GameConfig = {
         address: diamond.address,
         network: hre.network.name,
-        deploymentId: `${isRelease ? 'release' : ''}${hre.network.name}-${Date.now()}`,
+        deploymentId: ` ${mapName ? `${mapName}-` : ''} ${isRelease ? 'release-' : ''}${hre.network.name}-${Date.now()}`,
         map: tileMap,
       };
 
@@ -217,7 +217,7 @@ task('deploy', 'deploy contracts')
         existingDeployments.push(configFile);
 
         await fsPromise.writeFile(configFilePath, JSON.stringify(existingDeployments));
-        await hre.run('port'); // default to porting files
+        // await hre.run('port'); // default to porting files
       }
 
       // Publish deployment
