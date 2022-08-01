@@ -90,12 +90,7 @@ library EngineModules {
             gs().baseIdMap[_targetTile.baseId].health = 0;
 
             uint256 _damageToDistribute = Util._getArmyHealth(_army.troopIds) - _armyHealth;
-            // distribute damage to individual troops
-            for (uint256 i = 0; i < _army.troopIds.length; i++) {
-                if (_damageToDistribute == 0) break;
-                Util._distributeDamageToTroop(_army.troopIds[i]);
-                _damageToDistribute--;
-            }
+            Util._damageArmy(_damageToDistribute, _army.troopIds);
 
             // Capture and move onto base if troop is infantry or if base is oil well
             require(Util._getPlayer(msg.sender).numOwnedBases < gs().worldConstants.maxBaseCountPerPlayer, "CURIO: Max base count exceeded");
@@ -191,23 +186,13 @@ library EngineModules {
         // enemy army died
         if (_targetHealth == 0) {
             uint256 _damageToDistribute = Util._getArmyHealth(_army.troopIds) - _armyHealth;
-            // distribute damage to individual troops
-            for (uint256 i = 0; i < _army.troopIds.length; i++) {
-                if (_damageToDistribute == 0) break;
-                Util._distributeDamageToTroop(_army.troopIds[i]);
-                _damageToDistribute--;
-            }
+            Util._damageArmy(_damageToDistribute, _army.troopIds);
 
             _army = Util._getArmy(_armyId);
             _targetArmy = Util._getArmy(_targetTile.occupantId);
         } else {
             uint256 _damageToDistribute = Util._getArmyHealth(_targetArmy.troopIds) - _targetHealth;
-            // distribute damage to individual troops
-            for (uint256 i = 0; i < _targetArmy.troopIds.length; i++) {
-                if (_damageToDistribute == 0) break;
-                Util._distributeDamageToTroop(_targetArmy.troopIds[i]);
-                _damageToDistribute--;
-            }
+            Util._damageArmy(_damageToDistribute, _targetArmy.troopIds);
 
             _army = Util._getArmy(_armyId);
             _targetArmy = Util._getArmy(_targetTile.occupantId);

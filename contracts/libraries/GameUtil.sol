@@ -115,6 +115,17 @@ library Util {
         gs().map[_pos.x][_pos.y].occupantId = _NULL();
     }
 
+    function _damageArmy(uint256 _totalDamage, uint256[] memory _armyTroopIds) public {
+        uint256 _individualDamage = _totalDamage / _armyTroopIds.length;
+        uint256 _remainingDamage = _totalDamage % _armyTroopIds.length;
+
+        for (uint256 i = 0; i < _armyTroopIds.length; i++) {
+            uint256 _damage = _remainingDamage > 0 ? _individualDamage + 1 : _individualDamage;
+            _damageTroop(_damage, _armyTroopIds[i]);
+            if (_remainingDamage > 0) _remainingDamage--;
+        }
+    }
+
     function _removeTroop(uint256 _troopId) public {
         Troop memory _troop = _getTroop(_troopId);
         Army memory _army = _getArmy(_troop.armyId);
@@ -152,13 +163,13 @@ library Util {
         emit TroopDeath(msg.sender, _troopId);
     }
 
-    function _distributeDamageToTroop(uint256 _troopId) public {
-        Troop memory _troop = gs().troopIdMap[_troopId];
-        _troop.health -= 1;
-        if (_troop.health == 0) {
+    function _damageTroop(uint256 _damage, uint256 _troopId) public {
+        uint256 _health = gs().troopIdMap[_troopId].health;
+
+        if (_damage >= _health) {
             _removeTroop(_troopId);
         } else {
-            gs().troopIdMap[_troopId] = _troop;
+            gs().troopIdMap[_troopId].health = _health - _damage;
         }
     }
 
