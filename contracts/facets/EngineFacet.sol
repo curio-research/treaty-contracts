@@ -1,3 +1,4 @@
+//SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
 import "contracts/libraries/Storage.sol";
@@ -8,6 +9,7 @@ import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 
 /// @title Engine facet
 /// @notice Contains player functions such as march, purchaseTroop, initializePlayer
+
 contract EngineFacet is UseStorage {
     using SafeMath for uint256;
     uint256 NULL = 0;
@@ -19,6 +21,7 @@ contract EngineFacet is UseStorage {
      * @param _targetPos target position
      */
     function march(uint256 _armyId, Position memory _targetPos) external {
+        // basic check
         require(!gs().isPaused, "CURIO: Game is paused");
         require(Util._isPlayerActive(msg.sender), "CURIO: Player is inactive");
         require(Util._inBound(_targetPos), "CURIO: Target out of bound");
@@ -51,8 +54,8 @@ contract EngineFacet is UseStorage {
             EngineModules._battleArmy(_armyId, _targetPos);
         }
 
-        Util.updateArmy(_army.pos, _targetPos);
-        Util._emitPlayerInfo(msg.sender);
+        Util.updateArmy(_army.pos, _targetPos); // update army info on start tile and end tile
+        Util._emitPlayerInfo(msg.sender); // updates player info
     }
 
     /**
@@ -61,12 +64,12 @@ contract EngineFacet is UseStorage {
      * @param _targetPos target position
      */
     function moveTroop(uint256 _troopId, Position memory _targetPos) public {
+        // basic check
         require(!gs().isPaused, "CURIO: Game is paused");
         require(Util._isPlayerActive(msg.sender), "CURIO: Player is inactive");
         require(Util._inBound(_targetPos), "CURIO: Target out of bound");
         if (!Util._getTileAt(_targetPos).isInitialized) Util._initializeTile(_targetPos);
 
-        //
         Troop memory _troop = gs().troopIdMap[_troopId];
         Army memory _army = gs().armyIdMap[_troop.armyId];
         Position memory _startPos = _army.pos;
@@ -142,7 +145,6 @@ contract EngineFacet is UseStorage {
         require(_army.owner == msg.sender, "CURIO: Can only delete own troop");
 
         Util._removeTroop(_troopId);
-
         EngineModules._updateAttackedArmy(_troop.armyId, _troop.armyId);
     }
 

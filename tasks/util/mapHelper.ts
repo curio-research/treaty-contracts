@@ -337,16 +337,7 @@ export const placePortsAndCities = (colorMap: number[][][], numPorts: number, nu
     const inlandTileIdx = Math.floor(Math.random() * inlandTiles.length);
     const inlandTile = inlandTiles[inlandTileIdx];
 
-    // if there's already something on the block, skip
-
     if (tileMap[inlandTile.x][inlandTile.y] !== TILE_TYPE.INLAND) continue;
-
-    // const x = Math.floor(Math.random() * tileMap.length);
-    // const y = Math.floor(Math.random() * tileMap[0].length);
-
-    // const tileType = tileMap[x][y];
-
-    // if (tileType === TILE_TYPE.PORT || tileType === TILE_TYPE.CITY || tileType === TILE_TYPE.WATER || tileType === TILE_TYPE.COAST) continue;
 
     tileMap[inlandTile.x][inlandTile.y] = TILE_TYPE.OIL_WELL;
 
