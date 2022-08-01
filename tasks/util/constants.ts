@@ -96,10 +96,10 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
 // ----------------------------------------------------------
 
 export const RENDER_CONSTANTS: RenderInput = {
-  sizeFactor: 12,
+  sizeFactor: 15,
   numLandColors: 5,
   numWaterColors: 2,
-  waterNoiseCutoff: 0.45,
+  waterNoiseCutoff: 0.5,
   colorLowestPercent: 40,
   plateSizeMultiplier: 6,
   superpositionRatio: [0.7, 0.3],
