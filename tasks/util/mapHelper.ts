@@ -41,7 +41,7 @@ export const encodeTileMap = (tileMap: TILE_TYPE[][], numInitTerrainTypes: numbe
     for (k = 0; k < numBatchPerCol; k++) {
       tempBatch = BigInt(0);
       for (let y = 0; y < batchSize; y++) {
-        tempBatch += BigInt(tileMap[x][y]) * BigInt(numInitTerrainTypes) ** BigInt(y);
+        tempBatch += BigInt(tileMap[x][k * batchSize + y]) * BigInt(numInitTerrainTypes) ** BigInt(y);
         if (tempBatch >= MAX_UINT256) throw new Error('Encoding exceeds uint256 max size');
       }
       encodedCol.push(tempBatch.toString());
@@ -49,7 +49,7 @@ export const encodeTileMap = (tileMap: TILE_TYPE[][], numInitTerrainTypes: numbe
     if (lastBatchSize > 0) {
       tempBatch = BigInt(0);
       for (let y = 0; y < lastBatchSize; y++) {
-        tempBatch += BigInt(tileMap[x][y]) * BigInt(numInitTerrainTypes) ** BigInt(y);
+        tempBatch += BigInt(tileMap[x][k * batchSize + y]) * BigInt(numInitTerrainTypes) ** BigInt(y);
         if (tempBatch >= MAX_UINT256) throw new Error('Encoding exceeds uint256 max size');
       }
       encodedCol.push(tempBatch.toString());

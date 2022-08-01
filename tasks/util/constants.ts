@@ -18,11 +18,11 @@ export const LOCAL_MAP_INPUT: MapInput = {
 };
 
 export const SANDBOX_MAP_INPUT: MapInput = {
-  width: 70,
-  height: 70,
-  numPorts: 200,
-  numCities: 50,
-  numOilWells: 10,
+  width: 150,
+  height: 150,
+  numPorts: 300,
+  numCities: 300,
+  numOilWells: 150,
 };
 
 export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): WorldConstantsStruct => {
