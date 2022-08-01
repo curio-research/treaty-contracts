@@ -4,7 +4,7 @@ pragma solidity ^0.8.4;
 import "contracts/libraries/Storage.sol";
 import {Util} from "contracts/libraries/GameUtil.sol";
 import {EngineModules} from "contracts/libraries/EngineModules.sol";
-import {BASE_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop, Army, TroopType, WorldConstants} from "contracts/libraries/Types.sol";
+import {Army, BASE_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop, TroopType, WorldConstants} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 
 /// @title Engine facet
@@ -27,13 +27,13 @@ contract EngineFacet is UseStorage {
         require(Util._inBound(_targetPos), "CURIO: Target out of bound");
         if (!Util._getTileAt(_targetPos).isInitialized) Util._initializeTile(_targetPos);
 
-        Army memory _army = gs().armyIdMap[_armyId];
+        Army memory _army = Util._getArmy(_armyId);
         require(_army.owner == msg.sender, "CURIO: Can only march own troop");
         require(!Util._samePos(_army.pos, _targetPos), "CURIO: Already at destination");
         require((block.timestamp - _army.lastLargeActionTaken) >= Util._getArmyLargeActionCooldown(_army.troopIds), "CURIO: Large action taken too recently");
 
         Tile memory _targetTile = Util._getTileAt(_targetPos);
-        require(EngineModules._geographicCheckArmy(_armyId, _targetTile), "CURIO: Troops and land type not compatible"); // check if each troop can move onto the tile
+        require(EngineModules._geographicCheckArmy(_armyId, _targetTile), "CURIO: Troops and land type not compatible");
 
         if (_targetTile.occupantId == NULL) {
             if (_targetTile.baseId == NULL) {
@@ -76,19 +76,16 @@ contract EngineFacet is UseStorage {
         Army memory _targetArmy;
         Tile memory _targetTile = Util._getTileAt(_targetPos);
 
-        // should use function march to attack
         if (_targetTile.occupantId != NULL) {
             _targetArmy = Util._getArmy(_targetTile.occupantId);
-            require(_targetArmy.owner == msg.sender, "CURIO: Can only combine with own troop");
+            require(_targetArmy.owner == msg.sender, "CURIO: You can only combine with own troop");
         }
 
-        // basic check
-        require(Util._withinDist(_startPos, _targetPos, 1), "CURIO: Can only dispatch troop to the near tile");
-        require(_army.owner == msg.sender, "CURIO: Can only dispatch own troop");
+        require(Util._withinDist(_startPos, _targetPos, 1), "CURIO: You can only dispatch troop to the near tile");
+        require(_army.owner == msg.sender, "CURIO: You can only dispatch own troop");
         require(!Util._samePos(_startPos, _targetPos), "CURIO: Already at destination");
         require((block.timestamp - _army.lastLargeActionTaken) >= Util._getArmyLargeActionCooldown(_army.troopIds), "CURIO: Large action taken too recently");
 
-        // geographic check
         require(EngineModules._geographicCheckTroop(_troop.troopTypeId, _targetTile), "CURIO: Troop and land type not compatible");
 
         if (_targetTile.occupantId == NULL) {
@@ -148,6 +145,7 @@ contract EngineFacet is UseStorage {
         require(_army.owner == msg.sender, "CURIO: Can only delete own troop");
 
         Util._removeTroop(_troopId);
+        EngineModules._updateAttackedArmy(_troop.armyId, _troop.armyId);
     }
 
     /**
