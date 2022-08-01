@@ -107,7 +107,7 @@ library EngineModules {
 
             _targetBase = Util._getBase(_targetTile.baseId);
             gs().baseIdMap[_targetTile.baseId].owner = _player;
-            gs().baseIdMap[_targetTile.baseId].health = 100;
+            gs().baseIdMap[_targetTile.baseId].health = 800;
 
             Util._updatePlayerBalances(_targetPlayer);
             Util._updatePlayerBalances(_player);

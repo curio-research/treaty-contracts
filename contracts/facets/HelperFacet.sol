@@ -117,6 +117,8 @@ contract HelperFacet is UseStorage {
         require(_base.owner == NULL_ADDR, "CURIO: Base is owned");
 
         gs().baseIdMap[_tile.baseId].owner = _player;
+        gs().baseIdMap[_tile.baseId].health = 800;
+
         Util._updatePlayerBalances(_player);
         gs().playerMap[_player].numOwnedBases++;
         gs().playerMap[_player].totalGoldGenerationPerUpdate += _base.goldGenerationPerSecond;
