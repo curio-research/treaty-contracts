@@ -144,7 +144,12 @@ contract EngineFacet is UseStorage {
         Army memory _army = Util._getArmy(_troop.armyId);
         require(_army.owner == msg.sender, "CURIO: Can only delete own troop");
 
-        Util._removeTroop(_troopId);
+        if (_army.troopIds.length == 1) {
+            Util._removeArmyWithTroops(_troop.armyId); // remove entire army if troop is last one in army
+        } else {
+            Util._removeTroop(_troopId);
+        }
+
         EngineModules._updateAttackedArmy(msg.sender, _troop.armyId, _troop.armyId);
     }
 
