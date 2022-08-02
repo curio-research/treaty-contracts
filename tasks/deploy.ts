@@ -7,10 +7,10 @@ import { Util } from './../typechain-types/Util';
 import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { deployProxy, loadLocalMapConfig, LOCAL_MAP_PREFIX, printDivider, saveMapToLocal } from './util/deployHelper';
-import { TROOP_TYPES, getTroopTypeIndexByName, RENDER_CONSTANTS, generateWorldConstants, LOCAL_MAP_INPUT, SANDBOX_MAP_INPUT } from './util/constants';
+import { TROOP_TYPES, getTroopTypeIndexByName, RENDER_CONSTANTS, generateWorldConstants, SMALL_MAP_INPUT, LARGE_MAP_INPUT, SANDBOX_MAP_INPUT } from './util/constants';
 import { position } from '../util/types/common';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
-import { Position, GameMapConfig, TILE_TYPE, TROOP_NAME } from './util/types';
+import { Position, GameMapConfig, TILE_TYPE, TROOP_NAME, MapInput } from './util/types';
 import { encodeTileMap, generateGameMaps } from './util/mapHelper';
 import { GameConfig } from '../api/types';
 import { MEDITERRAINEAN_MAP_CONFIG, testingMapConfig } from './util/mapLibrary';
@@ -87,8 +87,10 @@ task('deploy', 'deploy contracts')
         oilWellTiles = gameMapConfig.oilWellTiles;
         worldConstants = generateWorldConstants(player1.address, { width: tileMap.length, height: tileMap[0].length, numPorts: portTiles.length, numCities: cityTiles.length, numOilWells: oilWellTiles.length });
       } else {
-        // two modes of randomly-generated maps: local (small) or sandbox (big)
-        const mapInput = mapName.toLowerCase() === 'sandbox' ? SANDBOX_MAP_INPUT : LOCAL_MAP_INPUT;
+        // three modes of randomly-generated maps: small, large, or sandbox
+        let mapInput: MapInput = SMALL_MAP_INPUT;
+        if (mapName.toLowerCase() === 'large') mapInput = LARGE_MAP_INPUT;
+        if (mapName.toLowerCase() === 'sandbox') mapInput = SANDBOX_MAP_INPUT;
         const gameMapConfigWithColor = generateGameMaps(mapInput, RENDER_CONSTANTS);
         tileMap = gameMapConfigWithColor.tileMap;
         portTiles = gameMapConfigWithColor.portTiles;
