@@ -26,8 +26,8 @@ export const LARGE_MAP_INPUT: MapInput = {
 };
 
 export const SANDBOX_MAP_INPUT: MapInput = {
-  width: 200,
-  height: 200,
+  width: 150,
+  height: 150,
   numPorts: 150,
   numCities: 150,
   numOilWells: 120,
