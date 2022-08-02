@@ -33,6 +33,7 @@ task('deploy', 'deploy contracts')
   .addFlag('fixmap', 'Use deterministic map') // default is non-deterministic maps; deterministic maps are mainly used for client development
   .addOptionalParam('name', 'Name of fixed map', 'Hello, World!')
   .addFlag('savemap', 'Save map to local') // default is not to save
+  .addFlag('nocooldown', 'No cooldowns!') // default is to have cooldown
   .setAction(async (args: any, hre: HardhatRuntimeEnvironment) => {
     try {
       // Compile contracts
@@ -40,26 +41,36 @@ task('deploy', 'deploy contracts')
       printDivider();
 
       // Read variables from run flags
-      const isDev = hre.network.name === 'localhost' || hre.network.name === 'hardhat' || hre.network.name === 'constellation';
+      const isDev: boolean = hre.network.name === 'localhost' || hre.network.name === 'hardhat' || hre.network.name === 'constellation';
 
       console.log('Network:', hre.network.name);
-      const fixMap = args.fixmap;
+      const fixMap: boolean = args.fixmap;
       if (fixMap) console.log('Using deterministic map');
-      const publish = args.publish;
-      const isRelease = args.release;
-      let mapName = args.name;
-      const saveMap = args.savemap;
+      const publish: boolean = args.publish;
+      const isRelease: boolean = args.release;
+      let mapName: string = args.name;
+      const saveMap: boolean = args.savemap;
+      const noCooldown: boolean = args.nocooldown;
 
       // Check connection with faucet to make sure deployment will post
       if (!isDev) {
         await isConnectionLive();
       }
 
+      // Remove cooldowns if no cooldown
+      let troopTypes = TROOP_TYPES;
+      if (noCooldown) {
+        troopTypes = troopTypes.map((troopType) => {
+          troopType.movementCooldown = 0;
+          return troopType;
+        });
+      }
+
       // Set up deployer and some local variables
       let [player1, player2] = await hre.ethers.getSigners();
       console.log('✦ player1 address is:', player1.address);
-      const infantryTroopTypeId = getTroopTypeIndexByName(TROOP_TYPES, TROOP_NAME.INFANTRY) + 1;
-      const destroyerTroopTypeId = getTroopTypeIndexByName(TROOP_TYPES, TROOP_NAME.DESTROYER) + 1;
+      const infantryTroopTypeId = getTroopTypeIndexByName(troopTypes, TROOP_NAME.INFANTRY) + 1;
+      const destroyerTroopTypeId = getTroopTypeIndexByName(troopTypes, TROOP_NAME.DESTROYER) + 1;
 
       // Set up game and map configs
       let gameMapConfig: GameMapConfig;

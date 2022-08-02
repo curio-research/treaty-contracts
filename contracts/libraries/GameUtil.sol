@@ -389,28 +389,26 @@ library Util {
 
     function _getArmyHealth(uint256[] memory _armyTroopIds) public view returns (uint256) {
         // take the sum
-        uint256 _health;
+        uint256 _totalHealth;
 
         for (uint256 i = 0; i < _armyTroopIds.length; i++) {
-            Troop memory _troop = _getTroop(_armyTroopIds[i]);
-            uint256 _troopHealth = _getMaxHealth(_troop.troopTypeId);
-            _health += _troopHealth;
+            _totalHealth += _getTroop(_armyTroopIds[i]).health;
         }
-        return _health;
+
+        return _totalHealth;
     }
 
     function _getArmyMovementCooldown(uint256[] memory _armyTroopIds) public view returns (uint256) {
         // take the longest cooldown
-        uint256 _movementCooldown;
+        uint256 _longestMovementCooldown;
 
         for (uint256 i = 0; i < _armyTroopIds.length; i++) {
-            Troop memory _troop = _getTroop(_armyTroopIds[i]);
-            uint256 _troopMovementCooldown = _getMovementCooldown(_troop.troopTypeId);
-            if (_troopMovementCooldown > _movementCooldown) {
-                _movementCooldown = _troopMovementCooldown;
+            uint256 _troopMovementCooldown = _getMovementCooldown(_getTroop(_armyTroopIds[i]).troopTypeId);
+            if (_troopMovementCooldown > _longestMovementCooldown) {
+                _longestMovementCooldown = _troopMovementCooldown;
             }
         }
-        return _movementCooldown;
+        return _longestMovementCooldown;
     }
 
     function _getArmyLargeActionCooldown(uint256[] memory _armyTroopIds) public view returns (uint256) {
