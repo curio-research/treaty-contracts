@@ -178,6 +178,7 @@ contract EngineFacet is UseStorage {
             isDebuffed: false //
         });
         gs().baseIdMap[_baseId].owner = msg.sender;
+        gs().baseIdMap[_baseId].health = 800;
 
         emit Util.NewPlayer(msg.sender, _pos);
 
