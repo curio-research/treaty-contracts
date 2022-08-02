@@ -58,7 +58,7 @@ contract StackingTest is Test, DiamondDeployTest {
         Base memory _base = getter.getBase(_tile.baseId);
         assertEq(_tile.occupantId, NULL);
         assertEq(_base.owner, NULL_ADDR);
-        assertEq(_base.health, 100);
+        assertEq(_base.health, 150);
         assertEq(getter.getPlayer(player1).totalOilConsumptionPerUpdate, 0);
 
         vm.startPrank(deployer);
@@ -83,7 +83,7 @@ contract StackingTest is Test, DiamondDeployTest {
             _base = getter.getBase(_tile.baseId);
             assertEq(_tile.occupantId, 1);
             assertEq(_base.owner, player1);
-            assertEq(_base.health, 100);
+            assertEq(_base.health, 150);
         } else {
             // port won
             assertEq(getter.getPlayer(player1).totalOilConsumptionPerUpdate, 0);
@@ -95,7 +95,7 @@ contract StackingTest is Test, DiamondDeployTest {
             _base = getter.getBase(_tile.baseId);
             assertEq(_tile.occupantId, NULL);
             assertEq(_base.owner, NULL_ADDR);
-            assertEq(_base.health, 100);
+            assertEq(_base.health, 50);
         }
     }
 

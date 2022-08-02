@@ -9,20 +9,28 @@ export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 // GAME CONSTANTS
 // ----------------------------------------------------------
 
-export const LOCAL_MAP_INPUT: MapInput = {
+export const SMALL_MAP_INPUT: MapInput = {
+  width: 50,
+  height: 50,
+  numPorts: 10,
+  numCities: 30,
+  numOilWells: 15,
+};
+
+export const LARGE_MAP_INPUT: MapInput = {
   width: 100,
   height: 100,
-  numPorts: 30,
+  numPorts: 40,
   numCities: 120,
   numOilWells: 60,
 };
 
 export const SANDBOX_MAP_INPUT: MapInput = {
-  width: 150,
-  height: 150,
-  numPorts: 300,
-  numCities: 300,
-  numOilWells: 150,
+  width: 200,
+  height: 200,
+  numPorts: 150,
+  numCities: 150,
+  numOilWells: 120,
 };
 
 export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): WorldConstantsStruct => {
@@ -33,11 +41,11 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): W
     combatEfficiency: 50,
     numInitTerrainTypes: 6,
     initBatchSize: 50,
-    initPlayerGoldBalance: 1000,
-    initPlayerOilBalance: 30,
-    maxBaseCountPerPlayer: 150,
+    initPlayerGoldBalance: mapInput.numPorts > 20 ? 2000 : 750,
+    initPlayerOilBalance: 0,
+    maxBaseCountPerPlayer: 200,
     maxTroopCountPerPlayer: 100000,
-    maxPlayerCount: 20,
+    maxPlayerCount: mapInput.numPorts,
     defaultBaseGoldGenerationPerSecond: 1,
     defaultWellOilGenerationPerSecond: 5,
     debuffFactor: 80,
@@ -73,7 +81,7 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     damagePerHit: 1000,
     attackFactor: 100,
     defenseFactor: 100,
-    movementCooldown: 3,
+    movementCooldown: 2,
     largeActionCooldown: 0,
     goldPrice: 1360,
     oilConsumptionPerSecond: 5,
@@ -84,7 +92,7 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
     damagePerHit: 3500,
     attackFactor: 100,
     defenseFactor: 100,
-    movementCooldown: 4,
+    movementCooldown: 2,
     largeActionCooldown: 0,
     goldPrice: 4800,
     oilConsumptionPerSecond: 20,
@@ -102,7 +110,7 @@ export const RENDER_CONSTANTS: RenderInput = {
   waterNoiseCutoff: 0.45,
   colorLowestPercent: 40,
   plateSizeMultiplier: 6,
-  superpositionRatio: [0.7, 0.3],
+  superpositionRatio: [0.6, 0.4],
 };
 
 // ------------------------------------------------
