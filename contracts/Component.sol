@@ -14,6 +14,7 @@ contract Component {
      * Question: Permission management for component value modification
      * Question: Is there value to having a nonce count how many components there are in an ordered fashion?
      * Question: Can `.filter()` be implemented, and if not fully, to what extent?
+     * Question: TODO: implement more advanced queries
      */
 
     address private gameAddr; // game diamond
