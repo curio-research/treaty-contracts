@@ -19,17 +19,15 @@ import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
 export interface ComponentInterface extends utils.Interface {
   functions: {
-    "admin()": FunctionFragment;
     "game()": FunctionFragment;
     "getEntities()": FunctionFragment;
     "getEntitiesWithValue(bytes)": FunctionFragment;
     "getRawValue(uint256)": FunctionFragment;
-    "has(uint256)": FunctionFragment;
+    "includes(uint256)": FunctionFragment;
     "remove(uint256)": FunctionFragment;
     "set(uint256,bytes)": FunctionFragment;
   };
 
-  encodeFunctionData(functionFragment: "admin", values?: undefined): string;
   encodeFunctionData(functionFragment: "game", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getEntities",
@@ -43,7 +41,10 @@ export interface ComponentInterface extends utils.Interface {
     functionFragment: "getRawValue",
     values: [BigNumberish]
   ): string;
-  encodeFunctionData(functionFragment: "has", values: [BigNumberish]): string;
+  encodeFunctionData(
+    functionFragment: "includes",
+    values: [BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "remove",
     values: [BigNumberish]
@@ -53,7 +54,6 @@ export interface ComponentInterface extends utils.Interface {
     values: [BigNumberish, BytesLike]
   ): string;
 
-  decodeFunctionResult(functionFragment: "admin", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "game", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getEntities",
@@ -67,7 +67,7 @@ export interface ComponentInterface extends utils.Interface {
     functionFragment: "getRawValue",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "has", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "includes", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "remove", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "set", data: BytesLike): Result;
 
@@ -101,8 +101,6 @@ export interface Component extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    admin(overrides?: CallOverrides): Promise<[string]>;
-
     game(overrides?: CallOverrides): Promise<[string]>;
 
     getEntities(overrides?: CallOverrides): Promise<[BigNumber[]]>;
@@ -117,7 +115,10 @@ export interface Component extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    has(_entity: BigNumberish, overrides?: CallOverrides): Promise<[boolean]>;
+    includes(
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     remove(
       _entity: BigNumberish,
@@ -130,8 +131,6 @@ export interface Component extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
-
-  admin(overrides?: CallOverrides): Promise<string>;
 
   game(overrides?: CallOverrides): Promise<string>;
 
@@ -147,7 +146,7 @@ export interface Component extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
-  has(_entity: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
+  includes(_entity: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
 
   remove(
     _entity: BigNumberish,
@@ -161,8 +160,6 @@ export interface Component extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    admin(overrides?: CallOverrides): Promise<string>;
-
     game(overrides?: CallOverrides): Promise<string>;
 
     getEntities(overrides?: CallOverrides): Promise<BigNumber[]>;
@@ -177,7 +174,10 @@ export interface Component extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    has(_entity: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
+    includes(
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     remove(_entity: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
@@ -191,8 +191,6 @@ export interface Component extends BaseContract {
   filters: {};
 
   estimateGas: {
-    admin(overrides?: CallOverrides): Promise<BigNumber>;
-
     game(overrides?: CallOverrides): Promise<BigNumber>;
 
     getEntities(overrides?: CallOverrides): Promise<BigNumber>;
@@ -207,7 +205,10 @@ export interface Component extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    has(_entity: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+    includes(
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     remove(
       _entity: BigNumberish,
@@ -222,8 +223,6 @@ export interface Component extends BaseContract {
   };
 
   populateTransaction: {
-    admin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     game(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getEntities(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -238,7 +237,7 @@ export interface Component extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    has(
+    includes(
       _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

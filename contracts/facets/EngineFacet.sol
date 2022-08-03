@@ -208,7 +208,7 @@ contract EngineFacet is UseStorage {
         Set _set2 = new Set();
 
         // 1. Verify that parametric entity exists
-        require(Set(gs().entities).has(_troopTemplateId), "CURIO: Troop template not found");
+        require(Set(gs().entities).includes(_troopTemplateId), "CURIO: Troop template not found");
 
         // 2. Verify that game is ongoing
         require(!gs().isPaused, "CURIO: Game is paused");
@@ -222,7 +222,7 @@ contract EngineFacet is UseStorage {
         if (!Util._getTileAt(_position).isInitializedECS) Util._initializeTileECS(_position);
 
         // 5. Verify that a "base" (aka. an entity which can purchase) is present
-        _set1.addArray(Util._getComponent("Position").getEntitiesWithValue(abi.encode(_position)));
+        _set1.addArray(Util._getComponent("Position").getEntitiesWithRawValue(abi.encode(_position)));
         _set2.addArray(Util._getComponent("CanPurchase").getEntities());
         uint256[] memory _intersection = Util._intersection(_set1, _set2);
         require(_intersection.length == 1, "CURIO: No base found");
@@ -272,7 +272,7 @@ contract EngineFacet is UseStorage {
         if (!Util._getTileAt(_position).isInitializedECS) Util._initializeTileECS(_position);
 
         // Verify that a "base" (aka. an entity which can purchase) is present
-        _set1.addArray(Util._getComponent("Position").getEntitiesWithValue(abi.encode(_position)));
+        _set1.addArray(Util._getComponent("Position").getEntitiesWithRawValue(abi.encode(_position)));
         _set2.addArray(Util._getComponent("CanPurchase").getEntities());
         uint256[] memory _intersection = Util._intersection(_set1, _set2);
         require(_intersection.length == 1, "CURIO: No base found");
@@ -320,7 +320,7 @@ contract EngineFacet is UseStorage {
         uint256[] memory _naviesWithFivePlusHealth = new uint256[](0);
         for (uint256 _health = 5; _health <= 12; _health++) {
             _set2 = new Set();
-            _set2.addArray(Util._getComponent("Health").getEntitiesWithValue(abi.encode(_health)));
+            _set2.addArray(Util._getComponent("Health").getEntitiesWithRawValue(abi.encode(_health)));
             _naviesWithFivePlusHealth = Util._concatenate(_naviesWithFivePlusHealth, Util._intersection(_set1, _set2));
         }
 
@@ -343,7 +343,7 @@ contract EngineFacet is UseStorage {
         Set _set1 = new Set();
         Set _set2 = new Set();
         _set1.addArray(Util._getComponent("CanPurchase").getEntities());
-        _set2.addArray(Util._getComponent("Owner").getEntitiesWithValue(abi.encode(msg.sender)));
+        _set2.addArray(Util._getComponent("Owner").getEntitiesWithRawValue(abi.encode(msg.sender)));
         uint256[] memory _playerBases = Util._intersection(_set1, _set2);
 
         // Update desired properties

@@ -75,10 +75,10 @@ contract ECS is Test, DiamondDeployTest {
         assertEq(getter.getComponent("IsActive").getEntities().length, 3);
         assertEq(getter.getComponent("CargoCapacity").getEntities().length, 0);
         assertEq(abi.decode(getter.getComponent("Gold").getRawValue(_player1Id), (uint256)), 20);
-        assertEq(getter.getComponent("Gold").getEntitiesWithValue(abi.encode(19))[0], _destroyerTemplateId);
-        assertEq(getter.getComponent("Position").getEntitiesWithValue(abi.encode(player1Pos)).length, 1);
+        assertEq(getter.getComponent("Gold").getEntitiesWithRawValue(abi.encode(19))[0], _destroyerTemplateId);
+        assertEq(getter.getComponent("Position").getEntitiesWithRawValue(abi.encode(player1Pos)).length, 1);
         assertEq(getter.getComponent("CanPurchase").getEntities().length, 1);
-        assertEq(getter.getComponent("Name").getEntitiesWithValue(abi.encode("Bob"))[0], _player1Id);
+        assertEq(getter.getComponent("Name").getEntitiesWithRawValue(abi.encode("Bob"))[0], _player1Id);
         vm.expectRevert(bytes("CURIO: Component not found"));
         getter.getComponent("NonexistentComponent");
 
@@ -87,7 +87,7 @@ contract ECS is Test, DiamondDeployTest {
 
         // Verify post-conditions
         assertEq(abi.decode(getter.getComponent("Gold").getRawValue(_player1Id), (uint256)), 20 - 19);
-        assertEq(getter.getComponent("Position").getEntitiesWithValue(abi.encode(player1Pos)).length, 2);
+        assertEq(getter.getComponent("Position").getEntitiesWithRawValue(abi.encode(player1Pos)).length, 2);
         Position memory _troopPosition = abi.decode(getter.getComponent("Position").getRawValue(_troopId), (Position));
         assertEq(_troopPosition.x, player1Pos.x);
         assertEq(_troopPosition.y, player1Pos.y);

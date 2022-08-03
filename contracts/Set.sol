@@ -15,7 +15,7 @@ contract Set {
         if (includes(_element)) return;
 
         elements.push(_element);
-        elementIndexMap[_element] = size();
+        elementIndexMap[_element] = size() - 1;
     }
 
     function addArray(uint256[] memory _elements) public {
@@ -44,7 +44,8 @@ contract Set {
 
     function includes(uint256 _element) public view returns (bool) {
         if (size() == 0) return false;
-        if (elementIndexMap[_element] == 0 && elements[0] != _element) return false; // element not found
-        return true;
+
+        // Element found either at nonzero index or zero index
+        return elementIndexMap[_element] != 0 || elements[0] == _element;
     }
 }

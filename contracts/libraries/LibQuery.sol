@@ -18,7 +18,7 @@ library LibQuery {
     function query(QueryFragment[] memory _fragments) internal view returns (uint256[] memory) {
         require(_fragments[0].queryType == QueryType.Has || _fragments[0].queryType == QueryType.HasValue, "Has/HasValue required");
 
-        uint256[] memory _firstFragmentEntities = _fragments[0].queryType == QueryType.HasValue ? _fragments[0].component.getEntitiesWithValue(_fragments[0].value) : _fragments[0].component.getEntities();
+        uint256[] memory _firstFragmentEntities = _fragments[0].queryType == QueryType.HasValue ? _fragments[0].component.getEntitiesWithRawValue(_fragments[0].value) : _fragments[0].component.getEntities();
 
         // If only one fragment is given, return immediately
         if (_fragments.length == 1) return _firstFragmentEntities;

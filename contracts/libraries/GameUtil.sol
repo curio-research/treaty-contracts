@@ -162,13 +162,14 @@ library Util {
         uint256 _entity,
         bytes memory _value
     ) public {
+        _getComponent(_componentName);
         _getComponent(_componentName).set(_entity, _value);
     }
 
     function _getPlayerTroopCount(uint256 _playerId) public returns (uint256) {
         Set _set1 = new Set();
         Set _set2 = new Set();
-        uint256[] memory _entitiesOwnedByPlayer = _getComponent("Owner").getEntitiesWithValue(abi.encode(_playerId));
+        uint256[] memory _entitiesOwnedByPlayer = _getComponent("Owner").getEntitiesWithRawValue(abi.encode(_playerId));
         uint256[] memory _allTroops = _getComponent("CanMove").getEntities();
         _set1.addArray(_entitiesOwnedByPlayer);
         _set2.addArray(_allTroops);
@@ -177,44 +178,44 @@ library Util {
 
     // Set-theoretic intersection
     function _intersection(Set _set1, Set _set2) public returns (uint256[] memory) {
-        Set _searchedItems = new Set();
+        Set _searchedElements = new Set();
 
         uint256[] memory _temp = new uint256[](_set1.size() + _set2.size());
-        uint256 _itemCount = 0;
+        uint256 _resultLength = 0;
 
         // Loop through first set
         for (uint256 i = 0; i < _set1.size(); i++) {
-            uint256 _item = _set1.getItems()[i];
+            uint256 _element = _set1.getAll()[i];
 
-            // Check if item is in second set
-            if (!_searchedItems.has(_item)) {
-                if (_set2.has(_item)) {
-                    _temp[_itemCount] = _item;
-                    _itemCount++;
+            // Check if element is in second set
+            if (!_searchedElements.includes(_element)) {
+                if (_set2.includes(_element)) {
+                    _temp[_resultLength] = _element;
+                    _resultLength++;
                 }
             }
 
-            _searchedItems.add(_item);
+            _searchedElements.add(_element);
         }
 
         // Loop through second set
         for (uint256 i = 0; i < _set2.size(); i++) {
-            uint256 _item = _set2.getItems()[i];
+            uint256 _element = _set2.getAll()[i];
 
-            // Check if item is in first set
-            if (!_searchedItems.has(_item)) {
-                if (_set1.has(_item)) {
-                    _temp[_itemCount] = _item;
-                    _itemCount++;
+            // Check if element is in first set
+            if (!_searchedElements.includes(_element)) {
+                if (_set1.includes(_element)) {
+                    _temp[_resultLength] = _element;
+                    _resultLength++;
                 }
             }
 
-            _searchedItems.add(_item);
+            _searchedElements.add(_element);
         }
 
         // Copy result to array with known length
-        uint256[] memory _result = new uint256[](_itemCount);
-        for (uint256 i = 0; i < _itemCount; i++) {
+        uint256[] memory _result = new uint256[](_resultLength);
+        for (uint256 i = 0; i < _resultLength; i++) {
             _result[i] = _temp[i];
         }
 
@@ -224,21 +225,21 @@ library Util {
     // Set-theoretic difference
     function _difference(Set set1, Set set2) public view returns (uint256[] memory) {
         uint256[] memory _temp = new uint256[](set1.size());
-        uint256 _itemCount = 0;
+        uint256 _resultLength = 0;
 
         // Loop through first set
         for (uint256 i = 0; i < set1.size(); i++) {
-            uint256 _item = set1.getItems()[i];
+            uint256 _element = set1.getAll()[i];
 
-            // Check if item is in second set
-            if (!set2.has(_item)) {
-                _temp[_itemCount] = _item;
-                _itemCount++;
+            // Check if element is in second set
+            if (!set2.includes(_element)) {
+                _temp[_resultLength] = _element;
+                _resultLength++;
             }
         }
 
-        uint256[] memory _result = new uint256[](_itemCount);
-        for (uint256 i = 0; i < _itemCount; i++) {
+        uint256[] memory _result = new uint256[](_resultLength);
+        for (uint256 i = 0; i < _resultLength; i++) {
             _result[i] = _temp[i];
         }
 
@@ -765,10 +766,10 @@ library Util {
         return address(0);
     }
 
-    function _getIndex(uint256 _item, uint256[] memory _arr) internal pure returns (uint256) {
+    function _getIndex(uint256 _element, uint256[] memory _arr) internal pure returns (uint256) {
         uint256 _index = 0;
         while (_index < _arr.length) {
-            if (_arr[_index] == _item) break;
+            if (_arr[_index] == _element) break;
             _index++;
         }
         return _index;

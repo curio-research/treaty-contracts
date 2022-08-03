@@ -47,55 +47,54 @@ contract CurioOS {
     function intersection(uint256 componentID1, uint256 componentID2) public returns (uint256[] memory) {
         // make sure two components are registered and valid
         if (componentID1 > componentID || componentID2 > componentID) {
-            uint256[] memory _temp = new uint256[](0);
-            return _temp;
+            return new uint256[](0);
         }
 
-        Set set1 = components[componentID1];
-        Set set2 = components[componentID2];
+        Set _set1 = components[componentID1];
+        Set _set2 = components[componentID2];
 
-        Set searchedItems = new Set();
+        Set _searchedElements = new Set();
 
         // first initiate an array with a crazy size then copy to right size lol
         // the max size of the sum of the two sets is the sum of the two raw sets themselves
-        uint256[] memory temp = new uint256[](set1.size() + set2.size());
-        uint256 itemCount = 0;
+        uint256[] memory _temp = new uint256[](_set1.size() + _set2.size());
+        uint256 _elementCount = 0;
 
         // loop through first set
-        for (uint256 i = 0; i < set1.size(); i++) {
-            uint256 _item = set1.getItems()[i];
+        for (uint256 i = 0; i < _set1.size(); i++) {
+            uint256 _element = _set1.getAll()[i];
 
-            // check if the item is in the secone set
-            if (!searchedItems.has(_item)) {
-                if (set2.has(_item)) {
-                    temp[itemCount] = _item;
-                    itemCount++;
+            // check if the element is in the secone set
+            if (!_searchedElements.includes(_element)) {
+                if (_set2.includes(_element)) {
+                    _temp[_elementCount] = _element;
+                    _elementCount++;
                 }
             }
 
-            searchedItems.add(_item);
+            _searchedElements.add(_element);
         }
 
         // loop through second set
 
-        for (uint256 i = 0; i < set2.size(); i++) {
-            uint256 _item = set2.getItems()[i];
+        for (uint256 i = 0; i < _set2.size(); i++) {
+            uint256 _element = _set2.getAll()[i];
 
-            // check if the item is in the first set
-            if (!searchedItems.has(_item)) {
-                if (set1.has(_item)) {
-                    temp[itemCount] = _item;
-                    itemCount++;
+            // check if the element is in the first set
+            if (!_searchedElements.includes(_element)) {
+                if (_set1.includes(_element)) {
+                    _temp[_elementCount] = _element;
+                    _elementCount++;
                 }
             }
 
-            searchedItems.add(_item);
+            _searchedElements.add(_element);
         }
 
         // copy the unknown size array to the calculated one
-        uint256[] memory res = new uint256[](itemCount);
-        for (uint256 i = 0; i < itemCount; i++) {
-            res[i] = temp[i];
+        uint256[] memory res = new uint256[](_elementCount);
+        for (uint256 i = 0; i < _elementCount; i++) {
+            res[i] = _temp[i];
         }
         return res;
     }
@@ -104,27 +103,27 @@ contract CurioOS {
     // example: i want all ships that are NOT in a port
 
     function difference(uint256 componentID1, uint256 componentID2) public view returns (uint256[] memory) {
-        Set set1 = components[componentID1];
-        Set set2 = components[componentID2];
+        Set _set1 = components[componentID1];
+        Set _set2 = components[componentID2];
 
-        uint256[] memory temp = new uint256[](set1.size());
-        uint256 itemCount = 0;
+        uint256[] memory _temp = new uint256[](_set1.size());
+        uint256 _elementCount = 0;
 
         // loop through first set
-        for (uint256 i = 0; i < set1.size(); i++) {
-            uint256 _item = set1.getItems()[i];
+        for (uint256 i = 0; i < _set1.size(); i++) {
+            uint256 _element = _set1.getAll()[i];
 
-            // check if the item is in the secone set
+            // check if the element is in the secone set
 
-            if (!set2.has(_item)) {
-                temp[itemCount] = _item;
-                itemCount++;
+            if (!_set2.includes(_element)) {
+                _temp[_elementCount] = _element;
+                _elementCount++;
             }
         }
 
-        uint256[] memory res = new uint256[](itemCount);
-        for (uint256 i = 0; i < itemCount; i++) {
-            res[i] = temp[i];
+        uint256[] memory res = new uint256[](_elementCount);
+        for (uint256 i = 0; i < _elementCount; i++) {
+            res[i] = _temp[i];
         }
         return res;
     }
