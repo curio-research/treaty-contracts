@@ -26,17 +26,20 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
 
 export interface HelperFacetInterface extends utils.Interface {
   functions: {
+    "addEntity()": FunctionFragment;
     "bulkInitializeTiles((uint256,uint256)[])": FunctionFragment;
     "pauseGame()": FunctionFragment;
     "reactivatePlayer(address)": FunctionFragment;
-    "repair((uint256,uint256))": FunctionFragment;
+    "registerComponents(address,string[28])": FunctionFragment;
     "resumeGame()": FunctionFragment;
+    "setComponentValue(string,uint256,bytes)": FunctionFragment;
     "spawnTroop((uint256,uint256),address,uint256)": FunctionFragment;
     "storeEncodedColumnBatches(uint256[][])": FunctionFragment;
     "transferBaseOwnership((uint256,uint256),address)": FunctionFragment;
     "updatePlayerBalances(address)": FunctionFragment;
   };
 
+  encodeFunctionData(functionFragment: "addEntity", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "bulkInitializeTiles",
     values: [PositionStruct[]]
@@ -47,12 +50,16 @@ export interface HelperFacetInterface extends utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "repair",
-    values: [PositionStruct]
+    functionFragment: "registerComponents",
+    values: [string, string[]]
   ): string;
   encodeFunctionData(
     functionFragment: "resumeGame",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setComponentValue",
+    values: [string, BigNumberish, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "spawnTroop",
@@ -71,6 +78,7 @@ export interface HelperFacetInterface extends utils.Interface {
     values: [string]
   ): string;
 
+  decodeFunctionResult(functionFragment: "addEntity", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "bulkInitializeTiles",
     data: BytesLike
@@ -80,8 +88,15 @@ export interface HelperFacetInterface extends utils.Interface {
     functionFragment: "reactivatePlayer",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "repair", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "registerComponents",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "resumeGame", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setComponentValue",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "spawnTroop", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "storeEncodedColumnBatches",
@@ -126,6 +141,10 @@ export interface HelperFacet extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    addEntity(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     bulkInitializeTiles(
       _positions: PositionStruct[],
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -140,12 +159,20 @@ export interface HelperFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    repair(
-      _pos: PositionStruct,
+    registerComponents(
+      _gameAddr: string,
+      _componentNameList: string[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     resumeGame(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setComponentValue(
+      _componentName: string,
+      _entity: BigNumberish,
+      _value: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -173,6 +200,10 @@ export interface HelperFacet extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
+  addEntity(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   bulkInitializeTiles(
     _positions: PositionStruct[],
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -187,12 +218,20 @@ export interface HelperFacet extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  repair(
-    _pos: PositionStruct,
+  registerComponents(
+    _gameAddr: string,
+    _componentNameList: string[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   resumeGame(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setComponentValue(
+    _componentName: string,
+    _entity: BigNumberish,
+    _value: BytesLike,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -220,6 +259,8 @@ export interface HelperFacet extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    addEntity(overrides?: CallOverrides): Promise<BigNumber>;
+
     bulkInitializeTiles(
       _positions: PositionStruct[],
       overrides?: CallOverrides
@@ -229,9 +270,20 @@ export interface HelperFacet extends BaseContract {
 
     reactivatePlayer(_player: string, overrides?: CallOverrides): Promise<void>;
 
-    repair(_pos: PositionStruct, overrides?: CallOverrides): Promise<void>;
+    registerComponents(
+      _gameAddr: string,
+      _componentNameList: string[],
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     resumeGame(overrides?: CallOverrides): Promise<void>;
+
+    setComponentValue(
+      _componentName: string,
+      _entity: BigNumberish,
+      _value: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     spawnTroop(
       _pos: PositionStruct,
@@ -260,6 +312,10 @@ export interface HelperFacet extends BaseContract {
   filters: {};
 
   estimateGas: {
+    addEntity(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     bulkInitializeTiles(
       _positions: PositionStruct[],
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -274,12 +330,20 @@ export interface HelperFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    repair(
-      _pos: PositionStruct,
+    registerComponents(
+      _gameAddr: string,
+      _componentNameList: string[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     resumeGame(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setComponentValue(
+      _componentName: string,
+      _entity: BigNumberish,
+      _value: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -308,6 +372,10 @@ export interface HelperFacet extends BaseContract {
   };
 
   populateTransaction: {
+    addEntity(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     bulkInitializeTiles(
       _positions: PositionStruct[],
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -322,12 +390,20 @@ export interface HelperFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    repair(
-      _pos: PositionStruct,
+    registerComponents(
+      _gameAddr: string,
+      _componentNameList: string[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     resumeGame(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setComponentValue(
+      _componentName: string,
+      _entity: BigNumberish,
+      _value: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

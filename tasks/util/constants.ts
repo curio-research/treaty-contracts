@@ -9,134 +9,108 @@ export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 // GAME CONSTANTS
 // ----------------------------------------------------------
 
-export const LOCAL_MAP_INPUT: MapInput = {
-  width: 30,
-  height: 30,
+export const SMALL_MAP_INPUT: MapInput = {
+  width: 50,
+  height: 50,
   numPorts: 10,
-  numCities: 10,
-  numOilWells: 40,
+  numCities: 30,
+  numOilWells: 15,
+};
+
+export const LARGE_MAP_INPUT: MapInput = {
+  width: 100,
+  height: 100,
+  numPorts: 40,
+  numCities: 120,
+  numOilWells: 60,
 };
 
 export const SANDBOX_MAP_INPUT: MapInput = {
-  width: 70,
-  height: 70,
-  numPorts: 200,
-  numCities: 50,
-  numOilWells: 10,
+  width: 150,
+  height: 150,
+  numPorts: 150,
+  numCities: 150,
+  numOilWells: 120,
 };
-
-export const COMBAT_EFFICIENCY = 50;
-export const BASE_ATTACK_FACTOR = 1;
-export const BASE_DEFENSE_FACTOR = 1;
-export const BASE_MAX_HEALTH = 1;
-export const NUM_INIT_TERRAIN_TYPES = 6;
-export const INIT_BATCH_SIZE = 50;
-export const INIT_PLAYER_GOLD_BALANCE = 30;
-export const INIT_PLAYER_OIL_BALANCE = 30; // FIXME
-export const MAX_BASE_COUNT_PER_PLAYER = 30;
-export const MAX_TROOP_COUNT_PER_PLAYER = 100000;
-export const MAX_PLAYER_COUNT = 20;
-export const DEFAULT_BASE_GOLD_GENERATION_PER_SECOND = 1;
-export const DEFAULT_WELL_OIL_GENERATION_PER_SECOND = 5;
-
-export const TROOP_TYPES: TroopTypeStruct[] = [
-  {
-    name: TROOP_NAME.INFANTRY,
-    isLandTroop: true,
-    maxHealth: 1,
-    damagePerHit: 1,
-    attackFactor: 100,
-    defenseFactor: 100,
-    cargoCapacity: 0,
-    movementCooldown: 0,
-    largeActionCooldown: 0,
-    goldPrice: 6,
-    oilConsumptionPerSecond: 1,
-  },
-  {
-    name: TROOP_NAME.TROOP_TRANSPORT,
-    isLandTroop: false,
-    maxHealth: 3,
-    damagePerHit: 1,
-    attackFactor: 50,
-    defenseFactor: 50,
-    cargoCapacity: 6,
-    movementCooldown: 0,
-    largeActionCooldown: 0,
-    goldPrice: 14,
-    oilConsumptionPerSecond: 1,
-  },
-  {
-    name: TROOP_NAME.DESTROYER,
-    isLandTroop: false,
-    maxHealth: 3,
-    damagePerHit: 1,
-    attackFactor: 100,
-    defenseFactor: 100,
-    cargoCapacity: 0,
-    movementCooldown: 0,
-    largeActionCooldown: 0,
-    goldPrice: 20,
-    oilConsumptionPerSecond: 1,
-  },
-  {
-    name: TROOP_NAME.CRUISER,
-    isLandTroop: false,
-    maxHealth: 8,
-    damagePerHit: 2,
-    attackFactor: 100,
-    defenseFactor: 100,
-    cargoCapacity: 0,
-    movementCooldown: 0,
-    largeActionCooldown: 0,
-    goldPrice: 30,
-    oilConsumptionPerSecond: 1,
-  },
-  {
-    name: TROOP_NAME.BATTLESHIP,
-    isLandTroop: false,
-    maxHealth: 12,
-    damagePerHit: 3,
-    attackFactor: 100,
-    defenseFactor: 100,
-    cargoCapacity: 0,
-    movementCooldown: 0,
-    largeActionCooldown: 0,
-    goldPrice: 50,
-    oilConsumptionPerSecond: 2,
-  },
-];
 
 export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): WorldConstantsStruct => {
   return {
     admin: adminAddr,
     worldWidth: mapInput.width,
     worldHeight: mapInput.height,
-    combatEfficiency: COMBAT_EFFICIENCY,
-    numInitTerrainTypes: NUM_INIT_TERRAIN_TYPES,
-    initBatchSize: INIT_BATCH_SIZE,
-    initPlayerGoldBalance: INIT_PLAYER_GOLD_BALANCE,
-    initPlayerOilBalance: INIT_PLAYER_OIL_BALANCE,
-    maxBaseCountPerPlayer: MAX_BASE_COUNT_PER_PLAYER,
-    maxTroopCountPerPlayer: MAX_TROOP_COUNT_PER_PLAYER,
-    maxPlayerCount: MAX_PLAYER_COUNT,
-    defaultBaseGoldGenerationPerSecond: DEFAULT_BASE_GOLD_GENERATION_PER_SECOND,
-    defaultWellOilGenerationPerSecond: DEFAULT_WELL_OIL_GENERATION_PER_SECOND,
+    combatEfficiency: 50,
+    numInitTerrainTypes: 6,
+    initBatchSize: 50,
+    initPlayerGoldBalance: mapInput.numPorts > 20 ? 2000 : 1000,
+    initPlayerOilBalance: 0,
+    maxBaseCountPerPlayer: 200,
+    maxTroopCountPerPlayer: 100000,
+    maxPlayerCount: mapInput.numPorts,
+    defaultBaseGoldGenerationPerSecond: 1,
+    defaultWellOilGenerationPerSecond: 5,
+    debuffFactor: 80,
   };
 };
+
+export const TROOP_TYPES: TroopTypeStruct[] = [
+  {
+    name: TROOP_NAME.INFANTRY,
+    maxHealth: 200,
+    damagePerHit: 100,
+    attackFactor: 100,
+    defenseFactor: 100,
+    movementCooldown: 5,
+    largeActionCooldown: 0,
+    goldPrice: 400,
+    oilConsumptionPerSecond: 0,
+  },
+  {
+    name: TROOP_NAME.DESTROYER,
+    maxHealth: 800,
+    damagePerHit: 700,
+    attackFactor: 100,
+    defenseFactor: 100,
+    movementCooldown: 2,
+    largeActionCooldown: 0,
+    goldPrice: 800,
+    oilConsumptionPerSecond: 2,
+  },
+  {
+    name: TROOP_NAME.CRUISER,
+    maxHealth: 1500,
+    damagePerHit: 1000,
+    attackFactor: 100,
+    defenseFactor: 100,
+    movementCooldown: 2,
+    largeActionCooldown: 0,
+    goldPrice: 1360,
+    oilConsumptionPerSecond: 5,
+  },
+  {
+    name: TROOP_NAME.BATTLESHIP,
+    maxHealth: 5500,
+    damagePerHit: 3500,
+    attackFactor: 100,
+    defenseFactor: 100,
+    movementCooldown: 2,
+    largeActionCooldown: 0,
+    goldPrice: 4800,
+    oilConsumptionPerSecond: 20,
+  },
+];
 
 // ----------------------------------------------------------
 // RENDERING CONSTANTS
 // ----------------------------------------------------------
 
 export const RENDER_CONSTANTS: RenderInput = {
-  sizeFactor: 10,
+  sizeFactor: 30,
   numLandColors: 5,
   numWaterColors: 2,
-  waterNoiseCutoff: 0.5,
+  waterNoiseCutoff: 0.45,
   colorLowestPercent: 40,
   plateSizeMultiplier: 6,
-  superpositionRatio: [0.7, 0.3],
+  superpositionRatio: [0.6, 0.4],
 };
 
 // ------------------------------------------------

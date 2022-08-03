@@ -19,11 +19,9 @@ enum TERRAIN {
 
 enum TROOP_NAME {
     INFANTRY,
-    TROOP_TRANSPORT,
     DESTROYER,
     CRUISER,
-    BATTLESHIP,
-    FIGHTER_JET
+    BATTLESHIP
 }
 
 struct Position {
@@ -35,13 +33,13 @@ struct Player {
     uint256 initTimestamp;
     bool active;
     uint256 goldBalance;
-    uint256 oilBalance;
     uint256 totalGoldGenerationPerUpdate;
     uint256 totalOilGenerationPerUpdate;
     uint256 totalOilConsumptionPerUpdate;
     uint256 balanceLastUpdated;
     uint256 numOwnedBases;
     uint256 numOwnedTroops;
+    bool isDebuffed;
 }
 
 struct Base {
@@ -59,29 +57,30 @@ struct Tile {
     bool isInitialized;
     bool isInitializedECS;
     TERRAIN terrain;
-    uint256 occupantId; // troopID
+    uint256 occupantId; // armyID
     uint256 baseId;
 }
 
-struct Troop {
+struct Army {
     address owner;
-    uint256 troopTypeId;
+    uint256[] troopIds; // troopIds
     uint256 lastMoved;
     uint256 lastLargeActionTaken;
-    uint256 lastRepaired;
-    uint256 health;
     Position pos;
-    uint256[] cargoTroopIds; // only for Troop Transport
+}
+
+struct Troop {
+    uint256 armyId;
+    uint256 troopTypeId;
+    uint256 health;
 }
 
 struct TroopType {
     TROOP_NAME name;
-    bool isLandTroop;
     uint256 maxHealth;
     uint256 damagePerHit;
     uint256 attackFactor; // in the interval [0, 100]
     uint256 defenseFactor; // in the interval [0, 100]
-    uint256 cargoCapacity;
     uint256 movementCooldown;
     uint256 largeActionCooldown;
     uint256 goldPrice;
@@ -93,8 +92,8 @@ struct WorldConstants {
     uint256 worldWidth;
     uint256 worldHeight;
     uint256 combatEfficiency; // in the interval [0, 100]
-    uint256 numInitTerrainTypes; // default is 5
-    uint256 initBatchSize; // default is 100 if numInitTerrainTypes = 5
+    uint256 numInitTerrainTypes; // default is 6
+    uint256 initBatchSize; // default is 50 if numInitTerrainTypes = 6
     uint256 initPlayerGoldBalance;
     uint256 initPlayerOilBalance;
     uint256 maxBaseCountPerPlayer;
@@ -102,6 +101,7 @@ struct WorldConstants {
     uint256 maxPlayerCount;
     uint256 defaultBaseGoldGenerationPerSecond;
     uint256 defaultWellOilGenerationPerSecond;
+    uint256 debuffFactor; // in the interval [0, 100]. 100 means losing everything, 0 means debuff affects nothing
 }
 
 struct GameState {
@@ -110,13 +110,17 @@ struct GameState {
     WorldConstants worldConstants;
     address[] players;
     mapping(address => Player) playerMap;
+    mapping(address => uint256[]) playerTroopIdMap;
     Tile[5000][5000] map;
     uint256[] baseIds;
     uint256 baseNonce;
     mapping(uint256 => Base) baseIdMap;
     uint256[] troopIds;
+    uint256[] armyIds;
     uint256 troopNonce;
+    uint256 armyNonce;
     mapping(uint256 => Troop) troopIdMap;
+    mapping(uint256 => Army) armyIdMap;
     uint256[] troopTypeIds;
     mapping(uint256 => TroopType) troopTypeIdMap;
     uint256[][] encodedColumnBatches;

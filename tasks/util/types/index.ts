@@ -9,11 +9,9 @@ export enum TILE_TYPE {
 
 export enum TROOP_NAME {
   INFANTRY,
-  TROOP_TRANSPORT,
   DESTROYER,
   CRUISER,
   BATTLESHIP,
-  FIGHTER_JET,
 }
 
 export interface MapInput {

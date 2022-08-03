@@ -41,7 +41,7 @@ export const encodeTileMap = (tileMap: TILE_TYPE[][], numInitTerrainTypes: numbe
     for (k = 0; k < numBatchPerCol; k++) {
       tempBatch = BigInt(0);
       for (let y = 0; y < batchSize; y++) {
-        tempBatch += BigInt(tileMap[x][y]) * BigInt(numInitTerrainTypes) ** BigInt(y);
+        tempBatch += BigInt(tileMap[x][k * batchSize + y]) * BigInt(numInitTerrainTypes) ** BigInt(y);
         if (tempBatch >= MAX_UINT256) throw new Error('Encoding exceeds uint256 max size');
       }
       encodedCol.push(tempBatch.toString());
@@ -49,7 +49,7 @@ export const encodeTileMap = (tileMap: TILE_TYPE[][], numInitTerrainTypes: numbe
     if (lastBatchSize > 0) {
       tempBatch = BigInt(0);
       for (let y = 0; y < lastBatchSize; y++) {
-        tempBatch += BigInt(tileMap[x][y]) * BigInt(numInitTerrainTypes) ** BigInt(y);
+        tempBatch += BigInt(tileMap[x][k * batchSize + y]) * BigInt(numInitTerrainTypes) ** BigInt(y);
         if (tempBatch >= MAX_UINT256) throw new Error('Encoding exceeds uint256 max size');
       }
       encodedCol.push(tempBatch.toString());
@@ -296,7 +296,7 @@ export const placePortsAndCities = (colorMap: number[][][], numPorts: number, nu
   // this ensures that there's at least one port on each island!
   for (let i = 1; i < islandID + 1; i++) {
     const positionsByIslandID = islandIdToMapping.get(i);
-    if (positionsByIslandID && numPorts > 0) {
+    if (positionsByIslandID) {
       // Note: remove the `numPorts > 0` part to generate a port on every landmass regardless of specified port number
       const randomIslandTilePosition = positionsByIslandID[Math.floor(Math.random() * positionsByIslandID.length)];
       tileMap[randomIslandTilePosition.x][randomIslandTilePosition.y] = TILE_TYPE.PORT;
@@ -331,16 +331,17 @@ export const placePortsAndCities = (colorMap: number[][][], numPorts: number, nu
   }
 
   while (numOilWells > 0) {
-    const x = Math.floor(Math.random() * tileMap.length);
-    const y = Math.floor(Math.random() * tileMap[0].length);
+    // place oil wells inland
+    if (!inlandTiles || inlandTiles.length === 0) break;
 
-    const tileType = tileMap[x][y];
+    const inlandTileIdx = Math.floor(Math.random() * inlandTiles.length);
+    const inlandTile = inlandTiles[inlandTileIdx];
 
-    if (tileType === TILE_TYPE.PORT || tileType === TILE_TYPE.CITY || tileType === TILE_TYPE.WATER || tileType === TILE_TYPE.INLAND) continue;
+    if (tileMap[inlandTile.x][inlandTile.y] !== TILE_TYPE.INLAND) continue;
 
-    tileMap[x][y] = TILE_TYPE.OIL_WELL;
+    tileMap[inlandTile.x][inlandTile.y] = TILE_TYPE.OIL_WELL;
 
-    oilWellTiles.push({ x, y });
+    oilWellTiles.push(inlandTile);
     numOilWells--;
   }
 

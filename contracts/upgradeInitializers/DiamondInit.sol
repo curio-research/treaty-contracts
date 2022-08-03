@@ -53,6 +53,9 @@ contract DiamondInit is UseStorage {
         // start troop nonce at 1. 0 denotes no troops
         gs().troopNonce++;
 
+        // start army nonce at 1. 0 denotes no troops
+        gs().armyNonce++;
+
         // start base nonce at 1. 0 denotes no base
         gs().baseNonce++;
 

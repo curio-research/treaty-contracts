@@ -13,6 +13,14 @@ import * as Contracts from ".";
 declare module "hardhat/types/runtime" {
   interface HardhatEthersHelpers extends HardhatEthersHelpersBase {
     getContractFactory(
+      name: "Component",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Component__factory>;
+    getContractFactory(
+      name: "CurioOS",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.CurioOS__factory>;
+    getContractFactory(
       name: "Diamond",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Diamond__factory>;
@@ -57,13 +65,9 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC173__factory>;
     getContractFactory(
-      name: "Component",
+      name: "EngineModules",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Component__factory>;
-    getContractFactory(
-      name: "CurioOS",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.CurioOS__factory>;
+    ): Promise<Contracts.EngineModules__factory>;
     getContractFactory(
       name: "Util",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -81,10 +85,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Set__factory>;
     getContractFactory(
-      name: "World",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.World__factory>;
-    getContractFactory(
       name: "DiamondInit",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.DiamondInit__factory>;
@@ -93,6 +93,16 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Curio__factory>;
 
+    getContractAt(
+      name: "Component",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Component>;
+    getContractAt(
+      name: "CurioOS",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.CurioOS>;
     getContractAt(
       name: "Diamond",
       address: string,
@@ -149,15 +159,10 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IERC173>;
     getContractAt(
-      name: "Component",
+      name: "EngineModules",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.Component>;
-    getContractAt(
-      name: "CurioOS",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.CurioOS>;
+    ): Promise<Contracts.EngineModules>;
     getContractAt(
       name: "Util",
       address: string,
@@ -178,11 +183,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Set>;
-    getContractAt(
-      name: "World",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.World>;
     getContractAt(
       name: "DiamondInit",
       address: string,

@@ -81,138 +81,141 @@ export interface MapSet extends BaseContract {
 
   functions: {
     add(
-      setKey: BigNumberish,
-      item: BigNumberish,
+      _setKey: BigNumberish,
+      _item: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     getItems(
-      setKey: BigNumberish,
+      _setKey: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
 
     has(
-      setKey: BigNumberish,
-      item: BigNumberish,
+      _setKey: BigNumberish,
+      _item: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     remove(
-      setKey: BigNumberish,
-      item: BigNumberish,
+      _setKey: BigNumberish,
+      _item: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    size(setKey: BigNumberish, overrides?: CallOverrides): Promise<[BigNumber]>;
+    size(
+      _setKey: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
   };
 
   add(
-    setKey: BigNumberish,
-    item: BigNumberish,
+    _setKey: BigNumberish,
+    _item: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   getItems(
-    setKey: BigNumberish,
+    _setKey: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
   has(
-    setKey: BigNumberish,
-    item: BigNumberish,
+    _setKey: BigNumberish,
+    _item: BigNumberish,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   remove(
-    setKey: BigNumberish,
-    item: BigNumberish,
+    _setKey: BigNumberish,
+    _item: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  size(setKey: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+  size(_setKey: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
   callStatic: {
     add(
-      setKey: BigNumberish,
-      item: BigNumberish,
+      _setKey: BigNumberish,
+      _item: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     getItems(
-      setKey: BigNumberish,
+      _setKey: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
     has(
-      setKey: BigNumberish,
-      item: BigNumberish,
+      _setKey: BigNumberish,
+      _item: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     remove(
-      setKey: BigNumberish,
-      item: BigNumberish,
+      _setKey: BigNumberish,
+      _item: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    size(setKey: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+    size(_setKey: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   filters: {};
 
   estimateGas: {
     add(
-      setKey: BigNumberish,
-      item: BigNumberish,
+      _setKey: BigNumberish,
+      _item: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     getItems(
-      setKey: BigNumberish,
+      _setKey: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     has(
-      setKey: BigNumberish,
-      item: BigNumberish,
+      _setKey: BigNumberish,
+      _item: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     remove(
-      setKey: BigNumberish,
-      item: BigNumberish,
+      _setKey: BigNumberish,
+      _item: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    size(setKey: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+    size(_setKey: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
     add(
-      setKey: BigNumberish,
-      item: BigNumberish,
+      _setKey: BigNumberish,
+      _item: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     getItems(
-      setKey: BigNumberish,
+      _setKey: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     has(
-      setKey: BigNumberish,
-      item: BigNumberish,
+      _setKey: BigNumberish,
+      _item: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     remove(
-      setKey: BigNumberish,
-      item: BigNumberish,
+      _setKey: BigNumberish,
+      _item: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     size(
-      setKey: BigNumberish,
+      _setKey: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
