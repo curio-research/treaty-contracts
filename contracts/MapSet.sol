@@ -1,44 +1,46 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.4;
 
+/// Implementation of a mathematical set in Solidity
+
 contract MapSet {
-    mapping(uint256 => uint256[]) private items;
-    mapping(uint256 => mapping(uint256 => uint256)) private itemToIndex;
+    mapping(uint256 => uint256[]) private elements;
+    mapping(uint256 => mapping(uint256 => uint256)) private elementIndexMap;
 
-    function add(uint256 _setKey, uint256 _item) public {
-        if (has(_setKey, _item)) return;
-
-        itemToIndex[_setKey][_item] = items[_setKey].length;
-        items[_setKey].push(_item);
+    function getAll(uint256 _setKey) public view returns (uint256[] memory) {
+        return elements[_setKey];
     }
 
-    function remove(uint256 _setKey, uint256 _item) public {
-        if (!has(_setKey, _item)) return;
+    function add(uint256 _setKey, uint256 _element) public {
+        if (includes(_setKey, _element)) return;
 
-        // Copy the last item to the given item's index
-        items[_setKey][itemToIndex[_setKey][_item]] = items[_setKey][items[_setKey].length - 1];
-
-        // Update the moved item's stored index to the new index
-        itemToIndex[_setKey][items[_setKey][itemToIndex[_setKey][_item]]] = itemToIndex[_setKey][_item];
-
-        // Remove the given item's stored index
-        delete itemToIndex[_setKey][_item];
-
-        // Remove the last item
-        items[_setKey].pop();
+        elements[_setKey].push(_element);
+        elementIndexMap[_setKey][_element] = elements[_setKey].length;
     }
 
-    function has(uint256 _setKey, uint256 _item) public view returns (bool) {
-        if (items[_setKey].length == 0) return false;
-        if (itemToIndex[_setKey][_item] == 0) return items[_setKey][0] == _item;
-        return itemToIndex[_setKey][_item] != 0;
+    function remove(uint256 _setKey, uint256 _element) public {
+        if (!includes(_setKey, _element)) return;
+
+        // Copy the last element to the given element's index
+        elements[_setKey][elementIndexMap[_setKey][_element]] = elements[_setKey][elements[_setKey].length - 1];
+
+        // Update the moved element's stored index to the new index
+        elementIndexMap[_setKey][elements[_setKey][elementIndexMap[_setKey][_element]]] = elementIndexMap[_setKey][_element];
+
+        // Remove the given element's stored index
+        delete elementIndexMap[_setKey][_element];
+
+        // Remove the last element
+        elements[_setKey].pop();
     }
 
-    function getItems(uint256 _setKey) public view returns (uint256[] memory) {
-        return items[_setKey];
+    function includes(uint256 _setKey, uint256 _element) public view returns (bool) {
+        if (elements[_setKey].length == 0) return false;
+        if (elementIndexMap[_setKey][_element] == 0) return elements[_setKey][0] == _element;
+        return elementIndexMap[_setKey][_element] != 0;
     }
 
     function size(uint256 _setKey) public view returns (uint256) {
-        return items[_setKey].length;
+        return elements[_setKey].length;
     }
 }

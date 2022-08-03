@@ -60,8 +60,8 @@ contract Component {
         // World(world).registerComponentValueRemoved(address(this), entity);
     }
 
-    function has(uint256 _entity) public view returns (bool) {
-        return entities.has(_entity);
+    function includes(uint256 _entity) public view returns (bool) {
+        return entities.includes(_entity);
     }
 
     function getRawValue(uint256 _entity) public view returns (bytes memory) {
@@ -70,11 +70,11 @@ contract Component {
     }
 
     function getEntities() public view returns (uint256[] memory) {
-        return entities.getItems();
+        return entities.getAll();
     }
 
     function getEntitiesWithValue(bytes memory _value) public view returns (uint256[] memory) {
         // Return all entities with this component value
-        return valueToEntities.getItems(uint256(keccak256(_value)));
+        return valueToEntities.getAll(uint256(keccak256(_value)));
     }
 }
