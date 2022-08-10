@@ -64,7 +64,7 @@ contract CurioOS {
         for (uint256 i = 0; i < _set1.size(); i++) {
             uint256 _element = _set1.getAll()[i];
 
-            // check if the element is in the secone set
+            // check if the element is in the second set
             if (!_searchedElements.includes(_element)) {
                 if (_set2.includes(_element)) {
                     _temp[_elementCount] = _element;
@@ -99,9 +99,6 @@ contract CurioOS {
         return res;
     }
 
-    // definitino of difference: set of all elements of A that are not elements of B
-    // example: i want all ships that are NOT in a port
-
     function difference(uint256 componentID1, uint256 componentID2) public view returns (uint256[] memory) {
         Set _set1 = components[componentID1];
         Set _set2 = components[componentID2];
@@ -126,43 +123,5 @@ contract CurioOS {
             res[i] = _temp[i];
         }
         return res;
-    }
-
-    function union(uint256 componentID1, uint256 componentID2) public view returns (uint256[] memory) {
-        // TODO: implement
-    }
-
-    //////////////////////////////////////////////////////////////////////
-
-    function moveInBay(uint256 _shipID) public {
-        // create new component called "Sharpness"
-
-        // sharpness is component # 0
-        // assume shipID = entityID
-
-        Set sharpnessComponent = components[0];
-        sharpnessComponent.add(_shipID);
-    }
-
-    function upgradeShips() public {
-        // Set sharpnessComponent = components[0];
-
-        // get all entityIDs with sharpenss aka component 0
-        uint256[] memory troopIDsWithSharpness = intersection(0, 0);
-
-        // Now you only loop over relevant troopIDs, as opposed to all troop IDs!
-        for (uint256 i = 0; i < troopIDsWithSharpness.length; i++) {
-            // apply updates to each troop ...
-            // ideally this should be variable too?
-        }
-
-        // get everything with health
-        // loop through, check
-
-        // component Health {
-
-        // }
-
-        // i need to get the health of entityID 1
     }
 }
