@@ -212,8 +212,7 @@ contract EngineFacet is UseStorage {
         if (!Util._getTileAt(_targetPosition).isInitializedECS) Util._initializeTileECS(_targetPosition);
 
         // 5. Verify that target position is different from starting position and within movement range
-        Component _positionComponent = Util._getComponent("Position");
-        Position memory _position = abi.decode(_positionComponent.getRawValue(_troopId), (Position));
+        Position memory _position = abi.decode(Util._getComponent("Position").getRawValue(_troopId), (Position));
         require(!Util._samePos(_position, _targetPosition), "CURIO: Already at destination");
         require(Util._withinDist(_position, _targetPosition, 1), "CURIO: You can only dispatch troop to the near tile");
 
@@ -225,7 +224,7 @@ contract EngineFacet is UseStorage {
         // ... March logic ignored
 
         // Final. Set new position
-        _positionComponent.set(_troopId, abi.encode(_targetPosition));
+        Util._setComponentValue("Position", _troopId, abi.encode(_targetPosition));
     }
 
     // TODO: ECS events
@@ -286,7 +285,7 @@ contract EngineFacet is UseStorage {
         require(_playerGoldBalance > _troopGoldPrice, "CURIO: Insufficient gold balance");
 
         // 10. Set new player gold balance
-        _goldComponent.set(_playerId, abi.encode(_playerGoldBalance - _troopGoldPrice));
+        Util._setComponentValue("Gold", _playerId, abi.encode(_playerGoldBalance - _troopGoldPrice));
 
         // 11. Add troop
         return Util._addTroopEntity(_playerId, _position, _troopTemplateId);
@@ -357,13 +356,12 @@ contract EngineFacet is UseStorage {
         }
 
         // Double attack factor for all such navies
-        Component _attackFactorComponent = Util._getComponent("AttackFactor");
         uint256 _troopId;
         uint256 _attackFactor;
         for (uint256 i = 0; i < _naviesWithFivePlusHealth.length; i++) {
             _troopId = _naviesWithFivePlusHealth[i];
-            _attackFactor = abi.decode(_attackFactorComponent.getRawValue(_troopId), (uint256));
-            _attackFactorComponent.set(_troopId, abi.encode(_attackFactor * 2));
+            _attackFactor = abi.decode(Util._getComponent("AttackFactor").getRawValue(_troopId), (uint256));
+            Util._setComponentValue("AttackFactor", _troopId, abi.encode(_attackFactor * 2));
         }
     }
 
@@ -379,13 +377,11 @@ contract EngineFacet is UseStorage {
         uint256[] memory _playerBases = Util._intersection(_set1, _set2);
 
         // Update desired properties
-        Component _canMoveComponent = Util._getComponent("CanMove");
-        Component _goldRatePositiveComponent = Util._getComponent("GoldRatePositive");
         uint256 _baseId;
         for (uint256 i = 0; i < _playerBases.length; i++) {
             _baseId = _playerBases[i];
-            _canMoveComponent.set(_baseId, abi.encode(true));
-            _goldRatePositiveComponent.remove(_baseId);
+            Util._setComponentValue("CanMove", _baseId, abi.encode(true));
+            Util._removeComponentValue("GoldRatePositive", _baseId);
         }
     }
 

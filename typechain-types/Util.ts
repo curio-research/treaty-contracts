@@ -498,9 +498,13 @@ export interface UtilInterface extends utils.Interface {
     "ArmyDeath(address,uint256)": EventFragment;
     "AttackedArmy(address,uint256,tuple,tuple[],uint256,tuple,tuple[])": EventFragment;
     "BaseInfo(address,uint256,tuple)": EventFragment;
+    "ComponentValueRemoved(string,uint256)": EventFragment;
+    "ComponentValueSet(string,uint256,bytes)": EventFragment;
     "GamePaused()": EventFragment;
     "GameResumed()": EventFragment;
     "MovedArmy(address,uint256,tuple,uint256,tuple,tuple,uint256,tuple)": EventFragment;
+    "NewComponent(string)": EventFragment;
+    "NewEntity(uint256)": EventFragment;
     "NewPlayer(address,tuple)": EventFragment;
     "NewTroop(address,uint256,tuple,uint256,tuple)": EventFragment;
     "PlayerInfo(address,tuple)": EventFragment;
@@ -511,9 +515,13 @@ export interface UtilInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "ArmyDeath"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "AttackedArmy"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BaseInfo"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ComponentValueRemoved"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ComponentValueSet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "GamePaused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "GameResumed"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "MovedArmy"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "NewComponent"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "NewEntity"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NewPlayer"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NewTroop"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "PlayerInfo"): EventFragment;
@@ -558,6 +566,22 @@ export type BaseInfoEvent = TypedEvent<
 
 export type BaseInfoEventFilter = TypedEventFilter<BaseInfoEvent>;
 
+export type ComponentValueRemovedEvent = TypedEvent<
+  [string, BigNumber],
+  { _componentName: string; _entity: BigNumber }
+>;
+
+export type ComponentValueRemovedEventFilter =
+  TypedEventFilter<ComponentValueRemovedEvent>;
+
+export type ComponentValueSetEvent = TypedEvent<
+  [string, BigNumber, string],
+  { _componentName: string; _entity: BigNumber; _rawValue: string }
+>;
+
+export type ComponentValueSetEventFilter =
+  TypedEventFilter<ComponentValueSetEvent>;
+
 export type GamePausedEvent = TypedEvent<[], {}>;
 
 export type GamePausedEventFilter = TypedEventFilter<GamePausedEvent>;
@@ -590,6 +614,14 @@ export type MovedArmyEvent = TypedEvent<
 >;
 
 export type MovedArmyEventFilter = TypedEventFilter<MovedArmyEvent>;
+
+export type NewComponentEvent = TypedEvent<[string], { _name: string }>;
+
+export type NewComponentEventFilter = TypedEventFilter<NewComponentEvent>;
+
+export type NewEntityEvent = TypedEvent<[BigNumber], { _entity: BigNumber }>;
+
+export type NewEntityEventFilter = TypedEventFilter<NewEntityEvent>;
 
 export type NewPlayerEvent = TypedEvent<
   [string, PositionStructOutput],
@@ -1296,6 +1328,26 @@ export interface Util extends BaseContract {
     ): BaseInfoEventFilter;
     BaseInfo(_player?: null, _baseId?: null, _Base?: null): BaseInfoEventFilter;
 
+    "ComponentValueRemoved(string,uint256)"(
+      _componentName?: null,
+      _entity?: null
+    ): ComponentValueRemovedEventFilter;
+    ComponentValueRemoved(
+      _componentName?: null,
+      _entity?: null
+    ): ComponentValueRemovedEventFilter;
+
+    "ComponentValueSet(string,uint256,bytes)"(
+      _componentName?: null,
+      _entity?: null,
+      _rawValue?: null
+    ): ComponentValueSetEventFilter;
+    ComponentValueSet(
+      _componentName?: null,
+      _entity?: null,
+      _rawValue?: null
+    ): ComponentValueSetEventFilter;
+
     "GamePaused()"(): GamePausedEventFilter;
     GamePaused(): GamePausedEventFilter;
 
@@ -1322,6 +1374,12 @@ export interface Util extends BaseContract {
       _targetTileArmyId?: null,
       _targetTileArmy?: null
     ): MovedArmyEventFilter;
+
+    "NewComponent(string)"(_name?: null): NewComponentEventFilter;
+    NewComponent(_name?: null): NewComponentEventFilter;
+
+    "NewEntity(uint256)"(_entity?: null): NewEntityEventFilter;
+    NewEntity(_entity?: null): NewEntityEventFilter;
 
     "NewPlayer(address,tuple)"(
       _player?: null,

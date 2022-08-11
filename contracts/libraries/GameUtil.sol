@@ -40,6 +40,11 @@ library Util {
     // ECS UTIL FUNCTIONS (temp)
     // ----------------------------------------------------------
 
+    event NewEntity(uint256 _entity);
+    event NewComponent(string _name);
+    event ComponentValueSet(string _componentName, uint256 _entity, bytes _rawValue);
+    event ComponentValueRemoved(string _componentName, uint256 _entity);
+
     function _initializeTileECS(Position memory _position) public {
         WorldConstants memory _worldConstants = gs().worldConstants;
         uint256 _batchSize = _worldConstants.initBatchSize;
@@ -153,17 +158,26 @@ library Util {
         Set _entities = Set(gs().entities);
         uint256 _newEntity = _entities.size() + 1;
         _entities.add(_newEntity);
+
+        emit NewEntity(_newEntity);
         return _newEntity;
     }
 
-    // FIXME: not too useful, can remove
+    // Question: Right now, all events regarding component set and removal are emitted in game contracts. Is this good?
     function _setComponentValue(
         string memory _componentName,
         uint256 _entity,
-        bytes memory _value
+        bytes memory _rawValue
     ) public {
-        _getComponent(_componentName);
-        _getComponent(_componentName).set(_entity, _value);
+        _getComponent(_componentName).set(_entity, _rawValue);
+
+        emit ComponentValueSet(_componentName, _entity, _rawValue);
+    }
+
+    function _removeComponentValue(string memory _componentName, uint256 _entity) public {
+        _getComponent(_componentName).remove(_entity);
+
+        emit ComponentValueRemoved(_componentName, _entity);
     }
 
     function _getPlayerTroopCount(uint256 _playerId) public returns (uint256) {
