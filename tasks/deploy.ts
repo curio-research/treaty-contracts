@@ -15,6 +15,7 @@ import { encodeTileMap, generateGameMaps } from './util/mapHelper';
 import { GameConfig } from '../api/types';
 import { MEDITERRAINEAN_MAP_CONFIG, testingMapConfig } from './util/mapLibrary';
 import { WorldConstantsStruct } from '../typechain-types/Curio';
+import { ethers } from 'ethers';
 
 /**
  * Deploy game instance and port configs to frontend.
@@ -34,6 +35,7 @@ task('deploy', 'deploy contracts')
   .addOptionalParam('name', 'Name of fixed map', 'Hello, World!')
   .addFlag('savemap', 'Save map to local') // default is not to save
   .addFlag('nocooldown', 'No cooldowns!') // default is to have cooldown
+  .addFlag('ecs', 'ECS') // default is no ECS
   .setAction(async (args: any, hre: HardhatRuntimeEnvironment) => {
     try {
       // Compile contracts
@@ -51,6 +53,7 @@ task('deploy', 'deploy contracts')
       let mapName: string = args.name;
       const saveMap: boolean = args.savemap;
       const noCooldown: boolean = args.nocooldown;
+      const ecs: boolean = args.ecs;
 
       // Check connection with faucet to make sure deployment will post
       if (!isDev) {
@@ -154,26 +157,102 @@ task('deploy', 'deploy contracts')
         let y: number;
 
         if (fixMap && mapName === 'testingMap') {
-          // Primary setting for client development
-          const player1Pos = { x: 2, y: 4 };
-          const player2Pos = { x: 4, y: 2 };
-          const player1InfantryPos = { x: 3, y: 3 };
-          const player1InfantryPos2 = { x: 2, y: 3 };
-          const player1InfantryPos3 = { x: 1, y: 3 };
-          const player2InfantryPos = { x: 3, y: 2 };
-          const player2InfantryPos2 = { x: 2, y: 2 };
-          const player2InfantryPos3 = { x: 1, y: 2 };
-          const player2DestroyerPos = { x: 5, y: 4 };
+          if (ecs) {
+            printDivider();
+            console.log('☢️ DANGER: EXPERIMENTING WITH ECS');
 
-          await (await diamond.connect(player1).initializePlayer(player1Pos)).wait();
-          await (await diamond.connect(player2).initializePlayer(player2Pos)).wait();
-          await (await diamond.connect(player1).spawnTroop(player1InfantryPos, player1.address, infantryTroopTypeId)).wait();
-          await (await diamond.connect(player1).spawnTroop(player1InfantryPos2, player1.address, infantryTroopTypeId)).wait();
-          await (await diamond.connect(player1).spawnTroop(player1InfantryPos3, player1.address, infantryTroopTypeId)).wait();
-          await (await diamond.connect(player1).spawnTroop(player2InfantryPos, player2.address, infantryTroopTypeId)).wait();
-          await (await diamond.connect(player1).spawnTroop(player2InfantryPos2, player2.address, infantryTroopTypeId)).wait();
-          await (await diamond.connect(player1).spawnTroop(player2InfantryPos3, player2.address, infantryTroopTypeId)).wait();
-          await (await diamond.connect(player1).spawnTroop(player2DestroyerPos, player2.address, destroyerTroopTypeId)).wait();
+            const player1Pos = { x: 2, y: 4 };
+            const player2Pos = { x: 4, y: 2 };
+            const abiCoder = new ethers.utils.AbiCoder();
+            let ecsTime = performance.now();
+
+            // List of all component names
+            const componentNames = [
+              'Name',
+              'IsActive',
+              'Position',
+              'Owner',
+              'CanMove',
+              'CanAttack',
+              'CanCapture',
+              'CanPurchase',
+              'Health',
+              'Gold',
+              'GoldPerSecond',
+              'GoldRatePositive',
+              'Oil',
+              'OilPerSecond',
+              'OilRatePositive',
+              'InitTimestamp',
+              'BalanceLastUpdated',
+              'LastMoved',
+              'LastLargeActionTaken',
+              'LastRepaired',
+              'IsLandTroop',
+              'MaxHealth',
+              'DamagePerHit',
+              'AttackFactor',
+              'DefenseFactor',
+              'MovementCooldown',
+              'LargeActionCooldown',
+              'CargoCapacity',
+            ];
+
+            // Register components
+            await (await diamond.registerComponents(diamond.address, componentNames)).wait();
+            console.log(`✦ components registered after ${performance.now() - ecsTime} ms`);
+            ecsTime = performance.now();
+
+            // Initialize a troop template (destroyer)
+            const destroyerTemplateId = 1;
+            await (await diamond.addEntity()).wait();
+            await (await diamond.setComponentValue('IsActive', destroyerTemplateId, abiCoder.encode(['bool'], [true]))).wait();
+            await (await diamond.setComponentValue('CanMove', destroyerTemplateId, abiCoder.encode(['bool'], [true]))).wait();
+            await (await diamond.setComponentValue('CanAttack', destroyerTemplateId, abiCoder.encode(['bool'], [true]))).wait();
+            await (await diamond.setComponentValue('Name', destroyerTemplateId, abiCoder.encode(['string'], ['Destroyer']))).wait();
+            await (await diamond.setComponentValue('MaxHealth', destroyerTemplateId, abiCoder.encode(['uint256'], [3]))).wait();
+            await (await diamond.setComponentValue('DamagePerHit', destroyerTemplateId, abiCoder.encode(['uint256'], [1]))).wait();
+            await (await diamond.setComponentValue('AttackFactor', destroyerTemplateId, abiCoder.encode(['uint256'], [100]))).wait();
+            await (await diamond.setComponentValue('DefenseFactor', destroyerTemplateId, abiCoder.encode(['uint256'], [100]))).wait();
+            await (await diamond.setComponentValue('MovementCooldown', destroyerTemplateId, abiCoder.encode(['uint256'], [1]))).wait();
+            await (await diamond.setComponentValue('LargeActionCooldown', destroyerTemplateId, abiCoder.encode(['uint256'], [1]))).wait();
+            await (await diamond.setComponentValue('Gold', destroyerTemplateId, abiCoder.encode(['uint256'], [19]))).wait();
+            await (await diamond.setComponentValue('OilPerSecond', destroyerTemplateId, abiCoder.encode(['uint256'], [1]))).wait();
+            console.log(`✦ troop template created after ${performance.now() - ecsTime} ms`);
+            ecsTime = performance.now();
+
+            // Initialize players
+            await (await diamond.connect(player1).initializePlayerECS(player1Pos, 'Alice')).wait();
+            await (await diamond.connect(player2).initializePlayerECS(player2Pos, 'Bob')).wait();
+            console.log(`✦ players initialized after ${performance.now() - ecsTime} ms`);
+            ecsTime = performance.now();
+
+            // Purchase a destroyer for player1
+            await (await diamond.connect(player1).purchaseTroopECS(player1Pos, destroyerTemplateId)).wait();
+            console.log(`✦ destroyer purchased after ${performance.now() - ecsTime} ms`);
+            ecsTime = performance.now();
+          } else {
+            // Primary setting for client development
+            const player1Pos = { x: 2, y: 4 };
+            const player2Pos = { x: 4, y: 2 };
+            const player1InfantryPos = { x: 3, y: 3 };
+            const player1InfantryPos2 = { x: 2, y: 3 };
+            const player1InfantryPos3 = { x: 1, y: 3 };
+            const player2InfantryPos = { x: 3, y: 2 };
+            const player2InfantryPos2 = { x: 2, y: 2 };
+            const player2InfantryPos3 = { x: 1, y: 2 };
+            const player2DestroyerPos = { x: 5, y: 4 };
+
+            await (await diamond.connect(player1).initializePlayer(player1Pos)).wait();
+            await (await diamond.connect(player2).initializePlayer(player2Pos)).wait();
+            await (await diamond.connect(player1).spawnTroop(player1InfantryPos, player1.address, infantryTroopTypeId)).wait();
+            await (await diamond.connect(player1).spawnTroop(player1InfantryPos2, player1.address, infantryTroopTypeId)).wait();
+            await (await diamond.connect(player1).spawnTroop(player1InfantryPos3, player1.address, infantryTroopTypeId)).wait();
+            await (await diamond.connect(player1).spawnTroop(player2InfantryPos, player2.address, infantryTroopTypeId)).wait();
+            await (await diamond.connect(player1).spawnTroop(player2InfantryPos2, player2.address, infantryTroopTypeId)).wait();
+            await (await diamond.connect(player1).spawnTroop(player2InfantryPos3, player2.address, infantryTroopTypeId)).wait();
+            await (await diamond.connect(player1).spawnTroop(player2DestroyerPos, player2.address, destroyerTroopTypeId)).wait();
+          }
         } else {
           // Primary setting for local playtesting
           const mapWidth = tileMap.length;
