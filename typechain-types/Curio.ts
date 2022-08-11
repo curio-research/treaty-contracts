@@ -266,6 +266,7 @@ export interface CurioInterface extends utils.Interface {
     "initializePlayerECS((uint256,uint256),string)": FunctionFragment;
     "march(uint256,(uint256,uint256))": FunctionFragment;
     "moveTroop(uint256,(uint256,uint256))": FunctionFragment;
+    "moveTroopECS(uint256,(uint256,uint256))": FunctionFragment;
     "purchaseTroop((uint256,uint256),uint256)": FunctionFragment;
     "purchaseTroopECS((uint256,uint256),uint256)": FunctionFragment;
     "sampleBuffPolicy()": FunctionFragment;
@@ -384,6 +385,10 @@ export interface CurioInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "moveTroop",
+    values: [BigNumberish, PositionStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "moveTroopECS",
     values: [BigNumberish, PositionStruct]
   ): string;
   encodeFunctionData(
@@ -709,6 +714,10 @@ export interface CurioInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "march", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "moveTroop", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "moveTroopECS",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "purchaseTroop",
     data: BytesLike
@@ -1192,6 +1201,12 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    moveTroopECS(
+      _troopId: BigNumberish,
+      _targetPosition: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     purchaseTroop(
       _pos: PositionStruct,
       _troopTypeId: BigNumberish,
@@ -1611,6 +1626,12 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  moveTroopECS(
+    _troopId: BigNumberish,
+    _targetPosition: PositionStruct,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   purchaseTroop(
     _pos: PositionStruct,
     _troopTypeId: BigNumberish,
@@ -2024,6 +2045,12 @@ export interface Curio extends BaseContract {
     moveTroop(
       _troopId: BigNumberish,
       _targetPos: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    moveTroopECS(
+      _troopId: BigNumberish,
+      _targetPosition: PositionStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -2551,6 +2578,12 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    moveTroopECS(
+      _troopId: BigNumberish,
+      _targetPosition: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     purchaseTroop(
       _pos: PositionStruct,
       _troopTypeId: BigNumberish,
@@ -2954,6 +2987,12 @@ export interface Curio extends BaseContract {
     moveTroop(
       _troopId: BigNumberish,
       _targetPos: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    moveTroopECS(
+      _troopId: BigNumberish,
+      _targetPosition: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

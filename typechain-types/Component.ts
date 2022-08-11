@@ -19,32 +19,27 @@ import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
 export interface ComponentInterface extends utils.Interface {
   functions: {
-    "game()": FunctionFragment;
     "getEntities()": FunctionFragment;
-    "getEntitiesWithValue(bytes)": FunctionFragment;
+    "getEntitiesWithRawValue(bytes)": FunctionFragment;
     "getRawValue(uint256)": FunctionFragment;
-    "includes(uint256)": FunctionFragment;
+    "has(uint256)": FunctionFragment;
     "remove(uint256)": FunctionFragment;
     "set(uint256,bytes)": FunctionFragment;
   };
 
-  encodeFunctionData(functionFragment: "game", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getEntities",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getEntitiesWithValue",
+    functionFragment: "getEntitiesWithRawValue",
     values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "getRawValue",
     values: [BigNumberish]
   ): string;
-  encodeFunctionData(
-    functionFragment: "includes",
-    values: [BigNumberish]
-  ): string;
+  encodeFunctionData(functionFragment: "has", values: [BigNumberish]): string;
   encodeFunctionData(
     functionFragment: "remove",
     values: [BigNumberish]
@@ -54,20 +49,19 @@ export interface ComponentInterface extends utils.Interface {
     values: [BigNumberish, BytesLike]
   ): string;
 
-  decodeFunctionResult(functionFragment: "game", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getEntities",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getEntitiesWithValue",
+    functionFragment: "getEntitiesWithRawValue",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "getRawValue",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "includes", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "has", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "remove", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "set", data: BytesLike): Result;
 
@@ -101,12 +95,10 @@ export interface Component extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    game(overrides?: CallOverrides): Promise<[string]>;
-
     getEntities(overrides?: CallOverrides): Promise<[BigNumber[]]>;
 
-    getEntitiesWithValue(
-      _value: BytesLike,
+    getEntitiesWithRawValue(
+      _rawValue: BytesLike,
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
 
@@ -115,10 +107,7 @@ export interface Component extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    includes(
-      _entity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
+    has(_entity: BigNumberish, overrides?: CallOverrides): Promise<[boolean]>;
 
     remove(
       _entity: BigNumberish,
@@ -127,17 +116,15 @@ export interface Component extends BaseContract {
 
     set(
       _entity: BigNumberish,
-      _value: BytesLike,
+      _rawValue: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
 
-  game(overrides?: CallOverrides): Promise<string>;
-
   getEntities(overrides?: CallOverrides): Promise<BigNumber[]>;
 
-  getEntitiesWithValue(
-    _value: BytesLike,
+  getEntitiesWithRawValue(
+    _rawValue: BytesLike,
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
@@ -146,7 +133,7 @@ export interface Component extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
-  includes(_entity: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
+  has(_entity: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
 
   remove(
     _entity: BigNumberish,
@@ -155,17 +142,15 @@ export interface Component extends BaseContract {
 
   set(
     _entity: BigNumberish,
-    _value: BytesLike,
+    _rawValue: BytesLike,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    game(overrides?: CallOverrides): Promise<string>;
-
     getEntities(overrides?: CallOverrides): Promise<BigNumber[]>;
 
-    getEntitiesWithValue(
-      _value: BytesLike,
+    getEntitiesWithRawValue(
+      _rawValue: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
@@ -174,16 +159,13 @@ export interface Component extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    includes(
-      _entity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
+    has(_entity: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
 
     remove(_entity: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
     set(
       _entity: BigNumberish,
-      _value: BytesLike,
+      _rawValue: BytesLike,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -191,12 +173,10 @@ export interface Component extends BaseContract {
   filters: {};
 
   estimateGas: {
-    game(overrides?: CallOverrides): Promise<BigNumber>;
-
     getEntities(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getEntitiesWithValue(
-      _value: BytesLike,
+    getEntitiesWithRawValue(
+      _rawValue: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -205,10 +185,7 @@ export interface Component extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    includes(
-      _entity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    has(_entity: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
     remove(
       _entity: BigNumberish,
@@ -217,18 +194,16 @@ export interface Component extends BaseContract {
 
     set(
       _entity: BigNumberish,
-      _value: BytesLike,
+      _rawValue: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    game(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     getEntities(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getEntitiesWithValue(
-      _value: BytesLike,
+    getEntitiesWithRawValue(
+      _rawValue: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -237,7 +212,7 @@ export interface Component extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    includes(
+    has(
       _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -249,7 +224,7 @@ export interface Component extends BaseContract {
 
     set(
       _entity: BigNumberish,
-      _value: BytesLike,
+      _rawValue: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

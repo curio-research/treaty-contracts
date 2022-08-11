@@ -29,10 +29,7 @@ export interface CurioOSInterface extends utils.Interface {
     "difference(uint256,uint256)": FunctionFragment;
     "entityID()": FunctionFragment;
     "intersection(uint256,uint256)": FunctionFragment;
-    "moveInBay(uint256)": FunctionFragment;
     "removeEntityFromComponent(uint256,uint256)": FunctionFragment;
-    "union(uint256,uint256)": FunctionFragment;
-    "upgradeShips()": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -70,20 +67,8 @@ export interface CurioOSInterface extends utils.Interface {
     values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "moveInBay",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "removeEntityFromComponent",
     values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "union",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "upgradeShips",
-    values?: undefined
   ): string;
 
   decodeFunctionResult(
@@ -114,14 +99,8 @@ export interface CurioOSInterface extends utils.Interface {
     functionFragment: "intersection",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "moveInBay", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "removeEntityFromComponent",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "union", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "upgradeShips",
     data: BytesLike
   ): Result;
 
@@ -202,24 +181,9 @@ export interface CurioOS extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    moveInBay(
-      _shipID: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     removeEntityFromComponent(
       _entityID: BigNumberish,
       _componentID: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    union(
-      componentID1: BigNumberish,
-      componentID2: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber[]]>;
-
-    upgradeShips(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
@@ -265,24 +229,9 @@ export interface CurioOS extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  moveInBay(
-    _shipID: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   removeEntityFromComponent(
     _entityID: BigNumberish,
     _componentID: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  union(
-    componentID1: BigNumberish,
-    componentID2: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber[]>;
-
-  upgradeShips(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -323,21 +272,11 @@ export interface CurioOS extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
-    moveInBay(_shipID: BigNumberish, overrides?: CallOverrides): Promise<void>;
-
     removeEntityFromComponent(
       _entityID: BigNumberish,
       _componentID: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    union(
-      componentID1: BigNumberish,
-      componentID2: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber[]>;
-
-    upgradeShips(overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {};
@@ -387,24 +326,9 @@ export interface CurioOS extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    moveInBay(
-      _shipID: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     removeEntityFromComponent(
       _entityID: BigNumberish,
       _componentID: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    union(
-      componentID1: BigNumberish,
-      componentID2: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    upgradeShips(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
@@ -457,24 +381,9 @@ export interface CurioOS extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    moveInBay(
-      _shipID: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     removeEntityFromComponent(
       _entityID: BigNumberish,
       _componentID: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    union(
-      componentID1: BigNumberish,
-      componentID2: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    upgradeShips(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

@@ -101,6 +101,14 @@ contract ECS is Test, DiamondDeployTest {
         vm.expectRevert(bytes("CURIO: Base occupied by another troop"));
         engine.purchaseTroopECS(player1Pos, _destroyerTemplateId);
 
+        // Move destroyer to nearby water tile
+        engine.moveTroopECS(_troopId, Position({x: 7, y: 1}));
+
+        // Verify post-conditions
+        Position memory _currentPosition = abi.decode(getter.getComponent("Position").getRawValue(_troopId), (Position));
+        assertEq(_currentPosition.x, 7);
+        assertEq(_currentPosition.y, 1);
+
         vm.stopPrank();
     }
 }

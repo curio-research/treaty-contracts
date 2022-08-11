@@ -196,6 +196,38 @@ contract EngineFacet is UseStorage {
     // ECS FUNCTIONS (temp)
     // ----------------------------------------------------------------------
 
+    function moveTroopECS(uint256 _troopId, Position memory _targetPosition) public {
+        // 1. Verify that troop exists as an entity
+        require(Set(gs().entities).includes(_troopId), "CURIO: Troop template not found");
+
+        // 2. Verify that game is ongoing
+        require(!gs().isPaused, "CURIO: Game is paused");
+
+        // 3. Verify that player is active
+        uint256 _playerId = Util._getPlayerId(msg.sender);
+        require(Util._getComponent("IsActive").has(_playerId), "CURIO: Player is inactive");
+
+        // 4. Verify that position is in bound, and initialize tile
+        require(Util._inBound(_targetPosition), "CURIO: Out of bound");
+        if (!Util._getTileAt(_targetPosition).isInitializedECS) Util._initializeTileECS(_targetPosition);
+
+        // 5. Verify that target position is different from starting position and within movement range
+        Component _positionComponent = Util._getComponent("Position");
+        Position memory _position = abi.decode(_positionComponent.getRawValue(_troopId), (Position));
+        require(!Util._samePos(_position, _targetPosition), "CURIO: Already at destination");
+        require(Util._withinDist(_position, _targetPosition, 1), "CURIO: You can only dispatch troop to the near tile");
+
+        // 6. Verify ownership of troop by player
+        require(abi.decode(Util._getComponent("Owner").getRawValue(_troopId), (uint256)) == _playerId, "CURIO: You can only dispatch own troop");
+
+        // ... Movement cooldown ignored
+        // ... Geographic checks ignored
+        // ... March logic ignored
+
+        // Final. Set new position
+        _positionComponent.set(_troopId, abi.encode(_targetPosition));
+    }
+
     // TODO: ECS events
     // Question: Is intersection the best way to find entities which satisfy multiple component conditions?
     // Question: Does simplicity outweigh slight obfuscation? e.g. Gold component assigned to both player balance and troop price
