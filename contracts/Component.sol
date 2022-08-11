@@ -56,6 +56,20 @@ contract Component {
     }
 
     /**
+     * @dev Get all entities with this component and all their values in the form of two arrays.
+     */
+    function getAllEntitiesAndRawValues() public view returns (uint256[] memory, bytes[] memory) {
+        uint256[] memory _entityArray = entities.getAll();
+        bytes[] memory _valueArray = new bytes[](_entityArray.length);
+
+        for (uint256 i = 0; i < _entityArray.length; i++) {
+            _valueArray[i] = entityToRawValueMap[_entityArray[i]];
+        }
+
+        return (_entityArray, _valueArray);
+    }
+
+    /**
      * @dev Check whether a specified entity has this component.
      * @param _entity entity ID
      */

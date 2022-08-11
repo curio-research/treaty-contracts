@@ -41,7 +41,7 @@ library Util {
     // ----------------------------------------------------------
 
     event NewEntity(uint256 _entity);
-    event NewComponent(string _name);
+    event NewComponent(string _name, uint256 _id);
     event ComponentValueSet(string _componentName, uint256 _entity, bytes _rawValue);
     event ComponentValueRemoved(string _componentName, uint256 _entity);
 
@@ -94,6 +94,13 @@ library Util {
 
     function _getComponent(string memory _name) public view returns (Component) {
         address _componentAddr = gs().components[_name];
+        require(_componentAddr != address(0), "CURIO: Component not found");
+
+        return Component(_componentAddr);
+    }
+
+    function _getComponentById(uint256 _id) public view returns (Component) {
+        address _componentAddr = gs().idComponentMap[_id];
         require(_componentAddr != address(0), "CURIO: Component not found");
 
         return Component(_componentAddr);

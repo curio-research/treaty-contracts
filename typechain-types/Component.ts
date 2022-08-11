@@ -19,6 +19,7 @@ import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
 export interface ComponentInterface extends utils.Interface {
   functions: {
+    "getAllEntitiesAndRawValues()": FunctionFragment;
     "getEntities()": FunctionFragment;
     "getEntitiesWithRawValue(bytes)": FunctionFragment;
     "getRawValue(uint256)": FunctionFragment;
@@ -27,6 +28,10 @@ export interface ComponentInterface extends utils.Interface {
     "set(uint256,bytes)": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "getAllEntitiesAndRawValues",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "getEntities",
     values?: undefined
@@ -49,6 +54,10 @@ export interface ComponentInterface extends utils.Interface {
     values: [BigNumberish, BytesLike]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "getAllEntitiesAndRawValues",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getEntities",
     data: BytesLike
@@ -95,6 +104,10 @@ export interface Component extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    getAllEntitiesAndRawValues(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[], string[]]>;
+
     getEntities(overrides?: CallOverrides): Promise<[BigNumber[]]>;
 
     getEntitiesWithRawValue(
@@ -120,6 +133,10 @@ export interface Component extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
+
+  getAllEntitiesAndRawValues(
+    overrides?: CallOverrides
+  ): Promise<[BigNumber[], string[]]>;
 
   getEntities(overrides?: CallOverrides): Promise<BigNumber[]>;
 
@@ -147,6 +164,10 @@ export interface Component extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    getAllEntitiesAndRawValues(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[], string[]]>;
+
     getEntities(overrides?: CallOverrides): Promise<BigNumber[]>;
 
     getEntitiesWithRawValue(
@@ -173,6 +194,8 @@ export interface Component extends BaseContract {
   filters: {};
 
   estimateGas: {
+    getAllEntitiesAndRawValues(overrides?: CallOverrides): Promise<BigNumber>;
+
     getEntities(overrides?: CallOverrides): Promise<BigNumber>;
 
     getEntitiesWithRawValue(
@@ -200,6 +223,10 @@ export interface Component extends BaseContract {
   };
 
   populateTransaction: {
+    getAllEntitiesAndRawValues(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getEntities(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getEntitiesWithRawValue(

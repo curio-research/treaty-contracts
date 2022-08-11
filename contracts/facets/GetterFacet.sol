@@ -21,6 +21,10 @@ contract GetterFacet is UseStorage {
         return Util._getComponent(_name);
     }
 
+    function getComponentById(uint256 _id) external view returns (Component) {
+        return Util._getComponentById(_id);
+    }
+
     // ----------------------------------------------------------------------
     // GETTERS
     // ----------------------------------------------------------------------

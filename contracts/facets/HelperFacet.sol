@@ -156,9 +156,11 @@ contract HelperFacet is UseStorage {
     function registerComponents(address _gameAddr, string[28] memory _componentNameList) external onlyAdmin {
         for (uint256 i = 0; i < _componentNameList.length; i++) {
             string memory _componentName = _componentNameList[i];
-            gs().components[_componentName] = address(new Component(_gameAddr));
+            address _componentAddr = address(new Component(_gameAddr));
+            gs().components[_componentName] = _componentAddr;
+            gs().idComponentMap[i + 1] = _componentAddr; // component ID starts with 1
 
-            emit Util.NewComponent(_componentName);
+            emit Util.NewComponent(_componentName, i + 1);
         }
     }
 

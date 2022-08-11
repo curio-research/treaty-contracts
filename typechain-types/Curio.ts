@@ -281,6 +281,7 @@ export interface CurioInterface extends utils.Interface {
     "getBulkBase(uint256,uint256)": FunctionFragment;
     "getBulkTroopTypes(uint256,uint256)": FunctionFragment;
     "getComponent(string)": FunctionFragment;
+    "getComponentById(uint256)": FunctionFragment;
     "getMapChunk((uint256,uint256),uint256)": FunctionFragment;
     "getPlayer(address)": FunctionFragment;
     "getPlayerCount()": FunctionFragment;
@@ -318,6 +319,7 @@ export interface CurioInterface extends utils.Interface {
     "_getBaseHealth(uint256)": FunctionFragment;
     "_getBaseOwner(uint256)": FunctionFragment;
     "_getComponent(string)": FunctionFragment;
+    "_getComponentById(uint256)": FunctionFragment;
     "_getDamagePerHit(uint256)": FunctionFragment;
     "_getDebuffedArmyDamagePerHit(uint256[])": FunctionFragment;
     "_getDefenseFactor(uint256)": FunctionFragment;
@@ -446,6 +448,10 @@ export interface CurioInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getComponent",
     values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getComponentById",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getMapChunk",
@@ -582,6 +588,10 @@ export interface CurioInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "_getComponent",
     values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getComponentById",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "_getDamagePerHit",
@@ -763,6 +773,10 @@ export interface CurioInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getComponentById",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getMapChunk",
     data: BytesLike
   ): Result;
@@ -881,6 +895,10 @@ export interface CurioInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "_getComponentById",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "_getDamagePerHit",
     data: BytesLike
   ): Result;
@@ -972,7 +990,7 @@ export interface CurioInterface extends utils.Interface {
     "GamePaused()": EventFragment;
     "GameResumed()": EventFragment;
     "MovedArmy(address,uint256,tuple,uint256,tuple,tuple,uint256,tuple)": EventFragment;
-    "NewComponent(string)": EventFragment;
+    "NewComponent(string,uint256)": EventFragment;
     "NewEntity(uint256)": EventFragment;
     "NewPlayer(address,tuple)": EventFragment;
     "NewTroop(address,uint256,tuple,uint256,tuple)": EventFragment;
@@ -1101,7 +1119,10 @@ export type MovedArmyEvent = TypedEvent<
 
 export type MovedArmyEventFilter = TypedEventFilter<MovedArmyEvent>;
 
-export type NewComponentEvent = TypedEvent<[string], { _name: string }>;
+export type NewComponentEvent = TypedEvent<
+  [string, BigNumber],
+  { _name: string; _id: BigNumber }
+>;
 
 export type NewComponentEventFilter = TypedEventFilter<NewComponentEvent>;
 
@@ -1299,6 +1320,11 @@ export interface Curio extends BaseContract {
 
     getComponent(_name: string, overrides?: CallOverrides): Promise<[string]>;
 
+    getComponentById(
+      _id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     getMapChunk(
       _startPos: PositionStruct,
       _interval: BigNumberish,
@@ -1479,6 +1505,11 @@ export interface Curio extends BaseContract {
     ): Promise<[string]>;
 
     _getComponent(_name: string, overrides?: CallOverrides): Promise<[string]>;
+
+    _getComponentById(
+      _id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
     _getDamagePerHit(
       _troopTypeId: BigNumberish,
@@ -1724,6 +1755,11 @@ export interface Curio extends BaseContract {
 
   getComponent(_name: string, overrides?: CallOverrides): Promise<string>;
 
+  getComponentById(
+    _id: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
   getMapChunk(
     _startPos: PositionStruct,
     _interval: BigNumberish,
@@ -1904,6 +1940,11 @@ export interface Curio extends BaseContract {
   ): Promise<string>;
 
   _getComponent(_name: string, overrides?: CallOverrides): Promise<string>;
+
+  _getComponentById(
+    _id: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   _getDamagePerHit(
     _troopTypeId: BigNumberish,
@@ -2142,6 +2183,11 @@ export interface Curio extends BaseContract {
 
     getComponent(_name: string, overrides?: CallOverrides): Promise<string>;
 
+    getComponentById(
+      _id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
     getMapChunk(
       _startPos: PositionStruct,
       _interval: BigNumberish,
@@ -2313,6 +2359,11 @@ export interface Curio extends BaseContract {
     ): Promise<string>;
 
     _getComponent(_name: string, overrides?: CallOverrides): Promise<string>;
+
+    _getComponentById(
+      _id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     _getDamagePerHit(
       _troopTypeId: BigNumberish,
@@ -2538,8 +2589,11 @@ export interface Curio extends BaseContract {
       _targetTileArmy?: null
     ): MovedArmyEventFilter;
 
-    "NewComponent(string)"(_name?: null): NewComponentEventFilter;
-    NewComponent(_name?: null): NewComponentEventFilter;
+    "NewComponent(string,uint256)"(
+      _name?: null,
+      _id?: null
+    ): NewComponentEventFilter;
+    NewComponent(_name?: null, _id?: null): NewComponentEventFilter;
 
     "NewEntity(uint256)"(_entity?: null): NewEntityEventFilter;
     NewEntity(_entity?: null): NewEntityEventFilter;
@@ -2698,6 +2752,11 @@ export interface Curio extends BaseContract {
     ): Promise<BigNumber>;
 
     getComponent(_name: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    getComponentById(
+      _id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     getMapChunk(
       _startPos: PositionStruct,
@@ -2871,6 +2930,11 @@ export interface Curio extends BaseContract {
     ): Promise<BigNumber>;
 
     _getComponent(_name: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    _getComponentById(
+      _id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     _getDamagePerHit(
       _troopTypeId: BigNumberish,
@@ -3117,6 +3181,11 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getComponentById(
+      _id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getMapChunk(
       _startPos: PositionStruct,
       _interval: BigNumberish,
@@ -3296,6 +3365,11 @@ export interface Curio extends BaseContract {
 
     _getComponent(
       _name: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getComponentById(
+      _id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

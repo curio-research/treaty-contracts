@@ -241,6 +241,7 @@ export interface GetterFacetInterface extends utils.Interface {
     "getBulkBase(uint256,uint256)": FunctionFragment;
     "getBulkTroopTypes(uint256,uint256)": FunctionFragment;
     "getComponent(string)": FunctionFragment;
+    "getComponentById(uint256)": FunctionFragment;
     "getMapChunk((uint256,uint256),uint256)": FunctionFragment;
     "getPlayer(address)": FunctionFragment;
     "getPlayerCount()": FunctionFragment;
@@ -290,6 +291,10 @@ export interface GetterFacetInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getComponent",
     values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getComponentById",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getMapChunk",
@@ -347,6 +352,10 @@ export interface GetterFacetInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getComponent",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getComponentById",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -443,6 +452,11 @@ export interface GetterFacet extends BaseContract {
 
     getComponent(_name: string, overrides?: CallOverrides): Promise<[string]>;
 
+    getComponentById(
+      _id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     getMapChunk(
       _startPos: PositionStruct,
       _interval: BigNumberish,
@@ -520,6 +534,11 @@ export interface GetterFacet extends BaseContract {
   ): Promise<TroopTypeStructOutput[]>;
 
   getComponent(_name: string, overrides?: CallOverrides): Promise<string>;
+
+  getComponentById(
+    _id: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   getMapChunk(
     _startPos: PositionStruct,
@@ -599,6 +618,11 @@ export interface GetterFacet extends BaseContract {
 
     getComponent(_name: string, overrides?: CallOverrides): Promise<string>;
 
+    getComponentById(
+      _id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
     getMapChunk(
       _startPos: PositionStruct,
       _interval: BigNumberish,
@@ -677,6 +701,11 @@ export interface GetterFacet extends BaseContract {
 
     getComponent(_name: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+    getComponentById(
+      _id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getMapChunk(
       _startPos: PositionStruct,
       _interval: BigNumberish,
@@ -751,6 +780,11 @@ export interface GetterFacet extends BaseContract {
 
     getComponent(
       _name: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getComponentById(
+      _id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

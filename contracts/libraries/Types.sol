@@ -128,5 +128,6 @@ struct GameState {
 
     address entities;
     mapping(string => address) components; // component name to contract address
+    mapping(uint256 => address) idComponentMap; // component id to contract address
     mapping(address => uint256) playerIdMap; // FIXME: update when initialized
 }
