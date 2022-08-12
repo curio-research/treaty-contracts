@@ -1,5 +1,4 @@
 import { WorldConstantsStruct } from './../../typechain-types/Curio';
-import { TroopTypeStruct } from '../../typechain-types/DiamondInit';
 import { MapInput, RenderInput, TROOP_NAME } from './types';
 
 export const LOCALHOST_RPC_URL = 'http://127.0.0.1:8545/';
@@ -52,82 +51,82 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): W
   };
 };
 
-export const TROOP_TYPES: TroopTypeStruct[] = [
-  {
-    name: TROOP_NAME.INFANTRY,
-    maxHealth: 200,
-    damagePerHit: 100,
-    attackFactor: 100,
-    defenseFactor: 100,
-    movementCooldown: 5,
-    largeActionCooldown: 0,
-    goldPrice: 400,
-    oilConsumptionPerSecond: 0,
-  },
-  {
-    name: TROOP_NAME.DESTROYER,
-    maxHealth: 800,
-    damagePerHit: 700,
-    attackFactor: 100,
-    defenseFactor: 100,
-    movementCooldown: 2,
-    largeActionCooldown: 0,
-    goldPrice: 800,
-    oilConsumptionPerSecond: 2,
-  },
-  {
-    name: TROOP_NAME.CRUISER,
-    maxHealth: 1500,
-    damagePerHit: 1000,
-    attackFactor: 100,
-    defenseFactor: 100,
-    movementCooldown: 2,
-    largeActionCooldown: 0,
-    goldPrice: 1360,
-    oilConsumptionPerSecond: 5,
-  },
-  {
-    name: TROOP_NAME.BATTLESHIP,
-    maxHealth: 5500,
-    damagePerHit: 3500,
-    attackFactor: 100,
-    defenseFactor: 100,
-    movementCooldown: 2,
-    largeActionCooldown: 0,
-    goldPrice: 4800,
-    oilConsumptionPerSecond: 20,
-  },
-];
+// export const TROOP_TYPES: TroopTypeStruct[] = [
+//   {
+//     name: TROOP_NAME.INFANTRY,
+//     maxHealth: 200,
+//     damagePerHit: 100,
+//     attackFactor: 100,
+//     defenseFactor: 100,
+//     movementCooldown: 5,
+//     largeActionCooldown: 0,
+//     goldPrice: 400,
+//     oilConsumptionPerSecond: 0,
+//   },
+//   {
+//     name: TROOP_NAME.DESTROYER,
+//     maxHealth: 800,
+//     damagePerHit: 700,
+//     attackFactor: 100,
+//     defenseFactor: 100,
+//     movementCooldown: 2,
+//     largeActionCooldown: 0,
+//     goldPrice: 800,
+//     oilConsumptionPerSecond: 2,
+//   },
+//   {
+//     name: TROOP_NAME.CRUISER,
+//     maxHealth: 1500,
+//     damagePerHit: 1000,
+//     attackFactor: 100,
+//     defenseFactor: 100,
+//     movementCooldown: 2,
+//     largeActionCooldown: 0,
+//     goldPrice: 1360,
+//     oilConsumptionPerSecond: 5,
+//   },
+//   {
+//     name: TROOP_NAME.BATTLESHIP,
+//     maxHealth: 5500,
+//     damagePerHit: 3500,
+//     attackFactor: 100,
+//     defenseFactor: 100,
+//     movementCooldown: 2,
+//     largeActionCooldown: 0,
+//     goldPrice: 4800,
+//     oilConsumptionPerSecond: 20,
+//   },
+// ];
 
-export const COMPONENT_NAMES = [
-  'Name',
+export const COMPONENT_NAMES: [string, string, string] = [
+  // 'Name',
   'IsActive',
   'Position',
   'Owner',
-  'CanMove',
-  'CanAttack',
-  'CanCapture',
-  'CanPurchase',
-  'Health',
-  'Gold',
-  'GoldPerSecond',
-  'GoldRatePositive',
-  'Oil',
-  'OilPerSecond',
-  'OilRatePositive',
-  'InitTimestamp',
-  'BalanceLastUpdated',
-  'LastMoved',
-  'LastLargeActionTaken',
-  'LastRepaired',
-  'IsLandTroop',
-  'MaxHealth',
-  'DamagePerHit',
-  'AttackFactor',
-  'DefenseFactor',
-  'MovementCooldown',
-  'LargeActionCooldown',
-  'CargoCapacity',
+  // 'CanMove',
+  // 'CanAttack',
+  // 'CanCapture',
+  // 'CanPurchase',
+  // 'Health',
+  // 'Gold',
+  // 'GoldPerSecond',
+  // 'GoldRatePositive',
+  // 'Oil',
+  // 'OilPerSecond',
+  // 'OilRatePositive',
+  // 'InitTimestamp',
+  // 'BalanceLastUpdated',
+  // 'LastMoved',
+  // 'LastLargeActionTaken',
+  // 'LastRepaired',
+  // 'IsLandTroop',
+  // 'MaxHealth',
+  // 'DamagePerHit',
+  // 'AttackFactor',
+  // 'DefenseFactor',
+  // 'MovementCooldown',
+  // 'LargeActionCooldown',
+  // 'CargoCapacity',
 ];
 
 // ----------------------------------------------------------
@@ -142,16 +141,4 @@ export const RENDER_CONSTANTS: RenderInput = {
   colorLowestPercent: 40,
   plateSizeMultiplier: 6,
   superpositionRatio: [0.6, 0.4],
-};
-
-// ------------------------------------------------
-// FUNCTIONS
-// ------------------------------------------------
-
-export const getTroopNames = (): string[] => {
-  return Object.keys(TROOP_NAME).filter((item) => isNaN(Number(item)));
-};
-
-export const getTroopTypeIndexByName = (troopTypes: TroopTypeStruct[], name: TROOP_NAME): number => {
-  return troopTypes.indexOf(troopTypes.filter((item) => item.name === name)[0]);
 };
