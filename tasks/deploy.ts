@@ -7,7 +7,7 @@ import { Util } from './../typechain-types/Util';
 import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { deployProxy, loadLocalMapConfig, LOCAL_MAP_PREFIX, printDivider, saveMapToLocal } from './util/deployHelper';
-import { TROOP_TYPES, getTroopTypeIndexByName, RENDER_CONSTANTS, generateWorldConstants, SMALL_MAP_INPUT, LARGE_MAP_INPUT, SANDBOX_MAP_INPUT } from './util/constants';
+import { TROOP_TYPES, getTroopTypeIndexByName, RENDER_CONSTANTS, generateWorldConstants, SMALL_MAP_INPUT, LARGE_MAP_INPUT, SANDBOX_MAP_INPUT, COMPONENT_NAMES } from './util/constants';
 import { position } from '../util/types/common';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
 import { Position, GameMapConfig, TILE_TYPE, TROOP_NAME, MapInput } from './util/types';
@@ -166,40 +166,8 @@ task('deploy', 'deploy contracts')
             const abiCoder = new ethers.utils.AbiCoder();
             let ecsTime = performance.now();
 
-            // List of all component names
-            const componentNames = [
-              'Name',
-              'IsActive',
-              'Position',
-              'Owner',
-              'CanMove',
-              'CanAttack',
-              'CanCapture',
-              'CanPurchase',
-              'Health',
-              'Gold',
-              'GoldPerSecond',
-              'GoldRatePositive',
-              'Oil',
-              'OilPerSecond',
-              'OilRatePositive',
-              'InitTimestamp',
-              'BalanceLastUpdated',
-              'LastMoved',
-              'LastLargeActionTaken',
-              'LastRepaired',
-              'IsLandTroop',
-              'MaxHealth',
-              'DamagePerHit',
-              'AttackFactor',
-              'DefenseFactor',
-              'MovementCooldown',
-              'LargeActionCooldown',
-              'CargoCapacity',
-            ];
-
             // Register components
-            await (await diamond.registerComponents(diamond.address, componentNames)).wait();
+            await (await diamond.registerComponents(diamond.address, COMPONENT_NAMES)).wait();
             console.log(`✦ components registered after ${performance.now() - ecsTime} ms`);
             ecsTime = performance.now();
 
@@ -283,6 +251,7 @@ task('deploy', 'deploy contracts')
         network: hre.network.name,
         deploymentId: ` ${mapName ? `${mapName}-` : ''} ${isRelease ? 'release-' : ''}${hre.network.name}-${Date.now()}`,
         map: tileMap,
+        // componentNames: COMPONENT_NAMES,
       };
 
       // Port files to frontend if on localhost

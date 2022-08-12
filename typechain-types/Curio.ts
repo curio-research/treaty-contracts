@@ -985,7 +985,6 @@ export interface CurioInterface extends utils.Interface {
     "ArmyDeath(address,uint256)": EventFragment;
     "AttackedArmy(address,uint256,tuple,tuple[],uint256,tuple,tuple[])": EventFragment;
     "BaseInfo(address,uint256,tuple)": EventFragment;
-    "ComponentValueRemoved(string,uint256)": EventFragment;
     "ComponentValueSet(string,uint256,bytes)": EventFragment;
     "GamePaused()": EventFragment;
     "GameResumed()": EventFragment;
@@ -1004,7 +1003,6 @@ export interface CurioInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "ArmyDeath"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "AttackedArmy"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "BaseInfo"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ComponentValueRemoved"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ComponentValueSet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "GamePaused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "GameResumed"): EventFragment;
@@ -1069,14 +1067,6 @@ export type BaseInfoEvent = TypedEvent<
 >;
 
 export type BaseInfoEventFilter = TypedEventFilter<BaseInfoEvent>;
-
-export type ComponentValueRemovedEvent = TypedEvent<
-  [string, BigNumber],
-  { _componentName: string; _entity: BigNumber }
->;
-
-export type ComponentValueRemovedEventFilter =
-  TypedEventFilter<ComponentValueRemovedEvent>;
 
 export type ComponentValueSetEvent = TypedEvent<
   [string, BigNumber, string],
@@ -2541,15 +2531,6 @@ export interface Curio extends BaseContract {
       _Base?: null
     ): BaseInfoEventFilter;
     BaseInfo(_player?: null, _baseId?: null, _Base?: null): BaseInfoEventFilter;
-
-    "ComponentValueRemoved(string,uint256)"(
-      _componentName?: null,
-      _entity?: null
-    ): ComponentValueRemovedEventFilter;
-    ComponentValueRemoved(
-      _componentName?: null,
-      _entity?: null
-    ): ComponentValueRemovedEventFilter;
 
     "ComponentValueSet(string,uint256,bytes)"(
       _componentName?: null,

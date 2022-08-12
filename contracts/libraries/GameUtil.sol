@@ -43,7 +43,6 @@ library Util {
     event NewEntity(uint256 _entity);
     event NewComponent(string _name, uint256 _id);
     event ComponentValueSet(string _componentName, uint256 _entity, bytes _rawValue);
-    event ComponentValueRemoved(string _componentName, uint256 _entity);
 
     function _initializeTileECS(Position memory _position) public {
         WorldConstants memory _worldConstants = gs().worldConstants;
@@ -184,7 +183,7 @@ library Util {
     function _removeComponentValue(string memory _componentName, uint256 _entity) public {
         _getComponent(_componentName).remove(_entity);
 
-        emit ComponentValueRemoved(_componentName, _entity);
+        emit ComponentValueSet(_componentName, _entity, new bytes(0));
     }
 
     function _getPlayerTroopCount(uint256 _playerId) public returns (uint256) {

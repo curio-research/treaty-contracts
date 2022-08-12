@@ -99,6 +99,37 @@ export const TROOP_TYPES: TroopTypeStruct[] = [
   },
 ];
 
+export const COMPONENT_NAMES = [
+  'Name',
+  'IsActive',
+  'Position',
+  'Owner',
+  'CanMove',
+  'CanAttack',
+  'CanCapture',
+  'CanPurchase',
+  'Health',
+  'Gold',
+  'GoldPerSecond',
+  'GoldRatePositive',
+  'Oil',
+  'OilPerSecond',
+  'OilRatePositive',
+  'InitTimestamp',
+  'BalanceLastUpdated',
+  'LastMoved',
+  'LastLargeActionTaken',
+  'LastRepaired',
+  'IsLandTroop',
+  'MaxHealth',
+  'DamagePerHit',
+  'AttackFactor',
+  'DefenseFactor',
+  'MovementCooldown',
+  'LargeActionCooldown',
+  'CargoCapacity',
+];
+
 // ----------------------------------------------------------
 // RENDERING CONSTANTS
 // ----------------------------------------------------------
