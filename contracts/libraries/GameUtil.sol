@@ -177,6 +177,43 @@ library Util {
         return _intersection(_set1, _set2).length;
     }
 
+    function _getNavies() public returns (uint256[] memory) {
+        Set _set1 = new Set();
+        Set _set2 = new Set();
+        _set1.addArray(Util._getComponent("CanMove").getEntities());
+        _set2.addArray(Util._getComponent("IsLandTroop").getEntities());
+        return _difference(_set1, _set2);
+    }
+
+    function _getPlayerBases(uint256 _playerId) public returns (uint256[] memory) {
+        Set _set1 = new Set();
+        Set _set2 = new Set();
+        _set1.addArray(Util._getComponent("CanPurchase").getEntities());
+        _set2.addArray(Util._getComponent("Owner").getEntitiesWithRawValue(abi.encode(_playerId)));
+        return _intersection(_set1, _set2);
+    }
+
+    // inclusive on both ends
+    function _filterByComponentRange(
+        uint256[] memory _entities,
+        string memory _componentName,
+        uint256 _lb,
+        uint256 _ub
+    ) public returns (uint256[] memory) {
+        Set _set1 = new Set();
+        _set1.addArray(_entities);
+
+        uint256[] memory _result = new uint256[](0);
+        Set _set2;
+        for (uint256 _value = _lb; _value <= _ub; _value++) {
+            _set2 = new Set();
+            _set2.addArray(Util._getComponent(_componentName).getEntitiesWithRawValue(abi.encode(_value)));
+            _result = Util._concatenate(_result, Util._intersection(_set1, _set2));
+        }
+
+        return _result;
+    }
+
     // Set-theoretic intersection
     function _intersection(Set _set1, Set _set2) public returns (uint256[] memory) {
         Set _searchedElements = new Set();

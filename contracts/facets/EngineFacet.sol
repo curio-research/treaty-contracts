@@ -337,22 +337,8 @@ contract EngineFacet is UseStorage {
      * TODO: Time-bound condition: "... attackFactor within the next 10 seconds." (require backend)
      */
     function sampleBuffPolicy() external {
-        // Get navies
-        Set _set1 = new Set();
-        Set _set2 = new Set();
-        _set1.addArray(Util._getComponent("CanMove").getEntities());
-        _set2.addArray(Util._getComponent("IsLandTroop").getEntities());
-        uint256[] memory _navies = Util._difference(_set1, _set2);
-        _set1 = new Set();
-        _set1.addArray(_navies);
-
-        // Get navies with 5-12 health
-        uint256[] memory _naviesWithFivePlusHealth = new uint256[](0);
-        for (uint256 _health = 5; _health <= 12; _health++) {
-            _set2 = new Set();
-            _set2.addArray(Util._getComponent("Health").getEntitiesWithRawValue(abi.encode(_health)));
-            _naviesWithFivePlusHealth = Util._concatenate(_naviesWithFivePlusHealth, Util._intersection(_set1, _set2));
-        }
+        // Get navies with at least 5 health
+        uint256[] memory _naviesWithFivePlusHealth = Util._filterByComponentRange(Util._getNavies(), "Health", 5, 12);
 
         // Double attack factor for all such navies
         uint256 _troopId;
@@ -369,11 +355,7 @@ contract EngineFacet is UseStorage {
      */
     function sampleImpossiblePolicy() external {
         // Get player's ports and cities
-        Set _set1 = new Set();
-        Set _set2 = new Set();
-        _set1.addArray(Util._getComponent("CanPurchase").getEntities());
-        _set2.addArray(Util._getComponent("Owner").getEntitiesWithRawValue(abi.encode(msg.sender)));
-        uint256[] memory _playerBases = Util._intersection(_set1, _set2);
+        uint256[] memory _playerBases = Util._getPlayerBases(msg.sender);
 
         // Update desired properties
         uint256 _baseId;
