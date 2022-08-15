@@ -385,9 +385,47 @@ contract EngineFacet is UseStorage {
         }
     }
 
-    // TODO: (future) allowing real-time, in-game addition of components
-    // function addComponent() {
-    //     // check name string conflict first
-    //     // new Component()
-    // }
+    /**
+     * @dev Sample Policy: If player's name is Stalin, all his troop health restored to its maximum,
+      but the cost is that he loses half of his gold
+     */
+    function workersOfTheWorldUnite() external {
+        // 1. Verify that game is ongoing
+        require(!gs().isPaused, "CURIO: Game is paused");
+
+        // 2. Verify that player is active
+        uint256 _playerId = Util._getPlayerId(msg.sender);
+        require(Util._getComponent("IsActive").has(_playerId), "CURIO: Player is inactive");
+
+        // 3. Verify that player name is Stalin
+        require(Util._getComponent("Name").getEntitiesWithRawValue(abi.encode("Stalin"))[0] == _playerId, "CURIO: Sorry bro, you're not our comrade");
+
+        // 4. Get "red army"
+        Set _set1 = new Set();
+        Set _set2 = new Set();
+        _set1.addArray(Util._getComponent("CanMove").getEntities());
+        _set2.addArray(Util._getComponent("IsLandTroop").getEntities());
+
+        uint256[] memory _redTroops = Util._intersection(_set1, _set2);
+        _set1 = new Set();
+        _set1.addArray(_redTroops);
+
+        _set2 = new Set();
+        _set2.addArray(Util._getComponent("Owner").getEntities());
+        _redTroops = Util._intersection(_set1, _set2);
+
+        // 5. "Red army" yells "long live socialism" and expropriates people's bread (restore health)
+        uint256 _troopId;
+        for (uint256 i = 0; i < _redTroops.length; i++) {
+            _troopId = _redTroops[i];
+            Util._setComponentValue("Health", _troopId, Util._getComponent("MaxHealth").getRawValue(_troopId));
+        }
+
+        // 6. Private property is an exploision of labor power (reduce player's gold balance)
+        Component _goldComponent = Util._getComponent("Gold");
+        uint256 _playerGoldBalance = abi.decode(_goldComponent.getRawValue(_playerId), (uint256));
+        _goldComponent.set(_playerId, abi.encode(_playerGoldBalance/2));
+        
+
+    }
 }
