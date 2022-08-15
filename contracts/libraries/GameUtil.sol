@@ -2,7 +2,7 @@
 pragma solidity ^0.8.4;
 
 import "contracts/libraries/Storage.sol";
-import {BASE_NAME, TROOP_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop, Army, WorldConstants, TroopType} from "contracts/libraries/Types.sol";
+import {BASE_NAME, GameState, Position, TERRAIN, Tile, WorldConstants} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 import {Component} from "contracts/Component.sol";
 import {Set} from "contracts/Set.sol";
@@ -18,23 +18,6 @@ library Util {
     function gs() internal pure returns (GameState storage) {
         return LibStorage.gameStorage();
     }
-
-    // ----------------------------------------------------------
-    // EVENTS
-    // ----------------------------------------------------------
-
-    event MovedArmy(address _player, uint256 timestamp, Position _startPos, uint256 _startTileArmyId, Army _startTileArmy, Position _endPos, uint256 _targetTileArmyId, Army _targetTileArmy);
-    event NewTroop(address _player, uint256 _troopId, Troop _troop, uint256 _armyId, Army _army);
-    event NewPlayer(address _player, Position _pos);
-    event PlayerInfo(address _addr, Player _player);
-    event ArmyDeath(address _player, uint256 _armyId);
-    event AttackedArmy(address _player, uint256 _armyId, Army _armyInfo, Troop[] _armyTroops, uint256 _targetArmy, Army _targetArmyInfo, Troop[] _targetArmyTroops);
-    event TroopDeath(address _player, uint256 _troopId);
-    event BaseInfo(address _player, uint256 _baseId, Base _Base);
-
-    event PlayerReactivated(address _player);
-    event GamePaused();
-    event GameResumed();
 
     // ----------------------------------------------------------
     // ECS UTIL FUNCTIONS (temp)
@@ -109,8 +92,6 @@ library Util {
         return gs().playerIdMap[_playerAddr];
     }
 
-    // Note: `occupantId` no longer needed thanks to Position component
-    // TODO: Implement balance updates
     function _addTroopEntity(
         uint256 _playerId,
         Position memory _position,

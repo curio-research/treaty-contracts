@@ -3,7 +3,7 @@ pragma solidity ^0.8.4;
 
 import "contracts/libraries/Storage.sol";
 import {Util} from "contracts/libraries/GameUtil.sol";
-import {BASE_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop, Army, TroopType, WorldConstants} from "contracts/libraries/Types.sol";
+import {Position, TERRAIN, Tile, WorldConstants} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 import {Component} from "contracts/Component.sol";
 import {Set} from "contracts/Set.sol";
@@ -131,9 +131,9 @@ contract HelperFacet is UseStorage {
      * Initialize all tiles from an array of positions.
      * @param _positions all positions
      */
-    function bulkInitializeTiles(Position[] memory _positions) external onlyAdmin {
+    function bulkInitializeTilesECS(Position[] memory _positions) external onlyAdmin {
         for (uint256 i = 0; i < _positions.length; i++) {
-            Util._initializeTile(_positions[i]);
+            Util._initializeTileECS(_positions[i]);
         }
     }
 
