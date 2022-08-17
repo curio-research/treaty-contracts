@@ -24,6 +24,7 @@ library Util {
     // ----------------------------------------------------------
 
     event NewEntity(uint256 _entity);
+    event EntityRemoved(uint256 _entity);
     event NewComponent(string _name, uint256 _id);
     event ComponentValueSet(string _componentName, uint256 _entity, bytes _rawValue);
 
@@ -81,7 +82,18 @@ library Util {
         _set2.addArray(Util._getComponent("Position").getEntitiesWithRawValue(abi.encode(_position)));
         uint256[] _result = _intersection(_set1, _set2);
 
-        require(_result.length <= 1, "CURIO: Something is wrong");
+        assert(_result.length <= 1, "CURIO: Something is wrong");
+        return _result.length == 1 ? _result[0] : NULL;
+    }
+
+    function _getBaseAt(Position memory _position) public returns (uint256) {
+        Set _set1 = new Set();
+        Set _set2 = new Set();
+        _set1.addArray(Util._getComponent("canPurchase").getEntities());
+        _set2.addArray(Util._getComponent("Position").getEntitiesWithRawValue(abi.encode(_position)));
+        uint256[] _result = _intersection(_set1, _set2);
+
+        assert(_result.length <= 1, "CURIO: Something is wrong");
         return _result.length == 1 ? _result[0] : NULL;
     }
 
@@ -148,6 +160,28 @@ library Util {
         return _troopId;
     }
 
+    function _removeTroopEntity(uint256 _troopId) public {
+        uint256 _owner = abi.decode(_getComponent("Owner").getRawValue(_troopId), (uint256));
+        uint256 _oilConsumptionPerSecond = abi.decode(_getComponent("OilPerSecond").getRawValue(_troopId), (uint256));
+
+        _removeEntity(_troopId);
+
+        _updatePlayerBalances(_addr);
+        uint256 _playerOilConsumptionPerSecond = abi.decode(_getComponent("OilPerSecond").getRawValue(_playerId), (uint256));
+        assert(_playerOilConsumptionPerSecond > _oilConsumptionPerSecond, "CURIO: Something is wrong");
+        _setComponentValue("OildPerSecond", _playerId, _playerOilConsumptionPerSecond - _oilConsumptionPerSecond);
+
+        emit EntityRemoved(_troopId);
+    }
+
+    function _removeArmyEntity(uint256 _armyId) public {
+        _removeEntity(_armyId);
+    }
+
+    function _getArmyTroopCount(uint256 _armyId) public returns (uint256) {
+        return _getComponent("ArmyId").getEntitiesWithRawValue(abi.encode(_armyId)).length;
+    }
+
     function _getPlayerTroopCount(uint256 _playerId) public returns (uint256) {
         Set _set1 = new Set();
         Set _set2 = new Set();
@@ -203,6 +237,19 @@ library Util {
 
         emit NewEntity(_newEntity);
         return _newEntity;
+    }
+
+    function _removeEntity(uint256 _entity) public {
+        Set _entities = Set(gs().entities);
+        _entities.remove(_entity);
+
+        // FIXME: remove over all components, or remove over components which the entity has? One more general, the other more efficient.
+        for (uint256 i = 0; i < gs().componentNames.length; i++) {
+            Component _component = Component(gs().components[gs().componentNames[i]]);
+            _component.remove(_entity);
+        }
+
+        emit EntityRemoved(_entity);
     }
 
     // Question: Right now, all events regarding component set and removal are emitted in game contracts. Is this good?

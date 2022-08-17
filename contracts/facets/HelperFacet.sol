@@ -153,9 +153,11 @@ contract HelperFacet is UseStorage {
     // ECS HELPERS (temp)
     // ----------------------------------------------------------------------
 
-    function registerComponents(address _gameAddr, string[28] memory _componentNameList) external onlyAdmin {
-        for (uint256 i = 0; i < _componentNameList.length; i++) {
-            string memory _componentName = _componentNameList[i];
+    function registerComponents(address _gameAddr, string[28] memory _componentNames) external onlyAdmin {
+        gs().componentNames = _componentNames;
+
+        for (uint256 i = 0; i < _componentNames.length; i++) {
+            string memory _componentName = _componentNames[i];
             address _componentAddr = address(new Component(_gameAddr));
             gs().components[_componentName] = _componentAddr;
             gs().idComponentMap[i + 1] = _componentAddr; // component ID starts with 1

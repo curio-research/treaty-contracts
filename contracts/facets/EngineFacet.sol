@@ -109,66 +109,16 @@ contract EngineFacet is UseStorage {
         Util._emitPlayerInfo(msg.sender);
     }
 
-    /**
-     * Delete an owned troop (often to reduce expense).
-     * @param _troopId identifier for troop
-     */
-    function deleteTroop(uint256 _troopId) external {
-        Troop memory _troop = Util._getTroop(_troopId);
-        Army memory _army = Util._getArmy(_troop.armyId);
-        require(_army.owner == msg.sender, "CURIO: Can only delete own troop");
-
-        if (_army.troopIds.length == 1) {
-            Util._removeArmyWithTroops(_troop.armyId); // remove entire army if troop is last one in army
-        } else {
-            Util._removeTroop(_troopId);
-        }
-
-        EngineModules._updateAttackedArmy(msg.sender, _troop.armyId, _troop.armyId);
-    }
-
-    /**
-     * Initialize self as player at a selected position.
-     * @param _pos position to initialize
-     */
-    function initializePlayer(Position memory _pos) external {
-        require(!gs().isPaused, "CURIO: Game is paused");
-        require(Util._getPlayerCount() < gs().worldConstants.maxPlayerCount, "CURIO: Max player count exceeded");
-        require(!Util._isPlayerInitialized(msg.sender), "CURIO: Player already initialized");
-
-        require(Util._inBound(_pos), "CURIO: Out of bound");
-        if (!Util._getTileAt(_pos).isInitialized) Util._initializeTile(_pos);
-
-        uint256 _baseId = Util._getTileAt(_pos).baseId;
-        require(Util._getBaseOwner(_baseId) == NULL_ADDR, "CURIO: Base is taken");
-
-        WorldConstants memory _worldConstants = gs().worldConstants;
-        gs().players.push(msg.sender);
-        gs().playerMap[msg.sender] = Player({
-            initTimestamp: block.timestamp,
-            active: true,
-            goldBalance: _worldConstants.initPlayerGoldBalance,
-            totalGoldGenerationPerUpdate: _worldConstants.defaultBaseGoldGenerationPerSecond,
-            totalOilGenerationPerUpdate: 0,
-            totalOilConsumptionPerUpdate: 0,
-            balanceLastUpdated: block.timestamp,
-            numOwnedBases: 1,
-            numOwnedTroops: 0,
-            isDebuffed: false //
-        });
-        gs().baseIdMap[_baseId].owner = msg.sender;
-        gs().baseIdMap[_baseId].health = 800; // FIXME: world constants
-
-        emit Util.NewPlayer(msg.sender, _pos);
-
-        Util._emitPlayerInfo(msg.sender);
-    }
-
     // ----------------------------------------------------------------------
-    // ECS FUNCTIONS (temp)
+    // ECS FUNCTIONS
     // ----------------------------------------------------------------------
 
-    function moveTroopECS(uint256 _troopId, Position memory _targetPosition) public {
+    /**
+     * Dispatch troop to a target position.
+     * @param _troopId troop entity
+     * @param _targetPosition target position
+     */
+    function moveTroopECS(uint256 _troopId, Position memory _targetPosition) external {
         // 1. Verify that troop exists as an entity
         require(Set(gs().entities).includes(_troopId), "CURIO: Troop template not found");
 
@@ -184,22 +134,53 @@ contract EngineFacet is UseStorage {
         if (!Util._getTileAt(_targetPosition).isInitializedECS) Util._initializeTileECS(_targetPosition);
 
         // 5. Verify that target position is different from starting position and within movement range
-        Position memory _position = abi.decode(Util._getComponent("Position").getRawValue(_troopId), (Position));
-        require(!Util._samePos(_position, _targetPosition), "CURIO: Already at destination");
-        require(Util._withinDist(_position, _targetPosition, 1), "CURIO: You can only dispatch troop to the near tile");
+        uint256 _armyId = abi.decode(Util._getComponent("ArmyId").getRawValue(_troopId), (uint256));
+        Position memory _sourcePosition = abi.decode(Util._getComponent("Position").getRawValue(_armyId), (Position));
+        require(!Util._samePos(_sourcePosition, _targetPosition), "CURIO: Already at destination");
+        require(Util._withinDist(_sourcePosition, _targetPosition, 1), "CURIO: You can only dispatch troop to the near tile");
 
         // 6. Verify ownership of troop by player
         require(abi.decode(Util._getComponent("Owner").getRawValue(_troopId), (uint256)) == _playerId, "CURIO: You can only dispatch own troop");
 
-        // ... Movement cooldown ignored
-        // ... Geographic checks ignored
-        // ... March logic ignored
+        // 7. Movement cooldown check
+        uint256 _lastLargeActionTaken = abi.decode(Util._getComponent("LastLargeActionTaken").getRawValue(_armyId), (uint256));
+        uint256 _largeActionCooldown = abi.decode(Util._getComponent("LargeActionCooldown").getRawValue(_armyId), (uint256));
+        require(block.timestamp - _lastLargeActionTaken >= _largeActionCooldown, "CURIO: Large action taken too recently");
 
-        // Final. Set new position
-        Util._setComponentValue("Position", _troopId, abi.encode(_targetPosition));
+        // 8. Geographic and base checks
+        require(EngineModules._geographicCheckTroopECS(_troopId, _targetPosition), "CURIO: Troop and land type not compatible"); // TODO
+        require(Util._getBaseAt(_targetPosition) == NULL, "CURIO: Cannot directly attack with troops");
+
+        // 9. March logic checks, and create new army if empty
+        uint256 _targetArmyId = Util._getArmyAt(_targetPosition);
+        if (_targetArmyId != NULL) {
+            require(abi.decode(Util._getComponent("Owner").getRawValue(_targetArmyId), (uint256)) == _playerId, "CURIO: Cannot directly attack with troops");
+            require(Util._getArmyTroopCount(_targetArmyId) + 1 <= 5, "CURIO: Army can have up to five troops, or two with one transport");
+        } else {
+            _targetArmyId = Util._addArmyEntity(_playerId, _targetPosition);
+        }
+
+        // 10. Move troop
+        Util._setComponentValue("ArmyId", _troopId, _targetArmyId);
+
+        // 11. Remove old army if empty
+        if (Util._getArmyTroopCount(_armyId) == 0) Util._removeArmyEntity(_armyId);
     }
 
-    function purchaseTroopECS(Position memory _position, uint256 _troopTemplateId) public returns (uint256) {
+    /**
+     * Delete an owned troop (often to reduce expense).
+     * @param _troopId identifier for troop
+     */
+    function deleteTroopECS(uint256 _troopId) external {
+        uint256 _playerId = Util._getPlayerId(msg.sender);
+        require(abi.decode(Util._getComponent("Owner").getRawValue(_troopId), (uint256)) == _playerId, "CURIO: Can only delete own troop");
+
+        uint256 _armyId = abi.decode(Util._getComponent("ArmyId").getRawValue(_troopId), (uint256));
+        if (Util._getArmyTroopCount(_armyId) <= 1) Util._removeArmyEntity(_armyId);
+        Util._removeTroopEntity(_troopId);
+    }
+
+    function purchaseTroopECS(Position memory _position, uint256 _troopTemplateId) external returns (uint256) {
         Set _set1 = new Set();
         Set _set2 = new Set();
 
@@ -292,8 +273,9 @@ contract EngineFacet is UseStorage {
         gs().players.push(msg.sender);
         gs().playerIdMap[msg.sender] = _playerId;
 
-        // Transfer base ownership
-        Util._getComponent("Owner").set(_baseId, abi.encode(_playerId));
+        // Transfer base ownership and update its health
+        Util._setComponentValue("Owner", _baseId, abi.encode(_playerId));
+        Util._setComponentValue("Health", _baseId, abi.encode(800));
 
         return _playerId;
     }
