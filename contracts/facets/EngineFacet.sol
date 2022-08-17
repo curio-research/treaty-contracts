@@ -17,8 +17,6 @@ contract EngineFacet is UseStorage {
     uint256 NULL = 0;
     address NULL_ADDR = address(0);
 
-    function marchECS(uint256 _armyId, Position memory _targetPos) external {}
-
     /**
      * March army to a target position (move, battle, or capture).
      * @param _armyId identifier for troop
@@ -62,56 +60,69 @@ contract EngineFacet is UseStorage {
         Util._emitPlayerInfo(msg.sender); // updates player info
     }
 
-    /**
-     * Dispatch troop to a target position (_moveArmy, _loadTroop, _clearTroopFromSourceArmy etc.).
-     * @param _troopId identifier for troop
-     * @param _targetPos target position
-     */
-    function moveTroop(uint256 _troopId, Position memory _targetPos) public {
-        // basic check
-        require(!gs().isPaused, "CURIO: Game is paused");
-        require(Util._isPlayerActive(msg.sender), "CURIO: Player is inactive");
-        require(Util._inBound(_targetPos), "CURIO: Target out of bound");
-        if (!Util._getTileAt(_targetPos).isInitialized) Util._initializeTile(_targetPos);
-
-        Troop memory _troop = gs().troopIdMap[_troopId];
-        Army memory _army = gs().armyIdMap[_troop.armyId];
-        Position memory _startPos = _army.pos;
-        Army memory _targetArmy;
-        Tile memory _targetTile = Util._getTileAt(_targetPos);
-
-        if (_targetTile.occupantId != NULL) {
-            _targetArmy = Util._getArmy(_targetTile.occupantId);
-            require(_targetArmy.owner == msg.sender, "CURIO: You can only combine with own troop");
-        }
-
-        require(Util._withinDist(_startPos, _targetPos, 1), "CURIO: You can only dispatch troop to the near tile");
-        require(_army.owner == msg.sender, "CURIO: You can only dispatch own troop");
-        require(!Util._samePos(_startPos, _targetPos), "CURIO: Already at destination");
-        require((block.timestamp - _army.lastLargeActionTaken) >= Util._getArmyLargeActionCooldown(_army.troopIds), "CURIO: Large action taken too recently");
-
-        require(EngineModules._geographicCheckTroop(_troop.troopTypeId, _targetTile), "CURIO: Troop and land type not compatible");
-
-        if (_targetTile.occupantId == NULL) {
-            // CaseI: Target Tile has no enemy base or enemy army
-            require(Util._getBaseOwner(_targetTile.baseId) == msg.sender || _targetTile.baseId == NULL, "CURIO: Cannot directly attack with troops");
-
-            uint256 _newArmyId = Util._createNewArmyFromTroop(msg.sender, _troopId, _startPos);
-            EngineModules._moveNewArmyToEmptyTile(_newArmyId, _targetPos);
-        } else {
-            // CaseII: Target Tile has own army
-            require(_targetArmy.troopIds.length + 1 <= 5, "CURIO: Army can have up to five troops, or two with one transport");
-            EngineModules._moveTroopToArmy(_targetTile.occupantId, _troopId);
-        }
-        EngineModules._clearTroopFromSourceArmy(_troop.armyId, _troopId);
-
-        Util._updateArmy(msg.sender, _startPos, _targetPos);
-        Util._emitPlayerInfo(msg.sender);
-    }
-
     // ----------------------------------------------------------------------
     // ECS FUNCTIONS
     // ----------------------------------------------------------------------
+
+    /**
+     * March army to a target position (move, battle, or capture).
+     * @param _armyId army entity
+     * @param _targetPos target position
+     */
+    function marchECS(uint256 _armyId, Position memory _targetPos) external {
+        // 1. Verify that army exists as an entity
+        require(Set(gs().entities).includes(_army), "CURIO: Troop not found");
+
+        // 2. Verify that game is ongoing
+        require(!gs().isPaused, "CURIO: Game is paused");
+
+        // 3. Verify that player is active
+        uint256 _playerId = Util._getPlayerId(msg.sender);
+        require(Util._getComponent("IsActive").has(_playerId), "CURIO: Player is inactive");
+
+        // 4. Verify that position is in bound, and initialize tile
+        require(Util._inBound(_targetPosition), "CURIO: Out of bound");
+        if (!Util._getTileAt(_targetPosition).isInitializedECS) Util._initializeTileECS(_targetPosition);
+
+        // 5. Verify that target position is different from starting position and within movement range
+        Position memory _sourcePosition = abi.decode(Util._getComponent("Position").getRawValue(_armyId), (Position));
+        require(!Util._samePos(_sourcePosition, _targetPosition), "CURIO: Already at destination");
+        require(Util._withinDist(_sourcePosition, _targetPosition, 1), "CURIO: You can only dispatch troop to the near tile");
+
+        // 6. Verify ownership of army by player
+        require(abi.decode(Util._getComponent("Owner").getRawValue(_armyId), (uint256)) == _playerId, "CURIO: You can only dispatch own troop");
+
+        // 7. Large action cooldown check
+        uint256 _lastLargeActionTaken = abi.decode(Util._getComponent("LastLargeActionTaken").getRawValue(_armyId), (uint256));
+        uint256 _largeActionCooldown = abi.decode(Util._getComponent("LargeActionCooldown").getRawValue(_armyId), (uint256));
+        require(block.timestamp - _lastLargeActionTaken >= _largeActionCooldown, "CURIO: Large action taken too recently");
+
+        // 8. Geographic check
+        require(EngineModules._geographicCheckArmyECS(_armyId, _targetPosition), "CURIO: Troop and land type not compatible"); // TODO
+
+        // 9. March logic
+        // TODO: left here
+        uint256 _targetArmyId = Util._getArmyAt(_targetPosition);
+        if (_targetArmyId == NULL) {
+            uint256 _targetBaseId = Util._getBaseAt(_targetPosition);
+            if (_targetBaseId == NULL) {
+                // CaseI: move army when target tile has no base or army
+                EngineModules._moveArmyECS(_playerId, _armyId, _targetPos);
+            } else {
+                if (abi.decode(Util._getComponent("Owner").getRawValue(_targetBaseId), (uint256)) == _playerId) {
+                    // CaseII: move army when target tile has your base but no army
+                    EngineModules._moveArmyECS(_playerId, _armyId, _targetPos);
+                } else {
+                    // CaseIII: attack base when target tile has enemy base but no army
+                    EngineModules._battleBaseECS(_playerId, _armyId, _targetPos);
+                }
+            }
+        } else {
+            // CaseIV: battle enemy army when target tile has one
+            require(abi.decode(Util._getComponent("Owner").getRawValue(_targetArmyId), (uint256)) != _playerId, "CURIO: Destination tile occupied");
+            EngineModules._battleArmyECS(_playerId, _armyId, _targetPos);
+        }
+    }
 
     /**
      * Dispatch troop to a target position.
@@ -120,7 +131,7 @@ contract EngineFacet is UseStorage {
      */
     function moveTroopECS(uint256 _troopId, Position memory _targetPosition) external {
         // 1. Verify that troop exists as an entity
-        require(Set(gs().entities).includes(_troopId), "CURIO: Troop template not found");
+        require(Set(gs().entities).includes(_troopId), "CURIO: Troop not found");
 
         // 2. Verify that game is ongoing
         require(!gs().isPaused, "CURIO: Game is paused");
@@ -142,16 +153,21 @@ contract EngineFacet is UseStorage {
         // 6. Verify ownership of troop by player
         require(abi.decode(Util._getComponent("Owner").getRawValue(_troopId), (uint256)) == _playerId, "CURIO: You can only dispatch own troop");
 
-        // 7. Movement cooldown check
+        // 7. Large action cooldown check
         uint256 _lastLargeActionTaken = abi.decode(Util._getComponent("LastLargeActionTaken").getRawValue(_armyId), (uint256));
         uint256 _largeActionCooldown = abi.decode(Util._getComponent("LargeActionCooldown").getRawValue(_armyId), (uint256));
         require(block.timestamp - _lastLargeActionTaken >= _largeActionCooldown, "CURIO: Large action taken too recently");
 
-        // 8. Geographic and base checks
+        // 8. Movement cooldown check
+        uint256 _lastMoved = abi.decode(Util._getComponent("LastMoved").getRawValue(_armyId), (uint256));
+        uint256 _movementCooldown = abi.decode(Util._getComponent("MovementCooldown").getRawValue(_armyId), (uint256));
+        require(block.timestamp - _lastMoved >= _movementCooldown, "CURIO: Moved too recently");
+
+        // 9. Geographic and base checks
         require(EngineModules._geographicCheckTroopECS(_troopId, _targetPosition), "CURIO: Troop and land type not compatible"); // TODO
         require(Util._getBaseAt(_targetPosition) == NULL, "CURIO: Cannot directly attack with troops");
 
-        // 9. March logic checks, and create new army if empty
+        // 10. March logic checks, and create new army if empty
         uint256 _targetArmyId = Util._getArmyAt(_targetPosition);
         if (_targetArmyId != NULL) {
             require(abi.decode(Util._getComponent("Owner").getRawValue(_targetArmyId), (uint256)) == _playerId, "CURIO: Cannot directly attack with troops");
@@ -160,10 +176,10 @@ contract EngineFacet is UseStorage {
             _targetArmyId = Util._addArmyEntity(_playerId, _targetPosition);
         }
 
-        // 10. Move troop
+        // 11. Move troop
         Util._setComponentValue("ArmyId", _troopId, _targetArmyId);
 
-        // 11. Remove old army if empty
+        // 12. Remove old army if empty
         if (Util._getArmyTroopCount(_armyId) == 0) Util._removeArmyEntity(_armyId);
     }
 
