@@ -20,7 +20,7 @@ library Util {
     }
 
     // ----------------------------------------------------------
-    // ECS UTIL FUNCTIONS (temp)
+    // ECS UTIL
     // ----------------------------------------------------------
 
     event NewEntity(uint256 _entity);
@@ -74,28 +74,37 @@ library Util {
         gs().map[_position.x][_position.y].terrain = TERRAIN(_terrainId);
     }
 
-    function _getComponent(string memory _name) public view returns (Component) {
-        address _componentAddr = gs().components[_name];
-        require(_componentAddr != address(0), "CURIO: Component not found");
+    function _getArmyAt(Position memory _position) public returns (uint256) {
+        Set _set1 = new Set();
+        Set _set2 = new Set();
+        _set1.addArray(Util._getComponent("IsArmy").getEntities());
+        _set2.addArray(Util._getComponent("Position").getEntitiesWithRawValue(abi.encode(_position)));
+        uint256[] _result = _intersection(_set1, _set2);
 
-        return Component(_componentAddr);
+        require(_result.length <= 1, "CURIO: Something is wrong");
+        return _result.length == 1 ? _result[0] : NULL;
     }
 
-    function _getComponentById(uint256 _id) public view returns (Component) {
-        address _componentAddr = gs().idComponentMap[_id];
-        require(_componentAddr != address(0), "CURIO: Component not found");
+    function _addArmyEntity(uint256 _playerId, Position memory _position) public returns (uint256) {
+        uint256 _armyId = _addEntity();
+        _setComponentValue("Owner", _armyId, abi.encode(_playerId));
+        _setComponentValue("LastMoved", _armyId, abi.encode(block.timestamp));
+        _setComponentValue("LastLargeActionTaken", _armyId, abi.encode(0));
+        _setComponentValue("LastRepaired", _armyId, abi.encode(block.timestamp));
+        _setComponentValue("Position", _armyId, abi.encode(_position));
+        _setComponentValue("CanMove", _troopId, abi.encode(true));
+        _setComponentValue("CanAttack", _troopId, abi.encode(true));
+        if (_getComponent("CanCapture").has(_troopTemplateId)) {
+            _setComponentValue("CanCapture", _troopId, abi.encode(true));
+        }
 
-        return Component(_componentAddr);
-    }
-
-    function _getPlayerId(address _playerAddr) public view returns (uint256) {
-        return gs().playerIdMap[_playerAddr];
+        return _armyId;
     }
 
     function _addTroopEntity(
         uint256 _playerId,
-        Position memory _position,
-        uint256 _troopTemplateId
+        uint256 _troopTemplateId,
+        uint256 _armyId
     ) public returns (uint256) {
         // 1. Get number of player-owned troops and verify size
         uint256 _playerTroopCount = _getPlayerTroopCount(_playerId);
@@ -106,17 +115,8 @@ library Util {
         // troop fields
         _setComponentValue("IsActive", _troopId, abi.encode(true));
         _setComponentValue("Owner", _troopId, abi.encode(_playerId));
-        _setComponentValue("LastMoved", _troopId, abi.encode(block.timestamp));
-        _setComponentValue("LastLargeActionTaken", _troopId, abi.encode(0));
-        _setComponentValue("LastRepaired", _troopId, abi.encode(block.timestamp));
+        _setComponentValue("ArmyId", _troopId, abi.encode(_armyId));
         _setComponentValue("Health", _troopId, _getComponent("MaxHealth").getRawValue(_troopTemplateId));
-        _setComponentValue("Position", _troopId, abi.encode(_position));
-        // struct property fields
-        _setComponentValue("CanMove", _troopId, abi.encode(true));
-        _setComponentValue("CanAttack", _troopId, abi.encode(true));
-        if (_getComponent("CanCapture").has(_troopTemplateId)) {
-            _setComponentValue("CanCapture", _troopId, abi.encode(true));
-        }
         // troop type fields
         _setComponentValue("Name", _troopId, _getComponent("Name").getRawValue(_troopTemplateId));
         if (_getComponent("IsLandTroop").has(_troopTemplateId)) {
@@ -128,43 +128,24 @@ library Util {
         _setComponentValue("DefenseFactor", _troopId, _getComponent("DefenseFactor").getRawValue(_troopTemplateId));
         _setComponentValue("MovementCooldown", _troopId, _getComponent("MovementCooldown").getRawValue(_troopTemplateId));
         _setComponentValue("LargeActionCooldown", _troopId, _getComponent("LargeActionCooldown").getRawValue(_troopTemplateId));
-        // _setComponentValue("Gold", _troopId, _getComponent("Gold").getRawValue(_troopTemplateId));
-        _setComponentValue("OilPerSecond", _troopId, _getComponent("OilPerSecond").getRawValue(_troopTemplateId));
         Component _cargoCapacityComponent = _getComponent("CargoCapacity");
         if (_cargoCapacityComponent.has(_troopTemplateId)) {
             _setComponentValue("CargoCapacity", _troopId, _cargoCapacityComponent.getRawValue(_troopTemplateId));
         }
+        // resource fields
+        uint256 _goldCost = abi.decode(_getComponent("Gold").getRawValue(_troopTemplateId), (uint256));
+        uint256 _oilConsumptionPerSecond = abi.decode(_getComponent("OilPerSecond").getRawValue(_troopTemplateId), (uint256));
+        _setComponentValue("OilPerSecond", _troopId, abi.encode(_oilConsumptionPerSecond));
 
-        // 4. Update balances
-        // TODO: implement
+        // 3. Update balances
+        _updatePlayerBalances(_owner); // FIXME
+        uint256 _playerGoldBalance = abi.decode(_getComponent("Gold").getRawValue(_playerId), (uint256));
+        uint256 _playerOilConsumptionPerSecond = abi.decode(_getComponent("OilPerSecond").getRawValue(_playerId), (uint256));
+        require(_playerGoldBalance > _goldCost, "CURIO: Insufficient gold balance");
+        _setComponentValue("Gold", _playerId, _playerGoldBalance - _goldCost);
+        _setComponentValue("OildPerSecond", _playerId, _playerOilConsumptionPerSecond + _oilConsumptionPerSecond);
 
         return _troopId;
-    }
-
-    function _addEntity() public returns (uint256) {
-        Set _entities = Set(gs().entities);
-        uint256 _newEntity = _entities.size() + 1;
-        _entities.add(_newEntity);
-
-        emit NewEntity(_newEntity);
-        return _newEntity;
-    }
-
-    // Question: Right now, all events regarding component set and removal are emitted in game contracts. Is this good?
-    function _setComponentValue(
-        string memory _componentName,
-        uint256 _entity,
-        bytes memory _rawValue
-    ) public {
-        _getComponent(_componentName).set(_entity, _rawValue);
-
-        emit ComponentValueSet(_componentName, _entity, _rawValue);
-    }
-
-    function _removeComponentValue(string memory _componentName, uint256 _entity) public {
-        _getComponent(_componentName).remove(_entity);
-
-        emit ComponentValueSet(_componentName, _entity, new bytes(0));
     }
 
     function _getPlayerTroopCount(uint256 _playerId) public returns (uint256) {
@@ -191,6 +172,54 @@ library Util {
         _set1.addArray(Util._getComponent("CanPurchase").getEntities());
         _set2.addArray(Util._getComponent("Owner").getEntitiesWithRawValue(abi.encode(_playerId)));
         return _intersection(_set1, _set2);
+    }
+
+    function _getPlayerId(address _playerAddr) public view returns (uint256) {
+        return gs().playerIdMap[_playerAddr];
+    }
+
+    // ----------------------------------------------------------
+    // ECS BASIC
+    // ----------------------------------------------------------
+
+    function _getComponent(string memory _name) public view returns (Component) {
+        address _componentAddr = gs().components[_name];
+        require(_componentAddr != address(0), "CURIO: Component not found");
+
+        return Component(_componentAddr);
+    }
+
+    function _getComponentById(uint256 _id) public view returns (Component) {
+        address _componentAddr = gs().idComponentMap[_id];
+        require(_componentAddr != address(0), "CURIO: Component not found");
+
+        return Component(_componentAddr);
+    }
+
+    function _addEntity() public returns (uint256) {
+        Set _entities = Set(gs().entities);
+        uint256 _newEntity = _entities.size() + 1;
+        _entities.add(_newEntity);
+
+        emit NewEntity(_newEntity);
+        return _newEntity;
+    }
+
+    // Question: Right now, all events regarding component set and removal are emitted in game contracts. Is this good?
+    function _setComponentValue(
+        string memory _componentName,
+        uint256 _entity,
+        bytes memory _rawValue
+    ) public {
+        _getComponent(_componentName).set(_entity, _rawValue);
+
+        emit ComponentValueSet(_componentName, _entity, _rawValue);
+    }
+
+    function _removeComponentValue(string memory _componentName, uint256 _entity) public {
+        _getComponent(_componentName).remove(_entity);
+
+        emit ComponentValueSet(_componentName, _entity, new bytes(0));
     }
 
     // inclusive on both ends
@@ -313,30 +342,6 @@ library Util {
     // ----------------------------------------------------------
     // SETTERS
     // ----------------------------------------------------------
-
-    function _initializeTile(Position memory _pos) public {
-        WorldConstants memory _worldConstants = gs().worldConstants;
-        uint256 _batchSize = _worldConstants.initBatchSize;
-        uint256 _numInitTerrainTypes = _worldConstants.numInitTerrainTypes;
-
-        uint256 _encodedCol = gs().encodedColumnBatches[_pos.x][_pos.y / _batchSize] % (_numInitTerrainTypes**((_pos.y % _batchSize) + 1));
-        uint256 _divFactor = _numInitTerrainTypes**(_pos.y % _batchSize);
-        uint256 _terrainId = _encodedCol / _divFactor;
-
-        if (_terrainId >= 3) {
-            BASE_NAME _baseName = BASE_NAME(_terrainId - 3);
-            _addBase(_pos, _baseName);
-
-            if (BASE_NAME(_terrainId - 3) == BASE_NAME.OIL_WELL) {
-                _terrainId = 1;
-            } else {
-                _terrainId -= 3;
-            }
-        }
-
-        gs().map[_pos.x][_pos.y].isInitialized = true;
-        gs().map[_pos.x][_pos.y].terrain = TERRAIN(_terrainId);
-    }
 
     function _updatePlayerBalances(address _addr) public {
         Player memory _player = gs().playerMap[_addr];

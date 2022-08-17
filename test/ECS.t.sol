@@ -39,7 +39,11 @@ contract ECS is Test, DiamondDeployTest {
             "DefenseFactor",
             "MovementCooldown",
             "LargeActionCooldown",
-            "CargoCapacity" //
+            "CargoCapacity",
+            "ArmyId",
+            "IsTroop",
+            "IsBase",
+            "IsArmy" //
         ];
 
         vm.startPrank(deployer);
@@ -49,7 +53,6 @@ contract ECS is Test, DiamondDeployTest {
 
         // Initialize a troop template (destroyer)
         uint256 _destroyerTemplateId = helper.addEntity();
-        helper.setComponentValue("IsActive", _destroyerTemplateId, abi.encode(true));
         helper.setComponentValue("CanMove", _destroyerTemplateId, abi.encode(true));
         helper.setComponentValue("CanAttack", _destroyerTemplateId, abi.encode(true));
         helper.setComponentValue("Name", _destroyerTemplateId, abi.encode("Destroyer"));

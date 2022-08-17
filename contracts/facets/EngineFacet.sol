@@ -17,6 +17,8 @@ contract EngineFacet is UseStorage {
     uint256 NULL = 0;
     address NULL_ADDR = address(0);
 
+    function marchECS(uint256 _armyId, Position memory _targetPos) external {}
+
     /**
      * March army to a target position (move, battle, or capture).
      * @param _armyId identifier for troop
@@ -108,36 +110,6 @@ contract EngineFacet is UseStorage {
     }
 
     /**
-     * Purchase troop at a base.
-     * @param _pos position of base
-     * @param _troopTypeId identifier for selected troop type
-     */
-    function purchaseTroop(Position memory _pos, uint256 _troopTypeId) external {
-        require(!gs().isPaused, "CURIO: Game is paused");
-        require(Util._isPlayerActive(msg.sender), "CURIO: Player is inactive");
-
-        require(Util._inBound(_pos), "CURIO: Out of bound");
-        if (!Util._getTileAt(_pos).isInitialized) Util._initializeTile(_pos);
-
-        Tile memory _tile = Util._getTileAt(_pos);
-        require(_tile.baseId != NULL, "CURIO: No base found");
-        require(_tile.occupantId == NULL, "CURIO: Base occupied by another troop");
-
-        Base memory _base = Util._getBase(_tile.baseId);
-        require(_base.owner == msg.sender, "CURIO: Can only purchase in own base");
-        require(EngineModules._geographicCheckTroop(_troopTypeId, _tile), "CURIO: Base cannot purchase selected troop type");
-
-        Util._addTroop(msg.sender, _pos, _troopTypeId);
-
-        uint256 _troopPrice = Util._getTroopGoldPrice(_troopTypeId);
-        Util._updatePlayerBalances(msg.sender);
-        require(_troopPrice <= Util._getPlayerGoldBalance(msg.sender), "CURIO: Insufficient gold balance");
-        gs().playerMap[msg.sender].goldBalance -= _troopPrice;
-
-        Util._emitPlayerInfo(msg.sender);
-    }
-
-    /**
      * Delete an owned troop (often to reduce expense).
      * @param _troopId identifier for troop
      */
@@ -185,7 +157,7 @@ contract EngineFacet is UseStorage {
             isDebuffed: false //
         });
         gs().baseIdMap[_baseId].owner = msg.sender;
-        gs().baseIdMap[_baseId].health = 800;
+        gs().baseIdMap[_baseId].health = 800; // FIXME: world constants
 
         emit Util.NewPlayer(msg.sender, _pos);
 
@@ -227,12 +199,6 @@ contract EngineFacet is UseStorage {
         Util._setComponentValue("Position", _troopId, abi.encode(_targetPosition));
     }
 
-    // Question: Is intersection the best way to find entities which satisfy multiple component conditions?
-    // Question: Does simplicity outweigh slight obfuscation? e.g. Gold component assigned to both player balance and troop price
-    // Question: Should past structs like Base or Troop be their own boolean components? Or should they be differentiated solely from "functional" components such as `canMove`?
-    // Question: Should entityId increase with nonce or be randomly generated?
-    // Question: How, if possible, can we have more efficient array intersections without creating sets first?
-    // Note: TroopType now is just a template Troop, without Owner, Position, or isActive
     function purchaseTroopECS(Position memory _position, uint256 _troopTemplateId) public returns (uint256) {
         Set _set1 = new Set();
         Set _set2 = new Set();
@@ -286,8 +252,11 @@ contract EngineFacet is UseStorage {
         // 10. Set new player gold balance
         Util._setComponentValue("Gold", _playerId, abi.encode(_playerGoldBalance - _troopGoldPrice));
 
-        // 11. Add troop
-        return Util._addTroopEntity(_playerId, _position, _troopTemplateId);
+        // 11. Add new army
+        uint256 _armyId = Util._addArmyEntity(_playerId, _position);
+
+        // 12. Add troop and return its ID
+        return Util._addTroopEntity(_playerId, _troopTemplateId, _armyId);
     }
 
     function initializePlayerECS(Position memory _position, string memory _name) external returns (uint256) {
