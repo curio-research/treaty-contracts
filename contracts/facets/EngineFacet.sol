@@ -4,9 +4,8 @@ pragma solidity ^0.8.4;
 import "contracts/libraries/Storage.sol";
 import {Util} from "contracts/libraries/GameUtil.sol";
 import {EngineModules} from "contracts/libraries/EngineModules.sol";
-import {BASE_NAME, Position, TERRAIN, Tile, WorldConstants} from "contracts/libraries/Types.sol";
+import {Position, TERRAIN, WorldConstants} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
-import {Component} from "contracts/Component.sol";
 import {Set} from "contracts/Set.sol";
 
 /// @title Engine facet
@@ -214,9 +213,6 @@ contract EngineFacet is UseStorage {
      * @return _playerId identifier for the player
      */
     function initializePlayer(Position memory _position, string memory _name) external returns (uint256) {
-        Set _set1 = new Set();
-        Set _set2 = new Set();
-
         // Checkers
         require(!gs().isPaused, "CURIO: Game is paused");
         require(gs().players.length < gs().worldConstants.maxPlayerCount, "CURIO: Max player count exceeded");
@@ -225,11 +221,8 @@ contract EngineFacet is UseStorage {
         if (!Util._getTileAt(_position).isInitialized) Util._initializeTile(_position);
 
         // Verify that a "base" (aka. an entity which can purchase) is present
-        _set1.addArray(Util._getComponent("Position").getEntitiesWithRawValue(abi.encode(_position)));
-        _set2.addArray(Util._getComponent("CanPurchase").getEntities());
-        uint256[] memory _intersection = Util._intersection(_set1, _set2);
-        require(_intersection.length == 1, "CURIO: No base found");
-        uint256 _baseId = _intersection[0];
+        uint256 _baseId = Util._getBaseAt(_position);
+        require(_baseId != NULL, "CURIO: No base found");
 
         // Verify that base is not taken
         require(!Util._getComponent("Owner").has(_baseId), "CURIO: Base is taken");
@@ -253,43 +246,5 @@ contract EngineFacet is UseStorage {
         Util._setComponentValue("GoldRatePositive", _playerId, abi.encode(true));
 
         return _playerId;
-    }
-
-    /**
-     * @dev Policy: All navies with 5+ health gain 100% attackFactor.
-     * TODO: Range condition for components of common types such as uint256, for example for Health greater than 5 instead of checking every value between 5 and 12.
-     *       This is essentially `.filter()`.
-     * TODO: Location-based condition: "... navies in ports/next to oil wells with ..."
-     * TODO: Time-bound condition: "... attackFactor within the next 10 seconds." (require backend)
-     */
-    function sampleBuffPolicy() external {
-        // Get navies with at least 5 health
-        uint256[] memory _naviesWithFivePlusHealth = Util._filterByComponentRange(Util._getNavies(), "Health", 5, 12);
-
-        // Double attack factor for all such navies
-        uint256 _troopId;
-        uint256 _attackFactor;
-        for (uint256 i = 0; i < _naviesWithFivePlusHealth.length; i++) {
-            _troopId = _naviesWithFivePlusHealth[i];
-            _attackFactor = abi.decode(Util._getComponentValue("AttackFactor", _troopId), (uint256));
-            Util._setComponentValue("AttackFactor", _troopId, abi.encode(_attackFactor * 2));
-        }
-    }
-
-    /**
-     * @dev Policy: The player's ports and cities gain movement ability, but they change from producing to consuming gold.
-     */
-    function sampleImpossiblePolicy() external {
-        // Get player's ports and cities
-        uint256 _playerId = gs().playerIdMap[msg.sender];
-        uint256[] memory _playerBases = Util._getPlayerBases(_playerId);
-
-        // Update desired properties
-        uint256 _baseId;
-        for (uint256 i = 0; i < _playerBases.length; i++) {
-            _baseId = _playerBases[i];
-            Util._setComponentValue("CanMove", _baseId, abi.encode(true));
-            Util._removeComponentValue("GoldRatePositive", _baseId);
-        }
     }
 }

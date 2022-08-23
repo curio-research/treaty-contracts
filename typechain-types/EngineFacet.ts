@@ -27,15 +27,10 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
 export interface EngineFacetInterface extends utils.Interface {
   functions: {
     "deleteTroop(uint256)": FunctionFragment;
-    "initializePlayer((uint256,uint256))": FunctionFragment;
-    "initializePlayerECS((uint256,uint256),string)": FunctionFragment;
+    "initializePlayer((uint256,uint256),string)": FunctionFragment;
     "march(uint256,(uint256,uint256))": FunctionFragment;
     "moveTroop(uint256,(uint256,uint256))": FunctionFragment;
-    "moveTroopECS(uint256,(uint256,uint256))": FunctionFragment;
     "purchaseTroop((uint256,uint256),uint256)": FunctionFragment;
-    "purchaseTroopECS((uint256,uint256),uint256)": FunctionFragment;
-    "sampleBuffPolicy()": FunctionFragment;
-    "sampleImpossiblePolicy()": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -44,10 +39,6 @@ export interface EngineFacetInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "initializePlayer",
-    values: [PositionStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "initializePlayerECS",
     values: [PositionStruct, string]
   ): string;
   encodeFunctionData(
@@ -59,24 +50,8 @@ export interface EngineFacetInterface extends utils.Interface {
     values: [BigNumberish, PositionStruct]
   ): string;
   encodeFunctionData(
-    functionFragment: "moveTroopECS",
-    values: [BigNumberish, PositionStruct]
-  ): string;
-  encodeFunctionData(
     functionFragment: "purchaseTroop",
     values: [PositionStruct, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "purchaseTroopECS",
-    values: [PositionStruct, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "sampleBuffPolicy",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "sampleImpossiblePolicy",
-    values?: undefined
   ): string;
 
   decodeFunctionResult(
@@ -87,30 +62,10 @@ export interface EngineFacetInterface extends utils.Interface {
     functionFragment: "initializePlayer",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "initializePlayerECS",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "march", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "moveTroop", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "moveTroopECS",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "purchaseTroop",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "purchaseTroopECS",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "sampleBuffPolicy",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "sampleImpossiblePolicy",
     data: BytesLike
   ): Result;
 
@@ -150,11 +105,6 @@ export interface EngineFacet extends BaseContract {
     ): Promise<ContractTransaction>;
 
     initializePlayer(
-      _pos: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    initializePlayerECS(
       _position: PositionStruct,
       _name: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -162,39 +112,19 @@ export interface EngineFacet extends BaseContract {
 
     march(
       _armyId: BigNumberish,
-      _targetPos: PositionStruct,
+      _targetPosition: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     moveTroop(
-      _troopId: BigNumberish,
-      _targetPos: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    moveTroopECS(
       _troopId: BigNumberish,
       _targetPosition: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     purchaseTroop(
-      _pos: PositionStruct,
-      _troopTypeId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    purchaseTroopECS(
       _position: PositionStruct,
       _troopTemplateId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    sampleBuffPolicy(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    sampleImpossiblePolicy(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
@@ -205,11 +135,6 @@ export interface EngineFacet extends BaseContract {
   ): Promise<ContractTransaction>;
 
   initializePlayer(
-    _pos: PositionStruct,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  initializePlayerECS(
     _position: PositionStruct,
     _name: string,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -217,39 +142,19 @@ export interface EngineFacet extends BaseContract {
 
   march(
     _armyId: BigNumberish,
-    _targetPos: PositionStruct,
+    _targetPosition: PositionStruct,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   moveTroop(
-    _troopId: BigNumberish,
-    _targetPos: PositionStruct,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  moveTroopECS(
     _troopId: BigNumberish,
     _targetPosition: PositionStruct,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   purchaseTroop(
-    _pos: PositionStruct,
-    _troopTypeId: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  purchaseTroopECS(
     _position: PositionStruct,
     _troopTemplateId: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  sampleBuffPolicy(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  sampleImpossiblePolicy(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -260,11 +165,6 @@ export interface EngineFacet extends BaseContract {
     ): Promise<void>;
 
     initializePlayer(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    initializePlayerECS(
       _position: PositionStruct,
       _name: string,
       overrides?: CallOverrides
@@ -272,37 +172,21 @@ export interface EngineFacet extends BaseContract {
 
     march(
       _armyId: BigNumberish,
-      _targetPos: PositionStruct,
+      _targetPosition: PositionStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
     moveTroop(
-      _troopId: BigNumberish,
-      _targetPos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    moveTroopECS(
       _troopId: BigNumberish,
       _targetPosition: PositionStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
     purchaseTroop(
-      _pos: PositionStruct,
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    purchaseTroopECS(
       _position: PositionStruct,
       _troopTemplateId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    sampleBuffPolicy(overrides?: CallOverrides): Promise<void>;
-
-    sampleImpossiblePolicy(overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {};
@@ -314,11 +198,6 @@ export interface EngineFacet extends BaseContract {
     ): Promise<BigNumber>;
 
     initializePlayer(
-      _pos: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    initializePlayerECS(
       _position: PositionStruct,
       _name: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -326,39 +205,19 @@ export interface EngineFacet extends BaseContract {
 
     march(
       _armyId: BigNumberish,
-      _targetPos: PositionStruct,
+      _targetPosition: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     moveTroop(
-      _troopId: BigNumberish,
-      _targetPos: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    moveTroopECS(
       _troopId: BigNumberish,
       _targetPosition: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     purchaseTroop(
-      _pos: PositionStruct,
-      _troopTypeId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    purchaseTroopECS(
       _position: PositionStruct,
       _troopTemplateId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    sampleBuffPolicy(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    sampleImpossiblePolicy(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
@@ -370,11 +229,6 @@ export interface EngineFacet extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     initializePlayer(
-      _pos: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    initializePlayerECS(
       _position: PositionStruct,
       _name: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -382,39 +236,19 @@ export interface EngineFacet extends BaseContract {
 
     march(
       _armyId: BigNumberish,
-      _targetPos: PositionStruct,
+      _targetPosition: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     moveTroop(
-      _troopId: BigNumberish,
-      _targetPos: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    moveTroopECS(
       _troopId: BigNumberish,
       _targetPosition: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     purchaseTroop(
-      _pos: PositionStruct,
-      _troopTypeId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    purchaseTroopECS(
       _position: PositionStruct,
       _troopTemplateId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    sampleBuffPolicy(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    sampleImpossiblePolicy(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

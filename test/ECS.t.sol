@@ -11,7 +11,7 @@ contract ECS is Test, DiamondDeployTest {
         // List of all component names
         // FIXME: array length hardcoded
         // TODO: separate into systems
-        string[28] memory _componentNameList = [
+        string[30] memory _componentNameList = [
             "Name",
             "IsActive",
             "Position",
@@ -41,10 +41,7 @@ contract ECS is Test, DiamondDeployTest {
             "LargeActionCooldown",
             "CargoCapacity",
             "ArmyId",
-            "IsDebuffed",
-            "IsTroop",
-            "IsBase",
-            "IsArmy" //
+            "IsDebuffed" //
         ];
 
         vm.startPrank(deployer);
@@ -78,11 +75,11 @@ contract ECS is Test, DiamondDeployTest {
         assertTrue(!getter.getComponent("DefenseFactor").has(_player1Id));
         assertEq(getter.getComponent("IsActive").getEntities().length, 3);
         assertEq(getter.getComponent("CargoCapacity").getEntities().length, 0);
-        assertEq(abi.decode(getter.getComponent("Gold").getRawValue(_player1Id), (uint256)), 20);
-        assertEq(getter.getComponent("Gold").getEntitiesWithRawValue(abi.encode(19))[0], _destroyerTemplateId);
-        assertEq(getter.getComponent("Position").getEntitiesWithRawValue(abi.encode(player1Pos)).length, 1);
+        assertEq(abi.decode(getter.getComponent("Gold").getValue(_player1Id), (uint256)), 20);
+        assertEq(getter.getComponent("Gold").getEntitiesWithValue(abi.encode(19))[0], _destroyerTemplateId);
+        assertEq(getter.getComponent("Position").getEntitiesWithValue(abi.encode(player1Pos)).length, 1);
         assertEq(getter.getComponent("CanPurchase").getEntities().length, 1);
-        assertEq(getter.getComponent("Name").getEntitiesWithRawValue(abi.encode("Bob"))[0], _player1Id);
+        assertEq(getter.getComponent("Name").getEntitiesWithValue(abi.encode("Bob"))[0], _player1Id);
         vm.expectRevert(bytes("CURIO: Component not found"));
         getter.getComponent("NonexistentComponent");
 
@@ -90,16 +87,16 @@ contract ECS is Test, DiamondDeployTest {
         uint256 _troopId = engine.purchaseTroopECS(player1Pos, _destroyerTemplateId);
 
         // Verify post-conditions
-        assertEq(abi.decode(getter.getComponent("Gold").getRawValue(_player1Id), (uint256)), 20 - 19);
-        assertEq(getter.getComponent("Position").getEntitiesWithRawValue(abi.encode(player1Pos)).length, 2);
-        Position memory _troopPosition = abi.decode(getter.getComponent("Position").getRawValue(_troopId), (Position));
+        assertEq(abi.decode(getter.getComponent("Gold").getValue(_player1Id), (uint256)), 20 - 19);
+        assertEq(getter.getComponent("Position").getEntitiesWithValue(abi.encode(player1Pos)).length, 2);
+        Position memory _troopPosition = abi.decode(getter.getComponent("Position").getValue(_troopId), (Position));
         assertEq(_troopPosition.x, player1Pos.x);
         assertEq(_troopPosition.y, player1Pos.y);
-        assertEq(abi.decode(getter.getComponent("Health").getRawValue(_troopId), (uint256)), 3);
+        assertEq(abi.decode(getter.getComponent("Health").getValue(_troopId), (uint256)), 3);
         assertEq(getter.getComponent("CanMove").getEntities()[1], _troopId);
         uint256[] memory _baseIds = getter.getComponent("CanPurchase").getEntities();
         assertEq(_baseIds.length, 4); // because nearby city and 2 ports are also initialized in neighbor search
-        assertEq(abi.decode(getter.getComponent("Owner").getRawValue(_baseIds[0]), (uint256)), _player1Id);
+        assertEq(abi.decode(getter.getComponent("Owner").getValue(_baseIds[0]), (uint256)), _player1Id);
 
         // Verify inability to buy another destroyer before moving destroyer away
         vm.expectRevert(bytes("CURIO: Base occupied by another troop"));
@@ -109,7 +106,7 @@ contract ECS is Test, DiamondDeployTest {
         engine.moveTroopECS(_troopId, Position({x: 7, y: 1}));
 
         // Verify post-conditions
-        Position memory _currentPosition = abi.decode(getter.getComponent("Position").getRawValue(_troopId), (Position));
+        Position memory _currentPosition = abi.decode(getter.getComponent("Position").getValue(_troopId), (Position));
         assertEq(_currentPosition.x, 7);
         assertEq(_currentPosition.y, 1);
 

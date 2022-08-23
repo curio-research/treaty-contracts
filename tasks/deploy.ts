@@ -7,7 +7,7 @@ import { Util } from './../typechain-types/Util';
 import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { deployProxy, loadLocalMapConfig, LOCAL_MAP_PREFIX, printDivider, saveMapToLocal } from './util/deployHelper';
-import { TROOP_TYPES, getTroopTypeIndexByName, RENDER_CONSTANTS, generateWorldConstants, SMALL_MAP_INPUT, LARGE_MAP_INPUT, SANDBOX_MAP_INPUT, COMPONENT_NAMES } from './util/constants';
+import { TROOP_TYPES, RENDER_CONSTANTS, generateWorldConstants, SMALL_MAP_INPUT, LARGE_MAP_INPUT, SANDBOX_MAP_INPUT, COMPONENT_NAMES } from './util/constants';
 import { position } from '../util/types/common';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
 import { Position, GameMapConfig, TILE_TYPE, TROOP_NAME, MapInput } from './util/types';
@@ -72,8 +72,8 @@ task('deploy', 'deploy contracts')
       // Set up deployer and some local variables
       let [player1, player2] = await hre.ethers.getSigners();
       console.log('✦ player1 address is:', player1.address);
-      const infantryTroopTypeId = getTroopTypeIndexByName(troopTypes, TROOP_NAME.INFANTRY) + 1;
-      const destroyerTroopTypeId = getTroopTypeIndexByName(troopTypes, TROOP_NAME.DESTROYER) + 1;
+      const infantryTroopTypeId = 1; // FIXME
+      const destroyerTroopTypeId = 3; // FIXME
 
       // Set up game and map configs
       let gameMapConfig: GameMapConfig;
@@ -190,13 +190,13 @@ task('deploy', 'deploy contracts')
             ecsTime = performance.now();
 
             // Initialize players
-            await (await diamond.connect(player1).initializePlayerECS(player1Pos, 'Alice')).wait();
-            await (await diamond.connect(player2).initializePlayerECS(player2Pos, 'Bob')).wait();
+            await (await diamond.connect(player1).initializePlayer(player1Pos, 'Alice')).wait();
+            await (await diamond.connect(player2).initializePlayer(player2Pos, 'Bob')).wait();
             console.log(`✦ players initialized after ${performance.now() - ecsTime} ms`);
             ecsTime = performance.now();
 
             // Purchase a destroyer for player1
-            await (await diamond.connect(player1).purchaseTroopECS(player1Pos, destroyerTemplateId)).wait();
+            await (await diamond.connect(player1).purchaseTroop(player1Pos, destroyerTemplateId)).wait();
             console.log(`✦ destroyer purchased after ${performance.now() - ecsTime} ms`);
             ecsTime = performance.now();
           } else {
@@ -211,8 +211,8 @@ task('deploy', 'deploy contracts')
             const player2InfantryPos3 = { x: 1, y: 2 };
             const player2DestroyerPos = { x: 5, y: 4 };
 
-            await (await diamond.connect(player1).initializePlayer(player1Pos)).wait();
-            await (await diamond.connect(player2).initializePlayer(player2Pos)).wait();
+            await (await diamond.connect(player1).initializePlayer(player1Pos, 'Cindy')).wait();
+            await (await diamond.connect(player2).initializePlayer(player2Pos, 'Daniel')).wait();
             await (await diamond.connect(player1).spawnTroop(player1InfantryPos, player1.address, infantryTroopTypeId)).wait();
             await (await diamond.connect(player1).spawnTroop(player1InfantryPos2, player1.address, infantryTroopTypeId)).wait();
             await (await diamond.connect(player1).spawnTroop(player1InfantryPos3, player1.address, infantryTroopTypeId)).wait();
@@ -240,7 +240,7 @@ task('deploy', 'deploy contracts')
           } while (tileMap[x][y] !== TILE_TYPE.PORT || player2Pos.x === player1Pos.x || player2Pos.y === player1Pos.y);
 
           // Give each player a port to start with
-          await (await diamond.connect(player1).initializePlayer(player1Pos)).wait();
+          await (await diamond.connect(player1).initializePlayer(player1Pos, 'Eve')).wait();
           // await (await diamond.connect(player2).initializePlayer(player2Pos)).wait();
         }
       }

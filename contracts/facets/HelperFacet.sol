@@ -127,11 +127,11 @@ contract HelperFacet is UseStorage {
 
         Util._updatePlayerBalances(_playerId);
 
-        // FIXME: experimenting with signed integers, need to change for everything else
-        int256 _baseGoldPerSecond = abi.decode(Util._getComponent("GoldPerSecond").getRawValue(_baseId), (int256));
-        int256 _baseOilPerSecond = abi.decode(Util._getComponent("OilPerSecond").getRawValue(_baseId), (int256));
-        int256 _playerGoldPerSecond = abi.decode(Util._getComponent("GoldPerSecond").getRawValue(_playerId), (int256));
-        int256 _playerOilPerSecond = abi.decode(Util._getComponent("OilPerSecond").getRawValue(_playerId), (int256));
+        // FIXME: experimenting with signed integers
+        int256 _baseGoldPerSecond = abi.decode(Util._getComponentValue("GoldPerSecond", _baseId), (int256));
+        int256 _baseOilPerSecond = abi.decode(Util._getComponentValue("OilPerSecond", _baseId), (int256));
+        int256 _playerGoldPerSecond = abi.decode(Util._getComponentValue("GoldPerSecond", _playerId), (int256));
+        int256 _playerOilPerSecond = abi.decode(Util._getComponentValue("OilPerSecond", _playerId), (int256));
 
         Util._setComponentValue("GoldPerSecond", _playerId, abi.encode(_playerGoldPerSecond + _baseGoldPerSecond));
         Util._setComponentValue("OilPerSecond", _playerId, abi.encode(_playerOilPerSecond + _baseOilPerSecond));

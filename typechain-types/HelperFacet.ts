@@ -161,7 +161,7 @@ export interface HelperFacet extends BaseContract {
 
     registerComponents(
       _gameAddr: string,
-      _componentNameList: string[],
+      _componentNames: string[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -177,9 +177,9 @@ export interface HelperFacet extends BaseContract {
     ): Promise<ContractTransaction>;
 
     spawnTroop(
-      _pos: PositionStruct,
+      _position: PositionStruct,
       _player: string,
-      _troopTypeId: BigNumberish,
+      _troopTemplateId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -189,7 +189,7 @@ export interface HelperFacet extends BaseContract {
     ): Promise<ContractTransaction>;
 
     transferBaseOwnership(
-      _pos: PositionStruct,
+      _position: PositionStruct,
       _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -220,7 +220,7 @@ export interface HelperFacet extends BaseContract {
 
   registerComponents(
     _gameAddr: string,
-    _componentNameList: string[],
+    _componentNames: string[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -236,9 +236,9 @@ export interface HelperFacet extends BaseContract {
   ): Promise<ContractTransaction>;
 
   spawnTroop(
-    _pos: PositionStruct,
+    _position: PositionStruct,
     _player: string,
-    _troopTypeId: BigNumberish,
+    _troopTemplateId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -248,7 +248,7 @@ export interface HelperFacet extends BaseContract {
   ): Promise<ContractTransaction>;
 
   transferBaseOwnership(
-    _pos: PositionStruct,
+    _position: PositionStruct,
     _player: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -272,7 +272,7 @@ export interface HelperFacet extends BaseContract {
 
     registerComponents(
       _gameAddr: string,
-      _componentNameList: string[],
+      _componentNames: string[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -286,11 +286,11 @@ export interface HelperFacet extends BaseContract {
     ): Promise<void>;
 
     spawnTroop(
-      _pos: PositionStruct,
+      _position: PositionStruct,
       _player: string,
-      _troopTypeId: BigNumberish,
+      _troopTemplateId: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<BigNumber>;
 
     storeEncodedColumnBatches(
       _colBatches: BigNumberish[][],
@@ -298,7 +298,7 @@ export interface HelperFacet extends BaseContract {
     ): Promise<void>;
 
     transferBaseOwnership(
-      _pos: PositionStruct,
+      _position: PositionStruct,
       _player: string,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -332,7 +332,7 @@ export interface HelperFacet extends BaseContract {
 
     registerComponents(
       _gameAddr: string,
-      _componentNameList: string[],
+      _componentNames: string[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -348,9 +348,9 @@ export interface HelperFacet extends BaseContract {
     ): Promise<BigNumber>;
 
     spawnTroop(
-      _pos: PositionStruct,
+      _position: PositionStruct,
       _player: string,
-      _troopTypeId: BigNumberish,
+      _troopTemplateId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -360,7 +360,7 @@ export interface HelperFacet extends BaseContract {
     ): Promise<BigNumber>;
 
     transferBaseOwnership(
-      _pos: PositionStruct,
+      _position: PositionStruct,
       _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -392,7 +392,7 @@ export interface HelperFacet extends BaseContract {
 
     registerComponents(
       _gameAddr: string,
-      _componentNameList: string[],
+      _componentNames: string[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -408,9 +408,9 @@ export interface HelperFacet extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     spawnTroop(
-      _pos: PositionStruct,
+      _position: PositionStruct,
       _player: string,
-      _troopTypeId: BigNumberish,
+      _troopTemplateId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -420,7 +420,7 @@ export interface HelperFacet extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     transferBaseOwnership(
-      _pos: PositionStruct,
+      _position: PositionStruct,
       _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;

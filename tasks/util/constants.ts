@@ -1,5 +1,4 @@
 import { WorldConstantsStruct } from './../../typechain-types/Curio';
-import { TroopTypeStruct } from '../../typechain-types/DiamondInit';
 import { MapInput, RenderInput, TROOP_NAME } from './types';
 
 export const LOCALHOST_RPC_URL = 'http://127.0.0.1:8545/';
@@ -52,7 +51,7 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): W
   };
 };
 
-export const TROOP_TYPES: TroopTypeStruct[] = [
+export const TROOP_TYPES = [
   {
     name: TROOP_NAME.INFANTRY,
     maxHealth: 200,
@@ -150,8 +149,4 @@ export const RENDER_CONSTANTS: RenderInput = {
 
 export const getTroopNames = (): string[] => {
   return Object.keys(TROOP_NAME).filter((item) => isNaN(Number(item)));
-};
-
-export const getTroopTypeIndexByName = (troopTypes: TroopTypeStruct[], name: TROOP_NAME): number => {
-  return troopTypes.indexOf(troopTypes.filter((item) => item.name === name)[0]);
 };

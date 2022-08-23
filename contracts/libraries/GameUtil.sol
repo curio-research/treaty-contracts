@@ -22,7 +22,7 @@ library Util {
     event NewEntity(uint256 _entity);
     event EntityRemoved(uint256 _entity);
     event NewComponent(string _name, uint256 _id);
-    event ComponentValueSet(string _componentName, uint256 _entity, bytes _rawValue);
+    event ComponentValueSet(string _componentName, uint256 _entity, bytes _value);
     event GamePaused();
     event GameResumed();
 
@@ -79,9 +79,7 @@ library Util {
         _setComponentValue("LastLargeActionTaken", _armyId, abi.encode(0));
         _setComponentValue("LastRepaired", _armyId, abi.encode(block.timestamp));
         _setComponentValue("Position", _armyId, abi.encode(_position));
-        _setComponentValue("CanMove", _armyId, abi.encode(true));
-        _setComponentValue("CanAttack", _armyId, abi.encode(true));
-        _setComponentValue("CanCapture", _armyId, abi.encode(true));
+        _setComponentValue("IsArmy", _armyId, abi.encode(true));
 
         return _armyId;
     }
@@ -102,6 +100,9 @@ library Util {
         _setComponentValue("Owner", _troopId, abi.encode(_playerId));
         _setComponentValue("ArmyId", _troopId, abi.encode(_armyId));
         _setComponentValue("Health", _troopId, _getComponentValue("MaxHealth", _troopTemplateId));
+        _setComponentValue("CanMove", _troopId, abi.encode(true));
+        _setComponentValue("CanAttack", _troopId, abi.encode(true));
+        _setComponentValue("CanCapture", _troopId, abi.encode(true));
         // troop type fields
         _setComponentValue("Name", _troopId, _getComponentValue("Name", _troopTemplateId));
         if (_getComponent("IsLandTroop").has(_troopTemplateId)) {
@@ -115,7 +116,7 @@ library Util {
         _setComponentValue("LargeActionCooldown", _troopId, _getComponentValue("LargeActionCooldown", _troopTemplateId));
         Component _cargoCapacityComponent = _getComponent("CargoCapacity");
         if (_cargoCapacityComponent.has(_troopTemplateId)) {
-            _setComponentValue("CargoCapacity", _troopId, _cargoCapacityComponent.getRawValue(_troopTemplateId));
+            _setComponentValue("CargoCapacity", _troopId, _cargoCapacityComponent.getValue(_troopTemplateId));
         }
         // resource fields
         int256 _goldCost = abi.decode(_getComponentValue("Gold", _troopTemplateId), (int256));
@@ -134,13 +135,13 @@ library Util {
     }
 
     function _removeTroop(uint256 _troopId) public {
-        uint256 _playerId = abi.decode(_getComponent("Owner").getRawValue(_troopId), (uint256));
-        int256 _oilPerSecond = abi.decode(_getComponent("OilPerSecond").getRawValue(_troopId), (int256));
+        uint256 _playerId = abi.decode(_getComponentValue("Owner", _troopId), (uint256));
+        int256 _oilPerSecond = abi.decode(_getComponentValue("OilPerSecond", _troopId), (int256));
 
         _removeEntity(_troopId);
 
         _updatePlayerBalances(_playerId);
-        int256 _playerOilPerSecond = abi.decode(_getComponent("OilPerSecond").getRawValue(_playerId), (int256));
+        int256 _playerOilPerSecond = abi.decode(_getComponentValue("OilPerSecond", _playerId), (int256));
         _setComponentValue("OildPerSecond", _playerId, abi.encode(_playerOilPerSecond - _oilPerSecond));
 
         emit EntityRemoved(_troopId);
@@ -194,11 +195,11 @@ library Util {
     }
 
     function _damageTroop(uint256 _damage, uint256 _troopId) public {
-        uint256 _health = abi.decode(_getComponent("Health").getRawValue(_troopId), (uint256));
+        uint256 _health = abi.decode(_getComponentValue("Health", _troopId), (uint256));
 
         if (_damage >= _health) {
-            uint256 _armyId = abi.decode(_getComponent("ArmyId").getRawValue(_troopId), (uint256));
-            if (_getComponent("ArmyId").getEntitiesWithRawValue(abi.encode(_armyId)).length == 1) _removeArmy(_armyId);
+            uint256 _armyId = abi.decode(_getComponentValue("ArmyId", _troopId), (uint256));
+            if (_getComponent("ArmyId").getEntitiesWithValue(abi.encode(_armyId)).length == 1) _removeArmy(_armyId);
             _removeTroop(_troopId);
         } else {
             _setComponentValue("Health", _troopId, abi.encode(_health - _damage));
@@ -220,7 +221,7 @@ library Util {
     function _getPlayerTroops(uint256 _playerId) public returns (uint256[] memory) {
         Set _set1 = new Set();
         Set _set2 = new Set();
-        uint256[] memory _entitiesOwnedByPlayer = _getComponent("Owner").getEntitiesWithRawValue(abi.encode(_playerId));
+        uint256[] memory _entitiesOwnedByPlayer = _getComponent("Owner").getEntitiesWithValue(abi.encode(_playerId));
         uint256[] memory _allTroops = _getComponent("CanMove").getEntities();
         _set1.addArray(_entitiesOwnedByPlayer);
         _set2.addArray(_allTroops);
@@ -231,7 +232,7 @@ library Util {
         Set _set1 = new Set();
         Set _set2 = new Set();
         _set1.addArray(_getComponent("CanPurchase").getEntities());
-        _set2.addArray(_getComponent("Owner").getEntitiesWithRawValue(abi.encode(_playerId)));
+        _set2.addArray(_getComponent("Owner").getEntitiesWithValue(abi.encode(_playerId)));
         return _intersection(_set1, _set2);
     }
 
@@ -239,7 +240,7 @@ library Util {
         Set _set1 = new Set();
         Set _set2 = new Set();
         _set1.addArray(_getComponent("IsArmy").getEntities());
-        _set2.addArray(_getComponent("Position").getEntitiesWithRawValue(abi.encode(_position)));
+        _set2.addArray(_getComponent("Position").getEntitiesWithValue(abi.encode(_position)));
         uint256[] memory _result = _intersection(_set1, _set2);
 
         assert(_result.length <= 1);
@@ -250,7 +251,7 @@ library Util {
         Set _set1 = new Set();
         Set _set2 = new Set();
         _set1.addArray(_getComponent("canPurchase").getEntities());
-        _set2.addArray(_getComponent("Position").getEntitiesWithRawValue(abi.encode(_position)));
+        _set2.addArray(_getComponent("Position").getEntitiesWithValue(abi.encode(_position)));
         uint256[] memory _result = _intersection(_set1, _set2);
 
         assert(_result.length <= 1);
@@ -258,11 +259,11 @@ library Util {
     }
 
     function _getArmyTroops(uint256 _armyId) public view returns (uint256[] memory) {
-        return _getComponent("ArmyId").getEntitiesWithRawValue(abi.encode(_armyId));
+        return _getComponent("ArmyId").getEntitiesWithValue(abi.encode(_armyId));
     }
 
-    function _getPlayerId(address _playerAddr) public view returns (uint256) {
-        return gs().playerIdMap[_playerAddr];
+    function _getPlayerId(address _player) public view returns (uint256) {
+        return gs().playerIdMap[_player];
     }
 
     function _getInfantryPercentage(uint256[] memory _troopIds) public view returns (uint256) {
@@ -285,7 +286,7 @@ library Util {
         uint256 _totalHealth;
 
         for (uint256 i = 0; i < _troopIds.length; i++) {
-            _totalHealth += abi.decode(_getComponent("Health").getRawValue(_troopIds[i]), (uint256));
+            _totalHealth += abi.decode(_getComponentValue("Health", _troopIds[i]), (uint256));
         }
 
         return _totalHealth;
@@ -296,7 +297,7 @@ library Util {
         uint256 _longestMovementCooldown;
 
         for (uint256 i = 0; i < _troopIds.length; i++) {
-            uint256 _troopMovementCooldown = abi.decode(_getComponent("MovementCooldown").getRawValue(_troopIds[i]), (uint256));
+            uint256 _troopMovementCooldown = abi.decode(_getComponentValue("MovementCooldown", _troopIds[i]), (uint256));
             if (_troopMovementCooldown > _longestMovementCooldown) {
                 _longestMovementCooldown = _troopMovementCooldown;
             }
@@ -309,7 +310,7 @@ library Util {
         uint256 _longestLargeActionCooldown;
 
         for (uint256 i = 0; i < _troopIds.length; i++) {
-            uint256 _troopLargeActionCooldown = abi.decode(_getComponent("LargeActionCooldown").getRawValue(_troopIds[i]), (uint256));
+            uint256 _troopLargeActionCooldown = abi.decode(_getComponentValue("LargeActionCooldown", _troopIds[i]), (uint256));
             if (_troopLargeActionCooldown > _longestLargeActionCooldown) {
                 _longestLargeActionCooldown = _troopLargeActionCooldown;
             }
@@ -323,7 +324,7 @@ library Util {
         uint256 _averageAttackFactor;
 
         for (uint256 i = 0; i < _troopIds.length; i++) {
-            _averageAttackFactor += abi.decode(_getComponent("AttackFactor").getRawValue(_troopIds[i]), (uint256));
+            _averageAttackFactor += abi.decode(_getComponentValue("AttackFactor", _troopIds[i]), (uint256));
         }
 
         return _averageAttackFactor / _troopIds.length;
@@ -334,7 +335,7 @@ library Util {
         uint256 _averageDefenseFactor;
 
         for (uint256 i = 0; i < _troopIds.length; i++) {
-            _averageDefenseFactor += abi.decode(_getComponent("DefenseFactor").getRawValue(_troopIds[i]), (uint256));
+            _averageDefenseFactor += abi.decode(_getComponentValue("DefenseFactor", _troopIds[i]), (uint256));
         }
 
         return _averageDefenseFactor / _troopIds.length;
@@ -345,7 +346,7 @@ library Util {
         uint256 _totalDamagePerHit = 0;
 
         for (uint256 i = 0; i < _troopIds.length; i++) {
-            _totalDamagePerHit += abi.decode(_getComponent("DamagePerHit").getRawValue(_troopIds[i]), (uint256));
+            _totalDamagePerHit += abi.decode(_getComponentValue("DamagePerHit", _troopIds[i]), (uint256));
         }
 
         return _totalDamagePerHit;
@@ -461,18 +462,18 @@ library Util {
     }
 
     function _getComponentValue(string memory _componentName, uint256 _entity) public view returns (bytes memory) {
-        return _getComponent(_componentName).getRawValue(_entity);
+        return _getComponent(_componentName).getValue(_entity);
     }
 
-    // Question: Right now, all events regarding component set and removal are emitted in game contracts. Is this good?
+    // Question: At the moment, all events regarding component set and removal are emitted in game contracts. Is this good?
     function _setComponentValue(
         string memory _componentName,
         uint256 _entity,
-        bytes memory _rawValue
+        bytes memory _value
     ) public {
-        _getComponent(_componentName).set(_entity, _rawValue);
+        _getComponent(_componentName).set(_entity, _value);
 
-        emit ComponentValueSet(_componentName, _entity, _rawValue);
+        emit ComponentValueSet(_componentName, _entity, _value);
     }
 
     function _removeComponentValue(string memory _componentName, uint256 _entity) public {
@@ -495,7 +496,7 @@ library Util {
         Set _set2;
         for (uint256 _value = _lb; _value <= _ub; _value++) {
             _set2 = new Set();
-            _set2.addArray(_getComponent(_componentName).getEntitiesWithRawValue(abi.encode(_value)));
+            _set2.addArray(_getComponent(_componentName).getEntitiesWithValue(abi.encode(_value)));
             _result = _concatenate(_result, _intersection(_set1, _set2));
         }
 
@@ -572,14 +573,14 @@ library Util {
         return _result;
     }
 
-    // Set-theoretic union
-    function _union(Set _set1, Set _set2) public returns (uint256[] memory) {
-        uint256[] memory _arr1 = _difference(_set1, _set2);
-        uint256[] memory _arr2 = _intersection(_set1, _set2);
-        uint256[] memory _arr3 = _difference(_set2, _set1);
+    // // Set-theoretic union
+    // function _union(Set _set1, Set _set2) public returns (uint256[] memory) {
+    //     uint256[] memory _arr1 = _difference(_set1, _set2);
+    //     uint256[] memory _arr2 = _intersection(_set1, _set2);
+    //     uint256[] memory _arr3 = _difference(_set2, _set1);
 
-        return _concatenate(_concatenate(_arr1, _arr2), _arr3);
-    }
+    //     return _concatenate(_concatenate(_arr1, _arr2), _arr3);
+    // }
 
     function _concatenate(uint256[] memory _arr1, uint256[] memory _arr2) public pure returns (uint256[] memory) {
         uint256[] memory _result = new uint256[](_arr1.length + _arr2.length);
