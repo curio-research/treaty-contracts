@@ -19,14 +19,16 @@ library Util {
         return LibStorage.gameStorage();
     }
 
-    // ----------------------------------------------------------
-    // ECS UTIL
-    // ----------------------------------------------------------
-
     event NewEntity(uint256 _entity);
     event EntityRemoved(uint256 _entity);
     event NewComponent(string _name, uint256 _id);
     event ComponentValueSet(string _componentName, uint256 _entity, bytes _rawValue);
+    event GamePaused();
+    event GameResumed();
+
+    // ----------------------------------------------------------
+    // LOGIC SETTERS
+    // ----------------------------------------------------------
 
     function _initializeTile(Position memory _position) public {
         WorldConstants memory _worldConstants = gs().worldConstants;
@@ -51,22 +53,17 @@ library Util {
                 // Port
                 _setComponentValue("Name", _baseId, abi.encode(BASE_NAME.PORT));
                 _setComponentValue("GoldPerSecond", _baseId, abi.encode(_worldConstants.defaultBaseGoldGenerationPerSecond));
-                _setComponentValue("GoldRatePositive", _baseId, abi.encode(true));
                 _terrainId = 0;
             } else if (_terrainId == 4) {
                 // City
-                // Note: Now cities and ports are the same except their terrain sitting on!
-                // Troop type produced now depends on the terrain, not on their nature any more.
                 _setComponentValue("Name", _baseId, abi.encode(BASE_NAME.CITY));
                 _setComponentValue("GoldPerSecond", _baseId, abi.encode(_worldConstants.defaultBaseGoldGenerationPerSecond));
-                _setComponentValue("GoldRatePositive", _baseId, abi.encode(true));
                 _terrainId = 1;
             } else if (_terrainId == 5) {
                 // Oil well
                 _setComponentValue("Name", _baseId, abi.encode(BASE_NAME.OIL_WELL));
                 _setComponentValue("OilPerSecond", _baseId, abi.encode(_worldConstants.defaultWellOilGenerationPerSecond));
-                _setComponentValue("OilRatePositive", _baseId, abi.encode(true));
-                _terrainId = 0;
+                _terrainId = 1;
             }
         }
 
@@ -75,33 +72,7 @@ library Util {
         gs().map[_position.x][_position.y].terrain = TERRAIN(_terrainId);
     }
 
-    function _getArmyAt(Position memory _position) public returns (uint256) {
-        Set _set1 = new Set();
-        Set _set2 = new Set();
-        _set1.addArray(_getComponent("IsArmy").getEntities());
-        _set2.addArray(_getComponent("Position").getEntitiesWithRawValue(abi.encode(_position)));
-        uint256[] memory _result = _intersection(_set1, _set2);
-
-        assert(_result.length <= 1);
-        return _result.length == 1 ? _result[0] : _NULL();
-    }
-
-    function _getBaseAt(Position memory _position) public returns (uint256) {
-        Set _set1 = new Set();
-        Set _set2 = new Set();
-        _set1.addArray(_getComponent("canPurchase").getEntities());
-        _set2.addArray(_getComponent("Position").getEntitiesWithRawValue(abi.encode(_position)));
-        uint256[] memory _result = _intersection(_set1, _set2);
-
-        assert(_result.length <= 1);
-        return _result.length == 1 ? _result[0] : _NULL();
-    }
-
-    function _addArmy(
-        uint256 _playerId,
-        Position memory _position,
-        bool _canCapture
-    ) public returns (uint256) {
+    function _addArmy(uint256 _playerId, Position memory _position) public returns (uint256) {
         uint256 _armyId = _addEntity();
         _setComponentValue("Owner", _armyId, abi.encode(_playerId));
         _setComponentValue("LastMoved", _armyId, abi.encode(block.timestamp));
@@ -110,9 +81,7 @@ library Util {
         _setComponentValue("Position", _armyId, abi.encode(_position));
         _setComponentValue("CanMove", _armyId, abi.encode(true));
         _setComponentValue("CanAttack", _armyId, abi.encode(true));
-        if (_canCapture) {
-            _setComponentValue("CanCapture", _armyId, abi.encode(true));
-        }
+        _setComponentValue("CanCapture", _armyId, abi.encode(true));
 
         return _armyId;
     }
@@ -132,31 +101,31 @@ library Util {
         _setComponentValue("IsActive", _troopId, abi.encode(true));
         _setComponentValue("Owner", _troopId, abi.encode(_playerId));
         _setComponentValue("ArmyId", _troopId, abi.encode(_armyId));
-        _setComponentValue("Health", _troopId, _getComponent("MaxHealth").getRawValue(_troopTemplateId));
+        _setComponentValue("Health", _troopId, _getComponentValue("MaxHealth", _troopTemplateId));
         // troop type fields
-        _setComponentValue("Name", _troopId, _getComponent("Name").getRawValue(_troopTemplateId));
+        _setComponentValue("Name", _troopId, _getComponentValue("Name", _troopTemplateId));
         if (_getComponent("IsLandTroop").has(_troopTemplateId)) {
             _setComponentValue("IsLandTroop", _troopId, abi.encode(true));
         }
-        _setComponentValue("MaxHealth", _troopId, _getComponent("MaxHealth").getRawValue(_troopTemplateId));
-        _setComponentValue("DamagePerHit", _troopId, _getComponent("DamagePerHit").getRawValue(_troopTemplateId));
-        _setComponentValue("AttackFactor", _troopId, _getComponent("AttackFactor").getRawValue(_troopTemplateId));
-        _setComponentValue("DefenseFactor", _troopId, _getComponent("DefenseFactor").getRawValue(_troopTemplateId));
-        _setComponentValue("MovementCooldown", _troopId, _getComponent("MovementCooldown").getRawValue(_troopTemplateId));
-        _setComponentValue("LargeActionCooldown", _troopId, _getComponent("LargeActionCooldown").getRawValue(_troopTemplateId));
+        _setComponentValue("MaxHealth", _troopId, _getComponentValue("MaxHealth", _troopTemplateId));
+        _setComponentValue("DamagePerHit", _troopId, _getComponentValue("DamagePerHit", _troopTemplateId));
+        _setComponentValue("AttackFactor", _troopId, _getComponentValue("AttackFactor", _troopTemplateId));
+        _setComponentValue("DefenseFactor", _troopId, _getComponentValue("DefenseFactor", _troopTemplateId));
+        _setComponentValue("MovementCooldown", _troopId, _getComponentValue("MovementCooldown", _troopTemplateId));
+        _setComponentValue("LargeActionCooldown", _troopId, _getComponentValue("LargeActionCooldown", _troopTemplateId));
         Component _cargoCapacityComponent = _getComponent("CargoCapacity");
         if (_cargoCapacityComponent.has(_troopTemplateId)) {
             _setComponentValue("CargoCapacity", _troopId, _cargoCapacityComponent.getRawValue(_troopTemplateId));
         }
         // resource fields
-        int256 _goldCost = abi.decode(_getComponent("Gold").getRawValue(_troopTemplateId), (int256));
-        int256 _oilPerSecond = abi.decode(_getComponent("OilPerSecond").getRawValue(_troopTemplateId), (int256));
+        int256 _goldCost = abi.decode(_getComponentValue("Gold", _troopTemplateId), (int256));
+        int256 _oilPerSecond = abi.decode(_getComponentValue("OilPerSecond", _troopTemplateId), (int256));
         _setComponentValue("OilPerSecond", _troopId, abi.encode(_oilPerSecond));
 
         // 3. Update balances
         _updatePlayerBalances(_playerId);
-        int256 _playerGoldBalance = abi.decode(_getComponent("Gold").getRawValue(_playerId), (int256));
-        int256 _playerOilPerSecond = abi.decode(_getComponent("OilPerSecond").getRawValue(_playerId), (int256));
+        int256 _playerGoldBalance = abi.decode(_getComponentValue("Gold", _playerId), (int256));
+        int256 _playerOilPerSecond = abi.decode(_getComponentValue("OilPerSecond", _playerId), (int256));
         require(_playerGoldBalance > _goldCost, "CURIO: Insufficient gold balance");
         _setComponentValue("Gold", _playerId, abi.encode(_playerGoldBalance - _goldCost));
         _setComponentValue("OildPerSecond", _playerId, abi.encode(_playerOilPerSecond + _oilPerSecond));
@@ -181,8 +150,71 @@ library Util {
         _removeEntity(_armyId);
     }
 
-    function _getArmyTroops(uint256 _armyId) public returns (uint256[] memory) {
-        return _getComponent("ArmyId").getEntitiesWithRawValue(abi.encode(_armyId));
+    function _updatePlayerBalances(uint256 _playerId) public {
+        uint256 _balanceLastUpdated = abi.decode(_getComponentValue("BalanceLastUpdated", _playerId), (uint256));
+        uint256 _timeElapsed = block.timestamp - _balanceLastUpdated;
+
+        // Update gold balance
+        int256 _gold = abi.decode(_getComponentValue("Gold", _playerId), (int256));
+        int256 _goldPerSecond = abi.decode(_getComponentValue("GoldPerSecond", _playerId), (int256));
+        _setComponentValue("Gold", _playerId, abi.encode(_gold + _goldPerSecond * int256(_timeElapsed)));
+
+        // Update oil balance
+        int256 _oil = abi.decode(_getComponentValue("Oil", _playerId), (int256));
+        int256 _oilPerSecond = abi.decode(_getComponentValue("OilPerSecond", _playerId), (int256));
+        _setComponentValue("Oil", _playerId, abi.encode(_oil + _oilPerSecond * int256(_timeElapsed)));
+
+        // Update debuff status based on oil rate
+        if (_oilPerSecond >= 0) {
+            _removeComponentValue("IsDebuffed", _playerId);
+        } else {
+            _setComponentValue("IsDebuffed", _playerId, abi.encode(true));
+        }
+
+        _setComponentValue("BalanceLastUpdated", _playerId, abi.encode(block.timestamp));
+    }
+
+    function _removeArmyWithTroops(uint256 _armyId) public {
+        _removeArmy(_armyId);
+        uint256[] memory _troopIds = _getArmyTroops(_armyId);
+        for (uint256 i = 0; i < _troopIds.length; i++) {
+            _removeTroop(_troopIds[i]);
+        }
+    }
+
+    function _damageArmy(uint256 _totalDamage, uint256[] memory _armyTroopIds) public {
+        uint256 _individualDamage = _totalDamage / _armyTroopIds.length;
+        uint256 _remainingDamage = _totalDamage % _armyTroopIds.length;
+
+        for (uint256 i = 0; i < _armyTroopIds.length; i++) {
+            uint256 _damage = _remainingDamage > 0 ? _individualDamage + 1 : _individualDamage;
+            _damageTroop(_damage, _armyTroopIds[i]);
+            if (_remainingDamage > 0) _remainingDamage--;
+        }
+    }
+
+    function _damageTroop(uint256 _damage, uint256 _troopId) public {
+        uint256 _health = abi.decode(_getComponent("Health").getRawValue(_troopId), (uint256));
+
+        if (_damage >= _health) {
+            uint256 _armyId = abi.decode(_getComponent("ArmyId").getRawValue(_troopId), (uint256));
+            if (_getComponent("ArmyId").getEntitiesWithRawValue(abi.encode(_armyId)).length == 1) _removeArmy(_armyId);
+            _removeTroop(_troopId);
+        } else {
+            _setComponentValue("Health", _troopId, abi.encode(_health - _damage));
+        }
+    }
+
+    // ----------------------------------------------------------
+    // LOGIC GETTERS
+    // ----------------------------------------------------------
+
+    function _getNavies() public returns (uint256[] memory) {
+        Set _set1 = new Set();
+        Set _set2 = new Set();
+        _set1.addArray(_getComponent("CanMove").getEntities());
+        _set2.addArray(_getComponent("IsLandTroop").getEntities());
+        return _difference(_set1, _set2);
     }
 
     function _getPlayerTroops(uint256 _playerId) public returns (uint256[] memory) {
@@ -195,14 +227,6 @@ library Util {
         return _intersection(_set1, _set2);
     }
 
-    function _getNavies() public returns (uint256[] memory) {
-        Set _set1 = new Set();
-        Set _set2 = new Set();
-        _set1.addArray(_getComponent("CanMove").getEntities());
-        _set2.addArray(_getComponent("IsLandTroop").getEntities());
-        return _difference(_set1, _set2);
-    }
-
     function _getPlayerBases(uint256 _playerId) public returns (uint256[] memory) {
         Set _set1 = new Set();
         Set _set2 = new Set();
@@ -211,12 +235,193 @@ library Util {
         return _intersection(_set1, _set2);
     }
 
+    function _getArmyAt(Position memory _position) public returns (uint256) {
+        Set _set1 = new Set();
+        Set _set2 = new Set();
+        _set1.addArray(_getComponent("IsArmy").getEntities());
+        _set2.addArray(_getComponent("Position").getEntitiesWithRawValue(abi.encode(_position)));
+        uint256[] memory _result = _intersection(_set1, _set2);
+
+        assert(_result.length <= 1);
+        return _result.length == 1 ? _result[0] : _NULL();
+    }
+
+    function _getBaseAt(Position memory _position) public returns (uint256) {
+        Set _set1 = new Set();
+        Set _set2 = new Set();
+        _set1.addArray(_getComponent("canPurchase").getEntities());
+        _set2.addArray(_getComponent("Position").getEntitiesWithRawValue(abi.encode(_position)));
+        uint256[] memory _result = _intersection(_set1, _set2);
+
+        assert(_result.length <= 1);
+        return _result.length == 1 ? _result[0] : _NULL();
+    }
+
+    function _getArmyTroops(uint256 _armyId) public view returns (uint256[] memory) {
+        return _getComponent("ArmyId").getEntitiesWithRawValue(abi.encode(_armyId));
+    }
+
     function _getPlayerId(address _playerAddr) public view returns (uint256) {
         return gs().playerIdMap[_playerAddr];
     }
 
+    function _getInfantryPercentage(uint256[] memory _troopIds) public view returns (uint256) {
+        require(_troopIds.length > 0, "CURIO: Cannot calculate percentage for zero troops");
+
+        uint256 _percentagePerTroop = 100 / _troopIds.length;
+        uint256 _result = 0;
+
+        for (uint256 i = 0; i < _troopIds.length; i++) {
+            if (_getComponent("IsLandTroop").has(_troopIds[i])) {
+                _result += _percentagePerTroop;
+            }
+        }
+
+        return _result;
+    }
+
+    function _getArmyHealth(uint256[] memory _troopIds) public view returns (uint256) {
+        // take the sum
+        uint256 _totalHealth;
+
+        for (uint256 i = 0; i < _troopIds.length; i++) {
+            _totalHealth += abi.decode(_getComponent("Health").getRawValue(_troopIds[i]), (uint256));
+        }
+
+        return _totalHealth;
+    }
+
+    function _getArmyMovementCooldown(uint256[] memory _troopIds) public view returns (uint256) {
+        // take the longest cooldown
+        uint256 _longestMovementCooldown;
+
+        for (uint256 i = 0; i < _troopIds.length; i++) {
+            uint256 _troopMovementCooldown = abi.decode(_getComponent("MovementCooldown").getRawValue(_troopIds[i]), (uint256));
+            if (_troopMovementCooldown > _longestMovementCooldown) {
+                _longestMovementCooldown = _troopMovementCooldown;
+            }
+        }
+        return _longestMovementCooldown;
+    }
+
+    function _getArmyLargeActionCooldown(uint256[] memory _troopIds) public view returns (uint256) {
+        // take the longest cooldown
+        uint256 _longestLargeActionCooldown;
+
+        for (uint256 i = 0; i < _troopIds.length; i++) {
+            uint256 _troopLargeActionCooldown = abi.decode(_getComponent("LargeActionCooldown").getRawValue(_troopIds[i]), (uint256));
+            if (_troopLargeActionCooldown > _longestLargeActionCooldown) {
+                _longestLargeActionCooldown = _troopLargeActionCooldown;
+            }
+        }
+
+        return _longestLargeActionCooldown;
+    }
+
+    function _getArmyAttackFactor(uint256[] memory _troopIds) public view returns (uint256) {
+        // take the average
+        uint256 _averageAttackFactor;
+
+        for (uint256 i = 0; i < _troopIds.length; i++) {
+            _averageAttackFactor += abi.decode(_getComponent("AttackFactor").getRawValue(_troopIds[i]), (uint256));
+        }
+
+        return _averageAttackFactor / _troopIds.length;
+    }
+
+    function _getArmyDefenseFactor(uint256[] memory _troopIds) public view returns (uint256) {
+        // take the average
+        uint256 _averageDefenseFactor;
+
+        for (uint256 i = 0; i < _troopIds.length; i++) {
+            _averageDefenseFactor += abi.decode(_getComponent("DefenseFactor").getRawValue(_troopIds[i]), (uint256));
+        }
+
+        return _averageDefenseFactor / _troopIds.length;
+    }
+
+    function _getArmyDamagePerHit(uint256[] memory _troopIds) public view returns (uint256) {
+        // take the sum
+        uint256 _totalDamagePerHit = 0;
+
+        for (uint256 i = 0; i < _troopIds.length; i++) {
+            _totalDamagePerHit += abi.decode(_getComponent("DamagePerHit").getRawValue(_troopIds[i]), (uint256));
+        }
+
+        return _totalDamagePerHit;
+    }
+
+    function _getDebuffedArmyDamagePerHit(uint256[] memory _troopIds) public view returns (uint256) {
+        uint256 _infantryPercentage = _getInfantryPercentage(_troopIds);
+        uint256 _debuffFactor = (gs().worldConstants.debuffFactor * (100 - _infantryPercentage)) / 100; // Only non-infantries are debuffed
+        return (_getArmyDamagePerHit(_troopIds) * (100 - _debuffFactor)) / 100;
+    }
+
+    function _getTileAt(Position memory _position) public view returns (Tile memory) {
+        return gs().map[_position.x][_position.y];
+    }
+
+    function _getNeighbors(Position memory _position) public view returns (Position[] memory) {
+        Position[] memory _result = new Position[](4); // FIXME: how to create and append to a dynamic array?
+        uint256 _x = _position.x;
+        uint256 _y = _position.y;
+
+        if (_x > 0) _result[0] = (Position({x: _x - 1, y: _y}));
+        if (_x < gs().worldConstants.worldWidth - 1) _result[1] = (Position({x: _x + 1, y: _y}));
+        if (_y > 0) _result[2] = (Position({x: _x, y: _y - 1}));
+        if (_y < gs().worldConstants.worldHeight - 1) _result[3] = (Position({x: _x, y: _y + 1}));
+
+        return _result;
+    }
+
     // ----------------------------------------------------------
-    // ECS BASIC
+    // UTILITY FUNCTIONS
+    // ----------------------------------------------------------
+
+    function _strike(uint256 _strikeFactor, uint256 _salt) public view returns (bool) {
+        uint256 _rand = _random(100, _salt);
+        return _rand * 100 < _strikeFactor * gs().worldConstants.combatEfficiency;
+    }
+
+    function _inBound(Position memory _p) public view returns (bool) {
+        return _p.x >= 0 && _p.x < gs().worldConstants.worldWidth && _p.y >= 0 && _p.y < gs().worldConstants.worldHeight;
+    }
+
+    function _random(uint256 _max, uint256 _salt) public view returns (uint256) {
+        return uint256(keccak256(abi.encode(block.timestamp, block.difficulty, _salt))) % _max;
+    }
+
+    function _coincident(Position memory _p1, Position memory _p2) public pure returns (bool) {
+        return _p1.x == _p2.x && _p1.y == _p2.y;
+    }
+
+    // Note: The current version treats a diagonal movement as two movements.
+    // For treating as one, use `xDist <= _dist && yDist <= _dist` as return condition.
+    function _withinDistance(
+        Position memory _p1,
+        Position memory _p2,
+        uint256 _dist
+    ) public pure returns (bool) {
+        uint256 _xDist = _p1.x >= _p2.x ? _p1.x - _p2.x : _p2.x - _p1.x;
+        uint256 _yDist = _p1.y >= _p2.y ? _p1.y - _p2.y : _p2.y - _p1.y;
+        return (_xDist + _yDist) <= _dist;
+    }
+
+    function _getIndex(uint256 _element, uint256[] memory _array) internal pure returns (uint256) {
+        uint256 _index = 0;
+        while (_index < _array.length) {
+            if (_array[_index] == _element) break;
+            _index++;
+        }
+        return _index;
+    }
+
+    function _NULL() internal pure returns (uint256) {
+        return 0;
+    }
+
+    // ----------------------------------------------------------
+    // ECS UTILITY FUNCTIONS
     // ----------------------------------------------------------
 
     function _getComponent(string memory _name) public view returns (Component) {
@@ -255,7 +460,7 @@ library Util {
         emit EntityRemoved(_entity);
     }
 
-    function _getComponentValue(string memory _componentName, uint256 _entity) public returns (bytes memory) {
+    function _getComponentValue(string memory _componentName, uint256 _entity) public view returns (bytes memory) {
         return _getComponent(_componentName).getRawValue(_entity);
     }
 
@@ -387,243 +592,5 @@ library Util {
         }
 
         return _result;
-    }
-
-    function _newSets() public returns (Set, Set) {
-        return (new Set(), new Set());
-    }
-
-    // ----------------------------------------------------------
-    // SETTERS
-    // ----------------------------------------------------------
-
-    function _updatePlayerBalances(uint256 _playerId) public {
-        uint256 _balanceLastUpdated = abi.decode(_getComponentValue("BalanceLastUpdated", _playerId), (uint256));
-        uint256 _timeElapsed = block.timestamp - _balanceLastUpdated;
-
-        // Update gold balance
-        int256 _gold = abi.decode(_getComponentValue("Gold", _playerId), (int256));
-        int256 _goldPerSecond = abi.decode(_getComponentValue("GoldPerSecond", _playerId), (int256));
-        _setComponentValue("Gold", _playerId, abi.encode(_gold + _goldPerSecond));
-
-        // Update oil balance
-        int256 _oil = abi.decode(_getComponentValue("Oil", _playerId), (int256));
-        int256 _oilPerSecond = abi.decode(_getComponentValue("OilPerSecond", _playerId), (int256));
-        _setComponentValue("Oil", _playerId, abi.encode(_oil + _oilPerSecond));
-
-        // Update debuff status based on oil rate
-        if (_oilPerSecond >= 0) {
-            _removeComponentValue("IsDebuffed", _playerId);
-        } else {
-            _setComponentValue("IsDebuffed", _playerId, abi.encode(true));
-        }
-
-        _setComponentValue("BalanceLastUpdated", _playerId, abi.encode(block.timestamp));
-    }
-
-    function _removeArmyWithTroops(uint256 _armyId) public {
-        _removeArmy(_armyId);
-        uint256[] memory _troopIds = _getArmyTroops(_armyId);
-        for (uint256 i = 0; i < _troopIds.length; i++) {
-            _removeTroop(_troopIds[i]);
-        }
-    }
-
-    function _damageArmy(uint256 _totalDamage, uint256[] memory _armyTroopIds) public {
-        uint256 _individualDamage = _totalDamage / _armyTroopIds.length;
-        uint256 _remainingDamage = _totalDamage % _armyTroopIds.length;
-
-        for (uint256 i = 0; i < _armyTroopIds.length; i++) {
-            uint256 _damage = _remainingDamage > 0 ? _individualDamage + 1 : _individualDamage;
-            _damageTroop(_damage, _armyTroopIds[i]);
-            if (_remainingDamage > 0) _remainingDamage--;
-        }
-    }
-
-    function _damageTroop(uint256 _damage, uint256 _troopId) public {
-        uint256 _health = abi.decode(_getComponent("Health").getRawValue(_troopId), (uint256));
-
-        if (_damage >= _health) {
-            uint256 _armyId = abi.decode(_getComponent("ArmyId").getRawValue(_troopId), (uint256));
-            if (_getComponent("ArmyId").getEntitiesWithRawValue(abi.encode(_armyId)).length == 1) _removeArmy(_armyId);
-            _removeTroop(_troopId);
-        } else {
-            _setComponentValue("Health", _troopId, abi.encode(_health - _damage));
-        }
-    }
-
-    // ----------------------------------------------------------
-    // GETTERS
-    // ----------------------------------------------------------
-
-    function _isPlayerInitialized(address _player) public view returns (bool) {
-        address[] memory _allPlayers = gs().players;
-        for (uint256 i = 0; i < _allPlayers.length; i++) {
-            if (_allPlayers[i] == _player) return true;
-        }
-        return false;
-    }
-
-    function _getPlayerCount() public view returns (uint256) {
-        return gs().players.length;
-    }
-
-    function _isPlayerActive(uint256 _playerId) public view returns (bool) {
-        return _getComponent("IsActive").has(_playerId);
-    }
-
-    function _getDebuffedArmyDamagePerHit(uint256[] memory _troopIds) public view returns (uint256) {
-        uint256 _infantryPercentage = _getInfantryPercentage(_troopIds);
-        uint256 _debuffFactor = (gs().worldConstants.debuffFactor * (100 - _infantryPercentage)) / 100; // Only non-infantries are debuffed
-        return (_getArmyDamagePerHit(_troopIds) * (100 - _debuffFactor)) / 100;
-    }
-
-    function _getInfantryPercentage(uint256[] memory _troopIds) public view returns (uint256) {
-        require(_troopIds.length > 0, "CURIO: Cannot calculate percentage for zero troops");
-
-        uint256 _percentagePerTroop = 100 / _troopIds.length;
-        uint256 _result = 0;
-
-        for (uint256 i = 0; i < _troopIds.length; i++) {
-            if (_getComponent("IsLandTroop").has(_troopIds[i])) {
-                _result += _percentagePerTroop;
-            }
-        }
-
-        return _result;
-    }
-
-    function _getArmyHealth(uint256[] memory _troopIds) public view returns (uint256) {
-        // take the sum
-        uint256 _totalHealth;
-
-        for (uint256 i = 0; i < _troopIds.length; i++) {
-            _totalHealth += abi.decode(_getComponent("Health").getRawValue(_troopIds[i]), (uint256));
-        }
-
-        return _totalHealth;
-    }
-
-    function _getArmyMovementCooldown(uint256[] memory _troopIds) public view returns (uint256) {
-        // take the longest cooldown
-        uint256 _longestMovementCooldown;
-
-        for (uint256 i = 0; i < _troopIds.length; i++) {
-            uint256 _troopMovementCooldown = abi.decode(_getComponent("MovementCooldown").getRawValue(_troopIds[i]), (uint256));
-            if (_troopMovementCooldown > _longestMovementCooldown) {
-                _longestMovementCooldown = _troopMovementCooldown;
-            }
-        }
-        return _longestMovementCooldown;
-    }
-
-    function _getArmyLargeActionCooldown(uint256[] memory _troopIds) public view returns (uint256) {
-        // take the longest cooldown
-        uint256 _longestLargeActionCooldown;
-
-        for (uint256 i = 0; i < _troopIds.length; i++) {
-            uint256 _troopLargeActionCooldown = abi.decode(_getComponent("LargeActionCooldown").getRawValue(_troopIds[i]), (uint256));
-            if (_troopLargeActionCooldown > _longestLargeActionCooldown) {
-                _longestLargeActionCooldown = _troopLargeActionCooldown;
-            }
-        }
-
-        return _longestLargeActionCooldown;
-    }
-
-    function _getArmyAttackFactor(uint256[] memory _troopIds) public view returns (uint256) {
-        // take the average
-        uint256 _averageAttackFactor;
-
-        for (uint256 i = 0; i < _troopIds.length; i++) {
-            _averageAttackFactor += abi.decode(_getComponent("AttackFactor").getRawValue(_troopIds[i]), (uint256));
-        }
-
-        return _averageAttackFactor / _troopIds.length;
-    }
-
-    function _getArmyDefenseFactor(uint256[] memory _troopIds) public view returns (uint256) {
-        // take the average
-        uint256 _averageDefenseFactor;
-
-        for (uint256 i = 0; i < _troopIds.length; i++) {
-            _averageDefenseFactor += abi.decode(_getComponent("DefenseFactor").getRawValue(_troopIds[i]), (uint256));
-        }
-
-        return _averageDefenseFactor / _troopIds.length;
-    }
-
-    function _getArmyDamagePerHit(uint256[] memory _troopIds) public view returns (uint256) {
-        // take the sum
-        uint256 _totalDamagePerHit = 0;
-
-        for (uint256 i = 0; i < _troopIds.length; i++) {
-            _totalDamagePerHit += abi.decode(_getComponent("DamagePerHit").getRawValue(_troopIds[i]), (uint256));
-        }
-
-        return _totalDamagePerHit;
-    }
-
-    function _getTileAt(Position memory _pos) public view returns (Tile memory) {
-        return gs().map[_pos.x][_pos.y];
-    }
-
-    function _strike(uint256 _strikeFactor, uint256 _salt) public view returns (bool) {
-        uint256 _rand = _random(100, _salt);
-        return _rand * 100 < _strikeFactor * gs().worldConstants.combatEfficiency;
-    }
-
-    function _inBound(Position memory _p) public view returns (bool) {
-        return _p.x >= 0 && _p.x < gs().worldConstants.worldWidth && _p.y >= 0 && _p.y < gs().worldConstants.worldHeight;
-    }
-
-    function _random(uint256 _max, uint256 _salt) public view returns (uint256) {
-        return uint256(keccak256(abi.encode(block.timestamp, block.difficulty, _salt))) % _max;
-    }
-
-    function _getNeighbors(Position memory _pos) public view returns (Position[] memory) {
-        Position[] memory _result = new Position[](4); // FIXME: how to create and append to a dynamic array?
-        uint256 _x = _pos.x;
-        uint256 _y = _pos.y;
-
-        if (_x > 0) _result[0] = (Position({x: _x - 1, y: _y}));
-        if (_x < gs().worldConstants.worldWidth - 1) _result[1] = (Position({x: _x + 1, y: _y}));
-        if (_y > 0) _result[2] = (Position({x: _x, y: _y - 1}));
-        if (_y < gs().worldConstants.worldHeight - 1) _result[3] = (Position({x: _x, y: _y + 1}));
-
-        return _result;
-    }
-
-    function _samePos(Position memory _p1, Position memory _p2) public pure returns (bool) {
-        return _p1.x == _p2.x && _p1.y == _p2.y;
-    }
-
-    // Note: The current version treats a diagonal movement as two movements.
-    // For treating as one, use `xDist <= _dist && yDist <= _dist` as return condition.
-    function _withinDist(
-        Position memory _p1,
-        Position memory _p2,
-        uint256 _dist
-    ) public pure returns (bool) {
-        uint256 _xDist = _p1.x >= _p2.x ? _p1.x - _p2.x : _p2.x - _p1.x;
-        uint256 _yDist = _p1.y >= _p2.y ? _p1.y - _p2.y : _p2.y - _p1.y;
-        return (_xDist + _yDist) <= _dist;
-    }
-
-    function _NULL() internal pure returns (uint256) {
-        return 0;
-    }
-
-    function _NULL_ADRESS() internal pure returns (address) {
-        return address(0);
-    }
-
-    function _getIndex(uint256 _element, uint256[] memory _arr) internal pure returns (uint256) {
-        uint256 _index = 0;
-        while (_index < _arr.length) {
-            if (_arr[_index] == _element) break;
-            _index++;
-        }
-        return _index;
     }
 }

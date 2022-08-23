@@ -49,8 +49,6 @@ struct GameState {
     address[] players;
     Tile[5000][5000] map;
     uint256[][] encodedColumnBatches;
-    //
-
     address entities;
     string[] componentNames;
     mapping(string => address) components; // component name to contract address

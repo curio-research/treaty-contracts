@@ -33,7 +33,7 @@ contract HelperFacet is UseStorage {
 
         address[] memory _allPlayers = gs().players;
         for (uint256 i = 0; i < _allPlayers.length; i++) {
-            Util._updatePlayerBalances(_allPlayers[i]);
+            Util._updatePlayerBalances(gs().playerIdMap[_allPlayers[i]]);
         }
 
         gs().isPaused = true;
@@ -47,8 +47,9 @@ contract HelperFacet is UseStorage {
     function resumeGame() external onlyAdmin {
         require(gs().isPaused, "CURIO: Game is ongoing");
 
-        for (uint256 i = 0; i < gs().players.length; i++) {
-            gs().playerMap[gs().players[i]].balanceLastUpdated = block.timestamp;
+        address[] memory _allPlayers = gs().players;
+        for (uint256 i = 0; i < _allPlayers.length; i++) {
+            Util._setComponentValue("BalanceLastUpdated", gs().playerIdMap[_allPlayers[i]], abi.encode(block.timestamp));
         }
 
         gs().isPaused = false;
@@ -61,8 +62,8 @@ contract HelperFacet is UseStorage {
      */
     function reactivatePlayer(address _player) external onlyAdmin {
         uint256 _playerId = gs().playerIdMap[_player];
-        require(!Util._isPlayerInitialized(_player), "CURIO: Player already initialized");
-        require(!Util._isPlayerActive(_playerId), "CURIO: Player is active");
+        require(gs().playerIdMap[_player] != NULL, "CURIO: Player already initialized");
+        require(!Util._getComponent("IsActive").has(_playerId), "CURIO: Player is active");
 
         Util._setComponentValue("IsActive", _playerId, abi.encode(true));
         Util._setComponentValue("Gold", _playerId, abi.encode(gs().worldConstants.initPlayerGoldBalance)); // reset gold balance
@@ -96,11 +97,11 @@ contract HelperFacet is UseStorage {
         uint256 _baseId = Util._getBaseAt(_position);
         if (_baseId != NULL) {
             // require(Util._getBaseOwner(_tile.baseId) == _player, "CURIO: Can only spawn troop in player's base");
-            require(EngineModules._geographicCheckTroopECS(_troopTemplateId, _position), "CURIO: Can only spawn water troops in ports");
+            require(EngineModules._geographicCheckTroop(_troopTemplateId, _position), "CURIO: Can only spawn water troops in ports");
         }
 
         uint256 _playerId = gs().playerIdMap[_player];
-        uint256 _armyId = Util._addArmy(_playerId, _position, Util._getComponent("CanCapture").has(_troopTemplateId));
+        uint256 _armyId = Util._addArmy(_playerId, _position);
         return Util._addTroop(_playerId, _troopTemplateId, _armyId);
     }
 
@@ -111,20 +112,20 @@ contract HelperFacet is UseStorage {
      */
     function transferBaseOwnership(Position memory _position, address _player) external onlyAdmin {
         require(Util._inBound(_position), "CURIO: Out of bound");
-        if (!Util._getTileAt(_position).isInitialized) Util._initializeTile(_pos);
+        if (!Util._getTileAt(_position).isInitialized) Util._initializeTile(_position);
 
         require(Util._getArmyAt(_position) == NULL, "CURIO: Tile occupied");
 
         uint256 _baseId = Util._getBaseAt(_position);
         require(_baseId != NULL, "CURIO: No base found");
 
-        require(abi.decode(_getComponent("Owner").getRawValue(_baseId), (unit256)) == NULL, "CURIO: Base is owned");
+        require(abi.decode(Util._getComponentValue("Owner", _baseId), (uint256)) == NULL, "CURIO: Base is owned");
 
         uint256 _playerId = gs().playerIdMap[_player];
         Util._setComponentValue("Owner", _baseId, abi.encode(_playerId));
         Util._setComponentValue("Health", _baseId, abi.encode(800));
 
-        Util._updatePlayerBalances(_player);
+        Util._updatePlayerBalances(_playerId);
 
         // FIXME: experimenting with signed integers, need to change for everything else
         int256 _baseGoldPerSecond = abi.decode(Util._getComponent("GoldPerSecond").getRawValue(_baseId), (int256));
@@ -132,8 +133,8 @@ contract HelperFacet is UseStorage {
         int256 _playerGoldPerSecond = abi.decode(Util._getComponent("GoldPerSecond").getRawValue(_playerId), (int256));
         int256 _playerOilPerSecond = abi.decode(Util._getComponent("OilPerSecond").getRawValue(_playerId), (int256));
 
-        Util._setComponentValue("GoldPerSecond", _playerId, _playerGoldPerSecond + _baseGoldPerSecond);
-        Util._setComponentValue("OilPerSecond", _playerId, _playerOilPerSecond + _baseOilPerSecond);
+        Util._setComponentValue("GoldPerSecond", _playerId, abi.encode(_playerGoldPerSecond + _baseGoldPerSecond));
+        Util._setComponentValue("OilPerSecond", _playerId, abi.encode(_playerOilPerSecond + _baseOilPerSecond));
     }
 
     /**
@@ -155,11 +156,11 @@ contract HelperFacet is UseStorage {
      * @param _player player address
      */
     function updatePlayerBalances(address _player) external {
-        Util._updatePlayerBalances(_player);
+        Util._updatePlayerBalances(gs().playerIdMap[_player]);
     }
 
     // ----------------------------------------------------------------------
-    // ECS HELPERS (temp)
+    // ECS HELPERS
     // ----------------------------------------------------------------------
 
     function registerComponents(address _gameAddr, string[28] memory _componentNames) external onlyAdmin {

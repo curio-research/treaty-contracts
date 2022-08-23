@@ -12,10 +12,7 @@ import {Component} from "contracts/Component.sol";
 
 contract GetterFacet is UseStorage {
     using SafeMath for uint256;
-
-    // ----------------------------------------------------------------------
-    // ECS GETTERS (temp)
-    // ----------------------------------------------------------------------
+    uint256 private NULL = 0;
 
     function getComponent(string memory _name) external view returns (Component) {
         return Util._getComponent(_name);
@@ -34,10 +31,10 @@ contract GetterFacet is UseStorage {
     }
 
     function isPlayerInitialized(address _player) external view returns (bool) {
-        return Util._isPlayerInitialized(_player);
+        return gs().playerIdMap[_player] != NULL;
     }
 
     function getPlayerCount() external view returns (uint256) {
-        return Util._getPlayerCount();
+        return gs().players.length;
     }
 }

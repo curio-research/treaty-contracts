@@ -14,7 +14,7 @@ import {Set} from "contracts/Set.sol";
 
 contract EngineFacet is UseStorage {
     using SafeMath for uint256;
-    uint256 NULL = 0;
+    uint256 private NULL = 0;
 
     /**
      * @dev March army to a target position (move, battle, or capture).
@@ -23,7 +23,7 @@ contract EngineFacet is UseStorage {
      */
     function march(uint256 _armyId, Position memory _targetPosition) external {
         // 1. Verify that army exists as an entity
-        require(Set(gs().entities).includes(_army), "CURIO: Troop not found");
+        require(Set(gs().entities).includes(_armyId), "CURIO: Troop not found");
 
         // 2. Verify that game is ongoing
         require(!gs().isPaused, "CURIO: Game is paused");
@@ -37,20 +37,20 @@ contract EngineFacet is UseStorage {
         if (!Util._getTileAt(_targetPosition).isInitialized) Util._initializeTile(_targetPosition);
 
         // 5. Verify that target position is different from starting position and within movement range
-        Position memory _sourcePosition = abi.decode(Util._getComponent("Position").getRawValue(_armyId), (Position));
-        require(!Util._samePos(_sourcePosition, _targetPosition), "CURIO: Already at destination");
-        require(Util._withinDist(_sourcePosition, _targetPosition, 1), "CURIO: You can only dispatch troop to the near tile");
+        Position memory _sourcePosition = abi.decode(Util._getComponentValue("Position", _armyId), (Position));
+        require(!Util._coincident(_sourcePosition, _targetPosition), "CURIO: Already at destination");
+        require(Util._withinDistance(_sourcePosition, _targetPosition, 1), "CURIO: You can only dispatch troop to the near tile");
 
         // 6. Verify ownership of army by player
-        require(abi.decode(Util._getComponent("Owner").getRawValue(_armyId), (uint256)) == _playerId, "CURIO: You can only dispatch own troop");
+        require(abi.decode(Util._getComponentValue("Owner", _armyId), (uint256)) == _playerId, "CURIO: You can only dispatch own troop");
 
         // 7. Large action cooldown check
-        uint256 _lastLargeActionTaken = abi.decode(Util._getComponent("LastLargeActionTaken").getRawValue(_armyId), (uint256));
-        uint256 _largeActionCooldown = abi.decode(Util._getComponent("LargeActionCooldown").getRawValue(_armyId), (uint256));
+        uint256 _lastLargeActionTaken = abi.decode(Util._getComponentValue("LastLargeActionTaken", _armyId), (uint256));
+        uint256 _largeActionCooldown = abi.decode(Util._getComponentValue("LargeActionCooldown", _armyId), (uint256));
         require(block.timestamp - _lastLargeActionTaken >= _largeActionCooldown, "CURIO: Large action taken too recently");
 
         // 8. Geographic check
-        require(EngineModules._geographicCheckArmyECS(_armyId, _targetPosition), "CURIO: Troop and land type not compatible"); // TODO
+        require(EngineModules._geographicCheckArmy(_armyId, _targetPosition), "CURIO: Troop and land type not compatible");
 
         // 9. March logic
         uint256 _targetArmyId = Util._getArmyAt(_targetPosition);
@@ -60,7 +60,7 @@ contract EngineFacet is UseStorage {
                 // CaseI: move army when target tile has no base or army
                 EngineModules._moveArmy(_playerId, _armyId, _targetPosition);
             } else {
-                if (abi.decode(Util._getComponent("Owner").getRawValue(_targetBaseId), (uint256)) == _playerId) {
+                if (abi.decode(Util._getComponentValue("Owner", _targetBaseId), (uint256)) == _playerId) {
                     // CaseII: move army when target tile has your base but no army
                     EngineModules._moveArmy(_playerId, _armyId, _targetPosition);
                 } else {
@@ -70,11 +70,11 @@ contract EngineFacet is UseStorage {
             }
         } else {
             // CaseIV: battle enemy army when target tile has one
-            require(abi.decode(Util._getComponent("Owner").getRawValue(_targetArmyId), (uint256)) != _playerId, "CURIO: Destination tile occupied");
+            require(abi.decode(Util._getComponentValue("Owner", _targetArmyId), (uint256)) != _playerId, "CURIO: Destination tile occupied");
             EngineModules._battleArmy(_playerId, _armyId, _targetPosition);
         }
 
-        Util._updatePlayerBalances(msg.sender);
+        Util._updatePlayerBalances(_playerId);
     }
 
     /**
@@ -98,39 +98,39 @@ contract EngineFacet is UseStorage {
         if (!Util._getTileAt(_targetPosition).isInitialized) Util._initializeTile(_targetPosition);
 
         // 5. Verify that target position is different from starting position and within movement range
-        uint256 _armyId = abi.decode(Util._getComponent("ArmyId").getRawValue(_troopId), (uint256));
-        Position memory _sourcePosition = abi.decode(Util._getComponent("Position").getRawValue(_armyId), (Position));
-        require(!Util._samePos(_sourcePosition, _targetPosition), "CURIO: Already at destination");
-        require(Util._withinDist(_sourcePosition, _targetPosition, 1), "CURIO: You can only dispatch troop to the near tile");
+        uint256 _armyId = abi.decode(Util._getComponentValue("ArmyId", _troopId), (uint256));
+        Position memory _sourcePosition = abi.decode(Util._getComponentValue("Position", _armyId), (Position));
+        require(!Util._coincident(_sourcePosition, _targetPosition), "CURIO: Already at destination");
+        require(Util._withinDistance(_sourcePosition, _targetPosition, 1), "CURIO: You can only dispatch troop to the near tile");
 
         // 6. Verify ownership of troop by player
-        require(abi.decode(Util._getComponent("Owner").getRawValue(_troopId), (uint256)) == _playerId, "CURIO: You can only dispatch own troop");
+        require(abi.decode(Util._getComponentValue("Owner", _troopId), (uint256)) == _playerId, "CURIO: You can only dispatch own troop");
 
         // 7. Large action cooldown check
-        uint256 _lastLargeActionTaken = abi.decode(Util._getComponent("LastLargeActionTaken").getRawValue(_armyId), (uint256));
-        uint256 _largeActionCooldown = abi.decode(Util._getComponent("LargeActionCooldown").getRawValue(_armyId), (uint256));
+        uint256 _lastLargeActionTaken = abi.decode(Util._getComponentValue("LastLargeActionTaken", _armyId), (uint256));
+        uint256 _largeActionCooldown = abi.decode(Util._getComponentValue("LargeActionCooldown", _armyId), (uint256));
         require(block.timestamp - _lastLargeActionTaken >= _largeActionCooldown, "CURIO: Large action taken too recently");
 
         // 8. Movement cooldown check
-        uint256 _lastMoved = abi.decode(Util._getComponent("LastMoved").getRawValue(_armyId), (uint256));
-        uint256 _movementCooldown = abi.decode(Util._getComponent("MovementCooldown").getRawValue(_armyId), (uint256));
+        uint256 _lastMoved = abi.decode(Util._getComponentValue("LastMoved", _armyId), (uint256));
+        uint256 _movementCooldown = abi.decode(Util._getComponentValue("MovementCooldown", _armyId), (uint256));
         require(block.timestamp - _lastMoved >= _movementCooldown, "CURIO: Moved too recently");
 
         // 9. Geographic and base checks
-        require(EngineModules._geographicCheckTroopECS(_troopId, _targetPosition), "CURIO: Troop and land type not compatible"); // TODO
+        require(EngineModules._geographicCheckTroop(_troopId, _targetPosition), "CURIO: Troop and land type not compatible");
         require(Util._getBaseAt(_targetPosition) == NULL, "CURIO: Cannot directly attack with troops");
 
         // 10. March logic checks, and create new army if empty
         uint256 _targetArmyId = Util._getArmyAt(_targetPosition);
         if (_targetArmyId != NULL) {
-            require(abi.decode(Util._getComponent("Owner").getRawValue(_targetArmyId), (uint256)) == _playerId, "CURIO: Cannot directly attack with troops");
+            require(abi.decode(Util._getComponentValue("Owner", _targetArmyId), (uint256)) == _playerId, "CURIO: Cannot directly attack with troops");
             require(Util._getArmyTroops(_targetArmyId).length + 1 <= 5, "CURIO: Army can have up to five troops, or two with one transport");
         } else {
-            _targetArmyId = Util._addArmy(_playerId, _targetPosition, Util._getComponent("CanCapture").has(_troopTemplateId));
+            _targetArmyId = Util._addArmy(_playerId, _targetPosition);
         }
 
         // 11. Move troop
-        Util._setComponentValue("ArmyId", _troopId, _targetArmyId);
+        Util._setComponentValue("ArmyId", _troopId, abi.encode(_targetArmyId));
 
         // 12. Remove old army if empty
         if (Util._getArmyTroops(_armyId).length == 0) Util._removeArmy(_armyId);
@@ -142,9 +142,9 @@ contract EngineFacet is UseStorage {
      */
     function deleteTroop(uint256 _troopId) external {
         uint256 _playerId = Util._getPlayerId(msg.sender);
-        require(abi.decode(Util._getComponent("Owner").getRawValue(_troopId), (uint256)) == _playerId, "CURIO: Can only delete own troop");
+        require(abi.decode(Util._getComponentValue("Owner", _troopId), (uint256)) == _playerId, "CURIO: Can only delete own troop");
 
-        uint256 _armyId = abi.decode(Util._getComponent("ArmyId").getRawValue(_troopId), (uint256));
+        uint256 _armyId = abi.decode(Util._getComponentValue("ArmyId", _troopId), (uint256));
         if (Util._getArmyTroops(_armyId).length <= 1) Util._removeArmy(_armyId);
         Util._removeTroop(_troopId);
     }
@@ -156,9 +156,6 @@ contract EngineFacet is UseStorage {
      * @return _troopId identifier for new troop
      */
     function purchaseTroop(Position memory _position, uint256 _troopTemplateId) external returns (uint256) {
-        Set _set1 = new Set();
-        Set _set2 = new Set();
-
         // 1. Verify that parametric entity exists
         require(Set(gs().entities).includes(_troopTemplateId), "CURIO: Troop template not found");
 
@@ -174,42 +171,37 @@ contract EngineFacet is UseStorage {
         if (!Util._getTileAt(_position).isInitialized) Util._initializeTile(_position);
 
         // 5. Verify that a "base" (aka. an entity which can purchase) is present
-        _set1.addArray(Util._getComponent("Position").getEntitiesWithRawValue(abi.encode(_position)));
-        _set2.addArray(Util._getComponent("CanPurchase").getEntities());
-        uint256[] memory _intersection = Util._intersection(_set1, _set2);
-        require(_intersection.length == 1, "CURIO: No base found");
-        uint256 _baseId = _intersection[0];
+        uint256 _baseId = Util._getBaseAt(_position);
+        require(_baseId != NULL, "CURIO: No base found");
 
         // 6. Verify that player owns the "base"
-        require(abi.decode(Util._getComponent("Owner").getRawValue(_baseId), (uint256)) == _playerId, "CURIO: Can only purchase in own base");
+        require(abi.decode(Util._getComponentValue("Owner", _baseId), (uint256)) == _playerId, "CURIO: Can only purchase in own base");
 
         // 7. Verify that no "troop" (aka. a movable entity) is present
-        _set2 = new Set();
-        _set2.addArray(Util._getComponent("CanMove").getEntities());
-        require(Util._intersection(_set1, _set2).length == 0, "CURIO: Base occupied by another troop");
+        require(Util._getArmyAt(_position) == NULL, "CURIO: Base occupied by another troop");
 
         // 8. Verify that the "base" can purchase the given type of "troop"
         if (!Util._getComponent("IsLandTroop").has(_troopTemplateId)) {
             Position[] memory _neighbors = Util._getNeighbors(_position);
-            bool _positionAdjacentToWater;
+            bool _isCoast;
             for (uint256 i = 0; i < _neighbors.length; i++) {
                 if (!Util._getTileAt(_neighbors[i]).isInitialized) Util._initializeTile(_neighbors[i]);
-                if (Util._getTileAt(_neighbors[i]).terrain == TERRAIN.WATER) _positionAdjacentToWater = true;
+                if (Util._getTileAt(_neighbors[i]).terrain == TERRAIN.WATER) _isCoast = true;
             }
-            require(_positionAdjacentToWater, "CURIO: Base cannot purchase selected troop type");
+            assert(_isCoast == (Util._getTileAt(_position).terrain == TERRAIN.COAST));
+            require(_isCoast, "CURIO: Base cannot purchase selected troop type");
         }
 
         // 9. Fetch player gold balance and verify sufficience
-        Component _goldComponent = Util._getComponent("Gold");
-        uint256 _troopGoldPrice = abi.decode(_goldComponent.getRawValue(_troopTemplateId), (uint256));
-        uint256 _playerGoldBalance = abi.decode(_goldComponent.getRawValue(_playerId), (uint256));
+        uint256 _troopGoldPrice = abi.decode(Util._getComponentValue("Gold", _troopTemplateId), (uint256));
+        uint256 _playerGoldBalance = abi.decode(Util._getComponentValue("Gold", _playerId), (uint256));
         require(_playerGoldBalance > _troopGoldPrice, "CURIO: Insufficient gold balance");
 
         // 10. Set new player gold balance
         Util._setComponentValue("Gold", _playerId, abi.encode(_playerGoldBalance - _troopGoldPrice));
 
         // 11. Add new army
-        uint256 _armyId = Util._addArmy(_playerId, _position, Util._getComponent("CanCapture").has(_troopTemplateId));
+        uint256 _armyId = Util._addArmy(_playerId, _position);
 
         // 12. Add troop and return its ID
         return Util._addTroop(_playerId, _troopTemplateId, _armyId);
@@ -227,7 +219,7 @@ contract EngineFacet is UseStorage {
 
         // Checkers
         require(!gs().isPaused, "CURIO: Game is paused");
-        require(Util._getPlayerCount() < gs().worldConstants.maxPlayerCount, "CURIO: Max player count exceeded");
+        require(gs().players.length < gs().worldConstants.maxPlayerCount, "CURIO: Max player count exceeded");
         require(gs().playerIdMap[msg.sender] == NULL, "CURIO: Player already initialized");
         require(Util._inBound(_position), "CURIO: Out of bound");
         if (!Util._getTileAt(_position).isInitialized) Util._initializeTile(_position);
@@ -279,7 +271,7 @@ contract EngineFacet is UseStorage {
         uint256 _attackFactor;
         for (uint256 i = 0; i < _naviesWithFivePlusHealth.length; i++) {
             _troopId = _naviesWithFivePlusHealth[i];
-            _attackFactor = abi.decode(Util._getComponent("AttackFactor").getRawValue(_troopId), (uint256));
+            _attackFactor = abi.decode(Util._getComponentValue("AttackFactor", _troopId), (uint256));
             Util._setComponentValue("AttackFactor", _troopId, abi.encode(_attackFactor * 2));
         }
     }
@@ -289,7 +281,8 @@ contract EngineFacet is UseStorage {
      */
     function sampleImpossiblePolicy() external {
         // Get player's ports and cities
-        uint256[] memory _playerBases = Util._getPlayerBases(msg.sender);
+        uint256 _playerId = gs().playerIdMap[msg.sender];
+        uint256[] memory _playerBases = Util._getPlayerBases(_playerId);
 
         // Update desired properties
         uint256 _baseId;
