@@ -21,7 +21,7 @@ struct Position {
 }
 
 struct Tile {
-    bool isInitializedECS;
+    bool isInitialized;
     TERRAIN terrain;
 }
 

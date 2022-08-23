@@ -15,7 +15,6 @@ import {EngineModules} from "contracts/libraries/EngineModules.sol";
 contract HelperFacet is UseStorage {
     using SafeMath for uint256;
     uint256 NULL = 0;
-    address NULL_ADDR = address(0);
 
     // ----------------------------------------------------------------------
     // ADMIN FUNCTIONS
@@ -27,7 +26,7 @@ contract HelperFacet is UseStorage {
     }
 
     /**
-     * Pause an ongoing game.
+     * @dev Pause an ongoing game.
      */
     function pauseGame() external onlyAdmin {
         require(!gs().isPaused, "CURIO: Game is paused");
@@ -43,7 +42,7 @@ contract HelperFacet is UseStorage {
     }
 
     /**
-     * Resume a paused game.
+     * @dev Resume a paused game.
      */
     function resumeGame() external onlyAdmin {
         require(gs().isPaused, "CURIO: Game is ongoing");
@@ -57,20 +56,20 @@ contract HelperFacet is UseStorage {
     }
 
     /**
-     * Reactivate an inactive player.
+     * @dev Reactivate an inactive player.
      * @param _player player address
      */
     function reactivatePlayer(address _player) external onlyAdmin {
+        uint256 _playerId = gs().playerIdMap[_player];
         require(!Util._isPlayerInitialized(_player), "CURIO: Player already initialized");
-        require(!Util._isPlayerActive(_player), "CURIO: Player is active");
+        require(!Util._isPlayerActive(_playerId), "CURIO: Player is active");
 
-        gs().playerMap[_player].active = true;
-        gs().playerMap[_player].goldBalance = gs().worldConstants.initPlayerGoldBalance; // reload balance
-        emit Util.PlayerReactivated(_player);
+        Util._setComponentValue("IsActive", _playerId, abi.encode(true));
+        Util._setComponentValue("Gold", _playerId, abi.encode(gs().worldConstants.initPlayerGoldBalance)); // reset gold balance
     }
 
     /**
-     * Store an array of encoded raw map columns containing information of all tiles, for efficient storage.
+     * @dev Store an array of encoded raw map columns containing information of all tiles, for efficient storage.
      * @param _colBatches map columns in batches, encoded with N-ary arithmetic
      */
     function storeEncodedColumnBatches(uint256[][] memory _colBatches) external onlyAdmin {
@@ -78,62 +77,72 @@ contract HelperFacet is UseStorage {
     }
 
     /**
-     * Spawn a troop at a selected position, typically upon initialization of a player.
-     * @param _pos position
+     * @dev Spawn a troop at a selected position, typically upon initialization of a player.
+     * @param _position position
      * @param _player player address
-     * @param _troopTypeId identifier for desired troop type
+     * @param _troopTemplateId identifier for desired troop type
+     * @return _troopId identifier for new troop
      */
     function spawnTroop(
-        Position memory _pos,
+        Position memory _position,
         address _player,
-        uint256 _troopTypeId
-    ) external onlyAdmin {
-        require(Util._inBound(_pos), "CURIO: Out of bound");
-        if (!Util._getTileAt(_pos).isInitialized) Util._initializeTile(_pos);
+        uint256 _troopTemplateId
+    ) external onlyAdmin returns (uint256) {
+        require(Util._inBound(_position), "CURIO: Out of bound");
+        if (!Util._getTileAt(_position).isInitialized) Util._initializeTile(_position);
 
-        Tile memory _tile = Util._getTileAt(_pos);
-        require(_tile.occupantId == NULL, "CURIO: Tile occupied");
+        require(Util._getArmyAt(_position) == NULL, "CURIO: Tile occupied");
 
-        if (_tile.baseId != NULL) {
+        uint256 _baseId = Util._getBaseAt(_position);
+        if (_baseId != NULL) {
             // require(Util._getBaseOwner(_tile.baseId) == _player, "CURIO: Can only spawn troop in player's base");
-            require(EngineModules._geographicCheckTroop(_troopTypeId, _tile), "CURIO: Can only spawn water troops in ports");
+            require(EngineModules._geographicCheckTroopECS(_troopTemplateId, _position), "CURIO: Can only spawn water troops in ports");
         }
 
-        Util._addTroop(_player, _pos, _troopTypeId);
+        uint256 _playerId = gs().playerIdMap[_player];
+        uint256 _armyId = Util._addArmy(_playerId, _position, Util._getComponent("CanCapture").has(_troopTemplateId));
+        return Util._addTroop(_playerId, _troopTemplateId, _armyId);
     }
 
     /**
-     * Transfer a base at a selected position to a player, typically upon initialization.
-     * @param _pos base position
+     * @dev Transfer a base at a selected position to a player, typically upon initialization.
+     * @param _position base position
      * @param _player player to give ownership to
      */
-    function transferBaseOwnership(Position memory _pos, address _player) external onlyAdmin {
-        require(Util._inBound(_pos), "CURIO: Out of bound");
-        if (!Util._getTileAt(_pos).isInitialized) Util._initializeTile(_pos);
+    function transferBaseOwnership(Position memory _position, address _player) external onlyAdmin {
+        require(Util._inBound(_position), "CURIO: Out of bound");
+        if (!Util._getTileAt(_position).isInitialized) Util._initializeTile(_pos);
 
-        Tile memory _tile = Util._getTileAt(_pos);
-        require(_tile.baseId != NULL, "CURIO: No base found");
-        require(_tile.occupantId == NULL, "CURIO: Tile occupied");
+        require(Util._getArmyAt(_position) == NULL, "CURIO: Tile occupied");
 
-        Base memory _base = Util._getBase(_tile.baseId);
-        require(_base.owner == NULL_ADDR, "CURIO: Base is owned");
+        uint256 _baseId = Util._getBaseAt(_position);
+        require(_baseId != NULL, "CURIO: No base found");
 
-        gs().baseIdMap[_tile.baseId].owner = _player;
-        gs().baseIdMap[_tile.baseId].health = 800;
+        require(abi.decode(_getComponent("Owner").getRawValue(_baseId), (unit256)) == NULL, "CURIO: Base is owned");
+
+        uint256 _playerId = gs().playerIdMap[_player];
+        Util._setComponentValue("Owner", _baseId, abi.encode(_playerId));
+        Util._setComponentValue("Health", _baseId, abi.encode(800));
 
         Util._updatePlayerBalances(_player);
-        gs().playerMap[_player].numOwnedBases++;
-        gs().playerMap[_player].totalGoldGenerationPerUpdate += _base.goldGenerationPerSecond;
-        gs().playerMap[_player].totalOilGenerationPerUpdate += _base.oilGenerationPerSecond;
+
+        // FIXME: experimenting with signed integers, need to change for everything else
+        int256 _baseGoldPerSecond = abi.decode(Util._getComponent("GoldPerSecond").getRawValue(_baseId), (int256));
+        int256 _baseOilPerSecond = abi.decode(Util._getComponent("OilPerSecond").getRawValue(_baseId), (int256));
+        int256 _playerGoldPerSecond = abi.decode(Util._getComponent("GoldPerSecond").getRawValue(_playerId), (int256));
+        int256 _playerOilPerSecond = abi.decode(Util._getComponent("OilPerSecond").getRawValue(_playerId), (int256));
+
+        Util._setComponentValue("GoldPerSecond", _playerId, _playerGoldPerSecond + _baseGoldPerSecond);
+        Util._setComponentValue("OilPerSecond", _playerId, _playerOilPerSecond + _baseOilPerSecond);
     }
 
     /**
-     * Initialize all tiles from an array of positions.
+     * @dev Initialize all tiles from an array of positions.
      * @param _positions all positions
      */
-    function bulkInitializeTilesECS(Position[] memory _positions) external onlyAdmin {
+    function bulkInitializeTiles(Position[] memory _positions) external onlyAdmin {
         for (uint256 i = 0; i < _positions.length; i++) {
-            Util._initializeTileECS(_positions[i]);
+            Util._initializeTile(_positions[i]);
         }
     }
 

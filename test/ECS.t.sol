@@ -41,6 +41,7 @@ contract ECS is Test, DiamondDeployTest {
             "LargeActionCooldown",
             "CargoCapacity",
             "ArmyId",
+            "IsDebuffed",
             "IsTroop",
             "IsBase",
             "IsArmy" //

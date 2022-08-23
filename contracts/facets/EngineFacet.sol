@@ -4,7 +4,7 @@ pragma solidity ^0.8.4;
 import "contracts/libraries/Storage.sol";
 import {Util} from "contracts/libraries/GameUtil.sol";
 import {EngineModules} from "contracts/libraries/EngineModules.sol";
-import {Army, BASE_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop, TroopType, WorldConstants} from "contracts/libraries/Types.sol";
+import {BASE_NAME, Position, TERRAIN, Tile, WorldConstants} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 import {Component} from "contracts/Component.sol";
 import {Set} from "contracts/Set.sol";
@@ -15,61 +15,13 @@ import {Set} from "contracts/Set.sol";
 contract EngineFacet is UseStorage {
     using SafeMath for uint256;
     uint256 NULL = 0;
-    address NULL_ADDR = address(0);
 
     /**
-     * March army to a target position (move, battle, or capture).
-     * @param _armyId identifier for troop
-     * @param _targetPos target position
-     */
-    function march(uint256 _armyId, Position memory _targetPos) external {
-        // basic check
-        require(!gs().isPaused, "CURIO: Game is paused");
-        require(Util._isPlayerActive(msg.sender), "CURIO: Player is inactive");
-        require(Util._inBound(_targetPos), "CURIO: Target out of bound");
-        if (!Util._getTileAt(_targetPos).isInitialized) Util._initializeTile(_targetPos);
-
-        Army memory _army = Util._getArmy(_armyId);
-        require(_army.owner == msg.sender, "CURIO: Can only march own troop");
-        require(!Util._samePos(_army.pos, _targetPos), "CURIO: Already at destination");
-        require((block.timestamp - _army.lastLargeActionTaken) >= Util._getArmyLargeActionCooldown(_army.troopIds), "CURIO: Large action taken too recently");
-
-        Tile memory _targetTile = Util._getTileAt(_targetPos);
-        require(EngineModules._geographicCheckArmy(_armyId, _targetTile), "CURIO: Troops and land type not compatible");
-
-        if (_targetTile.occupantId == NULL) {
-            if (_targetTile.baseId == NULL) {
-                // CaseI: move army when target tile has no base or army
-                EngineModules._moveArmy(msg.sender, _armyId, _targetPos);
-            } else {
-                if (Util._getBaseOwner(_targetTile.baseId) == msg.sender) {
-                    // CaseII: move army when target tile has your base but no army
-                    EngineModules._moveArmy(msg.sender, _armyId, _targetPos);
-                } else {
-                    // CaseIII: attack base when target tile has enemy base but no army
-                    EngineModules._battleBase(msg.sender, _armyId, _targetPos);
-                }
-            }
-        } else {
-            // CaseIV: battle enemy army when target tile has one
-            require(gs().armyIdMap[_targetTile.occupantId].owner != msg.sender, "CURIO: Destination tile occupied");
-            EngineModules._battleArmy(msg.sender, _armyId, _targetPos);
-        }
-
-        Util._updateArmy(msg.sender, _army.pos, _targetPos); // update army info on start tile and end tile
-        Util._emitPlayerInfo(msg.sender); // updates player info
-    }
-
-    // ----------------------------------------------------------------------
-    // ECS FUNCTIONS
-    // ----------------------------------------------------------------------
-
-    /**
-     * March army to a target position (move, battle, or capture).
+     * @dev March army to a target position (move, battle, or capture).
      * @param _armyId army entity
-     * @param _targetPos target position
+     * @param _targetPosition target position
      */
-    function marchECS(uint256 _armyId, Position memory _targetPos) external {
+    function march(uint256 _armyId, Position memory _targetPosition) external {
         // 1. Verify that army exists as an entity
         require(Set(gs().entities).includes(_army), "CURIO: Troop not found");
 
@@ -82,7 +34,7 @@ contract EngineFacet is UseStorage {
 
         // 4. Verify that position is in bound, and initialize tile
         require(Util._inBound(_targetPosition), "CURIO: Out of bound");
-        if (!Util._getTileAt(_targetPosition).isInitializedECS) Util._initializeTileECS(_targetPosition);
+        if (!Util._getTileAt(_targetPosition).isInitialized) Util._initializeTile(_targetPosition);
 
         // 5. Verify that target position is different from starting position and within movement range
         Position memory _sourcePosition = abi.decode(Util._getComponent("Position").getRawValue(_armyId), (Position));
@@ -101,35 +53,36 @@ contract EngineFacet is UseStorage {
         require(EngineModules._geographicCheckArmyECS(_armyId, _targetPosition), "CURIO: Troop and land type not compatible"); // TODO
 
         // 9. March logic
-        // TODO: left here
         uint256 _targetArmyId = Util._getArmyAt(_targetPosition);
         if (_targetArmyId == NULL) {
             uint256 _targetBaseId = Util._getBaseAt(_targetPosition);
             if (_targetBaseId == NULL) {
                 // CaseI: move army when target tile has no base or army
-                EngineModules._moveArmyECS(_playerId, _armyId, _targetPos);
+                EngineModules._moveArmy(_playerId, _armyId, _targetPosition);
             } else {
                 if (abi.decode(Util._getComponent("Owner").getRawValue(_targetBaseId), (uint256)) == _playerId) {
                     // CaseII: move army when target tile has your base but no army
-                    EngineModules._moveArmyECS(_playerId, _armyId, _targetPos);
+                    EngineModules._moveArmy(_playerId, _armyId, _targetPosition);
                 } else {
                     // CaseIII: attack base when target tile has enemy base but no army
-                    EngineModules._battleBaseECS(_playerId, _armyId, _targetPos);
+                    EngineModules._battleBase(_playerId, _armyId, _targetPosition);
                 }
             }
         } else {
             // CaseIV: battle enemy army when target tile has one
             require(abi.decode(Util._getComponent("Owner").getRawValue(_targetArmyId), (uint256)) != _playerId, "CURIO: Destination tile occupied");
-            EngineModules._battleArmyECS(_playerId, _armyId, _targetPos);
+            EngineModules._battleArmy(_playerId, _armyId, _targetPosition);
         }
+
+        Util._updatePlayerBalances(msg.sender);
     }
 
     /**
-     * Dispatch troop to a target position.
+     * @dev Dispatch troop to a target position.
      * @param _troopId troop entity
      * @param _targetPosition target position
      */
-    function moveTroopECS(uint256 _troopId, Position memory _targetPosition) external {
+    function moveTroop(uint256 _troopId, Position memory _targetPosition) external {
         // 1. Verify that troop exists as an entity
         require(Set(gs().entities).includes(_troopId), "CURIO: Troop not found");
 
@@ -142,7 +95,7 @@ contract EngineFacet is UseStorage {
 
         // 4. Verify that position is in bound, and initialize tile
         require(Util._inBound(_targetPosition), "CURIO: Out of bound");
-        if (!Util._getTileAt(_targetPosition).isInitializedECS) Util._initializeTileECS(_targetPosition);
+        if (!Util._getTileAt(_targetPosition).isInitialized) Util._initializeTile(_targetPosition);
 
         // 5. Verify that target position is different from starting position and within movement range
         uint256 _armyId = abi.decode(Util._getComponent("ArmyId").getRawValue(_troopId), (uint256));
@@ -171,32 +124,38 @@ contract EngineFacet is UseStorage {
         uint256 _targetArmyId = Util._getArmyAt(_targetPosition);
         if (_targetArmyId != NULL) {
             require(abi.decode(Util._getComponent("Owner").getRawValue(_targetArmyId), (uint256)) == _playerId, "CURIO: Cannot directly attack with troops");
-            require(Util._getArmyTroopCount(_targetArmyId) + 1 <= 5, "CURIO: Army can have up to five troops, or two with one transport");
+            require(Util._getArmyTroops(_targetArmyId).length + 1 <= 5, "CURIO: Army can have up to five troops, or two with one transport");
         } else {
-            _targetArmyId = Util._addArmyEntity(_playerId, _targetPosition);
+            _targetArmyId = Util._addArmy(_playerId, _targetPosition, Util._getComponent("CanCapture").has(_troopTemplateId));
         }
 
         // 11. Move troop
         Util._setComponentValue("ArmyId", _troopId, _targetArmyId);
 
         // 12. Remove old army if empty
-        if (Util._getArmyTroopCount(_armyId) == 0) Util._removeArmyEntity(_armyId);
+        if (Util._getArmyTroops(_armyId).length == 0) Util._removeArmy(_armyId);
     }
 
     /**
-     * Delete an owned troop (often to reduce expense).
+     * @dev Delete an owned troop (often to reduce expense).
      * @param _troopId identifier for troop
      */
-    function deleteTroopECS(uint256 _troopId) external {
+    function deleteTroop(uint256 _troopId) external {
         uint256 _playerId = Util._getPlayerId(msg.sender);
         require(abi.decode(Util._getComponent("Owner").getRawValue(_troopId), (uint256)) == _playerId, "CURIO: Can only delete own troop");
 
         uint256 _armyId = abi.decode(Util._getComponent("ArmyId").getRawValue(_troopId), (uint256));
-        if (Util._getArmyTroopCount(_armyId) <= 1) Util._removeArmyEntity(_armyId);
-        Util._removeTroopEntity(_troopId);
+        if (Util._getArmyTroops(_armyId).length <= 1) Util._removeArmy(_armyId);
+        Util._removeTroop(_troopId);
     }
 
-    function purchaseTroopECS(Position memory _position, uint256 _troopTemplateId) external returns (uint256) {
+    /**
+     * @dev Purchase a new troop.
+     * @param _position position to purchase troop
+     * @param _troopTemplateId identifier for desired troop type
+     * @return _troopId identifier for new troop
+     */
+    function purchaseTroop(Position memory _position, uint256 _troopTemplateId) external returns (uint256) {
         Set _set1 = new Set();
         Set _set2 = new Set();
 
@@ -212,7 +171,7 @@ contract EngineFacet is UseStorage {
 
         // 4. Verify that position is in bound, and initialize tile
         require(Util._inBound(_position), "CURIO: Out of bound");
-        if (!Util._getTileAt(_position).isInitializedECS) Util._initializeTileECS(_position);
+        if (!Util._getTileAt(_position).isInitialized) Util._initializeTile(_position);
 
         // 5. Verify that a "base" (aka. an entity which can purchase) is present
         _set1.addArray(Util._getComponent("Position").getEntitiesWithRawValue(abi.encode(_position)));
@@ -234,7 +193,7 @@ contract EngineFacet is UseStorage {
             Position[] memory _neighbors = Util._getNeighbors(_position);
             bool _positionAdjacentToWater;
             for (uint256 i = 0; i < _neighbors.length; i++) {
-                if (!Util._getTileAt(_neighbors[i]).isInitializedECS) Util._initializeTileECS(_neighbors[i]);
+                if (!Util._getTileAt(_neighbors[i]).isInitialized) Util._initializeTile(_neighbors[i]);
                 if (Util._getTileAt(_neighbors[i]).terrain == TERRAIN.WATER) _positionAdjacentToWater = true;
             }
             require(_positionAdjacentToWater, "CURIO: Base cannot purchase selected troop type");
@@ -250,13 +209,19 @@ contract EngineFacet is UseStorage {
         Util._setComponentValue("Gold", _playerId, abi.encode(_playerGoldBalance - _troopGoldPrice));
 
         // 11. Add new army
-        uint256 _armyId = Util._addArmyEntity(_playerId, _position);
+        uint256 _armyId = Util._addArmy(_playerId, _position, Util._getComponent("CanCapture").has(_troopTemplateId));
 
         // 12. Add troop and return its ID
-        return Util._addTroopEntity(_playerId, _troopTemplateId, _armyId);
+        return Util._addTroop(_playerId, _troopTemplateId, _armyId);
     }
 
-    function initializePlayerECS(Position memory _position, string memory _name) external returns (uint256) {
+    /**
+     * @dev Self-initialize as a player.
+     * @param _position starting position of the player
+     * @param _name name of the player
+     * @return _playerId identifier for the player
+     */
+    function initializePlayer(Position memory _position, string memory _name) external returns (uint256) {
         Set _set1 = new Set();
         Set _set2 = new Set();
 
@@ -265,7 +230,7 @@ contract EngineFacet is UseStorage {
         require(Util._getPlayerCount() < gs().worldConstants.maxPlayerCount, "CURIO: Max player count exceeded");
         require(gs().playerIdMap[msg.sender] == NULL, "CURIO: Player already initialized");
         require(Util._inBound(_position), "CURIO: Out of bound");
-        if (!Util._getTileAt(_position).isInitializedECS) Util._initializeTileECS(_position);
+        if (!Util._getTileAt(_position).isInitialized) Util._initializeTile(_position);
 
         // Verify that a "base" (aka. an entity which can purchase) is present
         _set1.addArray(Util._getComponent("Position").getEntitiesWithRawValue(abi.encode(_position)));
@@ -289,9 +254,11 @@ contract EngineFacet is UseStorage {
         gs().players.push(msg.sender);
         gs().playerIdMap[msg.sender] = _playerId;
 
-        // Transfer base ownership and update its health
+        // Transfer base ownership
         Util._setComponentValue("Owner", _baseId, abi.encode(_playerId));
         Util._setComponentValue("Health", _baseId, abi.encode(800));
+        Util._setComponentValue("GoldPerSecond", _playerId, abi.encode(_worldConstants.defaultBaseGoldGenerationPerSecond));
+        Util._setComponentValue("GoldRatePositive", _playerId, abi.encode(true));
 
         return _playerId;
     }
