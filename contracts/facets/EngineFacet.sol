@@ -7,6 +7,7 @@ import {EngineModules} from "contracts/libraries/EngineModules.sol";
 import {Position, TERRAIN, WorldConstants} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 import {Set} from "contracts/Set.sol";
+import {BoolComponent} from "contracts/TypedComponents.sol";
 
 /// @title Engine facet
 /// @notice Contains player functions such as march, purchaseTroop, initializePlayer
@@ -29,23 +30,23 @@ contract EngineFacet is UseStorage {
 
         // 3. Verify that player is active
         uint256 _playerId = Util._getPlayerId(msg.sender);
-        require(Util._getComponent("IsActive").has(_playerId), "CURIO: Player is inactive");
+        require(BoolComponent(gs().components["IsActive"]).has(_playerId), "CURIO: Player is inactive");
 
         // 4. Verify that position is in bound, and initialize tile
         require(Util._inBound(_targetPosition), "CURIO: Out of bound");
         if (!Util._getTileAt(_targetPosition).isInitialized) Util._initializeTile(_targetPosition);
 
         // 5. Verify that target position is different from starting position and within movement range
-        Position memory _sourcePosition = abi.decode(Util._getComponentValue("Position", _armyId), (Position));
+        Position memory _sourcePosition = Util._getPosition("Position", _armyId);
         require(!Util._coincident(_sourcePosition, _targetPosition), "CURIO: Already at destination");
         require(Util._withinDistance(_sourcePosition, _targetPosition, 1), "CURIO: You can only dispatch troop to the near tile");
 
         // 6. Verify ownership of army by player
-        require(abi.decode(Util._getComponentValue("Owner", _armyId), (uint256)) == _playerId, "CURIO: You can only dispatch own troop");
+        require(Util._getUint("Owner", _armyId) == _playerId, "CURIO: You can only dispatch own troop");
 
         // 7. Large action cooldown check
-        uint256 _lastLargeActionTaken = abi.decode(Util._getComponentValue("LastLargeActionTaken", _armyId), (uint256));
-        uint256 _largeActionCooldown = abi.decode(Util._getComponentValue("LargeActionCooldown", _armyId), (uint256));
+        uint256 _lastLargeActionTaken = Util._getUint("LastLargeActionTaken", _armyId);
+        uint256 _largeActionCooldown = Util._getUint("LargeActionCooldown", _armyId);
         require(block.timestamp - _lastLargeActionTaken >= _largeActionCooldown, "CURIO: Large action taken too recently");
 
         // 8. Geographic check
@@ -59,7 +60,7 @@ contract EngineFacet is UseStorage {
                 // CaseI: move army when target tile has no base or army
                 EngineModules._moveArmy(_playerId, _armyId, _targetPosition);
             } else {
-                if (abi.decode(Util._getComponentValue("Owner", _targetBaseId), (uint256)) == _playerId) {
+                if (Util._getUint("Owner", _targetBaseId) == _playerId) {
                     // CaseII: move army when target tile has your base but no army
                     EngineModules._moveArmy(_playerId, _armyId, _targetPosition);
                 } else {
@@ -69,7 +70,7 @@ contract EngineFacet is UseStorage {
             }
         } else {
             // CaseIV: battle enemy army when target tile has one
-            require(abi.decode(Util._getComponentValue("Owner", _targetArmyId), (uint256)) != _playerId, "CURIO: Destination tile occupied");
+            require(Util._getUint("Owner", _targetArmyId) != _playerId, "CURIO: Destination tile occupied");
             EngineModules._battleArmy(_playerId, _armyId, _targetPosition);
         }
 
@@ -90,29 +91,29 @@ contract EngineFacet is UseStorage {
 
         // 3. Verify that player is active
         uint256 _playerId = Util._getPlayerId(msg.sender);
-        require(Util._getComponent("IsActive").has(_playerId), "CURIO: Player is inactive");
+        require(BoolComponent(gs().components["IsActive"]).has(_playerId), "CURIO: Player is inactive");
 
         // 4. Verify that position is in bound, and initialize tile
         require(Util._inBound(_targetPosition), "CURIO: Out of bound");
         if (!Util._getTileAt(_targetPosition).isInitialized) Util._initializeTile(_targetPosition);
 
         // 5. Verify that target position is different from starting position and within movement range
-        uint256 _armyId = abi.decode(Util._getComponentValue("ArmyId", _troopId), (uint256));
-        Position memory _sourcePosition = abi.decode(Util._getComponentValue("Position", _armyId), (Position));
+        uint256 _armyId = Util._getUint("ArmyId", _troopId);
+        Position memory _sourcePosition = Util._getPosition("Position", _armyId);
         require(!Util._coincident(_sourcePosition, _targetPosition), "CURIO: Already at destination");
         require(Util._withinDistance(_sourcePosition, _targetPosition, 1), "CURIO: You can only dispatch troop to the near tile");
 
         // 6. Verify ownership of troop by player
-        require(abi.decode(Util._getComponentValue("Owner", _troopId), (uint256)) == _playerId, "CURIO: You can only dispatch own troop");
+        require(Util._getUint("Owner", _troopId) == _playerId, "CURIO: You can only dispatch own troop");
 
         // 7. Large action cooldown check
-        uint256 _lastLargeActionTaken = abi.decode(Util._getComponentValue("LastLargeActionTaken", _armyId), (uint256));
-        uint256 _largeActionCooldown = abi.decode(Util._getComponentValue("LargeActionCooldown", _armyId), (uint256));
+        uint256 _lastLargeActionTaken = Util._getUint("LastLargeActionTaken", _armyId);
+        uint256 _largeActionCooldown = Util._getUint("LargeActionCooldown", _armyId);
         require(block.timestamp - _lastLargeActionTaken >= _largeActionCooldown, "CURIO: Large action taken too recently");
 
         // 8. Movement cooldown check
-        uint256 _lastMoved = abi.decode(Util._getComponentValue("LastMoved", _armyId), (uint256));
-        uint256 _movementCooldown = abi.decode(Util._getComponentValue("MovementCooldown", _armyId), (uint256));
+        uint256 _lastMoved = Util._getUint("LastMoved", _armyId);
+        uint256 _movementCooldown = Util._getUint("MovementCooldown", _armyId);
         require(block.timestamp - _lastMoved >= _movementCooldown, "CURIO: Moved too recently");
 
         // 9. Geographic and base checks
@@ -122,14 +123,14 @@ contract EngineFacet is UseStorage {
         // 10. March logic checks, and create new army if empty
         uint256 _targetArmyId = Util._getArmyAt(_targetPosition);
         if (_targetArmyId != NULL) {
-            require(abi.decode(Util._getComponentValue("Owner", _targetArmyId), (uint256)) == _playerId, "CURIO: Cannot directly attack with troops");
+            require(Util._getUint("Owner", _targetArmyId) == _playerId, "CURIO: Cannot directly attack with troops");
             require(Util._getArmyTroops(_targetArmyId).length + 1 <= 5, "CURIO: Army can have up to five troops, or two with one transport");
         } else {
             _targetArmyId = Util._addArmy(_playerId, _targetPosition);
         }
 
         // 11. Move troop
-        Util._setComponentValue("ArmyId", _troopId, abi.encode(_targetArmyId));
+        Util._setUint("ArmyId", _troopId, _targetArmyId);
 
         // 12. Remove old army if empty
         if (Util._getArmyTroops(_armyId).length == 0) Util._removeArmy(_armyId);
@@ -141,9 +142,9 @@ contract EngineFacet is UseStorage {
      */
     function deleteTroop(uint256 _troopId) external {
         uint256 _playerId = Util._getPlayerId(msg.sender);
-        require(abi.decode(Util._getComponentValue("Owner", _troopId), (uint256)) == _playerId, "CURIO: Can only delete own troop");
+        require(Util._getUint("Owner", _troopId) == _playerId, "CURIO: Can only delete own troop");
 
-        uint256 _armyId = abi.decode(Util._getComponentValue("ArmyId", _troopId), (uint256));
+        uint256 _armyId = Util._getUint("ArmyId", _troopId);
         if (Util._getArmyTroops(_armyId).length <= 1) Util._removeArmy(_armyId);
         Util._removeTroop(_troopId);
     }
@@ -163,7 +164,7 @@ contract EngineFacet is UseStorage {
 
         // 3. Verify that player is active
         uint256 _playerId = Util._getPlayerId(msg.sender);
-        require(Util._getComponent("IsActive").has(_playerId), "CURIO: Player is inactive");
+        require(BoolComponent(gs().components["IsActive"]).has(_playerId), "CURIO: Player is inactive");
 
         // 4. Verify that position is in bound, and initialize tile
         require(Util._inBound(_position), "CURIO: Out of bound");
@@ -174,13 +175,13 @@ contract EngineFacet is UseStorage {
         require(_baseId != NULL, "CURIO: No base found");
 
         // 6. Verify that player owns the "base"
-        require(abi.decode(Util._getComponentValue("Owner", _baseId), (uint256)) == _playerId, "CURIO: Can only purchase in own base");
+        require(Util._getUint("Owner", _baseId) == _playerId, "CURIO: Can only purchase in own base");
 
         // 7. Verify that no "troop" (aka. a movable entity) is present
         require(Util._getArmyAt(_position) == NULL, "CURIO: Base occupied by another troop");
 
         // 8. Verify that the "base" can purchase the given type of "troop"
-        if (!Util._getComponent("IsLandTroop").has(_troopTemplateId)) {
+        if (!BoolComponent(gs().components["IsLandTroop"]).has(_troopTemplateId)) {
             Position[] memory _neighbors = Util._getNeighbors(_position);
             bool _isCoast;
             for (uint256 i = 0; i < _neighbors.length; i++) {
@@ -192,12 +193,12 @@ contract EngineFacet is UseStorage {
         }
 
         // 9. Fetch player gold balance and verify sufficience
-        uint256 _troopGoldPrice = abi.decode(Util._getComponentValue("Gold", _troopTemplateId), (uint256));
-        uint256 _playerGoldBalance = abi.decode(Util._getComponentValue("Gold", _playerId), (uint256));
+        uint256 _troopGoldPrice = Util._getUint("Gold", _troopTemplateId);
+        uint256 _playerGoldBalance = Util._getUint("Gold", _playerId);
         require(_playerGoldBalance > _troopGoldPrice, "CURIO: Insufficient gold balance");
 
         // 10. Set new player gold balance
-        Util._setComponentValue("Gold", _playerId, abi.encode(_playerGoldBalance - _troopGoldPrice));
+        Util._setUint("Gold", _playerId, _playerGoldBalance - _troopGoldPrice);
 
         // 11. Add new army
         uint256 _armyId = Util._addArmy(_playerId, _position);
@@ -225,25 +226,24 @@ contract EngineFacet is UseStorage {
         require(_baseId != NULL, "CURIO: No base found");
 
         // Verify that base is not taken
-        require(!Util._getComponent("Owner").has(_baseId), "CURIO: Base is taken");
+        require(!BoolComponent(gs().components["Owner"]).has(_baseId), "CURIO: Base is taken");
 
         // Spawn player
         WorldConstants memory _worldConstants = gs().worldConstants;
         uint256 _playerId = Util._addEntity();
-        Util._setComponentValue("IsActive", _playerId, abi.encode(true));
-        Util._setComponentValue("Name", _playerId, abi.encode(_name));
-        Util._setComponentValue("Gold", _playerId, abi.encode(_worldConstants.initPlayerGoldBalance));
-        Util._setComponentValue("Oil", _playerId, abi.encode(_worldConstants.initPlayerOilBalance));
-        Util._setComponentValue("InitTimestamp", _playerId, abi.encode(block.timestamp));
-        Util._setComponentValue("BalanceLastUpdated", _playerId, abi.encode(block.timestamp));
+        Util._setBool("IsActive", _playerId);
+        Util._setString("Name", _playerId, _name);
+        Util._setUint("Gold", _playerId, _worldConstants.initPlayerGoldBalance);
+        Util._setUint("Oil", _playerId, _worldConstants.initPlayerOilBalance);
+        Util._setUint("InitTimestamp", _playerId, block.timestamp);
+        Util._setUint("BalanceLastUpdated", _playerId, block.timestamp);
         gs().players.push(msg.sender);
         gs().playerIdMap[msg.sender] = _playerId;
 
         // Transfer base ownership
-        Util._setComponentValue("Owner", _baseId, abi.encode(_playerId));
-        Util._setComponentValue("Health", _baseId, abi.encode(800));
-        Util._setComponentValue("GoldPerSecond", _playerId, abi.encode(_worldConstants.defaultBaseGoldGenerationPerSecond));
-        Util._setComponentValue("GoldRatePositive", _playerId, abi.encode(true));
+        Util._setUint("Owner", _baseId, _playerId);
+        Util._setUint("Health", _baseId, 800);
+        Util._setInt("GoldPerSecond", _playerId, int256(_worldConstants.defaultBaseGoldGenerationPerSecond));
 
         return _playerId;
     }

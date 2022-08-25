@@ -20,6 +20,7 @@ export interface PolicyFacetInterface extends utils.Interface {
   functions: {
     "sampleBuffPolicy()": FunctionFragment;
     "sampleImpossiblePolicy()": FunctionFragment;
+    "workersOfTheWorldUnite()": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -30,6 +31,10 @@ export interface PolicyFacetInterface extends utils.Interface {
     functionFragment: "sampleImpossiblePolicy",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "workersOfTheWorldUnite",
+    values?: undefined
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "sampleBuffPolicy",
@@ -37,6 +42,10 @@ export interface PolicyFacetInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "sampleImpossiblePolicy",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "workersOfTheWorldUnite",
     data: BytesLike
   ): Result;
 
@@ -77,6 +86,10 @@ export interface PolicyFacet extends BaseContract {
     sampleImpossiblePolicy(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    workersOfTheWorldUnite(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
   };
 
   sampleBuffPolicy(
@@ -87,10 +100,16 @@ export interface PolicyFacet extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  workersOfTheWorldUnite(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
     sampleBuffPolicy(overrides?: CallOverrides): Promise<void>;
 
     sampleImpossiblePolicy(overrides?: CallOverrides): Promise<void>;
+
+    workersOfTheWorldUnite(overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {};
@@ -103,6 +122,10 @@ export interface PolicyFacet extends BaseContract {
     sampleImpossiblePolicy(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    workersOfTheWorldUnite(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -111,6 +134,10 @@ export interface PolicyFacet extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     sampleImpossiblePolicy(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    workersOfTheWorldUnite(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

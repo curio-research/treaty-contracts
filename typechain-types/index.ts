@@ -2,6 +2,12 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { Component } from "./Component";
+export type { AddressComponent } from "./AddressComponent";
+export type { BoolComponent } from "./BoolComponent";
+export type { IntComponent } from "./IntComponent";
+export type { PositionComponent } from "./PositionComponent";
+export type { StringComponent } from "./StringComponent";
+export type { UintComponent } from "./UintComponent";
 export type { Diamond } from "./Diamond";
 export type { DiamondCutFacet } from "./DiamondCutFacet";
 export type { DiamondLoupeFacet } from "./DiamondLoupeFacet";
@@ -21,6 +27,12 @@ export type { DiamondInit } from "./DiamondInit";
 export type { Curio } from "./Curio";
 
 export { Component__factory } from "./factories/Component__factory";
+export { AddressComponent__factory } from "./factories/AddressComponent__factory";
+export { BoolComponent__factory } from "./factories/BoolComponent__factory";
+export { IntComponent__factory } from "./factories/IntComponent__factory";
+export { PositionComponent__factory } from "./factories/PositionComponent__factory";
+export { StringComponent__factory } from "./factories/StringComponent__factory";
+export { UintComponent__factory } from "./factories/UintComponent__factory";
 export { Diamond__factory } from "./factories/Diamond__factory";
 export { DiamondCutFacet__factory } from "./factories/DiamondCutFacet__factory";
 export { DiamondLoupeFacet__factory } from "./factories/DiamondLoupeFacet__factory";

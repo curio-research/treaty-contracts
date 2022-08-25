@@ -13,7 +13,7 @@ contract Component {
 
     address private gameAddr; // game diamond
     Set private entities = new Set();
-    mapping(uint256 => bytes) private entityToValueMap; // entity => raw value of entity component
+    mapping(uint256 => bytes) private entityToValueMap; // entity => value of entity component
     mapping(uint256 => address) private valueToEntitySetAddrMap; // value => address of set of entities with this component equal to this value
 
     address private NULL_ADDR = address(0);
@@ -23,11 +23,10 @@ contract Component {
     }
 
     /**
-     * @dev Get the raw value of a specified entity.
+     * @dev Get the value of a specified entity.
      * @param _entity entity ID
      */
-    function getValue(uint256 _entity) public view returns (bytes memory) {
-        // Return the entity's component value
+    function getBytesValue(uint256 _entity) public view returns (bytes memory) {
         return entityToValueMap[_entity];
     }
 
@@ -39,8 +38,8 @@ contract Component {
     }
 
     /**
-     * @dev Get entities whose corresponding component has a specific raw value.
-     * @param _value raw value
+     * @dev Get entities whose corresponding component has a specific value.
+     * @param _value bytes value
      */
     function getEntitiesWithValue(bytes memory _value) public view returns (uint256[] memory) {
         // Return all entities with this component value

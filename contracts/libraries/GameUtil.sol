@@ -4,8 +4,9 @@ pragma solidity ^0.8.4;
 import "contracts/libraries/Storage.sol";
 import {BASE_NAME, GameState, Position, TERRAIN, Tile, WorldConstants} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
-import {Component} from "contracts/Component.sol";
 import {Set} from "contracts/Set.sol";
+import {Component} from "contracts/Component.sol";
+import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, UintComponent} from "contracts/TypedComponents.sol";
 
 /// @title Util library
 /// @notice Contains all events as well as lower-level setters and getters
@@ -42,27 +43,27 @@ library Util {
         // Add base
         if (_terrainId >= 3) {
             uint256 _baseId = _addEntity();
-            _setComponentValue("IsActive", _baseId, abi.encode(true));
-            _setComponentValue("Position", _baseId, abi.encode(_position));
-            _setComponentValue("Health", _baseId, abi.encode(1));
-            _setComponentValue("CanAttack", _baseId, abi.encode(true));
-            _setComponentValue("CanPurchase", _baseId, abi.encode(true));
-            _setComponentValue("AttackFactor", _baseId, abi.encode(100));
-            _setComponentValue("DefenseFactor", _baseId, abi.encode(100));
+            _setBool("IsActive", _baseId);
+            _setPosition("Position", _baseId, _position);
+            _setUint("Health", _baseId, 1);
+            _setBool("CanAttack", _baseId);
+            _setBool("CanPurchase", _baseId);
+            _setUint("AttackFactor", _baseId, 100);
+            _setUint("DefenseFactor", _baseId, 100);
             if (_terrainId == 3) {
                 // Port
-                _setComponentValue("Name", _baseId, abi.encode(BASE_NAME.PORT));
-                _setComponentValue("GoldPerSecond", _baseId, abi.encode(_worldConstants.defaultBaseGoldGenerationPerSecond));
+                _setString("Name", _baseId, "Port");
+                _setInt("GoldPerSecond", _baseId, int256(_worldConstants.defaultBaseGoldGenerationPerSecond));
                 _terrainId = 0;
             } else if (_terrainId == 4) {
                 // City
-                _setComponentValue("Name", _baseId, abi.encode(BASE_NAME.CITY));
-                _setComponentValue("GoldPerSecond", _baseId, abi.encode(_worldConstants.defaultBaseGoldGenerationPerSecond));
+                _setString("Name", _baseId, "City");
+                _setInt("GoldPerSecond", _baseId, int256(_worldConstants.defaultBaseGoldGenerationPerSecond));
                 _terrainId = 1;
             } else if (_terrainId == 5) {
                 // Oil well
-                _setComponentValue("Name", _baseId, abi.encode(BASE_NAME.OIL_WELL));
-                _setComponentValue("OilPerSecond", _baseId, abi.encode(_worldConstants.defaultWellOilGenerationPerSecond));
+                _setString("Name", _baseId, "Oil Well");
+                _setInt("OilPerSecond", _baseId, int256(_worldConstants.defaultWellOilGenerationPerSecond));
                 _terrainId = 1;
             }
         }
@@ -74,12 +75,12 @@ library Util {
 
     function _addArmy(uint256 _playerId, Position memory _position) public returns (uint256) {
         uint256 _armyId = _addEntity();
-        _setComponentValue("Owner", _armyId, abi.encode(_playerId));
-        _setComponentValue("LastMoved", _armyId, abi.encode(block.timestamp));
-        _setComponentValue("LastLargeActionTaken", _armyId, abi.encode(0));
-        _setComponentValue("LastRepaired", _armyId, abi.encode(block.timestamp));
-        _setComponentValue("Position", _armyId, abi.encode(_position));
-        _setComponentValue("IsArmy", _armyId, abi.encode(true));
+        _setUint("Owner", _armyId, _playerId);
+        _setUint("LastMoved", _armyId, block.timestamp);
+        _setUint("LastLargeActionTaken", _armyId, 0);
+        _setUint("LastRepaired", _armyId, block.timestamp);
+        _setPosition("Position", _armyId, _position);
+        _setBool("IsArmy", _armyId);
 
         return _armyId;
     }
@@ -96,53 +97,48 @@ library Util {
         // 2. Create new troop entity globally and in corresponding components
         uint256 _troopId = _addEntity();
         // troop fields
-        _setComponentValue("IsActive", _troopId, abi.encode(true));
-        _setComponentValue("Owner", _troopId, abi.encode(_playerId));
-        _setComponentValue("ArmyId", _troopId, abi.encode(_armyId));
-        _setComponentValue("Health", _troopId, _getComponentValue("MaxHealth", _troopTemplateId));
-        _setComponentValue("CanMove", _troopId, abi.encode(true));
-        _setComponentValue("CanAttack", _troopId, abi.encode(true));
-        _setComponentValue("CanCapture", _troopId, abi.encode(true));
+        // TODO: left here
+        _setBool("IsActive", _troopId);
+        _setUint("Owner", _troopId, _playerId);
+        _setUint("ArmyId", _troopId, _armyId);
+        _setUint("Health", _troopId, _getUint("MaxHealth", _troopTemplateId));
+        _setBool("CanMove", _troopId);
+        _setBool("CanAttack", _troopId);
+        _setBool("CanCapture", _troopId);
         // troop type fields
-        _setComponentValue("Name", _troopId, _getComponentValue("Name", _troopTemplateId));
-        if (_getComponent("IsLandTroop").has(_troopTemplateId)) {
-            _setComponentValue("IsLandTroop", _troopId, abi.encode(true));
-        }
-        _setComponentValue("MaxHealth", _troopId, _getComponentValue("MaxHealth", _troopTemplateId));
-        _setComponentValue("DamagePerHit", _troopId, _getComponentValue("DamagePerHit", _troopTemplateId));
-        _setComponentValue("AttackFactor", _troopId, _getComponentValue("AttackFactor", _troopTemplateId));
-        _setComponentValue("DefenseFactor", _troopId, _getComponentValue("DefenseFactor", _troopTemplateId));
-        _setComponentValue("MovementCooldown", _troopId, _getComponentValue("MovementCooldown", _troopTemplateId));
-        _setComponentValue("LargeActionCooldown", _troopId, _getComponentValue("LargeActionCooldown", _troopTemplateId));
-        Component _cargoCapacityComponent = _getComponent("CargoCapacity");
-        if (_cargoCapacityComponent.has(_troopTemplateId)) {
-            _setComponentValue("CargoCapacity", _troopId, _cargoCapacityComponent.getValue(_troopTemplateId));
-        }
+        _setString("Name", _troopId, _getString("Name", _troopTemplateId));
+        if (_getComponent("IsLandTroop").has(_troopTemplateId)) _setBool("IsLandTroop", _troopId);
+        _setUint("MaxHealth", _troopId, _getUint("MaxHealth", _troopTemplateId));
+        _setUint("DamagePerHit", _troopId, _getUint("DamagePerHit", _troopTemplateId));
+        _setUint("AttackFactor", _troopId, _getUint("AttackFactor", _troopTemplateId));
+        _setUint("DefenseFactor", _troopId, _getUint("DefenseFactor", _troopTemplateId));
+        _setUint("MovementCooldown", _troopId, _getUint("MovementCooldown", _troopTemplateId));
+        _setUint("LargeActionCooldown", _troopId, _getUint("LargeActionCooldown", _troopTemplateId));
         // resource fields
-        int256 _goldCost = abi.decode(_getComponentValue("Gold", _troopTemplateId), (int256));
-        int256 _oilPerSecond = abi.decode(_getComponentValue("OilPerSecond", _troopTemplateId), (int256));
-        _setComponentValue("OilPerSecond", _troopId, abi.encode(_oilPerSecond));
+        uint256 _goldCost = _getUint("Gold", _troopTemplateId);
+        int256 _oilPerSecond = _getInt("OilPerSecond", _troopTemplateId);
+        _setInt("OilPerSecond", _troopId, _oilPerSecond);
 
         // 3. Update balances
         _updatePlayerBalances(_playerId);
-        int256 _playerGoldBalance = abi.decode(_getComponentValue("Gold", _playerId), (int256));
-        int256 _playerOilPerSecond = abi.decode(_getComponentValue("OilPerSecond", _playerId), (int256));
+        uint256 _playerGoldBalance = _getUint("Gold", _playerId);
+        int256 _playerOilPerSecond = _getInt("OilPerSecond", _playerId);
         require(_playerGoldBalance > _goldCost, "CURIO: Insufficient gold balance");
-        _setComponentValue("Gold", _playerId, abi.encode(_playerGoldBalance - _goldCost));
-        _setComponentValue("OildPerSecond", _playerId, abi.encode(_playerOilPerSecond + _oilPerSecond));
+        _setUint("Gold", _playerId, _playerGoldBalance - _goldCost);
+        _setInt("OilPerSecond", _playerId, _playerOilPerSecond + _oilPerSecond);
 
         return _troopId;
     }
 
     function _removeTroop(uint256 _troopId) public {
-        uint256 _playerId = abi.decode(_getComponentValue("Owner", _troopId), (uint256));
-        int256 _oilPerSecond = abi.decode(_getComponentValue("OilPerSecond", _troopId), (int256));
+        uint256 _playerId = _getUint("Owner", _troopId);
+        int256 _oilPerSecond = _getInt("OilPerSecond", _troopId);
 
         _removeEntity(_troopId);
 
         _updatePlayerBalances(_playerId);
-        int256 _playerOilPerSecond = abi.decode(_getComponentValue("OilPerSecond", _playerId), (int256));
-        _setComponentValue("OildPerSecond", _playerId, abi.encode(_playerOilPerSecond - _oilPerSecond));
+        int256 _playerOilPerSecond = _getInt("OilPerSecond", _playerId);
+        _setInt("OilPerSecond", _playerId, _playerOilPerSecond - _oilPerSecond);
 
         emit EntityRemoved(_troopId);
     }
@@ -152,27 +148,28 @@ library Util {
     }
 
     function _updatePlayerBalances(uint256 _playerId) public {
-        uint256 _balanceLastUpdated = abi.decode(_getComponentValue("BalanceLastUpdated", _playerId), (uint256));
+        uint256 _balanceLastUpdated = _getUint("BalanceLastUpdated", _playerId);
         uint256 _timeElapsed = block.timestamp - _balanceLastUpdated;
 
         // Update gold balance
-        int256 _gold = abi.decode(_getComponentValue("Gold", _playerId), (int256));
-        int256 _goldPerSecond = abi.decode(_getComponentValue("GoldPerSecond", _playerId), (int256));
-        _setComponentValue("Gold", _playerId, abi.encode(_gold + _goldPerSecond * int256(_timeElapsed)));
+        // FIXME: math between uint and int
+        uint256 _gold = _getUint("Gold", _playerId);
+        int256 _goldPerSecond = _getInt("GoldPerSecond", _playerId);
+        _setUint("Gold", _playerId, uint256(int256(_gold) + _goldPerSecond * int256(_timeElapsed)));
 
         // Update oil balance
-        int256 _oil = abi.decode(_getComponentValue("Oil", _playerId), (int256));
-        int256 _oilPerSecond = abi.decode(_getComponentValue("OilPerSecond", _playerId), (int256));
-        _setComponentValue("Oil", _playerId, abi.encode(_oil + _oilPerSecond * int256(_timeElapsed)));
+        uint256 _oil = _getUint("Oil", _playerId);
+        int256 _oilPerSecond = _getInt("OilPerSecond", _playerId);
+        _setUint("Oil", _playerId, uint256(int256(_oil) + _oilPerSecond * int256(_timeElapsed)));
 
         // Update debuff status based on oil rate
         if (_oilPerSecond >= 0) {
-            _removeComponentValue("IsDebuffed", _playerId);
+            _removeBool("IsDebuffed", _playerId);
         } else {
-            _setComponentValue("IsDebuffed", _playerId, abi.encode(true));
+            _setBool("IsDebuffed", _playerId);
         }
 
-        _setComponentValue("BalanceLastUpdated", _playerId, abi.encode(block.timestamp));
+        _setUint("BalanceLastUpdated", _playerId, block.timestamp);
     }
 
     function _removeArmyWithTroops(uint256 _armyId) public {
@@ -195,14 +192,14 @@ library Util {
     }
 
     function _damageTroop(uint256 _damage, uint256 _troopId) public {
-        uint256 _health = abi.decode(_getComponentValue("Health", _troopId), (uint256));
+        uint256 _health = _getUint("Health", _troopId);
 
         if (_damage >= _health) {
-            uint256 _armyId = abi.decode(_getComponentValue("ArmyId", _troopId), (uint256));
-            if (_getComponent("ArmyId").getEntitiesWithValue(abi.encode(_armyId)).length == 1) _removeArmy(_armyId);
+            uint256 _armyId = _getUint("ArmyId", _troopId);
+            if (UintComponent(gs().components["ArmyId"]).getEntitiesWithValue(_armyId).length == 1) _removeArmy(_armyId);
             _removeTroop(_troopId);
         } else {
-            _setComponentValue("Health", _troopId, abi.encode(_health - _damage));
+            _setUint("Health", _troopId, _health - _damage);
         }
     }
 
@@ -221,7 +218,7 @@ library Util {
     function _getPlayerTroops(uint256 _playerId) public returns (uint256[] memory) {
         Set _set1 = new Set();
         Set _set2 = new Set();
-        uint256[] memory _entitiesOwnedByPlayer = _getComponent("Owner").getEntitiesWithValue(abi.encode(_playerId));
+        uint256[] memory _entitiesOwnedByPlayer = UintComponent(gs().components["Owner"]).getEntitiesWithValue(_playerId);
         uint256[] memory _allTroops = _getComponent("CanMove").getEntities();
         _set1.addArray(_entitiesOwnedByPlayer);
         _set2.addArray(_allTroops);
@@ -232,7 +229,7 @@ library Util {
         Set _set1 = new Set();
         Set _set2 = new Set();
         _set1.addArray(_getComponent("CanPurchase").getEntities());
-        _set2.addArray(_getComponent("Owner").getEntitiesWithValue(abi.encode(_playerId)));
+        _set2.addArray(UintComponent(gs().components["Owner"]).getEntitiesWithValue(_playerId));
         return _intersection(_set1, _set2);
     }
 
@@ -240,7 +237,7 @@ library Util {
         Set _set1 = new Set();
         Set _set2 = new Set();
         _set1.addArray(_getComponent("IsArmy").getEntities());
-        _set2.addArray(_getComponent("Position").getEntitiesWithValue(abi.encode(_position)));
+        _set2.addArray(PositionComponent(gs().components["Position"]).getEntitiesWithValue(_position));
         uint256[] memory _result = _intersection(_set1, _set2);
 
         assert(_result.length <= 1);
@@ -251,7 +248,7 @@ library Util {
         Set _set1 = new Set();
         Set _set2 = new Set();
         _set1.addArray(_getComponent("canPurchase").getEntities());
-        _set2.addArray(_getComponent("Position").getEntitiesWithValue(abi.encode(_position)));
+        _set2.addArray(PositionComponent(gs().components["Position"]).getEntitiesWithValue(_position));
         uint256[] memory _result = _intersection(_set1, _set2);
 
         assert(_result.length <= 1);
@@ -259,7 +256,7 @@ library Util {
     }
 
     function _getArmyTroops(uint256 _armyId) public view returns (uint256[] memory) {
-        return _getComponent("ArmyId").getEntitiesWithValue(abi.encode(_armyId));
+        return UintComponent(gs().components["ArmyId"]).getEntitiesWithValue(_armyId);
     }
 
     function _getPlayerId(address _player) public view returns (uint256) {
@@ -286,7 +283,7 @@ library Util {
         uint256 _totalHealth;
 
         for (uint256 i = 0; i < _troopIds.length; i++) {
-            _totalHealth += abi.decode(_getComponentValue("Health", _troopIds[i]), (uint256));
+            _totalHealth += _getUint("Health", _troopIds[i]);
         }
 
         return _totalHealth;
@@ -297,7 +294,7 @@ library Util {
         uint256 _longestMovementCooldown;
 
         for (uint256 i = 0; i < _troopIds.length; i++) {
-            uint256 _troopMovementCooldown = abi.decode(_getComponentValue("MovementCooldown", _troopIds[i]), (uint256));
+            uint256 _troopMovementCooldown = _getUint("MovementCooldown", _troopIds[i]);
             if (_troopMovementCooldown > _longestMovementCooldown) {
                 _longestMovementCooldown = _troopMovementCooldown;
             }
@@ -310,7 +307,7 @@ library Util {
         uint256 _longestLargeActionCooldown;
 
         for (uint256 i = 0; i < _troopIds.length; i++) {
-            uint256 _troopLargeActionCooldown = abi.decode(_getComponentValue("LargeActionCooldown", _troopIds[i]), (uint256));
+            uint256 _troopLargeActionCooldown = _getUint("LargeActionCooldown", _troopIds[i]);
             if (_troopLargeActionCooldown > _longestLargeActionCooldown) {
                 _longestLargeActionCooldown = _troopLargeActionCooldown;
             }
@@ -324,7 +321,7 @@ library Util {
         uint256 _averageAttackFactor;
 
         for (uint256 i = 0; i < _troopIds.length; i++) {
-            _averageAttackFactor += abi.decode(_getComponentValue("AttackFactor", _troopIds[i]), (uint256));
+            _averageAttackFactor += _getUint("AttackFactor", _troopIds[i]);
         }
 
         return _averageAttackFactor / _troopIds.length;
@@ -335,7 +332,7 @@ library Util {
         uint256 _averageDefenseFactor;
 
         for (uint256 i = 0; i < _troopIds.length; i++) {
-            _averageDefenseFactor += abi.decode(_getComponentValue("DefenseFactor", _troopIds[i]), (uint256));
+            _averageDefenseFactor += _getUint("DefenseFactor", _troopIds[i]);
         }
 
         return _averageDefenseFactor / _troopIds.length;
@@ -346,7 +343,7 @@ library Util {
         uint256 _totalDamagePerHit = 0;
 
         for (uint256 i = 0; i < _troopIds.length; i++) {
-            _totalDamagePerHit += abi.decode(_getComponentValue("DamagePerHit", _troopIds[i]), (uint256));
+            _totalDamagePerHit += _getUint("DamagePerHit", _troopIds[i]);
         }
 
         return _totalDamagePerHit;
@@ -408,6 +405,10 @@ library Util {
         return (_xDist + _yDist) <= _dist;
     }
 
+    function _strEq(string memory _s1, string memory _s2) public pure returns (bool) {
+        return (keccak256(abi.encodePacked((_s1))) == keccak256(abi.encodePacked((_s2))));
+    }
+
     function _getIndex(uint256 _element, uint256[] memory _array) internal pure returns (uint256) {
         uint256 _index = 0;
         while (_index < _array.length) {
@@ -419,6 +420,114 @@ library Util {
 
     function _NULL() internal pure returns (uint256) {
         return 0;
+    }
+
+    // ----------------------------------------------------------
+    // ECS TYPED UTILITY FUNCTIONS
+    // ----------------------------------------------------------
+
+    function _getAddress(string memory _componentName, uint256 _entity) public view returns (address) {
+        return AddressComponent(gs().components[_componentName]).getValue(_entity);
+    }
+
+    function _setAddress(
+        string memory _componentName,
+        uint256 _entity,
+        address _value
+    ) public {
+        AddressComponent(gs().components[_componentName]).set(_entity, _value);
+        emit ComponentValueSet(_componentName, _entity, abi.encode(_value));
+    }
+
+    function _removeAddress(string memory _componentName, uint256 _entity) public {
+        AddressComponent(gs().components[_componentName]).remove(_entity);
+        emit ComponentValueSet(_componentName, _entity, new bytes(0));
+    }
+
+    function _getBool(string memory _componentName, uint256 _entity) public view returns (bool) {
+        return BoolComponent(gs().components[_componentName]).getValue(_entity);
+    }
+
+    function _setBool(string memory _componentName, uint256 _entity) public {
+        BoolComponent(gs().components[_componentName]).set(_entity);
+        emit ComponentValueSet(_componentName, _entity, abi.encode(true));
+    }
+
+    function _removeBool(string memory _componentName, uint256 _entity) public {
+        BoolComponent(gs().components[_componentName]).remove(_entity);
+        emit ComponentValueSet(_componentName, _entity, new bytes(0));
+    }
+
+    function _getInt(string memory _componentName, uint256 _entity) public view returns (int256) {
+        return IntComponent(gs().components[_componentName]).getValue(_entity);
+    }
+
+    function _setInt(
+        string memory _componentName,
+        uint256 _entity,
+        int256 _value
+    ) public {
+        IntComponent(gs().components[_componentName]).set(_entity, _value);
+        emit ComponentValueSet(_componentName, _entity, abi.encode(_value));
+    }
+
+    function _removeInt(string memory _componentName, uint256 _entity) public {
+        IntComponent(gs().components[_componentName]).remove(_entity);
+        emit ComponentValueSet(_componentName, _entity, new bytes(0));
+    }
+
+    function _getPosition(string memory _componentName, uint256 _entity) public view returns (Position memory) {
+        return PositionComponent(gs().components[_componentName]).getValue(_entity);
+    }
+
+    function _setPosition(
+        string memory _componentName,
+        uint256 _entity,
+        Position memory _value
+    ) public {
+        PositionComponent(gs().components[_componentName]).set(_entity, _value);
+        emit ComponentValueSet(_componentName, _entity, abi.encode(_value));
+    }
+
+    function _removePosition(string memory _componentName, uint256 _entity) public {
+        PositionComponent(gs().components[_componentName]).remove(_entity);
+        emit ComponentValueSet(_componentName, _entity, new bytes(0));
+    }
+
+    function _getString(string memory _componentName, uint256 _entity) public view returns (string memory) {
+        return StringComponent(gs().components[_componentName]).getValue(_entity);
+    }
+
+    function _setString(
+        string memory _componentName,
+        uint256 _entity,
+        string memory _value
+    ) public {
+        StringComponent(gs().components[_componentName]).set(_entity, _value);
+        emit ComponentValueSet(_componentName, _entity, abi.encode(_value));
+    }
+
+    function _removeString(string memory _componentName, uint256 _entity) public {
+        StringComponent(gs().components[_componentName]).remove(_entity);
+        emit ComponentValueSet(_componentName, _entity, new bytes(0));
+    }
+
+    function _getUint(string memory _componentName, uint256 _entity) public view returns (uint256) {
+        return UintComponent(gs().components[_componentName]).getValue(_entity);
+    }
+
+    function _setUint(
+        string memory _componentName,
+        uint256 _entity,
+        uint256 _value
+    ) public {
+        UintComponent(gs().components[_componentName]).set(_entity, _value);
+        emit ComponentValueSet(_componentName, _entity, abi.encode(_value));
+    }
+
+    function _removeUint(string memory _componentName, uint256 _entity) public {
+        UintComponent(gs().components[_componentName]).remove(_entity);
+        emit ComponentValueSet(_componentName, _entity, new bytes(0));
     }
 
     // ----------------------------------------------------------
@@ -461,26 +570,26 @@ library Util {
         emit EntityRemoved(_entity);
     }
 
-    function _getComponentValue(string memory _componentName, uint256 _entity) public view returns (bytes memory) {
-        return _getComponent(_componentName).getValue(_entity);
-    }
+    // function _getComponentValue(string memory _componentName, uint256 _entity) public view returns (bytes memory) {
+    //     return _getComponent(_componentName).getBytesValue(_entity);
+    // }
 
-    // Question: At the moment, all events regarding component set and removal are emitted in game contracts. Is this good?
-    function _setComponentValue(
-        string memory _componentName,
-        uint256 _entity,
-        bytes memory _value
-    ) public {
-        _getComponent(_componentName).set(_entity, _value);
+    // // Question: At the moment, all events regarding component set and removal are emitted in game contracts. Is this good?
+    // function _setComponentValue(
+    //     string memory _componentName,
+    //     uint256 _entity,
+    //     bytes memory _value
+    // ) public {
+    //     _getComponent(_componentName).set(_entity, _value);
 
-        emit ComponentValueSet(_componentName, _entity, _value);
-    }
+    //     emit ComponentValueSet(_componentName, _entity, _value);
+    // }
 
-    function _removeComponentValue(string memory _componentName, uint256 _entity) public {
-        _getComponent(_componentName).remove(_entity);
+    // function _removeComponentValue(string memory _componentName, uint256 _entity) public {
+    //     _getComponent(_componentName).remove(_entity);
 
-        emit ComponentValueSet(_componentName, _entity, new bytes(0));
-    }
+    //     emit ComponentValueSet(_componentName, _entity, new bytes(0));
+    // }
 
     // inclusive on both ends
     function _filterByComponentRange(
@@ -496,7 +605,7 @@ library Util {
         Set _set2;
         for (uint256 _value = _lb; _value <= _ub; _value++) {
             _set2 = new Set();
-            _set2.addArray(_getComponent(_componentName).getEntitiesWithValue(abi.encode(_value)));
+            _set2.addArray(UintComponent(gs().components[_componentName]).getEntitiesWithValue(_value));
             _result = _concatenate(_result, _intersection(_set1, _set2));
         }
 

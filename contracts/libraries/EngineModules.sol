@@ -5,6 +5,7 @@ import "contracts/libraries/Storage.sol";
 import {Util} from "contracts/libraries/GameUtil.sol";
 import {BASE_NAME, GameState, Position, TERRAIN, Tile, WorldConstants} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
+import {Component} from "contracts/Component.sol";
 
 /// @title EngineModules library
 /// @notice Composable parts for engine functions
@@ -27,13 +28,13 @@ library EngineModules {
         uint256 _armyId,
         Position memory _targetPosition
     ) public {
-        require(Util._withinDistance(abi.decode(Util._getComponentValue("Position", _armyId), (Position)), _targetPosition, 1), "CURIO: Destination too far");
+        require(Util._withinDistance(Util._getPosition("Position", _armyId), _targetPosition, 1), "CURIO: Destination too far");
 
         uint256[] memory _troopIds = Util._getArmyTroops(_armyId);
-        require((block.timestamp - abi.decode(Util._getComponentValue("LastMoved", _armyId), (uint256))) >= Util._getArmyMovementCooldown(_troopIds), "CURIO: Moved too recently");
-        Util._setComponentValue("LastMoved", _armyId, abi.encode(block.timestamp));
+        require((block.timestamp - Util._getUint("LastMoved", _armyId)) >= Util._getArmyMovementCooldown(_troopIds), "CURIO: Moved too recently");
+        Util._setUint("LastMoved", _armyId, block.timestamp);
 
-        Util._setComponentValue("Position", _armyId, abi.encode(_targetPosition));
+        Util._setPosition("Position", _armyId, _targetPosition);
     }
 
     function _battleBase(
@@ -41,18 +42,18 @@ library EngineModules {
         uint256 _armyId,
         Position memory _targetPosition
     ) public {
-        require(Util._withinDistance(abi.decode(Util._getComponentValue("Position", _armyId), (Position)), _targetPosition, 1), "CURIO: Target not in firing range");
-        Util._setComponentValue("LastLargeActionTaken", _armyId, abi.encode(block.timestamp));
+        require(Util._withinDistance(Util._getPosition("Position", _armyId), _targetPosition, 1), "CURIO: Target not in firing range");
+        Util._setUint("LastLargeActionTaken", _armyId, block.timestamp);
 
         uint256 _targetBaseId = Util._getBaseAt(_targetPosition);
         require(_targetBaseId != _NULL(), "CURIO: No target to attack");
 
-        uint256 _targetPlayerId = abi.decode(Util._getComponentValue("Owner", _targetBaseId), (uint256));
+        uint256 _targetPlayerId = Util._getUint("Owner", _targetBaseId);
         require(_targetPlayerId != _playerId, "CURIO: Cannot attack own base");
 
         uint256[] memory _armyTroopIds = Util._getArmyTroops(_armyId);
         uint256 _armyHealth = Util._getArmyHealth(_armyTroopIds);
-        uint256 _targetBaseHealth = abi.decode(Util._getComponentValue("Health", _targetBaseId), (uint256));
+        uint256 _targetBaseHealth = Util._getUint("Health", _targetBaseId);
 
         uint256 _salt = 1;
         while (_armyHealth > 0) {
@@ -61,7 +62,7 @@ library EngineModules {
             if (Util._strike(Util._getArmyAttackFactor(_armyTroopIds), _salt)) {
                 Util._updatePlayerBalances(_playerId);
                 uint256 _damagePerHit;
-                if (Util._getComponent("IsDebuffed").has(_playerId)) {
+                if (Component(gs().components["IsDebuffed"]).has(_playerId)) {
                     _damagePerHit = Util._getDebuffedArmyDamagePerHit(_armyTroopIds);
                 } else {
                     _damagePerHit = Util._getArmyDamagePerHit(_armyTroopIds);
@@ -78,7 +79,7 @@ library EngineModules {
 
             // Target attacks troop
             _salt++;
-            if (Util._strike(abi.decode(Util._getComponentValue("DefenseFactor", _targetBaseId), (uint256)), _salt)) {
+            if (Util._strike(Util._getUint("DefenseFactor", _targetBaseId), _salt)) {
                 if (_armyHealth > 100) {
                     _armyHealth -= 100;
                 } else {
@@ -91,7 +92,7 @@ library EngineModules {
         if (_targetBaseHealth == 0) {
             // Target base dies
 
-            Util._setComponentValue("Health", _targetBaseId, abi.encode(0));
+            Util._setUint("Health", _targetBaseId, 0);
 
             uint256 _damageToDistribute = Util._getArmyHealth(_armyTroopIds) - _armyHealth;
             Util._damageArmy(_damageToDistribute, _armyTroopIds);
@@ -99,32 +100,32 @@ library EngineModules {
             // Capture and move onto base
             require(Util._getPlayerBases(_playerId).length < gs().worldConstants.maxBaseCountPerPlayer, "CURIO: Max base count exceeded");
 
-            Util._setComponentValue("Owner", _targetBaseId, abi.encode(_playerId));
-            Util._setComponentValue("Health", _targetBaseId, abi.encode(800));
+            Util._setUint("Owner", _targetBaseId, _playerId);
+            Util._setUint("Health", _targetBaseId, 800);
 
             Util._updatePlayerBalances(_targetPlayerId);
             Util._updatePlayerBalances(_playerId);
 
-            int256 _baseGoldPerSecond = abi.decode(Util._getComponentValue("GoldPerSecond", _targetBaseId), (int256));
-            int256 _baseOilPerSecond = abi.decode(Util._getComponentValue("OilPerSecond", _targetBaseId), (int256));
+            int256 _baseGoldPerSecond = Util._getInt("GoldPerSecond", _targetBaseId);
+            int256 _baseOilPerSecond = Util._getInt("OilPerSecond", _targetBaseId);
 
             if (_targetPlayerId != _NULL()) {
-                int256 _targetPlayerGoldPerSecond = abi.decode(Util._getComponentValue("GoldPerSecond", _targetPlayerId), (int256));
-                int256 _targetPlayerOilPerSecond = abi.decode(Util._getComponentValue("OilPerSecond", _targetPlayerId), (int256));
-                Util._setComponentValue("GoldPerSecond", _targetPlayerId, abi.encode(_targetPlayerGoldPerSecond - _baseGoldPerSecond));
-                Util._setComponentValue("OilPerSecond", _targetPlayerId, abi.encode(_targetPlayerOilPerSecond - _baseOilPerSecond));
+                int256 _targetPlayerGoldPerSecond = Util._getInt("GoldPerSecond", _targetPlayerId);
+                int256 _targetPlayerOilPerSecond = Util._getInt("OilPerSecond", _targetPlayerId);
+                Util._setInt("GoldPerSecond", _targetPlayerId, _targetPlayerGoldPerSecond - _baseGoldPerSecond);
+                Util._setInt("OilPerSecond", _targetPlayerId, _targetPlayerOilPerSecond - _baseOilPerSecond);
             }
-            int256 _playerGoldPerSecond = abi.decode(Util._getComponentValue("GoldPerSecond", _playerId), (int256));
-            int256 _playerOilPerSecond = abi.decode(Util._getComponentValue("OilPerSecond", _playerId), (int256));
-            Util._setComponentValue("GoldPerSecond", _playerId, abi.encode(_playerGoldPerSecond + _baseGoldPerSecond));
-            Util._setComponentValue("OilPerSecond", _playerId, abi.encode(_playerOilPerSecond + _baseOilPerSecond));
+            int256 _playerGoldPerSecond = Util._getInt("GoldPerSecond", _playerId);
+            int256 _playerOilPerSecond = Util._getInt("OilPerSecond", _playerId);
+            Util._setInt("GoldPerSecond", _playerId, _playerGoldPerSecond + _baseGoldPerSecond);
+            Util._setInt("OilPerSecond", _playerId, _playerOilPerSecond + _baseOilPerSecond);
 
             // Move
             _moveArmy(_playerId, _armyId, _targetPosition);
         } else {
             // Troop dies
 
-            Util._setComponentValue("Health", _targetBaseId, abi.encode(_targetBaseHealth));
+            Util._setUint("Health", _targetBaseId, _targetBaseHealth);
         }
     }
 
@@ -133,13 +134,13 @@ library EngineModules {
         uint256 _armyId,
         Position memory _targetPosition
     ) public {
-        require(Util._withinDistance(abi.decode(Util._getComponentValue("Position", _armyId), (Position)), _targetPosition, 1), "CURIO: Target not in firing range");
-        Util._setComponentValue("LastLargeActionTaken", _armyId, abi.encode(block.timestamp));
+        require(Util._withinDistance(Util._getPosition("Position", _armyId), _targetPosition, 1), "CURIO: Target not in firing range");
+        Util._setUint("LastLargeActionTaken", _armyId, block.timestamp);
 
         uint256 _targetArmyId = Util._getArmyAt(_targetPosition);
         require(_targetArmyId != _NULL(), "CURIO: No target to attack");
 
-        uint256 _targetPlayerId = abi.decode(Util._getComponentValue("Owner", _targetArmyId), (uint256));
+        uint256 _targetPlayerId = Util._getUint("Owner", _targetArmyId);
         require(_targetPlayerId != _playerId, "CURIO: Cannot attack own base");
 
         uint256[] memory _armyTroopIds = Util._getArmyTroops(_armyId);
@@ -203,7 +204,7 @@ library EngineModules {
 
         if (_tile.terrain == TERRAIN.WATER) return true; // water tiles are accessible to any troop
         uint256 _baseId = Util._getBaseAt(_position);
-        if (_baseId != _NULL() && abi.decode(Util._getComponentValue("Name", _baseId), (BASE_NAME)) == BASE_NAME.PORT) return true; // ports are accessible to any troop
+        if (_baseId != _NULL() && Util._strEq(Util._getString("Name", _baseId), "Port")) return true; // ports are accessible to any troop // FIXME: type mismatch
 
         uint256[] memory _troopIds = Util._getArmyTroops(_armyId);
         for (uint256 i = 0; i < _troopIds.length; i++) {
@@ -219,7 +220,7 @@ library EngineModules {
 
         if (_tile.terrain == TERRAIN.WATER) return true; // water tiles are accessible to any troop
         uint256 _baseId = Util._getBaseAt(_position);
-        if (_baseId != _NULL() && abi.decode(Util._getComponentValue("Name", _baseId), (BASE_NAME)) == BASE_NAME.PORT) return true; // ports are accessible to any troop
+        if (_baseId != _NULL() && Util._strEq(Util._getString("Name", _baseId), "Port")) return true; // ports are accessible to any troop
 
         if (Util._getComponent("IsLandTroop").has(_troopId)) return true; // infantries can move anywhere
 

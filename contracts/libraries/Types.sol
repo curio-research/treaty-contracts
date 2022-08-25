@@ -15,6 +15,21 @@ enum TERRAIN {
     WATER
 }
 
+enum VALUE_TYPE {
+    UINT,
+    STRING,
+    BOOL,
+    INT,
+    ADDRESS,
+    POSITION,
+    OTHER
+}
+
+struct ComponentSpec {
+    string name;
+    VALUE_TYPE valueType;
+}
+
 struct Position {
     uint256 x;
     uint256 y;

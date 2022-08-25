@@ -3,11 +3,12 @@ pragma solidity ^0.8.4;
 
 import "contracts/libraries/Storage.sol";
 import {Util} from "contracts/libraries/GameUtil.sol";
-import {Position, TERRAIN, Tile, WorldConstants} from "contracts/libraries/Types.sol";
-import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
-import {Component} from "contracts/Component.sol";
-import {Set} from "contracts/Set.sol";
 import {EngineModules} from "contracts/libraries/EngineModules.sol";
+import {ComponentSpec, Position, TERRAIN, Tile, VALUE_TYPE, WorldConstants} from "contracts/libraries/Types.sol";
+import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
+import {Set} from "contracts/Set.sol";
+import {Component} from "contracts/Component.sol";
+import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, UintComponent} from "contracts/TypedComponents.sol";
 
 /// @title Helper facet
 /// @notice Contains admin functions and state functions, both of which should be out of scope for players
@@ -49,7 +50,7 @@ contract HelperFacet is UseStorage {
 
         address[] memory _allPlayers = gs().players;
         for (uint256 i = 0; i < _allPlayers.length; i++) {
-            Util._setComponentValue("BalanceLastUpdated", gs().playerIdMap[_allPlayers[i]], abi.encode(block.timestamp));
+            Util._setUint("BalanceLastUpdated", gs().playerIdMap[_allPlayers[i]], block.timestamp);
         }
 
         gs().isPaused = false;
@@ -63,10 +64,10 @@ contract HelperFacet is UseStorage {
     function reactivatePlayer(address _player) external onlyAdmin {
         uint256 _playerId = gs().playerIdMap[_player];
         require(gs().playerIdMap[_player] != NULL, "CURIO: Player already initialized");
-        require(!Util._getComponent("IsActive").has(_playerId), "CURIO: Player is active");
+        require(!BoolComponent(gs().components["IsActive"]).has(_playerId), "CURIO: Player is active");
 
-        Util._setComponentValue("IsActive", _playerId, abi.encode(true));
-        Util._setComponentValue("Gold", _playerId, abi.encode(gs().worldConstants.initPlayerGoldBalance)); // reset gold balance
+        Util._setBool("IsActive", _playerId);
+        Util._setUint("Gold", _playerId, gs().worldConstants.initPlayerGoldBalance); // reset gold balance
     }
 
     /**
@@ -119,22 +120,22 @@ contract HelperFacet is UseStorage {
         uint256 _baseId = Util._getBaseAt(_position);
         require(_baseId != NULL, "CURIO: No base found");
 
-        require(abi.decode(Util._getComponentValue("Owner", _baseId), (uint256)) == NULL, "CURIO: Base is owned");
+        require(Util._getUint("Owner", _baseId) == NULL, "CURIO: Base is owned");
 
         uint256 _playerId = gs().playerIdMap[_player];
-        Util._setComponentValue("Owner", _baseId, abi.encode(_playerId));
-        Util._setComponentValue("Health", _baseId, abi.encode(800));
+        Util._setUint("Owner", _baseId, _playerId);
+        Util._setUint("Health", _baseId, 800);
 
         Util._updatePlayerBalances(_playerId);
 
         // FIXME: experimenting with signed integers
-        int256 _baseGoldPerSecond = abi.decode(Util._getComponentValue("GoldPerSecond", _baseId), (int256));
-        int256 _baseOilPerSecond = abi.decode(Util._getComponentValue("OilPerSecond", _baseId), (int256));
-        int256 _playerGoldPerSecond = abi.decode(Util._getComponentValue("GoldPerSecond", _playerId), (int256));
-        int256 _playerOilPerSecond = abi.decode(Util._getComponentValue("OilPerSecond", _playerId), (int256));
+        int256 _baseGoldPerSecond = Util._getInt("GoldPerSecond", _baseId);
+        int256 _baseOilPerSecond = Util._getInt("OilPerSecond", _baseId);
+        int256 _playerGoldPerSecond = Util._getInt("GoldPerSecond", _playerId);
+        int256 _playerOilPerSecond = Util._getInt("OilPerSecond", _playerId);
 
-        Util._setComponentValue("GoldPerSecond", _playerId, abi.encode(_playerGoldPerSecond + _baseGoldPerSecond));
-        Util._setComponentValue("OilPerSecond", _playerId, abi.encode(_playerOilPerSecond + _baseOilPerSecond));
+        Util._setInt("GoldPerSecond", _playerId, _playerGoldPerSecond + _baseGoldPerSecond);
+        Util._setInt("OilPerSecond", _playerId, _playerOilPerSecond + _baseOilPerSecond);
     }
 
     /**
@@ -163,28 +164,56 @@ contract HelperFacet is UseStorage {
     // ECS HELPERS
     // ----------------------------------------------------------------------
 
-    function registerComponents(address _gameAddr, string[28] memory _componentNames) external onlyAdmin {
-        gs().componentNames = _componentNames;
+    function registerComponents(address _gameAddr, ComponentSpec[1000] memory _componentSpecs) external onlyAdmin {
+        uint256 _componentCount = 0;
+        ComponentSpec memory _spec = _componentSpecs[_componentCount];
+        while (bytes(_spec.name).length > 0) {
+            // non-empty component spec
+            address _addr;
+            if (_spec.valueType == VALUE_TYPE.ADDRESS) {
+                _addr = address(new AddressComponent(_gameAddr));
+            } else if (_spec.valueType == VALUE_TYPE.BOOL) {
+                _addr = address(new BoolComponent(_gameAddr));
+            } else if (_spec.valueType == VALUE_TYPE.INT) {
+                _addr = address(new IntComponent(_gameAddr));
+            } else if (_spec.valueType == VALUE_TYPE.POSITION) {
+                _addr = address(new PositionComponent(_gameAddr));
+            } else if (_spec.valueType == VALUE_TYPE.STRING) {
+                _addr = address(new StringComponent(_gameAddr));
+            } else if (_spec.valueType == VALUE_TYPE.UINT) {
+                _addr = address(new UintComponent(_gameAddr));
+            } else {
+                _addr = address(new Component(_gameAddr));
+            }
+            gs().components[_spec.name] = _addr;
 
-        for (uint256 i = 0; i < _componentNames.length; i++) {
-            string memory _componentName = _componentNames[i];
-            address _componentAddr = address(new Component(_gameAddr));
-            gs().components[_componentName] = _componentAddr;
-            gs().idComponentMap[i + 1] = _componentAddr; // component ID starts with 1
+            uint256 _componentId = Util._addEntity();
+            Util._setBool("IsComponent", _componentId);
+            gs().idComponentMap[_componentId] = _addr; // component ID starts with 1
 
-            emit Util.NewComponent(_componentName, i + 1);
+            emit Util.NewComponent(_spec.name, _componentId);
+
+            _componentCount++;
+            _spec = _componentSpecs[_componentCount];
         }
+
+        // Copy result to array with known length
+        string[] memory _componentNames = new string[](_componentCount);
+        for (uint256 i = 0; i < _componentCount; i++) {
+            _componentNames[i] = _componentSpecs[i].name;
+        }
+        gs().componentNames = _componentNames;
     }
 
     function addEntity() external onlyAdmin returns (uint256) {
         return Util._addEntity();
     }
 
-    function setComponentValue(
-        string memory _componentName,
-        uint256 _entity,
-        bytes memory _value
-    ) external onlyAdmin {
-        Util._setComponentValue(_componentName, _entity, _value);
-    }
+    // function setComponentValue(
+    //     string memory _componentName,
+    //     uint256 _entity,
+    //     bytes memory _value
+    // ) external onlyAdmin {
+    //     Util._setComponentValue(_componentName, _entity, _value);
+    // }
 }

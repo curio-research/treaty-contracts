@@ -34,6 +34,7 @@ export interface UtilInterface extends utils.Interface {
     "_coincident((uint256,uint256),(uint256,uint256))": FunctionFragment;
     "_concatenate(uint256[],uint256[])": FunctionFragment;
     "_difference(Set,Set)": FunctionFragment;
+    "_getAddress(string,uint256)": FunctionFragment;
     "_getArmyAttackFactor(uint256[])": FunctionFragment;
     "_getArmyDamagePerHit(uint256[])": FunctionFragment;
     "_getArmyDefenseFactor(uint256[])": FunctionFragment;
@@ -41,16 +42,21 @@ export interface UtilInterface extends utils.Interface {
     "_getArmyLargeActionCooldown(uint256[])": FunctionFragment;
     "_getArmyMovementCooldown(uint256[])": FunctionFragment;
     "_getArmyTroops(uint256)": FunctionFragment;
+    "_getBool(string,uint256)": FunctionFragment;
     "_getComponent(string)": FunctionFragment;
     "_getComponentById(uint256)": FunctionFragment;
-    "_getComponentValue(string,uint256)": FunctionFragment;
     "_getDebuffedArmyDamagePerHit(uint256[])": FunctionFragment;
     "_getInfantryPercentage(uint256[])": FunctionFragment;
+    "_getInt(string,uint256)": FunctionFragment;
     "_getNeighbors((uint256,uint256))": FunctionFragment;
     "_getPlayerId(address)": FunctionFragment;
+    "_getPosition(string,uint256)": FunctionFragment;
+    "_getString(string,uint256)": FunctionFragment;
     "_getTileAt((uint256,uint256))": FunctionFragment;
+    "_getUint(string,uint256)": FunctionFragment;
     "_inBound((uint256,uint256))": FunctionFragment;
     "_random(uint256,uint256)": FunctionFragment;
+    "_strEq(string,string)": FunctionFragment;
     "_strike(uint256,uint256)": FunctionFragment;
     "_withinDistance((uint256,uint256),(uint256,uint256),uint256)": FunctionFragment;
   };
@@ -66,6 +72,10 @@ export interface UtilInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "_difference",
     values: [string, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getAddress",
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "_getArmyAttackFactor",
@@ -96,16 +106,16 @@ export interface UtilInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "_getBool",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "_getComponent",
     values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "_getComponentById",
     values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getComponentValue",
-    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "_getDebuffedArmyDamagePerHit",
@@ -116,6 +126,10 @@ export interface UtilInterface extends utils.Interface {
     values: [BigNumberish[]]
   ): string;
   encodeFunctionData(
+    functionFragment: "_getInt",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "_getNeighbors",
     values: [PositionStruct]
   ): string;
@@ -124,8 +138,20 @@ export interface UtilInterface extends utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
+    functionFragment: "_getPosition",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getString",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "_getTileAt",
     values: [PositionStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getUint",
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "_inBound",
@@ -134,6 +160,10 @@ export interface UtilInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "_random",
     values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_strEq",
+    values: [string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "_strike",
@@ -157,6 +187,10 @@ export interface UtilInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "_getAddress",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "_getArmyAttackFactor",
     data: BytesLike
   ): Result;
@@ -184,16 +218,13 @@ export interface UtilInterface extends utils.Interface {
     functionFragment: "_getArmyTroops",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "_getBool", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_getComponent",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "_getComponentById",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getComponentValue",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -204,6 +235,7 @@ export interface UtilInterface extends utils.Interface {
     functionFragment: "_getInfantryPercentage",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "_getInt", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_getNeighbors",
     data: BytesLike
@@ -212,9 +244,16 @@ export interface UtilInterface extends utils.Interface {
     functionFragment: "_getPlayerId",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "_getPosition",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "_getString", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "_getTileAt", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "_getUint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "_inBound", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "_random", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "_strEq", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "_strike", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_withinDistance",
@@ -317,6 +356,12 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
 
+    _getAddress(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     _getArmyAttackFactor(
       _troopIds: BigNumberish[],
       overrides?: CallOverrides
@@ -352,16 +397,16 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
 
+    _getBool(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     _getComponent(_name: string, overrides?: CallOverrides): Promise<[string]>;
 
     _getComponentById(
       _id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    _getComponentValue(
-      _componentName: string,
-      _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
@@ -375,6 +420,12 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    _getInt(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     _getNeighbors(
       _position: PositionStruct,
       overrides?: CallOverrides
@@ -385,10 +436,28 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    _getPosition(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[PositionStructOutput]>;
+
+    _getString(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     _getTileAt(
       _position: PositionStruct,
       overrides?: CallOverrides
     ): Promise<[TileStructOutput]>;
+
+    _getUint(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<[boolean]>;
 
@@ -397,6 +466,12 @@ export interface Util extends BaseContract {
       _salt: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    _strEq(
+      _s1: string,
+      _s2: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     _strike(
       _strikeFactor: BigNumberish,
@@ -429,6 +504,12 @@ export interface Util extends BaseContract {
     set2: string,
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
+
+  _getAddress(
+    _componentName: string,
+    _entity: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   _getArmyAttackFactor(
     _troopIds: BigNumberish[],
@@ -465,16 +546,16 @@ export interface Util extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
+  _getBool(
+    _componentName: string,
+    _entity: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   _getComponent(_name: string, overrides?: CallOverrides): Promise<string>;
 
   _getComponentById(
     _id: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  _getComponentValue(
-    _componentName: string,
-    _entity: BigNumberish,
     overrides?: CallOverrides
   ): Promise<string>;
 
@@ -488,6 +569,12 @@ export interface Util extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  _getInt(
+    _componentName: string,
+    _entity: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   _getNeighbors(
     _position: PositionStruct,
     overrides?: CallOverrides
@@ -495,10 +582,28 @@ export interface Util extends BaseContract {
 
   _getPlayerId(_player: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+  _getPosition(
+    _componentName: string,
+    _entity: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<PositionStructOutput>;
+
+  _getString(
+    _componentName: string,
+    _entity: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
   _getTileAt(
     _position: PositionStruct,
     overrides?: CallOverrides
   ): Promise<TileStructOutput>;
+
+  _getUint(
+    _componentName: string,
+    _entity: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<boolean>;
 
@@ -507,6 +612,8 @@ export interface Util extends BaseContract {
     _salt: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  _strEq(_s1: string, _s2: string, overrides?: CallOverrides): Promise<boolean>;
 
   _strike(
     _strikeFactor: BigNumberish,
@@ -539,6 +646,12 @@ export interface Util extends BaseContract {
       set2: string,
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
+
+    _getAddress(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     _getArmyAttackFactor(
       _troopIds: BigNumberish[],
@@ -575,16 +688,16 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
+    _getBool(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     _getComponent(_name: string, overrides?: CallOverrides): Promise<string>;
 
     _getComponentById(
       _id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    _getComponentValue(
-      _componentName: string,
-      _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -598,6 +711,12 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _getInt(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     _getNeighbors(
       _position: PositionStruct,
       overrides?: CallOverrides
@@ -608,10 +727,28 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _getPosition(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PositionStructOutput>;
+
+    _getString(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
     _getTileAt(
       _position: PositionStruct,
       overrides?: CallOverrides
     ): Promise<TileStructOutput>;
+
+    _getUint(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<boolean>;
 
@@ -620,6 +757,12 @@ export interface Util extends BaseContract {
       _salt: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    _strEq(
+      _s1: string,
+      _s2: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     _strike(
       _strikeFactor: BigNumberish,
@@ -685,6 +828,12 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _getAddress(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     _getArmyAttackFactor(
       _troopIds: BigNumberish[],
       overrides?: CallOverrides
@@ -720,16 +869,16 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _getBool(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     _getComponent(_name: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     _getComponentById(
       _id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getComponentValue(
-      _componentName: string,
-      _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -743,6 +892,12 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _getInt(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     _getNeighbors(
       _position: PositionStruct,
       overrides?: CallOverrides
@@ -753,8 +908,26 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _getPosition(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getString(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     _getTileAt(
       _position: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getUint(
+      _componentName: string,
+      _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -763,6 +936,12 @@ export interface Util extends BaseContract {
     _random(
       _max: BigNumberish,
       _salt: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _strEq(
+      _s1: string,
+      _s2: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -799,6 +978,12 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    _getAddress(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     _getArmyAttackFactor(
       _troopIds: BigNumberish[],
       overrides?: CallOverrides
@@ -834,6 +1019,12 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    _getBool(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     _getComponent(
       _name: string,
       overrides?: CallOverrides
@@ -841,12 +1032,6 @@ export interface Util extends BaseContract {
 
     _getComponentById(
       _id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getComponentValue(
-      _componentName: string,
-      _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -860,6 +1045,12 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    _getInt(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     _getNeighbors(
       _position: PositionStruct,
       overrides?: CallOverrides
@@ -870,8 +1061,26 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    _getPosition(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getString(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     _getTileAt(
       _position: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getUint(
+      _componentName: string,
+      _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -883,6 +1092,12 @@ export interface Util extends BaseContract {
     _random(
       _max: BigNumberish,
       _salt: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _strEq(
+      _s1: string,
+      _s2: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

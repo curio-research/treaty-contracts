@@ -17,15 +17,16 @@ import { FunctionFragment, Result } from "@ethersproject/abi";
 import { Listener, Provider } from "@ethersproject/providers";
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
-export interface ComponentInterface extends utils.Interface {
+export interface BoolComponentInterface extends utils.Interface {
   functions: {
     "getAllEntitiesAndValues()": FunctionFragment;
     "getBytesValue(uint256)": FunctionFragment;
     "getEntities()": FunctionFragment;
-    "getEntitiesWithValue(bytes)": FunctionFragment;
+    "getEntitiesWithValue(bool)": FunctionFragment;
+    "getValue(uint256)": FunctionFragment;
     "has(uint256)": FunctionFragment;
     "remove(uint256)": FunctionFragment;
-    "set(uint256,bytes)": FunctionFragment;
+    "set(uint256)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -42,17 +43,18 @@ export interface ComponentInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getEntitiesWithValue",
-    values: [BytesLike]
+    values: [boolean]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getValue",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "has", values: [BigNumberish]): string;
   encodeFunctionData(
     functionFragment: "remove",
     values: [BigNumberish]
   ): string;
-  encodeFunctionData(
-    functionFragment: "set",
-    values: [BigNumberish, BytesLike]
-  ): string;
+  encodeFunctionData(functionFragment: "set", values: [BigNumberish]): string;
 
   decodeFunctionResult(
     functionFragment: "getAllEntitiesAndValues",
@@ -70,6 +72,7 @@ export interface ComponentInterface extends utils.Interface {
     functionFragment: "getEntitiesWithValue",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getValue", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "has", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "remove", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "set", data: BytesLike): Result;
@@ -77,12 +80,12 @@ export interface ComponentInterface extends utils.Interface {
   events: {};
 }
 
-export interface Component extends BaseContract {
+export interface BoolComponent extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: ComponentInterface;
+  interface: BoolComponentInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -115,10 +118,20 @@ export interface Component extends BaseContract {
 
     getEntities(overrides?: CallOverrides): Promise<[BigNumber[]]>;
 
-    getEntitiesWithValue(
+    "getEntitiesWithValue(bool)"(
+      _value: boolean,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
+
+    "getEntitiesWithValue(bytes)"(
       _value: BytesLike,
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
+
+    getValue(
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     has(_entity: BigNumberish, overrides?: CallOverrides): Promise<[boolean]>;
 
@@ -127,7 +140,12 @@ export interface Component extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    set(
+    "set(uint256)"(
+      _entity: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    "set(uint256,bytes)"(
       _entity: BigNumberish,
       _value: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -145,10 +163,17 @@ export interface Component extends BaseContract {
 
   getEntities(overrides?: CallOverrides): Promise<BigNumber[]>;
 
-  getEntitiesWithValue(
+  "getEntitiesWithValue(bool)"(
+    _value: boolean,
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
+  "getEntitiesWithValue(bytes)"(
     _value: BytesLike,
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
+
+  getValue(_entity: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
 
   has(_entity: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
 
@@ -157,7 +182,12 @@ export interface Component extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  set(
+  "set(uint256)"(
+    _entity: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  "set(uint256,bytes)"(
     _entity: BigNumberish,
     _value: BytesLike,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -175,16 +205,31 @@ export interface Component extends BaseContract {
 
     getEntities(overrides?: CallOverrides): Promise<BigNumber[]>;
 
-    getEntitiesWithValue(
+    "getEntitiesWithValue(bool)"(
+      _value: boolean,
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
+
+    "getEntitiesWithValue(bytes)"(
       _value: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
+
+    getValue(
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     has(_entity: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
 
     remove(_entity: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
-    set(
+    "set(uint256)"(
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "set(uint256,bytes)"(
       _entity: BigNumberish,
       _value: BytesLike,
       overrides?: CallOverrides
@@ -203,8 +248,18 @@ export interface Component extends BaseContract {
 
     getEntities(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getEntitiesWithValue(
+    "getEntitiesWithValue(bool)"(
+      _value: boolean,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    "getEntitiesWithValue(bytes)"(
       _value: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getValue(
+      _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -215,7 +270,12 @@ export interface Component extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    set(
+    "set(uint256)"(
+      _entity: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    "set(uint256,bytes)"(
       _entity: BigNumberish,
       _value: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -234,8 +294,18 @@ export interface Component extends BaseContract {
 
     getEntities(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getEntitiesWithValue(
+    "getEntitiesWithValue(bool)"(
+      _value: boolean,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    "getEntitiesWithValue(bytes)"(
       _value: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getValue(
+      _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -249,7 +319,12 @@ export interface Component extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    set(
+    "set(uint256)"(
+      _entity: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "set(uint256,bytes)"(
       _entity: BigNumberish,
       _value: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }

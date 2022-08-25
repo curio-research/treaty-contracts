@@ -102,6 +102,13 @@ export type WorldConstantsStructOutput = [
   debuffFactor: BigNumber;
 };
 
+export type ComponentSpecStruct = { name: string; valueType: BigNumberish };
+
+export type ComponentSpecStructOutput = [string, number] & {
+  name: string;
+  valueType: number;
+};
+
 export interface CurioInterface extends utils.Interface {
   functions: {
     "diamondCut((address,uint8,bytes4[])[],address,bytes)": FunctionFragment;
@@ -125,9 +132,8 @@ export interface CurioInterface extends utils.Interface {
     "bulkInitializeTiles((uint256,uint256)[])": FunctionFragment;
     "pauseGame()": FunctionFragment;
     "reactivatePlayer(address)": FunctionFragment;
-    "registerComponents(address,string[28])": FunctionFragment;
+    "registerComponents(address,tuple[1000])": FunctionFragment;
     "resumeGame()": FunctionFragment;
-    "setComponentValue(string,uint256,bytes)": FunctionFragment;
     "spawnTroop((uint256,uint256),address,uint256)": FunctionFragment;
     "storeEncodedColumnBatches(uint256[][])": FunctionFragment;
     "transferBaseOwnership((uint256,uint256),address)": FunctionFragment;
@@ -136,9 +142,11 @@ export interface CurioInterface extends utils.Interface {
     "transferOwnership(address)": FunctionFragment;
     "sampleBuffPolicy()": FunctionFragment;
     "sampleImpossiblePolicy()": FunctionFragment;
+    "workersOfTheWorldUnite()": FunctionFragment;
     "_coincident((uint256,uint256),(uint256,uint256))": FunctionFragment;
     "_concatenate(uint256[],uint256[])": FunctionFragment;
     "_difference(Set,Set)": FunctionFragment;
+    "_getAddress(string,uint256)": FunctionFragment;
     "_getArmyAttackFactor(uint256[])": FunctionFragment;
     "_getArmyDamagePerHit(uint256[])": FunctionFragment;
     "_getArmyDefenseFactor(uint256[])": FunctionFragment;
@@ -146,16 +154,21 @@ export interface CurioInterface extends utils.Interface {
     "_getArmyLargeActionCooldown(uint256[])": FunctionFragment;
     "_getArmyMovementCooldown(uint256[])": FunctionFragment;
     "_getArmyTroops(uint256)": FunctionFragment;
+    "_getBool(string,uint256)": FunctionFragment;
     "_getComponent(string)": FunctionFragment;
     "_getComponentById(uint256)": FunctionFragment;
-    "_getComponentValue(string,uint256)": FunctionFragment;
     "_getDebuffedArmyDamagePerHit(uint256[])": FunctionFragment;
     "_getInfantryPercentage(uint256[])": FunctionFragment;
+    "_getInt(string,uint256)": FunctionFragment;
     "_getNeighbors((uint256,uint256))": FunctionFragment;
     "_getPlayerId(address)": FunctionFragment;
+    "_getPosition(string,uint256)": FunctionFragment;
+    "_getString(string,uint256)": FunctionFragment;
     "_getTileAt((uint256,uint256))": FunctionFragment;
+    "_getUint(string,uint256)": FunctionFragment;
     "_inBound((uint256,uint256))": FunctionFragment;
     "_random(uint256,uint256)": FunctionFragment;
+    "_strEq(string,string)": FunctionFragment;
     "_strike(uint256,uint256)": FunctionFragment;
     "_withinDistance((uint256,uint256),(uint256,uint256),uint256)": FunctionFragment;
   };
@@ -237,15 +250,11 @@ export interface CurioInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "registerComponents",
-    values: [string, string[]]
+    values: [string, ComponentSpecStruct[]]
   ): string;
   encodeFunctionData(
     functionFragment: "resumeGame",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setComponentValue",
-    values: [string, BigNumberish, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "spawnTroop",
@@ -277,6 +286,10 @@ export interface CurioInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "workersOfTheWorldUnite",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "_coincident",
     values: [PositionStruct, PositionStruct]
   ): string;
@@ -287,6 +300,10 @@ export interface CurioInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "_difference",
     values: [string, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getAddress",
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "_getArmyAttackFactor",
@@ -317,16 +334,16 @@ export interface CurioInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "_getBool",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "_getComponent",
     values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "_getComponentById",
     values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getComponentValue",
-    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "_getDebuffedArmyDamagePerHit",
@@ -337,6 +354,10 @@ export interface CurioInterface extends utils.Interface {
     values: [BigNumberish[]]
   ): string;
   encodeFunctionData(
+    functionFragment: "_getInt",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "_getNeighbors",
     values: [PositionStruct]
   ): string;
@@ -345,8 +366,20 @@ export interface CurioInterface extends utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(
+    functionFragment: "_getPosition",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getString",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "_getTileAt",
     values: [PositionStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getUint",
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "_inBound",
@@ -355,6 +388,10 @@ export interface CurioInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "_random",
     values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_strEq",
+    values: [string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "_strike",
@@ -433,10 +470,6 @@ export interface CurioInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "resumeGame", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "setComponentValue",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "spawnTroop", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "storeEncodedColumnBatches",
@@ -464,6 +497,10 @@ export interface CurioInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "workersOfTheWorldUnite",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "_coincident",
     data: BytesLike
   ): Result;
@@ -473,6 +510,10 @@ export interface CurioInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "_difference",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_getAddress",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -503,16 +544,13 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "_getArmyTroops",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "_getBool", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_getComponent",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "_getComponentById",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getComponentValue",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -523,6 +561,7 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "_getInfantryPercentage",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "_getInt", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_getNeighbors",
     data: BytesLike
@@ -531,9 +570,16 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "_getPlayerId",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "_getPosition",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "_getString", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "_getTileAt", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "_getUint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "_inBound", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "_random", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "_strEq", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "_strike", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_withinDistance",
@@ -739,18 +785,11 @@ export interface Curio extends BaseContract {
 
     registerComponents(
       _gameAddr: string,
-      _componentNames: string[],
+      _componentSpecs: ComponentSpecStruct[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     resumeGame(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    setComponentValue(
-      _componentName: string,
-      _entity: BigNumberish,
-      _value: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -792,6 +831,10 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    workersOfTheWorldUnite(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     _coincident(
       _p1: PositionStruct,
       _p2: PositionStruct,
@@ -809,6 +852,12 @@ export interface Curio extends BaseContract {
       set2: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
+
+    _getAddress(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
     _getArmyAttackFactor(
       _troopIds: BigNumberish[],
@@ -845,16 +894,16 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
 
+    _getBool(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     _getComponent(_name: string, overrides?: CallOverrides): Promise<[string]>;
 
     _getComponentById(
       _id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    _getComponentValue(
-      _componentName: string,
-      _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
@@ -868,6 +917,12 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    _getInt(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     _getNeighbors(
       _position: PositionStruct,
       overrides?: CallOverrides
@@ -878,10 +933,28 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    _getPosition(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[PositionStructOutput]>;
+
+    _getString(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     _getTileAt(
       _position: PositionStruct,
       overrides?: CallOverrides
     ): Promise<[TileStructOutput]>;
+
+    _getUint(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<[boolean]>;
 
@@ -890,6 +963,12 @@ export interface Curio extends BaseContract {
       _salt: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    _strEq(
+      _s1: string,
+      _s2: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     _strike(
       _strikeFactor: BigNumberish,
@@ -1003,18 +1082,11 @@ export interface Curio extends BaseContract {
 
   registerComponents(
     _gameAddr: string,
-    _componentNames: string[],
+    _componentSpecs: ComponentSpecStruct[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   resumeGame(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setComponentValue(
-    _componentName: string,
-    _entity: BigNumberish,
-    _value: BytesLike,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1056,6 +1128,10 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  workersOfTheWorldUnite(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   _coincident(
     _p1: PositionStruct,
     _p2: PositionStruct,
@@ -1073,6 +1149,12 @@ export interface Curio extends BaseContract {
     set2: string,
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
+
+  _getAddress(
+    _componentName: string,
+    _entity: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   _getArmyAttackFactor(
     _troopIds: BigNumberish[],
@@ -1109,16 +1191,16 @@ export interface Curio extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
+  _getBool(
+    _componentName: string,
+    _entity: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   _getComponent(_name: string, overrides?: CallOverrides): Promise<string>;
 
   _getComponentById(
     _id: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  _getComponentValue(
-    _componentName: string,
-    _entity: BigNumberish,
     overrides?: CallOverrides
   ): Promise<string>;
 
@@ -1132,6 +1214,12 @@ export interface Curio extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  _getInt(
+    _componentName: string,
+    _entity: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   _getNeighbors(
     _position: PositionStruct,
     overrides?: CallOverrides
@@ -1139,10 +1227,28 @@ export interface Curio extends BaseContract {
 
   _getPlayerId(_player: string, overrides?: CallOverrides): Promise<BigNumber>;
 
+  _getPosition(
+    _componentName: string,
+    _entity: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<PositionStructOutput>;
+
+  _getString(
+    _componentName: string,
+    _entity: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
   _getTileAt(
     _position: PositionStruct,
     overrides?: CallOverrides
   ): Promise<TileStructOutput>;
+
+  _getUint(
+    _componentName: string,
+    _entity: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<boolean>;
 
@@ -1151,6 +1257,8 @@ export interface Curio extends BaseContract {
     _salt: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  _strEq(_s1: string, _s2: string, overrides?: CallOverrides): Promise<boolean>;
 
   _strike(
     _strikeFactor: BigNumberish,
@@ -1257,18 +1365,11 @@ export interface Curio extends BaseContract {
 
     registerComponents(
       _gameAddr: string,
-      _componentNames: string[],
+      _componentSpecs: ComponentSpecStruct[],
       overrides?: CallOverrides
     ): Promise<void>;
 
     resumeGame(overrides?: CallOverrides): Promise<void>;
-
-    setComponentValue(
-      _componentName: string,
-      _entity: BigNumberish,
-      _value: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     spawnTroop(
       _position: PositionStruct,
@@ -1304,6 +1405,8 @@ export interface Curio extends BaseContract {
 
     sampleImpossiblePolicy(overrides?: CallOverrides): Promise<void>;
 
+    workersOfTheWorldUnite(overrides?: CallOverrides): Promise<void>;
+
     _coincident(
       _p1: PositionStruct,
       _p2: PositionStruct,
@@ -1321,6 +1424,12 @@ export interface Curio extends BaseContract {
       set2: string,
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
+
+    _getAddress(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     _getArmyAttackFactor(
       _troopIds: BigNumberish[],
@@ -1357,16 +1466,16 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
+    _getBool(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     _getComponent(_name: string, overrides?: CallOverrides): Promise<string>;
 
     _getComponentById(
       _id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    _getComponentValue(
-      _componentName: string,
-      _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -1380,6 +1489,12 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _getInt(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     _getNeighbors(
       _position: PositionStruct,
       overrides?: CallOverrides
@@ -1390,10 +1505,28 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _getPosition(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PositionStructOutput>;
+
+    _getString(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
     _getTileAt(
       _position: PositionStruct,
       overrides?: CallOverrides
     ): Promise<TileStructOutput>;
+
+    _getUint(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<boolean>;
 
@@ -1402,6 +1535,12 @@ export interface Curio extends BaseContract {
       _salt: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    _strEq(
+      _s1: string,
+      _s2: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     _strike(
       _strikeFactor: BigNumberish,
@@ -1565,18 +1704,11 @@ export interface Curio extends BaseContract {
 
     registerComponents(
       _gameAddr: string,
-      _componentNames: string[],
+      _componentSpecs: ComponentSpecStruct[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     resumeGame(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setComponentValue(
-      _componentName: string,
-      _entity: BigNumberish,
-      _value: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1618,6 +1750,10 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    workersOfTheWorldUnite(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     _coincident(
       _p1: PositionStruct,
       _p2: PositionStruct,
@@ -1633,6 +1769,12 @@ export interface Curio extends BaseContract {
     _difference(
       set1: string,
       set2: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getAddress(
+      _componentName: string,
+      _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1671,16 +1813,16 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _getBool(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     _getComponent(_name: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     _getComponentById(
       _id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getComponentValue(
-      _componentName: string,
-      _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1694,6 +1836,12 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _getInt(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     _getNeighbors(
       _position: PositionStruct,
       overrides?: CallOverrides
@@ -1704,8 +1852,26 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _getPosition(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getString(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     _getTileAt(
       _position: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getUint(
+      _componentName: string,
+      _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1714,6 +1880,12 @@ export interface Curio extends BaseContract {
     _random(
       _max: BigNumberish,
       _salt: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _strEq(
+      _s1: string,
+      _s2: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1831,18 +2003,11 @@ export interface Curio extends BaseContract {
 
     registerComponents(
       _gameAddr: string,
-      _componentNames: string[],
+      _componentSpecs: ComponentSpecStruct[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     resumeGame(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setComponentValue(
-      _componentName: string,
-      _entity: BigNumberish,
-      _value: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1884,6 +2049,10 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    workersOfTheWorldUnite(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     _coincident(
       _p1: PositionStruct,
       _p2: PositionStruct,
@@ -1899,6 +2068,12 @@ export interface Curio extends BaseContract {
     _difference(
       set1: string,
       set2: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getAddress(
+      _componentName: string,
+      _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1937,6 +2112,12 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    _getBool(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     _getComponent(
       _name: string,
       overrides?: CallOverrides
@@ -1944,12 +2125,6 @@ export interface Curio extends BaseContract {
 
     _getComponentById(
       _id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getComponentValue(
-      _componentName: string,
-      _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1963,6 +2138,12 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    _getInt(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     _getNeighbors(
       _position: PositionStruct,
       overrides?: CallOverrides
@@ -1973,8 +2154,26 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    _getPosition(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getString(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     _getTileAt(
       _position: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getUint(
+      _componentName: string,
+      _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1986,6 +2185,12 @@ export interface Curio extends BaseContract {
     _random(
       _max: BigNumberish,
       _salt: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _strEq(
+      _s1: string,
+      _s2: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
