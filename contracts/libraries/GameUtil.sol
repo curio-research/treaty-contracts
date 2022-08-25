@@ -76,6 +76,7 @@ library Util {
     function _addArmy(uint256 _playerId, Position memory _position) public returns (uint256) {
         uint256 _armyId = _addEntity();
         _setUint("Owner", _armyId, _playerId);
+        _setString("Name", _armyId, "Army");
         _setUint("LastMoved", _armyId, block.timestamp);
         _setUint("LastLargeActionTaken", _armyId, 0);
         _setUint("LastRepaired", _armyId, block.timestamp);

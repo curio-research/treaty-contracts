@@ -11,15 +11,15 @@ contract ECS is Test, DiamondDeployTest {
         ComponentSpec[] memory _componentSpecs = new ComponentSpec[](1000);
 
         // General system
-        _componentSpecs.push(ComponentSpec({name: "IsComponent", valueType: VALUE_TYPE.BOOL})); // this must be the first (or zero-th, however you name it) component!
-        _componentSpecs.push(ComponentSpec({name: "Name", valueType: VALUE_TYPE.STRING}));
         _componentSpecs.push(ComponentSpec({name: "InitTimestamp", valueType: VALUE_TYPE.UINT}));
         _componentSpecs.push(ComponentSpec({name: "IsActive", valueType: VALUE_TYPE.BOOL}));
         _componentSpecs.push(ComponentSpec({name: "Position", valueType: VALUE_TYPE.POSITION}));
         _componentSpecs.push(ComponentSpec({name: "Owner", valueType: VALUE_TYPE.UINT}));
 
         // Identifier system
-        _componentSpecs.push(ComponentSpec({name: "Identifier", valueType: VALUE_TYPE.STRING}));
+        _componentSpecs.push(ComponentSpec({name: "IsComponent", valueType: VALUE_TYPE.BOOL})); // this must be the first (or zero-th, however you name it) component!
+        _componentSpecs.push(ComponentSpec({name: "Name", valueType: VALUE_TYPE.STRING}));
+        _componentSpecs.push(ComponentSpec({name: "Identifier", valueType: VALUE_TYPE.STRING})); // most direct tag for frontend
         _componentSpecs.push(ComponentSpec({name: "CanMove", valueType: VALUE_TYPE.BOOL}));
         _componentSpecs.push(ComponentSpec({name: "CanAttack", valueType: VALUE_TYPE.BOOL}));
         _componentSpecs.push(ComponentSpec({name: "CanCapture", valueType: VALUE_TYPE.BOOL}));
