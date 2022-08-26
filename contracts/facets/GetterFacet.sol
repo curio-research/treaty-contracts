@@ -18,8 +18,8 @@ contract GetterFacet is UseStorage {
         return Util._getComponent(_name);
     }
 
-    function getComponentById(uint256 _id) external view returns (Component) {
-        return Util._getComponentById(_id);
+    function getComponentById(uint256 _entity) external view returns (Component) {
+        return Util._getComponentByEntity(_entity);
     }
 
     function getTileAt(Position memory _pos) external view returns (Tile memory) {
@@ -31,7 +31,7 @@ contract GetterFacet is UseStorage {
     }
 
     function isPlayerInitialized(address _player) external view returns (bool) {
-        return gs().playerIdMap[_player] != NULL;
+        return gs().playerEntityMap[_player] != NULL;
     }
 
     function getPlayerCount() external view returns (uint256) {
@@ -39,6 +39,6 @@ contract GetterFacet is UseStorage {
     }
 
     function getPlayerId(address _player) external view returns (uint256) {
-        return gs().playerIdMap[_player];
+        return gs().playerEntityMap[_player];
     }
 }

@@ -36,7 +36,7 @@ contract HelperFacet is UseStorage {
 
         address[] memory _allPlayers = gs().players;
         for (uint256 i = 0; i < _allPlayers.length; i++) {
-            Util._updatePlayerBalances(gs().playerIdMap[_allPlayers[i]]);
+            Util._updatePlayerBalances(gs().playerEntityMap[_allPlayers[i]]);
         }
 
         gs().isPaused = true;
@@ -52,7 +52,7 @@ contract HelperFacet is UseStorage {
 
         address[] memory _allPlayers = gs().players;
         for (uint256 i = 0; i < _allPlayers.length; i++) {
-            Util._setUint("BalanceLastUpdated", gs().playerIdMap[_allPlayers[i]], block.timestamp);
+            Util._setUint("BalanceLastUpdated", gs().playerEntityMap[_allPlayers[i]], block.timestamp);
         }
 
         gs().isPaused = false;
@@ -64,12 +64,12 @@ contract HelperFacet is UseStorage {
      * @param _player player address
      */
     function reactivatePlayer(address _player) external onlyAdmin {
-        uint256 _playerId = gs().playerIdMap[_player];
-        require(gs().playerIdMap[_player] != NULL, "CURIO: Player already initialized");
-        require(!BoolComponent(gs().components["IsActive"]).has(_playerId), "CURIO: Player is active");
+        uint256 _playerEntity = gs().playerEntityMap[_player];
+        require(gs().playerEntityMap[_player] != NULL, "CURIO: Player already initialized");
+        require(!BoolComponent(gs().components["IsActive"]).has(_playerEntity), "CURIO: Player is active");
 
-        Util._setBool("IsActive", _playerId);
-        Util._setUint("Gold", _playerId, gs().worldConstants.initPlayerGoldBalance); // reset gold balance
+        Util._setBool("IsActive", _playerEntity);
+        Util._setUint("Gold", _playerEntity, gs().worldConstants.initPlayerGoldBalance); // reset gold balance
     }
 
     /**
@@ -84,28 +84,28 @@ contract HelperFacet is UseStorage {
      * @dev Spawn a troop at a selected position, typically upon initialization of a player.
      * @param _position position
      * @param _player player address
-     * @param _troopTemplateId identifier for desired troop type
-     * @return _troopId identifier for new troop
+     * @param _troopTemplateEntity identifier for desired troop type
+     * @return _troopEntity identifier for new troop
      */
     function spawnTroop(
         Position memory _position,
         address _player,
-        uint256 _troopTemplateId
+        uint256 _troopTemplateEntity
     ) external onlyAdmin returns (uint256) {
         require(Util._inBound(_position), "CURIO: Out of bound");
         if (!Util._getTileAt(_position).isInitialized) Util._initializeTile(_position);
 
         require(Util._getArmyAt(_position) == NULL, "CURIO: Tile occupied");
 
-        uint256 _baseId = Util._getBaseAt(_position);
-        if (_baseId != NULL) {
+        uint256 _baseEntity = Util._getBaseAt(_position);
+        if (_baseEntity != NULL) {
             // require(Util._getBaseOwner(_tile.baseId) == _player, "CURIO: Can only spawn troop in player's base");
-            require(EngineModules._geographicCheckTroop(_troopTemplateId, _position), "CURIO: Can only spawn water troops in ports");
+            require(EngineModules._geographicCheckTroop(_troopTemplateEntity, _position), "CURIO: Can only spawn water troops in ports");
         }
 
-        uint256 _playerId = gs().playerIdMap[_player];
-        uint256 _armyId = Util._addArmy(_playerId, _position);
-        return Util._addTroop(_playerId, _troopTemplateId, _armyId);
+        uint256 _playerEntity = gs().playerEntityMap[_player];
+        uint256 _armyEntity = Util._addArmy(_playerEntity, _position);
+        return Util._addTroop(_playerEntity, _troopTemplateEntity, _armyEntity);
     }
 
     /**
@@ -119,25 +119,25 @@ contract HelperFacet is UseStorage {
 
         require(Util._getArmyAt(_position) == NULL, "CURIO: Tile occupied");
 
-        uint256 _baseId = Util._getBaseAt(_position);
-        require(_baseId != NULL, "CURIO: No base found");
+        uint256 _baseEntity = Util._getBaseAt(_position);
+        require(_baseEntity != NULL, "CURIO: No base found");
 
-        require(Util._getUint("Owner", _baseId) == NULL, "CURIO: Base is owned");
+        require(Util._getUint("OwnerEntity", _baseEntity) == NULL, "CURIO: Base is owned");
 
-        uint256 _playerId = gs().playerIdMap[_player];
-        Util._setUint("Owner", _baseId, _playerId);
-        Util._setUint("Health", _baseId, 800);
+        uint256 _playerEntity = gs().playerEntityMap[_player];
+        Util._setUint("OwnerEntity", _baseEntity, _playerEntity);
+        Util._setUint("Health", _baseEntity, 800);
 
-        Util._updatePlayerBalances(_playerId);
+        Util._updatePlayerBalances(_playerEntity);
 
         // FIXME: experimenting with signed integers
-        int256 _baseGoldPerSecond = Util._getInt("GoldPerSecond", _baseId);
-        int256 _baseOilPerSecond = Util._getInt("OilPerSecond", _baseId);
-        int256 _playerGoldPerSecond = Util._getInt("GoldPerSecond", _playerId);
-        int256 _playerOilPerSecond = Util._getInt("OilPerSecond", _playerId);
+        int256 _baseGoldPerSecond = Util._getInt("GoldPerSecond", _baseEntity);
+        int256 _baseOilPerSecond = Util._getInt("OilPerSecond", _baseEntity);
+        int256 _playerGoldPerSecond = Util._getInt("GoldPerSecond", _playerEntity);
+        int256 _playerOilPerSecond = Util._getInt("OilPerSecond", _playerEntity);
 
-        Util._setInt("GoldPerSecond", _playerId, _playerGoldPerSecond + _baseGoldPerSecond);
-        Util._setInt("OilPerSecond", _playerId, _playerOilPerSecond + _baseOilPerSecond);
+        Util._setInt("GoldPerSecond", _playerEntity, _playerGoldPerSecond + _baseGoldPerSecond);
+        Util._setInt("OilPerSecond", _playerEntity, _playerOilPerSecond + _baseOilPerSecond);
     }
 
     /**
@@ -159,7 +159,7 @@ contract HelperFacet is UseStorage {
      * @param _player player address
      */
     function updatePlayerBalances(address _player) external {
-        Util._updatePlayerBalances(gs().playerIdMap[_player]);
+        Util._updatePlayerBalances(gs().playerEntityMap[_player]);
     }
 
     // ----------------------------------------------------------------------
@@ -178,7 +178,7 @@ contract HelperFacet is UseStorage {
         _componentSpecs[1] = (ComponentSpec({name: "InitTimestamp", valueType: VALUE_TYPE.UINT}));
         _componentSpecs[2] = (ComponentSpec({name: "IsActive", valueType: VALUE_TYPE.BOOL}));
         _componentSpecs[3] = (ComponentSpec({name: "Position", valueType: VALUE_TYPE.POSITION}));
-        _componentSpecs[4] = (ComponentSpec({name: "Owner", valueType: VALUE_TYPE.UINT}));
+        _componentSpecs[4] = (ComponentSpec({name: "OwnerEntity", valueType: VALUE_TYPE.UINT}));
 
         // Identifier system
         _componentSpecs[5] = (ComponentSpec({name: "Name", valueType: VALUE_TYPE.STRING}));
@@ -200,14 +200,14 @@ contract HelperFacet is UseStorage {
         _componentSpecs[17] = (ComponentSpec({name: "LastMoved", valueType: VALUE_TYPE.UINT}));
         _componentSpecs[18] = (ComponentSpec({name: "LastLargeActionTaken", valueType: VALUE_TYPE.UINT}));
         _componentSpecs[19] = (ComponentSpec({name: "LastRepaired", valueType: VALUE_TYPE.UINT}));
-        _componentSpecs[20] = (ComponentSpec({name: "IsLandTroop", valueType: VALUE_TYPE.BOOL}));
+        _componentSpecs[20] = (ComponentSpec({name: "CanMoveOnLand", valueType: VALUE_TYPE.BOOL}));
         _componentSpecs[21] = (ComponentSpec({name: "MaxHealth", valueType: VALUE_TYPE.UINT}));
         _componentSpecs[22] = (ComponentSpec({name: "DamagePerHit", valueType: VALUE_TYPE.UINT}));
         _componentSpecs[23] = (ComponentSpec({name: "AttackFactor", valueType: VALUE_TYPE.UINT}));
         _componentSpecs[24] = (ComponentSpec({name: "DefenseFactor", valueType: VALUE_TYPE.UINT}));
         _componentSpecs[25] = (ComponentSpec({name: "MovementCooldown", valueType: VALUE_TYPE.UINT}));
         _componentSpecs[26] = (ComponentSpec({name: "LargeActionCooldown", valueType: VALUE_TYPE.UINT}));
-        _componentSpecs[27] = (ComponentSpec({name: "ArmyId", valueType: VALUE_TYPE.UINT}));
+        _componentSpecs[27] = (ComponentSpec({name: "ArmyEntity", valueType: VALUE_TYPE.UINT}));
         _componentSpecs[28] = (ComponentSpec({name: "IsDebuffed", valueType: VALUE_TYPE.BOOL}));
         _componentSpecs[29] = (ComponentSpec({name: "IsArmy", valueType: VALUE_TYPE.BOOL}));
 

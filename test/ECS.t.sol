@@ -24,20 +24,20 @@ contract ECS is Test, DiamondDeployTest {
         getter.getComponent("NonexistentComponent");
 
         // Purchase a destroyer
-        uint256 _troopId = engine.purchaseTroop(player1Pos, destroyerTemplateId);
-        uint256 _armyId = abi.decode(getter.getComponent("ArmyId").getBytesValue(_troopId), (uint256));
+        uint256 _troopEntity = engine.purchaseTroop(player1Pos, destroyerTemplateId);
+        uint256 _armyEntity = abi.decode(getter.getComponent("ArmyEntity").getBytesValue(_troopEntity), (uint256));
 
         // Verify post-conditions
         assertEq(abi.decode(getter.getComponent("Gold").getBytesValue(player1Id), (uint256)), 20 - 19);
         assertEq(getter.getComponent("Position").getEntitiesWithValue(abi.encode(player1Pos)).length, 2);
-        Position memory _troopPosition = abi.decode(getter.getComponent("Position").getBytesValue(_armyId), (Position));
+        Position memory _troopPosition = abi.decode(getter.getComponent("Position").getBytesValue(_armyEntity), (Position));
         assertEq(_troopPosition.x, player1Pos.x);
         assertEq(_troopPosition.y, player1Pos.y);
-        assertEq(abi.decode(getter.getComponent("Health").getBytesValue(_troopId), (uint256)), 3);
-        assertEq(getter.getComponent("CanMove").getEntities()[1], _troopId);
-        uint256[] memory _baseIds = getter.getComponent("CanPurchase").getEntities();
-        assertEq(_baseIds.length, 6); // because 1 nearby city and 2 ports are also initialized in neighbor search
-        assertEq(abi.decode(getter.getComponent("Owner").getBytesValue(_baseIds[0]), (uint256)), player1Id);
+        assertEq(abi.decode(getter.getComponent("Health").getBytesValue(_troopEntity), (uint256)), 3);
+        assertEq(getter.getComponent("CanMove").getEntities()[1], _troopEntity);
+        uint256[] memory _baseEntities = getter.getComponent("CanPurchase").getEntities();
+        assertEq(_baseEntities.length, 6); // because 1 nearby city and 2 ports are also initialized in neighbor search
+        assertEq(abi.decode(getter.getComponent("OwnerEntity").getBytesValue(_baseEntities[0]), (uint256)), player1Id);
 
         // Verify inability to buy another destroyer before moving destroyer away
         vm.expectRevert(bytes("CURIO: Base occupied by another troop"));
@@ -45,11 +45,11 @@ contract ECS is Test, DiamondDeployTest {
 
         // Move destroyer to nearby water tile
         vm.warp(3);
-        engine.moveTroop(_troopId, Position({x: 7, y: 1}));
-        _armyId = abi.decode(getter.getComponent("ArmyId").getBytesValue(_troopId), (uint256));
+        engine.moveTroop(_troopEntity, Position({x: 7, y: 1}));
+        _armyEntity = abi.decode(getter.getComponent("ArmyEntity").getBytesValue(_troopEntity), (uint256));
 
         // Verify post-conditions
-        Position memory _currentPosition = abi.decode(getter.getComponent("Position").getBytesValue(_armyId), (Position));
+        Position memory _currentPosition = abi.decode(getter.getComponent("Position").getBytesValue(_armyEntity), (Position));
         assertEq(_currentPosition.x, 7);
         assertEq(_currentPosition.y, 1);
 

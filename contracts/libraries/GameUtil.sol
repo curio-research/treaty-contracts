@@ -22,7 +22,7 @@ library Util {
 
     event NewEntity(uint256 _entity);
     event EntityRemoved(uint256 _entity);
-    event NewComponent(string _name, uint256 _id);
+    event NewComponent(string _name, uint256 _entity);
     event ComponentValueSet(string _componentName, uint256 _entity, bytes _value);
     event GamePaused();
     event GameResumed();
@@ -38,165 +38,165 @@ library Util {
 
         uint256 _encodedCol = gs().encodedColumnBatches[_position.x][_position.y / _batchSize] % (_numInitTerrainTypes**((_position.y % _batchSize) + 1));
         uint256 _divFactor = _numInitTerrainTypes**(_position.y % _batchSize);
-        uint256 _terrainId = _encodedCol / _divFactor;
+        uint256 _terrainEntity = _encodedCol / _divFactor;
 
         // Add base
-        if (_terrainId >= 3) {
-            uint256 _baseId = _addEntity();
-            _setBool("IsActive", _baseId);
-            _setPosition("Position", _baseId, _position);
-            _setUint("Health", _baseId, 1);
-            _setBool("CanAttack", _baseId);
-            _setBool("CanPurchase", _baseId);
-            _setUint("AttackFactor", _baseId, 100);
-            _setUint("DefenseFactor", _baseId, 100);
-            if (_terrainId == 3) {
+        if (_terrainEntity >= 3) {
+            uint256 _baseEntity = _addEntity();
+            _setBool("IsActive", _baseEntity);
+            _setPosition("Position", _baseEntity, _position);
+            _setUint("Health", _baseEntity, 1);
+            _setBool("CanAttack", _baseEntity);
+            _setBool("CanPurchase", _baseEntity);
+            _setUint("AttackFactor", _baseEntity, 100);
+            _setUint("DefenseFactor", _baseEntity, 100);
+            if (_terrainEntity == 3) {
                 // Port
-                _setString("Name", _baseId, "Port");
-                _setInt("GoldPerSecond", _baseId, int256(_worldConstants.defaultBaseGoldGenerationPerSecond));
-                _terrainId = 0;
-            } else if (_terrainId == 4) {
+                _setString("Name", _baseEntity, "Port");
+                _setInt("GoldPerSecond", _baseEntity, int256(_worldConstants.defaultBaseGoldGenerationPerSecond));
+                _terrainEntity = 0;
+            } else if (_terrainEntity == 4) {
                 // City
-                _setString("Name", _baseId, "City");
-                _setInt("GoldPerSecond", _baseId, int256(_worldConstants.defaultBaseGoldGenerationPerSecond));
-                _terrainId = 1;
-            } else if (_terrainId == 5) {
+                _setString("Name", _baseEntity, "City");
+                _setInt("GoldPerSecond", _baseEntity, int256(_worldConstants.defaultBaseGoldGenerationPerSecond));
+                _terrainEntity = 1;
+            } else if (_terrainEntity == 5) {
                 // Oil well
-                _setString("Name", _baseId, "Oil Well");
-                _setInt("OilPerSecond", _baseId, int256(_worldConstants.defaultWellOilGenerationPerSecond));
-                _terrainId = 1;
+                _setString("Name", _baseEntity, "Oil Well");
+                _setInt("OilPerSecond", _baseEntity, int256(_worldConstants.defaultWellOilGenerationPerSecond));
+                _terrainEntity = 1;
             }
         }
 
         // Update terrain
         gs().map[_position.x][_position.y].isInitialized = true;
-        gs().map[_position.x][_position.y].terrain = TERRAIN(_terrainId);
+        gs().map[_position.x][_position.y].terrain = TERRAIN(_terrainEntity);
     }
 
-    function _addArmy(uint256 _playerId, Position memory _position) public returns (uint256) {
-        uint256 _armyId = _addEntity();
-        _setUint("Owner", _armyId, _playerId);
-        _setString("Name", _armyId, "Army");
-        _setUint("LastMoved", _armyId, block.timestamp);
-        _setUint("LastLargeActionTaken", _armyId, 0);
-        _setUint("LastRepaired", _armyId, block.timestamp);
-        _setPosition("Position", _armyId, _position);
-        _setBool("IsArmy", _armyId);
+    function _addArmy(uint256 _playerEntity, Position memory _position) public returns (uint256) {
+        uint256 _armyEntity = _addEntity();
+        _setUint("OwnerEntity", _armyEntity, _playerEntity);
+        _setString("Name", _armyEntity, "Army");
+        _setUint("LastMoved", _armyEntity, block.timestamp);
+        _setUint("LastLargeActionTaken", _armyEntity, 0);
+        _setUint("LastRepaired", _armyEntity, block.timestamp);
+        _setPosition("Position", _armyEntity, _position);
+        _setBool("IsArmy", _armyEntity);
 
-        return _armyId;
+        return _armyEntity;
     }
 
     function _addTroop(
-        uint256 _playerId,
-        uint256 _troopTemplateId,
-        uint256 _armyId
+        uint256 _playerEntity,
+        uint256 _troopTemplateEntity,
+        uint256 _armyEntity
     ) public returns (uint256) {
         // 1. Get number of player-owned troops and verify size
-        uint256 _playerTroopCount = _getPlayerTroops(_playerId).length;
+        uint256 _playerTroopCount = _getPlayerTroops(_playerEntity).length;
         require(_playerTroopCount < gs().worldConstants.maxTroopCountPerPlayer, "CURIO: Max troop count exceeded");
 
         // 2. Create new troop entity globally and in corresponding components
-        uint256 _troopId = _addEntity();
+        uint256 _troopEntity = _addEntity();
         // troop fields
         // TODO: left here
-        _setBool("IsActive", _troopId);
-        _setUint("Owner", _troopId, _playerId);
-        _setUint("ArmyId", _troopId, _armyId);
-        _setUint("Health", _troopId, _getUint("MaxHealth", _troopTemplateId));
-        _setBool("CanMove", _troopId);
-        _setBool("CanAttack", _troopId);
-        _setBool("CanCapture", _troopId);
+        _setBool("IsActive", _troopEntity);
+        _setUint("OwnerEntity", _troopEntity, _playerEntity);
+        _setUint("ArmyEntity", _troopEntity, _armyEntity);
+        _setUint("Health", _troopEntity, _getUint("MaxHealth", _troopTemplateEntity));
+        _setBool("CanMove", _troopEntity);
+        _setBool("CanAttack", _troopEntity);
+        _setBool("CanCapture", _troopEntity);
         // troop type fields
-        _setString("Name", _troopId, _getString("Name", _troopTemplateId));
-        if (_getComponent("IsLandTroop").has(_troopTemplateId)) _setBool("IsLandTroop", _troopId);
-        _setUint("MaxHealth", _troopId, _getUint("MaxHealth", _troopTemplateId));
-        _setUint("DamagePerHit", _troopId, _getUint("DamagePerHit", _troopTemplateId));
-        _setUint("AttackFactor", _troopId, _getUint("AttackFactor", _troopTemplateId));
-        _setUint("DefenseFactor", _troopId, _getUint("DefenseFactor", _troopTemplateId));
-        _setUint("MovementCooldown", _troopId, _getUint("MovementCooldown", _troopTemplateId));
-        _setUint("LargeActionCooldown", _troopId, _getUint("LargeActionCooldown", _troopTemplateId));
+        _setString("Name", _troopEntity, _getString("Name", _troopTemplateEntity));
+        if (_getComponent("CanMoveOnLand").has(_troopTemplateEntity)) _setBool("CanMoveOnLand", _troopEntity);
+        _setUint("MaxHealth", _troopEntity, _getUint("MaxHealth", _troopTemplateEntity));
+        _setUint("DamagePerHit", _troopEntity, _getUint("DamagePerHit", _troopTemplateEntity));
+        _setUint("AttackFactor", _troopEntity, _getUint("AttackFactor", _troopTemplateEntity));
+        _setUint("DefenseFactor", _troopEntity, _getUint("DefenseFactor", _troopTemplateEntity));
+        _setUint("MovementCooldown", _troopEntity, _getUint("MovementCooldown", _troopTemplateEntity));
+        _setUint("LargeActionCooldown", _troopEntity, _getUint("LargeActionCooldown", _troopTemplateEntity));
         // resource fields
-        int256 _oilPerSecond = _getInt("OilPerSecond", _troopTemplateId);
-        _setInt("OilPerSecond", _troopId, _oilPerSecond);
+        int256 _oilPerSecond = _getInt("OilPerSecond", _troopTemplateEntity);
+        _setInt("OilPerSecond", _troopEntity, _oilPerSecond);
 
         // 3. Update balances
-        _updatePlayerBalances(_playerId);
-        int256 _playerOilPerSecond = _getInt("OilPerSecond", _playerId);
-        _setInt("OilPerSecond", _playerId, _playerOilPerSecond + _oilPerSecond);
+        _updatePlayerBalances(_playerEntity);
+        int256 _playerOilPerSecond = _getInt("OilPerSecond", _playerEntity);
+        _setInt("OilPerSecond", _playerEntity, _playerOilPerSecond + _oilPerSecond);
 
-        return _troopId;
+        return _troopEntity;
     }
 
-    function _removeTroop(uint256 _troopId) public {
-        uint256 _playerId = _getUint("Owner", _troopId);
-        int256 _oilPerSecond = _getInt("OilPerSecond", _troopId);
+    function _removeTroop(uint256 _troopEntity) public {
+        uint256 _playerEntity = _getUint("OwnerEntity", _troopEntity);
+        int256 _oilPerSecond = _getInt("OilPerSecond", _troopEntity);
 
-        _removeEntity(_troopId);
+        _removeEntity(_troopEntity);
 
-        _updatePlayerBalances(_playerId);
-        int256 _playerOilPerSecond = _getInt("OilPerSecond", _playerId);
-        _setInt("OilPerSecond", _playerId, _playerOilPerSecond - _oilPerSecond);
+        _updatePlayerBalances(_playerEntity);
+        int256 _playerOilPerSecond = _getInt("OilPerSecond", _playerEntity);
+        _setInt("OilPerSecond", _playerEntity, _playerOilPerSecond - _oilPerSecond);
 
-        emit EntityRemoved(_troopId);
+        emit EntityRemoved(_troopEntity);
     }
 
-    function _removeArmy(uint256 _armyId) public {
-        _removeEntity(_armyId);
+    function _removeArmy(uint256 _armyEntity) public {
+        _removeEntity(_armyEntity);
     }
 
-    function _updatePlayerBalances(uint256 _playerId) public {
-        uint256 _balanceLastUpdated = _getUint("BalanceLastUpdated", _playerId);
+    function _updatePlayerBalances(uint256 _playerEntity) public {
+        uint256 _balanceLastUpdated = _getUint("BalanceLastUpdated", _playerEntity);
         uint256 _timeElapsed = block.timestamp - _balanceLastUpdated;
 
         // Update gold balance
         // FIXME: math between uint and int
-        uint256 _gold = _getUint("Gold", _playerId);
-        int256 _goldPerSecond = _getInt("GoldPerSecond", _playerId);
-        _setUint("Gold", _playerId, uint256(int256(_gold) + _goldPerSecond * int256(_timeElapsed)));
+        uint256 _gold = _getUint("Gold", _playerEntity);
+        int256 _goldPerSecond = _getInt("GoldPerSecond", _playerEntity);
+        _setUint("Gold", _playerEntity, uint256(int256(_gold) + _goldPerSecond * int256(_timeElapsed)));
 
         // Update oil balance
-        uint256 _oil = _getUint("Oil", _playerId);
-        int256 _oilPerSecond = _getInt("OilPerSecond", _playerId);
-        _setUint("Oil", _playerId, uint256(int256(_oil) + _oilPerSecond * int256(_timeElapsed)));
+        uint256 _oil = _getUint("Oil", _playerEntity);
+        int256 _oilPerSecond = _getInt("OilPerSecond", _playerEntity);
+        _setUint("Oil", _playerEntity, uint256(int256(_oil) + _oilPerSecond * int256(_timeElapsed)));
 
         // Update debuff status based on oil rate
         if (_oilPerSecond >= 0) {
-            _removeBool("IsDebuffed", _playerId);
+            _removeBool("IsDebuffed", _playerEntity);
         } else {
-            _setBool("IsDebuffed", _playerId);
+            _setBool("IsDebuffed", _playerEntity);
         }
 
-        _setUint("BalanceLastUpdated", _playerId, block.timestamp);
+        _setUint("BalanceLastUpdated", _playerEntity, block.timestamp);
     }
 
-    function _removeArmyWithTroops(uint256 _armyId) public {
-        _removeArmy(_armyId);
-        uint256[] memory _troopIds = _getArmyTroops(_armyId);
-        for (uint256 i = 0; i < _troopIds.length; i++) {
-            _removeTroop(_troopIds[i]);
+    function _removeArmyWithTroops(uint256 _armyEntity) public {
+        _removeArmy(_armyEntity);
+        uint256[] memory _troopEntities = _getArmyTroopEntities(_armyEntity);
+        for (uint256 i = 0; i < _troopEntities.length; i++) {
+            _removeTroop(_troopEntities[i]);
         }
     }
 
-    function _damageArmy(uint256 _totalDamage, uint256[] memory _armyTroopIds) public {
-        uint256 _individualDamage = _totalDamage / _armyTroopIds.length;
-        uint256 _remainingDamage = _totalDamage % _armyTroopIds.length;
+    function _damageArmy(uint256 _totalDamage, uint256[] memory _armyTroopEntities) public {
+        uint256 _individualDamage = _totalDamage / _armyTroopEntities.length;
+        uint256 _remainingDamage = _totalDamage % _armyTroopEntities.length;
 
-        for (uint256 i = 0; i < _armyTroopIds.length; i++) {
+        for (uint256 i = 0; i < _armyTroopEntities.length; i++) {
             uint256 _damage = _remainingDamage > 0 ? _individualDamage + 1 : _individualDamage;
-            _damageTroop(_damage, _armyTroopIds[i]);
+            _damageTroop(_damage, _armyTroopEntities[i]);
             if (_remainingDamage > 0) _remainingDamage--;
         }
     }
 
-    function _damageTroop(uint256 _damage, uint256 _troopId) public {
-        uint256 _health = _getUint("Health", _troopId);
+    function _damageTroop(uint256 _damage, uint256 _troopEntity) public {
+        uint256 _health = _getUint("Health", _troopEntity);
 
         if (_damage >= _health) {
-            uint256 _armyId = _getUint("ArmyId", _troopId);
-            if (UintComponent(gs().components["ArmyId"]).getEntitiesWithValue(_armyId).length == 1) _removeArmy(_armyId);
-            _removeTroop(_troopId);
+            uint256 _armyEntity = _getUint("ArmyEntity", _troopEntity);
+            if (UintComponent(gs().components["ArmyEntity"]).getEntitiesWithValue(_armyEntity).length == 1) _removeArmy(_armyEntity);
+            _removeTroop(_troopEntity);
         } else {
-            _setUint("Health", _troopId, _health - _damage);
+            _setUint("Health", _troopEntity, _health - _damage);
         }
     }
 
@@ -208,25 +208,25 @@ library Util {
         Set _set1 = new Set();
         Set _set2 = new Set();
         _set1.addArray(_getComponent("CanMove").getEntities());
-        _set2.addArray(_getComponent("IsLandTroop").getEntities());
+        _set2.addArray(_getComponent("CanMoveOnLand").getEntities());
         return _difference(_set1, _set2);
     }
 
-    function _getPlayerTroops(uint256 _playerId) public returns (uint256[] memory) {
+    function _getPlayerTroops(uint256 _playerEntity) public returns (uint256[] memory) {
         Set _set1 = new Set();
         Set _set2 = new Set();
-        uint256[] memory _entitiesOwnedByPlayer = UintComponent(gs().components["Owner"]).getEntitiesWithValue(_playerId);
+        uint256[] memory _entitiesOwnedByPlayer = UintComponent(gs().components["OwnerEntity"]).getEntitiesWithValue(_playerEntity);
         uint256[] memory _allTroops = _getComponent("CanMove").getEntities();
         _set1.addArray(_entitiesOwnedByPlayer);
         _set2.addArray(_allTroops);
         return _intersection(_set1, _set2);
     }
 
-    function _getPlayerBases(uint256 _playerId) public returns (uint256[] memory) {
+    function _getPlayerBases(uint256 _playerEntity) public returns (uint256[] memory) {
         Set _set1 = new Set();
         Set _set2 = new Set();
         _set1.addArray(_getComponent("CanPurchase").getEntities());
-        _set2.addArray(UintComponent(gs().components["Owner"]).getEntitiesWithValue(_playerId));
+        _set2.addArray(UintComponent(gs().components["OwnerEntity"]).getEntitiesWithValue(_playerEntity));
         return _intersection(_set1, _set2);
     }
 
@@ -252,22 +252,22 @@ library Util {
         return _result.length == 1 ? _result[0] : _NULL();
     }
 
-    function _getArmyTroops(uint256 _armyId) public view returns (uint256[] memory) {
-        return UintComponent(gs().components["ArmyId"]).getEntitiesWithValue(_armyId);
+    function _getArmyTroopEntities(uint256 _armyEntity) public view returns (uint256[] memory) {
+        return UintComponent(gs().components["ArmyEntity"]).getEntitiesWithValue(_armyEntity);
     }
 
-    function _getPlayerId(address _player) public view returns (uint256) {
-        return gs().playerIdMap[_player];
+    function _getPlayerEntity(address _player) public view returns (uint256) {
+        return gs().playerEntityMap[_player];
     }
 
-    function _getInfantryPercentage(uint256[] memory _troopIds) public view returns (uint256) {
-        require(_troopIds.length > 0, "CURIO: Cannot calculate percentage for zero troops");
+    function _getInfantryPercentage(uint256[] memory _troopEntities) public view returns (uint256) {
+        require(_troopEntities.length > 0, "CURIO: Cannot calculate percentage for zero troops");
 
-        uint256 _percentagePerTroop = 100 / _troopIds.length;
+        uint256 _percentagePerTroop = 100 / _troopEntities.length;
         uint256 _result = 0;
 
-        for (uint256 i = 0; i < _troopIds.length; i++) {
-            if (_getComponent("IsLandTroop").has(_troopIds[i])) {
+        for (uint256 i = 0; i < _troopEntities.length; i++) {
+            if (_getComponent("CanMoveOnLand").has(_troopEntities[i])) {
                 _result += _percentagePerTroop;
             }
         }
@@ -275,23 +275,23 @@ library Util {
         return _result;
     }
 
-    function _getArmyHealth(uint256[] memory _troopIds) public view returns (uint256) {
+    function _getArmyHealth(uint256[] memory _troopEntities) public view returns (uint256) {
         // take the sum
         uint256 _totalHealth;
 
-        for (uint256 i = 0; i < _troopIds.length; i++) {
-            _totalHealth += _getUint("Health", _troopIds[i]);
+        for (uint256 i = 0; i < _troopEntities.length; i++) {
+            _totalHealth += _getUint("Health", _troopEntities[i]);
         }
 
         return _totalHealth;
     }
 
-    function _getArmyMovementCooldown(uint256[] memory _troopIds) public view returns (uint256) {
+    function _getArmyMovementCooldown(uint256[] memory _troopEntities) public view returns (uint256) {
         // take the longest cooldown
         uint256 _longestMovementCooldown;
 
-        for (uint256 i = 0; i < _troopIds.length; i++) {
-            uint256 _troopMovementCooldown = _getUint("MovementCooldown", _troopIds[i]);
+        for (uint256 i = 0; i < _troopEntities.length; i++) {
+            uint256 _troopMovementCooldown = _getUint("MovementCooldown", _troopEntities[i]);
             if (_troopMovementCooldown > _longestMovementCooldown) {
                 _longestMovementCooldown = _troopMovementCooldown;
             }
@@ -299,12 +299,12 @@ library Util {
         return _longestMovementCooldown;
     }
 
-    function _getArmyLargeActionCooldown(uint256[] memory _troopIds) public view returns (uint256) {
+    function _getArmyLargeActionCooldown(uint256[] memory _troopEntities) public view returns (uint256) {
         // take the longest cooldown
         uint256 _longestLargeActionCooldown;
 
-        for (uint256 i = 0; i < _troopIds.length; i++) {
-            uint256 _troopLargeActionCooldown = _getUint("LargeActionCooldown", _troopIds[i]);
+        for (uint256 i = 0; i < _troopEntities.length; i++) {
+            uint256 _troopLargeActionCooldown = _getUint("LargeActionCooldown", _troopEntities[i]);
             if (_troopLargeActionCooldown > _longestLargeActionCooldown) {
                 _longestLargeActionCooldown = _troopLargeActionCooldown;
             }
@@ -313,43 +313,43 @@ library Util {
         return _longestLargeActionCooldown;
     }
 
-    function _getArmyAttackFactor(uint256[] memory _troopIds) public view returns (uint256) {
+    function _getArmyAttackFactor(uint256[] memory _troopEntities) public view returns (uint256) {
         // take the average
         uint256 _averageAttackFactor;
 
-        for (uint256 i = 0; i < _troopIds.length; i++) {
-            _averageAttackFactor += _getUint("AttackFactor", _troopIds[i]);
+        for (uint256 i = 0; i < _troopEntities.length; i++) {
+            _averageAttackFactor += _getUint("AttackFactor", _troopEntities[i]);
         }
 
-        return _averageAttackFactor / _troopIds.length;
+        return _averageAttackFactor / _troopEntities.length;
     }
 
-    function _getArmyDefenseFactor(uint256[] memory _troopIds) public view returns (uint256) {
+    function _getArmyDefenseFactor(uint256[] memory _troopEntities) public view returns (uint256) {
         // take the average
         uint256 _averageDefenseFactor;
 
-        for (uint256 i = 0; i < _troopIds.length; i++) {
-            _averageDefenseFactor += _getUint("DefenseFactor", _troopIds[i]);
+        for (uint256 i = 0; i < _troopEntities.length; i++) {
+            _averageDefenseFactor += _getUint("DefenseFactor", _troopEntities[i]);
         }
 
-        return _averageDefenseFactor / _troopIds.length;
+        return _averageDefenseFactor / _troopEntities.length;
     }
 
-    function _getArmyDamagePerHit(uint256[] memory _troopIds) public view returns (uint256) {
+    function _getArmyDamagePerHit(uint256[] memory _troopEntities) public view returns (uint256) {
         // take the sum
         uint256 _totalDamagePerHit = 0;
 
-        for (uint256 i = 0; i < _troopIds.length; i++) {
-            _totalDamagePerHit += _getUint("DamagePerHit", _troopIds[i]);
+        for (uint256 i = 0; i < _troopEntities.length; i++) {
+            _totalDamagePerHit += _getUint("DamagePerHit", _troopEntities[i]);
         }
 
         return _totalDamagePerHit;
     }
 
-    function _getDebuffedArmyDamagePerHit(uint256[] memory _troopIds) public view returns (uint256) {
-        uint256 _infantryPercentage = _getInfantryPercentage(_troopIds);
+    function _getDebuffedArmyDamagePerHit(uint256[] memory _troopEntities) public view returns (uint256) {
+        uint256 _infantryPercentage = _getInfantryPercentage(_troopEntities);
         uint256 _debuffFactor = (gs().worldConstants.debuffFactor * (100 - _infantryPercentage)) / 100; // Only non-infantries are debuffed
-        return (_getArmyDamagePerHit(_troopIds) * (100 - _debuffFactor)) / 100;
+        return (_getArmyDamagePerHit(_troopEntities) * (100 - _debuffFactor)) / 100;
     }
 
     function _getTileAt(Position memory _position) public view returns (Tile memory) {
@@ -558,11 +558,11 @@ library Util {
             gs().components[_spec.name] = _addr;
 
             // Record identifier entity for component
-            uint256 _componentId = _addEntity();
-            _setBool("IsComponent", _componentId);
-            gs().idComponentMap[_componentId] = _addr;
+            uint256 _componentEntity = _addEntity();
+            _setBool("IsComponent", _componentEntity);
+            gs().ComponentEntityToAddress[_componentEntity] = _addr;
 
-            emit NewComponent(_spec.name, _componentId);
+            emit NewComponent(_spec.name, _componentEntity);
         }
 
         // Update component names for iteration
@@ -576,8 +576,8 @@ library Util {
         return Component(_componentAddr);
     }
 
-    function _getComponentById(uint256 _id) public view returns (Component) {
-        address _componentAddr = gs().idComponentMap[_id];
+    function _getComponentByEntity(uint256 _entity) public view returns (Component) {
+        address _componentAddr = gs().ComponentEntityToAddress[_entity];
         require(_componentAddr != address(0), "CURIO: Component not found");
 
         return Component(_componentAddr);

@@ -8,7 +8,7 @@ pragma solidity ^0.8.0;
 * Implementation of a diamond.
 /******************************************************************************/
 
-import {WorldConstants} from "contracts/libraries/Types.sol";
+import {Tile, WorldConstants} from "contracts/libraries/Types.sol";
 import {LibDiamond} from "contracts/libraries/LibDiamond.sol";
 import {IDiamondLoupe} from "contracts/interfaces/IDiamondLoupe.sol";
 import {IDiamondCut} from "contracts/interfaces/IDiamondCut.sol";
