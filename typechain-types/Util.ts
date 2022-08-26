@@ -45,6 +45,7 @@ export interface UtilInterface extends utils.Interface {
     "_getBool(string,uint256)": FunctionFragment;
     "_getComponent(string)": FunctionFragment;
     "_getComponentById(uint256)": FunctionFragment;
+    "_getComponentValue(string,uint256)": FunctionFragment;
     "_getDebuffedArmyDamagePerHit(uint256[])": FunctionFragment;
     "_getInfantryPercentage(uint256[])": FunctionFragment;
     "_getInt(string,uint256)": FunctionFragment;
@@ -116,6 +117,10 @@ export interface UtilInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "_getComponentById",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getComponentValue",
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "_getDebuffedArmyDamagePerHit",
@@ -225,6 +230,10 @@ export interface UtilInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "_getComponentById",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_getComponentValue",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -410,6 +419,12 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
+    _getComponentValue(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     _getDebuffedArmyDamagePerHit(
       _troopIds: BigNumberish[],
       overrides?: CallOverrides
@@ -559,6 +574,12 @@ export interface Util extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
+  _getComponentValue(
+    _componentName: string,
+    _entity: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
   _getDebuffedArmyDamagePerHit(
     _troopIds: BigNumberish[],
     overrides?: CallOverrides
@@ -698,6 +719,12 @@ export interface Util extends BaseContract {
 
     _getComponentById(
       _id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    _getComponentValue(
+      _componentName: string,
+      _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -882,6 +909,12 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _getComponentValue(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     _getDebuffedArmyDamagePerHit(
       _troopIds: BigNumberish[],
       overrides?: CallOverrides
@@ -1032,6 +1065,12 @@ export interface Util extends BaseContract {
 
     _getComponentById(
       _id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getComponentValue(
+      _componentName: string,
+      _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

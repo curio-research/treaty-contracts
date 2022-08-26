@@ -1,5 +1,5 @@
-import { WorldConstantsStruct } from './../../typechain-types/Curio';
-import { MapInput, RenderInput, TROOP_NAME } from './types';
+import { ComponentSpecStruct, ComponentSpecStructOutput, WorldConstantsStruct } from './../../typechain-types/Curio';
+import { MapInput, RenderInput, TROOP_NAME, VALUE_TYPE } from './types';
 
 export const LOCALHOST_RPC_URL = 'http://127.0.0.1:8545/';
 export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
@@ -96,37 +96,6 @@ export const TROOP_TYPES = [
     goldPrice: 4800,
     oilConsumptionPerSecond: 20,
   },
-];
-
-export const COMPONENT_NAMES = [
-  'Name',
-  'IsActive',
-  'Position',
-  'Owner',
-  'CanMove',
-  'CanAttack',
-  'CanCapture',
-  'CanPurchase',
-  'Health',
-  'Gold',
-  'GoldPerSecond',
-  'GoldRatePositive',
-  'Oil',
-  'OilPerSecond',
-  'OilRatePositive',
-  'InitTimestamp',
-  'BalanceLastUpdated',
-  'LastMoved',
-  'LastLargeActionTaken',
-  'LastRepaired',
-  'IsLandTroop',
-  'MaxHealth',
-  'DamagePerHit',
-  'AttackFactor',
-  'DefenseFactor',
-  'MovementCooldown',
-  'LargeActionCooldown',
-  'CargoCapacity',
 ];
 
 // ----------------------------------------------------------

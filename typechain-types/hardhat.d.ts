@@ -17,30 +17,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Component__factory>;
     getContractFactory(
-      name: "AddressComponent",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.AddressComponent__factory>;
-    getContractFactory(
-      name: "BoolComponent",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.BoolComponent__factory>;
-    getContractFactory(
-      name: "IntComponent",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IntComponent__factory>;
-    getContractFactory(
-      name: "PositionComponent",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.PositionComponent__factory>;
-    getContractFactory(
-      name: "StringComponent",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.StringComponent__factory>;
-    getContractFactory(
-      name: "UintComponent",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.UintComponent__factory>;
-    getContractFactory(
       name: "Diamond",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Diamond__factory>;
@@ -138,36 +114,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Component>;
-    getContractAt(
-      name: "AddressComponent",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.AddressComponent>;
-    getContractAt(
-      name: "BoolComponent",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.BoolComponent>;
-    getContractAt(
-      name: "IntComponent",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IntComponent>;
-    getContractAt(
-      name: "PositionComponent",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.PositionComponent>;
-    getContractAt(
-      name: "StringComponent",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.StringComponent>;
-    getContractAt(
-      name: "UintComponent",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.UintComponent>;
     getContractAt(
       name: "Diamond",
       address: string,

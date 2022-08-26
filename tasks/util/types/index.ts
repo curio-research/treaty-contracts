@@ -14,6 +14,15 @@ export enum TROOP_NAME {
   BATTLESHIP,
 }
 
+export enum VALUE_TYPE {
+  UINT,
+  STRING,
+  BOOL,
+  INT,
+  ADDRESS,
+  POSITION,
+  OTHER,
+}
 export interface MapInput {
   width: number;
   height: number;

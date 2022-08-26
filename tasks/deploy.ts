@@ -7,10 +7,10 @@ import { Util } from './../typechain-types/Util';
 import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { deployProxy, loadLocalMapConfig, LOCAL_MAP_PREFIX, printDivider, saveMapToLocal } from './util/deployHelper';
-import { TROOP_TYPES, RENDER_CONSTANTS, generateWorldConstants, SMALL_MAP_INPUT, LARGE_MAP_INPUT, SANDBOX_MAP_INPUT, COMPONENT_NAMES } from './util/constants';
+import { TROOP_TYPES, RENDER_CONSTANTS, generateWorldConstants, SMALL_MAP_INPUT, LARGE_MAP_INPUT, SANDBOX_MAP_INPUT } from './util/constants';
 import { position } from '../util/types/common';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
-import { Position, GameMapConfig, TILE_TYPE, TROOP_NAME, MapInput } from './util/types';
+import { Position, GameMapConfig, TILE_TYPE, MapInput } from './util/types';
 import { encodeTileMap, generateGameMaps } from './util/mapHelper';
 import { GameConfig } from '../api/types';
 import { MEDITERRAINEAN_MAP_CONFIG, testingMapConfig } from './util/mapLibrary';
@@ -34,8 +34,6 @@ task('deploy', 'deploy contracts')
   .addFlag('fixmap', 'Use deterministic map') // default is non-deterministic maps; deterministic maps are mainly used for client development
   .addOptionalParam('name', 'Name of fixed map', 'Hello, World!')
   .addFlag('savemap', 'Save map to local') // default is not to save
-  .addFlag('nocooldown', 'No cooldowns!') // default is to have cooldown
-  .addFlag('ecs', 'ECS') // default is no ECS
   .setAction(async (args: any, hre: HardhatRuntimeEnvironment) => {
     try {
       // Compile contracts
@@ -52,21 +50,10 @@ task('deploy', 'deploy contracts')
       const isRelease: boolean = args.release;
       let mapName: string = args.name;
       const saveMap: boolean = args.savemap;
-      const noCooldown: boolean = args.nocooldown;
-      const ecs: boolean = args.ecs;
 
       // Check connection with faucet to make sure deployment will post
       if (!isDev) {
         await isConnectionLive();
-      }
-
-      // Remove cooldowns if no cooldown
-      let troopTypes = TROOP_TYPES;
-      if (noCooldown) {
-        troopTypes = troopTypes.map((troopType) => {
-          troopType.movementCooldown = 0;
-          return troopType;
-        });
       }
 
       // Set up deployer and some local variables
@@ -133,94 +120,65 @@ task('deploy', 'deploy contracts')
       const diamond = await getDiamond(hre, diamondAddr);
       printDivider();
 
-      // Initialize map
-      console.log('✦ initializing map');
+      // Register components
+      const time0 = performance.now();
+      await (await diamond.registerDefaultComponents(diamond.address)).wait();
       const time1 = performance.now();
+      console.log(`✦ component registration took ${Math.floor(time1 - time0)} ms`);
+
+      // Initialize map
       const encodedTileMap = encodeTileMap(tileMap, 6, 50);
       await (await diamond.storeEncodedColumnBatches(encodedTileMap)).wait();
       const time2 = performance.now();
       console.log(`✦ lazy setting ${tileMap.length}x${tileMap[0].length} map took ${Math.floor(time2 - time1)} ms`);
 
-      console.log('✦ initializing bases');
       const baseTiles = [...portTiles, ...cityTiles, ...oilWellTiles];
       for (let i = 0; i < baseTiles.length; i += 20) {
         await (await diamond.bulkInitializeTiles(baseTiles.slice(i, i + 20))).wait();
       }
-
       const time3 = performance.now();
       console.log(`✦ initializing ${baseTiles.length} bases took ${Math.floor(time3 - time2)} ms`);
 
       // Randomly initialize players if on localhost
       if (isDev) {
-        console.log('✦ initializing players');
         let x: number;
         let y: number;
 
         if (fixMap && mapName === 'testingMap') {
-          if (ecs) {
-            printDivider();
-            console.log('☢️ DANGER: EXPERIMENTING WITH ECS');
+          const player1Pos = { x: 2, y: 4 };
+          const player2Pos = { x: 4, y: 2 };
+          const abiCoder = new ethers.utils.AbiCoder();
 
-            const player1Pos = { x: 2, y: 4 };
-            const player2Pos = { x: 4, y: 2 };
-            const abiCoder = new ethers.utils.AbiCoder();
-            let ecsTime = performance.now();
+          let ecsTime = performance.now();
 
-            // Register components
-            await (await diamond.registerComponents(diamond.address, COMPONENT_NAMES)).wait();
-            console.log(`✦ components registered after ${performance.now() - ecsTime} ms`);
-            ecsTime = performance.now();
+          // Initialize a troop template (destroyer)
+          const destroyerTemplateId = 1;
+          await (await diamond.addEntity()).wait();
+          await (await diamond.setComponentValue('IsActive', destroyerTemplateId, abiCoder.encode(['bool'], [true]))).wait();
+          await (await diamond.setComponentValue('CanMove', destroyerTemplateId, abiCoder.encode(['bool'], [true]))).wait();
+          await (await diamond.setComponentValue('CanAttack', destroyerTemplateId, abiCoder.encode(['bool'], [true]))).wait();
+          await (await diamond.setComponentValue('Name', destroyerTemplateId, abiCoder.encode(['string'], ['Destroyer']))).wait();
+          await (await diamond.setComponentValue('MaxHealth', destroyerTemplateId, abiCoder.encode(['uint256'], [3]))).wait();
+          await (await diamond.setComponentValue('DamagePerHit', destroyerTemplateId, abiCoder.encode(['uint256'], [1]))).wait();
+          await (await diamond.setComponentValue('AttackFactor', destroyerTemplateId, abiCoder.encode(['uint256'], [100]))).wait();
+          await (await diamond.setComponentValue('DefenseFactor', destroyerTemplateId, abiCoder.encode(['uint256'], [100]))).wait();
+          await (await diamond.setComponentValue('MovementCooldown', destroyerTemplateId, abiCoder.encode(['uint256'], [1]))).wait();
+          await (await diamond.setComponentValue('LargeActionCooldown', destroyerTemplateId, abiCoder.encode(['uint256'], [1]))).wait();
+          await (await diamond.setComponentValue('Gold', destroyerTemplateId, abiCoder.encode(['uint256'], [19]))).wait();
+          await (await diamond.setComponentValue('OilPerSecond', destroyerTemplateId, abiCoder.encode(['uint256'], [1]))).wait();
+          console.log(`✦ troop template created after ${performance.now() - ecsTime} ms`);
+          ecsTime = performance.now();
 
-            // Initialize a troop template (destroyer)
-            const destroyerTemplateId = 1;
-            await (await diamond.addEntity()).wait();
-            await (await diamond.setComponentValue('IsActive', destroyerTemplateId, abiCoder.encode(['bool'], [true]))).wait();
-            await (await diamond.setComponentValue('CanMove', destroyerTemplateId, abiCoder.encode(['bool'], [true]))).wait();
-            await (await diamond.setComponentValue('CanAttack', destroyerTemplateId, abiCoder.encode(['bool'], [true]))).wait();
-            await (await diamond.setComponentValue('Name', destroyerTemplateId, abiCoder.encode(['string'], ['Destroyer']))).wait();
-            await (await diamond.setComponentValue('MaxHealth', destroyerTemplateId, abiCoder.encode(['uint256'], [3]))).wait();
-            await (await diamond.setComponentValue('DamagePerHit', destroyerTemplateId, abiCoder.encode(['uint256'], [1]))).wait();
-            await (await diamond.setComponentValue('AttackFactor', destroyerTemplateId, abiCoder.encode(['uint256'], [100]))).wait();
-            await (await diamond.setComponentValue('DefenseFactor', destroyerTemplateId, abiCoder.encode(['uint256'], [100]))).wait();
-            await (await diamond.setComponentValue('MovementCooldown', destroyerTemplateId, abiCoder.encode(['uint256'], [1]))).wait();
-            await (await diamond.setComponentValue('LargeActionCooldown', destroyerTemplateId, abiCoder.encode(['uint256'], [1]))).wait();
-            await (await diamond.setComponentValue('Gold', destroyerTemplateId, abiCoder.encode(['uint256'], [19]))).wait();
-            await (await diamond.setComponentValue('OilPerSecond', destroyerTemplateId, abiCoder.encode(['uint256'], [1]))).wait();
-            console.log(`✦ troop template created after ${performance.now() - ecsTime} ms`);
-            ecsTime = performance.now();
+          // Initialize players
+          await (await diamond.connect(player1).initializePlayer(player1Pos, 'Alice')).wait();
+          await (await diamond.connect(player2).initializePlayer(player2Pos, 'Bob')).wait();
+          console.log(`✦ players initialized after ${performance.now() - ecsTime} ms`);
+          ecsTime = performance.now();
 
-            // Initialize players
-            await (await diamond.connect(player1).initializePlayer(player1Pos, 'Alice')).wait();
-            await (await diamond.connect(player2).initializePlayer(player2Pos, 'Bob')).wait();
-            console.log(`✦ players initialized after ${performance.now() - ecsTime} ms`);
-            ecsTime = performance.now();
-
-            // Purchase a destroyer for player1
-            await (await diamond.connect(player1).purchaseTroop(player1Pos, destroyerTemplateId)).wait();
-            console.log(`✦ destroyer purchased after ${performance.now() - ecsTime} ms`);
-            ecsTime = performance.now();
-          } else {
-            // Primary setting for client development
-            const player1Pos = { x: 2, y: 4 };
-            const player2Pos = { x: 4, y: 2 };
-            const player1InfantryPos = { x: 3, y: 3 };
-            const player1InfantryPos2 = { x: 2, y: 3 };
-            const player1InfantryPos3 = { x: 1, y: 3 };
-            const player2InfantryPos = { x: 3, y: 2 };
-            const player2InfantryPos2 = { x: 2, y: 2 };
-            const player2InfantryPos3 = { x: 1, y: 2 };
-            const player2DestroyerPos = { x: 5, y: 4 };
-
-            await (await diamond.connect(player1).initializePlayer(player1Pos, 'Cindy')).wait();
-            await (await diamond.connect(player2).initializePlayer(player2Pos, 'Daniel')).wait();
-            await (await diamond.connect(player1).spawnTroop(player1InfantryPos, player1.address, infantryTroopTypeId)).wait();
-            await (await diamond.connect(player1).spawnTroop(player1InfantryPos2, player1.address, infantryTroopTypeId)).wait();
-            await (await diamond.connect(player1).spawnTroop(player1InfantryPos3, player1.address, infantryTroopTypeId)).wait();
-            await (await diamond.connect(player1).spawnTroop(player2InfantryPos, player2.address, infantryTroopTypeId)).wait();
-            await (await diamond.connect(player1).spawnTroop(player2InfantryPos2, player2.address, infantryTroopTypeId)).wait();
-            await (await diamond.connect(player1).spawnTroop(player2InfantryPos3, player2.address, infantryTroopTypeId)).wait();
-            await (await diamond.connect(player1).spawnTroop(player2DestroyerPos, player2.address, destroyerTroopTypeId)).wait();
-          }
+          // Purchase a destroyer for player1
+          await (await diamond.connect(player1).purchaseTroop(player1Pos, destroyerTemplateId)).wait();
+          console.log(`✦ destroyer purchased after ${performance.now() - ecsTime} ms`);
+          ecsTime = performance.now();
         } else {
           // Primary setting for local playtesting
           const mapWidth = tileMap.length;
@@ -241,7 +199,7 @@ task('deploy', 'deploy contracts')
 
           // Give each player a port to start with
           await (await diamond.connect(player1).initializePlayer(player1Pos, 'Eve')).wait();
-          // await (await diamond.connect(player2).initializePlayer(player2Pos)).wait();
+          await (await diamond.connect(player2).initializePlayer(player2Pos, 'Felix')).wait();
         }
       }
 

@@ -8,49 +8,10 @@ import {Set} from "contracts/Set.sol";
 
 contract ECS is Test, DiamondDeployTest {
     function testPurchaseTroopEntity() public {
-        ComponentSpec[] memory _componentSpecs = new ComponentSpec[](1000);
-
-        // General system
-        _componentSpecs.push(ComponentSpec({name: "InitTimestamp", valueType: VALUE_TYPE.UINT}));
-        _componentSpecs.push(ComponentSpec({name: "IsActive", valueType: VALUE_TYPE.BOOL}));
-        _componentSpecs.push(ComponentSpec({name: "Position", valueType: VALUE_TYPE.POSITION}));
-        _componentSpecs.push(ComponentSpec({name: "Owner", valueType: VALUE_TYPE.UINT}));
-
-        // Identifier system
-        _componentSpecs.push(ComponentSpec({name: "IsComponent", valueType: VALUE_TYPE.BOOL})); // this must be the first (or zero-th, however you name it) component!
-        _componentSpecs.push(ComponentSpec({name: "Name", valueType: VALUE_TYPE.STRING}));
-        _componentSpecs.push(ComponentSpec({name: "Identifier", valueType: VALUE_TYPE.STRING})); // most direct tag for frontend
-        _componentSpecs.push(ComponentSpec({name: "CanMove", valueType: VALUE_TYPE.BOOL}));
-        _componentSpecs.push(ComponentSpec({name: "CanAttack", valueType: VALUE_TYPE.BOOL}));
-        _componentSpecs.push(ComponentSpec({name: "CanCapture", valueType: VALUE_TYPE.BOOL}));
-        _componentSpecs.push(ComponentSpec({name: "CanPurchase", valueType: VALUE_TYPE.BOOL}));
-
-        // Resource system
-        _componentSpecs.push(ComponentSpec({name: "Gold", valueType: VALUE_TYPE.UINT}));
-        _componentSpecs.push(ComponentSpec({name: "GoldPerSecond", valueType: VALUE_TYPE.INT}));
-        _componentSpecs.push(ComponentSpec({name: "Oil", valueType: VALUE_TYPE.UINT}));
-        _componentSpecs.push(ComponentSpec({name: "OilPerSecond", valueType: VALUE_TYPE.INT}));
-        _componentSpecs.push(ComponentSpec({name: "BalanceLastUpdated", valueType: VALUE_TYPE.UINT}));
-
-        // Battle system
-        _componentSpecs.push(ComponentSpec({name: "Health", valueType: VALUE_TYPE.UINT}));
-        _componentSpecs.push(ComponentSpec({name: "LastMoved", valueType: VALUE_TYPE.UINT}));
-        _componentSpecs.push(ComponentSpec({name: "LastLargeActionTaken", valueType: VALUE_TYPE.UINT}));
-        _componentSpecs.push(ComponentSpec({name: "LastRepaired", valueType: VALUE_TYPE.UINT}));
-        _componentSpecs.push(ComponentSpec({name: "IsLandTroop", valueType: VALUE_TYPE.BOOL}));
-        _componentSpecs.push(ComponentSpec({name: "MaxHealth", valueType: VALUE_TYPE.UINT}));
-        _componentSpecs.push(ComponentSpec({name: "DamagePerHit", valueType: VALUE_TYPE.UINT}));
-        _componentSpecs.push(ComponentSpec({name: "AttackFactor", valueType: VALUE_TYPE.UINT}));
-        _componentSpecs.push(ComponentSpec({name: "DefenseFactor", valueType: VALUE_TYPE.UINT}));
-        _componentSpecs.push(ComponentSpec({name: "MovementCooldown", valueType: VALUE_TYPE.UINT}));
-        _componentSpecs.push(ComponentSpec({name: "LargeActionCooldown", valueType: VALUE_TYPE.UINT}));
-        _componentSpecs.push(ComponentSpec({name: "ArmyId", valueType: VALUE_TYPE.UINT}));
-        _componentSpecs.push(ComponentSpec({name: "IsDebuffed", valueType: VALUE_TYPE.BOOL}));
-
         vm.startPrank(deployer);
 
         // Register components
-        helper.registerComponents(diamond, _componentSpecs);
+        helper.registerDefaultComponents(diamond);
 
         // Initialize a troop template (destroyer)
         uint256 _destroyerTemplateId = helper.addEntity();

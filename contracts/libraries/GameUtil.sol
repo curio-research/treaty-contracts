@@ -2,7 +2,7 @@
 pragma solidity ^0.8.4;
 
 import "contracts/libraries/Storage.sol";
-import {BASE_NAME, GameState, Position, TERRAIN, Tile, WorldConstants} from "contracts/libraries/Types.sol";
+import {BASE_NAME, ComponentSpec, GameState, Position, TERRAIN, Tile, VALUE_TYPE, WorldConstants} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 import {Set} from "contracts/Set.sol";
 import {Component} from "contracts/Component.sol";
@@ -535,6 +535,47 @@ library Util {
     // ECS UTILITY FUNCTIONS
     // ----------------------------------------------------------
 
+    function _registerComponents(address _gameAddr, ComponentSpec[] memory _componentSpecs) public {
+        uint256 _componentCount = 0;
+        ComponentSpec memory _spec = _componentSpecs[_componentCount];
+        while (bytes(_spec.name).length > 0) {
+            // non-empty component spec
+            address _addr;
+            if (_spec.valueType == VALUE_TYPE.ADDRESS) {
+                _addr = address(new AddressComponent(_gameAddr));
+            } else if (_spec.valueType == VALUE_TYPE.BOOL) {
+                _addr = address(new BoolComponent(_gameAddr));
+            } else if (_spec.valueType == VALUE_TYPE.INT) {
+                _addr = address(new IntComponent(_gameAddr));
+            } else if (_spec.valueType == VALUE_TYPE.POSITION) {
+                _addr = address(new PositionComponent(_gameAddr));
+            } else if (_spec.valueType == VALUE_TYPE.STRING) {
+                _addr = address(new StringComponent(_gameAddr));
+            } else if (_spec.valueType == VALUE_TYPE.UINT) {
+                _addr = address(new UintComponent(_gameAddr));
+            } else {
+                _addr = address(new Component(_gameAddr));
+            }
+            gs().components[_spec.name] = _addr;
+
+            uint256 _componentId = _addEntity();
+            _setBool("IsComponent", _componentId);
+            gs().idComponentMap[_componentId] = _addr; // component ID starts with 1
+
+            emit NewComponent(_spec.name, _componentId);
+
+            _componentCount++;
+            _spec = _componentSpecs[_componentCount];
+        }
+
+        // Copy result to array with known length
+        string[] memory _componentNames = new string[](_componentCount);
+        for (uint256 i = 0; i < _componentCount; i++) {
+            _componentNames[i] = _componentSpecs[i].name;
+        }
+        gs().componentNames = _componentNames;
+    }
+
     function _getComponent(string memory _name) public view returns (Component) {
         address _componentAddr = gs().components[_name];
         require(_componentAddr != address(0), "CURIO: Component not found");
@@ -571,26 +612,26 @@ library Util {
         emit EntityRemoved(_entity);
     }
 
-    // function _getComponentValue(string memory _componentName, uint256 _entity) public view returns (bytes memory) {
-    //     return _getComponent(_componentName).getBytesValue(_entity);
-    // }
+    function _getComponentValue(string memory _componentName, uint256 _entity) public view returns (bytes memory) {
+        return _getComponent(_componentName).getBytesValue(_entity);
+    }
 
-    // // Question: At the moment, all events regarding component set and removal are emitted in game contracts. Is this good?
-    // function _setComponentValue(
-    //     string memory _componentName,
-    //     uint256 _entity,
-    //     bytes memory _value
-    // ) public {
-    //     _getComponent(_componentName).set(_entity, _value);
+    // Question: At the moment, all events regarding component set and removal are emitted in game contracts. Is this good?
+    function _setComponentValue(
+        string memory _componentName,
+        uint256 _entity,
+        bytes memory _value
+    ) public {
+        _getComponent(_componentName).set(_entity, _value);
 
-    //     emit ComponentValueSet(_componentName, _entity, _value);
-    // }
+        emit ComponentValueSet(_componentName, _entity, _value);
+    }
 
-    // function _removeComponentValue(string memory _componentName, uint256 _entity) public {
-    //     _getComponent(_componentName).remove(_entity);
+    function _removeComponentValue(string memory _componentName, uint256 _entity) public {
+        _getComponent(_componentName).remove(_entity);
 
-    //     emit ComponentValueSet(_componentName, _entity, new bytes(0));
-    // }
+        emit ComponentValueSet(_componentName, _entity, new bytes(0));
+    }
 
     // inclusive on both ends
     function _filterByComponentRange(

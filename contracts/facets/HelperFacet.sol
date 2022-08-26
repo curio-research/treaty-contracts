@@ -164,56 +164,62 @@ contract HelperFacet is UseStorage {
     // ECS HELPERS
     // ----------------------------------------------------------------------
 
-    function registerComponents(address _gameAddr, ComponentSpec[1000] memory _componentSpecs) external onlyAdmin {
-        uint256 _componentCount = 0;
-        ComponentSpec memory _spec = _componentSpecs[_componentCount];
-        while (bytes(_spec.name).length > 0) {
-            // non-empty component spec
-            address _addr;
-            if (_spec.valueType == VALUE_TYPE.ADDRESS) {
-                _addr = address(new AddressComponent(_gameAddr));
-            } else if (_spec.valueType == VALUE_TYPE.BOOL) {
-                _addr = address(new BoolComponent(_gameAddr));
-            } else if (_spec.valueType == VALUE_TYPE.INT) {
-                _addr = address(new IntComponent(_gameAddr));
-            } else if (_spec.valueType == VALUE_TYPE.POSITION) {
-                _addr = address(new PositionComponent(_gameAddr));
-            } else if (_spec.valueType == VALUE_TYPE.STRING) {
-                _addr = address(new StringComponent(_gameAddr));
-            } else if (_spec.valueType == VALUE_TYPE.UINT) {
-                _addr = address(new UintComponent(_gameAddr));
-            } else {
-                _addr = address(new Component(_gameAddr));
-            }
-            gs().components[_spec.name] = _addr;
+    function registerComponents(address _gameAddr, ComponentSpec[] memory _componentSpecs) external onlyAdmin {
+        Util._registerComponents(_gameAddr, _componentSpecs);
+    }
 
-            uint256 _componentId = Util._addEntity();
-            Util._setBool("IsComponent", _componentId);
-            gs().idComponentMap[_componentId] = _addr; // component ID starts with 1
+    function registerDefaultComponents(address _gameAddr) external onlyAdmin {
+        ComponentSpec[] memory _componentSpecs = new ComponentSpec[](29);
 
-            emit Util.NewComponent(_spec.name, _componentId);
+        // General system
+        _componentSpecs[0] = (ComponentSpec({name: "InitTimestamp", valueType: VALUE_TYPE.UINT}));
+        _componentSpecs[1] = (ComponentSpec({name: "IsActive", valueType: VALUE_TYPE.BOOL}));
+        _componentSpecs[2] = (ComponentSpec({name: "Position", valueType: VALUE_TYPE.POSITION}));
+        _componentSpecs[3] = (ComponentSpec({name: "Owner", valueType: VALUE_TYPE.UINT}));
 
-            _componentCount++;
-            _spec = _componentSpecs[_componentCount];
-        }
+        // Identifier system
+        _componentSpecs[4] = (ComponentSpec({name: "IsComponent", valueType: VALUE_TYPE.BOOL})); // this must be the first (or zero-th, however you name it) component!
+        _componentSpecs[5] = (ComponentSpec({name: "Name", valueType: VALUE_TYPE.STRING}));
+        _componentSpecs[6] = (ComponentSpec({name: "Identifier", valueType: VALUE_TYPE.STRING})); // most direct tag for frontend
+        _componentSpecs[7] = (ComponentSpec({name: "CanMove", valueType: VALUE_TYPE.BOOL}));
+        _componentSpecs[8] = (ComponentSpec({name: "CanAttack", valueType: VALUE_TYPE.BOOL}));
+        _componentSpecs[9] = (ComponentSpec({name: "CanCapture", valueType: VALUE_TYPE.BOOL}));
+        _componentSpecs[10] = (ComponentSpec({name: "CanPurchase", valueType: VALUE_TYPE.BOOL}));
 
-        // Copy result to array with known length
-        string[] memory _componentNames = new string[](_componentCount);
-        for (uint256 i = 0; i < _componentCount; i++) {
-            _componentNames[i] = _componentSpecs[i].name;
-        }
-        gs().componentNames = _componentNames;
+        // Resource system
+        _componentSpecs[11] = (ComponentSpec({name: "Gold", valueType: VALUE_TYPE.UINT}));
+        _componentSpecs[12] = (ComponentSpec({name: "GoldPerSecond", valueType: VALUE_TYPE.INT}));
+        _componentSpecs[13] = (ComponentSpec({name: "Oil", valueType: VALUE_TYPE.UINT}));
+        _componentSpecs[14] = (ComponentSpec({name: "OilPerSecond", valueType: VALUE_TYPE.INT}));
+        _componentSpecs[15] = (ComponentSpec({name: "BalanceLastUpdated", valueType: VALUE_TYPE.UINT}));
+
+        // Battle system
+        _componentSpecs[16] = (ComponentSpec({name: "Health", valueType: VALUE_TYPE.UINT}));
+        _componentSpecs[17] = (ComponentSpec({name: "LastMoved", valueType: VALUE_TYPE.UINT}));
+        _componentSpecs[18] = (ComponentSpec({name: "LastLargeActionTaken", valueType: VALUE_TYPE.UINT}));
+        _componentSpecs[19] = (ComponentSpec({name: "LastRepaired", valueType: VALUE_TYPE.UINT}));
+        _componentSpecs[20] = (ComponentSpec({name: "IsLandTroop", valueType: VALUE_TYPE.BOOL}));
+        _componentSpecs[21] = (ComponentSpec({name: "MaxHealth", valueType: VALUE_TYPE.UINT}));
+        _componentSpecs[22] = (ComponentSpec({name: "DamagePerHit", valueType: VALUE_TYPE.UINT}));
+        _componentSpecs[23] = (ComponentSpec({name: "AttackFactor", valueType: VALUE_TYPE.UINT}));
+        _componentSpecs[24] = (ComponentSpec({name: "DefenseFactor", valueType: VALUE_TYPE.UINT}));
+        _componentSpecs[25] = (ComponentSpec({name: "MovementCooldown", valueType: VALUE_TYPE.UINT}));
+        _componentSpecs[26] = (ComponentSpec({name: "LargeActionCooldown", valueType: VALUE_TYPE.UINT}));
+        _componentSpecs[27] = (ComponentSpec({name: "ArmyId", valueType: VALUE_TYPE.UINT}));
+        _componentSpecs[28] = (ComponentSpec({name: "IsDebuffed", valueType: VALUE_TYPE.BOOL}));
+
+        Util._registerComponents(_gameAddr, _componentSpecs);
     }
 
     function addEntity() external onlyAdmin returns (uint256) {
         return Util._addEntity();
     }
 
-    // function setComponentValue(
-    //     string memory _componentName,
-    //     uint256 _entity,
-    //     bytes memory _value
-    // ) external onlyAdmin {
-    //     Util._setComponentValue(_componentName, _entity, _value);
-    // }
+    function setComponentValue(
+        string memory _componentName,
+        uint256 _entity,
+        bytes memory _value
+    ) external onlyAdmin {
+        Util._setComponentValue(_componentName, _entity, _value);
+    }
 }
