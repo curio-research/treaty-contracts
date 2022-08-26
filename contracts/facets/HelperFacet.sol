@@ -17,6 +17,8 @@ contract HelperFacet is UseStorage {
     using SafeMath for uint256;
     uint256 NULL = 0;
 
+    // TODO: Question: How to reuse functions from Util so that they can be directly called by external parties?
+
     // ----------------------------------------------------------------------
     // ADMIN FUNCTIONS
     // ----------------------------------------------------------------------
@@ -169,16 +171,16 @@ contract HelperFacet is UseStorage {
     }
 
     function registerDefaultComponents(address _gameAddr) external onlyAdmin {
-        ComponentSpec[] memory _componentSpecs = new ComponentSpec[](29);
+        ComponentSpec[] memory _componentSpecs = new ComponentSpec[](30);
 
         // General system
-        _componentSpecs[0] = (ComponentSpec({name: "InitTimestamp", valueType: VALUE_TYPE.UINT}));
-        _componentSpecs[1] = (ComponentSpec({name: "IsActive", valueType: VALUE_TYPE.BOOL}));
-        _componentSpecs[2] = (ComponentSpec({name: "Position", valueType: VALUE_TYPE.POSITION}));
-        _componentSpecs[3] = (ComponentSpec({name: "Owner", valueType: VALUE_TYPE.UINT}));
+        _componentSpecs[0] = (ComponentSpec({name: "IsComponent", valueType: VALUE_TYPE.BOOL})); // this must be the first (or zero-th, however you name it) component!
+        _componentSpecs[1] = (ComponentSpec({name: "InitTimestamp", valueType: VALUE_TYPE.UINT}));
+        _componentSpecs[2] = (ComponentSpec({name: "IsActive", valueType: VALUE_TYPE.BOOL}));
+        _componentSpecs[3] = (ComponentSpec({name: "Position", valueType: VALUE_TYPE.POSITION}));
+        _componentSpecs[4] = (ComponentSpec({name: "Owner", valueType: VALUE_TYPE.UINT}));
 
         // Identifier system
-        _componentSpecs[4] = (ComponentSpec({name: "IsComponent", valueType: VALUE_TYPE.BOOL})); // this must be the first (or zero-th, however you name it) component!
         _componentSpecs[5] = (ComponentSpec({name: "Name", valueType: VALUE_TYPE.STRING}));
         _componentSpecs[6] = (ComponentSpec({name: "Identifier", valueType: VALUE_TYPE.STRING})); // most direct tag for frontend
         _componentSpecs[7] = (ComponentSpec({name: "CanMove", valueType: VALUE_TYPE.BOOL}));
@@ -207,6 +209,7 @@ contract HelperFacet is UseStorage {
         _componentSpecs[26] = (ComponentSpec({name: "LargeActionCooldown", valueType: VALUE_TYPE.UINT}));
         _componentSpecs[27] = (ComponentSpec({name: "ArmyId", valueType: VALUE_TYPE.UINT}));
         _componentSpecs[28] = (ComponentSpec({name: "IsDebuffed", valueType: VALUE_TYPE.BOOL}));
+        _componentSpecs[29] = (ComponentSpec({name: "IsArmy", valueType: VALUE_TYPE.BOOL}));
 
         Util._registerComponents(_gameAddr, _componentSpecs);
     }

@@ -40,66 +40,68 @@ contract DiamondDeployTest is Test {
     address public player1 = address(1);
     address public player2 = address(2);
     address public player3 = address(3);
+    uint256 public player1Id;
+    uint256 public player2Id;
+    uint256 public player3Id;
 
     Position public player1Pos = Position({x: 6, y: 1});
     Position public player2Pos = Position({x: 6, y: 3});
     Position public player3Pos = Position({x: 5, y: 2});
 
-    uint256 public initTroopNonce = 1;
+    uint256 public destroyerTemplateId;
 
-    uint256 public infantryTroopTypeId = indexToId(uint256(TROOP_NAME.INFANTRY));
-    uint256 public destroyerTroopTypeId = indexToId(uint256(TROOP_NAME.DESTROYER));
-    uint256 public battleshipTroopTypeId = indexToId(uint256(TROOP_NAME.BATTLESHIP));
-
-    // troop types
-    TroopType public infantryTroopType =
-        TroopType({
-            name: TROOP_NAME.INFANTRY,
-            maxHealth: 100,
-            damagePerHit: 100,
-            attackFactor: 100,
-            defenseFactor: 100,
-            movementCooldown: 1,
-            largeActionCooldown: 1,
-            goldPrice: 6,
-            oilConsumptionPerSecond: 1 //
-        });
-    TroopType public destroyerTroopType =
-        TroopType({
-            name: TROOP_NAME.DESTROYER,
-            maxHealth: 300,
-            damagePerHit: 100,
-            attackFactor: 100,
-            defenseFactor: 100,
-            movementCooldown: 1,
-            largeActionCooldown: 1,
-            goldPrice: 20,
-            oilConsumptionPerSecond: 1 //
-        });
-    TroopType public cruiserTroopType =
-        TroopType({
-            name: TROOP_NAME.CRUISER,
-            maxHealth: 800,
-            damagePerHit: 200,
-            attackFactor: 100,
-            defenseFactor: 100,
-            movementCooldown: 1,
-            largeActionCooldown: 1,
-            goldPrice: 30,
-            oilConsumptionPerSecond: 1 //
-        });
-    TroopType public battleshipTroopType =
-        TroopType({
-            name: TROOP_NAME.BATTLESHIP,
-            maxHealth: 1200,
-            damagePerHit: 300,
-            attackFactor: 100,
-            defenseFactor: 100,
-            movementCooldown: 1,
-            largeActionCooldown: 1,
-            goldPrice: 50,
-            oilConsumptionPerSecond: 2 //
-        });
+    // // troop types
+    // uint256 public infantryTroopTypeId = 0;
+    // uint256 public destroyerTroopTypeId = 1;
+    // uint256 public battleshipTroopTypeId = 2;
+    // TroopType public infantryTroopType =
+    //     TroopType({
+    //         name: TROOP_NAME.INFANTRY,
+    //         maxHealth: 100,
+    //         damagePerHit: 100,
+    //         attackFactor: 100,
+    //         defenseFactor: 100,
+    //         movementCooldown: 1,
+    //         largeActionCooldown: 1,
+    //         goldPrice: 6,
+    //         oilConsumptionPerSecond: 1 //
+    //     });
+    // TroopType public destroyerTroopType =
+    //     TroopType({
+    //         name: TROOP_NAME.DESTROYER,
+    //         maxHealth: 300,
+    //         damagePerHit: 100,
+    //         attackFactor: 100,
+    //         defenseFactor: 100,
+    //         movementCooldown: 1,
+    //         largeActionCooldown: 1,
+    //         goldPrice: 20,
+    //         oilConsumptionPerSecond: 1 //
+    //     });
+    // TroopType public cruiserTroopType =
+    //     TroopType({
+    //         name: TROOP_NAME.CRUISER,
+    //         maxHealth: 800,
+    //         damagePerHit: 200,
+    //         attackFactor: 100,
+    //         defenseFactor: 100,
+    //         movementCooldown: 1,
+    //         largeActionCooldown: 1,
+    //         goldPrice: 30,
+    //         oilConsumptionPerSecond: 1 //
+    //     });
+    // TroopType public battleshipTroopType =
+    //     TroopType({
+    //         name: TROOP_NAME.BATTLESHIP,
+    //         maxHealth: 1200,
+    //         damagePerHit: 300,
+    //         attackFactor: 100,
+    //         defenseFactor: 100,
+    //         movementCooldown: 1,
+    //         largeActionCooldown: 1,
+    //         goldPrice: 50,
+    //         oilConsumptionPerSecond: 2 //
+    //     });
 
     // we assume these two facet selectors do not change. If they do however, we should use getSelectors
     bytes4[] OWNERSHIP_SELECTORS = [bytes4(0xf2fde38b), 0x8da5cb5b];
@@ -114,15 +116,13 @@ contract DiamondDeployTest is Test {
         diamondLoupeFacet = new DiamondLoupeFacet();
         diamondOwnershipFacet = new OwnershipFacet();
 
-        helperFacet = new HelperFacet();
         engineFacet = new EngineFacet();
         getterFacet = new GetterFacet();
-
+        helperFacet = new HelperFacet();
         WorldConstants memory _worldConstants = _generateWorldConstants();
-        TroopType[] memory _troopTypes = _generateTroopTypes();
 
-        // fetch args from cli. craft payload for init deploy
-        bytes memory initData = abi.encodeWithSelector(getSelectors("DiamondInit")[0], _worldConstants, _troopTypes);
+        // Fetch args from CLI craft payload for init deploy
+        bytes memory initData = abi.encodeWithSelector(getSelectors("DiamondInit")[0], _worldConstants);
 
         IDiamondCut.FacetCut[] memory cuts = new IDiamondCut.FacetCut[](5);
         cuts[0] = IDiamondCut.FacetCut({facetAddress: address(diamondLoupeFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: LOUPE_SELECTORS});
@@ -133,25 +133,47 @@ contract DiamondDeployTest is Test {
 
         IDiamondCut(diamond).diamondCut(cuts, address(diamondInit), initData);
 
-        helper = HelperFacet(diamond);
         getter = GetterFacet(diamond);
         engine = EngineFacet(diamond);
+        helper = HelperFacet(diamond);
         ownership = OwnershipFacet(diamond);
 
-        // initialize map using lazy + encoding
+        // Register components
+        helper.registerDefaultComponents(diamond);
+
+        // Initialize map
         uint256[][] memory _map = _generateMap(_worldConstants.worldWidth, _worldConstants.worldHeight, 10);
         uint256[][] memory _encodedColumnBatches = _encodeTileMap(_map, _worldConstants.numInitTerrainTypes, _worldConstants.initBatchSize);
         helper.storeEncodedColumnBatches(_encodedColumnBatches);
 
         vm.stopPrank();
 
-        // initialize players
+        // Initialize players
         vm.prank(player1);
-        engine.initializePlayer(player1Pos);
+        engine.initializePlayer(player1Pos, "Alice");
+        player1Id = getter.getPlayerId(player1);
         vm.prank(player2);
-        engine.initializePlayer(player2Pos);
+        engine.initializePlayer(player2Pos, "Bob");
+        player2Id = getter.getPlayerId(player2);
         vm.prank(player3);
-        engine.initializePlayer(player3Pos);
+        engine.initializePlayer(player3Pos, "Cindy");
+        player3Id = getter.getPlayerId(player3);
+
+        // Initialize a troop template (destroyer)
+        vm.startPrank(deployer);
+        destroyerTemplateId = helper.addEntity();
+        helper.setComponentValue("CanMove", destroyerTemplateId, abi.encode(true));
+        helper.setComponentValue("CanAttack", destroyerTemplateId, abi.encode(true));
+        helper.setComponentValue("Name", destroyerTemplateId, abi.encode("Destroyer"));
+        helper.setComponentValue("MaxHealth", destroyerTemplateId, abi.encode(3));
+        helper.setComponentValue("DamagePerHit", destroyerTemplateId, abi.encode(1));
+        helper.setComponentValue("AttackFactor", destroyerTemplateId, abi.encode(100));
+        helper.setComponentValue("DefenseFactor", destroyerTemplateId, abi.encode(100));
+        helper.setComponentValue("MovementCooldown", destroyerTemplateId, abi.encode(1));
+        helper.setComponentValue("LargeActionCooldown", destroyerTemplateId, abi.encode(1));
+        helper.setComponentValue("Gold", destroyerTemplateId, abi.encode(19));
+        helper.setComponentValue("OilPerSecond", destroyerTemplateId, abi.encode(1));
+        vm.stopPrank();
     }
 
     function _encodeTileMap(
@@ -214,16 +236,6 @@ contract DiamondDeployTest is Test {
     }
 
     // Note: hardcoded
-    function _generateTroopTypes() internal view returns (TroopType[] memory) {
-        TroopType[] memory _troopTypes = new TroopType[](5);
-        _troopTypes[0] = infantryTroopType;
-        _troopTypes[1] = destroyerTroopType;
-        _troopTypes[2] = cruiserTroopType;
-        _troopTypes[3] = battleshipTroopType;
-        return _troopTypes;
-    }
-
-    // Note: hardcoded
     function _generateMap(
         uint256 _width,
         uint256 _height,
@@ -267,18 +279,18 @@ contract DiamondDeployTest is Test {
         return _map;
     }
 
-    // generates values that need to be initialized from the cli and pipes it back into solidity! magic
-    function getInitVal() public returns (WorldConstants memory _constants, TroopType[] memory _troopTypes) {
-        string[] memory runJsInputs = new string[](4);
-        runJsInputs[0] = "yarn";
-        runJsInputs[1] = "--silent";
-        runJsInputs[2] = "run";
-        runJsInputs[3] = "getInitParams";
+    // // generates values that need to be initialized from the cli and pipes it back into solidity! magic
+    // function getInitVal() public returns (WorldConstants memory _constants) {
+    //     string[] memory runJsInputs = new string[](4);
+    //     runJsInputs[0] = "yarn";
+    //     runJsInputs[1] = "--silent";
+    //     runJsInputs[2] = "run";
+    //     runJsInputs[3] = "getInitParams";
 
-        bytes memory res = vm.ffi(runJsInputs);
+    //     bytes memory res = vm.ffi(runJsInputs);
 
-        (_constants, _troopTypes) = abi.decode(res, (WorldConstants, TroopType[]));
-    }
+    //     _constants = abi.decode(res, (WorldConstants));
+    // }
 
     function getSelectors(string memory _facetName) internal returns (bytes4[] memory selectors) {
         string[] memory cmd = new string[](5);
@@ -289,14 +301,5 @@ contract DiamondDeployTest is Test {
         cmd[4] = _facetName;
         bytes memory res = vm.ffi(cmd);
         selectors = abi.decode(res, (bytes4[]));
-    }
-
-    function indexToId(uint256 _index) public pure returns (uint256) {
-        return _index + 1;
-    }
-
-    // helpers
-    function getRightPos(Position memory _pos) public pure returns (Position memory) {
-        return Position({x: _pos.x + 1, y: _pos.y});
     }
 }

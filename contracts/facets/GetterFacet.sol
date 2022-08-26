@@ -37,4 +37,8 @@ contract GetterFacet is UseStorage {
     function getPlayerCount() external view returns (uint256) {
         return gs().players.length;
     }
+
+    function getPlayerId(address _player) external view returns (uint256) {
+        return gs().playerIdMap[_player];
+    }
 }

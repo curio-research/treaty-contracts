@@ -7,7 +7,7 @@ import {EngineModules} from "contracts/libraries/EngineModules.sol";
 import {Position, TERRAIN, WorldConstants} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 import {Set} from "contracts/Set.sol";
-import {BoolComponent} from "contracts/TypedComponents.sol";
+import {BoolComponent, UintComponent} from "contracts/TypedComponents.sol";
 
 /// @title Engine facet
 /// @notice Contains player functions such as march, purchaseTroop, initializePlayer
@@ -45,8 +45,9 @@ contract EngineFacet is UseStorage {
         require(Util._getUint("Owner", _armyId) == _playerId, "CURIO: You can only dispatch own troop");
 
         // 7. Large action cooldown check
+        uint256[] memory _armyTroopIds = Util._getArmyTroops(_armyId);
         uint256 _lastLargeActionTaken = Util._getUint("LastLargeActionTaken", _armyId);
-        uint256 _largeActionCooldown = Util._getUint("LargeActionCooldown", _armyId);
+        uint256 _largeActionCooldown = Util._getArmyLargeActionCooldown(_armyTroopIds);
         require(block.timestamp - _lastLargeActionTaken >= _largeActionCooldown, "CURIO: Large action taken too recently");
 
         // 8. Geographic check
@@ -107,13 +108,14 @@ contract EngineFacet is UseStorage {
         require(Util._getUint("Owner", _troopId) == _playerId, "CURIO: You can only dispatch own troop");
 
         // 7. Large action cooldown check
+        uint256[] memory _armyTroopIds = Util._getArmyTroops(_armyId);
         uint256 _lastLargeActionTaken = Util._getUint("LastLargeActionTaken", _armyId);
-        uint256 _largeActionCooldown = Util._getUint("LargeActionCooldown", _armyId);
+        uint256 _largeActionCooldown = Util._getArmyLargeActionCooldown(_armyTroopIds);
         require(block.timestamp - _lastLargeActionTaken >= _largeActionCooldown, "CURIO: Large action taken too recently");
 
         // 8. Movement cooldown check
         uint256 _lastMoved = Util._getUint("LastMoved", _armyId);
-        uint256 _movementCooldown = Util._getUint("MovementCooldown", _armyId);
+        uint256 _movementCooldown = Util._getArmyMovementCooldown(_armyTroopIds);
         require(block.timestamp - _lastMoved >= _movementCooldown, "CURIO: Moved too recently");
 
         // 9. Geographic and base checks
@@ -226,7 +228,7 @@ contract EngineFacet is UseStorage {
         require(_baseId != NULL, "CURIO: No base found");
 
         // Verify that base is not taken
-        require(!BoolComponent(gs().components["Owner"]).has(_baseId), "CURIO: Base is taken");
+        require(!UintComponent(gs().components["Owner"]).has(_baseId), "CURIO: Base is taken");
 
         // Spawn player
         WorldConstants memory _worldConstants = gs().worldConstants;
@@ -244,6 +246,7 @@ contract EngineFacet is UseStorage {
         Util._setUint("Owner", _baseId, _playerId);
         Util._setUint("Health", _baseId, 800);
         Util._setInt("GoldPerSecond", _playerId, int256(_worldConstants.defaultBaseGoldGenerationPerSecond));
+        Util._setInt("OilPerSecond", _playerId, int256(0));
 
         return _playerId;
     }

@@ -116,16 +116,12 @@ library Util {
         _setUint("MovementCooldown", _troopId, _getUint("MovementCooldown", _troopTemplateId));
         _setUint("LargeActionCooldown", _troopId, _getUint("LargeActionCooldown", _troopTemplateId));
         // resource fields
-        uint256 _goldCost = _getUint("Gold", _troopTemplateId);
         int256 _oilPerSecond = _getInt("OilPerSecond", _troopTemplateId);
         _setInt("OilPerSecond", _troopId, _oilPerSecond);
 
         // 3. Update balances
         _updatePlayerBalances(_playerId);
-        uint256 _playerGoldBalance = _getUint("Gold", _playerId);
         int256 _playerOilPerSecond = _getInt("OilPerSecond", _playerId);
-        require(_playerGoldBalance > _goldCost, "CURIO: Insufficient gold balance");
-        _setUint("Gold", _playerId, _playerGoldBalance - _goldCost);
         _setInt("OilPerSecond", _playerId, _playerOilPerSecond + _oilPerSecond);
 
         return _troopId;
@@ -248,7 +244,7 @@ library Util {
     function _getBaseAt(Position memory _position) public returns (uint256) {
         Set _set1 = new Set();
         Set _set2 = new Set();
-        _set1.addArray(_getComponent("canPurchase").getEntities());
+        _set1.addArray(_getComponent("CanPurchase").getEntities());
         _set2.addArray(PositionComponent(gs().components["Position"]).getEntitiesWithValue(_position));
         uint256[] memory _result = _intersection(_set1, _set2);
 
@@ -536,10 +532,13 @@ library Util {
     // ----------------------------------------------------------
 
     function _registerComponents(address _gameAddr, ComponentSpec[] memory _componentSpecs) public {
-        uint256 _componentCount = 0;
-        ComponentSpec memory _spec = _componentSpecs[_componentCount];
-        while (bytes(_spec.name).length > 0) {
-            // non-empty component spec
+        string[] memory _componentNames = new string[](_componentSpecs.length);
+
+        for (uint256 i = 0; i < _componentSpecs.length; i++) {
+            ComponentSpec memory _spec = _componentSpecs[i];
+            _componentNames[i] = _spec.name;
+
+            // Create corresponding typed component and register its address
             address _addr;
             if (_spec.valueType == VALUE_TYPE.ADDRESS) {
                 _addr = address(new AddressComponent(_gameAddr));
@@ -558,21 +557,15 @@ library Util {
             }
             gs().components[_spec.name] = _addr;
 
+            // Record identifier entity for component
             uint256 _componentId = _addEntity();
             _setBool("IsComponent", _componentId);
-            gs().idComponentMap[_componentId] = _addr; // component ID starts with 1
+            gs().idComponentMap[_componentId] = _addr;
 
             emit NewComponent(_spec.name, _componentId);
-
-            _componentCount++;
-            _spec = _componentSpecs[_componentCount];
         }
 
-        // Copy result to array with known length
-        string[] memory _componentNames = new string[](_componentCount);
-        for (uint256 i = 0; i < _componentCount; i++) {
-            _componentNames[i] = _componentSpecs[i].name;
-        }
+        // Update component names for iteration
         gs().componentNames = _componentNames;
     }
 
