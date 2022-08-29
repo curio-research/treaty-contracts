@@ -164,7 +164,7 @@ contract DiamondDeployTest is Test {
         destroyerTemplateId = helper.addEntity();
         helper.setComponentValue("CanMove", destroyerTemplateId, abi.encode(true));
         helper.setComponentValue("CanAttack", destroyerTemplateId, abi.encode(true));
-        helper.setComponentValue("Name", destroyerTemplateId, abi.encode("Destroyer"));
+        helper.setComponentValue("Tag", destroyerTemplateId, abi.encode("Destroyer"));
         helper.setComponentValue("MaxHealth", destroyerTemplateId, abi.encode(3));
         helper.setComponentValue("DamagePerHit", destroyerTemplateId, abi.encode(1));
         helper.setComponentValue("AttackFactor", destroyerTemplateId, abi.encode(100));

@@ -7,7 +7,7 @@ import { Util } from './../typechain-types/Util';
 import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { deployProxy, loadLocalMapConfig, LOCAL_MAP_PREFIX, printDivider, saveMapToLocal } from './util/deployHelper';
-import { TROOP_TYPES, RENDER_CONSTANTS, generateWorldConstants, SMALL_MAP_INPUT, LARGE_MAP_INPUT, SANDBOX_MAP_INPUT } from './util/constants';
+import { RENDER_CONSTANTS, generateWorldConstants, SMALL_MAP_INPUT, LARGE_MAP_INPUT, SANDBOX_MAP_INPUT } from './util/constants';
 import { position } from '../util/types/common';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
 import { Position, GameMapConfig, TILE_TYPE, MapInput } from './util/types';
@@ -110,7 +110,7 @@ task('deploy', 'deploy contracts')
       console.log('✦ EngineModules:', engineModules.address);
 
       // Deploy diamond and facets
-      const diamondAddr = await deployDiamond(hre, [worldConstants, TROOP_TYPES]);
+      const diamondAddr = await deployDiamond(hre, [worldConstants]);
       const facets = [
         { name: 'EngineFacet', libraries: { Util: util.address, EngineModules: engineModules.address } },
         { name: 'GetterFacet', libraries: { Util: util.address } },
@@ -122,7 +122,7 @@ task('deploy', 'deploy contracts')
 
       // Register components
       const time0 = performance.now();
-      await (await diamond.registerDefaultComponents(diamond.address)).wait();
+      const componentSpecs = await (await diamond.registerDefaultComponents(diamond.address)).wait();
       const time1 = performance.now();
       console.log(`✦ component registration took ${Math.floor(time1 - time0)} ms`);
 
@@ -157,7 +157,7 @@ task('deploy', 'deploy contracts')
           await (await diamond.setComponentValue('IsActive', destroyerTemplateId, abiCoder.encode(['bool'], [true]))).wait();
           await (await diamond.setComponentValue('CanMove', destroyerTemplateId, abiCoder.encode(['bool'], [true]))).wait();
           await (await diamond.setComponentValue('CanAttack', destroyerTemplateId, abiCoder.encode(['bool'], [true]))).wait();
-          await (await diamond.setComponentValue('Name', destroyerTemplateId, abiCoder.encode(['string'], ['Destroyer']))).wait();
+          await (await diamond.setComponentValue('Tag', destroyerTemplateId, abiCoder.encode(['string'], ['Destroyer']))).wait();
           await (await diamond.setComponentValue('MaxHealth', destroyerTemplateId, abiCoder.encode(['uint256'], [3]))).wait();
           await (await diamond.setComponentValue('DamagePerHit', destroyerTemplateId, abiCoder.encode(['uint256'], [1]))).wait();
           await (await diamond.setComponentValue('AttackFactor', destroyerTemplateId, abiCoder.encode(['uint256'], [100]))).wait();
@@ -209,7 +209,7 @@ task('deploy', 'deploy contracts')
         network: hre.network.name,
         deploymentId: ` ${mapName ? `${mapName}-` : ''} ${isRelease ? 'release-' : ''}${hre.network.name}-${Date.now()}`,
         map: tileMap,
-        // componentNames: COMPONENT_NAMES,
+        componentSpecs,
       };
 
       // Port files to frontend if on localhost
@@ -223,7 +223,7 @@ task('deploy', 'deploy contracts')
         existingDeployments.push(configFile);
 
         await fsPromise.writeFile(configFilePath, JSON.stringify(existingDeployments));
-        // await hre.run('port'); // default to porting files
+        await hre.run('port'); // default to porting files
       }
 
       // Publish deployment

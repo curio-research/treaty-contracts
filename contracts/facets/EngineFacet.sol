@@ -235,6 +235,7 @@ contract EngineFacet is UseStorage {
         uint256 _playerEntity = Util._addEntity();
         Util._setBool("IsActive", _playerEntity);
         Util._setString("Name", _playerEntity, _name);
+        Util._setString("Tag", _playerEntity, "Player");
         Util._setUint("Gold", _playerEntity, _worldConstants.initPlayerGoldBalance);
         Util._setUint("Oil", _playerEntity, _worldConstants.initPlayerOilBalance);
         Util._setUint("InitTimestamp", _playerEntity, block.timestamp);

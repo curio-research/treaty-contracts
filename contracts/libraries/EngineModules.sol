@@ -204,7 +204,7 @@ library EngineModules {
 
         if (_tile.terrain == TERRAIN.WATER) return true; // water tiles are accessible to any troop
         uint256 _baseEntity = Util._getBaseAt(_position);
-        if (_baseEntity != _NULL() && Util._strEq(Util._getString("Name", _baseEntity), "Port")) return true; // ports are accessible to any troop // FIXME: type mismatch
+        if (_baseEntity != _NULL() && Util._strEq(Util._getString("Tag", _baseEntity), "Port")) return true; // ports are accessible to any troop // FIXME: type mismatch
 
         uint256[] memory _troopEntities = Util._getArmyTroopEntities(_armyEntity);
         for (uint256 i = 0; i < _troopEntities.length; i++) {
@@ -220,7 +220,7 @@ library EngineModules {
 
         if (_tile.terrain == TERRAIN.WATER) return true; // water tiles are accessible to any troop
         uint256 _baseEntity = Util._getBaseAt(_position);
-        if (_baseEntity != _NULL() && Util._strEq(Util._getString("Name", _baseEntity), "Port")) return true; // ports are accessible to any troop
+        if (_baseEntity != _NULL() && Util._strEq(Util._getString("Tag", _baseEntity), "Port")) return true; // ports are accessible to any troop
 
         if (Util._getComponent("CanMoveOnLand").has(_troopEntity)) return true; // infantries can move anywhere
 

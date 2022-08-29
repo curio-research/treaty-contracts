@@ -52,17 +52,17 @@ library Util {
             _setUint("DefenseFactor", _baseEntity, 100);
             if (_terrainEntity == 3) {
                 // Port
-                _setString("Name", _baseEntity, "Port");
+                _setString("Tag", _baseEntity, "Port");
                 _setInt("GoldPerSecond", _baseEntity, int256(_worldConstants.defaultBaseGoldGenerationPerSecond));
                 _terrainEntity = 0;
             } else if (_terrainEntity == 4) {
                 // City
-                _setString("Name", _baseEntity, "City");
+                _setString("Tag", _baseEntity, "City");
                 _setInt("GoldPerSecond", _baseEntity, int256(_worldConstants.defaultBaseGoldGenerationPerSecond));
                 _terrainEntity = 1;
             } else if (_terrainEntity == 5) {
                 // Oil well
-                _setString("Name", _baseEntity, "Oil Well");
+                _setString("Tag", _baseEntity, "Oil Well");
                 _setInt("OilPerSecond", _baseEntity, int256(_worldConstants.defaultWellOilGenerationPerSecond));
                 _terrainEntity = 1;
             }
@@ -76,7 +76,7 @@ library Util {
     function _addArmy(uint256 _playerEntity, Position memory _position) public returns (uint256) {
         uint256 _armyEntity = _addEntity();
         _setUint("OwnerEntity", _armyEntity, _playerEntity);
-        _setString("Name", _armyEntity, "Army");
+        _setString("Tag", _armyEntity, "Army");
         _setUint("LastMoved", _armyEntity, block.timestamp);
         _setUint("LastLargeActionTaken", _armyEntity, 0);
         _setUint("LastRepaired", _armyEntity, block.timestamp);
@@ -107,7 +107,7 @@ library Util {
         _setBool("CanAttack", _troopEntity);
         _setBool("CanCapture", _troopEntity);
         // troop type fields
-        _setString("Name", _troopEntity, _getString("Name", _troopTemplateEntity));
+        _setString("Tag", _troopEntity, _getString("Tag", _troopTemplateEntity));
         if (_getComponent("CanMoveOnLand").has(_troopTemplateEntity)) _setBool("CanMoveOnLand", _troopEntity);
         _setUint("MaxHealth", _troopEntity, _getUint("MaxHealth", _troopTemplateEntity));
         _setUint("DamagePerHit", _troopEntity, _getUint("DamagePerHit", _troopTemplateEntity));

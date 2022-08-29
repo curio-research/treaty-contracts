@@ -170,7 +170,7 @@ contract HelperFacet is UseStorage {
         Util._registerComponents(_gameAddr, _componentSpecs);
     }
 
-    function registerDefaultComponents(address _gameAddr) external onlyAdmin {
+    function registerDefaultComponents(address _gameAddr) external onlyAdmin returns (ComponentSpec[] memory) {
         ComponentSpec[] memory _componentSpecs = new ComponentSpec[](30);
 
         // General system
@@ -182,7 +182,7 @@ contract HelperFacet is UseStorage {
 
         // Identifier system
         _componentSpecs[5] = (ComponentSpec({name: "Name", valueType: VALUE_TYPE.STRING}));
-        _componentSpecs[6] = (ComponentSpec({name: "Identifier", valueType: VALUE_TYPE.STRING})); // most direct tag for frontend
+        _componentSpecs[6] = (ComponentSpec({name: "Tag", valueType: VALUE_TYPE.STRING})); // most direct tag for frontend
         _componentSpecs[7] = (ComponentSpec({name: "CanMove", valueType: VALUE_TYPE.BOOL}));
         _componentSpecs[8] = (ComponentSpec({name: "CanAttack", valueType: VALUE_TYPE.BOOL}));
         _componentSpecs[9] = (ComponentSpec({name: "CanCapture", valueType: VALUE_TYPE.BOOL}));
@@ -212,6 +212,7 @@ contract HelperFacet is UseStorage {
         _componentSpecs[29] = (ComponentSpec({name: "IsArmy", valueType: VALUE_TYPE.BOOL}));
 
         Util._registerComponents(_gameAddr, _componentSpecs);
+        return _componentSpecs;
     }
 
     function addEntity() external onlyAdmin returns (uint256) {

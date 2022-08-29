@@ -51,6 +51,8 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): W
   };
 };
 
+export const TAGS = ['Port', 'City', 'Oil Well', 'Infantry', 'Destroyer', 'Cruiser', 'Battleship', 'Army', 'Player'];
+
 export const TROOP_TYPES = [
   {
     name: TROOP_NAME.INFANTRY,
