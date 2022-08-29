@@ -170,7 +170,7 @@ contract HelperFacet is UseStorage {
         Util._registerComponents(_gameAddr, _componentSpecs);
     }
 
-    function registerDefaultComponents(address _gameAddr) external onlyAdmin {
+    function registerDefaultComponents(address _gameAddr) external onlyAdmin returns (ComponentSpec[] memory) {
         ComponentSpec[] memory _componentSpecs = new ComponentSpec[](30);
 
         // General system
@@ -212,6 +212,7 @@ contract HelperFacet is UseStorage {
         _componentSpecs[29] = (ComponentSpec({name: "IsArmy", valueType: VALUE_TYPE.BOOL}));
 
         Util._registerComponents(_gameAddr, _componentSpecs);
+        return _componentSpecs;
     }
 
     function addEntity() external onlyAdmin returns (uint256) {

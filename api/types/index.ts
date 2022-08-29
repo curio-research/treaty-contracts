@@ -1,3 +1,4 @@
+import { ComponentSpecStruct } from '../../typechain-types/Curio';
 import { TILE_TYPE } from './../../tasks/util/types/index';
 
 export interface GameConfig {
@@ -5,5 +6,5 @@ export interface GameConfig {
   network: string;
   deploymentId: string;
   map: TILE_TYPE[][];
-  // componentNames: string[];
+  componentSpecs: any;
 }
