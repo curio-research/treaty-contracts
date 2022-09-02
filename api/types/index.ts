@@ -6,5 +6,5 @@ export interface GameConfig {
   network: string;
   deploymentId: string;
   map: TILE_TYPE[][];
-  componentSpecs: any;
+  componentSpecs: ComponentSpecStruct[];
 }

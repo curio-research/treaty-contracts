@@ -7,7 +7,7 @@ import { Util } from './../typechain-types/Util';
 import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { deployProxy, loadLocalMapConfig, LOCAL_MAP_PREFIX, printDivider, saveMapToLocal } from './util/deployHelper';
-import { RENDER_CONSTANTS, generateWorldConstants, SMALL_MAP_INPUT, LARGE_MAP_INPUT, SANDBOX_MAP_INPUT } from './util/constants';
+import { RENDER_CONSTANTS, generateWorldConstants, SMALL_MAP_INPUT, LARGE_MAP_INPUT, SANDBOX_MAP_INPUT, COMPONENT_SPECS } from './util/constants';
 import { position } from '../util/types/common';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
 import { Position, GameMapConfig, TILE_TYPE, MapInput } from './util/types';
@@ -122,7 +122,7 @@ task('deploy', 'deploy contracts')
 
       // Register components
       const time0 = performance.now();
-      const componentSpecs = await (await diamond.registerDefaultComponents(diamond.address)).wait();
+      await (await diamond.registerComponents(diamond.address, COMPONENT_SPECS)).wait();
       const time1 = performance.now();
       console.log(`✦ component registration took ${Math.floor(time1 - time0)} ms`);
 
@@ -209,7 +209,7 @@ task('deploy', 'deploy contracts')
         network: hre.network.name,
         deploymentId: ` ${mapName ? `${mapName}-` : ''} ${isRelease ? 'release-' : ''}${hre.network.name}-${Date.now()}`,
         map: tileMap,
-        componentSpecs,
+        componentSpecs: COMPONENT_SPECS,
       };
 
       // Port files to frontend if on localhost
