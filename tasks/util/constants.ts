@@ -125,9 +125,6 @@ export const getTroopNames = (): string[] => {
 export const COMPONENT_SPECS: ComponentSpecStruct[] = [];
 
 // General system
-COMPONENT_SPECS.push({ name: 'IsComponent', valueType: VALUE_TYPE.BOOL });
-COMPONENT_SPECS.push({ name: 'InitTimestamp', valueType: VALUE_TYPE.BOOL });
-COMPONENT_SPECS.push({ name: 'IsActive', valueType: VALUE_TYPE.BOOL });
 COMPONENT_SPECS.push({ name: 'IsComponent', valueType: VALUE_TYPE.BOOL }); // this must be the first (or zero-th, however you name it) component!
 COMPONENT_SPECS.push({ name: 'InitTimestamp', valueType: VALUE_TYPE.UINT });
 COMPONENT_SPECS.push({ name: 'IsActive', valueType: VALUE_TYPE.BOOL });

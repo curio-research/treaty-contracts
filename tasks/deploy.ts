@@ -139,6 +139,25 @@ task('deploy', 'deploy contracts')
       const time3 = performance.now();
       console.log(`✦ initializing ${baseTiles.length} bases took ${Math.floor(time3 - time2)} ms`);
 
+      // Initialize a troop template (destroyer)
+      const destroyerTemplateId = 1;
+      const abiCoder = new ethers.utils.AbiCoder();
+      await (await diamond.addEntity()).wait();
+      await (await diamond.setComponentValue('IsActive', destroyerTemplateId, abiCoder.encode(['bool'], [true]))).wait();
+      await (await diamond.setComponentValue('CanMove', destroyerTemplateId, abiCoder.encode(['bool'], [true]))).wait();
+      await (await diamond.setComponentValue('CanAttack', destroyerTemplateId, abiCoder.encode(['bool'], [true]))).wait();
+      await (await diamond.setComponentValue('Tag', destroyerTemplateId, abiCoder.encode(['string'], ['Destroyer']))).wait();
+      await (await diamond.setComponentValue('MaxHealth', destroyerTemplateId, abiCoder.encode(['uint256'], [3]))).wait();
+      await (await diamond.setComponentValue('DamagePerHit', destroyerTemplateId, abiCoder.encode(['uint256'], [1]))).wait();
+      await (await diamond.setComponentValue('AttackFactor', destroyerTemplateId, abiCoder.encode(['uint256'], [100]))).wait();
+      await (await diamond.setComponentValue('DefenseFactor', destroyerTemplateId, abiCoder.encode(['uint256'], [100]))).wait();
+      await (await diamond.setComponentValue('MovementCooldown', destroyerTemplateId, abiCoder.encode(['uint256'], [1]))).wait();
+      await (await diamond.setComponentValue('LargeActionCooldown', destroyerTemplateId, abiCoder.encode(['uint256'], [1]))).wait();
+      await (await diamond.setComponentValue('Gold', destroyerTemplateId, abiCoder.encode(['uint256'], [19]))).wait();
+      await (await diamond.setComponentValue('OilPerSecond', destroyerTemplateId, abiCoder.encode(['uint256'], [1]))).wait();
+      const time4 = performance.now();
+      console.log(`✦ troop template creation took ${Math.floor(time4 - time3)} ms`);
+
       // Randomly initialize players if on localhost
       if (isDev) {
         let x: number;
@@ -147,27 +166,8 @@ task('deploy', 'deploy contracts')
         if (fixMap && mapName === 'testingMap') {
           const player1Pos = { x: 2, y: 4 };
           const player2Pos = { x: 4, y: 2 };
-          const abiCoder = new ethers.utils.AbiCoder();
 
           let ecsTime = performance.now();
-
-          // Initialize a troop template (destroyer)
-          const destroyerTemplateId = 1;
-          await (await diamond.addEntity()).wait();
-          await (await diamond.setComponentValue('IsActive', destroyerTemplateId, abiCoder.encode(['bool'], [true]))).wait();
-          await (await diamond.setComponentValue('CanMove', destroyerTemplateId, abiCoder.encode(['bool'], [true]))).wait();
-          await (await diamond.setComponentValue('CanAttack', destroyerTemplateId, abiCoder.encode(['bool'], [true]))).wait();
-          await (await diamond.setComponentValue('Tag', destroyerTemplateId, abiCoder.encode(['string'], ['Destroyer']))).wait();
-          await (await diamond.setComponentValue('MaxHealth', destroyerTemplateId, abiCoder.encode(['uint256'], [3]))).wait();
-          await (await diamond.setComponentValue('DamagePerHit', destroyerTemplateId, abiCoder.encode(['uint256'], [1]))).wait();
-          await (await diamond.setComponentValue('AttackFactor', destroyerTemplateId, abiCoder.encode(['uint256'], [100]))).wait();
-          await (await diamond.setComponentValue('DefenseFactor', destroyerTemplateId, abiCoder.encode(['uint256'], [100]))).wait();
-          await (await diamond.setComponentValue('MovementCooldown', destroyerTemplateId, abiCoder.encode(['uint256'], [1]))).wait();
-          await (await diamond.setComponentValue('LargeActionCooldown', destroyerTemplateId, abiCoder.encode(['uint256'], [1]))).wait();
-          await (await diamond.setComponentValue('Gold', destroyerTemplateId, abiCoder.encode(['uint256'], [19]))).wait();
-          await (await diamond.setComponentValue('OilPerSecond', destroyerTemplateId, abiCoder.encode(['uint256'], [1]))).wait();
-          console.log(`✦ troop template created after ${performance.now() - ecsTime} ms`);
-          ecsTime = performance.now();
 
           // Initialize players
           await (await diamond.connect(player1).initializePlayer(player1Pos, 'Alice')).wait();
@@ -200,6 +200,7 @@ task('deploy', 'deploy contracts')
           // Give each player a port to start with
           await (await diamond.connect(player1).initializePlayer(player1Pos, 'Eve')).wait();
           await (await diamond.connect(player2).initializePlayer(player2Pos, 'Felix')).wait();
+          console.log(`✦ player initialization took ${Math.floor(performance.now() - time4)} ms`);
         }
       }
 
