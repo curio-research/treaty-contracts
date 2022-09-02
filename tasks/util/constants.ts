@@ -134,10 +134,10 @@ COMPONENT_SPECS.push({ name: 'OwnerEntity', valueType: VALUE_TYPE.UINT });
 // Identifier system
 COMPONENT_SPECS.push({ name: 'Name', valueType: VALUE_TYPE.STRING });
 COMPONENT_SPECS.push({ name: 'Tag', valueType: VALUE_TYPE.STRING }); // most direct tag for frontend
-COMPONENT_SPECS.push({ name: 'CanMove', valueType: VALUE_TYPE.BOOL });
+COMPONENT_SPECS.push({ name: 'CanMove', valueType: VALUE_TYPE.BOOL }); // differentiator for troops
 COMPONENT_SPECS.push({ name: 'CanAttack', valueType: VALUE_TYPE.BOOL });
 COMPONENT_SPECS.push({ name: 'CanCapture', valueType: VALUE_TYPE.BOOL });
-COMPONENT_SPECS.push({ name: 'CanPurchase', valueType: VALUE_TYPE.BOOL });
+COMPONENT_SPECS.push({ name: 'CanPurchase', valueType: VALUE_TYPE.BOOL }); // differentiator for bases
 
 // Resource system
 COMPONENT_SPECS.push({ name: 'Gold', valueType: VALUE_TYPE.UINT });
@@ -160,4 +160,4 @@ COMPONENT_SPECS.push({ name: 'MovementCooldown', valueType: VALUE_TYPE.UINT });
 COMPONENT_SPECS.push({ name: 'LargeActionCooldown', valueType: VALUE_TYPE.UINT });
 COMPONENT_SPECS.push({ name: 'ArmyEntity', valueType: VALUE_TYPE.UINT });
 COMPONENT_SPECS.push({ name: 'IsDebuffed', valueType: VALUE_TYPE.BOOL });
-COMPONENT_SPECS.push({ name: 'IsArmy', valueType: VALUE_TYPE.BOOL });
+COMPONENT_SPECS.push({ name: 'IsArmy', valueType: VALUE_TYPE.BOOL }); // differentiator for armies
