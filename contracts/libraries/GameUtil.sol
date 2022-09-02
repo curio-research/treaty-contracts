@@ -24,6 +24,7 @@ library Util {
     event EntityRemoved(uint256 _entity);
     event NewComponent(string _name, uint256 _entity);
     event ComponentValueSet(string _componentName, uint256 _entity, bytes _value);
+    event ComponentValueRemoved(string _componentName, uint256 _entity);
     event GamePaused();
     event GameResumed();
 
@@ -438,7 +439,7 @@ library Util {
 
     function _removeAddress(string memory _componentName, uint256 _entity) public {
         AddressComponent(gs().components[_componentName]).remove(_entity);
-        emit ComponentValueSet(_componentName, _entity, new bytes(0));
+        emit ComponentValueRemoved(_componentName, _entity);
     }
 
     function _getBool(string memory _componentName, uint256 _entity) public view returns (bool) {
@@ -452,7 +453,7 @@ library Util {
 
     function _removeBool(string memory _componentName, uint256 _entity) public {
         BoolComponent(gs().components[_componentName]).remove(_entity);
-        emit ComponentValueSet(_componentName, _entity, new bytes(0));
+        emit ComponentValueRemoved(_componentName, _entity);
     }
 
     function _getInt(string memory _componentName, uint256 _entity) public view returns (int256) {
@@ -470,7 +471,7 @@ library Util {
 
     function _removeInt(string memory _componentName, uint256 _entity) public {
         IntComponent(gs().components[_componentName]).remove(_entity);
-        emit ComponentValueSet(_componentName, _entity, new bytes(0));
+        emit ComponentValueRemoved(_componentName, _entity);
     }
 
     function _getPosition(string memory _componentName, uint256 _entity) public view returns (Position memory) {
@@ -488,7 +489,7 @@ library Util {
 
     function _removePosition(string memory _componentName, uint256 _entity) public {
         PositionComponent(gs().components[_componentName]).remove(_entity);
-        emit ComponentValueSet(_componentName, _entity, new bytes(0));
+        emit ComponentValueRemoved(_componentName, _entity);
     }
 
     function _getString(string memory _componentName, uint256 _entity) public view returns (string memory) {
@@ -506,7 +507,7 @@ library Util {
 
     function _removeString(string memory _componentName, uint256 _entity) public {
         StringComponent(gs().components[_componentName]).remove(_entity);
-        emit ComponentValueSet(_componentName, _entity, new bytes(0));
+        emit ComponentValueRemoved(_componentName, _entity);
     }
 
     function _getUint(string memory _componentName, uint256 _entity) public view returns (uint256) {
@@ -524,7 +525,7 @@ library Util {
 
     function _removeUint(string memory _componentName, uint256 _entity) public {
         UintComponent(gs().components[_componentName]).remove(_entity);
-        emit ComponentValueSet(_componentName, _entity, new bytes(0));
+        emit ComponentValueRemoved(_componentName, _entity);
     }
 
     // ----------------------------------------------------------

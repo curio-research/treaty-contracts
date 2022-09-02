@@ -270,6 +270,7 @@ export interface UtilInterface extends utils.Interface {
   ): Result;
 
   events: {
+    "ComponentValueRemoved(string,uint256)": EventFragment;
     "ComponentValueSet(string,uint256,bytes)": EventFragment;
     "EntityRemoved(uint256)": EventFragment;
     "GamePaused()": EventFragment;
@@ -278,6 +279,7 @@ export interface UtilInterface extends utils.Interface {
     "NewEntity(uint256)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "ComponentValueRemoved"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ComponentValueSet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "EntityRemoved"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "GamePaused"): EventFragment;
@@ -285,6 +287,14 @@ export interface UtilInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "NewComponent"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NewEntity"): EventFragment;
 }
+
+export type ComponentValueRemovedEvent = TypedEvent<
+  [string, BigNumber],
+  { _componentName: string; _entity: BigNumber }
+>;
+
+export type ComponentValueRemovedEventFilter =
+  TypedEventFilter<ComponentValueRemovedEvent>;
 
 export type ComponentValueSetEvent = TypedEvent<
   [string, BigNumber, string],
@@ -809,6 +819,15 @@ export interface Util extends BaseContract {
   };
 
   filters: {
+    "ComponentValueRemoved(string,uint256)"(
+      _componentName?: null,
+      _entity?: null
+    ): ComponentValueRemovedEventFilter;
+    ComponentValueRemoved(
+      _componentName?: null,
+      _entity?: null
+    ): ComponentValueRemovedEventFilter;
+
     "ComponentValueSet(string,uint256,bytes)"(
       _componentName?: null,
       _entity?: null,
