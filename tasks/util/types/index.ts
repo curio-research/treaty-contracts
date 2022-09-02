@@ -14,7 +14,7 @@ export enum TROOP_NAME {
   BATTLESHIP,
 }
 
-export enum VALUE_TYPE {
+export enum ComponentDataTypes {
   UINT,
   STRING,
   BOOL,
@@ -23,12 +23,18 @@ export enum VALUE_TYPE {
   POSITION,
   OTHER,
 }
+
 export interface MapInput {
   width: number;
   height: number;
   numPorts: number;
   numCities: number;
   numOilWells: number;
+}
+
+export interface compType {
+  name: string;
+  valueType: ComponentDataTypes;
 }
 
 export interface RenderInput {

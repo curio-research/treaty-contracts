@@ -66,10 +66,10 @@ export default {
       chainId: 1337,
       allowUnlimitedContractSize: true,
       blockGasLimit: 300_000_000_000_000,
-      mining: {
-        auto: false,
-        interval: 200,
-      },
+      // mining: {
+      //   auto: false,
+      //   interval: 200,
+      // },
     },
   },
 
