@@ -1,11 +1,10 @@
 import axios from 'axios';
-import { assert } from 'console';
-import { GameConfig } from './types/index';
+import { gameConfig } from 'curio-vault';
 
 const api = axios.create();
 api.defaults.baseURL = process.env.BACKEND_URL;
 
-export const publishDeployment = async (gameConfig: GameConfig) => {
+export const publishDeployment = async (gameConfig: gameConfig) => {
   try {
     const { data } = await api.post(`/deployments/add`, gameConfig);
 
