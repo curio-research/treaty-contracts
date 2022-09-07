@@ -15,7 +15,7 @@ import { Position, GameMapConfig, TILE_TYPE, MapInput } from './util/types';
 import { encodeTileMap, generateGameMaps } from './util/mapHelper';
 import { MEDITERRAINEAN_MAP_CONFIG, testingMapConfig } from './util/mapLibrary';
 import { WorldConstantsStruct } from '../typechain-types/Curio';
-import { gameConfig } from 'curio-vault';
+import { gameConfig } from '../api/types';
 
 /**
  * Deploy game instance and port configs to frontend.

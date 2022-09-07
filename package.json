@@ -8,8 +8,7 @@
     "forge-test": "forge test --ffi -vv",
     "ft": "forge test --ffi -vv",
     "deploy": "npx hardhat deploy --network localhost",
-    "port": "npx hardhat port",
-    "setup": "yarn link curio-vault"
+    "port": "npx hardhat port"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.2",
