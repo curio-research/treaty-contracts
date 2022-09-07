@@ -24,7 +24,7 @@ contract ECS is Test, DiamondDeployTest {
         getter.getComponent("NonexistentComponent");
 
         // Purchase a destroyer
-        uint256 _troopEntity = engine.purchaseTroop(player1Pos, destroyerTemplateId);
+        uint256 _troopEntity = game.purchaseTroop(player1Pos, destroyerTemplateId);
         uint256 _armyEntity = abi.decode(getter.getComponent("ArmyEntity").getBytesValue(_troopEntity), (uint256));
 
         // Verify post-conditions
@@ -41,11 +41,11 @@ contract ECS is Test, DiamondDeployTest {
 
         // Verify inability to buy another destroyer before moving destroyer away
         vm.expectRevert(bytes("CURIO: Base occupied by another troop"));
-        engine.purchaseTroop(player1Pos, destroyerTemplateId);
+        game.purchaseTroop(player1Pos, destroyerTemplateId);
 
         // Move destroyer to nearby water tile
         vm.warp(3);
-        engine.moveTroop(_troopEntity, Position({x: 7, y: 1}));
+        game.moveTroop(_troopEntity, Position({x: 7, y: 1}));
         _armyEntity = abi.decode(getter.getComponent("ArmyEntity").getBytesValue(_troopEntity), (uint256));
 
         // Verify post-conditions

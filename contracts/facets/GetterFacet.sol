@@ -2,7 +2,8 @@
 pragma solidity ^0.8.4;
 
 import "contracts/libraries/Storage.sol";
-import {Util} from "contracts/libraries/GameUtil.sol";
+import {GameLib} from "contracts/libraries/GameLib.sol";
+import {ECSLib} from "contracts/libraries/ECSLib.sol";
 import {Position, Tile, WorldConstants} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 import {Component} from "contracts/Component.sol";
@@ -15,15 +16,15 @@ contract GetterFacet is UseStorage {
     uint256 private NULL = 0;
 
     function getComponent(string memory _name) external view returns (Component) {
-        return Util._getComponent(_name);
+        return ECSLib._getComponent(_name);
     }
 
     function getComponentById(uint256 _entity) external view returns (Component) {
-        return Util._getComponentByEntity(_entity);
+        return ECSLib._getComponentByEntity(_entity);
     }
 
     function getTileAt(Position memory _pos) external view returns (Tile memory) {
-        return Util._getTileAt(_pos);
+        return GameLib._getTileAt(_pos);
     }
 
     function getWorldConstants() external view returns (WorldConstants memory) {
