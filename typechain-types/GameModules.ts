@@ -57,7 +57,7 @@ export type TroopStructOutput = [BigNumber, BigNumber, BigNumber] & {
   health: BigNumber;
 };
 
-export interface EngineModulesInterface extends utils.Interface {
+export interface GameModulesInterface extends utils.Interface {
   functions: {
     '_geographicCheckArmy(uint256,(bool,bool,uint8,uint256,uint256))': FunctionFragment;
     '_geographicCheckTroop(uint256,(bool,bool,uint8,uint256,uint256))': FunctionFragment;
@@ -75,12 +75,12 @@ export interface EngineModulesInterface extends utils.Interface {
   events: {};
 }
 
-export interface EngineModules extends BaseContract {
+export interface GameModules extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: EngineModulesInterface;
+  interface: GameModulesInterface;
 
   queryFilter<TEvent extends TypedEvent>(event: TypedEventFilter<TEvent>, fromBlockOrBlockhash?: string | number | undefined, toBlock?: string | number | undefined): Promise<Array<TEvent>>;
 

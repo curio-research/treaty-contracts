@@ -14,7 +14,6 @@ import {IDiamondLoupe} from "contracts/interfaces/IDiamondLoupe.sol";
 import {IDiamondCut} from "contracts/interfaces/IDiamondCut.sol";
 import {IERC173} from "contracts/interfaces/IERC173.sol";
 import {IERC165} from "contracts/interfaces/IERC165.sol";
-import {Util} from "contracts/libraries/GameUtil.sol";
 import {Set} from "contracts/Set.sol";
 import "contracts/libraries/Storage.sol";
 

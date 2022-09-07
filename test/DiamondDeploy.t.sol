@@ -8,10 +8,10 @@ import "contracts/facets/OwnershipFacet.sol";
 import "contracts/diamond.sol";
 import "contracts/upgradeInitializers/diamondInit.sol";
 import "contracts/interfaces/IDiamondCut.sol";
-import "contracts/libraries/GameUtil.sol";
+import "contracts/libraries/GameLib.sol";
 import "contracts/facets/GetterFacet.sol";
-import "contracts/facets/EngineFacet.sol";
-import "contracts/facets/HelperFacet.sol";
+import "contracts/facets/GameFacet.sol";
+import "contracts/facets/AdminFacet.sol";
 import "contracts/libraries/Types.sol";
 
 /// @title diamond deploy foundry template
@@ -23,14 +23,14 @@ contract DiamondDeployTest is Test {
     DiamondInit public diamondInit;
     DiamondLoupeFacet public diamondLoupeFacet;
     OwnershipFacet public diamondOwnershipFacet;
-    EngineFacet public engineFacet;
+    GameFacet public gameFacet;
     GetterFacet public getterFacet;
-    HelperFacet public helperFacet;
+    AdminFacet public adminFacet;
 
     // diamond-contract-casted methods
-    EngineFacet public engine;
+    GameFacet public game;
     GetterFacet public getter;
-    HelperFacet public helper;
+    AdminFacet public admin;
     OwnershipFacet public ownership;
 
     uint256 public NULL = 0;
@@ -116,9 +116,9 @@ contract DiamondDeployTest is Test {
         diamondLoupeFacet = new DiamondLoupeFacet();
         diamondOwnershipFacet = new OwnershipFacet();
 
-        engineFacet = new EngineFacet();
+        gameFacet = new GameFacet();
         getterFacet = new GetterFacet();
-        helperFacet = new HelperFacet();
+        adminFacet = new AdminFacet();
         WorldConstants memory _worldConstants = _generateWorldConstants();
 
         // Fetch args from CLI craft payload for init deploy
@@ -127,52 +127,52 @@ contract DiamondDeployTest is Test {
         IDiamondCut.FacetCut[] memory cuts = new IDiamondCut.FacetCut[](5);
         cuts[0] = IDiamondCut.FacetCut({facetAddress: address(diamondLoupeFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: LOUPE_SELECTORS});
         cuts[1] = IDiamondCut.FacetCut({facetAddress: address(diamondOwnershipFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: OWNERSHIP_SELECTORS});
-        cuts[2] = IDiamondCut.FacetCut({facetAddress: address(engineFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: getSelectors("EngineFacet")});
+        cuts[2] = IDiamondCut.FacetCut({facetAddress: address(gameFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: getSelectors("GameFacet")});
         cuts[3] = IDiamondCut.FacetCut({facetAddress: address(getterFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: getSelectors("GetterFacet")});
-        cuts[4] = IDiamondCut.FacetCut({facetAddress: address(helperFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: getSelectors("HelperFacet")});
+        cuts[4] = IDiamondCut.FacetCut({facetAddress: address(adminFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: getSelectors("AdminFacet")});
 
         IDiamondCut(diamond).diamondCut(cuts, address(diamondInit), initData);
 
         getter = GetterFacet(diamond);
-        engine = EngineFacet(diamond);
-        helper = HelperFacet(diamond);
+        game = GameFacet(diamond);
+        admin = AdminFacet(diamond);
         ownership = OwnershipFacet(diamond);
 
         // Register components
-        helper.registerDefaultComponents(diamond);
+        admin.registerDefaultComponents(diamond);
 
         // Initialize map
         uint256[][] memory _map = _generateMap(_worldConstants.worldWidth, _worldConstants.worldHeight, 10);
         uint256[][] memory _encodedColumnBatches = _encodeTileMap(_map, _worldConstants.numInitTerrainTypes, _worldConstants.initBatchSize);
-        helper.storeEncodedColumnBatches(_encodedColumnBatches);
+        admin.storeEncodedColumnBatches(_encodedColumnBatches);
 
         vm.stopPrank();
 
         // Initialize players
         vm.prank(player1);
-        engine.initializePlayer(player1Pos, "Alice");
+        game.initializePlayer(player1Pos, "Alice");
         player1Id = getter.getPlayerId(player1);
         vm.prank(player2);
-        engine.initializePlayer(player2Pos, "Bob");
+        game.initializePlayer(player2Pos, "Bob");
         player2Id = getter.getPlayerId(player2);
         vm.prank(player3);
-        engine.initializePlayer(player3Pos, "Cindy");
+        game.initializePlayer(player3Pos, "Cindy");
         player3Id = getter.getPlayerId(player3);
 
         // Initialize a troop template (destroyer)
         vm.startPrank(deployer);
-        destroyerTemplateId = helper.addEntity();
-        helper.setComponentValue("CanMove", destroyerTemplateId, abi.encode(true));
-        helper.setComponentValue("CanAttack", destroyerTemplateId, abi.encode(true));
-        helper.setComponentValue("Tag", destroyerTemplateId, abi.encode("Destroyer"));
-        helper.setComponentValue("MaxHealth", destroyerTemplateId, abi.encode(3));
-        helper.setComponentValue("DamagePerHit", destroyerTemplateId, abi.encode(1));
-        helper.setComponentValue("AttackFactor", destroyerTemplateId, abi.encode(100));
-        helper.setComponentValue("DefenseFactor", destroyerTemplateId, abi.encode(100));
-        helper.setComponentValue("MovementCooldown", destroyerTemplateId, abi.encode(1));
-        helper.setComponentValue("LargeActionCooldown", destroyerTemplateId, abi.encode(1));
-        helper.setComponentValue("Gold", destroyerTemplateId, abi.encode(19));
-        helper.setComponentValue("OilPerSecond", destroyerTemplateId, abi.encode(1));
+        destroyerTemplateId = admin.addEntity();
+        admin.setComponentValue("CanMove", destroyerTemplateId, abi.encode(true));
+        admin.setComponentValue("CanAttack", destroyerTemplateId, abi.encode(true));
+        admin.setComponentValue("Tag", destroyerTemplateId, abi.encode("Destroyer"));
+        admin.setComponentValue("MaxHealth", destroyerTemplateId, abi.encode(3));
+        admin.setComponentValue("DamagePerHit", destroyerTemplateId, abi.encode(1));
+        admin.setComponentValue("AttackFactor", destroyerTemplateId, abi.encode(100));
+        admin.setComponentValue("DefenseFactor", destroyerTemplateId, abi.encode(100));
+        admin.setComponentValue("MovementCooldown", destroyerTemplateId, abi.encode(1));
+        admin.setComponentValue("LargeActionCooldown", destroyerTemplateId, abi.encode(1));
+        admin.setComponentValue("Gold", destroyerTemplateId, abi.encode(19));
+        admin.setComponentValue("OilPerSecond", destroyerTemplateId, abi.encode(1));
         vm.stopPrank();
     }
 

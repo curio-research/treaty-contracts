@@ -2,8 +2,9 @@
 pragma solidity ^0.8.4;
 
 import "contracts/libraries/Storage.sol";
-import {Util} from "contracts/libraries/GameUtil.sol";
-import {EngineModules} from "contracts/libraries/EngineModules.sol";
+import {GameLib} from "contracts/libraries/GameLib.sol";
+import {ECSLib} from "contracts/libraries/ECSLib.sol";
+import {GameModules} from "contracts/libraries/GameModules.sol";
 import {ComponentSpec, Position, TERRAIN, Tile, VALUE_TYPE, WorldConstants} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 import {Set} from "contracts/Set.sol";
@@ -13,7 +14,7 @@ import {AddressComponent, BoolComponent, IntComponent, PositionComponent, String
 /// @title Helper facet
 /// @notice Contains admin functions and state functions, both of which should be out of scope for players
 
-contract HelperFacet is UseStorage {
+contract AdminFacet is UseStorage {
     using SafeMath for uint256;
     uint256 NULL = 0;
 
@@ -36,12 +37,12 @@ contract HelperFacet is UseStorage {
 
         address[] memory _allPlayers = gs().players;
         for (uint256 i = 0; i < _allPlayers.length; i++) {
-            Util._updatePlayerBalances(gs().playerEntityMap[_allPlayers[i]]);
+            GameLib._updatePlayerBalances(gs().playerEntityMap[_allPlayers[i]]);
         }
 
         gs().isPaused = true;
         gs().lastPaused = block.timestamp;
-        emit Util.GamePaused();
+        emit GameLib.GamePaused();
     }
 
     /**
@@ -52,11 +53,11 @@ contract HelperFacet is UseStorage {
 
         address[] memory _allPlayers = gs().players;
         for (uint256 i = 0; i < _allPlayers.length; i++) {
-            Util._setUint("BalanceLastUpdated", gs().playerEntityMap[_allPlayers[i]], block.timestamp);
+            ECSLib._setUint("BalanceLastUpdated", gs().playerEntityMap[_allPlayers[i]], block.timestamp);
         }
 
         gs().isPaused = false;
-        emit Util.GameResumed();
+        emit GameLib.GameResumed();
     }
 
     /**
@@ -68,8 +69,8 @@ contract HelperFacet is UseStorage {
         require(gs().playerEntityMap[_player] != NULL, "CURIO: Player already initialized");
         require(!BoolComponent(gs().components["IsActive"]).has(_playerEntity), "CURIO: Player is active");
 
-        Util._setBool("IsActive", _playerEntity);
-        Util._setUint("Gold", _playerEntity, gs().worldConstants.initPlayerGoldBalance); // reset gold balance
+        ECSLib._setBool("IsActive", _playerEntity);
+        ECSLib._setUint("Gold", _playerEntity, gs().worldConstants.initPlayerGoldBalance); // reset gold balance
     }
 
     /**
@@ -92,20 +93,20 @@ contract HelperFacet is UseStorage {
         address _player,
         uint256 _troopTemplateEntity
     ) external onlyAdmin returns (uint256) {
-        require(Util._inBound(_position), "CURIO: Out of bound");
-        if (!Util._getTileAt(_position).isInitialized) Util._initializeTile(_position);
+        require(GameLib._inBound(_position), "CURIO: Out of bound");
+        if (!GameLib._getTileAt(_position).isInitialized) GameLib._initializeTile(_position);
 
-        require(Util._getArmyAt(_position) == NULL, "CURIO: Tile occupied");
+        require(GameLib._getArmyAt(_position) == NULL, "CURIO: Tile occupied");
 
-        uint256 _baseEntity = Util._getBaseAt(_position);
+        uint256 _baseEntity = GameLib._getBaseAt(_position);
         if (_baseEntity != NULL) {
-            // require(Util._getBaseOwner(_tile.baseId) == _player, "CURIO: Can only spawn troop in player's base");
-            require(EngineModules._geographicCheckTroop(_troopTemplateEntity, _position), "CURIO: Can only spawn water troops in ports");
+            // require(GameLib._getBaseOwner(_tile.baseId) == _player, "CURIO: Can only spawn troop in player's base");
+            require(GameModules._geographicCheckTroop(_troopTemplateEntity, _position), "CURIO: Can only spawn water troops in ports");
         }
 
         uint256 _playerEntity = gs().playerEntityMap[_player];
-        uint256 _armyEntity = Util._addArmy(_playerEntity, _position);
-        return Util._addTroop(_playerEntity, _troopTemplateEntity, _armyEntity);
+        uint256 _armyEntity = GameLib._addArmy(_playerEntity, _position);
+        return GameLib._addTroop(_playerEntity, _troopTemplateEntity, _armyEntity);
     }
 
     /**
@@ -114,30 +115,30 @@ contract HelperFacet is UseStorage {
      * @param _player player to give ownership to
      */
     function transferBaseOwnership(Position memory _position, address _player) external onlyAdmin {
-        require(Util._inBound(_position), "CURIO: Out of bound");
-        if (!Util._getTileAt(_position).isInitialized) Util._initializeTile(_position);
+        require(GameLib._inBound(_position), "CURIO: Out of bound");
+        if (!GameLib._getTileAt(_position).isInitialized) GameLib._initializeTile(_position);
 
-        require(Util._getArmyAt(_position) == NULL, "CURIO: Tile occupied");
+        require(GameLib._getArmyAt(_position) == NULL, "CURIO: Tile occupied");
 
-        uint256 _baseEntity = Util._getBaseAt(_position);
+        uint256 _baseEntity = GameLib._getBaseAt(_position);
         require(_baseEntity != NULL, "CURIO: No base found");
 
-        require(Util._getUint("OwnerEntity", _baseEntity) == NULL, "CURIO: Base is owned");
+        require(ECSLib._getUint("OwnerEntity", _baseEntity) == NULL, "CURIO: Base is owned");
 
         uint256 _playerEntity = gs().playerEntityMap[_player];
-        Util._setUint("OwnerEntity", _baseEntity, _playerEntity);
-        Util._setUint("Health", _baseEntity, 800);
+        ECSLib._setUint("OwnerEntity", _baseEntity, _playerEntity);
+        ECSLib._setUint("Health", _baseEntity, 800);
 
-        Util._updatePlayerBalances(_playerEntity);
+        GameLib._updatePlayerBalances(_playerEntity);
 
         // FIXME: experimenting with signed integers
-        int256 _baseGoldPerSecond = Util._getInt("GoldPerSecond", _baseEntity);
-        int256 _baseOilPerSecond = Util._getInt("OilPerSecond", _baseEntity);
-        int256 _playerGoldPerSecond = Util._getInt("GoldPerSecond", _playerEntity);
-        int256 _playerOilPerSecond = Util._getInt("OilPerSecond", _playerEntity);
+        int256 _baseGoldPerSecond = ECSLib._getInt("GoldPerSecond", _baseEntity);
+        int256 _baseOilPerSecond = ECSLib._getInt("OilPerSecond", _baseEntity);
+        int256 _playerGoldPerSecond = ECSLib._getInt("GoldPerSecond", _playerEntity);
+        int256 _playerOilPerSecond = ECSLib._getInt("OilPerSecond", _playerEntity);
 
-        Util._setInt("GoldPerSecond", _playerEntity, _playerGoldPerSecond + _baseGoldPerSecond);
-        Util._setInt("OilPerSecond", _playerEntity, _playerOilPerSecond + _baseOilPerSecond);
+        ECSLib._setInt("GoldPerSecond", _playerEntity, _playerGoldPerSecond + _baseGoldPerSecond);
+        ECSLib._setInt("OilPerSecond", _playerEntity, _playerOilPerSecond + _baseOilPerSecond);
     }
 
     /**
@@ -146,7 +147,7 @@ contract HelperFacet is UseStorage {
      */
     function bulkInitializeTiles(Position[] memory _positions) external onlyAdmin {
         for (uint256 i = 0; i < _positions.length; i++) {
-            Util._initializeTile(_positions[i]);
+            GameLib._initializeTile(_positions[i]);
         }
     }
 
@@ -159,7 +160,7 @@ contract HelperFacet is UseStorage {
      * @param _player player address
      */
     function updatePlayerBalances(address _player) external {
-        Util._updatePlayerBalances(gs().playerEntityMap[_player]);
+        GameLib._updatePlayerBalances(gs().playerEntityMap[_player]);
     }
 
     // ----------------------------------------------------------------------
@@ -167,7 +168,7 @@ contract HelperFacet is UseStorage {
     // ----------------------------------------------------------------------
 
     function registerComponents(address _gameAddr, ComponentSpec[] memory _componentSpecs) external onlyAdmin {
-        Util._registerComponents(_gameAddr, _componentSpecs);
+        GameLib._registerComponents(_gameAddr, _componentSpecs);
     }
 
     function registerDefaultComponents(address _gameAddr) external onlyAdmin returns (ComponentSpec[] memory) {
@@ -211,12 +212,12 @@ contract HelperFacet is UseStorage {
         _componentSpecs[28] = (ComponentSpec({name: "IsDebuffed", valueType: VALUE_TYPE.BOOL}));
         _componentSpecs[29] = (ComponentSpec({name: "IsArmy", valueType: VALUE_TYPE.BOOL}));
 
-        Util._registerComponents(_gameAddr, _componentSpecs);
+        GameLib._registerComponents(_gameAddr, _componentSpecs);
         return _componentSpecs;
     }
 
     function addEntity() external onlyAdmin returns (uint256) {
-        return Util._addEntity();
+        return ECSLib._addEntity();
     }
 
     function setComponentValue(
@@ -224,6 +225,6 @@ contract HelperFacet is UseStorage {
         uint256 _entity,
         bytes memory _value
     ) external onlyAdmin {
-        Util._setComponentValue(_componentName, _entity, _value);
+        ECSLib._setComponentValue(_componentName, _entity, _value);
     }
 }

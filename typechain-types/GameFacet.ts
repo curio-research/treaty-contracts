@@ -24,7 +24,7 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
   y: BigNumber;
 };
 
-export interface EngineFacetInterface extends utils.Interface {
+export interface GameFacetInterface extends utils.Interface {
   functions: {
     "deleteTroop(uint256)": FunctionFragment;
     "initializePlayer((uint256,uint256),string)": FunctionFragment;
@@ -72,12 +72,12 @@ export interface EngineFacetInterface extends utils.Interface {
   events: {};
 }
 
-export interface EngineFacet extends BaseContract {
+export interface GameFacet extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: EngineFacetInterface;
+  interface: GameFacetInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,

@@ -1,10 +1,11 @@
 import { ethers } from 'ethers';
-import { EngineModules } from './../typechain-types/EngineModules';
+import { GameModules } from './../typechain-types/GameModules';
+import { GameLib } from './../typechain-types/GameLib';
+import { ECSLib } from './../typechain-types/ECSLib';
 import { publishDeployment, isConnectionLive } from './../api/deployment';
 import * as path from 'path';
 import * as fsPromise from 'fs/promises';
 import * as fs from 'fs';
-import { Util } from './../typechain-types/Util';
 import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { deployProxy, loadLocalMapConfig, LOCAL_MAP_PREFIX, printDivider, saveMapToLocal } from './util/deployHelper';
@@ -103,18 +104,21 @@ task('deploy', 'deploy contracts')
       if (saveMap) saveMapToLocal({ tileMap, portTiles, cityTiles, oilWellTiles });
 
       // Deploy helper contracts
-      const util = await deployProxy<Util>('Util', player1, hre, []);
-      console.log('✦ Util:', util.address);
+      const ecsLib = await deployProxy<ECSLib>('ECSLib', player1, hre, []);
+      console.log('✦ ECSLib:', ecsLib.address);
 
-      const engineModules = await deployProxy<EngineModules>('EngineModules', player1, hre, [], { Util: util.address });
-      console.log('✦ EngineModules:', engineModules.address);
+      const gameLib = await deployProxy<GameLib>('GameLib', player1, hre, [], { ECSLib: ecsLib.address });
+      console.log('✦ GameLib:', gameLib.address);
+
+      const gameModules = await deployProxy<GameModules>('GameModules', player1, hre, [], { GameLib: gameLib.address, ECSLib: ecsLib.address });
+      console.log('✦ GameModules:', gameModules.address);
 
       // Deploy diamond and facets
       const diamondAddr = await deployDiamond(hre, [worldConstants]);
       const facets = [
-        { name: 'EngineFacet', libraries: { Util: util.address, EngineModules: engineModules.address } },
-        { name: 'GetterFacet', libraries: { Util: util.address } },
-        { name: 'HelperFacet', libraries: { Util: util.address, EngineModules: engineModules.address } },
+        { name: 'GameFacet', libraries: { ECSLib: ecsLib.address, GameLib: gameLib.address, GameModules: gameModules.address } },
+        { name: 'GetterFacet', libraries: { ECSLib: ecsLib.address, GameLib: gameLib.address } },
+        { name: 'AdminFacet', libraries: { ECSLib: ecsLib.address, GameLib: gameLib.address, GameModules: gameModules.address } },
       ];
       await deployFacets(hre, diamondAddr, facets, player1);
       const diamond = await getDiamond(hre, diamondAddr);

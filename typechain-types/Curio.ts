@@ -17,6 +17,20 @@ import { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
 import { Listener, Provider } from "@ethersproject/providers";
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
+export type PositionStruct = { x: BigNumberish; y: BigNumberish };
+
+export type PositionStructOutput = [BigNumber, BigNumber] & {
+  x: BigNumber;
+  y: BigNumber;
+};
+
+export type ComponentSpecStruct = { name: string; valueType: BigNumberish };
+
+export type ComponentSpecStructOutput = [string, number] & {
+  name: string;
+  valueType: number;
+};
+
 export type FacetCutStruct = {
   facetAddress: string;
   action: BigNumberish;
@@ -37,13 +51,6 @@ export type FacetStruct = {
 export type FacetStructOutput = [string, string[]] & {
   facetAddress: string;
   functionSelectors: string[];
-};
-
-export type PositionStruct = { x: BigNumberish; y: BigNumberish };
-
-export type PositionStructOutput = [BigNumber, BigNumber] & {
-  x: BigNumber;
-  y: BigNumber;
 };
 
 export type TileStruct = { isInitialized: boolean; terrain: BigNumberish };
@@ -102,15 +109,20 @@ export type WorldConstantsStructOutput = [
   debuffFactor: BigNumber;
 };
 
-export type ComponentSpecStruct = { name: string; valueType: BigNumberish };
-
-export type ComponentSpecStructOutput = [string, number] & {
-  name: string;
-  valueType: number;
-};
-
 export interface CurioInterface extends utils.Interface {
   functions: {
+    "addEntity()": FunctionFragment;
+    "bulkInitializeTiles((uint256,uint256)[])": FunctionFragment;
+    "pauseGame()": FunctionFragment;
+    "reactivatePlayer(address)": FunctionFragment;
+    "registerComponents(address,(string,uint8)[])": FunctionFragment;
+    "registerDefaultComponents(address)": FunctionFragment;
+    "resumeGame()": FunctionFragment;
+    "setComponentValue(string,uint256,bytes)": FunctionFragment;
+    "spawnTroop((uint256,uint256),address,uint256)": FunctionFragment;
+    "storeEncodedColumnBatches(uint256[][])": FunctionFragment;
+    "transferBaseOwnership((uint256,uint256),address)": FunctionFragment;
+    "updatePlayerBalances(address)": FunctionFragment;
     "diamondCut((address,uint8,bytes4[])[],address,bytes)": FunctionFragment;
     "facetAddress(bytes4)": FunctionFragment;
     "facetAddresses()": FunctionFragment;
@@ -129,54 +141,55 @@ export interface CurioInterface extends utils.Interface {
     "getTileAt((uint256,uint256))": FunctionFragment;
     "getWorldConstants()": FunctionFragment;
     "isPlayerInitialized(address)": FunctionFragment;
-    "addEntity()": FunctionFragment;
-    "bulkInitializeTiles((uint256,uint256)[])": FunctionFragment;
-    "pauseGame()": FunctionFragment;
-    "reactivatePlayer(address)": FunctionFragment;
-    "registerComponents(address,(string,uint8)[])": FunctionFragment;
-    "registerDefaultComponents(address)": FunctionFragment;
-    "resumeGame()": FunctionFragment;
-    "setComponentValue(string,uint256,bytes)": FunctionFragment;
-    "spawnTroop((uint256,uint256),address,uint256)": FunctionFragment;
-    "storeEncodedColumnBatches(uint256[][])": FunctionFragment;
-    "transferBaseOwnership((uint256,uint256),address)": FunctionFragment;
-    "updatePlayerBalances(address)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "sampleBuffPolicy()": FunctionFragment;
     "sampleImpossiblePolicy()": FunctionFragment;
     "workersOfTheWorldUnite()": FunctionFragment;
-    "_coincident((uint256,uint256),(uint256,uint256))": FunctionFragment;
-    "_concatenate(uint256[],uint256[])": FunctionFragment;
-    "_difference(Set,Set)": FunctionFragment;
-    "_getAddress(string,uint256)": FunctionFragment;
-    "_getArmyAttackFactor(uint256[])": FunctionFragment;
-    "_getArmyDamagePerHit(uint256[])": FunctionFragment;
-    "_getArmyDefenseFactor(uint256[])": FunctionFragment;
-    "_getArmyHealth(uint256[])": FunctionFragment;
-    "_getArmyLargeActionCooldown(uint256[])": FunctionFragment;
-    "_getArmyMovementCooldown(uint256[])": FunctionFragment;
-    "_getArmyTroopEntities(uint256)": FunctionFragment;
-    "_getBool(string,uint256)": FunctionFragment;
-    "_getComponent(string)": FunctionFragment;
-    "_getComponentByEntity(uint256)": FunctionFragment;
-    "_getComponentValue(string,uint256)": FunctionFragment;
-    "_getDebuffedArmyDamagePerHit(uint256[])": FunctionFragment;
-    "_getInfantryPercentage(uint256[])": FunctionFragment;
-    "_getInt(string,uint256)": FunctionFragment;
-    "_getNeighbors((uint256,uint256))": FunctionFragment;
-    "_getPlayerEntity(address)": FunctionFragment;
-    "_getPosition(string,uint256)": FunctionFragment;
-    "_getString(string,uint256)": FunctionFragment;
-    "_getTileAt((uint256,uint256))": FunctionFragment;
-    "_getUint(string,uint256)": FunctionFragment;
-    "_inBound((uint256,uint256))": FunctionFragment;
-    "_random(uint256,uint256)": FunctionFragment;
-    "_strEq(string,string)": FunctionFragment;
-    "_strike(uint256,uint256)": FunctionFragment;
-    "_withinDistance((uint256,uint256),(uint256,uint256),uint256)": FunctionFragment;
   };
 
+  encodeFunctionData(functionFragment: "addEntity", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "bulkInitializeTiles",
+    values: [PositionStruct[]]
+  ): string;
+  encodeFunctionData(functionFragment: "pauseGame", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "reactivatePlayer",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "registerComponents",
+    values: [string, ComponentSpecStruct[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "registerDefaultComponents",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "resumeGame",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setComponentValue",
+    values: [string, BigNumberish, BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "spawnTroop",
+    values: [PositionStruct, string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "storeEncodedColumnBatches",
+    values: [BigNumberish[][]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "transferBaseOwnership",
+    values: [PositionStruct, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "updatePlayerBalances",
+    values: [string]
+  ): string;
   encodeFunctionData(
     functionFragment: "diamondCut",
     values: [FacetCutStruct[], string, BytesLike]
@@ -243,48 +256,6 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "isPlayerInitialized",
     values: [string]
   ): string;
-  encodeFunctionData(functionFragment: "addEntity", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "bulkInitializeTiles",
-    values: [PositionStruct[]]
-  ): string;
-  encodeFunctionData(functionFragment: "pauseGame", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "reactivatePlayer",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "registerComponents",
-    values: [string, ComponentSpecStruct[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "registerDefaultComponents",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "resumeGame",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setComponentValue",
-    values: [string, BigNumberish, BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "spawnTroop",
-    values: [PositionStruct, string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "storeEncodedColumnBatches",
-    values: [BigNumberish[][]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "transferBaseOwnership",
-    values: [PositionStruct, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "updatePlayerBalances",
-    values: [string]
-  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
@@ -302,123 +273,43 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "workersOfTheWorldUnite",
     values?: undefined
   ): string;
-  encodeFunctionData(
-    functionFragment: "_coincident",
-    values: [PositionStruct, PositionStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_concatenate",
-    values: [BigNumberish[], BigNumberish[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_difference",
-    values: [string, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getAddress",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getArmyAttackFactor",
-    values: [BigNumberish[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getArmyDamagePerHit",
-    values: [BigNumberish[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getArmyDefenseFactor",
-    values: [BigNumberish[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getArmyHealth",
-    values: [BigNumberish[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getArmyLargeActionCooldown",
-    values: [BigNumberish[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getArmyMovementCooldown",
-    values: [BigNumberish[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getArmyTroopEntities",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getBool",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getComponent",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getComponentByEntity",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getComponentValue",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getDebuffedArmyDamagePerHit",
-    values: [BigNumberish[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getInfantryPercentage",
-    values: [BigNumberish[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getInt",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getNeighbors",
-    values: [PositionStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getPlayerEntity",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getPosition",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getString",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getTileAt",
-    values: [PositionStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getUint",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_inBound",
-    values: [PositionStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_random",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_strEq",
-    values: [string, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_strike",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_withinDistance",
-    values: [PositionStruct, PositionStruct, BigNumberish]
-  ): string;
 
+  decodeFunctionResult(functionFragment: "addEntity", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "bulkInitializeTiles",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "pauseGame", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "reactivatePlayer",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "registerComponents",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "registerDefaultComponents",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "resumeGame", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setComponentValue",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "spawnTroop", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "storeEncodedColumnBatches",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "transferBaseOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updatePlayerBalances",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "diamondCut", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "facetAddress",
@@ -476,42 +367,6 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "isPlayerInitialized",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "addEntity", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "bulkInitializeTiles",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "pauseGame", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "reactivatePlayer",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "registerComponents",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "registerDefaultComponents",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "resumeGame", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "setComponentValue",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "spawnTroop", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "storeEncodedColumnBatches",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "transferBaseOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "updatePlayerBalances",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
@@ -529,117 +384,14 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "workersOfTheWorldUnite",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "_coincident",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_concatenate",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_difference",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getAddress",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getArmyAttackFactor",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getArmyDamagePerHit",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getArmyDefenseFactor",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getArmyHealth",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getArmyLargeActionCooldown",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getArmyMovementCooldown",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getArmyTroopEntities",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "_getBool", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "_getComponent",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getComponentByEntity",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getComponentValue",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getDebuffedArmyDamagePerHit",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getInfantryPercentage",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "_getInt", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "_getNeighbors",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getPlayerEntity",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getPosition",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "_getString", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "_getTileAt", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "_getUint", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "_inBound", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "_random", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "_strEq", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "_strike", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "_withinDistance",
-    data: BytesLike
-  ): Result;
 
   events: {
     "DiamondCut(tuple[],address,bytes)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
-    "ComponentValueRemoved(string,uint256)": EventFragment;
-    "ComponentValueSet(string,uint256,bytes)": EventFragment;
-    "EntityRemoved(uint256)": EventFragment;
-    "GamePaused()": EventFragment;
-    "GameResumed()": EventFragment;
-    "NewComponent(string,uint256)": EventFragment;
-    "NewEntity(uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "DiamondCut"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ComponentValueRemoved"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ComponentValueSet"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "EntityRemoved"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "GamePaused"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "GameResumed"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "NewComponent"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "NewEntity"): EventFragment;
 }
 
 export type DiamondCutEvent = TypedEvent<
@@ -656,48 +408,6 @@ export type OwnershipTransferredEvent = TypedEvent<
 
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
-
-export type ComponentValueRemovedEvent = TypedEvent<
-  [string, BigNumber],
-  { _componentName: string; _entity: BigNumber }
->;
-
-export type ComponentValueRemovedEventFilter =
-  TypedEventFilter<ComponentValueRemovedEvent>;
-
-export type ComponentValueSetEvent = TypedEvent<
-  [string, BigNumber, string],
-  { _componentName: string; _entity: BigNumber; _value: string }
->;
-
-export type ComponentValueSetEventFilter =
-  TypedEventFilter<ComponentValueSetEvent>;
-
-export type EntityRemovedEvent = TypedEvent<
-  [BigNumber],
-  { _entity: BigNumber }
->;
-
-export type EntityRemovedEventFilter = TypedEventFilter<EntityRemovedEvent>;
-
-export type GamePausedEvent = TypedEvent<[], {}>;
-
-export type GamePausedEventFilter = TypedEventFilter<GamePausedEvent>;
-
-export type GameResumedEvent = TypedEvent<[], {}>;
-
-export type GameResumedEventFilter = TypedEventFilter<GameResumedEvent>;
-
-export type NewComponentEvent = TypedEvent<
-  [string, BigNumber],
-  { _name: string; _entity: BigNumber }
->;
-
-export type NewComponentEventFilter = TypedEventFilter<NewComponentEvent>;
-
-export type NewEntityEvent = TypedEvent<[BigNumber], { _entity: BigNumber }>;
-
-export type NewEntityEventFilter = TypedEventFilter<NewEntityEvent>;
 
 export interface Curio extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -726,6 +436,69 @@ export interface Curio extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    addEntity(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    bulkInitializeTiles(
+      _positions: PositionStruct[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    pauseGame(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    reactivatePlayer(
+      _player: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    registerComponents(
+      _gameAddr: string,
+      _componentSpecs: ComponentSpecStruct[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    registerDefaultComponents(
+      _gameAddr: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    resumeGame(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setComponentValue(
+      _componentName: string,
+      _entity: BigNumberish,
+      _value: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    spawnTroop(
+      _position: PositionStruct,
+      _player: string,
+      _troopTemplateEntity: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    storeEncodedColumnBatches(
+      _colBatches: BigNumberish[][],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    transferBaseOwnership(
+      _position: PositionStruct,
+      _player: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    updatePlayerBalances(
+      _player: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     diamondCut(
       _diamondCut: FacetCutStruct[],
       _init: string,
@@ -813,69 +586,6 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    addEntity(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    bulkInitializeTiles(
-      _positions: PositionStruct[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    pauseGame(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    reactivatePlayer(
-      _player: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    registerComponents(
-      _gameAddr: string,
-      _componentSpecs: ComponentSpecStruct[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    registerDefaultComponents(
-      _gameAddr: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    resumeGame(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    setComponentValue(
-      _componentName: string,
-      _entity: BigNumberish,
-      _value: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    spawnTroop(
-      _position: PositionStruct,
-      _player: string,
-      _troopTemplateEntity: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    storeEncodedColumnBatches(
-      _colBatches: BigNumberish[][],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    transferBaseOwnership(
-      _position: PositionStruct,
-      _player: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    updatePlayerBalances(
-      _player: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     owner(overrides?: CallOverrides): Promise<[string] & { owner_: string }>;
 
     transferOwnership(
@@ -894,161 +604,70 @@ export interface Curio extends BaseContract {
     workersOfTheWorldUnite(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
-
-    _coincident(
-      _p1: PositionStruct,
-      _p2: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    _concatenate(
-      _arr1: BigNumberish[],
-      _arr2: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<[BigNumber[]]>;
-
-    _difference(
-      set1: string,
-      set2: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber[]]>;
-
-    _getAddress(
-      _componentName: string,
-      _entity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    _getArmyAttackFactor(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    _getArmyDamagePerHit(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    _getArmyDefenseFactor(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    _getArmyHealth(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    _getArmyLargeActionCooldown(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    _getArmyMovementCooldown(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    _getArmyTroopEntities(
-      _armyEntity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber[]]>;
-
-    _getBool(
-      _componentName: string,
-      _entity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    _getComponent(_name: string, overrides?: CallOverrides): Promise<[string]>;
-
-    _getComponentByEntity(
-      _entity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    _getComponentValue(
-      _componentName: string,
-      _entity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    _getDebuffedArmyDamagePerHit(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    _getInfantryPercentage(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    _getInt(
-      _componentName: string,
-      _entity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    _getNeighbors(
-      _position: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<[PositionStructOutput[]]>;
-
-    _getPlayerEntity(
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    _getPosition(
-      _componentName: string,
-      _entity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[PositionStructOutput]>;
-
-    _getString(
-      _componentName: string,
-      _entity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    _getTileAt(
-      _position: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<[TileStructOutput]>;
-
-    _getUint(
-      _componentName: string,
-      _entity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<[boolean]>;
-
-    _random(
-      _max: BigNumberish,
-      _salt: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    _strEq(
-      _s1: string,
-      _s2: string,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    _strike(
-      _strikeFactor: BigNumberish,
-      _salt: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    _withinDistance(
-      _p1: PositionStruct,
-      _p2: PositionStruct,
-      _dist: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
   };
+
+  addEntity(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  bulkInitializeTiles(
+    _positions: PositionStruct[],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  pauseGame(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  reactivatePlayer(
+    _player: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  registerComponents(
+    _gameAddr: string,
+    _componentSpecs: ComponentSpecStruct[],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  registerDefaultComponents(
+    _gameAddr: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  resumeGame(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setComponentValue(
+    _componentName: string,
+    _entity: BigNumberish,
+    _value: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  spawnTroop(
+    _position: PositionStruct,
+    _player: string,
+    _troopTemplateEntity: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  storeEncodedColumnBatches(
+    _colBatches: BigNumberish[][],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  transferBaseOwnership(
+    _position: PositionStruct,
+    _player: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  updatePlayerBalances(
+    _player: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   diamondCut(
     _diamondCut: FacetCutStruct[],
@@ -1130,69 +749,6 @@ export interface Curio extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  addEntity(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  bulkInitializeTiles(
-    _positions: PositionStruct[],
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  pauseGame(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  reactivatePlayer(
-    _player: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  registerComponents(
-    _gameAddr: string,
-    _componentSpecs: ComponentSpecStruct[],
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  registerDefaultComponents(
-    _gameAddr: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  resumeGame(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setComponentValue(
-    _componentName: string,
-    _entity: BigNumberish,
-    _value: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  spawnTroop(
-    _position: PositionStruct,
-    _player: string,
-    _troopTemplateEntity: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  storeEncodedColumnBatches(
-    _colBatches: BigNumberish[][],
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  transferBaseOwnership(
-    _position: PositionStruct,
-    _player: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  updatePlayerBalances(
-    _player: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   owner(overrides?: CallOverrides): Promise<string>;
 
   transferOwnership(
@@ -1212,157 +768,61 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  _coincident(
-    _p1: PositionStruct,
-    _p2: PositionStruct,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  _concatenate(
-    _arr1: BigNumberish[],
-    _arr2: BigNumberish[],
-    overrides?: CallOverrides
-  ): Promise<BigNumber[]>;
-
-  _difference(
-    set1: string,
-    set2: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber[]>;
-
-  _getAddress(
-    _componentName: string,
-    _entity: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  _getArmyAttackFactor(
-    _troopEntities: BigNumberish[],
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  _getArmyDamagePerHit(
-    _troopEntities: BigNumberish[],
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  _getArmyDefenseFactor(
-    _troopEntities: BigNumberish[],
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  _getArmyHealth(
-    _troopEntities: BigNumberish[],
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  _getArmyLargeActionCooldown(
-    _troopEntities: BigNumberish[],
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  _getArmyMovementCooldown(
-    _troopEntities: BigNumberish[],
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  _getArmyTroopEntities(
-    _armyEntity: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber[]>;
-
-  _getBool(
-    _componentName: string,
-    _entity: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  _getComponent(_name: string, overrides?: CallOverrides): Promise<string>;
-
-  _getComponentByEntity(
-    _entity: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  _getComponentValue(
-    _componentName: string,
-    _entity: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  _getDebuffedArmyDamagePerHit(
-    _troopEntities: BigNumberish[],
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  _getInfantryPercentage(
-    _troopEntities: BigNumberish[],
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  _getInt(
-    _componentName: string,
-    _entity: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  _getNeighbors(
-    _position: PositionStruct,
-    overrides?: CallOverrides
-  ): Promise<PositionStructOutput[]>;
-
-  _getPlayerEntity(
-    _player: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  _getPosition(
-    _componentName: string,
-    _entity: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<PositionStructOutput>;
-
-  _getString(
-    _componentName: string,
-    _entity: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  _getTileAt(
-    _position: PositionStruct,
-    overrides?: CallOverrides
-  ): Promise<TileStructOutput>;
-
-  _getUint(
-    _componentName: string,
-    _entity: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<boolean>;
-
-  _random(
-    _max: BigNumberish,
-    _salt: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  _strEq(_s1: string, _s2: string, overrides?: CallOverrides): Promise<boolean>;
-
-  _strike(
-    _strikeFactor: BigNumberish,
-    _salt: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  _withinDistance(
-    _p1: PositionStruct,
-    _p2: PositionStruct,
-    _dist: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
   callStatic: {
+    addEntity(overrides?: CallOverrides): Promise<BigNumber>;
+
+    bulkInitializeTiles(
+      _positions: PositionStruct[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    pauseGame(overrides?: CallOverrides): Promise<void>;
+
+    reactivatePlayer(_player: string, overrides?: CallOverrides): Promise<void>;
+
+    registerComponents(
+      _gameAddr: string,
+      _componentSpecs: ComponentSpecStruct[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    registerDefaultComponents(
+      _gameAddr: string,
+      overrides?: CallOverrides
+    ): Promise<ComponentSpecStructOutput[]>;
+
+    resumeGame(overrides?: CallOverrides): Promise<void>;
+
+    setComponentValue(
+      _componentName: string,
+      _entity: BigNumberish,
+      _value: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    spawnTroop(
+      _position: PositionStruct,
+      _player: string,
+      _troopTemplateEntity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    storeEncodedColumnBatches(
+      _colBatches: BigNumberish[][],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    transferBaseOwnership(
+      _position: PositionStruct,
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    updatePlayerBalances(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     diamondCut(
       _diamondCut: FacetCutStruct[],
       _init: string,
@@ -1443,60 +903,6 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    addEntity(overrides?: CallOverrides): Promise<BigNumber>;
-
-    bulkInitializeTiles(
-      _positions: PositionStruct[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    pauseGame(overrides?: CallOverrides): Promise<void>;
-
-    reactivatePlayer(_player: string, overrides?: CallOverrides): Promise<void>;
-
-    registerComponents(
-      _gameAddr: string,
-      _componentSpecs: ComponentSpecStruct[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    registerDefaultComponents(
-      _gameAddr: string,
-      overrides?: CallOverrides
-    ): Promise<ComponentSpecStructOutput[]>;
-
-    resumeGame(overrides?: CallOverrides): Promise<void>;
-
-    setComponentValue(
-      _componentName: string,
-      _entity: BigNumberish,
-      _value: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    spawnTroop(
-      _position: PositionStruct,
-      _player: string,
-      _troopTemplateEntity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    storeEncodedColumnBatches(
-      _colBatches: BigNumberish[][],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    transferBaseOwnership(
-      _position: PositionStruct,
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    updatePlayerBalances(
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     owner(overrides?: CallOverrides): Promise<string>;
 
     transferOwnership(
@@ -1509,160 +915,6 @@ export interface Curio extends BaseContract {
     sampleImpossiblePolicy(overrides?: CallOverrides): Promise<void>;
 
     workersOfTheWorldUnite(overrides?: CallOverrides): Promise<void>;
-
-    _coincident(
-      _p1: PositionStruct,
-      _p2: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    _concatenate(
-      _arr1: BigNumberish[],
-      _arr2: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber[]>;
-
-    _difference(
-      set1: string,
-      set2: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber[]>;
-
-    _getAddress(
-      _componentName: string,
-      _entity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    _getArmyAttackFactor(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getArmyDamagePerHit(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getArmyDefenseFactor(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getArmyHealth(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getArmyLargeActionCooldown(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getArmyMovementCooldown(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getArmyTroopEntities(
-      _armyEntity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber[]>;
-
-    _getBool(
-      _componentName: string,
-      _entity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    _getComponent(_name: string, overrides?: CallOverrides): Promise<string>;
-
-    _getComponentByEntity(
-      _entity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    _getComponentValue(
-      _componentName: string,
-      _entity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    _getDebuffedArmyDamagePerHit(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getInfantryPercentage(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getInt(
-      _componentName: string,
-      _entity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getNeighbors(
-      _position: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<PositionStructOutput[]>;
-
-    _getPlayerEntity(
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getPosition(
-      _componentName: string,
-      _entity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PositionStructOutput>;
-
-    _getString(
-      _componentName: string,
-      _entity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    _getTileAt(
-      _position: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<TileStructOutput>;
-
-    _getUint(
-      _componentName: string,
-      _entity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<boolean>;
-
-    _random(
-      _max: BigNumberish,
-      _salt: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _strEq(
-      _s1: string,
-      _s2: string,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    _strike(
-      _strikeFactor: BigNumberish,
-      _salt: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    _withinDistance(
-      _p1: PositionStruct,
-      _p2: PositionStruct,
-      _dist: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
   };
 
   filters: {
@@ -1685,47 +937,72 @@ export interface Curio extends BaseContract {
       previousOwner?: string | null,
       newOwner?: string | null
     ): OwnershipTransferredEventFilter;
-
-    "ComponentValueRemoved(string,uint256)"(
-      _componentName?: null,
-      _entity?: null
-    ): ComponentValueRemovedEventFilter;
-    ComponentValueRemoved(
-      _componentName?: null,
-      _entity?: null
-    ): ComponentValueRemovedEventFilter;
-
-    "ComponentValueSet(string,uint256,bytes)"(
-      _componentName?: null,
-      _entity?: null,
-      _value?: null
-    ): ComponentValueSetEventFilter;
-    ComponentValueSet(
-      _componentName?: null,
-      _entity?: null,
-      _value?: null
-    ): ComponentValueSetEventFilter;
-
-    "EntityRemoved(uint256)"(_entity?: null): EntityRemovedEventFilter;
-    EntityRemoved(_entity?: null): EntityRemovedEventFilter;
-
-    "GamePaused()"(): GamePausedEventFilter;
-    GamePaused(): GamePausedEventFilter;
-
-    "GameResumed()"(): GameResumedEventFilter;
-    GameResumed(): GameResumedEventFilter;
-
-    "NewComponent(string,uint256)"(
-      _name?: null,
-      _entity?: null
-    ): NewComponentEventFilter;
-    NewComponent(_name?: null, _entity?: null): NewComponentEventFilter;
-
-    "NewEntity(uint256)"(_entity?: null): NewEntityEventFilter;
-    NewEntity(_entity?: null): NewEntityEventFilter;
   };
 
   estimateGas: {
+    addEntity(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    bulkInitializeTiles(
+      _positions: PositionStruct[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    pauseGame(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    reactivatePlayer(
+      _player: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    registerComponents(
+      _gameAddr: string,
+      _componentSpecs: ComponentSpecStruct[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    registerDefaultComponents(
+      _gameAddr: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    resumeGame(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setComponentValue(
+      _componentName: string,
+      _entity: BigNumberish,
+      _value: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    spawnTroop(
+      _position: PositionStruct,
+      _player: string,
+      _troopTemplateEntity: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    storeEncodedColumnBatches(
+      _colBatches: BigNumberish[][],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    transferBaseOwnership(
+      _position: PositionStruct,
+      _player: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    updatePlayerBalances(
+      _player: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     diamondCut(
       _diamondCut: FacetCutStruct[],
       _init: string,
@@ -1804,69 +1081,6 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    addEntity(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    bulkInitializeTiles(
-      _positions: PositionStruct[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    pauseGame(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    reactivatePlayer(
-      _player: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    registerComponents(
-      _gameAddr: string,
-      _componentSpecs: ComponentSpecStruct[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    registerDefaultComponents(
-      _gameAddr: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    resumeGame(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setComponentValue(
-      _componentName: string,
-      _entity: BigNumberish,
-      _value: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    spawnTroop(
-      _position: PositionStruct,
-      _player: string,
-      _troopTemplateEntity: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    storeEncodedColumnBatches(
-      _colBatches: BigNumberish[][],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    transferBaseOwnership(
-      _position: PositionStruct,
-      _player: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    updatePlayerBalances(
-      _player: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferOwnership(
@@ -1885,163 +1099,72 @@ export interface Curio extends BaseContract {
     workersOfTheWorldUnite(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
-
-    _coincident(
-      _p1: PositionStruct,
-      _p2: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _concatenate(
-      _arr1: BigNumberish[],
-      _arr2: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _difference(
-      set1: string,
-      set2: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getAddress(
-      _componentName: string,
-      _entity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getArmyAttackFactor(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getArmyDamagePerHit(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getArmyDefenseFactor(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getArmyHealth(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getArmyLargeActionCooldown(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getArmyMovementCooldown(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getArmyTroopEntities(
-      _armyEntity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getBool(
-      _componentName: string,
-      _entity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getComponent(_name: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    _getComponentByEntity(
-      _entity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getComponentValue(
-      _componentName: string,
-      _entity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getDebuffedArmyDamagePerHit(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getInfantryPercentage(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getInt(
-      _componentName: string,
-      _entity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getNeighbors(
-      _position: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getPlayerEntity(
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getPosition(
-      _componentName: string,
-      _entity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getString(
-      _componentName: string,
-      _entity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getTileAt(
-      _position: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getUint(
-      _componentName: string,
-      _entity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<BigNumber>;
-
-    _random(
-      _max: BigNumberish,
-      _salt: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _strEq(
-      _s1: string,
-      _s2: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _strike(
-      _strikeFactor: BigNumberish,
-      _salt: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _withinDistance(
-      _p1: PositionStruct,
-      _p2: PositionStruct,
-      _dist: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    addEntity(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    bulkInitializeTiles(
+      _positions: PositionStruct[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    pauseGame(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    reactivatePlayer(
+      _player: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    registerComponents(
+      _gameAddr: string,
+      _componentSpecs: ComponentSpecStruct[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    registerDefaultComponents(
+      _gameAddr: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    resumeGame(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setComponentValue(
+      _componentName: string,
+      _entity: BigNumberish,
+      _value: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    spawnTroop(
+      _position: PositionStruct,
+      _player: string,
+      _troopTemplateEntity: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    storeEncodedColumnBatches(
+      _colBatches: BigNumberish[][],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    transferBaseOwnership(
+      _position: PositionStruct,
+      _player: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    updatePlayerBalances(
+      _player: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     diamondCut(
       _diamondCut: FacetCutStruct[],
       _init: string,
@@ -2126,69 +1249,6 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    addEntity(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    bulkInitializeTiles(
-      _positions: PositionStruct[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    pauseGame(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    reactivatePlayer(
-      _player: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    registerComponents(
-      _gameAddr: string,
-      _componentSpecs: ComponentSpecStruct[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    registerDefaultComponents(
-      _gameAddr: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    resumeGame(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setComponentValue(
-      _componentName: string,
-      _entity: BigNumberish,
-      _value: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    spawnTroop(
-      _position: PositionStruct,
-      _player: string,
-      _troopTemplateEntity: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    storeEncodedColumnBatches(
-      _colBatches: BigNumberish[][],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    transferBaseOwnership(
-      _position: PositionStruct,
-      _player: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    updatePlayerBalances(
-      _player: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     transferOwnership(
@@ -2206,166 +1266,6 @@ export interface Curio extends BaseContract {
 
     workersOfTheWorldUnite(
       overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    _coincident(
-      _p1: PositionStruct,
-      _p2: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _concatenate(
-      _arr1: BigNumberish[],
-      _arr2: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _difference(
-      set1: string,
-      set2: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getAddress(
-      _componentName: string,
-      _entity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getArmyAttackFactor(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getArmyDamagePerHit(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getArmyDefenseFactor(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getArmyHealth(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getArmyLargeActionCooldown(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getArmyMovementCooldown(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getArmyTroopEntities(
-      _armyEntity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getBool(
-      _componentName: string,
-      _entity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getComponent(
-      _name: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getComponentByEntity(
-      _entity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getComponentValue(
-      _componentName: string,
-      _entity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getDebuffedArmyDamagePerHit(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getInfantryPercentage(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getInt(
-      _componentName: string,
-      _entity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getNeighbors(
-      _position: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getPlayerEntity(
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getPosition(
-      _componentName: string,
-      _entity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getString(
-      _componentName: string,
-      _entity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getTileAt(
-      _position: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getUint(
-      _componentName: string,
-      _entity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _inBound(
-      _p: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _random(
-      _max: BigNumberish,
-      _salt: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _strEq(
-      _s1: string,
-      _s2: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _strike(
-      _strikeFactor: BigNumberish,
-      _salt: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _withinDistance(
-      _p1: PositionStruct,
-      _p2: PositionStruct,
-      _dist: BigNumberish,
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
 }
