@@ -27,7 +27,7 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
 export interface EngineFacetInterface extends utils.Interface {
   functions: {
     "deleteTroop(uint256)": FunctionFragment;
-    "initializePlayer((uint256,uint256))": FunctionFragment;
+    "initializePlayer((uint256,uint256),string)": FunctionFragment;
     "march(uint256,(uint256,uint256))": FunctionFragment;
     "moveTroop(uint256,(uint256,uint256))": FunctionFragment;
     "purchaseTroop((uint256,uint256),uint256)": FunctionFragment;
@@ -39,7 +39,7 @@ export interface EngineFacetInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "initializePlayer",
-    values: [PositionStruct]
+    values: [PositionStruct, string]
   ): string;
   encodeFunctionData(
     functionFragment: "march",
@@ -100,150 +100,155 @@ export interface EngineFacet extends BaseContract {
 
   functions: {
     deleteTroop(
-      _troopId: BigNumberish,
+      _troopEntity: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     initializePlayer(
-      _pos: PositionStruct,
+      _position: PositionStruct,
+      _name: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     march(
-      _armyId: BigNumberish,
-      _targetPos: PositionStruct,
+      _armyEntity: BigNumberish,
+      _targetPosition: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     moveTroop(
-      _troopId: BigNumberish,
-      _targetPos: PositionStruct,
+      _troopEntity: BigNumberish,
+      _targetPosition: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     purchaseTroop(
-      _pos: PositionStruct,
-      _troopTypeId: BigNumberish,
+      _position: PositionStruct,
+      _troopTemplateEntity: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
 
   deleteTroop(
-    _troopId: BigNumberish,
+    _troopEntity: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   initializePlayer(
-    _pos: PositionStruct,
+    _position: PositionStruct,
+    _name: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   march(
-    _armyId: BigNumberish,
-    _targetPos: PositionStruct,
+    _armyEntity: BigNumberish,
+    _targetPosition: PositionStruct,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   moveTroop(
-    _troopId: BigNumberish,
-    _targetPos: PositionStruct,
+    _troopEntity: BigNumberish,
+    _targetPosition: PositionStruct,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   purchaseTroop(
-    _pos: PositionStruct,
-    _troopTypeId: BigNumberish,
+    _position: PositionStruct,
+    _troopTemplateEntity: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
     deleteTroop(
-      _troopId: BigNumberish,
+      _troopEntity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     initializePlayer(
-      _pos: PositionStruct,
+      _position: PositionStruct,
+      _name: string,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<BigNumber>;
 
     march(
-      _armyId: BigNumberish,
-      _targetPos: PositionStruct,
+      _armyEntity: BigNumberish,
+      _targetPosition: PositionStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
     moveTroop(
-      _troopId: BigNumberish,
-      _targetPos: PositionStruct,
+      _troopEntity: BigNumberish,
+      _targetPosition: PositionStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
     purchaseTroop(
-      _pos: PositionStruct,
-      _troopTypeId: BigNumberish,
+      _position: PositionStruct,
+      _troopTemplateEntity: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<BigNumber>;
   };
 
   filters: {};
 
   estimateGas: {
     deleteTroop(
-      _troopId: BigNumberish,
+      _troopEntity: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     initializePlayer(
-      _pos: PositionStruct,
+      _position: PositionStruct,
+      _name: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     march(
-      _armyId: BigNumberish,
-      _targetPos: PositionStruct,
+      _armyEntity: BigNumberish,
+      _targetPosition: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     moveTroop(
-      _troopId: BigNumberish,
-      _targetPos: PositionStruct,
+      _troopEntity: BigNumberish,
+      _targetPosition: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     purchaseTroop(
-      _pos: PositionStruct,
-      _troopTypeId: BigNumberish,
+      _position: PositionStruct,
+      _troopTemplateEntity: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     deleteTroop(
-      _troopId: BigNumberish,
+      _troopEntity: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     initializePlayer(
-      _pos: PositionStruct,
+      _position: PositionStruct,
+      _name: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     march(
-      _armyId: BigNumberish,
-      _targetPos: PositionStruct,
+      _armyEntity: BigNumberish,
+      _targetPosition: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     moveTroop(
-      _troopId: BigNumberish,
-      _targetPos: PositionStruct,
+      _troopEntity: BigNumberish,
+      _targetPosition: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     purchaseTroop(
-      _pos: PositionStruct,
-      _troopTypeId: BigNumberish,
+      _position: PositionStruct,
+      _troopTemplateEntity: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

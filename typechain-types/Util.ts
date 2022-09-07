@@ -22,166 +22,61 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
   y: BigNumber;
 };
 
-export type ArmyStruct = {
-  owner: string;
-  troopIds: BigNumberish[];
-  lastMoved: BigNumberish;
-  lastLargeActionTaken: BigNumberish;
-  pos: PositionStruct;
-};
+export type TileStruct = { isInitialized: boolean; terrain: BigNumberish };
 
-export type ArmyStructOutput = [
-  string,
-  BigNumber[],
-  BigNumber,
-  BigNumber,
-  PositionStructOutput
-] & {
-  owner: string;
-  troopIds: BigNumber[];
-  lastMoved: BigNumber;
-  lastLargeActionTaken: BigNumber;
-  pos: PositionStructOutput;
-};
-
-export type TroopStruct = {
-  armyId: BigNumberish;
-  troopTypeId: BigNumberish;
-  health: BigNumberish;
-};
-
-export type TroopStructOutput = [BigNumber, BigNumber, BigNumber] & {
-  armyId: BigNumber;
-  troopTypeId: BigNumber;
-  health: BigNumber;
-};
-
-export type BaseStruct = {
-  name: BigNumberish;
-  owner: string;
-  attackFactor: BigNumberish;
-  defenseFactor: BigNumberish;
-  health: BigNumberish;
-  goldGenerationPerSecond: BigNumberish;
-  oilGenerationPerSecond: BigNumberish;
-  pos: PositionStruct;
-};
-
-export type BaseStructOutput = [
-  number,
-  string,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  PositionStructOutput
-] & {
-  name: number;
-  owner: string;
-  attackFactor: BigNumber;
-  defenseFactor: BigNumber;
-  health: BigNumber;
-  goldGenerationPerSecond: BigNumber;
-  oilGenerationPerSecond: BigNumber;
-  pos: PositionStructOutput;
-};
-
-export type PlayerStruct = {
-  initTimestamp: BigNumberish;
-  active: boolean;
-  goldBalance: BigNumberish;
-  totalGoldGenerationPerUpdate: BigNumberish;
-  totalOilGenerationPerUpdate: BigNumberish;
-  totalOilConsumptionPerUpdate: BigNumberish;
-  balanceLastUpdated: BigNumberish;
-  numOwnedBases: BigNumberish;
-  numOwnedTroops: BigNumberish;
-  isDebuffed: boolean;
-};
-
-export type PlayerStructOutput = [
-  BigNumber,
-  boolean,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  boolean
-] & {
-  initTimestamp: BigNumber;
-  active: boolean;
-  goldBalance: BigNumber;
-  totalGoldGenerationPerUpdate: BigNumber;
-  totalOilGenerationPerUpdate: BigNumber;
-  totalOilConsumptionPerUpdate: BigNumber;
-  balanceLastUpdated: BigNumber;
-  numOwnedBases: BigNumber;
-  numOwnedTroops: BigNumber;
-  isDebuffed: boolean;
-};
-
-export type TileStruct = {
-  isInitialized: boolean;
-  terrain: BigNumberish;
-  occupantId: BigNumberish;
-  baseId: BigNumberish;
-};
-
-export type TileStructOutput = [boolean, number, BigNumber, BigNumber] & {
+export type TileStructOutput = [boolean, number] & {
   isInitialized: boolean;
   terrain: number;
-  occupantId: BigNumber;
-  baseId: BigNumber;
 };
 
 export interface UtilInterface extends utils.Interface {
   functions: {
-    "_getArmy(uint256)": FunctionFragment;
+    "_coincident((uint256,uint256),(uint256,uint256))": FunctionFragment;
+    "_concatenate(uint256[],uint256[])": FunctionFragment;
+    "_difference(Set,Set)": FunctionFragment;
+    "_getAddress(string,uint256)": FunctionFragment;
     "_getArmyAttackFactor(uint256[])": FunctionFragment;
     "_getArmyDamagePerHit(uint256[])": FunctionFragment;
     "_getArmyDefenseFactor(uint256[])": FunctionFragment;
     "_getArmyHealth(uint256[])": FunctionFragment;
-    "_getArmyInfantryPercentage(uint256[])": FunctionFragment;
     "_getArmyLargeActionCooldown(uint256[])": FunctionFragment;
     "_getArmyMovementCooldown(uint256[])": FunctionFragment;
-    "_getArmyOilConsumptionPerSecond(uint256[])": FunctionFragment;
-    "_getAttackFactor(uint256)": FunctionFragment;
-    "_getBase(uint256)": FunctionFragment;
-    "_getBaseHealth(uint256)": FunctionFragment;
-    "_getBaseOwner(uint256)": FunctionFragment;
-    "_getDamagePerHit(uint256)": FunctionFragment;
+    "_getArmyTroopEntities(uint256)": FunctionFragment;
+    "_getBool(string,uint256)": FunctionFragment;
+    "_getComponent(string)": FunctionFragment;
+    "_getComponentByEntity(uint256)": FunctionFragment;
+    "_getComponentValue(string,uint256)": FunctionFragment;
     "_getDebuffedArmyDamagePerHit(uint256[])": FunctionFragment;
-    "_getDefenseFactor(uint256)": FunctionFragment;
-    "_getLargeActionCooldown(uint256)": FunctionFragment;
-    "_getMaxHealth(uint256)": FunctionFragment;
-    "_getMovementCooldown(uint256)": FunctionFragment;
-    "_getOilConsumptionPerSecond(uint256)": FunctionFragment;
-    "_getPlayer(address)": FunctionFragment;
-    "_getPlayerCount()": FunctionFragment;
-    "_getPlayerGoldBalance(address)": FunctionFragment;
+    "_getInfantryPercentage(uint256[])": FunctionFragment;
+    "_getInt(string,uint256)": FunctionFragment;
+    "_getNeighbors((uint256,uint256))": FunctionFragment;
+    "_getPlayerEntity(address)": FunctionFragment;
+    "_getPosition(string,uint256)": FunctionFragment;
+    "_getString(string,uint256)": FunctionFragment;
     "_getTileAt((uint256,uint256))": FunctionFragment;
-    "_getTotalGoldGenerationPerUpdate(address)": FunctionFragment;
-    "_getTroop(uint256)": FunctionFragment;
-    "_getTroopGoldPrice(uint256)": FunctionFragment;
-    "_getTroopName(uint256)": FunctionFragment;
-    "_hasPort((bool,uint8,uint256,uint256))": FunctionFragment;
+    "_getUint(string,uint256)": FunctionFragment;
     "_inBound((uint256,uint256))": FunctionFragment;
-    "_isDebuffed(address)": FunctionFragment;
-    "_isPlayerActive(address)": FunctionFragment;
-    "_isPlayerInitialized(address)": FunctionFragment;
     "_random(uint256,uint256)": FunctionFragment;
-    "_samePos((uint256,uint256),(uint256,uint256))": FunctionFragment;
+    "_strEq(string,string)": FunctionFragment;
     "_strike(uint256,uint256)": FunctionFragment;
-    "_withinDist((uint256,uint256),(uint256,uint256),uint256)": FunctionFragment;
+    "_withinDistance((uint256,uint256),(uint256,uint256),uint256)": FunctionFragment;
   };
 
   encodeFunctionData(
-    functionFragment: "_getArmy",
-    values: [BigNumberish]
+    functionFragment: "_coincident",
+    values: [PositionStruct, PositionStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_concatenate",
+    values: [BigNumberish[], BigNumberish[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_difference",
+    values: [string, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getAddress",
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "_getArmyAttackFactor",
@@ -200,10 +95,6 @@ export interface UtilInterface extends utils.Interface {
     values: [BigNumberish[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "_getArmyInfantryPercentage",
-    values: [BigNumberish[]]
-  ): string;
-  encodeFunctionData(
     functionFragment: "_getArmyLargeActionCooldown",
     values: [BigNumberish[]]
   ): string;
@@ -212,117 +103,98 @@ export interface UtilInterface extends utils.Interface {
     values: [BigNumberish[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "_getArmyOilConsumptionPerSecond",
-    values: [BigNumberish[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getAttackFactor",
+    functionFragment: "_getArmyTroopEntities",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "_getBase",
+    functionFragment: "_getBool",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getComponent",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getComponentByEntity",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "_getBaseHealth",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getBaseOwner",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getDamagePerHit",
-    values: [BigNumberish]
+    functionFragment: "_getComponentValue",
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "_getDebuffedArmyDamagePerHit",
     values: [BigNumberish[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "_getDefenseFactor",
-    values: [BigNumberish]
+    functionFragment: "_getInfantryPercentage",
+    values: [BigNumberish[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "_getLargeActionCooldown",
-    values: [BigNumberish]
+    functionFragment: "_getInt",
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "_getMaxHealth",
-    values: [BigNumberish]
+    functionFragment: "_getNeighbors",
+    values: [PositionStruct]
   ): string;
   encodeFunctionData(
-    functionFragment: "_getMovementCooldown",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getOilConsumptionPerSecond",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(functionFragment: "_getPlayer", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "_getPlayerCount",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getPlayerGoldBalance",
+    functionFragment: "_getPlayerEntity",
     values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getPosition",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getString",
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "_getTileAt",
     values: [PositionStruct]
   ): string;
   encodeFunctionData(
-    functionFragment: "_getTotalGoldGenerationPerUpdate",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getTroop",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getTroopGoldPrice",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getTroopName",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_hasPort",
-    values: [TileStruct]
+    functionFragment: "_getUint",
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "_inBound",
     values: [PositionStruct]
-  ): string;
-  encodeFunctionData(functionFragment: "_isDebuffed", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "_isPlayerActive",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_isPlayerInitialized",
-    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "_random",
     values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "_samePos",
-    values: [PositionStruct, PositionStruct]
+    functionFragment: "_strEq",
+    values: [string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "_strike",
     values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "_withinDist",
+    functionFragment: "_withinDistance",
     values: [PositionStruct, PositionStruct, BigNumberish]
   ): string;
 
-  decodeFunctionResult(functionFragment: "_getArmy", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "_coincident",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_concatenate",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_difference",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_getAddress",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "_getArmyAttackFactor",
     data: BytesLike
@@ -340,10 +212,6 @@ export interface UtilInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "_getArmyInfantryPercentage",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "_getArmyLargeActionCooldown",
     data: BytesLike
   ): Result;
@@ -352,24 +220,20 @@ export interface UtilInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "_getArmyOilConsumptionPerSecond",
+    functionFragment: "_getArmyTroopEntities",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "_getBool", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "_getComponent",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "_getAttackFactor",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "_getBase", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "_getBaseHealth",
+    functionFragment: "_getComponentByEntity",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "_getBaseOwner",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getDamagePerHit",
+    functionFragment: "_getComponentValue",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -377,133 +241,75 @@ export interface UtilInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "_getDefenseFactor",
+    functionFragment: "_getInfantryPercentage",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "_getInt", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "_getNeighbors",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "_getLargeActionCooldown",
+    functionFragment: "_getPlayerEntity",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "_getMaxHealth",
+    functionFragment: "_getPosition",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getMovementCooldown",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getOilConsumptionPerSecond",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "_getPlayer", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "_getPlayerCount",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getPlayerGoldBalance",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "_getString", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "_getTileAt", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "_getTotalGoldGenerationPerUpdate",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "_getTroop", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "_getTroopGoldPrice",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getTroopName",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "_hasPort", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "_getUint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "_inBound", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "_isDebuffed",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_isPlayerActive",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_isPlayerInitialized",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "_random", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "_samePos", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "_strEq", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "_strike", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "_withinDist",
+    functionFragment: "_withinDistance",
     data: BytesLike
   ): Result;
 
   events: {
-    "ArmyDeath(address,uint256)": EventFragment;
-    "AttackedArmy(address,uint256,tuple,tuple[],uint256,tuple,tuple[])": EventFragment;
-    "BaseInfo(address,uint256,tuple)": EventFragment;
+    "ComponentValueRemoved(string,uint256)": EventFragment;
+    "ComponentValueSet(string,uint256,bytes)": EventFragment;
+    "EntityRemoved(uint256)": EventFragment;
     "GamePaused()": EventFragment;
     "GameResumed()": EventFragment;
-    "MovedArmy(address,uint256,tuple,uint256,tuple,tuple,uint256,tuple)": EventFragment;
-    "NewPlayer(address,tuple)": EventFragment;
-    "NewTroop(address,uint256,tuple,uint256,tuple)": EventFragment;
-    "PlayerInfo(address,tuple)": EventFragment;
-    "PlayerReactivated(address)": EventFragment;
-    "TroopDeath(address,uint256)": EventFragment;
+    "NewComponent(string,uint256)": EventFragment;
+    "NewEntity(uint256)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "ArmyDeath"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "AttackedArmy"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "BaseInfo"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ComponentValueRemoved"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ComponentValueSet"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "EntityRemoved"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "GamePaused"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "GameResumed"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "MovedArmy"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "NewPlayer"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "NewTroop"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PlayerInfo"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "PlayerReactivated"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "TroopDeath"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "NewComponent"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "NewEntity"): EventFragment;
 }
 
-export type ArmyDeathEvent = TypedEvent<
+export type ComponentValueRemovedEvent = TypedEvent<
   [string, BigNumber],
-  { _player: string; _armyId: BigNumber }
+  { _componentName: string; _entity: BigNumber }
 >;
 
-export type ArmyDeathEventFilter = TypedEventFilter<ArmyDeathEvent>;
+export type ComponentValueRemovedEventFilter =
+  TypedEventFilter<ComponentValueRemovedEvent>;
 
-export type AttackedArmyEvent = TypedEvent<
-  [
-    string,
-    BigNumber,
-    ArmyStructOutput,
-    TroopStructOutput[],
-    BigNumber,
-    ArmyStructOutput,
-    TroopStructOutput[]
-  ],
-  {
-    _player: string;
-    _armyId: BigNumber;
-    _armyInfo: ArmyStructOutput;
-    _armyTroops: TroopStructOutput[];
-    _targetArmy: BigNumber;
-    _targetArmyInfo: ArmyStructOutput;
-    _targetArmyTroops: TroopStructOutput[];
-  }
+export type ComponentValueSetEvent = TypedEvent<
+  [string, BigNumber, string],
+  { _componentName: string; _entity: BigNumber; _value: string }
 >;
 
-export type AttackedArmyEventFilter = TypedEventFilter<AttackedArmyEvent>;
+export type ComponentValueSetEventFilter =
+  TypedEventFilter<ComponentValueSetEvent>;
 
-export type BaseInfoEvent = TypedEvent<
-  [string, BigNumber, BaseStructOutput],
-  { _player: string; _baseId: BigNumber; _Base: BaseStructOutput }
+export type EntityRemovedEvent = TypedEvent<
+  [BigNumber],
+  { _entity: BigNumber }
 >;
 
-export type BaseInfoEventFilter = TypedEventFilter<BaseInfoEvent>;
+export type EntityRemovedEventFilter = TypedEventFilter<EntityRemovedEvent>;
 
 export type GamePausedEvent = TypedEvent<[], {}>;
 
@@ -513,69 +319,16 @@ export type GameResumedEvent = TypedEvent<[], {}>;
 
 export type GameResumedEventFilter = TypedEventFilter<GameResumedEvent>;
 
-export type MovedArmyEvent = TypedEvent<
-  [
-    string,
-    BigNumber,
-    PositionStructOutput,
-    BigNumber,
-    ArmyStructOutput,
-    PositionStructOutput,
-    BigNumber,
-    ArmyStructOutput
-  ],
-  {
-    _player: string;
-    timestamp: BigNumber;
-    _startPos: PositionStructOutput;
-    _startTileArmyId: BigNumber;
-    _startTileArmy: ArmyStructOutput;
-    _endPos: PositionStructOutput;
-    _targetTileArmyId: BigNumber;
-    _targetTileArmy: ArmyStructOutput;
-  }
->;
-
-export type MovedArmyEventFilter = TypedEventFilter<MovedArmyEvent>;
-
-export type NewPlayerEvent = TypedEvent<
-  [string, PositionStructOutput],
-  { _player: string; _pos: PositionStructOutput }
->;
-
-export type NewPlayerEventFilter = TypedEventFilter<NewPlayerEvent>;
-
-export type NewTroopEvent = TypedEvent<
-  [string, BigNumber, TroopStructOutput, BigNumber, ArmyStructOutput],
-  {
-    _player: string;
-    _troopId: BigNumber;
-    _troop: TroopStructOutput;
-    _armyId: BigNumber;
-    _army: ArmyStructOutput;
-  }
->;
-
-export type NewTroopEventFilter = TypedEventFilter<NewTroopEvent>;
-
-export type PlayerInfoEvent = TypedEvent<
-  [string, PlayerStructOutput],
-  { _addr: string; _player: PlayerStructOutput }
->;
-
-export type PlayerInfoEventFilter = TypedEventFilter<PlayerInfoEvent>;
-
-export type PlayerReactivatedEvent = TypedEvent<[string], { _player: string }>;
-
-export type PlayerReactivatedEventFilter =
-  TypedEventFilter<PlayerReactivatedEvent>;
-
-export type TroopDeathEvent = TypedEvent<
+export type NewComponentEvent = TypedEvent<
   [string, BigNumber],
-  { _player: string; _troopId: BigNumber }
+  { _name: string; _entity: BigNumber }
 >;
 
-export type TroopDeathEventFilter = TypedEventFilter<TroopDeathEvent>;
+export type NewComponentEventFilter = TypedEventFilter<NewComponentEvent>;
+
+export type NewEntityEvent = TypedEvent<[BigNumber], { _entity: BigNumber }>;
+
+export type NewEntityEventFilter = TypedEventFilter<NewEntityEvent>;
 
 export interface Util extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -604,158 +357,134 @@ export interface Util extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    _getArmy(
-      _armyId: BigNumberish,
+    _coincident(
+      _p1: PositionStruct,
+      _p2: PositionStruct,
       overrides?: CallOverrides
-    ): Promise<[ArmyStructOutput]>;
+    ): Promise<[boolean]>;
+
+    _concatenate(
+      _arr1: BigNumberish[],
+      _arr2: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
+
+    _difference(
+      set1: string,
+      set2: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
+
+    _getAddress(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
     _getArmyAttackFactor(
-      _armyTroopIds: BigNumberish[],
+      _troopEntities: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     _getArmyDamagePerHit(
-      _armyTroopIds: BigNumberish[],
+      _troopEntities: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     _getArmyDefenseFactor(
-      _armyTroopIds: BigNumberish[],
+      _troopEntities: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     _getArmyHealth(
-      _armyTroopIds: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    _getArmyInfantryPercentage(
-      _armyTroopIds: BigNumberish[],
+      _troopEntities: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     _getArmyLargeActionCooldown(
-      _armyTroopIds: BigNumberish[],
+      _troopEntities: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     _getArmyMovementCooldown(
-      _armyTroopIds: BigNumberish[],
+      _troopEntities: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    _getArmyOilConsumptionPerSecond(
-      _armyTroopIds: BigNumberish[],
+    _getArmyTroopEntities(
+      _armyEntity: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<[BigNumber[]]>;
 
-    _getAttackFactor(
-      _troopTypeId: BigNumberish,
+    _getBool(
+      _componentName: string,
+      _entity: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<[boolean]>;
 
-    _getBase(
-      _id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BaseStructOutput]>;
+    _getComponent(_name: string, overrides?: CallOverrides): Promise<[string]>;
 
-    _getBaseHealth(
-      _baseId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    _getBaseOwner(
-      _baseId: BigNumberish,
+    _getComponentByEntity(
+      _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    _getDamagePerHit(
-      _troopTypeId: BigNumberish,
+    _getComponentValue(
+      _componentName: string,
+      _entity: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<[string]>;
 
     _getDebuffedArmyDamagePerHit(
-      _armyTroopIds: BigNumberish[],
+      _troopEntities: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    _getDefenseFactor(
-      _troopTypeId: BigNumberish,
+    _getInfantryPercentage(
+      _troopEntities: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    _getLargeActionCooldown(
-      _troopTypeId: BigNumberish,
+    _getInt(
+      _componentName: string,
+      _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    _getMaxHealth(
-      _troopTypeId: BigNumberish,
+    _getNeighbors(
+      _position: PositionStruct,
       overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
+    ): Promise<[PositionStructOutput[]]>;
 
-    _getMovementCooldown(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    _getOilConsumptionPerSecond(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    _getPlayer(
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<[PlayerStructOutput]>;
-
-    _getPlayerCount(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    _getPlayerGoldBalance(
+    _getPlayerEntity(
       _player: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    _getPosition(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[PositionStructOutput]>;
+
+    _getString(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
     _getTileAt(
-      _pos: PositionStruct,
+      _position: PositionStruct,
       overrides?: CallOverrides
     ): Promise<[TileStructOutput]>;
 
-    _getTotalGoldGenerationPerUpdate(
-      _player: string,
+    _getUint(
+      _componentName: string,
+      _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
-
-    _getTroop(
-      _troopId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[TroopStructOutput]>;
-
-    _getTroopGoldPrice(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    _getTroopName(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[number]>;
-
-    _hasPort(_tile: TileStruct, overrides?: CallOverrides): Promise<[boolean]>;
 
     _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<[boolean]>;
-
-    _isDebuffed(_player: string, overrides?: CallOverrides): Promise<[boolean]>;
-
-    _isPlayerActive(
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    _isPlayerInitialized(
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
 
     _random(
       _max: BigNumberish,
@@ -763,9 +492,9 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    _samePos(
-      _p1: PositionStruct,
-      _p2: PositionStruct,
+    _strEq(
+      _s1: string,
+      _s2: string,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
@@ -775,7 +504,7 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    _withinDist(
+    _withinDistance(
       _p1: PositionStruct,
       _p2: PositionStruct,
       _dist: BigNumberish,
@@ -783,155 +512,134 @@ export interface Util extends BaseContract {
     ): Promise<[boolean]>;
   };
 
-  _getArmy(
-    _armyId: BigNumberish,
+  _coincident(
+    _p1: PositionStruct,
+    _p2: PositionStruct,
     overrides?: CallOverrides
-  ): Promise<ArmyStructOutput>;
+  ): Promise<boolean>;
+
+  _concatenate(
+    _arr1: BigNumberish[],
+    _arr2: BigNumberish[],
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
+  _difference(
+    set1: string,
+    set2: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
+  _getAddress(
+    _componentName: string,
+    _entity: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   _getArmyAttackFactor(
-    _armyTroopIds: BigNumberish[],
+    _troopEntities: BigNumberish[],
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   _getArmyDamagePerHit(
-    _armyTroopIds: BigNumberish[],
+    _troopEntities: BigNumberish[],
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   _getArmyDefenseFactor(
-    _armyTroopIds: BigNumberish[],
+    _troopEntities: BigNumberish[],
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   _getArmyHealth(
-    _armyTroopIds: BigNumberish[],
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  _getArmyInfantryPercentage(
-    _armyTroopIds: BigNumberish[],
+    _troopEntities: BigNumberish[],
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   _getArmyLargeActionCooldown(
-    _armyTroopIds: BigNumberish[],
+    _troopEntities: BigNumberish[],
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   _getArmyMovementCooldown(
-    _armyTroopIds: BigNumberish[],
+    _troopEntities: BigNumberish[],
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  _getArmyOilConsumptionPerSecond(
-    _armyTroopIds: BigNumberish[],
+  _getArmyTroopEntities(
+    _armyEntity: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  ): Promise<BigNumber[]>;
 
-  _getAttackFactor(
-    _troopTypeId: BigNumberish,
+  _getBool(
+    _componentName: string,
+    _entity: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  ): Promise<boolean>;
 
-  _getBase(
-    _id: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BaseStructOutput>;
+  _getComponent(_name: string, overrides?: CallOverrides): Promise<string>;
 
-  _getBaseHealth(
-    _baseId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  _getBaseOwner(
-    _baseId: BigNumberish,
+  _getComponentByEntity(
+    _entity: BigNumberish,
     overrides?: CallOverrides
   ): Promise<string>;
 
-  _getDamagePerHit(
-    _troopTypeId: BigNumberish,
+  _getComponentValue(
+    _componentName: string,
+    _entity: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  ): Promise<string>;
 
   _getDebuffedArmyDamagePerHit(
-    _armyTroopIds: BigNumberish[],
+    _troopEntities: BigNumberish[],
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  _getDefenseFactor(
-    _troopTypeId: BigNumberish,
+  _getInfantryPercentage(
+    _troopEntities: BigNumberish[],
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  _getLargeActionCooldown(
-    _troopTypeId: BigNumberish,
+  _getInt(
+    _componentName: string,
+    _entity: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  _getMaxHealth(
-    _troopTypeId: BigNumberish,
+  _getNeighbors(
+    _position: PositionStruct,
     overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  ): Promise<PositionStructOutput[]>;
 
-  _getMovementCooldown(
-    _troopTypeId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  _getOilConsumptionPerSecond(
-    _troopTypeId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  _getPlayer(
-    _player: string,
-    overrides?: CallOverrides
-  ): Promise<PlayerStructOutput>;
-
-  _getPlayerCount(overrides?: CallOverrides): Promise<BigNumber>;
-
-  _getPlayerGoldBalance(
+  _getPlayerEntity(
     _player: string,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  _getPosition(
+    _componentName: string,
+    _entity: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<PositionStructOutput>;
+
+  _getString(
+    _componentName: string,
+    _entity: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   _getTileAt(
-    _pos: PositionStruct,
+    _position: PositionStruct,
     overrides?: CallOverrides
   ): Promise<TileStructOutput>;
 
-  _getTotalGoldGenerationPerUpdate(
-    _player: string,
+  _getUint(
+    _componentName: string,
+    _entity: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
-
-  _getTroop(
-    _troopId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<TroopStructOutput>;
-
-  _getTroopGoldPrice(
-    _troopTypeId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  _getTroopName(
-    _troopTypeId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<number>;
-
-  _hasPort(_tile: TileStruct, overrides?: CallOverrides): Promise<boolean>;
 
   _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<boolean>;
-
-  _isDebuffed(_player: string, overrides?: CallOverrides): Promise<boolean>;
-
-  _isPlayerActive(_player: string, overrides?: CallOverrides): Promise<boolean>;
-
-  _isPlayerInitialized(
-    _player: string,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
 
   _random(
     _max: BigNumberish,
@@ -939,11 +647,7 @@ export interface Util extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  _samePos(
-    _p1: PositionStruct,
-    _p2: PositionStruct,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
+  _strEq(_s1: string, _s2: string, overrides?: CallOverrides): Promise<boolean>;
 
   _strike(
     _strikeFactor: BigNumberish,
@@ -951,7 +655,7 @@ export interface Util extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  _withinDist(
+  _withinDistance(
     _p1: PositionStruct,
     _p2: PositionStruct,
     _dist: BigNumberish,
@@ -959,158 +663,134 @@ export interface Util extends BaseContract {
   ): Promise<boolean>;
 
   callStatic: {
-    _getArmy(
-      _armyId: BigNumberish,
+    _coincident(
+      _p1: PositionStruct,
+      _p2: PositionStruct,
       overrides?: CallOverrides
-    ): Promise<ArmyStructOutput>;
+    ): Promise<boolean>;
+
+    _concatenate(
+      _arr1: BigNumberish[],
+      _arr2: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
+
+    _difference(
+      set1: string,
+      set2: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
+
+    _getAddress(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     _getArmyAttackFactor(
-      _armyTroopIds: BigNumberish[],
+      _troopEntities: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     _getArmyDamagePerHit(
-      _armyTroopIds: BigNumberish[],
+      _troopEntities: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     _getArmyDefenseFactor(
-      _armyTroopIds: BigNumberish[],
+      _troopEntities: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     _getArmyHealth(
-      _armyTroopIds: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getArmyInfantryPercentage(
-      _armyTroopIds: BigNumberish[],
+      _troopEntities: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     _getArmyLargeActionCooldown(
-      _armyTroopIds: BigNumberish[],
+      _troopEntities: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     _getArmyMovementCooldown(
-      _armyTroopIds: BigNumberish[],
+      _troopEntities: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getArmyOilConsumptionPerSecond(
-      _armyTroopIds: BigNumberish[],
+    _getArmyTroopEntities(
+      _armyEntity: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<BigNumber[]>;
 
-    _getAttackFactor(
-      _troopTypeId: BigNumberish,
+    _getBool(
+      _componentName: string,
+      _entity: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<boolean>;
 
-    _getBase(
-      _id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BaseStructOutput>;
+    _getComponent(_name: string, overrides?: CallOverrides): Promise<string>;
 
-    _getBaseHealth(
-      _baseId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getBaseOwner(
-      _baseId: BigNumberish,
+    _getComponentByEntity(
+      _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<string>;
 
-    _getDamagePerHit(
-      _troopTypeId: BigNumberish,
+    _getComponentValue(
+      _componentName: string,
+      _entity: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<string>;
 
     _getDebuffedArmyDamagePerHit(
-      _armyTroopIds: BigNumberish[],
+      _troopEntities: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getDefenseFactor(
-      _troopTypeId: BigNumberish,
+    _getInfantryPercentage(
+      _troopEntities: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getLargeActionCooldown(
-      _troopTypeId: BigNumberish,
+    _getInt(
+      _componentName: string,
+      _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getMaxHealth(
-      _troopTypeId: BigNumberish,
+    _getNeighbors(
+      _position: PositionStruct,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<PositionStructOutput[]>;
 
-    _getMovementCooldown(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getOilConsumptionPerSecond(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getPlayer(
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<PlayerStructOutput>;
-
-    _getPlayerCount(overrides?: CallOverrides): Promise<BigNumber>;
-
-    _getPlayerGoldBalance(
+    _getPlayerEntity(
       _player: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    _getPosition(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PositionStructOutput>;
+
+    _getString(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     _getTileAt(
-      _pos: PositionStruct,
+      _position: PositionStruct,
       overrides?: CallOverrides
     ): Promise<TileStructOutput>;
 
-    _getTotalGoldGenerationPerUpdate(
-      _player: string,
+    _getUint(
+      _componentName: string,
+      _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    _getTroop(
-      _troopId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<TroopStructOutput>;
-
-    _getTroopGoldPrice(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getTroopName(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<number>;
-
-    _hasPort(_tile: TileStruct, overrides?: CallOverrides): Promise<boolean>;
 
     _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<boolean>;
-
-    _isDebuffed(_player: string, overrides?: CallOverrides): Promise<boolean>;
-
-    _isPlayerActive(
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    _isPlayerInitialized(
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
 
     _random(
       _max: BigNumberish,
@@ -1118,9 +798,9 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _samePos(
-      _p1: PositionStruct,
-      _p2: PositionStruct,
+    _strEq(
+      _s1: string,
+      _s2: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -1130,7 +810,7 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    _withinDist(
+    _withinDistance(
       _p1: PositionStruct,
       _p2: PositionStruct,
       _dist: BigNumberish,
@@ -1139,37 +819,28 @@ export interface Util extends BaseContract {
   };
 
   filters: {
-    "ArmyDeath(address,uint256)"(
-      _player?: null,
-      _armyId?: null
-    ): ArmyDeathEventFilter;
-    ArmyDeath(_player?: null, _armyId?: null): ArmyDeathEventFilter;
+    "ComponentValueRemoved(string,uint256)"(
+      _componentName?: null,
+      _entity?: null
+    ): ComponentValueRemovedEventFilter;
+    ComponentValueRemoved(
+      _componentName?: null,
+      _entity?: null
+    ): ComponentValueRemovedEventFilter;
 
-    "AttackedArmy(address,uint256,tuple,tuple[],uint256,tuple,tuple[])"(
-      _player?: null,
-      _armyId?: null,
-      _armyInfo?: null,
-      _armyTroops?: null,
-      _targetArmy?: null,
-      _targetArmyInfo?: null,
-      _targetArmyTroops?: null
-    ): AttackedArmyEventFilter;
-    AttackedArmy(
-      _player?: null,
-      _armyId?: null,
-      _armyInfo?: null,
-      _armyTroops?: null,
-      _targetArmy?: null,
-      _targetArmyInfo?: null,
-      _targetArmyTroops?: null
-    ): AttackedArmyEventFilter;
+    "ComponentValueSet(string,uint256,bytes)"(
+      _componentName?: null,
+      _entity?: null,
+      _value?: null
+    ): ComponentValueSetEventFilter;
+    ComponentValueSet(
+      _componentName?: null,
+      _entity?: null,
+      _value?: null
+    ): ComponentValueSetEventFilter;
 
-    "BaseInfo(address,uint256,tuple)"(
-      _player?: null,
-      _baseId?: null,
-      _Base?: null
-    ): BaseInfoEventFilter;
-    BaseInfo(_player?: null, _baseId?: null, _Base?: null): BaseInfoEventFilter;
+    "EntityRemoved(uint256)"(_entity?: null): EntityRemovedEventFilter;
+    EntityRemoved(_entity?: null): EntityRemovedEventFilter;
 
     "GamePaused()"(): GamePausedEventFilter;
     GamePaused(): GamePausedEventFilter;
@@ -1177,211 +848,145 @@ export interface Util extends BaseContract {
     "GameResumed()"(): GameResumedEventFilter;
     GameResumed(): GameResumedEventFilter;
 
-    "MovedArmy(address,uint256,tuple,uint256,tuple,tuple,uint256,tuple)"(
-      _player?: null,
-      timestamp?: null,
-      _startPos?: null,
-      _startTileArmyId?: null,
-      _startTileArmy?: null,
-      _endPos?: null,
-      _targetTileArmyId?: null,
-      _targetTileArmy?: null
-    ): MovedArmyEventFilter;
-    MovedArmy(
-      _player?: null,
-      timestamp?: null,
-      _startPos?: null,
-      _startTileArmyId?: null,
-      _startTileArmy?: null,
-      _endPos?: null,
-      _targetTileArmyId?: null,
-      _targetTileArmy?: null
-    ): MovedArmyEventFilter;
+    "NewComponent(string,uint256)"(
+      _name?: null,
+      _entity?: null
+    ): NewComponentEventFilter;
+    NewComponent(_name?: null, _entity?: null): NewComponentEventFilter;
 
-    "NewPlayer(address,tuple)"(
-      _player?: null,
-      _pos?: null
-    ): NewPlayerEventFilter;
-    NewPlayer(_player?: null, _pos?: null): NewPlayerEventFilter;
-
-    "NewTroop(address,uint256,tuple,uint256,tuple)"(
-      _player?: null,
-      _troopId?: null,
-      _troop?: null,
-      _armyId?: null,
-      _army?: null
-    ): NewTroopEventFilter;
-    NewTroop(
-      _player?: null,
-      _troopId?: null,
-      _troop?: null,
-      _armyId?: null,
-      _army?: null
-    ): NewTroopEventFilter;
-
-    "PlayerInfo(address,tuple)"(
-      _addr?: null,
-      _player?: null
-    ): PlayerInfoEventFilter;
-    PlayerInfo(_addr?: null, _player?: null): PlayerInfoEventFilter;
-
-    "PlayerReactivated(address)"(_player?: null): PlayerReactivatedEventFilter;
-    PlayerReactivated(_player?: null): PlayerReactivatedEventFilter;
-
-    "TroopDeath(address,uint256)"(
-      _player?: null,
-      _troopId?: null
-    ): TroopDeathEventFilter;
-    TroopDeath(_player?: null, _troopId?: null): TroopDeathEventFilter;
+    "NewEntity(uint256)"(_entity?: null): NewEntityEventFilter;
+    NewEntity(_entity?: null): NewEntityEventFilter;
   };
 
   estimateGas: {
-    _getArmy(
-      _armyId: BigNumberish,
+    _coincident(
+      _p1: PositionStruct,
+      _p2: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _concatenate(
+      _arr1: BigNumberish[],
+      _arr2: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _difference(
+      set1: string,
+      set2: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getAddress(
+      _componentName: string,
+      _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     _getArmyAttackFactor(
-      _armyTroopIds: BigNumberish[],
+      _troopEntities: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     _getArmyDamagePerHit(
-      _armyTroopIds: BigNumberish[],
+      _troopEntities: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     _getArmyDefenseFactor(
-      _armyTroopIds: BigNumberish[],
+      _troopEntities: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     _getArmyHealth(
-      _armyTroopIds: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getArmyInfantryPercentage(
-      _armyTroopIds: BigNumberish[],
+      _troopEntities: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     _getArmyLargeActionCooldown(
-      _armyTroopIds: BigNumberish[],
+      _troopEntities: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     _getArmyMovementCooldown(
-      _armyTroopIds: BigNumberish[],
+      _troopEntities: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getArmyOilConsumptionPerSecond(
-      _armyTroopIds: BigNumberish[],
+    _getArmyTroopEntities(
+      _armyEntity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getAttackFactor(
-      _troopTypeId: BigNumberish,
+    _getBool(
+      _componentName: string,
+      _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getBase(_id: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+    _getComponent(_name: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-    _getBaseHealth(
-      _baseId: BigNumberish,
+    _getComponentByEntity(
+      _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getBaseOwner(
-      _baseId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getDamagePerHit(
-      _troopTypeId: BigNumberish,
+    _getComponentValue(
+      _componentName: string,
+      _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     _getDebuffedArmyDamagePerHit(
-      _armyTroopIds: BigNumberish[],
+      _troopEntities: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getDefenseFactor(
-      _troopTypeId: BigNumberish,
+    _getInfantryPercentage(
+      _troopEntities: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getLargeActionCooldown(
-      _troopTypeId: BigNumberish,
+    _getInt(
+      _componentName: string,
+      _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getMaxHealth(
-      _troopTypeId: BigNumberish,
+    _getNeighbors(
+      _position: PositionStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getMovementCooldown(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getOilConsumptionPerSecond(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getPlayer(_player: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    _getPlayerCount(overrides?: CallOverrides): Promise<BigNumber>;
-
-    _getPlayerGoldBalance(
+    _getPlayerEntity(
       _player: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getPosition(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getString(
+      _componentName: string,
+      _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     _getTileAt(
-      _pos: PositionStruct,
+      _position: PositionStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getTotalGoldGenerationPerUpdate(
-      _player: string,
+    _getUint(
+      _componentName: string,
+      _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    _getTroop(
-      _troopId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getTroopGoldPrice(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getTroopName(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _hasPort(_tile: TileStruct, overrides?: CallOverrides): Promise<BigNumber>;
 
     _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<BigNumber>;
-
-    _isDebuffed(_player: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    _isPlayerActive(
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _isPlayerInitialized(
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     _random(
       _max: BigNumberish,
@@ -1389,9 +994,9 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _samePos(
-      _p1: PositionStruct,
-      _p2: PositionStruct,
+    _strEq(
+      _s1: string,
+      _s2: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1401,7 +1006,7 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _withinDist(
+    _withinDistance(
       _p1: PositionStruct,
       _p2: PositionStruct,
       _dist: BigNumberish,
@@ -1410,165 +1015,138 @@ export interface Util extends BaseContract {
   };
 
   populateTransaction: {
-    _getArmy(
-      _armyId: BigNumberish,
+    _coincident(
+      _p1: PositionStruct,
+      _p2: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _concatenate(
+      _arr1: BigNumberish[],
+      _arr2: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _difference(
+      set1: string,
+      set2: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getAddress(
+      _componentName: string,
+      _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     _getArmyAttackFactor(
-      _armyTroopIds: BigNumberish[],
+      _troopEntities: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     _getArmyDamagePerHit(
-      _armyTroopIds: BigNumberish[],
+      _troopEntities: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     _getArmyDefenseFactor(
-      _armyTroopIds: BigNumberish[],
+      _troopEntities: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     _getArmyHealth(
-      _armyTroopIds: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getArmyInfantryPercentage(
-      _armyTroopIds: BigNumberish[],
+      _troopEntities: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     _getArmyLargeActionCooldown(
-      _armyTroopIds: BigNumberish[],
+      _troopEntities: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     _getArmyMovementCooldown(
-      _armyTroopIds: BigNumberish[],
+      _troopEntities: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _getArmyOilConsumptionPerSecond(
-      _armyTroopIds: BigNumberish[],
+    _getArmyTroopEntities(
+      _armyEntity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _getAttackFactor(
-      _troopTypeId: BigNumberish,
+    _getBool(
+      _componentName: string,
+      _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _getBase(
-      _id: BigNumberish,
+    _getComponent(
+      _name: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _getBaseHealth(
-      _baseId: BigNumberish,
+    _getComponentByEntity(
+      _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _getBaseOwner(
-      _baseId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getDamagePerHit(
-      _troopTypeId: BigNumberish,
+    _getComponentValue(
+      _componentName: string,
+      _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     _getDebuffedArmyDamagePerHit(
-      _armyTroopIds: BigNumberish[],
+      _troopEntities: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _getDefenseFactor(
-      _troopTypeId: BigNumberish,
+    _getInfantryPercentage(
+      _troopEntities: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _getLargeActionCooldown(
-      _troopTypeId: BigNumberish,
+    _getInt(
+      _componentName: string,
+      _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _getMaxHealth(
-      _troopTypeId: BigNumberish,
+    _getNeighbors(
+      _position: PositionStruct,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _getMovementCooldown(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getOilConsumptionPerSecond(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getPlayer(
+    _getPlayerEntity(
       _player: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _getPlayerCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    _getPosition(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
-    _getPlayerGoldBalance(
-      _player: string,
+    _getString(
+      _componentName: string,
+      _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     _getTileAt(
-      _pos: PositionStruct,
+      _position: PositionStruct,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _getTotalGoldGenerationPerUpdate(
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getTroop(
-      _troopId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getTroopGoldPrice(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getTroopName(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _hasPort(
-      _tile: TileStruct,
+    _getUint(
+      _componentName: string,
+      _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     _inBound(
       _p: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _isDebuffed(
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _isPlayerActive(
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _isPlayerInitialized(
-      _player: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1578,9 +1156,9 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _samePos(
-      _p1: PositionStruct,
-      _p2: PositionStruct,
+    _strEq(
+      _s1: string,
+      _s2: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1590,7 +1168,7 @@ export interface Util extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _withinDist(
+    _withinDistance(
       _p1: PositionStruct,
       _p2: PositionStruct,
       _dist: BigNumberish,

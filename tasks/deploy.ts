@@ -1,3 +1,4 @@
+import { ethers } from 'ethers';
 import { EngineModules } from './../typechain-types/EngineModules';
 import { publishDeployment, isConnectionLive } from './../api/deployment';
 import * as path from 'path';
@@ -7,14 +8,14 @@ import { Util } from './../typechain-types/Util';
 import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { deployProxy, loadLocalMapConfig, LOCAL_MAP_PREFIX, printDivider, saveMapToLocal } from './util/deployHelper';
-import { TROOP_TYPES, getTroopTypeIndexByName, RENDER_CONSTANTS, generateWorldConstants, SMALL_MAP_INPUT, LARGE_MAP_INPUT, SANDBOX_MAP_INPUT } from './util/constants';
+import { RENDER_CONSTANTS, generateWorldConstants, SMALL_MAP_INPUT, LARGE_MAP_INPUT, SANDBOX_MAP_INPUT, COMPONENT_SPECS } from './util/constants';
 import { position } from '../util/types/common';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
-import { Position, GameMapConfig, TILE_TYPE, TROOP_NAME, MapInput } from './util/types';
+import { Position, GameMapConfig, TILE_TYPE, MapInput } from './util/types';
 import { encodeTileMap, generateGameMaps } from './util/mapHelper';
-import { GameConfig } from '../api/types';
 import { MEDITERRAINEAN_MAP_CONFIG, testingMapConfig } from './util/mapLibrary';
 import { WorldConstantsStruct } from '../typechain-types/Curio';
+import { GameConfig } from '../api/types';
 
 /**
  * Deploy game instance and port configs to frontend.
@@ -27,13 +28,12 @@ import { WorldConstantsStruct } from '../typechain-types/Curio';
  */
 
 task('deploy', 'deploy contracts')
-  .addFlag('noport', "Don't port files to frontend") // default is to call port
+  .addFlag('port', 'Port contract abis and game info to Vault') // default is to call port
   .addFlag('publish', 'Publish deployment to game launcher') // default is to call publish
   .addFlag('release', 'Publish deployment to official release') // default is to call publish
   .addFlag('fixmap', 'Use deterministic map') // default is non-deterministic maps; deterministic maps are mainly used for client development
   .addOptionalParam('name', 'Name of fixed map', 'Hello, World!')
   .addFlag('savemap', 'Save map to local') // default is not to save
-  .addFlag('nocooldown', 'No cooldowns!') // default is to have cooldown
   .setAction(async (args: any, hre: HardhatRuntimeEnvironment) => {
     try {
       // Compile contracts
@@ -50,27 +50,17 @@ task('deploy', 'deploy contracts')
       const isRelease: boolean = args.release;
       let mapName: string = args.name;
       const saveMap: boolean = args.savemap;
-      const noCooldown: boolean = args.nocooldown;
 
       // Check connection with faucet to make sure deployment will post
       if (!isDev) {
         await isConnectionLive();
       }
 
-      // Remove cooldowns if no cooldown
-      let troopTypes = TROOP_TYPES;
-      if (noCooldown) {
-        troopTypes = troopTypes.map((troopType) => {
-          troopType.movementCooldown = 0;
-          return troopType;
-        });
-      }
-
       // Set up deployer and some local variables
       let [player1, player2] = await hre.ethers.getSigners();
       console.log('✦ player1 address is:', player1.address);
-      const infantryTroopTypeId = getTroopTypeIndexByName(troopTypes, TROOP_NAME.INFANTRY) + 1;
-      const destroyerTroopTypeId = getTroopTypeIndexByName(troopTypes, TROOP_NAME.DESTROYER) + 1;
+      const infantryTroopTypeId = 1; // FIXME
+      const destroyerTroopTypeId = 3; // FIXME
 
       // Set up game and map configs
       let gameMapConfig: GameMapConfig;
@@ -120,7 +110,7 @@ task('deploy', 'deploy contracts')
       console.log('✦ EngineModules:', engineModules.address);
 
       // Deploy diamond and facets
-      const diamondAddr = await deployDiamond(hre, [worldConstants, TROOP_TYPES]);
+      const diamondAddr = await deployDiamond(hre, [worldConstants]);
       const facets = [
         { name: 'EngineFacet', libraries: { Util: util.address, EngineModules: engineModules.address } },
         { name: 'GetterFacet', libraries: { Util: util.address } },
@@ -130,50 +120,65 @@ task('deploy', 'deploy contracts')
       const diamond = await getDiamond(hre, diamondAddr);
       printDivider();
 
-      // Initialize map
-      console.log('✦ initializing map');
+      // Register components
+      const time0 = performance.now();
+      await (await diamond.registerComponents(diamond.address, COMPONENT_SPECS)).wait();
       const time1 = performance.now();
+      console.log(`✦ component registration took ${Math.floor(time1 - time0)} ms`);
+
+      // Initialize map
       const encodedTileMap = encodeTileMap(tileMap, 6, 50);
       await (await diamond.storeEncodedColumnBatches(encodedTileMap)).wait();
       const time2 = performance.now();
       console.log(`✦ lazy setting ${tileMap.length}x${tileMap[0].length} map took ${Math.floor(time2 - time1)} ms`);
 
-      console.log('✦ initializing bases');
       const baseTiles = [...portTiles, ...cityTiles, ...oilWellTiles];
       for (let i = 0; i < baseTiles.length; i += 20) {
         await (await diamond.bulkInitializeTiles(baseTiles.slice(i, i + 20))).wait();
       }
-
       const time3 = performance.now();
       console.log(`✦ initializing ${baseTiles.length} bases took ${Math.floor(time3 - time2)} ms`);
 
+      // Initialize a troop template (destroyer)
+      const destroyerTemplateId = 1;
+      const abiCoder = new ethers.utils.AbiCoder();
+      await (await diamond.addEntity()).wait();
+      await (await diamond.setComponentValue('IsActive', destroyerTemplateId, abiCoder.encode(['bool'], [true]))).wait();
+      await (await diamond.setComponentValue('CanMove', destroyerTemplateId, abiCoder.encode(['bool'], [true]))).wait();
+      await (await diamond.setComponentValue('CanAttack', destroyerTemplateId, abiCoder.encode(['bool'], [true]))).wait();
+      await (await diamond.setComponentValue('Tag', destroyerTemplateId, abiCoder.encode(['string'], ['Template-Destroyer']))).wait();
+      await (await diamond.setComponentValue('MaxHealth', destroyerTemplateId, abiCoder.encode(['uint256'], [3]))).wait();
+      await (await diamond.setComponentValue('DamagePerHit', destroyerTemplateId, abiCoder.encode(['uint256'], [1]))).wait();
+      await (await diamond.setComponentValue('AttackFactor', destroyerTemplateId, abiCoder.encode(['uint256'], [100]))).wait();
+      await (await diamond.setComponentValue('DefenseFactor', destroyerTemplateId, abiCoder.encode(['uint256'], [100]))).wait();
+      await (await diamond.setComponentValue('MovementCooldown', destroyerTemplateId, abiCoder.encode(['uint256'], [1]))).wait();
+      await (await diamond.setComponentValue('LargeActionCooldown', destroyerTemplateId, abiCoder.encode(['uint256'], [1]))).wait();
+      await (await diamond.setComponentValue('Gold', destroyerTemplateId, abiCoder.encode(['uint256'], [19]))).wait();
+      await (await diamond.setComponentValue('OilPerSecond', destroyerTemplateId, abiCoder.encode(['uint256'], [1]))).wait();
+      const time4 = performance.now();
+      console.log(`✦ troop template creation took ${Math.floor(time4 - time3)} ms`);
+
       // Randomly initialize players if on localhost
       if (isDev) {
-        console.log('✦ initializing players');
         let x: number;
         let y: number;
 
         if (fixMap && mapName === 'testingMap') {
-          // Primary setting for client development
           const player1Pos = { x: 2, y: 4 };
           const player2Pos = { x: 4, y: 2 };
-          const player1InfantryPos = { x: 3, y: 3 };
-          const player1InfantryPos2 = { x: 2, y: 3 };
-          const player1InfantryPos3 = { x: 1, y: 3 };
-          const player2InfantryPos = { x: 3, y: 2 };
-          const player2InfantryPos2 = { x: 2, y: 2 };
-          const player2InfantryPos3 = { x: 1, y: 2 };
-          const player2DestroyerPos = { x: 5, y: 4 };
 
-          await (await diamond.connect(player1).initializePlayer(player1Pos)).wait();
-          await (await diamond.connect(player2).initializePlayer(player2Pos)).wait();
-          await (await diamond.connect(player1).spawnTroop(player1InfantryPos, player1.address, infantryTroopTypeId)).wait();
-          await (await diamond.connect(player1).spawnTroop(player1InfantryPos2, player1.address, infantryTroopTypeId)).wait();
-          await (await diamond.connect(player1).spawnTroop(player1InfantryPos3, player1.address, infantryTroopTypeId)).wait();
-          await (await diamond.connect(player1).spawnTroop(player2InfantryPos, player2.address, infantryTroopTypeId)).wait();
-          await (await diamond.connect(player1).spawnTroop(player2InfantryPos2, player2.address, infantryTroopTypeId)).wait();
-          await (await diamond.connect(player1).spawnTroop(player2InfantryPos3, player2.address, infantryTroopTypeId)).wait();
-          await (await diamond.connect(player1).spawnTroop(player2DestroyerPos, player2.address, destroyerTroopTypeId)).wait();
+          let ecsTime = performance.now();
+
+          // Initialize players
+          await (await diamond.connect(player1).initializePlayer(player1Pos, 'Alice')).wait();
+          await (await diamond.connect(player2).initializePlayer(player2Pos, 'Bob')).wait();
+          console.log(`✦ players initialized after ${performance.now() - ecsTime} ms`);
+          ecsTime = performance.now();
+
+          // Purchase a destroyer for player1
+          await (await diamond.connect(player1).purchaseTroop(player1Pos, destroyerTemplateId)).wait();
+          console.log(`✦ destroyer purchased after ${performance.now() - ecsTime} ms`);
+          ecsTime = performance.now();
         } else {
           // Primary setting for local playtesting
           const mapWidth = tileMap.length;
@@ -193,8 +198,9 @@ task('deploy', 'deploy contracts')
           } while (tileMap[x][y] !== TILE_TYPE.PORT || player2Pos.x === player1Pos.x || player2Pos.y === player1Pos.y);
 
           // Give each player a port to start with
-          await (await diamond.connect(player1).initializePlayer(player1Pos)).wait();
-          // await (await diamond.connect(player2).initializePlayer(player2Pos)).wait();
+          await (await diamond.connect(player1).initializePlayer(player1Pos, 'Eve')).wait();
+          await (await diamond.connect(player2).initializePlayer(player2Pos, 'Felix')).wait();
+          console.log(`✦ player initialization took ${Math.floor(performance.now() - time4)} ms`);
         }
       }
 
@@ -204,6 +210,7 @@ task('deploy', 'deploy contracts')
         network: hre.network.name,
         deploymentId: ` ${mapName ? `${mapName}-` : ''} ${isRelease ? 'release-' : ''}${hre.network.name}-${Date.now()}`,
         map: tileMap,
+        time: new Date(),
       };
 
       // Port files to frontend if on localhost

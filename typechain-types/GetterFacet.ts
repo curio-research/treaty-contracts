@@ -22,154 +22,11 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
   y: BigNumber;
 };
 
-export type ArmyStruct = {
-  owner: string;
-  troopIds: BigNumberish[];
-  lastMoved: BigNumberish;
-  lastLargeActionTaken: BigNumberish;
-  pos: PositionStruct;
-};
+export type TileStruct = { isInitialized: boolean; terrain: BigNumberish };
 
-export type ArmyStructOutput = [
-  string,
-  BigNumber[],
-  BigNumber,
-  BigNumber,
-  PositionStructOutput
-] & {
-  owner: string;
-  troopIds: BigNumber[];
-  lastMoved: BigNumber;
-  lastLargeActionTaken: BigNumber;
-  pos: PositionStructOutput;
-};
-
-export type TroopStruct = {
-  armyId: BigNumberish;
-  troopTypeId: BigNumberish;
-  health: BigNumberish;
-};
-
-export type TroopStructOutput = [BigNumber, BigNumber, BigNumber] & {
-  armyId: BigNumber;
-  troopTypeId: BigNumber;
-  health: BigNumber;
-};
-
-export type BaseStruct = {
-  name: BigNumberish;
-  owner: string;
-  attackFactor: BigNumberish;
-  defenseFactor: BigNumberish;
-  health: BigNumberish;
-  goldGenerationPerSecond: BigNumberish;
-  oilGenerationPerSecond: BigNumberish;
-  pos: PositionStruct;
-};
-
-export type BaseStructOutput = [
-  number,
-  string,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  PositionStructOutput
-] & {
-  name: number;
-  owner: string;
-  attackFactor: BigNumber;
-  defenseFactor: BigNumber;
-  health: BigNumber;
-  goldGenerationPerSecond: BigNumber;
-  oilGenerationPerSecond: BigNumber;
-  pos: PositionStructOutput;
-};
-
-export type TroopTypeStruct = {
-  name: BigNumberish;
-  maxHealth: BigNumberish;
-  damagePerHit: BigNumberish;
-  attackFactor: BigNumberish;
-  defenseFactor: BigNumberish;
-  movementCooldown: BigNumberish;
-  largeActionCooldown: BigNumberish;
-  goldPrice: BigNumberish;
-  oilConsumptionPerSecond: BigNumberish;
-};
-
-export type TroopTypeStructOutput = [
-  number,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber
-] & {
-  name: number;
-  maxHealth: BigNumber;
-  damagePerHit: BigNumber;
-  attackFactor: BigNumber;
-  defenseFactor: BigNumber;
-  movementCooldown: BigNumber;
-  largeActionCooldown: BigNumber;
-  goldPrice: BigNumber;
-  oilConsumptionPerSecond: BigNumber;
-};
-
-export type TileStruct = {
-  isInitialized: boolean;
-  terrain: BigNumberish;
-  occupantId: BigNumberish;
-  baseId: BigNumberish;
-};
-
-export type TileStructOutput = [boolean, number, BigNumber, BigNumber] & {
+export type TileStructOutput = [boolean, number] & {
   isInitialized: boolean;
   terrain: number;
-  occupantId: BigNumber;
-  baseId: BigNumber;
-};
-
-export type PlayerStruct = {
-  initTimestamp: BigNumberish;
-  active: boolean;
-  goldBalance: BigNumberish;
-  totalGoldGenerationPerUpdate: BigNumberish;
-  totalOilGenerationPerUpdate: BigNumberish;
-  totalOilConsumptionPerUpdate: BigNumberish;
-  balanceLastUpdated: BigNumberish;
-  numOwnedBases: BigNumberish;
-  numOwnedTroops: BigNumberish;
-  isDebuffed: boolean;
-};
-
-export type PlayerStructOutput = [
-  BigNumber,
-  boolean,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  boolean
-] & {
-  initTimestamp: BigNumber;
-  active: boolean;
-  goldBalance: BigNumber;
-  totalGoldGenerationPerUpdate: BigNumber;
-  totalOilGenerationPerUpdate: BigNumber;
-  totalOilConsumptionPerUpdate: BigNumber;
-  balanceLastUpdated: BigNumber;
-  numOwnedBases: BigNumber;
-  numOwnedTroops: BigNumber;
-  isDebuffed: boolean;
 };
 
 export type WorldConstantsStruct = {
@@ -223,81 +80,31 @@ export type WorldConstantsStructOutput = [
 
 export interface GetterFacetInterface extends utils.Interface {
   functions: {
-    "bulkGetAllArmies()": FunctionFragment;
-    "bulkGetAllTroops()": FunctionFragment;
-    "getArmy(uint256)": FunctionFragment;
-    "getArmyAt((uint256,uint256))": FunctionFragment;
-    "getBase(uint256)": FunctionFragment;
-    "getBaseAt((uint256,uint256))": FunctionFragment;
-    "getBaseNonce()": FunctionFragment;
-    "getBulkBase(uint256,uint256)": FunctionFragment;
-    "getBulkTroopTypes(uint256,uint256)": FunctionFragment;
-    "getMapChunk((uint256,uint256),uint256)": FunctionFragment;
-    "getPlayer(address)": FunctionFragment;
+    "getComponent(string)": FunctionFragment;
+    "getComponentById(uint256)": FunctionFragment;
     "getPlayerCount()": FunctionFragment;
+    "getPlayerId(address)": FunctionFragment;
     "getTileAt((uint256,uint256))": FunctionFragment;
-    "getTroop(uint256)": FunctionFragment;
-    "getTroopType(uint256)": FunctionFragment;
     "getWorldConstants()": FunctionFragment;
     "isPlayerInitialized(address)": FunctionFragment;
   };
 
   encodeFunctionData(
-    functionFragment: "bulkGetAllArmies",
-    values?: undefined
+    functionFragment: "getComponent",
+    values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "bulkGetAllTroops",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getArmy",
+    functionFragment: "getComponentById",
     values: [BigNumberish]
   ): string;
-  encodeFunctionData(
-    functionFragment: "getArmyAt",
-    values: [PositionStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getBase",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getBaseAt",
-    values: [PositionStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getBaseNonce",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getBulkBase",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getBulkTroopTypes",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getMapChunk",
-    values: [PositionStruct, BigNumberish]
-  ): string;
-  encodeFunctionData(functionFragment: "getPlayer", values: [string]): string;
   encodeFunctionData(
     functionFragment: "getPlayerCount",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "getPlayerId", values: [string]): string;
   encodeFunctionData(
     functionFragment: "getTileAt",
     values: [PositionStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getTroop",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getTroopType",
-    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getWorldConstants",
@@ -309,44 +116,22 @@ export interface GetterFacetInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "bulkGetAllArmies",
+    functionFragment: "getComponent",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "bulkGetAllTroops",
+    functionFragment: "getComponentById",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "getArmy", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "getArmyAt", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "getBase", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "getBaseAt", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "getBaseNonce",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getBulkBase",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getBulkTroopTypes",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getMapChunk",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "getPlayer", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getPlayerCount",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "getTileAt", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "getTroop", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "getTroopType",
+    functionFragment: "getPlayerId",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getTileAt", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getWorldConstants",
     data: BytesLike
@@ -386,71 +171,24 @@ export interface GetterFacet extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    bulkGetAllArmies(overrides?: CallOverrides): Promise<[ArmyStructOutput[]]>;
+    getComponent(_name: string, overrides?: CallOverrides): Promise<[string]>;
 
-    bulkGetAllTroops(overrides?: CallOverrides): Promise<[TroopStructOutput[]]>;
-
-    getArmy(
-      _armyId: BigNumberish,
+    getComponentById(
+      _entity: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[ArmyStructOutput]>;
-
-    getArmyAt(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<[ArmyStructOutput]>;
-
-    getBase(
-      _id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BaseStructOutput]>;
-
-    getBaseAt(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<[BaseStructOutput]>;
-
-    getBaseNonce(overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    getBulkBase(
-      _startId: BigNumberish,
-      _endId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BaseStructOutput[]]>;
-
-    getBulkTroopTypes(
-      _startId: BigNumberish,
-      _endId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[TroopTypeStructOutput[]]>;
-
-    getMapChunk(
-      _startPos: PositionStruct,
-      _interval: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[TileStructOutput[], PositionStructOutput[]]>;
-
-    getPlayer(
-      _addr: string,
-      overrides?: CallOverrides
-    ): Promise<[PlayerStructOutput]>;
+    ): Promise<[string]>;
 
     getPlayerCount(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    getPlayerId(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     getTileAt(
       _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<[TileStructOutput]>;
-
-    getTroop(
-      _troopId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[TroopStructOutput]>;
-
-    getTroopType(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[TroopTypeStructOutput]>;
 
     getWorldConstants(
       overrides?: CallOverrides
@@ -462,71 +200,21 @@ export interface GetterFacet extends BaseContract {
     ): Promise<[boolean]>;
   };
 
-  bulkGetAllArmies(overrides?: CallOverrides): Promise<ArmyStructOutput[]>;
+  getComponent(_name: string, overrides?: CallOverrides): Promise<string>;
 
-  bulkGetAllTroops(overrides?: CallOverrides): Promise<TroopStructOutput[]>;
-
-  getArmy(
-    _armyId: BigNumberish,
+  getComponentById(
+    _entity: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<ArmyStructOutput>;
-
-  getArmyAt(
-    _pos: PositionStruct,
-    overrides?: CallOverrides
-  ): Promise<ArmyStructOutput>;
-
-  getBase(
-    _id: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BaseStructOutput>;
-
-  getBaseAt(
-    _pos: PositionStruct,
-    overrides?: CallOverrides
-  ): Promise<BaseStructOutput>;
-
-  getBaseNonce(overrides?: CallOverrides): Promise<BigNumber>;
-
-  getBulkBase(
-    _startId: BigNumberish,
-    _endId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BaseStructOutput[]>;
-
-  getBulkTroopTypes(
-    _startId: BigNumberish,
-    _endId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<TroopTypeStructOutput[]>;
-
-  getMapChunk(
-    _startPos: PositionStruct,
-    _interval: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<[TileStructOutput[], PositionStructOutput[]]>;
-
-  getPlayer(
-    _addr: string,
-    overrides?: CallOverrides
-  ): Promise<PlayerStructOutput>;
+  ): Promise<string>;
 
   getPlayerCount(overrides?: CallOverrides): Promise<BigNumber>;
+
+  getPlayerId(_player: string, overrides?: CallOverrides): Promise<BigNumber>;
 
   getTileAt(
     _pos: PositionStruct,
     overrides?: CallOverrides
   ): Promise<TileStructOutput>;
-
-  getTroop(
-    _troopId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<TroopStructOutput>;
-
-  getTroopType(
-    _troopTypeId: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<TroopTypeStructOutput>;
 
   getWorldConstants(
     overrides?: CallOverrides
@@ -538,71 +226,21 @@ export interface GetterFacet extends BaseContract {
   ): Promise<boolean>;
 
   callStatic: {
-    bulkGetAllArmies(overrides?: CallOverrides): Promise<ArmyStructOutput[]>;
+    getComponent(_name: string, overrides?: CallOverrides): Promise<string>;
 
-    bulkGetAllTroops(overrides?: CallOverrides): Promise<TroopStructOutput[]>;
-
-    getArmy(
-      _armyId: BigNumberish,
+    getComponentById(
+      _entity: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<ArmyStructOutput>;
-
-    getArmyAt(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<ArmyStructOutput>;
-
-    getBase(
-      _id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BaseStructOutput>;
-
-    getBaseAt(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<BaseStructOutput>;
-
-    getBaseNonce(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getBulkBase(
-      _startId: BigNumberish,
-      _endId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BaseStructOutput[]>;
-
-    getBulkTroopTypes(
-      _startId: BigNumberish,
-      _endId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<TroopTypeStructOutput[]>;
-
-    getMapChunk(
-      _startPos: PositionStruct,
-      _interval: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[TileStructOutput[], PositionStructOutput[]]>;
-
-    getPlayer(
-      _addr: string,
-      overrides?: CallOverrides
-    ): Promise<PlayerStructOutput>;
+    ): Promise<string>;
 
     getPlayerCount(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getPlayerId(_player: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     getTileAt(
       _pos: PositionStruct,
       overrides?: CallOverrides
     ): Promise<TileStructOutput>;
-
-    getTroop(
-      _troopId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<TroopStructOutput>;
-
-    getTroopType(
-      _troopTypeId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<TroopTypeStructOutput>;
 
     getWorldConstants(
       overrides?: CallOverrides
@@ -617,63 +255,19 @@ export interface GetterFacet extends BaseContract {
   filters: {};
 
   estimateGas: {
-    bulkGetAllArmies(overrides?: CallOverrides): Promise<BigNumber>;
+    getComponent(_name: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-    bulkGetAllTroops(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getArmy(
-      _armyId: BigNumberish,
+    getComponentById(
+      _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    getArmyAt(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getBase(_id: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
-
-    getBaseAt(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getBaseNonce(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getBulkBase(
-      _startId: BigNumberish,
-      _endId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getBulkTroopTypes(
-      _startId: BigNumberish,
-      _endId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getMapChunk(
-      _startPos: PositionStruct,
-      _interval: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getPlayer(_addr: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     getPlayerCount(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getPlayerId(_player: string, overrides?: CallOverrides): Promise<BigNumber>;
+
     getTileAt(
       _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getTroop(
-      _troopId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getTroopType(
-      _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -686,69 +280,25 @@ export interface GetterFacet extends BaseContract {
   };
 
   populateTransaction: {
-    bulkGetAllArmies(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    bulkGetAllTroops(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getArmy(
-      _armyId: BigNumberish,
+    getComponent(
+      _name: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getArmyAt(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getBase(
-      _id: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getBaseAt(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getBaseNonce(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getBulkBase(
-      _startId: BigNumberish,
-      _endId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getBulkTroopTypes(
-      _startId: BigNumberish,
-      _endId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getMapChunk(
-      _startPos: PositionStruct,
-      _interval: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getPlayer(
-      _addr: string,
+    getComponentById(
+      _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getPlayerCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    getPlayerId(
+      _player: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getTileAt(
       _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getTroop(
-      _troopId: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getTroopType(
-      _troopTypeId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

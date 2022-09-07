@@ -1,6 +1,6 @@
+import { CompType } from './types/index';
 import { WorldConstantsStruct } from './../../typechain-types/Curio';
-import { TroopTypeStruct } from '../../typechain-types/DiamondInit';
-import { MapInput, RenderInput, TROOP_NAME } from './types';
+import { MapInput, RenderInput, TROOP_NAME, ComponentDataTypes } from './types';
 
 export const LOCALHOST_RPC_URL = 'http://127.0.0.1:8545/';
 export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
@@ -52,7 +52,9 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): W
   };
 };
 
-export const TROOP_TYPES: TroopTypeStruct[] = [
+export const TAGS = ['Port', 'City', 'Oil Well', 'Infantry', 'Destroyer', 'Cruiser', 'Battleship', 'Army', 'Player'];
+
+export const TROOP_TYPES = [
   {
     name: TROOP_NAME.INFANTRY,
     maxHealth: 200,
@@ -121,6 +123,39 @@ export const getTroopNames = (): string[] => {
   return Object.keys(TROOP_NAME).filter((item) => isNaN(Number(item)));
 };
 
-export const getTroopTypeIndexByName = (troopTypes: TroopTypeStruct[], name: TROOP_NAME): number => {
-  return troopTypes.indexOf(troopTypes.filter((item) => item.name === name)[0]);
-};
+export const COMPONENT_SPECS: CompType[] = [
+  // General syste
+  { name: 'IsComponent', valueType: ComponentDataTypes.BOOL },
+  { name: 'InitTimestamp', valueType: ComponentDataTypes.UINT },
+  { name: 'IsActive', valueType: ComponentDataTypes.BOOL },
+  { name: 'Position', valueType: ComponentDataTypes.POSITION },
+  { name: 'OwnerEntity', valueType: ComponentDataTypes.UINT },
+  // Identifier system
+  { name: 'Name', valueType: ComponentDataTypes.STRING },
+  { name: 'Tag', valueType: ComponentDataTypes.STRING },
+  { name: 'CanMove', valueType: ComponentDataTypes.BOOL },
+  { name: 'CanAttack', valueType: ComponentDataTypes.BOOL },
+  { name: 'CanCapture', valueType: ComponentDataTypes.BOOL },
+  { name: 'CanPurchase', valueType: ComponentDataTypes.BOOL },
+  // Resource system
+  { name: 'Gold', valueType: ComponentDataTypes.UINT },
+  { name: 'GoldPerSecond', valueType: ComponentDataTypes.INT },
+  { name: 'Oil', valueType: ComponentDataTypes.UINT },
+  { name: 'OilPerSecond', valueType: ComponentDataTypes.INT },
+  { name: 'BalanceLastUpdated', valueType: ComponentDataTypes.UINT },
+  // Battle system
+  { name: 'Health', valueType: ComponentDataTypes.UINT },
+  { name: 'LastMoved', valueType: ComponentDataTypes.UINT },
+  { name: 'LastLargeActionTaken', valueType: ComponentDataTypes.UINT },
+  { name: 'LastRepaired', valueType: ComponentDataTypes.UINT },
+  { name: 'CanMoveOnLand', valueType: ComponentDataTypes.BOOL },
+  { name: 'MaxHealth', valueType: ComponentDataTypes.UINT },
+  { name: 'DamagePerHit', valueType: ComponentDataTypes.UINT },
+  { name: 'AttackFactor', valueType: ComponentDataTypes.UINT },
+  { name: 'DefenseFactor', valueType: ComponentDataTypes.UINT },
+  { name: 'MovementCooldown', valueType: ComponentDataTypes.UINT },
+  { name: 'LargeActionCooldown', valueType: ComponentDataTypes.UINT },
+  { name: 'ArmyEntity', valueType: ComponentDataTypes.UINT },
+  { name: 'IsDebuffed', valueType: ComponentDataTypes.BOOL },
+  { name: 'IsArmy', valueType: ComponentDataTypes.BOOL },
+];

@@ -65,11 +65,11 @@ export default {
     hardhat: {
       chainId: 1337,
       allowUnlimitedContractSize: true,
-      blockGasLimit: 100000000000,
-      mining: {
-        auto: false,
-        interval: 200,
-      },
+      blockGasLimit: 300_000_000_000_000,
+      // mining: {
+      //   auto: false,
+      //   interval: 200,
+      // },
     },
   },
 

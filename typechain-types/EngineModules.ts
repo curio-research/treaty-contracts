@@ -8,13 +8,15 @@ import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from './common';
 
 export type TileStruct = {
   isInitialized: boolean;
+  isInitializedECS: boolean;
   terrain: BigNumberish;
   occupantId: BigNumberish;
   baseId: BigNumberish;
 };
 
-export type TileStructOutput = [boolean, number, BigNumber, BigNumber] & {
+export type TileStructOutput = [boolean, boolean, number, BigNumber, BigNumber] & {
   isInitialized: boolean;
+  isInitializedECS: boolean;
   terrain: number;
   occupantId: BigNumber;
   baseId: BigNumber;
@@ -57,8 +59,8 @@ export type TroopStructOutput = [BigNumber, BigNumber, BigNumber] & {
 
 export interface EngineModulesInterface extends utils.Interface {
   functions: {
-    '_geographicCheckArmy(uint256,(bool,uint8,uint256,uint256))': FunctionFragment;
-    '_geographicCheckTroop(uint256,(bool,uint8,uint256,uint256))': FunctionFragment;
+    '_geographicCheckArmy(uint256,(bool,bool,uint8,uint256,uint256))': FunctionFragment;
+    '_geographicCheckTroop(uint256,(bool,bool,uint8,uint256,uint256))': FunctionFragment;
     '_getArmyAndTroops(uint256)': FunctionFragment;
   };
 
@@ -92,42 +94,42 @@ export interface EngineModules extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    _geographicCheckArmy(_armyId: BigNumberish, _tile: TileStruct, overrides?: CallOverrides): Promise<[boolean]>;
+    _geographicCheckArmy(_armyEntity: BigNumberish, _tile: TileStruct, overrides?: CallOverrides): Promise<[boolean]>;
 
     _geographicCheckTroop(_troopTypeId: BigNumberish, _tile: TileStruct, overrides?: CallOverrides): Promise<[boolean]>;
 
-    _getArmyAndTroops(_armyId: BigNumberish, overrides?: CallOverrides): Promise<[ArmyStructOutput, TroopStructOutput[]]>;
+    _getArmyAndTroops(_armyEntity: BigNumberish, overrides?: CallOverrides): Promise<[ArmyStructOutput, TroopStructOutput[]]>;
   };
 
-  _geographicCheckArmy(_armyId: BigNumberish, _tile: TileStruct, overrides?: CallOverrides): Promise<boolean>;
+  _geographicCheckArmy(_armyEntity: BigNumberish, _tile: TileStruct, overrides?: CallOverrides): Promise<boolean>;
 
   _geographicCheckTroop(_troopTypeId: BigNumberish, _tile: TileStruct, overrides?: CallOverrides): Promise<boolean>;
 
-  _getArmyAndTroops(_armyId: BigNumberish, overrides?: CallOverrides): Promise<[ArmyStructOutput, TroopStructOutput[]]>;
+  _getArmyAndTroops(_armyEntity: BigNumberish, overrides?: CallOverrides): Promise<[ArmyStructOutput, TroopStructOutput[]]>;
 
   callStatic: {
-    _geographicCheckArmy(_armyId: BigNumberish, _tile: TileStruct, overrides?: CallOverrides): Promise<boolean>;
+    _geographicCheckArmy(_armyEntity: BigNumberish, _tile: TileStruct, overrides?: CallOverrides): Promise<boolean>;
 
     _geographicCheckTroop(_troopTypeId: BigNumberish, _tile: TileStruct, overrides?: CallOverrides): Promise<boolean>;
 
-    _getArmyAndTroops(_armyId: BigNumberish, overrides?: CallOverrides): Promise<[ArmyStructOutput, TroopStructOutput[]]>;
+    _getArmyAndTroops(_armyEntity: BigNumberish, overrides?: CallOverrides): Promise<[ArmyStructOutput, TroopStructOutput[]]>;
   };
 
   filters: {};
 
   estimateGas: {
-    _geographicCheckArmy(_armyId: BigNumberish, _tile: TileStruct, overrides?: CallOverrides): Promise<BigNumber>;
+    _geographicCheckArmy(_armyEntity: BigNumberish, _tile: TileStruct, overrides?: CallOverrides): Promise<BigNumber>;
 
     _geographicCheckTroop(_troopTypeId: BigNumberish, _tile: TileStruct, overrides?: CallOverrides): Promise<BigNumber>;
 
-    _getArmyAndTroops(_armyId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+    _getArmyAndTroops(_armyEntity: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    _geographicCheckArmy(_armyId: BigNumberish, _tile: TileStruct, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    _geographicCheckArmy(_armyEntity: BigNumberish, _tile: TileStruct, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     _geographicCheckTroop(_troopTypeId: BigNumberish, _tile: TileStruct, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    _getArmyAndTroops(_armyId: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    _getArmyAndTroops(_armyEntity: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

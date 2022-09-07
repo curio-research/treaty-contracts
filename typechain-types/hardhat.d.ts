@@ -13,6 +13,10 @@ import * as Contracts from ".";
 declare module "hardhat/types/runtime" {
   interface HardhatEthersHelpers extends HardhatEthersHelpersBase {
     getContractFactory(
+      name: "Component",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Component__factory>;
+    getContractFactory(
       name: "Diamond",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Diamond__factory>;
@@ -41,6 +45,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.OwnershipFacet__factory>;
     getContractFactory(
+      name: "PolicyFacet",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.PolicyFacet__factory>;
+    getContractFactory(
       name: "IDiamondCut",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IDiamondCut__factory>;
@@ -57,10 +65,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC173__factory>;
     getContractFactory(
-      name: "EngineModules",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.EngineModules__factory>;
-    getContractFactory(
       name: "Util",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Util__factory>;
@@ -68,6 +72,34 @@ declare module "hardhat/types/runtime" {
       name: "LibDiamond",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.LibDiamond__factory>;
+    getContractFactory(
+      name: "Set",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Set__factory>;
+    getContractFactory(
+      name: "AddressComponent",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.AddressComponent__factory>;
+    getContractFactory(
+      name: "BoolComponent",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.BoolComponent__factory>;
+    getContractFactory(
+      name: "IntComponent",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IntComponent__factory>;
+    getContractFactory(
+      name: "PositionComponent",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.PositionComponent__factory>;
+    getContractFactory(
+      name: "StringComponent",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.StringComponent__factory>;
+    getContractFactory(
+      name: "UintComponent",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.UintComponent__factory>;
     getContractFactory(
       name: "DiamondInit",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -77,6 +109,11 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Curio__factory>;
 
+    getContractAt(
+      name: "Component",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Component>;
     getContractAt(
       name: "Diamond",
       address: string,
@@ -113,6 +150,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.OwnershipFacet>;
     getContractAt(
+      name: "PolicyFacet",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.PolicyFacet>;
+    getContractAt(
       name: "IDiamondCut",
       address: string,
       signer?: ethers.Signer
@@ -133,11 +175,6 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IERC173>;
     getContractAt(
-      name: "EngineModules",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.EngineModules>;
-    getContractAt(
       name: "Util",
       address: string,
       signer?: ethers.Signer
@@ -147,6 +184,41 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.LibDiamond>;
+    getContractAt(
+      name: "Set",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Set>;
+    getContractAt(
+      name: "AddressComponent",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.AddressComponent>;
+    getContractAt(
+      name: "BoolComponent",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.BoolComponent>;
+    getContractAt(
+      name: "IntComponent",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IntComponent>;
+    getContractAt(
+      name: "PositionComponent",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.PositionComponent>;
+    getContractAt(
+      name: "StringComponent",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.StringComponent>;
+    getContractAt(
+      name: "UintComponent",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.UintComponent>;
     getContractAt(
       name: "DiamondInit",
       address: string,

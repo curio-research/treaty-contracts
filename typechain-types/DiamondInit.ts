@@ -66,48 +66,14 @@ export type WorldConstantsStructOutput = [
   debuffFactor: BigNumber;
 };
 
-export type TroopTypeStruct = {
-  name: BigNumberish;
-  maxHealth: BigNumberish;
-  damagePerHit: BigNumberish;
-  attackFactor: BigNumberish;
-  defenseFactor: BigNumberish;
-  movementCooldown: BigNumberish;
-  largeActionCooldown: BigNumberish;
-  goldPrice: BigNumberish;
-  oilConsumptionPerSecond: BigNumberish;
-};
-
-export type TroopTypeStructOutput = [
-  number,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber
-] & {
-  name: number;
-  maxHealth: BigNumber;
-  damagePerHit: BigNumber;
-  attackFactor: BigNumber;
-  defenseFactor: BigNumber;
-  movementCooldown: BigNumber;
-  largeActionCooldown: BigNumber;
-  goldPrice: BigNumber;
-  oilConsumptionPerSecond: BigNumber;
-};
-
 export interface DiamondInitInterface extends utils.Interface {
   functions: {
-    "init((address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256),(uint8,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256)[])": FunctionFragment;
+    "init((address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))": FunctionFragment;
   };
 
   encodeFunctionData(
     functionFragment: "init",
-    values: [WorldConstantsStruct, TroopTypeStruct[]]
+    values: [WorldConstantsStruct]
   ): string;
 
   decodeFunctionResult(functionFragment: "init", data: BytesLike): Result;
@@ -144,21 +110,18 @@ export interface DiamondInit extends BaseContract {
   functions: {
     init(
       _worldConstants: WorldConstantsStruct,
-      _troopTypes: TroopTypeStruct[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
 
   init(
     _worldConstants: WorldConstantsStruct,
-    _troopTypes: TroopTypeStruct[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
     init(
       _worldConstants: WorldConstantsStruct,
-      _troopTypes: TroopTypeStruct[],
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -168,7 +131,6 @@ export interface DiamondInit extends BaseContract {
   estimateGas: {
     init(
       _worldConstants: WorldConstantsStruct,
-      _troopTypes: TroopTypeStruct[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
@@ -176,7 +138,6 @@ export interface DiamondInit extends BaseContract {
   populateTransaction: {
     init(
       _worldConstants: WorldConstantsStruct,
-      _troopTypes: TroopTypeStruct[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

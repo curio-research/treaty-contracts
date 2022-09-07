@@ -4,189 +4,251 @@ pragma solidity ^0.8.4;
 import "contracts/libraries/Storage.sol";
 import {Util} from "contracts/libraries/GameUtil.sol";
 import {EngineModules} from "contracts/libraries/EngineModules.sol";
-import {Army, BASE_NAME, Base, GameState, Player, Position, TERRAIN, Tile, Troop, TroopType, WorldConstants} from "contracts/libraries/Types.sol";
+import {Position, TERRAIN, WorldConstants} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
+import {Set} from "contracts/Set.sol";
+import {BoolComponent, UintComponent} from "contracts/TypedComponents.sol";
 
 /// @title Engine facet
 /// @notice Contains player functions such as march, purchaseTroop, initializePlayer
 
 contract EngineFacet is UseStorage {
     using SafeMath for uint256;
-    uint256 NULL = 0;
-    address NULL_ADDR = address(0);
+    uint256 private NULL = 0;
 
     /**
-     * March army to a target position (move, battle, or capture).
-     * @param _armyId identifier for troop
-     * @param _targetPos target position
+     * @dev March army to a target position (move, battle, or capture).
+     * @param _armyEntity army entity
+     * @param _targetPosition target position
      */
-    function march(uint256 _armyId, Position memory _targetPos) external {
-        // basic check
+    function march(uint256 _armyEntity, Position memory _targetPosition) external {
+        // 1. Verify that army exists as an entity
+        require(Set(gs().entities).includes(_armyEntity), "CURIO: Troop not found");
+
+        // 2. Verify that game is ongoing
         require(!gs().isPaused, "CURIO: Game is paused");
-        require(Util._isPlayerActive(msg.sender), "CURIO: Player is inactive");
-        require(Util._inBound(_targetPos), "CURIO: Target out of bound");
-        if (!Util._getTileAt(_targetPos).isInitialized) Util._initializeTile(_targetPos);
 
-        Army memory _army = Util._getArmy(_armyId);
-        require(_army.owner == msg.sender, "CURIO: Can only march own troop");
-        require(!Util._samePos(_army.pos, _targetPos), "CURIO: Already at destination");
-        require((block.timestamp - _army.lastLargeActionTaken) >= Util._getArmyLargeActionCooldown(_army.troopIds), "CURIO: Large action taken too recently");
+        // 3. Verify that player is active
+        uint256 _playerEntity = Util._getPlayerEntity(msg.sender);
+        require(BoolComponent(gs().components["IsActive"]).has(_playerEntity), "CURIO: Player is inactive");
 
-        Tile memory _targetTile = Util._getTileAt(_targetPos);
-        require(EngineModules._geographicCheckArmy(_armyId, _targetTile), "CURIO: Troops and land type not compatible");
+        // 4. Verify that position is in bound, and initialize tile
+        require(Util._inBound(_targetPosition), "CURIO: Out of bound");
+        if (!Util._getTileAt(_targetPosition).isInitialized) Util._initializeTile(_targetPosition);
 
-        if (_targetTile.occupantId == NULL) {
-            if (_targetTile.baseId == NULL) {
+        // 5. Verify that target position is different from starting position and within movement range
+        Position memory _sourcePosition = Util._getPosition("Position", _armyEntity);
+        require(!Util._coincident(_sourcePosition, _targetPosition), "CURIO: Already at destination");
+        require(Util._withinDistance(_sourcePosition, _targetPosition, 1), "CURIO: You can only dispatch troop to the near tile");
+
+        // 6. Verify ownership of army by player
+        require(Util._getUint("OwnerEntity", _armyEntity) == _playerEntity, "CURIO: You can only dispatch own troop");
+
+        // 7. Large action cooldown check
+        uint256[] memory _armyTroopEntities = Util._getArmyTroopEntities(_armyEntity);
+        uint256 _lastLargeActionTaken = Util._getUint("LastLargeActionTaken", _armyEntity);
+        uint256 _largeActionCooldown = Util._getArmyLargeActionCooldown(_armyTroopEntities);
+        require(block.timestamp - _lastLargeActionTaken >= _largeActionCooldown, "CURIO: Large action taken too recently");
+
+        // 8. Geographic check
+        require(EngineModules._geographicCheckArmy(_armyEntity, _targetPosition), "CURIO: Troop and land type not compatible");
+
+        // 9. March logic
+        uint256 _targetArmyId = Util._getArmyAt(_targetPosition);
+        if (_targetArmyId == NULL) {
+            uint256 _targetBaseId = Util._getBaseAt(_targetPosition);
+            if (_targetBaseId == NULL) {
                 // CaseI: move army when target tile has no base or army
-                EngineModules._moveArmy(msg.sender, _armyId, _targetPos);
+                EngineModules._moveArmy(_playerEntity, _armyEntity, _targetPosition);
             } else {
-                if (Util._getBaseOwner(_targetTile.baseId) == msg.sender) {
+                if (Util._getUint("OwnerEntity", _targetBaseId) == _playerEntity) {
                     // CaseII: move army when target tile has your base but no army
-                    EngineModules._moveArmy(msg.sender, _armyId, _targetPos);
+                    EngineModules._moveArmy(_playerEntity, _armyEntity, _targetPosition);
                 } else {
                     // CaseIII: attack base when target tile has enemy base but no army
-                    EngineModules._battleBase(msg.sender, _armyId, _targetPos);
+                    EngineModules._battleBase(_playerEntity, _armyEntity, _targetPosition);
                 }
             }
         } else {
             // CaseIV: battle enemy army when target tile has one
-            require(gs().armyIdMap[_targetTile.occupantId].owner != msg.sender, "CURIO: Destination tile occupied");
-            EngineModules._battleArmy(msg.sender, _armyId, _targetPos);
+            require(Util._getUint("OwnerEntity", _targetArmyId) != _playerEntity, "CURIO: Destination tile occupied");
+            EngineModules._battleArmy(_playerEntity, _armyEntity, _targetPosition);
         }
 
-        Util._updateArmy(msg.sender, _army.pos, _targetPos); // update army info on start tile and end tile
-        Util._emitPlayerInfo(msg.sender); // updates player info
+        Util._updatePlayerBalances(_playerEntity);
     }
 
     /**
-     * Dispatch troop to a target position (_moveArmy, _loadTroop, _clearTroopFromSourceArmy etc.).
-     * @param _troopId identifier for troop
-     * @param _targetPos target position
+     * @dev Dispatch troop to a target position.
+     * @param _troopEntity troop entity
+     * @param _targetPosition target position
      */
-    function moveTroop(uint256 _troopId, Position memory _targetPos) public {
-        // basic check
+    function moveTroop(uint256 _troopEntity, Position memory _targetPosition) external {
+        // 1. Verify that troop exists as an entity
+        require(Set(gs().entities).includes(_troopEntity), "CURIO: Troop not found");
+
+        // 2. Verify that game is ongoing
         require(!gs().isPaused, "CURIO: Game is paused");
-        require(Util._isPlayerActive(msg.sender), "CURIO: Player is inactive");
-        require(Util._inBound(_targetPos), "CURIO: Target out of bound");
-        if (!Util._getTileAt(_targetPos).isInitialized) Util._initializeTile(_targetPos);
 
-        Troop memory _troop = gs().troopIdMap[_troopId];
-        Army memory _army = gs().armyIdMap[_troop.armyId];
-        Position memory _startPos = _army.pos;
-        Army memory _targetArmy;
-        Tile memory _targetTile = Util._getTileAt(_targetPos);
+        // 3. Verify that player is active
+        uint256 _playerEntity = Util._getPlayerEntity(msg.sender);
+        require(BoolComponent(gs().components["IsActive"]).has(_playerEntity), "CURIO: Player is inactive");
 
-        if (_targetTile.occupantId != NULL) {
-            _targetArmy = Util._getArmy(_targetTile.occupantId);
-            require(_targetArmy.owner == msg.sender, "CURIO: You can only combine with own troop");
-        }
+        // 4. Verify that position is in bound, and initialize tile
+        require(Util._inBound(_targetPosition), "CURIO: Out of bound");
+        if (!Util._getTileAt(_targetPosition).isInitialized) Util._initializeTile(_targetPosition);
 
-        require(Util._withinDist(_startPos, _targetPos, 1), "CURIO: You can only dispatch troop to the near tile");
-        require(_army.owner == msg.sender, "CURIO: You can only dispatch own troop");
-        require(!Util._samePos(_startPos, _targetPos), "CURIO: Already at destination");
-        require((block.timestamp - _army.lastLargeActionTaken) >= Util._getArmyLargeActionCooldown(_army.troopIds), "CURIO: Large action taken too recently");
+        // 5. Verify that target position is different from starting position and within movement range
+        uint256 _armyEntity = Util._getUint("ArmyEntity", _troopEntity);
+        Position memory _sourcePosition = Util._getPosition("Position", _armyEntity);
+        require(!Util._coincident(_sourcePosition, _targetPosition), "CURIO: Already at destination");
+        require(Util._withinDistance(_sourcePosition, _targetPosition, 1), "CURIO: You can only dispatch troop to the near tile");
 
-        require(EngineModules._geographicCheckTroop(_troop.troopTypeId, _targetTile), "CURIO: Troop and land type not compatible");
+        // 6. Verify ownership of troop by player
+        require(Util._getUint("OwnerEntity", _troopEntity) == _playerEntity, "CURIO: You can only dispatch own troop");
 
-        if (_targetTile.occupantId == NULL) {
-            // CaseI: Target Tile has no enemy base or enemy army
-            require(Util._getBaseOwner(_targetTile.baseId) == msg.sender || _targetTile.baseId == NULL, "CURIO: Cannot directly attack with troops");
+        // 7. Large action cooldown check
+        uint256[] memory _armyTroopEntities = Util._getArmyTroopEntities(_armyEntity);
+        uint256 _lastLargeActionTaken = Util._getUint("LastLargeActionTaken", _armyEntity);
+        uint256 _largeActionCooldown = Util._getArmyLargeActionCooldown(_armyTroopEntities);
+        require(block.timestamp - _lastLargeActionTaken >= _largeActionCooldown, "CURIO: Large action taken too recently");
 
-            uint256 _newArmyId = Util._createNewArmyFromTroop(msg.sender, _troopId, _startPos);
-            EngineModules._moveNewArmyToEmptyTile(_newArmyId, _targetPos);
+        // 8. Movement cooldown check
+        uint256 _lastMoved = Util._getUint("LastMoved", _armyEntity);
+        uint256 _movementCooldown = Util._getArmyMovementCooldown(_armyTroopEntities);
+        require(block.timestamp - _lastMoved >= _movementCooldown, "CURIO: Moved too recently");
+
+        // 9. Geographic and base checks
+        require(EngineModules._geographicCheckTroop(_troopEntity, _targetPosition), "CURIO: Troop and land type not compatible");
+        require(Util._getBaseAt(_targetPosition) == NULL, "CURIO: Cannot directly attack with troops");
+
+        // 10. March logic checks, and create new army if empty
+        uint256 _targetArmyId = Util._getArmyAt(_targetPosition);
+        if (_targetArmyId != NULL) {
+            require(Util._getUint("OwnerEntity", _targetArmyId) == _playerEntity, "CURIO: Cannot directly attack with troops");
+            require(Util._getArmyTroopEntities(_targetArmyId).length + 1 <= 5, "CURIO: Army can have up to five troops, or two with one transport");
         } else {
-            // CaseII: Target Tile has own army
-            require(_targetArmy.troopIds.length + 1 <= 5, "CURIO: Army can have up to five troops, or two with one transport");
-            EngineModules._moveTroopToArmy(_targetTile.occupantId, _troopId);
-        }
-        EngineModules._clearTroopFromSourceArmy(_troop.armyId, _troopId);
-
-        Util._updateArmy(msg.sender, _startPos, _targetPos);
-        Util._emitPlayerInfo(msg.sender);
-    }
-
-    /**
-     * Purchase troop at a base.
-     * @param _pos position of base
-     * @param _troopTypeId identifier for selected troop type
-     */
-    function purchaseTroop(Position memory _pos, uint256 _troopTypeId) external {
-        require(!gs().isPaused, "CURIO: Game is paused");
-        require(Util._isPlayerActive(msg.sender), "CURIO: Player is inactive");
-
-        require(Util._inBound(_pos), "CURIO: Out of bound");
-        if (!Util._getTileAt(_pos).isInitialized) Util._initializeTile(_pos);
-
-        Tile memory _tile = Util._getTileAt(_pos);
-        require(_tile.baseId != NULL, "CURIO: No base found");
-        require(_tile.occupantId == NULL, "CURIO: Base occupied by another troop");
-
-        Base memory _base = Util._getBase(_tile.baseId);
-        require(_base.owner == msg.sender, "CURIO: Can only purchase in own base");
-        require(EngineModules._geographicCheckTroop(_troopTypeId, _tile), "CURIO: Base cannot purchase selected troop type");
-
-        Util._addTroop(msg.sender, _pos, _troopTypeId);
-
-        uint256 _troopPrice = Util._getTroopGoldPrice(_troopTypeId);
-        Util._updatePlayerBalances(msg.sender);
-        require(_troopPrice <= Util._getPlayerGoldBalance(msg.sender), "CURIO: Insufficient gold balance");
-        gs().playerMap[msg.sender].goldBalance -= _troopPrice;
-
-        Util._emitPlayerInfo(msg.sender);
-    }
-
-    /**
-     * Delete an owned troop (often to reduce expense).
-     * @param _troopId identifier for troop
-     */
-    function deleteTroop(uint256 _troopId) external {
-        Troop memory _troop = Util._getTroop(_troopId);
-        Army memory _army = Util._getArmy(_troop.armyId);
-        require(_army.owner == msg.sender, "CURIO: Can only delete own troop");
-
-        if (_army.troopIds.length == 1) {
-            Util._removeArmyWithTroops(_troop.armyId); // remove entire army if troop is last one in army
-        } else {
-            Util._removeTroop(_troopId);
+            _targetArmyId = Util._addArmy(_playerEntity, _targetPosition);
         }
 
-        EngineModules._updateAttackedArmy(msg.sender, _troop.armyId, _troop.armyId);
+        // 11. Move troop
+        Util._setUint("ArmyEntity", _troopEntity, _targetArmyId);
+
+        // 12. Remove old army if empty
+        if (Util._getArmyTroopEntities(_armyEntity).length == 0) Util._removeArmy(_armyEntity);
     }
 
     /**
-     * Initialize self as player at a selected position.
-     * @param _pos position to initialize
+     * @dev Delete an owned troop (often to reduce expense).
+     * @param _troopEntity identifier for troop
      */
-    function initializePlayer(Position memory _pos) external {
+    function deleteTroop(uint256 _troopEntity) external {
+        uint256 _playerEntity = Util._getPlayerEntity(msg.sender);
+        require(Util._getUint("OwnerEntity", _troopEntity) == _playerEntity, "CURIO: Can only delete own troop");
+
+        uint256 _armyEntity = Util._getUint("ArmyEntity", _troopEntity);
+        if (Util._getArmyTroopEntities(_armyEntity).length <= 1) Util._removeArmy(_armyEntity);
+        Util._removeTroop(_troopEntity);
+    }
+
+    /**
+     * @dev Purchase a new troop.
+     * @param _position position to purchase troop
+     * @param _troopTemplateEntity identifier for desired troop type
+     * @return _troopEntity identifier for new troop
+     */
+    function purchaseTroop(Position memory _position, uint256 _troopTemplateEntity) external returns (uint256) {
+        // 1. Verify that parametric entity exists
+        require(Set(gs().entities).includes(_troopTemplateEntity), "CURIO: Troop template not found");
+
+        // 2. Verify that game is ongoing
         require(!gs().isPaused, "CURIO: Game is paused");
-        require(Util._getPlayerCount() < gs().worldConstants.maxPlayerCount, "CURIO: Max player count exceeded");
-        require(!Util._isPlayerInitialized(msg.sender), "CURIO: Player already initialized");
 
-        require(Util._inBound(_pos), "CURIO: Out of bound");
-        if (!Util._getTileAt(_pos).isInitialized) Util._initializeTile(_pos);
+        // 3. Verify that player is active
+        uint256 _playerEntity = Util._getPlayerEntity(msg.sender);
+        require(BoolComponent(gs().components["IsActive"]).has(_playerEntity), "CURIO: Player is inactive");
 
-        uint256 _baseId = Util._getTileAt(_pos).baseId;
-        require(Util._getBaseOwner(_baseId) == NULL_ADDR, "CURIO: Base is taken");
+        // 4. Verify that position is in bound, and initialize tile
+        require(Util._inBound(_position), "CURIO: Out of bound");
+        if (!Util._getTileAt(_position).isInitialized) Util._initializeTile(_position);
 
+        // 5. Verify that a "base" (aka. an entity which can purchase) is present
+        uint256 _baseEntity = Util._getBaseAt(_position);
+        require(_baseEntity != NULL, "CURIO: No base found");
+
+        // 6. Verify that player owns the "base"
+        require(Util._getUint("OwnerEntity", _baseEntity) == _playerEntity, "CURIO: Can only purchase in own base");
+
+        // 7. Verify that no "troop" (aka. a movable entity) is present
+        require(Util._getArmyAt(_position) == NULL, "CURIO: Base occupied by another troop");
+
+        // 8. Verify that the "base" can purchase the given type of "troop"
+        if (!BoolComponent(gs().components["CanMoveOnLand"]).has(_troopTemplateEntity)) {
+            Position[] memory _neighbors = Util._getNeighbors(_position);
+            bool _isCoast;
+            for (uint256 i = 0; i < _neighbors.length; i++) {
+                if (!Util._getTileAt(_neighbors[i]).isInitialized) Util._initializeTile(_neighbors[i]);
+                if (Util._getTileAt(_neighbors[i]).terrain == TERRAIN.WATER) _isCoast = true;
+            }
+            assert(_isCoast == (Util._getTileAt(_position).terrain == TERRAIN.COAST));
+            require(_isCoast, "CURIO: Base cannot purchase selected troop type");
+        }
+
+        // 9. Fetch player gold balance and verify sufficience
+        uint256 _troopGoldPrice = Util._getUint("Gold", _troopTemplateEntity);
+        uint256 _playerGoldBalance = Util._getUint("Gold", _playerEntity);
+        require(_playerGoldBalance > _troopGoldPrice, "CURIO: Insufficient gold balance");
+
+        // 10. Set new player gold balance
+        Util._setUint("Gold", _playerEntity, _playerGoldBalance - _troopGoldPrice);
+
+        // 11. Add new army
+        uint256 _armyEntity = Util._addArmy(_playerEntity, _position);
+
+        // 12. Add troop and return its ID
+        return Util._addTroop(_playerEntity, _troopTemplateEntity, _armyEntity);
+    }
+
+    /**
+     * @dev Self-initialize as a player.
+     * @param _position starting position of the player
+     * @param _name name of the player
+     * @return _playerEntity identifier for the player
+     */
+    function initializePlayer(Position memory _position, string memory _name) external returns (uint256) {
+        // Checkers
+        require(!gs().isPaused, "CURIO: Game is paused");
+        require(gs().players.length < gs().worldConstants.maxPlayerCount, "CURIO: Max player count exceeded");
+        require(gs().playerEntityMap[msg.sender] == NULL, "CURIO: Player already initialized");
+        require(Util._inBound(_position), "CURIO: Out of bound");
+        if (!Util._getTileAt(_position).isInitialized) Util._initializeTile(_position);
+
+        // Verify that a "base" (aka. an entity which can purchase) is present
+        uint256 _baseEntity = Util._getBaseAt(_position);
+        require(_baseEntity != NULL, "CURIO: No base found");
+
+        // Verify that base is not taken
+        require(!UintComponent(gs().components["OwnerEntity"]).has(_baseEntity), "CURIO: Base is taken");
+
+        // Spawn player
         WorldConstants memory _worldConstants = gs().worldConstants;
+        uint256 _playerEntity = Util._addEntity();
+        Util._setBool("IsActive", _playerEntity);
+        Util._setString("Name", _playerEntity, _name);
+        Util._setString("Tag", _playerEntity, "Player");
+        Util._setUint("Gold", _playerEntity, _worldConstants.initPlayerGoldBalance);
+        Util._setUint("Oil", _playerEntity, _worldConstants.initPlayerOilBalance);
+        Util._setUint("InitTimestamp", _playerEntity, block.timestamp);
+        Util._setUint("BalanceLastUpdated", _playerEntity, block.timestamp);
         gs().players.push(msg.sender);
-        gs().playerMap[msg.sender] = Player({
-            initTimestamp: block.timestamp,
-            active: true,
-            goldBalance: _worldConstants.initPlayerGoldBalance,
-            totalGoldGenerationPerUpdate: _worldConstants.defaultBaseGoldGenerationPerSecond,
-            totalOilGenerationPerUpdate: 0,
-            totalOilConsumptionPerUpdate: 0,
-            balanceLastUpdated: block.timestamp,
-            numOwnedBases: 1,
-            numOwnedTroops: 0,
-            isDebuffed: false //
-        });
-        gs().baseIdMap[_baseId].owner = msg.sender;
-        gs().baseIdMap[_baseId].health = 800;
+        gs().playerEntityMap[msg.sender] = _playerEntity;
 
-        emit Util.NewPlayer(msg.sender, _pos);
+        // Transfer base ownership
+        Util._setUint("OwnerEntity", _baseEntity, _playerEntity);
+        Util._setUint("Health", _baseEntity, 800);
+        Util._setInt("GoldPerSecond", _playerEntity, int256(_worldConstants.defaultBaseGoldGenerationPerSecond));
+        Util._setInt("OilPerSecond", _playerEntity, int256(0));
 
-        Util._emitPlayerInfo(msg.sender);
+        return _playerEntity;
     }
 }

@@ -1,6 +1,5 @@
 import axios from 'axios';
-import { assert } from 'console';
-import { GameConfig } from './types/index';
+import { GameConfig } from './types';
 
 const api = axios.create();
 api.defaults.baseURL = process.env.BACKEND_URL;
