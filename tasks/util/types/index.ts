@@ -32,7 +32,7 @@ export interface MapInput {
   numOilWells: number;
 }
 
-export interface compType {
+export interface CompType {
   name: string;
   valueType: ComponentDataTypes;
 }

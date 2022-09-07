@@ -15,7 +15,7 @@ import { Position, GameMapConfig, TILE_TYPE, MapInput } from './util/types';
 import { encodeTileMap, generateGameMaps } from './util/mapHelper';
 import { MEDITERRAINEAN_MAP_CONFIG, testingMapConfig } from './util/mapLibrary';
 import { WorldConstantsStruct } from '../typechain-types/Curio';
-import { gameConfig } from '../api/types';
+import { GameConfig } from '../api/types';
 
 /**
  * Deploy game instance and port configs to frontend.
@@ -205,7 +205,7 @@ task('deploy', 'deploy contracts')
       }
 
       // Generate config files
-      const configFile: gameConfig = {
+      const configFile: GameConfig = {
         address: diamond.address,
         network: hre.network.name,
         deploymentId: ` ${mapName ? `${mapName}-` : ''} ${isRelease ? 'release-' : ''}${hre.network.name}-${Date.now()}`,

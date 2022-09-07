@@ -1,4 +1,4 @@
-import { compType } from './types/index';
+import { CompType } from './types/index';
 import { WorldConstantsStruct } from './../../typechain-types/Curio';
 import { MapInput, RenderInput, TROOP_NAME, ComponentDataTypes } from './types';
 
@@ -123,7 +123,7 @@ export const getTroopNames = (): string[] => {
   return Object.keys(TROOP_NAME).filter((item) => isNaN(Number(item)));
 };
 
-export const COMPONENT_SPECS: compType[] = [
+export const COMPONENT_SPECS: CompType[] = [
   // General syste
   { name: 'IsComponent', valueType: ComponentDataTypes.BOOL },
   { name: 'InitTimestamp', valueType: ComponentDataTypes.UINT },
