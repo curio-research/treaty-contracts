@@ -19,6 +19,8 @@ task('port', 'compile and port contracts over to frontend repo').setAction(async
     await portFile('/Curio.ts');
     await portFile('/common.ts');
     await portFile('/factories/Curio__factory.ts');
+    await portFile('/Component.ts');
+    await portFile('/factories/Component__factory.ts');
 
     // copy game configs
     const configFilePath = path.join(__dirname, './game.config.json');

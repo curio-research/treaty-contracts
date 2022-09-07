@@ -622,6 +622,7 @@ export interface CurioInterface extends utils.Interface {
   events: {
     "DiamondCut(tuple[],address,bytes)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
+    "ComponentValueRemoved(string,uint256)": EventFragment;
     "ComponentValueSet(string,uint256,bytes)": EventFragment;
     "EntityRemoved(uint256)": EventFragment;
     "GamePaused()": EventFragment;
@@ -632,6 +633,7 @@ export interface CurioInterface extends utils.Interface {
 
   getEvent(nameOrSignatureOrTopic: "DiamondCut"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ComponentValueRemoved"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ComponentValueSet"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "EntityRemoved"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "GamePaused"): EventFragment;
@@ -654,6 +656,14 @@ export type OwnershipTransferredEvent = TypedEvent<
 
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
+
+export type ComponentValueRemovedEvent = TypedEvent<
+  [string, BigNumber],
+  { _componentName: string; _entity: BigNumber }
+>;
+
+export type ComponentValueRemovedEventFilter =
+  TypedEventFilter<ComponentValueRemovedEvent>;
 
 export type ComponentValueSetEvent = TypedEvent<
   [string, BigNumber, string],
@@ -1675,6 +1685,15 @@ export interface Curio extends BaseContract {
       previousOwner?: string | null,
       newOwner?: string | null
     ): OwnershipTransferredEventFilter;
+
+    "ComponentValueRemoved(string,uint256)"(
+      _componentName?: null,
+      _entity?: null
+    ): ComponentValueRemovedEventFilter;
+    ComponentValueRemoved(
+      _componentName?: null,
+      _entity?: null
+    ): ComponentValueRemovedEventFilter;
 
     "ComponentValueSet(string,uint256,bytes)"(
       _componentName?: null,

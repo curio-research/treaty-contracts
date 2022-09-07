@@ -1,3 +1,4 @@
+import { ethers } from 'ethers';
 import { EngineModules } from './../typechain-types/EngineModules';
 import { publishDeployment, isConnectionLive } from './../api/deployment';
 import * as path from 'path';
@@ -12,10 +13,9 @@ import { position } from '../util/types/common';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
 import { Position, GameMapConfig, TILE_TYPE, MapInput } from './util/types';
 import { encodeTileMap, generateGameMaps } from './util/mapHelper';
-import { GameConfig } from '../api/types';
 import { MEDITERRAINEAN_MAP_CONFIG, testingMapConfig } from './util/mapLibrary';
 import { WorldConstantsStruct } from '../typechain-types/Curio';
-import { ethers } from 'ethers';
+import { GameConfig } from '../api/types';
 
 /**
  * Deploy game instance and port configs to frontend.
@@ -28,7 +28,7 @@ import { ethers } from 'ethers';
  */
 
 task('deploy', 'deploy contracts')
-  .addFlag('noport', "Don't port files to frontend") // default is to call port
+  .addFlag('port', 'Port contract abis and game info to Vault') // default is to call port
   .addFlag('publish', 'Publish deployment to game launcher') // default is to call publish
   .addFlag('release', 'Publish deployment to official release') // default is to call publish
   .addFlag('fixmap', 'Use deterministic map') // default is non-deterministic maps; deterministic maps are mainly used for client development
@@ -146,7 +146,7 @@ task('deploy', 'deploy contracts')
       await (await diamond.setComponentValue('IsActive', destroyerTemplateId, abiCoder.encode(['bool'], [true]))).wait();
       await (await diamond.setComponentValue('CanMove', destroyerTemplateId, abiCoder.encode(['bool'], [true]))).wait();
       await (await diamond.setComponentValue('CanAttack', destroyerTemplateId, abiCoder.encode(['bool'], [true]))).wait();
-      await (await diamond.setComponentValue('Tag', destroyerTemplateId, abiCoder.encode(['string'], ['Destroyer']))).wait();
+      await (await diamond.setComponentValue('Tag', destroyerTemplateId, abiCoder.encode(['string'], ['Template-Destroyer']))).wait();
       await (await diamond.setComponentValue('MaxHealth', destroyerTemplateId, abiCoder.encode(['uint256'], [3]))).wait();
       await (await diamond.setComponentValue('DamagePerHit', destroyerTemplateId, abiCoder.encode(['uint256'], [1]))).wait();
       await (await diamond.setComponentValue('AttackFactor', destroyerTemplateId, abiCoder.encode(['uint256'], [100]))).wait();
@@ -210,7 +210,7 @@ task('deploy', 'deploy contracts')
         network: hre.network.name,
         deploymentId: ` ${mapName ? `${mapName}-` : ''} ${isRelease ? 'release-' : ''}${hre.network.name}-${Date.now()}`,
         map: tileMap,
-        componentSpecs: COMPONENT_SPECS,
+        time: new Date(),
       };
 
       // Port files to frontend if on localhost
@@ -224,7 +224,7 @@ task('deploy', 'deploy contracts')
         existingDeployments.push(configFile);
 
         await fsPromise.writeFile(configFilePath, JSON.stringify(existingDeployments));
-        await hre.run('port'); // default to porting files
+        // await hre.run('port'); // default to porting files
       }
 
       // Publish deployment
