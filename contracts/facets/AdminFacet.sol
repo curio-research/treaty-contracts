@@ -171,51 +171,6 @@ contract AdminFacet is UseStorage {
         GameLib._registerComponents(_gameAddr, _componentSpecs);
     }
 
-    function registerDefaultComponents(address _gameAddr) external onlyAdmin returns (ComponentSpec[] memory) {
-        ComponentSpec[] memory _componentSpecs = new ComponentSpec[](30);
-
-        // General system
-        _componentSpecs[0] = (ComponentSpec({name: "IsComponent", valueType: VALUE_TYPE.BOOL})); // this must be the first (or zero-th, however you name it) component!
-        _componentSpecs[1] = (ComponentSpec({name: "InitTimestamp", valueType: VALUE_TYPE.UINT}));
-        _componentSpecs[2] = (ComponentSpec({name: "IsActive", valueType: VALUE_TYPE.BOOL}));
-        _componentSpecs[3] = (ComponentSpec({name: "Position", valueType: VALUE_TYPE.POSITION}));
-        _componentSpecs[4] = (ComponentSpec({name: "OwnerEntity", valueType: VALUE_TYPE.UINT}));
-
-        // Identifier system
-        _componentSpecs[5] = (ComponentSpec({name: "Name", valueType: VALUE_TYPE.STRING}));
-        _componentSpecs[6] = (ComponentSpec({name: "Tag", valueType: VALUE_TYPE.STRING})); // most direct tag for frontend
-        _componentSpecs[7] = (ComponentSpec({name: "CanMove", valueType: VALUE_TYPE.BOOL}));
-        _componentSpecs[8] = (ComponentSpec({name: "CanAttack", valueType: VALUE_TYPE.BOOL}));
-        _componentSpecs[9] = (ComponentSpec({name: "CanCapture", valueType: VALUE_TYPE.BOOL}));
-        _componentSpecs[10] = (ComponentSpec({name: "CanPurchase", valueType: VALUE_TYPE.BOOL}));
-
-        // Resource system
-        _componentSpecs[11] = (ComponentSpec({name: "Gold", valueType: VALUE_TYPE.UINT}));
-        _componentSpecs[12] = (ComponentSpec({name: "GoldPerSecond", valueType: VALUE_TYPE.INT}));
-        _componentSpecs[13] = (ComponentSpec({name: "Oil", valueType: VALUE_TYPE.UINT}));
-        _componentSpecs[14] = (ComponentSpec({name: "OilPerSecond", valueType: VALUE_TYPE.INT}));
-        _componentSpecs[15] = (ComponentSpec({name: "BalanceLastUpdated", valueType: VALUE_TYPE.UINT}));
-
-        // Battle system
-        _componentSpecs[16] = (ComponentSpec({name: "Health", valueType: VALUE_TYPE.UINT}));
-        _componentSpecs[17] = (ComponentSpec({name: "LastMoved", valueType: VALUE_TYPE.UINT}));
-        _componentSpecs[18] = (ComponentSpec({name: "LastLargeActionTaken", valueType: VALUE_TYPE.UINT}));
-        _componentSpecs[19] = (ComponentSpec({name: "LastRepaired", valueType: VALUE_TYPE.UINT}));
-        _componentSpecs[20] = (ComponentSpec({name: "CanMoveOnLand", valueType: VALUE_TYPE.BOOL}));
-        _componentSpecs[21] = (ComponentSpec({name: "MaxHealth", valueType: VALUE_TYPE.UINT}));
-        _componentSpecs[22] = (ComponentSpec({name: "DamagePerHit", valueType: VALUE_TYPE.UINT}));
-        _componentSpecs[23] = (ComponentSpec({name: "AttackFactor", valueType: VALUE_TYPE.UINT}));
-        _componentSpecs[24] = (ComponentSpec({name: "DefenseFactor", valueType: VALUE_TYPE.UINT}));
-        _componentSpecs[25] = (ComponentSpec({name: "MovementCooldown", valueType: VALUE_TYPE.UINT}));
-        _componentSpecs[26] = (ComponentSpec({name: "LargeActionCooldown", valueType: VALUE_TYPE.UINT}));
-        _componentSpecs[27] = (ComponentSpec({name: "ArmyEntity", valueType: VALUE_TYPE.UINT}));
-        _componentSpecs[28] = (ComponentSpec({name: "IsDebuffed", valueType: VALUE_TYPE.BOOL}));
-        _componentSpecs[29] = (ComponentSpec({name: "IsArmy", valueType: VALUE_TYPE.BOOL}));
-
-        GameLib._registerComponents(_gameAddr, _componentSpecs);
-        return _componentSpecs;
-    }
-
     function addEntity() external onlyAdmin returns (uint256) {
         return ECSLib._addEntity();
     }

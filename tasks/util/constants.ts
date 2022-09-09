@@ -1,6 +1,7 @@
 import { CompType } from './types/index';
 import { WorldConstantsStruct } from './../../typechain-types/Curio';
 import { MapInput, RenderInput, TROOP_NAME, ComponentDataTypes } from './types';
+import { cp } from 'fs';
 
 export const LOCALHOST_RPC_URL = 'http://127.0.0.1:8545/';
 export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
@@ -52,54 +53,7 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): W
   };
 };
 
-export const TAGS = ['Port', 'City', 'Oil Well', 'Infantry', 'Destroyer', 'Cruiser', 'Battleship', 'Army', 'Player'];
-
-export const TROOP_TYPES = [
-  {
-    name: TROOP_NAME.INFANTRY,
-    maxHealth: 200,
-    damagePerHit: 100,
-    attackFactor: 100,
-    defenseFactor: 100,
-    movementCooldown: 5,
-    largeActionCooldown: 0,
-    goldPrice: 400,
-    oilConsumptionPerSecond: 0,
-  },
-  {
-    name: TROOP_NAME.DESTROYER,
-    maxHealth: 800,
-    damagePerHit: 700,
-    attackFactor: 100,
-    defenseFactor: 100,
-    movementCooldown: 2,
-    largeActionCooldown: 0,
-    goldPrice: 800,
-    oilConsumptionPerSecond: 2,
-  },
-  {
-    name: TROOP_NAME.CRUISER,
-    maxHealth: 1500,
-    damagePerHit: 1000,
-    attackFactor: 100,
-    defenseFactor: 100,
-    movementCooldown: 2,
-    largeActionCooldown: 0,
-    goldPrice: 1360,
-    oilConsumptionPerSecond: 5,
-  },
-  {
-    name: TROOP_NAME.BATTLESHIP,
-    maxHealth: 5500,
-    damagePerHit: 3500,
-    attackFactor: 100,
-    defenseFactor: 100,
-    movementCooldown: 2,
-    largeActionCooldown: 0,
-    goldPrice: 4800,
-    oilConsumptionPerSecond: 20,
-  },
-];
+export const TAGS = ['Player', 'Settler', 'TroopTemplate', 'City', 'Building', 'Resource', 'ResourceInventory', 'TroopInventory', 'Army'];
 
 // ----------------------------------------------------------
 // RENDERING CONSTANTS
@@ -124,38 +78,28 @@ export const getTroopNames = (): string[] => {
 };
 
 export const COMPONENT_SPECS: CompType[] = [
-  // General syste
   { name: 'IsComponent', valueType: ComponentDataTypes.BOOL },
-  { name: 'InitTimestamp', valueType: ComponentDataTypes.UINT },
-  { name: 'IsActive', valueType: ComponentDataTypes.BOOL },
-  { name: 'Position', valueType: ComponentDataTypes.POSITION },
-  { name: 'OwnerEntity', valueType: ComponentDataTypes.UINT },
-  // Identifier system
-  { name: 'Name', valueType: ComponentDataTypes.STRING },
   { name: 'Tag', valueType: ComponentDataTypes.STRING },
-  { name: 'CanMove', valueType: ComponentDataTypes.BOOL },
-  { name: 'CanAttack', valueType: ComponentDataTypes.BOOL },
-  { name: 'CanCapture', valueType: ComponentDataTypes.BOOL },
-  { name: 'CanPurchase', valueType: ComponentDataTypes.BOOL },
-  // Resource system
-  { name: 'Gold', valueType: ComponentDataTypes.UINT },
-  { name: 'GoldPerSecond', valueType: ComponentDataTypes.INT },
-  { name: 'Oil', valueType: ComponentDataTypes.UINT },
-  { name: 'OilPerSecond', valueType: ComponentDataTypes.INT },
+  { name: 'IsActive', valueType: ComponentDataTypes.BOOL },
+  { name: 'InitTimestamp', valueType: ComponentDataTypes.UINT },
+  { name: 'Position', valueType: ComponentDataTypes.POSITION },
+  { name: 'Positions', valueType: ComponentDataTypes.POSITION_ARRAY },
+  { name: 'Owner', valueType: ComponentDataTypes.UINT },
+  { name: 'Level', valueType: ComponentDataTypes.UINT },
+  { name: 'Name', valueType: ComponentDataTypes.STRING },
+  { name: 'CanSettle', valueType: ComponentDataTypes.BOOL },
+  { name: 'ResourceType', valueType: ComponentDataTypes.STRING },
+  { name: 'BuildingType', valueType: ComponentDataTypes.STRING },
+  { name: 'TroopTemplate', valueType: ComponentDataTypes.STRING },
+  { name: 'CanProduce', valueType: ComponentDataTypes.BOOL },
+  { name: 'TimeToProduce', valueType: ComponentDataTypes.UINT },
   { name: 'BalanceLastUpdated', valueType: ComponentDataTypes.UINT },
-  // Battle system
-  { name: 'Health', valueType: ComponentDataTypes.UINT },
-  { name: 'LastMoved', valueType: ComponentDataTypes.UINT },
-  { name: 'LastLargeActionTaken', valueType: ComponentDataTypes.UINT },
-  { name: 'LastRepaired', valueType: ComponentDataTypes.UINT },
-  { name: 'CanMoveOnLand', valueType: ComponentDataTypes.BOOL },
   { name: 'MaxHealth', valueType: ComponentDataTypes.UINT },
-  { name: 'DamagePerHit', valueType: ComponentDataTypes.UINT },
-  { name: 'AttackFactor', valueType: ComponentDataTypes.UINT },
-  { name: 'DefenseFactor', valueType: ComponentDataTypes.UINT },
-  { name: 'MovementCooldown', valueType: ComponentDataTypes.UINT },
-  { name: 'LargeActionCooldown', valueType: ComponentDataTypes.UINT },
-  { name: 'ArmyEntity', valueType: ComponentDataTypes.UINT },
-  { name: 'IsDebuffed', valueType: ComponentDataTypes.BOOL },
-  { name: 'IsArmy', valueType: ComponentDataTypes.BOOL },
+  { name: 'Health', valueType: ComponentDataTypes.UINT },
+  { name: 'Attack', valueType: ComponentDataTypes.UINT },
+  { name: 'Defense', valueType: ComponentDataTypes.UINT },
+  { name: 'Speed', valueType: ComponentDataTypes.UINT },
+  { name: 'CityEntity', valueType: ComponentDataTypes.UINT },
+  { name: 'Amount', valueType: ComponentDataTypes.UINT },
+  { name: 'AmountPerSecond', valueType: ComponentDataTypes.INT },
 ];

@@ -1,4 +1,4 @@
-import { Signer, Contract } from 'ethers';
+import { Signer, Contract, BigNumber, utils } from 'ethers';
 import { FactoryOptions, HardhatRuntimeEnvironment } from 'hardhat/types';
 import { LOCALHOST_RPC_URL, LOCALHOST_WS_RPC_URL } from './constants';
 import { GameMapConfig } from './types';
@@ -11,6 +11,7 @@ export const deployProxy = async <C extends Contract>(contractName: string, sign
   // add retry ?
   const factory = await hre.ethers.getContractFactory(contractName, libs ? { libraries: libs } : signer);
   const contract = await factory.deploy(...contractArgs);
+  // { gasLimit: BigNumber.from('9223372036854775808'), gasPrice: utils.parseUnits('1', 'wei') }
   await contract.deployTransaction.wait();
   return contract as C;
 };
