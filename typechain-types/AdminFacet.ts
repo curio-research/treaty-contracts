@@ -38,13 +38,9 @@ export interface AdminFacetInterface extends utils.Interface {
     "pauseGame()": FunctionFragment;
     "reactivatePlayer(address)": FunctionFragment;
     "registerComponents(address,(string,uint8)[])": FunctionFragment;
-    "registerDefaultComponents(address)": FunctionFragment;
     "resumeGame()": FunctionFragment;
     "setComponentValue(string,uint256,bytes)": FunctionFragment;
-    "spawnTroop((uint256,uint256),address,uint256)": FunctionFragment;
     "storeEncodedColumnBatches(uint256[][])": FunctionFragment;
-    "transferBaseOwnership((uint256,uint256),address)": FunctionFragment;
-    "updatePlayerBalances(address)": FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: "addEntity", values?: undefined): string;
@@ -62,10 +58,6 @@ export interface AdminFacetInterface extends utils.Interface {
     values: [string, ComponentSpecStruct[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "registerDefaultComponents",
-    values: [string]
-  ): string;
-  encodeFunctionData(
     functionFragment: "resumeGame",
     values?: undefined
   ): string;
@@ -74,20 +66,8 @@ export interface AdminFacetInterface extends utils.Interface {
     values: [string, BigNumberish, BytesLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "spawnTroop",
-    values: [PositionStruct, string, BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "storeEncodedColumnBatches",
     values: [BigNumberish[][]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "transferBaseOwnership",
-    values: [PositionStruct, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "updatePlayerBalances",
-    values: [string]
   ): string;
 
   decodeFunctionResult(functionFragment: "addEntity", data: BytesLike): Result;
@@ -104,26 +84,13 @@ export interface AdminFacetInterface extends utils.Interface {
     functionFragment: "registerComponents",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "registerDefaultComponents",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "resumeGame", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setComponentValue",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "spawnTroop", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "storeEncodedColumnBatches",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "transferBaseOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "updatePlayerBalances",
     data: BytesLike
   ): Result;
 
@@ -171,18 +138,13 @@ export interface AdminFacet extends BaseContract {
     ): Promise<ContractTransaction>;
 
     reactivatePlayer(
-      _player: string,
+      _address: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     registerComponents(
       _gameAddr: string,
       _componentSpecs: ComponentSpecStruct[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    registerDefaultComponents(
-      _gameAddr: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -197,26 +159,8 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    spawnTroop(
-      _position: PositionStruct,
-      _player: string,
-      _troopTemplateEntity: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     storeEncodedColumnBatches(
       _colBatches: BigNumberish[][],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    transferBaseOwnership(
-      _position: PositionStruct,
-      _player: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    updatePlayerBalances(
-      _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
@@ -235,18 +179,13 @@ export interface AdminFacet extends BaseContract {
   ): Promise<ContractTransaction>;
 
   reactivatePlayer(
-    _player: string,
+    _address: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   registerComponents(
     _gameAddr: string,
     _componentSpecs: ComponentSpecStruct[],
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  registerDefaultComponents(
-    _gameAddr: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -261,26 +200,8 @@ export interface AdminFacet extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  spawnTroop(
-    _position: PositionStruct,
-    _player: string,
-    _troopTemplateEntity: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   storeEncodedColumnBatches(
     _colBatches: BigNumberish[][],
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  transferBaseOwnership(
-    _position: PositionStruct,
-    _player: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  updatePlayerBalances(
-    _player: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -294,18 +215,16 @@ export interface AdminFacet extends BaseContract {
 
     pauseGame(overrides?: CallOverrides): Promise<void>;
 
-    reactivatePlayer(_player: string, overrides?: CallOverrides): Promise<void>;
+    reactivatePlayer(
+      _address: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     registerComponents(
       _gameAddr: string,
       _componentSpecs: ComponentSpecStruct[],
       overrides?: CallOverrides
     ): Promise<void>;
-
-    registerDefaultComponents(
-      _gameAddr: string,
-      overrides?: CallOverrides
-    ): Promise<ComponentSpecStructOutput[]>;
 
     resumeGame(overrides?: CallOverrides): Promise<void>;
 
@@ -316,26 +235,8 @@ export interface AdminFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    spawnTroop(
-      _position: PositionStruct,
-      _player: string,
-      _troopTemplateEntity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     storeEncodedColumnBatches(
       _colBatches: BigNumberish[][],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    transferBaseOwnership(
-      _position: PositionStruct,
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    updatePlayerBalances(
-      _player: string,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -357,18 +258,13 @@ export interface AdminFacet extends BaseContract {
     ): Promise<BigNumber>;
 
     reactivatePlayer(
-      _player: string,
+      _address: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     registerComponents(
       _gameAddr: string,
       _componentSpecs: ComponentSpecStruct[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    registerDefaultComponents(
-      _gameAddr: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -383,26 +279,8 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    spawnTroop(
-      _position: PositionStruct,
-      _player: string,
-      _troopTemplateEntity: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     storeEncodedColumnBatches(
       _colBatches: BigNumberish[][],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    transferBaseOwnership(
-      _position: PositionStruct,
-      _player: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    updatePlayerBalances(
-      _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
@@ -422,18 +300,13 @@ export interface AdminFacet extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     reactivatePlayer(
-      _player: string,
+      _address: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     registerComponents(
       _gameAddr: string,
       _componentSpecs: ComponentSpecStruct[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    registerDefaultComponents(
-      _gameAddr: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -448,26 +321,8 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    spawnTroop(
-      _position: PositionStruct,
-      _player: string,
-      _troopTemplateEntity: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     storeEncodedColumnBatches(
       _colBatches: BigNumberish[][],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    transferBaseOwnership(
-      _position: PositionStruct,
-      _player: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    updatePlayerBalances(
-      _player: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

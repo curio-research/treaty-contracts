@@ -21,26 +21,16 @@ export type WorldConstantsStruct = {
   admin: string;
   worldWidth: BigNumberish;
   worldHeight: BigNumberish;
-  combatEfficiency: BigNumberish;
   numInitTerrainTypes: BigNumberish;
   initBatchSize: BigNumberish;
-  initPlayerGoldBalance: BigNumberish;
-  initPlayerOilBalance: BigNumberish;
-  maxBaseCountPerPlayer: BigNumberish;
-  maxTroopCountPerPlayer: BigNumberish;
+  maxCityCountPerPlayer: BigNumberish;
+  maxArmyCountPerPlayer: BigNumberish;
   maxPlayerCount: BigNumberish;
-  defaultBaseGoldGenerationPerSecond: BigNumberish;
-  defaultWellOilGenerationPerSecond: BigNumberish;
-  debuffFactor: BigNumberish;
+  maxInventoryCapacity: BigNumberish;
 };
 
 export type WorldConstantsStructOutput = [
   string,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -53,22 +43,17 @@ export type WorldConstantsStructOutput = [
   admin: string;
   worldWidth: BigNumber;
   worldHeight: BigNumber;
-  combatEfficiency: BigNumber;
   numInitTerrainTypes: BigNumber;
   initBatchSize: BigNumber;
-  initPlayerGoldBalance: BigNumber;
-  initPlayerOilBalance: BigNumber;
-  maxBaseCountPerPlayer: BigNumber;
-  maxTroopCountPerPlayer: BigNumber;
+  maxCityCountPerPlayer: BigNumber;
+  maxArmyCountPerPlayer: BigNumber;
   maxPlayerCount: BigNumber;
-  defaultBaseGoldGenerationPerSecond: BigNumber;
-  defaultWellOilGenerationPerSecond: BigNumber;
-  debuffFactor: BigNumber;
+  maxInventoryCapacity: BigNumber;
 };
 
 export interface DiamondInitInterface extends utils.Interface {
   functions: {
-    "init((address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))": FunctionFragment;
+    "init((address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))": FunctionFragment;
   };
 
   encodeFunctionData(

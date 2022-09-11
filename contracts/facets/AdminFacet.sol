@@ -4,14 +4,13 @@ pragma solidity ^0.8.4;
 import "contracts/libraries/Storage.sol";
 import {GameLib} from "contracts/libraries/GameLib.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
-import {GameModules} from "contracts/libraries/GameModules.sol";
 import {ComponentSpec, Position, TERRAIN, Tile, VALUE_TYPE, WorldConstants} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 import {Set} from "contracts/Set.sol";
 import {Component} from "contracts/Component.sol";
 import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, UintComponent} from "contracts/TypedComponents.sol";
 
-/// @title Helper facet
+/// @title Admin facet
 /// @notice Contains admin functions and state functions, both of which should be out of scope for players
 
 contract AdminFacet is UseStorage {
@@ -35,10 +34,10 @@ contract AdminFacet is UseStorage {
     function pauseGame() external onlyAdmin {
         require(!gs().isPaused, "CURIO: Game is paused");
 
-        address[] memory _allPlayers = gs().players;
-        for (uint256 i = 0; i < _allPlayers.length; i++) {
-            GameLib._updatePlayerBalances(gs().playerEntityMap[_allPlayers[i]]);
-        }
+        // address[] memory _allPlayers = gs().players;
+        // for (uint256 i = 0; i < _allPlayers.length; i++) {
+        //     GameLib._updatePlayerBalances(gs().playerEntityMap[_allPlayers[i]]);
+        // }
 
         gs().isPaused = true;
         gs().lastPaused = block.timestamp;
@@ -62,15 +61,14 @@ contract AdminFacet is UseStorage {
 
     /**
      * @dev Reactivate an inactive player.
-     * @param _player player address
+     * @param _address player address
      */
-    function reactivatePlayer(address _player) external onlyAdmin {
-        uint256 _playerEntity = gs().playerEntityMap[_player];
-        require(gs().playerEntityMap[_player] != NULL, "CURIO: Player already initialized");
-        require(!BoolComponent(gs().components["IsActive"]).has(_playerEntity), "CURIO: Player is active");
+    function reactivatePlayer(address _address) external onlyAdmin {
+        uint256 _player = gs().playerEntityMap[_address];
+        require(_player != NULL, "CURIO: Player already initialized");
+        require(!BoolComponent(gs().components["IsActive"]).has(_player), "CURIO: Player is active");
 
-        ECSLib._setBool("IsActive", _playerEntity);
-        ECSLib._setUint("Gold", _playerEntity, gs().worldConstants.initPlayerGoldBalance); // reset gold balance
+        ECSLib._setBool("IsActive", _player);
     }
 
     /**
@@ -79,66 +77,6 @@ contract AdminFacet is UseStorage {
      */
     function storeEncodedColumnBatches(uint256[][] memory _colBatches) external onlyAdmin {
         gs().encodedColumnBatches = _colBatches;
-    }
-
-    /**
-     * @dev Spawn a troop at a selected position, typically upon initialization of a player.
-     * @param _position position
-     * @param _player player address
-     * @param _troopTemplateEntity identifier for desired troop type
-     * @return _troopEntity identifier for new troop
-     */
-    function spawnTroop(
-        Position memory _position,
-        address _player,
-        uint256 _troopTemplateEntity
-    ) external onlyAdmin returns (uint256) {
-        require(GameLib._inBound(_position), "CURIO: Out of bound");
-        if (!GameLib._getTileAt(_position).isInitialized) GameLib._initializeTile(_position);
-
-        require(GameLib._getArmyAt(_position) == NULL, "CURIO: Tile occupied");
-
-        uint256 _baseEntity = GameLib._getBaseAt(_position);
-        if (_baseEntity != NULL) {
-            // require(GameLib._getBaseOwner(_tile.baseId) == _player, "CURIO: Can only spawn troop in player's base");
-            require(GameModules._geographicCheckTroop(_troopTemplateEntity, _position), "CURIO: Can only spawn water troops in ports");
-        }
-
-        uint256 _playerEntity = gs().playerEntityMap[_player];
-        uint256 _armyEntity = GameLib._addArmy(_playerEntity, _position);
-        return GameLib._addTroop(_playerEntity, _troopTemplateEntity, _armyEntity);
-    }
-
-    /**
-     * @dev Transfer a base at a selected position to a player, typically upon initialization.
-     * @param _position base position
-     * @param _player player to give ownership to
-     */
-    function transferBaseOwnership(Position memory _position, address _player) external onlyAdmin {
-        require(GameLib._inBound(_position), "CURIO: Out of bound");
-        if (!GameLib._getTileAt(_position).isInitialized) GameLib._initializeTile(_position);
-
-        require(GameLib._getArmyAt(_position) == NULL, "CURIO: Tile occupied");
-
-        uint256 _baseEntity = GameLib._getBaseAt(_position);
-        require(_baseEntity != NULL, "CURIO: No base found");
-
-        require(ECSLib._getUint("OwnerEntity", _baseEntity) == NULL, "CURIO: Base is owned");
-
-        uint256 _playerEntity = gs().playerEntityMap[_player];
-        ECSLib._setUint("OwnerEntity", _baseEntity, _playerEntity);
-        ECSLib._setUint("Health", _baseEntity, 800);
-
-        GameLib._updatePlayerBalances(_playerEntity);
-
-        // FIXME: experimenting with signed integers
-        int256 _baseGoldPerSecond = ECSLib._getInt("GoldPerSecond", _baseEntity);
-        int256 _baseOilPerSecond = ECSLib._getInt("OilPerSecond", _baseEntity);
-        int256 _playerGoldPerSecond = ECSLib._getInt("GoldPerSecond", _playerEntity);
-        int256 _playerOilPerSecond = ECSLib._getInt("OilPerSecond", _playerEntity);
-
-        ECSLib._setInt("GoldPerSecond", _playerEntity, _playerGoldPerSecond + _baseGoldPerSecond);
-        ECSLib._setInt("OilPerSecond", _playerEntity, _playerOilPerSecond + _baseOilPerSecond);
     }
 
     /**
@@ -155,13 +93,13 @@ contract AdminFacet is UseStorage {
     // STATE FUNCTIONS
     // ----------------------------------------------------------------------
 
-    /**
-     * Update player's balances to the latest state.
-     * @param _player player address
-     */
-    function updatePlayerBalances(address _player) external {
-        GameLib._updatePlayerBalances(gs().playerEntityMap[_player]);
-    }
+    // /**
+    //  * Update player's balances to the latest state.
+    //  * @param _player player address
+    //  */
+    // function updatePlayerBalances(address _player) external {
+    //     GameLib._updatePlayerBalances(gs().playerEntityMap[_player]);
+    // }
 
     // ----------------------------------------------------------------------
     // ECS HELPERS

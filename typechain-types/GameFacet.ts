@@ -26,16 +26,28 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
 
 export interface GameFacetInterface extends utils.Interface {
   functions: {
-    "deleteTroop(uint256)": FunctionFragment;
+    "endProduction(uint256,uint256)": FunctionFragment;
+    "foldCity(uint256)": FunctionFragment;
+    "foundCity(uint256,(uint256,uint256)[],(uint256,uint256),string)": FunctionFragment;
     "initializePlayer((uint256,uint256),string)": FunctionFragment;
     "march(uint256,(uint256,uint256))": FunctionFragment;
-    "moveTroop(uint256,(uint256,uint256))": FunctionFragment;
-    "purchaseTroop((uint256,uint256),uint256)": FunctionFragment;
+    "organizeArmy(uint256,string[],uint256[])": FunctionFragment;
+    "startProduction(uint256,uint256,uint256)": FunctionFragment;
+    "unfoldCity(uint256)": FunctionFragment;
+    "upgradeCity(uint256)": FunctionFragment;
   };
 
   encodeFunctionData(
-    functionFragment: "deleteTroop",
+    functionFragment: "endProduction",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "foldCity",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "foundCity",
+    values: [BigNumberish, PositionStruct[], PositionStruct, string]
   ): string;
   encodeFunctionData(
     functionFragment: "initializePlayer",
@@ -46,26 +58,44 @@ export interface GameFacetInterface extends utils.Interface {
     values: [BigNumberish, PositionStruct]
   ): string;
   encodeFunctionData(
-    functionFragment: "moveTroop",
-    values: [BigNumberish, PositionStruct]
+    functionFragment: "organizeArmy",
+    values: [BigNumberish, string[], BigNumberish[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "purchaseTroop",
-    values: [PositionStruct, BigNumberish]
+    functionFragment: "startProduction",
+    values: [BigNumberish, BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "unfoldCity",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "upgradeCity",
+    values: [BigNumberish]
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "deleteTroop",
+    functionFragment: "endProduction",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "foldCity", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "foundCity", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "initializePlayer",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "march", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "moveTroop", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "purchaseTroop",
+    functionFragment: "organizeArmy",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "startProduction",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "unfoldCity", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "upgradeCity",
     data: BytesLike
   ): Result;
 
@@ -99,8 +129,22 @@ export interface GameFacet extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    deleteTroop(
-      _troopEntity: BigNumberish,
+    endProduction(
+      _building: BigNumberish,
+      _production: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    foldCity(
+      _city: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    foundCity(
+      _settler: BigNumberish,
+      _territory: PositionStruct[],
+      _centerPosition: PositionStruct,
+      _cityName: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -111,26 +155,52 @@ export interface GameFacet extends BaseContract {
     ): Promise<ContractTransaction>;
 
     march(
-      _armyEntity: BigNumberish,
-      _targetPosition: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    moveTroop(
-      _troopEntity: BigNumberish,
-      _targetPosition: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    purchaseTroop(
+      _army: BigNumberish,
       _position: PositionStruct,
-      _troopTemplateEntity: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    organizeArmy(
+      _city: BigNumberish,
+      _troopTypes: string[],
+      _amounts: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    startProduction(
+      _building: BigNumberish,
+      _template: BigNumberish,
+      _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    unfoldCity(
+      _settler: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    upgradeCity(
+      _city: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
 
-  deleteTroop(
-    _troopEntity: BigNumberish,
+  endProduction(
+    _building: BigNumberish,
+    _production: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  foldCity(
+    _city: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  foundCity(
+    _settler: BigNumberish,
+    _territory: PositionStruct[],
+    _centerPosition: PositionStruct,
+    _cityName: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -141,59 +211,110 @@ export interface GameFacet extends BaseContract {
   ): Promise<ContractTransaction>;
 
   march(
-    _armyEntity: BigNumberish,
-    _targetPosition: PositionStruct,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  moveTroop(
-    _troopEntity: BigNumberish,
-    _targetPosition: PositionStruct,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  purchaseTroop(
+    _army: BigNumberish,
     _position: PositionStruct,
-    _troopTemplateEntity: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  organizeArmy(
+    _city: BigNumberish,
+    _troopTypes: string[],
+    _amounts: BigNumberish[],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  startProduction(
+    _building: BigNumberish,
+    _template: BigNumberish,
+    _amount: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  unfoldCity(
+    _settler: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  upgradeCity(
+    _city: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    deleteTroop(
-      _troopEntity: BigNumberish,
+    endProduction(
+      _building: BigNumberish,
+      _production: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    foldCity(
+      _city: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    foundCity(
+      _settler: BigNumberish,
+      _territory: PositionStruct[],
+      _centerPosition: PositionStruct,
+      _cityName: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     initializePlayer(
       _position: PositionStruct,
       _name: string,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<
+      [BigNumber, BigNumber] & { _player: BigNumber; _settler: BigNumber }
+    >;
 
     march(
-      _armyEntity: BigNumberish,
-      _targetPosition: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    moveTroop(
-      _troopEntity: BigNumberish,
-      _targetPosition: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    purchaseTroop(
+      _army: BigNumberish,
       _position: PositionStruct,
-      _troopTemplateEntity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    organizeArmy(
+      _city: BigNumberish,
+      _troopTypes: string[],
+      _amounts: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    startProduction(
+      _building: BigNumberish,
+      _template: BigNumberish,
+      _amount: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    unfoldCity(
+      _settler: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    upgradeCity(_city: BigNumberish, overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {};
 
   estimateGas: {
-    deleteTroop(
-      _troopEntity: BigNumberish,
+    endProduction(
+      _building: BigNumberish,
+      _production: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    foldCity(
+      _city: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    foundCity(
+      _settler: BigNumberish,
+      _territory: PositionStruct[],
+      _centerPosition: PositionStruct,
+      _cityName: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -204,27 +325,53 @@ export interface GameFacet extends BaseContract {
     ): Promise<BigNumber>;
 
     march(
-      _armyEntity: BigNumberish,
-      _targetPosition: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    moveTroop(
-      _troopEntity: BigNumberish,
-      _targetPosition: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    purchaseTroop(
+      _army: BigNumberish,
       _position: PositionStruct,
-      _troopTemplateEntity: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    organizeArmy(
+      _city: BigNumberish,
+      _troopTypes: string[],
+      _amounts: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    startProduction(
+      _building: BigNumberish,
+      _template: BigNumberish,
+      _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    unfoldCity(
+      _settler: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    upgradeCity(
+      _city: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    deleteTroop(
-      _troopEntity: BigNumberish,
+    endProduction(
+      _building: BigNumberish,
+      _production: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    foldCity(
+      _city: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    foundCity(
+      _settler: BigNumberish,
+      _territory: PositionStruct[],
+      _centerPosition: PositionStruct,
+      _cityName: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -235,20 +382,32 @@ export interface GameFacet extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     march(
-      _armyEntity: BigNumberish,
-      _targetPosition: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    moveTroop(
-      _troopEntity: BigNumberish,
-      _targetPosition: PositionStruct,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    purchaseTroop(
+      _army: BigNumberish,
       _position: PositionStruct,
-      _troopTemplateEntity: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    organizeArmy(
+      _city: BigNumberish,
+      _troopTypes: string[],
+      _amounts: BigNumberish[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    startProduction(
+      _building: BigNumberish,
+      _template: BigNumberish,
+      _amount: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    unfoldCity(
+      _settler: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    upgradeCity(
+      _city: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

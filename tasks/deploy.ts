@@ -13,7 +13,7 @@ import { RENDER_CONSTANTS, generateWorldConstants, SMALL_MAP_INPUT, LARGE_MAP_IN
 import { position } from '../util/types/common';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
 import { Position, GameMapConfig, TILE_TYPE, MapInput } from './util/types';
-import { encodeTileMap, generateGameMaps } from './util/mapHelper';
+import { encodeTileMap } from './util/mapHelper';
 import { MEDITERRAINEAN_MAP_CONFIG, testingMapConfig } from './util/mapLibrary';
 import { WorldConstantsStruct } from '../typechain-types/Curio';
 import { GameConfig } from '../api/types';
@@ -60,48 +60,49 @@ task('deploy', 'deploy contracts')
       // Set up deployer and some local variables
       let [player1, player2] = await hre.ethers.getSigners();
       console.log('✦ player1 address is:', player1.address);
-      const infantryTroopTypeId = 1; // FIXME
-      const destroyerTroopTypeId = 3; // FIXME
 
       // Set up game and map configs
-      let gameMapConfig: GameMapConfig;
-      let tileMap: TILE_TYPE[][];
-      let portTiles: Position[];
-      let cityTiles: Position[];
-      let oilWellTiles: Position[];
-      let worldConstants: WorldConstantsStruct;
-
-      if (fixMap) {
-        if (mapName.toLowerCase() === 'mediterranean') {
-          // hardcoded map: Mediterrainean 42x20
-          gameMapConfig = MEDITERRAINEAN_MAP_CONFIG;
-        } else if (mapName.length > LOCAL_MAP_PREFIX.length && mapName.substring(0, LOCAL_MAP_PREFIX.length) === LOCAL_MAP_PREFIX) {
-          // saved maps from random generation
-          const index = Number(mapName.substring(LOCAL_MAP_PREFIX.length, mapName.length));
-          gameMapConfig = loadLocalMapConfig(index);
-        } else {
-          mapName = 'testingMap';
-          gameMapConfig = testingMapConfig;
+      let tileMap: TILE_TYPE[][] = [];
+      const worldConstants = generateWorldConstants(player1.address, SMALL_MAP_INPUT);
+      for (let i = 0; i < worldConstants.worldWidth; i++) {
+        let col: TILE_TYPE[] = [];
+        for (let j = 0; j < worldConstants.worldHeight; j++) {
+          col.push(0);
         }
-        tileMap = gameMapConfig.tileMap;
-        portTiles = gameMapConfig.portTiles;
-        cityTiles = gameMapConfig.cityTiles;
-        oilWellTiles = gameMapConfig.oilWellTiles;
-        worldConstants = generateWorldConstants(player1.address, { width: tileMap.length, height: tileMap[0].length, numPorts: portTiles.length, numCities: cityTiles.length, numOilWells: oilWellTiles.length });
-      } else {
-        // three modes of randomly-generated maps: small, large, or sandbox
-        let mapInput: MapInput = SMALL_MAP_INPUT;
-        if (mapName.toLowerCase() === 'large') mapInput = LARGE_MAP_INPUT;
-        if (mapName.toLowerCase() === 'sandbox') mapInput = SANDBOX_MAP_INPUT;
-        const gameMapConfigWithColor = generateGameMaps(mapInput, RENDER_CONSTANTS);
-        tileMap = gameMapConfigWithColor.tileMap;
-        portTiles = gameMapConfigWithColor.portTiles;
-        cityTiles = gameMapConfigWithColor.cityTiles;
-        oilWellTiles = gameMapConfigWithColor.oilWellTiles;
-        worldConstants = generateWorldConstants(player1.address, mapInput);
+        tileMap.push(col);
       }
 
-      if (saveMap) saveMapToLocal({ tileMap, portTiles, cityTiles, oilWellTiles });
+      // if (fixMap) {
+      //   if (mapName.toLowerCase() === 'mediterranean') {
+      //     // hardcoded map: Mediterrainean 42x20
+      //     gameMapConfig = MEDITERRAINEAN_MAP_CONFIG;
+      //   } else if (mapName.length > LOCAL_MAP_PREFIX.length && mapName.substring(0, LOCAL_MAP_PREFIX.length) === LOCAL_MAP_PREFIX) {
+      //     // saved maps from random generation
+      //     const index = Number(mapName.substring(LOCAL_MAP_PREFIX.length, mapName.length));
+      //     gameMapConfig = loadLocalMapConfig(index);
+      //   } else {
+      //     mapName = 'testingMap';
+      //     gameMapConfig = testingMapConfig;
+      //   }
+      //   tileMap = gameMapConfig.tileMap;
+      //   portTiles = gameMapConfig.portTiles;
+      //   cityTiles = gameMapConfig.cityTiles;
+      //   oilWellTiles = gameMapConfig.oilWellTiles;
+      //   worldConstants = generateWorldConstants(player1.address, { width: tileMap.length, height: tileMap[0].length, numPorts: portTiles.length, numCities: cityTiles.length, numOilWells: oilWellTiles.length });
+      // } else {
+      //   // three modes of randomly-generated maps: small, large, or sandbox
+      //   let mapInput: MapInput = SMALL_MAP_INPUT;
+      //   if (mapName.toLowerCase() === 'large') mapInput = LARGE_MAP_INPUT;
+      //   if (mapName.toLowerCase() === 'sandbox') mapInput = SANDBOX_MAP_INPUT;
+      //   const gameMapConfigWithColor = generateGameMaps(mapInput, RENDER_CONSTANTS);
+      //   tileMap = gameMapConfigWithColor.tileMap;
+      //   portTiles = gameMapConfigWithColor.portTiles;
+      //   cityTiles = gameMapConfigWithColor.cityTiles;
+      //   oilWellTiles = gameMapConfigWithColor.oilWellTiles;
+      //   worldConstants = generateWorldConstants(player1.address, mapInput);
+      // }
+
+      // if (saveMap) saveMapToLocal({ tileMap, portTiles, cityTiles, oilWellTiles });
 
       // Deploy helper contracts
       const ecsLib = await deployProxy<ECSLib>('ECSLib', player1, hre, []);
@@ -110,15 +111,12 @@ task('deploy', 'deploy contracts')
       const gameLib = await deployProxy<GameLib>('GameLib', player1, hre, [], { ECSLib: ecsLib.address });
       console.log('✦ GameLib:', gameLib.address);
 
-      const gameModules = await deployProxy<GameModules>('GameModules', player1, hre, [], { GameLib: gameLib.address, ECSLib: ecsLib.address });
-      console.log('✦ GameModules:', gameModules.address);
-
       // Deploy diamond and facets
       const diamondAddr = await deployDiamond(hre, [worldConstants]);
       const facets = [
-        { name: 'GameFacet', libraries: { ECSLib: ecsLib.address, GameLib: gameLib.address, GameModules: gameModules.address } },
+        { name: 'GameFacet', libraries: { ECSLib: ecsLib.address, GameLib: gameLib.address } },
         { name: 'GetterFacet', libraries: { ECSLib: ecsLib.address, GameLib: gameLib.address } },
-        { name: 'AdminFacet', libraries: { ECSLib: ecsLib.address, GameLib: gameLib.address, GameModules: gameModules.address } },
+        { name: 'AdminFacet', libraries: { ECSLib: ecsLib.address, GameLib: gameLib.address } },
       ];
       await deployFacets(hre, diamondAddr, facets, player1);
       const diamond = await getDiamond(hre, diamondAddr);
@@ -136,31 +134,24 @@ task('deploy', 'deploy contracts')
       const time2 = performance.now();
       console.log(`✦ lazy setting ${tileMap.length}x${tileMap[0].length} map took ${Math.floor(time2 - time1)} ms`);
 
-      const baseTiles = [...portTiles, ...cityTiles, ...oilWellTiles];
-      for (let i = 0; i < baseTiles.length; i += 20) {
-        await (await diamond.bulkInitializeTiles(baseTiles.slice(i, i + 20))).wait();
-      }
-      const time3 = performance.now();
-      console.log(`✦ initializing ${baseTiles.length} bases took ${Math.floor(time3 - time2)} ms`);
-
-      // Initialize a troop template (destroyer)
-      const destroyerTemplateId = 1;
-      const abiCoder = new ethers.utils.AbiCoder();
-      await (await diamond.addEntity()).wait();
-      await (await diamond.setComponentValue('IsActive', destroyerTemplateId, abiCoder.encode(['bool'], [true]))).wait();
-      await (await diamond.setComponentValue('CanMove', destroyerTemplateId, abiCoder.encode(['bool'], [true]))).wait();
-      await (await diamond.setComponentValue('CanAttack', destroyerTemplateId, abiCoder.encode(['bool'], [true]))).wait();
-      await (await diamond.setComponentValue('Tag', destroyerTemplateId, abiCoder.encode(['string'], ['Template-Destroyer']))).wait();
-      await (await diamond.setComponentValue('MaxHealth', destroyerTemplateId, abiCoder.encode(['uint256'], [3]))).wait();
-      await (await diamond.setComponentValue('DamagePerHit', destroyerTemplateId, abiCoder.encode(['uint256'], [1]))).wait();
-      await (await diamond.setComponentValue('AttackFactor', destroyerTemplateId, abiCoder.encode(['uint256'], [100]))).wait();
-      await (await diamond.setComponentValue('DefenseFactor', destroyerTemplateId, abiCoder.encode(['uint256'], [100]))).wait();
-      await (await diamond.setComponentValue('MovementCooldown', destroyerTemplateId, abiCoder.encode(['uint256'], [1]))).wait();
-      await (await diamond.setComponentValue('LargeActionCooldown', destroyerTemplateId, abiCoder.encode(['uint256'], [1]))).wait();
-      await (await diamond.setComponentValue('Gold', destroyerTemplateId, abiCoder.encode(['uint256'], [19]))).wait();
-      await (await diamond.setComponentValue('OilPerSecond', destroyerTemplateId, abiCoder.encode(['uint256'], [1]))).wait();
-      const time4 = performance.now();
-      console.log(`✦ troop template creation took ${Math.floor(time4 - time3)} ms`);
+      // // Initialize a troop template (destroyer)
+      // const destroyerTemplateId = 1;
+      // const abiCoder = new ethers.utils.AbiCoder();
+      // await (await diamond.addEntity()).wait();
+      // await (await diamond.setComponentValue('IsActive', destroyerTemplateId, abiCoder.encode(['bool'], [true]))).wait();
+      // await (await diamond.setComponentValue('CanMove', destroyerTemplateId, abiCoder.encode(['bool'], [true]))).wait();
+      // await (await diamond.setComponentValue('CanAttack', destroyerTemplateId, abiCoder.encode(['bool'], [true]))).wait();
+      // await (await diamond.setComponentValue('Tag', destroyerTemplateId, abiCoder.encode(['string'], ['Template-Destroyer']))).wait();
+      // await (await diamond.setComponentValue('MaxHealth', destroyerTemplateId, abiCoder.encode(['uint256'], [3]))).wait();
+      // await (await diamond.setComponentValue('DamagePerHit', destroyerTemplateId, abiCoder.encode(['uint256'], [1]))).wait();
+      // await (await diamond.setComponentValue('AttackFactor', destroyerTemplateId, abiCoder.encode(['uint256'], [100]))).wait();
+      // await (await diamond.setComponentValue('DefenseFactor', destroyerTemplateId, abiCoder.encode(['uint256'], [100]))).wait();
+      // await (await diamond.setComponentValue('MovementCooldown', destroyerTemplateId, abiCoder.encode(['uint256'], [1]))).wait();
+      // await (await diamond.setComponentValue('LargeActionCooldown', destroyerTemplateId, abiCoder.encode(['uint256'], [1]))).wait();
+      // await (await diamond.setComponentValue('Gold', destroyerTemplateId, abiCoder.encode(['uint256'], [19]))).wait();
+      // await (await diamond.setComponentValue('OilPerSecond', destroyerTemplateId, abiCoder.encode(['uint256'], [1]))).wait();
+      // const time3 = performance.now();
+      // console.log(`✦ troop template creation took ${Math.floor(time3 - time2)} ms`);
 
       // Randomly initialize players if on localhost
       if (isDev) {
@@ -179,10 +170,10 @@ task('deploy', 'deploy contracts')
           console.log(`✦ players initialized after ${performance.now() - ecsTime} ms`);
           ecsTime = performance.now();
 
-          // Purchase a destroyer for player1
-          await (await diamond.connect(player1).purchaseTroop(player1Pos, destroyerTemplateId)).wait();
-          console.log(`✦ destroyer purchased after ${performance.now() - ecsTime} ms`);
-          ecsTime = performance.now();
+          // // Purchase a destroyer for player1
+          // await (await diamond.connect(player1).purchaseTroop(player1Pos, destroyerTemplateId)).wait();
+          // console.log(`✦ destroyer purchased after ${performance.now() - ecsTime} ms`);
+          // ecsTime = performance.now();
         } else {
           // Primary setting for local playtesting
           const mapWidth = tileMap.length;
@@ -193,18 +184,21 @@ task('deploy', 'deploy contracts')
             x = Math.floor(Math.random() * mapWidth);
             y = Math.floor(Math.random() * mapHeight);
             player1Pos = { x, y };
-          } while (tileMap[x][y] != TILE_TYPE.PORT);
+          } while (false);
 
           do {
             x = Math.floor(Math.random() * mapWidth);
             y = Math.floor(Math.random() * mapHeight);
             player2Pos = { x, y };
-          } while (tileMap[x][y] !== TILE_TYPE.PORT || player2Pos.x === player1Pos.x || player2Pos.y === player1Pos.y);
+          } while (player2Pos.x === player1Pos.x || player2Pos.y === player1Pos.y);
 
-          // Give each player a port to start with
+          console.log('AAA');
+
           await (await diamond.connect(player1).initializePlayer(player1Pos, 'Eve')).wait();
           await (await diamond.connect(player2).initializePlayer(player2Pos, 'Felix')).wait();
-          console.log(`✦ player initialization took ${Math.floor(performance.now() - time4)} ms`);
+          console.log(`✦ player initialization took ${Math.floor(performance.now() - time2)} ms`);
+
+          console.log('BBB');
         }
       }
 

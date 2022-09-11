@@ -22,32 +22,27 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
   y: BigNumber;
 };
 
-export type TileStruct = { isInitialized: boolean; terrain: BigNumberish };
+export type TileStruct = {
+  isInitialized: boolean;
+  terrain: BigNumberish;
+  city: BigNumberish;
+};
 
-export type TileStructOutput = [boolean, number] & {
+export type TileStructOutput = [boolean, number, BigNumber] & {
   isInitialized: boolean;
   terrain: number;
+  city: BigNumber;
 };
 
 export interface GameLibInterface extends utils.Interface {
   functions: {
     "_coincident((uint256,uint256),(uint256,uint256))": FunctionFragment;
-    "_getArmyAttackFactor(uint256[])": FunctionFragment;
-    "_getArmyDamagePerHit(uint256[])": FunctionFragment;
-    "_getArmyDefenseFactor(uint256[])": FunctionFragment;
-    "_getArmyHealth(uint256[])": FunctionFragment;
-    "_getArmyLargeActionCooldown(uint256[])": FunctionFragment;
-    "_getArmyMovementCooldown(uint256[])": FunctionFragment;
-    "_getArmyTroopEntities(uint256)": FunctionFragment;
-    "_getDebuffedArmyDamagePerHit(uint256[])": FunctionFragment;
-    "_getInfantryPercentage(uint256[])": FunctionFragment;
     "_getNeighbors((uint256,uint256))": FunctionFragment;
-    "_getPlayerEntity(address)": FunctionFragment;
+    "_getPlayer(address)": FunctionFragment;
     "_getTileAt((uint256,uint256))": FunctionFragment;
     "_inBound((uint256,uint256))": FunctionFragment;
     "_random(uint256,uint256)": FunctionFragment;
     "_strEq(string,string)": FunctionFragment;
-    "_strike(uint256,uint256)": FunctionFragment;
     "_withinDistance((uint256,uint256),(uint256,uint256),uint256)": FunctionFragment;
   };
 
@@ -56,49 +51,10 @@ export interface GameLibInterface extends utils.Interface {
     values: [PositionStruct, PositionStruct]
   ): string;
   encodeFunctionData(
-    functionFragment: "_getArmyAttackFactor",
-    values: [BigNumberish[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getArmyDamagePerHit",
-    values: [BigNumberish[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getArmyDefenseFactor",
-    values: [BigNumberish[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getArmyHealth",
-    values: [BigNumberish[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getArmyLargeActionCooldown",
-    values: [BigNumberish[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getArmyMovementCooldown",
-    values: [BigNumberish[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getArmyTroopEntities",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getDebuffedArmyDamagePerHit",
-    values: [BigNumberish[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getInfantryPercentage",
-    values: [BigNumberish[]]
-  ): string;
-  encodeFunctionData(
     functionFragment: "_getNeighbors",
     values: [PositionStruct]
   ): string;
-  encodeFunctionData(
-    functionFragment: "_getPlayerEntity",
-    values: [string]
-  ): string;
+  encodeFunctionData(functionFragment: "_getPlayer", values: [string]): string;
   encodeFunctionData(
     functionFragment: "_getTileAt",
     values: [PositionStruct]
@@ -116,10 +72,6 @@ export interface GameLibInterface extends utils.Interface {
     values: [string, string]
   ): string;
   encodeFunctionData(
-    functionFragment: "_strike",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "_withinDistance",
     values: [PositionStruct, PositionStruct, BigNumberish]
   ): string;
@@ -129,54 +81,14 @@ export interface GameLibInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "_getArmyAttackFactor",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getArmyDamagePerHit",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getArmyDefenseFactor",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getArmyHealth",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getArmyLargeActionCooldown",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getArmyMovementCooldown",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getArmyTroopEntities",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getDebuffedArmyDamagePerHit",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getInfantryPercentage",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "_getNeighbors",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getPlayerEntity",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "_getPlayer", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "_getTileAt", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "_inBound", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "_random", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "_strEq", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "_strike", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_withinDistance",
     data: BytesLike
@@ -232,58 +144,13 @@ export interface GameLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    _getArmyAttackFactor(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    _getArmyDamagePerHit(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    _getArmyDefenseFactor(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    _getArmyHealth(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    _getArmyLargeActionCooldown(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    _getArmyMovementCooldown(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    _getArmyTroopEntities(
-      _armyEntity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber[]]>;
-
-    _getDebuffedArmyDamagePerHit(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    _getInfantryPercentage(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     _getNeighbors(
       _position: PositionStruct,
       overrides?: CallOverrides
     ): Promise<[PositionStructOutput[]]>;
 
-    _getPlayerEntity(
-      _player: string,
+    _getPlayer(
+      _address: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -306,12 +173,6 @@ export interface GameLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    _strike(
-      _strikeFactor: BigNumberish,
-      _salt: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
     _withinDistance(
       _p1: PositionStruct,
       _p2: PositionStruct,
@@ -326,60 +187,12 @@ export interface GameLib extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  _getArmyAttackFactor(
-    _troopEntities: BigNumberish[],
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  _getArmyDamagePerHit(
-    _troopEntities: BigNumberish[],
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  _getArmyDefenseFactor(
-    _troopEntities: BigNumberish[],
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  _getArmyHealth(
-    _troopEntities: BigNumberish[],
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  _getArmyLargeActionCooldown(
-    _troopEntities: BigNumberish[],
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  _getArmyMovementCooldown(
-    _troopEntities: BigNumberish[],
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  _getArmyTroopEntities(
-    _armyEntity: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber[]>;
-
-  _getDebuffedArmyDamagePerHit(
-    _troopEntities: BigNumberish[],
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  _getInfantryPercentage(
-    _troopEntities: BigNumberish[],
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   _getNeighbors(
     _position: PositionStruct,
     overrides?: CallOverrides
   ): Promise<PositionStructOutput[]>;
 
-  _getPlayerEntity(
-    _player: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+  _getPlayer(_address: string, overrides?: CallOverrides): Promise<BigNumber>;
 
   _getTileAt(
     _position: PositionStruct,
@@ -396,12 +209,6 @@ export interface GameLib extends BaseContract {
 
   _strEq(_s1: string, _s2: string, overrides?: CallOverrides): Promise<boolean>;
 
-  _strike(
-    _strikeFactor: BigNumberish,
-    _salt: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
   _withinDistance(
     _p1: PositionStruct,
     _p2: PositionStruct,
@@ -416,60 +223,12 @@ export interface GameLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    _getArmyAttackFactor(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getArmyDamagePerHit(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getArmyDefenseFactor(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getArmyHealth(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getArmyLargeActionCooldown(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getArmyMovementCooldown(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getArmyTroopEntities(
-      _armyEntity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber[]>;
-
-    _getDebuffedArmyDamagePerHit(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getInfantryPercentage(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     _getNeighbors(
       _position: PositionStruct,
       overrides?: CallOverrides
     ): Promise<PositionStructOutput[]>;
 
-    _getPlayerEntity(
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    _getPlayer(_address: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     _getTileAt(
       _position: PositionStruct,
@@ -487,12 +246,6 @@ export interface GameLib extends BaseContract {
     _strEq(
       _s1: string,
       _s2: string,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    _strike(
-      _strikeFactor: BigNumberish,
-      _salt: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -519,60 +272,12 @@ export interface GameLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getArmyAttackFactor(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getArmyDamagePerHit(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getArmyDefenseFactor(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getArmyHealth(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getArmyLargeActionCooldown(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getArmyMovementCooldown(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getArmyTroopEntities(
-      _armyEntity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getDebuffedArmyDamagePerHit(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getInfantryPercentage(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     _getNeighbors(
       _position: PositionStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getPlayerEntity(
-      _player: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    _getPlayer(_address: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     _getTileAt(
       _position: PositionStruct,
@@ -593,12 +298,6 @@ export interface GameLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _strike(
-      _strikeFactor: BigNumberish,
-      _salt: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     _withinDistance(
       _p1: PositionStruct,
       _p2: PositionStruct,
@@ -614,58 +313,13 @@ export interface GameLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _getArmyAttackFactor(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getArmyDamagePerHit(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getArmyDefenseFactor(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getArmyHealth(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getArmyLargeActionCooldown(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getArmyMovementCooldown(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getArmyTroopEntities(
-      _armyEntity: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getDebuffedArmyDamagePerHit(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getInfantryPercentage(
-      _troopEntities: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     _getNeighbors(
       _position: PositionStruct,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _getPlayerEntity(
-      _player: string,
+    _getPlayer(
+      _address: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -688,12 +342,6 @@ export interface GameLib extends BaseContract {
     _strEq(
       _s1: string,
       _s2: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _strike(
-      _strikeFactor: BigNumberish,
-      _salt: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

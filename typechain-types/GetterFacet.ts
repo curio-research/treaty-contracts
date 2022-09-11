@@ -22,37 +22,32 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
   y: BigNumber;
 };
 
-export type TileStruct = { isInitialized: boolean; terrain: BigNumberish };
+export type TileStruct = {
+  isInitialized: boolean;
+  terrain: BigNumberish;
+  city: BigNumberish;
+};
 
-export type TileStructOutput = [boolean, number] & {
+export type TileStructOutput = [boolean, number, BigNumber] & {
   isInitialized: boolean;
   terrain: number;
+  city: BigNumber;
 };
 
 export type WorldConstantsStruct = {
   admin: string;
   worldWidth: BigNumberish;
   worldHeight: BigNumberish;
-  combatEfficiency: BigNumberish;
   numInitTerrainTypes: BigNumberish;
   initBatchSize: BigNumberish;
-  initPlayerGoldBalance: BigNumberish;
-  initPlayerOilBalance: BigNumberish;
-  maxBaseCountPerPlayer: BigNumberish;
-  maxTroopCountPerPlayer: BigNumberish;
+  maxCityCountPerPlayer: BigNumberish;
+  maxArmyCountPerPlayer: BigNumberish;
   maxPlayerCount: BigNumberish;
-  defaultBaseGoldGenerationPerSecond: BigNumberish;
-  defaultWellOilGenerationPerSecond: BigNumberish;
-  debuffFactor: BigNumberish;
+  maxInventoryCapacity: BigNumberish;
 };
 
 export type WorldConstantsStructOutput = [
   string,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -65,17 +60,12 @@ export type WorldConstantsStructOutput = [
   admin: string;
   worldWidth: BigNumber;
   worldHeight: BigNumber;
-  combatEfficiency: BigNumber;
   numInitTerrainTypes: BigNumber;
   initBatchSize: BigNumber;
-  initPlayerGoldBalance: BigNumber;
-  initPlayerOilBalance: BigNumber;
-  maxBaseCountPerPlayer: BigNumber;
-  maxTroopCountPerPlayer: BigNumber;
+  maxCityCountPerPlayer: BigNumber;
+  maxArmyCountPerPlayer: BigNumber;
   maxPlayerCount: BigNumber;
-  defaultBaseGoldGenerationPerSecond: BigNumber;
-  defaultWellOilGenerationPerSecond: BigNumber;
-  debuffFactor: BigNumber;
+  maxInventoryCapacity: BigNumber;
 };
 
 export interface GetterFacetInterface extends utils.Interface {

@@ -15,7 +15,8 @@ enum VALUE_TYPE {
     INT,
     ADDRESS,
     POSITION,
-    POSITION_ARRAY,
+    UINT_ARRAY,
+    STRING_ARRAY,
     OTHER
 }
 
@@ -32,6 +33,7 @@ struct Position {
 struct Tile {
     bool isInitialized;
     TERRAIN terrain;
+    uint256 city;
 }
 
 struct WorldConstants {
@@ -43,6 +45,7 @@ struct WorldConstants {
     uint256 maxCityCountPerPlayer;
     uint256 maxArmyCountPerPlayer;
     uint256 maxPlayerCount;
+    uint256 maxInventoryCapacity;
 }
 
 struct GameState {

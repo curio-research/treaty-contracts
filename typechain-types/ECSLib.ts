@@ -34,7 +34,9 @@ export interface ECSLibInterface extends utils.Interface {
     "_getInt(string,uint256)": FunctionFragment;
     "_getPosition(string,uint256)": FunctionFragment;
     "_getString(string,uint256)": FunctionFragment;
+    "_getStringArray(string,uint256)": FunctionFragment;
     "_getUint(string,uint256)": FunctionFragment;
+    "_getUintArray(string,uint256)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -78,7 +80,15 @@ export interface ECSLibInterface extends utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "_getStringArray",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "_getUint",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getUintArray",
     values: [string, BigNumberish]
   ): string;
 
@@ -113,7 +123,15 @@ export interface ECSLibInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "_getString", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "_getStringArray",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "_getUint", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "_getUintArray",
+    data: BytesLike
+  ): Result;
 
   events: {
     "ComponentValueRemoved(string,uint256)": EventFragment;
@@ -246,11 +264,23 @@ export interface ECSLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
+    _getStringArray(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string[]]>;
+
     _getUint(
       _componentName: string,
       _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    _getUintArray(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
   };
 
   _concatenate(
@@ -308,11 +338,23 @@ export interface ECSLib extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
+  _getStringArray(
+    _componentName: string,
+    _entity: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string[]>;
+
   _getUint(
     _componentName: string,
     _entity: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  _getUintArray(
+    _componentName: string,
+    _entity: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
 
   callStatic: {
     _concatenate(
@@ -370,11 +412,23 @@ export interface ECSLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
+    _getStringArray(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string[]>;
+
     _getUint(
       _componentName: string,
       _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    _getUintArray(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
   };
 
   filters: {
@@ -467,7 +521,19 @@ export interface ECSLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _getStringArray(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     _getUint(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getUintArray(
       _componentName: string,
       _entity: BigNumberish,
       overrides?: CallOverrides
@@ -533,7 +599,19 @@ export interface ECSLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    _getStringArray(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     _getUint(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getUintArray(
       _componentName: string,
       _entity: BigNumberish,
       overrides?: CallOverrides

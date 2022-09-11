@@ -6,7 +6,7 @@ import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 import {Position} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
 import {Component} from "contracts/Component.sol";
-import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, UintComponent} from "contracts/TypedComponents.sol";
+import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, StringArrayComponent, UintComponent, UintArrayComponent} from "contracts/TypedComponents.sol";
 
 /// @title library of ECS utility functions
 
@@ -174,6 +174,24 @@ library ECSLib {
         emit ECSLib.ComponentValueRemoved(_componentName, _entity);
     }
 
+    function _getStringArray(string memory _componentName, uint256 _entity) public view returns (string[] memory) {
+        return StringArrayComponent(gs().components[_componentName]).getValue(_entity);
+    }
+
+    function _setStringArray(
+        string memory _componentName,
+        uint256 _entity,
+        string[] memory _value
+    ) public {
+        StringArrayComponent(gs().components[_componentName]).set(_entity, _value);
+        emit ECSLib.ComponentValueSet(_componentName, _entity, abi.encode(_value));
+    }
+
+    function _removeStringArray(string memory _componentName, uint256 _entity) public {
+        StringArrayComponent(gs().components[_componentName]).remove(_entity);
+        emit ECSLib.ComponentValueRemoved(_componentName, _entity);
+    }
+
     function _getUint(string memory _componentName, uint256 _entity) public view returns (uint256) {
         return UintComponent(gs().components[_componentName]).getValue(_entity);
     }
@@ -189,6 +207,24 @@ library ECSLib {
 
     function _removeUint(string memory _componentName, uint256 _entity) public {
         UintComponent(gs().components[_componentName]).remove(_entity);
+        emit ECSLib.ComponentValueRemoved(_componentName, _entity);
+    }
+
+    function _getUintArray(string memory _componentName, uint256 _entity) public view returns (uint256[] memory) {
+        return UintArrayComponent(gs().components[_componentName]).getValue(_entity);
+    }
+
+    function _setUintArray(
+        string memory _componentName,
+        uint256 _entity,
+        uint256[] memory _value
+    ) public {
+        UintArrayComponent(gs().components[_componentName]).set(_entity, _value);
+        emit ECSLib.ComponentValueSet(_componentName, _entity, abi.encode(_value));
+    }
+
+    function _removeUintArray(string memory _componentName, uint256 _entity) public {
+        UintArrayComponent(gs().components[_componentName]).remove(_entity);
         emit ECSLib.ComponentValueRemoved(_componentName, _entity);
     }
 

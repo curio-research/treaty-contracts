@@ -1,17 +1,5 @@
 export enum TILE_TYPE {
-  COAST = 0,
-  INLAND = 1,
-  WATER = 2,
-  PORT = 3,
-  CITY = 4,
-  OIL_WELL = 5,
-}
-
-export enum TROOP_NAME {
-  INFANTRY,
-  DESTROYER,
-  CRUISER,
-  BATTLESHIP,
+  PLAIN = 0,
 }
 
 export enum ComponentDataTypes {
@@ -21,16 +9,14 @@ export enum ComponentDataTypes {
   INT,
   ADDRESS,
   POSITION,
-  POSITION_ARRAY,
+  UINT_ARRAY,
+  STRING_ARRAY,
   OTHER,
 }
 
 export interface MapInput {
   width: number;
   height: number;
-  numPorts: number;
-  numCities: number;
-  numOilWells: number;
 }
 
 export interface CompType {

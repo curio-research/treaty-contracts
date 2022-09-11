@@ -1,7 +1,6 @@
 import { CompType } from './types/index';
 import { WorldConstantsStruct } from './../../typechain-types/Curio';
-import { MapInput, RenderInput, TROOP_NAME, ComponentDataTypes } from './types';
-import { cp } from 'fs';
+import { MapInput, RenderInput, ComponentDataTypes } from './types';
 
 export const LOCALHOST_RPC_URL = 'http://127.0.0.1:8545/';
 export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
@@ -13,25 +12,16 @@ export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 export const SMALL_MAP_INPUT: MapInput = {
   width: 50,
   height: 50,
-  numPorts: 10,
-  numCities: 30,
-  numOilWells: 15,
 };
 
 export const LARGE_MAP_INPUT: MapInput = {
   width: 100,
   height: 100,
-  numPorts: 40,
-  numCities: 120,
-  numOilWells: 60,
 };
 
 export const SANDBOX_MAP_INPUT: MapInput = {
   width: 150,
   height: 150,
-  numPorts: 150,
-  numCities: 150,
-  numOilWells: 120,
 };
 
 export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): WorldConstantsStruct => {
@@ -39,17 +29,12 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): W
     admin: adminAddr,
     worldWidth: mapInput.width,
     worldHeight: mapInput.height,
-    combatEfficiency: 50,
-    numInitTerrainTypes: 6,
+    numInitTerrainTypes: 1,
     initBatchSize: 50,
-    initPlayerGoldBalance: mapInput.numPorts > 20 ? 2000 : 1000,
-    initPlayerOilBalance: 0,
-    maxBaseCountPerPlayer: 200,
-    maxTroopCountPerPlayer: 100000,
-    maxPlayerCount: mapInput.numPorts,
-    defaultBaseGoldGenerationPerSecond: 1,
-    defaultWellOilGenerationPerSecond: 5,
-    debuffFactor: 80,
+    maxCityCountPerPlayer: 3,
+    maxArmyCountPerPlayer: 3,
+    maxPlayerCount: 20,
+    maxInventoryCapacity: 80,
   };
 };
 
@@ -73,33 +58,30 @@ export const RENDER_CONSTANTS: RenderInput = {
 // FUNCTIONS
 // ------------------------------------------------
 
-export const getTroopNames = (): string[] => {
-  return Object.keys(TROOP_NAME).filter((item) => isNaN(Number(item)));
-};
-
 export const COMPONENT_SPECS: CompType[] = [
   { name: 'IsComponent', valueType: ComponentDataTypes.BOOL },
   { name: 'Tag', valueType: ComponentDataTypes.STRING },
   { name: 'IsActive', valueType: ComponentDataTypes.BOOL },
   { name: 'InitTimestamp', valueType: ComponentDataTypes.UINT },
   { name: 'Position', valueType: ComponentDataTypes.POSITION },
-  { name: 'Positions', valueType: ComponentDataTypes.POSITION_ARRAY },
   { name: 'Owner', valueType: ComponentDataTypes.UINT },
   { name: 'Level', valueType: ComponentDataTypes.UINT },
   { name: 'Name', valueType: ComponentDataTypes.STRING },
   { name: 'CanSettle', valueType: ComponentDataTypes.BOOL },
   { name: 'ResourceType', valueType: ComponentDataTypes.STRING },
   { name: 'BuildingType', valueType: ComponentDataTypes.STRING },
-  { name: 'TroopTemplate', valueType: ComponentDataTypes.STRING },
+  { name: 'Template', valueType: ComponentDataTypes.UINT },
   { name: 'CanProduce', valueType: ComponentDataTypes.BOOL },
-  { name: 'TimeToProduce', valueType: ComponentDataTypes.UINT },
+  { name: 'Duration', valueType: ComponentDataTypes.UINT },
   { name: 'BalanceLastUpdated', valueType: ComponentDataTypes.UINT },
   { name: 'MaxHealth', valueType: ComponentDataTypes.UINT },
   { name: 'Health', valueType: ComponentDataTypes.UINT },
   { name: 'Attack', valueType: ComponentDataTypes.UINT },
   { name: 'Defense', valueType: ComponentDataTypes.UINT },
   { name: 'Speed', valueType: ComponentDataTypes.UINT },
-  { name: 'CityEntity', valueType: ComponentDataTypes.UINT },
+  { name: 'City', valueType: ComponentDataTypes.UINT },
   { name: 'Amount', valueType: ComponentDataTypes.UINT },
-  { name: 'AmountPerSecond', valueType: ComponentDataTypes.INT },
+  { name: 'Amounts', valueType: ComponentDataTypes.UINT_ARRAY },
+  { name: 'InventoryType', valueType: ComponentDataTypes.STRING },
+  { name: 'InventoryTypes', valueType: ComponentDataTypes.STRING_ARRAY },
 ];

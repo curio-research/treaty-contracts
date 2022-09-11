@@ -14,79 +14,79 @@ import {AddressComponent, BoolComponent, IntComponent, PositionComponent, String
 
 contract PolicyFacet is UseStorage {
     using SafeMath for uint256;
-    uint256 private NULL = 0;
+    // uint256 private NULL = 0;
 
-    /**
-     * @dev Policy: All navies with 5+ health gain 100% attackFactor.
-     * TODO: Location-based condition: "... navies in ports/next to oil wells with ..."
-     * TODO: Time-bound condition: "... attackFactor within the next 10 seconds." (require backend)
-     */
-    function sampleBuffPolicy() external {
-        // Get navies with at least 5 health
-        uint256[] memory _naviesWithFivePlusHealth = ECSLib._filterByComponentRange(GameLib._getNavies(), "Health", 5, 12);
+    // /**
+    //  * @dev Policy: All navies with 5+ health gain 100% attackFactor.
+    //  * TODO: Location-based condition: "... navies in ports/next to oil wells with ..."
+    //  * TODO: Time-bound condition: "... attackFactor within the next 10 seconds." (require backend)
+    //  */
+    // function sampleBuffPolicy() external {
+    //     // Get navies with at least 5 health
+    //     uint256[] memory _naviesWithFivePlusHealth = ECSLib._filterByComponentRange(GameLib._getNavies(), "Health", 5, 12);
 
-        // Double attack factor for all such navies
-        uint256 _troopEntity;
-        for (uint256 i = 0; i < _naviesWithFivePlusHealth.length; i++) {
-            _troopEntity = _naviesWithFivePlusHealth[i];
-            ECSLib._setUint("AttackFactor", _troopEntity, ECSLib._getUint("AttackFactor", _troopEntity) * 2);
-        }
-    }
+    //     // Double attack factor for all such navies
+    //     uint256 _troopEntity;
+    //     for (uint256 i = 0; i < _naviesWithFivePlusHealth.length; i++) {
+    //         _troopEntity = _naviesWithFivePlusHealth[i];
+    //         ECSLib._setUint("AttackFactor", _troopEntity, ECSLib._getUint("AttackFactor", _troopEntity) * 2);
+    //     }
+    // }
 
-    /**
-     * @dev Policy: The player's ports and cities gain movement ability, but they change from producing to consuming gold.
-     */
-    function sampleImpossiblePolicy() external {
-        // Get player's ports and cities
-        uint256 _playerEntity = gs().playerEntityMap[msg.sender];
-        uint256[] memory _playerBases = GameLib._getPlayerBases(_playerEntity);
+    // /**
+    //  * @dev Policy: The player's ports and cities gain movement ability, but they change from producing to consuming gold.
+    //  */
+    // function sampleImpossiblePolicy() external {
+    //     // Get player's ports and cities
+    //     uint256 _playerEntity = gs().playerEntityMap[msg.sender];
+    //     uint256[] memory _playerBases = GameLib._getPlayerBases(_playerEntity);
 
-        // Update desired properties
-        uint256 _baseEntity;
-        for (uint256 i = 0; i < _playerBases.length; i++) {
-            _baseEntity = _playerBases[i];
-            ECSLib._setBool("CanMove", _baseEntity);
-            int256 _goldPerSecond = ECSLib._getInt("GoldPerSecond", _baseEntity);
-            ECSLib._setInt("GoldPerSecond", _baseEntity, -_goldPerSecond);
-        }
-    }
+    //     // Update desired properties
+    //     uint256 _baseEntity;
+    //     for (uint256 i = 0; i < _playerBases.length; i++) {
+    //         _baseEntity = _playerBases[i];
+    //         ECSLib._setBool("CanMove", _baseEntity);
+    //         int256 _goldPerSecond = ECSLib._getInt("GoldPerSecond", _baseEntity);
+    //         ECSLib._setInt("GoldPerSecond", _baseEntity, -_goldPerSecond);
+    //     }
+    // }
 
-    /**
-     * @dev Sample Policy: If player's name is Stalin, all his troop health restored to its maximum,
-      but the cost is that he loses half of his gold
-     */
-    function workersOfTheWorldUnite() external {
-        // 1. Verify that game is ongoing
-        require(!gs().isPaused, "CURIO: Game is paused");
+    // /**
+    //  * @dev Sample Policy: If player's name is Stalin, all his troop health restored to its maximum,
+    //   but the cost is that he loses half of his gold
+    //  */
+    // function workersOfTheWorldUnite() external {
+    //     // 1. Verify that game is ongoing
+    //     require(!gs().isPaused, "CURIO: Game is paused");
 
-        // 2. Verify that player is active
-        uint256 _playerEntity = gs().playerEntityMap[msg.sender];
-        require(BoolComponent(gs().components["IsActive"]).has(_playerEntity), "CURIO: Player is inactive");
+    //     // 2. Verify that player is active
+    //     uint256 _playerEntity = gs().playerEntityMap[msg.sender];
+    //     require(BoolComponent(gs().components["IsActive"]).has(_playerEntity), "CURIO: Player is inactive");
 
-        // 3. Verify that player name is Stalin
-        require(GameLib._strEq(ECSLib._getString("Name", _playerEntity), "Stalin"), "CURIO: Sorry bro, you're not our comrade");
+    //     // 3. Verify that player name is Stalin
+    //     require(GameLib._strEq(ECSLib._getString("Name", _playerEntity), "Stalin"), "CURIO: Sorry bro, you're not our comrade");
 
-        // 4. Get "red army"
-        Set _set1 = new Set();
-        Set _set2 = new Set();
-        _set1.addArray(BoolComponent(gs().components["CanMove"]).getEntities());
-        _set2.addArray(BoolComponent(gs().components["CanMoveOnLand"]).getEntities());
-        uint256[] memory _redTroops = ECSLib._intersection(_set1, _set2);
+    //     // 4. Get "red army"
+    //     Set _set1 = new Set();
+    //     Set _set2 = new Set();
+    //     _set1.addArray(BoolComponent(gs().components["CanMove"]).getEntities());
+    //     _set2.addArray(BoolComponent(gs().components["CanMoveOnLand"]).getEntities());
+    //     uint256[] memory _redTroops = ECSLib._intersection(_set1, _set2);
 
-        _set1 = new Set();
-        _set1.addArray(_redTroops);
-        _set2 = new Set();
-        _set2.addArray(UintComponent(gs().components["OwnerEntity"]).getEntitiesWithValue(_playerEntity));
-        _redTroops = ECSLib._intersection(_set1, _set2);
+    //     _set1 = new Set();
+    //     _set1.addArray(_redTroops);
+    //     _set2 = new Set();
+    //     _set2.addArray(UintComponent(gs().components["OwnerEntity"]).getEntitiesWithValue(_playerEntity));
+    //     _redTroops = ECSLib._intersection(_set1, _set2);
 
-        // 5. "Red army" yells "long live socialism" and expropriates people's bread (restore health)
-        uint256 _troopEntity;
-        for (uint256 i = 0; i < _redTroops.length; i++) {
-            _troopEntity = _redTroops[i];
-            ECSLib._setUint("Health", _troopEntity, ECSLib._getUint("MaxHealth", _troopEntity));
-        }
+    //     // 5. "Red army" yells "long live socialism" and expropriates people's bread (restore health)
+    //     uint256 _troopEntity;
+    //     for (uint256 i = 0; i < _redTroops.length; i++) {
+    //         _troopEntity = _redTroops[i];
+    //         ECSLib._setUint("Health", _troopEntity, ECSLib._getUint("MaxHealth", _troopEntity));
+    //     }
 
-        // 6. Private property is an exploision of labor power (reduce player's gold balance)
-        ECSLib._setUint("Gold", _playerEntity, ECSLib._getUint("Gold", _playerEntity) / 2);
-    }
+    //     // 6. Private property is an exploision of labor power (reduce player's gold balance)
+    //     ECSLib._setUint("Gold", _playerEntity, ECSLib._getUint("Gold", _playerEntity) / 2);
+    // }
 }

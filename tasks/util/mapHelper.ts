@@ -60,37 +60,37 @@ export const encodeTileMap = (tileMap: TILE_TYPE[][], numInitTerrainTypes: numbe
   return result;
 };
 
-/**
- * Generate two 2d maps of tiles, one representing tile types and the other representing colors in RGB.
- * @param mapInput
- * @param renderInput
- * @returns a 2d matrix of tile types and a 2d matrix of RGB values
- */
-export const generateGameMaps = (mapInput: MapInput, renderInput: RenderInput): GameMapConfigWithColor => {
-  // Use multiple layers of Perlin noise to generate randomized continents and oceans with plate tectonics
-  const microNoiseMap: number[][] = generateNoiseMap(mapInput.width, mapInput.height, renderInput.sizeFactor);
-  const plateNoiseMap: number[][] = generateNoiseMap(mapInput.width, mapInput.height, renderInput.sizeFactor * renderInput.plateSizeMultiplier);
-  const noiseMap: number[][] = superpose([microNoiseMap, plateNoiseMap], renderInput.superpositionRatio);
+// /**
+//  * Generate two 2d maps of tiles, one representing tile types and the other representing colors in RGB.
+//  * @param mapInput
+//  * @param renderInput
+//  * @returns a 2d matrix of tile types and a 2d matrix of RGB values
+//  */
+// export const generateGameMaps = (mapInput: MapInput, renderInput: RenderInput): GameMapConfigWithColor => {
+//   // Use multiple layers of Perlin noise to generate randomized continents and oceans with plate tectonics
+//   const microNoiseMap: number[][] = generateNoiseMap(mapInput.width, mapInput.height, renderInput.sizeFactor);
+//   const plateNoiseMap: number[][] = generateNoiseMap(mapInput.width, mapInput.height, renderInput.sizeFactor * renderInput.plateSizeMultiplier);
+//   const noiseMap: number[][] = superpose([microNoiseMap, plateNoiseMap], renderInput.superpositionRatio);
 
-  // Generate colors, cutoffs, and tile map
-  const colorsAndCutoffs: ColorsAndCutoffs = getColorsAndCutoffs(renderInput);
-  const colorMap: number[][][] = noiseMap.map((row: number[]) => {
-    return row.map((val: number) => assignDepthColor(val, colorsAndCutoffs));
-  });
+//   // Generate colors, cutoffs, and tile map
+//   const colorsAndCutoffs: ColorsAndCutoffs = getColorsAndCutoffs(renderInput);
+//   const colorMap: number[][][] = noiseMap.map((row: number[]) => {
+//     return row.map((val: number) => assignDepthColor(val, colorsAndCutoffs));
+//   });
 
-  const { tileMap, portTiles, cityTiles, oilWellTiles } = placePortsAndCities(colorMap, mapInput.numPorts, mapInput.numCities, mapInput.numOilWells);
+//   const { tileMap, portTiles, cityTiles, oilWellTiles } = placePortsAndCities(colorMap, 10, 10, 10); // FIXME
 
-  // Update colorMap with ports and cities
-  portTiles.forEach((portTile) => {
-    colorMap[portTile.x][portTile.y] = [100, 0, 0];
-  });
+//   // Update colorMap with ports and cities
+//   portTiles.forEach((portTile) => {
+//     colorMap[portTile.x][portTile.y] = [100, 0, 0];
+//   });
 
-  cityTiles.forEach((cityTile) => {
-    colorMap[cityTile.x][cityTile.y] = [100, 100, 100];
-  });
+//   cityTiles.forEach((cityTile) => {
+//     colorMap[cityTile.x][cityTile.y] = [100, 100, 100];
+//   });
 
-  return { tileMap, portTiles, cityTiles, oilWellTiles, colorMap };
-};
+//   return { tileMap, portTiles, cityTiles, oilWellTiles, colorMap };
+// };
 
 export const generateEmptyMatrix = (mapWidth: number, mapHeight: number, defaultValue: any): any[][] => {
   const result: number[][] = [];
@@ -112,44 +112,44 @@ interface islandIDMapCreatorRes {
   islandIDMarkerMap: number[][];
 }
 
-/**
- * Mark the islands and the corresponding tiles on a map.
- * @param tileMap
- * @returns number of islands as well as mapping to tiles
- */
-const islandIDMapCreator = (tileMap: number[][]): islandIDMapCreatorRes => {
-  const validLand = [TILE_TYPE.CITY, TILE_TYPE.COAST, TILE_TYPE.INLAND, TILE_TYPE.PORT];
-  const islandIDMarkerMap: number[][] = new Array(tileMap.length).fill(null).map(() => new Array(tileMap[0].length).fill(0)); // a 2D number array marked with number the islandID
-  let islandID = 0; // number of islands on the map
+// /**
+//  * Mark the islands and the corresponding tiles on a map.
+//  * @param tileMap
+//  * @returns number of islands as well as mapping to tiles
+//  */
+// const islandIDMapCreator = (tileMap: number[][]): islandIDMapCreatorRes => {
+//   const validLand = [TILE_TYPE.CITY, TILE_TYPE.COAST, TILE_TYPE.INLAND, TILE_TYPE.PORT];
+//   const islandIDMarkerMap: number[][] = new Array(tileMap.length).fill(null).map(() => new Array(tileMap[0].length).fill(0)); // a 2D number array marked with number the islandID
+//   let islandID = 0; // number of islands on the map
 
-  // don't explore if its out of bounds, already explored, or is a water tile.
-  const explore = (row: number, col: number, grid: number[][], islandID: number) => {
-    if (row < 0 || col < 0 || row >= grid.length || col >= grid[row].length || grid[row][col] === TILE_TYPE.WATER || grid[row][col] === -1) {
-      return;
-    }
+//   // don't explore if its out of bounds, already explored, or is a water tile.
+//   const explore = (row: number, col: number, grid: number[][], islandID: number) => {
+//     if (row < 0 || col < 0 || row >= grid.length || col >= grid[row].length || grid[row][col] === TILE_TYPE.WATER || grid[row][col] === -1) {
+//       return;
+//     }
 
-    // otherwise, proceed with DFS
-    grid[row][col] = -1;
-    islandIDMarkerMap[row][col] = islandID;
+//     // otherwise, proceed with DFS
+//     grid[row][col] = -1;
+//     islandIDMarkerMap[row][col] = islandID;
 
-    explore(row, col + 1, grid, islandID);
-    explore(row, col - 1, grid, islandID);
-    explore(row + 1, col, grid, islandID);
-    explore(row - 1, col, grid, islandID);
-  };
+//     explore(row, col + 1, grid, islandID);
+//     explore(row, col - 1, grid, islandID);
+//     explore(row + 1, col, grid, islandID);
+//     explore(row - 1, col, grid, islandID);
+//   };
 
-  // go though each cell of the 2d array/grid
-  for (let row = 0; row < tileMap.length; row++) {
-    for (let col = 0; col < tileMap[row].length; col++) {
-      if (validLand.includes(tileMap[row][col])) {
-        islandID++;
-        explore(row, col, tileMap, islandID);
-      }
-    }
-  }
+//   // go though each cell of the 2d array/grid
+//   for (let row = 0; row < tileMap.length; row++) {
+//     for (let col = 0; col < tileMap[row].length; col++) {
+//       if (validLand.includes(tileMap[row][col])) {
+//         islandID++;
+//         explore(row, col, tileMap, islandID);
+//       }
+//     }
+//   }
 
-  return { islandID, islandIDMarkerMap };
-};
+//   return { islandID, islandIDMarkerMap };
+// };
 
 /**
  * Generate noise matrix from Perlin noise.
@@ -233,120 +233,120 @@ export const rgbArrayToString = (rgbArray: number[]): string => {
   return `rgb(${r}%, ${g}%, ${b}%)`;
 };
 
-/**
- * Given an RGB color map, place random ports and cities.
- * @param colorMap
- * @param numPorts
- * @param numCities
- * @returns a 2d matrix of tile types
- */
-export const placePortsAndCities = (colorMap: number[][][], numPorts: number, numCities: number, numOilWells: number): GameMapConfig => {
-  let tileMap: TILE_TYPE[][] = generateEmptyMatrix(colorMap.length, colorMap[0].length, TILE_TYPE.WATER);
+// /**
+//  * Given an RGB color map, place random ports and cities.
+//  * @param colorMap
+//  * @param numPorts
+//  * @param numCities
+//  * @returns a 2d matrix of tile types
+//  */
+// export const placePortsAndCities = (colorMap: number[][][], numPorts: number, numCities: number, numOilWells: number): GameMapConfig => {
+//   let tileMap: TILE_TYPE[][] = generateEmptyMatrix(colorMap.length, colorMap[0].length, TILE_TYPE.WATER);
 
-  // 1. Identify coastlines and inland areas.
-  const coastlineTiles: Position[] = [];
-  const inlandTiles: Position[] = [];
-  const portTiles: Position[] = [];
-  const cityTiles: Position[] = [];
-  const oilWellTiles: Position[] = [];
+//   // 1. Identify coastlines and inland areas.
+//   const coastlineTiles: Position[] = [];
+//   const inlandTiles: Position[] = [];
+//   const portTiles: Position[] = [];
+//   const cityTiles: Position[] = [];
+//   const oilWellTiles: Position[] = [];
 
-  for (let x = 0; x < colorMap.length * xIncrement; x += xIncrement) {
-    for (let y = 0; y < colorMap[0].length * yIncrement; y += yIncrement) {
-      if (colorMap[x][y][1] > 0) {
-        if ((x > 0 && colorMap[x - 1][y][1] == 0) || (x < colorMap.length - 1 && colorMap[x + 1][y][1] == 0) || (y > 0 && colorMap[x][y - 1][1] == 0) || (y < colorMap[0].length - 1 && colorMap[x][y + 1][1] == 0)) {
-          tileMap[x][y] = TILE_TYPE.COAST;
-          coastlineTiles.push({ x, y });
-        } else {
-          tileMap[x][y] = TILE_TYPE.INLAND;
-          inlandTiles.push({ x, y });
-        }
-      }
-    }
-  }
+//   for (let x = 0; x < colorMap.length * xIncrement; x += xIncrement) {
+//     for (let y = 0; y < colorMap[0].length * yIncrement; y += yIncrement) {
+//       if (colorMap[x][y][1] > 0) {
+//         if ((x > 0 && colorMap[x - 1][y][1] == 0) || (x < colorMap.length - 1 && colorMap[x + 1][y][1] == 0) || (y > 0 && colorMap[x][y - 1][1] == 0) || (y < colorMap[0].length - 1 && colorMap[x][y + 1][1] == 0)) {
+//           tileMap[x][y] = TILE_TYPE.COAST;
+//           coastlineTiles.push({ x, y });
+//         } else {
+//           tileMap[x][y] = TILE_TYPE.INLAND;
+//           inlandTiles.push({ x, y });
+//         }
+//       }
+//     }
+//   }
 
-  // 2. Randomly place ports and cities.
-  let tileIndex: number;
-  let tile: Position;
+//   // 2. Randomly place ports and cities.
+//   let tileIndex: number;
+//   let tile: Position;
 
-  // ---------------------------
-  // ensure that every island has at least one coast
-  // ---------------------------
+//   // ---------------------------
+//   // ensure that every island has at least one coast
+//   // ---------------------------
 
-  const { islandID, islandIDMarkerMap } = islandIDMapCreator(JSON.parse(JSON.stringify(tileMap)));
-  const islandIdToMapping: Map<number, Position[]> = new Map();
+//   const { islandID, islandIDMarkerMap } = islandIDMapCreator(JSON.parse(JSON.stringify(tileMap)));
+//   const islandIdToMapping: Map<number, Position[]> = new Map();
 
-  // loop through coastline tiles
-  for (let i = 0; i < coastlineTiles.length; i++) {
-    const coastlineTile = coastlineTiles[i];
-    const x = coastlineTile.x;
-    const y = coastlineTile.y;
-    const islandID = islandIDMarkerMap[x][y];
+//   // loop through coastline tiles
+//   for (let i = 0; i < coastlineTiles.length; i++) {
+//     const coastlineTile = coastlineTiles[i];
+//     const x = coastlineTile.x;
+//     const y = coastlineTile.y;
+//     const islandID = islandIDMarkerMap[x][y];
 
-    const islandArr = islandIdToMapping.get(islandID);
-    if (!islandArr) {
-      islandIdToMapping.set(islandID, [coastlineTile]);
-    } else {
-      islandArr.push(coastlineTile);
-      islandIdToMapping.set(islandID, islandArr);
-    }
-  }
+//     const islandArr = islandIdToMapping.get(islandID);
+//     if (!islandArr) {
+//       islandIdToMapping.set(islandID, [coastlineTile]);
+//     } else {
+//       islandArr.push(coastlineTile);
+//       islandIdToMapping.set(islandID, islandArr);
+//     }
+//   }
 
-  // go through each island number
-  // pick a random coast tile on each island and then add it to the island array.
-  // this ensures that there's at least one port on each island!
-  for (let i = 1; i < islandID + 1; i++) {
-    const positionsByIslandID = islandIdToMapping.get(i);
-    if (positionsByIslandID) {
-      // Note: remove the `numPorts > 0` part to generate a port on every landmass regardless of specified port number
-      const randomIslandTilePosition = positionsByIslandID[Math.floor(Math.random() * positionsByIslandID.length)];
-      tileMap[randomIslandTilePosition.x][randomIslandTilePosition.y] = TILE_TYPE.PORT;
-      portTiles.push({ x: randomIslandTilePosition.x, y: randomIslandTilePosition.y });
-      numPorts--;
-    }
-  }
+//   // go through each island number
+//   // pick a random coast tile on each island and then add it to the island array.
+//   // this ensures that there's at least one port on each island!
+//   for (let i = 1; i < islandID + 1; i++) {
+//     const positionsByIslandID = islandIdToMapping.get(i);
+//     if (positionsByIslandID) {
+//       // Note: remove the `numPorts > 0` part to generate a port on every landmass regardless of specified port number
+//       const randomIslandTilePosition = positionsByIslandID[Math.floor(Math.random() * positionsByIslandID.length)];
+//       tileMap[randomIslandTilePosition.x][randomIslandTilePosition.y] = TILE_TYPE.PORT;
+//       portTiles.push({ x: randomIslandTilePosition.x, y: randomIslandTilePosition.y });
+//       numPorts--;
+//     }
+//   }
 
-  while (numPorts > 0) {
-    if (!coastlineTiles || coastlineTiles.length === 0) break;
+//   while (numPorts > 0) {
+//     if (!coastlineTiles || coastlineTiles.length === 0) break;
 
-    tileIndex = Math.floor(Math.random() * coastlineTiles.length);
-    tile = coastlineTiles[tileIndex];
-    tileMap[tile.x][tile.y] = TILE_TYPE.PORT;
+//     tileIndex = Math.floor(Math.random() * coastlineTiles.length);
+//     tile = coastlineTiles[tileIndex];
+//     tileMap[tile.x][tile.y] = TILE_TYPE.PORT;
 
-    portTiles.push(tile);
-    coastlineTiles.splice(tileIndex, 1);
-    numPorts--;
-  }
+//     portTiles.push(tile);
+//     coastlineTiles.splice(tileIndex, 1);
+//     numPorts--;
+//   }
 
-  while (numCities > 0) {
-    if (!inlandTiles || inlandTiles.length === 0) break;
+//   while (numCities > 0) {
+//     if (!inlandTiles || inlandTiles.length === 0) break;
 
-    const inlandTileIdx = Math.floor(Math.random() * inlandTiles.length);
-    const inlandTile = inlandTiles[inlandTileIdx];
+//     const inlandTileIdx = Math.floor(Math.random() * inlandTiles.length);
+//     const inlandTile = inlandTiles[inlandTileIdx];
 
-    tileMap[inlandTile.x][inlandTile.y] = TILE_TYPE.CITY;
+//     tileMap[inlandTile.x][inlandTile.y] = TILE_TYPE.CITY;
 
-    cityTiles.push(inlandTile);
-    inlandTiles.splice(inlandTileIdx, 1);
-    numCities--;
-  }
+//     cityTiles.push(inlandTile);
+//     inlandTiles.splice(inlandTileIdx, 1);
+//     numCities--;
+//   }
 
-  while (numOilWells > 0) {
-    // place oil wells inland
-    if (!inlandTiles || inlandTiles.length === 0) break;
+//   while (numOilWells > 0) {
+//     // place oil wells inland
+//     if (!inlandTiles || inlandTiles.length === 0) break;
 
-    const inlandTileIdx = Math.floor(Math.random() * inlandTiles.length);
-    const inlandTile = inlandTiles[inlandTileIdx];
+//     const inlandTileIdx = Math.floor(Math.random() * inlandTiles.length);
+//     const inlandTile = inlandTiles[inlandTileIdx];
 
-    if (tileMap[inlandTile.x][inlandTile.y] !== TILE_TYPE.INLAND) continue;
+//     if (tileMap[inlandTile.x][inlandTile.y] !== TILE_TYPE.INLAND) continue;
 
-    tileMap[inlandTile.x][inlandTile.y] = TILE_TYPE.OIL_WELL;
+//     tileMap[inlandTile.x][inlandTile.y] = TILE_TYPE.OIL_WELL;
 
-    oilWellTiles.push(inlandTile);
-    numOilWells--;
-  }
+//     oilWellTiles.push(inlandTile);
+//     numOilWells--;
+//   }
 
-  return { tileMap, portTiles, cityTiles, oilWellTiles };
-};
+//   return { tileMap, portTiles, cityTiles, oilWellTiles };
+// };
 
 //////////////////////////////////////////////////////////////////////
 ////////////////////////////// HELPERS ///////////////////////////////
