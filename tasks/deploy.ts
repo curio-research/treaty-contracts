@@ -192,13 +192,9 @@ task('deploy', 'deploy contracts')
             player2Pos = { x, y };
           } while (player2Pos.x === player1Pos.x || player2Pos.y === player1Pos.y);
 
-          console.log('AAA');
-
           await (await diamond.connect(player1).initializePlayer(player1Pos, 'Eve')).wait();
           await (await diamond.connect(player2).initializePlayer(player2Pos, 'Felix')).wait();
           console.log(`✦ player initialization took ${Math.floor(performance.now() - time2)} ms`);
-
-          console.log('BBB');
         }
       }
 

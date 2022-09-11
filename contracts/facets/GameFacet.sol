@@ -268,16 +268,12 @@ contract GameFacet is UseStorage {
     }
 
     function initializePlayer(Position memory _position, string memory _name) external returns (uint256 _player, uint256 _settler) {
-        console.log("BBB");
-
         // Checkers
         require(!gs().isPaused, "CURIO: Game is paused");
         require(gs().players.length < gs().worldConstants.maxPlayerCount, "CURIO: Max player count exceeded");
         require(gs().playerEntityMap[msg.sender] == NULL, "CURIO: Player already initialized");
         require(GameLib._inBound(_position), "CURIO: Out of bound");
         if (!GameLib._getTileAt(_position).isInitialized) GameLib._initializeTile(_position);
-
-        console.log("CCC");
 
         // Spawn player
         _player = ECSLib._addEntity();
@@ -289,17 +285,14 @@ contract GameFacet is UseStorage {
         gs().players.push(msg.sender);
         gs().playerEntityMap[msg.sender] = _player;
 
-        console.log("DDD");
-
         // Spawn settler
         _settler = ECSLib._addEntity();
-        ECSLib._setString("String", _settler, "Settler");
+        // ECSLib._setString("String", _settler, "Settler"); // bug
+        ECSLib._setString("Tag", _settler, "Settler");
         ECSLib._setUint("Owner", _settler, _player);
         ECSLib._setBool("CanSettle", _settler);
         ECSLib._setUint("Health", _settler, 1); // FIXME
         ECSLib._setUint("Speed", _settler, 1); // FIXME
-
-        console.log("EEE");
     }
 
     // /**
