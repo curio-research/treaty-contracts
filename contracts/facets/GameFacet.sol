@@ -313,6 +313,7 @@ contract GameFacet is UseStorage {
         // Spawn settler
         _settler = ECSLib._addEntity();
         ECSLib._setString("Tag", _settler, "Settler");
+        ECSLib._setPosition("Position", _settler, _position);
         ECSLib._setUint("Owner", _settler, _player);
         ECSLib._setBool("CanSettle", _settler);
         ECSLib._setUint("Health", _settler, 1); // FIXME

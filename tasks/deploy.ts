@@ -202,7 +202,7 @@ task('deploy', 'deploy contracts')
       const configFile: GameConfig = {
         address: diamond.address,
         network: hre.network.name,
-        deploymentId: ` ${mapName ? `${mapName}-` : ''} ${isRelease ? 'release-' : ''}${hre.network.name}-${Date.now()}`,
+        deploymentId: `deployer=${process.env.DEPLOYER_ID}-${mapName ? `${mapName}-` : ''}${isRelease ? 'release-' : ''}${hre.network.name}-${Date.now()}`,
         map: tileMap,
         time: new Date(),
       };
