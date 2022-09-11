@@ -385,6 +385,22 @@ library GameLib {
         return _index;
     }
 
+    function _euclidean(Position memory _p1, Position memory _p2) public pure returns (uint256) {
+        uint256 _a = _p2.x >= _p1.x ? _p2.x - _p1.x : _p1.x - _p2.x;
+        uint256 _b = _p2.y >= _p1.y ? _p2.y - _p1.y : _p1.y - _p2.y;
+
+        return _sqrt(_a**2 + _b**2);
+    }
+
+    function _sqrt(uint256 x) internal pure returns (uint256 y) {
+        uint256 z = (x + 1) / 2;
+        y = x;
+        while (z < y) {
+            y = z;
+            z = (x / z + z) / 2;
+        }
+    }
+
     function _NULL() internal pure returns (uint256) {
         return 0;
     }

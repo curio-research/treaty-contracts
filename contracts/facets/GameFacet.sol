@@ -21,6 +21,31 @@ contract GameFacet is UseStorage {
     // SETTLEMENT
     // ----------------------------------------------------------
 
+    function moveSettler(uint256 _settler, Position memory _targetPosition) external {
+        // Verify that settler exists as an entity
+        require(Set(gs().entities).includes(_settler), "CURIO: Settler not found");
+
+        // Verify that game is ongoing
+        require(!gs().isPaused, "CURIO: Game is paused");
+
+        // Verify that player is active
+        uint256 _player = GameLib._getPlayer(msg.sender);
+        require(BoolComponent(gs().components["IsActive"]).has(_player), "CURIO: You are inactive");
+
+        // Verify that settler belongs to player
+        require(ECSLib._getUint("Owner", _settler) == _player, "CURIO: Settler is not yours");
+
+        // Verify target position is in bound
+        require(GameLib._inBound(_targetPosition), "CURIO: Out of bound");
+
+        // Check speed and cooldown
+        require(ECSLib._getUint("LastMoved", _settler) < block.timestamp, "CURIO: Need more time till next move");
+        require(ECSLib._getUint("Speed", _settler) >= GameLib._euclidean(ECSLib._getPosition("Position", _settler), _targetPosition), "CURIO: Not fast enough");
+
+        ECSLib._setPosition("Position", _settler, _targetPosition);
+        ECSLib._setUint("LastMoved", _settler, block.timestamp);
+    }
+
     function foundCity(
         uint256 _settler,
         Position[] memory _territory,
@@ -287,12 +312,12 @@ contract GameFacet is UseStorage {
 
         // Spawn settler
         _settler = ECSLib._addEntity();
-        // ECSLib._setString("String", _settler, "Settler"); // bug
         ECSLib._setString("Tag", _settler, "Settler");
         ECSLib._setUint("Owner", _settler, _player);
         ECSLib._setBool("CanSettle", _settler);
         ECSLib._setUint("Health", _settler, 1); // FIXME
         ECSLib._setUint("Speed", _settler, 1); // FIXME
+        ECSLib._setUint("LastMoved", _settler, block.timestamp);
     }
 
     // /**

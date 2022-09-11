@@ -37,6 +37,7 @@ export type TileStructOutput = [boolean, number, BigNumber] & {
 export interface GameLibInterface extends utils.Interface {
   functions: {
     "_coincident((uint256,uint256),(uint256,uint256))": FunctionFragment;
+    "_euclidean((uint256,uint256),(uint256,uint256))": FunctionFragment;
     "_getNeighbors((uint256,uint256))": FunctionFragment;
     "_getPlayer(address)": FunctionFragment;
     "_getTileAt((uint256,uint256))": FunctionFragment;
@@ -48,6 +49,10 @@ export interface GameLibInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "_coincident",
+    values: [PositionStruct, PositionStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_euclidean",
     values: [PositionStruct, PositionStruct]
   ): string;
   encodeFunctionData(
@@ -80,6 +85,7 @@ export interface GameLibInterface extends utils.Interface {
     functionFragment: "_coincident",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "_euclidean", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_getNeighbors",
     data: BytesLike
@@ -144,6 +150,12 @@ export interface GameLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    _euclidean(
+      _p1: PositionStruct,
+      _p2: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     _getNeighbors(
       _position: PositionStruct,
       overrides?: CallOverrides
@@ -187,6 +199,12 @@ export interface GameLib extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  _euclidean(
+    _p1: PositionStruct,
+    _p2: PositionStruct,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   _getNeighbors(
     _position: PositionStruct,
     overrides?: CallOverrides
@@ -222,6 +240,12 @@ export interface GameLib extends BaseContract {
       _p2: PositionStruct,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    _euclidean(
+      _p1: PositionStruct,
+      _p2: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     _getNeighbors(
       _position: PositionStruct,
@@ -272,6 +296,12 @@ export interface GameLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _euclidean(
+      _p1: PositionStruct,
+      _p2: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     _getNeighbors(
       _position: PositionStruct,
       overrides?: CallOverrides
@@ -308,6 +338,12 @@ export interface GameLib extends BaseContract {
 
   populateTransaction: {
     _coincident(
+      _p1: PositionStruct,
+      _p2: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _euclidean(
       _p1: PositionStruct,
       _p2: PositionStruct,
       overrides?: CallOverrides

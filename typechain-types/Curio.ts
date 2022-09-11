@@ -120,6 +120,7 @@ export interface CurioInterface extends utils.Interface {
     "foundCity(uint256,(uint256,uint256)[],(uint256,uint256),string)": FunctionFragment;
     "initializePlayer((uint256,uint256),string)": FunctionFragment;
     "march(uint256,(uint256,uint256))": FunctionFragment;
+    "moveSettler(uint256,(uint256,uint256))": FunctionFragment;
     "organizeArmy(uint256,string[],uint256[])": FunctionFragment;
     "startProduction(uint256,uint256,uint256)": FunctionFragment;
     "unfoldCity(uint256)": FunctionFragment;
@@ -200,6 +201,10 @@ export interface CurioInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "march",
+    values: [BigNumberish, PositionStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "moveSettler",
     values: [BigNumberish, PositionStruct]
   ): string;
   encodeFunctionData(
@@ -301,6 +306,10 @@ export interface CurioInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "march", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "moveSettler",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "organizeArmy",
     data: BytesLike
@@ -497,6 +506,12 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    moveSettler(
+      _settler: BigNumberish,
+      _targetPosition: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     organizeArmy(
       _city: BigNumberish,
       _troopTypes: string[],
@@ -654,6 +669,12 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  moveSettler(
+    _settler: BigNumberish,
+    _targetPosition: PositionStruct,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   organizeArmy(
     _city: BigNumberish,
     _troopTypes: string[],
@@ -801,6 +822,12 @@ export interface Curio extends BaseContract {
     march(
       _army: BigNumberish,
       _position: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    moveSettler(
+      _settler: BigNumberish,
+      _targetPosition: PositionStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -978,6 +1005,12 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    moveSettler(
+      _settler: BigNumberish,
+      _targetPosition: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     organizeArmy(
       _city: BigNumberish,
       _troopTypes: string[],
@@ -1128,6 +1161,12 @@ export interface Curio extends BaseContract {
     march(
       _army: BigNumberish,
       _position: PositionStruct,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    moveSettler(
+      _settler: BigNumberish,
+      _targetPosition: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
