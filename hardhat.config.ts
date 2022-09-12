@@ -32,7 +32,7 @@ export default {
   },
   diamondAbi: {
     name: 'Curio',
-    include: ['Facet', 'Util'],
+    include: ['Facet', 'Util', 'ECSLib'],
     strict: true, // check for overlapping function names
   },
 

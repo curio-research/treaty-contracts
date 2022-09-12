@@ -175,6 +175,16 @@ library GameLib {
     // LOGIC GETTERS
     // ----------------------------------------------------------
 
+    function _getArmyBattles(uint256 _army) public returns (uint256[] memory) {
+        Set _set1 = new Set();
+        Set _set2 = new Set();
+        Set _set3 = new Set();
+        _set1.addArray(UintComponent(gs().components["Source"]).getEntitiesWithValue(_army));
+        _set2.addArray(UintComponent(gs().components["Target"]).getEntitiesWithValue(_army));
+        _set3.addArray(StringComponent(gs().components["Tag"]).getEntitiesWithValue(string("Battle")));
+        return ECSLib._concatenate(ECSLib._intersection(_set1, _set3), ECSLib._intersection(_set2, _set3));
+    }
+
     function _getPlayerArmies(uint256 _player) public returns (uint256[] memory) {
         Set _set1 = new Set();
         Set _set2 = new Set();
@@ -345,6 +355,20 @@ library GameLib {
         return uint256(keccak256(abi.encode(block.timestamp, block.difficulty, _salt))) % _max;
     }
 
+    function _connected(Position[] memory _positions) public pure returns (bool) {
+        require(_positions.length > 0, "CURIO: Positions cannot be empty");
+
+        for (uint256 i = 1; i < _positions.length; i++) {
+            if (!_adjacent(_positions[i - 1], _positions[i])) return false;
+        }
+
+        return true;
+    }
+
+    function _adjacent(Position memory _p1, Position memory _p2) public pure returns (bool) {
+        return !_coincident(_p1, _p2) && _withinDistance(_p1, _p2, 1);
+    }
+
     function _coincident(Position memory _p1, Position memory _p2) public pure returns (bool) {
         return _p1.x == _p2.x && _p1.y == _p2.y;
     }
@@ -372,22 +396,6 @@ library GameLib {
             _index++;
         }
         return _index;
-    }
-
-    function _connected(Position[] memory _positions) public pure returns (bool) {
-        require(_positions.length > 0, "CURIO: Positions cannot be empty");
-
-        Position memory _last;
-        for (uint256 i = 1; i < _positions.length; i++) {
-            _last = _positions[i - 1];
-            if (_positions[i].x == _last.x && _positions[i].y == _last.y - 1) continue;
-            if (_positions[i].x == _last.x && _positions[i].y == _last.y + 1) continue;
-            if (_positions[i].x == _last.x - 1 && _positions[i].y == _last.y) continue;
-            if (_positions[i].x == _last.x + 1 && _positions[i].y == _last.y) continue;
-            return false;
-        }
-
-        return true;
     }
 
     function _euclidean(Position memory _p1, Position memory _p2) public pure returns (uint256) {

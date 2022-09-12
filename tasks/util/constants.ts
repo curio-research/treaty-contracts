@@ -86,4 +86,6 @@ export const COMPONENT_SPECS: CompType[] = [
   { name: 'InventoryType', valueType: ComponentDataTypes.STRING },
   { name: 'InventoryTypes', valueType: ComponentDataTypes.STRING_ARRAY },
   { name: 'LastMoved', valueType: ComponentDataTypes.UINT },
+  { name: 'Source', valueType: ComponentDataTypes.UINT },
+  { name: 'Target', valueType: ComponentDataTypes.UINT },
 ];

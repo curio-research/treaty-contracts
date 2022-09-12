@@ -375,7 +375,61 @@ contract GameFacet is UseStorage {
         ECSLib._setPosition("Position", _army, _targetPosition);
     }
 
-    function _battle(uint256 _army, uint256 _targetArmy) external {}
+    function _startBattle(uint256 _army, uint256 _targetArmy) external {
+        // Verify that armies exist as entities
+        require(Set(gs().entities).includes(_army), "CURIO: Army not found");
+        require(Set(gs().entities).includes(_targetArmy), "CURIO: Target army not found");
+
+        // Verify that game is ongoing
+        require(!gs().isPaused, "CURIO: Game is paused");
+
+        // Verify that player is active
+        uint256 _player = GameLib._getPlayer(msg.sender);
+        require(BoolComponent(gs().components["IsActive"]).has(_player), "CURIO: You are inactive");
+
+        // Verify that army belongs to player
+        require(ECSLib._getUint("Owner", _army) == _player, "CURIO: Army is not yours");
+        require(ECSLib._getUint("Owner", _targetArmy) != _player, "CURIO: Cannot attack your own army");
+
+        // Verify that army and target army are adjacent
+        require(GameLib._adjacent(ECSLib._getPosition("Position", _army), ECSLib._getPosition("Position", _targetArmy)), "CURIO: Too far");
+
+        // Start exchanging fire
+        uint256 _battle = ECSLib._addEntity();
+        ECSLib._setString("Tag", _battle, "Battle");
+        ECSLib._setUint("InitTimestamp", _battle, block.timestamp);
+        ECSLib._setUint("Source", _battle, _army);
+        ECSLib._setUint("Target", _battle, _targetArmy);
+    }
+
+    function _retreat(uint256 _army, Position memory _targetPosition) external {
+        // Verify that army exist as an entity
+        require(Set(gs().entities).includes(_army), "CURIO: Army not found");
+
+        // Verify that game is ongoing
+        require(!gs().isPaused, "CURIO: Game is paused");
+
+        // Verify that player is active
+        uint256 _player = GameLib._getPlayer(msg.sender);
+        require(BoolComponent(gs().components["IsActive"]).has(_player), "CURIO: You are inactive");
+
+        // Verify that army belongs to player
+        require(ECSLib._getUint("Owner", _army) == _player, "CURIO: Army is not yours");
+
+        // Verify that at least one war is happening with the army
+        uint256[] memory _battles = GameLib._getArmyBattles(_army);
+        require(_battles.length >= 1, "CURIO: No battle to retreat from");
+
+        // Verify that destination does not belong to foreign city
+        uint256 _destinationCityOwner = ECSLib._getUint("Owner", GameLib._getCityAt(_targetPosition));
+        require(_destinationCityOwner == NULL || _destinationCityOwner == _player, "CURIO: Cannot retreat to foreign city");
+
+        // Damage both armies and kill if necessary
+
+        // Move army
+    }
+
+    function _battleCity(uint256 _army, uint256 _city) external {}
 
     // /**
     //  * @dev March army to a target position (move, battle, or capture).
