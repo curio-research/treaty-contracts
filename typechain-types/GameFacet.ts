@@ -26,18 +26,28 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
 
 export interface GameFacetInterface extends utils.Interface {
   functions: {
+    "_battle(uint256,uint256)": FunctionFragment;
+    "disbandArmy(uint256)": FunctionFragment;
     "endProduction(uint256,uint256)": FunctionFragment;
     "foldCity(uint256)": FunctionFragment;
     "foundCity(uint256,(uint256,uint256)[],(uint256,uint256),string)": FunctionFragment;
     "initializePlayer((uint256,uint256),string)": FunctionFragment;
-    "march(uint256,(uint256,uint256))": FunctionFragment;
+    "moveArmy(uint256,(uint256,uint256))": FunctionFragment;
     "moveSettler(uint256,(uint256,uint256))": FunctionFragment;
     "organizeArmy(uint256,string[],uint256[])": FunctionFragment;
     "startProduction(uint256,uint256,uint256)": FunctionFragment;
     "unfoldCity(uint256)": FunctionFragment;
-    "upgradeCity(uint256)": FunctionFragment;
+    "upgradeCity(uint256,(uint256,uint256)[])": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "_battle",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "disbandArmy",
+    values: [BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "endProduction",
     values: [BigNumberish, BigNumberish]
@@ -55,7 +65,7 @@ export interface GameFacetInterface extends utils.Interface {
     values: [PositionStruct, string]
   ): string;
   encodeFunctionData(
-    functionFragment: "march",
+    functionFragment: "moveArmy",
     values: [BigNumberish, PositionStruct]
   ): string;
   encodeFunctionData(
@@ -76,9 +86,14 @@ export interface GameFacetInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "upgradeCity",
-    values: [BigNumberish]
+    values: [BigNumberish, PositionStruct[]]
   ): string;
 
+  decodeFunctionResult(functionFragment: "_battle", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "disbandArmy",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "endProduction",
     data: BytesLike
@@ -89,7 +104,7 @@ export interface GameFacetInterface extends utils.Interface {
     functionFragment: "initializePlayer",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "march", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "moveArmy", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "moveSettler",
     data: BytesLike
@@ -138,6 +153,17 @@ export interface GameFacet extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    _battle(
+      _army: BigNumberish,
+      _targetArmy: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    disbandArmy(
+      _army: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     endProduction(
       _building: BigNumberish,
       _production: BigNumberish,
@@ -163,9 +189,9 @@ export interface GameFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    march(
+    moveArmy(
       _army: BigNumberish,
-      _position: PositionStruct,
+      _targetPosition: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -196,9 +222,21 @@ export interface GameFacet extends BaseContract {
 
     upgradeCity(
       _city: BigNumberish,
+      _newTerritory: PositionStruct[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
+
+  _battle(
+    _army: BigNumberish,
+    _targetArmy: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  disbandArmy(
+    _army: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   endProduction(
     _building: BigNumberish,
@@ -225,9 +263,9 @@ export interface GameFacet extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  march(
+  moveArmy(
     _army: BigNumberish,
-    _position: PositionStruct,
+    _targetPosition: PositionStruct,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -258,10 +296,19 @@ export interface GameFacet extends BaseContract {
 
   upgradeCity(
     _city: BigNumberish,
+    _newTerritory: PositionStruct[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    _battle(
+      _army: BigNumberish,
+      _targetArmy: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    disbandArmy(_army: BigNumberish, overrides?: CallOverrides): Promise<void>;
+
     endProduction(
       _building: BigNumberish,
       _production: BigNumberish,
@@ -289,9 +336,9 @@ export interface GameFacet extends BaseContract {
       [BigNumber, BigNumber] & { _player: BigNumber; _settler: BigNumber }
     >;
 
-    march(
+    moveArmy(
       _army: BigNumberish,
-      _position: PositionStruct,
+      _targetPosition: PositionStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -320,12 +367,27 @@ export interface GameFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    upgradeCity(_city: BigNumberish, overrides?: CallOverrides): Promise<void>;
+    upgradeCity(
+      _city: BigNumberish,
+      _newTerritory: PositionStruct[],
+      overrides?: CallOverrides
+    ): Promise<void>;
   };
 
   filters: {};
 
   estimateGas: {
+    _battle(
+      _army: BigNumberish,
+      _targetArmy: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    disbandArmy(
+      _army: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     endProduction(
       _building: BigNumberish,
       _production: BigNumberish,
@@ -351,9 +413,9 @@ export interface GameFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    march(
+    moveArmy(
       _army: BigNumberish,
-      _position: PositionStruct,
+      _targetPosition: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -384,11 +446,23 @@ export interface GameFacet extends BaseContract {
 
     upgradeCity(
       _city: BigNumberish,
+      _newTerritory: PositionStruct[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    _battle(
+      _army: BigNumberish,
+      _targetArmy: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    disbandArmy(
+      _army: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     endProduction(
       _building: BigNumberish,
       _production: BigNumberish,
@@ -414,9 +488,9 @@ export interface GameFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    march(
+    moveArmy(
       _army: BigNumberish,
-      _position: PositionStruct,
+      _targetPosition: PositionStruct,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -447,6 +521,7 @@ export interface GameFacet extends BaseContract {
 
     upgradeCity(
       _city: BigNumberish,
+      _newTerritory: PositionStruct[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

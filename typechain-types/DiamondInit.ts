@@ -27,10 +27,12 @@ export type WorldConstantsStruct = {
   maxArmyCountPerPlayer: BigNumberish;
   maxPlayerCount: BigNumberish;
   maxInventoryCapacity: BigNumberish;
+  cityUpgradeGoldCost: BigNumberish;
 };
 
 export type WorldConstantsStructOutput = [
   string,
+  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -49,11 +51,12 @@ export type WorldConstantsStructOutput = [
   maxArmyCountPerPlayer: BigNumber;
   maxPlayerCount: BigNumber;
   maxInventoryCapacity: BigNumber;
+  cityUpgradeGoldCost: BigNumber;
 };
 
 export interface DiamondInitInterface extends utils.Interface {
   functions: {
-    "init((address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))": FunctionFragment;
+    "init((address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))": FunctionFragment;
   };
 
   encodeFunctionData(

@@ -38,6 +38,7 @@ export interface AdminFacetInterface extends utils.Interface {
     "pauseGame()": FunctionFragment;
     "reactivatePlayer(address)": FunctionFragment;
     "registerComponents(address,(string,uint8)[])": FunctionFragment;
+    "registerDefaultComponents(address)": FunctionFragment;
     "resumeGame()": FunctionFragment;
     "setComponentValue(string,uint256,bytes)": FunctionFragment;
     "storeEncodedColumnBatches(uint256[][])": FunctionFragment;
@@ -56,6 +57,10 @@ export interface AdminFacetInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "registerComponents",
     values: [string, ComponentSpecStruct[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "registerDefaultComponents",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "resumeGame",
@@ -82,6 +87,10 @@ export interface AdminFacetInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "registerComponents",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "registerDefaultComponents",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "resumeGame", data: BytesLike): Result;
@@ -148,6 +157,11 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    registerDefaultComponents(
+      _gameAddr: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     resumeGame(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -189,6 +203,11 @@ export interface AdminFacet extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  registerDefaultComponents(
+    _gameAddr: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   resumeGame(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -223,6 +242,11 @@ export interface AdminFacet extends BaseContract {
     registerComponents(
       _gameAddr: string,
       _componentSpecs: ComponentSpecStruct[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    registerDefaultComponents(
+      _gameAddr: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -268,6 +292,11 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    registerDefaultComponents(
+      _gameAddr: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     resumeGame(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -307,6 +336,11 @@ export interface AdminFacet extends BaseContract {
     registerComponents(
       _gameAddr: string,
       _componentSpecs: ComponentSpecStruct[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    registerDefaultComponents(
+      _gameAddr: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

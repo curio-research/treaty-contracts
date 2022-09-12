@@ -30,11 +30,12 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): W
     worldWidth: mapInput.width,
     worldHeight: mapInput.height,
     numInitTerrainTypes: 1,
-    initBatchSize: 50,
+    initBatchSize: 100,
     maxCityCountPerPlayer: 3,
     maxArmyCountPerPlayer: 3,
     maxPlayerCount: 20,
     maxInventoryCapacity: 80,
+    cityUpgradeGoldCost: 500,
   };
 };
 

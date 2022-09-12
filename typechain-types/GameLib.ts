@@ -37,6 +37,7 @@ export type TileStructOutput = [boolean, number, BigNumber] & {
 export interface GameLibInterface extends utils.Interface {
   functions: {
     "_coincident((uint256,uint256),(uint256,uint256))": FunctionFragment;
+    "_connected((uint256,uint256)[])": FunctionFragment;
     "_euclidean((uint256,uint256),(uint256,uint256))": FunctionFragment;
     "_getNeighbors((uint256,uint256))": FunctionFragment;
     "_getPlayer(address)": FunctionFragment;
@@ -44,12 +45,17 @@ export interface GameLibInterface extends utils.Interface {
     "_inBound((uint256,uint256))": FunctionFragment;
     "_random(uint256,uint256)": FunctionFragment;
     "_strEq(string,string)": FunctionFragment;
+    "_sum(uint256[])": FunctionFragment;
     "_withinDistance((uint256,uint256),(uint256,uint256),uint256)": FunctionFragment;
   };
 
   encodeFunctionData(
     functionFragment: "_coincident",
     values: [PositionStruct, PositionStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_connected",
+    values: [PositionStruct[]]
   ): string;
   encodeFunctionData(
     functionFragment: "_euclidean",
@@ -77,6 +83,10 @@ export interface GameLibInterface extends utils.Interface {
     values: [string, string]
   ): string;
   encodeFunctionData(
+    functionFragment: "_sum",
+    values: [BigNumberish[]]
+  ): string;
+  encodeFunctionData(
     functionFragment: "_withinDistance",
     values: [PositionStruct, PositionStruct, BigNumberish]
   ): string;
@@ -85,6 +95,7 @@ export interface GameLibInterface extends utils.Interface {
     functionFragment: "_coincident",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "_connected", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "_euclidean", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_getNeighbors",
@@ -95,6 +106,7 @@ export interface GameLibInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "_inBound", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "_random", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "_strEq", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "_sum", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_withinDistance",
     data: BytesLike
@@ -150,6 +162,11 @@ export interface GameLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    _connected(
+      _positions: PositionStruct[],
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     _euclidean(
       _p1: PositionStruct,
       _p2: PositionStruct,
@@ -185,6 +202,8 @@ export interface GameLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    _sum(_arr: BigNumberish[], overrides?: CallOverrides): Promise<[BigNumber]>;
+
     _withinDistance(
       _p1: PositionStruct,
       _p2: PositionStruct,
@@ -196,6 +215,11 @@ export interface GameLib extends BaseContract {
   _coincident(
     _p1: PositionStruct,
     _p2: PositionStruct,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  _connected(
+    _positions: PositionStruct[],
     overrides?: CallOverrides
   ): Promise<boolean>;
 
@@ -227,6 +251,8 @@ export interface GameLib extends BaseContract {
 
   _strEq(_s1: string, _s2: string, overrides?: CallOverrides): Promise<boolean>;
 
+  _sum(_arr: BigNumberish[], overrides?: CallOverrides): Promise<BigNumber>;
+
   _withinDistance(
     _p1: PositionStruct,
     _p2: PositionStruct,
@@ -238,6 +264,11 @@ export interface GameLib extends BaseContract {
     _coincident(
       _p1: PositionStruct,
       _p2: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    _connected(
+      _positions: PositionStruct[],
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -273,6 +304,8 @@ export interface GameLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    _sum(_arr: BigNumberish[], overrides?: CallOverrides): Promise<BigNumber>;
+
     _withinDistance(
       _p1: PositionStruct,
       _p2: PositionStruct,
@@ -293,6 +326,11 @@ export interface GameLib extends BaseContract {
     _coincident(
       _p1: PositionStruct,
       _p2: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _connected(
+      _positions: PositionStruct[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -328,6 +366,8 @@ export interface GameLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _sum(_arr: BigNumberish[], overrides?: CallOverrides): Promise<BigNumber>;
+
     _withinDistance(
       _p1: PositionStruct,
       _p2: PositionStruct,
@@ -340,6 +380,11 @@ export interface GameLib extends BaseContract {
     _coincident(
       _p1: PositionStruct,
       _p2: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _connected(
+      _positions: PositionStruct[],
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -378,6 +423,11 @@ export interface GameLib extends BaseContract {
     _strEq(
       _s1: string,
       _s2: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _sum(
+      _arr: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

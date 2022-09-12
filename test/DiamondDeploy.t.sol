@@ -142,7 +142,7 @@ contract DiamondDeployTest is Test {
         admin.registerDefaultComponents(diamond);
 
         // Initialize map
-        uint256[][] memory _map = _generateMap(_worldConstants.worldWidth, _worldConstants.worldHeight, 10);
+        uint256[][] memory _map = _generateMap(_worldConstants.worldWidth, _worldConstants.worldHeight);
         uint256[][] memory _encodedColumnBatches = _encodeTileMap(_map, _worldConstants.numInitTerrainTypes, _worldConstants.initBatchSize);
         admin.storeEncodedColumnBatches(_encodedColumnBatches);
 
@@ -159,21 +159,21 @@ contract DiamondDeployTest is Test {
         game.initializePlayer(player3Pos, "Cindy");
         player3Id = getter.getPlayerId(player3);
 
-        // Initialize a troop template (destroyer)
-        vm.startPrank(deployer);
-        destroyerTemplateId = admin.addEntity();
-        admin.setComponentValue("CanMove", destroyerTemplateId, abi.encode(true));
-        admin.setComponentValue("CanAttack", destroyerTemplateId, abi.encode(true));
-        admin.setComponentValue("Tag", destroyerTemplateId, abi.encode("Destroyer"));
-        admin.setComponentValue("MaxHealth", destroyerTemplateId, abi.encode(3));
-        admin.setComponentValue("DamagePerHit", destroyerTemplateId, abi.encode(1));
-        admin.setComponentValue("AttackFactor", destroyerTemplateId, abi.encode(100));
-        admin.setComponentValue("DefenseFactor", destroyerTemplateId, abi.encode(100));
-        admin.setComponentValue("MovementCooldown", destroyerTemplateId, abi.encode(1));
-        admin.setComponentValue("LargeActionCooldown", destroyerTemplateId, abi.encode(1));
-        admin.setComponentValue("Gold", destroyerTemplateId, abi.encode(19));
-        admin.setComponentValue("OilPerSecond", destroyerTemplateId, abi.encode(1));
-        vm.stopPrank();
+        // // Initialize a troop template (destroyer)
+        // vm.startPrank(deployer);
+        // destroyerTemplateId = admin.addEntity();
+        // admin.setComponentValue("CanMove", destroyerTemplateId, abi.encode(true));
+        // admin.setComponentValue("CanAttack", destroyerTemplateId, abi.encode(true));
+        // admin.setComponentValue("Tag", destroyerTemplateId, abi.encode("Destroyer"));
+        // admin.setComponentValue("MaxHealth", destroyerTemplateId, abi.encode(3));
+        // admin.setComponentValue("DamagePerHit", destroyerTemplateId, abi.encode(1));
+        // admin.setComponentValue("AttackFactor", destroyerTemplateId, abi.encode(100));
+        // admin.setComponentValue("DefenseFactor", destroyerTemplateId, abi.encode(100));
+        // admin.setComponentValue("MovementCooldown", destroyerTemplateId, abi.encode(1));
+        // admin.setComponentValue("LargeActionCooldown", destroyerTemplateId, abi.encode(1));
+        // admin.setComponentValue("Gold", destroyerTemplateId, abi.encode(19));
+        // admin.setComponentValue("OilPerSecond", destroyerTemplateId, abi.encode(1));
+        // vm.stopPrank();
     }
 
     function _encodeTileMap(
@@ -221,60 +221,30 @@ contract DiamondDeployTest is Test {
                 admin: deployer,
                 worldWidth: 1000,
                 worldHeight: 1000,
-                combatEfficiency: 50,
-                numInitTerrainTypes: 6,
-                initBatchSize: 50,
-                initPlayerGoldBalance: 20,
-                initPlayerOilBalance: 20,
-                maxBaseCountPerPlayer: 20,
-                maxTroopCountPerPlayer: 20,
+                numInitTerrainTypes: 1,
+                initBatchSize: 100,
+                maxCityCountPerPlayer: 20,
+                maxArmyCountPerPlayer: 20,
                 maxPlayerCount: 50,
-                defaultBaseGoldGenerationPerSecond: 5,
-                defaultWellOilGenerationPerSecond: 5,
-                debuffFactor: 80 //
+                maxInventoryCapacity: 80, //
+                cityUpgradeGoldCost: 500
             });
     }
 
     // Note: hardcoded
-    function _generateMap(
-        uint256 _width,
-        uint256 _height,
-        uint256 _interval
-    ) public pure returns (uint256[][] memory) {
-        uint256[] memory _coastCol = new uint256[](_height);
-        uint256[] memory _landCol = new uint256[](_height);
-        uint256[] memory _waterCol = new uint256[](_height);
-        uint256[] memory _portCol = new uint256[](_height);
-        uint256[] memory _cityCol = new uint256[](_height);
+    function _generateMap(uint256 _width, uint256 _height) public pure returns (uint256[][] memory) {
+        uint256[] memory _plainCol = new uint256[](_height);
 
         // set individual columns
         for (uint256 y = 0; y < _height; y++) {
-            _coastCol[y] = 0;
-            _landCol[y] = 1;
-            _waterCol[y] = 2;
-            _portCol[y] = 3;
-            _cityCol[y] = 4;
+            _plainCol[y] = 0;
         }
 
         // set whole map
         uint256[][] memory _map = new uint256[][](_width);
-        for (uint256 x = 0; x < _width; x += _interval) {
-            _map[x] = _waterCol;
-            _map[x + 1] = _waterCol;
-            _map[x + 2] = _portCol;
-            _map[x + 3] = _landCol;
-            _map[x + 4] = _landCol;
-            _map[x + 5] = _cityCol;
-            _map[x + 6] = _portCol;
-            _map[x + 7] = _waterCol;
-            _map[x + 8] = _coastCol;
-            _map[x + 9] = _landCol;
+        for (uint256 x = 0; x < _width; x += 1) {
+            _map[x] = _plainCol;
         }
-
-        // set oil wells
-        _map[0][7] = 5;
-        _map[5][0] = 5;
-        _map[7][8] = 5;
 
         return _map;
     }

@@ -59,11 +59,11 @@ library GameLib {
             gs().components[_spec.name] = _addr;
 
             // Record identifier entity for component
-            uint256 _componentEntity = ECSLib._addEntity();
-            ECSLib._setBool("IsComponent", _componentEntity);
-            gs().ComponentEntityToAddress[_componentEntity] = _addr;
+            uint256 _component = ECSLib._addEntity();
+            ECSLib._setBool("IsComponent", _component);
+            gs().ComponentEntityToAddress[_component] = _addr;
 
-            emit ECSLib.NewComponent(_spec.name, _componentEntity);
+            emit ECSLib.NewComponent(_spec.name, _component);
         }
 
         // Update component names for iteration
@@ -77,108 +77,97 @@ library GameLib {
 
         uint256 _encodedCol = gs().encodedColumnBatches[_position.x][_position.y / _batchSize] % (_numInitTerrainTypes**((_position.y % _batchSize) + 1));
         uint256 _divFactor = _numInitTerrainTypes**(_position.y % _batchSize);
-        uint256 _terrainEntity = _encodedCol / _divFactor;
+        uint256 _terrain = _encodedCol / _divFactor;
 
         // // Add base
-        // if (_terrainEntity >= 3) {
-        //     uint256 _baseEntity = ECSLib._addEntity();
-        //     ECSLib._setBool("IsActive", _baseEntity);
-        //     ECSLib._setPosition("Position", _baseEntity, _position);
-        //     ECSLib._setUint("Health", _baseEntity, 1);
-        //     ECSLib._setBool("CanAttack", _baseEntity);
-        //     ECSLib._setBool("CanPurchase", _baseEntity);
-        //     ECSLib._setUint("AttackFactor", _baseEntity, 100);
-        //     ECSLib._setUint("DefenseFactor", _baseEntity, 100);
-        //     if (_terrainEntity == 3) {
+        // if (_terrain >= 3) {
+        //     uint256 _base = ECSLib._addEntity();
+        //     ECSLib._setBool("IsActive", _base);
+        //     ECSLib._setPosition("Position", _base, _position);
+        //     ECSLib._setUint("Health", _base, 1);
+        //     ECSLib._setBool("CanAttack", _base);
+        //     ECSLib._setBool("CanPurchase", _base);
+        //     ECSLib._setUint("AttackFactor", _base, 100);
+        //     ECSLib._setUint("DefenseFactor", _base, 100);
+        //     if (_terrain == 3) {
         //         // Port
-        //         ECSLib._setString("Tag", _baseEntity, "Port");
-        //         ECSLib._setInt("GoldPerSecond", _baseEntity, int256(_worldConstants.defaultBaseGoldGenerationPerSecond));
-        //         _terrainEntity = 0;
-        //     } else if (_terrainEntity == 4) {
+        //         ECSLib._setString("Tag", _base, "Port");
+        //         ECSLib._setInt("GoldPerSecond", _base, int256(_worldConstants.defaultBaseGoldGenerationPerSecond));
+        //         _terrain = 0;
+        //     } else if (_terrain == 4) {
         //         // City
-        //         ECSLib._setString("Tag", _baseEntity, "City");
-        //         ECSLib._setInt("GoldPerSecond", _baseEntity, int256(_worldConstants.defaultBaseGoldGenerationPerSecond));
-        //         _terrainEntity = 1;
-        //     } else if (_terrainEntity == 5) {
+        //         ECSLib._setString("Tag", _base, "City");
+        //         ECSLib._setInt("GoldPerSecond", _base, int256(_worldConstants.defaultBaseGoldGenerationPerSecond));
+        //         _terrain = 1;
+        //     } else if (_terrain == 5) {
         //         // Oil well
-        //         ECSLib._setString("Tag", _baseEntity, "Oil Well");
-        //         ECSLib._setInt("OilPerSecond", _baseEntity, int256(_worldConstants.defaultWellOilGenerationPerSecond));
-        //         _terrainEntity = 1;
+        //         ECSLib._setString("Tag", _base, "Oil Well");
+        //         ECSLib._setInt("OilPerSecond", _base, int256(_worldConstants.defaultWellOilGenerationPerSecond));
+        //         _terrain = 1;
         //     }
         // }
 
         // Update terrain
         gs().map[_position.x][_position.y].isInitialized = true;
-        gs().map[_position.x][_position.y].terrain = TERRAIN(_terrainEntity);
+        gs().map[_position.x][_position.y].terrain = TERRAIN(_terrain);
     }
 
-    // function _removeTroop(uint256 _troopEntity) public {
-    //     uint256 _playerEntity = ECSLib._getUint("OwnerEntity", _troopEntity);
-    //     int256 _oilPerSecond = ECSLib._getInt("OilPerSecond", _troopEntity);
-
-    //     ECSLib._removeEntity(_troopEntity);
-
-    //     _updatePlayerBalances(_playerEntity);
-    //     int256 _playerOilPerSecond = ECSLib._getInt("OilPerSecond", _playerEntity);
-    //     ECSLib._setInt("OilPerSecond", _playerEntity, _playerOilPerSecond - _oilPerSecond);
-    // }
-
-    function _removeArmy(uint256 _armyEntity) public {
-        ECSLib._removeEntity(_armyEntity);
+    function _removeArmy(uint256 _army) public {
+        ECSLib._removeEntity(_army);
     }
 
-    // function _updatePlayerBalances(uint256 _playerEntity) public {
-    //     uint256 _balanceLastUpdated = ECSLib._getUint("BalanceLastUpdated", _playerEntity);
+    // function _updatePlayerBalances(uint256 _player) public {
+    //     uint256 _balanceLastUpdated = ECSLib._getUint("BalanceLastUpdated", _player);
     //     uint256 _timeElapsed = block.timestamp - _balanceLastUpdated;
 
     //     // Update gold balance
-    //     uint256 _gold = ECSLib._getUint("Gold", _playerEntity);
-    //     int256 _goldPerSecond = ECSLib._getInt("GoldPerSecond", _playerEntity);
-    //     ECSLib._setUint("Gold", _playerEntity, uint256(int256(_gold) + _goldPerSecond * int256(_timeElapsed)));
+    //     uint256 _gold = ECSLib._getUint("Gold", _player);
+    //     int256 _goldPerSecond = ECSLib._getInt("GoldPerSecond", _player);
+    //     ECSLib._setUint("Gold", _player, uint256(int256(_gold) + _goldPerSecond * int256(_timeElapsed)));
 
     //     // Update oil balance
-    //     uint256 _oil = ECSLib._getUint("Oil", _playerEntity);
-    //     int256 _oilPerSecond = ECSLib._getInt("OilPerSecond", _playerEntity);
-    //     ECSLib._setUint("Oil", _playerEntity, uint256(int256(_oil) + _oilPerSecond * int256(_timeElapsed)));
+    //     uint256 _oil = ECSLib._getUint("Oil", _player);
+    //     int256 _oilPerSecond = ECSLib._getInt("OilPerSecond", _player);
+    //     ECSLib._setUint("Oil", _player, uint256(int256(_oil) + _oilPerSecond * int256(_timeElapsed)));
 
     //     // Update debuff status based on oil rate
     //     if (_oilPerSecond >= 0) {
-    //         ECSLib._removeBool("IsDebuffed", _playerEntity);
+    //         ECSLib._removeBool("IsDebuffed", _player);
     //     } else {
-    //         ECSLib._setBool("IsDebuffed", _playerEntity);
+    //         ECSLib._setBool("IsDebuffed", _player);
     //     }
 
-    //     ECSLib._setUint("BalanceLastUpdated", _playerEntity, block.timestamp);
+    //     ECSLib._setUint("BalanceLastUpdated", _player, block.timestamp);
     // }
 
-    // function _removeArmyWithTroops(uint256 _armyEntity) public {
-    //     _removeArmy(_armyEntity);
-    //     uint256[] memory _troopEntities = _getArmyTroopEntities(_armyEntity);
-    //     for (uint256 i = 0; i < _troopEntities.length; i++) {
-    //         _removeTroop(_troopEntities[i]);
+    // function _removeArmyWithTroops(uint256 _army) public {
+    //     _removeArmy(_army);
+    //     uint256[] memory _troops = _getArmyTroops(_army);
+    //     for (uint256 i = 0; i < _troops.length; i++) {
+    //         _removeTroop(_troops[i]);
     //     }
     // }
 
-    // function _damageArmy(uint256 _totalDamage, uint256[] memory _armyTroopEntities) public {
-    //     uint256 _individualDamage = _totalDamage / _armyTroopEntities.length;
-    //     uint256 _remainingDamage = _totalDamage % _armyTroopEntities.length;
+    // function _damageArmy(uint256 _totalDamage, uint256[] memory _armyTroops) public {
+    //     uint256 _individualDamage = _totalDamage / _armyTroops.length;
+    //     uint256 _remainingDamage = _totalDamage % _armyTroops.length;
 
-    //     for (uint256 i = 0; i < _armyTroopEntities.length; i++) {
+    //     for (uint256 i = 0; i < _armyTroops.length; i++) {
     //         uint256 _damage = _remainingDamage > 0 ? _individualDamage + 1 : _individualDamage;
-    //         _damageTroop(_damage, _armyTroopEntities[i]);
+    //         _damageTroop(_damage, _armyTroops[i]);
     //         if (_remainingDamage > 0) _remainingDamage--;
     //     }
     // }
 
-    // function _damageTroop(uint256 _damage, uint256 _troopEntity) public {
-    //     uint256 _health = ECSLib._getUint("Health", _troopEntity);
+    // function _damageTroop(uint256 _damage, uint256 _troop) public {
+    //     uint256 _health = ECSLib._getUint("Health", _troop);
 
     //     if (_damage >= _health) {
-    //         uint256 _armyEntity = ECSLib._getUint("ArmyEntity", _troopEntity);
-    //         if (UintComponent(gs().components["ArmyEntity"]).getEntitiesWithValue(_armyEntity).length == 1) _removeArmy(_armyEntity);
-    //         _removeTroop(_troopEntity);
+    //         uint256 _army = ECSLib._getUint("Army", _troop);
+    //         if (UintComponent(gs().components["Army"]).getEntitiesWithValue(_army).length == 1) _removeArmy(_army);
+    //         _removeTroop(_troop);
     //     } else {
-    //         ECSLib._setUint("Health", _troopEntity, _health - _damage);
+    //         ECSLib._setUint("Health", _troop, _health - _damage);
     //     }
     // }
 
@@ -385,11 +374,35 @@ library GameLib {
         return _index;
     }
 
+    function _connected(Position[] memory _positions) public pure returns (bool) {
+        require(_positions.length > 0, "CURIO: Positions cannot be empty");
+
+        Position memory _last;
+        for (uint256 i = 1; i < _positions.length; i++) {
+            _last = _positions[i - 1];
+            if (_positions[i].x == _last.x && _positions[i].y == _last.y - 1) continue;
+            if (_positions[i].x == _last.x && _positions[i].y == _last.y + 1) continue;
+            if (_positions[i].x == _last.x - 1 && _positions[i].y == _last.y) continue;
+            if (_positions[i].x == _last.x + 1 && _positions[i].y == _last.y) continue;
+            return false;
+        }
+
+        return true;
+    }
+
     function _euclidean(Position memory _p1, Position memory _p2) public pure returns (uint256) {
         uint256 _a = _p2.x >= _p1.x ? _p2.x - _p1.x : _p1.x - _p2.x;
         uint256 _b = _p2.y >= _p1.y ? _p2.y - _p1.y : _p1.y - _p2.y;
 
         return _sqrt(_a**2 + _b**2);
+    }
+
+    function _sum(uint256[] memory _arr) public pure returns (uint256) {
+        uint256 _result = 0;
+        for (uint256 i = 0; i < _arr.length; i++) {
+            _result += _arr[i];
+        }
+        return _result;
     }
 
     function _sqrt(uint256 x) internal pure returns (uint256 y) {

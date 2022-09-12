@@ -109,6 +109,39 @@ contract AdminFacet is UseStorage {
         GameLib._registerComponents(_gameAddr, _componentSpecs);
     }
 
+    function registerDefaultComponents(address _gameAddr) external onlyAdmin {
+        ComponentSpec[] memory _componentSpecs = new ComponentSpec[](26);
+
+        _componentSpecs[0] = ComponentSpec({name: "IsComponent", valueType: VALUE_TYPE.BOOL});
+        _componentSpecs[1] = ComponentSpec({name: "Tag", valueType: VALUE_TYPE.STRING});
+        _componentSpecs[2] = ComponentSpec({name: "IsActive", valueType: VALUE_TYPE.BOOL});
+        _componentSpecs[3] = ComponentSpec({name: "InitTimestamp", valueType: VALUE_TYPE.UINT});
+        _componentSpecs[4] = ComponentSpec({name: "Position", valueType: VALUE_TYPE.POSITION});
+        _componentSpecs[5] = ComponentSpec({name: "Owner", valueType: VALUE_TYPE.UINT});
+        _componentSpecs[6] = ComponentSpec({name: "Level", valueType: VALUE_TYPE.UINT});
+        _componentSpecs[7] = ComponentSpec({name: "Name", valueType: VALUE_TYPE.STRING});
+        _componentSpecs[8] = ComponentSpec({name: "CanSettle", valueType: VALUE_TYPE.BOOL});
+        _componentSpecs[9] = ComponentSpec({name: "ResourceType", valueType: VALUE_TYPE.STRING});
+        _componentSpecs[10] = ComponentSpec({name: "BuildingType", valueType: VALUE_TYPE.STRING});
+        _componentSpecs[11] = ComponentSpec({name: "Template", valueType: VALUE_TYPE.UINT});
+        _componentSpecs[12] = ComponentSpec({name: "CanProduce", valueType: VALUE_TYPE.BOOL});
+        _componentSpecs[13] = ComponentSpec({name: "Duration", valueType: VALUE_TYPE.UINT});
+        _componentSpecs[14] = ComponentSpec({name: "BalanceLastUpdated", valueType: VALUE_TYPE.UINT});
+        _componentSpecs[15] = ComponentSpec({name: "MaxHealth", valueType: VALUE_TYPE.UINT});
+        _componentSpecs[16] = ComponentSpec({name: "Health", valueType: VALUE_TYPE.UINT});
+        _componentSpecs[17] = ComponentSpec({name: "Attack", valueType: VALUE_TYPE.UINT});
+        _componentSpecs[18] = ComponentSpec({name: "Defense", valueType: VALUE_TYPE.UINT});
+        _componentSpecs[19] = ComponentSpec({name: "Speed", valueType: VALUE_TYPE.UINT});
+        _componentSpecs[20] = ComponentSpec({name: "City", valueType: VALUE_TYPE.UINT});
+        _componentSpecs[21] = ComponentSpec({name: "Amount", valueType: VALUE_TYPE.UINT});
+        _componentSpecs[22] = ComponentSpec({name: "Amounts", valueType: VALUE_TYPE.UINT_ARRAY});
+        _componentSpecs[23] = ComponentSpec({name: "InventoryType", valueType: VALUE_TYPE.STRING});
+        _componentSpecs[24] = ComponentSpec({name: "InventoryTypes", valueType: VALUE_TYPE.STRING_ARRAY});
+        _componentSpecs[25] = ComponentSpec({name: "LastMoved", valueType: VALUE_TYPE.UINT});
+
+        GameLib._registerComponents(_gameAddr, _componentSpecs);
+    }
+
     function addEntity() external onlyAdmin returns (uint256) {
         return ECSLib._addEntity();
     }
