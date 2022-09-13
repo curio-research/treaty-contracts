@@ -1,3 +1,4 @@
+import { Curio__factory } from './../typechain-types/factories/Curio__factory';
 import { ethers } from 'ethers';
 import { GameLib } from './../typechain-types/GameLib';
 import { ECSLib } from './../typechain-types/ECSLib';
