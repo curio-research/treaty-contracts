@@ -26,9 +26,10 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
 
 export interface GameFacetInterface extends utils.Interface {
   functions: {
-    "_battleCity(uint256,uint256)": FunctionFragment;
-    "_endBattle(uint256)": FunctionFragment;
-    "_startBattle(uint256,uint256)": FunctionFragment;
+    "_endBattleArmy(uint256)": FunctionFragment;
+    "_endBattleCity(uint256)": FunctionFragment;
+    "_startBattleArmy(uint256,uint256)": FunctionFragment;
+    "_startBattleCity(uint256,uint256)": FunctionFragment;
     "disbandArmy(uint256)": FunctionFragment;
     "endProduction(uint256,uint256)": FunctionFragment;
     "foldCity(uint256)": FunctionFragment;
@@ -43,15 +44,19 @@ export interface GameFacetInterface extends utils.Interface {
   };
 
   encodeFunctionData(
-    functionFragment: "_battleCity",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_endBattle",
+    functionFragment: "_endBattleArmy",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "_startBattle",
+    functionFragment: "_endBattleCity",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_startBattleArmy",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_startBattleCity",
     values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
@@ -100,12 +105,19 @@ export interface GameFacetInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "_battleCity",
+    functionFragment: "_endBattleArmy",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "_endBattle", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "_startBattle",
+    functionFragment: "_endBattleCity",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_startBattleArmy",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_startBattleCity",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -171,20 +183,25 @@ export interface GameFacet extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    _battleCity(
-      _army: BigNumberish,
-      _city: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    _endBattle(
+    _endBattleArmy(
       _army: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    _startBattle(
+    _endBattleCity(
+      _army: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    _startBattleArmy(
       _army: BigNumberish,
       _targetArmy: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    _startBattleCity(
+      _army: BigNumberish,
+      _city: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -256,20 +273,25 @@ export interface GameFacet extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
-  _battleCity(
-    _army: BigNumberish,
-    _city: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  _endBattle(
+  _endBattleArmy(
     _army: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  _startBattle(
+  _endBattleCity(
+    _army: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  _startBattleArmy(
     _army: BigNumberish,
     _targetArmy: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  _startBattleCity(
+    _army: BigNumberish,
+    _city: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -341,17 +363,25 @@ export interface GameFacet extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    _battleCity(
+    _endBattleArmy(
       _army: BigNumberish,
-      _city: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    _endBattle(_army: BigNumberish, overrides?: CallOverrides): Promise<void>;
+    _endBattleCity(
+      _army: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    _startBattle(
+    _startBattleArmy(
       _army: BigNumberish,
       _targetArmy: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    _startBattleCity(
+      _army: BigNumberish,
+      _city: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -425,20 +455,25 @@ export interface GameFacet extends BaseContract {
   filters: {};
 
   estimateGas: {
-    _battleCity(
-      _army: BigNumberish,
-      _city: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    _endBattle(
+    _endBattleArmy(
       _army: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    _startBattle(
+    _endBattleCity(
+      _army: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    _startBattleArmy(
       _army: BigNumberish,
       _targetArmy: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    _startBattleCity(
+      _army: BigNumberish,
+      _city: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -511,20 +546,25 @@ export interface GameFacet extends BaseContract {
   };
 
   populateTransaction: {
-    _battleCity(
-      _army: BigNumberish,
-      _city: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    _endBattle(
+    _endBattleArmy(
       _army: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    _startBattle(
+    _endBattleCity(
+      _army: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    _startBattleArmy(
       _army: BigNumberish,
       _targetArmy: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    _startBattleCity(
+      _army: BigNumberish,
+      _city: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

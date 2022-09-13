@@ -182,6 +182,16 @@ library GameLib {
     //     }
     // }
 
+    function _addGuard(uint256 _city) public returns (uint256 _guard) {
+        WorldConstants memory _constants = gs().worldConstants;
+        _guard = ECSLib._addEntity();
+        ECSLib._setString("Tag", _guard, "Guard");
+        ECSLib._setUint("City", _guard, _city);
+        ECSLib._setUint("Health", _guard, _constants.cityHealth);
+        ECSLib._setUint("Attack", _guard, _constants.cityAttack);
+        ECSLib._setUint("Defense", _guard, _constants.cityDefense);
+    }
+
     // ----------------------------------------------------------
     // LOGIC GETTERS
     // ----------------------------------------------------------
@@ -217,6 +227,17 @@ library GameLib {
         Set _set2 = new Set();
         _set1.addArray(StringComponent(gs().components["Tag"]).getEntitiesWithValue(string("Army")));
         _set2.addArray(PositionComponent(gs().components["Position"]).getEntitiesWithValue(_position));
+        uint256[] memory _result = ECSLib._intersection(_set1, _set2);
+
+        assert(_result.length <= 1);
+        return _result.length == 1 ? _result[0] : _NULL();
+    }
+
+    function _getCityGuard(uint256 _city) public returns (uint256) {
+        Set _set1 = new Set();
+        Set _set2 = new Set();
+        _set1.addArray(StringComponent(gs().components["Tag"]).getEntitiesWithValue(string("Guard")));
+        _set2.addArray(UintComponent(gs().components["City"]).getEntitiesWithValue(_city));
         uint256[] memory _result = ECSLib._intersection(_set1, _set2);
 
         assert(_result.length <= 1);
@@ -366,6 +387,11 @@ library GameLib {
         if (_y < gs().worldConstants.worldHeight - 1) _result[3] = (Position({x: _x, y: _y + 1}));
 
         return _result;
+    }
+
+    function _adjacentToCity(Position memory _position, uint256 _city) public returns (bool) {
+        Position memory _centerPosition = ECSLib._getPosition("Position", _getCityCenter(_city));
+        return !_coincident(_position, _centerPosition) && _withinDistance(_position, _centerPosition, 2);
     }
 
     // ----------------------------------------------------------

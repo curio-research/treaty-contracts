@@ -127,6 +127,9 @@ contract GameFacet is UseStorage {
         ECSLib._setUint("City", _cityCenter, _city);
         ECSLib._setString("BuildingType", _cityCenter, "City Center");
 
+        // Initialize guard
+        GameLib._addGuard(_city);
+
         // Initialize its resources
         // TODO
     }
@@ -375,7 +378,7 @@ contract GameFacet is UseStorage {
         ECSLib._setPosition("Position", _army, _targetPosition);
     }
 
-    function _startBattle(uint256 _army, uint256 _targetArmy) external {
+    function _startBattleArmy(uint256 _army, uint256 _targetArmy) external {
         // Verify that armies exist as entities
         require(Set(gs().entities).includes(_army), "CURIO: Army not found");
         require(Set(gs().entities).includes(_targetArmy), "CURIO: Target army not found");
@@ -405,8 +408,8 @@ contract GameFacet is UseStorage {
     /**
      * This function was to be called `retreat`, but I figured since we need to ping the contract side to end battle anyway,
      */
-    function _endBattle(uint256 _army) external {
-        // Verify that army exist as an entity
+    function _endBattleArmy(uint256 _army) external {
+        // Verify that army exists as an entity
         require(Set(gs().entities).includes(_army), "CURIO: Army not found");
 
         // Verify that game is ongoing
@@ -430,7 +433,7 @@ contract GameFacet is UseStorage {
         if (_damageOnOtherArmy >= ECSLib._getUint("Health", _otherArmy)) {
             GameLib._removeArmy(_otherArmy);
         } else {
-            GameLib._damageArmy(_army, _damageOnOtherArmy);
+            GameLib._damageArmy(_otherArmy, _damageOnOtherArmy);
         }
         if (_damageOnArmy >= ECSLib._getUint("Health", _army)) {
             GameLib._removeArmy(_army);
@@ -458,7 +461,70 @@ contract GameFacet is UseStorage {
         // }
     }
 
-    function _battleCity(uint256 _army, uint256 _city) external {}
+    function _startBattleCity(uint256 _army, uint256 _city) external {
+        // Verify that army and city exist as entities
+        require(Set(gs().entities).includes(_army), "CURIO: Army not found");
+        require(Set(gs().entities).includes(_city), "CURIO: City not found");
+
+        // Verify that game is ongoing
+        require(!gs().isPaused, "CURIO: Game is paused");
+
+        // Verify that player is active
+        uint256 _player = GameLib._getPlayer(msg.sender);
+        require(BoolComponent(gs().components["IsActive"]).has(_player), "CURIO: You are inactive");
+
+        // Verify that army belongs to player and city doesn't
+        require(ECSLib._getUint("Owner", _army) == _player, "CURIO: Army is not yours");
+        require(ECSLib._getUint("Owner", _city) != _player, "CURIO: Cannot attack your own city");
+
+        // Verify that army is adjacent to city
+        require(GameLib._adjacentToCity(ECSLib._getPosition("Position", _army), _city), "CURIO: Too far");
+
+        // Start exchanging fire
+        uint256 _battle = ECSLib._addEntity();
+        ECSLib._setString("Tag", _battle, "Battle");
+        ECSLib._setUint("InitTimestamp", _battle, block.timestamp);
+        ECSLib._setUint("Source", _battle, _army);
+        ECSLib._setUint("Target", _battle, GameLib._getCityGuard(_city));
+    }
+
+    function _endBattleCity(uint256 _army) external {
+        // Verify that army exists as an entity
+        require(Set(gs().entities).includes(_army), "CURIO: Army not found");
+
+        // Verify that game is ongoing
+        require(!gs().isPaused, "CURIO: Game is paused");
+
+        // Verify that player is active
+        uint256 _player = GameLib._getPlayer(msg.sender);
+        require(BoolComponent(gs().components["IsActive"]).has(_player), "CURIO: You are inactive");
+
+        // Verify that army belongs to player
+        require(ECSLib._getUint("Owner", _army) == _player, "CURIO: Army is not yours");
+
+        // Verify that at least one war is happening with the army
+        uint256[] memory _battles = GameLib._getArmyBattles(_army);
+        require(_battles.length >= 1, "CURIO: No battle to end");
+
+        // For now, assume there's only one battle
+        uint256 _guard = ECSLib._getUint("Source", _battles[0]) == _army ? ECSLib._getUint("Target", _battles[0]) : ECSLib._getUint("Source", _battles[0]);
+        uint256 _city = ECSLib._getUint("City", _guard);
+        uint256 _duration = block.timestamp - ECSLib._getUint("InitTimestamp", _battles[0]);
+        (uint256 _damageOnArmy, uint256 _damageOnGuard) = GameLib._getBattleOutcome(_army, _guard, _duration);
+        if (_damageOnGuard >= ECSLib._getUint("Health", _guard)) {
+            // Capture
+            GameLib._removeArmy(_guard);
+            ECSLib._setUint("Owner", _city, _player);
+            GameLib._addGuard(_city);
+        } else {
+            GameLib._damageArmy(_guard, _damageOnGuard);
+        }
+        if (_damageOnArmy >= ECSLib._getUint("Health", _army)) {
+            GameLib._removeArmy(_army);
+        } else {
+            GameLib._damageArmy(_army, _damageOnArmy);
+        }
+    }
 
     // /**
     //  * @dev March army to a target position (move, battle, or capture).
