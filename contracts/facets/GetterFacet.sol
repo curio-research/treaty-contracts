@@ -1,6 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
+import {Set} from "contracts/Set.sol";
 import "contracts/libraries/Storage.sol";
 import {GameLib} from "contracts/libraries/GameLib.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
@@ -41,5 +42,10 @@ contract GetterFacet is UseStorage {
 
     function getPlayerId(address _player) external view returns (uint256) {
         return gs().playerEntityMap[_player];
+    }
+
+    function getEntity() external view returns (uint256) {
+        Set _entities = Set(gs().entities);
+        return _entities.size();
     }
 }

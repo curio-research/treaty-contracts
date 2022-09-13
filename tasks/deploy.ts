@@ -1,3 +1,4 @@
+import { Curio__factory } from './../typechain-types/factories/Curio__factory';
 import { ethers } from 'ethers';
 import { GameModules } from './../typechain-types/GameModules';
 import { GameLib } from './../typechain-types/GameLib';
@@ -135,16 +136,20 @@ task('deploy', 'deploy contracts')
       console.log(`✦ lazy setting ${tileMap.length}x${tileMap[0].length} map took ${Math.floor(time2 - time1)} ms`);
 
       // Initialize a troop template
-      const cavalryTemplate = COMPONENT_SPECS.length;
       const abiCoder = new ethers.utils.AbiCoder();
+
+      // const diamondNew =     Curio__factory.connect(String(diamond.address), player1);
+      // const res = await diamondNew.getComponentById(1);
+
       await (await diamond.addEntity()).wait();
-      await (await diamond.setComponentValue('Tag', cavalryTemplate, abiCoder.encode(['string'], ['TroopTemplate']))).wait();
-      await (await diamond.setComponentValue('InventoryType', cavalryTemplate, abiCoder.encode(['string'], ['Cavalry']))).wait();
-      await (await diamond.setComponentValue('Health', cavalryTemplate, abiCoder.encode(['uint256'], [10]))).wait();
-      await (await diamond.setComponentValue('Speed', cavalryTemplate, abiCoder.encode(['uint256'], [1]))).wait();
-      await (await diamond.setComponentValue('Attack', cavalryTemplate, abiCoder.encode(['uint256'], [1]))).wait();
-      await (await diamond.setComponentValue('Defense', cavalryTemplate, abiCoder.encode(['uint256'], [0]))).wait();
-      await (await diamond.setComponentValue('Duration', cavalryTemplate, abiCoder.encode(['uint256'], [1]))).wait();
+      const entityCount = (await diamond.getEntity()).toNumber();
+      await (await diamond.setComponentValue('Tag', entityCount, abiCoder.encode(['string'], ['TroopTemplate']))).wait();
+      await (await diamond.setComponentValue('InventoryType', entityCount, abiCoder.encode(['string'], ['Cavalry']))).wait();
+      await (await diamond.setComponentValue('Health', entityCount, abiCoder.encode(['uint256'], [10]))).wait();
+      await (await diamond.setComponentValue('Speed', entityCount, abiCoder.encode(['uint256'], [1]))).wait();
+      await (await diamond.setComponentValue('Attack', entityCount, abiCoder.encode(['uint256'], [1]))).wait();
+      await (await diamond.setComponentValue('Defense', entityCount, abiCoder.encode(['uint256'], [0]))).wait();
+      await (await diamond.setComponentValue('Duration', entityCount, abiCoder.encode(['uint256'], [1]))).wait();
       const time3 = performance.now();
       console.log(`✦ troop template creation took ${Math.floor(time3 - time2)} ms`);
 
