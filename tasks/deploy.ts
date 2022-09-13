@@ -134,9 +134,6 @@ task('deploy', 'deploy contracts')
       // Initialize a troop template
       const abiCoder = new ethers.utils.AbiCoder();
 
-      // const diamondNew =     Curio__factory.connect(String(diamond.address), player1);
-      // const res = await diamondNew.getComponentById(1);
-
       await (await diamond.addEntity()).wait();
       const entityCount = (await diamond.getEntity()).toNumber();
       await (await diamond.setComponentValue('Tag', entityCount, abiCoder.encode(['string'], ['TroopTemplate']))).wait();
