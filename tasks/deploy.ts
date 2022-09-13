@@ -1,5 +1,4 @@
 import { ethers } from 'ethers';
-import { GameModules } from './../typechain-types/GameModules';
 import { GameLib } from './../typechain-types/GameLib';
 import { ECSLib } from './../typechain-types/ECSLib';
 import { publishDeployment, isConnectionLive } from './../api/deployment';
@@ -8,14 +7,12 @@ import * as fsPromise from 'fs/promises';
 import * as fs from 'fs';
 import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
-import { deployProxy, loadLocalMapConfig, LOCAL_MAP_PREFIX, printDivider, saveMapToLocal } from './util/deployHelper';
-import { RENDER_CONSTANTS, generateWorldConstants, SMALL_MAP_INPUT, LARGE_MAP_INPUT, SANDBOX_MAP_INPUT, COMPONENT_SPECS } from './util/constants';
+import { deployProxy, printDivider } from './util/deployHelper';
+import { generateWorldConstants, SMALL_MAP_INPUT, COMPONENT_SPECS } from './util/constants';
 import { position } from '../util/types/common';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
-import { Position, GameMapConfig, TILE_TYPE, MapInput } from './util/types';
+import { TILE_TYPE } from './util/types';
 import { encodeTileMap } from './util/mapHelper';
-import { MEDITERRAINEAN_MAP_CONFIG, testingMapConfig } from './util/mapLibrary';
-import { WorldConstantsStruct } from '../typechain-types/Curio';
 import { GameConfig } from '../api/types';
 
 /**
@@ -135,16 +132,17 @@ task('deploy', 'deploy contracts')
       console.log(`✦ lazy setting ${tileMap.length}x${tileMap[0].length} map took ${Math.floor(time2 - time1)} ms`);
 
       // Initialize a troop template
-      const cavalryTemplate = COMPONENT_SPECS.length;
       const abiCoder = new ethers.utils.AbiCoder();
+
       await (await diamond.addEntity()).wait();
-      await (await diamond.setComponentValue('Tag', cavalryTemplate, abiCoder.encode(['string'], ['TroopTemplate']))).wait();
-      await (await diamond.setComponentValue('InventoryType', cavalryTemplate, abiCoder.encode(['string'], ['Cavalry']))).wait();
-      await (await diamond.setComponentValue('Health', cavalryTemplate, abiCoder.encode(['uint256'], [10]))).wait();
-      await (await diamond.setComponentValue('Speed', cavalryTemplate, abiCoder.encode(['uint256'], [1]))).wait();
-      await (await diamond.setComponentValue('Attack', cavalryTemplate, abiCoder.encode(['uint256'], [1]))).wait();
-      await (await diamond.setComponentValue('Defense', cavalryTemplate, abiCoder.encode(['uint256'], [0]))).wait();
-      await (await diamond.setComponentValue('Duration', cavalryTemplate, abiCoder.encode(['uint256'], [1]))).wait();
+      const entityCount = (await diamond.getEntity()).toNumber();
+      await (await diamond.setComponentValue('Tag', entityCount, abiCoder.encode(['string'], ['TroopTemplate']))).wait();
+      await (await diamond.setComponentValue('InventoryType', entityCount, abiCoder.encode(['string'], ['Cavalry']))).wait();
+      await (await diamond.setComponentValue('Health', entityCount, abiCoder.encode(['uint256'], [10]))).wait();
+      await (await diamond.setComponentValue('Speed', entityCount, abiCoder.encode(['uint256'], [1]))).wait();
+      await (await diamond.setComponentValue('Attack', entityCount, abiCoder.encode(['uint256'], [1]))).wait();
+      await (await diamond.setComponentValue('Defense', entityCount, abiCoder.encode(['uint256'], [0]))).wait();
+      await (await diamond.setComponentValue('Duration', entityCount, abiCoder.encode(['uint256'], [1]))).wait();
       const time3 = performance.now();
       console.log(`✦ troop template creation took ${Math.floor(time3 - time2)} ms`);
 

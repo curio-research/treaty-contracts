@@ -145,6 +145,7 @@ export interface CurioInterface extends utils.Interface {
     "upgradeCity(uint256,(uint256,uint256)[])": FunctionFragment;
     "getComponent(string)": FunctionFragment;
     "getComponentById(uint256)": FunctionFragment;
+    "getEntity()": FunctionFragment;
     "getPlayerCount()": FunctionFragment;
     "getPlayerId(address)": FunctionFragment;
     "getTileAt((uint256,uint256))": FunctionFragment;
@@ -286,6 +287,7 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "getComponentById",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "getEntity", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getPlayerCount",
     values?: undefined
@@ -462,6 +464,7 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "getComponentById",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getEntity", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getPlayerCount",
     data: BytesLike
@@ -791,6 +794,8 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
+    getEntity(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     getPlayerCount(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getPlayerId(
@@ -1060,6 +1065,8 @@ export interface Curio extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
+  getEntity(overrides?: CallOverrides): Promise<BigNumber>;
+
   getPlayerCount(overrides?: CallOverrides): Promise<BigNumber>;
 
   getPlayerId(_player: string, overrides?: CallOverrides): Promise<BigNumber>;
@@ -1318,6 +1325,8 @@ export interface Curio extends BaseContract {
       _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<string>;
+
+    getEntity(overrides?: CallOverrides): Promise<BigNumber>;
 
     getPlayerCount(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1640,6 +1649,8 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getEntity(overrides?: CallOverrides): Promise<BigNumber>;
+
     getPlayerCount(overrides?: CallOverrides): Promise<BigNumber>;
 
     getPlayerId(_player: string, overrides?: CallOverrides): Promise<BigNumber>;
@@ -1907,6 +1918,8 @@ export interface Curio extends BaseContract {
       _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    getEntity(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getPlayerCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
