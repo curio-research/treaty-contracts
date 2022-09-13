@@ -36,6 +36,9 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): W
     maxPlayerCount: 20,
     maxInventoryCapacity: 80,
     cityUpgradeGoldCost: 500,
+    cityHealth: 500,
+    cityAttack: 50,
+    cityDefense: 10,
   };
 };
 

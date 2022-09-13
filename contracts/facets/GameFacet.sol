@@ -110,6 +110,11 @@ contract GameFacet is UseStorage {
             require(GameLib._getTileAt(_territory[i]).city == NULL, "CURIO: Territory overlaps with another city");
             gs().map[_territory[i].x][_territory[i].y].city = _city;
             if (!GameLib._getTileAt(_territory[i]).isInitialized) GameLib._initializeTile(_territory[i]);
+
+            uint256 _tile = ECSLib._addEntity();
+            ECSLib._setString("Tag", _tile, "Tile");
+            ECSLib._setPosition("Position", _tile, _territory[i]);
+            ECSLib._setUint("City", _tile, _city);
         }
 
         // Found a city
