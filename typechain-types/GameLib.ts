@@ -36,9 +36,11 @@ export type TileStructOutput = [boolean, number, BigNumber] & {
 
 export interface GameLibInterface extends utils.Interface {
   functions: {
+    "_adjacent((uint256,uint256),(uint256,uint256))": FunctionFragment;
     "_coincident((uint256,uint256),(uint256,uint256))": FunctionFragment;
     "_connected((uint256,uint256)[])": FunctionFragment;
     "_euclidean((uint256,uint256),(uint256,uint256))": FunctionFragment;
+    "_getBattleOutcome(uint256,uint256,uint256)": FunctionFragment;
     "_getNeighbors((uint256,uint256))": FunctionFragment;
     "_getPlayer(address)": FunctionFragment;
     "_getTileAt((uint256,uint256))": FunctionFragment;
@@ -50,6 +52,10 @@ export interface GameLibInterface extends utils.Interface {
   };
 
   encodeFunctionData(
+    functionFragment: "_adjacent",
+    values: [PositionStruct, PositionStruct]
+  ): string;
+  encodeFunctionData(
     functionFragment: "_coincident",
     values: [PositionStruct, PositionStruct]
   ): string;
@@ -60,6 +66,10 @@ export interface GameLibInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "_euclidean",
     values: [PositionStruct, PositionStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getBattleOutcome",
+    values: [BigNumberish, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "_getNeighbors",
@@ -91,12 +101,17 @@ export interface GameLibInterface extends utils.Interface {
     values: [PositionStruct, PositionStruct, BigNumberish]
   ): string;
 
+  decodeFunctionResult(functionFragment: "_adjacent", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_coincident",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "_connected", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "_euclidean", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "_getBattleOutcome",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "_getNeighbors",
     data: BytesLike
@@ -156,6 +171,12 @@ export interface GameLib extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    _adjacent(
+      _p1: PositionStruct,
+      _p2: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     _coincident(
       _p1: PositionStruct,
       _p2: PositionStruct,
@@ -172,6 +193,15 @@ export interface GameLib extends BaseContract {
       _p2: PositionStruct,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    _getBattleOutcome(
+      _army1: BigNumberish,
+      _army2: BigNumberish,
+      _duration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & { _damageOn1: BigNumber; _damageOn2: BigNumber }
+    >;
 
     _getNeighbors(
       _position: PositionStruct,
@@ -212,6 +242,12 @@ export interface GameLib extends BaseContract {
     ): Promise<[boolean]>;
   };
 
+  _adjacent(
+    _p1: PositionStruct,
+    _p2: PositionStruct,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   _coincident(
     _p1: PositionStruct,
     _p2: PositionStruct,
@@ -228,6 +264,15 @@ export interface GameLib extends BaseContract {
     _p2: PositionStruct,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  _getBattleOutcome(
+    _army1: BigNumberish,
+    _army2: BigNumberish,
+    _duration: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber] & { _damageOn1: BigNumber; _damageOn2: BigNumber }
+  >;
 
   _getNeighbors(
     _position: PositionStruct,
@@ -261,6 +306,12 @@ export interface GameLib extends BaseContract {
   ): Promise<boolean>;
 
   callStatic: {
+    _adjacent(
+      _p1: PositionStruct,
+      _p2: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     _coincident(
       _p1: PositionStruct,
       _p2: PositionStruct,
@@ -277,6 +328,15 @@ export interface GameLib extends BaseContract {
       _p2: PositionStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    _getBattleOutcome(
+      _army1: BigNumberish,
+      _army2: BigNumberish,
+      _duration: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber] & { _damageOn1: BigNumber; _damageOn2: BigNumber }
+    >;
 
     _getNeighbors(
       _position: PositionStruct,
@@ -323,6 +383,12 @@ export interface GameLib extends BaseContract {
   };
 
   estimateGas: {
+    _adjacent(
+      _p1: PositionStruct,
+      _p2: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     _coincident(
       _p1: PositionStruct,
       _p2: PositionStruct,
@@ -337,6 +403,13 @@ export interface GameLib extends BaseContract {
     _euclidean(
       _p1: PositionStruct,
       _p2: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getBattleOutcome(
+      _army1: BigNumberish,
+      _army2: BigNumberish,
+      _duration: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -377,6 +450,12 @@ export interface GameLib extends BaseContract {
   };
 
   populateTransaction: {
+    _adjacent(
+      _p1: PositionStruct,
+      _p2: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     _coincident(
       _p1: PositionStruct,
       _p2: PositionStruct,
@@ -391,6 +470,13 @@ export interface GameLib extends BaseContract {
     _euclidean(
       _p1: PositionStruct,
       _p2: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getBattleOutcome(
+      _army1: BigNumberish,
+      _army2: BigNumberish,
+      _duration: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

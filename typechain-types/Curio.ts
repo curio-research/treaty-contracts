@@ -119,7 +119,9 @@ export interface CurioInterface extends utils.Interface {
     "facetFunctionSelectors(address)": FunctionFragment;
     "facets()": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
-    "_battle(uint256,uint256)": FunctionFragment;
+    "_battleCity(uint256,uint256)": FunctionFragment;
+    "_endBattle(uint256)": FunctionFragment;
+    "_startBattle(uint256,uint256)": FunctionFragment;
     "disbandArmy(uint256)": FunctionFragment;
     "endProduction(uint256,uint256)": FunctionFragment;
     "foldCity(uint256)": FunctionFragment;
@@ -140,6 +142,19 @@ export interface CurioInterface extends utils.Interface {
     "isPlayerInitialized(address)": FunctionFragment;
     "owner()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
+    "_concatenate(uint256[],uint256[])": FunctionFragment;
+    "_difference(Set,Set)": FunctionFragment;
+    "_getAddress(string,uint256)": FunctionFragment;
+    "_getBool(string,uint256)": FunctionFragment;
+    "_getComponent(string)": FunctionFragment;
+    "_getComponentByEntity(uint256)": FunctionFragment;
+    "_getComponentValue(string,uint256)": FunctionFragment;
+    "_getInt(string,uint256)": FunctionFragment;
+    "_getPosition(string,uint256)": FunctionFragment;
+    "_getString(string,uint256)": FunctionFragment;
+    "_getStringArray(string,uint256)": FunctionFragment;
+    "_getUint(string,uint256)": FunctionFragment;
+    "_getUintArray(string,uint256)": FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: "addEntity", values?: undefined): string;
@@ -194,7 +209,15 @@ export interface CurioInterface extends utils.Interface {
     values: [BytesLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "_battle",
+    functionFragment: "_battleCity",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_endBattle",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_startBattle",
     values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
@@ -271,6 +294,58 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "transferOwnership",
     values: [string]
   ): string;
+  encodeFunctionData(
+    functionFragment: "_concatenate",
+    values: [BigNumberish[], BigNumberish[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_difference",
+    values: [string, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getAddress",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getBool",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getComponent",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getComponentByEntity",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getComponentValue",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getInt",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getPosition",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getString",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getStringArray",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getUint",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getUintArray",
+    values: [string, BigNumberish]
+  ): string;
 
   decodeFunctionResult(functionFragment: "addEntity", data: BytesLike): Result;
   decodeFunctionResult(
@@ -317,7 +392,15 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "supportsInterface",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "_battle", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "_battleCity",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "_endBattle", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "_startBattle",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "disbandArmy",
     data: BytesLike
@@ -380,14 +463,64 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "_concatenate",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_difference",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_getAddress",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "_getBool", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "_getComponent",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_getComponentByEntity",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_getComponentValue",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "_getInt", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "_getPosition",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "_getString", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "_getStringArray",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "_getUint", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "_getUintArray",
+    data: BytesLike
+  ): Result;
 
   events: {
     "DiamondCut(tuple[],address,bytes)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
+    "ComponentValueRemoved(string,uint256)": EventFragment;
+    "ComponentValueSet(string,uint256,bytes)": EventFragment;
+    "EntityRemoved(uint256)": EventFragment;
+    "NewComponent(string,uint256)": EventFragment;
+    "NewEntity(uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "DiamondCut"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ComponentValueRemoved"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ComponentValueSet"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "EntityRemoved"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "NewComponent"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "NewEntity"): EventFragment;
 }
 
 export type DiamondCutEvent = TypedEvent<
@@ -404,6 +537,40 @@ export type OwnershipTransferredEvent = TypedEvent<
 
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
+
+export type ComponentValueRemovedEvent = TypedEvent<
+  [string, BigNumber],
+  { _componentName: string; _entity: BigNumber }
+>;
+
+export type ComponentValueRemovedEventFilter =
+  TypedEventFilter<ComponentValueRemovedEvent>;
+
+export type ComponentValueSetEvent = TypedEvent<
+  [string, BigNumber, string],
+  { _componentName: string; _entity: BigNumber; _value: string }
+>;
+
+export type ComponentValueSetEventFilter =
+  TypedEventFilter<ComponentValueSetEvent>;
+
+export type EntityRemovedEvent = TypedEvent<
+  [BigNumber],
+  { _entity: BigNumber }
+>;
+
+export type EntityRemovedEventFilter = TypedEventFilter<EntityRemovedEvent>;
+
+export type NewComponentEvent = TypedEvent<
+  [string, BigNumber],
+  { _name: string; _entity: BigNumber }
+>;
+
+export type NewComponentEventFilter = TypedEventFilter<NewComponentEvent>;
+
+export type NewEntityEvent = TypedEvent<[BigNumber], { _entity: BigNumber }>;
+
+export type NewEntityEventFilter = TypedEventFilter<NewEntityEvent>;
 
 export interface Curio extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -507,7 +674,18 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    _battle(
+    _battleCity(
+      _army: BigNumberish,
+      _city: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    _endBattle(
+      _army: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    _startBattle(
       _army: BigNumberish,
       _targetArmy: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -614,6 +792,79 @@ export interface Curio extends BaseContract {
       _newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    _concatenate(
+      _arr1: BigNumberish[],
+      _arr2: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
+
+    _difference(
+      set1: string,
+      set2: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
+
+    _getAddress(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    _getBool(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    _getComponent(_name: string, overrides?: CallOverrides): Promise<[string]>;
+
+    _getComponentByEntity(
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    _getComponentValue(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    _getInt(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    _getPosition(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[PositionStructOutput]>;
+
+    _getString(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    _getStringArray(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string[]]>;
+
+    _getUint(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    _getUintArray(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
   };
 
   addEntity(
@@ -687,7 +938,18 @@ export interface Curio extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  _battle(
+  _battleCity(
+    _army: BigNumberish,
+    _city: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  _endBattle(
+    _army: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  _startBattle(
     _army: BigNumberish,
     _targetArmy: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -792,6 +1054,79 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  _concatenate(
+    _arr1: BigNumberish[],
+    _arr2: BigNumberish[],
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
+  _difference(
+    set1: string,
+    set2: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
+  _getAddress(
+    _componentName: string,
+    _entity: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  _getBool(
+    _componentName: string,
+    _entity: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  _getComponent(_name: string, overrides?: CallOverrides): Promise<string>;
+
+  _getComponentByEntity(
+    _entity: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  _getComponentValue(
+    _componentName: string,
+    _entity: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  _getInt(
+    _componentName: string,
+    _entity: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  _getPosition(
+    _componentName: string,
+    _entity: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<PositionStructOutput>;
+
+  _getString(
+    _componentName: string,
+    _entity: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  _getStringArray(
+    _componentName: string,
+    _entity: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<string[]>;
+
+  _getUint(
+    _componentName: string,
+    _entity: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  _getUintArray(
+    _componentName: string,
+    _entity: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
   callStatic: {
     addEntity(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -858,7 +1193,15 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    _battle(
+    _battleCity(
+      _army: BigNumberish,
+      _city: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    _endBattle(_army: BigNumberish, overrides?: CallOverrides): Promise<void>;
+
+    _startBattle(
       _army: BigNumberish,
       _targetArmy: BigNumberish,
       overrides?: CallOverrides
@@ -961,6 +1304,79 @@ export interface Curio extends BaseContract {
       _newOwner: string,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    _concatenate(
+      _arr1: BigNumberish[],
+      _arr2: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
+
+    _difference(
+      set1: string,
+      set2: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
+
+    _getAddress(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    _getBool(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    _getComponent(_name: string, overrides?: CallOverrides): Promise<string>;
+
+    _getComponentByEntity(
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    _getComponentValue(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    _getInt(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getPosition(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PositionStructOutput>;
+
+    _getString(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    _getStringArray(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<string[]>;
+
+    _getUint(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getUintArray(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
   };
 
   filters: {
@@ -983,6 +1399,38 @@ export interface Curio extends BaseContract {
       previousOwner?: string | null,
       newOwner?: string | null
     ): OwnershipTransferredEventFilter;
+
+    "ComponentValueRemoved(string,uint256)"(
+      _componentName?: null,
+      _entity?: null
+    ): ComponentValueRemovedEventFilter;
+    ComponentValueRemoved(
+      _componentName?: null,
+      _entity?: null
+    ): ComponentValueRemovedEventFilter;
+
+    "ComponentValueSet(string,uint256,bytes)"(
+      _componentName?: null,
+      _entity?: null,
+      _value?: null
+    ): ComponentValueSetEventFilter;
+    ComponentValueSet(
+      _componentName?: null,
+      _entity?: null,
+      _value?: null
+    ): ComponentValueSetEventFilter;
+
+    "EntityRemoved(uint256)"(_entity?: null): EntityRemovedEventFilter;
+    EntityRemoved(_entity?: null): EntityRemovedEventFilter;
+
+    "NewComponent(string,uint256)"(
+      _name?: null,
+      _entity?: null
+    ): NewComponentEventFilter;
+    NewComponent(_name?: null, _entity?: null): NewComponentEventFilter;
+
+    "NewEntity(uint256)"(_entity?: null): NewEntityEventFilter;
+    NewEntity(_entity?: null): NewEntityEventFilter;
   };
 
   estimateGas: {
@@ -1057,7 +1505,18 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _battle(
+    _battleCity(
+      _army: BigNumberish,
+      _city: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    _endBattle(
+      _army: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    _startBattle(
       _army: BigNumberish,
       _targetArmy: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1159,6 +1618,79 @@ export interface Curio extends BaseContract {
       _newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    _concatenate(
+      _arr1: BigNumberish[],
+      _arr2: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _difference(
+      set1: string,
+      set2: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getAddress(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getBool(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getComponent(_name: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    _getComponentByEntity(
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getComponentValue(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getInt(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getPosition(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getString(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getStringArray(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getUint(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getUintArray(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -1233,7 +1765,18 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _battle(
+    _battleCity(
+      _army: BigNumberish,
+      _city: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    _endBattle(
+      _army: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    _startBattle(
       _army: BigNumberish,
       _targetArmy: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1340,6 +1883,82 @@ export interface Curio extends BaseContract {
     transferOwnership(
       _newOwner: string,
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    _concatenate(
+      _arr1: BigNumberish[],
+      _arr2: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _difference(
+      set1: string,
+      set2: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getAddress(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getBool(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getComponent(
+      _name: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getComponentByEntity(
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getComponentValue(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getInt(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getPosition(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getString(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getStringArray(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getUint(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getUintArray(
+      _componentName: string,
+      _entity: BigNumberish,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
 }

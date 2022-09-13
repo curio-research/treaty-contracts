@@ -402,7 +402,10 @@ contract GameFacet is UseStorage {
         ECSLib._setUint("Target", _battle, _targetArmy);
     }
 
-    function _retreat(uint256 _army, Position memory _targetPosition) external {
+    /**
+     * This function was to be called `retreat`, but I figured since we need to ping the contract side to end battle anyway,
+     */
+    function _endBattle(uint256 _army) external {
         // Verify that army exist as an entity
         require(Set(gs().entities).includes(_army), "CURIO: Army not found");
 
@@ -418,15 +421,41 @@ contract GameFacet is UseStorage {
 
         // Verify that at least one war is happening with the army
         uint256[] memory _battles = GameLib._getArmyBattles(_army);
-        require(_battles.length >= 1, "CURIO: No battle to retreat from");
+        require(_battles.length >= 1, "CURIO: No battle to end");
 
-        // Verify that destination does not belong to foreign city
-        uint256 _destinationCityOwner = ECSLib._getUint("Owner", GameLib._getCityAt(_targetPosition));
-        require(_destinationCityOwner == NULL || _destinationCityOwner == _player, "CURIO: Cannot retreat to foreign city");
+        // For now, assume there's only one battle
+        uint256 _otherArmy = ECSLib._getUint("Source", _battles[0]) == _army ? ECSLib._getUint("Target", _battles[0]) : ECSLib._getUint("Source", _battles[0]);
+        uint256 _duration = block.timestamp - ECSLib._getUint("InitTimestamp", _battles[0]);
+        (uint256 _damageOnArmy, uint256 _damageOnOtherArmy) = GameLib._getBattleOutcome(_army, _otherArmy, _duration);
+        if (_damageOnOtherArmy >= ECSLib._getUint("Health", _otherArmy)) {
+            GameLib._removeArmy(_otherArmy);
+        } else {
+            GameLib._damageArmy(_army, _damageOnOtherArmy);
+        }
+        if (_damageOnArmy >= ECSLib._getUint("Health", _army)) {
+            GameLib._removeArmy(_army);
+        } else {
+            GameLib._damageArmy(_army, _damageOnArmy);
+        }
 
-        // Damage both armies and kill if necessary
+        // // Damage both armies and kill if one or both sides die
+        // for (uint256 i = 0; i < _battles.length; i++) {
+        //     uint256 _otherArmy = ECSLib._getUint("Source", _battles[i]) == _army ? ECSLib._getUint("Target", _battles[i]) : ECSLib._getUint("Source", _battles[i]);
+        //     uint256 _duration = block.timestamp - ECSLib._getUint("InitTimestamp", _battles[i]);
+        //     (uint256 _damageOnArmy, uint256 _damageOnOtherArmy) = GameLib._getBattleOutcome(_army, _otherArmy, _duration);
 
-        // Move army
+        //     if (_damageOnOtherArmy >= ECSLib._getUint("Health", _otherArmy)) {
+        //         GameLib._removeArmy(_otherArmy);
+        //     } else {
+        //         GameLib._damageArmy(_army, _damageOnOtherArmy);
+        //     }
+
+        //     if (_damageOnArmy >= ECSLib._getUint("Health", _army)) {
+        //         GameLib._removeArmy(_army);
+        //     } else {
+        //         GameLib._damageArmy(_army, _damageOnArmy);
+        //     }
+        // }
     }
 
     function _battleCity(uint256 _army, uint256 _city) external {}
