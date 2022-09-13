@@ -175,7 +175,7 @@ library GameLib {
 
     //     if (_damage >= _health) {
     //         uint256 _army = ECSLib._getUint("Army", _troop);
-    //         if (UintComponent(gs().components["Army"]).getEntitiesWithValue(_army).length == 1) _removeArmy(_army);
+    //         if (ECSLib._getUintComponent("Army").getEntitiesWithValue(_army).length == 1) _removeArmy(_army);
     //         _removeTroop(_troop);
     //     } else {
     //         ECSLib._setUint("Health", _troop, _health - _damage);
@@ -200,44 +200,33 @@ library GameLib {
         Set _set1 = new Set();
         Set _set2 = new Set();
         Set _set3 = new Set();
-        _set1.addArray(UintComponent(gs().components["Source"]).getEntitiesWithValue(_army));
-        _set2.addArray(UintComponent(gs().components["Target"]).getEntitiesWithValue(_army));
-        _set3.addArray(StringComponent(gs().components["Tag"]).getEntitiesWithValue(string("Battle")));
+        _set1.addArray(ECSLib._getUintComponent("Source").getEntitiesWithValue(_army));
+        _set2.addArray(ECSLib._getUintComponent("Target").getEntitiesWithValue(_army));
+        _set3.addArray(ECSLib._getStringComponent("Tag").getEntitiesWithValue(string("Battle")));
         return ECSLib._concatenate(ECSLib._intersection(_set1, _set3), ECSLib._intersection(_set2, _set3));
     }
 
     function _getPlayerArmies(uint256 _player) public returns (uint256[] memory) {
         Set _set1 = new Set();
         Set _set2 = new Set();
-        _set1.addArray(UintComponent(gs().components["Owner"]).getEntitiesWithValue(_player));
-        _set2.addArray(StringComponent(gs().components["Tag"]).getEntitiesWithValue(string("Army")));
+        _set1.addArray(ECSLib._getUintComponent("Owner").getEntitiesWithValue(_player));
+        _set2.addArray(ECSLib._getStringComponent("Tag").getEntitiesWithValue(string("Army")));
         return ECSLib._intersection(_set1, _set2);
     }
 
     function _getPlayerCities(uint256 _player) public returns (uint256[] memory) {
         Set _set1 = new Set();
         Set _set2 = new Set();
-        _set1.addArray(UintComponent(gs().components["Owner"]).getEntitiesWithValue(_player));
-        _set2.addArray(StringComponent(gs().components["Tag"]).getEntitiesWithValue(string("City")));
+        _set1.addArray(ECSLib._getUintComponent("Owner").getEntitiesWithValue(_player));
+        _set2.addArray(ECSLib._getStringComponent("Tag").getEntitiesWithValue(string("City")));
         return ECSLib._intersection(_set1, _set2);
     }
 
     function _getArmyAt(Position memory _position) public returns (uint256) {
         Set _set1 = new Set();
         Set _set2 = new Set();
-        _set1.addArray(StringComponent(gs().components["Tag"]).getEntitiesWithValue(string("Army")));
-        _set2.addArray(PositionComponent(gs().components["Position"]).getEntitiesWithValue(_position));
-        uint256[] memory _result = ECSLib._intersection(_set1, _set2);
-
-        assert(_result.length <= 1);
-        return _result.length == 1 ? _result[0] : _NULL();
-    }
-
-    function _getCityGuard(uint256 _city) public returns (uint256) {
-        Set _set1 = new Set();
-        Set _set2 = new Set();
-        _set1.addArray(StringComponent(gs().components["Tag"]).getEntitiesWithValue(string("Guard")));
-        _set2.addArray(UintComponent(gs().components["City"]).getEntitiesWithValue(_city));
+        _set1.addArray(ECSLib._getStringComponent("Tag").getEntitiesWithValue(string("Army")));
+        _set2.addArray(ECSLib._getPositionComponent("Position").getEntitiesWithValue(_position));
         uint256[] memory _result = ECSLib._intersection(_set1, _set2);
 
         assert(_result.length <= 1);
@@ -247,8 +236,19 @@ library GameLib {
     function _getCityAt(Position memory _position) public returns (uint256) {
         Set _set1 = new Set();
         Set _set2 = new Set();
-        _set1.addArray(StringComponent(gs().components["Tag"]).getEntitiesWithValue(string("City")));
-        _set2.addArray(PositionComponent(gs().components["Position"]).getEntitiesWithValue(_position));
+        _set1.addArray(ECSLib._getStringComponent("Tag").getEntitiesWithValue(string("City")));
+        _set2.addArray(ECSLib._getPositionComponent("Position").getEntitiesWithValue(_position));
+        uint256[] memory _result = ECSLib._intersection(_set1, _set2);
+
+        assert(_result.length <= 1);
+        return _result.length == 1 ? _result[0] : _NULL();
+    }
+
+    function _getCityGuard(uint256 _city) public returns (uint256) {
+        Set _set1 = new Set();
+        Set _set2 = new Set();
+        _set1.addArray(ECSLib._getStringComponent("Tag").getEntitiesWithValue(string("Guard")));
+        _set2.addArray(ECSLib._getUintComponent("City").getEntitiesWithValue(_city));
         uint256[] memory _result = ECSLib._intersection(_set1, _set2);
 
         assert(_result.length <= 1);
@@ -258,8 +258,8 @@ library GameLib {
     function _getInventory(uint256 _city, string memory _inventoryType) public returns (uint256) {
         Set _set1 = new Set();
         Set _set2 = new Set();
-        _set1.addArray(UintComponent(gs().components["City"]).getEntitiesWithValue(_city));
-        _set2.addArray(StringComponent(gs().components["InventoryType"]).getEntitiesWithValue(_inventoryType));
+        _set1.addArray(ECSLib._getUintComponent("City").getEntitiesWithValue(_city));
+        _set2.addArray(ECSLib._getStringComponent("InventoryType").getEntitiesWithValue(_inventoryType));
         uint256[] memory _result = ECSLib._intersection(_set1, _set2);
 
         assert(_result.length <= 1);
@@ -364,8 +364,8 @@ library GameLib {
     function _getCityCenter(uint256 _city) public returns (uint256) {
         Set _set1 = new Set();
         Set _set2 = new Set();
-        _set1.addArray(UintComponent(gs().components["City"]).getEntitiesWithValue(_city));
-        _set2.addArray(StringComponent(gs().components["BuildingType"]).getEntitiesWithValue(string("City Center")));
+        _set1.addArray(ECSLib._getUintComponent("City").getEntitiesWithValue(_city));
+        _set2.addArray(ECSLib._getStringComponent("BuildingType").getEntitiesWithValue(string("City Center")));
         uint256[] memory _result = ECSLib._intersection(_set1, _set2);
 
         assert(_result.length == 1);

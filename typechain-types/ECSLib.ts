@@ -27,16 +27,24 @@ export interface ECSLibInterface extends utils.Interface {
     "_concatenate(uint256[],uint256[])": FunctionFragment;
     "_difference(Set,Set)": FunctionFragment;
     "_getAddress(string,uint256)": FunctionFragment;
+    "_getAddressComponent(string)": FunctionFragment;
     "_getBool(string,uint256)": FunctionFragment;
+    "_getBoolComponent(string)": FunctionFragment;
     "_getComponent(string)": FunctionFragment;
     "_getComponentByEntity(uint256)": FunctionFragment;
     "_getComponentValue(string,uint256)": FunctionFragment;
     "_getInt(string,uint256)": FunctionFragment;
+    "_getIntComponent(string)": FunctionFragment;
     "_getPosition(string,uint256)": FunctionFragment;
+    "_getPositionComponent(string)": FunctionFragment;
     "_getString(string,uint256)": FunctionFragment;
     "_getStringArray(string,uint256)": FunctionFragment;
+    "_getStringArrayComponent(string)": FunctionFragment;
+    "_getStringComponent(string)": FunctionFragment;
     "_getUint(string,uint256)": FunctionFragment;
     "_getUintArray(string,uint256)": FunctionFragment;
+    "_getUintArrayComponent(string)": FunctionFragment;
+    "_getUintComponent(string)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -52,8 +60,16 @@ export interface ECSLibInterface extends utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "_getAddressComponent",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "_getBool",
     values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getBoolComponent",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "_getComponent",
@@ -72,8 +88,16 @@ export interface ECSLibInterface extends utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "_getIntComponent",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "_getPosition",
     values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getPositionComponent",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "_getString",
@@ -84,12 +108,28 @@ export interface ECSLibInterface extends utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "_getStringArrayComponent",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getStringComponent",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "_getUint",
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "_getUintArray",
     values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getUintArrayComponent",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getUintComponent",
+    values: [string]
   ): string;
 
   decodeFunctionResult(
@@ -104,7 +144,15 @@ export interface ECSLibInterface extends utils.Interface {
     functionFragment: "_getAddress",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "_getAddressComponent",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "_getBool", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "_getBoolComponent",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "_getComponent",
     data: BytesLike
@@ -119,7 +167,15 @@ export interface ECSLibInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "_getInt", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "_getIntComponent",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "_getPosition",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_getPositionComponent",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "_getString", data: BytesLike): Result;
@@ -127,9 +183,25 @@ export interface ECSLibInterface extends utils.Interface {
     functionFragment: "_getStringArray",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "_getStringArrayComponent",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_getStringComponent",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "_getUint", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_getUintArray",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_getUintArrayComponent",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_getUintComponent",
     data: BytesLike
   ): Result;
 
@@ -227,11 +299,21 @@ export interface ECSLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
+    _getAddressComponent(
+      _name: string,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     _getBool(
       _componentName: string,
       _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
+
+    _getBoolComponent(
+      _name: string,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
     _getComponent(_name: string, overrides?: CallOverrides): Promise<[string]>;
 
@@ -252,11 +334,21 @@ export interface ECSLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    _getIntComponent(
+      _name: string,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     _getPosition(
       _componentName: string,
       _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[PositionStructOutput]>;
+
+    _getPositionComponent(
+      _name: string,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
     _getString(
       _componentName: string,
@@ -270,6 +362,16 @@ export interface ECSLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string[]]>;
 
+    _getStringArrayComponent(
+      _name: string,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    _getStringComponent(
+      _name: string,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     _getUint(
       _componentName: string,
       _entity: BigNumberish,
@@ -281,6 +383,16 @@ export interface ECSLib extends BaseContract {
       _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
+
+    _getUintArrayComponent(
+      _name: string,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    _getUintComponent(
+      _name: string,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
   };
 
   _concatenate(
@@ -301,11 +413,18 @@ export interface ECSLib extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
+  _getAddressComponent(
+    _name: string,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
   _getBool(
     _componentName: string,
     _entity: BigNumberish,
     overrides?: CallOverrides
   ): Promise<boolean>;
+
+  _getBoolComponent(_name: string, overrides?: CallOverrides): Promise<string>;
 
   _getComponent(_name: string, overrides?: CallOverrides): Promise<string>;
 
@@ -326,11 +445,18 @@ export interface ECSLib extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  _getIntComponent(_name: string, overrides?: CallOverrides): Promise<string>;
+
   _getPosition(
     _componentName: string,
     _entity: BigNumberish,
     overrides?: CallOverrides
   ): Promise<PositionStructOutput>;
+
+  _getPositionComponent(
+    _name: string,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   _getString(
     _componentName: string,
@@ -344,6 +470,16 @@ export interface ECSLib extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string[]>;
 
+  _getStringArrayComponent(
+    _name: string,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  _getStringComponent(
+    _name: string,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
   _getUint(
     _componentName: string,
     _entity: BigNumberish,
@@ -355,6 +491,13 @@ export interface ECSLib extends BaseContract {
     _entity: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
+
+  _getUintArrayComponent(
+    _name: string,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  _getUintComponent(_name: string, overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
     _concatenate(
@@ -375,11 +518,21 @@ export interface ECSLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
+    _getAddressComponent(
+      _name: string,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
     _getBool(
       _componentName: string,
       _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    _getBoolComponent(
+      _name: string,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     _getComponent(_name: string, overrides?: CallOverrides): Promise<string>;
 
@@ -400,11 +553,18 @@ export interface ECSLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _getIntComponent(_name: string, overrides?: CallOverrides): Promise<string>;
+
     _getPosition(
       _componentName: string,
       _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PositionStructOutput>;
+
+    _getPositionComponent(
+      _name: string,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     _getString(
       _componentName: string,
@@ -418,6 +578,16 @@ export interface ECSLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string[]>;
 
+    _getStringArrayComponent(
+      _name: string,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    _getStringComponent(
+      _name: string,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
     _getUint(
       _componentName: string,
       _entity: BigNumberish,
@@ -429,6 +599,16 @@ export interface ECSLib extends BaseContract {
       _entity: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
+
+    _getUintArrayComponent(
+      _name: string,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    _getUintComponent(
+      _name: string,
+      overrides?: CallOverrides
+    ): Promise<string>;
   };
 
   filters: {
@@ -484,9 +664,19 @@ export interface ECSLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _getAddressComponent(
+      _name: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     _getBool(
       _componentName: string,
       _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getBoolComponent(
+      _name: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -509,9 +699,19 @@ export interface ECSLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _getIntComponent(
+      _name: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     _getPosition(
       _componentName: string,
       _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getPositionComponent(
+      _name: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -527,6 +727,16 @@ export interface ECSLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _getStringArrayComponent(
+      _name: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getStringComponent(
+      _name: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     _getUint(
       _componentName: string,
       _entity: BigNumberish,
@@ -536,6 +746,16 @@ export interface ECSLib extends BaseContract {
     _getUintArray(
       _componentName: string,
       _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getUintArrayComponent(
+      _name: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getUintComponent(
+      _name: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
@@ -559,9 +779,19 @@ export interface ECSLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    _getAddressComponent(
+      _name: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     _getBool(
       _componentName: string,
       _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getBoolComponent(
+      _name: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -587,9 +817,19 @@ export interface ECSLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    _getIntComponent(
+      _name: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     _getPosition(
       _componentName: string,
       _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getPositionComponent(
+      _name: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -605,6 +845,16 @@ export interface ECSLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    _getStringArrayComponent(
+      _name: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getStringComponent(
+      _name: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     _getUint(
       _componentName: string,
       _entity: BigNumberish,
@@ -614,6 +864,16 @@ export interface ECSLib extends BaseContract {
     _getUintArray(
       _componentName: string,
       _entity: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getUintArrayComponent(
+      _name: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getUintComponent(
+      _name: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

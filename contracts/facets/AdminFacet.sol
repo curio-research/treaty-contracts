@@ -7,8 +7,6 @@ import {ECSLib} from "contracts/libraries/ECSLib.sol";
 import {ComponentSpec, Position, TERRAIN, Tile, VALUE_TYPE, WorldConstants} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 import {Set} from "contracts/Set.sol";
-import {Component} from "contracts/Component.sol";
-import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, UintComponent} from "contracts/TypedComponents.sol";
 
 /// @title Admin facet
 /// @notice Contains admin functions and state functions, both of which should be out of scope for players
@@ -66,7 +64,7 @@ contract AdminFacet is UseStorage {
     function reactivatePlayer(address _address) external onlyAdmin {
         uint256 _player = gs().playerEntityMap[_address];
         require(_player != NULL, "CURIO: Player already initialized");
-        require(!BoolComponent(gs().components["IsActive"]).has(_player), "CURIO: Player is active");
+        require(!ECSLib._getBoolComponent("IsActive").has(_player), "CURIO: Player is active");
 
         ECSLib._setBool("IsActive", _player);
     }

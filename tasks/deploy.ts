@@ -147,11 +147,10 @@ task('deploy', 'deploy contracts')
       console.log(`✦ troop template creation took ${Math.floor(time3 - time2)} ms`);
 
       // Initialize a resource template
-      const goldTemplate = COMPONENT_SPECS.length + 1;
       await (await diamond.addEntity()).wait();
-      await (await diamond.setComponentValue('Tag', goldTemplate, abiCoder.encode(['string'], ['ResourceTemplate']))).wait();
-      await (await diamond.setComponentValue('InventoryType', goldTemplate, abiCoder.encode(['string'], ['Gold']))).wait();
-      await (await diamond.setComponentValue('Duration', goldTemplate, abiCoder.encode(['uint256'], [1]))).wait();
+      await (await diamond.setComponentValue('Tag', entityCount + 1, abiCoder.encode(['string'], ['ResourceTemplate']))).wait();
+      await (await diamond.setComponentValue('InventoryType', entityCount + 1, abiCoder.encode(['string'], ['Gold']))).wait();
+      await (await diamond.setComponentValue('Duration', entityCount + 1, abiCoder.encode(['uint256'], [1]))).wait();
       const time4 = performance.now();
       console.log(`✦ resource template creation took ${Math.floor(time4 - time3)} ms`);
 

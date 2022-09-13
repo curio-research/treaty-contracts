@@ -7,7 +7,6 @@ import {ECSLib} from "contracts/libraries/ECSLib.sol";
 import {Position, TERRAIN, WorldConstants} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 import {Set} from "contracts/Set.sol";
-import {BoolComponent, UintComponent} from "contracts/TypedComponents.sol";
 import "forge-std/console.sol";
 
 /// @title Game facet
@@ -63,7 +62,7 @@ contract GameFacet is UseStorage {
 
         // Verify that player is active
         uint256 _player = GameLib._getPlayer(msg.sender);
-        require(BoolComponent(gs().components["IsActive"]).has(_player), "CURIO: You are inactive");
+        require(ECSLib._getBoolComponent("IsActive").has(_player), "CURIO: You are inactive");
 
         // Verify that settler belongs to player
         require(ECSLib._getUint("Owner", _settler) == _player, "CURIO: Settler is not yours");
@@ -93,7 +92,7 @@ contract GameFacet is UseStorage {
 
         // Verify that player is active
         uint256 _player = GameLib._getPlayer(msg.sender);
-        require(BoolComponent(gs().components["IsActive"]).has(_player), "CURIO: You are inactive");
+        require(ECSLib._getBoolComponent("IsActive").has(_player), "CURIO: You are inactive");
 
         // Verify that settler belongs to player
         require(ECSLib._getUint("Owner", _settler) == _player, "CURIO: Settler is not yours");
@@ -148,7 +147,7 @@ contract GameFacet is UseStorage {
 
         // Verify that player is active
         uint256 _player = GameLib._getPlayer(msg.sender);
-        require(BoolComponent(gs().components["IsActive"]).has(_player), "CURIO: You are inactive");
+        require(ECSLib._getBoolComponent("IsActive").has(_player), "CURIO: You are inactive");
 
         // Verify that city belongs to player
         require(ECSLib._getUint("Owner", _city) == _player, "CURIO: City is not yours");
@@ -204,7 +203,7 @@ contract GameFacet is UseStorage {
 
         // Verify that player is active
         uint256 _player = GameLib._getPlayer(msg.sender);
-        require(BoolComponent(gs().components["IsActive"]).has(_player), "CURIO: Player is inactive");
+        require(ECSLib._getBoolComponent("IsActive").has(_player), "CURIO: Player is inactive");
 
         // Verify that city belongs to player
         uint256 _city = ECSLib._getUint("City", _building);
@@ -244,7 +243,7 @@ contract GameFacet is UseStorage {
 
         // Verify that player is active
         uint256 _player = GameLib._getPlayer(msg.sender);
-        require(BoolComponent(gs().components["IsActive"]).has(_player), "CURIO: Player is inactive");
+        require(ECSLib._getBoolComponent("IsActive").has(_player), "CURIO: Player is inactive");
 
         // Verify that city belongs to player
         uint256 _city = ECSLib._getUint("City", _building);
@@ -279,7 +278,7 @@ contract GameFacet is UseStorage {
 
         // Verify that player is active
         uint256 _player = GameLib._getPlayer(msg.sender);
-        require(BoolComponent(gs().components["IsActive"]).has(_player), "CURIO: You are inactive");
+        require(ECSLib._getBoolComponent("IsActive").has(_player), "CURIO: You are inactive");
 
         // Verify that city belongs to player
         require(ECSLib._getUint("Owner", _city) == _player, "CURIO: City is not yours");
@@ -330,7 +329,7 @@ contract GameFacet is UseStorage {
 
         // Verify that player is active
         uint256 _player = GameLib._getPlayer(msg.sender);
-        require(BoolComponent(gs().components["IsActive"]).has(_player), "CURIO: You are inactive");
+        require(ECSLib._getBoolComponent("IsActive").has(_player), "CURIO: You are inactive");
 
         // Verify that army belongs to player
         require(ECSLib._getUint("Owner", _army) == _player, "CURIO: Army is not yours");
@@ -364,7 +363,7 @@ contract GameFacet is UseStorage {
 
         // Verify that player is active
         uint256 _player = GameLib._getPlayer(msg.sender);
-        require(BoolComponent(gs().components["IsActive"]).has(_player), "CURIO: You are inactive");
+        require(ECSLib._getBoolComponent("IsActive").has(_player), "CURIO: You are inactive");
 
         // Verify that army belongs to player
         require(ECSLib._getUint("Owner", _army) == _player, "CURIO: Army is not yours");
@@ -393,7 +392,7 @@ contract GameFacet is UseStorage {
 
         // Verify that player is active
         uint256 _player = GameLib._getPlayer(msg.sender);
-        require(BoolComponent(gs().components["IsActive"]).has(_player), "CURIO: You are inactive");
+        require(ECSLib._getBoolComponent("IsActive").has(_player), "CURIO: You are inactive");
 
         // Verify that army belongs to player
         require(ECSLib._getUint("Owner", _army) == _player, "CURIO: Army is not yours");
@@ -422,7 +421,7 @@ contract GameFacet is UseStorage {
 
         // Verify that player is active
         uint256 _player = GameLib._getPlayer(msg.sender);
-        require(BoolComponent(gs().components["IsActive"]).has(_player), "CURIO: You are inactive");
+        require(ECSLib._getBoolComponent("IsActive").has(_player), "CURIO: You are inactive");
 
         // Verify that army belongs to player
         require(ECSLib._getUint("Owner", _army) == _player, "CURIO: Army is not yours");
@@ -476,7 +475,7 @@ contract GameFacet is UseStorage {
 
         // Verify that player is active
         uint256 _player = GameLib._getPlayer(msg.sender);
-        require(BoolComponent(gs().components["IsActive"]).has(_player), "CURIO: You are inactive");
+        require(ECSLib._getBoolComponent("IsActive").has(_player), "CURIO: You are inactive");
 
         // Verify that army belongs to player and city doesn't
         require(ECSLib._getUint("Owner", _army) == _player, "CURIO: Army is not yours");
@@ -502,7 +501,7 @@ contract GameFacet is UseStorage {
 
         // Verify that player is active
         uint256 _player = GameLib._getPlayer(msg.sender);
-        require(BoolComponent(gs().components["IsActive"]).has(_player), "CURIO: You are inactive");
+        require(ECSLib._getBoolComponent("IsActive").has(_player), "CURIO: You are inactive");
 
         // Verify that army belongs to player
         require(ECSLib._getUint("Owner", _army) == _player, "CURIO: Army is not yours");
@@ -545,7 +544,7 @@ contract GameFacet is UseStorage {
 
     //     // 3. Verify that player is active
     //     uint256 _playerEntity = GameLib._getPlayerEntity(msg.sender);
-    //     require(BoolComponent(gs().components["IsActive"]).has(_playerEntity), "CURIO: Player is inactive");
+    //     require(ECSLib._getBoolComponent("IsActive").has(_playerEntity), "CURIO: Player is inactive");
 
     //     // 4. Verify that position is in bound, and initialize tile
     //     require(GameLib._inBound(_targetPosition), "CURIO: Out of bound");
@@ -607,7 +606,7 @@ contract GameFacet is UseStorage {
 
     //     // 3. Verify that player is active
     //     uint256 _playerEntity = GameLib._getPlayerEntity(msg.sender);
-    //     require(BoolComponent(gs().components["IsActive"]).has(_playerEntity), "CURIO: Player is inactive");
+    //     require(ECSLib._getBoolComponent("IsActive").has(_playerEntity), "CURIO: Player is inactive");
 
     //     // 4. Verify that position is in bound, and initialize tile
     //     require(GameLib._inBound(_targetPosition), "CURIO: Out of bound");
@@ -681,7 +680,7 @@ contract GameFacet is UseStorage {
 
     //     // 3. Verify that player is active
     //     uint256 _playerEntity = GameLib._getPlayerEntity(msg.sender);
-    //     require(BoolComponent(gs().components["IsActive"]).has(_playerEntity), "CURIO: Player is inactive");
+    //     require(ECSLib._getBoolComponent("IsActive").has(_playerEntity), "CURIO: Player is inactive");
 
     //     // 4. Verify that position is in bound, and initialize tile
     //     require(GameLib._inBound(_position), "CURIO: Out of bound");
@@ -698,7 +697,7 @@ contract GameFacet is UseStorage {
     //     require(GameLib._getArmyAt(_position) == NULL, "CURIO: Base occupied by another troop");
 
     //     // 8. Verify that the "base" can purchase the given type of "troop"
-    //     if (!BoolComponent(gs().components["CanMoveOnLand"]).has(_troopTemplateEntity)) {
+    //     if (!ECSLib._getBoolComponent("CanMoveOnLand").has(_troopTemplateEntity)) {
     //         Position[] memory _neighbors = GameLib._getNeighbors(_position);
     //         bool _isCoast;
     //         for (uint256 i = 0; i < _neighbors.length; i++) {
@@ -743,7 +742,7 @@ contract GameFacet is UseStorage {
     //     require(_baseEntity != NULL, "CURIO: No base found");
 
     //     // Verify that base is not taken
-    //     require(!UintComponent(gs().components["OwnerEntity"]).has(_baseEntity), "CURIO: Base is taken");
+    //     require(!ECSLib._getUintComponent("OwnerEntity").has(_baseEntity), "CURIO: Base is taken");
 
     //     // Spawn player
     //     WorldConstants memory _worldConstants = gs().worldConstants;
