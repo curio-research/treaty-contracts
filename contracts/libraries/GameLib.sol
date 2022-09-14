@@ -59,11 +59,11 @@ library GameLib {
             gs().components[_spec.name] = _addr;
 
             // Record identifier entity for component
-            uint256 _component = ECSLib._addEntity();
-            ECSLib._setBool("IsComponent", _component);
-            gs().ComponentEntityToAddress[_component] = _addr;
+            uint256 _componentID = ECSLib._addEntity();
+            ECSLib._setBool("IsComponent", _componentID);
+            gs().ComponentEntityToAddress[_componentID] = _addr;
 
-            emit ECSLib.NewComponent(_spec.name, _component);
+            emit ECSLib.NewComponent(_spec.name, _componentID);
         }
 
         // Update component names for iteration
@@ -84,81 +84,81 @@ library GameLib {
         gs().map[_position.x][_position.y].terrain = TERRAIN(_terrain);
     }
 
-    function _removeArmy(uint256 _army) public {
-        ECSLib._removeEntity(_army);
+    function _removeArmy(uint256 _armyID) public {
+        ECSLib._removeEntity(_armyID);
     }
 
-    function _damageArmy(uint256 _army, uint256 _damage) public {
-        uint256 _health = ECSLib._getUint("Health", _army);
-        ECSLib._setUint("Health", _army, _health - _damage);
+    function _damageArmy(uint256 _armyID, uint256 _damage) public {
+        uint256 _health = ECSLib._getUint("Health", _armyID);
+        ECSLib._setUint("Health", _armyID, _health - _damage);
 
-        uint256[] memory _amounts = ECSLib._getUintArray("Amounts", _army);
+        uint256[] memory _amounts = ECSLib._getUintArray("Amounts", _armyID);
         for (uint256 i = 0; i < _amounts.length; i++) {
             _amounts[i] = (_amounts[i] * (_health - _damage)) / _health;
         }
-        ECSLib._setUintArray("Amounts", _army, _amounts);
+        ECSLib._setUintArray("Amounts", _armyID, _amounts);
     }
 
-    // function _updatePlayerBalances(uint256 _player) public {
-    //     uint256 _balanceLastUpdated = ECSLib._getUint("BalanceLastUpdated", _player);
+    // function _updatePlayerBalances(uint256 _playerID) public {
+    //     uint256 _balanceLastUpdated = ECSLib._getUint("BalanceLastUpdated", _playerID);
     //     uint256 _timeElapsed = block.timestamp - _balanceLastUpdated;
 
     //     // Update gold balance
-    //     uint256 _gold = ECSLib._getUint("Gold", _player);
-    //     int256 _goldPerSecond = ECSLib._getInt("GoldPerSecond", _player);
-    //     ECSLib._setUint("Gold", _player, uint256(int256(_gold) + _goldPerSecond * int256(_timeElapsed)));
+    //     uint256 _gold = ECSLib._getUint("Gold", _playerID);
+    //     int256 _goldPerSecond = ECSLib._getInt("GoldPerSecond", _playerID);
+    //     ECSLib._setUint("Gold", _playerID, uint256(int256(_gold) + _goldPerSecond * int256(_timeElapsed)));
 
     //     // Update oil balance
-    //     uint256 _oil = ECSLib._getUint("Oil", _player);
-    //     int256 _oilPerSecond = ECSLib._getInt("OilPerSecond", _player);
-    //     ECSLib._setUint("Oil", _player, uint256(int256(_oil) + _oilPerSecond * int256(_timeElapsed)));
+    //     uint256 _oil = ECSLib._getUint("Oil", _playerID);
+    //     int256 _oilPerSecond = ECSLib._getInt("OilPerSecond", _playerID);
+    //     ECSLib._setUint("Oil", _playerID, uint256(int256(_oil) + _oilPerSecond * int256(_timeElapsed)));
 
     //     // Update debuff status based on oil rate
     //     if (_oilPerSecond >= 0) {
-    //         ECSLib._removeBool("IsDebuffed", _player);
+    //         ECSLib._removeBool("IsDebuffed", _playerID);
     //     } else {
-    //         ECSLib._setBool("IsDebuffed", _player);
+    //         ECSLib._setBool("IsDebuffed", _playerID);
     //     }
 
-    //     ECSLib._setUint("BalanceLastUpdated", _player, block.timestamp);
+    //     ECSLib._setUint("BalanceLastUpdated", _playerID, block.timestamp);
     // }
 
-    function _addGuard(uint256 _city) public returns (uint256 _guard) {
+    function _addGuard(uint256 _cityID) public returns (uint256 _guardID) {
         WorldConstants memory _constants = gs().worldConstants;
-        _guard = ECSLib._addEntity();
-        ECSLib._setString("Tag", _guard, "Guard");
-        ECSLib._setUint("City", _guard, _city);
-        ECSLib._setUint("Health", _guard, _constants.cityHealth);
-        ECSLib._setUint("Attack", _guard, _constants.cityAttack);
-        ECSLib._setUint("Defense", _guard, _constants.cityDefense);
+        _guardID = ECSLib._addEntity();
+        ECSLib._setString("Tag", _guardID, "Guard");
+        ECSLib._setUint("City", _guardID, _cityID);
+        ECSLib._setUint("Health", _guardID, _constants.cityHealth);
+        ECSLib._setUint("Attack", _guardID, _constants.cityAttack);
+        ECSLib._setUint("Defense", _guardID, _constants.cityDefense);
     }
 
     // ----------------------------------------------------------
     // LOGIC GETTERS
     // ----------------------------------------------------------
 
-    function _getArmyBattles(uint256 _army) public returns (uint256[] memory) {
+    function _getArmyBattles(uint256 _armyID) public returns (uint256[] memory) {
         Set _set1 = new Set();
         Set _set2 = new Set();
         Set _set3 = new Set();
-        _set1.addArray(ECSLib._getUintComponent("Source").getEntitiesWithValue(_army));
-        _set2.addArray(ECSLib._getUintComponent("Target").getEntitiesWithValue(_army));
+        _set1.addArray(ECSLib._getUintComponent("Source").getEntitiesWithValue(_armyID));
+        _set2.addArray(ECSLib._getUintComponent("Target").getEntitiesWithValue(_armyID));
         _set3.addArray(ECSLib._getStringComponent("Tag").getEntitiesWithValue(string("Battle")));
         return ECSLib._concatenate(ECSLib._intersection(_set1, _set3), ECSLib._intersection(_set2, _set3));
     }
 
-    function _getPlayerArmies(uint256 _player) public returns (uint256[] memory) {
+    function _getPlayerArmies(uint256 _playerID) public returns (uint256[] memory) {
         Set _set1 = new Set();
         Set _set2 = new Set();
-        _set1.addArray(ECSLib._getUintComponent("Owner").getEntitiesWithValue(_player));
+        _set1.addArray(ECSLib._getUintComponent("Owner").getEntitiesWithValue(_playerID));
         _set2.addArray(ECSLib._getStringComponent("Tag").getEntitiesWithValue(string("Army")));
         return ECSLib._intersection(_set1, _set2);
     }
 
-    function _getPlayerCities(uint256 _player) public returns (uint256[] memory) {
+    function _getPlayerCities(uint256 _playerID) public returns (uint256[] memory) {
         Set _set1 = new Set();
         Set _set2 = new Set();
-        _set1.addArray(ECSLib._getUintComponent("Owner").getEntitiesWithValue(_player));
+        _set1.addArray(ECSLib._getUintComponent("Owner").getEntitiesWithValue(_playerID));
         _set2.addArray(ECSLib._getStringComponent("Tag").getEntitiesWithValue(string("City")));
         return ECSLib._intersection(_set1, _set2);
     }
@@ -185,11 +185,11 @@ library GameLib {
         return _result.length == 1 ? _result[0] : _NULL();
     }
 
-    function _getCityGuard(uint256 _city) public returns (uint256) {
+    function _getCityGuard(uint256 _cityID) public returns (uint256) {
         Set _set1 = new Set();
         Set _set2 = new Set();
         _set1.addArray(ECSLib._getStringComponent("Tag").getEntitiesWithValue(string("Guard")));
-        _set2.addArray(ECSLib._getUintComponent("City").getEntitiesWithValue(_city));
+        _set2.addArray(ECSLib._getUintComponent("City").getEntitiesWithValue(_cityID));
         uint256[] memory _result = ECSLib._intersection(_set1, _set2);
 
         assert(_result.length <= 1);
@@ -207,11 +207,11 @@ library GameLib {
         return _result.length == 1 ? _result[0] : _NULL();
     }
 
-    function _getInventory(uint256 _city, uint256 _template) public returns (uint256) {
+    function _getInventory(uint256 _cityID, uint256 _templateID) public returns (uint256) {
         Set _set1 = new Set();
         Set _set2 = new Set();
-        _set1.addArray(ECSLib._getUintComponent("City").getEntitiesWithValue(_city));
-        _set2.addArray(ECSLib._getUintComponent("Template").getEntitiesWithValue(_template));
+        _set1.addArray(ECSLib._getUintComponent("City").getEntitiesWithValue(_cityID));
+        _set2.addArray(ECSLib._getUintComponent("Template").getEntitiesWithValue(_templateID));
         uint256[] memory _result = ECSLib._intersection(_set1, _set2);
 
         assert(_result.length <= 1);
@@ -253,10 +253,10 @@ library GameLib {
     //     return (_getArmyDamagePerHit(_troopEntities) * (100 - _debuffFactor)) / 100;
     // }
 
-    function _getCityCenter(uint256 _city) public returns (uint256) {
+    function _getCityCenter(uint256 _cityID) public returns (uint256) {
         Set _set1 = new Set();
         Set _set2 = new Set();
-        _set1.addArray(ECSLib._getUintComponent("City").getEntitiesWithValue(_city));
+        _set1.addArray(ECSLib._getUintComponent("City").getEntitiesWithValue(_cityID));
         _set2.addArray(ECSLib._getStringComponent("BuildingType").getEntitiesWithValue(string("City Center")));
         uint256[] memory _result = ECSLib._intersection(_set1, _set2);
 
@@ -281,8 +281,8 @@ library GameLib {
         return _result;
     }
 
-    function _adjacentToCity(Position memory _position, uint256 _city) public returns (bool) {
-        Position memory _centerPosition = ECSLib._getPosition("Position", _getCityCenter(_city));
+    function _adjacentToCity(Position memory _position, uint256 _cityID) public returns (bool) {
+        Position memory _centerPosition = ECSLib._getPosition("Position", _getCityCenter(_cityID));
         return !_coincident(_position, _centerPosition) && _withinDistance(_position, _centerPosition, 2);
     }
 
