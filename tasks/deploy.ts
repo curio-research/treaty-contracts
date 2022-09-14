@@ -40,7 +40,7 @@ task('deploy', 'deploy contracts')
       printDivider();
 
       // Read variables from run flags
-      const isDev: boolean = hre.network.name === 'localhost' || hre.network.name === 'hardhat' || hre.network.name === 'constellation';
+      const isDev: boolean = hre.network.name === 'localhost' || hre.network.name === 'hardhat' || hre.network.name === 'constellation' || hre.network.name === 'altlayer';
 
       console.log('Network:', hre.network.name);
       const fixMap: boolean = args.fixmap;
