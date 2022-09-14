@@ -37,7 +37,7 @@ export interface GameFacetInterface extends utils.Interface {
     "initializePlayer((uint256,uint256),string)": FunctionFragment;
     "moveArmy(uint256,(uint256,uint256))": FunctionFragment;
     "moveSettler(uint256,(uint256,uint256))": FunctionFragment;
-    "organizeArmy(uint256,string[],uint256[])": FunctionFragment;
+    "organizeArmy(uint256,uint256[],uint256[])": FunctionFragment;
     "startProduction(uint256,uint256,uint256)": FunctionFragment;
     "unfoldCity(uint256)": FunctionFragment;
     "upgradeCity(uint256,(uint256,uint256)[])": FunctionFragment;
@@ -89,7 +89,7 @@ export interface GameFacetInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "organizeArmy",
-    values: [BigNumberish, string[], BigNumberish[]]
+    values: [BigNumberish, BigNumberish[], BigNumberish[]]
   ): string;
   encodeFunctionData(
     functionFragment: "startProduction",
@@ -249,7 +249,7 @@ export interface GameFacet extends BaseContract {
 
     organizeArmy(
       _city: BigNumberish,
-      _troopTypes: string[],
+      _templates: BigNumberish[],
       _amounts: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -339,7 +339,7 @@ export interface GameFacet extends BaseContract {
 
   organizeArmy(
     _city: BigNumberish,
-    _troopTypes: string[],
+    _templates: BigNumberish[],
     _amounts: BigNumberish[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -428,7 +428,7 @@ export interface GameFacet extends BaseContract {
 
     organizeArmy(
       _city: BigNumberish,
-      _troopTypes: string[],
+      _templates: BigNumberish[],
       _amounts: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -521,7 +521,7 @@ export interface GameFacet extends BaseContract {
 
     organizeArmy(
       _city: BigNumberish,
-      _troopTypes: string[],
+      _templates: BigNumberish[],
       _amounts: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -612,7 +612,7 @@ export interface GameFacet extends BaseContract {
 
     organizeArmy(
       _city: BigNumberish,
-      _troopTypes: string[],
+      _templates: BigNumberish[],
       _amounts: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;

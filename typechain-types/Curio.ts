@@ -115,11 +115,9 @@ export interface CurioInterface extends utils.Interface {
   functions: {
     "addEntity()": FunctionFragment;
     "bulkInitializeTiles((uint256,uint256)[])": FunctionFragment;
-    "pauseGame()": FunctionFragment;
     "reactivatePlayer(address)": FunctionFragment;
     "registerComponents(address,(string,uint8)[])": FunctionFragment;
     "registerDefaultComponents(address)": FunctionFragment;
-    "resumeGame()": FunctionFragment;
     "setComponentValue(string,uint256,bytes)": FunctionFragment;
     "storeEncodedColumnBatches(uint256[][])": FunctionFragment;
     "diamondCut((address,uint8,bytes4[])[],address,bytes)": FunctionFragment;
@@ -139,7 +137,7 @@ export interface CurioInterface extends utils.Interface {
     "initializePlayer((uint256,uint256),string)": FunctionFragment;
     "moveArmy(uint256,(uint256,uint256))": FunctionFragment;
     "moveSettler(uint256,(uint256,uint256))": FunctionFragment;
-    "organizeArmy(uint256,string[],uint256[])": FunctionFragment;
+    "organizeArmy(uint256,uint256[],uint256[])": FunctionFragment;
     "startProduction(uint256,uint256,uint256)": FunctionFragment;
     "unfoldCity(uint256)": FunctionFragment;
     "upgradeCity(uint256,(uint256,uint256)[])": FunctionFragment;
@@ -181,7 +179,6 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "bulkInitializeTiles",
     values: [PositionStruct[]]
   ): string;
-  encodeFunctionData(functionFragment: "pauseGame", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "reactivatePlayer",
     values: [string]
@@ -193,10 +190,6 @@ export interface CurioInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "registerDefaultComponents",
     values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "resumeGame",
-    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "setComponentValue",
@@ -273,7 +266,7 @@ export interface CurioInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "organizeArmy",
-    values: [BigNumberish, string[], BigNumberish[]]
+    values: [BigNumberish, BigNumberish[], BigNumberish[]]
   ): string;
   encodeFunctionData(
     functionFragment: "startProduction",
@@ -408,7 +401,6 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "bulkInitializeTiles",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "pauseGame", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "reactivatePlayer",
     data: BytesLike
@@ -421,7 +413,6 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "registerDefaultComponents",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "resumeGame", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setComponentValue",
     data: BytesLike
@@ -704,10 +695,6 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    pauseGame(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     reactivatePlayer(
       _address: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -721,10 +708,6 @@ export interface Curio extends BaseContract {
 
     registerDefaultComponents(
       _gameAddr: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    resumeGame(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -836,7 +819,7 @@ export interface Curio extends BaseContract {
 
     organizeArmy(
       _city: BigNumberish,
-      _troopTypes: string[],
+      _templates: BigNumberish[],
       _amounts: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -1019,10 +1002,6 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  pauseGame(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   reactivatePlayer(
     _address: string,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -1036,10 +1015,6 @@ export interface Curio extends BaseContract {
 
   registerDefaultComponents(
     _gameAddr: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  resumeGame(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1147,7 +1122,7 @@ export interface Curio extends BaseContract {
 
   organizeArmy(
     _city: BigNumberish,
-    _troopTypes: string[],
+    _templates: BigNumberish[],
     _amounts: BigNumberish[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -1316,8 +1291,6 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    pauseGame(overrides?: CallOverrides): Promise<void>;
-
     reactivatePlayer(
       _address: string,
       overrides?: CallOverrides
@@ -1333,8 +1306,6 @@ export interface Curio extends BaseContract {
       _gameAddr: string,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    resumeGame(overrides?: CallOverrides): Promise<void>;
 
     setComponentValue(
       _componentName: string,
@@ -1439,7 +1410,7 @@ export interface Curio extends BaseContract {
 
     organizeArmy(
       _city: BigNumberish,
-      _troopTypes: string[],
+      _templates: BigNumberish[],
       _amounts: BigNumberish[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -1671,10 +1642,6 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    pauseGame(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     reactivatePlayer(
       _address: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1688,10 +1655,6 @@ export interface Curio extends BaseContract {
 
     registerDefaultComponents(
       _gameAddr: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    resumeGame(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1799,7 +1762,7 @@ export interface Curio extends BaseContract {
 
     organizeArmy(
       _city: BigNumberish,
-      _troopTypes: string[],
+      _templates: BigNumberish[],
       _amounts: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -1978,10 +1941,6 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    pauseGame(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     reactivatePlayer(
       _address: string,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -1995,10 +1954,6 @@ export interface Curio extends BaseContract {
 
     registerDefaultComponents(
       _gameAddr: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    resumeGame(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2106,7 +2061,7 @@ export interface Curio extends BaseContract {
 
     organizeArmy(
       _city: BigNumberish,
-      _troopTypes: string[],
+      _templates: BigNumberish[],
       _amounts: BigNumberish[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;

@@ -196,11 +196,22 @@ library GameLib {
         return _result.length == 1 ? _result[0] : _NULL();
     }
 
-    function _getInventory(uint256 _city, string memory _inventoryType) public returns (uint256) {
+    function _getTemplateByInventoryType(string memory _inventoryType) public returns (uint256) {
+        Set _set1 = new Set();
+        Set _set2 = new Set();
+        _set1.addArray(ECSLib._getStringComponent("Tag").getEntitiesWithValue(string("Template")));
+        _set2.addArray(ECSLib._getStringComponent("InventoryType").getEntitiesWithValue(_inventoryType));
+        uint256[] memory _result = ECSLib._intersection(_set1, _set2);
+
+        assert(_result.length <= 1);
+        return _result.length == 1 ? _result[0] : _NULL();
+    }
+
+    function _getInventory(uint256 _city, uint256 _template) public returns (uint256) {
         Set _set1 = new Set();
         Set _set2 = new Set();
         _set1.addArray(ECSLib._getUintComponent("City").getEntitiesWithValue(_city));
-        _set2.addArray(ECSLib._getStringComponent("InventoryType").getEntitiesWithValue(_inventoryType));
+        _set2.addArray(ECSLib._getUintComponent("Template").getEntitiesWithValue(_template));
         uint256[] memory _result = ECSLib._intersection(_set1, _set2);
 
         assert(_result.length <= 1);
