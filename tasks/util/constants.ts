@@ -84,6 +84,7 @@ export const COMPONENT_SPECS: CompType[] = [
   { name: 'Defense', valueType: ComponentDataTypes.UINT },
   { name: 'Speed', valueType: ComponentDataTypes.UINT },
   { name: 'City', valueType: ComponentDataTypes.UINT },
+  { name: 'Building', valueType: ComponentDataTypes.UINT },
   { name: 'Amount', valueType: ComponentDataTypes.UINT },
   { name: 'Amounts', valueType: ComponentDataTypes.UINT_ARRAY },
   { name: 'InventoryType', valueType: ComponentDataTypes.STRING },

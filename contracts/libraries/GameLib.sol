@@ -79,34 +79,6 @@ library GameLib {
         uint256 _divFactor = _numInitTerrainTypes**(_position.y % _batchSize);
         uint256 _terrain = _encodedCol / _divFactor;
 
-        // // Add base
-        // if (_terrain >= 3) {
-        //     uint256 _base = ECSLib._addEntity();
-        //     ECSLib._setBool("IsActive", _base);
-        //     ECSLib._setPosition("Position", _base, _position);
-        //     ECSLib._setUint("Health", _base, 1);
-        //     ECSLib._setBool("CanAttack", _base);
-        //     ECSLib._setBool("CanPurchase", _base);
-        //     ECSLib._setUint("AttackFactor", _base, 100);
-        //     ECSLib._setUint("DefenseFactor", _base, 100);
-        //     if (_terrain == 3) {
-        //         // Port
-        //         ECSLib._setString("Tag", _base, "Port");
-        //         ECSLib._setInt("GoldPerSecond", _base, int256(_worldConstants.defaultBaseGoldGenerationPerSecond));
-        //         _terrain = 0;
-        //     } else if (_terrain == 4) {
-        //         // City
-        //         ECSLib._setString("Tag", _base, "City");
-        //         ECSLib._setInt("GoldPerSecond", _base, int256(_worldConstants.defaultBaseGoldGenerationPerSecond));
-        //         _terrain = 1;
-        //     } else if (_terrain == 5) {
-        //         // Oil well
-        //         ECSLib._setString("Tag", _base, "Oil Well");
-        //         ECSLib._setInt("OilPerSecond", _base, int256(_worldConstants.defaultWellOilGenerationPerSecond));
-        //         _terrain = 1;
-        //     }
-        // }
-
         // Update terrain
         gs().map[_position.x][_position.y].isInitialized = true;
         gs().map[_position.x][_position.y].terrain = TERRAIN(_terrain);
@@ -149,37 +121,6 @@ library GameLib {
     //     }
 
     //     ECSLib._setUint("BalanceLastUpdated", _player, block.timestamp);
-    // }
-
-    // function _removeArmyWithTroops(uint256 _army) public {
-    //     _removeArmy(_army);
-    //     uint256[] memory _troops = _getArmyTroops(_army);
-    //     for (uint256 i = 0; i < _troops.length; i++) {
-    //         _removeTroop(_troops[i]);
-    //     }
-    // }
-
-    // function _damageArmy(uint256 _totalDamage, uint256[] memory _armyTroops) public {
-    //     uint256 _individualDamage = _totalDamage / _armyTroops.length;
-    //     uint256 _remainingDamage = _totalDamage % _armyTroops.length;
-
-    //     for (uint256 i = 0; i < _armyTroops.length; i++) {
-    //         uint256 _damage = _remainingDamage > 0 ? _individualDamage + 1 : _individualDamage;
-    //         _damageTroop(_damage, _armyTroops[i]);
-    //         if (_remainingDamage > 0) _remainingDamage--;
-    //     }
-    // }
-
-    // function _damageTroop(uint256 _damage, uint256 _troop) public {
-    //     uint256 _health = ECSLib._getUint("Health", _troop);
-
-    //     if (_damage >= _health) {
-    //         uint256 _army = ECSLib._getUint("Army", _troop);
-    //         if (ECSLib._getUintComponent("Army").getEntitiesWithValue(_army).length == 1) _removeArmy(_army);
-    //         _removeTroop(_troop);
-    //     } else {
-    //         ECSLib._setUint("Health", _troop, _health - _damage);
-    //     }
     // }
 
     function _addGuard(uint256 _city) public returns (uint256 _guard) {
@@ -293,66 +234,6 @@ library GameLib {
     //     }
 
     //     return _totalHealth;
-    // }
-
-    // function _getArmyMovementCooldown(uint256[] memory _troopEntities) public view returns (uint256) {
-    //     // take the longest cooldown
-    //     uint256 _longestMovementCooldown;
-
-    //     for (uint256 i = 0; i < _troopEntities.length; i++) {
-    //         uint256 _troopMovementCooldown = ECSLib._getUint("MovementCooldown", _troopEntities[i]);
-    //         if (_troopMovementCooldown > _longestMovementCooldown) {
-    //             _longestMovementCooldown = _troopMovementCooldown;
-    //         }
-    //     }
-    //     return _longestMovementCooldown;
-    // }
-
-    // function _getArmyLargeActionCooldown(uint256[] memory _troopEntities) public view returns (uint256) {
-    //     // take the longest cooldown
-    //     uint256 _longestLargeActionCooldown;
-
-    //     for (uint256 i = 0; i < _troopEntities.length; i++) {
-    //         uint256 _troopLargeActionCooldown = ECSLib._getUint("LargeActionCooldown", _troopEntities[i]);
-    //         if (_troopLargeActionCooldown > _longestLargeActionCooldown) {
-    //             _longestLargeActionCooldown = _troopLargeActionCooldown;
-    //         }
-    //     }
-
-    //     return _longestLargeActionCooldown;
-    // }
-
-    // function _getArmyAttackFactor(uint256[] memory _troopEntities) public view returns (uint256) {
-    //     // take the average
-    //     uint256 _averageAttackFactor;
-
-    //     for (uint256 i = 0; i < _troopEntities.length; i++) {
-    //         _averageAttackFactor += ECSLib._getUint("AttackFactor", _troopEntities[i]);
-    //     }
-
-    //     return _averageAttackFactor / _troopEntities.length;
-    // }
-
-    // function _getArmyDefenseFactor(uint256[] memory _troopEntities) public view returns (uint256) {
-    //     // take the average
-    //     uint256 _averageDefenseFactor;
-
-    //     for (uint256 i = 0; i < _troopEntities.length; i++) {
-    //         _averageDefenseFactor += ECSLib._getUint("DefenseFactor", _troopEntities[i]);
-    //     }
-
-    //     return _averageDefenseFactor / _troopEntities.length;
-    // }
-
-    // function _getArmyDamagePerHit(uint256[] memory _troopEntities) public view returns (uint256) {
-    //     // take the sum
-    //     uint256 _totalDamagePerHit = 0;
-
-    //     for (uint256 i = 0; i < _troopEntities.length; i++) {
-    //         _totalDamagePerHit += ECSLib._getUint("DamagePerHit", _troopEntities[i]);
-    //     }
-
-    //     return _totalDamagePerHit;
     // }
 
     // function _getDebuffedArmyDamagePerHit(uint256[] memory _troopEntities) public view returns (uint256) {

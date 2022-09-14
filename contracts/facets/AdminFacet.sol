@@ -108,7 +108,7 @@ contract AdminFacet is UseStorage {
     }
 
     function registerDefaultComponents(address _gameAddr) external onlyAdmin {
-        ComponentSpec[] memory _componentSpecs = new ComponentSpec[](26);
+        ComponentSpec[] memory _componentSpecs = new ComponentSpec[](29);
 
         _componentSpecs[0] = ComponentSpec({name: "IsComponent", valueType: VALUE_TYPE.BOOL});
         _componentSpecs[1] = ComponentSpec({name: "Tag", valueType: VALUE_TYPE.STRING});
@@ -131,11 +131,14 @@ contract AdminFacet is UseStorage {
         _componentSpecs[18] = ComponentSpec({name: "Defense", valueType: VALUE_TYPE.UINT});
         _componentSpecs[19] = ComponentSpec({name: "Speed", valueType: VALUE_TYPE.UINT});
         _componentSpecs[20] = ComponentSpec({name: "City", valueType: VALUE_TYPE.UINT});
-        _componentSpecs[21] = ComponentSpec({name: "Amount", valueType: VALUE_TYPE.UINT});
-        _componentSpecs[22] = ComponentSpec({name: "Amounts", valueType: VALUE_TYPE.UINT_ARRAY});
-        _componentSpecs[23] = ComponentSpec({name: "InventoryType", valueType: VALUE_TYPE.STRING});
-        _componentSpecs[24] = ComponentSpec({name: "InventoryTypes", valueType: VALUE_TYPE.STRING_ARRAY});
-        _componentSpecs[25] = ComponentSpec({name: "LastMoved", valueType: VALUE_TYPE.UINT});
+        _componentSpecs[21] = ComponentSpec({name: "Building", valueType: VALUE_TYPE.UINT});
+        _componentSpecs[22] = ComponentSpec({name: "Amount", valueType: VALUE_TYPE.UINT});
+        _componentSpecs[23] = ComponentSpec({name: "Amounts", valueType: VALUE_TYPE.UINT_ARRAY});
+        _componentSpecs[24] = ComponentSpec({name: "InventoryType", valueType: VALUE_TYPE.STRING});
+        _componentSpecs[25] = ComponentSpec({name: "InventoryTypes", valueType: VALUE_TYPE.STRING_ARRAY});
+        _componentSpecs[26] = ComponentSpec({name: "LastMoved", valueType: VALUE_TYPE.UINT});
+        _componentSpecs[27] = ComponentSpec({name: "Source", valueType: VALUE_TYPE.UINT});
+        _componentSpecs[28] = ComponentSpec({name: "Target", valueType: VALUE_TYPE.UINT});
 
         GameLib._registerComponents(_gameAddr, _componentSpecs);
     }
