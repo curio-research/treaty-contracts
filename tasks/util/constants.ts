@@ -1,6 +1,5 @@
-import { CompType } from './types/index';
 import { WorldConstantsStruct } from './../../typechain-types/Curio';
-import { MapInput, RenderInput, ComponentDataTypes } from './types';
+import { MapInput, RenderInput } from './types';
 
 export const LOCALHOST_RPC_URL = 'http://127.0.0.1:8545/';
 export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';

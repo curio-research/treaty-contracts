@@ -225,8 +225,8 @@ task('deploy', 'deploy contracts')
 
       // Publish deployment
       if (publish || !isDev) {
-        await publishDeployment(configFile);
       }
+      await publishDeployment(configFile);
     } catch (err: any) {
       console.log(err.message);
     }
