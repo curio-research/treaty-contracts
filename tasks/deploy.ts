@@ -1,4 +1,3 @@
-import { Curio__factory } from './../typechain-types/factories/Curio__factory';
 import { ethers } from 'ethers';
 import { GameLib } from './../typechain-types/GameLib';
 import { ECSLib } from './../typechain-types/ECSLib';
@@ -9,12 +8,13 @@ import * as fs from 'fs';
 import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { deployProxy, printDivider } from './util/deployHelper';
-import { generateWorldConstants, SMALL_MAP_INPUT, COMPONENT_SPECS } from './util/constants';
+import { generateWorldConstants, SMALL_MAP_INPUT } from './util/constants';
 import { position } from '../util/types/common';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
 import { TILE_TYPE } from './util/types';
 import { encodeTileMap } from './util/mapHelper';
 import { GameConfig } from '../api/types';
+import { COMPONENT_SPECS } from 'curio-vault';
 
 /**
  * Deploy game instance and port configs to frontend.
