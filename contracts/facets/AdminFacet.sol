@@ -27,37 +27,6 @@ contract AdminFacet is UseStorage {
     }
 
     /**
-     * @dev Pause an ongoing game.
-     */
-    function pauseGame() external onlyAdmin {
-        require(!gs().isPaused, "CURIO: Game is paused");
-
-        // address[] memory _allPlayers = gs().players;
-        // for (uint256 i = 0; i < _allPlayers.length; i++) {
-        //     GameLib._updatePlayerBalances(gs().playerEntityMap[_allPlayers[i]]);
-        // }
-
-        gs().isPaused = true;
-        gs().lastPaused = block.timestamp;
-        emit GameLib.GamePaused();
-    }
-
-    /**
-     * @dev Resume a paused game.
-     */
-    function resumeGame() external onlyAdmin {
-        require(gs().isPaused, "CURIO: Game is ongoing");
-
-        address[] memory _allPlayers = gs().players;
-        for (uint256 i = 0; i < _allPlayers.length; i++) {
-            ECSLib._setUint("BalanceLastUpdated", gs().playerEntityMap[_allPlayers[i]], block.timestamp);
-        }
-
-        gs().isPaused = false;
-        emit GameLib.GameResumed();
-    }
-
-    /**
      * @dev Reactivate an inactive player.
      * @param _address player address
      */
