@@ -210,7 +210,6 @@ contract GameFacet is UseStorage {
         require(ECSLib._getUint("Owner", _city) == _player, "CURIO: City is not yours");
 
         // Create inventory if no exist, and verify that amount does not exceed ceiling
-        string memory _inventoryType = ECSLib._getString("InventoryType", _template);
         uint256 _inventory = GameLib._getInventory(_city, _template);
         if (_inventory == NULL) {
             _inventory = ECSLib._addEntity();
@@ -228,6 +227,7 @@ contract GameFacet is UseStorage {
         ECSLib._setString("Tag", _production, "Production");
         ECSLib._setUint("City", _production, _city);
         ECSLib._setUint("Template", _production, _template);
+        ECSLib._setUint("Inventory", _production, _inventory);
         ECSLib._setUint("Amount", _production, _amount);
         ECSLib._setUint("InitTimestamp", _production, block.timestamp);
         ECSLib._setUint("Duration", _production, ECSLib._getUint("Duration", _template) * _amount);
@@ -253,7 +253,7 @@ contract GameFacet is UseStorage {
         require(ECSLib._getUint("InitTimestamp", _production) + ECSLib._getUint("Duration", _production) >= block.timestamp, "CURIO: Need more time for production");
 
         // Update inventory
-        uint256 _inventory = GameLib._getInventory(_city, ECSLib._getUint("Template", _production));
+        uint256 _inventory = ECSLib._getUint("Inventory", _production);
         ECSLib._setUint("Amount", _inventory, ECSLib._getUint("Amount", _inventory) + ECSLib._getUint("Amount", _production));
 
         // Delete production
