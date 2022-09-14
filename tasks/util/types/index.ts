@@ -2,26 +2,9 @@ export enum TILE_TYPE {
   PLAIN = 0,
 }
 
-export enum ComponentDataTypes {
-  UINT,
-  STRING,
-  BOOL,
-  INT,
-  ADDRESS,
-  POSITION,
-  UINT_ARRAY,
-  STRING_ARRAY,
-  OTHER,
-}
-
 export interface MapInput {
   width: number;
   height: number;
-}
-
-export interface CompType {
-  name: string;
-  valueType: ComponentDataTypes;
 }
 
 export interface RenderInput {
