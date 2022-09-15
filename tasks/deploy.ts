@@ -136,24 +136,49 @@ task('deploy', 'deploy contracts')
       const abiCoder = new ethers.utils.AbiCoder();
 
       await (await diamond.addEntity()).wait();
-      const entityCount = (await diamond.getEntity()).toNumber();
-      await (await diamond.setComponentValue('Tag', entityCount, abiCoder.encode(['string'], ['TroopTemplate']))).wait();
-      await (await diamond.setComponentValue('InventoryType', entityCount, abiCoder.encode(['string'], ['Cavalry']))).wait();
-      await (await diamond.setComponentValue('Health', entityCount, abiCoder.encode(['uint256'], [10]))).wait();
-      await (await diamond.setComponentValue('Speed', entityCount, abiCoder.encode(['uint256'], [1]))).wait();
-      await (await diamond.setComponentValue('Attack', entityCount, abiCoder.encode(['uint256'], [1]))).wait();
-      await (await diamond.setComponentValue('Defense', entityCount, abiCoder.encode(['uint256'], [0]))).wait();
-      await (await diamond.setComponentValue('Duration', entityCount, abiCoder.encode(['uint256'], [1]))).wait();
+      let entity = (await diamond.getEntity()).toNumber();
+      await (await diamond.setComponentValue('Tag', entity, abiCoder.encode(['string'], ['TroopTemplate']))).wait();
+      await (await diamond.setComponentValue('InventoryType', entity, abiCoder.encode(['string'], ['Cavalry']))).wait();
+      await (await diamond.setComponentValue('Health', entity, abiCoder.encode(['uint256'], [10]))).wait();
+      await (await diamond.setComponentValue('Speed', entity, abiCoder.encode(['uint256'], [1]))).wait();
+      await (await diamond.setComponentValue('Attack', entity, abiCoder.encode(['uint256'], [1]))).wait();
+      await (await diamond.setComponentValue('Defense', entity, abiCoder.encode(['uint256'], [0]))).wait();
+      await (await diamond.setComponentValue('Duration', entity, abiCoder.encode(['uint256'], [1]))).wait();
       const time3 = performance.now();
-      console.log(`✦ troop template creation took ${Math.floor(time3 - time2)} ms`);
+      console.log(`✦ cavalry template creation took ${Math.floor(time3 - time2)} ms`);
+
+      await (await diamond.addEntity()).wait();
+      entity++;
+      await (await diamond.setComponentValue('Tag', entity, abiCoder.encode(['string'], ['TroopTemplate']))).wait();
+      await (await diamond.setComponentValue('InventoryType', entity, abiCoder.encode(['string'], ['Infantry']))).wait();
+      await (await diamond.setComponentValue('Health', entity, abiCoder.encode(['uint256'], [10]))).wait();
+      await (await diamond.setComponentValue('Speed', entity, abiCoder.encode(['uint256'], [1]))).wait();
+      await (await diamond.setComponentValue('Attack', entity, abiCoder.encode(['uint256'], [1]))).wait();
+      await (await diamond.setComponentValue('Defense', entity, abiCoder.encode(['uint256'], [0]))).wait();
+      await (await diamond.setComponentValue('Duration', entity, abiCoder.encode(['uint256'], [1]))).wait();
+      const time4 = performance.now();
+      console.log(`✦ infantry template creation took ${Math.floor(time4 - time3)} ms`);
+
+      await (await diamond.addEntity()).wait();
+      entity++;
+      await (await diamond.setComponentValue('Tag', entity, abiCoder.encode(['string'], ['TroopTemplate']))).wait();
+      await (await diamond.setComponentValue('InventoryType', entity, abiCoder.encode(['string'], ['Archer']))).wait();
+      await (await diamond.setComponentValue('Health', entity, abiCoder.encode(['uint256'], [10]))).wait();
+      await (await diamond.setComponentValue('Speed', entity, abiCoder.encode(['uint256'], [1]))).wait();
+      await (await diamond.setComponentValue('Attack', entity, abiCoder.encode(['uint256'], [1]))).wait();
+      await (await diamond.setComponentValue('Defense', entity, abiCoder.encode(['uint256'], [0]))).wait();
+      await (await diamond.setComponentValue('Duration', entity, abiCoder.encode(['uint256'], [1]))).wait();
+      const time5 = performance.now();
+      console.log(`✦ archer template creation took ${Math.floor(time5 - time4)} ms`);
 
       // Initialize a resource template
       await (await diamond.addEntity()).wait();
-      await (await diamond.setComponentValue('Tag', entityCount + 1, abiCoder.encode(['string'], ['ResourceTemplate']))).wait();
-      await (await diamond.setComponentValue('InventoryType', entityCount + 1, abiCoder.encode(['string'], ['Gold']))).wait();
-      await (await diamond.setComponentValue('Duration', entityCount + 1, abiCoder.encode(['uint256'], [1]))).wait();
-      const time4 = performance.now();
-      console.log(`✦ resource template creation took ${Math.floor(time4 - time3)} ms`);
+      entity++;
+      await (await diamond.setComponentValue('Tag', entity, abiCoder.encode(['string'], ['ResourceTemplate']))).wait();
+      await (await diamond.setComponentValue('InventoryType', entity, abiCoder.encode(['string'], ['Gold']))).wait();
+      await (await diamond.setComponentValue('Duration', entity, abiCoder.encode(['uint256'], [1]))).wait();
+      const time6 = performance.now();
+      console.log(`✦ gold template creation took ${Math.floor(time6 - time5)} ms`);
 
       // Randomly initialize players if on localhost
       if (isDev) {
@@ -196,7 +221,7 @@ task('deploy', 'deploy contracts')
 
           await (await diamond.connect(player1).initializePlayer(player1Pos, 'Eve')).wait();
           await (await diamond.connect(player2).initializePlayer(player2Pos, 'Felix')).wait();
-          console.log(`✦ player initialization took ${Math.floor(performance.now() - time4)} ms`);
+          console.log(`✦ player initialization took ${Math.floor(performance.now() - time6)} ms`);
         }
       }
 
