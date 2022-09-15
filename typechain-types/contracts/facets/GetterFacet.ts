@@ -34,13 +34,11 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
 export type TileStruct = {
   isInitialized: PromiseOrValue<boolean>;
   terrain: PromiseOrValue<BigNumberish>;
-  city: PromiseOrValue<BigNumberish>;
 };
 
-export type TileStructOutput = [boolean, number, BigNumber] & {
+export type TileStructOutput = [boolean, number] & {
   isInitialized: boolean;
   terrain: number;
-  city: BigNumber;
 };
 
 export type WorldConstantsStruct = {

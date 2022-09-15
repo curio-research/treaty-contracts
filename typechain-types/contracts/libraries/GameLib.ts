@@ -38,25 +38,26 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
 export type TileStruct = {
   isInitialized: PromiseOrValue<boolean>;
   terrain: PromiseOrValue<BigNumberish>;
-  city: PromiseOrValue<BigNumberish>;
 };
 
-export type TileStructOutput = [boolean, number, BigNumber] & {
+export type TileStructOutput = [boolean, number] & {
   isInitialized: boolean;
   terrain: number;
-  city: BigNumber;
 };
 
 export interface GameLibInterface extends utils.Interface {
   functions: {
     "_adjacent((uint256,uint256),(uint256,uint256))": FunctionFragment;
+    "_adjacentToCity((uint256,uint256),uint256)": FunctionFragment;
     "_coincident((uint256,uint256),(uint256,uint256))": FunctionFragment;
     "_connected((uint256,uint256)[])": FunctionFragment;
     "_euclidean((uint256,uint256),(uint256,uint256))": FunctionFragment;
     "_getBattleOutcome(uint256,uint256,uint256)": FunctionFragment;
+    "_getCityTileCountByLevel(uint256)": FunctionFragment;
+    "_getMapTileAt((uint256,uint256))": FunctionFragment;
     "_getNeighbors((uint256,uint256))": FunctionFragment;
     "_getPlayer(address)": FunctionFragment;
-    "_getTileAt((uint256,uint256))": FunctionFragment;
+    "_getSettlerHealthAndSpeedByLevel(uint256)": FunctionFragment;
     "_inBound((uint256,uint256))": FunctionFragment;
     "_random(uint256,uint256)": FunctionFragment;
     "_strEq(string,string)": FunctionFragment;
@@ -67,13 +68,16 @@ export interface GameLibInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "_adjacent"
+      | "_adjacentToCity"
       | "_coincident"
       | "_connected"
       | "_euclidean"
       | "_getBattleOutcome"
+      | "_getCityTileCountByLevel"
+      | "_getMapTileAt"
       | "_getNeighbors"
       | "_getPlayer"
-      | "_getTileAt"
+      | "_getSettlerHealthAndSpeedByLevel"
       | "_inBound"
       | "_random"
       | "_strEq"
@@ -84,6 +88,10 @@ export interface GameLibInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "_adjacent",
     values: [PositionStruct, PositionStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_adjacentToCity",
+    values: [PositionStruct, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "_coincident",
@@ -106,6 +114,14 @@ export interface GameLibInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
+    functionFragment: "_getCityTileCountByLevel",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getMapTileAt",
+    values: [PositionStruct]
+  ): string;
+  encodeFunctionData(
     functionFragment: "_getNeighbors",
     values: [PositionStruct]
   ): string;
@@ -114,8 +130,8 @@ export interface GameLibInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "_getTileAt",
-    values: [PositionStruct]
+    functionFragment: "_getSettlerHealthAndSpeedByLevel",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "_inBound",
@@ -140,6 +156,10 @@ export interface GameLibInterface extends utils.Interface {
 
   decodeFunctionResult(functionFragment: "_adjacent", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "_adjacentToCity",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "_coincident",
     data: BytesLike
   ): Result;
@@ -150,11 +170,22 @@ export interface GameLibInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "_getCityTileCountByLevel",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_getMapTileAt",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "_getNeighbors",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "_getPlayer", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "_getTileAt", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "_getSettlerHealthAndSpeedByLevel",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "_inBound", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "_random", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "_strEq", data: BytesLike): Result;
@@ -216,6 +247,12 @@ export interface GameLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    _adjacentToCity(
+      _position: PositionStruct,
+      _cityID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     _coincident(
       _p1: PositionStruct,
       _p2: PositionStruct,
@@ -242,6 +279,16 @@ export interface GameLib extends BaseContract {
       [BigNumber, BigNumber] & { _damageOn1: BigNumber; _damageOn2: BigNumber }
     >;
 
+    _getCityTileCountByLevel(
+      _level: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    _getMapTileAt(
+      _position: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<[TileStructOutput]>;
+
     _getNeighbors(
       _position: PositionStruct,
       overrides?: CallOverrides
@@ -252,10 +299,10 @@ export interface GameLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    _getTileAt(
-      _position: PositionStruct,
+    _getSettlerHealthAndSpeedByLevel(
+      _level: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<[TileStructOutput]>;
+    ): Promise<[BigNumber, BigNumber]>;
 
     _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<[boolean]>;
 
@@ -290,6 +337,12 @@ export interface GameLib extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  _adjacentToCity(
+    _position: PositionStruct,
+    _cityID: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   _coincident(
     _p1: PositionStruct,
     _p2: PositionStruct,
@@ -316,6 +369,16 @@ export interface GameLib extends BaseContract {
     [BigNumber, BigNumber] & { _damageOn1: BigNumber; _damageOn2: BigNumber }
   >;
 
+  _getCityTileCountByLevel(
+    _level: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  _getMapTileAt(
+    _position: PositionStruct,
+    overrides?: CallOverrides
+  ): Promise<TileStructOutput>;
+
   _getNeighbors(
     _position: PositionStruct,
     overrides?: CallOverrides
@@ -326,10 +389,10 @@ export interface GameLib extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  _getTileAt(
-    _position: PositionStruct,
+  _getSettlerHealthAndSpeedByLevel(
+    _level: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
-  ): Promise<TileStructOutput>;
+  ): Promise<[BigNumber, BigNumber]>;
 
   _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<boolean>;
 
@@ -364,6 +427,12 @@ export interface GameLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    _adjacentToCity(
+      _position: PositionStruct,
+      _cityID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     _coincident(
       _p1: PositionStruct,
       _p2: PositionStruct,
@@ -390,6 +459,16 @@ export interface GameLib extends BaseContract {
       [BigNumber, BigNumber] & { _damageOn1: BigNumber; _damageOn2: BigNumber }
     >;
 
+    _getCityTileCountByLevel(
+      _level: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getMapTileAt(
+      _position: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<TileStructOutput>;
+
     _getNeighbors(
       _position: PositionStruct,
       overrides?: CallOverrides
@@ -400,10 +479,10 @@ export interface GameLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getTileAt(
-      _position: PositionStruct,
+    _getSettlerHealthAndSpeedByLevel(
+      _level: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<TileStructOutput>;
+    ): Promise<[BigNumber, BigNumber]>;
 
     _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<boolean>;
 
@@ -447,6 +526,12 @@ export interface GameLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _adjacentToCity(
+      _position: PositionStruct,
+      _cityID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     _coincident(
       _p1: PositionStruct,
       _p2: PositionStruct,
@@ -471,6 +556,16 @@ export interface GameLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _getCityTileCountByLevel(
+      _level: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getMapTileAt(
+      _position: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     _getNeighbors(
       _position: PositionStruct,
       overrides?: CallOverrides
@@ -481,8 +576,8 @@ export interface GameLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getTileAt(
-      _position: PositionStruct,
+    _getSettlerHealthAndSpeedByLevel(
+      _level: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -520,6 +615,12 @@ export interface GameLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    _adjacentToCity(
+      _position: PositionStruct,
+      _cityID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     _coincident(
       _p1: PositionStruct,
       _p2: PositionStruct,
@@ -544,6 +645,16 @@ export interface GameLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    _getCityTileCountByLevel(
+      _level: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getMapTileAt(
+      _position: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     _getNeighbors(
       _position: PositionStruct,
       overrides?: CallOverrides
@@ -554,8 +665,8 @@ export interface GameLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _getTileAt(
-      _position: PositionStruct,
+    _getSettlerHealthAndSpeedByLevel(
+      _level: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
