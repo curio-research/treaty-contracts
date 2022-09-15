@@ -22,16 +22,11 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
   y: BigNumber;
 };
 
-export type TileStruct = {
-  isInitialized: boolean;
-  terrain: BigNumberish;
-  city: BigNumberish;
-};
+export type TileStruct = { isInitialized: boolean; terrain: BigNumberish };
 
-export type TileStructOutput = [boolean, number, BigNumber] & {
+export type TileStructOutput = [boolean, number] & {
   isInitialized: boolean;
   terrain: number;
-  city: BigNumber;
 };
 
 export type WorldConstantsStruct = {

@@ -53,16 +53,11 @@ export type FacetStructOutput = [string, string[]] & {
   functionSelectors: string[];
 };
 
-export type TileStruct = {
-  isInitialized: boolean;
-  terrain: BigNumberish;
-  city: BigNumberish;
-};
+export type TileStruct = { isInitialized: boolean; terrain: BigNumberish };
 
-export type TileStructOutput = [boolean, number, BigNumber] & {
+export type TileStructOutput = [boolean, number] & {
   isInitialized: boolean;
   terrain: number;
-  city: BigNumber;
 };
 
 export type WorldConstantsStruct = {
@@ -129,20 +124,17 @@ export interface CurioInterface extends utils.Interface {
     "facetFunctionSelectors(address)": FunctionFragment;
     "facets()": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
-    "_endBattleArmy(uint256)": FunctionFragment;
-    "_endBattleCity(uint256)": FunctionFragment;
-    "_startBattleArmy(uint256,uint256)": FunctionFragment;
-    "_startBattleCity(uint256,uint256)": FunctionFragment;
     "disbandArmy(uint256)": FunctionFragment;
+    "endBattle(uint256,bool)": FunctionFragment;
     "endProduction(uint256,uint256)": FunctionFragment;
-    "foldCity(uint256)": FunctionFragment;
-    "foundCity(uint256,(uint256,uint256)[],(uint256,uint256),string)": FunctionFragment;
+    "foundCity(uint256,(uint256,uint256)[],string)": FunctionFragment;
     "initializePlayer((uint256,uint256),string)": FunctionFragment;
     "moveArmy(uint256,(uint256,uint256))": FunctionFragment;
     "moveSettler(uint256,(uint256,uint256))": FunctionFragment;
     "organizeArmy(uint256,uint256[],uint256[])": FunctionFragment;
+    "packCity(uint256)": FunctionFragment;
+    "startBattle(uint256,uint256)": FunctionFragment;
     "startProduction(uint256,uint256,uint256)": FunctionFragment;
-    "unfoldCity(uint256)": FunctionFragment;
     "upgradeCity(uint256,(uint256,uint256)[])": FunctionFragment;
     "getComponent(string)": FunctionFragment;
     "getComponentById(uint256)": FunctionFragment;
@@ -224,36 +216,20 @@ export interface CurioInterface extends utils.Interface {
     values: [BytesLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "_endBattleArmy",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_endBattleCity",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_startBattleArmy",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_startBattleCity",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "disbandArmy",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "endBattle",
+    values: [BigNumberish, boolean]
   ): string;
   encodeFunctionData(
     functionFragment: "endProduction",
     values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "foldCity",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "foundCity",
-    values: [BigNumberish, PositionStruct[], PositionStruct, string]
+    values: [BigNumberish, PositionStruct[], string]
   ): string;
   encodeFunctionData(
     functionFragment: "initializePlayer",
@@ -272,12 +248,16 @@ export interface CurioInterface extends utils.Interface {
     values: [BigNumberish, BigNumberish[], BigNumberish[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "startProduction",
-    values: [BigNumberish, BigNumberish, BigNumberish]
+    functionFragment: "packCity",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "unfoldCity",
-    values: [BigNumberish]
+    functionFragment: "startBattle",
+    values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "startProduction",
+    values: [BigNumberish, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "upgradeCity",
@@ -443,30 +423,14 @@ export interface CurioInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "_endBattleArmy",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_endBattleCity",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_startBattleArmy",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_startBattleCity",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "disbandArmy",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "endBattle", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "endProduction",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "foldCity", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "foundCity", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "initializePlayer",
@@ -481,11 +445,15 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "organizeArmy",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "packCity", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "startBattle",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "startProduction",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "unfoldCity", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "upgradeCity",
     data: BytesLike
@@ -756,30 +724,14 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    _endBattleArmy(
-      _armyID: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    _endBattleCity(
-      _armyID: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    _startBattleArmy(
-      _armyID: BigNumberish,
-      _targetArmyID: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    _startBattleCity(
-      _armyID: BigNumberish,
-      _cityID: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     disbandArmy(
       _armyID: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    endBattle(
+      _armyID: BigNumberish,
+      _isBattlingArmy: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -789,15 +741,9 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    foldCity(
-      _cityID: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     foundCity(
       _settlerID: BigNumberish,
       _territory: PositionStruct[],
-      _centerPosition: PositionStruct,
       _cityName: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -827,15 +773,21 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    packCity(
+      _cityID: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    startBattle(
+      _armyID: BigNumberish,
+      _targetID: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     startProduction(
       _buildingID: BigNumberish,
       _templateID: BigNumberish,
       _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    unfoldCity(
-      _settlerID: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -1059,30 +1011,14 @@ export interface Curio extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  _endBattleArmy(
-    _armyID: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  _endBattleCity(
-    _armyID: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  _startBattleArmy(
-    _armyID: BigNumberish,
-    _targetArmyID: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  _startBattleCity(
-    _armyID: BigNumberish,
-    _cityID: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   disbandArmy(
     _armyID: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  endBattle(
+    _armyID: BigNumberish,
+    _isBattlingArmy: boolean,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1092,15 +1028,9 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  foldCity(
-    _cityID: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   foundCity(
     _settlerID: BigNumberish,
     _territory: PositionStruct[],
-    _centerPosition: PositionStruct,
     _cityName: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -1130,15 +1060,21 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  packCity(
+    _cityID: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  startBattle(
+    _armyID: BigNumberish,
+    _targetID: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   startProduction(
     _buildingID: BigNumberish,
     _templateID: BigNumberish,
     _amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  unfoldCity(
-    _settlerID: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1348,30 +1284,14 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    _endBattleArmy(
-      _armyID: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    _endBattleCity(
-      _armyID: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    _startBattleArmy(
-      _armyID: BigNumberish,
-      _targetArmyID: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    _startBattleCity(
-      _armyID: BigNumberish,
-      _cityID: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     disbandArmy(
       _armyID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    endBattle(
+      _armyID: BigNumberish,
+      _isBattlingArmy: boolean,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1381,18 +1301,12 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    foldCity(
-      _cityID: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     foundCity(
       _settlerID: BigNumberish,
       _territory: PositionStruct[],
-      _centerPosition: PositionStruct,
       _cityName: string,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<void>;
 
     initializePlayer(
       _position: PositionStruct,
@@ -1421,17 +1335,20 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    packCity(_cityID: BigNumberish, overrides?: CallOverrides): Promise<void>;
+
+    startBattle(
+      _armyID: BigNumberish,
+      _targetID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     startProduction(
       _buildingID: BigNumberish,
       _templateID: BigNumberish,
       _amount: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    unfoldCity(
-      _settlerID: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     upgradeCity(
       _cityID: BigNumberish,
@@ -1702,30 +1619,14 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _endBattleArmy(
-      _armyID: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    _endBattleCity(
-      _armyID: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    _startBattleArmy(
-      _armyID: BigNumberish,
-      _targetArmyID: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    _startBattleCity(
-      _armyID: BigNumberish,
-      _cityID: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     disbandArmy(
       _armyID: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    endBattle(
+      _armyID: BigNumberish,
+      _isBattlingArmy: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -1735,15 +1636,9 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    foldCity(
-      _cityID: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     foundCity(
       _settlerID: BigNumberish,
       _territory: PositionStruct[],
-      _centerPosition: PositionStruct,
       _cityName: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -1773,15 +1668,21 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    packCity(
+      _cityID: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    startBattle(
+      _armyID: BigNumberish,
+      _targetID: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     startProduction(
       _buildingID: BigNumberish,
       _templateID: BigNumberish,
       _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    unfoldCity(
-      _settlerID: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -2001,30 +1902,14 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _endBattleArmy(
-      _armyID: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    _endBattleCity(
-      _armyID: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    _startBattleArmy(
-      _armyID: BigNumberish,
-      _targetArmyID: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    _startBattleCity(
-      _armyID: BigNumberish,
-      _cityID: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     disbandArmy(
       _armyID: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    endBattle(
+      _armyID: BigNumberish,
+      _isBattlingArmy: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2034,15 +1919,9 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    foldCity(
-      _cityID: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     foundCity(
       _settlerID: BigNumberish,
       _territory: PositionStruct[],
-      _centerPosition: PositionStruct,
       _cityName: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -2072,15 +1951,21 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
+    packCity(
+      _cityID: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    startBattle(
+      _armyID: BigNumberish,
+      _targetID: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
     startProduction(
       _buildingID: BigNumberish,
       _templateID: BigNumberish,
       _amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    unfoldCity(
-      _settlerID: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

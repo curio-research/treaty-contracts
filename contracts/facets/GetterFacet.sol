@@ -25,7 +25,7 @@ contract GetterFacet is UseStorage {
     }
 
     function getTileAt(Position memory _pos) external view returns (Tile memory) {
-        return GameLib._getTileAt(_pos);
+        return GameLib._getMapTileAt(_pos);
     }
 
     function getWorldConstants() external view returns (WorldConstants memory) {
