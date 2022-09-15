@@ -76,6 +76,7 @@ export type WorldConstantsStruct = {
   maxPlayerCount: BigNumberish;
   maxInventoryCapacity: BigNumberish;
   cityUpgradeGoldCost: BigNumberish;
+  initCityGold: BigNumberish;
   cityHealth: BigNumberish;
   cityAttack: BigNumberish;
   cityDefense: BigNumberish;
@@ -83,6 +84,7 @@ export type WorldConstantsStruct = {
 
 export type WorldConstantsStructOutput = [
   string,
+  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -106,6 +108,7 @@ export type WorldConstantsStructOutput = [
   maxPlayerCount: BigNumber;
   maxInventoryCapacity: BigNumber;
   cityUpgradeGoldCost: BigNumber;
+  initCityGold: BigNumber;
   cityHealth: BigNumber;
   cityAttack: BigNumber;
   cityDefense: BigNumber;

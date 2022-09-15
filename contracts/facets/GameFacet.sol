@@ -134,6 +134,14 @@ contract GameFacet is UseStorage {
         // Initialize guard
         GameLib._addGuard(_cityID);
 
+        // Add some gold
+        uint256 _goldInventoryID = ECSLib._addEntity();
+        ECSLib._setString("Tag", _goldInventoryID, "Inventory");
+        ECSLib._setUint("City", _goldInventoryID, _cityID);
+        ECSLib._setUint("Building", _goldInventoryID, _cityCenterID);
+        ECSLib._setUint("Template", _goldInventoryID, GameLib._getTemplateByInventoryType("Gold"));
+        ECSLib._setUint("Amount", _goldInventoryID, gs().worldConstants.initCityGold);
+
         // Initialize its resources
         // TODO
     }
@@ -154,7 +162,7 @@ contract GameFacet is UseStorage {
 
         // Verify that city has enough gold
         uint256 _goldInventoryID = GameLib._getInventory(_cityID, GameLib._getTemplateByInventoryType("Gold"));
-        uint256 _balance = ECSLib._getUint("Amount", _goldInventoryID);
+        uint256 _balance = _goldInventoryID != NULL ? ECSLib._getUint("Amount", _goldInventoryID) : 0;
         uint256 _cost = gs().worldConstants.cityUpgradeGoldCost;
         require(_balance >= _cost, "CURIO: Insufficient gold balance");
 

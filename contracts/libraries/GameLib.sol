@@ -199,9 +199,17 @@ library GameLib {
     function _getTemplateByInventoryType(string memory _inventoryType) public returns (uint256) {
         Set _set1 = new Set();
         Set _set2 = new Set();
-        _set1.addArray(ECSLib._getStringComponent("Tag").getEntitiesWithValue(string("Template")));
-        _set2.addArray(ECSLib._getStringComponent("InventoryType").getEntitiesWithValue(_inventoryType));
-        uint256[] memory _result = ECSLib._intersection(_set1, _set2);
+        Set _set3 = new Set();
+        _set1.addArray(ECSLib._getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate")));
+        _set2.addArray(ECSLib._getStringComponent("Tag").getEntitiesWithValue(string("TroopTemplate")));
+        _set3.addArray(ECSLib._getStringComponent("InventoryType").getEntitiesWithValue(_inventoryType));
+        uint256[] memory _inter1 = ECSLib._intersection(_set1, _set3);
+        uint256[] memory _inter2 = ECSLib._intersection(_set2, _set3);
+        _set1 = new Set();
+        _set2 = new Set();
+        _set1.addArray(_inter1);
+        _set2.addArray(_inter2);
+        uint256[] memory _result = ECSLib._union(_set1, _set2);
 
         assert(_result.length <= 1);
         return _result.length == 1 ? _result[0] : _NULL();

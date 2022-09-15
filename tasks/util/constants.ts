@@ -35,13 +35,14 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): W
     maxPlayerCount: 20,
     maxInventoryCapacity: 80,
     cityUpgradeGoldCost: 500,
+    initCityGold: 1000,
     cityHealth: 500,
     cityAttack: 50,
     cityDefense: 10,
   };
 };
 
-export const TAGS = ['Player', 'Settler', 'TroopTemplate', 'City', 'Building', 'Resource', 'ResourceInventory', 'TroopInventory', 'Army'];
+export const TAGS = ['Player', 'Settler', 'ResourceTemplate', 'TroopTemplate', 'City', 'Building', 'Resource', 'ResourceInventory', 'TroopInventory', 'Army'];
 
 // ----------------------------------------------------------
 // RENDERING CONSTANTS
