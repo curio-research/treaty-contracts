@@ -81,7 +81,7 @@ contract GameFacet is UseStorage {
         require(GameLib._inBound(_targetPosition), "CURIO: Out of bound");
 
         // Check speed and cooldown
-        require(ECSLib._getUint("LastMoved", _settlerID) < block.timestamp, "CURIO: Need more time till next move");
+        // require(ECSLib._getUint("LastMoved", _settlerID) < block.timestamp, "CURIO: Need more time till next move");
         require(ECSLib._getUint("Speed", _settlerID) >= GameLib._euclidean(ECSLib._getPosition("Position", _settlerID), _targetPosition), "CURIO: Not fast enough");
 
         ECSLib._setPosition("Position", _settlerID, _targetPosition);
@@ -298,7 +298,7 @@ contract GameFacet is UseStorage {
         require(ECSLib._getUint("Owner", _cityID) == _playerID, "CURIO: City is not yours");
 
         // Verify that enough time has passed
-        require(ECSLib._getUint("InitTimestamp", _productionID) + ECSLib._getUint("Duration", _productionID) >= block.timestamp, "CURIO: Need more time for production");
+        // require(ECSLib._getUint("InitTimestamp", _productionID) + ECSLib._getUint("Duration", _productionID) >= block.timestamp, "CURIO: Need more time for production");
 
         // Update inventory
         uint256 _inventoryID = ECSLib._getUint("Inventory", _productionID);
