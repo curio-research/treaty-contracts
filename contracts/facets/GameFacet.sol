@@ -26,7 +26,7 @@ contract GameFacet is UseStorage {
         require(gs().players.length < gs().worldConstants.maxPlayerCount, "CURIO: Max player count exceeded");
         require(gs().playerEntityMap[msg.sender] == NULL, "CURIO: Player already initialized");
         require(GameLib._inBound(_position), "CURIO: Out of bound");
-        if (!GameLib._getTileAt(_position).isInitialized) GameLib._initializeTile(_position);
+        if (!GameLib._getMapTileAt(_position).isInitialized) GameLib._initializeTile(_position);
 
         // Spawn player
         _playerID = ECSLib._addEntity();
@@ -34,7 +34,6 @@ contract GameFacet is UseStorage {
         ECSLib._setString("Name", _playerID, _name);
         ECSLib._setString("Tag", _playerID, "Player");
         ECSLib._setUint("InitTimestamp", _playerID, block.timestamp);
-        ECSLib._setUint("BalanceLastUpdated", _playerID, block.timestamp);
         gs().players.push(msg.sender);
         gs().playerEntityMap[msg.sender] = _playerID;
 
@@ -43,10 +42,21 @@ contract GameFacet is UseStorage {
         ECSLib._setString("Tag", _settlerID, "Settler");
         ECSLib._setPosition("Position", _settlerID, _position);
         ECSLib._setUint("Owner", _settlerID, _playerID);
+        ECSLib._setUint("Level", _settlerID, 1);
         ECSLib._setBool("CanSettle", _settlerID);
         ECSLib._setUint("Health", _settlerID, 1); // FIXME
         ECSLib._setUint("Speed", _settlerID, 1); // FIXME
         ECSLib._setUint("LastMoved", _settlerID, block.timestamp);
+
+        // Initialize guard which stays with eventual city
+        GameLib._addGuard(_settlerID);
+
+        // Add gold to eventual city
+        uint256 _goldInventoryID = ECSLib._addEntity();
+        ECSLib._setString("Tag", _goldInventoryID, "ResourceInventory");
+        ECSLib._setUint("City", _goldInventoryID, _settlerID);
+        ECSLib._setUint("Template", _goldInventoryID, GameLib._getTemplateByInventoryType("Gold"));
+        ECSLib._setUint("Amount", _goldInventoryID, gs().worldConstants.initCityGold);
     }
 
     // ----------------------------------------------------------
@@ -81,9 +91,8 @@ contract GameFacet is UseStorage {
     function foundCity(
         uint256 _settlerID,
         Position[] memory _territory,
-        Position memory _centerPosition,
         string memory _cityName
-    ) external returns (uint256 _cityID) {
+    ) external {
         // Verify that settler exists as an entity
         require(Set(gs().entities).includes(_settlerID), "CURIO: Settler not found");
 
@@ -97,18 +106,22 @@ contract GameFacet is UseStorage {
         // Verify that settler belongs to player
         require(ECSLib._getUint("Owner", _settlerID) == _playerID, "CURIO: Settler is not yours");
 
-        _cityID = ECSLib._addEntity();
+        // Verify that settler can settle
+        require(ECSLib._getBool("CanSettle", _settlerID), "CURIO: Settler cannot settle");
 
-        // Verify that territory is connected
+        // Verify that territory is connected and includes settler's current position
         // FIXME: right now, territory must be selected in a way in which each position is next to the next position in the array
-        require(GameLib._connected(_territory), "CURIO: Territory not connected");
+        Position memory _centerPosition = ECSLib._getPosition("Position", _settlerID);
+        require(GameLib._connected(_territory), "CURIO: Territory disconnected");
+        require(GameLib._includesPosition(_centerPosition, _territory), "CURIO: Territory must cover settler's current position");
 
-        // Verify that territory is wholly in bound and does not overlap with other cities
+        uint256 _cityID = _settlerID;
+
+        // Verify that territory is wholly in bound and does not overlap with other cities, and initialize tiles
         for (uint256 i = 0; i < _territory.length; i++) {
             require(GameLib._inBound(_territory[i]), "CURIO: Out of bound");
-            require(GameLib._getTileAt(_territory[i]).city == NULL, "CURIO: Territory overlaps with another city");
-            gs().map[_territory[i].x][_territory[i].y].city = _cityID;
-            if (!GameLib._getTileAt(_territory[i]).isInitialized) GameLib._initializeTile(_territory[i]);
+            require(ECSLib._getUint("City", GameLib._getTileAt(_territory[i])) == NULL, "CURIO: Territory overlaps with another city");
+            if (!GameLib._getMapTileAt(_territory[i]).isInitialized) GameLib._initializeTile(_territory[i]);
 
             uint256 _tile = ECSLib._addEntity();
             ECSLib._setString("Tag", _tile, "Tile");
@@ -116,34 +129,59 @@ contract GameFacet is UseStorage {
             ECSLib._setUint("City", _tile, _cityID);
         }
 
-        // Found a city
+        // Convert the settler to a city
+        ECSLib._removeBool("CanSettle", _cityID);
+        ECSLib._removeUint("Health", _cityID);
+        ECSLib._removeUint("Speed", _cityID);
+        ECSLib._removeUint("LastMoved", _cityID);
         ECSLib._setString("Tag", _cityID, "City");
         ECSLib._setString("Name", _cityID, _cityName);
-        ECSLib._setUint("Owner", _cityID, _playerID);
         ECSLib._setBool("CanProduce", _cityID);
-        ECSLib._setUint("Level", _cityID, 1);
-        ECSLib._setUint("BalanceLastUpdated", _cityID, block.timestamp);
 
-        // Build city center
+        // Spawn city center
         uint256 _cityCenterID = ECSLib._addEntity();
         ECSLib._setString("Tag", _cityCenterID, "Building");
         ECSLib._setPosition("Position", _cityCenterID, _centerPosition);
         ECSLib._setUint("City", _cityCenterID, _cityID);
         ECSLib._setString("BuildingType", _cityCenterID, "City Center");
+    }
 
-        // Initialize guard
-        GameLib._addGuard(_cityID);
+    /// @notice This function can be viewed as the inverse of `foundCity`, as it converts a city back into a settler.
+    function packCity(uint256 _cityID) external {
+        // Verify that city exists as an entity
+        require(Set(gs().entities).includes(_cityID), "CURIO: City not found");
 
-        // Add some gold
-        uint256 _goldInventoryID = ECSLib._addEntity();
-        ECSLib._setString("Tag", _goldInventoryID, "Inventory");
-        ECSLib._setUint("City", _goldInventoryID, _cityID);
-        ECSLib._setUint("Building", _goldInventoryID, _cityCenterID);
-        ECSLib._setUint("Template", _goldInventoryID, GameLib._getTemplateByInventoryType("Gold"));
-        ECSLib._setUint("Amount", _goldInventoryID, gs().worldConstants.initCityGold);
+        // Verify that game is ongoing
+        require(!gs().isPaused, "CURIO: Game is paused");
 
-        // Initialize its resources
-        // TODO
+        // Verify that player is active
+        uint256 _playerID = GameLib._getPlayer(msg.sender);
+        require(ECSLib._getBoolComponent("IsActive").has(_playerID), "CURIO: You are inactive");
+
+        // Verify that city belongs to player
+        require(ECSLib._getUint("Owner", _cityID) == _playerID, "CURIO: City is not yours");
+
+        uint256 _settlerID = _cityID;
+
+        // Remove city tiles
+        uint256[] memory _tileIDs = GameLib._getCityTiles(_cityID);
+        assert(_tileIDs.length == GameLib._getCityTileCountByLevel(ECSLib._getUint("Level", _cityID)));
+        for (uint256 i = 0; i < _tileIDs.length; i++) {
+            ECSLib._removeEntity(_tileIDs[i]);
+        }
+
+        // Convert the settler to a city
+        (uint256 _health, uint256 _speed) = GameLib._getSettlerHealthAndSpeedByLevel(ECSLib._getUint("Level", _settlerID));
+        ECSLib._setBool("CanSettle", _settlerID);
+        ECSLib._setUint("Health", _settlerID, _health);
+        ECSLib._setUint("Speed", _settlerID, _speed);
+        ECSLib._setUint("LastMoved", _settlerID, block.timestamp);
+        ECSLib._setString("Tag", _settlerID, "Settler");
+        ECSLib._removeString("Name", _settlerID);
+        ECSLib._removeBool("CanProduce", _settlerID);
+
+        // Remove city center
+        ECSLib._removeEntity(GameLib._getCityCenter(_cityID));
     }
 
     function upgradeCity(uint256 _cityID, Position[] memory _newTerritory) external {
@@ -166,31 +204,29 @@ contract GameFacet is UseStorage {
         uint256 _cost = gs().worldConstants.cityUpgradeGoldCost;
         require(_balance >= _cost, "CURIO: Insufficient gold balance");
 
+        uint256 _level = ECSLib._getUint("Level", _cityID);
+        require(_newTerritory.length == GameLib._getCityTileCountByLevel(_level + 1) - GameLib._getCityTileCountByLevel(_level), "CURIO: New territory tile count is incorrect");
+
         // Verify that territory is connected
-        // FIXME: right now, territory must be selected in a way in which each position is next to the next position in the array
         require(GameLib._connected(_newTerritory), "CURIO: Territory not connected");
 
         // Verify that territory is wholly in bound and does not overlap with other cities
         for (uint256 i = 0; i < _newTerritory.length; i++) {
             require(GameLib._inBound(_newTerritory[i]), "CURIO: Out of bound");
-            require(GameLib._getTileAt(_newTerritory[i]).city == NULL, "CURIO: Territory overlaps with another city");
-            gs().map[_newTerritory[i].x][_newTerritory[i].y].city = _cityID;
-            if (!GameLib._getTileAt(_newTerritory[i]).isInitialized) GameLib._initializeTile(_newTerritory[i]);
+            require(ECSLib._getUint("City", GameLib._getTileAt(_newTerritory[i])) == NULL, "CURIO: Territory overlaps with another city");
+            if (!GameLib._getMapTileAt(_newTerritory[i]).isInitialized) GameLib._initializeTile(_newTerritory[i]);
+
+            uint256 _tile = ECSLib._addEntity();
+            ECSLib._setString("Tag", _tile, "Tile");
+            ECSLib._setPosition("Position", _tile, _newTerritory[i]);
+            ECSLib._setUint("City", _tile, _cityID);
         }
 
         // Expend resources
         ECSLib._setUint("Amount", _goldInventoryID, _balance - _cost);
 
         // Upgrade city
-        ECSLib._setUint("Level", _cityID, ECSLib._getUint("Level", _cityID) + 1);
-    }
-
-    function foldCity(uint256 _cityID) external returns (uint256 _settlerID) {
-        // TODO later
-    }
-
-    function unfoldCity(uint256 _settlerID) external {
-        // TODO later
+        ECSLib._setUint("Level", _cityID, _level + 1);
     }
 
     // ----------------------------------------------------------
@@ -217,11 +253,15 @@ contract GameFacet is UseStorage {
         uint256 _cityID = ECSLib._getUint("City", _buildingID);
         require(ECSLib._getUint("Owner", _cityID) == _playerID, "CURIO: City is not yours");
 
+        // Verify that city can produce
+        require(ECSLib._getBool("CanProduce", _cityID), "CURIO: City cannot produce");
+
         // Create inventory if no exist, and verify that amount does not exceed ceiling
+        bool _isResource = GameLib._strEq(ECSLib._getString("Tag", _templateID), "ResourceTemplate");
         uint256 _inventoryID = GameLib._getInventory(_cityID, _templateID);
         if (_inventoryID == NULL) {
             _inventoryID = ECSLib._addEntity();
-            ECSLib._setString("Tag", _inventoryID, "Inventory");
+            ECSLib._setString("Tag", _inventoryID, _isResource ? "ResourceInventory" : "TroopInventory");
             ECSLib._setUint("City", _inventoryID, _cityID);
             ECSLib._setUint("Building", _inventoryID, _buildingID);
             ECSLib._setUint("Template", _inventoryID, _templateID);
@@ -375,8 +415,9 @@ contract GameFacet is UseStorage {
         // Verify that army belongs to player
         require(ECSLib._getUint("Owner", _armyID) == _playerID, "CURIO: Army is not yours");
 
-        // Verify that position is in bound
+        // Verify that position is in bound, and initialize tile
         require(GameLib._inBound(_targetPosition), "CURIO: Out of bound");
+        if (!GameLib._getMapTileAt(_targetPosition).isInitialized) GameLib._initializeTile(_targetPosition);
 
         // Check speed and cooldown
         require(ECSLib._getUint("LastMoved", _armyID) < block.timestamp, "CURIO: Need more time till next move");
@@ -389,7 +430,24 @@ contract GameFacet is UseStorage {
         ECSLib._setPosition("Position", _armyID, _targetPosition);
     }
 
-    function _startBattleArmy(uint256 _armyID, uint256 _targetArmyID) external {
+    function startBattle(uint256 _armyID, uint256 _targetID) external {
+        if (GameLib._strEq(ECSLib._getString("Tag", _targetID), "Army")) {
+            _startBattleArmy(_armyID, _targetID);
+        } else {
+            _startBattleCity(_armyID, _targetID);
+        }
+    }
+
+    function endBattle(uint256 _armyID, bool _isBattlingArmy) external {
+        if (_isBattlingArmy) {
+            // FIXME: temporary distinguisher for army or city
+            _endBattleArmy(_armyID);
+        } else {
+            _endBattleCity(_armyID);
+        }
+    }
+
+    function _startBattleArmy(uint256 _armyID, uint256 _targetArmyID) private {
         // Verify that armies exist as entities
         require(Set(gs().entities).includes(_armyID), "CURIO: Army not found");
         require(Set(gs().entities).includes(_targetArmyID), "CURIO: Target army not found");
@@ -422,7 +480,7 @@ contract GameFacet is UseStorage {
     /**
      * This function was to be called `retreat`, but I figured since we need to ping the contract side to end battle anyway,
      */
-    function _endBattleArmy(uint256 _armyID) external {
+    function _endBattleArmy(uint256 _armyID) private {
         // Verify that army exists as an entity
         require(Set(gs().entities).includes(_armyID), "CURIO: Army not found");
 
@@ -437,7 +495,7 @@ contract GameFacet is UseStorage {
         require(ECSLib._getUint("Owner", _armyID) == _playerID, "CURIO: Army is not yours");
 
         // Verify that at least one war is happening with the army
-        uint256[] memory _battleIDs = GameLib._getArmyBattles(_armyID);
+        uint256[] memory _battleIDs = GameLib._getBattles(_armyID);
         require(_battleIDs.length >= 1, "CURIO: No battle to end");
 
         // For now, assume there's only one battle
@@ -475,7 +533,7 @@ contract GameFacet is UseStorage {
         // }
     }
 
-    function _startBattleCity(uint256 _armyID, uint256 _cityID) external {
+    function _startBattleCity(uint256 _armyID, uint256 _cityID) private {
         // Verify that army and city exist as entities
         require(Set(gs().entities).includes(_armyID), "CURIO: Army not found");
         require(Set(gs().entities).includes(_cityID), "CURIO: City not found");
@@ -502,7 +560,7 @@ contract GameFacet is UseStorage {
         ECSLib._setUint("Target", _battleID, GameLib._getCityGuard(_cityID));
     }
 
-    function _endBattleCity(uint256 _armyID) external {
+    function _endBattleCity(uint256 _armyID) private {
         // Verify that army exists as an entity
         require(Set(gs().entities).includes(_armyID), "CURIO: Army not found");
 
@@ -517,7 +575,7 @@ contract GameFacet is UseStorage {
         require(ECSLib._getUint("Owner", _armyID) == _playerID, "CURIO: Army is not yours");
 
         // Verify that at least one war is happening with the army
-        uint256[] memory _battleIDs = GameLib._getArmyBattles(_armyID);
+        uint256[] memory _battleIDs = GameLib._getBattles(_armyID);
         require(_battleIDs.length >= 1, "CURIO: No battle to end");
 
         // For now, assume there's only one battle

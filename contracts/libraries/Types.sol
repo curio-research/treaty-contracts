@@ -33,7 +33,6 @@ struct Position {
 struct Tile {
     bool isInitialized;
     TERRAIN terrain;
-    uint256 city;
 }
 
 struct WorldConstants {
