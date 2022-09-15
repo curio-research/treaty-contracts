@@ -34,6 +34,7 @@ contract GameFacet is UseStorage {
         ECSLib._setString("Name", _playerID, _name);
         ECSLib._setString("Tag", _playerID, "Player");
         ECSLib._setUint("InitTimestamp", _playerID, block.timestamp);
+        ECSLib._setAddress("Address", _playerID, msg.sender);
         gs().players.push(msg.sender);
         gs().playerEntityMap[msg.sender] = _playerID;
 

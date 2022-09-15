@@ -77,7 +77,7 @@ contract AdminFacet is UseStorage {
     }
 
     function registerDefaultComponents(address _gameAddr) external onlyAdmin {
-        ComponentSpec[] memory _componentSpecs = new ComponentSpec[](30);
+        ComponentSpec[] memory _componentSpecs = new ComponentSpec[](31);
 
         _componentSpecs[0] = ComponentSpec({name: "IsComponent", valueType: VALUE_TYPE.BOOL});
         _componentSpecs[1] = ComponentSpec({name: "Tag", valueType: VALUE_TYPE.STRING});
@@ -109,6 +109,7 @@ contract AdminFacet is UseStorage {
         _componentSpecs[27] = ComponentSpec({name: "Source", valueType: VALUE_TYPE.UINT});
         _componentSpecs[28] = ComponentSpec({name: "Target", valueType: VALUE_TYPE.UINT});
         _componentSpecs[29] = ComponentSpec({name: "Inventory", valueType: VALUE_TYPE.UINT});
+        _componentSpecs[30] = ComponentSpec({name: "Address", valueType: VALUE_TYPE.ADDRESS});
 
         GameLib._registerComponents(_gameAddr, _componentSpecs);
     }
