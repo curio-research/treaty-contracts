@@ -362,6 +362,14 @@ contract GameFacet is UseStorage {
     }
 
     function moveArmy(uint256 _armyID, Position memory _targetPosition) external {
+        // verify that player's binding treaty approves the move
+        uint256 _playerID = GameLib._getPlayer(msg.sender);
+        address _treatyAddress = ECSLib._getAddress("SignedTreaty", _playerID);
+
+        (bool success, bytes memory returnData) = _treatyAddress.call(abi.encodeWithSignature("joinTreaty()"));
+        require(success, "CRUIO: Failed to call the external treaty");
+        require(abi.decode(returnData, (bool)), "CRUIO: your signed treaty does not approve your action");
+
         // Verify that army exists as an entity
         require(Set(gs().entities).includes(_armyID), "CURIO: Army not found");
 
@@ -369,7 +377,6 @@ contract GameFacet is UseStorage {
         require(!gs().isPaused, "CURIO: Game is paused");
 
         // Verify that player is active
-        uint256 _playerID = GameLib._getPlayer(msg.sender);
         require(ECSLib._getBoolComponent("IsActive").has(_playerID), "CURIO: You are inactive");
 
         // Verify that army belongs to player
@@ -538,5 +545,23 @@ contract GameFacet is UseStorage {
         } else {
             GameLib._damageArmy(_armyID, _damageOnArmy);
         }
+    }
+
+    // TODO: _setAddress => _setAddressArray
+    function joinTreaty(address _treatyAddress) external {
+        uint256 _playerID = GameLib._getPlayer(msg.sender);
+        // Verify that player is active
+        require(ECSLib._getBoolComponent("IsActive").has(_playerID), "CURIO: You are inactive");
+
+        // Verify that game is ongoing
+        require(!gs().isPaused, "CURIO: Game is paused");
+
+        (bool success, bytes memory returnData) = _treatyAddress.call(abi.encodeWithSignature("joinTreaty()"));
+
+        require(success, "CRUIO: Failed to call the external treaty");
+        require(abi.decode(returnData, (bool)), "CRUIO: The treaty rejects your application");
+
+        ECSLib._setAddress("SignedTreaty", _playerID, _treatyAddress);
+        
     }
 }
