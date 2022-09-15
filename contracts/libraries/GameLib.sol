@@ -252,17 +252,6 @@ library GameLib {
         _damageOn2 = _attack1 > _defense2 ? (_attack1 - _defense2) * _duration : 0;
     }
 
-    // function _getArmyHealth(uint256[] memory _troopEntities) public view returns (uint256) {
-    //     // take the sum
-    //     uint256 _totalHealth;
-
-    //     for (uint256 i = 0; i < _troopEntities.length; i++) {
-    //         _totalHealth += ECSLib._getUint("Health", _troopEntities[i]);
-    //     }
-
-    //     return _totalHealth;
-    // }
-
     // function _getDebuffedArmyDamagePerHit(uint256[] memory _troopEntities) public view returns (uint256) {
     //     uint256 _infantryPercentage = _getInfantryPercentage(_troopEntities);
     //     uint256 _debuffFactor = (gs().worldConstants.debuffFactor * (100 - _infantryPercentage)) / 100; // Only non-infantries are debuffed

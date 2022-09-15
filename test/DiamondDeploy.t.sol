@@ -216,19 +216,7 @@ contract DiamondDeployTest is Test {
 
     // Note: hardcoded
     function _generateWorldConstants() internal view returns (WorldConstants memory) {
-        return
-            WorldConstants({
-                admin: deployer,
-                worldWidth: 1000,
-                worldHeight: 1000,
-                numInitTerrainTypes: 1,
-                initBatchSize: 100,
-                maxCityCountPerPlayer: 20,
-                maxArmyCountPerPlayer: 20,
-                maxPlayerCount: 50,
-                maxInventoryCapacity: 80, //
-                cityUpgradeGoldCost: 500
-            });
+        return WorldConstants({admin: deployer, worldWidth: 1000, worldHeight: 1000, numInitTerrainTypes: 1, initBatchSize: 100, maxCityCountPerPlayer: 3, maxArmyCountPerPlayer: 3, maxPlayerCount: 20, maxInventoryCapacity: 5000, cityUpgradeGoldCost: 500, initCityGold: 1000, cityHealth: 500, cityAttack: 50, cityDefense: 10});
     }
 
     // Note: hardcoded
