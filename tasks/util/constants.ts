@@ -1,4 +1,4 @@
-import { WorldConstantsStruct } from './../../typechain-types/Curio';
+import { WorldConstantsStruct } from './../../typechain-types/hardhat-diamond-abi/Curio';
 import { MapInput, RenderInput } from './types';
 
 export const LOCALHOST_RPC_URL = 'http://127.0.0.1:8545/';

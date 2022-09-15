@@ -1,6 +1,5 @@
+import { GameLib, ECSLib } from './../typechain-types';
 import { ethers } from 'ethers';
-import { GameLib } from './../typechain-types/GameLib';
-import { ECSLib } from './../typechain-types/ECSLib';
 import { publishDeployment, isConnectionLive } from './../api/deployment';
 import * as path from 'path';
 import * as fsPromise from 'fs/promises';

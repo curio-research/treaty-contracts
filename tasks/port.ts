@@ -6,19 +6,10 @@ import { task } from 'hardhat/config';
 task('port', 'compile and port contracts over to frontend repo').setAction(async (args: HardhatArguments, hre: HardhatRuntimeEnvironment) => {
   try {
     // delete items in existing directories
-    await fs.emptydirSync(getDir('frontend', ''));
+    await fs.emptydirSync(getDir('vault', ''));
 
-    // create factory folders in each
-    await fs.mkdirSync(getDir('frontend', '/factories'));
-
-    // since hardhat-diamond-abi compiles all files into one, We need to port common.ts, Curio.ts, and Curio__factory.ts
-    // NICE-TO-HAVE: selectively port files, search by file names in the subdirectories
-
-    await portFile('/Curio.ts');
-    await portFile('/common.ts');
-    await portFile('/factories/Curio__factory.ts');
-    await portFile('/Component.ts');
-    await portFile('/factories/Component__factory.ts');
+    // port entire typechain folder to vault
+    await fs.copySync(getDir('local', ''), getDir('vault', ''));
 
     console.log('✦ Porting complete!');
   } catch (err: any) {
@@ -32,7 +23,6 @@ const getDir = (repositoryName: string, filePath: string): string => {
   const prefixSelector = (repoName: string) => {
     if (repoName === 'local') return '../typechain-types';
     if (repoName === 'vault') return '../../vault/src/game/typechain-types';
-    // if (repoName === 'frontend') return '../../frontend/src/network/typechain-types';
   };
   return path.join(__dirname, `${prefixSelector(repositoryName)}${filePath}`);
 };

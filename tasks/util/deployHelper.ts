@@ -1,4 +1,4 @@
-import { Signer, Contract, BigNumber, utils } from 'ethers';
+import { Signer, Contract } from 'ethers';
 import { FactoryOptions, HardhatRuntimeEnvironment } from 'hardhat/types';
 import { LOCALHOST_RPC_URL, LOCALHOST_WS_RPC_URL } from './constants';
 import { GameMapConfig } from './types';
