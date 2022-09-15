@@ -287,8 +287,8 @@ library GameLib {
         _set2.addArray(ECSLib._getStringComponent("Tag").getEntitiesWithValue(string("Tile")));
         uint256[] memory _result = ECSLib._intersection(_set1, _set2);
 
-        assert(_result.length == 1);
-        return _result[0];
+        assert(_result.length <= 1);
+        return _result.length == 1 ? _result[0] : _NULL();
     }
 
     function _getMapTileAt(Position memory _position) public view returns (Tile memory) {
