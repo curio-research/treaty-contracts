@@ -8,8 +8,6 @@ import {Set} from "contracts/Set.sol";
 
 contract ECS is Test, DiamondDeployTest {
     function testPurchaseAndMoveTroop() public {
-        vm.startPrank(player1);
-
         /**
         Logic flow:
         - Initialize two players, Alice and Bob, each with a settler
@@ -70,6 +68,7 @@ contract ECS is Test, DiamondDeployTest {
         // assertEq(_currentPosition.x, 7);
         // assertEq(_currentPosition.y, 1);
 
+        vm.startPrank(player1);
         vm.stopPrank();
     }
 }

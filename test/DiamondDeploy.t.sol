@@ -13,6 +13,7 @@ import "contracts/facets/GetterFacet.sol";
 import "contracts/facets/GameFacet.sol";
 import "contracts/facets/AdminFacet.sol";
 import "contracts/libraries/Types.sol";
+import "contracts/NATO.sol";
 
 /// @title diamond deploy foundry template
 /// @notice This contract sets up the diamond for testing and is inherited by other foundry test contracts.
@@ -32,6 +33,9 @@ contract DiamondDeployTest is Test {
     GetterFacet public getter;
     AdminFacet public admin;
     OwnershipFacet public ownership;
+
+    // treaties
+    NATO public nato;
 
     uint256 public NULL = 0;
     address public NULL_ADDR = address(0);
@@ -120,6 +124,8 @@ contract DiamondDeployTest is Test {
         getterFacet = new GetterFacet();
         adminFacet = new AdminFacet();
         WorldConstants memory _worldConstants = _generateWorldConstants();
+
+        nato = new NATO();
 
         // Fetch args from CLI craft payload for init deploy
         bytes memory initData = abi.encodeWithSelector(getSelectors("DiamondInit")[0], _worldConstants);
@@ -223,11 +229,15 @@ contract DiamondDeployTest is Test {
                 worldHeight: 1000,
                 numInitTerrainTypes: 1,
                 initBatchSize: 100,
-                maxCityCountPerPlayer: 20,
-                maxArmyCountPerPlayer: 20,
-                maxPlayerCount: 50,
-                maxInventoryCapacity: 80, //
-                cityUpgradeGoldCost: 500
+                maxCityCountPerPlayer: 3,
+                maxArmyCountPerPlayer: 3,
+                maxPlayerCount: 20,
+                maxInventoryCapacity: 5000,
+                cityUpgradeGoldCost: 500,
+                initCityGold: 1000,
+                cityHealth: 500,
+                cityAttack: 50,
+                cityDefense: 10 //
             });
     }
 

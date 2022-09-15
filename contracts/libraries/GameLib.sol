@@ -137,7 +137,23 @@ library GameLib {
     // LOGIC GETTERS
     // ----------------------------------------------------------
 
-    function _getArmyBattles(uint256 _armyID) public returns (uint256[] memory) {
+    function _getPlayerSignatures(uint256 _playerID) public returns (uint256[] memory) {
+        Set _set1 = new Set();
+        Set _set2 = new Set();
+        _set1.addArray(ECSLib._getUintComponent("Owner").getEntitiesWithValue(_playerID));
+        _set2.addArray(ECSLib._getStringComponent("Tag").getEntitiesWithValue(string("Treaty")));
+        return ECSLib._intersection(_set1, _set2);
+    }
+
+    function _getCityTiles(uint256 _cityID) public returns (uint256[] memory) {
+        Set _set1 = new Set();
+        Set _set2 = new Set();
+        _set1.addArray(ECSLib._getUintComponent("City").getEntitiesWithValue(_cityID));
+        _set2.addArray(ECSLib._getStringComponent("Tag").getEntitiesWithValue(string("Tile")));
+        return ECSLib._intersection(_set1, _set2);
+    }
+
+    function _getBattles(uint256 _armyID) public returns (uint256[] memory) {
         Set _set1 = new Set();
         Set _set2 = new Set();
         Set _set3 = new Set();
@@ -244,17 +260,6 @@ library GameLib {
         _damageOn2 = _attack1 > _defense2 ? (_attack1 - _defense2) * _duration : 0;
     }
 
-    // function _getArmyHealth(uint256[] memory _troopEntities) public view returns (uint256) {
-    //     // take the sum
-    //     uint256 _totalHealth;
-
-    //     for (uint256 i = 0; i < _troopEntities.length; i++) {
-    //         _totalHealth += ECSLib._getUint("Health", _troopEntities[i]);
-    //     }
-
-    //     return _totalHealth;
-    // }
-
     // function _getDebuffedArmyDamagePerHit(uint256[] memory _troopEntities) public view returns (uint256) {
     //     uint256 _infantryPercentage = _getInfantryPercentage(_troopEntities);
     //     uint256 _debuffFactor = (gs().worldConstants.debuffFactor * (100 - _infantryPercentage)) / 100; // Only non-infantries are debuffed
@@ -272,7 +277,18 @@ library GameLib {
         return _result[0];
     }
 
-    function _getTileAt(Position memory _position) public view returns (Tile memory) {
+    function _getTileAt(Position memory _position) public returns (uint256) {
+        Set _set1 = new Set();
+        Set _set2 = new Set();
+        _set1.addArray(ECSLib._getPositionComponent("Position").getEntitiesWithValue(_position));
+        _set2.addArray(ECSLib._getStringComponent("Tag").getEntitiesWithValue(string("Tile")));
+        uint256[] memory _result = ECSLib._intersection(_set1, _set2);
+
+        assert(_result.length <= 1);
+        return _result.length == 1 ? _result[0] : _NULL();
+    }
+
+    function _getMapTileAt(Position memory _position) public view returns (Tile memory) {
         return gs().map[_position.x][_position.y];
     }
 
@@ -289,9 +305,19 @@ library GameLib {
         return _result;
     }
 
-    function _adjacentToCity(Position memory _position, uint256 _cityID) public returns (bool) {
-        Position memory _centerPosition = ECSLib._getPosition("Position", _getCityCenter(_cityID));
+    function _adjacentToCity(Position memory _position, uint256 _cityID) public view returns (bool) {
+        Position memory _centerPosition = ECSLib._getPosition("Position", _cityID);
         return !_coincident(_position, _centerPosition) && _withinDistance(_position, _centerPosition, 2);
+    }
+
+    function _getSettlerHealthAndSpeedByLevel(uint256 _level) public pure returns (uint256, uint256) {
+        require(_level >= 1, "CURIO: City level must be at least 1");
+        return (_level * 2 + 5, 1); // FIXME: temporary
+    }
+
+    function _getCityTileCountByLevel(uint256 _level) public pure returns (uint256) {
+        require(_level >= 1, "CURIO: City level must be at least 1");
+        return ((_level + 1) * (_level + 2)) / 2 + 6;
     }
 
     // ----------------------------------------------------------
@@ -338,6 +364,13 @@ library GameLib {
 
     function _strEq(string memory _s1, string memory _s2) public pure returns (bool) {
         return (keccak256(abi.encodePacked((_s1))) == keccak256(abi.encodePacked((_s2))));
+    }
+
+    function _includesPosition(Position memory _p, Position[] memory _area) internal pure returns (bool) {
+        for (uint256 i = 0; i < _area.length; i++) {
+            if (_coincident(_p, _area[i])) return true;
+        }
+        return false;
     }
 
     function _getIndex(uint256 _element, uint256[] memory _array) internal pure returns (uint256) {
