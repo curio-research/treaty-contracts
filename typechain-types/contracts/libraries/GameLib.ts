@@ -52,7 +52,7 @@ export interface GameLibInterface extends utils.Interface {
     "_coincident((uint256,uint256),(uint256,uint256))": FunctionFragment;
     "_connected((uint256,uint256)[])": FunctionFragment;
     "_euclidean((uint256,uint256),(uint256,uint256))": FunctionFragment;
-    "_getBattleOutcome(uint256,uint256,uint256)": FunctionFragment;
+    "_getBattleDamages(uint256,uint256,uint256)": FunctionFragment;
     "_getCityTileCountByLevel(uint256)": FunctionFragment;
     "_getMapTileAt((uint256,uint256))": FunctionFragment;
     "_getNeighbors((uint256,uint256))": FunctionFragment;
@@ -72,7 +72,7 @@ export interface GameLibInterface extends utils.Interface {
       | "_coincident"
       | "_connected"
       | "_euclidean"
-      | "_getBattleOutcome"
+      | "_getBattleDamages"
       | "_getCityTileCountByLevel"
       | "_getMapTileAt"
       | "_getNeighbors"
@@ -106,7 +106,7 @@ export interface GameLibInterface extends utils.Interface {
     values: [PositionStruct, PositionStruct]
   ): string;
   encodeFunctionData(
-    functionFragment: "_getBattleOutcome",
+    functionFragment: "_getBattleDamages",
     values: [
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
@@ -166,7 +166,7 @@ export interface GameLibInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "_connected", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "_euclidean", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "_getBattleOutcome",
+    functionFragment: "_getBattleDamages",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -270,7 +270,7 @@ export interface GameLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    _getBattleOutcome(
+    _getBattleDamages(
       _army1: PromiseOrValue<BigNumberish>,
       _army2: PromiseOrValue<BigNumberish>,
       _duration: PromiseOrValue<BigNumberish>,
@@ -360,7 +360,7 @@ export interface GameLib extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  _getBattleOutcome(
+  _getBattleDamages(
     _army1: PromiseOrValue<BigNumberish>,
     _army2: PromiseOrValue<BigNumberish>,
     _duration: PromiseOrValue<BigNumberish>,
@@ -450,7 +450,7 @@ export interface GameLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getBattleOutcome(
+    _getBattleDamages(
       _army1: PromiseOrValue<BigNumberish>,
       _army2: PromiseOrValue<BigNumberish>,
       _duration: PromiseOrValue<BigNumberish>,
@@ -549,7 +549,7 @@ export interface GameLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getBattleOutcome(
+    _getBattleDamages(
       _army1: PromiseOrValue<BigNumberish>,
       _army2: PromiseOrValue<BigNumberish>,
       _duration: PromiseOrValue<BigNumberish>,
@@ -638,7 +638,7 @@ export interface GameLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _getBattleOutcome(
+    _getBattleDamages(
       _army1: PromiseOrValue<BigNumberish>,
       _army2: PromiseOrValue<BigNumberish>,
       _duration: PromiseOrValue<BigNumberish>,

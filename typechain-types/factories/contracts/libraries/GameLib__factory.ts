@@ -251,7 +251,7 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "_getBattleOutcome",
+    name: "_getBattleDamages",
     outputs: [
       {
         internalType: "uint256",
