@@ -358,7 +358,7 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "endProduction",
+    name: "endTroopProduction",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -394,6 +394,24 @@ const _abi = [
       },
     ],
     name: "foundCity",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_buildingID",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_templateID",
+        type: "uint256",
+      },
+    ],
+    name: "harvestResources",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -577,7 +595,7 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "startProduction",
+    name: "startTroopProduction",
     outputs: [
       {
         internalType: "uint256",

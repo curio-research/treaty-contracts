@@ -144,6 +144,7 @@ task('deploy', 'deploy contracts')
       await (await diamond.setComponentValue('Attack', entity, abiCoder.encode(['uint256'], [1]))).wait();
       await (await diamond.setComponentValue('Defense', entity, abiCoder.encode(['uint256'], [0]))).wait();
       await (await diamond.setComponentValue('Duration', entity, abiCoder.encode(['uint256'], [1]))).wait();
+      await (await diamond.setComponentValue('Cost', entity, abiCoder.encode(['uint256'], [1]))).wait();
       const time3 = performance.now();
       console.log(`✦ cavalry template creation took ${Math.floor(time3 - time2)} ms`);
 
@@ -156,6 +157,7 @@ task('deploy', 'deploy contracts')
       await (await diamond.setComponentValue('Attack', entity, abiCoder.encode(['uint256'], [1]))).wait();
       await (await diamond.setComponentValue('Defense', entity, abiCoder.encode(['uint256'], [0]))).wait();
       await (await diamond.setComponentValue('Duration', entity, abiCoder.encode(['uint256'], [1]))).wait();
+      await (await diamond.setComponentValue('Cost', entity, abiCoder.encode(['uint256'], [1]))).wait();
       const time4 = performance.now();
       console.log(`✦ infantry template creation took ${Math.floor(time4 - time3)} ms`);
 
@@ -168,6 +170,7 @@ task('deploy', 'deploy contracts')
       await (await diamond.setComponentValue('Attack', entity, abiCoder.encode(['uint256'], [1]))).wait();
       await (await diamond.setComponentValue('Defense', entity, abiCoder.encode(['uint256'], [0]))).wait();
       await (await diamond.setComponentValue('Duration', entity, abiCoder.encode(['uint256'], [1]))).wait();
+      await (await diamond.setComponentValue('Cost', entity, abiCoder.encode(['uint256'], [1]))).wait();
       const time5 = performance.now();
       console.log(`✦ archer template creation took ${Math.floor(time5 - time4)} ms`);
 
