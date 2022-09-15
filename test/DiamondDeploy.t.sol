@@ -50,58 +50,10 @@ contract DiamondDeployTest is Test {
 
     uint256 public destroyerTemplateId;
 
-    // // troop types
-    // uint256 public infantryTroopTypeId = 0;
-    // uint256 public destroyerTroopTypeId = 1;
-    // uint256 public battleshipTroopTypeId = 2;
-    // TroopType public infantryTroopType =
-    //     TroopType({
-    //         name: TROOP_NAME.INFANTRY,
-    //         maxHealth: 100,
-    //         damagePerHit: 100,
-    //         attackFactor: 100,
-    //         defenseFactor: 100,
-    //         movementCooldown: 1,
-    //         largeActionCooldown: 1,
-    //         goldPrice: 6,
-    //         oilConsumptionPerSecond: 1 //
-    //     });
-    // TroopType public destroyerTroopType =
-    //     TroopType({
-    //         name: TROOP_NAME.DESTROYER,
-    //         maxHealth: 300,
-    //         damagePerHit: 100,
-    //         attackFactor: 100,
-    //         defenseFactor: 100,
-    //         movementCooldown: 1,
-    //         largeActionCooldown: 1,
-    //         goldPrice: 20,
-    //         oilConsumptionPerSecond: 1 //
-    //     });
-    // TroopType public cruiserTroopType =
-    //     TroopType({
-    //         name: TROOP_NAME.CRUISER,
-    //         maxHealth: 800,
-    //         damagePerHit: 200,
-    //         attackFactor: 100,
-    //         defenseFactor: 100,
-    //         movementCooldown: 1,
-    //         largeActionCooldown: 1,
-    //         goldPrice: 30,
-    //         oilConsumptionPerSecond: 1 //
-    //     });
-    // TroopType public battleshipTroopType =
-    //     TroopType({
-    //         name: TROOP_NAME.BATTLESHIP,
-    //         maxHealth: 1200,
-    //         damagePerHit: 300,
-    //         attackFactor: 100,
-    //         defenseFactor: 100,
-    //         movementCooldown: 1,
-    //         largeActionCooldown: 1,
-    //         goldPrice: 50,
-    //         oilConsumptionPerSecond: 2 //
-    //     });
+    uint256 public cavalryTemplateID;
+    uint256 public infantryTemplateID;
+    uint256 public archerTemplateID;
+    uint256 public goldTemplateID;
 
     // we assume these two facet selectors do not change. If they do however, we should use getSelectors
     bytes4[] OWNERSHIP_SELECTORS = [bytes4(0xf2fde38b), 0x8da5cb5b];
@@ -159,21 +111,42 @@ contract DiamondDeployTest is Test {
         game.initializePlayer(player3Pos, "Cindy");
         player3Id = getter.getPlayerId(player3);
 
-        // // Initialize a troop template (destroyer)
-        // vm.startPrank(deployer);
-        // destroyerTemplateId = admin.addEntity();
-        // admin.setComponentValue("CanMove", destroyerTemplateId, abi.encode(true));
-        // admin.setComponentValue("CanAttack", destroyerTemplateId, abi.encode(true));
-        // admin.setComponentValue("Tag", destroyerTemplateId, abi.encode("Destroyer"));
-        // admin.setComponentValue("MaxHealth", destroyerTemplateId, abi.encode(3));
-        // admin.setComponentValue("DamagePerHit", destroyerTemplateId, abi.encode(1));
-        // admin.setComponentValue("AttackFactor", destroyerTemplateId, abi.encode(100));
-        // admin.setComponentValue("DefenseFactor", destroyerTemplateId, abi.encode(100));
-        // admin.setComponentValue("MovementCooldown", destroyerTemplateId, abi.encode(1));
-        // admin.setComponentValue("LargeActionCooldown", destroyerTemplateId, abi.encode(1));
-        // admin.setComponentValue("Gold", destroyerTemplateId, abi.encode(19));
-        // admin.setComponentValue("OilPerSecond", destroyerTemplateId, abi.encode(1));
-        // vm.stopPrank();
+        // Initialize a troop template (destroyer)
+        vm.startPrank(deployer);
+
+        cavalryTemplateID = admin.addEntity();
+        admin.setComponentValue("Tag", cavalryTemplateID, abi.encode("TroopTemplate"));
+        admin.setComponentValue("InventoryType", cavalryTemplateID, abi.encode("Cavalry"));
+        admin.setComponentValue("Health", cavalryTemplateID, abi.encode(10));
+        admin.setComponentValue("Speed", cavalryTemplateID, abi.encode(1));
+        admin.setComponentValue("Attack", cavalryTemplateID, abi.encode(1));
+        admin.setComponentValue("Defense", cavalryTemplateID, abi.encode(1));
+        admin.setComponentValue("Duration", cavalryTemplateID, abi.encode(1));
+
+        infantryTemplateID = admin.addEntity();
+        admin.setComponentValue("Tag", infantryTemplateID, abi.encode("TroopTemplate"));
+        admin.setComponentValue("InventoryType", infantryTemplateID, abi.encode("Infantry"));
+        admin.setComponentValue("Health", infantryTemplateID, abi.encode(10));
+        admin.setComponentValue("Speed", infantryTemplateID, abi.encode(1));
+        admin.setComponentValue("Attack", infantryTemplateID, abi.encode(1));
+        admin.setComponentValue("Defense", infantryTemplateID, abi.encode(1));
+        admin.setComponentValue("Duration", infantryTemplateID, abi.encode(1));
+
+        archerTemplateID = admin.addEntity();
+        admin.setComponentValue("Tag", archerTemplateID, abi.encode("TroopTemplate"));
+        admin.setComponentValue("InventoryType", archerTemplateID, abi.encode("Archer"));
+        admin.setComponentValue("Health", archerTemplateID, abi.encode(10));
+        admin.setComponentValue("Speed", archerTemplateID, abi.encode(1));
+        admin.setComponentValue("Attack", archerTemplateID, abi.encode(1));
+        admin.setComponentValue("Defense", archerTemplateID, abi.encode(1));
+        admin.setComponentValue("Duration", archerTemplateID, abi.encode(1));
+
+        goldTemplateID = admin.addEntity();
+        admin.setComponentValue("Tag", goldTemplateID, abi.encode("ResourceTemplate"));
+        admin.setComponentValue("InventoryType", goldTemplateID, abi.encode("Gold"));
+        admin.setComponentValue("Duration", goldTemplateID, abi.encode(1));
+
+        vm.stopPrank();
     }
 
     function _encodeTileMap(
