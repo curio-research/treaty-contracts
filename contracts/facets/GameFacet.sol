@@ -501,7 +501,7 @@ contract GameFacet is UseStorage {
         // For now, assume there's only one battle
         uint256 _otherArmyID = ECSLib._getUint("Source", _battleIDs[0]) == _armyID ? ECSLib._getUint("Target", _battleIDs[0]) : ECSLib._getUint("Source", _battleIDs[0]);
         uint256 _duration = block.timestamp - ECSLib._getUint("InitTimestamp", _battleIDs[0]);
-        (uint256 _damageOnArmy, uint256 _damageOnOtherArmy) = GameLib._getBattleOutcome(_armyID, _otherArmyID, _duration);
+        (uint256 _damageOnArmy, uint256 _damageOnOtherArmy) = GameLib._getBattleDamages(_armyID, _otherArmyID, _duration);
         if (_damageOnOtherArmy >= ECSLib._getUint("Health", _otherArmyID)) {
             GameLib._removeArmy(_otherArmyID);
         } else {
@@ -517,7 +517,7 @@ contract GameFacet is UseStorage {
         // for (uint256 i = 0; i < _battleIDs.length; i++) {
         //     uint256 _otherArmyID = ECSLib._getUint("Source", _battleIDs[i]) == _armyID ? ECSLib._getUint("Target", _battleIDs[i]) : ECSLib._getUint("Source", _battleIDs[i]);
         //     uint256 _duration = block.timestamp - ECSLib._getUint("InitTimestamp", _battleIDs[i]);
-        //     (uint256 _damageOnArmy, uint256 _damageOnOtherArmy) = GameLib._getBattleOutcome(_armyID, _otherArmyID, _duration);
+        //     (uint256 _damageOnArmy, uint256 _damageOnOtherArmy) = GameLib._getBattleDamages(_armyID, _otherArmyID, _duration);
 
         //     if (_damageOnOtherArmy >= ECSLib._getUint("Health", _otherArmyID)) {
         //         GameLib._removeArmy(_otherArmyID);
@@ -582,7 +582,7 @@ contract GameFacet is UseStorage {
         uint256 _guardID = ECSLib._getUint("Source", _battleIDs[0]) == _armyID ? ECSLib._getUint("Target", _battleIDs[0]) : ECSLib._getUint("Source", _battleIDs[0]);
         uint256 _cityID = ECSLib._getUint("City", _guardID);
         uint256 _duration = block.timestamp - ECSLib._getUint("InitTimestamp", _battleIDs[0]);
-        (uint256 _damageOnArmy, uint256 _damageOnGuard) = GameLib._getBattleOutcome(_armyID, _guardID, _duration);
+        (uint256 _damageOnArmy, uint256 _damageOnGuard) = GameLib._getBattleDamages(_armyID, _guardID, _duration);
         if (_damageOnGuard >= ECSLib._getUint("Health", _guardID)) {
             // Capture
             GameLib._removeArmy(_guardID);

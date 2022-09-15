@@ -238,18 +238,13 @@ library GameLib {
         return gs().playerEntityMap[_address];
     }
 
-    function _getBattleOutcome(
+    function _getBattleDamages(
         uint256 _army1,
         uint256 _army2,
         uint256 _duration
     ) public view returns (uint256 _damageOn1, uint256 _damageOn2) {
-        uint256 _attack1 = ECSLib._getUint("Attack", _army1);
-        uint256 _attack2 = ECSLib._getUint("Attack", _army2);
-        uint256 _defense1 = ECSLib._getUint("Defense", _army1);
-        uint256 _defense2 = ECSLib._getUint("Defense", _army2);
-
-        _damageOn1 = _attack2 > _defense1 ? (_attack2 - _defense1) * _duration : 0;
-        _damageOn2 = _attack1 > _defense2 ? (_attack1 - _defense2) * _duration : 0;
+        _damageOn1 = (_duration * ECSLib._getUint("Attack", _army2) * 2) / ECSLib._getUint("Defense", _army1);
+        _damageOn2 = (_duration * ECSLib._getUint("Attack", _army1) * 2) / ECSLib._getUint("Defense", _army2);
     }
 
     // function _getDebuffedArmyDamagePerHit(uint256[] memory _troopEntities) public view returns (uint256) {
