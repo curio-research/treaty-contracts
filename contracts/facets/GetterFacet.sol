@@ -53,15 +53,15 @@ contract GetterFacet is UseStorage {
         return GameLib._getTemplateByInventoryType(_inventoryType);
     }
 
-    function _getCityAt(Position memory _position) external returns (uint256) {
+    function getCityAt(Position memory _position) external returns (uint256) {
         return GameLib._getCityAt(_position);
     }
 
-    function _getCityCenter(uint256 _cityID) external returns (uint256) {
+    function getCityCenter(uint256 _cityID) external returns (uint256) {
         return GameLib._getCityCenter(_cityID);
     }
 
-    function _getPlayerSettleAt(Position memory _position) external returns (uint256) {
+    function getSettlerAt(Position memory _position) external returns (uint256) {
         return GameLib._getSettlerAt(_position);
     }
 }

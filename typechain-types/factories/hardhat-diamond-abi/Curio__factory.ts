@@ -682,7 +682,7 @@ const _abi = [
         type: "tuple",
       },
     ],
-    name: "_getCityAt",
+    name: "getCityAt",
     outputs: [
       {
         internalType: "uint256",
@@ -701,38 +701,7 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "_getCityCenter",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        components: [
-          {
-            internalType: "uint256",
-            name: "x",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "y",
-            type: "uint256",
-          },
-        ],
-        internalType: "struct Position",
-        name: "_position",
-        type: "tuple",
-      },
-    ],
-    name: "_getPlayerSettleAt",
+    name: "getCityCenter",
     outputs: [
       {
         internalType: "uint256",
@@ -824,6 +793,37 @@ const _abi = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        components: [
+          {
+            internalType: "uint256",
+            name: "x",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "y",
+            type: "uint256",
+          },
+        ],
+        internalType: "struct Position",
+        name: "_position",
+        type: "tuple",
+      },
+    ],
+    name: "getSettlerAt",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
