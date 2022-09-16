@@ -7,7 +7,7 @@ import * as fs from 'fs';
 import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { deployProxy, printDivider } from './util/deployHelper';
-import { addTemplates, generateWorldConstants, SMALL_MAP_INPUT } from './util/constants';
+import { createTemplates, generateWorldConstants, SMALL_MAP_INPUT } from './util/constants';
 import { position } from '../util/types/common';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
 import { encodeTileMap } from './util/mapHelper';
@@ -97,10 +97,10 @@ task('deploy', 'deploy contracts')
       await (await diamond.storeEncodedColumnBatches(encodedTileMap)).wait();
       console.log(`✦ lazy setting ${tileMap.length}x${tileMap[0].length} map took ${Math.floor(performance.now() - startTime)} ms`);
 
-      // Initialize templates
+      // Create templates
       startTime = performance.now();
-      await addTemplates(diamond);
-      console.log(`✦ template initialization took ${Math.floor(performance.now() - startTime)} ms`);
+      await createTemplates(diamond);
+      console.log(`✦ template creation took ${Math.floor(performance.now() - startTime)} ms`);
 
       // Randomly initialize players if on localhost
       if (isDev) {

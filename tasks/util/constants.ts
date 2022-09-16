@@ -57,7 +57,7 @@ export const TAGS = [
 // TEMPLATES
 // ----------------------------------------------------------
 
-export const addTemplates = async (diamond: Curio) => {
+export const createTemplates = async (diamond: Curio) => {
   const abiCoder = new ethers.utils.AbiCoder();
 
   // Initialize three troop templates
