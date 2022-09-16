@@ -121,7 +121,7 @@ contract GameFacet is UseStorage {
         // Verify that territory is wholly in bound and does not overlap with other cities, and initialize tiles
         for (uint256 i = 0; i < _territory.length; i++) {
             require(GameLib._inBound(_territory[i]), "CURIO: Out of bound");
-            // require(ECSLib._getUint("City", GameLib._getTileAt(_territory[i])) == NULL, "CURIO: Territory overlaps with another city");
+            require(ECSLib._getUint("City", GameLib._getTileAt(_territory[i])) == NULL, "CURIO: Territory overlaps with another city");
             if (!GameLib._getMapTileAt(_territory[i]).isInitialized) GameLib._initializeTile(_territory[i]);
 
             uint256 _tile = ECSLib._addEntity();
