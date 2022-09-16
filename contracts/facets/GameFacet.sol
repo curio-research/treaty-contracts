@@ -381,6 +381,8 @@ contract GameFacet is UseStorage {
 
         // Update inventory and gather army traits
         require(_templateIDs.length == _amounts.length, "CURIO: Input lengths do not match");
+        require(_templateIDs.length > 0, "CURIO: You must organize armies with at least 1 troop");
+
         for (uint256 i = 0; i < _templateIDs.length; i++) {
             uint256 _inventoryID = GameLib._getInventory(_cityID, _templateIDs[i]);
             require(ECSLib._getUint("Amount", _inventoryID) >= _amounts[i], "CURIO: Not enough troops");

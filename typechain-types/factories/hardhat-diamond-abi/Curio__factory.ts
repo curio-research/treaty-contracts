@@ -411,7 +411,7 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "harvestResources",
+    name: "harvestResource",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
