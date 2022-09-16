@@ -151,7 +151,7 @@ export interface CurioInterface extends utils.Interface {
     "endBattle(uint256,bool)": FunctionFragment;
     "endTroopProduction(uint256,uint256)": FunctionFragment;
     "foundCity(uint256,(uint256,uint256)[],string)": FunctionFragment;
-    "harvestResources(uint256,uint256)": FunctionFragment;
+    "harvestResource(uint256,uint256)": FunctionFragment;
     "initializePlayer((uint256,uint256),string)": FunctionFragment;
     "moveArmy(uint256,(uint256,uint256))": FunctionFragment;
     "moveSettler(uint256,(uint256,uint256))": FunctionFragment;
@@ -212,7 +212,7 @@ export interface CurioInterface extends utils.Interface {
       | "endBattle"
       | "endTroopProduction"
       | "foundCity"
-      | "harvestResources"
+      | "harvestResource"
       | "initializePlayer"
       | "moveArmy"
       | "moveSettler"
@@ -329,7 +329,7 @@ export interface CurioInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "harvestResources",
+    functionFragment: "harvestResource",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -545,7 +545,7 @@ export interface CurioInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "foundCity", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "harvestResources",
+    functionFragment: "harvestResource",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -896,7 +896,7 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    harvestResources(
+    harvestResource(
       _buildingID: PromiseOrValue<BigNumberish>,
       _templateID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1195,7 +1195,7 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  harvestResources(
+  harvestResource(
     _buildingID: PromiseOrValue<BigNumberish>,
     _templateID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1494,7 +1494,7 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    harvestResources(
+    harvestResource(
       _buildingID: PromiseOrValue<BigNumberish>,
       _templateID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -1850,7 +1850,7 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    harvestResources(
+    harvestResource(
       _buildingID: PromiseOrValue<BigNumberish>,
       _templateID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -2148,7 +2148,7 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    harvestResources(
+    harvestResource(
       _buildingID: PromiseOrValue<BigNumberish>,
       _templateID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
