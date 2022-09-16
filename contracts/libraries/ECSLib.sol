@@ -3,7 +3,7 @@ pragma solidity ^0.8.4;
 
 import "contracts/libraries/Storage.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
-import {Position} from "contracts/libraries/Types.sol";
+import {Position, VALUE_TYPE} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
 import {Component} from "contracts/Component.sol";
 import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, UintComponent, UintArrayComponent} from "contracts/TypedComponents.sol";
@@ -39,6 +39,10 @@ library ECSLib {
         require(_componentAddr != address(0), string(abi.encodePacked("CURIO: Component with id ", _entity, " not found")));
 
         return Component(_componentAddr);
+    }
+
+    function _addComponent(string memory _name, VALUE_TYPE _valueType) public {
+        // TODO: implement
     }
 
     function _addEntity() public returns (uint256) {
