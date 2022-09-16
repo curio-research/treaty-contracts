@@ -270,7 +270,6 @@ contract GameFacet is UseStorage {
             _inventoryID = ECSLib._addEntity();
             ECSLib._setString("Tag", _inventoryID, "TroopInventory");
             ECSLib._setUint("City", _inventoryID, _cityID);
-            ECSLib._setUint("Building", _inventoryID, _buildingID);
             ECSLib._setUint("Template", _inventoryID, _templateID);
             ECSLib._setUint("Amount", _inventoryID, 0);
         } else {
@@ -337,7 +336,6 @@ contract GameFacet is UseStorage {
             _inventoryID = ECSLib._addEntity();
             ECSLib._setString("Tag", _inventoryID, "ResourceInventory");
             ECSLib._setUint("City", _inventoryID, _cityID);
-            ECSLib._setUint("Building", _inventoryID, _buildingID);
             ECSLib._setUint("Template", _inventoryID, _templateID);
             ECSLib._setUint("Amount", _inventoryID, 0);
         }
@@ -379,10 +377,11 @@ contract GameFacet is UseStorage {
         uint256 _attack = 0; // sum
         uint256 _defense = 0; // sum
 
-        // Update inventory and gather army traits
+        // Verify input templates
         require(_templateIDs.length == _amounts.length, "CURIO: Input lengths do not match");
         require(_templateIDs.length > 0, "CURIO: You must organize armies with at least 1 troop");
 
+        // Update inventory and gather army traits
         for (uint256 i = 0; i < _templateIDs.length; i++) {
             uint256 _inventoryID = GameLib._getInventory(_cityID, _templateIDs[i]);
             require(ECSLib._getUint("Amount", _inventoryID) >= _amounts[i], "CURIO: Not enough troops");
@@ -401,13 +400,20 @@ contract GameFacet is UseStorage {
         ECSLib._setString("Tag", _armyID, "Army");
         ECSLib._setUint("Owner", _armyID, _playerID);
         ECSLib._setPosition("Position", _armyID, ECSLib._getPosition("Position", GameLib._getCityCenter(_cityID)));
-        ECSLib._setUintArray("Templates", _armyID, _templateIDs);
-        ECSLib._setUintArray("Amounts", _armyID, _amounts);
         ECSLib._setUint("Health", _armyID, _health);
         ECSLib._setUint("Speed", _armyID, _speed);
         ECSLib._setUint("Attack", _armyID, _attack);
         ECSLib._setUint("Defense", _armyID, _defense);
         ECSLib._setUint("LastMoved", _armyID, block.timestamp);
+
+        // Add army constituents
+        for (uint256 i = 0; i < _templateIDs.length; i++) {
+            uint256 _constituentID = ECSLib._addEntity();
+            ECSLib._setString("Tag", _constituentID, "ArmyConstituent");
+            ECSLib._setUint("Keeper", _constituentID, _armyID);
+            ECSLib._setUint("Template", _constituentID, _templateIDs[i]);
+            ECSLib._setUint("Amount", _constituentID, _amounts[i]);
+        }
     }
 
     function disbandArmy(uint256 _armyID) external {
@@ -432,12 +438,12 @@ contract GameFacet is UseStorage {
         require(ECSLib._getUint("Owner", _cityID) == _playerID, "CURIO: Cannot disband army in foreign city");
 
         // Return troops to corresponding inventories
-        uint256[] memory _templateIDs = ECSLib._getUintArray("Templates", _armyID);
-        uint256[] memory _amounts = ECSLib._getUintArray("Amounts", _armyID);
-        for (uint256 i = 0; i < _templateIDs.length; i++) {
-            uint256 _inventoryID = GameLib._getInventory(_cityID, _templateIDs[i]);
-            require(ECSLib._getUint("Amount", _inventoryID) + _amounts[i] <= gs().worldConstants.maxInventoryCapacity, "CURIO: Too many troops");
-            ECSLib._setUint("Amount", _inventoryID, ECSLib._getUint("Amount", _inventoryID) + _amounts[i]);
+        uint256[] memory _constituentIDs = GameLib._getArmyConstituents(_armyID);
+        for (uint256 i = 0; i < _constituentIDs.length; i++) {
+            uint256 _inventoryID = GameLib._getInventory(_cityID, ECSLib._getUint("Template", _constituentIDs[i]));
+            uint256 _amount = ECSLib._getUint("Amount", _inventoryID) + ECSLib._getUint("Amount", _constituentIDs[i]);
+            require(_amount <= gs().worldConstants.maxInventoryCapacity, "CURIO: Too many troops");
+            ECSLib._setUint("Amount", _inventoryID, _amount);
         }
 
         // Disband army

@@ -46,8 +46,6 @@ export type { IntComponent } from "./contracts/TypedComponents.sol/IntComponent"
 export { IntComponent__factory } from "./factories/contracts/TypedComponents.sol/IntComponent__factory";
 export type { PositionComponent } from "./contracts/TypedComponents.sol/PositionComponent";
 export { PositionComponent__factory } from "./factories/contracts/TypedComponents.sol/PositionComponent__factory";
-export type { StringArrayComponent } from "./contracts/TypedComponents.sol/StringArrayComponent";
-export { StringArrayComponent__factory } from "./factories/contracts/TypedComponents.sol/StringArrayComponent__factory";
 export type { StringComponent } from "./contracts/TypedComponents.sol/StringComponent";
 export { StringComponent__factory } from "./factories/contracts/TypedComponents.sol/StringComponent__factory";
 export type { UintArrayComponent } from "./contracts/TypedComponents.sol/UintArrayComponent";

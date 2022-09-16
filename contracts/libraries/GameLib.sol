@@ -7,7 +7,7 @@ import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
 import {Set} from "contracts/Set.sol";
 import {Component} from "contracts/Component.sol";
-import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, StringArrayComponent, UintComponent, UintArrayComponent} from "contracts/TypedComponents.sol";
+import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, UintComponent, UintArrayComponent} from "contracts/TypedComponents.sol";
 
 /// @title Util library
 /// @notice Contains all events as well as lower-level setters and getters
@@ -51,8 +51,6 @@ library GameLib {
                 _addr = address(new UintComponent(_gameAddr));
             } else if (_spec.valueType == VALUE_TYPE.UINT_ARRAY) {
                 _addr = address(new UintArrayComponent(_gameAddr));
-            } else if (_spec.valueType == VALUE_TYPE.STRING_ARRAY) {
-                _addr = address(new StringArrayComponent(_gameAddr));
             } else {
                 _addr = address(new Component(_gameAddr));
             }
@@ -85,6 +83,10 @@ library GameLib {
     }
 
     function _removeArmy(uint256 _armyID) public {
+        uint256[] memory _constituentIDs = _getArmyConstituents(_armyID);
+        for (uint256 i = 0; i < _constituentIDs.length; i++) {
+            ECSLib._removeEntity(_constituentIDs[i]);
+        }
         ECSLib._removeEntity(_armyID);
     }
 
@@ -92,11 +94,10 @@ library GameLib {
         uint256 _health = ECSLib._getUint("Health", _armyID);
         ECSLib._setUint("Health", _armyID, _health - _damage);
 
-        uint256[] memory _amounts = ECSLib._getUintArray("Amounts", _armyID);
-        for (uint256 i = 0; i < _amounts.length; i++) {
-            _amounts[i] = (_amounts[i] * (_health - _damage)) / _health;
+        uint256[] memory _constituentIDs = _getArmyConstituents(_armyID);
+        for (uint256 i = 0; i < _constituentIDs.length; i++) {
+            ECSLib._setUint("Amount", _constituentIDs[i], (ECSLib._getUint("Amount", _constituentIDs[i]) * (_health - _damage)) / _health);
         }
-        ECSLib._setUintArray("Amounts", _armyID, _amounts);
     }
 
     // function _updatePlayerBalances(uint256 _playerID) public {
@@ -136,6 +137,14 @@ library GameLib {
     // ----------------------------------------------------------
     // LOGIC GETTERS
     // ----------------------------------------------------------
+
+    function _getArmyConstituents(uint256 _armyID) public returns (uint256[] memory) {
+        Set _set1 = new Set();
+        Set _set2 = new Set();
+        _set1.addArray(ECSLib._getUintComponent("Keeper").getEntitiesWithValue(_armyID));
+        _set2.addArray(ECSLib._getStringComponent("Tag").getEntitiesWithValue(string("ArmyConstituent")));
+        return ECSLib._intersection(_set1, _set2);
+    }
 
     function _getCityTiles(uint256 _cityID) public returns (uint256[] memory) {
         Set _set1 = new Set();

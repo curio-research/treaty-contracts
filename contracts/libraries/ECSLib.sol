@@ -6,7 +6,7 @@ import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 import {Position} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
 import {Component} from "contracts/Component.sol";
-import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, StringArrayComponent, UintComponent, UintArrayComponent} from "contracts/TypedComponents.sol";
+import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, UintComponent, UintArrayComponent} from "contracts/TypedComponents.sol";
 
 /// @title library of ECS utility functions
 
@@ -209,30 +209,30 @@ library ECSLib {
         emit ECSLib.ComponentValueRemoved(_componentName, _entity);
     }
 
-    function _getStringArrayComponent(string memory _name) public view returns (StringArrayComponent) {
-        address _componentAddr = gs().components[_name];
-        require(_componentAddr != address(0), string(abi.encodePacked("CURIO: Component ", _name, " not found")));
+    // function _getStringArrayComponent(string memory _name) public view returns (StringArrayComponent) {
+    //     address _componentAddr = gs().components[_name];
+    //     require(_componentAddr != address(0), string(abi.encodePacked("CURIO: Component ", _name, " not found")));
 
-        return StringArrayComponent(_componentAddr);
-    }
+    //     return StringArrayComponent(_componentAddr);
+    // }
 
-    function _getStringArray(string memory _componentName, uint256 _entity) public view returns (string[] memory) {
-        return _getStringArrayComponent(_componentName).getValue(_entity);
-    }
+    // function _getStringArray(string memory _componentName, uint256 _entity) public view returns (string[] memory) {
+    //     return _getStringArrayComponent(_componentName).getValue(_entity);
+    // }
 
-    function _setStringArray(
-        string memory _componentName,
-        uint256 _entity,
-        string[] memory _value
-    ) public {
-        _getStringArrayComponent(_componentName).set(_entity, _value);
-        emit ECSLib.ComponentValueSet(_componentName, _entity, abi.encode(_value));
-    }
+    // function _setStringArray(
+    //     string memory _componentName,
+    //     uint256 _entity,
+    //     string[] memory _value
+    // ) public {
+    //     _getStringArrayComponent(_componentName).set(_entity, _value);
+    //     emit ECSLib.ComponentValueSet(_componentName, _entity, abi.encode(_value));
+    // }
 
-    function _removeStringArray(string memory _componentName, uint256 _entity) public {
-        _getStringArrayComponent(_componentName).remove(_entity);
-        emit ECSLib.ComponentValueRemoved(_componentName, _entity);
-    }
+    // function _removeStringArray(string memory _componentName, uint256 _entity) public {
+    //     _getStringArrayComponent(_componentName).remove(_entity);
+    //     emit ECSLib.ComponentValueRemoved(_componentName, _entity);
+    // }
 
     function _getUintComponent(string memory _name) public view returns (UintComponent) {
         address _componentAddr = gs().components[_name];
