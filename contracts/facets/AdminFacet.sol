@@ -77,7 +77,7 @@ contract AdminFacet is UseStorage {
     }
 
     function registerDefaultComponents(address _gameAddr) external onlyAdmin {
-        ComponentSpec[] memory _componentSpecs = new ComponentSpec[](32);
+        ComponentSpec[] memory _componentSpecs = new ComponentSpec[](30);
 
         _componentSpecs[0] = ComponentSpec({name: "IsComponent", valueType: VALUE_TYPE.BOOL});
         _componentSpecs[1] = ComponentSpec({name: "Tag", valueType: VALUE_TYPE.STRING});
@@ -91,26 +91,24 @@ contract AdminFacet is UseStorage {
         _componentSpecs[9] = ComponentSpec({name: "ResourceType", valueType: VALUE_TYPE.STRING});
         _componentSpecs[10] = ComponentSpec({name: "BuildingType", valueType: VALUE_TYPE.STRING});
         _componentSpecs[11] = ComponentSpec({name: "Template", valueType: VALUE_TYPE.UINT});
-        _componentSpecs[12] = ComponentSpec({name: "Templates", valueType: VALUE_TYPE.UINT_ARRAY});
-        _componentSpecs[13] = ComponentSpec({name: "CanProduce", valueType: VALUE_TYPE.BOOL});
-        _componentSpecs[14] = ComponentSpec({name: "Duration", valueType: VALUE_TYPE.UINT});
-        _componentSpecs[15] = ComponentSpec({name: "BalanceLastUpdated", valueType: VALUE_TYPE.UINT});
-        _componentSpecs[16] = ComponentSpec({name: "MaxHealth", valueType: VALUE_TYPE.UINT});
-        _componentSpecs[17] = ComponentSpec({name: "Health", valueType: VALUE_TYPE.UINT});
-        _componentSpecs[18] = ComponentSpec({name: "Attack", valueType: VALUE_TYPE.UINT});
-        _componentSpecs[19] = ComponentSpec({name: "Defense", valueType: VALUE_TYPE.UINT});
-        _componentSpecs[20] = ComponentSpec({name: "Speed", valueType: VALUE_TYPE.UINT});
-        _componentSpecs[21] = ComponentSpec({name: "City", valueType: VALUE_TYPE.UINT});
-        _componentSpecs[22] = ComponentSpec({name: "Building", valueType: VALUE_TYPE.UINT});
-        _componentSpecs[23] = ComponentSpec({name: "Amount", valueType: VALUE_TYPE.UINT});
-        _componentSpecs[24] = ComponentSpec({name: "Amounts", valueType: VALUE_TYPE.UINT_ARRAY});
-        _componentSpecs[25] = ComponentSpec({name: "InventoryType", valueType: VALUE_TYPE.STRING});
-        _componentSpecs[26] = ComponentSpec({name: "LastMoved", valueType: VALUE_TYPE.UINT});
-        _componentSpecs[27] = ComponentSpec({name: "Source", valueType: VALUE_TYPE.UINT});
-        _componentSpecs[28] = ComponentSpec({name: "Target", valueType: VALUE_TYPE.UINT});
-        _componentSpecs[29] = ComponentSpec({name: "Inventory", valueType: VALUE_TYPE.UINT});
-        _componentSpecs[30] = ComponentSpec({name: "Address", valueType: VALUE_TYPE.ADDRESS});
-        _componentSpecs[31] = ComponentSpec({name: "Cost", valueType: VALUE_TYPE.UINT});
+        _componentSpecs[12] = ComponentSpec({name: "CanProduce", valueType: VALUE_TYPE.BOOL});
+        _componentSpecs[13] = ComponentSpec({name: "Duration", valueType: VALUE_TYPE.UINT});
+        _componentSpecs[14] = ComponentSpec({name: "BalanceLastUpdated", valueType: VALUE_TYPE.UINT});
+        _componentSpecs[15] = ComponentSpec({name: "MaxHealth", valueType: VALUE_TYPE.UINT});
+        _componentSpecs[16] = ComponentSpec({name: "Health", valueType: VALUE_TYPE.UINT});
+        _componentSpecs[17] = ComponentSpec({name: "Attack", valueType: VALUE_TYPE.UINT});
+        _componentSpecs[18] = ComponentSpec({name: "Defense", valueType: VALUE_TYPE.UINT});
+        _componentSpecs[19] = ComponentSpec({name: "Speed", valueType: VALUE_TYPE.UINT});
+        _componentSpecs[20] = ComponentSpec({name: "City", valueType: VALUE_TYPE.UINT});
+        _componentSpecs[21] = ComponentSpec({name: "Keeper", valueType: VALUE_TYPE.UINT});
+        _componentSpecs[22] = ComponentSpec({name: "Amount", valueType: VALUE_TYPE.UINT});
+        _componentSpecs[23] = ComponentSpec({name: "InventoryType", valueType: VALUE_TYPE.STRING});
+        _componentSpecs[24] = ComponentSpec({name: "LastMoved", valueType: VALUE_TYPE.UINT});
+        _componentSpecs[25] = ComponentSpec({name: "Source", valueType: VALUE_TYPE.UINT});
+        _componentSpecs[26] = ComponentSpec({name: "Target", valueType: VALUE_TYPE.UINT});
+        _componentSpecs[27] = ComponentSpec({name: "Inventory", valueType: VALUE_TYPE.UINT});
+        _componentSpecs[28] = ComponentSpec({name: "Address", valueType: VALUE_TYPE.ADDRESS});
+        _componentSpecs[29] = ComponentSpec({name: "Cost", valueType: VALUE_TYPE.UINT});
 
         GameLib._registerComponents(_gameAddr, _componentSpecs);
     }

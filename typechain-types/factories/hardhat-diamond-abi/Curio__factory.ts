@@ -1322,49 +1322,6 @@ const _abi = [
     inputs: [
       {
         internalType: "string",
-        name: "_componentName",
-        type: "string",
-      },
-      {
-        internalType: "uint256",
-        name: "_entity",
-        type: "uint256",
-      },
-    ],
-    name: "_getStringArray",
-    outputs: [
-      {
-        internalType: "string[]",
-        name: "",
-        type: "string[]",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "string",
-        name: "_name",
-        type: "string",
-      },
-    ],
-    name: "_getStringArrayComponent",
-    outputs: [
-      {
-        internalType: "contract StringArrayComponent",
-        name: "",
-        type: "StringArrayComponent",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "string",
         name: "_name",
         type: "string",
       },

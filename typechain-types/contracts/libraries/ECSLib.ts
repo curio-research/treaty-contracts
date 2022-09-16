@@ -51,8 +51,6 @@ export interface ECSLibInterface extends utils.Interface {
     "_getPosition(string,uint256)": FunctionFragment;
     "_getPositionComponent(string)": FunctionFragment;
     "_getString(string,uint256)": FunctionFragment;
-    "_getStringArray(string,uint256)": FunctionFragment;
-    "_getStringArrayComponent(string)": FunctionFragment;
     "_getStringComponent(string)": FunctionFragment;
     "_getUint(string,uint256)": FunctionFragment;
     "_getUintArray(string,uint256)": FunctionFragment;
@@ -76,8 +74,6 @@ export interface ECSLibInterface extends utils.Interface {
       | "_getPosition"
       | "_getPositionComponent"
       | "_getString"
-      | "_getStringArray"
-      | "_getStringArrayComponent"
       | "_getStringComponent"
       | "_getUint"
       | "_getUintArray"
@@ -140,14 +136,6 @@ export interface ECSLibInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "_getString",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getStringArray",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getStringArrayComponent",
-    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "_getStringComponent",
@@ -217,14 +205,6 @@ export interface ECSLibInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "_getString", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "_getStringArray",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getStringArrayComponent",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "_getStringComponent",
     data: BytesLike
@@ -416,17 +396,6 @@ export interface ECSLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    _getStringArray(
-      _componentName: PromiseOrValue<string>,
-      _entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[string[]]>;
-
-    _getStringArrayComponent(
-      _name: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
     _getStringComponent(
       _name: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -533,17 +502,6 @@ export interface ECSLib extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
-  _getStringArray(
-    _componentName: PromiseOrValue<string>,
-    _entity: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<string[]>;
-
-  _getStringArrayComponent(
-    _name: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
   _getStringComponent(
     _name: PromiseOrValue<string>,
     overrides?: CallOverrides
@@ -647,17 +605,6 @@ export interface ECSLib extends BaseContract {
     _getString(
       _componentName: PromiseOrValue<string>,
       _entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    _getStringArray(
-      _componentName: PromiseOrValue<string>,
-      _entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string[]>;
-
-    _getStringArrayComponent(
-      _name: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -802,17 +749,6 @@ export interface ECSLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getStringArray(
-      _componentName: PromiseOrValue<string>,
-      _entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getStringArrayComponent(
-      _name: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     _getStringComponent(
       _name: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -917,17 +853,6 @@ export interface ECSLib extends BaseContract {
     _getString(
       _componentName: PromiseOrValue<string>,
       _entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getStringArray(
-      _componentName: PromiseOrValue<string>,
-      _entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getStringArrayComponent(
-      _name: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
