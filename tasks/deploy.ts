@@ -142,7 +142,7 @@ task('deploy', 'deploy contracts')
       await (await diamond.setComponentValue('Health', entity, abiCoder.encode(['uint256'], [10]))).wait();
       await (await diamond.setComponentValue('Speed', entity, abiCoder.encode(['uint256'], [1]))).wait();
       await (await diamond.setComponentValue('Attack', entity, abiCoder.encode(['uint256'], [1]))).wait();
-      await (await diamond.setComponentValue('Defense', entity, abiCoder.encode(['uint256'], [0]))).wait();
+      await (await diamond.setComponentValue('Defense', entity, abiCoder.encode(['uint256'], [1]))).wait();
       await (await diamond.setComponentValue('Duration', entity, abiCoder.encode(['uint256'], [1]))).wait();
       await (await diamond.setComponentValue('Cost', entity, abiCoder.encode(['uint256'], [1]))).wait();
       const time3 = performance.now();
@@ -155,7 +155,7 @@ task('deploy', 'deploy contracts')
       await (await diamond.setComponentValue('Health', entity, abiCoder.encode(['uint256'], [10]))).wait();
       await (await diamond.setComponentValue('Speed', entity, abiCoder.encode(['uint256'], [1]))).wait();
       await (await diamond.setComponentValue('Attack', entity, abiCoder.encode(['uint256'], [1]))).wait();
-      await (await diamond.setComponentValue('Defense', entity, abiCoder.encode(['uint256'], [0]))).wait();
+      await (await diamond.setComponentValue('Defense', entity, abiCoder.encode(['uint256'], [1]))).wait();
       await (await diamond.setComponentValue('Duration', entity, abiCoder.encode(['uint256'], [1]))).wait();
       await (await diamond.setComponentValue('Cost', entity, abiCoder.encode(['uint256'], [1]))).wait();
       const time4 = performance.now();
@@ -168,7 +168,7 @@ task('deploy', 'deploy contracts')
       await (await diamond.setComponentValue('Health', entity, abiCoder.encode(['uint256'], [10]))).wait();
       await (await diamond.setComponentValue('Speed', entity, abiCoder.encode(['uint256'], [1]))).wait();
       await (await diamond.setComponentValue('Attack', entity, abiCoder.encode(['uint256'], [1]))).wait();
-      await (await diamond.setComponentValue('Defense', entity, abiCoder.encode(['uint256'], [0]))).wait();
+      await (await diamond.setComponentValue('Defense', entity, abiCoder.encode(['uint256'], [1]))).wait();
       await (await diamond.setComponentValue('Duration', entity, abiCoder.encode(['uint256'], [1]))).wait();
       await (await diamond.setComponentValue('Cost', entity, abiCoder.encode(['uint256'], [1]))).wait();
       const time5 = performance.now();
