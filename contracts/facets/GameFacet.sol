@@ -456,7 +456,7 @@ contract GameFacet is UseStorage {
             address _treaty = ECSLib._getAddress("Treaty", _signatureIDs[i]);
             (bool success, bytes memory returnData) = _treaty.call(abi.encodeWithSignature("approveMoveArmy()"));
             require(success, "CRUIO: Failed to call the external treaty");
-            require(abi.decode(returnData, (bool)), "CRUIO: A treaty does not approve your action");
+            require(abi.decode(returnData, (bool)), "CRUIO: Treaty does not approve your action");
         }
 
         // Verify that army exists as an entity
@@ -630,7 +630,7 @@ contract GameFacet is UseStorage {
         // Verify that army belongs to player
         require(ECSLib._getUint("Owner", _armyID) == _playerID, "CURIO: Army is not yours");
 
-        // Verify that at least one war is happening with the army
+        // Verify that at least one war is happening with the army 
         uint256[] memory _battleIDs = GameLib._getBattles(_armyID);
         require(_battleIDs.length >= 1, "CURIO: No battle to end");
 
