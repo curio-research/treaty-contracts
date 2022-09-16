@@ -1,5 +1,7 @@
+import { Curio } from 'curio-vault';
+import { ethers } from 'ethers';
 import { WorldConstantsStruct } from './../../typechain-types/hardhat-diamond-abi/Curio';
-import { MapInput, RenderInput } from './types';
+import { MapInput } from './types';
 
 export const LOCALHOST_RPC_URL = 'http://127.0.0.1:8545/';
 export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
@@ -11,16 +13,6 @@ export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 export const SMALL_MAP_INPUT: MapInput = {
   width: 50,
   height: 50,
-};
-
-export const LARGE_MAP_INPUT: MapInput = {
-  width: 100,
-  height: 100,
-};
-
-export const SANDBOX_MAP_INPUT: MapInput = {
-  width: 150,
-  height: 150,
 };
 
 export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): WorldConstantsStruct => {
@@ -42,18 +34,70 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): W
   };
 };
 
-export const TAGS = ['Player', 'Settler', 'ResourceTemplate', 'TroopTemplate', 'City', 'Building', 'Resource', 'ResourceInventory', 'TroopInventory', 'Army'];
+export const TAGS = [
+  'Army',
+  'ArmyConstituent',
+  'Battle',
+  'Building',
+  'City',
+  'Guard',
+  'Player',
+  'Resource',
+  'ResourceInventory',
+  'ResourceTemplate',
+  'Settler',
+  'Signature',
+  'Tile',
+  'TroopInventory',
+  'TroopProduction',
+  'TroopTemplate', //
+];
 
 // ----------------------------------------------------------
-// RENDERING CONSTANTS
+// TEMPLATES
 // ----------------------------------------------------------
 
-export const RENDER_CONSTANTS: RenderInput = {
-  sizeFactor: 30,
-  numLandColors: 5,
-  numWaterColors: 2,
-  waterNoiseCutoff: 0.45,
-  colorLowestPercent: 40,
-  plateSizeMultiplier: 6,
-  superpositionRatio: [0.6, 0.4],
+export const createTemplates = async (diamond: Curio) => {
+  const abiCoder = new ethers.utils.AbiCoder();
+
+  // Initialize three troop templates
+  await (await diamond.addEntity()).wait();
+  let entity = (await diamond.getEntity()).toNumber();
+  await (await diamond.setComponentValue('Tag', entity, abiCoder.encode(['string'], ['TroopTemplate']))).wait();
+  await (await diamond.setComponentValue('InventoryType', entity, abiCoder.encode(['string'], ['Cavalry']))).wait();
+  await (await diamond.setComponentValue('Health', entity, abiCoder.encode(['uint256'], [10]))).wait();
+  await (await diamond.setComponentValue('Speed', entity, abiCoder.encode(['uint256'], [1]))).wait();
+  await (await diamond.setComponentValue('Attack', entity, abiCoder.encode(['uint256'], [1]))).wait();
+  await (await diamond.setComponentValue('Defense', entity, abiCoder.encode(['uint256'], [1]))).wait();
+  await (await diamond.setComponentValue('Duration', entity, abiCoder.encode(['uint256'], [1]))).wait();
+  await (await diamond.setComponentValue('Cost', entity, abiCoder.encode(['uint256'], [1]))).wait();
+
+  await (await diamond.addEntity()).wait();
+  entity = (await diamond.getEntity()).toNumber();
+  await (await diamond.setComponentValue('Tag', entity, abiCoder.encode(['string'], ['TroopTemplate']))).wait();
+  await (await diamond.setComponentValue('InventoryType', entity, abiCoder.encode(['string'], ['Infantry']))).wait();
+  await (await diamond.setComponentValue('Health', entity, abiCoder.encode(['uint256'], [10]))).wait();
+  await (await diamond.setComponentValue('Speed', entity, abiCoder.encode(['uint256'], [1]))).wait();
+  await (await diamond.setComponentValue('Attack', entity, abiCoder.encode(['uint256'], [1]))).wait();
+  await (await diamond.setComponentValue('Defense', entity, abiCoder.encode(['uint256'], [1]))).wait();
+  await (await diamond.setComponentValue('Duration', entity, abiCoder.encode(['uint256'], [1]))).wait();
+  await (await diamond.setComponentValue('Cost', entity, abiCoder.encode(['uint256'], [1]))).wait();
+
+  await (await diamond.addEntity()).wait();
+  entity = (await diamond.getEntity()).toNumber();
+  await (await diamond.setComponentValue('Tag', entity, abiCoder.encode(['string'], ['TroopTemplate']))).wait();
+  await (await diamond.setComponentValue('InventoryType', entity, abiCoder.encode(['string'], ['Archer']))).wait();
+  await (await diamond.setComponentValue('Health', entity, abiCoder.encode(['uint256'], [10]))).wait();
+  await (await diamond.setComponentValue('Speed', entity, abiCoder.encode(['uint256'], [1]))).wait();
+  await (await diamond.setComponentValue('Attack', entity, abiCoder.encode(['uint256'], [1]))).wait();
+  await (await diamond.setComponentValue('Defense', entity, abiCoder.encode(['uint256'], [1]))).wait();
+  await (await diamond.setComponentValue('Duration', entity, abiCoder.encode(['uint256'], [1]))).wait();
+  await (await diamond.setComponentValue('Cost', entity, abiCoder.encode(['uint256'], [1]))).wait();
+
+  // Initialize a resource template
+  await (await diamond.addEntity()).wait();
+  entity = (await diamond.getEntity()).toNumber();
+  await (await diamond.setComponentValue('Tag', entity, abiCoder.encode(['string'], ['ResourceTemplate']))).wait();
+  await (await diamond.setComponentValue('InventoryType', entity, abiCoder.encode(['string'], ['Gold']))).wait();
+  await (await diamond.setComponentValue('Duration', entity, abiCoder.encode(['uint256'], [1]))).wait();
 };

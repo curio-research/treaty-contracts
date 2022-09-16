@@ -97,10 +97,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.PositionComponent__factory>;
     getContractFactory(
-      name: "StringArrayComponent",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.StringArrayComponent__factory>;
-    getContractFactory(
       name: "StringComponent",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.StringComponent__factory>;
@@ -226,11 +222,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.PositionComponent>;
-    getContractAt(
-      name: "StringArrayComponent",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.StringArrayComponent>;
     getContractAt(
       name: "StringComponent",
       address: string,

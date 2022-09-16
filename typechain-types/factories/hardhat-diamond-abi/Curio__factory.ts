@@ -371,7 +371,7 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "endProduction",
+    name: "endTroopProduction",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -407,6 +407,24 @@ const _abi = [
       },
     ],
     name: "foundCity",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_buildingID",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_templateID",
+        type: "uint256",
+      },
+    ],
+    name: "harvestResource",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -603,7 +621,7 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "startProduction",
+    name: "startTroopProduction",
     outputs: [
       {
         internalType: "uint256",
@@ -684,6 +702,37 @@ const _abi = [
       },
     ],
     name: "_getCityCenter",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        components: [
+          {
+            internalType: "uint256",
+            name: "x",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "y",
+            type: "uint256",
+          },
+        ],
+        internalType: "struct Position",
+        name: "_position",
+        type: "tuple",
+      },
+    ],
+    name: "_getPlayerSettleAt",
     outputs: [
       {
         internalType: "uint256",
@@ -1390,49 +1439,6 @@ const _abi = [
         internalType: "string",
         name: "",
         type: "string",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "string",
-        name: "_componentName",
-        type: "string",
-      },
-      {
-        internalType: "uint256",
-        name: "_entity",
-        type: "uint256",
-      },
-    ],
-    name: "_getStringArray",
-    outputs: [
-      {
-        internalType: "string[]",
-        name: "",
-        type: "string[]",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "string",
-        name: "_name",
-        type: "string",
-      },
-    ],
-    name: "_getStringArrayComponent",
-    outputs: [
-      {
-        internalType: "contract StringArrayComponent",
-        name: "",
-        type: "StringArrayComponent",
       },
     ],
     stateMutability: "view",

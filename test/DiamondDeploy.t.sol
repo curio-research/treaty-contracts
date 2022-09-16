@@ -117,42 +117,8 @@ contract DiamondDeployTest is Test {
         game.initializePlayer(player3Pos, "Cindy");
         player3Id = getter.getPlayerId(player3);
 
-        // Initialize a troop template (destroyer)
-        vm.startPrank(deployer);
-
-        cavalryTemplateID = admin.addEntity();
-        admin.setComponentValue("Tag", cavalryTemplateID, abi.encode("TroopTemplate"));
-        admin.setComponentValue("InventoryType", cavalryTemplateID, abi.encode("Cavalry"));
-        admin.setComponentValue("Health", cavalryTemplateID, abi.encode(10));
-        admin.setComponentValue("Speed", cavalryTemplateID, abi.encode(1));
-        admin.setComponentValue("Attack", cavalryTemplateID, abi.encode(1));
-        admin.setComponentValue("Defense", cavalryTemplateID, abi.encode(1));
-        admin.setComponentValue("Duration", cavalryTemplateID, abi.encode(1));
-
-        infantryTemplateID = admin.addEntity();
-        admin.setComponentValue("Tag", infantryTemplateID, abi.encode("TroopTemplate"));
-        admin.setComponentValue("InventoryType", infantryTemplateID, abi.encode("Infantry"));
-        admin.setComponentValue("Health", infantryTemplateID, abi.encode(10));
-        admin.setComponentValue("Speed", infantryTemplateID, abi.encode(1));
-        admin.setComponentValue("Attack", infantryTemplateID, abi.encode(1));
-        admin.setComponentValue("Defense", infantryTemplateID, abi.encode(1));
-        admin.setComponentValue("Duration", infantryTemplateID, abi.encode(1));
-
-        archerTemplateID = admin.addEntity();
-        admin.setComponentValue("Tag", archerTemplateID, abi.encode("TroopTemplate"));
-        admin.setComponentValue("InventoryType", archerTemplateID, abi.encode("Archer"));
-        admin.setComponentValue("Health", archerTemplateID, abi.encode(10));
-        admin.setComponentValue("Speed", archerTemplateID, abi.encode(1));
-        admin.setComponentValue("Attack", archerTemplateID, abi.encode(1));
-        admin.setComponentValue("Defense", archerTemplateID, abi.encode(1));
-        admin.setComponentValue("Duration", archerTemplateID, abi.encode(1));
-
-        goldTemplateID = admin.addEntity();
-        admin.setComponentValue("Tag", goldTemplateID, abi.encode("ResourceTemplate"));
-        admin.setComponentValue("InventoryType", goldTemplateID, abi.encode("Gold"));
-        admin.setComponentValue("Duration", goldTemplateID, abi.encode(1));
-
-        vm.stopPrank();
+        // Create templates
+        _createTemplates();
     }
 
     function _encodeTileMap(
@@ -193,6 +159,47 @@ contract DiamondDeployTest is Test {
         return _result;
     }
 
+    function _createTemplates() internal {
+        vm.startPrank(deployer);
+
+        cavalryTemplateID = admin.addEntity();
+        admin.setComponentValue("Tag", cavalryTemplateID, abi.encode("TroopTemplate"));
+        admin.setComponentValue("InventoryType", cavalryTemplateID, abi.encode("Cavalry"));
+        admin.setComponentValue("Health", cavalryTemplateID, abi.encode(10));
+        admin.setComponentValue("Speed", cavalryTemplateID, abi.encode(1));
+        admin.setComponentValue("Attack", cavalryTemplateID, abi.encode(1));
+        admin.setComponentValue("Defense", cavalryTemplateID, abi.encode(1));
+        admin.setComponentValue("Duration", cavalryTemplateID, abi.encode(1));
+        admin.setComponentValue("Cost", cavalryTemplateID, abi.encode(1));
+
+        infantryTemplateID = admin.addEntity();
+        admin.setComponentValue("Tag", infantryTemplateID, abi.encode("TroopTemplate"));
+        admin.setComponentValue("InventoryType", infantryTemplateID, abi.encode("Infantry"));
+        admin.setComponentValue("Health", infantryTemplateID, abi.encode(10));
+        admin.setComponentValue("Speed", infantryTemplateID, abi.encode(1));
+        admin.setComponentValue("Attack", infantryTemplateID, abi.encode(1));
+        admin.setComponentValue("Defense", infantryTemplateID, abi.encode(1));
+        admin.setComponentValue("Duration", infantryTemplateID, abi.encode(1));
+        admin.setComponentValue("Cost", cavalryTemplateID, abi.encode(1));
+
+        archerTemplateID = admin.addEntity();
+        admin.setComponentValue("Tag", archerTemplateID, abi.encode("TroopTemplate"));
+        admin.setComponentValue("InventoryType", archerTemplateID, abi.encode("Archer"));
+        admin.setComponentValue("Health", archerTemplateID, abi.encode(10));
+        admin.setComponentValue("Speed", archerTemplateID, abi.encode(1));
+        admin.setComponentValue("Attack", archerTemplateID, abi.encode(1));
+        admin.setComponentValue("Defense", archerTemplateID, abi.encode(1));
+        admin.setComponentValue("Duration", archerTemplateID, abi.encode(1));
+        admin.setComponentValue("Cost", cavalryTemplateID, abi.encode(1));
+
+        goldTemplateID = admin.addEntity();
+        admin.setComponentValue("Tag", goldTemplateID, abi.encode("ResourceTemplate"));
+        admin.setComponentValue("InventoryType", goldTemplateID, abi.encode("Gold"));
+        admin.setComponentValue("Duration", goldTemplateID, abi.encode(1));
+
+        vm.stopPrank();
+    }
+
     // Note: hardcoded
     function _generateWorldConstants() internal view returns (WorldConstants memory) {
         return
@@ -210,7 +217,7 @@ contract DiamondDeployTest is Test {
                 initCityGold: 1000,
                 cityHealth: 500,
                 cityAttack: 50,
-                cityDefense: 10 //
+                cityDefense: 10 // DO NOT REMOVE THIS COMMENT
             });
     }
 
