@@ -1,4 +1,3 @@
-import { ethers } from 'ethers';
 import { GameLib } from './../typechain-types/contracts/libraries/GameLib';
 import { ECSLib } from './../typechain-types/contracts/libraries/ECSLib';
 import { publishDeployment, isConnectionLive } from './../api/deployment';
@@ -8,7 +7,7 @@ import * as fs from 'fs';
 import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { deployProxy, printDivider } from './util/deployHelper';
-import { generateWorldConstants, SMALL_MAP_INPUT } from './util/constants';
+import { addTemplates, generateWorldConstants, SMALL_MAP_INPUT } from './util/constants';
 import { position } from '../util/types/common';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
 import { encodeTileMap } from './util/mapHelper';
@@ -98,80 +97,25 @@ task('deploy', 'deploy contracts')
       await (await diamond.storeEncodedColumnBatches(encodedTileMap)).wait();
       console.log(`✦ lazy setting ${tileMap.length}x${tileMap[0].length} map took ${Math.floor(performance.now() - startTime)} ms`);
 
-      // Initialize a troop template
-      const abiCoder = new ethers.utils.AbiCoder();
-
+      // Initialize templates
       startTime = performance.now();
-      await (await diamond.addEntity()).wait();
-      let entity = (await diamond.getEntity()).toNumber();
-      await (await diamond.setComponentValue('Tag', entity, abiCoder.encode(['string'], ['TroopTemplate']))).wait();
-      await (await diamond.setComponentValue('InventoryType', entity, abiCoder.encode(['string'], ['Cavalry']))).wait();
-      await (await diamond.setComponentValue('Health', entity, abiCoder.encode(['uint256'], [10]))).wait();
-      await (await diamond.setComponentValue('Speed', entity, abiCoder.encode(['uint256'], [1]))).wait();
-      await (await diamond.setComponentValue('Attack', entity, abiCoder.encode(['uint256'], [1]))).wait();
-      await (await diamond.setComponentValue('Defense', entity, abiCoder.encode(['uint256'], [1]))).wait();
-      await (await diamond.setComponentValue('Duration', entity, abiCoder.encode(['uint256'], [1]))).wait();
-      await (await diamond.setComponentValue('Cost', entity, abiCoder.encode(['uint256'], [1]))).wait();
-      console.log(`✦ cavalry template creation took ${Math.floor(performance.now() - startTime)} ms`);
-
-      startTime = performance.now();
-      await (await diamond.addEntity()).wait();
-      entity = (await diamond.getEntity()).toNumber();
-      await (await diamond.setComponentValue('Tag', entity, abiCoder.encode(['string'], ['TroopTemplate']))).wait();
-      await (await diamond.setComponentValue('InventoryType', entity, abiCoder.encode(['string'], ['Infantry']))).wait();
-      await (await diamond.setComponentValue('Health', entity, abiCoder.encode(['uint256'], [10]))).wait();
-      await (await diamond.setComponentValue('Speed', entity, abiCoder.encode(['uint256'], [1]))).wait();
-      await (await diamond.setComponentValue('Attack', entity, abiCoder.encode(['uint256'], [1]))).wait();
-      await (await diamond.setComponentValue('Defense', entity, abiCoder.encode(['uint256'], [1]))).wait();
-      await (await diamond.setComponentValue('Duration', entity, abiCoder.encode(['uint256'], [1]))).wait();
-      await (await diamond.setComponentValue('Cost', entity, abiCoder.encode(['uint256'], [1]))).wait();
-      console.log(`✦ infantry template creation took ${Math.floor(performance.now() - startTime)} ms`);
-
-      startTime = performance.now();
-      await (await diamond.addEntity()).wait();
-      entity = (await diamond.getEntity()).toNumber();
-      await (await diamond.setComponentValue('Tag', entity, abiCoder.encode(['string'], ['TroopTemplate']))).wait();
-      await (await diamond.setComponentValue('InventoryType', entity, abiCoder.encode(['string'], ['Archer']))).wait();
-      await (await diamond.setComponentValue('Health', entity, abiCoder.encode(['uint256'], [10]))).wait();
-      await (await diamond.setComponentValue('Speed', entity, abiCoder.encode(['uint256'], [1]))).wait();
-      await (await diamond.setComponentValue('Attack', entity, abiCoder.encode(['uint256'], [1]))).wait();
-      await (await diamond.setComponentValue('Defense', entity, abiCoder.encode(['uint256'], [1]))).wait();
-      await (await diamond.setComponentValue('Duration', entity, abiCoder.encode(['uint256'], [1]))).wait();
-      await (await diamond.setComponentValue('Cost', entity, abiCoder.encode(['uint256'], [1]))).wait();
-      console.log(`✦ archer template creation took ${Math.floor(performance.now() - startTime)} ms`);
-
-      // Initialize a resource template
-      startTime = performance.now();
-      await (await diamond.addEntity()).wait();
-      entity = (await diamond.getEntity()).toNumber();
-      await (await diamond.setComponentValue('Tag', entity, abiCoder.encode(['string'], ['ResourceTemplate']))).wait();
-      await (await diamond.setComponentValue('InventoryType', entity, abiCoder.encode(['string'], ['Gold']))).wait();
-      await (await diamond.setComponentValue('Duration', entity, abiCoder.encode(['uint256'], [1]))).wait();
-      console.log(`✦ gold template creation took ${Math.floor(performance.now() - startTime)} ms`);
+      await addTemplates(diamond);
+      console.log(`✦ template initialization took ${Math.floor(performance.now() - startTime)} ms`);
 
       // Randomly initialize players if on localhost
       if (isDev) {
-        let x: number, y: number;
-
         const mapWidth = tileMap.length;
         const mapHeight = tileMap[0].length;
-        let player1Pos: position;
+        const player1Pos: position = { x: Math.floor(Math.random() * mapWidth), y: Math.floor(Math.random() * mapHeight) };
+
         let player2Pos: position;
         do {
-          x = Math.floor(Math.random() * mapWidth);
-          y = Math.floor(Math.random() * mapHeight);
-          player1Pos = { x, y };
-        } while (false);
-
-        do {
-          x = Math.floor(Math.random() * mapWidth);
-          y = Math.floor(Math.random() * mapHeight);
-          player2Pos = { x, y };
+          player2Pos = { x: Math.floor(Math.random() * mapWidth), y: Math.floor(Math.random() * mapHeight) };
         } while (player2Pos.x === player1Pos.x || player2Pos.y === player1Pos.y);
 
         startTime = performance.now();
-        await (await diamond.connect(player1).initializePlayer(player1Pos, 'Eve')).wait();
-        await (await diamond.connect(player2).initializePlayer(player2Pos, 'Felix')).wait();
+        await (await diamond.connect(player1).initializePlayer(player1Pos, 'Alice')).wait();
+        await (await diamond.connect(player2).initializePlayer(player2Pos, 'Bob')).wait();
         console.log(`✦ player initialization took ${Math.floor(performance.now() - startTime)} ms`);
       }
 

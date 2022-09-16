@@ -1,4 +1,4 @@
-import { Curio } from './../../typechain-types';
+import { Curio } from 'curio-vault';
 import { Signer } from 'ethers';
 import { deployProxy } from './deployHelper';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
