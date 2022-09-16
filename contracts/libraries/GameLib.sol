@@ -7,6 +7,7 @@ import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
 import {Set} from "contracts/Set.sol";
 import {Component} from "contracts/Component.sol";
+import "forge-std/console.sol";
 import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, StringArrayComponent, UintComponent, UintArrayComponent} from "contracts/TypedComponents.sol";
 
 /// @title Util library
@@ -141,7 +142,7 @@ library GameLib {
         Set _set1 = new Set();
         Set _set2 = new Set();
         _set1.addArray(ECSLib._getUintComponent("Owner").getEntitiesWithValue(_playerID));
-        _set2.addArray(ECSLib._getStringComponent("Tag").getEntitiesWithValue(string("Treaty")));
+        _set2.addArray(ECSLib._getStringComponent("Tag").getEntitiesWithValue(string("Signature")));
         return ECSLib._intersection(_set1, _set2);
     }
 
@@ -236,6 +237,17 @@ library GameLib {
         Set _set2 = new Set();
         _set1.addArray(ECSLib._getUintComponent("City").getEntitiesWithValue(_cityID));
         _set2.addArray(ECSLib._getUintComponent("Template").getEntitiesWithValue(_templateID));
+        uint256[] memory _result = ECSLib._intersection(_set1, _set2);
+
+        assert(_result.length <= 1);
+        return _result.length == 1 ? _result[0] : _NULL();
+    }
+
+    function _getSettlerAt(Position memory _position) public returns (uint256) {
+        Set _set1 = new Set();
+        Set _set2 = new Set();
+        _set1.addArray(ECSLib._getStringComponent("Tag").getEntitiesWithValue(string("Settler")));
+        _set2.addArray(ECSLib._getPositionComponent("Position").getEntitiesWithValue(_position));
         uint256[] memory _result = ECSLib._intersection(_set1, _set2);
 
         assert(_result.length <= 1);

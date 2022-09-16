@@ -211,7 +211,7 @@ export interface GameFacet extends BaseContract {
 
   functions: {
     denounceTreaty(
-      _treatyAddress: PromiseOrValue<string>,
+      _treatyToDenounce: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -295,7 +295,7 @@ export interface GameFacet extends BaseContract {
   };
 
   denounceTreaty(
-    _treatyAddress: PromiseOrValue<string>,
+    _treatyToDenounce: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -379,7 +379,7 @@ export interface GameFacet extends BaseContract {
 
   callStatic: {
     denounceTreaty(
-      _treatyAddress: PromiseOrValue<string>,
+      _treatyToDenounce: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -468,7 +468,7 @@ export interface GameFacet extends BaseContract {
 
   estimateGas: {
     denounceTreaty(
-      _treatyAddress: PromiseOrValue<string>,
+      _treatyToDenounce: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -553,7 +553,7 @@ export interface GameFacet extends BaseContract {
 
   populateTransaction: {
     denounceTreaty(
-      _treatyAddress: PromiseOrValue<string>,
+      _treatyToDenounce: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

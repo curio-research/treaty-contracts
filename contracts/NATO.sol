@@ -41,7 +41,7 @@ contract NATO {
 
         isMemberStates[_memberState] = false;
 
-        console.log("NATO: See u on the battlefield");
+        console.log("NATO: We're regret about your withdrawal");
 
         return true;
     }
@@ -55,7 +55,7 @@ contract NATO {
     function approveMoveArmy() external view returns (bool) {
         address _memberState = msg.sender;
         require(isMemberStates[_memberState], "NATO: Nation is not binded by the Treaty");
-
+        console.log("NATO: Action Approved");
         return true;
     }
 }

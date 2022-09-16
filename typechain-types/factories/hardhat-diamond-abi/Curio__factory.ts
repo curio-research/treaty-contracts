@@ -318,7 +318,7 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "_treatyAddress",
+        name: "_treatyToDenounce",
         type: "address",
       },
     ],
@@ -647,6 +647,56 @@ const _abi = [
   {
     inputs: [
       {
+        components: [
+          {
+            internalType: "uint256",
+            name: "x",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "y",
+            type: "uint256",
+          },
+        ],
+        internalType: "struct Position",
+        name: "_position",
+        type: "tuple",
+      },
+    ],
+    name: "_getCityAt",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_cityID",
+        type: "uint256",
+      },
+    ],
+    name: "_getCityCenter",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "string",
         name: "_name",
         type: "string",
@@ -725,6 +775,25 @@ const _abi = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "_inventoryType",
+        type: "string",
+      },
+    ],
+    name: "getTemplateId",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {

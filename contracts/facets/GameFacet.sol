@@ -7,7 +7,6 @@ import {ECSLib} from "contracts/libraries/ECSLib.sol";
 import {Position, TERRAIN, WorldConstants} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 import {Set} from "contracts/Set.sol";
-import "forge-std/console.sol";
 
 /// @title Game facet
 /// @notice Contains player functions
@@ -121,7 +120,7 @@ contract GameFacet is UseStorage {
         // Verify that territory is wholly in bound and does not overlap with other cities, and initialize tiles
         for (uint256 i = 0; i < _territory.length; i++) {
             require(GameLib._inBound(_territory[i]), "CURIO: Out of bound");
-            require(ECSLib._getUint("City", GameLib._getTileAt(_territory[i])) == NULL, "CURIO: Territory overlaps with another city");
+            // require(ECSLib._getUint("City", GameLib._getTileAt(_territory[i])) == NULL, "CURIO: Territory overlaps with another city");
             if (!GameLib._getMapTileAt(_territory[i]).isInitialized) GameLib._initializeTile(_territory[i]);
 
             uint256 _tile = ECSLib._addEntity();
@@ -270,7 +269,6 @@ contract GameFacet is UseStorage {
         } else {
             require(ECSLib._getUint("Amount", _inventoryID) < gs().worldConstants.maxInventoryCapacity, "CURIO: Amount exceeds inventory capacity");
         }
-
         // Start production
         _productionID = ECSLib._addEntity();
         ECSLib._setString("Tag", _productionID, "Production");
@@ -405,13 +403,12 @@ contract GameFacet is UseStorage {
     function moveArmy(uint256 _armyID, Position memory _targetPosition) external {
         // verify that player's binding treaty approves the move
         uint256 _playerID = GameLib._getPlayer(msg.sender);
-
         uint256[] memory _signatureIDs = GameLib._getPlayerSignatures(_playerID);
         for (uint256 i = 0; i < _signatureIDs.length; i++) {
             address _treaty = ECSLib._getAddress("Treaty", _signatureIDs[i]);
-            (bool success, bytes memory returnData) = _treaty.call(abi.encodeWithSignature("joinTreaty()"));
+            (bool success, bytes memory returnData) = _treaty.call(abi.encodeWithSignature("approveMoveArmy()"));
             require(success, "CRUIO: Failed to call the external treaty");
-            require(abi.decode(returnData, (bool)), "CRUIO: your signed treaty does not approve your action");
+            require(abi.decode(returnData, (bool)), "CRUIO: A treaty does not approve your action");
         }
 
         // Verify that army exists as an entity
@@ -650,7 +647,7 @@ contract GameFacet is UseStorage {
             if (_treaty == _treatyToDenounce) {
                 ECSLib._removeEntity(_signatureIDs[i]);
                 break;
-                }
+            }
         }
     }
 }

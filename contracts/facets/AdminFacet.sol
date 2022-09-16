@@ -78,7 +78,7 @@ contract AdminFacet is UseStorage {
 
     // FIXME: be able to sync with vault
     function registerDefaultComponents(address _gameAddr) external onlyAdmin {
-        ComponentSpec[] memory _componentSpecs = new ComponentSpec[](31);
+        ComponentSpec[] memory _componentSpecs = new ComponentSpec[](32);
 
         _componentSpecs[0] = ComponentSpec({name: "IsComponent", valueType: VALUE_TYPE.BOOL});
         _componentSpecs[1] = ComponentSpec({name: "Tag", valueType: VALUE_TYPE.STRING});
@@ -111,6 +111,7 @@ contract AdminFacet is UseStorage {
         _componentSpecs[28] = ComponentSpec({name: "Target", valueType: VALUE_TYPE.UINT});
         _componentSpecs[29] = ComponentSpec({name: "Inventory", valueType: VALUE_TYPE.UINT});
         _componentSpecs[30] = ComponentSpec({name: "Treaty", valueType: VALUE_TYPE.ADDRESS});
+        _componentSpecs[31] = ComponentSpec({name: "Address", valueType: VALUE_TYPE.ADDRESS});
 
         GameLib._registerComponents(_gameAddr, _componentSpecs);
     }
