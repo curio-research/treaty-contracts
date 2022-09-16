@@ -13,16 +13,6 @@ export const SMALL_MAP_INPUT: MapInput = {
   height: 50,
 };
 
-export const LARGE_MAP_INPUT: MapInput = {
-  width: 100,
-  height: 100,
-};
-
-export const SANDBOX_MAP_INPUT: MapInput = {
-  width: 150,
-  height: 150,
-};
-
 export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): WorldConstantsStruct => {
   return {
     admin: adminAddr,
@@ -42,7 +32,24 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): W
   };
 };
 
-export const TAGS = ['Player', 'Settler', 'ResourceTemplate', 'TroopTemplate', 'City', 'Building', 'Resource', 'ResourceInventory', 'TroopInventory', 'Army'];
+export const TAGS = [
+  'Army',
+  'ArmyConstituent',
+  'Battle',
+  'Building',
+  'City',
+  'Guard',
+  'Player',
+  'Resource',
+  'ResourceInventory',
+  'ResourceTemplate',
+  'Settler',
+  'Signature',
+  'Tile',
+  'TroopInventory',
+  'TroopProduction',
+  'TroopTemplate', //
+];
 
 // ----------------------------------------------------------
 // RENDERING CONSTANTS

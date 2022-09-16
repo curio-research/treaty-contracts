@@ -70,38 +70,6 @@ task('deploy', 'deploy contracts')
         tileMap.push(col);
       }
 
-      // if (fixMap) {
-      //   if (mapName.toLowerCase() === 'mediterranean') {
-      //     // hardcoded map: Mediterrainean 42x20
-      //     gameMapConfig = MEDITERRAINEAN_MAP_CONFIG;
-      //   } else if (mapName.length > LOCAL_MAP_PREFIX.length && mapName.substring(0, LOCAL_MAP_PREFIX.length) === LOCAL_MAP_PREFIX) {
-      //     // saved maps from random generation
-      //     const index = Number(mapName.substring(LOCAL_MAP_PREFIX.length, mapName.length));
-      //     gameMapConfig = loadLocalMapConfig(index);
-      //   } else {
-      //     mapName = 'testingMap';
-      //     gameMapConfig = testingMapConfig;
-      //   }
-      //   tileMap = gameMapConfig.tileMap;
-      //   portTiles = gameMapConfig.portTiles;
-      //   cityTiles = gameMapConfig.cityTiles;
-      //   oilWellTiles = gameMapConfig.oilWellTiles;
-      //   worldConstants = generateWorldConstants(player1.address, { width: tileMap.length, height: tileMap[0].length, numPorts: portTiles.length, numCities: cityTiles.length, numOilWells: oilWellTiles.length });
-      // } else {
-      //   // three modes of randomly-generated maps: small, large, or sandbox
-      //   let mapInput: MapInput = SMALL_MAP_INPUT;
-      //   if (mapName.toLowerCase() === 'large') mapInput = LARGE_MAP_INPUT;
-      //   if (mapName.toLowerCase() === 'sandbox') mapInput = SANDBOX_MAP_INPUT;
-      //   const gameMapConfigWithColor = generateGameMaps(mapInput, RENDER_CONSTANTS);
-      //   tileMap = gameMapConfigWithColor.tileMap;
-      //   portTiles = gameMapConfigWithColor.portTiles;
-      //   cityTiles = gameMapConfigWithColor.cityTiles;
-      //   oilWellTiles = gameMapConfigWithColor.oilWellTiles;
-      //   worldConstants = generateWorldConstants(player1.address, mapInput);
-      // }
-
-      // if (saveMap) saveMapToLocal({ tileMap, portTiles, cityTiles, oilWellTiles });
-
       // Deploy helper contracts
       const ecsLib = await deployProxy<ECSLib>('ECSLib', player1, hre, []);
       console.log('✦ ECSLib:', ecsLib.address);
@@ -121,20 +89,20 @@ task('deploy', 'deploy contracts')
       printDivider();
 
       // Register components
-      const time0 = performance.now();
+      let startTime = performance.now();
       await (await diamond.registerComponents(diamond.address, COMPONENT_SPECS)).wait();
-      const time1 = performance.now();
-      console.log(`✦ component registration took ${Math.floor(time1 - time0)} ms`);
+      console.log(`✦ component registration took ${Math.floor(performance.now() - startTime)} ms`);
 
       // Initialize map
+      startTime = performance.now();
       const encodedTileMap = encodeTileMap(tileMap, 6, 50);
       await (await diamond.storeEncodedColumnBatches(encodedTileMap)).wait();
-      const time2 = performance.now();
-      console.log(`✦ lazy setting ${tileMap.length}x${tileMap[0].length} map took ${Math.floor(time2 - time1)} ms`);
+      console.log(`✦ lazy setting ${tileMap.length}x${tileMap[0].length} map took ${Math.floor(performance.now() - startTime)} ms`);
 
       // Initialize a troop template
       const abiCoder = new ethers.utils.AbiCoder();
 
+      startTime = performance.now();
       await (await diamond.addEntity()).wait();
       let entity = (await diamond.getEntity()).toNumber();
       await (await diamond.setComponentValue('Tag', entity, abiCoder.encode(['string'], ['TroopTemplate']))).wait();
@@ -145,11 +113,11 @@ task('deploy', 'deploy contracts')
       await (await diamond.setComponentValue('Defense', entity, abiCoder.encode(['uint256'], [1]))).wait();
       await (await diamond.setComponentValue('Duration', entity, abiCoder.encode(['uint256'], [1]))).wait();
       await (await diamond.setComponentValue('Cost', entity, abiCoder.encode(['uint256'], [1]))).wait();
-      const time3 = performance.now();
-      console.log(`✦ cavalry template creation took ${Math.floor(time3 - time2)} ms`);
+      console.log(`✦ cavalry template creation took ${Math.floor(performance.now() - startTime)} ms`);
 
+      startTime = performance.now();
       await (await diamond.addEntity()).wait();
-      entity++;
+      entity = (await diamond.getEntity()).toNumber();
       await (await diamond.setComponentValue('Tag', entity, abiCoder.encode(['string'], ['TroopTemplate']))).wait();
       await (await diamond.setComponentValue('InventoryType', entity, abiCoder.encode(['string'], ['Infantry']))).wait();
       await (await diamond.setComponentValue('Health', entity, abiCoder.encode(['uint256'], [10]))).wait();
@@ -158,11 +126,11 @@ task('deploy', 'deploy contracts')
       await (await diamond.setComponentValue('Defense', entity, abiCoder.encode(['uint256'], [1]))).wait();
       await (await diamond.setComponentValue('Duration', entity, abiCoder.encode(['uint256'], [1]))).wait();
       await (await diamond.setComponentValue('Cost', entity, abiCoder.encode(['uint256'], [1]))).wait();
-      const time4 = performance.now();
-      console.log(`✦ infantry template creation took ${Math.floor(time4 - time3)} ms`);
+      console.log(`✦ infantry template creation took ${Math.floor(performance.now() - startTime)} ms`);
 
+      startTime = performance.now();
       await (await diamond.addEntity()).wait();
-      entity++;
+      entity = (await diamond.getEntity()).toNumber();
       await (await diamond.setComponentValue('Tag', entity, abiCoder.encode(['string'], ['TroopTemplate']))).wait();
       await (await diamond.setComponentValue('InventoryType', entity, abiCoder.encode(['string'], ['Archer']))).wait();
       await (await diamond.setComponentValue('Health', entity, abiCoder.encode(['uint256'], [10]))).wait();
@@ -171,61 +139,41 @@ task('deploy', 'deploy contracts')
       await (await diamond.setComponentValue('Defense', entity, abiCoder.encode(['uint256'], [1]))).wait();
       await (await diamond.setComponentValue('Duration', entity, abiCoder.encode(['uint256'], [1]))).wait();
       await (await diamond.setComponentValue('Cost', entity, abiCoder.encode(['uint256'], [1]))).wait();
-      const time5 = performance.now();
-      console.log(`✦ archer template creation took ${Math.floor(time5 - time4)} ms`);
+      console.log(`✦ archer template creation took ${Math.floor(performance.now() - startTime)} ms`);
 
       // Initialize a resource template
+      startTime = performance.now();
       await (await diamond.addEntity()).wait();
-      entity++;
+      entity = (await diamond.getEntity()).toNumber();
       await (await diamond.setComponentValue('Tag', entity, abiCoder.encode(['string'], ['ResourceTemplate']))).wait();
       await (await diamond.setComponentValue('InventoryType', entity, abiCoder.encode(['string'], ['Gold']))).wait();
       await (await diamond.setComponentValue('Duration', entity, abiCoder.encode(['uint256'], [1]))).wait();
-      const time6 = performance.now();
-      console.log(`✦ gold template creation took ${Math.floor(time6 - time5)} ms`);
+      console.log(`✦ gold template creation took ${Math.floor(performance.now() - startTime)} ms`);
 
       // Randomly initialize players if on localhost
       if (isDev) {
-        let x: number;
-        let y: number;
+        let x: number, y: number;
 
-        if (fixMap && mapName === 'testingMap') {
-          const player1Pos = { x: 2, y: 4 };
-          const player2Pos = { x: 4, y: 2 };
+        const mapWidth = tileMap.length;
+        const mapHeight = tileMap[0].length;
+        let player1Pos: position;
+        let player2Pos: position;
+        do {
+          x = Math.floor(Math.random() * mapWidth);
+          y = Math.floor(Math.random() * mapHeight);
+          player1Pos = { x, y };
+        } while (false);
 
-          let ecsTime = performance.now();
+        do {
+          x = Math.floor(Math.random() * mapWidth);
+          y = Math.floor(Math.random() * mapHeight);
+          player2Pos = { x, y };
+        } while (player2Pos.x === player1Pos.x || player2Pos.y === player1Pos.y);
 
-          // Initialize players
-          await (await diamond.connect(player1).initializePlayer(player1Pos, 'Alice')).wait();
-          await (await diamond.connect(player2).initializePlayer(player2Pos, 'Bob')).wait();
-          console.log(`✦ players initialized after ${performance.now() - ecsTime} ms`);
-          ecsTime = performance.now();
-
-          // // Purchase a destroyer for player1
-          // await (await diamond.connect(player1).purchaseTroop(player1Pos, destroyerTemplateId)).wait();
-          // console.log(`✦ destroyer purchased after ${performance.now() - ecsTime} ms`);
-          // ecsTime = performance.now();
-        } else {
-          // Primary setting for local playtesting
-          const mapWidth = tileMap.length;
-          const mapHeight = tileMap[0].length;
-          let player1Pos: position;
-          let player2Pos: position;
-          do {
-            x = Math.floor(Math.random() * mapWidth);
-            y = Math.floor(Math.random() * mapHeight);
-            player1Pos = { x, y };
-          } while (false);
-
-          do {
-            x = Math.floor(Math.random() * mapWidth);
-            y = Math.floor(Math.random() * mapHeight);
-            player2Pos = { x, y };
-          } while (player2Pos.x === player1Pos.x || player2Pos.y === player1Pos.y);
-
-          await (await diamond.connect(player1).initializePlayer(player1Pos, 'Eve')).wait();
-          await (await diamond.connect(player2).initializePlayer(player2Pos, 'Felix')).wait();
-          console.log(`✦ player initialization took ${Math.floor(performance.now() - time6)} ms`);
-        }
+        startTime = performance.now();
+        await (await diamond.connect(player1).initializePlayer(player1Pos, 'Eve')).wait();
+        await (await diamond.connect(player2).initializePlayer(player2Pos, 'Felix')).wait();
+        console.log(`✦ player initialization took ${Math.floor(performance.now() - startTime)} ms`);
       }
 
       // Generate config files
