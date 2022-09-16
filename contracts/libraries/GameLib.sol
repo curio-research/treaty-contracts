@@ -146,6 +146,14 @@ library GameLib {
         return ECSLib._intersection(_set1, _set2);
     }
 
+    function _getPlayerSignatures(uint256 _playerID) public returns (uint256[] memory) {
+        Set _set1 = new Set();
+        Set _set2 = new Set();
+        _set1.addArray(ECSLib._getUintComponent("Owner").getEntitiesWithValue(_playerID));
+        _set2.addArray(ECSLib._getStringComponent("Tag").getEntitiesWithValue(string("Signature")));
+        return ECSLib._intersection(_set1, _set2);
+    }
+
     function _getCityTiles(uint256 _cityID) public returns (uint256[] memory) {
         Set _set1 = new Set();
         Set _set2 = new Set();
@@ -237,6 +245,17 @@ library GameLib {
         Set _set2 = new Set();
         _set1.addArray(ECSLib._getUintComponent("City").getEntitiesWithValue(_cityID));
         _set2.addArray(ECSLib._getUintComponent("Template").getEntitiesWithValue(_templateID));
+        uint256[] memory _result = ECSLib._intersection(_set1, _set2);
+
+        assert(_result.length <= 1);
+        return _result.length == 1 ? _result[0] : _NULL();
+    }
+
+    function _getSettlerAt(Position memory _position) public returns (uint256) {
+        Set _set1 = new Set();
+        Set _set2 = new Set();
+        _set1.addArray(ECSLib._getStringComponent("Tag").getEntitiesWithValue(string("Settler")));
+        _set2.addArray(ECSLib._getPositionComponent("Position").getEntitiesWithValue(_position));
         uint256[] memory _result = ECSLib._intersection(_set1, _set2);
 
         assert(_result.length <= 1);

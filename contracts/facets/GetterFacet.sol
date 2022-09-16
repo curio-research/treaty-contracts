@@ -48,4 +48,20 @@ contract GetterFacet is UseStorage {
         Set _entities = Set(gs().entities);
         return _entities.size();
     }
+
+    function getTemplateId(string memory _inventoryType) external returns (uint256) {
+        return GameLib._getTemplateByInventoryType(_inventoryType);
+    }
+
+    function getCityAt(Position memory _position) external returns (uint256) {
+        return GameLib._getCityAt(_position);
+    }
+
+    function getCityCenter(uint256 _cityID) external returns (uint256) {
+        return GameLib._getCityCenter(_cityID);
+    }
+
+    function getSettlerAt(Position memory _position) external returns (uint256) {
+        return GameLib._getSettlerAt(_position);
+    }
 }

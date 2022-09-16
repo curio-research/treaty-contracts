@@ -13,6 +13,7 @@ import "contracts/facets/GetterFacet.sol";
 import "contracts/facets/GameFacet.sol";
 import "contracts/facets/AdminFacet.sol";
 import "contracts/libraries/Types.sol";
+import "contracts/NATO.sol";
 
 /// @title diamond deploy foundry template
 /// @notice This contract sets up the diamond for testing and is inherited by other foundry test contracts.
@@ -32,6 +33,9 @@ contract DiamondDeployTest is Test {
     GetterFacet public getter;
     AdminFacet public admin;
     OwnershipFacet public ownership;
+
+    // treaties
+    NATO public nato;
 
     uint256 public NULL = 0;
     address public NULL_ADDR = address(0);
@@ -73,6 +77,8 @@ contract DiamondDeployTest is Test {
         adminFacet = new AdminFacet();
         WorldConstants memory _worldConstants = _generateWorldConstants();
 
+        nato = new NATO();
+
         // Fetch args from CLI craft payload for init deploy
         bytes memory initData = abi.encodeWithSelector(getSelectors("DiamondInit")[0], _worldConstants);
 
@@ -100,6 +106,9 @@ contract DiamondDeployTest is Test {
 
         vm.stopPrank();
 
+        // Create templates
+        _createTemplates();
+
         // Initialize players
         vm.prank(player1);
         game.initializePlayer(player1Pos, "Alice");
@@ -110,9 +119,6 @@ contract DiamondDeployTest is Test {
         vm.prank(player3);
         game.initializePlayer(player3Pos, "Cindy");
         player3Id = getter.getPlayerId(player3);
-
-        // Create templates
-        _createTemplates();
     }
 
     function _encodeTileMap(
@@ -156,6 +162,7 @@ contract DiamondDeployTest is Test {
     function _createTemplates() internal {
         vm.startPrank(deployer);
 
+        // Troop: Cavalry
         cavalryTemplateID = admin.addEntity();
         admin.setComponentValue("Tag", cavalryTemplateID, abi.encode("TroopTemplate"));
         admin.setComponentValue("InventoryType", cavalryTemplateID, abi.encode("Cavalry"));
@@ -166,6 +173,7 @@ contract DiamondDeployTest is Test {
         admin.setComponentValue("Duration", cavalryTemplateID, abi.encode(1));
         admin.setComponentValue("Cost", cavalryTemplateID, abi.encode(1));
 
+        // Troop: Infantry
         infantryTemplateID = admin.addEntity();
         admin.setComponentValue("Tag", infantryTemplateID, abi.encode("TroopTemplate"));
         admin.setComponentValue("InventoryType", infantryTemplateID, abi.encode("Infantry"));
@@ -176,6 +184,7 @@ contract DiamondDeployTest is Test {
         admin.setComponentValue("Duration", infantryTemplateID, abi.encode(1));
         admin.setComponentValue("Cost", cavalryTemplateID, abi.encode(1));
 
+        // Troop: Archer
         archerTemplateID = admin.addEntity();
         admin.setComponentValue("Tag", archerTemplateID, abi.encode("TroopTemplate"));
         admin.setComponentValue("InventoryType", archerTemplateID, abi.encode("Archer"));
@@ -186,6 +195,7 @@ contract DiamondDeployTest is Test {
         admin.setComponentValue("Duration", archerTemplateID, abi.encode(1));
         admin.setComponentValue("Cost", cavalryTemplateID, abi.encode(1));
 
+        // Resource: Gold
         goldTemplateID = admin.addEntity();
         admin.setComponentValue("Tag", goldTemplateID, abi.encode("ResourceTemplate"));
         admin.setComponentValue("InventoryType", goldTemplateID, abi.encode("Gold"));

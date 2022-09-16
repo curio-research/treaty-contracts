@@ -73,6 +73,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.LibDiamond__factory>;
     getContractFactory(
+      name: "NATO",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.NATO__factory>;
+    getContractFactory(
       name: "Set",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Set__factory>;
@@ -188,6 +192,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.LibDiamond>;
+    getContractAt(
+      name: "NATO",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.NATO>;
     getContractAt(
       name: "Set",
       address: string,
