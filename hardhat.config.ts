@@ -101,9 +101,11 @@ export default {
         }
         return line;
       },
+      settings: { comment: true }, // ensure the cache is working, in that example it can be anything as there is no option, the preprocessing happen all the time
     }),
   },
 };
+
 // script copy pasta'd from Foundry book
 
 function getRemappings() {
