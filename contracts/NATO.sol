@@ -6,13 +6,6 @@ contract NATO {
     address[] public memberStates;
     mapping(address => bool) public isMemberStates;
 
-    // title: nato
-    // description
-    // membershipStates [button]
-    // return -> [0x123... ,0x3erkd ...]
-    // isMemberStates [input box for address] [button for submission]
-    // return -> [boolean]
-
     // ----------------------------------------------------------
     // Article I: The "Open Door"
     // ----------------------------------------------------------
