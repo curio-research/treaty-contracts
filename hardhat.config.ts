@@ -85,6 +85,8 @@ export default {
 
   paths: {
     cache: './cache_hardhat', // Use a different cache for Hardhat than Foundry
+    sources: './contracts',
+    artifacts: './artifacts',
   },
 
   preprocess: {

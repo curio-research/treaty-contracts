@@ -1,13 +1,17 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
-// import "@openzeppelin/contracts/access/Ownable.sol";
-import {Position, TERRAIN, WorldConstants} from "contracts/libraries/Types.sol";
-import "forge-std/console.sol";
 
 // FIXME: add back Ownable
 contract NATO {
     address[] public memberStates;
     mapping(address => bool) public isMemberStates;
+
+    // title: nato
+    // description
+    // membershipStates [button]
+    // return -> [0x123... ,0x3erkd ...]
+    // isMemberStates [input box for address] [button for submission]
+    // return -> [boolean]
 
     // ----------------------------------------------------------
     // Article I: The "Open Door"
