@@ -63,6 +63,7 @@ export interface GameLibInterface extends utils.Interface {
     "_strEq(string,string)": FunctionFragment;
     "_sum(uint256[])": FunctionFragment;
     "_withinDistance((uint256,uint256),(uint256,uint256),uint256)": FunctionFragment;
+    "goldLevelSelector(uint256)": FunctionFragment;
   };
 
   getFunction(
@@ -83,6 +84,7 @@ export interface GameLibInterface extends utils.Interface {
       | "_strEq"
       | "_sum"
       | "_withinDistance"
+      | "goldLevelSelector"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -153,6 +155,10 @@ export interface GameLibInterface extends utils.Interface {
     functionFragment: "_withinDistance",
     values: [PositionStruct, PositionStruct, PromiseOrValue<BigNumberish>]
   ): string;
+  encodeFunctionData(
+    functionFragment: "goldLevelSelector",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
 
   decodeFunctionResult(functionFragment: "_adjacent", data: BytesLike): Result;
   decodeFunctionResult(
@@ -192,6 +198,10 @@ export interface GameLibInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "_sum", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_withinDistance",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "goldLevelSelector",
     data: BytesLike
   ): Result;
 
@@ -329,6 +339,11 @@ export interface GameLib extends BaseContract {
       _dist: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
+
+    goldLevelSelector(
+      _goldLevel: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
   };
 
   _adjacent(
@@ -420,6 +435,11 @@ export interface GameLib extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  goldLevelSelector(
+    _goldLevel: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   callStatic: {
     _adjacent(
       _p1: PositionStruct,
@@ -509,6 +529,11 @@ export interface GameLib extends BaseContract {
       _dist: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    goldLevelSelector(
+      _goldLevel: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
   };
 
   filters: {
@@ -606,6 +631,11 @@ export interface GameLib extends BaseContract {
       _dist: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    goldLevelSelector(
+      _goldLevel: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -696,6 +726,11 @@ export interface GameLib extends BaseContract {
       _p1: PositionStruct,
       _p2: PositionStruct,
       _dist: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    goldLevelSelector(
+      _goldLevel: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

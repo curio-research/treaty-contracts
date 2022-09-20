@@ -68,6 +68,10 @@ library GameLib {
         gs().componentNames = _componentNames;
     }
 
+    function initializeTile(Position memory _position) public {
+        if (!_getMapTileAt(_position).isInitialized) _initializeTile(_position);
+    }
+
     function _initializeTile(Position memory _position) public {
         WorldConstants memory _worldConstants = gs().worldConstants;
         uint256 _batchSize = _worldConstants.initBatchSize;
@@ -79,7 +83,31 @@ library GameLib {
 
         // Update terrain
         gs().map[_position.x][_position.y].isInitialized = true;
-        gs().map[_position.x][_position.y].terrain = TERRAIN(_terrain);
+
+        // if it's land or 1-3 level gold mine, initialize as land
+        if (_terrain == 0 || _terrain == 1 || _terrain == 2 || _terrain == 3) {
+            gs().map[_position.x][_position.y].terrain = TERRAIN(0);
+        }
+
+        uint256 entity = ECSLib._addEntity();
+
+        // if it's a gold mine, initialize it
+        if (_terrain == 1 || _terrain == 2 || _terrain == 3) {
+            uint256 goldMineLevel = _terrain; // it happens that the gold level is the same as the terrain index
+
+            ECSLib._setString("Tag", entity, "GoldMine");
+            ECSLib._setUint("GoldMineLevel", entity, goldMineLevel);
+            ECSLib._setPosition("Position", entity, _position);
+            ECSLib._setUint("LastMined", entity, block.timestamp);
+            ECSLib._setUint("GoldReserve", entity, goldLevelSelector(goldMineLevel));
+        }
+    }
+
+    function goldLevelSelector(uint256 _goldLevel) public pure returns (uint256) {
+        if (_goldLevel == 1) return 10000;
+        if (_goldLevel == 2) return 20000;
+        if (_goldLevel == 3) return 30000;
+        return 0;
     }
 
     function _removeArmy(uint256 _armyID) public {

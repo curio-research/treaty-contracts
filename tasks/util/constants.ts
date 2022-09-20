@@ -1,5 +1,4 @@
 import { Attack, Cost, Curio, Defense, Duration, encodeString, encodeUint256, Health, InventoryType, InventoryTypeOptions, Speed, Tag, Tags } from 'curio-vault';
-import { ethers } from 'ethers';
 import { WorldConstantsStruct } from './../../typechain-types/hardhat-diamond-abi/Curio';
 import { MapInput } from './types';
 
@@ -20,7 +19,7 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): W
     admin: adminAddr,
     worldWidth: mapInput.width,
     worldHeight: mapInput.height,
-    numInitTerrainTypes: 1,
+    numInitTerrainTypes: 5,
     initBatchSize: 100,
     maxCityCountPerPlayer: 3,
     maxArmyCountPerPlayer: 3,

@@ -1,6 +1,6 @@
+import { Curio } from './../../typechain-types/hardhat-diamond-abi/Curio';
 import { position } from './../../util/types/common';
-import { generateWorldConstants } from './constants';
-import { TILE_TYPE } from 'curio-vault';
+import { TILE_TYPE, Tag, encodeString, Tags, GoldMineLevel, encodeUint256, Position, encodePosition, LastMined, GoldReserve } from 'curio-vault';
 
 const MAX_UINT256 = BigInt(Math.pow(2, 256)) - BigInt(1);
 
@@ -59,7 +59,7 @@ export const generateMap = (worldWidth: any, worldHeight: any): TILE_TYPE[][] =>
 
   // assign level 1, 2, and 3 gold mines to the map
 
-  const totalDensity = 0.1;
+  const totalDensity = 0.02;
 
   // distribution of gold mines
   const level1GoldMineDensity = 0.6;
@@ -86,7 +86,7 @@ export const generateMap = (worldWidth: any, worldHeight: any): TILE_TYPE[][] =>
   return tileMap;
 };
 
-const chooseRandomEmptyLandPosition = (tileMap: TILE_TYPE[][]): position => {
+export const chooseRandomEmptyLandPosition = (tileMap: TILE_TYPE[][]): position => {
   const mapWidth = tileMap.length;
   const mapHeight = tileMap[0].length;
 

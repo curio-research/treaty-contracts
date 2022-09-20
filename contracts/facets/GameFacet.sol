@@ -25,7 +25,7 @@ contract GameFacet is UseStorage {
         require(gs().players.length < gs().worldConstants.maxPlayerCount, "CURIO: Max player count exceeded");
         require(gs().playerEntityMap[msg.sender] == NULL, "CURIO: Player already initialized");
         require(GameLib._inBound(_position), "CURIO: Out of bound");
-        if (!GameLib._getMapTileAt(_position).isInitialized) GameLib._initializeTile(_position);
+        GameLib.initializeTile(_position);
 
         // Spawn player
         _playerID = ECSLib._addEntity();
@@ -83,6 +83,8 @@ contract GameFacet is UseStorage {
         // Check speed and cooldown
         // require(ECSLib._getUint("LastMoved", _settlerID) < block.timestamp, "CURIO: Need more time till next move");
         require(ECSLib._getUint("Speed", _settlerID) >= GameLib._euclidean(ECSLib._getPosition("Position", _settlerID), _targetPosition), "CURIO: Not fast enough");
+
+        GameLib.initializeTile(_targetPosition);
 
         ECSLib._setPosition("Position", _settlerID, _targetPosition);
         ECSLib._setUint("LastMoved", _settlerID, block.timestamp);
@@ -484,6 +486,8 @@ contract GameFacet is UseStorage {
 
         // Verify that target tile has no other army
         require(GameLib._getArmyAt(_targetPosition) == NULL, "CURIO: Destination occupied by another army");
+
+        GameLib.initializeTile(_targetPosition);
 
         // Move
         ECSLib._setPosition("Position", _armyID, _targetPosition);
