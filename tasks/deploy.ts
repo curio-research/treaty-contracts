@@ -7,7 +7,7 @@ import { deployProxy, printDivider } from './util/deployHelper';
 import { createTemplates, generateWorldConstants, SMALL_MAP_INPUT } from './util/constants';
 import { position } from '../util/types/common';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
-import { encodeTileMap } from './util/mapHelper';
+import { encodeTileMap, generateMap } from './util/mapHelper';
 import { GameConfig } from '../api/types';
 import { COMPONENT_SPECS, TILE_TYPE } from 'curio-vault';
 
@@ -44,82 +44,79 @@ task('deploy', 'deploy contracts')
       console.log('✦ player1 address is:', player1.address);
 
       // Set up game and map configs
-      let tileMap: TILE_TYPE[][] = [];
       const worldConstants = generateWorldConstants(player1.address, SMALL_MAP_INPUT);
-      for (let i = 0; i < worldConstants.worldWidth; i++) {
-        let col: TILE_TYPE[] = [];
-        for (let j = 0; j < worldConstants.worldHeight; j++) {
-          col.push(0);
-        }
-        tileMap.push(col);
-      }
+
+      // generate world map
+      const tileMap = generateMap(worldConstants.worldWidth, worldConstants.worldHeight);
+
+      // console.log(tileMap);
 
       // Deploy helper contracts
-      const ecsLib = await deployProxy<ECSLib>('ECSLib', player1, hre, []);
-      console.log('✦ ECSLib:', ecsLib.address);
+      // const ecsLib = await deployProxy<ECSLib>('ECSLib', player1, hre, []);
+      // console.log('✦ ECSLib:', ecsLib.address);
 
-      const gameLib = await deployProxy<GameLib>('GameLib', player1, hre, [], { ECSLib: ecsLib.address });
-      console.log('✦ GameLib:', gameLib.address);
+      // const gameLib = await deployProxy<GameLib>('GameLib', player1, hre, [], { ECSLib: ecsLib.address });
+      // console.log('✦ GameLib:', gameLib.address);
 
-      // Deploy diamond and facets
-      const diamondAddr = await deployDiamond(hre, [worldConstants]);
-      const facets = [
-        { name: 'GameFacet', libraries: { ECSLib: ecsLib.address, GameLib: gameLib.address } },
-        { name: 'GetterFacet', libraries: { ECSLib: ecsLib.address, GameLib: gameLib.address } },
-        { name: 'AdminFacet', libraries: { ECSLib: ecsLib.address, GameLib: gameLib.address } },
-      ];
-      await deployFacets(hre, diamondAddr, facets, player1);
-      const diamond = await getDiamond(hre, diamondAddr);
-      printDivider();
+      // // Deploy diamond and facets
+      // const diamondAddr = await deployDiamond(hre, [worldConstants]);
+      // const facets = [
+      //   { name: 'GameFacet', libraries: { ECSLib: ecsLib.address, GameLib: gameLib.address } },
+      //   { name: 'GetterFacet', libraries: { ECSLib: ecsLib.address, GameLib: gameLib.address } },
+      //   { name: 'AdminFacet', libraries: { ECSLib: ecsLib.address, GameLib: gameLib.address } },
+      // ];
+      // await deployFacets(hre, diamondAddr, facets, player1);
+      // const diamond = await getDiamond(hre, diamondAddr);
+      // printDivider();
 
-      // Register components
-      let startTime = performance.now();
-      for (let i = 0; i < COMPONENT_SPECS.length; i++) {
-        await (await diamond.registerComponents(diamond.address, [COMPONENT_SPECS[i]])).wait();
-      }
+      // // Register components
+      // let startTime = performance.now();
+      // for (let i = 0; i < COMPONENT_SPECS.length; i++) {
+      //   await (await diamond.registerComponents(diamond.address, [COMPONENT_SPECS[i]])).wait();
+      // }
 
-      // Initialize map
-      startTime = performance.now();
-      const encodedTileMap = encodeTileMap(tileMap, 6, 50);
-      await (await diamond.storeEncodedColumnBatches(encodedTileMap)).wait();
-      console.log(`✦ lazy setting ${tileMap.length}x${tileMap[0].length} map took ${Math.floor(performance.now() - startTime)} ms`);
+      // // Initialize map
+      // startTime = performance.now();
+      // const encodedTileMap = encodeTileMap(tileMap, 6, 50);
+      // await (await diamond.storeEncodedColumnBatches(encodedTileMap)).wait();
+      // console.log(`✦ lazy setting ${tileMap.length}x${tileMap[0].length} map took ${Math.floor(performance.now() - startTime)} ms`);
 
-      // Create templates
-      startTime = performance.now();
-      await createTemplates(diamond);
-      console.log(`✦ template creation took ${Math.floor(performance.now() - startTime)} ms`);
+      // // Create templates
+      // startTime = performance.now();
+      // await createTemplates(diamond);
+      // console.log(`✦ template creation took ${Math.floor(performance.now() - startTime)} ms`);
 
-      // Randomly initialize players if on localhost
-      if (isDev) {
-        const mapWidth = tileMap.length;
-        const mapHeight = tileMap[0].length;
-        const player1Pos: position = { x: Math.floor(Math.random() * mapWidth), y: Math.floor(Math.random() * mapHeight) };
+      // // Randomly initialize players if on localhost
+      // if (isDev) {
+      //   const mapWidth = tileMap.length;
+      //   const mapHeight = tileMap[0].length;
+      //   const player1Pos: position = { x: Math.floor(Math.random() * mapWidth), y: Math.floor(Math.random() * mapHeight) };
 
-        let player2Pos: position;
-        do {
-          player2Pos = { x: Math.floor(Math.random() * mapWidth), y: Math.floor(Math.random() * mapHeight) };
-        } while (player2Pos.x === player1Pos.x || player2Pos.y === player1Pos.y);
+      //   let player2Pos: position;
+      //   do {
+      //     player2Pos = { x: Math.floor(Math.random() * mapWidth), y: Math.floor(Math.random() * mapHeight) };
+      //   } while (player2Pos.x === player1Pos.x || player2Pos.y === player1Pos.y);
 
-        startTime = performance.now();
-        await (await diamond.connect(player1).initializePlayer(player1Pos, 'Alice', { gasLimit: 15_000_000 })).wait();
-        await (await diamond.connect(player2).initializePlayer(player2Pos, 'Bob', { gasLimit: 15_000_000 })).wait();
-        console.log(`✦ player initialization took ${Math.floor(performance.now() - startTime)} ms`);
-      }
+      //   startTime = performance.now();
+      //   await (await diamond.connect(player1).initializePlayer(player1Pos, 'Alice', { gasLimit: 15_000_000 })).wait();
+      //   await (await diamond.connect(player2).initializePlayer(player2Pos, 'Bob', { gasLimit: 15_000_000 })).wait();
+      //   console.log(`✦ player initialization took ${Math.floor(performance.now() - startTime)} ms`);
+      // }
 
-      // Generate config files
-      const configFile: GameConfig = {
-        address: diamond.address,
-        network: hre.network.name,
-        deploymentId: `deployer=${process.env.DEPLOYER_ID}-${release && 'release-'}${hre.network.name}-${Date.now()}`,
-        map: tileMap,
-        time: new Date(),
-      };
+      // // Generate config files
+      // const configFile: GameConfig = {
+      //   address: diamond.address,
+      //   network: hre.network.name,
+      //   deploymentId: `deployer=${process.env.DEPLOYER_ID}-${release && 'release-'}${hre.network.name}-${Date.now()}`,
+      //   map: tileMap,
+      //   time: new Date(),
+      // };
 
-      await publishDeployment(configFile); // publish deployment
+      // await publishDeployment(configFile); // publish deployment
 
-      if (port === undefined || port.toLowerCase() === 'true') {
-        hre.run('port'); // if no port flag present, assume always port to Vault
-      }
+      // if (port === undefined || port.toLowerCase() === 'true') {
+      //   hre.run('port'); // if no port flag present, assume always port to Vault
+      // }
     } catch (err: any) {
       console.log(err.message);
     }
