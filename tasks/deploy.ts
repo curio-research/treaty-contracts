@@ -1,11 +1,8 @@
 import { GameLib } from './../typechain-types/contracts/libraries/GameLib';
 import { ECSLib } from './../typechain-types/contracts/libraries/ECSLib';
 import { publishDeployment, isConnectionLive } from './../api/deployment';
-import * as path from 'path';
-import * as fsPromise from 'fs/promises';
-import * as fs from 'fs';
 import { task } from 'hardhat/config';
-import { HardhatRuntimeEnvironment } from 'hardhat/types';
+import { HardhatRuntimeEnvironment, HardhatArguments } from 'hardhat/types';
 import { deployProxy, printDivider } from './util/deployHelper';
 import { createTemplates, generateWorldConstants, SMALL_MAP_INPUT } from './util/constants';
 import { position } from '../util/types/common';
@@ -19,21 +16,17 @@ import { COMPONENT_SPECS, TILE_TYPE } from 'curio-vault';
  *
  * Examples:
  * `npx hardhat deploy --savemap`: randomly generate small map, deploy on localhost, and save map to local
- * `npx hardhat deploy --network OptimismKovan --fixmap --name MAP-0`: deploy on Optimism Kovan and use the first saved random map
+ * `npx hardhat deploy --network constellationNew --fixmap --name MAP-0`: deploy on Optimism Kovan and use the first saved random map
  * `npx hardhat deploy --noport --fixmap --name MEDITERRAINEAN`: deploy on localhost, use the hardcoded Mediterrainean map, and do not port files to frontend
  * `npx hardhat deploy --name SANDBOX --network constellation`: randomly generate sandbox map and deploy on Constellation
  */
 
 task('deploy', 'deploy contracts')
   .addFlag('port', 'Port contract abis and game info to Vault') // default is to call port
-  .addFlag('publish', 'Publish deployment to game launcher') // default is to call publish
   .addFlag('release', 'Publish deployment to official release') // default is to call publish
   .addFlag('fixmap', 'Use deterministic map') // default is non-deterministic maps; deterministic maps are mainly used for client development
-  .addOptionalParam('name', 'Name of fixed map', 'Hello, World!')
-  .addFlag('savemap', 'Save map to local') // default is not to save
-  .setAction(async (args: any, hre: HardhatRuntimeEnvironment) => {
+  .setAction(async (args: DeployArgs, hre: HardhatRuntimeEnvironment) => {
     try {
-      // Compile contracts
       await hre.run('compile');
       printDivider();
 
@@ -41,12 +34,9 @@ task('deploy', 'deploy contracts')
       const isDev: boolean = hre.network.name === 'localhost' || hre.network.name === 'hardhat' || hre.network.name === 'constellation' || hre.network.name === 'altlayer';
 
       console.log('Network:', hre.network.name);
-      const fixMap: boolean = args.fixmap;
+      const fixMap = args.fixmap;
       if (fixMap) console.log('Using deterministic map');
-      const publish: boolean = args.publish;
-      const isRelease: boolean = args.release;
-      let mapName: string = args.name;
-      const saveMap: boolean = args.savemap;
+      const isRelease = args.release;
 
       // Check connection with faucet to make sure deployment will post
       await isConnectionLive();
@@ -122,16 +112,18 @@ task('deploy', 'deploy contracts')
       const configFile: GameConfig = {
         address: diamond.address,
         network: hre.network.name,
-        deploymentId: `deployer=${process.env.DEPLOYER_ID}-${mapName ? `${mapName}-` : ''}${isRelease ? 'release-' : ''}${hre.network.name}-${Date.now()}`,
+        deploymentId: `deployer=${process.env.DEPLOYER_ID}-${isRelease && 'release-'}${hre.network.name}-${Date.now()}`,
         map: tileMap,
         time: new Date(),
       };
 
-      // Publish deployment
-      if (publish || !isDev) {
-      }
-      await publishDeployment(configFile);
+      await publishDeployment(configFile); // publish deployment
     } catch (err: any) {
       console.log(err.message);
     }
   });
+
+interface DeployArgs extends HardhatArguments {
+  fixmap: boolean;
+  release: boolean;
+}

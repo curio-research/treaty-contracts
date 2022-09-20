@@ -1,5 +1,4 @@
 import { Attack, Cost, Curio, Defense, Duration, encodeString, encodeUint256, Health, InventoryType, InventoryTypeOptions, Speed, Tag, Tags } from 'curio-vault';
-import { ethers } from 'ethers';
 import { WorldConstantsStruct } from './../../typechain-types/hardhat-diamond-abi/Curio';
 import { MapInput } from './types';
 
@@ -39,11 +38,10 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): W
 // ----------------------------------------------------------
 
 export const createTemplates = async (diamond: Curio) => {
-  const abiCoder = new ethers.utils.AbiCoder();
-
   // Initialize three troop templates
   await (await diamond.addEntity()).wait();
   let entity = (await diamond.getEntity()).toNumber();
+
   await (await diamond.setComponentValue(Tag, entity, encodeString(Tags.TroopTemplate))).wait();
   await (await diamond.setComponentValue(InventoryType, entity, encodeString(InventoryTypeOptions.Cavalry))).wait();
   await (await diamond.setComponentValue(Health, entity, encodeUint256(10))).wait();
@@ -55,6 +53,7 @@ export const createTemplates = async (diamond: Curio) => {
 
   await (await diamond.addEntity()).wait();
   entity = (await diamond.getEntity()).toNumber();
+
   await (await diamond.setComponentValue(Tag, entity, encodeString(Tags.TroopTemplate))).wait();
   await (await diamond.setComponentValue(InventoryType, entity, encodeString(InventoryTypeOptions.Infantry))).wait();
   await (await diamond.setComponentValue(Health, entity, encodeUint256(10))).wait();
@@ -66,6 +65,7 @@ export const createTemplates = async (diamond: Curio) => {
 
   await (await diamond.addEntity()).wait();
   entity = (await diamond.getEntity()).toNumber();
+
   await (await diamond.setComponentValue(Tag, entity, encodeString(Tags.TroopTemplate))).wait();
   await (await diamond.setComponentValue(InventoryType, entity, encodeString(InventoryTypeOptions.Archer))).wait();
   await (await diamond.setComponentValue(Health, entity, encodeUint256(10))).wait();
@@ -78,6 +78,7 @@ export const createTemplates = async (diamond: Curio) => {
   // Initialize a resource template
   await (await diamond.addEntity()).wait();
   entity = (await diamond.getEntity()).toNumber();
+
   await (await diamond.setComponentValue(Tag, entity, encodeString(Tags.ResourceTemplate))).wait();
   await (await diamond.setComponentValue(InventoryType, entity, encodeString(InventoryTypeOptions.Gold))).wait();
   await (await diamond.setComponentValue(Duration, entity, encodeUint256(1))).wait();
