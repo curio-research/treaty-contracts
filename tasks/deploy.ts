@@ -88,8 +88,9 @@ task('deploy', 'deploy contracts')
 
       // Register components
       let startTime = performance.now();
-      await (await diamond.registerComponents(diamond.address, COMPONENT_SPECS)).wait();
-      console.log(`✦ component registration took ${Math.floor(performance.now() - startTime)} ms`);
+      for (let i = 0; i < COMPONENT_SPECS.length; i++) {
+        await (await diamond.registerComponents(diamond.address, [COMPONENT_SPECS[i]])).wait();
+      }
 
       // Initialize map
       startTime = performance.now();
@@ -114,8 +115,8 @@ task('deploy', 'deploy contracts')
         } while (player2Pos.x === player1Pos.x || player2Pos.y === player1Pos.y);
 
         startTime = performance.now();
-        await (await diamond.connect(player1).initializePlayer(player1Pos, 'Alice')).wait();
-        await (await diamond.connect(player2).initializePlayer(player2Pos, 'Bob')).wait();
+        await (await diamond.connect(player1).initializePlayer(player1Pos, 'Alice', { gasLimit: 15_000_000 })).wait();
+        await (await diamond.connect(player2).initializePlayer(player2Pos, 'Bob', { gasLimit: 15_000_000 })).wait();
         console.log(`✦ player initialization took ${Math.floor(performance.now() - startTime)} ms`);
       }
 
@@ -127,20 +128,6 @@ task('deploy', 'deploy contracts')
         map: tileMap,
         time: new Date(),
       };
-
-      // Port files to frontend if on localhost
-      if (isDev) {
-        const configFilePath = path.join(path.join(__dirname), 'game.config.json');
-        let existingDeployments = [];
-        if (fs.existsSync(configFilePath)) {
-          const raw = fs.readFileSync(configFilePath).toString();
-          existingDeployments = raw ? JSON.parse(raw) : [];
-        }
-        existingDeployments.push(configFile);
-
-        await fsPromise.writeFile(configFilePath, JSON.stringify(existingDeployments));
-        // await hre.run('port'); // default to porting files
-      }
 
       // Publish deployment
       if (publish || !isDev) {
