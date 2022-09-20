@@ -49,9 +49,7 @@ task('deploy', 'deploy contracts')
       const saveMap: boolean = args.savemap;
 
       // Check connection with faucet to make sure deployment will post
-      if (!isDev) {
-        await isConnectionLive();
-      }
+      await isConnectionLive();
 
       // Set up deployer and some local variables
       let [player1, player2] = await hre.ethers.getSigners();
