@@ -47,7 +47,7 @@ task('deploy', 'deploy contracts')
         // Set up game and map configs
         const worldConstants = generateWorldConstants(player1.address, SMALL_MAP_INPUT);
 
-        // generate world map
+        // Generate world map
         const tileMap = generateMap(worldConstants.worldWidth, worldConstants.worldHeight);
 
         // Deploy helper contracts

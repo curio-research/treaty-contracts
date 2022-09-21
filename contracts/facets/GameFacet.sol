@@ -279,6 +279,7 @@ contract GameFacet is UseStorage {
         } else {
             require(ECSLib._getUint("Amount", _inventoryID) < gs().worldConstants.maxInventoryCapacity, "CURIO: Amount exceeds inventory capacity");
         }
+
         // Start production
         _productionID = ECSLib._addEntity();
         ECSLib._setString("Tag", _productionID, "TroopProduction");
@@ -288,7 +289,9 @@ contract GameFacet is UseStorage {
         ECSLib._setUint("Amount", _productionID, _amount);
         ECSLib._setUint("InitTimestamp", _productionID, block.timestamp);
         ECSLib._setUint("Duration", _productionID, ECSLib._getUint("Duration", _templateID) * _amount);
-        ECSLib._setUint("Cost", _productionID, _cost);
+
+        // Deduct cost
+        ECSLib._setUint("Amount", _goldInventoryID, _balance - _cost);
     }
 
     function endTroopProduction(uint256 _buildingID, uint256 _productionID) external {
