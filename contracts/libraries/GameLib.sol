@@ -275,6 +275,15 @@ library GameLib {
         _set2.addArray(ECSLib._getUintComponent("Template").getEntitiesWithValue(_templateID));
         uint256[] memory _result = ECSLib._intersection(_set1, _set2);
 
+        // // FIXME: THERE EXISTS A BUG HERE
+        // if (_result.length > 1) {
+        //     console.log("Uh-oh");
+        //     for (uint256 i = 0; i < _result.length; i++) {
+        //         console.log(ECSLib._getString("InventoryType", _templateID));
+        //         console.log(ECSLib._getString("Tag", _templateID));
+        //     }
+        // }
+
         assert(_result.length <= 1);
         return _result.length == 1 ? _result[0] : _NULL();
     }

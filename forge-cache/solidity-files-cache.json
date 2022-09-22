@@ -314,6 +314,7 @@
         "contracts/libraries/GameLib.sol",
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Types.sol",
+        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -410,8 +411,8 @@
       }
     },
     "contracts/facets/GameFacet.sol": {
-      "lastModificationDate": 1663789668437,
-      "contentHash": "e4ad5302f9fe7e94c32c1eecbc487db3",
+      "lastModificationDate": 1663800359479,
+      "contentHash": "6896f889832a6b02908689e0ab1b4e1b",
       "sourceName": "contracts/facets/GameFacet.sol",
       "solcConfig": {
         "settings": {
@@ -448,6 +449,7 @@
         "contracts/libraries/GameLib.sol",
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Types.sol",
+        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -496,6 +498,7 @@
         "contracts/libraries/GameLib.sol",
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Types.sol",
+        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -587,6 +590,7 @@
         "contracts/libraries/GameLib.sol",
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Types.sol",
+        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -799,8 +803,8 @@
       }
     },
     "contracts/libraries/GameLib.sol": {
-      "lastModificationDate": 1663789668437,
-      "contentHash": "97c50667d0787ed43438db07d3dc55be",
+      "lastModificationDate": 1663798743155,
+      "contentHash": "610a2ebac973c6b3e96e8c7e8cb71dce",
       "sourceName": "contracts/libraries/GameLib.sol",
       "solcConfig": {
         "settings": {
@@ -836,6 +840,7 @@
         "contracts/libraries/ECSLib.sol",
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Types.sol",
+        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -884,6 +889,7 @@
         "contracts/libraries/GameLib.sol",
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Types.sol",
+        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol"
       ],
       "versionRequirement": "^0.8.4",

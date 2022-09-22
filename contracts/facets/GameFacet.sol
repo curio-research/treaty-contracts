@@ -268,8 +268,8 @@ contract GameFacet is UseStorage {
         uint256 _cost = ECSLib._getUint("Cost", _templateID) * _amount;
         require(_balance >= _cost, "CURIO: Insufficient gold balance");
 
-        // Create inventory if no exist, and verify that amount does not exceed ceiling
-        uint256 _inventoryID = GameLib._getInventory(_cityID, _templateID);
+        // Create inventory if none exists, and verify that amount does not exceed ceiling
+        uint256 _inventoryID = GameLib._getInventory(_cityID, _templateID); // FIXME: BUG
         if (_inventoryID == NULL) {
             _inventoryID = ECSLib._addEntity();
             ECSLib._setString("Tag", _inventoryID, "TroopInventory");
@@ -336,7 +336,7 @@ contract GameFacet is UseStorage {
         uint256 _cityID = ECSLib._getUint("City", _buildingID);
         require(ECSLib._getUint("Owner", _cityID) == _playerID, "CURIO: City is not yours");
 
-        // Create inventory if no exist
+        // Create inventory if none exists
         uint256 _inventoryID = GameLib._getInventory(_cityID, _templateID);
         if (_inventoryID == NULL) {
             _inventoryID = ECSLib._addEntity();
@@ -392,11 +392,10 @@ contract GameFacet is UseStorage {
             uint256 _inventoryID = GameLib._getInventory(_cityID, _templateIDs[i]);
             require(ECSLib._getUint("Amount", _inventoryID) >= _amounts[i], "CURIO: Not enough troops");
 
-            uint256 _templateID = ECSLib._getUint("Template", _inventoryID);
-            _health += ECSLib._getUint("Health", _templateID) * _amounts[i];
-            _speed += ECSLib._getUint("Speed", _templateID) * _amounts[i];
-            _attack += ECSLib._getUint("Attack", _templateID) * _amounts[i];
-            _defense += ECSLib._getUint("Defense", _templateID) * _amounts[i];
+            _health += ECSLib._getUint("Health", _templateIDs[i]) * _amounts[i];
+            _speed += ECSLib._getUint("Speed", _templateIDs[i]) * _amounts[i];
+            _attack += ECSLib._getUint("Attack", _templateIDs[i]) * _amounts[i];
+            _defense += ECSLib._getUint("Defense", _templateIDs[i]) * _amounts[i];
             ECSLib._setUint("Amount", _inventoryID, ECSLib._getUint("Amount", _inventoryID) - _amounts[i]);
         }
         _speed /= GameLib._sum(_amounts);
