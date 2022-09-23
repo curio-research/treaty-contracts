@@ -1,6 +1,5 @@
-import { Curio } from './../../typechain-types/hardhat-diamond-abi/Curio';
 import { position } from './../../util/types/common';
-import { TILE_TYPE, Tag, encodeString, Tags, GoldMineLevel, encodeUint256, Position, encodePosition, LastMined, GoldReserve } from 'curio-vault';
+import { TILE_TYPE } from 'curio-vault';
 
 const MAX_UINT256 = BigInt(Math.pow(2, 256)) - BigInt(1);
 
