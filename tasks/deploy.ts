@@ -48,7 +48,7 @@ task('deploy', 'deploy contracts')
         const worldConstants = generateWorldConstants(player1.address, SMALL_MAP_INPUT);
 
         // Generate world map
-        const tileMap = generateMap(worldConstants.worldWidth, worldConstants.worldHeight);
+        const tileMap = generateMap(SMALL_MAP_INPUT.width, SMALL_MAP_INPUT.height);
 
         // Deploy helper contracts
         const ecsLib = await deployProxy<ECSLib>('ECSLib', player1, hre, []);
