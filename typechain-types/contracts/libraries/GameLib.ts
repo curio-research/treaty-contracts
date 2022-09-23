@@ -49,6 +49,7 @@ export interface GameLibInterface extends utils.Interface {
   functions: {
     "_adjacent((uint256,uint256),(uint256,uint256))": FunctionFragment;
     "_adjacentToCity((uint256,uint256),uint256)": FunctionFragment;
+    "_barbarianInfantrySelector(uint256)": FunctionFragment;
     "_coincident((uint256,uint256),(uint256,uint256))": FunctionFragment;
     "_connected((uint256,uint256)[])": FunctionFragment;
     "_euclidean((uint256,uint256),(uint256,uint256))": FunctionFragment;
@@ -58,6 +59,7 @@ export interface GameLibInterface extends utils.Interface {
     "_getNeighbors((uint256,uint256))": FunctionFragment;
     "_getPlayer(address)": FunctionFragment;
     "_getSettlerHealthAndSpeedByLevel(uint256)": FunctionFragment;
+    "_goldLevelSelector(uint256)": FunctionFragment;
     "_inBound((uint256,uint256))": FunctionFragment;
     "_random(uint256,uint256)": FunctionFragment;
     "_strEq(string,string)": FunctionFragment;
@@ -69,6 +71,7 @@ export interface GameLibInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "_adjacent"
       | "_adjacentToCity"
+      | "_barbarianInfantrySelector"
       | "_coincident"
       | "_connected"
       | "_euclidean"
@@ -78,6 +81,7 @@ export interface GameLibInterface extends utils.Interface {
       | "_getNeighbors"
       | "_getPlayer"
       | "_getSettlerHealthAndSpeedByLevel"
+      | "_goldLevelSelector"
       | "_inBound"
       | "_random"
       | "_strEq"
@@ -92,6 +96,10 @@ export interface GameLibInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "_adjacentToCity",
     values: [PositionStruct, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_barbarianInfantrySelector",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "_coincident",
@@ -134,6 +142,10 @@ export interface GameLibInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "_goldLevelSelector",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "_inBound",
     values: [PositionStruct]
   ): string;
@@ -157,6 +169,10 @@ export interface GameLibInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "_adjacent", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_adjacentToCity",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_barbarianInfantrySelector",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -184,6 +200,10 @@ export interface GameLibInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "_getPlayer", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_getSettlerHealthAndSpeedByLevel",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_goldLevelSelector",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "_inBound", data: BytesLike): Result;
@@ -253,6 +273,11 @@ export interface GameLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    _barbarianInfantrySelector(
+      _level: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     _coincident(
       _p1: PositionStruct,
       _p2: PositionStruct,
@@ -304,6 +329,11 @@ export interface GameLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber, BigNumber]>;
 
+    _goldLevelSelector(
+      _goldLevel: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<[boolean]>;
 
     _random(
@@ -342,6 +372,11 @@ export interface GameLib extends BaseContract {
     _cityID: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<boolean>;
+
+  _barbarianInfantrySelector(
+    _level: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   _coincident(
     _p1: PositionStruct,
@@ -394,6 +429,11 @@ export interface GameLib extends BaseContract {
     overrides?: CallOverrides
   ): Promise<[BigNumber, BigNumber]>;
 
+  _goldLevelSelector(
+    _goldLevel: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<boolean>;
 
   _random(
@@ -432,6 +472,11 @@ export interface GameLib extends BaseContract {
       _cityID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    _barbarianInfantrySelector(
+      _level: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     _coincident(
       _p1: PositionStruct,
@@ -484,6 +529,11 @@ export interface GameLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber, BigNumber]>;
 
+    _goldLevelSelector(
+      _goldLevel: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<boolean>;
 
     _random(
@@ -532,6 +582,11 @@ export interface GameLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _barbarianInfantrySelector(
+      _level: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     _coincident(
       _p1: PositionStruct,
       _p2: PositionStruct,
@@ -578,6 +633,11 @@ export interface GameLib extends BaseContract {
 
     _getSettlerHealthAndSpeedByLevel(
       _level: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _goldLevelSelector(
+      _goldLevel: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -621,6 +681,11 @@ export interface GameLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    _barbarianInfantrySelector(
+      _level: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     _coincident(
       _p1: PositionStruct,
       _p2: PositionStruct,
@@ -667,6 +732,11 @@ export interface GameLib extends BaseContract {
 
     _getSettlerHealthAndSpeedByLevel(
       _level: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _goldLevelSelector(
+      _goldLevel: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

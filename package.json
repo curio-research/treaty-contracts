@@ -9,7 +9,8 @@
     "ft": "forge test --ffi -vv",
     "deploy": "npx hardhat deploy --network localhost",
     "port": "npx hardhat port",
-    "setup": "yarn link curio-vault"
+    "setup": "yarn link curio-vault",
+    "deploy:anvil": "forge build && lsof -ti:8545 | xargs kill & anvil --gas-limit 100000000 --base-fee 0 --gas-price 0 & npx hardhat deploy"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.2",

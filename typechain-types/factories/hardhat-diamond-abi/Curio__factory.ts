@@ -362,6 +362,19 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
+        name: "_armyID",
+        type: "uint256",
+      },
+    ],
+    name: "endGather",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
         name: "_buildingID",
         type: "uint256",
       },
@@ -407,24 +420,6 @@ const _abi = [
       },
     ],
     name: "foundCity",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_buildingID",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_templateID",
-        type: "uint256",
-      },
-    ],
-    name: "harvestResource",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -599,6 +594,24 @@ const _abi = [
       },
     ],
     name: "startBattle",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_armyID",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_resourceID",
+        type: "uint256",
+      },
+    ],
+    name: "startGather",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

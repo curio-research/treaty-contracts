@@ -4,8 +4,7 @@ pragma solidity ^0.8.4;
 /// Data structures for game
 
 enum TERRAIN {
-    PLAIN,
-    MOUNTAIN
+    LAND
 }
 
 enum VALUE_TYPE {

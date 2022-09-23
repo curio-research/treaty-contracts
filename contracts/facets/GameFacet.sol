@@ -25,7 +25,7 @@ contract GameFacet is UseStorage {
         require(gs().players.length < gs().worldConstants.maxPlayerCount, "CURIO: Max player count exceeded");
         require(gs().playerEntityMap[msg.sender] == NULL, "CURIO: Player already initialized");
         require(GameLib._inBound(_position), "CURIO: Out of bound");
-        if (!GameLib._getMapTileAt(_position).isInitialized) GameLib._initializeTile(_position);
+        GameLib._initializeTile(_position);
 
         // Spawn player
         _playerID = ECSLib._addEntity();
@@ -46,7 +46,7 @@ contract GameFacet is UseStorage {
         ECSLib._setBool("CanSettle", _settlerID);
         ECSLib._setUint("Health", _settlerID, 1); // FIXME
         ECSLib._setUint("Speed", _settlerID, 1); // FIXME
-        ECSLib._setUint("LastMoved", _settlerID, block.timestamp);
+        ECSLib._setUint("LastTimestamp", _settlerID, block.timestamp);
 
         // Initialize guard which stays with eventual city
         GameLib._addGuard(_settlerID);
@@ -79,13 +79,17 @@ contract GameFacet is UseStorage {
 
         // Verify target position is in bound
         require(GameLib._inBound(_targetPosition), "CURIO: Out of bound");
+        GameLib._initializeTile(_targetPosition);
 
         // Check speed and cooldown
-        // require(ECSLib._getUint("LastMoved", _settlerID) < block.timestamp, "CURIO: Need more time till next move");
+        // require(ECSLib._getUint("LastTimestamp", _settlerID) < block.timestamp, "CURIO: Need more time till next move");
         require(ECSLib._getUint("Speed", _settlerID) >= GameLib._euclidean(ECSLib._getPosition("Position", _settlerID), _targetPosition), "CURIO: Not fast enough");
 
+        // Verify no other army or settler at destination
+        require(GameLib._getArmyAt(_targetPosition) == NULL && GameLib._getSettlerAt(_targetPosition) == NULL, "CURIO: Destination occupied");
+
         ECSLib._setPosition("Position", _settlerID, _targetPosition);
-        ECSLib._setUint("LastMoved", _settlerID, block.timestamp);
+        ECSLib._setUint("LastTimestamp", _settlerID, block.timestamp);
     }
 
     function foundCity(
@@ -115,13 +119,17 @@ contract GameFacet is UseStorage {
         require(GameLib._connected(_territory), "CURIO: Territory disconnected");
         require(GameLib._includesPosition(_centerPosition, _territory), "CURIO: Territory must cover settler's current position");
 
+        // Remove resource at destination if one exists
+        uint256 _resourceID = GameLib._getResourceAt(_centerPosition);
+        if (_resourceID != NULL) ECSLib._removeEntity(_resourceID);
+
         uint256 _cityID = _settlerID;
 
         // Verify that territory is wholly in bound and does not overlap with other cities, and initialize tiles
         for (uint256 i = 0; i < _territory.length; i++) {
             require(GameLib._inBound(_territory[i]), "CURIO: Out of bound");
             require(GameLib._getTileAt(_territory[i]) == NULL, "CURIO: Territory overlaps with another city");
-            if (!GameLib._getMapTileAt(_territory[i]).isInitialized) GameLib._initializeTile(_territory[i]);
+            GameLib._initializeTile(_territory[i]);
 
             uint256 _tile = ECSLib._addEntity();
             ECSLib._setString("Tag", _tile, "Tile");
@@ -133,7 +141,7 @@ contract GameFacet is UseStorage {
         ECSLib._removeBool("CanSettle", _cityID);
         ECSLib._removeUint("Health", _cityID);
         ECSLib._removeUint("Speed", _cityID);
-        ECSLib._removeUint("LastMoved", _cityID);
+        ECSLib._removeUint("LastTimestamp", _cityID);
         ECSLib._setString("Tag", _cityID, "City");
         ECSLib._setString("Name", _cityID, _cityName);
         ECSLib._setBool("CanProduce", _cityID);
@@ -176,7 +184,7 @@ contract GameFacet is UseStorage {
         ECSLib._setBool("CanSettle", _settlerID);
         ECSLib._setUint("Health", _settlerID, _health);
         ECSLib._setUint("Speed", _settlerID, _speed);
-        ECSLib._setUint("LastMoved", _settlerID, block.timestamp);
+        ECSLib._setUint("LastTimestamp", _settlerID, block.timestamp);
         ECSLib._setString("Tag", _settlerID, "Settler");
         ECSLib._removeString("Name", _settlerID);
         ECSLib._removeBool("CanProduce", _settlerID);
@@ -218,7 +226,7 @@ contract GameFacet is UseStorage {
         for (uint256 i = 0; i < _newTerritory.length; i++) {
             require(GameLib._inBound(_newTerritory[i]), "CURIO: Out of bound");
             require(GameLib._getTileAt(_newTerritory[i]) == NULL, "CURIO: Territory overlaps with another city");
-            if (!GameLib._getMapTileAt(_newTerritory[i]).isInitialized) GameLib._initializeTile(_newTerritory[i]);
+            GameLib._initializeTile(_newTerritory[i]);
 
             uint256 _tile = ECSLib._addEntity();
             ECSLib._setString("Tag", _tile, "Tile");
@@ -266,8 +274,8 @@ contract GameFacet is UseStorage {
         uint256 _cost = ECSLib._getUint("Cost", _templateID) * _amount;
         require(_balance >= _cost, "CURIO: Insufficient gold balance");
 
-        // Create inventory if no exist, and verify that amount does not exceed ceiling
-        uint256 _inventoryID = GameLib._getInventory(_cityID, _templateID);
+        // Create inventory if none exists, and verify that amount does not exceed ceiling
+        uint256 _inventoryID = GameLib._getInventory(_cityID, _templateID); // FIXME: BUG
         if (_inventoryID == NULL) {
             _inventoryID = ECSLib._addEntity();
             ECSLib._setString("Tag", _inventoryID, "TroopInventory");
@@ -277,6 +285,7 @@ contract GameFacet is UseStorage {
         } else {
             require(ECSLib._getUint("Amount", _inventoryID) < gs().worldConstants.maxInventoryCapacity, "CURIO: Amount exceeds inventory capacity");
         }
+
         // Start production
         _productionID = ECSLib._addEntity();
         ECSLib._setString("Tag", _productionID, "TroopProduction");
@@ -286,7 +295,9 @@ contract GameFacet is UseStorage {
         ECSLib._setUint("Amount", _productionID, _amount);
         ECSLib._setUint("InitTimestamp", _productionID, block.timestamp);
         ECSLib._setUint("Duration", _productionID, ECSLib._getUint("Duration", _templateID) * _amount);
-        ECSLib._setUint("Cost", _productionID, _cost);
+
+        // Deduct cost
+        ECSLib._setUint("Amount", _goldInventoryID, _balance - _cost);
     }
 
     function endTroopProduction(uint256 _buildingID, uint256 _productionID) external {
@@ -316,9 +327,10 @@ contract GameFacet is UseStorage {
         ECSLib._removeEntity(_productionID);
     }
 
-    function harvestResource(uint256 _buildingID, uint256 _templateID) external {
-        // Verify that building exists as an entity
-        require(Set(gs().entities).includes(_buildingID), "CURIO: Building not found");
+    function startGather(uint256 _armyID, uint256 _resourceID) external {
+        // Verify that army and resource exist as entities
+        require(Set(gs().entities).includes(_armyID), "CURIO: Army not found");
+        require(Set(gs().entities).includes(_resourceID), "CURIO: Resource not found");
 
         // Verify that game is ongoing
         require(!gs().isPaused, "CURIO: Game is paused");
@@ -327,26 +339,78 @@ contract GameFacet is UseStorage {
         uint256 _playerID = GameLib._getPlayer(msg.sender);
         require(ECSLib._getBoolComponent("IsActive").has(_playerID), "CURIO: Player is inactive");
 
-        // Verify that city belongs to player
-        uint256 _cityID = ECSLib._getUint("City", _buildingID);
-        require(ECSLib._getUint("Owner", _cityID) == _playerID, "CURIO: City is not yours");
+        // Verify that army is sitting on the resource
+        Position memory _position = ECSLib._getPosition("Position", _armyID);
+        require(GameLib._coincident(_position, ECSLib._getPosition("Position", _resourceID)), "CURIO: Army must be coincident to resource to gather");
 
-        // Create inventory if no exist
-        uint256 _inventoryID = GameLib._getInventory(_cityID, _templateID);
-        if (_inventoryID == NULL) {
-            _inventoryID = ECSLib._addEntity();
-            ECSLib._setString("Tag", _inventoryID, "ResourceInventory");
-            ECSLib._setUint("City", _inventoryID, _cityID);
-            ECSLib._setUint("Template", _inventoryID, _templateID);
-            ECSLib._setUint("Amount", _inventoryID, 0);
-        }
+        // Verify that army belongs to player
+        require(ECSLib._getUint("Owner", _armyID) == _playerID, "CURIO: Army is not yours");
 
-        // Update amount and reset time
-        uint256 _amount = (block.timestamp - ECSLib._getUint("InitTimestamp", _buildingID)) / ECSLib._getUint("Duration", _templateID) + ECSLib._getUint("Amount", _inventoryID);
-        if (_amount >= gs().worldConstants.maxInventoryCapacity) _amount = gs().worldConstants.maxInventoryCapacity;
-        ECSLib._setUint("Amount", _inventoryID, _amount);
-        ECSLib._setUint("InitTimestamp", _buildingID, block.timestamp);
+        // Verify that resource is not in another player's territory
+        uint256 _tileID = GameLib._getTileAt(_position);
+        require(_tileID == NULL || ECSLib._getUint("Owner", ECSLib._getUint("City", _tileID)) == _playerID, "CURIO: Cannot gather on another player's territory");
+
+        // Verify that the army's capacity isn't full
+        // TODO
+
+        // Start gathering process
+        uint256 _gatherID = ECSLib._addEntity();
+        ECSLib._setString("Tag", _gatherID, "ResourceGather");
+        ECSLib._setPosition("Position", _gatherID, _position);
+        ECSLib._setUint("Owner", _gatherID, _playerID);
+        ECSLib._setUint("Template", _gatherID, ECSLib._getUint("Template", _resourceID));
+        ECSLib._setUint("InitTimestamp", _gatherID, block.timestamp);
     }
+
+    function endGather(uint256 _armyID) external {
+        // Verify that army exists as an entity
+        require(Set(gs().entities).includes(_armyID), "CURIO: Army not found");
+
+        // Verify that game is ongoing
+        require(!gs().isPaused, "CURIO: Game is paused");
+
+        // Verify that player is active
+        uint256 _playerID = GameLib._getPlayer(msg.sender);
+        require(ECSLib._getBoolComponent("IsActive").has(_playerID), "CURIO: Player is inactive");
+
+        // Verify that army belongs to player
+        require(ECSLib._getUint("Owner", _armyID) == _playerID, "CURIO: Army is not yours");
+
+        // End gather
+        GameLib._endGather(_armyID);
+    }
+
+    // function harvestResource(uint256 _buildingID, uint256 _templateID) external {
+    //     // Verify that building exists as an entity
+    //     require(Set(gs().entities).includes(_buildingID), "CURIO: Building not found");
+
+    //     // Verify that game is ongoing
+    //     require(!gs().isPaused, "CURIO: Game is paused");
+
+    //     // Verify that player is active
+    //     uint256 _playerID = GameLib._getPlayer(msg.sender);
+    //     require(ECSLib._getBoolComponent("IsActive").has(_playerID), "CURIO: Player is inactive");
+
+    //     // Verify that city belongs to player
+    //     uint256 _cityID = ECSLib._getUint("City", _buildingID);
+    //     require(ECSLib._getUint("Owner", _cityID) == _playerID, "CURIO: City is not yours");
+
+    //     // Create inventory if none exists
+    //     uint256 _inventoryID = GameLib._getInventory(_cityID, _templateID);
+    //     if (_inventoryID == NULL) {
+    //         _inventoryID = ECSLib._addEntity();
+    //         ECSLib._setString("Tag", _inventoryID, "ResourceInventory");
+    //         ECSLib._setUint("City", _inventoryID, _cityID);
+    //         ECSLib._setUint("Template", _inventoryID, _templateID);
+    //         ECSLib._setUint("Amount", _inventoryID, 0);
+    //     }
+
+    //     // Update amount and reset time
+    //     uint256 _amount = (block.timestamp - ECSLib._getUint("InitTimestamp", _buildingID)) / ECSLib._getUint("Duration", _templateID) + ECSLib._getUint("Amount", _inventoryID);
+    //     if (_amount >= gs().worldConstants.maxInventoryCapacity) _amount = gs().worldConstants.maxInventoryCapacity;
+    //     ECSLib._setUint("Amount", _inventoryID, _amount);
+    //     ECSLib._setUint("InitTimestamp", _buildingID, block.timestamp);
+    // }
 
     // ----------------------------------------------------------
     // BATTLE
@@ -371,12 +435,13 @@ contract GameFacet is UseStorage {
         require(ECSLib._getUint("Owner", _cityID) == _playerID, "CURIO: City is not yours");
 
         // Verify there is no army currently at the city center
-        require(GameLib._getArmyAt(ECSLib._getPosition("Position", GameLib._getCityCenter(_cityID))) == NULL, "CURIO: Tile occupied by another army");
+        require(GameLib._getArmyAt(ECSLib._getPosition("Position", _cityID)) == NULL, "CURIO: Tile occupied by another army");
 
         uint256 _health = 0; // sum
         uint256 _speed = 0; // average
         uint256 _attack = 0; // sum
         uint256 _defense = 0; // sum
+        uint256 _load = 0; // sum
 
         // Verify input templates
         require(_templateIDs.length == _amounts.length, "CURIO: Input lengths do not match");
@@ -387,11 +452,11 @@ contract GameFacet is UseStorage {
             uint256 _inventoryID = GameLib._getInventory(_cityID, _templateIDs[i]);
             require(ECSLib._getUint("Amount", _inventoryID) >= _amounts[i], "CURIO: Not enough troops");
 
-            uint256 _templateID = ECSLib._getUint("Template", _inventoryID);
-            _health += ECSLib._getUint("Health", _templateID) * _amounts[i];
-            _speed += ECSLib._getUint("Speed", _templateID) * _amounts[i];
-            _attack += ECSLib._getUint("Attack", _templateID) * _amounts[i];
-            _defense += ECSLib._getUint("Defense", _templateID) * _amounts[i];
+            _health += ECSLib._getUint("Health", _templateIDs[i]) * _amounts[i];
+            _speed += ECSLib._getUint("Speed", _templateIDs[i]) * _amounts[i];
+            _attack += ECSLib._getUint("Attack", _templateIDs[i]) * _amounts[i];
+            _defense += ECSLib._getUint("Defense", _templateIDs[i]) * _amounts[i];
+            _load += ECSLib._getUint("Load", _templateIDs[i]) * _amounts[i];
             ECSLib._setUint("Amount", _inventoryID, ECSLib._getUint("Amount", _inventoryID) - _amounts[i]);
         }
         _speed /= GameLib._sum(_amounts);
@@ -400,12 +465,13 @@ contract GameFacet is UseStorage {
         _armyID = ECSLib._addEntity();
         ECSLib._setString("Tag", _armyID, "Army");
         ECSLib._setUint("Owner", _armyID, _playerID);
-        ECSLib._setPosition("Position", _armyID, ECSLib._getPosition("Position", GameLib._getCityCenter(_cityID)));
+        ECSLib._setPosition("Position", _armyID, ECSLib._getPosition("Position", _cityID));
         ECSLib._setUint("Health", _armyID, _health);
         ECSLib._setUint("Speed", _armyID, _speed);
         ECSLib._setUint("Attack", _armyID, _attack);
         ECSLib._setUint("Defense", _armyID, _defense);
-        ECSLib._setUint("LastMoved", _armyID, block.timestamp);
+        ECSLib._setUint("Load", _armyID, _load);
+        ECSLib._setUint("LastTimestamp", _armyID, block.timestamp);
 
         // Add army constituents
         for (uint256 i = 0; i < _templateIDs.length; i++) {
@@ -457,9 +523,9 @@ contract GameFacet is UseStorage {
         uint256[] memory _signatureIDs = GameLib._getPlayerSignatures(_playerID);
         for (uint256 i = 0; i < _signatureIDs.length; i++) {
             address _treaty = ECSLib._getAddress("Treaty", _signatureIDs[i]);
-            (bool success, bytes memory returnData) = _treaty.call(abi.encodeWithSignature("approveMoveArmy()"));
-            require(success, "CRUIO: Failed to call the external treaty");
-            require(abi.decode(returnData, (bool)), "CRUIO: Treaty does not approve your action");
+            (bool _success, bytes memory _returnData) = _treaty.call(abi.encodeWithSignature("approveMoveArmy()"));
+            require(_success, "CRUIO: Failed to call the external treaty");
+            require(abi.decode(_returnData, (bool)), "CRUIO: Treaty does not approve your action");
         }
 
         // Verify that army exists as an entity
@@ -476,10 +542,10 @@ contract GameFacet is UseStorage {
 
         // Verify that position is in bound, and initialize tile
         require(GameLib._inBound(_targetPosition), "CURIO: Out of bound");
-        if (!GameLib._getMapTileAt(_targetPosition).isInitialized) GameLib._initializeTile(_targetPosition);
+        GameLib._initializeTile(_targetPosition);
 
         // Check speed and cooldown
-        require(ECSLib._getUint("LastMoved", _armyID) < block.timestamp, "CURIO: Need more time till next move");
+        require(ECSLib._getUint("LastTimestamp", _armyID) < block.timestamp, "CURIO: Need more time till next move");
         require(ECSLib._getUint("Speed", _armyID) >= GameLib._euclidean(ECSLib._getPosition("Position", _armyID), _targetPosition), "CURIO: Not fast enough");
 
         // Verify that target tile has no other army
@@ -518,9 +584,13 @@ contract GameFacet is UseStorage {
         uint256 _playerID = GameLib._getPlayer(msg.sender);
         require(ECSLib._getBoolComponent("IsActive").has(_playerID), "CURIO: You are inactive");
 
-        // Verify that army belongs to player
+        // Verify that army belongs to player and target army doesn't
         require(ECSLib._getUint("Owner", _armyID) == _playerID, "CURIO: Army is not yours");
         require(ECSLib._getUint("Owner", _targetArmyID) != _playerID, "CURIO: Cannot attack your own army");
+
+        // End army's and target army's gathers
+        if (GameLib._getArmyGather(_armyID) != NULL) GameLib._endGather(_armyID);
+        if (GameLib._getArmyGather(_targetArmyID) != NULL) GameLib._endGather(_targetArmyID);
 
         // Verify that army and target army are adjacent
         require(GameLib._adjacent(ECSLib._getPosition("Position", _armyID), ECSLib._getPosition("Position", _targetArmyID)), "CURIO: Too far");
@@ -532,7 +602,11 @@ contract GameFacet is UseStorage {
         ECSLib._setUint("Source", _battleID, _armyID);
         ECSLib._setUint("Target", _battleID, _targetArmyID);
 
-        // FIXME: congrats, you win
+        // FIXME: congrats, you win (and take the other's gold)
+        uint256 _armyInventoryAmount = ECSLib._getUint("Amount", GameLib._getArmyInventory(_armyID, GameLib._getTemplateByInventoryType("Gold")));
+        uint256 _increase = ECSLib._getUint("Amount", GameLib._getArmyInventory(_targetArmyID, GameLib._getTemplateByInventoryType("Gold")));
+        if (_increase > ECSLib._getUint("Load", _armyID) - _armyInventoryAmount) _increase = ECSLib._getUint("Load", _armyID) - _armyInventoryAmount;
+        ECSLib._setUint("Amount", GameLib._getArmyInventory(_armyID, GameLib._getTemplateByInventoryType("Gold")), _armyInventoryAmount + _increase);
         GameLib._removeArmy(_targetArmyID);
     }
 

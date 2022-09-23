@@ -104,7 +104,7 @@ contract AdminFacet is UseStorage {
         _componentSpecs[21] = ComponentSpec({name: "Keeper", valueType: VALUE_TYPE.UINT});
         _componentSpecs[22] = ComponentSpec({name: "Amount", valueType: VALUE_TYPE.UINT});
         _componentSpecs[23] = ComponentSpec({name: "InventoryType", valueType: VALUE_TYPE.STRING});
-        _componentSpecs[24] = ComponentSpec({name: "LastMoved", valueType: VALUE_TYPE.UINT});
+        _componentSpecs[24] = ComponentSpec({name: "LastTimestamp", valueType: VALUE_TYPE.UINT});
         _componentSpecs[25] = ComponentSpec({name: "Source", valueType: VALUE_TYPE.UINT});
         _componentSpecs[26] = ComponentSpec({name: "Target", valueType: VALUE_TYPE.UINT});
         _componentSpecs[27] = ComponentSpec({name: "Inventory", valueType: VALUE_TYPE.UINT});

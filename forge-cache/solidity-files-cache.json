@@ -12,7 +12,7 @@
   },
   "files": {
     "contracts/Component.sol": {
-      "lastModificationDate": 1663281046122,
+      "lastModificationDate": 1663363116135,
       "contentHash": "0938a0cb406ae0cd279e287fdacd608b",
       "sourceName": "contracts/Component.sol",
       "solcConfig": {
@@ -33,7 +33,8 @@
                 "abi",
                 "evm.bytecode",
                 "evm.deployedBytecode",
-                "evm.methodIdentifiers"
+                "evm.methodIdentifiers",
+                "metadata"
               ]
             }
           },
@@ -52,7 +53,7 @@
       }
     },
     "contracts/Diamond.sol": {
-      "lastModificationDate": 1663281046122,
+      "lastModificationDate": 1663363116135,
       "contentHash": "1e162c4c7e9cd8814e6f1ec468f3bfb7",
       "sourceName": "contracts/Diamond.sol",
       "solcConfig": {
@@ -73,7 +74,8 @@
                 "abi",
                 "evm.bytecode",
                 "evm.deployedBytecode",
-                "evm.methodIdentifiers"
+                "evm.methodIdentifiers",
+                "metadata"
               ]
             }
           },
@@ -88,13 +90,13 @@
       "versionRequirement": "^0.8.0",
       "artifacts": {
         "Diamond": {
-          "0.8.4+commit.c7e474f2.Darwin.appleclang": "Diamond.sol/Diamond.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "contracts/Diamond.sol/Diamond.json"
         }
       }
     },
     "contracts/NATO.sol": {
-      "lastModificationDate": 1663620458665,
-      "contentHash": "189d2dd2a984061613d5e692a18cfe0a",
+      "lastModificationDate": 1663781216616,
+      "contentHash": "c6d4f2fbdfdfd05cc24842a058fc972a",
       "sourceName": "contracts/NATO.sol",
       "solcConfig": {
         "settings": {
@@ -114,7 +116,8 @@
                 "abi",
                 "evm.bytecode",
                 "evm.deployedBytecode",
-                "evm.methodIdentifiers"
+                "evm.methodIdentifiers",
+                "metadata"
               ]
             }
           },
@@ -131,7 +134,7 @@
       }
     },
     "contracts/Set.sol": {
-      "lastModificationDate": 1663281046123,
+      "lastModificationDate": 1663363116135,
       "contentHash": "b978f5ba69b3acb9f8424bbe0312a512",
       "sourceName": "contracts/Set.sol",
       "solcConfig": {
@@ -152,7 +155,8 @@
                 "abi",
                 "evm.bytecode",
                 "evm.deployedBytecode",
-                "evm.methodIdentifiers"
+                "evm.methodIdentifiers",
+                "metadata"
               ]
             }
           },
@@ -169,7 +173,7 @@
       }
     },
     "contracts/TypedComponents.sol": {
-      "lastModificationDate": 1663347052860,
+      "lastModificationDate": 1663363116136,
       "contentHash": "784c815f5c7c20df44d5463e4396354d",
       "sourceName": "contracts/TypedComponents.sol",
       "solcConfig": {
@@ -190,7 +194,8 @@
                 "abi",
                 "evm.bytecode",
                 "evm.deployedBytecode",
-                "evm.methodIdentifiers"
+                "evm.methodIdentifiers",
+                "metadata"
               ]
             }
           },
@@ -229,7 +234,7 @@
       }
     },
     "contracts/diamond.sol": {
-      "lastModificationDate": 1663281046122,
+      "lastModificationDate": 1663363116135,
       "contentHash": "1e162c4c7e9cd8814e6f1ec468f3bfb7",
       "sourceName": "contracts/diamond.sol",
       "solcConfig": {
@@ -250,7 +255,8 @@
                 "abi",
                 "evm.bytecode",
                 "evm.deployedBytecode",
-                "evm.methodIdentifiers"
+                "evm.methodIdentifiers",
+                "metadata"
               ]
             }
           },
@@ -265,12 +271,12 @@
       "versionRequirement": "^0.8.0",
       "artifacts": {
         "Diamond": {
-          "0.8.4+commit.c7e474f2.Darwin.appleclang": "diamond.sol/Diamond.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "contracts/diamond.sol/Diamond.json"
         }
       }
     },
     "contracts/facets/AdminFacet.sol": {
-      "lastModificationDate": 1663514667864,
+      "lastModificationDate": 1663363118547,
       "contentHash": "327832b2158ae6087ec329c39a7ce66d",
       "sourceName": "contracts/facets/AdminFacet.sol",
       "solcConfig": {
@@ -291,7 +297,8 @@
                 "abi",
                 "evm.bytecode",
                 "evm.deployedBytecode",
-                "evm.methodIdentifiers"
+                "evm.methodIdentifiers",
+                "metadata"
               ]
             }
           },
@@ -307,6 +314,7 @@
         "contracts/libraries/GameLib.sol",
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Types.sol",
+        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -317,7 +325,7 @@
       }
     },
     "contracts/facets/DiamondCutFacet.sol": {
-      "lastModificationDate": 1663281046129,
+      "lastModificationDate": 1663363116136,
       "contentHash": "ad746ce9d800ea0c25c48b34397c7182",
       "sourceName": "contracts/facets/DiamondCutFacet.sol",
       "solcConfig": {
@@ -338,7 +346,8 @@
                 "abi",
                 "evm.bytecode",
                 "evm.deployedBytecode",
-                "evm.methodIdentifiers"
+                "evm.methodIdentifiers",
+                "metadata"
               ]
             }
           },
@@ -358,7 +367,7 @@
       }
     },
     "contracts/facets/DiamondLoupeFacet.sol": {
-      "lastModificationDate": 1663281046129,
+      "lastModificationDate": 1663363116136,
       "contentHash": "a540c77de08e319128a4937adb8ee3f0",
       "sourceName": "contracts/facets/DiamondLoupeFacet.sol",
       "solcConfig": {
@@ -379,7 +388,8 @@
                 "abi",
                 "evm.bytecode",
                 "evm.deployedBytecode",
-                "evm.methodIdentifiers"
+                "evm.methodIdentifiers",
+                "metadata"
               ]
             }
           },
@@ -401,8 +411,8 @@
       }
     },
     "contracts/facets/GameFacet.sol": {
-      "lastModificationDate": 1663514667864,
-      "contentHash": "4896303a75acf7b7e0b04cc1f84f9d00",
+      "lastModificationDate": 1663800359479,
+      "contentHash": "6896f889832a6b02908689e0ab1b4e1b",
       "sourceName": "contracts/facets/GameFacet.sol",
       "solcConfig": {
         "settings": {
@@ -422,7 +432,8 @@
                 "abi",
                 "evm.bytecode",
                 "evm.deployedBytecode",
-                "evm.methodIdentifiers"
+                "evm.methodIdentifiers",
+                "metadata"
               ]
             }
           },
@@ -438,6 +449,7 @@
         "contracts/libraries/GameLib.sol",
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Types.sol",
+        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -448,7 +460,7 @@
       }
     },
     "contracts/facets/GetterFacet.sol": {
-      "lastModificationDate": 1663514667864,
+      "lastModificationDate": 1663363118547,
       "contentHash": "d9ffe4335af8362980db11f4fe054f93",
       "sourceName": "contracts/facets/GetterFacet.sol",
       "solcConfig": {
@@ -469,7 +481,8 @@
                 "abi",
                 "evm.bytecode",
                 "evm.deployedBytecode",
-                "evm.methodIdentifiers"
+                "evm.methodIdentifiers",
+                "metadata"
               ]
             }
           },
@@ -485,6 +498,7 @@
         "contracts/libraries/GameLib.sol",
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Types.sol",
+        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -495,7 +509,7 @@
       }
     },
     "contracts/facets/OwnershipFacet.sol": {
-      "lastModificationDate": 1663281046137,
+      "lastModificationDate": 1663363116137,
       "contentHash": "511e52e633c81449539ae2a3a978abf8",
       "sourceName": "contracts/facets/OwnershipFacet.sol",
       "solcConfig": {
@@ -516,7 +530,8 @@
                 "abi",
                 "evm.bytecode",
                 "evm.deployedBytecode",
-                "evm.methodIdentifiers"
+                "evm.methodIdentifiers",
+                "metadata"
               ]
             }
           },
@@ -537,7 +552,7 @@
       }
     },
     "contracts/facets/PolicyFacet.sol": {
-      "lastModificationDate": 1663281046137,
+      "lastModificationDate": 1663363116137,
       "contentHash": "b9d757464502b2739219b20fb4b5c3ad",
       "sourceName": "contracts/facets/PolicyFacet.sol",
       "solcConfig": {
@@ -558,7 +573,8 @@
                 "abi",
                 "evm.bytecode",
                 "evm.deployedBytecode",
-                "evm.methodIdentifiers"
+                "evm.methodIdentifiers",
+                "metadata"
               ]
             }
           },
@@ -574,6 +590,7 @@
         "contracts/libraries/GameLib.sol",
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Types.sol",
+        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -584,7 +601,7 @@
       }
     },
     "contracts/interfaces/IDiamondCut.sol": {
-      "lastModificationDate": 1663281046137,
+      "lastModificationDate": 1663363116137,
       "contentHash": "d8b4c09443cf22718287f7f9a4a6bcb2",
       "sourceName": "contracts/interfaces/IDiamondCut.sol",
       "solcConfig": {
@@ -605,7 +622,8 @@
                 "abi",
                 "evm.bytecode",
                 "evm.deployedBytecode",
-                "evm.methodIdentifiers"
+                "evm.methodIdentifiers",
+                "metadata"
               ]
             }
           },
@@ -622,7 +640,7 @@
       }
     },
     "contracts/interfaces/IDiamondLoupe.sol": {
-      "lastModificationDate": 1663281046137,
+      "lastModificationDate": 1663363116137,
       "contentHash": "a471cd6a18e337530aa0fb37a1dd2294",
       "sourceName": "contracts/interfaces/IDiamondLoupe.sol",
       "solcConfig": {
@@ -643,7 +661,8 @@
                 "abi",
                 "evm.bytecode",
                 "evm.deployedBytecode",
-                "evm.methodIdentifiers"
+                "evm.methodIdentifiers",
+                "metadata"
               ]
             }
           },
@@ -660,7 +679,7 @@
       }
     },
     "contracts/interfaces/IERC165.sol": {
-      "lastModificationDate": 1663281046138,
+      "lastModificationDate": 1663363116137,
       "contentHash": "f8f9ee2c76e1678bfead7a3fad131934",
       "sourceName": "contracts/interfaces/IERC165.sol",
       "solcConfig": {
@@ -681,7 +700,8 @@
                 "abi",
                 "evm.bytecode",
                 "evm.deployedBytecode",
-                "evm.methodIdentifiers"
+                "evm.methodIdentifiers",
+                "metadata"
               ]
             }
           },
@@ -698,7 +718,7 @@
       }
     },
     "contracts/interfaces/IERC173.sol": {
-      "lastModificationDate": 1663281046138,
+      "lastModificationDate": 1663363116138,
       "contentHash": "65e379207bc221335d0eedfe7b077af6",
       "sourceName": "contracts/interfaces/IERC173.sol",
       "solcConfig": {
@@ -719,7 +739,8 @@
                 "abi",
                 "evm.bytecode",
                 "evm.deployedBytecode",
-                "evm.methodIdentifiers"
+                "evm.methodIdentifiers",
+                "metadata"
               ]
             }
           },
@@ -736,7 +757,7 @@
       }
     },
     "contracts/libraries/ECSLib.sol": {
-      "lastModificationDate": 1663347052861,
+      "lastModificationDate": 1663363116138,
       "contentHash": "0fa42a5826697cf3cd9a3f1e09c25dbc",
       "sourceName": "contracts/libraries/ECSLib.sol",
       "solcConfig": {
@@ -757,7 +778,8 @@
                 "abi",
                 "evm.bytecode",
                 "evm.deployedBytecode",
-                "evm.methodIdentifiers"
+                "evm.methodIdentifiers",
+                "metadata"
               ]
             }
           },
@@ -781,8 +803,8 @@
       }
     },
     "contracts/libraries/GameLib.sol": {
-      "lastModificationDate": 1663514667864,
-      "contentHash": "d293d9064f6cfc26bf7cc9de1e0ca52d",
+      "lastModificationDate": 1663798743155,
+      "contentHash": "610a2ebac973c6b3e96e8c7e8cb71dce",
       "sourceName": "contracts/libraries/GameLib.sol",
       "solcConfig": {
         "settings": {
@@ -802,7 +824,8 @@
                 "abi",
                 "evm.bytecode",
                 "evm.deployedBytecode",
-                "evm.methodIdentifiers"
+                "evm.methodIdentifiers",
+                "metadata"
               ]
             }
           },
@@ -817,6 +840,7 @@
         "contracts/libraries/ECSLib.sol",
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Types.sol",
+        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -827,7 +851,7 @@
       }
     },
     "contracts/libraries/GameModules.sol": {
-      "lastModificationDate": 1663281046139,
+      "lastModificationDate": 1663363116138,
       "contentHash": "2e9e11a0cd14def3bb861f31e32beb98",
       "sourceName": "contracts/libraries/GameModules.sol",
       "solcConfig": {
@@ -848,7 +872,8 @@
                 "abi",
                 "evm.bytecode",
                 "evm.deployedBytecode",
-                "evm.methodIdentifiers"
+                "evm.methodIdentifiers",
+                "metadata"
               ]
             }
           },
@@ -864,6 +889,7 @@
         "contracts/libraries/GameLib.sol",
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Types.sol",
+        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -874,7 +900,7 @@
       }
     },
     "contracts/libraries/LibDiamond.sol": {
-      "lastModificationDate": 1663281046139,
+      "lastModificationDate": 1663363116139,
       "contentHash": "dc19813d865c86478eceb05147199488",
       "sourceName": "contracts/libraries/LibDiamond.sol",
       "solcConfig": {
@@ -895,7 +921,8 @@
                 "abi",
                 "evm.bytecode",
                 "evm.deployedBytecode",
-                "evm.methodIdentifiers"
+                "evm.methodIdentifiers",
+                "metadata"
               ]
             }
           },
@@ -914,7 +941,7 @@
       }
     },
     "contracts/libraries/Storage.sol": {
-      "lastModificationDate": 1663281046140,
+      "lastModificationDate": 1663363116139,
       "contentHash": "1b36141f848b096102e707d476aaf9cb",
       "sourceName": "contracts/libraries/Storage.sol",
       "solcConfig": {
@@ -935,7 +962,8 @@
                 "abi",
                 "evm.bytecode",
                 "evm.deployedBytecode",
-                "evm.methodIdentifiers"
+                "evm.methodIdentifiers",
+                "metadata"
               ]
             }
           },
@@ -957,8 +985,8 @@
       }
     },
     "contracts/libraries/Types.sol": {
-      "lastModificationDate": 1663514667865,
-      "contentHash": "8454ab9e132274c988f247a3baf927be",
+      "lastModificationDate": 1663789668438,
+      "contentHash": "3c8d6e896099ac4ea82549964a5ac210",
       "sourceName": "contracts/libraries/Types.sol",
       "solcConfig": {
         "settings": {
@@ -978,7 +1006,8 @@
                 "abi",
                 "evm.bytecode",
                 "evm.deployedBytecode",
-                "evm.methodIdentifiers"
+                "evm.methodIdentifiers",
+                "metadata"
               ]
             }
           },
@@ -995,7 +1024,7 @@
       }
     },
     "contracts/upgradeInitializers/DiamondInit.sol": {
-      "lastModificationDate": 1663281046140,
+      "lastModificationDate": 1663363116139,
       "contentHash": "ce6f189fac589c8cd362a4fb74b013bc",
       "sourceName": "contracts/upgradeInitializers/DiamondInit.sol",
       "solcConfig": {
@@ -1016,7 +1045,8 @@
                 "abi",
                 "evm.bytecode",
                 "evm.deployedBytecode",
-                "evm.methodIdentifiers"
+                "evm.methodIdentifiers",
+                "metadata"
               ]
             }
           },
@@ -1037,12 +1067,12 @@
       "versionRequirement": "^0.8.0",
       "artifacts": {
         "DiamondInit": {
-          "0.8.4+commit.c7e474f2.Darwin.appleclang": "DiamondInit.sol/DiamondInit.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "upgradeInitializers/DiamondInit.sol/DiamondInit.json"
         }
       }
     },
     "contracts/upgradeInitializers/diamondInit.sol": {
-      "lastModificationDate": 1663281046140,
+      "lastModificationDate": 1663363116139,
       "contentHash": "ce6f189fac589c8cd362a4fb74b013bc",
       "sourceName": "contracts/upgradeInitializers/diamondInit.sol",
       "solcConfig": {
@@ -1063,7 +1093,8 @@
                 "abi",
                 "evm.bytecode",
                 "evm.deployedBytecode",
-                "evm.methodIdentifiers"
+                "evm.methodIdentifiers",
+                "metadata"
               ]
             }
           },
@@ -1084,12 +1115,12 @@
       "versionRequirement": "^0.8.0",
       "artifacts": {
         "DiamondInit": {
-          "0.8.4+commit.c7e474f2.Darwin.appleclang": "diamondInit.sol/DiamondInit.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "upgradeInitializers/diamondInit.sol/DiamondInit.json"
         }
       }
     },
     "lib/forge-std/lib/ds-test/src/test.sol": {
-      "lastModificationDate": 1663281046143,
+      "lastModificationDate": 1663363116142,
       "contentHash": "962996f0e05d5218857a538a62d7c47e",
       "sourceName": "lib/forge-std/lib/ds-test/src/test.sol",
       "solcConfig": {
@@ -1110,7 +1141,8 @@
                 "abi",
                 "evm.bytecode",
                 "evm.deployedBytecode",
-                "evm.methodIdentifiers"
+                "evm.methodIdentifiers",
+                "metadata"
               ]
             }
           },
@@ -1127,7 +1159,7 @@
       }
     },
     "lib/forge-std/src/Test.sol": {
-      "lastModificationDate": 1663281046144,
+      "lastModificationDate": 1663363116142,
       "contentHash": "01af3898b6c9b54e3383d2e7303f487a",
       "sourceName": "lib/forge-std/src/Test.sol",
       "solcConfig": {
@@ -1148,7 +1180,8 @@
                 "abi",
                 "evm.bytecode",
                 "evm.deployedBytecode",
-                "evm.methodIdentifiers"
+                "evm.methodIdentifiers",
+                "metadata"
               ]
             }
           },
@@ -1179,7 +1212,7 @@
       }
     },
     "lib/forge-std/src/Vm.sol": {
-      "lastModificationDate": 1663281046144,
+      "lastModificationDate": 1663363116142,
       "contentHash": "1af1970835110fd1d828d9570c720bdb",
       "sourceName": "lib/forge-std/src/Vm.sol",
       "solcConfig": {
@@ -1200,7 +1233,8 @@
                 "abi",
                 "evm.bytecode",
                 "evm.deployedBytecode",
-                "evm.methodIdentifiers"
+                "evm.methodIdentifiers",
+                "metadata"
               ]
             }
           },
@@ -1217,7 +1251,7 @@
       }
     },
     "lib/forge-std/src/console.sol": {
-      "lastModificationDate": 1663281046144,
+      "lastModificationDate": 1663363116143,
       "contentHash": "100b8a33b917da1147740d7ab8b0ded3",
       "sourceName": "lib/forge-std/src/console.sol",
       "solcConfig": {
@@ -1238,7 +1272,8 @@
                 "abi",
                 "evm.bytecode",
                 "evm.deployedBytecode",
-                "evm.methodIdentifiers"
+                "evm.methodIdentifiers",
+                "metadata"
               ]
             }
           },
@@ -1255,7 +1290,7 @@
       }
     },
     "lib/forge-std/src/console2.sol": {
-      "lastModificationDate": 1663281046145,
+      "lastModificationDate": 1663363116143,
       "contentHash": "5df91f8e93efbfcccf68973dc1b74a70",
       "sourceName": "lib/forge-std/src/console2.sol",
       "solcConfig": {
@@ -1276,7 +1311,8 @@
                 "abi",
                 "evm.bytecode",
                 "evm.deployedBytecode",
-                "evm.methodIdentifiers"
+                "evm.methodIdentifiers",
+                "metadata"
               ]
             }
           },
@@ -1293,7 +1329,7 @@
       }
     },
     "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol": {
-      "lastModificationDate": 1663281046206,
+      "lastModificationDate": 1663363116189,
       "contentHash": "2337f0279507b5edf14a07067adf0d05",
       "sourceName": "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol",
       "solcConfig": {
@@ -1314,7 +1350,8 @@
                 "abi",
                 "evm.bytecode",
                 "evm.deployedBytecode",
-                "evm.methodIdentifiers"
+                "evm.methodIdentifiers",
+                "metadata"
               ]
             }
           },
@@ -1331,7 +1368,7 @@
       }
     },
     "test/Basic.t.sol": {
-      "lastModificationDate": 1663514667865,
+      "lastModificationDate": 1663363118548,
       "contentHash": "ff7747e1ab4c86469ed2ed06c659b116",
       "sourceName": "test/Basic.t.sol",
       "solcConfig": {
@@ -1352,7 +1389,8 @@
                 "abi",
                 "evm.bytecode",
                 "evm.deployedBytecode",
-                "evm.methodIdentifiers"
+                "evm.methodIdentifiers",
+                "metadata"
               ]
             }
           },
@@ -1398,7 +1436,7 @@
       }
     },
     "test/DiamondDeploy.t.sol": {
-      "lastModificationDate": 1663514667865,
+      "lastModificationDate": 1663363118549,
       "contentHash": "eb94796f56ae560bd3dd0efe1d902f16",
       "sourceName": "test/DiamondDeploy.t.sol",
       "solcConfig": {
@@ -1419,7 +1457,8 @@
                 "abi",
                 "evm.bytecode",
                 "evm.deployedBytecode",
-                "evm.methodIdentifiers"
+                "evm.methodIdentifiers",
+                "metadata"
               ]
             }
           },
@@ -1464,7 +1503,7 @@
       }
     },
     "test/Treaty.t.sol": {
-      "lastModificationDate": 1663514667865,
+      "lastModificationDate": 1663363118549,
       "contentHash": "50bfcc68544c200d34b3ebb914b842df",
       "sourceName": "test/Treaty.t.sol",
       "solcConfig": {
@@ -1485,7 +1524,8 @@
                 "abi",
                 "evm.bytecode",
                 "evm.deployedBytecode",
-                "evm.methodIdentifiers"
+                "evm.methodIdentifiers",
+                "metadata"
               ]
             }
           },

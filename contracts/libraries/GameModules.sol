@@ -31,8 +31,8 @@ library GameModules {
     //     require(GameLib._withinDistance(ECSLib._getPosition("Position", _armyEntity), _targetPosition, 1), "CURIO: Destination too far");
 
     //     uint256[] memory _troopEntities = GameLib._getArmyTroopEntities(_armyEntity);
-    //     require((block.timestamp - ECSLib._getUint("LastMoved", _armyEntity)) >= GameLib._getArmyMovementCooldown(_troopEntities), "CURIO: Moved too recently");
-    //     ECSLib._setUint("LastMoved", _armyEntity, block.timestamp);
+    //     require((block.timestamp - ECSLib._getUint("LastTimestamp", _armyEntity)) >= GameLib._getArmyMovementCooldown(_troopEntities), "CURIO: Moved too recently");
+    //     ECSLib._setUint("LastTimestamp", _armyEntity, block.timestamp);
 
     //     ECSLib._setPosition("Position", _armyEntity, _targetPosition);
     // }
