@@ -5,7 +5,6 @@ import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment, HardhatArguments } from 'hardhat/types';
 import { deployProxy, printDivider } from './util/deployHelper';
 import { createTemplates, generateWorldConstants, SMALL_MAP_INPUT } from './util/constants';
-import { position } from '../util/types/common';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
 import { chooseRandomEmptyLandPosition, encodeTileMap, generateMap } from './util/mapHelper';
 import { GameConfig } from '../api/types';
@@ -78,7 +77,7 @@ task('deploy', 'deploy contracts')
 
         // Initialize map
         startTime = performance.now();
-        const encodedTileMap = encodeTileMap(tileMap, 6, 50);
+        const encodedTileMap = encodeTileMap(tileMap, worldConstants.numInitTerrainTypes, worldConstants.initBatchSize);
         await (await diamond.storeEncodedColumnBatches(encodedTileMap)).wait();
         console.log(`✦ lazy setting ${tileMap.length}x${tileMap[0].length} map took ${Math.floor(performance.now() - startTime)} ms`);
 
