@@ -483,9 +483,7 @@ export interface GameFacet extends BaseContract {
       _position: PositionStruct,
       _name: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber] & { _playerID: BigNumber; _settlerID: BigNumber }
-    >;
+    ): Promise<void>;
 
     joinTreaty(
       _treatyAddress: PromiseOrValue<string>,

@@ -20,42 +20,27 @@ contract GameFacet is UseStorage {
     // BASIC
     // ----------------------------------------------------------
 
-    function initializePlayer(Position memory _position, string memory _name) external returns (uint256 _playerID, uint256 _settlerID) {
-        // Checkers
-        require(!gs().isPaused, "CURIO: Game is paused");
+    function initializePlayer(Position memory _position, string memory _name) external {
+        GameLib.gamePauseCheck();
         require(gs().players.length < gs().worldConstants.maxPlayerCount, "CURIO: Max player count exceeded");
         require(gs().playerEntityMap[msg.sender] == NULL, "CURIO: Player already initialized");
         require(GameLib._inBound(_position), "CURIO: Out of bound");
         GameLib._initializeTile(_position);
 
-        // Spawn player
-        _playerID = ECSLib._addEntity();
-        ECSLib._setBool("IsActive", _playerID);
-        ECSLib._setString("Name", _playerID, _name);
-        ECSLib._setString("Tag", _playerID, "Player");
-        ECSLib._setUint("InitTimestamp", _playerID, block.timestamp);
-        ECSLib._setAddress("Address", _playerID, msg.sender);
-        gs().players.push(msg.sender);
-        gs().playerEntityMap[msg.sender] = _playerID;
+        uint256 _playerId = Templates.createPlayer(_name);
 
-        // Spawn settler
-        _settlerID = ECSLib._addEntity();
-        ECSLib._setString("Tag", _settlerID, "Settler");
-        ECSLib._setPosition("Position", _settlerID, _position);
-        ECSLib._setUint("Owner", _settlerID, _playerID);
-        ECSLib._setUint("Level", _settlerID, 1);
-        ECSLib._setBool("CanSettle", _settlerID);
-        ECSLib._setUint("Health", _settlerID, 1); // FIXME
-        ECSLib._setUint("Speed", _settlerID, 1); // FIXME
-        ECSLib._setUint("LastTimestamp", _settlerID, block.timestamp);
+        gs().players.push(msg.sender);
+        gs().playerEntityMap[msg.sender] = _playerId;
+
+        uint256 _settlerId = Templates.createSettler(_position, _playerId);
 
         // Initialize guard which stays with eventual city
-        GameLib._addGuard(_settlerID);
+        GameLib._addGuard(_settlerId);
 
         // Add gold to eventual city
         uint256 _goldInventoryID = ECSLib._addEntity();
         ECSLib._setString("Tag", _goldInventoryID, "ResourceInventory");
-        ECSLib._setUint("City", _goldInventoryID, _settlerID);
+        ECSLib._setUint("City", _goldInventoryID, _settlerId);
         ECSLib._setUint("Template", _goldInventoryID, GameLib._getTemplateByInventoryType("Gold"));
         ECSLib._setUint("Amount", _goldInventoryID, gs().worldConstants.initCityGold);
     }
@@ -65,17 +50,10 @@ contract GameFacet is UseStorage {
     // ----------------------------------------------------------
 
     function moveSettler(uint256 _settlerID, Position memory _targetPosition) external {
-        // Verify that settler exists as an entity
-        require(Set(gs().entities).includes(_settlerID), "CURIO: Settler not found");
-
+        GameLib.validEntityCheck(_settlerID);
         GameLib.gamePauseCheck();
-
-        // Verify that player is active
-        uint256 _playerID = GameLib._getPlayer(msg.sender);
-        require(ECSLib._getBoolComponent("IsActive").has(_playerID), "CURIO: You are inactive");
-
-        // Verify that settler belongs to player
-        require(ECSLib._getUint("Owner", _settlerID) == _playerID, "CURIO: Settler is not yours");
+        GameLib.activePlayerCheck(msg.sender);
+        GameLib.entityOwnershipCheckByAddress(_settlerID, msg.sender);
 
         // Verify target position is in bound
         require(GameLib._inBound(_targetPosition), "CURIO: Out of bound");
@@ -97,17 +75,10 @@ contract GameFacet is UseStorage {
         Position[] memory _territory,
         string memory _cityName
     ) external {
-        // Verify that settler exists as an entity
-        require(Set(gs().entities).includes(_settlerID), "CURIO: Settler not found");
-
+        GameLib.validEntityCheck(_settlerID);
         GameLib.gamePauseCheck();
-
-        // Verify that player is active
-        uint256 _playerID = GameLib._getPlayer(msg.sender);
-        require(ECSLib._getBoolComponent("IsActive").has(_playerID), "CURIO: You are inactive");
-
-        // Verify that settler belongs to player
-        require(ECSLib._getUint("Owner", _settlerID) == _playerID, "CURIO: Settler is not yours");
+        GameLib.activePlayerCheck(msg.sender);
+        GameLib.entityOwnershipCheckByAddress(_settlerID, msg.sender);
 
         // Verify that settler can settle
         require(ECSLib._getBool("CanSettle", _settlerID), "CURIO: Settler cannot settle");
@@ -145,22 +116,15 @@ contract GameFacet is UseStorage {
         ECSLib._setString("Name", _cityID, _cityName);
         ECSLib._setBool("CanProduce", _cityID);
 
-        Templates.createSettler(_centerPosition, _cityID);
+        Templates.createCityCenter(_centerPosition, _cityID);
     }
 
     /// @notice This function can be viewed as the inverse of `foundCity`, as it converts a city back into a settler.
     function packCity(uint256 _cityID) external {
-        // Verify that city exists as an entity
-        require(Set(gs().entities).includes(_cityID), "CURIO: City not found");
-
+        GameLib.validEntityCheck(_cityID);
         GameLib.gamePauseCheck();
-
-        // Verify that player is active
-        uint256 _playerID = GameLib._getPlayer(msg.sender);
-        require(ECSLib._getBoolComponent("IsActive").has(_playerID), "CURIO: You are inactive");
-
-        // Verify that city belongs to player
-        require(ECSLib._getUint("Owner", _cityID) == _playerID, "CURIO: City is not yours");
+        GameLib.activePlayerCheck(msg.sender);
+        GameLib.entityOwnershipCheckByAddress(_cityID, msg.sender);
 
         uint256 _settlerID = _cityID;
 
@@ -186,17 +150,10 @@ contract GameFacet is UseStorage {
     }
 
     function upgradeCity(uint256 _cityID, Position[] memory _newTiles) external {
-        // Verify that city exists as an entity
-        require(Set(gs().entities).includes(_cityID), "CURIO: City not found");
-
+        GameLib.validEntityCheck(_cityID);
         GameLib.gamePauseCheck();
-
-        // Verify that player is active
-        uint256 _playerID = GameLib._getPlayer(msg.sender);
-        require(ECSLib._getBoolComponent("IsActive").has(_playerID), "CURIO: You are inactive");
-
-        // Verify that city belongs to player
-        require(ECSLib._getUint("Owner", _cityID) == _playerID, "CURIO: City is not yours");
+        GameLib.activePlayerCheck(msg.sender);
+        GameLib.entityOwnershipCheckByAddress(_cityID, msg.sender);
 
         // Verify that city has enough gold
         uint256 _goldInventoryID = GameLib._getInventory(_cityID, GameLib._getTemplateByInventoryType("Gold"));
@@ -234,19 +191,13 @@ contract GameFacet is UseStorage {
         uint256 _templateID,
         uint256 _amount
     ) external returns (uint256 _productionID) {
-        // Verify that building and template exist as entities
-        require(Set(gs().entities).includes(_buildingID), "CURIO: Building not found");
-        require(Set(gs().entities).includes(_templateID), "CURIO: Template not found");
-
+        GameLib.validEntityCheck(_buildingID);
+        GameLib.validEntityCheck(_templateID);
         GameLib.gamePauseCheck();
+        GameLib.activePlayerCheck(msg.sender);
 
-        // Verify that player is active
-        uint256 _playerID = GameLib._getPlayer(msg.sender);
-        require(ECSLib._getBoolComponent("IsActive").has(_playerID), "CURIO: Player is inactive");
-
-        // Verify that city belongs to player
         uint256 _cityID = ECSLib._getUint("City", _buildingID);
-        require(ECSLib._getUint("Owner", _cityID) == _playerID, "CURIO: City is not yours");
+        GameLib.entityOwnershipCheckByAddress(_cityID, msg.sender);
 
         // Verify that city can produce
         require(ECSLib._getBool("CanProduce", _cityID), "CURIO: City cannot produce");
@@ -284,19 +235,14 @@ contract GameFacet is UseStorage {
     }
 
     function endTroopProduction(uint256 _buildingID, uint256 _productionID) external {
-        // Verify that building and production exist as entities
-        require(Set(gs().entities).includes(_buildingID), "CURIO: Building not found");
-        require(Set(gs().entities).includes(_productionID), "CURIO: Production not found");
-
+        GameLib.validEntityCheck(_buildingID);
+        GameLib.validEntityCheck(_productionID);
         GameLib.gamePauseCheck();
-
-        // Verify that player is active
-        uint256 _playerID = GameLib._getPlayer(msg.sender);
-        require(ECSLib._getBoolComponent("IsActive").has(_playerID), "CURIO: Player is inactive");
+        GameLib.activePlayerCheck(msg.sender);
 
         // Verify that city belongs to player
         uint256 _cityID = ECSLib._getUint("City", _buildingID);
-        require(ECSLib._getUint("Owner", _cityID) == _playerID, "CURIO: City is not yours");
+        GameLib.entityOwnershipCheckByAddress(_cityID, msg.sender);
 
         // Verify that enough time has passed
         // require(ECSLib._getUint("InitTimestamp", _productionID) + ECSLib._getUint("Duration", _productionID) >= block.timestamp, "CURIO: Need more time for production");
@@ -310,25 +256,19 @@ contract GameFacet is UseStorage {
     }
 
     function startGather(uint256 _armyID, uint256 _resourceID) external {
-        // Verify that army and resource exist as entities
-        require(Set(gs().entities).includes(_armyID), "CURIO: Army not found");
-        require(Set(gs().entities).includes(_resourceID), "CURIO: Resource not found");
-
+        GameLib.validEntityCheck(_armyID);
+        GameLib.validEntityCheck(_resourceID);
         GameLib.gamePauseCheck();
-
-        // Verify that player is active
-        uint256 _playerID = GameLib._getPlayer(msg.sender);
-        require(ECSLib._getBoolComponent("IsActive").has(_playerID), "CURIO: Player is inactive");
+        GameLib.activePlayerCheck(msg.sender);
+        GameLib.entityOwnershipCheckByAddress(_armyID, msg.sender);
 
         // Verify that army is sitting on the resource
         Position memory _position = ECSLib._getPosition("Position", _armyID);
         require(GameLib._coincident(_position, ECSLib._getPosition("Position", _resourceID)), "CURIO: Army must be coincident to resource to gather");
 
-        // Verify that army belongs to player
-        require(ECSLib._getUint("Owner", _armyID) == _playerID, "CURIO: Army is not yours");
-
         // Verify that resource is not in another player's territory
         uint256 _tileID = GameLib._getTileAt(_position);
+        uint256 _playerID = GameLib._getPlayer(msg.sender);
         require(_tileID == NULL || ECSLib._getUint("Owner", ECSLib._getUint("City", _tileID)) == _playerID, "CURIO: Cannot gather on another player's territory");
 
         // Verify that the army's capacity isn't full
@@ -344,17 +284,10 @@ contract GameFacet is UseStorage {
     }
 
     function endGather(uint256 _armyID) external {
-        // Verify that army exists as an entity
-        require(Set(gs().entities).includes(_armyID), "CURIO: Army not found");
-
+        GameLib.validEntityCheck(_armyID);
         GameLib.gamePauseCheck();
-
-        // Verify that player is active
-        uint256 _playerID = GameLib._getPlayer(msg.sender);
-        require(ECSLib._getBoolComponent("IsActive").has(_playerID), "CURIO: Player is inactive");
-
-        // Verify that army belongs to player
-        require(ECSLib._getUint("Owner", _armyID) == _playerID, "CURIO: Army is not yours");
+        GameLib.activePlayerCheck(msg.sender);
+        GameLib.entityOwnershipCheckByAddress(_armyID, msg.sender);
 
         // End gather
         GameLib._endGather(_armyID);
@@ -362,18 +295,13 @@ contract GameFacet is UseStorage {
 
     // harvest gold on a city
     function harvestResource(uint256 _buildingID, uint256 _templateID) external {
-        // Verify that building exists as an entity
-        require(Set(gs().entities).includes(_buildingID), "CURIO: Building not found");
-
+        GameLib.validEntityCheck(_buildingID);
         GameLib.gamePauseCheck();
-
-        // Verify that player is active
-        uint256 _playerID = GameLib._getPlayer(msg.sender);
-        require(ECSLib._getBoolComponent("IsActive").has(_playerID), "CURIO: Player is inactive");
+        GameLib.activePlayerCheck(msg.sender);
 
         // Verify that city belongs to player
         uint256 _cityID = ECSLib._getUint("City", _buildingID);
-        require(ECSLib._getUint("Owner", _cityID) == _playerID, "CURIO: City is not yours");
+        GameLib.entityOwnershipCheckByAddress(_cityID, msg.sender);
 
         // Create inventory if none exists
         uint256 _inventoryID = GameLib._getInventory(_cityID, _templateID);
@@ -401,17 +329,10 @@ contract GameFacet is UseStorage {
         uint256[] memory _templateIDs,
         uint256[] memory _amounts
     ) external returns (uint256 _armyID) {
-        // Verify that city exists as an entity
-        require(Set(gs().entities).includes(_cityID), "CURIO: City not found");
-
+        GameLib.validEntityCheck(_cityID);
         GameLib.gamePauseCheck();
-
-        // Verify that player is active
-        uint256 _playerID = GameLib._getPlayer(msg.sender);
-        require(ECSLib._getBoolComponent("IsActive").has(_playerID), "CURIO: You are inactive");
-
-        // Verify that city belongs to player
-        require(ECSLib._getUint("Owner", _cityID) == _playerID, "CURIO: City is not yours");
+        GameLib.activePlayerCheck(msg.sender);
+        GameLib.entityOwnershipCheckByAddress(_cityID, msg.sender);
 
         // Verify there is no army currently at the city center
         require(GameLib._getArmyAt(ECSLib._getPosition("Position", _cityID)) == NULL, "CURIO: Tile occupied by another army");
@@ -440,6 +361,8 @@ contract GameFacet is UseStorage {
         }
         _speed /= GameLib._sum(_amounts);
 
+        uint256 _playerID = GameLib._getPlayer(msg.sender);
+
         // Add army
         _armyID = ECSLib._addEntity();
         ECSLib._setString("Tag", _armyID, "Army");
@@ -463,24 +386,16 @@ contract GameFacet is UseStorage {
     }
 
     function disbandArmy(uint256 _armyID) external {
-        // Verify that army exists as an entity
-        require(Set(gs().entities).includes(_armyID), "CURIO: City not found");
-
+        GameLib.validEntityCheck(_armyID);
         GameLib.gamePauseCheck();
-
-        // Verify that player is active
-        uint256 _playerID = GameLib._getPlayer(msg.sender);
-        require(ECSLib._getBoolComponent("IsActive").has(_playerID), "CURIO: You are inactive");
-
-        // Verify that army belongs to player
-        require(ECSLib._getUint("Owner", _armyID) == _playerID, "CURIO: Army is not yours");
+        GameLib.activePlayerCheck(msg.sender);
+        GameLib.entityOwnershipCheckByAddress(_armyID, msg.sender);
 
         // Get army position and city on top
         Position memory _position = ECSLib._getPosition("Position", _armyID);
         uint256 _cityID = GameLib._getCityAt(_position);
 
-        // Verify that city belongs to player
-        require(ECSLib._getUint("Owner", _cityID) == _playerID, "CURIO: Cannot disband army in foreign city");
+        GameLib.entityOwnershipCheckByAddress(_cityID, msg.sender);
 
         // Return troops to corresponding inventories
         uint256[] memory _constituentIDs = GameLib._getArmyConstituents(_armyID);
@@ -496,7 +411,10 @@ contract GameFacet is UseStorage {
     }
 
     function moveArmy(uint256 _armyID, Position memory _targetPosition) external {
-        // verify that player's binding treaty approves the move
+        GameLib.validEntityCheck(_armyID);
+        GameLib.gamePauseCheck();
+        GameLib.activePlayerCheck(msg.sender);
+
         uint256 _playerID = GameLib._getPlayer(msg.sender);
         uint256[] memory _signatureIDs = GameLib._getPlayerSignatures(_playerID);
         for (uint256 i = 0; i < _signatureIDs.length; i++) {
@@ -505,14 +423,6 @@ contract GameFacet is UseStorage {
             require(_success, "CRUIO: Failed to call the external treaty");
             require(abi.decode(_returnData, (bool)), "CRUIO: Treaty does not approve your action");
         }
-
-        // Verify that army exists as an entity
-        require(Set(gs().entities).includes(_armyID), "CURIO: Army not found");
-
-        GameLib.gamePauseCheck();
-
-        // Verify that player is active
-        require(ECSLib._getBoolComponent("IsActive").has(_playerID), "CURIO: You are inactive");
 
         // Verify that army belongs to player
         require(ECSLib._getUint("Owner", _armyID) == _playerID, "CURIO: Army is not yours");
@@ -550,18 +460,13 @@ contract GameFacet is UseStorage {
     }
 
     function _startBattleArmy(uint256 _armyID, uint256 _targetArmyID) private {
-        // Verify that armies exist as entities
-        require(Set(gs().entities).includes(_armyID), "CURIO: Army not found");
-        require(Set(gs().entities).includes(_targetArmyID), "CURIO: Target army not found");
-
+        GameLib.validEntityCheck(_armyID);
+        GameLib.validEntityCheck(_targetArmyID);
         GameLib.gamePauseCheck();
+        GameLib.activePlayerCheck(msg.sender);
+        GameLib.entityOwnershipCheckByAddress(_armyID, msg.sender);
 
-        // Verify that player is active
         uint256 _playerID = GameLib._getPlayer(msg.sender);
-        require(ECSLib._getBoolComponent("IsActive").has(_playerID), "CURIO: You are inactive");
-
-        // Verify that army belongs to player and target army doesn't
-        require(ECSLib._getUint("Owner", _armyID) == _playerID, "CURIO: Army is not yours");
         require(ECSLib._getUint("Owner", _targetArmyID) != _playerID, "CURIO: Cannot attack your own army");
 
         // End army's and target army's gathers
@@ -590,17 +495,10 @@ contract GameFacet is UseStorage {
      * This function was to be called `retreat`, but I figured since we need to ping the contract side to end battle anyway,
      */
     function _endBattleArmy(uint256 _armyID) private {
-        // Verify that army exists as an entity
-        require(Set(gs().entities).includes(_armyID), "CURIO: Army not found");
-
+        GameLib.validEntityCheck(_armyID);
         GameLib.gamePauseCheck();
-
-        // Verify that player is active
-        uint256 _playerID = GameLib._getPlayer(msg.sender);
-        require(ECSLib._getBoolComponent("IsActive").has(_playerID), "CURIO: You are inactive");
-
-        // Verify that army belongs to player
-        require(ECSLib._getUint("Owner", _armyID) == _playerID, "CURIO: Army is not yours");
+        GameLib.activePlayerCheck(msg.sender);
+        GameLib.entityOwnershipCheckByAddress(_armyID, msg.sender);
 
         // Verify that at least one war is happening with the army
         uint256[] memory _battleIDs = GameLib._getBattles(_armyID);
@@ -642,18 +540,13 @@ contract GameFacet is UseStorage {
     }
 
     function _startBattleCity(uint256 _armyID, uint256 _cityID) private {
-        // Verify that army and city exist as entities
-        require(Set(gs().entities).includes(_armyID), "CURIO: Army not found");
-        require(Set(gs().entities).includes(_cityID), "CURIO: City not found");
-
+        GameLib.validEntityCheck(_armyID);
+        GameLib.validEntityCheck(_cityID);
         GameLib.gamePauseCheck();
+        GameLib.activePlayerCheck(msg.sender);
+        GameLib.entityOwnershipCheckByAddress(_armyID, msg.sender);
 
-        // Verify that player is active
         uint256 _playerID = GameLib._getPlayer(msg.sender);
-        require(ECSLib._getBoolComponent("IsActive").has(_playerID), "CURIO: You are inactive");
-
-        // Verify that army belongs to player and city doesn't
-        require(ECSLib._getUint("Owner", _armyID) == _playerID, "CURIO: Army is not yours");
         require(ECSLib._getUint("Owner", _cityID) != _playerID, "CURIO: Cannot attack your own city");
 
         // Verify that army is adjacent to city
@@ -668,17 +561,10 @@ contract GameFacet is UseStorage {
     }
 
     function _endBattleCity(uint256 _armyID) private {
-        // Verify that army exists as an entity
-        require(Set(gs().entities).includes(_armyID), "CURIO: Army not found");
-
+        GameLib.validEntityCheck(_armyID);
         GameLib.gamePauseCheck();
-
-        // Verify that player is active
-        uint256 _playerID = GameLib._getPlayer(msg.sender);
-        require(ECSLib._getBoolComponent("IsActive").has(_playerID), "CURIO: You are inactive");
-
-        // Verify that army belongs to player
-        require(ECSLib._getUint("Owner", _armyID) == _playerID, "CURIO: Army is not yours");
+        GameLib.activePlayerCheck(msg.sender);
+        GameLib.entityOwnershipCheckByAddress(_armyID, msg.sender);
 
         // Verify that at least one war is happening with the army
         uint256[] memory _battleIDs = GameLib._getBattles(_armyID);
@@ -689,6 +575,9 @@ contract GameFacet is UseStorage {
         uint256 _cityID = ECSLib._getUint("City", _guardID);
         uint256 _duration = block.timestamp - ECSLib._getUint("InitTimestamp", _battleIDs[0]);
         (uint256 _damageOnArmy, uint256 _damageOnGuard) = GameLib._getBattleDamages(_armyID, _guardID, _duration);
+
+        uint256 _playerID = GameLib._getPlayer(msg.sender);
+
         if (_damageOnGuard >= ECSLib._getUint("Health", _guardID)) {
             // Capture
             GameLib._removeArmy(_guardID);
@@ -704,48 +593,42 @@ contract GameFacet is UseStorage {
         }
     }
 
+    // --------------------------
+    // treaty (WIP)
+    // --------------------------
+
     // TODO: _setAddress => _setAddressArray
     function joinTreaty(address _treatyAddress) external {
-        uint256 _playerID = GameLib._getPlayer(msg.sender);
-        // Verify that player is active
-        require(ECSLib._getBoolComponent("IsActive").has(_playerID), "CURIO: You are inactive");
-
-        GameLib.gamePauseCheck();
-
-        // request to sign treaty
-        (bool success, bytes memory returnData) = _treatyAddress.call(abi.encodeWithSignature("joinTreaty()"));
-
-        require(success, "CRUIO: Failed to call the external treaty");
-        require(abi.decode(returnData, (bool)), "CRUIO: The treaty rejects your request");
-
-        // Sign treaty
-        uint256 _signatureID = ECSLib._addEntity();
-        ECSLib._setString("Tag", _signatureID, "Signature");
-        ECSLib._setUint("Owner", _signatureID, _playerID);
-        ECSLib._setAddress("Treaty", _signatureID, _treatyAddress);
+        // GameLib.gamePauseCheck();
+        // GameLib.activePlayerCheck(msg.sender);
+        // // request to sign treaty
+        // (bool success, bytes memory returnData) = _treatyAddress.call(abi.encodeWithSignature("joinTreaty()"));
+        // require(success, "CRUIO: Failed to call the external treaty");
+        // require(abi.decode(returnData, (bool)), "CRUIO: The treaty rejects your request");
+        // // Sign treaty
+        // uint256 _signatureID = ECSLib._addEntity();
+        // ECSLib._setString("Tag", _signatureID, "Signature");
+        // ECSLib._setUint("Owner", _signatureID, _playerID);
+        // ECSLib._setAddress("Treaty", _signatureID, _treatyAddress);
     }
 
     function denounceTreaty(address _treatyToDenounce) external {
-        uint256 _playerID = GameLib._getPlayer(msg.sender);
-        // Verify that player is active
-        require(ECSLib._getBoolComponent("IsActive").has(_playerID), "CURIO: You are inactive");
-
-        GameLib.gamePauseCheck();
-
-        // request to breach treaty
-        (bool success, bytes memory returnData) = _treatyToDenounce.call(abi.encodeWithSignature("denounceTreaty()"));
-
-        require(success, "CRUIO: Failed to call the external treaty");
-        require(abi.decode(returnData, (bool)), "CRUIO: The treaty rejects your request");
-
-        // breach treaty
-        uint256[] memory _signatureIDs = GameLib._getPlayerSignatures(_playerID);
-        for (uint256 i = 0; i < _signatureIDs.length; i++) {
-            address _treaty = ECSLib._getAddress("Treaty", _signatureIDs[i]);
-            if (_treaty == _treatyToDenounce) {
-                ECSLib._removeEntity(_signatureIDs[i]);
-                break;
-            }
-        }
+        // uint256 _playerID = GameLib._getPlayer(msg.sender);
+        // // Verify that player is active
+        // require(ECSLib._getBoolComponent("IsActive").has(_playerID), "CURIO: You are inactive");
+        // GameLib.gamePauseCheck();
+        // // request to breach treaty
+        // (bool success, bytes memory returnData) = _treatyToDenounce.call(abi.encodeWithSignature("denounceTreaty()"));
+        // require(success, "CRUIO: Failed to call the external treaty");
+        // require(abi.decode(returnData, (bool)), "CRUIO: The treaty rejects your request");
+        // // breach treaty
+        // uint256[] memory _signatureIDs = GameLib._getPlayerSignatures(_playerID);
+        // for (uint256 i = 0; i < _signatureIDs.length; i++) {
+        //     address _treaty = ECSLib._getAddress("Treaty", _signatureIDs[i]);
+        //     if (_treaty == _treatyToDenounce) {
+        //         ECSLib._removeEntity(_signatureIDs[i]);
+        //         break;
+        //     }
+        // }
     }
 }

@@ -471,6 +471,20 @@ library GameLib {
         require(!gs().isPaused, "CURIO: Game is paused");
     }
 
+    function validEntityCheck(uint256 _entity) public view {
+        require(Set(gs().entities).includes(_entity), "CURIO: Entity object not found");
+    }
+
+    function activePlayerCheck(address _player) public view {
+        uint256 _playerID = _getPlayer(_player);
+        require(ECSLib._getBoolComponent("IsActive").has(_playerID), "CURIO: You are inactive");
+    }
+
+    function entityOwnershipCheckByAddress(uint256 _entity, address _player) public view {
+        uint256 _playerID = _getPlayer(_player);
+        require(ECSLib._getUint("Owner", _entity) == _playerID, "CURIO: Entity is not yours");
+    }
+
     // ----------------------------------------------------------
     // UTILITY FUNCTIONS
     // ----------------------------------------------------------
