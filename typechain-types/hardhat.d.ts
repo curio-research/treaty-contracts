@@ -45,10 +45,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.OwnershipFacet__factory>;
     getContractFactory(
-      name: "PolicyFacet",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.PolicyFacet__factory>;
-    getContractFactory(
       name: "IDiamondCut",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IDiamondCut__factory>;
@@ -77,6 +73,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.LibDiamond__factory>;
     getContractFactory(
+      name: "NATO",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.NATO__factory>;
+    getContractFactory(
       name: "Set",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Set__factory>;
@@ -100,6 +100,10 @@ declare module "hardhat/types/runtime" {
       name: "StringComponent",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.StringComponent__factory>;
+    getContractFactory(
+      name: "UintArrayComponent",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.UintArrayComponent__factory>;
     getContractFactory(
       name: "UintComponent",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -154,11 +158,6 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.OwnershipFacet>;
     getContractAt(
-      name: "PolicyFacet",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.PolicyFacet>;
-    getContractAt(
       name: "IDiamondCut",
       address: string,
       signer?: ethers.Signer
@@ -194,6 +193,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.LibDiamond>;
     getContractAt(
+      name: "NATO",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.NATO>;
+    getContractAt(
       name: "Set",
       address: string,
       signer?: ethers.Signer
@@ -223,6 +227,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.StringComponent>;
+    getContractAt(
+      name: "UintArrayComponent",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.UintArrayComponent>;
     getContractAt(
       name: "UintComponent",
       address: string,

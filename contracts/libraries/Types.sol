@@ -3,16 +3,8 @@ pragma solidity ^0.8.4;
 
 /// Data structures for game
 
-enum BASE_NAME {
-    PORT,
-    CITY,
-    OIL_WELL
-}
-
 enum TERRAIN {
-    COAST,
-    INLAND,
-    WATER
+    LAND
 }
 
 enum VALUE_TYPE {
@@ -22,6 +14,8 @@ enum VALUE_TYPE {
     INT,
     ADDRESS,
     POSITION,
+    UINT_ARRAY,
+    STRING_ARRAY,
     OTHER
 }
 
@@ -44,17 +38,17 @@ struct WorldConstants {
     address admin;
     uint256 worldWidth;
     uint256 worldHeight;
-    uint256 combatEfficiency; // in the interval [0, 100]
     uint256 numInitTerrainTypes; // default is 6
     uint256 initBatchSize; // default is 50 if numInitTerrainTypes = 6
-    uint256 initPlayerGoldBalance;
-    uint256 initPlayerOilBalance;
-    uint256 maxBaseCountPerPlayer;
-    uint256 maxTroopCountPerPlayer;
+    uint256 maxCityCountPerPlayer;
+    uint256 maxArmyCountPerPlayer;
     uint256 maxPlayerCount;
-    uint256 defaultBaseGoldGenerationPerSecond;
-    uint256 defaultWellOilGenerationPerSecond;
-    uint256 debuffFactor; // in the interval [0, 100]. 100 means losing everything, 0 means debuff affects nothing
+    uint256 maxInventoryCapacity;
+    uint256 cityUpgradeGoldCost;
+    uint256 initCityGold;
+    uint256 cityHealth;
+    uint256 cityAttack;
+    uint256 cityDefense;
 }
 
 struct GameState {
@@ -64,6 +58,7 @@ struct GameState {
     address[] players;
     Tile[5000][5000] map;
     uint256[][] encodedColumnBatches;
+    address[] treaties;
     address entities;
     string[] componentNames;
     mapping(string => address) components; // component name to contract address

@@ -1,16 +1,17 @@
 import { Signer, Contract } from 'ethers';
 import { FactoryOptions, HardhatRuntimeEnvironment } from 'hardhat/types';
 import { LOCALHOST_RPC_URL, LOCALHOST_WS_RPC_URL } from './constants';
-import { GameMapConfig } from './types';
 import * as path from 'path';
 import * as fsPromise from 'fs/promises';
 import * as fs from 'fs';
+import { TILE_TYPE } from 'curio-vault';
 
 // deploy proxy used in hre
 export const deployProxy = async <C extends Contract>(contractName: string, signer: Signer, hre: HardhatRuntimeEnvironment, contractArgs: unknown[], libs?: FactoryOptions['libraries']): Promise<C> => {
   // add retry ?
   const factory = await hre.ethers.getContractFactory(contractName, libs ? { libraries: libs } : signer);
   const contract = await factory.deploy(...contractArgs);
+  // { gasLimit: BigNumber.from('9223372036854775808'), gasPrice: utils.parseUnits('1', 'wei') }
   await contract.deployTransaction.wait();
   return contract as C;
 };
@@ -30,7 +31,7 @@ export const rpcUrlSelector = (networkName: string): string[] => {
 
 export const LOCAL_MAP_PREFIX = 'MAP-';
 
-export const saveMapToLocal = async (tileMapOutput: GameMapConfig) => {
+export const saveMapToLocal = async (tileMap: TILE_TYPE[][]) => {
   const mapsDir = path.join(path.join(__dirname), '..', 'maps');
   if (!fs.existsSync(mapsDir)) fs.mkdirSync(mapsDir);
 
@@ -41,10 +42,10 @@ export const saveMapToLocal = async (tileMapOutput: GameMapConfig) => {
     mapIndex++;
   } while (fs.existsSync(mapPath));
 
-  await fsPromise.writeFile(mapPath, JSON.stringify(tileMapOutput));
+  await fsPromise.writeFile(mapPath, JSON.stringify(tileMap));
 };
 
-export const loadLocalMapConfig = (mapIndex: number): GameMapConfig => {
+export const loadLocalMapConfig = (mapIndex: number): TILE_TYPE[][] => {
   const mapsDir = path.join(path.join(__dirname), '..', 'maps');
   const mapPath = path.join(mapsDir, `${LOCAL_MAP_PREFIX}${mapIndex}.json`);
   if (!fs.existsSync(mapsDir) || !fs.existsSync(mapPath)) {
@@ -52,7 +53,5 @@ export const loadLocalMapConfig = (mapIndex: number): GameMapConfig => {
   }
 
   const raw = fs.readFileSync(mapPath).toString();
-  const tileMapOutput = JSON.parse(raw);
-  if (!tileMapOutput.tileMap || !tileMapOutput.portTiles) throw new Error('something is wrong with stored maps');
-  return tileMapOutput;
+  return JSON.parse(raw);
 };

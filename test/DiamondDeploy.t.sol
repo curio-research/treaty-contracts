@@ -13,6 +13,7 @@ import "contracts/facets/GetterFacet.sol";
 import "contracts/facets/GameFacet.sol";
 import "contracts/facets/AdminFacet.sol";
 import "contracts/libraries/Types.sol";
+import "contracts/NATO.sol";
 
 /// @title diamond deploy foundry template
 /// @notice This contract sets up the diamond for testing and is inherited by other foundry test contracts.
@@ -33,6 +34,9 @@ contract DiamondDeployTest is Test {
     AdminFacet public admin;
     OwnershipFacet public ownership;
 
+    // treaties
+    NATO public nato;
+
     uint256 public NULL = 0;
     address public NULL_ADDR = address(0);
 
@@ -50,58 +54,10 @@ contract DiamondDeployTest is Test {
 
     uint256 public destroyerTemplateId;
 
-    // // troop types
-    // uint256 public infantryTroopTypeId = 0;
-    // uint256 public destroyerTroopTypeId = 1;
-    // uint256 public battleshipTroopTypeId = 2;
-    // TroopType public infantryTroopType =
-    //     TroopType({
-    //         name: TROOP_NAME.INFANTRY,
-    //         maxHealth: 100,
-    //         damagePerHit: 100,
-    //         attackFactor: 100,
-    //         defenseFactor: 100,
-    //         movementCooldown: 1,
-    //         largeActionCooldown: 1,
-    //         goldPrice: 6,
-    //         oilConsumptionPerSecond: 1 //
-    //     });
-    // TroopType public destroyerTroopType =
-    //     TroopType({
-    //         name: TROOP_NAME.DESTROYER,
-    //         maxHealth: 300,
-    //         damagePerHit: 100,
-    //         attackFactor: 100,
-    //         defenseFactor: 100,
-    //         movementCooldown: 1,
-    //         largeActionCooldown: 1,
-    //         goldPrice: 20,
-    //         oilConsumptionPerSecond: 1 //
-    //     });
-    // TroopType public cruiserTroopType =
-    //     TroopType({
-    //         name: TROOP_NAME.CRUISER,
-    //         maxHealth: 800,
-    //         damagePerHit: 200,
-    //         attackFactor: 100,
-    //         defenseFactor: 100,
-    //         movementCooldown: 1,
-    //         largeActionCooldown: 1,
-    //         goldPrice: 30,
-    //         oilConsumptionPerSecond: 1 //
-    //     });
-    // TroopType public battleshipTroopType =
-    //     TroopType({
-    //         name: TROOP_NAME.BATTLESHIP,
-    //         maxHealth: 1200,
-    //         damagePerHit: 300,
-    //         attackFactor: 100,
-    //         defenseFactor: 100,
-    //         movementCooldown: 1,
-    //         largeActionCooldown: 1,
-    //         goldPrice: 50,
-    //         oilConsumptionPerSecond: 2 //
-    //     });
+    uint256 public cavalryTemplateID;
+    uint256 public infantryTemplateID;
+    uint256 public archerTemplateID;
+    uint256 public goldTemplateID;
 
     // we assume these two facet selectors do not change. If they do however, we should use getSelectors
     bytes4[] OWNERSHIP_SELECTORS = [bytes4(0xf2fde38b), 0x8da5cb5b];
@@ -120,6 +76,8 @@ contract DiamondDeployTest is Test {
         getterFacet = new GetterFacet();
         adminFacet = new AdminFacet();
         WorldConstants memory _worldConstants = _generateWorldConstants();
+
+        nato = new NATO();
 
         // Fetch args from CLI craft payload for init deploy
         bytes memory initData = abi.encodeWithSelector(getSelectors("DiamondInit")[0], _worldConstants);
@@ -142,11 +100,14 @@ contract DiamondDeployTest is Test {
         admin.registerDefaultComponents(diamond);
 
         // Initialize map
-        uint256[][] memory _map = _generateMap(_worldConstants.worldWidth, _worldConstants.worldHeight, 10);
+        uint256[][] memory _map = _generateMap(_worldConstants.worldWidth, _worldConstants.worldHeight);
         uint256[][] memory _encodedColumnBatches = _encodeTileMap(_map, _worldConstants.numInitTerrainTypes, _worldConstants.initBatchSize);
         admin.storeEncodedColumnBatches(_encodedColumnBatches);
 
         vm.stopPrank();
+
+        // Create templates
+        _createTemplates();
 
         // Initialize players
         vm.prank(player1);
@@ -158,22 +119,6 @@ contract DiamondDeployTest is Test {
         vm.prank(player3);
         game.initializePlayer(player3Pos, "Cindy");
         player3Id = getter.getPlayerId(player3);
-
-        // Initialize a troop template (destroyer)
-        vm.startPrank(deployer);
-        destroyerTemplateId = admin.addEntity();
-        admin.setComponentValue("CanMove", destroyerTemplateId, abi.encode(true));
-        admin.setComponentValue("CanAttack", destroyerTemplateId, abi.encode(true));
-        admin.setComponentValue("Tag", destroyerTemplateId, abi.encode("Destroyer"));
-        admin.setComponentValue("MaxHealth", destroyerTemplateId, abi.encode(3));
-        admin.setComponentValue("DamagePerHit", destroyerTemplateId, abi.encode(1));
-        admin.setComponentValue("AttackFactor", destroyerTemplateId, abi.encode(100));
-        admin.setComponentValue("DefenseFactor", destroyerTemplateId, abi.encode(100));
-        admin.setComponentValue("MovementCooldown", destroyerTemplateId, abi.encode(1));
-        admin.setComponentValue("LargeActionCooldown", destroyerTemplateId, abi.encode(1));
-        admin.setComponentValue("Gold", destroyerTemplateId, abi.encode(19));
-        admin.setComponentValue("OilPerSecond", destroyerTemplateId, abi.encode(1));
-        vm.stopPrank();
     }
 
     function _encodeTileMap(
@@ -214,6 +159,51 @@ contract DiamondDeployTest is Test {
         return _result;
     }
 
+    function _createTemplates() internal {
+        vm.startPrank(deployer);
+
+        // Troop: Cavalry
+        cavalryTemplateID = admin.addEntity();
+        admin.setComponentValue("Tag", cavalryTemplateID, abi.encode("TroopTemplate"));
+        admin.setComponentValue("InventoryType", cavalryTemplateID, abi.encode("Cavalry"));
+        admin.setComponentValue("Health", cavalryTemplateID, abi.encode(10));
+        admin.setComponentValue("Speed", cavalryTemplateID, abi.encode(1));
+        admin.setComponentValue("Attack", cavalryTemplateID, abi.encode(1));
+        admin.setComponentValue("Defense", cavalryTemplateID, abi.encode(1));
+        admin.setComponentValue("Duration", cavalryTemplateID, abi.encode(1));
+        admin.setComponentValue("Cost", cavalryTemplateID, abi.encode(1));
+
+        // Troop: Infantry
+        infantryTemplateID = admin.addEntity();
+        admin.setComponentValue("Tag", infantryTemplateID, abi.encode("TroopTemplate"));
+        admin.setComponentValue("InventoryType", infantryTemplateID, abi.encode("Infantry"));
+        admin.setComponentValue("Health", infantryTemplateID, abi.encode(10));
+        admin.setComponentValue("Speed", infantryTemplateID, abi.encode(1));
+        admin.setComponentValue("Attack", infantryTemplateID, abi.encode(1));
+        admin.setComponentValue("Defense", infantryTemplateID, abi.encode(1));
+        admin.setComponentValue("Duration", infantryTemplateID, abi.encode(1));
+        admin.setComponentValue("Cost", cavalryTemplateID, abi.encode(1));
+
+        // Troop: Archer
+        archerTemplateID = admin.addEntity();
+        admin.setComponentValue("Tag", archerTemplateID, abi.encode("TroopTemplate"));
+        admin.setComponentValue("InventoryType", archerTemplateID, abi.encode("Archer"));
+        admin.setComponentValue("Health", archerTemplateID, abi.encode(10));
+        admin.setComponentValue("Speed", archerTemplateID, abi.encode(1));
+        admin.setComponentValue("Attack", archerTemplateID, abi.encode(1));
+        admin.setComponentValue("Defense", archerTemplateID, abi.encode(1));
+        admin.setComponentValue("Duration", archerTemplateID, abi.encode(1));
+        admin.setComponentValue("Cost", cavalryTemplateID, abi.encode(1));
+
+        // Resource: Gold
+        goldTemplateID = admin.addEntity();
+        admin.setComponentValue("Tag", goldTemplateID, abi.encode("ResourceTemplate"));
+        admin.setComponentValue("InventoryType", goldTemplateID, abi.encode("Gold"));
+        admin.setComponentValue("Duration", goldTemplateID, abi.encode(1));
+
+        vm.stopPrank();
+    }
+
     // Note: hardcoded
     function _generateWorldConstants() internal view returns (WorldConstants memory) {
         return
@@ -221,60 +211,34 @@ contract DiamondDeployTest is Test {
                 admin: deployer,
                 worldWidth: 1000,
                 worldHeight: 1000,
-                combatEfficiency: 50,
-                numInitTerrainTypes: 6,
-                initBatchSize: 50,
-                initPlayerGoldBalance: 20,
-                initPlayerOilBalance: 20,
-                maxBaseCountPerPlayer: 20,
-                maxTroopCountPerPlayer: 20,
-                maxPlayerCount: 50,
-                defaultBaseGoldGenerationPerSecond: 5,
-                defaultWellOilGenerationPerSecond: 5,
-                debuffFactor: 80 //
+                numInitTerrainTypes: 1,
+                initBatchSize: 100,
+                maxCityCountPerPlayer: 3,
+                maxArmyCountPerPlayer: 3,
+                maxPlayerCount: 20,
+                maxInventoryCapacity: 5000,
+                cityUpgradeGoldCost: 500,
+                initCityGold: 1000,
+                cityHealth: 500,
+                cityAttack: 50,
+                cityDefense: 10 // DO NOT REMOVE THIS COMMENT
             });
     }
 
     // Note: hardcoded
-    function _generateMap(
-        uint256 _width,
-        uint256 _height,
-        uint256 _interval
-    ) public pure returns (uint256[][] memory) {
-        uint256[] memory _coastCol = new uint256[](_height);
-        uint256[] memory _landCol = new uint256[](_height);
-        uint256[] memory _waterCol = new uint256[](_height);
-        uint256[] memory _portCol = new uint256[](_height);
-        uint256[] memory _cityCol = new uint256[](_height);
+    function _generateMap(uint256 _width, uint256 _height) public pure returns (uint256[][] memory) {
+        uint256[] memory _plainCol = new uint256[](_height);
 
         // set individual columns
         for (uint256 y = 0; y < _height; y++) {
-            _coastCol[y] = 0;
-            _landCol[y] = 1;
-            _waterCol[y] = 2;
-            _portCol[y] = 3;
-            _cityCol[y] = 4;
+            _plainCol[y] = 0;
         }
 
         // set whole map
         uint256[][] memory _map = new uint256[][](_width);
-        for (uint256 x = 0; x < _width; x += _interval) {
-            _map[x] = _waterCol;
-            _map[x + 1] = _waterCol;
-            _map[x + 2] = _portCol;
-            _map[x + 3] = _landCol;
-            _map[x + 4] = _landCol;
-            _map[x + 5] = _cityCol;
-            _map[x + 6] = _portCol;
-            _map[x + 7] = _waterCol;
-            _map[x + 8] = _coastCol;
-            _map[x + 9] = _landCol;
+        for (uint256 x = 0; x < _width; x += 1) {
+            _map[x] = _plainCol;
         }
-
-        // set oil wells
-        _map[0][7] = 5;
-        _map[5][0] = 5;
-        _map[7][8] = 5;
 
         return _map;
     }

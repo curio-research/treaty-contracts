@@ -1,6 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
+import {Set} from "contracts/Set.sol";
 import "contracts/libraries/Storage.sol";
 import {GameLib} from "contracts/libraries/GameLib.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
@@ -24,7 +25,7 @@ contract GetterFacet is UseStorage {
     }
 
     function getTileAt(Position memory _pos) external view returns (Tile memory) {
-        return GameLib._getTileAt(_pos);
+        return GameLib._getMapTileAt(_pos);
     }
 
     function getWorldConstants() external view returns (WorldConstants memory) {
@@ -41,5 +42,26 @@ contract GetterFacet is UseStorage {
 
     function getPlayerId(address _player) external view returns (uint256) {
         return gs().playerEntityMap[_player];
+    }
+
+    function getEntity() external view returns (uint256) {
+        Set _entities = Set(gs().entities);
+        return _entities.size();
+    }
+
+    function getTemplateId(string memory _inventoryType) external returns (uint256) {
+        return GameLib._getTemplateByInventoryType(_inventoryType);
+    }
+
+    function getCityAt(Position memory _position) external returns (uint256) {
+        return GameLib._getCityAt(_position);
+    }
+
+    function getCityCenter(uint256 _cityID) external returns (uint256) {
+        return GameLib._getCityCenter(_cityID);
+    }
+
+    function getSettlerAt(Position memory _position) external returns (uint256) {
+        return GameLib._getSettlerAt(_position);
     }
 }

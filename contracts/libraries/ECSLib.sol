@@ -3,10 +3,10 @@ pragma solidity ^0.8.4;
 
 import "contracts/libraries/Storage.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
-import {Position} from "contracts/libraries/Types.sol";
+import {Position, VALUE_TYPE} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
 import {Component} from "contracts/Component.sol";
-import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, UintComponent} from "contracts/TypedComponents.sol";
+import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, UintComponent, UintArrayComponent} from "contracts/TypedComponents.sol";
 
 /// @title library of ECS utility functions
 
@@ -29,16 +29,20 @@ library ECSLib {
 
     function _getComponent(string memory _name) public view returns (Component) {
         address _componentAddr = gs().components[_name];
-        require(_componentAddr != address(0), "CURIO: Component not found");
+        require(_componentAddr != address(0), string(abi.encodePacked("CURIO: Component ", _name, " not found")));
 
         return Component(_componentAddr);
     }
 
     function _getComponentByEntity(uint256 _entity) public view returns (Component) {
         address _componentAddr = gs().ComponentEntityToAddress[_entity];
-        require(_componentAddr != address(0), "CURIO: Component not found");
+        require(_componentAddr != address(0), string(abi.encodePacked("CURIO: Component with id ", _entity, " not found")));
 
         return Component(_componentAddr);
+    }
+
+    function _addComponent(string memory _name, VALUE_TYPE _valueType) public {
+        // TODO: implement
     }
 
     function _addEntity() public returns (uint256) {
@@ -88,8 +92,15 @@ library ECSLib {
     // ECS TYPED UTILITY FUNCTIONS
     // ----------------------------------------------------------
 
+    function _getAddressComponent(string memory _name) public view returns (AddressComponent) {
+        address _componentAddr = gs().components[_name];
+        require(_componentAddr != address(0), string(abi.encodePacked("CURIO: Component ", _name, " not found")));
+
+        return AddressComponent(_componentAddr);
+    }
+
     function _getAddress(string memory _componentName, uint256 _entity) public view returns (address) {
-        return AddressComponent(gs().components[_componentName]).getValue(_entity);
+        return _getAddressComponent(_componentName).getValue(_entity);
     }
 
     function _setAddress(
@@ -97,31 +108,45 @@ library ECSLib {
         uint256 _entity,
         address _value
     ) public {
-        AddressComponent(gs().components[_componentName]).set(_entity, _value);
+        _getAddressComponent(_componentName).set(_entity, _value);
         emit ComponentValueSet(_componentName, _entity, abi.encode(_value));
     }
 
     function _removeAddress(string memory _componentName, uint256 _entity) public {
-        AddressComponent(gs().components[_componentName]).remove(_entity);
+        _getAddressComponent(_componentName).remove(_entity);
         emit ComponentValueRemoved(_componentName, _entity);
     }
 
+    function _getBoolComponent(string memory _name) public view returns (BoolComponent) {
+        address _componentAddr = gs().components[_name];
+        require(_componentAddr != address(0), string(abi.encodePacked("CURIO: Component ", _name, " not found")));
+
+        return BoolComponent(_componentAddr);
+    }
+
     function _getBool(string memory _componentName, uint256 _entity) public view returns (bool) {
-        return BoolComponent(gs().components[_componentName]).getValue(_entity);
+        return _getBoolComponent(_componentName).getValue(_entity);
     }
 
     function _setBool(string memory _componentName, uint256 _entity) public {
-        BoolComponent(gs().components[_componentName]).set(_entity);
+        _getBoolComponent(_componentName).set(_entity);
         emit ComponentValueSet(_componentName, _entity, abi.encode(true));
     }
 
     function _removeBool(string memory _componentName, uint256 _entity) public {
-        BoolComponent(gs().components[_componentName]).remove(_entity);
+        _getBoolComponent(_componentName).remove(_entity);
         emit ComponentValueRemoved(_componentName, _entity);
     }
 
+    function _getIntComponent(string memory _name) public view returns (IntComponent) {
+        address _componentAddr = gs().components[_name];
+        require(_componentAddr != address(0), string(abi.encodePacked("CURIO: Component ", _name, " not found")));
+
+        return IntComponent(_componentAddr);
+    }
+
     function _getInt(string memory _componentName, uint256 _entity) public view returns (int256) {
-        return IntComponent(gs().components[_componentName]).getValue(_entity);
+        return _getIntComponent(_componentName).getValue(_entity);
     }
 
     function _setInt(
@@ -129,17 +154,24 @@ library ECSLib {
         uint256 _entity,
         int256 _value
     ) public {
-        IntComponent(gs().components[_componentName]).set(_entity, _value);
+        _getIntComponent(_componentName).set(_entity, _value);
         emit ComponentValueSet(_componentName, _entity, abi.encode(_value));
     }
 
     function _removeInt(string memory _componentName, uint256 _entity) public {
-        IntComponent(gs().components[_componentName]).remove(_entity);
+        _getIntComponent(_componentName).remove(_entity);
         emit ComponentValueRemoved(_componentName, _entity);
     }
 
+    function _getPositionComponent(string memory _name) public view returns (PositionComponent) {
+        address _componentAddr = gs().components[_name];
+        require(_componentAddr != address(0), string(abi.encodePacked("CURIO: Component ", _name, " not found")));
+
+        return PositionComponent(_componentAddr);
+    }
+
     function _getPosition(string memory _componentName, uint256 _entity) public view returns (Position memory) {
-        return PositionComponent(gs().components[_componentName]).getValue(_entity);
+        return _getPositionComponent(_componentName).getValue(_entity);
     }
 
     function _setPosition(
@@ -147,17 +179,24 @@ library ECSLib {
         uint256 _entity,
         Position memory _value
     ) public {
-        PositionComponent(gs().components[_componentName]).set(_entity, _value);
+        _getPositionComponent(_componentName).set(_entity, _value);
         emit ComponentValueSet(_componentName, _entity, abi.encode(_value));
     }
 
     function _removePosition(string memory _componentName, uint256 _entity) public {
-        PositionComponent(gs().components[_componentName]).remove(_entity);
+        _getPositionComponent(_componentName).remove(_entity);
         emit ComponentValueRemoved(_componentName, _entity);
     }
 
+    function _getStringComponent(string memory _name) public view returns (StringComponent) {
+        address _componentAddr = gs().components[_name];
+        require(_componentAddr != address(0), string(abi.encodePacked("CURIO: Component ", _name, " not found")));
+
+        return StringComponent(_componentAddr);
+    }
+
     function _getString(string memory _componentName, uint256 _entity) public view returns (string memory) {
-        return StringComponent(gs().components[_componentName]).getValue(_entity);
+        return _getStringComponent(_componentName).getValue(_entity);
     }
 
     function _setString(
@@ -165,17 +204,49 @@ library ECSLib {
         uint256 _entity,
         string memory _value
     ) public {
-        StringComponent(gs().components[_componentName]).set(_entity, _value);
+        _getStringComponent(_componentName).set(_entity, _value);
         emit ECSLib.ComponentValueSet(_componentName, _entity, abi.encode(_value));
     }
 
     function _removeString(string memory _componentName, uint256 _entity) public {
-        StringComponent(gs().components[_componentName]).remove(_entity);
+        _getStringComponent(_componentName).remove(_entity);
         emit ECSLib.ComponentValueRemoved(_componentName, _entity);
     }
 
+    // function _getStringArrayComponent(string memory _name) public view returns (StringArrayComponent) {
+    //     address _componentAddr = gs().components[_name];
+    //     require(_componentAddr != address(0), string(abi.encodePacked("CURIO: Component ", _name, " not found")));
+
+    //     return StringArrayComponent(_componentAddr);
+    // }
+
+    // function _getStringArray(string memory _componentName, uint256 _entity) public view returns (string[] memory) {
+    //     return _getStringArrayComponent(_componentName).getValue(_entity);
+    // }
+
+    // function _setStringArray(
+    //     string memory _componentName,
+    //     uint256 _entity,
+    //     string[] memory _value
+    // ) public {
+    //     _getStringArrayComponent(_componentName).set(_entity, _value);
+    //     emit ECSLib.ComponentValueSet(_componentName, _entity, abi.encode(_value));
+    // }
+
+    // function _removeStringArray(string memory _componentName, uint256 _entity) public {
+    //     _getStringArrayComponent(_componentName).remove(_entity);
+    //     emit ECSLib.ComponentValueRemoved(_componentName, _entity);
+    // }
+
+    function _getUintComponent(string memory _name) public view returns (UintComponent) {
+        address _componentAddr = gs().components[_name];
+        require(_componentAddr != address(0), string(abi.encodePacked("CURIO: Component ", _name, " not found")));
+
+        return UintComponent(_componentAddr);
+    }
+
     function _getUint(string memory _componentName, uint256 _entity) public view returns (uint256) {
-        return UintComponent(gs().components[_componentName]).getValue(_entity);
+        return _getUintComponent(_componentName).getValue(_entity);
     }
 
     function _setUint(
@@ -183,12 +254,37 @@ library ECSLib {
         uint256 _entity,
         uint256 _value
     ) public {
-        UintComponent(gs().components[_componentName]).set(_entity, _value);
+        _getUintComponent(_componentName).set(_entity, _value);
         emit ECSLib.ComponentValueSet(_componentName, _entity, abi.encode(_value));
     }
 
     function _removeUint(string memory _componentName, uint256 _entity) public {
-        UintComponent(gs().components[_componentName]).remove(_entity);
+        _getUintComponent(_componentName).remove(_entity);
+        emit ECSLib.ComponentValueRemoved(_componentName, _entity);
+    }
+
+    function _getUintArrayComponent(string memory _name) public view returns (UintArrayComponent) {
+        address _componentAddr = gs().components[_name];
+        require(_componentAddr != address(0), string(abi.encodePacked("CURIO: Component ", _name, " not found")));
+
+        return UintArrayComponent(_componentAddr);
+    }
+
+    function _getUintArray(string memory _componentName, uint256 _entity) public view returns (uint256[] memory) {
+        return _getUintArrayComponent(_componentName).getValue(_entity);
+    }
+
+    function _setUintArray(
+        string memory _componentName,
+        uint256 _entity,
+        uint256[] memory _value
+    ) public {
+        _getUintArrayComponent(_componentName).set(_entity, _value);
+        emit ECSLib.ComponentValueSet(_componentName, _entity, abi.encode(_value));
+    }
+
+    function _removeUintArray(string memory _componentName, uint256 _entity) public {
+        _getUintArrayComponent(_componentName).remove(_entity);
         emit ECSLib.ComponentValueRemoved(_componentName, _entity);
     }
 

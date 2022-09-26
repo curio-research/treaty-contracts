@@ -1,7 +1,7 @@
-import { Curio } from '../../typechain-types/Curio';
+import { Curio } from 'curio-vault';
 import { Signer } from 'ethers';
 import { deployProxy } from './deployHelper';
-import { HardhatRuntimeEnvironment, Libraries } from 'hardhat/types';
+import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { getSelectors, FacetCutAction } from './diamondHelper';
 
 export async function deployDiamond(hre: HardhatRuntimeEnvironment, deployArgs: any[]) {

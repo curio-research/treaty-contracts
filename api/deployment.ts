@@ -9,9 +9,9 @@ export const publishDeployment = async (gameConfig: GameConfig) => {
     const { data } = await api.post(`/deployments/add`, gameConfig);
 
     if (data && data.status === 'success') {
-      console.log('Published successfully');
+      console.log('✦ Published successfully');
     } else {
-      throw new Error('Published unsuccessfully');
+      throw new Error('✦ Published unsuccessfully');
     }
   } catch (err) {
     console.log(err);
