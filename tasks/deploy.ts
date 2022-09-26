@@ -27,6 +27,8 @@ task('deploy', 'deploy contracts')
       await hre.run('compile');
       printDivider();
 
+      // assert(COMPONENT_SPECS.length === )
+
       for (let i = 0; i < 1; i++) {
         const { port, release, fixmap } = args;
 

@@ -5,8 +5,9 @@ import "contracts/libraries/Storage.sol";
 import {GameLib} from "contracts/libraries/GameLib.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
 import {Position, TERRAIN, WorldConstants} from "contracts/libraries/Types.sol";
-import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 import {Set} from "contracts/Set.sol";
+import "contracts/libraries/Templates.sol";
+import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 
 /// @title Game facet
 /// @notice Contains player functions
@@ -67,8 +68,7 @@ contract GameFacet is UseStorage {
         // Verify that settler exists as an entity
         require(Set(gs().entities).includes(_settlerID), "CURIO: Settler not found");
 
-        // Verify that game is ongoing
-        require(!gs().isPaused, "CURIO: Game is paused");
+        GameLib.gamePauseCheck();
 
         // Verify that player is active
         uint256 _playerID = GameLib._getPlayer(msg.sender);
@@ -100,8 +100,7 @@ contract GameFacet is UseStorage {
         // Verify that settler exists as an entity
         require(Set(gs().entities).includes(_settlerID), "CURIO: Settler not found");
 
-        // Verify that game is ongoing
-        require(!gs().isPaused, "CURIO: Game is paused");
+        GameLib.gamePauseCheck();
 
         // Verify that player is active
         uint256 _playerID = GameLib._getPlayer(msg.sender);
@@ -146,13 +145,7 @@ contract GameFacet is UseStorage {
         ECSLib._setString("Name", _cityID, _cityName);
         ECSLib._setBool("CanProduce", _cityID);
 
-        // Spawn city center
-        uint256 _cityCenterID = ECSLib._addEntity();
-        ECSLib._setString("Tag", _cityCenterID, "Building");
-        ECSLib._setPosition("Position", _cityCenterID, _centerPosition);
-        ECSLib._setUint("City", _cityCenterID, _cityID);
-        ECSLib._setString("BuildingType", _cityCenterID, "City Center");
-        ECSLib._setUint("InitTimestamp", _cityCenterID, block.timestamp);
+        Templates.createSettler(_centerPosition, _cityID);
     }
 
     /// @notice This function can be viewed as the inverse of `foundCity`, as it converts a city back into a settler.
@@ -160,8 +153,7 @@ contract GameFacet is UseStorage {
         // Verify that city exists as an entity
         require(Set(gs().entities).includes(_cityID), "CURIO: City not found");
 
-        // Verify that game is ongoing
-        require(!gs().isPaused, "CURIO: Game is paused");
+        GameLib.gamePauseCheck();
 
         // Verify that player is active
         uint256 _playerID = GameLib._getPlayer(msg.sender);
@@ -193,12 +185,11 @@ contract GameFacet is UseStorage {
         ECSLib._removeEntity(GameLib._getCityCenter(_cityID));
     }
 
-    function upgradeCity(uint256 _cityID, Position[] memory _newTerritory) external {
+    function upgradeCity(uint256 _cityID, Position[] memory _newTiles) external {
         // Verify that city exists as an entity
         require(Set(gs().entities).includes(_cityID), "CURIO: City not found");
 
-        // Verify that game is ongoing
-        require(!gs().isPaused, "CURIO: Game is paused");
+        GameLib.gamePauseCheck();
 
         // Verify that player is active
         uint256 _playerID = GameLib._getPlayer(msg.sender);
@@ -214,24 +205,17 @@ contract GameFacet is UseStorage {
         require(_balance >= _cost, "CURIO: Insufficient gold balance");
 
         uint256 _level = ECSLib._getUint("Level", _cityID);
-        require(_newTerritory.length == GameLib._getCityTileCountByLevel(_level + 1) - GameLib._getCityTileCountByLevel(_level), "CURIO: New territory tile count is incorrect");
+        require(_newTiles.length == GameLib._getCityTileCountByLevel(_level + 1) - GameLib._getCityTileCountByLevel(_level), "CURIO: New territory tile count is incorrect");
 
         // Verify that territory is connected
-        require(GameLib._connected(_newTerritory), "CURIO: Territory not connected");
+        require(GameLib._connected(_newTiles), "CURIO: Territory not connected");
 
         // Verify that new territory is connected to existing territory
         // TODO
 
         // Verify that territory is wholly in bound and does not overlap with other cities
-        for (uint256 i = 0; i < _newTerritory.length; i++) {
-            require(GameLib._inBound(_newTerritory[i]), "CURIO: Out of bound");
-            require(GameLib._getTileAt(_newTerritory[i]) == NULL, "CURIO: Territory overlaps with another city");
-            GameLib._initializeTile(_newTerritory[i]);
-
-            uint256 _tile = ECSLib._addEntity();
-            ECSLib._setString("Tag", _tile, "Tile");
-            ECSLib._setPosition("Position", _tile, _newTerritory[i]);
-            ECSLib._setUint("City", _tile, _cityID);
+        for (uint256 i = 0; i < _newTiles.length; i++) {
+            Templates.createCityTile(_newTiles[i], _cityID);
         }
 
         // Expend resources
@@ -254,8 +238,7 @@ contract GameFacet is UseStorage {
         require(Set(gs().entities).includes(_buildingID), "CURIO: Building not found");
         require(Set(gs().entities).includes(_templateID), "CURIO: Template not found");
 
-        // Verify that game is ongoing
-        require(!gs().isPaused, "CURIO: Game is paused");
+        GameLib.gamePauseCheck();
 
         // Verify that player is active
         uint256 _playerID = GameLib._getPlayer(msg.sender);
@@ -305,8 +288,7 @@ contract GameFacet is UseStorage {
         require(Set(gs().entities).includes(_buildingID), "CURIO: Building not found");
         require(Set(gs().entities).includes(_productionID), "CURIO: Production not found");
 
-        // Verify that game is ongoing
-        require(!gs().isPaused, "CURIO: Game is paused");
+        GameLib.gamePauseCheck();
 
         // Verify that player is active
         uint256 _playerID = GameLib._getPlayer(msg.sender);
@@ -332,8 +314,7 @@ contract GameFacet is UseStorage {
         require(Set(gs().entities).includes(_armyID), "CURIO: Army not found");
         require(Set(gs().entities).includes(_resourceID), "CURIO: Resource not found");
 
-        // Verify that game is ongoing
-        require(!gs().isPaused, "CURIO: Game is paused");
+        GameLib.gamePauseCheck();
 
         // Verify that player is active
         uint256 _playerID = GameLib._getPlayer(msg.sender);
@@ -366,8 +347,7 @@ contract GameFacet is UseStorage {
         // Verify that army exists as an entity
         require(Set(gs().entities).includes(_armyID), "CURIO: Army not found");
 
-        // Verify that game is ongoing
-        require(!gs().isPaused, "CURIO: Game is paused");
+        GameLib.gamePauseCheck();
 
         // Verify that player is active
         uint256 _playerID = GameLib._getPlayer(msg.sender);
@@ -380,37 +360,37 @@ contract GameFacet is UseStorage {
         GameLib._endGather(_armyID);
     }
 
-    // function harvestResource(uint256 _buildingID, uint256 _templateID) external {
-    //     // Verify that building exists as an entity
-    //     require(Set(gs().entities).includes(_buildingID), "CURIO: Building not found");
+    // harvest gold on a city
+    function harvestResource(uint256 _buildingID, uint256 _templateID) external {
+        // Verify that building exists as an entity
+        require(Set(gs().entities).includes(_buildingID), "CURIO: Building not found");
 
-    //     // Verify that game is ongoing
-    //     require(!gs().isPaused, "CURIO: Game is paused");
+        GameLib.gamePauseCheck();
 
-    //     // Verify that player is active
-    //     uint256 _playerID = GameLib._getPlayer(msg.sender);
-    //     require(ECSLib._getBoolComponent("IsActive").has(_playerID), "CURIO: Player is inactive");
+        // Verify that player is active
+        uint256 _playerID = GameLib._getPlayer(msg.sender);
+        require(ECSLib._getBoolComponent("IsActive").has(_playerID), "CURIO: Player is inactive");
 
-    //     // Verify that city belongs to player
-    //     uint256 _cityID = ECSLib._getUint("City", _buildingID);
-    //     require(ECSLib._getUint("Owner", _cityID) == _playerID, "CURIO: City is not yours");
+        // Verify that city belongs to player
+        uint256 _cityID = ECSLib._getUint("City", _buildingID);
+        require(ECSLib._getUint("Owner", _cityID) == _playerID, "CURIO: City is not yours");
 
-    //     // Create inventory if none exists
-    //     uint256 _inventoryID = GameLib._getInventory(_cityID, _templateID);
-    //     if (_inventoryID == NULL) {
-    //         _inventoryID = ECSLib._addEntity();
-    //         ECSLib._setString("Tag", _inventoryID, "ResourceInventory");
-    //         ECSLib._setUint("City", _inventoryID, _cityID);
-    //         ECSLib._setUint("Template", _inventoryID, _templateID);
-    //         ECSLib._setUint("Amount", _inventoryID, 0);
-    //     }
+        // Create inventory if none exists
+        uint256 _inventoryID = GameLib._getInventory(_cityID, _templateID);
+        if (_inventoryID == NULL) {
+            _inventoryID = ECSLib._addEntity();
+            ECSLib._setString("Tag", _inventoryID, "ResourceInventory");
+            ECSLib._setUint("City", _inventoryID, _cityID);
+            ECSLib._setUint("Template", _inventoryID, _templateID);
+            ECSLib._setUint("Amount", _inventoryID, 0);
+        }
 
-    //     // Update amount and reset time
-    //     uint256 _amount = (block.timestamp - ECSLib._getUint("InitTimestamp", _buildingID)) / ECSLib._getUint("Duration", _templateID) + ECSLib._getUint("Amount", _inventoryID);
-    //     if (_amount >= gs().worldConstants.maxInventoryCapacity) _amount = gs().worldConstants.maxInventoryCapacity;
-    //     ECSLib._setUint("Amount", _inventoryID, _amount);
-    //     ECSLib._setUint("InitTimestamp", _buildingID, block.timestamp);
-    // }
+        // Update amount and reset time
+        uint256 _amount = (block.timestamp - ECSLib._getUint("InitTimestamp", _buildingID)) / ECSLib._getUint("Duration", _templateID) + ECSLib._getUint("Amount", _inventoryID);
+        if (_amount >= gs().worldConstants.maxInventoryCapacity) _amount = gs().worldConstants.maxInventoryCapacity;
+        ECSLib._setUint("Amount", _inventoryID, _amount);
+        ECSLib._setUint("InitTimestamp", _buildingID, block.timestamp);
+    }
 
     // ----------------------------------------------------------
     // BATTLE
@@ -424,8 +404,7 @@ contract GameFacet is UseStorage {
         // Verify that city exists as an entity
         require(Set(gs().entities).includes(_cityID), "CURIO: City not found");
 
-        // Verify that game is ongoing
-        require(!gs().isPaused, "CURIO: Game is paused");
+        GameLib.gamePauseCheck();
 
         // Verify that player is active
         uint256 _playerID = GameLib._getPlayer(msg.sender);
@@ -487,8 +466,7 @@ contract GameFacet is UseStorage {
         // Verify that army exists as an entity
         require(Set(gs().entities).includes(_armyID), "CURIO: City not found");
 
-        // Verify that game is ongoing
-        require(!gs().isPaused, "CURIO: Game is paused");
+        GameLib.gamePauseCheck();
 
         // Verify that player is active
         uint256 _playerID = GameLib._getPlayer(msg.sender);
@@ -531,8 +509,7 @@ contract GameFacet is UseStorage {
         // Verify that army exists as an entity
         require(Set(gs().entities).includes(_armyID), "CURIO: Army not found");
 
-        // Verify that game is ongoing
-        require(!gs().isPaused, "CURIO: Game is paused");
+        GameLib.gamePauseCheck();
 
         // Verify that player is active
         require(ECSLib._getBoolComponent("IsActive").has(_playerID), "CURIO: You are inactive");
@@ -577,8 +554,7 @@ contract GameFacet is UseStorage {
         require(Set(gs().entities).includes(_armyID), "CURIO: Army not found");
         require(Set(gs().entities).includes(_targetArmyID), "CURIO: Target army not found");
 
-        // Verify that game is ongoing
-        require(!gs().isPaused, "CURIO: Game is paused");
+        GameLib.gamePauseCheck();
 
         // Verify that player is active
         uint256 _playerID = GameLib._getPlayer(msg.sender);
@@ -617,8 +593,7 @@ contract GameFacet is UseStorage {
         // Verify that army exists as an entity
         require(Set(gs().entities).includes(_armyID), "CURIO: Army not found");
 
-        // Verify that game is ongoing
-        require(!gs().isPaused, "CURIO: Game is paused");
+        GameLib.gamePauseCheck();
 
         // Verify that player is active
         uint256 _playerID = GameLib._getPlayer(msg.sender);
@@ -671,8 +646,7 @@ contract GameFacet is UseStorage {
         require(Set(gs().entities).includes(_armyID), "CURIO: Army not found");
         require(Set(gs().entities).includes(_cityID), "CURIO: City not found");
 
-        // Verify that game is ongoing
-        require(!gs().isPaused, "CURIO: Game is paused");
+        GameLib.gamePauseCheck();
 
         // Verify that player is active
         uint256 _playerID = GameLib._getPlayer(msg.sender);
@@ -697,8 +671,7 @@ contract GameFacet is UseStorage {
         // Verify that army exists as an entity
         require(Set(gs().entities).includes(_armyID), "CURIO: Army not found");
 
-        // Verify that game is ongoing
-        require(!gs().isPaused, "CURIO: Game is paused");
+        GameLib.gamePauseCheck();
 
         // Verify that player is active
         uint256 _playerID = GameLib._getPlayer(msg.sender);
@@ -736,8 +709,8 @@ contract GameFacet is UseStorage {
         uint256 _playerID = GameLib._getPlayer(msg.sender);
         // Verify that player is active
         require(ECSLib._getBoolComponent("IsActive").has(_playerID), "CURIO: You are inactive");
-        // Verify that game is ongoing
-        require(!gs().isPaused, "CURIO: Game is paused");
+
+        GameLib.gamePauseCheck();
 
         // request to sign treaty
         (bool success, bytes memory returnData) = _treatyAddress.call(abi.encodeWithSignature("joinTreaty()"));
@@ -756,8 +729,8 @@ contract GameFacet is UseStorage {
         uint256 _playerID = GameLib._getPlayer(msg.sender);
         // Verify that player is active
         require(ECSLib._getBoolComponent("IsActive").has(_playerID), "CURIO: You are inactive");
-        // Verify that game is ongoing
-        require(!gs().isPaused, "CURIO: Game is paused");
+
+        GameLib.gamePauseCheck();
 
         // request to breach treaty
         (bool success, bytes memory returnData) = _treatyToDenounce.call(abi.encodeWithSignature("denounceTreaty()"));

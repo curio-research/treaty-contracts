@@ -427,6 +427,24 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "uint256",
+        name: "_buildingID",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_templateID",
+        type: "uint256",
+      },
+    ],
+    name: "harvestResource",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         components: [
           {
             internalType: "uint256",
@@ -666,7 +684,7 @@ const _abi = [
           },
         ],
         internalType: "struct Position[]",
-        name: "_newTerritory",
+        name: "_newTiles",
         type: "tuple[]",
       },
     ],

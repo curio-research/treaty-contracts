@@ -467,6 +467,10 @@ library GameLib {
         return ((_level + 1) * (_level + 2)) / 2 + 6;
     }
 
+    function gamePauseCheck() public view {
+        require(!gs().isPaused, "CURIO: Game is paused");
+    }
+
     // ----------------------------------------------------------
     // UTILITY FUNCTIONS
     // ----------------------------------------------------------
