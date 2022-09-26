@@ -49,7 +49,9 @@ struct WorldConstants {
     uint256 cityHealth;
     uint256 cityAttack;
     uint256 cityDefense;
-    uint256 tileCoordinateMultiplier;
+    uint256 tileWidth;
+    uint256 armyBattleRange;
+    uint256 cityBattleRange;
 }
 
 struct GameState {

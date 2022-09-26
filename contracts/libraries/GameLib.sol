@@ -173,7 +173,7 @@ library GameLib {
             _armyAmount = ECSLib._getUint("Amount", _inventoryID);
         }
 
-        uint256 _resourceID = _getResourceAt(_position);
+        uint256 _resourceID = _getResourceAt(_getProperTilePosition(_position));
         uint256 _resourceAmount = ECSLib._getUint("Amount", _resourceID);
 
         // Gather
@@ -490,7 +490,7 @@ library GameLib {
         return uint256(keccak256(abi.encode(block.timestamp, block.difficulty, _salt))) % _max;
     }
 
-    function _connected(Position[] memory _positions) public pure returns (bool) {
+    function _connected(Position[] memory _positions) public view returns (bool) {
         require(_positions.length > 0, "CURIO: Positions cannot be empty");
 
         for (uint256 i = 1; i < _positions.length; i++) {
@@ -500,8 +500,32 @@ library GameLib {
         return true;
     }
 
-    function _adjacent(Position memory _p1, Position memory _p2) public pure returns (bool) {
-        return !_coincident(_p1, _p2) && _withinDistance(_p1, _p2, 1);
+    /**
+     * @dev Belong to adjacent tiles.
+     */
+    function _adjacent(Position memory _p1, Position memory _p2) public view returns (bool) {
+        uint256 _xDist = _p1.x >= _p2.x ? _p1.x - _p2.x : _p2.x - _p1.x;
+        uint256 _yDist = _p1.y >= _p2.y ? _p1.y - _p2.y : _p2.y - _p1.y;
+        uint256 _tileWidth = gs().worldConstants.tileWidth;
+        return (_xDist == 0 && _yDist == _tileWidth) || (_xDist == _tileWidth && _yDist == 0);
+    }
+
+    function _getProperTilePosition(Position memory _p) public view returns (Position memory) {
+        uint256 _tileWidth = gs().worldConstants.tileWidth;
+        return Position({x: _p.x - (_p.x % _tileWidth), y: _p.y - (_p.y % _tileWidth)});
+    }
+
+    function _getMidPositionFromTilePosition(Position memory _tilePosition) public view returns (Position memory) {
+        uint256 _tileWidth = gs().worldConstants.tileWidth;
+        return Position({x: _tilePosition.x + _tileWidth / 2, y: _tilePosition.y + _tileWidth / 2});
+    }
+
+    /**
+     * @dev Determine whether a position is at the top-left corner of a tile.
+     */
+    function _isProperTilePosition(Position memory _p) public view returns (bool) {
+        uint256 _tileWidth = gs().worldConstants.tileWidth;
+        return _p.x % _tileWidth == 0 && _p.y % _tileWidth == 0;
     }
 
     function _coincident(Position memory _p1, Position memory _p2) public pure returns (bool) {
