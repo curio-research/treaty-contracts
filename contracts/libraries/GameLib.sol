@@ -300,6 +300,17 @@ library GameLib {
         return _result.length == 1 ? _result[0] : _NULL();
     }
 
+    function _getMovableEntityAt(Position memory _position) public returns (uint256) {
+        Set _set1 = new Set();
+        Set _set2 = new Set();
+        _set1.addArray(ECSLib._getUintComponent("Speed").getEntities());
+        _set2.addArray(ECSLib._getPositionComponent("Position").getEntitiesWithValue(_position));
+        uint256[] memory _result = ECSLib._intersection(_set1, _set2);
+
+        assert(_result.length <= 1);
+        return _result.length == 1 ? _result[0] : _NULL();
+    }
+
     function _getArmyAt(Position memory _position) public returns (uint256) {
         Set _set1 = new Set();
         Set _set2 = new Set();

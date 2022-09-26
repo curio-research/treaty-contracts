@@ -63,9 +63,9 @@ contract GameFacet is UseStorage {
     // SETTLEMENT
     // ----------------------------------------------------------
 
-    function moveSettler(uint256 _settlerID, Position memory _targetPosition) external {
-        // Verify that settler exists as an entity
-        require(Set(gs().entities).includes(_settlerID), "CURIO: Settler not found");
+    function startMove(uint256 _movableEntity, Position memory _targetPosition) external {
+        // Verify that movable entity exists
+        require(Set(gs().entities).includes(_movableEntity), "CURIO: Movable entity not found");
 
         // Verify that game is ongoing
         require(!gs().isPaused, "CURIO: Game is paused");
@@ -74,22 +74,24 @@ contract GameFacet is UseStorage {
         uint256 _playerID = GameLib._getPlayer(msg.sender);
         require(ECSLib._getBoolComponent("IsActive").has(_playerID), "CURIO: You are inactive");
 
-        // Verify that settler belongs to player
-        require(ECSLib._getUint("Owner", _settlerID) == _playerID, "CURIO: Settler is not yours");
+        // Verify that movable entity belongs to player
+        require(ECSLib._getUint("Owner", _movableEntity) == _playerID, "CURIO: Movable entity is not yours");
 
         // Verify target position is in bound
         require(GameLib._inBound(_targetPosition), "CURIO: Out of bound");
         GameLib._initializeTile(_targetPosition);
 
         // Check speed and cooldown
-        // require(ECSLib._getUint("LastTimestamp", _settlerID) < block.timestamp, "CURIO: Need more time till next move");
-        require(ECSLib._getUint("Speed", _settlerID) >= GameLib._euclidean(ECSLib._getPosition("Position", _settlerID), _targetPosition), "CURIO: Not fast enough");
+        require(ECSLib._getUint("LastTimestamp", _movableEntity) < block.timestamp, "CURIO: Need more time till next move");
+        require(ECSLib._getUint("Speed", _movableEntity) >= GameLib._euclidean(ECSLib._getPosition("Position", _movableEntity), _targetPosition), "CURIO: Not fast enough");
 
         // Verify no other army or settler at destination
         require(GameLib._getArmyAt(_targetPosition) == NULL && GameLib._getSettlerAt(_targetPosition) == NULL, "CURIO: Destination occupied");
 
-        ECSLib._setPosition("Position", _settlerID, _targetPosition);
-        ECSLib._setUint("LastTimestamp", _settlerID, block.timestamp);
+        require(GameLib._getMovableEntityAt(_targetPosition) == NULL, "CURIO: Destination occupied");
+
+        ECSLib._setPosition("Position", _movableEntity, _targetPosition);
+        ECSLib._setUint("LastTimestamp", _movableEntity, block.timestamp);
     }
 
     function foundCity(
@@ -517,43 +519,44 @@ contract GameFacet is UseStorage {
         GameLib._removeArmy(_armyID);
     }
 
-    function moveArmy(uint256 _armyID, Position memory _targetPosition) external {
-        // verify that player's binding treaty approves the move
-        uint256 _playerID = GameLib._getPlayer(msg.sender);
-        uint256[] memory _signatureIDs = GameLib._getPlayerSignatures(_playerID);
-        for (uint256 i = 0; i < _signatureIDs.length; i++) {
-            address _treaty = ECSLib._getAddress("Treaty", _signatureIDs[i]);
-            (bool _success, bytes memory _returnData) = _treaty.call(abi.encodeWithSignature("approveMoveArmy()"));
-            require(_success, "CRUIO: Failed to call the external treaty");
-            require(abi.decode(_returnData, (bool)), "CRUIO: Treaty does not approve your action");
-        }
+    // function moveArmy(uint256 _armyID, Position memory _targetPosition) external {
+    //     // verify that player's binding treaty approves the move
+    //     uint256 _playerID = GameLib._getPlayer(msg.sender);
+    //     uint256[] memory _signatureIDs = GameLib._getPlayerSignatures(_playerID);
+    //     for (uint256 i = 0; i < _signatureIDs.length; i++) {
+    //         address _treaty = ECSLib._getAddress("Treaty", _signatureIDs[i]);
+    //         (bool _success, bytes memory _returnData) = _treaty.call(abi.encodeWithSignature("approveMoveArmy()"));
+    //         require(_success, "CRUIO: Failed to call the external treaty");
+    //         require(abi.decode(_returnData, (bool)), "CRUIO: Treaty does not approve your action");
+    //     }
 
-        // Verify that army exists as an entity
-        require(Set(gs().entities).includes(_armyID), "CURIO: Army not found");
+    //     // Verify that army exists as an entity
+    //     require(Set(gs().entities).includes(_armyID), "CURIO: Army not found");
 
-        // Verify that game is ongoing
-        require(!gs().isPaused, "CURIO: Game is paused");
+    //     // Verify that game is ongoing
+    //     require(!gs().isPaused, "CURIO: Game is paused");
 
-        // Verify that player is active
-        require(ECSLib._getBoolComponent("IsActive").has(_playerID), "CURIO: You are inactive");
+    //     // Verify that player is active
+    //     require(ECSLib._getBoolComponent("IsActive").has(_playerID), "CURIO: You are inactive");
 
-        // Verify that army belongs to player
-        require(ECSLib._getUint("Owner", _armyID) == _playerID, "CURIO: Army is not yours");
+    //     // Verify that army belongs to player
+    //     require(ECSLib._getUint("Owner", _armyID) == _playerID, "CURIO: Army is not yours");
 
-        // Verify that position is in bound, and initialize tile
-        require(GameLib._inBound(_targetPosition), "CURIO: Out of bound");
-        GameLib._initializeTile(_targetPosition);
+    //     // Verify that position is in bound, and initialize tile
+    //     require(GameLib._inBound(_targetPosition), "CURIO: Out of bound");
+    //     GameLib._initializeTile(_targetPosition);
 
-        // Check speed and cooldown
-        require(ECSLib._getUint("LastTimestamp", _armyID) < block.timestamp, "CURIO: Need more time till next move");
-        require(ECSLib._getUint("Speed", _armyID) >= GameLib._euclidean(ECSLib._getPosition("Position", _armyID), _targetPosition), "CURIO: Not fast enough");
+    //     // Check speed and cooldown
+    //     require(ECSLib._getUint("LastTimestamp", _armyID) < block.timestamp, "CURIO: Need more time till next move");
+    //     require(ECSLib._getUint("Speed", _armyID) >= GameLib._euclidean(ECSLib._getPosition("Position", _armyID), _targetPosition), "CURIO: Not fast enough");
 
-        // Verify that target tile has no other army
-        require(GameLib._getArmyAt(_targetPosition) == NULL, "CURIO: Destination occupied by another army");
+    //     // Verify that target tile has no other army
+    //     require(GameLib._getArmyAt(_targetPosition) == NULL, "CURIO: Destination occupied by another army");
 
-        // Move
-        ECSLib._setPosition("Position", _armyID, _targetPosition);
-    }
+    //     // Move
+    //     ECSLib._setPosition("Position", _armyID, _targetPosition);
+    //     ECSLib._setUint("LastTimestamp", _armyID, block.timestamp);
+    // }
 
     function startBattle(uint256 _armyID, uint256 _targetID) external {
         if (GameLib._strEq(ECSLib._getString("Tag", _targetID), "Army")) {
