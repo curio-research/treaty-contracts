@@ -1,9 +1,9 @@
-import fs from 'fs';
 import 'hardhat-diamond-abi';
-import { task } from 'hardhat/config';
 import '@typechain/hardhat';
 import '@nomiclabs/hardhat-ethers';
 import '@nomiclabs/hardhat-waffle';
+import fs from 'fs';
+import { task } from 'hardhat/config';
 import 'hardhat-contract-sizer';
 import 'hardhat-preprocessor';
 require('dotenv').config();

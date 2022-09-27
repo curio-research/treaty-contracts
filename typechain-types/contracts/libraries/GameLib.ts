@@ -65,6 +65,11 @@ export interface GameLibInterface extends utils.Interface {
     "_strEq(string,string)": FunctionFragment;
     "_sum(uint256[])": FunctionFragment;
     "_withinDistance((uint256,uint256),(uint256,uint256),uint256)": FunctionFragment;
+    "activePlayerCheck(address)": FunctionFragment;
+    "entityOwnershipCheckByAddress(uint256,address)": FunctionFragment;
+    "gamePauseCheck()": FunctionFragment;
+    "positionInboundCheck((uint256,uint256))": FunctionFragment;
+    "validEntityCheck(uint256)": FunctionFragment;
   };
 
   getFunction(
@@ -87,6 +92,11 @@ export interface GameLibInterface extends utils.Interface {
       | "_strEq"
       | "_sum"
       | "_withinDistance"
+      | "activePlayerCheck"
+      | "entityOwnershipCheckByAddress"
+      | "gamePauseCheck"
+      | "positionInboundCheck"
+      | "validEntityCheck"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -165,6 +175,26 @@ export interface GameLibInterface extends utils.Interface {
     functionFragment: "_withinDistance",
     values: [PositionStruct, PositionStruct, PromiseOrValue<BigNumberish>]
   ): string;
+  encodeFunctionData(
+    functionFragment: "activePlayerCheck",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "entityOwnershipCheckByAddress",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "gamePauseCheck",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "positionInboundCheck",
+    values: [PositionStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "validEntityCheck",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
 
   decodeFunctionResult(functionFragment: "_adjacent", data: BytesLike): Result;
   decodeFunctionResult(
@@ -212,6 +242,26 @@ export interface GameLibInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "_sum", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_withinDistance",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "activePlayerCheck",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "entityOwnershipCheckByAddress",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "gamePauseCheck",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "positionInboundCheck",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "validEntityCheck",
     data: BytesLike
   ): Result;
 
@@ -359,6 +409,29 @@ export interface GameLib extends BaseContract {
       _dist: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
+
+    activePlayerCheck(
+      _player: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
+
+    entityOwnershipCheckByAddress(
+      _entity: PromiseOrValue<BigNumberish>,
+      _player: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
+
+    gamePauseCheck(overrides?: CallOverrides): Promise<[void]>;
+
+    positionInboundCheck(
+      _position: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
+
+    validEntityCheck(
+      _entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
   };
 
   _adjacent(
@@ -460,6 +533,29 @@ export interface GameLib extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  activePlayerCheck(
+    _player: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
+  entityOwnershipCheckByAddress(
+    _entity: PromiseOrValue<BigNumberish>,
+    _player: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
+  gamePauseCheck(overrides?: CallOverrides): Promise<void>;
+
+  positionInboundCheck(
+    _position: PositionStruct,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
+  validEntityCheck(
+    _entity: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
   callStatic: {
     _adjacent(
       _p1: PositionStruct,
@@ -559,6 +655,29 @@ export interface GameLib extends BaseContract {
       _dist: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    activePlayerCheck(
+      _player: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    entityOwnershipCheckByAddress(
+      _entity: PromiseOrValue<BigNumberish>,
+      _player: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    gamePauseCheck(overrides?: CallOverrides): Promise<void>;
+
+    positionInboundCheck(
+      _position: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    validEntityCheck(
+      _entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
   };
 
   filters: {
@@ -666,6 +785,29 @@ export interface GameLib extends BaseContract {
       _dist: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    activePlayerCheck(
+      _player: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    entityOwnershipCheckByAddress(
+      _entity: PromiseOrValue<BigNumberish>,
+      _player: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    gamePauseCheck(overrides?: CallOverrides): Promise<BigNumber>;
+
+    positionInboundCheck(
+      _position: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    validEntityCheck(
+      _entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -766,6 +908,29 @@ export interface GameLib extends BaseContract {
       _p1: PositionStruct,
       _p2: PositionStruct,
       _dist: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    activePlayerCheck(
+      _player: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    entityOwnershipCheckByAddress(
+      _entity: PromiseOrValue<BigNumberish>,
+      _player: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    gamePauseCheck(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    positionInboundCheck(
+      _position: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    validEntityCheck(
+      _entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

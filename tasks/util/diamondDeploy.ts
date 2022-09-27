@@ -75,7 +75,6 @@ export const deployFacets = async (hre: HardhatRuntimeEnvironment, diamondAddres
     const facetName: string = facets[i].name;
 
     const facet = await deployProxy<any>(facetName, signer, hre, [], facets[i].libraries);
-    // const facet = await (await hre.ethers.getContractFactory(facetName, { libraries: facets[i].libraries })).deploy();
     await facet.deployed();
 
     facetContracts.push(facet);

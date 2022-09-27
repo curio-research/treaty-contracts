@@ -410,7 +410,7 @@ const _abi = [
           },
         ],
         internalType: "struct Position[]",
-        name: "_territory",
+        name: "_tiles",
         type: "tuple[]",
       },
       {
@@ -420,6 +420,24 @@ const _abi = [
       },
     ],
     name: "foundCity",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_buildingID",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_templateID",
+        type: "uint256",
+      },
+    ],
+    name: "harvestResource",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -450,18 +468,7 @@ const _abi = [
       },
     ],
     name: "initializePlayer",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "_playerID",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_settlerID",
-        type: "uint256",
-      },
-    ],
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
@@ -666,7 +673,7 @@ const _abi = [
           },
         ],
         internalType: "struct Position[]",
-        name: "_newTerritory",
+        name: "_newTiles",
         type: "tuple[]",
       },
     ],
