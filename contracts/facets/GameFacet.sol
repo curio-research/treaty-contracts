@@ -8,6 +8,7 @@ import {Position, TERRAIN, WorldConstants} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
 import "contracts/libraries/Templates.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
+import "forge-std/console.sol";
 
 /// @title Game facet
 /// @notice Contains player functions
@@ -28,20 +29,20 @@ contract GameFacet is UseStorage {
 
         GameLib._initializeTile(_position);
 
-        uint256 _playerId = Templates.createPlayer(_name);
+        uint256 _playerID = Templates.createPlayer(_name);
 
         gs().players.push(msg.sender);
-        gs().playerEntityMap[msg.sender] = _playerId;
+        gs().playerEntityMap[msg.sender] = _playerID;
 
-        uint256 _settlerId = Templates.createSettler(_position, _playerId);
+        uint256 _settlerID = Templates.createSettler(_position, _playerID);
 
         // Initialize guard which stays with eventual city
-        GameLib._addGuard(_settlerId);
+        GameLib._addGuard(_settlerID);
 
         // Add gold to eventual city
         uint256 _goldInventoryID = ECSLib._addEntity();
         ECSLib._setString("Tag", _goldInventoryID, "ResourceInventory");
-        ECSLib._setUint("City", _goldInventoryID, _settlerId);
+        ECSLib._setUint("City", _goldInventoryID, _settlerID);
         ECSLib._setUint("Template", _goldInventoryID, GameLib._getTemplateByInventoryType("Gold"));
         ECSLib._setUint("Amount", _goldInventoryID, gs().worldConstants.initCityGold);
     }
@@ -78,6 +79,8 @@ contract GameFacet is UseStorage {
         GameLib.activePlayerCheck(msg.sender);
         GameLib.entityOwnershipCheckByAddress(_settlerID, msg.sender);
 
+        // GameLib._debug(_tiles);
+
         // Verify that settler can settle
         require(ECSLib._getBool("CanSettle", _settlerID), "CURIO: Settler cannot settle");
 
@@ -94,8 +97,13 @@ contract GameFacet is UseStorage {
         uint256 _cityID = _settlerID;
 
         // Verify that territory is wholly in bound and does not overlap with other cities, and initialize tiles
+        // console.log("Overlap checks begin...");
         for (uint256 i = 0; i < _tiles.length; i++) {
             GameLib.positionInboundCheck(_tiles[i]);
+            // console.log("x", _tiles[i].x);
+            // console.log("y", _tiles[i].y);
+            // console.log();
+
             require(GameLib._getTileAt(_tiles[i]) == NULL, "CURIO: Territory overlaps with another city");
             GameLib._initializeTile(_tiles[i]);
 
@@ -415,8 +423,8 @@ contract GameFacet is UseStorage {
         // GameLib.entityOwnershipCheckByAddress(_armyID, msg.sender); // FIXME: NOT WORKING?
 
         // Verify that resource is not in another player's territory
-        // uint256 _tileId = GameLib._getTileAt(_targetPosition);
-        // if (_tileId != 0) GameLib.entityOwnershipCheckByAddress(_tileId, msg.sender);
+        // uint256 _tileID = GameLib._getTileAt(_targetPosition);
+        // if (_tileID != 0) GameLib.entityOwnershipCheckByAddress(_tileID, msg.sender);
 
         // armies cannot move in enemy territory
 

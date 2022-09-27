@@ -8,6 +8,7 @@ import {ECSLib} from "contracts/libraries/ECSLib.sol";
 import {Set} from "contracts/Set.sol";
 import {Component} from "contracts/Component.sol";
 import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, UintComponent, UintArrayComponent} from "contracts/TypedComponents.sol";
+import "forge-std/console.sol";
 
 /// @title Util library
 /// @notice Contains all events as well as lower-level setters and getters
@@ -23,6 +24,16 @@ library GameLib {
 
     event GamePaused();
     event GameResumed();
+
+    // DEBUG FNS
+    function _debug(Position[] memory _ps) public view {
+        console.log("TILES");
+        for (uint256 i = 0; i < _ps.length; i++) {
+            console.log("x", _ps[i].x);
+            console.log("y", _ps[i].y);
+            console.log();
+        }
+    }
 
     // ----------------------------------------------------------
     // LOGIC SETTERS
@@ -370,14 +381,14 @@ library GameLib {
         _set2.addArray(ECSLib._getUintComponent("Template").getEntitiesWithValue(_templateID));
         uint256[] memory _result = ECSLib._intersection(_set1, _set2);
 
-        // // FIXME: THERE EXISTS A BUG HERE
-        // if (_result.length > 1) {
-        //     console.log("Uh-oh");
-        //     for (uint256 i = 0; i < _result.length; i++) {
-        //         console.log(ECSLib._getString("InventoryType", _templateID));
-        //         console.log(ECSLib._getString("Tag", _templateID));
-        //     }
-        // }
+        // FIXME: THERE EXISTS A BUG HERE
+        if (_result.length > 1) {
+            console.log("Uh-oh");
+            for (uint256 i = 0; i < _result.length; i++) {
+                console.log(ECSLib._getString("InventoryType", _templateID));
+                console.log(ECSLib._getString("Tag", _templateID));
+            }
+        }
 
         assert(_result.length <= 1);
         return _result.length == 1 ? _result[0] : _NULL();
