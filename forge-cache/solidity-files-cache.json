@@ -276,7 +276,7 @@
       }
     },
     "contracts/facets/AdminFacet.sol": {
-      "lastModificationDate": 1664312747392,
+      "lastModificationDate": 1664315232414,
       "contentHash": "a298c7abc7503da4eafb2a9de455d3e1",
       "sourceName": "contracts/facets/AdminFacet.sol",
       "solcConfig": {
@@ -314,7 +314,6 @@
         "contracts/libraries/GameLib.sol",
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Types.sol",
-        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -411,8 +410,8 @@
       }
     },
     "contracts/facets/GameFacet.sol": {
-      "lastModificationDate": 1664313969162,
-      "contentHash": "f2239ef67f936f57ef840150b9f04d13",
+      "lastModificationDate": 1664317986062,
+      "contentHash": "9017e09ef522ef7ed5b6f951714daaf2",
       "sourceName": "contracts/facets/GameFacet.sol",
       "solcConfig": {
         "settings": {
@@ -450,7 +449,6 @@
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Templates.sol",
         "contracts/libraries/Types.sol",
-        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -461,8 +459,8 @@
       }
     },
     "contracts/facets/GetterFacet.sol": {
-      "lastModificationDate": 1664315237902,
-      "contentHash": "8971190c28d6fc815c6c7c0c9377c6f6",
+      "lastModificationDate": 1664316843652,
+      "contentHash": "fb83cb1faaaa1411a880da9452a71cd4",
       "sourceName": "contracts/facets/GetterFacet.sol",
       "solcConfig": {
         "settings": {
@@ -499,7 +497,6 @@
         "contracts/libraries/GameLib.sol",
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Types.sol",
-        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -591,7 +588,6 @@
         "contracts/libraries/GameLib.sol",
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Types.sol",
-        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -804,8 +800,8 @@
       }
     },
     "contracts/libraries/GameLib.sol": {
-      "lastModificationDate": 1664311950210,
-      "contentHash": "e486a16d0e6efa0fefbe7d0a343856e6",
+      "lastModificationDate": 1664317977208,
+      "contentHash": "35dbe1922f1c0491a0e317861f635a4a",
       "sourceName": "contracts/libraries/GameLib.sol",
       "solcConfig": {
         "settings": {
@@ -841,7 +837,6 @@
         "contracts/libraries/ECSLib.sol",
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Types.sol",
-        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -890,7 +885,6 @@
         "contracts/libraries/GameLib.sol",
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Types.sol",
-        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -986,7 +980,7 @@
       }
     },
     "contracts/libraries/Templates.sol": {
-      "lastModificationDate": 1664311038202,
+      "lastModificationDate": 1664314455204,
       "contentHash": "f82f700205d3511dbbd4bedc25a31fcc",
       "sourceName": "contracts/libraries/Templates.sol",
       "solcConfig": {
@@ -1024,7 +1018,6 @@
         "contracts/libraries/GameLib.sol",
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Types.sol",
-        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -1487,8 +1480,8 @@
       }
     },
     "test/DiamondDeploy.t.sol": {
-      "lastModificationDate": 1664314458638,
-      "contentHash": "1be3c124272a1b186859aa7dd3cdaf3a",
+      "lastModificationDate": 1664317847558,
+      "contentHash": "cff28cbb6aaf5a12a84cd45e92f45133",
       "sourceName": "test/DiamondDeploy.t.sol",
       "solcConfig": {
         "settings": {
@@ -1555,8 +1548,8 @@
       }
     },
     "test/Treaty.t.sol": {
-      "lastModificationDate": 1664315395195,
-      "contentHash": "8a79ff6c51670d1d83b323ada8acada7",
+      "lastModificationDate": 1664318009226,
+      "contentHash": "6b07cda0d332b5acf8fe7d8613de21af",
       "sourceName": "test/Treaty.t.sol",
       "solcConfig": {
         "settings": {
