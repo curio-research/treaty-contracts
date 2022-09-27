@@ -266,7 +266,7 @@ export interface GameFacet extends BaseContract {
 
     foundCity(
       _settlerID: PromiseOrValue<BigNumberish>,
-      _territory: PositionStruct[],
+      _tiles: PositionStruct[],
       _cityName: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -367,7 +367,7 @@ export interface GameFacet extends BaseContract {
 
   foundCity(
     _settlerID: PromiseOrValue<BigNumberish>,
-    _territory: PositionStruct[],
+    _tiles: PositionStruct[],
     _cityName: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -468,7 +468,7 @@ export interface GameFacet extends BaseContract {
 
     foundCity(
       _settlerID: PromiseOrValue<BigNumberish>,
-      _territory: PositionStruct[],
+      _tiles: PositionStruct[],
       _cityName: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -572,7 +572,7 @@ export interface GameFacet extends BaseContract {
 
     foundCity(
       _settlerID: PromiseOrValue<BigNumberish>,
-      _territory: PositionStruct[],
+      _tiles: PositionStruct[],
       _cityName: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -674,7 +674,7 @@ export interface GameFacet extends BaseContract {
 
     foundCity(
       _settlerID: PromiseOrValue<BigNumberish>,
-      _territory: PositionStruct[],
+      _tiles: PositionStruct[],
       _cityName: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

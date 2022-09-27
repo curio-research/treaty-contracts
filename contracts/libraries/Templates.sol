@@ -48,11 +48,27 @@ library Templates {
 
     function createPlayer(string memory _name) public returns (uint256) {
         uint256 _playerID = ECSLib._addEntity();
+
         ECSLib._setBool("IsActive", _playerID);
         ECSLib._setString("Name", _playerID, _name);
         ECSLib._setString("Tag", _playerID, "Player");
         ECSLib._setUint("InitTimestamp", _playerID, block.timestamp);
         ECSLib._setAddress("Address", _playerID, msg.sender);
+
         return _playerID;
+    }
+
+    function addArmy(uint256 _playerId, Position memory _position) public returns (uint256) {
+        uint256 _armyID = ECSLib._addEntity();
+
+        ECSLib._setString("Tag", _armyID, "Army");
+        ECSLib._setUint("Owner", _armyID, _playerId);
+        ECSLib._setPosition("Position", _armyID, _position);
+        ECSLib._setUint("Health", _armyID, 0);
+        ECSLib._setUint("Speed", _armyID, 0);
+        ECSLib._setUint("Attack", _armyID, 0);
+        ECSLib._setUint("Defense", _armyID, 0);
+        ECSLib._setUint("Load", _armyID, 0);
+        ECSLib._setUint("LastTimestamp", _armyID, block.timestamp);
     }
 }

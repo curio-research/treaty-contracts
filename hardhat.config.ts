@@ -1,8 +1,8 @@
+import 'hardhat-diamond-abi';
 import '@typechain/hardhat';
 import '@nomiclabs/hardhat-ethers';
 import '@nomiclabs/hardhat-waffle';
 import fs from 'fs';
-import 'hardhat-diamond-abi';
 import { task } from 'hardhat/config';
 import 'hardhat-contract-sizer';
 import 'hardhat-preprocessor';

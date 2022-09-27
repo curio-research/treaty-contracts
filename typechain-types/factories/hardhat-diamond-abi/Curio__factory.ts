@@ -410,7 +410,7 @@ const _abi = [
           },
         ],
         internalType: "struct Position[]",
-        name: "_territory",
+        name: "_tiles",
         type: "tuple[]",
       },
       {
@@ -468,18 +468,7 @@ const _abi = [
       },
     ],
     name: "initializePlayer",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "_playerID",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_settlerID",
-        type: "uint256",
-      },
-    ],
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },

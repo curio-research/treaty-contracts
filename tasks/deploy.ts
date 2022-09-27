@@ -1,12 +1,12 @@
-import { GameLib } from './../typechain-types/contracts/libraries/GameLib';
-import { ECSLib } from './../typechain-types/contracts/libraries/ECSLib';
+import { GameLib } from './../typechain-types/libraries/GameLib';
+import { ECSLib } from './../typechain-types/libraries/ECSLib';
 import { publishDeployment, isConnectionLive } from './../api/deployment';
 import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment, HardhatArguments } from 'hardhat/types';
 import { deployProxy, printDivider } from './util/deployHelper';
 import { createTemplates, generateWorldConstants, SMALL_MAP_INPUT } from './util/constants';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
-import { chooseRandomEmptyLandPosition, encodeTileMap, generateMap } from './util/mapHelper';
+import { chooseRandomEmptyLandPosition, encodeTileMap, generateBlankFixmap, generateMap, initializeFixmap } from './util/mapHelper';
 import { GameConfig } from '../api/types';
 import { COMPONENT_SPECS } from 'curio-vault';
 
@@ -43,7 +43,7 @@ task('deploy', 'deploy contracts')
 
       const worldConstants = generateWorldConstants(player1.address, SMALL_MAP_INPUT);
 
-      const tileMap = generateMap(SMALL_MAP_INPUT.width, SMALL_MAP_INPUT.height);
+      const tileMap = fixmap ? generateBlankFixmap() : generateMap(SMALL_MAP_INPUT.width, SMALL_MAP_INPUT.height);
 
       const ecsLib = await deployProxy<ECSLib>('ECSLib', player1, hre, []);
       const gameLib = await deployProxy<GameLib>('GameLib', player1, hre, [], { ECSLib: ecsLib.address });
@@ -79,15 +79,19 @@ task('deploy', 'deploy contracts')
       await createTemplates(diamond);
       console.log(`✦ template creation took ${Math.floor(performance.now() - startTime)} ms`);
 
-      // Randomly initialize players if on localhost
-      if (isDev) {
-        const player1Pos = chooseRandomEmptyLandPosition(tileMap);
-        const player2Pos = chooseRandomEmptyLandPosition(tileMap);
+      if (fixmap) {
+        await initializeFixmap(hre, diamond);
+      } else {
+        // Randomly initialize players if on localhost
+        if (isDev) {
+          const player1Pos = chooseRandomEmptyLandPosition(tileMap);
+          const player2Pos = chooseRandomEmptyLandPosition(tileMap);
 
-        startTime = performance.now();
-        await (await diamond.connect(player1).initializePlayer(player1Pos, 'Alice', { gasLimit: 100_000_000 })).wait();
-        await (await diamond.connect(player2).initializePlayer(player2Pos, 'Bob', { gasLimit: 100_000_000 })).wait();
-        console.log(`✦ player initialization took ${Math.floor(performance.now() - startTime)} ms`);
+          startTime = performance.now();
+          await (await diamond.connect(player1).initializePlayer(player1Pos, 'Alice', { gasLimit: 100_000_000 })).wait();
+          await (await diamond.connect(player2).initializePlayer(player2Pos, 'Bob', { gasLimit: 100_000_000 })).wait();
+          console.log(`✦ player initialization took ${Math.floor(performance.now() - startTime)} ms`);
+        }
       }
 
       // Generate config files
