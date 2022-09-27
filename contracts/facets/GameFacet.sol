@@ -81,15 +81,41 @@ contract GameFacet is UseStorage {
         require(GameLib._inBound(_targetPosition), "CURIO: Out of bound");
         GameLib._initializeTile(_targetPosition);
 
-        // Check speed and cooldown
-        require(ECSLib._getUint("LastTimestamp", _movableEntity) < block.timestamp, "CURIO: Need more time till next move");
-        require(ECSLib._getUint("Speed", _movableEntity) >= GameLib._euclidean(ECSLib._getPosition("Position", _movableEntity), _targetPosition), "CURIO: Not fast enough");
+        // End all current movements
+        if (GameLib._getMovementBy(_movableEntity) != NULL) GameLib._endMove(_movableEntity);
 
-        // Verify no other movable entity at destination
+        // Verify no other movable entity at exact destination coordinate
         require(GameLib._getMovableEntityAt(_targetPosition) == NULL, "CURIO: Destination occupied");
 
-        ECSLib._setPosition("Position", _movableEntity, _targetPosition);
-        ECSLib._setUint("LastTimestamp", _movableEntity, block.timestamp);
+        // Add movement
+        uint256 _movementID = ECSLib._addEntity();
+        ECSLib._setString("Tag", _movementID, "Movement");
+        ECSLib._setUint("Source", _movementID, _movableEntity);
+        ECSLib._setPosition("StartPosition", _movementID, ECSLib._getPosition("Position", _movableEntity));
+        ECSLib._setPosition("EndPosition", _movementID, _targetPosition);
+        ECSLib._setUint("InitTimestamp", _movableEntity, block.timestamp);
+    }
+
+    function endMove(uint256 _movableEntity) external {
+        // Verify that movable entity exists
+        require(Set(gs().entities).includes(_movableEntity), "CURIO: Movable entity not found");
+
+        // Verify that game is ongoing
+        require(!gs().isPaused, "CURIO: Game is paused");
+
+        // Verify that player is active
+        uint256 _playerID = GameLib._getPlayer(msg.sender);
+        require(ECSLib._getBoolComponent("IsActive").has(_playerID), "CURIO: You are inactive");
+
+        // Verify that movable entity belongs to player
+        require(ECSLib._getUint("Owner", _movableEntity) == _playerID, "CURIO: Movable entity is not yours");
+
+        // Verify that a movement exists
+        uint256 _movementID = GameLib._getMovementBy(_movableEntity);
+        require(_movementID != NULL, "CURIO: Entity is not moving");
+
+        // Calculate time it takes to travel
+        uint256 _distance = GameLib._euclidean(ECSLib._getPosition("StartPosition", _movementID), ECSLib._getPosition("EndPosition", _movementID));
     }
 
     function foundCity(

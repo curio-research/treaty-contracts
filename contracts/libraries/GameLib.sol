@@ -150,6 +150,10 @@ library GameLib {
         }
     }
 
+    function _endMove(uint256 _movableEntity) public {
+        // TODO
+    }
+
     function _endGather(uint256 _armyID) public {
         Position memory _position = ECSLib._getPosition("Position", _armyID);
 
@@ -294,6 +298,17 @@ library GameLib {
         Set _set2 = new Set();
         _set1.addArray(ECSLib._getStringComponent("Tag").getEntitiesWithValue(string("Resource")));
         _set2.addArray(ECSLib._getPositionComponent("Position").getEntitiesWithValue(_position));
+        uint256[] memory _result = ECSLib._intersection(_set1, _set2);
+
+        assert(_result.length <= 1);
+        return _result.length == 1 ? _result[0] : _NULL();
+    }
+
+    function _getMovementBy(uint256 _movableEntity) public returns (uint256) {
+        Set _set1 = new Set();
+        Set _set2 = new Set();
+        _set1.addArray(ECSLib._getStringComponent("Tag").getEntitiesWithValue(string("Movement")));
+        _set2.addArray(ECSLib._getUintComponent("Source").getEntitiesWithValue(_movableEntity));
         uint256[] memory _result = ECSLib._intersection(_set1, _set2);
 
         assert(_result.length <= 1);
