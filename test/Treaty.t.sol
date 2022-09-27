@@ -8,6 +8,45 @@ import {Position} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
 
 contract TreatyTest is Test, DiamondDeployTest {
+    // function testMultipleTroopProductions() public {
+    //     Position[] memory _territory = new Position[](9);
+    //     _territory[0] = Position({x: 6, y: 0});
+    //     _territory[1] = Position({x: 6, y: 1});
+    //     _territory[2] = Position({x: 6, y: 2});
+    //     _territory[3] = Position({x: 7, y: 2});
+    //     _territory[4] = Position({x: 8, y: 2});
+    //     _territory[5] = Position({x: 8, y: 1});
+    //     _territory[6] = Position({x: 8, y: 0});
+    //     _territory[7] = Position({x: 7, y: 0});
+    //     _territory[8] = Position({x: 7, y: 1});
+
+    //     vm.startPrank(player1);
+
+    //     // Found city
+    //     uint256 _settyID = getter.getSettlerAt(player1Pos);
+    //     game.moveSettler(_settyID, Position({x: 7, y: 1}));
+    //     game.foundCity(_settyID, _territory, "New Amsterdam");
+
+    //     uint256 _cityCenterID = getter.getCityCenter(_settyID);
+
+    //     assertTrue(getter.getInventory(_settyID) == NULL);
+
+    //     // Produce troops
+    //     uint256 _productionID = game.startTroopProduction(_cityCenterID, cavalryTemplateID, 20);
+    //     vm.warp(30);
+    //     game.endTroopProduction(_cityCenterID, _productionID);
+
+    //     console.log("AA");
+    //     // Get inventory
+    //     assertTrue(getter.getInventory(_settyID) != NULL);
+    //     console.log("BB");
+
+    //     // Produce more troops
+    //     _productionID = game.startTroopProduction(_cityCenterID, cavalryTemplateID, 20);
+    //     vm.warp(60);
+    //     game.endTroopProduction(_cityCenterID, _productionID);
+    // }
+
     function testFoundProducePackMoveUnpackSequence() public {
         Position[] memory _territory = new Position[](9);
         _territory[0] = Position({x: 6, y: 0});

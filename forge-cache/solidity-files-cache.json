@@ -461,8 +461,8 @@
       }
     },
     "contracts/facets/GetterFacet.sol": {
-      "lastModificationDate": 1664216687006,
-      "contentHash": "d9ffe4335af8362980db11f4fe054f93",
+      "lastModificationDate": 1664315237902,
+      "contentHash": "8971190c28d6fc815c6c7c0c9377c6f6",
       "sourceName": "contracts/facets/GetterFacet.sol",
       "solcConfig": {
         "settings": {
@@ -1487,7 +1487,7 @@
       }
     },
     "test/DiamondDeploy.t.sol": {
-      "lastModificationDate": 1664313927667,
+      "lastModificationDate": 1664314458638,
       "contentHash": "1be3c124272a1b186859aa7dd3cdaf3a",
       "sourceName": "test/DiamondDeploy.t.sol",
       "solcConfig": {
@@ -1555,8 +1555,8 @@
       }
     },
     "test/Treaty.t.sol": {
-      "lastModificationDate": 1664314862178,
-      "contentHash": "43062e04f7d87e4dba84c2fef44ea0dc",
+      "lastModificationDate": 1664315395195,
+      "contentHash": "8a79ff6c51670d1d83b323ada8acada7",
       "sourceName": "test/Treaty.t.sol",
       "solcConfig": {
         "settings": {
