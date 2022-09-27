@@ -276,8 +276,8 @@
       }
     },
     "contracts/facets/AdminFacet.sol": {
-      "lastModificationDate": 1664315232414,
-      "contentHash": "a298c7abc7503da4eafb2a9de455d3e1",
+      "lastModificationDate": 1664320973582,
+      "contentHash": "50f457dc18e380ebbef65589184c7289",
       "sourceName": "contracts/facets/AdminFacet.sol",
       "solcConfig": {
         "settings": {
@@ -459,8 +459,8 @@
       }
     },
     "contracts/facets/GetterFacet.sol": {
-      "lastModificationDate": 1664316843652,
-      "contentHash": "fb83cb1faaaa1411a880da9452a71cd4",
+      "lastModificationDate": 1664319850545,
+      "contentHash": "c685b41c4be10136f82d4afce248e212",
       "sourceName": "contracts/facets/GetterFacet.sol",
       "solcConfig": {
         "settings": {
@@ -754,8 +754,8 @@
       }
     },
     "contracts/libraries/ECSLib.sol": {
-      "lastModificationDate": 1664311241918,
-      "contentHash": "0fa42a5826697cf3cd9a3f1e09c25dbc",
+      "lastModificationDate": 1664318920773,
+      "contentHash": "c50e7fb1aaf1c98149e4cbd3e656764b",
       "sourceName": "contracts/libraries/ECSLib.sol",
       "solcConfig": {
         "settings": {
@@ -1480,8 +1480,8 @@
       }
     },
     "test/DiamondDeploy.t.sol": {
-      "lastModificationDate": 1664317847558,
-      "contentHash": "cff28cbb6aaf5a12a84cd45e92f45133",
+      "lastModificationDate": 1664318230932,
+      "contentHash": "5023bb28ca50297565aa81176048e387",
       "sourceName": "test/DiamondDeploy.t.sol",
       "solcConfig": {
         "settings": {
@@ -1548,8 +1548,8 @@
       }
     },
     "test/Treaty.t.sol": {
-      "lastModificationDate": 1664318009226,
-      "contentHash": "6b07cda0d332b5acf8fe7d8613de21af",
+      "lastModificationDate": 1664320980607,
+      "contentHash": "e715d9f63177755e3b5749f62c73646d",
       "sourceName": "test/Treaty.t.sol",
       "solcConfig": {
         "settings": {

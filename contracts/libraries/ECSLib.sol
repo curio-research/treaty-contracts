@@ -60,7 +60,7 @@ library ECSLib {
 
         // FIXME: remove over all components, or remove over components which the entity has? One more general, the other more efficient.
         for (uint256 i = 0; i < gs().componentNames.length; i++) {
-            Component _component = Component(gs().components[gs().componentNames[i]]);
+            Component _component = _getComponent(gs().componentNames[i]);
             _component.remove(_entity);
         }
 

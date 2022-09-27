@@ -8,6 +8,21 @@ import {Position} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
 
 contract TreatyTest is Test, DiamondDeployTest {
+    function testEntityRemoval() public {
+        // Check pre-condition
+        uint256 _settyID = getter.getSettlerAt(player1Pos);
+        assertTrue(Set(getter.getEntitiesAddr()).includes(_settyID));
+        assertEq(getter.getComponent("CanSettle").getEntities().length, 3);
+
+        // Remove settler
+        vm.startPrank(deployer);
+        admin.removeEntity(_settyID);
+
+        // Check post-condition
+        assertFalse(Set(getter.getEntitiesAddr()).includes(_settyID));
+        assertEq(getter.getComponent("CanSettle").getEntities().length, 2);
+    }
+
     function testMultipleTroopProductions() public {
         Position[] memory _territory = new Position[](9);
         _territory[0] = Position({x: 6, y: 0});

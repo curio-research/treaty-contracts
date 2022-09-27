@@ -790,8 +790,13 @@ const _abi = [
         name: "_cityID",
         type: "uint256",
       },
+      {
+        internalType: "string",
+        name: "_inventoryType",
+        type: "string",
+      },
     ],
-    name: "getInventory",
+    name: "getInventoryByCityAndType",
     outputs: [
       {
         internalType: "uint256",
@@ -855,6 +860,25 @@ const _abi = [
       },
     ],
     name: "getSettlerAt",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "_inventoryType",
+        type: "string",
+      },
+    ],
+    name: "getTemplateByInventoryType",
     outputs: [
       {
         internalType: "uint256",
