@@ -49,8 +49,15 @@ contract TreatyTest is Test, DiamondDeployTest {
         // Found another city
         vm.warp(36);
         game.moveSettler(_settyID, Position({x: 8, y: 1}));
-        vm.warp(38);
-        game.moveSettler(_settyID, Position({x: 7, y: 1}));
+        _territory[0] = Position({x: 7, y: 0});
+        _territory[1] = Position({x: 7, y: 1});
+        _territory[2] = Position({x: 7, y: 2});
+        _territory[3] = Position({x: 8, y: 2});
+        _territory[4] = Position({x: 9, y: 2});
+        _territory[5] = Position({x: 9, y: 1});
+        _territory[6] = Position({x: 9, y: 0});
+        _territory[7] = Position({x: 8, y: 0});
+        _territory[8] = Position({x: 8, y: 1});
         game.foundCity(_settyID, _territory, "New York");
 
         vm.stopPrank();
