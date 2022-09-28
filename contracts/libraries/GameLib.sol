@@ -404,6 +404,12 @@ library GameLib {
         _damageOn2 = (_duration * ECSLib._getUint("Attack", _army1) * 2) / ECSLib._getUint("Defense", _army2);
     }
 
+    function _getCityGold(uint256 cityId) public returns (uint256) {
+        uint256 _goldInventoryID = _getInventory(cityId, _getTemplateByInventoryType("Gold"));
+        uint256 _balance = _goldInventoryID != 0 ? ECSLib._getUint("Amount", _goldInventoryID) : 0;
+        return _balance;
+    }
+
     // function _getDebuffedArmyDamagePerHit(uint256[] memory _troopEntities) public view returns (uint256) {
     //     uint256 _infantryPercentage = _getInfantryPercentage(_troopEntities);
     //     uint256 _debuffFactor = (gs().worldConstants.debuffFactor * (100 - _infantryPercentage)) / 100; // Only non-infantries are debuffed
@@ -462,6 +468,24 @@ library GameLib {
     function _getCityTileCountByLevel(uint256 _level) public pure returns (uint256) {
         require(_level >= 1, "CURIO: City level must be at least 1");
         return ((_level + 1) * (_level + 2)) / 2 + 6;
+    }
+
+    function getHarvestCap(uint256 _level) public pure returns (uint256) {
+        if (_level == 1) return 3000;
+        if (_level == 2) return 6000;
+        if (_level == 3) return 9000;
+        if (_level == 4) return 12000;
+        if (_level == 5) return 15000;
+        return 0;
+    }
+
+    function getTotalGoldCap(uint256 _level) public pure returns (uint256) {
+        if (_level == 1) return 12000;
+        if (_level == 2) return 24000;
+        if (_level == 3) return 27000;
+        if (_level == 4) return 48000;
+        if (_level == 5) return 60000;
+        return 0;
     }
 
     // checkers

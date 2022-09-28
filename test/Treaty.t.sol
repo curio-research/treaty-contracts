@@ -89,6 +89,32 @@ contract TreatyTest is Test, DiamondDeployTest {
         game.organizeArmy(_settyID, _templateIDs, _amounts);
     }
 
+    function testSet() public {
+        Set set = new Set();
+        set.add(1);
+        set.add(2);
+        set.add(3);
+        set.add(4);
+        set.add(5);
+
+        set.remove(2);
+        set.remove(3);
+        set.remove(4);
+
+        assertEq(set.size(), 2);
+
+        assertEq(set.includes(2), false);
+        assertEq(set.includes(3), false);
+        assertEq(set.includes(4), false);
+
+        assertEq(set.includes(1), true);
+        assertEq(set.includes(5), true);
+
+        set.add(6);
+        assertEq(set.includes(6), true);
+        assertEq(set.size(), 3);
+    }
+
     function testFoundProducePackMoveUnpackSequence() public {
         Position[] memory _territory = new Position[](9);
         _territory[0] = Position({x: 6, y: 0});
@@ -105,6 +131,7 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Found city
         uint256 _settyID = getter.getSettlerAt(player1Pos);
+        console.log(_settyID);
         game.moveSettler(_settyID, Position({x: 7, y: 1}));
         game.foundCity(_settyID, _territory, "New Amsterdam");
         assertEq(getter.getComponent("Tag").getEntitiesWithValue(abi.encode("Tile")).length, 9);
@@ -124,8 +151,11 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.warp(34);
         game.moveSettler(_settyID, Position({x: 9, y: 1}));
 
+        console.log(getter.getComponent("Tag").getEntitiesWithValue(abi.encode("Tile")).length);
+
         // Verify that all previous tiles and buildings are removed
         for (uint256 i = 0; i < _territory.length; i++) {
+            // console.log(getter.getComponent("Position").getEntitiesWithValue(abi.encode(_territory[i])).length);
             assertEq(getter.getComponent("Position").getEntitiesWithValue(abi.encode(_territory[i])).length, 0);
         }
 

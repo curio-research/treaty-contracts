@@ -36,7 +36,7 @@ contract GameFacet is UseStorage {
         uint256 _settlerID = Templates.createSettler(_position, _playerID);
 
         // Initialize guard which stays with eventual city
-        GameLib._addGuard(_settlerID);
+        // GameLib._addGuard(_settlerID);
 
         // Add gold to eventual city
         uint256 _goldInventoryID = ECSLib._addEntity();
@@ -125,6 +125,12 @@ contract GameFacet is UseStorage {
         GameLib.activePlayerCheck(msg.sender);
         GameLib.entityOwnershipCheckByAddress(_cityID, msg.sender);
 
+        uint256 _balance = GameLib._getCityGold(_cityID);
+        require(_balance >= 500, "CURIO: Insufficient gold balance for packing");
+
+        uint256 _goldInventoryID = GameLib._getInventory(_cityID, GameLib._getTemplateByInventoryType("Gold"));
+        ECSLib._setUint("Amount", _goldInventoryID, _balance - 500);
+
         uint256 _settlerID = _cityID;
 
         // Remove city tiles
@@ -155,8 +161,7 @@ contract GameFacet is UseStorage {
         GameLib.entityOwnershipCheckByAddress(_cityID, msg.sender);
 
         // Verify that city has enough gold
-        uint256 _goldInventoryID = GameLib._getInventory(_cityID, GameLib._getTemplateByInventoryType("Gold"));
-        uint256 _balance = _goldInventoryID != NULL ? ECSLib._getUint("Amount", _goldInventoryID) : 0;
+        uint256 _balance = GameLib._getCityGold(_cityID);
         uint256 _cost = gs().worldConstants.cityUpgradeGoldCost;
         require(_balance >= _cost, "CURIO: Insufficient gold balance");
 
@@ -174,10 +179,9 @@ contract GameFacet is UseStorage {
             Templates.createCityTile(_newTiles[i], _cityID);
         }
 
-        // Expend resources
+        uint256 _goldInventoryID = GameLib._getInventory(_cityID, GameLib._getTemplateByInventoryType("Gold"));
         ECSLib._setUint("Amount", _goldInventoryID, _balance - _cost);
 
-        // Upgrade city
         ECSLib._setUint("Level", _cityID, _level + 1);
     }
 
@@ -216,7 +220,7 @@ contract GameFacet is UseStorage {
             ECSLib._setUint("Template", _inventoryID, _templateID);
             ECSLib._setUint("Amount", _inventoryID, 0);
         } else {
-            require(ECSLib._getUint("Amount", _inventoryID) < gs().worldConstants.maxInventoryCapacity, "CURIO: Amount exceeds inventory capacity");
+            // require(ECSLib._getUint("Amount", _inventoryID) < gs().worldConstants.maxInventoryCapacity, "CURIO: Amount exceeds inventory capacity");
         }
 
         // Start production
@@ -312,10 +316,18 @@ contract GameFacet is UseStorage {
             ECSLib._setUint("Amount", _inventoryID, 0);
         }
 
+        uint256 cityGoldAmount = GameLib._getCityGold(_cityID);
+        uint256 intendedHarvestAmount = (block.timestamp - ECSLib._getUint("InitTimestamp", _buildingID)) / ECSLib._getUint("Duration", _templateID);
+
+        uint256 _level = ECSLib._getUint("Level", _cityID);
+        uint256 harvestCap = GameLib.getHarvestCap(_level);
+        uint256 totalCap = GameLib.getTotalGoldCap(_level);
+
+        uint256 currentHarvestAmount = intendedHarvestAmount >= harvestCap ? harvestCap : intendedHarvestAmount;
+        uint256 totalAmount = cityGoldAmount + currentHarvestAmount >= totalCap ? totalCap : cityGoldAmount + currentHarvestAmount;
+
         // Update amount and reset time
-        uint256 _amount = (block.timestamp - ECSLib._getUint("InitTimestamp", _buildingID)) / ECSLib._getUint("Duration", _templateID) + ECSLib._getUint("Amount", _inventoryID);
-        if (_amount >= gs().worldConstants.maxInventoryCapacity) _amount = gs().worldConstants.maxInventoryCapacity;
-        ECSLib._setUint("Amount", _inventoryID, _amount);
+        ECSLib._setUint("Amount", _inventoryID, totalAmount);
         ECSLib._setUint("InitTimestamp", _buildingID, block.timestamp);
     }
 
@@ -401,7 +413,7 @@ contract GameFacet is UseStorage {
         for (uint256 i = 0; i < _constituentIDs.length; i++) {
             uint256 _inventoryID = GameLib._getInventory(_cityID, ECSLib._getUint("Template", _constituentIDs[i]));
             uint256 _amount = ECSLib._getUint("Amount", _inventoryID) + ECSLib._getUint("Amount", _constituentIDs[i]);
-            require(_amount <= gs().worldConstants.maxInventoryCapacity, "CURIO: Too many troops");
+            // require(_amount <= gs().worldConstants.maxInventoryCapacity, "CURIO: Too many troops");
             ECSLib._setUint("Amount", _inventoryID, _amount);
         }
 

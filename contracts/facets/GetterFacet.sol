@@ -65,6 +65,10 @@ contract GetterFacet is UseStorage {
         return _entities.size();
     }
 
+    function getEntities() external view returns (uint256[] memory) {
+        return Set(gs().entities).getAll();
+    }
+
     function getTemplateId(string memory _inventoryType) external returns (uint256) {
         return GameLib._getTemplateByInventoryType(_inventoryType);
     }
