@@ -418,6 +418,12 @@ library GameLib {
         _damageOn2 = (_duration * ECSLib._getUint("Attack", _army1) * 2) / ECSLib._getUint("Defense", _army2);
     }
 
+    function _getCityGold(uint256 cityId) public returns (uint256) {
+        uint256 _goldInventoryID = _getInventory(cityId, _getTemplateByInventoryType("Gold"));
+        uint256 _balance = _goldInventoryID != 0 ? ECSLib._getUint("Amount", _goldInventoryID) : 0;
+        return _balance;
+    }
+
     // function _getDebuffedArmyDamagePerHit(uint256[] memory _troopEntities) public view returns (uint256) {
     //     uint256 _infantryPercentage = _getInfantryPercentage(_troopEntities);
     //     uint256 _debuffFactor = (gs().worldConstants.debuffFactor * (100 - _infantryPercentage)) / 100; // Only non-infantries are debuffed

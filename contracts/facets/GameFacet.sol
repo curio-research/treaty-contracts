@@ -37,7 +37,7 @@ contract GameFacet is UseStorage {
         uint256 _settlerID = Templates.createSettler(_position, _playerID);
 
         // Initialize guard which stays with eventual city
-        GameLib._addGuard(_settlerID);
+        // GameLib._addGuard(_settlerID);
 
         // Add gold to eventual city
         uint256 _goldInventoryID = ECSLib._addEntity();
@@ -132,6 +132,10 @@ contract GameFacet is UseStorage {
         GameLib.activePlayerCheck(msg.sender);
         GameLib.entityOwnershipCheckByAddress(_cityID, msg.sender);
 
+        uint256 _balance = GameLib._getCityGold(_cityID);
+        require(_balance >= 500, "CURIO: Insufficient gold balance for packing");
+        ECSLib._setUint("Gold", _cityID, _balance - 500);
+
         uint256 _settlerID = _cityID;
 
         // Remove city tiles
@@ -162,8 +166,7 @@ contract GameFacet is UseStorage {
         GameLib.entityOwnershipCheckByAddress(_cityID, msg.sender);
 
         // Verify that city has enough gold
-        uint256 _goldInventoryID = GameLib._getInventory(_cityID, GameLib._getTemplateByInventoryType("Gold"));
-        uint256 _balance = _goldInventoryID != NULL ? ECSLib._getUint("Amount", _goldInventoryID) : 0;
+        uint256 _balance = GameLib._getCityGold(_cityID);
         uint256 _cost = gs().worldConstants.cityUpgradeGoldCost;
         require(_balance >= _cost, "CURIO: Insufficient gold balance");
 
