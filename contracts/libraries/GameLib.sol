@@ -370,6 +370,12 @@ library GameLib {
         _set2.addArray(ECSLib._getUintComponent("Template").getEntitiesWithValue(_templateID));
         uint256[] memory _result = ECSLib._intersection(_set1, _set2);
 
+        _set1 = new Set();
+        _set2 = new Set();
+        _set1.addArray(_result);
+        _set2.addArray(ECSLib._getStringComponent("Tag").getEntitiesWithValue(string("Production")));
+        _result = ECSLib._difference(_set1, _set2);
+
         assert(_result.length <= 1);
         return _result.length == 1 ? _result[0] : _NULL();
     }
