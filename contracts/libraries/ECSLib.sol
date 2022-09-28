@@ -292,22 +292,21 @@ library ECSLib {
     // HELPERS
     // ----------------------------------------------------------
 
-    function queryAsSet(QueryCondition[] memory query) public returns (Set) {
+    function queryAsSet(QueryCondition[] memory _query) public returns (Set) {
         Set res = new Set();
 
-        for (uint256 i = 0; i < query.length; i++) {
-            QueryCondition memory queryChunk = query[i];
-            Set tempSet = new Set();
+        for (uint256 i = 0; i < _query.length; i++) {
+            QueryCondition memory _queryChunk = _query[i];
 
-            if (queryChunk.queryType == QueryType.Has) {
-                Component _component = Component(gs().components[queryChunk.componentName]);
+            if (_queryChunk.queryType == QueryType.Has) {
+                Component _component = Component(gs().components[_queryChunk.componentName]);
                 res = _intersectionAsSet(res, _component.getEntitiesAsSet());
             }
 
             // has exact value
-            if (queryChunk.queryType == QueryType.HasVal) {
-                Component _component = Component(gs().components[queryChunk.componentName]);
-                res = _intersectionAsSet(res, _component.getEntitiesWithValueAsSet(queryChunk.value));
+            if (_queryChunk.queryType == QueryType.HasVal) {
+                Component _component = Component(gs().components[_queryChunk.componentName]);
+                res = _intersectionAsSet(res, _component.getEntitiesWithValueAsSet(_queryChunk.value));
             }
         }
 

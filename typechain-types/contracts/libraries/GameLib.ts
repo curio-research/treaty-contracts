@@ -52,7 +52,6 @@ export interface GameLibInterface extends utils.Interface {
     "_barbarianInfantrySelector(uint256)": FunctionFragment;
     "_coincident((uint256,uint256),(uint256,uint256))": FunctionFragment;
     "_connected((uint256,uint256)[])": FunctionFragment;
-    "_debug((uint256,uint256)[])": FunctionFragment;
     "_euclidean((uint256,uint256),(uint256,uint256))": FunctionFragment;
     "_getBattleDamages(uint256,uint256,uint256)": FunctionFragment;
     "_getCityTileCountByLevel(uint256)": FunctionFragment;
@@ -82,7 +81,6 @@ export interface GameLibInterface extends utils.Interface {
       | "_barbarianInfantrySelector"
       | "_coincident"
       | "_connected"
-      | "_debug"
       | "_euclidean"
       | "_getBattleDamages"
       | "_getCityTileCountByLevel"
@@ -123,10 +121,6 @@ export interface GameLibInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "_connected",
-    values: [PositionStruct[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_debug",
     values: [PositionStruct[]]
   ): string;
   encodeFunctionData(
@@ -228,7 +222,6 @@ export interface GameLibInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "_connected", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "_debug", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "_euclidean", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "_getBattleDamages",
@@ -366,8 +359,6 @@ export interface GameLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    _debug(_ps: PositionStruct[], overrides?: CallOverrides): Promise<[void]>;
-
     _euclidean(
       _p1: PositionStruct,
       _p2: PositionStruct,
@@ -501,8 +492,6 @@ export interface GameLib extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  _debug(_ps: PositionStruct[], overrides?: CallOverrides): Promise<void>;
-
   _euclidean(
     _p1: PositionStruct,
     _p2: PositionStruct,
@@ -635,8 +624,6 @@ export interface GameLib extends BaseContract {
       _positions: PositionStruct[],
       overrides?: CallOverrides
     ): Promise<boolean>;
-
-    _debug(_ps: PositionStruct[], overrides?: CallOverrides): Promise<void>;
 
     _euclidean(
       _p1: PositionStruct,
@@ -780,11 +767,6 @@ export interface GameLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _debug(
-      _ps: PositionStruct[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     _euclidean(
       _p1: PositionStruct,
       _p2: PositionStruct,
@@ -914,11 +896,6 @@ export interface GameLib extends BaseContract {
 
     _connected(
       _positions: PositionStruct[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _debug(
-      _ps: PositionStruct[],
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

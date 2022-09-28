@@ -79,8 +79,6 @@ contract GameFacet is UseStorage {
         GameLib.activePlayerCheck(msg.sender);
         GameLib.entityOwnershipCheckByAddress(_settlerID, msg.sender);
 
-        // GameLib._debug(_tiles);
-
         // Verify that settler can settle
         require(ECSLib._getBool("CanSettle", _settlerID), "CURIO: Settler cannot settle");
 
