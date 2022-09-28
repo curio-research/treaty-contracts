@@ -383,8 +383,8 @@ library GameLib {
 
         // FIXME: THERE EXISTS A BUG HERE
         if (_result.length > 1) {
-            console.log("Uh-oh");
             for (uint256 i = 0; i < _result.length; i++) {
+                console.log(_result[i]);
                 console.log(ECSLib._getString("InventoryType", _templateID));
                 console.log(ECSLib._getString("Tag", _templateID));
             }

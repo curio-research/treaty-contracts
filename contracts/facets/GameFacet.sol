@@ -100,9 +100,6 @@ contract GameFacet is UseStorage {
         // console.log("Overlap checks begin...");
         for (uint256 i = 0; i < _tiles.length; i++) {
             GameLib.positionInboundCheck(_tiles[i]);
-            // console.log("x", _tiles[i].x);
-            // console.log("y", _tiles[i].y);
-            // console.log();
 
             require(GameLib._getTileAt(_tiles[i]) == NULL, "CURIO: Territory overlaps with another city");
             GameLib._initializeTile(_tiles[i]);
@@ -186,10 +183,9 @@ contract GameFacet is UseStorage {
             Templates.createCityTile(_newTiles[i], _cityID);
         }
 
-        // Expend resources
-        // ECSLib._setUint("Amount", _goldInventoryID, _balance - _cost);
+        uint256 _goldInventoryID = GameLib._getInventory(_cityID, GameLib._getTemplateByInventoryType("Gold"));
+        ECSLib._setUint("Amount", _goldInventoryID, _balance - _cost);
 
-        // Upgrade city
         ECSLib._setUint("Level", _cityID, _level + 1);
     }
 
@@ -324,7 +320,7 @@ contract GameFacet is UseStorage {
             ECSLib._setUint("Amount", _inventoryID, 0);
         }
 
-        uint256 cityGoldAmount = ECSLib._getUint("Duration", _templateID);
+        uint256 cityGoldAmount = GameLib._getCityGold(_cityID);
         uint256 intendedHarvestAmount = (block.timestamp - ECSLib._getUint("InitTimestamp", _buildingID)) / ECSLib._getUint("Duration", _templateID);
 
         uint256 _level = ECSLib._getUint("Level", _cityID);
