@@ -11,16 +11,37 @@ contract TreatyTest is Test, DiamondDeployTest {
     function testEntityRemoval() public {
         // Check pre-condition
         uint256 _settyID = getter.getSettlerAt(player1Pos);
-        assertTrue(Set(getter.getEntitiesAddr()).includes(_settyID));
         assertEq(getter.getComponent("CanSettle").getEntities().length, 3);
 
         // Remove settler
-        vm.startPrank(deployer);
+        vm.prank(deployer);
         admin.removeEntity(_settyID);
 
         // Check post-condition
-        assertFalse(Set(getter.getEntitiesAddr()).includes(_settyID));
         assertEq(getter.getComponent("CanSettle").getEntities().length, 2);
+
+        Position[] memory _territory = new Position[](9);
+        _territory[0] = Position({x: 5, y: 2});
+        _territory[1] = Position({x: 5, y: 3});
+        _territory[2] = Position({x: 5, y: 4});
+        _territory[3] = Position({x: 6, y: 4});
+        _territory[4] = Position({x: 7, y: 4});
+        _territory[5] = Position({x: 7, y: 3});
+        _territory[6] = Position({x: 7, y: 2});
+        _territory[7] = Position({x: 6, y: 2});
+        _territory[8] = Position({x: 6, y: 3});
+
+        // Player 2 founds a city
+        vm.startPrank(player2);
+        uint256 _setty2ID = getter.getSettlerAt(player2Pos);
+        game.foundCity(_setty2ID, _territory, "Philadelphia");
+        assertEq(getter.getComponent("Tag").getEntitiesWithValue(abi.encode("Tile")).length, 9);
+
+        // Player 2 packs the city
+        game.packCity(_setty2ID);
+
+        assertEq(getter.getComponent("Tag").getEntitiesWithValue(abi.encode("Tile")).length, 0);
+        vm.stopPrank();
     }
 
     function testMultipleTroopProductions() public {
@@ -41,6 +62,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         uint256 _settyID = getter.getSettlerAt(player1Pos);
         game.moveSettler(_settyID, Position({x: 7, y: 1}));
         game.foundCity(_settyID, _territory, "New Amsterdam");
+        assertEq(getter.getComponent("Tag").getEntitiesWithValue(abi.encode("Tile")).length, 9);
 
         uint256 _cityCenterID = getter.getCityCenter(_settyID);
 
@@ -85,6 +107,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         uint256 _settyID = getter.getSettlerAt(player1Pos);
         game.moveSettler(_settyID, Position({x: 7, y: 1}));
         game.foundCity(_settyID, _territory, "New Amsterdam");
+        assertEq(getter.getComponent("Tag").getEntitiesWithValue(abi.encode("Tile")).length, 9);
 
         uint256 _cityCenterID = getter.getCityCenter(_settyID);
 
@@ -95,6 +118,7 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Pack city and move settler out of former city boundry
         game.packCity(_settyID);
+        assertEq(getter.getComponent("Tag").getEntitiesWithValue(abi.encode("Tile")).length, 0);
         vm.warp(32);
         game.moveSettler(_settyID, Position({x: 8, y: 1}));
         vm.warp(34);
@@ -118,6 +142,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         _territory[7] = Position({x: 8, y: 0});
         _territory[8] = Position({x: 8, y: 1});
         game.foundCity(_settyID, _territory, "New York");
+        assertEq(getter.getComponent("Tag").getEntitiesWithValue(abi.encode("Tile")).length, 9);
 
         vm.stopPrank();
     }

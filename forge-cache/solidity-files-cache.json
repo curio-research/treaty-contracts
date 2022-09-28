@@ -410,8 +410,8 @@
       }
     },
     "contracts/facets/GameFacet.sol": {
-      "lastModificationDate": 1664317986062,
-      "contentHash": "9017e09ef522ef7ed5b6f951714daaf2",
+      "lastModificationDate": 1664403283178,
+      "contentHash": "7dc20239860f08220ac91efd8556168f",
       "sourceName": "contracts/facets/GameFacet.sol",
       "solcConfig": {
         "settings": {
@@ -754,8 +754,8 @@
       }
     },
     "contracts/libraries/ECSLib.sol": {
-      "lastModificationDate": 1664318920773,
-      "contentHash": "c50e7fb1aaf1c98149e4cbd3e656764b",
+      "lastModificationDate": 1664403274979,
+      "contentHash": "7a2c5d02bff46e6628e9786fd6761281",
       "sourceName": "contracts/libraries/ECSLib.sol",
       "solcConfig": {
         "settings": {
@@ -980,8 +980,8 @@
       }
     },
     "contracts/libraries/Templates.sol": {
-      "lastModificationDate": 1664314455204,
-      "contentHash": "f82f700205d3511dbbd4bedc25a31fcc",
+      "lastModificationDate": 1664400217697,
+      "contentHash": "c1f104ddcaa8add9c0d8debf098813bd",
       "sourceName": "contracts/libraries/Templates.sol",
       "solcConfig": {
         "settings": {
@@ -1548,8 +1548,8 @@
       }
     },
     "test/Treaty.t.sol": {
-      "lastModificationDate": 1664320980607,
-      "contentHash": "e715d9f63177755e3b5749f62c73646d",
+      "lastModificationDate": 1664403370067,
+      "contentHash": "846cf9792c7424fcc20d8608455a0295",
       "sourceName": "test/Treaty.t.sol",
       "solcConfig": {
         "settings": {

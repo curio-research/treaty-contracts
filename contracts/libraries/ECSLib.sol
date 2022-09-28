@@ -54,11 +54,8 @@ library ECSLib {
         return _newEntity;
     }
 
+    // FIXME: remove over all components, or remove over components which the entity has? One more general, the other more efficient.
     function _removeEntity(uint256 _entity) public {
-        Set _entities = Set(gs().entities);
-        _entities.remove(_entity);
-
-        // FIXME: remove over all components, or remove over components which the entity has? One more general, the other more efficient.
         for (uint256 i = 0; i < gs().componentNames.length; i++) {
             Component _component = _getComponent(gs().componentNames[i]);
             _component.remove(_entity);

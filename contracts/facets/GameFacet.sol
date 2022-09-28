@@ -100,10 +100,10 @@ contract GameFacet is UseStorage {
             require(GameLib._getTileAt(_tiles[i]) == NULL, "CURIO: Territory overlaps with another city");
             GameLib._initializeTile(_tiles[i]);
 
-            uint256 _tile = ECSLib._addEntity();
-            ECSLib._setString("Tag", _tile, "Tile");
-            ECSLib._setPosition("Position", _tile, _tiles[i]);
-            ECSLib._setUint("City", _tile, _cityID);
+            uint256 _tileID = ECSLib._addEntity();
+            ECSLib._setString("Tag", _tileID, "Tile");
+            ECSLib._setPosition("Position", _tileID, _tiles[i]);
+            ECSLib._setUint("City", _tileID, _cityID);
         }
 
         // Convert the settler to a city
