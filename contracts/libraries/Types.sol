@@ -43,7 +43,6 @@ struct WorldConstants {
     uint256 maxCityCountPerPlayer;
     uint256 maxArmyCountPerPlayer;
     uint256 maxPlayerCount;
-    uint256 maxInventoryCapacity;
     uint256 cityUpgradeGoldCost;
     uint256 initCityGold;
     uint256 cityHealth;

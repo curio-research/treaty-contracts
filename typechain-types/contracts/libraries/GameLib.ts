@@ -69,6 +69,8 @@ export interface GameLibInterface extends utils.Interface {
     "activePlayerCheck(address)": FunctionFragment;
     "entityOwnershipCheckByAddress(uint256,address)": FunctionFragment;
     "gamePauseCheck()": FunctionFragment;
+    "getHarvestCap(uint256)": FunctionFragment;
+    "getTotalGoldCap(uint256)": FunctionFragment;
     "positionInboundCheck((uint256,uint256))": FunctionFragment;
     "validEntityCheck(uint256)": FunctionFragment;
   };
@@ -97,6 +99,8 @@ export interface GameLibInterface extends utils.Interface {
       | "activePlayerCheck"
       | "entityOwnershipCheckByAddress"
       | "gamePauseCheck"
+      | "getHarvestCap"
+      | "getTotalGoldCap"
       | "positionInboundCheck"
       | "validEntityCheck"
   ): FunctionFragment;
@@ -194,6 +198,14 @@ export interface GameLibInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "getHarvestCap",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTotalGoldCap",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "positionInboundCheck",
     values: [PositionStruct]
   ): string;
@@ -261,6 +273,14 @@ export interface GameLibInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "gamePauseCheck",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getHarvestCap",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTotalGoldCap",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -432,6 +452,16 @@ export interface GameLib extends BaseContract {
 
     gamePauseCheck(overrides?: CallOverrides): Promise<[void]>;
 
+    getHarvestCap(
+      _level: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    getTotalGoldCap(
+      _level: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     positionInboundCheck(
       _position: PositionStruct,
       overrides?: CallOverrides
@@ -557,6 +587,16 @@ export interface GameLib extends BaseContract {
 
   gamePauseCheck(overrides?: CallOverrides): Promise<void>;
 
+  getHarvestCap(
+    _level: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getTotalGoldCap(
+    _level: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   positionInboundCheck(
     _position: PositionStruct,
     overrides?: CallOverrides
@@ -681,6 +721,16 @@ export interface GameLib extends BaseContract {
     ): Promise<void>;
 
     gamePauseCheck(overrides?: CallOverrides): Promise<void>;
+
+    getHarvestCap(
+      _level: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getTotalGoldCap(
+      _level: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     positionInboundCheck(
       _position: PositionStruct,
@@ -817,6 +867,16 @@ export interface GameLib extends BaseContract {
 
     gamePauseCheck(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getHarvestCap(
+      _level: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getTotalGoldCap(
+      _level: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     positionInboundCheck(
       _position: PositionStruct,
       overrides?: CallOverrides
@@ -946,6 +1006,16 @@ export interface GameLib extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     gamePauseCheck(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getHarvestCap(
+      _level: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getTotalGoldCap(
+      _level: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     positionInboundCheck(
       _position: PositionStruct,

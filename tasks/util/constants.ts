@@ -14,7 +14,7 @@ export const SMALL_MAP_INPUT: MapInput = {
   height: 50,
 };
 
-export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): WorldConstantsStruct => {
+export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): any => {
   return {
     admin: adminAddr,
     worldWidth: mapInput.width,
@@ -24,7 +24,6 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): W
     maxCityCountPerPlayer: 3,
     maxArmyCountPerPlayer: 3,
     maxPlayerCount: 20,
-    maxInventoryCapacity: 5000,
     cityUpgradeGoldCost: 50,
     initCityGold: 100,
     cityHealth: 1000,

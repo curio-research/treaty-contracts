@@ -11,7 +11,8 @@
     "deploy": "npx hardhat deploy --network localhost",
     "port": "npx hardhat port",
     "setup": "yarn link curio-vault",
-    "deploy:anvil": "bash ./scripts/deploy.sh"
+    "deploy:anvil": "bash ./scripts/deploy.sh",
+    "compile": "npx hardhat compile"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.2",

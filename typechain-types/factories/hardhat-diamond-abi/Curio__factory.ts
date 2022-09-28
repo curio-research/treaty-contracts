@@ -988,11 +988,6 @@ const _abi = [
           },
           {
             internalType: "uint256",
-            name: "maxInventoryCapacity",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
             name: "cityUpgradeGoldCost",
             type: "uint256",
           },

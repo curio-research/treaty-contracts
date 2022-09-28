@@ -484,6 +484,24 @@ library GameLib {
         return ((_level + 1) * (_level + 2)) / 2 + 6;
     }
 
+    function getHarvestCap(uint256 _level) public pure returns (uint256) {
+        if (_level == 1) return 3000;
+        if (_level == 2) return 6000;
+        if (_level == 3) return 9000;
+        if (_level == 4) return 12000;
+        if (_level == 5) return 15000;
+        return 0;
+    }
+
+    function getTotalGoldCap(uint256 _level) public pure returns (uint256) {
+        if (_level == 1) return 12000;
+        if (_level == 2) return 24000;
+        if (_level == 3) return 27000;
+        if (_level == 4) return 48000;
+        if (_level == 5) return 60000;
+        return 0;
+    }
+
     // checkers
 
     function gamePauseCheck() public view {
