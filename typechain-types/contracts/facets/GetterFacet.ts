@@ -98,6 +98,7 @@ export interface GetterFacetInterface extends utils.Interface {
     "getCityCenter(uint256)": FunctionFragment;
     "getComponent(string)": FunctionFragment;
     "getComponentById(uint256)": FunctionFragment;
+    "getEntitiesAddr()": FunctionFragment;
     "getEntity()": FunctionFragment;
     "getInventoryByCityAndType(uint256,string)": FunctionFragment;
     "getPlayerCount()": FunctionFragment;
@@ -116,6 +117,7 @@ export interface GetterFacetInterface extends utils.Interface {
       | "getCityCenter"
       | "getComponent"
       | "getComponentById"
+      | "getEntitiesAddr"
       | "getEntity"
       | "getInventoryByCityAndType"
       | "getPlayerCount"
@@ -143,6 +145,10 @@ export interface GetterFacetInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getComponentById",
     values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getEntitiesAddr",
+    values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "getEntity", values?: undefined): string;
   encodeFunctionData(
@@ -193,6 +199,10 @@ export interface GetterFacetInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getComponentById",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getEntitiesAddr",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getEntity", data: BytesLike): Result;
@@ -280,6 +290,8 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
+    getEntitiesAddr(overrides?: CallOverrides): Promise<[string]>;
+
     getEntity(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getInventoryByCityAndType(
@@ -345,6 +357,8 @@ export interface GetterFacet extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
+  getEntitiesAddr(overrides?: CallOverrides): Promise<string>;
+
   getEntity(overrides?: CallOverrides): Promise<BigNumber>;
 
   getInventoryByCityAndType(
@@ -409,6 +423,8 @@ export interface GetterFacet extends BaseContract {
       _entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
+
+    getEntitiesAddr(overrides?: CallOverrides): Promise<string>;
 
     getEntity(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -478,6 +494,8 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getEntitiesAddr(overrides?: CallOverrides): Promise<BigNumber>;
+
     getEntity(overrides?: CallOverrides): Promise<BigNumber>;
 
     getInventoryByCityAndType(
@@ -541,6 +559,8 @@ export interface GetterFacet extends BaseContract {
       _entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    getEntitiesAddr(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getEntity(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

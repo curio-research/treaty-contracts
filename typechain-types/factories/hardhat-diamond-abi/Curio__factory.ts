@@ -104,6 +104,19 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "uint256",
+        name: "_entity",
+        type: "uint256",
+      },
+    ],
+    name: "removeEntity",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "string",
         name: "_componentName",
         type: "string",
@@ -763,6 +776,19 @@ const _abi = [
     outputs: [
       {
         internalType: "contract Component",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getEntitiesAddr",
+    outputs: [
+      {
+        internalType: "address",
         name: "",
         type: "address",
       },
