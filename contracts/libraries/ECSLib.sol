@@ -3,7 +3,7 @@ pragma solidity ^0.8.4;
 
 import "contracts/libraries/Storage.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
-import {Position, VALUE_TYPE} from "contracts/libraries/Types.sol";
+import {Position, VALUE_TYPE, QueryCondition, QueryType} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
 import {Component} from "contracts/Component.sol";
 import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, UintComponent, UintArrayComponent} from "contracts/TypedComponents.sol";
@@ -291,6 +291,50 @@ library ECSLib {
     // ----------------------------------------------------------
     // HELPERS
     // ----------------------------------------------------------
+
+    function queryAsSet(QueryCondition[] memory query) public returns (Set) {
+        Set res = new Set();
+
+        for (uint256 i = 0; i < query.length; i++) {
+            QueryCondition memory queryChunk = query[i];
+            Set tempSet = new Set();
+
+            if (queryChunk.queryType == QueryType.Has) {
+                Component _component = Component(gs().components[queryChunk.componentName]);
+                res = _intersectionAsSet(res, _component.getEntitiesAsSet());
+            }
+
+            // has exact value
+            if (queryChunk.queryType == QueryType.HasVal) {
+                Component _component = Component(gs().components[queryChunk.componentName]);
+                res = _intersectionAsSet(res, _component.getEntitiesWithValueAsSet(queryChunk.value));
+            }
+        }
+
+        return res;
+    }
+
+    function query(QueryCondition[] memory _query) public returns (uint256[] memory) {
+        return queryAsSet(_query).getAll();
+    }
+
+    function queryChunk(
+        QueryType _queryType,
+        string memory _componentName,
+        bytes memory _value
+    ) public pure returns (QueryCondition memory) {
+        return QueryCondition({queryType: _queryType, componentName: _componentName, value: _value});
+    }
+
+    function _intersectionAsSet(Set _set1, Set _set2) public returns (Set) {
+        uint256[] memory _vals = _intersection(_set2, _set2);
+        Set _res = new Set();
+        for (uint256 i = 0; i < _vals.length; i++) {
+            _res.add(_vals[i]);
+        }
+
+        return _res;
+    }
 
     // Set-theoretic intersection
     function _intersection(Set _set1, Set _set2) public returns (uint256[] memory) {

@@ -129,11 +129,12 @@ contract GameFacet is UseStorage {
         GameLib.activePlayerCheck(msg.sender);
         GameLib.entityOwnershipCheckByAddress(_cityID, msg.sender);
 
-        uint256 _balance = GameLib._getCityGold(_cityID);
-        require(_balance >= 500, "CURIO: Insufficient gold balance for packing");
+        // FIXME: add a few
+        // uint256 _balance = GameLib._getCityGold(_cityID);
+        // require(_balance >= 0, "CURIO: Insufficient gold balance for packing");
 
-        uint256 _goldInventoryID = GameLib._getInventory(_cityID, GameLib._getTemplateByInventoryType("Gold"));
-        ECSLib._setUint("Amount", _goldInventoryID, _balance - 500);
+        // uint256 _goldInventoryID = GameLib._getInventory(_cityID, GameLib._getTemplateByInventoryType("Gold"));
+        // ECSLib._setUint("Amount", _goldInventoryID, _balance - 500);
 
         uint256 _settlerID = _cityID;
 

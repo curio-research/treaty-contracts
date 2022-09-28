@@ -12,6 +12,7 @@ contract Component {
      */
 
     address private gameAddr; // game diamond
+    Set immutable emptySet = new Set();
     Set private entities = new Set();
     mapping(uint256 => bytes) private entityToValueMap; // entity => value of entity component
     mapping(uint256 => address) private valueToEntitySetAddrMap; // value => address of set of entities with this component equal to this value
@@ -38,14 +39,30 @@ contract Component {
     }
 
     /**
+     * @dev Get all entities with this component as a set.
+     */
+    function getEntitiesAsSet() public view returns (Set) {
+        return entities;
+    }
+
+    /**
      * @dev Get entities whose corresponding component has a specific value.
      * @param _value bytes value
      */
     function getEntitiesWithValue(bytes memory _value) public view returns (uint256[] memory) {
         // Return all entities with this component value
+        return getEntitiesWithValueAsSet(_value).getAll();
+    }
+
+    /**
+     * @dev Get entities whose corresponding component has a specific value. Returns as a set
+     * @param _value bytes value
+     */
+    function getEntitiesWithValueAsSet(bytes memory _value) public view returns (Set) {
+        // Return all entities with this component value
         address _setAddr = valueToEntitySetAddrMap[uint256(keccak256(_value))];
-        if (_setAddr == NULL_ADDR) return new uint256[](0);
-        return Set(_setAddr).getAll();
+        if (_setAddr == NULL_ADDR) return emptySet;
+        return Set(_setAddr);
     }
 
     /**

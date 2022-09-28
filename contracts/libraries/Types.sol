@@ -19,6 +19,17 @@ enum VALUE_TYPE {
     OTHER
 }
 
+enum QueryType {
+    Has,
+    HasVal
+}
+
+struct QueryCondition {
+    QueryType queryType;
+    bytes value;
+    string componentName;
+}
+
 struct ComponentSpec {
     string name;
     VALUE_TYPE valueType;
