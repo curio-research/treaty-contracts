@@ -67,6 +67,7 @@ export type WorldConstantsStruct = {
   maxArmyCountPerPlayer: PromiseOrValue<BigNumberish>;
   maxPlayerCount: PromiseOrValue<BigNumberish>;
   cityUpgradeGoldCost: PromiseOrValue<BigNumberish>;
+  cityPackCost: PromiseOrValue<BigNumberish>;
   initCityGold: PromiseOrValue<BigNumberish>;
   cityHealth: PromiseOrValue<BigNumberish>;
   cityAttack: PromiseOrValue<BigNumberish>;
@@ -75,6 +76,7 @@ export type WorldConstantsStruct = {
 
 export type WorldConstantsStructOutput = [
   string,
+  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -97,6 +99,7 @@ export type WorldConstantsStructOutput = [
   maxArmyCountPerPlayer: BigNumber;
   maxPlayerCount: BigNumber;
   cityUpgradeGoldCost: BigNumber;
+  cityPackCost: BigNumber;
   initCityGold: BigNumber;
   cityHealth: BigNumber;
   cityAttack: BigNumber;
