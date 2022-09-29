@@ -28,7 +28,9 @@ export interface ComponentInterface extends utils.Interface {
     "getAllEntitiesAndValues()": FunctionFragment;
     "getBytesValue(uint256)": FunctionFragment;
     "getEntities()": FunctionFragment;
+    "getEntitiesAsSet()": FunctionFragment;
     "getEntitiesWithValue(bytes)": FunctionFragment;
+    "getEntitiesWithValueAsSet(bytes)": FunctionFragment;
     "has(uint256)": FunctionFragment;
     "remove(uint256)": FunctionFragment;
     "set(uint256,bytes)": FunctionFragment;
@@ -39,7 +41,9 @@ export interface ComponentInterface extends utils.Interface {
       | "getAllEntitiesAndValues"
       | "getBytesValue"
       | "getEntities"
+      | "getEntitiesAsSet"
       | "getEntitiesWithValue"
+      | "getEntitiesWithValueAsSet"
       | "has"
       | "remove"
       | "set"
@@ -58,7 +62,15 @@ export interface ComponentInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "getEntitiesAsSet",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "getEntitiesWithValue",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getEntitiesWithValueAsSet",
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
@@ -87,7 +99,15 @@ export interface ComponentInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getEntitiesAsSet",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getEntitiesWithValue",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getEntitiesWithValueAsSet",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "has", data: BytesLike): Result;
@@ -135,10 +155,17 @@ export interface Component extends BaseContract {
 
     getEntities(overrides?: CallOverrides): Promise<[BigNumber[]]>;
 
+    getEntitiesAsSet(overrides?: CallOverrides): Promise<[string]>;
+
     getEntitiesWithValue(
       _value: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
+
+    getEntitiesWithValueAsSet(
+      _value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
     has(
       _entity: PromiseOrValue<BigNumberish>,
@@ -168,10 +195,17 @@ export interface Component extends BaseContract {
 
   getEntities(overrides?: CallOverrides): Promise<BigNumber[]>;
 
+  getEntitiesAsSet(overrides?: CallOverrides): Promise<string>;
+
   getEntitiesWithValue(
     _value: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
+
+  getEntitiesWithValueAsSet(
+    _value: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   has(
     _entity: PromiseOrValue<BigNumberish>,
@@ -201,10 +235,17 @@ export interface Component extends BaseContract {
 
     getEntities(overrides?: CallOverrides): Promise<BigNumber[]>;
 
+    getEntitiesAsSet(overrides?: CallOverrides): Promise<string>;
+
     getEntitiesWithValue(
       _value: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
+
+    getEntitiesWithValueAsSet(
+      _value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     has(
       _entity: PromiseOrValue<BigNumberish>,
@@ -235,7 +276,14 @@ export interface Component extends BaseContract {
 
     getEntities(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getEntitiesAsSet(overrides?: CallOverrides): Promise<BigNumber>;
+
     getEntitiesWithValue(
+      _value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getEntitiesWithValueAsSet(
       _value: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -269,7 +317,14 @@ export interface Component extends BaseContract {
 
     getEntities(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    getEntitiesAsSet(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     getEntitiesWithValue(
+      _value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getEntitiesWithValueAsSet(
       _value: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

@@ -28,8 +28,10 @@ export interface BoolComponentInterface extends utils.Interface {
     "getAllEntitiesAndValues()": FunctionFragment;
     "getBytesValue(uint256)": FunctionFragment;
     "getEntities()": FunctionFragment;
+    "getEntitiesAsSet()": FunctionFragment;
     "getEntitiesWithValue(bool)": FunctionFragment;
     "getEntitiesWithValue(bytes)": FunctionFragment;
+    "getEntitiesWithValueAsSet(bytes)": FunctionFragment;
     "getValue(uint256)": FunctionFragment;
     "has(uint256)": FunctionFragment;
     "remove(uint256)": FunctionFragment;
@@ -42,8 +44,10 @@ export interface BoolComponentInterface extends utils.Interface {
       | "getAllEntitiesAndValues"
       | "getBytesValue"
       | "getEntities"
+      | "getEntitiesAsSet"
       | "getEntitiesWithValue(bool)"
       | "getEntitiesWithValue(bytes)"
+      | "getEntitiesWithValueAsSet"
       | "getValue"
       | "has"
       | "remove"
@@ -64,11 +68,19 @@ export interface BoolComponentInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "getEntitiesAsSet",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "getEntitiesWithValue(bool)",
     values: [PromiseOrValue<boolean>]
   ): string;
   encodeFunctionData(
     functionFragment: "getEntitiesWithValue(bytes)",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getEntitiesWithValueAsSet",
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
@@ -105,11 +117,19 @@ export interface BoolComponentInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getEntitiesAsSet",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getEntitiesWithValue(bool)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "getEntitiesWithValue(bytes)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getEntitiesWithValueAsSet",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getValue", data: BytesLike): Result;
@@ -165,6 +185,8 @@ export interface BoolComponent extends BaseContract {
 
     getEntities(overrides?: CallOverrides): Promise<[BigNumber[]]>;
 
+    getEntitiesAsSet(overrides?: CallOverrides): Promise<[string]>;
+
     "getEntitiesWithValue(bool)"(
       _value: PromiseOrValue<boolean>,
       overrides?: CallOverrides
@@ -174,6 +196,11 @@ export interface BoolComponent extends BaseContract {
       _value: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
+
+    getEntitiesWithValueAsSet(
+      _value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
     getValue(
       _entity: PromiseOrValue<BigNumberish>,
@@ -213,6 +240,8 @@ export interface BoolComponent extends BaseContract {
 
   getEntities(overrides?: CallOverrides): Promise<BigNumber[]>;
 
+  getEntitiesAsSet(overrides?: CallOverrides): Promise<string>;
+
   "getEntitiesWithValue(bool)"(
     _value: PromiseOrValue<boolean>,
     overrides?: CallOverrides
@@ -222,6 +251,11 @@ export interface BoolComponent extends BaseContract {
     _value: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
+
+  getEntitiesWithValueAsSet(
+    _value: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   getValue(
     _entity: PromiseOrValue<BigNumberish>,
@@ -261,6 +295,8 @@ export interface BoolComponent extends BaseContract {
 
     getEntities(overrides?: CallOverrides): Promise<BigNumber[]>;
 
+    getEntitiesAsSet(overrides?: CallOverrides): Promise<string>;
+
     "getEntitiesWithValue(bool)"(
       _value: PromiseOrValue<boolean>,
       overrides?: CallOverrides
@@ -270,6 +306,11 @@ export interface BoolComponent extends BaseContract {
       _value: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
+
+    getEntitiesWithValueAsSet(
+      _value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     getValue(
       _entity: PromiseOrValue<BigNumberish>,
@@ -310,12 +351,19 @@ export interface BoolComponent extends BaseContract {
 
     getEntities(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getEntitiesAsSet(overrides?: CallOverrides): Promise<BigNumber>;
+
     "getEntitiesWithValue(bool)"(
       _value: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     "getEntitiesWithValue(bytes)"(
+      _value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getEntitiesWithValueAsSet(
       _value: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -359,12 +407,19 @@ export interface BoolComponent extends BaseContract {
 
     getEntities(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    getEntitiesAsSet(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     "getEntitiesWithValue(bool)"(
       _value: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "getEntitiesWithValue(bytes)"(
+      _value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getEntitiesWithValueAsSet(
       _value: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

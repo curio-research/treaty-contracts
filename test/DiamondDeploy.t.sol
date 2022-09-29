@@ -14,6 +14,7 @@ import "contracts/facets/GameFacet.sol";
 import "contracts/facets/AdminFacet.sol";
 import "contracts/libraries/Types.sol";
 import "contracts/NATO.sol";
+import "forge-std/console.sol";
 
 /// @title diamond deploy foundry template
 /// @notice This contract sets up the diamond for testing and is inherited by other foundry test contracts.
@@ -219,7 +220,9 @@ contract DiamondDeployTest is Test {
                 maxCityCountPerPlayer: 3,
                 maxArmyCountPerPlayer: 3,
                 maxPlayerCount: 20,
+                maxInventoryCapacity: 5000,
                 cityUpgradeGoldCost: 500,
+                cityPackCost: 30,
                 initCityGold: 1000,
                 cityHealth: 500,
                 cityAttack: 50,

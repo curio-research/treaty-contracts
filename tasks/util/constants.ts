@@ -25,6 +25,8 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): a
     maxArmyCountPerPlayer: 3,
     maxPlayerCount: 20,
     cityUpgradeGoldCost: 50,
+    cityPackCost: 0,
+    maxInventoryCapacity: 1000,
     initCityGold: 100,
     cityHealth: 1000,
     cityAttack: 500,

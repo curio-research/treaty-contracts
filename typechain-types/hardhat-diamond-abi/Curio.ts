@@ -67,6 +67,8 @@ export type WorldConstantsStruct = {
   maxArmyCountPerPlayer: PromiseOrValue<BigNumberish>;
   maxPlayerCount: PromiseOrValue<BigNumberish>;
   cityUpgradeGoldCost: PromiseOrValue<BigNumberish>;
+  maxInventoryCapacity: PromiseOrValue<BigNumberish>;
+  cityPackCost: PromiseOrValue<BigNumberish>;
   initCityGold: PromiseOrValue<BigNumberish>;
   cityHealth: PromiseOrValue<BigNumberish>;
   cityAttack: PromiseOrValue<BigNumberish>;
@@ -75,6 +77,8 @@ export type WorldConstantsStruct = {
 
 export type WorldConstantsStructOutput = [
   string,
+  BigNumber,
+  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -97,10 +101,24 @@ export type WorldConstantsStructOutput = [
   maxArmyCountPerPlayer: BigNumber;
   maxPlayerCount: BigNumber;
   cityUpgradeGoldCost: BigNumber;
+  maxInventoryCapacity: BigNumber;
+  cityPackCost: BigNumber;
   initCityGold: BigNumber;
   cityHealth: BigNumber;
   cityAttack: BigNumber;
   cityDefense: BigNumber;
+};
+
+export type QueryConditionStruct = {
+  queryType: PromiseOrValue<BigNumberish>;
+  value: PromiseOrValue<BytesLike>;
+  componentName: PromiseOrValue<string>;
+};
+
+export type QueryConditionStructOutput = [number, string, string] & {
+  queryType: number;
+  value: string;
+  componentName: string;
 };
 
 export declare namespace IDiamondCut {
@@ -199,6 +217,7 @@ export interface CurioInterface extends utils.Interface {
     "_getUintArray(string,uint256)": FunctionFragment;
     "_getUintArrayComponent(string)": FunctionFragment;
     "_getUintComponent(string)": FunctionFragment;
+    "queryChunk(uint8,string,bytes)": FunctionFragment;
   };
 
   getFunction(
@@ -271,6 +290,7 @@ export interface CurioInterface extends utils.Interface {
       | "_getUintArray"
       | "_getUintArrayComponent"
       | "_getUintComponent"
+      | "queryChunk"
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "addEntity", values?: undefined): string;
@@ -553,6 +573,14 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "_getUintComponent",
     values: [PromiseOrValue<string>]
   ): string;
+  encodeFunctionData(
+    functionFragment: "queryChunk",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BytesLike>
+    ]
+  ): string;
 
   decodeFunctionResult(functionFragment: "addEntity", data: BytesLike): Result;
   decodeFunctionResult(
@@ -775,6 +803,7 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "_getUintComponent",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "queryChunk", data: BytesLike): Result;
 
   events: {
     "DiamondCut(tuple[],address,bytes)": EventFragment;
@@ -1254,6 +1283,13 @@ export interface Curio extends BaseContract {
       _name: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[string]>;
+
+    queryChunk(
+      _queryType: PromiseOrValue<BigNumberish>,
+      _componentName: PromiseOrValue<string>,
+      _value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[QueryConditionStructOutput]>;
   };
 
   addEntity(
@@ -1604,6 +1640,13 @@ export interface Curio extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
+  queryChunk(
+    _queryType: PromiseOrValue<BigNumberish>,
+    _componentName: PromiseOrValue<string>,
+    _value: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<QueryConditionStructOutput>;
+
   callStatic: {
     addEntity(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1952,6 +1995,13 @@ export interface Curio extends BaseContract {
       _name: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<string>;
+
+    queryChunk(
+      _queryType: PromiseOrValue<BigNumberish>,
+      _componentName: PromiseOrValue<string>,
+      _value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<QueryConditionStructOutput>;
   };
 
   filters: {
@@ -2354,6 +2404,13 @@ export interface Curio extends BaseContract {
       _name: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    queryChunk(
+      _queryType: PromiseOrValue<BigNumberish>,
+      _componentName: PromiseOrValue<string>,
+      _value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -2700,6 +2757,13 @@ export interface Curio extends BaseContract {
 
     _getUintComponent(
       _name: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    queryChunk(
+      _queryType: PromiseOrValue<BigNumberish>,
+      _componentName: PromiseOrValue<string>,
+      _value: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

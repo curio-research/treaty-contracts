@@ -1043,6 +1043,16 @@ const _abi = [
           },
           {
             internalType: "uint256",
+            name: "maxInventoryCapacity",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "cityPackCost",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
             name: "initCityGold",
             type: "uint256",
           },
@@ -1644,6 +1654,52 @@ const _abi = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "enum QueryType",
+        name: "_queryType",
+        type: "QueryType",
+      },
+      {
+        internalType: "string",
+        name: "_componentName",
+        type: "string",
+      },
+      {
+        internalType: "bytes",
+        name: "_value",
+        type: "bytes",
+      },
+    ],
+    name: "queryChunk",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "enum QueryType",
+            name: "queryType",
+            type: "QueryType",
+          },
+          {
+            internalType: "bytes",
+            name: "value",
+            type: "bytes",
+          },
+          {
+            internalType: "string",
+            name: "componentName",
+            type: "string",
+          },
+        ],
+        internalType: "struct QueryCondition",
+        name: "",
+        type: "tuple",
+      },
+    ],
+    stateMutability: "pure",
     type: "function",
   },
 ];
