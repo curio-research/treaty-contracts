@@ -17,10 +17,20 @@ contract GetterFacet is UseStorage {
     uint256 private NULL = 0;
 
     // DEBUG FNS
-    function getInventory(uint256 _cityID) external returns (uint256) {
-        uint256 _templateID = GameLib._getTemplateByInventoryType("Gold");
+    function getEntitiesAddr() external view returns (address) {
+        return gs().entities;
+    }
+
+    function getInventoryByCityAndType(uint256 _cityID, string memory _inventoryType) external returns (uint256) {
+        uint256 _templateID = GameLib._getTemplateByInventoryType(_inventoryType);
         return GameLib._getInventory(_cityID, _templateID);
     }
+
+    function getTemplateByInventoryType(string memory _inventoryType) external returns (uint256) {
+        return GameLib._getTemplateByInventoryType(_inventoryType);
+    }
+
+    ////////////
 
     function getComponent(string memory _name) external view returns (Component) {
         return ECSLib._getComponent(_name);

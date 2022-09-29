@@ -70,5 +70,7 @@ library Templates {
         ECSLib._setUint("Defense", _armyID, 0);
         ECSLib._setUint("Load", _armyID, 0);
         ECSLib._setUint("LastTimestamp", _armyID, block.timestamp);
+
+        return _armyID;
     }
 }

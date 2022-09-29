@@ -18,6 +18,14 @@ contract AdminFacet is UseStorage {
     // TODO: Question: How to reuse functions from Util so that they can be directly called by external parties?
 
     // ----------------------------------------------------------------------
+    // DEBUG FUNCTIONS
+    // ----------------------------------------------------------------------
+
+    function removeEntity(uint256 _entity) external onlyAdmin {
+        ECSLib._removeEntity(_entity);
+    }
+
+    // ----------------------------------------------------------------------
     // ADMIN FUNCTIONS
     // ----------------------------------------------------------------------
 

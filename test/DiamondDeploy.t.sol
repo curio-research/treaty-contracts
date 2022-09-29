@@ -171,7 +171,7 @@ contract DiamondDeployTest is Test {
         admin.setComponentValue("Speed", cavalryTemplateID, abi.encode(1));
         admin.setComponentValue("Attack", cavalryTemplateID, abi.encode(1));
         admin.setComponentValue("Defense", cavalryTemplateID, abi.encode(1));
-        admin.setComponentValue("Load", infantryTemplateID, abi.encode(1));
+        admin.setComponentValue("Load", cavalryTemplateID, abi.encode(1));
         admin.setComponentValue("Duration", cavalryTemplateID, abi.encode(1));
         admin.setComponentValue("Cost", cavalryTemplateID, abi.encode(1));
 
@@ -185,7 +185,7 @@ contract DiamondDeployTest is Test {
         admin.setComponentValue("Defense", infantryTemplateID, abi.encode(1));
         admin.setComponentValue("Load", infantryTemplateID, abi.encode(1));
         admin.setComponentValue("Duration", infantryTemplateID, abi.encode(1));
-        admin.setComponentValue("Cost", cavalryTemplateID, abi.encode(1));
+        admin.setComponentValue("Cost", infantryTemplateID, abi.encode(1));
 
         // Troop: Archer
         archerTemplateID = admin.addEntity();
@@ -195,9 +195,9 @@ contract DiamondDeployTest is Test {
         admin.setComponentValue("Speed", archerTemplateID, abi.encode(1));
         admin.setComponentValue("Attack", archerTemplateID, abi.encode(1));
         admin.setComponentValue("Defense", archerTemplateID, abi.encode(1));
-        admin.setComponentValue("Load", infantryTemplateID, abi.encode(1));
+        admin.setComponentValue("Load", archerTemplateID, abi.encode(1));
         admin.setComponentValue("Duration", archerTemplateID, abi.encode(1));
-        admin.setComponentValue("Cost", cavalryTemplateID, abi.encode(1));
+        admin.setComponentValue("Cost", archerTemplateID, abi.encode(1));
 
         // Resource: Gold
         goldTemplateID = admin.addEntity();
@@ -222,6 +222,7 @@ contract DiamondDeployTest is Test {
                 maxPlayerCount: 20,
                 maxInventoryCapacity: 5000,
                 cityUpgradeGoldCost: 500,
+                cityPackCost: 30,
                 initCityGold: 1000,
                 cityHealth: 500,
                 cityAttack: 50,

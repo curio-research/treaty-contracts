@@ -154,6 +154,7 @@ export interface CurioInterface extends utils.Interface {
     "reactivatePlayer(address)": FunctionFragment;
     "registerComponents(address,(string,uint8)[])": FunctionFragment;
     "registerDefaultComponents(address)": FunctionFragment;
+    "removeEntity(uint256)": FunctionFragment;
     "setComponentValue(string,uint256,bytes)": FunctionFragment;
     "storeEncodedColumnBatches(uint256[][])": FunctionFragment;
     "diamondCut((address,uint8,bytes4[])[],address,bytes)": FunctionFragment;
@@ -184,11 +185,13 @@ export interface CurioInterface extends utils.Interface {
     "getComponent(string)": FunctionFragment;
     "getComponentById(uint256)": FunctionFragment;
     "getEntities()": FunctionFragment;
+    "getEntitiesAddr()": FunctionFragment;
     "getEntity()": FunctionFragment;
-    "getInventory(uint256)": FunctionFragment;
+    "getInventoryByCityAndType(uint256,string)": FunctionFragment;
     "getPlayerCount()": FunctionFragment;
     "getPlayerId(address)": FunctionFragment;
     "getSettlerAt((uint256,uint256))": FunctionFragment;
+    "getTemplateByInventoryType(string)": FunctionFragment;
     "getTemplateId(string)": FunctionFragment;
     "getTileAt((uint256,uint256))": FunctionFragment;
     "getWorldConstants()": FunctionFragment;
@@ -224,6 +227,7 @@ export interface CurioInterface extends utils.Interface {
       | "reactivatePlayer"
       | "registerComponents"
       | "registerDefaultComponents"
+      | "removeEntity"
       | "setComponentValue"
       | "storeEncodedColumnBatches"
       | "diamondCut"
@@ -254,11 +258,13 @@ export interface CurioInterface extends utils.Interface {
       | "getComponent"
       | "getComponentById"
       | "getEntities"
+      | "getEntitiesAddr"
       | "getEntity"
-      | "getInventory"
+      | "getInventoryByCityAndType"
       | "getPlayerCount"
       | "getPlayerId"
       | "getSettlerAt"
+      | "getTemplateByInventoryType"
       | "getTemplateId"
       | "getTileAt"
       | "getWorldConstants"
@@ -303,6 +309,10 @@ export interface CurioInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "registerDefaultComponents",
     values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "removeEntity",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "setComponentValue",
@@ -441,10 +451,14 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "getEntities",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "getEntitiesAddr",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "getEntity", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "getInventory",
-    values: [PromiseOrValue<BigNumberish>]
+    functionFragment: "getInventoryByCityAndType",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "getPlayerCount",
@@ -457,6 +471,10 @@ export interface CurioInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getSettlerAt",
     values: [PositionStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTemplateByInventoryType",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "getTemplateId",
@@ -582,6 +600,10 @@ export interface CurioInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "removeEntity",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "setComponentValue",
     data: BytesLike
   ): Result;
@@ -674,9 +696,13 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "getEntities",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "getEntitiesAddr",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getEntity", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "getInventory",
+    functionFragment: "getInventoryByCityAndType",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -689,6 +715,10 @@ export interface CurioInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getSettlerAt",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTemplateByInventoryType",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -923,6 +953,11 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    removeEntity(
+      _entity: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     setComponentValue(
       _componentName: PromiseOrValue<string>,
       _entity: PromiseOrValue<BigNumberish>,
@@ -1091,10 +1126,13 @@ export interface Curio extends BaseContract {
 
     getEntities(overrides?: CallOverrides): Promise<[BigNumber[]]>;
 
+    getEntitiesAddr(overrides?: CallOverrides): Promise<[string]>;
+
     getEntity(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    getInventory(
+    getInventoryByCityAndType(
       _cityID: PromiseOrValue<BigNumberish>,
+      _inventoryType: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1107,6 +1145,11 @@ export interface Curio extends BaseContract {
 
     getSettlerAt(
       _position: PositionStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    getTemplateByInventoryType(
+      _inventoryType: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1274,6 +1317,11 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  removeEntity(
+    _entity: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   setComponentValue(
     _componentName: PromiseOrValue<string>,
     _entity: PromiseOrValue<BigNumberish>,
@@ -1434,10 +1482,13 @@ export interface Curio extends BaseContract {
 
   getEntities(overrides?: CallOverrides): Promise<BigNumber[]>;
 
+  getEntitiesAddr(overrides?: CallOverrides): Promise<string>;
+
   getEntity(overrides?: CallOverrides): Promise<BigNumber>;
 
-  getInventory(
+  getInventoryByCityAndType(
     _cityID: PromiseOrValue<BigNumberish>,
+    _inventoryType: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1450,6 +1501,11 @@ export interface Curio extends BaseContract {
 
   getSettlerAt(
     _position: PositionStruct,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  getTemplateByInventoryType(
+    _inventoryType: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1615,6 +1671,11 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    removeEntity(
+      _entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     setComponentValue(
       _componentName: PromiseOrValue<string>,
       _entity: PromiseOrValue<BigNumberish>,
@@ -1777,10 +1838,13 @@ export interface Curio extends BaseContract {
 
     getEntities(overrides?: CallOverrides): Promise<BigNumber[]>;
 
+    getEntitiesAddr(overrides?: CallOverrides): Promise<string>;
+
     getEntity(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getInventory(
+    getInventoryByCityAndType(
       _cityID: PromiseOrValue<BigNumberish>,
+      _inventoryType: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1793,6 +1857,11 @@ export interface Curio extends BaseContract {
 
     getSettlerAt(
       _position: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getTemplateByInventoryType(
+      _inventoryType: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -2015,6 +2084,11 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    removeEntity(
+      _entity: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     setComponentValue(
       _componentName: PromiseOrValue<string>,
       _entity: PromiseOrValue<BigNumberish>,
@@ -2175,10 +2249,13 @@ export interface Curio extends BaseContract {
 
     getEntities(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getEntitiesAddr(overrides?: CallOverrides): Promise<BigNumber>;
+
     getEntity(overrides?: CallOverrides): Promise<BigNumber>;
 
-    getInventory(
+    getInventoryByCityAndType(
       _cityID: PromiseOrValue<BigNumberish>,
+      _inventoryType: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -2191,6 +2268,11 @@ export interface Curio extends BaseContract {
 
     getSettlerAt(
       _position: PositionStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    getTemplateByInventoryType(
+      _inventoryType: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -2357,6 +2439,11 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    removeEntity(
+      _entity: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     setComponentValue(
       _componentName: PromiseOrValue<string>,
       _entity: PromiseOrValue<BigNumberish>,
@@ -2517,10 +2604,13 @@ export interface Curio extends BaseContract {
 
     getEntities(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    getEntitiesAddr(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     getEntity(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    getInventory(
+    getInventoryByCityAndType(
       _cityID: PromiseOrValue<BigNumberish>,
+      _inventoryType: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2533,6 +2623,11 @@ export interface Curio extends BaseContract {
 
     getSettlerAt(
       _position: PositionStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    getTemplateByInventoryType(
+      _inventoryType: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

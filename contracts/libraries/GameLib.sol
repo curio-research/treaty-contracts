@@ -8,7 +8,6 @@ import {ECSLib} from "contracts/libraries/ECSLib.sol";
 import {Set} from "contracts/Set.sol";
 import {Component} from "contracts/Component.sol";
 import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, UintComponent, UintArrayComponent} from "contracts/TypedComponents.sol";
-import "hardhat/console.sol";
 
 /// @title Util library
 /// @notice Contains all events as well as lower-level setters and getters
@@ -323,6 +322,13 @@ library GameLib {
         query[0] = ECSLib.queryChunk(QueryType.HasVal, "City", abi.encode(_cityID));
         query[1] = ECSLib.queryChunk(QueryType.HasVal, "Template", abi.encode(_templateID));
         uint256[] memory res = ECSLib.query(query);
+
+        Set _set1 = new Set();
+        Set _set2 = new Set();
+        _set1.addArray(res);
+        _set2.addArray(ECSLib._getStringComponent("Tag").getEntitiesWithValue(string("Production")));
+        res = ECSLib._difference(_set1, _set2);
+
         assert(res.length <= 1);
         return res.length == 1 ? res[0] : 0;
     }

@@ -8,44 +8,86 @@ import {Position} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
 
 contract TreatyTest is Test, DiamondDeployTest {
-    // function testMultipleTroopProductions() public {
-    //     Position[] memory _territory = new Position[](9);
-    //     _territory[0] = Position({x: 6, y: 0});
-    //     _territory[1] = Position({x: 6, y: 1});
-    //     _territory[2] = Position({x: 6, y: 2});
-    //     _territory[3] = Position({x: 7, y: 2});
-    //     _territory[4] = Position({x: 8, y: 2});
-    //     _territory[5] = Position({x: 8, y: 1});
-    //     _territory[6] = Position({x: 8, y: 0});
-    //     _territory[7] = Position({x: 7, y: 0});
-    //     _territory[8] = Position({x: 7, y: 1});
+    function testEntityRemoval() public {
+        // Check pre-condition
+        uint256 _settyID = getter.getSettlerAt(player1Pos);
+        assertEq(getter.getComponent("CanSettle").getEntities().length, 3);
 
-    //     vm.startPrank(player1);
+        // Remove settler
+        vm.prank(deployer);
+        admin.removeEntity(_settyID);
 
-    //     // Found city
-    //     uint256 _settyID = getter.getSettlerAt(player1Pos);
-    //     game.moveSettler(_settyID, Position({x: 7, y: 1}));
-    //     game.foundCity(_settyID, _territory, "New Amsterdam");
+        // Check post-condition
+        assertEq(getter.getComponent("CanSettle").getEntities().length, 2);
 
-    //     uint256 _cityCenterID = getter.getCityCenter(_settyID);
+        Position[] memory _territory = new Position[](9);
+        _territory[0] = Position({x: 5, y: 2});
+        _territory[1] = Position({x: 5, y: 3});
+        _territory[2] = Position({x: 5, y: 4});
+        _territory[3] = Position({x: 6, y: 4});
+        _territory[4] = Position({x: 7, y: 4});
+        _territory[5] = Position({x: 7, y: 3});
+        _territory[6] = Position({x: 7, y: 2});
+        _territory[7] = Position({x: 6, y: 2});
+        _territory[8] = Position({x: 6, y: 3});
 
-    //     assertTrue(getter.getInventory(_settyID) == NULL);
+        // Player 2 founds a city
+        vm.startPrank(player2);
+        uint256 _setty2ID = getter.getSettlerAt(player2Pos);
+        game.foundCity(_setty2ID, _territory, "Philadelphia");
+        assertEq(getter.getComponent("Tag").getEntitiesWithValue(abi.encode("Tile")).length, 9);
 
-    //     // Produce troops
-    //     uint256 _productionID = game.startTroopProduction(_cityCenterID, cavalryTemplateID, 20);
-    //     vm.warp(30);
-    //     game.endTroopProduction(_cityCenterID, _productionID);
+        // Player 2 packs the city
+        game.packCity(_setty2ID);
 
-    //     console.log("AA");
-    //     // Get inventory
-    //     assertTrue(getter.getInventory(_settyID) != NULL);
-    //     console.log("BB");
+        assertEq(getter.getComponent("Tag").getEntitiesWithValue(abi.encode("Tile")).length, 0);
+        vm.stopPrank();
+    }
 
-    //     // Produce more troops
-    //     _productionID = game.startTroopProduction(_cityCenterID, cavalryTemplateID, 20);
-    //     vm.warp(60);
-    //     game.endTroopProduction(_cityCenterID, _productionID);
-    // }
+    function testMultipleTroopProductions() public {
+        Position[] memory _territory = new Position[](9);
+        _territory[0] = Position({x: 6, y: 0});
+        _territory[1] = Position({x: 6, y: 1});
+        _territory[2] = Position({x: 6, y: 2});
+        _territory[3] = Position({x: 7, y: 2});
+        _territory[4] = Position({x: 8, y: 2});
+        _territory[5] = Position({x: 8, y: 1});
+        _territory[6] = Position({x: 8, y: 0});
+        _territory[7] = Position({x: 7, y: 0});
+        _territory[8] = Position({x: 7, y: 1});
+
+        vm.startPrank(player1);
+
+        // Found city
+        uint256 _settyID = getter.getSettlerAt(player1Pos);
+        game.moveSettler(_settyID, Position({x: 7, y: 1}));
+        game.foundCity(_settyID, _territory, "New Amsterdam");
+        assertEq(getter.getComponent("Tag").getEntitiesWithValue(abi.encode("Tile")).length, 9);
+
+        uint256 _cityCenterID = getter.getCityCenter(_settyID);
+
+        assertTrue(getter.getInventoryByCityAndType(_settyID, "Cavalry") == NULL);
+
+        // Produce troops
+        uint256 _productionID = game.startTroopProduction(_cityCenterID, cavalryTemplateID, 20);
+        vm.warp(30);
+        game.endTroopProduction(_cityCenterID, _productionID);
+
+        // Get inventory
+        assertTrue(getter.getInventoryByCityAndType(_settyID, "Cavalry") != NULL);
+
+        // Produce more troops
+        _productionID = game.startTroopProduction(_cityCenterID, cavalryTemplateID, 20);
+        vm.warp(60);
+        game.endTroopProduction(_cityCenterID, _productionID);
+
+        // Form army
+        uint256[] memory _templateIDs = new uint256[](1);
+        uint256[] memory _amounts = new uint256[](1);
+        _templateIDs[0] = getter.getTemplateByInventoryType("Cavalry");
+        _amounts[0] = 30;
+        game.organizeArmy(_settyID, _templateIDs, _amounts);
+    }
 
     function testSet() public {
         Set set = new Set();
@@ -89,9 +131,9 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Found city
         uint256 _settyID = getter.getSettlerAt(player1Pos);
-        console.log(_settyID);
         game.moveSettler(_settyID, Position({x: 7, y: 1}));
         game.foundCity(_settyID, _territory, "New Amsterdam");
+        assertEq(getter.getComponent("Tag").getEntitiesWithValue(abi.encode("Tile")).length, 9);
 
         uint256 _cityCenterID = getter.getCityCenter(_settyID);
 
@@ -102,16 +144,14 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Pack city and move settler out of former city boundry
         game.packCity(_settyID);
+        assertEq(getter.getComponent("Tag").getEntitiesWithValue(abi.encode("Tile")).length, 0);
         vm.warp(32);
         game.moveSettler(_settyID, Position({x: 8, y: 1}));
         vm.warp(34);
         game.moveSettler(_settyID, Position({x: 9, y: 1}));
 
-        console.log(getter.getComponent("Tag").getEntitiesWithValue(abi.encode("Tile")).length);
-
         // Verify that all previous tiles and buildings are removed
         for (uint256 i = 0; i < _territory.length; i++) {
-            // console.log(getter.getComponent("Position").getEntitiesWithValue(abi.encode(_territory[i])).length);
             assertEq(getter.getComponent("Position").getEntitiesWithValue(abi.encode(_territory[i])).length, 0);
         }
 
@@ -128,6 +168,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         _territory[7] = Position({x: 8, y: 0});
         _territory[8] = Position({x: 8, y: 1});
         game.foundCity(_settyID, _territory, "New York");
+        assertEq(getter.getComponent("Tag").getEntitiesWithValue(abi.encode("Tile")).length, 9);
 
         vm.stopPrank();
     }

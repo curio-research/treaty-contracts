@@ -28,20 +28,20 @@ contract GameFacet is UseStorage {
 
         GameLib._initializeTile(_position);
 
-        uint256 _playerId = Templates.createPlayer(_name);
+        uint256 _playerID = Templates.createPlayer(_name);
 
         gs().players.push(msg.sender);
-        gs().playerEntityMap[msg.sender] = _playerId;
+        gs().playerEntityMap[msg.sender] = _playerID;
 
-        uint256 _settlerId = Templates.createSettler(_position, _playerId);
+        uint256 _settlerID = Templates.createSettler(_position, _playerID);
 
         // Initialize guard which stays with eventual city
-        GameLib._addGuard(_settlerId);
+        // GameLib._addGuard(_settlerID);
 
         // Add gold to eventual city
         uint256 _goldInventoryID = ECSLib._addEntity();
         ECSLib._setString("Tag", _goldInventoryID, "ResourceInventory");
-        ECSLib._setUint("City", _goldInventoryID, _settlerId);
+        ECSLib._setUint("City", _goldInventoryID, _settlerID);
         ECSLib._setUint("Template", _goldInventoryID, GameLib._getTemplateByInventoryType("Gold"));
         ECSLib._setUint("Amount", _goldInventoryID, gs().worldConstants.initCityGold);
     }
@@ -100,10 +100,10 @@ contract GameFacet is UseStorage {
             require(GameLib._getTileAt(_tiles[i]) == NULL, "CURIO: Territory overlaps with another city");
             GameLib._initializeTile(_tiles[i]);
 
-            uint256 _tile = ECSLib._addEntity();
-            ECSLib._setString("Tag", _tile, "Tile");
-            ECSLib._setPosition("Position", _tile, _tiles[i]);
-            ECSLib._setUint("City", _tile, _cityID);
+            uint256 _tileID = ECSLib._addEntity();
+            ECSLib._setString("Tag", _tileID, "Tile");
+            ECSLib._setPosition("Position", _tileID, _tiles[i]);
+            ECSLib._setUint("City", _tileID, _cityID);
         }
 
         // Convert the settler to a city
@@ -223,7 +223,7 @@ contract GameFacet is UseStorage {
             ECSLib._setUint("Template", _inventoryID, _templateID);
             ECSLib._setUint("Amount", _inventoryID, 0);
         } else {
-            require(ECSLib._getUint("Amount", _inventoryID) < gs().worldConstants.maxInventoryCapacity, "CURIO: Amount exceeds inventory capacity");
+            // require(ECSLib._getUint("Amount", _inventoryID) < gs().worldConstants.maxInventoryCapacity, "CURIO: Amount exceeds inventory capacity");
         }
 
         // Start production
@@ -416,7 +416,7 @@ contract GameFacet is UseStorage {
         for (uint256 i = 0; i < _constituentIDs.length; i++) {
             uint256 _inventoryID = GameLib._getInventory(_cityID, ECSLib._getUint("Template", _constituentIDs[i]));
             uint256 _amount = ECSLib._getUint("Amount", _inventoryID) + ECSLib._getUint("Amount", _constituentIDs[i]);
-            require(_amount <= gs().worldConstants.maxInventoryCapacity, "CURIO: Too many troops");
+            // require(_amount <= gs().worldConstants.maxInventoryCapacity, "CURIO: Too many troops");
             ECSLib._setUint("Amount", _inventoryID, _amount);
         }
 

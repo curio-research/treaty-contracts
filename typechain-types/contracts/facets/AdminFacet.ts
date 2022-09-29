@@ -50,6 +50,7 @@ export interface AdminFacetInterface extends utils.Interface {
     "reactivatePlayer(address)": FunctionFragment;
     "registerComponents(address,(string,uint8)[])": FunctionFragment;
     "registerDefaultComponents(address)": FunctionFragment;
+    "removeEntity(uint256)": FunctionFragment;
     "setComponentValue(string,uint256,bytes)": FunctionFragment;
     "storeEncodedColumnBatches(uint256[][])": FunctionFragment;
   };
@@ -61,6 +62,7 @@ export interface AdminFacetInterface extends utils.Interface {
       | "reactivatePlayer"
       | "registerComponents"
       | "registerDefaultComponents"
+      | "removeEntity"
       | "setComponentValue"
       | "storeEncodedColumnBatches"
   ): FunctionFragment;
@@ -81,6 +83,10 @@ export interface AdminFacetInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "registerDefaultComponents",
     values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "removeEntity",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "setComponentValue",
@@ -110,6 +116,10 @@ export interface AdminFacetInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "registerDefaultComponents",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "removeEntity",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -176,6 +186,11 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    removeEntity(
+      _entity: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     setComponentValue(
       _componentName: PromiseOrValue<string>,
       _entity: PromiseOrValue<BigNumberish>,
@@ -214,6 +229,11 @@ export interface AdminFacet extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  removeEntity(
+    _entity: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   setComponentValue(
     _componentName: PromiseOrValue<string>,
     _entity: PromiseOrValue<BigNumberish>,
@@ -247,6 +267,11 @@ export interface AdminFacet extends BaseContract {
 
     registerDefaultComponents(
       _gameAddr: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    removeEntity(
+      _entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -291,6 +316,11 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    removeEntity(
+      _entity: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     setComponentValue(
       _componentName: PromiseOrValue<string>,
       _entity: PromiseOrValue<BigNumberish>,
@@ -327,6 +357,11 @@ export interface AdminFacet extends BaseContract {
 
     registerDefaultComponents(
       _gameAddr: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    removeEntity(
+      _entity: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

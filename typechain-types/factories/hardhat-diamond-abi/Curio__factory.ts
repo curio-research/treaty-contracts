@@ -104,6 +104,19 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "uint256",
+        name: "_entity",
+        type: "uint256",
+      },
+    ],
+    name: "removeEntity",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "string",
         name: "_componentName",
         type: "string",
@@ -785,6 +798,19 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "getEntitiesAddr",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "getEntity",
     outputs: [
       {
@@ -803,8 +829,13 @@ const _abi = [
         name: "_cityID",
         type: "uint256",
       },
+      {
+        internalType: "string",
+        name: "_inventoryType",
+        type: "string",
+      },
     ],
-    name: "getInventory",
+    name: "getInventoryByCityAndType",
     outputs: [
       {
         internalType: "uint256",
@@ -868,6 +899,25 @@ const _abi = [
       },
     ],
     name: "getSettlerAt",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "_inventoryType",
+        type: "string",
+      },
+    ],
+    name: "getTemplateByInventoryType",
     outputs: [
       {
         internalType: "uint256",
