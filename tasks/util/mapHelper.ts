@@ -178,17 +178,21 @@ export const initializeFixmap = async (hre: HardhatRuntimeEnvironment, diamond: 
   await (await diamond.addEntity()).wait();
   const entity = (await diamond.getEntity()).toNumber();
 
-  console.log(entity, player1Id);
+  console.log(entity, Number(player1Id));
 
-  for (const playerId in [player1Id]) {
+  const players = [player1Id];
+
+  for (let i = 0; i < players.length; i++) {
+    const playerId = players[i];
+
+    await (await diamond.setComponentValue(Owner, entity, encodeUint256(playerId))).wait();
     await (await diamond.setComponentValue(Tag, entity, encodeString(Tags.Army))).wait();
-    await (await diamond.setComponentValue(Owner, entity, encodeUint256(Number(playerId)))).wait();
     await (await diamond.setComponentValue(Position, entity, encodePosition(player1Pos))).wait();
     await (await diamond.setComponentValue(Health, entity, encodeUint256(10))).wait();
     await (await diamond.setComponentValue(Speed, entity, encodeUint256(10))).wait();
     await (await diamond.setComponentValue(Attack, entity, encodeUint256(10))).wait();
     await (await diamond.setComponentValue(Defense, entity, encodeUint256(10))).wait();
     await (await diamond.setComponentValue(Load, entity, encodeUint256(10))).wait();
-    await (await diamond.setComponentValue(LastTimestamp, entity, encodeUint256(0))).wait();
+    await (await diamond.setComponentValue(LastTimestamp, entity, encodeUint256(1))).wait();
   }
 };
