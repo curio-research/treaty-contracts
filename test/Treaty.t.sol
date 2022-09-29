@@ -131,7 +131,6 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Found city
         uint256 _settyID = getter.getSettlerAt(player1Pos);
-        console.log(_settyID);
         game.moveSettler(_settyID, Position({x: 7, y: 1}));
         game.foundCity(_settyID, _territory, "New Amsterdam");
         assertEq(getter.getComponent("Tag").getEntitiesWithValue(abi.encode("Tile")).length, 9);
@@ -151,11 +150,8 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.warp(34);
         game.moveSettler(_settyID, Position({x: 9, y: 1}));
 
-        console.log(getter.getComponent("Tag").getEntitiesWithValue(abi.encode("Tile")).length);
-
         // Verify that all previous tiles and buildings are removed
         for (uint256 i = 0; i < _territory.length; i++) {
-            // console.log(getter.getComponent("Position").getEntitiesWithValue(abi.encode(_territory[i])).length);
             assertEq(getter.getComponent("Position").getEntitiesWithValue(abi.encode(_territory[i])).length, 0);
         }
 

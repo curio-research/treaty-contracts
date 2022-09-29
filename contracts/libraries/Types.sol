@@ -59,6 +59,7 @@ struct GameState {
     uint256[][] encodedColumnBatches;
     address[] treaties;
     address entities;
+    uint256 entityNonce;
     string[] componentNames;
     mapping(string => address) components; // component name to contract address
     mapping(uint256 => address) ComponentEntityToAddress; // component id to contract address

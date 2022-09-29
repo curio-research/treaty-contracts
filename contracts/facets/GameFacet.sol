@@ -8,6 +8,7 @@ import {Position, TERRAIN, WorldConstants} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
 import "contracts/libraries/Templates.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
+import "forge-std/console.sol";
 
 /// @title Game facet
 /// @notice Contains player functions
@@ -126,10 +127,10 @@ contract GameFacet is UseStorage {
         GameLib.entityOwnershipCheckByAddress(_cityID, msg.sender);
 
         uint256 _balance = GameLib._getCityGold(_cityID);
-        require(_balance >= 500, "CURIO: Insufficient gold balance for packing");
+        require(_balance >= 50, "CURIO: Insufficient gold balance for packing");
 
         uint256 _goldInventoryID = GameLib._getInventory(_cityID, GameLib._getTemplateByInventoryType("Gold"));
-        ECSLib._setUint("Amount", _goldInventoryID, _balance - 500);
+        ECSLib._setUint("Amount", _goldInventoryID, _balance - 50);
 
         uint256 _settlerID = _cityID;
 

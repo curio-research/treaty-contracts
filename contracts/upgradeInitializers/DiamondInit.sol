@@ -45,5 +45,6 @@ contract DiamondInit is UseStorage {
 
         // initialize entities
         gs().entities = address(new Set());
+        gs().entityNonce = 1;
     }
 }

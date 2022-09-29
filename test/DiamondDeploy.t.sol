@@ -219,7 +219,6 @@ contract DiamondDeployTest is Test {
                 maxCityCountPerPlayer: 3,
                 maxArmyCountPerPlayer: 3,
                 maxPlayerCount: 20,
-                maxInventoryCapacity: 5000,
                 cityUpgradeGoldCost: 500,
                 initCityGold: 1000,
                 cityHealth: 500,

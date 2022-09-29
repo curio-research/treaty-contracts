@@ -47,8 +47,10 @@ library ECSLib {
 
     function _addEntity() public returns (uint256) {
         Set _entities = Set(gs().entities);
-        uint256 _newEntity = _entities.size() + 1;
+        uint256 _newEntity = gs().entityNonce;
         _entities.add(_newEntity);
+
+        gs().entityNonce++;
 
         emit NewEntity(_newEntity);
         return _newEntity;
@@ -56,7 +58,11 @@ library ECSLib {
 
     // FIXME: remove over all components, or remove over components which the entity has? One more general, the other more efficient.
     function _removeEntity(uint256 _entity) public {
-        for (uint256 i = 0; i < gs().componentNames.length; i++) {
+        Set _entities = Set(gs().entities);
+        _entities.remove(_entity);
+
+        string[] memory _componentNames = gs().componentNames;
+        for (uint256 i = 0; i < _componentNames.length; i++) {
             Component _component = _getComponent(gs().componentNames[i]);
             _component.remove(_entity);
         }
