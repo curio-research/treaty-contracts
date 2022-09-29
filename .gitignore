@@ -5,6 +5,7 @@ node_modules
 cache
 artifacts
 cache_hardhat
+forge-cache
 out
 
 #local dev help

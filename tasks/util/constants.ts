@@ -14,7 +14,7 @@ export const SMALL_MAP_INPUT: MapInput = {
   height: 50,
 };
 
-export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): any => {
+export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): WorldConstantsStruct => {
   return {
     admin: adminAddr,
     worldWidth: mapInput.width,
