@@ -63,7 +63,9 @@ task('deploy', 'deploy contracts')
 
       // Register components
       let startTime = performance.now();
-      await (await diamond.registerComponents(diamond.address, COMPONENT_SPECS)).wait();
+      for (let i = 0; i < COMPONENT_SPECS.length; i++) {
+        await (await diamond.registerComponents(diamond.address, [COMPONENT_SPECS[i]])).wait();
+      }
       console.log(`✦ component registration took ${Math.floor(performance.now() - startTime)} ms`);
 
       // Initialize map

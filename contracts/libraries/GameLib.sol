@@ -29,43 +29,39 @@ library GameLib {
     // ----------------------------------------------------------
 
     function _registerComponents(address _gameAddr, ComponentSpec[] memory _componentSpecs) public {
-        string[] memory _componentNames = new string[](_componentSpecs.length);
-
         for (uint256 i = 0; i < _componentSpecs.length; i++) {
-            ComponentSpec memory _spec = _componentSpecs[i];
-            _componentNames[i] = _spec.name;
+            ComponentSpec memory spec = _componentSpecs[i];
 
             // Create corresponding typed component and register its address
-            address _addr;
-            if (_spec.valueType == VALUE_TYPE.ADDRESS) {
-                _addr = address(new AddressComponent(_gameAddr));
-            } else if (_spec.valueType == VALUE_TYPE.BOOL) {
-                _addr = address(new BoolComponent(_gameAddr));
-            } else if (_spec.valueType == VALUE_TYPE.INT) {
-                _addr = address(new IntComponent(_gameAddr));
-            } else if (_spec.valueType == VALUE_TYPE.POSITION) {
-                _addr = address(new PositionComponent(_gameAddr));
-            } else if (_spec.valueType == VALUE_TYPE.STRING) {
-                _addr = address(new StringComponent(_gameAddr));
-            } else if (_spec.valueType == VALUE_TYPE.UINT) {
-                _addr = address(new UintComponent(_gameAddr));
-            } else if (_spec.valueType == VALUE_TYPE.UINT_ARRAY) {
-                _addr = address(new UintArrayComponent(_gameAddr));
+            address addr;
+            if (spec.valueType == VALUE_TYPE.ADDRESS) {
+                addr = address(new AddressComponent(_gameAddr));
+            } else if (spec.valueType == VALUE_TYPE.BOOL) {
+                addr = address(new BoolComponent(_gameAddr));
+            } else if (spec.valueType == VALUE_TYPE.INT) {
+                addr = address(new IntComponent(_gameAddr));
+            } else if (spec.valueType == VALUE_TYPE.POSITION) {
+                addr = address(new PositionComponent(_gameAddr));
+            } else if (spec.valueType == VALUE_TYPE.STRING) {
+                addr = address(new StringComponent(_gameAddr));
+            } else if (spec.valueType == VALUE_TYPE.UINT) {
+                addr = address(new UintComponent(_gameAddr));
+            } else if (spec.valueType == VALUE_TYPE.UINT_ARRAY) {
+                addr = address(new UintArrayComponent(_gameAddr));
             } else {
-                _addr = address(new Component(_gameAddr));
+                addr = address(new Component(_gameAddr));
             }
-            gs().components[_spec.name] = _addr;
+            gs().components[spec.name] = addr;
 
             // Record identifier entity for component
-            uint256 _componentID = ECSLib._addEntity();
-            ECSLib._setBool("IsComponent", _componentID);
-            gs().ComponentEntityToAddress[_componentID] = _addr;
+            uint256 componentID = ECSLib._addEntity();
+            ECSLib._setBool("IsComponent", componentID);
+            gs().ComponentEntityToAddress[componentID] = addr;
 
-            emit ECSLib.NewComponent(_spec.name, _componentID);
+            gs().componentNames.push(spec.name);
+
+            emit ECSLib.NewComponent(spec.name, componentID);
         }
-
-        // Update component names for iteration
-        gs().componentNames = _componentNames;
     }
 
     function _initializeTile(Position memory _position) public {
@@ -437,25 +433,25 @@ library GameLib {
 
     // checkers
 
-    function gamePauseCheck() public view {
+    function _gamePauseCheck() internal view {
         require(!gs().isPaused, "CURIO: Game is paused");
     }
 
-    function validEntityCheck(uint256 _entity) public view {
+    function _validEntityCheck(uint256 _entity) internal view {
         require(Set(gs().entities).includes(_entity), "CURIO: Entity object not found");
     }
 
-    function activePlayerCheck(address _player) public view {
+    function _activePlayerCheck(address _player) internal view {
         uint256 _playerID = _getPlayer(_player);
         require(ECSLib._getBoolComponent("IsActive").has(_playerID), "CURIO: You are inactive");
     }
 
-    function entityOwnershipCheckByAddress(uint256 _entity, address _player) public view {
+    function _entityOwnershipCheckByAddress(uint256 _entity, address _player) internal view {
         uint256 _playerID = _getPlayer(_player);
         require(ECSLib._getUint("Owner", _entity) == _playerID, "CURIO: Entity is not yours");
     }
 
-    function positionInboundCheck(Position memory _position) public view {
+    function _positionInboundCheck(Position memory _position) public view {
         require(_inBound(_position), "CURIO: Position out of bounds");
     }
 
