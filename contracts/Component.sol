@@ -60,23 +60,23 @@ contract Component {
      */
     function getEntitiesWithValueAsSet(bytes memory _value) public view returns (Set) {
         // Return all entities with this component value
-        address _setAddr = valueToEntitySetAddrMap[uint256(keccak256(_value))];
-        if (_setAddr == NULL_ADDR) return emptySet;
-        return Set(_setAddr);
+        address setAddr = valueToEntitySetAddrMap[uint256(keccak256(_value))];
+        if (setAddr == NULL_ADDR) return emptySet;
+        return Set(setAddr);
     }
 
     /**
      * @dev Get all entities with this component and all their values in the form of two arrays.
      */
     function getAllEntitiesAndValues() public view returns (uint256[] memory, bytes[] memory) {
-        uint256[] memory _entityArray = entities.getAll();
-        bytes[] memory _valueArray = new bytes[](_entityArray.length);
+        uint256[] memory entityArray = entities.getAll();
+        bytes[] memory valueArray = new bytes[](entityArray.length);
 
-        for (uint256 i = 0; i < _entityArray.length; i++) {
-            _valueArray[i] = entityToValueMap[_entityArray[i]];
+        for (uint256 i = 0; i < entityArray.length; i++) {
+            valueArray[i] = entityToValueMap[entityArray[i]];
         }
 
-        return (_entityArray, _valueArray);
+        return (entityArray, valueArray);
     }
 
     /**
@@ -95,8 +95,8 @@ contract Component {
     function set(uint256 _entity, bytes memory _value) public {
         entities.add(_entity);
 
-        address _setAddr = valueToEntitySetAddrMap[uint256(keccak256(entityToValueMap[_entity]))];
-        if (_setAddr != NULL_ADDR) Set(_setAddr).remove(_entity);
+        address setAddr = valueToEntitySetAddrMap[uint256(keccak256(entityToValueMap[_entity]))];
+        if (setAddr != NULL_ADDR) Set(setAddr).remove(_entity);
 
         entityToValueMap[_entity] = _value;
 
@@ -112,8 +112,8 @@ contract Component {
     function remove(uint256 _entity) public {
         entities.remove(_entity);
 
-        address _setAddr = valueToEntitySetAddrMap[uint256(keccak256(entityToValueMap[_entity]))];
-        if (_setAddr != NULL_ADDR) Set(_setAddr).remove(_entity);
+        address setAddr = valueToEntitySetAddrMap[uint256(keccak256(entityToValueMap[_entity]))];
+        if (setAddr != NULL_ADDR) Set(setAddr).remove(_entity);
 
         delete entityToValueMap[_entity];
     }
