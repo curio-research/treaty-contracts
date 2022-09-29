@@ -1,6 +1,7 @@
 {
   "name": "game-contracts",
   "private": true,
+  "license": "TBD",
   "scripts": {
     "contract-size": "yarn run hardhat size-contracts",
     "getInitParams": "npx ts-node test/util/foundry/getInitParams.ts",
@@ -10,7 +11,8 @@
     "deploy": "npx hardhat deploy --network localhost",
     "port": "npx hardhat port",
     "setup": "yarn link curio-vault",
-    "deploy:anvil": "bash ./scripts/deploy.sh"
+    "deploy:anvil": "bash ./scripts/deploy.sh",
+    "compile": "npx hardhat compile"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.2",

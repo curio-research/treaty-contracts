@@ -66,8 +66,9 @@ export type WorldConstantsStruct = {
   maxCityCountPerPlayer: PromiseOrValue<BigNumberish>;
   maxArmyCountPerPlayer: PromiseOrValue<BigNumberish>;
   maxPlayerCount: PromiseOrValue<BigNumberish>;
-  maxInventoryCapacity: PromiseOrValue<BigNumberish>;
   cityUpgradeGoldCost: PromiseOrValue<BigNumberish>;
+  maxInventoryCapacity: PromiseOrValue<BigNumberish>;
+  cityPackCost: PromiseOrValue<BigNumberish>;
   initCityGold: PromiseOrValue<BigNumberish>;
   cityHealth: PromiseOrValue<BigNumberish>;
   cityAttack: PromiseOrValue<BigNumberish>;
@@ -76,6 +77,7 @@ export type WorldConstantsStruct = {
 
 export type WorldConstantsStructOutput = [
   string,
+  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -98,12 +100,25 @@ export type WorldConstantsStructOutput = [
   maxCityCountPerPlayer: BigNumber;
   maxArmyCountPerPlayer: BigNumber;
   maxPlayerCount: BigNumber;
-  maxInventoryCapacity: BigNumber;
   cityUpgradeGoldCost: BigNumber;
+  maxInventoryCapacity: BigNumber;
+  cityPackCost: BigNumber;
   initCityGold: BigNumber;
   cityHealth: BigNumber;
   cityAttack: BigNumber;
   cityDefense: BigNumber;
+};
+
+export type QueryConditionStruct = {
+  queryType: PromiseOrValue<BigNumberish>;
+  value: PromiseOrValue<BytesLike>;
+  componentName: PromiseOrValue<string>;
+};
+
+export type QueryConditionStructOutput = [number, string, string] & {
+  queryType: number;
+  value: string;
+  componentName: string;
 };
 
 export declare namespace IDiamondCut {
@@ -168,7 +183,9 @@ export interface CurioInterface extends utils.Interface {
     "getCityCenter(uint256)": FunctionFragment;
     "getComponent(string)": FunctionFragment;
     "getComponentById(uint256)": FunctionFragment;
+    "getEntities()": FunctionFragment;
     "getEntity()": FunctionFragment;
+    "getInventory(uint256)": FunctionFragment;
     "getPlayerCount()": FunctionFragment;
     "getPlayerId(address)": FunctionFragment;
     "getSettlerAt((uint256,uint256))": FunctionFragment;
@@ -197,6 +214,7 @@ export interface CurioInterface extends utils.Interface {
     "_getUintArray(string,uint256)": FunctionFragment;
     "_getUintArrayComponent(string)": FunctionFragment;
     "_getUintComponent(string)": FunctionFragment;
+    "queryChunk(uint8,string,bytes)": FunctionFragment;
   };
 
   getFunction(
@@ -235,7 +253,9 @@ export interface CurioInterface extends utils.Interface {
       | "getCityCenter"
       | "getComponent"
       | "getComponentById"
+      | "getEntities"
       | "getEntity"
+      | "getInventory"
       | "getPlayerCount"
       | "getPlayerId"
       | "getSettlerAt"
@@ -264,6 +284,7 @@ export interface CurioInterface extends utils.Interface {
       | "_getUintArray"
       | "_getUintArrayComponent"
       | "_getUintComponent"
+      | "queryChunk"
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "addEntity", values?: undefined): string;
@@ -416,7 +437,15 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "getComponentById",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
+  encodeFunctionData(
+    functionFragment: "getEntities",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "getEntity", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "getInventory",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(
     functionFragment: "getPlayerCount",
     values?: undefined
@@ -526,6 +555,14 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "_getUintComponent",
     values: [PromiseOrValue<string>]
   ): string;
+  encodeFunctionData(
+    functionFragment: "queryChunk",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BytesLike>
+    ]
+  ): string;
 
   decodeFunctionResult(functionFragment: "addEntity", data: BytesLike): Result;
   decodeFunctionResult(
@@ -633,7 +670,15 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "getComponentById",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "getEntities",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getEntity", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getInventory",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getPlayerCount",
     data: BytesLike
@@ -728,6 +773,7 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "_getUintComponent",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "queryChunk", data: BytesLike): Result;
 
   events: {
     "DiamondCut(tuple[],address,bytes)": EventFragment;
@@ -1043,7 +1089,14 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
+    getEntities(overrides?: CallOverrides): Promise<[BigNumber[]]>;
+
     getEntity(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    getInventory(
+      _cityID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     getPlayerCount(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -1187,6 +1240,13 @@ export interface Curio extends BaseContract {
       _name: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[string]>;
+
+    queryChunk(
+      _queryType: PromiseOrValue<BigNumberish>,
+      _componentName: PromiseOrValue<string>,
+      _value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[QueryConditionStructOutput]>;
   };
 
   addEntity(
@@ -1372,7 +1432,14 @@ export interface Curio extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
+  getEntities(overrides?: CallOverrides): Promise<BigNumber[]>;
+
   getEntity(overrides?: CallOverrides): Promise<BigNumber>;
+
+  getInventory(
+    _cityID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   getPlayerCount(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1516,6 +1583,13 @@ export interface Curio extends BaseContract {
     _name: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<string>;
+
+  queryChunk(
+    _queryType: PromiseOrValue<BigNumberish>,
+    _componentName: PromiseOrValue<string>,
+    _value: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<QueryConditionStructOutput>;
 
   callStatic: {
     addEntity(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1701,7 +1775,14 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
+    getEntities(overrides?: CallOverrides): Promise<BigNumber[]>;
+
     getEntity(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getInventory(
+      _cityID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     getPlayerCount(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1845,6 +1926,13 @@ export interface Curio extends BaseContract {
       _name: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<string>;
+
+    queryChunk(
+      _queryType: PromiseOrValue<BigNumberish>,
+      _componentName: PromiseOrValue<string>,
+      _value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<QueryConditionStructOutput>;
   };
 
   filters: {
@@ -2085,7 +2173,14 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getEntities(overrides?: CallOverrides): Promise<BigNumber>;
+
     getEntity(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getInventory(
+      _cityID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     getPlayerCount(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -2225,6 +2320,13 @@ export interface Curio extends BaseContract {
 
     _getUintComponent(
       _name: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    queryChunk(
+      _queryType: PromiseOrValue<BigNumberish>,
+      _componentName: PromiseOrValue<string>,
+      _value: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
@@ -2413,7 +2515,14 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getEntities(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     getEntity(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getInventory(
+      _cityID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     getPlayerCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -2553,6 +2662,13 @@ export interface Curio extends BaseContract {
 
     _getUintComponent(
       _name: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    queryChunk(
+      _queryType: PromiseOrValue<BigNumberish>,
+      _componentName: PromiseOrValue<string>,
+      _value: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

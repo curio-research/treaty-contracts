@@ -772,6 +772,19 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "getEntities",
+    outputs: [
+      {
+        internalType: "uint256[]",
+        name: "",
+        type: "uint256[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "getEntity",
     outputs: [
       {
@@ -781,6 +794,25 @@ const _abi = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_cityID",
+        type: "uint256",
+      },
+    ],
+    name: "getInventory",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -956,12 +988,17 @@ const _abi = [
           },
           {
             internalType: "uint256",
+            name: "cityUpgradeGoldCost",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
             name: "maxInventoryCapacity",
             type: "uint256",
           },
           {
             internalType: "uint256",
-            name: "cityUpgradeGoldCost",
+            name: "cityPackCost",
             type: "uint256",
           },
           {
@@ -1567,6 +1604,52 @@ const _abi = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "enum QueryType",
+        name: "_queryType",
+        type: "QueryType",
+      },
+      {
+        internalType: "string",
+        name: "_componentName",
+        type: "string",
+      },
+      {
+        internalType: "bytes",
+        name: "_value",
+        type: "bytes",
+      },
+    ],
+    name: "queryChunk",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "enum QueryType",
+            name: "queryType",
+            type: "QueryType",
+          },
+          {
+            internalType: "bytes",
+            name: "value",
+            type: "bytes",
+          },
+          {
+            internalType: "string",
+            name: "componentName",
+            type: "string",
+          },
+        ],
+        internalType: "struct QueryCondition",
+        name: "",
+        type: "tuple",
+      },
+    ],
+    stateMutability: "pure",
     type: "function",
   },
 ];

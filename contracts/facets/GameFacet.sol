@@ -96,6 +96,7 @@ contract GameFacet is UseStorage {
         // Verify that territory is wholly in bound and does not overlap with other cities, and initialize tiles
         for (uint256 i = 0; i < _tiles.length; i++) {
             GameLib.positionInboundCheck(_tiles[i]);
+
             require(GameLib._getTileAt(_tiles[i]) == NULL, "CURIO: Territory overlaps with another city");
             GameLib._initializeTile(_tiles[i]);
 
@@ -124,11 +125,20 @@ contract GameFacet is UseStorage {
         GameLib.activePlayerCheck(msg.sender);
         GameLib.entityOwnershipCheckByAddress(_cityID, msg.sender);
 
+        // FIXME: configure optimal gold upgrade balance for city
+        uint256 _packCost = gs().worldConstants.cityPackCost;
+        uint256 _balance = GameLib._getCityGold(_cityID);
+        require(_balance >= _packCost, "CURIO: Insufficient gold balance for packing");
+
+        uint256 _goldInventoryID = GameLib._getInventory(_cityID, GameLib._getTemplateByInventoryType("Gold"));
+        ECSLib._setUint("Amount", _goldInventoryID, _balance - _packCost);
+
         uint256 _settlerID = _cityID;
 
         // Remove city tiles
         uint256[] memory _tileIDs = GameLib._getCityTiles(_cityID);
         assert(_tileIDs.length == GameLib._getCityTileCountByLevel(ECSLib._getUint("Level", _cityID)));
+
         for (uint256 i = 0; i < _tileIDs.length; i++) {
             ECSLib._removeEntity(_tileIDs[i]);
         }
@@ -154,8 +164,7 @@ contract GameFacet is UseStorage {
         GameLib.entityOwnershipCheckByAddress(_cityID, msg.sender);
 
         // Verify that city has enough gold
-        uint256 _goldInventoryID = GameLib._getInventory(_cityID, GameLib._getTemplateByInventoryType("Gold"));
-        uint256 _balance = _goldInventoryID != NULL ? ECSLib._getUint("Amount", _goldInventoryID) : 0;
+        uint256 _balance = GameLib._getCityGold(_cityID);
         uint256 _cost = gs().worldConstants.cityUpgradeGoldCost;
         require(_balance >= _cost, "CURIO: Insufficient gold balance");
 
@@ -173,10 +182,9 @@ contract GameFacet is UseStorage {
             Templates.createCityTile(_newTiles[i], _cityID);
         }
 
-        // Expend resources
+        uint256 _goldInventoryID = GameLib._getInventory(_cityID, GameLib._getTemplateByInventoryType("Gold"));
         ECSLib._setUint("Amount", _goldInventoryID, _balance - _cost);
 
-        // Upgrade city
         ECSLib._setUint("Level", _cityID, _level + 1);
     }
 
@@ -311,10 +319,18 @@ contract GameFacet is UseStorage {
             ECSLib._setUint("Amount", _inventoryID, 0);
         }
 
+        uint256 cityGoldAmount = GameLib._getCityGold(_cityID);
+        uint256 intendedHarvestAmount = (block.timestamp - ECSLib._getUint("InitTimestamp", _buildingID)) / ECSLib._getUint("Duration", _templateID);
+
+        uint256 _level = ECSLib._getUint("Level", _cityID);
+        uint256 harvestCap = GameLib.getHarvestCap(_level);
+        uint256 totalCap = GameLib.getTotalGoldCap(_level);
+
+        uint256 currentHarvestAmount = intendedHarvestAmount >= harvestCap ? harvestCap : intendedHarvestAmount;
+        uint256 totalAmount = cityGoldAmount + currentHarvestAmount >= totalCap ? totalCap : cityGoldAmount + currentHarvestAmount;
+
         // Update amount and reset time
-        uint256 _amount = (block.timestamp - ECSLib._getUint("InitTimestamp", _buildingID)) / ECSLib._getUint("Duration", _templateID) + ECSLib._getUint("Amount", _inventoryID);
-        if (_amount >= gs().worldConstants.maxInventoryCapacity) _amount = gs().worldConstants.maxInventoryCapacity;
-        ECSLib._setUint("Amount", _inventoryID, _amount);
+        ECSLib._setUint("Amount", _inventoryID, totalAmount);
         ECSLib._setUint("InitTimestamp", _buildingID, block.timestamp);
     }
 
@@ -412,25 +428,24 @@ contract GameFacet is UseStorage {
         GameLib.validEntityCheck(_armyID);
         GameLib.gamePauseCheck();
         GameLib.activePlayerCheck(msg.sender);
-        // GameLib.entityOwnershipCheckByAddress(_armyID, msg.sender); // FIXME: NOT WORKING?
+        GameLib.entityOwnershipCheckByAddress(_armyID, msg.sender);
+        GameLib.positionInboundCheck(_targetPosition);
 
         // Verify that resource is not in another player's territory
-        // uint256 _tileId = GameLib._getTileAt(_targetPosition);
-        // if (_tileId != 0) GameLib.entityOwnershipCheckByAddress(_tileId, msg.sender);
+        // uint256 _tileID = GameLib._getTileAt(_targetPosition);
+        // if (_tileID != 0) GameLib.entityOwnershipCheckByAddress(_tileID, msg.sender);
 
         // armies cannot move in enemy territory
 
-        uint256 _playerID = GameLib._getPlayer(msg.sender);
-        uint256[] memory _signatureIDs = GameLib._getPlayerSignatures(_playerID);
-        for (uint256 i = 0; i < _signatureIDs.length; i++) {
-            address _treaty = ECSLib._getAddress("Treaty", _signatureIDs[i]);
-            (bool _success, bytes memory _returnData) = _treaty.call(abi.encodeWithSignature("approveMoveArmy()"));
-            require(_success, "CRUIO: Failed to call the external treaty");
-            require(abi.decode(_returnData, (bool)), "CRUIO: Treaty does not approve your action");
-        }
-
-        // Verify that position is in bound, and initialize tile
-        require(GameLib._inBound(_targetPosition), "CURIO: Out of bound");
+        // Disable treaty for now
+        // uint256 _playerID = GameLib._getPlayer(msg.sender);
+        // uint256[] memory _signatureIDs = GameLib._getPlayerSignatures(_playerID);
+        // for (uint256 i = 0; i < _signatureIDs.length; i++) {
+        //     address _treaty = ECSLib._getAddress("Treaty", _signatureIDs[i]);
+        //     (bool _success, bytes memory _returnData) = _treaty.call(abi.encodeWithSignature("approveMoveArmy()"));
+        //     require(_success, "CRUIO: Failed to call the external treaty");
+        //     require(abi.decode(_returnData, (bool)), "CRUIO: Treaty does not approve your action");
+        // }
 
         // Check speed and cooldown
         require(ECSLib._getUint("LastTimestamp", _armyID) < block.timestamp, "CURIO: Need more time till next move");
@@ -441,7 +456,6 @@ contract GameFacet is UseStorage {
 
         GameLib._initializeTile(_targetPosition);
 
-        // Move
         ECSLib._setPosition("Position", _armyID, _targetPosition);
     }
 
