@@ -326,7 +326,7 @@ library ECSLib {
     }
 
     function _intersectionAsSet(Set _set1, Set _set2) public returns (Set) {
-        uint256[] memory _vals = _intersection(_set2, _set2);
+        uint256[] memory _vals = _intersection(_set1, _set2);
         Set _res = new Set();
         for (uint256 i = 0; i < _vals.length; i++) {
             _res.add(_vals[i]);

@@ -255,6 +255,15 @@ library GameLib {
         uint256[] memory res = ECSLib.query(query);
         assert(res.length <= 1);
         return res.length == 1 ? res[0] : 0;
+
+        // Set _set1 = new Set();
+        // Set _set2 = new Set();
+        // _set1.addArray(ECSLib._getStringComponent("Tag").getEntitiesWithValue(string("Resource")));
+        // _set2.addArray(ECSLib._getPositionComponent("Position").getEntitiesWithValue(_position));
+        // uint256[] memory _result = ECSLib._intersection(_set1, _set2);
+
+        // assert(_result.length <= 1);
+        // return _result.length == 1 ? _result[0] : _NULL();
     }
 
     function _getArmyAt(Position memory _position) public returns (uint256) {
@@ -365,12 +374,21 @@ library GameLib {
     }
 
     function _getTileAt(Position memory _position) public returns (uint256) {
-        QueryCondition[] memory query = new QueryCondition[](2);
-        query[0] = ECSLib.queryChunk(QueryType.HasVal, "Position", abi.encode(_position));
-        query[1] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("Tile"));
-        uint256[] memory res = ECSLib.query(query);
-        assert(res.length <= 1);
-        return res.length == 1 ? res[0] : 0;
+        // QueryCondition[] memory query = new QueryCondition[](2);
+        // query[0] = ECSLib.queryChunk(QueryType.HasVal, "Position", abi.encode(_position));
+        // query[1] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("Tile"));
+        // uint256[] memory res = ECSLib.query(query);
+        // assert(res.length <= 1);
+        // return res.length == 1 ? res[0] : 0;
+
+        Set _set1 = new Set();
+        Set _set2 = new Set();
+        _set1.addArray(ECSLib._getPositionComponent("Position").getEntitiesWithValue(_position));
+        _set2.addArray(ECSLib._getStringComponent("Tag").getEntitiesWithValue(string("Tile")));
+        uint256[] memory _result = ECSLib._intersection(_set1, _set2);
+
+        assert(_result.length <= 1);
+        return _result.length == 1 ? _result[0] : _NULL();
     }
 
     function _getMapTileAt(Position memory _position) public view returns (Tile memory) {
