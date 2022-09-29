@@ -351,42 +351,42 @@ contract GameFacet is UseStorage {
         // Verify there is no army currently at the city center
         require(GameLib._getArmyAt(ECSLib._getPosition("Position", _cityID)) == NULL, "CURIO: Tile occupied by another army");
 
-        uint256 _health = 0; // sum
-        uint256 _speed = 0; // average
-        uint256 _attack = 0; // sum
-        uint256 _defense = 0; // sum
-        uint256 _load = 0; // sum
+        uint256 _playerID = GameLib._getPlayer(msg.sender);
+        require(GameLib._getPlayerArmies(_playerID).length < gs().worldConstants.maxArmyCountPerPlayer, "CURIO: Army max count reached");
 
-        // Verify input templates
+        uint256 health = 0; // sum
+        uint256 speed = 0; // average
+        uint256 attack = 0; // sum
+        uint256 defense = 0; // sum
+        uint256 load = 0; // sum
+
         require(_templateIDs.length == _amounts.length, "CURIO: Input lengths do not match");
         require(_templateIDs.length > 0, "CURIO: You must organize armies with at least 1 troop");
 
         // Update inventory and gather army traits
         for (uint256 i = 0; i < _templateIDs.length; i++) {
-            uint256 _inventoryID = GameLib._getInventory(_cityID, _templateIDs[i]);
-            require(ECSLib._getUint("Amount", _inventoryID) >= _amounts[i], "CURIO: Not enough troops");
+            uint256 inventoryID = GameLib._getInventory(_cityID, _templateIDs[i]);
+            require(ECSLib._getUint("Amount", inventoryID) >= _amounts[i], "CURIO: Not enough troops");
 
-            _health += ECSLib._getUint("Health", _templateIDs[i]) * _amounts[i];
-            _speed += ECSLib._getUint("Speed", _templateIDs[i]) * _amounts[i];
-            _attack += ECSLib._getUint("Attack", _templateIDs[i]) * _amounts[i];
-            _defense += ECSLib._getUint("Defense", _templateIDs[i]) * _amounts[i];
-            _load += ECSLib._getUint("Load", _templateIDs[i]) * _amounts[i];
-            ECSLib._setUint("Amount", _inventoryID, ECSLib._getUint("Amount", _inventoryID) - _amounts[i]);
+            health += ECSLib._getUint("Health", _templateIDs[i]) * _amounts[i];
+            speed += ECSLib._getUint("Speed", _templateIDs[i]) * _amounts[i];
+            attack += ECSLib._getUint("Attack", _templateIDs[i]) * _amounts[i];
+            defense += ECSLib._getUint("Defense", _templateIDs[i]) * _amounts[i];
+            load += ECSLib._getUint("Load", _templateIDs[i]) * _amounts[i];
+            ECSLib._setUint("Amount", inventoryID, ECSLib._getUint("Amount", inventoryID) - _amounts[i]);
         }
-        _speed /= GameLib._sum(_amounts);
-
-        uint256 _playerID = GameLib._getPlayer(msg.sender);
+        speed /= GameLib._sum(_amounts);
 
         // Add army
         _armyID = ECSLib._addEntity();
         ECSLib._setString("Tag", _armyID, "Army");
         ECSLib._setUint("Owner", _armyID, _playerID);
         ECSLib._setPosition("Position", _armyID, ECSLib._getPosition("Position", _cityID));
-        ECSLib._setUint("Health", _armyID, _health);
-        ECSLib._setUint("Speed", _armyID, _speed);
-        ECSLib._setUint("Attack", _armyID, _attack);
-        ECSLib._setUint("Defense", _armyID, _defense);
-        ECSLib._setUint("Load", _armyID, _load);
+        ECSLib._setUint("Health", _armyID, health);
+        ECSLib._setUint("Speed", _armyID, speed);
+        ECSLib._setUint("Attack", _armyID, attack);
+        ECSLib._setUint("Defense", _armyID, defense);
+        ECSLib._setUint("Load", _armyID, load);
         ECSLib._setUint("LastTimestamp", _armyID, block.timestamp);
 
         // Add army constituents

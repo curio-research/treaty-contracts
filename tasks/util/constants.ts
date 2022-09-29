@@ -22,7 +22,7 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): W
     numInitTerrainTypes: 7,
     initBatchSize: 30,
     maxCityCountPerPlayer: 3,
-    maxArmyCountPerPlayer: 3,
+    maxArmyCountPerPlayer: 2,
     maxPlayerCount: 20,
     cityUpgradeGoldCost: 50,
     cityPackCost: 0,
