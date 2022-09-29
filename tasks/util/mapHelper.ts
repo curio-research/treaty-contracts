@@ -174,14 +174,12 @@ export const initializeFixmap = async (hre: HardhatRuntimeEnvironment, diamond: 
   await diamond.connect(player3).foundCity(player3SettlerId, getImmediateSurroundingPositions(player3Pos), '');
   await diamond.connect(player4).foundCity(player4SettlerId, getImmediateSurroundingPositions(player4Pos), '');
 
-  // produce armies on each spot
   await (await diamond.addEntity()).wait();
   const entity = (await diamond.getEntity()).toNumber();
 
-  console.log(entity, Number(player1Id));
-
   const players = [player1Id];
 
+  // spawn armies
   for (let i = 0; i < players.length; i++) {
     const playerId = players[i];
 

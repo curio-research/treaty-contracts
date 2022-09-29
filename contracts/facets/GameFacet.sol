@@ -57,10 +57,14 @@ contract GameFacet is UseStorage {
         GameLib._entityOwnershipCheckByAddress(_settlerID, msg.sender);
         GameLib._positionInboundCheck(_targetPosition);
 
-        // require(ECSLib._getUint("Speed", _settlerID) >= GameLib._euclidean(ECSLib._getPosition("Position", _settlerID), _targetPosition), "CURIO: Not fast enough");
+        require(GameLib._euclidean(ECSLib._getPosition("Position", _settlerID), _targetPosition) <= 2, "CURIO: Not fast enough");
 
         // Verify no other army or settler at destination
         require(GameLib._getArmyAt(_targetPosition) == NULL && GameLib._getSettlerAt(_targetPosition) == NULL, "CURIO: Destination occupied");
+
+        // settler cannot move in enemy territory
+        uint256 _tileID = GameLib._getTileAt(_targetPosition);
+        if (_tileID != 0) GameLib._entityOwnershipCheckByAddress(_tileID, msg.sender);
 
         GameLib._initializeTile(_targetPosition);
 
@@ -88,10 +92,11 @@ contract GameFacet is UseStorage {
         require(GameLib._includesPosition(_centerPosition, _tiles), "CURIO: Territory must cover settler's current position");
 
         // Remove resource at destination if one exists
-        uint256 _resourceID = GameLib._getResourceAt(_centerPosition);
-        if (_resourceID != NULL) ECSLib._removeEntity(_resourceID);
+        uint256 resourceID = GameLib._getResourceAt(_centerPosition);
+        if (resourceID != NULL) ECSLib._removeEntity(resourceID);
 
-        uint256 _cityID = _settlerID;
+        uint256 playerID = GameLib._getPlayer(msg.sender);
+        uint256 cityID = _settlerID;
 
         // Verify that territory is wholly in bound and does not overlap with other cities, and initialize tiles
         for (uint256 i = 0; i < _tiles.length; i++) {
@@ -100,22 +105,23 @@ contract GameFacet is UseStorage {
             require(GameLib._getTileAt(_tiles[i]) == NULL, "CURIO: Territory overlaps with another city");
             GameLib._initializeTile(_tiles[i]);
 
-            uint256 _tileID = ECSLib._addEntity();
-            ECSLib._setString("Tag", _tileID, "Tile");
-            ECSLib._setPosition("Position", _tileID, _tiles[i]);
-            ECSLib._setUint("City", _tileID, _cityID);
+            uint256 tileID = ECSLib._addEntity();
+            ECSLib._setString("Tag", tileID, "Tile");
+            ECSLib._setPosition("Position", tileID, _tiles[i]);
+            ECSLib._setUint("City", tileID, cityID);
+            ECSLib._setUint("Owner", tileID, playerID);
         }
 
         // Convert the settler to a city
-        ECSLib._removeBool("CanSettle", _cityID);
-        ECSLib._removeUint("Health", _cityID);
-        ECSLib._removeUint("Speed", _cityID);
-        ECSLib._removeUint("LastTimestamp", _cityID);
-        ECSLib._setString("Tag", _cityID, "City");
-        ECSLib._setString("Name", _cityID, _cityName);
-        ECSLib._setBool("CanProduce", _cityID);
+        ECSLib._removeBool("CanSettle", cityID);
+        ECSLib._removeUint("Health", cityID);
+        ECSLib._removeUint("Speed", cityID);
+        ECSLib._removeUint("LastTimestamp", cityID);
+        ECSLib._setString("Tag", cityID, "City");
+        ECSLib._setString("Name", cityID, _cityName);
+        ECSLib._setBool("CanProduce", cityID);
 
-        Templates.createCityCenter(_centerPosition, _cityID);
+        Templates.createCityCenter(_centerPosition, cityID);
     }
 
     /// @notice This function can be viewed as the inverse of `foundCity`, as it converts a city back into a settler.
@@ -164,9 +170,9 @@ contract GameFacet is UseStorage {
         GameLib._entityOwnershipCheckByAddress(_cityID, msg.sender);
 
         // Verify that city has enough gold
-        uint256 _balance = GameLib._getCityGold(_cityID);
-        uint256 _cost = gs().worldConstants.cityUpgradeGoldCost;
-        require(_balance >= _cost, "CURIO: Insufficient gold balance");
+        uint256 balance = GameLib._getCityGold(_cityID);
+        uint256 cost = gs().worldConstants.cityUpgradeGoldCost;
+        require(balance >= cost, "CURIO: Insufficient gold balance");
 
         uint256 _level = ECSLib._getUint("Level", _cityID);
         require(_newTiles.length == GameLib._getCityTileCountByLevel(_level + 1) - GameLib._getCityTileCountByLevel(_level), "CURIO: New territory tile count is incorrect");
@@ -183,7 +189,7 @@ contract GameFacet is UseStorage {
         }
 
         uint256 _goldInventoryID = GameLib._getInventory(_cityID, GameLib._getTemplateByInventoryType("Gold"));
-        ECSLib._setUint("Amount", _goldInventoryID, _balance - _cost);
+        ECSLib._setUint("Amount", _goldInventoryID, balance - cost);
 
         ECSLib._setUint("Level", _cityID, _level + 1);
     }
@@ -431,21 +437,9 @@ contract GameFacet is UseStorage {
         GameLib._entityOwnershipCheckByAddress(_armyID, msg.sender);
         GameLib._positionInboundCheck(_targetPosition);
 
-        // Verify that resource is not in another player's territory
-        // uint256 _tileID = GameLib._getTileAt(_targetPosition);
-        // if (_tileID != 0) GameLib._entityOwnershipCheckByAddress(_tileID, msg.sender);
-
         // armies cannot move in enemy territory
-
-        // Disable treaty for now
-        // uint256 _playerID = GameLib._getPlayer(msg.sender);
-        // uint256[] memory _signatureIDs = GameLib._getPlayerSignatures(_playerID);
-        // for (uint256 i = 0; i < _signatureIDs.length; i++) {
-        //     address _treaty = ECSLib._getAddress("Treaty", _signatureIDs[i]);
-        //     (bool _success, bytes memory _returnData) = _treaty.call(abi.encodeWithSignature("approveMoveArmy()"));
-        //     require(_success, "CRUIO: Failed to call the external treaty");
-        //     require(abi.decode(_returnData, (bool)), "CRUIO: Treaty does not approve your action");
-        // }
+        uint256 _tileID = GameLib._getTileAt(_targetPosition);
+        if (_tileID != 0) GameLib._entityOwnershipCheckByAddress(_tileID, msg.sender);
 
         // Check speed and cooldown
         require(ECSLib._getUint("LastTimestamp", _armyID) < block.timestamp, "CURIO: Need more time till next move");
@@ -467,14 +461,14 @@ contract GameFacet is UseStorage {
         }
     }
 
-    function endBattle(uint256 _armyID, bool _isBattlingArmy) external {
-        if (_isBattlingArmy) {
-            // FIXME: temporary distinguisher for army or city
-            _endBattleArmy(_armyID);
-        } else {
-            _endBattleCity(_armyID);
-        }
-    }
+    // function endBattle(uint256 _armyID, bool _isBattlingArmy) external {
+    //     if (_isBattlingArmy) {
+    //         // FIXME: temporary distinguisher for army or city
+    //         _endBattleArmy(_armyID);
+    //     } else {
+    //         _endBattleCity(_armyID);
+    //     }
+    // }
 
     function _startBattleArmy(uint256 _armyID, uint256 _targetArmyID) private {
         GameLib._validEntityCheck(_armyID);
