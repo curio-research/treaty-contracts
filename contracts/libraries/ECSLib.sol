@@ -293,7 +293,7 @@ library ECSLib {
     // ----------------------------------------------------------
 
     function queryAsSet(QueryCondition[] memory _query) public returns (Set) {
-        Set res = new Set();
+        Set res = Set(gs().entities);
 
         for (uint256 i = 0; i < _query.length; i++) {
             QueryCondition memory _queryChunk = _query[i];

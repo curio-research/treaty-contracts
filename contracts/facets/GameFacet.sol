@@ -138,6 +138,7 @@ contract GameFacet is UseStorage {
         // Remove city tiles
         uint256[] memory _tileIDs = GameLib._getCityTiles(_cityID);
         assert(_tileIDs.length == GameLib._getCityTileCountByLevel(ECSLib._getUint("Level", _cityID)));
+
         for (uint256 i = 0; i < _tileIDs.length; i++) {
             ECSLib._removeEntity(_tileIDs[i]);
         }

@@ -218,10 +218,16 @@ library GameLib {
     }
 
     function _getCityTiles(uint256 _cityID) public returns (uint256[] memory) {
-        QueryCondition[] memory query = new QueryCondition[](2);
-        query[0] = ECSLib.queryChunk(QueryType.HasVal, "City", abi.encode(_cityID));
-        query[1] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("Tile"));
-        return ECSLib.query(query);
+        // QueryCondition[] memory query = new QueryCondition[](2);
+        // query[0] = ECSLib.queryChunk(QueryType.HasVal, "City", abi.encode(_cityID));
+        // query[1] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("Tile"));
+        // return ECSLib.query(query);
+
+        Set _set1 = new Set();
+        Set _set2 = new Set();
+        _set1.addArray(ECSLib._getUintComponent("City").getEntitiesWithValue(_cityID));
+        _set2.addArray(ECSLib._getStringComponent("Tag").getEntitiesWithValue(string("Tile")));
+        return ECSLib._intersection(_set1, _set2);
     }
 
     function _getBattles(uint256 _armyID) public returns (uint256[] memory) {
