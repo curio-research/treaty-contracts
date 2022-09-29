@@ -21,8 +21,8 @@ contract GameFacet is UseStorage {
     // ----------------------------------------------------------
 
     function initializePlayer(Position memory _position, string memory _name) external {
-        GameLib.gamePauseCheck();
-        GameLib.positionInboundCheck(_position);
+        GameLib._gamePauseCheck();
+        GameLib._positionInboundCheck(_position);
         require(gs().players.length < gs().worldConstants.maxPlayerCount, "CURIO: Max player count exceeded");
         require(gs().playerEntityMap[msg.sender] == NULL, "CURIO: Player already initialized");
 
@@ -51,11 +51,11 @@ contract GameFacet is UseStorage {
     // ----------------------------------------------------------
 
     function moveSettler(uint256 _settlerID, Position memory _targetPosition) external {
-        GameLib.validEntityCheck(_settlerID);
-        GameLib.gamePauseCheck();
-        GameLib.activePlayerCheck(msg.sender);
-        GameLib.entityOwnershipCheckByAddress(_settlerID, msg.sender);
-        GameLib.positionInboundCheck(_targetPosition);
+        GameLib._validEntityCheck(_settlerID);
+        GameLib._gamePauseCheck();
+        GameLib._activePlayerCheck(msg.sender);
+        GameLib._entityOwnershipCheckByAddress(_settlerID, msg.sender);
+        GameLib._positionInboundCheck(_targetPosition);
 
         // require(ECSLib._getUint("Speed", _settlerID) >= GameLib._euclidean(ECSLib._getPosition("Position", _settlerID), _targetPosition), "CURIO: Not fast enough");
 
@@ -73,10 +73,10 @@ contract GameFacet is UseStorage {
         Position[] memory _tiles,
         string memory _cityName
     ) external {
-        GameLib.validEntityCheck(_settlerID);
-        GameLib.gamePauseCheck();
-        GameLib.activePlayerCheck(msg.sender);
-        GameLib.entityOwnershipCheckByAddress(_settlerID, msg.sender);
+        GameLib._validEntityCheck(_settlerID);
+        GameLib._gamePauseCheck();
+        GameLib._activePlayerCheck(msg.sender);
+        GameLib._entityOwnershipCheckByAddress(_settlerID, msg.sender);
 
         // Verify that settler can settle
         require(ECSLib._getBool("CanSettle", _settlerID), "CURIO: Settler cannot settle");
@@ -95,7 +95,7 @@ contract GameFacet is UseStorage {
 
         // Verify that territory is wholly in bound and does not overlap with other cities, and initialize tiles
         for (uint256 i = 0; i < _tiles.length; i++) {
-            GameLib.positionInboundCheck(_tiles[i]);
+            GameLib._positionInboundCheck(_tiles[i]);
 
             require(GameLib._getTileAt(_tiles[i]) == NULL, "CURIO: Territory overlaps with another city");
             GameLib._initializeTile(_tiles[i]);
@@ -120,10 +120,10 @@ contract GameFacet is UseStorage {
 
     /// @notice This function can be viewed as the inverse of `foundCity`, as it converts a city back into a settler.
     function packCity(uint256 _cityID) external {
-        GameLib.validEntityCheck(_cityID);
-        GameLib.gamePauseCheck();
-        GameLib.activePlayerCheck(msg.sender);
-        GameLib.entityOwnershipCheckByAddress(_cityID, msg.sender);
+        GameLib._validEntityCheck(_cityID);
+        GameLib._gamePauseCheck();
+        GameLib._activePlayerCheck(msg.sender);
+        GameLib._entityOwnershipCheckByAddress(_cityID, msg.sender);
 
         // FIXME: configure optimal gold upgrade balance for city
         uint256 _packCost = gs().worldConstants.cityPackCost;
@@ -158,10 +158,10 @@ contract GameFacet is UseStorage {
     }
 
     function upgradeCity(uint256 _cityID, Position[] memory _newTiles) external {
-        GameLib.validEntityCheck(_cityID);
-        GameLib.gamePauseCheck();
-        GameLib.activePlayerCheck(msg.sender);
-        GameLib.entityOwnershipCheckByAddress(_cityID, msg.sender);
+        GameLib._validEntityCheck(_cityID);
+        GameLib._gamePauseCheck();
+        GameLib._activePlayerCheck(msg.sender);
+        GameLib._entityOwnershipCheckByAddress(_cityID, msg.sender);
 
         // Verify that city has enough gold
         uint256 _balance = GameLib._getCityGold(_cityID);
@@ -197,13 +197,13 @@ contract GameFacet is UseStorage {
         uint256 _templateID,
         uint256 _amount
     ) external returns (uint256 productionID) {
-        GameLib.validEntityCheck(_buildingID);
-        GameLib.validEntityCheck(_templateID);
-        GameLib.gamePauseCheck();
-        GameLib.activePlayerCheck(msg.sender);
+        GameLib._validEntityCheck(_buildingID);
+        GameLib._validEntityCheck(_templateID);
+        GameLib._gamePauseCheck();
+        GameLib._activePlayerCheck(msg.sender);
 
         uint256 cityID = ECSLib._getUint("City", _buildingID);
-        GameLib.entityOwnershipCheckByAddress(cityID, msg.sender);
+        GameLib._entityOwnershipCheckByAddress(cityID, msg.sender);
 
         // Verify that city can produce
         require(ECSLib._getBool("CanProduce", cityID), "CURIO: City cannot produce");
@@ -241,14 +241,14 @@ contract GameFacet is UseStorage {
     }
 
     function endTroopProduction(uint256 _buildingID, uint256 _productionID) external {
-        GameLib.validEntityCheck(_buildingID);
-        GameLib.validEntityCheck(_productionID);
-        GameLib.gamePauseCheck();
-        GameLib.activePlayerCheck(msg.sender);
+        GameLib._validEntityCheck(_buildingID);
+        GameLib._validEntityCheck(_productionID);
+        GameLib._gamePauseCheck();
+        GameLib._activePlayerCheck(msg.sender);
 
         // Verify that city belongs to player
         uint256 cityID = ECSLib._getUint("City", _buildingID);
-        GameLib.entityOwnershipCheckByAddress(cityID, msg.sender);
+        GameLib._entityOwnershipCheckByAddress(cityID, msg.sender);
 
         // Verify that enough time has passed
         // require(ECSLib._getUint("InitTimestamp", _productionID) + ECSLib._getUint("Duration", _productionID) >= block.timestamp, "CURIO: Need more time for production");
@@ -262,11 +262,11 @@ contract GameFacet is UseStorage {
     }
 
     function startGather(uint256 _armyID, uint256 _resourceID) external {
-        GameLib.validEntityCheck(_armyID);
-        GameLib.validEntityCheck(_resourceID);
-        GameLib.gamePauseCheck();
-        GameLib.activePlayerCheck(msg.sender);
-        GameLib.entityOwnershipCheckByAddress(_armyID, msg.sender);
+        GameLib._validEntityCheck(_armyID);
+        GameLib._validEntityCheck(_resourceID);
+        GameLib._gamePauseCheck();
+        GameLib._activePlayerCheck(msg.sender);
+        GameLib._entityOwnershipCheckByAddress(_armyID, msg.sender);
 
         // Verify that army is sitting on the resource
         Position memory position = ECSLib._getPosition("Position", _armyID);
@@ -290,10 +290,10 @@ contract GameFacet is UseStorage {
     }
 
     function endGather(uint256 _armyID) external {
-        GameLib.validEntityCheck(_armyID);
-        GameLib.gamePauseCheck();
-        GameLib.activePlayerCheck(msg.sender);
-        GameLib.entityOwnershipCheckByAddress(_armyID, msg.sender);
+        GameLib._validEntityCheck(_armyID);
+        GameLib._gamePauseCheck();
+        GameLib._activePlayerCheck(msg.sender);
+        GameLib._entityOwnershipCheckByAddress(_armyID, msg.sender);
 
         // End gather
         GameLib._endGather(_armyID);
@@ -301,13 +301,13 @@ contract GameFacet is UseStorage {
 
     // harvest gold on a city
     function harvestResource(uint256 _buildingID, uint256 _templateID) external {
-        GameLib.validEntityCheck(_buildingID);
-        GameLib.gamePauseCheck();
-        GameLib.activePlayerCheck(msg.sender);
+        GameLib._validEntityCheck(_buildingID);
+        GameLib._gamePauseCheck();
+        GameLib._activePlayerCheck(msg.sender);
 
         // Verify that city belongs to player
         uint256 cityID = ECSLib._getUint("City", _buildingID);
-        GameLib.entityOwnershipCheckByAddress(cityID, msg.sender);
+        GameLib._entityOwnershipCheckByAddress(cityID, msg.sender);
 
         // Create inventory if none exists
         uint256 inventoryID = GameLib._getInventory(cityID, _templateID);
@@ -343,10 +343,10 @@ contract GameFacet is UseStorage {
         uint256[] memory _templateIDs,
         uint256[] memory _amounts
     ) external returns (uint256 armyID) {
-        GameLib.validEntityCheck(_cityID);
-        GameLib.gamePauseCheck();
-        GameLib.activePlayerCheck(msg.sender);
-        GameLib.entityOwnershipCheckByAddress(_cityID, msg.sender);
+        GameLib._validEntityCheck(_cityID);
+        GameLib._gamePauseCheck();
+        GameLib._activePlayerCheck(msg.sender);
+        GameLib._entityOwnershipCheckByAddress(_cityID, msg.sender);
 
         // Verify there is no army currently at the city center
         require(GameLib._getArmyAt(ECSLib._getPosition("Position", _cityID)) == NULL, "CURIO: Tile occupied by another army");
@@ -400,16 +400,16 @@ contract GameFacet is UseStorage {
     }
 
     function disbandArmy(uint256 _armyID) external {
-        GameLib.validEntityCheck(_armyID);
-        GameLib.gamePauseCheck();
-        GameLib.activePlayerCheck(msg.sender);
-        GameLib.entityOwnershipCheckByAddress(_armyID, msg.sender);
+        GameLib._validEntityCheck(_armyID);
+        GameLib._gamePauseCheck();
+        GameLib._activePlayerCheck(msg.sender);
+        GameLib._entityOwnershipCheckByAddress(_armyID, msg.sender);
 
         // Get army position and city on top
         Position memory position = ECSLib._getPosition("Position", _armyID);
         uint256 cityID = GameLib._getCityAt(position);
 
-        GameLib.entityOwnershipCheckByAddress(cityID, msg.sender);
+        GameLib._entityOwnershipCheckByAddress(cityID, msg.sender);
 
         // Return troops to corresponding inventories
         uint256[] memory constituentIDs = GameLib._getArmyConstituents(_armyID);
@@ -425,15 +425,15 @@ contract GameFacet is UseStorage {
     }
 
     function moveArmy(uint256 _armyID, Position memory _targetPosition) external {
-        GameLib.validEntityCheck(_armyID);
-        GameLib.gamePauseCheck();
-        GameLib.activePlayerCheck(msg.sender);
-        GameLib.entityOwnershipCheckByAddress(_armyID, msg.sender);
-        GameLib.positionInboundCheck(_targetPosition);
+        GameLib._validEntityCheck(_armyID);
+        GameLib._gamePauseCheck();
+        GameLib._activePlayerCheck(msg.sender);
+        GameLib._entityOwnershipCheckByAddress(_armyID, msg.sender);
+        GameLib._positionInboundCheck(_targetPosition);
 
         // Verify that resource is not in another player's territory
         // uint256 _tileID = GameLib._getTileAt(_targetPosition);
-        // if (_tileID != 0) GameLib.entityOwnershipCheckByAddress(_tileID, msg.sender);
+        // if (_tileID != 0) GameLib._entityOwnershipCheckByAddress(_tileID, msg.sender);
 
         // armies cannot move in enemy territory
 
@@ -477,11 +477,11 @@ contract GameFacet is UseStorage {
     }
 
     function _startBattleArmy(uint256 _armyID, uint256 _targetArmyID) private {
-        GameLib.validEntityCheck(_armyID);
-        GameLib.validEntityCheck(_targetArmyID);
-        GameLib.gamePauseCheck();
-        GameLib.activePlayerCheck(msg.sender);
-        GameLib.entityOwnershipCheckByAddress(_armyID, msg.sender);
+        GameLib._validEntityCheck(_armyID);
+        GameLib._validEntityCheck(_targetArmyID);
+        GameLib._gamePauseCheck();
+        GameLib._activePlayerCheck(msg.sender);
+        GameLib._entityOwnershipCheckByAddress(_armyID, msg.sender);
 
         uint256 _playerID = GameLib._getPlayer(msg.sender);
         require(ECSLib._getUint("Owner", _targetArmyID) != _playerID, "CURIO: Cannot attack your own army");
@@ -512,10 +512,10 @@ contract GameFacet is UseStorage {
      * This function was to be called `retreat`, but I figured since we need to ping the contract side to end battle anyway,
      */
     function _endBattleArmy(uint256 _armyID) private {
-        GameLib.validEntityCheck(_armyID);
-        GameLib.gamePauseCheck();
-        GameLib.activePlayerCheck(msg.sender);
-        GameLib.entityOwnershipCheckByAddress(_armyID, msg.sender);
+        GameLib._validEntityCheck(_armyID);
+        GameLib._gamePauseCheck();
+        GameLib._activePlayerCheck(msg.sender);
+        GameLib._entityOwnershipCheckByAddress(_armyID, msg.sender);
 
         // Verify that at least one war is happening with the army
         uint256[] memory _battleIDs = GameLib._getBattles(_armyID);
@@ -557,11 +557,11 @@ contract GameFacet is UseStorage {
     }
 
     function _startBattleCity(uint256 _armyID, uint256 _cityID) private {
-        GameLib.validEntityCheck(_armyID);
-        GameLib.validEntityCheck(_cityID);
-        GameLib.gamePauseCheck();
-        GameLib.activePlayerCheck(msg.sender);
-        GameLib.entityOwnershipCheckByAddress(_armyID, msg.sender);
+        GameLib._validEntityCheck(_armyID);
+        GameLib._validEntityCheck(_cityID);
+        GameLib._gamePauseCheck();
+        GameLib._activePlayerCheck(msg.sender);
+        GameLib._entityOwnershipCheckByAddress(_armyID, msg.sender);
 
         uint256 _playerID = GameLib._getPlayer(msg.sender);
         require(ECSLib._getUint("Owner", _cityID) != _playerID, "CURIO: Cannot attack your own city");
@@ -578,10 +578,10 @@ contract GameFacet is UseStorage {
     }
 
     function _endBattleCity(uint256 _armyID) private {
-        GameLib.validEntityCheck(_armyID);
-        GameLib.gamePauseCheck();
-        GameLib.activePlayerCheck(msg.sender);
-        GameLib.entityOwnershipCheckByAddress(_armyID, msg.sender);
+        GameLib._validEntityCheck(_armyID);
+        GameLib._gamePauseCheck();
+        GameLib._activePlayerCheck(msg.sender);
+        GameLib._entityOwnershipCheckByAddress(_armyID, msg.sender);
 
         // Verify that at least one war is happening with the army
         uint256[] memory _battleIDs = GameLib._getBattles(_armyID);
@@ -616,8 +616,8 @@ contract GameFacet is UseStorage {
 
     // TODO: _setAddress => _setAddressArray
     function joinTreaty(address _treatyAddress) external {
-        // GameLib.gamePauseCheck();
-        // GameLib.activePlayerCheck(msg.sender);
+        // GameLib._gamePauseCheck();
+        // GameLib._activePlayerCheck(msg.sender);
         // // request to sign treaty
         // (bool success, bytes memory returnData) = _treatyAddress.call(abi.encodeWithSignature("joinTreaty()"));
         // require(success, "CRUIO: Failed to call the external treaty");
@@ -633,7 +633,7 @@ contract GameFacet is UseStorage {
         // uint256 _playerID = GameLib._getPlayer(msg.sender);
         // // Verify that player is active
         // require(ECSLib._getBoolComponent("IsActive").has(_playerID), "CURIO: You are inactive");
-        // GameLib.gamePauseCheck();
+        // GameLib._gamePauseCheck();
         // // request to breach treaty
         // (bool success, bytes memory returnData) = _treatyToDenounce.call(abi.encodeWithSignature("denounceTreaty()"));
         // require(success, "CRUIO: Failed to call the external treaty");

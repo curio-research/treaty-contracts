@@ -433,25 +433,25 @@ library GameLib {
 
     // checkers
 
-    function gamePauseCheck() public view {
+    function _gamePauseCheck() internal view {
         require(!gs().isPaused, "CURIO: Game is paused");
     }
 
-    function validEntityCheck(uint256 _entity) public view {
+    function _validEntityCheck(uint256 _entity) internal view {
         require(Set(gs().entities).includes(_entity), "CURIO: Entity object not found");
     }
 
-    function activePlayerCheck(address _player) public view {
+    function _activePlayerCheck(address _player) internal view {
         uint256 _playerID = _getPlayer(_player);
         require(ECSLib._getBoolComponent("IsActive").has(_playerID), "CURIO: You are inactive");
     }
 
-    function entityOwnershipCheckByAddress(uint256 _entity, address _player) public view {
+    function _entityOwnershipCheckByAddress(uint256 _entity, address _player) internal view {
         uint256 _playerID = _getPlayer(_player);
         require(ECSLib._getUint("Owner", _entity) == _playerID, "CURIO: Entity is not yours");
     }
 
-    function positionInboundCheck(Position memory _position) public view {
+    function _positionInboundCheck(Position memory _position) public view {
         require(_inBound(_position), "CURIO: Position out of bounds");
     }
 
