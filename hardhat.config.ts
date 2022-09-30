@@ -37,6 +37,9 @@ export default {
   },
 
   networks: {
+    localhost: {
+      // timeout: 100_000_000,
+    },
     optimismKovan: {
       url: OPTIMISM_KOVAN_RPC_URL,
       accounts: [USER1_PK, USER2_PK],

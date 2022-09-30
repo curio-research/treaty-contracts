@@ -505,50 +505,50 @@ contract GameFacet is UseStorage {
     /**
      * This function was to be called `retreat`, but I figured since we need to ping the contract side to end battle anyway,
      */
-    function _endBattleArmy(uint256 _armyID) private {
-        GameLib._validEntityCheck(_armyID);
-        GameLib._gamePauseCheck();
-        GameLib._activePlayerCheck(msg.sender);
-        GameLib._entityOwnershipCheckByAddress(_armyID, msg.sender);
+    // function _endBattleArmy(uint256 _armyID) private {
+    //     GameLib._validEntityCheck(_armyID);
+    //     GameLib._gamePauseCheck();
+    //     GameLib._activePlayerCheck(msg.sender);
+    //     GameLib._entityOwnershipCheckByAddress(_armyID, msg.sender);
 
-        // Verify that at least one war is happening with the army
-        uint256[] memory _battleIDs = GameLib._getBattles(_armyID);
-        require(_battleIDs.length >= 1, "CURIO: No battle to end");
+    //     // Verify that at least one war is happening with the army
+    //     uint256[] memory _battleIDs = GameLib._getBattles(_armyID);
+    //     require(_battleIDs.length >= 1, "CURIO: No battle to end");
 
-        // For now, assume there's only one battle
-        uint256 _otherArmyID = ECSLib._getUint("Source", _battleIDs[0]) == _armyID ? ECSLib._getUint("Target", _battleIDs[0]) : ECSLib._getUint("Source", _battleIDs[0]);
-        uint256 _duration = block.timestamp - ECSLib._getUint("InitTimestamp", _battleIDs[0]);
-        (uint256 _damageOnArmy, uint256 _damageOnOtherArmy) = GameLib._getBattleDamages(_armyID, _otherArmyID, _duration);
-        if (_damageOnOtherArmy >= ECSLib._getUint("Health", _otherArmyID)) {
-            GameLib._removeArmy(_otherArmyID);
-        } else {
-            GameLib._damageArmy(_otherArmyID, _damageOnOtherArmy);
-        }
-        if (_damageOnArmy >= ECSLib._getUint("Health", _armyID)) {
-            GameLib._removeArmy(_armyID);
-        } else {
-            GameLib._damageArmy(_armyID, _damageOnArmy);
-        }
+    //     // For now, assume there's only one battle
+    //     uint256 _otherArmyID = ECSLib._getUint("Source", _battleIDs[0]) == _armyID ? ECSLib._getUint("Target", _battleIDs[0]) : ECSLib._getUint("Source", _battleIDs[0]);
+    //     uint256 _duration = block.timestamp - ECSLib._getUint("InitTimestamp", _battleIDs[0]);
+    //     (uint256 _damageOnArmy, uint256 _damageOnOtherArmy) = GameLib._getBattleDamages(_armyID, _otherArmyID, _duration);
+    //     if (_damageOnOtherArmy >= ECSLib._getUint("Health", _otherArmyID)) {
+    //         GameLib._removeArmy(_otherArmyID);
+    //     } else {
+    //         GameLib._damageArmy(_otherArmyID, _damageOnOtherArmy);
+    //     }
+    //     if (_damageOnArmy >= ECSLib._getUint("Health", _armyID)) {
+    //         GameLib._removeArmy(_armyID);
+    //     } else {
+    //         GameLib._damageArmy(_armyID, _damageOnArmy);
+    //     }
 
-        // // Damage both armies and kill if one or both sides die
-        // for (uint256 i = 0; i < _battleIDs.length; i++) {
-        //     uint256 _otherArmyID = ECSLib._getUint("Source", _battleIDs[i]) == _armyID ? ECSLib._getUint("Target", _battleIDs[i]) : ECSLib._getUint("Source", _battleIDs[i]);
-        //     uint256 _duration = block.timestamp - ECSLib._getUint("InitTimestamp", _battleIDs[i]);
-        //     (uint256 _damageOnArmy, uint256 _damageOnOtherArmy) = GameLib._getBattleDamages(_armyID, _otherArmyID, _duration);
+    //     // // Damage both armies and kill if one or both sides die
+    //     // for (uint256 i = 0; i < _battleIDs.length; i++) {
+    //     //     uint256 _otherArmyID = ECSLib._getUint("Source", _battleIDs[i]) == _armyID ? ECSLib._getUint("Target", _battleIDs[i]) : ECSLib._getUint("Source", _battleIDs[i]);
+    //     //     uint256 _duration = block.timestamp - ECSLib._getUint("InitTimestamp", _battleIDs[i]);
+    //     //     (uint256 _damageOnArmy, uint256 _damageOnOtherArmy) = GameLib._getBattleDamages(_armyID, _otherArmyID, _duration);
 
-        //     if (_damageOnOtherArmy >= ECSLib._getUint("Health", _otherArmyID)) {
-        //         GameLib._removeArmy(_otherArmyID);
-        //     } else {
-        //         GameLib._damageArmy(_armyID, _damageOnOtherArmy);
-        //     }
+    //     //     if (_damageOnOtherArmy >= ECSLib._getUint("Health", _otherArmyID)) {
+    //     //         GameLib._removeArmy(_otherArmyID);
+    //     //     } else {
+    //     //         GameLib._damageArmy(_armyID, _damageOnOtherArmy);
+    //     //     }
 
-        //     if (_damageOnArmy >= ECSLib._getUint("Health", _armyID)) {
-        //         GameLib._removeArmy(_armyID);
-        //     } else {
-        //         GameLib._damageArmy(_armyID, _damageOnArmy);
-        //     }
-        // }
-    }
+    //     //     if (_damageOnArmy >= ECSLib._getUint("Health", _armyID)) {
+    //     //         GameLib._removeArmy(_armyID);
+    //     //     } else {
+    //     //         GameLib._damageArmy(_armyID, _damageOnArmy);
+    //     //     }
+    //     // }
+    // }
 
     function _startBattleCity(uint256 _armyID, uint256 _cityID) private {
         GameLib._validEntityCheck(_armyID);
@@ -563,6 +563,13 @@ contract GameFacet is UseStorage {
         // Verify that army is adjacent to city
         require(GameLib._adjacentToCity(ECSLib._getPosition("Position", _armyID), _cityID), "CURIO: Too far");
 
+        // TEMPORARY ALERT
+        // reduce the gold by half
+        uint256 _balance = GameLib._getCityGold(_cityID);
+        uint256 _goldInventoryID = GameLib._getInventory(_cityID, GameLib._getTemplateByInventoryType("Gold"));
+        ECSLib._setUint("Amount", _goldInventoryID, _balance - 1);
+        // ECSLib._setUint("Amount", _goldInventoryID, _balance / 2);
+
         // Start exchanging fire
         uint256 _battleID = ECSLib._addEntity();
         ECSLib._setString("Tag", _battleID, "Battle");
@@ -571,38 +578,38 @@ contract GameFacet is UseStorage {
         ECSLib._setUint("Target", _battleID, GameLib._getCityGuard(_cityID));
     }
 
-    function _endBattleCity(uint256 _armyID) private {
-        GameLib._validEntityCheck(_armyID);
-        GameLib._gamePauseCheck();
-        GameLib._activePlayerCheck(msg.sender);
-        GameLib._entityOwnershipCheckByAddress(_armyID, msg.sender);
+    // function _endBattleCity(uint256 _armyID) private {
+    //     GameLib._validEntityCheck(_armyID);
+    //     GameLib._gamePauseCheck();
+    //     GameLib._activePlayerCheck(msg.sender);
+    //     GameLib._entityOwnershipCheckByAddress(_armyID, msg.sender);
 
-        // Verify that at least one war is happening with the army
-        uint256[] memory _battleIDs = GameLib._getBattles(_armyID);
-        require(_battleIDs.length >= 1, "CURIO: No battle to end");
+    //     // Verify that at least one war is happening with the army
+    //     uint256[] memory _battleIDs = GameLib._getBattles(_armyID);
+    //     require(_battleIDs.length >= 1, "CURIO: No battle to end");
 
-        // For now, assume there's only one battle
-        uint256 _guardID = ECSLib._getUint("Source", _battleIDs[0]) == _armyID ? ECSLib._getUint("Target", _battleIDs[0]) : ECSLib._getUint("Source", _battleIDs[0]);
-        uint256 _cityID = ECSLib._getUint("City", _guardID);
-        uint256 _duration = block.timestamp - ECSLib._getUint("InitTimestamp", _battleIDs[0]);
-        (uint256 _damageOnArmy, uint256 _damageOnGuard) = GameLib._getBattleDamages(_armyID, _guardID, _duration);
+    //     // For now, assume there's only one battle
+    //     uint256 _guardID = ECSLib._getUint("Source", _battleIDs[0]) == _armyID ? ECSLib._getUint("Target", _battleIDs[0]) : ECSLib._getUint("Source", _battleIDs[0]);
+    //     uint256 _cityID = ECSLib._getUint("City", _guardID);
+    //     uint256 _duration = block.timestamp - ECSLib._getUint("InitTimestamp", _battleIDs[0]);
+    //     (uint256 _damageOnArmy, uint256 _damageOnGuard) = GameLib._getBattleDamages(_armyID, _guardID, _duration);
 
-        uint256 _playerID = GameLib._getPlayer(msg.sender);
+    //     uint256 _playerID = GameLib._getPlayer(msg.sender);
 
-        if (_damageOnGuard >= ECSLib._getUint("Health", _guardID)) {
-            // Capture
-            GameLib._removeArmy(_guardID);
-            ECSLib._setUint("Owner", _cityID, _playerID);
-            GameLib._addGuard(_cityID);
-        } else {
-            GameLib._damageArmy(_guardID, _damageOnGuard);
-        }
-        if (_damageOnArmy >= ECSLib._getUint("Health", _armyID)) {
-            GameLib._removeArmy(_armyID);
-        } else {
-            GameLib._damageArmy(_armyID, _damageOnArmy);
-        }
-    }
+    //     if (_damageOnGuard >= ECSLib._getUint("Health", _guardID)) {
+    //         // Capture
+    //         GameLib._removeArmy(_guardID);
+    //         ECSLib._setUint("Owner", _cityID, _playerID);
+    //         GameLib._addGuard(_cityID);
+    //     } else {
+    //         GameLib._damageArmy(_guardID, _damageOnGuard);
+    //     }
+    //     if (_damageOnArmy >= ECSLib._getUint("Health", _armyID)) {
+    //         GameLib._removeArmy(_armyID);
+    //     } else {
+    //         GameLib._damageArmy(_armyID, _damageOnArmy);
+    //     }
+    // }
 
     // --------------------------
     // treaty (WIP)
