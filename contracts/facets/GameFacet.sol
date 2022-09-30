@@ -57,7 +57,7 @@ contract GameFacet is UseStorage {
         GameLib._entityOwnershipCheckByAddress(_settlerID, msg.sender);
         GameLib._positionInboundCheck(_targetPosition);
 
-        require(GameLib._euclidean(ECSLib._getPosition("Position", _settlerID), _targetPosition) <= 2, "CURIO: Not fast enough");
+        // require(ECSLib._getUint("Speed", _settlerID) >= GameLib._euclidean(ECSLib._getPosition("Position", _settlerID), _targetPosition), "CURIO: Not fast enough");
 
         // Verify no other army or settler at destination
         require(GameLib._getArmyAt(_targetPosition) == NULL && GameLib._getSettlerAt(_targetPosition) == NULL, "CURIO: Destination occupied");

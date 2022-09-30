@@ -85,7 +85,7 @@ task('deploy', 'deploy contracts')
         // Randomly initialize players if on localhost
         if (isDev) {
           const player1Pos = chooseRandomEmptyLandPosition(tileMap);
-          const player2Pos = getRightPos(getRightPos(player1Pos)); // chooseRandomEmptyLandPosition(tileMap);
+          const player2Pos = getRightPos(getRightPos(player1Pos));
 
           startTime = performance.now();
           await (await diamond.connect(player1).initializePlayer(player1Pos, 'Alice', { gasLimit: 100_000_000 })).wait();
