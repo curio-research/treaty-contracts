@@ -37,7 +37,6 @@ export interface GameFacetInterface extends utils.Interface {
   functions: {
     "denounceTreaty(address)": FunctionFragment;
     "disbandArmy(uint256)": FunctionFragment;
-    "endBattle(uint256,bool)": FunctionFragment;
     "endGather(uint256)": FunctionFragment;
     "endTroopProduction(uint256,uint256)": FunctionFragment;
     "foundCity(uint256,(uint256,uint256)[],string)": FunctionFragment;
@@ -58,7 +57,6 @@ export interface GameFacetInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "denounceTreaty"
       | "disbandArmy"
-      | "endBattle"
       | "endGather"
       | "endTroopProduction"
       | "foundCity"
@@ -82,10 +80,6 @@ export interface GameFacetInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "disbandArmy",
     values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "endBattle",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<boolean>]
   ): string;
   encodeFunctionData(
     functionFragment: "endGather",
@@ -164,7 +158,6 @@ export interface GameFacetInterface extends utils.Interface {
     functionFragment: "disbandArmy",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "endBattle", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "endGather", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "endTroopProduction",
@@ -244,12 +237,6 @@ export interface GameFacet extends BaseContract {
 
     disbandArmy(
       _armyID: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    endBattle(
-      _armyID: PromiseOrValue<BigNumberish>,
-      _isBattlingArmy: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -348,12 +335,6 @@ export interface GameFacet extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  endBattle(
-    _armyID: PromiseOrValue<BigNumberish>,
-    _isBattlingArmy: PromiseOrValue<boolean>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   endGather(
     _armyID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -446,12 +427,6 @@ export interface GameFacet extends BaseContract {
 
     disbandArmy(
       _armyID: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    endBattle(
-      _armyID: PromiseOrValue<BigNumberish>,
-      _isBattlingArmy: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -553,12 +528,6 @@ export interface GameFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    endBattle(
-      _armyID: PromiseOrValue<BigNumberish>,
-      _isBattlingArmy: PromiseOrValue<boolean>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     endGather(
       _armyID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -652,12 +621,6 @@ export interface GameFacet extends BaseContract {
 
     disbandArmy(
       _armyID: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    endBattle(
-      _armyID: PromiseOrValue<BigNumberish>,
-      _isBattlingArmy: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -8,7 +8,7 @@ import { createTemplates, generateWorldConstants, SMALL_MAP_INPUT } from './util
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
 import { chooseRandomEmptyLandPosition, encodeTileMap, generateBlankFixmap, generateMap, initializeFixmap } from './util/mapHelper';
 import { GameConfig } from '../api/types';
-import { COMPONENT_SPECS } from 'curio-vault';
+import { COMPONENT_SPECS, getRightPos } from 'curio-vault';
 
 /**
  * Deploy script for publishing games
@@ -85,7 +85,7 @@ task('deploy', 'deploy contracts')
         // Randomly initialize players if on localhost
         if (isDev) {
           const player1Pos = chooseRandomEmptyLandPosition(tileMap);
-          const player2Pos = chooseRandomEmptyLandPosition(tileMap);
+          const player2Pos = getRightPos(getRightPos(player1Pos));
 
           startTime = performance.now();
           await (await diamond.connect(player1).initializePlayer(player1Pos, 'Alice', { gasLimit: 100_000_000 })).wait();

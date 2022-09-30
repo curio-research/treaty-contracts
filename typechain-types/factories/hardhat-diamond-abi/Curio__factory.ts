@@ -360,24 +360,6 @@ const _abi = [
         name: "_armyID",
         type: "uint256",
       },
-      {
-        internalType: "bool",
-        name: "_isBattlingArmy",
-        type: "bool",
-      },
-    ],
-    name: "endBattle",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_armyID",
-        type: "uint256",
-      },
     ],
     name: "endGather",
     outputs: [],
@@ -580,7 +562,7 @@ const _abi = [
     outputs: [
       {
         internalType: "uint256",
-        name: "_armyID",
+        name: "armyID",
         type: "uint256",
       },
     ],
@@ -658,7 +640,7 @@ const _abi = [
     outputs: [
       {
         internalType: "uint256",
-        name: "_productionID",
+        name: "productionID",
         type: "uint256",
       },
     ],
