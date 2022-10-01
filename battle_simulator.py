@@ -10,25 +10,28 @@ class TroopType(Enum):
     INFANTRY = 1
     ARCHER = 2
 
+
 class Troop:
     def __init__(self, health: int, attack: int, defense: int, troop_type: int) -> None:
         self.health = health
         self.attack = attack
         self.defense = defense
         self.troop_type = troop_type
-    
+
+
 class Army:
     def __init__(self, troops: List[Troop], amounts: List[int]) -> None:
         self.troops = troops
         self.amounts = amounts
-
-    @property
-    def is_dead(self) -> bool:
-        return sum(self.amounts) <= 0
     
     @property
     def troop_count(self) -> int:
         return sum(self.amounts)
+
+    @property
+    def is_dead(self) -> bool:
+        return self.troop_count <= 0
+
 
 def get_damage_bonus(troop_type_a: TroopType, troop_type_b: TroopType) -> float:
     if troop_type_a.value == troop_type_b.value:
@@ -38,13 +41,16 @@ def get_damage_bonus(troop_type_a: TroopType, troop_type_b: TroopType) -> float:
     else:
         return 0.8
 
+
 def battle(army_a: Army, army_b: Army) -> None:
     while True:
         # Army A attacks Army B
         for i in range(len(army_a.troops)):
             troop_count = army_a.amounts[i]
+            if not troop_count:
+                continue
             for j in range(len(army_b.troops)):
-                loss = 0 if not troop_count else (troop_count * army_a.troops[i].attack * get_damage_bonus(army_a.troops[i].troop_type, army_b.troops[j].troop_type) / army_b.troops[j].defense / army_b.troops[j].health) * 2 * math.sqrt(10000/troop_count)
+                loss = (troop_count * army_a.troops[i].attack * get_damage_bonus(army_a.troops[i].troop_type, army_b.troops[j].troop_type) / army_b.troops[j].defense / army_b.troops[j].health) * 2 * math.sqrt(10000 / troop_count)
                 army_b.amounts[j] -= min(loss, army_b.amounts[j])
         
         print("A attacks B!")
@@ -58,8 +64,10 @@ def battle(army_a: Army, army_b: Army) -> None:
         # Army B attacks Army A
         for j in range(len(army_b.troops)):
             troop_count = army_b.amounts[j]
+            if not troop_count:
+                continue
             for i in range(len(army_a.troops)):
-                loss = 0 if not troop_count else (troop_count * army_b.troops[j].attack * get_damage_bonus(army_b.troops[j].troop_type, army_a.troops[i].troop_type) / army_a.troops[i].defense / army_a.troops[i].health) * 2 * math.sqrt(10000/troop_count)
+                loss = (troop_count * army_b.troops[j].attack * get_damage_bonus(army_b.troops[j].troop_type, army_a.troops[i].troop_type) / army_a.troops[i].defense / army_a.troops[i].health) * 2 * math.sqrt(10000 / troop_count)
                 army_a.amounts[i] -= min(loss, army_a.amounts[i])
 
         print("B attacks A!")
@@ -71,6 +79,7 @@ def battle(army_a: Army, army_b: Army) -> None:
         time.sleep(1.5)
 
     return
+
 
 cavalry = Troop(120, 60, 120, TroopType.CAVALRY)
 infantry = Troop(120, 60, 120, TroopType.INFANTRY)
