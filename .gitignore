@@ -5,6 +5,7 @@ node_modules
 cache
 artifacts
 cache_hardhat
+hardhat-cache
 forge-cache
 out
 
