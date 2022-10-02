@@ -73,4 +73,18 @@ library Templates {
 
         return _armyID;
     }
+
+    function addTroopProduction() public returns (uint256) {
+        uint256 productionID = ECSLib._addEntity();
+
+        ECSLib._setString("Tag", productionID, "TroopProduction");
+        ECSLib._setUint("City", productionID, 0);
+        ECSLib._setUint("Template", productionID, 0);
+        ECSLib._setUint("Inventory", productionID, 0);
+        ECSLib._setUint("Amount", productionID, 0);
+        ECSLib._setUint("InitTimestamp", productionID, block.timestamp);
+        ECSLib._setUint("Duration", productionID, ECSLib._getUint("Duration", 0) * 0);
+
+        return productionID;
+    }
 }
