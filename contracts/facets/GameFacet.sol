@@ -36,7 +36,7 @@ contract GameFacet is UseStorage {
         uint256 _settlerID = Templates.createSettler(_position, _playerID);
 
         // Initialize guard which stays with eventual city
-        // GameLib._addGuard(_settlerID);
+        GameLib._addGuard(_settlerID);
 
         // Add gold to eventual city
         uint256 _goldInventoryID = ECSLib._addEntity();
@@ -496,11 +496,13 @@ contract GameFacet is UseStorage {
                 for (uint256 i = 0; i < armyConstituents.length; i++) {
                     if (ECSLib._getUint("Amount", armyConstituents[i]) == 0) continue;
                     for (uint256 j = 0; j < targetArmyConstituents.length; j++) {
+                        if (ECSLib._getUint("Amount", targetArmyConstituents[j]) == 0) continue;
                         loss = (GameLib._sqrt(ECSLib._getUint("Amount", armyConstituents[i])) * ECSLib._getUint("Attack", ECSLib._getUint("Template", armyConstituents[i])) * 2 * 10000) / (ECSLib._getUint("Defense", ECSLib._getUint("Template", targetArmyConstituents[j])) * ECSLib._getUint("Health", ECSLib._getUint("Template", targetArmyConstituents[j])));
                         if (loss >= ECSLib._getUint("Amount", targetArmyConstituents[j])) {
                             ECSLib._removeEntity(targetArmyConstituents[j]);
+                        } else {
+                            ECSLib._setUint("Amount", targetArmyConstituents[j], ECSLib._getUint("Amount", targetArmyConstituents[j]) - loss);
                         }
-                        ECSLib._setUint("Amount", targetArmyConstituents[j], ECSLib._getUint("Amount", targetArmyConstituents[j]) - loss);
                     }
                 }
             }
@@ -519,11 +521,13 @@ contract GameFacet is UseStorage {
                 for (uint256 j = 0; j < targetArmyConstituents.length; j++) {
                     if (ECSLib._getUint("Amount", targetArmyConstituents[j]) == 0) continue;
                     for (uint256 i = 0; i < armyConstituents.length; i++) {
+                        if (ECSLib._getUint("Amount", armyConstituents[i]) == 0) continue;
                         loss = (GameLib._sqrt(ECSLib._getUint("Amount", targetArmyConstituents[j])) * ECSLib._getUint("Attack", ECSLib._getUint("Template", targetArmyConstituents[j])) * 2 * 10000) / (ECSLib._getUint("Defense", ECSLib._getUint("Template", armyConstituents[i])) * ECSLib._getUint("Health", ECSLib._getUint("Template", armyConstituents[i])));
                         if (loss >= ECSLib._getUint("Amount", armyConstituents[i])) {
                             ECSLib._removeEntity(armyConstituents[i]);
+                        } else {
+                            ECSLib._setUint("Amount", armyConstituents[i], ECSLib._getUint("Amount", armyConstituents[i]) - loss);
                         }
-                        ECSLib._setUint("Amount", armyConstituents[i], ECSLib._getUint("Amount", armyConstituents[i]) - loss);
                     }
                 }
             }
@@ -539,7 +543,6 @@ contract GameFacet is UseStorage {
         }
     }
 
-    // TODO: implement
     function _battleCity(uint256 _armyID, uint256 _cityID) private {
         GameLib._validEntityCheck(_armyID);
         GameLib._validEntityCheck(_cityID);
@@ -547,25 +550,63 @@ contract GameFacet is UseStorage {
         GameLib._activePlayerCheck(msg.sender);
         GameLib._entityOwnershipCheckByAddress(_armyID, msg.sender);
 
-        uint256 _playerID = GameLib._getPlayer(msg.sender);
-        require(ECSLib._getUint("Owner", _cityID) != _playerID, "CURIO: Cannot attack your own city");
+        uint256 playerID = GameLib._getPlayer(msg.sender);
+        require(ECSLib._getUint("Owner", _cityID) != playerID, "CURIO: Cannot attack your own city");
 
         // Verify that army is adjacent to city
         require(GameLib._adjacentToCity(ECSLib._getPosition("Position", _armyID), _cityID), "CURIO: Too far");
 
         // TEMPORARY ALERT
         // reduce the gold by half
-        uint256 _balance = GameLib._getCityGold(_cityID);
-        uint256 _goldInventoryID = GameLib._getInventory(_cityID, GameLib._getTemplateByInventoryType("Gold"));
-        ECSLib._setUint("Amount", _goldInventoryID, _balance - 1);
-        // ECSLib._setUint("Amount", _goldInventoryID, _balance / 2);
+        {
+            uint256 balance = GameLib._getCityGold(_cityID);
+            uint256 goldInventoryID = GameLib._getInventory(_cityID, GameLib._getTemplateByInventoryType("Gold"));
+            ECSLib._setUint("Amount", goldInventoryID, balance - 1);
+            // ECSLib._setUint("Amount", _goldInventoryID, balance / 2);
+        }
 
-        // Start exchanging fire
-        uint256 _battleID = ECSLib._addEntity();
-        ECSLib._setString("Tag", _battleID, "Battle");
-        ECSLib._setUint("InitTimestamp", _battleID, block.timestamp);
-        ECSLib._setUint("Source", _battleID, _armyID);
-        ECSLib._setUint("Target", _battleID, GameLib._getCityGuard(_cityID));
+        // One round of battle against city
+        uint256 guardID = GameLib._getCityGuard(_cityID);
+        if (guardID != NULL) {
+            uint256[] memory armyConstituents = GameLib._getArmyConstituents(_armyID);
+
+            {
+                // Army attacks City
+                uint256 loss;
+                for (uint256 i = 0; i < armyConstituents.length; i++) {
+                    if (ECSLib._getUint("Amount", armyConstituents[i]) == 0) continue;
+                    loss = (GameLib._sqrt(ECSLib._getUint("Amount", armyConstituents[i])) * ECSLib._getUint("Attack", ECSLib._getUint("Template", armyConstituents[i])) * 2 * 10000) / (ECSLib._getUint("Defense", guardID) * ECSLib._getUint("Health", guardID));
+                    if (loss >= ECSLib._getUint("Amount", guardID)) {
+                        ECSLib._removeEntity(guardID);
+                        break;
+                    } else {
+                        ECSLib._setUint("Amount", guardID, ECSLib._getUint("Amount", guardID) - loss);
+                    }
+                }
+            }
+            if (!Set(gs().entities).includes(guardID)) {
+                // City has no defense, Army takes over
+                ECSLib._setUint("Owner", _cityID, playerID);
+                return;
+            }
+            {
+                // City attacks Army
+                uint256 loss;
+                for (uint256 i = 0; i < armyConstituents.length; i++) {
+                    loss = (GameLib._sqrt(ECSLib._getUint("Amount", guardID)) * ECSLib._getUint("Attack", guardID) * 2 * 10000) / (ECSLib._getUint("Defense", ECSLib._getUint("Template", armyConstituents[i])) * ECSLib._getUint("Health", ECSLib._getUint("Template", armyConstituents[i])));
+                    if (loss >= ECSLib._getUint("Amount", armyConstituents[i])) {
+                        ECSLib._removeEntity(armyConstituents[i]);
+                    }
+                    ECSLib._setUint("Amount", armyConstituents[i], ECSLib._getUint("Amount", armyConstituents[i]) - loss);
+                }
+            }
+            if (GameLib._getArmyConstituents(_armyID).length == 0) {
+                // Army dead, City takes its gold
+                // TODO: taking gold
+                GameLib._removeArmy(_armyID);
+                return;
+            }
+        }
     }
 
     // --------------------------

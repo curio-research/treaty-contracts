@@ -61,6 +61,7 @@ struct WorldConstants {
     uint256 cityHealth;
     uint256 cityAttack;
     uint256 cityDefense;
+    uint256 cityAmount;
 }
 
 struct GameState {

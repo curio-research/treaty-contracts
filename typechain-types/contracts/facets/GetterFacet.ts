@@ -59,10 +59,12 @@ export type WorldConstantsStruct = {
   cityHealth: PromiseOrValue<BigNumberish>;
   cityAttack: PromiseOrValue<BigNumberish>;
   cityDefense: PromiseOrValue<BigNumberish>;
+  cityAmount: PromiseOrValue<BigNumberish>;
 };
 
 export type WorldConstantsStructOutput = [
   string,
+  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -93,6 +95,7 @@ export type WorldConstantsStructOutput = [
   cityHealth: BigNumber;
   cityAttack: BigNumber;
   cityDefense: BigNumber;
+  cityAmount: BigNumber;
 };
 
 export interface GetterFacetInterface extends utils.Interface {

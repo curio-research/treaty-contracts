@@ -73,10 +73,12 @@ export type WorldConstantsStruct = {
   cityHealth: PromiseOrValue<BigNumberish>;
   cityAttack: PromiseOrValue<BigNumberish>;
   cityDefense: PromiseOrValue<BigNumberish>;
+  cityAmount: PromiseOrValue<BigNumberish>;
 };
 
 export type WorldConstantsStructOutput = [
   string,
+  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -107,6 +109,7 @@ export type WorldConstantsStructOutput = [
   cityHealth: BigNumber;
   cityAttack: BigNumber;
   cityDefense: BigNumber;
+  cityAmount: BigNumber;
 };
 
 export type QueryConditionStruct = {
@@ -163,6 +166,7 @@ export interface CurioInterface extends utils.Interface {
     "facetFunctionSelectors(address)": FunctionFragment;
     "facets()": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
+    "battle(uint256,uint256)": FunctionFragment;
     "denounceTreaty(address)": FunctionFragment;
     "disbandArmy(uint256)": FunctionFragment;
     "endGather(uint256)": FunctionFragment;
@@ -175,7 +179,6 @@ export interface CurioInterface extends utils.Interface {
     "moveSettler(uint256,(uint256,uint256))": FunctionFragment;
     "organizeArmy(uint256,uint256[],uint256[])": FunctionFragment;
     "packCity(uint256)": FunctionFragment;
-    "startBattle(uint256,uint256)": FunctionFragment;
     "startGather(uint256,uint256)": FunctionFragment;
     "startTroopProduction(uint256,uint256,uint256)": FunctionFragment;
     "upgradeCity(uint256,(uint256,uint256)[])": FunctionFragment;
@@ -235,6 +238,7 @@ export interface CurioInterface extends utils.Interface {
       | "facetFunctionSelectors"
       | "facets"
       | "supportsInterface"
+      | "battle"
       | "denounceTreaty"
       | "disbandArmy"
       | "endGather"
@@ -247,7 +251,6 @@ export interface CurioInterface extends utils.Interface {
       | "moveSettler"
       | "organizeArmy"
       | "packCity"
-      | "startBattle"
       | "startGather"
       | "startTroopProduction"
       | "upgradeCity"
@@ -350,6 +353,10 @@ export interface CurioInterface extends utils.Interface {
     values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
+    functionFragment: "battle",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "denounceTreaty",
     values: [PromiseOrValue<string>]
   ): string;
@@ -404,10 +411,6 @@ export interface CurioInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "packCity",
     values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "startBattle",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "startGather",
@@ -623,6 +626,7 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "supportsInterface",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "battle", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "denounceTreaty",
     data: BytesLike
@@ -656,10 +660,6 @@ export interface CurioInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "packCity", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "startBattle",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "startGather",
     data: BytesLike
@@ -997,6 +997,12 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    battle(
+      _armyID: PromiseOrValue<BigNumberish>,
+      _targetID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     denounceTreaty(
       _treatyToDenounce: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1063,12 +1069,6 @@ export interface Curio extends BaseContract {
 
     packCity(
       _cityID: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    startBattle(
-      _armyID: PromiseOrValue<BigNumberish>,
-      _targetID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1347,6 +1347,12 @@ export interface Curio extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  battle(
+    _armyID: PromiseOrValue<BigNumberish>,
+    _targetID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   denounceTreaty(
     _treatyToDenounce: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1413,12 +1419,6 @@ export interface Curio extends BaseContract {
 
   packCity(
     _cityID: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  startBattle(
-    _armyID: PromiseOrValue<BigNumberish>,
-    _targetID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1697,6 +1697,12 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    battle(
+      _armyID: PromiseOrValue<BigNumberish>,
+      _targetID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     denounceTreaty(
       _treatyToDenounce: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -1763,12 +1769,6 @@ export interface Curio extends BaseContract {
 
     packCity(
       _cityID: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    startBattle(
-      _armyID: PromiseOrValue<BigNumberish>,
-      _targetID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -2102,6 +2102,12 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    battle(
+      _armyID: PromiseOrValue<BigNumberish>,
+      _targetID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     denounceTreaty(
       _treatyToDenounce: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -2168,12 +2174,6 @@ export interface Curio extends BaseContract {
 
     packCity(
       _cityID: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    startBattle(
-      _armyID: PromiseOrValue<BigNumberish>,
-      _targetID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -2451,6 +2451,12 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    battle(
+      _armyID: PromiseOrValue<BigNumberish>,
+      _targetID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     denounceTreaty(
       _treatyToDenounce: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -2517,12 +2523,6 @@ export interface Curio extends BaseContract {
 
     packCity(
       _cityID: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    startBattle(
-      _armyID: PromiseOrValue<BigNumberish>,
-      _targetID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

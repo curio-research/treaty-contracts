@@ -39,10 +39,12 @@ export type WorldConstantsStruct = {
   cityHealth: PromiseOrValue<BigNumberish>;
   cityAttack: PromiseOrValue<BigNumberish>;
   cityDefense: PromiseOrValue<BigNumberish>;
+  cityAmount: PromiseOrValue<BigNumberish>;
 };
 
 export type WorldConstantsStructOutput = [
   string,
+  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -73,11 +75,12 @@ export type WorldConstantsStructOutput = [
   cityHealth: BigNumber;
   cityAttack: BigNumber;
   cityDefense: BigNumber;
+  cityAmount: BigNumber;
 };
 
 export interface DiamondInitInterface extends utils.Interface {
   functions: {
-    "init((address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))": FunctionFragment;
+    "init((address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))": FunctionFragment;
   };
 
   getFunction(nameOrSignatureOrTopic: "init"): FunctionFragment;

@@ -192,6 +192,7 @@ library GameLib {
         ECSLib._setUint("Health", _guardID, _constants.cityHealth);
         ECSLib._setUint("Attack", _guardID, _constants.cityAttack);
         ECSLib._setUint("Defense", _guardID, _constants.cityDefense);
+        ECSLib._setUint("Amount", _guardID, _constants.cityAmount);
     }
 
     // ----------------------------------------------------------
