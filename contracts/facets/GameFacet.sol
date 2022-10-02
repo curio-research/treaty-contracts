@@ -221,7 +221,7 @@ contract GameFacet is UseStorage {
         require(balance >= cost, "CURIO: Insufficient gold balance");
 
         // Create inventory if none exists, and verify that amount does not exceed ceiling
-        uint256 inventoryID = GameLib._getInventory(cityID, _templateID); // FIXME: BUG
+        uint256 inventoryID = GameLib._getInventory(cityID, _templateID);
         if (inventoryID == NULL) {
             inventoryID = ECSLib._addEntity();
             ECSLib._setString("Tag", inventoryID, "TroopInventory");
