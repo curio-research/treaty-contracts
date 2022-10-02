@@ -533,10 +533,10 @@ contract GameFacet is UseStorage {
             }
             if (GameLib._getArmyConstituents(_armyID).length == 0) {
                 // Army dead, TargetArmy takes its gold
-                uint256 _targetArmyInventoryAmount = ECSLib._getUint("Amount", GameLib._getArmyInventory(_targetArmyID, GameLib._getTemplateByInventoryType("Gold")));
-                uint256 _increase = ECSLib._getUint("Amount", GameLib._getArmyInventory(_armyID, GameLib._getTemplateByInventoryType("Gold")));
-                if (_increase > ECSLib._getUint("Load", _targetArmyID) - _targetArmyInventoryAmount) _increase = ECSLib._getUint("Load", _targetArmyID) - _targetArmyInventoryAmount;
-                ECSLib._setUint("Amount", GameLib._getArmyInventory(_targetArmyID, GameLib._getTemplateByInventoryType("Gold")), _targetArmyInventoryAmount + _increase);
+                uint256 targetArmyInventoryAmount = ECSLib._getUint("Amount", GameLib._getArmyInventory(_targetArmyID, GameLib._getTemplateByInventoryType("Gold")));
+                uint256 increase = ECSLib._getUint("Amount", GameLib._getArmyInventory(_armyID, GameLib._getTemplateByInventoryType("Gold")));
+                if (increase > ECSLib._getUint("Load", _targetArmyID) - targetArmyInventoryAmount) increase = ECSLib._getUint("Load", _targetArmyID) - targetArmyInventoryAmount;
+                ECSLib._setUint("Amount", GameLib._getArmyInventory(_targetArmyID, GameLib._getTemplateByInventoryType("Gold")), targetArmyInventoryAmount + increase);
                 GameLib._removeArmy(_armyID);
                 return;
             }
@@ -602,7 +602,10 @@ contract GameFacet is UseStorage {
             }
             if (GameLib._getArmyConstituents(_armyID).length == 0) {
                 // Army dead, City takes its gold
-                // TODO: taking gold
+                uint256 cityInventoryAmount = ECSLib._getUint("Amount", GameLib._getInventory(_cityID, GameLib._getTemplateByInventoryType("Gold")));
+                uint256 increase = ECSLib._getUint("Amount", GameLib._getArmyInventory(_armyID, GameLib._getTemplateByInventoryType("Gold")));
+                // FIXME: add city load
+                ECSLib._setUint("Amount", GameLib._getInventory(_cityID, GameLib._getTemplateByInventoryType("Gold")), cityInventoryAmount + increase);
                 GameLib._removeArmy(_armyID);
                 return;
             }
