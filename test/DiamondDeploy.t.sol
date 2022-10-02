@@ -226,7 +226,8 @@ contract DiamondDeployTest is Test {
                 initCityGold: 1000,
                 cityHealth: 500,
                 cityAttack: 50,
-                cityDefense: 10 // DO NOT REMOVE THIS COMMENT
+                cityDefense: 10,
+                cityAmount: 100 // DO NOT REMOVE THIS COMMENT
             });
     }
 

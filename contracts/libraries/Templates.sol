@@ -6,7 +6,7 @@ import {ECSLib} from "contracts/libraries/ECSLib.sol";
 import {GameLib} from "contracts/libraries/GameLib.sol";
 
 library Templates {
-    function createCityCenter(Position memory _position, uint256 _cityId) public returns (uint256) {
+    function _createCityCenter(Position memory _position, uint256 _cityId) public returns (uint256) {
         uint256 _cityCenterID = ECSLib._addEntity();
 
         ECSLib._setString("Tag", _cityCenterID, "Building");
@@ -18,7 +18,7 @@ library Templates {
         return _cityCenterID;
     }
 
-    function createCityTile(Position memory _position, uint256 cityId) public returns (uint256) {
+    function _createCityTile(Position memory _position, uint256 cityId) public returns (uint256) {
         require(GameLib._inBound(_position), "CURIO: Out of bound");
         require(GameLib._getTileAt(_position) == 0, "CURIO: Territory overlaps with another city");
         GameLib._initializeTile(_position);
@@ -31,7 +31,7 @@ library Templates {
         return _tile;
     }
 
-    function createSettler(Position memory _position, uint256 _playerId) public returns (uint256) {
+    function _createSettler(Position memory _position, uint256 _playerId) public returns (uint256) {
         uint256 _settlerId = ECSLib._addEntity();
 
         ECSLib._setString("Tag", _settlerId, "Settler");
@@ -46,7 +46,7 @@ library Templates {
         return _settlerId;
     }
 
-    function createPlayer(string memory _name) public returns (uint256) {
+    function _createPlayer(string memory _name) public returns (uint256) {
         uint256 _playerID = ECSLib._addEntity();
 
         ECSLib._setBool("IsActive", _playerID);
@@ -58,7 +58,7 @@ library Templates {
         return _playerID;
     }
 
-    function addArmy(uint256 _playerId, Position memory _position) public returns (uint256) {
+    function _addArmy(uint256 _playerId, Position memory _position) public returns (uint256) {
         uint256 _armyID = ECSLib._addEntity();
 
         ECSLib._setString("Tag", _armyID, "Army");
@@ -72,5 +72,18 @@ library Templates {
         ECSLib._setUint("LastTimestamp", _armyID, block.timestamp);
 
         return _armyID;
+    }
+
+    function _addGuard(uint256 _cityID, WorldConstants memory _constants) public returns (uint256) {
+        uint256 _guardID = ECSLib._addEntity();
+
+        ECSLib._setString("Tag", _guardID, "Guard");
+        ECSLib._setUint("City", _guardID, _cityID);
+        ECSLib._setUint("Health", _guardID, _constants.cityHealth);
+        ECSLib._setUint("Attack", _guardID, _constants.cityAttack);
+        ECSLib._setUint("Defense", _guardID, _constants.cityDefense);
+        ECSLib._setUint("Amount", _guardID, _constants.cityAmount);
+
+        return _guardID;
     }
 }

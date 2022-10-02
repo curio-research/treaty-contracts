@@ -28,15 +28,15 @@ contract GameFacet is UseStorage {
 
         GameLib._initializeTile(_position);
 
-        uint256 _playerID = Templates.createPlayer(_name);
+        uint256 _playerID = Templates._createPlayer(_name);
 
         gs().players.push(msg.sender);
         gs().playerEntityMap[msg.sender] = _playerID;
 
-        uint256 _settlerID = Templates.createSettler(_position, _playerID);
+        uint256 _settlerID = Templates._createSettler(_position, _playerID);
 
         // Initialize guard which stays with eventual city
-        GameLib._addGuard(_settlerID);
+        Templates._addGuard(_settlerID, gs().worldConstants);
 
         // Add gold to eventual city
         uint256 _goldInventoryID = ECSLib._addEntity();
@@ -121,7 +121,7 @@ contract GameFacet is UseStorage {
         ECSLib._setString("Name", cityID, _cityName);
         ECSLib._setBool("CanProduce", cityID);
 
-        Templates.createCityCenter(_centerPosition, cityID);
+        Templates._createCityCenter(_centerPosition, cityID);
     }
 
     /// @notice This function can be viewed as the inverse of `foundCity`, as it converts a city back into a settler.
@@ -174,8 +174,8 @@ contract GameFacet is UseStorage {
         uint256 cost = gs().worldConstants.cityUpgradeGoldCost;
         require(balance >= cost, "CURIO: Insufficient gold balance");
 
-        uint256 _level = ECSLib._getUint("Level", _cityID);
-        require(_newTiles.length == GameLib._getCityTileCountByLevel(_level + 1) - GameLib._getCityTileCountByLevel(_level), "CURIO: New territory tile count is incorrect");
+        uint256 level = ECSLib._getUint("Level", _cityID);
+        require(_newTiles.length == GameLib._getCityTileCountByLevel(level + 1) - GameLib._getCityTileCountByLevel(level), "CURIO: New territory tile count is incorrect");
 
         // Verify that territory is connected
         require(GameLib._connected(_newTiles), "CURIO: Territory not connected");
@@ -185,13 +185,13 @@ contract GameFacet is UseStorage {
 
         // Verify that territory is wholly in bound and does not overlap with other cities
         for (uint256 i = 0; i < _newTiles.length; i++) {
-            Templates.createCityTile(_newTiles[i], _cityID);
+            Templates._createCityTile(_newTiles[i], _cityID);
         }
 
         uint256 _goldInventoryID = GameLib._getInventory(_cityID, GameLib._getTemplateByInventoryType("Gold"));
         ECSLib._setUint("Amount", _goldInventoryID, balance - cost);
 
-        ECSLib._setUint("Level", _cityID, _level + 1);
+        ECSLib._setUint("Level", _cityID, level + 1);
     }
 
     // ----------------------------------------------------------
@@ -568,6 +568,10 @@ contract GameFacet is UseStorage {
         // One round of battle against city
         uint256 guardID = GameLib._getCityGuard(_cityID);
         if (guardID != NULL) {
+            ECSLib._setUint("Owner", _cityID, playerID);
+            Templates._addGuard(_cityID, gs().worldConstants);
+            return;
+        } else {
             uint256[] memory armyConstituents = GameLib._getArmyConstituents(_armyID);
 
             {
@@ -587,6 +591,7 @@ contract GameFacet is UseStorage {
             if (!Set(gs().entities).includes(guardID)) {
                 // City has no defense, Army takes over
                 ECSLib._setUint("Owner", _cityID, playerID);
+                Templates._addGuard(_cityID, gs().worldConstants);
                 return;
             }
             {

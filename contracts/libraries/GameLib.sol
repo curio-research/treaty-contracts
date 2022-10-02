@@ -184,17 +184,6 @@ library GameLib {
         ECSLib._removeEntity(_gatherID);
     }
 
-    function _addGuard(uint256 _cityID) public returns (uint256 _guardID) {
-        WorldConstants memory _constants = gs().worldConstants;
-        _guardID = ECSLib._addEntity();
-        ECSLib._setString("Tag", _guardID, "Guard");
-        ECSLib._setUint("City", _guardID, _cityID);
-        ECSLib._setUint("Health", _guardID, _constants.cityHealth);
-        ECSLib._setUint("Attack", _guardID, _constants.cityAttack);
-        ECSLib._setUint("Defense", _guardID, _constants.cityDefense);
-        ECSLib._setUint("Amount", _guardID, _constants.cityAmount);
-    }
-
     // ----------------------------------------------------------
     // LOGIC GETTERS
     // ----------------------------------------------------------
