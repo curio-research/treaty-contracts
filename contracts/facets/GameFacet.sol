@@ -283,8 +283,7 @@ contract GameFacet is UseStorage {
         uint256 playerID = GameLib._getPlayer(msg.sender);
         require(tileID == NULL || ECSLib._getUint("Owner", ECSLib._getUint("City", tileID)) == playerID, "CURIO: Cannot gather on another player's territory");
 
-        uint256 gatherID = GameLib._getArmyGather(_armyID);
-        require(gatherID == 0, "CURIO: There is already a resource gathering in this location");
+        require(GameLib._getArmyGather(_armyID) == 0, "CURIO: There is already a resource gathering in this location");
 
         // Verify that the army's capacity isn't full
         // TODO
@@ -418,10 +417,9 @@ contract GameFacet is UseStorage {
         for (uint256 i = 0; i < constituentIDs.length; i++) {
             uint256 cityInventoryID = GameLib._getInventory(cityID, ECSLib._getUint("Template", constituentIDs[i]));
             uint256 amount = ECSLib._getUint("Amount", cityInventoryID) + ECSLib._getUint("Amount", constituentIDs[i]);
-            // TODO: add gold cap check
+
             // require(_amount <= gs().worldConstants.maxInventoryCapacity, "CURIO: Too many troops");
             ECSLib._setUint("Amount", cityInventoryID, amount);
-            // ECSLib._removeEntity(_entity);
         }
 
         // Disband army
@@ -445,16 +443,6 @@ contract GameFacet is UseStorage {
 
         // Verify that target tile has no other army
         require(GameLib._getArmyAt(_targetPosition) == NULL, "CURIO: Destination occupied by another army");
-
-        // FIXME:
-        // the resource tile needs to be not gathering anything currently
-
-        // Verify that a gather process is present
-        // uint256 gatherID = GameLib._getArmyGather(_armyID);
-        // require(gatherID == 0, "CURIO: Army must stop gathering resource first before moving");
-
-        // if it's on a resource tile, end the resource gathering
-        // GameLib._endGather(_armyID);
 
         GameLib._initializeTile(_targetPosition);
 
