@@ -1,8 +1,9 @@
+import { Curio } from './../../typechain-types/hardhat-diamond-abi/Curio';
 import { decodeBigNumberishArr } from './../../util/serde/common';
 import { Component__factory } from './../../typechain-types/factories/contracts/Component__factory';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { position } from './../../util/types/common';
-import { TILE_TYPE, componentNameToId, encodePosition, getImmediateSurroundingPositions, TileMap, Tag, Position, Owner, Health, Speed, Attack, Defense, Load, LastTimestamp, Tags, encodeString, encodeUint256, Curio } from 'curio-vault';
+import { TILE_TYPE, componentNameToId, encodePosition, getImmediateSurroundingPositions, TileMap, Tag, Position, Owner, Health, Speed, Attack, Defense, Load, LastTimestamp, Tags, encodeString, encodeUint256, Capacity } from 'curio-vault';
 
 const MAX_UINT256 = BigInt(Math.pow(2, 256)) - BigInt(1);
 
@@ -147,6 +148,7 @@ export const initializeFixmap = async (hre: HardhatRuntimeEnvironment, diamond: 
   const player2Pos = { x: 2, y: 2 };
   const player3Pos = { x: 5, y: 2 };
   const player4Pos = { x: 8, y: 2 };
+  const playerPositions = [player1Pos, player2Pos, player3Pos, player4Pos];
 
   // initialize 4 players
   await (await diamond.connect(player1).initializePlayer(player1Pos, 'A', { gasLimit: 100_000_000 })).wait();
@@ -174,23 +176,35 @@ export const initializeFixmap = async (hre: HardhatRuntimeEnvironment, diamond: 
   await diamond.connect(player3).foundCity(player3SettlerId, getImmediateSurroundingPositions(player3Pos), '');
   await diamond.connect(player4).foundCity(player4SettlerId, getImmediateSurroundingPositions(player4Pos), '');
 
-  await (await diamond.addEntity()).wait();
-  const entity = (await diamond.getEntity()).toNumber();
-
   const players = [player1Id];
 
   // spawn armies
   for (let i = 0; i < players.length; i++) {
-    const playerId = players[i];
+    const playerID = players[i];
+    const playerPosition = playerPositions[i];
 
-    await (await diamond.setComponentValue(Owner, entity, encodeUint256(playerId))).wait();
-    await (await diamond.setComponentValue(Tag, entity, encodeString(Tags.Army))).wait();
-    await (await diamond.setComponentValue(Position, entity, encodePosition(player1Pos))).wait();
-    await (await diamond.setComponentValue(Health, entity, encodeUint256(10))).wait();
-    await (await diamond.setComponentValue(Speed, entity, encodeUint256(10))).wait();
-    await (await diamond.setComponentValue(Attack, entity, encodeUint256(10))).wait();
-    await (await diamond.setComponentValue(Defense, entity, encodeUint256(10))).wait();
-    await (await diamond.setComponentValue(Load, entity, encodeUint256(10))).wait();
-    await (await diamond.setComponentValue(LastTimestamp, entity, encodeUint256(1))).wait();
+    await spawnArmy(diamond, playerID, playerPosition);
   }
+};
+
+export const addGetEntity = async (diamond: Curio): Promise<number> => {
+  await (await diamond.addEntity()).wait();
+  return (await diamond.getEntity()).toNumber();
+};
+
+// add army entity directly to the map
+// FIXME: this should be using templates directly!
+export const spawnArmy = async (diamond: Curio, playerID: number, position: position) => {
+  const entity = await addGetEntity(diamond);
+
+  await (await diamond.setComponentValue(Owner, entity, encodeUint256(playerID))).wait();
+  await (await diamond.setComponentValue(Tag, entity, encodeString(Tags.Army))).wait();
+  await (await diamond.setComponentValue(Position, entity, encodePosition(position))).wait();
+  await (await diamond.setComponentValue(Health, entity, encodeUint256(10))).wait();
+  await (await diamond.setComponentValue(Speed, entity, encodeUint256(10))).wait();
+  await (await diamond.setComponentValue(Attack, entity, encodeUint256(10))).wait();
+  await (await diamond.setComponentValue(Defense, entity, encodeUint256(10))).wait();
+  await (await diamond.setComponentValue(Load, entity, encodeUint256(10))).wait();
+  await (await diamond.setComponentValue(LastTimestamp, entity, encodeUint256(1))).wait();
+  await (await diamond.setComponentValue(Capacity, entity, encodeUint256(100))).wait();
 };

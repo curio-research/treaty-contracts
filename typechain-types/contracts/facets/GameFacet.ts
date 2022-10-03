@@ -43,6 +43,7 @@ export interface GameFacetInterface extends utils.Interface {
     "foundCity(uint256,(uint256,uint256)[],string)": FunctionFragment;
     "harvestResource(uint256,uint256)": FunctionFragment;
     "initializePlayer((uint256,uint256),string)": FunctionFragment;
+    "initializeTile((uint256,uint256))": FunctionFragment;
     "joinTreaty(address)": FunctionFragment;
     "moveArmy(uint256,(uint256,uint256))": FunctionFragment;
     "moveSettler(uint256,(uint256,uint256))": FunctionFragment;
@@ -63,6 +64,7 @@ export interface GameFacetInterface extends utils.Interface {
       | "foundCity"
       | "harvestResource"
       | "initializePlayer"
+      | "initializeTile"
       | "joinTreaty"
       | "moveArmy"
       | "moveSettler"
@@ -108,6 +110,10 @@ export interface GameFacetInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "initializePlayer",
     values: [PositionStruct, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "initializeTile",
+    values: [PositionStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "joinTreaty",
@@ -171,6 +177,10 @@ export interface GameFacetInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "initializePlayer",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "initializeTile",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "joinTreaty", data: BytesLike): Result;
@@ -273,6 +283,11 @@ export interface GameFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    initializeTile(
+      _position: PositionStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     joinTreaty(
       _treatyAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -365,6 +380,11 @@ export interface GameFacet extends BaseContract {
   initializePlayer(
     _position: PositionStruct,
     _name: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  initializeTile(
+    _position: PositionStruct,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -463,6 +483,11 @@ export interface GameFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    initializeTile(
+      _position: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     joinTreaty(
       _treatyAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -485,7 +510,7 @@ export interface GameFacet extends BaseContract {
       _templateIDs: PromiseOrValue<BigNumberish>[],
       _amounts: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<void>;
 
     packCity(
       _cityID: PromiseOrValue<BigNumberish>,
@@ -558,6 +583,11 @@ export interface GameFacet extends BaseContract {
     initializePlayer(
       _position: PositionStruct,
       _name: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    initializeTile(
+      _position: PositionStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -654,6 +684,11 @@ export interface GameFacet extends BaseContract {
     initializePlayer(
       _position: PositionStruct,
       _name: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    initializeTile(
+      _position: PositionStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

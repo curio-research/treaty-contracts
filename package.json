@@ -10,6 +10,7 @@
     "ft": "forge test --ffi -vv",
     "deploy": "npx hardhat deploy --network localhost",
     "port": "npx hardhat port",
+    "kill": "lsof -ti:8545 | xargs kill",
     "setup": "yarn link curio-vault",
     "deploy:anvil": "bash ./scripts/deploy.sh",
     "compile": "npx hardhat compile"

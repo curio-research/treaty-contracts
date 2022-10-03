@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { GameConfig } from './types';
+import { GameConfig } from 'curio-vault/src/types/deployment';
 
 const api = axios.create();
 api.defaults.baseURL = process.env.BACKEND_URL;

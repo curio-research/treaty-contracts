@@ -1,5 +1,6 @@
-import { Attack, Cost, Curio, Defense, Duration, encodeString, encodeUint256, Health, InventoryType, InventoryTypeOptions, Speed, Load, Tag, Tags } from 'curio-vault';
-import { WorldConstantsStruct } from './../../typechain-types/hardhat-diamond-abi/Curio';
+import { Attack, Cost, Defense, Duration, encodeString, encodeUint256, Health, InventoryType, InventoryTypeOptions, Speed, Load, Tag, Tags } from 'curio-vault';
+import { WorldConstantsStruct, Curio } from './../../typechain-types/hardhat-diamond-abi/Curio';
+import { addGetEntity } from './mapHelper';
 import { MapInput } from './types';
 
 export const LOCALHOST_RPC_URL = 'http://127.0.0.1:8545/';
@@ -44,45 +45,45 @@ export const createTemplates = async (diamond: Curio) => {
   await (await diamond.addEntity()).wait();
   let entity = (await diamond.getEntity()).toNumber();
 
+  // Horseman
   await (await diamond.setComponentValue(Tag, entity, encodeString(Tags.TroopTemplate))).wait();
   await (await diamond.setComponentValue(InventoryType, entity, encodeString(InventoryTypeOptions.Horseman))).wait();
   await (await diamond.setComponentValue(Health, entity, encodeUint256(120))).wait();
   await (await diamond.setComponentValue(Speed, entity, encodeUint256(5))).wait();
   await (await diamond.setComponentValue(Attack, entity, encodeUint256(60))).wait();
   await (await diamond.setComponentValue(Defense, entity, encodeUint256(120))).wait();
-  await (await diamond.setComponentValue(Duration, entity, encodeUint256(1))).wait();
+  await (await diamond.setComponentValue(Duration, entity, encodeUint256(5))).wait();
   await (await diamond.setComponentValue(Load, entity, encodeUint256(5))).wait();
   await (await diamond.setComponentValue(Cost, entity, encodeUint256(1))).wait();
 
-  await (await diamond.addEntity()).wait();
-  entity = (await diamond.getEntity()).toNumber();
+  entity = await addGetEntity(diamond);
 
+  // Warrior
   await (await diamond.setComponentValue(Tag, entity, encodeString(Tags.TroopTemplate))).wait();
   await (await diamond.setComponentValue(InventoryType, entity, encodeString(InventoryTypeOptions.Warrior))).wait();
   await (await diamond.setComponentValue(Health, entity, encodeUint256(120))).wait();
   await (await diamond.setComponentValue(Speed, entity, encodeUint256(5))).wait();
   await (await diamond.setComponentValue(Attack, entity, encodeUint256(60))).wait();
   await (await diamond.setComponentValue(Defense, entity, encodeUint256(120))).wait();
-  await (await diamond.setComponentValue(Duration, entity, encodeUint256(1))).wait();
+  await (await diamond.setComponentValue(Duration, entity, encodeUint256(5))).wait();
   await (await diamond.setComponentValue(Load, entity, encodeUint256(6))).wait();
   await (await diamond.setComponentValue(Cost, entity, encodeUint256(1))).wait();
 
-  await (await diamond.addEntity()).wait();
-  entity = (await diamond.getEntity()).toNumber();
+  entity = await addGetEntity(diamond);
 
+  // Slinger
   await (await diamond.setComponentValue(Tag, entity, encodeString(Tags.TroopTemplate))).wait();
   await (await diamond.setComponentValue(InventoryType, entity, encodeString(InventoryTypeOptions.Slinger))).wait();
   await (await diamond.setComponentValue(Health, entity, encodeUint256(125))).wait();
   await (await diamond.setComponentValue(Speed, entity, encodeUint256(5))).wait();
   await (await diamond.setComponentValue(Attack, entity, encodeUint256(60))).wait();
   await (await diamond.setComponentValue(Defense, entity, encodeUint256(125))).wait();
-  await (await diamond.setComponentValue(Duration, entity, encodeUint256(1))).wait();
+  await (await diamond.setComponentValue(Duration, entity, encodeUint256(5))).wait();
   await (await diamond.setComponentValue(Load, entity, encodeUint256(6))).wait();
   await (await diamond.setComponentValue(Cost, entity, encodeUint256(1))).wait();
 
   // Initialize a resource template
-  await (await diamond.addEntity()).wait();
-  entity = (await diamond.getEntity()).toNumber();
+  entity = await addGetEntity(diamond);
 
   await (await diamond.setComponentValue(Tag, entity, encodeString(Tags.ResourceTemplate))).wait();
   await (await diamond.setComponentValue(InventoryType, entity, encodeString(InventoryTypeOptions.Gold))).wait();

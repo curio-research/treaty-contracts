@@ -488,6 +488,31 @@ const _abi = [
   {
     inputs: [
       {
+        components: [
+          {
+            internalType: "uint256",
+            name: "x",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "y",
+            type: "uint256",
+          },
+        ],
+        internalType: "struct Position",
+        name: "_position",
+        type: "tuple",
+      },
+    ],
+    name: "initializeTile",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "address",
         name: "_treatyAddress",
         type: "address",
@@ -577,13 +602,7 @@ const _abi = [
       },
     ],
     name: "organizeArmy",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "armyID",
-        type: "uint256",
-      },
-    ],
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
