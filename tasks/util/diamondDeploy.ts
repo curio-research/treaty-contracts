@@ -1,8 +1,9 @@
-import { Curio } from 'curio-vault';
+import { Curio } from './../../typechain-types/hardhat-diamond-abi/Curio';
 import { Signer } from 'ethers';
 import { deployProxy } from './deployHelper';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { getSelectors, FacetCutAction } from './diamondHelper';
+import { CurioInterface } from '../../typechain-types/hardhat-diamond-abi/Curio';
 
 export async function deployDiamond(hre: HardhatRuntimeEnvironment, deployArgs: any[]) {
   const accounts = await hre.ethers.getSigners();

@@ -67,39 +67,39 @@ library GameLib {
     function _initializeTile(Position memory _position) public {
         if (_getMapTileAt(_position).isInitialized) return;
 
-        WorldConstants memory _worldConstants = gs().worldConstants;
-        uint256 _batchSize = _worldConstants.initBatchSize;
-        uint256 _numInitTerrainTypes = _worldConstants.numInitTerrainTypes;
+        WorldConstants memory worldConstants = gs().worldConstants;
+        uint256 batchSize = worldConstants.initBatchSize;
+        uint256 numInitTerrainTypes = worldConstants.numInitTerrainTypes;
 
-        uint256 _encodedCol = gs().encodedColumnBatches[_position.x][_position.y / _batchSize] % (_numInitTerrainTypes**((_position.y % _batchSize) + 1));
-        uint256 _divFactor = _numInitTerrainTypes**(_position.y % _batchSize);
-        uint256 _terrain = _encodedCol / _divFactor;
+        uint256 encodedCol = gs().encodedColumnBatches[_position.x][_position.y / batchSize] % (numInitTerrainTypes**((_position.y % batchSize) + 1));
+        uint256 divFactor = numInitTerrainTypes**(_position.y % batchSize);
+        uint256 terrain = encodedCol / divFactor;
 
         // Update terrain
         gs().map[_position.x][_position.y].isInitialized = true;
 
         // if it's land, 1-3 level gold mine, or barbarian, initialize as land
-        if (_terrain <= 3) {
+        if (terrain <= 3) {
             gs().map[_position.x][_position.y].terrain = TERRAIN(0);
         }
 
         // if it's a gold mine, initialize it
-        if (_terrain == 1 || _terrain == 2 || _terrain == 3) {
-            uint256 _goldMineID = ECSLib._addEntity();
-            uint256 _goldMineLevel = _terrain; // it happens that the gold level is the same as the terrain index
+        if (terrain == 1 || terrain == 2 || terrain == 3) {
+            uint256 goldMineID = ECSLib._addEntity();
+            uint256 goldMineLevel = terrain; // it happens that the gold level is the same as the terrain index
 
-            ECSLib._setString("Tag", _goldMineID, "Resource");
-            ECSLib._setUint("Template", _goldMineID, _getTemplateByInventoryType("Gold"));
-            ECSLib._setUint("Level", _goldMineID, _goldMineLevel);
-            ECSLib._setPosition("Position", _goldMineID, _position);
-            ECSLib._setUint("LastTimestamp", _goldMineID, block.timestamp);
-            ECSLib._setUint("Amount", _goldMineID, _goldLevelSelector(_goldMineLevel));
+            ECSLib._setString("Tag", goldMineID, "Resource");
+            ECSLib._setUint("Template", goldMineID, _getTemplateByInventoryType("Gold"));
+            ECSLib._setUint("Level", goldMineID, goldMineLevel);
+            ECSLib._setPosition("Position", goldMineID, _position);
+            ECSLib._setUint("LastTimestamp", goldMineID, block.timestamp);
+            ECSLib._setUint("Amount", goldMineID, _goldLevelSelector(goldMineLevel));
         }
 
         // if it's a barbarian, initialize it
-        if (_terrain >= 4 && _terrain <= 6) {
+        if (terrain >= 4 && terrain <= 6) {
             uint256 _barbarianID = ECSLib._addEntity();
-            uint256 _infantryAmount = _barbarianInfantrySelector(_terrain - 3);
+            uint256 _infantryAmount = _barbarianInfantrySelector(terrain - 3);
             uint256 _infantryTemplate = _getTemplateByInventoryType("Infantry");
 
             uint256 _infantryConstituentID = ECSLib._addEntity();
@@ -147,41 +147,41 @@ library GameLib {
     }
 
     function _endGather(uint256 _armyID) public {
-        Position memory _position = ECSLib._getPosition("Position", _armyID);
+        Position memory position = ECSLib._getPosition("Position", _armyID);
 
         // Verify that a gather process is present
-        uint256 _gatherID = _getArmyGather(_armyID);
-        require(_gatherID != _NULL(), "CURIO: Need to start gathering first");
+        uint256 gatherID = _getArmyGather(_armyID);
+        require(gatherID != _NULL(), "CURIO: Need to start gathering first");
 
         // Get army's and resource's remaining capacities
-        uint256 _templateID = ECSLib._getUint("Template", _gatherID);
-        uint256 _inventoryID = _getArmyInventory(_armyID, _templateID); // FIXME: BUG
-        uint256 _armyAmount;
-        if (_inventoryID == _NULL()) {
-            _armyAmount = 0;
+        uint256 templateID = ECSLib._getUint("Template", gatherID);
+        uint256 inventoryID = _getArmyInventory(_armyID, templateID); // FIXME: BUG
+        uint256 armyAmount;
+        if (inventoryID == _NULL()) {
+            armyAmount = 0;
 
-            _inventoryID = ECSLib._addEntity();
-            ECSLib._setString("Tag", _inventoryID, "TroopInventory");
-            ECSLib._setUint("Army", _inventoryID, _armyID);
-            ECSLib._setUint("Template", _inventoryID, _templateID);
-            ECSLib._setUint("Amount", _inventoryID, _armyAmount);
+            inventoryID = ECSLib._addEntity();
+            ECSLib._setString("Tag", inventoryID, "TroopInventory");
+            ECSLib._setUint("Army", inventoryID, _armyID);
+            ECSLib._setUint("Template", inventoryID, templateID);
+            ECSLib._setUint("Amount", inventoryID, armyAmount);
         } else {
-            _armyAmount = ECSLib._getUint("Amount", _inventoryID);
+            armyAmount = ECSLib._getUint("Amount", inventoryID);
         }
 
-        uint256 _resourceID = _getResourceAt(_position);
+        uint256 _resourceID = _getResourceAt(position);
         uint256 _resourceAmount = ECSLib._getUint("Amount", _resourceID);
 
         // Gather
-        uint256 _gatherAmount = (block.timestamp - ECSLib._getUint("InitTimestamp", _gatherID)) / ECSLib._getUint("Duration", _templateID);
+        uint256 _gatherAmount = (block.timestamp - ECSLib._getUint("InitTimestamp", gatherID)) / ECSLib._getUint("Duration", templateID);
         if (_gatherAmount > _resourceAmount) _gatherAmount = _resourceAmount;
-        if (_gatherAmount > (ECSLib._getUint("Capacity", _armyID) - _armyAmount)) _gatherAmount = ECSLib._getUint("Capacity", _armyID) - _armyAmount;
-        ECSLib._setUint("Amount", _inventoryID, _armyAmount + _gatherAmount);
+        if (_gatherAmount > (ECSLib._getUint("Capacity", _armyID) - armyAmount)) _gatherAmount = ECSLib._getUint("Capacity", _armyID) - armyAmount;
+        ECSLib._setUint("Amount", inventoryID, armyAmount + _gatherAmount);
         ECSLib._setUint("Amount", _resourceID, _resourceAmount - _gatherAmount);
 
         if (_gatherAmount == _resourceAmount) ECSLib._removeEntity(_resourceID);
 
-        ECSLib._removeEntity(_gatherID);
+        ECSLib._removeEntity(gatherID);
     }
 
     function _addGuard(uint256 _cityID) public returns (uint256 _guardID) {
@@ -247,15 +247,33 @@ library GameLib {
         uint256[] memory res = ECSLib.query(query);
         assert(res.length <= 1);
         return res.length == 1 ? res[0] : 0;
+
+        // Set _set1 = new Set();
+        // Set _set2 = new Set();
+        // _set1.addArray(ECSLib._getUintComponent("Army").getEntitiesWithValue(_armyID));
+        // _set2.addArray(ECSLib._getStringComponent("Tag").getEntitiesWithValue(string("ResourceGather")));
+        // uint256[] memory _result = ECSLib._intersection(_set1, _set2);
+
+        // assert(_result.length <= 1);
+        // return _result.length == 1 ? _result[0] : _NULL();
     }
 
     function _getResourceAt(Position memory _position) public returns (uint256) {
-        QueryCondition[] memory query = new QueryCondition[](2);
-        query[0] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode(string("Resource")));
-        query[1] = ECSLib.queryChunk(QueryType.HasVal, "Position", abi.encode(_position));
-        uint256[] memory res = ECSLib.query(query);
-        assert(res.length <= 1);
-        return res.length == 1 ? res[0] : 0;
+        // QueryCondition[] memory query = new QueryCondition[](2);
+        // query[0] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode(string("Resource")));
+        // query[1] = ECSLib.queryChunk(QueryType.HasVal, "Position", abi.encode(_position));
+        // uint256[] memory res = ECSLib.query(query);
+        // assert(res.length <= 1);
+        // return res.length == 1 ? res[0] : 0;
+
+        Set _set1 = new Set();
+        Set _set2 = new Set();
+        _set1.addArray(ECSLib._getStringComponent("Tag").getEntitiesWithValue(string("Resource")));
+        _set2.addArray(ECSLib._getPositionComponent("Position").getEntitiesWithValue(_position));
+        uint256[] memory _result = ECSLib._intersection(_set1, _set2);
+
+        assert(_result.length <= 1);
+        return _result.length == 1 ? _result[0] : _NULL();
     }
 
     function _getArmyAt(Position memory _position) public returns (uint256) {
@@ -305,9 +323,10 @@ library GameLib {
     }
 
     function _getArmyInventory(uint256 _armyID, uint256 _templateID) public returns (uint256) {
-        QueryCondition[] memory query = new QueryCondition[](2);
-        query[0] = ECSLib.queryChunk(QueryType.HasVal, "Army", abi.encode(_armyID));
-        query[1] = ECSLib.queryChunk(QueryType.HasVal, "Template", abi.encode(_templateID));
+        QueryCondition[] memory query = new QueryCondition[](3);
+        query[0] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("TroopInventory"));
+        query[1] = ECSLib.queryChunk(QueryType.HasVal, "Army", abi.encode(_armyID));
+        query[2] = ECSLib.queryChunk(QueryType.HasVal, "Template", abi.encode(_templateID));
         uint256[] memory res = ECSLib.query(query);
         assert(res.length <= 1);
         return res.length == 1 ? res[0] : 0;

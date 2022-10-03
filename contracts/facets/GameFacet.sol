@@ -286,13 +286,7 @@ contract GameFacet is UseStorage {
         // Verify that the army's capacity isn't full
         // TODO
 
-        // Start gathering process
-        uint256 gatherID = ECSLib._addEntity();
-        ECSLib._setString("Tag", gatherID, "ResourceGather");
-        ECSLib._setPosition("Position", gatherID, position);
-        ECSLib._setUint("Owner", gatherID, playerID);
-        ECSLib._setUint("Template", gatherID, ECSLib._getUint("Template", _resourceID));
-        ECSLib._setUint("InitTimestamp", gatherID, block.timestamp);
+        Templates.addResourceGather(position, playerID, _resourceID, _armyID);
     }
 
     function endGather(uint256 _armyID) external {
@@ -448,6 +442,16 @@ contract GameFacet is UseStorage {
         // Verify that target tile has no other army
         require(GameLib._getArmyAt(_targetPosition) == NULL, "CURIO: Destination occupied by another army");
 
+        // FIXME:
+        // the resource tile needs to be not gathering anything currently
+
+        // Verify that a gather process is present
+        // uint256 gatherID = GameLib._getArmyGather(_armyID);
+        // require(gatherID == 0, "CURIO: Army must stop gathering resource first before moving");
+
+        // if it's on a resource tile, end the resource gathering
+        // GameLib._endGather(_armyID);
+
         GameLib._initializeTile(_targetPosition);
 
         ECSLib._setPosition("Position", _armyID, _targetPosition);
@@ -500,6 +504,10 @@ contract GameFacet is UseStorage {
         if (_increase > ECSLib._getUint("Load", _armyID) - _armyInventoryAmount) _increase = ECSLib._getUint("Load", _armyID) - _armyInventoryAmount;
         ECSLib._setUint("Amount", GameLib._getArmyInventory(_armyID, GameLib._getTemplateByInventoryType("Gold")), _armyInventoryAmount + _increase);
         GameLib._removeArmy(_targetArmyID);
+    }
+
+    function initializeTile(Position memory _position) public {
+        GameLib._initializeTile(_position);
     }
 
     /**

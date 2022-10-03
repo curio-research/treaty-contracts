@@ -70,6 +70,7 @@ library Templates {
         ECSLib._setUint("Defense", _armyID, 0);
         ECSLib._setUint("Load", _armyID, 0);
         ECSLib._setUint("LastTimestamp", _armyID, block.timestamp);
+        ECSLib._setUint("Capacity", _armyID, 10); // FIXME: temporary
 
         return _armyID;
     }
@@ -86,5 +87,21 @@ library Templates {
         ECSLib._setUint("Duration", productionID, ECSLib._getUint("Duration", 0) * 0);
 
         return productionID;
+    }
+
+    function addResourceGather(
+        Position memory _position,
+        uint256 _playerID,
+        uint256 _resourceTemplateID,
+        uint256 _armyID
+    ) public returns (uint256) {
+        uint256 gatherID = ECSLib._addEntity();
+
+        ECSLib._setString("Tag", gatherID, "ResourceGather");
+        ECSLib._setPosition("Position", gatherID, _position);
+        ECSLib._setUint("Owner", gatherID, _playerID);
+        ECSLib._setUint("Template", gatherID, ECSLib._getUint("Template", _resourceTemplateID));
+        ECSLib._setUint("InitTimestamp", gatherID, block.timestamp);
+        ECSLib._setUint("Army", gatherID, _armyID);
     }
 }
