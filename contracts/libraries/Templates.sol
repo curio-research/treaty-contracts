@@ -70,7 +70,7 @@ library Templates {
         ECSLib._setUint("Defense", _armyID, 0);
         ECSLib._setUint("Load", _armyID, 0);
         ECSLib._setUint("LastTimestamp", _armyID, block.timestamp);
-        ECSLib._setUint("Capacity", _armyID, 10); // FIXME: temporary
+        ECSLib._setUint("Capacity", _armyID, 100); // FIXME: temporary
 
         return _armyID;
     }

@@ -256,8 +256,8 @@ contract GameFacet is UseStorage {
         uint256 cityID = ECSLib._getUint("City", _buildingID);
         GameLib._entityOwnershipCheckByAddress(cityID, msg.sender);
 
-        // Verify that enough time has passed
-        // require(ECSLib._getUint("InitTimestamp", _productionID) + ECSLib._getUint("Duration", _productionID) >= block.timestamp, "CURIO: Need more time for production");
+        // Verify that enough time has passed for the given amount
+        require(block.timestamp >= (ECSLib._getUint("InitTimestamp", _productionID) + ECSLib._getUint("Duration", _productionID) * ECSLib._getUint("Amount", _productionID)), "CURIO: Need more time for production");
 
         // Update inventory
         uint256 inventoryID = ECSLib._getUint("Inventory", _productionID);
