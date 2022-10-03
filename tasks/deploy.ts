@@ -1,3 +1,4 @@
+import { Curio } from './../typechain-types/hardhat-diamond-abi/Curio';
 import { GameLib } from './../typechain-types/libraries/GameLib';
 import { ECSLib } from './../typechain-types/libraries/ECSLib';
 import { publishDeployment, isConnectionLive } from './../api/deployment';
@@ -6,9 +7,8 @@ import { HardhatRuntimeEnvironment, HardhatArguments } from 'hardhat/types';
 import { deployProxy, printDivider } from './util/deployHelper';
 import { createTemplates, generateWorldConstants, SMALL_MAP_INPUT } from './util/constants';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
-import { chooseRandomEmptyLandPosition, encodeTileMap, generateBlankFixmap, generateMap, initializeFixmap } from './util/mapHelper';
-import { GameConfig } from '../api/types';
-import { COMPONENT_SPECS, getRightPos } from 'curio-vault';
+import { chooseRandomEmptyLandPosition, encodeTileMap, generateBlankFixmap, generateMap, initializeFixmap, spawnArmy } from './util/mapHelper';
+import { COMPONENT_SPECS, getRightPos, GameConfig } from 'curio-vault';
 
 /**
  * Deploy script for publishing games
@@ -47,7 +47,7 @@ task('deploy', 'deploy contracts')
 
       const ecsLib = await deployProxy<ECSLib>('ECSLib', player1, hre, []);
       const gameLib = await deployProxy<GameLib>('GameLib', player1, hre, [], { ECSLib: ecsLib.address });
-      const templates = await deployProxy<GameLib>('Templates', player1, hre, [], { GameLib: gameLib.address, ECSLib: ecsLib.address });
+      const templates = await deployProxy<any>('Templates', player1, hre, [], { GameLib: gameLib.address, ECSLib: ecsLib.address });
 
       const diamondAddr = await deployDiamond(hre, [worldConstants]);
       const diamond = await getDiamond(hre, diamondAddr);
@@ -91,6 +91,22 @@ task('deploy', 'deploy contracts')
           await (await diamond.connect(player1).initializePlayer(player1Pos, 'Alice', { gasLimit: 100_000_000 })).wait();
           await (await diamond.connect(player2).initializePlayer(player2Pos, 'Bob', { gasLimit: 100_000_000 })).wait();
           console.log(`✦ player initialization took ${Math.floor(performance.now() - startTime)} ms`);
+
+          const player1ID = (await diamond.getPlayerId(player1.address)).toNumber();
+
+          let armySpawnPos = { x: -1, y: -1 };
+          for (let i = 0; i < worldConstants.worldWidth; i++) {
+            for (let j = 0; j < worldConstants.worldHeight; j++) {
+              if (tileMap[i][j] === 1 || tileMap[i][j] === 2 || tileMap[i][j] === 3) {
+                armySpawnPos = { x: i, y: j };
+              }
+            }
+          }
+
+          // add an army on a gold mine (easy for testing gather resource)
+          await diamond.initializeTile(armySpawnPos);
+          // await templates.addArmy(player1ID, armySpawnPos);
+          await spawnArmy(diamond, player1ID, armySpawnPos);
         }
       }
 

@@ -256,8 +256,8 @@ contract GameFacet is UseStorage {
         uint256 cityID = ECSLib._getUint("City", _buildingID);
         GameLib._entityOwnershipCheckByAddress(cityID, msg.sender);
 
-        // Verify that enough time has passed
-        // require(ECSLib._getUint("InitTimestamp", _productionID) + ECSLib._getUint("Duration", _productionID) >= block.timestamp, "CURIO: Need more time for production");
+        // Verify that enough time has passed for the given amount
+        require(block.timestamp >= (ECSLib._getUint("InitTimestamp", _productionID) + ECSLib._getUint("Duration", _productionID) * ECSLib._getUint("Amount", _productionID)), "CURIO: Need more time for production");
 
         // Update inventory
         uint256 inventoryID = ECSLib._getUint("Inventory", _productionID);
@@ -283,16 +283,12 @@ contract GameFacet is UseStorage {
         uint256 playerID = GameLib._getPlayer(msg.sender);
         require(tileID == NULL || ECSLib._getUint("Owner", ECSLib._getUint("City", tileID)) == playerID, "CURIO: Cannot gather on another player's territory");
 
+        require(GameLib._getArmyGather(_armyID) == 0, "CURIO: There is already a resource gathering in this location");
+
         // Verify that the army's capacity isn't full
         // TODO
 
-        // Start gathering process
-        uint256 gatherID = ECSLib._addEntity();
-        ECSLib._setString("Tag", gatherID, "ResourceGather");
-        ECSLib._setPosition("Position", gatherID, position);
-        ECSLib._setUint("Owner", gatherID, playerID);
-        ECSLib._setUint("Template", gatherID, ECSLib._getUint("Template", _resourceID));
-        ECSLib._setUint("InitTimestamp", gatherID, block.timestamp);
+        Templates.addResourceGather(position, playerID, _resourceID, _armyID);
     }
 
     function endGather(uint256 _armyID) external {
@@ -348,7 +344,7 @@ contract GameFacet is UseStorage {
         uint256 _cityID,
         uint256[] memory _templateIDs,
         uint256[] memory _amounts
-    ) external returns (uint256 armyID) {
+    ) external {
         GameLib._validEntityCheck(_cityID);
         GameLib._gamePauseCheck();
         GameLib._activePlayerCheck(msg.sender);
@@ -383,11 +379,10 @@ contract GameFacet is UseStorage {
         }
         speed /= GameLib._sum(_amounts);
 
+        Position memory position = ECSLib._getPosition("Position", _cityID);
+
         // Add army
-        armyID = ECSLib._addEntity();
-        ECSLib._setString("Tag", armyID, "Army");
-        ECSLib._setUint("Owner", armyID, playerID);
-        ECSLib._setPosition("Position", armyID, ECSLib._getPosition("Position", _cityID));
+        uint256 armyID = Templates.addArmy(playerID, position);
         ECSLib._setUint("Health", armyID, health);
         ECSLib._setUint("Speed", armyID, speed);
         ECSLib._setUint("Attack", armyID, attack);
@@ -420,10 +415,11 @@ contract GameFacet is UseStorage {
         // Return troops to corresponding inventories
         uint256[] memory constituentIDs = GameLib._getArmyConstituents(_armyID);
         for (uint256 i = 0; i < constituentIDs.length; i++) {
-            uint256 inventoryID = GameLib._getInventory(cityID, ECSLib._getUint("Template", constituentIDs[i]));
-            uint256 amount = ECSLib._getUint("Amount", inventoryID) + ECSLib._getUint("Amount", constituentIDs[i]);
+            uint256 cityInventoryID = GameLib._getInventory(cityID, ECSLib._getUint("Template", constituentIDs[i]));
+            uint256 amount = ECSLib._getUint("Amount", cityInventoryID) + ECSLib._getUint("Amount", constituentIDs[i]);
+
             // require(_amount <= gs().worldConstants.maxInventoryCapacity, "CURIO: Too many troops");
-            ECSLib._setUint("Amount", inventoryID, amount);
+            ECSLib._setUint("Amount", cityInventoryID, amount);
         }
 
         // Disband army
@@ -500,6 +496,10 @@ contract GameFacet is UseStorage {
         if (_increase > ECSLib._getUint("Load", _armyID) - _armyInventoryAmount) _increase = ECSLib._getUint("Load", _armyID) - _armyInventoryAmount;
         ECSLib._setUint("Amount", GameLib._getArmyInventory(_armyID, GameLib._getTemplateByInventoryType("Gold")), _armyInventoryAmount + _increase);
         GameLib._removeArmy(_targetArmyID);
+    }
+
+    function initializeTile(Position memory _position) public {
+        GameLib._initializeTile(_position);
     }
 
     /**
