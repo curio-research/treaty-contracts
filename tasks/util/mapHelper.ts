@@ -183,28 +183,11 @@ export const initializeFixmap = async (hre: HardhatRuntimeEnvironment, diamond: 
     const playerID = players[i];
     const playerPosition = playerPositions[i];
 
-    await spawnArmy(diamond, playerID, playerPosition);
+    await diamond.createArmy(playerID, playerPosition);
   }
 };
 
 export const addGetEntity = async (diamond: Curio): Promise<number> => {
   await (await diamond.addEntity()).wait();
   return (await diamond.getEntity()).toNumber();
-};
-
-// add army entity directly to the map
-// FIXME: this should be using templates directly!
-export const spawnArmy = async (diamond: Curio, playerID: number, position: position) => {
-  const entity = await addGetEntity(diamond);
-
-  await (await diamond.setComponentValue(Owner, entity, encodeUint256(playerID))).wait();
-  await (await diamond.setComponentValue(Tag, entity, encodeString(Tags.Army))).wait();
-  await (await diamond.setComponentValue(Position, entity, encodePosition(position))).wait();
-  await (await diamond.setComponentValue(Health, entity, encodeUint256(10))).wait();
-  await (await diamond.setComponentValue(Speed, entity, encodeUint256(10))).wait();
-  await (await diamond.setComponentValue(Attack, entity, encodeUint256(10))).wait();
-  await (await diamond.setComponentValue(Defense, entity, encodeUint256(10))).wait();
-  await (await diamond.setComponentValue(Load, entity, encodeUint256(10))).wait();
-  await (await diamond.setComponentValue(LastTimestamp, entity, encodeUint256(1))).wait();
-  await (await diamond.setComponentValue(Capacity, entity, encodeUint256(100))).wait();
 };

@@ -7,7 +7,7 @@ import { HardhatRuntimeEnvironment, HardhatArguments } from 'hardhat/types';
 import { deployProxy, printDivider } from './util/deployHelper';
 import { createTemplates, generateWorldConstants, SMALL_MAP_INPUT } from './util/constants';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
-import { chooseRandomEmptyLandPosition, encodeTileMap, generateBlankFixmap, generateMap, initializeFixmap, spawnArmy } from './util/mapHelper';
+import { chooseRandomEmptyLandPosition, encodeTileMap, generateBlankFixmap, generateMap, initializeFixmap } from './util/mapHelper';
 import { COMPONENT_SPECS, getRightPos, GameConfig } from 'curio-vault';
 
 /**
@@ -55,7 +55,7 @@ task('deploy', 'deploy contracts')
       const facets = [
         { name: 'GameFacet', libraries: { ECSLib: ecsLib.address, GameLib: gameLib.address, Templates: templates.address } },
         { name: 'GetterFacet', libraries: { ECSLib: ecsLib.address, GameLib: gameLib.address } },
-        { name: 'AdminFacet', libraries: { ECSLib: ecsLib.address, GameLib: gameLib.address } },
+        { name: 'AdminFacet', libraries: { ECSLib: ecsLib.address, GameLib: gameLib.address, Templates: templates.address } },
       ];
       await deployFacets(hre, diamondAddr, facets, player1);
 
@@ -106,10 +106,7 @@ task('deploy', 'deploy contracts')
 
           // add an army on a gold mine (easy for testing gather resource)
           await diamond.initializeTile(armySpawnPos);
-          // await templates.addArmy(player1ID, armySpawnPos);
-          await spawnArmy(diamond, player1ID, armySpawnPos);
-
-          await spawnArmy(diamond, player2ID, player2Pos);
+          await diamond.createArmy(player1ID, armySpawnPos);
         }
       }
 

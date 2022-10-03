@@ -47,6 +47,7 @@ export interface AdminFacetInterface extends utils.Interface {
   functions: {
     "addEntity()": FunctionFragment;
     "bulkInitializeTiles((uint256,uint256)[])": FunctionFragment;
+    "createArmy(uint256,(uint256,uint256))": FunctionFragment;
     "reactivatePlayer(address)": FunctionFragment;
     "registerComponents(address,(string,uint8)[])": FunctionFragment;
     "registerDefaultComponents(address)": FunctionFragment;
@@ -59,6 +60,7 @@ export interface AdminFacetInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "addEntity"
       | "bulkInitializeTiles"
+      | "createArmy"
       | "reactivatePlayer"
       | "registerComponents"
       | "registerDefaultComponents"
@@ -71,6 +73,10 @@ export interface AdminFacetInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "bulkInitializeTiles",
     values: [PositionStruct[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "createArmy",
+    values: [PromiseOrValue<BigNumberish>, PositionStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "reactivatePlayer",
@@ -106,6 +112,7 @@ export interface AdminFacetInterface extends utils.Interface {
     functionFragment: "bulkInitializeTiles",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "createArmy", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "reactivatePlayer",
     data: BytesLike
@@ -170,6 +177,12 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    createArmy(
+      _playerId: PromiseOrValue<BigNumberish>,
+      _position: PositionStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     reactivatePlayer(
       _address: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -213,6 +226,12 @@ export interface AdminFacet extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  createArmy(
+    _playerId: PromiseOrValue<BigNumberish>,
+    _position: PositionStruct,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   reactivatePlayer(
     _address: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -253,6 +272,12 @@ export interface AdminFacet extends BaseContract {
       _positions: PositionStruct[],
       overrides?: CallOverrides
     ): Promise<void>;
+
+    createArmy(
+      _playerId: PromiseOrValue<BigNumberish>,
+      _position: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     reactivatePlayer(
       _address: PromiseOrValue<string>,
@@ -300,6 +325,12 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    createArmy(
+      _playerId: PromiseOrValue<BigNumberish>,
+      _position: PositionStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     reactivatePlayer(
       _address: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -341,6 +372,12 @@ export interface AdminFacet extends BaseContract {
 
     bulkInitializeTiles(
       _positions: PositionStruct[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    createArmy(
+      _playerId: PromiseOrValue<BigNumberish>,
+      _position: PositionStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
