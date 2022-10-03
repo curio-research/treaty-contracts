@@ -1,4 +1,5 @@
 import { Curio } from './../typechain-types/hardhat-diamond-abi/Curio';
+import chalk from 'chalk';
 import { GameLib } from './../typechain-types/libraries/GameLib';
 import { ECSLib } from './../typechain-types/libraries/ECSLib';
 import { publishDeployment, isConnectionLive } from './../api/deployment';
@@ -8,7 +9,7 @@ import { deployProxy, printDivider } from './util/deployHelper';
 import { createTemplates, generateWorldConstants, SMALL_MAP_INPUT } from './util/constants';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
 import { chooseRandomEmptyLandPosition, encodeTileMap, generateBlankFixmap, generateMap, initializeFixmap } from './util/mapHelper';
-import { COMPONENT_SPECS, getRightPos, GameConfig } from 'curio-vault';
+import { COMPONENT_SPECS, getRightPos, GameConfig, TILE_TYPE } from 'curio-vault';
 
 /**
  * Deploy script for publishing games
@@ -98,7 +99,7 @@ task('deploy', 'deploy contracts')
           let armySpawnPos = { x: -1, y: -1 };
           for (let i = 0; i < worldConstants.worldWidth; i++) {
             for (let j = 0; j < worldConstants.worldHeight; j++) {
-              if (tileMap[i][j] === 1 || tileMap[i][j] === 2 || tileMap[i][j] === 3) {
+              if (tileMap[i][j] === TILE_TYPE.GOLDMINE_LV1 || tileMap[i][j] === TILE_TYPE.GOLDMINE_LV2 || tileMap[i][j] === TILE_TYPE.GOLDMINE_LV3) {
                 armySpawnPos = { x: i, y: j };
               }
             }
@@ -124,6 +125,8 @@ task('deploy', 'deploy contracts')
       if (port === undefined || port.toLowerCase() === 'true') {
         hre.run('port'); // if no port flag present, assume always port to Vault
       }
+
+      console.log(chalk.bgGreen.black(' Curio Game Deployed '));
     } catch (err: any) {
       console.log(err.message);
     }
