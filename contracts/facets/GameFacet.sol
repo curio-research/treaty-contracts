@@ -283,6 +283,9 @@ contract GameFacet is UseStorage {
         uint256 playerID = GameLib._getPlayer(msg.sender);
         require(tileID == NULL || ECSLib._getUint("Owner", ECSLib._getUint("City", tileID)) == playerID, "CURIO: Cannot gather on another player's territory");
 
+        uint256 gatherID = GameLib._getArmyGather(_armyID);
+        require(gatherID == 0, "CURIO: There is already a resource gathering in this location");
+
         // Verify that the army's capacity isn't full
         // TODO
 
@@ -342,7 +345,7 @@ contract GameFacet is UseStorage {
         uint256 _cityID,
         uint256[] memory _templateIDs,
         uint256[] memory _amounts
-    ) external returns (uint256 armyID) {
+    ) external {
         GameLib._validEntityCheck(_cityID);
         GameLib._gamePauseCheck();
         GameLib._activePlayerCheck(msg.sender);
@@ -377,11 +380,10 @@ contract GameFacet is UseStorage {
         }
         speed /= GameLib._sum(_amounts);
 
+        Position memory position = ECSLib._getPosition("Position", _cityID);
+
         // Add army
-        armyID = ECSLib._addEntity();
-        ECSLib._setString("Tag", armyID, "Army");
-        ECSLib._setUint("Owner", armyID, playerID);
-        ECSLib._setPosition("Position", armyID, ECSLib._getPosition("Position", _cityID));
+        uint256 armyID = Templates.addArmy(playerID, position);
         ECSLib._setUint("Health", armyID, health);
         ECSLib._setUint("Speed", armyID, speed);
         ECSLib._setUint("Attack", armyID, attack);
@@ -414,10 +416,12 @@ contract GameFacet is UseStorage {
         // Return troops to corresponding inventories
         uint256[] memory constituentIDs = GameLib._getArmyConstituents(_armyID);
         for (uint256 i = 0; i < constituentIDs.length; i++) {
-            uint256 inventoryID = GameLib._getInventory(cityID, ECSLib._getUint("Template", constituentIDs[i]));
-            uint256 amount = ECSLib._getUint("Amount", inventoryID) + ECSLib._getUint("Amount", constituentIDs[i]);
+            uint256 cityInventoryID = GameLib._getInventory(cityID, ECSLib._getUint("Template", constituentIDs[i]));
+            uint256 amount = ECSLib._getUint("Amount", cityInventoryID) + ECSLib._getUint("Amount", constituentIDs[i]);
+            // TODO: add gold cap check
             // require(_amount <= gs().worldConstants.maxInventoryCapacity, "CURIO: Too many troops");
-            ECSLib._setUint("Amount", inventoryID, amount);
+            ECSLib._setUint("Amount", cityInventoryID, amount);
+            // ECSLib._removeEntity(_entity);
         }
 
         // Disband army

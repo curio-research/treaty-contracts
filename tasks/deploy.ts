@@ -47,7 +47,7 @@ task('deploy', 'deploy contracts')
 
       const ecsLib = await deployProxy<ECSLib>('ECSLib', player1, hre, []);
       const gameLib = await deployProxy<GameLib>('GameLib', player1, hre, [], { ECSLib: ecsLib.address });
-      const templates = await deployProxy<GameLib>('Templates', player1, hre, [], { GameLib: gameLib.address, ECSLib: ecsLib.address });
+      const templates = await deployProxy<any>('Templates', player1, hre, [], { GameLib: gameLib.address, ECSLib: ecsLib.address });
 
       const diamondAddr = await deployDiamond(hre, [worldConstants]);
       const diamond = await getDiamond(hre, diamondAddr);
@@ -105,6 +105,7 @@ task('deploy', 'deploy contracts')
 
           // add an army on a gold mine (easy for testing gather resource)
           await diamond.initializeTile(armySpawnPos);
+          // await templates.addArmy(player1ID, armySpawnPos);
           await spawnArmy(diamond, player1ID, armySpawnPos);
         }
       }

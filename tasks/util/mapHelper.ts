@@ -1,8 +1,9 @@
+import { Curio } from './../../typechain-types/hardhat-diamond-abi/Curio';
 import { decodeBigNumberishArr } from './../../util/serde/common';
 import { Component__factory } from './../../typechain-types/factories/contracts/Component__factory';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { position } from './../../util/types/common';
-import { TILE_TYPE, componentNameToId, encodePosition, getImmediateSurroundingPositions, TileMap, Tag, Position, Owner, Health, Speed, Attack, Defense, Load, LastTimestamp, Tags, encodeString, encodeUint256, Curio, Capacity } from 'curio-vault';
+import { TILE_TYPE, componentNameToId, encodePosition, getImmediateSurroundingPositions, TileMap, Tag, Position, Owner, Health, Speed, Attack, Defense, Load, LastTimestamp, Tags, encodeString, encodeUint256, Capacity } from 'curio-vault';
 
 const MAX_UINT256 = BigInt(Math.pow(2, 256)) - BigInt(1);
 
@@ -188,8 +189,7 @@ export const initializeFixmap = async (hre: HardhatRuntimeEnvironment, diamond: 
 
 export const addGetEntity = async (diamond: Curio): Promise<number> => {
   await (await diamond.addEntity()).wait();
-  const entity = (await diamond.getEntity()).toNumber();
-  return entity;
+  return (await diamond.getEntity()).toNumber();
 };
 
 // add army entity directly to the map

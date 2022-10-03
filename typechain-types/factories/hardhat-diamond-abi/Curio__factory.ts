@@ -584,13 +584,7 @@ const _abi = [
       },
     ],
     name: "organizeArmy",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "armyID",
-        type: "uint256",
-      },
-    ],
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },

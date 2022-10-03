@@ -507,7 +507,7 @@ export interface GameFacet extends BaseContract {
       _templateIDs: PromiseOrValue<BigNumberish>[],
       _amounts: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    ): Promise<void>;
 
     packCity(
       _cityID: PromiseOrValue<BigNumberish>,
