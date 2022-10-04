@@ -1,4 +1,5 @@
 import { Curio } from './../typechain-types/hardhat-diamond-abi/Curio';
+import chalk from 'chalk';
 import { GameLib } from './../typechain-types/libraries/GameLib';
 import { ECSLib } from './../typechain-types/libraries/ECSLib';
 import { publishDeployment, isConnectionLive } from './../api/deployment';
@@ -7,8 +8,8 @@ import { HardhatRuntimeEnvironment, HardhatArguments } from 'hardhat/types';
 import { deployProxy, printDivider } from './util/deployHelper';
 import { createTemplates, generateWorldConstants, SMALL_MAP_INPUT } from './util/constants';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
-import { chooseRandomEmptyLandPosition, encodeTileMap, generateBlankFixmap, generateMap, initializeFixmap, spawnArmy } from './util/mapHelper';
-import { COMPONENT_SPECS, getRightPos, GameConfig } from 'curio-vault';
+import { chooseRandomEmptyLandPosition, encodeTileMap, generateBlankFixmap, generateMap, initializeFixmap } from './util/mapHelper';
+import { COMPONENT_SPECS, getRightPos, GameConfig, TILE_TYPE, Speed, encodeUint256, getTopPos } from 'curio-vault';
 
 /**
  * Deploy script for publishing games
@@ -55,7 +56,7 @@ task('deploy', 'deploy contracts')
       const facets = [
         { name: 'GameFacet', libraries: { ECSLib: ecsLib.address, GameLib: gameLib.address, Templates: templates.address } },
         { name: 'GetterFacet', libraries: { ECSLib: ecsLib.address, GameLib: gameLib.address } },
-        { name: 'AdminFacet', libraries: { ECSLib: ecsLib.address, GameLib: gameLib.address } },
+        { name: 'AdminFacet', libraries: { ECSLib: ecsLib.address, GameLib: gameLib.address, Templates: templates.address } },
       ];
       await deployFacets(hre, diamondAddr, facets, player1);
 
@@ -98,7 +99,7 @@ task('deploy', 'deploy contracts')
           let armySpawnPos = { x: -1, y: -1 };
           for (let i = 0; i < worldConstants.worldWidth; i++) {
             for (let j = 0; j < worldConstants.worldHeight; j++) {
-              if (tileMap[i][j] === 1 || tileMap[i][j] === 2 || tileMap[i][j] === 3) {
+              if (tileMap[i][j] === TILE_TYPE.GOLDMINE_LV1 || tileMap[i][j] === TILE_TYPE.GOLDMINE_LV2 || tileMap[i][j] === TILE_TYPE.GOLDMINE_LV3) {
                 armySpawnPos = { x: i, y: j };
               }
             }
@@ -106,10 +107,14 @@ task('deploy', 'deploy contracts')
 
           // add an army on a gold mine (easy for testing gather resource)
           await diamond.initializeTile(armySpawnPos);
-          // await templates.addArmy(player1ID, armySpawnPos);
-          await spawnArmy(diamond, player1ID, armySpawnPos);
+          await diamond.createArmy(player1ID, armySpawnPos);
+          let entity = (await diamond.getEntity()).toNumber();
+          await (await diamond.setComponentValue(Speed, entity, encodeUint256(2))).wait();
 
-          await spawnArmy(diamond, player2ID, player2Pos);
+          await diamond.initializeTile(getTopPos(armySpawnPos));
+          await diamond.createArmy(player2ID, getTopPos(armySpawnPos));
+          entity = (await diamond.getEntity()).toNumber();
+          await (await diamond.setComponentValue(Speed, entity, encodeUint256(2))).wait();
         }
       }
 
@@ -127,6 +132,8 @@ task('deploy', 'deploy contracts')
       if (port === undefined || port.toLowerCase() === 'true') {
         hre.run('port'); // if no port flag present, assume always port to Vault
       }
+
+      console.log(chalk.bgGreen.black(' Curio Game Deployed '));
     } catch (err: any) {
       console.log(err.message);
     }

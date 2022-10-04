@@ -155,7 +155,7 @@ library GameLib {
 
         // Get army's and resource's remaining capacities
         uint256 templateID = ECSLib._getUint("Template", gatherID);
-        uint256 inventoryID = _getArmyInventory(_armyID, templateID); // FIXME: BUG
+        uint256 inventoryID = _getArmyInventory(_armyID, templateID);
         uint256 armyAmount;
         if (inventoryID == _NULL()) {
             armyAmount = 0;
@@ -341,12 +341,6 @@ library GameLib {
         uint256 _balance = _goldInventoryID != 0 ? ECSLib._getUint("Amount", _goldInventoryID) : 0;
         return _balance;
     }
-
-    // function _getDebuffedArmyDamagePerHit(uint256[] memory _troopEntities) public view returns (uint256) {
-    //     uint256 _infantryPercentage = _getInfantryPercentage(_troopEntities);
-    //     uint256 _debuffFactor = (gs().worldConstants.debuffFactor * (100 - _infantryPercentage)) / 100; // Only non-infantries are debuffed
-    //     return (_getArmyDamagePerHit(_troopEntities) * (100 - _debuffFactor)) / 100;
-    // }
 
     function _getCityCenter(uint256 _cityID) public returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);

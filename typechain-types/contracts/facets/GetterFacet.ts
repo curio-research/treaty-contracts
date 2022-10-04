@@ -33,16 +33,6 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
   y: BigNumber;
 };
 
-export type TileStruct = {
-  isInitialized: PromiseOrValue<boolean>;
-  terrain: PromiseOrValue<BigNumberish>;
-};
-
-export type TileStructOutput = [boolean, number] & {
-  isInitialized: boolean;
-  terrain: number;
-};
-
 export type WorldConstantsStruct = {
   admin: PromiseOrValue<string>;
   worldWidth: PromiseOrValue<BigNumberish>;
@@ -115,8 +105,6 @@ export interface GetterFacetInterface extends utils.Interface {
     "getPlayerId(address)": FunctionFragment;
     "getSettlerAt((uint256,uint256))": FunctionFragment;
     "getTemplateByInventoryType(string)": FunctionFragment;
-    "getTemplateId(string)": FunctionFragment;
-    "getTileAt((uint256,uint256))": FunctionFragment;
     "getWorldConstants()": FunctionFragment;
     "isPlayerInitialized(address)": FunctionFragment;
   };
@@ -138,8 +126,6 @@ export interface GetterFacetInterface extends utils.Interface {
       | "getPlayerId"
       | "getSettlerAt"
       | "getTemplateByInventoryType"
-      | "getTemplateId"
-      | "getTileAt"
       | "getWorldConstants"
       | "isPlayerInitialized"
   ): FunctionFragment;
@@ -202,14 +188,6 @@ export interface GetterFacetInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "getTemplateId",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getTileAt",
-    values: [PositionStruct]
-  ): string;
-  encodeFunctionData(
     functionFragment: "getWorldConstants",
     values?: undefined
   ): string;
@@ -269,11 +247,6 @@ export interface GetterFacetInterface extends utils.Interface {
     functionFragment: "getTemplateByInventoryType",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "getTemplateId",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "getTileAt", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getWorldConstants",
     data: BytesLike
@@ -377,16 +350,6 @@ export interface GetterFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    getTemplateId(
-      _inventoryType: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    getTileAt(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<[TileStructOutput]>;
-
     getWorldConstants(
       overrides?: CallOverrides
     ): Promise<[WorldConstantsStructOutput]>;
@@ -461,16 +424,6 @@ export interface GetterFacet extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  getTemplateId(
-    _inventoryType: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  getTileAt(
-    _pos: PositionStruct,
-    overrides?: CallOverrides
-  ): Promise<TileStructOutput>;
-
   getWorldConstants(
     overrides?: CallOverrides
   ): Promise<WorldConstantsStructOutput>;
@@ -544,16 +497,6 @@ export interface GetterFacet extends BaseContract {
       _inventoryType: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    getTemplateId(
-      _inventoryType: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getTileAt(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<TileStructOutput>;
 
     getWorldConstants(
       overrides?: CallOverrides
@@ -632,16 +575,6 @@ export interface GetterFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    getTemplateId(
-      _inventoryType: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    getTileAt(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     getWorldConstants(overrides?: CallOverrides): Promise<BigNumber>;
 
     isPlayerInitialized(
@@ -713,16 +646,6 @@ export interface GetterFacet extends BaseContract {
     getTemplateByInventoryType(
       _inventoryType: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    getTemplateId(
-      _inventoryType: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    getTileAt(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getWorldConstants(overrides?: CallOverrides): Promise<PopulatedTransaction>;

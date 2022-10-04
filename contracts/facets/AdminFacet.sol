@@ -6,6 +6,7 @@ import {GameLib} from "contracts/libraries/GameLib.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
 import {ComponentSpec, Position, TERRAIN, Tile, VALUE_TYPE, WorldConstants} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
+import "contracts/libraries/Templates.sol";
 import {Set} from "contracts/Set.sol";
 
 /// @title Admin facet
@@ -136,5 +137,10 @@ contract AdminFacet is UseStorage {
         bytes memory _value
     ) external onlyAdmin {
         ECSLib._setComponentValue(_componentName, _entity, _value);
+    }
+
+    // entity creation for testing
+    function createArmy(uint256 _playerId, Position memory _position) external onlyAdmin returns (uint256) {
+        return Templates._addArmy(_playerId, _position);
     }
 }

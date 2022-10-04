@@ -1,4 +1,4 @@
-import { Attack, Cost, Defense, Duration, encodeString, encodeUint256, Health, InventoryType, InventoryTypeOptions, Speed, Load, Tag, Tags } from 'curio-vault';
+import { Attack, Cost, Defense, Duration, encodeString, encodeUint256, Health, InventoryType, InventoryTypeOptions, Speed, Load, Tag, Tags, MoveCooldown } from 'curio-vault';
 import { WorldConstantsStruct, Curio } from './../../typechain-types/hardhat-diamond-abi/Curio';
 import { addGetEntity } from './mapHelper';
 import { MapInput } from './types';
@@ -49,10 +49,12 @@ export const createTemplates = async (diamond: Curio) => {
   await (await diamond.setComponentValue(Tag, entity, encodeString(Tags.TroopTemplate))).wait();
   await (await diamond.setComponentValue(InventoryType, entity, encodeString(InventoryTypeOptions.Horseman))).wait();
   await (await diamond.setComponentValue(Health, entity, encodeUint256(120))).wait();
-  await (await diamond.setComponentValue(Speed, entity, encodeUint256(5))).wait();
+  await (await diamond.setComponentValue(Speed, entity, encodeUint256(2))).wait(); // how many tiles it can skip
+  await (await diamond.setComponentValue(MoveCooldown, entity, encodeUint256(1))).wait();
   await (await diamond.setComponentValue(Attack, entity, encodeUint256(60))).wait();
   await (await diamond.setComponentValue(Defense, entity, encodeUint256(120))).wait();
-  await (await diamond.setComponentValue(Duration, entity, encodeUint256(5))).wait();
+  // await (await diamond.setComponentValue(Duration, entity, encodeUint256(5))).wait();
+  await (await diamond.setComponentValue(Duration, entity, encodeUint256(0))).wait();
   await (await diamond.setComponentValue(Load, entity, encodeUint256(5))).wait();
   await (await diamond.setComponentValue(Cost, entity, encodeUint256(1))).wait();
 
@@ -62,10 +64,12 @@ export const createTemplates = async (diamond: Curio) => {
   await (await diamond.setComponentValue(Tag, entity, encodeString(Tags.TroopTemplate))).wait();
   await (await diamond.setComponentValue(InventoryType, entity, encodeString(InventoryTypeOptions.Warrior))).wait();
   await (await diamond.setComponentValue(Health, entity, encodeUint256(120))).wait();
-  await (await diamond.setComponentValue(Speed, entity, encodeUint256(5))).wait();
+  await (await diamond.setComponentValue(Speed, entity, encodeUint256(1))).wait();
+  await (await diamond.setComponentValue(MoveCooldown, entity, encodeUint256(1))).wait();
   await (await diamond.setComponentValue(Attack, entity, encodeUint256(60))).wait();
   await (await diamond.setComponentValue(Defense, entity, encodeUint256(120))).wait();
-  await (await diamond.setComponentValue(Duration, entity, encodeUint256(5))).wait();
+  // await (await diamond.setComponentValue(Duration, entity, encodeUint256(5))).wait();
+  await (await diamond.setComponentValue(Duration, entity, encodeUint256(0))).wait();
   await (await diamond.setComponentValue(Load, entity, encodeUint256(6))).wait();
   await (await diamond.setComponentValue(Cost, entity, encodeUint256(1))).wait();
 
@@ -75,10 +79,12 @@ export const createTemplates = async (diamond: Curio) => {
   await (await diamond.setComponentValue(Tag, entity, encodeString(Tags.TroopTemplate))).wait();
   await (await diamond.setComponentValue(InventoryType, entity, encodeString(InventoryTypeOptions.Slinger))).wait();
   await (await diamond.setComponentValue(Health, entity, encodeUint256(125))).wait();
-  await (await diamond.setComponentValue(Speed, entity, encodeUint256(5))).wait();
+  await (await diamond.setComponentValue(Speed, entity, encodeUint256(1))).wait();
+  await (await diamond.setComponentValue(MoveCooldown, entity, encodeUint256(1))).wait();
   await (await diamond.setComponentValue(Attack, entity, encodeUint256(60))).wait();
   await (await diamond.setComponentValue(Defense, entity, encodeUint256(125))).wait();
-  await (await diamond.setComponentValue(Duration, entity, encodeUint256(5))).wait();
+  // await (await diamond.setComponentValue(Duration, entity, encodeUint256(5))).wait();
+  await (await diamond.setComponentValue(Duration, entity, encodeUint256(0))).wait();
   await (await diamond.setComponentValue(Load, entity, encodeUint256(6))).wait();
   await (await diamond.setComponentValue(Cost, entity, encodeUint256(1))).wait();
 
