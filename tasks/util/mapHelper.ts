@@ -3,7 +3,7 @@ import { decodeBigNumberishArr } from './../../util/serde/common';
 import { Component__factory } from './../../typechain-types/factories/contracts/Component__factory';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { position } from './../../util/types/common';
-import { TILE_TYPE, componentNameToId, encodePosition, getImmediateSurroundingPositions, TileMap, Tag, Position, Owner, Health, Speed, Attack, Defense, Load, LastTimestamp, Tags, encodeString, encodeUint256, Capacity } from 'curio-vault';
+import { TILE_TYPE, componentNameToId, encodePosition, getImmediateSurroundingPositions, TileMap, Tag, Position, Owner, Health, Speed, Attack, Defense, Load, LastTimestamp, Tags, encodeString, encodeUint256, Capacity, getRightPos } from 'curio-vault';
 
 const MAX_UINT256 = BigInt(Math.pow(2, 256)) - BigInt(1);
 
@@ -179,14 +179,15 @@ export const initializeFixmap = async (hre: HardhatRuntimeEnvironment, diamond: 
   const players = [player1Id];
 
   // spawn armies
-  for (let i = 0; i < players.length; i++) {
-    const playerID = players[i];
-    const playerPosition = playerPositions[i];
 
-    await diamond.createArmy(playerID, playerPosition);
-    const entity = (await diamond.getEntity()).toNumber();
-    await (await diamond.setComponentValue(Speed, entity, encodeUint256(2))).wait();
-  }
+  // create army at base
+  await diamond.createArmy(player1Id, getRightPos(player1Pos));
+  let entity = (await diamond.getEntity()).toNumber();
+  await (await diamond.setComponentValue(Speed, entity, encodeUint256(2))).wait();
+
+  await diamond.createArmy(player2Id, getRightPos(getRightPos(player1Pos)));
+  entity = (await diamond.getEntity()).toNumber();
+  await (await diamond.setComponentValue(Speed, entity, encodeUint256(2))).wait();
 };
 
 export const addGetEntity = async (diamond: Curio): Promise<number> => {

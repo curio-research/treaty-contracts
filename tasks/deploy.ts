@@ -9,7 +9,7 @@ import { deployProxy, printDivider } from './util/deployHelper';
 import { createTemplates, generateWorldConstants, SMALL_MAP_INPUT } from './util/constants';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
 import { chooseRandomEmptyLandPosition, encodeTileMap, generateBlankFixmap, generateMap, initializeFixmap } from './util/mapHelper';
-import { COMPONENT_SPECS, getRightPos, GameConfig, TILE_TYPE } from 'curio-vault';
+import { COMPONENT_SPECS, getRightPos, GameConfig, TILE_TYPE, Speed, encodeUint256, getTopPos } from 'curio-vault';
 
 /**
  * Deploy script for publishing games
@@ -108,6 +108,13 @@ task('deploy', 'deploy contracts')
           // add an army on a gold mine (easy for testing gather resource)
           await diamond.initializeTile(armySpawnPos);
           await diamond.createArmy(player1ID, armySpawnPos);
+          let entity = (await diamond.getEntity()).toNumber();
+          await (await diamond.setComponentValue(Speed, entity, encodeUint256(2))).wait();
+
+          await diamond.initializeTile(getTopPos(armySpawnPos));
+          await diamond.createArmy(player2ID, getTopPos(armySpawnPos));
+          entity = (await diamond.getEntity()).toNumber();
+          await (await diamond.setComponentValue(Speed, entity, encodeUint256(2))).wait();
         }
       }
 
