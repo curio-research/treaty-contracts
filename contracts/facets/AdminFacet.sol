@@ -18,6 +18,14 @@ contract AdminFacet is UseStorage {
     // TODO: Question: How to reuse functions from Util so that they can be directly called by external parties?
 
     // ----------------------------------------------------------------------
+    // DEBUG FUNCTIONS
+    // ----------------------------------------------------------------------
+
+    function removeEntity(uint256 _entity) external onlyAdmin {
+        ECSLib._removeEntity(_entity);
+    }
+
+    // ----------------------------------------------------------------------
     // ADMIN FUNCTIONS
     // ----------------------------------------------------------------------
 
@@ -78,7 +86,7 @@ contract AdminFacet is UseStorage {
 
     // FIXME: be able to sync with vault
     function registerDefaultComponents(address _gameAddr) external onlyAdmin {
-        ComponentSpec[] memory _componentSpecs = new ComponentSpec[](31);
+        ComponentSpec[] memory _componentSpecs = new ComponentSpec[](34);
 
         _componentSpecs[0] = ComponentSpec({name: "IsComponent", valueType: VALUE_TYPE.BOOL});
         _componentSpecs[1] = ComponentSpec({name: "Tag", valueType: VALUE_TYPE.STRING});
@@ -100,17 +108,20 @@ contract AdminFacet is UseStorage {
         _componentSpecs[17] = ComponentSpec({name: "Attack", valueType: VALUE_TYPE.UINT});
         _componentSpecs[18] = ComponentSpec({name: "Defense", valueType: VALUE_TYPE.UINT});
         _componentSpecs[19] = ComponentSpec({name: "Speed", valueType: VALUE_TYPE.UINT});
-        _componentSpecs[20] = ComponentSpec({name: "City", valueType: VALUE_TYPE.UINT});
-        _componentSpecs[21] = ComponentSpec({name: "Keeper", valueType: VALUE_TYPE.UINT});
-        _componentSpecs[22] = ComponentSpec({name: "Amount", valueType: VALUE_TYPE.UINT});
-        _componentSpecs[23] = ComponentSpec({name: "InventoryType", valueType: VALUE_TYPE.STRING});
-        _componentSpecs[24] = ComponentSpec({name: "LastTimestamp", valueType: VALUE_TYPE.UINT});
-        _componentSpecs[25] = ComponentSpec({name: "Source", valueType: VALUE_TYPE.UINT});
-        _componentSpecs[26] = ComponentSpec({name: "Target", valueType: VALUE_TYPE.UINT});
-        _componentSpecs[27] = ComponentSpec({name: "Inventory", valueType: VALUE_TYPE.UINT});
-        _componentSpecs[28] = ComponentSpec({name: "Address", valueType: VALUE_TYPE.ADDRESS});
-        _componentSpecs[29] = ComponentSpec({name: "Treaty", valueType: VALUE_TYPE.ADDRESS});
-        _componentSpecs[30] = ComponentSpec({name: "Cost", valueType: VALUE_TYPE.UINT});
+        _componentSpecs[20] = ComponentSpec({name: "Load", valueType: VALUE_TYPE.UINT});
+        _componentSpecs[21] = ComponentSpec({name: "City", valueType: VALUE_TYPE.UINT});
+        _componentSpecs[22] = ComponentSpec({name: "Keeper", valueType: VALUE_TYPE.UINT});
+        _componentSpecs[23] = ComponentSpec({name: "Amount", valueType: VALUE_TYPE.UINT});
+        _componentSpecs[24] = ComponentSpec({name: "InventoryType", valueType: VALUE_TYPE.STRING});
+        _componentSpecs[25] = ComponentSpec({name: "LastTimestamp", valueType: VALUE_TYPE.UINT});
+        _componentSpecs[26] = ComponentSpec({name: "Source", valueType: VALUE_TYPE.UINT});
+        _componentSpecs[27] = ComponentSpec({name: "Target", valueType: VALUE_TYPE.UINT});
+        _componentSpecs[28] = ComponentSpec({name: "Inventory", valueType: VALUE_TYPE.UINT});
+        _componentSpecs[29] = ComponentSpec({name: "Address", valueType: VALUE_TYPE.ADDRESS});
+        _componentSpecs[30] = ComponentSpec({name: "Treaty", valueType: VALUE_TYPE.ADDRESS});
+        _componentSpecs[31] = ComponentSpec({name: "Cost", valueType: VALUE_TYPE.UINT});
+        _componentSpecs[32] = ComponentSpec({name: "Army", valueType: VALUE_TYPE.UINT});
+        _componentSpecs[33] = ComponentSpec({name: "Capacity", valueType: VALUE_TYPE.UINT});
 
         GameLib._registerComponents(_gameAddr, _componentSpecs);
     }

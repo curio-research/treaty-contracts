@@ -19,6 +19,17 @@ enum VALUE_TYPE {
     OTHER
 }
 
+enum QueryType {
+    Has,
+    HasVal
+}
+
+struct QueryCondition {
+    QueryType queryType;
+    bytes value;
+    string componentName;
+}
+
 struct ComponentSpec {
     string name;
     VALUE_TYPE valueType;
@@ -43,8 +54,9 @@ struct WorldConstants {
     uint256 maxCityCountPerPlayer;
     uint256 maxArmyCountPerPlayer;
     uint256 maxPlayerCount;
+    uint256 cityUpgradeGoldCost; // constant for now but realistically not ?
     uint256 maxInventoryCapacity;
-    uint256 cityUpgradeGoldCost;
+    uint256 cityPackCost;
     uint256 initCityGold;
     uint256 cityHealth;
     uint256 cityAttack;
@@ -52,6 +64,7 @@ struct WorldConstants {
     uint256 tileWidth;
     uint256 armyBattleRange;
     uint256 cityBattleRange;
+    uint256 cityAmount;
 }
 
 struct GameState {
@@ -63,6 +76,7 @@ struct GameState {
     uint256[][] encodedColumnBatches;
     address[] treaties;
     address entities;
+    uint256 entityNonce;
     string[] componentNames;
     mapping(string => address) components; // component name to contract address
     mapping(uint256 => address) ComponentEntityToAddress; // component id to contract address

@@ -35,6 +35,18 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
   y: BigNumber;
 };
 
+export type QueryConditionStruct = {
+  queryType: PromiseOrValue<BigNumberish>;
+  value: PromiseOrValue<BytesLike>;
+  componentName: PromiseOrValue<string>;
+};
+
+export type QueryConditionStructOutput = [number, string, string] & {
+  queryType: number;
+  value: string;
+  componentName: string;
+};
+
 export interface ECSLibInterface extends utils.Interface {
   functions: {
     "_concatenate(uint256[],uint256[])": FunctionFragment;
@@ -56,6 +68,7 @@ export interface ECSLibInterface extends utils.Interface {
     "_getUintArray(string,uint256)": FunctionFragment;
     "_getUintArrayComponent(string)": FunctionFragment;
     "_getUintComponent(string)": FunctionFragment;
+    "_queryChunk(uint8,string,bytes)": FunctionFragment;
   };
 
   getFunction(
@@ -79,6 +92,7 @@ export interface ECSLibInterface extends utils.Interface {
       | "_getUintArray"
       | "_getUintArrayComponent"
       | "_getUintComponent"
+      | "_queryChunk"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -157,6 +171,14 @@ export interface ECSLibInterface extends utils.Interface {
     functionFragment: "_getUintComponent",
     values: [PromiseOrValue<string>]
   ): string;
+  encodeFunctionData(
+    functionFragment: "_queryChunk",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BytesLike>
+    ]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "_concatenate",
@@ -220,6 +242,10 @@ export interface ECSLibInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "_getUintComponent",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_queryChunk",
     data: BytesLike
   ): Result;
 
@@ -422,6 +448,13 @@ export interface ECSLib extends BaseContract {
       _name: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[string]>;
+
+    _queryChunk(
+      _queryType: PromiseOrValue<BigNumberish>,
+      _componentName: PromiseOrValue<string>,
+      _value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<[QueryConditionStructOutput]>;
   };
 
   _concatenate(
@@ -529,6 +562,13 @@ export interface ECSLib extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
+  _queryChunk(
+    _queryType: PromiseOrValue<BigNumberish>,
+    _componentName: PromiseOrValue<string>,
+    _value: PromiseOrValue<BytesLike>,
+    overrides?: CallOverrides
+  ): Promise<QueryConditionStructOutput>;
+
   callStatic: {
     _concatenate(
       _arr1: PromiseOrValue<BigNumberish>[],
@@ -634,6 +674,13 @@ export interface ECSLib extends BaseContract {
       _name: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<string>;
+
+    _queryChunk(
+      _queryType: PromiseOrValue<BigNumberish>,
+      _componentName: PromiseOrValue<string>,
+      _value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<QueryConditionStructOutput>;
   };
 
   filters: {
@@ -775,6 +822,13 @@ export interface ECSLib extends BaseContract {
       _name: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    _queryChunk(
+      _queryType: PromiseOrValue<BigNumberish>,
+      _componentName: PromiseOrValue<string>,
+      _value: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -880,6 +934,13 @@ export interface ECSLib extends BaseContract {
 
     _getUintComponent(
       _name: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _queryChunk(
+      _queryType: PromiseOrValue<BigNumberish>,
+      _componentName: PromiseOrValue<string>,
+      _value: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

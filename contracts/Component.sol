@@ -12,6 +12,7 @@ contract Component {
      */
 
     address private gameAddr; // game diamond
+    Set immutable emptySet = new Set();
     Set private entities = new Set();
     mapping(uint256 => bytes) private entityToValueMap; // entity => value of entity component
     mapping(uint256 => address) private valueToEntitySetAddrMap; // value => address of set of entities with this component equal to this value
@@ -27,6 +28,8 @@ contract Component {
      * @param _entity entity ID
      */
     function getBytesValue(uint256 _entity) public view returns (bytes memory) {
+        require(has(_entity), "CURIO: Entity not found in component");
+
         return entityToValueMap[_entity];
     }
 
@@ -38,28 +41,44 @@ contract Component {
     }
 
     /**
+     * @dev Get all entities with this component as a set.
+     */
+    function getEntitiesAsSet() public view returns (Set) {
+        return entities;
+    }
+
+    /**
      * @dev Get entities whose corresponding component has a specific value.
      * @param _value bytes value
      */
     function getEntitiesWithValue(bytes memory _value) public view returns (uint256[] memory) {
         // Return all entities with this component value
-        address _setAddr = valueToEntitySetAddrMap[uint256(keccak256(_value))];
-        if (_setAddr == NULL_ADDR) return new uint256[](0);
-        return Set(_setAddr).getAll();
+        return getEntitiesWithValueAsSet(_value).getAll();
+    }
+
+    /**
+     * @dev Get entities whose corresponding component has a specific value. Returns as a set
+     * @param _value bytes value
+     */
+    function getEntitiesWithValueAsSet(bytes memory _value) public view returns (Set) {
+        // Return all entities with this component value
+        address setAddr = valueToEntitySetAddrMap[uint256(keccak256(_value))];
+        if (setAddr == NULL_ADDR) return emptySet;
+        return Set(setAddr);
     }
 
     /**
      * @dev Get all entities with this component and all their values in the form of two arrays.
      */
     function getAllEntitiesAndValues() public view returns (uint256[] memory, bytes[] memory) {
-        uint256[] memory _entityArray = entities.getAll();
-        bytes[] memory _valueArray = new bytes[](_entityArray.length);
+        uint256[] memory entityArray = entities.getAll();
+        bytes[] memory valueArray = new bytes[](entityArray.length);
 
-        for (uint256 i = 0; i < _entityArray.length; i++) {
-            _valueArray[i] = entityToValueMap[_entityArray[i]];
+        for (uint256 i = 0; i < entityArray.length; i++) {
+            valueArray[i] = entityToValueMap[entityArray[i]];
         }
 
-        return (_entityArray, _valueArray);
+        return (entityArray, valueArray);
     }
 
     /**
@@ -78,8 +97,8 @@ contract Component {
     function set(uint256 _entity, bytes memory _value) public {
         entities.add(_entity);
 
-        address _setAddr = valueToEntitySetAddrMap[uint256(keccak256(entityToValueMap[_entity]))];
-        if (_setAddr != NULL_ADDR) Set(_setAddr).remove(_entity);
+        address setAddr = valueToEntitySetAddrMap[uint256(keccak256(entityToValueMap[_entity]))];
+        if (setAddr != NULL_ADDR) Set(setAddr).remove(_entity);
 
         entityToValueMap[_entity] = _value;
 
@@ -95,8 +114,8 @@ contract Component {
     function remove(uint256 _entity) public {
         entities.remove(_entity);
 
-        address _setAddr = valueToEntitySetAddrMap[uint256(keccak256(entityToValueMap[_entity]))];
-        if (_setAddr != NULL_ADDR) Set(_setAddr).remove(_entity);
+        address setAddr = valueToEntitySetAddrMap[uint256(keccak256(entityToValueMap[_entity]))];
+        if (setAddr != NULL_ADDR) Set(setAddr).remove(_entity);
 
         delete entityToValueMap[_entity];
     }

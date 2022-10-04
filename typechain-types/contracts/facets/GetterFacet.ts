@@ -52,16 +52,26 @@ export type WorldConstantsStruct = {
   maxCityCountPerPlayer: PromiseOrValue<BigNumberish>;
   maxArmyCountPerPlayer: PromiseOrValue<BigNumberish>;
   maxPlayerCount: PromiseOrValue<BigNumberish>;
-  maxInventoryCapacity: PromiseOrValue<BigNumberish>;
   cityUpgradeGoldCost: PromiseOrValue<BigNumberish>;
+  maxInventoryCapacity: PromiseOrValue<BigNumberish>;
+  cityPackCost: PromiseOrValue<BigNumberish>;
   initCityGold: PromiseOrValue<BigNumberish>;
   cityHealth: PromiseOrValue<BigNumberish>;
   cityAttack: PromiseOrValue<BigNumberish>;
   cityDefense: PromiseOrValue<BigNumberish>;
+  tileWidth: PromiseOrValue<BigNumberish>;
+  armyBattleRange: PromiseOrValue<BigNumberish>;
+  cityBattleRange: PromiseOrValue<BigNumberish>;
+  cityAmount: PromiseOrValue<BigNumberish>;
 };
 
 export type WorldConstantsStructOutput = [
   string,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -84,24 +94,36 @@ export type WorldConstantsStructOutput = [
   maxCityCountPerPlayer: BigNumber;
   maxArmyCountPerPlayer: BigNumber;
   maxPlayerCount: BigNumber;
-  maxInventoryCapacity: BigNumber;
   cityUpgradeGoldCost: BigNumber;
+  maxInventoryCapacity: BigNumber;
+  cityPackCost: BigNumber;
   initCityGold: BigNumber;
   cityHealth: BigNumber;
   cityAttack: BigNumber;
   cityDefense: BigNumber;
+  tileWidth: BigNumber;
+  armyBattleRange: BigNumber;
+  cityBattleRange: BigNumber;
+  cityAmount: BigNumber;
 };
 
 export interface GetterFacetInterface extends utils.Interface {
   functions: {
+    "getArmyAt((uint256,uint256))": FunctionFragment;
+    "getArmyConstituents(uint256)": FunctionFragment;
     "getCityAt((uint256,uint256))": FunctionFragment;
     "getCityCenter(uint256)": FunctionFragment;
+    "getCityGuard(uint256)": FunctionFragment;
     "getComponent(string)": FunctionFragment;
     "getComponentById(uint256)": FunctionFragment;
+    "getEntities()": FunctionFragment;
+    "getEntitiesAddr()": FunctionFragment;
     "getEntity()": FunctionFragment;
+    "getInventoryByCityAndType(uint256,string)": FunctionFragment;
     "getPlayerCount()": FunctionFragment;
     "getPlayerId(address)": FunctionFragment;
     "getSettlerAt((uint256,uint256))": FunctionFragment;
+    "getTemplateByInventoryType(string)": FunctionFragment;
     "getTemplateId(string)": FunctionFragment;
     "getTileAt((uint256,uint256))": FunctionFragment;
     "getWorldConstants()": FunctionFragment;
@@ -110,14 +132,21 @@ export interface GetterFacetInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "getArmyAt"
+      | "getArmyConstituents"
       | "getCityAt"
       | "getCityCenter"
+      | "getCityGuard"
       | "getComponent"
       | "getComponentById"
+      | "getEntities"
+      | "getEntitiesAddr"
       | "getEntity"
+      | "getInventoryByCityAndType"
       | "getPlayerCount"
       | "getPlayerId"
       | "getSettlerAt"
+      | "getTemplateByInventoryType"
       | "getTemplateId"
       | "getTileAt"
       | "getWorldConstants"
@@ -125,11 +154,23 @@ export interface GetterFacetInterface extends utils.Interface {
   ): FunctionFragment;
 
   encodeFunctionData(
+    functionFragment: "getArmyAt",
+    values: [PositionStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getArmyConstituents",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getCityAt",
     values: [PositionStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "getCityCenter",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getCityGuard",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -140,7 +181,19 @@ export interface GetterFacetInterface extends utils.Interface {
     functionFragment: "getComponentById",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
+  encodeFunctionData(
+    functionFragment: "getEntities",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getEntitiesAddr",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "getEntity", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "getInventoryByCityAndType",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "getPlayerCount",
     values?: undefined
@@ -152,6 +205,10 @@ export interface GetterFacetInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getSettlerAt",
     values: [PositionStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTemplateByInventoryType",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "getTemplateId",
@@ -170,9 +227,18 @@ export interface GetterFacetInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
 
+  decodeFunctionResult(functionFragment: "getArmyAt", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getArmyConstituents",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getCityAt", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getCityCenter",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getCityGuard",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -183,7 +249,19 @@ export interface GetterFacetInterface extends utils.Interface {
     functionFragment: "getComponentById",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "getEntities",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getEntitiesAddr",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getEntity", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getInventoryByCityAndType",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getPlayerCount",
     data: BytesLike
@@ -194,6 +272,10 @@ export interface GetterFacetInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getSettlerAt",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTemplateByInventoryType",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -240,12 +322,27 @@ export interface GetterFacet extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    getArmyAt(
+      _position: PositionStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    getArmyConstituents(
+      _armyID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     getCityAt(
       _position: PositionStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     getCityCenter(
+      _cityID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    getCityGuard(
       _cityID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -260,7 +357,17 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
+    getEntities(overrides?: CallOverrides): Promise<[BigNumber[]]>;
+
+    getEntitiesAddr(overrides?: CallOverrides): Promise<[string]>;
+
     getEntity(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    getInventoryByCityAndType(
+      _cityID: PromiseOrValue<BigNumberish>,
+      _inventoryType: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     getPlayerCount(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -271,6 +378,11 @@ export interface GetterFacet extends BaseContract {
 
     getSettlerAt(
       _position: PositionStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    getTemplateByInventoryType(
+      _inventoryType: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -294,12 +406,27 @@ export interface GetterFacet extends BaseContract {
     ): Promise<[boolean]>;
   };
 
+  getArmyAt(
+    _position: PositionStruct,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  getArmyConstituents(
+    _armyID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   getCityAt(
     _position: PositionStruct,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   getCityCenter(
+    _cityID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  getCityGuard(
     _cityID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -314,7 +441,17 @@ export interface GetterFacet extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
+  getEntities(overrides?: CallOverrides): Promise<BigNumber[]>;
+
+  getEntitiesAddr(overrides?: CallOverrides): Promise<string>;
+
   getEntity(overrides?: CallOverrides): Promise<BigNumber>;
+
+  getInventoryByCityAndType(
+    _cityID: PromiseOrValue<BigNumberish>,
+    _inventoryType: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   getPlayerCount(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -325,6 +462,11 @@ export interface GetterFacet extends BaseContract {
 
   getSettlerAt(
     _position: PositionStruct,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  getTemplateByInventoryType(
+    _inventoryType: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -348,12 +490,27 @@ export interface GetterFacet extends BaseContract {
   ): Promise<boolean>;
 
   callStatic: {
+    getArmyAt(
+      _position: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getArmyConstituents(
+      _armyID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
+
     getCityAt(
       _position: PositionStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getCityCenter(
+      _cityID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getCityGuard(
       _cityID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -368,7 +525,17 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
+    getEntities(overrides?: CallOverrides): Promise<BigNumber[]>;
+
+    getEntitiesAddr(overrides?: CallOverrides): Promise<string>;
+
     getEntity(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getInventoryByCityAndType(
+      _cityID: PromiseOrValue<BigNumberish>,
+      _inventoryType: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     getPlayerCount(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -379,6 +546,11 @@ export interface GetterFacet extends BaseContract {
 
     getSettlerAt(
       _position: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getTemplateByInventoryType(
+      _inventoryType: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -405,12 +577,27 @@ export interface GetterFacet extends BaseContract {
   filters: {};
 
   estimateGas: {
+    getArmyAt(
+      _position: PositionStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    getArmyConstituents(
+      _armyID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     getCityAt(
       _position: PositionStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     getCityCenter(
+      _cityID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    getCityGuard(
       _cityID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -425,7 +612,17 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getEntities(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getEntitiesAddr(overrides?: CallOverrides): Promise<BigNumber>;
+
     getEntity(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getInventoryByCityAndType(
+      _cityID: PromiseOrValue<BigNumberish>,
+      _inventoryType: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     getPlayerCount(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -436,6 +633,11 @@ export interface GetterFacet extends BaseContract {
 
     getSettlerAt(
       _position: PositionStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    getTemplateByInventoryType(
+      _inventoryType: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -458,12 +660,27 @@ export interface GetterFacet extends BaseContract {
   };
 
   populateTransaction: {
+    getArmyAt(
+      _position: PositionStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    getArmyConstituents(
+      _armyID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     getCityAt(
       _position: PositionStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     getCityCenter(
+      _cityID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    getCityGuard(
       _cityID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -478,7 +695,17 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getEntities(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getEntitiesAddr(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     getEntity(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getInventoryByCityAndType(
+      _cityID: PromiseOrValue<BigNumberish>,
+      _inventoryType: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     getPlayerCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -489,6 +716,11 @@ export interface GetterFacet extends BaseContract {
 
     getSettlerAt(
       _position: PositionStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    getTemplateByInventoryType(
+      _inventoryType: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

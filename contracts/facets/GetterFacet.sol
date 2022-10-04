@@ -16,6 +16,34 @@ contract GetterFacet is UseStorage {
     using SafeMath for uint256;
     uint256 private NULL = 0;
 
+    // DEBUG FNS
+    function getEntitiesAddr() external view returns (address) {
+        return gs().entities;
+    }
+
+    function getInventoryByCityAndType(uint256 _cityID, string memory _inventoryType) external returns (uint256) {
+        uint256 _templateID = GameLib._getTemplateByInventoryType(_inventoryType);
+        return GameLib._getInventory(_cityID, _templateID);
+    }
+
+    function getTemplateByInventoryType(string memory _inventoryType) external returns (uint256) {
+        return GameLib._getTemplateByInventoryType(_inventoryType);
+    }
+
+    function getArmyConstituents(uint256 _armyID) external returns (uint256[] memory) {
+        return GameLib._getArmyConstituents(_armyID);
+    }
+
+    function getCityGuard(uint256 _cityID) external returns (uint256) {
+        return GameLib._getCityGuard(_cityID);
+    }
+
+    function getArmyAt(Position memory _position) external returns (uint256) {
+        return GameLib._getArmyAt(_position);
+    }
+
+    ////////////
+
     function getComponent(string memory _name) external view returns (Component) {
         return ECSLib._getComponent(_name);
     }
@@ -47,6 +75,10 @@ contract GetterFacet is UseStorage {
     function getEntity() external view returns (uint256) {
         Set _entities = Set(gs().entities);
         return _entities.size();
+    }
+
+    function getEntities() external view returns (uint256[] memory) {
+        return Set(gs().entities).getAll();
     }
 
     function getTemplateId(string memory _inventoryType) external returns (uint256) {
