@@ -76,12 +76,12 @@ contract DiamondDeployTest is Test {
         gameFacet = new GameFacet();
         getterFacet = new GetterFacet();
         adminFacet = new AdminFacet();
-        WorldConstants memory _worldConstants = _generateWorldConstants();
+        WorldConstants memory worldConstants = _generateWorldConstants();
 
         nato = new NATO();
 
         // Fetch args from CLI craft payload for init deploy
-        bytes memory initData = abi.encodeWithSelector(getSelectors("DiamondInit")[0], _worldConstants);
+        bytes memory initData = abi.encodeWithSelector(getSelectors("DiamondInit")[0], worldConstants);
 
         IDiamondCut.FacetCut[] memory cuts = new IDiamondCut.FacetCut[](5);
         cuts[0] = IDiamondCut.FacetCut({facetAddress: address(diamondLoupeFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: LOUPE_SELECTORS});
@@ -101,8 +101,8 @@ contract DiamondDeployTest is Test {
         admin.registerDefaultComponents(diamond);
 
         // Initialize map
-        uint256[][] memory _map = _generateMap(_worldConstants.worldWidth, _worldConstants.worldHeight);
-        uint256[][] memory _encodedColumnBatches = _encodeTileMap(_map, _worldConstants.numInitTerrainTypes, _worldConstants.initBatchSize);
+        uint256[][] memory _map = _generateMap(worldConstants.worldWidth, worldConstants.worldHeight);
+        uint256[][] memory _encodedColumnBatches = _encodeTileMap(_map, worldConstants.numInitTerrainTypes, worldConstants.initBatchSize);
         admin.storeEncodedColumnBatches(_encodedColumnBatches);
 
         vm.stopPrank();
@@ -167,10 +167,10 @@ contract DiamondDeployTest is Test {
         cavalryTemplateID = admin.addEntity();
         admin.setComponentValue("Tag", cavalryTemplateID, abi.encode("TroopTemplate"));
         admin.setComponentValue("InventoryType", cavalryTemplateID, abi.encode("Cavalry"));
-        admin.setComponentValue("Health", cavalryTemplateID, abi.encode(10));
+        admin.setComponentValue("Health", cavalryTemplateID, abi.encode(120));
         admin.setComponentValue("Speed", cavalryTemplateID, abi.encode(1));
-        admin.setComponentValue("Attack", cavalryTemplateID, abi.encode(1));
-        admin.setComponentValue("Defense", cavalryTemplateID, abi.encode(1));
+        admin.setComponentValue("Attack", cavalryTemplateID, abi.encode(60));
+        admin.setComponentValue("Defense", cavalryTemplateID, abi.encode(120));
         admin.setComponentValue("Load", cavalryTemplateID, abi.encode(1));
         admin.setComponentValue("Duration", cavalryTemplateID, abi.encode(1));
         admin.setComponentValue("Cost", cavalryTemplateID, abi.encode(1));
@@ -179,10 +179,10 @@ contract DiamondDeployTest is Test {
         infantryTemplateID = admin.addEntity();
         admin.setComponentValue("Tag", infantryTemplateID, abi.encode("TroopTemplate"));
         admin.setComponentValue("InventoryType", infantryTemplateID, abi.encode("Infantry"));
-        admin.setComponentValue("Health", infantryTemplateID, abi.encode(10));
+        admin.setComponentValue("Health", infantryTemplateID, abi.encode(120));
         admin.setComponentValue("Speed", infantryTemplateID, abi.encode(1));
-        admin.setComponentValue("Attack", infantryTemplateID, abi.encode(1));
-        admin.setComponentValue("Defense", infantryTemplateID, abi.encode(1));
+        admin.setComponentValue("Attack", infantryTemplateID, abi.encode(60));
+        admin.setComponentValue("Defense", infantryTemplateID, abi.encode(120));
         admin.setComponentValue("Load", infantryTemplateID, abi.encode(1));
         admin.setComponentValue("Duration", infantryTemplateID, abi.encode(1));
         admin.setComponentValue("Cost", infantryTemplateID, abi.encode(1));
@@ -191,10 +191,10 @@ contract DiamondDeployTest is Test {
         archerTemplateID = admin.addEntity();
         admin.setComponentValue("Tag", archerTemplateID, abi.encode("TroopTemplate"));
         admin.setComponentValue("InventoryType", archerTemplateID, abi.encode("Archer"));
-        admin.setComponentValue("Health", archerTemplateID, abi.encode(10));
+        admin.setComponentValue("Health", archerTemplateID, abi.encode(120));
         admin.setComponentValue("Speed", archerTemplateID, abi.encode(1));
-        admin.setComponentValue("Attack", archerTemplateID, abi.encode(1));
-        admin.setComponentValue("Defense", archerTemplateID, abi.encode(1));
+        admin.setComponentValue("Attack", archerTemplateID, abi.encode(60));
+        admin.setComponentValue("Defense", archerTemplateID, abi.encode(120));
         admin.setComponentValue("Load", archerTemplateID, abi.encode(1));
         admin.setComponentValue("Duration", archerTemplateID, abi.encode(1));
         admin.setComponentValue("Cost", archerTemplateID, abi.encode(1));
@@ -218,16 +218,16 @@ contract DiamondDeployTest is Test {
                 numInitTerrainTypes: 1,
                 initBatchSize: 100,
                 maxCityCountPerPlayer: 3,
-                maxArmyCountPerPlayer: 3,
+                maxArmyCountPerPlayer: 2,
                 maxPlayerCount: 20,
-                maxInventoryCapacity: 5000,
-                cityUpgradeGoldCost: 500,
+                cityUpgradeGoldCost: 50,
                 cityPackCost: 30,
+                maxInventoryCapacity: 5000,
                 initCityGold: 1000,
-                cityHealth: 500,
-                cityAttack: 50,
-                cityDefense: 10,
-                cityAmount: 100 // DO NOT REMOVE THIS COMMENT
+                cityHealth: 120,
+                cityAttack: 60,
+                cityDefense: 120,
+                cityAmount: 1000 // DO NOT REMOVE THIS COMMENT
             });
     }
 

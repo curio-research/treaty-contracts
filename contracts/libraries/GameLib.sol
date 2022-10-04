@@ -190,81 +190,81 @@ library GameLib {
 
     function _getArmyConstituents(uint256 _armyID) public returns (uint256[] memory) {
         QueryCondition[] memory query = new QueryCondition[](2);
-        query[0] = ECSLib.queryChunk(QueryType.HasVal, "Keeper", abi.encode(_armyID));
-        query[1] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("ArmyConstituent"));
-        return ECSLib.query(query);
+        query[0] = ECSLib._queryChunk(QueryType.HasVal, "Keeper", abi.encode(_armyID));
+        query[1] = ECSLib._queryChunk(QueryType.HasVal, "Tag", abi.encode("ArmyConstituent"));
+        return ECSLib._query(query);
     }
 
     function _getPlayerSignatures(uint256 _playerID) public returns (uint256[] memory) {
         QueryCondition[] memory query = new QueryCondition[](2);
-        query[0] = ECSLib.queryChunk(QueryType.HasVal, "Owner", abi.encode(_playerID));
-        query[1] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("Signature"));
-        return ECSLib.query(query);
+        query[0] = ECSLib._queryChunk(QueryType.HasVal, "Owner", abi.encode(_playerID));
+        query[1] = ECSLib._queryChunk(QueryType.HasVal, "Tag", abi.encode("Signature"));
+        return ECSLib._query(query);
     }
 
     function _getCityTiles(uint256 _cityID) public returns (uint256[] memory) {
         QueryCondition[] memory query = new QueryCondition[](2);
-        query[0] = ECSLib.queryChunk(QueryType.HasVal, "City", abi.encode(_cityID));
-        query[1] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("Tile"));
-        return ECSLib.query(query);
+        query[0] = ECSLib._queryChunk(QueryType.HasVal, "City", abi.encode(_cityID));
+        query[1] = ECSLib._queryChunk(QueryType.HasVal, "Tag", abi.encode("Tile"));
+        return ECSLib._query(query);
     }
 
     function _getBattles(uint256 _armyID) public returns (uint256[] memory) {
         QueryCondition[] memory query = new QueryCondition[](3);
-        query[0] = ECSLib.queryChunk(QueryType.HasVal, "Source", abi.encode(_armyID));
-        query[1] = ECSLib.queryChunk(QueryType.HasVal, "Target", abi.encode(_armyID));
-        query[1] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("Battle"));
-        return ECSLib.query(query);
+        query[0] = ECSLib._queryChunk(QueryType.HasVal, "Source", abi.encode(_armyID));
+        query[1] = ECSLib._queryChunk(QueryType.HasVal, "Target", abi.encode(_armyID));
+        query[1] = ECSLib._queryChunk(QueryType.HasVal, "Tag", abi.encode("Battle"));
+        return ECSLib._query(query);
     }
 
     function _getPlayerArmies(uint256 _playerID) public returns (uint256[] memory) {
         QueryCondition[] memory query = new QueryCondition[](2);
-        query[0] = ECSLib.queryChunk(QueryType.HasVal, "Owner", abi.encode(_playerID));
-        query[1] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("Army"));
-        return ECSLib.query(query);
+        query[0] = ECSLib._queryChunk(QueryType.HasVal, "Owner", abi.encode(_playerID));
+        query[1] = ECSLib._queryChunk(QueryType.HasVal, "Tag", abi.encode("Army"));
+        return ECSLib._query(query);
     }
 
     function _getArmyGather(uint256 _armyID) public returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
-        query[0] = ECSLib.queryChunk(QueryType.HasVal, "Army", abi.encode(_armyID));
-        query[1] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("ResourceGather"));
-        uint256[] memory res = ECSLib.query(query);
+        query[0] = ECSLib._queryChunk(QueryType.HasVal, "Army", abi.encode(_armyID));
+        query[1] = ECSLib._queryChunk(QueryType.HasVal, "Tag", abi.encode("ResourceGather"));
+        uint256[] memory res = ECSLib._query(query);
         assert(res.length <= 1);
         return res.length == 1 ? res[0] : 0;
     }
 
     function _getResourceAt(Position memory _position) public returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
-        query[0] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode(string("Resource")));
-        query[1] = ECSLib.queryChunk(QueryType.HasVal, "Position", abi.encode(_position));
-        uint256[] memory res = ECSLib.query(query);
+        query[0] = ECSLib._queryChunk(QueryType.HasVal, "Tag", abi.encode(string("Resource")));
+        query[1] = ECSLib._queryChunk(QueryType.HasVal, "Position", abi.encode(_position));
+        uint256[] memory res = ECSLib._query(query);
         assert(res.length <= 1);
         return res.length == 1 ? res[0] : 0;
     }
 
     function _getArmyAt(Position memory _position) public returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
-        query[0] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode(string("Army")));
-        query[1] = ECSLib.queryChunk(QueryType.HasVal, "Position", abi.encode(_position));
-        uint256[] memory res = ECSLib.query(query);
+        query[0] = ECSLib._queryChunk(QueryType.HasVal, "Tag", abi.encode(string("Army")));
+        query[1] = ECSLib._queryChunk(QueryType.HasVal, "Position", abi.encode(_position));
+        uint256[] memory res = ECSLib._query(query);
         assert(res.length <= 1);
         return res.length == 1 ? res[0] : 0;
     }
 
     function _getCityAt(Position memory _position) public returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
-        query[0] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("City"));
-        query[1] = ECSLib.queryChunk(QueryType.HasVal, "Position", abi.encode(_position));
-        uint256[] memory res = ECSLib.query(query);
+        query[0] = ECSLib._queryChunk(QueryType.HasVal, "Tag", abi.encode("City"));
+        query[1] = ECSLib._queryChunk(QueryType.HasVal, "Position", abi.encode(_position));
+        uint256[] memory res = ECSLib._query(query);
         assert(res.length <= 1);
         return res.length == 1 ? res[0] : 0;
     }
 
     function _getCityGuard(uint256 _cityID) public returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
-        query[0] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("Guard"));
-        query[1] = ECSLib.queryChunk(QueryType.HasVal, "City", abi.encode(_cityID));
-        uint256[] memory res = ECSLib.query(query);
+        query[0] = ECSLib._queryChunk(QueryType.HasVal, "Tag", abi.encode("Guard"));
+        query[1] = ECSLib._queryChunk(QueryType.HasVal, "City", abi.encode(_cityID));
+        uint256[] memory res = ECSLib._query(query);
         assert(res.length <= 1);
         return res.length == 1 ? res[0] : 0;
     }
@@ -290,19 +290,19 @@ library GameLib {
 
     function _getArmyInventory(uint256 _armyID, uint256 _templateID) public returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](3);
-        query[0] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("TroopInventory"));
-        query[1] = ECSLib.queryChunk(QueryType.HasVal, "Army", abi.encode(_armyID));
-        query[2] = ECSLib.queryChunk(QueryType.HasVal, "Template", abi.encode(_templateID));
-        uint256[] memory res = ECSLib.query(query);
+        query[0] = ECSLib._queryChunk(QueryType.HasVal, "Tag", abi.encode("TroopInventory"));
+        query[1] = ECSLib._queryChunk(QueryType.HasVal, "Army", abi.encode(_armyID));
+        query[2] = ECSLib._queryChunk(QueryType.HasVal, "Template", abi.encode(_templateID));
+        uint256[] memory res = ECSLib._query(query);
         assert(res.length <= 1);
         return res.length == 1 ? res[0] : 0;
     }
 
     function _getInventory(uint256 _cityID, uint256 _templateID) public returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
-        query[0] = ECSLib.queryChunk(QueryType.HasVal, "City", abi.encode(_cityID));
-        query[1] = ECSLib.queryChunk(QueryType.HasVal, "Template", abi.encode(_templateID));
-        uint256[] memory res = ECSLib.query(query);
+        query[0] = ECSLib._queryChunk(QueryType.HasVal, "City", abi.encode(_cityID));
+        query[1] = ECSLib._queryChunk(QueryType.HasVal, "Template", abi.encode(_templateID));
+        uint256[] memory res = ECSLib._query(query);
 
         Set _set1 = new Set();
         Set _set2 = new Set();
@@ -316,9 +316,9 @@ library GameLib {
 
     function _getSettlerAt(Position memory _position) public returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
-        query[0] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("Settler"));
-        query[1] = ECSLib.queryChunk(QueryType.HasVal, "Position", abi.encode(_position));
-        uint256[] memory res = ECSLib.query(query);
+        query[0] = ECSLib._queryChunk(QueryType.HasVal, "Tag", abi.encode("Settler"));
+        query[1] = ECSLib._queryChunk(QueryType.HasVal, "Position", abi.encode(_position));
+        uint256[] memory res = ECSLib._query(query);
         assert(res.length <= 1);
         return res.length == 1 ? res[0] : 0;
     }
@@ -350,18 +350,18 @@ library GameLib {
 
     function _getCityCenter(uint256 _cityID) public returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
-        query[0] = ECSLib.queryChunk(QueryType.HasVal, "City", abi.encode(_cityID));
-        query[1] = ECSLib.queryChunk(QueryType.HasVal, "BuildingType", abi.encode("City Center"));
-        uint256[] memory res = ECSLib.query(query);
+        query[0] = ECSLib._queryChunk(QueryType.HasVal, "City", abi.encode(_cityID));
+        query[1] = ECSLib._queryChunk(QueryType.HasVal, "BuildingType", abi.encode("City Center"));
+        uint256[] memory res = ECSLib._query(query);
         assert(res.length <= 1);
         return res.length == 1 ? res[0] : 0;
     }
 
     function _getTileAt(Position memory _position) public returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
-        query[0] = ECSLib.queryChunk(QueryType.HasVal, "Position", abi.encode(_position));
-        query[1] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("Tile"));
-        uint256[] memory res = ECSLib.query(query);
+        query[0] = ECSLib._queryChunk(QueryType.HasVal, "Position", abi.encode(_position));
+        query[1] = ECSLib._queryChunk(QueryType.HasVal, "Tag", abi.encode("Tile"));
+        uint256[] memory res = ECSLib._query(query);
         assert(res.length <= 1);
         return res.length == 1 ? res[0] : 0;
     }

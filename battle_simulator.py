@@ -51,6 +51,7 @@ def battle(army_a: Army, army_b: Army) -> None:
                 continue
             for j in range(len(army_b.troops)):
                 loss = (troop_count * army_a.troops[i].attack * get_damage_bonus(army_a.troops[i].troop_type, army_b.troops[j].troop_type) / army_b.troops[j].defense / army_b.troops[j].health) * 2 * math.sqrt(10000 / troop_count)
+                print(loss)
                 army_b.amounts[j] -= min(loss, army_b.amounts[j])
         
         print("A attacks B!")
@@ -85,6 +86,6 @@ cavalry = Troop(120, 60, 120, TroopType.CAVALRY)
 infantry = Troop(120, 60, 120, TroopType.INFANTRY)
 archer = Troop(120, 60, 120, TroopType.ARCHER)
 
-army_a = Army([cavalry, infantry, archer], [1000, 500, 200])
-army_b = Army([cavalry, archer], [500, 800])
+army_a = Army([cavalry, infantry], [500, 50])
+army_b = Army([cavalry], [600])
 battle(army_a, army_b)

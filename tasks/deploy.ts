@@ -93,6 +93,7 @@ task('deploy', 'deploy contracts')
           console.log(`✦ player initialization took ${Math.floor(performance.now() - startTime)} ms`);
 
           const player1ID = (await diamond.getPlayerId(player1.address)).toNumber();
+          const player2ID = (await diamond.getPlayerId(player2.address)).toNumber();
 
           let armySpawnPos = { x: -1, y: -1 };
           for (let i = 0; i < worldConstants.worldWidth; i++) {
@@ -107,6 +108,8 @@ task('deploy', 'deploy contracts')
           await diamond.initializeTile(armySpawnPos);
           // await templates.addArmy(player1ID, armySpawnPos);
           await spawnArmy(diamond, player1ID, armySpawnPos);
+
+          await spawnArmy(diamond, player2ID, player2Pos);
         }
       }
 
