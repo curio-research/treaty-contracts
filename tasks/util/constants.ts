@@ -29,9 +29,10 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): W
     cityPackCost: 0,
     maxInventoryCapacity: 1000,
     initCityGold: 100,
-    cityHealth: 1000,
-    cityAttack: 500,
-    cityDefense: 1000,
+    cityHealth: 120,
+    cityAttack: 60,
+    cityDefense: 120,
+    cityAmount: 1000,
   };
 };
 

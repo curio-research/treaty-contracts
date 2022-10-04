@@ -68,7 +68,7 @@ export interface ECSLibInterface extends utils.Interface {
     "_getUintArray(string,uint256)": FunctionFragment;
     "_getUintArrayComponent(string)": FunctionFragment;
     "_getUintComponent(string)": FunctionFragment;
-    "queryChunk(uint8,string,bytes)": FunctionFragment;
+    "_queryChunk(uint8,string,bytes)": FunctionFragment;
   };
 
   getFunction(
@@ -92,7 +92,7 @@ export interface ECSLibInterface extends utils.Interface {
       | "_getUintArray"
       | "_getUintArrayComponent"
       | "_getUintComponent"
-      | "queryChunk"
+      | "_queryChunk"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -172,7 +172,7 @@ export interface ECSLibInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "queryChunk",
+    functionFragment: "_queryChunk",
     values: [
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
@@ -244,7 +244,10 @@ export interface ECSLibInterface extends utils.Interface {
     functionFragment: "_getUintComponent",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "queryChunk", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "_queryChunk",
+    data: BytesLike
+  ): Result;
 
   events: {
     "ComponentValueRemoved(string,uint256)": EventFragment;
@@ -446,7 +449,7 @@ export interface ECSLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    queryChunk(
+    _queryChunk(
       _queryType: PromiseOrValue<BigNumberish>,
       _componentName: PromiseOrValue<string>,
       _value: PromiseOrValue<BytesLike>,
@@ -559,7 +562,7 @@ export interface ECSLib extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
-  queryChunk(
+  _queryChunk(
     _queryType: PromiseOrValue<BigNumberish>,
     _componentName: PromiseOrValue<string>,
     _value: PromiseOrValue<BytesLike>,
@@ -672,7 +675,7 @@ export interface ECSLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    queryChunk(
+    _queryChunk(
       _queryType: PromiseOrValue<BigNumberish>,
       _componentName: PromiseOrValue<string>,
       _value: PromiseOrValue<BytesLike>,
@@ -820,7 +823,7 @@ export interface ECSLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    queryChunk(
+    _queryChunk(
       _queryType: PromiseOrValue<BigNumberish>,
       _componentName: PromiseOrValue<string>,
       _value: PromiseOrValue<BytesLike>,
@@ -934,7 +937,7 @@ export interface ECSLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    queryChunk(
+    _queryChunk(
       _queryType: PromiseOrValue<BigNumberish>,
       _componentName: PromiseOrValue<string>,
       _value: PromiseOrValue<BytesLike>,

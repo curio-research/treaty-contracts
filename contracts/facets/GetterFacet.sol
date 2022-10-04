@@ -30,6 +30,18 @@ contract GetterFacet is UseStorage {
         return GameLib._getTemplateByInventoryType(_inventoryType);
     }
 
+    function getArmyConstituents(uint256 _armyID) external returns (uint256[] memory) {
+        return GameLib._getArmyConstituents(_armyID);
+    }
+
+    function getCityGuard(uint256 _cityID) external returns (uint256) {
+        return GameLib._getCityGuard(_cityID);
+    }
+
+    function getArmyAt(Position memory _position) external returns (uint256) {
+        return GameLib._getArmyAt(_position);
+    }
+
     ////////////
 
     function getComponent(string memory _name) external view returns (Component) {
