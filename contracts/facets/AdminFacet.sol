@@ -141,6 +141,6 @@ contract AdminFacet is UseStorage {
 
     // entity creation for testing
     function createArmy(uint256 _playerId, Position memory _position) external onlyAdmin returns (uint256) {
-        return Templates.addArmy(_playerId, _position);
+        return Templates._addArmy(_playerId, _position);
     }
 }

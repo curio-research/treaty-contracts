@@ -28,12 +28,12 @@ contract GameFacet is UseStorage {
 
         GameLib._initializeTile(_position);
 
-        uint256 playerID = Templates.createPlayer(_name);
+        uint256 playerID = Templates._createPlayer(_name);
 
         gs().players.push(msg.sender);
         gs().playerEntityMap[msg.sender] = playerID;
 
-        uint256 _settlerID = Templates._createSettler(_position, _playerID);
+        uint256 _settlerID = Templates._createSettler(_position, playerID);
 
         // Initialize guard which stays with eventual city
         Templates._addGuard(_settlerID, gs().worldConstants);
