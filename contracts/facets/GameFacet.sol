@@ -353,8 +353,7 @@ contract GameFacet is UseStorage {
         // Verify there is no army currently at the city center
         require(GameLib._getArmyAt(ECSLib._getPosition("Position", _cityID)) == NULL, "CURIO: Tile occupied by another army");
 
-        uint256 playerID = GameLib._getPlayer(msg.sender);
-        require(GameLib._getPlayerArmies(playerID).length < gs().worldConstants.maxArmyCountPerPlayer, "CURIO: Army max count reached");
+        require(GameLib._getPlayerArmies(GameLib._getPlayer(msg.sender)).length < gs().worldConstants.maxArmyCountPerPlayer, "CURIO: Army max count reached");
 
         uint256 health = 0; // sum
         uint256 speed = 0; // min of all individaul troop types (represents the number of tiles it can "skip")
@@ -368,27 +367,24 @@ contract GameFacet is UseStorage {
 
         // Update inventory and gather army traits
         for (uint256 i = 0; i < _templateIDs.length; i++) {
-            uint256 templateID = _templateIDs[i];
-            uint256 inventoryID = GameLib._getInventory(_cityID, templateID);
+            uint256 inventoryID = GameLib._getInventory(_cityID, _templateIDs[i]);
             require(ECSLib._getUint("Amount", inventoryID) >= _amounts[i], "CURIO: Not enough troops");
 
-            health += ECSLib._getUint("Health", templateID) * _amounts[i];
-            speed += ECSLib._getUint("Speed", templateID) * _amounts[i];
-            attack += ECSLib._getUint("Attack", templateID) * _amounts[i];
-            defense += ECSLib._getUint("Defense", templateID) * _amounts[i];
-            load += ECSLib._getUint("Load", templateID) * _amounts[i];
+            health += ECSLib._getUint("Health", _templateIDs[i]) * _amounts[i];
+            speed += ECSLib._getUint("Speed", _templateIDs[i]) * _amounts[i];
+            attack += ECSLib._getUint("Attack", _templateIDs[i]) * _amounts[i];
+            defense += ECSLib._getUint("Defense", _templateIDs[i]) * _amounts[i];
+            load += ECSLib._getUint("Load", _templateIDs[i]) * _amounts[i];
             ECSLib._setUint("Amount", inventoryID, ECSLib._getUint("Amount", inventoryID) - _amounts[i]);
 
-            uint256 templateCooldown = ECSLib._getUint("MoveCooldown", templateID);
+            uint256 templateCooldown = ECSLib._getUint("MoveCooldown", _templateIDs[i]);
             cooldown = templateCooldown > cooldown ? templateCooldown : templateCooldown;
         }
 
         speed /= GameLib._sum(_amounts);
 
-        Position memory position = ECSLib._getPosition("Position", _cityID);
-
         // Add army
-        uint256 armyID = Templates._addArmy(playerID, position);
+        uint256 armyID = Templates._addArmy(GameLib._getPlayer(msg.sender), ECSLib._getPosition("Position", _cityID));
         ECSLib._setUint("Health", armyID, health);
         ECSLib._setUint("Speed", armyID, speed);
         ECSLib._setUint("MoveCooldown", armyID, cooldown);
