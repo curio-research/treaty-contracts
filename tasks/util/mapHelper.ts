@@ -184,6 +184,8 @@ export const initializeFixmap = async (hre: HardhatRuntimeEnvironment, diamond: 
     const playerPosition = playerPositions[i];
 
     await diamond.createArmy(playerID, playerPosition);
+    const entity = (await diamond.getEntity()).toNumber();
+    await (await diamond.setComponentValue(Speed, entity, encodeUint256(2))).wait();
   }
 };
 
