@@ -146,10 +146,6 @@ library GameLib {
         }
     }
 
-    function _endMove(uint256 _movableEntity) public {
-        // TODO
-    }
-
     function _endGather(uint256 _armyID) public {
         Position memory position = ECSLib._getPosition("Position", _armyID);
 
@@ -246,26 +242,13 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    function _getMovementBy(uint256 _movableEntity) public returns (uint256) {
-        Set _set1 = new Set();
-        Set _set2 = new Set();
-        _set1.addArray(ECSLib._getStringComponent("Tag").getEntitiesWithValue(string("Movement")));
-        _set2.addArray(ECSLib._getUintComponent("Source").getEntitiesWithValue(_movableEntity));
-        uint256[] memory _result = ECSLib._intersection(_set1, _set2);
-
-        assert(_result.length <= 1);
-        return _result.length == 1 ? _result[0] : _NULL();
-    }
-
     function _getMovableEntityAt(Position memory _position) public returns (uint256) {
-        Set _set1 = new Set();
-        Set _set2 = new Set();
-        _set1.addArray(ECSLib._getUintComponent("Speed").getEntities());
-        _set2.addArray(ECSLib._getPositionComponent("Position").getEntitiesWithValue(_position));
-        uint256[] memory _result = ECSLib._intersection(_set1, _set2);
-
-        assert(_result.length <= 1);
-        return _result.length == 1 ? _result[0] : _NULL();
+        QueryCondition[] memory query = new QueryCondition[](2);
+        query[0] = ECSLib._queryChunk(QueryType.Has, "Speed", new bytes(0));
+        query[1] = ECSLib._queryChunk(QueryType.HasVal, "Position", abi.encode(_position));
+        uint256[] memory res = ECSLib._query(query);
+        assert(res.length <= 1);
+        return res.length == 1 ? res[0] : 0;
     }
 
     function _getArmyAt(Position memory _position) public returns (uint256) {
@@ -492,18 +475,24 @@ library GameLib {
         return (_xDist == 0 && _yDist == _tileWidth) || (_xDist == _tileWidth && _yDist == 0);
     }
 
+    /**
+     * @dev From any position, get its proper tile position.
+     */
     function _getProperTilePosition(Position memory _p) public view returns (Position memory) {
         uint256 _tileWidth = gs().worldConstants.tileWidth;
         return Position({x: _p.x - (_p.x % _tileWidth), y: _p.y - (_p.y % _tileWidth)});
     }
 
+    /**
+     * @dev From any proper tile position, get the midpoint position of that tile. Often used for spawning units.
+     */
     function _getMidPositionFromTilePosition(Position memory _tilePosition) public view returns (Position memory) {
         uint256 _tileWidth = gs().worldConstants.tileWidth;
         return Position({x: _tilePosition.x + _tileWidth / 2, y: _tilePosition.y + _tileWidth / 2});
     }
 
     /**
-     * @dev Determine whether a position is at the top-left corner of a tile.
+     * @dev Determine whether a position is a proper tile position, aka located exactly at the top-left corner of a tile.
      */
     function _isProperTilePosition(Position memory _p) public view returns (bool) {
         uint256 _tileWidth = gs().worldConstants.tileWidth;
