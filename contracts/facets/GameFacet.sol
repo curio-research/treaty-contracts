@@ -276,7 +276,7 @@ contract GameFacet is UseStorage {
 
         // Verify that army is sitting on the resource
         Position memory startPosition = GameLib._getProperTilePosition(ECSLib._getPosition("Position", _armyID));
-        require(GameLib._coincident(startPosition, ECSLib._getPosition("Position", _resourceID)), "CURIO: Army must be coincident to resource to gather");
+        require(GameLib._coincident(startPosition, ECSLib._getPosition("StartPosition", _resourceID)), "CURIO: Army must be coincident to resource to gather");
 
         // Verify that resource is not in another player's territory
         uint256 tileID = GameLib._getTileAt(startPosition);
