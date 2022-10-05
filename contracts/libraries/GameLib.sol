@@ -85,13 +85,15 @@ library GameLib {
 
         // if it's a gold mine, initialize it
         if (terrain == 1 || terrain == 2 || terrain == 3) {
+            if (_getResourceAt(_position) != _NULL()) return; // avoid initializing two resources on the same tile
+
             uint256 goldMineID = ECSLib._addEntity();
             uint256 goldMineLevel = terrain; // it happens that the gold level is the same as the terrain index
 
             ECSLib._setString("Tag", goldMineID, "Resource");
             ECSLib._setUint("Template", goldMineID, _getTemplateByInventoryType("Gold"));
             ECSLib._setUint("Level", goldMineID, goldMineLevel);
-            ECSLib._setPosition("Position", goldMineID, _position);
+            ECSLib._setPosition("StartPosition", goldMineID, _getProperTilePosition(_position));
             ECSLib._setUint("LastTimestamp", goldMineID, block.timestamp);
             ECSLib._setUint("Amount", goldMineID, _goldLevelSelector(goldMineLevel));
         }
@@ -169,17 +171,17 @@ library GameLib {
             armyAmount = ECSLib._getUint("Amount", inventoryID);
         }
 
-        uint256 _resourceID = _getResourceAt(_getProperTilePosition(position));
-        uint256 _resourceAmount = ECSLib._getUint("Amount", _resourceID);
+        uint256 resourceID = _getResourceAt(_getProperTilePosition(position));
+        uint256 resourceAmount = ECSLib._getUint("Amount", resourceID);
 
         // Gather
         uint256 _gatherAmount = (block.timestamp - ECSLib._getUint("InitTimestamp", gatherID)) / ECSLib._getUint("Duration", templateID);
-        if (_gatherAmount > _resourceAmount) _gatherAmount = _resourceAmount;
+        if (_gatherAmount > resourceAmount) _gatherAmount = resourceAmount;
         if (_gatherAmount > (ECSLib._getUint("Capacity", _armyID) - armyAmount)) _gatherAmount = ECSLib._getUint("Capacity", _armyID) - armyAmount;
         ECSLib._setUint("Amount", inventoryID, armyAmount + _gatherAmount);
-        ECSLib._setUint("Amount", _resourceID, _resourceAmount - _gatherAmount);
+        ECSLib._setUint("Amount", resourceID, resourceAmount - _gatherAmount);
 
-        if (_gatherAmount == _resourceAmount) ECSLib._removeEntity(_resourceID);
+        if (_gatherAmount == resourceAmount) ECSLib._removeEntity(resourceID);
 
         ECSLib._removeEntity(gatherID);
     }

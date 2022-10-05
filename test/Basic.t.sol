@@ -45,10 +45,15 @@ contract TreatyTest is Test, DiamondDeployTest {
             kievTiles[8] = Position({x: 60, y: 40});
             vm.startPrank(player2);
             game.move(kievID, Position({x: 60, y: 40}));
+            time += 2;
+            vm.warp(time);
+            game.move(kievID, Position({x: 67, y: 47}));
             game.foundCity(kievID, kievTiles, "Kiev");
             vm.stopPrank();
             console.log("Kiev is founded");
         }
+        time += 2;
+        vm.warp(time);
 
         // Player 1 produces troops and organizes army
         {
