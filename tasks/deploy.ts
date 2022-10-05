@@ -1,4 +1,3 @@
-import { Curio } from './../typechain-types/hardhat-diamond-abi/Curio';
 import { GameLib } from './../typechain-types/libraries/GameLib';
 import { ECSLib } from './../typechain-types/libraries/ECSLib';
 import { publishDeployment, isConnectionLive } from './../api/deployment';

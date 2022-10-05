@@ -416,7 +416,7 @@ library GameLib {
 
     function _getSettlerHealthAndSpeedByLevel(uint256 _level) public pure returns (uint256, uint256) {
         require(_level >= 1, "CURIO: City level must be at least 1");
-        return (_level * 2 + 5, 1); // FIXME: temporary
+        return (_level * 2 + 5, 10); // FIXME: temporary
     }
 
     function _getCityTileCountByLevel(uint256 _level) public pure returns (uint256) {

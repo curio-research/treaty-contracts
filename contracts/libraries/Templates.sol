@@ -18,7 +18,11 @@ library Templates {
         return cityCenterID;
     }
 
-    function _createCityTile(Position memory _position, uint256 _cityID) public returns (uint256) {
+    function _createCityTile(
+        Position memory _position,
+        uint256 _cityID,
+        address _playerAddr
+    ) public returns (uint256) {
         require(GameLib._inBound(_position), "CURIO: Out of bound");
         require(GameLib._getTileAt(_position) == 0, "CURIO: Territory overlaps with another city");
         GameLib._initializeTile(_position);
@@ -27,11 +31,16 @@ library Templates {
         ECSLib._setString("Tag", tileID, "Tile");
         ECSLib._setPosition("Position", tileID, _position);
         ECSLib._setUint("City", tileID, _cityID);
+        ECSLib._setUint("Owner", tileID, GameLib._getPlayer(_playerAddr));
 
         return tileID;
     }
 
-    function _createSettler(Position memory _position, uint256 _playerID) public returns (uint256) {
+    function _createSettler(
+        Position memory _position,
+        uint256 _playerID,
+        uint256 _speed
+    ) public returns (uint256) {
         uint256 settlerID = ECSLib._addEntity();
 
         ECSLib._setString("Tag", settlerID, "Settler");
@@ -40,8 +49,9 @@ library Templates {
         ECSLib._setUint("Level", settlerID, 1);
         ECSLib._setBool("CanSettle", settlerID);
         ECSLib._setUint("Health", settlerID, 1); // FIXME
-        ECSLib._setUint("Speed", settlerID, 1); // FIXME
+        ECSLib._setUint("Speed", settlerID, _speed); // FIXME
         ECSLib._setUint("LastTimestamp", settlerID, block.timestamp);
+        ECSLib._setUint("MoveCooldown", settlerID, 1);
 
         return settlerID;
     }

@@ -388,19 +388,6 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "_movableEntity",
-        type: "uint256",
-      },
-    ],
-    name: "endMove",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
         name: "_buildingID",
         type: "uint256",
       },
@@ -540,6 +527,36 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
+        name: "_movableEntity",
+        type: "uint256",
+      },
+      {
+        components: [
+          {
+            internalType: "uint256",
+            name: "x",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "y",
+            type: "uint256",
+          },
+        ],
+        internalType: "struct Position",
+        name: "_targetPosition",
+        type: "tuple",
+      },
+    ],
+    name: "move",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
         name: "_cityID",
         type: "uint256",
       },
@@ -592,36 +609,6 @@ const _abi = [
       },
     ],
     name: "startGather",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_movableEntity",
-        type: "uint256",
-      },
-      {
-        components: [
-          {
-            internalType: "uint256",
-            name: "x",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "y",
-            type: "uint256",
-          },
-        ],
-        internalType: "struct Position",
-        name: "_targetPosition",
-        type: "tuple",
-      },
-    ],
-    name: "startMove",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

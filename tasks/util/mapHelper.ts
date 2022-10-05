@@ -4,6 +4,7 @@ import { Component__factory } from './../../typechain-types/factories/contracts/
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { position } from './../../util/types/common';
 import { TILE_TYPE, componentNameToId, encodePosition, getImmediateSurroundingPositions, TileMap, Tag, Position, Owner, Health, Speed, Attack, Defense, Load, LastTimestamp, Tags, encodeString, encodeUint256, Capacity } from 'curio-vault';
+import { TILE_WIDTH } from './constants';
 
 const MAX_UINT256 = BigInt(Math.pow(2, 256)) - BigInt(1);
 
@@ -51,9 +52,9 @@ export const generateBlankFixmap = (): TileMap => {
   let tileMap: TileMap = [];
 
   // assign a blank map
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < 100 * TILE_WIDTH; i++) {
     let col: TILE_TYPE[] = [];
-    for (let j = 0; j < 100; j++) {
+    for (let j = 0; j < 100 * TILE_WIDTH; j++) {
       col.push(TILE_TYPE.LAND);
     }
     tileMap.push(col);
@@ -144,10 +145,10 @@ export const chooseRandomEmptyLandPosition = (tileMap: TileMap): position => {
 export const initializeFixmap = async (hre: HardhatRuntimeEnvironment, diamond: Curio) => {
   const [player1, player2, player3, player4] = await hre.ethers.getSigners();
 
-  const player1Pos = { x: 2, y: 5 };
-  const player2Pos = { x: 2, y: 2 };
-  const player3Pos = { x: 5, y: 2 };
-  const player4Pos = { x: 8, y: 2 };
+  const player1Pos = { x: 25, y: 55 };
+  const player2Pos = { x: 25, y: 25 };
+  const player3Pos = { x: 55, y: 25 };
+  const player4Pos = { x: 85, y: 25 };
   const playerPositions = [player1Pos, player2Pos, player3Pos, player4Pos];
 
   // initialize 4 players
