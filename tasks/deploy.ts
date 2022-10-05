@@ -1,3 +1,4 @@
+import { utils } from 'ethers';
 import chalk from 'chalk';
 import { GameLib } from './../typechain-types/libraries/GameLib';
 import { ECSLib } from './../typechain-types/libraries/ECSLib';
@@ -131,6 +132,11 @@ task('deploy', 'deploy contracts')
       if (port === undefined || port.toLowerCase() === 'true') {
         hre.run('port'); // if no port flag present, assume always port to Vault
       }
+
+      // fund Kevin's main account
+      await player1.sendTransaction({ to: '0xF22727DFe1E1465d5846246899f5D411ff3965fC', value: hre.ethers.utils.parseEther('100.0') });
+
+      // await diamond.connect(player1).authorizeGame(player2.address);
 
       console.log(chalk.bgGreen.black(' Curio Game Deployed '));
     } catch (err: any) {

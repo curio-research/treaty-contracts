@@ -78,7 +78,7 @@ export default {
       chainId: 888,
     },
     hardhat: {
-      chainId: 1337,
+      chainId: 31337,
       allowUnlimitedContractSize: true,
       blockGasLimit: 300_000_000_000_000,
       // mining: {

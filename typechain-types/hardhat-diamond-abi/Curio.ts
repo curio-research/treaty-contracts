@@ -167,6 +167,7 @@ export interface CurioInterface extends utils.Interface {
     "facetFunctionSelectors(address)": FunctionFragment;
     "facets()": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
+    "authorizeGame(address)": FunctionFragment;
     "battle(uint256,uint256)": FunctionFragment;
     "denounceTreaty(address)": FunctionFragment;
     "disbandArmy(uint256)": FunctionFragment;
@@ -194,6 +195,7 @@ export interface CurioInterface extends utils.Interface {
     "getEntitiesAddr()": FunctionFragment;
     "getEntity()": FunctionFragment;
     "getInventoryByCityAndType(uint256,string)": FunctionFragment;
+    "getMainBurnerAccount(address)": FunctionFragment;
     "getPlayerCount()": FunctionFragment;
     "getPlayerId(address)": FunctionFragment;
     "getSettlerAt((uint256,uint256))": FunctionFragment;
@@ -242,6 +244,7 @@ export interface CurioInterface extends utils.Interface {
       | "facetFunctionSelectors"
       | "facets"
       | "supportsInterface"
+      | "authorizeGame"
       | "battle"
       | "denounceTreaty"
       | "disbandArmy"
@@ -269,6 +272,7 @@ export interface CurioInterface extends utils.Interface {
       | "getEntitiesAddr"
       | "getEntity"
       | "getInventoryByCityAndType"
+      | "getMainBurnerAccount"
       | "getPlayerCount"
       | "getPlayerId"
       | "getSettlerAt"
@@ -364,6 +368,10 @@ export interface CurioInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "supportsInterface",
     values: [PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "authorizeGame",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "battle",
@@ -481,6 +489,10 @@ export interface CurioInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getInventoryByCityAndType",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getMainBurnerAccount",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "getPlayerCount",
@@ -648,6 +660,10 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "supportsInterface",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "authorizeGame",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "battle", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "denounceTreaty",
@@ -727,6 +743,10 @@ export interface CurioInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "getEntity", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getInventoryByCityAndType",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getMainBurnerAccount",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -1029,6 +1049,11 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    authorizeGame(
+      _burnerAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     battle(
       _armyID: PromiseOrValue<BigNumberish>,
       _targetID: PromiseOrValue<BigNumberish>,
@@ -1168,6 +1193,11 @@ export interface Curio extends BaseContract {
       _inventoryType: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    getMainBurnerAccount(
+      _primaryAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
     getPlayerCount(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -1395,6 +1425,11 @@ export interface Curio extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  authorizeGame(
+    _burnerAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   battle(
     _armyID: PromiseOrValue<BigNumberish>,
     _targetID: PromiseOrValue<BigNumberish>,
@@ -1534,6 +1569,11 @@ export interface Curio extends BaseContract {
     _inventoryType: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  getMainBurnerAccount(
+    _primaryAddress: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   getPlayerCount(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1761,6 +1801,11 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    authorizeGame(
+      _burnerAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     battle(
       _armyID: PromiseOrValue<BigNumberish>,
       _targetID: PromiseOrValue<BigNumberish>,
@@ -1900,6 +1945,11 @@ export interface Curio extends BaseContract {
       _inventoryType: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    getMainBurnerAccount(
+      _primaryAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     getPlayerCount(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -2182,6 +2232,11 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    authorizeGame(
+      _burnerAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     battle(
       _armyID: PromiseOrValue<BigNumberish>,
       _targetID: PromiseOrValue<BigNumberish>,
@@ -2320,6 +2375,11 @@ export interface Curio extends BaseContract {
       _cityID: PromiseOrValue<BigNumberish>,
       _inventoryType: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    getMainBurnerAccount(
+      _primaryAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getPlayerCount(overrides?: CallOverrides): Promise<BigNumber>;
@@ -2547,6 +2607,11 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    authorizeGame(
+      _burnerAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     battle(
       _armyID: PromiseOrValue<BigNumberish>,
       _targetID: PromiseOrValue<BigNumberish>,
@@ -2685,6 +2750,11 @@ export interface Curio extends BaseContract {
       _cityID: PromiseOrValue<BigNumberish>,
       _inventoryType: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    getMainBurnerAccount(
+      _primaryAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getPlayerCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;

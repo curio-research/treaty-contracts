@@ -20,6 +20,12 @@ contract GameFacet is UseStorage {
     // BASIC
     // ----------------------------------------------------------
 
+    // sent using the initial function
+    function authorizeGame(address _burnerAddress) external {
+        gs().accounts[msg.sender] = _burnerAddress;
+        gs().burnerAccounts[_burnerAddress] = msg.sender;
+    }
+
     function initializePlayer(Position memory _position, string memory _name) external {
         GameLib.ongoingGameCheck();
         GameLib.inboundPositionCheck(_position);

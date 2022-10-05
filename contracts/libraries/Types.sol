@@ -82,4 +82,6 @@ struct GameState {
     mapping(string => uint256) templates; // template name to id
     mapping(uint256 => address) componentEntityToAddress; // component id to contract address
     mapping(address => uint256) playerEntityMap;
+    mapping(address => address) accounts; // main address -> burner address
+    mapping(address => address) burnerAccounts; // burner address -> main address
 }
