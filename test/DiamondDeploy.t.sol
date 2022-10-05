@@ -49,9 +49,9 @@ contract DiamondDeployTest is Test {
     uint256 public player2Id;
     uint256 public player3Id;
 
-    Position public player1Pos = Position({x: 6, y: 1});
-    Position public player2Pos = Position({x: 6, y: 3});
-    Position public player3Pos = Position({x: 5, y: 2});
+    Position public player1Pos = Position({x: 60, y: 10});
+    Position public player2Pos = Position({x: 60, y: 30});
+    Position public player3Pos = Position({x: 50, y: 20});
 
     uint256 public destroyerTemplateId;
 
@@ -168,7 +168,7 @@ contract DiamondDeployTest is Test {
         admin.setComponentValue("Tag", cavalryTemplateID, abi.encode("TroopTemplate"));
         admin.setComponentValue("InventoryType", cavalryTemplateID, abi.encode("Cavalry"));
         admin.setComponentValue("Health", cavalryTemplateID, abi.encode(120));
-        admin.setComponentValue("Speed", cavalryTemplateID, abi.encode(1));
+        admin.setComponentValue("Speed", cavalryTemplateID, abi.encode(5));
         admin.setComponentValue("Attack", cavalryTemplateID, abi.encode(60));
         admin.setComponentValue("Defense", cavalryTemplateID, abi.encode(120));
         admin.setComponentValue("Load", cavalryTemplateID, abi.encode(1));
@@ -180,7 +180,7 @@ contract DiamondDeployTest is Test {
         admin.setComponentValue("Tag", infantryTemplateID, abi.encode("TroopTemplate"));
         admin.setComponentValue("InventoryType", infantryTemplateID, abi.encode("Infantry"));
         admin.setComponentValue("Health", infantryTemplateID, abi.encode(120));
-        admin.setComponentValue("Speed", infantryTemplateID, abi.encode(1));
+        admin.setComponentValue("Speed", infantryTemplateID, abi.encode(5));
         admin.setComponentValue("Attack", infantryTemplateID, abi.encode(60));
         admin.setComponentValue("Defense", infantryTemplateID, abi.encode(120));
         admin.setComponentValue("Load", infantryTemplateID, abi.encode(1));
@@ -192,7 +192,7 @@ contract DiamondDeployTest is Test {
         admin.setComponentValue("Tag", archerTemplateID, abi.encode("TroopTemplate"));
         admin.setComponentValue("InventoryType", archerTemplateID, abi.encode("Archer"));
         admin.setComponentValue("Health", archerTemplateID, abi.encode(120));
-        admin.setComponentValue("Speed", archerTemplateID, abi.encode(1));
+        admin.setComponentValue("Speed", archerTemplateID, abi.encode(5));
         admin.setComponentValue("Attack", archerTemplateID, abi.encode(60));
         admin.setComponentValue("Defense", archerTemplateID, abi.encode(120));
         admin.setComponentValue("Load", archerTemplateID, abi.encode(1));
@@ -227,6 +227,9 @@ contract DiamondDeployTest is Test {
                 cityHealth: 120,
                 cityAttack: 60,
                 cityDefense: 120,
+                armyBattleRange: 5,
+                cityBattleRange: 18,
+                tileWidth: 10,
                 cityAmount: 1000 // DO NOT REMOVE THIS COMMENT
             });
     }

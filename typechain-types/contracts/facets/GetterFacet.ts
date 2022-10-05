@@ -49,11 +49,17 @@ export type WorldConstantsStruct = {
   cityHealth: PromiseOrValue<BigNumberish>;
   cityAttack: PromiseOrValue<BigNumberish>;
   cityDefense: PromiseOrValue<BigNumberish>;
+  tileWidth: PromiseOrValue<BigNumberish>;
+  armyBattleRange: PromiseOrValue<BigNumberish>;
+  cityBattleRange: PromiseOrValue<BigNumberish>;
   cityAmount: PromiseOrValue<BigNumberish>;
 };
 
 export type WorldConstantsStructOutput = [
   string,
+  BigNumber,
+  BigNumber,
+  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -85,6 +91,9 @@ export type WorldConstantsStructOutput = [
   cityHealth: BigNumber;
   cityAttack: BigNumber;
   cityDefense: BigNumber;
+  tileWidth: BigNumber;
+  armyBattleRange: BigNumber;
+  cityBattleRange: BigNumber;
   cityAmount: BigNumber;
 };
 

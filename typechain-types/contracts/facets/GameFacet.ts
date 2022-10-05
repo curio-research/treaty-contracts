@@ -45,8 +45,7 @@ export interface GameFacetInterface extends utils.Interface {
     "initializePlayer((uint256,uint256),string)": FunctionFragment;
     "initializeTile((uint256,uint256))": FunctionFragment;
     "joinTreaty(address)": FunctionFragment;
-    "moveArmy(uint256,(uint256,uint256))": FunctionFragment;
-    "moveSettler(uint256,(uint256,uint256))": FunctionFragment;
+    "move(uint256,(uint256,uint256))": FunctionFragment;
     "organizeArmy(uint256,uint256[],uint256[])": FunctionFragment;
     "packCity(uint256)": FunctionFragment;
     "startGather(uint256,uint256)": FunctionFragment;
@@ -66,8 +65,7 @@ export interface GameFacetInterface extends utils.Interface {
       | "initializePlayer"
       | "initializeTile"
       | "joinTreaty"
-      | "moveArmy"
-      | "moveSettler"
+      | "move"
       | "organizeArmy"
       | "packCity"
       | "startGather"
@@ -120,11 +118,7 @@ export interface GameFacetInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "moveArmy",
-    values: [PromiseOrValue<BigNumberish>, PositionStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "moveSettler",
+    functionFragment: "move",
     values: [PromiseOrValue<BigNumberish>, PositionStruct]
   ): string;
   encodeFunctionData(
@@ -184,11 +178,7 @@ export interface GameFacetInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "joinTreaty", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "moveArmy", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "moveSettler",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "move", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "organizeArmy",
     data: BytesLike
@@ -293,14 +283,8 @@ export interface GameFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    moveArmy(
-      _armyID: PromiseOrValue<BigNumberish>,
-      _targetPosition: PositionStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    moveSettler(
-      _settlerID: PromiseOrValue<BigNumberish>,
+    move(
+      _movableEntity: PromiseOrValue<BigNumberish>,
       _targetPosition: PositionStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -393,14 +377,8 @@ export interface GameFacet extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  moveArmy(
-    _armyID: PromiseOrValue<BigNumberish>,
-    _targetPosition: PositionStruct,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  moveSettler(
-    _settlerID: PromiseOrValue<BigNumberish>,
+  move(
+    _movableEntity: PromiseOrValue<BigNumberish>,
     _targetPosition: PositionStruct,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -493,14 +471,8 @@ export interface GameFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    moveArmy(
-      _armyID: PromiseOrValue<BigNumberish>,
-      _targetPosition: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    moveSettler(
-      _settlerID: PromiseOrValue<BigNumberish>,
+    move(
+      _movableEntity: PromiseOrValue<BigNumberish>,
       _targetPosition: PositionStruct,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -596,14 +568,8 @@ export interface GameFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    moveArmy(
-      _armyID: PromiseOrValue<BigNumberish>,
-      _targetPosition: PositionStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    moveSettler(
-      _settlerID: PromiseOrValue<BigNumberish>,
+    move(
+      _movableEntity: PromiseOrValue<BigNumberish>,
       _targetPosition: PositionStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -697,14 +663,8 @@ export interface GameFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    moveArmy(
-      _armyID: PromiseOrValue<BigNumberish>,
-      _targetPosition: PositionStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    moveSettler(
-      _settlerID: PromiseOrValue<BigNumberish>,
+    move(
+      _movableEntity: PromiseOrValue<BigNumberish>,
       _targetPosition: PositionStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

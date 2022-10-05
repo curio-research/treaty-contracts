@@ -56,11 +56,14 @@ export interface GameLibInterface extends utils.Interface {
     "_getBattleDamages(uint256,uint256,uint256)": FunctionFragment;
     "_getCityTileCountByLevel(uint256)": FunctionFragment;
     "_getMapTileAt((uint256,uint256))": FunctionFragment;
+    "_getMidPositionFromTilePosition((uint256,uint256))": FunctionFragment;
     "_getNeighbors((uint256,uint256))": FunctionFragment;
     "_getPlayer(address)": FunctionFragment;
+    "_getProperTilePosition((uint256,uint256))": FunctionFragment;
     "_getSettlerHealthAndSpeedByLevel(uint256)": FunctionFragment;
     "_goldLevelSelector(uint256)": FunctionFragment;
     "_inBound((uint256,uint256))": FunctionFragment;
+    "_isProperTilePosition((uint256,uint256))": FunctionFragment;
     "_positionInboundCheck((uint256,uint256))": FunctionFragment;
     "_random(uint256,uint256)": FunctionFragment;
     "_strEq(string,string)": FunctionFragment;
@@ -81,11 +84,14 @@ export interface GameLibInterface extends utils.Interface {
       | "_getBattleDamages"
       | "_getCityTileCountByLevel"
       | "_getMapTileAt"
+      | "_getMidPositionFromTilePosition"
       | "_getNeighbors"
       | "_getPlayer"
+      | "_getProperTilePosition"
       | "_getSettlerHealthAndSpeedByLevel"
       | "_goldLevelSelector"
       | "_inBound"
+      | "_isProperTilePosition"
       | "_positionInboundCheck"
       | "_random"
       | "_strEq"
@@ -136,12 +142,20 @@ export interface GameLibInterface extends utils.Interface {
     values: [PositionStruct]
   ): string;
   encodeFunctionData(
+    functionFragment: "_getMidPositionFromTilePosition",
+    values: [PositionStruct]
+  ): string;
+  encodeFunctionData(
     functionFragment: "_getNeighbors",
     values: [PositionStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "_getPlayer",
     values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getProperTilePosition",
+    values: [PositionStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "_getSettlerHealthAndSpeedByLevel",
@@ -153,6 +167,10 @@ export interface GameLibInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "_inBound",
+    values: [PositionStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_isProperTilePosition",
     values: [PositionStruct]
   ): string;
   encodeFunctionData(
@@ -212,10 +230,18 @@ export interface GameLibInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "_getMidPositionFromTilePosition",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "_getNeighbors",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "_getPlayer", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "_getProperTilePosition",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "_getSettlerHealthAndSpeedByLevel",
     data: BytesLike
@@ -225,6 +251,10 @@ export interface GameLibInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "_inBound", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "_isProperTilePosition",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "_positionInboundCheck",
     data: BytesLike
@@ -344,6 +374,11 @@ export interface GameLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[TileStructOutput]>;
 
+    _getMidPositionFromTilePosition(
+      _tilePosition: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<[PositionStructOutput]>;
+
     _getNeighbors(
       _position: PositionStruct,
       overrides?: CallOverrides
@@ -353,6 +388,11 @@ export interface GameLib extends BaseContract {
       _address: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    _getProperTilePosition(
+      _p: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<[PositionStructOutput]>;
 
     _getSettlerHealthAndSpeedByLevel(
       _level: PromiseOrValue<BigNumberish>,
@@ -365,6 +405,11 @@ export interface GameLib extends BaseContract {
     ): Promise<[BigNumber]>;
 
     _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<[boolean]>;
+
+    _isProperTilePosition(
+      _p: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     _positionInboundCheck(
       _position: PositionStruct,
@@ -459,6 +504,11 @@ export interface GameLib extends BaseContract {
     overrides?: CallOverrides
   ): Promise<TileStructOutput>;
 
+  _getMidPositionFromTilePosition(
+    _tilePosition: PositionStruct,
+    overrides?: CallOverrides
+  ): Promise<PositionStructOutput>;
+
   _getNeighbors(
     _position: PositionStruct,
     overrides?: CallOverrides
@@ -468,6 +518,11 @@ export interface GameLib extends BaseContract {
     _address: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  _getProperTilePosition(
+    _p: PositionStruct,
+    overrides?: CallOverrides
+  ): Promise<PositionStructOutput>;
 
   _getSettlerHealthAndSpeedByLevel(
     _level: PromiseOrValue<BigNumberish>,
@@ -480,6 +535,11 @@ export interface GameLib extends BaseContract {
   ): Promise<BigNumber>;
 
   _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<boolean>;
+
+  _isProperTilePosition(
+    _p: PositionStruct,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   _positionInboundCheck(
     _position: PositionStruct,
@@ -574,6 +634,11 @@ export interface GameLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<TileStructOutput>;
 
+    _getMidPositionFromTilePosition(
+      _tilePosition: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PositionStructOutput>;
+
     _getNeighbors(
       _position: PositionStruct,
       overrides?: CallOverrides
@@ -583,6 +648,11 @@ export interface GameLib extends BaseContract {
       _address: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    _getProperTilePosition(
+      _p: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PositionStructOutput>;
 
     _getSettlerHealthAndSpeedByLevel(
       _level: PromiseOrValue<BigNumberish>,
@@ -595,6 +665,11 @@ export interface GameLib extends BaseContract {
     ): Promise<BigNumber>;
 
     _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<boolean>;
+
+    _isProperTilePosition(
+      _p: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     _positionInboundCheck(
       _position: PositionStruct,
@@ -696,6 +771,11 @@ export interface GameLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    _getMidPositionFromTilePosition(
+      _tilePosition: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     _getNeighbors(
       _position: PositionStruct,
       overrides?: CallOverrides
@@ -703,6 +783,11 @@ export interface GameLib extends BaseContract {
 
     _getPlayer(
       _address: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    _getProperTilePosition(
+      _p: PositionStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -717,6 +802,11 @@ export interface GameLib extends BaseContract {
     ): Promise<BigNumber>;
 
     _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<BigNumber>;
+
+    _isProperTilePosition(
+      _p: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     _positionInboundCheck(
       _position: PositionStruct,
@@ -810,6 +900,11 @@ export interface GameLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    _getMidPositionFromTilePosition(
+      _tilePosition: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     _getNeighbors(
       _position: PositionStruct,
       overrides?: CallOverrides
@@ -817,6 +912,11 @@ export interface GameLib extends BaseContract {
 
     _getPlayer(
       _address: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _getProperTilePosition(
+      _p: PositionStruct,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -831,6 +931,11 @@ export interface GameLib extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     _inBound(
+      _p: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    _isProperTilePosition(
       _p: PositionStruct,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

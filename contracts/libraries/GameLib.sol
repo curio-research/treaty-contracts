@@ -169,7 +169,7 @@ library GameLib {
             armyAmount = ECSLib._getUint("Amount", inventoryID);
         }
 
-        uint256 _resourceID = _getResourceAt(position);
+        uint256 _resourceID = _getResourceAt(_getProperTilePosition(position));
         uint256 _resourceAmount = ECSLib._getUint("Amount", _resourceID);
 
         // Gather
@@ -236,6 +236,15 @@ library GameLib {
     function _getResourceAt(Position memory _position) public returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib._queryChunk(QueryType.HasVal, "Tag", abi.encode(string("Resource")));
+        query[1] = ECSLib._queryChunk(QueryType.HasVal, "Position", abi.encode(_position));
+        uint256[] memory res = ECSLib._query(query);
+        assert(res.length <= 1);
+        return res.length == 1 ? res[0] : 0;
+    }
+
+    function _getMovableEntityAt(Position memory _position) public returns (uint256) {
+        QueryCondition[] memory query = new QueryCondition[](2);
+        query[0] = ECSLib._queryChunk(QueryType.Has, "Speed", new bytes(0));
         query[1] = ECSLib._queryChunk(QueryType.HasVal, "Position", abi.encode(_position));
         uint256[] memory res = ECSLib._query(query);
         assert(res.length <= 1);
@@ -384,7 +393,7 @@ library GameLib {
 
     function _getSettlerHealthAndSpeedByLevel(uint256 _level) public pure returns (uint256, uint256) {
         require(_level >= 1, "CURIO: City level must be at least 1");
-        return (_level * 2 + 5, 1); // FIXME: temporary
+        return (_level * 2 + 5, 10); // FIXME: temporary
     }
 
     function _getCityTileCountByLevel(uint256 _level) public pure returns (uint256) {
@@ -446,7 +455,7 @@ library GameLib {
         return uint256(keccak256(abi.encode(block.timestamp, block.difficulty, _salt))) % _max;
     }
 
-    function _connected(Position[] memory _positions) public pure returns (bool) {
+    function _connected(Position[] memory _positions) public view returns (bool) {
         require(_positions.length > 0, "CURIO: Positions cannot be empty");
 
         for (uint256 i = 1; i < _positions.length; i++) {
@@ -456,8 +465,38 @@ library GameLib {
         return true;
     }
 
-    function _adjacent(Position memory _p1, Position memory _p2) public pure returns (bool) {
-        return !_coincident(_p1, _p2) && _withinDistance(_p1, _p2, 1);
+    /**
+     * @dev Belong to adjacent tiles.
+     */
+    function _adjacent(Position memory _p1, Position memory _p2) public view returns (bool) {
+        uint256 _xDist = _p1.x >= _p2.x ? _p1.x - _p2.x : _p2.x - _p1.x;
+        uint256 _yDist = _p1.y >= _p2.y ? _p1.y - _p2.y : _p2.y - _p1.y;
+        uint256 _tileWidth = gs().worldConstants.tileWidth;
+        return (_xDist == 0 && _yDist == _tileWidth) || (_xDist == _tileWidth && _yDist == 0);
+    }
+
+    /**
+     * @dev From any position, get its proper tile position.
+     */
+    function _getProperTilePosition(Position memory _p) public view returns (Position memory) {
+        uint256 _tileWidth = gs().worldConstants.tileWidth;
+        return Position({x: _p.x - (_p.x % _tileWidth), y: _p.y - (_p.y % _tileWidth)});
+    }
+
+    /**
+     * @dev From any proper tile position, get the midpoint position of that tile. Often used for spawning units.
+     */
+    function _getMidPositionFromTilePosition(Position memory _tilePosition) public view returns (Position memory) {
+        uint256 _tileWidth = gs().worldConstants.tileWidth;
+        return Position({x: _tilePosition.x + _tileWidth / 2, y: _tilePosition.y + _tileWidth / 2});
+    }
+
+    /**
+     * @dev Determine whether a position is a proper tile position, aka located exactly at the top-left corner of a tile.
+     */
+    function _isProperTilePosition(Position memory _p) public view returns (bool) {
+        uint256 _tileWidth = gs().worldConstants.tileWidth;
+        return _p.x % _tileWidth == 0 && _p.y % _tileWidth == 0;
     }
 
     function _coincident(Position memory _p1, Position memory _p2) public pure returns (bool) {

@@ -15,6 +15,8 @@ export const SMALL_MAP_INPUT: MapInput = {
   height: 50,
 };
 
+export const TILE_WIDTH = 10;
+
 export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): WorldConstantsStruct => {
   return {
     admin: adminAddr,
@@ -32,6 +34,9 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): W
     cityHealth: 120,
     cityAttack: 60,
     cityDefense: 120,
+    tileWidth: TILE_WIDTH,
+    armyBattleRange: 1,
+    cityBattleRange: 2,
     cityAmount: 1000,
   };
 };

@@ -563,7 +563,7 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "_armyID",
+        name: "_movableEntity",
         type: "uint256",
       },
       {
@@ -584,37 +584,7 @@ const _abi = [
         type: "tuple",
       },
     ],
-    name: "moveArmy",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_settlerID",
-        type: "uint256",
-      },
-      {
-        components: [
-          {
-            internalType: "uint256",
-            name: "x",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "y",
-            type: "uint256",
-          },
-        ],
-        internalType: "struct Position",
-        name: "_targetPosition",
-        type: "tuple",
-      },
-    ],
-    name: "moveSettler",
+    name: "move",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -1119,6 +1089,21 @@ const _abi = [
           {
             internalType: "uint256",
             name: "cityDefense",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "tileWidth",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "armyBattleRange",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "cityBattleRange",
             type: "uint256",
           },
           {

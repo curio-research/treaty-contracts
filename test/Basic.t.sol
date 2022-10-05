@@ -11,20 +11,21 @@ contract TreatyTest is Test, DiamondDeployTest {
     function testBattle() public {
         uint256 moscowID = getter.getSettlerAt(player1Pos);
         uint256 kievID = getter.getSettlerAt(player2Pos);
-        uint256 time = block.timestamp;
+        uint256 time = block.timestamp + 10;
+        vm.warp(time);
 
         // Player 1 founds city
         {
             Position[] memory moscowTiles = new Position[](9);
-            moscowTiles[0] = Position({x: 5, y: 0});
-            moscowTiles[1] = Position({x: 5, y: 1});
-            moscowTiles[2] = Position({x: 5, y: 2});
-            moscowTiles[3] = Position({x: 6, y: 2});
-            moscowTiles[4] = Position({x: 7, y: 2});
-            moscowTiles[5] = Position({x: 7, y: 1});
-            moscowTiles[6] = Position({x: 7, y: 0});
-            moscowTiles[7] = Position({x: 6, y: 0});
-            moscowTiles[8] = Position({x: 6, y: 1});
+            moscowTiles[0] = Position({x: 50, y: 0});
+            moscowTiles[1] = Position({x: 50, y: 10});
+            moscowTiles[2] = Position({x: 50, y: 20});
+            moscowTiles[3] = Position({x: 60, y: 20});
+            moscowTiles[4] = Position({x: 70, y: 20});
+            moscowTiles[5] = Position({x: 70, y: 10});
+            moscowTiles[6] = Position({x: 70, y: 0});
+            moscowTiles[7] = Position({x: 60, y: 0});
+            moscowTiles[8] = Position({x: 60, y: 10});
             vm.prank(player1);
             game.foundCity(moscowID, moscowTiles, "Moscow");
             console.log("Moscow is founded");
@@ -33,17 +34,17 @@ contract TreatyTest is Test, DiamondDeployTest {
         // Player 2 founds city
         {
             Position[] memory kievTiles = new Position[](9);
-            kievTiles[0] = Position({x: 5, y: 3});
-            kievTiles[1] = Position({x: 5, y: 4});
-            kievTiles[2] = Position({x: 5, y: 5});
-            kievTiles[3] = Position({x: 6, y: 5});
-            kievTiles[4] = Position({x: 7, y: 5});
-            kievTiles[5] = Position({x: 7, y: 4});
-            kievTiles[6] = Position({x: 7, y: 3});
-            kievTiles[7] = Position({x: 6, y: 3});
-            kievTiles[8] = Position({x: 6, y: 4});
+            kievTiles[0] = Position({x: 50, y: 30});
+            kievTiles[1] = Position({x: 50, y: 40});
+            kievTiles[2] = Position({x: 50, y: 50});
+            kievTiles[3] = Position({x: 60, y: 50});
+            kievTiles[4] = Position({x: 70, y: 50});
+            kievTiles[5] = Position({x: 70, y: 40});
+            kievTiles[6] = Position({x: 70, y: 30});
+            kievTiles[7] = Position({x: 60, y: 30});
+            kievTiles[8] = Position({x: 60, y: 40});
             vm.startPrank(player2);
-            game.moveSettler(kievID, Position({x: 6, y: 4}));
+            game.move(kievID, Position({x: 60, y: 40}));
             game.foundCity(kievID, kievTiles, "Kiev");
             vm.stopPrank();
             console.log("Kiev is founded");
@@ -75,7 +76,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         }
         time += 500 + 500;
         vm.warp(time);
-        uint256 moscowArmyID = getter.getArmyAt(player1Pos);
+        uint256 moscowArmyID = getter.getArmyAt(Position({x: 65, y: 15}));
 
         // Player 2 produces troops and organizes army
         {
@@ -103,25 +104,39 @@ contract TreatyTest is Test, DiamondDeployTest {
         }
         time += 30 + 70;
         vm.warp(time);
-        uint256 kievArmyID = getter.getArmyAt(Position({x: 6, y: 4}));
+        uint256 kievArmyID = getter.getArmyAt(Position({x: 65, y: 45}));
 
         // Moscow and Kiev move their armies next to one another
-        time += 2;
+        time += 5;
         vm.warp(time);
-        {
-            vm.prank(player1);
-            game.moveArmy(moscowArmyID, Position({x: 6, y: 2}));
-            vm.prank(player2);
-            game.moveArmy(kievArmyID, Position({x: 6, y: 3}));
-            console.log("Troops are on the frontier, waiting for command...");
-        }
+        vm.prank(player1);
+        game.move(moscowArmyID, Position({x: 60, y: 15}));
+        vm.prank(player2);
+        game.move(kievArmyID, Position({x: 62, y: 42}));
+        time += 5;
+        vm.warp(time);
+        vm.prank(player1);
+        game.move(moscowArmyID, Position({x: 60, y: 20}));
+        vm.prank(player2);
+        game.move(kievArmyID, Position({x: 61, y: 38}));
+        time += 5;
+        vm.warp(time);
+        vm.prank(player1);
+        game.move(moscowArmyID, Position({x: 60, y: 25}));
+        vm.prank(player2);
+        game.move(kievArmyID, Position({x: 60, y: 34}));
+        time += 5;
+        vm.warp(time);
+        vm.prank(player2);
+        game.move(kievArmyID, Position({x: 60, y: 30}));
+        console.log("Troops are on the frontier, waiting for command...");
 
         // Check battle preconditions
         uint256 moscowInfantryAmount;
         uint256 kievArcherAmount;
         {
-            assertEq(abi.decode(getter.getComponent("Position").getBytesValue(moscowArmyID), (Position)).y, 2);
-            assertEq(abi.decode(getter.getComponent("Position").getBytesValue(kievArmyID), (Position)).y, 3);
+            assertEq(abi.decode(getter.getComponent("Position").getBytesValue(moscowArmyID), (Position)).y, 25);
+            assertEq(abi.decode(getter.getComponent("Position").getBytesValue(kievArmyID), (Position)).y, 30);
             moscowInfantryAmount = abi.decode(getter.getComponent("Amount").getBytesValue(getter.getArmyConstituents(moscowArmyID)[1]), (uint256));
             assertEq(moscowInfantryAmount, 500);
             kievArcherAmount = abi.decode(getter.getComponent("Amount").getBytesValue(getter.getArmyConstituents(kievArmyID)[1]), (uint256));
@@ -160,9 +175,13 @@ contract TreatyTest is Test, DiamondDeployTest {
         }
 
         // Moscow's army attacks the city of Kiev
+        time += 5;
+        vm.warp(time);
         {
-            vm.prank(player1);
+            vm.startPrank(player1);
+            game.move(moscowArmyID, Position({x: 60, y: 29}));
             game.battle(moscowArmyID, kievID);
+            vm.stopPrank();
             moscowInfantryAmount = abi.decode(getter.getComponent("Amount").getBytesValue(getter.getArmyConstituents(moscowArmyID)[1]), (uint256));
             assertGe(moscowInfantryAmount, 500 - 40);
             assertLe(moscowInfantryAmount, 500 - 20); // FIXME
@@ -189,15 +208,15 @@ contract TreatyTest is Test, DiamondDeployTest {
         assertEq(getter.getComponent("CanSettle").getEntities().length, 2);
 
         Position[] memory _territory = new Position[](9);
-        _territory[0] = Position({x: 5, y: 2});
-        _territory[1] = Position({x: 5, y: 3});
-        _territory[2] = Position({x: 5, y: 4});
-        _territory[3] = Position({x: 6, y: 4});
-        _territory[4] = Position({x: 7, y: 4});
-        _territory[5] = Position({x: 7, y: 3});
-        _territory[6] = Position({x: 7, y: 2});
-        _territory[7] = Position({x: 6, y: 2});
-        _territory[8] = Position({x: 6, y: 3});
+        _territory[0] = Position({x: 50, y: 20});
+        _territory[1] = Position({x: 50, y: 30});
+        _territory[2] = Position({x: 50, y: 40});
+        _territory[3] = Position({x: 60, y: 40});
+        _territory[4] = Position({x: 70, y: 40});
+        _territory[5] = Position({x: 70, y: 30});
+        _territory[6] = Position({x: 70, y: 20});
+        _territory[7] = Position({x: 60, y: 20});
+        _territory[8] = Position({x: 60, y: 30});
 
         // Player 2 founds a city
         vm.startPrank(player2);
@@ -214,21 +233,22 @@ contract TreatyTest is Test, DiamondDeployTest {
 
     function testMultipleTroopProductions() public {
         Position[] memory _territory = new Position[](9);
-        _territory[0] = Position({x: 6, y: 0});
-        _territory[1] = Position({x: 6, y: 1});
-        _territory[2] = Position({x: 6, y: 2});
-        _territory[3] = Position({x: 7, y: 2});
-        _territory[4] = Position({x: 8, y: 2});
-        _territory[5] = Position({x: 8, y: 1});
-        _territory[6] = Position({x: 8, y: 0});
-        _territory[7] = Position({x: 7, y: 0});
-        _territory[8] = Position({x: 7, y: 1});
+        _territory[0] = Position({x: 60, y: 0});
+        _territory[1] = Position({x: 60, y: 10});
+        _territory[2] = Position({x: 60, y: 20});
+        _territory[3] = Position({x: 70, y: 20});
+        _territory[4] = Position({x: 80, y: 20});
+        _territory[5] = Position({x: 80, y: 10});
+        _territory[6] = Position({x: 80, y: 0});
+        _territory[7] = Position({x: 70, y: 0});
+        _territory[8] = Position({x: 70, y: 10});
 
         vm.startPrank(player1);
 
         // Found city
+        vm.warp(3);
         uint256 _settyID = getter.getSettlerAt(player1Pos);
-        game.moveSettler(_settyID, Position({x: 7, y: 1}));
+        game.move(_settyID, Position({x: 70, y: 10}));
         game.foundCity(_settyID, _territory, "New Amsterdam");
         assertEq(getter.getComponent("Tag").getEntitiesWithValue(abi.encode("Tile")).length, 9);
 
@@ -285,21 +305,24 @@ contract TreatyTest is Test, DiamondDeployTest {
 
     function testFoundProducePackMoveUnpackSequence() public {
         Position[] memory _territory = new Position[](9);
-        _territory[0] = Position({x: 6, y: 0});
-        _territory[1] = Position({x: 6, y: 1});
-        _territory[2] = Position({x: 6, y: 2});
-        _territory[3] = Position({x: 7, y: 2});
-        _territory[4] = Position({x: 8, y: 2});
-        _territory[5] = Position({x: 8, y: 1});
-        _territory[6] = Position({x: 8, y: 0});
-        _territory[7] = Position({x: 7, y: 0});
-        _territory[8] = Position({x: 7, y: 1});
+        _territory[0] = Position({x: 60, y: 0});
+        _territory[1] = Position({x: 60, y: 10});
+        _territory[2] = Position({x: 60, y: 20});
+        _territory[3] = Position({x: 70, y: 20});
+        _territory[4] = Position({x: 80, y: 20});
+        _territory[5] = Position({x: 80, y: 10});
+        _territory[6] = Position({x: 80, y: 0});
+        _territory[7] = Position({x: 70, y: 0});
+        _territory[8] = Position({x: 70, y: 10});
 
         vm.startPrank(player1);
 
         // Found city
         uint256 _settyID = getter.getSettlerAt(player1Pos);
-        game.moveSettler(_settyID, Position({x: 7, y: 1}));
+        vm.warp(3);
+        game.move(_settyID, Position({x: 65, y: 10}));
+        vm.warp(4);
+        game.move(_settyID, Position({x: 70, y: 10}));
         game.foundCity(_settyID, _territory, "New Amsterdam");
         assertEq(getter.getComponent("Tag").getEntitiesWithValue(abi.encode("Tile")).length, 9);
 
@@ -314,9 +337,13 @@ contract TreatyTest is Test, DiamondDeployTest {
         game.packCity(_settyID);
         assertEq(getter.getComponent("Tag").getEntitiesWithValue(abi.encode("Tile")).length, 0);
         vm.warp(32);
-        game.moveSettler(_settyID, Position({x: 8, y: 1}));
+        game.move(_settyID, Position({x: 75, y: 10}));
+        vm.warp(33);
+        game.move(_settyID, Position({x: 80, y: 10}));
         vm.warp(34);
-        game.moveSettler(_settyID, Position({x: 9, y: 1}));
+        game.move(_settyID, Position({x: 85, y: 10}));
+        vm.warp(35);
+        game.move(_settyID, Position({x: 90, y: 10}));
 
         // Verify that all previous tiles and buildings are removed
         for (uint256 i = 0; i < _territory.length; i++) {
@@ -325,16 +352,18 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Found another city
         vm.warp(36);
-        game.moveSettler(_settyID, Position({x: 8, y: 1}));
-        _territory[0] = Position({x: 7, y: 0});
-        _territory[1] = Position({x: 7, y: 1});
-        _territory[2] = Position({x: 7, y: 2});
-        _territory[3] = Position({x: 8, y: 2});
-        _territory[4] = Position({x: 9, y: 2});
-        _territory[5] = Position({x: 9, y: 1});
-        _territory[6] = Position({x: 9, y: 0});
-        _territory[7] = Position({x: 8, y: 0});
-        _territory[8] = Position({x: 8, y: 1});
+        game.move(_settyID, Position({x: 85, y: 10}));
+        vm.warp(37);
+        game.move(_settyID, Position({x: 80, y: 10}));
+        _territory[0] = Position({x: 70, y: 0});
+        _territory[1] = Position({x: 70, y: 10});
+        _territory[2] = Position({x: 70, y: 20});
+        _territory[3] = Position({x: 80, y: 20});
+        _territory[4] = Position({x: 90, y: 20});
+        _territory[5] = Position({x: 90, y: 10});
+        _territory[6] = Position({x: 90, y: 0});
+        _territory[7] = Position({x: 80, y: 0});
+        _territory[8] = Position({x: 80, y: 10});
         game.foundCity(_settyID, _territory, "New York");
         assertEq(getter.getComponent("Tag").getEntitiesWithValue(abi.encode("Tile")).length, 9);
 
@@ -343,15 +372,15 @@ contract TreatyTest is Test, DiamondDeployTest {
 
     // function testTreatyBasics() public {
     //     Position[] memory _territory = new Position[](9);
-    //     _territory[0] = Position({x: 5, y: 0});
-    //     _territory[1] = Position({x: 5, y: 1});
-    //     _territory[2] = Position({x: 5, y: 2});
-    //     _territory[3] = Position({x: 6, y: 2});
-    //     _territory[4] = Position({x: 7, y: 2});
-    //     _territory[5] = Position({x: 7, y: 1});
-    //     _territory[6] = Position({x: 7, y: 0});
-    //     _territory[7] = Position({x: 6, y: 0});
-    //     _territory[8] = Position({x: 6, y: 1});
+    //     _territory[0] = Position({x: 50, y: 0});
+    //     _territory[1] = Position({x: 50, y: 10});
+    //     _territory[2] = Position({x: 50, y: 20});
+    //     _territory[3] = Position({x: 60, y: 20});
+    //     _territory[4] = Position({x: 70, y: 20});
+    //     _territory[5] = Position({x: 70, y: 10});
+    //     _territory[6] = Position({x: 70, y: 0});
+    //     _territory[7] = Position({x: 60, y: 0});
+    //     _territory[8] = Position({x: 60, y: 10});
 
     //     vm.startPrank(player1);
     //     game.joinTreaty(address(nato));
@@ -373,7 +402,7 @@ contract TreatyTest is Test, DiamondDeployTest {
     //     uint256 _army1 = game.organizeArmy(_cityID, _arr1, _arr2);
 
     //     vm.warp(20);
-    //     game.moveArmy(_army1, Position({x: 6, y: 2}));
+    //     game.moveArmy(_army1, Position({x: 60, y: 20}));
 
     //     game.denounceTreaty(address(nato));
     //     vm.stopPrank();

@@ -6,44 +6,54 @@ import {ECSLib} from "contracts/libraries/ECSLib.sol";
 import {GameLib} from "contracts/libraries/GameLib.sol";
 
 library Templates {
-    function _createCityCenter(Position memory _position, uint256 _cityId) public returns (uint256) {
+    function _createCityCenter(Position memory _position, uint256 _cityID) public returns (uint256) {
         uint256 cityCenterID = ECSLib._addEntity();
 
         ECSLib._setString("Tag", cityCenterID, "Building");
         ECSLib._setPosition("Position", cityCenterID, _position);
-        ECSLib._setUint("City", cityCenterID, _cityId);
+        ECSLib._setUint("City", cityCenterID, _cityID);
         ECSLib._setString("BuildingType", cityCenterID, "City Center");
         ECSLib._setUint("InitTimestamp", cityCenterID, block.timestamp);
 
         return cityCenterID;
     }
 
-    function _createCityTile(Position memory _position, uint256 cityId) public returns (uint256) {
+    function _createCityTile(
+        Position memory _position,
+        uint256 _cityID,
+        address _playerAddr
+    ) public returns (uint256) {
         require(GameLib._inBound(_position), "CURIO: Out of bound");
         require(GameLib._getTileAt(_position) == 0, "CURIO: Territory overlaps with another city");
         GameLib._initializeTile(_position);
 
-        uint256 tile = ECSLib._addEntity();
-        ECSLib._setString("Tag", tile, "Tile");
-        ECSLib._setPosition("Position", tile, _position);
-        ECSLib._setUint("City", tile, cityId);
+        uint256 tileID = ECSLib._addEntity();
+        ECSLib._setString("Tag", tileID, "Tile");
+        ECSLib._setPosition("Position", tileID, _position);
+        ECSLib._setUint("City", tileID, _cityID);
+        ECSLib._setUint("Owner", tileID, GameLib._getPlayer(_playerAddr));
 
-        return tile;
+        return tileID;
     }
 
-    function _createSettler(Position memory _position, uint256 _playerId) public returns (uint256) {
-        uint256 settlerId = ECSLib._addEntity();
+    function _createSettler(
+        Position memory _position,
+        uint256 _playerID,
+        uint256 _speed
+    ) public returns (uint256) {
+        uint256 settlerID = ECSLib._addEntity();
 
-        ECSLib._setString("Tag", settlerId, "Settler");
-        ECSLib._setPosition("Position", settlerId, _position);
-        ECSLib._setUint("Owner", settlerId, _playerId);
-        ECSLib._setUint("Level", settlerId, 1);
-        ECSLib._setBool("CanSettle", settlerId);
-        ECSLib._setUint("Health", settlerId, 1); // FIXME
-        ECSLib._setUint("Speed", settlerId, 1); // FIXME
-        ECSLib._setUint("LastTimestamp", settlerId, block.timestamp);
+        ECSLib._setString("Tag", settlerID, "Settler");
+        ECSLib._setPosition("Position", settlerID, _position);
+        ECSLib._setUint("Owner", settlerID, _playerID);
+        ECSLib._setUint("Level", settlerID, 1);
+        ECSLib._setBool("CanSettle", settlerID);
+        ECSLib._setUint("Health", settlerID, 1); // FIXME
+        ECSLib._setUint("Speed", settlerID, _speed); // FIXME
+        ECSLib._setUint("LastTimestamp", settlerID, block.timestamp);
+        ECSLib._setUint("MoveCooldown", settlerID, 1);
 
-        return settlerId;
+        return settlerID;
     }
 
     function _createPlayer(string memory _name) public returns (uint256) {
@@ -58,11 +68,11 @@ library Templates {
         return playerID;
     }
 
-    function _addArmy(uint256 _playerId, Position memory _position) public returns (uint256) {
+    function _addArmy(uint256 _playerID, Position memory _position) public returns (uint256) {
         uint256 armyID = ECSLib._addEntity();
 
         ECSLib._setString("Tag", armyID, "Army");
-        ECSLib._setUint("Owner", armyID, _playerId);
+        ECSLib._setUint("Owner", armyID, _playerID);
         ECSLib._setPosition("Position", armyID, _position);
         ECSLib._setUint("Health", armyID, 0);
         ECSLib._setUint("Speed", armyID, 0);

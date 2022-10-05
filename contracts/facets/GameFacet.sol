@@ -33,15 +33,15 @@ contract GameFacet is UseStorage {
         gs().players.push(msg.sender);
         gs().playerEntityMap[msg.sender] = playerID;
 
-        uint256 _settlerID = Templates._createSettler(_position, playerID);
+        uint256 settlerID = Templates._createSettler(_position, playerID, gs().worldConstants.tileWidth);
 
         // Initialize guard which stays with eventual city
-        Templates._addGuard(_settlerID, gs().worldConstants);
+        Templates._addGuard(settlerID, gs().worldConstants);
 
         // Add gold to eventual city
         uint256 goldInventoryID = ECSLib._addEntity();
         ECSLib._setString("Tag", goldInventoryID, "ResourceInventory");
-        ECSLib._setUint("City", goldInventoryID, _settlerID);
+        ECSLib._setUint("City", goldInventoryID, settlerID);
         ECSLib._setUint("Template", goldInventoryID, GameLib._getTemplateByInventoryType("Gold"));
         ECSLib._setUint("Amount", goldInventoryID, gs().worldConstants.initCityGold);
     }
@@ -50,26 +50,32 @@ contract GameFacet is UseStorage {
     // SETTLEMENT
     // ----------------------------------------------------------
 
-    function moveSettler(uint256 _settlerID, Position memory _targetPosition) external {
-        GameLib._validEntityCheck(_settlerID);
+    function move(uint256 _movableEntity, Position memory _targetPosition) external {
+        GameLib._validEntityCheck(_movableEntity);
         GameLib._gamePauseCheck();
         GameLib._activePlayerCheck(msg.sender);
-        GameLib._entityOwnershipCheckByAddress(_settlerID, msg.sender);
+        GameLib._entityOwnershipCheckByAddress(_movableEntity, msg.sender);
         GameLib._positionInboundCheck(_targetPosition);
-
-        // require(ECSLib._getUint("Speed", _settlerID) >= GameLib._euclidean(ECSLib._getPosition("Position", _settlerID), _targetPosition), "CURIO: Not fast enough");
-
-        // Verify no other army or settler at destination
-        require(GameLib._getArmyAt(_targetPosition) == NULL && GameLib._getSettlerAt(_targetPosition) == NULL, "CURIO: Destination occupied");
-
-        // settler cannot move in enemy territory
-        uint256 tileID = GameLib._getTileAt(_targetPosition);
-        if (tileID != 0) GameLib._entityOwnershipCheckByAddress(tileID, msg.sender);
 
         GameLib._initializeTile(_targetPosition);
 
-        ECSLib._setPosition("Position", _settlerID, _targetPosition);
-        ECSLib._setUint("LastTimestamp", _settlerID, block.timestamp);
+        // Verify no other movable entity at exact destination coordinate
+        require(GameLib._getMovableEntityAt(_targetPosition) == NULL, "CURIO: Destination occupied");
+
+        // Check cooldown
+        require(block.timestamp >= ECSLib._getUint("LastTimestamp", _movableEntity) + ECSLib._getUint("MoveCooldown", _movableEntity), "CURIO: Moved too recently");
+
+        // settler cannot move in enemy territory
+        uint256 tileID = GameLib._getTileAt(GameLib._getProperTilePosition(_targetPosition));
+        if (tileID != NULL) GameLib._entityOwnershipCheckByAddress(tileID, msg.sender);
+
+        // Calculate distance
+        uint256 distance = GameLib._euclidean(ECSLib._getPosition("Position", _movableEntity), _targetPosition);
+        require(distance <= ECSLib._getUint("Speed", _movableEntity), "CURIO: Not enough movement points");
+
+        // Move and update cooldown
+        ECSLib._setPosition("Position", _movableEntity, _targetPosition);
+        ECSLib._setUint("LastTimestamp", _movableEntity, block.timestamp);
     }
 
     function foundCity(
@@ -86,30 +92,20 @@ contract GameFacet is UseStorage {
         require(ECSLib._getBool("CanSettle", _settlerID), "CURIO: Settler cannot settle");
 
         // Verify that territory is connected and includes settler's current position
-        // FIXME: right now, territory must be selected in a way in which each position is next to the next position in the array
-        Position memory _centerPosition = ECSLib._getPosition("Position", _settlerID);
+        // FIXME: right now, territory must be selected in a way in which each position is adjacent to next position in the array
+        Position memory centerPosition = GameLib._getProperTilePosition(ECSLib._getPosition("Position", _settlerID));
         require(GameLib._connected(_tiles), "CURIO: Territory disconnected");
-        require(GameLib._includesPosition(_centerPosition, _tiles), "CURIO: Territory must cover settler's current position");
+        require(GameLib._includesPosition(centerPosition, _tiles), "CURIO: Territory must cover settler's current position");
 
         // Remove resource at destination if one exists
-        uint256 resourceID = GameLib._getResourceAt(_centerPosition);
+        uint256 resourceID = GameLib._getResourceAt(centerPosition);
         if (resourceID != NULL) ECSLib._removeEntity(resourceID);
 
-        uint256 playerID = GameLib._getPlayer(msg.sender);
         uint256 cityID = _settlerID;
 
         // Verify that territory is wholly in bound and does not overlap with other cities, and initialize tiles
         for (uint256 i = 0; i < _tiles.length; i++) {
-            GameLib._positionInboundCheck(_tiles[i]);
-
-            require(GameLib._getTileAt(_tiles[i]) == NULL, "CURIO: Territory overlaps with another city");
-            GameLib._initializeTile(_tiles[i]);
-
-            uint256 tileID = ECSLib._addEntity();
-            ECSLib._setString("Tag", tileID, "Tile");
-            ECSLib._setPosition("Position", tileID, _tiles[i]);
-            ECSLib._setUint("City", tileID, cityID);
-            ECSLib._setUint("Owner", tileID, playerID);
+            Templates._createCityTile(_tiles[i], cityID, msg.sender);
         }
 
         // Convert the settler to a city
@@ -117,11 +113,13 @@ contract GameFacet is UseStorage {
         ECSLib._removeUint("Health", cityID);
         ECSLib._removeUint("Speed", cityID);
         ECSLib._removeUint("LastTimestamp", cityID);
+        ECSLib._removeUint("MoveCooldown", cityID);
+        ECSLib._setPosition("StartPosition", cityID, centerPosition);
         ECSLib._setString("Tag", cityID, "City");
         ECSLib._setString("Name", cityID, _cityName);
         ECSLib._setBool("CanProduce", cityID);
 
-        Templates._createCityCenter(_centerPosition, cityID);
+        Templates._createCityCenter(centerPosition, cityID);
     }
 
     /// @notice This function can be viewed as the inverse of `foundCity`, as it converts a city back into a settler.
@@ -150,14 +148,16 @@ contract GameFacet is UseStorage {
         }
 
         // Convert the settler to a city
-        (uint256 health, uint256 speed) = GameLib._getSettlerHealthAndSpeedByLevel(ECSLib._getUint("Level", settlerID));
+        (uint256 _health, uint256 _speed) = GameLib._getSettlerHealthAndSpeedByLevel(ECSLib._getUint("Level", settlerID));
         ECSLib._setBool("CanSettle", settlerID);
-        ECSLib._setUint("Health", settlerID, health);
-        ECSLib._setUint("Speed", settlerID, speed);
+        ECSLib._setUint("Health", settlerID, _health);
+        ECSLib._setUint("Speed", settlerID, gs().worldConstants.tileWidth);
         ECSLib._setUint("LastTimestamp", settlerID, block.timestamp);
+        ECSLib._setUint("MoveCooldown", settlerID, 1);
         ECSLib._setString("Tag", settlerID, "Settler");
         ECSLib._removeString("Name", settlerID);
         ECSLib._removeBool("CanProduce", settlerID);
+        ECSLib._removePosition("StartPosition", settlerID);
 
         // Remove city center
         ECSLib._removeEntity(GameLib._getCityCenter(_cityID));
@@ -185,7 +185,7 @@ contract GameFacet is UseStorage {
 
         // Verify that territory is wholly in bound and does not overlap with other cities
         for (uint256 i = 0; i < _newTiles.length; i++) {
-            Templates._createCityTile(_newTiles[i], _cityID);
+            Templates._createCityTile(_newTiles[i], _cityID, msg.sender);
         }
 
         uint256 goldInventoryID = GameLib._getInventory(_cityID, GameLib._getTemplateByInventoryType("Gold"));
@@ -275,11 +275,11 @@ contract GameFacet is UseStorage {
         GameLib._entityOwnershipCheckByAddress(_armyID, msg.sender);
 
         // Verify that army is sitting on the resource
-        Position memory position = ECSLib._getPosition("Position", _armyID);
-        require(GameLib._coincident(position, ECSLib._getPosition("Position", _resourceID)), "CURIO: Army must be coincident to resource to gather");
+        Position memory startPosition = GameLib._getProperTilePosition(ECSLib._getPosition("Position", _armyID));
+        require(GameLib._coincident(startPosition, ECSLib._getPosition("Position", _resourceID)), "CURIO: Army must be coincident to resource to gather");
 
         // Verify that resource is not in another player's territory
-        uint256 tileID = GameLib._getTileAt(position);
+        uint256 tileID = GameLib._getTileAt(startPosition);
         uint256 playerID = GameLib._getPlayer(msg.sender);
         require(tileID == NULL || ECSLib._getUint("Owner", ECSLib._getUint("City", tileID)) == playerID, "CURIO: Cannot gather on another player's territory");
 
@@ -288,7 +288,7 @@ contract GameFacet is UseStorage {
         // Verify that the army's capacity isn't full
         // TODO
 
-        Templates._addResourceGather(position, playerID, _resourceID, _armyID);
+        Templates._addResourceGather(startPosition, playerID, _resourceID, _armyID);
     }
 
     function endGather(uint256 _armyID) external {
@@ -353,14 +353,12 @@ contract GameFacet is UseStorage {
         // Verify there is no army currently at the city center
         require(GameLib._getArmyAt(ECSLib._getPosition("Position", _cityID)) == NULL, "CURIO: Tile occupied by another army");
 
-        require(GameLib._getPlayerArmies(GameLib._getPlayer(msg.sender)).length < gs().worldConstants.maxArmyCountPerPlayer, "CURIO: Army max count reached");
+        uint256 playerID = GameLib._getPlayer(msg.sender);
+        require(GameLib._getPlayerArmies(playerID).length < gs().worldConstants.maxArmyCountPerPlayer, "CURIO: Army max count reached");
 
-        uint256 health = 0; // sum
-        uint256 speed = 0; // min of all individaul troop types (represents the number of tiles it can "skip")
-        uint256 cooldown = 0; // max of all individual troop types
-        uint256 attack = 0; // sum
-        uint256 defense = 0; // sum
+        uint256 speed = 0; // average
         uint256 load = 0; // sum
+        uint256 cooldown = 0; // max
 
         require(_templateIDs.length == _amounts.length, "CURIO: Input lengths do not match");
         require(_templateIDs.length > 0, "CURIO: You must organize armies with at least 1 troop");
@@ -370,10 +368,7 @@ contract GameFacet is UseStorage {
             uint256 inventoryID = GameLib._getInventory(_cityID, _templateIDs[i]);
             require(ECSLib._getUint("Amount", inventoryID) >= _amounts[i], "CURIO: Not enough troops");
 
-            health += ECSLib._getUint("Health", _templateIDs[i]) * _amounts[i];
             speed += ECSLib._getUint("Speed", _templateIDs[i]) * _amounts[i];
-            attack += ECSLib._getUint("Attack", _templateIDs[i]) * _amounts[i];
-            defense += ECSLib._getUint("Defense", _templateIDs[i]) * _amounts[i];
             load += ECSLib._getUint("Load", _templateIDs[i]) * _amounts[i];
             ECSLib._setUint("Amount", inventoryID, ECSLib._getUint("Amount", inventoryID) - _amounts[i]);
 
@@ -384,14 +379,11 @@ contract GameFacet is UseStorage {
         speed /= GameLib._sum(_amounts);
 
         // Add army
-        uint256 armyID = Templates._addArmy(GameLib._getPlayer(msg.sender), ECSLib._getPosition("Position", _cityID));
-        ECSLib._setUint("Health", armyID, health);
+        uint256 armyID = Templates._addArmy(playerID, GameLib._getMidPositionFromTilePosition(ECSLib._getPosition("Position", _cityID)));
         ECSLib._setUint("Speed", armyID, speed);
-        ECSLib._setUint("MoveCooldown", armyID, cooldown);
-        ECSLib._setUint("Attack", armyID, attack);
-        ECSLib._setUint("Defense", armyID, defense);
         ECSLib._setUint("Load", armyID, load);
         ECSLib._setUint("LastTimestamp", armyID, block.timestamp);
+        ECSLib._setUint("MoveCooldown", armyID, cooldown);
 
         // Add army constituents
         for (uint256 i = 0; i < _templateIDs.length; i++) {
@@ -431,30 +423,6 @@ contract GameFacet is UseStorage {
         GameLib._removeArmy(_armyID);
     }
 
-    function moveArmy(uint256 _armyID, Position memory _targetPosition) external {
-        GameLib._validEntityCheck(_armyID);
-        GameLib._gamePauseCheck();
-        GameLib._activePlayerCheck(msg.sender);
-        GameLib._entityOwnershipCheckByAddress(_armyID, msg.sender);
-        GameLib._positionInboundCheck(_targetPosition);
-
-        // armies cannot move in enemy territory
-        uint256 _tileID = GameLib._getTileAt(_targetPosition);
-        if (_tileID != 0) GameLib._entityOwnershipCheckByAddress(_tileID, msg.sender);
-
-        // Check speed and cooldown
-        uint256 armyMoveCooldown = ECSLib._getUint("MoveCooldown", _armyID);
-        require((ECSLib._getUint("LastTimestamp", _armyID) + armyMoveCooldown) < block.timestamp, "CURIO: Need more time till next move");
-        require(ECSLib._getUint("Speed", _armyID) >= GameLib._euclidean(ECSLib._getPosition("Position", _armyID), _targetPosition), "CURIO: Target not within range of travel");
-
-        // Verify that target tile has no other army
-        require(GameLib._getArmyAt(_targetPosition) == NULL, "CURIO: Destination occupied by another army");
-
-        GameLib._initializeTile(_targetPosition);
-
-        ECSLib._setPosition("Position", _armyID, _targetPosition);
-    }
-
     function battle(uint256 _armyID, uint256 _targetID) external {
         if (GameLib._strEq(ECSLib._getString("Tag", _targetID), "Army")) {
             _battleArmy(_armyID, _targetID);
@@ -485,7 +453,7 @@ contract GameFacet is UseStorage {
         if (GameLib._getArmyGather(_targetArmyID) != NULL) GameLib._endGather(_targetArmyID);
 
         // Verify that army and target army are adjacent
-        require(GameLib._adjacent(ECSLib._getPosition("Position", _armyID), ECSLib._getPosition("Position", _targetArmyID)), "CURIO: Too far");
+        require(GameLib._euclidean(ECSLib._getPosition("Position", _armyID), ECSLib._getPosition("Position", _targetArmyID)) <= gs().worldConstants.armyBattleRange, "CURIO: Too far");
 
         // Execute one round of battle
         {
@@ -563,7 +531,7 @@ contract GameFacet is UseStorage {
         require(ECSLib._getUint("Owner", _cityID) != playerID, "CURIO: Cannot attack your own city");
 
         // Verify that army is adjacent to city
-        require(GameLib._adjacentToCity(ECSLib._getPosition("Position", _armyID), _cityID), "CURIO: Too far");
+        require(GameLib._euclidean(ECSLib._getPosition("Position", _armyID), GameLib._getMidPositionFromTilePosition(ECSLib._getPosition("StartPosition", _cityID))) <= gs().worldConstants.cityBattleRange, "CURIO: Too far");
 
         // TEMPORARY ALERT
         // reduce the gold by half
