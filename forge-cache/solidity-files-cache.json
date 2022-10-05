@@ -1364,8 +1364,8 @@
       }
     },
     "test/Basic.t.sol": {
-      "lastModificationDate": 1664929218067,
-      "contentHash": "e296c91f1c784e15f581602a834a39ae",
+      "lastModificationDate": 1664930192838,
+      "contentHash": "321d7a493be282e46eead34e61b84ba3",
       "sourceName": "test/Basic.t.sol",
       "solcConfig": {
         "settings": {

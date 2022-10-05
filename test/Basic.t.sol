@@ -76,7 +76,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         }
         time += 500 + 500;
         vm.warp(time);
-        uint256 moscowArmyID = getter.getArmyAt(player1Pos);
+        uint256 moscowArmyID = getter.getArmyAt(Position({x: 65, y: 15}));
 
         // Player 2 produces troops and organizes army
         {
@@ -104,7 +104,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         }
         time += 30 + 70;
         vm.warp(time);
-        uint256 kievArmyID = getter.getArmyAt(Position({x: 60, y: 40}));
+        uint256 kievArmyID = getter.getArmyAt(Position({x: 65, y: 45}));
 
         // Moscow and Kiev move their armies next to one another
         time += 5;
@@ -112,17 +112,23 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.prank(player1);
         game.move(moscowArmyID, Position({x: 60, y: 15}));
         vm.prank(player2);
-        game.move(kievArmyID, Position({x: 60, y: 35}));
+        game.move(kievArmyID, Position({x: 62, y: 42}));
         time += 5;
         vm.warp(time);
         vm.prank(player1);
         game.move(moscowArmyID, Position({x: 60, y: 20}));
         vm.prank(player2);
-        game.move(kievArmyID, Position({x: 60, y: 30}));
+        game.move(kievArmyID, Position({x: 61, y: 38}));
         time += 5;
         vm.warp(time);
         vm.prank(player1);
         game.move(moscowArmyID, Position({x: 60, y: 25}));
+        vm.prank(player2);
+        game.move(kievArmyID, Position({x: 60, y: 34}));
+        time += 5;
+        vm.warp(time);
+        vm.prank(player2);
+        game.move(kievArmyID, Position({x: 60, y: 30}));
         console.log("Troops are on the frontier, waiting for command...");
 
         // Check battle preconditions
