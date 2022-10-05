@@ -3,7 +3,7 @@ import { decodeBigNumberishArr } from './../../util/serde/common';
 import { Component__factory } from './../../typechain-types/factories/contracts/Component__factory';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { position } from './../../util/types/common';
-import { TILE_TYPE, componentNameToId, encodePosition, getImmediateSurroundingPositions, TileMap, Tag, Position, Owner, Health, Speed, Attack, Defense, Load, LastTimestamp, Tags, encodeString, encodeUint256, Capacity } from 'curio-vault';
+import { TILE_TYPE, componentNameToId, encodePosition, getImmediateSurroundingPositions, TileMap, Tag, Position, Owner, Health, Speed, Attack, Defense, Load, LastTimestamp, Tags, encodeString, encodeUint256, Capacity, getRightPos } from 'curio-vault';
 import { TILE_WIDTH } from './constants';
 
 const MAX_UINT256 = BigInt(Math.pow(2, 256)) - BigInt(1);
@@ -180,32 +180,18 @@ export const initializeFixmap = async (hre: HardhatRuntimeEnvironment, diamond: 
   const players = [player1Id];
 
   // spawn armies
-  for (let i = 0; i < players.length; i++) {
-    const playerID = players[i];
-    const playerPosition = playerPositions[i];
 
-    await spawnArmy(diamond, playerID, playerPosition);
-  }
+  // create army at base
+  await diamond.createArmy(player1Id, getRightPos(player1Pos));
+  let entity = (await diamond.getEntity()).toNumber();
+  await (await diamond.setComponentValue(Speed, entity, encodeUint256(2))).wait();
+
+  await diamond.createArmy(player2Id, getRightPos(getRightPos(player1Pos)));
+  entity = (await diamond.getEntity()).toNumber();
+  await (await diamond.setComponentValue(Speed, entity, encodeUint256(2))).wait();
 };
 
 export const addGetEntity = async (diamond: Curio): Promise<number> => {
   await (await diamond.addEntity()).wait();
   return (await diamond.getEntity()).toNumber();
-};
-
-// add army entity directly to the map
-// FIXME: this should be using templates directly!
-export const spawnArmy = async (diamond: Curio, playerID: number, position: position) => {
-  const entity = await addGetEntity(diamond);
-
-  await (await diamond.setComponentValue(Owner, entity, encodeUint256(playerID))).wait();
-  await (await diamond.setComponentValue(Tag, entity, encodeString(Tags.Army))).wait();
-  await (await diamond.setComponentValue(Position, entity, encodePosition(position))).wait();
-  await (await diamond.setComponentValue(Health, entity, encodeUint256(10))).wait();
-  await (await diamond.setComponentValue(Speed, entity, encodeUint256(10))).wait();
-  await (await diamond.setComponentValue(Attack, entity, encodeUint256(10))).wait();
-  await (await diamond.setComponentValue(Defense, entity, encodeUint256(10))).wait();
-  await (await diamond.setComponentValue(Load, entity, encodeUint256(10))).wait();
-  await (await diamond.setComponentValue(LastTimestamp, entity, encodeUint256(1))).wait();
-  await (await diamond.setComponentValue(Capacity, entity, encodeUint256(100))).wait();
 };

@@ -140,11 +140,11 @@ contract GameFacet is UseStorage {
         uint256 settlerID = _cityID;
 
         // Remove city tiles
-        uint256[] memory _tileIDs = GameLib._getCityTiles(_cityID);
-        assert(_tileIDs.length == GameLib._getCityTileCountByLevel(ECSLib._getUint("Level", _cityID)));
+        uint256[] memory tileIDs = GameLib._getCityTiles(_cityID);
+        assert(tileIDs.length == GameLib._getCityTileCountByLevel(ECSLib._getUint("Level", _cityID)));
 
-        for (uint256 i = 0; i < _tileIDs.length; i++) {
-            ECSLib._removeEntity(_tileIDs[i]);
+        for (uint256 i = 0; i < tileIDs.length; i++) {
+            ECSLib._removeEntity(tileIDs[i]);
         }
 
         // Convert the settler to a city
@@ -358,6 +358,7 @@ contract GameFacet is UseStorage {
 
         uint256 speed = 0; // average
         uint256 load = 0; // sum
+        uint256 cooldown = 0; // max
 
         require(_templateIDs.length == _amounts.length, "CURIO: Input lengths do not match");
         require(_templateIDs.length > 0, "CURIO: You must organize armies with at least 1 troop");
@@ -370,17 +371,19 @@ contract GameFacet is UseStorage {
             speed += ECSLib._getUint("Speed", _templateIDs[i]) * _amounts[i];
             load += ECSLib._getUint("Load", _templateIDs[i]) * _amounts[i];
             ECSLib._setUint("Amount", inventoryID, ECSLib._getUint("Amount", inventoryID) - _amounts[i]);
+
+            uint256 templateCooldown = ECSLib._getUint("MoveCooldown", _templateIDs[i]);
+            cooldown = templateCooldown > cooldown ? templateCooldown : templateCooldown;
         }
+
         speed /= GameLib._sum(_amounts);
 
-        Position memory position = ECSLib._getPosition("Position", _cityID);
-
         // Add army
-        uint256 armyID = Templates._addArmy(playerID, position);
+        uint256 armyID = Templates._addArmy(playerID, GameLib._getMidPositionFromTilePosition(ECSLib._getPosition("Position", _cityID)));
         ECSLib._setUint("Speed", armyID, speed);
         ECSLib._setUint("Load", armyID, load);
         ECSLib._setUint("LastTimestamp", armyID, block.timestamp);
-        ECSLib._setUint("MoveCooldown", armyID, 1);
+        ECSLib._setUint("MoveCooldown", armyID, cooldown);
 
         // Add army constituents
         for (uint256 i = 0; i < _templateIDs.length; i++) {

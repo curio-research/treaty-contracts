@@ -276,8 +276,8 @@
       }
     },
     "contracts/facets/AdminFacet.sol": {
-      "lastModificationDate": 1664923357718,
-      "contentHash": "c095f78a579e80800dbc74c45556e6fd",
+      "lastModificationDate": 1664929221109,
+      "contentHash": "9a82fcbfb05aa557f53e4db9cef3b8b5",
       "sourceName": "contracts/facets/AdminFacet.sol",
       "solcConfig": {
         "settings": {
@@ -313,6 +313,7 @@
         "contracts/libraries/ECSLib.sol",
         "contracts/libraries/GameLib.sol",
         "contracts/libraries/Storage.sol",
+        "contracts/libraries/Templates.sol",
         "contracts/libraries/Types.sol",
         "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol"
       ],
@@ -410,8 +411,8 @@
       }
     },
     "contracts/facets/GameFacet.sol": {
-      "lastModificationDate": 1664928746471,
-      "contentHash": "0f5757a73b7b910924105eb1913943fd",
+      "lastModificationDate": 1664929431010,
+      "contentHash": "5d9e6e7c6cde9d06f55e589edf09078c",
       "sourceName": "contracts/facets/GameFacet.sol",
       "solcConfig": {
         "settings": {
@@ -459,8 +460,8 @@
       }
     },
     "contracts/facets/GetterFacet.sol": {
-      "lastModificationDate": 1664916277866,
-      "contentHash": "100ba357ac46c657b6867e83fcaaca2e",
+      "lastModificationDate": 1664929221109,
+      "contentHash": "a14ebb4b1af6129b4c95b48707c96473",
       "sourceName": "contracts/facets/GetterFacet.sol",
       "solcConfig": {
         "settings": {
@@ -800,8 +801,8 @@
       }
     },
     "contracts/libraries/GameLib.sol": {
-      "lastModificationDate": 1664928751656,
-      "contentHash": "4504de84e277d283049efa33f8675761",
+      "lastModificationDate": 1664929221110,
+      "contentHash": "f5fb1bc68c4a88f076eec8c4cb169c55",
       "sourceName": "contracts/libraries/GameLib.sol",
       "solcConfig": {
         "settings": {
@@ -843,54 +844,6 @@
       "artifacts": {
         "GameLib": {
           "0.8.4+commit.c7e474f2.Darwin.appleclang": "GameLib.sol/GameLib.json"
-        }
-      }
-    },
-    "contracts/libraries/GameModules.sol": {
-      "lastModificationDate": 1664216687008,
-      "contentHash": "fd4cf8e3d465bbb68784bb1709e9bc68",
-      "sourceName": "contracts/libraries/GameModules.sol",
-      "solcConfig": {
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "metadata": {
-            "bytecodeHash": "ipfs"
-          },
-          "outputSelection": {
-            "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
-            }
-          },
-          "evmVersion": "london",
-          "libraries": {}
-        }
-      },
-      "imports": [
-        "contracts/Component.sol",
-        "contracts/Set.sol",
-        "contracts/TypedComponents.sol",
-        "contracts/libraries/ECSLib.sol",
-        "contracts/libraries/GameLib.sol",
-        "contracts/libraries/Storage.sol",
-        "contracts/libraries/Types.sol",
-        "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol"
-      ],
-      "versionRequirement": "^0.8.4",
-      "artifacts": {
-        "GameModules": {
-          "0.8.4+commit.c7e474f2.Darwin.appleclang": "GameModules.sol/GameModules.json"
         }
       }
     },
@@ -980,7 +933,7 @@
       }
     },
     "contracts/libraries/Templates.sol": {
-      "lastModificationDate": 1664924273490,
+      "lastModificationDate": 1664929218065,
       "contentHash": "1fb3c786bd6b76b511ec9dbd09eb7d05",
       "sourceName": "contracts/libraries/Templates.sol",
       "solcConfig": {
@@ -1411,7 +1364,7 @@
       }
     },
     "test/Basic.t.sol": {
-      "lastModificationDate": 1664928089734,
+      "lastModificationDate": 1664929218067,
       "contentHash": "e296c91f1c784e15f581602a834a39ae",
       "sourceName": "test/Basic.t.sol",
       "solcConfig": {
@@ -1549,7 +1502,7 @@
       }
     },
     "test/DiamondDeploy.t.sol": {
-      "lastModificationDate": 1664922441485,
+      "lastModificationDate": 1664929218067,
       "contentHash": "21f1ed6aa93936efbc7984318245098e",
       "sourceName": "test/DiamondDeploy.t.sol",
       "solcConfig": {

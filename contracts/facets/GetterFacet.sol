@@ -16,7 +16,7 @@ contract GetterFacet is UseStorage {
     using SafeMath for uint256;
     uint256 private NULL = 0;
 
-    // DEBUG FNS
+    // Debug Helpers
     function getEntitiesAddr() external view returns (address) {
         return gs().entities;
     }
@@ -52,10 +52,6 @@ contract GetterFacet is UseStorage {
         return ECSLib._getComponentByEntity(_entity);
     }
 
-    function getTileAt(Position memory _pos) external view returns (Tile memory) {
-        return GameLib._getMapTileAt(_pos);
-    }
-
     function getWorldConstants() external view returns (WorldConstants memory) {
         return gs().worldConstants;
     }
@@ -79,10 +75,6 @@ contract GetterFacet is UseStorage {
 
     function getEntities() external view returns (uint256[] memory) {
         return Set(gs().entities).getAll();
-    }
-
-    function getTemplateId(string memory _inventoryType) external returns (uint256) {
-        return GameLib._getTemplateByInventoryType(_inventoryType);
     }
 
     function getCityAt(Position memory _position) external returns (uint256) {

@@ -47,16 +47,6 @@ export type ComponentSpecStructOutput = [string, number] & {
   valueType: number;
 };
 
-export type TileStruct = {
-  isInitialized: PromiseOrValue<boolean>;
-  terrain: PromiseOrValue<BigNumberish>;
-};
-
-export type TileStructOutput = [boolean, number] & {
-  isInitialized: boolean;
-  terrain: number;
-};
-
 export type WorldConstantsStruct = {
   admin: PromiseOrValue<string>;
   worldWidth: PromiseOrValue<BigNumberish>;
@@ -163,6 +153,7 @@ export interface CurioInterface extends utils.Interface {
   functions: {
     "addEntity()": FunctionFragment;
     "bulkInitializeTiles((uint256,uint256)[])": FunctionFragment;
+    "createArmy(uint256,(uint256,uint256))": FunctionFragment;
     "reactivatePlayer(address)": FunctionFragment;
     "registerComponents(address,(string,uint8)[])": FunctionFragment;
     "registerDefaultComponents(address)": FunctionFragment;
@@ -206,8 +197,6 @@ export interface CurioInterface extends utils.Interface {
     "getPlayerId(address)": FunctionFragment;
     "getSettlerAt((uint256,uint256))": FunctionFragment;
     "getTemplateByInventoryType(string)": FunctionFragment;
-    "getTemplateId(string)": FunctionFragment;
-    "getTileAt((uint256,uint256))": FunctionFragment;
     "getWorldConstants()": FunctionFragment;
     "isPlayerInitialized(address)": FunctionFragment;
     "owner()": FunctionFragment;
@@ -238,6 +227,7 @@ export interface CurioInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "addEntity"
       | "bulkInitializeTiles"
+      | "createArmy"
       | "reactivatePlayer"
       | "registerComponents"
       | "registerDefaultComponents"
@@ -281,8 +271,6 @@ export interface CurioInterface extends utils.Interface {
       | "getPlayerId"
       | "getSettlerAt"
       | "getTemplateByInventoryType"
-      | "getTemplateId"
-      | "getTileAt"
       | "getWorldConstants"
       | "isPlayerInitialized"
       | "owner"
@@ -313,6 +301,10 @@ export interface CurioInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "bulkInitializeTiles",
     values: [PositionStruct[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "createArmy",
+    values: [PromiseOrValue<BigNumberish>, PositionStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "reactivatePlayer",
@@ -501,14 +493,6 @@ export interface CurioInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "getTemplateId",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getTileAt",
-    values: [PositionStruct]
-  ): string;
-  encodeFunctionData(
     functionFragment: "getWorldConstants",
     values?: undefined
   ): string;
@@ -611,6 +595,7 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "bulkInitializeTiles",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "createArmy", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "reactivatePlayer",
     data: BytesLike
@@ -750,11 +735,6 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "getTemplateByInventoryType",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "getTemplateId",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "getTileAt", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getWorldConstants",
     data: BytesLike
@@ -966,6 +946,12 @@ export interface Curio extends BaseContract {
 
     bulkInitializeTiles(
       _positions: PositionStruct[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    createArmy(
+      _playerId: PromiseOrValue<BigNumberish>,
+      _position: PositionStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1193,16 +1179,6 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    getTemplateId(
-      _inventoryType: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    getTileAt(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<[TileStructOutput]>;
-
     getWorldConstants(
       overrides?: CallOverrides
     ): Promise<[WorldConstantsStructOutput]>;
@@ -1338,6 +1314,12 @@ export interface Curio extends BaseContract {
 
   bulkInitializeTiles(
     _positions: PositionStruct[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  createArmy(
+    _playerId: PromiseOrValue<BigNumberish>,
+    _position: PositionStruct,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1557,16 +1539,6 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  getTemplateId(
-    _inventoryType: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  getTileAt(
-    _pos: PositionStruct,
-    overrides?: CallOverrides
-  ): Promise<TileStructOutput>;
-
   getWorldConstants(
     overrides?: CallOverrides
   ): Promise<WorldConstantsStructOutput>;
@@ -1702,6 +1674,12 @@ export interface Curio extends BaseContract {
       _positions: PositionStruct[],
       overrides?: CallOverrides
     ): Promise<void>;
+
+    createArmy(
+      _playerId: PromiseOrValue<BigNumberish>,
+      _position: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     reactivatePlayer(
       _address: PromiseOrValue<string>,
@@ -1921,16 +1899,6 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getTemplateId(
-      _inventoryType: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getTileAt(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<TileStructOutput>;
-
     getWorldConstants(
       overrides?: CallOverrides
     ): Promise<WorldConstantsStructOutput>;
@@ -2121,6 +2089,12 @@ export interface Curio extends BaseContract {
 
     bulkInitializeTiles(
       _positions: PositionStruct[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    createArmy(
+      _playerId: PromiseOrValue<BigNumberish>,
+      _position: PositionStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -2340,16 +2314,6 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    getTemplateId(
-      _inventoryType: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    getTileAt(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     getWorldConstants(overrides?: CallOverrides): Promise<BigNumber>;
 
     isPlayerInitialized(
@@ -2484,6 +2448,12 @@ export interface Curio extends BaseContract {
 
     bulkInitializeTiles(
       _positions: PositionStruct[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    createArmy(
+      _playerId: PromiseOrValue<BigNumberish>,
+      _position: PositionStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2701,16 +2671,6 @@ export interface Curio extends BaseContract {
     getTemplateByInventoryType(
       _inventoryType: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    getTemplateId(
-      _inventoryType: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    getTileAt(
-      _pos: PositionStruct,
-      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getWorldConstants(overrides?: CallOverrides): Promise<PopulatedTransaction>;
