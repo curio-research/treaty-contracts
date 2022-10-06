@@ -49,130 +49,130 @@ export type QueryConditionStructOutput = [number, string, string] & {
 
 export interface ECSLibInterface extends utils.Interface {
   functions: {
-    "_concatenate(uint256[],uint256[])": FunctionFragment;
-    "_difference(Set,Set)": FunctionFragment;
-    "_getAddress(string,uint256)": FunctionFragment;
-    "_getAddressComponent(string)": FunctionFragment;
-    "_getBool(string,uint256)": FunctionFragment;
-    "_getBoolComponent(string)": FunctionFragment;
     "_getComponent(string)": FunctionFragment;
-    "_getComponentByEntity(uint256)": FunctionFragment;
     "_getComponentValue(string,uint256)": FunctionFragment;
-    "_getInt(string,uint256)": FunctionFragment;
-    "_getIntComponent(string)": FunctionFragment;
-    "_getPosition(string,uint256)": FunctionFragment;
-    "_getPositionComponent(string)": FunctionFragment;
-    "_getString(string,uint256)": FunctionFragment;
-    "_getStringComponent(string)": FunctionFragment;
-    "_getUint(string,uint256)": FunctionFragment;
-    "_getUintArray(string,uint256)": FunctionFragment;
-    "_getUintArrayComponent(string)": FunctionFragment;
-    "_getUintComponent(string)": FunctionFragment;
-    "_queryChunk(uint8,string,bytes)": FunctionFragment;
+    "concatenate(uint256[],uint256[])": FunctionFragment;
+    "difference(Set,Set)": FunctionFragment;
+    "getAddress(string,uint256)": FunctionFragment;
+    "getAddressComponent(string)": FunctionFragment;
+    "getBool(string,uint256)": FunctionFragment;
+    "getBoolComponent(string)": FunctionFragment;
+    "getComponentByEntity(uint256)": FunctionFragment;
+    "getInt(string,uint256)": FunctionFragment;
+    "getIntComponent(string)": FunctionFragment;
+    "getPosition(string,uint256)": FunctionFragment;
+    "getPositionComponent(string)": FunctionFragment;
+    "getString(string,uint256)": FunctionFragment;
+    "getStringComponent(string)": FunctionFragment;
+    "getUint(string,uint256)": FunctionFragment;
+    "getUintArray(string,uint256)": FunctionFragment;
+    "getUintArrayComponent(string)": FunctionFragment;
+    "getUintComponent(string)": FunctionFragment;
+    "queryChunk(uint8,string,bytes)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "_concatenate"
-      | "_difference"
-      | "_getAddress"
-      | "_getAddressComponent"
-      | "_getBool"
-      | "_getBoolComponent"
       | "_getComponent"
-      | "_getComponentByEntity"
       | "_getComponentValue"
-      | "_getInt"
-      | "_getIntComponent"
-      | "_getPosition"
-      | "_getPositionComponent"
-      | "_getString"
-      | "_getStringComponent"
-      | "_getUint"
-      | "_getUintArray"
-      | "_getUintArrayComponent"
-      | "_getUintComponent"
-      | "_queryChunk"
+      | "concatenate"
+      | "difference"
+      | "getAddress"
+      | "getAddressComponent"
+      | "getBool"
+      | "getBoolComponent"
+      | "getComponentByEntity"
+      | "getInt"
+      | "getIntComponent"
+      | "getPosition"
+      | "getPositionComponent"
+      | "getString"
+      | "getStringComponent"
+      | "getUint"
+      | "getUintArray"
+      | "getUintArrayComponent"
+      | "getUintComponent"
+      | "queryChunk"
   ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "_concatenate",
-    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BigNumberish>[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_difference",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getAddress",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getAddressComponent",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getBool",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getBoolComponent",
-    values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "_getComponent",
     values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getComponentByEntity",
-    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "_getComponentValue",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "_getInt",
+    functionFragment: "concatenate",
+    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BigNumberish>[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "difference",
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getAddress",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "_getIntComponent",
+    functionFragment: "getAddressComponent",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "_getPosition",
+    functionFragment: "getBool",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "_getPositionComponent",
+    functionFragment: "getBoolComponent",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "_getString",
+    functionFragment: "getComponentByEntity",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getInt",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "_getStringComponent",
+    functionFragment: "getIntComponent",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "_getUint",
+    functionFragment: "getPosition",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "_getUintArray",
+    functionFragment: "getPositionComponent",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getString",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "_getUintArrayComponent",
+    functionFragment: "getStringComponent",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "_getUintComponent",
+    functionFragment: "getUint",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getUintArray",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getUintArrayComponent",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "_queryChunk",
+    functionFragment: "getUintComponent",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "queryChunk",
     values: [
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
@@ -181,73 +181,64 @@ export interface ECSLibInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "_concatenate",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_difference",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getAddress",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getAddressComponent",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "_getBool", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "_getBoolComponent",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "_getComponent",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getComponentByEntity",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "_getComponentValue",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "_getInt", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "_getIntComponent",
+    functionFragment: "concatenate",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "difference", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "getAddress", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getAddressComponent",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "getBool", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getBoolComponent",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "_getPosition",
+    functionFragment: "getComponentByEntity",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "getInt", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getIntComponent",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "_getPositionComponent",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "_getString", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "_getStringComponent",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "_getUint", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "_getUintArray",
+    functionFragment: "getPosition",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "_getUintArrayComponent",
+    functionFragment: "getPositionComponent",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "getString", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getStringComponent",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "getUint", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getUintArray",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "_getUintComponent",
+    functionFragment: "getUintArrayComponent",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "_queryChunk",
+    functionFragment: "getUintComponent",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "queryChunk", data: BytesLike): Result;
 
   events: {
     "ComponentValueRemoved(string,uint256)": EventFragment;
@@ -344,47 +335,8 @@ export interface ECSLib extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    _concatenate(
-      _arr1: PromiseOrValue<BigNumberish>[],
-      _arr2: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<[BigNumber[]]>;
-
-    _difference(
-      set1: PromiseOrValue<string>,
-      set2: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber[]]>;
-
-    _getAddress(
-      _componentName: PromiseOrValue<string>,
-      _entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    _getAddressComponent(
-      _name: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    _getBool(
-      _componentName: PromiseOrValue<string>,
-      _entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    _getBoolComponent(
-      _name: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
     _getComponent(
       _name: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    _getComponentByEntity(
-      _entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
@@ -394,62 +346,101 @@ export interface ECSLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    _getInt(
+    concatenate(
+      _arr1: PromiseOrValue<BigNumberish>[],
+      _arr2: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
+
+    difference(
+      set1: PromiseOrValue<string>,
+      set2: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
+
+    getAddress(
+      _componentName: PromiseOrValue<string>,
+      _entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    getAddressComponent(
+      _name: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    getBool(
+      _componentName: PromiseOrValue<string>,
+      _entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    getBoolComponent(
+      _name: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    getComponentByEntity(
+      _entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    getInt(
       _componentName: PromiseOrValue<string>,
       _entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    _getIntComponent(
+    getIntComponent(
       _name: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    _getPosition(
+    getPosition(
       _componentName: PromiseOrValue<string>,
       _entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[PositionStructOutput]>;
 
-    _getPositionComponent(
+    getPositionComponent(
       _name: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    _getString(
+    getString(
       _componentName: PromiseOrValue<string>,
       _entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    _getStringComponent(
+    getStringComponent(
       _name: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    _getUint(
+    getUint(
       _componentName: PromiseOrValue<string>,
       _entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    _getUintArray(
+    getUintArray(
       _componentName: PromiseOrValue<string>,
       _entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
 
-    _getUintArrayComponent(
+    getUintArrayComponent(
       _name: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    _getUintComponent(
+    getUintComponent(
       _name: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    _queryChunk(
+    queryChunk(
       _queryType: PromiseOrValue<BigNumberish>,
       _componentName: PromiseOrValue<string>,
       _value: PromiseOrValue<BytesLike>,
@@ -457,47 +448,8 @@ export interface ECSLib extends BaseContract {
     ): Promise<[QueryConditionStructOutput]>;
   };
 
-  _concatenate(
-    _arr1: PromiseOrValue<BigNumberish>[],
-    _arr2: PromiseOrValue<BigNumberish>[],
-    overrides?: CallOverrides
-  ): Promise<BigNumber[]>;
-
-  _difference(
-    set1: PromiseOrValue<string>,
-    set2: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber[]>;
-
-  _getAddress(
-    _componentName: PromiseOrValue<string>,
-    _entity: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  _getAddressComponent(
-    _name: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  _getBool(
-    _componentName: PromiseOrValue<string>,
-    _entity: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  _getBoolComponent(
-    _name: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
   _getComponent(
     _name: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  _getComponentByEntity(
-    _entity: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<string>;
 
@@ -507,62 +459,101 @@ export interface ECSLib extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
-  _getInt(
+  concatenate(
+    _arr1: PromiseOrValue<BigNumberish>[],
+    _arr2: PromiseOrValue<BigNumberish>[],
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
+  difference(
+    set1: PromiseOrValue<string>,
+    set2: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
+  getAddress(
+    _componentName: PromiseOrValue<string>,
+    _entity: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  getAddressComponent(
+    _name: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  getBool(
+    _componentName: PromiseOrValue<string>,
+    _entity: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  getBoolComponent(
+    _name: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  getComponentByEntity(
+    _entity: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  getInt(
     _componentName: PromiseOrValue<string>,
     _entity: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  _getIntComponent(
+  getIntComponent(
     _name: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<string>;
 
-  _getPosition(
+  getPosition(
     _componentName: PromiseOrValue<string>,
     _entity: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<PositionStructOutput>;
 
-  _getPositionComponent(
+  getPositionComponent(
     _name: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<string>;
 
-  _getString(
+  getString(
     _componentName: PromiseOrValue<string>,
     _entity: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<string>;
 
-  _getStringComponent(
+  getStringComponent(
     _name: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<string>;
 
-  _getUint(
+  getUint(
     _componentName: PromiseOrValue<string>,
     _entity: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  _getUintArray(
+  getUintArray(
     _componentName: PromiseOrValue<string>,
     _entity: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
-  _getUintArrayComponent(
+  getUintArrayComponent(
     _name: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<string>;
 
-  _getUintComponent(
+  getUintComponent(
     _name: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<string>;
 
-  _queryChunk(
+  queryChunk(
     _queryType: PromiseOrValue<BigNumberish>,
     _componentName: PromiseOrValue<string>,
     _value: PromiseOrValue<BytesLike>,
@@ -570,47 +561,8 @@ export interface ECSLib extends BaseContract {
   ): Promise<QueryConditionStructOutput>;
 
   callStatic: {
-    _concatenate(
-      _arr1: PromiseOrValue<BigNumberish>[],
-      _arr2: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber[]>;
-
-    _difference(
-      set1: PromiseOrValue<string>,
-      set2: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber[]>;
-
-    _getAddress(
-      _componentName: PromiseOrValue<string>,
-      _entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    _getAddressComponent(
-      _name: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    _getBool(
-      _componentName: PromiseOrValue<string>,
-      _entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    _getBoolComponent(
-      _name: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
     _getComponent(
       _name: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    _getComponentByEntity(
-      _entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -620,62 +572,101 @@ export interface ECSLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    _getInt(
+    concatenate(
+      _arr1: PromiseOrValue<BigNumberish>[],
+      _arr2: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
+
+    difference(
+      set1: PromiseOrValue<string>,
+      set2: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
+
+    getAddress(
+      _componentName: PromiseOrValue<string>,
+      _entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    getAddressComponent(
+      _name: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    getBool(
+      _componentName: PromiseOrValue<string>,
+      _entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    getBoolComponent(
+      _name: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    getComponentByEntity(
+      _entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    getInt(
       _componentName: PromiseOrValue<string>,
       _entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getIntComponent(
+    getIntComponent(
       _name: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<string>;
 
-    _getPosition(
+    getPosition(
       _componentName: PromiseOrValue<string>,
       _entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PositionStructOutput>;
 
-    _getPositionComponent(
+    getPositionComponent(
       _name: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<string>;
 
-    _getString(
+    getString(
       _componentName: PromiseOrValue<string>,
       _entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
 
-    _getStringComponent(
+    getStringComponent(
       _name: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<string>;
 
-    _getUint(
+    getUint(
       _componentName: PromiseOrValue<string>,
       _entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getUintArray(
+    getUintArray(
       _componentName: PromiseOrValue<string>,
       _entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
-    _getUintArrayComponent(
+    getUintArrayComponent(
       _name: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<string>;
 
-    _getUintComponent(
+    getUintComponent(
       _name: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<string>;
 
-    _queryChunk(
+    queryChunk(
       _queryType: PromiseOrValue<BigNumberish>,
       _componentName: PromiseOrValue<string>,
       _value: PromiseOrValue<BytesLike>,
@@ -718,47 +709,8 @@ export interface ECSLib extends BaseContract {
   };
 
   estimateGas: {
-    _concatenate(
-      _arr1: PromiseOrValue<BigNumberish>[],
-      _arr2: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _difference(
-      set1: PromiseOrValue<string>,
-      set2: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getAddress(
-      _componentName: PromiseOrValue<string>,
-      _entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getAddressComponent(
-      _name: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getBool(
-      _componentName: PromiseOrValue<string>,
-      _entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getBoolComponent(
-      _name: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     _getComponent(
       _name: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getComponentByEntity(
-      _entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -768,62 +720,101 @@ export interface ECSLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getInt(
+    concatenate(
+      _arr1: PromiseOrValue<BigNumberish>[],
+      _arr2: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    difference(
+      set1: PromiseOrValue<string>,
+      set2: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getAddress(
       _componentName: PromiseOrValue<string>,
       _entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getIntComponent(
+    getAddressComponent(
       _name: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getPosition(
+    getBool(
       _componentName: PromiseOrValue<string>,
       _entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getPositionComponent(
+    getBoolComponent(
       _name: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getString(
+    getComponentByEntity(
+      _entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getInt(
       _componentName: PromiseOrValue<string>,
       _entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getStringComponent(
+    getIntComponent(
       _name: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getUint(
+    getPosition(
       _componentName: PromiseOrValue<string>,
       _entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getUintArray(
+    getPositionComponent(
+      _name: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getString(
       _componentName: PromiseOrValue<string>,
       _entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getUintArrayComponent(
+    getStringComponent(
       _name: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getUintComponent(
+    getUint(
+      _componentName: PromiseOrValue<string>,
+      _entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getUintArray(
+      _componentName: PromiseOrValue<string>,
+      _entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getUintArrayComponent(
       _name: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _queryChunk(
+    getUintComponent(
+      _name: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    queryChunk(
       _queryType: PromiseOrValue<BigNumberish>,
       _componentName: PromiseOrValue<string>,
       _value: PromiseOrValue<BytesLike>,
@@ -832,47 +823,8 @@ export interface ECSLib extends BaseContract {
   };
 
   populateTransaction: {
-    _concatenate(
-      _arr1: PromiseOrValue<BigNumberish>[],
-      _arr2: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _difference(
-      set1: PromiseOrValue<string>,
-      set2: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getAddress(
-      _componentName: PromiseOrValue<string>,
-      _entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getAddressComponent(
-      _name: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getBool(
-      _componentName: PromiseOrValue<string>,
-      _entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getBoolComponent(
-      _name: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     _getComponent(
       _name: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getComponentByEntity(
-      _entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -882,62 +834,101 @@ export interface ECSLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _getInt(
+    concatenate(
+      _arr1: PromiseOrValue<BigNumberish>[],
+      _arr2: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    difference(
+      set1: PromiseOrValue<string>,
+      set2: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getAddress(
       _componentName: PromiseOrValue<string>,
       _entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _getIntComponent(
+    getAddressComponent(
       _name: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _getPosition(
+    getBool(
       _componentName: PromiseOrValue<string>,
       _entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _getPositionComponent(
+    getBoolComponent(
       _name: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _getString(
+    getComponentByEntity(
+      _entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getInt(
       _componentName: PromiseOrValue<string>,
       _entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _getStringComponent(
+    getIntComponent(
       _name: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _getUint(
+    getPosition(
       _componentName: PromiseOrValue<string>,
       _entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _getUintArray(
+    getPositionComponent(
+      _name: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getString(
       _componentName: PromiseOrValue<string>,
       _entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _getUintArrayComponent(
+    getStringComponent(
       _name: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _getUintComponent(
+    getUint(
+      _componentName: PromiseOrValue<string>,
+      _entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getUintArray(
+      _componentName: PromiseOrValue<string>,
+      _entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getUintArrayComponent(
       _name: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _queryChunk(
+    getUintComponent(
+      _name: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    queryChunk(
       _queryType: PromiseOrValue<BigNumberish>,
       _componentName: PromiseOrValue<string>,
       _value: PromiseOrValue<BytesLike>,

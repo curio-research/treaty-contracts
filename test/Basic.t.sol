@@ -116,8 +116,11 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.warp(time);
         vm.prank(player1);
         game.move(moscowArmyID, Position({x: 60, y: 15}));
+        console.log("Doomed");
         vm.prank(player2);
         game.move(kievArmyID, Position({x: 62, y: 42}));
+        console.log("AAA");
+
         time += 5;
         vm.warp(time);
         vm.prank(player1);

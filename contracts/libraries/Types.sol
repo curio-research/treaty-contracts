@@ -3,11 +3,11 @@ pragma solidity ^0.8.4;
 
 /// Data structures for game
 
-enum TERRAIN {
+enum Terrain {
     LAND
 }
 
-enum VALUE_TYPE {
+enum ValueType {
     UINT,
     STRING,
     BOOL,
@@ -32,7 +32,7 @@ struct QueryCondition {
 
 struct ComponentSpec {
     string name;
-    VALUE_TYPE valueType;
+    ValueType valueType;
 }
 
 struct Position {
@@ -42,7 +42,7 @@ struct Position {
 
 struct Tile {
     bool isInitialized;
-    TERRAIN terrain;
+    Terrain terrain;
 }
 
 struct WorldConstants {
@@ -79,6 +79,7 @@ struct GameState {
     uint256 entityNonce;
     string[] componentNames;
     mapping(string => address) components; // component name to contract address
-    mapping(uint256 => address) ComponentEntityToAddress; // component id to contract address
+    mapping(string => uint256) templates; // template name to id
+    mapping(uint256 => address) componentEntityToAddress; // component id to contract address
     mapping(address => uint256) playerEntityMap;
 }

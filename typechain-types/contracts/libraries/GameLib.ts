@@ -47,86 +47,76 @@ export type TileStructOutput = [boolean, number] & {
 
 export interface GameLibInterface extends utils.Interface {
   functions: {
-    "_adjacent((uint256,uint256),(uint256,uint256))": FunctionFragment;
-    "_adjacentToCity((uint256,uint256),uint256)": FunctionFragment;
-    "_barbarianInfantrySelector(uint256)": FunctionFragment;
-    "_coincident((uint256,uint256),(uint256,uint256))": FunctionFragment;
-    "_connected((uint256,uint256)[])": FunctionFragment;
-    "_euclidean((uint256,uint256),(uint256,uint256))": FunctionFragment;
-    "_getBattleDamages(uint256,uint256,uint256)": FunctionFragment;
-    "_getCityTileCountByLevel(uint256)": FunctionFragment;
-    "_getMapTileAt((uint256,uint256))": FunctionFragment;
-    "_getMidPositionFromTilePosition((uint256,uint256))": FunctionFragment;
-    "_getNeighbors((uint256,uint256))": FunctionFragment;
-    "_getPlayer(address)": FunctionFragment;
-    "_getProperTilePosition((uint256,uint256))": FunctionFragment;
-    "_getSettlerHealthAndSpeedByLevel(uint256)": FunctionFragment;
-    "_goldLevelSelector(uint256)": FunctionFragment;
-    "_inBound((uint256,uint256))": FunctionFragment;
-    "_isProperTilePosition((uint256,uint256))": FunctionFragment;
-    "_positionInboundCheck((uint256,uint256))": FunctionFragment;
-    "_random(uint256,uint256)": FunctionFragment;
-    "_strEq(string,string)": FunctionFragment;
-    "_sum(uint256[])": FunctionFragment;
-    "_withinDistance((uint256,uint256),(uint256,uint256),uint256)": FunctionFragment;
+    "adjacent((uint256,uint256),(uint256,uint256))": FunctionFragment;
+    "adjacentToCity((uint256,uint256),uint256)": FunctionFragment;
+    "coincident((uint256,uint256),(uint256,uint256))": FunctionFragment;
+    "connected((uint256,uint256)[])": FunctionFragment;
+    "euclidean((uint256,uint256),(uint256,uint256))": FunctionFragment;
+    "getBattleDamages(uint256,uint256,uint256)": FunctionFragment;
+    "getCityTileCountByLevel(uint256)": FunctionFragment;
     "getHarvestCap(uint256)": FunctionFragment;
-    "getTotalGoldCap(uint256)": FunctionFragment;
+    "getMapTileAt((uint256,uint256))": FunctionFragment;
+    "getMidPositionFromTilePosition((uint256,uint256))": FunctionFragment;
+    "getNeighbors((uint256,uint256))": FunctionFragment;
+    "getPlayer(address)": FunctionFragment;
+    "getProperTilePosition((uint256,uint256))": FunctionFragment;
+    "getSettlerHealthAndSpeedByLevel(uint256)": FunctionFragment;
+    "inBound((uint256,uint256))": FunctionFragment;
+    "inboundPositionCheck((uint256,uint256))": FunctionFragment;
+    "isProperTilePosition((uint256,uint256))": FunctionFragment;
+    "random(uint256,uint256)": FunctionFragment;
+    "strEq(string,string)": FunctionFragment;
+    "sum(uint256[])": FunctionFragment;
+    "withinDistance((uint256,uint256),(uint256,uint256),uint256)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "_adjacent"
-      | "_adjacentToCity"
-      | "_barbarianInfantrySelector"
-      | "_coincident"
-      | "_connected"
-      | "_euclidean"
-      | "_getBattleDamages"
-      | "_getCityTileCountByLevel"
-      | "_getMapTileAt"
-      | "_getMidPositionFromTilePosition"
-      | "_getNeighbors"
-      | "_getPlayer"
-      | "_getProperTilePosition"
-      | "_getSettlerHealthAndSpeedByLevel"
-      | "_goldLevelSelector"
-      | "_inBound"
-      | "_isProperTilePosition"
-      | "_positionInboundCheck"
-      | "_random"
-      | "_strEq"
-      | "_sum"
-      | "_withinDistance"
+      | "adjacent"
+      | "adjacentToCity"
+      | "coincident"
+      | "connected"
+      | "euclidean"
+      | "getBattleDamages"
+      | "getCityTileCountByLevel"
       | "getHarvestCap"
-      | "getTotalGoldCap"
+      | "getMapTileAt"
+      | "getMidPositionFromTilePosition"
+      | "getNeighbors"
+      | "getPlayer"
+      | "getProperTilePosition"
+      | "getSettlerHealthAndSpeedByLevel"
+      | "inBound"
+      | "inboundPositionCheck"
+      | "isProperTilePosition"
+      | "random"
+      | "strEq"
+      | "sum"
+      | "withinDistance"
   ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "_adjacent",
+    functionFragment: "adjacent",
     values: [PositionStruct, PositionStruct]
   ): string;
   encodeFunctionData(
-    functionFragment: "_adjacentToCity",
+    functionFragment: "adjacentToCity",
     values: [PositionStruct, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "_barbarianInfantrySelector",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_coincident",
+    functionFragment: "coincident",
     values: [PositionStruct, PositionStruct]
   ): string;
   encodeFunctionData(
-    functionFragment: "_connected",
+    functionFragment: "connected",
     values: [PositionStruct[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "_euclidean",
+    functionFragment: "euclidean",
     values: [PositionStruct, PositionStruct]
   ): string;
   encodeFunctionData(
-    functionFragment: "_getBattleDamages",
+    functionFragment: "getBattleDamages",
     values: [
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
@@ -134,136 +124,80 @@ export interface GameLibInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "_getCityTileCountByLevel",
+    functionFragment: "getCityTileCountByLevel",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "_getMapTileAt",
+    functionFragment: "getHarvestCap",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getMapTileAt",
     values: [PositionStruct]
   ): string;
   encodeFunctionData(
-    functionFragment: "_getMidPositionFromTilePosition",
+    functionFragment: "getMidPositionFromTilePosition",
     values: [PositionStruct]
   ): string;
   encodeFunctionData(
-    functionFragment: "_getNeighbors",
+    functionFragment: "getNeighbors",
     values: [PositionStruct]
   ): string;
   encodeFunctionData(
-    functionFragment: "_getPlayer",
+    functionFragment: "getPlayer",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "_getProperTilePosition",
+    functionFragment: "getProperTilePosition",
     values: [PositionStruct]
   ): string;
   encodeFunctionData(
-    functionFragment: "_getSettlerHealthAndSpeedByLevel",
+    functionFragment: "getSettlerHealthAndSpeedByLevel",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "_goldLevelSelector",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_inBound",
+    functionFragment: "inBound",
     values: [PositionStruct]
   ): string;
   encodeFunctionData(
-    functionFragment: "_isProperTilePosition",
+    functionFragment: "inboundPositionCheck",
     values: [PositionStruct]
   ): string;
   encodeFunctionData(
-    functionFragment: "_positionInboundCheck",
+    functionFragment: "isProperTilePosition",
     values: [PositionStruct]
   ): string;
   encodeFunctionData(
-    functionFragment: "_random",
+    functionFragment: "random",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "_strEq",
+    functionFragment: "strEq",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "_sum",
+    functionFragment: "sum",
     values: [PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "_withinDistance",
+    functionFragment: "withinDistance",
     values: [PositionStruct, PositionStruct, PromiseOrValue<BigNumberish>]
   ): string;
-  encodeFunctionData(
-    functionFragment: "getHarvestCap",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getTotalGoldCap",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
 
-  decodeFunctionResult(functionFragment: "_adjacent", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "adjacent", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "_adjacentToCity",
+    functionFragment: "adjacentToCity",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "coincident", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "connected", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "euclidean", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getBattleDamages",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "_barbarianInfantrySelector",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_coincident",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "_connected", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "_euclidean", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "_getBattleDamages",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getCityTileCountByLevel",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getMapTileAt",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getMidPositionFromTilePosition",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getNeighbors",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "_getPlayer", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "_getProperTilePosition",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_getSettlerHealthAndSpeedByLevel",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_goldLevelSelector",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "_inBound", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "_isProperTilePosition",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_positionInboundCheck",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "_random", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "_strEq", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "_sum", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "_withinDistance",
+    functionFragment: "getCityTileCountByLevel",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -271,7 +205,40 @@ export interface GameLibInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getTotalGoldCap",
+    functionFragment: "getMapTileAt",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getMidPositionFromTilePosition",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getNeighbors",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "getPlayer", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getProperTilePosition",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getSettlerHealthAndSpeedByLevel",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "inBound", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "inboundPositionCheck",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "isProperTilePosition",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "random", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "strEq", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "sum", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "withinDistance",
     data: BytesLike
   ): Result;
 
@@ -321,41 +288,36 @@ export interface GameLib extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    _adjacent(
+    adjacent(
       _p1: PositionStruct,
       _p2: PositionStruct,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    _adjacentToCity(
+    adjacentToCity(
       _position: PositionStruct,
       _cityID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    _barbarianInfantrySelector(
-      _level: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    _coincident(
+    coincident(
       _p1: PositionStruct,
       _p2: PositionStruct,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    _connected(
+    connected(
       _positions: PositionStruct[],
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    _euclidean(
+    euclidean(
       _p1: PositionStruct,
       _p2: PositionStruct,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    _getBattleDamages(
+    getBattleDamages(
       _army1: PromiseOrValue<BigNumberish>,
       _army2: PromiseOrValue<BigNumberish>,
       _duration: PromiseOrValue<BigNumberish>,
@@ -364,128 +326,113 @@ export interface GameLib extends BaseContract {
       [BigNumber, BigNumber] & { _damageOn1: BigNumber; _damageOn2: BigNumber }
     >;
 
-    _getCityTileCountByLevel(
+    getCityTileCountByLevel(
       _level: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
-
-    _getMapTileAt(
-      _position: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<[TileStructOutput]>;
-
-    _getMidPositionFromTilePosition(
-      _tilePosition: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<[PositionStructOutput]>;
-
-    _getNeighbors(
-      _position: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<[PositionStructOutput[]]>;
-
-    _getPlayer(
-      _address: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    _getProperTilePosition(
-      _p: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<[PositionStructOutput]>;
-
-    _getSettlerHealthAndSpeedByLevel(
-      _level: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, BigNumber]>;
-
-    _goldLevelSelector(
-      _goldLevel: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<[boolean]>;
-
-    _isProperTilePosition(
-      _p: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    _positionInboundCheck(
-      _position: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<[void]>;
-
-    _random(
-      _max: PromiseOrValue<BigNumberish>,
-      _salt: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    _strEq(
-      _s1: PromiseOrValue<string>,
-      _s2: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    _sum(
-      _arr: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    _withinDistance(
-      _p1: PositionStruct,
-      _p2: PositionStruct,
-      _dist: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
 
     getHarvestCap(
       _level: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    getTotalGoldCap(
-      _level: PromiseOrValue<BigNumberish>,
+    getMapTileAt(
+      _position: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<[TileStructOutput]>;
+
+    getMidPositionFromTilePosition(
+      _tilePosition: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<[PositionStructOutput]>;
+
+    getNeighbors(
+      _position: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<[PositionStructOutput[]]>;
+
+    getPlayer(
+      _address: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    getProperTilePosition(
+      _p: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<[PositionStructOutput]>;
+
+    getSettlerHealthAndSpeedByLevel(
+      _level: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber, BigNumber]>;
+
+    inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<[boolean]>;
+
+    inboundPositionCheck(
+      _position: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<[void]>;
+
+    isProperTilePosition(
+      _p: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    random(
+      _max: PromiseOrValue<BigNumberish>,
+      _salt: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    strEq(
+      _s1: PromiseOrValue<string>,
+      _s2: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    sum(
+      _arr: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    withinDistance(
+      _p1: PositionStruct,
+      _p2: PositionStruct,
+      _dist: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
   };
 
-  _adjacent(
+  adjacent(
     _p1: PositionStruct,
     _p2: PositionStruct,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  _adjacentToCity(
+  adjacentToCity(
     _position: PositionStruct,
     _cityID: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  _barbarianInfantrySelector(
-    _level: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  _coincident(
+  coincident(
     _p1: PositionStruct,
     _p2: PositionStruct,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  _connected(
+  connected(
     _positions: PositionStruct[],
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  _euclidean(
+  euclidean(
     _p1: PositionStruct,
     _p2: PositionStruct,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  _getBattleDamages(
+  getBattleDamages(
     _army1: PromiseOrValue<BigNumberish>,
     _army2: PromiseOrValue<BigNumberish>,
     _duration: PromiseOrValue<BigNumberish>,
@@ -494,128 +441,113 @@ export interface GameLib extends BaseContract {
     [BigNumber, BigNumber] & { _damageOn1: BigNumber; _damageOn2: BigNumber }
   >;
 
-  _getCityTileCountByLevel(
+  getCityTileCountByLevel(
     _level: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
-
-  _getMapTileAt(
-    _position: PositionStruct,
-    overrides?: CallOverrides
-  ): Promise<TileStructOutput>;
-
-  _getMidPositionFromTilePosition(
-    _tilePosition: PositionStruct,
-    overrides?: CallOverrides
-  ): Promise<PositionStructOutput>;
-
-  _getNeighbors(
-    _position: PositionStruct,
-    overrides?: CallOverrides
-  ): Promise<PositionStructOutput[]>;
-
-  _getPlayer(
-    _address: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  _getProperTilePosition(
-    _p: PositionStruct,
-    overrides?: CallOverrides
-  ): Promise<PositionStructOutput>;
-
-  _getSettlerHealthAndSpeedByLevel(
-    _level: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<[BigNumber, BigNumber]>;
-
-  _goldLevelSelector(
-    _goldLevel: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<boolean>;
-
-  _isProperTilePosition(
-    _p: PositionStruct,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  _positionInboundCheck(
-    _position: PositionStruct,
-    overrides?: CallOverrides
-  ): Promise<void>;
-
-  _random(
-    _max: PromiseOrValue<BigNumberish>,
-    _salt: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  _strEq(
-    _s1: PromiseOrValue<string>,
-    _s2: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  _sum(
-    _arr: PromiseOrValue<BigNumberish>[],
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  _withinDistance(
-    _p1: PositionStruct,
-    _p2: PositionStruct,
-    _dist: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
 
   getHarvestCap(
     _level: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  getTotalGoldCap(
-    _level: PromiseOrValue<BigNumberish>,
+  getMapTileAt(
+    _position: PositionStruct,
+    overrides?: CallOverrides
+  ): Promise<TileStructOutput>;
+
+  getMidPositionFromTilePosition(
+    _tilePosition: PositionStruct,
+    overrides?: CallOverrides
+  ): Promise<PositionStructOutput>;
+
+  getNeighbors(
+    _position: PositionStruct,
+    overrides?: CallOverrides
+  ): Promise<PositionStructOutput[]>;
+
+  getPlayer(
+    _address: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  getProperTilePosition(
+    _p: PositionStruct,
+    overrides?: CallOverrides
+  ): Promise<PositionStructOutput>;
+
+  getSettlerHealthAndSpeedByLevel(
+    _level: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<[BigNumber, BigNumber]>;
+
+  inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<boolean>;
+
+  inboundPositionCheck(
+    _position: PositionStruct,
+    overrides?: CallOverrides
+  ): Promise<void>;
+
+  isProperTilePosition(
+    _p: PositionStruct,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  random(
+    _max: PromiseOrValue<BigNumberish>,
+    _salt: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  strEq(
+    _s1: PromiseOrValue<string>,
+    _s2: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  sum(
+    _arr: PromiseOrValue<BigNumberish>[],
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  withinDistance(
+    _p1: PositionStruct,
+    _p2: PositionStruct,
+    _dist: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   callStatic: {
-    _adjacent(
+    adjacent(
       _p1: PositionStruct,
       _p2: PositionStruct,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    _adjacentToCity(
+    adjacentToCity(
       _position: PositionStruct,
       _cityID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    _barbarianInfantrySelector(
-      _level: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _coincident(
+    coincident(
       _p1: PositionStruct,
       _p2: PositionStruct,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    _connected(
+    connected(
       _positions: PositionStruct[],
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    _euclidean(
+    euclidean(
       _p1: PositionStruct,
       _p2: PositionStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getBattleDamages(
+    getBattleDamages(
       _army1: PromiseOrValue<BigNumberish>,
       _army2: PromiseOrValue<BigNumberish>,
       _duration: PromiseOrValue<BigNumberish>,
@@ -624,91 +556,81 @@ export interface GameLib extends BaseContract {
       [BigNumber, BigNumber] & { _damageOn1: BigNumber; _damageOn2: BigNumber }
     >;
 
-    _getCityTileCountByLevel(
+    getCityTileCountByLevel(
       _level: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    _getMapTileAt(
-      _position: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<TileStructOutput>;
-
-    _getMidPositionFromTilePosition(
-      _tilePosition: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<PositionStructOutput>;
-
-    _getNeighbors(
-      _position: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<PositionStructOutput[]>;
-
-    _getPlayer(
-      _address: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getProperTilePosition(
-      _p: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<PositionStructOutput>;
-
-    _getSettlerHealthAndSpeedByLevel(
-      _level: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber, BigNumber]>;
-
-    _goldLevelSelector(
-      _goldLevel: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<boolean>;
-
-    _isProperTilePosition(
-      _p: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    _positionInboundCheck(
-      _position: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    _random(
-      _max: PromiseOrValue<BigNumberish>,
-      _salt: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _strEq(
-      _s1: PromiseOrValue<string>,
-      _s2: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    _sum(
-      _arr: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _withinDistance(
-      _p1: PositionStruct,
-      _p2: PositionStruct,
-      _dist: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
 
     getHarvestCap(
       _level: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getTotalGoldCap(
-      _level: PromiseOrValue<BigNumberish>,
+    getMapTileAt(
+      _position: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<TileStructOutput>;
+
+    getMidPositionFromTilePosition(
+      _tilePosition: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PositionStructOutput>;
+
+    getNeighbors(
+      _position: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PositionStructOutput[]>;
+
+    getPlayer(
+      _address: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    getProperTilePosition(
+      _p: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PositionStructOutput>;
+
+    getSettlerHealthAndSpeedByLevel(
+      _level: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber, BigNumber]>;
+
+    inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<boolean>;
+
+    inboundPositionCheck(
+      _position: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    isProperTilePosition(
+      _p: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    random(
+      _max: PromiseOrValue<BigNumberish>,
+      _salt: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    strEq(
+      _s1: PromiseOrValue<string>,
+      _s2: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    sum(
+      _arr: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    withinDistance(
+      _p1: PositionStruct,
+      _p2: PositionStruct,
+      _dist: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
   };
 
   filters: {
@@ -720,120 +642,44 @@ export interface GameLib extends BaseContract {
   };
 
   estimateGas: {
-    _adjacent(
+    adjacent(
       _p1: PositionStruct,
       _p2: PositionStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _adjacentToCity(
+    adjacentToCity(
       _position: PositionStruct,
       _cityID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _barbarianInfantrySelector(
-      _level: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _coincident(
+    coincident(
       _p1: PositionStruct,
       _p2: PositionStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _connected(
+    connected(
       _positions: PositionStruct[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _euclidean(
+    euclidean(
       _p1: PositionStruct,
       _p2: PositionStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getBattleDamages(
+    getBattleDamages(
       _army1: PromiseOrValue<BigNumberish>,
       _army2: PromiseOrValue<BigNumberish>,
       _duration: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getCityTileCountByLevel(
+    getCityTileCountByLevel(
       _level: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getMapTileAt(
-      _position: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getMidPositionFromTilePosition(
-      _tilePosition: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getNeighbors(
-      _position: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getPlayer(
-      _address: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getProperTilePosition(
-      _p: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _getSettlerHealthAndSpeedByLevel(
-      _level: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _goldLevelSelector(
-      _goldLevel: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<BigNumber>;
-
-    _isProperTilePosition(
-      _p: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _positionInboundCheck(
-      _position: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _random(
-      _max: PromiseOrValue<BigNumberish>,
-      _salt: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _strEq(
-      _s1: PromiseOrValue<string>,
-      _s2: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _sum(
-      _arr: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _withinDistance(
-      _p1: PositionStruct,
-      _p2: PositionStruct,
-      _dist: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -842,130 +688,112 @@ export interface GameLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getTotalGoldCap(
+    getMapTileAt(
+      _position: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getMidPositionFromTilePosition(
+      _tilePosition: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getNeighbors(
+      _position: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getPlayer(
+      _address: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getProperTilePosition(
+      _p: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getSettlerHealthAndSpeedByLevel(
       _level: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<BigNumber>;
+
+    inboundPositionCheck(
+      _position: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    isProperTilePosition(
+      _p: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    random(
+      _max: PromiseOrValue<BigNumberish>,
+      _salt: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    strEq(
+      _s1: PromiseOrValue<string>,
+      _s2: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    sum(
+      _arr: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    withinDistance(
+      _p1: PositionStruct,
+      _p2: PositionStruct,
+      _dist: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    _adjacent(
+    adjacent(
       _p1: PositionStruct,
       _p2: PositionStruct,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _adjacentToCity(
+    adjacentToCity(
       _position: PositionStruct,
       _cityID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _barbarianInfantrySelector(
-      _level: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _coincident(
+    coincident(
       _p1: PositionStruct,
       _p2: PositionStruct,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _connected(
+    connected(
       _positions: PositionStruct[],
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _euclidean(
+    euclidean(
       _p1: PositionStruct,
       _p2: PositionStruct,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _getBattleDamages(
+    getBattleDamages(
       _army1: PromiseOrValue<BigNumberish>,
       _army2: PromiseOrValue<BigNumberish>,
       _duration: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _getCityTileCountByLevel(
+    getCityTileCountByLevel(
       _level: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getMapTileAt(
-      _position: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getMidPositionFromTilePosition(
-      _tilePosition: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getNeighbors(
-      _position: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getPlayer(
-      _address: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getProperTilePosition(
-      _p: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _getSettlerHealthAndSpeedByLevel(
-      _level: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _goldLevelSelector(
-      _goldLevel: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _inBound(
-      _p: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _isProperTilePosition(
-      _p: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _positionInboundCheck(
-      _position: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _random(
-      _max: PromiseOrValue<BigNumberish>,
-      _salt: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _strEq(
-      _s1: PromiseOrValue<string>,
-      _s2: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _sum(
-      _arr: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _withinDistance(
-      _p1: PositionStruct,
-      _p2: PositionStruct,
-      _dist: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -974,8 +802,72 @@ export interface GameLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getTotalGoldCap(
+    getMapTileAt(
+      _position: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getMidPositionFromTilePosition(
+      _tilePosition: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getNeighbors(
+      _position: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getPlayer(
+      _address: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getProperTilePosition(
+      _p: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getSettlerHealthAndSpeedByLevel(
       _level: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    inBound(
+      _p: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    inboundPositionCheck(
+      _position: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    isProperTilePosition(
+      _p: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    random(
+      _max: PromiseOrValue<BigNumberish>,
+      _salt: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    strEq(
+      _s1: PromiseOrValue<string>,
+      _s2: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    sum(
+      _arr: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    withinDistance(
+      _p1: PositionStruct,
+      _p2: PositionStruct,
+      _dist: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

@@ -56,7 +56,7 @@ const _abi = [
         type: 'tuple',
       },
     ],
-    name: '_adjacent',
+    name: 'adjacent',
     outputs: [
       {
         internalType: 'bool',
@@ -92,7 +92,7 @@ const _abi = [
         type: 'uint256',
       },
     ],
-    name: '_adjacentToCity',
+    name: 'adjacentToCity',
     outputs: [
       {
         internalType: 'bool',
@@ -159,7 +159,7 @@ const _abi = [
         type: 'tuple',
       },
     ],
-    name: '_coincident',
+    name: 'coincident',
     outputs: [
       {
         internalType: 'bool',
@@ -190,7 +190,7 @@ const _abi = [
         type: 'tuple[]',
       },
     ],
-    name: '_connected',
+    name: 'connected',
     outputs: [
       {
         internalType: 'bool',
@@ -238,7 +238,7 @@ const _abi = [
         type: 'tuple',
       },
     ],
-    name: '_euclidean',
+    name: 'euclidean',
     outputs: [
       {
         internalType: 'uint256',
@@ -267,7 +267,7 @@ const _abi = [
         type: 'uint256',
       },
     ],
-    name: '_getBattleDamages',
+    name: 'getBattleDamages',
     outputs: [
       {
         internalType: 'uint256',
@@ -291,7 +291,7 @@ const _abi = [
         type: 'uint256',
       },
     ],
-    name: '_getCityTileCountByLevel',
+    name: 'getCityTileCountByLevel',
     outputs: [
       {
         internalType: 'uint256',
@@ -322,7 +322,7 @@ const _abi = [
         type: 'tuple',
       },
     ],
-    name: '_getMapTileAt',
+    name: 'getMapTileAt',
     outputs: [
       {
         components: [
@@ -365,7 +365,7 @@ const _abi = [
         type: 'tuple',
       },
     ],
-    name: '_getNeighbors',
+    name: 'getNeighbors',
     outputs: [
       {
         components: [
@@ -396,7 +396,7 @@ const _abi = [
         type: 'address',
       },
     ],
-    name: '_getPlayer',
+    name: 'getPlayer',
     outputs: [
       {
         internalType: 'uint256',
@@ -415,7 +415,7 @@ const _abi = [
         type: 'uint256',
       },
     ],
-    name: '_getSettlerHealthAndSpeedByLevel',
+    name: 'getSettlerHealthAndSpeedByLevel',
     outputs: [
       {
         internalType: 'uint256',
@@ -470,7 +470,7 @@ const _abi = [
         type: 'tuple',
       },
     ],
-    name: '_inBound',
+    name: 'inBound',
     outputs: [
       {
         internalType: 'bool',
@@ -494,7 +494,7 @@ const _abi = [
         type: 'uint256',
       },
     ],
-    name: '_random',
+    name: 'random',
     outputs: [
       {
         internalType: 'uint256',
@@ -518,7 +518,7 @@ const _abi = [
         type: 'string',
       },
     ],
-    name: '_strEq',
+    name: 'strEq',
     outputs: [
       {
         internalType: 'bool',
@@ -537,7 +537,7 @@ const _abi = [
         type: 'uint256[]',
       },
     ],
-    name: '_sum',
+    name: 'sum',
     outputs: [
       {
         internalType: 'uint256',
@@ -590,7 +590,7 @@ const _abi = [
         type: 'uint256',
       },
     ],
-    name: '_withinDistance',
+    name: 'withinDistance',
     outputs: [
       {
         internalType: 'bool',
@@ -609,7 +609,7 @@ const _abi = [
         type: 'address',
       },
     ],
-    name: '_activePlayerCheck',
+    name: 'activePlayerCheck',
     outputs: [],
     stateMutability: 'view',
     type: 'function',
@@ -627,14 +627,14 @@ const _abi = [
         type: 'address',
       },
     ],
-    name: '_entityOwnershipCheckByAddress',
+    name: 'entityOwnershipCheck',
     outputs: [],
     stateMutability: 'view',
     type: 'function',
   },
   {
     inputs: [],
-    name: '_gamePauseCheck',
+    name: 'ongoingGameCheck',
     outputs: [],
     stateMutability: 'view',
     type: 'function',
@@ -659,7 +659,7 @@ const _abi = [
         type: 'tuple',
       },
     ],
-    name: '_positionInboundCheck',
+    name: 'inboundPositionCheck',
     outputs: [],
     stateMutability: 'view',
     type: 'function',
@@ -672,7 +672,7 @@ const _abi = [
         type: 'uint256',
       },
     ],
-    name: '_validEntityCheck',
+    name: 'validEntityCheck',
     outputs: [],
     stateMutability: 'view',
     type: 'function',
