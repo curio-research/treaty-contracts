@@ -74,10 +74,7 @@ library Templates {
         ECSLib.setString("Tag", armyID, "Army");
         ECSLib.setUint("Owner", armyID, _playerID);
         ECSLib.setPosition("Position", armyID, _position);
-        ECSLib.setUint("Health", armyID, 0);
         ECSLib.setUint("Speed", armyID, 0);
-        ECSLib.setUint("Attack", armyID, 0);
-        ECSLib.setUint("Defense", armyID, 0);
         ECSLib.setUint("Load", armyID, 0);
         ECSLib.setUint("LastTimestamp", armyID, block.timestamp);
         ECSLib.setUint("Capacity", armyID, 100); // FIXME: temporary

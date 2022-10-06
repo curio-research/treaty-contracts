@@ -1,3 +1,4 @@
+import { utils } from 'ethers';
 import chalk from 'chalk';
 import { GameLib } from './../typechain-types/libraries/GameLib';
 import { ECSLib } from './../typechain-types/libraries/ECSLib';
@@ -43,7 +44,7 @@ task('deploy', 'deploy contracts')
 
       const worldConstants = generateWorldConstants(player1.address, SMALL_MAP_INPUT);
 
-      const tileMap = fixmap ? generateBlankFixmap() : generateMap(SMALL_MAP_INPUT.width, SMALL_MAP_INPUT.height);
+      const tileMap = fixmap ? generateBlankFixmap() : generateMap(SMALL_MAP_INPUT.width, SMALL_MAP_INPUT.height, worldConstants);
 
       const ecsLib = await deployProxy<ECSLib>('ECSLib', player1, hre, []);
       const gameLib = await deployProxy<GameLib>('GameLib', player1, hre, [], { ECSLib: ecsLib.address });

@@ -1,4 +1,4 @@
-import { Curio } from './../../typechain-types/hardhat-diamond-abi/Curio';
+import { Curio, WorldConstantsStruct } from './../../typechain-types/hardhat-diamond-abi/Curio';
 import { decodeBigNumberishArr } from './../../util/serde/common';
 import { Component__factory } from './../../typechain-types/factories/contracts/Component__factory';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
@@ -64,7 +64,7 @@ export const generateBlankFixmap = (): TileMap => {
 };
 
 // main map generator
-export const generateMap = (worldWidth: number, worldHeight: number): TileMap => {
+export const generateMap = (worldWidth: number, worldHeight: number, worldConstants: WorldConstantsStruct): TileMap => {
   let tileMap: TileMap = [];
 
   // assign a blank map
@@ -91,33 +91,35 @@ export const generateMap = (worldWidth: number, worldHeight: number): TileMap =>
 
   const totalGoldmineCount = worldWidth * worldHeight * totalGoldMineDensity;
 
+  const tileWidth = Number(worldConstants.tileWidth);
+
   for (let i = 0; i < totalGoldmineCount * level1GoldMineDensity; i++) {
-    const pos = chooseRandomEmptyLandPosition(tileMap);
+    const pos = getProperTilePosition(chooseRandomEmptyLandPosition(tileMap), tileWidth);
     tileMap[pos.x][pos.y] = TILE_TYPE.GOLDMINE_LV1;
   }
 
   for (let i = 0; i < totalGoldmineCount * level2GoldMineDensity; i++) {
-    const pos = chooseRandomEmptyLandPosition(tileMap);
+    const pos = getProperTilePosition(chooseRandomEmptyLandPosition(tileMap), tileWidth);
     tileMap[pos.x][pos.y] = TILE_TYPE.GOLDMINE_LV2;
   }
 
   for (let i = 0; i < totalGoldmineCount * level3GoldMineDensity; i++) {
-    const pos = chooseRandomEmptyLandPosition(tileMap);
+    const pos = getProperTilePosition(chooseRandomEmptyLandPosition(tileMap), tileWidth);
     tileMap[pos.x][pos.y] = TILE_TYPE.GOLDMINE_LV3;
   }
 
   for (let i = 0; i < totalBarbarianDensity * level1BarbarianDensity; i++) {
-    const pos = chooseRandomEmptyLandPosition(tileMap);
+    const pos = getProperTilePosition(chooseRandomEmptyLandPosition(tileMap), tileWidth);
     tileMap[pos.x][pos.y] = TILE_TYPE.BARBARIAN_LV1;
   }
 
   for (let i = 0; i < totalBarbarianDensity * level2BarbarianDensity; i++) {
-    const pos = chooseRandomEmptyLandPosition(tileMap);
+    const pos = getProperTilePosition(chooseRandomEmptyLandPosition(tileMap), tileWidth);
     tileMap[pos.x][pos.y] = TILE_TYPE.BARBARIAN_LV2;
   }
 
   for (let i = 0; i < totalBarbarianDensity * level3BarbarianDensity; i++) {
-    const pos = chooseRandomEmptyLandPosition(tileMap);
+    const pos = getProperTilePosition(chooseRandomEmptyLandPosition(tileMap), tileWidth);
     tileMap[pos.x][pos.y] = TILE_TYPE.BARBARIAN_LV3;
   }
 
@@ -138,6 +140,10 @@ export const chooseRandomEmptyLandPosition = (tileMap: TileMap): position => {
   } while (!pos);
 
   return pos;
+};
+
+export const getProperTilePosition = (position: position, tileSize: number): position => {
+  return { x: position.x - (position.x % tileSize), y: position.y - (position.y % tileSize) };
 };
 
 // fixmap helpers

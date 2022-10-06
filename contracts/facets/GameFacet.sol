@@ -20,6 +20,12 @@ contract GameFacet is UseStorage {
     // BASIC
     // ----------------------------------------------------------
 
+    // sent using the initial function
+    function authorizeGame(address _burnerAddress) external {
+        gs().accounts[msg.sender] = _burnerAddress;
+        gs().burnerAccounts[_burnerAddress] = msg.sender;
+    }
+
     function initializePlayer(Position memory _position, string memory _name) external {
         GameLib.ongoingGameCheck();
         GameLib.inboundPositionCheck(_position);
@@ -57,6 +63,7 @@ contract GameFacet is UseStorage {
         GameLib.entityOwnershipCheck(_movableEntity, msg.sender);
         GameLib.inboundPositionCheck(_targetPosition);
 
+        GameLib.initializeTile(GameLib.getProperTilePosition(_targetPosition));
         GameLib.initializeTile(_targetPosition);
 
         // Verify no other movable entity at exact destination coordinate
@@ -423,14 +430,21 @@ contract GameFacet is UseStorage {
         uint256 cityID = ECSLib.getUint("City", tileID);
         require(GameLib.coincident(ECSLib.getPosition("StartPosition", cityID), startPosition), "CURIO: Army must be on city center");
 
+        uint256 cityGoldInventoryID = GameLib.getInventory(cityID, GameLib.getTemplateByInventoryType("Gold"));
+
         // Return troops to corresponding inventories
         uint256[] memory constituentIDs = GameLib.getArmyConstituents(_armyID);
         for (uint256 i = 0; i < constituentIDs.length; i++) {
             uint256 cityInventoryID = GameLib.getInventory(cityID, ECSLib.getUint("Template", constituentIDs[i]));
-            uint256 amount = ECSLib.getUint("Amount", cityInventoryID) + ECSLib.getUint("Amount", constituentIDs[i]);
+            uint256 troopAmount = ECSLib.getUint("Amount", cityInventoryID) + ECSLib.getUint("Amount", constituentIDs[i]);
+
+            uint256 armyGoldInventoryID = GameLib.getArmyInventory(_armyID, GameLib.getTemplateByInventoryType("Gold"));
+            uint256 armyGoldAmount = ECSLib.getUint("Amount", armyGoldInventoryID);
+
+            ECSLib.setUint("Amount", cityGoldInventoryID, GameLib.getCityGold(cityID) + armyGoldAmount);
 
             // require(_amount <= gs().worldConstants.maxInventoryCapacity, "CURIO: Too many troops");
-            ECSLib.setUint("Amount", cityInventoryID, amount);
+            ECSLib.setUint("Amount", cityInventoryID, troopAmount); // add troop amount back to city
         }
 
         // Disband army

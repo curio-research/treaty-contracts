@@ -384,6 +384,19 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "address",
+        name: "_burnerAddress",
+        type: "address",
+      },
+    ],
+    name: "authorizeGame",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "uint256",
         name: "_armyID",
         type: "uint256",
@@ -944,6 +957,25 @@ const _abi = [
       },
     ],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_primaryAddress",
+        type: "address",
+      },
+    ],
+    name: "getMainBurnerAccount",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {
