@@ -296,7 +296,7 @@ library ECSLib {
 
         for (uint256 i = 0; i < _queryCondition.length; i++) {
             QueryCondition memory _queryChunkCondition = _queryCondition[i];
-            Component component = Component(gs().components[_queryChunkCondition.componentName]);
+            Component component = _getComponent(_queryChunkCondition.componentName);
 
             if (_queryChunkCondition.queryType == QueryType.Has) {
                 res = intersectionAsSet(res, component.getEntitiesAsSet());

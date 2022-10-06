@@ -210,8 +210,8 @@ library GameLib {
 
     function getBuildingProduction(uint256 _buildingID) public returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
-        query[0] = ECSLib.queryChunk(QueryType.HasVal, "Building", abi.encode(_buildingID));
-        query[1] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("Production"));
+        query[0] = ECSLib.queryChunk(QueryType.HasVal, "Keeper", abi.encode(_buildingID));
+        query[1] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("TroopProduction"));
         uint256[] memory res = ECSLib.query(query);
         assert(res.length <= 1);
         return res.length == 1 ? res[0] : 0;

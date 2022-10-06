@@ -116,10 +116,8 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.warp(time);
         vm.prank(player1);
         game.move(moscowArmyID, Position({x: 60, y: 15}));
-        console.log("Doomed");
         vm.prank(player2);
         game.move(kievArmyID, Position({x: 62, y: 42}));
-        console.log("AAA");
 
         time += 5;
         vm.warp(time);
@@ -175,12 +173,19 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // One more round of battle and Kiev's army is dead
         {
-            vm.prank(player1);
+            vm.startPrank(player1);
+            vm.expectRevert("CURIO: Battled too recently");
             game.battle(moscowArmyID, kievArmyID);
+            time += 2;
+            vm.warp(time);
+            game.battle(moscowArmyID, kievArmyID);
+            vm.stopPrank();
             assertTrue(Set(getter.getEntitiesAddr()).includes(moscowArmyID));
             assertFalse(Set(getter.getEntitiesAddr()).includes(kievArmyID));
             console.log("The road to Kiev is clear");
         }
+        time += 2;
+        vm.warp(time);
 
         // Moscow's army attacks the city of Kiev
         time += 5;
@@ -267,6 +272,8 @@ contract TreatyTest is Test, DiamondDeployTest {
         // Produce troops
         uint256 _productionID = game.startTroopProduction(_cityCenterID, cavalryTemplateID, 20);
         vm.warp(30);
+        vm.expectRevert("CURIO: No concurrent productions");
+        game.startTroopProduction(_cityCenterID, cavalryTemplateID, 20);
         game.endTroopProduction(_cityCenterID, _productionID);
 
         // Get inventory
