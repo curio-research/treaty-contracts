@@ -38,8 +38,6 @@ task('deploy', 'deploy contracts')
 
       await isConnectionLive();
 
-      console.log('bruh');
-
       // Set up deployer and some local variables
       let [player1, player2] = await hre.ethers.getSigners();
       console.log('✦ player1 address is:', player1.address);
@@ -129,18 +127,11 @@ task('deploy', 'deploy contracts')
         time: new Date(),
       };
 
-      // _getProperTilePosition
-
       await publishDeployment(configFile);
 
       if (port === undefined || port.toLowerCase() === 'true') {
         hre.run('port'); // if no port flag present, assume always port to Vault
       }
-
-      // fund Kevin's main account
-      await player1.sendTransaction({ to: '0xF22727DFe1E1465d5846246899f5D411ff3965fC', value: hre.ethers.utils.parseEther('100.0') });
-
-      // await diamond.connect(player1).authorizeGame(player2.address);
 
       console.log(chalk.bgGreen.black(' Curio Game Deployed '));
     } catch (err: any) {
