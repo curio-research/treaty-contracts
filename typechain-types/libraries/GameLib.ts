@@ -28,105 +28,105 @@ export type TileStructOutput = [boolean, number] & {
 
 export interface GameLibInterface extends utils.Interface {
   functions: {
-    '_adjacent((uint256,uint256),(uint256,uint256))': FunctionFragment;
-    '_adjacentToCity((uint256,uint256),uint256)': FunctionFragment;
+    'adjacent((uint256,uint256),(uint256,uint256))': FunctionFragment;
+    'adjacentToCity((uint256,uint256),uint256)': FunctionFragment;
     '_barbarianInfantrySelector(uint256)': FunctionFragment;
-    '_coincident((uint256,uint256),(uint256,uint256))': FunctionFragment;
-    '_connected((uint256,uint256)[])': FunctionFragment;
-    '_euclidean((uint256,uint256),(uint256,uint256))': FunctionFragment;
-    '_getBattleDamages(uint256,uint256,uint256)': FunctionFragment;
-    '_getCityTileCountByLevel(uint256)': FunctionFragment;
-    '_getMapTileAt((uint256,uint256))': FunctionFragment;
-    '_getNeighbors((uint256,uint256))': FunctionFragment;
-    '_getPlayer(address)': FunctionFragment;
-    '_getSettlerHealthAndSpeedByLevel(uint256)': FunctionFragment;
+    'coincident((uint256,uint256),(uint256,uint256))': FunctionFragment;
+    'connected((uint256,uint256)[])': FunctionFragment;
+    'euclidean((uint256,uint256),(uint256,uint256))': FunctionFragment;
+    'getBattleDamages(uint256,uint256,uint256)': FunctionFragment;
+    'getCityTileCountByLevel(uint256)': FunctionFragment;
+    'getMapTileAt((uint256,uint256))': FunctionFragment;
+    'getNeighbors((uint256,uint256))': FunctionFragment;
+    'getPlayer(address)': FunctionFragment;
+    'getSettlerHealthAndSpeedByLevel(uint256)': FunctionFragment;
     '_goldLevelSelector(uint256)': FunctionFragment;
-    '_inBound((uint256,uint256))': FunctionFragment;
-    '_random(uint256,uint256)': FunctionFragment;
-    '_strEq(string,string)': FunctionFragment;
-    '_sum(uint256[])': FunctionFragment;
-    '_withinDistance((uint256,uint256),(uint256,uint256),uint256)': FunctionFragment;
-    '_activePlayerCheck(address)': FunctionFragment;
-    '_entityOwnershipCheckByAddress(uint256,address)': FunctionFragment;
-    '_gamePauseCheck()': FunctionFragment;
-    '_positionInboundCheck((uint256,uint256))': FunctionFragment;
-    '_validEntityCheck(uint256)': FunctionFragment;
+    'inBound((uint256,uint256))': FunctionFragment;
+    'random(uint256,uint256)': FunctionFragment;
+    'strEq(string,string)': FunctionFragment;
+    'sum(uint256[])': FunctionFragment;
+    'withinDistance((uint256,uint256),(uint256,uint256),uint256)': FunctionFragment;
+    'activePlayerCheck(address)': FunctionFragment;
+    'entityOwnershipCheck(uint256,address)': FunctionFragment;
+    'ongoingGameCheck()': FunctionFragment;
+    'inboundPositionCheck((uint256,uint256))': FunctionFragment;
+    'validEntityCheck(uint256)': FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
-      | '_adjacent'
-      | '_adjacentToCity'
+      | 'adjacent'
+      | 'adjacentToCity'
       | '_barbarianInfantrySelector'
-      | '_coincident'
-      | '_connected'
-      | '_euclidean'
-      | '_getBattleDamages'
-      | '_getCityTileCountByLevel'
-      | '_getMapTileAt'
-      | '_getNeighbors'
-      | '_getPlayer'
-      | '_getSettlerHealthAndSpeedByLevel'
+      | 'coincident'
+      | 'connected'
+      | 'euclidean'
+      | 'getBattleDamages'
+      | 'getCityTileCountByLevel'
+      | 'getMapTileAt'
+      | 'getNeighbors'
+      | 'getPlayer'
+      | 'getSettlerHealthAndSpeedByLevel'
       | '_goldLevelSelector'
-      | '_inBound'
-      | '_random'
-      | '_strEq'
-      | '_sum'
-      | '_withinDistance'
-      | '_activePlayerCheck'
-      | '_entityOwnershipCheckByAddress'
-      | '_gamePauseCheck'
-      | '_positionInboundCheck'
-      | '_validEntityCheck'
+      | 'inBound'
+      | 'random'
+      | 'strEq'
+      | 'sum'
+      | 'withinDistance'
+      | 'activePlayerCheck'
+      | 'entityOwnershipCheck'
+      | 'ongoingGameCheck'
+      | 'inboundPositionCheck'
+      | 'validEntityCheck'
   ): FunctionFragment;
 
-  encodeFunctionData(functionFragment: '_adjacent', values: [PositionStruct, PositionStruct]): string;
-  encodeFunctionData(functionFragment: '_adjacentToCity', values: [PositionStruct, PromiseOrValue<BigNumberish>]): string;
+  encodeFunctionData(functionFragment: 'adjacent', values: [PositionStruct, PositionStruct]): string;
+  encodeFunctionData(functionFragment: 'adjacentToCity', values: [PositionStruct, PromiseOrValue<BigNumberish>]): string;
   encodeFunctionData(functionFragment: '_barbarianInfantrySelector', values: [PromiseOrValue<BigNumberish>]): string;
-  encodeFunctionData(functionFragment: '_coincident', values: [PositionStruct, PositionStruct]): string;
-  encodeFunctionData(functionFragment: '_connected', values: [PositionStruct[]]): string;
-  encodeFunctionData(functionFragment: '_euclidean', values: [PositionStruct, PositionStruct]): string;
-  encodeFunctionData(functionFragment: '_getBattleDamages', values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]): string;
-  encodeFunctionData(functionFragment: '_getCityTileCountByLevel', values: [PromiseOrValue<BigNumberish>]): string;
-  encodeFunctionData(functionFragment: '_getMapTileAt', values: [PositionStruct]): string;
-  encodeFunctionData(functionFragment: '_getNeighbors', values: [PositionStruct]): string;
-  encodeFunctionData(functionFragment: '_getPlayer', values: [PromiseOrValue<string>]): string;
-  encodeFunctionData(functionFragment: '_getSettlerHealthAndSpeedByLevel', values: [PromiseOrValue<BigNumberish>]): string;
+  encodeFunctionData(functionFragment: 'coincident', values: [PositionStruct, PositionStruct]): string;
+  encodeFunctionData(functionFragment: 'connected', values: [PositionStruct[]]): string;
+  encodeFunctionData(functionFragment: 'euclidean', values: [PositionStruct, PositionStruct]): string;
+  encodeFunctionData(functionFragment: 'getBattleDamages', values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]): string;
+  encodeFunctionData(functionFragment: 'getCityTileCountByLevel', values: [PromiseOrValue<BigNumberish>]): string;
+  encodeFunctionData(functionFragment: 'getMapTileAt', values: [PositionStruct]): string;
+  encodeFunctionData(functionFragment: 'getNeighbors', values: [PositionStruct]): string;
+  encodeFunctionData(functionFragment: 'getPlayer', values: [PromiseOrValue<string>]): string;
+  encodeFunctionData(functionFragment: 'getSettlerHealthAndSpeedByLevel', values: [PromiseOrValue<BigNumberish>]): string;
   encodeFunctionData(functionFragment: '_goldLevelSelector', values: [PromiseOrValue<BigNumberish>]): string;
-  encodeFunctionData(functionFragment: '_inBound', values: [PositionStruct]): string;
-  encodeFunctionData(functionFragment: '_random', values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]): string;
-  encodeFunctionData(functionFragment: '_strEq', values: [PromiseOrValue<string>, PromiseOrValue<string>]): string;
-  encodeFunctionData(functionFragment: '_sum', values: [PromiseOrValue<BigNumberish>[]]): string;
-  encodeFunctionData(functionFragment: '_withinDistance', values: [PositionStruct, PositionStruct, PromiseOrValue<BigNumberish>]): string;
-  encodeFunctionData(functionFragment: '_activePlayerCheck', values: [PromiseOrValue<string>]): string;
-  encodeFunctionData(functionFragment: '_entityOwnershipCheckByAddress', values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]): string;
-  encodeFunctionData(functionFragment: '_gamePauseCheck', values?: undefined): string;
-  encodeFunctionData(functionFragment: '_positionInboundCheck', values: [PositionStruct]): string;
-  encodeFunctionData(functionFragment: '_validEntityCheck', values: [PromiseOrValue<BigNumberish>]): string;
+  encodeFunctionData(functionFragment: 'inBound', values: [PositionStruct]): string;
+  encodeFunctionData(functionFragment: 'random', values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]): string;
+  encodeFunctionData(functionFragment: 'strEq', values: [PromiseOrValue<string>, PromiseOrValue<string>]): string;
+  encodeFunctionData(functionFragment: 'sum', values: [PromiseOrValue<BigNumberish>[]]): string;
+  encodeFunctionData(functionFragment: 'withinDistance', values: [PositionStruct, PositionStruct, PromiseOrValue<BigNumberish>]): string;
+  encodeFunctionData(functionFragment: 'activePlayerCheck', values: [PromiseOrValue<string>]): string;
+  encodeFunctionData(functionFragment: 'entityOwnershipCheck', values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]): string;
+  encodeFunctionData(functionFragment: 'ongoingGameCheck', values?: undefined): string;
+  encodeFunctionData(functionFragment: 'inboundPositionCheck', values: [PositionStruct]): string;
+  encodeFunctionData(functionFragment: 'validEntityCheck', values: [PromiseOrValue<BigNumberish>]): string;
 
-  decodeFunctionResult(functionFragment: '_adjacent', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: '_adjacentToCity', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'adjacent', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'adjacentToCity', data: BytesLike): Result;
   decodeFunctionResult(functionFragment: '_barbarianInfantrySelector', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: '_coincident', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: '_connected', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: '_euclidean', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: '_getBattleDamages', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: '_getCityTileCountByLevel', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: '_getMapTileAt', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: '_getNeighbors', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: '_getPlayer', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: '_getSettlerHealthAndSpeedByLevel', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'coincident', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'connected', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'euclidean', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'getBattleDamages', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'getCityTileCountByLevel', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'getMapTileAt', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'getNeighbors', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'getPlayer', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'getSettlerHealthAndSpeedByLevel', data: BytesLike): Result;
   decodeFunctionResult(functionFragment: '_goldLevelSelector', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: '_inBound', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: '_random', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: '_strEq', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: '_sum', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: '_withinDistance', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: '_activePlayerCheck', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: '_entityOwnershipCheckByAddress', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: '_gamePauseCheck', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: '_positionInboundCheck', data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: '_validEntityCheck', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'inBound', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'random', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'strEq', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'sum', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'withinDistance', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'activePlayerCheck', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'entityOwnershipCheck', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'ongoingGameCheck', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'inboundPositionCheck', data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'validEntityCheck', data: BytesLike): Result;
 
   events: {
     'GamePaused()': EventFragment;
@@ -166,145 +166,145 @@ export interface GameLib extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    _adjacent(_p1: PositionStruct, _p2: PositionStruct, overrides?: CallOverrides): Promise<[boolean]>;
+    adjacent(_p1: PositionStruct, _p2: PositionStruct, overrides?: CallOverrides): Promise<[boolean]>;
 
-    _adjacentToCity(_position: PositionStruct, _cityID: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[boolean]>;
+    adjacentToCity(_position: PositionStruct, _cityID: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[boolean]>;
 
     _barbarianInfantrySelector(_level: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    _coincident(_p1: PositionStruct, _p2: PositionStruct, overrides?: CallOverrides): Promise<[boolean]>;
+    coincident(_p1: PositionStruct, _p2: PositionStruct, overrides?: CallOverrides): Promise<[boolean]>;
 
-    _connected(_positions: PositionStruct[], overrides?: CallOverrides): Promise<[boolean]>;
+    connected(_positions: PositionStruct[], overrides?: CallOverrides): Promise<[boolean]>;
 
-    _euclidean(_p1: PositionStruct, _p2: PositionStruct, overrides?: CallOverrides): Promise<[BigNumber]>;
+    euclidean(_p1: PositionStruct, _p2: PositionStruct, overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    _getBattleDamages(_army1: PromiseOrValue<BigNumberish>, _army2: PromiseOrValue<BigNumberish>, _duration: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[BigNumber, BigNumber] & { _damageOn1: BigNumber; _damageOn2: BigNumber }>;
+    getBattleDamages(_army1: PromiseOrValue<BigNumberish>, _army2: PromiseOrValue<BigNumberish>, _duration: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[BigNumber, BigNumber] & { _damageOn1: BigNumber; _damageOn2: BigNumber }>;
 
-    _getCityTileCountByLevel(_level: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[BigNumber]>;
+    getCityTileCountByLevel(_level: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    _getMapTileAt(_position: PositionStruct, overrides?: CallOverrides): Promise<[TileStructOutput]>;
+    getMapTileAt(_position: PositionStruct, overrides?: CallOverrides): Promise<[TileStructOutput]>;
 
-    _getNeighbors(_position: PositionStruct, overrides?: CallOverrides): Promise<[PositionStructOutput[]]>;
+    getNeighbors(_position: PositionStruct, overrides?: CallOverrides): Promise<[PositionStructOutput[]]>;
 
-    _getPlayer(_address: PromiseOrValue<string>, overrides?: CallOverrides): Promise<[BigNumber]>;
+    getPlayer(_address: PromiseOrValue<string>, overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    _getSettlerHealthAndSpeedByLevel(_level: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[BigNumber, BigNumber]>;
+    getSettlerHealthAndSpeedByLevel(_level: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[BigNumber, BigNumber]>;
 
     _goldLevelSelector(_goldLevel: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<[boolean]>;
+    inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<[boolean]>;
 
-    _random(_max: PromiseOrValue<BigNumberish>, _salt: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[BigNumber]>;
+    random(_max: PromiseOrValue<BigNumberish>, _salt: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    _strEq(_s1: PromiseOrValue<string>, _s2: PromiseOrValue<string>, overrides?: CallOverrides): Promise<[boolean]>;
+    strEq(_s1: PromiseOrValue<string>, _s2: PromiseOrValue<string>, overrides?: CallOverrides): Promise<[boolean]>;
 
-    _sum(_arr: PromiseOrValue<BigNumberish>[], overrides?: CallOverrides): Promise<[BigNumber]>;
+    sum(_arr: PromiseOrValue<BigNumberish>[], overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    _withinDistance(_p1: PositionStruct, _p2: PositionStruct, _dist: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[boolean]>;
+    withinDistance(_p1: PositionStruct, _p2: PositionStruct, _dist: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[boolean]>;
 
-    _activePlayerCheck(_player: PromiseOrValue<string>, overrides?: CallOverrides): Promise<[void]>;
+    activePlayerCheck(_player: PromiseOrValue<string>, overrides?: CallOverrides): Promise<[void]>;
 
-    _entityOwnershipCheckByAddress(_entity: PromiseOrValue<BigNumberish>, _player: PromiseOrValue<string>, overrides?: CallOverrides): Promise<[void]>;
+    entityOwnershipCheck(_entity: PromiseOrValue<BigNumberish>, _player: PromiseOrValue<string>, overrides?: CallOverrides): Promise<[void]>;
 
-    _gamePauseCheck(overrides?: CallOverrides): Promise<[void]>;
+    ongoingGameCheck(overrides?: CallOverrides): Promise<[void]>;
 
-    _positionInboundCheck(_position: PositionStruct, overrides?: CallOverrides): Promise<[void]>;
+    inboundPositionCheck(_position: PositionStruct, overrides?: CallOverrides): Promise<[void]>;
 
-    _validEntityCheck(_entity: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[void]>;
+    validEntityCheck(_entity: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[void]>;
   };
 
-  _adjacent(_p1: PositionStruct, _p2: PositionStruct, overrides?: CallOverrides): Promise<boolean>;
+  adjacent(_p1: PositionStruct, _p2: PositionStruct, overrides?: CallOverrides): Promise<boolean>;
 
-  _adjacentToCity(_position: PositionStruct, _cityID: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<boolean>;
+  adjacentToCity(_position: PositionStruct, _cityID: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<boolean>;
 
   _barbarianInfantrySelector(_level: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
 
-  _coincident(_p1: PositionStruct, _p2: PositionStruct, overrides?: CallOverrides): Promise<boolean>;
+  coincident(_p1: PositionStruct, _p2: PositionStruct, overrides?: CallOverrides): Promise<boolean>;
 
-  _connected(_positions: PositionStruct[], overrides?: CallOverrides): Promise<boolean>;
+  connected(_positions: PositionStruct[], overrides?: CallOverrides): Promise<boolean>;
 
-  _euclidean(_p1: PositionStruct, _p2: PositionStruct, overrides?: CallOverrides): Promise<BigNumber>;
+  euclidean(_p1: PositionStruct, _p2: PositionStruct, overrides?: CallOverrides): Promise<BigNumber>;
 
-  _getBattleDamages(_army1: PromiseOrValue<BigNumberish>, _army2: PromiseOrValue<BigNumberish>, _duration: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[BigNumber, BigNumber] & { _damageOn1: BigNumber; _damageOn2: BigNumber }>;
+  getBattleDamages(_army1: PromiseOrValue<BigNumberish>, _army2: PromiseOrValue<BigNumberish>, _duration: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[BigNumber, BigNumber] & { _damageOn1: BigNumber; _damageOn2: BigNumber }>;
 
-  _getCityTileCountByLevel(_level: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
+  getCityTileCountByLevel(_level: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
 
-  _getMapTileAt(_position: PositionStruct, overrides?: CallOverrides): Promise<TileStructOutput>;
+  getMapTileAt(_position: PositionStruct, overrides?: CallOverrides): Promise<TileStructOutput>;
 
-  _getNeighbors(_position: PositionStruct, overrides?: CallOverrides): Promise<PositionStructOutput[]>;
+  getNeighbors(_position: PositionStruct, overrides?: CallOverrides): Promise<PositionStructOutput[]>;
 
-  _getPlayer(_address: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
+  getPlayer(_address: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
 
-  _getSettlerHealthAndSpeedByLevel(_level: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[BigNumber, BigNumber]>;
+  getSettlerHealthAndSpeedByLevel(_level: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[BigNumber, BigNumber]>;
 
   _goldLevelSelector(_goldLevel: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
 
-  _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<boolean>;
+  inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<boolean>;
 
-  _random(_max: PromiseOrValue<BigNumberish>, _salt: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
+  random(_max: PromiseOrValue<BigNumberish>, _salt: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
 
-  _strEq(_s1: PromiseOrValue<string>, _s2: PromiseOrValue<string>, overrides?: CallOverrides): Promise<boolean>;
+  strEq(_s1: PromiseOrValue<string>, _s2: PromiseOrValue<string>, overrides?: CallOverrides): Promise<boolean>;
 
-  _sum(_arr: PromiseOrValue<BigNumberish>[], overrides?: CallOverrides): Promise<BigNumber>;
+  sum(_arr: PromiseOrValue<BigNumberish>[], overrides?: CallOverrides): Promise<BigNumber>;
 
-  _withinDistance(_p1: PositionStruct, _p2: PositionStruct, _dist: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<boolean>;
+  withinDistance(_p1: PositionStruct, _p2: PositionStruct, _dist: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<boolean>;
 
-  _activePlayerCheck(_player: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
+  activePlayerCheck(_player: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
 
-  _entityOwnershipCheckByAddress(_entity: PromiseOrValue<BigNumberish>, _player: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
+  entityOwnershipCheck(_entity: PromiseOrValue<BigNumberish>, _player: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
 
-  _gamePauseCheck(overrides?: CallOverrides): Promise<void>;
+  ongoingGameCheck(overrides?: CallOverrides): Promise<void>;
 
-  _positionInboundCheck(_position: PositionStruct, overrides?: CallOverrides): Promise<void>;
+  inboundPositionCheck(_position: PositionStruct, overrides?: CallOverrides): Promise<void>;
 
-  _validEntityCheck(_entity: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
+  validEntityCheck(_entity: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
 
   callStatic: {
-    _adjacent(_p1: PositionStruct, _p2: PositionStruct, overrides?: CallOverrides): Promise<boolean>;
+    adjacent(_p1: PositionStruct, _p2: PositionStruct, overrides?: CallOverrides): Promise<boolean>;
 
-    _adjacentToCity(_position: PositionStruct, _cityID: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<boolean>;
+    adjacentToCity(_position: PositionStruct, _cityID: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<boolean>;
 
     _barbarianInfantrySelector(_level: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
 
-    _coincident(_p1: PositionStruct, _p2: PositionStruct, overrides?: CallOverrides): Promise<boolean>;
+    coincident(_p1: PositionStruct, _p2: PositionStruct, overrides?: CallOverrides): Promise<boolean>;
 
-    _connected(_positions: PositionStruct[], overrides?: CallOverrides): Promise<boolean>;
+    connected(_positions: PositionStruct[], overrides?: CallOverrides): Promise<boolean>;
 
-    _euclidean(_p1: PositionStruct, _p2: PositionStruct, overrides?: CallOverrides): Promise<BigNumber>;
+    euclidean(_p1: PositionStruct, _p2: PositionStruct, overrides?: CallOverrides): Promise<BigNumber>;
 
-    _getBattleDamages(_army1: PromiseOrValue<BigNumberish>, _army2: PromiseOrValue<BigNumberish>, _duration: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[BigNumber, BigNumber] & { _damageOn1: BigNumber; _damageOn2: BigNumber }>;
+    getBattleDamages(_army1: PromiseOrValue<BigNumberish>, _army2: PromiseOrValue<BigNumberish>, _duration: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[BigNumber, BigNumber] & { _damageOn1: BigNumber; _damageOn2: BigNumber }>;
 
-    _getCityTileCountByLevel(_level: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
+    getCityTileCountByLevel(_level: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
 
-    _getMapTileAt(_position: PositionStruct, overrides?: CallOverrides): Promise<TileStructOutput>;
+    getMapTileAt(_position: PositionStruct, overrides?: CallOverrides): Promise<TileStructOutput>;
 
-    _getNeighbors(_position: PositionStruct, overrides?: CallOverrides): Promise<PositionStructOutput[]>;
+    getNeighbors(_position: PositionStruct, overrides?: CallOverrides): Promise<PositionStructOutput[]>;
 
-    _getPlayer(_address: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
+    getPlayer(_address: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
 
-    _getSettlerHealthAndSpeedByLevel(_level: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[BigNumber, BigNumber]>;
+    getSettlerHealthAndSpeedByLevel(_level: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[BigNumber, BigNumber]>;
 
     _goldLevelSelector(_goldLevel: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
 
-    _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<boolean>;
+    inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<boolean>;
 
-    _random(_max: PromiseOrValue<BigNumberish>, _salt: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
+    random(_max: PromiseOrValue<BigNumberish>, _salt: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
 
-    _strEq(_s1: PromiseOrValue<string>, _s2: PromiseOrValue<string>, overrides?: CallOverrides): Promise<boolean>;
+    strEq(_s1: PromiseOrValue<string>, _s2: PromiseOrValue<string>, overrides?: CallOverrides): Promise<boolean>;
 
-    _sum(_arr: PromiseOrValue<BigNumberish>[], overrides?: CallOverrides): Promise<BigNumber>;
+    sum(_arr: PromiseOrValue<BigNumberish>[], overrides?: CallOverrides): Promise<BigNumber>;
 
-    _withinDistance(_p1: PositionStruct, _p2: PositionStruct, _dist: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<boolean>;
+    withinDistance(_p1: PositionStruct, _p2: PositionStruct, _dist: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<boolean>;
 
-    _activePlayerCheck(_player: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
+    activePlayerCheck(_player: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
 
-    _entityOwnershipCheckByAddress(_entity: PromiseOrValue<BigNumberish>, _player: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
+    entityOwnershipCheck(_entity: PromiseOrValue<BigNumberish>, _player: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
 
-    _gamePauseCheck(overrides?: CallOverrides): Promise<void>;
+    ongoingGameCheck(overrides?: CallOverrides): Promise<void>;
 
-    _positionInboundCheck(_position: PositionStruct, overrides?: CallOverrides): Promise<void>;
+    inboundPositionCheck(_position: PositionStruct, overrides?: CallOverrides): Promise<void>;
 
-    _validEntityCheck(_entity: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
+    validEntityCheck(_entity: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
   };
 
   filters: {
@@ -316,98 +316,98 @@ export interface GameLib extends BaseContract {
   };
 
   estimateGas: {
-    _adjacent(_p1: PositionStruct, _p2: PositionStruct, overrides?: CallOverrides): Promise<BigNumber>;
+    adjacent(_p1: PositionStruct, _p2: PositionStruct, overrides?: CallOverrides): Promise<BigNumber>;
 
-    _adjacentToCity(_position: PositionStruct, _cityID: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
+    adjacentToCity(_position: PositionStruct, _cityID: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
 
     _barbarianInfantrySelector(_level: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
 
-    _coincident(_p1: PositionStruct, _p2: PositionStruct, overrides?: CallOverrides): Promise<BigNumber>;
+    coincident(_p1: PositionStruct, _p2: PositionStruct, overrides?: CallOverrides): Promise<BigNumber>;
 
-    _connected(_positions: PositionStruct[], overrides?: CallOverrides): Promise<BigNumber>;
+    connected(_positions: PositionStruct[], overrides?: CallOverrides): Promise<BigNumber>;
 
-    _euclidean(_p1: PositionStruct, _p2: PositionStruct, overrides?: CallOverrides): Promise<BigNumber>;
+    euclidean(_p1: PositionStruct, _p2: PositionStruct, overrides?: CallOverrides): Promise<BigNumber>;
 
-    _getBattleDamages(_army1: PromiseOrValue<BigNumberish>, _army2: PromiseOrValue<BigNumberish>, _duration: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
+    getBattleDamages(_army1: PromiseOrValue<BigNumberish>, _army2: PromiseOrValue<BigNumberish>, _duration: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
 
-    _getCityTileCountByLevel(_level: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
+    getCityTileCountByLevel(_level: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
 
-    _getMapTileAt(_position: PositionStruct, overrides?: CallOverrides): Promise<BigNumber>;
+    getMapTileAt(_position: PositionStruct, overrides?: CallOverrides): Promise<BigNumber>;
 
-    _getNeighbors(_position: PositionStruct, overrides?: CallOverrides): Promise<BigNumber>;
+    getNeighbors(_position: PositionStruct, overrides?: CallOverrides): Promise<BigNumber>;
 
-    _getPlayer(_address: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
+    getPlayer(_address: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
 
-    _getSettlerHealthAndSpeedByLevel(_level: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
+    getSettlerHealthAndSpeedByLevel(_level: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
 
     _goldLevelSelector(_goldLevel: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
 
-    _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<BigNumber>;
+    inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<BigNumber>;
 
-    _random(_max: PromiseOrValue<BigNumberish>, _salt: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
+    random(_max: PromiseOrValue<BigNumberish>, _salt: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
 
-    _strEq(_s1: PromiseOrValue<string>, _s2: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
+    strEq(_s1: PromiseOrValue<string>, _s2: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
 
-    _sum(_arr: PromiseOrValue<BigNumberish>[], overrides?: CallOverrides): Promise<BigNumber>;
+    sum(_arr: PromiseOrValue<BigNumberish>[], overrides?: CallOverrides): Promise<BigNumber>;
 
-    _withinDistance(_p1: PositionStruct, _p2: PositionStruct, _dist: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
+    withinDistance(_p1: PositionStruct, _p2: PositionStruct, _dist: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
 
-    _activePlayerCheck(_player: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
+    activePlayerCheck(_player: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
 
-    _entityOwnershipCheckByAddress(_entity: PromiseOrValue<BigNumberish>, _player: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
+    entityOwnershipCheck(_entity: PromiseOrValue<BigNumberish>, _player: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
 
-    _gamePauseCheck(overrides?: CallOverrides): Promise<BigNumber>;
+    ongoingGameCheck(overrides?: CallOverrides): Promise<BigNumber>;
 
-    _positionInboundCheck(_position: PositionStruct, overrides?: CallOverrides): Promise<BigNumber>;
+    inboundPositionCheck(_position: PositionStruct, overrides?: CallOverrides): Promise<BigNumber>;
 
-    _validEntityCheck(_entity: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
+    validEntityCheck(_entity: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    _adjacent(_p1: PositionStruct, _p2: PositionStruct, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    adjacent(_p1: PositionStruct, _p2: PositionStruct, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    _adjacentToCity(_position: PositionStruct, _cityID: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    adjacentToCity(_position: PositionStruct, _cityID: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     _barbarianInfantrySelector(_level: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    _coincident(_p1: PositionStruct, _p2: PositionStruct, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    coincident(_p1: PositionStruct, _p2: PositionStruct, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    _connected(_positions: PositionStruct[], overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    connected(_positions: PositionStruct[], overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    _euclidean(_p1: PositionStruct, _p2: PositionStruct, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    euclidean(_p1: PositionStruct, _p2: PositionStruct, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    _getBattleDamages(_army1: PromiseOrValue<BigNumberish>, _army2: PromiseOrValue<BigNumberish>, _duration: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    getBattleDamages(_army1: PromiseOrValue<BigNumberish>, _army2: PromiseOrValue<BigNumberish>, _duration: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    _getCityTileCountByLevel(_level: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    getCityTileCountByLevel(_level: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    _getMapTileAt(_position: PositionStruct, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    getMapTileAt(_position: PositionStruct, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    _getNeighbors(_position: PositionStruct, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    getNeighbors(_position: PositionStruct, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    _getPlayer(_address: PromiseOrValue<string>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    getPlayer(_address: PromiseOrValue<string>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    _getSettlerHealthAndSpeedByLevel(_level: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    getSettlerHealthAndSpeedByLevel(_level: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     _goldLevelSelector(_goldLevel: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    _inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    _random(_max: PromiseOrValue<BigNumberish>, _salt: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    random(_max: PromiseOrValue<BigNumberish>, _salt: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    _strEq(_s1: PromiseOrValue<string>, _s2: PromiseOrValue<string>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    strEq(_s1: PromiseOrValue<string>, _s2: PromiseOrValue<string>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    _sum(_arr: PromiseOrValue<BigNumberish>[], overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    sum(_arr: PromiseOrValue<BigNumberish>[], overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    _withinDistance(_p1: PositionStruct, _p2: PositionStruct, _dist: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    withinDistance(_p1: PositionStruct, _p2: PositionStruct, _dist: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    _activePlayerCheck(_player: PromiseOrValue<string>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    activePlayerCheck(_player: PromiseOrValue<string>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    _entityOwnershipCheckByAddress(_entity: PromiseOrValue<BigNumberish>, _player: PromiseOrValue<string>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    entityOwnershipCheck(_entity: PromiseOrValue<BigNumberish>, _player: PromiseOrValue<string>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    _gamePauseCheck(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    ongoingGameCheck(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    _positionInboundCheck(_position: PositionStruct, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    inboundPositionCheck(_position: PositionStruct, overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    _validEntityCheck(_entity: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    validEntityCheck(_entity: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

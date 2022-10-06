@@ -22,34 +22,34 @@ contract GetterFacet is UseStorage {
     }
 
     function getInventoryByCityAndType(uint256 _cityID, string memory _inventoryType) external returns (uint256) {
-        uint256 _templateID = GameLib._getTemplateByInventoryType(_inventoryType);
-        return GameLib._getInventory(_cityID, _templateID);
+        uint256 _templateID = GameLib.getTemplateByInventoryType(_inventoryType);
+        return GameLib.getInventory(_cityID, _templateID);
     }
 
     function getTemplateByInventoryType(string memory _inventoryType) external returns (uint256) {
-        return GameLib._getTemplateByInventoryType(_inventoryType);
+        return GameLib.getTemplateByInventoryType(_inventoryType);
     }
 
     function getArmyConstituents(uint256 _armyID) external returns (uint256[] memory) {
-        return GameLib._getArmyConstituents(_armyID);
+        return GameLib.getArmyConstituents(_armyID);
     }
 
     function getCityGuard(uint256 _cityID) external returns (uint256) {
-        return GameLib._getCityGuard(_cityID);
+        return GameLib.getCityGuard(_cityID);
     }
 
     function getArmyAt(Position memory _position) external returns (uint256) {
-        return GameLib._getArmyAt(_position);
+        return GameLib.getArmyAt(_position);
     }
 
     ////////////
 
     function getComponent(string memory _name) external view returns (Component) {
-        return ECSLib._getComponent(_name);
+        return ECSLib.getComponent(_name);
     }
 
     function getComponentById(uint256 _entity) external view returns (Component) {
-        return ECSLib._getComponentByEntity(_entity);
+        return ECSLib.getComponentByEntity(_entity);
     }
 
     function getWorldConstants() external view returns (WorldConstants memory) {
@@ -78,14 +78,14 @@ contract GetterFacet is UseStorage {
     }
 
     function getCityAt(Position memory _position) external returns (uint256) {
-        return GameLib._getCityAt(_position);
+        return GameLib.getCityAt(_position);
     }
 
     function getCityCenter(uint256 _cityID) external returns (uint256) {
-        return GameLib._getCityCenter(_cityID);
+        return GameLib.getCityCenter(_cityID);
     }
 
     function getSettlerAt(Position memory _position) external returns (uint256) {
-        return GameLib._getSettlerAt(_position);
+        return GameLib.getSettlerAt(_position);
     }
 }

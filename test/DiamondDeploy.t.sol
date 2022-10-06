@@ -205,6 +205,19 @@ contract DiamondDeployTest is Test {
         admin.setComponentValue("InventoryType", goldTemplateID, abi.encode("Gold"));
         admin.setComponentValue("Duration", goldTemplateID, abi.encode(1));
 
+        // Register template shortcuts
+        string[] memory templateNames = new string[](4);
+        uint256[] memory templateIDs = new uint256[](4);
+        templateNames[0] = "Cavalry";
+        templateNames[1] = "Infantry";
+        templateNames[2] = "Archer";
+        templateNames[3] = "Gold";
+        templateIDs[0] = cavalryTemplateID;
+        templateIDs[1] = infantryTemplateID;
+        templateIDs[2] = archerTemplateID;
+        templateIDs[3] = goldTemplateID;
+        admin.registerTemplateShortcuts(templateNames, templateIDs);
+
         vm.stopPrank();
     }
 

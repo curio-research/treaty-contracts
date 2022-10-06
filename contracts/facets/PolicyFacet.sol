@@ -23,13 +23,13 @@ contract PolicyFacet is UseStorage {
     //  */
     // function sampleBuffPolicy() external {
     //     // Get navies with at least 5 health
-    //     uint256[] memory _naviesWithFivePlusHealth = ECSLib._filterByComponentRange(GameLib._getNavies(), "Health", 5, 12);
+    //     uint256[] memory _naviesWithFivePlusHealth = ECSLib.filterByComponentRange(GameLib._getNavies(), "Health", 5, 12);
 
     //     // Double attack factor for all such navies
     //     uint256 _troopEntity;
     //     for (uint256 i = 0; i < _naviesWithFivePlusHealth.length; i++) {
     //         _troopEntity = _naviesWithFivePlusHealth[i];
-    //         ECSLib._setUint("AttackFactor", _troopEntity, ECSLib._getUint("AttackFactor", _troopEntity) * 2);
+    //         ECSLib.setUint("AttackFactor", _troopEntity, ECSLib.getUint("AttackFactor", _troopEntity) * 2);
     //     }
     // }
 
@@ -45,9 +45,9 @@ contract PolicyFacet is UseStorage {
     //     uint256 _baseEntity;
     //     for (uint256 i = 0; i < _playerBases.length; i++) {
     //         _baseEntity = _playerBases[i];
-    //         ECSLib._setBool("CanMove", _baseEntity);
-    //         int256 _goldPerSecond = ECSLib._getInt("GoldPerSecond", _baseEntity);
-    //         ECSLib._setInt("GoldPerSecond", _baseEntity, -_goldPerSecond);
+    //         ECSLib.setBool("CanMove", _baseEntity);
+    //         int256 _goldPerSecond = ECSLib.getInt("GoldPerSecond", _baseEntity);
+    //         ECSLib.setInt("GoldPerSecond", _baseEntity, -_goldPerSecond);
     //     }
     // }
 
@@ -64,29 +64,29 @@ contract PolicyFacet is UseStorage {
     //     require(BoolComponent(gs().components["IsActive"]).has(_playerEntity), "CURIO: Player is inactive");
 
     //     // 3. Verify that player name is Stalin
-    //     require(GameLib._strEq(ECSLib._getString("Name", _playerEntity), "Stalin"), "CURIO: Sorry bro, you're not our comrade");
+    //     require(GameLib.strEq(ECSLib.getString("Name", _playerEntity), "Stalin"), "CURIO: Sorry bro, you're not our comrade");
 
     //     // 4. Get "red army"
     //     Set _set1 = new Set();
     //     Set _set2 = new Set();
     //     _set1.addArray(BoolComponent(gs().components["CanMove"]).getEntities());
     //     _set2.addArray(BoolComponent(gs().components["CanMoveOnLand"]).getEntities());
-    //     uint256[] memory _redTroops = ECSLib._intersection(_set1, _set2);
+    //     uint256[] memory _redTroops = ECSLib.intersection(_set1, _set2);
 
     //     _set1 = new Set();
     //     _set1.addArray(_redTroops);
     //     _set2 = new Set();
     //     _set2.addArray(UintComponent(gs().components["OwnerEntity"]).getEntitiesWithValue(_playerEntity));
-    //     _redTroops = ECSLib._intersection(_set1, _set2);
+    //     _redTroops = ECSLib.intersection(_set1, _set2);
 
     //     // 5. "Red army" yells "long live socialism" and expropriates people's bread (restore health)
     //     uint256 _troopEntity;
     //     for (uint256 i = 0; i < _redTroops.length; i++) {
     //         _troopEntity = _redTroops[i];
-    //         ECSLib._setUint("Health", _troopEntity, ECSLib._getUint("MaxHealth", _troopEntity));
+    //         ECSLib.setUint("Health", _troopEntity, ECSLib.getUint("MaxHealth", _troopEntity));
     //     }
 
     //     // 6. Private property is an exploision of labor power (reduce player's gold balance)
-    //     ECSLib._setUint("Gold", _playerEntity, ECSLib._getUint("Gold", _playerEntity) / 2);
+    //     ECSLib.setUint("Gold", _playerEntity, ECSLib.getUint("Gold", _playerEntity) / 2);
     // }
 }
