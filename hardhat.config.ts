@@ -43,9 +43,9 @@ export default {
       chainId: 69,
     },
     tailscale: {
-      url: `http://${TAILSCALE_MAIN}:8545`,
+      url: `${TAILSCALE_MAIN}:8545`,
       accounts: [LOCALHOST_USER1_PK, LOCALHOST_USER2_PK],
-      chainId: 1337,
+      chainId: 31337,
     },
     gnosisOptimism: {
       url: GNOSIS_OPTIMISM_RPC_URL,

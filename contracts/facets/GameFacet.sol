@@ -410,9 +410,9 @@ contract GameFacet is UseStorage {
         GameLib.activePlayerCheck(msg.sender);
         GameLib.entityOwnershipCheck(_armyID, msg.sender);
 
-        // Get army position and city on top
-        Position memory position = ECSLib.getPosition("Position", _armyID);
-        uint256 cityID = GameLib.getCityAt(position);
+        // Get army position and city in the tile chunk
+        Position memory cityStartPosition = GameLib.getProperTilePosition(ECSLib.getPosition("Position", _armyID));
+        uint256 cityID = GameLib.getCityAt(cityStartPosition);
 
         GameLib.entityOwnershipCheck(cityID, msg.sender);
 

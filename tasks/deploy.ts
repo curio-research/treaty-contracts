@@ -38,6 +38,8 @@ task('deploy', 'deploy contracts')
 
       await isConnectionLive();
 
+      console.log('bruh');
+
       // Set up deployer and some local variables
       let [player1, player2] = await hre.ethers.getSigners();
       console.log('✦ player1 address is:', player1.address);
