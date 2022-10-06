@@ -414,10 +414,14 @@ contract GameFacet is UseStorage {
         GameLib.entityOwnershipCheck(_armyID, msg.sender);
 
         // Get army position and city on top
-        Position memory position = ECSLib.getPosition("Position", _armyID);
-        uint256 cityID = GameLib.getCityAt(position);
+        Position memory startPosition = GameLib.getProperTilePosition(ECSLib.getPosition("Position", _armyID));
+        uint256 tileID = GameLib.getTileAt(startPosition);
 
-        GameLib.entityOwnershipCheck(cityID, msg.sender);
+        GameLib.entityOwnershipCheck(tileID, msg.sender);
+
+        // Verify that army is in city center tile
+        uint256 cityID = ECSLib.getUint("City", tileID);
+        require(GameLib.coincident(ECSLib.getPosition("StartPosition", cityID), startPosition), "CURIO: Army must be on city center");
 
         // Return troops to corresponding inventories
         uint256[] memory constituentIDs = GameLib.getArmyConstituents(_armyID);
