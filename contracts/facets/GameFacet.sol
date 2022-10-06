@@ -63,7 +63,8 @@ contract GameFacet is UseStorage {
         GameLib.entityOwnershipCheck(_movableEntity, msg.sender);
         GameLib.inboundPositionCheck(_targetPosition);
 
-        GameLib.initializeTile(_targetPosition);
+        GameLib._initializeTile(GameLib._getProperTilePosition(_targetPosition));
+        GameLib._initializeTile(_targetPosition);
 
         // Verify no other movable entity at exact destination coordinate
         require(GameLib.getMovableEntityAt(_targetPosition) == NULL, "CURIO: Destination occupied");
