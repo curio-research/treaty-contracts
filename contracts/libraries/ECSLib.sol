@@ -27,7 +27,7 @@ library ECSLib {
     // ECS BASIC UTILITY FUNCTIONS
     // ----------------------------------------------------------
 
-    function getComponent(string memory _name) public view returns (Component) {
+    function _getComponent(string memory _name) public view returns (Component) {
         address _componentAddr = gs().components[_name];
         require(_componentAddr != address(0), string(abi.encodePacked("CURIO: Component ", _name, " not found")));
 
@@ -63,15 +63,15 @@ library ECSLib {
 
         string[] memory _componentNames = gs().componentNames;
         for (uint256 i = 0; i < _componentNames.length; i++) {
-            Component _component = getComponent(gs().componentNames[i]);
+            Component _component = _getComponent(gs().componentNames[i]);
             _component.remove(_entity);
         }
 
         emit EntityRemoved(_entity);
     }
 
-    function getComponentValue(string memory _componentName, uint256 _entity) public view returns (bytes memory) {
-        return getComponent(_componentName).getBytesValue(_entity);
+    function _getComponentValue(string memory _componentName, uint256 _entity) public view returns (bytes memory) {
+        return _getComponent(_componentName).getBytesValue(_entity);
     }
 
     // Question: At the moment, all events regarding component set and removal are emitted in game contracts. Is this good?
@@ -80,13 +80,13 @@ library ECSLib {
         uint256 _entity,
         bytes memory _value
     ) public {
-        getComponent(_componentName).set(_entity, _value);
+        _getComponent(_componentName).set(_entity, _value);
 
         emit ComponentValueSet(_componentName, _entity, _value);
     }
 
     function removeComponentValue(string memory _componentName, uint256 _entity) public {
-        getComponent(_componentName).remove(_entity);
+        _getComponent(_componentName).remove(_entity);
 
         emit ComponentValueRemoved(_componentName, _entity);
     }

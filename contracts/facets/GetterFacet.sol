@@ -45,7 +45,7 @@ contract GetterFacet is UseStorage {
     ////////////
 
     function getComponent(string memory _name) external view returns (Component) {
-        return ECSLib.getComponent(_name);
+        return ECSLib._getComponent(_name);
     }
 
     function getComponentById(uint256 _entity) external view returns (Component) {
