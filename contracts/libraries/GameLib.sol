@@ -90,13 +90,13 @@ library GameLib {
             uint256 goldMineID = ECSLib.addEntity();
             uint256 goldMineLevel = terrain; // it happens that the gold level is the same as the terrain index
 
-            ECSLib._setString("Tag", goldMineID, "Resource");
-            ECSLib._setUint("Template", goldMineID, _getTemplateByInventoryType("Gold"));
-            ECSLib._setUint("Level", goldMineID, goldMineLevel);
-            ECSLib._setPosition("StartPosition", goldMineID, _getProperTilePosition(_position));
-            ECSLib._setPosition("Position", goldMineID, _position);
-            ECSLib._setUint("LastTimestamp", goldMineID, block.timestamp);
-            ECSLib._setUint("Amount", goldMineID, _goldLevelSelector(goldMineLevel));
+            ECSLib.setString("Tag", goldMineID, "Resource");
+            ECSLib.setUint("Template", goldMineID, getTemplateByInventoryType("Gold"));
+            ECSLib.setUint("Level", goldMineID, goldMineLevel);
+            ECSLib.setPosition("StartPosition", goldMineID, getProperTilePosition(_position));
+            ECSLib.setPosition("Position", goldMineID, _position);
+            ECSLib.setUint("LastTimestamp", goldMineID, block.timestamp);
+            ECSLib.setUint("Amount", goldMineID, _goldLevelSelector(goldMineLevel));
         }
 
         // if it's a barbarian, initialize it

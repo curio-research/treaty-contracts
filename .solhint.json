@@ -1,47 +1,56 @@
 {
-    "solidity.linter": "solhint",
-    "extends": "solhint:recommended",
-    "plugins": [],
-    "rules": {
-        "max-line-length": ["error", 200],
-        "no-empty-blocks": "warn",
-        "no-unused-vars": "warn",
-        "payable-fallback": "error",
-        "reason-string": ["warn", {
-            "maxLength": 40
-        }],
-        "quotes": ["error", "double"],
-        "const-name-snakecase": "warn",
-        "contract-name-camelcase": "warn",
-        "event-name-camelcase": "warn",
-        "func-name-mixedcase": "warn",
-        "modifier-name-mixedcase": "warn",
-        "private-vars-leading-underscore": ["warn", {
-            "strict": false
-        }],
-        "use-forbidden-name": "warn",
-        "var-name-mixedcase": "warn",
-        "func-order": "warn",
-        "imports-on-top": "warn",
-        "visibility-modifier-order": "error",
-        "avoid-call-value": "error",
-        "avoid-low-level-calls": "error",
-        "avoid-sha3": "error",
-        "avoid-suicide": "error",
-        "avoid-throw": "error",
-        "avoid-tx-origin": "warn",
-        "check-send-result": "error",
-        "compiler-version": ["error", "^0.8.0"],
-        "func-visibility": ["error", {
-            "ignoreConstructors": true
-        }],
-        "mark-callable-contracts": "off",
-        "multiple-sends": "error",
-        "no-complex-fallback": "warn",
-        "no-inline-assembly": "warn",
-        "not-rely-on-block-hash": "warn",
-        "not-rely-on-time": "off",
-        "reentrancy": "warn",
-        "state-visibility": "warn"
-    }
+  "solidity.linter": "solhint",
+  "extends": "solhint:recommended",
+  "plugins": [],
+  "rules": {
+    "max-line-length": ["error", 200],
+    "no-empty-blocks": "warn",
+    "no-unused-vars": "warn",
+    "payable-fallback": "error",
+    "reason-string": [
+      "warn",
+      {
+        "maxLength": 40
+      }
+    ],
+    "quotes": ["error", "double"],
+    "const-name-snakecase": "warn",
+    "contract-name-camelcase": "warn",
+    "event-name-camelcase": "warn",
+    "func-name-mixedcase": "warn",
+    "modifier-name-mixedcase": "warn",
+    "private-vars-leading-underscore": [
+      "warn",
+      {
+        "strict": false
+      }
+    ],
+    "use-forbidden-name": "warn",
+    "var-name-mixedcase": "warn",
+    "func-order": "warn",
+    "imports-on-top": "warn",
+    "visibility-modifier-order": "error",
+    "avoid-call-value": "error",
+    "avoid-low-level-calls": "error",
+    "avoid-sha3": "error",
+    "avoid-suicide": "error",
+    "avoid-throw": "error",
+    "avoid-tx-origin": "warn",
+    "check-send-result": "error",
+    "compiler-version": ["error", "^0.8.0"],
+    "func-visibility": [
+      "error",
+      {
+        "ignoreConstructors": true
+      }
+    ],
+    "mark-callable-contracts": "off",
+    "multiple-sends": "error",
+    "no-complex-fallback": "warn",
+    "no-inline-assembly": "warn",
+    "not-rely-on-block-hash": "warn",
+    "not-rely-on-time": "off",
+    "reentrancy": "warn",
+    "state-visibility": "warn"
+  }
 }
