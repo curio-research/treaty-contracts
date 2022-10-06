@@ -94,6 +94,7 @@ library GameLib {
             ECSLib.setUint("Template", goldMineID, getTemplateByInventoryType("Gold"));
             ECSLib.setUint("Level", goldMineID, goldMineLevel);
             ECSLib.setPosition("StartPosition", goldMineID, getProperTilePosition(_position));
+            ECSLib.setPosition("Position", goldMineID, _position);
             ECSLib.setUint("LastTimestamp", goldMineID, block.timestamp);
             ECSLib.setUint("Amount", goldMineID, _goldLevelSelector(goldMineLevel));
         }

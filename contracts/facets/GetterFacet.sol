@@ -42,6 +42,10 @@ contract GetterFacet is UseStorage {
         return GameLib.getArmyAt(_position);
     }
 
+    function getMainBurnerAccount(address _primaryAddress) external view returns (address) {
+        return gs().accounts[_primaryAddress];
+    }
+
     ////////////
 
     function getComponent(string memory _name) external view returns (Component) {

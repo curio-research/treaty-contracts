@@ -43,9 +43,9 @@ export default {
       chainId: 69,
     },
     tailscale: {
-      url: `http://${TAILSCALE_MAIN}:8545`,
+      url: `${TAILSCALE_MAIN}:8545`,
       accounts: [LOCALHOST_USER1_PK, LOCALHOST_USER2_PK],
-      chainId: 1337,
+      chainId: 31337,
     },
     gnosisOptimism: {
       url: GNOSIS_OPTIMISM_RPC_URL,
@@ -78,7 +78,7 @@ export default {
       chainId: 888,
     },
     hardhat: {
-      chainId: 1337,
+      chainId: 31337,
       allowUnlimitedContractSize: true,
       blockGasLimit: 300_000_000_000_000,
       // mining: {

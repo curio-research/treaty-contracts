@@ -110,6 +110,7 @@ export interface GetterFacetInterface extends utils.Interface {
     "getEntitiesAddr()": FunctionFragment;
     "getEntity()": FunctionFragment;
     "getInventoryByCityAndType(uint256,string)": FunctionFragment;
+    "getMainBurnerAccount(address)": FunctionFragment;
     "getPlayerCount()": FunctionFragment;
     "getPlayerId(address)": FunctionFragment;
     "getSettlerAt((uint256,uint256))": FunctionFragment;
@@ -131,6 +132,7 @@ export interface GetterFacetInterface extends utils.Interface {
       | "getEntitiesAddr"
       | "getEntity"
       | "getInventoryByCityAndType"
+      | "getMainBurnerAccount"
       | "getPlayerCount"
       | "getPlayerId"
       | "getSettlerAt"
@@ -179,6 +181,10 @@ export interface GetterFacetInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getInventoryByCityAndType",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getMainBurnerAccount",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "getPlayerCount",
@@ -238,6 +244,10 @@ export interface GetterFacetInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "getEntity", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getInventoryByCityAndType",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getMainBurnerAccount",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -342,6 +352,11 @@ export interface GetterFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    getMainBurnerAccount(
+      _primaryAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     getPlayerCount(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getPlayerId(
@@ -416,6 +431,11 @@ export interface GetterFacet extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  getMainBurnerAccount(
+    _primaryAddress: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
   getPlayerCount(overrides?: CallOverrides): Promise<BigNumber>;
 
   getPlayerId(
@@ -489,6 +509,11 @@ export interface GetterFacet extends BaseContract {
       _inventoryType: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    getMainBurnerAccount(
+      _primaryAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     getPlayerCount(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -567,6 +592,11 @@ export interface GetterFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    getMainBurnerAccount(
+      _primaryAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getPlayerCount(overrides?: CallOverrides): Promise<BigNumber>;
 
     getPlayerId(
@@ -638,6 +668,11 @@ export interface GetterFacet extends BaseContract {
       _cityID: PromiseOrValue<BigNumberish>,
       _inventoryType: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    getMainBurnerAccount(
+      _primaryAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getPlayerCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
