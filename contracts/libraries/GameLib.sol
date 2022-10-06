@@ -209,6 +209,15 @@ library GameLib {
         return ECSLib.query(query);
     }
 
+    function getBuildingProduction(uint256 _buildingID) public returns (uint256) {
+        QueryCondition[] memory query = new QueryCondition[](2);
+        query[0] = ECSLib.queryChunk(QueryType.HasVal, "Keeper", abi.encode(_buildingID));
+        query[1] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("TroopProduction"));
+        uint256[] memory res = ECSLib.query(query);
+        assert(res.length <= 1);
+        return res.length == 1 ? res[0] : 0;
+    }
+
     function getArmyGather(uint256 _armyID) public returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.HasVal, "Army", abi.encode(_armyID));
@@ -248,7 +257,7 @@ library GameLib {
     function getCityAt(Position memory _position) public returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("City"));
-        query[1] = ECSLib.queryChunk(QueryType.HasVal, "Position", abi.encode(_position));
+        query[1] = ECSLib.queryChunk(QueryType.HasVal, "StartPosition", abi.encode(getProperTilePosition(_position)));
         uint256[] memory res = ECSLib.query(query);
         assert(res.length <= 1);
         return res.length == 1 ? res[0] : 0;
@@ -359,7 +368,7 @@ library GameLib {
     }
 
     function getNeighbors(Position memory _position) public view returns (Position[] memory) {
-        Position[] memory _result = new Position[](4); // FIXME: how to create and append to a dynamic array?
+        Position[] memory _result = new Position[](4);
         uint256 _x = _position.x;
         uint256 _y = _position.y;
 

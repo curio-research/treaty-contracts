@@ -116,10 +116,8 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.warp(time);
         vm.prank(player1);
         game.move(moscowArmyID, Position({x: 60, y: 15}));
-        console.log("Doomed");
         vm.prank(player2);
         game.move(kievArmyID, Position({x: 62, y: 42}));
-        console.log("AAA");
 
         time += 5;
         vm.warp(time);
@@ -175,12 +173,19 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // One more round of battle and Kiev's army is dead
         {
-            vm.prank(player1);
+            vm.startPrank(player1);
+            vm.expectRevert("CURIO: Battled too recently");
             game.battle(moscowArmyID, kievArmyID);
+            time += 2;
+            vm.warp(time);
+            game.battle(moscowArmyID, kievArmyID);
+            vm.stopPrank();
             assertTrue(Set(getter.getEntitiesAddr()).includes(moscowArmyID));
             assertFalse(Set(getter.getEntitiesAddr()).includes(kievArmyID));
             console.log("The road to Kiev is clear");
         }
+        time += 2;
+        vm.warp(time);
 
         // Moscow's army attacks the city of Kiev
         time += 5;
@@ -188,6 +193,8 @@ contract TreatyTest is Test, DiamondDeployTest {
         {
             vm.startPrank(player1);
             game.move(moscowArmyID, Position({x: 60, y: 29}));
+            time += 2;
+            vm.warp(time);
             game.battle(moscowArmyID, kievID);
             vm.stopPrank();
             moscowInfantryAmount = abi.decode(getter.getComponent("Amount").getBytesValue(getter.getArmyConstituents(moscowArmyID)[1]), (uint256));
@@ -198,9 +205,61 @@ contract TreatyTest is Test, DiamondDeployTest {
             assertLe(moscowInfantryAmount, _generateWorldConstants().cityAmount - 20); // FIXME
             console.log("Moscow encounters great setback occupying Kiev");
         }
+        time += 2;
+        vm.warp(time);
 
         // TODO: repeat battle until Moscow's army dies at the foot of Kiev
         // TODO: test with inventory seizures
+    }
+
+    function testDisband() public {
+        Position[] memory territory = new Position[](9);
+        territory[0] = Position({x: 50, y: 20});
+        territory[1] = Position({x: 50, y: 30});
+        territory[2] = Position({x: 50, y: 40});
+        territory[3] = Position({x: 60, y: 40});
+        territory[4] = Position({x: 70, y: 40});
+        territory[5] = Position({x: 70, y: 30});
+        territory[6] = Position({x: 70, y: 20});
+        territory[7] = Position({x: 60, y: 20});
+        territory[8] = Position({x: 60, y: 30});
+
+        // Player 2 founds a city
+        vm.startPrank(player2);
+        uint256 genghisID = getter.getSettlerAt(player2Pos);
+        game.foundCity(genghisID, territory, "Ulaanbaataar");
+        uint256 genghisYurtID = getter.getCityCenter(genghisID);
+
+        // Player produces troops
+        uint256 productionID = game.startTroopProduction(genghisYurtID, cavalryTemplateID, 20);
+        vm.warp(25);
+        game.endTroopProduction(genghisYurtID, productionID);
+
+        // Player organizes an army
+        uint256[] memory templateIDs = new uint256[](1);
+        uint256[] memory amounts = new uint256[](1);
+        templateIDs[0] = cavalryTemplateID;
+        amounts[0] = 18;
+        uint256 goldenHordeID = game.organizeArmy(genghisID, templateIDs, amounts);
+        assertEq(abi.decode(getter.getComponent("Amount").getBytesValue(getter.getInventoryByCityAndType(genghisID, "Cavalry")), (uint256)), 20 - 18);
+
+        // Player moves off the army
+        vm.warp(26);
+        game.move(goldenHordeID, Position({x: 62, y: 32}));
+        vm.warp(27);
+        game.move(goldenHordeID, Position({x: 59, y: 29}));
+        vm.warp(29);
+
+        // Player fails to disband
+        vm.expectRevert("CURIO: Army must be on city center");
+        game.disbandArmy(goldenHordeID);
+
+        // Player moves army back and successfully disbands
+        game.move(goldenHordeID, Position({x: 61, y: 33}));
+        game.disbandArmy(goldenHordeID);
+        assertEq(abi.decode(getter.getComponent("Amount").getBytesValue(getter.getInventoryByCityAndType(genghisID, "Cavalry")), (uint256)), 20);
+
+        vm.stopPrank();
     }
 
     function testEntityRemoval() public {
@@ -267,6 +326,8 @@ contract TreatyTest is Test, DiamondDeployTest {
         // Produce troops
         uint256 _productionID = game.startTroopProduction(_cityCenterID, cavalryTemplateID, 20);
         vm.warp(30);
+        vm.expectRevert("CURIO: No concurrent productions");
+        game.startTroopProduction(_cityCenterID, cavalryTemplateID, 20);
         game.endTroopProduction(_cityCenterID, _productionID);
 
         // Get inventory

@@ -174,6 +174,8 @@ contract DiamondDeployTest is Test {
         admin.setComponentValue("Load", cavalryTemplateID, abi.encode(1));
         admin.setComponentValue("Duration", cavalryTemplateID, abi.encode(1));
         admin.setComponentValue("Cost", cavalryTemplateID, abi.encode(1));
+        admin.setComponentValue("MoveCooldown", cavalryTemplateID, abi.encode(1));
+        admin.setComponentValue("BattleCooldown", cavalryTemplateID, abi.encode(2));
 
         // Troop: Infantry
         infantryTemplateID = admin.addEntity();
@@ -186,6 +188,8 @@ contract DiamondDeployTest is Test {
         admin.setComponentValue("Load", infantryTemplateID, abi.encode(1));
         admin.setComponentValue("Duration", infantryTemplateID, abi.encode(1));
         admin.setComponentValue("Cost", infantryTemplateID, abi.encode(1));
+        admin.setComponentValue("MoveCooldown", infantryTemplateID, abi.encode(1));
+        admin.setComponentValue("BattleCooldown", infantryTemplateID, abi.encode(2));
 
         // Troop: Archer
         archerTemplateID = admin.addEntity();
@@ -198,6 +202,8 @@ contract DiamondDeployTest is Test {
         admin.setComponentValue("Load", archerTemplateID, abi.encode(1));
         admin.setComponentValue("Duration", archerTemplateID, abi.encode(1));
         admin.setComponentValue("Cost", archerTemplateID, abi.encode(1));
+        admin.setComponentValue("MoveCooldown", archerTemplateID, abi.encode(1));
+        admin.setComponentValue("BattleCooldown", archerTemplateID, abi.encode(2));
 
         // Resource: Gold
         goldTemplateID = admin.addEntity();
