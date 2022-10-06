@@ -220,6 +220,9 @@ contract GameFacet is UseStorage {
         uint256 cost = ECSLib.getUint("Cost", _templateID) * _amount;
         require(balance >= cost, "CURIO: Insufficient gold balance");
 
+        // Verify no other production
+        require(GameLib.getBuildingProduction(_buildingID) == NULL, "CURIO: No multiple productions");
+
         // Create inventory if none exists, and verify that amount does not exceed ceiling
         uint256 inventoryID = GameLib.getInventory(cityID, _templateID);
         if (inventoryID == NULL) {
@@ -235,7 +238,7 @@ contract GameFacet is UseStorage {
         // Start production
         productionID = ECSLib.addEntity();
         ECSLib.setString("Tag", productionID, "TroopProduction");
-        ECSLib.setUint("City", productionID, cityID);
+        ECSLib.setUint("Building", productionID, _buildingID);
         ECSLib.setUint("Template", productionID, _templateID);
         ECSLib.setUint("Inventory", productionID, inventoryID);
         ECSLib.setUint("Amount", productionID, _amount);
