@@ -149,10 +149,3 @@ interface DeployArgs extends HardhatArguments {
   release: boolean;
   port: string | undefined;
 }
-
-// occupy tiles (main objective)
-//      need to find a metaphor for this
-// unlimited gold resource (2 hours)
-// troops to harvest resources by moving over them (laborer) (1 hour)
-// Buildings to produce barracks etc etc (TBD / upgrades) (can be abstracted way into buttons) (5 hours)
-// Functions to boost player capacity, etc
