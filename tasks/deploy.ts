@@ -134,6 +134,11 @@ task('deploy', 'deploy contracts')
       }
 
       console.log(chalk.bgGreen.black(' Curio Game Deployed '));
+
+      if (isDev) {
+        await hre.ethers.provider.send('evm_setNextBlockTimestamp', [Math.floor(new Date().getTime() / 1000)]);
+        await hre.ethers.provider.send('evm_mine', []); // syncs the blockchain time to current unix time
+      }
     } catch (err: any) {
       console.log(err.message);
     }

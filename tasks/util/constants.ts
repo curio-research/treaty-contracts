@@ -59,7 +59,7 @@ export const createTemplates = async (diamond: Curio) => {
   await (await diamond.setComponentValue(BattleCooldown, entity, encodeUint256(2))).wait();
   await (await diamond.setComponentValue(Attack, entity, encodeUint256(60))).wait();
   await (await diamond.setComponentValue(Defense, entity, encodeUint256(120))).wait();
-  await (await diamond.setComponentValue(Duration, entity, encodeUint256(3))).wait();
+  await (await diamond.setComponentValue(Duration, entity, encodeUint256(1))).wait();
   await (await diamond.setComponentValue(Load, entity, encodeUint256(5))).wait();
   await (await diamond.setComponentValue(Cost, entity, encodeUint256(1))).wait();
 
@@ -74,7 +74,7 @@ export const createTemplates = async (diamond: Curio) => {
   await (await diamond.setComponentValue(BattleCooldown, entity, encodeUint256(2))).wait();
   await (await diamond.setComponentValue(Attack, entity, encodeUint256(60))).wait();
   await (await diamond.setComponentValue(Defense, entity, encodeUint256(120))).wait();
-  await (await diamond.setComponentValue(Duration, entity, encodeUint256(3))).wait();
+  await (await diamond.setComponentValue(Duration, entity, encodeUint256(1))).wait();
   await (await diamond.setComponentValue(Load, entity, encodeUint256(6))).wait();
   await (await diamond.setComponentValue(Cost, entity, encodeUint256(1))).wait();
 
@@ -89,7 +89,7 @@ export const createTemplates = async (diamond: Curio) => {
   await (await diamond.setComponentValue(BattleCooldown, entity, encodeUint256(2))).wait();
   await (await diamond.setComponentValue(Attack, entity, encodeUint256(60))).wait();
   await (await diamond.setComponentValue(Defense, entity, encodeUint256(125))).wait();
-  await (await diamond.setComponentValue(Duration, entity, encodeUint256(3))).wait();
+  await (await diamond.setComponentValue(Duration, entity, encodeUint256(1))).wait();
   await (await diamond.setComponentValue(Load, entity, encodeUint256(6))).wait();
   await (await diamond.setComponentValue(Cost, entity, encodeUint256(1))).wait();
 
