@@ -131,12 +131,17 @@ library GameLib {
         Position memory properPosition = getProperTilePosition(_position);
 
         uint256 tileId = getTileAt(properPosition);
-        if (tileId != 0) return; // tile already initialized
+        if (tileId != 0) return; // tile chunk already initialized
+
+        uint256 playerID = gs().playerEntityMap[msg.sender];
 
         uint256 tileID = ECSLib.addEntity();
         ECSLib.setString("Tag", tileID, "Tile");
         ECSLib.setPosition("Position", tileID, properPosition);
         ECSLib.setUint("City", tileID, 0);
+        ECSLib.setUint("Owner", tileID, playerID);
+        ECSLib.setUint("Defense", tileID, 0);
+        ECSLib.setUint("Attack", tileID, 0);
     }
 
     function _goldLevelSelector(uint256 _goldLevel) private pure returns (uint256) {
