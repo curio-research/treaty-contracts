@@ -75,8 +75,8 @@ library GameLib {
         uint256 divFactor = numInitTerrainTypes**(_position.y % batchSize);
         uint256 terrain = encodedCol / divFactor;
 
-        // Update terrain
-        gs().map[_position.x][_position.y].isInitialized = true;
+        //  add a tile
+        // Templates.addCityTile(getProperTilePosition(_position));
 
         // if it's land, 1-3 level gold mine, or barbarian, initialize as land
         if (terrain <= 3) {
@@ -92,11 +92,14 @@ library GameLib {
 
             ECSLib.setString("Tag", goldMineID, "Resource");
             ECSLib.setUint("Template", goldMineID, getTemplateByInventoryType("Gold"));
-            ECSLib.setUint("Level", goldMineID, goldMineLevel);
+            ECSLib.setUint("Level", goldMineID, 1); // FIXME: initialize at 1 for testing only. initialize at zero is equivalent to not having a gold mine "built"
             ECSLib.setPosition("StartPosition", goldMineID, getProperTilePosition(_position));
             ECSLib.setPosition("Position", goldMineID, _position);
             ECSLib.setUint("LastTimestamp", goldMineID, block.timestamp);
             ECSLib.setUint("Amount", goldMineID, _goldLevelSelector(goldMineLevel));
+            ECSLib.setUint("Load", goldMineID, 100); // FIXME: placeholder
+            // ECSLib.setUint("Amount", _entity, _value);
+            // add resource cap
         }
 
         // if it's a barbarian, initialize it
@@ -118,6 +121,22 @@ library GameLib {
             ECSLib.setUint("Attack", barbarianID, ECSLib.getUint("Attack", infantryTemplate) * infantryAmount);
             ECSLib.setUint("Defense", barbarianID, ECSLib.getUint("Defense", infantryTemplate) * infantryAmount);
         }
+
+        gs().map[_position.x][_position.y].isInitialized = true;
+
+        initializeTileChunk(_position); // add tile if it hasn't been initialized
+    }
+
+    function initializeTileChunk(Position memory _position) public {
+        Position memory properPosition = getProperTilePosition(_position);
+
+        uint256 tileId = getTileAt(properPosition);
+        if (tileId != 0) return; // tile already initialized
+
+        uint256 tileID = ECSLib.addEntity();
+        ECSLib.setString("Tag", tileID, "Tile");
+        ECSLib.setPosition("Position", tileID, properPosition);
+        ECSLib.setUint("City", tileID, 0);
     }
 
     function _goldLevelSelector(uint256 _goldLevel) private pure returns (uint256) {
@@ -413,6 +432,20 @@ library GameLib {
         return 0;
     }
 
+    function getPlayerCity(uint256 _playerID) public returns (uint256) {
+        QueryCondition[] memory query = new QueryCondition[](2);
+        query[0] = ECSLib.queryChunk(QueryType.HasVal, "Owner", abi.encode(_playerID));
+        query[1] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("City"));
+        uint256[] memory res = ECSLib.query(query);
+        require(res.length <= 1, "CURIO: getPlayerCity query error");
+        return res.length == 1 ? res[0] : 0;
+    }
+
+    function goldmineUpgradeSelector(uint256 _goldLevel) public pure returns (uint256) {
+        if (_goldLevel == 0) return 500; // from level 0 to 1 (purchasing gold mine
+        return 0;
+    }
+
     // checkers
 
     function ongoingGameCheck() internal view {
@@ -424,13 +457,19 @@ library GameLib {
     }
 
     function activePlayerCheck(address _player) internal view {
-        uint256 _playerID = getPlayer(_player);
-        require(ECSLib.getBoolComponent("IsActive").has(_playerID), "CURIO: You are inactive");
+        uint256 playerID = getPlayer(_player);
+        require(ECSLib.getBoolComponent("IsActive").has(playerID), "CURIO: You are inactive");
     }
 
     function entityOwnershipCheck(uint256 _entity, address _player) internal view {
+        uint256 playerID = getPlayer(_player);
+        require(ECSLib.getUint("Owner", _entity) == playerID, "CURIO: Entity is not yours");
+    }
+
+    function neutralOrOwnedEntityCheck(uint256 _entity, address _player) internal view {
         uint256 _playerID = getPlayer(_player);
-        require(ECSLib.getUint("Owner", _entity) == _playerID, "CURIO: Entity is not yours");
+        uint256 entityOwner = ECSLib.getUint("Owner", _entity);
+        require(entityOwner == _playerID || entityOwner == 0, "CURIO: Entity is not yours");
     }
 
     function inboundPositionCheck(Position memory _position) public view {
@@ -551,5 +590,9 @@ library GameLib {
             y = z;
             z = (x / z + z) / 2;
         }
+    }
+
+    function min(uint256 x, uint256 y) public pure returns (uint256) {
+        return x <= y ? x : y;
     }
 }

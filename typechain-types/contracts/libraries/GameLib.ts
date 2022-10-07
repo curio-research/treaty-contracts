@@ -61,9 +61,11 @@ export interface GameLibInterface extends utils.Interface {
     "getPlayer(address)": FunctionFragment;
     "getProperTilePosition((uint256,uint256))": FunctionFragment;
     "getSettlerHealthAndSpeedByLevel(uint256)": FunctionFragment;
+    "goldmineUpgradeSelector(uint256)": FunctionFragment;
     "inBound((uint256,uint256))": FunctionFragment;
     "inboundPositionCheck((uint256,uint256))": FunctionFragment;
     "isProperTilePosition((uint256,uint256))": FunctionFragment;
+    "min(uint256,uint256)": FunctionFragment;
     "random(uint256,uint256)": FunctionFragment;
     "strEq(string,string)": FunctionFragment;
     "sum(uint256[])": FunctionFragment;
@@ -86,9 +88,11 @@ export interface GameLibInterface extends utils.Interface {
       | "getPlayer"
       | "getProperTilePosition"
       | "getSettlerHealthAndSpeedByLevel"
+      | "goldmineUpgradeSelector"
       | "inBound"
       | "inboundPositionCheck"
       | "isProperTilePosition"
+      | "min"
       | "random"
       | "strEq"
       | "sum"
@@ -156,6 +160,10 @@ export interface GameLibInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "goldmineUpgradeSelector",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "inBound",
     values: [PositionStruct]
   ): string;
@@ -166,6 +174,10 @@ export interface GameLibInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "isProperTilePosition",
     values: [PositionStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "min",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "random",
@@ -225,6 +237,10 @@ export interface GameLibInterface extends utils.Interface {
     functionFragment: "getSettlerHealthAndSpeedByLevel",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "goldmineUpgradeSelector",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "inBound", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "inboundPositionCheck",
@@ -234,6 +250,7 @@ export interface GameLibInterface extends utils.Interface {
     functionFragment: "isProperTilePosition",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "min", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "random", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "strEq", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "sum", data: BytesLike): Result;
@@ -366,6 +383,11 @@ export interface GameLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber, BigNumber]>;
 
+    goldmineUpgradeSelector(
+      _goldLevel: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<[boolean]>;
 
     inboundPositionCheck(
@@ -377,6 +399,12 @@ export interface GameLib extends BaseContract {
       _p: PositionStruct,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
+
+    min(
+      x: PromiseOrValue<BigNumberish>,
+      y: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     random(
       _max: PromiseOrValue<BigNumberish>,
@@ -481,6 +509,11 @@ export interface GameLib extends BaseContract {
     overrides?: CallOverrides
   ): Promise<[BigNumber, BigNumber]>;
 
+  goldmineUpgradeSelector(
+    _goldLevel: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<boolean>;
 
   inboundPositionCheck(
@@ -492,6 +525,12 @@ export interface GameLib extends BaseContract {
     _p: PositionStruct,
     overrides?: CallOverrides
   ): Promise<boolean>;
+
+  min(
+    x: PromiseOrValue<BigNumberish>,
+    y: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   random(
     _max: PromiseOrValue<BigNumberish>,
@@ -596,6 +635,11 @@ export interface GameLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber, BigNumber]>;
 
+    goldmineUpgradeSelector(
+      _goldLevel: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<boolean>;
 
     inboundPositionCheck(
@@ -607,6 +651,12 @@ export interface GameLib extends BaseContract {
       _p: PositionStruct,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    min(
+      x: PromiseOrValue<BigNumberish>,
+      y: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     random(
       _max: PromiseOrValue<BigNumberish>,
@@ -718,6 +768,11 @@ export interface GameLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    goldmineUpgradeSelector(
+      _goldLevel: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     inBound(_p: PositionStruct, overrides?: CallOverrides): Promise<BigNumber>;
 
     inboundPositionCheck(
@@ -727,6 +782,12 @@ export interface GameLib extends BaseContract {
 
     isProperTilePosition(
       _p: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    min(
+      x: PromiseOrValue<BigNumberish>,
+      y: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -832,6 +893,11 @@ export interface GameLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    goldmineUpgradeSelector(
+      _goldLevel: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     inBound(
       _p: PositionStruct,
       overrides?: CallOverrides
@@ -844,6 +910,12 @@ export interface GameLib extends BaseContract {
 
     isProperTilePosition(
       _p: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    min(
+      x: PromiseOrValue<BigNumberish>,
+      y: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

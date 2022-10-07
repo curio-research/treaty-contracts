@@ -31,7 +31,7 @@ library Templates {
         ECSLib.setString("Tag", tileID, "Tile");
         ECSLib.setPosition("Position", tileID, _position);
         ECSLib.setUint("City", tileID, _cityID);
-        ECSLib.setUint("Owner", tileID, GameLib.getPlayer(_playerAddr));
+        // ECSLib.setUint("Owner", tileID, GameLib.getPlayer(_playerAddr));
 
         return tileID;
     }
