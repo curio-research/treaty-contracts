@@ -5,6 +5,7 @@ import "contracts/libraries/Storage.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 import {Position, ValueType, QueryCondition, QueryType} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
+import {Mapping} from "contracts/Mapping.sol";
 import {Component} from "contracts/Component.sol";
 import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, UintComponent, UintArrayComponent} from "contracts/TypedComponents.sol";
 
@@ -324,6 +325,41 @@ library ECSLib {
     }
 
     function intersectionAsSet(Set _set1, Set _set2) public returns (Set) {
+        Mapping _searchedElements = new Mapping();
+        Set intersections = new Set();
+
+        // Loop through first set
+        uint256[] memory set1elements = _set1.getAll();
+        for (uint256 i = 0; i < _set1.size(); i++) {
+            uint256 _element = set1elements[i];
+
+            // Check if element is in second set
+            if (!_searchedElements.val(_element)) {
+                if (_set2.includes(_element)) {
+                    intersections.add(_element);
+                }
+                _searchedElements.set(_element, true);
+            }
+        }
+
+        // Loop through second set
+        uint256[] memory set2elements = _set2.getAll();
+        for (uint256 i = 0; i < _set2.size(); i++) {
+            uint256 _element = set2elements[i];
+
+            // Check if element is in first set
+            if (!_searchedElements.val(_element)) {
+                if (_set1.includes(_element)) {
+                    intersections.add(_element);
+                }
+                _searchedElements.set(_element, true);
+            }
+        }
+
+        return intersections;
+    }
+
+    function intersectionAsSetOld(Set _set1, Set _set2) public returns (Set) {
         uint256[] memory _vals = intersection(_set1, _set2);
         Set _res = new Set();
         for (uint256 i = 0; i < _vals.length; i++) {

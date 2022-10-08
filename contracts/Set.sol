@@ -49,3 +49,11 @@ contract Set {
         return elementIndexMap[_element] != 0 || elements[0] == _element;
     }
 }
+
+contract Mapping {
+    mapping(uint256 => bool) public val;
+
+    function set(uint256 _idx, bool _val) public {
+        val[_idx] = _val;
+    }
+}
