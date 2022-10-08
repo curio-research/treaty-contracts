@@ -387,11 +387,11 @@ library ECSLib {
 
     // Set-theoretic union
     function union(Set _set1, Set _set2) public returns (uint256[] memory) {
-        uint256[] memory _arr1 = difference(_set1, _set2);
-        uint256[] memory _arr2 = intersection(_set1, _set2);
-        uint256[] memory _arr3 = difference(_set2, _set1);
+        uint256[] memory arr1 = difference(_set1, _set2);
+        uint256[] memory arr2 = intersection(_set1, _set2);
+        uint256[] memory arr3 = difference(_set2, _set1);
 
-        return concatenate(concatenate(_arr1, _arr2), _arr3);
+        return concatenate(concatenate(arr1, arr2), arr3);
     }
 
     function concatenate(uint256[] memory _arr1, uint256[] memory _arr2) public pure returns (uint256[] memory) {
