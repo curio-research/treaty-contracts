@@ -368,34 +368,11 @@ library ECSLib {
     // Set-theoretic difference
     function difference(Set _set1, Set _set2) public returns (uint256[] memory) {
         return differenceAsSet(_set1, _set2).getAll();
-        // uint256[] memory _temp = new uint256[](set1.size());
-        // uint256 _resultLength = 0;
-
-        // // Loop through first set
-        // for (uint256 i = 0; i < set1.size(); i++) {
-        //     uint256 _element = set1.getAll()[i];
-
-        //     // Check if element is in second set
-        //     if (!set2.includes(_element)) {
-        //         _temp[_resultLength] = _element;
-        //         _resultLength++;
-        //     }
-        // }
-
-        // uint256[] memory _result = new uint256[](_resultLength);
-        // for (uint256 i = 0; i < _resultLength; i++) {
-        //     _result[i] = _temp[i];
-        // }
-
-        // return _result;
     }
 
     function differenceAsSet(Set set1, Set set2) public returns (Set) {
         Set res = new Set();
-        // uint256[] memory _temp = new uint256[](set1.size());
-        // uint256 _resultLength = 0;
 
-        // Loop through first set
         for (uint256 i = 0; i < set1.size(); i++) {
             uint256 _element = set1.getAll()[i];
 
