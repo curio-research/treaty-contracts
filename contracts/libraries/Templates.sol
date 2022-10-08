@@ -17,6 +17,47 @@ library Templates {
         return cityCenterID;
     }
 
+    function convertSettlerToCity(
+        uint256 _settlerID,
+        string memory _cityName,
+        Position memory _centerTilePosition
+    ) public returns (uint256) {
+        uint256 cityID = _settlerID;
+
+        // Convert the settler to a city
+        ECSLib.removeBool("CanSettle", cityID);
+        ECSLib.removeUint("Health", cityID);
+        ECSLib.removeUint("Speed", cityID);
+        ECSLib.removeUint("LastTimestamp", cityID);
+        ECSLib.removeUint("MoveCooldown", cityID);
+        ECSLib.setPosition("StartPosition", cityID, _centerTilePosition);
+        ECSLib.setString("Tag", cityID, "City");
+        ECSLib.setString("Name", cityID, _cityName);
+        ECSLib.setBool("CanProduce", cityID);
+
+        return cityID;
+    }
+
+    function convertCityToSettler(
+        uint256 _cityID,
+        uint256 _health,
+        uint256 _speed
+    ) public returns (uint256) {
+        uint256 settlerID = _cityID;
+
+        ECSLib.setBool("CanSettle", settlerID);
+        ECSLib.setUint("Health", settlerID, _health);
+        ECSLib.setUint("Speed", settlerID, _speed);
+        ECSLib.setUint("LastTimestamp", settlerID, block.timestamp);
+        ECSLib.setUint("MoveCooldown", settlerID, 1);
+        ECSLib.setString("Tag", settlerID, "Settler");
+        ECSLib.removeString("Name", settlerID);
+        ECSLib.removeBool("CanProduce", settlerID);
+        ECSLib.removePosition("StartPosition", settlerID);
+
+        return settlerID;
+    }
+
     function addTile(Position memory _startPosition) public returns (uint256) {
         uint256 tileID = ECSLib.addEntity();
 

@@ -29,7 +29,7 @@ library GameLib {
     // LOGIC SETTERS
     // ----------------------------------------------------------
 
-    function registerComponents(address _gameAddr, ComponentSpec[] memory _componentSpecs) public {
+    function registerComponents(address _gameAddr, ComponentSpec[] memory _componentSpecs) internal {
         for (uint256 i = 0; i < _componentSpecs.length; i++) {
             ComponentSpec memory spec = _componentSpecs[i];
 
@@ -65,7 +65,7 @@ library GameLib {
         }
     }
 
-    function initializeTile(Position memory _startPosition) public {
+    function initializeTile(Position memory _startPosition) internal {
         require(isProperTilePosition(_startPosition), "CURIO: Not proper tile position");
         if (getTileAt(_startPosition) != 0) return;
 
@@ -137,15 +137,16 @@ library GameLib {
         return _level * 1000;
     }
 
-    function removeArmy(uint256 _armyID) public {
+    function removeArmy(uint256 _armyID) internal {
         uint256[] memory _constituentIDs = getConstituents(_armyID);
         for (uint256 i = 0; i < _constituentIDs.length; i++) {
             ECSLib.removeEntity(_constituentIDs[i]);
         }
+        ECSLib.removeEntity(getArmyInventory(_armyID, gs().templates["Gold"]));
         ECSLib.removeEntity(_armyID);
     }
 
-    function endGather(uint256 _armyID) public {
+    function endGather(uint256 _armyID) internal {
         Position memory position = ECSLib.getPosition("Position", _armyID);
 
         // Verify that a gather process is present
@@ -183,39 +184,107 @@ library GameLib {
         ECSLib.removeEntity(gatherID);
     }
 
+    function attack(
+        uint256 _offenderID,
+        uint256 _defenderID,
+        bool _transferGoldUponVictory,
+        bool _transferOwnershipUponVictory,
+        bool _removeUponVictory
+    ) internal returns (bool victory) {
+        uint256[] memory offenderConstituentIDs = getConstituents(_offenderID);
+        uint256[] memory defenderConstituentIDs = getConstituents(_defenderID);
+
+        // Offender attacks defender
+        {
+            uint256 loss;
+            for (uint256 i = 0; i < offenderConstituentIDs.length; i++) {
+                if (ECSLib.getUint("Amount", offenderConstituentIDs[i]) == 0) continue;
+                for (uint256 j = 0; j < defenderConstituentIDs.length; j++) {
+                    if (ECSLib.getUint("Amount", defenderConstituentIDs[j]) == 0) continue;
+                    loss =
+                        (GameLib.sqrt(ECSLib.getUint("Amount", offenderConstituentIDs[i])) * ECSLib.getUint("Attack", ECSLib.getUint("Template", offenderConstituentIDs[i])) * 2 * 100) / //
+                        (ECSLib.getUint("Defense", ECSLib.getUint("Template", defenderConstituentIDs[j])) * ECSLib.getUint("Health", ECSLib.getUint("Template", defenderConstituentIDs[j])));
+                    if (loss >= ECSLib.getUint("Amount", defenderConstituentIDs[j])) {
+                        ECSLib.removeEntity(defenderConstituentIDs[j]);
+                    } else {
+                        ECSLib.setUint("Amount", defenderConstituentIDs[j], ECSLib.getUint("Amount", defenderConstituentIDs[j]) - loss);
+                    }
+                }
+            }
+        }
+
+        // Check defender status
+        if (getConstituents(_defenderID).length == 0) {
+            victory = true;
+
+            if (_transferGoldUponVictory) {
+                // Offender takes defender's gold
+                uint256 offenderInventoryAmount = ECSLib.getUint("Amount", getArmyInventory(_offenderID, gs().templates["Gold"]));
+                uint256 capturedAmount = ECSLib.getUint("Amount", getArmyInventory(_defenderID, gs().templates["Gold"]));
+                if (capturedAmount > ECSLib.getUint("Load", _offenderID) - offenderInventoryAmount) capturedAmount = ECSLib.getUint("Load", _offenderID) - offenderInventoryAmount;
+                ECSLib.setUint("Amount", getArmyInventory(_offenderID, gs().templates["Gold"]), offenderInventoryAmount + capturedAmount);
+            }
+
+            if (_transferOwnershipUponVictory) {
+                // Defender becomes owned by offender's owner
+                ECSLib.setUint("Owner", _defenderID, ECSLib.getUint("Owner", _offenderID));
+            }
+
+            if (_removeUponVictory) {
+                // Defender is removed
+                uint256 defenderInventoryID = getArmyInventory(_defenderID, gs().templates["Gold"]);
+                if (defenderInventoryID != 0) ECSLib.removeEntity(defenderInventoryID);
+                ECSLib.removeEntity(_defenderID);
+            }
+        } else {
+            victory = false;
+        }
+    }
+
+    function battleOnce(
+        uint256 _keeperIdA,
+        uint256 _keeperIdB,
+        bool _transferGoldUponVictory,
+        bool _transferOwnershipUponVictory,
+        bool _removeUponVictory
+    ) internal returns (bool victory) {
+        victory = attack(_keeperIdA, _keeperIdB, _transferGoldUponVictory, _transferOwnershipUponVictory, _removeUponVictory);
+        if (!victory) attack(_keeperIdB, _keeperIdA, _transferGoldUponVictory, _transferOwnershipUponVictory, _removeUponVictory);
+    }
+
     // ----------------------------------------------------------
     // LOGIC GETTERS
     // ----------------------------------------------------------
 
-    function getConstituents(uint256 _keeperID) public returns (uint256[] memory) {
+    function getConstituents(uint256 _keeperID) internal returns (uint256[] memory) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.HasVal, "Keeper", abi.encode(_keeperID));
         query[1] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("Constituent"));
         return ECSLib.query(query);
     }
 
-    function getPlayerSignatures(uint256 _playerID) public returns (uint256[] memory) {
+    function getPlayerSignatures(uint256 _playerID) internal returns (uint256[] memory) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.HasVal, "Owner", abi.encode(_playerID));
         query[1] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("Signature"));
         return ECSLib.query(query);
     }
 
-    function getCityTiles(uint256 _cityID) public returns (uint256[] memory) {
+    function getCityTiles(uint256 _cityID) internal returns (uint256[] memory) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.HasVal, "City", abi.encode(_cityID));
         query[1] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("Tile"));
         return ECSLib.query(query);
     }
 
-    function getPlayerArmies(uint256 _playerID) public returns (uint256[] memory) {
+    function getPlayerArmies(uint256 _playerID) internal returns (uint256[] memory) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.HasVal, "Owner", abi.encode(_playerID));
         query[1] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("Army"));
         return ECSLib.query(query);
     }
 
-    function getBuildingProduction(uint256 _buildingID) public returns (uint256) {
+    function getBuildingProduction(uint256 _buildingID) internal returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.HasVal, "Keeper", abi.encode(_buildingID));
         query[1] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("TroopProduction"));
@@ -224,7 +293,7 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    function getArmyGather(uint256 _armyID) public returns (uint256) {
+    function getArmyGather(uint256 _armyID) internal returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.HasVal, "Army", abi.encode(_armyID));
         query[1] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("ResourceGather"));
@@ -233,7 +302,7 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    function getResourceAtTile(Position memory _startPosition) public returns (uint256) {
+    function getResourceAtTile(Position memory _startPosition) internal returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode(string("Resource")));
         query[1] = ECSLib.queryChunk(QueryType.HasVal, "StartPosition", abi.encode(_startPosition));
@@ -242,7 +311,7 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    function getMovableEntityAt(Position memory _position) public returns (uint256) {
+    function getMovableEntityAt(Position memory _position) internal returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.Has, "Speed", new bytes(0));
         query[1] = ECSLib.queryChunk(QueryType.HasVal, "Position", abi.encode(_position));
@@ -251,7 +320,7 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    function getArmyAt(Position memory _position) public returns (uint256) {
+    function getArmyAt(Position memory _position) internal returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode(string("Army")));
         query[1] = ECSLib.queryChunk(QueryType.HasVal, "Position", abi.encode(_position));
@@ -260,7 +329,7 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    function getCityAtTile(Position memory _startPosition) public returns (uint256) {
+    function getCityAtTile(Position memory _startPosition) internal returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("City"));
         query[1] = ECSLib.queryChunk(QueryType.HasVal, "StartPosition", abi.encode(_startPosition));
@@ -269,7 +338,7 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    function getCityGuard(uint256 _cityID) public returns (uint256) {
+    function getCityGuard(uint256 _cityID) internal returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("Guard"));
         query[1] = ECSLib.queryChunk(QueryType.HasVal, "City", abi.encode(_cityID));
@@ -278,7 +347,7 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    function getTemplateByInventoryType(string memory _inventoryType) public returns (uint256) {
+    function getTemplateByInventoryType(string memory _inventoryType) internal returns (uint256) {
         Set _set1 = new Set();
         Set _set2 = new Set();
         Set _set3 = new Set();
@@ -297,7 +366,7 @@ library GameLib {
         return _result.length == 1 ? _result[0] : 0;
     }
 
-    function getArmyInventory(uint256 _armyID, uint256 _templateID) public returns (uint256) {
+    function getArmyInventory(uint256 _armyID, uint256 _templateID) internal returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](3);
         query[0] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("TroopInventory"));
         query[1] = ECSLib.queryChunk(QueryType.HasVal, "Army", abi.encode(_armyID));
@@ -307,7 +376,7 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    function getInventory(uint256 _cityID, uint256 _templateID) public returns (uint256) {
+    function getInventory(uint256 _cityID, uint256 _templateID) internal returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.HasVal, "City", abi.encode(_cityID));
         query[1] = ECSLib.queryChunk(QueryType.HasVal, "Template", abi.encode(_templateID));
@@ -323,7 +392,7 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    function getSettlerAt(Position memory _position) public returns (uint256) {
+    function getSettlerAt(Position memory _position) internal returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("Settler"));
         query[1] = ECSLib.queryChunk(QueryType.HasVal, "Position", abi.encode(_position));
@@ -332,7 +401,7 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    function getPlayer(address _address) public view returns (uint256) {
+    function getPlayer(address _address) internal view returns (uint256) {
         return gs().playerEntityMap[_address];
     }
 
@@ -340,18 +409,18 @@ library GameLib {
         uint256 _army1,
         uint256 _army2,
         uint256 _duration
-    ) public view returns (uint256 _damageOn1, uint256 _damageOn2) {
+    ) internal view returns (uint256 _damageOn1, uint256 _damageOn2) {
         _damageOn1 = (_duration * ECSLib.getUint("Attack", _army2) * 2) / ECSLib.getUint("Defense", _army1);
         _damageOn2 = (_duration * ECSLib.getUint("Attack", _army1) * 2) / ECSLib.getUint("Defense", _army2);
     }
 
-    function getCityGold(uint256 cityId) public returns (uint256) {
+    function getCityGold(uint256 cityId) internal returns (uint256) {
         uint256 _goldInventoryID = getInventory(cityId, getTemplateByInventoryType("Gold"));
         uint256 _balance = _goldInventoryID != 0 ? ECSLib.getUint("Amount", _goldInventoryID) : 0;
         return _balance;
     }
 
-    function getCityCenter(uint256 _cityID) public returns (uint256) {
+    function getCityCenter(uint256 _cityID) internal returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.HasVal, "City", abi.encode(_cityID));
         query[1] = ECSLib.queryChunk(QueryType.HasVal, "BuildingType", abi.encode("City Center"));
@@ -360,7 +429,7 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    function getTileAt(Position memory _startPosition) public returns (uint256) {
+    function getTileAt(Position memory _startPosition) internal returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.HasVal, "StartPosition", abi.encode(_startPosition));
         query[1] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("Tile"));
@@ -369,11 +438,11 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    // function getMapTileAt(Position memory _position) public view returns (Tile memory) {
+    // function getMapTileAt(Position memory _position) internal view returns (Tile memory) {
     //     return gs().map[_position.x][_position.y];
     // }
 
-    function getNeighbors(Position memory _position) public view returns (Position[] memory) {
+    function getNeighbors(Position memory _position) internal view returns (Position[] memory) {
         Position[] memory _result = new Position[](4);
         uint256 _x = _position.x;
         uint256 _y = _position.y;
@@ -386,22 +455,27 @@ library GameLib {
         return _result;
     }
 
-    function adjacentToCity(Position memory _position, uint256 _cityID) public view returns (bool) {
+    function canOccupyTile(uint256 _playerID, uint256 _tileID) internal pure returns (bool) {
+        // TODO: implement
+        return false;
+    }
+
+    function adjacentToCity(Position memory _position, uint256 _cityID) internal view returns (bool) {
         Position memory _centerPosition = ECSLib.getPosition("Position", _cityID);
         return !coincident(_position, _centerPosition) && withinDistance(_position, _centerPosition, 2);
     }
 
-    function getSettlerHealthAndSpeedByLevel(uint256 _level) public pure returns (uint256, uint256) {
+    function getSettlerHealthByLevel(uint256 _level) internal pure returns (uint256) {
         require(_level >= 1, "CURIO: City level must be at least 1");
-        return (_level * 2 + 5, 10); // FIXME: temporary
+        return _level * 2 + 5;
     }
 
-    function getCityTileCountByLevel(uint256 _level) public pure returns (uint256) {
+    function getCityTileCountByLevel(uint256 _level) internal pure returns (uint256) {
         require(_level >= 1, "CURIO: City level must be at least 1");
         return ((_level + 1) * (_level + 2)) / 2 + 6;
     }
 
-    function getHarvestCap(uint256 _level) public pure returns (uint256) {
+    function getHarvestCap(uint256 _level) internal pure returns (uint256) {
         if (_level == 1) return 3000;
         if (_level == 2) return 6000;
         if (_level == 3) return 9000;
@@ -419,7 +493,7 @@ library GameLib {
         return 0;
     }
 
-    function getPlayerCity(uint256 _playerID) public returns (uint256) {
+    function getPlayerCity(uint256 _playerID) internal returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.HasVal, "Owner", abi.encode(_playerID));
         query[1] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("City"));
@@ -428,7 +502,7 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    function goldmineUpgradeSelector(uint256 _goldLevel) public pure returns (uint256) {
+    function goldmineUpgradeSelector(uint256 _goldLevel) internal pure returns (uint256) {
         if (_goldLevel == 0) return 500; // from level 0 to 1 (purchasing gold mine
         return 0;
     }
@@ -459,7 +533,7 @@ library GameLib {
         require(entityOwner == _playerID || entityOwner == 0, "CURIO: Entity is not yours");
     }
 
-    function inboundPositionCheck(Position memory _position) public view {
+    function inboundPositionCheck(Position memory _position) internal view {
         require(inBound(_position), "CURIO: Position out of bound");
     }
 
@@ -467,15 +541,15 @@ library GameLib {
     // UTILITY FUNCTIONS
     // ----------------------------------------------------------
 
-    function inBound(Position memory _p) public view returns (bool) {
+    function inBound(Position memory _p) internal view returns (bool) {
         return _p.x >= 0 && _p.x < gs().worldConstants.worldWidth && _p.y >= 0 && _p.y < gs().worldConstants.worldHeight;
     }
 
-    function random(uint256 _max, uint256 _salt) public view returns (uint256) {
+    function random(uint256 _max, uint256 _salt) internal view returns (uint256) {
         return uint256(keccak256(abi.encode(block.timestamp, block.difficulty, _salt))) % _max;
     }
 
-    function connected(Position[] memory _positions) public view returns (bool) {
+    function connected(Position[] memory _positions) internal view returns (bool) {
         require(_positions.length > 0, "CURIO: Positions cannot be empty");
 
         for (uint256 i = 1; i < _positions.length; i++) {
@@ -488,7 +562,7 @@ library GameLib {
     /**
      * @dev Belong to adjacent tiles.
      */
-    function adjacent(Position memory _p1, Position memory _p2) public view returns (bool) {
+    function adjacent(Position memory _p1, Position memory _p2) internal view returns (bool) {
         uint256 _xDist = _p1.x >= _p2.x ? _p1.x - _p2.x : _p2.x - _p1.x;
         uint256 _yDist = _p1.y >= _p2.y ? _p1.y - _p2.y : _p2.y - _p1.y;
         uint256 _tileWidth = gs().worldConstants.tileWidth;
@@ -498,7 +572,7 @@ library GameLib {
     /**
      * @dev From any position, get its proper tile position.
      */
-    function getProperTilePosition(Position memory _p) public view returns (Position memory) {
+    function getProperTilePosition(Position memory _p) internal view returns (Position memory) {
         uint256 _tileWidth = gs().worldConstants.tileWidth;
         return Position({x: _p.x - (_p.x % _tileWidth), y: _p.y - (_p.y % _tileWidth)});
     }
@@ -506,7 +580,7 @@ library GameLib {
     /**
      * @dev From any proper tile position, get the midpoint position of that tile. Often used for spawning units.
      */
-    function getMidPositionFromTilePosition(Position memory _tilePosition) public view returns (Position memory) {
+    function getMidPositionFromTilePosition(Position memory _tilePosition) internal view returns (Position memory) {
         uint256 tileWidth = gs().worldConstants.tileWidth;
         return Position({x: _tilePosition.x + tileWidth / 2, y: _tilePosition.y + tileWidth / 2});
     }
@@ -514,12 +588,12 @@ library GameLib {
     /**
      * @dev Determine whether a position is a proper tile position, aka located exactly at the top-left corner of a tile.
      */
-    function isProperTilePosition(Position memory _p) public view returns (bool) {
+    function isProperTilePosition(Position memory _p) internal view returns (bool) {
         uint256 tileWidth = gs().worldConstants.tileWidth;
         return _p.x % tileWidth == 0 && _p.y % tileWidth == 0;
     }
 
-    function coincident(Position memory _p1, Position memory _p2) public pure returns (bool) {
+    function coincident(Position memory _p1, Position memory _p2) internal pure returns (bool) {
         return _p1.x == _p2.x && _p1.y == _p2.y;
     }
 
@@ -529,13 +603,13 @@ library GameLib {
         Position memory _p1,
         Position memory _p2,
         uint256 _dist
-    ) public pure returns (bool) {
+    ) internal pure returns (bool) {
         uint256 xDist = _p1.x >= _p2.x ? _p1.x - _p2.x : _p2.x - _p1.x;
         uint256 yDist = _p1.y >= _p2.y ? _p1.y - _p2.y : _p2.y - _p1.y;
         return (xDist + yDist) <= _dist;
     }
 
-    function strEq(string memory _s1, string memory _s2) public pure returns (bool) {
+    function strEq(string memory _s1, string memory _s2) internal pure returns (bool) {
         return (keccak256(abi.encodePacked((_s1))) == keccak256(abi.encodePacked((_s2))));
     }
 
@@ -555,14 +629,14 @@ library GameLib {
         return index;
     }
 
-    function euclidean(Position memory _p1, Position memory _p2) public pure returns (uint256) {
+    function euclidean(Position memory _p1, Position memory _p2) internal pure returns (uint256) {
         uint256 a = _p2.x >= _p1.x ? _p2.x - _p1.x : _p1.x - _p2.x;
         uint256 b = _p2.y >= _p1.y ? _p2.y - _p1.y : _p1.y - _p2.y;
 
         return sqrt(a**2 + b**2);
     }
 
-    function sum(uint256[] memory _arr) public pure returns (uint256) {
+    function sum(uint256[] memory _arr) internal pure returns (uint256) {
         uint256 result = 0;
         for (uint256 i = 0; i < _arr.length; i++) {
             result += _arr[i];
@@ -579,7 +653,7 @@ library GameLib {
         }
     }
 
-    function min(uint256 x, uint256 y) public pure returns (uint256) {
+    function min(uint256 x, uint256 y) internal pure returns (uint256) {
         return x <= y ? x : y;
     }
 }
