@@ -184,7 +184,7 @@ library GameLib {
         ECSLib.removeEntity(gatherID);
     }
 
-    function getAttackBonus(uint256 _offenderTemplateID, uint256 _defenderTemplateID) public returns (uint256) {
+    function getAttackBonus(uint256 _offenderTemplateID, uint256 _defenderTemplateID) public view returns (uint256) {
         uint256 horsemanTemplateId = gs().templates["Horseman"];
         uint256 warriorTemplateId = gs().templates["Warrior"];
         uint256 slingerTemplateId = gs().templates["Slinger"];
@@ -224,7 +224,8 @@ library GameLib {
 
                     if (ECSLib.getUint("Amount", defenderConstituentIDs[j]) == 0) continue;
                     loss =
-                        (troopTypeBonus * (GameLib.sqrt(ECSLib.getUint("Amount", offenderConstituentIDs[i])) * ECSLib.getUint("Attack", ECSLib.getUint("Template", offenderConstituentIDs[i])) * 2)) / //
+                        (troopTypeBonus * 
+                        (GameLib.sqrt(ECSLib.getUint("Amount", offenderConstituentIDs[i])) * ECSLib.getUint("Attack", ECSLib.getUint("Template", offenderConstituentIDs[i])) * 2)) / //
                         (ECSLib.getUint("Defense", ECSLib.getUint("Template", defenderConstituentIDs[j])) * ECSLib.getUint("Health", ECSLib.getUint("Template", defenderConstituentIDs[j])));
 
                     if (loss >= ECSLib.getUint("Amount", defenderConstituentIDs[j])) {
