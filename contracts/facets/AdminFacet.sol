@@ -152,9 +152,4 @@ contract AdminFacet is UseStorage {
     ) external onlyAdmin {
         ECSLib.setComponentValue(_componentName, _entity, _value);
     }
-
-    // entity creation for testing
-    function createArmy(uint256 _playerId, Position memory _position) external onlyAdmin returns (uint256) {
-        return Templates.addArmy(_playerId, _position);
-    }
 }

@@ -58,13 +58,11 @@ struct WorldConstants {
     uint256 maxInventoryCapacity;
     uint256 cityPackCost;
     uint256 initCityGold;
-    uint256 cityHealth;
-    uint256 cityAttack;
-    uint256 cityDefense;
+    uint256 cityGuardAmount;
+    uint256 tileGuardAmount;
     uint256 tileWidth;
     uint256 armyBattleRange;
     uint256 cityBattleRange;
-    uint256 cityAmount;
 }
 
 struct GameState {
@@ -72,7 +70,7 @@ struct GameState {
     uint256 lastPaused;
     WorldConstants worldConstants;
     address[] players;
-    Tile[5000][5000] map;
+    // Tile[5000][5000] map;
     uint256[][] encodedColumnBatches;
     address[] treaties;
     address entities;

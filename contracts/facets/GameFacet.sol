@@ -12,6 +12,8 @@ import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 /// @title Game facet
 /// @notice Contains player functions
 
+// TODO: LEFT OFF: guard and battle and constituents and initializeTile
+
 contract GameFacet is UseStorage {
     using SafeMath for uint256;
     uint256 private constant NULL = 0;
@@ -32,7 +34,7 @@ contract GameFacet is UseStorage {
         require(gs().players.length < gs().worldConstants.maxPlayerCount, "CURIO: Max player count exceeded");
         require(gs().playerEntityMap[msg.sender] == NULL, "CURIO: Player already initialized");
 
-        GameLib.initializeTile(_position);
+        GameLib.initializeTile(GameLib.getProperTilePosition(_position));
 
         uint256 playerID = Templates.addPlayer(_name);
 
@@ -42,7 +44,7 @@ contract GameFacet is UseStorage {
         uint256 settlerID = Templates.addSettler(_position, playerID, gs().worldConstants.tileWidth);
 
         // Initialize guard which stays with eventual city
-        Templates.addGuard(settlerID, gs().worldConstants);
+        Templates.addConstituent(settlerID, gs().templates["Guard"], gs().worldConstants.cityGuardAmount);
 
         // Add gold to eventual city
         uint256 goldInventoryID = ECSLib.addEntity();
@@ -64,7 +66,6 @@ contract GameFacet is UseStorage {
         GameLib.inboundPositionCheck(_targetPosition);
 
         GameLib.initializeTile(GameLib.getProperTilePosition(_targetPosition));
-        GameLib.initializeTile(_targetPosition);
 
         // Verify no other movable entity at exact destination coordinate
         require(GameLib.getMovableEntityAt(_targetPosition) == NULL, "CURIO: Destination occupied");
@@ -100,19 +101,24 @@ contract GameFacet is UseStorage {
 
         // Verify that territory is connected and includes settler's current position
         // FIXME: right now, territory must be selected in a way in which each position is adjacent to next position in the array
-        Position memory centerPosition = GameLib.getProperTilePosition(ECSLib.getPosition("Position", _settlerID));
+        Position memory centerTilePosition = GameLib.getProperTilePosition(ECSLib.getPosition("Position", _settlerID));
         require(GameLib.connected(_tiles), "CURIO: Territory disconnected");
-        require(GameLib.includesPosition(centerPosition, _tiles), "CURIO: Tiles must cover settler position");
+        require(GameLib.includesPosition(centerTilePosition, _tiles), "CURIO: Tiles must cover settler position");
 
         // Remove resource at destination if one exists
-        uint256 resourceID = GameLib.getResourceAt(centerPosition);
+        uint256 resourceID = GameLib.getResourceAtTile(centerTilePosition);
         if (resourceID != NULL) ECSLib.removeEntity(resourceID);
 
+        uint256 playerID = GameLib.getPlayer(msg.sender);
         uint256 cityID = _settlerID;
 
-        // Verify that territory is wholly in bound and does not overlap with other cities, and initialize tiles
+        // Verify that territory is wholly in bound and does not overlap with other cities, and set tile ownership
         for (uint256 i = 0; i < _tiles.length; i++) {
-            Templates.addCityTile(_tiles[i], cityID, msg.sender);
+            GameLib.inboundPositionCheck(_tiles[i]);
+            uint256 tileID = GameLib.getTileAt(_tiles[i]);
+            require(tileID != NULL, "CURIO: Tile is not initialized");
+
+            ECSLib.setUint("Owner", tileID, playerID);
         }
 
         // Convert the settler to a city
@@ -121,12 +127,12 @@ contract GameFacet is UseStorage {
         ECSLib.removeUint("Speed", cityID);
         ECSLib.removeUint("LastTimestamp", cityID);
         ECSLib.removeUint("MoveCooldown", cityID);
-        ECSLib.setPosition("StartPosition", cityID, centerPosition);
+        ECSLib.setPosition("StartPosition", cityID, centerTilePosition);
         ECSLib.setString("Tag", cityID, "City");
         ECSLib.setString("Name", cityID, _cityName);
         ECSLib.setBool("CanProduce", cityID);
 
-        Templates.addCityCenter(centerPosition, cityID);
+        Templates.addCityCenter(centerTilePosition, cityID);
     }
 
     /// @notice This function can be viewed as the inverse of `foundCity`, as it converts a city back into a settler.
@@ -190,9 +196,15 @@ contract GameFacet is UseStorage {
         // Verify that new territory is connected to existing territory
         // TODO
 
+        uint256 playerID = GameLib.getPlayer(msg.sender);
+
         // Verify that territory is wholly in bound and does not overlap with other cities
         for (uint256 i = 0; i < _newTiles.length; i++) {
-            Templates.addCityTile(_newTiles[i], _cityID, msg.sender);
+            GameLib.inboundPositionCheck(_newTiles[i]);
+            uint256 tileID = GameLib.getTileAt(_newTiles[i]);
+            require(tileID != NULL, "CURIO: Tile is not initialized");
+
+            ECSLib.setUint("Owner", tileID, playerID);
         }
 
         uint256 goldInventoryID = GameLib.getInventory(_cityID, GameLib.getTemplateByInventoryType("Gold"));
@@ -421,7 +433,8 @@ contract GameFacet is UseStorage {
         GameLib.entityOwnershipCheck(_cityID, msg.sender);
 
         // Verify there is no army currently at the city center
-        require(GameLib.getArmyAt(ECSLib.getPosition("Position", _cityID)) == NULL, "CURIO: Tile occupied by another army");
+        Position memory midPosition = GameLib.getMidPositionFromTilePosition(ECSLib.getPosition("StartPosition", _cityID));
+        require(GameLib.getArmyAt(midPosition) == NULL, "CURIO: Occupied by another army");
 
         require(GameLib.getPlayerArmies(GameLib.getPlayer(msg.sender)).length < gs().worldConstants.maxArmyCountPerPlayer, "CURIO: Army max count reached");
 
@@ -448,27 +461,16 @@ contract GameFacet is UseStorage {
                 templateCooldown = ECSLib.getUint("BattleCooldown", _templateIDs[i]);
                 battleCooldown = templateCooldown > battleCooldown ? templateCooldown : battleCooldown;
             }
-
             speed /= GameLib.sum(_amounts);
 
             // Add army
-            uint256 armyID = Templates.addArmy(GameLib.getPlayer(msg.sender), GameLib.getMidPositionFromTilePosition(ECSLib.getPosition("StartPosition", _cityID)));
-            ECSLib.setUint("Speed", armyID, speed);
-            ECSLib.setUint("Load", armyID, load);
-            ECSLib.setUint("LastTimestamp", armyID, block.timestamp);
-            ECSLib.setUint("MoveCooldown", armyID, moveCooldown);
-            ECSLib.setUint("BattleCooldown", armyID, battleCooldown);
+            Templates.addArmy(GameLib.getPlayer(msg.sender), midPosition, speed, load, moveCooldown, battleCooldown);
         }
-
-        uint256 armyID = GameLib.getArmyAt(GameLib.getMidPositionFromTilePosition(ECSLib.getPosition("StartPosition", _cityID)));
+        uint256 armyID = GameLib.getArmyAt(midPosition);
 
         // Add army constituents
         for (uint256 i = 0; i < _templateIDs.length; i++) {
-            uint256 constituentID = ECSLib.addEntity();
-            ECSLib.setString("Tag", constituentID, "ArmyConstituent");
-            ECSLib.setUint("Keeper", constituentID, armyID);
-            ECSLib.setUint("Template", constituentID, _templateIDs[i]);
-            ECSLib.setUint("Amount", constituentID, _amounts[i]);
+            Templates.addConstituent(armyID, _templateIDs[i], _amounts[i]);
         }
 
         return armyID;
@@ -493,7 +495,7 @@ contract GameFacet is UseStorage {
         uint256 cityGoldInventoryID = GameLib.getInventory(cityID, GameLib.getTemplateByInventoryType("Gold"));
 
         // Return troops to corresponding inventories
-        uint256[] memory constituentIDs = GameLib.getArmyConstituents(_armyID);
+        uint256[] memory constituentIDs = GameLib.getConstituents(_armyID);
         for (uint256 i = 0; i < constituentIDs.length; i++) {
             uint256 cityInventoryID = GameLib.getInventory(cityID, ECSLib.getUint("Template", constituentIDs[i]));
             uint256 troopAmount = ECSLib.getUint("Amount", cityInventoryID) + ECSLib.getUint("Amount", constituentIDs[i]);
@@ -549,11 +551,11 @@ contract GameFacet is UseStorage {
 
         // Execute one round of battle
         {
-            uint256[] memory armyConstituents = GameLib.getArmyConstituents(_armyID);
-            uint256[] memory targetArmyConstituents = GameLib.getArmyConstituents(_targetArmyID);
+            uint256[] memory armyConstituents = GameLib.getConstituents(_armyID);
+            uint256[] memory targetArmyConstituents = GameLib.getConstituents(_targetArmyID);
 
+            // Army attacks TargetArmy
             {
-                // Army attacks TargetArmy
                 uint256 loss;
                 for (uint256 i = 0; i < armyConstituents.length; i++) {
                     if (ECSLib.getUint("Amount", armyConstituents[i]) == 0) continue;
@@ -571,7 +573,9 @@ contract GameFacet is UseStorage {
                 }
             }
 
-            if (GameLib.getArmyConstituents(_targetArmyID).length == 0) {
+            // Check TargetArmy and process potential death
+            targetArmyConstituents = GameLib.getConstituents(_targetArmyID);
+            if (targetArmyConstituents.length == 0) {
                 // TargetArmy dead, Army takes its gold
                 uint256 _armyInventoryAmount = ECSLib.getUint("Amount", GameLib.getArmyInventory(_armyID, GameLib.getTemplateByInventoryType("Gold")));
                 uint256 _increase = ECSLib.getUint("Amount", GameLib.getArmyInventory(_targetArmyID, GameLib.getTemplateByInventoryType("Gold")));
@@ -581,8 +585,8 @@ contract GameFacet is UseStorage {
                 return;
             }
 
+            // TargetArmy attacks Army
             {
-                // TargetArmy attacks Army
                 uint256 loss;
                 for (uint256 j = 0; j < targetArmyConstituents.length; j++) {
                     if (ECSLib.getUint("Amount", targetArmyConstituents[j]) == 0) continue;
@@ -600,7 +604,8 @@ contract GameFacet is UseStorage {
                 }
             }
 
-            if (GameLib.getArmyConstituents(_armyID).length == 0) {
+            armyConstituents = GameLib.getConstituents(_armyID);
+            if (armyConstituents.length == 0) {
                 // Army dead, TargetArmy takes its gold
                 uint256 targetArmyInventoryAmount = ECSLib.getUint("Amount", GameLib.getArmyInventory(_targetArmyID, GameLib.getTemplateByInventoryType("Gold")));
                 uint256 increase = ECSLib.getUint("Amount", GameLib.getArmyInventory(_armyID, GameLib.getTemplateByInventoryType("Gold")));
@@ -612,8 +617,8 @@ contract GameFacet is UseStorage {
         }
     }
 
-    function initializeTile(Position memory _position) public {
-        GameLib.initializeTile(_position);
+    function initializeTile(Position memory _startPosition) public {
+        GameLib.initializeTile(_startPosition);
     }
 
     function _battleCity(uint256 _armyID, uint256 _cityID) private {
@@ -639,7 +644,7 @@ contract GameFacet is UseStorage {
         require(block.timestamp >= ECSLib.getUint("LastTimestamp", _armyID) + ECSLib.getUint("BattleCooldown", _armyID), "CURIO: Battled too recently");
         ECSLib.setUint("LastTimestamp", _armyID, block.timestamp);
 
-        // TEMPORARY ALERT
+        // FIXME: TEMPORARY ALERT
         // reduce the gold by half
         {
             uint256 balance = GameLib.getCityGold(_cityID);
@@ -652,10 +657,10 @@ contract GameFacet is UseStorage {
         uint256 guardID = GameLib.getCityGuard(_cityID);
         if (guardID == NULL) {
             ECSLib.setUint("Owner", _cityID, playerID);
-            Templates.addGuard(_cityID, gs().worldConstants);
+            Templates.addConstituent(_cityID, gs().templates["Guard"], gs().worldConstants.cityGuardAmount);
             return;
         } else {
-            uint256[] memory armyConstituents = GameLib.getArmyConstituents(_armyID);
+            uint256[] memory armyConstituents = GameLib.getConstituents(_armyID);
 
             {
                 // Army attacks City
@@ -677,7 +682,7 @@ contract GameFacet is UseStorage {
             if (!Set(gs().entities).includes(guardID)) {
                 // City has no defense, Army takes over
                 ECSLib.setUint("Owner", _cityID, playerID);
-                Templates.addGuard(_cityID, gs().worldConstants);
+                Templates.addConstituent(_cityID, gs().templates["Guard"], gs().worldConstants.cityGuardAmount);
                 return;
             }
 
@@ -695,7 +700,8 @@ contract GameFacet is UseStorage {
                 }
             }
 
-            if (GameLib.getArmyConstituents(_armyID).length == 0) {
+            armyConstituents = GameLib.getConstituents(_armyID);
+            if (armyConstituents.length == 0) {
                 // Army dead, City takes its gold
                 uint256 cityInventoryAmount = ECSLib.getUint("Amount", GameLib.getInventory(_cityID, GameLib.getTemplateByInventoryType("Gold")));
                 uint256 increase = ECSLib.getUint("Amount", GameLib.getArmyInventory(_armyID, GameLib.getTemplateByInventoryType("Gold")));

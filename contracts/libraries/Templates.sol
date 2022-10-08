@@ -3,14 +3,13 @@ pragma solidity ^0.8.4;
 
 import {Position, WorldConstants} from "contracts/libraries/Types.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
-import {GameLib} from "contracts/libraries/GameLib.sol";
 
 library Templates {
-    function addCityCenter(Position memory _position, uint256 _cityID) public returns (uint256) {
+    function addCityCenter(Position memory _startPosition, uint256 _cityID) public returns (uint256) {
         uint256 cityCenterID = ECSLib.addEntity();
 
         ECSLib.setString("Tag", cityCenterID, "Building");
-        ECSLib.setPosition("Position", cityCenterID, _position);
+        ECSLib.setPosition("StartPosition", cityCenterID, _startPosition);
         ECSLib.setUint("City", cityCenterID, _cityID);
         ECSLib.setString("BuildingType", cityCenterID, "City Center");
         ECSLib.setUint("InitTimestamp", cityCenterID, block.timestamp);
@@ -18,20 +17,14 @@ library Templates {
         return cityCenterID;
     }
 
-    function addCityTile(
-        Position memory _position,
-        uint256 _cityID,
-        address _playerAddr
-    ) public returns (uint256) {
-        require(GameLib.inBound(_position), "CURIO: Out of bound");
-        require(GameLib.getTileAt(_position) == 0, "CURIO: Tile overlaps with another city");
-        GameLib.initializeTile(_position);
-
+    function addTile(Position memory _startPosition) public returns (uint256) {
         uint256 tileID = ECSLib.addEntity();
+
         ECSLib.setString("Tag", tileID, "Tile");
-        ECSLib.setPosition("Position", tileID, _position);
-        ECSLib.setUint("City", tileID, _cityID);
-        // ECSLib.setUint("Owner", tileID, GameLib.getPlayer(_playerAddr));
+        ECSLib.setBool("CanBattle", tileID);
+        ECSLib.setPosition("StartPosition", tileID, _startPosition);
+        ECSLib.setUint("City", tileID, 0);
+        ECSLib.setUint("Owner", tileID, 0);
 
         return tileID;
     }
@@ -49,7 +42,7 @@ library Templates {
         ECSLib.setUint("Level", settlerID, 1);
         ECSLib.setBool("CanSettle", settlerID);
         ECSLib.setUint("Health", settlerID, 1); // FIXME
-        ECSLib.setUint("Speed", settlerID, _speed); // FIXME
+        ECSLib.setUint("Speed", settlerID, _speed);
         ECSLib.setUint("LastTimestamp", settlerID, block.timestamp);
         ECSLib.setUint("MoveCooldown", settlerID, 1);
 
@@ -68,29 +61,40 @@ library Templates {
         return playerID;
     }
 
-    function addArmy(uint256 _playerID, Position memory _position) public returns (uint256) {
+    function addArmy(
+        uint256 _playerID,
+        Position memory _position,
+        uint256 _speed,
+        uint256 _load,
+        uint256 _moveCooldown,
+        uint256 _battleCooldown
+    ) public returns (uint256) {
         uint256 armyID = ECSLib.addEntity();
 
         ECSLib.setString("Tag", armyID, "Army");
+        ECSLib.setBool("CanBattle", armyID);
         ECSLib.setUint("Owner", armyID, _playerID);
         ECSLib.setPosition("Position", armyID, _position);
-        ECSLib.setUint("Speed", armyID, 0);
-        ECSLib.setUint("Load", armyID, 0);
+        ECSLib.setUint("Speed", armyID, _speed);
+        ECSLib.setUint("Load", armyID, _load);
         ECSLib.setUint("LastTimestamp", armyID, block.timestamp);
-        ECSLib.setUint("Capacity", armyID, 100); // FIXME: temporary
+        ECSLib.setUint("MoveCooldown", armyID, _moveCooldown);
+        ECSLib.setUint("BattleCooldown", armyID, _battleCooldown);
 
         return armyID;
     }
 
-    function addGuard(uint256 _cityID, WorldConstants memory _constants) public returns (uint256) {
+    function addConstituent(
+        uint256 _keeperID,
+        uint256 _templateID,
+        uint256 _amount
+    ) public returns (uint256) {
         uint256 guardID = ECSLib.addEntity();
 
-        ECSLib.setString("Tag", guardID, "Guard");
-        ECSLib.setUint("City", guardID, _cityID);
-        ECSLib.setUint("Health", guardID, _constants.cityHealth);
-        ECSLib.setUint("Attack", guardID, _constants.cityAttack);
-        ECSLib.setUint("Defense", guardID, _constants.cityDefense);
-        ECSLib.setUint("Amount", guardID, _constants.cityAmount);
+        ECSLib.setString("Tag", guardID, "Constituent");
+        ECSLib.setUint("Keeper", guardID, _keeperID);
+        ECSLib.setUint("Template", guardID, _templateID);
+        ECSLib.setUint("Amount", guardID, _amount);
 
         return guardID;
     }
