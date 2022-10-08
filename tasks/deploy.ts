@@ -6,9 +6,9 @@ import { publishDeployment, isConnectionLive } from './../api/deployment';
 import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment, HardhatArguments } from 'hardhat/types';
 import { deployProxy, printDivider } from './util/deployHelper';
-import { createTemplates, generateWorldConstants, SMALL_MAP_INPUT } from './util/constants';
+import { createTemplates, generateWorldConstants, SMALL_MAP_INPUT, TILE_WIDTH } from './util/constants';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
-import { chooseRandomEmptyLandPosition, encodeTileMap, generateBlankFixmap, generateMap, initializeFixmap } from './util/mapHelper';
+import { chooseRandomEmptyLandPosition, encodeTileMap, generateBlankFixmap, generateMap, getPositionFromLargeTilePosition, initializeFixmap } from './util/mapHelper';
 import { COMPONENT_SPECS, getRightPos, GameConfig, TILE_TYPE, Speed, encodeUint256, getTopPos } from 'curio-vault';
 
 /**
@@ -92,8 +92,8 @@ task('deploy', 'deploy contracts')
       } else {
         // Randomly initialize players if on localhost
         if (isDev) {
-          const player1Pos = chooseRandomEmptyLandPosition(tileMap);
-          const player2Pos = getRightPos(getRightPos(player1Pos));
+          const player1Pos = getPositionFromLargeTilePosition(chooseRandomEmptyLandPosition(tileMap), TILE_WIDTH);
+          const player2Pos = getPositionFromLargeTilePosition(getRightPos(getRightPos(player1Pos)), TILE_WIDTH);
 
           startTime = performance.now();
           await (await diamond.connect(player1).initializePlayer(player1Pos, 'Alice', { gasLimit: 100_000_000 })).wait();
@@ -111,6 +111,8 @@ task('deploy', 'deploy contracts')
               }
             }
           }
+
+          armySpawnPos = getPositionFromLargeTilePosition(armySpawnPos, TILE_WIDTH);
 
           // add an army on a gold mine (easy for testing gather resource)
           await diamond.initializeTile(armySpawnPos);

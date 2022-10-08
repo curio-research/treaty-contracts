@@ -26,6 +26,14 @@ contract AdminFacet is UseStorage {
         ECSLib.removeEntity(_entity);
     }
 
+    function createArmy(uint256 _playerID, Position memory _position) external onlyAdmin {
+        Templates.addArmy(_playerID, _position, 0, 1, 1, 2);
+    }
+
+    function initializeTile(Position memory _startPosition) external onlyAdmin {
+        GameLib.initializeTile(_startPosition);
+    }
+
     // ----------------------------------------------------------------------
     // ADMIN FUNCTIONS
     // ----------------------------------------------------------------------

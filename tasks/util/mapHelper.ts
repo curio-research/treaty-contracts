@@ -142,8 +142,12 @@ export const chooseRandomEmptyLandPosition = (tileMap: TileMap): position => {
   return pos;
 };
 
-export const getProperTilePosition = (position: position, tileSize: number): position => {
-  return { x: position.x - (position.x % tileSize), y: position.y - (position.y % tileSize) };
+export const getPositionFromLargeTilePosition = (position: position, tileWidth: number): position => {
+  return { x: position.x * tileWidth, y: position.y * tileWidth };
+};
+
+export const getProperTilePosition = (position: position, tileWidth: number): position => {
+  return { x: position.x - (position.x % tileWidth), y: position.y - (position.y % tileWidth) };
 };
 
 // fixmap helpers
@@ -183,18 +187,14 @@ export const initializeFixmap = async (hre: HardhatRuntimeEnvironment, diamond: 
   await diamond.connect(player3).foundCity(player3SettlerId, getImmediateSurroundingPositions(player3Pos), '');
   await diamond.connect(player4).foundCity(player4SettlerId, getImmediateSurroundingPositions(player4Pos), '');
 
-  const players = [player1Id];
-
   // spawn armies
-
-  // create army at base
   await diamond.createArmy(player1Id, getRightPos(player1Pos));
   let entity = (await diamond.getEntity()).toNumber();
-  await (await diamond.setComponentValue(Speed, entity, encodeUint256(2))).wait();
+  await (await diamond.setComponentValue(Speed, entity, encodeUint256(5))).wait();
 
   await diamond.createArmy(player2Id, getRightPos(getRightPos(player1Pos)));
   entity = (await diamond.getEntity()).toNumber();
-  await (await diamond.setComponentValue(Speed, entity, encodeUint256(2))).wait();
+  await (await diamond.setComponentValue(Speed, entity, encodeUint256(5))).wait();
 };
 
 export const addGetEntity = async (diamond: Curio): Promise<number> => {

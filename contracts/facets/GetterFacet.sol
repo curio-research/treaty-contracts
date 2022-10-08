@@ -30,8 +30,8 @@ contract GetterFacet is UseStorage {
         return GameLib.getTemplateByInventoryType(_inventoryType);
     }
 
-    function getArmyConstituents(uint256 _armyID) external returns (uint256[] memory) {
-        return GameLib.getArmyConstituents(_armyID);
+    function getConstituents(uint256 _armyID) external returns (uint256[] memory) {
+        return GameLib.getConstituents(_armyID);
     }
 
     function getCityGuard(uint256 _cityID) external returns (uint256) {
@@ -81,8 +81,8 @@ contract GetterFacet is UseStorage {
         return Set(gs().entities).getAll();
     }
 
-    function getCityAt(Position memory _position) external returns (uint256) {
-        return GameLib.getCityAt(_position);
+    function getCityAtTile(Position memory _startPosition) external returns (uint256) {
+        return GameLib.getCityAtTile(_startPosition);
     }
 
     function getCityCenter(uint256 _cityID) external returns (uint256) {

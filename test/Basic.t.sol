@@ -143,9 +143,9 @@ contract TreatyTest is Test, DiamondDeployTest {
         {
             assertEq(abi.decode(getter.getComponent("Position").getBytesValue(moscowArmyID), (Position)).y, 25);
             assertEq(abi.decode(getter.getComponent("Position").getBytesValue(kievArmyID), (Position)).y, 30);
-            moscowInfantryAmount = abi.decode(getter.getComponent("Amount").getBytesValue(getter.getArmyConstituents(moscowArmyID)[1]), (uint256));
+            moscowInfantryAmount = abi.decode(getter.getComponent("Amount").getBytesValue(getter.getConstituents(moscowArmyID)[1]), (uint256));
             assertEq(moscowInfantryAmount, 500);
-            kievArcherAmount = abi.decode(getter.getComponent("Amount").getBytesValue(getter.getArmyConstituents(kievArmyID)[1]), (uint256));
+            kievArcherAmount = abi.decode(getter.getComponent("Amount").getBytesValue(getter.getConstituents(kievArmyID)[1]), (uint256));
             assertEq(kievArcherAmount, 70);
             console.log("Everything is in order");
         }
@@ -161,11 +161,11 @@ contract TreatyTest is Test, DiamondDeployTest {
         {
             assertTrue(Set(getter.getEntitiesAddr()).includes(moscowArmyID));
             assertTrue(Set(getter.getEntitiesAddr()).includes(kievArmyID));
-            moscowInfantryAmount = abi.decode(getter.getComponent("Amount").getBytesValue(getter.getArmyConstituents(moscowArmyID)[1]), (uint256));
+            moscowInfantryAmount = abi.decode(getter.getComponent("Amount").getBytesValue(getter.getConstituents(moscowArmyID)[1]), (uint256));
             assertGe(moscowInfantryAmount, 500 - 20);
             assertLe(moscowInfantryAmount, 500 - 3);
-            uint256 archerIndex = getter.getArmyConstituents(kievArmyID).length == 2 ? 1 : 0;
-            kievArcherAmount = abi.decode(getter.getComponent("Amount").getBytesValue(getter.getArmyConstituents(kievArmyID)[archerIndex]), (uint256));
+            uint256 archerIndex = getter.getConstituents(kievArmyID).length == 2 ? 1 : 0;
+            kievArcherAmount = abi.decode(getter.getComponent("Amount").getBytesValue(getter.getConstituents(kievArmyID)[archerIndex]), (uint256));
             assertGe(kievArcherAmount, 70 - 50);
             assertLe(kievArcherAmount, 70 - 20);
             console.log("Casualties are heavy on both sides, but especially for Kiev");
@@ -197,12 +197,12 @@ contract TreatyTest is Test, DiamondDeployTest {
             vm.warp(time);
             game.battle(moscowArmyID, kievID);
             vm.stopPrank();
-            moscowInfantryAmount = abi.decode(getter.getComponent("Amount").getBytesValue(getter.getArmyConstituents(moscowArmyID)[1]), (uint256));
+            moscowInfantryAmount = abi.decode(getter.getComponent("Amount").getBytesValue(getter.getConstituents(moscowArmyID)[1]), (uint256));
             assertGe(moscowInfantryAmount, 500 - 40);
             assertLe(moscowInfantryAmount, 500 - 20); // FIXME
             uint256 kievDefenseAmount = abi.decode(getter.getComponent("Amount").getBytesValue(getter.getCityGuard(kievID)), (uint256));
-            assertGe(kievDefenseAmount, _generateWorldConstants().cityAmount - 50);
-            assertLe(moscowInfantryAmount, _generateWorldConstants().cityAmount - 20); // FIXME
+            assertGe(kievDefenseAmount, _generateWorldConstants().cityGuardAmount - 50);
+            assertLe(moscowInfantryAmount, _generateWorldConstants().cityGuardAmount - 20); // FIXME
             console.log("Moscow encounters great setback occupying Kiev");
         }
         time += 2;

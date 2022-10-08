@@ -58,6 +58,7 @@ contract DiamondDeployTest is Test {
     uint256 public cavalryTemplateID;
     uint256 public infantryTemplateID;
     uint256 public archerTemplateID;
+    uint256 public guardTemplateID;
     uint256 public goldTemplateID;
 
     // we assume these two facet selectors do not change. If they do however, we should use getSelectors
@@ -205,6 +206,14 @@ contract DiamondDeployTest is Test {
         admin.setComponentValue("MoveCooldown", archerTemplateID, abi.encode(1));
         admin.setComponentValue("BattleCooldown", archerTemplateID, abi.encode(2));
 
+        // Troop: Guard
+        guardTemplateID = admin.addEntity();
+        admin.setComponentValue("Tag", guardTemplateID, abi.encode("TroopTemplate"));
+        admin.setComponentValue("InventoryType", guardTemplateID, abi.encode("Guard"));
+        admin.setComponentValue("Health", guardTemplateID, abi.encode(120));
+        admin.setComponentValue("Attack", guardTemplateID, abi.encode(60));
+        admin.setComponentValue("Defense", guardTemplateID, abi.encode(120));
+
         // Resource: Gold
         goldTemplateID = admin.addEntity();
         admin.setComponentValue("Tag", goldTemplateID, abi.encode("ResourceTemplate"));
@@ -212,16 +221,18 @@ contract DiamondDeployTest is Test {
         admin.setComponentValue("Duration", goldTemplateID, abi.encode(1));
 
         // Register template shortcuts
-        string[] memory templateNames = new string[](4);
-        uint256[] memory templateIDs = new uint256[](4);
+        string[] memory templateNames = new string[](5);
+        uint256[] memory templateIDs = new uint256[](5);
         templateNames[0] = "Cavalry";
         templateNames[1] = "Infantry";
         templateNames[2] = "Archer";
-        templateNames[3] = "Gold";
+        templateNames[3] = "Guard";
+        templateNames[4] = "Gold";
         templateIDs[0] = cavalryTemplateID;
         templateIDs[1] = infantryTemplateID;
         templateIDs[2] = archerTemplateID;
-        templateIDs[3] = goldTemplateID;
+        templateIDs[3] = guardTemplateID;
+        templateIDs[4] = goldTemplateID;
         admin.registerTemplateShortcuts(templateNames, templateIDs);
 
         vm.stopPrank();
@@ -243,13 +254,10 @@ contract DiamondDeployTest is Test {
                 cityPackCost: 30,
                 maxInventoryCapacity: 5000,
                 initCityGold: 1000,
-                cityHealth: 120,
-                cityAttack: 60,
-                cityDefense: 120,
-                armyBattleRange: 5,
-                cityBattleRange: 18,
                 tileWidth: 10,
-                cityAmount: 1000 // DO NOT REMOVE THIS COMMENT
+                battleRange: 5,
+                tileGuardAmount: 1000,
+                cityGuardAmount: 1000 // DO NOT REMOVE THIS COMMENT
             });
     }
 
