@@ -197,7 +197,6 @@ export interface CurioInterface extends utils.Interface {
     "_getComponent(string)": FunctionFragment;
     "_getComponentValue(string,uint256)": FunctionFragment;
     "concatenate(uint256[],uint256[])": FunctionFragment;
-    "difference(Set,Set)": FunctionFragment;
     "getAddress(string,uint256)": FunctionFragment;
     "getAddressComponent(string)": FunctionFragment;
     "getBool(string,uint256)": FunctionFragment;
@@ -273,7 +272,6 @@ export interface CurioInterface extends utils.Interface {
       | "_getComponent"
       | "_getComponentValue"
       | "concatenate"
-      | "difference"
       | "getAddress"
       | "getAddressComponent"
       | "getBool"
@@ -519,10 +517,6 @@ export interface CurioInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "concatenate",
     values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<BigNumberish>[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "difference",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "getAddress",
@@ -777,7 +771,6 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "concatenate",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "difference", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getAddress", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getAddressComponent",
@@ -1231,12 +1224,6 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
 
-    difference(
-      set1: PromiseOrValue<string>,
-      set2: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber[]]>;
-
     getAddress(
       _componentName: PromiseOrValue<string>,
       _entity: PromiseOrValue<BigNumberish>,
@@ -1602,12 +1589,6 @@ export interface Curio extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
-  difference(
-    set1: PromiseOrValue<string>,
-    set2: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber[]>;
-
   getAddress(
     _componentName: PromiseOrValue<string>,
     _entity: PromiseOrValue<BigNumberish>,
@@ -1970,12 +1951,6 @@ export interface Curio extends BaseContract {
     concatenate(
       _arr1: PromiseOrValue<BigNumberish>[],
       _arr2: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<BigNumber[]>;
-
-    difference(
-      set1: PromiseOrValue<string>,
-      set2: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
@@ -2397,12 +2372,6 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    difference(
-      set1: PromiseOrValue<string>,
-      set2: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     getAddress(
       _componentName: PromiseOrValue<string>,
       _entity: PromiseOrValue<BigNumberish>,
@@ -2764,12 +2733,6 @@ export interface Curio extends BaseContract {
     concatenate(
       _arr1: PromiseOrValue<BigNumberish>[],
       _arr2: PromiseOrValue<BigNumberish>[],
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    difference(
-      set1: PromiseOrValue<string>,
-      set2: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

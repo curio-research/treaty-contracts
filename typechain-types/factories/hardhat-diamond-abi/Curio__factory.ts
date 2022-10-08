@@ -1359,30 +1359,6 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "contract Set",
-        name: "set1",
-        type: "Set",
-      },
-      {
-        internalType: "contract Set",
-        name: "set2",
-        type: "Set",
-      },
-    ],
-    name: "difference",
-    outputs: [
-      {
-        internalType: "uint256[]",
-        name: "",
-        type: "uint256[]",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
         internalType: "string",
         name: "_componentName",
         type: "string",
