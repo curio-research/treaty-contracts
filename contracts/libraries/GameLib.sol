@@ -224,8 +224,7 @@ library GameLib {
 
                     if (ECSLib.getUint("Amount", defenderConstituentIDs[j]) == 0) continue;
                     loss =
-                        (troopTypeBonus * 
-                        (GameLib.sqrt(ECSLib.getUint("Amount", offenderConstituentIDs[i])) * ECSLib.getUint("Attack", ECSLib.getUint("Template", offenderConstituentIDs[i])) * 2)) / //
+                        (troopTypeBonus * (GameLib.sqrt(ECSLib.getUint("Amount", offenderConstituentIDs[i])) * ECSLib.getUint("Attack", ECSLib.getUint("Template", offenderConstituentIDs[i])) * 2)) / //
                         (ECSLib.getUint("Defense", ECSLib.getUint("Template", defenderConstituentIDs[j])) * ECSLib.getUint("Health", ECSLib.getUint("Template", defenderConstituentIDs[j])));
 
                     if (loss >= ECSLib.getUint("Amount", defenderConstituentIDs[j])) {
