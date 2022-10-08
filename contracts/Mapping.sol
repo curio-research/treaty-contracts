@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-contract Mapping {
+contract UintBoolMapping {
     mapping(uint256 => bool) public val;
 
     function set(uint256 _idx, bool _val) public {

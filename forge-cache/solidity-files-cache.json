@@ -95,8 +95,8 @@
       }
     },
     "contracts/Mapping.sol": {
-      "lastModificationDate": 1665250877140,
-      "contentHash": "c5404c530973decea25ff73dfc6af1b8",
+      "lastModificationDate": 1665252199808,
+      "contentHash": "04811aac85026d7704c1d8a9c09468ad",
       "sourceName": "contracts/Mapping.sol",
       "solcConfig": {
         "settings": {
@@ -128,8 +128,8 @@
       "imports": [],
       "versionRequirement": "^0.8.4",
       "artifacts": {
-        "Mapping": {
-          "0.8.4+commit.c7e474f2.Darwin.appleclang": "Mapping.sol/Mapping.json"
+        "UintBoolMapping": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "Mapping.sol/UintBoolMapping.json"
         }
       }
     },
@@ -173,8 +173,8 @@
       }
     },
     "contracts/Set.sol": {
-      "lastModificationDate": 1665248117249,
-      "contentHash": "8dccdeffd87992458b43348a86b34bcb",
+      "lastModificationDate": 1665252436681,
+      "contentHash": "b978f5ba69b3acb9f8424bbe0312a512",
       "sourceName": "contracts/Set.sol",
       "solcConfig": {
         "settings": {
@@ -206,9 +206,6 @@
       "imports": [],
       "versionRequirement": "^0.8.4",
       "artifacts": {
-        "Mapping": {
-          "0.8.4+commit.c7e474f2.Darwin.appleclang": "Set.sol/Mapping.json"
-        },
         "Set": {
           "0.8.4+commit.c7e474f2.Darwin.appleclang": "Set.sol/Set.json"
         }
@@ -801,8 +798,8 @@
       }
     },
     "contracts/libraries/ECSLib.sol": {
-      "lastModificationDate": 1665250880045,
-      "contentHash": "a8e1b08a9f67cf7babf8d4697a969f2d",
+      "lastModificationDate": 1665252834706,
+      "contentHash": "27139510f8a9fb1b0352117aeab8a80f",
       "sourceName": "contracts/libraries/ECSLib.sol",
       "solcConfig": {
         "settings": {
@@ -1622,8 +1619,8 @@
       }
     },
     "test/ECS.t.sol": {
-      "lastModificationDate": 1665250080897,
-      "contentHash": "00e1e4c540056f80c055a481cdc87877",
+      "lastModificationDate": 1665252693805,
+      "contentHash": "f0fd0abe0e8b6fefb0c750080ca7607a",
       "sourceName": "test/ECS.t.sol",
       "solcConfig": {
         "settings": {
