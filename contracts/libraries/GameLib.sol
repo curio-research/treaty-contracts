@@ -184,6 +184,26 @@ library GameLib {
         ECSLib.removeEntity(gatherID);
     }
 
+    function getAttackBonus(uint256 _offenderTemplateID, uint256 _defenderTemplateID) public returns (uint256) {
+        uint256 horsemanTemplateId = gs().templates["Horseman"];
+        uint256 warriorTemplateId = gs().templates["Warrior"];
+        uint256 slingerTemplateId = gs().templates["Slinger"];
+
+        if (_offenderTemplateID == horsemanTemplateId) {
+            if (_defenderTemplateID == warriorTemplateId) return 80;
+            if (_defenderTemplateID == slingerTemplateId) return 120;
+            else return 100;
+        } else if (_offenderTemplateID == warriorTemplateId) {
+            if (_defenderTemplateID == slingerTemplateId) return 80;
+            if (_defenderTemplateID == horsemanTemplateId) return 120;
+            else return 100;
+        } else if (_offenderTemplateID == slingerTemplateId) {
+            if (_defenderTemplateID == horsemanTemplateId) return 80;
+            if (_defenderTemplateID == warriorTemplateId) return 120;
+            else return 100;
+        } else return 100;
+    }
+
     function attack(
         uint256 _offenderID,
         uint256 _defenderID,
@@ -200,10 +220,13 @@ library GameLib {
             for (uint256 i = 0; i < offenderConstituentIDs.length; i++) {
                 if (ECSLib.getUint("Amount", offenderConstituentIDs[i]) == 0) continue;
                 for (uint256 j = 0; j < defenderConstituentIDs.length; j++) {
+                    uint256 troopTypeBonus = getAttackBonus(ECSLib.getUint("Template", offenderConstituentIDs[i]), ECSLib.getUint("Template", defenderConstituentIDs[j]));
+
                     if (ECSLib.getUint("Amount", defenderConstituentIDs[j]) == 0) continue;
                     loss =
-                        (GameLib.sqrt(ECSLib.getUint("Amount", offenderConstituentIDs[i])) * ECSLib.getUint("Attack", ECSLib.getUint("Template", offenderConstituentIDs[i])) * 2 * 100) / //
+                        (troopTypeBonus * (GameLib.sqrt(ECSLib.getUint("Amount", offenderConstituentIDs[i])) * ECSLib.getUint("Attack", ECSLib.getUint("Template", offenderConstituentIDs[i])) * 2)) / //
                         (ECSLib.getUint("Defense", ECSLib.getUint("Template", defenderConstituentIDs[j])) * ECSLib.getUint("Health", ECSLib.getUint("Template", defenderConstituentIDs[j])));
+
                     if (loss >= ECSLib.getUint("Amount", defenderConstituentIDs[j])) {
                         ECSLib.removeEntity(defenderConstituentIDs[j]);
                     } else {
