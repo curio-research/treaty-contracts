@@ -5,6 +5,7 @@ import "contracts/libraries/Storage.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 import {Position, ValueType, QueryCondition, QueryType} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
+import {UintBoolMapping} from "contracts/Mapping.sol";
 import {Component} from "contracts/Component.sol";
 import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, UintComponent, UintArrayComponent} from "contracts/TypedComponents.sol";
 
@@ -324,92 +325,73 @@ library ECSLib {
     }
 
     function intersectionAsSet(Set _set1, Set _set2) public returns (Set) {
-        uint256[] memory _vals = intersection(_set1, _set2);
-        Set _res = new Set();
-        for (uint256 i = 0; i < _vals.length; i++) {
-            _res.add(_vals[i]);
+        UintBoolMapping searchedElements = new UintBoolMapping();
+        Set intersections = new Set();
+
+        // Loop through first set
+        uint256[] memory set1elements = _set1.getAll();
+        uint256 element;
+        for (uint256 i = 0; i < _set1.size(); i++) {
+            element = set1elements[i];
+
+            // Check if element is in second set
+            if (!searchedElements.val(element)) {
+                if (_set2.includes(element)) {
+                    intersections.add(element);
+                }
+                searchedElements.set(element, true);
+            }
         }
 
-        return _res;
+        // Loop through second set
+        uint256[] memory set2elements = _set2.getAll();
+        for (uint256 i = 0; i < _set2.size(); i++) {
+            element = set2elements[i];
+
+            // Check if element is in first set
+            if (!searchedElements.val(element)) {
+                if (_set1.includes(element)) {
+                    intersections.add(element);
+                }
+                searchedElements.set(element, true);
+            }
+        }
+
+        return intersections;
     }
 
     // Set-theoretic intersection
     function intersection(Set _set1, Set _set2) public returns (uint256[] memory) {
-        Set _searchedElements = new Set();
-
-        uint256[] memory _temp = new uint256[](_set1.size() + _set2.size());
-        uint256 _resultLength = 0;
-
-        // Loop through first set
-        for (uint256 i = 0; i < _set1.size(); i++) {
-            uint256 _element = _set1.getAll()[i];
-
-            // Check if element is in second set
-            if (!_searchedElements.includes(_element)) {
-                if (_set2.includes(_element)) {
-                    _temp[_resultLength] = _element;
-                    _resultLength++;
-                }
-            }
-
-            _searchedElements.add(_element);
-        }
-
-        // Loop through second set
-        for (uint256 i = 0; i < _set2.size(); i++) {
-            uint256 _element = _set2.getAll()[i];
-
-            // Check if element is in first set
-            if (!_searchedElements.includes(_element)) {
-                if (_set1.includes(_element)) {
-                    _temp[_resultLength] = _element;
-                    _resultLength++;
-                }
-            }
-
-            _searchedElements.add(_element);
-        }
-
-        // Copy result to array with known length
-        uint256[] memory _result = new uint256[](_resultLength);
-        for (uint256 i = 0; i < _resultLength; i++) {
-            _result[i] = _temp[i];
-        }
-
-        return _result;
+        return intersectionAsSet(_set1, _set2).getAll();
     }
 
     // Set-theoretic difference
-    function difference(Set set1, Set set2) public view returns (uint256[] memory) {
-        uint256[] memory _temp = new uint256[](set1.size());
-        uint256 _resultLength = 0;
+    function difference(Set _set1, Set _set2) public returns (uint256[] memory) {
+        return differenceAsSet(_set1, _set2).getAll();
+    }
 
-        // Loop through first set
+    function differenceAsSet(Set set1, Set set2) public returns (Set) {
+        Set res = new Set();
+
         for (uint256 i = 0; i < set1.size(); i++) {
             uint256 _element = set1.getAll()[i];
 
             // Check if element is in second set
             if (!set2.includes(_element)) {
-                _temp[_resultLength] = _element;
-                _resultLength++;
+                res.add(_element);
             }
         }
 
-        uint256[] memory _result = new uint256[](_resultLength);
-        for (uint256 i = 0; i < _resultLength; i++) {
-            _result[i] = _temp[i];
-        }
-
-        return _result;
+        return res;
     }
 
     // Set-theoretic union
     function union(Set _set1, Set _set2) public returns (uint256[] memory) {
-        uint256[] memory _arr1 = difference(_set1, _set2);
-        uint256[] memory _arr2 = intersection(_set1, _set2);
-        uint256[] memory _arr3 = difference(_set2, _set1);
+        uint256[] memory arr1 = difference(_set1, _set2);
+        uint256[] memory arr2 = intersection(_set1, _set2);
+        uint256[] memory arr3 = difference(_set2, _set1);
 
-        return concatenate(concatenate(_arr1, _arr2), _arr3);
+        return concatenate(concatenate(arr1, arr2), arr3);
     }
 
     function concatenate(uint256[] memory _arr1, uint256[] memory _arr2) public pure returns (uint256[] memory) {

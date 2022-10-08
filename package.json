@@ -13,7 +13,8 @@
     "kill": "lsof -ti:8545 | xargs kill",
     "setup": "yarn link curio-vault",
     "deploy:anvil": "bash ./scripts/deploy.sh",
-    "compile": "npx hardhat compile"
+    "compile": "npx hardhat compile",
+    "clean-git-cache": "git rm -r --cached ."
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.2",
