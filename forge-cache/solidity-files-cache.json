@@ -933,8 +933,8 @@
       }
     },
     "contracts/libraries/Templates.sol": {
-      "lastModificationDate": 1665180767140,
-      "contentHash": "1f089bd023a665fe04daaf1817d60aeb",
+      "lastModificationDate": 1665202556944,
+      "contentHash": "0be0470207e2589401950323081bb285",
       "sourceName": "contracts/libraries/Templates.sol",
       "solcConfig": {
         "settings": {

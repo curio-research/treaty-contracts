@@ -46,7 +46,14 @@ task('deploy', 'deploy contracts')
 
       const tileMap = fixmap ? generateBlankFixmap() : generateMap(SMALL_MAP_INPUT.width, SMALL_MAP_INPUT.height, worldConstants);
 
+      // const time = performance.now();
+      // for (let i = 0; i < 10; i++) {
+      //   const ecsLib = await deployProxy<ECSLib>('ECSLib', player1, hre, []);
+      // }
+      // console.log((performance.now() - time) / 10);
+
       const ecsLib = await deployProxy<ECSLib>('ECSLib', player1, hre, []);
+
       const gameLib = await deployProxy<GameLib>('GameLib', player1, hre, [], { ECSLib: ecsLib.address });
       const templates = await deployProxy<any>('Templates', player1, hre, [], { GameLib: gameLib.address, ECSLib: ecsLib.address });
 
