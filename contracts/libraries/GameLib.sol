@@ -65,9 +65,9 @@ library GameLib {
         }
     }
 
-    function initializeTile(Position memory _startPosition) internal {
+    function initializeTile(Position memory _startPosition) internal returns (uint256) {
         require(isProperTilePosition(_startPosition), "CURIO: Not proper tile position");
-        if (getTileAt(_startPosition) != 0) return;
+        if (getTileAt(_startPosition) != 0) return getTileAt(_startPosition);
 
         // Load constants
         uint256 batchSize = gs().worldConstants.initBatchSize;
@@ -88,7 +88,7 @@ library GameLib {
 
         // Initialize gold mine
         if (terrain == 1 || terrain == 2 || terrain == 3) {
-            if (getResourceAtTile(_startPosition) != 0) return; // avoid initializing two resources on the same tile
+            require(getResourceAtTile(_startPosition) != 0, "CURIO: Something is wrong"); // avoid initializing two resources on the same tile
 
             uint256 goldMineID = ECSLib.addEntity();
             ECSLib.setString("Tag", goldMineID, "Resource");
@@ -124,6 +124,8 @@ library GameLib {
 
         // Initialize defense
         Templates.addConstituent(tileID, gs().templates["Guard"], gs().worldConstants.tileGuardAmount);
+
+        return tileID;
     }
 
     function _goldLevelSelector(uint256 _goldLevel) private pure returns (uint256) {
