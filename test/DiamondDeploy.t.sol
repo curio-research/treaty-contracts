@@ -15,6 +15,7 @@ import "contracts/facets/AdminFacet.sol";
 import "contracts/libraries/Types.sol";
 import "contracts/NATO.sol";
 import "forge-std/console.sol";
+import "forge-std/StdJson.sol";
 
 /// @title diamond deploy foundry template
 /// @notice This contract sets up the diamond for testing and is inherited by other foundry test contracts.
@@ -98,7 +99,12 @@ contract DiamondDeployTest is Test {
         ownership = OwnershipFacet(diamond);
 
         // Register components
-        string memory root = vm.parseJson(2);
+        string memory root = vm.projectRoot();
+        string memory path = string(abi.encodePacked(root, "/test/components/IsComponent.json"));
+        string memory json = vm.readFile(path);
+        ComponentSpec memory componentSpec = abi.decode(bytes(json), (ComponentSpec));
+        console.log("YO!", componentSpec.name);
+
         admin.registerDefaultComponents(diamond);
 
         // Initialize map
