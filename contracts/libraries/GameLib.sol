@@ -177,7 +177,7 @@ library GameLib {
         // Gather
         uint256 _gatherAmount = (block.timestamp - ECSLib.getUint("InitTimestamp", gatherID)) / ECSLib.getUint("Duration", templateID);
         if (_gatherAmount > resourceAmount) _gatherAmount = resourceAmount;
-        if (_gatherAmount > (ECSLib.getUint("Capacity", _armyID) - armyAmount)) _gatherAmount = ECSLib.getUint("Capacity", _armyID) - armyAmount;
+        if (_gatherAmount > (ECSLib.getUint("Load", _armyID) - armyAmount)) _gatherAmount = ECSLib.getUint("Load", _armyID) - armyAmount;
         ECSLib.setUint("Amount", inventoryID, armyAmount + _gatherAmount);
         ECSLib.setUint("Amount", resourceID, resourceAmount - _gatherAmount);
 
