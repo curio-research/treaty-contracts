@@ -98,6 +98,7 @@ contract DiamondDeployTest is Test {
         ownership = OwnershipFacet(diamond);
 
         // Register components
+        string memory root = vm.parseJson(2);
         admin.registerDefaultComponents(diamond);
 
         // Initialize map
