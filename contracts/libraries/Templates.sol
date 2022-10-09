@@ -104,7 +104,7 @@ library Templates {
         ECSLib.setUint("Health", settlerID, 1); // FIXME
         ECSLib.setUint("Speed", settlerID, _speed);
         ECSLib.setUint("LastTimestamp", settlerID, block.timestamp);
-        ECSLib.setUint("MoveCooldown", settlerID, 1);
+        ECSLib.setUint("MoveCooldown", settlerID, 0); // FIXME: change back for deployment
 
         return settlerID;
     }
