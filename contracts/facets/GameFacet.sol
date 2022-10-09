@@ -621,7 +621,6 @@ contract GameFacet is UseStorage {
                 // Victorious against city, occupy regardless of adjacency
                 Templates.addConstituent(_tileID, gs().templates["Guard"], gs().worldConstants.cityGuardAmount);
             }
-
             // if (_occupyUponVictory) {
             //     // Victorious against tile, occupy only if an owned tile is adjacent
             //     Templates.addConstituent(_tileID, gs().templates["Guard"], gs().worldConstants.tileGuardAmount);
