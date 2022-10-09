@@ -434,6 +434,24 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "uint256",
+        name: "_armyId",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_tileID",
+        type: "uint256",
+      },
+    ],
+    name: "claimTile",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "address",
         name: "_treatyToDenounce",
         type: "address",
@@ -514,12 +532,12 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "_goldMineResourceEntity",
+        name: "_goldMineResourceID",
         type: "uint256",
       },
       {
         internalType: "uint256",
-        name: "armyId",
+        name: "armyID",
         type: "uint256",
       },
     ],
@@ -716,6 +734,19 @@ const _abi = [
       },
     ],
     name: "upgradeCity",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_resourceID",
+        type: "uint256",
+      },
+    ],
+    name: "upgradeGoldmine",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

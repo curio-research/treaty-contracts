@@ -5,6 +5,7 @@ import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { position } from './../../util/types/common';
 import { TILE_TYPE, componentNameToId, encodePosition, getImmediateSurroundingPositions, TileMap, Tag, Position, Owner, Health, Speed, Attack, Defense, Load, LastTimestamp, Tags, encodeString, encodeUint256, Capacity, getRightPos } from 'curio-vault';
 import { TILE_WIDTH } from './constants';
+import { Console } from 'console';
 
 const MAX_UINT256 = BigInt(Math.pow(2, 256)) - BigInt(1);
 
@@ -76,7 +77,7 @@ export const generateMap = (worldWidth: number, worldHeight: number, worldConsta
     tileMap.push(col);
   }
 
-  const totalGoldMineDensity = 0.01;
+  const totalGoldMineDensity = 0.5;
   const totalBarbarianDensity = 0.005;
 
   // distribution of gold mines
@@ -94,34 +95,34 @@ export const generateMap = (worldWidth: number, worldHeight: number, worldConsta
   const tileWidth = Number(worldConstants.tileWidth);
 
   for (let i = 0; i < totalGoldmineCount * level1GoldMineDensity; i++) {
-    const pos = getProperTilePosition(chooseRandomEmptyLandPosition(tileMap), tileWidth);
+    const pos = chooseRandomEmptyLandPosition(tileMap);
     tileMap[pos.x][pos.y] = TILE_TYPE.GOLDMINE_LV1;
   }
 
   for (let i = 0; i < totalGoldmineCount * level2GoldMineDensity; i++) {
-    const pos = getProperTilePosition(chooseRandomEmptyLandPosition(tileMap), tileWidth);
+    const pos = chooseRandomEmptyLandPosition(tileMap);
     tileMap[pos.x][pos.y] = TILE_TYPE.GOLDMINE_LV2;
   }
 
   for (let i = 0; i < totalGoldmineCount * level3GoldMineDensity; i++) {
-    const pos = getProperTilePosition(chooseRandomEmptyLandPosition(tileMap), tileWidth);
+    const pos = chooseRandomEmptyLandPosition(tileMap);
     tileMap[pos.x][pos.y] = TILE_TYPE.GOLDMINE_LV3;
   }
 
-  for (let i = 0; i < totalBarbarianDensity * level1BarbarianDensity; i++) {
-    const pos = getProperTilePosition(chooseRandomEmptyLandPosition(tileMap), tileWidth);
-    tileMap[pos.x][pos.y] = TILE_TYPE.BARBARIAN_LV1;
-  }
+  // for (let i = 0; i < totalBarbarianDensity * level1BarbarianDensity; i++) {
+  //   const pos = getProperTilePosition(chooseRandomEmptyLandPosition(tileMap), tileWidth);
+  //   tileMap[pos.x][pos.y] = TILE_TYPE.BARBARIAN_LV1;
+  // }
 
-  for (let i = 0; i < totalBarbarianDensity * level2BarbarianDensity; i++) {
-    const pos = getProperTilePosition(chooseRandomEmptyLandPosition(tileMap), tileWidth);
-    tileMap[pos.x][pos.y] = TILE_TYPE.BARBARIAN_LV2;
-  }
+  // for (let i = 0; i < totalBarbarianDensity * level2BarbarianDensity; i++) {
+  //   const pos = getProperTilePosition(chooseRandomEmptyLandPosition(tileMap), tileWidth);
+  //   tileMap[pos.x][pos.y] = TILE_TYPE.BARBARIAN_LV2;
+  // }
 
-  for (let i = 0; i < totalBarbarianDensity * level3BarbarianDensity; i++) {
-    const pos = getProperTilePosition(chooseRandomEmptyLandPosition(tileMap), tileWidth);
-    tileMap[pos.x][pos.y] = TILE_TYPE.BARBARIAN_LV3;
-  }
+  // for (let i = 0; i < totalBarbarianDensity * level3BarbarianDensity; i++) {
+  //   const pos = getProperTilePosition(chooseRandomEmptyLandPosition(tileMap), tileWidth);
+  //   tileMap[pos.x][pos.y] = TILE_TYPE.BARBARIAN_LV3;
+  // }
 
   return tileMap;
 };

@@ -11,8 +11,8 @@ export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 // ----------------------------------------------------------
 
 export const SMALL_MAP_INPUT: MapInput = {
-  width: 50,
-  height: 50,
+  width: 10,
+  height: 10,
 };
 
 export const TILE_WIDTH = 5;
@@ -20,8 +20,8 @@ export const TILE_WIDTH = 5;
 export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): WorldConstantsStruct => {
   return {
     admin: adminAddr,
-    worldWidth: mapInput.width,
-    worldHeight: mapInput.height,
+    worldWidth: mapInput.width * TILE_WIDTH,
+    worldHeight: mapInput.height * TILE_WIDTH,
     numInitTerrainTypes: 7,
     initBatchSize: 30,
     maxCityCountPerPlayer: 3,
@@ -30,10 +30,10 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): W
     cityUpgradeGoldCost: 50,
     cityPackCost: 0,
     maxInventoryCapacity: 1000,
-    initCityGold: 100,
+    initCityGold: 100000000,
     tileWidth: TILE_WIDTH,
     battleRange: TILE_WIDTH,
-    tileGuardAmount: 100,
+    tileGuardAmount: 1,
     cityGuardAmount: 1000,
   };
 };
@@ -61,7 +61,7 @@ export const createTemplates = async (diamond: Curio) => {
   await (await diamond.setComponentValue(BattleCooldown, entity, encodeUint256(2))).wait();
   await (await diamond.setComponentValue(Attack, entity, encodeUint256(60))).wait();
   await (await diamond.setComponentValue(Defense, entity, encodeUint256(120))).wait();
-  await (await diamond.setComponentValue(Duration, entity, encodeUint256(1))).wait();
+  await (await diamond.setComponentValue(Duration, entity, encodeUint256(0))).wait();
   await (await diamond.setComponentValue(Load, entity, encodeUint256(5))).wait();
   await (await diamond.setComponentValue(Cost, entity, encodeUint256(1))).wait();
   templateNames.push(inventoryType);
@@ -78,7 +78,7 @@ export const createTemplates = async (diamond: Curio) => {
   await (await diamond.setComponentValue(BattleCooldown, entity, encodeUint256(2))).wait();
   await (await diamond.setComponentValue(Attack, entity, encodeUint256(60))).wait();
   await (await diamond.setComponentValue(Defense, entity, encodeUint256(120))).wait();
-  await (await diamond.setComponentValue(Duration, entity, encodeUint256(1))).wait();
+  await (await diamond.setComponentValue(Duration, entity, encodeUint256(0))).wait();
   await (await diamond.setComponentValue(Load, entity, encodeUint256(6))).wait();
   await (await diamond.setComponentValue(Cost, entity, encodeUint256(1))).wait();
   templateNames.push(inventoryType);
@@ -95,7 +95,7 @@ export const createTemplates = async (diamond: Curio) => {
   await (await diamond.setComponentValue(BattleCooldown, entity, encodeUint256(2))).wait();
   await (await diamond.setComponentValue(Attack, entity, encodeUint256(60))).wait();
   await (await diamond.setComponentValue(Defense, entity, encodeUint256(125))).wait();
-  await (await diamond.setComponentValue(Duration, entity, encodeUint256(1))).wait();
+  await (await diamond.setComponentValue(Duration, entity, encodeUint256(0))).wait();
   await (await diamond.setComponentValue(Load, entity, encodeUint256(6))).wait();
   await (await diamond.setComponentValue(Cost, entity, encodeUint256(1))).wait();
   templateNames.push(inventoryType);

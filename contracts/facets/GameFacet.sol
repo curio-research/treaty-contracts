@@ -366,7 +366,8 @@ contract GameFacet is UseStorage {
 
         // Get harvest amount
         uint256 goldMineHarvestCap = ECSLib.getUint("Load", _goldMineResourceID);
-        uint256 rawHarvestAmount = (block.timestamp - ECSLib.getUint("LastTimestamp", _goldMineResourceID)); // 1 second = 1 gold
+        uint256 goldmineLevel = ECSLib.getUint("Level", _goldMineResourceID);
+        uint256 rawHarvestAmount = GameLib._goldmineProductionRate(goldmineLevel) * (block.timestamp - ECSLib.getUint("LastTimestamp", _goldMineResourceID)); // 1 second = 1 gold
         uint256 harvestAmount = GameLib.min(goldMineHarvestCap, rawHarvestAmount); // harvest amount must not exceed the gold cap
 
         // Update gold mine last harvest
@@ -562,18 +563,67 @@ contract GameFacet is UseStorage {
             "CURIO: Too far"
         );
 
+        uint256 cityID = GameLib.getCityAtTile(ECSLib.getPosition("StartPosition", _tileID));
+
         // Execute one round of battle
         bool victory = GameLib.attack(_armyID, _tileID, false, _occupyUponVictory, false);
         if (victory) {
-            uint256 cityID = GameLib.getCityAtTile(ECSLib.getPosition("StartPosition", _tileID));
             if (cityID != NULL) {
                 Templates.addConstituent(_tileID, gs().templates["Guard"], gs().worldConstants.cityGuardAmount);
             } else {
-                Templates.addConstituent(_tileID, gs().templates["Guard"], gs().worldConstants.tileGuardAmount);
+                // this means that it's a tile - don't add a guard back.
+                // Templates.addConstituent(_tileID, gs().templates["Guard"], gs().worldConstants.tileGuardAmount);
             }
         } else {
             GameLib.attack(_tileID, _armyID, false, false, true);
         }
+    }
+
+    // claiming a tile
+    function claimTile(uint256 _armyId, uint256 _tileID) public {
+        GameLib.validEntityCheck(_tileID);
+        GameLib.ongoingGameCheck();
+        GameLib.activePlayerCheck(msg.sender);
+
+        require(ECSLib.getUint("Owner", _tileID) == 0, "CURIO: Tile has owner");
+
+        // TODO: distance check
+        Position memory armyPosition = ECSLib.getPosition("Position", _armyId);
+        Position memory tilePosition = ECSLib.getPosition("StartPosition", _tileID);
+        require(GameLib.coincident(GameLib.getProperTilePosition(armyPosition), tilePosition), "CURIO: Army is not on the selected tile");
+
+        // if there are no constituents on this current tile, add a constituent and claim the tile yours.
+        require(GameLib.getConstituents(_tileID).length == 0, "CURIO: Tile has defenders");
+
+        Templates.addConstituent(_tileID, gs().templates["Guard"], gs().worldConstants.tileGuardAmount);
+        uint256 playerID = GameLib.getPlayer(msg.sender);
+
+        // transfer ownership of new tile to the claiming player
+        ECSLib.setUint("Owner", _tileID, playerID);
+    }
+
+    function upgradeGoldmine(uint256 _resourceID) public {
+        GameLib.validEntityCheck(_resourceID);
+        GameLib.ongoingGameCheck();
+        GameLib.activePlayerCheck(msg.sender);
+
+        // tile needs to be yours
+        uint256 playerID = GameLib.getPlayer(msg.sender);
+        Position memory goldresourceStartPosition = ECSLib.getPosition("StartPosition", _resourceID);
+        uint256 tileID = GameLib.getTileAt(goldresourceStartPosition);
+        require(ECSLib.getUint("Owner", tileID) == playerID, "CURIO: Tile isn't yours");
+
+        // get current goldmine level
+        uint256 currentGoldmineLevel = ECSLib.getUint("Level", _resourceID);
+        uint256 upgradeCost = GameLib._goldmineUpgradeCost(currentGoldmineLevel);
+
+        uint256 playerCityID = GameLib.getPlayerCity(playerID);
+        uint256 playerCityGold = GameLib.getCityGold(playerCityID);
+
+        require(playerCityGold >= upgradeCost, "CURIO: Insufficient gold for upgrade");
+
+        ECSLib.setUint("Level", _resourceID, currentGoldmineLevel + 1);
+        GameLib.setCityGold(playerCityID, playerCityGold - upgradeCost);
     }
 
     // --------------------------

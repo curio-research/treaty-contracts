@@ -30,7 +30,7 @@ contract AdminFacet is UseStorage {
         Templates.addArmy(_playerID, _position, 0, 1, 1, 2);
     }
 
-    function initializeTile(Position memory _startPosition) external onlyAdmin {
+    function initializeTile(Position memory _startPosition) public onlyAdmin {
         GameLib.initializeTile(_startPosition);
     }
 
@@ -95,7 +95,7 @@ contract AdminFacet is UseStorage {
 
     // FIXME: be able to sync with vault
     function registerDefaultComponents(address _gameAddr) external onlyAdmin {
-        ComponentSpec[] memory _componentSpecs = new ComponentSpec[](39);
+        ComponentSpec[] memory _componentSpecs = new ComponentSpec[](38);
 
         _componentSpecs[0] = ComponentSpec({name: "IsComponent", valueType: ValueType.BOOL});
         _componentSpecs[1] = ComponentSpec({name: "Tag", valueType: ValueType.STRING});
@@ -130,12 +130,11 @@ contract AdminFacet is UseStorage {
         _componentSpecs[30] = ComponentSpec({name: "Treaty", valueType: ValueType.ADDRESS});
         _componentSpecs[31] = ComponentSpec({name: "Cost", valueType: ValueType.UINT});
         _componentSpecs[32] = ComponentSpec({name: "Army", valueType: ValueType.UINT});
-        _componentSpecs[33] = ComponentSpec({name: "Capacity", valueType: ValueType.UINT});
-        _componentSpecs[34] = ComponentSpec({name: "StartPosition", valueType: ValueType.POSITION});
-        _componentSpecs[35] = ComponentSpec({name: "MoveCooldown", valueType: ValueType.UINT});
-        _componentSpecs[36] = ComponentSpec({name: "BattleCooldown", valueType: ValueType.UINT});
-        _componentSpecs[37] = ComponentSpec({name: "Terrain", valueType: ValueType.UINT});
-        _componentSpecs[38] = ComponentSpec({name: "CanBattle", valueType: ValueType.BOOL});
+        _componentSpecs[33] = ComponentSpec({name: "StartPosition", valueType: ValueType.POSITION});
+        _componentSpecs[34] = ComponentSpec({name: "MoveCooldown", valueType: ValueType.UINT});
+        _componentSpecs[35] = ComponentSpec({name: "BattleCooldown", valueType: ValueType.UINT});
+        _componentSpecs[36] = ComponentSpec({name: "Terrain", valueType: ValueType.UINT});
+        _componentSpecs[37] = ComponentSpec({name: "CanBattle", valueType: ValueType.BOOL});
 
         GameLib.registerComponents(_gameAddr, _componentSpecs);
     }

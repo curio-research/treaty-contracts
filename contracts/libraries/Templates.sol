@@ -66,6 +66,7 @@ library Templates {
         ECSLib.setPosition("StartPosition", tileID, _startPosition);
         ECSLib.setUint("City", tileID, 0);
         ECSLib.setUint("Owner", tileID, 0);
+        ECSLib.setUint("Level", tileID, 0);
 
         return tileID;
     }
