@@ -52,6 +52,7 @@ export interface GameFacetInterface extends utils.Interface {
     "startTroopProduction(uint256,uint256,uint256)": FunctionFragment;
     "upgradeCity(uint256,(uint256,uint256)[])": FunctionFragment;
     "upgradeGoldmine(uint256)": FunctionFragment;
+    "upgradeTile(uint256)": FunctionFragment;
   };
 
   getFunction(
@@ -73,6 +74,7 @@ export interface GameFacetInterface extends utils.Interface {
       | "startTroopProduction"
       | "upgradeCity"
       | "upgradeGoldmine"
+      | "upgradeTile"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -155,6 +157,10 @@ export interface GameFacetInterface extends utils.Interface {
     functionFragment: "upgradeGoldmine",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
+  encodeFunctionData(
+    functionFragment: "upgradeTile",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "authorizeGame",
@@ -206,6 +212,10 @@ export interface GameFacetInterface extends utils.Interface {
     functionFragment: "upgradeGoldmine",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "upgradeTile",
+    data: BytesLike
+  ): Result;
 
   events: {};
 }
@@ -249,7 +259,7 @@ export interface GameFacet extends BaseContract {
     ): Promise<ContractTransaction>;
 
     claimTile(
-      _armyId: PromiseOrValue<BigNumberish>,
+      _armyID: PromiseOrValue<BigNumberish>,
       _tileID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -335,6 +345,11 @@ export interface GameFacet extends BaseContract {
       _resourceID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    upgradeTile(
+      _tileID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
   };
 
   authorizeGame(
@@ -349,7 +364,7 @@ export interface GameFacet extends BaseContract {
   ): Promise<ContractTransaction>;
 
   claimTile(
-    _armyId: PromiseOrValue<BigNumberish>,
+    _armyID: PromiseOrValue<BigNumberish>,
     _tileID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -436,6 +451,11 @@ export interface GameFacet extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  upgradeTile(
+    _tileID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
     authorizeGame(
       _burnerAddress: PromiseOrValue<string>,
@@ -449,7 +469,7 @@ export interface GameFacet extends BaseContract {
     ): Promise<void>;
 
     claimTile(
-      _armyId: PromiseOrValue<BigNumberish>,
+      _armyID: PromiseOrValue<BigNumberish>,
       _tileID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -533,6 +553,11 @@ export interface GameFacet extends BaseContract {
 
     upgradeGoldmine(
       _resourceID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    upgradeTile(
+      _tileID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -552,7 +577,7 @@ export interface GameFacet extends BaseContract {
     ): Promise<BigNumber>;
 
     claimTile(
-      _armyId: PromiseOrValue<BigNumberish>,
+      _armyID: PromiseOrValue<BigNumberish>,
       _tileID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -636,6 +661,11 @@ export interface GameFacet extends BaseContract {
 
     upgradeGoldmine(
       _resourceID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    upgradeTile(
+      _tileID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
@@ -653,7 +683,7 @@ export interface GameFacet extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     claimTile(
-      _armyId: PromiseOrValue<BigNumberish>,
+      _armyID: PromiseOrValue<BigNumberish>,
       _tileID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -737,6 +767,11 @@ export interface GameFacet extends BaseContract {
 
     upgradeGoldmine(
       _resourceID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    upgradeTile(
+      _tileID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };

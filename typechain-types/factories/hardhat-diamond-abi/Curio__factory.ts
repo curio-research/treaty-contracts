@@ -435,7 +435,7 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "_armyId",
+        name: "_armyID",
         type: "uint256",
       },
       {
@@ -747,6 +747,19 @@ const _abi = [
       },
     ],
     name: "upgradeGoldmine",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_tileID",
+        type: "uint256",
+      },
+    ],
+    name: "upgradeTile",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -1116,6 +1129,11 @@ const _abi = [
           {
             internalType: "uint256",
             name: "maxPlayerCount",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "tileUpgradeGoldCost",
             type: "uint256",
           },
           {

@@ -164,6 +164,28 @@ contract GameFacet is UseStorage {
         ECSLib.removeEntity(GameLib.getCityCenter(_cityID));
     }
 
+    function upgradeTile(uint256 _tileID) external {
+        // Basic checks
+        GameLib.validEntityCheck(_tileID);
+        GameLib.ongoingGameCheck();
+        GameLib.activePlayerCheck(msg.sender);
+        GameLib.entityOwnershipCheck(_tileID, msg.sender);
+
+        // Verify that city has enough gold
+        uint256 goldInventoryID = GameLib.getInventory(ECSLib.getUint("City", _tileID), gs().templates["Gold"]);
+        uint256 balance = ECSLib.getUint("Amount", goldInventoryID);
+        uint256 cost = gs().worldConstants.tileUpgradeGoldCost;
+        require(balance >= cost, "CURIO: Insufficient gold balance");
+
+        // Deduct upgrade cost
+        ECSLib.setUint("Amount", goldInventoryID, balance - cost);
+
+        // Upgrade tile level and guard amount
+        uint256 newLevel = ECSLib.getUint("Level", _tileID) + 1;
+        ECSLib.setUint("Level", _tileID, newLevel);
+        ECSLib.setUint("Amount", GameLib.getConstituents(_tileID)[0], newLevel * gs().worldConstants.tileGuardAmount);
+    }
+
     function upgradeCity(uint256 _cityID, Position[] memory _newTiles) external {
         // Basic checks
         GameLib.validEntityCheck(_cityID);
@@ -172,7 +194,8 @@ contract GameFacet is UseStorage {
         GameLib.entityOwnershipCheck(_cityID, msg.sender);
 
         // Verify that city has enough gold
-        uint256 balance = GameLib.getCityGold(_cityID);
+        uint256 goldInventoryID = GameLib.getInventory(_cityID, gs().templates["Gold"]);
+        uint256 balance = ECSLib.getUint("Amount", goldInventoryID);
         uint256 cost = gs().worldConstants.cityUpgradeGoldCost;
         require(balance >= cost, "CURIO: Insufficient gold balance");
 
@@ -197,11 +220,12 @@ contract GameFacet is UseStorage {
         }
 
         // Deduct upgrade cost
-        uint256 goldInventoryID = GameLib.getInventory(_cityID, GameLib.getTemplateByInventoryType("Gold"));
         ECSLib.setUint("Amount", goldInventoryID, balance - cost);
 
-        // Update city level
+        // Update city level and guard amount
         ECSLib.setUint("Level", _cityID, level + 1);
+        uint256 centerTileID = GameLib.getTileAt(ECSLib.getPosition("StartPosition", GameLib.getCityCenter(_cityID)));
+        ECSLib.setUint("Amount", GameLib.getConstituents(centerTileID)[0], (level + 1) * gs().worldConstants.cityGuardAmount);
     }
 
     // ----------------------------------------------------------
@@ -570,36 +594,47 @@ contract GameFacet is UseStorage {
         if (victory) {
             if (cityID != NULL) {
                 Templates.addConstituent(_tileID, gs().templates["Guard"], gs().worldConstants.cityGuardAmount);
-            } else {
-                // this means that it's a tile - don't add a guard back.
-                // Templates.addConstituent(_tileID, gs().templates["Guard"], gs().worldConstants.tileGuardAmount);
             }
         } else {
             GameLib.attack(_tileID, _armyID, false, false, true);
         }
     }
 
-    // claiming a tile
-    function claimTile(uint256 _armyId, uint256 _tileID) public {
+    function claimTile(uint256 _armyID, uint256 _tileID) public {
+        // Basic checks
         GameLib.validEntityCheck(_tileID);
         GameLib.ongoingGameCheck();
         GameLib.activePlayerCheck(msg.sender);
+        GameLib.entityOwnershipCheck(_armyID, msg.sender);
 
+        // Verify target tile has no owner
         require(ECSLib.getUint("Owner", _tileID) == 0, "CURIO: Tile has owner");
 
-        // TODO: distance check
-        Position memory armyPosition = ECSLib.getPosition("Position", _armyId);
+        // Verify that no guard exists on tile
+        require(GameLib.getConstituents(_tileID).length == 0, "CURIO: Tile has guard");
+
+        // Verify that army is on selected tile
+        Position memory armyPosition = ECSLib.getPosition("Position", _armyID);
         Position memory tilePosition = ECSLib.getPosition("StartPosition", _tileID);
         require(GameLib.coincident(GameLib.getProperTilePosition(armyPosition), tilePosition), "CURIO: Army is not on the selected tile");
 
-        // if there are no constituents on this current tile, add a constituent and claim the tile yours.
-        require(GameLib.getConstituents(_tileID).length == 0, "CURIO: Tile has defenders");
-
-        Templates.addConstituent(_tileID, gs().templates["Guard"], gs().worldConstants.tileGuardAmount);
+        // Verify that tile is next to own tile
         uint256 playerID = GameLib.getPlayer(msg.sender);
+        Position[] memory neighborPositions = GameLib.getTileNeighbors(tilePosition);
+        bool isAdjacentToOwnTile = false;
+        for (uint256 i = 0; i < neighborPositions.length; i++) {
+            if (ECSLib.getUint("Owner", GameLib.getTileAt(neighborPositions[i])) == playerID) {
+                isAdjacentToOwnTile = true;
+                break;
+            }
+        }
+        require(isAdjacentToOwnTile, "CURIO: Tile must be adjacent to own");
 
-        // transfer ownership of new tile to the claiming player
+        // TODO: other army check
+
+        // Transfer ownership of tile and initialize new guard
         ECSLib.setUint("Owner", _tileID, playerID);
+        Templates.addConstituent(_tileID, gs().templates["Guard"], gs().worldConstants.tileGuardAmount);
     }
 
     function upgradeGoldmine(uint256 _resourceID) public {

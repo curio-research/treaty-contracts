@@ -27,6 +27,7 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): W
     maxCityCountPerPlayer: 3,
     maxArmyCountPerPlayer: 2,
     maxPlayerCount: 20,
+    tileUpgradeGoldCost: 10,
     cityUpgradeGoldCost: 50,
     cityPackCost: 0,
     maxInventoryCapacity: 1000,

@@ -453,13 +453,13 @@ library GameLib {
     }
 
     function getCityGold(uint256 cityId) internal returns (uint256) {
-        uint256 _goldInventoryID = getInventory(cityId, getTemplateByInventoryType("Gold"));
+        uint256 _goldInventoryID = getInventory(cityId, gs().templates["Gold"]);
         uint256 _balance = _goldInventoryID != 0 ? ECSLib.getUint("Amount", _goldInventoryID) : 0;
         return _balance;
     }
 
     function setCityGold(uint256 cityId, uint256 _goldAmount) internal {
-        uint256 _goldInventoryID = getInventory(cityId, getTemplateByInventoryType("Gold"));
+        uint256 _goldInventoryID = getInventory(cityId, gs().templates["Gold"]);
         ECSLib.setUint("Amount", _goldInventoryID, _goldAmount);
     }
 
@@ -481,21 +481,38 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    // function getMapTileAt(Position memory _position) internal view returns (Tile memory) {
-    //     return gs().map[_position.x][_position.y];
-    // }
+    function getTileNeighbors(Position memory _startPosition) internal view returns (Position[] memory) {
+        require(isProperTilePosition(_startPosition), "CURIO: Intended for tile neighbor");
 
-    function getNeighbors(Position memory _position) internal view returns (Position[] memory) {
-        Position[] memory _result = new Position[](4);
-        uint256 _x = _position.x;
-        uint256 _y = _position.y;
+        Position[] memory temp = new Position[](4);
+        uint256 x = _startPosition.x;
+        uint256 y = _startPosition.y;
+        uint256 tileWidth = gs().worldConstants.tileWidth;
+        uint256 neighborCount = 0;
 
-        if (_x > 0) _result[0] = (Position({x: _x - 1, y: _y}));
-        if (_x < gs().worldConstants.worldWidth - 1) _result[1] = (Position({x: _x + 1, y: _y}));
-        if (_y > 0) _result[2] = (Position({x: _x, y: _y - 1}));
-        if (_y < gs().worldConstants.worldHeight - 1) _result[3] = (Position({x: _x, y: _y + 1}));
+        if (x > 0) {
+            temp[neighborCount] = (Position({x: x - tileWidth, y: y}));
+            neighborCount++;
+        }
+        if (x < gs().worldConstants.worldWidth - tileWidth) {
+            temp[neighborCount] = (Position({x: x + 1, y: y}));
+            neighborCount++;
+        }
+        if (y > 0) {
+            temp[neighborCount] = (Position({x: x, y: y - 1}));
+            neighborCount++;
+        }
+        if (y < gs().worldConstants.worldHeight - tileWidth) {
+            temp[neighborCount] = (Position({x: x, y: y + 1}));
+            neighborCount++;
+        }
 
-        return _result;
+        Position[] memory result = new Position[](neighborCount);
+        for (uint256 i = 0; i < neighborCount; i++) {
+            result[i] = temp[i];
+        }
+
+        return result;
     }
 
     function canOccupyTile(uint256 _playerID, uint256 _tileID) internal pure returns (bool) {
