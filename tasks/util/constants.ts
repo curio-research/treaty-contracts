@@ -54,6 +54,8 @@ export const createTemplates = async (diamond: Curio) => {
   const templateIDs: number[] = [];
 
   // Horseman
+
+  // FIXME: wrap these in templates it's much faster for deployment.
   let inventoryType = InventoryTypeOptions.Horseman;
   let entity = await addGetEntity(diamond);
   await (await diamond.setComponentValue(Tag, entity, encodeString(Tags.TroopTemplate))).wait();
