@@ -103,11 +103,11 @@ task('deploy', 'deploy contracts')
       }
 
       // initialize 10 at a time
-      const bulkTileUploadSize = 5;
-      for (let i = 0; i < allStartingPositions.length; i += bulkTileUploadSize) {
-        console.log(`bulk initializing tiles ${i} to ${i + bulkTileUploadSize}`);
-        await (await diamond.bulkInitializeTiles(allStartingPositions.slice(i, i + bulkTileUploadSize), { gasLimit: 100_000_000 })).wait();
-      }
+      // const bulkTileUploadSize = 5;
+      // for (let i = 0; i < allStartingPositions.length; i += bulkTileUploadSize) {
+      //   console.log(`bulk initializing tiles ${i} to ${i + bulkTileUploadSize}`);
+      //   await (await diamond.bulkInitializeTiles(allStartingPositions.slice(i, i + bulkTileUploadSize), { gasLimit: 100_000_000 })).wait();
+      // }
 
       if (fixmap) {
         await initializeFixmap(hre, diamond);
@@ -167,7 +167,7 @@ task('deploy', 'deploy contracts')
       }
 
       console.log(chalk.bgGreen.black(' Curio Game Deployed '));
-      console.log(chalk.bgRed.white(` Deployed in ${performance.now() - s}s `));
+      console.log(chalk.bgRed.white(` Deployed in ${Math.floor(performance.now() - s)}s `));
 
       if (isDev) {
         await hre.ethers.provider.send('evm_setNextBlockTimestamp', [Math.floor(new Date().getTime() / 1000)]);

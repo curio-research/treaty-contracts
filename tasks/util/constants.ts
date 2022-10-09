@@ -53,69 +53,29 @@ export const createTemplates = async (diamond: Curio) => {
   const templateNames: string[] = [];
   const templateIDs: number[] = [];
 
-  // Horseman
-
-  // FIXME: wrap these in templates it's much faster for deployment.
   let inventoryType = InventoryTypeOptions.Horseman;
-  let entity = await addGetEntity(diamond);
-  await (await diamond.setComponentValue(Tag, entity, encodeString(Tags.TroopTemplate))).wait();
-  await (await diamond.setComponentValue(InventoryType, entity, encodeString(inventoryType))).wait();
-  await (await diamond.setComponentValue(Health, entity, encodeUint256(120))).wait();
-  await (await diamond.setComponentValue(Speed, entity, encodeUint256(2))).wait(); // how many tiles it can skip
-  await (await diamond.setComponentValue(MoveCooldown, entity, encodeUint256(1))).wait();
-  await (await diamond.setComponentValue(BattleCooldown, entity, encodeUint256(2))).wait();
-  await (await diamond.setComponentValue(Attack, entity, encodeUint256(60))).wait();
-  await (await diamond.setComponentValue(Defense, entity, encodeUint256(120))).wait();
-  await (await diamond.setComponentValue(Duration, entity, encodeUint256(0))).wait();
-  await (await diamond.setComponentValue(Load, entity, encodeUint256(5))).wait();
-  await (await diamond.setComponentValue(Cost, entity, encodeUint256(1))).wait();
-  templateNames.push(inventoryType);
-  templateIDs.push(entity);
+
+  let entity = Number(await diamond.getEntity());
+
+  // Horseman
+  await diamond.addTroopTemplate(InventoryTypeOptions.Horseman, 120, 2, 1, 2, 60, 120, 0, 5, 1);
+  templateNames.push(InventoryTypeOptions.Horseman);
+  templateIDs.push(entity++);
 
   // Warrior
-  inventoryType = InventoryTypeOptions.Warrior;
-  entity = await addGetEntity(diamond);
-  await (await diamond.setComponentValue(Tag, entity, encodeString(Tags.TroopTemplate))).wait();
-  await (await diamond.setComponentValue(InventoryType, entity, encodeString(inventoryType))).wait();
-  await (await diamond.setComponentValue(Health, entity, encodeUint256(120))).wait();
-  await (await diamond.setComponentValue(Speed, entity, encodeUint256(1))).wait();
-  await (await diamond.setComponentValue(MoveCooldown, entity, encodeUint256(1))).wait();
-  await (await diamond.setComponentValue(BattleCooldown, entity, encodeUint256(2))).wait();
-  await (await diamond.setComponentValue(Attack, entity, encodeUint256(60))).wait();
-  await (await diamond.setComponentValue(Defense, entity, encodeUint256(120))).wait();
-  await (await diamond.setComponentValue(Duration, entity, encodeUint256(0))).wait();
-  await (await diamond.setComponentValue(Load, entity, encodeUint256(6))).wait();
-  await (await diamond.setComponentValue(Cost, entity, encodeUint256(1))).wait();
-  templateNames.push(inventoryType);
-  templateIDs.push(entity);
+  await diamond.addTroopTemplate(InventoryTypeOptions.Warrior, 120, 1, 1, 2, 60, 120, 0, 6, 1);
+  templateNames.push(InventoryTypeOptions.Warrior);
+  templateIDs.push(entity++);
 
   // Slinger
-  inventoryType = InventoryTypeOptions.Slinger;
-  entity = await addGetEntity(diamond);
-  await (await diamond.setComponentValue(Tag, entity, encodeString(Tags.TroopTemplate))).wait();
-  await (await diamond.setComponentValue(InventoryType, entity, encodeString(inventoryType))).wait();
-  await (await diamond.setComponentValue(Health, entity, encodeUint256(125))).wait();
-  await (await diamond.setComponentValue(Speed, entity, encodeUint256(1))).wait();
-  await (await diamond.setComponentValue(MoveCooldown, entity, encodeUint256(1))).wait();
-  await (await diamond.setComponentValue(BattleCooldown, entity, encodeUint256(2))).wait();
-  await (await diamond.setComponentValue(Attack, entity, encodeUint256(60))).wait();
-  await (await diamond.setComponentValue(Defense, entity, encodeUint256(125))).wait();
-  await (await diamond.setComponentValue(Duration, entity, encodeUint256(0))).wait();
-  await (await diamond.setComponentValue(Load, entity, encodeUint256(6))).wait();
-  await (await diamond.setComponentValue(Cost, entity, encodeUint256(1))).wait();
-  templateNames.push(inventoryType);
-  templateIDs.push(entity);
+  await diamond.addTroopTemplate(InventoryTypeOptions.Slinger, 125, 1, 1, 2, 60, 125, 0, 6, 1);
+  templateNames.push(InventoryTypeOptions.Slinger);
+  templateIDs.push(entity++);
 
   // Guard
-  inventoryType = InventoryTypeOptions.Guard;
-  entity = await addGetEntity(diamond);
-  await (await diamond.setComponentValue(Tag, entity, encodeString(Tags.TroopTemplate))).wait();
-  await (await diamond.setComponentValue(InventoryType, entity, encodeString(inventoryType))).wait();
-  await (await diamond.setComponentValue(Health, entity, encodeUint256(120))).wait();
-  await (await diamond.setComponentValue(Attack, entity, encodeUint256(60))).wait();
-  await (await diamond.setComponentValue(Defense, entity, encodeUint256(120))).wait();
-  templateNames.push(inventoryType);
-  templateIDs.push(entity);
+  await diamond.addTroopTemplate(InventoryTypeOptions.Guard, 120, 0, 0, 0, 60, 120, 0, 0, 0);
+  templateNames.push(InventoryTypeOptions.Guard);
+  templateIDs.push(entity++);
 
   // Gold
   inventoryType = InventoryTypeOptions.Gold;
@@ -126,6 +86,6 @@ export const createTemplates = async (diamond: Curio) => {
   templateNames.push(inventoryType);
   templateIDs.push(entity);
 
-  // Register template names
+  // Register template names used for shortcuts
   await (await diamond.registerTemplateShortcuts(templateNames, templateIDs)).wait();
 };

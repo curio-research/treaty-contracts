@@ -190,4 +190,33 @@ library Templates {
 
         return gatherID;
     }
+
+    function addTroopTemplate(
+        string memory _inventoryType,
+        uint256 _health,
+        uint256 _speed,
+        uint256 _moveCooldown,
+        uint256 _battleCooldown,
+        uint256 _attack,
+        uint256 _defense,
+        uint256 _duration,
+        uint256 _load,
+        uint256 _cost
+    ) public returns (uint256) {
+        uint256 entity = ECSLib.addEntity();
+
+        ECSLib.setString("Tag", entity, "TroopTemplate");
+        ECSLib.setString("InventoryType", entity, _inventoryType);
+        ECSLib.setUint("Health", entity, _health);
+        ECSLib.setUint("Speed", entity, _speed);
+        ECSLib.setUint("MoveCooldown", entity, _moveCooldown);
+        ECSLib.setUint("BattleCooldown", entity, _battleCooldown);
+        ECSLib.setUint("Attack", entity, _attack);
+        ECSLib.setUint("Defense", entity, _defense);
+        ECSLib.setUint("Duration", entity, _duration);
+        ECSLib.setUint("Load", entity, _load);
+        ECSLib.setUint("Cost", entity, _cost);
+
+        return entity;
+    }
 }

@@ -715,12 +715,6 @@ contract GameFacet is UseStorage {
         GameLib.initializeTile(_startPosition);
     }
 
-    function bulkInitializeTile(Position[] memory _startPositions) public {
-        for (uint256 i = 0; i < _startPositions.length; i++) {
-            initializeTile(_startPositions[i]);
-        }
-    }
-
     // --------------------------
     // treaty (WIP)
     // --------------------------
