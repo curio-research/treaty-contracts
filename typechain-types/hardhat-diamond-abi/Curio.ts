@@ -161,6 +161,7 @@ export interface CurioInterface extends utils.Interface {
     "supportsInterface(bytes4)": FunctionFragment;
     "authorizeGame(address)": FunctionFragment;
     "battle(uint256,uint256)": FunctionFragment;
+    "claimTile(uint256,uint256)": FunctionFragment;
     "denounceTreaty(address)": FunctionFragment;
     "disbandArmy(uint256)": FunctionFragment;
     "endTroopProduction(uint256,uint256)": FunctionFragment;
@@ -236,6 +237,7 @@ export interface CurioInterface extends utils.Interface {
       | "supportsInterface"
       | "authorizeGame"
       | "battle"
+      | "claimTile"
       | "denounceTreaty"
       | "disbandArmy"
       | "endTroopProduction"
@@ -366,6 +368,10 @@ export interface CurioInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "battle",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "claimTile",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -648,6 +654,7 @@ export interface CurioInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "battle", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "claimTile", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "denounceTreaty",
     data: BytesLike
@@ -1045,6 +1052,12 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    claimTile(
+      _armyId: PromiseOrValue<BigNumberish>,
+      _tileID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     denounceTreaty(
       _treatyToDenounce: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1069,8 +1082,8 @@ export interface Curio extends BaseContract {
     ): Promise<ContractTransaction>;
 
     harvestGold(
-      _goldMineResourceEntity: PromiseOrValue<BigNumberish>,
-      armyId: PromiseOrValue<BigNumberish>,
+      _goldMineResourceID: PromiseOrValue<BigNumberish>,
+      armyID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1410,6 +1423,12 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  claimTile(
+    _armyId: PromiseOrValue<BigNumberish>,
+    _tileID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   denounceTreaty(
     _treatyToDenounce: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1434,8 +1453,8 @@ export interface Curio extends BaseContract {
   ): Promise<ContractTransaction>;
 
   harvestGold(
-    _goldMineResourceEntity: PromiseOrValue<BigNumberish>,
-    armyId: PromiseOrValue<BigNumberish>,
+    _goldMineResourceID: PromiseOrValue<BigNumberish>,
+    armyID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1775,6 +1794,12 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    claimTile(
+      _armyId: PromiseOrValue<BigNumberish>,
+      _tileID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     denounceTreaty(
       _treatyToDenounce: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -1799,8 +1824,8 @@ export interface Curio extends BaseContract {
     ): Promise<void>;
 
     harvestGold(
-      _goldMineResourceEntity: PromiseOrValue<BigNumberish>,
-      armyId: PromiseOrValue<BigNumberish>,
+      _goldMineResourceID: PromiseOrValue<BigNumberish>,
+      armyID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -2195,6 +2220,12 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    claimTile(
+      _armyId: PromiseOrValue<BigNumberish>,
+      _tileID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     denounceTreaty(
       _treatyToDenounce: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -2219,8 +2250,8 @@ export interface Curio extends BaseContract {
     ): Promise<BigNumber>;
 
     harvestGold(
-      _goldMineResourceEntity: PromiseOrValue<BigNumberish>,
-      armyId: PromiseOrValue<BigNumberish>,
+      _goldMineResourceID: PromiseOrValue<BigNumberish>,
+      armyID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -2559,6 +2590,12 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    claimTile(
+      _armyId: PromiseOrValue<BigNumberish>,
+      _tileID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     denounceTreaty(
       _treatyToDenounce: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -2583,8 +2620,8 @@ export interface Curio extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     harvestGold(
-      _goldMineResourceEntity: PromiseOrValue<BigNumberish>,
-      armyId: PromiseOrValue<BigNumberish>,
+      _goldMineResourceID: PromiseOrValue<BigNumberish>,
+      armyID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

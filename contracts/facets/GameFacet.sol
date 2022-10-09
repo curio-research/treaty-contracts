@@ -562,18 +562,43 @@ contract GameFacet is UseStorage {
             "CURIO: Too far"
         );
 
+        uint256 cityID = GameLib.getCityAtTile(ECSLib.getPosition("StartPosition", _tileID));
+
         // Execute one round of battle
         bool victory = GameLib.attack(_armyID, _tileID, false, _occupyUponVictory, false);
         if (victory) {
-            uint256 cityID = GameLib.getCityAtTile(ECSLib.getPosition("StartPosition", _tileID));
             if (cityID != NULL) {
                 Templates.addConstituent(_tileID, gs().templates["Guard"], gs().worldConstants.cityGuardAmount);
             } else {
-                Templates.addConstituent(_tileID, gs().templates["Guard"], gs().worldConstants.tileGuardAmount);
+                // this means that it's a tile - don't add a guard back.
+                // Templates.addConstituent(_tileID, gs().templates["Guard"], gs().worldConstants.tileGuardAmount);
             }
         } else {
             GameLib.attack(_tileID, _armyID, false, false, true);
         }
+    }
+
+    // claiming a tile
+    function claimTile(uint256 _armyId, uint256 _tileID) public {
+        GameLib.validEntityCheck(_tileID);
+        GameLib.ongoingGameCheck();
+        GameLib.activePlayerCheck(msg.sender);
+
+        require(ECSLib.getUint("Owner", _tileID) == 0, "CURIO: Tile has owner");
+
+        // TODO: distance check
+        Position memory armyPosition = ECSLib.getPosition("Position", _armyId);
+        Position memory tilePosition = ECSLib.getPosition("StartPosition", _tileID);
+        require(GameLib.coincident(GameLib.getProperTilePosition(armyPosition), tilePosition), "CURIO: Army is not on the selected tile");
+
+        // if there are no constituents on this current tile, add a constituent and claim the tile yours.
+        require(GameLib.getConstituents(_tileID).length == 0, "CURIO: Tile has defenders");
+
+        Templates.addConstituent(_tileID, gs().templates["Guard"], gs().worldConstants.tileGuardAmount);
+        uint256 playerID = GameLib.getPlayer(msg.sender);
+
+        // transfer ownership of new tile to the claiming player
+        ECSLib.setUint("Owner", _tileID, playerID);
     }
 
     // --------------------------

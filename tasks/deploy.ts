@@ -9,7 +9,7 @@ import { deployProxy, printDivider } from './util/deployHelper';
 import { createTemplates, generateWorldConstants, SMALL_MAP_INPUT, TILE_WIDTH } from './util/constants';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
 import { chooseRandomEmptyLandPosition, encodeTileMap, generateBlankFixmap, generateMap, getPositionFromLargeTilePosition, initializeFixmap } from './util/mapHelper';
-import { COMPONENT_SPECS, getRightPos, GameConfig, TILE_TYPE, Speed, encodeUint256, getTopPos } from 'curio-vault';
+import { COMPONENT_SPECS, getRightPos, GameConfig, TILE_TYPE, Speed, encodeUint256, getTopPos, scaleMap } from 'curio-vault';
 
 /**
  * Deploy script for publishing games
@@ -55,7 +55,7 @@ task('deploy', 'deploy contracts')
       const ecsLib = await deployProxy<ECSLib>('ECSLib', player1, hre, []);
 
       const gameLib = await deployProxy<GameLib>('GameLib', player1, hre, [], { ECSLib: ecsLib.address });
-      const templates = await deployProxy<any>('Templates', player1, hre, [], { GameLib: gameLib.address, ECSLib: ecsLib.address });
+      const templates = await deployProxy<any>('Templates', player1, hre, [], { ECSLib: ecsLib.address });
 
       const diamondAddr = await deployDiamond(hre, [worldConstants]);
       const diamond = await getDiamond(hre, diamondAddr);
@@ -63,7 +63,7 @@ task('deploy', 'deploy contracts')
       const facets = [
         { name: 'GameFacet', libraries: { ECSLib: ecsLib.address, GameLib: gameLib.address, Templates: templates.address } },
         { name: 'GetterFacet', libraries: { ECSLib: ecsLib.address, GameLib: gameLib.address } },
-        { name: 'AdminFacet', libraries: { ECSLib: ecsLib.address, GameLib: gameLib.address, Templates: templates.address } },
+        { name: 'AdminFacet', libraries: { ECSLib: ecsLib.address, Templates: templates.address } },
       ];
       await deployFacets(hre, diamondAddr, facets, player1);
 
@@ -92,38 +92,40 @@ task('deploy', 'deploy contracts')
       } else {
         // Randomly initialize players if on localhost
         if (isDev) {
-          const player1Pos = getPositionFromLargeTilePosition(chooseRandomEmptyLandPosition(tileMap), TILE_WIDTH);
-          const player2Pos = getPositionFromLargeTilePosition(getRightPos(getRightPos(player1Pos)), TILE_WIDTH);
+          // this is coordinate position
+          // console.log(scaleMap(tileMap, TILE_WIDTH));
+          const player1Pos = chooseRandomEmptyLandPosition(scaleMap(tileMap, TILE_WIDTH));
+          const player2Pos = getRightPos(getRightPos(player1Pos));
 
           startTime = performance.now();
           await (await diamond.connect(player1).initializePlayer(player1Pos, 'Alice', { gasLimit: 100_000_000 })).wait();
           await (await diamond.connect(player2).initializePlayer(player2Pos, 'Bob', { gasLimit: 100_000_000 })).wait();
           console.log(`✦ player initialization took ${Math.floor(performance.now() - startTime)} ms`);
 
-          const player1ID = (await diamond.getPlayerId(player1.address)).toNumber();
-          const player2ID = (await diamond.getPlayerId(player2.address)).toNumber();
+          // const player1ID = (await diamond.getPlayerId(player1.address)).toNumber();
+          // const player2ID = (await diamond.getPlayerId(player2.address)).toNumber();
 
-          let armySpawnPos = { x: -1, y: -1 };
-          for (let i = 0; i < worldConstants.worldWidth; i++) {
-            for (let j = 0; j < worldConstants.worldHeight; j++) {
-              if (tileMap[i][j] === TILE_TYPE.GOLDMINE_LV1 || tileMap[i][j] === TILE_TYPE.GOLDMINE_LV2 || tileMap[i][j] === TILE_TYPE.GOLDMINE_LV3) {
-                armySpawnPos = { x: i, y: j };
-              }
-            }
-          }
+          // let armySpawnPos = { x: -1, y: -1 };
+          // for (let i = 0; i < worldConstants.worldWidth; i++) {
+          //   for (let j = 0; j < worldConstants.worldHeight; j++) {
+          //     if (tileMap[i][j] === TILE_TYPE.GOLDMINE_LV1 || tileMap[i][j] === TILE_TYPE.GOLDMINE_LV2 || tileMap[i][j] === TILE_TYPE.GOLDMINE_LV3) {
+          //       armySpawnPos = { x: i, y: j };
+          //     }
+          //   }
+          // }
 
-          armySpawnPos = getPositionFromLargeTilePosition(armySpawnPos, TILE_WIDTH);
+          // armySpawnPos = getPositionFromLargeTilePosition(armySpawnPos, TILE_WIDTH);
 
-          // add an army on a gold mine (easy for testing gather resource)
-          await diamond.initializeTile(armySpawnPos);
-          await diamond.createArmy(player1ID, armySpawnPos);
-          let entity = (await diamond.getEntity()).toNumber();
-          await (await diamond.setComponentValue(Speed, entity, encodeUint256(2))).wait();
+          // // add an army on a gold mine (easy for testing gather resource)
+          // await diamond.initializeTile(armySpawnPos);
+          // await diamond.createArmy(player1ID, armySpawnPos);
+          // let entity = (await diamond.getEntity()).toNumber();
+          // await (await diamond.setComponentValue(Speed, entity, encodeUint256(2))).wait();
 
-          await diamond.initializeTile(getTopPos(armySpawnPos));
-          await diamond.createArmy(player2ID, getTopPos(armySpawnPos));
-          entity = (await diamond.getEntity()).toNumber();
-          await (await diamond.setComponentValue(Speed, entity, encodeUint256(2))).wait();
+          // await diamond.initializeTile(getTopPos(armySpawnPos));
+          // await diamond.createArmy(player2ID, getTopPos(armySpawnPos));
+          // entity = (await diamond.getEntity()).toNumber();
+          // await (await diamond.setComponentValue(Speed, entity, encodeUint256(2))).wait();
         }
       }
 
@@ -132,7 +134,7 @@ task('deploy', 'deploy contracts')
         address: diamond.address,
         network: hre.network.name,
         deploymentId: `deployer=${process.env.DEPLOYER_ID}-${release && 'release-'}${hre.network.name}-${Date.now()}`,
-        map: tileMap,
+        map: scaleMap(tileMap, Number(worldConstants.tileWidth)),
         time: new Date(),
       };
 

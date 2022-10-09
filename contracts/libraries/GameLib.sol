@@ -281,7 +281,7 @@ library GameLib {
     // LOGIC GETTERS
     // ----------------------------------------------------------
 
-    function getConstituents(uint256 _keeperID) internal returns (uint256[] memory) {
+    function getConstituents(uint256 _keeperID) public returns (uint256[] memory) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.HasVal, "Keeper", abi.encode(_keeperID));
         query[1] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("Constituent"));
