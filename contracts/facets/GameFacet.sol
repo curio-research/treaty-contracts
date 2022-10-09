@@ -366,7 +366,8 @@ contract GameFacet is UseStorage {
 
         // Get harvest amount
         uint256 goldMineHarvestCap = ECSLib.getUint("Load", _goldMineResourceID);
-        uint256 rawHarvestAmount = (block.timestamp - ECSLib.getUint("LastTimestamp", _goldMineResourceID)); // 1 second = 1 gold
+        uint256 goldmineLevel = ECSLib.getUint("Level", _goldMineResourceID);
+        uint256 rawHarvestAmount = GameLib._goldmineProductionRate(goldmineLevel) * (block.timestamp - ECSLib.getUint("LastTimestamp", _goldMineResourceID)); // 1 second = 1 gold
         uint256 harvestAmount = GameLib.min(goldMineHarvestCap, rawHarvestAmount); // harvest amount must not exceed the gold cap
 
         // Update gold mine last harvest
@@ -599,6 +600,30 @@ contract GameFacet is UseStorage {
 
         // transfer ownership of new tile to the claiming player
         ECSLib.setUint("Owner", _tileID, playerID);
+    }
+
+    function upgradeGoldmine(uint256 _resourceID) public {
+        GameLib.validEntityCheck(_resourceID);
+        GameLib.ongoingGameCheck();
+        GameLib.activePlayerCheck(msg.sender);
+
+        // tile needs to be yours
+        uint256 playerID = GameLib.getPlayer(msg.sender);
+        Position memory goldresourceStartPosition = ECSLib.getPosition("StartPosition", _resourceID);
+        uint256 tileID = GameLib.getTileAt(goldresourceStartPosition);
+        require(ECSLib.getUint("Owner", tileID) == playerID, "CURIO: Tile isn't yours");
+
+        // get current goldmine level
+        uint256 currentGoldmineLevel = ECSLib.getUint("Level", _resourceID);
+        uint256 upgradeCost = GameLib._goldmineUpgradeCost(currentGoldmineLevel);
+
+        uint256 playerCityID = GameLib.getPlayerCity(playerID);
+        uint256 playerCityGold = GameLib.getCityGold(playerCityID);
+
+        require(playerCityGold >= upgradeCost, "CURIO: Insufficient gold for upgrade");
+
+        ECSLib.setUint("Level", _resourceID, currentGoldmineLevel + 1);
+        GameLib.setCityGold(playerCityID, playerCityGold - upgradeCost);
     }
 
     // --------------------------

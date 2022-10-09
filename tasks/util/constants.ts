@@ -30,7 +30,7 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): W
     cityUpgradeGoldCost: 50,
     cityPackCost: 0,
     maxInventoryCapacity: 1000,
-    initCityGold: 100,
+    initCityGold: 100000000,
     tileWidth: TILE_WIDTH,
     battleRange: TILE_WIDTH,
     tileGuardAmount: 1,

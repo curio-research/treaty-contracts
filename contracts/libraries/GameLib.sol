@@ -88,12 +88,12 @@ library GameLib {
 
         // Initialize gold mine
         if (terrain == 1 || terrain == 2 || terrain == 3) {
-            require(getResourceAtTile(_startPosition) != 0, "CURIO: Something is wrong"); // avoid initializing two resources on the same tile
+            // require(getResourceAtTile(_startPosition) != 0, "CURIO: Resource is missing at location"); // avoid initializing two resources on the same tile
 
             uint256 goldMineID = ECSLib.addEntity();
             ECSLib.setString("Tag", goldMineID, "Resource");
             ECSLib.setUint("Template", goldMineID, getTemplateByInventoryType("Gold"));
-            ECSLib.setUint("Level", goldMineID, 1); // FIXME: initialize at 1 for testing only. initialize at zero is equivalent to not having a gold mine "built"
+            ECSLib.setUint("Level", goldMineID, 0); // initialize at zero is equivalent to not having a gold mine "built"
             ECSLib.setPosition("StartPosition", goldMineID, getProperTilePosition(_startPosition));
             ECSLib.setUint("LastTimestamp", goldMineID, block.timestamp);
             ECSLib.setUint("Amount", goldMineID, _goldLevelSelector(terrain)); // it happens that the gold level is the same as the terrain index
@@ -133,6 +133,19 @@ library GameLib {
         if (_goldLevel == 2) return 200;
         if (_goldLevel == 3) return 300;
         return 0;
+    }
+
+    function _goldmineUpgradeCost(uint256 _currentLevel) public pure returns (uint256) {
+        require(_currentLevel <= 2, "CURIO: Max goldmine level reached");
+        if (_currentLevel == 0) return 2000; // level 0 to 1 (builds gold mine extra cost)
+        if (_currentLevel == 1) return 1000; // level 1 to 2
+        if (_currentLevel == 2) return 1000; // level 2 to 3
+    }
+
+    function _goldmineProductionRate(uint256 _level) public pure returns (uint256) {
+        if (_level == 1) return 1;
+        if (_level == 2) return 2;
+        if (_level == 3) return 3;
     }
 
     function _barbarianInfantrySelector(uint256 _level) private pure returns (uint256) {
@@ -443,6 +456,11 @@ library GameLib {
         uint256 _goldInventoryID = getInventory(cityId, getTemplateByInventoryType("Gold"));
         uint256 _balance = _goldInventoryID != 0 ? ECSLib.getUint("Amount", _goldInventoryID) : 0;
         return _balance;
+    }
+
+    function setCityGold(uint256 cityId, uint256 _goldAmount) internal {
+        uint256 _goldInventoryID = getInventory(cityId, getTemplateByInventoryType("Gold"));
+        ECSLib.setUint("Amount", _goldInventoryID, _goldAmount);
     }
 
     function getCityCenter(uint256 _cityID) internal returns (uint256) {

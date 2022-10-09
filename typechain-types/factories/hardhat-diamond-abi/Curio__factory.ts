@@ -741,6 +741,19 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "uint256",
+        name: "_resourceID",
+        type: "uint256",
+      },
+    ],
+    name: "upgradeGoldmine",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         components: [
           {
             internalType: "uint256",
