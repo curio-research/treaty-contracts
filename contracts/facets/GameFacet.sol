@@ -85,6 +85,7 @@ contract GameFacet is UseStorage {
 
         // Move and update moveCooldown
         ECSLib.setPosition("Position", _movableEntity, _targetPosition);
+        ECSLib.setPosition("StartPosition", _movableEntity, GameLib.getProperTilePosition(_targetPosition));
         ECSLib.setUint("LastTimestamp", _movableEntity, block.timestamp);
     }
 
@@ -630,7 +631,9 @@ contract GameFacet is UseStorage {
         }
         require(isAdjacentToOwnTile, "CURIO: Tile must be adjacent to own");
 
-        // TODO: other army check
+        // Verify that no other movable entity is on tile
+        uint256[] memory movableEntitiesOnTile = GameLib.getMovableEntitiesAtTile(tilePosition);
+        require(movableEntitiesOnTile.length == 1 && movableEntitiesOnTile[0] == _armyID, "CURIO: Other movable entity on tile");
 
         // Transfer ownership of tile and initialize new guard
         ECSLib.setUint("Owner", _tileID, playerID);

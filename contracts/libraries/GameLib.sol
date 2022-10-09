@@ -322,6 +322,13 @@ library GameLib {
         return ECSLib.query(query);
     }
 
+    function getMovableEntitiesAtTile(Position memory _startPosition) internal returns (uint256[] memory) {
+        QueryCondition[] memory query = new QueryCondition[](2);
+        query[0] = ECSLib.queryChunk(QueryType.Has, "Speed", new bytes(0));
+        query[1] = ECSLib.queryChunk(QueryType.HasVal, "StartPosition", abi.encode(_startPosition));
+        return ECSLib.query(query);
+    }
+
     function getBuildingProduction(uint256 _buildingID) internal returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.HasVal, "Keeper", abi.encode(_buildingID));
