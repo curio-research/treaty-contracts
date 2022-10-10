@@ -34,12 +34,12 @@ contract ECSTest is Test {
 
     function testSetIntersectionNew() public {
         (Set a, Set b) = createSets();
-        Set res = ECSLib.intersectionAsSet(a, b);
+        ECSLib.intersectionAsSet(a, b);
     }
 
     function testSetIntersectionOld() public {
         (Set a, Set b) = createSets();
-        Set res = oldIntersectionAsSet(a, b);
+        oldIntersectionAsSet(a, b);
     }
 
     // ------------------------------------------------------------

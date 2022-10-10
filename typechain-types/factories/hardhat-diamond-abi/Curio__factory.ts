@@ -23,6 +23,70 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "string",
+        name: "_inventoryType",
+        type: "string",
+      },
+      {
+        internalType: "uint256",
+        name: "_health",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_speed",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_moveCooldown",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_battleCooldown",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_attack",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_defense",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_duration",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_load",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_cost",
+        type: "uint256",
+      },
+    ],
+    name: "addTroopTemplate",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         components: [
           {
             internalType: "uint256",
@@ -452,19 +516,6 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "address",
-        name: "_treatyToDenounce",
-        type: "address",
-      },
-    ],
-    name: "denounceTreaty",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
         internalType: "uint256",
         name: "_armyID",
         type: "uint256",
@@ -590,19 +641,6 @@ const _abi = [
       },
     ],
     name: "initializePlayer",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_treatyAddress",
-        type: "address",
-      },
-    ],
-    name: "joinTreaty",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

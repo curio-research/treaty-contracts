@@ -1,3 +1,4 @@
+import { position } from './../util/types/common';
 import { utils } from 'ethers';
 import chalk from 'chalk';
 import { GameLib } from './../typechain-types/libraries/GameLib';
@@ -28,6 +29,8 @@ task('deploy', 'deploy contracts')
       await hre.run('compile');
       printDivider();
 
+      const s = performance.now();
+
       const { port, release, fixmap } = args;
 
       // Read variables from run flags
@@ -43,9 +46,6 @@ task('deploy', 'deploy contracts')
       console.log('✦ player1 address is:', player1.address);
 
       const worldConstants = generateWorldConstants(player1.address, SMALL_MAP_INPUT);
-
-      // console.log(scaleMap(generateMap(SMALL_MAP_INPUT.width, SMALL_MAP_INPUT.height, worldConstants), Number(worldConstants.tileWidth)));
-      // return;
 
       const tileMap = fixmap ? generateBlankFixmap() : generateMap(SMALL_MAP_INPUT.width, SMALL_MAP_INPUT.height, worldConstants);
 
@@ -66,11 +66,14 @@ task('deploy', 'deploy contracts')
 
       printDivider();
 
-      // Register components
+      // Batch register components
       let startTime = performance.now();
-      for (let i = 0; i < COMPONENT_SPECS.length; i++) {
-        await (await diamond.registerComponents(diamond.address, [COMPONENT_SPECS[i]])).wait();
+      const componentUploadBatchSize = 20;
+      for (let i = 0; i < COMPONENT_SPECS.length; i += componentUploadBatchSize) {
+        console.log(`Registering components ${i} to ${i + componentUploadBatchSize}`);
+        await (await diamond.registerComponents(diamond.address, COMPONENT_SPECS.slice(i, i + componentUploadBatchSize))).wait();
       }
+
       console.log(`✦ component registration took ${Math.floor(performance.now() - startTime)} ms`);
 
       // Initialize map
@@ -83,6 +86,23 @@ task('deploy', 'deploy contracts')
       startTime = performance.now();
       await createTemplates(diamond);
       console.log(`✦ template creation took ${Math.floor(performance.now() - startTime)} ms`);
+
+      // TODO: useful in some testing. Bulk initialize all tiles
+      // const tileWidth = Number(worldConstants.tileWidth);
+      // const allStartingPositions: position[] = [];
+      // for (let i = 0; i < tileMap.length; i++) {
+      //   for (let j = 0; j < tileMap[0].length; j++) {
+      //     const properTile = { x: i * tileWidth, y: j * tileWidth };
+      //     allStartingPositions.push(properTile);
+      //   }
+      // }
+
+      // initialize 10 at a time
+      // const bulkTileUploadSize = 5;
+      // for (let i = 0; i < allStartingPositions.length; i += bulkTileUploadSize) {
+      //   console.log(`bulk initializing tiles ${i} to ${i + bulkTileUploadSize}`);
+      //   await (await diamond.bulkInitializeTiles(allStartingPositions.slice(i, i + bulkTileUploadSize), { gasLimit: 100_000_000 })).wait();
+      // }
 
       if (fixmap) {
         await initializeFixmap(hre, diamond);
@@ -142,6 +162,7 @@ task('deploy', 'deploy contracts')
       }
 
       console.log(chalk.bgGreen.black(' Curio Game Deployed '));
+      console.log(chalk.bgRed.white(` Deployed in ${Math.floor(performance.now() - s) / 1000}s `));
 
       if (isDev) {
         await hre.ethers.provider.send('evm_setNextBlockTimestamp', [Math.floor(new Date().getTime() / 1000)]);

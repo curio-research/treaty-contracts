@@ -64,13 +64,28 @@ contract AdminFacet is UseStorage {
     }
 
     /**
-     * @dev Initialize all tiles from an array of positions.
+     * @dev Initialize all large tiles from an array of starting positions.
      * @param _positions all positions
      */
     function bulkInitializeTiles(Position[] memory _positions) external onlyAdmin {
         for (uint256 i = 0; i < _positions.length; i++) {
             GameLib.initializeTile(_positions[i]);
         }
+    }
+
+    function addTroopTemplate(
+        string memory _inventoryType,
+        uint256 _health,
+        uint256 _speed,
+        uint256 _moveCooldown,
+        uint256 _battleCooldown,
+        uint256 _attack,
+        uint256 _defense,
+        uint256 _duration,
+        uint256 _load,
+        uint256 _cost
+    ) public returns (uint256) {
+        return Templates.addTroopTemplate(_inventoryType, _health, _speed, _moveCooldown, _battleCooldown, _attack, _defense, _duration, _load, _cost);
     }
 
     // ----------------------------------------------------------------------
