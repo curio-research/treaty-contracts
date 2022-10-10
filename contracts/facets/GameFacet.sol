@@ -390,6 +390,7 @@ contract GameFacet is UseStorage {
     //     ECSLib.setUint("Amount", cityGoldInventoryID, GameLib.getCityGold(playerCityID) + cost);
     // }
 
+    // harvest gold from a gold resource directly
     function harvestGold(uint256 _goldMineResourceID, uint256 armyID) external {
         // Basic checks
         GameLib.validEntityCheck(_goldMineResourceID);
@@ -413,7 +414,7 @@ contract GameFacet is UseStorage {
         require(hasArmyOnTile || hasGoldMineBuilt, "CURIO: Need gold mine or army on tile");
 
         // Verify that the gold mine resource level is greater than zero, meaning that a gold mine has "been built".
-        require(goldMineLevel > 0, "CURIO: Must activate gold mine");
+        // require(goldMineLevel > 0, "CURIO: Must activate gold mine");
 
         // Verify city ownership
         uint256 playerCityID = GameLib.getPlayerCity(GameLib.getPlayer(msg.sender));
@@ -430,7 +431,8 @@ contract GameFacet is UseStorage {
 
         // Add harvested gold to player's city limited by its load
         uint256 cityGoldInventoryID = GameLib.getInventory(playerCityID, gs().templates["Gold"]);
-        uint256 totalAmount = GameLib.min(ECSLib.getUint("Load", cityGoldInventoryID), ECSLib.getUint("Amount", harvestAmount));
+        uint256 existingCityGold = ECSLib.getUint("Amount", cityGoldInventoryID);
+        uint256 totalAmount = GameLib.min(ECSLib.getUint("Load", cityGoldInventoryID), harvestAmount + existingCityGold);
         ECSLib.setUint("Amount", cityGoldInventoryID, totalAmount);
     }
 

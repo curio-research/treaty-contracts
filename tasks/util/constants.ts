@@ -58,22 +58,22 @@ export const createTemplates = async (diamond: Curio) => {
   let entity = Number(await diamond.getEntity());
 
   // Horseman
-  await diamond.addTroopTemplate(InventoryTypeOptions.Horseman, 120, 2, 0, 2, 60, 120, 0, 5, 1);
+  await (await diamond.addTroopTemplate(InventoryTypeOptions.Horseman, 120, 2, 0, 2, 60, 120, 0, 5, 1)).wait();
   templateNames.push(InventoryTypeOptions.Horseman);
   templateIDs.push(entity++);
 
   // Warrior
-  await diamond.addTroopTemplate(InventoryTypeOptions.Warrior, 120, 1, 0, 2, 60, 120, 0, 6, 1);
+  await (await diamond.addTroopTemplate(InventoryTypeOptions.Warrior, 120, 1, 0, 2, 60, 120, 0, 6, 1)).wait();
   templateNames.push(InventoryTypeOptions.Warrior);
   templateIDs.push(entity++);
 
   // Slinger
-  await diamond.addTroopTemplate(InventoryTypeOptions.Slinger, 125, 1, 0, 2, 60, 125, 0, 6, 1);
+  await (await diamond.addTroopTemplate(InventoryTypeOptions.Slinger, 125, 1, 0, 2, 60, 125, 0, 6, 1)).wait();
   templateNames.push(InventoryTypeOptions.Slinger);
   templateIDs.push(entity++);
 
   // Guard
-  await diamond.addTroopTemplate(InventoryTypeOptions.Guard, 120, 0, 0, 0, 60, 120, 0, 0, 0);
+  await (await diamond.addTroopTemplate(InventoryTypeOptions.Guard, 120, 0, 0, 0, 60, 120, 0, 0, 0)).wait();
   templateNames.push(InventoryTypeOptions.Guard);
   templateIDs.push(entity++);
 
