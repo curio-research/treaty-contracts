@@ -148,6 +148,8 @@ contract AdminFacet is UseStorage {
         for (uint256 i = 0; i < _names.length; i++) {
             gs().templates[_names[i]] = _IDs[i];
         }
+
+        gs().templateNames = _names;
     }
 
     function addEntity() external onlyAdmin returns (uint256) {

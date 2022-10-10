@@ -25,17 +25,19 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): W
     numInitTerrainTypes: 7,
     initBatchSize: 30,
     maxCityCountPerPlayer: 3,
-    maxArmyCountPerPlayer: 2,
+    maxArmyCountPerPlayer: 3,
     maxPlayerCount: 20,
-    tileUpgradeGoldCost: 10,
-    cityUpgradeGoldCost: 50,
-    cityPackCost: 0,
-    maxInventoryCapacity: 1000,
-    initCityGold: 100000000,
+    tileUpgradeGoldCost: 150,
+    buildingUpgradeGoldCost: 3000, // internal buildings
+    cityUpgradeGoldCost: 1000000000000000, // temporarily disabled
+    cityPackCost: 1000000000000000, // temporarily disabled
+    initCityCenterGoldLoad: 5000,
+    initCityCenterTroopLoad: 1000,
+    initCityGold: 1000,
     tileWidth: TILE_WIDTH,
     battleRange: TILE_WIDTH,
-    tileGuardAmount: 1,
-    cityGuardAmount: 1000,
+    tileGuardAmount: 100,
+    cityGuardAmount: 2000,
   };
 };
 

@@ -742,6 +742,19 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
+        name: "_buildingID",
+        type: "uint256",
+      },
+    ],
+    name: "upgradeCityInventory",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
         name: "_resourceID",
         type: "uint256",
       },
@@ -1138,12 +1151,22 @@ const _abi = [
           },
           {
             internalType: "uint256",
+            name: "buildingUpgradeGoldCost",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
             name: "cityUpgradeGoldCost",
             type: "uint256",
           },
           {
             internalType: "uint256",
-            name: "maxInventoryCapacity",
+            name: "initCityCenterGoldLoad",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "initCityCenterTroopLoad",
             type: "uint256",
           },
           {

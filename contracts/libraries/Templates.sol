@@ -11,10 +11,28 @@ library Templates {
         ECSLib.setString("Tag", cityCenterID, "Building");
         ECSLib.setPosition("StartPosition", cityCenterID, _startPosition);
         ECSLib.setUint("City", cityCenterID, _cityID);
+        ECSLib.setUint("Level", cityCenterID, 1);
         ECSLib.setString("BuildingType", cityCenterID, "City Center");
         ECSLib.setUint("InitTimestamp", cityCenterID, block.timestamp);
 
         return cityCenterID;
+    }
+
+    function addInventory(
+        uint256 _cityID,
+        uint256 _templateID,
+        uint256 _amount,
+        uint256 _load
+    ) public returns (uint256) {
+        uint256 inventoryID = ECSLib.addEntity();
+
+        ECSLib.setString("Tag", inventoryID, "ResourceInventory");
+        ECSLib.setUint("City", inventoryID, _cityID);
+        ECSLib.setUint("Template", inventoryID, _templateID);
+        ECSLib.setUint("Amount", inventoryID, _amount);
+        ECSLib.setUint("Load", inventoryID, _load);
+
+        return inventoryID;
     }
 
     function convertSettlerToCity(

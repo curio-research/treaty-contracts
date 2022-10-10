@@ -16,6 +16,7 @@ import {IERC173} from "contracts/interfaces/IERC173.sol";
 import {IERC165} from "contracts/interfaces/IERC165.sol";
 import {Set} from "contracts/Set.sol";
 import "contracts/libraries/Storage.sol";
+import "forge-std/console.sol";
 
 // It is expected that this contract is customized if you want to deploy your diamond
 // with data from a deployment script. Use the init function to initialize state variables
@@ -46,5 +47,7 @@ contract DiamondInit is UseStorage {
         // initialize entities
         gs().entities = address(new Set());
         gs().entityNonce = 1;
+
+        console.log("Done");
     }
 }

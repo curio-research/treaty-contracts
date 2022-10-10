@@ -522,9 +522,16 @@ library GameLib {
         return result;
     }
 
-    function canOccupyTile(uint256 _playerID, uint256 _tileID) internal pure returns (bool) {
-        // TODO: implement
-        return false;
+    function isAdjacentToOwnTile(uint256 _playerID, Position memory _tilePosition) internal returns (bool) {
+        Position[] memory neighborPositions = getTileNeighbors(_tilePosition);
+        bool result = false;
+        for (uint256 i = 0; i < neighborPositions.length; i++) {
+            if (ECSLib.getUint("Owner", GameLib.getTileAt(neighborPositions[i])) == _playerID) {
+                result = true;
+                break;
+            }
+        }
+        return result;
     }
 
     function adjacentToCity(Position memory _position, uint256 _cityID) internal view returns (bool) {
@@ -548,15 +555,6 @@ library GameLib {
         if (_level == 3) return 9000;
         if (_level == 4) return 12000;
         if (_level == 5) return 15000;
-        return 0;
-    }
-
-    function getTotalGoldCap(uint256 _level) internal pure returns (uint256) {
-        if (_level == 1) return 12000;
-        if (_level == 2) return 24000;
-        if (_level == 3) return 36000;
-        if (_level == 4) return 48000;
-        if (_level == 5) return 60000;
         return 0;
     }
 

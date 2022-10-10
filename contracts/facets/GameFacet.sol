@@ -47,11 +47,7 @@ contract GameFacet is UseStorage {
         uint256 settlerID = Templates.addSettler(_position, playerID, gs().worldConstants.tileWidth);
 
         // Add initial gold
-        uint256 goldInventoryID = ECSLib.addEntity();
-        ECSLib.setString("Tag", goldInventoryID, "ResourceInventory");
-        ECSLib.setUint("City", goldInventoryID, settlerID);
-        ECSLib.setUint("Template", goldInventoryID, GameLib.getTemplateByInventoryType("Gold"));
-        ECSLib.setUint("Amount", goldInventoryID, gs().worldConstants.initCityGold);
+        Templates.addInventory(settlerID, gs().templates["Gold"], gs().worldConstants.initCityGold, gs().worldConstants.initCityCenterGoldLoad);
     }
 
     // ----------------------------------------------------------
@@ -158,8 +154,8 @@ contract GameFacet is UseStorage {
         }
 
         // Convert the settler to a city
-        uint256 _health = GameLib.getSettlerHealthByLevel(ECSLib.getUint("Level", settlerID));
-        Templates.convertCityToSettler(_cityID, _health, gs().worldConstants.tileWidth);
+        uint256 health = GameLib.getSettlerHealthByLevel(ECSLib.getUint("Level", settlerID));
+        Templates.convertCityToSettler(_cityID, health, gs().worldConstants.tileWidth);
 
         // Remove city center
         ECSLib.removeEntity(GameLib.getCityCenter(_cityID));
@@ -185,6 +181,39 @@ contract GameFacet is UseStorage {
         uint256 newLevel = ECSLib.getUint("Level", _tileID) + 1;
         ECSLib.setUint("Level", _tileID, newLevel);
         ECSLib.setUint("Amount", GameLib.getConstituents(_tileID)[0], newLevel * gs().worldConstants.tileGuardAmount);
+    }
+
+    function upgradeCityInventory(uint256 _buildingID) external {
+        // Basic checks
+        GameLib.validEntityCheck(_buildingID);
+        GameLib.ongoingGameCheck();
+        GameLib.activePlayerCheck(msg.sender);
+        uint256 cityID = ECSLib.getUint("City", _buildingID);
+        GameLib.entityOwnershipCheck(cityID, msg.sender);
+
+        // Verify that city has enough gold
+        uint256 goldInventoryID = GameLib.getInventory(cityID, gs().templates["Gold"]);
+        uint256 balance = ECSLib.getUint("Amount", goldInventoryID);
+        uint256 cost = gs().worldConstants.buildingUpgradeGoldCost;
+        require(balance >= cost, "CURIO: Insufficient gold balance");
+
+        // Deduct upgrade cost
+        ECSLib.setUint("Amount", goldInventoryID, balance - cost);
+
+        // Upgrade tile level and inventory loads
+        uint256 newLevel = ECSLib.getUint("Level", _buildingID) + 1;
+        ECSLib.setUint("Level", _buildingID, newLevel);
+        for (uint256 i = 0; i < gs().templateNames.length; i++) {
+            uint256 inventoryID = GameLib.getInventory(cityID, gs().templates[gs().templateNames[i]]);
+            if (inventoryID != NULL) {
+                string memory inventoryTag = ECSLib.getString("Tag", inventoryID);
+                if (GameLib.strEq(inventoryTag, "ResourceInventory")) {
+                    ECSLib.setUint("Load", inventoryID, gs().worldConstants.initCityCenterGoldLoad * newLevel);
+                } else if (GameLib.strEq(inventoryTag, "TroopInventory")) {
+                    ECSLib.setUint("Load", inventoryID, gs().worldConstants.initCityCenterTroopLoad * newLevel);
+                }
+            }
+        }
     }
 
     function upgradeCity(uint256 _cityID, Position[] memory _newTiles) external {
@@ -252,7 +281,7 @@ contract GameFacet is UseStorage {
         require(ECSLib.getBool("CanProduce", cityID), "CURIO: City cannot produce");
 
         // Check gold balance sufficience
-        uint256 goldInventoryID = GameLib.getInventory(cityID, GameLib.getTemplateByInventoryType("Gold"));
+        uint256 goldInventoryID = GameLib.getInventory(cityID, gs().templates["Gold"]);
         uint256 balance = goldInventoryID != NULL ? ECSLib.getUint("Amount", goldInventoryID) : 0;
         uint256 cost = ECSLib.getUint("Cost", _templateID) * _amount;
         require(balance >= cost, "CURIO: Insufficient gold balance");
@@ -268,8 +297,9 @@ contract GameFacet is UseStorage {
             ECSLib.setUint("City", inventoryID, cityID);
             ECSLib.setUint("Template", inventoryID, _templateID);
             ECSLib.setUint("Amount", inventoryID, 0);
+            ECSLib.setUint("Load", inventoryID, gs().worldConstants.initCityCenterTroopLoad);
         } else {
-            require(ECSLib.getUint("Amount", inventoryID) < gs().worldConstants.maxInventoryCapacity, "CURIO: Amount exceeds inventory capacity");
+            require(ECSLib.getUint("Amount", inventoryID) < ECSLib.getUint("Load", inventoryID), "CURIO: Amount exceeds inventory capacity");
         }
 
         // Start production
@@ -390,17 +420,16 @@ contract GameFacet is UseStorage {
         require(playerCityID != NULL, "CURIO: Player must own a city");
 
         // Get harvest amount
-        uint256 goldMineHarvestCap = ECSLib.getUint("Load", _goldMineResourceID);
-        uint256 goldmineLevel = ECSLib.getUint("Level", _goldMineResourceID);
-        uint256 rawHarvestAmount = GameLib._goldmineProductionRate(goldmineLevel) * (block.timestamp - ECSLib.getUint("LastTimestamp", _goldMineResourceID)); // 1 second = 1 gold
-        uint256 harvestAmount = GameLib.min(goldMineHarvestCap, rawHarvestAmount); // harvest amount must not exceed the gold cap
+        uint256 harvestAmount = GameLib._goldmineProductionRate(ECSLib.getUint("Level", _goldMineResourceID)) * (block.timestamp - ECSLib.getUint("LastTimestamp", _goldMineResourceID)); // 1 second = 1 gold
+        harvestAmount = GameLib.min(ECSLib.getUint("Load", _goldMineResourceID), harvestAmount); // harvest amount must not exceed the gold cap
 
         // Update gold mine last harvest
         ECSLib.setUint("LastTimestamp", _goldMineResourceID, block.timestamp);
 
-        // Add harvested gold to player's city
-        uint256 cityGoldInventoryID = GameLib.getInventory(playerCityID, GameLib.getTemplateByInventoryType("Gold"));
-        ECSLib.setUint("Amount", cityGoldInventoryID, ECSLib.getUint("Amount", cityGoldInventoryID) + harvestAmount);
+        // Add harvested gold to player's city limited by its load
+        uint256 cityGoldInventoryID = GameLib.getInventory(playerCityID, gs().templates["Gold"]);
+        uint256 totalAmount = GameLib.min(ECSLib.getUint("Load", cityGoldInventoryID), ECSLib.getUint("Amount", harvestAmount));
+        ECSLib.setUint("Amount", cityGoldInventoryID, totalAmount);
     }
 
     // harvest gold on a city
@@ -423,19 +452,14 @@ contract GameFacet is UseStorage {
             ECSLib.setUint("Amount", inventoryID, 0);
         }
 
-        uint256 cityGoldAmount = GameLib.getCityGold(cityID);
-        uint256 intendedHarvestAmount = (block.timestamp - ECSLib.getUint("InitTimestamp", _buildingID)) / ECSLib.getUint("Duration", _templateID);
-
-        uint256 level = ECSLib.getUint("Level", cityID);
-        uint256 harvestCap = GameLib.getHarvestCap(level);
-        uint256 totalCap = GameLib.getTotalGoldCap(level);
-
-        uint256 currentHarvestAmount = intendedHarvestAmount >= harvestCap ? harvestCap : intendedHarvestAmount;
-        uint256 totalAmount = cityGoldAmount + currentHarvestAmount >= totalCap ? totalCap : cityGoldAmount + currentHarvestAmount;
-
-        // Update amount and reset time
+        // Update harvest amount
+        uint256 harvestAmount = (block.timestamp - ECSLib.getUint("LastTimestamp", _buildingID)) / ECSLib.getUint("Duration", _templateID);
+        harvestAmount = GameLib.min(GameLib.getHarvestCap(ECSLib.getUint("Level", cityID)), harvestAmount);
+        uint256 totalAmount = GameLib.min(ECSLib.getUint("Amount", inventoryID) + harvestAmount, ECSLib.getUint("Load", inventoryID));
         ECSLib.setUint("Amount", inventoryID, totalAmount);
-        ECSLib.setUint("InitTimestamp", _buildingID, block.timestamp);
+
+        // Reset harvest time
+        ECSLib.setUint("LastTimestamp", _buildingID, block.timestamp);
     }
 
     // ----------------------------------------------------------
@@ -561,7 +585,7 @@ contract GameFacet is UseStorage {
         if (GameLib.strEq(ECSLib.getString("Tag", _targetID), "Army")) {
             _battleArmy(_armyID, _targetID);
         } else if (GameLib.strEq(ECSLib.getString("Tag", _targetID), "Tile")) {
-            _battleTile(_armyID, _targetID, GameLib.canOccupyTile(playerID, _targetID));
+            _battleTile(_armyID, _targetID, GameLib.isAdjacentToOwnTile(playerID, ECSLib.getPosition("StartPosition", _targetID)));
         }
     }
 
@@ -594,8 +618,14 @@ contract GameFacet is UseStorage {
         bool victory = GameLib.attack(_armyID, _tileID, false, _occupyUponVictory, false);
         if (victory) {
             if (cityID != NULL) {
+                // Victorious against city, occupy regardless of adjacency
                 Templates.addConstituent(_tileID, gs().templates["Guard"], gs().worldConstants.cityGuardAmount);
             }
+
+            // if (_occupyUponVictory) {
+            //     // Victorious against tile, occupy only if an owned tile is adjacent
+            //     Templates.addConstituent(_tileID, gs().templates["Guard"], gs().worldConstants.tileGuardAmount);
+            // }
         } else {
             GameLib.attack(_tileID, _armyID, false, false, true);
         }
@@ -621,15 +651,7 @@ contract GameFacet is UseStorage {
 
         // Verify that tile is next to own tile
         uint256 playerID = GameLib.getPlayer(msg.sender);
-        Position[] memory neighborPositions = GameLib.getTileNeighbors(tilePosition);
-        bool isAdjacentToOwnTile = false;
-        for (uint256 i = 0; i < neighborPositions.length; i++) {
-            if (ECSLib.getUint("Owner", GameLib.getTileAt(neighborPositions[i])) == playerID) {
-                isAdjacentToOwnTile = true;
-                break;
-            }
-        }
-        require(isAdjacentToOwnTile, "CURIO: Tile must be adjacent to own");
+        require(GameLib.isAdjacentToOwnTile(playerID, tilePosition), "CURIO: Tile must be adjacent to own");
 
         // Verify that no other movable entity is on tile
         uint256[] memory movableEntitiesOnTile = GameLib.getMovableEntitiesAtTile(tilePosition);

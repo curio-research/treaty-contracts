@@ -81,8 +81,12 @@ contract DiamondDeployTest is Test {
 
         nato = new NATO();
 
+        // console.log("Run");
+
         // Fetch args from CLI craft payload for init deploy
         bytes memory initData = abi.encodeWithSelector(getSelectors("DiamondInit")[0], worldConstants);
+
+        // console.log("Not run");
 
         IDiamondCut.FacetCut[] memory cuts = new IDiamondCut.FacetCut[](5);
         cuts[0] = IDiamondCut.FacetCut({facetAddress: address(diamondLoupeFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: LOUPE_SELECTORS});
@@ -161,7 +165,7 @@ contract DiamondDeployTest is Test {
         return _result;
     }
 
-    function _createTemplates() internal {
+    function _createTemplates() private {
         vm.startPrank(deployer);
 
         // Troop: Cavalry
@@ -248,11 +252,14 @@ contract DiamondDeployTest is Test {
                 numInitTerrainTypes: 1,
                 initBatchSize: 100,
                 maxCityCountPerPlayer: 3,
-                maxArmyCountPerPlayer: 2,
+                maxArmyCountPerPlayer: 3,
                 maxPlayerCount: 20,
-                cityUpgradeGoldCost: 50,
+                tileUpgradeGoldCost: 150,
+                buildingUpgradeGoldCost: 3000,
+                cityUpgradeGoldCost: 3000,
                 cityPackCost: 30,
-                maxInventoryCapacity: 5000,
+                initCityCenterGoldLoad: 5000,
+                initCityCenterTroopLoad: 1000,
                 initCityGold: 1000,
                 tileWidth: 10,
                 battleRange: 5,

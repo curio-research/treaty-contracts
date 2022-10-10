@@ -57,8 +57,10 @@ export type WorldConstantsStruct = {
   maxArmyCountPerPlayer: PromiseOrValue<BigNumberish>;
   maxPlayerCount: PromiseOrValue<BigNumberish>;
   tileUpgradeGoldCost: PromiseOrValue<BigNumberish>;
+  buildingUpgradeGoldCost: PromiseOrValue<BigNumberish>;
   cityUpgradeGoldCost: PromiseOrValue<BigNumberish>;
-  maxInventoryCapacity: PromiseOrValue<BigNumberish>;
+  initCityCenterGoldLoad: PromiseOrValue<BigNumberish>;
+  initCityCenterTroopLoad: PromiseOrValue<BigNumberish>;
   cityPackCost: PromiseOrValue<BigNumberish>;
   initCityGold: PromiseOrValue<BigNumberish>;
   cityGuardAmount: PromiseOrValue<BigNumberish>;
@@ -69,6 +71,8 @@ export type WorldConstantsStruct = {
 
 export type WorldConstantsStructOutput = [
   string,
+  BigNumber,
+  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -95,8 +99,10 @@ export type WorldConstantsStructOutput = [
   maxArmyCountPerPlayer: BigNumber;
   maxPlayerCount: BigNumber;
   tileUpgradeGoldCost: BigNumber;
+  buildingUpgradeGoldCost: BigNumber;
   cityUpgradeGoldCost: BigNumber;
-  maxInventoryCapacity: BigNumber;
+  initCityCenterGoldLoad: BigNumber;
+  initCityCenterTroopLoad: BigNumber;
   cityPackCost: BigNumber;
   initCityGold: BigNumber;
   cityGuardAmount: BigNumber;
@@ -178,6 +184,7 @@ export interface CurioInterface extends utils.Interface {
     "packCity(uint256)": FunctionFragment;
     "startTroopProduction(uint256,uint256,uint256)": FunctionFragment;
     "upgradeCity(uint256,(uint256,uint256)[])": FunctionFragment;
+    "upgradeCityInventory(uint256)": FunctionFragment;
     "upgradeGoldmine(uint256)": FunctionFragment;
     "upgradeTile(uint256)": FunctionFragment;
     "getArmyAt((uint256,uint256))": FunctionFragment;
@@ -256,6 +263,7 @@ export interface CurioInterface extends utils.Interface {
       | "packCity"
       | "startTroopProduction"
       | "upgradeCity"
+      | "upgradeCityInventory"
       | "upgradeGoldmine"
       | "upgradeTile"
       | "getArmyAt"
@@ -444,6 +452,10 @@ export interface CurioInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "upgradeCity",
     values: [PromiseOrValue<BigNumberish>, PositionStruct[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "upgradeCityInventory",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "upgradeGoldmine",
@@ -708,6 +720,10 @@ export interface CurioInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "upgradeCity",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "upgradeCityInventory",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -1158,6 +1174,11 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    upgradeCityInventory(
+      _buildingID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     upgradeGoldmine(
       _resourceID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1539,6 +1560,11 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  upgradeCityInventory(
+    _buildingID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   upgradeGoldmine(
     _resourceID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1917,6 +1943,11 @@ export interface Curio extends BaseContract {
     upgradeCity(
       _cityID: PromiseOrValue<BigNumberish>,
       _newTiles: PositionStruct[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    upgradeCityInventory(
+      _buildingID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -2356,6 +2387,11 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    upgradeCityInventory(
+      _buildingID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     upgradeGoldmine(
       _resourceID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -2733,6 +2769,11 @@ export interface Curio extends BaseContract {
     upgradeCity(
       _cityID: PromiseOrValue<BigNumberish>,
       _newTiles: PositionStruct[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    upgradeCityInventory(
+      _buildingID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

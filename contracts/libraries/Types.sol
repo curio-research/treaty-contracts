@@ -55,8 +55,10 @@ struct WorldConstants {
     uint256 maxArmyCountPerPlayer;
     uint256 maxPlayerCount;
     uint256 tileUpgradeGoldCost;
+    uint256 buildingUpgradeGoldCost;
     uint256 cityUpgradeGoldCost; // constant for now but realistically not ?
-    uint256 maxInventoryCapacity;
+    uint256 initCityCenterGoldLoad;
+    uint256 initCityCenterTroopLoad;
     uint256 cityPackCost;
     uint256 initCityGold;
     uint256 cityGuardAmount;
@@ -77,6 +79,7 @@ struct GameState {
     uint256 entityNonce;
     string[] componentNames;
     mapping(string => address) components; // component name to contract address
+    string[] templateNames;
     mapping(string => uint256) templates; // template name to id
     mapping(uint256 => address) componentEntityToAddress; // component id to contract address
     mapping(address => uint256) playerEntityMap;
