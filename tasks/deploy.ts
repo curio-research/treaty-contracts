@@ -87,15 +87,15 @@ task('deploy', 'deploy contracts')
       await createTemplates(diamond);
       console.log(`✦ template creation took ${Math.floor(performance.now() - startTime)} ms`);
 
-      // Bulk initialize all tiles
-      const tileWidth = Number(worldConstants.tileWidth);
-      const allStartingPositions: position[] = [];
-      for (let i = 0; i < tileMap.length; i++) {
-        for (let j = 0; j < tileMap[0].length; j++) {
-          const properTile = { x: i * tileWidth, y: j * tileWidth };
-          allStartingPositions.push(properTile);
-        }
-      }
+      // TODO: useful in some testing. Bulk initialize all tiles
+      // const tileWidth = Number(worldConstants.tileWidth);
+      // const allStartingPositions: position[] = [];
+      // for (let i = 0; i < tileMap.length; i++) {
+      //   for (let j = 0; j < tileMap[0].length; j++) {
+      //     const properTile = { x: i * tileWidth, y: j * tileWidth };
+      //     allStartingPositions.push(properTile);
+      //   }
+      // }
 
       // initialize 10 at a time
       // const bulkTileUploadSize = 5;
@@ -162,7 +162,7 @@ task('deploy', 'deploy contracts')
       }
 
       console.log(chalk.bgGreen.black(' Curio Game Deployed '));
-      console.log(chalk.bgRed.white(` Deployed in ${Math.floor(performance.now() - s)}s `));
+      console.log(chalk.bgRed.white(` Deployed in ${Math.floor(performance.now() - s) / 1000}s `));
 
       if (isDev) {
         await hre.ethers.provider.send('evm_setNextBlockTimestamp', [Math.floor(new Date().getTime() / 1000)]);
