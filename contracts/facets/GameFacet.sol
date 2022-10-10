@@ -161,6 +161,7 @@ contract GameFacet is UseStorage {
         ECSLib.removeEntity(GameLib.getCityCenter(_cityID));
     }
 
+    // every time you purchase, you increase the number of tile defenders
     function upgradeTile(uint256 _tileID) external {
         // Basic checks
         GameLib.validEntityCheck(_tileID);
@@ -168,8 +169,7 @@ contract GameFacet is UseStorage {
         GameLib.activePlayerCheck(msg.sender);
         GameLib.entityOwnershipCheck(_tileID, msg.sender);
 
-        // Verify that city has enough gold
-        uint256 goldInventoryID = GameLib.getInventory(ECSLib.getUint("City", _tileID), gs().templates["Gold"]);
+        uint256 goldInventoryID = GameLib.getInventory(GameLib.getPlayerCity(GameLib.getPlayer(msg.sender)), gs().templates["Gold"]);
         uint256 balance = ECSLib.getUint("Amount", goldInventoryID);
         uint256 cost = gs().worldConstants.tileUpgradeGoldCost;
         require(balance >= cost, "CURIO: Insufficient gold balance");
@@ -177,10 +177,9 @@ contract GameFacet is UseStorage {
         // Deduct upgrade cost
         ECSLib.setUint("Amount", goldInventoryID, balance - cost);
 
-        // Upgrade tile level and guard amount
-        uint256 newLevel = ECSLib.getUint("Level", _tileID) + 1;
-        ECSLib.setUint("Level", _tileID, newLevel);
-        ECSLib.setUint("Amount", GameLib.getConstituents(_tileID)[0], newLevel * gs().worldConstants.tileGuardAmount);
+        // get constituents
+        uint256 constituentAmount = ECSLib.getUint("Amount", GameLib.getConstituents(_tileID)[0]);
+        ECSLib.setUint("Amount", GameLib.getConstituents(_tileID)[0], constituentAmount + gs().worldConstants.tileGuardAmount);
     }
 
     function upgradeCityInventory(uint256 _buildingID) external {

@@ -29,14 +29,14 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): W
     maxPlayerCount: 20,
     tileUpgradeGoldCost: 150,
     buildingUpgradeGoldCost: 3000, // internal buildings
-    cityUpgradeGoldCost: 1000000000000000, // temporarily disabled
+    cityUpgradeGoldCost: 1000, // temporarily disabled
     cityPackCost: 1000000000000000, // temporarily disabled
     initCityCenterGoldLoad: 5000,
     initCityCenterTroopLoad: 1000,
     initCityGold: 1000,
     tileWidth: TILE_WIDTH,
     battleRange: TILE_WIDTH,
-    tileGuardAmount: 1,
+    tileGuardAmount: 10,
     cityGuardAmount: 1000,
   };
 };
