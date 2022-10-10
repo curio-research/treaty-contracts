@@ -81,12 +81,8 @@ contract DiamondDeployTest is Test {
 
         nato = new NATO();
 
-        // console.log("Run");
-
         // Fetch args from CLI craft payload for init deploy
         bytes memory initData = abi.encodeWithSelector(getSelectors("DiamondInit")[0], worldConstants);
-
-        // console.log("Not run");
 
         IDiamondCut.FacetCut[] memory cuts = new IDiamondCut.FacetCut[](5);
         cuts[0] = IDiamondCut.FacetCut({facetAddress: address(diamondLoupeFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: LOUPE_SELECTORS});

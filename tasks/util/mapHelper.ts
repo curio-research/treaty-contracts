@@ -3,7 +3,7 @@ import { decodeBigNumberishArr } from './../../util/serde/common';
 import { Component__factory } from './../../typechain-types/factories/contracts/Component__factory';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { position } from './../../util/types/common';
-import { TILE_TYPE, componentNameToId, encodePosition, getImmediateSurroundingPositions, TileMap, Tag, Position, Owner, Health, Speed, Attack, Defense, Load, LastTimestamp, Tags, encodeString, encodeUint256, Capacity, getRightPos } from 'curio-vault';
+import { TILE_TYPE, componentNameToId, encodePosition, getImmediateSurroundingPositions, TileMap, Tag, Position, Owner, Health, Speed, Attack, Defense, Load, LastTimestamp, Tags, encodeString, encodeUint256, getRightPos } from 'curio-vault';
 import { TILE_WIDTH } from './constants';
 import { Console } from 'console';
 
