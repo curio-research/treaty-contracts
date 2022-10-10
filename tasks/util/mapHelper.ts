@@ -5,7 +5,6 @@ import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { position } from './../../util/types/common';
 import { TILE_TYPE, componentNameToId, encodePosition, getImmediateSurroundingPositions, TileMap, Tag, Position, Owner, Health, Speed, Attack, Defense, Load, LastTimestamp, Tags, encodeString, encodeUint256, getRightPos } from 'curio-vault';
 import { TILE_WIDTH } from './constants';
-import { Console } from 'console';
 
 const MAX_UINT256 = BigInt(Math.pow(2, 256)) - BigInt(1);
 

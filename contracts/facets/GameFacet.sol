@@ -161,6 +161,7 @@ contract GameFacet is UseStorage {
         ECSLib.removeEntity(GameLib.getCityCenter(_cityID));
     }
 
+    // every time you purchase, you increase the number of tile defenders
     function upgradeTile(uint256 _tileID) external {
         // Basic checks
         GameLib.validEntityCheck(_tileID);
@@ -168,8 +169,7 @@ contract GameFacet is UseStorage {
         GameLib.activePlayerCheck(msg.sender);
         GameLib.entityOwnershipCheck(_tileID, msg.sender);
 
-        // Verify that city has enough gold
-        uint256 goldInventoryID = GameLib.getInventory(ECSLib.getUint("City", _tileID), gs().templates["Gold"]);
+        uint256 goldInventoryID = GameLib.getInventory(GameLib.getPlayerCity(GameLib.getPlayer(msg.sender)), gs().templates["Gold"]);
         uint256 balance = ECSLib.getUint("Amount", goldInventoryID);
         uint256 cost = gs().worldConstants.tileUpgradeGoldCost;
         require(balance >= cost, "CURIO: Insufficient gold balance");
@@ -177,10 +177,9 @@ contract GameFacet is UseStorage {
         // Deduct upgrade cost
         ECSLib.setUint("Amount", goldInventoryID, balance - cost);
 
-        // Upgrade tile level and guard amount
-        uint256 newLevel = ECSLib.getUint("Level", _tileID) + 1;
-        ECSLib.setUint("Level", _tileID, newLevel);
-        ECSLib.setUint("Amount", GameLib.getConstituents(_tileID)[0], newLevel * gs().worldConstants.tileGuardAmount);
+        // get constituents
+        uint256 constituentAmount = ECSLib.getUint("Amount", GameLib.getConstituents(_tileID)[0]);
+        ECSLib.setUint("Amount", GameLib.getConstituents(_tileID)[0], constituentAmount + gs().worldConstants.tileGuardAmount);
     }
 
     function upgradeCityInventory(uint256 _buildingID) external {
@@ -390,6 +389,7 @@ contract GameFacet is UseStorage {
     //     ECSLib.setUint("Amount", cityGoldInventoryID, GameLib.getCityGold(playerCityID) + cost);
     // }
 
+    // harvest gold from a gold resource directly
     function harvestGold(uint256 _goldMineResourceID, uint256 armyID) external {
         // Basic checks
         GameLib.validEntityCheck(_goldMineResourceID);
@@ -413,22 +413,25 @@ contract GameFacet is UseStorage {
         require(hasArmyOnTile || hasGoldMineBuilt, "CURIO: Need gold mine or army on tile");
 
         // Verify that the gold mine resource level is greater than zero, meaning that a gold mine has "been built".
-        require(goldMineLevel > 0, "CURIO: Must activate gold mine");
+        // require(goldMineLevel > 0, "CURIO: Must activate gold mine");
 
         // Verify city ownership
         uint256 playerCityID = GameLib.getPlayerCity(GameLib.getPlayer(msg.sender));
         require(playerCityID != NULL, "CURIO: Player must own a city");
 
         // Get harvest amount
-        uint256 harvestAmount = GameLib._goldmineProductionRate(ECSLib.getUint("Level", _goldMineResourceID)) * (block.timestamp - ECSLib.getUint("LastTimestamp", _goldMineResourceID)); // 1 second = 1 gold
-        harvestAmount = GameLib.min(ECSLib.getUint("Load", _goldMineResourceID), harvestAmount); // harvest amount must not exceed the gold cap
+        uint256 goldMineHarvestCap = ECSLib.getUint("Load", _goldMineResourceID);
+        uint256 goldmineLevel = ECSLib.getUint("Level", _goldMineResourceID);
+        uint256 rawHarvestAmount = GameLib._goldmineProductionRate(goldmineLevel) * (block.timestamp - ECSLib.getUint("LastTimestamp", _goldMineResourceID)); // 1 second = 1 gold
+        uint256 harvestAmount = GameLib.min(goldMineHarvestCap, rawHarvestAmount); // harvest amount must not exceed the gold cap
 
         // Update gold mine last harvest
         ECSLib.setUint("LastTimestamp", _goldMineResourceID, block.timestamp);
 
         // Add harvested gold to player's city limited by its load
         uint256 cityGoldInventoryID = GameLib.getInventory(playerCityID, gs().templates["Gold"]);
-        uint256 totalAmount = GameLib.min(ECSLib.getUint("Load", cityGoldInventoryID), ECSLib.getUint("Amount", harvestAmount));
+        uint256 existingCityGold = ECSLib.getUint("Amount", cityGoldInventoryID);
+        uint256 totalAmount = GameLib.min(ECSLib.getUint("Load", cityGoldInventoryID), harvestAmount + existingCityGold);
         ECSLib.setUint("Amount", cityGoldInventoryID, totalAmount);
     }
 
@@ -621,7 +624,6 @@ contract GameFacet is UseStorage {
                 // Victorious against city, occupy regardless of adjacency
                 Templates.addConstituent(_tileID, gs().templates["Guard"], gs().worldConstants.cityGuardAmount);
             }
-
             // if (_occupyUponVictory) {
             //     // Victorious against tile, occupy only if an owned tile is adjacent
             //     Templates.addConstituent(_tileID, gs().templates["Guard"], gs().worldConstants.tileGuardAmount);
@@ -651,7 +653,7 @@ contract GameFacet is UseStorage {
 
         // Verify that tile is next to own tile
         uint256 playerID = GameLib.getPlayer(msg.sender);
-        require(GameLib.isAdjacentToOwnTile(playerID, tilePosition), "CURIO: Tile must be adjacent to own");
+        require(GameLib.isAdjacentToOwnTile(playerID, tilePosition), "CURIO: You must claim tiles next to your own");
 
         // Verify that no other movable entity is on tile
         uint256[] memory movableEntitiesOnTile = GameLib.getMovableEntitiesAtTile(tilePosition);
@@ -686,42 +688,46 @@ contract GameFacet is UseStorage {
         GameLib.setCityGold(playerCityID, playerCityGold - upgradeCost);
     }
 
+    // function initializeTile(Position memory _startPosition) public {
+    //     GameLib.initializeTile(_startPosition);
+    // }
+
     // --------------------------
     // treaty (WIP)
     // --------------------------
 
     // TODO: setAddress => _setAddressArray
-    function joinTreaty(address _treatyAddress) external {
-        // GameLib.ongoingGameCheck();
-        // GameLib.activePlayerCheck(msg.sender);
-        // // request to sign treaty
-        // (bool success, bytes memory returnData) = _treatyAddress.call(abi.encodeWithSignature("joinTreaty()"));
-        // require(success, "CRUIO: Failed to call the external treaty");
-        // require(abi.decode(returnData, (bool)), "CRUIO: The treaty rejects your request");
-        // // Sign treaty
-        // uint256 _signatureID = ECSLib.addEntity();
-        // ECSLib.setString("Tag", _signatureID, "Signature");
-        // ECSLib.setUint("Owner", _signatureID, _playerID);
-        // ECSLib.setAddress("Treaty", _signatureID, _treatyAddress);
-    }
+    // function joinTreaty(address _treatyAddress) external {
+    //     // GameLib.ongoingGameCheck();
+    //     // GameLib.activePlayerCheck(msg.sender);
+    //     // // request to sign treaty
+    //     // (bool success, bytes memory returnData) = _treatyAddress.call(abi.encodeWithSignature("joinTreaty()"));
+    //     // require(success, "CRUIO: Failed to call the external treaty");
+    //     // require(abi.decode(returnData, (bool)), "CRUIO: The treaty rejects your request");
+    //     // // Sign treaty
+    //     // uint256 _signatureID = ECSLib.addEntity();
+    //     // ECSLib.setString("Tag", _signatureID, "Signature");
+    //     // ECSLib.setUint("Owner", _signatureID, _playerID);
+    //     // ECSLib.setAddress("Treaty", _signatureID, _treatyAddress);
+    // }
 
-    function denounceTreaty(address _treatyToDenounce) external {
-        // uint256 _playerID = GameLib.getPlayer(msg.sender);
-        // // Verify that player is active
-        // require(ECSLib.getBoolComponent("IsActive").has(_playerID), "CURIO: You are inactive");
-        // GameLib.ongoingGameCheck();
-        // // request to breach treaty
-        // (bool success, bytes memory returnData) = _treatyToDenounce.call(abi.encodeWithSignature("denounceTreaty()"));
-        // require(success, "CRUIO: Failed to call the external treaty");
-        // require(abi.decode(returnData, (bool)), "CRUIO: The treaty rejects your request");
-        // // breach treaty
-        // uint256[] memory _signatureIDs = GameLib.getPlayerSignatures(_playerID);
-        // for (uint256 i = 0; i < _signatureIDs.length; i++) {
-        //     address _treaty = ECSLib.getAddress("Treaty", _signatureIDs[i]);
-        //     if (_treaty == _treatyToDenounce) {
-        //         ECSLib.removeEntity(_signatureIDs[i]);
-        //         break;
-        //     }
-        // }
-    }
+    // function denounceTreaty(address _treatyToDenounce) external {
+    //     // uint256 _playerID = GameLib.getPlayer(msg.sender);
+    //     // // Verify that player is active
+    //     // require(ECSLib.getBoolComponent("IsActive").has(_playerID), "CURIO: You are inactive");
+    //     // GameLib.ongoingGameCheck();
+    //     // // request to breach treaty
+    //     // (bool success, bytes memory returnData) = _treatyToDenounce.call(abi.encodeWithSignature("denounceTreaty()"));
+    //     // require(success, "CRUIO: Failed to call the external treaty");
+    //     // require(abi.decode(returnData, (bool)), "CRUIO: The treaty rejects your request");
+    //     // // breach treaty
+    //     // uint256[] memory _signatureIDs = GameLib.getPlayerSignatures(_playerID);
+    //     // for (uint256 i = 0; i < _signatureIDs.length; i++) {
+    //     //     address _treaty = ECSLib.getAddress("Treaty", _signatureIDs[i]);
+    //     //     if (_treaty == _treatyToDenounce) {
+    //     //         ECSLib.removeEntity(_signatureIDs[i]);
+    //     //         break;
+    //     //     }
+    //     // }
+    // }
 }

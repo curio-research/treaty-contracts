@@ -97,6 +97,7 @@ library GameLib {
             ECSLib.setPosition("StartPosition", goldMineID, getProperTilePosition(_startPosition));
             ECSLib.setUint("LastTimestamp", goldMineID, block.timestamp);
             ECSLib.setUint("Amount", goldMineID, _goldLevelSelector(terrain)); // it happens that the gold level is the same as the terrain index
+            ECSLib.setUint("Load", goldMineID, goldmineCap(1));
         }
 
         // if (terrain >= 4 && terrain <= 6) {
@@ -143,6 +144,7 @@ library GameLib {
     }
 
     function _goldmineProductionRate(uint256 _level) public pure returns (uint256) {
+        if (_level == 0) return 1;
         if (_level == 1) return 1;
         if (_level == 2) return 2;
         if (_level == 3) return 3;
@@ -508,15 +510,15 @@ library GameLib {
             neighborCount++;
         }
         if (x < gs().worldConstants.worldWidth - tileWidth) {
-            temp[neighborCount] = (Position({x: x + 1, y: y}));
+            temp[neighborCount] = (Position({x: x + tileWidth, y: y}));
             neighborCount++;
         }
         if (y > 0) {
-            temp[neighborCount] = (Position({x: x, y: y - 1}));
+            temp[neighborCount] = (Position({x: x, y: y - tileWidth}));
             neighborCount++;
         }
         if (y < gs().worldConstants.worldHeight - tileWidth) {
-            temp[neighborCount] = (Position({x: x, y: y + 1}));
+            temp[neighborCount] = (Position({x: x, y: y + tileWidth}));
             neighborCount++;
         }
 
@@ -562,6 +564,12 @@ library GameLib {
         if (_level == 4) return 12000;
         if (_level == 5) return 15000;
         return 0;
+    }
+
+    function goldmineCap(uint256 _level) internal pure returns (uint256) {
+        if (_level == 1) return 1000;
+        if (_level == 2) return 2000;
+        if (_level == 3) return 3000;
     }
 
     function getPlayerCity(uint256 _playerID) internal returns (uint256) {
