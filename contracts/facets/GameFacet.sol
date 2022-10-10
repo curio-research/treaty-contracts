@@ -687,30 +687,6 @@ contract GameFacet is UseStorage {
         GameLib.setCityGold(playerCityID, playerCityGold - upgradeCost);
     }
 
-    function upgradeGoldmine(uint256 _resourceID) public {
-        GameLib.validEntityCheck(_resourceID);
-        GameLib.ongoingGameCheck();
-        GameLib.activePlayerCheck(msg.sender);
-
-        // tile needs to be yours
-        uint256 playerID = GameLib.getPlayer(msg.sender);
-        Position memory goldresourceStartPosition = ECSLib.getPosition("StartPosition", _resourceID);
-        uint256 tileID = GameLib.getTileAt(goldresourceStartPosition);
-        require(ECSLib.getUint("Owner", tileID) == playerID, "CURIO: Tile isn't yours");
-
-        // get current goldmine level
-        uint256 currentGoldmineLevel = ECSLib.getUint("Level", _resourceID);
-        uint256 upgradeCost = GameLib._goldmineUpgradeCost(currentGoldmineLevel);
-
-        uint256 playerCityID = GameLib.getPlayerCity(playerID);
-        uint256 playerCityGold = GameLib.getCityGold(playerCityID);
-
-        require(playerCityGold >= upgradeCost, "CURIO: Insufficient gold for upgrade");
-
-        ECSLib.setUint("Level", _resourceID, currentGoldmineLevel + 1);
-        GameLib.setCityGold(playerCityID, playerCityGold - upgradeCost);
-    }
-
     function initializeTile(Position memory _startPosition) public {
         GameLib.initializeTile(_startPosition);
     }
@@ -720,37 +696,37 @@ contract GameFacet is UseStorage {
     // --------------------------
 
     // TODO: setAddress => _setAddressArray
-    function joinTreaty(address _treatyAddress) external {
-        // GameLib.ongoingGameCheck();
-        // GameLib.activePlayerCheck(msg.sender);
-        // // request to sign treaty
-        // (bool success, bytes memory returnData) = _treatyAddress.call(abi.encodeWithSignature("joinTreaty()"));
-        // require(success, "CRUIO: Failed to call the external treaty");
-        // require(abi.decode(returnData, (bool)), "CRUIO: The treaty rejects your request");
-        // // Sign treaty
-        // uint256 _signatureID = ECSLib.addEntity();
-        // ECSLib.setString("Tag", _signatureID, "Signature");
-        // ECSLib.setUint("Owner", _signatureID, _playerID);
-        // ECSLib.setAddress("Treaty", _signatureID, _treatyAddress);
-    }
+    // function joinTreaty(address _treatyAddress) external {
+    //     // GameLib.ongoingGameCheck();
+    //     // GameLib.activePlayerCheck(msg.sender);
+    //     // // request to sign treaty
+    //     // (bool success, bytes memory returnData) = _treatyAddress.call(abi.encodeWithSignature("joinTreaty()"));
+    //     // require(success, "CRUIO: Failed to call the external treaty");
+    //     // require(abi.decode(returnData, (bool)), "CRUIO: The treaty rejects your request");
+    //     // // Sign treaty
+    //     // uint256 _signatureID = ECSLib.addEntity();
+    //     // ECSLib.setString("Tag", _signatureID, "Signature");
+    //     // ECSLib.setUint("Owner", _signatureID, _playerID);
+    //     // ECSLib.setAddress("Treaty", _signatureID, _treatyAddress);
+    // }
 
-    function denounceTreaty(address _treatyToDenounce) external {
-        // uint256 _playerID = GameLib.getPlayer(msg.sender);
-        // // Verify that player is active
-        // require(ECSLib.getBoolComponent("IsActive").has(_playerID), "CURIO: You are inactive");
-        // GameLib.ongoingGameCheck();
-        // // request to breach treaty
-        // (bool success, bytes memory returnData) = _treatyToDenounce.call(abi.encodeWithSignature("denounceTreaty()"));
-        // require(success, "CRUIO: Failed to call the external treaty");
-        // require(abi.decode(returnData, (bool)), "CRUIO: The treaty rejects your request");
-        // // breach treaty
-        // uint256[] memory _signatureIDs = GameLib.getPlayerSignatures(_playerID);
-        // for (uint256 i = 0; i < _signatureIDs.length; i++) {
-        //     address _treaty = ECSLib.getAddress("Treaty", _signatureIDs[i]);
-        //     if (_treaty == _treatyToDenounce) {
-        //         ECSLib.removeEntity(_signatureIDs[i]);
-        //         break;
-        //     }
-        // }
-    }
+    // function denounceTreaty(address _treatyToDenounce) external {
+    //     // uint256 _playerID = GameLib.getPlayer(msg.sender);
+    //     // // Verify that player is active
+    //     // require(ECSLib.getBoolComponent("IsActive").has(_playerID), "CURIO: You are inactive");
+    //     // GameLib.ongoingGameCheck();
+    //     // // request to breach treaty
+    //     // (bool success, bytes memory returnData) = _treatyToDenounce.call(abi.encodeWithSignature("denounceTreaty()"));
+    //     // require(success, "CRUIO: Failed to call the external treaty");
+    //     // require(abi.decode(returnData, (bool)), "CRUIO: The treaty rejects your request");
+    //     // // breach treaty
+    //     // uint256[] memory _signatureIDs = GameLib.getPlayerSignatures(_playerID);
+    //     // for (uint256 i = 0; i < _signatureIDs.length; i++) {
+    //     //     address _treaty = ECSLib.getAddress("Treaty", _signatureIDs[i]);
+    //     //     if (_treaty == _treatyToDenounce) {
+    //     //         ECSLib.removeEntity(_signatureIDs[i]);
+    //     //         break;
+    //     //     }
+    //     // }
+    // }
 }
