@@ -596,7 +596,7 @@ contract GameFacet is UseStorage {
 
     function _battleArmy(uint256 _armyID, uint256 _targetArmyID) private {
         // Verify that army and target army are adjacent
-        require(GameLib.euclidean(ECSLib.getPosition("Position", _armyID), ECSLib.getPosition("Position", _targetArmyID)) <= gs().worldConstants.battleRange, "CURIO: Too far");
+        require(GameLib.euclidean(ECSLib.getPosition("Position", _armyID), ECSLib.getPosition("Position", _targetArmyID)) <= ECSLib.getUint("AttackRange", _armyID), "CURIO: Attack not within range");
 
         // End target army's gather
         if (GameLib.getArmyGather(_targetArmyID) != NULL) GameLib.endGather(_targetArmyID);
@@ -613,8 +613,8 @@ contract GameFacet is UseStorage {
     ) private {
         // Verify that army and tile are adjacent
         require(
-            GameLib.euclidean(ECSLib.getPosition("Position", _armyID), GameLib.getMidPositionFromTilePosition(ECSLib.getPosition("StartPosition", _tileID))) <= gs().worldConstants.battleRange, //
-            "CURIO: Too far"
+            GameLib.euclidean(ECSLib.getPosition("Position", _armyID), GameLib.getMidPositionFromTilePosition(ECSLib.getPosition("StartPosition", _tileID))) <= ECSLib.getUint("AttackRange", _armyID), //
+            "CURIO: Attack not within range"
         );
 
         uint256 cityID = GameLib.getCityAtTile(ECSLib.getPosition("StartPosition", _tileID));

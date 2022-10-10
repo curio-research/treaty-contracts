@@ -66,12 +66,10 @@ export type WorldConstantsStruct = {
   cityGuardAmount: PromiseOrValue<BigNumberish>;
   tileGuardAmount: PromiseOrValue<BigNumberish>;
   tileWidth: PromiseOrValue<BigNumberish>;
-  battleRange: PromiseOrValue<BigNumberish>;
 };
 
 export type WorldConstantsStructOutput = [
   string,
-  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -108,7 +106,6 @@ export type WorldConstantsStructOutput = [
   cityGuardAmount: BigNumber;
   tileGuardAmount: BigNumber;
   tileWidth: BigNumber;
-  battleRange: BigNumber;
 };
 
 export type QueryConditionStruct = {

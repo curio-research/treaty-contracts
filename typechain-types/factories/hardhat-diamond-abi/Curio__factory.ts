@@ -1299,11 +1299,6 @@ const _abi = [
             name: "tileWidth",
             type: "uint256",
           },
-          {
-            internalType: "uint256",
-            name: "battleRange",
-            type: "uint256",
-          },
         ],
         internalType: "struct WorldConstants",
         name: "",

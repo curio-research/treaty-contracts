@@ -140,6 +140,7 @@ library Templates {
         ECSLib.setUint("LastTimestamp", armyID, block.timestamp);
         ECSLib.setUint("MoveCooldown", armyID, _moveCooldown);
         ECSLib.setUint("BattleCooldown", armyID, _battleCooldown);
+        ECSLib.setUint("AttackRange", armyID, 5);
 
         return armyID;
     }

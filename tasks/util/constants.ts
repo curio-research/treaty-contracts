@@ -18,7 +18,7 @@ export const SMALL_MAP_INPUT: MapInput = {
 export const TILE_WIDTH = 5;
 export const NUM_INIT_TERRAIN_TYPES = Object.keys(TILE_TYPE).length;
 
-export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): WorldConstantsStruct => {
+export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): any => {
   return {
     admin: adminAddr,
     worldWidth: mapInput.width * TILE_WIDTH,
@@ -36,7 +36,6 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): W
     initCityCenterTroopLoad: 1000,
     initCityGold: 1000,
     tileWidth: TILE_WIDTH,
-    battleRange: TILE_WIDTH,
     tileGuardAmount: 10,
     cityGuardAmount: 1000,
   };
