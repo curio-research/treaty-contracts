@@ -34,8 +34,8 @@ contract GetterFacet is UseStorage {
         return GameLib.getConstituents(_armyID);
     }
 
-    function getCityGuard(uint256 _cityID) external returns (uint256) {
-        return GameLib.getCityGuard(_cityID);
+    function getConstituentAtTile(uint256 _cityID) external returns (uint256) {
+        return GameLib.getConstituentAtTile(_cityID);
     }
 
     function getArmyAt(Position memory _position) external returns (uint256) {
@@ -99,5 +99,9 @@ contract GetterFacet is UseStorage {
 
     function getSettlerAt(Position memory _position) external returns (uint256) {
         return GameLib.getSettlerAt(_position);
+    }
+
+    function getTileAt(Position memory _position) external returns (uint256) {
+        return GameLib.getTileAt(_position);
     }
 }

@@ -385,14 +385,14 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    // function getCityGuard(uint256 _cityID) internal returns (uint256) {
-    //     QueryCondition[] memory query = new QueryCondition[](2);
-    //     query[0] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("Guard"));
-    //     query[1] = ECSLib.queryChunk(QueryType.HasVal, "City", abi.encode(_cityID));
-    //     uint256[] memory res = ECSLib.query(query);
-    //     assert(res.length <= 1);
-    //     return res.length == 1 ? res[0] : 0;
-    // }
+    function getConstituentAtTile(uint256 _tileID) internal returns (uint256) {
+        QueryCondition[] memory query = new QueryCondition[](2);
+        query[0] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("Constituent"));
+        query[1] = ECSLib.queryChunk(QueryType.HasVal, "Keeper", abi.encode(_tileID));
+        uint256[] memory res = ECSLib.query(query);
+        assert(res.length <= 1);
+        return res.length == 1 ? res[0] : 0;
+    }
 
     function getTemplateByInventoryType(string memory _inventoryType) internal returns (uint256) {
         Set _set1 = new Set();

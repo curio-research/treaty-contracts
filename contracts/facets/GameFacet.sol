@@ -8,6 +8,7 @@ import {Position, WorldConstants} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
 import "contracts/libraries/Templates.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
+import "forge-std/console.sol";
 
 /// @title Game facet
 /// @notice Contains player functions
@@ -588,7 +589,7 @@ contract GameFacet is UseStorage {
         if (GameLib.strEq(ECSLib.getString("Tag", _targetID), "Army")) {
             _battleArmy(_armyID, _targetID);
         } else if (GameLib.strEq(ECSLib.getString("Tag", _targetID), "Tile")) {
-            _battleTile(_armyID, _targetID, GameLib.isAdjacentToOwnTile(playerID, ECSLib.getPosition("StartPosition", _targetID)));
+            _battleTile(_armyID, _targetID, false);
         }
     }
 
@@ -623,6 +624,7 @@ contract GameFacet is UseStorage {
             if (cityID != NULL) {
                 // Victorious against city, occupy regardless of adjacency
                 Templates.addConstituent(_tileID, gs().templates["Guard"], gs().worldConstants.cityGuardAmount);
+                // TODO: rewards for victor
             }
             // if (_occupyUponVictory) {
             //     // Victorious against tile, occupy only if an owned tile is adjacent

@@ -187,7 +187,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         time += 2;
         vm.warp(time);
 
-        // Moscow's army attacks the city of Kiev
+        // Moscow's army attacks Suburb Kiev (left of city center)
         time += 5;
         vm.warp(time);
         {
@@ -196,19 +196,23 @@ contract TreatyTest is Test, DiamondDeployTest {
             time += 2;
             vm.warp(time);
 
-            uint256 kievTileID = getter.getTileOfCityCenter(kievID);
+            uint256 kievSuburbTileID = getter.getTileAt(Position({x: 60, y: 30}));
 
-            game.battle(moscowArmyID, kievTileID);
+            game.battle(moscowArmyID, kievSuburbTileID);
             vm.stopPrank();
             moscowInfantryAmount = abi.decode(getter.getComponent("Amount").getBytesValue(getter.getConstituents(moscowArmyID)[1]), (uint256));
             assertGe(moscowInfantryAmount, 500 - 40);
             assertLe(moscowInfantryAmount, 500 - 20); // FIXME
-            uint256 kievDefenseAmount = abi.decode(getter.getComponent("Amount").getBytesValue(getter.getCityGuard(kievTileID)), (uint256));
+
+            uint256 postWarKievSuburbTileID = getter.getTileAt(Position({x: 60, y: 30}));
+            console.log(postWarKievSuburbTileID);
+            uint256 kievDefenseAmount = abi.decode(getter.getComponent("Amount").getBytesValue(getter.getConstituentAtTile(kievSuburbTileID)), (uint256));
+            console.log("CC");
             assertGe(kievDefenseAmount, _generateWorldConstants().cityGuardAmount - 50);
             assertLe(moscowInfantryAmount, _generateWorldConstants().cityGuardAmount - 20); // FIXME
-            console.log("Moscow encounters great setback occupying Kiev");
+            console.log("Moscow encounters great setback advancing to Kiev");
         }
-        time += 2;
+        time += 6;
         vm.warp(time);
 
         // TODO: repeat battle until Moscow's army dies at the foot of Kiev
