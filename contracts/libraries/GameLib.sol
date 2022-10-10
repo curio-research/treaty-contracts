@@ -502,15 +502,15 @@ library GameLib {
             neighborCount++;
         }
         if (x < gs().worldConstants.worldWidth - tileWidth) {
-            temp[neighborCount] = (Position({x: x + 1, y: y}));
+            temp[neighborCount] = (Position({x: x + tileWidth, y: y}));
             neighborCount++;
         }
         if (y > 0) {
-            temp[neighborCount] = (Position({x: x, y: y - 1}));
+            temp[neighborCount] = (Position({x: x, y: y - tileWidth}));
             neighborCount++;
         }
         if (y < gs().worldConstants.worldHeight - tileWidth) {
-            temp[neighborCount] = (Position({x: x, y: y + 1}));
+            temp[neighborCount] = (Position({x: x, y: y + tileWidth}));
             neighborCount++;
         }
 

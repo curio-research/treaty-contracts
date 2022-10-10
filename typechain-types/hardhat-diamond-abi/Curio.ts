@@ -155,6 +155,7 @@ export interface CurioInterface extends utils.Interface {
     "addTroopTemplate(string,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256)": FunctionFragment;
     "bulkInitializeTiles((uint256,uint256)[])": FunctionFragment;
     "createArmy(uint256,(uint256,uint256))": FunctionFragment;
+    "initializeTile((uint256,uint256))": FunctionFragment;
     "reactivatePlayer(address)": FunctionFragment;
     "registerComponents(address,(string,uint8)[])": FunctionFragment;
     "registerDefaultComponents(address)": FunctionFragment;
@@ -177,7 +178,6 @@ export interface CurioInterface extends utils.Interface {
     "harvestGold(uint256,uint256)": FunctionFragment;
     "harvestResource(uint256,uint256)": FunctionFragment;
     "initializePlayer((uint256,uint256),string)": FunctionFragment;
-    "initializeTile((uint256,uint256))": FunctionFragment;
     "move(uint256,(uint256,uint256))": FunctionFragment;
     "organizeArmy(uint256,uint256[],uint256[])": FunctionFragment;
     "packCity(uint256)": FunctionFragment;
@@ -233,6 +233,7 @@ export interface CurioInterface extends utils.Interface {
       | "addTroopTemplate"
       | "bulkInitializeTiles"
       | "createArmy"
+      | "initializeTile"
       | "reactivatePlayer"
       | "registerComponents"
       | "registerDefaultComponents"
@@ -255,7 +256,6 @@ export interface CurioInterface extends utils.Interface {
       | "harvestGold"
       | "harvestResource"
       | "initializePlayer"
-      | "initializeTile"
       | "move"
       | "organizeArmy"
       | "packCity"
@@ -328,6 +328,10 @@ export interface CurioInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "createArmy",
     values: [PromiseOrValue<BigNumberish>, PositionStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "initializeTile",
+    values: [PositionStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "reactivatePlayer",
@@ -425,10 +429,6 @@ export interface CurioInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "initializePlayer",
     values: [PositionStruct, PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "initializeTile",
-    values: [PositionStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "move",
@@ -636,6 +636,10 @@ export interface CurioInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "createArmy", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "initializeTile",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "reactivatePlayer",
     data: BytesLike
   ): Result;
@@ -706,10 +710,6 @@ export interface CurioInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "initializePlayer",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "initializeTile",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "move", data: BytesLike): Result;
@@ -1020,6 +1020,11 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    initializeTile(
+      _startPosition: PositionStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     reactivatePlayer(
       _address: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1143,11 +1148,6 @@ export interface Curio extends BaseContract {
     initializePlayer(
       _position: PositionStruct,
       _name: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    initializeTile(
-      _startPosition: PositionStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1418,6 +1418,11 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  initializeTile(
+    _startPosition: PositionStruct,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   reactivatePlayer(
     _address: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1533,11 +1538,6 @@ export interface Curio extends BaseContract {
   initializePlayer(
     _position: PositionStruct,
     _name: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  initializeTile(
-    _startPosition: PositionStruct,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1806,6 +1806,11 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    initializeTile(
+      _startPosition: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     reactivatePlayer(
       _address: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -1923,11 +1928,6 @@ export interface Curio extends BaseContract {
     initializePlayer(
       _position: PositionStruct,
       _name: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    initializeTile(
-      _startPosition: PositionStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -2253,6 +2253,11 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    initializeTile(
+      _startPosition: PositionStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     reactivatePlayer(
       _address: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -2368,11 +2373,6 @@ export interface Curio extends BaseContract {
     initializePlayer(
       _position: PositionStruct,
       _name: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    initializeTile(
-      _startPosition: PositionStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -2642,6 +2642,11 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    initializeTile(
+      _startPosition: PositionStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     reactivatePlayer(
       _address: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -2757,11 +2762,6 @@ export interface Curio extends BaseContract {
     initializePlayer(
       _position: PositionStruct,
       _name: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    initializeTile(
-      _startPosition: PositionStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -30,9 +30,9 @@ contract AdminFacet is UseStorage {
         Templates.addArmy(_playerID, _position, 0, 1, 1, 2);
     }
 
-    // function initializeTile(Position memory _startPosition) public onlyAdmin {
-    //     GameLib.initializeTile(_startPosition);
-    // }
+    function initializeTile(Position memory _startPosition) public onlyAdmin {
+        GameLib.initializeTile(_startPosition);
+    }
 
     // ----------------------------------------------------------------------
     // ADMIN FUNCTIONS

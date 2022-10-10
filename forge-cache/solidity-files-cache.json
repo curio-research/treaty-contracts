@@ -1,0 +1,1696 @@
+{
+  "_format": "ethers-rs-sol-cache-3",
+  "paths": {
+    "artifacts": "out",
+    "build_infos": "out/build-info",
+    "sources": "contracts",
+    "tests": "test",
+    "scripts": "script",
+    "libraries": [
+      "lib"
+    ]
+  },
+  "files": {
+    "contracts/Component.sol": {
+      "lastModificationDate": 1664950311628,
+      "contentHash": "bc26299f82f26cfa85b6a6fd14f21568",
+      "sourceName": "contracts/Component.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "contracts/Set.sol"
+      ],
+      "versionRequirement": "^0.8.4",
+      "artifacts": {
+        "Component": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "Component.sol/Component.json"
+        }
+      }
+    },
+    "contracts/Diamond.sol": {
+      "lastModificationDate": 1663281046122,
+      "contentHash": "1e162c4c7e9cd8814e6f1ec468f3bfb7",
+      "sourceName": "contracts/Diamond.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "contracts/interfaces/IDiamondCut.sol",
+        "contracts/libraries/LibDiamond.sol"
+      ],
+      "versionRequirement": "^0.8.0",
+      "artifacts": {
+        "Diamond": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "contracts/Diamond.sol/Diamond.json"
+        }
+      }
+    },
+    "contracts/Mapping.sol": {
+      "lastModificationDate": 1665288483354,
+      "contentHash": "04811aac85026d7704c1d8a9c09468ad",
+      "sourceName": "contracts/Mapping.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": "^0.8.4",
+      "artifacts": {
+        "UintBoolMapping": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "Mapping.sol/UintBoolMapping.json"
+        }
+      }
+    },
+    "contracts/NATO.sol": {
+      "lastModificationDate": 1664216710041,
+      "contentHash": "c6d4f2fbdfdfd05cc24842a058fc972a",
+      "sourceName": "contracts/NATO.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": "^0.8.4",
+      "artifacts": {
+        "NATO": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "NATO.sol/NATO.json"
+        }
+      }
+    },
+    "contracts/Set.sol": {
+      "lastModificationDate": 1665252951614,
+      "contentHash": "b978f5ba69b3acb9f8424bbe0312a512",
+      "sourceName": "contracts/Set.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": "^0.8.4",
+      "artifacts": {
+        "Set": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "Set.sol/Set.json"
+        }
+      }
+    },
+    "contracts/TypedComponents.sol": {
+      "lastModificationDate": 1665177635757,
+      "contentHash": "784c815f5c7c20df44d5463e4396354d",
+      "sourceName": "contracts/TypedComponents.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "contracts/Component.sol",
+        "contracts/Set.sol",
+        "contracts/libraries/Types.sol"
+      ],
+      "versionRequirement": "^0.8.4",
+      "artifacts": {
+        "AddressComponent": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "TypedComponents.sol/AddressComponent.json"
+        },
+        "BoolComponent": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "TypedComponents.sol/BoolComponent.json"
+        },
+        "IntComponent": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "TypedComponents.sol/IntComponent.json"
+        },
+        "PositionComponent": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "TypedComponents.sol/PositionComponent.json"
+        },
+        "StringComponent": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "TypedComponents.sol/StringComponent.json"
+        },
+        "UintArrayComponent": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "TypedComponents.sol/UintArrayComponent.json"
+        },
+        "UintComponent": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "TypedComponents.sol/UintComponent.json"
+        }
+      }
+    },
+    "contracts/diamond.sol": {
+      "lastModificationDate": 1663281046122,
+      "contentHash": "1e162c4c7e9cd8814e6f1ec468f3bfb7",
+      "sourceName": "contracts/diamond.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "contracts/interfaces/IDiamondCut.sol",
+        "contracts/libraries/LibDiamond.sol"
+      ],
+      "versionRequirement": "^0.8.0",
+      "artifacts": {
+        "Diamond": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "contracts/diamond.sol/Diamond.json"
+        }
+      }
+    },
+    "contracts/facets/AdminFacet.sol": {
+      "lastModificationDate": 1665420113849,
+      "contentHash": "a432e91b7b2f7394f0319663a0cf4031",
+      "sourceName": "contracts/facets/AdminFacet.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "contracts/Component.sol",
+        "contracts/Mapping.sol",
+        "contracts/Set.sol",
+        "contracts/TypedComponents.sol",
+        "contracts/libraries/ECSLib.sol",
+        "contracts/libraries/GameLib.sol",
+        "contracts/libraries/Storage.sol",
+        "contracts/libraries/Templates.sol",
+        "contracts/libraries/Types.sol",
+        "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol"
+      ],
+      "versionRequirement": "^0.8.4",
+      "artifacts": {
+        "AdminFacet": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "AdminFacet.sol/AdminFacet.json"
+        }
+      }
+    },
+    "contracts/facets/DiamondCutFacet.sol": {
+      "lastModificationDate": 1663281046129,
+      "contentHash": "ad746ce9d800ea0c25c48b34397c7182",
+      "sourceName": "contracts/facets/DiamondCutFacet.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "contracts/interfaces/IDiamondCut.sol",
+        "contracts/libraries/LibDiamond.sol"
+      ],
+      "versionRequirement": "^0.8.0",
+      "artifacts": {
+        "DiamondCutFacet": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "DiamondCutFacet.sol/DiamondCutFacet.json"
+        }
+      }
+    },
+    "contracts/facets/DiamondLoupeFacet.sol": {
+      "lastModificationDate": 1663281046129,
+      "contentHash": "a540c77de08e319128a4937adb8ee3f0",
+      "sourceName": "contracts/facets/DiamondLoupeFacet.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "contracts/interfaces/IDiamondCut.sol",
+        "contracts/interfaces/IDiamondLoupe.sol",
+        "contracts/interfaces/IERC165.sol",
+        "contracts/libraries/LibDiamond.sol"
+      ],
+      "versionRequirement": "^0.8.0",
+      "artifacts": {
+        "DiamondLoupeFacet": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "DiamondLoupeFacet.sol/DiamondLoupeFacet.json"
+        }
+      }
+    },
+    "contracts/facets/GameFacet.sol": {
+      "lastModificationDate": 1665423863154,
+      "contentHash": "469ae1c13ad121fb68c267b44354fed3",
+      "sourceName": "contracts/facets/GameFacet.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "contracts/Component.sol",
+        "contracts/Mapping.sol",
+        "contracts/Set.sol",
+        "contracts/TypedComponents.sol",
+        "contracts/libraries/ECSLib.sol",
+        "contracts/libraries/GameLib.sol",
+        "contracts/libraries/Storage.sol",
+        "contracts/libraries/Templates.sol",
+        "contracts/libraries/Types.sol",
+        "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol"
+      ],
+      "versionRequirement": "^0.8.4",
+      "artifacts": {
+        "GameFacet": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "GameFacet.sol/GameFacet.json"
+        }
+      }
+    },
+    "contracts/facets/GetterFacet.sol": {
+      "lastModificationDate": 1665288483355,
+      "contentHash": "e176544bafa50229c0bb335cedf14f0d",
+      "sourceName": "contracts/facets/GetterFacet.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "contracts/Component.sol",
+        "contracts/Mapping.sol",
+        "contracts/Set.sol",
+        "contracts/TypedComponents.sol",
+        "contracts/libraries/ECSLib.sol",
+        "contracts/libraries/GameLib.sol",
+        "contracts/libraries/Storage.sol",
+        "contracts/libraries/Templates.sol",
+        "contracts/libraries/Types.sol",
+        "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol"
+      ],
+      "versionRequirement": "^0.8.4",
+      "artifacts": {
+        "GetterFacet": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "GetterFacet.sol/GetterFacet.json"
+        }
+      }
+    },
+    "contracts/facets/OwnershipFacet.sol": {
+      "lastModificationDate": 1663281046137,
+      "contentHash": "511e52e633c81449539ae2a3a978abf8",
+      "sourceName": "contracts/facets/OwnershipFacet.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "contracts/interfaces/IDiamondCut.sol",
+        "contracts/interfaces/IERC173.sol",
+        "contracts/libraries/LibDiamond.sol"
+      ],
+      "versionRequirement": "^0.8.0",
+      "artifacts": {
+        "OwnershipFacet": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "OwnershipFacet.sol/OwnershipFacet.json"
+        }
+      }
+    },
+    "contracts/facets/PolicyFacet.sol": {
+      "lastModificationDate": 1665099866208,
+      "contentHash": "937d0828bde7ce69ce5f3d0d865c256f",
+      "sourceName": "contracts/facets/PolicyFacet.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "contracts/Component.sol",
+        "contracts/Mapping.sol",
+        "contracts/Set.sol",
+        "contracts/TypedComponents.sol",
+        "contracts/libraries/ECSLib.sol",
+        "contracts/libraries/GameLib.sol",
+        "contracts/libraries/Storage.sol",
+        "contracts/libraries/Templates.sol",
+        "contracts/libraries/Types.sol",
+        "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol"
+      ],
+      "versionRequirement": "^0.8.4",
+      "artifacts": {
+        "PolicyFacet": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "PolicyFacet.sol/PolicyFacet.json"
+        }
+      }
+    },
+    "contracts/interfaces/IDiamondCut.sol": {
+      "lastModificationDate": 1663281046137,
+      "contentHash": "d8b4c09443cf22718287f7f9a4a6bcb2",
+      "sourceName": "contracts/interfaces/IDiamondCut.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": "^0.8.0",
+      "artifacts": {
+        "IDiamondCut": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "IDiamondCut.sol/IDiamondCut.json"
+        }
+      }
+    },
+    "contracts/interfaces/IDiamondLoupe.sol": {
+      "lastModificationDate": 1663281046137,
+      "contentHash": "a471cd6a18e337530aa0fb37a1dd2294",
+      "sourceName": "contracts/interfaces/IDiamondLoupe.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": "^0.8.0",
+      "artifacts": {
+        "IDiamondLoupe": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "IDiamondLoupe.sol/IDiamondLoupe.json"
+        }
+      }
+    },
+    "contracts/interfaces/IERC165.sol": {
+      "lastModificationDate": 1663281046138,
+      "contentHash": "f8f9ee2c76e1678bfead7a3fad131934",
+      "sourceName": "contracts/interfaces/IERC165.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": "^0.8.0",
+      "artifacts": {
+        "IERC165": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "IERC165.sol/IERC165.json"
+        }
+      }
+    },
+    "contracts/interfaces/IERC173.sol": {
+      "lastModificationDate": 1663281046138,
+      "contentHash": "65e379207bc221335d0eedfe7b077af6",
+      "sourceName": "contracts/interfaces/IERC173.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": "^0.8.0",
+      "artifacts": {
+        "IERC173": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "IERC173.sol/IERC173.json"
+        }
+      }
+    },
+    "contracts/libraries/ECSLib.sol": {
+      "lastModificationDate": 1665288483355,
+      "contentHash": "21abc0fe2ed154e7d2357751c8ce25a3",
+      "sourceName": "contracts/libraries/ECSLib.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "contracts/Component.sol",
+        "contracts/Mapping.sol",
+        "contracts/Set.sol",
+        "contracts/TypedComponents.sol",
+        "contracts/libraries/Storage.sol",
+        "contracts/libraries/Types.sol",
+        "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol"
+      ],
+      "versionRequirement": "^0.8.4",
+      "artifacts": {
+        "ECSLib": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "ECSLib.sol/ECSLib.json"
+        }
+      }
+    },
+    "contracts/libraries/GameLib.sol": {
+      "lastModificationDate": 1665423945533,
+      "contentHash": "c9ad1dff535e10536766c1dfef1b9293",
+      "sourceName": "contracts/libraries/GameLib.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "contracts/Component.sol",
+        "contracts/Mapping.sol",
+        "contracts/Set.sol",
+        "contracts/TypedComponents.sol",
+        "contracts/libraries/ECSLib.sol",
+        "contracts/libraries/Storage.sol",
+        "contracts/libraries/Templates.sol",
+        "contracts/libraries/Types.sol",
+        "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol"
+      ],
+      "versionRequirement": "^0.8.4",
+      "artifacts": {
+        "GameLib": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "GameLib.sol/GameLib.json"
+        }
+      }
+    },
+    "contracts/libraries/LibDiamond.sol": {
+      "lastModificationDate": 1663281046139,
+      "contentHash": "dc19813d865c86478eceb05147199488",
+      "sourceName": "contracts/libraries/LibDiamond.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "contracts/interfaces/IDiamondCut.sol"
+      ],
+      "versionRequirement": "^0.8.0",
+      "artifacts": {
+        "LibDiamond": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "LibDiamond.sol/LibDiamond.json"
+        }
+      }
+    },
+    "contracts/libraries/Storage.sol": {
+      "lastModificationDate": 1663281046140,
+      "contentHash": "1b36141f848b096102e707d476aaf9cb",
+      "sourceName": "contracts/libraries/Storage.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "contracts/libraries/Types.sol"
+      ],
+      "versionRequirement": "^0.8.0",
+      "artifacts": {
+        "LibStorage": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "Storage.sol/LibStorage.json"
+        },
+        "UseStorage": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "Storage.sol/UseStorage.json"
+        }
+      }
+    },
+    "contracts/libraries/Templates.sol": {
+      "lastModificationDate": 1665419956977,
+      "contentHash": "c1300f4331907dfc93f2999852cd85d8",
+      "sourceName": "contracts/libraries/Templates.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "contracts/Component.sol",
+        "contracts/Mapping.sol",
+        "contracts/Set.sol",
+        "contracts/TypedComponents.sol",
+        "contracts/libraries/ECSLib.sol",
+        "contracts/libraries/Storage.sol",
+        "contracts/libraries/Types.sol",
+        "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol"
+      ],
+      "versionRequirement": "^0.8.4",
+      "artifacts": {
+        "Templates": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "Templates.sol/Templates.json"
+        }
+      }
+    },
+    "contracts/libraries/Types.sol": {
+      "lastModificationDate": 1665419757776,
+      "contentHash": "6099f19fd4dc85e939a808cbe69fd360",
+      "sourceName": "contracts/libraries/Types.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": "^0.8.4",
+      "artifacts": {
+        "Types": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "Types.sol/Types.json"
+        }
+      }
+    },
+    "contracts/upgradeInitializers/DiamondInit.sol": {
+      "lastModificationDate": 1665419757777,
+      "contentHash": "0e2c3e2aa6e4f37ddd77f297064c1b3f",
+      "sourceName": "contracts/upgradeInitializers/DiamondInit.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "contracts/Set.sol",
+        "contracts/interfaces/IDiamondCut.sol",
+        "contracts/interfaces/IDiamondLoupe.sol",
+        "contracts/interfaces/IERC165.sol",
+        "contracts/interfaces/IERC173.sol",
+        "contracts/libraries/LibDiamond.sol",
+        "contracts/libraries/Storage.sol",
+        "contracts/libraries/Types.sol",
+        "lib/forge-std/src/console.sol"
+      ],
+      "versionRequirement": "^0.8.0",
+      "artifacts": {
+        "DiamondInit": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "upgradeInitializers/DiamondInit.sol/DiamondInit.json"
+        }
+      }
+    },
+    "contracts/upgradeInitializers/diamondInit.sol": {
+      "lastModificationDate": 1665419757777,
+      "contentHash": "0e2c3e2aa6e4f37ddd77f297064c1b3f",
+      "sourceName": "contracts/upgradeInitializers/diamondInit.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "contracts/Set.sol",
+        "contracts/interfaces/IDiamondCut.sol",
+        "contracts/interfaces/IDiamondLoupe.sol",
+        "contracts/interfaces/IERC165.sol",
+        "contracts/interfaces/IERC173.sol",
+        "contracts/libraries/LibDiamond.sol",
+        "contracts/libraries/Storage.sol",
+        "contracts/libraries/Types.sol",
+        "lib/forge-std/src/console.sol"
+      ],
+      "versionRequirement": "^0.8.0",
+      "artifacts": {
+        "DiamondInit": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "upgradeInitializers/diamondInit.sol/DiamondInit.json"
+        }
+      }
+    },
+    "lib/forge-std/lib/ds-test/src/test.sol": {
+      "lastModificationDate": 1665287817940,
+      "contentHash": "962996f0e05d5218857a538a62d7c47e",
+      "sourceName": "lib/forge-std/lib/ds-test/src/test.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": ">=0.5.0",
+      "artifacts": {
+        "DSTest": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "test.sol/DSTest.json"
+        }
+      }
+    },
+    "lib/forge-std/src/Test.sol": {
+      "lastModificationDate": 1665287817941,
+      "contentHash": "01af3898b6c9b54e3383d2e7303f487a",
+      "sourceName": "lib/forge-std/src/Test.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/forge-std/lib/ds-test/src/test.sol",
+        "lib/forge-std/src/Vm.sol",
+        "lib/forge-std/src/console.sol",
+        "lib/forge-std/src/console2.sol"
+      ],
+      "versionRequirement": ">=0.6.0, <0.9.0",
+      "artifacts": {
+        "Test": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "Test.sol/Test.json"
+        },
+        "stdError": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "Test.sol/stdError.json"
+        },
+        "stdMath": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "Test.sol/stdMath.json"
+        },
+        "stdStorage": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "Test.sol/stdStorage.json"
+        }
+      }
+    },
+    "lib/forge-std/src/Vm.sol": {
+      "lastModificationDate": 1665287817941,
+      "contentHash": "1af1970835110fd1d828d9570c720bdb",
+      "sourceName": "lib/forge-std/src/Vm.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": ">=0.6.0",
+      "artifacts": {
+        "Vm": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "Vm.sol/Vm.json"
+        }
+      }
+    },
+    "lib/forge-std/src/console.sol": {
+      "lastModificationDate": 1665287817941,
+      "contentHash": "100b8a33b917da1147740d7ab8b0ded3",
+      "sourceName": "lib/forge-std/src/console.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": ">=0.4.22, <0.9.0",
+      "artifacts": {
+        "console": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "console.sol/console.json"
+        }
+      }
+    },
+    "lib/forge-std/src/console2.sol": {
+      "lastModificationDate": 1665287817941,
+      "contentHash": "5df91f8e93efbfcccf68973dc1b74a70",
+      "sourceName": "lib/forge-std/src/console2.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": ">=0.4.22, <0.9.0",
+      "artifacts": {
+        "console2": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "console2.sol/console2.json"
+        }
+      }
+    },
+    "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol": {
+      "lastModificationDate": 1663281046206,
+      "contentHash": "2337f0279507b5edf14a07067adf0d05",
+      "sourceName": "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": "^0.8.0",
+      "artifacts": {
+        "SafeMath": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "SafeMath.sol/SafeMath.json"
+        }
+      }
+    },
+    "test/Basic.t.sol": {
+      "lastModificationDate": 1665288483359,
+      "contentHash": "64a29c77b51bf784471122488ca9b112",
+      "sourceName": "test/Basic.t.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "contracts/Component.sol",
+        "contracts/Mapping.sol",
+        "contracts/NATO.sol",
+        "contracts/Set.sol",
+        "contracts/TypedComponents.sol",
+        "contracts/diamond.sol",
+        "contracts/facets/AdminFacet.sol",
+        "contracts/facets/DiamondCutFacet.sol",
+        "contracts/facets/DiamondLoupeFacet.sol",
+        "contracts/facets/GameFacet.sol",
+        "contracts/facets/GetterFacet.sol",
+        "contracts/facets/OwnershipFacet.sol",
+        "contracts/interfaces/IDiamondCut.sol",
+        "contracts/interfaces/IDiamondLoupe.sol",
+        "contracts/interfaces/IERC165.sol",
+        "contracts/interfaces/IERC173.sol",
+        "contracts/libraries/ECSLib.sol",
+        "contracts/libraries/GameLib.sol",
+        "contracts/libraries/LibDiamond.sol",
+        "contracts/libraries/Storage.sol",
+        "contracts/libraries/Templates.sol",
+        "contracts/libraries/Types.sol",
+        "contracts/upgradeInitializers/diamondInit.sol",
+        "lib/forge-std/lib/ds-test/src/test.sol",
+        "lib/forge-std/src/Test.sol",
+        "lib/forge-std/src/Vm.sol",
+        "lib/forge-std/src/console.sol",
+        "lib/forge-std/src/console2.sol",
+        "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol",
+        "test/DiamondDeploy.t.sol"
+      ],
+      "versionRequirement": "^0.8.4",
+      "artifacts": {
+        "TreatyTest": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "Basic.t.sol/TreatyTest.json"
+        }
+      }
+    },
+    "test/Depr.t.sol": {
+      "lastModificationDate": 1664859780733,
+      "contentHash": "ff7747e1ab4c86469ed2ed06c659b116",
+      "sourceName": "test/Depr.t.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "contracts/Component.sol",
+        "contracts/Mapping.sol",
+        "contracts/NATO.sol",
+        "contracts/Set.sol",
+        "contracts/TypedComponents.sol",
+        "contracts/diamond.sol",
+        "contracts/facets/AdminFacet.sol",
+        "contracts/facets/DiamondCutFacet.sol",
+        "contracts/facets/DiamondLoupeFacet.sol",
+        "contracts/facets/GameFacet.sol",
+        "contracts/facets/GetterFacet.sol",
+        "contracts/facets/OwnershipFacet.sol",
+        "contracts/interfaces/IDiamondCut.sol",
+        "contracts/interfaces/IDiamondLoupe.sol",
+        "contracts/interfaces/IERC165.sol",
+        "contracts/interfaces/IERC173.sol",
+        "contracts/libraries/ECSLib.sol",
+        "contracts/libraries/GameLib.sol",
+        "contracts/libraries/LibDiamond.sol",
+        "contracts/libraries/Storage.sol",
+        "contracts/libraries/Templates.sol",
+        "contracts/libraries/Types.sol",
+        "contracts/upgradeInitializers/diamondInit.sol",
+        "lib/forge-std/lib/ds-test/src/test.sol",
+        "lib/forge-std/src/Test.sol",
+        "lib/forge-std/src/Vm.sol",
+        "lib/forge-std/src/console.sol",
+        "lib/forge-std/src/console2.sol",
+        "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol",
+        "test/DiamondDeploy.t.sol"
+      ],
+      "versionRequirement": "^0.8.4",
+      "artifacts": {
+        "ECS": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "Depr.t.sol/ECS.json"
+        }
+      }
+    },
+    "test/DiamondDeploy.t.sol": {
+      "lastModificationDate": 1665419757778,
+      "contentHash": "9d1e7162e9f4ae0b18c42747735454ab",
+      "sourceName": "test/DiamondDeploy.t.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "contracts/Component.sol",
+        "contracts/Mapping.sol",
+        "contracts/NATO.sol",
+        "contracts/Set.sol",
+        "contracts/TypedComponents.sol",
+        "contracts/diamond.sol",
+        "contracts/facets/AdminFacet.sol",
+        "contracts/facets/DiamondCutFacet.sol",
+        "contracts/facets/DiamondLoupeFacet.sol",
+        "contracts/facets/GameFacet.sol",
+        "contracts/facets/GetterFacet.sol",
+        "contracts/facets/OwnershipFacet.sol",
+        "contracts/interfaces/IDiamondCut.sol",
+        "contracts/interfaces/IDiamondLoupe.sol",
+        "contracts/interfaces/IERC165.sol",
+        "contracts/interfaces/IERC173.sol",
+        "contracts/libraries/ECSLib.sol",
+        "contracts/libraries/GameLib.sol",
+        "contracts/libraries/LibDiamond.sol",
+        "contracts/libraries/Storage.sol",
+        "contracts/libraries/Templates.sol",
+        "contracts/libraries/Types.sol",
+        "contracts/upgradeInitializers/diamondInit.sol",
+        "lib/forge-std/lib/ds-test/src/test.sol",
+        "lib/forge-std/src/Test.sol",
+        "lib/forge-std/src/Vm.sol",
+        "lib/forge-std/src/console.sol",
+        "lib/forge-std/src/console2.sol",
+        "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol"
+      ],
+      "versionRequirement": "^0.8.4",
+      "artifacts": {
+        "DiamondDeployTest": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "DiamondDeploy.t.sol/DiamondDeployTest.json"
+        }
+      }
+    },
+    "test/ECS.t.sol": {
+      "lastModificationDate": 1665288483359,
+      "contentHash": "f0fd0abe0e8b6fefb0c750080ca7607a",
+      "sourceName": "test/ECS.t.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "contracts/Component.sol",
+        "contracts/Mapping.sol",
+        "contracts/NATO.sol",
+        "contracts/Set.sol",
+        "contracts/TypedComponents.sol",
+        "contracts/diamond.sol",
+        "contracts/facets/AdminFacet.sol",
+        "contracts/facets/DiamondCutFacet.sol",
+        "contracts/facets/DiamondLoupeFacet.sol",
+        "contracts/facets/GameFacet.sol",
+        "contracts/facets/GetterFacet.sol",
+        "contracts/facets/OwnershipFacet.sol",
+        "contracts/interfaces/IDiamondCut.sol",
+        "contracts/interfaces/IDiamondLoupe.sol",
+        "contracts/interfaces/IERC165.sol",
+        "contracts/interfaces/IERC173.sol",
+        "contracts/libraries/ECSLib.sol",
+        "contracts/libraries/GameLib.sol",
+        "contracts/libraries/LibDiamond.sol",
+        "contracts/libraries/Storage.sol",
+        "contracts/libraries/Templates.sol",
+        "contracts/libraries/Types.sol",
+        "contracts/upgradeInitializers/diamondInit.sol",
+        "lib/forge-std/lib/ds-test/src/test.sol",
+        "lib/forge-std/src/Test.sol",
+        "lib/forge-std/src/Vm.sol",
+        "lib/forge-std/src/console.sol",
+        "lib/forge-std/src/console2.sol",
+        "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol",
+        "test/DiamondDeploy.t.sol"
+      ],
+      "versionRequirement": "^0.8.4",
+      "artifacts": {
+        "ECSTest": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "ECS.t.sol/ECSTest.json"
+        }
+      }
+    }
+  }
+}

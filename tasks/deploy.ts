@@ -47,9 +47,6 @@ task('deploy', 'deploy contracts')
 
       const worldConstants = generateWorldConstants(player1.address, SMALL_MAP_INPUT);
 
-      // console.log(scaleMap(generateMap(SMALL_MAP_INPUT.width, SMALL_MAP_INPUT.height, worldConstants), Number(worldConstants.tileWidth)));
-      // return;
-
       const tileMap = fixmap ? generateBlankFixmap() : generateMap(SMALL_MAP_INPUT.width, SMALL_MAP_INPUT.height, worldConstants);
 
       const ecsLib = await deployProxy<ECSLib>('ECSLib', player1, hre, []);
@@ -70,7 +67,6 @@ task('deploy', 'deploy contracts')
       printDivider();
 
       // Batch register components
-      // FIXME: batch upload this
       let startTime = performance.now();
       const componentUploadBatchSize = 20;
       for (let i = 0; i < COMPONENT_SPECS.length; i += componentUploadBatchSize) {
@@ -78,7 +74,6 @@ task('deploy', 'deploy contracts')
         await (await diamond.registerComponents(diamond.address, COMPONENT_SPECS.slice(i, i + componentUploadBatchSize))).wait();
       }
 
-      // COMPONENT_SPECS[i]
       console.log(`✦ component registration took ${Math.floor(performance.now() - startTime)} ms`);
 
       // Initialize map
@@ -92,7 +87,7 @@ task('deploy', 'deploy contracts')
       await createTemplates(diamond);
       console.log(`✦ template creation took ${Math.floor(performance.now() - startTime)} ms`);
 
-      // bulk initialize all tiles
+      // Bulk initialize all tiles
       const tileWidth = Number(worldConstants.tileWidth);
       const allStartingPositions: position[] = [];
       for (let i = 0; i < tileMap.length; i++) {

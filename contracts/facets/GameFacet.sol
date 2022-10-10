@@ -652,7 +652,7 @@ contract GameFacet is UseStorage {
 
         // Verify that tile is next to own tile
         uint256 playerID = GameLib.getPlayer(msg.sender);
-        require(GameLib.isAdjacentToOwnTile(playerID, tilePosition), "CURIO: Tile must be adjacent to own");
+        require(GameLib.isAdjacentToOwnTile(playerID, tilePosition), "CURIO: You must claim tiles next to your own");
 
         // Verify that no other movable entity is on tile
         uint256[] memory movableEntitiesOnTile = GameLib.getMovableEntitiesAtTile(tilePosition);
@@ -687,9 +687,9 @@ contract GameFacet is UseStorage {
         GameLib.setCityGold(playerCityID, playerCityGold - upgradeCost);
     }
 
-    function initializeTile(Position memory _startPosition) public {
-        GameLib.initializeTile(_startPosition);
-    }
+    // function initializeTile(Position memory _startPosition) public {
+    //     GameLib.initializeTile(_startPosition);
+    // }
 
     // --------------------------
     // treaty (WIP)
