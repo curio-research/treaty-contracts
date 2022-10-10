@@ -46,6 +46,10 @@ contract GetterFacet is UseStorage {
         return gs().accounts[_primaryAddress];
     }
 
+    function getPosition(string memory _componentName, uint256 _entity) external view returns (Position memory) {
+        return ECSLib.getPosition(_componentName, _entity);
+    }
+
     ////////////
 
     function getComponent(string memory _name) external view returns (Component) {
@@ -87,6 +91,10 @@ contract GetterFacet is UseStorage {
 
     function getCityCenter(uint256 _cityID) external returns (uint256) {
         return GameLib.getCityCenter(_cityID);
+    }
+
+    function getTileOfCityCenter(uint256 _cityID) external returns (uint256) {
+        return GameLib.getTileOfCityCenter(_cityID);
     }
 
     function getSettlerAt(Position memory _position) external returns (uint256) {

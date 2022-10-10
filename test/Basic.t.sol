@@ -195,12 +195,15 @@ contract TreatyTest is Test, DiamondDeployTest {
             game.move(moscowArmyID, Position({x: 60, y: 29}));
             time += 2;
             vm.warp(time);
-            game.battle(moscowArmyID, kievID);
+
+            uint256 kievTileID = getter.getTileOfCityCenter(kievID);
+
+            game.battle(moscowArmyID, kievTileID);
             vm.stopPrank();
             moscowInfantryAmount = abi.decode(getter.getComponent("Amount").getBytesValue(getter.getConstituents(moscowArmyID)[1]), (uint256));
             assertGe(moscowInfantryAmount, 500 - 40);
             assertLe(moscowInfantryAmount, 500 - 20); // FIXME
-            uint256 kievDefenseAmount = abi.decode(getter.getComponent("Amount").getBytesValue(getter.getCityGuard(kievID)), (uint256));
+            uint256 kievDefenseAmount = abi.decode(getter.getComponent("Amount").getBytesValue(getter.getCityGuard(kievTileID)), (uint256));
             assertGe(kievDefenseAmount, _generateWorldConstants().cityGuardAmount - 50);
             assertLe(moscowInfantryAmount, _generateWorldConstants().cityGuardAmount - 20); // FIXME
             console.log("Moscow encounters great setback occupying Kiev");
