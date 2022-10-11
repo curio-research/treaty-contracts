@@ -98,11 +98,11 @@ task('deploy', 'deploy contracts')
       }
 
       // initialize 10 at a time
-      const bulkTileUploadSize = 10;
-      for (let i = 0; i < allStartingPositions.length; i += bulkTileUploadSize) {
-        console.log(`bulk initializing tiles ${i} to ${i + bulkTileUploadSize}`);
-        await (await diamond.bulkInitializeTiles(allStartingPositions.slice(i, i + bulkTileUploadSize), { gasLimit: 100_000_000 })).wait();
-      }
+      // const bulkTileUploadSize = 10;
+      // for (let i = 0; i < allStartingPositions.length; i += bulkTileUploadSize) {
+      //   console.log(`bulk initializing tiles ${i} to ${i + bulkTileUploadSize}`);
+      //   await (await diamond.bulkInitializeTiles(allStartingPositions.slice(i, i + bulkTileUploadSize), { gasLimit: 100_000_000 })).wait();
+      // }
 
       if (fixmap) {
         await initializeFixmap(hre, diamond);
