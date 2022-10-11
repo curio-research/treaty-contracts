@@ -30,7 +30,7 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): a
     maxPlayerCount: 20,
     tileUpgradeGoldCost: 850,
     buildingUpgradeGoldCost: 3000, // internal buildings
-    cityUpgradeGoldCost: 1000, // temporarily disabled
+    cityUpgradeGoldCost: 100000,
     cityPackCost: 1000000000000000, // temporarily disabled
     initCityCenterGoldLoad: 5000,
     initCityCenterTroopLoad: 1000,

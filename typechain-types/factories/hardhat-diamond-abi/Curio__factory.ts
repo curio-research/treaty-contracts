@@ -818,6 +818,42 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "string",
+        name: "_componentName",
+        type: "string",
+      },
+      {
+        internalType: "uint256",
+        name: "_entity",
+        type: "uint256",
+      },
+    ],
+    name: "_getPosition",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "uint256",
+            name: "x",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "y",
+            type: "uint256",
+          },
+        ],
+        internalType: "struct Position",
+        name: "",
+        type: "tuple",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         components: [
           {
             internalType: "uint256",

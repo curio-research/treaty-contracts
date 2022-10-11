@@ -183,6 +183,7 @@ export interface CurioInterface extends utils.Interface {
     "upgradeCityInventory(uint256)": FunctionFragment;
     "upgradeGoldmine(uint256)": FunctionFragment;
     "upgradeTile(uint256)": FunctionFragment;
+    "_getPosition(string,uint256)": FunctionFragment;
     "getArmyAt((uint256,uint256))": FunctionFragment;
     "getCityAtTile((uint256,uint256))": FunctionFragment;
     "getCityCenter(uint256)": FunctionFragment;
@@ -263,6 +264,7 @@ export interface CurioInterface extends utils.Interface {
       | "upgradeCityInventory"
       | "upgradeGoldmine"
       | "upgradeTile"
+      | "_getPosition"
       | "getArmyAt"
       | "getCityAtTile"
       | "getCityCenter"
@@ -470,6 +472,10 @@ export interface CurioInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "upgradeTile",
     values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "_getPosition",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getArmyAt",
@@ -745,6 +751,10 @@ export interface CurioInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "upgradeTile",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "_getPosition",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getArmyAt", data: BytesLike): Result;
@@ -1211,6 +1221,12 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    _getPosition(
+      _componentName: PromiseOrValue<string>,
+      _entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[PositionStructOutput]>;
+
     getArmyAt(
       _position: PositionStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1612,6 +1628,12 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  _getPosition(
+    _componentName: PromiseOrValue<string>,
+    _entity: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<PositionStructOutput>;
+
   getArmyAt(
     _position: PositionStruct,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -2012,6 +2034,12 @@ export interface Curio extends BaseContract {
       _tileID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    _getPosition(
+      _componentName: PromiseOrValue<string>,
+      _entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PositionStructOutput>;
 
     getArmyAt(
       _position: PositionStruct,
@@ -2469,6 +2497,12 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    _getPosition(
+      _componentName: PromiseOrValue<string>,
+      _entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getArmyAt(
       _position: PositionStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -2867,6 +2901,12 @@ export interface Curio extends BaseContract {
     upgradeTile(
       _tileID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    _getPosition(
+      _componentName: PromiseOrValue<string>,
+      _entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getArmyAt(
