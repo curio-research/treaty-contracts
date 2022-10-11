@@ -88,21 +88,21 @@ task('deploy', 'deploy contracts')
       console.log(`✦ template creation took ${Math.floor(performance.now() - startTime)} ms`);
 
       // TODO: useful in some testing. Bulk initialize all tiles
-      // const tileWidth = Number(worldConstants.tileWidth);
-      // const allStartingPositions: position[] = [];
-      // for (let i = 0; i < tileMap.length; i++) {
-      //   for (let j = 0; j < tileMap[0].length; j++) {
-      //     const properTile = { x: i * tileWidth, y: j * tileWidth };
-      //     allStartingPositions.push(properTile);
-      //   }
-      // }
+      const tileWidth = Number(worldConstants.tileWidth);
+      const allStartingPositions: position[] = [];
+      for (let i = 0; i < tileMap.length; i++) {
+        for (let j = 0; j < tileMap[0].length; j++) {
+          const properTile = { x: i * tileWidth, y: j * tileWidth };
+          allStartingPositions.push(properTile);
+        }
+      }
 
       // initialize 10 at a time
-      // const bulkTileUploadSize = 5;
-      // for (let i = 0; i < allStartingPositions.length; i += bulkTileUploadSize) {
-      //   console.log(`bulk initializing tiles ${i} to ${i + bulkTileUploadSize}`);
-      //   await (await diamond.bulkInitializeTiles(allStartingPositions.slice(i, i + bulkTileUploadSize), { gasLimit: 100_000_000 })).wait();
-      // }
+      const bulkTileUploadSize = 10;
+      for (let i = 0; i < allStartingPositions.length; i += bulkTileUploadSize) {
+        console.log(`bulk initializing tiles ${i} to ${i + bulkTileUploadSize}`);
+        await (await diamond.bulkInitializeTiles(allStartingPositions.slice(i, i + bulkTileUploadSize), { gasLimit: 100_000_000 })).wait();
+      }
 
       if (fixmap) {
         await initializeFixmap(hre, diamond);

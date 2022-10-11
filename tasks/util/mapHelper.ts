@@ -76,7 +76,7 @@ export const generateMap = (worldWidth: number, worldHeight: number, worldConsta
     tileMap.push(col);
   }
 
-  const totalGoldMineDensity = 0.5;
+  const totalGoldMineDensity = 0.2;
   const totalBarbarianDensity = 0.005;
 
   // distribution of gold mines
