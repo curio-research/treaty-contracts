@@ -46,7 +46,7 @@ contract GetterFacet is UseStorage {
         return gs().accounts[_primaryAddress];
     }
 
-    function getPosition(string memory _componentName, uint256 _entity) external view returns (Position memory) {
+    function getPositionExternal(string memory _componentName, uint256 _entity) external view returns (Position memory) {
         return ECSLib.getPosition(_componentName, _entity);
     }
 

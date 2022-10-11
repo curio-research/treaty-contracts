@@ -233,8 +233,8 @@ contract TreatyTest is Test, DiamondDeployTest {
         uint256 genghisID = getter.getSettlerAt(player2Pos);
         game.foundCity(genghisID, territory, "Ulaanbaataar");
         uint256 genghisYurtID = getter.getCityCenter(genghisID);
-        console.log("genghisYurt City Center:", getter.getPosition("StartPosition", genghisYurtID).x, getter.getPosition("StartPosition", genghisYurtID).y);
-        console.log("genghis City:", getter.getPosition("StartPosition", genghisID).x, getter.getPosition("StartPosition", genghisID).y);
+        console.log("genghisYurt City Center:", getter.getPositionExternal("StartPosition", genghisYurtID).x, getter.getPositionExternal("StartPosition", genghisYurtID).y);
+        console.log("genghis City:", getter.getPositionExternal("StartPosition", genghisID).x, getter.getPositionExternal("StartPosition", genghisID).y);
 
         // Player produces troops
         uint256 productionID = game.startTroopProduction(genghisYurtID, cavalryTemplateID, 20);
