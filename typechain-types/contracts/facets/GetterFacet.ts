@@ -96,7 +96,6 @@ export type WorldConstantsStructOutput = [
 
 export interface GetterFacetInterface extends utils.Interface {
   functions: {
-    "_getPosition(string,uint256)": FunctionFragment;
     "getArmyAt((uint256,uint256))": FunctionFragment;
     "getCityAtTile((uint256,uint256))": FunctionFragment;
     "getCityCenter(uint256)": FunctionFragment;
@@ -121,7 +120,6 @@ export interface GetterFacetInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "_getPosition"
       | "getArmyAt"
       | "getCityAtTile"
       | "getCityCenter"
@@ -144,10 +142,6 @@ export interface GetterFacetInterface extends utils.Interface {
       | "isPlayerInitialized"
   ): FunctionFragment;
 
-  encodeFunctionData(
-    functionFragment: "_getPosition",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
-  ): string;
   encodeFunctionData(
     functionFragment: "getArmyAt",
     values: [PositionStruct]
@@ -226,10 +220,6 @@ export interface GetterFacetInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
 
-  decodeFunctionResult(
-    functionFragment: "_getPosition",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "getArmyAt", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getCityAtTile",
@@ -332,12 +322,6 @@ export interface GetterFacet extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    _getPosition(
-      _componentName: PromiseOrValue<string>,
-      _entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[PositionStructOutput]>;
-
     getArmyAt(
       _position: PositionStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -427,12 +411,6 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
   };
-
-  _getPosition(
-    _componentName: PromiseOrValue<string>,
-    _entity: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<PositionStructOutput>;
 
   getArmyAt(
     _position: PositionStruct,
@@ -524,12 +502,6 @@ export interface GetterFacet extends BaseContract {
   ): Promise<boolean>;
 
   callStatic: {
-    _getPosition(
-      _componentName: PromiseOrValue<string>,
-      _entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PositionStructOutput>;
-
     getArmyAt(
       _position: PositionStruct,
       overrides?: CallOverrides
@@ -623,12 +595,6 @@ export interface GetterFacet extends BaseContract {
   filters: {};
 
   estimateGas: {
-    _getPosition(
-      _componentName: PromiseOrValue<string>,
-      _entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     getArmyAt(
       _position: PositionStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -718,12 +684,6 @@ export interface GetterFacet extends BaseContract {
   };
 
   populateTransaction: {
-    _getPosition(
-      _componentName: PromiseOrValue<string>,
-      _entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     getArmyAt(
       _position: PositionStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }

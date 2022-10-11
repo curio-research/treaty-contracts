@@ -34,7 +34,7 @@ task('deploy', 'deploy contracts')
       const { port, release, fixmap } = args;
 
       // Read variables from run flags
-      const isDev = hre.network.name === 'localhost' || hre.network.name === 'hardhat' || hre.network.name === 'constellation' || hre.network.name === 'altlayer';
+      const isDev = hre.network.name === 'localhost' || hre.network.name === 'hardhat' || hre.network.name === 'constellation' || hre.network.name === 'altlayer' || hre.network.name === 'tailscale';
       console.log('Network:', hre.network.name);
 
       if (fixmap) console.log('Using deterministic map');

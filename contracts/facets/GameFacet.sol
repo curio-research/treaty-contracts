@@ -641,6 +641,10 @@ contract GameFacet is UseStorage {
                 uint256 existingCityGold = ECSLib.getUint("Amount", winnerCityGoldInventoryID);
                 uint256 winnerTotalAmount = GameLib.min(ECSLib.getUint("Load", winnerCityGoldInventoryID), loserTotalAmount / 2 + existingCityGold);
                 ECSLib.setUint("Amount", winnerCityGoldInventoryID, winnerTotalAmount);
+            }else {
+                // if it's a normal tile
+                ECSLib.setUint("Owner", _tileID, 0);
+
             }
             // if (_occupyUponVictory) {
             //     // Victorious against tile, occupy only if an owned tile is adjacent
