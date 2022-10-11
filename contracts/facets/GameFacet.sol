@@ -8,7 +8,6 @@ import {Position, WorldConstants} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
 import "contracts/libraries/Templates.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
-import "forge-std/console.sol";
 
 /// @title Game facet
 /// @notice Contains player functions
