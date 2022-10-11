@@ -481,12 +481,6 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    function getTileOfCityCenter(uint256 _cityID) internal returns (uint256) {
-        uint256 _cityCenterId = getCityCenter(_cityID);
-        Position memory cityCenterPosition = ECSLib.getPosition("StartPosition", _cityCenterId);
-        return getTileAt(cityCenterPosition);
-    }
-
     function getTileAt(Position memory _startPosition) internal returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.HasVal, "StartPosition", abi.encode(_startPosition));
