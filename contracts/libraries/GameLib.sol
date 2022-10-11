@@ -336,7 +336,7 @@ library GameLib {
         query[0] = ECSLib.queryChunk(QueryType.HasVal, "Keeper", abi.encode(_buildingID));
         query[1] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("TroopProduction"));
         uint256[] memory res = ECSLib.query(query);
-        assert(res.length <= 1);
+        require(res.length <= 1, "CURIO: Production assertion failed");
         return res.length == 1 ? res[0] : 0;
     }
 
@@ -345,7 +345,7 @@ library GameLib {
         query[0] = ECSLib.queryChunk(QueryType.HasVal, "Army", abi.encode(_armyID));
         query[1] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("ResourceGather"));
         uint256[] memory res = ECSLib.query(query);
-        assert(res.length <= 1);
+        require(res.length <= 1, "CURIO: Gather assertion failed");
         return res.length == 1 ? res[0] : 0;
     }
 
@@ -354,7 +354,7 @@ library GameLib {
         query[0] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode(string("Resource")));
         query[1] = ECSLib.queryChunk(QueryType.HasVal, "StartPosition", abi.encode(_startPosition));
         uint256[] memory res = ECSLib.query(query);
-        assert(res.length <= 1);
+        require(res.length <= 1, "CURIO: Tile resource assertion failed");
         return res.length == 1 ? res[0] : 0;
     }
 
@@ -363,7 +363,7 @@ library GameLib {
         query[0] = ECSLib.queryChunk(QueryType.Has, "Speed", new bytes(0));
         query[1] = ECSLib.queryChunk(QueryType.HasVal, "Position", abi.encode(_position));
         uint256[] memory res = ECSLib.query(query);
-        assert(res.length <= 1);
+        require(res.length <= 1, "CURIO: Movable entity assertion failed");
         return res.length == 1 ? res[0] : 0;
     }
 
@@ -372,7 +372,7 @@ library GameLib {
         query[0] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode(string("Army")));
         query[1] = ECSLib.queryChunk(QueryType.HasVal, "Position", abi.encode(_position));
         uint256[] memory res = ECSLib.query(query);
-        assert(res.length <= 1);
+        require(res.length <= 1, "CURIO: Army assertion failed");
         return res.length == 1 ? res[0] : 0;
     }
 
@@ -381,7 +381,7 @@ library GameLib {
         query[0] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("City"));
         query[1] = ECSLib.queryChunk(QueryType.HasVal, "StartPosition", abi.encode(_startPosition));
         uint256[] memory res = ECSLib.query(query);
-        assert(res.length <= 1);
+        require(res.length <= 1, "CURIO: Tile city assertion failed");
         return res.length == 1 ? res[0] : 0;
     }
 
@@ -390,7 +390,7 @@ library GameLib {
         query[0] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("Constituent"));
         query[1] = ECSLib.queryChunk(QueryType.HasVal, "Keeper", abi.encode(_tileID));
         uint256[] memory res = ECSLib.query(query);
-        assert(res.length <= 1);
+        require(res.length <= 1, "CURIO: Constituent assertion failed");
         return res.length == 1 ? res[0] : 0;
     }
 
@@ -407,10 +407,10 @@ library GameLib {
         _set2 = new Set();
         _set1.addArray(_inter1);
         _set2.addArray(_inter2);
-        uint256[] memory _result = ECSLib.union(_set1, _set2);
+        uint256[] memory result = ECSLib.union(_set1, _set2);
 
-        assert(_result.length <= 1);
-        return _result.length == 1 ? _result[0] : 0;
+        require(result.length <= 1, "CURIO: Template assertion failed");
+        return result.length == 1 ? result[0] : 0;
     }
 
     function getArmyInventory(uint256 _armyID, uint256 _templateID) internal returns (uint256) {
@@ -419,7 +419,7 @@ library GameLib {
         query[1] = ECSLib.queryChunk(QueryType.HasVal, "Army", abi.encode(_armyID));
         query[2] = ECSLib.queryChunk(QueryType.HasVal, "Template", abi.encode(_templateID));
         uint256[] memory res = ECSLib.query(query);
-        assert(res.length <= 1);
+        require(res.length <= 1, "CURIO: Army inventory assertion failed");
         return res.length == 1 ? res[0] : 0;
     }
 
@@ -435,7 +435,7 @@ library GameLib {
         _set2.addArray(ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("Production")));
         res = ECSLib.difference(_set1, _set2);
 
-        assert(res.length <= 1);
+        require(res.length <= 1, "CURIO: Inventory assertion failed");
         return res.length == 1 ? res[0] : 0;
     }
 
@@ -444,7 +444,7 @@ library GameLib {
         query[0] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("Settler"));
         query[1] = ECSLib.queryChunk(QueryType.HasVal, "Position", abi.encode(_position));
         uint256[] memory res = ECSLib.query(query);
-        assert(res.length <= 1);
+        require(res.length <= 1, "CURIO: Settler assertion failed");
         return res.length == 1 ? res[0] : 0;
     }
 
@@ -477,7 +477,7 @@ library GameLib {
         query[0] = ECSLib.queryChunk(QueryType.HasVal, "City", abi.encode(_cityID));
         query[1] = ECSLib.queryChunk(QueryType.HasVal, "BuildingType", abi.encode("City Center"));
         uint256[] memory res = ECSLib.query(query);
-        assert(res.length <= 1);
+        require(res.length <= 1, "CURIO: City Center assertion failed");
         return res.length == 1 ? res[0] : 0;
     }
 
@@ -486,7 +486,7 @@ library GameLib {
         query[0] = ECSLib.queryChunk(QueryType.HasVal, "StartPosition", abi.encode(_startPosition));
         query[1] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("Tile"));
         uint256[] memory res = ECSLib.query(query);
-        assert(res.length <= 1);
+        require(res.length <= 1, "CURIO: Tile assertion failed");
         return res.length == 1 ? res[0] : 0;
     }
 
