@@ -70,7 +70,7 @@ export default {
     altlayer: {
       url: ALTLAYER_RPC_URL,
       accounts: [USER1_PK, USER2_PK],
-      chainId: 9997,
+      chainId: 9991,
     },
     exfac: {
       url: EXFAC_RPC_URL,

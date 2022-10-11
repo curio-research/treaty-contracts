@@ -180,7 +180,9 @@ contract GameFacet is UseStorage {
 
         // get constituents
         uint256 constituentAmount = ECSLib.getUint("Amount", GameLib.getConstituents(_tileID)[0]);
-        ECSLib.setUint("Amount", GameLib.getConstituents(_tileID)[0], constituentAmount + gs().worldConstants.tileGuardAmount);
+        // TODO: adding a temporary cap
+        uint256 newConstituentCount = GameLib.min(constituentAmount + gs().worldConstants.tileGuardAmount, gs().worldConstants.tileGuardAmount * 3);
+        ECSLib.setUint("Amount", GameLib.getConstituents(_tileID)[0], newConstituentCount);
     }
 
     function upgradeCityInventory(uint256 _buildingID) external {

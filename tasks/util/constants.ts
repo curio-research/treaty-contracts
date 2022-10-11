@@ -26,9 +26,9 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): a
     numInitTerrainTypes: NUM_INIT_TERRAIN_TYPES,
     initBatchSize: Math.floor(100 / NUM_INIT_TERRAIN_TYPES),
     maxCityCountPerPlayer: 3,
-    maxArmyCountPerPlayer: 3,
+    maxArmyCountPerPlayer: 5,
     maxPlayerCount: 20,
-    tileUpgradeGoldCost: 150,
+    tileUpgradeGoldCost: 850,
     buildingUpgradeGoldCost: 3000, // internal buildings
     cityUpgradeGoldCost: 1000, // temporarily disabled
     cityPackCost: 1000000000000000, // temporarily disabled
@@ -58,17 +58,17 @@ export const createTemplates = async (diamond: Curio) => {
   let entity = Number(await diamond.getEntity());
 
   // Horseman
-  await (await diamond.addTroopTemplate(InventoryTypeOptions.Horseman, 120, 2, 0, 2, 60, 120, 0, 5, 1)).wait();
+  await (await diamond.addTroopTemplate(InventoryTypeOptions.Horseman, 120, 2, 1, 2, 60, 120, 0, 5, 1)).wait();
   templateNames.push(InventoryTypeOptions.Horseman);
   templateIDs.push(entity++);
 
   // Warrior
-  await (await diamond.addTroopTemplate(InventoryTypeOptions.Warrior, 120, 1, 0, 2, 60, 120, 0, 6, 1)).wait();
+  await (await diamond.addTroopTemplate(InventoryTypeOptions.Warrior, 120, 1, 1, 2, 60, 120, 0, 6, 1)).wait();
   templateNames.push(InventoryTypeOptions.Warrior);
   templateIDs.push(entity++);
 
   // Slinger
-  await (await diamond.addTroopTemplate(InventoryTypeOptions.Slinger, 125, 1, 0, 2, 60, 125, 0, 6, 1)).wait();
+  await (await diamond.addTroopTemplate(InventoryTypeOptions.Slinger, 125, 1, 1, 2, 60, 125, 0, 6, 1)).wait();
   templateNames.push(InventoryTypeOptions.Slinger);
   templateIDs.push(entity++);
 
