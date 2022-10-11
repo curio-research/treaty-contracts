@@ -623,9 +623,22 @@ contract GameFacet is UseStorage {
         bool victory = GameLib.attack(_armyID, _tileID, false, _occupyUponVictory, false);
         if (victory) {
             if (cityID != NULL) {
-                // Victorious against city, occupy regardless of adjacency
+                // Victorious against city, add back some guards for the loser
                 Templates.addConstituent(_tileID, gs().templates["Guard"], gs().worldConstants.cityGuardAmount);
-                // TODO: rewards for victor
+                // City loses half of gold and winner gets it
+                uint256 loserCityGoldInventoryID = GameLib.getInventory(cityID, gs().templates["Gold"]);
+                uint256 loserTotalAmount = ECSLib.getUint("Load", loserCityGoldInventoryID);
+                ECSLib.setUint("Amount", loserCityGoldInventoryID, loserTotalAmount / 2);
+
+                // Verify city ownership
+                uint256 winnerCityID = GameLib.getPlayerCity(GameLib.getPlayer(msg.sender));
+                require(winnerCityID != NULL, "CURIO: Winner must own a city");
+
+                // Add harvested gold to player's city limited by its load
+                uint256 winnerCityGoldInventoryID = GameLib.getInventory(winnerCityID, gs().templates["Gold"]);
+                uint256 existingCityGold = ECSLib.getUint("Amount", winnerCityGoldInventoryID);
+                uint256 winnerTotalAmount = GameLib.min(ECSLib.getUint("Load", winnerCityGoldInventoryID), loserTotalAmount/2 + existingCityGold);
+                ECSLib.setUint("Amount", winnerCityGoldInventoryID, winnerTotalAmount);
             }
             // if (_occupyUponVictory) {
             //     // Victorious against tile, occupy only if an owned tile is adjacent
