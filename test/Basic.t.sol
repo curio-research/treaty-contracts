@@ -233,13 +233,8 @@ contract TreatyTest is Test, DiamondDeployTest {
         uint256 genghisID = getter.getSettlerAt(player2Pos);
         game.foundCity(genghisID, territory, "Ulaanbaataar");
         uint256 genghisYurtID = getter.getCityCenter(genghisID);
-        console.log(genghisYurtID);
-        console.log("genghisYurt City Center:");
-        console.log(getter.getPosition("StartPosition", genghisYurtID).x);
-        console.log(getter.getPosition("StartPosition", genghisYurtID).y);
-        console.log("genghis City:");
-        console.log(getter.getPosition("StartPosition", genghisID).x);
-        console.log(getter.getPosition("StartPosition", genghisID).y);
+        console.log("genghisYurt City Center:", getter.getPosition("StartPosition", genghisYurtID).x, getter.getPosition("StartPosition", genghisYurtID).y);
+        console.log("genghis City:", getter.getPosition("StartPosition", genghisID).x, getter.getPosition("StartPosition", genghisID).y);
 
         // Player produces troops
         uint256 productionID = game.startTroopProduction(genghisYurtID, cavalryTemplateID, 20);
@@ -271,10 +266,8 @@ contract TreatyTest is Test, DiamondDeployTest {
         // vm.warp(29);
         // game.move(goldenHordeID, Position({x: 62, y: 32}));
 
-        console.log("CC");
         vm.warp(30);
         game.disbandArmy(goldenHordeID);
-        console.log("DD");
         assertEq(abi.decode(getter.getComponent("Amount").getBytesValue(getter.getInventoryByCityAndType(genghisID, "Cavalry")), (uint256)), 20);
 
         vm.stopPrank();
@@ -334,7 +327,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         uint256 _settyID = getter.getSettlerAt(player1Pos);
         game.move(_settyID, Position({x: 70, y: 10}));
         game.foundCity(_settyID, _territory, "New Amsterdam");
-        assertEq(getter.getComponent("Tag").getEntitiesWithValue(abi.encode("Tile")).length, 9);
+        // assertEq(getter.getComponent("Tag").getEntitiesWithValue(abi.encode("Tile")).length, 9);
 
         uint256 _cityCenterID = getter.getCityCenter(_settyID);
 

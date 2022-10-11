@@ -627,7 +627,7 @@ contract GameFacet is UseStorage {
                 Templates.addConstituent(_tileID, gs().templates["Guard"], gs().worldConstants.cityGuardAmount);
                 // City loses half of gold and winner gets it
                 uint256 loserCityGoldInventoryID = GameLib.getInventory(cityID, gs().templates["Gold"]);
-                uint256 loserTotalAmount = ECSLib.getUint("Load", loserCityGoldInventoryID);
+                uint256 loserTotalAmount = ECSLib.getUint("Amount", loserCityGoldInventoryID);
                 ECSLib.setUint("Amount", loserCityGoldInventoryID, loserTotalAmount / 2);
 
                 // Verify city ownership
@@ -637,7 +637,7 @@ contract GameFacet is UseStorage {
                 // Add harvested gold to player's city limited by its load
                 uint256 winnerCityGoldInventoryID = GameLib.getInventory(winnerCityID, gs().templates["Gold"]);
                 uint256 existingCityGold = ECSLib.getUint("Amount", winnerCityGoldInventoryID);
-                uint256 winnerTotalAmount = GameLib.min(ECSLib.getUint("Load", winnerCityGoldInventoryID), loserTotalAmount/2 + existingCityGold);
+                uint256 winnerTotalAmount = GameLib.min(ECSLib.getUint("Load", winnerCityGoldInventoryID), loserTotalAmount / 2 + existingCityGold);
                 ECSLib.setUint("Amount", winnerCityGoldInventoryID, winnerTotalAmount);
             }
             // if (_occupyUponVictory) {
