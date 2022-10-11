@@ -3,6 +3,8 @@ pragma solidity ^0.8.4;
 
 import {Position, WorldConstants} from "contracts/libraries/Types.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
+import "forge-std/console.sol";
+
 
 library Templates {
     function addCityCenter(Position memory _startPosition, uint256 _cityID) public returns (uint256) {

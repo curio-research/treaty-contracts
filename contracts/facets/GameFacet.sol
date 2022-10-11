@@ -117,6 +117,7 @@ contract GameFacet is UseStorage {
             require(GameLib.isProperTilePosition(_tiles[i]), "CURIO: Must be proper tile position");
             uint256 tileID = GameLib.initializeTile(_tiles[i]);
 
+            ECSLib.setUint("City", tileID, cityID);
             ECSLib.setUint("Owner", tileID, playerID);
         }
 
@@ -151,7 +152,7 @@ contract GameFacet is UseStorage {
         assert(tileIDs.length == GameLib.getCityTileCountByLevel(ECSLib.getUint("Level", _cityID)));
         uint256 settlerID = _cityID;
         for (uint256 i = 0; i < tileIDs.length; i++) {
-            ECSLib.removeEntity(tileIDs[i]);
+            ECSLib.setUint("Owner", tileIDs[i], NULL);
         }
 
         // Convert the settler to a city
@@ -532,7 +533,7 @@ contract GameFacet is UseStorage {
         GameLib.entityOwnershipCheck(_armyID, msg.sender);
 
         // Get army position and city on top
-        Position memory startPosition = GameLib.getProperTilePosition(ECSLib.getPosition("Position", _armyID));
+        Position memory startPosition = GameLib.getProperTilePosition(ECSLib.getPosition("StartPosition", _armyID));
         uint256 tileID = GameLib.getTileAt(startPosition);
 
         // Verify tile ownership
@@ -540,7 +541,8 @@ contract GameFacet is UseStorage {
 
         // Verify that army is in city center tile
         uint256 cityID = ECSLib.getUint("City", tileID);
-        require(GameLib.coincident(ECSLib.getPosition("StartPosition", cityID), startPosition), "CURIO: Army must be on city center");
+        uint256 cityCenter = GameLib.getCityCenter(cityID);
+        require(GameLib.coincident(ECSLib.getPosition("StartPosition", cityCenter), startPosition), "CURIO: Army must be on city center");
 
         // Return carried gold to city
         uint256 cityGoldInventoryID = GameLib.getInventory(cityID, gs().templates["Gold"]);

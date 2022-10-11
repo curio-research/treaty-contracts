@@ -355,6 +355,7 @@
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Templates.sol",
         "contracts/libraries/Types.sol",
+        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -451,8 +452,8 @@
       }
     },
     "contracts/facets/GameFacet.sol": {
-      "lastModificationDate": 1665438786945,
-      "contentHash": "838eb43e67d504cc19fc1f3f58173cb8",
+      "lastModificationDate": 1665504980756,
+      "contentHash": "098d02ef5106eae63bda0cdb7a0a3a46",
       "sourceName": "contracts/facets/GameFacet.sol",
       "solcConfig": {
         "settings": {
@@ -542,6 +543,7 @@
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Templates.sol",
         "contracts/libraries/Types.sol",
+        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -635,6 +637,7 @@
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Templates.sol",
         "contracts/libraries/Types.sol",
+        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -887,6 +890,7 @@
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Templates.sol",
         "contracts/libraries/Types.sol",
+        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -982,8 +986,8 @@
       }
     },
     "contracts/libraries/Templates.sol": {
-      "lastModificationDate": 1665434868710,
-      "contentHash": "c1300f4331907dfc93f2999852cd85d8",
+      "lastModificationDate": 1665502311992,
+      "contentHash": "e746a40da9d93dc55b30da42126570ae",
       "sourceName": "contracts/libraries/Templates.sol",
       "solcConfig": {
         "settings": {
@@ -1020,6 +1024,7 @@
         "contracts/libraries/ECSLib.sol",
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Types.sol",
+        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -1415,8 +1420,8 @@
       }
     },
     "test/Basic.t.sol": {
-      "lastModificationDate": 1665439184066,
-      "contentHash": "e6acef58b211a699bfe09a5fcdef03cd",
+      "lastModificationDate": 1665505020763,
+      "contentHash": "7eda92715a8a3ec1431d39e41f2848e9",
       "sourceName": "test/Basic.t.sol",
       "solcConfig": {
         "settings": {
@@ -1555,7 +1560,7 @@
       }
     },
     "test/DiamondDeploy.t.sol": {
-      "lastModificationDate": 1665437600258,
+      "lastModificationDate": 1665502885917,
       "contentHash": "39da762bf95e3e7c54340e0450aab04a",
       "sourceName": "test/DiamondDeploy.t.sol",
       "solcConfig": {
