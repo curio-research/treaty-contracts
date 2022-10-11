@@ -116,6 +116,7 @@ contract GameFacet is UseStorage {
             require(GameLib.isProperTilePosition(_tiles[i]), "CURIO: Must be proper tile position");
             uint256 tileID = GameLib.initializeTile(_tiles[i]);
 
+            ECSLib.setUint("City", tileID, cityID);
             ECSLib.setUint("Owner", tileID, playerID);
         }
 
@@ -150,7 +151,7 @@ contract GameFacet is UseStorage {
         assert(tileIDs.length == GameLib.getCityTileCountByLevel(ECSLib.getUint("Level", _cityID)));
         uint256 settlerID = _cityID;
         for (uint256 i = 0; i < tileIDs.length; i++) {
-            ECSLib.removeEntity(tileIDs[i]);
+            ECSLib.setUint("Owner", tileIDs[i], NULL);
         }
 
         // Convert the settler to a city
@@ -531,7 +532,7 @@ contract GameFacet is UseStorage {
         GameLib.entityOwnershipCheck(_armyID, msg.sender);
 
         // Get army position and city on top
-        Position memory startPosition = GameLib.getProperTilePosition(ECSLib.getPosition("Position", _armyID));
+        Position memory startPosition = ECSLib.getPosition("StartPosition", _armyID);
         uint256 tileID = GameLib.getTileAt(startPosition);
 
         // Verify tile ownership
@@ -539,7 +540,8 @@ contract GameFacet is UseStorage {
 
         // Verify that army is in city center tile
         uint256 cityID = ECSLib.getUint("City", tileID);
-        require(GameLib.coincident(ECSLib.getPosition("StartPosition", cityID), startPosition), "CURIO: Army must be on city center");
+        uint256 cityCenterID = GameLib.getCityCenter(cityID);
+        require(GameLib.coincident(ECSLib.getPosition("StartPosition", cityCenterID), startPosition), "CURIO: Army must be on city center");
 
         // Return carried gold to city
         uint256 cityGoldInventoryID = GameLib.getInventory(cityID, gs().templates["Gold"]);
@@ -588,7 +590,7 @@ contract GameFacet is UseStorage {
         if (GameLib.strEq(ECSLib.getString("Tag", _targetID), "Army")) {
             _battleArmy(_armyID, _targetID);
         } else if (GameLib.strEq(ECSLib.getString("Tag", _targetID), "Tile")) {
-            _battleTile(_armyID, _targetID, GameLib.isAdjacentToOwnTile(playerID, ECSLib.getPosition("StartPosition", _targetID)));
+            _battleTile(_armyID, _targetID, false);
         }
     }
 
@@ -621,8 +623,22 @@ contract GameFacet is UseStorage {
         bool victory = GameLib.attack(_armyID, _tileID, false, _occupyUponVictory, false);
         if (victory) {
             if (cityID != NULL) {
-                // Victorious against city, occupy regardless of adjacency
+                // Victorious against city, add back some guards for the loser
                 Templates.addConstituent(_tileID, gs().templates["Guard"], gs().worldConstants.cityGuardAmount);
+                // City loses half of gold and winner gets it
+                uint256 loserCityGoldInventoryID = GameLib.getInventory(cityID, gs().templates["Gold"]);
+                uint256 loserTotalAmount = ECSLib.getUint("Amount", loserCityGoldInventoryID);
+                ECSLib.setUint("Amount", loserCityGoldInventoryID, loserTotalAmount / 2);
+
+                // Verify city ownership
+                uint256 winnerCityID = GameLib.getPlayerCity(GameLib.getPlayer(msg.sender));
+                require(winnerCityID != NULL, "CURIO: Winner must own a city");
+
+                // Add harvested gold to player's city limited by its load
+                uint256 winnerCityGoldInventoryID = GameLib.getInventory(winnerCityID, gs().templates["Gold"]);
+                uint256 existingCityGold = ECSLib.getUint("Amount", winnerCityGoldInventoryID);
+                uint256 winnerTotalAmount = GameLib.min(ECSLib.getUint("Load", winnerCityGoldInventoryID), loserTotalAmount / 2 + existingCityGold);
+                ECSLib.setUint("Amount", winnerCityGoldInventoryID, winnerTotalAmount);
             }
             // if (_occupyUponVictory) {
             //     // Victorious against tile, occupy only if an owned tile is adjacent

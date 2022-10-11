@@ -34,8 +34,8 @@ contract GetterFacet is UseStorage {
         return GameLib.getConstituents(_armyID);
     }
 
-    function getCityGuard(uint256 _cityID) external returns (uint256) {
-        return GameLib.getCityGuard(_cityID);
+    function getConstituentAtTile(uint256 _tileID) external returns (uint256) {
+        return GameLib.getConstituentAtTile(_tileID);
     }
 
     function getArmyAt(Position memory _position) external returns (uint256) {
@@ -44,6 +44,10 @@ contract GetterFacet is UseStorage {
 
     function getMainBurnerAccount(address _primaryAddress) external view returns (address) {
         return gs().accounts[_primaryAddress];
+    }
+
+    function getPosition(string memory _componentName, uint256 _entity) external view returns (Position memory) {
+        return ECSLib.getPosition(_componentName, _entity);
     }
 
     ////////////
@@ -91,5 +95,9 @@ contract GetterFacet is UseStorage {
 
     function getSettlerAt(Position memory _position) external returns (uint256) {
         return GameLib.getSettlerAt(_position);
+    }
+
+    function getTileAt(Position memory _position) external returns (uint256) {
+        return GameLib.getTileAt(_position);
     }
 }

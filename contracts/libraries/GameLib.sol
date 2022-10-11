@@ -385,10 +385,10 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    function getCityGuard(uint256 _cityID) internal returns (uint256) {
+    function getConstituentAtTile(uint256 _tileID) internal returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
-        query[0] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("Guard"));
-        query[1] = ECSLib.queryChunk(QueryType.HasVal, "City", abi.encode(_cityID));
+        query[0] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("Constituent"));
+        query[1] = ECSLib.queryChunk(QueryType.HasVal, "Keeper", abi.encode(_tileID));
         uint256[] memory res = ECSLib.query(query);
         assert(res.length <= 1);
         return res.length == 1 ? res[0] : 0;
@@ -461,14 +461,14 @@ library GameLib {
         _damageOn2 = (_duration * ECSLib.getUint("Attack", _army1) * 2) / ECSLib.getUint("Defense", _army2);
     }
 
-    function getCityGold(uint256 cityId) internal returns (uint256) {
-        uint256 _goldInventoryID = getInventory(cityId, gs().templates["Gold"]);
+    function getCityGold(uint256 _cityId) internal returns (uint256) {
+        uint256 _goldInventoryID = getInventory(_cityId, gs().templates["Gold"]);
         uint256 _balance = _goldInventoryID != 0 ? ECSLib.getUint("Amount", _goldInventoryID) : 0;
         return _balance;
     }
 
-    function setCityGold(uint256 cityId, uint256 _goldAmount) internal {
-        uint256 _goldInventoryID = getInventory(cityId, gs().templates["Gold"]);
+    function setCityGold(uint256 _cityId, uint256 _goldAmount) internal {
+        uint256 _goldInventoryID = getInventory(_cityId, gs().templates["Gold"]);
         ECSLib.setUint("Amount", _goldInventoryID, _goldAmount);
     }
 
