@@ -1,4 +1,4 @@
-import { Attack, Cost, Defense, Duration, encodeString, encodeUint256, Health, InventoryType, InventoryTypeOptions, Speed, Load, Tag, Tags, MoveCooldown, BattleCooldown } from 'curio-vault';
+import { Attack, Cost, Defense, Duration, encodeString, encodeUint256, Health, InventoryType, InventoryTypeOptions, Speed, Load, Tag, Tags, MoveCooldown, BattleCooldown, TILE_TYPE } from 'curio-vault';
 import { WorldConstantsStruct, Curio } from './../../typechain-types/hardhat-diamond-abi/Curio';
 import { addGetEntity } from './mapHelper';
 import { MapInput } from './types';
@@ -16,14 +16,15 @@ export const SMALL_MAP_INPUT: MapInput = {
 };
 
 export const TILE_WIDTH = 5;
+export const NUM_INIT_TERRAIN_TYPES = Object.keys(TILE_TYPE).length;
 
 export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): WorldConstantsStruct => {
   return {
     admin: adminAddr,
     worldWidth: mapInput.width * TILE_WIDTH,
     worldHeight: mapInput.height * TILE_WIDTH,
-    numInitTerrainTypes: 7,
-    initBatchSize: 30,
+    numInitTerrainTypes: NUM_INIT_TERRAIN_TYPES,
+    initBatchSize: Math.floor(100 / NUM_INIT_TERRAIN_TYPES),
     maxCityCountPerPlayer: 3,
     maxArmyCountPerPlayer: 3,
     maxPlayerCount: 20,

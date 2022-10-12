@@ -80,24 +80,18 @@ library GameLib {
         uint256 divFactor = numInitTerrainTypes**(tileY % batchSize);
         uint256 terrain = encodedCol / divFactor;
 
-        // // Initialize as plain if plain, 1-3 level gold mine, or barbarian
-        // if (terrain <= 3) {
-        //     gs().map[_position.x][_position.y].terrain = Terrain(0);
-        // }
-        // gs().map[_position.x][_position.y].isInitialized = true;
-
         // Initialize gold mine
         if (terrain == 1 || terrain == 2 || terrain == 3) {
             // require(getResourceAtTile(_startPosition) != 0, "CURIO: Resource is missing at location"); // avoid initializing two resources on the same tile
 
             uint256 goldMineID = ECSLib.addEntity();
             ECSLib.setString("Tag", goldMineID, "Resource");
-            ECSLib.setUint("Template", goldMineID, getTemplateByInventoryType("Gold"));
+            ECSLib.setUint("Template", goldMineID, gs().templates["Gold"]);
             ECSLib.setUint("Level", goldMineID, 0); // initialize at zero is equivalent to not having a gold mine "built"
-            ECSLib.setPosition("StartPosition", goldMineID, getProperTilePosition(_startPosition));
+            ECSLib.setPosition("StartPosition", goldMineID, _startPosition);
             ECSLib.setUint("LastTimestamp", goldMineID, block.timestamp);
             ECSLib.setUint("Amount", goldMineID, _goldLevelSelector(terrain)); // it happens that the gold level is the same as the terrain index
-            ECSLib.setUint("Load", goldMineID, goldmineCap(1));
+            ECSLib.setUint("Load", goldMineID, _goldmineCap(1));
         }
 
         // if (terrain >= 4 && terrain <= 6) {
@@ -141,6 +135,7 @@ library GameLib {
         if (_currentLevel == 0) return 2000; // level 0 to 1 (builds gold mine extra cost)
         if (_currentLevel == 1) return 1000; // level 1 to 2
         if (_currentLevel == 2) return 1000; // level 2 to 3
+        return 0;
     }
 
     function _goldmineProductionRate(uint256 _level) public pure returns (uint256) {
@@ -148,6 +143,7 @@ library GameLib {
         if (_level == 1) return 1;
         if (_level == 2) return 2;
         if (_level == 3) return 3;
+        return 0;
     }
 
     function _barbarianInfantrySelector(uint256 _level) private pure returns (uint256) {
@@ -560,10 +556,11 @@ library GameLib {
         return 0;
     }
 
-    function goldmineCap(uint256 _level) internal pure returns (uint256) {
+    function _goldmineCap(uint256 _level) private pure returns (uint256) {
         if (_level == 1) return 1000;
         if (_level == 2) return 2000;
         if (_level == 3) return 3000;
+        return 0;
     }
 
     function getPlayerCity(uint256 _playerID) internal returns (uint256) {
