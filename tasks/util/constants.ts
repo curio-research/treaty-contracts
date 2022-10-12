@@ -86,6 +86,15 @@ export const createTemplates = async (diamond: Curio) => {
   templateNames.push(inventoryType);
   templateIDs.push(entity);
 
+  // Farm
+  inventoryType = InventoryTypeOptions.Farm;
+  entity = await addGetEntity(diamond);
+  await (await diamond.setComponentValue(Tag, entity, encodeString(Tags.ResourceTemplate))).wait();
+  await (await diamond.setComponentValue(InventoryType, entity, encodeString(inventoryType))).wait();
+  await (await diamond.setComponentValue(Duration, entity, encodeUint256(1))).wait();
+  templateNames.push(inventoryType);
+  templateIDs.push(entity);
+
   // Register template names used for shortcuts
   await (await diamond.registerTemplateShortcuts(templateNames, templateIDs)).wait();
 };

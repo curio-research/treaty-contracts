@@ -289,7 +289,7 @@ contract GameFacet is UseStorage {
         require(balance >= cost, "CURIO: Insufficient gold balance");
 
         // Verify no ongoing production
-        require(GameLib.getBuildingProduction(_buildingID) == NULL, "CURIO: You cannot have more than 1 concurrent productions");
+        require(GameLib.getBuildingProduction(_buildingID) == NULL, "CURIO: Concurrent productions disallowed");
 
         // Create inventory if none exists, and verify that amount does not exceed ceiling
         uint256 inventoryID = GameLib.getInventory(cityID, _templateID);
