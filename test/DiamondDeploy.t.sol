@@ -258,7 +258,6 @@ contract DiamondDeployTest is Test {
                 initCityCenterTroopLoad: 1000,
                 initCityGold: 1000,
                 tileWidth: 10,
-                battleRange: 10,
                 tileGuardAmount: 1000,
                 cityGuardAmount: 1000 // DO NOT REMOVE THIS COMMENT
             });

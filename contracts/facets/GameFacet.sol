@@ -180,7 +180,7 @@ contract GameFacet is UseStorage {
 
         // get constituents
         uint256 constituentAmount = ECSLib.getUint("Amount", GameLib.getConstituents(_tileID)[0]);
-        // TODO: adding a temporary cap
+        // temporarily enfroce a gold mine cap that's 3 times the default defender size
         uint256 newConstituentCount = GameLib.min(constituentAmount + gs().worldConstants.tileGuardAmount, gs().worldConstants.tileGuardAmount * 3);
         ECSLib.setUint("Amount", GameLib.getConstituents(_tileID)[0], newConstituentCount);
     }
@@ -289,7 +289,7 @@ contract GameFacet is UseStorage {
         require(balance >= cost, "CURIO: Insufficient gold balance");
 
         // Verify no ongoing production
-        require(GameLib.getBuildingProduction(_buildingID) == NULL, "CURIO: No concurrent productions");
+        require(GameLib.getBuildingProduction(_buildingID) == NULL, "CURIO: You cannot have more than 1 concurrent productions");
 
         // Create inventory if none exists, and verify that amount does not exceed ceiling
         uint256 inventoryID = GameLib.getInventory(cityID, _templateID);
@@ -514,7 +514,7 @@ contract GameFacet is UseStorage {
             speed /= GameLib.sum(_amounts);
 
             // Add army
-            Templates.addArmy(GameLib.getPlayer(msg.sender), midPosition, speed, load, moveCooldown, battleCooldown);
+            Templates.addArmy(GameLib.getPlayer(msg.sender), midPosition, speed, load, moveCooldown, battleCooldown, gs().worldConstants.tileWidth);
         }
         uint256 armyID = GameLib.getArmyAt(midPosition);
 
@@ -641,15 +641,10 @@ contract GameFacet is UseStorage {
                 uint256 existingCityGold = ECSLib.getUint("Amount", winnerCityGoldInventoryID);
                 uint256 winnerTotalAmount = GameLib.min(ECSLib.getUint("Load", winnerCityGoldInventoryID), loserTotalAmount / 2 + existingCityGold);
                 ECSLib.setUint("Amount", winnerCityGoldInventoryID, winnerTotalAmount);
-            }else {
-                // if it's a normal tile
+            } else {
+                // reset ownership
                 ECSLib.setUint("Owner", _tileID, 0);
-
             }
-            // if (_occupyUponVictory) {
-            //     // Victorious against tile, occupy only if an owned tile is adjacent
-            //     Templates.addConstituent(_tileID, gs().templates["Guard"], gs().worldConstants.tileGuardAmount);
-            // }
         } else {
             GameLib.attack(_tileID, _armyID, false, false, true);
         }

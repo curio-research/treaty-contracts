@@ -11,8 +11,8 @@ export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 // ----------------------------------------------------------
 
 export const SMALL_MAP_INPUT: MapInput = {
-  width: 10,
-  height: 10,
+  width: 8,
+  height: 8,
 };
 
 export const TILE_WIDTH = 5;
@@ -28,7 +28,7 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): a
     maxCityCountPerPlayer: 3,
     maxArmyCountPerPlayer: 5,
     maxPlayerCount: 20,
-    tileUpgradeGoldCost: 600,
+    tileUpgradeGoldCost: 1, // 650
     buildingUpgradeGoldCost: 3000, // internal buildings
     cityUpgradeGoldCost: 100000,
     cityPackCost: 1000000000000000, // temporarily disabled
@@ -36,7 +36,7 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): a
     initCityCenterTroopLoad: 1000,
     initCityGold: 1000,
     tileWidth: TILE_WIDTH,
-    tileGuardAmount: 10,
+    tileGuardAmount: 10, // 140
     cityGuardAmount: 15,
   };
 };

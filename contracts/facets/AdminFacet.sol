@@ -27,7 +27,7 @@ contract AdminFacet is UseStorage {
     }
 
     function createArmy(uint256 _playerID, Position memory _position) external onlyAdmin {
-        Templates.addArmy(_playerID, _position, 0, 1, 1, 2);
+        Templates.addArmy(_playerID, _position, 0, 1, 1, 2, 5);
     }
 
     function initializeTile(Position memory _startPosition) public onlyAdmin {

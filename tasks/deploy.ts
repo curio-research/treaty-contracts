@@ -34,7 +34,7 @@ task('deploy', 'deploy contracts')
       const { port, release, fixmap } = args;
 
       // Read variables from run flags
-      const isDev = hre.network.name === 'localhost' || hre.network.name === 'hardhat' || hre.network.name === 'constellation' || hre.network.name === 'altlayer' || hre.network.name === 'tailscale';
+      const isDev = hre.network.name === 'localhost' || hre.network.name === 'hardhat' || hre.network.name === 'constellation' || hre.network.name === 'altlayer';
       console.log('Network:', hre.network.name);
 
       if (fixmap) console.log('Using deterministic map');
@@ -164,7 +164,7 @@ task('deploy', 'deploy contracts')
       console.log(chalk.bgGreen.black(' Curio Game Deployed '));
       console.log(chalk.bgRed.white(` Deployed in ${Math.floor(performance.now() - s) / 1000}s `));
 
-      if (isDev) {
+      if (isDev || hre.network.name === 'tailscale') {
         await hre.ethers.provider.send('evm_setNextBlockTimestamp', [Math.floor(new Date().getTime() / 1000)]);
         await hre.ethers.provider.send('evm_mine', []); // syncs the blockchain time to current unix time
       }

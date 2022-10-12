@@ -127,7 +127,8 @@ library Templates {
         uint256 _speed,
         uint256 _load,
         uint256 _moveCooldown,
-        uint256 _battleCooldown
+        uint256 _battleCooldown,
+        uint256 _attackRange
     ) public returns (uint256) {
         uint256 armyID = ECSLib.addEntity();
 
@@ -140,7 +141,7 @@ library Templates {
         ECSLib.setUint("LastTimestamp", armyID, block.timestamp);
         ECSLib.setUint("MoveCooldown", armyID, _moveCooldown);
         ECSLib.setUint("BattleCooldown", armyID, _battleCooldown);
-        ECSLib.setUint("AttackRange", armyID, 5);
+        ECSLib.setUint("AttackRange", armyID, _attackRange);
 
         return armyID;
     }
