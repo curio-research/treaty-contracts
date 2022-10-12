@@ -180,7 +180,9 @@ contract GameFacet is UseStorage {
 
         // get constituents
         uint256 constituentAmount = ECSLib.getUint("Amount", GameLib.getConstituents(_tileID)[0]);
-        ECSLib.setUint("Amount", GameLib.getConstituents(_tileID)[0], constituentAmount + gs().worldConstants.tileGuardAmount);
+        // temporarily enfroce a gold mine cap that's 3 times the default defender size
+        uint256 newConstituentCount = GameLib.min(constituentAmount + gs().worldConstants.tileGuardAmount, gs().worldConstants.tileGuardAmount * 3);
+        ECSLib.setUint("Amount", GameLib.getConstituents(_tileID)[0], newConstituentCount);
     }
 
     function upgradeCityInventory(uint256 _buildingID) external {
@@ -287,7 +289,7 @@ contract GameFacet is UseStorage {
         require(balance >= cost, "CURIO: Insufficient gold balance");
 
         // Verify no ongoing production
-        require(GameLib.getBuildingProduction(_buildingID) == NULL, "CURIO: No concurrent productions");
+        require(GameLib.getBuildingProduction(_buildingID) == NULL, "CURIO: You cannot have more than 1 concurrent productions");
 
         // Create inventory if none exists, and verify that amount does not exceed ceiling
         uint256 inventoryID = GameLib.getInventory(cityID, _templateID);
@@ -512,7 +514,7 @@ contract GameFacet is UseStorage {
             speed /= GameLib.sum(_amounts);
 
             // Add army
-            Templates.addArmy(GameLib.getPlayer(msg.sender), midPosition, speed, load, moveCooldown, battleCooldown);
+            Templates.addArmy(GameLib.getPlayer(msg.sender), midPosition, speed, load, moveCooldown, battleCooldown, gs().worldConstants.tileWidth);
         }
         uint256 armyID = GameLib.getArmyAt(midPosition);
 
@@ -596,7 +598,7 @@ contract GameFacet is UseStorage {
 
     function _battleArmy(uint256 _armyID, uint256 _targetArmyID) private {
         // Verify that army and target army are adjacent
-        require(GameLib.euclidean(ECSLib.getPosition("Position", _armyID), ECSLib.getPosition("Position", _targetArmyID)) <= gs().worldConstants.battleRange, "CURIO: Too far");
+        require(GameLib.euclidean(ECSLib.getPosition("Position", _armyID), ECSLib.getPosition("Position", _targetArmyID)) <= ECSLib.getUint("AttackRange", _armyID), "CURIO: Attack not within range");
 
         // End target army's gather
         if (GameLib.getArmyGather(_targetArmyID) != NULL) GameLib.endGather(_targetArmyID);
@@ -613,8 +615,8 @@ contract GameFacet is UseStorage {
     ) private {
         // Verify that army and tile are adjacent
         require(
-            GameLib.euclidean(ECSLib.getPosition("Position", _armyID), GameLib.getMidPositionFromTilePosition(ECSLib.getPosition("StartPosition", _tileID))) <= gs().worldConstants.battleRange, //
-            "CURIO: Too far"
+            GameLib.euclidean(ECSLib.getPosition("Position", _armyID), GameLib.getMidPositionFromTilePosition(ECSLib.getPosition("StartPosition", _tileID))) <= ECSLib.getUint("AttackRange", _armyID), //
+            "CURIO: Attack not within range"
         );
 
         uint256 cityID = GameLib.getCityAtTile(ECSLib.getPosition("StartPosition", _tileID));
@@ -639,11 +641,10 @@ contract GameFacet is UseStorage {
                 uint256 existingCityGold = ECSLib.getUint("Amount", winnerCityGoldInventoryID);
                 uint256 winnerTotalAmount = GameLib.min(ECSLib.getUint("Load", winnerCityGoldInventoryID), loserTotalAmount / 2 + existingCityGold);
                 ECSLib.setUint("Amount", winnerCityGoldInventoryID, winnerTotalAmount);
+            } else {
+                // reset ownership
+                ECSLib.setUint("Owner", _tileID, 0);
             }
-            // if (_occupyUponVictory) {
-            //     // Victorious against tile, occupy only if an owned tile is adjacent
-            //     Templates.addConstituent(_tileID, gs().templates["Guard"], gs().worldConstants.tileGuardAmount);
-            // }
         } else {
             GameLib.attack(_tileID, _armyID, false, false, true);
         }

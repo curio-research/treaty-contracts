@@ -60,7 +60,7 @@ task('deploy', 'deploy contracts')
       const facets = [
         { name: 'GameFacet', libraries: { ECSLib: ecsLib.address, GameLib: gameLib.address, Templates: templates.address } },
         { name: 'GetterFacet', libraries: { ECSLib: ecsLib.address, GameLib: gameLib.address } },
-        { name: 'AdminFacet', libraries: { ECSLib: ecsLib.address, Templates: templates.address } },
+        { name: 'AdminFacet', libraries: { ECSLib: ecsLib.address, GameLib: gameLib.address, Templates: templates.address } },
       ];
       await deployFacets(hre, diamondAddr, facets, player1);
 
@@ -88,17 +88,17 @@ task('deploy', 'deploy contracts')
       console.log(`✦ template creation took ${Math.floor(performance.now() - startTime)} ms`);
 
       // TODO: useful in some testing. Bulk initialize all tiles
-      // const tileWidth = Number(worldConstants.tileWidth);
-      // const allStartingPositions: position[] = [];
-      // for (let i = 0; i < tileMap.length; i++) {
-      //   for (let j = 0; j < tileMap[0].length; j++) {
-      //     const properTile = { x: i * tileWidth, y: j * tileWidth };
-      //     allStartingPositions.push(properTile);
-      //   }
-      // }
+      const tileWidth = Number(worldConstants.tileWidth);
+      const allStartingPositions: position[] = [];
+      for (let i = 0; i < tileMap.length; i++) {
+        for (let j = 0; j < tileMap[0].length; j++) {
+          const properTile = { x: i * tileWidth, y: j * tileWidth };
+          allStartingPositions.push(properTile);
+        }
+      }
 
       // initialize 10 at a time
-      // const bulkTileUploadSize = 5;
+      // const bulkTileUploadSize = 10;
       // for (let i = 0; i < allStartingPositions.length; i += bulkTileUploadSize) {
       //   console.log(`bulk initializing tiles ${i} to ${i + bulkTileUploadSize}`);
       //   await (await diamond.bulkInitializeTiles(allStartingPositions.slice(i, i + bulkTileUploadSize), { gasLimit: 100_000_000 })).wait();
@@ -164,7 +164,7 @@ task('deploy', 'deploy contracts')
       console.log(chalk.bgGreen.black(' Curio Game Deployed '));
       console.log(chalk.bgRed.white(` Deployed in ${Math.floor(performance.now() - s) / 1000}s `));
 
-      if (isDev) {
+      if (isDev || hre.network.name === 'tailscale') {
         await hre.ethers.provider.send('evm_setNextBlockTimestamp', [Math.floor(new Date().getTime() / 1000)]);
         await hre.ethers.provider.send('evm_mine', []); // syncs the blockchain time to current unix time
       }

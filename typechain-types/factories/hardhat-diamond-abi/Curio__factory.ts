@@ -99,6 +99,31 @@ const _abi = [
             type: "uint256",
           },
         ],
+        internalType: "struct Position",
+        name: "_startPosition",
+        type: "tuple",
+      },
+    ],
+    name: "adminInitializeTile",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        components: [
+          {
+            internalType: "uint256",
+            name: "x",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "y",
+            type: "uint256",
+          },
+        ],
         internalType: "struct Position[]",
         name: "_positions",
         type: "tuple[]",
@@ -135,31 +160,6 @@ const _abi = [
       },
     ],
     name: "createArmy",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        components: [
-          {
-            internalType: "uint256",
-            name: "x",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "y",
-            type: "uint256",
-          },
-        ],
-        internalType: "struct Position",
-        name: "_startPosition",
-        type: "tuple",
-      },
-    ],
-    name: "initializeTile",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -1297,11 +1297,6 @@ const _abi = [
           {
             internalType: "uint256",
             name: "tileWidth",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "battleRange",
             type: "uint256",
           },
         ],

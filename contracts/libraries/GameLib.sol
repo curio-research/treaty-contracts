@@ -132,10 +132,9 @@ library GameLib {
 
     function _goldmineUpgradeCost(uint256 _currentLevel) public pure returns (uint256) {
         require(_currentLevel <= 2, "CURIO: Max goldmine level reached");
-        if (_currentLevel == 0) return 2000; // level 0 to 1 (builds gold mine extra cost)
-        if (_currentLevel == 1) return 1000; // level 1 to 2
-        if (_currentLevel == 2) return 1000; // level 2 to 3
-        return 0;
+        if (_currentLevel == 0) return 400; // level 0 to 1 (builds gold mine extra cost)
+        if (_currentLevel == 1) return 300; // level 1 to 2
+        if (_currentLevel == 2) return 300; // level 2 to 3
     }
 
     function _goldmineProductionRate(uint256 _level) public pure returns (uint256) {

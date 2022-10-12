@@ -66,12 +66,10 @@ export type WorldConstantsStruct = {
   cityGuardAmount: PromiseOrValue<BigNumberish>;
   tileGuardAmount: PromiseOrValue<BigNumberish>;
   tileWidth: PromiseOrValue<BigNumberish>;
-  battleRange: PromiseOrValue<BigNumberish>;
 };
 
 export type WorldConstantsStructOutput = [
   string,
-  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -108,7 +106,6 @@ export type WorldConstantsStructOutput = [
   cityGuardAmount: BigNumber;
   tileGuardAmount: BigNumber;
   tileWidth: BigNumber;
-  battleRange: BigNumber;
 };
 
 export type QueryConditionStruct = {
@@ -153,9 +150,9 @@ export interface CurioInterface extends utils.Interface {
   functions: {
     "addEntity()": FunctionFragment;
     "addTroopTemplate(string,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256)": FunctionFragment;
+    "adminInitializeTile((uint256,uint256))": FunctionFragment;
     "bulkInitializeTiles((uint256,uint256)[])": FunctionFragment;
     "createArmy(uint256,(uint256,uint256))": FunctionFragment;
-    "initializeTile((uint256,uint256))": FunctionFragment;
     "reactivatePlayer(address)": FunctionFragment;
     "registerComponents(address,(string,uint8)[])": FunctionFragment;
     "registerDefaultComponents(address)": FunctionFragment;
@@ -233,9 +230,9 @@ export interface CurioInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "addEntity"
       | "addTroopTemplate"
+      | "adminInitializeTile"
       | "bulkInitializeTiles"
       | "createArmy"
-      | "initializeTile"
       | "reactivatePlayer"
       | "registerComponents"
       | "registerDefaultComponents"
@@ -326,16 +323,16 @@ export interface CurioInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
+    functionFragment: "adminInitializeTile",
+    values: [PositionStruct]
+  ): string;
+  encodeFunctionData(
     functionFragment: "bulkInitializeTiles",
     values: [PositionStruct[]]
   ): string;
   encodeFunctionData(
     functionFragment: "createArmy",
     values: [PromiseOrValue<BigNumberish>, PositionStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "initializeTile",
-    values: [PositionStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "reactivatePlayer",
@@ -643,14 +640,14 @@ export interface CurioInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "adminInitializeTile",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "bulkInitializeTiles",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "createArmy", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "initializeTile",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "reactivatePlayer",
     data: BytesLike
@@ -1026,6 +1023,11 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    adminInitializeTile(
+      _startPosition: PositionStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     bulkInitializeTiles(
       _positions: PositionStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1034,11 +1036,6 @@ export interface Curio extends BaseContract {
     createArmy(
       _playerID: PromiseOrValue<BigNumberish>,
       _position: PositionStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    initializeTile(
-      _startPosition: PositionStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1435,6 +1432,11 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  adminInitializeTile(
+    _startPosition: PositionStruct,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   bulkInitializeTiles(
     _positions: PositionStruct[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1443,11 +1445,6 @@ export interface Curio extends BaseContract {
   createArmy(
     _playerID: PromiseOrValue<BigNumberish>,
     _position: PositionStruct,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  initializeTile(
-    _startPosition: PositionStruct,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1834,6 +1831,11 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    adminInitializeTile(
+      _startPosition: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     bulkInitializeTiles(
       _positions: PositionStruct[],
       overrides?: CallOverrides
@@ -1842,11 +1844,6 @@ export interface Curio extends BaseContract {
     createArmy(
       _playerID: PromiseOrValue<BigNumberish>,
       _position: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    initializeTile(
-      _startPosition: PositionStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -2292,6 +2289,11 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    adminInitializeTile(
+      _startPosition: PositionStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     bulkInitializeTiles(
       _positions: PositionStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -2300,11 +2302,6 @@ export interface Curio extends BaseContract {
     createArmy(
       _playerID: PromiseOrValue<BigNumberish>,
       _position: PositionStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    initializeTile(
-      _startPosition: PositionStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -2692,6 +2689,11 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    adminInitializeTile(
+      _startPosition: PositionStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     bulkInitializeTiles(
       _positions: PositionStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -2700,11 +2702,6 @@ export interface Curio extends BaseContract {
     createArmy(
       _playerID: PromiseOrValue<BigNumberish>,
       _position: PositionStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    initializeTile(
-      _startPosition: PositionStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

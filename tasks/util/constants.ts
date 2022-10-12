@@ -11,14 +11,14 @@ export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 // ----------------------------------------------------------
 
 export const SMALL_MAP_INPUT: MapInput = {
-  width: 10,
-  height: 10,
+  width: 8,
+  height: 8,
 };
 
 export const TILE_WIDTH = 5;
 export const NUM_INIT_TERRAIN_TYPES = Object.keys(TILE_TYPE).length;
 
-export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): WorldConstantsStruct => {
+export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): any => {
   return {
     admin: adminAddr,
     worldWidth: mapInput.width * TILE_WIDTH,
@@ -26,19 +26,18 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): W
     numInitTerrainTypes: NUM_INIT_TERRAIN_TYPES,
     initBatchSize: Math.floor(100 / NUM_INIT_TERRAIN_TYPES),
     maxCityCountPerPlayer: 3,
-    maxArmyCountPerPlayer: 3,
+    maxArmyCountPerPlayer: 5,
     maxPlayerCount: 20,
-    tileUpgradeGoldCost: 150,
+    tileUpgradeGoldCost: 1, // 650
     buildingUpgradeGoldCost: 3000, // internal buildings
-    cityUpgradeGoldCost: 1000, // temporarily disabled
+    cityUpgradeGoldCost: 100000,
     cityPackCost: 1000000000000000, // temporarily disabled
     initCityCenterGoldLoad: 5000,
     initCityCenterTroopLoad: 1000,
     initCityGold: 1000,
     tileWidth: TILE_WIDTH,
-    battleRange: TILE_WIDTH,
-    tileGuardAmount: 10,
-    cityGuardAmount: 1000,
+    tileGuardAmount: 10, // 140
+    cityGuardAmount: 15,
   };
 };
 
@@ -59,17 +58,17 @@ export const createTemplates = async (diamond: Curio) => {
   let entity = Number(await diamond.getEntity());
 
   // Horseman
-  await (await diamond.addTroopTemplate(InventoryTypeOptions.Horseman, 120, 2, 0, 2, 60, 120, 0, 5, 1)).wait();
+  await (await diamond.addTroopTemplate(InventoryTypeOptions.Horseman, 120, 2, 1, 2, 60, 120, 1, 5, 1)).wait();
   templateNames.push(InventoryTypeOptions.Horseman);
   templateIDs.push(entity++);
 
   // Warrior
-  await (await diamond.addTroopTemplate(InventoryTypeOptions.Warrior, 120, 1, 0, 2, 60, 120, 0, 6, 1)).wait();
+  await (await diamond.addTroopTemplate(InventoryTypeOptions.Warrior, 120, 1, 1, 2, 60, 120, 1, 6, 1)).wait();
   templateNames.push(InventoryTypeOptions.Warrior);
   templateIDs.push(entity++);
 
   // Slinger
-  await (await diamond.addTroopTemplate(InventoryTypeOptions.Slinger, 125, 1, 0, 2, 60, 125, 0, 6, 1)).wait();
+  await (await diamond.addTroopTemplate(InventoryTypeOptions.Slinger, 125, 1, 1, 2, 60, 125, 1, 6, 1)).wait();
   templateNames.push(InventoryTypeOptions.Slinger);
   templateIDs.push(entity++);
 
