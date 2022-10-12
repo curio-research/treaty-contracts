@@ -130,14 +130,29 @@ library GameLib {
         return 0;
     }
 
-    function _goldmineUpgradeCost(uint256 _currentLevel) public pure returns (uint256) {
+    function barbarianInfo(uint256 _level)
+        internal
+        pure
+        returns (
+            uint256,
+            uint256,
+            uint256
+        )
+    {
+        // gold, food, amount
+        if (_level == 1) return (180000, 60000, 1000);
+        if (_level == 2) return (480000, 150000, 2000);
+        else return (0, 0, 0);
+    }
+
+    function goldmineUpgradeCost(uint256 _currentLevel) internal pure returns (uint256) {
         require(_currentLevel <= 2, "CURIO: Max goldmine level reached");
         if (_currentLevel == 0) return 400; // level 0 to 1 (builds gold mine extra cost)
         if (_currentLevel == 1) return 300; // level 1 to 2
         if (_currentLevel == 2) return 300; // level 2 to 3
     }
 
-    function _goldmineProductionRate(uint256 _level) public pure returns (uint256) {
+    function goldmineProductionRate(uint256 _level) public pure returns (uint256) {
         if (_level == 0) return 1;
         if (_level == 1) return 1;
         if (_level == 2) return 2;

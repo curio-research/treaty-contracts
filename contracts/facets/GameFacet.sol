@@ -425,7 +425,7 @@ contract GameFacet is UseStorage {
         // Get harvest amount
         uint256 goldMineHarvestCap = ECSLib.getUint("Load", _goldMineResourceID);
         uint256 goldmineLevel = ECSLib.getUint("Level", _goldMineResourceID);
-        uint256 rawHarvestAmount = GameLib._goldmineProductionRate(goldmineLevel) * (block.timestamp - ECSLib.getUint("LastTimestamp", _goldMineResourceID)); // 1 second = 1 gold
+        uint256 rawHarvestAmount = GameLib.goldmineProductionRate(goldmineLevel) * (block.timestamp - ECSLib.getUint("LastTimestamp", _goldMineResourceID)); // 1 second = 1 gold
         uint256 harvestAmount = GameLib.min(goldMineHarvestCap, rawHarvestAmount); // harvest amount must not exceed the gold cap
 
         // Update gold mine last harvest
@@ -619,11 +619,18 @@ contract GameFacet is UseStorage {
             "CURIO: Attack not within range"
         );
 
+        bool isBarbarian = ECSLib.getUint("Terrain", _tileID) == 5;
+        // if it is barbarian, check it's not hybernating
+        if (isBarbarian) {
+            require(block.timestamp >= ECSLib.getUint("LastTimestamp", _tileID) + gs().worldConstants.barbarianCooldown, "CURIO: Barbarians hybernating");
+        }
+
         uint256 cityID = GameLib.getCityAtTile(ECSLib.getPosition("StartPosition", _tileID));
 
         // Execute one round of battle
         bool victory = GameLib.attack(_armyID, _tileID, false, _occupyUponVictory, false);
         if (victory) {
+            uint256 winnerCityID = GameLib.getPlayerCity(GameLib.getPlayer(msg.sender));
             if (cityID != NULL) {
                 // Victorious against city, add back some guards for the loser
                 Templates.addConstituent(_tileID, gs().templates["Guard"], gs().worldConstants.cityGuardAmount);
@@ -633,7 +640,6 @@ contract GameFacet is UseStorage {
                 ECSLib.setUint("Amount", loserCityGoldInventoryID, loserTotalAmount / 2);
 
                 // Verify city ownership
-                uint256 winnerCityID = GameLib.getPlayerCity(GameLib.getPlayer(msg.sender));
                 require(winnerCityID != NULL, "CURIO: Winner must own a city");
 
                 // Add harvested gold to player's city limited by its load
@@ -644,6 +650,18 @@ contract GameFacet is UseStorage {
             } else {
                 // reset ownership
                 ECSLib.setUint("Owner", _tileID, 0);
+                if (isBarbarian) {
+                    // TODO: gain wood rewards
+                    (uint256 barbarianGold, uint256 barbarianFood, uint256 barbarianAmount) = GameLib.barbarianInfo(ECSLib.getUint("Level", _tileID));
+                    uint256 winnerCityGoldInventoryID = GameLib.getInventory(winnerCityID, gs().templates["Gold"]);
+                    uint256 existingCityGold = ECSLib.getUint("Amount", winnerCityGoldInventoryID);
+                    uint256 winnerTotalAmount = GameLib.min(ECSLib.getUint("Load", winnerCityGoldInventoryID), barbarianGold + existingCityGold);
+                    ECSLib.setUint("Amount", winnerCityGoldInventoryID, winnerTotalAmount);
+                    
+                    // restore barbarians & set lastDead
+                    ECSLib.setUint("LastTimestamp", _tileID, block.timestamp);
+                    ECSLib.setUint("Amount", GameLib.getConstituents(_tileID)[0], barbarianAmount);
+                }
             }
         } else {
             GameLib.attack(_tileID, _armyID, false, false, true);
@@ -659,6 +677,9 @@ contract GameFacet is UseStorage {
 
         // Verify target tile has no owner
         require(ECSLib.getUint("Owner", _tileID) == 0, "CURIO: Tile has owner");
+
+        // Verify target tile is not barbarian tile
+        require(ECSLib.getUint("Terrain", _tileID) != 5, "CURIO: Can't claim barbarian tiles");
 
         // Verify that no guard exists on tile
         require(GameLib.getConstituents(_tileID).length == 0, "CURIO: Tile has guard");
@@ -694,7 +715,7 @@ contract GameFacet is UseStorage {
 
         // get current goldmine level
         uint256 currentGoldmineLevel = ECSLib.getUint("Level", _resourceID);
-        uint256 upgradeCost = GameLib._goldmineUpgradeCost(currentGoldmineLevel);
+        uint256 upgradeCost = GameLib.goldmineUpgradeCost(currentGoldmineLevel);
 
         uint256 playerCityID = GameLib.getPlayerCity(playerID);
         uint256 playerCityGold = GameLib.getCityGold(playerCityID);

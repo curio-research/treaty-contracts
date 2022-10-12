@@ -38,6 +38,7 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): a
     tileWidth: TILE_WIDTH,
     tileGuardAmount: 10, // 140
     cityGuardAmount: 15,
+    barbarianCooldown: 3000, // Fixme
   };
 };
 
