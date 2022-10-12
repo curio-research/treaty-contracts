@@ -2,12 +2,12 @@
 pragma solidity ^0.8.4;
 
 import "contracts/libraries/Storage.sol";
-import {GameLib} from "contracts/libraries/GameLib.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
 import {ComponentSpec, Position, Tile, ValueType, WorldConstants} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 import "contracts/libraries/Templates.sol";
 import {Set} from "contracts/Set.sol";
+import {GameLib} from "contracts/libraries/GameLib.sol";
 
 /// @title Admin facet
 /// @notice Contains admin functions and state functions, both of which should be out of scope for players
@@ -30,7 +30,7 @@ contract AdminFacet is UseStorage {
         Templates.addArmy(_playerID, _position, 0, 1, 1, 2, 5);
     }
 
-    function initializeTile(Position memory _startPosition) public onlyAdmin {
+    function adminInitializeTile(Position memory _startPosition) external onlyAdmin {
         GameLib.initializeTile(_startPosition);
     }
 
