@@ -125,7 +125,7 @@ library GameLib {
         // }
 
         // Initialize tile
-        uint256 tileID = Templates.addTile(_startPosition);
+        uint256 tileID = Templates.addTile(_startPosition, terrain);
 
         // Initialize barbarian
         if (terrain == 3) ECSLib.setUint("Level", tileID, 1);

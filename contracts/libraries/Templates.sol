@@ -77,7 +77,7 @@ library Templates {
         return settlerID;
     }
 
-    function addTile(Position memory _startPosition) public returns (uint256) {
+    function addTile(Position memory _startPosition, uint256 _terrain) public returns (uint256) {
         uint256 tileID = ECSLib.addEntity();
 
         ECSLib.setString("Tag", tileID, "Tile");
@@ -86,6 +86,7 @@ library Templates {
         ECSLib.setUint("City", tileID, 0);
         ECSLib.setUint("Owner", tileID, 0);
         ECSLib.setUint("Level", tileID, 1);
+        ECSLib.setUint("Terrain", tileID, _terrain);
         ECSLib.setUint("LastTimestamp", tileID, block.timestamp);
         return tileID;
     }
