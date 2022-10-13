@@ -666,11 +666,11 @@ contract GameFacet is UseStorage {
         // Verify that army is on selected tile
         Position memory armyPosition = ECSLib.getPosition("Position", _armyID);
         Position memory tilePosition = ECSLib.getPosition("StartPosition", _tileID);
-        require(GameLib.coincident(GameLib.getProperTilePosition(armyPosition), tilePosition), "CURIO: Army is not on the selected tile");
+        require(GameLib.coincident(GameLib.getProperTilePosition(armyPosition), tilePosition), "CURIO: Army must be on tile to claim");
 
         // Verify that tile is next to own tile
         uint256 playerID = GameLib.getPlayer(msg.sender);
-        require(GameLib.isAdjacentToOwnTile(playerID, tilePosition), "CURIO: You must claim tiles next to your own");
+        require(GameLib.isAdjacentToOwnTile(playerID, tilePosition), "CURIO: Can only claim next to a tile your own");
 
         // Verify that no other movable entity is on tile
         uint256[] memory movableEntitiesOnTile = GameLib.getMovableEntitiesAtTile(tilePosition);

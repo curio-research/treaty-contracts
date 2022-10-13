@@ -14,6 +14,7 @@ library Templates {
         ECSLib.setUint("Level", cityCenterID, 1);
         ECSLib.setString("BuildingType", cityCenterID, "City Center");
         ECSLib.setUint("InitTimestamp", cityCenterID, block.timestamp);
+        ECSLib.setUint("LastTimestamp", cityCenterID, block.timestamp);
 
         return cityCenterID;
     }
