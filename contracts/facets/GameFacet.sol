@@ -667,7 +667,7 @@ contract GameFacet is UseStorage {
         require(ECSLib.getUint("Owner", _tileID) == 0, "CURIO: Tile has owner");
 
         // Verify target tile is not barbarian tile
-        require(ECSLib.getUint("Level", _tileID) != 1 && ECSLib.getUint("Level", _tileID) != 2, "CURIO: Can't claim barbarian tiles");
+        require(ECSLib.getUint("Level", _tileID) != 1 && ECSLib.getUint("Level", _tileID) != 2, "CURIO: Cannot claim barbarian tiles");
 
         // Verify that no guard exists on tile
         require(GameLib.getConstituents(_tileID).length == 0, "CURIO: Tile has guard");
@@ -716,10 +716,6 @@ contract GameFacet is UseStorage {
         GameLib.setCityGold(playerCityID, playerCityGold - goldCost);
         GameLib.setCityFood(playerCityID, playerCityFood - foodCost);
     }
-
-    // function initializeTile(Position memory _startPosition) public {
-    //     GameLib.initializeTile(_startPosition);
-    // }
 
     // --------------------------
     // treaty (WIP)

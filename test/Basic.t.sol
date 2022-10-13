@@ -8,7 +8,7 @@ import {Position} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
 
 contract TreatyTest is Test, DiamondDeployTest {
-    function testGatherAndBarbarina() public {
+    function testClaimBarbarina() public {
         // Pin key IDs and tile positions
         uint256 texasID = getter.getSettlerAt(player2Pos);
         Position memory cornTilePos = Position({x: 80, y: 30});
@@ -70,31 +70,70 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Fight the barbarian
         uint256 texasArmyID = getter.getArmyAt(Position({x: 65, y: 35}));
-        vm.startPrank(player2);
-        time += 2;
-        vm.warp(time);
-        game.move(texasArmyID, Position({x: 65, y: 40}));
-        time += 2;
-        vm.warp(time);
-        game.move(texasArmyID, Position({x: 65, y: 45}));
-        time += 2;
-        vm.warp(time);
-        game.move(texasArmyID, Position({x: 65, y: 49}));
         uint256 madameBarbarinaID = getter.getTileAt(barbarinaTilePos);
-        uint256 madameBarbarinaStrength;
-        uint256 i = 0;
-        do {
-            time += 5;
+        {
+            vm.startPrank(player2);
+            time += 2;
             vm.warp(time);
-            game.battle(texasArmyID, madameBarbarinaID);
-            madameBarbarinaStrength = abi.decode(getter.getComponent("Amount").getBytesValue(getter.getConstituents(madameBarbarinaID)[0]), (uint256));
-            i++;
-        } while (madameBarbarinaStrength < 1000);
-        vm.stopPrank();
+            game.move(texasArmyID, Position({x: 65, y: 40}));
+            time += 2;
+            vm.warp(time);
+            game.move(texasArmyID, Position({x: 65, y: 45}));
+            time += 2;
+            vm.warp(time);
+            game.move(texasArmyID, Position({x: 65, y: 49}));
+            uint256 madameBarbarinaStrength;
+            do {
+                time += 5;
+                vm.warp(time);
+                game.battle(texasArmyID, madameBarbarinaID);
+                madameBarbarinaStrength = abi.decode(getter.getComponent("Amount").getBytesValue(getter.getConstituents(madameBarbarinaID)[0]), (uint256));
+            } while (madameBarbarinaStrength < 1000);
+            vm.stopPrank();
+        }
+        time += 1000;
+        vm.warp(time);
 
         // Check post condition
         assertEq(getter.getCityFood(texasID), 60000);
         assertEq(getter.getCityGold(texasID), 180000);
+
+        // Try claiming the barbarian in vain
+        vm.startPrank(player2);
+        time += 2;
+        vm.warp(time);
+        game.move(texasArmyID, Position({x: 65, y: 54}));
+        vm.expectRevert("CURIO: Cannot claim barbarian tiles");
+        game.claimTile(texasArmyID, madameBarbarinaID);
+        vm.stopPrank();
+
+        // Fight an empty tile
+        vm.prank(deployer);
+        admin.adminInitializeTile(Position({x: 50, y: 50}));
+        uint256 emptyTileID = getter.getTileAt(Position({x: 50, y: 50}));
+        {
+            vm.startPrank(player2);
+            time += 2;
+            vm.warp(time);
+            game.move(texasArmyID, Position({x: 60, y: 54}));
+            time += 2;
+            vm.warp(time);
+            game.move(texasArmyID, Position({x: 55, y: 54}));
+            do {
+                time += 5;
+                vm.warp(time);
+                game.battle(texasArmyID, emptyTileID);
+            } while (getter.getConstituents(emptyTileID).length > 0);
+            vm.stopPrank();
+        }
+        time += 100;
+        vm.warp(time);
+
+        // Claim it
+        vm.startPrank(player2);
+        game.claimTile(texasArmyID, emptyTileID);
+        vm.stopPrank();
+        assertEq(abi.decode(getter.getComponent("Owner").getBytesValue(emptyTileID), (uint256)), player2Id);
     }
 
     function testBattle() public {

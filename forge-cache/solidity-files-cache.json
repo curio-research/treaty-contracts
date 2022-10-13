@@ -452,8 +452,8 @@
       }
     },
     "contracts/facets/GameFacet.sol": {
-      "lastModificationDate": 1665700857590,
-      "contentHash": "8c57ca236c3b020dcd16578e20b867f6",
+      "lastModificationDate": 1665702907797,
+      "contentHash": "52cfb22d169dac889119a8686cb32274",
       "sourceName": "contracts/facets/GameFacet.sol",
       "solcConfig": {
         "settings": {
@@ -1413,8 +1413,8 @@
       }
     },
     "test/Basic.t.sol": {
-      "lastModificationDate": 1665701131322,
-      "contentHash": "25cb76d95dd4e35377d63c9ec6dfdbd1",
+      "lastModificationDate": 1665703118338,
+      "contentHash": "deabbc85ae67f8da93b077f62aee521f",
       "sourceName": "test/Basic.t.sol",
       "solcConfig": {
         "settings": {
