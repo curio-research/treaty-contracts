@@ -84,13 +84,7 @@ library GameLib {
         if (terrain == 1) {
             // require(getResourceAtTile(_startPosition) != 0, "CURIO: Resource is missing at location"); // avoid initializing two resources on the same tile
 
-            uint256 goldMineID = ECSLib.addEntity();
-            ECSLib.setString("Tag", goldMineID, "Resource");
-            ECSLib.setUint("Template", goldMineID, gs().templates["Gold"]);
-            ECSLib.setUint("Level", goldMineID, 0); // initialize at zero is equivalent to not having a gold mine "built"
-            ECSLib.setPosition("StartPosition", goldMineID, _startPosition);
-            ECSLib.setUint("LastTimestamp", goldMineID, block.timestamp);
-            ECSLib.setUint("Load", goldMineID, _goldmineCap(1));
+            Templates.addResource(gs().templates["Gold"], _startPosition, _goldmineCap(1));
         }
 
         // Initialize farm
@@ -626,7 +620,8 @@ library GameLib {
         return 0;
     }
 
-    function _goldmineCap(uint256 _level) private pure returns (uint256) {
+    // TODO: hardcoded
+    function _resourceCap(uint256 _level) private pure returns (uint256) {
         if (_level == 1) return 1000;
         if (_level == 2) return 2000;
         if (_level == 3) return 3000;

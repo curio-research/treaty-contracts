@@ -268,7 +268,7 @@ contract DiamondDeployTest is Test {
     // Note: hardcoded
     function _generateMap(uint256 _width, uint256 _height) public pure returns (uint256[][] memory) {
         uint256[] memory _plainCol = new uint256[](_height);
-
+    
         // set individual columns
         for (uint256 y = 0; y < _height; y++) {
             _plainCol[y] = 0;
