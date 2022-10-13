@@ -85,7 +85,7 @@ library Templates {
         ECSLib.setPosition("StartPosition", tileID, _startPosition);
         ECSLib.setUint("City", tileID, 0);
         ECSLib.setUint("Owner", tileID, 0);
-        ECSLib.setUint("Level", tileID, 1); // Fixme: this should be barbarian variable (lv2:lv1 = 1:2)
+        ECSLib.setUint("Level", tileID, 1);
         ECSLib.setUint("LastTimestamp", tileID, block.timestamp);
         return tileID;
     }
