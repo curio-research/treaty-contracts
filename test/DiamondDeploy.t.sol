@@ -259,7 +259,8 @@ contract DiamondDeployTest is Test {
                 initCityGold: 1000,
                 tileWidth: 10,
                 tileGuardAmount: 1000,
-                cityGuardAmount: 1000 // DO NOT REMOVE THIS COMMENT
+                cityGuardAmount: 1000, // DO NOT REMOVE THIS COMMENT
+                barbarianCooldown: 3000
             });
     }
 
