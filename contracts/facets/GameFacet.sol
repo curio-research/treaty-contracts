@@ -613,7 +613,7 @@ contract GameFacet is UseStorage {
             "CURIO: Attack not within range"
         );
 
-        bool isBarbarian = ECSLib.getUint("Terrain", _tileID) == 5;
+        bool isBarbarian = ECSLib.getUint("Terrain", _tileID) == 3 || ECSLib.getUint("Terrain", _tileID) == 4;
         // if it is barbarian, check it's not hybernating
         if (isBarbarian) {
             require(block.timestamp >= ECSLib.getUint("LastTimestamp", _tileID) + gs().worldConstants.barbarianCooldown, "CURIO: Barbarians hybernating");
