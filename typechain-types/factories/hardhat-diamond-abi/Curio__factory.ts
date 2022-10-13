@@ -530,6 +530,19 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
+        name: "_armyID",
+        type: "uint256",
+      },
+    ],
+    name: "endGather",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
         name: "_buildingID",
         type: "uint256",
       },
@@ -708,6 +721,24 @@ const _abi = [
       },
     ],
     name: "packCity",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_armyID",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_resourceID",
+        type: "uint256",
+      },
+    ],
+    name: "startGather",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -1262,6 +1293,11 @@ const _abi = [
           {
             internalType: "uint256",
             name: "initCityCenterGoldLoad",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "initCityCenterFoodLoad",
             type: "uint256",
           },
           {

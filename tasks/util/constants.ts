@@ -33,6 +33,7 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): a
     cityUpgradeGoldCost: 100000,
     cityPackCost: 1000000000000000, // temporarily disabled
     initCityCenterGoldLoad: 5000,
+    initCityCenterFoodLoad: 5000,
     initCityCenterTroopLoad: 1000,
     initCityGold: 1000,
     tileWidth: TILE_WIDTH,

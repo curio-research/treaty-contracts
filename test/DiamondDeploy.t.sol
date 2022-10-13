@@ -255,6 +255,7 @@ contract DiamondDeployTest is Test {
                 cityUpgradeGoldCost: 3000,
                 cityPackCost: 30,
                 initCityCenterGoldLoad: 5000,
+                initCityCenterFoodLoad: 5000,
                 initCityCenterTroopLoad: 1000,
                 initCityGold: 1000,
                 tileWidth: 10,

@@ -204,12 +204,11 @@ library GameLib {
             ECSLib.removeEntity(_constituentIDs[i]);
         }
         ECSLib.removeEntity(getArmyInventory(_armyID, gs().templates["Gold"]));
+        ECSLib.removeEntity(getArmyInventory(_armyID, gs().templates["Food"]));
         ECSLib.removeEntity(_armyID);
     }
 
     function endGather(uint256 _armyID) internal {
-        Position memory position = ECSLib.getPosition("Position", _armyID);
-
         // Verify that a gather process is present
         uint256 gatherID = getArmyGather(_armyID);
         require(gatherID != 0, "CURIO: Need to start gathering first");
@@ -217,30 +216,24 @@ library GameLib {
         // Get army's and resource's remaining capacities
         uint256 templateID = ECSLib.getUint("Template", gatherID);
         uint256 inventoryID = getArmyInventory(_armyID, templateID);
-        uint256 armyAmount;
+        uint256 armyInventoryAmount;
         if (inventoryID == 0) {
-            armyAmount = 0;
+            armyInventoryAmount = 0;
 
             inventoryID = ECSLib.addEntity();
             ECSLib.setString("Tag", inventoryID, "TroopInventory");
             ECSLib.setUint("Army", inventoryID, _armyID);
             ECSLib.setUint("Template", inventoryID, templateID);
-            ECSLib.setUint("Amount", inventoryID, armyAmount);
+            ECSLib.setUint("Amount", inventoryID, armyInventoryAmount);
+            ECSLib.setUint("Load", inventoryID, ECSLib.getUint("Load", _armyID));
         } else {
-            armyAmount = ECSLib.getUint("Amount", inventoryID);
+            armyInventoryAmount = ECSLib.getUint("Amount", inventoryID);
         }
-
-        uint256 resourceID = getResourceAtTile(getProperTilePosition(position));
-        uint256 resourceAmount = ECSLib.getUint("Amount", resourceID);
 
         // Gather
         uint256 _gatherAmount = (block.timestamp - ECSLib.getUint("InitTimestamp", gatherID)) / ECSLib.getUint("Duration", templateID);
-        if (_gatherAmount > resourceAmount) _gatherAmount = resourceAmount;
-        if (_gatherAmount > (ECSLib.getUint("Load", _armyID) - armyAmount)) _gatherAmount = ECSLib.getUint("Load", _armyID) - armyAmount;
-        ECSLib.setUint("Amount", inventoryID, armyAmount + _gatherAmount);
-        ECSLib.setUint("Amount", resourceID, resourceAmount - _gatherAmount);
-
-        if (_gatherAmount == resourceAmount) ECSLib.removeEntity(resourceID);
+        if (_gatherAmount > (ECSLib.getUint("Load", inventoryID) - armyInventoryAmount)) _gatherAmount = ECSLib.getUint("Load", _armyID) - armyInventoryAmount;
+        ECSLib.setUint("Amount", inventoryID, armyInventoryAmount + _gatherAmount);
 
         ECSLib.removeEntity(gatherID);
     }

@@ -58,6 +58,7 @@ struct WorldConstants {
     uint256 buildingUpgradeGoldCost;
     uint256 cityUpgradeGoldCost; // constant for now but realistically not ?
     uint256 initCityCenterGoldLoad;
+    uint256 initCityCenterFoodLoad;
     uint256 initCityCenterTroopLoad;
     uint256 cityPackCost;
     uint256 initCityGold;

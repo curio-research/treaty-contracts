@@ -48,6 +48,7 @@ contract GameFacet is UseStorage {
 
         // Add initial gold
         Templates.addInventory(settlerID, gs().templates["Gold"], gs().worldConstants.initCityGold, gs().worldConstants.initCityCenterGoldLoad);
+        Templates.addInventory(settlerID, gs().templates["Food"], 0, gs().worldConstants.initCityCenterFoodLoad);
     }
 
     // ----------------------------------------------------------
@@ -340,39 +341,43 @@ contract GameFacet is UseStorage {
         ECSLib.removeEntity(_productionID);
     }
 
-    // function startGather(uint256 _armyID, uint256 _resourceID) external {
-    //     GameLib.validEntityCheck(_armyID);
-    //     GameLib.validEntityCheck(_resourceID);
-    //     GameLib.ongoingGameCheck();
-    //     GameLib.activePlayerCheck(msg.sender);
-    //     GameLib.entityOwnershipCheck(_armyID, msg.sender);
+    function startGather(uint256 _armyID, uint256 _resourceID) external {
+        GameLib.validEntityCheck(_armyID);
+        GameLib.validEntityCheck(_resourceID);
+        GameLib.ongoingGameCheck();
+        GameLib.activePlayerCheck(msg.sender);
+        GameLib.entityOwnershipCheck(_armyID, msg.sender);
 
-    //     // Verify that army is sitting on the resource
-    //     Position memory startPosition = GameLib.getProperTilePosition(ECSLib.getPosition("Position", _armyID));
-    //     require(GameLib.coincident(startPosition, ECSLib.getPosition("StartPosition", _resourceID)), "CURIO: Army must be on resource tile");
+        // Verify that army is sitting on the resource
+        Position memory startPosition = GameLib.getProperTilePosition(ECSLib.getPosition("Position", _armyID));
+        require(GameLib.coincident(startPosition, ECSLib.getPosition("StartPosition", _resourceID)), "CURIO: Army must be on resource tile");
 
-    //     // Verify that resource is not in another player's territory
-    //     uint256 tileID = GameLib.getTileAt(startPosition);
-    //     uint256 playerID = GameLib.getPlayer(msg.sender);
-    //     require(tileID == NULL || ECSLib.getUint("Owner", ECSLib.getUint("City", tileID)) == playerID, "CURIO: Cannot gather on other's tiles");
+        // Verify that the resource level is greater than zero, meaning that a gold mine has "been built".
+        require(ECSLib.getUint("Level", _resourceID) == 0, "CURIO: Tool already built");
 
-    //     require(GameLib.getArmyGather(_armyID) == 0, "CURIO: Another gather at this location");
+        // Verify that resource is not in another player's territory
+        uint256 tileID = GameLib.getTileAt(startPosition);
+        uint256 playerID = GameLib.getPlayer(msg.sender);
+        require(tileID == NULL || ECSLib.getUint("Owner", ECSLib.getUint("City", tileID)) == playerID, "CURIO: Cannot gather on other's tiles");
 
-    //     // Verify that the army's capacity isn't full
-    //     // TODO
+        // Cannot gather twice
+        require(GameLib.getArmyGather(_armyID) == 0, "CURIO: Another gather at this location");
 
-    //     Templates.addResourceGather(startPosition, playerID, _resourceID, _armyID);
-    // }
+        // Verify that the army's capacity isn't full
+        // TODO
 
-    // function endGather(uint256 _armyID) external {
-    //     GameLib.validEntityCheck(_armyID);
-    //     GameLib.ongoingGameCheck();
-    //     GameLib.activePlayerCheck(msg.sender);
-    //     GameLib.entityOwnershipCheck(_armyID, msg.sender);
+        Templates.addResourceGather(startPosition, playerID, _resourceID, _armyID);
+    }
 
-    //     // End gather
-    //     GameLib.endGather(_armyID);
-    // }
+    function endGather(uint256 _armyID) external {
+        GameLib.validEntityCheck(_armyID);
+        GameLib.ongoingGameCheck();
+        GameLib.activePlayerCheck(msg.sender);
+        GameLib.entityOwnershipCheck(_armyID, msg.sender);
+
+        // End gather
+        GameLib.endGather(_armyID);
+    }
 
     // harvest gold from a gold resource directly
     function harvestResource(uint256 _resourceID) external {
@@ -386,15 +391,15 @@ contract GameFacet is UseStorage {
 
         GameLib.neutralOrOwnedEntityCheck(GameLib.getTileAt(goldMineStartPosition), msg.sender);
 
-        // Verify that the gold mine resource level is greater than zero, meaning that a gold mine has "been built".
-        require(resourceLevel > 0, "CURIO: Need to build gold mine to harvest");
+        // Verify that the resource level is greater than zero, meaning that a tool has "been built".
+        require(resourceLevel > 0, "CURIO: Need to build tool to harvest");
 
         // Verify city ownership
         uint256 playerCityID = GameLib.getPlayerCity(GameLib.getPlayer(msg.sender));
         require(playerCityID != NULL, "CURIO: Player must own a city");
 
         // Note: resource tokenization is gonna make this so much easier => one mint function
-        uint256 resourceHarvestCap = ECSLib.getUint("Load", _resourceID); 
+        uint256 resourceHarvestCap = ECSLib.getUint("Load", _resourceID);
         string memory resourceType = ECSLib.getString("InventoryType", _resourceID);
         uint256 templateID = GameLib.getTemplateByInventoryType(resourceType);
         uint256 resourceHarvestRate = GameLib.getResourceHarvestRate(templateID, resourceLevel);
@@ -402,7 +407,7 @@ contract GameFacet is UseStorage {
         uint256 rawHarvestAmount = (block.timestamp - ECSLib.getUint("LastTimestamp", _resourceID)) * resourceHarvestRate;
         uint256 harvestAmount = GameLib.min(resourceHarvestCap, rawHarvestAmount); // harvest amount must not exceed the gold cap
 
-        // Update gold mine last harvest
+        // Update last harvest
         ECSLib.setUint("LastTimestamp", _resourceID, block.timestamp);
 
         // Note: consider to change all inventories to smart contract wallet => they're under custody until it's transferred to player wallet

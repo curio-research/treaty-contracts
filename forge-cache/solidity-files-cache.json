@@ -212,7 +212,7 @@
       }
     },
     "contracts/TypedComponents.sol": {
-      "lastModificationDate": 1664333270914,
+      "lastModificationDate": 1665426093740,
       "contentHash": "784c815f5c7c20df44d5463e4396354d",
       "sourceName": "contracts/TypedComponents.sol",
       "solcConfig": {
@@ -452,8 +452,8 @@
       }
     },
     "contracts/facets/GameFacet.sol": {
-      "lastModificationDate": 1665681280808,
-      "contentHash": "72153fcba51646aef065f269b7893d3a",
+      "lastModificationDate": 1665684970226,
+      "contentHash": "802499f9e3d25c84353d46194028aa23",
       "sourceName": "contracts/facets/GameFacet.sol",
       "solcConfig": {
         "settings": {
@@ -801,7 +801,7 @@
       }
     },
     "contracts/libraries/ECSLib.sol": {
-      "lastModificationDate": 1665439231896,
+      "lastModificationDate": 1665615209079,
       "contentHash": "21abc0fe2ed154e7d2357751c8ce25a3",
       "sourceName": "contracts/libraries/ECSLib.sol",
       "solcConfig": {
@@ -848,8 +848,8 @@
       }
     },
     "contracts/libraries/GameLib.sol": {
-      "lastModificationDate": 1665681920104,
-      "contentHash": "e89f290b0ee377e9e09cc6c501d34349",
+      "lastModificationDate": 1665684923320,
+      "contentHash": "ab79bd643cfb66c48855018ac27fa727",
       "sourceName": "contracts/libraries/GameLib.sol",
       "solcConfig": {
         "settings": {
@@ -938,7 +938,7 @@
       }
     },
     "contracts/libraries/Storage.sol": {
-      "lastModificationDate": 1663016127223,
+      "lastModificationDate": 1665288827106,
       "contentHash": "1b36141f848b096102e707d476aaf9cb",
       "sourceName": "contracts/libraries/Storage.sol",
       "solcConfig": {
@@ -982,7 +982,7 @@
       }
     },
     "contracts/libraries/Templates.sol": {
-      "lastModificationDate": 1665636883701,
+      "lastModificationDate": 1665681280809,
       "contentHash": "31a97afba479fc26db142131f0a62060",
       "sourceName": "contracts/libraries/Templates.sol",
       "solcConfig": {
@@ -1030,8 +1030,8 @@
       }
     },
     "contracts/libraries/Types.sol": {
-      "lastModificationDate": 1665627456950,
-      "contentHash": "d8c4c00e9019d24d8a1519c0e688b87d",
+      "lastModificationDate": 1665683354697,
+      "contentHash": "d03008734d31d8b2fc88d72fd51bd3b4",
       "sourceName": "contracts/libraries/Types.sol",
       "solcConfig": {
         "settings": {
@@ -1069,7 +1069,7 @@
       }
     },
     "contracts/upgradeInitializers/DiamondInit.sol": {
-      "lastModificationDate": 1664727380176,
+      "lastModificationDate": 1665614471417,
       "contentHash": "20c57a1b63107534c842845ef2518021",
       "sourceName": "contracts/upgradeInitializers/DiamondInit.sol",
       "solcConfig": {
@@ -1117,7 +1117,7 @@
       }
     },
     "contracts/upgradeInitializers/diamondInit.sol": {
-      "lastModificationDate": 1664727380176,
+      "lastModificationDate": 1665614471417,
       "contentHash": "20c57a1b63107534c842845ef2518021",
       "sourceName": "contracts/upgradeInitializers/diamondInit.sol",
       "solcConfig": {
@@ -1553,8 +1553,8 @@
       }
     },
     "test/DiamondDeploy.t.sol": {
-      "lastModificationDate": 1665681280810,
-      "contentHash": "5de530fcd9924725edfe53bf08c5b43a",
+      "lastModificationDate": 1665684989695,
+      "contentHash": "62ac6c1af126da527a2d00f35e364a0b",
       "sourceName": "test/DiamondDeploy.t.sol",
       "solcConfig": {
         "settings": {

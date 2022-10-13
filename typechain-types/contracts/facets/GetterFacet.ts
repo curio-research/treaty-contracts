@@ -46,6 +46,7 @@ export type WorldConstantsStruct = {
   buildingUpgradeGoldCost: PromiseOrValue<BigNumberish>;
   cityUpgradeGoldCost: PromiseOrValue<BigNumberish>;
   initCityCenterGoldLoad: PromiseOrValue<BigNumberish>;
+  initCityCenterFoodLoad: PromiseOrValue<BigNumberish>;
   initCityCenterTroopLoad: PromiseOrValue<BigNumberish>;
   cityPackCost: PromiseOrValue<BigNumberish>;
   initCityGold: PromiseOrValue<BigNumberish>;
@@ -57,6 +58,7 @@ export type WorldConstantsStruct = {
 
 export type WorldConstantsStructOutput = [
   string,
+  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -88,6 +90,7 @@ export type WorldConstantsStructOutput = [
   buildingUpgradeGoldCost: BigNumber;
   cityUpgradeGoldCost: BigNumber;
   initCityCenterGoldLoad: BigNumber;
+  initCityCenterFoodLoad: BigNumber;
   initCityCenterTroopLoad: BigNumber;
   cityPackCost: BigNumber;
   initCityGold: BigNumber;
