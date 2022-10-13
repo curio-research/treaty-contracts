@@ -336,7 +336,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         // Produce troops
         uint256 _productionID = game.startTroopProduction(_cityCenterID, cavalryTemplateID, 20);
         vm.warp(30);
-        vm.expectRevert("CURIO: No concurrent productions");
+        vm.expectRevert("CURIO: Concurrent productions disallowed");
         game.startTroopProduction(_cityCenterID, cavalryTemplateID, 20);
         game.endTroopProduction(_cityCenterID, _productionID);
 

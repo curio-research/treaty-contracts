@@ -29,7 +29,7 @@ library GameLib {
     // LOGIC SETTERS
     // ----------------------------------------------------------
 
-    function registerComponents(address _gameAddr, ComponentSpec[] memory _componentSpecs) internal {
+    function registerComponents(address _gameAddr, ComponentSpec[] memory _componentSpecs) public {
         for (uint256 i = 0; i < _componentSpecs.length; i++) {
             ComponentSpec memory spec = _componentSpecs[i];
 
@@ -81,7 +81,7 @@ library GameLib {
         uint256 terrain = encodedCol / divFactor;
 
         // Initialize gold mine
-        if (terrain == 1 || terrain == 2 || terrain == 3) {
+        if (terrain == 1) {
             // require(getResourceAtTile(_startPosition) != 0, "CURIO: Resource is missing at location"); // avoid initializing two resources on the same tile
 
             uint256 goldMineID = ECSLib.addEntity();
@@ -90,8 +90,18 @@ library GameLib {
             ECSLib.setUint("Level", goldMineID, 0); // initialize at zero is equivalent to not having a gold mine "built"
             ECSLib.setPosition("StartPosition", goldMineID, _startPosition);
             ECSLib.setUint("LastTimestamp", goldMineID, block.timestamp);
-            ECSLib.setUint("Amount", goldMineID, _goldLevelSelector(terrain)); // it happens that the gold level is the same as the terrain index
             ECSLib.setUint("Load", goldMineID, _goldmineCap(1));
+        }
+
+        // Initialize farm
+        if (terrain == 2) {
+            uint256 farmID = ECSLib.addEntity();
+            ECSLib.setString("Tag", farmID, "Resource");
+            ECSLib.setUint("Template", farmID, gs().templates["Farm"]);
+            ECSLib.setUint("Level", farmID, 0); // initialize at zero is equivalent to not having a gold mine "built"
+            ECSLib.setPosition("StartPosition", farmID, _startPosition);
+            ECSLib.setUint("LastTimestamp", farmID, block.timestamp);
+            ECSLib.setUint("Load", farmID, _goldmineCap(1));
         }
 
         // if (terrain >= 4 && terrain <= 6) {
@@ -116,6 +126,10 @@ library GameLib {
 
         // Initialize tile
         uint256 tileID = Templates.addTile(_startPosition);
+
+        // Initialize barbarian
+        if (terrain == 3) ECSLib.setUint("Level", tileID, 1);
+        if (terrain == 4) ECSLib.setUint("Level", tileID, 2);
 
         // Initialize defense
         Templates.addConstituent(tileID, gs().templates["Guard"], gs().worldConstants.tileGuardAmount);

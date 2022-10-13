@@ -8,6 +8,7 @@ import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 import "contracts/libraries/Templates.sol";
 import {Set} from "contracts/Set.sol";
 import {GameLib} from "contracts/libraries/GameLib.sol";
+import "forge-std/console.sol";
 
 /// @title Admin facet
 /// @notice Contains admin functions and state functions, both of which should be out of scope for players
@@ -110,7 +111,7 @@ contract AdminFacet is UseStorage {
 
     // FIXME: be able to sync with vault
     function registerDefaultComponents(address _gameAddr) external onlyAdmin {
-        ComponentSpec[] memory _componentSpecs = new ComponentSpec[](38);
+        ComponentSpec[] memory _componentSpecs = new ComponentSpec[](39);
 
         _componentSpecs[0] = ComponentSpec({name: "IsComponent", valueType: ValueType.BOOL});
         _componentSpecs[1] = ComponentSpec({name: "Tag", valueType: ValueType.STRING});
@@ -150,6 +151,7 @@ contract AdminFacet is UseStorage {
         _componentSpecs[35] = ComponentSpec({name: "BattleCooldown", valueType: ValueType.UINT});
         _componentSpecs[36] = ComponentSpec({name: "Terrain", valueType: ValueType.UINT});
         _componentSpecs[37] = ComponentSpec({name: "CanBattle", valueType: ValueType.BOOL});
+        _componentSpecs[38] = ComponentSpec({name: "AttackRange", valueType: ValueType.UINT});
 
         GameLib.registerComponents(_gameAddr, _componentSpecs);
     }
