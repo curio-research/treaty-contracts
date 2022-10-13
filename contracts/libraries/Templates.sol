@@ -85,7 +85,7 @@ library Templates {
         ECSLib.setPosition("StartPosition", tileID, _startPosition);
         ECSLib.setUint("City", tileID, 0);
         ECSLib.setUint("Owner", tileID, 0);
-        ECSLib.setUint("Level", tileID, 1);
+        ECSLib.setUint("Level", tileID, 0); // 1 or above means a barbarian
         ECSLib.setUint("Terrain", tileID, _terrain);
         ECSLib.setUint("LastTimestamp", tileID, block.timestamp);
 
@@ -125,7 +125,7 @@ library Templates {
         ECSLib.setPosition("StartPosition", resourceID, _startPosition);
         ECSLib.setUint("LastTimestamp", resourceID, block.timestamp);
         ECSLib.setUint("Load", resourceID, _load);
-        
+
         return resourceID;
     }
 

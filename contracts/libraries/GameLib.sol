@@ -113,12 +113,16 @@ library GameLib {
         // Initialize tile
         uint256 tileID = Templates.addTile(_startPosition, terrain);
 
-        // Initialize barbarian
-        if (terrain == 3) ECSLib.setUint("Level", tileID, 1);
-        if (terrain == 4) ECSLib.setUint("Level", tileID, 2);
-
-        // Initialize defense
-        Templates.addConstituent(tileID, gs().templates["Guard"], gs().worldConstants.tileGuardAmount);
+        if (terrain < 3) {
+            // Normal tile
+            Templates.addConstituent(tileID, gs().templates["Guard"], gs().worldConstants.tileGuardAmount);
+        } else {
+            // Barbarian tile
+            uint256 barbarianLevel = terrain - 2;
+            ECSLib.setUint("Level", tileID, barbarianLevel);
+            (, , uint256 barbarianAmount) = barbarianInfo(barbarianLevel);
+            Templates.addConstituent(tileID, gs().templates["Guard"], barbarianAmount);
+        }
 
         return tileID;
     }
@@ -316,7 +320,7 @@ library GameLib {
     }
 
     function distributeBarbarianReward(uint256 _cityID, uint256 _barbarianTileID) internal {
-        (uint256 barbarianGold, uint256 barbarianFood, uint256 barbarianAmount) = barbarianInfo(ECSLib.getUint("Level", _barbarianTileID));
+        (uint256 barbarianGold, uint256 barbarianFood, ) = barbarianInfo(ECSLib.getUint("Level", _barbarianTileID));
 
         uint256 winnerCityGoldInventoryID = getInventory(_cityID, gs().templates["Gold"]);
         uint256 existingCityGold = ECSLib.getUint("Amount", winnerCityGoldInventoryID);
@@ -327,19 +331,16 @@ library GameLib {
         uint256 existingCityFood = ECSLib.getUint("Amount", winnerCityFoodInventoryID);
         uint256 winnerFoodTotalAmount = min(ECSLib.getUint("Load", winnerCityFoodInventoryID), barbarianFood + existingCityFood);
         ECSLib.setUint("Amount", winnerCityFoodInventoryID, winnerFoodTotalAmount);
-
-        // restore barbarians & set lastDead
-        ECSLib.setUint("LastTimestamp", _barbarianTileID, block.timestamp);
-        ECSLib.setUint("Amount", getConstituents(_barbarianTileID)[0], barbarianAmount);
     }
 
     function unloadResources(uint256 _cityID, uint256 _armyID) internal {
         uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
         for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
             uint256 cityResourceInventoryID = getInventory(_cityID, resourceTemplateIDs[i]);
-            uint256 armyResourceAmount = ECSLib.getUint("Amount", getArmyInventory(_armyID, resourceTemplateIDs[i]));
+            uint256 armyResourceInventoryID = getArmyInventory(_armyID, resourceTemplateIDs[i]);
             uint256 cityResourceLoad = ECSLib.getUint("Load", cityResourceInventoryID);
-            ECSLib.setUint("Amount", cityResourceInventoryID, min(ECSLib.getUint("Amount", cityResourceInventoryID) + armyResourceAmount, cityResourceLoad));
+            ECSLib.setUint("Amount", cityResourceInventoryID, min(ECSLib.getUint("Amount", cityResourceInventoryID) + ECSLib.getUint("Amount", armyResourceInventoryID), cityResourceLoad));
+            ECSLib.setUint("Amount", armyResourceInventoryID, 0);
         }
     }
 

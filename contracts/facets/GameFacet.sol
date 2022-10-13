@@ -612,12 +612,12 @@ contract GameFacet is UseStorage {
         );
 
         bool isBarbarian = ECSLib.getUint("Level", _tileID) == 1 || ECSLib.getUint("Level", _tileID) == 2;
+        uint256 cityID = GameLib.getCityAtTile(ECSLib.getPosition("StartPosition", _tileID));
+
         // if it is barbarian, check it's not hybernating
         if (isBarbarian) {
             require(block.timestamp >= ECSLib.getUint("LastTimestamp", _tileID) + gs().worldConstants.barbarianCooldown, "CURIO: Barbarians hybernating");
         }
-
-        uint256 cityID = GameLib.getCityAtTile(ECSLib.getPosition("StartPosition", _tileID));
 
         // Execute one round of battle
         bool victory = GameLib.attack(_armyID, _tileID, false, _occupyUponVictory, false);
@@ -640,10 +640,15 @@ contract GameFacet is UseStorage {
                 uint256 winnerTotalAmount = GameLib.min(ECSLib.getUint("Load", winnerCityGoldInventoryID), loserTotalAmount / 2 + existingCityGold);
                 ECSLib.setUint("Amount", winnerCityGoldInventoryID, winnerTotalAmount);
             } else {
-                // reset ownership
-                ECSLib.setUint("Owner", _tileID, 0);
                 if (isBarbarian) {
+                    // Reset barbarian
                     GameLib.distributeBarbarianReward(winnerCityID, _tileID);
+                    (, , uint256 barbarianAmount) = GameLib.barbarianInfo(ECSLib.getUint("Level", _tileID));
+                    ECSLib.setUint("LastTimestamp", _tileID, block.timestamp);
+                    Templates.addConstituent(_tileID, gs().templates["Guard"], barbarianAmount);
+                } else {
+                    // Neutralize tile
+                    ECSLib.setUint("Owner", _tileID, NULL);
                 }
             }
         } else {

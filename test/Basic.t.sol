@@ -11,16 +11,16 @@ contract TreatyTest is Test, DiamondDeployTest {
     function testGatherAndBarbarina() public {
         // Pin key IDs and tile positions
         uint256 texasID = getter.getSettlerAt(player2Pos);
-        Position memory cornPos = Position({x: 80, y: 30});
-        Position memory barbarinaPos = Position({x: 60, y: 50});
+        Position memory cornTilePos = Position({x: 80, y: 30});
+        Position memory barbarinaTilePos = Position({x: 60, y: 50});
         uint256 time = 2;
         vm.warp(time);
 
         // Spawn resource near player2's city
         {
             vm.startPrank(deployer);
-            admin.spawnResource(cornPos, "Food");
-            admin.spawnBarbarian(barbarinaPos, 1);
+            admin.spawnResource(cornTilePos, "Food");
+            admin.spawnBarbarian(barbarinaTilePos, 1);
             vm.stopPrank();
         }
 
@@ -49,8 +49,8 @@ contract TreatyTest is Test, DiamondDeployTest {
             texasArmyTemplateIDs[0] = cavalryTemplateID;
             texasArmyTemplateIDs[1] = infantryTemplateID;
             uint256[] memory texasArmyAmounts = new uint256[](2);
-            texasArmyAmounts[0] = 500;
-            texasArmyAmounts[1] = 500;
+            texasArmyAmounts[0] = 1000;
+            texasArmyAmounts[1] = 1000;
 
             vm.startPrank(player2);
             uint256 houseID = getter.getCityCenter(texasID);
@@ -65,10 +65,36 @@ contract TreatyTest is Test, DiamondDeployTest {
             game.organizeArmy(texasID, texasArmyTemplateIDs, texasArmyAmounts);
             vm.stopPrank();
         }
-        time += 500 + 500;
+        time += 1000 + 1000;
         vm.warp(time);
 
-        // Start gather and end gather
+        // Fight the barbarian
+        uint256 texasArmyID = getter.getArmyAt(Position({x: 65, y: 35}));
+        vm.startPrank(player2);
+        time += 2;
+        vm.warp(time);
+        game.move(texasArmyID, Position({x: 65, y: 40}));
+        time += 2;
+        vm.warp(time);
+        game.move(texasArmyID, Position({x: 65, y: 45}));
+        time += 2;
+        vm.warp(time);
+        game.move(texasArmyID, Position({x: 65, y: 49}));
+        uint256 madameBarbarinaID = getter.getTileAt(barbarinaTilePos);
+        uint256 madameBarbarinaStrength;
+        uint256 i = 0;
+        do {
+            time += 5;
+            vm.warp(time);
+            game.battle(texasArmyID, madameBarbarinaID);
+            madameBarbarinaStrength = abi.decode(getter.getComponent("Amount").getBytesValue(getter.getConstituents(madameBarbarinaID)[0]), (uint256));
+            i++;
+        } while (madameBarbarinaStrength < 1000);
+        vm.stopPrank();
+
+        // Check post condition
+        assertEq(getter.getCityFood(texasID), 60000);
+        assertEq(getter.getCityGold(texasID), 180000);
     }
 
     function testBattle() public {
