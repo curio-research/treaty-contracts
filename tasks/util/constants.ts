@@ -87,8 +87,8 @@ export const createTemplates = async (diamond: Curio) => {
   templateNames.push(inventoryType);
   templateIDs.push(entity);
 
-  // Farm
-  inventoryType = InventoryTypeOptions.Farm;
+  // Food
+  inventoryType = InventoryTypeOptions.Food;
   entity = await addGetEntity(diamond);
   await (await diamond.setComponentValue(Tag, entity, encodeString(Tags.ResourceTemplate))).wait();
   await (await diamond.setComponentValue(InventoryType, entity, encodeString(inventoryType))).wait();

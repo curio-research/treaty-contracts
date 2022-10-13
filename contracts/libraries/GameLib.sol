@@ -137,11 +137,31 @@ library GameLib {
         return tileID;
     }
 
-    function _goldLevelSelector(uint256 _goldLevel) private pure returns (uint256) {
-        if (_goldLevel == 1) return 100;
-        if (_goldLevel == 2) return 200;
-        if (_goldLevel == 3) return 300;
-        return 0;
+    // TODO: hardcoded; we should make certain things into components
+    function _resourceHarvestRate(uint256 _templateID, uint256 _resourceLevel) internal view returns (uint256) {
+        if (_templateID == gs().templates["Gold"]) {
+            if (_resourceLevel == 1) return 8;
+            if (_resourceLevel == 2) return 10;
+            if (_resourceLevel == 3) return 12;
+            if (_resourceLevel == 4) return 13;
+            if (_resourceLevel == 5) return 14;
+            if (_resourceLevel == 6) return 15;
+            if (_resourceLevel == 7) return 16;
+            if (_resourceLevel == 8) return 17;
+            if (_resourceLevel == 9) return 18;
+            else return 0;
+        } else if (_templateID == gs().templates["Food"]) {
+            if (_resourceLevel == 1) return 200;
+            if (_resourceLevel == 2) return 220;
+            if (_resourceLevel == 3) return 240;
+            if (_resourceLevel == 4) return 250;
+            if (_resourceLevel == 5) return 260;
+            if (_resourceLevel == 6) return 270;
+            if (_resourceLevel == 7) return 280;
+            if (_resourceLevel == 8) return 290;
+            if (_resourceLevel == 9) return 300;
+            else return 0;
+        } else return 0;
     }
 
     function barbarianInfo(uint256 _level)
@@ -159,19 +179,19 @@ library GameLib {
         else return (0, 0, 0);
     }
 
-    function goldmineUpgradeCost(uint256 _currentLevel) internal pure returns (uint256) {
-        require(_currentLevel <= 2, "CURIO: Max goldmine level reached");
-        if (_currentLevel == 0) return 400; // level 0 to 1 (builds gold mine extra cost)
-        if (_currentLevel == 1) return 300; // level 1 to 2
-        if (_currentLevel == 2) return 300; // level 2 to 3
-    }
-
-    function goldmineProductionRate(uint256 _level) public pure returns (uint256) {
-        if (_level == 0) return 1;
-        if (_level == 1) return 1;
-        if (_level == 2) return 2;
-        if (_level == 3) return 3;
-        return 0;
+    // TODO: hardcoded like _resourceHarvestRate
+    function resourceUpgradeCost(uint256 _currentLevel) internal pure returns (uint256, uint256) {
+        require(_currentLevel <= 9, "CURIO: Max goldmine level reached");
+            if (_currentLevel == 0) return (100000, 32000);
+            if (_currentLevel == 1) return (100000, 32000);
+            if (_currentLevel == 2) return (100000, 32000);
+            if (_currentLevel == 3) return (300000, 90000);
+            if (_currentLevel == 4) return (300000, 90000);
+            if (_currentLevel == 5) return (300000, 90000);
+            if (_currentLevel == 6) return (300000, 90000);
+            if (_currentLevel == 7) return (300000, 120000);
+            if (_currentLevel == 8) return (300000, 120000);
+            else return (0, 0);
     }
 
     function _barbarianInfantrySelector(uint256 _level) private pure returns (uint256) {
@@ -491,9 +511,20 @@ library GameLib {
         return _balance;
     }
 
+    function getCityFood(uint256 _cityId) internal returns (uint256) {
+        uint256 _foodInventoryID = getInventory(_cityId, gs().templates["Food"]);
+        uint256 _balance = _foodInventoryID != 0 ? ECSLib.getUint("Amount", _foodInventoryID) : 0;
+        return _balance;
+    }
+
     function setCityGold(uint256 _cityId, uint256 _goldAmount) internal {
         uint256 _goldInventoryID = getInventory(_cityId, gs().templates["Gold"]);
         ECSLib.setUint("Amount", _goldInventoryID, _goldAmount);
+    }
+
+    function setCityFood(uint256 _cityId, uint256 _foodAmount) internal {
+        uint256 _goldInventoryID = getInventory(_cityId, gs().templates["Food"]);
+        ECSLib.setUint("Amount", _goldInventoryID, _foodAmount);
     }
 
     function getCityCenter(uint256 _cityID) internal returns (uint256) {
