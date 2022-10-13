@@ -165,6 +165,8 @@ export interface CurioInterface extends utils.Interface {
     "registerTemplateShortcuts(string[],uint256[])": FunctionFragment;
     "removeEntity(uint256)": FunctionFragment;
     "setComponentValue(string,uint256,bytes)": FunctionFragment;
+    "spawnBarbarian((uint256,uint256),uint256)": FunctionFragment;
+    "spawnResource((uint256,uint256),string)": FunctionFragment;
     "storeEncodedColumnBatches(uint256[][])": FunctionFragment;
     "diamondCut((address,uint8,bytes4[])[],address,bytes)": FunctionFragment;
     "facetAddress(bytes4)": FunctionFragment;
@@ -187,6 +189,7 @@ export interface CurioInterface extends utils.Interface {
     "packCity(uint256)": FunctionFragment;
     "startGather(uint256,uint256)": FunctionFragment;
     "startTroopProduction(uint256,uint256,uint256)": FunctionFragment;
+    "unloadResources(uint256)": FunctionFragment;
     "upgradeCity(uint256,(uint256,uint256)[])": FunctionFragment;
     "upgradeCityInventory(uint256)": FunctionFragment;
     "upgradeResource(uint256)": FunctionFragment;
@@ -194,6 +197,8 @@ export interface CurioInterface extends utils.Interface {
     "getArmyAt((uint256,uint256))": FunctionFragment;
     "getCityAtTile((uint256,uint256))": FunctionFragment;
     "getCityCenter(uint256)": FunctionFragment;
+    "getCityFood(uint256)": FunctionFragment;
+    "getCityGold(uint256)": FunctionFragment;
     "getComponent(string)": FunctionFragment;
     "getComponentById(uint256)": FunctionFragment;
     "getConstituentAtTile(uint256)": FunctionFragment;
@@ -247,6 +252,8 @@ export interface CurioInterface extends utils.Interface {
       | "registerTemplateShortcuts"
       | "removeEntity"
       | "setComponentValue"
+      | "spawnBarbarian"
+      | "spawnResource"
       | "storeEncodedColumnBatches"
       | "diamondCut"
       | "facetAddress"
@@ -269,6 +276,7 @@ export interface CurioInterface extends utils.Interface {
       | "packCity"
       | "startGather"
       | "startTroopProduction"
+      | "unloadResources"
       | "upgradeCity"
       | "upgradeCityInventory"
       | "upgradeResource"
@@ -276,6 +284,8 @@ export interface CurioInterface extends utils.Interface {
       | "getArmyAt"
       | "getCityAtTile"
       | "getCityCenter"
+      | "getCityFood"
+      | "getCityGold"
       | "getComponent"
       | "getComponentById"
       | "getConstituentAtTile"
@@ -371,6 +381,14 @@ export interface CurioInterface extends utils.Interface {
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BytesLike>
     ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "spawnBarbarian",
+    values: [PositionStruct, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "spawnResource",
+    values: [PositionStruct, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "storeEncodedColumnBatches",
@@ -474,6 +492,10 @@ export interface CurioInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
+    functionFragment: "unloadResources",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "upgradeCity",
     values: [PromiseOrValue<BigNumberish>, PositionStruct[]]
   ): string;
@@ -499,6 +521,14 @@ export interface CurioInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getCityCenter",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getCityFood",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getCityGold",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -691,6 +721,14 @@ export interface CurioInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "spawnBarbarian",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "spawnResource",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "storeEncodedColumnBatches",
     data: BytesLike
   ): Result;
@@ -755,6 +793,10 @@ export interface CurioInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "unloadResources",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "upgradeCity",
     data: BytesLike
   ): Result;
@@ -777,6 +819,14 @@ export interface CurioInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getCityCenter",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getCityFood",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getCityGold",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -1096,6 +1146,18 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    spawnBarbarian(
+      _startPosition: PositionStruct,
+      _level: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    spawnResource(
+      _startPosition: PositionStruct,
+      _inventoryType: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     storeEncodedColumnBatches(
       _colBatches: PromiseOrValue<BigNumberish>[][],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1223,6 +1285,11 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    unloadResources(
+      _armyID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     upgradeCity(
       _cityID: PromiseOrValue<BigNumberish>,
       _newTiles: PositionStruct[],
@@ -1255,6 +1322,16 @@ export interface Curio extends BaseContract {
     ): Promise<ContractTransaction>;
 
     getCityCenter(
+      _cityID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    getCityFood(
+      _cityID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    getCityGold(
       _cityID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -1515,6 +1592,18 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  spawnBarbarian(
+    _startPosition: PositionStruct,
+    _level: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  spawnResource(
+    _startPosition: PositionStruct,
+    _inventoryType: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   storeEncodedColumnBatches(
     _colBatches: PromiseOrValue<BigNumberish>[][],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1634,6 +1723,11 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  unloadResources(
+    _armyID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   upgradeCity(
     _cityID: PromiseOrValue<BigNumberish>,
     _newTiles: PositionStruct[],
@@ -1666,6 +1760,16 @@ export interface Curio extends BaseContract {
   ): Promise<ContractTransaction>;
 
   getCityCenter(
+    _cityID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  getCityFood(
+    _cityID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  getCityGold(
     _cityID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -1924,6 +2028,18 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    spawnBarbarian(
+      _startPosition: PositionStruct,
+      _level: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    spawnResource(
+      _startPosition: PositionStruct,
+      _inventoryType: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     storeEncodedColumnBatches(
       _colBatches: PromiseOrValue<BigNumberish>[][],
       overrides?: CallOverrides
@@ -2045,6 +2161,11 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    unloadResources(
+      _armyID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     upgradeCity(
       _cityID: PromiseOrValue<BigNumberish>,
       _newTiles: PositionStruct[],
@@ -2077,6 +2198,16 @@ export interface Curio extends BaseContract {
     ): Promise<BigNumber>;
 
     getCityCenter(
+      _cityID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getCityFood(
+      _cityID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getCityGold(
       _cityID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -2392,6 +2523,18 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    spawnBarbarian(
+      _startPosition: PositionStruct,
+      _level: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    spawnResource(
+      _startPosition: PositionStruct,
+      _inventoryType: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     storeEncodedColumnBatches(
       _colBatches: PromiseOrValue<BigNumberish>[][],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -2511,6 +2654,11 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    unloadResources(
+      _armyID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     upgradeCity(
       _cityID: PromiseOrValue<BigNumberish>,
       _newTiles: PositionStruct[],
@@ -2543,6 +2691,16 @@ export interface Curio extends BaseContract {
     ): Promise<BigNumber>;
 
     getCityCenter(
+      _cityID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    getCityFood(
+      _cityID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    getCityGold(
       _cityID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -2802,6 +2960,18 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    spawnBarbarian(
+      _startPosition: PositionStruct,
+      _level: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    spawnResource(
+      _startPosition: PositionStruct,
+      _inventoryType: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     storeEncodedColumnBatches(
       _colBatches: PromiseOrValue<BigNumberish>[][],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -2921,6 +3091,11 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    unloadResources(
+      _armyID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     upgradeCity(
       _cityID: PromiseOrValue<BigNumberish>,
       _newTiles: PositionStruct[],
@@ -2953,6 +3128,16 @@ export interface Curio extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getCityCenter(
+      _cityID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    getCityFood(
+      _cityID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    getCityGold(
       _cityID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

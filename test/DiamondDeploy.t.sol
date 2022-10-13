@@ -60,6 +60,7 @@ contract DiamondDeployTest is Test {
     uint256 public archerTemplateID;
     uint256 public guardTemplateID;
     uint256 public goldTemplateID;
+    uint256 public foodTemplateID;
 
     // we assume these two facet selectors do not change. If they do however, we should use getSelectors
     bytes4[] OWNERSHIP_SELECTORS = [bytes4(0xf2fde38b), 0x8da5cb5b];
@@ -220,19 +221,27 @@ contract DiamondDeployTest is Test {
         admin.setComponentValue("InventoryType", goldTemplateID, abi.encode("Gold"));
         admin.setComponentValue("Duration", goldTemplateID, abi.encode(1));
 
+        // Resource: Food
+        foodTemplateID = admin.addEntity();
+        admin.setComponentValue("Tag", foodTemplateID, abi.encode("ResourceTemplate"));
+        admin.setComponentValue("InventoryType", foodTemplateID, abi.encode("Food"));
+        admin.setComponentValue("Duration", foodTemplateID, abi.encode(1));
+
         // Register template shortcuts
-        string[] memory templateNames = new string[](5);
-        uint256[] memory templateIDs = new uint256[](5);
+        string[] memory templateNames = new string[](6);
+        uint256[] memory templateIDs = new uint256[](6);
         templateNames[0] = "Cavalry";
         templateNames[1] = "Infantry";
         templateNames[2] = "Archer";
         templateNames[3] = "Guard";
         templateNames[4] = "Gold";
+        templateNames[5] = "Food";
         templateIDs[0] = cavalryTemplateID;
         templateIDs[1] = infantryTemplateID;
         templateIDs[2] = archerTemplateID;
         templateIDs[3] = guardTemplateID;
         templateIDs[4] = goldTemplateID;
+        templateIDs[5] = foodTemplateID;
         admin.registerTemplateShortcuts(templateNames, templateIDs);
 
         vm.stopPrank();
@@ -268,7 +277,7 @@ contract DiamondDeployTest is Test {
     // Note: hardcoded
     function _generateMap(uint256 _width, uint256 _height) public pure returns (uint256[][] memory) {
         uint256[] memory _plainCol = new uint256[](_height);
-    
+
         // set individual columns
         for (uint256 y = 0; y < _height; y++) {
             _plainCol[y] = 0;

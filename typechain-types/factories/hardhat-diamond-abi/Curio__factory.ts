@@ -277,6 +277,66 @@ const _abi = [
   {
     inputs: [
       {
+        components: [
+          {
+            internalType: "uint256",
+            name: "x",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "y",
+            type: "uint256",
+          },
+        ],
+        internalType: "struct Position",
+        name: "_startPosition",
+        type: "tuple",
+      },
+      {
+        internalType: "uint256",
+        name: "_level",
+        type: "uint256",
+      },
+    ],
+    name: "spawnBarbarian",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        components: [
+          {
+            internalType: "uint256",
+            name: "x",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "y",
+            type: "uint256",
+          },
+        ],
+        internalType: "struct Position",
+        name: "_startPosition",
+        type: "tuple",
+      },
+      {
+        internalType: "string",
+        name: "_inventoryType",
+        type: "string",
+      },
+    ],
+    name: "spawnResource",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "uint256[][]",
         name: "_colBatches",
         type: "uint256[][]",
@@ -776,6 +836,19 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
+        name: "_armyID",
+        type: "uint256",
+      },
+    ],
+    name: "unloadResources",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
         name: "_cityID",
         type: "uint256",
       },
@@ -912,6 +985,44 @@ const _abi = [
       },
     ],
     name: "getCityCenter",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_cityID",
+        type: "uint256",
+      },
+    ],
+    name: "getCityFood",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_cityID",
+        type: "uint256",
+      },
+    ],
+    name: "getCityGold",
     outputs: [
       {
         internalType: "uint256",

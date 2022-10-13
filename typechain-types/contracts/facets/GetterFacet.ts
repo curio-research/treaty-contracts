@@ -105,6 +105,8 @@ export interface GetterFacetInterface extends utils.Interface {
     "getArmyAt((uint256,uint256))": FunctionFragment;
     "getCityAtTile((uint256,uint256))": FunctionFragment;
     "getCityCenter(uint256)": FunctionFragment;
+    "getCityFood(uint256)": FunctionFragment;
+    "getCityGold(uint256)": FunctionFragment;
     "getComponent(string)": FunctionFragment;
     "getComponentById(uint256)": FunctionFragment;
     "getConstituentAtTile(uint256)": FunctionFragment;
@@ -129,6 +131,8 @@ export interface GetterFacetInterface extends utils.Interface {
       | "getArmyAt"
       | "getCityAtTile"
       | "getCityCenter"
+      | "getCityFood"
+      | "getCityGold"
       | "getComponent"
       | "getComponentById"
       | "getConstituentAtTile"
@@ -158,6 +162,14 @@ export interface GetterFacetInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getCityCenter",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getCityFood",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getCityGold",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -233,6 +245,14 @@ export interface GetterFacetInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getCityCenter",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getCityFood",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getCityGold",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -343,6 +363,16 @@ export interface GetterFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    getCityFood(
+      _cityID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    getCityGold(
+      _cityID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     getComponent(
       _name: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -433,6 +463,16 @@ export interface GetterFacet extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  getCityFood(
+    _cityID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  getCityGold(
+    _cityID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   getComponent(
     _name: PromiseOrValue<string>,
     overrides?: CallOverrides
@@ -519,6 +559,16 @@ export interface GetterFacet extends BaseContract {
     ): Promise<BigNumber>;
 
     getCityCenter(
+      _cityID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getCityFood(
+      _cityID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getCityGold(
       _cityID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -616,6 +666,16 @@ export interface GetterFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    getCityFood(
+      _cityID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    getCityGold(
+      _cityID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     getComponent(
       _name: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -701,6 +761,16 @@ export interface GetterFacet extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getCityCenter(
+      _cityID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    getCityFood(
+      _cityID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    getCityGold(
       _cityID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

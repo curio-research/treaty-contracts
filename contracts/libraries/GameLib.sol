@@ -81,21 +81,13 @@ library GameLib {
         uint256 terrain = encodedCol / divFactor;
 
         // Initialize gold mine
-        if (terrain == 1) {
-            // require(getResourceAtTile(_startPosition) != 0, "CURIO: Resource is missing at location"); // avoid initializing two resources on the same tile
-
-            Templates.addResource(gs().templates["Gold"], _startPosition, _goldmineCap(1));
+        if (terrain == 1 && getResourceAtTile(_startPosition) == 0) {
+            Templates.addResource(gs().templates["Gold"], _startPosition, _resourceCap(1));
         }
 
         // Initialize farm
-        if (terrain == 2) {
-            uint256 farmID = ECSLib.addEntity();
-            ECSLib.setString("Tag", farmID, "Resource");
-            ECSLib.setUint("Template", farmID, gs().templates["Food"]);
-            ECSLib.setUint("Level", farmID, 0); // initialize at zero is equivalent to not having a gold mine "built"
-            ECSLib.setPosition("StartPosition", farmID, _startPosition);
-            ECSLib.setUint("LastTimestamp", farmID, block.timestamp);
-            ECSLib.setUint("Load", farmID, _goldmineCap(1));
+        if (terrain == 2 && getResourceAtTile(_startPosition) == 0) {
+            Templates.addResource(gs().templates["Food"], _startPosition, _resourceCap(1));
         }
 
         // if (terrain >= 4 && terrain <= 6) {
@@ -272,7 +264,7 @@ library GameLib {
 
                     if (ECSLib.getUint("Amount", defenderConstituentIDs[j]) == 0) continue;
                     loss =
-                        (troopTypeBonus * (GameLib.sqrt(ECSLib.getUint("Amount", offenderConstituentIDs[i])) * ECSLib.getUint("Attack", ECSLib.getUint("Template", offenderConstituentIDs[i])) * 2)) / //
+                        (troopTypeBonus * (sqrt(ECSLib.getUint("Amount", offenderConstituentIDs[i])) * ECSLib.getUint("Attack", ECSLib.getUint("Template", offenderConstituentIDs[i])) * 2)) / //
                         (ECSLib.getUint("Defense", ECSLib.getUint("Template", defenderConstituentIDs[j])) * ECSLib.getUint("Health", ECSLib.getUint("Template", defenderConstituentIDs[j])));
 
                     if (loss >= ECSLib.getUint("Amount", defenderConstituentIDs[j])) {
@@ -324,21 +316,45 @@ library GameLib {
     }
 
     function distributeBarbarianReward(uint256 _cityID, uint256 _barbarianTileID) internal {
-        (uint256 barbarianGold, uint256 barbarianFood, uint256 barbarianAmount) = GameLib.barbarianInfo(ECSLib.getUint("Level", _barbarianTileID));
+        (uint256 barbarianGold, uint256 barbarianFood, uint256 barbarianAmount) = barbarianInfo(ECSLib.getUint("Level", _barbarianTileID));
 
-        uint256 winnerCityGoldInventoryID = GameLib.getInventory(_cityID, gs().templates["Gold"]);
+        uint256 winnerCityGoldInventoryID = getInventory(_cityID, gs().templates["Gold"]);
         uint256 existingCityGold = ECSLib.getUint("Amount", winnerCityGoldInventoryID);
-        uint256 winnerGoldTotalAmount = GameLib.min(ECSLib.getUint("Load", winnerCityGoldInventoryID), barbarianGold + existingCityGold);
+        uint256 winnerGoldTotalAmount = min(ECSLib.getUint("Load", winnerCityGoldInventoryID), barbarianGold + existingCityGold);
         ECSLib.setUint("Amount", winnerCityGoldInventoryID, winnerGoldTotalAmount);
 
-        uint256 winnerCityFoodInventoryID = GameLib.getInventory(_cityID, gs().templates["Food"]);
+        uint256 winnerCityFoodInventoryID = getInventory(_cityID, gs().templates["Food"]);
         uint256 existingCityFood = ECSLib.getUint("Amount", winnerCityFoodInventoryID);
-        uint256 winnerFoodTotalAmount = GameLib.min(ECSLib.getUint("Load", winnerCityFoodInventoryID), barbarianFood + existingCityFood);
+        uint256 winnerFoodTotalAmount = min(ECSLib.getUint("Load", winnerCityFoodInventoryID), barbarianFood + existingCityFood);
         ECSLib.setUint("Amount", winnerCityFoodInventoryID, winnerFoodTotalAmount);
 
         // restore barbarians & set lastDead
         ECSLib.setUint("LastTimestamp", _barbarianTileID, block.timestamp);
         ECSLib.setUint("Amount", getConstituents(_barbarianTileID)[0], barbarianAmount);
+    }
+
+    function unloadResources(uint256 _cityID, uint256 _armyID) internal {
+        uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
+        for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
+            uint256 cityResourceInventoryID = getInventory(_cityID, resourceTemplateIDs[i]);
+            uint256 armyResourceAmount = ECSLib.getUint("Amount", getArmyInventory(_armyID, resourceTemplateIDs[i]));
+            uint256 cityResourceLoad = ECSLib.getUint("Load", cityResourceInventoryID);
+            ECSLib.setUint("Amount", cityResourceInventoryID, min(ECSLib.getUint("Amount", cityResourceInventoryID) + armyResourceAmount, cityResourceLoad));
+        }
+    }
+
+    function disbandArmy(uint256 _cityID, uint256 _armyID) internal {
+        // Return troops to corresponding inventories
+        uint256[] memory constituentIDs = getConstituents(_armyID);
+        for (uint256 i = 0; i < constituentIDs.length; i++) {
+            uint256 cityTroopInventoryID = getInventory(_cityID, ECSLib.getUint("Template", constituentIDs[i]));
+            uint256 armyTroopAmount = ECSLib.getUint("Amount", constituentIDs[i]);
+            uint256 cityTroopLoad = ECSLib.getUint("Load", cityTroopInventoryID);
+            ECSLib.setUint("Amount", cityTroopInventoryID, min(ECSLib.getUint("Amount", cityTroopInventoryID) + armyTroopAmount, cityTroopLoad)); // add troop amount back to city
+        }
+
+        // Disband army
+        removeArmy(_armyID);
     }
 
     // ----------------------------------------------------------
@@ -510,25 +526,25 @@ library GameLib {
         _damageOn2 = (_duration * ECSLib.getUint("Attack", _army1) * 2) / ECSLib.getUint("Defense", _army2);
     }
 
-    function getCityGold(uint256 _cityId) internal returns (uint256) {
-        uint256 _goldInventoryID = getInventory(_cityId, gs().templates["Gold"]);
+    function getCityGold(uint256 _cityID) internal returns (uint256) {
+        uint256 _goldInventoryID = getInventory(_cityID, gs().templates["Gold"]);
         uint256 _balance = _goldInventoryID != 0 ? ECSLib.getUint("Amount", _goldInventoryID) : 0;
         return _balance;
     }
 
-    function getCityFood(uint256 _cityId) internal returns (uint256) {
-        uint256 _foodInventoryID = getInventory(_cityId, gs().templates["Food"]);
+    function getCityFood(uint256 _cityID) internal returns (uint256) {
+        uint256 _foodInventoryID = getInventory(_cityID, gs().templates["Food"]);
         uint256 _balance = _foodInventoryID != 0 ? ECSLib.getUint("Amount", _foodInventoryID) : 0;
         return _balance;
     }
 
-    function setCityGold(uint256 _cityId, uint256 _goldAmount) internal {
-        uint256 _goldInventoryID = getInventory(_cityId, gs().templates["Gold"]);
+    function setCityGold(uint256 _cityID, uint256 _goldAmount) internal {
+        uint256 _goldInventoryID = getInventory(_cityID, gs().templates["Gold"]);
         ECSLib.setUint("Amount", _goldInventoryID, _goldAmount);
     }
 
-    function setCityFood(uint256 _cityId, uint256 _foodAmount) internal {
-        uint256 _goldInventoryID = getInventory(_cityId, gs().templates["Food"]);
+    function setCityFood(uint256 _cityID, uint256 _foodAmount) internal {
+        uint256 _goldInventoryID = getInventory(_cityID, gs().templates["Food"]);
         ECSLib.setUint("Amount", _goldInventoryID, _foodAmount);
     }
 
@@ -588,7 +604,7 @@ library GameLib {
         Position[] memory neighborPositions = getTileNeighbors(_tilePosition);
         bool result = false;
         for (uint256 i = 0; i < neighborPositions.length; i++) {
-            if (ECSLib.getUint("Owner", GameLib.getTileAt(neighborPositions[i])) == _playerID) {
+            if (ECSLib.getUint("Owner", getTileAt(neighborPositions[i])) == _playerID) {
                 result = true;
                 break;
             }

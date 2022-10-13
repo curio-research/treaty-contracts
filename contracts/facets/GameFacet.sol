@@ -379,6 +379,27 @@ contract GameFacet is UseStorage {
         GameLib.endGather(_armyID);
     }
 
+    function unloadResources(uint256 _armyID) external {
+        // Basic checks
+        GameLib.validEntityCheck(_armyID);
+        GameLib.ongoingGameCheck();
+        GameLib.activePlayerCheck(msg.sender);
+        GameLib.entityOwnershipCheck(_armyID, msg.sender);
+
+        // Verify tile ownership
+        Position memory startPosition = ECSLib.getPosition("StartPosition", _armyID);
+        uint256 tileID = GameLib.getTileAt(startPosition);
+        GameLib.entityOwnershipCheck(tileID, msg.sender);
+
+        // Verify that army is in city center tile
+        uint256 cityID = ECSLib.getUint("City", tileID);
+        uint256 cityCenterID = GameLib.getCityCenter(cityID);
+        require(GameLib.coincident(ECSLib.getPosition("StartPosition", cityCenterID), startPosition), "CURIO: Army must be on city center");
+
+        // Return carried resources to city
+        GameLib.unloadResources(cityID, _armyID);
+    }
+
     // harvest gold from a gold resource directly
     function harvestResource(uint256 _resourceID) external {
         // Basic checks
@@ -514,11 +535,9 @@ contract GameFacet is UseStorage {
         GameLib.activePlayerCheck(msg.sender);
         GameLib.entityOwnershipCheck(_armyID, msg.sender);
 
-        // Get army position and city on top
+        // Verify tile ownership
         Position memory startPosition = ECSLib.getPosition("StartPosition", _armyID);
         uint256 tileID = GameLib.getTileAt(startPosition);
-
-        // Verify tile ownership
         GameLib.entityOwnershipCheck(tileID, msg.sender);
 
         // Verify that army is in city center tile
@@ -526,19 +545,11 @@ contract GameFacet is UseStorage {
         uint256 cityCenterID = GameLib.getCityCenter(cityID);
         require(GameLib.coincident(ECSLib.getPosition("StartPosition", cityCenterID), startPosition), "CURIO: Army must be on city center");
 
-        // Return carried gold to city
-        uint256 cityGoldInventoryID = GameLib.getInventory(cityID, gs().templates["Gold"]);
-        ECSLib.setUint("Amount", cityGoldInventoryID, ECSLib.getUint("Amount", cityGoldInventoryID) + ECSLib.getUint("Amount", GameLib.getArmyInventory(_armyID, gs().templates["Gold"])));
+        // Return carried resources to city
+        GameLib.unloadResources(cityID, _armyID);
 
-        // Return troops and carried gold to corresponding inventories
-        uint256[] memory constituentIDs = GameLib.getConstituents(_armyID);
-        for (uint256 i = 0; i < constituentIDs.length; i++) {
-            uint256 inventoryID = GameLib.getInventory(cityID, ECSLib.getUint("Template", constituentIDs[i]));
-            ECSLib.setUint("Amount", inventoryID, ECSLib.getUint("Amount", inventoryID) + ECSLib.getUint("Amount", constituentIDs[i])); // add troop amount back to city
-        }
-
-        // Disband army
-        GameLib.removeArmy(_armyID);
+        // Return troops to corresponding inventories and disband army
+        GameLib.disbandArmy(cityID, _armyID);
     }
 
     /**

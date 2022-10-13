@@ -8,6 +8,69 @@ import {Position} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
 
 contract TreatyTest is Test, DiamondDeployTest {
+    function testGatherAndBarbarina() public {
+        // Pin key IDs and tile positions
+        uint256 texasID = getter.getSettlerAt(player2Pos);
+        Position memory cornPos = Position({x: 80, y: 30});
+        Position memory barbarinaPos = Position({x: 60, y: 50});
+        uint256 time = 2;
+        vm.warp(time);
+
+        // Spawn resource near player2's city
+        {
+            vm.startPrank(deployer);
+            admin.spawnResource(cornPos, "Food");
+            admin.spawnBarbarian(barbarinaPos, 1);
+            vm.stopPrank();
+        }
+
+        // Player 2 founds city
+        {
+            Position[] memory texasTiles = new Position[](9);
+            texasTiles[0] = Position({x: 50, y: 20});
+            texasTiles[1] = Position({x: 50, y: 30});
+            texasTiles[2] = Position({x: 50, y: 40});
+            texasTiles[3] = Position({x: 60, y: 40});
+            texasTiles[4] = Position({x: 70, y: 40});
+            texasTiles[5] = Position({x: 70, y: 30});
+            texasTiles[6] = Position({x: 70, y: 20});
+            texasTiles[7] = Position({x: 60, y: 20});
+            texasTiles[8] = Position({x: 60, y: 30});
+            vm.startPrank(player2);
+            game.foundCity(texasID, texasTiles, "Lone Star Republic");
+            vm.stopPrank();
+            assertEq(getter.getCityFood(texasID), 0);
+            assertEq(getter.getCityGold(texasID), _generateWorldConstants().initCityGold);
+        }
+
+        // Produce troop and organize army
+        {
+            uint256[] memory texasArmyTemplateIDs = new uint256[](2);
+            texasArmyTemplateIDs[0] = cavalryTemplateID;
+            texasArmyTemplateIDs[1] = infantryTemplateID;
+            uint256[] memory texasArmyAmounts = new uint256[](2);
+            texasArmyAmounts[0] = 500;
+            texasArmyAmounts[1] = 500;
+
+            vm.startPrank(player2);
+            uint256 houseID = getter.getCityCenter(texasID);
+            uint256 productionID = game.startTroopProduction(houseID, texasArmyTemplateIDs[0], texasArmyAmounts[0]);
+            time += texasArmyAmounts[0];
+            vm.warp(time);
+            game.endTroopProduction(houseID, productionID);
+            productionID = game.startTroopProduction(houseID, texasArmyTemplateIDs[1], texasArmyAmounts[1]);
+            time += texasArmyAmounts[1];
+            vm.warp(time);
+            game.endTroopProduction(houseID, productionID);
+            game.organizeArmy(texasID, texasArmyTemplateIDs, texasArmyAmounts);
+            vm.stopPrank();
+        }
+        time += 500 + 500;
+        vm.warp(time);
+
+        // Start gather and end gather
+    }
+
     function testBattle() public {
         uint256 moscowID = getter.getSettlerAt(player1Pos);
         uint256 kievID = getter.getSettlerAt(player2Pos);
@@ -470,9 +533,6 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.warp(4);
         game.move(_settlerID, Position({x: 70, y: 10}));
         game.foundCity(_settlerID, _territory, "New Amsterdam");
-
-
-
     }
 
     // function testTreatyBasics() public {

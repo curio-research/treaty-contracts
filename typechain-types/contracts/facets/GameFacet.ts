@@ -50,6 +50,7 @@ export interface GameFacetInterface extends utils.Interface {
     "packCity(uint256)": FunctionFragment;
     "startGather(uint256,uint256)": FunctionFragment;
     "startTroopProduction(uint256,uint256,uint256)": FunctionFragment;
+    "unloadResources(uint256)": FunctionFragment;
     "upgradeCity(uint256,(uint256,uint256)[])": FunctionFragment;
     "upgradeCityInventory(uint256)": FunctionFragment;
     "upgradeResource(uint256)": FunctionFragment;
@@ -73,6 +74,7 @@ export interface GameFacetInterface extends utils.Interface {
       | "packCity"
       | "startGather"
       | "startTroopProduction"
+      | "unloadResources"
       | "upgradeCity"
       | "upgradeCityInventory"
       | "upgradeResource"
@@ -152,6 +154,10 @@ export interface GameFacetInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
+    functionFragment: "unloadResources",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "upgradeCity",
     values: [PromiseOrValue<BigNumberish>, PositionStruct[]]
   ): string;
@@ -208,6 +214,10 @@ export interface GameFacetInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "startTroopProduction",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "unloadResources",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -345,6 +355,11 @@ export interface GameFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    unloadResources(
+      _armyID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     upgradeCity(
       _cityID: PromiseOrValue<BigNumberish>,
       _newTiles: PositionStruct[],
@@ -452,6 +467,11 @@ export interface GameFacet extends BaseContract {
     _buildingID: PromiseOrValue<BigNumberish>,
     _templateID: PromiseOrValue<BigNumberish>,
     _amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  unloadResources(
+    _armyID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -564,6 +584,11 @@ export interface GameFacet extends BaseContract {
       _amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    unloadResources(
+      _armyID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     upgradeCity(
       _cityID: PromiseOrValue<BigNumberish>,
@@ -678,6 +703,11 @@ export interface GameFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    unloadResources(
+      _armyID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     upgradeCity(
       _cityID: PromiseOrValue<BigNumberish>,
       _newTiles: PositionStruct[],
@@ -786,6 +816,11 @@ export interface GameFacet extends BaseContract {
       _buildingID: PromiseOrValue<BigNumberish>,
       _templateID: PromiseOrValue<BigNumberish>,
       _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    unloadResources(
+      _armyID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

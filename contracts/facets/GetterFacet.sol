@@ -100,4 +100,12 @@ contract GetterFacet is UseStorage {
     function getTileAt(Position memory _position) external returns (uint256) {
         return GameLib.getTileAt(_position);
     }
+
+    function getCityFood(uint256 _cityID) external returns (uint256) {
+        return GameLib.getCityFood(_cityID);
+    }
+
+    function getCityGold(uint256 _cityID) external returns (uint256) {
+        return GameLib.getCityGold(_cityID);
+    }
 }
