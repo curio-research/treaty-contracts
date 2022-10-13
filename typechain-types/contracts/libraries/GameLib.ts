@@ -27,39 +27,16 @@ import type {
 
 export interface GameLibInterface extends utils.Interface {
   functions: {
-    "_goldmineProductionRate(uint256)": FunctionFragment;
-    "_goldmineUpgradeCost(uint256)": FunctionFragment;
     "getAttackBonus(uint256,uint256)": FunctionFragment;
   };
 
-  getFunction(
-    nameOrSignatureOrTopic:
-      | "_goldmineProductionRate"
-      | "_goldmineUpgradeCost"
-      | "getAttackBonus"
-  ): FunctionFragment;
+  getFunction(nameOrSignatureOrTopic: "getAttackBonus"): FunctionFragment;
 
-  encodeFunctionData(
-    functionFragment: "_goldmineProductionRate",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_goldmineUpgradeCost",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
   encodeFunctionData(
     functionFragment: "getAttackBonus",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
 
-  decodeFunctionResult(
-    functionFragment: "_goldmineProductionRate",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "_goldmineUpgradeCost",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "getAttackBonus",
     data: BytesLike
@@ -111,32 +88,12 @@ export interface GameLib extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    _goldmineProductionRate(
-      _level: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    _goldmineUpgradeCost(
-      _currentLevel: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
     getAttackBonus(
       _offenderTemplateID: PromiseOrValue<BigNumberish>,
       _defenderTemplateID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
   };
-
-  _goldmineProductionRate(
-    _level: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  _goldmineUpgradeCost(
-    _currentLevel: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
 
   getAttackBonus(
     _offenderTemplateID: PromiseOrValue<BigNumberish>,
@@ -145,16 +102,6 @@ export interface GameLib extends BaseContract {
   ): Promise<BigNumber>;
 
   callStatic: {
-    _goldmineProductionRate(
-      _level: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _goldmineUpgradeCost(
-      _currentLevel: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     getAttackBonus(
       _offenderTemplateID: PromiseOrValue<BigNumberish>,
       _defenderTemplateID: PromiseOrValue<BigNumberish>,
@@ -171,16 +118,6 @@ export interface GameLib extends BaseContract {
   };
 
   estimateGas: {
-    _goldmineProductionRate(
-      _level: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    _goldmineUpgradeCost(
-      _currentLevel: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     getAttackBonus(
       _offenderTemplateID: PromiseOrValue<BigNumberish>,
       _defenderTemplateID: PromiseOrValue<BigNumberish>,
@@ -189,16 +126,6 @@ export interface GameLib extends BaseContract {
   };
 
   populateTransaction: {
-    _goldmineProductionRate(
-      _level: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    _goldmineUpgradeCost(
-      _currentLevel: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     getAttackBonus(
       _offenderTemplateID: PromiseOrValue<BigNumberish>,
       _defenderTemplateID: PromiseOrValue<BigNumberish>,

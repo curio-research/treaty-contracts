@@ -583,16 +583,11 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "_goldMineResourceID",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "armyID",
+        name: "_resourceID",
         type: "uint256",
       },
     ],
-    name: "harvestGold",
+    name: "harvestResource",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -610,7 +605,7 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "harvestResource",
+    name: "harvestResourceFromCity",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -797,7 +792,7 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "upgradeGoldmine",
+    name: "upgradeResource",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -1297,6 +1292,11 @@ const _abi = [
           {
             internalType: "uint256",
             name: "tileWidth",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "barbarianCooldown",
             type: "uint256",
           },
         ],

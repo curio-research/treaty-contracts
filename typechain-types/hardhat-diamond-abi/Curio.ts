@@ -66,10 +66,12 @@ export type WorldConstantsStruct = {
   cityGuardAmount: PromiseOrValue<BigNumberish>;
   tileGuardAmount: PromiseOrValue<BigNumberish>;
   tileWidth: PromiseOrValue<BigNumberish>;
+  barbarianCooldown: PromiseOrValue<BigNumberish>;
 };
 
 export type WorldConstantsStructOutput = [
   string,
+  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -106,6 +108,7 @@ export type WorldConstantsStructOutput = [
   cityGuardAmount: BigNumber;
   tileGuardAmount: BigNumber;
   tileWidth: BigNumber;
+  barbarianCooldown: BigNumber;
 };
 
 export type QueryConditionStruct = {
@@ -172,8 +175,8 @@ export interface CurioInterface extends utils.Interface {
     "disbandArmy(uint256)": FunctionFragment;
     "endTroopProduction(uint256,uint256)": FunctionFragment;
     "foundCity(uint256,(uint256,uint256)[],string)": FunctionFragment;
-    "harvestGold(uint256,uint256)": FunctionFragment;
-    "harvestResource(uint256,uint256)": FunctionFragment;
+    "harvestResource(uint256)": FunctionFragment;
+    "harvestResourceFromCity(uint256,uint256)": FunctionFragment;
     "initializePlayer((uint256,uint256),string)": FunctionFragment;
     "move(uint256,(uint256,uint256))": FunctionFragment;
     "organizeArmy(uint256,uint256[],uint256[])": FunctionFragment;
@@ -181,7 +184,7 @@ export interface CurioInterface extends utils.Interface {
     "startTroopProduction(uint256,uint256,uint256)": FunctionFragment;
     "upgradeCity(uint256,(uint256,uint256)[])": FunctionFragment;
     "upgradeCityInventory(uint256)": FunctionFragment;
-    "upgradeGoldmine(uint256)": FunctionFragment;
+    "upgradeResource(uint256)": FunctionFragment;
     "upgradeTile(uint256)": FunctionFragment;
     "getArmyAt((uint256,uint256))": FunctionFragment;
     "getCityAtTile((uint256,uint256))": FunctionFragment;
@@ -252,8 +255,8 @@ export interface CurioInterface extends utils.Interface {
       | "disbandArmy"
       | "endTroopProduction"
       | "foundCity"
-      | "harvestGold"
       | "harvestResource"
+      | "harvestResourceFromCity"
       | "initializePlayer"
       | "move"
       | "organizeArmy"
@@ -261,7 +264,7 @@ export interface CurioInterface extends utils.Interface {
       | "startTroopProduction"
       | "upgradeCity"
       | "upgradeCityInventory"
-      | "upgradeGoldmine"
+      | "upgradeResource"
       | "upgradeTile"
       | "getArmyAt"
       | "getCityAtTile"
@@ -420,11 +423,11 @@ export interface CurioInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "harvestGold",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+    functionFragment: "harvestResource",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "harvestResource",
+    functionFragment: "harvestResourceFromCity",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -464,7 +467,7 @@ export interface CurioInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "upgradeGoldmine",
+    functionFragment: "upgradeResource",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -710,11 +713,11 @@ export interface CurioInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "foundCity", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "harvestGold",
+    functionFragment: "harvestResource",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "harvestResource",
+    functionFragment: "harvestResourceFromCity",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -740,7 +743,7 @@ export interface CurioInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "upgradeGoldmine",
+    functionFragment: "upgradeResource",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -1147,13 +1150,12 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    harvestGold(
-      _goldMineResourceID: PromiseOrValue<BigNumberish>,
-      armyID: PromiseOrValue<BigNumberish>,
+    harvestResource(
+      _resourceID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    harvestResource(
+    harvestResourceFromCity(
       _buildingID: PromiseOrValue<BigNumberish>,
       _templateID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1201,7 +1203,7 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    upgradeGoldmine(
+    upgradeResource(
       _resourceID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -1548,13 +1550,12 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  harvestGold(
-    _goldMineResourceID: PromiseOrValue<BigNumberish>,
-    armyID: PromiseOrValue<BigNumberish>,
+  harvestResource(
+    _resourceID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  harvestResource(
+  harvestResourceFromCity(
     _buildingID: PromiseOrValue<BigNumberish>,
     _templateID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1602,7 +1603,7 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  upgradeGoldmine(
+  upgradeResource(
     _resourceID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -1949,13 +1950,12 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    harvestGold(
-      _goldMineResourceID: PromiseOrValue<BigNumberish>,
-      armyID: PromiseOrValue<BigNumberish>,
+    harvestResource(
+      _resourceID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    harvestResource(
+    harvestResourceFromCity(
       _buildingID: PromiseOrValue<BigNumberish>,
       _templateID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -2003,7 +2003,7 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    upgradeGoldmine(
+    upgradeResource(
       _resourceID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -2405,13 +2405,12 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    harvestGold(
-      _goldMineResourceID: PromiseOrValue<BigNumberish>,
-      armyID: PromiseOrValue<BigNumberish>,
+    harvestResource(
+      _resourceID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    harvestResource(
+    harvestResourceFromCity(
       _buildingID: PromiseOrValue<BigNumberish>,
       _templateID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -2459,7 +2458,7 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    upgradeGoldmine(
+    upgradeResource(
       _resourceID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -2805,13 +2804,12 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    harvestGold(
-      _goldMineResourceID: PromiseOrValue<BigNumberish>,
-      armyID: PromiseOrValue<BigNumberish>,
+    harvestResource(
+      _resourceID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    harvestResource(
+    harvestResourceFromCity(
       _buildingID: PromiseOrValue<BigNumberish>,
       _templateID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -2859,7 +2857,7 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    upgradeGoldmine(
+    upgradeResource(
       _resourceID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

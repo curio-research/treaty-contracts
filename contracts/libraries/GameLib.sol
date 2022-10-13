@@ -97,7 +97,7 @@ library GameLib {
         if (terrain == 2) {
             uint256 farmID = ECSLib.addEntity();
             ECSLib.setString("Tag", farmID, "Resource");
-            ECSLib.setUint("Template", farmID, gs().templates["Farm"]);
+            ECSLib.setUint("Template", farmID, gs().templates["Food"]);
             ECSLib.setUint("Level", farmID, 0); // initialize at zero is equivalent to not having a gold mine "built"
             ECSLib.setPosition("StartPosition", farmID, _startPosition);
             ECSLib.setUint("LastTimestamp", farmID, block.timestamp);
