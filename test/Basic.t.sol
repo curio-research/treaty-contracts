@@ -449,6 +449,32 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.stopPrank();
     }
 
+    function testHarvestResource() public {
+        Position[] memory _territory = new Position[](9);
+        _territory[0] = Position({x: 60, y: 0});
+        _territory[1] = Position({x: 60, y: 10});
+        _territory[2] = Position({x: 60, y: 20});
+        _territory[3] = Position({x: 70, y: 20});
+        _territory[4] = Position({x: 80, y: 20});
+        _territory[5] = Position({x: 80, y: 10});
+        _territory[6] = Position({x: 80, y: 0});
+        _territory[7] = Position({x: 70, y: 0});
+        _territory[8] = Position({x: 70, y: 10});
+
+        vm.startPrank(player1);
+
+        // Found city
+        uint256 _settlerID = getter.getSettlerAt(player1Pos);
+        vm.warp(3);
+        game.move(_settlerID, Position({x: 65, y: 10}));
+        vm.warp(4);
+        game.move(_settlerID, Position({x: 70, y: 10}));
+        game.foundCity(_settlerID, _territory, "New Amsterdam");
+
+
+
+    }
+
     // function testTreatyBasics() public {
     //     Position[] memory _territory = new Position[](9);
     //     _territory[0] = Position({x: 50, y: 0});

@@ -35,6 +35,12 @@ contract AdminFacet is UseStorage {
         GameLib.initializeTile(_startPosition);
     }
 
+    function spawnResource(Position memory _startPosition, string memory _inventoryType) external onlyAdmin {
+        GameLib.initializeTile(_startPosition);
+
+        
+    }
+
     // ----------------------------------------------------------------------
     // ADMIN FUNCTIONS
     // ----------------------------------------------------------------------

@@ -88,6 +88,7 @@ library Templates {
         ECSLib.setUint("Level", tileID, 1);
         ECSLib.setUint("Terrain", tileID, _terrain);
         ECSLib.setUint("LastTimestamp", tileID, block.timestamp);
+
         return tileID;
     }
 
@@ -109,6 +110,23 @@ library Templates {
         ECSLib.setUint("MoveCooldown", settlerID, 0); // FIXME: change back for deployment
 
         return settlerID;
+    }
+
+    function addResource(
+        uint256 _templateID,
+        Position memory _startPosition,
+        uint256 _load
+    ) public returns (uint256) {
+        uint256 resourceID = ECSLib.addEntity();
+
+        ECSLib.setString("Tag", resourceID, "Resource");
+        ECSLib.setUint("Template", resourceID, _templateID);
+        ECSLib.setUint("Level", resourceID, 0); // initialize at zero is equivalent to not having a gold mine "built"
+        ECSLib.setPosition("StartPosition", resourceID, _startPosition);
+        ECSLib.setUint("LastTimestamp", resourceID, block.timestamp);
+        ECSLib.setUint("Load", resourceID, _load);
+        
+        return resourceID;
     }
 
     function addPlayer(string memory _name) public returns (uint256) {
