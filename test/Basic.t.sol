@@ -8,11 +8,12 @@ import {Position} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
 
 contract TreatyTest is Test, DiamondDeployTest {
-    function testClaimBarbarina() public {
+    function testClaimBarbarinaGather() public {
         // Pin key IDs and tile positions
         uint256 texasID = getter.getSettlerAt(player2Pos);
-        Position memory cornTilePos = Position({x: 80, y: 30});
+        Position memory cornTilePos = Position({x: 50, y: 40});
         Position memory barbarinaTilePos = Position({x: 60, y: 50});
+        uint256 madameBarbarinaID = getter.getTileAt(barbarinaTilePos);
         uint256 time = 2;
         vm.warp(time);
 
@@ -70,7 +71,6 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Fight the barbarian
         uint256 texasArmyID = getter.getArmyAt(Position({x: 65, y: 35}));
-        uint256 madameBarbarinaID = getter.getTileAt(barbarinaTilePos);
         {
             vm.startPrank(player2);
             time += 2;
@@ -107,7 +107,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         game.claimTile(texasArmyID, madameBarbarinaID);
         vm.stopPrank();
 
-        // Fight an empty tile
+        // Fight an empty tile and claim it
         vm.prank(deployer);
         admin.adminInitializeTile(Position({x: 50, y: 50}));
         uint256 emptyTileID = getter.getTileAt(Position({x: 50, y: 50}));
@@ -124,16 +124,26 @@ contract TreatyTest is Test, DiamondDeployTest {
                 vm.warp(time);
                 game.battle(texasArmyID, emptyTileID);
             } while (getter.getConstituents(emptyTileID).length > 0);
+            game.claimTile(texasArmyID, emptyTileID);
+            assertEq(abi.decode(getter.getComponent("Owner").getBytesValue(emptyTileID), (uint256)), player2Id);
             vm.stopPrank();
         }
         time += 100;
         vm.warp(time);
 
-        // Claim it
-        vm.startPrank(player2);
-        game.claimTile(texasArmyID, emptyTileID);
-        vm.stopPrank();
-        assertEq(abi.decode(getter.getComponent("Owner").getBytesValue(emptyTileID), (uint256)), player2Id);
+        // // Start and end gather
+        // {
+        //     vm.startPrank(player2);
+        //     time += 2;
+        //     vm.warp(time);
+        //     game.move(texasArmyID, Position({x: 55, y: 49}));
+        //     game.startGather(texasArmyID, getter.getResourceAtTile(cornTilePos));
+        //     time += 100;
+        //     vm.warp(time);
+        //     game.endGather(texasArmyID);
+        //     assertEq(getter.getCityFood(texasID), 60000 + 100);
+        //     vm.stopPrank();
+        // }
     }
 
     function testBattle() public {

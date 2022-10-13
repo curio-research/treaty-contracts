@@ -502,8 +502,8 @@
       }
     },
     "contracts/facets/GetterFacet.sol": {
-      "lastModificationDate": 1665694991940,
-      "contentHash": "c5ad3f1d114974aab809b29d927a3f89",
+      "lastModificationDate": 1665704092688,
+      "contentHash": "7876e032b288c9cf7970b24f142cc0ee",
       "sourceName": "contracts/facets/GetterFacet.sol",
       "solcConfig": {
         "settings": {
@@ -1413,8 +1413,8 @@
       }
     },
     "test/Basic.t.sol": {
-      "lastModificationDate": 1665703118338,
-      "contentHash": "deabbc85ae67f8da93b077f62aee521f",
+      "lastModificationDate": 1665704158945,
+      "contentHash": "ab17e436596191475a014922ecfd2411",
       "sourceName": "test/Basic.t.sol",
       "solcConfig": {
         "settings": {

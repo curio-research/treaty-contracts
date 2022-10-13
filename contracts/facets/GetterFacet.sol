@@ -108,4 +108,8 @@ contract GetterFacet is UseStorage {
     function getCityGold(uint256 _cityID) external returns (uint256) {
         return GameLib.getCityGold(_cityID);
     }
+
+    function getResourceAtTile(Position memory _startPosition) external returns (uint256) {
+        return GameLib.getResourceAtTile(_startPosition);
+    }
 }
