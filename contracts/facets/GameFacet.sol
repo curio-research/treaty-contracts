@@ -374,72 +374,48 @@ contract GameFacet is UseStorage {
     //     GameLib.endGather(_armyID);
     // }
 
-    // function buildGoldMine(uint256 _goldMineResourceID) external {
-    //     uint256 playerID = gs().playerEntityMap[msg.sender];
-    //     uint256 playerCityID = GameLib.getPlayerCity(playerID);
-    //     require(playerCityID != 0, "CURIO: Player must own a city");
-
-    //     uint256 goldmineResourceLevel = ECSLib.getUint("Level", _goldMineResourceID);
-    //     require(goldmineResourceLevel == 0, "CURIO: Gold mine already built");
-
-    //     // subtract gold cost from player city
-    //     uint256 cost = GameLib.goldmineUpgradeSelector(goldmineResourceLevel);
-
-    //     // increase gold mine level
-    //     ECSLib.setUint("Level", _goldMineResourceID, goldmineResourceLevel + 1);
-
-    //     uint256 cityGoldInventoryID = GameLib.getInventory(playerCityID, GameLib.getTemplateByInventoryType("Gold"));
-    //     ECSLib.setUint("Amount", cityGoldInventoryID, GameLib.getCityGold(playerCityID) + cost);
-    // }
-
     // harvest gold from a gold resource directly
-    function harvestGold(uint256 _goldMineResourceID, uint256 armyID) external {
+    function harvestResource(uint256 _resourceID) external {
         // Basic checks
-        GameLib.validEntityCheck(_goldMineResourceID);
+        GameLib.validEntityCheck(_resourceID);
         GameLib.ongoingGameCheck();
         GameLib.activePlayerCheck(msg.sender);
 
-        uint256 goldMineLevel = ECSLib.getUint("Level", _goldMineResourceID);
-        Position memory goldMineStartPosition = ECSLib.getPosition("StartPosition", _goldMineResourceID);
+        uint256 resourceLevel = ECSLib.getUint("Level", _resourceID);
+        Position memory goldMineStartPosition = ECSLib.getPosition("StartPosition", _resourceID);
 
-        // if there's an army, it needs to be 1) yours 2) on the tile it's trying to harvest from
-        if (armyID != NULL) {
-            GameLib.validEntityCheck(armyID);
-            GameLib.neutralOrOwnedEntityCheck(GameLib.getTileAt(goldMineStartPosition), msg.sender);
-
-            Position memory armyPosition = ECSLib.getPosition("Position", armyID);
-            require(GameLib.coincident(goldMineStartPosition, GameLib.getProperTilePosition(armyPosition)), "CURIO: Army not on gold mine");
-        }
-        bool hasArmyOnTile = armyID != NULL;
-        bool hasGoldMineBuilt = goldMineLevel > 0;
-
-        require(hasArmyOnTile || hasGoldMineBuilt, "CURIO: Need gold mine or army on tile");
+        GameLib.neutralOrOwnedEntityCheck(GameLib.getTileAt(goldMineStartPosition), msg.sender);
 
         // Verify that the gold mine resource level is greater than zero, meaning that a gold mine has "been built".
-        // require(goldMineLevel > 0, "CURIO: Must activate gold mine");
+        require(resourceLevel > 0, "CURIO: Need to build gold mine to harvest");
 
         // Verify city ownership
         uint256 playerCityID = GameLib.getPlayerCity(GameLib.getPlayer(msg.sender));
         require(playerCityID != NULL, "CURIO: Player must own a city");
 
-        // Get harvest amount
-        uint256 goldMineHarvestCap = ECSLib.getUint("Load", _goldMineResourceID);
-        uint256 goldmineLevel = ECSLib.getUint("Level", _goldMineResourceID);
-        uint256 rawHarvestAmount = GameLib._goldmineProductionRate(goldmineLevel) * (block.timestamp - ECSLib.getUint("LastTimestamp", _goldMineResourceID)); // 1 second = 1 gold
-        uint256 harvestAmount = GameLib.min(goldMineHarvestCap, rawHarvestAmount); // harvest amount must not exceed the gold cap
+        // Note: resource tokenization is gonna make this so much easier => one mint function
+        uint256 resourceHarvestCap = ECSLib.getUint("Load", _resourceID); 
+        string memory resourceType = ECSLib.getString("InventoryType", _resourceID);
+        uint256 templateID = GameLib.getTemplateByInventoryType(resourceType);
+        uint256 resourceHarvestRate = GameLib.getResourceHarvestRate(templateID, resourceLevel);
+
+        uint256 rawHarvestAmount = (block.timestamp - ECSLib.getUint("LastTimestamp", _resourceID)) * resourceHarvestRate;
+        uint256 harvestAmount = GameLib.min(resourceHarvestCap, rawHarvestAmount); // harvest amount must not exceed the gold cap
 
         // Update gold mine last harvest
-        ECSLib.setUint("LastTimestamp", _goldMineResourceID, block.timestamp);
+        ECSLib.setUint("LastTimestamp", _resourceID, block.timestamp);
 
-        // Add harvested gold to player's city limited by its load
-        uint256 cityGoldInventoryID = GameLib.getInventory(playerCityID, gs().templates["Gold"]);
-        uint256 existingCityGold = ECSLib.getUint("Amount", cityGoldInventoryID);
-        uint256 totalAmount = GameLib.min(ECSLib.getUint("Load", cityGoldInventoryID), harvestAmount + existingCityGold);
-        ECSLib.setUint("Amount", cityGoldInventoryID, totalAmount);
+        // Note: consider to change all inventories to smart contract wallet => they're under custody until it's transferred to player wallet
+        // If smart contract wallet, 1. easy to store game parameters like load 2. custody/harvest/gather function becomes good abstraction
+        // Add harvested resource to player's city limited by its load
+        uint256 cityInventoryID = GameLib.getInventory(playerCityID, templateID);
+        uint256 existingCityResource = ECSLib.getUint("Amount", cityInventoryID);
+        uint256 totalAmount = GameLib.min(ECSLib.getUint("Load", cityInventoryID), harvestAmount + existingCityResource);
+        ECSLib.setUint("Amount", cityInventoryID, totalAmount);
     }
 
-    // harvest gold on a city
-    function harvestResource(uint256 _buildingID, uint256 _templateID) external {
+    // TODO: harvest gold & food on a city; consider merge this with the function above
+    function harvestResourceFromCity(uint256 _buildingID, uint256 _templateID) external {
         GameLib.validEntityCheck(_buildingID);
         GameLib.ongoingGameCheck();
         GameLib.activePlayerCheck(msg.sender);
@@ -619,11 +595,18 @@ contract GameFacet is UseStorage {
             "CURIO: Attack not within range"
         );
 
+        bool isBarbarian = ECSLib.getUint("Terrain", _tileID) == 3 || ECSLib.getUint("Terrain", _tileID) == 4;
+        // if it is barbarian, check it's not hybernating
+        if (isBarbarian) {
+            require(block.timestamp >= ECSLib.getUint("LastTimestamp", _tileID) + gs().worldConstants.barbarianCooldown, "CURIO: Barbarians hybernating");
+        }
+
         uint256 cityID = GameLib.getCityAtTile(ECSLib.getPosition("StartPosition", _tileID));
 
         // Execute one round of battle
         bool victory = GameLib.attack(_armyID, _tileID, false, _occupyUponVictory, false);
         if (victory) {
+            uint256 winnerCityID = GameLib.getPlayerCity(GameLib.getPlayer(msg.sender));
             if (cityID != NULL) {
                 // Victorious against city, add back some guards for the loser
                 Templates.addConstituent(_tileID, gs().templates["Guard"], gs().worldConstants.cityGuardAmount);
@@ -633,7 +616,6 @@ contract GameFacet is UseStorage {
                 ECSLib.setUint("Amount", loserCityGoldInventoryID, loserTotalAmount / 2);
 
                 // Verify city ownership
-                uint256 winnerCityID = GameLib.getPlayerCity(GameLib.getPlayer(msg.sender));
                 require(winnerCityID != NULL, "CURIO: Winner must own a city");
 
                 // Add harvested gold to player's city limited by its load
@@ -644,6 +626,9 @@ contract GameFacet is UseStorage {
             } else {
                 // reset ownership
                 ECSLib.setUint("Owner", _tileID, 0);
+                if (isBarbarian) {
+                    GameLib.distributeBarbarianReward(winnerCityID, _tileID);
+                }
             }
         } else {
             GameLib.attack(_tileID, _armyID, false, false, true);
@@ -659,6 +644,9 @@ contract GameFacet is UseStorage {
 
         // Verify target tile has no owner
         require(ECSLib.getUint("Owner", _tileID) == 0, "CURIO: Tile has owner");
+
+        // Verify target tile is not barbarian tile
+        require(ECSLib.getUint("Terrain", _tileID) != 3 && ECSLib.getUint("Terrain", _tileID) != 4, "CURIO: Can't claim barbarian tiles");
 
         // Verify that no guard exists on tile
         require(GameLib.getConstituents(_tileID).length == 0, "CURIO: Tile has guard");
@@ -681,7 +669,7 @@ contract GameFacet is UseStorage {
         Templates.addConstituent(_tileID, gs().templates["Guard"], gs().worldConstants.tileGuardAmount);
     }
 
-    function upgradeGoldmine(uint256 _resourceID) public {
+    function upgradeResource(uint256 _resourceID) public {
         GameLib.validEntityCheck(_resourceID);
         GameLib.ongoingGameCheck();
         GameLib.activePlayerCheck(msg.sender);
@@ -693,16 +681,19 @@ contract GameFacet is UseStorage {
         require(ECSLib.getUint("Owner", tileID) == playerID, "CURIO: Tile isn't yours");
 
         // get current goldmine level
-        uint256 currentGoldmineLevel = ECSLib.getUint("Level", _resourceID);
-        uint256 upgradeCost = GameLib._goldmineUpgradeCost(currentGoldmineLevel);
+        uint256 currResourceLevel = ECSLib.getUint("Level", _resourceID);
+        (uint256 goldCost, uint256 foodCost) = GameLib.getResourceUpgradeCost(currResourceLevel);
 
         uint256 playerCityID = GameLib.getPlayerCity(playerID);
         uint256 playerCityGold = GameLib.getCityGold(playerCityID);
+        uint256 playerCityFood = GameLib.getCityFood(playerCityID);
 
-        require(playerCityGold >= upgradeCost, "CURIO: Insufficient gold for upgrade");
+        require(playerCityGold >= goldCost, "CURIO: Insufficient gold for upgrade");
+        require(playerCityFood >= foodCost, "CURIO: Insufficient food for upgrade");
 
-        ECSLib.setUint("Level", _resourceID, currentGoldmineLevel + 1);
-        GameLib.setCityGold(playerCityID, playerCityGold - upgradeCost);
+        ECSLib.setUint("Level", _resourceID, currResourceLevel + 1);
+        GameLib.setCityGold(playerCityID, playerCityGold - goldCost);
+        GameLib.setCityFood(playerCityID, playerCityFood - foodCost);
     }
 
     // function initializeTile(Position memory _startPosition) public {
