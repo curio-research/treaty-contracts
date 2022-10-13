@@ -387,7 +387,7 @@ contract GameFacet is UseStorage {
         GameLib.neutralOrOwnedEntityCheck(GameLib.getTileAt(goldMineStartPosition), msg.sender);
 
         // Verify that the gold mine resource level is greater than zero, meaning that a gold mine has "been built".
-        require(resourceLevel > 0, "CURIO: Need gold mine or army on tile");
+        require(resourceLevel > 0, "CURIO: Need to build gold mine to harvest");
 
         // Verify city ownership
         uint256 playerCityID = GameLib.getPlayerCity(GameLib.getPlayer(msg.sender));
