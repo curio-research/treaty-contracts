@@ -52,6 +52,10 @@ contract GetterFacet is UseStorage {
 
     ////////////
 
+    function getResourceLevel(uint256 _resourceID) external view returns (uint256) {
+        return ECSLib.getUint("Level", _resourceID);
+    }
+
     function getComponent(string memory _name) external view returns (Component) {
         return ECSLib._getComponent(_name);
     }

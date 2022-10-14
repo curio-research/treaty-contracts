@@ -35,6 +35,14 @@ contract AdminFacet is UseStorage {
         GameLib.initializeTile(_startPosition);
     }
 
+    function assignResource(uint256 _cityID, string memory _inventoryType, uint256 _amount) external onlyAdmin {
+        uint256 templateID = gs().templates[_inventoryType];
+        uint256 cityInventoryID = GameLib.getInventory(_cityID, templateID);
+        uint256 existingCityResource = ECSLib.getUint("Amount", cityInventoryID);
+        uint256 totalAmount = GameLib.min(ECSLib.getUint("Load", cityInventoryID), _amount + existingCityResource);
+        ECSLib.setUint("Amount", cityInventoryID, totalAmount);
+    }
+
     function spawnResource(Position memory _startPosition, string memory _inventoryType) external onlyAdmin {
         GameLib.initializeTile(_startPosition);
         Templates.addResource(gs().templates[_inventoryType], _startPosition, 0);

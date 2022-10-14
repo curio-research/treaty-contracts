@@ -592,26 +592,64 @@ contract TreatyTest is Test, DiamondDeployTest {
     }
 
     function testHarvestResource() public {
-        Position[] memory _territory = new Position[](9);
-        _territory[0] = Position({x: 60, y: 0});
-        _territory[1] = Position({x: 60, y: 10});
-        _territory[2] = Position({x: 60, y: 20});
-        _territory[3] = Position({x: 70, y: 20});
-        _territory[4] = Position({x: 80, y: 20});
-        _territory[5] = Position({x: 80, y: 10});
-        _territory[6] = Position({x: 80, y: 0});
-        _territory[7] = Position({x: 70, y: 0});
-        _territory[8] = Position({x: 70, y: 10});
+        // Pin key IDs and tile positions
+        uint256 texasID = getter.getSettlerAt(player2Pos);
+        Position memory cornTilePos = Position({x: 50, y: 40});
+        uint256 time = 2;
+        vm.warp(time);
 
-        vm.startPrank(player1);
+        // Spawn resource near player2's city
+        {
+            vm.startPrank(deployer);
+            admin.spawnResource(cornTilePos, "Food");
+            vm.stopPrank();
+        }
 
-        // Found city
-        uint256 _settlerID = getter.getSettlerAt(player1Pos);
-        vm.warp(3);
-        game.move(_settlerID, Position({x: 65, y: 10}));
-        vm.warp(4);
-        game.move(_settlerID, Position({x: 70, y: 10}));
-        game.foundCity(_settlerID, _territory, "New Amsterdam");
+        // Player 2 founds city
+        {
+            Position[] memory texasTiles = new Position[](9);
+            texasTiles[0] = Position({x: 50, y: 20});
+            texasTiles[1] = Position({x: 50, y: 30});
+            texasTiles[2] = Position({x: 50, y: 40});
+            texasTiles[3] = Position({x: 60, y: 40});
+            texasTiles[4] = Position({x: 70, y: 40});
+            texasTiles[5] = Position({x: 70, y: 30});
+            texasTiles[6] = Position({x: 70, y: 20});
+            texasTiles[7] = Position({x: 60, y: 20});
+            texasTiles[8] = Position({x: 60, y: 30});
+            vm.startPrank(player2);
+            game.foundCity(texasID, texasTiles, "Lone Star Republic");
+            vm.stopPrank();
+            assertEq(getter.getCityFood(texasID), 0);
+            assertEq(getter.getCityGold(texasID), _generateWorldConstants().initCityGold);
+        }
+
+        vm.startPrank(deployer);
+        admin.assignResource(texasID, "Gold", 100000);
+        admin.assignResource(texasID, "Food", 32000);
+        vm.stopPrank();
+
+        console.log("City Gold before Resource Upgrade:", getter.getCityGold(texasID));
+        console.log("City Food before Resource UPgrade:", getter.getCityFood(texasID));
+
+        // Player 2 upgrades resource
+        time += 50;
+        vm.warp(time);
+
+        vm.startPrank(player2);
+        uint256 cornResourceID = getter.getResourceAtTile(cornTilePos);
+        assertEq(getter.getResourceLevel(cornResourceID), 0);
+
+        game.upgradeResource(cornResourceID);
+        assertEq(getter.getResourceLevel(cornResourceID), 1);
+
+        console.log("City Gold post Resource Upgrade:", getter.getCityGold(texasID));
+        console.log("City Food post Resource Upgrade:", getter.getCityFood(texasID));
+
+        time += 50;
+        vm.warp(time);
+        game.harvestResource(cornResourceID);
+        assertTrue(getter.getCityFood(texasID) > 0);
     }
 
     // function testTreatyBasics() public {

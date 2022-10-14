@@ -154,6 +154,34 @@ library GameLib {
         } else return 0;
     }
 
+    function getResourceLoad(uint256 _templateID, uint256 _resourceLevel) internal view returns (uint256) {
+        if (_templateID == gs().templates["Gold"]) {
+            if (_resourceLevel == 1) return 5500;
+            if (_resourceLevel == 2) return 6000;
+            if (_resourceLevel == 3) return 6500;
+            if (_resourceLevel == 4) return 7000;
+            if (_resourceLevel == 5) return 7500;
+            if (_resourceLevel == 6) return 8000;
+            if (_resourceLevel == 7) return 8500;
+            if (_resourceLevel == 8) return 9000;
+            if (_resourceLevel == 9) return 9500;
+            else return 0;
+        } else if (_templateID == gs().templates["Food"]) {
+            if (_resourceLevel == 1) return 100000;
+            if (_resourceLevel == 2) return 110000;
+            if (_resourceLevel == 3) return 120000;
+            if (_resourceLevel == 4) return 130000;
+            if (_resourceLevel == 5) return 140000;
+            if (_resourceLevel == 6) return 150000;
+            if (_resourceLevel == 7) return 160000;
+            if (_resourceLevel == 8) return 170000;
+            if (_resourceLevel == 9) return 180000;
+            else return 0;
+        } else {
+            return 0;
+        }
+    }
+
     function barbarianInfo(uint256 _level)
         internal
         pure

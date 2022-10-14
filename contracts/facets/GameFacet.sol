@@ -404,7 +404,7 @@ contract GameFacet is UseStorage {
     }
 
     // harvest gold from a gold resource directly
-    function harvestResource(uint256 _resourceID) external {
+    function harvestResource(uint256 _resourceID) public {
         // Basic checks
         GameLib.validEntityCheck(_resourceID);
         GameLib.ongoingGameCheck();
@@ -424,9 +424,8 @@ contract GameFacet is UseStorage {
 
         // Note: resource tokenization is gonna make this so much easier => one mint function
         uint256 resourceHarvestCap = ECSLib.getUint("Load", _resourceID);
-        string memory resourceType = ECSLib.getString("InventoryType", _resourceID);
-        uint256 templateID = GameLib.getTemplateByInventoryType(resourceType);
-        uint256 resourceHarvestRate = GameLib.getResourceHarvestRate(templateID, resourceLevel);
+        uint256 templateID = ECSLib.getUint("Template", _resourceID);
+        uint256 resourceHarvestRate = GameLib.getResourceHarvestRate(ECSLib.getUint("Template", _resourceID), resourceLevel);
 
         uint256 rawHarvestAmount = (block.timestamp - ECSLib.getUint("LastTimestamp", _resourceID)) * resourceHarvestRate;
         uint256 harvestAmount = GameLib.min(resourceHarvestCap, rawHarvestAmount); // harvest amount must not exceed the gold cap
@@ -716,8 +715,11 @@ contract GameFacet is UseStorage {
 
         require(playerCityGold >= goldCost, "CURIO: Insufficient gold for upgrade");
         require(playerCityFood >= foodCost, "CURIO: Insufficient food for upgrade");
+        
+        uint256 inventoryTypeID = ECSLib.getUint("Template", _resourceID);
 
         ECSLib.setUint("Level", _resourceID, currResourceLevel + 1);
+        ECSLib.setUint("Load", _resourceID, GameLib.getResourceLoad(inventoryTypeID, currResourceLevel + 1));
         GameLib.setCityGold(playerCityID, playerCityGold - goldCost);
         GameLib.setCityFood(playerCityID, playerCityFood - foodCost);
     }
