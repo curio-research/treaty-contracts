@@ -305,7 +305,7 @@ contract GameFacet is UseStorage {
         uint256 foodBalance = foodInventoryID != NULL ? ECSLib.getUint("Amount", foodInventoryID) : 0;
         // FIXME: hardcoded
         uint256 foodCost = 50 * _amount;
-        require(foodBalance >= foodCost, "CURIO: Insufficient gold balance");
+        require(foodBalance >= foodCost, "CURIO: Insufficient food balance");
 
         // Verify no ongoing production
         require(GameLib.getBuildingProduction(_buildingID) == NULL, "CURIO: Concurrent productions disallowed");
