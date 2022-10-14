@@ -480,7 +480,8 @@ contract GameFacet is UseStorage {
                 ECSLib.setUint("Amount", inventoryID, 0);
                 ECSLib.setUint("Load", inventoryID, gs().worldConstants.initCityCenterGoldLoad); // FIXME
             }
-            uint256 harvestAmount = (block.timestamp - ECSLib.getUint("LastTimestamp", _buildingID)) / ECSLib.getUint("Duration", resourceTemplateIDs[i]);
+            // Fixme: hardcoded
+            uint256 harvestAmount = (block.timestamp - ECSLib.getUint("LastTimestamp", _buildingID)) * 20;
             harvestAmount = GameLib.min(GameLib.getHarvestCap(ECSLib.getUint("Level", cityID)), harvestAmount);
             uint256 cityResourceLoad = ECSLib.getUint("Load", inventoryID);
             ECSLib.setUint("Amount", inventoryID, GameLib.min(ECSLib.getUint("Amount", inventoryID) + harvestAmount, cityResourceLoad));
