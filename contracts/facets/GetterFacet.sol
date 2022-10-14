@@ -109,6 +109,11 @@ contract GetterFacet is UseStorage {
         return GameLib.getCityGold(_cityID);
     }
 
+    function getArmyFood(uint256 _armyID) external returns (uint256) {
+        uint256 foodInventoryID = GameLib.getArmyInventory(_armyID, gs().templates["Food"]);
+        return ECSLib.getUint("Amount", foodInventoryID);
+    }
+
     function getResourceAtTile(Position memory _startPosition) external returns (uint256) {
         return GameLib.getResourceAtTile(_startPosition);
     }

@@ -13,7 +13,6 @@ contract TreatyTest is Test, DiamondDeployTest {
         uint256 texasID = getter.getSettlerAt(player2Pos);
         Position memory cornTilePos = Position({x: 50, y: 40});
         Position memory barbarinaTilePos = Position({x: 60, y: 50});
-        uint256 madameBarbarinaID = getter.getTileAt(barbarinaTilePos);
         uint256 time = 2;
         vm.warp(time);
 
@@ -24,6 +23,8 @@ contract TreatyTest is Test, DiamondDeployTest {
             admin.spawnBarbarian(barbarinaTilePos, 1);
             vm.stopPrank();
         }
+        uint256 madameBarbarinaID = getter.getTileAt(barbarinaTilePos);
+        assertTrue(Set(getter.getEntitiesAddr()).includes(madameBarbarinaID));
 
         // Player 2 founds city
         {
@@ -71,6 +72,7 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Fight the barbarian
         uint256 texasArmyID = getter.getArmyAt(Position({x: 65, y: 35}));
+        assertTrue(Set(getter.getEntitiesAddr()).includes(texasArmyID));
         {
             vm.startPrank(player2);
             time += 2;
@@ -111,6 +113,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.prank(deployer);
         admin.adminInitializeTile(Position({x: 50, y: 50}));
         uint256 emptyTileID = getter.getTileAt(Position({x: 50, y: 50}));
+        assertTrue(Set(getter.getEntitiesAddr()).includes(emptyTileID));
         {
             vm.startPrank(player2);
             time += 2;
@@ -131,19 +134,20 @@ contract TreatyTest is Test, DiamondDeployTest {
         time += 100;
         vm.warp(time);
 
-        // // Start and end gather
-        // {
-        //     vm.startPrank(player2);
-        //     time += 2;
-        //     vm.warp(time);
-        //     game.move(texasArmyID, Position({x: 55, y: 49}));
-        //     game.startGather(texasArmyID, getter.getResourceAtTile(cornTilePos));
-        //     time += 100;
-        //     vm.warp(time);
-        //     game.endGather(texasArmyID);
-        //     assertEq(getter.getCityFood(texasID), 60000 + 100);
-        //     vm.stopPrank();
-        // }
+        // Start and end gather
+        {
+            vm.startPrank(player2);
+            time += 2;
+            vm.warp(time);
+            game.move(texasArmyID, Position({x: 55, y: 49}));
+            game.startGather(texasArmyID, getter.getResourceAtTile(cornTilePos));
+            time += 100;
+            vm.warp(time);
+            game.endGather(texasArmyID);
+            assertEq(getter.getCityFood(texasID), 60000);
+            assertEq(getter.getArmyFood(texasArmyID), 100);
+            vm.stopPrank();
+        }
     }
 
     function testBattle() public {

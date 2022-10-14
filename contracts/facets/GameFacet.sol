@@ -361,7 +361,7 @@ contract GameFacet is UseStorage {
         // Verify that resource is not in another player's territory
         uint256 tileID = GameLib.getTileAt(startPosition);
         uint256 playerID = GameLib.getPlayer(msg.sender);
-        require(tileID == NULL || ECSLib.getUint("Owner", ECSLib.getUint("City", tileID)) == playerID, "CURIO: Cannot gather on other's tiles");
+        GameLib.neutralOrOwnedEntityCheck(tileID, msg.sender);
 
         // Cannot gather twice
         require(GameLib.getArmyGather(_armyID) == 0, "CURIO: Another gather at this location");
@@ -444,7 +444,7 @@ contract GameFacet is UseStorage {
     }
 
     // TODO: harvest gold & food on a city; consider merge this with the function above
-    function harvestResourceFromCity(uint256 _buildingID, uint256 _templateID) external {
+    function harvestResourcesFromCity(uint256 _buildingID) external {
         GameLib.validEntityCheck(_buildingID);
         GameLib.ongoingGameCheck();
         GameLib.activePlayerCheck(msg.sender);
@@ -454,20 +454,22 @@ contract GameFacet is UseStorage {
         GameLib.entityOwnershipCheck(cityID, msg.sender);
 
         // Create inventory if none exists
-        uint256 inventoryID = GameLib.getInventory(cityID, _templateID);
-        if (inventoryID == NULL) {
-            inventoryID = ECSLib.addEntity();
-            ECSLib.setString("Tag", inventoryID, "ResourceInventory");
-            ECSLib.setUint("City", inventoryID, cityID);
-            ECSLib.setUint("Template", inventoryID, _templateID);
-            ECSLib.setUint("Amount", inventoryID, 0);
+        uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
+        for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
+            uint256 inventoryID = GameLib.getInventory(cityID, resourceTemplateIDs[i]);
+            if (inventoryID == NULL) {
+                inventoryID = ECSLib.addEntity();
+                ECSLib.setString("Tag", inventoryID, "ResourceInventory");
+                ECSLib.setUint("City", inventoryID, cityID);
+                ECSLib.setUint("Template", inventoryID, resourceTemplateIDs[i]);
+                ECSLib.setUint("Amount", inventoryID, 0);
+                ECSLib.setUint("Load", inventoryID, gs().worldConstants.initCityCenterGoldLoad); // FIXME
+            }
+            uint256 harvestAmount = (block.timestamp - ECSLib.getUint("LastTimestamp", _buildingID)) / ECSLib.getUint("Duration", resourceTemplateIDs[i]);
+            harvestAmount = GameLib.min(GameLib.getHarvestCap(ECSLib.getUint("Level", cityID)), harvestAmount);
+            uint256 cityResourceLoad = ECSLib.getUint("Load", inventoryID);
+            ECSLib.setUint("Amount", inventoryID, GameLib.min(ECSLib.getUint("Amount", inventoryID) + harvestAmount, cityResourceLoad));
         }
-
-        // Update harvest amount
-        uint256 harvestAmount = (block.timestamp - ECSLib.getUint("LastTimestamp", _buildingID)) / ECSLib.getUint("Duration", _templateID);
-        harvestAmount = GameLib.min(GameLib.getHarvestCap(ECSLib.getUint("Level", cityID)), harvestAmount);
-        uint256 totalAmount = GameLib.min(ECSLib.getUint("Amount", inventoryID) + harvestAmount, ECSLib.getUint("Load", inventoryID));
-        ECSLib.setUint("Amount", inventoryID, totalAmount);
 
         // Reset harvest time
         ECSLib.setUint("LastTimestamp", _buildingID, block.timestamp);
