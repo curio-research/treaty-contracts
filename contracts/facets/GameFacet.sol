@@ -293,19 +293,25 @@ contract GameFacet is UseStorage {
         // Verify that city can produce
         require(ECSLib.getBool("CanProduce", cityID), "CURIO: City cannot produce");
 
-        // Check gold balance sufficience
-        uint256 goldInventoryID = GameLib.getInventory(cityID, gs().templates["Gold"]);
-        uint256 goldBalance = goldInventoryID != NULL ? ECSLib.getUint("Amount", goldInventoryID) : 0;
-        // FIXME: hardcoded
-        uint256 goldCost = 10 * _amount;
-        require(goldBalance >= goldCost, "CURIO: Insufficient gold balance");
+        // Check gold balance sufficience and deduct cost
+        {
+            uint256 goldInventoryID = GameLib.getInventory(cityID, gs().templates["Gold"]);
+            uint256 goldBalance = goldInventoryID != NULL ? ECSLib.getUint("Amount", goldInventoryID) : 0;
+            // FIXME: hardcoded
+            uint256 goldCost = 10 * _amount;
+            require(goldBalance >= goldCost, "CURIO: Insufficient gold balance");
+            ECSLib.setUint("Amount", goldInventoryID, goldBalance - goldCost);
+        }
 
-        // Check food balance sufficience
-        uint256 foodInventoryID = GameLib.getInventory(cityID, gs().templates["Gold"]);
-        uint256 foodBalance = foodInventoryID != NULL ? ECSLib.getUint("Amount", foodInventoryID) : 0;
-        // FIXME: hardcoded
-        uint256 foodCost = 50 * _amount;
-        require(foodBalance >= foodCost, "CURIO: Insufficient food balance");
+        // Check food balance sufficience and deduct cost
+        {
+            uint256 foodInventoryID = GameLib.getInventory(cityID, gs().templates["Gold"]);
+            uint256 foodBalance = foodInventoryID != NULL ? ECSLib.getUint("Amount", foodInventoryID) : 0;
+            // FIXME: hardcoded
+            uint256 foodCost = 50 * _amount;
+            require(foodBalance >= foodCost, "CURIO: Insufficient food balance");
+            ECSLib.setUint("Amount", foodInventoryID, foodBalance - foodCost);
+        }
 
         // Verify no ongoing production
         require(GameLib.getBuildingProduction(_buildingID) == NULL, "CURIO: Concurrent productions disallowed");
@@ -332,10 +338,6 @@ contract GameFacet is UseStorage {
         ECSLib.setUint("Amount", productionID, _amount);
         ECSLib.setUint("InitTimestamp", productionID, block.timestamp);
         ECSLib.setUint("Duration", productionID, ECSLib.getUint("Duration", _templateID) * _amount);
-
-        // Deduct production cost
-        ECSLib.setUint("Amount", goldInventoryID, goldBalance - goldCost);
-        ECSLib.setUint("Amount", foodInventoryID, foodBalance - foodCost);
     }
 
     function endTroopProduction(uint256 _buildingID, uint256 _productionID) external {

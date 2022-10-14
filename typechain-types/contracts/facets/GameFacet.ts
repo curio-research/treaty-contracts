@@ -43,7 +43,7 @@ export interface GameFacetInterface extends utils.Interface {
     "endTroopProduction(uint256,uint256)": FunctionFragment;
     "foundCity(uint256,(uint256,uint256)[],string)": FunctionFragment;
     "harvestResource(uint256)": FunctionFragment;
-    "harvestResourceFromCity(uint256,uint256)": FunctionFragment;
+    "harvestResourcesFromCity(uint256)": FunctionFragment;
     "initializePlayer((uint256,uint256),string)": FunctionFragment;
     "move(uint256,(uint256,uint256))": FunctionFragment;
     "organizeArmy(uint256,uint256[],uint256[])": FunctionFragment;
@@ -67,7 +67,7 @@ export interface GameFacetInterface extends utils.Interface {
       | "endTroopProduction"
       | "foundCity"
       | "harvestResource"
-      | "harvestResourceFromCity"
+      | "harvestResourcesFromCity"
       | "initializePlayer"
       | "move"
       | "organizeArmy"
@@ -118,8 +118,8 @@ export interface GameFacetInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "harvestResourceFromCity",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+    functionFragment: "harvestResourcesFromCity",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "initializePlayer",
@@ -195,7 +195,7 @@ export interface GameFacetInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "harvestResourceFromCity",
+    functionFragment: "harvestResourcesFromCity",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -312,9 +312,8 @@ export interface GameFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    harvestResourceFromCity(
+    harvestResourcesFromCity(
       _buildingID: PromiseOrValue<BigNumberish>,
-      _templateID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -427,9 +426,8 @@ export interface GameFacet extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  harvestResourceFromCity(
+  harvestResourcesFromCity(
     _buildingID: PromiseOrValue<BigNumberish>,
-    _templateID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -542,9 +540,8 @@ export interface GameFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    harvestResourceFromCity(
+    harvestResourcesFromCity(
       _buildingID: PromiseOrValue<BigNumberish>,
-      _templateID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -660,9 +657,8 @@ export interface GameFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    harvestResourceFromCity(
+    harvestResourcesFromCity(
       _buildingID: PromiseOrValue<BigNumberish>,
-      _templateID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -776,9 +772,8 @@ export interface GameFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    harvestResourceFromCity(
+    harvestResourcesFromCity(
       _buildingID: PromiseOrValue<BigNumberish>,
-      _templateID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

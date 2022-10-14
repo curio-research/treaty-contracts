@@ -157,6 +157,7 @@ export interface CurioInterface extends utils.Interface {
     "addEntity()": FunctionFragment;
     "addTroopTemplate(string,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256)": FunctionFragment;
     "adminInitializeTile((uint256,uint256))": FunctionFragment;
+    "assignResource(uint256,string,uint256)": FunctionFragment;
     "bulkInitializeTiles((uint256,uint256)[])": FunctionFragment;
     "createArmy(uint256,(uint256,uint256))": FunctionFragment;
     "reactivatePlayer(address)": FunctionFragment;
@@ -182,7 +183,7 @@ export interface CurioInterface extends utils.Interface {
     "endTroopProduction(uint256,uint256)": FunctionFragment;
     "foundCity(uint256,(uint256,uint256)[],string)": FunctionFragment;
     "harvestResource(uint256)": FunctionFragment;
-    "harvestResourceFromCity(uint256,uint256)": FunctionFragment;
+    "harvestResourcesFromCity(uint256)": FunctionFragment;
     "initializePlayer((uint256,uint256),string)": FunctionFragment;
     "move(uint256,(uint256,uint256))": FunctionFragment;
     "organizeArmy(uint256,uint256[],uint256[])": FunctionFragment;
@@ -195,6 +196,7 @@ export interface CurioInterface extends utils.Interface {
     "upgradeResource(uint256)": FunctionFragment;
     "upgradeTile(uint256)": FunctionFragment;
     "getArmyAt((uint256,uint256))": FunctionFragment;
+    "getArmyFood(uint256)": FunctionFragment;
     "getCityAtTile((uint256,uint256))": FunctionFragment;
     "getCityCenter(uint256)": FunctionFragment;
     "getCityFood(uint256)": FunctionFragment;
@@ -211,6 +213,8 @@ export interface CurioInterface extends utils.Interface {
     "getPlayerCount()": FunctionFragment;
     "getPlayerId(address)": FunctionFragment;
     "getPositionExternal(string,uint256)": FunctionFragment;
+    "getResourceAtTile((uint256,uint256))": FunctionFragment;
+    "getResourceLevel(uint256)": FunctionFragment;
     "getSettlerAt((uint256,uint256))": FunctionFragment;
     "getTemplateByInventoryType(string)": FunctionFragment;
     "getTileAt((uint256,uint256))": FunctionFragment;
@@ -244,6 +248,7 @@ export interface CurioInterface extends utils.Interface {
       | "addEntity"
       | "addTroopTemplate"
       | "adminInitializeTile"
+      | "assignResource"
       | "bulkInitializeTiles"
       | "createArmy"
       | "reactivatePlayer"
@@ -269,7 +274,7 @@ export interface CurioInterface extends utils.Interface {
       | "endTroopProduction"
       | "foundCity"
       | "harvestResource"
-      | "harvestResourceFromCity"
+      | "harvestResourcesFromCity"
       | "initializePlayer"
       | "move"
       | "organizeArmy"
@@ -282,6 +287,7 @@ export interface CurioInterface extends utils.Interface {
       | "upgradeResource"
       | "upgradeTile"
       | "getArmyAt"
+      | "getArmyFood"
       | "getCityAtTile"
       | "getCityCenter"
       | "getCityFood"
@@ -298,6 +304,8 @@ export interface CurioInterface extends utils.Interface {
       | "getPlayerCount"
       | "getPlayerId"
       | "getPositionExternal"
+      | "getResourceAtTile"
+      | "getResourceLevel"
       | "getSettlerAt"
       | "getTemplateByInventoryType"
       | "getTileAt"
@@ -345,6 +353,14 @@ export interface CurioInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "adminInitializeTile",
     values: [PositionStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "assignResource",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "bulkInitializeTiles",
@@ -456,8 +472,8 @@ export interface CurioInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "harvestResourceFromCity",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+    functionFragment: "harvestResourcesFromCity",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "initializePlayer",
@@ -514,6 +530,10 @@ export interface CurioInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getArmyAt",
     values: [PositionStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getArmyFood",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getCityAtTile",
@@ -575,6 +595,14 @@ export interface CurioInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getPositionExternal",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getResourceAtTile",
+    values: [PositionStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getResourceLevel",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getSettlerAt",
@@ -692,6 +720,10 @@ export interface CurioInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "assignResource",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "bulkInitializeTiles",
     data: BytesLike
   ): Result;
@@ -771,7 +803,7 @@ export interface CurioInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "harvestResourceFromCity",
+    functionFragment: "harvestResourcesFromCity",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -813,6 +845,10 @@ export interface CurioInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getArmyAt", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getArmyFood",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getCityAtTile",
     data: BytesLike
@@ -872,6 +908,14 @@ export interface CurioInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getPositionExternal",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getResourceAtTile",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getResourceLevel",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -1101,6 +1145,13 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    assignResource(
+      _cityID: PromiseOrValue<BigNumberish>,
+      _inventoryType: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     bulkInitializeTiles(
       _positions: PositionStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1242,9 +1293,8 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    harvestResourceFromCity(
+    harvestResourcesFromCity(
       _buildingID: PromiseOrValue<BigNumberish>,
-      _templateID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1313,6 +1363,11 @@ export interface Curio extends BaseContract {
 
     getArmyAt(
       _position: PositionStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    getArmyFood(
+      _armyID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1385,6 +1440,16 @@ export interface Curio extends BaseContract {
       _entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[PositionStructOutput]>;
+
+    getResourceAtTile(
+      _startPosition: PositionStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    getResourceLevel(
+      _resourceID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     getSettlerAt(
       _position: PositionStruct,
@@ -1547,6 +1612,13 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  assignResource(
+    _cityID: PromiseOrValue<BigNumberish>,
+    _inventoryType: PromiseOrValue<string>,
+    _amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   bulkInitializeTiles(
     _positions: PositionStruct[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1680,9 +1752,8 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  harvestResourceFromCity(
+  harvestResourcesFromCity(
     _buildingID: PromiseOrValue<BigNumberish>,
-    _templateID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1751,6 +1822,11 @@ export interface Curio extends BaseContract {
 
   getArmyAt(
     _position: PositionStruct,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  getArmyFood(
+    _armyID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1823,6 +1899,16 @@ export interface Curio extends BaseContract {
     _entity: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<PositionStructOutput>;
+
+  getResourceAtTile(
+    _startPosition: PositionStruct,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  getResourceLevel(
+    _resourceID: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   getSettlerAt(
     _position: PositionStruct,
@@ -1983,6 +2069,13 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    assignResource(
+      _cityID: PromiseOrValue<BigNumberish>,
+      _inventoryType: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     bulkInitializeTiles(
       _positions: PositionStruct[],
       overrides?: CallOverrides
@@ -2118,9 +2211,8 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    harvestResourceFromCity(
+    harvestResourcesFromCity(
       _buildingID: PromiseOrValue<BigNumberish>,
-      _templateID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -2189,6 +2281,11 @@ export interface Curio extends BaseContract {
 
     getArmyAt(
       _position: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getArmyFood(
+      _armyID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -2261,6 +2358,16 @@ export interface Curio extends BaseContract {
       _entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PositionStructOutput>;
+
+    getResourceAtTile(
+      _startPosition: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getResourceLevel(
+      _resourceID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     getSettlerAt(
       _position: PositionStruct,
@@ -2478,6 +2585,13 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    assignResource(
+      _cityID: PromiseOrValue<BigNumberish>,
+      _inventoryType: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     bulkInitializeTiles(
       _positions: PositionStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -2611,9 +2725,8 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    harvestResourceFromCity(
+    harvestResourcesFromCity(
       _buildingID: PromiseOrValue<BigNumberish>,
-      _templateID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -2685,6 +2798,11 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    getArmyFood(
+      _armyID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     getCityAtTile(
       _startPosition: PositionStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -2752,6 +2870,16 @@ export interface Curio extends BaseContract {
     getPositionExternal(
       _componentName: PromiseOrValue<string>,
       _entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getResourceAtTile(
+      _startPosition: PositionStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    getResourceLevel(
+      _resourceID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -2915,6 +3043,13 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    assignResource(
+      _cityID: PromiseOrValue<BigNumberish>,
+      _inventoryType: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     bulkInitializeTiles(
       _positions: PositionStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -3048,9 +3183,8 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    harvestResourceFromCity(
+    harvestResourcesFromCity(
       _buildingID: PromiseOrValue<BigNumberish>,
-      _templateID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -3122,6 +3256,11 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    getArmyFood(
+      _armyID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     getCityAtTile(
       _startPosition: PositionStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -3189,6 +3328,16 @@ export interface Curio extends BaseContract {
     getPositionExternal(
       _componentName: PromiseOrValue<string>,
       _entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getResourceAtTile(
+      _startPosition: PositionStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    getResourceLevel(
+      _resourceID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
