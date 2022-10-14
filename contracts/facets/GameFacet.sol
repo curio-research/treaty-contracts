@@ -177,13 +177,13 @@ contract GameFacet is UseStorage {
         // FIXME: cost hardcoded
         uint256 goldInventoryID = GameLib.getInventory(GameLib.getPlayerCity(GameLib.getPlayer(msg.sender)), gs().templates["Gold"]);
         uint256 goldBalance = ECSLib.getUint("Amount", goldInventoryID);
-        uint256 goldCost = 10*1000;
+        uint256 goldCost = 10 * 1000;
         require(goldBalance >= goldCost, "CURIO: Insufficient gold balance");
 
         uint256 foodInventoryID = GameLib.getInventory(GameLib.getPlayerCity(GameLib.getPlayer(msg.sender)), gs().templates["Food"]);
         uint256 foodBalance = ECSLib.getUint("Amount", foodInventoryID);
-        uint256 foodCost = 50*1000;
-        require(foodBalance >= foodCost, "CURIO: Insufficient gold balance");
+        uint256 foodCost = 50 * 1000;
+        require(foodBalance >= foodCost, "CURIO: Insufficient food balance");
 
         // Deduct upgrade cost
         ECSLib.setUint("Amount", goldInventoryID, goldBalance - goldCost);
@@ -731,7 +731,7 @@ contract GameFacet is UseStorage {
 
         require(playerCityGold >= goldCost, "CURIO: Insufficient gold for upgrade");
         require(playerCityFood >= foodCost, "CURIO: Insufficient food for upgrade");
-        
+
         uint256 inventoryTypeID = ECSLib.getUint("Template", _resourceID);
 
         ECSLib.setUint("Level", _resourceID, currResourceLevel + 1);
