@@ -48,6 +48,7 @@ export interface AdminFacetInterface extends utils.Interface {
     "addEntity()": FunctionFragment;
     "addTroopTemplate(string,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256)": FunctionFragment;
     "adminInitializeTile((uint256,uint256))": FunctionFragment;
+    "assignResource(uint256,string,uint256)": FunctionFragment;
     "bulkInitializeTiles((uint256,uint256)[])": FunctionFragment;
     "createArmy(uint256,(uint256,uint256))": FunctionFragment;
     "reactivatePlayer(address)": FunctionFragment;
@@ -66,6 +67,7 @@ export interface AdminFacetInterface extends utils.Interface {
       | "addEntity"
       | "addTroopTemplate"
       | "adminInitializeTile"
+      | "assignResource"
       | "bulkInitializeTiles"
       | "createArmy"
       | "reactivatePlayer"
@@ -98,6 +100,14 @@ export interface AdminFacetInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "adminInitializeTile",
     values: [PositionStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "assignResource",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "bulkInitializeTiles",
@@ -155,6 +165,10 @@ export interface AdminFacetInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "adminInitializeTile",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "assignResource",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -252,6 +266,13 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    assignResource(
+      _cityID: PromiseOrValue<BigNumberish>,
+      _inventoryType: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     bulkInitializeTiles(
       _positions: PositionStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -338,6 +359,13 @@ export interface AdminFacet extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  assignResource(
+    _cityID: PromiseOrValue<BigNumberish>,
+    _inventoryType: PromiseOrValue<string>,
+    _amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   bulkInitializeTiles(
     _positions: PositionStruct[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -419,6 +447,13 @@ export interface AdminFacet extends BaseContract {
 
     adminInitializeTile(
       _startPosition: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    assignResource(
+      _cityID: PromiseOrValue<BigNumberish>,
+      _inventoryType: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -511,6 +546,13 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    assignResource(
+      _cityID: PromiseOrValue<BigNumberish>,
+      _inventoryType: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     bulkInitializeTiles(
       _positions: PositionStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -595,6 +637,13 @@ export interface AdminFacet extends BaseContract {
 
     adminInitializeTile(
       _startPosition: PositionStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    assignResource(
+      _cityID: PromiseOrValue<BigNumberish>,
+      _inventoryType: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
