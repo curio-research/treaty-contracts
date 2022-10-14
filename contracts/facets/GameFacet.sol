@@ -76,6 +76,9 @@ contract GameFacet is UseStorage {
         uint256 tileID = GameLib.getTileAt(GameLib.getProperTilePosition(_targetPosition));
         if (tileID != NULL) GameLib.neutralOrOwnedEntityCheck(tileID, msg.sender);
 
+        // Verify no gather
+        require(GameLib.getArmyGather(_movableEntity) == NULL, "CURIO: Ongoing gather");
+
         // Calculate distance
         uint256 distance = GameLib.euclidean(ECSLib.getPosition("Position", _movableEntity), _targetPosition);
         require(distance <= ECSLib.getUint("Speed", _movableEntity), "CURIO: Not enough movement points");
