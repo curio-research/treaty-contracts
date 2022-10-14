@@ -26,19 +26,19 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): a
     numInitTerrainTypes: NUM_INIT_TERRAIN_TYPES,
     initBatchSize: Math.floor(100 / NUM_INIT_TERRAIN_TYPES),
     maxCityCountPerPlayer: 3,
-    maxArmyCountPerPlayer: 5,
+    maxArmyCountPerPlayer: 2,
     maxPlayerCount: 20,
-    tileUpgradeGoldCost: 1, // 650
+    tileUpgradeGoldCost: 1000, // 650
     buildingUpgradeGoldCost: 3000, // internal buildings
     cityUpgradeGoldCost: 100000,
     cityPackCost: 1000000000000000, // temporarily disabled
-    initCityCenterGoldLoad: 5000,
-    initCityCenterFoodLoad: 5000,
-    initCityCenterTroopLoad: 1000,
-    initCityGold: 1000,
+    initCityCenterGoldLoad: 10000000,
+    initCityCenterFoodLoad: 10000000,
+    initCityCenterTroopLoad: 2000,
+    initCityGold: 0,
     tileWidth: TILE_WIDTH,
-    tileGuardAmount: 10, // 140
-    cityGuardAmount: 15,
+    tileGuardAmount: 1000, // 140
+    cityGuardAmount: 1500,
     barbarianCooldown: 3000, // Fixme
   };
 };
