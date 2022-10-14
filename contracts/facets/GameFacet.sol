@@ -510,6 +510,9 @@ contract GameFacet is UseStorage {
         Position memory midPosition = GameLib.getMidPositionFromTilePosition(ECSLib.getPosition("StartPosition", _cityID));
         require(GameLib.getArmyAt(midPosition) == NULL, "CURIO: Occupied by another army");
 
+        // Verify that total troop amount does not exceed 1000 (FIXME: hardcoded)
+        require(GameLib.sum(_amounts) <= 1000, "CURIO: Troop amount exceeds 1000");
+
         // Gather army traits from individual troop types
         {
             uint256 speed = 0; // average
