@@ -37,7 +37,7 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): a
     initCityCenterTroopLoad: 2000,
     initCityGold: 0,
     tileWidth: TILE_WIDTH,
-    tileGuardAmount: 80, // 140
+    tileGuardAmount: 200, // 140
     cityGuardAmount: 1500,
     barbarianCooldown: 60, // Fixme
   };

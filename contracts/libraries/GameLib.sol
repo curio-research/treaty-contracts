@@ -200,15 +200,15 @@ library GameLib {
     // TODO: hardcoded like _resourceHarvestRate
     function getResourceUpgradeCost(uint256 _currentLevel) internal pure returns (uint256, uint256) {
         require(_currentLevel <= 9, "CURIO: Max goldmine level reached");
-        if (_currentLevel == 0) return (100000, 32000);
-        if (_currentLevel == 1) return (100000, 32000);
-        if (_currentLevel == 2) return (100000, 32000);
-        if (_currentLevel == 3) return (300000, 90000);
-        if (_currentLevel == 4) return (300000, 90000);
-        if (_currentLevel == 5) return (300000, 90000);
-        if (_currentLevel == 6) return (300000, 90000);
-        if (_currentLevel == 7) return (300000, 120000);
-        if (_currentLevel == 8) return (300000, 120000);
+        if (_currentLevel == 0) return (50000, 16000);
+        if (_currentLevel == 1) return (50000, 16000);
+        if (_currentLevel == 2) return (50000, 16000);
+        if (_currentLevel == 3) return (50000, 16000);
+        if (_currentLevel == 4) return (50000, 16000);
+        if (_currentLevel == 5) return (50000, 16000);
+        if (_currentLevel == 6) return (50000, 16000);
+        if (_currentLevel == 7) return (50000, 16000);
+        if (_currentLevel == 8) return (50000, 16000);
         else return (0, 0);
     }
 

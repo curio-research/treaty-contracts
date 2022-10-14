@@ -177,12 +177,12 @@ contract GameFacet is UseStorage {
         // FIXME: cost hardcoded
         uint256 goldInventoryID = GameLib.getInventory(GameLib.getPlayerCity(GameLib.getPlayer(msg.sender)), gs().templates["Gold"]);
         uint256 goldBalance = ECSLib.getUint("Amount", goldInventoryID);
-        uint256 goldCost = 10 * 1000;
+        uint256 goldCost = 10 * 200;
         require(goldBalance >= goldCost, "CURIO: Insufficient gold balance");
 
         uint256 foodInventoryID = GameLib.getInventory(GameLib.getPlayerCity(GameLib.getPlayer(msg.sender)), gs().templates["Food"]);
         uint256 foodBalance = ECSLib.getUint("Amount", foodInventoryID);
-        uint256 foodCost = 50 * 1000;
+        uint256 foodCost = 50 * 200;
         require(foodBalance >= foodCost, "CURIO: Insufficient food balance");
 
         // Deduct upgrade cost
@@ -337,7 +337,7 @@ contract GameFacet is UseStorage {
         ECSLib.setUint("Inventory", productionID, inventoryID);
         ECSLib.setUint("Amount", productionID, _amount);
         ECSLib.setUint("InitTimestamp", productionID, block.timestamp);
-        ECSLib.setUint("Duration", productionID, ECSLib.getUint("Duration", _templateID) * _amount);
+        ECSLib.setUint("Duration", productionID, _amount / 5);
     }
 
     function endTroopProduction(uint256 _buildingID, uint256 _productionID) external {
