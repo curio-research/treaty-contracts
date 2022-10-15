@@ -130,15 +130,15 @@ library GameLib {
     // TODO: hardcoded; we should make certain things into components
     function getResourceHarvestRate(uint256 _templateID, uint256 _resourceLevel) internal view returns (uint256) {
         if (_templateID == gs().templates["Gold"]) {
-            if (_resourceLevel == 1) return 8;
-            if (_resourceLevel == 2) return 10;
-            if (_resourceLevel == 3) return 12;
-            if (_resourceLevel == 4) return 13;
-            if (_resourceLevel == 5) return 14;
-            if (_resourceLevel == 6) return 15;
-            if (_resourceLevel == 7) return 16;
-            if (_resourceLevel == 8) return 17;
-            if (_resourceLevel == 9) return 18;
+            if (_resourceLevel == 1) return 160;
+            if (_resourceLevel == 2) return 200;
+            if (_resourceLevel == 3) return 240;
+            if (_resourceLevel == 4) return 260;
+            if (_resourceLevel == 5) return 280;
+            if (_resourceLevel == 6) return 300;
+            if (_resourceLevel == 7) return 320;
+            if (_resourceLevel == 8) return 340;
+            if (_resourceLevel == 9) return 360;
             else return 0;
         } else if (_templateID == gs().templates["Food"]) {
             if (_resourceLevel == 1) return 200;
@@ -249,7 +249,7 @@ library GameLib {
         }
 
         // Gather
-        uint256 _gatherAmount = (block.timestamp - ECSLib.getUint("InitTimestamp", gatherID)) / ECSLib.getUint("Duration", templateID);
+        uint256 _gatherAmount = ((block.timestamp - ECSLib.getUint("InitTimestamp", gatherID)) / ECSLib.getUint("Duration", templateID)) * 100;
         if (_gatherAmount > (ECSLib.getUint("Load", inventoryID) - armyInventoryAmount)) _gatherAmount = ECSLib.getUint("Load", _armyID) - armyInventoryAmount;
         ECSLib.setUint("Amount", inventoryID, armyInventoryAmount + _gatherAmount);
 
@@ -657,7 +657,7 @@ library GameLib {
     }
 
     function getHarvestCap(uint256 _level) internal pure returns (uint256) {
-        if (_level == 1) return 3000;
+        if (_level == 1) return 100000000;
         if (_level == 2) return 6000;
         if (_level == 3) return 9000;
         if (_level == 4) return 12000;

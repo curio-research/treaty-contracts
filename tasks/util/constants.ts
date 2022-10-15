@@ -11,12 +11,12 @@ export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 // ----------------------------------------------------------
 
 export const SMALL_MAP_INPUT: MapInput = {
-  width: 8,
-  height: 8,
+  width: 9,
+  height: 9,
 };
 
 export const TILE_WIDTH = 5;
-export const NUM_INIT_TERRAIN_TYPES = Object.keys(TILE_TYPE).length;
+export const NUM_INIT_TERRAIN_TYPES = Object.keys(TILE_TYPE).length - 1;
 
 export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): any => {
   return {
@@ -24,7 +24,7 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): a
     worldWidth: mapInput.width * TILE_WIDTH,
     worldHeight: mapInput.height * TILE_WIDTH,
     numInitTerrainTypes: NUM_INIT_TERRAIN_TYPES,
-    initBatchSize: Math.floor(100 / NUM_INIT_TERRAIN_TYPES),
+    initBatchSize: 10,
     maxCityCountPerPlayer: 3,
     maxArmyCountPerPlayer: 2,
     maxPlayerCount: 20,
@@ -60,17 +60,17 @@ export const createTemplates = async (diamond: Curio) => {
   let entity = Number(await diamond.getEntity());
 
   // Horseman
-  await (await diamond.addTroopTemplate(InventoryTypeOptions.Horseman, 120, 2, 1, 2, 60, 120, 1, 5, 1)).wait();
+  await (await diamond.addTroopTemplate(InventoryTypeOptions.Horseman, 120, 2, 1, 2, 60, 120, 1, 500, 1)).wait();
   templateNames.push(InventoryTypeOptions.Horseman);
   templateIDs.push(entity++);
 
   // Warrior
-  await (await diamond.addTroopTemplate(InventoryTypeOptions.Warrior, 120, 1, 1, 2, 60, 120, 1, 6, 1)).wait();
+  await (await diamond.addTroopTemplate(InventoryTypeOptions.Warrior, 120, 1, 1, 2, 60, 120, 1, 600, 1)).wait();
   templateNames.push(InventoryTypeOptions.Warrior);
   templateIDs.push(entity++);
 
   // Slinger
-  await (await diamond.addTroopTemplate(InventoryTypeOptions.Slinger, 125, 1, 1, 2, 60, 125, 1, 6, 1)).wait();
+  await (await diamond.addTroopTemplate(InventoryTypeOptions.Slinger, 125, 1, 1, 2, 60, 125, 1, 600, 1)).wait();
   templateNames.push(InventoryTypeOptions.Slinger);
   templateIDs.push(entity++);
 

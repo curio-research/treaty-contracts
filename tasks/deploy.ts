@@ -42,7 +42,7 @@ task('deploy', 'deploy contracts')
       await isConnectionLive();
 
       // Set up deployer and some local variables
-      let [player1, player2] = await hre.ethers.getSigners();
+      let [player1, player2, player3] = await hre.ethers.getSigners();
       console.log('✦ player1 address is:', player1.address);
 
       const worldConstants = generateWorldConstants(player1.address, SMALL_MAP_INPUT);
@@ -113,10 +113,12 @@ task('deploy', 'deploy contracts')
           // console.log(scaleMap(tileMap, TILE_WIDTH));
           const player1Pos = chooseRandomEmptyLandPosition(scaleMap(tileMap, TILE_WIDTH));
           const player2Pos = getRightPos(getRightPos(player1Pos));
+          const player3Pos = getTopPos(getTopPos(player1Pos));
 
           startTime = performance.now();
           await (await diamond.connect(player1).initializePlayer(player1Pos, 'Alice', { gasLimit: 100_000_000 })).wait();
           await (await diamond.connect(player2).initializePlayer(player2Pos, 'Bob', { gasLimit: 100_000_000 })).wait();
+          await (await diamond.connect(player3).initializePlayer(player2Pos, 'Bob', { gasLimit: 100_000_000 })).wait();
           console.log(`✦ player initialization took ${Math.floor(performance.now() - startTime)} ms`);
 
           // const player1ID = (await diamond.getPlayerId(player1.address)).toNumber();

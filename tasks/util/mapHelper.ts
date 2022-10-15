@@ -91,10 +91,15 @@ export const generateMap = (worldWidth: number, worldHeight: number, worldConsta
     const pos = getProperTilePosition(chooseRandomEmptyLandPosition(tileMap), tileWidth);
     tileMap[pos.x][pos.y] = TILE_TYPE.BARBARIAN_LV1;
   }
-  for (let i = 0; i < totalTileCount * level2BarbarianDensity; i++) {
+
+  for (let i = 0; i < totalTileCount * level1BarbarianDensity; i++) {
     const pos = getProperTilePosition(chooseRandomEmptyLandPosition(tileMap), tileWidth);
-    tileMap[pos.x][pos.y] = TILE_TYPE.BARBARIAN_LV2;
+    tileMap[pos.x][pos.y] = TILE_TYPE.BARBARIAN_LV1;
   }
+  // for (let i = 0; i < totalTileCount * level2BarbarianDensity; i++) {
+  //   const pos = getProperTilePosition(chooseRandomEmptyLandPosition(tileMap), tileWidth);
+  //   tileMap[pos.x][pos.y] = TILE_TYPE.BARBARIAN_LV2;
+  // }
   return tileMap;
 };
 

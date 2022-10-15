@@ -305,7 +305,7 @@ contract GameFacet is UseStorage {
 
         // Check food balance sufficience and deduct cost
         {
-            uint256 foodInventoryID = GameLib.getInventory(cityID, gs().templates["Gold"]);
+            uint256 foodInventoryID = GameLib.getInventory(cityID, gs().templates["Food"]);
             uint256 foodBalance = foodInventoryID != NULL ? ECSLib.getUint("Amount", foodInventoryID) : 0;
             // FIXME: hardcoded
             uint256 foodCost = 50 * _amount;
@@ -480,9 +480,9 @@ contract GameFacet is UseStorage {
                 ECSLib.setUint("City", inventoryID, cityID);
                 ECSLib.setUint("Template", inventoryID, resourceTemplateIDs[i]);
                 ECSLib.setUint("Amount", inventoryID, 0);
-                ECSLib.setUint("Load", inventoryID, gs().worldConstants.initCityCenterGoldLoad); // FIXME
+                ECSLib.setUint("Load", inventoryID, gs().worldConstants.initCityCenterGoldLoad); // FIXME:
             }
-            uint256 harvestAmount = (block.timestamp - ECSLib.getUint("LastTimestamp", _buildingID)) * 20; // FIXME
+            uint256 harvestAmount = (block.timestamp - ECSLib.getUint("LastTimestamp", _buildingID)) * 180; // FIXME:
             harvestAmount = GameLib.min(GameLib.getHarvestCap(ECSLib.getUint("Level", cityID)), harvestAmount);
             uint256 cityResourceLoad = ECSLib.getUint("Load", inventoryID);
             ECSLib.setUint("Amount", inventoryID, GameLib.min(ECSLib.getUint("Amount", inventoryID) + harvestAmount, cityResourceLoad));
