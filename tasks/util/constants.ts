@@ -1,4 +1,4 @@
-import { Attack, Cost, Defense, Duration, encodeString, encodeUint256, Health, InventoryType, InventoryTypeOptions, Speed, Load, Tag, Tags, MoveCooldown, BattleCooldown } from 'curio-vault';
+import { Attack, Cost, Defense, Duration, encodeString, encodeUint256, Health, InventoryType, InventoryTypeOptions, Speed, Load, Tag, Tags, MoveCooldown, BattleCooldown, TILE_TYPE } from 'curio-vault';
 import { WorldConstantsStruct, Curio } from './../../typechain-types/hardhat-diamond-abi/Curio';
 import { addGetEntity } from './mapHelper';
 import { MapInput } from './types';
@@ -11,33 +11,35 @@ export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 // ----------------------------------------------------------
 
 export const SMALL_MAP_INPUT: MapInput = {
-  width: 50,
-  height: 50,
+  width: 9,
+  height: 9,
 };
 
-export const TILE_WIDTH = 3;
+export const TILE_WIDTH = 5;
+export const NUM_INIT_TERRAIN_TYPES = Object.keys(TILE_TYPE).length - 1;
 
-export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): WorldConstantsStruct => {
+export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): any => {
   return {
     admin: adminAddr,
-    worldWidth: mapInput.width,
-    worldHeight: mapInput.height,
-    numInitTerrainTypes: 7,
-    initBatchSize: 30,
+    worldWidth: mapInput.width * TILE_WIDTH,
+    worldHeight: mapInput.height * TILE_WIDTH,
+    numInitTerrainTypes: NUM_INIT_TERRAIN_TYPES,
+    initBatchSize: 10,
     maxCityCountPerPlayer: 3,
     maxArmyCountPerPlayer: 2,
     maxPlayerCount: 20,
-    cityUpgradeGoldCost: 50,
-    cityPackCost: 0,
-    maxInventoryCapacity: 1000,
-    initCityGold: 100,
-    cityHealth: 120,
-    cityAttack: 60,
-    cityDefense: 120,
+    tileUpgradeGoldCost: 1000, // 650
+    buildingUpgradeGoldCost: 3000, // internal buildings
+    cityUpgradeGoldCost: 100000,
+    cityPackCost: 1000000000000000, // temporarily disabled
+    initCityCenterGoldLoad: 10000000,
+    initCityCenterFoodLoad: 10000000,
+    initCityCenterTroopLoad: 2000,
+    initCityGold: 0,
     tileWidth: TILE_WIDTH,
-    armyBattleRange: 1,
-    cityBattleRange: 2,
-    cityAmount: 1000,
+    tileGuardAmount: 200, // 140
+    cityGuardAmount: 1500,
+    barbarianCooldown: 60, // Fixme
   };
 };
 
@@ -45,58 +47,56 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): W
 // TEMPLATES
 // ----------------------------------------------------------
 
+/**
+ * @dev Initialize 5 battle templates and 1 resource template
+ * @param diamond diamond address
+ */
 export const createTemplates = async (diamond: Curio) => {
-  // Initialize three troop templates
-  await (await diamond.addEntity()).wait();
-  let entity = (await diamond.getEntity()).toNumber();
+  const templateNames: string[] = [];
+  const templateIDs: number[] = [];
+
+  let inventoryType = InventoryTypeOptions.Horseman;
+
+  let entity = Number(await diamond.getEntity());
 
   // Horseman
-  await (await diamond.setComponentValue(Tag, entity, encodeString(Tags.TroopTemplate))).wait();
-  await (await diamond.setComponentValue(InventoryType, entity, encodeString(InventoryTypeOptions.Horseman))).wait();
-  await (await diamond.setComponentValue(Health, entity, encodeUint256(120))).wait();
-  await (await diamond.setComponentValue(Speed, entity, encodeUint256(2))).wait(); // how many tiles it can skip
-  await (await diamond.setComponentValue(MoveCooldown, entity, encodeUint256(1))).wait();
-  await (await diamond.setComponentValue(BattleCooldown, entity, encodeUint256(2))).wait();
-  await (await diamond.setComponentValue(Attack, entity, encodeUint256(60))).wait();
-  await (await diamond.setComponentValue(Defense, entity, encodeUint256(120))).wait();
-  await (await diamond.setComponentValue(Duration, entity, encodeUint256(1))).wait();
-  await (await diamond.setComponentValue(Load, entity, encodeUint256(5))).wait();
-  await (await diamond.setComponentValue(Cost, entity, encodeUint256(1))).wait();
-
-  entity = await addGetEntity(diamond);
+  await (await diamond.addTroopTemplate(InventoryTypeOptions.Horseman, 120, 2, 1, 2, 60, 120, 1, 500, 1)).wait();
+  templateNames.push(InventoryTypeOptions.Horseman);
+  templateIDs.push(entity++);
 
   // Warrior
-  await (await diamond.setComponentValue(Tag, entity, encodeString(Tags.TroopTemplate))).wait();
-  await (await diamond.setComponentValue(InventoryType, entity, encodeString(InventoryTypeOptions.Warrior))).wait();
-  await (await diamond.setComponentValue(Health, entity, encodeUint256(120))).wait();
-  await (await diamond.setComponentValue(Speed, entity, encodeUint256(1))).wait();
-  await (await diamond.setComponentValue(MoveCooldown, entity, encodeUint256(1))).wait();
-  await (await diamond.setComponentValue(BattleCooldown, entity, encodeUint256(2))).wait();
-  await (await diamond.setComponentValue(Attack, entity, encodeUint256(60))).wait();
-  await (await diamond.setComponentValue(Defense, entity, encodeUint256(120))).wait();
-  await (await diamond.setComponentValue(Duration, entity, encodeUint256(1))).wait();
-  await (await diamond.setComponentValue(Load, entity, encodeUint256(6))).wait();
-  await (await diamond.setComponentValue(Cost, entity, encodeUint256(1))).wait();
-
-  entity = await addGetEntity(diamond);
+  await (await diamond.addTroopTemplate(InventoryTypeOptions.Warrior, 120, 1, 1, 2, 60, 120, 1, 600, 1)).wait();
+  templateNames.push(InventoryTypeOptions.Warrior);
+  templateIDs.push(entity++);
 
   // Slinger
-  await (await diamond.setComponentValue(Tag, entity, encodeString(Tags.TroopTemplate))).wait();
-  await (await diamond.setComponentValue(InventoryType, entity, encodeString(InventoryTypeOptions.Slinger))).wait();
-  await (await diamond.setComponentValue(Health, entity, encodeUint256(125))).wait();
-  await (await diamond.setComponentValue(Speed, entity, encodeUint256(1))).wait();
-  await (await diamond.setComponentValue(MoveCooldown, entity, encodeUint256(1))).wait();
-  await (await diamond.setComponentValue(BattleCooldown, entity, encodeUint256(2))).wait();
-  await (await diamond.setComponentValue(Attack, entity, encodeUint256(60))).wait();
-  await (await diamond.setComponentValue(Defense, entity, encodeUint256(125))).wait();
-  await (await diamond.setComponentValue(Duration, entity, encodeUint256(1))).wait();
-  await (await diamond.setComponentValue(Load, entity, encodeUint256(6))).wait();
-  await (await diamond.setComponentValue(Cost, entity, encodeUint256(1))).wait();
+  await (await diamond.addTroopTemplate(InventoryTypeOptions.Slinger, 125, 1, 1, 2, 60, 125, 1, 600, 1)).wait();
+  templateNames.push(InventoryTypeOptions.Slinger);
+  templateIDs.push(entity++);
 
-  // Initialize a resource template
+  // Guard
+  await (await diamond.addTroopTemplate(InventoryTypeOptions.Guard, 120, 0, 0, 0, 60, 120, 0, 0, 0)).wait();
+  templateNames.push(InventoryTypeOptions.Guard);
+  templateIDs.push(entity++);
+
+  // Gold
+  inventoryType = InventoryTypeOptions.Gold;
   entity = await addGetEntity(diamond);
-
   await (await diamond.setComponentValue(Tag, entity, encodeString(Tags.ResourceTemplate))).wait();
-  await (await diamond.setComponentValue(InventoryType, entity, encodeString(InventoryTypeOptions.Gold))).wait();
+  await (await diamond.setComponentValue(InventoryType, entity, encodeString(inventoryType))).wait();
   await (await diamond.setComponentValue(Duration, entity, encodeUint256(1))).wait();
+  templateNames.push(inventoryType);
+  templateIDs.push(entity);
+
+  // Food
+  inventoryType = InventoryTypeOptions.Food;
+  entity = await addGetEntity(diamond);
+  await (await diamond.setComponentValue(Tag, entity, encodeString(Tags.ResourceTemplate))).wait();
+  await (await diamond.setComponentValue(InventoryType, entity, encodeString(inventoryType))).wait();
+  await (await diamond.setComponentValue(Duration, entity, encodeUint256(1))).wait();
+  templateNames.push(inventoryType);
+  templateIDs.push(entity);
+
+  // Register template names used for shortcuts
+  await (await diamond.registerTemplateShortcuts(templateNames, templateIDs)).wait();
 };

@@ -3,7 +3,7 @@
   "extends": "solhint:recommended",
   "plugins": [],
   "rules": {
-    "max-line-length": ["error", 200],
+    "max-line-length": ["error", 210],
     "no-empty-blocks": "warn",
     "no-unused-vars": "warn",
     "payable-fallback": "error",

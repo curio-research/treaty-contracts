@@ -65,12 +65,12 @@ export default {
     constellationNew: {
       url: CONSTELLATIONNEW_RPC_URL,
       accounts: [LOCALHOST_USER1_PK, LOCALHOST_USER2_PK],
-      chainId: 17,
+      chainId: 2938,
     },
     altlayer: {
       url: ALTLAYER_RPC_URL,
       accounts: [USER1_PK, USER2_PK],
-      chainId: 9997,
+      chainId: 9991,
     },
     exfac: {
       url: EXFAC_RPC_URL,

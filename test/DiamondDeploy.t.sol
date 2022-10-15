@@ -58,7 +58,9 @@ contract DiamondDeployTest is Test {
     uint256 public cavalryTemplateID;
     uint256 public infantryTemplateID;
     uint256 public archerTemplateID;
+    uint256 public guardTemplateID;
     uint256 public goldTemplateID;
+    uint256 public foodTemplateID;
 
     // we assume these two facet selectors do not change. If they do however, we should use getSelectors
     bytes4[] OWNERSHIP_SELECTORS = [bytes4(0xf2fde38b), 0x8da5cb5b];
@@ -160,7 +162,7 @@ contract DiamondDeployTest is Test {
         return _result;
     }
 
-    function _createTemplates() internal {
+    function _createTemplates() private {
         vm.startPrank(deployer);
 
         // Troop: Cavalry
@@ -205,23 +207,41 @@ contract DiamondDeployTest is Test {
         admin.setComponentValue("MoveCooldown", archerTemplateID, abi.encode(1));
         admin.setComponentValue("BattleCooldown", archerTemplateID, abi.encode(2));
 
+        // Troop: Guard
+        guardTemplateID = admin.addEntity();
+        admin.setComponentValue("Tag", guardTemplateID, abi.encode("TroopTemplate"));
+        admin.setComponentValue("InventoryType", guardTemplateID, abi.encode("Guard"));
+        admin.setComponentValue("Health", guardTemplateID, abi.encode(120));
+        admin.setComponentValue("Attack", guardTemplateID, abi.encode(60));
+        admin.setComponentValue("Defense", guardTemplateID, abi.encode(120));
+
         // Resource: Gold
         goldTemplateID = admin.addEntity();
         admin.setComponentValue("Tag", goldTemplateID, abi.encode("ResourceTemplate"));
         admin.setComponentValue("InventoryType", goldTemplateID, abi.encode("Gold"));
         admin.setComponentValue("Duration", goldTemplateID, abi.encode(1));
 
+        // Resource: Food
+        foodTemplateID = admin.addEntity();
+        admin.setComponentValue("Tag", foodTemplateID, abi.encode("ResourceTemplate"));
+        admin.setComponentValue("InventoryType", foodTemplateID, abi.encode("Food"));
+        admin.setComponentValue("Duration", foodTemplateID, abi.encode(1));
+
         // Register template shortcuts
-        string[] memory templateNames = new string[](4);
-        uint256[] memory templateIDs = new uint256[](4);
+        string[] memory templateNames = new string[](6);
+        uint256[] memory templateIDs = new uint256[](6);
         templateNames[0] = "Cavalry";
         templateNames[1] = "Infantry";
         templateNames[2] = "Archer";
-        templateNames[3] = "Gold";
+        templateNames[3] = "Guard";
+        templateNames[4] = "Gold";
+        templateNames[5] = "Food";
         templateIDs[0] = cavalryTemplateID;
         templateIDs[1] = infantryTemplateID;
         templateIDs[2] = archerTemplateID;
-        templateIDs[3] = goldTemplateID;
+        templateIDs[3] = guardTemplateID;
+        templateIDs[4] = goldTemplateID;
+        templateIDs[5] = foodTemplateID;
         admin.registerTemplateShortcuts(templateNames, templateIDs);
 
         vm.stopPrank();
@@ -237,19 +257,20 @@ contract DiamondDeployTest is Test {
                 numInitTerrainTypes: 1,
                 initBatchSize: 100,
                 maxCityCountPerPlayer: 3,
-                maxArmyCountPerPlayer: 2,
+                maxArmyCountPerPlayer: 3,
                 maxPlayerCount: 20,
-                cityUpgradeGoldCost: 50,
+                tileUpgradeGoldCost: 150,
+                buildingUpgradeGoldCost: 3000,
+                cityUpgradeGoldCost: 3000,
                 cityPackCost: 30,
-                maxInventoryCapacity: 5000,
-                initCityGold: 1000,
-                cityHealth: 120,
-                cityAttack: 60,
-                cityDefense: 120,
-                armyBattleRange: 5,
-                cityBattleRange: 18,
+                initCityCenterGoldLoad: 500000,
+                initCityCenterFoodLoad: 500000,
+                initCityCenterTroopLoad: 1000,
+                initCityGold: 2000,
                 tileWidth: 10,
-                cityAmount: 1000 // DO NOT REMOVE THIS COMMENT
+                tileGuardAmount: 1000,
+                cityGuardAmount: 1000, // DO NOT REMOVE THIS COMMENT
+                barbarianCooldown: 3000
             });
     }
 
