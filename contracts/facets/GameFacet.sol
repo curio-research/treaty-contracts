@@ -47,8 +47,8 @@ contract GameFacet is UseStorage {
         uint256 settlerID = Templates.addSettler(_position, playerID, gs().worldConstants.tileWidth);
 
         // Add initial gold
-        Templates.addInventory(settlerID, gs().templates["Gold"], gs().worldConstants.initCityGold, gs().worldConstants.initCityCenterGoldLoad);
-        Templates.addInventory(settlerID, gs().templates["Food"], 0, gs().worldConstants.initCityCenterFoodLoad);
+        Templates.addInventory(settlerID, gs().templates["Gold"], gs().worldConstants.initCityGold, gs().worldConstants.initCityCenterGoldLoad); // FIXME: ECS
+        Templates.addInventory(settlerID, gs().templates["Food"], 0, gs().worldConstants.initCityCenterFoodLoad); // FIXME: ECS
     }
 
     // ----------------------------------------------------------
@@ -119,6 +119,7 @@ contract GameFacet is UseStorage {
             GameLib.inboundPositionCheck(_tiles[i]);
             require(GameLib.isProperTilePosition(_tiles[i]), "CURIO: Must be proper tile position");
             uint256 tileID = GameLib.initializeTile(_tiles[i]);
+            require(ECSLib.getUint("City", tileID) == NULL, "CURIO: Overlaps with another city");
 
             ECSLib.setUint("City", tileID, cityID);
             ECSLib.setUint("Owner", tileID, playerID);
@@ -131,7 +132,7 @@ contract GameFacet is UseStorage {
         Templates.addCityCenter(centerTilePosition, cityID);
 
         // Strengthen guard to city defense level
-        ECSLib.setUint("Amount", GameLib.getConstituents(GameLib.getTileAt(centerTilePosition))[0], gs().worldConstants.cityGuardAmount);
+        ECSLib.setUint("Amount", GameLib.getConstituents(GameLib.getTileAt(centerTilePosition))[0], gs().worldConstants.cityGuardAmount); // FIXME: ECS
     }
 
     /// @notice This function can be viewed as the inverse of `foundCity`, as it converts a city back into a settler.
@@ -258,6 +259,7 @@ contract GameFacet is UseStorage {
             GameLib.inboundPositionCheck(_newTiles[i]);
             require(GameLib.isProperTilePosition(_newTiles[i]), "CURIO: Must be proper tile position");
             uint256 tileID = GameLib.initializeTile(_newTiles[i]);
+            require(ECSLib.getUint("City", tileID) == NULL, "CURIO: Overlaps with another city");
 
             ECSLib.setUint("Owner", tileID, playerID);
         }
