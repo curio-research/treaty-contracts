@@ -90,26 +90,6 @@ library GameLib {
             Templates.addResource(gs().templates["Food"], _startPosition, _resourceCap(1));
         }
 
-        // if (terrain >= 4 && terrain <= 6) {
-        //     // Initialize barbarian
-        //     uint256 barbarianID = ECSLib.addEntity();
-        //     uint256 infantryAmount = _barbarianInfantrySelector(terrain - 3);
-        //     uint256 infantryTemplate = getTemplateByInventoryType("Infantry");
-
-        //     uint256 infantryConstituentID = ECSLib.addEntity();
-        //     ECSLib.setString("Tag", infantryConstituentID, "ArmyConstituent");
-        //     ECSLib.setUint("Keeper", infantryConstituentID, barbarianID);
-        //     ECSLib.setUint("Template", infantryConstituentID, infantryTemplate);
-        //     ECSLib.setUint("Amount", infantryConstituentID, infantryAmount);
-
-        //     ECSLib.setString("Tag", barbarianID, "Army");
-        //     ECSLib.setPosition("Position", barbarianID, _position);
-        //     ECSLib.setUint("Health", barbarianID, ECSLib.getUint("Health", infantryTemplate) * infantryAmount);
-        //     ECSLib.setUint("Speed", barbarianID, ECSLib.getUint("Speed", infantryTemplate));
-        //     ECSLib.setUint("Attack", barbarianID, ECSLib.getUint("Attack", infantryTemplate) * infantryAmount);
-        //     ECSLib.setUint("Defense", barbarianID, ECSLib.getUint("Defense", infantryTemplate) * infantryAmount);
-        // }
-
         // Initialize tile
         uint256 tileID = Templates.addTile(_startPosition, terrain);
 
@@ -239,7 +219,7 @@ library GameLib {
             armyInventoryAmount = 0;
 
             inventoryID = ECSLib.addEntity();
-            ECSLib.setString("Tag", inventoryID, "TroopInventory");
+            ECSLib.setString("Tag", inventoryID, "ResourceInventory");
             ECSLib.setUint("Army", inventoryID, _armyID);
             ECSLib.setUint("Template", inventoryID, templateID);
             ECSLib.setUint("Amount", inventoryID, armyInventoryAmount);
@@ -256,6 +236,7 @@ library GameLib {
         ECSLib.removeEntity(gatherID);
     }
 
+    // FIXME: Hardcoded triangular relations
     function getAttackBonus(uint256 _offenderTemplateID, uint256 _defenderTemplateID) public view returns (uint256) {
         uint256 horsemanTemplateId = gs().templates["Horseman"];
         uint256 warriorTemplateId = gs().templates["Warrior"];
@@ -509,7 +490,7 @@ library GameLib {
 
     function getArmyInventory(uint256 _armyID, uint256 _templateID) internal returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](3);
-        query[0] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("TroopInventory"));
+        query[0] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("ResourceInventory"));
         query[1] = ECSLib.queryChunk(QueryType.HasVal, "Army", abi.encode(_armyID));
         query[2] = ECSLib.queryChunk(QueryType.HasVal, "Template", abi.encode(_templateID));
         uint256[] memory res = ECSLib.query(query);

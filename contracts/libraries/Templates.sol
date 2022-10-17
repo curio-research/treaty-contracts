@@ -225,20 +225,39 @@ library Templates {
         uint256 _load,
         uint256 _cost
     ) public returns (uint256) {
-        uint256 entity = ECSLib.addEntity();
+        uint256 templateID = ECSLib.addEntity();
 
-        ECSLib.setString("Tag", entity, "TroopTemplate");
-        ECSLib.setString("InventoryType", entity, _inventoryType);
-        ECSLib.setUint("Health", entity, _health);
-        ECSLib.setUint("Speed", entity, _speed);
-        ECSLib.setUint("MoveCooldown", entity, _moveCooldown);
-        ECSLib.setUint("BattleCooldown", entity, _battleCooldown);
-        ECSLib.setUint("Attack", entity, _attack);
-        ECSLib.setUint("Defense", entity, _defense);
-        ECSLib.setUint("Duration", entity, _duration);
-        ECSLib.setUint("Load", entity, _load);
-        ECSLib.setUint("Cost", entity, _cost);
+        ECSLib.setString("Tag", templateID, "TroopTemplate");
+        ECSLib.setString("InventoryType", templateID, _inventoryType);
+        ECSLib.setUint("Health", templateID, _health);
+        ECSLib.setUint("Speed", templateID, _speed);
+        ECSLib.setUint("MoveCooldown", templateID, _moveCooldown);
+        ECSLib.setUint("BattleCooldown", templateID, _battleCooldown);
+        ECSLib.setUint("Attack", templateID, _attack);
+        ECSLib.setUint("Defense", templateID, _defense);
+        ECSLib.setUint("Duration", templateID, _duration);
+        ECSLib.setUint("Load", templateID, _load);
+        ECSLib.setUint("Cost", templateID, _cost);
 
-        return entity;
+        return templateID;
+    }
+
+    function addConstant(
+        string memory _functionName,
+        string memory _componentName,
+        uint256 _templateID,
+        uint256 _level,
+        uint256 _amount
+    ) public returns (uint256) {
+        uint256 constantID = ECSLib.addEntity();
+
+        ECSLib.setString("Tag", constantID, "Constant");
+        ECSLib.setString("FunctionName", constantID, _functionName);
+        ECSLib.setString("ComponentName", constantID, _componentName);
+        ECSLib.setUint("Template", constantID, _templateID);
+        ECSLib.setUint("Level", constantID, _level);
+        ECSLib.setUint("Amount", constantID, _amount);
+
+        return constantID;
     }
 }

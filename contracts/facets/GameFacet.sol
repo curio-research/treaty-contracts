@@ -611,7 +611,7 @@ contract GameFacet is UseStorage {
         if (GameLib.strEq(ECSLib.getString("Tag", _targetID), "Army")) {
             _battleArmy(_armyID, _targetID);
         } else if (GameLib.strEq(ECSLib.getString("Tag", _targetID), "Tile")) {
-            _battleTile(_armyID, _targetID, false);
+            _battleTile(_armyID, _targetID);
         }
     }
 
@@ -627,11 +627,7 @@ contract GameFacet is UseStorage {
         if (!victory) GameLib.attack(_targetArmyID, _armyID, true, false, true);
     }
 
-    function _battleTile(
-        uint256 _armyID,
-        uint256 _tileID,
-        bool _occupyUponVictory
-    ) private {
+    function _battleTile(uint256 _armyID, uint256 _tileID) private {
         // Verify that army and tile are adjacent
         require(
             GameLib.euclidean(ECSLib.getPosition("Position", _armyID), GameLib.getMidPositionFromTilePosition(ECSLib.getPosition("StartPosition", _tileID))) <= ECSLib.getUint("AttackRange", _armyID), //
@@ -647,7 +643,7 @@ contract GameFacet is UseStorage {
         }
 
         // Execute one round of battle
-        bool victory = GameLib.attack(_armyID, _tileID, false, _occupyUponVictory, false);
+        bool victory = GameLib.attack(_armyID, _tileID, false, false, false);
         if (victory) {
             uint256 winnerCityID = GameLib.getPlayerCity(GameLib.getPlayer(msg.sender));
             if (cityID != NULL) {
@@ -670,7 +666,7 @@ contract GameFacet is UseStorage {
                 if (isBarbarian) {
                     // Reset barbarian
                     GameLib.distributeBarbarianReward(winnerCityID, _tileID);
-                    (, , uint256 barbarianAmount) = GameLib.barbarianInfo(ECSLib.getUint("Level", _tileID));
+                    (, , uint256 barbarianAmount) = GameLib.barbarianInfo(ECSLib.getUint("Level", _tileID)); // FIXME: ECS
                     ECSLib.setUint("LastTimestamp", _tileID, block.timestamp);
                     Templates.addConstituent(_tileID, gs().templates["Guard"], barbarianAmount);
                 } else {
@@ -694,7 +690,7 @@ contract GameFacet is UseStorage {
         require(ECSLib.getUint("Owner", _tileID) == 0, "CURIO: Tile has owner");
 
         // Verify target tile is not barbarian tile
-        require(ECSLib.getUint("Level", _tileID) != 1 && ECSLib.getUint("Level", _tileID) != 2, "CURIO: Cannot claim barbarian tiles");
+        require(ECSLib.getUint("Level", _tileID) != 1 && ECSLib.getUint("Level", _tileID) != 2, "CURIO: Cannot claim barbarian tiles"); // FIXME: ECS
 
         // Verify that no guard exists on tile
         require(GameLib.getConstituents(_tileID).length == 0, "CURIO: Tile has guard");

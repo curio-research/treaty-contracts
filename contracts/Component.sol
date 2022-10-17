@@ -7,8 +7,7 @@ import {Set} from "contracts/Set.sol";
 
 contract Component {
     /**
-     * Question: Permission management for value modification
-     * Question: TODO: more advanced queries like `.filter()` in JS
+     * TODO: Permission management for value modification
      */
 
     address private gameAddr; // game diamond

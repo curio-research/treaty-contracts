@@ -100,3 +100,9 @@ export const createTemplates = async (diamond: Curio) => {
   // Register template names used for shortcuts
   await (await diamond.registerTemplateShortcuts(templateNames, templateIDs)).wait();
 };
+
+// ----------------------------------------------------------
+// IN-GAME AMOUNTS
+// ----------------------------------------------------------
+
+export const registerConstants = async (diamond: Curio) => {};
