@@ -9,7 +9,6 @@ import {Templates} from "contracts/libraries/Templates.sol";
 import {Set} from "contracts/Set.sol";
 import {Component} from "contracts/Component.sol";
 import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, UintComponent, UintArrayComponent} from "contracts/TypedComponents.sol";
-import "forge-std/console.sol";
 
 /// @title Util library
 /// @notice Contains all events as well as lower-level setters and getters
@@ -67,7 +66,6 @@ library GameLib {
     }
 
     function initializeTile(Position memory _startPosition) internal returns (uint256) {
-        console.log("start tile initial");
         require(isProperTilePosition(_startPosition), "CURIO: Not proper tile position");
         if (getTileAt(_startPosition) != 0) return getTileAt(_startPosition);
 
@@ -107,7 +105,6 @@ library GameLib {
             Templates.addConstituent(tileID, gs().templates["Guard"], barbarianGuardAmount);
         }
 
-        console.log("end tile initial");
         return tileID;
     }
 

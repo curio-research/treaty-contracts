@@ -420,7 +420,7 @@ contract GameFacet is UseStorage {
 
         // Get harvest amount
         uint256 templateID = ECSLib.getUint("Template", _resourceID);
-        uint256 harvestRate = GameLib.getConstant("harvestResource", "Amount", ECSLib.getString("InventoryType", templateID), resourceLevel);
+        uint256 harvestRate = GameLib.getConstant("harvestResource", "Rate", ECSLib.getString("InventoryType", templateID), resourceLevel);
         uint256 harvestAmount = (block.timestamp - ECSLib.getUint("LastTimestamp", _resourceID)) * harvestRate;
         harvestAmount = GameLib.min(ECSLib.getUint("Load", _resourceID), harvestAmount);
 
@@ -448,7 +448,7 @@ contract GameFacet is UseStorage {
         uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
         for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
             uint256 inventoryID = GameLib.getInventory(cityID, resourceTemplateIDs[i]);
-            uint256 harvestRate = GameLib.getConstant("harvestResourcesFromCity", "Amount", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), 0);
+            uint256 harvestRate = GameLib.getConstant("harvestResourcesFromCity", "Rate", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), 0);
             uint256 harvestAmount = (block.timestamp - ECSLib.getUint("LastTimestamp", _buildingID)) * harvestRate;
             harvestAmount = GameLib.min(GameLib.getConstant("harvestResourcesFromCity", "Load", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), ECSLib.getUint("Level", cityID)), harvestAmount);
             ECSLib.setUint("Amount", inventoryID, GameLib.min(ECSLib.getUint("Amount", inventoryID) + harvestAmount, ECSLib.getUint("Load", inventoryID)));

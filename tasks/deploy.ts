@@ -1,5 +1,4 @@
 import { position } from './../util/types/common';
-import { utils } from 'ethers';
 import chalk from 'chalk';
 import { GameLib } from './../typechain-types/libraries/GameLib';
 import { ECSLib } from './../typechain-types/libraries/ECSLib';
@@ -9,8 +8,8 @@ import { HardhatRuntimeEnvironment, HardhatArguments } from 'hardhat/types';
 import { deployProxy, printDivider } from './util/deployHelper';
 import { CONSTANT_SPECS, createTemplates, generateWorldConstants, SMALL_MAP_INPUT, TILE_WIDTH } from './util/constants';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
-import { chooseRandomEmptyLandPosition, encodeTileMap, generateBlankFixmap, generateMap, getPositionFromLargeTilePosition, initializeFixmap } from './util/mapHelper';
-import { COMPONENT_SPECS, getRightPos, GameConfig, TILE_TYPE, Speed, encodeUint256, getTopPos, scaleMap } from 'curio-vault';
+import { chooseRandomEmptyLandPosition, encodeTileMap, generateBlankFixmap, generateMap, initializeFixmap } from './util/mapHelper';
+import { COMPONENT_SPECS, getRightPos, GameConfig, getTopPos, scaleMap } from 'curio-vault';
 
 /**
  * Deploy script for publishing games
