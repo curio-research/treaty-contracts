@@ -258,7 +258,7 @@ library Templates {
     ) public returns (uint256) {
         uint256 constantID = ECSLib.addEntity();
 
-        string memory identifier = string(abi.encodePacked("Constant", _functionName, _componentName, _entityName, _level));
+        string memory identifier = string(abi.encodePacked("Constant-", _functionName, "-", _componentName, "-", _entityName, "-", _level));
         ECSLib.setString("Tag", constantID, identifier);
         ECSLib.setUint("Amount", constantID, _amount);
 

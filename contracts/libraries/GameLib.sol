@@ -316,7 +316,7 @@ library GameLib {
         string memory _entityName,
         uint256 _level
     ) internal view returns (uint256) {
-        string memory identifier = string(abi.encodePacked("Constant", _functionName, _componentName, _entityName, _level));
+        string memory identifier = string(abi.encodePacked("Constant-", _functionName, "-", _componentName, "-", _entityName, "-", _level));
         uint256[] memory res = ECSLib.getStringComponent("Tag").getEntitiesWithValue(identifier);
         require(res.length == 1, "CURIO: Constant assertion failed");
         return ECSLib.getUint("Amount", res[0]);
