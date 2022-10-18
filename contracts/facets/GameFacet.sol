@@ -188,7 +188,8 @@ contract GameFacet is UseStorage {
         }
 
         // Upgrade tile defense
-        uint256 newConstituentAmount = GameLib.getConstant("upgradeTile", "Amount", gs().templates["Guard"], 1); // FIXME: no level usable
+        uint256 added = GameLib.getConstant("upgradeTile", "Amount", gs().templates["Guard"], 1);
+        uint256 newConstituentAmount = GameLib.min(ECSLib.getUint("Amount", GameLib.getConstituents(_tileID)[0]) + added, added * 3);
         ECSLib.setUint("Amount", GameLib.getConstituents(_tileID)[0], newConstituentAmount);
     }
 
