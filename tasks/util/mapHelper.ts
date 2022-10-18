@@ -139,10 +139,10 @@ export const initializeFixmap = async (hre: HardhatRuntimeEnvironment, diamond: 
   const playerPositions = [player1Pos, player2Pos, player3Pos, player4Pos];
 
   // initialize 4 players
-  await (await diamond.connect(player1).initializePlayer(player1Pos, 'A', { gasLimit: 100_000_000 })).wait();
-  await (await diamond.connect(player2).initializePlayer(player2Pos, 'B', { gasLimit: 100_000_000 })).wait();
-  await (await diamond.connect(player3).initializePlayer(player3Pos, 'C', { gasLimit: 100_000_000 })).wait();
-  await (await diamond.connect(player4).initializePlayer(player4Pos, 'D', { gasLimit: 100_000_000 })).wait();
+  await (await diamond.connect(player1).initializePlayer(player1Pos, 'A', { gasLimit: 500_000_000 })).wait();
+  await (await diamond.connect(player2).initializePlayer(player2Pos, 'B', { gasLimit: 500_000_000 })).wait();
+  await (await diamond.connect(player3).initializePlayer(player3Pos, 'C', { gasLimit: 500_000_000 })).wait();
+  await (await diamond.connect(player4).initializePlayer(player4Pos, 'D', { gasLimit: 500_000_000 })).wait();
 
   const player1Id = (await diamond.getPlayerId(player1.address)).toNumber();
   const player2Id = (await diamond.getPlayerId(player2.address)).toNumber();
