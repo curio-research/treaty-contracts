@@ -115,11 +115,11 @@ contract AdminFacet is UseStorage {
     function addConstant(
         string memory _functionName,
         string memory _componentName,
-        string memory _inventoryType,
+        string memory _entityName,
         uint256 _level,
         uint256 _amount
     ) external onlyAdmin returns (uint256) {
-        return Templates.addConstant(_functionName, _componentName, gs().templates[_inventoryType], _level, _amount);
+        return Templates.addConstant(_functionName, _componentName, _entityName, _level, _amount);
     }
 
     // ----------------------------------------------------------------------

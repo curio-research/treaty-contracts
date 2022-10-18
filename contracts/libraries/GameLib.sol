@@ -82,12 +82,12 @@ library GameLib {
 
         // Initialize gold mine
         if (terrain == 1 && getResourceAtTile(_startPosition) == 0) {
-            Templates.addResource(gs().templates["Gold"], _startPosition, getConstant("initializeTile", "Load", gs().templates["Gold"], 0));
+            Templates.addResource(gs().templates["Gold"], _startPosition, getConstant("initializeTile", "Load", "Gold", 0));
         }
 
         // Initialize farm
         if (terrain == 2 && getResourceAtTile(_startPosition) == 0) {
-            Templates.addResource(gs().templates["Food"], _startPosition, getConstant("initializeTile", "Load", gs().templates["Food"], 0));
+            Templates.addResource(gs().templates["Food"], _startPosition, getConstant("initializeTile", "Load", "Food", 0));
         }
 
         // Initialize tile
@@ -95,13 +95,13 @@ library GameLib {
 
         if (terrain < 3) {
             // Normal tile
-            uint256 tileGuardAmount = getConstant("initializeTile", "Amount", gs().templates["Guard"], 0);
+            uint256 tileGuardAmount = getConstant("initializeTile", "Amount", "Guard", 0);
             Templates.addConstituent(tileID, gs().templates["Guard"], tileGuardAmount);
         } else {
             // Barbarian tile
             uint256 barbarianLevel = terrain - 2;
             ECSLib.setUint("Level", tileID, barbarianLevel);
-            uint256 barbarianGuardAmount = getConstant("initializeTile", "Amount", gs().templates["Guard"], barbarianLevel);
+            uint256 barbarianGuardAmount = getConstant("initializeTile", "Amount", "Settler", barbarianLevel);
             Templates.addConstituent(tileID, gs().templates["Guard"], barbarianGuardAmount);
         }
 
@@ -239,7 +239,7 @@ library GameLib {
         uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
         for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
             uint256 cityInventoryID = getInventory(_cityID, resourceTemplateIDs[i]);
-            uint256 reward = getConstant("distributeBarbarianReward", "Amount", resourceTemplateIDs[i], barbarianLevel);
+            uint256 reward = getConstant("distributeBarbarianReward", "Amount", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), barbarianLevel);
             uint256 balance = ECSLib.getUint("Amount", cityInventoryID) + reward;
             balance = min(balance, ECSLib.getUint("Load", cityInventoryID));
             ECSLib.setUint("Amount", cityInventoryID, balance);
@@ -313,20 +313,13 @@ library GameLib {
     function getConstant(
         string memory _functionName,
         string memory _componentName,
-        uint256 _templateID,
+        string memory _entityName,
         uint256 _level
-    ) internal returns (uint256) {
-        QueryCondition[] memory query = new QueryCondition[](5);
-
-        query[0] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("Constant"));
-        query[1] = ECSLib.queryChunk(QueryType.HasVal, "FunctionName", abi.encode(_functionName));
-        query[2] = ECSLib.queryChunk(QueryType.HasVal, "ComponentName", abi.encode(_componentName));
-        query[3] = ECSLib.queryChunk(QueryType.HasVal, "Template", abi.encode(_templateID));
-        query[4] = ECSLib.queryChunk(QueryType.HasVal, "Level", abi.encode(_level));
-        uint256[] memory res = ECSLib.query(query);
-
+    ) internal view returns (uint256) {
+        string memory identifier = string(abi.encodePacked("Constant", _functionName, _componentName, _entityName, _level));
+        uint256[] memory res = ECSLib.getStringComponent("Tag").getEntitiesWithValue(identifier);
         require(res.length == 1, "CURIO: Constant assertion failed");
-        return res[0];
+        return ECSLib.getUint("Amount", res[0]);
     }
 
     function getBuildingProduction(uint256 _buildingID) internal returns (uint256) {

@@ -1114,7 +1114,7 @@ export interface Curio extends BaseContract {
     addConstant(
       _functionName: PromiseOrValue<string>,
       _componentName: PromiseOrValue<string>,
-      _inventoryType: PromiseOrValue<string>,
+      _entityName: PromiseOrValue<string>,
       _level: PromiseOrValue<BigNumberish>,
       _amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1590,7 +1590,7 @@ export interface Curio extends BaseContract {
   addConstant(
     _functionName: PromiseOrValue<string>,
     _componentName: PromiseOrValue<string>,
-    _inventoryType: PromiseOrValue<string>,
+    _entityName: PromiseOrValue<string>,
     _level: PromiseOrValue<BigNumberish>,
     _amount: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -2058,7 +2058,7 @@ export interface Curio extends BaseContract {
     addConstant(
       _functionName: PromiseOrValue<string>,
       _componentName: PromiseOrValue<string>,
-      _inventoryType: PromiseOrValue<string>,
+      _entityName: PromiseOrValue<string>,
       _level: PromiseOrValue<BigNumberish>,
       _amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -2581,7 +2581,7 @@ export interface Curio extends BaseContract {
     addConstant(
       _functionName: PromiseOrValue<string>,
       _componentName: PromiseOrValue<string>,
-      _inventoryType: PromiseOrValue<string>,
+      _entityName: PromiseOrValue<string>,
       _level: PromiseOrValue<BigNumberish>,
       _amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -3048,7 +3048,7 @@ export interface Curio extends BaseContract {
     addConstant(
       _functionName: PromiseOrValue<string>,
       _componentName: PromiseOrValue<string>,
-      _inventoryType: PromiseOrValue<string>,
+      _entityName: PromiseOrValue<string>,
       _level: PromiseOrValue<BigNumberish>,
       _amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }

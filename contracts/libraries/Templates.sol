@@ -252,17 +252,14 @@ library Templates {
     function addConstant(
         string memory _functionName,
         string memory _componentName,
-        uint256 _templateID,
+        string memory _entityName,
         uint256 _level,
         uint256 _amount
     ) public returns (uint256) {
         uint256 constantID = ECSLib.addEntity();
 
-        ECSLib.setString("Tag", constantID, "Constant");
-        ECSLib.setString("FunctionName", constantID, _functionName);
-        ECSLib.setString("ComponentName", constantID, _componentName);
-        ECSLib.setUint("Template", constantID, _templateID);
-        ECSLib.setUint("Level", constantID, _level);
+        string memory identifier = string(abi.encodePacked("Constant", _functionName, _componentName, _entityName, _level));
+        ECSLib.setString("Tag", constantID, identifier);
         ECSLib.setUint("Amount", constantID, _amount);
 
         return constantID;

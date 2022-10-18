@@ -88,12 +88,6 @@ export const createTemplates = async (diamond: Curio) => {
   templateNames.push(inventoryType);
   templateIDs.push(entity);
 
-  // Placeholder
-  inventoryType = InventoryTypeOptions.Placeholder;
-  entity = await addGetEntity(diamond);
-  templateNames.push(inventoryType);
-  templateIDs.push(entity);
-
   // Register template names used for shortcuts
   await (await diamond.registerTemplateShortcuts(templateNames, templateIDs)).wait();
 };
@@ -125,12 +119,12 @@ export const registerConstants = async (diamond: Curio) => {
 
   // `packCity`
   await (await diamond.addConstant('packCity', Cost, InventoryTypeOptions.Gold, 0, 1000000000000000)).wait();
-  await (await diamond.addConstant('packCity', Health, InventoryTypeOptions.Placeholder, 0, 1000000000000000)).wait();
+  await (await diamond.addConstant('packCity', Health, 'Settler', 0, 1000000000000000)).wait();
 
   // `upgradeTile`
   await (await diamond.addConstant('upgradeTile', Cost, InventoryTypeOptions.Gold, NULL, 10 * 200)).wait();
   await (await diamond.addConstant('upgradeTile', Cost, InventoryTypeOptions.Food, NULL, 50 * 200)).wait();
-  for (let i = 0; i <= 9; i++) {
+  for (let i = 1; i <= 9; i++) {
     await (await diamond.addConstant('upgradeTile', Amount, InventoryTypeOptions.Guard, i, Math.pow(3, i) * 200)).wait();
   }
 
@@ -145,9 +139,9 @@ export const registerConstants = async (diamond: Curio) => {
   }
 
   // `upgradeResource`
-  for (let i = 0; i <= 9; i++) {
-    await (await diamond.addConstant('upgradeResource', Cost, InventoryTypeOptions.Gold, 1, 50000)).wait();
-    await (await diamond.addConstant('upgradeResource', Cost, InventoryTypeOptions.Food, 1, 16000)).wait();
+  for (let i = 1; i <= 9; i++) {
+    await (await diamond.addConstant('upgradeResource', Cost, InventoryTypeOptions.Gold, i, 50000)).wait();
+    await (await diamond.addConstant('upgradeResource', Cost, InventoryTypeOptions.Food, i, 16000)).wait();
   }
   await (await diamond.addConstant('upgradeResource', Load, InventoryTypeOptions.Gold, 1, 5500)).wait();
   await (await diamond.addConstant('upgradeResource', Load, InventoryTypeOptions.Gold, 2, 6000)).wait();

@@ -21,7 +21,7 @@ const _abi = [
       },
       {
         internalType: "string",
-        name: "_inventoryType",
+        name: "_entityName",
         type: "string",
       },
       {
