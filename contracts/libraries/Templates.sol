@@ -20,15 +20,16 @@ library Templates {
     }
 
     function addInventory(
-        uint256 _cityID,
+        uint256 _keeperID,
         uint256 _templateID,
         uint256 _amount,
-        uint256 _load
+        uint256 _load,
+        bool _isResource
     ) public returns (uint256) {
         uint256 inventoryID = ECSLib.addEntity();
 
-        ECSLib.setString("Tag", inventoryID, "ResourceInventory");
-        ECSLib.setUint("City", inventoryID, _cityID);
+        ECSLib.setString("Tag", inventoryID, _isResource ? "ResourceInventory" : "TroopInventory");
+        ECSLib.setUint("Keeper", inventoryID, _keeperID);
         ECSLib.setUint("Template", inventoryID, _templateID);
         ECSLib.setUint("Amount", inventoryID, _amount);
         ECSLib.setUint("Load", inventoryID, _load);
@@ -181,16 +182,22 @@ library Templates {
         return guardID;
     }
 
-    function addTroopProduction() public returns (uint256) {
+    function addTroopProduction(
+        uint256 _buildingID,
+        uint256 _templateID,
+        uint256 _troopInventoryID,
+        uint256 _amount,
+        uint256 _duration
+    ) public returns (uint256) {
         uint256 productionID = ECSLib.addEntity();
 
         ECSLib.setString("Tag", productionID, "TroopProduction");
-        ECSLib.setUint("City", productionID, 0);
-        ECSLib.setUint("Template", productionID, 0);
-        ECSLib.setUint("Inventory", productionID, 0);
-        ECSLib.setUint("Amount", productionID, 0);
+        ECSLib.setUint("Keeper", productionID, _buildingID);
+        ECSLib.setUint("Template", productionID, _templateID);
+        ECSLib.setUint("Inventory", productionID, _troopInventoryID);
+        ECSLib.setUint("Amount", productionID, _amount);
         ECSLib.setUint("InitTimestamp", productionID, block.timestamp);
-        ECSLib.setUint("Duration", productionID, ECSLib.getUint("Duration", 0) * 0);
+        ECSLib.setUint("Duration", productionID, _duration);
 
         return productionID;
     }

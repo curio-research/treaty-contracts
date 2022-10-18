@@ -108,8 +108,18 @@ contract AdminFacet is UseStorage {
         uint256 _duration,
         uint256 _load,
         uint256 _cost
-    ) public returns (uint256) {
+    ) external onlyAdmin returns (uint256) {
         return Templates.addTroopTemplate(_inventoryType, _health, _speed, _moveCooldown, _battleCooldown, _attack, _defense, _duration, _load, _cost);
+    }
+
+    function addConstant(
+        string memory _functionName,
+        string memory _componentName,
+        string memory _inventoryType,
+        uint256 _level,
+        uint256 _amount
+    ) external onlyAdmin returns (uint256) {
+        return Templates.addConstant(_functionName, _componentName, gs().templates[_inventoryType], _level, _amount);
     }
 
     // ----------------------------------------------------------------------

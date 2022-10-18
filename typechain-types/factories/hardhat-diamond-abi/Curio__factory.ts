@@ -8,6 +8,45 @@ import type { Curio, CurioInterface } from "../../hardhat-diamond-abi/Curio";
 
 const _abi = [
   {
+    inputs: [
+      {
+        internalType: "string",
+        name: "_functionName",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "_componentName",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "_inventoryType",
+        type: "string",
+      },
+      {
+        internalType: "uint256",
+        name: "_level",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_amount",
+        type: "uint256",
+      },
+    ],
+    name: "addConstant",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "addEntity",
     outputs: [
@@ -1470,57 +1509,12 @@ const _abi = [
           },
           {
             internalType: "uint256",
+            name: "maxTroopCountPerArmy",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
             name: "maxPlayerCount",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "tileUpgradeGoldCost",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "buildingUpgradeGoldCost",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "cityUpgradeGoldCost",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "initCityCenterGoldLoad",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "initCityCenterFoodLoad",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "initCityCenterTroopLoad",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "cityPackCost",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "initCityGold",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "cityGuardAmount",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "tileGuardAmount",
             type: "uint256",
           },
           {

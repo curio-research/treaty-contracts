@@ -55,32 +55,14 @@ export type WorldConstantsStruct = {
   initBatchSize: PromiseOrValue<BigNumberish>;
   maxCityCountPerPlayer: PromiseOrValue<BigNumberish>;
   maxArmyCountPerPlayer: PromiseOrValue<BigNumberish>;
+  maxTroopCountPerArmy: PromiseOrValue<BigNumberish>;
   maxPlayerCount: PromiseOrValue<BigNumberish>;
-  tileUpgradeGoldCost: PromiseOrValue<BigNumberish>;
-  buildingUpgradeGoldCost: PromiseOrValue<BigNumberish>;
-  cityUpgradeGoldCost: PromiseOrValue<BigNumberish>;
-  initCityCenterGoldLoad: PromiseOrValue<BigNumberish>;
-  initCityCenterFoodLoad: PromiseOrValue<BigNumberish>;
-  initCityCenterTroopLoad: PromiseOrValue<BigNumberish>;
-  cityPackCost: PromiseOrValue<BigNumberish>;
-  initCityGold: PromiseOrValue<BigNumberish>;
-  cityGuardAmount: PromiseOrValue<BigNumberish>;
-  tileGuardAmount: PromiseOrValue<BigNumberish>;
   tileWidth: PromiseOrValue<BigNumberish>;
   barbarianCooldown: PromiseOrValue<BigNumberish>;
 };
 
 export type WorldConstantsStructOutput = [
   string,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -99,17 +81,8 @@ export type WorldConstantsStructOutput = [
   initBatchSize: BigNumber;
   maxCityCountPerPlayer: BigNumber;
   maxArmyCountPerPlayer: BigNumber;
+  maxTroopCountPerArmy: BigNumber;
   maxPlayerCount: BigNumber;
-  tileUpgradeGoldCost: BigNumber;
-  buildingUpgradeGoldCost: BigNumber;
-  cityUpgradeGoldCost: BigNumber;
-  initCityCenterGoldLoad: BigNumber;
-  initCityCenterFoodLoad: BigNumber;
-  initCityCenterTroopLoad: BigNumber;
-  cityPackCost: BigNumber;
-  initCityGold: BigNumber;
-  cityGuardAmount: BigNumber;
-  tileGuardAmount: BigNumber;
   tileWidth: BigNumber;
   barbarianCooldown: BigNumber;
 };
@@ -154,6 +127,7 @@ export declare namespace IDiamondLoupe {
 
 export interface CurioInterface extends utils.Interface {
   functions: {
+    "addConstant(string,string,string,uint256,uint256)": FunctionFragment;
     "addEntity()": FunctionFragment;
     "addTroopTemplate(string,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256)": FunctionFragment;
     "adminInitializeTile((uint256,uint256))": FunctionFragment;
@@ -245,6 +219,7 @@ export interface CurioInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "addConstant"
       | "addEntity"
       | "addTroopTemplate"
       | "adminInitializeTile"
@@ -334,6 +309,16 @@ export interface CurioInterface extends utils.Interface {
       | "queryChunk"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "addConstant",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
+  ): string;
   encodeFunctionData(functionFragment: "addEntity", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "addTroopTemplate",
@@ -710,6 +695,10 @@ export interface CurioInterface extends utils.Interface {
     ]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "addConstant",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "addEntity", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "addTroopTemplate",
@@ -1122,6 +1111,15 @@ export interface Curio extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    addConstant(
+      _functionName: PromiseOrValue<string>,
+      _componentName: PromiseOrValue<string>,
+      _inventoryType: PromiseOrValue<string>,
+      _level: PromiseOrValue<BigNumberish>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     addEntity(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -1589,6 +1587,15 @@ export interface Curio extends BaseContract {
     ): Promise<[QueryConditionStructOutput]>;
   };
 
+  addConstant(
+    _functionName: PromiseOrValue<string>,
+    _componentName: PromiseOrValue<string>,
+    _inventoryType: PromiseOrValue<string>,
+    _level: PromiseOrValue<BigNumberish>,
+    _amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   addEntity(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -2048,6 +2055,15 @@ export interface Curio extends BaseContract {
   ): Promise<QueryConditionStructOutput>;
 
   callStatic: {
+    addConstant(
+      _functionName: PromiseOrValue<string>,
+      _componentName: PromiseOrValue<string>,
+      _inventoryType: PromiseOrValue<string>,
+      _level: PromiseOrValue<BigNumberish>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     addEntity(overrides?: CallOverrides): Promise<BigNumber>;
 
     addTroopTemplate(
@@ -2562,6 +2578,15 @@ export interface Curio extends BaseContract {
   };
 
   estimateGas: {
+    addConstant(
+      _functionName: PromiseOrValue<string>,
+      _componentName: PromiseOrValue<string>,
+      _inventoryType: PromiseOrValue<string>,
+      _level: PromiseOrValue<BigNumberish>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     addEntity(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -3020,6 +3045,15 @@ export interface Curio extends BaseContract {
   };
 
   populateTransaction: {
+    addConstant(
+      _functionName: PromiseOrValue<string>,
+      _componentName: PromiseOrValue<string>,
+      _inventoryType: PromiseOrValue<string>,
+      _level: PromiseOrValue<BigNumberish>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     addEntity(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

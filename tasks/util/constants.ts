@@ -1,4 +1,4 @@
-import { Attack, Cost, Defense, Duration, encodeString, encodeUint256, Health, InventoryType, InventoryTypeOptions, Speed, Load, Tag, Tags, MoveCooldown, BattleCooldown, TILE_TYPE } from 'curio-vault';
+import { Attack, Cost, Defense, Duration, encodeString, encodeUint256, Health, InventoryType, InventoryTypeOptions, Speed, Load, Tag, Tags, MoveCooldown, BattleCooldown, TILE_TYPE, Amount } from 'curio-vault';
 import { WorldConstantsStruct, Curio } from './../../typechain-types/hardhat-diamond-abi/Curio';
 import { addGetEntity } from './mapHelper';
 import { MapInput } from './types';
@@ -27,18 +27,9 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): a
     initBatchSize: 10,
     maxCityCountPerPlayer: 3,
     maxArmyCountPerPlayer: 2,
+    maxTroopCountPerArmy: 1000,
     maxPlayerCount: 20,
-    tileUpgradeGoldCost: 1000, // 650
-    buildingUpgradeGoldCost: 3000, // internal buildings
-    cityUpgradeGoldCost: 100000,
-    cityPackCost: 1000000000000000, // temporarily disabled
-    initCityCenterGoldLoad: 10000000,
-    initCityCenterFoodLoad: 10000000,
-    initCityCenterTroopLoad: 2000,
-    initCityGold: 0,
     tileWidth: TILE_WIDTH,
-    tileGuardAmount: 200, // 140
-    cityGuardAmount: 1500,
     barbarianCooldown: 60, // Fixme
   };
 };
@@ -97,6 +88,12 @@ export const createTemplates = async (diamond: Curio) => {
   templateNames.push(inventoryType);
   templateIDs.push(entity);
 
+  // Placeholder
+  inventoryType = InventoryTypeOptions.Placeholder;
+  entity = await addGetEntity(diamond);
+  templateNames.push(inventoryType);
+  templateIDs.push(entity);
+
   // Register template names used for shortcuts
   await (await diamond.registerTemplateShortcuts(templateNames, templateIDs)).wait();
 };
@@ -105,4 +102,113 @@ export const createTemplates = async (diamond: Curio) => {
 // IN-GAME AMOUNTS
 // ----------------------------------------------------------
 
-export const registerConstants = async (diamond: Curio) => {};
+export const registerConstants = async (diamond: Curio) => {
+  // TODO: change some of the "Amount" to more descriptive words
+
+  const NULL = 0; // indicator: not related to level
+
+  // `initializePlayer`
+  await (await diamond.addConstant('initializePlayer', Amount, InventoryTypeOptions.Gold, NULL, 0)).wait();
+  await (await diamond.addConstant('initializePlayer', Amount, InventoryTypeOptions.Food, NULL, 0)).wait();
+  await (await diamond.addConstant('initializePlayer', Load, InventoryTypeOptions.Gold, NULL, 10000000)).wait();
+  await (await diamond.addConstant('initializePlayer', Load, InventoryTypeOptions.Food, NULL, 10000000)).wait();
+
+  // `initializeTile`
+  await (await diamond.addConstant('initializeTile', Amount, InventoryTypeOptions.Guard, 0, 200)).wait();
+  await (await diamond.addConstant('initializeTile', Amount, InventoryTypeOptions.Guard, 1, 1000)).wait(); // level 1 barbarian
+  await (await diamond.addConstant('initializeTile', Amount, InventoryTypeOptions.Guard, 2, 2000)).wait(); // level 2 barbarian
+  await (await diamond.addConstant('initializeTile', Load, InventoryTypeOptions.Gold, 0, 1000)).wait();
+  await (await diamond.addConstant('initializeTile', Load, InventoryTypeOptions.Food, 0, 1000)).wait();
+
+  // `foundCity`
+  await (await diamond.addConstant('foundCity', Amount, InventoryTypeOptions.Guard, 0, 1500)).wait();
+
+  // `packCity`
+  await (await diamond.addConstant('packCity', Cost, InventoryTypeOptions.Gold, 0, 1000000000000000)).wait();
+  await (await diamond.addConstant('packCity', Health, InventoryTypeOptions.Placeholder, 0, 1000000000000000)).wait();
+
+  // `upgradeTile`
+  await (await diamond.addConstant('upgradeTile', Cost, InventoryTypeOptions.Gold, NULL, 10 * 200)).wait();
+  await (await diamond.addConstant('upgradeTile', Cost, InventoryTypeOptions.Food, NULL, 50 * 200)).wait();
+  for (let i = 0; i <= 9; i++) {
+    await (await diamond.addConstant('upgradeTile', Amount, InventoryTypeOptions.Guard, i, Math.pow(3, i) * 200)).wait();
+  }
+
+  // `upgradeCityInventory`
+  await (await diamond.addConstant('upgradeCityInventory', Cost, InventoryTypeOptions.Gold, NULL, 3000)).wait();
+  for (let i = 1; i <= 9; i++) {
+    await (await diamond.addConstant('upgradeCityInventory', Load, InventoryTypeOptions.Gold, i, 10000000 * i)).wait();
+    await (await diamond.addConstant('upgradeCityInventory', Load, InventoryTypeOptions.Food, i, 10000000 * i)).wait();
+    await (await diamond.addConstant('upgradeCityInventory', Load, InventoryTypeOptions.Horseman, i, 2000 * i)).wait();
+    await (await diamond.addConstant('upgradeCityInventory', Load, InventoryTypeOptions.Warrior, i, 2000 * i)).wait();
+    await (await diamond.addConstant('upgradeCityInventory', Load, InventoryTypeOptions.Slinger, i, 2000 * i)).wait();
+  }
+
+  // `upgradeResource`
+  for (let i = 0; i <= 9; i++) {
+    await (await diamond.addConstant('upgradeResource', Cost, InventoryTypeOptions.Gold, 1, 50000)).wait();
+    await (await diamond.addConstant('upgradeResource', Cost, InventoryTypeOptions.Food, 1, 16000)).wait();
+  }
+  await (await diamond.addConstant('upgradeResource', Load, InventoryTypeOptions.Gold, 1, 5500)).wait();
+  await (await diamond.addConstant('upgradeResource', Load, InventoryTypeOptions.Gold, 2, 6000)).wait();
+  await (await diamond.addConstant('upgradeResource', Load, InventoryTypeOptions.Gold, 3, 6500)).wait();
+  await (await diamond.addConstant('upgradeResource', Load, InventoryTypeOptions.Gold, 4, 7000)).wait();
+  await (await diamond.addConstant('upgradeResource', Load, InventoryTypeOptions.Gold, 5, 7500)).wait();
+  await (await diamond.addConstant('upgradeResource', Load, InventoryTypeOptions.Gold, 6, 8000)).wait();
+  await (await diamond.addConstant('upgradeResource', Load, InventoryTypeOptions.Gold, 7, 8500)).wait();
+  await (await diamond.addConstant('upgradeResource', Load, InventoryTypeOptions.Gold, 8, 9000)).wait();
+  await (await diamond.addConstant('upgradeResource', Load, InventoryTypeOptions.Gold, 9, 9500)).wait();
+  await (await diamond.addConstant('upgradeResource', Load, InventoryTypeOptions.Food, 1, 100000)).wait();
+  await (await diamond.addConstant('upgradeResource', Load, InventoryTypeOptions.Food, 2, 110000)).wait();
+  await (await diamond.addConstant('upgradeResource', Load, InventoryTypeOptions.Food, 3, 120000)).wait();
+  await (await diamond.addConstant('upgradeResource', Load, InventoryTypeOptions.Food, 4, 130000)).wait();
+  await (await diamond.addConstant('upgradeResource', Load, InventoryTypeOptions.Food, 5, 140000)).wait();
+  await (await diamond.addConstant('upgradeResource', Load, InventoryTypeOptions.Food, 6, 150000)).wait();
+  await (await diamond.addConstant('upgradeResource', Load, InventoryTypeOptions.Food, 7, 160000)).wait();
+  await (await diamond.addConstant('upgradeResource', Load, InventoryTypeOptions.Food, 8, 170000)).wait();
+  await (await diamond.addConstant('upgradeResource', Load, InventoryTypeOptions.Food, 9, 180000)).wait();
+
+  // `upgradeCity`
+  await (await diamond.addConstant('upgradeCity', Cost, InventoryTypeOptions.Gold, 0, 100000)).wait();
+  for (let i = 1; i <= 3; i++) {
+    await (await diamond.addConstant('upgradeCity', Amount, InventoryTypeOptions.Guard, i, 1500 * i)).wait();
+  }
+
+  // `startTroopProduction`
+  await (await diamond.addConstant('startTroopProduction', Cost, InventoryTypeOptions.Gold, 0, 10)).wait();
+  await (await diamond.addConstant('startTroopProduction', Cost, InventoryTypeOptions.Food, 0, 50)).wait();
+
+  // `harvestResource`
+  await (await diamond.addConstant('harvestResource', Amount, InventoryTypeOptions.Gold, 1, 160)).wait();
+  await (await diamond.addConstant('harvestResource', Amount, InventoryTypeOptions.Gold, 2, 200)).wait();
+  await (await diamond.addConstant('harvestResource', Amount, InventoryTypeOptions.Gold, 3, 240)).wait();
+  await (await diamond.addConstant('harvestResource', Amount, InventoryTypeOptions.Gold, 4, 260)).wait();
+  await (await diamond.addConstant('harvestResource', Amount, InventoryTypeOptions.Gold, 5, 280)).wait();
+  await (await diamond.addConstant('harvestResource', Amount, InventoryTypeOptions.Gold, 6, 300)).wait();
+  await (await diamond.addConstant('harvestResource', Amount, InventoryTypeOptions.Gold, 7, 320)).wait();
+  await (await diamond.addConstant('harvestResource', Amount, InventoryTypeOptions.Gold, 8, 340)).wait();
+  await (await diamond.addConstant('harvestResource', Amount, InventoryTypeOptions.Gold, 9, 360)).wait();
+  await (await diamond.addConstant('harvestResource', Amount, InventoryTypeOptions.Food, 1, 200)).wait();
+  await (await diamond.addConstant('harvestResource', Amount, InventoryTypeOptions.Food, 2, 220)).wait();
+  await (await diamond.addConstant('harvestResource', Amount, InventoryTypeOptions.Food, 3, 240)).wait();
+  await (await diamond.addConstant('harvestResource', Amount, InventoryTypeOptions.Food, 4, 250)).wait();
+  await (await diamond.addConstant('harvestResource', Amount, InventoryTypeOptions.Food, 5, 260)).wait();
+  await (await diamond.addConstant('harvestResource', Amount, InventoryTypeOptions.Food, 6, 270)).wait();
+  await (await diamond.addConstant('harvestResource', Amount, InventoryTypeOptions.Food, 7, 280)).wait();
+  await (await diamond.addConstant('harvestResource', Amount, InventoryTypeOptions.Food, 8, 290)).wait();
+  await (await diamond.addConstant('harvestResource', Amount, InventoryTypeOptions.Food, 9, 300)).wait();
+
+  // `harvestResourceFromCity`
+  await (await diamond.addConstant('harvestResourcesFromCity', Amount, InventoryTypeOptions.Gold, NULL, 180)).wait();
+  await (await diamond.addConstant('harvestResourcesFromCity', Amount, InventoryTypeOptions.Food, NULL, 180)).wait();
+  for (let i = 1; i <= 5; i++) {
+    await (await diamond.addConstant('harvestResourcesFromCity', Load, InventoryTypeOptions.Gold, i, 100000000)).wait();
+    await (await diamond.addConstant('harvestResourcesFromCity', Load, InventoryTypeOptions.Food, i, 100000000)).wait();
+  }
+
+  // `distributeBarbarianReward`
+  await (await diamond.addConstant('distributeBarbarianReward', Amount, InventoryTypeOptions.Gold, 1, 180000)).wait();
+  await (await diamond.addConstant('distributeBarbarianReward', Amount, InventoryTypeOptions.Gold, 2, 480000)).wait();
+  await (await diamond.addConstant('distributeBarbarianReward', Amount, InventoryTypeOptions.Food, 1, 60000)).wait();
+  await (await diamond.addConstant('distributeBarbarianReward', Amount, InventoryTypeOptions.Food, 2, 150000)).wait();
+};
