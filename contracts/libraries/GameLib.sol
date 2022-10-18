@@ -82,138 +82,30 @@ library GameLib {
 
         // Initialize gold mine
         if (terrain == 1 && getResourceAtTile(_startPosition) == 0) {
-            Templates.addResource(gs().templates["Gold"], _startPosition, _resourceCap(1));
+            Templates.addResource(gs().templates["Gold"], _startPosition, getConstant("initializeTile", "Load", "Gold", 0));
         }
 
         // Initialize farm
         if (terrain == 2 && getResourceAtTile(_startPosition) == 0) {
-            Templates.addResource(gs().templates["Food"], _startPosition, _resourceCap(1));
+            Templates.addResource(gs().templates["Food"], _startPosition, getConstant("initializeTile", "Load", "Food", 0));
         }
-
-        // if (terrain >= 4 && terrain <= 6) {
-        //     // Initialize barbarian
-        //     uint256 barbarianID = ECSLib.addEntity();
-        //     uint256 infantryAmount = _barbarianInfantrySelector(terrain - 3);
-        //     uint256 infantryTemplate = getTemplateByInventoryType("Infantry");
-
-        //     uint256 infantryConstituentID = ECSLib.addEntity();
-        //     ECSLib.setString("Tag", infantryConstituentID, "ArmyConstituent");
-        //     ECSLib.setUint("Keeper", infantryConstituentID, barbarianID);
-        //     ECSLib.setUint("Template", infantryConstituentID, infantryTemplate);
-        //     ECSLib.setUint("Amount", infantryConstituentID, infantryAmount);
-
-        //     ECSLib.setString("Tag", barbarianID, "Army");
-        //     ECSLib.setPosition("Position", barbarianID, _position);
-        //     ECSLib.setUint("Health", barbarianID, ECSLib.getUint("Health", infantryTemplate) * infantryAmount);
-        //     ECSLib.setUint("Speed", barbarianID, ECSLib.getUint("Speed", infantryTemplate));
-        //     ECSLib.setUint("Attack", barbarianID, ECSLib.getUint("Attack", infantryTemplate) * infantryAmount);
-        //     ECSLib.setUint("Defense", barbarianID, ECSLib.getUint("Defense", infantryTemplate) * infantryAmount);
-        // }
 
         // Initialize tile
         uint256 tileID = Templates.addTile(_startPosition, terrain);
 
         if (terrain < 3) {
             // Normal tile
-            Templates.addConstituent(tileID, gs().templates["Guard"], gs().worldConstants.tileGuardAmount);
+            uint256 tileGuardAmount = getConstant("initializeTile", "Amount", "Guard", 0);
+            Templates.addConstituent(tileID, gs().templates["Guard"], tileGuardAmount);
         } else {
             // Barbarian tile
             uint256 barbarianLevel = terrain - 2;
             ECSLib.setUint("Level", tileID, barbarianLevel);
-            (, , uint256 barbarianAmount) = barbarianInfo(barbarianLevel);
-            Templates.addConstituent(tileID, gs().templates["Guard"], barbarianAmount);
+            uint256 barbarianGuardAmount = getConstant("initializeTile", "Amount", "Guard", barbarianLevel);
+            Templates.addConstituent(tileID, gs().templates["Guard"], barbarianGuardAmount);
         }
 
         return tileID;
-    }
-
-    // TODO: hardcoded; we should make certain things into components
-    function getResourceHarvestRate(uint256 _templateID, uint256 _resourceLevel) internal view returns (uint256) {
-        if (_templateID == gs().templates["Gold"]) {
-            if (_resourceLevel == 1) return 160;
-            if (_resourceLevel == 2) return 200;
-            if (_resourceLevel == 3) return 240;
-            if (_resourceLevel == 4) return 260;
-            if (_resourceLevel == 5) return 280;
-            if (_resourceLevel == 6) return 300;
-            if (_resourceLevel == 7) return 320;
-            if (_resourceLevel == 8) return 340;
-            if (_resourceLevel == 9) return 360;
-            else return 0;
-        } else if (_templateID == gs().templates["Food"]) {
-            if (_resourceLevel == 1) return 200;
-            if (_resourceLevel == 2) return 220;
-            if (_resourceLevel == 3) return 240;
-            if (_resourceLevel == 4) return 250;
-            if (_resourceLevel == 5) return 260;
-            if (_resourceLevel == 6) return 270;
-            if (_resourceLevel == 7) return 280;
-            if (_resourceLevel == 8) return 290;
-            if (_resourceLevel == 9) return 300;
-            else return 0;
-        } else return 0;
-    }
-
-    function getResourceLoad(uint256 _templateID, uint256 _resourceLevel) internal view returns (uint256) {
-        if (_templateID == gs().templates["Gold"]) {
-            if (_resourceLevel == 1) return 5500;
-            if (_resourceLevel == 2) return 6000;
-            if (_resourceLevel == 3) return 6500;
-            if (_resourceLevel == 4) return 7000;
-            if (_resourceLevel == 5) return 7500;
-            if (_resourceLevel == 6) return 8000;
-            if (_resourceLevel == 7) return 8500;
-            if (_resourceLevel == 8) return 9000;
-            if (_resourceLevel == 9) return 9500;
-            else return 0;
-        } else if (_templateID == gs().templates["Food"]) {
-            if (_resourceLevel == 1) return 100000;
-            if (_resourceLevel == 2) return 110000;
-            if (_resourceLevel == 3) return 120000;
-            if (_resourceLevel == 4) return 130000;
-            if (_resourceLevel == 5) return 140000;
-            if (_resourceLevel == 6) return 150000;
-            if (_resourceLevel == 7) return 160000;
-            if (_resourceLevel == 8) return 170000;
-            if (_resourceLevel == 9) return 180000;
-            else return 0;
-        } else {
-            return 0;
-        }
-    }
-
-    function barbarianInfo(uint256 _level)
-        internal
-        pure
-        returns (
-            uint256,
-            uint256,
-            uint256
-        )
-    {
-        // gold, food, amount
-        if (_level == 1) return (180000, 60000, 1000);
-        if (_level == 2) return (480000, 150000, 2000);
-        else return (0, 0, 0);
-    }
-
-    // TODO: hardcoded like _resourceHarvestRate
-    function getResourceUpgradeCost(uint256 _currentLevel) internal pure returns (uint256, uint256) {
-        require(_currentLevel <= 9, "CURIO: Max goldmine level reached");
-        if (_currentLevel == 0) return (50000, 16000);
-        if (_currentLevel == 1) return (50000, 16000);
-        if (_currentLevel == 2) return (50000, 16000);
-        if (_currentLevel == 3) return (50000, 16000);
-        if (_currentLevel == 4) return (50000, 16000);
-        if (_currentLevel == 5) return (50000, 16000);
-        if (_currentLevel == 6) return (50000, 16000);
-        if (_currentLevel == 7) return (50000, 16000);
-        if (_currentLevel == 8) return (50000, 16000);
-        else return (0, 0);
-    }
-
-    function _barbarianInfantrySelector(uint256 _level) private pure returns (uint256) {
-        return _level * 1000;
     }
 
     function removeArmy(uint256 _armyID) internal {
@@ -237,13 +129,7 @@ library GameLib {
         uint256 armyInventoryAmount;
         if (inventoryID == 0) {
             armyInventoryAmount = 0;
-
-            inventoryID = ECSLib.addEntity();
-            ECSLib.setString("Tag", inventoryID, "TroopInventory");
-            ECSLib.setUint("Army", inventoryID, _armyID);
-            ECSLib.setUint("Template", inventoryID, templateID);
-            ECSLib.setUint("Amount", inventoryID, armyInventoryAmount);
-            ECSLib.setUint("Load", inventoryID, ECSLib.getUint("Load", _armyID));
+            inventoryID = Templates.addInventory(_armyID, templateID, armyInventoryAmount, ECSLib.getUint("Load", _armyID), true);
         } else {
             armyInventoryAmount = ECSLib.getUint("Amount", inventoryID);
         }
@@ -256,6 +142,7 @@ library GameLib {
         ECSLib.removeEntity(gatherID);
     }
 
+    // FIXME: Hardcoded triangular relations
     function getAttackBonus(uint256 _offenderTemplateID, uint256 _defenderTemplateID) public view returns (uint256) {
         uint256 horsemanTemplateId = gs().templates["Horseman"];
         uint256 warriorTemplateId = gs().templates["Warrior"];
@@ -348,17 +235,15 @@ library GameLib {
     }
 
     function distributeBarbarianReward(uint256 _cityID, uint256 _barbarianTileID) internal {
-        (uint256 barbarianGold, uint256 barbarianFood, ) = barbarianInfo(ECSLib.getUint("Level", _barbarianTileID));
-
-        uint256 winnerCityGoldInventoryID = getInventory(_cityID, gs().templates["Gold"]);
-        uint256 existingCityGold = ECSLib.getUint("Amount", winnerCityGoldInventoryID);
-        uint256 winnerGoldTotalAmount = min(ECSLib.getUint("Load", winnerCityGoldInventoryID), barbarianGold + existingCityGold);
-        ECSLib.setUint("Amount", winnerCityGoldInventoryID, winnerGoldTotalAmount);
-
-        uint256 winnerCityFoodInventoryID = getInventory(_cityID, gs().templates["Food"]);
-        uint256 existingCityFood = ECSLib.getUint("Amount", winnerCityFoodInventoryID);
-        uint256 winnerFoodTotalAmount = min(ECSLib.getUint("Load", winnerCityFoodInventoryID), barbarianFood + existingCityFood);
-        ECSLib.setUint("Amount", winnerCityFoodInventoryID, winnerFoodTotalAmount);
+        uint256 barbarianLevel = ECSLib.getUint("Level", _barbarianTileID);
+        uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
+        for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
+            uint256 cityInventoryID = getInventory(_cityID, resourceTemplateIDs[i]);
+            uint256 reward = getConstant("distributeBarbarianReward", "Amount", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), barbarianLevel);
+            uint256 balance = ECSLib.getUint("Amount", cityInventoryID) + reward;
+            balance = min(balance, ECSLib.getUint("Load", cityInventoryID));
+            ECSLib.setUint("Amount", cityInventoryID, balance);
+        }
     }
 
     function unloadResources(uint256 _cityID, uint256 _armyID) internal {
@@ -423,6 +308,18 @@ library GameLib {
         query[0] = ECSLib.queryChunk(QueryType.Has, "Speed", new bytes(0));
         query[1] = ECSLib.queryChunk(QueryType.HasVal, "StartPosition", abi.encode(_startPosition));
         return ECSLib.query(query);
+    }
+
+    function getConstant(
+        string memory _functionName,
+        string memory _componentName,
+        string memory _entityName,
+        uint256 _level
+    ) internal view returns (uint256) {
+        string memory identifier = string(abi.encodePacked("Constant-", _functionName, "-", _componentName, "-", _entityName, "-", _level));
+        uint256[] memory res = ECSLib.getStringComponent("Tag").getEntitiesWithValue(identifier);
+        require(res.length == 1, string(abi.encodePacked("CURIO: Constant with Tag=", identifier, " not found")));
+        return ECSLib.getUint("Amount", res[0]);
     }
 
     function getBuildingProduction(uint256 _buildingID) internal returns (uint256) {
@@ -509,7 +406,7 @@ library GameLib {
 
     function getArmyInventory(uint256 _armyID, uint256 _templateID) internal returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](3);
-        query[0] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("TroopInventory"));
+        query[0] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("ResourceInventory"));
         query[1] = ECSLib.queryChunk(QueryType.HasVal, "Army", abi.encode(_armyID));
         query[2] = ECSLib.queryChunk(QueryType.HasVal, "Template", abi.encode(_templateID));
         uint256[] memory res = ECSLib.query(query);
@@ -646,31 +543,9 @@ library GameLib {
         return !coincident(_position, _centerPosition) && withinDistance(_position, _centerPosition, 2);
     }
 
-    function getSettlerHealthByLevel(uint256 _level) internal pure returns (uint256) {
-        require(_level >= 1, "CURIO: City level must be at least 1");
-        return _level * 2 + 5;
-    }
-
     function getCityTileCountByLevel(uint256 _level) internal pure returns (uint256) {
         require(_level >= 1, "CURIO: City level must be at least 1");
         return ((_level + 1) * (_level + 2)) / 2 + 6;
-    }
-
-    function getHarvestCap(uint256 _level) internal pure returns (uint256) {
-        if (_level == 1) return 100000000;
-        if (_level == 2) return 6000;
-        if (_level == 3) return 9000;
-        if (_level == 4) return 12000;
-        if (_level == 5) return 15000;
-        return 0;
-    }
-
-    // TODO: hardcoded
-    function _resourceCap(uint256 _level) private pure returns (uint256) {
-        if (_level == 1) return 1000;
-        if (_level == 2) return 2000;
-        if (_level == 3) return 3000;
-        return 0;
     }
 
     function getPlayerCity(uint256 _playerID) internal returns (uint256) {
@@ -682,12 +557,9 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    function goldmineUpgradeSelector(uint256 _goldLevel) internal pure returns (uint256) {
-        if (_goldLevel == 0) return 500; // from level 0 to 1 (purchasing gold mine
-        return 0;
-    }
-
-    // checkers
+    // ----------------------------------------------------------
+    // CHECKERS
+    // ----------------------------------------------------------
 
     function ongoingGameCheck() internal view {
         require(!gs().isPaused, "CURIO: Game is paused");

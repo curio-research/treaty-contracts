@@ -35,6 +35,14 @@ struct ComponentSpec {
     ValueType valueType;
 }
 
+struct ConstantSpec {
+    string functionName;
+    string componentName;
+    string entityName;
+    uint256 level;
+    uint256 value;
+}
+
 struct Position {
     uint256 x;
     uint256 y;
@@ -53,19 +61,9 @@ struct WorldConstants {
     uint256 initBatchSize; // default is 50 if numInitTerrainTypes = 6
     uint256 maxCityCountPerPlayer;
     uint256 maxArmyCountPerPlayer;
+    uint256 maxTroopCountPerArmy;
     uint256 maxPlayerCount;
-    uint256 tileUpgradeGoldCost;
-    uint256 buildingUpgradeGoldCost;
-    uint256 cityUpgradeGoldCost; // constant for now but realistically not ?
-    uint256 initCityCenterGoldLoad;
-    uint256 initCityCenterFoodLoad;
-    uint256 initCityCenterTroopLoad;
-    uint256 cityPackCost;
-    uint256 initCityGold;
-    uint256 cityGuardAmount;
-    uint256 tileGuardAmount;
     uint256 tileWidth;
-    uint256 barbarianCooldown;
 }
 
 struct GameState {

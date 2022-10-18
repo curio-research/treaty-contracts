@@ -42,7 +42,7 @@ contract TreatyTest is Test, DiamondDeployTest {
             game.foundCity(texasID, texasTiles, "Lone Star Republic");
             vm.stopPrank();
             assertEq(getter.getCityFood(texasID), 0);
-            assertEq(getter.getCityGold(texasID), _generateWorldConstants().initCityGold);
+            // assertEq(getter.getCityGold(texasID), _generateWorldConstants().initCityGold);
         }
 
         // Produce troop and organize army
@@ -347,8 +347,8 @@ contract TreatyTest is Test, DiamondDeployTest {
             assertLe(moscowInfantryAmount, 500 - 20); // FIXME
 
             uint256 kievDefenseAmount = abi.decode(getter.getComponent("Amount").getBytesValue(getter.getConstituentAtTile(kievSuburbTileID)), (uint256));
-            assertGe(kievDefenseAmount, _generateWorldConstants().cityGuardAmount - 50);
-            assertLe(moscowInfantryAmount, _generateWorldConstants().cityGuardAmount - 20); // FIXME
+            // assertGe(kievDefenseAmount, _generateWorldConstants().cityGuardAmount - 50);
+            // assertLe(moscowInfantryAmount, _generateWorldConstants().cityGuardAmount - 20); // FIXME
             console.log("Moscow encounters great setback advancing to Kiev");
         }
         time += 6;
@@ -416,16 +416,16 @@ contract TreatyTest is Test, DiamondDeployTest {
     }
 
     function testEntityRemoval() public {
-        // // Check pre-condition
-        // uint256 _settyID = getter.getSettlerAt(player1Pos);
-        // assertEq(getter.getComponent("CanSettle").getEntities().length, 3);
+        // Check pre-condition
+        uint256 _settyID = getter.getSettlerAt(player1Pos);
+        assertEq(getter.getComponent("CanSettle").getEntities().length, 3);
 
-        // // Remove settler
-        // vm.prank(deployer);
-        // admin.removeEntity(_settyID);
+        // Remove settler
+        vm.prank(deployer);
+        admin.removeEntity(_settyID);
 
         // // Check post-condition
-        // assertEq(getter.getComponent("CanSettle").getEntities().length, 2);
+        assertEq(getter.getComponent("CanSettle").getEntities().length, 2);
         Position[] memory _territory = new Position[](9);
         _territory[0] = Position({x: 50, y: 20});
         _territory[1] = Position({x: 50, y: 30});
@@ -441,12 +441,12 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.startPrank(player2);
         uint256 _setty2ID = getter.getSettlerAt(player2Pos);
         game.foundCity(_setty2ID, _territory, "Philadelphia");
-        // assertEq(getter.getComponent("Tag").getEntitiesWithValue(abi.encode("Tile")).length, 9);
+        assertEq(getter.getComponent("Tag").getEntitiesWithValue(abi.encode("Tile")).length, 9);
 
         // Player 2 packs the city
         game.packCity(_setty2ID);
 
-        // assertEq(getter.getComponent("Tag").getEntitiesWithValue(abi.encode("Tile")).length, 3);
+        assertEq(getter.getComponent("Tag").getEntitiesWithValue(abi.encode("Tile")).length, 3);
         vm.stopPrank();
     }
 
@@ -621,7 +621,7 @@ contract TreatyTest is Test, DiamondDeployTest {
             game.foundCity(texasID, texasTiles, "Lone Star Republic");
             vm.stopPrank();
             assertEq(getter.getCityFood(texasID), 0);
-            assertEq(getter.getCityGold(texasID), _generateWorldConstants().initCityGold);
+            // assertEq(getter.getCityGold(texasID), _generateWorldConstants().initCityGold);
         }
 
         vm.startPrank(deployer);

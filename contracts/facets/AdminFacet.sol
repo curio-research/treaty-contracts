@@ -3,7 +3,7 @@ pragma solidity ^0.8.4;
 
 import "contracts/libraries/Storage.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
-import {ComponentSpec, Position, Tile, ValueType, WorldConstants} from "contracts/libraries/Types.sol";
+import {ComponentSpec, ConstantSpec, Position, Tile, ValueType, WorldConstants} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 import "contracts/libraries/Templates.sol";
 import {Set} from "contracts/Set.sol";
@@ -35,7 +35,11 @@ contract AdminFacet is UseStorage {
         GameLib.initializeTile(_startPosition);
     }
 
-    function assignResource(uint256 _cityID, string memory _inventoryType, uint256 _amount) external onlyAdmin {
+    function assignResource(
+        uint256 _cityID,
+        string memory _inventoryType,
+        uint256 _amount
+    ) external onlyAdmin {
         uint256 templateID = gs().templates[_inventoryType];
         uint256 cityInventoryID = GameLib.getInventory(_cityID, templateID);
         uint256 existingCityResource = ECSLib.getUint("Amount", cityInventoryID);
@@ -104,8 +108,26 @@ contract AdminFacet is UseStorage {
         uint256 _duration,
         uint256 _load,
         uint256 _cost
-    ) public returns (uint256) {
+    ) external onlyAdmin returns (uint256) {
         return Templates.addTroopTemplate(_inventoryType, _health, _speed, _moveCooldown, _battleCooldown, _attack, _defense, _duration, _load, _cost);
+    }
+
+    function addConstant(
+        string memory _functionName,
+        string memory _componentName,
+        string memory _entityName,
+        uint256 _level,
+        uint256 _amount
+    ) external onlyAdmin returns (uint256) {
+        return Templates.addConstant(_functionName, _componentName, _entityName, _level, _amount);
+    }
+
+    function bulkAddConstants(ConstantSpec[] memory _constantSpecs) external onlyAdmin {
+        ConstantSpec memory spec;
+        for (uint256 i = 0; i < _constantSpecs.length; i++) {
+            spec = _constantSpecs[i];
+            Templates.addConstant(spec.functionName, spec.componentName, spec.entityName, spec.level, spec.value);
+        }
     }
 
     // ----------------------------------------------------------------------

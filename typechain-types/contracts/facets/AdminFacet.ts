@@ -33,6 +33,28 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
   y: BigNumber;
 };
 
+export type ConstantSpecStruct = {
+  functionName: PromiseOrValue<string>;
+  componentName: PromiseOrValue<string>;
+  entityName: PromiseOrValue<string>;
+  level: PromiseOrValue<BigNumberish>;
+  value: PromiseOrValue<BigNumberish>;
+};
+
+export type ConstantSpecStructOutput = [
+  string,
+  string,
+  string,
+  BigNumber,
+  BigNumber
+] & {
+  functionName: string;
+  componentName: string;
+  entityName: string;
+  level: BigNumber;
+  value: BigNumber;
+};
+
 export type ComponentSpecStruct = {
   name: PromiseOrValue<string>;
   valueType: PromiseOrValue<BigNumberish>;
@@ -45,10 +67,12 @@ export type ComponentSpecStructOutput = [string, number] & {
 
 export interface AdminFacetInterface extends utils.Interface {
   functions: {
+    "addConstant(string,string,string,uint256,uint256)": FunctionFragment;
     "addEntity()": FunctionFragment;
     "addTroopTemplate(string,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256)": FunctionFragment;
     "adminInitializeTile((uint256,uint256))": FunctionFragment;
     "assignResource(uint256,string,uint256)": FunctionFragment;
+    "bulkAddConstants((string,string,string,uint256,uint256)[])": FunctionFragment;
     "bulkInitializeTiles((uint256,uint256)[])": FunctionFragment;
     "createArmy(uint256,(uint256,uint256))": FunctionFragment;
     "reactivatePlayer(address)": FunctionFragment;
@@ -64,10 +88,12 @@ export interface AdminFacetInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "addConstant"
       | "addEntity"
       | "addTroopTemplate"
       | "adminInitializeTile"
       | "assignResource"
+      | "bulkAddConstants"
       | "bulkInitializeTiles"
       | "createArmy"
       | "reactivatePlayer"
@@ -81,6 +107,16 @@ export interface AdminFacetInterface extends utils.Interface {
       | "storeEncodedColumnBatches"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "addConstant",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>
+    ]
+  ): string;
   encodeFunctionData(functionFragment: "addEntity", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "addTroopTemplate",
@@ -108,6 +144,10 @@ export interface AdminFacetInterface extends utils.Interface {
       PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>
     ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "bulkAddConstants",
+    values: [ConstantSpecStruct[]]
   ): string;
   encodeFunctionData(
     functionFragment: "bulkInitializeTiles",
@@ -158,6 +198,10 @@ export interface AdminFacetInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>[][]]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "addConstant",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "addEntity", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "addTroopTemplate",
@@ -169,6 +213,10 @@ export interface AdminFacetInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "assignResource",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "bulkAddConstants",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -243,6 +291,15 @@ export interface AdminFacet extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    addConstant(
+      _functionName: PromiseOrValue<string>,
+      _componentName: PromiseOrValue<string>,
+      _entityName: PromiseOrValue<string>,
+      _level: PromiseOrValue<BigNumberish>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     addEntity(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -270,6 +327,11 @@ export interface AdminFacet extends BaseContract {
       _cityID: PromiseOrValue<BigNumberish>,
       _inventoryType: PromiseOrValue<string>,
       _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    bulkAddConstants(
+      _constantSpecs: ConstantSpecStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -336,6 +398,15 @@ export interface AdminFacet extends BaseContract {
     ): Promise<ContractTransaction>;
   };
 
+  addConstant(
+    _functionName: PromiseOrValue<string>,
+    _componentName: PromiseOrValue<string>,
+    _entityName: PromiseOrValue<string>,
+    _level: PromiseOrValue<BigNumberish>,
+    _amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   addEntity(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -363,6 +434,11 @@ export interface AdminFacet extends BaseContract {
     _cityID: PromiseOrValue<BigNumberish>,
     _inventoryType: PromiseOrValue<string>,
     _amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  bulkAddConstants(
+    _constantSpecs: ConstantSpecStruct[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -429,6 +505,15 @@ export interface AdminFacet extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    addConstant(
+      _functionName: PromiseOrValue<string>,
+      _componentName: PromiseOrValue<string>,
+      _entityName: PromiseOrValue<string>,
+      _level: PromiseOrValue<BigNumberish>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     addEntity(overrides?: CallOverrides): Promise<BigNumber>;
 
     addTroopTemplate(
@@ -454,6 +539,11 @@ export interface AdminFacet extends BaseContract {
       _cityID: PromiseOrValue<BigNumberish>,
       _inventoryType: PromiseOrValue<string>,
       _amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    bulkAddConstants(
+      _constantSpecs: ConstantSpecStruct[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -523,6 +613,15 @@ export interface AdminFacet extends BaseContract {
   filters: {};
 
   estimateGas: {
+    addConstant(
+      _functionName: PromiseOrValue<string>,
+      _componentName: PromiseOrValue<string>,
+      _entityName: PromiseOrValue<string>,
+      _level: PromiseOrValue<BigNumberish>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     addEntity(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -550,6 +649,11 @@ export interface AdminFacet extends BaseContract {
       _cityID: PromiseOrValue<BigNumberish>,
       _inventoryType: PromiseOrValue<string>,
       _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    bulkAddConstants(
+      _constantSpecs: ConstantSpecStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -617,6 +721,15 @@ export interface AdminFacet extends BaseContract {
   };
 
   populateTransaction: {
+    addConstant(
+      _functionName: PromiseOrValue<string>,
+      _componentName: PromiseOrValue<string>,
+      _entityName: PromiseOrValue<string>,
+      _level: PromiseOrValue<BigNumberish>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     addEntity(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -644,6 +757,11 @@ export interface AdminFacet extends BaseContract {
       _cityID: PromiseOrValue<BigNumberish>,
       _inventoryType: PromiseOrValue<string>,
       _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    bulkAddConstants(
+      _constantSpecs: ConstantSpecStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

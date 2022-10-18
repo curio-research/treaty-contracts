@@ -41,33 +41,13 @@ export type WorldConstantsStruct = {
   initBatchSize: PromiseOrValue<BigNumberish>;
   maxCityCountPerPlayer: PromiseOrValue<BigNumberish>;
   maxArmyCountPerPlayer: PromiseOrValue<BigNumberish>;
+  maxTroopCountPerArmy: PromiseOrValue<BigNumberish>;
   maxPlayerCount: PromiseOrValue<BigNumberish>;
-  tileUpgradeGoldCost: PromiseOrValue<BigNumberish>;
-  buildingUpgradeGoldCost: PromiseOrValue<BigNumberish>;
-  cityUpgradeGoldCost: PromiseOrValue<BigNumberish>;
-  initCityCenterGoldLoad: PromiseOrValue<BigNumberish>;
-  initCityCenterFoodLoad: PromiseOrValue<BigNumberish>;
-  initCityCenterTroopLoad: PromiseOrValue<BigNumberish>;
-  cityPackCost: PromiseOrValue<BigNumberish>;
-  initCityGold: PromiseOrValue<BigNumberish>;
-  cityGuardAmount: PromiseOrValue<BigNumberish>;
-  tileGuardAmount: PromiseOrValue<BigNumberish>;
   tileWidth: PromiseOrValue<BigNumberish>;
-  barbarianCooldown: PromiseOrValue<BigNumberish>;
 };
 
 export type WorldConstantsStructOutput = [
   string,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
-  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -85,19 +65,9 @@ export type WorldConstantsStructOutput = [
   initBatchSize: BigNumber;
   maxCityCountPerPlayer: BigNumber;
   maxArmyCountPerPlayer: BigNumber;
+  maxTroopCountPerArmy: BigNumber;
   maxPlayerCount: BigNumber;
-  tileUpgradeGoldCost: BigNumber;
-  buildingUpgradeGoldCost: BigNumber;
-  cityUpgradeGoldCost: BigNumber;
-  initCityCenterGoldLoad: BigNumber;
-  initCityCenterFoodLoad: BigNumber;
-  initCityCenterTroopLoad: BigNumber;
-  cityPackCost: BigNumber;
-  initCityGold: BigNumber;
-  cityGuardAmount: BigNumber;
-  tileGuardAmount: BigNumber;
   tileWidth: BigNumber;
-  barbarianCooldown: BigNumber;
 };
 
 export interface GetterFacetInterface extends utils.Interface {

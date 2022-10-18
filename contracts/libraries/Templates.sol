@@ -20,15 +20,16 @@ library Templates {
     }
 
     function addInventory(
-        uint256 _cityID,
+        uint256 _keeperID,
         uint256 _templateID,
         uint256 _amount,
-        uint256 _load
+        uint256 _load,
+        bool _isResource
     ) public returns (uint256) {
         uint256 inventoryID = ECSLib.addEntity();
 
-        ECSLib.setString("Tag", inventoryID, "ResourceInventory");
-        ECSLib.setUint("City", inventoryID, _cityID);
+        ECSLib.setString("Tag", inventoryID, _isResource ? "ResourceInventory" : "TroopInventory");
+        ECSLib.setUint("Keeper", inventoryID, _keeperID);
         ECSLib.setUint("Template", inventoryID, _templateID);
         ECSLib.setUint("Amount", inventoryID, _amount);
         ECSLib.setUint("Load", inventoryID, _load);
@@ -181,16 +182,22 @@ library Templates {
         return guardID;
     }
 
-    function addTroopProduction() public returns (uint256) {
+    function addTroopProduction(
+        uint256 _buildingID,
+        uint256 _templateID,
+        uint256 _troopInventoryID,
+        uint256 _amount,
+        uint256 _duration
+    ) public returns (uint256) {
         uint256 productionID = ECSLib.addEntity();
 
         ECSLib.setString("Tag", productionID, "TroopProduction");
-        ECSLib.setUint("City", productionID, 0);
-        ECSLib.setUint("Template", productionID, 0);
-        ECSLib.setUint("Inventory", productionID, 0);
-        ECSLib.setUint("Amount", productionID, 0);
+        ECSLib.setUint("Keeper", productionID, _buildingID);
+        ECSLib.setUint("Template", productionID, _templateID);
+        ECSLib.setUint("Inventory", productionID, _troopInventoryID);
+        ECSLib.setUint("Amount", productionID, _amount);
         ECSLib.setUint("InitTimestamp", productionID, block.timestamp);
-        ECSLib.setUint("Duration", productionID, ECSLib.getUint("Duration", 0) * 0);
+        ECSLib.setUint("Duration", productionID, _duration);
 
         return productionID;
     }
@@ -225,20 +232,36 @@ library Templates {
         uint256 _load,
         uint256 _cost
     ) public returns (uint256) {
-        uint256 entity = ECSLib.addEntity();
+        uint256 templateID = ECSLib.addEntity();
 
-        ECSLib.setString("Tag", entity, "TroopTemplate");
-        ECSLib.setString("InventoryType", entity, _inventoryType);
-        ECSLib.setUint("Health", entity, _health);
-        ECSLib.setUint("Speed", entity, _speed);
-        ECSLib.setUint("MoveCooldown", entity, _moveCooldown);
-        ECSLib.setUint("BattleCooldown", entity, _battleCooldown);
-        ECSLib.setUint("Attack", entity, _attack);
-        ECSLib.setUint("Defense", entity, _defense);
-        ECSLib.setUint("Duration", entity, _duration);
-        ECSLib.setUint("Load", entity, _load);
-        ECSLib.setUint("Cost", entity, _cost);
+        ECSLib.setString("Tag", templateID, "TroopTemplate");
+        ECSLib.setString("InventoryType", templateID, _inventoryType);
+        ECSLib.setUint("Health", templateID, _health);
+        ECSLib.setUint("Speed", templateID, _speed);
+        ECSLib.setUint("MoveCooldown", templateID, _moveCooldown);
+        ECSLib.setUint("BattleCooldown", templateID, _battleCooldown);
+        ECSLib.setUint("Attack", templateID, _attack);
+        ECSLib.setUint("Defense", templateID, _defense);
+        ECSLib.setUint("Duration", templateID, _duration);
+        ECSLib.setUint("Load", templateID, _load);
+        ECSLib.setUint("Cost", templateID, _cost);
 
-        return entity;
+        return templateID;
+    }
+
+    function addConstant(
+        string memory _functionName,
+        string memory _componentName,
+        string memory _entityName,
+        uint256 _level,
+        uint256 _amount
+    ) public returns (uint256) {
+        uint256 constantID = ECSLib.addEntity();
+
+        string memory identifier = string(abi.encodePacked("Constant-", _functionName, "-", _componentName, "-", _entityName, "-", _level));
+        ECSLib.setString("Tag", constantID, identifier);
+        ECSLib.setUint("Amount", constantID, _amount);
+
+        return constantID;
     }
 }
