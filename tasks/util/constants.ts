@@ -1,5 +1,5 @@
 import { Attack, Cost, Defense, Duration, encodeString, encodeUint256, Health, InventoryType, InventoryTypeOptions, Speed, Load, Tag, Tags, MoveCooldown, BattleCooldown, TILE_TYPE, Amount } from 'curio-vault';
-import { WorldConstantsStruct, Curio } from './../../typechain-types/hardhat-diamond-abi/Curio';
+import { WorldConstantsStruct, Curio, ConstantSpecStruct } from './../../typechain-types/hardhat-diamond-abi/Curio';
 import { addGetEntity } from './mapHelper';
 import { MapInput } from './types';
 
@@ -24,13 +24,12 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): a
     worldWidth: mapInput.width * TILE_WIDTH,
     worldHeight: mapInput.height * TILE_WIDTH,
     numInitTerrainTypes: NUM_INIT_TERRAIN_TYPES,
-    initBatchSize: 10,
+    initBatchSize: Math.floor(150 / NUM_INIT_TERRAIN_TYPES),
     maxCityCountPerPlayer: 3,
     maxArmyCountPerPlayer: 2,
     maxTroopCountPerArmy: 1000,
     maxPlayerCount: 20,
     tileWidth: TILE_WIDTH,
-    barbarianCooldown: 60, // Fixme
   };
 };
 
@@ -96,113 +95,114 @@ export const createTemplates = async (diamond: Curio) => {
 // IN-GAME AMOUNTS
 // ----------------------------------------------------------
 
-export const registerConstants = async (diamond: Curio) => {
-  // TODO: change some of the "Amount" to more descriptive words
+const NULL = 0;
+export const CONSTANT_SPECS: ConstantSpecStruct[] = [];
 
-  const NULL = 0; // indicator: not related to level
+// `initializePlayer`
+CONSTANT_SPECS.push({ functionName: 'initializePlayer', componentName: Amount, entityName: InventoryTypeOptions.Gold, level: NULL, value: 0 });
+CONSTANT_SPECS.push({ functionName: 'initializePlayer', componentName: Amount, entityName: InventoryTypeOptions.Food, level: NULL, value: 0 });
+CONSTANT_SPECS.push({ functionName: 'initializePlayer', componentName: Load, entityName: InventoryTypeOptions.Gold, level: NULL, value: 10000000 });
+CONSTANT_SPECS.push({ functionName: 'initializePlayer', componentName: Load, entityName: InventoryTypeOptions.Food, level: NULL, value: 10000000 });
 
-  // `initializePlayer`
-  await (await diamond.addConstant('initializePlayer', Amount, InventoryTypeOptions.Gold, NULL, 0)).wait();
-  await (await diamond.addConstant('initializePlayer', Amount, InventoryTypeOptions.Food, NULL, 0)).wait();
-  await (await diamond.addConstant('initializePlayer', Load, InventoryTypeOptions.Gold, NULL, 10000000)).wait();
-  await (await diamond.addConstant('initializePlayer', Load, InventoryTypeOptions.Food, NULL, 10000000)).wait();
+// `initializeTile`
+CONSTANT_SPECS.push({ functionName: 'initializeTile', componentName: Amount, entityName: InventoryTypeOptions.Guard, level: 0, value: 200 });
+CONSTANT_SPECS.push({ functionName: 'initializeTile', componentName: Amount, entityName: InventoryTypeOptions.Guard, level: 1, value: 1000 }); // level 1 barbarian
+CONSTANT_SPECS.push({ functionName: 'initializeTile', componentName: Amount, entityName: InventoryTypeOptions.Guard, level: 2, value: 2000 }); // level 2 barbarian
+CONSTANT_SPECS.push({ functionName: 'initializeTile', componentName: Load, entityName: InventoryTypeOptions.Gold, level: 0, value: 1000 });
+CONSTANT_SPECS.push({ functionName: 'initializeTile', componentName: Load, entityName: InventoryTypeOptions.Food, level: 0, value: 1000 });
 
-  // `initializeTile`
-  await (await diamond.addConstant('initializeTile', Amount, InventoryTypeOptions.Guard, 0, 200)).wait();
-  await (await diamond.addConstant('initializeTile', Amount, InventoryTypeOptions.Guard, 1, 1000)).wait(); // level 1 barbarian
-  await (await diamond.addConstant('initializeTile', Amount, InventoryTypeOptions.Guard, 2, 2000)).wait(); // level 2 barbarian
-  await (await diamond.addConstant('initializeTile', Load, InventoryTypeOptions.Gold, 0, 1000)).wait();
-  await (await diamond.addConstant('initializeTile', Load, InventoryTypeOptions.Food, 0, 1000)).wait();
+// `foundCity`
+CONSTANT_SPECS.push({ functionName: 'foundCity', componentName: Amount, entityName: InventoryTypeOptions.Guard, level: 0, value: 1500 });
 
-  // `foundCity`
-  await (await diamond.addConstant('foundCity', Amount, InventoryTypeOptions.Guard, 0, 1500)).wait();
+// `packCity`
+CONSTANT_SPECS.push({ functionName: 'packCity', componentName: Cost, entityName: InventoryTypeOptions.Gold, level: 0, value: 1000000000000000 });
+CONSTANT_SPECS.push({ functionName: 'packCity', componentName: Health, entityName: 'Settler', level: 0, value: 1000000000000000 });
 
-  // `packCity`
-  await (await diamond.addConstant('packCity', Cost, InventoryTypeOptions.Gold, 0, 1000000000000000)).wait();
-  await (await diamond.addConstant('packCity', Health, 'Settler', 0, 1000000000000000)).wait();
+// `upgradeTile`
+CONSTANT_SPECS.push({ functionName: 'upgradeTile', componentName: Cost, entityName: InventoryTypeOptions.Gold, level: 0, value: 10 * 200 });
+CONSTANT_SPECS.push({ functionName: 'upgradeTile', componentName: Cost, entityName: InventoryTypeOptions.Food, level: 0, value: 50 * 200 });
+for (let i = 1; i <= 9; i++) {
+  CONSTANT_SPECS.push({ functionName: 'upgradeTile', componentName: Amount, entityName: InventoryTypeOptions.Guard, level: i, value: Math.pow(3, i) * 200 });
+}
 
-  // `upgradeTile`
-  await (await diamond.addConstant('upgradeTile', Cost, InventoryTypeOptions.Gold, NULL, 10 * 200)).wait();
-  await (await diamond.addConstant('upgradeTile', Cost, InventoryTypeOptions.Food, NULL, 50 * 200)).wait();
-  for (let i = 1; i <= 9; i++) {
-    await (await diamond.addConstant('upgradeTile', Amount, InventoryTypeOptions.Guard, i, Math.pow(3, i) * 200)).wait();
-  }
+// `upgradeCityInventory`
+CONSTANT_SPECS.push({ functionName: 'upgradeCityInventory', componentName: Cost, entityName: InventoryTypeOptions.Gold, level: NULL, value: 3000 });
+for (let i = 1; i <= 9; i++) {
+  CONSTANT_SPECS.push({ functionName: 'upgradeCityInventory', componentName: Load, entityName: InventoryTypeOptions.Gold, level: i, value: 10000000 * i });
+  CONSTANT_SPECS.push({ functionName: 'upgradeCityInventory', componentName: Load, entityName: InventoryTypeOptions.Food, level: i, value: 10000000 * i });
+  CONSTANT_SPECS.push({ functionName: 'upgradeCityInventory', componentName: Load, entityName: InventoryTypeOptions.Horseman, level: i, value: 2000 * i });
+  CONSTANT_SPECS.push({ functionName: 'upgradeCityInventory', componentName: Load, entityName: InventoryTypeOptions.Warrior, level: i, value: 2000 * i });
+  CONSTANT_SPECS.push({ functionName: 'upgradeCityInventory', componentName: Load, entityName: InventoryTypeOptions.Slinger, level: i, value: 2000 * i });
+}
 
-  // `upgradeCityInventory`
-  await (await diamond.addConstant('upgradeCityInventory', Cost, InventoryTypeOptions.Gold, NULL, 3000)).wait();
-  for (let i = 1; i <= 9; i++) {
-    await (await diamond.addConstant('upgradeCityInventory', Load, InventoryTypeOptions.Gold, i, 10000000 * i)).wait();
-    await (await diamond.addConstant('upgradeCityInventory', Load, InventoryTypeOptions.Food, i, 10000000 * i)).wait();
-    await (await diamond.addConstant('upgradeCityInventory', Load, InventoryTypeOptions.Horseman, i, 2000 * i)).wait();
-    await (await diamond.addConstant('upgradeCityInventory', Load, InventoryTypeOptions.Warrior, i, 2000 * i)).wait();
-    await (await diamond.addConstant('upgradeCityInventory', Load, InventoryTypeOptions.Slinger, i, 2000 * i)).wait();
-  }
+// `upgradeResource`
+for (let i = 1; i <= 9; i++) {
+  CONSTANT_SPECS.push({ functionName: 'upgradeResource', componentName: Cost, entityName: InventoryTypeOptions.Gold, level: i, value: 50000 });
+  CONSTANT_SPECS.push({ functionName: 'upgradeResource', componentName: Cost, entityName: InventoryTypeOptions.Food, level: i, value: 16000 });
+}
+CONSTANT_SPECS.push({ functionName: 'upgradeResource', componentName: Load, entityName: InventoryTypeOptions.Gold, level: 1, value: 5500 });
+CONSTANT_SPECS.push({ functionName: 'upgradeResource', componentName: Load, entityName: InventoryTypeOptions.Gold, level: 2, value: 6000 });
+CONSTANT_SPECS.push({ functionName: 'upgradeResource', componentName: Load, entityName: InventoryTypeOptions.Gold, level: 3, value: 6500 });
+CONSTANT_SPECS.push({ functionName: 'upgradeResource', componentName: Load, entityName: InventoryTypeOptions.Gold, level: 4, value: 7000 });
+CONSTANT_SPECS.push({ functionName: 'upgradeResource', componentName: Load, entityName: InventoryTypeOptions.Gold, level: 5, value: 7500 });
+CONSTANT_SPECS.push({ functionName: 'upgradeResource', componentName: Load, entityName: InventoryTypeOptions.Gold, level: 6, value: 8000 });
+CONSTANT_SPECS.push({ functionName: 'upgradeResource', componentName: Load, entityName: InventoryTypeOptions.Gold, level: 7, value: 8500 });
+CONSTANT_SPECS.push({ functionName: 'upgradeResource', componentName: Load, entityName: InventoryTypeOptions.Gold, level: 8, value: 9000 });
+CONSTANT_SPECS.push({ functionName: 'upgradeResource', componentName: Load, entityName: InventoryTypeOptions.Gold, level: 9, value: 9500 });
+CONSTANT_SPECS.push({ functionName: 'upgradeResource', componentName: Load, entityName: InventoryTypeOptions.Food, level: 1, value: 100000 });
+CONSTANT_SPECS.push({ functionName: 'upgradeResource', componentName: Load, entityName: InventoryTypeOptions.Food, level: 2, value: 110000 });
+CONSTANT_SPECS.push({ functionName: 'upgradeResource', componentName: Load, entityName: InventoryTypeOptions.Food, level: 3, value: 120000 });
+CONSTANT_SPECS.push({ functionName: 'upgradeResource', componentName: Load, entityName: InventoryTypeOptions.Food, level: 4, value: 130000 });
+CONSTANT_SPECS.push({ functionName: 'upgradeResource', componentName: Load, entityName: InventoryTypeOptions.Food, level: 5, value: 140000 });
+CONSTANT_SPECS.push({ functionName: 'upgradeResource', componentName: Load, entityName: InventoryTypeOptions.Food, level: 6, value: 150000 });
+CONSTANT_SPECS.push({ functionName: 'upgradeResource', componentName: Load, entityName: InventoryTypeOptions.Food, level: 7, value: 160000 });
+CONSTANT_SPECS.push({ functionName: 'upgradeResource', componentName: Load, entityName: InventoryTypeOptions.Food, level: 8, value: 170000 });
+CONSTANT_SPECS.push({ functionName: 'upgradeResource', componentName: Load, entityName: InventoryTypeOptions.Food, level: 9, value: 180000 });
 
-  // `upgradeResource`
-  for (let i = 1; i <= 9; i++) {
-    await (await diamond.addConstant('upgradeResource', Cost, InventoryTypeOptions.Gold, i, 50000)).wait();
-    await (await diamond.addConstant('upgradeResource', Cost, InventoryTypeOptions.Food, i, 16000)).wait();
-  }
-  await (await diamond.addConstant('upgradeResource', Load, InventoryTypeOptions.Gold, 1, 5500)).wait();
-  await (await diamond.addConstant('upgradeResource', Load, InventoryTypeOptions.Gold, 2, 6000)).wait();
-  await (await diamond.addConstant('upgradeResource', Load, InventoryTypeOptions.Gold, 3, 6500)).wait();
-  await (await diamond.addConstant('upgradeResource', Load, InventoryTypeOptions.Gold, 4, 7000)).wait();
-  await (await diamond.addConstant('upgradeResource', Load, InventoryTypeOptions.Gold, 5, 7500)).wait();
-  await (await diamond.addConstant('upgradeResource', Load, InventoryTypeOptions.Gold, 6, 8000)).wait();
-  await (await diamond.addConstant('upgradeResource', Load, InventoryTypeOptions.Gold, 7, 8500)).wait();
-  await (await diamond.addConstant('upgradeResource', Load, InventoryTypeOptions.Gold, 8, 9000)).wait();
-  await (await diamond.addConstant('upgradeResource', Load, InventoryTypeOptions.Gold, 9, 9500)).wait();
-  await (await diamond.addConstant('upgradeResource', Load, InventoryTypeOptions.Food, 1, 100000)).wait();
-  await (await diamond.addConstant('upgradeResource', Load, InventoryTypeOptions.Food, 2, 110000)).wait();
-  await (await diamond.addConstant('upgradeResource', Load, InventoryTypeOptions.Food, 3, 120000)).wait();
-  await (await diamond.addConstant('upgradeResource', Load, InventoryTypeOptions.Food, 4, 130000)).wait();
-  await (await diamond.addConstant('upgradeResource', Load, InventoryTypeOptions.Food, 5, 140000)).wait();
-  await (await diamond.addConstant('upgradeResource', Load, InventoryTypeOptions.Food, 6, 150000)).wait();
-  await (await diamond.addConstant('upgradeResource', Load, InventoryTypeOptions.Food, 7, 160000)).wait();
-  await (await diamond.addConstant('upgradeResource', Load, InventoryTypeOptions.Food, 8, 170000)).wait();
-  await (await diamond.addConstant('upgradeResource', Load, InventoryTypeOptions.Food, 9, 180000)).wait();
+// `upgradeCity`
+CONSTANT_SPECS.push({ functionName: 'upgradeCity', componentName: Cost, entityName: InventoryTypeOptions.Gold, level: 0, value: 100000 });
+for (let i = 1; i <= 3; i++) {
+  CONSTANT_SPECS.push({ functionName: 'upgradeCity', componentName: Amount, entityName: InventoryTypeOptions.Guard, level: i, value: 1500 * i });
+}
 
-  // `upgradeCity`
-  await (await diamond.addConstant('upgradeCity', Cost, InventoryTypeOptions.Gold, 0, 100000)).wait();
-  for (let i = 1; i <= 3; i++) {
-    await (await diamond.addConstant('upgradeCity', Amount, InventoryTypeOptions.Guard, i, 1500 * i)).wait();
-  }
+// `startTroopProduction`
+CONSTANT_SPECS.push({ functionName: 'startTroopProduction', componentName: Cost, entityName: InventoryTypeOptions.Gold, level: 0, value: 10 });
+CONSTANT_SPECS.push({ functionName: 'startTroopProduction', componentName: Cost, entityName: InventoryTypeOptions.Food, level: 0, value: 50 });
 
-  // `startTroopProduction`
-  await (await diamond.addConstant('startTroopProduction', Cost, InventoryTypeOptions.Gold, 0, 10)).wait();
-  await (await diamond.addConstant('startTroopProduction', Cost, InventoryTypeOptions.Food, 0, 50)).wait();
+// `harvestResource`
+CONSTANT_SPECS.push({ functionName: 'harvestResource', componentName: Amount, entityName: InventoryTypeOptions.Gold, level: 1, value: 160 });
+CONSTANT_SPECS.push({ functionName: 'harvestResource', componentName: Amount, entityName: InventoryTypeOptions.Gold, level: 2, value: 200 });
+CONSTANT_SPECS.push({ functionName: 'harvestResource', componentName: Amount, entityName: InventoryTypeOptions.Gold, level: 3, value: 240 });
+CONSTANT_SPECS.push({ functionName: 'harvestResource', componentName: Amount, entityName: InventoryTypeOptions.Gold, level: 4, value: 260 });
+CONSTANT_SPECS.push({ functionName: 'harvestResource', componentName: Amount, entityName: InventoryTypeOptions.Gold, level: 5, value: 280 });
+CONSTANT_SPECS.push({ functionName: 'harvestResource', componentName: Amount, entityName: InventoryTypeOptions.Gold, level: 6, value: 300 });
+CONSTANT_SPECS.push({ functionName: 'harvestResource', componentName: Amount, entityName: InventoryTypeOptions.Gold, level: 7, value: 320 });
+CONSTANT_SPECS.push({ functionName: 'harvestResource', componentName: Amount, entityName: InventoryTypeOptions.Gold, level: 8, value: 340 });
+CONSTANT_SPECS.push({ functionName: 'harvestResource', componentName: Amount, entityName: InventoryTypeOptions.Gold, level: 9, value: 360 });
+CONSTANT_SPECS.push({ functionName: 'harvestResource', componentName: Amount, entityName: InventoryTypeOptions.Food, level: 1, value: 200 });
+CONSTANT_SPECS.push({ functionName: 'harvestResource', componentName: Amount, entityName: InventoryTypeOptions.Food, level: 2, value: 220 });
+CONSTANT_SPECS.push({ functionName: 'harvestResource', componentName: Amount, entityName: InventoryTypeOptions.Food, level: 3, value: 240 });
+CONSTANT_SPECS.push({ functionName: 'harvestResource', componentName: Amount, entityName: InventoryTypeOptions.Food, level: 4, value: 250 });
+CONSTANT_SPECS.push({ functionName: 'harvestResource', componentName: Amount, entityName: InventoryTypeOptions.Food, level: 5, value: 260 });
+CONSTANT_SPECS.push({ functionName: 'harvestResource', componentName: Amount, entityName: InventoryTypeOptions.Food, level: 6, value: 270 });
+CONSTANT_SPECS.push({ functionName: 'harvestResource', componentName: Amount, entityName: InventoryTypeOptions.Food, level: 7, value: 280 });
+CONSTANT_SPECS.push({ functionName: 'harvestResource', componentName: Amount, entityName: InventoryTypeOptions.Food, level: 8, value: 290 });
+CONSTANT_SPECS.push({ functionName: 'harvestResource', componentName: Amount, entityName: InventoryTypeOptions.Food, level: 9, value: 300 });
 
-  // `harvestResource`
-  await (await diamond.addConstant('harvestResource', Amount, InventoryTypeOptions.Gold, 1, 160)).wait();
-  await (await diamond.addConstant('harvestResource', Amount, InventoryTypeOptions.Gold, 2, 200)).wait();
-  await (await diamond.addConstant('harvestResource', Amount, InventoryTypeOptions.Gold, 3, 240)).wait();
-  await (await diamond.addConstant('harvestResource', Amount, InventoryTypeOptions.Gold, 4, 260)).wait();
-  await (await diamond.addConstant('harvestResource', Amount, InventoryTypeOptions.Gold, 5, 280)).wait();
-  await (await diamond.addConstant('harvestResource', Amount, InventoryTypeOptions.Gold, 6, 300)).wait();
-  await (await diamond.addConstant('harvestResource', Amount, InventoryTypeOptions.Gold, 7, 320)).wait();
-  await (await diamond.addConstant('harvestResource', Amount, InventoryTypeOptions.Gold, 8, 340)).wait();
-  await (await diamond.addConstant('harvestResource', Amount, InventoryTypeOptions.Gold, 9, 360)).wait();
-  await (await diamond.addConstant('harvestResource', Amount, InventoryTypeOptions.Food, 1, 200)).wait();
-  await (await diamond.addConstant('harvestResource', Amount, InventoryTypeOptions.Food, 2, 220)).wait();
-  await (await diamond.addConstant('harvestResource', Amount, InventoryTypeOptions.Food, 3, 240)).wait();
-  await (await diamond.addConstant('harvestResource', Amount, InventoryTypeOptions.Food, 4, 250)).wait();
-  await (await diamond.addConstant('harvestResource', Amount, InventoryTypeOptions.Food, 5, 260)).wait();
-  await (await diamond.addConstant('harvestResource', Amount, InventoryTypeOptions.Food, 6, 270)).wait();
-  await (await diamond.addConstant('harvestResource', Amount, InventoryTypeOptions.Food, 7, 280)).wait();
-  await (await diamond.addConstant('harvestResource', Amount, InventoryTypeOptions.Food, 8, 290)).wait();
-  await (await diamond.addConstant('harvestResource', Amount, InventoryTypeOptions.Food, 9, 300)).wait();
+// `harvestResourceFromCity`
+CONSTANT_SPECS.push({ functionName: 'harvestResourcesFromCity', componentName: Amount, entityName: InventoryTypeOptions.Gold, level: NULL, value: 180 });
+CONSTANT_SPECS.push({ functionName: 'harvestResourcesFromCity', componentName: Amount, entityName: InventoryTypeOptions.Food, level: NULL, value: 180 });
+for (let i = 1; i <= 5; i++) {
+  CONSTANT_SPECS.push({ functionName: 'harvestResourcesFromCity', componentName: Load, entityName: InventoryTypeOptions.Gold, level: i, value: 10000000 });
+  CONSTANT_SPECS.push({ functionName: 'harvestResourcesFromCity', componentName: Load, entityName: InventoryTypeOptions.Food, level: i, value: 10000000 });
+}
 
-  // `harvestResourceFromCity`
-  await (await diamond.addConstant('harvestResourcesFromCity', Amount, InventoryTypeOptions.Gold, NULL, 180)).wait();
-  await (await diamond.addConstant('harvestResourcesFromCity', Amount, InventoryTypeOptions.Food, NULL, 180)).wait();
-  for (let i = 1; i <= 5; i++) {
-    await (await diamond.addConstant('harvestResourcesFromCity', Load, InventoryTypeOptions.Gold, i, 100000000)).wait();
-    await (await diamond.addConstant('harvestResourcesFromCity', Load, InventoryTypeOptions.Food, i, 100000000)).wait();
-  }
+// `battleTile`
+CONSTANT_SPECS.push({ functionName: 'battleTile', componentName: BattleCooldown, entityName: 'Barbarian', level: 1, value: 60 });
+CONSTANT_SPECS.push({ functionName: 'battleTile', componentName: BattleCooldown, entityName: 'Barbarian', level: 2, value: 60 });
 
-  // `distributeBarbarianReward`
-  await (await diamond.addConstant('distributeBarbarianReward', Amount, InventoryTypeOptions.Gold, 1, 180000)).wait();
-  await (await diamond.addConstant('distributeBarbarianReward', Amount, InventoryTypeOptions.Gold, 2, 480000)).wait();
-  await (await diamond.addConstant('distributeBarbarianReward', Amount, InventoryTypeOptions.Food, 1, 60000)).wait();
-  await (await diamond.addConstant('distributeBarbarianReward', Amount, InventoryTypeOptions.Food, 2, 150000)).wait();
-};
+// `distributeBarbarianReward`
+CONSTANT_SPECS.push({ functionName: 'distributeBarbarianReward', componentName: Amount, entityName: InventoryTypeOptions.Gold, level: 1, value: 180000 });
+CONSTANT_SPECS.push({ functionName: 'distributeBarbarianReward', componentName: Amount, entityName: InventoryTypeOptions.Gold, level: 2, value: 480000 });
+CONSTANT_SPECS.push({ functionName: 'distributeBarbarianReward', componentName: Amount, entityName: InventoryTypeOptions.Food, level: 1, value: 60000 });
+CONSTANT_SPECS.push({ functionName: 'distributeBarbarianReward', componentName: Amount, entityName: InventoryTypeOptions.Food, level: 2, value: 150000 });

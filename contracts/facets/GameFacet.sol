@@ -598,12 +598,13 @@ contract GameFacet is UseStorage {
             "CURIO: Attack not within range"
         );
 
-        bool isBarbarian = ECSLib.getUint("Level", _tileID) == 1 || ECSLib.getUint("Level", _tileID) == 2;
+        uint256 tileLevel = ECSLib.getUint("Level", _tileID);
         uint256 cityID = GameLib.getCityAtTile(ECSLib.getPosition("StartPosition", _tileID));
 
         // if it is barbarian, check it's not hybernating
-        if (isBarbarian) {
-            require(block.timestamp >= ECSLib.getUint("LastTimestamp", _tileID) + gs().worldConstants.barbarianCooldown, "CURIO: Barbarians hybernating");
+        if (tileLevel == 1 || tileLevel == 2) {
+            uint256 barbarianCooldown = GameLib.getConstant("battleTile", "BattleCooldown", "Barbarian", tileLevel);
+            require(block.timestamp >= ECSLib.getUint("LastTimestamp", _tileID) + barbarianCooldown, "CURIO: Barbarians hybernating");
         }
 
         // Execute one round of battle
@@ -627,7 +628,7 @@ contract GameFacet is UseStorage {
                 uint256 winnerTotalAmount = GameLib.min(ECSLib.getUint("Load", winnerCityGoldInventoryID), loserTotalAmount / 2 + existingCityGold);
                 ECSLib.setUint("Amount", winnerCityGoldInventoryID, winnerTotalAmount);
             } else {
-                if (isBarbarian) {
+                if (tileLevel == 1 || tileLevel == 2) {
                     // Reset barbarian
                     GameLib.distributeBarbarianReward(winnerCityID, _tileID);
                     uint256 barbarianGuardAmount = GameLib.getConstant("initializeTile", "Amount", "Guard", ECSLib.getUint("Level", _tileID));

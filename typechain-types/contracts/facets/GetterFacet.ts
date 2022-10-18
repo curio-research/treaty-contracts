@@ -44,12 +44,10 @@ export type WorldConstantsStruct = {
   maxTroopCountPerArmy: PromiseOrValue<BigNumberish>;
   maxPlayerCount: PromiseOrValue<BigNumberish>;
   tileWidth: PromiseOrValue<BigNumberish>;
-  barbarianCooldown: PromiseOrValue<BigNumberish>;
 };
 
 export type WorldConstantsStructOutput = [
   string,
-  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -70,7 +68,6 @@ export type WorldConstantsStructOutput = [
   maxTroopCountPerArmy: BigNumber;
   maxPlayerCount: BigNumber;
   tileWidth: BigNumber;
-  barbarianCooldown: BigNumber;
 };
 
 export interface GetterFacetInterface extends utils.Interface {

@@ -3,7 +3,7 @@ pragma solidity ^0.8.4;
 
 import "contracts/libraries/Storage.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
-import {ComponentSpec, Position, Tile, ValueType, WorldConstants} from "contracts/libraries/Types.sol";
+import {ComponentSpec, ConstantSpec, Position, Tile, ValueType, WorldConstants} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 import "contracts/libraries/Templates.sol";
 import {Set} from "contracts/Set.sol";
@@ -120,6 +120,14 @@ contract AdminFacet is UseStorage {
         uint256 _amount
     ) external onlyAdmin returns (uint256) {
         return Templates.addConstant(_functionName, _componentName, _entityName, _level, _amount);
+    }
+
+    function bulkAddConstants(ConstantSpec[] memory _constantSpecs) external onlyAdmin {
+        ConstantSpec memory spec;
+        for (uint256 i = 0; i < _constantSpecs.length; i++) {
+            spec = _constantSpecs[i];
+            Templates.addConstant(spec.functionName, spec.componentName, spec.entityName, spec.level, spec.value);
+        }
     }
 
     // ----------------------------------------------------------------------

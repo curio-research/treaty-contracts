@@ -176,6 +176,46 @@ const _abi = [
       {
         components: [
           {
+            internalType: "string",
+            name: "functionName",
+            type: "string",
+          },
+          {
+            internalType: "string",
+            name: "componentName",
+            type: "string",
+          },
+          {
+            internalType: "string",
+            name: "entityName",
+            type: "string",
+          },
+          {
+            internalType: "uint256",
+            name: "level",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "value",
+            type: "uint256",
+          },
+        ],
+        internalType: "struct ConstantSpec[]",
+        name: "_constantSpecs",
+        type: "tuple[]",
+      },
+    ],
+    name: "bulkAddConstants",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        components: [
+          {
             internalType: "uint256",
             name: "x",
             type: "uint256",
@@ -1520,11 +1560,6 @@ const _abi = [
           {
             internalType: "uint256",
             name: "tileWidth",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "barbarianCooldown",
             type: "uint256",
           },
         ],

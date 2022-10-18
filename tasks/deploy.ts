@@ -7,7 +7,7 @@ import { publishDeployment, isConnectionLive } from './../api/deployment';
 import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment, HardhatArguments } from 'hardhat/types';
 import { deployProxy, printDivider } from './util/deployHelper';
-import { createTemplates, generateWorldConstants, SMALL_MAP_INPUT, TILE_WIDTH } from './util/constants';
+import { CONSTANT_SPECS, createTemplates, generateWorldConstants, SMALL_MAP_INPUT, TILE_WIDTH } from './util/constants';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
 import { chooseRandomEmptyLandPosition, encodeTileMap, generateBlankFixmap, generateMap, getPositionFromLargeTilePosition, initializeFixmap } from './util/mapHelper';
 import { COMPONENT_SPECS, getRightPos, GameConfig, TILE_TYPE, Speed, encodeUint256, getTopPos, scaleMap } from 'curio-vault';
@@ -70,11 +70,19 @@ task('deploy', 'deploy contracts')
       let startTime = performance.now();
       const componentUploadBatchSize = 20;
       for (let i = 0; i < COMPONENT_SPECS.length; i += componentUploadBatchSize) {
-        console.log(`Registering components ${i} to ${i + componentUploadBatchSize}`);
+        console.log(`  ✦ Registering components ${i} to ${i + componentUploadBatchSize}`);
         await (await diamond.registerComponents(diamond.address, COMPONENT_SPECS.slice(i, i + componentUploadBatchSize))).wait();
       }
-
       console.log(`✦ component registration took ${Math.floor(performance.now() - startTime)} ms`);
+
+      // Register constants
+      startTime = performance.now();
+      const constantUploadBatchSize = 15;
+      for (let i = 0; i < CONSTANT_SPECS.length; i += constantUploadBatchSize) {
+        console.log(`  ✦ Registering constants ${i} to ${i + constantUploadBatchSize}`);
+        await (await diamond.bulkAddConstants(CONSTANT_SPECS.slice(i, i + constantUploadBatchSize))).wait();
+      }
+      console.log(`✦ constant registration took ${Math.floor(performance.now() - startTime)} ms`);
 
       // Initialize map
       startTime = performance.now();
@@ -88,6 +96,7 @@ task('deploy', 'deploy contracts')
       console.log(`✦ template creation took ${Math.floor(performance.now() - startTime)} ms`);
 
       // TODO: useful in some testing. Bulk initialize all tiles
+      startTime = performance.now();
       const tileWidth = Number(worldConstants.tileWidth);
       const allStartingPositions: position[] = [];
       for (let i = 0; i < tileMap.length; i++) {
@@ -96,13 +105,13 @@ task('deploy', 'deploy contracts')
           allStartingPositions.push(properTile);
         }
       }
-
       // initialize 10 at a time
       // const bulkTileUploadSize = 10;
       // for (let i = 0; i < allStartingPositions.length; i += bulkTileUploadSize) {
       //   console.log(`bulk initializing tiles ${i} to ${i + bulkTileUploadSize}`);
       //   await (await diamond.bulkInitializeTiles(allStartingPositions.slice(i, i + bulkTileUploadSize), { gasLimit: 100_000_000 })).wait();
       // }
+      console.log(`✦ bulk tile initialization took ${Math.floor(performance.now() - startTime)} ms`);
 
       if (fixmap) {
         await initializeFixmap(hre, diamond);

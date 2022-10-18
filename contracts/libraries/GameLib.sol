@@ -9,6 +9,7 @@ import {Templates} from "contracts/libraries/Templates.sol";
 import {Set} from "contracts/Set.sol";
 import {Component} from "contracts/Component.sol";
 import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, UintComponent, UintArrayComponent} from "contracts/TypedComponents.sol";
+import "forge-std/console.sol";
 
 /// @title Util library
 /// @notice Contains all events as well as lower-level setters and getters
@@ -66,6 +67,7 @@ library GameLib {
     }
 
     function initializeTile(Position memory _startPosition) internal returns (uint256) {
+        console.log("start tile initial");
         require(isProperTilePosition(_startPosition), "CURIO: Not proper tile position");
         if (getTileAt(_startPosition) != 0) return getTileAt(_startPosition);
 
@@ -101,10 +103,11 @@ library GameLib {
             // Barbarian tile
             uint256 barbarianLevel = terrain - 2;
             ECSLib.setUint("Level", tileID, barbarianLevel);
-            uint256 barbarianGuardAmount = getConstant("initializeTile", "Amount", "Settler", barbarianLevel);
+            uint256 barbarianGuardAmount = getConstant("initializeTile", "Amount", "Guard", barbarianLevel);
             Templates.addConstituent(tileID, gs().templates["Guard"], barbarianGuardAmount);
         }
 
+        console.log("end tile initial");
         return tileID;
     }
 
@@ -318,7 +321,7 @@ library GameLib {
     ) internal view returns (uint256) {
         string memory identifier = string(abi.encodePacked("Constant-", _functionName, "-", _componentName, "-", _entityName, "-", _level));
         uint256[] memory res = ECSLib.getStringComponent("Tag").getEntitiesWithValue(identifier);
-        require(res.length == 1, "CURIO: Constant assertion failed");
+        require(res.length == 1, string(abi.encodePacked("CURIO: Constant with Tag=", identifier, " not found")));
         return ECSLib.getUint("Amount", res[0]);
     }
 

@@ -37,6 +37,28 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
   y: BigNumber;
 };
 
+export type ConstantSpecStruct = {
+  functionName: PromiseOrValue<string>;
+  componentName: PromiseOrValue<string>;
+  entityName: PromiseOrValue<string>;
+  level: PromiseOrValue<BigNumberish>;
+  value: PromiseOrValue<BigNumberish>;
+};
+
+export type ConstantSpecStructOutput = [
+  string,
+  string,
+  string,
+  BigNumber,
+  BigNumber
+] & {
+  functionName: string;
+  componentName: string;
+  entityName: string;
+  level: BigNumber;
+  value: BigNumber;
+};
+
 export type ComponentSpecStruct = {
   name: PromiseOrValue<string>;
   valueType: PromiseOrValue<BigNumberish>;
@@ -58,12 +80,10 @@ export type WorldConstantsStruct = {
   maxTroopCountPerArmy: PromiseOrValue<BigNumberish>;
   maxPlayerCount: PromiseOrValue<BigNumberish>;
   tileWidth: PromiseOrValue<BigNumberish>;
-  barbarianCooldown: PromiseOrValue<BigNumberish>;
 };
 
 export type WorldConstantsStructOutput = [
   string,
-  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -84,7 +104,6 @@ export type WorldConstantsStructOutput = [
   maxTroopCountPerArmy: BigNumber;
   maxPlayerCount: BigNumber;
   tileWidth: BigNumber;
-  barbarianCooldown: BigNumber;
 };
 
 export type QueryConditionStruct = {
@@ -132,6 +151,7 @@ export interface CurioInterface extends utils.Interface {
     "addTroopTemplate(string,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256)": FunctionFragment;
     "adminInitializeTile((uint256,uint256))": FunctionFragment;
     "assignResource(uint256,string,uint256)": FunctionFragment;
+    "bulkAddConstants((string,string,string,uint256,uint256)[])": FunctionFragment;
     "bulkInitializeTiles((uint256,uint256)[])": FunctionFragment;
     "createArmy(uint256,(uint256,uint256))": FunctionFragment;
     "reactivatePlayer(address)": FunctionFragment;
@@ -224,6 +244,7 @@ export interface CurioInterface extends utils.Interface {
       | "addTroopTemplate"
       | "adminInitializeTile"
       | "assignResource"
+      | "bulkAddConstants"
       | "bulkInitializeTiles"
       | "createArmy"
       | "reactivatePlayer"
@@ -346,6 +367,10 @@ export interface CurioInterface extends utils.Interface {
       PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>
     ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "bulkAddConstants",
+    values: [ConstantSpecStruct[]]
   ): string;
   encodeFunctionData(
     functionFragment: "bulkInitializeTiles",
@@ -710,6 +735,10 @@ export interface CurioInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "assignResource",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "bulkAddConstants",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -1147,6 +1176,11 @@ export interface Curio extends BaseContract {
       _cityID: PromiseOrValue<BigNumberish>,
       _inventoryType: PromiseOrValue<string>,
       _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    bulkAddConstants(
+      _constantSpecs: ConstantSpecStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1626,6 +1660,11 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  bulkAddConstants(
+    _constantSpecs: ConstantSpecStruct[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   bulkInitializeTiles(
     _positions: PositionStruct[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -2089,6 +2128,11 @@ export interface Curio extends BaseContract {
       _cityID: PromiseOrValue<BigNumberish>,
       _inventoryType: PromiseOrValue<string>,
       _amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    bulkAddConstants(
+      _constantSpecs: ConstantSpecStruct[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -2617,6 +2661,11 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    bulkAddConstants(
+      _constantSpecs: ConstantSpecStruct[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     bulkInitializeTiles(
       _positions: PositionStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -3081,6 +3130,11 @@ export interface Curio extends BaseContract {
       _cityID: PromiseOrValue<BigNumberish>,
       _inventoryType: PromiseOrValue<string>,
       _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    bulkAddConstants(
+      _constantSpecs: ConstantSpecStruct[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
