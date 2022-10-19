@@ -2,14 +2,14 @@ import { position } from './../util/types/common';
 import chalk from 'chalk';
 import { GameLib } from './../typechain-types/libraries/GameLib';
 import { ECSLib } from './../typechain-types/libraries/ECSLib';
-import { publishDeployment, isConnectionLive } from './../api/deployment';
+import { publishDeployment, isConnectionLive, startGameSync } from './../api/deployment';
 import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment, HardhatArguments } from 'hardhat/types';
 import { deployProxy, printDivider } from './util/deployHelper';
 import { CONSTANT_SPECS, createTemplates, generateWorldConstants, SMALL_MAP_INPUT, TILE_WIDTH } from './util/constants';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
-import { chooseRandomEmptyLandPosition, encodeTileMap, generateBlankFixmap, generateMap, initializeFixmap } from './util/mapHelper';
-import { COMPONENT_SPECS, getRightPos, GameConfig, getTopPos, scaleMap } from 'curio-vault';
+import { chooseRandomEmptyLandPosition, encodeTileMap, generateBlankFixmap, generateMap, getPositionFromLargeTilePosition, initializeFixmap } from './util/mapHelper';
+import { COMPONENT_SPECS, getRightPos, GameConfig, TILE_TYPE, Speed, encodeUint256, getTopPos, scaleMap, chainInfo } from 'curio-vault';
 
 /**
  * Deploy script for publishing games
@@ -27,8 +27,9 @@ task('deploy', 'deploy contracts')
     try {
       await hre.run('compile');
       printDivider();
-
       const s = performance.now();
+
+      const gasLimit = chainInfo[hre.network.name].gasLimit;
 
       const { port, release, fixmap } = args;
 
@@ -69,9 +70,10 @@ task('deploy', 'deploy contracts')
       let startTime = performance.now();
       const componentUploadBatchSize = 20;
       for (let i = 0; i < COMPONENT_SPECS.length; i += componentUploadBatchSize) {
-        console.log(`  ✦ Registering components ${i} to ${i + componentUploadBatchSize}`);
+        console.log(`Registering components ${i} to ${i + componentUploadBatchSize}`);
         await (await diamond.registerComponents(diamond.address, COMPONENT_SPECS.slice(i, i + componentUploadBatchSize))).wait();
       }
+
       console.log(`✦ component registration took ${Math.floor(performance.now() - startTime)} ms`);
 
       // Register constants
@@ -79,7 +81,7 @@ task('deploy', 'deploy contracts')
       const constantUploadBatchSize = 15;
       for (let i = 0; i < CONSTANT_SPECS.length; i += constantUploadBatchSize) {
         console.log(`  ✦ Registering constants ${i} to ${i + constantUploadBatchSize}`);
-        await (await diamond.bulkAddConstants(CONSTANT_SPECS.slice(i, i + constantUploadBatchSize))).wait();
+        await (await diamond.bulkAddConstants(CONSTANT_SPECS.slice(i, i + constantUploadBatchSize), { gasLimit: gasLimit })).wait();
       }
       console.log(`✦ constant registration took ${Math.floor(performance.now() - startTime)} ms`);
 
@@ -95,22 +97,27 @@ task('deploy', 'deploy contracts')
       console.log(`✦ template creation took ${Math.floor(performance.now() - startTime)} ms`);
 
       // TODO: useful in some testing. Bulk initialize all tiles
-      startTime = performance.now();
       const tileWidth = Number(worldConstants.tileWidth);
       const allStartingPositions: position[] = [];
+      const harvestableLocations: position[] = [];
       for (let i = 0; i < tileMap.length; i++) {
         for (let j = 0; j < tileMap[0].length; j++) {
           const properTile = { x: i * tileWidth, y: j * tileWidth };
           allStartingPositions.push(properTile);
+          if (tileMap[i][j] === TILE_TYPE.BARBARIAN_LV1 || tileMap[i][j] === TILE_TYPE.BARBARIAN_LV2 || tileMap[i][j] === TILE_TYPE.GOLDMINE_LV1 || tileMap[i][j] === TILE_TYPE.FARM_LV1) {
+            harvestableLocations.push(properTile);
+          }
         }
       }
-      // initialize 10 at a time
-      // const bulkTileUploadSize = 10;
-      // for (let i = 0; i < allStartingPositions.length; i += bulkTileUploadSize) {
-      //   console.log(`bulk initializing tiles ${i} to ${i + bulkTileUploadSize}`);
-      //   await (await diamond.bulkInitializeTiles(allStartingPositions.slice(i, i + bulkTileUploadSize), { gasLimit: 100_000_000 })).wait();
-      // }
-      console.log(`✦ bulk tile initialization took ${Math.floor(performance.now() - startTime)} ms`);
+
+      // initialize tiles that include barbarians, farms, gold mine
+      const bulkTileUploadSize = 20;
+      for (let i = 0; i < harvestableLocations.length; i += bulkTileUploadSize) {
+        console.log(`Initializing harvestable tiles ${i} to ${i + bulkTileUploadSize}`);
+        await (await diamond.bulkInitializeTiles(harvestableLocations.slice(i, i + bulkTileUploadSize), { gasLimit: gasLimit })).wait();
+      }
+
+      // TODO: think about whether initializing all tiles / more than barbarian tiles is necessary
 
       if (fixmap) {
         await initializeFixmap(hre, diamond);
@@ -118,15 +125,14 @@ task('deploy', 'deploy contracts')
         // Randomly initialize players if on localhost
         if (isDev) {
           // this is coordinate position
-          // console.log(scaleMap(tileMap, TILE_WIDTH));
           const player1Pos = chooseRandomEmptyLandPosition(scaleMap(tileMap, TILE_WIDTH));
           const player2Pos = getRightPos(getRightPos(player1Pos));
           const player3Pos = getTopPos(getTopPos(player1Pos));
 
           startTime = performance.now();
-          await (await diamond.connect(player1).initializePlayer(player1Pos, 'Alice', { gasLimit: 100_000_000 })).wait();
-          await (await diamond.connect(player2).initializePlayer(player2Pos, 'Bob', { gasLimit: 100_000_000 })).wait();
-          await (await diamond.connect(player3).initializePlayer(player2Pos, 'Bob', { gasLimit: 100_000_000 })).wait();
+          await (await diamond.connect(player1).initializePlayer(player1Pos, 'Alice', { gasLimit: gasLimit })).wait();
+          await (await diamond.connect(player2).initializePlayer(player2Pos, 'Bob', { gasLimit: gasLimit })).wait();
+          await (await diamond.connect(player3).initializePlayer(player2Pos, 'Bob', { gasLimit: gasLimit })).wait();
           console.log(`✦ player initialization took ${Math.floor(performance.now() - startTime)} ms`);
 
           // const player1ID = (await diamond.getPlayerId(player1.address)).toNumber();
@@ -156,11 +162,13 @@ task('deploy', 'deploy contracts')
         }
       }
 
+      const deploymentId = `deployer=${process.env.DEPLOYER_ID}-${release && 'release-'}${hre.network.name}-${Date.now()}`;
+
       // Generate config files
       const configFile: GameConfig = {
         address: diamond.address,
         network: hre.network.name,
-        deploymentId: `deployer=${process.env.DEPLOYER_ID}-${release && 'release-'}${hre.network.name}-${Date.now()}`,
+        deploymentId: deploymentId,
         map: scaleMap(tileMap, Number(worldConstants.tileWidth)),
         time: new Date(),
       };
@@ -171,13 +179,19 @@ task('deploy', 'deploy contracts')
         hre.run('port'); // if no port flag present, assume always port to Vault
       }
 
-      console.log(chalk.bgGreen.black(' Curio Game Deployed '));
-      console.log(chalk.bgRed.white(` Deployed in ${Math.floor(performance.now() - s) / 1000}s `));
-
       if (isDev || hre.network.name === 'tailscale') {
         await hre.ethers.provider.send('evm_setNextBlockTimestamp', [Math.floor(new Date().getTime() / 1000)]);
         await hre.ethers.provider.send('evm_mine', []); // syncs the blockchain time to current unix time
       }
+
+      // TODO: for now, only sync in dev mode
+      if (isDev) {
+        // sync game state with middleware
+        await startGameSync(deploymentId);
+      }
+
+      console.log(chalk.bgRed.white(` Deployed in ${Math.floor(performance.now() - s) / 1000}s `));
+      console.log(chalk.bgGreen.black(' Curio Game Deployed '));
     } catch (err: any) {
       console.log(err.message);
     }

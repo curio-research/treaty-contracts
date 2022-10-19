@@ -3,7 +3,7 @@ import { decodeBigNumberishArr } from './../../util/serde/common';
 import { Component__factory } from './../../typechain-types/factories/contracts/Component__factory';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { position } from './../../util/types/common';
-import { TILE_TYPE, componentNameToId, encodePosition, getImmediateSurroundingPositions, TileMap, Tag, Position, Owner, Health, Speed, Attack, Defense, Load, LastTimestamp, Tags, encodeString, encodeUint256, getRightPos } from 'curio-vault';
+import { TILE_TYPE, componentNameToId, encodePosition, getImmediateSurroundingPositions, TileMap, Tag, Position, Owner, Health, Speed, Attack, Defense, Load, LastTimestamp, Tags, encodeString, encodeUint256, getRightPos, chainInfo } from 'curio-vault';
 import { TILE_WIDTH } from './constants';
 
 const MAX_UINT256 = BigInt(Math.pow(2, 256)) - BigInt(1);
@@ -131,6 +131,7 @@ export const getProperTilePosition = (position: position, tileWidth: number): po
 
 export const initializeFixmap = async (hre: HardhatRuntimeEnvironment, diamond: Curio) => {
   const [player1, player2, player3, player4] = await hre.ethers.getSigners();
+  const gasLimit = chainInfo[hre.network.name].gasLimit;
 
   const player1Pos = { x: 25, y: 55 };
   const player2Pos = { x: 25, y: 25 };
@@ -139,10 +140,10 @@ export const initializeFixmap = async (hre: HardhatRuntimeEnvironment, diamond: 
   const playerPositions = [player1Pos, player2Pos, player3Pos, player4Pos];
 
   // initialize 4 players
-  await (await diamond.connect(player1).initializePlayer(player1Pos, 'A', { gasLimit: 100_000_000 })).wait();
-  await (await diamond.connect(player2).initializePlayer(player2Pos, 'B', { gasLimit: 100_000_000 })).wait();
-  await (await diamond.connect(player3).initializePlayer(player3Pos, 'C', { gasLimit: 100_000_000 })).wait();
-  await (await diamond.connect(player4).initializePlayer(player4Pos, 'D', { gasLimit: 100_000_000 })).wait();
+  await (await diamond.connect(player1).initializePlayer(player1Pos, 'A', { gasLimit: gasLimit })).wait();
+  await (await diamond.connect(player2).initializePlayer(player2Pos, 'B', { gasLimit: gasLimit })).wait();
+  await (await diamond.connect(player3).initializePlayer(player3Pos, 'C', { gasLimit: gasLimit })).wait();
+  await (await diamond.connect(player4).initializePlayer(player4Pos, 'D', { gasLimit: gasLimit })).wait();
 
   const player1Id = (await diamond.getPlayerId(player1.address)).toNumber();
   const player2Id = (await diamond.getPlayerId(player2.address)).toNumber();

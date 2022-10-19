@@ -1,6 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
+import "openzeppelin-contracts/contracts/utils/Strings.sol";
 import "contracts/libraries/Storage.sol";
 import {ComponentSpec, GameState, Position, Terrain, Tile, ValueType, WorldConstants, QueryCondition, QueryType} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
@@ -316,7 +317,7 @@ library GameLib {
         string memory _entityName,
         uint256 _level
     ) internal view returns (uint256) {
-        string memory identifier = string(abi.encodePacked("Constant-", _functionName, "-", _componentName, "-", _entityName, "-", _level));
+        string memory identifier = string(abi.encodePacked("Constant-", _functionName, "-", _componentName, "-", _entityName, "-", Strings.toString(_level)));
         uint256[] memory res = ECSLib.getStringComponent("Tag").getEntitiesWithValue(identifier);
         require(res.length == 1, string(abi.encodePacked("CURIO: Constant with Tag=", identifier, " not found")));
         return ECSLib.getUint("Amount", res[0]);
@@ -416,7 +417,7 @@ library GameLib {
 
     function getInventory(uint256 _cityID, uint256 _templateID) internal returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
-        query[0] = ECSLib.queryChunk(QueryType.HasVal, "City", abi.encode(_cityID));
+        query[0] = ECSLib.queryChunk(QueryType.HasVal, "Keeper", abi.encode(_cityID));
         query[1] = ECSLib.queryChunk(QueryType.HasVal, "Template", abi.encode(_templateID));
         uint256[] memory res = ECSLib.query(query);
 
