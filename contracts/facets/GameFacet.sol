@@ -305,10 +305,11 @@ contract GameFacet is UseStorage {
         // Verify no ongoing production
         require(GameLib.getBuildingProduction(_buildingID) == NULL, "CURIO: Concurrent productions disallowed");
 
+        uint256 buildingLevel = ECSLib.getUint("Level", cityID);
         // Create inventory if none exists, and verify that amount does not exceed ceiling
         uint256 troopInventoryID = GameLib.getInventory(cityID, _templateID);
         if (troopInventoryID == NULL) {
-            uint256 load = GameLib.getConstant("startTroopProduction", "Load", ECSLib.getString("InventoryType", _templateID), 0);
+            uint256 load = GameLib.getConstant("upgradeCityInventory", "Load", ECSLib.getString("InventoryType", _templateID), buildingLevel);
             troopInventoryID = Templates.addInventory(cityID, _templateID, 0, load, false);
         } else {
             require(ECSLib.getUint("Amount", troopInventoryID) < ECSLib.getUint("Load", troopInventoryID), "CURIO: Amount exceeds inventory capacity");

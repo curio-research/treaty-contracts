@@ -2,6 +2,7 @@
 pragma solidity ^0.8.4;
 
 import {Position, WorldConstants} from "contracts/libraries/Types.sol";
+import "openzeppelin-contracts/contracts/utils/Strings.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
 
 library Templates {
@@ -258,7 +259,7 @@ library Templates {
     ) public returns (uint256) {
         uint256 constantID = ECSLib.addEntity();
 
-        string memory identifier = string(abi.encodePacked("Constant-", _functionName, "-", _componentName, "-", _entityName, "-", _level));
+        string memory identifier = string(abi.encodePacked("Constant-", _functionName, "-", _componentName, "-", _entityName, "-", Strings.toString(_level)));
         ECSLib.setString("Tag", constantID, identifier);
         ECSLib.setUint("Amount", constantID, _amount);
 

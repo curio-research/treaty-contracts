@@ -136,7 +136,7 @@ for (let i = 1; i <= 9; i++) {
 }
 
 // `upgradeResource`
-for (let i = 1; i <= 9; i++) {
+for (let i = 0; i <= 9; i++) {
   CONSTANT_SPECS.push({ functionName: 'upgradeResource', componentName: Cost, entityName: InventoryTypeOptions.Gold, level: i, value: 50000 });
   CONSTANT_SPECS.push({ functionName: 'upgradeResource', componentName: Cost, entityName: InventoryTypeOptions.Food, level: i, value: 16000 });
 }

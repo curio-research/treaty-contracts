@@ -6,7 +6,7 @@ import { publishDeployment, isConnectionLive, startGameSync } from './../api/dep
 import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment, HardhatArguments } from 'hardhat/types';
 import { deployProxy, printDivider } from './util/deployHelper';
-import { createTemplates, generateWorldConstants, SMALL_MAP_INPUT, TILE_WIDTH } from './util/constants';
+import { CONSTANT_SPECS, createTemplates, generateWorldConstants, SMALL_MAP_INPUT, TILE_WIDTH } from './util/constants';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
 import { chooseRandomEmptyLandPosition, encodeTileMap, generateBlankFixmap, generateMap, getPositionFromLargeTilePosition, initializeFixmap } from './util/mapHelper';
 import { COMPONENT_SPECS, getRightPos, GameConfig, TILE_TYPE, Speed, encodeUint256, getTopPos, scaleMap, chainInfo } from 'curio-vault';
@@ -76,6 +76,15 @@ task('deploy', 'deploy contracts')
 
       console.log(`✦ component registration took ${Math.floor(performance.now() - startTime)} ms`);
 
+      // Register constants
+      startTime = performance.now();
+      const constantUploadBatchSize = 15;
+      for (let i = 0; i < CONSTANT_SPECS.length; i += constantUploadBatchSize) {
+        console.log(`  ✦ Registering constants ${i} to ${i + constantUploadBatchSize}`);
+        await (await diamond.bulkAddConstants(CONSTANT_SPECS.slice(i, i + constantUploadBatchSize), { gasLimit: gasLimit })).wait();
+      }
+      console.log(`✦ constant registration took ${Math.floor(performance.now() - startTime)} ms`);
+
       // Initialize map
       startTime = performance.now();
       const encodedTileMap = encodeTileMap(tileMap, worldConstants.numInitTerrainTypes, worldConstants.initBatchSize);
@@ -116,7 +125,6 @@ task('deploy', 'deploy contracts')
         // Randomly initialize players if on localhost
         if (isDev) {
           // this is coordinate position
-          // console.log(scaleMap(tileMap, TILE_WIDTH));
           const player1Pos = chooseRandomEmptyLandPosition(scaleMap(tileMap, TILE_WIDTH));
           const player2Pos = getRightPos(getRightPos(player1Pos));
           const player3Pos = getTopPos(getTopPos(player1Pos));
