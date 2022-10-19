@@ -121,9 +121,7 @@ CONSTANT_SPECS.push({ functionName: 'packCity', componentName: Health, entityNam
 // `upgradeTile`
 CONSTANT_SPECS.push({ functionName: 'upgradeTile', componentName: Cost, entityName: InventoryTypeOptions.Gold, level: 0, value: 10 * 200 });
 CONSTANT_SPECS.push({ functionName: 'upgradeTile', componentName: Cost, entityName: InventoryTypeOptions.Food, level: 0, value: 50 * 200 });
-for (let i = 1; i <= 9; i++) {
-  CONSTANT_SPECS.push({ functionName: 'upgradeTile', componentName: Amount, entityName: InventoryTypeOptions.Guard, level: i, value: Math.pow(3, i) * 200 });
-}
+CONSTANT_SPECS.push({ functionName: 'upgradeTile', componentName: Amount, entityName: InventoryTypeOptions.Guard, level: 0, value: 200 });
 
 // `upgradeCityInventory`
 CONSTANT_SPECS.push({ functionName: 'upgradeCityInventory', componentName: Cost, entityName: InventoryTypeOptions.Gold, level: NULL, value: 3000 });
