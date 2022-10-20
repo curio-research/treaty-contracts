@@ -96,6 +96,7 @@ export const createTemplates = async (diamond: Curio) => {
 // ----------------------------------------------------------
 
 const NULL = 0;
+
 export const CONSTANT_SPECS: ConstantSpecStruct[] = [];
 
 // `initializePlayer`
