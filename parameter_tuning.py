@@ -1,6 +1,7 @@
 import functools
 import math
 from enum import Enum
+from types import LambdaType
 from typing import List
 import numpy as np
 
@@ -12,6 +13,24 @@ class Building(Enum):
     GOLDMINE = 0
     FARM = 1
     CITYCENTER = 2
+
+def get_gather_rate_per_army(city_center_level: int, resourceType: Resource):
+    """
+    Growth: Constant
+    Gist: determined by resource weight & city center level & player expected yields. Gold/Food mints are both medium
+    """
+    # should take the middle of the interval => if ccl = 2, ccltbl = 3, then it corresponds to (6 + 3) / 2 = 4.5
+    corresponding_building_level = corresponding_building_level(city_center_level)
+    # NOTE: function input uses resource enum but it's fine for now
+    (gold_hourly_yield, food_hourly_yield) =  get_building_hourly_yield_by_level(corresponding_building_level, resourceType)
+    
+    
+def get_troop_size_by_center_level(level: int) -> int:
+    """
+    Growth: same as barbarian counts curve
+    level is city center level
+    """
+    return Game.barbarian_count_growth_curve(level * Game.city_center_level_to_building_level) / Game.payback_period_curve(1) * get_PvE_troop_base_count() * 100 / Game.barbarian_to_army_difficulty_constant
 
 def get_building_resource_cap(level: int, buildingType: Building):
     """
@@ -63,7 +82,7 @@ def get_building_hourly_yield_by_level(level: int, building_type: Building):
     food_hourly_yield = math.floor(((math.e)**(1/5 * level) - 0.9) / 0.321 * food_base_hourly_yield)
     return np.array([gold_hourly_yield, food_hourly_yield])
 
-def getPvETroopBaseCount() -> int:
+def get_PvE_troop_base_count() -> int:
     return Game.new_player_action_in_seconds * Game.base_troop_training_in_Seconds
 
 def get_barbarian_count_by_level(level: int) -> int:
@@ -71,7 +90,7 @@ def get_barbarian_count_by_level(level: int) -> int:
     Growth: slow exponential
     Gist: barbarian rewards and costs both increase exponentially, but the latter at a lower rate
     """
-    return ((math.e)**(1/7 * level) - 0.9) / 0.254 * getPvETroopBaseCount()
+    return Game.barbarian_count_growth_curve(level) / Game.barbarian_count_growth_curve(1) * get_PvE_troop_base_count()
 
 def getBarbarianReward(level: int):
     """
@@ -84,9 +103,9 @@ def getBarbarianReward(level: int):
     total_goldcost = barbarian_count * goldcost_per_troop
     total_foodcost = barbarian_count * foodcost_per_troop
     # actual reward = base reward * exponential curve (level as x)
-    gold_reward = total_goldcost * Game.barbarian_reward_to_cost_coefficient * ((math.e)**(1/5 * level) - 0.9)
+    gold_reward = total_goldcost * Game.barbarian_reward_to_cost_coefficient * ((math.e)**(1/(Game.barbarian_growth_constant - 2) * level) - 0.9)
     # food burn for troop is heavy while foot mint for barbarians is low
-    food_reward = total_foodcost * Game.barbarian_reward_to_cost_coefficient * ((math.e)**(1/5 * level) - 0.9) * (Game.resource_weight_low/Game.resource_weight_heavy)
+    food_reward = total_foodcost * Game.barbarian_reward_to_cost_coefficient * ((math.e)**(1/(Game.barbarian_growth_constant - 2) * level) - 0.9) * (Game.resource_weight_low/Game.resource_weight_heavy)
     return np.array([gold_reward, food_reward])
 
 def get_tile_troop_count(level: int) -> int:
@@ -94,7 +113,7 @@ def get_tile_troop_count(level: int) -> int:
     Growth: slow exponential
     Gist: tile power increases exponentially; for now all tiles are initialized to be lv1
     """
-    return ((math.e)**(1/7 * level) - 0.9) / 0.254 * getPvETroopBaseCount() * Game.tile_to_barbarian_strength_ratio
+    return Game.payback_period_curve(level) / Game.payback_period_curve(1) * get_PvE_troop_base_count() * Game.tile_to_barbarian_strength_ratio
 
 def getTileUpgradeCost(level: int) -> int:
     """
@@ -107,22 +126,27 @@ def getTileUpgradeCost(level: int) -> int:
     total_foodcost = get_tile_troop_count(level) * foodcost_per_troop
     return np.array([total_goldcost, total_foodcost])
 
+def get_resource_expected_density(resourceType: Resource) -> float:
+    if resourceType == Resource.GOLD: return Game.init_player_goldmine_count/Game.init_player_tile_count
+
+def city_center_level_to_building_level(level: int) -> int:
+    (2 * (level) - 1) * Game.city_center_level_to_building_level / 2
+
 def get_building_upgrade_cost(level: int, building_type: Building) -> float:
     """
     Growth: fast exponential
     Gist: both building yields and upgrade costs increase exponentially, but the latter at a lower rate
     """
     (gold_hourly_yield, food_hourly_yield) =  get_building_hourly_yield_by_level(level, building_type)
-    # the exponential curve makes sure upgrade from lv8 to lv9 has 5.15 hr payback period
     # cost is easy to calculate for goldmine
-    goldmine_goldcost = ((math.e)**(1/7 * level) - 0.9) * gold_hourly_yield
+    goldmine_goldcost = Game.payback_period_curve(level) * gold_hourly_yield
     # calculate foodcost based on resource weight
     goldmine_foodcost = goldmine_goldcost/Game.resource_weight_heavy * Game.resource_weight_low
     # taking a leap of faith here; farm doesn't generate gold, so we use its quantity relative to goldmine to calculate
     # assumption is that player spend gold equivalently on two types of building
     farm_goldcost = goldmine_goldcost * Game.init_player_goldmine_count / Game.init_player_farm_count
     # farm food cost if don't consider that part of it goes to troops
-    farm_foodcost_raw = ((math.e)**(1/7 * level) - 0.9) * food_hourly_yield
+    farm_foodcost_raw = Game.payback_period_curve(level) * food_hourly_yield
     # consider relative weight of food burn => Build (low), Troop (heavy)
     farm_foodcost = farm_foodcost_raw * Game.resource_weight_low/(Game.resource_weight_heavy + Game.resource_weight_low)
     if building_type == Building.GOLDMINE:
@@ -130,28 +154,34 @@ def get_building_upgrade_cost(level: int, building_type: Building) -> float:
     if building_type == Building.FARM:
         return np.array([farm_goldcost, farm_foodcost])
     if building_type == Building.CITYCENTER:
-        ## city center upgrade cost incur additional tax, based upon how many tile it unlocks
-        ## tax = (initPlayerGoldMineCount * output + initPlayerFarmCount * output)/9 * getCityCenterTilesInterval * payback period
-        (taxGold, taxFood) = (Game.init_player_farm_count * np.array(get_building_base_hourly_yield(Building.GOLDMINE)) \
-         + Game.init_player_farm_count * np.array(get_building_base_hourly_yield(Building.FARM)) )/9 * get_citycenter_tiles_interval() \
-            * ((math.e)**(1/5 * level) - 0.9)
-        return np.array([goldmine_goldcost + farm_goldcost + taxGold, goldmine_foodcost + farm_foodcost + taxFood])
+        # city center upgrade cost incur additional tax, based upon new tile it unlocks
+        # tax = expected resource output (= density * getCityCenterTilesInterval / '2' * yield) * payback period
+        unlocked_goldmine_count = Game.expected_gold_density * get_citycenter_tiles_interval()
+        unlocked_farm_count = Game.expected_farm_density * get_citycenter_tiles_interval()
+        # here I choose to use the new city level as base 
+        corresponding_building_level = city_center_level_to_building_level(level + 1)
+        expected_goldmine_hourly_yield = get_building_hourly_yield_by_level(corresponding_building_level, Building.GOLDMINE)[0]
+        expected_farm_hourly_yield = get_building_hourly_yield_by_level(corresponding_building_level, Building.FARM)[1]
+        tax_gold = unlocked_goldmine_count * expected_goldmine_hourly_yield * Game.payback_period_curve(corresponding_building_level)
+        tax_food = unlocked_farm_count * expected_farm_hourly_yield * Game.payback_period_curve(corresponding_building_level)
+
+        return np.array([goldmine_goldcost + farm_goldcost + tax_gold, goldmine_foodcost + farm_foodcost + tax_food])
 
 class Game:
     total_tile_count = 1600
     expected_player_count = 10
-    init_player_tile_count = 9
+    init_player_tile_count = 16
     """
     How many tiles does a level 1 city center player has
     """
 
-    init_player_goldmine_count = 2
+    init_player_goldmine_count = 3
     """
     How many goldmines avg players have when city center level is 1
     Determined by resource density. Note that one of the goldmine is citycenter
     """
 
-    init_player_farm_count = 7
+    init_player_farm_count = 13
     """
     How many farms avg players have when city center level is 1
     Determined by resource density. 
@@ -159,12 +189,17 @@ class Game:
 
     player_login_interval_in_minutes = 10
     """
-    mainly determine building cap
+    Mainly determine building cap
     """
 
     total_city_center_level = 3
     """
-    each city center level matches with 3 building levels
+    City center max level
+    """
+
+    city_center_level_to_building_level = 3
+    """
+    Building levels that each city level upgrade unlocks. NOTE: same constant is used for barbarians & tiles
     """
 
     new_player_action_in_seconds = 120
@@ -180,7 +215,8 @@ class Game:
 
     barbarian_reward_to_cost_coefficient = 2
     """
-    Adjust this number based upon expected player behavior
+    Adjust this number based upon expected player behavior. This only changes the absolute ratio of reward to cost.
+    To tune the difference in rate of increment. Adjust the exponential function (by default the diff is 2)
     """
 
     tile_to_barbarian_strength_ratio = 5
@@ -193,6 +229,42 @@ class Game:
     Upgrading Tiles should cost less than buying troops
     """
 
+    barbarian_growth_constant = 7
+    """
+    Control barbarian quantity curve rate. e^(1/bgc * x) - 0.9. Ranges from 3 to n.
+    Affect both quantity and rewards. The smaller it is, barbarians grow faster
+    """
+
+    barbarian_to_army_difficulty_constant = 100
+    """
+    Affect army size. The percentage of troop attendence to defeat same-level barbarian
+    Example: player city center is lv3, then its army should equal lv7 - 9 barbarians (avg is 8) if constant is 100
+    """
+
+    @property
+    def barbarian_count_growth_curve() -> LambdaType:
+        """
+        Growth: slow exponential
+        Gist: barbarian rewards and costs both increase exponentially, but the latter at a lower rate
+        """
+        return lambda level: ((math.e)**(level/Game.barbarian_growth_constant) - 0.9)
+
+    @property
+    def payback_period_curve() -> LambdaType:
+        """
+        Growth: fast exponential
+        Gist: the exponential curve makes sure upgrade from lv8 to lv9 has 5.15 hr payback period
+        """
+        return lambda level: ((math.e)**(level/7) - 0.9)
+
+    @property
+    def expected_gold_density() -> float:
+        return Game.init_player_goldmine_count/Game.init_player_tile_count
+
+    @property
+    def expected_farm_density() -> float:
+        return Game.init_player_farm_count/Game.init_player_tile_count
+
     # Gold:
     #   Mint: Harvest (low), Gather (medium), Barbarians (high)
     #   Burn: Build (heavy), Troop (low)
@@ -200,29 +272,8 @@ class Game:
     #   Mint: Harvest (heavy), Gather (medium), Barbarians (low)
     #   Burn: Build (low), Troop (heavy)
 
-    resource_weight_low = 2
-    """
-    Mint: Harvest
-    Burn: Troop
-    """
+    (resource_weight_low, resource_weight_medium, resource_weight_high, resource_weight_heavy) = (2, 3, 4, 8)
 
-    resource_weight_medium = 3
-    """
-    Mint: Gather
-    Burn: Null
-    """
-
-    resource_weight_high = 4
-    """
-    Mint: Barbarian
-    Burn: Null
-    """
-
-    resource_weight_heavy = 8
-    """
-    Mint: Null
-    Burn: Build, Troop
-    """
     def __init__(self) -> None:
         return
 
@@ -233,11 +284,11 @@ class Game:
             total_level = 1
             buildingType = i
             if i == Building.GOLDMINE:
-                total_level = 9
+                total_level = self.city_center_level_to_building_level
             if i == Building.FARM:
-                total_level = 9
+                total_level = self.city_center_level_to_building_level
             else:
-                total_level = 3
+                total_level = self.total_city_center_level
 
             curr_level = 1
 
@@ -273,7 +324,7 @@ class Game:
         print(f"Barbarian Stats")
         print("-----------------")
         curr_level = 1
-        while curr_level < 10:
+        while curr_level < self.city_center_level_to_building_level - 1:
             reward_arr = getBarbarianReward(curr_level)
             reward_gold = reward_arr[0]
             reward_food = reward_arr[1]
@@ -290,7 +341,7 @@ class Game:
         print(f"Tile Upgrade Stats")
         print("-----------------")
         curr_level = 1
-        while curr_level < 10:
+        while curr_level < self.city_center_level_to_building_level - 1:
             cost_arr = getTileUpgradeCost(curr_level)
             cost_gold = cost_arr[0]
             cost_food = cost_arr[1]
