@@ -6,15 +6,16 @@ import { publishDeployment, isConnectionLive, startGameSync } from './../api/dep
 import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment, HardhatArguments } from 'hardhat/types';
 import { confirm, deployProxy, printDivider } from './util/deployHelper';
-import { CONSTANT_SPECS, createTemplates, generateWorldConstants, SMALL_MAP_INPUT, TILE_WIDTH } from './util/constants';
+import { CONSTANT_SPECS, createTemplates, generateWorldConstants, SMALL_MAP_INPUT } from './util/constants';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
-import { chooseRandomEmptyLandPosition, encodeTileMap, generateBlankFixmap, generateMap, initializeFixmap } from './util/mapHelper';
-import { COMPONENT_SPECS, getRightPos, GameConfig, TILE_TYPE, getTopPos, scaleMap, chainInfo } from 'curio-vault';
+import { encodeTileMap, generateBlankFixmap, generateMap, initializeFixmap } from './util/mapHelper';
+import { COMPONENT_SPECS, GameConfig, TILE_TYPE, getTopPos, scaleMap, chainInfo } from 'curio-vault';
 
 /**
  * Deploy script for publishing games
  *
  * Examples:
+ * `yarn deploy:anvil`: starts Anvil instance + deploys a single game
  * `npx hardhat deploy`: deploys game on localhost
  * `npx hardhat deploy --network constellationNew`: deploy game on constellationNew network
  */
@@ -42,7 +43,7 @@ task('deploy', 'deploy contracts')
       await isConnectionLive();
 
       // Set up deployer and some local variables
-      let [player1, player2, player3] = await hre.ethers.getSigners();
+      let [player1] = await hre.ethers.getSigners();
       console.log('✦ player1 address is:', player1.address);
 
       const worldConstants = generateWorldConstants(player1.address, SMALL_MAP_INPUT);
@@ -70,7 +71,7 @@ task('deploy', 'deploy contracts')
       let startTime = performance.now();
       const componentUploadBatchSize = 40;
       for (let i = 0; i < COMPONENT_SPECS.length; i += componentUploadBatchSize) {
-        console.log(`Registering components ${i} to ${i + componentUploadBatchSize}`);
+        console.log(chalk.dim(`Registering components ${i} to ${i + componentUploadBatchSize}`));
         await confirm(await diamond.registerComponents(diamond.address, COMPONENT_SPECS.slice(i, i + componentUploadBatchSize)), hre);
       }
 
@@ -80,7 +81,7 @@ task('deploy', 'deploy contracts')
       startTime = performance.now();
       const constantUploadBatchSize = 10;
       for (let i = 0; i < CONSTANT_SPECS.length; i += constantUploadBatchSize) {
-        console.log(`✦ Registering constants ${i} to ${i + constantUploadBatchSize}`);
+        console.log(chalk.dim(`✦ Registering constants ${i} to ${i + constantUploadBatchSize}`));
         await confirm(await diamond.bulkAddConstants(CONSTANT_SPECS.slice(i, i + constantUploadBatchSize), { gasLimit: gasLimit }), hre);
       }
       console.log(`✦ constant registration took ${Math.floor(performance.now() - startTime)} ms`);
@@ -120,50 +121,12 @@ task('deploy', 'deploy contracts')
 
       if (fixmap) {
         await initializeFixmap(hre, diamond);
-      } else {
-        // Randomly initialize players if on localhost
-        if (isDev) {
-          // this is coordinate position
-          const player1Pos = chooseRandomEmptyLandPosition(scaleMap(tileMap, TILE_WIDTH));
-          const player2Pos = getRightPos(getRightPos(player1Pos));
-          const player3Pos = getTopPos(getTopPos(player1Pos));
-
-          startTime = performance.now();
-          await confirm(await diamond.connect(player1).initializePlayer(player1Pos, 'Alice', { gasLimit: gasLimit }), hre);
-          await confirm(await diamond.connect(player2).initializePlayer(player2Pos, 'Bob', { gasLimit: gasLimit }), hre);
-          await confirm(await diamond.connect(player3).initializePlayer(player3Pos, 'Bob', { gasLimit: gasLimit }), hre);
-          console.log(`✦ player initialization took ${Math.floor(performance.now() - startTime)} ms`);
-
-          // const player1ID = (await diamond.getPlayerId(player1.address)).toNumber();
-          // const player2ID = (await diamond.getPlayerId(player2.address)).toNumber();
-
-          // let armySpawnPos = { x: -1, y: -1 };
-          // for (let i = 0; i < worldConstants.worldWidth; i++) {
-          //   for (let j = 0; j < worldConstants.worldHeight; j++) {
-          //     if (tileMap[i][j] === TILE_TYPE.GOLDMINE_LV1 || tileMap[i][j] === TILE_TYPE.GOLDMINE_LV2 || tileMap[i][j] === TILE_TYPE.GOLDMINE_LV3) {
-          //       armySpawnPos = { x: i, y: j };
-          //     }
-          //   }
-          // }
-
-          // armySpawnPos = getPositionFromLargeTilePosition(armySpawnPos, TILE_WIDTH);
-
-          // // add an army on a gold mine (easy for testing gather resource)
-          // await diamond.initializeTile(armySpawnPos);
-          // await diamond.createArmy(player1ID, armySpawnPos);
-          // let entity = (await diamond.getEntity()).toNumber();
-          // await confirm (await diamond.setComponentValue(Speed, entity, encodeUint256(2)), hre);
-
-          // await diamond.initializeTile(getTopPos(armySpawnPos));
-          // await diamond.createArmy(player2ID, getTopPos(armySpawnPos));
-          // entity = (await diamond.getEntity()).toNumber();
-          // await confirm (await diamond.setComponentValue(Speed, entity, encodeUint256(2)), hre);
-        }
       }
 
+      // Each deployment has a unique deploymentId
       const deploymentId = `deployer=${process.env.DEPLOYER_ID}-${release && 'release-'}${hre.network.name}-${Date.now()}`;
 
-      // Generate config files
+      // Generate config file
       const configFile: GameConfig = {
         address: diamond.address,
         network: hre.network.name,
@@ -183,14 +146,12 @@ task('deploy', 'deploy contracts')
         await hre.ethers.provider.send('evm_mine', []); // syncs the blockchain time to current unix time
       }
 
-      // TODO: for now, only sync in dev mode
+      // TODO: for now, only sync game state with middleware in dev mode
       if (isDev) {
-        // sync game state with middleware
         await startGameSync(deploymentId);
       }
 
-      console.log(chalk.bgRed.white(` Deployed in ${Math.floor(performance.now() - s) / 1000}s `));
-      console.log(chalk.bgGreen.black(' Curio Game Deployed '));
+      console.log(chalk.bgGreen.black(` Curio Game deployed (${Math.floor(performance.now() - s) / 1000}s) `));
     } catch (err: any) {
       console.log(err.message);
     }
