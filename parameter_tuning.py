@@ -14,16 +14,26 @@ class Building(Enum):
     FARM = 1
     CITYCENTER = 2
 
-def get_gather_rate_per_army(city_center_level: int, resourceType: Resource):
+def get_gather_rate_per_army(resourceType: Resource):
     """
     Growth: Constant
-    Gist: determined by resource weight & city center level & player expected yields. Gold/Food mints are both medium
+    Gist: determined by resource weight & city center level (midpoint constant) & projected yields.
+    Gold/Food mints from gather are both medium
     """
     # should take the middle of the interval => if ccl = 2, ccltbl = 3, then it corresponds to (6 + 3) / 2 = 4.5
-    corresponding_building_level = corresponding_building_level(city_center_level)
+    corresponding_building_level = city_center_level_to_building_level((Game.max_city_center_level + 1) / 2)
     # NOTE: function input uses resource enum but it's fine for now
     (gold_hourly_yield, food_hourly_yield) =  get_building_hourly_yield_by_level(corresponding_building_level, resourceType)
-    
+
+    projected_goldmine_count = Game.expected_gold_density * get_citycenter_tiles_interval() * math.ceil((Game.max_city_center_level + 1) / 2)
+    projected_farm_count = Game.expected_farm_density * get_citycenter_tiles_interval() * math.ceil((Game.max_city_center_level + 1) / 2)
+
+    gold_gather_rate = gold_hourly_yield * projected_goldmine_count / Game.resource_weight_low * Game.resource_weight_medium
+    food_gather_rate = food_hourly_yield * projected_farm_count / Game.resource_weight_heavy * Game.resource_weight_medium
+
+    if (resourceType == Resource.GOLD): return gold_gather_rate
+    if (resourceType == Resource.FOOD): return food_gather_rate
+
     
 def get_troop_size_by_center_level(level: int) -> int:
     """
@@ -44,7 +54,7 @@ def get_citycenter_tiles_interval() -> int:
     Growth: Constant
     Gist: 9 tiles - avg tiles - max tiles => calculate with (avg - init) / (intervals/2)
     """
-    return math.floor(((Game.total_tile_count/Game.expected_player_count) - Game.init_player_tile_count) / (Game.total_city_center_level - 1) / 2)
+    return math.floor(((Game.total_tile_count/Game.expected_player_count) - Game.init_player_tile_count) / (Game.max_city_center_level - 1) / 2)
 
 def get_building_base_hourly_yield(building_type: Building):
     """
@@ -130,7 +140,10 @@ def get_resource_expected_density(resourceType: Resource) -> float:
     if resourceType == Resource.GOLD: return Game.init_player_goldmine_count/Game.init_player_tile_count
 
 def city_center_level_to_building_level(level: int) -> int:
-    (2 * (level) - 1) * Game.city_center_level_to_building_level / 2
+    """
+    Gist take the middle of the interval => if ccl = 2, ccltbl = 3, then it corresponds to (6 + 3) / 2 = 4.5
+    """
+    return (2 * (level) - 1) * Game.city_center_level_to_building_level / 2
 
 def get_building_upgrade_cost(level: int, building_type: Building) -> float:
     """
@@ -192,7 +205,7 @@ class Game:
     Mainly determine building cap
     """
 
-    total_city_center_level = 3
+    max_city_center_level = 3
     """
     City center max level
     """
@@ -239,6 +252,11 @@ class Game:
     """
     Affect army size. The percentage of troop attendence to defeat same-level barbarian
     Example: player city center is lv3, then its army should equal lv7 - 9 barbarians (avg is 8) if constant is 100
+    """
+
+    gather_rate_to_resource_rate = 80
+    """
+    Gather rate should be much faster than harvest yield rate
     """
 
     @property
@@ -288,7 +306,7 @@ class Game:
             if i == Building.FARM:
                 total_level = self.city_center_level_to_building_level
             else:
-                total_level = self.total_city_center_level
+                total_level = self.max_city_center_level
 
             curr_level = 1
 
