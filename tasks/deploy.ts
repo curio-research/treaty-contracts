@@ -5,7 +5,7 @@ import { ECSLib } from './../typechain-types/libraries/ECSLib';
 import { publishDeployment, isConnectionLive, startGameSync } from './../api/deployment';
 import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment, HardhatArguments } from 'hardhat/types';
-import { deployProxy, printDivider } from './util/deployHelper';
+import { confirm, deployProxy, printDivider } from './util/deployHelper';
 import { CONSTANT_SPECS, createTemplates, generateWorldConstants, SMALL_MAP_INPUT, TILE_WIDTH } from './util/constants';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
 import { chooseRandomEmptyLandPosition, encodeTileMap, generateBlankFixmap, generateMap, getPositionFromLargeTilePosition, initializeFixmap } from './util/mapHelper';
@@ -68,32 +68,34 @@ task('deploy', 'deploy contracts')
 
       // Batch register components
       let startTime = performance.now();
-      const componentUploadBatchSize = 20;
+      const componentUploadBatchSize = 40;
       for (let i = 0; i < COMPONENT_SPECS.length; i += componentUploadBatchSize) {
         console.log(`Registering components ${i} to ${i + componentUploadBatchSize}`);
-        await (await diamond.registerComponents(diamond.address, COMPONENT_SPECS.slice(i, i + componentUploadBatchSize))).wait();
+        await confirm(await diamond.registerComponents(diamond.address, COMPONENT_SPECS.slice(i, i + componentUploadBatchSize)), hre);
       }
 
       console.log(`✦ component registration took ${Math.floor(performance.now() - startTime)} ms`);
 
       // Register constants
       startTime = performance.now();
-      const constantUploadBatchSize = 15;
+      const constantUploadBatchSize = 10;
       for (let i = 0; i < CONSTANT_SPECS.length; i += constantUploadBatchSize) {
         console.log(`  ✦ Registering constants ${i} to ${i + constantUploadBatchSize}`);
-        await (await diamond.bulkAddConstants(CONSTANT_SPECS.slice(i, i + constantUploadBatchSize), { gasLimit: gasLimit })).wait();
+        await confirm(await diamond.bulkAddConstants(CONSTANT_SPECS.slice(i, i + constantUploadBatchSize), { gasLimit: gasLimit }), hre);
       }
-      console.log(`✦ constant registration took ${Math.floor(performance.now() - startTime)} ms`);
+      console.log(chalk.bgRed.white(` constant registration took ${Math.floor(performance.now() - constantUploadBatchSize) / 1000}s `));
+
+      // console.log(`✦ constant registration took ${Math.floor(performance.now() - startTime)} ms`);
 
       // Initialize map
       startTime = performance.now();
       const encodedTileMap = encodeTileMap(tileMap, worldConstants.numInitTerrainTypes, worldConstants.initBatchSize);
-      await (await diamond.storeEncodedColumnBatches(encodedTileMap)).wait();
+      await confirm(await diamond.storeEncodedColumnBatches(encodedTileMap), hre);
       console.log(`✦ lazy setting ${tileMap.length}x${tileMap[0].length} map took ${Math.floor(performance.now() - startTime)} ms`);
 
       // Create templates
       startTime = performance.now();
-      await createTemplates(diamond);
+      await createTemplates(diamond, hre);
       console.log(`✦ template creation took ${Math.floor(performance.now() - startTime)} ms`);
 
       // TODO: useful in some testing. Bulk initialize all tiles
@@ -114,7 +116,7 @@ task('deploy', 'deploy contracts')
       const bulkTileUploadSize = 20;
       for (let i = 0; i < harvestableLocations.length; i += bulkTileUploadSize) {
         console.log(`Initializing harvestable tiles ${i} to ${i + bulkTileUploadSize}`);
-        await (await diamond.bulkInitializeTiles(harvestableLocations.slice(i, i + bulkTileUploadSize), { gasLimit: gasLimit })).wait();
+        await confirm(await diamond.bulkInitializeTiles(harvestableLocations.slice(i, i + bulkTileUploadSize), { gasLimit: gasLimit }), hre);
       }
 
       // TODO: think about whether initializing all tiles / more than barbarian tiles is necessary
@@ -130,9 +132,9 @@ task('deploy', 'deploy contracts')
           const player3Pos = getTopPos(getTopPos(player1Pos));
 
           startTime = performance.now();
-          await (await diamond.connect(player1).initializePlayer(player1Pos, 'Alice', { gasLimit: gasLimit })).wait();
-          await (await diamond.connect(player2).initializePlayer(player2Pos, 'Bob', { gasLimit: gasLimit })).wait();
-          await (await diamond.connect(player3).initializePlayer(player2Pos, 'Bob', { gasLimit: gasLimit })).wait();
+          await confirm(await diamond.connect(player1).initializePlayer(player1Pos, 'Alice', { gasLimit: gasLimit }), hre);
+          await confirm(await diamond.connect(player2).initializePlayer(player2Pos, 'Bob', { gasLimit: gasLimit }), hre);
+          await confirm(await diamond.connect(player3).initializePlayer(player3Pos, 'Bob', { gasLimit: gasLimit }), hre);
           console.log(`✦ player initialization took ${Math.floor(performance.now() - startTime)} ms`);
 
           // const player1ID = (await diamond.getPlayerId(player1.address)).toNumber();
@@ -153,12 +155,12 @@ task('deploy', 'deploy contracts')
           // await diamond.initializeTile(armySpawnPos);
           // await diamond.createArmy(player1ID, armySpawnPos);
           // let entity = (await diamond.getEntity()).toNumber();
-          // await (await diamond.setComponentValue(Speed, entity, encodeUint256(2))).wait();
+          // await confirm (await diamond.setComponentValue(Speed, entity, encodeUint256(2)), hre);
 
           // await diamond.initializeTile(getTopPos(armySpawnPos));
           // await diamond.createArmy(player2ID, getTopPos(armySpawnPos));
           // entity = (await diamond.getEntity()).toNumber();
-          // await (await diamond.setComponentValue(Speed, entity, encodeUint256(2))).wait();
+          // await confirm (await diamond.setComponentValue(Speed, entity, encodeUint256(2)), hre);
         }
       }
 

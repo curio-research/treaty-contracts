@@ -30,6 +30,7 @@ export const isConnectionLive = async (): Promise<boolean> => {
 export const startGameSync = async (deploymentId: string): Promise<void> => {
   try {
     const { data } = await api.post(`/startGameSync`, { deploymentId: deploymentId });
+    console.log('sYNCED SUCCESSFULLY');
   } catch (err: any) {
     throw new Error(err.message);
   }

@@ -100,6 +100,7 @@ export const generateMap = (worldWidth: number, worldHeight: number, worldConsta
   //   const pos = getProperTilePosition(chooseRandomEmptyLandPosition(tileMap), tileWidth);
   //   tileMap[pos.x][pos.y] = TILE_TYPE.BARBARIAN_LV2;
   // }
+
   return tileMap;
 };
 
@@ -176,6 +177,6 @@ export const initializeFixmap = async (hre: HardhatRuntimeEnvironment, diamond: 
 };
 
 export const addGetEntity = async (diamond: Curio): Promise<number> => {
-  await (await diamond.addEntity()).wait();
+  await await diamond.addEntity();
   return (await diamond.getEntity()).toNumber();
 };

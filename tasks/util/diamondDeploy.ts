@@ -104,10 +104,10 @@ export const deployFacets = async (hre: HardhatRuntimeEnvironment, diamondAddres
       { gasLimit: 800000 }
     );
 
-    const receipt = await tx.wait();
-    if (!receipt.status) {
-      throw Error(`Diamond upgrade failed: ${tx.hash}`);
-    }
+    // const receipt = await tx.wait();
+    // if (!receipt.status) {
+    //   throw Error(`Diamond upgrade failed: ${tx.hash}`);
+    // }
   }
 };
 
