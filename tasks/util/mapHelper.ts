@@ -5,6 +5,7 @@ import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { position } from './../../util/types/common';
 import { TILE_TYPE, componentNameToId, encodePosition, getImmediateSurroundingPositions, TileMap, Tag, Position, Owner, Health, Speed, Attack, Defense, Load, LastTimestamp, Tags, encodeString, encodeUint256, getRightPos, chainInfo } from 'curio-vault';
 import { TILE_WIDTH } from './constants';
+import { confirm } from './deployHelper';
 
 const MAX_UINT256 = BigInt(Math.pow(2, 256)) - BigInt(1);
 
@@ -141,10 +142,10 @@ export const initializeFixmap = async (hre: HardhatRuntimeEnvironment, diamond: 
   const playerPositions = [player1Pos, player2Pos, player3Pos, player4Pos];
 
   // initialize 4 players
-  await (await diamond.connect(player1).initializePlayer(player1Pos, 'A', { gasLimit: gasLimit })).wait();
-  await (await diamond.connect(player2).initializePlayer(player2Pos, 'B', { gasLimit: gasLimit })).wait();
-  await (await diamond.connect(player3).initializePlayer(player3Pos, 'C', { gasLimit: gasLimit })).wait();
-  await (await diamond.connect(player4).initializePlayer(player4Pos, 'D', { gasLimit: gasLimit })).wait();
+  await confirm(await diamond.connect(player1).initializePlayer(player1Pos, 'A', { gasLimit: gasLimit }), hre);
+  await confirm(await diamond.connect(player2).initializePlayer(player2Pos, 'B', { gasLimit: gasLimit }), hre);
+  await confirm(await diamond.connect(player3).initializePlayer(player3Pos, 'C', { gasLimit: gasLimit }), hre);
+  await confirm(await diamond.connect(player4).initializePlayer(player4Pos, 'D', { gasLimit: gasLimit }), hre);
 
   const player1Id = (await diamond.getPlayerId(player1.address)).toNumber();
   const player2Id = (await diamond.getPlayerId(player2.address)).toNumber();
@@ -169,11 +170,11 @@ export const initializeFixmap = async (hre: HardhatRuntimeEnvironment, diamond: 
   // spawn armies
   await diamond.createArmy(player1Id, getRightPos(player1Pos));
   let entity = (await diamond.getEntity()).toNumber();
-  await (await diamond.setComponentValue(Speed, entity, encodeUint256(5))).wait();
+  await confirm(await diamond.setComponentValue(Speed, entity, encodeUint256(5)), hre);
 
   await diamond.createArmy(player2Id, getRightPos(getRightPos(player1Pos)));
   entity = (await diamond.getEntity()).toNumber();
-  await (await diamond.setComponentValue(Speed, entity, encodeUint256(5))).wait();
+  await confirm(await diamond.setComponentValue(Speed, entity, encodeUint256(5)), hre);
 };
 
 export const addGetEntity = async (diamond: Curio): Promise<number> => {

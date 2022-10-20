@@ -8,8 +8,8 @@ import { HardhatRuntimeEnvironment, HardhatArguments } from 'hardhat/types';
 import { confirm, deployProxy, printDivider } from './util/deployHelper';
 import { CONSTANT_SPECS, createTemplates, generateWorldConstants, SMALL_MAP_INPUT, TILE_WIDTH } from './util/constants';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
-import { chooseRandomEmptyLandPosition, encodeTileMap, generateBlankFixmap, generateMap, getPositionFromLargeTilePosition, initializeFixmap } from './util/mapHelper';
-import { COMPONENT_SPECS, getRightPos, GameConfig, TILE_TYPE, Speed, encodeUint256, getTopPos, scaleMap, chainInfo } from 'curio-vault';
+import { chooseRandomEmptyLandPosition, encodeTileMap, generateBlankFixmap, generateMap, initializeFixmap } from './util/mapHelper';
+import { COMPONENT_SPECS, getRightPos, GameConfig, TILE_TYPE, getTopPos, scaleMap, chainInfo } from 'curio-vault';
 
 /**
  * Deploy script for publishing games
@@ -80,12 +80,10 @@ task('deploy', 'deploy contracts')
       startTime = performance.now();
       const constantUploadBatchSize = 10;
       for (let i = 0; i < CONSTANT_SPECS.length; i += constantUploadBatchSize) {
-        console.log(`  ✦ Registering constants ${i} to ${i + constantUploadBatchSize}`);
+        console.log(`✦ Registering constants ${i} to ${i + constantUploadBatchSize}`);
         await confirm(await diamond.bulkAddConstants(CONSTANT_SPECS.slice(i, i + constantUploadBatchSize), { gasLimit: gasLimit }), hre);
       }
-      console.log(chalk.bgRed.white(` constant registration took ${Math.floor(performance.now() - constantUploadBatchSize) / 1000}s `));
-
-      // console.log(`✦ constant registration took ${Math.floor(performance.now() - startTime)} ms`);
+      console.log(`✦ constant registration took ${Math.floor(performance.now() - startTime)} ms`);
 
       // Initialize map
       startTime = performance.now();
@@ -112,14 +110,13 @@ task('deploy', 'deploy contracts')
         }
       }
 
+      // TODO: think about whether initializing all tiles / more than barbarian tiles is necessary
       // initialize tiles that include barbarians, farms, gold mine
       const bulkTileUploadSize = 20;
       for (let i = 0; i < harvestableLocations.length; i += bulkTileUploadSize) {
         console.log(`Initializing harvestable tiles ${i} to ${i + bulkTileUploadSize}`);
         await confirm(await diamond.bulkInitializeTiles(harvestableLocations.slice(i, i + bulkTileUploadSize), { gasLimit: gasLimit }), hre);
       }
-
-      // TODO: think about whether initializing all tiles / more than barbarian tiles is necessary
 
       if (fixmap) {
         await initializeFixmap(hre, diamond);
