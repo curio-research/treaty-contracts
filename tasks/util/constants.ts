@@ -31,6 +31,9 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): a
     maxTroopCountPerArmy: 1000,
     maxPlayerCount: 20,
     tileWidth: TILE_WIDTH,
+    maxCityCenterLevel: 3,
+    cityCenterLevelToEntityLevel: 3,
+    cityCenterLevelToTileCounts: 20,
   };
 };
 
@@ -179,10 +182,6 @@ for (let i = 0; i <= 9; i++) {
 // `startTroopProduction`
 CONSTANT_SPECS.push({ functionName: 'startTroopProduction', componentName: Cost, entityName: InventoryTypeOptions.Gold, level: 0, value: 10 });
 CONSTANT_SPECS.push({ functionName: 'startTroopProduction', componentName: Cost, entityName: InventoryTypeOptions.Food, level: 0, value: 50 });
-
-// `organizeArmy`
-CONSTANT_SPECS.push({ functionName: 'organizeArmy', componentName: Load, entityName: , level: 0, value: 10 });
-
 
 // `harvestResource`
 CONSTANT_SPECS.push({ functionName: 'harvestResource', componentName: 'Rate', entityName: InventoryTypeOptions.Gold, level: 1, value: 160 });

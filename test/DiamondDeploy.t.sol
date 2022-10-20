@@ -372,7 +372,10 @@ contract DiamondDeployTest is Test {
                 maxArmyCountPerPlayer: 3,
                 maxTroopCountPerArmy: 1000,
                 maxPlayerCount: 20,
-                tileWidth: 10 // DO NOT REMOVE THIS COMMENT
+                tileWidth: 10, // DO NOT REMOVE THIS COMMENT
+                maxCityCenterLevel: 3,
+                cityCenterLevelToEntityLevel: 3,
+                cityCenterLevelToTileCounts: 20
             });
     }
 

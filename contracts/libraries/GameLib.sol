@@ -93,6 +93,7 @@ library GameLib {
 
         // Initialize tile
         uint256 tileID = Templates.addTile(_startPosition, terrain);
+        ECSLib.setUint("Terrain", tileID, terrain);
 
         if (terrain < 3) {
             // Normal tile

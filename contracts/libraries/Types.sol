@@ -64,6 +64,9 @@ struct WorldConstants {
     uint256 maxTroopCountPerArmy;
     uint256 maxPlayerCount;
     uint256 tileWidth;
+    uint256 maxCityCenterLevel;
+    uint256 cityCenterLevelToEntityLevel; // 3 => lv1 city center unlocks lv3 resources
+    uint256 cityCenterLevelToTileCounts; // 5 => lv1 -> lv2 upgrade unlocks five more tiles
 }
 
 struct GameState {

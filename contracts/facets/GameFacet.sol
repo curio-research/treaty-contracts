@@ -53,8 +53,7 @@ contract GameFacet is UseStorage {
             Templates.addInventory(settlerID, resourceTemplateIDs[i], inventoryAmount, inventoryLoad, true);
         }
 
-        // Initialize maxSubEntityLevel & Tile Counts for players
-        gs().maxSubEntityLevel[msg.sender] = gs().cityCenterLevelToEntityLevel;
+        // Initialize Tile Counts for players
         // NOTE: here is another adjustable parameter
         gs().maxTileCounts[msg.sender] = 9;
     }
@@ -183,7 +182,8 @@ contract GameFacet is UseStorage {
 
         // Check if player has reached max tile level
         uint256 tileLevel = ECSLib.getUint("Level", _tileID);
-        require(tileLevel < gs().maxSubEntityLevel[msg.sender], "CURIO: Max Tile Level Reached");
+        uint256 cityID = ECSLib.getUint("City", _tileID);
+        require(tileLevel < ECSLib.getUint("Level", cityID) * gs().worldConstants.cityCenterLevelToEntityLevel, "CURIO: Max Tile Level Reached");
 
         // Deduct costs
         uint256 playerID = GameLib.getPlayer(msg.sender);
@@ -234,9 +234,6 @@ contract GameFacet is UseStorage {
 
         // Set new level
         ECSLib.setUint("Level", _buildingID, centerLevel + 1);
-        // Unlocks higher resource, tile level
-        gs().maxSubEntityLevel[msg.sender] += gs().cityCenterLevelToEntityLevel;
-        gs().maxTileCounts[msg.sender] += gs().cityCenterLevelToTileCounts;
     }
 
     // function upgradeCityInventory(uint256 _buildingID) external {
@@ -645,11 +642,12 @@ contract GameFacet is UseStorage {
             "CURIO: Attack not within range"
         );
 
+        uint256 terrain = ECSLib.getUint("Terrain", _tileID);
         uint256 tileLevel = ECSLib.getUint("Level", _tileID);
         uint256 cityID = GameLib.getCityAtTile(ECSLib.getPosition("StartPosition", _tileID));
 
         // if it is barbarian, check it's not hybernating
-        if (tileLevel == 1 || tileLevel == 2) {
+        if (terrain >= 3) {
             uint256 barbarianCooldown = GameLib.getConstant("battleTile", "BattleCooldown", "Barbarian", tileLevel);
             require(block.timestamp >= ECSLib.getUint("LastTimestamp", _tileID) + barbarianCooldown, "CURIO: Barbarians hybernating");
         }
@@ -675,7 +673,7 @@ contract GameFacet is UseStorage {
                 uint256 winnerTotalAmount = GameLib.min(ECSLib.getUint("Load", winnerCityGoldInventoryID), loserTotalAmount / 2 + existingCityGold);
                 ECSLib.setUint("Amount", winnerCityGoldInventoryID, winnerTotalAmount);
             } else {
-                if (tileLevel == 1 || tileLevel == 2) {
+                if (terrain >= 3) {
                     // Reset barbarian
                     GameLib.distributeBarbarianReward(winnerCityID, _tileID);
                     uint256 barbarianGuardAmount = GameLib.getConstant("initializeTile", "Amount", "Guard", ECSLib.getUint("Level", _tileID));
@@ -701,7 +699,7 @@ contract GameFacet is UseStorage {
         // Check Tile Count has not exceeded limits
         uint256 playerID = GameLib.getPlayer(msg.sender);
         uint256 cityID = GameLib.getPlayerCity(playerID);
-        require(GameLib.getCityTiles(cityID).length < gs().maxTileCounts[msg.sender], "CURIO: Reached territory limit");
+        require(GameLib.getCityTiles(cityID).length < gs().worldConstants.cityCenterLevelToTileCounts, "CURIO: Reached territory limit");
 
         // Verify target tile has no owner
         require(ECSLib.getUint("Owner", _tileID) == 0, "CURIO: Tile has owner");
@@ -741,9 +739,10 @@ contract GameFacet is UseStorage {
         uint256 tileID = GameLib.getTileAt(ECSLib.getPosition("StartPosition", _resourceID));
         require(ECSLib.getUint("Owner", tileID) == playerID, "CURIO: Tile isn't yours");
 
-        // Check if player has reached max resource level
+        // Check if player has reached max tile level
         uint256 resourceLevel = ECSLib.getUint("Level", _resourceID);
-        require(resourceLevel < gs().maxSubEntityLevel[msg.sender], "CURIO: Max Resource Level Reached");
+        uint256 cityID = ECSLib.getUint("City", tileID);
+        require(resourceLevel < ECSLib.getUint("Level", cityID) * gs().worldConstants.cityCenterLevelToEntityLevel, "CURIO: Max Resource Level Reached");
 
         // Deduct costs and set load
         uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
