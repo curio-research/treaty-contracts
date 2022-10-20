@@ -145,8 +145,6 @@ CONSTANT_SPECS.push({ functionName: 'upgradeCityCenter', componentName: Load, en
 CONSTANT_SPECS.push({ functionName: 'upgradeCityCenter', componentName: Load, entityName: InventoryTypeOptions.Gold, level: 3, value: 30000000});
 CONSTANT_SPECS.push({ functionName: 'upgradeCityCenter', componentName: Load, entityName: InventoryTypeOptions.Food, level: 3, value: 30000000});
 
-
-
 // // `upgradeCityInventory`
 // CONSTANT_SPECS.push({ functionName: 'upgradeCityInventory', componentName: Cost, entityName: InventoryTypeOptions.Gold, level: NULL, value: 3000 });
 // for (let i = 1; i <= 9; i++) {
