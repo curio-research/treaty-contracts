@@ -54,7 +54,7 @@ task('deploy', 'deploy contracts')
       const gameLib = await deployProxy<GameLib>('GameLib', player1, hre, [], { ECSLib: ecsLib.address });
       const templates = await deployProxy<any>('Templates', player1, hre, [], { ECSLib: ecsLib.address });
 
-      const diamondAddr = await deployDiamond(hre, [worldConstants]);
+      const diamondAddr = await deployDiamond(hre, player1, [worldConstants]);
       const diamond = await getDiamond(hre, diamondAddr);
 
       const facets = [

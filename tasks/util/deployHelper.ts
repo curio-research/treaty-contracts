@@ -1,4 +1,4 @@
-import { ContractTransaction } from '@ethersproject/contracts';
+import { ContractReceipt, ContractTransaction } from '@ethersproject/contracts';
 import { Signer, Contract } from 'ethers';
 import { FactoryOptions, HardhatRuntimeEnvironment } from 'hardhat/types';
 
@@ -7,9 +7,9 @@ export const deployProxy = async <C extends Contract>(contractName: string, sign
   const factory = await hre.ethers.getContractFactory(contractName, libs ? { libraries: libs } : signer);
   const contract = await factory.deploy(...contractArgs);
 
-  await contract.deployTransaction.wait();
+  await confirm(contract.deployTransaction, hre);
 
-  console.log(`✦ ${contractName}`, contract.address);
+  console.log(`✦ ${contractName}: `, contract.address);
 
   return contract as C;
 };
@@ -18,9 +18,10 @@ export const printDivider = () => {
   console.log('------------------------------------');
 };
 
-export const confirm = async (contractTx: ContractTransaction, hre: HardhatRuntimeEnvironment) => {
+export const confirm = async (contractTx: ContractTransaction, hre: HardhatRuntimeEnvironment): Promise<ContractReceipt | undefined> => {
   // we assume that localhost anvil has automine / instant block confirmation
   if (hre.network.name === 'localhost' || hre.network.name === 'tailscale') return;
 
-  await contractTx.wait();
+  let receipt = await contractTx.wait();
+  return receipt;
 };
