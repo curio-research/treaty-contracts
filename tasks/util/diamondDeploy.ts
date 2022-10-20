@@ -2,7 +2,7 @@ import { DiamondInit } from './../../typechain-types/upgradeInitializers/Diamond
 import { DiamondCutFacet } from './../../typechain-types/facets/DiamondCutFacet';
 import { Curio } from './../../typechain-types/hardhat-diamond-abi/Curio';
 import { Signer } from 'ethers';
-import { deployProxy } from './deployHelper';
+import { confirm, deployProxy } from './deployHelper';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { getSelectors, FacetCutAction } from './diamondHelper';
 import { chainInfo } from 'curio-vault';
@@ -34,15 +34,14 @@ export async function deployDiamond(hre: HardhatRuntimeEnvironment, signer: Sign
 
   // upgrade diamond with facets
   const diamondCut = await hre.ethers.getContractAt('IDiamondCut', diamond.address);
-  let receipt;
 
   // call to init function. add initial state setting parameters. this acts as the constructor essentially
   let functionCall = diamondInit.interface.encodeFunctionData('init', deployArgs); // encodes data functions into bytes i believe
-  const tx = await diamondCut.diamondCut(cut, diamondInit.address, functionCall);
+  const receipt = await confirm(await diamondCut.diamondCut(cut, diamondInit.address, functionCall), hre);
 
-  // if (receipt && !receipt.status) {
-  //   throw Error(`Diamond upgrade failed: ${tx.hash}`);
-  // }
+  if (receipt && !receipt.status) {
+    throw Error(`Diamond upgrade failed: ${receipt.transactionHash}`);
+  }
 
   return diamond.address;
 }
@@ -74,29 +73,25 @@ export const deployFacets = async (hre: HardhatRuntimeEnvironment, diamondAddres
 
     const gasLimit = chainInfo[hre.network.name].gasLimit;
 
-    const tx = await diamond.diamondCut(
-      [
-        {
-          facetAddress: currentFacet.address,
-          action: FacetCutAction.Add,
-          functionSelectors: selectors,
-        },
-      ],
-      hre.ethers.constants.AddressZero,
-      '0x',
-      { gasLimit: gasLimit }
+    const receipt = await confirm(
+      await diamond.diamondCut(
+        [
+          {
+            facetAddress: currentFacet.address,
+            action: FacetCutAction.Add,
+            functionSelectors: selectors,
+          },
+        ],
+        hre.ethers.constants.AddressZero,
+        '0x',
+        { gasLimit: gasLimit }
+      ),
+      hre
     );
 
-    // const receipt = await confirm(tx, hre);
-
-    // if (receipt && !receipt.status) {
-    //   throw Error(`Diamond upgrade failed: ${tx.hash}`);
-    // }
-
-    // const receipt = await tx.wait();
-    // if (!receipt.status) {
-    //   throw Error(`Diamond upgrade failed: ${tx.hash}`);
-    // }
+    if (receipt && !receipt.status) {
+      throw Error(`Diamond upgrade failed: ${receipt.transactionHash}`);
+    }
   }
 };
 
