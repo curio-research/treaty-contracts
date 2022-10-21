@@ -166,6 +166,7 @@ contract DiamondDeployTest is Test {
     function _createTemplates() private {
         vm.startPrank(deployer);
 
+        // todo: fix naming: horseman, warrior, slinger
         // Troop: Cavalry
         cavalryTemplateID = admin.addEntity();
         admin.setComponentValue("Tag", cavalryTemplateID, abi.encode("TroopTemplate"));
@@ -281,15 +282,19 @@ contract DiamondDeployTest is Test {
         // `upgradeCityInventory`
         admin.addConstant("upgradeCityInventory", "Cost", "Gold", 0, 3000);
         for (uint256 i = 1; i <= 9; i++) {
-            admin.addConstant("upgradeCityInventory", "Load", "Gold", i, 10000000 * i);
-            admin.addConstant("upgradeCityInventory", "Load", "Food", i, 10000000 * i);
-            admin.addConstant("upgradeCityInventory", "Load", "Horseman", i, 2000 * i);
-            admin.addConstant("upgradeCityInventory", "Load", "Warrior", i, 2000 * i);
-            admin.addConstant("upgradeCityInventory", "Load", "Slinger", i, 2000 * i);
+            // todo: fix the naming here
+            admin.addConstant("upgradeCityInventory", "Load", "Gold", i, 1000000 * i);
+            admin.addConstant("upgradeCityInventory", "Load", "Food", i, 1000000 * i);
+            admin.addConstant("upgradeCityInventory", "Load", "Horseman", i, 20000 * i);
+            admin.addConstant("upgradeCityInventory", "Load", "Warrior", i, 20000 * i);
+            admin.addConstant("upgradeCityInventory", "Load", "Slinger", i, 20000 * i);
+            admin.addConstant("upgradeCityInventory", "Load", "Cavalry", i, 20000 * i);
+            admin.addConstant("upgradeCityInventory", "Load", "Archer", i, 20000 * i);
+            admin.addConstant("upgradeCityInventory", "Load", "Infantry", i, 20000 * i);
         }
 
         // `upgradeResource`
-        for (uint256 i = 1; i <= 9; i++) {
+        for (uint256 i = 0; i <= 9; i++) {
             admin.addConstant("upgradeResource", "Cost", "Gold", i, 50000);
             admin.addConstant("upgradeResource", "Cost", "Food", i, 16000);
         }
@@ -342,6 +347,11 @@ contract DiamondDeployTest is Test {
         admin.addConstant("harvestResource", "Amount", "Food", 8, 290);
         admin.addConstant("harvestResource", "Amount", "Food", 9, 300);
 
+        admin.addConstant("harvestResource", "Rate", "Food", 0, 300);
+        admin.addConstant("harvestResource", "Rate", "Food", 1, 300);
+        admin.addConstant("harvestResource", "Rate", "Gold", 0, 300);
+        admin.addConstant("harvestResource", "Rate", "Gold", 1, 300);
+
         // `harvestResourceFromCity`
         admin.addConstant("harvestResourcesFromCity", "Amount", "Gold", 0, 180);
         admin.addConstant("harvestResourcesFromCity", "Amount", "Food", 0, 180);
@@ -370,7 +380,7 @@ contract DiamondDeployTest is Test {
                 initBatchSize: 100,
                 maxCityCountPerPlayer: 3,
                 maxArmyCountPerPlayer: 3,
-                maxTroopCountPerArmy: 1000,
+                maxTroopCountPerArmy: 10000,
                 maxPlayerCount: 20,
                 tileWidth: 10, // DO NOT REMOVE THIS COMMENT
                 maxCityCenterLevel: 3,

@@ -347,6 +347,7 @@ contract GameFacet is UseStorage {
         // Create inventory if none exists, and verify that amount does not exceed ceiling
         uint256 troopInventoryID = GameLib.getInventory(cityID, _templateID);
         if (troopInventoryID == NULL) {
+            // todo: there's no upgradeCityInventory, load comes from city center
             uint256 load = GameLib.getConstant("upgradeCityInventory", "Load", ECSLib.getString("InventoryType", _templateID), buildingLevel);
             troopInventoryID = Templates.addInventory(cityID, _templateID, 0, load, false);
         } else {
