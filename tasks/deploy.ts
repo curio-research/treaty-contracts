@@ -137,8 +137,9 @@ task('deploy', 'deploy contracts')
 
       await publishDeployment(configFile);
 
-      if (port === undefined || port.toLowerCase() === 'true') {
-        hre.run('port'); // if no port flag present, assume always port to Vault
+      // TODO: for now, only sync game state with middleware in dev mode
+      if (isDev || hre.network.name === 'constellationNew') {
+        await startGameSync(deploymentId);
       }
 
       if (isDev || hre.network.name === 'tailscale') {
@@ -146,9 +147,8 @@ task('deploy', 'deploy contracts')
         await hre.ethers.provider.send('evm_mine', []); // syncs the blockchain time to current unix time
       }
 
-      // TODO: for now, only sync game state with middleware in dev mode
-      if (isDev) {
-        await startGameSync(deploymentId);
+      if (port === undefined || port.toLowerCase() === 'true') {
+        hre.run('port'); // if no port flag present, assume always port to Vault
       }
 
       console.log(chalk.bgGreen.black(` Curio Game deployed (${Math.floor(performance.now() - s) / 1000}s) `));
