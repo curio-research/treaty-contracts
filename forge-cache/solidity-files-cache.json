@@ -453,8 +453,8 @@
       }
     },
     "contracts/facets/GameFacet.sol": {
-      "lastModificationDate": 1666388045823,
-      "contentHash": "ca58d2cc37f16a17d96fa59c097b9379",
+      "lastModificationDate": 1666388580773,
+      "contentHash": "f8ac5560b1dc7394175246f9b1aec647",
       "sourceName": "contracts/facets/GameFacet.sol",
       "solcConfig": {
         "settings": {
@@ -1458,8 +1458,8 @@
       }
     },
     "test/Basic.t.sol": {
-      "lastModificationDate": 1666388043039,
-      "contentHash": "b1e9787bf3ed19267a40bbdfbcb5a5ed",
+      "lastModificationDate": 1666389860052,
+      "contentHash": "154926964debf8f8fee7a730064b6a6d",
       "sourceName": "test/Basic.t.sol",
       "solcConfig": {
         "settings": {
@@ -1600,8 +1600,8 @@
       }
     },
     "test/DiamondDeploy.t.sol": {
-      "lastModificationDate": 1666388045825,
-      "contentHash": "80091c74dec96bf1e2f7c5e12e14379a",
+      "lastModificationDate": 1666389440923,
+      "contentHash": "9dd9bcac3377bcf038bdc7470613763d",
       "sourceName": "test/DiamondDeploy.t.sol",
       "solcConfig": {
         "settings": {

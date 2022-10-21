@@ -295,27 +295,47 @@ contract DiamondDeployTest is Test {
 
         // `upgradeResource`
         for (uint256 i = 0; i <= 9; i++) {
-            admin.addConstant("upgradeResource", "Cost", "Gold", i, 50000);
-            admin.addConstant("upgradeResource", "Cost", "Food", i, 16000);
+            admin.addConstant("upgradeGoldmine", "Cost", "Gold", i, 50000);
+            admin.addConstant("upgradeGoldmine", "Cost", "Food", i, 16000);
+            admin.addConstant("upgradeFarm", "Cost", "Gold", i, 50000);
+            admin.addConstant("upgradeFarm", "Cost", "Food", i, 16000);
         }
-        admin.addConstant("upgradeResource", "Load", "Gold", 1, 5500);
-        admin.addConstant("upgradeResource", "Load", "Gold", 2, 6000);
-        admin.addConstant("upgradeResource", "Load", "Gold", 3, 6500);
-        admin.addConstant("upgradeResource", "Load", "Gold", 4, 7000);
-        admin.addConstant("upgradeResource", "Load", "Gold", 5, 7500);
-        admin.addConstant("upgradeResource", "Load", "Gold", 6, 8000);
-        admin.addConstant("upgradeResource", "Load", "Gold", 7, 8500);
-        admin.addConstant("upgradeResource", "Load", "Gold", 8, 9000);
-        admin.addConstant("upgradeResource", "Load", "Gold", 9, 9500);
-        admin.addConstant("upgradeResource", "Load", "Food", 1, 100000);
-        admin.addConstant("upgradeResource", "Load", "Food", 2, 110000);
-        admin.addConstant("upgradeResource", "Load", "Food", 3, 120000);
-        admin.addConstant("upgradeResource", "Load", "Food", 4, 130000);
-        admin.addConstant("upgradeResource", "Load", "Food", 5, 140000);
-        admin.addConstant("upgradeResource", "Load", "Food", 6, 150000);
-        admin.addConstant("upgradeResource", "Load", "Food", 7, 160000);
-        admin.addConstant("upgradeResource", "Load", "Food", 8, 170000);
-        admin.addConstant("upgradeResource", "Load", "Food", 9, 180000);
+        admin.addConstant("upgradeGoldmine", "Load", "Gold", 1, 5500);
+        admin.addConstant("upgradeGoldmine", "Load", "Gold", 2, 6000);
+        admin.addConstant("upgradeGoldmine", "Load", "Gold", 3, 6500);
+        admin.addConstant("upgradeGoldmine", "Load", "Gold", 4, 7000);
+        admin.addConstant("upgradeGoldmine", "Load", "Gold", 5, 7500);
+        admin.addConstant("upgradeGoldmine", "Load", "Gold", 6, 8000);
+        admin.addConstant("upgradeGoldmine", "Load", "Gold", 7, 8500);
+        admin.addConstant("upgradeGoldmine", "Load", "Gold", 8, 9000);
+        admin.addConstant("upgradeGoldmine", "Load", "Gold", 9, 9500);
+        admin.addConstant("upgradeGoldmine", "Load", "Food", 1, 100000);
+        admin.addConstant("upgradeGoldmine", "Load", "Food", 2, 110000);
+        admin.addConstant("upgradeGoldmine", "Load", "Food", 3, 120000);
+        admin.addConstant("upgradeGoldmine", "Load", "Food", 4, 130000);
+        admin.addConstant("upgradeGoldmine", "Load", "Food", 5, 140000);
+        admin.addConstant("upgradeGoldmine", "Load", "Food", 6, 150000);
+        admin.addConstant("upgradeGoldmine", "Load", "Food", 7, 160000);
+        admin.addConstant("upgradeGoldmine", "Load", "Food", 8, 170000);
+        admin.addConstant("upgradeGoldmine", "Load", "Food", 9, 180000);
+        admin.addConstant("upgradeFarm", "Load", "Gold", 1, 5500);
+        admin.addConstant("upgradeFarm", "Load", "Gold", 2, 6000);
+        admin.addConstant("upgradeFarm", "Load", "Gold", 3, 6500);
+        admin.addConstant("upgradeFarm", "Load", "Gold", 4, 7000);
+        admin.addConstant("upgradeFarm", "Load", "Gold", 5, 7500);
+        admin.addConstant("upgradeFarm", "Load", "Gold", 6, 8000);
+        admin.addConstant("upgradeFarm", "Load", "Gold", 7, 8500);
+        admin.addConstant("upgradeFarm", "Load", "Gold", 8, 9000);
+        admin.addConstant("upgradeFarm", "Load", "Gold", 9, 9500);
+        admin.addConstant("upgradeFarm", "Load", "Food", 1, 100000);
+        admin.addConstant("upgradeFarm", "Load", "Food", 2, 110000);
+        admin.addConstant("upgradeFarm", "Load", "Food", 3, 120000);
+        admin.addConstant("upgradeFarm", "Load", "Food", 4, 130000);
+        admin.addConstant("upgradeFarm", "Load", "Food", 5, 140000);
+        admin.addConstant("upgradeFarm", "Load", "Food", 6, 150000);
+        admin.addConstant("upgradeFarm", "Load", "Food", 7, 160000);
+        admin.addConstant("upgradeFarm", "Load", "Food", 8, 170000);
+        admin.addConstant("upgradeFarm", "Load", "Food", 9, 180000);
 
         // `upgradeCity`
         admin.addConstant("upgradeCity", "Cost", "Gold", 0, 100000);

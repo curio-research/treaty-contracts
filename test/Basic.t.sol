@@ -17,8 +17,8 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.warp(time);
 
         vm.startPrank(deployer);
-        admin.assignResource(texasID, "Gold", 10000000);
-        admin.assignResource(texasID, "Food", 32000000);
+        admin.assignResource(texasID, "Gold", 2000);
+        admin.assignResource(texasID, "Food", 2000);
         vm.stopPrank();
 
         // Spawn resource near player2's city
@@ -46,8 +46,8 @@ contract TreatyTest is Test, DiamondDeployTest {
             vm.startPrank(player2);
             game.foundCity(texasID, texasTiles, "Lone Star Republic");
             vm.stopPrank();
-            // assertEq(getter.getCityFood(texasID), 0);
-            // assertEq(getter.getCityGold(texasID), _generateWorldConstants().initCityGold);
+            assertEq(getter.getCityFood(texasID), 2000);
+            assertEq(getter.getCityGold(texasID), 2000);
         }
 
         // Produce troop and organize army
@@ -89,21 +89,19 @@ contract TreatyTest is Test, DiamondDeployTest {
             time += 2;
             vm.warp(time);
             game.move(texasArmyID, Position({x: 65, y: 49}));
-            uint256 madameBarbarinaStrength;
-            do {
+            while (getter.getConstituents(madameBarbarinaID).length > 0) {
                 time += 5;
                 vm.warp(time);
                 game.battle(texasArmyID, madameBarbarinaID);
-                madameBarbarinaStrength = abi.decode(getter.getComponent("Amount").getBytesValue(getter.getConstituents(madameBarbarinaID)[0]), (uint256));
-            } while (madameBarbarinaStrength < 1000);
+            }
             vm.stopPrank();
         }
         time += 1000;
         vm.warp(time);
 
         // Check post condition
-        // assertEq(getter.getCityFood(texasID), 60000);
-        // assertEq(getter.getCityGold(texasID), 180000);
+        assertEq(getter.getCityFood(texasID), 60000);
+        assertEq(getter.getCityGold(texasID), 180000);
 
         // Try claiming the barbarian in vain
         vm.startPrank(player2);
@@ -139,6 +137,8 @@ contract TreatyTest is Test, DiamondDeployTest {
         time += 100;
         vm.warp(time);
 
+        console.log("EE");
+
         // Start and end gather
         {
             vm.startPrank(player2);
@@ -153,6 +153,8 @@ contract TreatyTest is Test, DiamondDeployTest {
             assertEq(getter.getArmyFood(texasArmyID), 100);
             vm.stopPrank();
         }
+
+        console.log("FF");
     }
 
     function testBattle() public {
