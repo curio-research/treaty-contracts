@@ -200,7 +200,6 @@ contract GameFacet is UseStorage {
     }
 
     // todo: merge it with upgrade resource
-    // todo: set a level ceiling ?
     function upgradeCityCenter(uint256 _buildingID) external {
         GameLib.validEntityCheck(_buildingID);
         GameLib.ongoingGameCheck();
@@ -745,7 +744,7 @@ contract GameFacet is UseStorage {
         for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
             uint256 inventoryID = GameLib.getInventory(GameLib.getPlayerCity(playerID), resourceTemplateIDs[i]);
             uint256 balance = ECSLib.getUint("Amount", inventoryID);
-            uint256 cost = GameLib.getConstant("upgradeCityCenter", "Cost", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), resourceLevel);
+            uint256 cost = GameLib.getConstant("upgradeResource", "Cost", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), resourceLevel);
             require(balance >= cost, "CURIO: Insufficient balance");
             ECSLib.setUint("Amount", inventoryID, balance - cost);
 
