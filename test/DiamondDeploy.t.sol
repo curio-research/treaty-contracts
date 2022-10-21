@@ -59,7 +59,9 @@ contract DiamondDeployTest is Test {
     uint256 public cavalryTemplateID;
     uint256 public infantryTemplateID;
     uint256 public archerTemplateID;
+    uint256 public guardTemplateID;
     uint256 public goldTemplateID;
+    uint256 public foodTemplateID;
 
     // we assume these two facet selectors do not change. If they do however, we should use getSelectors
     bytes4[] OWNERSHIP_SELECTORS = [bytes4(0xf2fde38b), 0x8da5cb5b];
@@ -114,8 +116,9 @@ contract DiamondDeployTest is Test {
 
         vm.stopPrank();
 
-        // Create templates
+        // Create templates & constants
         _createTemplates();
+        _registerConstants();
 
         // Initialize players
         vm.prank(player1);
@@ -167,7 +170,7 @@ contract DiamondDeployTest is Test {
         return _result;
     }
 
-    function _createTemplates() internal {
+    function _createTemplates() private {
         vm.startPrank(deployer);
 
         // Troop: Cavalry
@@ -212,24 +215,153 @@ contract DiamondDeployTest is Test {
         admin.setComponentValue("MoveCooldown", archerTemplateID, abi.encode(1));
         admin.setComponentValue("BattleCooldown", archerTemplateID, abi.encode(2));
 
+        // Troop: Guard
+        guardTemplateID = admin.addEntity();
+        admin.setComponentValue("Tag", guardTemplateID, abi.encode("TroopTemplate"));
+        admin.setComponentValue("InventoryType", guardTemplateID, abi.encode("Guard"));
+        admin.setComponentValue("Health", guardTemplateID, abi.encode(120));
+        admin.setComponentValue("Attack", guardTemplateID, abi.encode(60));
+        admin.setComponentValue("Defense", guardTemplateID, abi.encode(120));
+
         // Resource: Gold
         goldTemplateID = admin.addEntity();
         admin.setComponentValue("Tag", goldTemplateID, abi.encode("ResourceTemplate"));
         admin.setComponentValue("InventoryType", goldTemplateID, abi.encode("Gold"));
         admin.setComponentValue("Duration", goldTemplateID, abi.encode(1));
 
+        // Resource: Food
+        foodTemplateID = admin.addEntity();
+        admin.setComponentValue("Tag", foodTemplateID, abi.encode("ResourceTemplate"));
+        admin.setComponentValue("InventoryType", foodTemplateID, abi.encode("Food"));
+        admin.setComponentValue("Duration", foodTemplateID, abi.encode(1));
+
         // Register template shortcuts
-        string[] memory templateNames = new string[](4);
-        uint256[] memory templateIDs = new uint256[](4);
+        string[] memory templateNames = new string[](6);
+        uint256[] memory templateIDs = new uint256[](6);
         templateNames[0] = "Cavalry";
         templateNames[1] = "Infantry";
         templateNames[2] = "Archer";
-        templateNames[3] = "Gold";
+        templateNames[3] = "Guard";
+        templateNames[4] = "Gold";
+        templateNames[5] = "Food";
         templateIDs[0] = cavalryTemplateID;
         templateIDs[1] = infantryTemplateID;
         templateIDs[2] = archerTemplateID;
-        templateIDs[3] = goldTemplateID;
+        templateIDs[3] = guardTemplateID;
+        templateIDs[4] = goldTemplateID;
+        templateIDs[5] = foodTemplateID;
         admin.registerTemplateShortcuts(templateNames, templateIDs);
+
+        vm.stopPrank();
+    }
+
+    function _registerConstants() private {
+        vm.startPrank(deployer);
+
+        // `initializePlayer`
+        admin.addConstant("initializePlayer", "Amount", "Gold", NULL, 0);
+        admin.addConstant("initializePlayer", "Amount", "Food", NULL, 0);
+        admin.addConstant("initializePlayer", "Load", "Gold", NULL, 10000000);
+        admin.addConstant("initializePlayer", "Load", "Food", NULL, 10000000);
+
+        // `initializeTile`
+        admin.addConstant("initializeTile", "Amount", "Guard", 0, 200);
+        admin.addConstant("initializeTile", "Amount", "Guard", 1, 1000); // level 1 barbarian
+        admin.addConstant("initializeTile", "Amount", "Guard", 2, 2000); // level 2 barbarian
+        admin.addConstant("initializeTile", "Load", "Gold", 0, 1000);
+        admin.addConstant("initializeTile", "Load", "Food", 0, 1000);
+
+        // `foundCity`
+        admin.addConstant("foundCity", "Amount", "Guard", 0, 1500);
+
+        // `packCity`
+        admin.addConstant("packCity", "Cost", "Gold", 0, 1000000000000000);
+        admin.addConstant("packCity", "Health", "Settler", 0, 1000000000000000);
+
+        // `upgradeTile`
+        admin.addConstant("upgradeTile", "Cost", "Gold", 0, 10 * 200);
+        admin.addConstant("upgradeTile", "Cost", "Food", 0, 50 * 200);
+        for (uint256 i = 1; i <= 9; i++) {
+            admin.addConstant("upgradeTile", "Amount", "Guard", i, (3**i) * 200);
+        }
+
+        // `upgradeCityInventory`
+        admin.addConstant("upgradeCityInventory", "Cost", "Gold", 0, 3000);
+        for (uint256 i = 1; i <= 9; i++) {
+            admin.addConstant("upgradeCityInventory", "Load", "Gold", i, 10000000 * i);
+            admin.addConstant("upgradeCityInventory", "Load", "Food", i, 10000000 * i);
+            admin.addConstant("upgradeCityInventory", "Load", "Horseman", i, 2000 * i);
+            admin.addConstant("upgradeCityInventory", "Load", "Warrior", i, 2000 * i);
+            admin.addConstant("upgradeCityInventory", "Load", "Slinger", i, 2000 * i);
+        }
+
+        // `upgradeResource`
+        for (uint256 i = 1; i <= 9; i++) {
+            admin.addConstant("upgradeResource", "Cost", "Gold", i, 50000);
+            admin.addConstant("upgradeResource", "Cost", "Food", i, 16000);
+        }
+        admin.addConstant("upgradeResource", "Load", "Gold", 1, 5500);
+        admin.addConstant("upgradeResource", "Load", "Gold", 2, 6000);
+        admin.addConstant("upgradeResource", "Load", "Gold", 3, 6500);
+        admin.addConstant("upgradeResource", "Load", "Gold", 4, 7000);
+        admin.addConstant("upgradeResource", "Load", "Gold", 5, 7500);
+        admin.addConstant("upgradeResource", "Load", "Gold", 6, 8000);
+        admin.addConstant("upgradeResource", "Load", "Gold", 7, 8500);
+        admin.addConstant("upgradeResource", "Load", "Gold", 8, 9000);
+        admin.addConstant("upgradeResource", "Load", "Gold", 9, 9500);
+        admin.addConstant("upgradeResource", "Load", "Food", 1, 100000);
+        admin.addConstant("upgradeResource", "Load", "Food", 2, 110000);
+        admin.addConstant("upgradeResource", "Load", "Food", 3, 120000);
+        admin.addConstant("upgradeResource", "Load", "Food", 4, 130000);
+        admin.addConstant("upgradeResource", "Load", "Food", 5, 140000);
+        admin.addConstant("upgradeResource", "Load", "Food", 6, 150000);
+        admin.addConstant("upgradeResource", "Load", "Food", 7, 160000);
+        admin.addConstant("upgradeResource", "Load", "Food", 8, 170000);
+        admin.addConstant("upgradeResource", "Load", "Food", 9, 180000);
+
+        // `upgradeCity`
+        admin.addConstant("upgradeCity", "Cost", "Gold", 0, 100000);
+        for (uint256 i = 1; i <= 3; i++) {
+            admin.addConstant("upgradeCity", "Amount", "Guard", i, 1500 * i);
+        }
+
+        // `startTroopProduction`
+        admin.addConstant("startTroopProduction", "Cost", "Gold", 0, 10);
+        admin.addConstant("startTroopProduction", "Cost", "Food", 0, 50);
+
+        // `harvestResource`
+        admin.addConstant("harvestResource", "Amount", "Gold", 1, 160);
+        admin.addConstant("harvestResource", "Amount", "Gold", 2, 200);
+        admin.addConstant("harvestResource", "Amount", "Gold", 3, 240);
+        admin.addConstant("harvestResource", "Amount", "Gold", 4, 260);
+        admin.addConstant("harvestResource", "Amount", "Gold", 5, 280);
+        admin.addConstant("harvestResource", "Amount", "Gold", 6, 300);
+        admin.addConstant("harvestResource", "Amount", "Gold", 7, 320);
+        admin.addConstant("harvestResource", "Amount", "Gold", 8, 340);
+        admin.addConstant("harvestResource", "Amount", "Gold", 9, 360);
+        admin.addConstant("harvestResource", "Amount", "Food", 1, 200);
+        admin.addConstant("harvestResource", "Amount", "Food", 2, 220);
+        admin.addConstant("harvestResource", "Amount", "Food", 3, 240);
+        admin.addConstant("harvestResource", "Amount", "Food", 4, 250);
+        admin.addConstant("harvestResource", "Amount", "Food", 5, 260);
+        admin.addConstant("harvestResource", "Amount", "Food", 6, 270);
+        admin.addConstant("harvestResource", "Amount", "Food", 7, 280);
+        admin.addConstant("harvestResource", "Amount", "Food", 8, 290);
+        admin.addConstant("harvestResource", "Amount", "Food", 9, 300);
+
+        // `harvestResourceFromCity`
+        admin.addConstant("harvestResourcesFromCity", "Amount", "Gold", 0, 180);
+        admin.addConstant("harvestResourcesFromCity", "Amount", "Food", 0, 180);
+        for (uint256 i = 1; i <= 5; i++) {
+            admin.addConstant("harvestResourcesFromCity", "Load", "Gold", i, 100000000);
+            admin.addConstant("harvestResourcesFromCity", "Load", "Food", i, 100000000);
+        }
+
+        // `distributeBarbarianReward`
+        admin.addConstant("distributeBarbarianReward", "Amount", "Gold", 1, 180000);
+        admin.addConstant("distributeBarbarianReward", "Amount", "Gold", 2, 480000);
+        admin.addConstant("distributeBarbarianReward", "Amount", "Food", 1, 60000);
+        admin.addConstant("distributeBarbarianReward", "Amount", "Food", 2, 150000);
 
         vm.stopPrank();
     }
@@ -244,19 +376,10 @@ contract DiamondDeployTest is Test {
                 numInitTerrainTypes: 1,
                 initBatchSize: 100,
                 maxCityCountPerPlayer: 3,
-                maxArmyCountPerPlayer: 2,
+                maxArmyCountPerPlayer: 3,
+                maxTroopCountPerArmy: 1000,
                 maxPlayerCount: 20,
-                cityUpgradeGoldCost: 50,
-                cityPackCost: 30,
-                maxInventoryCapacity: 5000,
-                initCityGold: 1000,
-                cityHealth: 120,
-                cityAttack: 60,
-                cityDefense: 120,
-                armyBattleRange: 5,
-                cityBattleRange: 18,
-                tileWidth: 10,
-                cityAmount: 1000 // DO NOT REMOVE THIS COMMENT
+                tileWidth: 10 // DO NOT REMOVE THIS COMMENT
             });
     }
 

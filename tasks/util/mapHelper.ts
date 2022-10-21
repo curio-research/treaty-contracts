@@ -3,8 +3,9 @@ import { decodeBigNumberishArr } from './../../util/serde/common';
 import { Component__factory } from './../../typechain-types/factories/contracts/Component__factory';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { position } from './../../util/types/common';
-import { TILE_TYPE, componentNameToId, encodePosition, getImmediateSurroundingPositions, TileMap, Tag, Position, Owner, Health, Speed, Attack, Defense, Load, LastTimestamp, Tags, encodeString, encodeUint256, Capacity, getRightPos } from 'curio-vault';
+import { TILE_TYPE, componentNameToId, encodePosition, getImmediateSurroundingPositions, TileMap, Tag, Position, Owner, Health, Speed, Attack, Defense, Load, LastTimestamp, Tags, encodeString, encodeUint256, getRightPos, chainInfo } from 'curio-vault';
 import { TILE_WIDTH } from './constants';
+import { confirm } from './deployHelper';
 
 const MAX_UINT256 = BigInt(Math.pow(2, 256)) - BigInt(1);
 
@@ -63,10 +64,8 @@ export const generateBlankFixmap = (): TileMap => {
   return tileMap;
 };
 
-// main map generator
 export const generateMap = (worldWidth: number, worldHeight: number, worldConstants: WorldConstantsStruct): TileMap => {
   let tileMap: TileMap = [];
-
   // assign a blank map
   for (let i = 0; i < worldWidth; i++) {
     let col: TILE_TYPE[] = [];
@@ -75,53 +74,33 @@ export const generateMap = (worldWidth: number, worldHeight: number, worldConsta
     }
     tileMap.push(col);
   }
-
-  const totalGoldMineDensity = 0.01;
-  const totalBarbarianDensity = 0.005;
-
-  // distribution of gold mines
-  const level1GoldMineDensity = 0.6;
-  const level2GoldMineDensity = 0.3;
-  const level3GoldMineDensity = 0.1;
-
-  // distribution of barbarians
-  const level1BarbarianDensity = 0.6;
+  const level1GoldMineDensity = 0.05;
+  const totalFarmDensity = level1GoldMineDensity * 4;
+  const level1BarbarianDensity = 0.3;
   const level2BarbarianDensity = 0.3;
-  const level3BarbarianDensity = 0.1;
-
-  const totalGoldmineCount = worldWidth * worldHeight * totalGoldMineDensity;
-
+  const totalTileCount = worldWidth * worldHeight;
   const tileWidth = Number(worldConstants.tileWidth);
-
-  for (let i = 0; i < totalGoldmineCount * level1GoldMineDensity; i++) {
-    const pos = getProperTilePosition(chooseRandomEmptyLandPosition(tileMap), tileWidth);
+  for (let i = 0; i < totalTileCount * level1GoldMineDensity; i++) {
+    const pos = chooseRandomEmptyLandPosition(tileMap);
     tileMap[pos.x][pos.y] = TILE_TYPE.GOLDMINE_LV1;
   }
-
-  for (let i = 0; i < totalGoldmineCount * level2GoldMineDensity; i++) {
-    const pos = getProperTilePosition(chooseRandomEmptyLandPosition(tileMap), tileWidth);
-    tileMap[pos.x][pos.y] = TILE_TYPE.GOLDMINE_LV2;
+  for (let i = 0; i < totalTileCount * totalFarmDensity; i++) {
+    const pos = chooseRandomEmptyLandPosition(tileMap);
+    tileMap[pos.x][pos.y] = TILE_TYPE.FARM_LV1;
   }
-
-  for (let i = 0; i < totalGoldmineCount * level3GoldMineDensity; i++) {
-    const pos = getProperTilePosition(chooseRandomEmptyLandPosition(tileMap), tileWidth);
-    tileMap[pos.x][pos.y] = TILE_TYPE.GOLDMINE_LV3;
-  }
-
-  for (let i = 0; i < totalBarbarianDensity * level1BarbarianDensity; i++) {
+  for (let i = 0; i < totalTileCount * level1BarbarianDensity; i++) {
     const pos = getProperTilePosition(chooseRandomEmptyLandPosition(tileMap), tileWidth);
     tileMap[pos.x][pos.y] = TILE_TYPE.BARBARIAN_LV1;
   }
 
-  for (let i = 0; i < totalBarbarianDensity * level2BarbarianDensity; i++) {
+  for (let i = 0; i < totalTileCount * level1BarbarianDensity; i++) {
     const pos = getProperTilePosition(chooseRandomEmptyLandPosition(tileMap), tileWidth);
-    tileMap[pos.x][pos.y] = TILE_TYPE.BARBARIAN_LV2;
+    tileMap[pos.x][pos.y] = TILE_TYPE.BARBARIAN_LV1;
   }
-
-  for (let i = 0; i < totalBarbarianDensity * level3BarbarianDensity; i++) {
-    const pos = getProperTilePosition(chooseRandomEmptyLandPosition(tileMap), tileWidth);
-    tileMap[pos.x][pos.y] = TILE_TYPE.BARBARIAN_LV3;
-  }
+  // for (let i = 0; i < totalTileCount * level2BarbarianDensity; i++) {
+  //   const pos = getProperTilePosition(chooseRandomEmptyLandPosition(tileMap), tileWidth);
+  //   tileMap[pos.x][pos.y] = TILE_TYPE.BARBARIAN_LV2;
+  // }
 
   return tileMap;
 };
@@ -142,14 +121,19 @@ export const chooseRandomEmptyLandPosition = (tileMap: TileMap): position => {
   return pos;
 };
 
-export const getProperTilePosition = (position: position, tileSize: number): position => {
-  return { x: position.x - (position.x % tileSize), y: position.y - (position.y % tileSize) };
+export const getPositionFromLargeTilePosition = (position: position, tileWidth: number): position => {
+  return { x: position.x * tileWidth, y: position.y * tileWidth };
+};
+
+export const getProperTilePosition = (position: position, tileWidth: number): position => {
+  return { x: position.x - (position.x % tileWidth), y: position.y - (position.y % tileWidth) };
 };
 
 // fixmap helpers
 
 export const initializeFixmap = async (hre: HardhatRuntimeEnvironment, diamond: Curio) => {
   const [player1, player2, player3, player4] = await hre.ethers.getSigners();
+  const gasLimit = chainInfo[hre.network.name].gasLimit;
 
   const player1Pos = { x: 25, y: 55 };
   const player2Pos = { x: 25, y: 25 };
@@ -158,10 +142,10 @@ export const initializeFixmap = async (hre: HardhatRuntimeEnvironment, diamond: 
   const playerPositions = [player1Pos, player2Pos, player3Pos, player4Pos];
 
   // initialize 4 players
-  await (await diamond.connect(player1).initializePlayer(player1Pos, 'A', { gasLimit: 100_000_000 })).wait();
-  await (await diamond.connect(player2).initializePlayer(player2Pos, 'B', { gasLimit: 100_000_000 })).wait();
-  await (await diamond.connect(player3).initializePlayer(player3Pos, 'C', { gasLimit: 100_000_000 })).wait();
-  await (await diamond.connect(player4).initializePlayer(player4Pos, 'D', { gasLimit: 100_000_000 })).wait();
+  await confirm(await diamond.connect(player1).initializePlayer(player1Pos, 'A', { gasLimit: gasLimit }), hre);
+  await confirm(await diamond.connect(player2).initializePlayer(player2Pos, 'B', { gasLimit: gasLimit }), hre);
+  await confirm(await diamond.connect(player3).initializePlayer(player3Pos, 'C', { gasLimit: gasLimit }), hre);
+  await confirm(await diamond.connect(player4).initializePlayer(player4Pos, 'D', { gasLimit: gasLimit }), hre);
 
   const player1Id = (await diamond.getPlayerId(player1.address)).toNumber();
   const player2Id = (await diamond.getPlayerId(player2.address)).toNumber();
@@ -183,21 +167,17 @@ export const initializeFixmap = async (hre: HardhatRuntimeEnvironment, diamond: 
   await diamond.connect(player3).foundCity(player3SettlerId, getImmediateSurroundingPositions(player3Pos), '');
   await diamond.connect(player4).foundCity(player4SettlerId, getImmediateSurroundingPositions(player4Pos), '');
 
-  const players = [player1Id];
-
   // spawn armies
-
-  // create army at base
   await diamond.createArmy(player1Id, getRightPos(player1Pos));
   let entity = (await diamond.getEntity()).toNumber();
-  await (await diamond.setComponentValue(Speed, entity, encodeUint256(2))).wait();
+  await confirm(await diamond.setComponentValue(Speed, entity, encodeUint256(5)), hre);
 
   await diamond.createArmy(player2Id, getRightPos(getRightPos(player1Pos)));
   entity = (await diamond.getEntity()).toNumber();
-  await (await diamond.setComponentValue(Speed, entity, encodeUint256(2))).wait();
+  await confirm(await diamond.setComponentValue(Speed, entity, encodeUint256(5)), hre);
 };
 
 export const addGetEntity = async (diamond: Curio): Promise<number> => {
-  await (await diamond.addEntity()).wait();
+  await await diamond.addEntity();
   return (await diamond.getEntity()).toNumber();
 };

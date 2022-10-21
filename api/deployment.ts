@@ -26,3 +26,11 @@ export const isConnectionLive = async (): Promise<boolean> => {
     throw new Error(err.message);
   }
 };
+
+export const startGameSync = async (deploymentId: string): Promise<void> => {
+  try {
+    const { data } = await api.post(`/startGameSync`, { deploymentId: deploymentId });
+  } catch (err: any) {
+    throw new Error(err.message);
+  }
+};

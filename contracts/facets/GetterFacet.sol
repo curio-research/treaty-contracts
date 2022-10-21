@@ -30,12 +30,12 @@ contract GetterFacet is UseStorage {
         return GameLib.getTemplateByInventoryType(_inventoryType);
     }
 
-    function getArmyConstituents(uint256 _armyID) external returns (uint256[] memory) {
-        return GameLib.getArmyConstituents(_armyID);
+    function getConstituents(uint256 _armyID) external returns (uint256[] memory) {
+        return GameLib.getConstituents(_armyID);
     }
 
-    function getCityGuard(uint256 _cityID) external returns (uint256) {
-        return GameLib.getCityGuard(_cityID);
+    function getConstituentAtTile(uint256 _tileID) external returns (uint256) {
+        return GameLib.getConstituentAtTile(_tileID);
     }
 
     function getArmyAt(Position memory _position) external returns (uint256) {
@@ -46,7 +46,15 @@ contract GetterFacet is UseStorage {
         return gs().accounts[_primaryAddress];
     }
 
+    function getPositionExternal(string memory _componentName, uint256 _entity) external view returns (Position memory) {
+        return ECSLib.getPosition(_componentName, _entity);
+    }
+
     ////////////
+
+    function getResourceLevel(uint256 _resourceID) external view returns (uint256) {
+        return ECSLib.getUint("Level", _resourceID);
+    }
 
     function getComponent(string memory _name) external view returns (Component) {
         return ECSLib._getComponent(_name);
@@ -81,8 +89,8 @@ contract GetterFacet is UseStorage {
         return Set(gs().entities).getAll();
     }
 
-    function getCityAt(Position memory _position) external returns (uint256) {
-        return GameLib.getCityAt(_position);
+    function getCityAtTile(Position memory _startPosition) external returns (uint256) {
+        return GameLib.getCityAtTile(_startPosition);
     }
 
     function getCityCenter(uint256 _cityID) external returns (uint256) {
@@ -91,5 +99,26 @@ contract GetterFacet is UseStorage {
 
     function getSettlerAt(Position memory _position) external returns (uint256) {
         return GameLib.getSettlerAt(_position);
+    }
+
+    function getTileAt(Position memory _position) external returns (uint256) {
+        return GameLib.getTileAt(_position);
+    }
+
+    function getCityFood(uint256 _cityID) external returns (uint256) {
+        return GameLib.getCityFood(_cityID);
+    }
+
+    function getCityGold(uint256 _cityID) external returns (uint256) {
+        return GameLib.getCityGold(_cityID);
+    }
+
+    function getArmyFood(uint256 _armyID) external returns (uint256) {
+        uint256 foodInventoryID = GameLib.getArmyInventory(_armyID, gs().templates["Food"]);
+        return ECSLib.getUint("Amount", foodInventoryID);
+    }
+
+    function getResourceAtTile(Position memory _startPosition) external returns (uint256) {
+        return GameLib.getResourceAtTile(_startPosition);
     }
 }

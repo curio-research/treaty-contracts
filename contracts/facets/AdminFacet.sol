@@ -2,12 +2,13 @@
 pragma solidity ^0.8.4;
 
 import "contracts/libraries/Storage.sol";
-import {GameLib} from "contracts/libraries/GameLib.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
-import {ComponentSpec, Position, Tile, ValueType, WorldConstants} from "contracts/libraries/Types.sol";
+import {ComponentSpec, ConstantSpec, Position, Tile, ValueType, WorldConstants} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 import "contracts/libraries/Templates.sol";
 import {Set} from "contracts/Set.sol";
+import {GameLib} from "contracts/libraries/GameLib.sol";
+import "forge-std/console.sol";
 
 /// @title Admin facet
 /// @notice Contains admin functions and state functions, both of which should be out of scope for players
@@ -24,6 +25,37 @@ contract AdminFacet is UseStorage {
 
     function removeEntity(uint256 _entity) external onlyAdmin {
         ECSLib.removeEntity(_entity);
+    }
+
+    function createArmy(uint256 _playerID, Position memory _position) external onlyAdmin {
+        Templates.addArmy(_playerID, _position, 0, 1, 1, 2, 5);
+    }
+
+    function adminInitializeTile(Position memory _startPosition) external onlyAdmin {
+        GameLib.initializeTile(_startPosition);
+    }
+
+    function assignResource(
+        uint256 _cityID,
+        string memory _inventoryType,
+        uint256 _amount
+    ) external onlyAdmin {
+        uint256 templateID = gs().templates[_inventoryType];
+        uint256 cityInventoryID = GameLib.getInventory(_cityID, templateID);
+        uint256 existingCityResource = ECSLib.getUint("Amount", cityInventoryID);
+        uint256 totalAmount = GameLib.min(ECSLib.getUint("Load", cityInventoryID), _amount + existingCityResource);
+        ECSLib.setUint("Amount", cityInventoryID, totalAmount);
+    }
+
+    function spawnResource(Position memory _startPosition, string memory _inventoryType) external onlyAdmin {
+        GameLib.initializeTile(_startPosition);
+        Templates.addResource(gs().templates[_inventoryType], _startPosition, 0);
+    }
+
+    function spawnBarbarian(Position memory _startPosition, uint256 _level) external onlyAdmin {
+        require(_level == 1 || _level == 2, "CURIO: Function not used correctly");
+        uint256 tileID = GameLib.initializeTile(_startPosition);
+        ECSLib.setUint("Level", tileID, _level);
     }
 
     // ----------------------------------------------------------------------
@@ -56,12 +88,45 @@ contract AdminFacet is UseStorage {
     }
 
     /**
-     * @dev Initialize all tiles from an array of positions.
+     * @dev Initialize all large tiles from an array of starting positions.
      * @param _positions all positions
      */
     function bulkInitializeTiles(Position[] memory _positions) external onlyAdmin {
         for (uint256 i = 0; i < _positions.length; i++) {
             GameLib.initializeTile(_positions[i]);
+        }
+    }
+
+    function addTroopTemplate(
+        string memory _inventoryType,
+        uint256 _health,
+        uint256 _speed,
+        uint256 _moveCooldown,
+        uint256 _battleCooldown,
+        uint256 _attack,
+        uint256 _defense,
+        uint256 _duration,
+        uint256 _load,
+        uint256 _cost
+    ) external onlyAdmin returns (uint256) {
+        return Templates.addTroopTemplate(_inventoryType, _health, _speed, _moveCooldown, _battleCooldown, _attack, _defense, _duration, _load, _cost);
+    }
+
+    function addConstant(
+        string memory _functionName,
+        string memory _componentName,
+        string memory _entityName,
+        uint256 _level,
+        uint256 _amount
+    ) external onlyAdmin returns (uint256) {
+        return Templates.addConstant(_functionName, _componentName, _entityName, _level, _amount);
+    }
+
+    function bulkAddConstants(ConstantSpec[] memory _constantSpecs) external onlyAdmin {
+        ConstantSpec memory spec;
+        for (uint256 i = 0; i < _constantSpecs.length; i++) {
+            spec = _constantSpecs[i];
+            Templates.addConstant(spec.functionName, spec.componentName, spec.entityName, spec.level, spec.value);
         }
     }
 
@@ -87,7 +152,7 @@ contract AdminFacet is UseStorage {
 
     // FIXME: be able to sync with vault
     function registerDefaultComponents(address _gameAddr) external onlyAdmin {
-        ComponentSpec[] memory _componentSpecs = new ComponentSpec[](37);
+        ComponentSpec[] memory _componentSpecs = new ComponentSpec[](39);
 
         _componentSpecs[0] = ComponentSpec({name: "IsComponent", valueType: ValueType.BOOL});
         _componentSpecs[1] = ComponentSpec({name: "Tag", valueType: ValueType.STRING});
@@ -122,10 +187,12 @@ contract AdminFacet is UseStorage {
         _componentSpecs[30] = ComponentSpec({name: "Treaty", valueType: ValueType.ADDRESS});
         _componentSpecs[31] = ComponentSpec({name: "Cost", valueType: ValueType.UINT});
         _componentSpecs[32] = ComponentSpec({name: "Army", valueType: ValueType.UINT});
-        _componentSpecs[33] = ComponentSpec({name: "Capacity", valueType: ValueType.UINT});
-        _componentSpecs[34] = ComponentSpec({name: "StartPosition", valueType: ValueType.POSITION});
-        _componentSpecs[35] = ComponentSpec({name: "MoveCooldown", valueType: ValueType.UINT});
-        _componentSpecs[36] = ComponentSpec({name: "BattleCooldown", valueType: ValueType.UINT});
+        _componentSpecs[33] = ComponentSpec({name: "StartPosition", valueType: ValueType.POSITION});
+        _componentSpecs[34] = ComponentSpec({name: "MoveCooldown", valueType: ValueType.UINT});
+        _componentSpecs[35] = ComponentSpec({name: "BattleCooldown", valueType: ValueType.UINT});
+        _componentSpecs[36] = ComponentSpec({name: "Terrain", valueType: ValueType.UINT});
+        _componentSpecs[37] = ComponentSpec({name: "CanBattle", valueType: ValueType.BOOL});
+        _componentSpecs[38] = ComponentSpec({name: "AttackRange", valueType: ValueType.UINT});
 
         GameLib.registerComponents(_gameAddr, _componentSpecs);
     }
@@ -139,6 +206,8 @@ contract AdminFacet is UseStorage {
         for (uint256 i = 0; i < _names.length; i++) {
             gs().templates[_names[i]] = _IDs[i];
         }
+
+        gs().templateNames = _names;
     }
 
     function addEntity() external onlyAdmin returns (uint256) {
@@ -151,10 +220,5 @@ contract AdminFacet is UseStorage {
         bytes memory _value
     ) external onlyAdmin {
         ECSLib.setComponentValue(_componentName, _entity, _value);
-    }
-
-    // entity creation for testing
-    function createArmy(uint256 _playerId, Position memory _position) external onlyAdmin returns (uint256) {
-        return Templates.addArmy(_playerId, _position);
     }
 }
