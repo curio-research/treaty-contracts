@@ -65,7 +65,7 @@ struct WorldConstants {
     uint256 maxPlayerCount;
     uint256 tileWidth;
     uint256 maxCityCenterLevel;
-    uint256 cityCenterLevelToEntityLevel; // 3 => lv1 city center unlocks lv3 resources
+    uint256 cityCenterLevelToEntityLevelRatio; // 3 => lv1 city center unlocks lv3 resources
     uint256 cityCenterLevelToTileCounts; // 5 => lv1 -> lv2 upgrade unlocks five more tiles
 }
 
@@ -74,12 +74,6 @@ struct GameState {
     uint256 lastPaused;
     WorldConstants worldConstants;
     address[] players;
-    // NOTE: Initialize the following while setting up constants.ts
-    uint256 maxCityCenterLevel;
-    uint256 cityCenterLevelToEntityLevel; // 3 => lv1 city center unlocks lv3 resources
-    mapping(address => uint256) maxSubEntityLevel; // ex: lv1 city center only unlocks up to lv3 resources 
-    uint256 cityCenterLevelToTileCounts; // 5 => lv1 -> lv2 upgrade unlocks five more tiles
-    mapping(address => uint256) maxTileCounts;
     // Tile[5000][5000] map;
     uint256[][] encodedColumnBatches;
     address[] treaties;

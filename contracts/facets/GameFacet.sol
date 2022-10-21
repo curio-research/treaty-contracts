@@ -52,10 +52,6 @@ contract GameFacet is UseStorage {
             uint256 inventoryLoad = GameLib.getConstant("initializePlayer", "Load", inventoryType, 0);
             Templates.addInventory(settlerID, resourceTemplateIDs[i], inventoryAmount, inventoryLoad, true);
         }
-
-        // Initialize Tile Counts for players
-        // NOTE: here is another adjustable parameter
-        gs().maxTileCounts[msg.sender] = 9;
     }
 
     // ----------------------------------------------------------
@@ -183,7 +179,7 @@ contract GameFacet is UseStorage {
         // Check if player has reached max tile level
         uint256 tileLevel = ECSLib.getUint("Level", _tileID);
         uint256 cityID = ECSLib.getUint("City", _tileID);
-        require(tileLevel < ECSLib.getUint("Level", cityID) * gs().worldConstants.cityCenterLevelToEntityLevel, "CURIO: Max Tile Level Reached");
+        require(tileLevel < ECSLib.getUint("Level", cityID) * gs().worldConstants.cityCenterLevelToEntityLevelRatio, "CURIO: Max Tile Level Reached");
 
         // Deduct costs
         uint256 playerID = GameLib.getPlayer(msg.sender);
@@ -212,7 +208,7 @@ contract GameFacet is UseStorage {
 
         // Check if player has reached maxCityCenterLevel
         uint256 centerLevel = ECSLib.getUint("Level", _buildingID);
-        require(centerLevel < gs().maxCityCenterLevel, "CURIO: Reached Maximum Center Level");
+        require(centerLevel < gs().worldConstants.maxCityCenterLevel, "CURIO: Reached Maximum Center Level");
 
         // Tile needs to be yours
         uint256 playerID = GameLib.getPlayer(msg.sender);
@@ -742,7 +738,7 @@ contract GameFacet is UseStorage {
         // Check if player has reached max tile level
         uint256 resourceLevel = ECSLib.getUint("Level", _resourceID);
         uint256 cityID = ECSLib.getUint("City", tileID);
-        require(resourceLevel < ECSLib.getUint("Level", cityID) * gs().worldConstants.cityCenterLevelToEntityLevel, "CURIO: Max Resource Level Reached");
+        require(resourceLevel < ECSLib.getUint("Level", cityID) * gs().worldConstants.cityCenterLevelToEntityLevelRatio, "CURIO: Max Resource Level Reached");
 
         // Deduct costs and set load
         uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));

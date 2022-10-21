@@ -374,7 +374,7 @@ contract DiamondDeployTest is Test {
                 maxPlayerCount: 20,
                 tileWidth: 10, // DO NOT REMOVE THIS COMMENT
                 maxCityCenterLevel: 3,
-                cityCenterLevelToEntityLevel: 3,
+                cityCenterLevelToEntityLevelRatio: 3,
                 cityCenterLevelToTileCounts: 20
             });
     }
