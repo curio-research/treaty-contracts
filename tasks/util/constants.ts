@@ -106,7 +106,7 @@ export const CONSTANT_SPECS: ConstantSpecStruct[] = [];
 // `initializePlayer`
 CONSTANT_SPECS.push({ functionName: 'initializePlayer', componentName: Amount, entityName: InventoryTypeOptions.Gold, level: NULL, value: 0 });
 CONSTANT_SPECS.push({ functionName: 'initializePlayer', componentName: Amount, entityName: InventoryTypeOptions.Food, level: NULL, value: 0 });
-// todo: I haven't calculate this in god_os yet
+// TODO: I haven't calculate this in god_os yet
 CONSTANT_SPECS.push({ functionName: 'initializePlayer', componentName: Load, entityName: InventoryTypeOptions.Gold, level: NULL, value: 100000000 });
 CONSTANT_SPECS.push({ functionName: 'initializePlayer', componentName: Load, entityName: InventoryTypeOptions.Food, level: NULL, value: 100000000 });
 

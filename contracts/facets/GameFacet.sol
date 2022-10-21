@@ -730,26 +730,29 @@ contract GameFacet is UseStorage {
         GameLib.ongoingGameCheck();
         GameLib.activePlayerCheck(msg.sender);
 
-        // Tile needs to be yours
-        uint256 playerID = GameLib.getPlayer(msg.sender);
-        uint256 tileID = GameLib.getTileAt(ECSLib.getPosition("StartPosition", _resourceID));
-        require(ECSLib.getUint("Owner", tileID) == playerID, "CURIO: Tile isn't yours");
+        {
+            // Tile needs to be yours
+            uint256 tileID = GameLib.getTileAt(ECSLib.getPosition("StartPosition", _resourceID));
+            require(ECSLib.getUint("Owner", tileID) == GameLib.getPlayer(msg.sender), "CURIO: Tile isn't yours");
 
-        // Check if player has reached max tile level
+            // Check if player has reached max tile level
+            uint256 cityID = ECSLib.getUint("City", tileID);
+            require(ECSLib.getUint("Level", _resourceID) < ECSLib.getUint("Level", cityID) * gs().worldConstants.cityCenterLevelToEntityLevelRatio, "CURIO: Max Resource Level Reached");
+        }
+        uint256 playerID = GameLib.getPlayer(msg.sender);
         uint256 resourceLevel = ECSLib.getUint("Level", _resourceID);
-        uint256 cityID = ECSLib.getUint("City", tileID);
-        require(resourceLevel < ECSLib.getUint("Level", cityID) * gs().worldConstants.cityCenterLevelToEntityLevelRatio, "CURIO: Max Resource Level Reached");
 
         // Deduct costs and set load
         uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
+        string memory functionName = ECSLib.getUint("Template", _resourceID) == gs().templates["Gold"] ? "upgradeGoldmine" : "upgradeFarm"; // FIXME: temporary
         for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
             uint256 inventoryID = GameLib.getInventory(GameLib.getPlayerCity(playerID), resourceTemplateIDs[i]);
             uint256 balance = ECSLib.getUint("Amount", inventoryID);
-            uint256 cost = GameLib.getConstant("upgradeResource", "Cost", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), resourceLevel);
+            uint256 cost = GameLib.getConstant(functionName, "Cost", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), resourceLevel);
             require(balance >= cost, "CURIO: Insufficient balance");
             ECSLib.setUint("Amount", inventoryID, balance - cost);
 
-            uint256 newLoad = GameLib.getConstant("upgradeResource", "Load", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), resourceLevel + 1);
+            uint256 newLoad = GameLib.getConstant(functionName, "Load", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), resourceLevel + 1);
             ECSLib.setUint("Load", _resourceID, newLoad);
         }
 
