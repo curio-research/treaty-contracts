@@ -358,6 +358,12 @@ contract DiamondDeployTest is Test {
         for (uint256 i = 1; i <= 5; i++) {
             admin.addConstant("harvestResourcesFromCity", "Load", "Gold", i, 100000000);
             admin.addConstant("harvestResourcesFromCity", "Load", "Food", i, 100000000);
+            admin.addConstant("harvestResourcesFromCity", "Load", "Horseman", i, 200000 * i);
+            admin.addConstant("harvestResourcesFromCity", "Load", "Warrior", i, 200000 * i);
+            admin.addConstant("harvestResourcesFromCity", "Load", "Slinger", i, 200000 * i);
+            admin.addConstant("harvestResourcesFromCity", "Load", "Cavalry", i, 200000 * i);
+            admin.addConstant("harvestResourcesFromCity", "Load", "Archer", i, 200000 * i);
+            admin.addConstant("harvestResourcesFromCity", "Load", "Infantry", i, 200000 * i);
         }
 
         // `distributeBarbarianReward`

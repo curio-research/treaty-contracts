@@ -196,10 +196,10 @@ def get_building_upgrade_cost(level: int, building_type: Building) -> np.array:
 
 class Game:
     total_tile_count = 400
-    expected_player_count = 4
+    expected_player_count = 3
     init_player_tile_count = 9
 
-    expected_play_time_in_hour = 2
+    expected_play_time_in_hour = 1.5
     """
     How many tiles does a level 1 city center player has
     """
@@ -210,7 +210,7 @@ class Game:
     Determine resource density. Note that one of the goldmine is citycenter
     """
 
-    init_player_farm_count = 8
+    init_player_farm_count = 4
     """
     How many farms avg players have when city center level is 1
     Determine resource density. 
@@ -237,7 +237,7 @@ class Game:
     note: this is already kinda fast, but might still feel slow. If so, we can initialize some resources
     """
 
-    base_troop_training_in_Seconds = 1
+    base_troop_training_in_Seconds = 0.5
     """
     time to train one troop
     """
@@ -410,6 +410,8 @@ class Game:
         while curr_level <= max_building_level:
             print(f"City Center Level ({curr_level}) TroopSize: {get_troop_size_by_center_level(curr_level)}")
             curr_level += 1
+        print(f"Troop Gold Cost: {self.resource_weight_low}")
+        print(f"Troop Food Cost: {self.resource_weight_heavy}")
 
         sys.stdout.close()
         sys.stdout=stdoutOrigin
