@@ -1,0 +1,23 @@
+[{
+        "subject": "Farm",
+        "componentName": "Yield",
+        "object": "Gold",
+        "level": 1,
+        "value": 0
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Yield",
+        "object": "Food",
+        "level": 1,
+        "value": 1920
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 1,
+        "function": "upgrade",
+        "value": 12
+    }
+]
