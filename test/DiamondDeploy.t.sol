@@ -100,10 +100,14 @@ contract DiamondDeployTest is Test {
         admin = AdminFacet(diamond);
         ownership = OwnershipFacet(diamond);
 
+        console.log("hello");
+
         // Register components
         string memory root = vm.projectRoot();
         string memory path = string(abi.encodePacked(root, "/test/components/IsComponent.json"));
+        console.log("path set");
         string memory json = vm.readFile(path);
+        console.log("hey!");
         ComponentSpec memory componentSpec = abi.decode(bytes(json), (ComponentSpec));
         console.log("YO!", componentSpec.name);
 
