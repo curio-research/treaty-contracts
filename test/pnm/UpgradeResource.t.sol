@@ -5,7 +5,7 @@ import "@pwnednomore/contracts/PTest.sol";
 import "contracts/libraries/Storage.sol";
 import "../DiamondDeploy.t.sol";
 
-contract PurchaseTroopTest is PTest, DiamondDeployTest, UseStorage {
+contract UpgradeResourceTest is PTest, DiamondDeployTest, UseStorage {
     uint256 texasID;
     Position public cornTilePos = Position({x: 50, y: 40});
     Position public barbarinaTilePos = Position({x: 60, y: 50});
