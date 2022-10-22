@@ -66,7 +66,7 @@ contract DiamondDeployTest is Test {
     bytes4[] OWNERSHIP_SELECTORS = [bytes4(0xf2fde38b), 0x8da5cb5b];
     bytes4[] LOUPE_SELECTORS = [bytes4(0xcdffacc6), 0x52ef6b2c, 0xadfca15e, 0x7a0ed627, 0x01ffc9a7];
 
-    function setUp() public {
+    function setUp() public virtual {
         vm.startPrank(deployer);
 
         diamondCutFacet = new DiamondCutFacet();
