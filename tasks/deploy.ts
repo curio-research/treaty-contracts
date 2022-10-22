@@ -1,15 +1,14 @@
-import { position } from './../util/types/common';
 import chalk from 'chalk';
 import { GameLib } from './../typechain-types/libraries/GameLib';
 import { ECSLib } from './../typechain-types/libraries/ECSLib';
 import { publishDeployment, isConnectionLive, startGameSync } from './../api/deployment';
 import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment, HardhatArguments } from 'hardhat/types';
-import { confirm, deployProxy, printDivider } from './util/deployHelper';
+import { confirm, deployProxy, printDivider, indexerUrlSelector } from './util/deployHelper';
 import { CONSTANT_SPECS, createTemplates, generateWorldConstants, SMALL_MAP_INPUT } from './util/constants';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
 import { encodeTileMap, generateBlankFixmap, generateMap, initializeFixmap } from './util/mapHelper';
-import { COMPONENT_SPECS, GameConfig, TILE_TYPE, getTopPos, scaleMap, chainInfo } from 'curio-vault';
+import { COMPONENT_SPECS, GameConfig, TILE_TYPE, position, scaleMap, chainInfo } from 'curio-vault';
 
 /**
  * Deploy script for publishing games
@@ -35,7 +34,7 @@ task('deploy', 'deploy contracts')
       const { port, release, fixmap } = args;
 
       // Read variables from run flags
-      const isDev = hre.network.name === 'localhost' || hre.network.name === 'hardhat' || hre.network.name === 'constellation' || hre.network.name === 'altlayer';
+      const isDev = hre.network.name === 'localhost' || hre.network.name === 'hardhat' || hre.network.name === 'constellation' || hre.network.name === 'altlayer' || hre.network.name === 'tailscale';
       console.log('Network:', hre.network.name);
 
       if (fixmap) console.log('Using deterministic map');
@@ -126,11 +125,14 @@ task('deploy', 'deploy contracts')
       // Each deployment has a unique deploymentId
       const deploymentId = `deployer=${process.env.DEPLOYER_ID}-${release && 'release-'}${hre.network.name}-${Date.now()}`;
 
+      const indexerUrl = indexerUrlSelector(hre);
+
       // Generate config file
       const configFile: GameConfig = {
         address: diamond.address,
         network: hre.network.name,
         deploymentId: deploymentId,
+        indexerUrl: indexerUrl,
         map: scaleMap(tileMap, Number(worldConstants.tileWidth)),
         time: new Date(),
       };

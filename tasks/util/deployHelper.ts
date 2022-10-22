@@ -25,3 +25,19 @@ export const confirm = async (contractTx: ContractTransaction, hre: HardhatRunti
   let receipt = await contractTx.wait();
   return receipt;
 };
+
+export const indexerUrlSelector = (hre: HardhatRuntimeEnvironment): string => {
+  if (hre.network.name === 'localhost') {
+    return process.env.BACKEND_URL || '';
+  }
+  if (hre.network.name === 'tailscale') {
+    return `${process.env.TAILSCALE_MAIN}:8080`;
+  }
+
+  if (hre.network.name === 'constellationNew') {
+    return process.env.BACKEND_URL || '';
+  }
+
+  // TODO: add production indexer url cases
+  return '';
+};
