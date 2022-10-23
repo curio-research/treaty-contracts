@@ -1,8 +1,7 @@
 import { Curio, WorldConstantsStruct } from './../../typechain-types/hardhat-diamond-abi/Curio';
-import { decodeBigNumberishArr } from './../../util/serde/common';
+import { decodeBigNumberishArr, position } from 'curio-vault';
 import { Component__factory } from './../../typechain-types/factories/contracts/Component__factory';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
-import { position } from './../../util/types/common';
 import { TILE_TYPE, componentNameToId, encodePosition, getImmediateSurroundingPositions, TileMap, Tag, Position, Owner, Health, Speed, Attack, Defense, Load, LastTimestamp, Tags, encodeString, encodeUint256, getRightPos, chainInfo } from 'curio-vault';
 import { TILE_WIDTH } from './constants';
 import { confirm } from './deployHelper';

@@ -52,23 +52,24 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): a
 export const createTemplates = async (diamond: Curio, hre: HardhatRuntimeEnvironment) => {
   const templateNames: string[] = [];
   const templateIDs: number[] = [];
+  // TODO: automate this just like the game constants
 
   let inventoryType = InventoryTypeOptions.Horseman;
 
   let entity = Number(await diamond.getEntity());
 
   // Horseman
-  await confirm(await diamond.addTroopTemplate(InventoryTypeOptions.Horseman, 120, 2, 1, 2, 60, 120, 1, worldConstants.troopResourceLoadPerThousand), hre);
+  await confirm(await diamond.addTroopTemplate(InventoryTypeOptions.Horseman, 120, 2, 1, 2, 60, 120, 1, 95), hre);
   templateNames.push(InventoryTypeOptions.Horseman);
   templateIDs.push(entity++);
 
   // Warrior
-  await confirm(await diamond.addTroopTemplate(InventoryTypeOptions.Warrior, 120, 1, 1, 2, 60, 120, 1, worldConstants.troopResourceLoadPerThousand), hre);
+  await confirm(await diamond.addTroopTemplate(InventoryTypeOptions.Warrior, 120, 1, 1, 2, 60, 120, 1, 95), hre);
   templateNames.push(InventoryTypeOptions.Warrior);
   templateIDs.push(entity++);
 
   // Slinger
-  await confirm(await diamond.addTroopTemplate(InventoryTypeOptions.Slinger, 125, 1, 1, 2, 60, 125, 1, worldConstants.troopResourceLoadPerThousand), hre);
+  await confirm(await diamond.addTroopTemplate(InventoryTypeOptions.Slinger, 125, 1, 1, 2, 60, 125, 1, 95), hre);
   templateNames.push(InventoryTypeOptions.Slinger);
   templateIDs.push(entity++);
 
