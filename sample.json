@@ -17,7 +17,6 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 1,
-        "function": "upgrade",
         "value": 12
     }
 ]

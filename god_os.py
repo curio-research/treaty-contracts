@@ -2,6 +2,7 @@ import math
 from enum import Enum
 from types import LambdaType
 import numpy as np
+import json
 
 import sys 
 
@@ -13,9 +14,9 @@ class Resource(Enum):
     FOOD = 1
 
 class Building(Enum):
-    GOLDMINE = 0
-    FARM = 1
-    CITYCENTER = 2
+    GOLDMINE = "Goldmine"
+    FARM = "Farm"
+    CITY_CENTER = "City Center"
 
 def get_hourly_gather_rate_per_army(resource_type: Resource) -> int:
     """
@@ -92,7 +93,7 @@ def get_building_base_hourly_yield(building_type: Building) -> np.array:
         return np.array([0, base_farm_food_hourly_yield])
     elif building_type == Building.GOLDMINE:
         return np.array([base_gold_food_hourly_yield, 0])
-    elif building_type == Building.CITYCENTER:
+    elif building_type == Building.CITY_CENTER:
         return np.array([base_gold_food_hourly_yield, base_farm_food_hourly_yield])
     else: 
         return np.array([0, 0])
@@ -180,7 +181,7 @@ def get_building_upgrade_cost(level: int, building_type: Building) -> np.array:
         return np.array([goldmine_goldcost, goldmine_foodcost])
     if building_type == Building.FARM:
         return np.array([farm_goldcost, farm_foodcost])
-    if building_type == Building.CITYCENTER:
+    if building_type == Building.CITY_CENTER:
         # city center upgrade cost incur additional tax, based upon new tile it unlocks
         # tax = expected resource output (= density * getCityCenterTilesInterval / '2' * yield) * payback period
         unlocked_goldmine_count = Game.expected_gold_density() * get_city_center_tiles_interval()
@@ -324,14 +325,14 @@ class Game:
             print(f"{raw_constant}: {getattr(self, raw_constant)}")
 
         # Print Building Stats
-        for i in [Building.GOLDMINE, Building.FARM, Building.CITYCENTER]:
+        for i in [Building.GOLDMINE, Building.FARM, Building.CITY_CENTER]:
             max_building_level = 1
             buildingType = i
             if i == Building.GOLDMINE:
                 max_building_level = self.max_city_center_level * self.city_center_level_to_building_level
             if i == Building.FARM:
                 max_building_level = self.max_city_center_level * self.city_center_level_to_building_level
-            if i == Building.CITYCENTER:
+            if i == Building.CITY_CENTER:
                 max_building_level = self.max_city_center_level
 
             curr_level = 1
@@ -355,7 +356,109 @@ class Game:
                     print(f"Food Cost to Upgrade: {food_upgrade_cost}")
                 if curr_level == max_building_level:
                     print("Cannot Upgrade")
-                if buildingType == Building.CITYCENTER:
+                if buildingType == Building.CITY_CENTER:
+                    print(f"Tile Count Limit: {self.init_player_tile_count + get_city_center_tiles_interval()*(curr_level-1)}")
+                print("-----------------")
+
+                curr_level += 1
+
+        print("-----------------")
+        print(f"** Barbarian Stats **")
+        print("-----------------")
+        curr_level = 1
+        while curr_level <= self.max_city_center_level * self.city_center_level_to_building_level:
+            (reward_gold, reward_food) = get_barbarian_reward(curr_level)
+            barbarian_count = get_barbarian_count_by_level(curr_level)
+            print("-----------------")
+            print(f"Barbarian Level: {curr_level}")
+            print("-----------------")
+            print(f"Barbarian Counts: {barbarian_count}")
+            print(f"Gold Reward: {reward_gold}")
+            print(f"Food Reward: {reward_food}")
+            curr_level += 1
+
+        print("-----------------")
+        print(f"** Tile Upgrade Stats **")
+        print("-----------------")
+        curr_level = 1
+        max_tile_level = self.max_city_center_level * self.city_center_level_to_building_level
+        while curr_level <= max_tile_level:
+            (cost_gold, cost_food) = get_tile_upgrade_cost(curr_level)
+            tile_guard_count = get_tile_troop_count(curr_level)
+            print("-----------------")
+            print(f"Tile Level: {curr_level}")
+            print("-----------------")
+            print(f"Tile Guard Counts: {tile_guard_count}")
+            if curr_level < max_tile_level:
+                print(f"Gold Cost to Upgrade: {cost_gold}")
+                print(f"Food Cost to Upgrade: {cost_food}")
+            if curr_level == max_tile_level:
+                print("Cannot Upgrade")
+            curr_level += 1
+        
+        print("-----------------")
+        print(f"Gather Stats")
+        print("-----------------")
+        for i in [Resource.GOLD, Resource.FOOD]:
+            print(f"{i} Hourly Gather Rate Per Army: {get_hourly_gather_rate_per_army(i)}")
+        print(f"Resource Load per Troop: {resource_cap_per_troop()}")
+        
+        print("-----------------")
+        print(f"TroopSize Stats")
+        print("-----------------")
+        max_building_level = self.max_city_center_level
+        curr_level = 1
+        while curr_level <= max_building_level:
+            print(f"City Center Level ({curr_level}) TroopSize: {get_troop_size_by_center_level(curr_level)}")
+            curr_level += 1
+        print(f"Troop Gold Cost: {self.resource_weight_low}")
+        print(f"Troop Food Cost: {self.resource_weight_heavy}")
+
+        sys.stdout.close()
+        sys.stdout=stdout_origin
+
+    """
+    Constant format:
+    "subject": "Farm",
+    "componentName": "Yield",
+    "object": "Food",
+    "level": 1,
+    "functionName": "upgrade"
+    "value": 1920
+    """
+    def export_json_parameters(self) -> None:
+        # Deal iwth json here
+        constants = []
+
+        for i in [Building.GOLDMINE, Building.FARM, Building.CITY_CENTER]:
+        # Print Building Stats
+            max_building_level = 1
+            building_type = i
+            if i == Building.GOLDMINE:
+                max_building_level = self.max_city_center_level * self.city_center_level_to_building_level
+            elif i == Building.FARM:
+                max_building_level = self.max_city_center_level * self.city_center_level_to_building_level
+            elif i == Building.CITY_CENTER:
+                max_building_level = self.max_city_center_level
+
+            curr_level = 1
+
+            while curr_level <= max_building_level:
+                (gold_upgrade_cost, food_upgrade_cost) = get_building_upgrade_cost(curr_level, building_type)
+                (gold_hourly_yield, food_hourly_yield) = get_building_hourly_yield_by_level(curr_level, building_type)
+                (gold_cap, food_cap) = get_building_resource_cap(curr_level, building_type)
+                # print(f"Building Level: {curr_level}")
+                # print("-----------------")
+                constants.append({ "subject": building_type, "componentName": "Yield", "object": "Gold", "level": curr_level, "functionName": "", "value": gold_hourly_yield  })
+                constants.append({ "subject": building_type, "componentName": "Yield", "object": "Food", "level": curr_level, "functionName": "", "value": food_hourly_yield  })
+                constants.append({ "subject": building_type, "componentName": "Load", "object": "Gold", "level": curr_level, "functionName": "", "value": gold_cap })
+                constants.append({ "subject": building_type, "componentName": "Load", "object": "Food", "level": curr_level, "functionName": "", "value": food_cap })
+                if curr_level < max_building_level:
+                    constants.append({ "subject": building_type, "componentName": "Cost", "object": "Gold", "level": curr_level, "functionName": "upgrade", "value": gold_upgrade_cost  })
+                    constants.append({ "subject": building_type, "componentName": "Cost", "object": "Food", "level": curr_level, "functionName": "upgrade", "value": food_upgrade_cost  })
+                if curr_level == max_building_level:
+                    print("Cannot Upgrade")
+                if building_type == Building.CITY_CENTER:
                     print(f"Tile Count Limit: {self.init_player_tile_count + get_city_center_tiles_interval()*(curr_level-1)}")
                 print("-----------------")
 
