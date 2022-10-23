@@ -59,6 +59,54 @@
         "subject": "Goldmine",
         "componentName": "Yield",
         "object": "Gold",
+        "level": 0,
+        "functionName": "",
+        "value": 512
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Yield",
+        "object": "Food",
+        "level": 0,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Load",
+        "object": "Gold",
+        "level": 0,
+        "functionName": "",
+        "value": 85
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Load",
+        "object": "Food",
+        "level": 0,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 0,
+        "functionName": "upgrade",
+        "value": 1
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 0,
+        "functionName": "upgrade",
+        "value": 0
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Yield",
+        "object": "Gold",
         "level": 1,
         "functionName": "",
         "value": 720
@@ -475,6 +523,54 @@
         "subject": "Farm",
         "componentName": "Yield",
         "object": "Gold",
+        "level": 0,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Yield",
+        "object": "Food",
+        "level": 0,
+        "functionName": "",
+        "value": 8196
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Load",
+        "object": "Gold",
+        "level": 0,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Load",
+        "object": "Food",
+        "level": 0,
+        "functionName": "",
+        "value": 1366
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 0,
+        "functionName": "upgrade",
+        "value": 0
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 0,
+        "functionName": "upgrade",
+        "value": 3
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Yield",
+        "object": "Gold",
         "level": 1,
         "functionName": "",
         "value": 0
@@ -886,6 +982,126 @@
         "level": 9,
         "functionName": "",
         "value": 3694
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Load",
+        "object": "Troop",
+        "level": 1,
+        "functionName": "",
+        "value": 2000
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Load",
+        "object": "Troop",
+        "level": 2,
+        "functionName": "",
+        "value": 2000
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Load",
+        "object": "Troop",
+        "level": 3,
+        "functionName": "",
+        "value": 2000
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Load",
+        "object": "Troop",
+        "level": 4,
+        "functionName": "",
+        "value": 2000
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Load",
+        "object": "Troop",
+        "level": 5,
+        "functionName": "",
+        "value": 2000
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Load",
+        "object": "Troop",
+        "level": 6,
+        "functionName": "",
+        "value": 2000
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Load",
+        "object": "Troop",
+        "level": 7,
+        "functionName": "",
+        "value": 2000
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Load",
+        "object": "Troop",
+        "level": 8,
+        "functionName": "",
+        "value": 2000
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Load",
+        "object": "Troop",
+        "level": 9,
+        "functionName": "",
+        "value": 2000
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Yield",
+        "object": "Gold",
+        "level": 0,
+        "functionName": "",
+        "value": 512
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Yield",
+        "object": "Food",
+        "level": 0,
+        "functionName": "",
+        "value": 8196
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Load",
+        "object": "Gold",
+        "level": 0,
+        "functionName": "",
+        "value": 85
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Load",
+        "object": "Food",
+        "level": 0,
+        "functionName": "",
+        "value": 1366
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 0,
+        "functionName": "upgrade",
+        "value": 40
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 0,
+        "functionName": "upgrade",
+        "value": 1247
     },
     {
         "subject": "City Center",

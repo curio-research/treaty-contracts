@@ -455,8 +455,10 @@ class Game:
                 max_building_level = self.max_city_center_level * self.city_center_level_to_building_level
             elif i == Building.CITY_CENTER:
                 max_building_level = self.max_city_center_level
+                for i in range(1, 10):
+                    game_parameters.append({ "subject": "City Center", "componentName": "Load", "object": "Troop", "level": i, "functionName": "", "value": 2000 }) # FIXME: hardcoded
 
-            curr_level = 1
+            curr_level = 0
 
             while curr_level <= max_building_level:
                 (gold_upgrade_cost, food_upgrade_cost) = get_building_upgrade_cost(curr_level, building_type)
