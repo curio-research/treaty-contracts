@@ -37,28 +37,6 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
   y: BigNumber;
 };
 
-export type ConstantSpecStruct = {
-  functionName: PromiseOrValue<string>;
-  componentName: PromiseOrValue<string>;
-  entityName: PromiseOrValue<string>;
-  level: PromiseOrValue<BigNumberish>;
-  value: PromiseOrValue<BigNumberish>;
-};
-
-export type ConstantSpecStructOutput = [
-  string,
-  string,
-  string,
-  BigNumber,
-  BigNumber
-] & {
-  functionName: string;
-  componentName: string;
-  entityName: string;
-  level: BigNumber;
-  value: BigNumber;
-};
-
 export type ComponentSpecStruct = {
   name: PromiseOrValue<string>;
   valueType: PromiseOrValue<BigNumberish>;
@@ -71,6 +49,7 @@ export type ComponentSpecStructOutput = [string, number] & {
 
 export type WorldConstantsStruct = {
   admin: PromiseOrValue<string>;
+  tileWidth: PromiseOrValue<BigNumberish>;
   worldWidth: PromiseOrValue<BigNumberish>;
   worldHeight: PromiseOrValue<BigNumberish>;
   numInitTerrainTypes: PromiseOrValue<BigNumberish>;
@@ -79,7 +58,9 @@ export type WorldConstantsStruct = {
   maxArmyCountPerPlayer: PromiseOrValue<BigNumberish>;
   maxTroopCountPerArmy: PromiseOrValue<BigNumberish>;
   maxPlayerCount: PromiseOrValue<BigNumberish>;
-  tileWidth: PromiseOrValue<BigNumberish>;
+  maxCityCenterLevel: PromiseOrValue<BigNumberish>;
+  cityCenterLevelToEntityLevelRatio: PromiseOrValue<BigNumberish>;
+  cityCenterLevelToTileCountRatio: PromiseOrValue<BigNumberish>;
 };
 
 export type WorldConstantsStructOutput = [
@@ -92,9 +73,13 @@ export type WorldConstantsStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
   BigNumber
 ] & {
   admin: string;
+  tileWidth: BigNumber;
   worldWidth: BigNumber;
   worldHeight: BigNumber;
   numInitTerrainTypes: BigNumber;
@@ -103,7 +88,9 @@ export type WorldConstantsStructOutput = [
   maxArmyCountPerPlayer: BigNumber;
   maxTroopCountPerArmy: BigNumber;
   maxPlayerCount: BigNumber;
-  tileWidth: BigNumber;
+  maxCityCenterLevel: BigNumber;
+  cityCenterLevelToEntityLevelRatio: BigNumber;
+  cityCenterLevelToTileCountRatio: BigNumber;
 };
 
 export type QueryConditionStruct = {
@@ -146,12 +133,12 @@ export declare namespace IDiamondLoupe {
 
 export interface CurioInterface extends utils.Interface {
   functions: {
-    "addConstant(string,string,string,uint256,uint256)": FunctionFragment;
+    "addConstant(string,uint256)": FunctionFragment;
     "addEntity()": FunctionFragment;
-    "addTroopTemplate(string,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256)": FunctionFragment;
+    "addTroopTemplate(string,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256)": FunctionFragment;
     "adminInitializeTile((uint256,uint256))": FunctionFragment;
     "assignResource(uint256,string,uint256)": FunctionFragment;
-    "bulkAddConstants((string,string,string,uint256,uint256)[])": FunctionFragment;
+    "bulkAddConstants(string[],uint256[])": FunctionFragment;
     "bulkInitializeTiles((uint256,uint256)[])": FunctionFragment;
     "createArmy(uint256,(uint256,uint256))": FunctionFragment;
     "reactivatePlayer(address)": FunctionFragment;
@@ -185,8 +172,7 @@ export interface CurioInterface extends utils.Interface {
     "startGather(uint256,uint256)": FunctionFragment;
     "startTroopProduction(uint256,uint256,uint256)": FunctionFragment;
     "unloadResources(uint256)": FunctionFragment;
-    "upgradeCity(uint256,(uint256,uint256)[])": FunctionFragment;
-    "upgradeCityInventory(uint256)": FunctionFragment;
+    "upgradeCityCenter(uint256)": FunctionFragment;
     "upgradeResource(uint256)": FunctionFragment;
     "upgradeTile(uint256)": FunctionFragment;
     "getArmyAt((uint256,uint256))": FunctionFragment;
@@ -278,8 +264,7 @@ export interface CurioInterface extends utils.Interface {
       | "startGather"
       | "startTroopProduction"
       | "unloadResources"
-      | "upgradeCity"
-      | "upgradeCityInventory"
+      | "upgradeCityCenter"
       | "upgradeResource"
       | "upgradeTile"
       | "getArmyAt"
@@ -332,20 +317,13 @@ export interface CurioInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "addConstant",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>
-    ]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(functionFragment: "addEntity", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "addTroopTemplate",
     values: [
       PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
@@ -370,7 +348,7 @@ export interface CurioInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "bulkAddConstants",
-    values: [ConstantSpecStruct[]]
+    values: [PromiseOrValue<string>[], PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
     functionFragment: "bulkInitializeTiles",
@@ -522,11 +500,7 @@ export interface CurioInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "upgradeCity",
-    values: [PromiseOrValue<BigNumberish>, PositionStruct[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "upgradeCityInventory",
+    functionFragment: "upgradeCityCenter",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -847,11 +821,7 @@ export interface CurioInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "upgradeCity",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "upgradeCityInventory",
+    functionFragment: "upgradeCityCenter",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -1141,11 +1111,8 @@ export interface Curio extends BaseContract {
 
   functions: {
     addConstant(
-      _functionName: PromiseOrValue<string>,
-      _componentName: PromiseOrValue<string>,
-      _entityName: PromiseOrValue<string>,
-      _level: PromiseOrValue<BigNumberish>,
-      _amount: PromiseOrValue<BigNumberish>,
+      _identifier: PromiseOrValue<string>,
+      _value: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1163,7 +1130,6 @@ export interface Curio extends BaseContract {
       _defense: PromiseOrValue<BigNumberish>,
       _duration: PromiseOrValue<BigNumberish>,
       _load: PromiseOrValue<BigNumberish>,
-      _cost: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1180,7 +1146,8 @@ export interface Curio extends BaseContract {
     ): Promise<ContractTransaction>;
 
     bulkAddConstants(
-      _constantSpecs: ConstantSpecStruct[],
+      _identifiers: PromiseOrValue<string>[],
+      _values: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1372,13 +1339,7 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    upgradeCity(
-      _cityID: PromiseOrValue<BigNumberish>,
-      _newTiles: PositionStruct[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    upgradeCityInventory(
+    upgradeCityCenter(
       _buildingID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -1622,11 +1583,8 @@ export interface Curio extends BaseContract {
   };
 
   addConstant(
-    _functionName: PromiseOrValue<string>,
-    _componentName: PromiseOrValue<string>,
-    _entityName: PromiseOrValue<string>,
-    _level: PromiseOrValue<BigNumberish>,
-    _amount: PromiseOrValue<BigNumberish>,
+    _identifier: PromiseOrValue<string>,
+    _value: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1644,7 +1602,6 @@ export interface Curio extends BaseContract {
     _defense: PromiseOrValue<BigNumberish>,
     _duration: PromiseOrValue<BigNumberish>,
     _load: PromiseOrValue<BigNumberish>,
-    _cost: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1661,7 +1618,8 @@ export interface Curio extends BaseContract {
   ): Promise<ContractTransaction>;
 
   bulkAddConstants(
-    _constantSpecs: ConstantSpecStruct[],
+    _identifiers: PromiseOrValue<string>[],
+    _values: PromiseOrValue<BigNumberish>[],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -1845,13 +1803,7 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  upgradeCity(
-    _cityID: PromiseOrValue<BigNumberish>,
-    _newTiles: PositionStruct[],
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  upgradeCityInventory(
+  upgradeCityCenter(
     _buildingID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -2095,11 +2047,8 @@ export interface Curio extends BaseContract {
 
   callStatic: {
     addConstant(
-      _functionName: PromiseOrValue<string>,
-      _componentName: PromiseOrValue<string>,
-      _entityName: PromiseOrValue<string>,
-      _level: PromiseOrValue<BigNumberish>,
-      _amount: PromiseOrValue<BigNumberish>,
+      _identifier: PromiseOrValue<string>,
+      _value: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -2115,7 +2064,6 @@ export interface Curio extends BaseContract {
       _defense: PromiseOrValue<BigNumberish>,
       _duration: PromiseOrValue<BigNumberish>,
       _load: PromiseOrValue<BigNumberish>,
-      _cost: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -2132,7 +2080,8 @@ export interface Curio extends BaseContract {
     ): Promise<void>;
 
     bulkAddConstants(
-      _constantSpecs: ConstantSpecStruct[],
+      _identifiers: PromiseOrValue<string>[],
+      _values: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -2318,13 +2267,7 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    upgradeCity(
-      _cityID: PromiseOrValue<BigNumberish>,
-      _newTiles: PositionStruct[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    upgradeCityInventory(
+    upgradeCityCenter(
       _buildingID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -2623,11 +2566,8 @@ export interface Curio extends BaseContract {
 
   estimateGas: {
     addConstant(
-      _functionName: PromiseOrValue<string>,
-      _componentName: PromiseOrValue<string>,
-      _entityName: PromiseOrValue<string>,
-      _level: PromiseOrValue<BigNumberish>,
-      _amount: PromiseOrValue<BigNumberish>,
+      _identifier: PromiseOrValue<string>,
+      _value: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -2645,7 +2585,6 @@ export interface Curio extends BaseContract {
       _defense: PromiseOrValue<BigNumberish>,
       _duration: PromiseOrValue<BigNumberish>,
       _load: PromiseOrValue<BigNumberish>,
-      _cost: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -2662,7 +2601,8 @@ export interface Curio extends BaseContract {
     ): Promise<BigNumber>;
 
     bulkAddConstants(
-      _constantSpecs: ConstantSpecStruct[],
+      _identifiers: PromiseOrValue<string>[],
+      _values: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -2846,13 +2786,7 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    upgradeCity(
-      _cityID: PromiseOrValue<BigNumberish>,
-      _newTiles: PositionStruct[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    upgradeCityInventory(
+    upgradeCityCenter(
       _buildingID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -3095,11 +3029,8 @@ export interface Curio extends BaseContract {
 
   populateTransaction: {
     addConstant(
-      _functionName: PromiseOrValue<string>,
-      _componentName: PromiseOrValue<string>,
-      _entityName: PromiseOrValue<string>,
-      _level: PromiseOrValue<BigNumberish>,
-      _amount: PromiseOrValue<BigNumberish>,
+      _identifier: PromiseOrValue<string>,
+      _value: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -3117,7 +3048,6 @@ export interface Curio extends BaseContract {
       _defense: PromiseOrValue<BigNumberish>,
       _duration: PromiseOrValue<BigNumberish>,
       _load: PromiseOrValue<BigNumberish>,
-      _cost: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -3134,7 +3064,8 @@ export interface Curio extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     bulkAddConstants(
-      _constantSpecs: ConstantSpecStruct[],
+      _identifiers: PromiseOrValue<string>[],
+      _values: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -3318,13 +3249,7 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    upgradeCity(
-      _cityID: PromiseOrValue<BigNumberish>,
-      _newTiles: PositionStruct[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    upgradeCityInventory(
+    upgradeCityCenter(
       _buildingID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

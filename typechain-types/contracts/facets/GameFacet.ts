@@ -51,8 +51,7 @@ export interface GameFacetInterface extends utils.Interface {
     "startGather(uint256,uint256)": FunctionFragment;
     "startTroopProduction(uint256,uint256,uint256)": FunctionFragment;
     "unloadResources(uint256)": FunctionFragment;
-    "upgradeCity(uint256,(uint256,uint256)[])": FunctionFragment;
-    "upgradeCityInventory(uint256)": FunctionFragment;
+    "upgradeCityCenter(uint256)": FunctionFragment;
     "upgradeResource(uint256)": FunctionFragment;
     "upgradeTile(uint256)": FunctionFragment;
   };
@@ -75,8 +74,7 @@ export interface GameFacetInterface extends utils.Interface {
       | "startGather"
       | "startTroopProduction"
       | "unloadResources"
-      | "upgradeCity"
-      | "upgradeCityInventory"
+      | "upgradeCityCenter"
       | "upgradeResource"
       | "upgradeTile"
   ): FunctionFragment;
@@ -158,11 +156,7 @@ export interface GameFacetInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "upgradeCity",
-    values: [PromiseOrValue<BigNumberish>, PositionStruct[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "upgradeCityInventory",
+    functionFragment: "upgradeCityCenter",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -221,11 +215,7 @@ export interface GameFacetInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "upgradeCity",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "upgradeCityInventory",
+    functionFragment: "upgradeCityCenter",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -359,13 +349,7 @@ export interface GameFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    upgradeCity(
-      _cityID: PromiseOrValue<BigNumberish>,
-      _newTiles: PositionStruct[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    upgradeCityInventory(
+    upgradeCityCenter(
       _buildingID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -473,13 +457,7 @@ export interface GameFacet extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  upgradeCity(
-    _cityID: PromiseOrValue<BigNumberish>,
-    _newTiles: PositionStruct[],
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  upgradeCityInventory(
+  upgradeCityCenter(
     _buildingID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -587,13 +565,7 @@ export interface GameFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    upgradeCity(
-      _cityID: PromiseOrValue<BigNumberish>,
-      _newTiles: PositionStruct[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    upgradeCityInventory(
+    upgradeCityCenter(
       _buildingID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -704,13 +676,7 @@ export interface GameFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    upgradeCity(
-      _cityID: PromiseOrValue<BigNumberish>,
-      _newTiles: PositionStruct[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    upgradeCityInventory(
+    upgradeCityCenter(
       _buildingID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -819,13 +785,7 @@ export interface GameFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    upgradeCity(
-      _cityID: PromiseOrValue<BigNumberish>,
-      _newTiles: PositionStruct[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    upgradeCityInventory(
+    upgradeCityCenter(
       _buildingID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

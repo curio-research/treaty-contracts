@@ -964,23 +964,23 @@
         "componentName": "Reward",
         "object": "Gold",
         "level": 1,
-        "functionName": "upgrade",
+        "functionName": "",
         "value": 77
     },
     {
         "subject": "Barbarian",
         "componentName": "Reward",
-        "object": "Self",
+        "object": "Food",
         "level": 1,
-        "functionName": "upgrade",
+        "functionName": "",
         "value": 240
     },
     {
         "subject": "Barbarian",
-        "componentName": "Count",
-        "object": "Self",
+        "componentName": "Amount",
+        "object": "Guard",
         "level": 1,
-        "functionName": "battle",
+        "functionName": "",
         "value": 60.0
     },
     {
@@ -988,23 +988,23 @@
         "componentName": "Reward",
         "object": "Gold",
         "level": 2,
-        "functionName": "upgrade",
+        "functionName": "",
         "value": 241
     },
     {
         "subject": "Barbarian",
         "componentName": "Reward",
-        "object": "Self",
+        "object": "Food",
         "level": 2,
-        "functionName": "upgrade",
+        "functionName": "",
         "value": 407
     },
     {
         "subject": "Barbarian",
-        "componentName": "Count",
-        "object": "Self",
+        "componentName": "Amount",
+        "object": "Guard",
         "level": 2,
-        "functionName": "battle",
+        "functionName": "",
         "value": 101.91758471050537
     },
     {
@@ -1012,23 +1012,23 @@
         "componentName": "Reward",
         "object": "Gold",
         "level": 3,
-        "functionName": "upgrade",
+        "functionName": "",
         "value": 554
     },
     {
         "subject": "Barbarian",
         "componentName": "Reward",
-        "object": "Self",
+        "object": "Food",
         "level": 3,
-        "functionName": "upgrade",
+        "functionName": "",
         "value": 601
     },
     {
         "subject": "Barbarian",
-        "componentName": "Count",
-        "object": "Self",
+        "componentName": "Amount",
+        "object": "Guard",
         "level": 3,
-        "functionName": "battle",
+        "functionName": "",
         "value": 150.27224310309472
     },
     {
@@ -1036,23 +1036,23 @@
         "componentName": "Reward",
         "object": "Gold",
         "level": 4,
-        "functionName": "upgrade",
+        "functionName": "",
         "value": 1092
     },
     {
         "subject": "Barbarian",
         "componentName": "Reward",
-        "object": "Self",
+        "object": "Food",
         "level": 4,
-        "functionName": "upgrade",
+        "functionName": "",
         "value": 824
     },
     {
         "subject": "Barbarian",
-        "componentName": "Count",
-        "object": "Self",
+        "componentName": "Amount",
+        "object": "Guard",
         "level": 4,
-        "functionName": "battle",
+        "functionName": "",
         "value": 206.05248436489677
     },
     {
@@ -1060,23 +1060,23 @@
         "componentName": "Reward",
         "object": "Gold",
         "level": 5,
-        "functionName": "upgrade",
+        "functionName": "",
         "value": 1966
     },
     {
         "subject": "Barbarian",
         "componentName": "Reward",
-        "object": "Self",
+        "object": "Food",
         "level": 5,
-        "functionName": "upgrade",
+        "functionName": "",
         "value": 1081
     },
     {
         "subject": "Barbarian",
-        "componentName": "Count",
-        "object": "Self",
+        "componentName": "Amount",
+        "object": "Guard",
         "level": 5,
-        "functionName": "battle",
+        "functionName": "",
         "value": 270.3986180913153
     },
     {
@@ -1084,23 +1084,23 @@
         "componentName": "Reward",
         "object": "Gold",
         "level": 6,
-        "functionName": "upgrade",
+        "functionName": "",
         "value": 3336
     },
     {
         "subject": "Barbarian",
         "componentName": "Reward",
-        "object": "Self",
+        "object": "Food",
         "level": 6,
-        "functionName": "upgrade",
+        "functionName": "",
         "value": 1378
     },
     {
         "subject": "Barbarian",
-        "componentName": "Count",
-        "object": "Self",
+        "componentName": "Amount",
+        "object": "Guard",
         "level": 6,
-        "functionName": "battle",
+        "functionName": "",
         "value": 344.6260655149512
     },
     {
@@ -1108,23 +1108,23 @@
         "componentName": "Reward",
         "object": "Gold",
         "level": 7,
-        "functionName": "upgrade",
+        "functionName": "",
         "value": 5430
     },
     {
         "subject": "Barbarian",
         "componentName": "Reward",
-        "object": "Self",
+        "object": "Food",
         "level": 7,
-        "functionName": "upgrade",
+        "functionName": "",
         "value": 1721
     },
     {
         "subject": "Barbarian",
-        "componentName": "Count",
-        "object": "Self",
+        "componentName": "Amount",
+        "object": "Guard",
         "level": 7,
-        "functionName": "battle",
+        "functionName": "",
         "value": 430.2522505232746
     },
     {
@@ -1132,23 +1132,23 @@
         "componentName": "Reward",
         "object": "Gold",
         "level": 8,
-        "functionName": "upgrade",
+        "functionName": "",
         "value": 8576
     },
     {
         "subject": "Barbarian",
         "componentName": "Reward",
-        "object": "Self",
+        "object": "Food",
         "level": 8,
-        "functionName": "upgrade",
+        "functionName": "",
         "value": 2116
     },
     {
         "subject": "Barbarian",
-        "componentName": "Count",
-        "object": "Self",
+        "componentName": "Amount",
+        "object": "Guard",
         "level": 8,
-        "functionName": "battle",
+        "functionName": "",
         "value": 529.0276201952887
     },
     {
@@ -1156,31 +1156,31 @@
         "componentName": "Reward",
         "object": "Gold",
         "level": 9,
-        "functionName": "upgrade",
+        "functionName": "",
         "value": 13244
     },
     {
         "subject": "Barbarian",
         "componentName": "Reward",
-        "object": "Self",
+        "object": "Food",
         "level": 9,
-        "functionName": "upgrade",
+        "functionName": "",
         "value": 2571
     },
     {
         "subject": "Barbarian",
-        "componentName": "Count",
-        "object": "Self",
+        "componentName": "Amount",
+        "object": "Guard",
         "level": 9,
-        "functionName": "battle",
+        "functionName": "",
         "value": 642.971429006748
     },
     {
         "subject": "Tile",
-        "componentName": "Count",
-        "object": "Self",
+        "componentName": "Amount",
+        "object": "Guard",
         "level": 1,
-        "functionName": "battle",
+        "functionName": "",
         "value": 300.0
     },
     {
@@ -1201,10 +1201,10 @@
     },
     {
         "subject": "Tile",
-        "componentName": "Count",
-        "object": "Self",
+        "componentName": "Amount",
+        "object": "Guard",
         "level": 2,
-        "functionName": "battle",
+        "functionName": "",
         "value": 509.58792355252683
     },
     {
@@ -1225,10 +1225,10 @@
     },
     {
         "subject": "Tile",
-        "componentName": "Count",
-        "object": "Self",
+        "componentName": "Amount",
+        "object": "Guard",
         "level": 3,
-        "functionName": "battle",
+        "functionName": "",
         "value": 751.3612155154736
     },
     {
@@ -1249,10 +1249,10 @@
     },
     {
         "subject": "Tile",
-        "componentName": "Count",
-        "object": "Self",
+        "componentName": "Amount",
+        "object": "Guard",
         "level": 4,
-        "functionName": "battle",
+        "functionName": "",
         "value": 1030.262421824484
     },
     {
@@ -1273,10 +1273,10 @@
     },
     {
         "subject": "Tile",
-        "componentName": "Count",
-        "object": "Self",
+        "componentName": "Amount",
+        "object": "Guard",
         "level": 5,
-        "functionName": "battle",
+        "functionName": "",
         "value": 1351.9930904565765
     },
     {
@@ -1297,10 +1297,10 @@
     },
     {
         "subject": "Tile",
-        "componentName": "Count",
-        "object": "Self",
+        "componentName": "Amount",
+        "object": "Guard",
         "level": 6,
-        "functionName": "battle",
+        "functionName": "",
         "value": 1723.130327574756
     },
     {
@@ -1321,10 +1321,10 @@
     },
     {
         "subject": "Tile",
-        "componentName": "Count",
-        "object": "Self",
+        "componentName": "Amount",
+        "object": "Guard",
         "level": 7,
-        "functionName": "battle",
+        "functionName": "",
         "value": 2151.2612526163734
     },
     {
@@ -1345,10 +1345,10 @@
     },
     {
         "subject": "Tile",
-        "componentName": "Count",
-        "object": "Self",
+        "componentName": "Amount",
+        "object": "Guard",
         "level": 8,
-        "functionName": "battle",
+        "functionName": "",
         "value": 2645.1381009764436
     },
     {
@@ -1369,16 +1369,16 @@
     },
     {
         "subject": "Tile",
-        "componentName": "Count",
-        "object": "Self",
+        "componentName": "Amount",
+        "object": "Guard",
         "level": 9,
-        "functionName": "battle",
+        "functionName": "",
         "value": 3214.8571450337413
     },
     {
         "subject": "Army",
         "componentName": "Count",
-        "object": "Self",
+        "object": "Troop",
         "level": 1,
         "functionName": "upgrade",
         "value": 7213.067668948546
@@ -1386,7 +1386,7 @@
     {
         "subject": "Army",
         "componentName": "Count",
-        "object": "Self",
+        "object": "Troop",
         "level": 2,
         "functionName": "upgrade",
         "value": 16542.051144717658
@@ -1394,7 +1394,7 @@
     {
         "subject": "Army",
         "componentName": "Count",
-        "object": "Self",
+        "object": "Troop",
         "level": 3,
         "functionName": "upgrade",
         "value": 30862.628592323912

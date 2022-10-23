@@ -4,6 +4,7 @@ pragma solidity ^0.8.4;
 import {Position, WorldConstants} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/Strings.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
+import "forge-std/console.sol";
 
 library Templates {
     function addCityCenter(Position memory _startPosition, uint256 _cityID) public returns (uint256) {
@@ -87,7 +88,7 @@ library Templates {
         ECSLib.setPosition("StartPosition", tileID, _startPosition);
         ECSLib.setUint("City", tileID, 0);
         ECSLib.setUint("Owner", tileID, 0);
-        ECSLib.setUint("Level", tileID, 0); // 1 or above means a barbarian
+        ECSLib.setUint("Level", tileID, 1);
         ECSLib.setUint("Terrain", tileID, _terrain);
         ECSLib.setUint("LastTimestamp", tileID, block.timestamp);
 
@@ -230,8 +231,7 @@ library Templates {
         uint256 _attack,
         uint256 _defense,
         uint256 _duration,
-        uint256 _load,
-        uint256 _cost
+        uint256 _load
     ) public returns (uint256) {
         uint256 templateID = ECSLib.addEntity();
 
@@ -245,7 +245,6 @@ library Templates {
         ECSLib.setUint("Defense", templateID, _defense);
         ECSLib.setUint("Duration", templateID, _duration);
         ECSLib.setUint("Load", templateID, _load);
-        ECSLib.setUint("Cost", templateID, _cost);
 
         return templateID;
     }

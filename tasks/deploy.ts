@@ -6,10 +6,11 @@ import { publishDeployment, isConnectionLive, startGameSync } from './../api/dep
 import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment, HardhatArguments } from 'hardhat/types';
 import { confirm, deployProxy, printDivider } from './util/deployHelper';
-import { CONSTANT_SPECS, createTemplates, generateWorldConstants, SMALL_MAP_INPUT, TILE_WIDTH } from './util/constants';
+import { createTemplates, generateWorldConstants, SMALL_MAP_INPUT, TILE_WIDTH } from './util/constants';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
 import { chooseRandomEmptyLandPosition, encodeTileMap, generateBlankFixmap, generateMap, initializeFixmap } from './util/mapHelper';
 import { COMPONENT_SPECS, getRightPos, GameConfig, TILE_TYPE, getTopPos, scaleMap, chainInfo } from 'curio-vault';
+import gameConstants from '../game_parameters.json';
 
 /**
  * Deploy script for publishing games
@@ -70,7 +71,7 @@ task('deploy', 'deploy contracts')
       let startTime = performance.now();
       const componentUploadBatchSize = 40;
       for (let i = 0; i < COMPONENT_SPECS.length; i += componentUploadBatchSize) {
-        console.log(`Registering components ${i} to ${i + componentUploadBatchSize}`);
+        console.log(`✦ registering components ${i} to ${i + componentUploadBatchSize}`);
         await confirm(await diamond.registerComponents(diamond.address, COMPONENT_SPECS.slice(i, i + componentUploadBatchSize)), hre);
       }
 
@@ -78,10 +79,12 @@ task('deploy', 'deploy contracts')
 
       // Register constants
       startTime = performance.now();
-      const constantUploadBatchSize = 10;
-      for (let i = 0; i < CONSTANT_SPECS.length; i += constantUploadBatchSize) {
-        console.log(`✦ Registering constants ${i} to ${i + constantUploadBatchSize}`);
-        await confirm(await diamond.bulkAddConstants(CONSTANT_SPECS.slice(i, i + constantUploadBatchSize), { gasLimit: gasLimit }), hre);
+      const constantUploadBatchSize = 200;
+      for (let i = 0; i < gameConstants.length; i += constantUploadBatchSize) {
+        console.log(`✦ registering constants ${i} to ${i + constantUploadBatchSize}`);
+        const identifiers = gameConstants.map((c) => c.subject + '-' + c.object + '-' + c.componentName + '-' + c.functionName + '-' + Math.trunc(c.level).toString());
+        const values = gameConstants.map((c) => Math.trunc(c.value));
+        await confirm(await diamond.bulkAddConstants(identifiers, values, { gasLimit: gasLimit }), hre);
       }
       console.log(`✦ constant registration took ${Math.floor(performance.now() - startTime)} ms`);
 
@@ -114,7 +117,7 @@ task('deploy', 'deploy contracts')
       // initialize tiles that include barbarians, farms, gold mine
       const bulkTileUploadSize = 20;
       for (let i = 0; i < harvestableLocations.length; i += bulkTileUploadSize) {
-        console.log(`Initializing harvestable tiles ${i} to ${i + bulkTileUploadSize}`);
+        console.log(`✦ initializing harvestable tiles ${i} to ${i + bulkTileUploadSize}`);
         await confirm(await diamond.bulkInitializeTiles(harvestableLocations.slice(i, i + bulkTileUploadSize), { gasLimit: gasLimit }), hre);
       }
 
@@ -169,6 +172,7 @@ task('deploy', 'deploy contracts')
         network: hre.network.name,
         deploymentId: deploymentId,
         map: scaleMap(tileMap, Number(worldConstants.tileWidth)),
+        indexerUrl: 'FIXME',
         time: new Date(),
       };
 

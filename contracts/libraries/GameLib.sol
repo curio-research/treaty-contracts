@@ -83,12 +83,12 @@ library GameLib {
 
         // Initialize gold mine
         if (terrain == 1 && getResourceAtTile(_startPosition) == 0) {
-            Templates.addResource(gs().templates["Gold"], _startPosition, getConstant("initializeTile", "Load", "Gold", 0));
+            Templates.addResource(gs().templates["Gold"], _startPosition, 0);
         }
 
         // Initialize farm
         if (terrain == 2 && getResourceAtTile(_startPosition) == 0) {
-            Templates.addResource(gs().templates["Food"], _startPosition, getConstant("initializeTile", "Load", "Food", 0));
+            Templates.addResource(gs().templates["Food"], _startPosition, 0);
         }
 
         // Initialize tile
@@ -97,13 +97,13 @@ library GameLib {
 
         if (terrain < 3) {
             // Normal tile
-            uint256 tileGuardAmount = getConstant("initializeTile", "Amount", "Guard", 0);
+            uint256 tileGuardAmount = getConstant("Tile", "Guard", "Amount", "", ECSLib.getUint("Level", tileID));
             Templates.addConstituent(tileID, gs().templates["Guard"], tileGuardAmount);
         } else {
             // Barbarian tile
             uint256 barbarianLevel = terrain - 2;
             ECSLib.setUint("Level", tileID, barbarianLevel);
-            uint256 barbarianGuardAmount = getConstant("initializeTile", "Amount", "Guard", barbarianLevel);
+            uint256 barbarianGuardAmount = getConstant("Barbarian", "Guard", "Amount", "", barbarianLevel * 4); // FIXME
             Templates.addConstituent(tileID, gs().templates["Guard"], barbarianGuardAmount);
         }
 
@@ -137,10 +137,10 @@ library GameLib {
         }
 
         // Gather
-        // todo: add gathering speed constant
-        uint256 _gatherAmount = ((block.timestamp - ECSLib.getUint("InitTimestamp", gatherID)) / ECSLib.getUint("Duration", templateID)) * 100;
-        if (_gatherAmount > (ECSLib.getUint("Load", inventoryID) - armyInventoryAmount)) _gatherAmount = ECSLib.getUint("Load", _armyID) - armyInventoryAmount;
-        ECSLib.setUint("Amount", inventoryID, armyInventoryAmount + _gatherAmount);
+        uint256 armyTroopCount = getArmyTroopCount(_armyID);
+        uint256 gatherAmount = (block.timestamp - ECSLib.getUint("InitTimestamp", gatherID)) * getConstant("Army", ECSLib.getString("InventoryType", inventoryID), "Rate", "gather", 0);
+        if (gatherAmount > (ECSLib.getUint("Load", inventoryID) - armyInventoryAmount)) gatherAmount = (getConstant("Troop", "Resource", "Load", "", 0) * armyTroopCount) / 1000 - armyInventoryAmount;
+        ECSLib.setUint("Amount", inventoryID, armyInventoryAmount + gatherAmount);
 
         ECSLib.removeEntity(gatherID);
     }
@@ -242,7 +242,7 @@ library GameLib {
         uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
         for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
             uint256 cityInventoryID = getInventory(_cityID, resourceTemplateIDs[i]);
-            uint256 reward = getConstant(string(abi.encodePacked("distributeBarbarianReward", "Amount", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), barbarianLevel)));
+            uint256 reward = getConstant("Barbarian", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Reward", "", barbarianLevel);
             uint256 balance = ECSLib.getUint("Amount", cityInventoryID) + reward;
             balance = min(balance, ECSLib.getUint("Load", cityInventoryID));
             ECSLib.setUint("Amount", cityInventoryID, balance);
@@ -313,9 +313,25 @@ library GameLib {
         return ECSLib.query(query);
     }
 
-    function getConstant(string memory _identifier) internal view returns (uint256) {
-        uint256[] memory res = ECSLib.getStringComponent("Tag").getEntitiesWithValue(_identifier);
-        require(res.length == 1, string(abi.encodePacked("CURIO: Constant with Tag=", _identifier, " not found")));
+    function getArmyTroopCount(uint256 _armyID) internal returns (uint256) {
+        uint256 count = 0;
+        uint256[] memory constituentIDs = getConstituents(_armyID);
+        for (uint256 i = 0; i < constituentIDs.length; i++) {
+            count += ECSLib.getUint("Amount", constituentIDs[i]);
+        }
+        return count;
+    }
+
+    function getConstant(
+        string memory _subject,
+        string memory _object,
+        string memory _componentName,
+        string memory _functionName,
+        uint256 _level
+    ) internal view returns (uint256) {
+        string memory identifier = string(abi.encodePacked(_subject, "-", _object, "-", _componentName, "-", _functionName, "-", Strings.toString(_level)));
+        uint256[] memory res = ECSLib.getStringComponent("Tag").getEntitiesWithValue(identifier);
+        require(res.length == 1, string(abi.encodePacked("CURIO: Constant with Tag=", identifier, " not found")));
         return ECSLib.getUint("Amount", res[0]);
     }
 

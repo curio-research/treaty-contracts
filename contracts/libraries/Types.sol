@@ -54,19 +54,23 @@ struct Tile {
 }
 
 struct WorldConstants {
+    // Admin info
     address admin;
+    // Map info
+    uint256 tileWidth;
     uint256 worldWidth;
     uint256 worldHeight;
     uint256 numInitTerrainTypes; // default is 6
     uint256 initBatchSize; // default is 50 if numInitTerrainTypes = 6
+    // Manual configs
     uint256 maxCityCountPerPlayer;
     uint256 maxArmyCountPerPlayer;
     uint256 maxTroopCountPerArmy;
     uint256 maxPlayerCount;
-    uint256 tileWidth;
+    // Generated configs
     uint256 maxCityCenterLevel;
     uint256 cityCenterLevelToEntityLevelRatio; // 3 => lv1 city center unlocks lv3 resources
-    uint256 cityCenterLevelToTileCounts; // 5 => lv1 -> lv2 upgrade unlocks five more tiles
+    uint256 cityCenterLevelToTileCountRatio; // 5 => lv1 -> lv2 upgrade unlocks five more tiles
 }
 
 struct GameState {
