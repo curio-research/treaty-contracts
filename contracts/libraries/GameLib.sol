@@ -243,9 +243,7 @@ library GameLib {
         for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
             uint256 cityInventoryID = getInventory(_cityID, resourceTemplateIDs[i]);
             uint256 reward = getConstant("Barbarian", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Reward", "", barbarianLevel);
-            uint256 balance = ECSLib.getUint("Amount", cityInventoryID) + reward;
-            balance = min(balance, ECSLib.getUint("Load", cityInventoryID));
-            ECSLib.setUint("Amount", cityInventoryID, balance);
+            ECSLib.setUint("Amount", cityInventoryID, ECSLib.getUint("Amount", cityInventoryID) + reward);
         }
     }
 

@@ -393,8 +393,7 @@ contract GameFacet is UseStorage {
         // Update city inventory amount
         uint256 cityInventoryID = GameLib.getInventory(cityID, templateID);
         uint256 existingCityResource = ECSLib.getUint("Amount", cityInventoryID);
-        uint256 totalAmount = GameLib.min(ECSLib.getUint("Load", cityInventoryID), harvestAmount + existingCityResource);
-        ECSLib.setUint("Amount", cityInventoryID, totalAmount);
+        ECSLib.setUint("Amount", cityInventoryID, harvestAmount + existingCityResource);
     }
 
     // TODO: harvest gold & food on a city; consider merge this with the function above
@@ -416,7 +415,7 @@ contract GameFacet is UseStorage {
             uint256 harvestRate = GameLib.getConstant("City Center", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Yield", "", ECSLib.getUint("Level", cityCenterID));
             uint256 harvestAmount = (block.timestamp - ECSLib.getUint("LastTimestamp", _buildingID)) * harvestRate;
             harvestAmount = GameLib.min(GameLib.getConstant("City Center", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Load", "", ECSLib.getUint("Level", cityCenterID)), harvestAmount);
-            ECSLib.setUint("Amount", inventoryID, GameLib.min(ECSLib.getUint("Amount", inventoryID) + harvestAmount, ECSLib.getUint("Load", inventoryID)));
+            ECSLib.setUint("Amount", inventoryID, ECSLib.getUint("Amount", inventoryID) + harvestAmount);
         }
 
         // Reset harvest time
@@ -579,7 +578,7 @@ contract GameFacet is UseStorage {
             uint256 winnerCityID = GameLib.getPlayerCity(GameLib.getPlayer(msg.sender));
             if (cityID != NULL) {
                 // Victorious against city, add back some guards for the loser
-                Templates.addConstituent(_tileID, gs().templates["Guard"], GameLib.getConstant("City", "Amount", "Guard", "", ECSLib.getUint("Level", cityID)));
+                Templates.addConstituent(_tileID, gs().templates["Guard"], GameLib.getConstant("City", "Guard", "Amount", "", ECSLib.getUint("Level", cityID)));
                 // City loses half of gold and winner gets it
                 uint256 loserCityGoldInventoryID = GameLib.getInventory(cityID, gs().templates["Gold"]);
                 uint256 loserTotalAmount = ECSLib.getUint("Amount", loserCityGoldInventoryID);
@@ -620,7 +619,7 @@ contract GameFacet is UseStorage {
         // Check Tile Count has not exceeded limits
         uint256 playerID = GameLib.getPlayer(msg.sender);
         uint256 cityID = GameLib.getPlayerCity(playerID);
-        require(GameLib.getCityTiles(cityID).length < gs().worldConstants.cityCenterLevelToTileCountRatio, "CURIO: Reached territory limit");
+        require(GameLib.getCityTiles(cityID).length < gs().worldConstants.cityCenterLevelToTileCountRatio * ECSLib.getUint("Level", GameLib.getCityCenter(cityID)), "CURIO: Reached territory limit");
 
         // Verify target tile has no owner
         require(ECSLib.getUint("Owner", _tileID) == 0, "CURIO: Tile has owner");
