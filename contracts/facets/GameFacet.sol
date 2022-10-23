@@ -404,6 +404,7 @@ contract GameFacet is UseStorage {
         // Verify that the army's capacity isn't full
         // TODO
 
+        // string memory subject = ECSLib.getUint("Template", _resourceID) == gs().templates["Gold"] ? "Goldmine" : "Farm";
         Templates.addResourceGather(startPosition, playerID, _resourceID, _armyID);
     }
 
@@ -459,7 +460,7 @@ contract GameFacet is UseStorage {
 
         // Get harvest amount
         uint256 templateID = ECSLib.getUint("Template", _resourceID);
-        uint256 harvestRate = GameLib.getConstant(ECSLib.getString("Tag", _resourceID), ECSLib.getString("InventoryType", templateID), "Yield", "", resourceLevel);
+        uint256 harvestRate = GameLib.getConstant(templateID == gs().templates["Gold"] ? "Goldmine" : "Farm", ECSLib.getString("InventoryType", templateID), "Yield", "", resourceLevel);
         uint256 harvestAmount = (block.timestamp - ECSLib.getUint("LastTimestamp", _resourceID)) * harvestRate;
         harvestAmount = GameLib.min(ECSLib.getUint("Load", _resourceID), harvestAmount);
 
