@@ -744,14 +744,15 @@ contract GameFacet is UseStorage {
 
         // Deduct costs and set load
         uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
+        string memory subject = ECSLib.getUint("Template", _resourceID) == gs().templates["Gold"] ? "Goldmine" : "Farm";
         for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
             uint256 inventoryID = GameLib.getInventory(GameLib.getPlayerCity(playerID), resourceTemplateIDs[i]);
             uint256 balance = ECSLib.getUint("Amount", inventoryID);
-            uint256 cost = GameLib.getConstant(ECSLib.getString("Tag", _resourceID), ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Cost", "upgrade", resourceLevel);
+            uint256 cost = GameLib.getConstant(subject, ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Cost", "upgrade", resourceLevel);
             require(balance >= cost, "CURIO: Insufficient balance");
             ECSLib.setUint("Amount", inventoryID, balance - cost);
 
-            uint256 newLoad = GameLib.getConstant(ECSLib.getString("Tag", _resourceID), ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Load", "", resourceLevel + 1);
+            uint256 newLoad = GameLib.getConstant(subject, ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Load", "", resourceLevel + 1);
             ECSLib.setUint("Load", _resourceID, newLoad);
         }
 
