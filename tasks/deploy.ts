@@ -1,6 +1,6 @@
+import { GameLib } from './../typechain-types/contracts/libraries/GameLib';
+import { ECSLib } from './../typechain-types/contracts/libraries/ECSLib';
 import chalk from 'chalk';
-import { GameLib } from './../typechain-types/libraries/GameLib';
-import { ECSLib } from './../typechain-types/libraries/ECSLib';
 import { publishDeployment, isConnectionLive, startGameSync } from './../api/deployment';
 import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment, HardhatArguments } from 'hardhat/types';
@@ -23,6 +23,7 @@ task('deploy', 'deploy contracts')
   .addOptionalParam('port', 'Port contract abis and game info to Vault') // default is to call port
   .addFlag('release', 'Publish deployment to official release') // default is to call publish
   .addFlag('fixmap', 'Use deterministic map') // default is non-deterministic maps; deterministic maps are mainly used for client development
+  .addFlag('indexer', 'Use production indexer') //
   .setAction(async (args: DeployArgs, hre: HardhatRuntimeEnvironment) => {
     try {
       await hre.run('compile');
@@ -31,7 +32,7 @@ task('deploy', 'deploy contracts')
 
       const gasLimit = chainInfo[hre.network.name].gasLimit;
 
-      const { port, release, fixmap } = args;
+      const { port, release, fixmap, indexer } = args;
 
       // Read variables from run flags
       const isDev = hre.network.name === 'localhost' || hre.network.name === 'hardhat' || hre.network.name === 'constellation' || hre.network.name === 'altlayer' || hre.network.name === 'tailscale';
@@ -78,7 +79,7 @@ task('deploy', 'deploy contracts')
 
       // Register constants
       startTime = performance.now();
-      const constantUploadBatchSize = 10;
+      const constantUploadBatchSize = 40;
       for (let i = 0; i < CONSTANT_SPECS.length; i += constantUploadBatchSize) {
         console.log(chalk.dim(`✦ Registering constants ${i} to ${i + constantUploadBatchSize}`));
         await confirm(await diamond.bulkAddConstants(CONSTANT_SPECS.slice(i, i + constantUploadBatchSize), { gasLimit: gasLimit }), hre);
@@ -125,7 +126,8 @@ task('deploy', 'deploy contracts')
       // Each deployment has a unique deploymentId
       const deploymentId = `deployer=${process.env.DEPLOYER_ID}-${release && 'release-'}${hre.network.name}-${Date.now()}`;
 
-      const indexerUrl = indexerUrlSelector(hre);
+      let indexerUrl = indexerUrlSelector(hre);
+      if (indexer) indexerUrl = process.env.INDEXER_URL || '';
 
       // Generate config file
       const configFile: GameConfig = {
@@ -141,7 +143,7 @@ task('deploy', 'deploy contracts')
 
       // TODO: for now, only sync game state with middleware in dev mode
       if (isDev || hre.network.name === 'constellationNew') {
-        await startGameSync(deploymentId);
+        await startGameSync(configFile);
       }
 
       if (isDev || hre.network.name === 'tailscale') {
@@ -163,4 +165,5 @@ interface DeployArgs extends HardhatArguments {
   fixmap: boolean;
   release: boolean;
   port: string | undefined;
+  indexer: boolean;
 }
