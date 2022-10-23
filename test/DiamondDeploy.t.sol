@@ -111,7 +111,7 @@ contract DiamondDeployTest is Test {
 
         // Create templates & constants
         _createTemplates();
-        _registerConstants();
+        // _registerConstants();
 
         // Initialize players
         vm.prank(player1);
@@ -166,6 +166,7 @@ contract DiamondDeployTest is Test {
     function _createTemplates() private {
         vm.startPrank(deployer);
 
+        // todo: fix naming: horseman, warrior, slinger
         // Troop: Cavalry
         cavalryTemplateID = admin.addEntity();
         admin.setComponentValue("Tag", cavalryTemplateID, abi.encode("TroopTemplate"));
@@ -248,116 +249,151 @@ contract DiamondDeployTest is Test {
         vm.stopPrank();
     }
 
-    function _registerConstants() private {
-        vm.startPrank(deployer);
+    // function _registerConstants() private {
+    //     vm.startPrank(deployer);
 
-        // `initializePlayer`
-        admin.addConstant("initializePlayer", "Amount", "Gold", NULL, 0);
-        admin.addConstant("initializePlayer", "Amount", "Food", NULL, 0);
-        admin.addConstant("initializePlayer", "Load", "Gold", NULL, 10000000);
-        admin.addConstant("initializePlayer", "Load", "Food", NULL, 10000000);
+    //     // `initializePlayer`
+    //     admin.addConstant("initializePlayer", "Amount", "Gold", NULL, 0);
+    //     admin.addConstant("initializePlayer", "Amount", "Food", NULL, 0);
+    //     admin.addConstant("initializePlayer", "Load", "Gold", NULL, 10000000);
+    //     admin.addConstant("initializePlayer", "Load", "Food", NULL, 10000000);
 
-        // `initializeTile`
-        admin.addConstant("initializeTile", "Amount", "Guard", 0, 200);
-        admin.addConstant("initializeTile", "Amount", "Guard", 1, 1000); // level 1 barbarian
-        admin.addConstant("initializeTile", "Amount", "Guard", 2, 2000); // level 2 barbarian
-        admin.addConstant("initializeTile", "Load", "Gold", 0, 1000);
-        admin.addConstant("initializeTile", "Load", "Food", 0, 1000);
+    //     // `initializeTile`
+    //     admin.addConstant("initializeTile", "Amount", "Guard", 0, 200);
+    //     admin.addConstant("initializeTile", "Amount", "Guard", 1, 1000); // level 1 barbarian
+    //     admin.addConstant("initializeTile", "Amount", "Guard", 2, 2000); // level 2 barbarian
+    //     admin.addConstant("initializeTile", "Load", "Gold", 0, 1000);
+    //     admin.addConstant("initializeTile", "Load", "Food", 0, 1000);
 
-        // `foundCity`
-        admin.addConstant("foundCity", "Amount", "Guard", 0, 1500);
+    //     // `foundCity`
+    //     admin.addConstant("foundCity", "Amount", "Guard", 0, 1500);
 
-        // `packCity`
-        admin.addConstant("packCity", "Cost", "Gold", 0, 1000000000000000);
-        admin.addConstant("packCity", "Health", "Settler", 0, 1000000000000000);
+    //     // `packCity`
+    //     admin.addConstant("packCity", "Cost", "Gold", 0, 1000000000000000);
+    //     admin.addConstant("packCity", "Health", "Settler", 0, 1000000000000000);
 
-        // `upgradeTile`
-        admin.addConstant("upgradeTile", "Cost", "Gold", 0, 10 * 200);
-        admin.addConstant("upgradeTile", "Cost", "Food", 0, 50 * 200);
-        for (uint256 i = 1; i <= 9; i++) {
-            admin.addConstant("upgradeTile", "Amount", "Guard", i, (3**i) * 200);
-        }
+    //     // `upgradeTile`
+    //     admin.addConstant("upgradeTile", "Cost", "Gold", 0, 10 * 200);
+    //     admin.addConstant("upgradeTile", "Cost", "Food", 0, 50 * 200);
+    //     for (uint256 i = 1; i <= 9; i++) {
+    //         admin.addConstant("upgradeTile", "Amount", "Guard", i, (3**i) * 200);
+    //     }
 
-        // `upgradeCityInventory`
-        admin.addConstant("upgradeCityInventory", "Cost", "Gold", 0, 3000);
-        for (uint256 i = 1; i <= 9; i++) {
-            admin.addConstant("upgradeCityInventory", "Load", "Gold", i, 10000000 * i);
-            admin.addConstant("upgradeCityInventory", "Load", "Food", i, 10000000 * i);
-            admin.addConstant("upgradeCityInventory", "Load", "Horseman", i, 2000 * i);
-            admin.addConstant("upgradeCityInventory", "Load", "Warrior", i, 2000 * i);
-            admin.addConstant("upgradeCityInventory", "Load", "Slinger", i, 2000 * i);
-        }
+    //     // `upgradeCityInventory`
+    //     admin.addConstant("upgradeCityInventory", "Cost", "Gold", 0, 3000);
+    //     for (uint256 i = 1; i <= 9; i++) {
+    //         // todo: fix the naming here
+    //         admin.addConstant("upgradeCityInventory", "Load", "Gold", i, 1000000 * i);
+    //         admin.addConstant("upgradeCityInventory", "Load", "Food", i, 1000000 * i);
+    //         admin.addConstant("upgradeCityInventory", "Load", "Horseman", i, 20000 * i);
+    //         admin.addConstant("upgradeCityInventory", "Load", "Warrior", i, 20000 * i);
+    //         admin.addConstant("upgradeCityInventory", "Load", "Slinger", i, 20000 * i);
+    //         admin.addConstant("upgradeCityInventory", "Load", "Cavalry", i, 20000 * i);
+    //         admin.addConstant("upgradeCityInventory", "Load", "Archer", i, 20000 * i);
+    //         admin.addConstant("upgradeCityInventory", "Load", "Infantry", i, 20000 * i);
+    //     }
 
-        // `upgradeResource`
-        for (uint256 i = 1; i <= 9; i++) {
-            admin.addConstant("upgradeResource", "Cost", "Gold", i, 50000);
-            admin.addConstant("upgradeResource", "Cost", "Food", i, 16000);
-        }
-        admin.addConstant("upgradeResource", "Load", "Gold", 1, 5500);
-        admin.addConstant("upgradeResource", "Load", "Gold", 2, 6000);
-        admin.addConstant("upgradeResource", "Load", "Gold", 3, 6500);
-        admin.addConstant("upgradeResource", "Load", "Gold", 4, 7000);
-        admin.addConstant("upgradeResource", "Load", "Gold", 5, 7500);
-        admin.addConstant("upgradeResource", "Load", "Gold", 6, 8000);
-        admin.addConstant("upgradeResource", "Load", "Gold", 7, 8500);
-        admin.addConstant("upgradeResource", "Load", "Gold", 8, 9000);
-        admin.addConstant("upgradeResource", "Load", "Gold", 9, 9500);
-        admin.addConstant("upgradeResource", "Load", "Food", 1, 100000);
-        admin.addConstant("upgradeResource", "Load", "Food", 2, 110000);
-        admin.addConstant("upgradeResource", "Load", "Food", 3, 120000);
-        admin.addConstant("upgradeResource", "Load", "Food", 4, 130000);
-        admin.addConstant("upgradeResource", "Load", "Food", 5, 140000);
-        admin.addConstant("upgradeResource", "Load", "Food", 6, 150000);
-        admin.addConstant("upgradeResource", "Load", "Food", 7, 160000);
-        admin.addConstant("upgradeResource", "Load", "Food", 8, 170000);
-        admin.addConstant("upgradeResource", "Load", "Food", 9, 180000);
+    //     // `upgradeResource`
+    //     for (uint256 i = 0; i <= 9; i++) {
+    //         admin.addConstant("upgradeGoldmine", "Cost", "Gold", i, 50000);
+    //         admin.addConstant("upgradeGoldmine", "Cost", "Food", i, 16000);
+    //         admin.addConstant("upgradeFarm", "Cost", "Gold", i, 50000);
+    //         admin.addConstant("upgradeFarm", "Cost", "Food", i, 16000);
+    //     }
+    //     admin.addConstant("upgradeGoldmine", "Load", "Gold", 1, 5500);
+    //     admin.addConstant("upgradeGoldmine", "Load", "Gold", 2, 6000);
+    //     admin.addConstant("upgradeGoldmine", "Load", "Gold", 3, 6500);
+    //     admin.addConstant("upgradeGoldmine", "Load", "Gold", 4, 7000);
+    //     admin.addConstant("upgradeGoldmine", "Load", "Gold", 5, 7500);
+    //     admin.addConstant("upgradeGoldmine", "Load", "Gold", 6, 8000);
+    //     admin.addConstant("upgradeGoldmine", "Load", "Gold", 7, 8500);
+    //     admin.addConstant("upgradeGoldmine", "Load", "Gold", 8, 9000);
+    //     admin.addConstant("upgradeGoldmine", "Load", "Gold", 9, 9500);
+    //     admin.addConstant("upgradeGoldmine", "Load", "Food", 1, 100000);
+    //     admin.addConstant("upgradeGoldmine", "Load", "Food", 2, 110000);
+    //     admin.addConstant("upgradeGoldmine", "Load", "Food", 3, 120000);
+    //     admin.addConstant("upgradeGoldmine", "Load", "Food", 4, 130000);
+    //     admin.addConstant("upgradeGoldmine", "Load", "Food", 5, 140000);
+    //     admin.addConstant("upgradeGoldmine", "Load", "Food", 6, 150000);
+    //     admin.addConstant("upgradeGoldmine", "Load", "Food", 7, 160000);
+    //     admin.addConstant("upgradeGoldmine", "Load", "Food", 8, 170000);
+    //     admin.addConstant("upgradeGoldmine", "Load", "Food", 9, 180000);
+    //     admin.addConstant("upgradeFarm", "Load", "Gold", 1, 5500);
+    //     admin.addConstant("upgradeFarm", "Load", "Gold", 2, 6000);
+    //     admin.addConstant("upgradeFarm", "Load", "Gold", 3, 6500);
+    //     admin.addConstant("upgradeFarm", "Load", "Gold", 4, 7000);
+    //     admin.addConstant("upgradeFarm", "Load", "Gold", 5, 7500);
+    //     admin.addConstant("upgradeFarm", "Load", "Gold", 6, 8000);
+    //     admin.addConstant("upgradeFarm", "Load", "Gold", 7, 8500);
+    //     admin.addConstant("upgradeFarm", "Load", "Gold", 8, 9000);
+    //     admin.addConstant("upgradeFarm", "Load", "Gold", 9, 9500);
+    //     admin.addConstant("upgradeFarm", "Load", "Food", 1, 100000);
+    //     admin.addConstant("upgradeFarm", "Load", "Food", 2, 110000);
+    //     admin.addConstant("upgradeFarm", "Load", "Food", 3, 120000);
+    //     admin.addConstant("upgradeFarm", "Load", "Food", 4, 130000);
+    //     admin.addConstant("upgradeFarm", "Load", "Food", 5, 140000);
+    //     admin.addConstant("upgradeFarm", "Load", "Food", 6, 150000);
+    //     admin.addConstant("upgradeFarm", "Load", "Food", 7, 160000);
+    //     admin.addConstant("upgradeFarm", "Load", "Food", 8, 170000);
+    //     admin.addConstant("upgradeFarm", "Load", "Food", 9, 180000);
 
-        // `upgradeCity`
-        admin.addConstant("upgradeCity", "Cost", "Gold", 0, 100000);
-        for (uint256 i = 1; i <= 3; i++) {
-            admin.addConstant("upgradeCity", "Amount", "Guard", i, 1500 * i);
-        }
+    //     // `upgradeCity`
+    //     admin.addConstant("upgradeCity", "Cost", "Gold", 0, 100000);
+    //     for (uint256 i = 1; i <= 3; i++) {
+    //         admin.addConstant("upgradeCity", "Amount", "Guard", i, 1500 * i);
+    //     }
 
-        // `startTroopProduction`
-        admin.addConstant("startTroopProduction", "Cost", "Gold", 0, 10);
-        admin.addConstant("startTroopProduction", "Cost", "Food", 0, 50);
+    //     // `startTroopProduction`
+    //     admin.addConstant("startTroopProduction", "Cost", "Gold", 0, 10);
+    //     admin.addConstant("startTroopProduction", "Cost", "Food", 0, 50);
 
-        // `harvestResource`
-        admin.addConstant("harvestResource", "Amount", "Gold", 1, 160);
-        admin.addConstant("harvestResource", "Amount", "Gold", 2, 200);
-        admin.addConstant("harvestResource", "Amount", "Gold", 3, 240);
-        admin.addConstant("harvestResource", "Amount", "Gold", 4, 260);
-        admin.addConstant("harvestResource", "Amount", "Gold", 5, 280);
-        admin.addConstant("harvestResource", "Amount", "Gold", 6, 300);
-        admin.addConstant("harvestResource", "Amount", "Gold", 7, 320);
-        admin.addConstant("harvestResource", "Amount", "Gold", 8, 340);
-        admin.addConstant("harvestResource", "Amount", "Gold", 9, 360);
-        admin.addConstant("harvestResource", "Amount", "Food", 1, 200);
-        admin.addConstant("harvestResource", "Amount", "Food", 2, 220);
-        admin.addConstant("harvestResource", "Amount", "Food", 3, 240);
-        admin.addConstant("harvestResource", "Amount", "Food", 4, 250);
-        admin.addConstant("harvestResource", "Amount", "Food", 5, 260);
-        admin.addConstant("harvestResource", "Amount", "Food", 6, 270);
-        admin.addConstant("harvestResource", "Amount", "Food", 7, 280);
-        admin.addConstant("harvestResource", "Amount", "Food", 8, 290);
-        admin.addConstant("harvestResource", "Amount", "Food", 9, 300);
+    //     // `harvestResource`
+    //     admin.addConstant("harvestResource", "Amount", "Gold", 1, 160);
+    //     admin.addConstant("harvestResource", "Amount", "Gold", 2, 200);
+    //     admin.addConstant("harvestResource", "Amount", "Gold", 3, 240);
+    //     admin.addConstant("harvestResource", "Amount", "Gold", 4, 260);
+    //     admin.addConstant("harvestResource", "Amount", "Gold", 5, 280);
+    //     admin.addConstant("harvestResource", "Amount", "Gold", 6, 300);
+    //     admin.addConstant("harvestResource", "Amount", "Gold", 7, 320);
+    //     admin.addConstant("harvestResource", "Amount", "Gold", 8, 340);
+    //     admin.addConstant("harvestResource", "Amount", "Gold", 9, 360);
+    //     admin.addConstant("harvestResource", "Amount", "Food", 1, 200);
+    //     admin.addConstant("harvestResource", "Amount", "Food", 2, 220);
+    //     admin.addConstant("harvestResource", "Amount", "Food", 3, 240);
+    //     admin.addConstant("harvestResource", "Amount", "Food", 4, 250);
+    //     admin.addConstant("harvestResource", "Amount", "Food", 5, 260);
+    //     admin.addConstant("harvestResource", "Amount", "Food", 6, 270);
+    //     admin.addConstant("harvestResource", "Amount", "Food", 7, 280);
+    //     admin.addConstant("harvestResource", "Amount", "Food", 8, 290);
+    //     admin.addConstant("harvestResource", "Amount", "Food", 9, 300);
 
-        // `harvestResourceFromCity`
-        admin.addConstant("harvestResourcesFromCity", "Amount", "Gold", 0, 180);
-        admin.addConstant("harvestResourcesFromCity", "Amount", "Food", 0, 180);
-        for (uint256 i = 1; i <= 5; i++) {
-            admin.addConstant("harvestResourcesFromCity", "Load", "Gold", i, 100000000);
-            admin.addConstant("harvestResourcesFromCity", "Load", "Food", i, 100000000);
-        }
+    //     admin.addConstant("harvestResource", "Rate", "Food", 0, 300);
+    //     admin.addConstant("harvestResource", "Rate", "Food", 1, 300);
+    //     admin.addConstant("harvestResource", "Rate", "Gold", 0, 300);
+    //     admin.addConstant("harvestResource", "Rate", "Gold", 1, 300);
 
-        // `distributeBarbarianReward`
-        admin.addConstant("distributeBarbarianReward", "Amount", "Gold", 1, 180000);
-        admin.addConstant("distributeBarbarianReward", "Amount", "Gold", 2, 480000);
-        admin.addConstant("distributeBarbarianReward", "Amount", "Food", 1, 60000);
-        admin.addConstant("distributeBarbarianReward", "Amount", "Food", 2, 150000);
+    //     // `harvestResourceFromCity`
+    //     admin.addConstant("harvestResourcesFromCity", "Amount", "Gold", 0, 180);
+    //     admin.addConstant("harvestResourcesFromCity", "Amount", "Food", 0, 180);
+    //     for (uint256 i = 1; i <= 5; i++) {
+    //         admin.addConstant("harvestResourcesFromCity", "Load", "Gold", i, 100000000);
+    //         admin.addConstant("harvestResourcesFromCity", "Load", "Food", i, 100000000);
+    //         admin.addConstant("harvestResourcesFromCity", "Load", "Horseman", i, 200000 * i);
+    //         admin.addConstant("harvestResourcesFromCity", "Load", "Warrior", i, 200000 * i);
+    //         admin.addConstant("harvestResourcesFromCity", "Load", "Slinger", i, 200000 * i);
+    //         admin.addConstant("harvestResourcesFromCity", "Load", "Cavalry", i, 200000 * i);
+    //         admin.addConstant("harvestResourcesFromCity", "Load", "Archer", i, 200000 * i);
+    //         admin.addConstant("harvestResourcesFromCity", "Load", "Infantry", i, 200000 * i);
+    //     }
 
-        vm.stopPrank();
-    }
+    //     // `distributeBarbarianReward`
+    //     admin.addConstant("distributeBarbarianReward", "Amount", "Gold", 1, 180000);
+    //     admin.addConstant("distributeBarbarianReward", "Amount", "Gold", 2, 480000);
+    //     admin.addConstant("distributeBarbarianReward", "Amount", "Food", 1, 60000);
+    //     admin.addConstant("distributeBarbarianReward", "Amount", "Food", 2, 150000);
+
+    //     vm.stopPrank();
+    // }
 
     // Note: hardcoded
     function _generateWorldConstants() internal view returns (WorldConstants memory) {
@@ -370,9 +406,12 @@ contract DiamondDeployTest is Test {
                 initBatchSize: 100,
                 maxCityCountPerPlayer: 3,
                 maxArmyCountPerPlayer: 3,
-                maxTroopCountPerArmy: 1000,
+                maxTroopCountPerArmy: 10000,
                 maxPlayerCount: 20,
-                tileWidth: 10 // DO NOT REMOVE THIS COMMENT
+                tileWidth: 10, // DO NOT REMOVE THIS COMMENT
+                maxCityCenterLevel: 3,
+                cityCenterLevelToEntityLevelRatio: 3,
+                cityCenterLevelToTileCountRatio: 20
             });
     }
 
