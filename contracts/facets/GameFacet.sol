@@ -738,7 +738,7 @@ contract GameFacet is UseStorage {
 
             // Check if player has reached max tile level
             uint256 cityID = ECSLib.getUint("City", tileID);
-            require(ECSLib.getUint("Level", _resourceID) < ECSLib.getUint("Level", cityID) * gs().worldConstants.cityCenterLevelToEntityLevelRatio, "CURIO: Max Resource Level Reached");
+            require(ECSLib.getUint("Level", _resourceID) < ECSLib.getUint("Level", cityID) * gs().worldConstants.cityCenterLevelToEntityLevelRatio, "CURIO: Need to upgrade resource");
         }
         uint256 playerID = GameLib.getPlayer(msg.sender);
         uint256 resourceLevel = ECSLib.getUint("Level", _resourceID);
