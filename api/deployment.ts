@@ -27,9 +27,11 @@ export const isConnectionLive = async (): Promise<boolean> => {
   }
 };
 
-export const startGameSync = async (deploymentId: string): Promise<void> => {
+export const startGameSync = async (deployment: GameConfig): Promise<void> => {
   try {
-    const { data } = await api.post(`/startGameSync`, { deploymentId: deploymentId });
+    const indexerApi = axios.create({ baseURL: deployment.indexerUrl });
+
+    const { data } = await indexerApi.post(`/startGameSync`, { deploymentId: deployment.deploymentId });
   } catch (err: any) {
     throw new Error(err.message);
   }
