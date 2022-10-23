@@ -154,7 +154,7 @@ contract GameFacet is UseStorage {
 
         // Remove city tiles
         uint256[] memory tileIDs = GameLib.getCityTiles(_cityID);
-        assert(tileIDs.length == GameLib.getCityTileCountByLevel(ECSLib.getUint("Level", _cityID)));
+        assert(tileIDs.length == GameLib.getCityTileCountByLevel(ECSLib.getUint("Level", GameLib.getCityCenter(_cityID))));
         for (uint256 i = 0; i < tileIDs.length; i++) {
             ECSLib.setUint("Owner", tileIDs[i], NULL);
         }
