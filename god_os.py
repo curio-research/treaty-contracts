@@ -4,16 +4,18 @@ from types import LambdaType
 import numpy as np
 import json
 
-import sys 
+import sys
+
+from pyparsing import Word 
 
 stdout_origin=sys.stdout 
 sys.stdout = open("earth_log.txt", "w")
 
-class Resource(Enum):
-    GOLD = 0
-    FOOD = 1
+class Resource(str, Enum):
+    GOLD = "Gold"
+    FOOD = "Food"
 
-class Building(Enum):
+class Building(str, Enum):
     GOLDMINE = "Goldmine"
     FARM = "Farm"
     CITY_CENTER = "City Center"
@@ -427,11 +429,22 @@ class Game:
     "value": 1920
     """
     def export_json_parameters(self) -> None:
-        # Deal iwth json here
-        constants = []
 
+        # Deal with json here
+        game_parameters = []
+        world_parameters = []
+        # save wolrd parameters here
+        world_parameters.append({"cityCenterLevelToTileCounts": int(get_city_center_tiles_interval())})
+        world_parameters.append({"cityCenterLevelToEntityLevelRatio": int(self.city_center_level_to_building_level)})
+        world_parameters.append({"ArmyGoldHourlyGatheringRate": int(get_hourly_gather_rate_per_army(Resource.GOLD))})
+        world_parameters.append({"ArmyFoodHourlyGatheringRate": int(get_hourly_gather_rate_per_army(Resource.FOOD))})
+        world_parameters.append({"TroopResourceLoad": resource_cap_per_troop()})
+        world_parameters.append({"TroopGoldCost": self.resource_weight_low })
+        world_parameters.append({"TroopFoodCost": self.resource_weight_heavy })
+        world_parameters.append({"maxCityCenterLevel": self.max_city_center_level})
+
+        # Building Stats
         for i in [Building.GOLDMINE, Building.FARM, Building.CITY_CENTER]:
-        # Print Building Stats
             max_building_level = 1
             building_type = i
             if i == Building.GOLDMINE:
@@ -447,74 +460,48 @@ class Game:
                 (gold_upgrade_cost, food_upgrade_cost) = get_building_upgrade_cost(curr_level, building_type)
                 (gold_hourly_yield, food_hourly_yield) = get_building_hourly_yield_by_level(curr_level, building_type)
                 (gold_cap, food_cap) = get_building_resource_cap(curr_level, building_type)
-                # print(f"Building Level: {curr_level}")
-                # print("-----------------")
-                constants.append({ "subject": building_type, "componentName": "Yield", "object": "Gold", "level": curr_level, "functionName": "", "value": gold_hourly_yield  })
-                constants.append({ "subject": building_type, "componentName": "Yield", "object": "Food", "level": curr_level, "functionName": "", "value": food_hourly_yield  })
-                constants.append({ "subject": building_type, "componentName": "Load", "object": "Gold", "level": curr_level, "functionName": "", "value": gold_cap })
-                constants.append({ "subject": building_type, "componentName": "Load", "object": "Food", "level": curr_level, "functionName": "", "value": food_cap })
+
+                game_parameters.append({ "subject": building_type, "componentName": "Yield", "object": "Gold", "level": curr_level, "functionName": "", "value": int(gold_hourly_yield)  })
+                game_parameters.append({ "subject": building_type, "componentName": "Yield", "object": "Food", "level": curr_level, "functionName": "", "value": int(food_hourly_yield)  })
+                game_parameters.append({ "subject": building_type, "componentName": "Load", "object": "Gold", "level": curr_level, "functionName": "", "value": int(gold_cap) })
+                game_parameters.append({ "subject": building_type, "componentName": "Load", "object": "Food", "level": curr_level, "functionName": "", "value": int(food_cap) })
                 if curr_level < max_building_level:
-                    constants.append({ "subject": building_type, "componentName": "Cost", "object": "Gold", "level": curr_level, "functionName": "upgrade", "value": gold_upgrade_cost  })
-                    constants.append({ "subject": building_type, "componentName": "Cost", "object": "Food", "level": curr_level, "functionName": "upgrade", "value": food_upgrade_cost  })
-                if curr_level == max_building_level:
-                    print("Cannot Upgrade")
-                if building_type == Building.CITY_CENTER:
-                    print(f"Tile Count Limit: {self.init_player_tile_count + get_city_center_tiles_interval()*(curr_level-1)}")
-                print("-----------------")
+                    game_parameters.append({ "subject": building_type, "componentName": "Cost", "object": "Gold", "level": curr_level, "functionName": "upgrade", "value": int(gold_upgrade_cost)  })
+                    game_parameters.append({ "subject": building_type, "componentName": "Cost", "object": "Food", "level": curr_level, "functionName": "upgrade", "value": int(food_upgrade_cost)  })
 
                 curr_level += 1
 
-        print("-----------------")
-        print(f"** Barbarian Stats **")
-        print("-----------------")
+        # Barbarian Stats
         curr_level = 1
         while curr_level <= self.max_city_center_level * self.city_center_level_to_building_level:
             (reward_gold, reward_food) = get_barbarian_reward(curr_level)
             barbarian_count = get_barbarian_count_by_level(curr_level)
-            print("-----------------")
-            print(f"Barbarian Level: {curr_level}")
-            print("-----------------")
-            print(f"Barbarian Counts: {barbarian_count}")
-            print(f"Gold Reward: {reward_gold}")
-            print(f"Food Reward: {reward_food}")
+            game_parameters.append({ "subject": "Barbarian", "componentName": "Reward", "object": "Gold", "level": curr_level, "functionName": "upgrade", "value": int(reward_gold)  })
+            game_parameters.append({ "subject": "Barbarian", "componentName": "Reward", "object": "Self", "level": curr_level, "functionName": "upgrade", "value": int(reward_food)  })
+            game_parameters.append({ "subject": "Barbarian", "componentName": "Count", "object": "Self", "level": curr_level, "functionName": "battle", "value": barbarian_count  })
             curr_level += 1
 
-        print("-----------------")
-        print(f"** Tile Upgrade Stats **")
-        print("-----------------")
+        # Tile Stats
         curr_level = 1
         max_tile_level = self.max_city_center_level * self.city_center_level_to_building_level
         while curr_level <= max_tile_level:
             (cost_gold, cost_food) = get_tile_upgrade_cost(curr_level)
             tile_guard_count = get_tile_troop_count(curr_level)
-            print("-----------------")
-            print(f"Tile Level: {curr_level}")
-            print("-----------------")
-            print(f"Tile Guard Counts: {tile_guard_count}")
+            game_parameters.append({ "subject": "Tile", "componentName": "Count", "object": "Self", "level": curr_level, "functionName": "battle", "value": tile_guard_count  })
             if curr_level < max_tile_level:
-                print(f"Gold Cost to Upgrade: {cost_gold}")
-                print(f"Food Cost to Upgrade: {cost_food}")
-            if curr_level == max_tile_level:
-                print("Cannot Upgrade")
+                game_parameters.append({ "subject": "Tile", "componentName": "Cost", "object": "Gold", "level": curr_level, "functionName": "upgrade", "value": int(cost_gold)  })
+                game_parameters.append({ "subject": "Tile", "componentName": "Cost", "object": "Food", "level": curr_level, "functionName": "upgrade", "value": int(cost_food)  })
             curr_level += 1
         
-        print("-----------------")
-        print(f"Gather Stats")
-        print("-----------------")
-        for i in [Resource.GOLD, Resource.FOOD]:
-            print(f"{i} Hourly Gather Rate Per Army: {get_hourly_gather_rate_per_army(i)}")
-        print(f"Resource Load per Troop: {resource_cap_per_troop()}")
-        
-        print("-----------------")
-        print(f"TroopSize Stats")
-        print("-----------------")
+        # Army Size Stats
         max_building_level = self.max_city_center_level
         curr_level = 1
         while curr_level <= max_building_level:
-            print(f"City Center Level ({curr_level}) TroopSize: {get_troop_size_by_center_level(curr_level)}")
+            game_parameters.append({ "subject": "Army", "componentName": "Count", "object": "Self", "level": curr_level, "functionName": "upgrade", "value": get_troop_size_by_center_level(curr_level)  })
             curr_level += 1
-        print(f"Troop Gold Cost: {self.resource_weight_low}")
-        print(f"Troop Food Cost: {self.resource_weight_heavy}")
-
-        sys.stdout.close()
-        sys.stdout=stdout_origin
+        json_object = json.dumps(game_parameters, indent=4)
+        with open("game_parameters.json", "w") as outfile:
+                outfile.write(json_object)
+        json_object = json.dumps(world_parameters, indent=4)
+        with open("world_parameters.json", "w") as outfile:
+                outfile.write(json_object)

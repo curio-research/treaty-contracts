@@ -1,0 +1,26 @@
+[
+    {
+        "cityCenterLevelToTileCounts": 31
+    },
+    {
+        "cityCenterLevelToEntityLevelRatio": 3
+    },
+    {
+        "ArmyGoldHourlyGatheringRate": 23063
+    },
+    {
+        "ArmyFoodHourlyGatheringRate": 184522
+    },
+    {
+        "TroopResourceLoad": 0.09557964242168467
+    },
+    {
+        "TroopGoldCost": 2
+    },
+    {
+        "TroopFoodCost": 8
+    },
+    {
+        "maxCityCenterLevel": 3
+    }
+]

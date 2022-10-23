@@ -137,6 +137,7 @@ library GameLib {
         }
 
         // Gather
+        // todo: add gathering speed constant
         uint256 _gatherAmount = ((block.timestamp - ECSLib.getUint("InitTimestamp", gatherID)) / ECSLib.getUint("Duration", templateID)) * 100;
         if (_gatherAmount > (ECSLib.getUint("Load", inventoryID) - armyInventoryAmount)) _gatherAmount = ECSLib.getUint("Load", _armyID) - armyInventoryAmount;
         ECSLib.setUint("Amount", inventoryID, armyInventoryAmount + _gatherAmount);
