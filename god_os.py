@@ -198,7 +198,8 @@ def get_building_upgrade_cost(level: int, building_type: Building) -> np.array:
         return np.array([goldmine_goldcost + farm_goldcost + tax_gold, goldmine_foodcost + farm_foodcost + tax_food])
 
 class Game:
-    total_tile_count = 400
+    # TODO: use a JSON to initialize these variable
+    total_tile_count = 169
     expected_player_count = 3
     init_player_tile_count = 9
 
