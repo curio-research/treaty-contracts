@@ -1,7 +1,9 @@
+import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { Cost, Duration, encodeString, encodeUint256, Health, InventoryType, InventoryTypeOptions, Load, Tag, Tags, BattleCooldown, TILE_TYPE, Amount } from 'curio-vault';
 import { Curio, ConstantSpecStruct } from './../../typechain-types/hardhat-diamond-abi/Curio';
 import { addGetEntity } from './mapHelper';
 import { MapInput } from './types';
+import { confirm } from './deployHelper';
 
 export const LOCALHOST_RPC_URL = 'http://127.0.0.1:8545/';
 export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
@@ -45,7 +47,7 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): a
  * @dev Initialize 5 battle templates and 1 resource template
  * @param diamond diamond address
  */
-export const createTemplates = async (diamond: Curio) => {
+export const createTemplates = async (diamond: Curio, hre: HardhatRuntimeEnvironment) => {
   const templateNames: string[] = [];
   const templateIDs: number[] = [];
 
@@ -54,45 +56,45 @@ export const createTemplates = async (diamond: Curio) => {
   let entity = Number(await diamond.getEntity());
 
   // Horseman
-  await (await diamond.addTroopTemplate(InventoryTypeOptions.Horseman, 120, 2, 1, 2, 60, 120, 1, 500, 1)).wait();
+  await confirm(await diamond.addTroopTemplate(InventoryTypeOptions.Horseman, 120, 2, 1, 2, 60, 120, 1, 500, 1), hre);
   templateNames.push(InventoryTypeOptions.Horseman);
   templateIDs.push(entity++);
 
   // Warrior
-  await (await diamond.addTroopTemplate(InventoryTypeOptions.Warrior, 120, 1, 1, 2, 60, 120, 1, 600, 1)).wait();
+  await confirm(await diamond.addTroopTemplate(InventoryTypeOptions.Warrior, 120, 1, 1, 2, 60, 120, 1, 600, 1), hre);
   templateNames.push(InventoryTypeOptions.Warrior);
   templateIDs.push(entity++);
 
   // Slinger
-  await (await diamond.addTroopTemplate(InventoryTypeOptions.Slinger, 125, 1, 1, 2, 60, 125, 1, 600, 1)).wait();
+  await confirm(await diamond.addTroopTemplate(InventoryTypeOptions.Slinger, 125, 1, 1, 2, 60, 125, 1, 600, 1), hre);
   templateNames.push(InventoryTypeOptions.Slinger);
   templateIDs.push(entity++);
 
   // Guard
-  await (await diamond.addTroopTemplate(InventoryTypeOptions.Guard, 120, 0, 0, 0, 60, 120, 0, 0, 0)).wait();
+  await confirm(await diamond.addTroopTemplate(InventoryTypeOptions.Guard, 120, 0, 0, 0, 60, 120, 0, 0, 0), hre);
   templateNames.push(InventoryTypeOptions.Guard);
   templateIDs.push(entity++);
 
   // Gold
   inventoryType = InventoryTypeOptions.Gold;
   entity = await addGetEntity(diamond);
-  await (await diamond.setComponentValue(Tag, entity, encodeString(Tags.ResourceTemplate))).wait();
-  await (await diamond.setComponentValue(InventoryType, entity, encodeString(inventoryType))).wait();
-  await (await diamond.setComponentValue(Duration, entity, encodeUint256(1))).wait();
+  await confirm(await diamond.setComponentValue(Tag, entity, encodeString(Tags.ResourceTemplate)), hre);
+  await confirm(await diamond.setComponentValue(InventoryType, entity, encodeString(inventoryType)), hre);
+  await confirm(await diamond.setComponentValue(Duration, entity, encodeUint256(1)), hre);
   templateNames.push(inventoryType);
   templateIDs.push(entity);
 
   // Food
   inventoryType = InventoryTypeOptions.Food;
   entity = await addGetEntity(diamond);
-  await (await diamond.setComponentValue(Tag, entity, encodeString(Tags.ResourceTemplate))).wait();
-  await (await diamond.setComponentValue(InventoryType, entity, encodeString(inventoryType))).wait();
-  await (await diamond.setComponentValue(Duration, entity, encodeUint256(1))).wait();
+  await confirm(await diamond.setComponentValue(Tag, entity, encodeString(Tags.ResourceTemplate)), hre);
+  await confirm(await diamond.setComponentValue(InventoryType, entity, encodeString(inventoryType)), hre);
+  await confirm(await diamond.setComponentValue(Duration, entity, encodeUint256(1)), hre);
   templateNames.push(inventoryType);
   templateIDs.push(entity);
 
   // Register template names used for shortcuts
-  await (await diamond.registerTemplateShortcuts(templateNames, templateIDs)).wait();
+  await confirm(await diamond.registerTemplateShortcuts(templateNames, templateIDs), hre);
 };
 
 // ----------------------------------------------------------

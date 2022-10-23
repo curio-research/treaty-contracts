@@ -242,7 +242,7 @@ library GameLib {
         uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
         for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
             uint256 cityInventoryID = getInventory(_cityID, resourceTemplateIDs[i]);
-            uint256 reward = getConstant("distributeBarbarianReward", "Amount", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), barbarianLevel);
+            uint256 reward = getConstant(string(abi.encodePacked("distributeBarbarianReward", "Amount", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), barbarianLevel)));
             uint256 balance = ECSLib.getUint("Amount", cityInventoryID) + reward;
             balance = min(balance, ECSLib.getUint("Load", cityInventoryID));
             ECSLib.setUint("Amount", cityInventoryID, balance);
@@ -313,15 +313,9 @@ library GameLib {
         return ECSLib.query(query);
     }
 
-    function getConstant(
-        string memory _functionName,
-        string memory _componentName,
-        string memory _entityName,
-        uint256 _level
-    ) internal view returns (uint256) {
-        string memory identifier = string(abi.encodePacked("Constant-", _functionName, "-", _componentName, "-", _entityName, "-", Strings.toString(_level)));
-        uint256[] memory res = ECSLib.getStringComponent("Tag").getEntitiesWithValue(identifier);
-        require(res.length == 1, string(abi.encodePacked("CURIO: Constant with Tag=", identifier, " not found")));
+    function getConstant(string memory _identifier) internal view returns (uint256) {
+        uint256[] memory res = ECSLib.getStringComponent("Tag").getEntitiesWithValue(_identifier);
+        require(res.length == 1, string(abi.encodePacked("CURIO: Constant with Tag=", _identifier, " not found")));
         return ECSLib.getUint("Amount", res[0]);
     }
 

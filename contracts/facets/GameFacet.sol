@@ -335,7 +335,7 @@ contract GameFacet is UseStorage {
         for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
             uint256 resourceInventoryID = GameLib.getInventory(cityID, resourceTemplateIDs[i]);
             uint256 balance = ECSLib.getUint("Amount", resourceInventoryID);
-            uint256 cost = GameLib.getConstant("startTroopProduction", "Cost", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), 0);
+            uint256 cost = _amount * GameLib.getConstant("startTroopProduction", "Cost", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), 0);
             require(balance >= cost, "CURIO: Insufficient balance");
             ECSLib.setUint("Amount", resourceInventoryID, balance - cost);
         }

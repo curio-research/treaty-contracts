@@ -434,13 +434,13 @@ class Game:
         game_parameters = []
         world_parameters = []
         # save wolrd parameters here
-        world_parameters.append({"cityCenterLevelToTileCounts": int(get_city_center_tiles_interval())})
+        world_parameters.append({"cityCenterLevelToTileCountRatio": int(get_city_center_tiles_interval())})
         world_parameters.append({"cityCenterLevelToEntityLevelRatio": int(self.city_center_level_to_building_level)})
-        world_parameters.append({"ArmyGoldHourlyGatheringRate": int(get_hourly_gather_rate_per_army(Resource.GOLD))})
-        world_parameters.append({"ArmyFoodHourlyGatheringRate": int(get_hourly_gather_rate_per_army(Resource.FOOD))})
-        world_parameters.append({"TroopResourceLoad": resource_cap_per_troop()})
-        world_parameters.append({"TroopGoldCost": self.resource_weight_low })
-        world_parameters.append({"TroopFoodCost": self.resource_weight_heavy })
+        world_parameters.append({"armyGoldHourlyGatheringRate": int(get_hourly_gather_rate_per_army(Resource.GOLD))})
+        world_parameters.append({"armyFoodHourlyGatheringRate": int(get_hourly_gather_rate_per_army(Resource.FOOD))})
+        world_parameters.append({"troopResourceLoad": resource_cap_per_troop()})
+        world_parameters.append({"troopGoldCost": self.resource_weight_low })
+        world_parameters.append({"troopFoodCost": self.resource_weight_heavy })
         world_parameters.append({"maxCityCenterLevel": self.max_city_center_level})
 
         # Building Stats
@@ -477,8 +477,8 @@ class Game:
             (reward_gold, reward_food) = get_barbarian_reward(curr_level)
             barbarian_count = get_barbarian_count_by_level(curr_level)
             game_parameters.append({ "subject": "Barbarian", "componentName": "Reward", "object": "Gold", "level": curr_level, "functionName": "upgrade", "value": int(reward_gold)  })
-            game_parameters.append({ "subject": "Barbarian", "componentName": "Reward", "object": "Self", "level": curr_level, "functionName": "upgrade", "value": int(reward_food)  })
-            game_parameters.append({ "subject": "Barbarian", "componentName": "Count", "object": "Self", "level": curr_level, "functionName": "battle", "value": barbarian_count  })
+            game_parameters.append({ "subject": "Barbarian", "componentName": "Reward", "object": "Food", "level": curr_level, "functionName": "upgrade", "value": int(reward_food)  })
+            game_parameters.append({ "subject": "Barbarian", "componentName": "Amount", "object": "Guard", "level": curr_level, "functionName": "", "value": barbarian_count  })
             curr_level += 1
 
         # Tile Stats
@@ -487,7 +487,7 @@ class Game:
         while curr_level <= max_tile_level:
             (cost_gold, cost_food) = get_tile_upgrade_cost(curr_level)
             tile_guard_count = get_tile_troop_count(curr_level)
-            game_parameters.append({ "subject": "Tile", "componentName": "Count", "object": "Self", "level": curr_level, "functionName": "battle", "value": tile_guard_count  })
+            game_parameters.append({ "subject": "Tile", "componentName": "Amount", "object": "Guard", "level": curr_level, "functionName": "", "value": tile_guard_count  })
             if curr_level < max_tile_level:
                 game_parameters.append({ "subject": "Tile", "componentName": "Cost", "object": "Gold", "level": curr_level, "functionName": "upgrade", "value": int(cost_gold)  })
                 game_parameters.append({ "subject": "Tile", "componentName": "Cost", "object": "Food", "level": curr_level, "functionName": "upgrade", "value": int(cost_food)  })
@@ -497,7 +497,7 @@ class Game:
         max_building_level = self.max_city_center_level
         curr_level = 1
         while curr_level <= max_building_level:
-            game_parameters.append({ "subject": "Army", "componentName": "Count", "object": "Self", "level": curr_level, "functionName": "upgrade", "value": get_troop_size_by_center_level(curr_level)  })
+            game_parameters.append({ "subject": "Army", "componentName": "Count", "object": "Troop", "level": curr_level, "functionName": "upgrade", "value": get_troop_size_by_center_level(curr_level)  })
             curr_level += 1
         json_object = json.dumps(game_parameters, indent=4)
         with open("game_parameters.json", "w") as outfile:
