@@ -444,8 +444,9 @@ class Game:
         game_parameters.append({ "subject": "Troop Production", "componentName": "Cost", "object": "Food", "level": 0, "functionName": "", "value": int(self.resource_weight_heavy) })
         game_parameters.append({ "subject": "Settler", "componentName": "Health", "object": "", "level": 0, "functionName": "", "value": 1000000000 })
         game_parameters.append({ "subject": "Barbarian", "componentName": "Cooldown", "object": "", "level": 0, "functionName": "", "value": 30 })
-        game_parameters.append({ "subject": "City Center", "componentName": "Load", "object": "Gold", "level": 0, "functionName": "", "value": 1000000000 })
-        game_parameters.append({ "subject": "City Center", "componentName": "Load", "object": "Food", "level": 0, "functionName": "", "value": 1000000000 })
+        for i in range(9):
+            game_parameters.append({ "subject": "City Center", "componentName": "Load", "object": "Gold", "level": i, "functionName": "", "value": 1000000000 })
+            game_parameters.append({ "subject": "City Center", "componentName": "Load", "object": "Food", "level": i, "functionName": "", "value": 1000000000 })
 
         # Building Stats
         for i in [Building.GOLDMINE, Building.FARM, Building.CITY_CENTER]:
