@@ -442,6 +442,7 @@ class Game:
         game_parameters.append({ "subject": "Troop", "componentName": "Load", "object": "Resource", "level": 0, "functionName": "", "value": int(resource_cap_per_troop() * 1000) })
         game_parameters.append({ "subject": "Troop Production", "componentName": "Cost", "object": "Gold", "level": 0, "functionName": "", "value": int(self.resource_weight_light) })
         game_parameters.append({ "subject": "Troop Production", "componentName": "Cost", "object": "Food", "level": 0, "functionName": "", "value": int(self.resource_weight_heavy) })
+        game_parameters.append({ "subject": "Settler", "componentName": "Health", "object": "", "level": 0, "functionName": "", "value": 1000000000 })
 
         # Building Stats
         for i in [Building.GOLDMINE, Building.FARM, Building.CITY_CENTER]:

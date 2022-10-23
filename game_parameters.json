@@ -1,5 +1,53 @@
 [
     {
+        "subject": "Army",
+        "componentName": "Rate",
+        "object": "Gold",
+        "level": 0,
+        "functionName": "gather",
+        "value": 23063
+    },
+    {
+        "subject": "Army",
+        "componentName": "Rate",
+        "object": "Food",
+        "level": 0,
+        "functionName": "gather",
+        "value": 184522
+    },
+    {
+        "subject": "Troop",
+        "componentName": "Load",
+        "object": "Resource",
+        "level": 0,
+        "functionName": "",
+        "value": 95
+    },
+    {
+        "subject": "Troop Production",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 0,
+        "functionName": "",
+        "value": 2
+    },
+    {
+        "subject": "Troop Production",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 0,
+        "functionName": "",
+        "value": 8
+    },
+    {
+        "subject": "Settler",
+        "componentName": "Health",
+        "object": "",
+        "level": 0,
+        "functionName": "",
+        "value": 1000000000
+    },
+    {
         "subject": "Goldmine",
         "componentName": "Yield",
         "object": "Gold",
