@@ -34,9 +34,11 @@ export interface CurioERC20Interface extends utils.Interface {
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
     "decimals()": FunctionFragment;
+    "game()": FunctionFragment;
     "name()": FunctionFragment;
     "nonces(address)": FunctionFragment;
     "permit(address,address,uint256,uint256,uint8,bytes32,bytes32)": FunctionFragment;
+    "positionOf(address)": FunctionFragment;
     "symbol()": FunctionFragment;
     "totalSupply()": FunctionFragment;
     "transfer(address,uint256)": FunctionFragment;
@@ -50,9 +52,11 @@ export interface CurioERC20Interface extends utils.Interface {
       | "approve"
       | "balanceOf"
       | "decimals"
+      | "game"
       | "name"
       | "nonces"
       | "permit"
+      | "positionOf"
       | "symbol"
       | "totalSupply"
       | "transfer"
@@ -76,6 +80,7 @@ export interface CurioERC20Interface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
+  encodeFunctionData(functionFragment: "game", values?: undefined): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "nonces",
@@ -92,6 +97,10 @@ export interface CurioERC20Interface extends utils.Interface {
       PromiseOrValue<BytesLike>,
       PromiseOrValue<BytesLike>
     ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "positionOf",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
   encodeFunctionData(
@@ -119,9 +128,11 @@ export interface CurioERC20Interface extends utils.Interface {
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "game", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "nonces", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "permit", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "positionOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "totalSupply",
@@ -214,6 +225,8 @@ export interface CurioERC20 extends BaseContract {
 
     decimals(overrides?: CallOverrides): Promise<[number]>;
 
+    game(overrides?: CallOverrides): Promise<[string]>;
+
     name(overrides?: CallOverrides): Promise<[string]>;
 
     nonces(
@@ -231,6 +244,11 @@ export interface CurioERC20 extends BaseContract {
       s: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    positionOf(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber, BigNumber] & { x: BigNumber; y: BigNumber }>;
 
     symbol(overrides?: CallOverrides): Promise<[string]>;
 
@@ -271,6 +289,8 @@ export interface CurioERC20 extends BaseContract {
 
   decimals(overrides?: CallOverrides): Promise<number>;
 
+  game(overrides?: CallOverrides): Promise<string>;
+
   name(overrides?: CallOverrides): Promise<string>;
 
   nonces(
@@ -288,6 +308,11 @@ export interface CurioERC20 extends BaseContract {
     s: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  positionOf(
+    arg0: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<[BigNumber, BigNumber] & { x: BigNumber; y: BigNumber }>;
 
   symbol(overrides?: CallOverrides): Promise<string>;
 
@@ -328,6 +353,8 @@ export interface CurioERC20 extends BaseContract {
 
     decimals(overrides?: CallOverrides): Promise<number>;
 
+    game(overrides?: CallOverrides): Promise<string>;
+
     name(overrides?: CallOverrides): Promise<string>;
 
     nonces(
@@ -345,6 +372,11 @@ export interface CurioERC20 extends BaseContract {
       s: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    positionOf(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber, BigNumber] & { x: BigNumber; y: BigNumber }>;
 
     symbol(overrides?: CallOverrides): Promise<string>;
 
@@ -410,6 +442,8 @@ export interface CurioERC20 extends BaseContract {
 
     decimals(overrides?: CallOverrides): Promise<BigNumber>;
 
+    game(overrides?: CallOverrides): Promise<BigNumber>;
+
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
     nonces(
@@ -426,6 +460,11 @@ export interface CurioERC20 extends BaseContract {
       r: PromiseOrValue<BytesLike>,
       s: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    positionOf(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     symbol(overrides?: CallOverrides): Promise<BigNumber>;
@@ -468,6 +507,8 @@ export interface CurioERC20 extends BaseContract {
 
     decimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    game(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     nonces(
@@ -484,6 +525,11 @@ export interface CurioERC20 extends BaseContract {
       r: PromiseOrValue<BytesLike>,
       s: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    positionOf(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>;

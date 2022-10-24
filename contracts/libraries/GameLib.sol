@@ -455,6 +455,11 @@ library GameLib {
         return gs().playerEntityMap[_address];
     }
 
+    function getRange() internal view returns (uint256) {
+        // FIXME: update to actual range
+        return gs().worldConstants.tileWidth;
+    }
+
     function getBattleDamages(
         uint256 _army1,
         uint256 _army2,
