@@ -438,7 +438,7 @@ class Game:
         world_parameters["maxCityCenterLevel"] = self.max_city_center_level
         world_parameters["cityCenterLevelToTileCountRatio"] = int(get_city_center_tiles_interval())
         world_parameters["cityCenterLevelToEntityLevelRatio"] = int(self.city_center_level_to_building_level)
-        world_parameters["secondsToTrainAThousandTroops"] = int(Game.base_troop_training_in_Seconds)
+        world_parameters["secondsToTrainAThousandTroops"] = int(Game.base_troop_training_in_Seconds * 1000)
         game_parameters.append({ "subject": "Army", "componentName": "Rate", "object": "Gold", "level": 0, "functionName": "gather", "value": int(get_hourly_gather_rate_per_army(Resource.GOLD)) })
         game_parameters.append({ "subject": "Army", "componentName": "Rate", "object": "Food", "level": 0, "functionName": "gather", "value": int(get_hourly_gather_rate_per_army(Resource.FOOD)) })
         game_parameters.append({ "subject": "Troop", "componentName": "Load", "object": "Resource", "level": 0, "functionName": "", "value": int(resource_cap_per_troop() * 1000) })
