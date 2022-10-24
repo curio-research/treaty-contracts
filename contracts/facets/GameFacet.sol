@@ -44,7 +44,6 @@ contract GameFacet is UseStorage {
         // Add player's first settler
         uint256 settlerID = Templates.addSettler(_position, playerID, gs().worldConstants.tileWidth);
 
-<<<<<<< Updated upstream
         // Add initial resources to settler
         uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
         for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
@@ -53,11 +52,6 @@ contract GameFacet is UseStorage {
             uint256 inventoryLoad = GameLib.getConstant("initializePlayer", "Load", inventoryType, 0);
             Templates.addInventory(settlerID, resourceTemplateIDs[i], inventoryAmount, inventoryLoad, true);
         }
-=======
-        // Add initial gold
-        Templates.addInventory(settlerID, gs().templates["Gold"], gs().worldConstants.initCityGold, gs().worldConstants.initCityCenterGoldLoad); // FIXME: ECS
-        Templates.addInventory(settlerID, gs().templates["Food"], 0, gs().worldConstants.initCityCenterFoodLoad); // FIXME: ECS
->>>>>>> Stashed changes
     }
 
     // ----------------------------------------------------------
