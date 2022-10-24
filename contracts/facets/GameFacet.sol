@@ -174,9 +174,6 @@ contract GameFacet is UseStorage {
         GameLib.ongoingGameCheck();
         GameLib.activePlayerCheck(msg.sender);
         GameLib.entityOwnershipCheck(_tileID, msg.sender);
-
-        uint256 lv2TileGuardAmount = GameLib.getConstant("Tile", "Guard", "Amount", "", 2);
-        uint256 lv1TileGuardAmount = GameLib.getConstant("Tile", "Guard", "Amount", "", 1);
  
         // lost tile amount = current level amount - actual amount
         uint256 tileLevel = ECSLib.getUint("Level", _tileID);
@@ -189,9 +186,7 @@ contract GameFacet is UseStorage {
             uint256 inventoryID = GameLib.getInventory(GameLib.getPlayerCity(playerID), resourceTemplateIDs[i]);
             uint256 balance = ECSLib.getUint("Amount", inventoryID);
 
-            // Cost per tile guard = lv1 tile upgrade cost / (lv2 troop amount - lv1 troop amount)
-            uint256 totalRecoverCost = GameLib.getConstant("Tile", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Cost", "upgrade", 1) 
-            / (lv2TileGuardAmount - lv1TileGuardAmount) * lostGuardAmount;
+            uint256 totalRecoverCost =  GameLib.getConstant("Tile", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Cost", "upgrade", 0) * lostGuardAmount;
 
             require(balance >= totalRecoverCost, "CURIO: Insufficient balance");
             ECSLib.setUint("Amount", inventoryID, balance - totalRecoverCost);
@@ -478,7 +473,7 @@ contract GameFacet is UseStorage {
         require(GameLib.getArmyAt(midPosition) == NULL, "CURIO: Occupied by another army");
 
         // Verify that total troop amount does not exceed max troop count
-        uint256 maxTroopCountPerArmy = GameLib.getConstant("Army", "Troop", "Amount", "upgrade", ECSLib.getUint("Level", _cityID));
+        uint256 maxTroopCountPerArmy = GameLib.getConstant("Army", "Troop", "Amount", "", ECSLib.getUint("Level", _cityID));
         require(GameLib.sum(_amounts) <= maxTroopCountPerArmy, "CURIO: Troop amount exceeds capacity");
 
         // Gather army traits from individual troop types

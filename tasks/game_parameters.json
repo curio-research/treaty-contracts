@@ -40,6 +40,22 @@
         "value": 8000
     },
     {
+        "subject": "Tile",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 0,
+        "functionName": "upgrade",
+        "value": 400
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 0,
+        "functionName": "upgrade",
+        "value": 1600
+    },
+    {
         "subject": "Settler",
         "componentName": "Health",
         "object": "",
@@ -1409,43 +1425,11 @@
     },
     {
         "subject": "Tile",
-        "componentName": "Cost",
-        "object": "Gold",
-        "level": 1,
-        "functionName": "upgrade",
-        "value": 156510
-    },
-    {
-        "subject": "Tile",
-        "componentName": "Cost",
-        "object": "Food",
-        "level": 1,
-        "functionName": "upgrade",
-        "value": 626040
-    },
-    {
-        "subject": "Tile",
         "componentName": "Amount",
         "object": "Guard",
         "level": 2,
         "functionName": "",
         "value": 509.58792355252683
-    },
-    {
-        "subject": "Tile",
-        "componentName": "Cost",
-        "object": "Gold",
-        "level": 2,
-        "functionName": "upgrade",
-        "value": 180544
-    },
-    {
-        "subject": "Tile",
-        "componentName": "Cost",
-        "object": "Food",
-        "level": 2,
-        "functionName": "upgrade",
-        "value": 722177
     },
     {
         "subject": "Tile",
@@ -1457,43 +1441,11 @@
     },
     {
         "subject": "Tile",
-        "componentName": "Cost",
-        "object": "Gold",
-        "level": 3,
-        "functionName": "upgrade",
-        "value": 208269
-    },
-    {
-        "subject": "Tile",
-        "componentName": "Cost",
-        "object": "Food",
-        "level": 3,
-        "functionName": "upgrade",
-        "value": 833079
-    },
-    {
-        "subject": "Tile",
         "componentName": "Amount",
         "object": "Guard",
         "level": 4,
         "functionName": "",
         "value": 1030.262421824484
-    },
-    {
-        "subject": "Tile",
-        "componentName": "Cost",
-        "object": "Gold",
-        "level": 4,
-        "functionName": "upgrade",
-        "value": 240252
-    },
-    {
-        "subject": "Tile",
-        "componentName": "Cost",
-        "object": "Food",
-        "level": 4,
-        "functionName": "upgrade",
-        "value": 961010
     },
     {
         "subject": "Tile",
@@ -1505,43 +1457,11 @@
     },
     {
         "subject": "Tile",
-        "componentName": "Cost",
-        "object": "Gold",
-        "level": 5,
-        "functionName": "upgrade",
-        "value": 277147
-    },
-    {
-        "subject": "Tile",
-        "componentName": "Cost",
-        "object": "Food",
-        "level": 5,
-        "functionName": "upgrade",
-        "value": 1108588
-    },
-    {
-        "subject": "Tile",
         "componentName": "Amount",
         "object": "Guard",
         "level": 6,
         "functionName": "",
         "value": 1723.130327574756
-    },
-    {
-        "subject": "Tile",
-        "componentName": "Cost",
-        "object": "Gold",
-        "level": 6,
-        "functionName": "upgrade",
-        "value": 319707
-    },
-    {
-        "subject": "Tile",
-        "componentName": "Cost",
-        "object": "Food",
-        "level": 6,
-        "functionName": "upgrade",
-        "value": 1278829
     },
     {
         "subject": "Tile",
@@ -1553,43 +1473,11 @@
     },
     {
         "subject": "Tile",
-        "componentName": "Cost",
-        "object": "Gold",
-        "level": 7,
-        "functionName": "upgrade",
-        "value": 368803
-    },
-    {
-        "subject": "Tile",
-        "componentName": "Cost",
-        "object": "Food",
-        "level": 7,
-        "functionName": "upgrade",
-        "value": 1475212
-    },
-    {
-        "subject": "Tile",
         "componentName": "Amount",
         "object": "Guard",
         "level": 8,
         "functionName": "",
         "value": 2645.1381009764436
-    },
-    {
-        "subject": "Tile",
-        "componentName": "Cost",
-        "object": "Gold",
-        "level": 8,
-        "functionName": "upgrade",
-        "value": 425438
-    },
-    {
-        "subject": "Tile",
-        "componentName": "Cost",
-        "object": "Food",
-        "level": 8,
-        "functionName": "upgrade",
-        "value": 1701753
     },
     {
         "subject": "Tile",
@@ -1601,26 +1489,26 @@
     },
     {
         "subject": "Army",
-        "componentName": "Count",
+        "componentName": "Amount",
         "object": "Troop",
         "level": 1,
-        "functionName": "upgrade",
+        "functionName": "",
         "value": 7213.067668948546
     },
     {
         "subject": "Army",
-        "componentName": "Count",
+        "componentName": "Amount",
         "object": "Troop",
         "level": 2,
-        "functionName": "upgrade",
+        "functionName": "",
         "value": 16542.051144717658
     },
     {
         "subject": "Army",
-        "componentName": "Count",
+        "componentName": "Amount",
         "object": "Troop",
         "level": 3,
-        "functionName": "upgrade",
+        "functionName": "",
         "value": 30862.628592323912
     }
 ]

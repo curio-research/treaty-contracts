@@ -443,6 +443,8 @@ class Game:
         game_parameters.append({ "subject": "Troop", "componentName": "Load", "object": "Resource", "level": 0, "functionName": "", "value": int(resource_cap_per_troop() * 1000) })
         game_parameters.append({ "subject": "Troop Production", "componentName": "Cost", "object": "Gold", "level": 0, "functionName": "", "value": int(self.resource_weight_light * 1000) })
         game_parameters.append({ "subject": "Troop Production", "componentName": "Cost", "object": "Food", "level": 0, "functionName": "", "value": int(self.resource_weight_heavy * 1000) })
+        game_parameters.append({ "subject": "Tile", "componentName": "Cost", "object": "Gold", "level": 0, "functionName": "upgrade", "value": int(Game.resource_weight_light * Game.tile_troop_discount * 1000)})
+        game_parameters.append({ "subject": "Tile", "componentName": "Cost", "object": "Food", "level": 0, "functionName": "upgrade", "value": int(Game.resource_weight_heavy * Game.tile_troop_discount * 1000)})
         game_parameters.append({ "subject": "Settler", "componentName": "Health", "object": "", "level": 0, "functionName": "", "value": 1000000000 })
         game_parameters.append({ "subject": "Barbarian", "componentName": "Cooldown", "object": "", "level": 0, "functionName": "", "value": 30 })
 
@@ -490,19 +492,15 @@ class Game:
         curr_level = 1
         max_tile_level = self.max_city_center_level * self.city_center_level_to_building_level
         while curr_level <= max_tile_level:
-            (cost_gold, cost_food) = get_tile_upgrade_cost(curr_level)
             tile_guard_count = get_tile_troop_count(curr_level)
             game_parameters.append({ "subject": "Tile", "componentName": "Amount", "object": "Guard", "level": curr_level, "functionName": "", "value": tile_guard_count  })
-            if curr_level < max_tile_level:
-                game_parameters.append({ "subject": "Tile", "componentName": "Cost", "object": "Gold", "level": curr_level, "functionName": "upgrade", "value": int(cost_gold * 1000)  })
-                game_parameters.append({ "subject": "Tile", "componentName": "Cost", "object": "Food", "level": curr_level, "functionName": "upgrade", "value": int(cost_food * 1000)  })
             curr_level += 1
         
         # Army Size Stats
         max_building_level = self.max_city_center_level
         curr_level = 1
         while curr_level <= max_building_level:
-            game_parameters.append({ "subject": "Army", "componentName": "Count", "object": "Troop", "level": curr_level, "functionName": "upgrade", "value": get_troop_size_by_center_level(curr_level)  })
+            game_parameters.append({ "subject": "Army", "componentName": "Amount", "object": "Troop", "level": curr_level, "functionName": "", "value": get_troop_size_by_center_level(curr_level)  })
             curr_level += 1
         
         # Dump JSON
@@ -512,4 +510,5 @@ class Game:
                 outfile.write(json.dumps(world_parameters, indent=4))
 
 a = Game()
+a.print_parameters()
 a.export_json_parameters()
