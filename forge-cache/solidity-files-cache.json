@@ -453,8 +453,8 @@
       }
     },
     "contracts/facets/GameFacet.sol": {
-      "lastModificationDate": 1666570305822,
-      "contentHash": "e4af97cf6d19b3514871c19f5195395b",
+      "lastModificationDate": 1666574419697,
+      "contentHash": "de357107aef86ead6b54756b3d3638b5",
       "sourceName": "contracts/facets/GameFacet.sol",
       "solcConfig": {
         "settings": {
