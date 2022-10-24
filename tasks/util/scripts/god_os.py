@@ -506,9 +506,9 @@ class Game:
             curr_level += 1
         
         # Dump JSON
-        with open("game_parameters.json", "w+") as outfile:
+        with open("tasks/game_parameters.json", "w+") as outfile:
                 outfile.write(json.dumps(game_parameters, indent=4))
-        with open("world_parameters.json", "w+") as outfile:
+        with open("tasks/world_parameters.json", "w+") as outfile:
                 outfile.write(json.dumps(world_parameters, indent=4))
 
 a = Game()
