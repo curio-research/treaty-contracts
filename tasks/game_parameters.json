@@ -5,7 +5,7 @@
         "object": "Gold",
         "level": 0,
         "functionName": "gather",
-        "value": 8183999
+        "value": 2273
     },
     {
         "subject": "Army",
@@ -13,7 +13,7 @@
         "object": "Food",
         "level": 0,
         "functionName": "gather",
-        "value": 65475666
+        "value": 18187
     },
     {
         "subject": "Troop",
@@ -557,7 +557,7 @@
         "object": "Gold",
         "level": 0,
         "functionName": "upgrade",
-        "value": 0
+        "value": 533
     },
     {
         "subject": "Farm",
@@ -605,7 +605,7 @@
         "object": "Gold",
         "level": 1,
         "functionName": "upgrade",
-        "value": 0
+        "value": 1901
     },
     {
         "subject": "Farm",
@@ -653,7 +653,7 @@
         "object": "Gold",
         "level": 2,
         "functionName": "upgrade",
-        "value": 0
+        "value": 3889
     },
     {
         "subject": "Farm",
@@ -701,7 +701,7 @@
         "object": "Gold",
         "level": 3,
         "functionName": "upgrade",
-        "value": 0
+        "value": 6489
     },
     {
         "subject": "Farm",
@@ -749,7 +749,7 @@
         "object": "Gold",
         "level": 4,
         "functionName": "upgrade",
-        "value": 0
+        "value": 9751
     },
     {
         "subject": "Farm",
@@ -797,7 +797,7 @@
         "object": "Gold",
         "level": 5,
         "functionName": "upgrade",
-        "value": 0
+        "value": 13736
     },
     {
         "subject": "Farm",
@@ -845,7 +845,7 @@
         "object": "Gold",
         "level": 6,
         "functionName": "upgrade",
-        "value": 0
+        "value": 18538
     },
     {
         "subject": "Farm",
@@ -893,7 +893,7 @@
         "object": "Gold",
         "level": 7,
         "functionName": "upgrade",
-        "value": 0
+        "value": 24281
     },
     {
         "subject": "Farm",
@@ -941,7 +941,7 @@
         "object": "Gold",
         "level": 8,
         "functionName": "upgrade",
-        "value": 0
+        "value": 31113
     },
     {
         "subject": "Farm",

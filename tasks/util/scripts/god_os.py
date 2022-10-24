@@ -167,16 +167,15 @@ def get_building_upgrade_cost(level: int, building_type: Building) -> np.array:
     Growth: fast exponential
     Gist: both building yields and upgrade costs increase exponentially, but the latter at a lower rate
     """
-    (gold_hourly_yield, food_hourly_yield) =  get_building_hourly_yield_by_level(level, building_type)
     # cost is easy to calculate for goldmine
-    goldmine_goldcost = Game.payback_period_curve_in_hour()(level) * gold_hourly_yield
+    goldmine_goldcost = Game.payback_period_curve_in_hour()(level) * get_building_hourly_yield_by_level(level, Building.GOLDMINE)[0]
     # calculate foodcost based on resource weight
     goldmine_foodcost = goldmine_goldcost/Game.resource_weight_heavy * Game.resource_weight_light
     # taking a leap of faith here; farm doesn't generate gold, so we use its quantity relative to goldmine to calculate
     # assumption is that player spend gold equivalently on two types of building
     farm_goldcost = goldmine_goldcost * Game.init_player_goldmine_count / Game.init_player_farm_count
     # farm food cost if don't consider that part of it goes to troops
-    farm_foodcost_raw = Game.payback_period_curve_in_hour()(level) * food_hourly_yield
+    farm_foodcost_raw = Game.payback_period_curve_in_hour()(level) * get_building_hourly_yield_by_level(level, Building.FARM)[1]
     # consider relative weight of food burn => Build (low), Troop (heavy)
     farm_foodcost = farm_foodcost_raw * Game.resource_weight_light/(Game.resource_weight_heavy + Game.resource_weight_light)
     if building_type == Building.GOLDMINE:
@@ -439,8 +438,8 @@ class Game:
         world_parameters["cityCenterLevelToTileCountRatio"] = int(get_city_center_tiles_interval())
         world_parameters["cityCenterLevelToEntityLevelRatio"] = int(self.city_center_level_to_building_level)
         world_parameters["secondsToTrainAThousandTroops"] = int(Game.base_troop_training_in_Seconds * 1000)
-        game_parameters.append({ "subject": "Army", "componentName": "Rate", "object": "Gold", "level": 0, "functionName": "gather", "value": int(get_hourly_gather_rate_per_army(Resource.GOLD) * 1000) })
-        game_parameters.append({ "subject": "Army", "componentName": "Rate", "object": "Food", "level": 0, "functionName": "gather", "value": int(get_hourly_gather_rate_per_army(Resource.FOOD) * 1000) })
+        game_parameters.append({ "subject": "Army", "componentName": "Rate", "object": "Gold", "level": 0, "functionName": "gather", "value": int(get_hourly_gather_rate_per_army(Resource.GOLD) * 1000 / 3600) })
+        game_parameters.append({ "subject": "Army", "componentName": "Rate", "object": "Food", "level": 0, "functionName": "gather", "value": int(get_hourly_gather_rate_per_army(Resource.FOOD) * 1000 / 3600) })
         game_parameters.append({ "subject": "Troop", "componentName": "Load", "object": "Resource", "level": 0, "functionName": "", "value": int(resource_cap_per_troop() * 1000) })
         game_parameters.append({ "subject": "Troop Production", "componentName": "Cost", "object": "Gold", "level": 0, "functionName": "", "value": int(self.resource_weight_light * 1000) })
         game_parameters.append({ "subject": "Troop Production", "componentName": "Cost", "object": "Food", "level": 0, "functionName": "", "value": int(self.resource_weight_heavy * 1000) })
