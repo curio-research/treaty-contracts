@@ -8,6 +8,7 @@ import {Position, WorldConstants} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
 import "contracts/libraries/Templates.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
+import "forge-std/console.sol";
 
 /// @title Game facet
 /// @notice Contains player functions
@@ -392,8 +393,11 @@ contract GameFacet is UseStorage {
 
         // Update city inventory amount
         uint256 cityInventoryID = GameLib.getInventory(cityID, templateID);
-        uint256 existingCityResource = ECSLib.getUint("Amount", cityInventoryID);
-        ECSLib.setUint("Amount", cityInventoryID, harvestAmount + existingCityResource);
+        uint256 existingCityResourceAmount = ECSLib.getUint("Amount", cityInventoryID);
+        console.log("harvest rate", harvestRate);
+        console.log("harvest amount", harvestAmount);
+        console.log("existing amount", existingCityResourceAmount);
+        ECSLib.setUint("Amount", cityInventoryID, harvestAmount + existingCityResourceAmount);
     }
 
     // TODO: harvest gold & food on a city; consider merge this with the function above
@@ -674,10 +678,11 @@ contract GameFacet is UseStorage {
             uint256 cost = GameLib.getConstant(subject, ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Cost", "upgrade", resourceLevel);
             require(balance >= cost, "CURIO: Insufficient balance");
             ECSLib.setUint("Amount", inventoryID, balance - cost);
-
-            uint256 newLoad = GameLib.getConstant(subject, ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Load", "", resourceLevel + 1);
-            ECSLib.setUint("Load", _resourceID, newLoad);
         }
+
+        // Set load
+        uint256 newLoad = GameLib.getConstant(subject, ECSLib.getString("InventoryType", ECSLib.getUint("Template", _resourceID)), "Load", "", resourceLevel + 1);
+        ECSLib.setUint("Load", _resourceID, newLoad);
 
         // Set new level
         ECSLib.setUint("Level", _resourceID, resourceLevel + 1);
