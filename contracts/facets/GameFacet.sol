@@ -168,7 +168,34 @@ contract GameFacet is UseStorage {
         ECSLib.removeEntity(GameLib.getCityCenter(_cityID));
     }
 
-    // every time you purchase, you increase the number of tile defenders
+    function recoverTile(uint256 _tileID) external {
+        // Basic checks
+        GameLib.validEntityCheck(_tileID);
+        GameLib.ongoingGameCheck();
+        GameLib.activePlayerCheck(msg.sender);
+        GameLib.entityOwnershipCheck(_tileID, msg.sender);
+ 
+        // lost tile amount = current level amount - actual amount
+        uint256 tileLevel = ECSLib.getUint("Level", _tileID);
+        uint256 lostGuardAmount = GameLib.getConstant("Tile", "Guard", "Amount", "", tileLevel) - ECSLib.getUint("Amount", _tileID);
+
+        // Deduct costs
+        uint256 playerID = GameLib.getPlayer(msg.sender);
+        uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
+        for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
+            uint256 inventoryID = GameLib.getInventory(GameLib.getPlayerCity(playerID), resourceTemplateIDs[i]);
+            uint256 balance = ECSLib.getUint("Amount", inventoryID);
+
+            uint256 totalRecoverCost =  GameLib.getConstant("Tile", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Cost", "upgrade", 0) * lostGuardAmount;
+
+            require(balance >= totalRecoverCost, "CURIO: Insufficient balance");
+            ECSLib.setUint("Amount", inventoryID, balance - totalRecoverCost);
+        }
+
+        // Recover the Tile
+        ECSLib.setUint("Amount", GameLib.getConstituents(_tileID)[0], GameLib.getConstant("Tile", "Guard", "Amount", "", tileLevel));
+    }
+
     function upgradeTile(uint256 _tileID) external {
         // Basic checks
         GameLib.validEntityCheck(_tileID);
@@ -180,6 +207,9 @@ contract GameFacet is UseStorage {
         uint256 tileLevel = ECSLib.getUint("Level", _tileID);
         uint256 cityCenterID = GameLib.getCityCenter(ECSLib.getUint("City", _tileID));
         require(tileLevel < ECSLib.getUint("Level", cityCenterID) * gs().worldConstants.cityCenterLevelToEntityLevelRatio, "CURIO: Max Tile Level Reached");
+
+        // Require players to fully recover the tile before upgrade
+        require(GameLib.getConstant("Tile", "Guard", "Amount", "", tileLevel) - ECSLib.getUint("Amount", _tileID) == 0, "CURIO: Need to recover tile first");
 
         // Deduct costs
         uint256 playerID = GameLib.getPlayer(msg.sender);
@@ -193,7 +223,6 @@ contract GameFacet is UseStorage {
         }
 
         // Upgrade tile defense and level
-        // todo: deduct cost if guard is not full during upgrades / require player to repair tile first before upgrade
         uint256 newConstituentAmount = GameLib.getConstant("Tile", "Guard", "Amount", "", tileLevel + 1);
         ECSLib.setUint("Amount", GameLib.getConstituents(_tileID)[0], newConstituentAmount);
         ECSLib.setUint("Level", _tileID, tileLevel + 1);
@@ -278,7 +307,7 @@ contract GameFacet is UseStorage {
         }
 
         // Start production
-        return Templates.addTroopProduction(_buildingID, _templateID, troopInventoryID, _amount, _amount / 5);
+        return Templates.addTroopProduction(_buildingID, _templateID, troopInventoryID, _amount, gs().worldConstants.secondsToTrainAThousandTroops * (_amount / 1000));
     }
 
     function endTroopProduction(uint256 _buildingID, uint256 _productionID) external {
@@ -444,7 +473,8 @@ contract GameFacet is UseStorage {
         require(GameLib.getArmyAt(midPosition) == NULL, "CURIO: Occupied by another army");
 
         // Verify that total troop amount does not exceed max troop count
-        require(GameLib.sum(_amounts) <= gs().worldConstants.maxTroopCountPerArmy, "CURIO: Troop amount exceeds capacity");
+        uint256 maxTroopCountPerArmy = GameLib.getConstant("Army", "Troop", "Amount", "", ECSLib.getUint("Level", _cityID));
+        require(GameLib.sum(_amounts) <= maxTroopCountPerArmy, "CURIO: Troop amount exceeds capacity");
 
         // Gather army traits from individual troop types
         {
