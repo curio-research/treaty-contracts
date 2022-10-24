@@ -52,6 +52,47 @@
         }
       }
     },
+    "contracts/CurioERC20.sol": {
+      "lastModificationDate": 1666632452915,
+      "contentHash": "7c91ba1c40a3058e10a1b0b6d69e8e86",
+      "sourceName": "contracts/CurioERC20.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/solmate/src/tokens/ERC20.sol"
+      ],
+      "versionRequirement": "^0.8.4",
+      "artifacts": {
+        "CurioERC20": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "CurioERC20.sol/CurioERC20.json"
+        }
+      }
+    },
     "contracts/Diamond.sol": {
       "lastModificationDate": 1665596810981,
       "contentHash": "1e162c4c7e9cd8814e6f1ec468f3bfb7",
@@ -315,7 +356,7 @@
       }
     },
     "contracts/facets/AdminFacet.sol": {
-      "lastModificationDate": 1666566074187,
+      "lastModificationDate": 1666632561502,
       "contentHash": "0fa2b4b434fef1a213b99e3c4c2c5eef",
       "sourceName": "contracts/facets/AdminFacet.sol",
       "solcConfig": {
@@ -453,7 +494,7 @@
       }
     },
     "contracts/facets/GameFacet.sol": {
-      "lastModificationDate": 1666574419697,
+      "lastModificationDate": 1666632561502,
       "contentHash": "de357107aef86ead6b54756b3d3638b5",
       "sourceName": "contracts/facets/GameFacet.sol",
       "solcConfig": {
@@ -505,7 +546,7 @@
       }
     },
     "contracts/facets/GetterFacet.sol": {
-      "lastModificationDate": 1666566074188,
+      "lastModificationDate": 1666632561503,
       "contentHash": "49c390b30ecebdf8818c93425cf47815",
       "sourceName": "contracts/facets/GetterFacet.sol",
       "solcConfig": {
@@ -853,7 +894,7 @@
       }
     },
     "contracts/libraries/GameLib.sol": {
-      "lastModificationDate": 1666566074189,
+      "lastModificationDate": 1666632561503,
       "contentHash": "ededdecd1d5dfd060915953096d8aeb4",
       "sourceName": "contracts/libraries/GameLib.sol",
       "solcConfig": {
@@ -1458,8 +1499,47 @@
         }
       }
     },
+    "lib/solmate/src/tokens/ERC20.sol": {
+      "lastModificationDate": 1666632452943,
+      "contentHash": "0c7c7ada139062536af09d69d96d395c",
+      "sourceName": "lib/solmate/src/tokens/ERC20.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": ">=0.8.0",
+      "artifacts": {
+        "ERC20": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "ERC20.sol/ERC20.json"
+        }
+      }
+    },
     "test/Basic.t.sol": {
-      "lastModificationDate": 1666566074197,
+      "lastModificationDate": 1666632561506,
       "contentHash": "154926964debf8f8fee7a730064b6a6d",
       "sourceName": "test/Basic.t.sol",
       "solcConfig": {
@@ -1601,7 +1681,7 @@
       }
     },
     "test/DiamondDeploy.t.sol": {
-      "lastModificationDate": 1666566074197,
+      "lastModificationDate": 1666632561506,
       "contentHash": "31dde790573849911d8c57104070240e",
       "sourceName": "test/DiamondDeploy.t.sol",
       "solcConfig": {

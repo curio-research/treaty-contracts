@@ -9,7 +9,7 @@ import { createTemplates, generateWorldConstants, SMALL_MAP_INPUT } from './util
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
 import { encodeTileMap, generateBlankFixmap, generateMap, initializeFixmap } from './util/mapHelper';
 import { COMPONENT_SPECS, GameConfig, TILE_TYPE, position, scaleMap, chainInfo } from 'curio-vault';
-import gameConstants from '../game_parameters.json';
+import gameConstants from './game_parameters.json';
 
 /**
  * Deploy script for publishing games
