@@ -11,27 +11,12 @@ const _abi = [
     inputs: [
       {
         internalType: "string",
-        name: "_functionName",
-        type: "string",
-      },
-      {
-        internalType: "string",
-        name: "_componentName",
-        type: "string",
-      },
-      {
-        internalType: "string",
-        name: "_entityName",
+        name: "_identifier",
         type: "string",
       },
       {
         internalType: "uint256",
-        name: "_level",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_amount",
+        name: "_value",
         type: "uint256",
       },
     ],
@@ -106,11 +91,6 @@ const _abi = [
         name: "_load",
         type: "uint256",
       },
-      {
-        internalType: "uint256",
-        name: "_cost",
-        type: "uint256",
-      },
     ],
     name: "addTroopTemplate",
     outputs: [
@@ -174,36 +154,14 @@ const _abi = [
   {
     inputs: [
       {
-        components: [
-          {
-            internalType: "string",
-            name: "functionName",
-            type: "string",
-          },
-          {
-            internalType: "string",
-            name: "componentName",
-            type: "string",
-          },
-          {
-            internalType: "string",
-            name: "entityName",
-            type: "string",
-          },
-          {
-            internalType: "uint256",
-            name: "level",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "value",
-            type: "uint256",
-          },
-        ],
-        internalType: "struct ConstantSpec[]",
-        name: "_constantSpecs",
-        type: "tuple[]",
+        internalType: "string[]",
+        name: "_identifiers",
+        type: "string[]",
+      },
+      {
+        internalType: "uint256[]",
+        name: "_values",
+        type: "uint256[]",
       },
     ],
     name: "bulkAddConstants",
@@ -946,41 +904,11 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "_cityID",
-        type: "uint256",
-      },
-      {
-        components: [
-          {
-            internalType: "uint256",
-            name: "x",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "y",
-            type: "uint256",
-          },
-        ],
-        internalType: "struct Position[]",
-        name: "_newTiles",
-        type: "tuple[]",
-      },
-    ],
-    name: "upgradeCity",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
         name: "_buildingID",
         type: "uint256",
       },
     ],
-    name: "upgradeCityInventory",
+    name: "upgradeCityCenter",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -1519,6 +1447,11 @@ const _abi = [
           },
           {
             internalType: "uint256",
+            name: "tileWidth",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
             name: "worldWidth",
             type: "uint256",
           },
@@ -1559,7 +1492,17 @@ const _abi = [
           },
           {
             internalType: "uint256",
-            name: "tileWidth",
+            name: "maxCityCenterLevel",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "cityCenterLevelToEntityLevelRatio",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "cityCenterLevelToTileCountRatio",
             type: "uint256",
           },
         ],

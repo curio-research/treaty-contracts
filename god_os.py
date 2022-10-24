@@ -2,20 +2,23 @@ import math
 from enum import Enum
 from types import LambdaType
 import numpy as np
+import json
 
-import sys 
+import sys
 
-stdoutOrigin=sys.stdout 
+from pyparsing import Word 
+
+stdout_origin=sys.stdout 
 sys.stdout = open("earth_log.txt", "w")
 
-class Resource(Enum):
-    GOLD = 0
-    FOOD = 1
+class Resource(str, Enum):
+    GOLD = "Gold"
+    FOOD = "Food"
 
-class Building(Enum):
-    GOLDMINE = 0
-    FARM = 1
-    CITYCENTER = 2
+class Building(str, Enum):
+    GOLDMINE = "Goldmine"
+    FARM = "Farm"
+    CITY_CENTER = "City Center"
 
 def get_hourly_gather_rate_per_army(resource_type: Resource) -> int:
     """
@@ -31,10 +34,10 @@ def get_hourly_gather_rate_per_army(resource_type: Resource) -> int:
     if (resource_type == Resource.FOOD): building_type = Building.FARM
     (gold_hourly_yield, food_hourly_yield) =  get_building_hourly_yield_by_level(corresponding_building_level, building_type)
 
-    projected_goldmine_count = Game.expected_gold_density() * get_citycenter_tiles_interval() * math.ceil((Game.max_city_center_level + 1) / 2)
-    projected_farm_count = Game.expected_farm_density() * get_citycenter_tiles_interval() * math.ceil((Game.max_city_center_level + 1) / 2)
+    projected_goldmine_count = Game.expected_gold_density() * get_city_center_tiles_interval() * math.ceil((Game.max_city_center_level + 1) / 2)
+    projected_farm_count = Game.expected_farm_density() * get_city_center_tiles_interval() * math.ceil((Game.max_city_center_level + 1) / 2)
 
-    gold_gather_rate = gold_hourly_yield * projected_goldmine_count / Game.resource_weight_low * Game.resource_weight_medium
+    gold_gather_rate = gold_hourly_yield * projected_goldmine_count / Game.resource_weight_light * Game.resource_weight_medium
     food_gather_rate = food_hourly_yield * projected_farm_count / Game.resource_weight_heavy * Game.resource_weight_medium
 
     if (resource_type == Resource.GOLD): return gold_gather_rate
@@ -66,7 +69,7 @@ def get_building_resource_cap(level: int, buildingType: Building) -> np.array:
     """
     return Game.player_login_interval_in_minutes / 60 * get_building_hourly_yield_by_level(level, buildingType)
 
-def get_citycenter_tiles_interval() -> int:
+def get_city_center_tiles_interval() -> int:
     """
     Growth: Constant
     Gist: 9 tiles - avg tiles - max tiles => calculate with (avg - init) / (intervals/2)
@@ -79,20 +82,20 @@ def get_building_base_hourly_yield(building_type: Building) -> np.array:
     Gist: based upon how much it takes to occupy one tile and one lv1 barbarian, given that the player has only a city center
     """
     total_troop = get_tile_troop_count(1) + get_barbarian_count_by_level(1)
-    gold_cost_per_troop = Game.resource_weight_low 
+    gold_cost_per_troop = Game.resource_weight_light 
     food_cost_per_troop = Game.resource_weight_heavy
     total_goldcost = total_troop * gold_cost_per_troop
     total_foodcost = total_troop * food_cost_per_troop
     total_seconds = Game.new_player_action_in_seconds * (1 + Game.tile_to_barbarian_strength_ratio)
 
-    base_farm_food_hourly_yield = total_foodcost / total_seconds * 3600 * (Game.resource_weight_heavy/(Game.resource_weight_low + Game.resource_weight_heavy))
-    base_gold_food_hourly_yield = total_goldcost / total_seconds * 3600 * (Game.resource_weight_low/(Game.resource_weight_low + Game.resource_weight_heavy))
+    base_farm_food_hourly_yield = total_foodcost / total_seconds * 3600 * (Game.resource_weight_heavy/(Game.resource_weight_light + Game.resource_weight_heavy))
+    base_gold_food_hourly_yield = total_goldcost / total_seconds * 3600 * (Game.resource_weight_light/(Game.resource_weight_light + Game.resource_weight_heavy))
     
     if building_type == Building.FARM:
         return np.array([0, base_farm_food_hourly_yield])
     elif building_type == Building.GOLDMINE:
         return np.array([base_gold_food_hourly_yield, 0])
-    elif building_type == Building.CITYCENTER:
+    elif building_type == Building.CITY_CENTER:
         return np.array([base_gold_food_hourly_yield, base_farm_food_hourly_yield])
     else: 
         return np.array([0, 0])
@@ -119,20 +122,20 @@ def get_barbarian_count_by_level(level: int) -> int:
     """
     return Game.slow_exponential_curve()(level) / Game.slow_exponential_curve()(1) * get_PvE_troop_base_count()
 
-def getBarbarianReward(level: int) -> np.array:
+def get_barbarian_reward(level: int) -> np.array:
     """
     Growth: fast exponential for gold; constant for food
     Gist: barbarian rewards and costs both increase exponentially, but the latter at a lower rate
     """
     barbarian_count = get_barbarian_count_by_level(level)
-    goldcost_per_troop = Game.resource_weight_low 
+    goldcost_per_troop = Game.resource_weight_light 
     foodcost_per_troop = Game.resource_weight_heavy
     total_goldcost = barbarian_count * goldcost_per_troop
     total_foodcost = barbarian_count * foodcost_per_troop
     # actual reward = base reward * exponential curve (level as x)
     gold_reward = total_goldcost * Game.barbarian_reward_to_cost_coefficient * Game.fast_exponential_curve()(level)
     # food burn for troop is heavy while foot mint for barbarians is low
-    food_reward = total_foodcost * Game.barbarian_reward_to_cost_coefficient * (Game.resource_weight_low/Game.resource_weight_heavy)
+    food_reward = total_foodcost * Game.barbarian_reward_to_cost_coefficient * (Game.resource_weight_light/Game.resource_weight_heavy)
     return np.array([gold_reward, food_reward])
 
 def get_tile_troop_count(level: int) -> int:
@@ -147,7 +150,7 @@ def get_tile_upgrade_cost(level: int) -> np.array:
     Growth: slow exponential
     Gist: grow depending on tileTroopCount; applied tileTroop discount => more total discounts if higher level
     """
-    goldcost_per_troop = Game.resource_weight_low * Game.tile_troop_discount
+    goldcost_per_troop = Game.resource_weight_light * Game.tile_troop_discount
     foodcost_per_troop = Game.resource_weight_heavy * Game.tile_troop_discount
     total_goldcost = get_tile_troop_count(level) * goldcost_per_troop
     total_foodcost = get_tile_troop_count(level) * foodcost_per_troop
@@ -168,23 +171,23 @@ def get_building_upgrade_cost(level: int, building_type: Building) -> np.array:
     # cost is easy to calculate for goldmine
     goldmine_goldcost = Game.payback_period_curve_in_hour()(level) * gold_hourly_yield
     # calculate foodcost based on resource weight
-    goldmine_foodcost = goldmine_goldcost/Game.resource_weight_heavy * Game.resource_weight_low
+    goldmine_foodcost = goldmine_goldcost/Game.resource_weight_heavy * Game.resource_weight_light
     # taking a leap of faith here; farm doesn't generate gold, so we use its quantity relative to goldmine to calculate
     # assumption is that player spend gold equivalently on two types of building
     farm_goldcost = goldmine_goldcost * Game.init_player_goldmine_count / Game.init_player_farm_count
     # farm food cost if don't consider that part of it goes to troops
     farm_foodcost_raw = Game.payback_period_curve_in_hour()(level) * food_hourly_yield
     # consider relative weight of food burn => Build (low), Troop (heavy)
-    farm_foodcost = farm_foodcost_raw * Game.resource_weight_low/(Game.resource_weight_heavy + Game.resource_weight_low)
+    farm_foodcost = farm_foodcost_raw * Game.resource_weight_light/(Game.resource_weight_heavy + Game.resource_weight_light)
     if building_type == Building.GOLDMINE:
         return np.array([goldmine_goldcost, goldmine_foodcost])
     if building_type == Building.FARM:
         return np.array([farm_goldcost, farm_foodcost])
-    if building_type == Building.CITYCENTER:
+    if building_type == Building.CITY_CENTER:
         # city center upgrade cost incur additional tax, based upon new tile it unlocks
         # tax = expected resource output (= density * getCityCenterTilesInterval / '2' * yield) * payback period
-        unlocked_goldmine_count = Game.expected_gold_density() * get_citycenter_tiles_interval()
-        unlocked_farm_count = Game.expected_farm_density() * get_citycenter_tiles_interval()
+        unlocked_goldmine_count = Game.expected_gold_density() * get_city_center_tiles_interval()
+        unlocked_farm_count = Game.expected_farm_density() * get_city_center_tiles_interval()
         # here I choose to use the new city level as base 
         corresponding_building_level = building_level_based_on_center_level(level + 1)
         expected_goldmine_hourly_yield = get_building_hourly_yield_by_level(corresponding_building_level, Building.GOLDMINE)[0]
@@ -195,11 +198,12 @@ def get_building_upgrade_cost(level: int, building_type: Building) -> np.array:
         return np.array([goldmine_goldcost + farm_goldcost + tax_gold, goldmine_foodcost + farm_foodcost + tax_food])
 
 class Game:
-    total_tile_count = 400
-    expected_player_count = 4
+    # TODO: use a JSON to initialize these variable
+    total_tile_count = 169
+    expected_player_count = 3
     init_player_tile_count = 9
 
-    expected_play_time_in_hour = 2
+    expected_play_time_in_hour = 1.5
     """
     How many tiles does a level 1 city center player has
     """
@@ -210,7 +214,7 @@ class Game:
     Determine resource density. Note that one of the goldmine is citycenter
     """
 
-    init_player_farm_count = 8
+    init_player_farm_count = 4
     """
     How many farms avg players have when city center level is 1
     Determine resource density. 
@@ -237,7 +241,7 @@ class Game:
     note: this is already kinda fast, but might still feel slow. If so, we can initialize some resources
     """
 
-    base_troop_training_in_Seconds = 1
+    base_troop_training_in_Seconds = 0.5
     """
     time to train one troop
     """
@@ -310,7 +314,7 @@ class Game:
     #   Mint: Harvest (heavy), Gather (medium), Barbarians (low)
     #   Burn: Build (low), Troop (heavy)
 
-    (resource_weight_low, resource_weight_medium, resource_weight_high, resource_weight_heavy) = (2, 3, 4, 8)
+    (resource_weight_light, resource_weight_medium, resource_weight_high, resource_weight_heavy) = (2, 3, 4, 8)
 
     def __init__(self) -> None:
         return
@@ -324,14 +328,14 @@ class Game:
             print(f"{raw_constant}: {getattr(self, raw_constant)}")
 
         # Print Building Stats
-        for i in [Building.GOLDMINE, Building.FARM, Building.CITYCENTER]:
+        for i in [Building.GOLDMINE, Building.FARM, Building.CITY_CENTER]:
             max_building_level = 1
             buildingType = i
             if i == Building.GOLDMINE:
                 max_building_level = self.max_city_center_level * self.city_center_level_to_building_level
             if i == Building.FARM:
                 max_building_level = self.max_city_center_level * self.city_center_level_to_building_level
-            if i == Building.CITYCENTER:
+            if i == Building.CITY_CENTER:
                 max_building_level = self.max_city_center_level
 
             curr_level = 1
@@ -344,7 +348,7 @@ class Game:
                 (gold_upgrade_cost, food_upgrade_cost) = get_building_upgrade_cost(curr_level, buildingType)
                 (gold_hourly_yield, food_hourly_yield) = get_building_hourly_yield_by_level(curr_level, buildingType)
                 (gold_cap, food_cap) = get_building_resource_cap(curr_level, buildingType)
-                print(f"Building Level:{curr_level}")
+                print(f"Building Level: {curr_level}")
                 print("-----------------")
                 print(f"Gold Yield Per Hour: {gold_hourly_yield}" )
                 print(f"Food Yield Per Hour: {food_hourly_yield}")
@@ -355,8 +359,8 @@ class Game:
                     print(f"Food Cost to Upgrade: {food_upgrade_cost}")
                 if curr_level == max_building_level:
                     print("Cannot Upgrade")
-                if buildingType == Building.CITYCENTER:
-                    print(f"Tile Count Limit: {self.init_player_tile_count + get_citycenter_tiles_interval()*(curr_level-1)}")
+                if buildingType == Building.CITY_CENTER:
+                    print(f"Tile Count Limit: {self.init_player_tile_count + get_city_center_tiles_interval()*(curr_level-1)}")
                 print("-----------------")
 
                 curr_level += 1
@@ -366,7 +370,7 @@ class Game:
         print("-----------------")
         curr_level = 1
         while curr_level <= self.max_city_center_level * self.city_center_level_to_building_level:
-            (reward_gold, reward_food) = getBarbarianReward(curr_level)
+            (reward_gold, reward_food) = get_barbarian_reward(curr_level)
             barbarian_count = get_barbarian_count_by_level(curr_level)
             print("-----------------")
             print(f"Barbarian Level: {curr_level}")
@@ -410,6 +414,102 @@ class Game:
         while curr_level <= max_building_level:
             print(f"City Center Level ({curr_level}) TroopSize: {get_troop_size_by_center_level(curr_level)}")
             curr_level += 1
+        print(f"Troop Gold Cost: {self.resource_weight_light}")
+        print(f"Troop Food Cost: {self.resource_weight_heavy}")
 
         sys.stdout.close()
-        sys.stdout=stdoutOrigin
+        sys.stdout=stdout_origin
+
+    """
+    Constant format:
+    "subject": "Farm",
+    "object": "Food",
+    "componentName": "Yield",
+    "level": 1,
+    "functionName": "upgrade"
+    "value": 1920
+    """
+    def export_json_parameters(self) -> None:
+        # Initialize JSONs
+        game_parameters = []
+        world_parameters = {}
+
+        # Save world parameters here
+        world_parameters["maxCityCenterLevel"] = self.max_city_center_level
+        world_parameters["cityCenterLevelToTileCountRatio"] = int(get_city_center_tiles_interval())
+        world_parameters["cityCenterLevelToEntityLevelRatio"] = int(self.city_center_level_to_building_level)
+        game_parameters.append({ "subject": "Army", "componentName": "Rate", "object": "Gold", "level": 0, "functionName": "gather", "value": int(get_hourly_gather_rate_per_army(Resource.GOLD)) })
+        game_parameters.append({ "subject": "Army", "componentName": "Rate", "object": "Food", "level": 0, "functionName": "gather", "value": int(get_hourly_gather_rate_per_army(Resource.FOOD)) })
+        game_parameters.append({ "subject": "Troop", "componentName": "Load", "object": "Resource", "level": 0, "functionName": "", "value": int(resource_cap_per_troop() * 1000) })
+        game_parameters.append({ "subject": "Troop Production", "componentName": "Cost", "object": "Gold", "level": 0, "functionName": "", "value": int(self.resource_weight_light) })
+        game_parameters.append({ "subject": "Troop Production", "componentName": "Cost", "object": "Food", "level": 0, "functionName": "", "value": int(self.resource_weight_heavy) })
+        game_parameters.append({ "subject": "Settler", "componentName": "Health", "object": "", "level": 0, "functionName": "", "value": 1000000000 })
+        game_parameters.append({ "subject": "Barbarian", "componentName": "Cooldown", "object": "", "level": 0, "functionName": "", "value": 30 })
+
+        # Building Stats
+        for i in [Building.GOLDMINE, Building.FARM, Building.CITY_CENTER]:
+            max_building_level = 1
+            building_type = i
+            if i == Building.GOLDMINE:
+                max_building_level = self.max_city_center_level * self.city_center_level_to_building_level
+            elif i == Building.FARM:
+                max_building_level = self.max_city_center_level * self.city_center_level_to_building_level
+            elif i == Building.CITY_CENTER:
+                max_building_level = self.max_city_center_level
+                for i in range(1, 10):
+                    game_parameters.append({ "subject": "City Center", "componentName": "Load", "object": "Troop", "level": i, "functionName": "", "value": 2000 }) # FIXME: hardcoded
+
+            curr_level = 0
+
+            while curr_level <= max_building_level:
+                (gold_upgrade_cost, food_upgrade_cost) = get_building_upgrade_cost(curr_level, building_type)
+                (gold_hourly_yield, food_hourly_yield) = get_building_hourly_yield_by_level(curr_level, building_type)
+                (gold_cap, food_cap) = get_building_resource_cap(curr_level, building_type)
+
+                game_parameters.append({ "subject": building_type, "componentName": "Yield", "object": "Gold", "level": curr_level, "functionName": "", "value": int(gold_hourly_yield)  })
+                game_parameters.append({ "subject": building_type, "componentName": "Yield", "object": "Food", "level": curr_level, "functionName": "", "value": int(food_hourly_yield)  })
+                game_parameters.append({ "subject": building_type, "componentName": "Load", "object": "Gold", "level": curr_level, "functionName": "", "value": int(gold_cap) })
+                game_parameters.append({ "subject": building_type, "componentName": "Load", "object": "Food", "level": curr_level, "functionName": "", "value": int(food_cap) })
+                if curr_level < max_building_level:
+                    game_parameters.append({ "subject": building_type, "componentName": "Cost", "object": "Gold", "level": curr_level, "functionName": "upgrade", "value": int(gold_upgrade_cost)  })
+                    game_parameters.append({ "subject": building_type, "componentName": "Cost", "object": "Food", "level": curr_level, "functionName": "upgrade", "value": int(food_upgrade_cost)  })
+
+                curr_level += 1
+
+        # Barbarian Stats
+        curr_level = 1
+        while curr_level <= self.max_city_center_level * self.city_center_level_to_building_level:
+            (reward_gold, reward_food) = get_barbarian_reward(curr_level)
+            barbarian_count = get_barbarian_count_by_level(curr_level)
+            game_parameters.append({ "subject": "Barbarian", "componentName": "Reward", "object": "Gold", "level": curr_level, "functionName": "", "value": int(reward_gold)  })
+            game_parameters.append({ "subject": "Barbarian", "componentName": "Reward", "object": "Food", "level": curr_level, "functionName": "", "value": int(reward_food)  })
+            game_parameters.append({ "subject": "Barbarian", "componentName": "Amount", "object": "Guard", "level": curr_level, "functionName": "", "value": barbarian_count  })
+            curr_level += 1
+
+        # Tile Stats
+        curr_level = 1
+        max_tile_level = self.max_city_center_level * self.city_center_level_to_building_level
+        while curr_level <= max_tile_level:
+            (cost_gold, cost_food) = get_tile_upgrade_cost(curr_level)
+            tile_guard_count = get_tile_troop_count(curr_level)
+            game_parameters.append({ "subject": "Tile", "componentName": "Amount", "object": "Guard", "level": curr_level, "functionName": "", "value": tile_guard_count  })
+            if curr_level < max_tile_level:
+                game_parameters.append({ "subject": "Tile", "componentName": "Cost", "object": "Gold", "level": curr_level, "functionName": "upgrade", "value": int(cost_gold)  })
+                game_parameters.append({ "subject": "Tile", "componentName": "Cost", "object": "Food", "level": curr_level, "functionName": "upgrade", "value": int(cost_food)  })
+            curr_level += 1
+        
+        # Army Size Stats
+        max_building_level = self.max_city_center_level
+        curr_level = 1
+        while curr_level <= max_building_level:
+            game_parameters.append({ "subject": "Army", "componentName": "Count", "object": "Troop", "level": curr_level, "functionName": "upgrade", "value": get_troop_size_by_center_level(curr_level)  })
+            curr_level += 1
+        
+        # Dump JSON
+        with open("game_parameters.json", "w+") as outfile:
+                outfile.write(json.dumps(game_parameters, indent=4))
+        with open("world_parameters.json", "w+") as outfile:
+                outfile.write(json.dumps(world_parameters, indent=4))
+
+a = Game()
+a.export_json_parameters()

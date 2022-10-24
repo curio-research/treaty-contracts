@@ -35,6 +35,7 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
 
 export type WorldConstantsStruct = {
   admin: PromiseOrValue<string>;
+  tileWidth: PromiseOrValue<BigNumberish>;
   worldWidth: PromiseOrValue<BigNumberish>;
   worldHeight: PromiseOrValue<BigNumberish>;
   numInitTerrainTypes: PromiseOrValue<BigNumberish>;
@@ -43,7 +44,9 @@ export type WorldConstantsStruct = {
   maxArmyCountPerPlayer: PromiseOrValue<BigNumberish>;
   maxTroopCountPerArmy: PromiseOrValue<BigNumberish>;
   maxPlayerCount: PromiseOrValue<BigNumberish>;
-  tileWidth: PromiseOrValue<BigNumberish>;
+  maxCityCenterLevel: PromiseOrValue<BigNumberish>;
+  cityCenterLevelToEntityLevelRatio: PromiseOrValue<BigNumberish>;
+  cityCenterLevelToTileCountRatio: PromiseOrValue<BigNumberish>;
 };
 
 export type WorldConstantsStructOutput = [
@@ -56,9 +59,13 @@ export type WorldConstantsStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
+  BigNumber,
+  BigNumber,
+  BigNumber,
   BigNumber
 ] & {
   admin: string;
+  tileWidth: BigNumber;
   worldWidth: BigNumber;
   worldHeight: BigNumber;
   numInitTerrainTypes: BigNumber;
@@ -67,7 +74,9 @@ export type WorldConstantsStructOutput = [
   maxArmyCountPerPlayer: BigNumber;
   maxTroopCountPerArmy: BigNumber;
   maxPlayerCount: BigNumber;
-  tileWidth: BigNumber;
+  maxCityCenterLevel: BigNumber;
+  cityCenterLevelToEntityLevelRatio: BigNumber;
+  cityCenterLevelToTileCountRatio: BigNumber;
 };
 
 export interface GetterFacetInterface extends utils.Interface {

@@ -12,7 +12,7 @@
   },
   "files": {
     "contracts/Component.sol": {
-      "lastModificationDate": 1666201131058,
+      "lastModificationDate": 1666133962115,
       "contentHash": "d358edd51715363a84865cc279701893",
       "sourceName": "contracts/Component.sol",
       "solcConfig": {
@@ -22,8 +22,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -53,6 +52,47 @@
         }
       }
     },
+    "contracts/CurioERC20.sol": {
+      "lastModificationDate": 1666632452915,
+      "contentHash": "7c91ba1c40a3058e10a1b0b6d69e8e86",
+      "sourceName": "contracts/CurioERC20.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/solmate/src/tokens/ERC20.sol"
+      ],
+      "versionRequirement": "^0.8.4",
+      "artifacts": {
+        "CurioERC20": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "CurioERC20.sol/CurioERC20.json"
+        }
+      }
+    },
     "contracts/Diamond.sol": {
       "lastModificationDate": 1665596810981,
       "contentHash": "1e162c4c7e9cd8814e6f1ec468f3bfb7",
@@ -64,8 +104,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -107,8 +146,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -147,8 +185,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -187,8 +224,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -217,7 +253,7 @@
       }
     },
     "contracts/TypedComponents.sol": {
-      "lastModificationDate": 1665596810982,
+      "lastModificationDate": 1665426093740,
       "contentHash": "784c815f5c7c20df44d5463e4396354d",
       "sourceName": "contracts/TypedComponents.sol",
       "solcConfig": {
@@ -227,8 +263,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -289,8 +324,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -322,8 +356,8 @@
       }
     },
     "contracts/facets/AdminFacet.sol": {
-      "lastModificationDate": 1666201131058,
-      "contentHash": "0cdcb024e6be26fc3f9d3fc1f512592d",
+      "lastModificationDate": 1666632561502,
+      "contentHash": "0fa2b4b434fef1a213b99e3c4c2c5eef",
       "sourceName": "contracts/facets/AdminFacet.sol",
       "solcConfig": {
         "settings": {
@@ -332,8 +366,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -385,8 +418,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -428,8 +460,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -463,13 +494,8 @@
       }
     },
     "contracts/facets/GameFacet.sol": {
-<<<<<<< Updated upstream
-      "lastModificationDate": 1666241003634,
-      "contentHash": "25f1ebcb6188a78197c70eb43f5d9cd9",
-=======
-      "lastModificationDate": 1665785615192,
-      "contentHash": "b9542c1888e1e53cd02d66f7b6221715",
->>>>>>> Stashed changes
+      "lastModificationDate": 1666632561502,
+      "contentHash": "de357107aef86ead6b54756b3d3638b5",
       "sourceName": "contracts/facets/GameFacet.sol",
       "solcConfig": {
         "settings": {
@@ -478,8 +504,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -509,6 +534,7 @@
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Templates.sol",
         "contracts/libraries/Types.sol",
+        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/Strings.sol",
         "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol"
       ],
@@ -520,8 +546,8 @@
       }
     },
     "contracts/facets/GetterFacet.sol": {
-      "lastModificationDate": 1666022016420,
-      "contentHash": "2a2695a21e22f36aff0c97084c68f675",
+      "lastModificationDate": 1666632561503,
+      "contentHash": "49c390b30ecebdf8818c93425cf47815",
       "sourceName": "contracts/facets/GetterFacet.sol",
       "solcConfig": {
         "settings": {
@@ -530,8 +556,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -582,8 +607,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -616,7 +640,7 @@
       }
     },
     "contracts/facets/PolicyFacet.sol": {
-      "lastModificationDate": 1665596810983,
+      "lastModificationDate": 1666565020570,
       "contentHash": "937d0828bde7ce69ce5f3d0d865c256f",
       "sourceName": "contracts/facets/PolicyFacet.sol",
       "solcConfig": {
@@ -626,8 +650,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -678,8 +701,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -718,8 +740,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -758,8 +779,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -798,8 +818,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -828,7 +847,7 @@
       }
     },
     "contracts/libraries/ECSLib.sol": {
-      "lastModificationDate": 1665596810983,
+      "lastModificationDate": 1666236490287,
       "contentHash": "21abc0fe2ed154e7d2357751c8ce25a3",
       "sourceName": "contracts/libraries/ECSLib.sol",
       "solcConfig": {
@@ -838,8 +857,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -876,13 +894,8 @@
       }
     },
     "contracts/libraries/GameLib.sol": {
-<<<<<<< Updated upstream
-      "lastModificationDate": 1666201131059,
-      "contentHash": "48118c71f8edd20757f1c96cc6fd20ac",
-=======
-      "lastModificationDate": 1665785615192,
-      "contentHash": "5c9c82010e01ddfff13054635c650725",
->>>>>>> Stashed changes
+      "lastModificationDate": 1666632561503,
+      "contentHash": "ededdecd1d5dfd060915953096d8aeb4",
       "sourceName": "contracts/libraries/GameLib.sol",
       "solcConfig": {
         "settings": {
@@ -891,8 +904,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -942,8 +954,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -974,7 +985,7 @@
       }
     },
     "contracts/libraries/Storage.sol": {
-      "lastModificationDate": 1665596810984,
+      "lastModificationDate": 1665288827106,
       "contentHash": "1b36141f848b096102e707d476aaf9cb",
       "sourceName": "contracts/libraries/Storage.sol",
       "solcConfig": {
@@ -984,8 +995,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -1019,8 +1029,8 @@
       }
     },
     "contracts/libraries/Templates.sol": {
-      "lastModificationDate": 1666201131059,
-      "contentHash": "699f5121af78366f83e4eb70698e5606",
+      "lastModificationDate": 1666547306453,
+      "contentHash": "ebd1d4f4252526d9f2045471983dcbf1",
       "sourceName": "contracts/libraries/Templates.sol",
       "solcConfig": {
         "settings": {
@@ -1029,8 +1039,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -1069,8 +1078,8 @@
       }
     },
     "contracts/libraries/Types.sol": {
-      "lastModificationDate": 1666201131060,
-      "contentHash": "4f550b072e09cc339033efbf48a18be4",
+      "lastModificationDate": 1666544994301,
+      "contentHash": "c74e739f4c09100a279d1472019f00d9",
       "sourceName": "contracts/libraries/Types.sol",
       "solcConfig": {
         "settings": {
@@ -1079,8 +1088,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -1109,7 +1117,7 @@
       }
     },
     "contracts/upgradeInitializers/DiamondInit.sol": {
-      "lastModificationDate": 1665596810984,
+      "lastModificationDate": 1665614471417,
       "contentHash": "20c57a1b63107534c842845ef2518021",
       "sourceName": "contracts/upgradeInitializers/DiamondInit.sol",
       "solcConfig": {
@@ -1119,8 +1127,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -1158,7 +1165,7 @@
       }
     },
     "contracts/upgradeInitializers/diamondInit.sol": {
-      "lastModificationDate": 1665596810984,
+      "lastModificationDate": 1665614471417,
       "contentHash": "20c57a1b63107534c842845ef2518021",
       "sourceName": "contracts/upgradeInitializers/diamondInit.sol",
       "solcConfig": {
@@ -1168,8 +1175,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -1217,8 +1223,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -1257,8 +1262,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -1311,8 +1315,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -1351,8 +1354,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -1391,8 +1393,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -1421,7 +1422,7 @@
       }
     },
     "lib/openzeppelin-contracts/contracts/utils/Strings.sol": {
-      "lastModificationDate": 1665596811013,
+      "lastModificationDate": 1665288827155,
       "contentHash": "9ba0bb93454a1ab7b6824f59ead41f42",
       "sourceName": "lib/openzeppelin-contracts/contracts/utils/Strings.sol",
       "solcConfig": {
@@ -1431,8 +1432,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -1471,8 +1471,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -1500,9 +1499,48 @@
         }
       }
     },
+    "lib/solmate/src/tokens/ERC20.sol": {
+      "lastModificationDate": 1666632452943,
+      "contentHash": "0c7c7ada139062536af09d69d96d395c",
+      "sourceName": "lib/solmate/src/tokens/ERC20.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": ">=0.8.0",
+      "artifacts": {
+        "ERC20": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "ERC20.sol/ERC20.json"
+        }
+      }
+    },
     "test/Basic.t.sol": {
-      "lastModificationDate": 1666201131061,
-      "contentHash": "187bfac5ed267da95e613e37d744eb14",
+      "lastModificationDate": 1666632561506,
+      "contentHash": "154926964debf8f8fee7a730064b6a6d",
       "sourceName": "test/Basic.t.sol",
       "solcConfig": {
         "settings": {
@@ -1511,8 +1549,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -1573,7 +1610,7 @@
       }
     },
     "test/Depr.t.sol": {
-      "lastModificationDate": 1665596811042,
+      "lastModificationDate": 1665426093751,
       "contentHash": "ff7747e1ab4c86469ed2ed06c659b116",
       "sourceName": "test/Depr.t.sol",
       "solcConfig": {
@@ -1583,8 +1620,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -1645,8 +1681,8 @@
       }
     },
     "test/DiamondDeploy.t.sol": {
-      "lastModificationDate": 1666201131062,
-      "contentHash": "1ab2f0acba1173ce04a417f34dc4748f",
+      "lastModificationDate": 1666632561506,
+      "contentHash": "31dde790573849911d8c57104070240e",
       "sourceName": "test/DiamondDeploy.t.sol",
       "solcConfig": {
         "settings": {
@@ -1655,8 +1691,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -1716,7 +1751,7 @@
       }
     },
     "test/ECS.t.sol": {
-      "lastModificationDate": 1666022016424,
+      "lastModificationDate": 1666565020576,
       "contentHash": "5af2d7a97cc40ba9eb4dc53bf9000a06",
       "sourceName": "test/ECS.t.sol",
       "solcConfig": {
@@ -1726,8 +1761,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
