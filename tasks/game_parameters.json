@@ -1461,7 +1461,7 @@
         "object": "Gold",
         "level": 1,
         "functionName": "upgrade",
-        "value": 120
+        "value": 156
     },
     {
         "subject": "Tile",
@@ -1469,7 +1469,7 @@
         "object": "Food",
         "level": 1,
         "functionName": "upgrade",
-        "value": 480
+        "value": 626
     },
     {
         "subject": "Tile",
@@ -1485,7 +1485,7 @@
         "object": "Gold",
         "level": 2,
         "functionName": "upgrade",
-        "value": 203
+        "value": 180
     },
     {
         "subject": "Tile",
@@ -1493,7 +1493,7 @@
         "object": "Food",
         "level": 2,
         "functionName": "upgrade",
-        "value": 815
+        "value": 722
     },
     {
         "subject": "Tile",
@@ -1509,7 +1509,7 @@
         "object": "Gold",
         "level": 3,
         "functionName": "upgrade",
-        "value": 300
+        "value": 208
     },
     {
         "subject": "Tile",
@@ -1517,7 +1517,7 @@
         "object": "Food",
         "level": 3,
         "functionName": "upgrade",
-        "value": 1202
+        "value": 833
     },
     {
         "subject": "Tile",
@@ -1533,7 +1533,7 @@
         "object": "Gold",
         "level": 4,
         "functionName": "upgrade",
-        "value": 412
+        "value": 240
     },
     {
         "subject": "Tile",
@@ -1541,7 +1541,7 @@
         "object": "Food",
         "level": 4,
         "functionName": "upgrade",
-        "value": 1648
+        "value": 961
     },
     {
         "subject": "Tile",
@@ -1557,7 +1557,7 @@
         "object": "Gold",
         "level": 5,
         "functionName": "upgrade",
-        "value": 540
+        "value": 277
     },
     {
         "subject": "Tile",
@@ -1565,7 +1565,7 @@
         "object": "Food",
         "level": 5,
         "functionName": "upgrade",
-        "value": 2163
+        "value": 1108
     },
     {
         "subject": "Tile",
@@ -1581,7 +1581,7 @@
         "object": "Gold",
         "level": 6,
         "functionName": "upgrade",
-        "value": 689
+        "value": 319
     },
     {
         "subject": "Tile",
@@ -1589,7 +1589,7 @@
         "object": "Food",
         "level": 6,
         "functionName": "upgrade",
-        "value": 2757
+        "value": 1278
     },
     {
         "subject": "Tile",
@@ -1605,7 +1605,7 @@
         "object": "Gold",
         "level": 7,
         "functionName": "upgrade",
-        "value": 860
+        "value": 368
     },
     {
         "subject": "Tile",
@@ -1613,7 +1613,7 @@
         "object": "Food",
         "level": 7,
         "functionName": "upgrade",
-        "value": 3442
+        "value": 1475
     },
     {
         "subject": "Tile",
@@ -1629,7 +1629,7 @@
         "object": "Gold",
         "level": 8,
         "functionName": "upgrade",
-        "value": 1058
+        "value": 425
     },
     {
         "subject": "Tile",
@@ -1637,7 +1637,7 @@
         "object": "Food",
         "level": 8,
         "functionName": "upgrade",
-        "value": 4232
+        "value": 1701
     },
     {
         "subject": "Tile",

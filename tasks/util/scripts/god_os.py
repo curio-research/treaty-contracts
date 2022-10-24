@@ -152,8 +152,8 @@ def get_tile_upgrade_cost(level: int) -> np.array:
     """
     goldcost_per_troop = Game.resource_weight_light * Game.tile_troop_discount
     foodcost_per_troop = Game.resource_weight_heavy * Game.tile_troop_discount
-    total_goldcost = get_tile_troop_count(level) * goldcost_per_troop
-    total_foodcost = get_tile_troop_count(level) * foodcost_per_troop
+    total_goldcost = (get_tile_troop_count(level + 1) - get_tile_troop_count(level - 1)) * goldcost_per_troop
+    total_foodcost = (get_tile_troop_count(level + 1) - get_tile_troop_count(level - 1)) * foodcost_per_troop
     return np.array([total_goldcost, total_foodcost])
 
 def building_level_based_on_center_level(level: int) -> int:
