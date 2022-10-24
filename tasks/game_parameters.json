@@ -989,7 +989,7 @@
         "object": "Troop",
         "level": 1,
         "functionName": "",
-        "value": 2000
+        "value": 999999999
     },
     {
         "subject": "City Center",
@@ -997,7 +997,7 @@
         "object": "Troop",
         "level": 2,
         "functionName": "",
-        "value": 2000
+        "value": 999999999
     },
     {
         "subject": "City Center",
@@ -1005,55 +1005,7 @@
         "object": "Troop",
         "level": 3,
         "functionName": "",
-        "value": 2000
-    },
-    {
-        "subject": "City Center",
-        "componentName": "Load",
-        "object": "Troop",
-        "level": 4,
-        "functionName": "",
-        "value": 2000
-    },
-    {
-        "subject": "City Center",
-        "componentName": "Load",
-        "object": "Troop",
-        "level": 5,
-        "functionName": "",
-        "value": 2000
-    },
-    {
-        "subject": "City Center",
-        "componentName": "Load",
-        "object": "Troop",
-        "level": 6,
-        "functionName": "",
-        "value": 2000
-    },
-    {
-        "subject": "City Center",
-        "componentName": "Load",
-        "object": "Troop",
-        "level": 7,
-        "functionName": "",
-        "value": 2000
-    },
-    {
-        "subject": "City Center",
-        "componentName": "Load",
-        "object": "Troop",
-        "level": 8,
-        "functionName": "",
-        "value": 2000
-    },
-    {
-        "subject": "City Center",
-        "componentName": "Load",
-        "object": "Troop",
-        "level": 9,
-        "functionName": "",
-        "value": 2000
+        "value": 999999999
     },
     {
         "subject": "City Center",

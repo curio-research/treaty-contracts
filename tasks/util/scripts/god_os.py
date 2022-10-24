@@ -438,6 +438,7 @@ class Game:
         world_parameters["maxCityCenterLevel"] = self.max_city_center_level
         world_parameters["cityCenterLevelToTileCountRatio"] = int(get_city_center_tiles_interval())
         world_parameters["cityCenterLevelToEntityLevelRatio"] = int(self.city_center_level_to_building_level)
+        world_parameters["secondsToTrainAThousandTroops"] = int(Game.base_troop_training_in_Seconds)
         game_parameters.append({ "subject": "Army", "componentName": "Rate", "object": "Gold", "level": 0, "functionName": "gather", "value": int(get_hourly_gather_rate_per_army(Resource.GOLD)) })
         game_parameters.append({ "subject": "Army", "componentName": "Rate", "object": "Food", "level": 0, "functionName": "gather", "value": int(get_hourly_gather_rate_per_army(Resource.FOOD)) })
         game_parameters.append({ "subject": "Troop", "componentName": "Load", "object": "Resource", "level": 0, "functionName": "", "value": int(resource_cap_per_troop() * 1000) })
@@ -456,8 +457,8 @@ class Game:
                 max_building_level = self.max_city_center_level * self.city_center_level_to_building_level
             elif i == Building.CITY_CENTER:
                 max_building_level = self.max_city_center_level
-                for i in range(1, 10):
-                    game_parameters.append({ "subject": "City Center", "componentName": "Load", "object": "Troop", "level": i, "functionName": "", "value": 2000 }) # FIXME: hardcoded
+                for i in range(1, self.max_city_center_level + 1):
+                    game_parameters.append({ "subject": "City Center", "componentName": "Load", "object": "Troop", "level": i, "functionName": "", "value": 999999999 }) # FIXME: hardcoded
 
             curr_level = 0
 

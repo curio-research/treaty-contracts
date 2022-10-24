@@ -312,7 +312,7 @@ contract GameFacet is UseStorage {
         }
 
         // Start production
-        return Templates.addTroopProduction(_buildingID, _templateID, troopInventoryID, _amount, _amount / 5);
+        return Templates.addTroopProduction(_buildingID, _templateID, troopInventoryID, _amount, gs().worldConstants.secondsToTrainAThousandTroops * (_amount / 1000));
     }
 
     function endTroopProduction(uint256 _buildingID, uint256 _productionID) external {
