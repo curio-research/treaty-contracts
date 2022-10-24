@@ -1,8 +1,0 @@
-{
-    "maxCityCenterLevel": 3,
-    "cityCenterLevelToTileCountRatio": 31,
-    "cityCenterLevelToEntityLevelRatio": 3,
-    "cityCenterLV1ArmySize": 7213.067668948546,
-    "cityCenterLV2ArmySize": 16542.051144717658,
-    "cityCenterLV3ArmySize": 30862.628592323912
-}

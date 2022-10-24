@@ -198,7 +198,8 @@ def get_building_upgrade_cost(level: int, building_type: Building) -> np.array:
         return np.array([goldmine_goldcost + farm_goldcost + tax_gold, goldmine_foodcost + farm_foodcost + tax_food])
 
 class Game:
-    total_tile_count = 400
+    # TODO: use a JSON to initialize these variable
+    total_tile_count = 169
     expected_player_count = 3
     init_player_tile_count = 9
 
@@ -455,8 +456,10 @@ class Game:
                 max_building_level = self.max_city_center_level * self.city_center_level_to_building_level
             elif i == Building.CITY_CENTER:
                 max_building_level = self.max_city_center_level
+                for i in range(1, 10):
+                    game_parameters.append({ "subject": "City Center", "componentName": "Load", "object": "Troop", "level": i, "functionName": "", "value": 2000 }) # FIXME: hardcoded
 
-            curr_level = 1
+            curr_level = 0
 
             while curr_level <= max_building_level:
                 (gold_upgrade_cost, food_upgrade_cost) = get_building_upgrade_cost(curr_level, building_type)
@@ -503,9 +506,9 @@ class Game:
             curr_level += 1
         
         # Dump JSON
-        with open("game_parameters.json", "w") as outfile:
+        with open("tasks/game_parameters.json", "w+") as outfile:
                 outfile.write(json.dumps(game_parameters, indent=4))
-        with open("world_parameters.json", "w") as outfile:
+        with open("tasks/world_parameters.json", "w+") as outfile:
                 outfile.write(json.dumps(world_parameters, indent=4))
 
 a = Game()

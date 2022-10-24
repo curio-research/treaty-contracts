@@ -6,9 +6,7 @@
     "sources": "contracts",
     "tests": "test",
     "scripts": "script",
-    "libraries": [
-      "lib"
-    ]
+    "libraries": ["lib"]
   },
   "files": {
     "contracts/Component.sol": {
@@ -26,29 +24,50 @@
           },
           "outputSelection": {
             "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
+              "": ["ast"],
+              "*": ["abi", "evm.bytecode", "evm.deployedBytecode", "evm.methodIdentifiers", "metadata"]
             }
           },
           "evmVersion": "london",
           "libraries": {}
         }
       },
-      "imports": [
-        "contracts/Set.sol"
-      ],
+      "imports": ["contracts/Set.sol"],
       "versionRequirement": "^0.8.4",
       "artifacts": {
         "Component": {
           "0.8.4+commit.c7e474f2.Darwin.appleclang": "Component.sol/Component.json"
+        }
+      }
+    },
+    "contracts/CurioERC20.sol": {
+      "lastModificationDate": 1666632452915,
+      "contentHash": "7c91ba1c40a3058e10a1b0b6d69e8e86",
+      "sourceName": "contracts/CurioERC20.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": ["ast"],
+              "*": ["abi", "evm.bytecode", "evm.deployedBytecode", "evm.methodIdentifiers", "metadata"]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": ["lib/solmate/src/tokens/ERC20.sol"],
+      "versionRequirement": "^0.8.4",
+      "artifacts": {
+        "CurioERC20": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "CurioERC20.sol/CurioERC20.json"
         }
       }
     },
@@ -67,26 +86,15 @@
           },
           "outputSelection": {
             "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
+              "": ["ast"],
+              "*": ["abi", "evm.bytecode", "evm.deployedBytecode", "evm.methodIdentifiers", "metadata"]
             }
           },
           "evmVersion": "london",
           "libraries": {}
         }
       },
-      "imports": [
-        "contracts/interfaces/IDiamondCut.sol",
-        "contracts/libraries/LibDiamond.sol"
-      ],
+      "imports": ["contracts/interfaces/IDiamondCut.sol", "contracts/libraries/LibDiamond.sol"],
       "versionRequirement": "^0.8.0",
       "artifacts": {
         "Diamond": {
@@ -109,16 +117,8 @@
           },
           "outputSelection": {
             "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
+              "": ["ast"],
+              "*": ["abi", "evm.bytecode", "evm.deployedBytecode", "evm.methodIdentifiers", "metadata"]
             }
           },
           "evmVersion": "london",
@@ -148,16 +148,8 @@
           },
           "outputSelection": {
             "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
+              "": ["ast"],
+              "*": ["abi", "evm.bytecode", "evm.deployedBytecode", "evm.methodIdentifiers", "metadata"]
             }
           },
           "evmVersion": "london",
@@ -187,16 +179,8 @@
           },
           "outputSelection": {
             "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
+              "": ["ast"],
+              "*": ["abi", "evm.bytecode", "evm.deployedBytecode", "evm.methodIdentifiers", "metadata"]
             }
           },
           "evmVersion": "london",
@@ -226,27 +210,15 @@
           },
           "outputSelection": {
             "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
+              "": ["ast"],
+              "*": ["abi", "evm.bytecode", "evm.deployedBytecode", "evm.methodIdentifiers", "metadata"]
             }
           },
           "evmVersion": "london",
           "libraries": {}
         }
       },
-      "imports": [
-        "contracts/Component.sol",
-        "contracts/Set.sol",
-        "contracts/libraries/Types.sol"
-      ],
+      "imports": ["contracts/Component.sol", "contracts/Set.sol", "contracts/libraries/Types.sol"],
       "versionRequirement": "^0.8.4",
       "artifacts": {
         "AddressComponent": {
@@ -287,26 +259,15 @@
           },
           "outputSelection": {
             "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
+              "": ["ast"],
+              "*": ["abi", "evm.bytecode", "evm.deployedBytecode", "evm.methodIdentifiers", "metadata"]
             }
           },
           "evmVersion": "london",
           "libraries": {}
         }
       },
-      "imports": [
-        "contracts/interfaces/IDiamondCut.sol",
-        "contracts/libraries/LibDiamond.sol"
-      ],
+      "imports": ["contracts/interfaces/IDiamondCut.sol", "contracts/libraries/LibDiamond.sol"],
       "versionRequirement": "^0.8.0",
       "artifacts": {
         "Diamond": {
@@ -329,16 +290,8 @@
           },
           "outputSelection": {
             "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
+              "": ["ast"],
+              "*": ["abi", "evm.bytecode", "evm.deployedBytecode", "evm.methodIdentifiers", "metadata"]
             }
           },
           "evmVersion": "london",
@@ -381,26 +334,15 @@
           },
           "outputSelection": {
             "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
+              "": ["ast"],
+              "*": ["abi", "evm.bytecode", "evm.deployedBytecode", "evm.methodIdentifiers", "metadata"]
             }
           },
           "evmVersion": "london",
           "libraries": {}
         }
       },
-      "imports": [
-        "contracts/interfaces/IDiamondCut.sol",
-        "contracts/libraries/LibDiamond.sol"
-      ],
+      "imports": ["contracts/interfaces/IDiamondCut.sol", "contracts/libraries/LibDiamond.sol"],
       "versionRequirement": "^0.8.0",
       "artifacts": {
         "DiamondCutFacet": {
@@ -423,28 +365,15 @@
           },
           "outputSelection": {
             "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
+              "": ["ast"],
+              "*": ["abi", "evm.bytecode", "evm.deployedBytecode", "evm.methodIdentifiers", "metadata"]
             }
           },
           "evmVersion": "london",
           "libraries": {}
         }
       },
-      "imports": [
-        "contracts/interfaces/IDiamondCut.sol",
-        "contracts/interfaces/IDiamondLoupe.sol",
-        "contracts/interfaces/IERC165.sol",
-        "contracts/libraries/LibDiamond.sol"
-      ],
+      "imports": ["contracts/interfaces/IDiamondCut.sol", "contracts/interfaces/IDiamondLoupe.sol", "contracts/interfaces/IERC165.sol", "contracts/libraries/LibDiamond.sol"],
       "versionRequirement": "^0.8.0",
       "artifacts": {
         "DiamondLoupeFacet": {
@@ -467,16 +396,8 @@
           },
           "outputSelection": {
             "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
+              "": ["ast"],
+              "*": ["abi", "evm.bytecode", "evm.deployedBytecode", "evm.methodIdentifiers", "metadata"]
             }
           },
           "evmVersion": "london",
@@ -493,6 +414,7 @@
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Templates.sol",
         "contracts/libraries/Types.sol",
+        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/Strings.sol",
         "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol"
       ],
@@ -518,16 +440,8 @@
           },
           "outputSelection": {
             "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
+              "": ["ast"],
+              "*": ["abi", "evm.bytecode", "evm.deployedBytecode", "evm.methodIdentifiers", "metadata"]
             }
           },
           "evmVersion": "london",
@@ -569,27 +483,15 @@
           },
           "outputSelection": {
             "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
+              "": ["ast"],
+              "*": ["abi", "evm.bytecode", "evm.deployedBytecode", "evm.methodIdentifiers", "metadata"]
             }
           },
           "evmVersion": "london",
           "libraries": {}
         }
       },
-      "imports": [
-        "contracts/interfaces/IDiamondCut.sol",
-        "contracts/interfaces/IERC173.sol",
-        "contracts/libraries/LibDiamond.sol"
-      ],
+      "imports": ["contracts/interfaces/IDiamondCut.sol", "contracts/interfaces/IERC173.sol", "contracts/libraries/LibDiamond.sol"],
       "versionRequirement": "^0.8.0",
       "artifacts": {
         "OwnershipFacet": {
@@ -612,16 +514,8 @@
           },
           "outputSelection": {
             "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
+              "": ["ast"],
+              "*": ["abi", "evm.bytecode", "evm.deployedBytecode", "evm.methodIdentifiers", "metadata"]
             }
           },
           "evmVersion": "london",
@@ -663,16 +557,8 @@
           },
           "outputSelection": {
             "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
+              "": ["ast"],
+              "*": ["abi", "evm.bytecode", "evm.deployedBytecode", "evm.methodIdentifiers", "metadata"]
             }
           },
           "evmVersion": "london",
@@ -702,16 +588,8 @@
           },
           "outputSelection": {
             "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
+              "": ["ast"],
+              "*": ["abi", "evm.bytecode", "evm.deployedBytecode", "evm.methodIdentifiers", "metadata"]
             }
           },
           "evmVersion": "london",
@@ -741,16 +619,8 @@
           },
           "outputSelection": {
             "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
+              "": ["ast"],
+              "*": ["abi", "evm.bytecode", "evm.deployedBytecode", "evm.methodIdentifiers", "metadata"]
             }
           },
           "evmVersion": "london",
@@ -780,16 +650,8 @@
           },
           "outputSelection": {
             "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
+              "": ["ast"],
+              "*": ["abi", "evm.bytecode", "evm.deployedBytecode", "evm.methodIdentifiers", "metadata"]
             }
           },
           "evmVersion": "london",
@@ -819,31 +681,15 @@
           },
           "outputSelection": {
             "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
+              "": ["ast"],
+              "*": ["abi", "evm.bytecode", "evm.deployedBytecode", "evm.methodIdentifiers", "metadata"]
             }
           },
           "evmVersion": "london",
           "libraries": {}
         }
       },
-      "imports": [
-        "contracts/Component.sol",
-        "contracts/Mapping.sol",
-        "contracts/Set.sol",
-        "contracts/TypedComponents.sol",
-        "contracts/libraries/Storage.sol",
-        "contracts/libraries/Types.sol",
-        "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol"
-      ],
+      "imports": ["contracts/Component.sol", "contracts/Mapping.sol", "contracts/Set.sol", "contracts/TypedComponents.sol", "contracts/libraries/Storage.sol", "contracts/libraries/Types.sol", "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol"],
       "versionRequirement": "^0.8.4",
       "artifacts": {
         "ECSLib": {
@@ -866,34 +712,15 @@
           },
           "outputSelection": {
             "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
+              "": ["ast"],
+              "*": ["abi", "evm.bytecode", "evm.deployedBytecode", "evm.methodIdentifiers", "metadata"]
             }
           },
           "evmVersion": "london",
           "libraries": {}
         }
       },
-      "imports": [
-        "contracts/Component.sol",
-        "contracts/Mapping.sol",
-        "contracts/Set.sol",
-        "contracts/TypedComponents.sol",
-        "contracts/libraries/ECSLib.sol",
-        "contracts/libraries/Storage.sol",
-        "contracts/libraries/Templates.sol",
-        "contracts/libraries/Types.sol",
-        "lib/openzeppelin-contracts/contracts/utils/Strings.sol",
-        "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol"
-      ],
+      "imports": ["contracts/Component.sol", "contracts/Mapping.sol", "contracts/Set.sol", "contracts/TypedComponents.sol", "contracts/libraries/ECSLib.sol", "contracts/libraries/Storage.sol", "contracts/libraries/Templates.sol", "contracts/libraries/Types.sol", "lib/openzeppelin-contracts/contracts/utils/Strings.sol", "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol"],
       "versionRequirement": "^0.8.4",
       "artifacts": {
         "GameLib": {
@@ -916,25 +743,15 @@
           },
           "outputSelection": {
             "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
+              "": ["ast"],
+              "*": ["abi", "evm.bytecode", "evm.deployedBytecode", "evm.methodIdentifiers", "metadata"]
             }
           },
           "evmVersion": "london",
           "libraries": {}
         }
       },
-      "imports": [
-        "contracts/interfaces/IDiamondCut.sol"
-      ],
+      "imports": ["contracts/interfaces/IDiamondCut.sol"],
       "versionRequirement": "^0.8.0",
       "artifacts": {
         "LibDiamond": {
@@ -957,25 +774,15 @@
           },
           "outputSelection": {
             "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
+              "": ["ast"],
+              "*": ["abi", "evm.bytecode", "evm.deployedBytecode", "evm.methodIdentifiers", "metadata"]
             }
           },
           "evmVersion": "london",
           "libraries": {}
         }
       },
-      "imports": [
-        "contracts/libraries/Types.sol"
-      ],
+      "imports": ["contracts/libraries/Types.sol"],
       "versionRequirement": "^0.8.0",
       "artifacts": {
         "LibStorage": {
@@ -1001,33 +808,15 @@
           },
           "outputSelection": {
             "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
+              "": ["ast"],
+              "*": ["abi", "evm.bytecode", "evm.deployedBytecode", "evm.methodIdentifiers", "metadata"]
             }
           },
           "evmVersion": "london",
           "libraries": {}
         }
       },
-      "imports": [
-        "contracts/Component.sol",
-        "contracts/Mapping.sol",
-        "contracts/Set.sol",
-        "contracts/TypedComponents.sol",
-        "contracts/libraries/ECSLib.sol",
-        "contracts/libraries/Storage.sol",
-        "contracts/libraries/Types.sol",
-        "lib/openzeppelin-contracts/contracts/utils/Strings.sol",
-        "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol"
-      ],
+      "imports": ["contracts/Component.sol", "contracts/Mapping.sol", "contracts/Set.sol", "contracts/TypedComponents.sol", "contracts/libraries/ECSLib.sol", "contracts/libraries/Storage.sol", "contracts/libraries/Types.sol", "lib/openzeppelin-contracts/contracts/utils/Strings.sol", "lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol"],
       "versionRequirement": "^0.8.4",
       "artifacts": {
         "Templates": {
@@ -1050,16 +839,8 @@
           },
           "outputSelection": {
             "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
+              "": ["ast"],
+              "*": ["abi", "evm.bytecode", "evm.deployedBytecode", "evm.methodIdentifiers", "metadata"]
             }
           },
           "evmVersion": "london",
@@ -1089,32 +870,15 @@
           },
           "outputSelection": {
             "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
+              "": ["ast"],
+              "*": ["abi", "evm.bytecode", "evm.deployedBytecode", "evm.methodIdentifiers", "metadata"]
             }
           },
           "evmVersion": "london",
           "libraries": {}
         }
       },
-      "imports": [
-        "contracts/Set.sol",
-        "contracts/interfaces/IDiamondCut.sol",
-        "contracts/interfaces/IDiamondLoupe.sol",
-        "contracts/interfaces/IERC165.sol",
-        "contracts/interfaces/IERC173.sol",
-        "contracts/libraries/LibDiamond.sol",
-        "contracts/libraries/Storage.sol",
-        "contracts/libraries/Types.sol"
-      ],
+      "imports": ["contracts/Set.sol", "contracts/interfaces/IDiamondCut.sol", "contracts/interfaces/IDiamondLoupe.sol", "contracts/interfaces/IERC165.sol", "contracts/interfaces/IERC173.sol", "contracts/libraries/LibDiamond.sol", "contracts/libraries/Storage.sol", "contracts/libraries/Types.sol"],
       "versionRequirement": "^0.8.0",
       "artifacts": {
         "DiamondInit": {
@@ -1137,32 +901,15 @@
           },
           "outputSelection": {
             "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
+              "": ["ast"],
+              "*": ["abi", "evm.bytecode", "evm.deployedBytecode", "evm.methodIdentifiers", "metadata"]
             }
           },
           "evmVersion": "london",
           "libraries": {}
         }
       },
-      "imports": [
-        "contracts/Set.sol",
-        "contracts/interfaces/IDiamondCut.sol",
-        "contracts/interfaces/IDiamondLoupe.sol",
-        "contracts/interfaces/IERC165.sol",
-        "contracts/interfaces/IERC173.sol",
-        "contracts/libraries/LibDiamond.sol",
-        "contracts/libraries/Storage.sol",
-        "contracts/libraries/Types.sol"
-      ],
+      "imports": ["contracts/Set.sol", "contracts/interfaces/IDiamondCut.sol", "contracts/interfaces/IDiamondLoupe.sol", "contracts/interfaces/IERC165.sol", "contracts/interfaces/IERC173.sol", "contracts/libraries/LibDiamond.sol", "contracts/libraries/Storage.sol", "contracts/libraries/Types.sol"],
       "versionRequirement": "^0.8.0",
       "artifacts": {
         "DiamondInit": {
@@ -1185,16 +932,8 @@
           },
           "outputSelection": {
             "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
+              "": ["ast"],
+              "*": ["abi", "evm.bytecode", "evm.deployedBytecode", "evm.methodIdentifiers", "metadata"]
             }
           },
           "evmVersion": "london",
@@ -1224,28 +963,15 @@
           },
           "outputSelection": {
             "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
+              "": ["ast"],
+              "*": ["abi", "evm.bytecode", "evm.deployedBytecode", "evm.methodIdentifiers", "metadata"]
             }
           },
           "evmVersion": "london",
           "libraries": {}
         }
       },
-      "imports": [
-        "lib/forge-std/lib/ds-test/src/test.sol",
-        "lib/forge-std/src/Vm.sol",
-        "lib/forge-std/src/console.sol",
-        "lib/forge-std/src/console2.sol"
-      ],
+      "imports": ["lib/forge-std/lib/ds-test/src/test.sol", "lib/forge-std/src/Vm.sol", "lib/forge-std/src/console.sol", "lib/forge-std/src/console2.sol"],
       "versionRequirement": ">=0.6.0, <0.9.0",
       "artifacts": {
         "Test": {
@@ -1277,16 +1003,8 @@
           },
           "outputSelection": {
             "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
+              "": ["ast"],
+              "*": ["abi", "evm.bytecode", "evm.deployedBytecode", "evm.methodIdentifiers", "metadata"]
             }
           },
           "evmVersion": "london",
@@ -1316,16 +1034,8 @@
           },
           "outputSelection": {
             "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
+              "": ["ast"],
+              "*": ["abi", "evm.bytecode", "evm.deployedBytecode", "evm.methodIdentifiers", "metadata"]
             }
           },
           "evmVersion": "london",
@@ -1355,16 +1065,8 @@
           },
           "outputSelection": {
             "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
+              "": ["ast"],
+              "*": ["abi", "evm.bytecode", "evm.deployedBytecode", "evm.methodIdentifiers", "metadata"]
             }
           },
           "evmVersion": "london",
@@ -1394,16 +1096,8 @@
           },
           "outputSelection": {
             "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
+              "": ["ast"],
+              "*": ["abi", "evm.bytecode", "evm.deployedBytecode", "evm.methodIdentifiers", "metadata"]
             }
           },
           "evmVersion": "london",
@@ -1433,16 +1127,8 @@
           },
           "outputSelection": {
             "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
+              "": ["ast"],
+              "*": ["abi", "evm.bytecode", "evm.deployedBytecode", "evm.methodIdentifiers", "metadata"]
             }
           },
           "evmVersion": "london",
@@ -1454,6 +1140,37 @@
       "artifacts": {
         "SafeMath": {
           "0.8.4+commit.c7e474f2.Darwin.appleclang": "SafeMath.sol/SafeMath.json"
+        }
+      }
+    },
+    "lib/solmate/src/tokens/ERC20.sol": {
+      "lastModificationDate": 1666632452943,
+      "contentHash": "0c7c7ada139062536af09d69d96d395c",
+      "sourceName": "lib/solmate/src/tokens/ERC20.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": ["ast"],
+              "*": ["abi", "evm.bytecode", "evm.deployedBytecode", "evm.methodIdentifiers", "metadata"]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": ">=0.8.0",
+      "artifacts": {
+        "ERC20": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "ERC20.sol/ERC20.json"
         }
       }
     },
@@ -1472,16 +1189,8 @@
           },
           "outputSelection": {
             "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
+              "": ["ast"],
+              "*": ["abi", "evm.bytecode", "evm.deployedBytecode", "evm.methodIdentifiers", "metadata"]
             }
           },
           "evmVersion": "london",
@@ -1543,16 +1252,8 @@
           },
           "outputSelection": {
             "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
+              "": ["ast"],
+              "*": ["abi", "evm.bytecode", "evm.deployedBytecode", "evm.methodIdentifiers", "metadata"]
             }
           },
           "evmVersion": "london",
@@ -1614,16 +1315,8 @@
           },
           "outputSelection": {
             "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
+              "": ["ast"],
+              "*": ["abi", "evm.bytecode", "evm.deployedBytecode", "evm.methodIdentifiers", "metadata"]
             }
           },
           "evmVersion": "london",
@@ -1684,16 +1377,8 @@
           },
           "outputSelection": {
             "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
+              "": ["ast"],
+              "*": ["abi", "evm.bytecode", "evm.deployedBytecode", "evm.methodIdentifiers", "metadata"]
             }
           },
           "evmVersion": "london",
