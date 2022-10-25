@@ -227,56 +227,56 @@ Tile Count Limit: 53
 Barbarian Level: 1
 -----------------
 Barbarian Counts: 20.0
-Gold Reward: 19.28416548961019
-Food Reward: 180.0
+Gold Reward: 59.99999999999999
+Food Reward: 60.0
 -----------------
 Barbarian Level: 2
 -----------------
 Barbarian Counts: 33.97252823683512
-Gold Reward: 60.317343755623384
-Food Reward: 305.75275413151604
+Gold Reward: 187.66902966515448
+Food Reward: 101.91758471050535
 -----------------
 Barbarian Level: 3
 -----------------
 Barbarian Counts: 50.090747701031574
-Gold Reward: 138.56886054221667
-Food Reward: 450.81672930928414
+Gold Reward: 431.137745473738
+Food Reward: 150.27224310309472
 -----------------
 Barbarian Level: 4
 -----------------
 Barbarian Counts: 68.68416145496559
-Gold Reward: 273.13100144322493
-Food Reward: 618.1574530946903
+Gold Reward: 849.8091398055493
+Food Reward: 206.05248436489677
 -----------------
 Barbarian Level: 5
 -----------------
 Barbarian Counts: 90.1328726971051
-Gold Reward: 491.6608937158759
-Food Reward: 811.195854273946
+Gold Reward: 1529.7345191756524
+Food Reward: 270.3986180913153
 -----------------
 Barbarian Level: 6
 -----------------
 Barbarian Counts: 114.87535517165041
-Gold Reward: 834.0353731688476
-Food Reward: 1033.8781965448536
+Gold Reward: 2594.985114450105
+Food Reward: 344.6260655149512
 -----------------
 Barbarian Level: 7
 -----------------
 Barbarian Counts: 143.41741684109155
-Gold Reward: 1357.5318865858828
-Food Reward: 1290.756751569824
+Gold Reward: 4223.771738478243
+Food Reward: 430.25225052327465
 -----------------
 Barbarian Level: 8
 -----------------
 Barbarian Counts: 176.34254006509624
-Gold Reward: 2144.1660980520887
-Food Reward: 1587.082860585866
+Gold Reward: 6671.274728089146
+Food Reward: 529.0276201952887
 -----------------
 Barbarian Level: 9
 -----------------
 Barbarian Counts: 214.32380966891603
-Gold Reward: 3311.076189074568
-Food Reward: 1928.914287020244
+Gold Reward: 10301.953250272065
+Food Reward: 642.971429006748
 -----------------
 ** Tile Upgrade Stats **
 -----------------

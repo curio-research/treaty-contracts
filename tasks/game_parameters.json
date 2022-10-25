@@ -1189,7 +1189,7 @@
         "object": "Gold",
         "level": 1,
         "functionName": "",
-        "value": 19284
+        "value": 59999
     },
     {
         "subject": "Barbarian",
@@ -1197,7 +1197,7 @@
         "object": "Food",
         "level": 1,
         "functionName": "",
-        "value": 180000
+        "value": 60000
     },
     {
         "subject": "Barbarian",
@@ -1213,7 +1213,7 @@
         "object": "Gold",
         "level": 2,
         "functionName": "",
-        "value": 60317
+        "value": 187669
     },
     {
         "subject": "Barbarian",
@@ -1221,7 +1221,7 @@
         "object": "Food",
         "level": 2,
         "functionName": "",
-        "value": 305752
+        "value": 101917
     },
     {
         "subject": "Barbarian",
@@ -1237,7 +1237,7 @@
         "object": "Gold",
         "level": 3,
         "functionName": "",
-        "value": 138568
+        "value": 431137
     },
     {
         "subject": "Barbarian",
@@ -1245,7 +1245,7 @@
         "object": "Food",
         "level": 3,
         "functionName": "",
-        "value": 450816
+        "value": 150272
     },
     {
         "subject": "Barbarian",
@@ -1261,7 +1261,7 @@
         "object": "Gold",
         "level": 4,
         "functionName": "",
-        "value": 273131
+        "value": 849809
     },
     {
         "subject": "Barbarian",
@@ -1269,7 +1269,7 @@
         "object": "Food",
         "level": 4,
         "functionName": "",
-        "value": 618157
+        "value": 206052
     },
     {
         "subject": "Barbarian",
@@ -1285,7 +1285,7 @@
         "object": "Gold",
         "level": 5,
         "functionName": "",
-        "value": 491660
+        "value": 1529734
     },
     {
         "subject": "Barbarian",
@@ -1293,7 +1293,7 @@
         "object": "Food",
         "level": 5,
         "functionName": "",
-        "value": 811195
+        "value": 270398
     },
     {
         "subject": "Barbarian",
@@ -1309,7 +1309,7 @@
         "object": "Gold",
         "level": 6,
         "functionName": "",
-        "value": 834035
+        "value": 2594985
     },
     {
         "subject": "Barbarian",
@@ -1317,7 +1317,7 @@
         "object": "Food",
         "level": 6,
         "functionName": "",
-        "value": 1033878
+        "value": 344626
     },
     {
         "subject": "Barbarian",
@@ -1333,7 +1333,7 @@
         "object": "Gold",
         "level": 7,
         "functionName": "",
-        "value": 1357531
+        "value": 4223771
     },
     {
         "subject": "Barbarian",
@@ -1341,7 +1341,7 @@
         "object": "Food",
         "level": 7,
         "functionName": "",
-        "value": 1290756
+        "value": 430252
     },
     {
         "subject": "Barbarian",
@@ -1357,7 +1357,7 @@
         "object": "Gold",
         "level": 8,
         "functionName": "",
-        "value": 2144166
+        "value": 6671274
     },
     {
         "subject": "Barbarian",
@@ -1365,7 +1365,7 @@
         "object": "Food",
         "level": 8,
         "functionName": "",
-        "value": 1587082
+        "value": 529027
     },
     {
         "subject": "Barbarian",
@@ -1381,7 +1381,7 @@
         "object": "Gold",
         "level": 9,
         "functionName": "",
-        "value": 3311076
+        "value": 10301953
     },
     {
         "subject": "Barbarian",
@@ -1389,7 +1389,7 @@
         "object": "Food",
         "level": 9,
         "functionName": "",
-        "value": 1928914
+        "value": 642971
     },
     {
         "subject": "Barbarian",

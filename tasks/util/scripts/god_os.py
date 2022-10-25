@@ -133,9 +133,9 @@ def get_barbarian_reward(level: int) -> np.array:
     total_goldcost = barbarian_count * goldcost_per_troop
     total_foodcost = barbarian_count * foodcost_per_troop
     # actual reward = base reward * exponential curve (level as x)
-    gold_reward = total_goldcost * Game.barbarian_reward_to_cost_coefficient * Game.fast_exponential_curve()(level)
-    # food burn for troop is heavy while food mint for barbarians is low
-    food_reward = total_foodcost * Game.barbarian_reward_to_cost_coefficient * (Game.resource_weight_low/Game.resource_weight_heavy)
+    gold_reward = total_goldcost * Game.barbarian_reward_to_cost_coefficient * Game.fast_exponential_curve()(level) / Game.fast_exponential_curve()(1)
+    # food burn for troop is heavy while foot mint for barbarians is low
+    food_reward = total_foodcost * Game.barbarian_reward_to_cost_coefficient * (Game.resource_weight_light/Game.resource_weight_heavy)
     return np.array([gold_reward, food_reward])
 
 def get_tile_troop_count(level: int) -> int:
