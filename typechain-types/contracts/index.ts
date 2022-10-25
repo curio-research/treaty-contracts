@@ -14,7 +14,6 @@ export type { libraries };
 import type * as upgradeInitializers from "./upgradeInitializers";
 export type { upgradeInitializers };
 export type { Component } from "./Component";
-export type { CurioERC20 } from "./CurioERC20";
 export type { Diamond } from "./Diamond";
 export type { NATO } from "./NATO";
 export type { Set } from "./Set";

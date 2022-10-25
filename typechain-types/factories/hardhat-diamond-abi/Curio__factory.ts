@@ -844,6 +844,19 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
+        name: "_tileID",
+        type: "uint256",
+      },
+    ],
+    name: "recoverTile",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
         name: "_armyID",
         type: "uint256",
       },
@@ -1503,6 +1516,11 @@ const _abi = [
           {
             internalType: "uint256",
             name: "cityCenterLevelToTileCountRatio",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "secondsToTrainAThousandTroops",
             type: "uint256",
           },
         ],

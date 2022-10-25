@@ -492,11 +492,11 @@ class Game:
         while curr_level <= max_tile_level:
             tile_guard_count = get_tile_troop_count(curr_level)
             game_parameters.append({ "subject": "Tile", "componentName": "Amount", "object": "Guard", "level": curr_level, "functionName": "", "value": tile_guard_count  })
-            curr_level += 1
             if curr_level != max_tile_level:
                 (cost_gold, cost_food) = get_tile_upgrade_cost(curr_level)
                 game_parameters.append({ "subject": "Tile", "componentName": "Cost", "object": "Gold", "level": curr_level, "functionName": "upgrade", "value": int(cost_gold * 1000)})
                 game_parameters.append({ "subject": "Tile", "componentName": "Cost", "object": "Food", "level": curr_level, "functionName": "upgrade", "value": int(cost_food * 1000)})
+            curr_level += 1
 
         
         # Army Size Stats

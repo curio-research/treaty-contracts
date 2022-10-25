@@ -6,7 +6,7 @@ barbarian_to_army_difficulty_constant: 60
 base_troop_training_in_Seconds: 0.2
 city_center_level_to_building_level: 3
 expected_play_time_in_hour: 1.5
-expected_player_count: 3
+expected_player_count: 4
 gather_rate_to_resource_rate: 40
 init_player_farm_count: 4
 init_player_goldmine_count: 2
@@ -197,8 +197,8 @@ Gold Yield Per Hour: 113
 Food Yield Per Hour: 9701
 Gold Cap: 37.666666666666664
 Food Cap: 3233.6666666666665
-Gold Cost to Upgrade: 26.20283369774625
-Food Cost to Upgrade: 4332.610980324693
+Gold Cost to Upgrade: 18.85551464014283
+Food Cost to Upgrade: 3077.1378363567082
 Tile Count Limit: 9
 -----------------
 Building Level: 2
@@ -207,9 +207,9 @@ Gold Yield Per Hour: 136
 Food Yield Per Hour: 11686
 Gold Cap: 45.33333333333333
 Food Cap: 3895.333333333333
-Gold Cost to Upgrade: 61.538068895461784
-Food Cost to Upgrade: 10252.281558860477
-Tile Count Limit: 40
+Gold Cost to Upgrade: 44.203621201694205
+Food Cost to Upgrade: 7280.685996444417
+Tile Count Limit: 31
 -----------------
 Building Level: 3
 -----------------
@@ -218,7 +218,7 @@ Food Yield Per Hour: 13226
 Gold Cap: 51.666666666666664
 Food Cap: 4408.666666666666
 Cannot Upgrade
-Tile Count Limit: 71
+Tile Count Limit: 53
 -----------------
 -----------------
 ** Barbarian Stats **
@@ -336,8 +336,8 @@ Cannot Upgrade
 -----------------
 Gather Stats
 -----------------
-Gold Hourly Gather Rate Per Army: 3233.1851851851848
-Food Hourly Gather Rate Per Army: 103588.22222222222
+Gold Hourly Gather Rate Per Army: 2294.5185185185182
+Food Hourly Gather Rate Per Army: 73514.22222222222
 Resource Load per Troop: 0.27589686188688767
 -----------------
 TroopSize Stats

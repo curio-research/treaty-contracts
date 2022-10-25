@@ -8,7 +8,6 @@ import {Position, WorldConstants} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
 import "contracts/libraries/Templates.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
-import "forge-std/console.sol";
 
 /// @title Game facet
 /// @notice Contains player functions
@@ -174,7 +173,7 @@ contract GameFacet is UseStorage {
         GameLib.ongoingGameCheck();
         GameLib.activePlayerCheck(msg.sender);
         GameLib.entityOwnershipCheck(_tileID, msg.sender);
- 
+
         // lost tile amount = current level amount - actual amount
         uint256 tileLevel = ECSLib.getUint("Level", _tileID);
         uint256 lostGuardAmount = GameLib.getConstant("Tile", "Guard", "Amount", "", tileLevel) - ECSLib.getUint("Amount", _tileID);
@@ -186,7 +185,7 @@ contract GameFacet is UseStorage {
             uint256 inventoryID = GameLib.getInventory(GameLib.getPlayerCity(playerID), resourceTemplateIDs[i]);
             uint256 balance = ECSLib.getUint("Amount", inventoryID);
 
-            uint256 totalRecoverCost =  GameLib.getConstant("Tile", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Cost", "upgrade", 0) * lostGuardAmount;
+            uint256 totalRecoverCost = GameLib.getConstant("Tile", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Cost", "upgrade", 0) * lostGuardAmount;
 
             require(balance >= totalRecoverCost, "CURIO: Insufficient balance");
             ECSLib.setUint("Amount", inventoryID, balance - totalRecoverCost);
@@ -209,7 +208,7 @@ contract GameFacet is UseStorage {
         require(tileLevel < ECSLib.getUint("Level", cityCenterID) * gs().worldConstants.cityCenterLevelToEntityLevelRatio, "CURIO: Max Tile Level Reached");
 
         // Require players to fully recover the tile before upgrade
-        require(GameLib.getConstant("Tile", "Guard", "Amount", "", tileLevel) - ECSLib.getUint("Amount", _tileID) == 0, "CURIO: Need to recover tile first");
+        require(GameLib.getConstant("Tile", "Guard", "Amount", "", tileLevel) <= ECSLib.getUint("Amount", GameLib.getConstituents(_tileID)[0]), "CURIO: Need to recover tile first");
 
         // Deduct costs
         uint256 playerID = GameLib.getPlayer(msg.sender);
@@ -624,8 +623,6 @@ contract GameFacet is UseStorage {
                 ECSLib.setUint("Amount", winnerCityGoldInventoryID, winnerTotalAmount);
             } else {
                 if (terrain >= 3) {
-                    console.log("rightly here");
-
                     // Reset barbarian
                     GameLib.distributeBarbarianReward(winnerCityID, _tileID);
                     uint256 barbarianGuardAmount = GameLib.getConstant("Tile", "Guard", "Amount", "", ECSLib.getUint("Level", _tileID));
@@ -711,6 +708,7 @@ contract GameFacet is UseStorage {
         // Set load
         uint256 newLoad = GameLib.getConstant(subject, ECSLib.getString("InventoryType", ECSLib.getUint("Template", _resourceID)), "Load", "", resourceLevel + 1);
         ECSLib.setUint("Load", _resourceID, newLoad);
+        ECSLib.setUint("LastTimestamp", _resourceID, block.timestamp);
 
         // Set new level
         ECSLib.setUint("Level", _resourceID, resourceLevel + 1);

@@ -47,10 +47,12 @@ export type WorldConstantsStruct = {
   maxCityCenterLevel: PromiseOrValue<BigNumberish>;
   cityCenterLevelToEntityLevelRatio: PromiseOrValue<BigNumberish>;
   cityCenterLevelToTileCountRatio: PromiseOrValue<BigNumberish>;
+  secondsToTrainAThousandTroops: PromiseOrValue<BigNumberish>;
 };
 
 export type WorldConstantsStructOutput = [
   string,
+  BigNumber,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -77,6 +79,7 @@ export type WorldConstantsStructOutput = [
   maxCityCenterLevel: BigNumber;
   cityCenterLevelToEntityLevelRatio: BigNumber;
   cityCenterLevelToTileCountRatio: BigNumber;
+  secondsToTrainAThousandTroops: BigNumber;
 };
 
 export interface GetterFacetInterface extends utils.Interface {
