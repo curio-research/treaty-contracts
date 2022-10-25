@@ -411,7 +411,8 @@ contract DiamondDeployTest is Test {
                 tileWidth: 10, // DO NOT REMOVE THIS COMMENT
                 maxCityCenterLevel: 3,
                 cityCenterLevelToEntityLevelRatio: 3,
-                cityCenterLevelToTileCountRatio: 20
+                cityCenterLevelToTileCountRatio: 20,
+                secondsToTrainAThousandTroops: 500
             });
     }
 
