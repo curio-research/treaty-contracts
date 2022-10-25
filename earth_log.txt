@@ -1,7 +1,7 @@
 -----------------
 ** Faith Constants **
 -----------------
-barbarian_reward_to_cost_coefficient: 2
+barbarian_reward_to_cost_coefficient: 3
 barbarian_to_army_difficulty_constant: 100
 base_troop_training_in_Seconds: 0.5
 city_center_level_to_building_level: 3
@@ -12,13 +12,13 @@ init_player_farm_count: 4
 init_player_goldmine_count: 2
 init_player_tile_count: 9
 max_city_center_level: 3
-new_player_action_in_seconds: 120
+new_player_action_in_seconds: 100
 player_login_interval_in_minutes: 10
 resource_weight_heavy: 8
 resource_weight_high: 4
 resource_weight_light: 2
 resource_weight_medium: 3
-tile_to_barbarian_strength_ratio: 5
+tile_to_barbarian_strength_ratio: 2.5
 tile_troop_discount: 0.2
 total_tile_count: 169
 -----------------
@@ -225,124 +225,124 @@ Tile Count Limit: 31
 -----------------
 Barbarian Level: 1
 -----------------
-Barbarian Counts: 60.0
-Gold Reward: 77.13666195844075
-Food Reward: 240.0
+Barbarian Counts: 50.0
+Gold Reward: 96.42082744805094
+Food Reward: 300.0
 -----------------
 Barbarian Level: 2
 -----------------
-Barbarian Counts: 101.91758471050537
-Gold Reward: 241.26937502249356
-Food Reward: 407.67033884202147
+Barbarian Counts: 84.9313205920878
+Gold Reward: 301.58671877811696
+Food Reward: 509.58792355252683
 -----------------
 Barbarian Level: 3
 -----------------
-Barbarian Counts: 150.27224310309472
-Gold Reward: 554.2754421688667
-Food Reward: 601.0889724123789
+Barbarian Counts: 125.22686925257894
+Gold Reward: 692.8443027110833
+Food Reward: 751.3612155154736
 -----------------
 Barbarian Level: 4
 -----------------
-Barbarian Counts: 206.05248436489677
-Gold Reward: 1092.5240057728997
-Food Reward: 824.2099374595871
+Barbarian Counts: 171.71040363741398
+Gold Reward: 1365.6550072161247
+Food Reward: 1030.262421824484
 -----------------
 Barbarian Level: 5
 -----------------
-Barbarian Counts: 270.3986180913153
-Gold Reward: 1966.6435748635035
-Food Reward: 1081.5944723652613
+Barbarian Counts: 225.33218174276274
+Gold Reward: 2458.3044685793793
+Food Reward: 1351.9930904565765
 -----------------
 Barbarian Level: 6
 -----------------
-Barbarian Counts: 344.6260655149512
-Gold Reward: 3336.1414926753905
-Food Reward: 1378.504262059805
+Barbarian Counts: 287.188387929126
+Gold Reward: 4170.176865844238
+Food Reward: 1723.130327574756
 -----------------
 Barbarian Level: 7
 -----------------
-Barbarian Counts: 430.2522505232746
-Gold Reward: 5430.12754634353
-Food Reward: 1721.0090020930984
+Barbarian Counts: 358.54354210272885
+Gold Reward: 6787.659432929413
+Food Reward: 2151.261252616373
 -----------------
 Barbarian Level: 8
 -----------------
-Barbarian Counts: 529.0276201952887
-Gold Reward: 8576.664392208355
-Food Reward: 2116.110480781155
+Barbarian Counts: 440.8563501627406
+Gold Reward: 10720.830490260445
+Food Reward: 2645.1381009764436
 -----------------
 Barbarian Level: 9
 -----------------
-Barbarian Counts: 642.971429006748
-Gold Reward: 13244.304756298272
-Food Reward: 2571.885716026992
+Barbarian Counts: 535.8095241722901
+Gold Reward: 16555.380945372843
+Food Reward: 3214.857145033741
 -----------------
 ** Tile Upgrade Stats **
 -----------------
 -----------------
 Tile Level: 1
 -----------------
-Tile Guard Counts: 300.0
-Gold Cost to Upgrade: 156.51002501389712
-Food Cost to Upgrade: 626.0401000555885
+Tile Guard Counts: 125.0
+Gold Cost to Upgrade: 65.21251042245714
+Food Cost to Upgrade: 260.8500416898286
 -----------------
 Tile Level: 2
 -----------------
-Tile Guard Counts: 509.58792355252683
-Gold Cost to Upgrade: 180.54448620618948
-Food Cost to Upgrade: 722.1779448247579
+Tile Guard Counts: 212.32830148021952
+Gold Cost to Upgrade: 75.22686925257895
+Food Cost to Upgrade: 300.9074770103158
 -----------------
 Tile Level: 3
 -----------------
-Tile Guard Counts: 751.3612155154736
-Gold Cost to Upgrade: 208.26979930878284
-Food Cost to Upgrade: 833.0791972351313
+Tile Guard Counts: 313.06717313144736
+Gold Cost to Upgrade: 86.77908304532616
+Food Cost to Upgrade: 347.11633218130464
 -----------------
 Tile Level: 4
 -----------------
-Tile Guard Counts: 1030.262421824484
-Gold Cost to Upgrade: 240.25274997644115
-Food Cost to Upgrade: 961.0109999057646
+Tile Guard Counts: 429.2760090935349
+Gold Cost to Upgrade: 100.10531249018382
+Food Cost to Upgrade: 400.4212499607353
 -----------------
 Tile Level: 5
 -----------------
-Tile Guard Counts: 1351.9930904565765
-Gold Cost to Upgrade: 277.14716230010885
-Food Cost to Upgrade: 1108.5886492004354
+Tile Guard Counts: 563.3304543569069
+Gold Cost to Upgrade: 115.47798429171196
+Food Cost to Upgrade: 461.91193716684785
 -----------------
 Tile Level: 6
 -----------------
-Tile Guard Counts: 1723.130327574756
-Gold Cost to Upgrade: 319.7072648639188
-Food Cost to Upgrade: 1278.8290594556752
+Tile Guard Counts: 717.9709698228148
+Gold Cost to Upgrade: 133.21136035996616
+Food Cost to Upgrade: 532.8454414398647
 -----------------
 Tile Level: 7
 -----------------
-Tile Guard Counts: 2151.2612526163734
-Gold Cost to Upgrade: 368.8031093606751
-Food Cost to Upgrade: 1475.2124374427003
+Tile Guard Counts: 896.3588552568223
+Gold Cost to Upgrade: 153.66796223361473
+Food Cost to Upgrade: 614.6718489344589
 -----------------
 Tile Level: 8
 -----------------
-Tile Guard Counts: 2645.1381009764436
-Gold Cost to Upgrade: 425.43835696694714
-Food Cost to Upgrade: 1701.7534278677886
+Tile Guard Counts: 1102.1408754068516
+Gold Cost to Upgrade: 177.26598206956137
+Food Cost to Upgrade: 709.0639282782455
 -----------------
 Tile Level: 9
 -----------------
-Tile Guard Counts: 3214.8571450337413
+Tile Guard Counts: 1339.5238104307257
 Cannot Upgrade
 -----------------
 Gather Stats
 -----------------
 Gold Hourly Gather Rate Per Army: 8183.999999999998
 Food Hourly Gather Rate Per Army: 65475.66666666666
-Resource Load per Troop: 0.09557964242168467
+Resource Load per Troop: 0.1146955709060216
 -----------------
 TroopSize Stats
 -----------------
-City Center Level (1) TroopSize: 7213.067668948546
-City Center Level (2) TroopSize: 16542.051144717658
-City Center Level (3) TroopSize: 30862.628592323912
+City Center Level (1) TroopSize: 6010.889724123789
+City Center Level (2) TroopSize: 13785.042620598048
+City Center Level (3) TroopSize: 25718.857160269927
 Troop Gold Cost: 2
 Troop Food Cost: 8

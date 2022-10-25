@@ -21,7 +21,7 @@
         "object": "Resource",
         "level": 0,
         "functionName": "",
-        "value": 95
+        "value": 114
     },
     {
         "subject": "Troop Production",
@@ -1205,7 +1205,7 @@
         "object": "Gold",
         "level": 1,
         "functionName": "",
-        "value": 77136
+        "value": 96420
     },
     {
         "subject": "Barbarian",
@@ -1213,7 +1213,7 @@
         "object": "Food",
         "level": 1,
         "functionName": "",
-        "value": 240000
+        "value": 300000
     },
     {
         "subject": "Barbarian",
@@ -1221,7 +1221,7 @@
         "object": "Guard",
         "level": 1,
         "functionName": "",
-        "value": 60.0
+        "value": 50.0
     },
     {
         "subject": "Barbarian",
@@ -1229,7 +1229,7 @@
         "object": "Gold",
         "level": 2,
         "functionName": "",
-        "value": 241269
+        "value": 301586
     },
     {
         "subject": "Barbarian",
@@ -1237,7 +1237,7 @@
         "object": "Food",
         "level": 2,
         "functionName": "",
-        "value": 407670
+        "value": 509587
     },
     {
         "subject": "Barbarian",
@@ -1245,7 +1245,7 @@
         "object": "Guard",
         "level": 2,
         "functionName": "",
-        "value": 101.91758471050537
+        "value": 84.9313205920878
     },
     {
         "subject": "Barbarian",
@@ -1253,7 +1253,7 @@
         "object": "Gold",
         "level": 3,
         "functionName": "",
-        "value": 554275
+        "value": 692844
     },
     {
         "subject": "Barbarian",
@@ -1261,7 +1261,7 @@
         "object": "Food",
         "level": 3,
         "functionName": "",
-        "value": 601088
+        "value": 751361
     },
     {
         "subject": "Barbarian",
@@ -1269,7 +1269,7 @@
         "object": "Guard",
         "level": 3,
         "functionName": "",
-        "value": 150.27224310309472
+        "value": 125.22686925257894
     },
     {
         "subject": "Barbarian",
@@ -1277,7 +1277,7 @@
         "object": "Gold",
         "level": 4,
         "functionName": "",
-        "value": 1092524
+        "value": 1365655
     },
     {
         "subject": "Barbarian",
@@ -1285,7 +1285,7 @@
         "object": "Food",
         "level": 4,
         "functionName": "",
-        "value": 824209
+        "value": 1030262
     },
     {
         "subject": "Barbarian",
@@ -1293,7 +1293,7 @@
         "object": "Guard",
         "level": 4,
         "functionName": "",
-        "value": 206.05248436489677
+        "value": 171.71040363741398
     },
     {
         "subject": "Barbarian",
@@ -1301,7 +1301,7 @@
         "object": "Gold",
         "level": 5,
         "functionName": "",
-        "value": 1966643
+        "value": 2458304
     },
     {
         "subject": "Barbarian",
@@ -1309,7 +1309,7 @@
         "object": "Food",
         "level": 5,
         "functionName": "",
-        "value": 1081594
+        "value": 1351993
     },
     {
         "subject": "Barbarian",
@@ -1317,7 +1317,7 @@
         "object": "Guard",
         "level": 5,
         "functionName": "",
-        "value": 270.3986180913153
+        "value": 225.33218174276274
     },
     {
         "subject": "Barbarian",
@@ -1325,7 +1325,7 @@
         "object": "Gold",
         "level": 6,
         "functionName": "",
-        "value": 3336141
+        "value": 4170176
     },
     {
         "subject": "Barbarian",
@@ -1333,7 +1333,7 @@
         "object": "Food",
         "level": 6,
         "functionName": "",
-        "value": 1378504
+        "value": 1723130
     },
     {
         "subject": "Barbarian",
@@ -1341,7 +1341,7 @@
         "object": "Guard",
         "level": 6,
         "functionName": "",
-        "value": 344.6260655149512
+        "value": 287.188387929126
     },
     {
         "subject": "Barbarian",
@@ -1349,7 +1349,7 @@
         "object": "Gold",
         "level": 7,
         "functionName": "",
-        "value": 5430127
+        "value": 6787659
     },
     {
         "subject": "Barbarian",
@@ -1357,7 +1357,7 @@
         "object": "Food",
         "level": 7,
         "functionName": "",
-        "value": 1721009
+        "value": 2151261
     },
     {
         "subject": "Barbarian",
@@ -1365,7 +1365,7 @@
         "object": "Guard",
         "level": 7,
         "functionName": "",
-        "value": 430.2522505232746
+        "value": 358.54354210272885
     },
     {
         "subject": "Barbarian",
@@ -1373,7 +1373,7 @@
         "object": "Gold",
         "level": 8,
         "functionName": "",
-        "value": 8576664
+        "value": 10720830
     },
     {
         "subject": "Barbarian",
@@ -1381,7 +1381,7 @@
         "object": "Food",
         "level": 8,
         "functionName": "",
-        "value": 2116110
+        "value": 2645138
     },
     {
         "subject": "Barbarian",
@@ -1389,7 +1389,7 @@
         "object": "Guard",
         "level": 8,
         "functionName": "",
-        "value": 529.0276201952887
+        "value": 440.8563501627406
     },
     {
         "subject": "Barbarian",
@@ -1397,7 +1397,7 @@
         "object": "Gold",
         "level": 9,
         "functionName": "",
-        "value": 13244304
+        "value": 16555380
     },
     {
         "subject": "Barbarian",
@@ -1405,7 +1405,7 @@
         "object": "Food",
         "level": 9,
         "functionName": "",
-        "value": 2571885
+        "value": 3214857
     },
     {
         "subject": "Barbarian",
@@ -1413,7 +1413,7 @@
         "object": "Guard",
         "level": 9,
         "functionName": "",
-        "value": 642.971429006748
+        "value": 535.8095241722901
     },
     {
         "subject": "Tile",
@@ -1421,7 +1421,7 @@
         "object": "Guard",
         "level": 1,
         "functionName": "",
-        "value": 300.0
+        "value": 125.0
     },
     {
         "subject": "Tile",
@@ -1429,7 +1429,7 @@
         "object": "Guard",
         "level": 2,
         "functionName": "",
-        "value": 509.58792355252683
+        "value": 212.32830148021952
     },
     {
         "subject": "Tile",
@@ -1437,7 +1437,7 @@
         "object": "Guard",
         "level": 3,
         "functionName": "",
-        "value": 751.3612155154736
+        "value": 313.06717313144736
     },
     {
         "subject": "Tile",
@@ -1445,7 +1445,7 @@
         "object": "Guard",
         "level": 4,
         "functionName": "",
-        "value": 1030.262421824484
+        "value": 429.2760090935349
     },
     {
         "subject": "Tile",
@@ -1453,7 +1453,7 @@
         "object": "Guard",
         "level": 5,
         "functionName": "",
-        "value": 1351.9930904565765
+        "value": 563.3304543569069
     },
     {
         "subject": "Tile",
@@ -1461,7 +1461,7 @@
         "object": "Guard",
         "level": 6,
         "functionName": "",
-        "value": 1723.130327574756
+        "value": 717.9709698228148
     },
     {
         "subject": "Tile",
@@ -1469,7 +1469,7 @@
         "object": "Guard",
         "level": 7,
         "functionName": "",
-        "value": 2151.2612526163734
+        "value": 896.3588552568223
     },
     {
         "subject": "Tile",
@@ -1477,7 +1477,7 @@
         "object": "Guard",
         "level": 8,
         "functionName": "",
-        "value": 2645.1381009764436
+        "value": 1102.1408754068516
     },
     {
         "subject": "Tile",
@@ -1485,7 +1485,7 @@
         "object": "Guard",
         "level": 9,
         "functionName": "",
-        "value": 3214.8571450337413
+        "value": 1339.5238104307257
     },
     {
         "subject": "Army",
@@ -1493,7 +1493,7 @@
         "object": "Troop",
         "level": 1,
         "functionName": "",
-        "value": 7213.067668948546
+        "value": 6010.889724123789
     },
     {
         "subject": "Army",
@@ -1501,7 +1501,7 @@
         "object": "Troop",
         "level": 2,
         "functionName": "",
-        "value": 16542.051144717658
+        "value": 13785.042620598048
     },
     {
         "subject": "Army",
@@ -1509,6 +1509,6 @@
         "object": "Troop",
         "level": 3,
         "functionName": "",
-        "value": 30862.628592323912
+        "value": 25718.857160269927
     }
 ]

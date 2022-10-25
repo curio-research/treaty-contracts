@@ -234,7 +234,7 @@ class Game:
     Building levels that each city level upgrade unlocks. NOTE: same constant is used for barbarians & tiles
     """
 
-    new_player_action_in_seconds = 120
+    new_player_action_in_seconds = 100
     """
     time for new player to train enough troops to defeat lv1 barbarians
     note: this is already kinda fast, but might still feel slow. If so, we can initialize some resources
@@ -245,13 +245,13 @@ class Game:
     time to train one troop
     """
 
-    barbarian_reward_to_cost_coefficient = 2
+    barbarian_reward_to_cost_coefficient = 3
     """
     Adjust this number based upon expected player behavior. This only changes the absolute ratio of reward to cost.
     To tune the difference in rate of increment. Adjust the exponential function (by default the diff is 2)
     """
 
-    tile_to_barbarian_strength_ratio = 5
+    tile_to_barbarian_strength_ratio = 2.5
     """
     Tile & Barbarians are both PvE mechanics. Adjust this number based upon expected player behavior
     """
