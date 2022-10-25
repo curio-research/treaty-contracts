@@ -1,6 +1,6 @@
 {
     "maxCityCenterLevel": 3,
-    "cityCenterLevelToTileCountRatio": 11,
+    "cityCenterLevelToTileCountRatio": 31,
     "cityCenterLevelToEntityLevelRatio": 3,
-    "secondsToTrainAThousandTroops": 500
+    "secondsToTrainAThousandTroops": 200
 }
