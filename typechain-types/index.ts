@@ -10,8 +10,6 @@ export type { lib };
 export * as factories from "./factories";
 export type { Component } from "./contracts/Component";
 export { Component__factory } from "./factories/contracts/Component__factory";
-export type { CurioERC20 } from "./contracts/CurioERC20";
-export { CurioERC20__factory } from "./factories/contracts/CurioERC20__factory";
 export type { Diamond } from "./contracts/Diamond";
 export { Diamond__factory } from "./factories/contracts/Diamond__factory";
 export type { AdminFacet } from "./contracts/facets/AdminFacet";
