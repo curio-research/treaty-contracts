@@ -88,8 +88,11 @@ def get_building_base_hourly_yield(building_type: Building) -> np.array:
     total_foodcost = total_troop * food_cost_per_troop
     total_seconds = Game.new_player_action_in_seconds * (1 + Game.tile_to_barbarian_strength_ratio)
 
-    base_farm_food_hourly_yield = total_foodcost / total_seconds * 3600 * (Game.resource_weight_heavy/(Game.resource_weight_low + Game.resource_weight_heavy))
-    base_gold_food_hourly_yield = total_goldcost / total_seconds * 3600 * (Game.resource_weight_low/(Game.resource_weight_low + Game.resource_weight_heavy))
+    # Food Mint: Harvest (heavy), Food Burn: Troop (heavy)
+    base_farm_food_hourly_yield = total_foodcost / total_seconds * 3600 * (Game.resource_weight_heavy/Game.resource_weight_heavy)
+    
+    # Gold Mint: Harvest (low), Gold Burn: Troop (light)
+    base_gold_food_hourly_yield = total_goldcost / total_seconds * 3600 * (Game.resource_weight_low/Game.resource_weight_light)
     
     if building_type == Building.FARM:
         return np.array([0, base_farm_food_hourly_yield])
@@ -133,9 +136,9 @@ def get_barbarian_reward(level: int) -> np.array:
     total_goldcost = barbarian_count * goldcost_per_troop
     total_foodcost = barbarian_count * foodcost_per_troop
     # actual reward = base reward * exponential curve (level as x)
-    gold_reward = total_goldcost * Game.barbarian_reward_to_cost_coefficient * Game.fast_exponential_curve()(level)
+    gold_reward = total_goldcost * Game.barbarian_reward_to_cost_coefficient * Game.fast_exponential_curve()(level) / Game.fast_exponential_curve()(1)
     # food burn for troop is heavy while food mint for barbarians is low
-    food_reward = total_foodcost * Game.barbarian_reward_to_cost_coefficient * (Game.resource_weight_low/Game.resource_weight_heavy)
+    food_reward = total_foodcost * Game.barbarian_reward_to_cost_coefficient * (Game.resource_weight_light/Game.resource_weight_heavy)
     return np.array([gold_reward, food_reward])
 
 def get_tile_troop_count(level: int) -> int:
@@ -169,9 +172,8 @@ def get_building_upgrade_cost(level: int, building_type: Building) -> np.array:
     """
     # cost is easy to calculate for goldmine
     goldmine_goldcost = Game.payback_period_curve_in_hour()(level) * get_building_hourly_yield_by_level(level, Building.GOLDMINE)[0]
-    # calculate foodcost based on resource weight
+    # calculate foodcost based on resource weight; NOTE: not scientific here, a leap of faith here
     goldmine_foodcost = goldmine_goldcost/Game.resource_weight_heavy * Game.resource_weight_low
-    # taking a leap of faith here; farm doesn't generate gold, so we use its quantity relative to goldmine to calculate
     # assumption is that player spend gold equivalently on two types of building
     farm_goldcost = goldmine_goldcost * Game.init_player_goldmine_count / Game.init_player_farm_count
     # farm food cost if don't consider that part of it goes to troops
@@ -198,7 +200,7 @@ def get_building_upgrade_cost(level: int, building_type: Building) -> np.array:
 
 class Game:
     # TODO: use a JSON to initialize these variable
-    total_tile_count = 20*20
+    total_tile_count = 16*16
     expected_player_count = 4
     init_player_tile_count = 9
 
@@ -224,7 +226,7 @@ class Game:
     Mainly determine building cap
     """
 
-    max_city_center_level = 3
+    max_city_center_level = 5
     """
     City center max level
     """
@@ -240,12 +242,12 @@ class Game:
     note: this is already kinda fast, but might still feel slow. If so, we can initialize some resources
     """
 
-    base_troop_training_in_Seconds = 0.2
+    base_troop_training_in_Seconds = 0.3
     """
     time to train one troop
     """
 
-    barbarian_reward_to_cost_coefficient = 3
+    barbarian_reward_to_cost_coefficient = 4
     """
     Adjust this number based upon expected player behavior. This only changes the absolute ratio of reward to cost.
     To tune the difference in rate of increment. Adjust the exponential function (by default the diff is 2)
