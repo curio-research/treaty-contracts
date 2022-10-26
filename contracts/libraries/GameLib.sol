@@ -152,16 +152,16 @@ library GameLib {
         uint256 slingerTemplateId = gs().templates["Slinger"];
 
         if (_offenderTemplateID == horsemanTemplateId) {
-            if (_defenderTemplateID == warriorTemplateId) return 80;
-            if (_defenderTemplateID == slingerTemplateId) return 120;
+            if (_defenderTemplateID == warriorTemplateId) return 60;
+            if (_defenderTemplateID == slingerTemplateId) return 140;
             else return 100;
         } else if (_offenderTemplateID == warriorTemplateId) {
-            if (_defenderTemplateID == slingerTemplateId) return 80;
-            if (_defenderTemplateID == horsemanTemplateId) return 120;
+            if (_defenderTemplateID == slingerTemplateId) return 60;
+            if (_defenderTemplateID == horsemanTemplateId) return 140;
             else return 100;
         } else if (_offenderTemplateID == slingerTemplateId) {
-            if (_defenderTemplateID == horsemanTemplateId) return 80;
-            if (_defenderTemplateID == warriorTemplateId) return 120;
+            if (_defenderTemplateID == horsemanTemplateId) return 60;
+            if (_defenderTemplateID == warriorTemplateId) return 140;
             else return 100;
         } else return 100;
     }

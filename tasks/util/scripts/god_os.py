@@ -226,7 +226,7 @@ class Game:
     Mainly determine building cap
     """
 
-    max_city_center_level = 3
+    max_city_center_level = 5
     """
     City center max level
     """
@@ -242,12 +242,12 @@ class Game:
     note: this is already kinda fast, but might still feel slow. If so, we can initialize some resources
     """
 
-    base_troop_training_in_Seconds = 0.2
+    base_troop_training_in_Seconds = 0.3
     """
     time to train one troop
     """
 
-    barbarian_reward_to_cost_coefficient = 3
+    barbarian_reward_to_cost_coefficient = 4
     """
     Adjust this number based upon expected player behavior. This only changes the absolute ratio of reward to cost.
     To tune the difference in rate of increment. Adjust the exponential function (by default the diff is 2)
