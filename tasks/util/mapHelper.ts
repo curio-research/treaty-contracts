@@ -69,7 +69,7 @@ export const generateMap = (worldWidth: number, worldHeight: number, worldConsta
   for (let i = 0; i < worldWidth; i++) {
     let col: TILE_TYPE[] = [];
     for (let j = 0; j < worldHeight; j++) {
-      col.push(TILE_TYPE.LAND);
+      col.push(TILE_TYPE.FARM_LV1);
     }
     tileMap.push(col);
   }
@@ -92,9 +92,9 @@ export const generateMap = (worldWidth: number, worldHeight: number, worldConsta
     tileMap[pos.x][pos.y] = TILE_TYPE.BARBARIAN_LV1;
   }
 
-  for (let i = 0; i < totalTileCount * level1BarbarianDensity; i++) {
+  for (let i = 0; i < totalTileCount * level2BarbarianDensity; i++) {
     const pos = getProperTilePosition(chooseRandomEmptyLandPosition(tileMap), tileWidth);
-    tileMap[pos.x][pos.y] = TILE_TYPE.BARBARIAN_LV1;
+    tileMap[pos.x][pos.y] = TILE_TYPE.BARBARIAN_LV2;
   }
   // for (let i = 0; i < totalTileCount * level2BarbarianDensity; i++) {
   //   const pos = getProperTilePosition(chooseRandomEmptyLandPosition(tileMap), tileWidth);
@@ -112,7 +112,8 @@ export const chooseRandomEmptyLandPosition = (tileMap: TileMap): position => {
   do {
     const x = Math.floor(Math.random() * mapWidth);
     const y = Math.floor(Math.random() * mapHeight);
-    if (tileMap[x][y] === 0) {
+    if (tileMap[x][y] === 0 || tileMap[x][y] === 2) {
+      // FIXME: also counts farm as an empty tile
       pos = { x, y };
     }
   } while (!pos);
