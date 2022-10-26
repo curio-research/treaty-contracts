@@ -75,8 +75,8 @@ export const generateMap = (worldWidth: number, worldHeight: number, worldConsta
   }
   const level1GoldMineDensity = 0.05;
   const totalFarmDensity = level1GoldMineDensity * 4;
-  const level1BarbarianDensity = 0.3;
-  const level2BarbarianDensity = 0.3;
+  const level1BarbarianDensity = 0.15;
+  const level2BarbarianDensity = 0.15;
   const totalTileCount = worldWidth * worldHeight;
   const tileWidth = Number(worldConstants.tileWidth);
   for (let i = 0; i < totalTileCount * level1GoldMineDensity; i++) {
