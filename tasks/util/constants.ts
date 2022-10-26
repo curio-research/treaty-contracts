@@ -1,10 +1,11 @@
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
-import { Duration, encodeString, encodeUint256, InventoryType, InventoryTypeOptions, Load, Tag, Tags, BattleCooldown, TILE_TYPE, Amount } from 'curio-vault';
+import { Duration, encodeString, encodeUint256, InventoryType, InventoryTypeOptions, Tag, Tags, TILE_TYPE } from 'curio-vault';
 import { Curio } from './../../typechain-types/hardhat-diamond-abi/Curio';
 import { addGetEntity } from './mapHelper';
 import { MapInput } from './types';
 import { confirm } from './deployHelper';
-import worldConstants from '../world_parameters.json';
+import manualParameters from '../manual_parameters.json';
+import worldParameters from '../world_parameters.json';
 
 export const LOCALHOST_RPC_URL = 'http://127.0.0.1:8545/';
 export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
@@ -14,8 +15,8 @@ export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 // ----------------------------------------------------------
 
 export const SMALL_MAP_INPUT: MapInput = {
-  width: 13,
-  height: 13,
+  width: 19,
+  height: 19,
 };
 
 export const TILE_WIDTH = 5;
@@ -37,7 +38,7 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): a
     maxPlayerCount: 20,
     maxTroopCountPerArmy: 16542,
     // generated constants
-    ...worldConstants,
+    ...worldParameters,
   };
 };
 
