@@ -728,6 +728,19 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "uint256[]",
+        name: "resourceIds",
+        type: "uint256[]",
+      },
+    ],
+    name: "harvestResources",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "uint256",
         name: "_buildingID",
         type: "uint256",
