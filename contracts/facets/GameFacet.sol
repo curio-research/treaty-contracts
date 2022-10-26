@@ -205,8 +205,7 @@ contract GameFacet is UseStorage {
         // Check if player has reached max tile level
         uint256 tileLevel = ECSLib.getUint("Level", _tileID);
         uint256 cityCenterID = GameLib.getCityCenter(ECSLib.getUint("City", _tileID));
-        // fixme: initialized tile hardcoded
-        require(tileLevel < 9 + ECSLib.getUint("Level", cityCenterID) * gs().worldConstants.cityCenterLevelToEntityLevelRatio, "CURIO: Max Tile Level Reached");
+        require(tileLevel < ECSLib.getUint("Level", cityCenterID) * gs().worldConstants.cityCenterLevelToEntityLevelRatio, "CURIO: Max Tile Level Reached");
 
         // Require players to fully recover the tile before upgrade
         require(GameLib.getConstant("Tile", "Guard", "Amount", "", tileLevel) <= ECSLib.getUint("Amount", GameLib.getConstituents(_tileID)[0]), "CURIO: Need to recover tile first");
@@ -649,7 +648,8 @@ contract GameFacet is UseStorage {
         // Check Tile Count has not exceeded limits
         uint256 playerID = GameLib.getPlayer(msg.sender);
         uint256 cityID = GameLib.getPlayerCity(playerID);
-        require(GameLib.getCityTiles(cityID).length < gs().worldConstants.cityCenterLevelToTileCountRatio * ECSLib.getUint("Level", GameLib.getCityCenter(cityID)), "CURIO: Reached territory limit");
+        // fixme: initialized tile hardcoded
+        require(GameLib.getCityTiles(cityID).length < 9 + gs().worldConstants.cityCenterLevelToTileCountRatio * ECSLib.getUint("Level", GameLib.getCityCenter(cityID)), "CURIO: Reached territory limit");
 
         // Verify target tile has no owner
         require(ECSLib.getUint("Owner", _tileID) == 0, "CURIO: Tile has owner");
