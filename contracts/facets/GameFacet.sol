@@ -425,6 +425,12 @@ contract GameFacet is UseStorage {
         ECSLib.setUint("Amount", cityInventoryID, harvestAmount + existingCityResourceAmount);
     }
 
+    function harvestResources(uint256[] memory resourceIds) external {
+        for (uint256 i = 0; i < resourceIds.length; i++) {
+            harvestResource(resourceIds[i]);
+        }
+    }
+
     // TODO: harvest gold & food on a city; consider merge this with the function above
     function harvestResourcesFromCity(uint256 _buildingID) external {
         GameLib.validEntityCheck(_buildingID);
@@ -648,7 +654,8 @@ contract GameFacet is UseStorage {
         // Check Tile Count has not exceeded limits
         uint256 playerID = GameLib.getPlayer(msg.sender);
         uint256 cityID = GameLib.getPlayerCity(playerID);
-        require(GameLib.getCityTiles(cityID).length < gs().worldConstants.cityCenterLevelToTileCountRatio * ECSLib.getUint("Level", GameLib.getCityCenter(cityID)), "CURIO: Reached territory limit");
+        // fixme: initialized tile hardcoded
+        require(GameLib.getCityTiles(cityID).length < 9 + gs().worldConstants.cityCenterLevelToTileCountRatio * ECSLib.getUint("Level", GameLib.getCityCenter(cityID)), "CURIO: Reached territory limit");
 
         // Verify target tile has no owner
         require(ECSLib.getUint("Owner", _tileID) == 0, "CURIO: Tile has owner");

@@ -5,7 +5,7 @@
         "object": "Gold",
         "level": 0,
         "functionName": "gather",
-        "value": 8736
+        "value": 7280
     },
     {
         "subject": "Army",
@@ -13,7 +13,7 @@
         "object": "Food",
         "level": 0,
         "functionName": "gather",
-        "value": 17473
+        "value": 14561
     },
     {
         "subject": "Troop",
@@ -1637,7 +1637,7 @@
         "object": "Gold",
         "level": 0,
         "functionName": "upgrade",
-        "value": 41053
+        "value": 35411
     },
     {
         "subject": "City Center",
@@ -1645,7 +1645,7 @@
         "object": "Food",
         "level": 0,
         "functionName": "upgrade",
-        "value": 366048
+        "value": 305864
     },
     {
         "subject": "City Center",
@@ -1685,7 +1685,7 @@
         "object": "Gold",
         "level": 1,
         "functionName": "upgrade",
-        "value": 165439
+        "value": 142145
     },
     {
         "subject": "City Center",
@@ -1693,7 +1693,7 @@
         "object": "Food",
         "level": 1,
         "functionName": "upgrade",
-        "value": 1508571
+        "value": 1260079
     },
     {
         "subject": "City Center",
@@ -1733,7 +1733,7 @@
         "object": "Gold",
         "level": 2,
         "functionName": "upgrade",
-        "value": 383346
+        "value": 328210
     },
     {
         "subject": "City Center",
@@ -1741,7 +1741,7 @@
         "object": "Food",
         "level": 2,
         "functionName": "upgrade",
-        "value": 3564882
+        "value": 2976745
     },
     {
         "subject": "City Center",
@@ -1781,7 +1781,7 @@
         "object": "Gold",
         "level": 3,
         "functionName": "upgrade",
-        "value": 737237
+        "value": 628974
     },
     {
         "subject": "City Center",
@@ -1789,7 +1789,7 @@
         "object": "Food",
         "level": 3,
         "functionName": "upgrade",
-        "value": 6989947
+        "value": 5834985
     },
     {
         "subject": "City Center",
@@ -1829,7 +1829,7 @@
         "object": "Gold",
         "level": 4,
         "functionName": "upgrade",
-        "value": 1298493
+        "value": 1104015
     },
     {
         "subject": "City Center",
@@ -1837,7 +1837,7 @@
         "object": "Food",
         "level": 4,
         "functionName": "upgrade",
-        "value": 12538052
+        "value": 10463437
     },
     {
         "subject": "City Center",

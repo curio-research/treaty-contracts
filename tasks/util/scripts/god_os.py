@@ -200,8 +200,8 @@ def get_building_upgrade_cost(level: int, building_type: Building) -> np.array:
 
 class Game:
     # TODO: use a JSON to initialize these variable
-    total_tile_count = 16*16
-    expected_player_count = 4
+    total_tile_count = 13*13
+    expected_player_count = 3
     init_player_tile_count = 9
 
     expected_play_time_in_hour = 1.5
