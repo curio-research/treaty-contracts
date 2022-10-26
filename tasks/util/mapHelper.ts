@@ -69,7 +69,7 @@ export const generateMap = (worldWidth: number, worldHeight: number, worldConsta
   for (let i = 0; i < worldWidth; i++) {
     let col: TILE_TYPE[] = [];
     for (let j = 0; j < worldHeight; j++) {
-      col.push(TILE_TYPE.FARM_LV1);
+      col.push(TILE_TYPE.LAND);
     }
     tileMap.push(col);
   }
@@ -112,7 +112,7 @@ export const chooseRandomEmptyLandPosition = (tileMap: TileMap): position => {
   do {
     const x = Math.floor(Math.random() * mapWidth);
     const y = Math.floor(Math.random() * mapHeight);
-    if (tileMap[x][y] === 0 || tileMap[x][y] === 2) {
+    if (tileMap[x][y] === TILE_TYPE.LAND) {
       // FIXME: also counts farm as an empty tile
       pos = { x, y };
     }
