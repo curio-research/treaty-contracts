@@ -4,7 +4,6 @@ import { Curio } from './../../typechain-types/hardhat-diamond-abi/Curio';
 import { addGetEntity } from './mapHelper';
 import { MapInput } from './types';
 import { confirm } from './deployHelper';
-import manualParameters from '../manual_parameters.json';
 import worldParameters from '../world_parameters.json';
 
 export const LOCALHOST_RPC_URL = 'http://127.0.0.1:8545/';
