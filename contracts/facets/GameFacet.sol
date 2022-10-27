@@ -113,6 +113,7 @@ contract GameFacet is UseStorage {
             GameLib.inboundPositionCheck(_tiles[i]);
             require(GameLib.isProperTilePosition(_tiles[i]), "CURIO: Must be proper tile position");
             uint256 tileID = GameLib.initializeTile(_tiles[i]);
+            require(ECSLib.getUint("Terrain", tileID) < 3, "CURIO: Cannot settle on barbarians");
             require(ECSLib.getUint("City", tileID) == NULL, "CURIO: Overlaps with another city");
 
             ECSLib.setUint("City", tileID, cityID);
@@ -257,6 +258,55 @@ contract GameFacet is UseStorage {
 
         // Set new level
         ECSLib.setUint("Level", _buildingID, centerLevel + 1);
+    }
+
+    // FIXME: untested
+    function moveCityCenter(uint256 _buildingID, Position memory _newTilePosition) external {
+        GameLib.validEntityCheck(_buildingID);
+        GameLib.ongoingGameCheck();
+        GameLib.activePlayerCheck(msg.sender);
+        GameLib.inboundPositionCheck(_newTilePosition);
+
+        // Verify that city center belongs to player
+        uint256 playerID = GameLib.getPlayer(msg.sender);
+        require(ECSLib.getUint("Owner", GameLib.getTileAt(ECSLib.getPosition("StartPosition", _buildingID))) == playerID, "CURIO: Building is not yours");
+
+        // Verify that target tile belongs to player
+        require(ECSLib.getUint("Owner", GameLib.getTileAt(_newTilePosition)) == playerID, "CURIO: Can only move in your territory");
+
+        // Deduct costs
+        {
+            uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
+            for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
+                uint256 inventoryID = GameLib.getInventory(GameLib.getPlayerCity(playerID), resourceTemplateIDs[i]);
+                uint256 balance = ECSLib.getUint("Amount", inventoryID);
+                uint256 cost = GameLib.getConstant("City Center", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Cost", "move", ECSLib.getUint("Level", _buildingID));
+                require(balance >= cost, "CURIO: Insufficient balance");
+                ECSLib.setUint("Amount", inventoryID, balance - cost);
+            }
+        }
+
+        // Move city center, city, and underlying settler positions
+        uint256 cityID = ECSLib.getUint("City", _buildingID);
+        ECSLib.setPosition("StartPosition", _buildingID, _newTilePosition);
+        ECSLib.setPosition("StartPosition", cityID, _newTilePosition);
+        ECSLib.setPosition("Position", cityID, GameLib.getMidPositionFromTilePosition(_newTilePosition));
+    }
+
+    // FIXME: untested
+    function disownTile(uint256 _tileID) external {
+        // Basic checks
+        GameLib.validEntityCheck(_tileID);
+        GameLib.ongoingGameCheck();
+        GameLib.activePlayerCheck(msg.sender);
+        GameLib.entityOwnershipCheck(_tileID, msg.sender);
+
+        // TODO: deduct resources from, or return resources to, player inventory
+
+        // Disown tile
+        Position memory tilePosition = ECSLib.getPosition("StartPosition", _tileID);
+        ECSLib.removeEntity(_tileID);
+        GameLib.initializeTile(tilePosition);
     }
 
     // ----------------------------------------------------------
@@ -661,7 +711,7 @@ contract GameFacet is UseStorage {
         require(ECSLib.getUint("Owner", _tileID) == 0, "CURIO: Tile has owner");
 
         // Verify target tile is not barbarian tile
-        require(ECSLib.getUint("Terrain", _tileID) != 3 && ECSLib.getUint("Terrain", _tileID) != 4, "CURIO: Cannot claim barbarian tiles");
+        require(ECSLib.getUint("Terrain", _tileID) < 3, "CURIO: Cannot claim barbarian tiles");
 
         // Verify that no guard exists on tile
         require(GameLib.getConstituents(_tileID).length == 0, "CURIO: Tile has guard");

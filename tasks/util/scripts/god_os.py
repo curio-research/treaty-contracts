@@ -460,6 +460,7 @@ class Game:
                 max_building_level = self.max_city_center_level
                 for i in range(1, self.max_city_center_level + 1):
                     game_parameters.append({ "subject": "City Center", "componentName": "Load", "object": "Troop", "level": i, "functionName": "", "value": 999999999 }) # FIXME: hardcoded
+                    game_parameters.append({ "subject": "City Center", "componentName": "Cost", "object": "Gold", "level": i, "functionName": "move", "value": 0 }) # FIXME: hardcoded, attention @Modeo
 
             curr_level = 0
 
