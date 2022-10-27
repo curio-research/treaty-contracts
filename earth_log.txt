@@ -2,9 +2,8 @@
 ** Faith Constants **
 -----------------
 barbarian_reward_to_cost_coefficient: 4
-barbarian_to_army_difficulty_constant: 40
-base_troop_training_in_seconds: 0.2
-building_upgrade_cooldown_ratio: 5
+barbarian_to_army_difficulty_constant: 60
+base_troop_training_in_seconds: 0.3
 city_center_level_to_building_level: 3
 city_center_migration_cooldown_ratio: 10
 expected_play_time_in_hour: 1.5
