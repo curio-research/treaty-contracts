@@ -212,9 +212,9 @@ def payback_period_curve_in_hour(max_level: int) -> LambdaType:
     """
     Growth: fast exponential
     Note: sum from f(1) to f(9) is 19.757. Leap of faith: assume this is reasonable for 72 hr gameplay
-    Gist: (math.e)**(level/7) - 0.9 makes sure upgrade from (n - 1) to n (max level) has 5.15 hr payback period (72 h gameplay)
+    Gist: (math.e)**(level/7) - 0.9 makes sure upgrade from (n - 1) to n (max level)
     """
-    return lambda level: ((math.e)**((level / max_level * 9)/5) - 0.9) * Game.expected_play_time_in_hour / 72
+    return lambda level: ((math.e)**((level / max_level * 9)/4) - 0.9) * Game.expected_play_time_in_hour / 72
     
 def slow_exponential_curve(max_level: int) -> LambdaType:
     """
@@ -245,7 +245,7 @@ def tile_loyalty_points(decay_dist: float):
 
 class Game:
     # TODO: use a JSON to initialize these variable
-    total_tile_count = 13*13
+    total_tile_count = 9*9
     expected_player_count = 3
     init_player_tile_count = 9
 
@@ -287,7 +287,7 @@ class Game:
     note: this is already kinda fast, but might still feel slow. If so, we can initialize some resources
     """
 
-    base_troop_training_in_seconds = 0.3
+    base_troop_training_in_seconds = 0.15
     """
     time to train one troop
     """
