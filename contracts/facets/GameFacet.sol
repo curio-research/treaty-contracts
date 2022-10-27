@@ -113,6 +113,7 @@ contract GameFacet is UseStorage {
             GameLib.inboundPositionCheck(_tiles[i]);
             require(GameLib.isProperTilePosition(_tiles[i]), "CURIO: Must be proper tile position");
             uint256 tileID = GameLib.initializeTile(_tiles[i]);
+            require(ECSLib.getUint("Terrain", tileID) < 3, "CURIO: Cannot settle on barbarians");
             require(ECSLib.getUint("City", tileID) == NULL, "CURIO: Overlaps with another city");
 
             ECSLib.setUint("City", tileID, cityID);
@@ -661,7 +662,7 @@ contract GameFacet is UseStorage {
         require(ECSLib.getUint("Owner", _tileID) == 0, "CURIO: Tile has owner");
 
         // Verify target tile is not barbarian tile
-        require(ECSLib.getUint("Terrain", _tileID) != 3 && ECSLib.getUint("Terrain", _tileID) != 4, "CURIO: Cannot claim barbarian tiles");
+        require(ECSLib.getUint("Terrain", _tileID) < 3, "CURIO: Cannot claim barbarian tiles");
 
         // Verify that no guard exists on tile
         require(GameLib.getConstituents(_tileID).length == 0, "CURIO: Tile has guard");
