@@ -260,6 +260,7 @@ contract GameFacet is UseStorage {
         ECSLib.setUint("Level", _buildingID, centerLevel + 1);
     }
 
+    // FIXME: untested
     function moveCityCenter(uint256 _buildingID, Position memory _newTilePosition) external {
         GameLib.validEntityCheck(_buildingID);
         GameLib.ongoingGameCheck();
@@ -268,21 +269,21 @@ contract GameFacet is UseStorage {
 
         // Verify that city center belongs to player
         uint256 playerID = GameLib.getPlayer(msg.sender);
-        uint256 oldTileID = GameLib.getTileAt(ECSLib.getPosition("StartPosition", _buildingID));
-        require(ECSLib.getUint("Owner", oldTileID) == playerID, "CURIO: Building is not yours");
+        require(ECSLib.getUint("Owner", GameLib.getTileAt(ECSLib.getPosition("StartPosition", _buildingID))) == playerID, "CURIO: Building is not yours");
 
         // Verify that target tile belongs to player
-        uint256 newTileID = GameLib.getTileAt(_newTilePosition);
-        require(ECSLib.getUint("Owner", newTileID) == playerID, "CURIO: Can only move in your territory");
+        require(ECSLib.getUint("Owner", GameLib.getTileAt(_newTilePosition)) == playerID, "CURIO: Can only move in your territory");
 
         // Deduct costs
-        uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
-        for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
-            uint256 inventoryID = GameLib.getInventory(GameLib.getPlayerCity(playerID), resourceTemplateIDs[i]);
-            uint256 balance = ECSLib.getUint("Amount", inventoryID);
-            uint256 cost = GameLib.getConstant("City Center", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Cost", "move", ECSLib.getUint("Level", _buildingID));
-            require(balance >= cost, "CURIO: Insufficient balance");
-            ECSLib.setUint("Amount", inventoryID, balance - cost);
+        {
+            uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
+            for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
+                uint256 inventoryID = GameLib.getInventory(GameLib.getPlayerCity(playerID), resourceTemplateIDs[i]);
+                uint256 balance = ECSLib.getUint("Amount", inventoryID);
+                uint256 cost = GameLib.getConstant("City Center", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Cost", "move", ECSLib.getUint("Level", _buildingID));
+                require(balance >= cost, "CURIO: Insufficient balance");
+                ECSLib.setUint("Amount", inventoryID, balance - cost);
+            }
         }
 
         // Move city center, city, and underlying settler positions
@@ -292,6 +293,7 @@ contract GameFacet is UseStorage {
         ECSLib.setPosition("Position", cityID, GameLib.getMidPositionFromTilePosition(_newTilePosition));
     }
 
+    // FIXME: untested
     function disownTile(uint256 _tileID) external {
         // Basic checks
         GameLib.validEntityCheck(_tileID);
