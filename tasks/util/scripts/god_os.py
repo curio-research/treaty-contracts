@@ -249,7 +249,7 @@ class Game:
     expected_player_count = 3
     init_player_tile_count = 9
 
-    expected_play_time_in_hour = 1.5
+    expected_play_time_in_hour = 2
     """
     How many tiles does a level 1 city center player has
     """
@@ -298,7 +298,7 @@ class Game:
     To tune the difference in rate of increment. Adjust the exponential function (by default the diff is 2)
     """
 
-    tile_to_barbarian_strength_ratio = 2.5
+    tile_to_barbarian_strength_ratio = 1.8
     """
     Tile & Barbarians are both PvE mechanics. Adjust this number based upon expected player behavior
     """
