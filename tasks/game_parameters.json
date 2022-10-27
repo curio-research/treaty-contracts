@@ -92,7 +92,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 0,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 1793
     },
     {
@@ -100,7 +100,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 0,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 336
     },
     {
@@ -140,7 +140,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 1,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 5151
     },
     {
@@ -148,7 +148,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 1,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 965
     },
     {
@@ -188,7 +188,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 2,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 9791
     },
     {
@@ -196,7 +196,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 2,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 1835
     },
     {
@@ -236,7 +236,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 3,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 15710
     },
     {
@@ -244,7 +244,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 3,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 2945
     },
     {
@@ -284,7 +284,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 4,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 22974
     },
     {
@@ -292,7 +292,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 4,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 4307
     },
     {
@@ -332,7 +332,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 5,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 31697
     },
     {
@@ -340,7 +340,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 5,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 5943
     },
     {
@@ -380,7 +380,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 6,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 42040
     },
     {
@@ -388,7 +388,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 6,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 7882
     },
     {
@@ -428,7 +428,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 7,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 54146
     },
     {
@@ -436,7 +436,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 7,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 10152
     },
     {
@@ -476,7 +476,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 8,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 68289
     },
     {
@@ -484,7 +484,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 8,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 12804
     },
     {
@@ -524,7 +524,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 9,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 84683
     },
     {
@@ -532,7 +532,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 9,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 15878
     },
     {
@@ -572,7 +572,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 10,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 103611
     },
     {
@@ -580,7 +580,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 10,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 19427
     },
     {
@@ -620,7 +620,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 11,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 125406
     },
     {
@@ -628,7 +628,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 11,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 23513
     },
     {
@@ -668,7 +668,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 12,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 150469
     },
     {
@@ -676,7 +676,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 12,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 28212
     },
     {
@@ -716,7 +716,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 13,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 179274
     },
     {
@@ -724,7 +724,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 13,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 33613
     },
     {
@@ -764,7 +764,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 14,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 212206
     },
     {
@@ -772,7 +772,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 14,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 39788
     },
     {
@@ -844,7 +844,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 0,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 398
     },
     {
@@ -852,7 +852,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 0,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 335
     },
     {
@@ -892,7 +892,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 1,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 1144
     },
     {
@@ -900,7 +900,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 1,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 963
     },
     {
@@ -940,7 +940,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 2,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 2175
     },
     {
@@ -948,7 +948,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 2,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 1831
     },
     {
@@ -988,7 +988,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 3,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 3491
     },
     {
@@ -996,7 +996,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 3,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 2940
     },
     {
@@ -1036,7 +1036,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 4,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 5105
     },
     {
@@ -1044,7 +1044,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 4,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 4298
     },
     {
@@ -1084,7 +1084,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 5,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 7043
     },
     {
@@ -1092,7 +1092,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 5,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 5933
     },
     {
@@ -1132,7 +1132,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 6,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 9342
     },
     {
@@ -1140,7 +1140,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 6,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 7868
     },
     {
@@ -1180,7 +1180,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 7,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 12032
     },
     {
@@ -1188,7 +1188,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 7,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 10133
     },
     {
@@ -1228,7 +1228,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 8,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 15175
     },
     {
@@ -1236,7 +1236,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 8,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 12781
     },
     {
@@ -1276,7 +1276,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 9,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 18818
     },
     {
@@ -1284,7 +1284,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 9,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 15846
     },
     {
@@ -1324,7 +1324,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 10,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 23024
     },
     {
@@ -1332,7 +1332,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 10,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 19392
     },
     {
@@ -1372,7 +1372,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 11,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 27868
     },
     {
@@ -1380,7 +1380,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 11,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 23476
     },
     {
@@ -1420,7 +1420,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 12,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 33437
     },
     {
@@ -1428,7 +1428,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 12,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 28160
     },
     {
@@ -1468,7 +1468,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 13,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 39838
     },
     {
@@ -1476,7 +1476,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 13,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 33548
     },
     {
@@ -1516,7 +1516,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 14,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 47157
     },
     {
@@ -1524,7 +1524,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 14,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 39719
     },
     {
@@ -1572,7 +1572,15 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 1,
-        "functionName": "move",
+        "functionName": "Move",
+        "value": 0
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 1,
+        "functionName": "Move",
         "value": 0
     },
     {
@@ -1588,7 +1596,15 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 2,
-        "functionName": "move",
+        "functionName": "Move",
+        "value": 0
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 2,
+        "functionName": "Move",
         "value": 0
     },
     {
@@ -1604,7 +1620,15 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 3,
-        "functionName": "move",
+        "functionName": "Move",
+        "value": 0
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 3,
+        "functionName": "Move",
         "value": 0
     },
     {
@@ -1620,7 +1644,15 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 4,
-        "functionName": "move",
+        "functionName": "Move",
+        "value": 0
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 4,
+        "functionName": "Move",
         "value": 0
     },
     {
@@ -1636,7 +1668,15 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 5,
-        "functionName": "move",
+        "functionName": "Move",
+        "value": 0
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 5,
+        "functionName": "Move",
         "value": 0
     },
     {
@@ -1676,7 +1716,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 0,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 4926
     },
     {
@@ -1684,7 +1724,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 0,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 15255
     },
     {
@@ -1724,7 +1764,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 1,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 14706
     },
     {
@@ -1732,7 +1772,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 1,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 46789
     },
     {
@@ -1772,7 +1812,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 2,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 28089
     },
     {
@@ -1780,7 +1820,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 2,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 89673
     },
     {
@@ -1820,7 +1860,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 3,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 44967
     },
     {
@@ -1828,7 +1868,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 3,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 143274
     },
     {
@@ -1868,7 +1908,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 4,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 65474
     },
     {
@@ -1876,7 +1916,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 4,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 208062
     },
     {
@@ -2284,7 +2324,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 1,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 11062
     },
     {
@@ -2292,7 +2332,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 1,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 176995
     },
     {
@@ -2308,7 +2348,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 2,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 12052
     },
     {
@@ -2316,7 +2356,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 2,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 192835
     },
     {
@@ -2332,7 +2372,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 3,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 13130
     },
     {
@@ -2340,7 +2380,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 3,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 210093
     },
     {
@@ -2356,7 +2396,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 4,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 14305
     },
     {
@@ -2364,7 +2404,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 4,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 228895
     },
     {
@@ -2380,7 +2420,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 5,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 15586
     },
     {
@@ -2388,7 +2428,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 5,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 249380
     },
     {
@@ -2404,7 +2444,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 6,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 16981
     },
     {
@@ -2412,7 +2452,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 6,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 271699
     },
     {
@@ -2428,7 +2468,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 7,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 18500
     },
     {
@@ -2436,7 +2476,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 7,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 296014
     },
     {
@@ -2452,7 +2492,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 8,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 20156
     },
     {
@@ -2460,7 +2500,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 8,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 322506
     },
     {
@@ -2476,7 +2516,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 9,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 21960
     },
     {
@@ -2484,7 +2524,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 9,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 351369
     },
     {
@@ -2500,7 +2540,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 10,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 23925
     },
     {
@@ -2508,7 +2548,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 10,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 382815
     },
     {
@@ -2524,7 +2564,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 11,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 26067
     },
     {
@@ -2532,7 +2572,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 11,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 417075
     },
     {
@@ -2548,7 +2588,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 12,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 28400
     },
     {
@@ -2556,7 +2596,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 12,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 454401
     },
     {
@@ -2572,7 +2612,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 13,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 30941
     },
     {
@@ -2580,7 +2620,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 13,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 495068
     },
     {
@@ -2596,7 +2636,7 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 14,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 33710
     },
     {
@@ -2604,7 +2644,7 @@
         "componentName": "Cost",
         "object": "Food",
         "level": 14,
-        "functionName": "upgrade",
+        "functionName": "Upgrade",
         "value": 539374
     },
     {
