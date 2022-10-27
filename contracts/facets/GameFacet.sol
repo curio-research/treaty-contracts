@@ -123,13 +123,17 @@ contract GameFacet is UseStorage {
         // Verify that territory is wholly in bound and does not overlap with other cities, and set tile ownership
         uint256 playerID = GameLib.getPlayer(msg.sender);
         uint256 cityID = _settlerID;
-        for (uint256 i = 0; i < _tiles.length; i++) {
-            GameLib.inboundPositionCheck(_tiles[i]);
-            require(GameLib.isProperTilePosition(_tiles[i]), "CURIO: Must be proper tile position");
-            uint256 tileID = GameLib.initializeTile(_tiles[i]);
-            require(!GameLib.isBarbarian(tileID), "CURIO: Cannot settle on barbarians");
-            require(ECSLib.getUint("City", tileID) == NULL, "CURIO: Overlaps with another city");
 
+        for (uint256 i = 0; i < _tiles.length; i++) {
+            // GameLib.inboundPositionCheck(_tiles[i]);
+            // require(GameLib.isProperTilePosition(_tiles[i]), "CURIO: Must be proper tile position");
+            uint256 tileID = GameLib.initializeTile(_tiles[i]);
+            // require(ECSLib.getUint("Terrain", tileID) < 3, "CURIO: Cannot settle on barbarians");
+            // require(ECSLib.getUint("City", tileID) == NULL, "CURIO: Overlaps with another city");
+        }
+
+        for (uint256 i = 0; i < _tiles.length; i++) {
+            uint256 tileID = GameLib.initializeTile(_tiles[i]);
             ECSLib.setUint("City", tileID, cityID);
             ECSLib.setUint("Owner", tileID, playerID);
         }
@@ -323,9 +327,9 @@ contract GameFacet is UseStorage {
             for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
                 uint256 inventoryID = GameLib.getInventory(GameLib.getPlayerCity(playerID), resourceTemplateIDs[i]);
                 uint256 balance = ECSLib.getUint("Amount", inventoryID);
-                uint256 cost = GameLib.getConstant("City Center", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Cost", "move", ECSLib.getUint("Level", _buildingID));
-                require(balance >= cost, "CURIO: Insufficient balance");
-                ECSLib.setUint("Amount", inventoryID, balance - cost);
+                // uint256 cost = GameLib.getConstant("City Center", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Cost", "move", ECSLib.getUint("Level", _buildingID));
+                // require(balance >= cost, "CURIO: Insufficient balance");
+                // ECSLib.setUint("Amount", inventoryID, balance - cost);
             }
         }
 
