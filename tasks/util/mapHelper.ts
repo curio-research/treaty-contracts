@@ -75,8 +75,8 @@ export const generateMap = (worldWidth: number, worldHeight: number, worldConsta
   }
   const level1GoldMineDensity = 0.05;
   const totalFarmDensity = level1GoldMineDensity * 4;
-  const level1BarbarianDensity = 0.3;
-  const level2BarbarianDensity = 0.3;
+  const level1BarbarianDensity = 0.15;
+  const level2BarbarianDensity = 0.15;
   const totalTileCount = worldWidth * worldHeight;
   const tileWidth = Number(worldConstants.tileWidth);
   for (let i = 0; i < totalTileCount * level1GoldMineDensity; i++) {
@@ -92,9 +92,9 @@ export const generateMap = (worldWidth: number, worldHeight: number, worldConsta
     tileMap[pos.x][pos.y] = TILE_TYPE.BARBARIAN_LV1;
   }
 
-  for (let i = 0; i < totalTileCount * level1BarbarianDensity; i++) {
+  for (let i = 0; i < totalTileCount * level2BarbarianDensity; i++) {
     const pos = getProperTilePosition(chooseRandomEmptyLandPosition(tileMap), tileWidth);
-    tileMap[pos.x][pos.y] = TILE_TYPE.BARBARIAN_LV1;
+    tileMap[pos.x][pos.y] = TILE_TYPE.BARBARIAN_LV2;
   }
   // for (let i = 0; i < totalTileCount * level2BarbarianDensity; i++) {
   //   const pos = getProperTilePosition(chooseRandomEmptyLandPosition(tileMap), tileWidth);
@@ -112,7 +112,8 @@ export const chooseRandomEmptyLandPosition = (tileMap: TileMap): position => {
   do {
     const x = Math.floor(Math.random() * mapWidth);
     const y = Math.floor(Math.random() * mapHeight);
-    if (tileMap[x][y] === 0) {
+    if (tileMap[x][y] === TILE_TYPE.LAND) {
+      // FIXME: also counts farm as an empty tile
       pos = { x, y };
     }
   } while (!pos);

@@ -142,6 +142,8 @@ task('deploy', 'deploy contracts')
         time: new Date(),
       };
 
+      console.log(tileMap);
+
       await publishDeployment(configFile);
 
       // TODO: for now, only sync game state with middleware in dev mode

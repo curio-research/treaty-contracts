@@ -107,6 +107,11 @@ library GameLib {
             Templates.addConstituent(tileID, gs().templates["Guard"], barbarianGuardAmount);
         }
 
+        // TEMP
+        if (terrain == 0 && getResourceAtTile(_startPosition) == 0) {
+            Templates.addResource(gs().templates["Food"], _startPosition, 0);
+        }
+
         return tileID;
     }
 
