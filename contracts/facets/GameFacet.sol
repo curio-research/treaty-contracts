@@ -307,7 +307,7 @@ contract GameFacet is UseStorage {
 
         // Verify that city center belongs to player
         uint256 playerID = GameLib.getPlayer(msg.sender);
-        
+
         require(ECSLib.getUint("Owner", GameLib.getTileAt(ECSLib.getPosition("StartPosition", _buildingID))) == playerID, "CURIO: Building is not yours");
 
         // Verify that target tile belongs to player
@@ -323,7 +323,7 @@ contract GameFacet is UseStorage {
             for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
                 uint256 inventoryID = GameLib.getInventory(GameLib.getPlayerCity(playerID), resourceTemplateIDs[i]);
                 uint256 balance = ECSLib.getUint("Amount", inventoryID);
-                uint256 cost = GameLib.getConstant("City Center", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Cost", "Move", centerLevel);
+                uint256 cost = GameLib.getConstant("City Center", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Cost", "Move", ECSLib.getUint("Level", _buildingID));
                 require(balance >= cost, "CURIO: Insufficient balance");
                 ECSLib.setUint("Amount", inventoryID, balance - cost);
             }
@@ -748,7 +748,6 @@ contract GameFacet is UseStorage {
                     ECSLib.setUint("Amount", winnerCityGoldInventoryID, winnerTotalAmount);
 
                     // todo: update lastSackedTimeStamp
-
                 } else {
                     if (GameLib.isBarbarian(_tileID)) {
                         // Reset barbarian
