@@ -1569,11 +1569,27 @@
     },
     {
         "subject": "City Center",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 1,
+        "functionName": "move",
+        "value": 0
+    },
+    {
+        "subject": "City Center",
         "componentName": "Load",
         "object": "Troop",
         "level": 2,
         "functionName": "",
         "value": 999999999
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 2,
+        "functionName": "move",
+        "value": 0
     },
     {
         "subject": "City Center",
@@ -1585,6 +1601,14 @@
     },
     {
         "subject": "City Center",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 3,
+        "functionName": "move",
+        "value": 0
+    },
+    {
+        "subject": "City Center",
         "componentName": "Load",
         "object": "Troop",
         "level": 4,
@@ -1593,11 +1617,27 @@
     },
     {
         "subject": "City Center",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 4,
+        "functionName": "move",
+        "value": 0
+    },
+    {
+        "subject": "City Center",
         "componentName": "Load",
         "object": "Troop",
         "level": 5,
         "functionName": "",
         "value": 999999999
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 5,
+        "functionName": "move",
+        "value": 0
     },
     {
         "subject": "City Center",
