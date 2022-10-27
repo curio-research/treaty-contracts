@@ -1551,11 +1551,6 @@ const _abi = [
           },
           {
             internalType: "uint256",
-            name: "maxTroopCountPerArmy",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
             name: "maxPlayerCount",
             type: "uint256",
           },
@@ -1567,11 +1562,6 @@ const _abi = [
           {
             internalType: "uint256",
             name: "cityCenterLevelToEntityLevelRatio",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "cityCenterLevelToTileCountRatio",
             type: "uint256",
           },
           {

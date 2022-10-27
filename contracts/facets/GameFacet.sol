@@ -705,7 +705,7 @@ contract GameFacet is UseStorage {
         uint256 playerID = GameLib.getPlayer(msg.sender);
         uint256 cityID = GameLib.getPlayerCity(playerID);
         // fixme: initialized tile hardcoded
-        require(GameLib.getCityTiles(cityID).length < 9 + gs().worldConstants.cityCenterLevelToTileCountRatio * ECSLib.getUint("Level", GameLib.getCityCenter(cityID)), "CURIO: Reached territory limit");
+        require(GameLib.getCityTiles(cityID).length < GameLib.getConstant("City", "Tile", "Amount", "", ECSLib.getUint("Level", GameLib.getCityCenter(cityID))), "CURIO: Reached territory limit");
 
         // Verify target tile has no owner
         require(ECSLib.getUint("Owner", _tileID) == 0, "CURIO: Tile has owner");

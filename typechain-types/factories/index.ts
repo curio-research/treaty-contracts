@@ -3,4 +3,3 @@
 /* eslint-disable */
 export * as contracts from "./contracts";
 export * as hardhatDiamondAbi from "./hardhat-diamond-abi";
-export * as lib from "./lib";

@@ -65,12 +65,10 @@ struct WorldConstants {
     // Manual configs
     uint256 maxCityCountPerPlayer;
     uint256 maxArmyCountPerPlayer;
-    uint256 maxTroopCountPerArmy;
     uint256 maxPlayerCount;
     // Generated configs
     uint256 maxCityCenterLevel;
     uint256 cityCenterLevelToEntityLevelRatio; // 3 => lv1 city center unlocks lv3 resources
-    uint256 cityCenterLevelToTileCountRatio; // 5 => lv1 -> lv2 upgrade unlocks five more tiles
     uint256 secondsToTrainAThousandTroops;
 }
 
