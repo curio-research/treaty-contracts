@@ -470,7 +470,9 @@ class Game:
                 max_building_level = self.max_city_center_level
                 for i in range(1, self.max_city_center_level + 1):
                     game_parameters.append({ "subject": "City Center", "componentName": "Load", "object": "Troop", "level": i, "functionName": "", "value": 999999999 }) # FIXME: hardcoded
-                    game_parameters.append({ "subject": "City Center", "componentName": "Cost", "object": "Gold", "level": i, "functionName": "move", "value": 0 }) # FIXME: hardcoded, attention @Modeo
+                    game_parameters.append({ "subject": "City Center", "componentName": "Cost", "object": "Gold", "level": i, "functionName": "Move", "value": 0 }) # FIXME: hardcoded, attention @Modeo
+                    game_parameters.append({ "subject": "City Center", "componentName": "Cost", "object": "Food", "level": i, "functionName": "Move", "value": 0 }) # FIXME: hardcoded, attention @Modeo
+
 
             curr_level = 0
 
@@ -484,8 +486,8 @@ class Game:
                 game_parameters.append({ "subject": building_type, "componentName": "Load", "object": "Gold", "level": curr_level, "functionName": "", "value": int(gold_cap * 1000) })
                 game_parameters.append({ "subject": building_type, "componentName": "Load", "object": "Food", "level": curr_level, "functionName": "", "value": int(food_cap * 1000) })
                 if curr_level < max_building_level:
-                    game_parameters.append({ "subject": building_type, "componentName": "Cost", "object": "Gold", "level": curr_level, "functionName": "upgrade", "value": int(gold_upgrade_cost * 1000)  })
-                    game_parameters.append({ "subject": building_type, "componentName": "Cost", "object": "Food", "level": curr_level, "functionName": "upgrade", "value": int(food_upgrade_cost * 1000)  })
+                    game_parameters.append({ "subject": building_type, "componentName": "Cost", "object": "Gold", "level": curr_level, "functionName": "Upgrade", "value": int(gold_upgrade_cost * 1000)  })
+                    game_parameters.append({ "subject": building_type, "componentName": "Cost", "object": "Food", "level": curr_level, "functionName": "Upgrade", "value": int(food_upgrade_cost * 1000)  })
 
                 curr_level += 1
 
@@ -507,8 +509,8 @@ class Game:
             game_parameters.append({ "subject": "Tile", "componentName": "Amount", "object": "Guard", "level": curr_level, "functionName": "", "value": tile_guard_count  })
             if curr_level != max_tile_level:
                 (cost_gold, cost_food) = get_tile_upgrade_cost(curr_level)
-                game_parameters.append({ "subject": "Tile", "componentName": "Cost", "object": "Gold", "level": curr_level, "functionName": "upgrade", "value": int(cost_gold * 1000)})
-                game_parameters.append({ "subject": "Tile", "componentName": "Cost", "object": "Food", "level": curr_level, "functionName": "upgrade", "value": int(cost_food * 1000)})
+                game_parameters.append({ "subject": "Tile", "componentName": "Cost", "object": "Gold", "level": curr_level, "functionName": "Upgrade", "value": int(cost_gold * 1000)})
+                game_parameters.append({ "subject": "Tile", "componentName": "Cost", "object": "Food", "level": curr_level, "functionName": "Upgrade", "value": int(cost_food * 1000)})
             curr_level += 1
 
         
