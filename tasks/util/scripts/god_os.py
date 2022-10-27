@@ -34,8 +34,8 @@ def get_hourly_gather_rate_per_army(resource_type: Resource) -> int:
     if (resource_type == Resource.FOOD): building_type = Building.FARM
     (gold_hourly_yield, food_hourly_yield) =  get_building_hourly_yield_by_level(corresponding_building_level, building_type)
 
-    projected_goldmine_count = Game.expected_gold_density() * get_city_center_tiles_interval() * math.ceil((Game.max_city_center_level + 1) / 2)
-    projected_farm_count = Game.expected_farm_density() * get_city_center_tiles_interval() * math.ceil((Game.max_city_center_level + 1) / 2)
+    projected_goldmine_count = expected_gold_density() * get_city_center_tiles_interval() * math.ceil((Game.max_city_center_level + 1) / 2)
+    projected_farm_count = expected_farm_density() * get_city_center_tiles_interval() * math.ceil((Game.max_city_center_level + 1) / 2)
 
     gold_gather_rate = gold_hourly_yield * projected_goldmine_count / Game.resource_weight_low * Game.resource_weight_medium
     food_gather_rate = food_hourly_yield * projected_farm_count / Game.resource_weight_heavy * Game.resource_weight_medium
@@ -118,7 +118,7 @@ def get_building_hourly_yield_by_level(level: int, building_type: Building) -> n
     return np.array([gold_hourly_yield, food_hourly_yield])
 
 def get_PvE_troop_base_count() -> int:
-    return Game.new_player_action_in_seconds * Game.base_troop_training_in_Seconds
+    return Game.new_player_action_in_seconds * Game.base_troop_training_in_seconds
 
 def get_barbarian_count_by_level(level: int) -> int:
     """
@@ -191,8 +191,8 @@ def get_building_upgrade_cost(level: int, building_type: Building) -> np.array:
     if building_type == Building.CITY_CENTER:
         # city center upgrade cost incur additional tax, based upon new tile it unlocks
         # tax = expected resource output (= density * getCityCenterTilesInterval / '2' * yield) * payback period
-        unlocked_goldmine_count = Game.expected_gold_density() * get_city_center_tiles_interval()
-        unlocked_farm_count = Game.expected_farm_density() * get_city_center_tiles_interval()
+        unlocked_goldmine_count = expected_gold_density() * get_city_center_tiles_interval()
+        unlocked_farm_count = expected_farm_density() * get_city_center_tiles_interval()
         # here I choose to use the new city level as base 
         corresponding_building_level = building_level_based_on_center_level(level + 1)
         expected_goldmine_hourly_yield = get_building_hourly_yield_by_level(corresponding_building_level, Building.GOLDMINE)[0]
@@ -201,6 +201,12 @@ def get_building_upgrade_cost(level: int, building_type: Building) -> np.array:
         tax_food = unlocked_farm_count * expected_farm_hourly_yield * payback_period_curve_in_hour(Game.max_city_center_level * Game.city_center_level_to_building_level)(level)
 
         return np.array([goldmine_goldcost + farm_goldcost + tax_gold, goldmine_foodcost + farm_foodcost + tax_food])
+
+def expected_gold_density() -> float:
+    return Game.init_player_goldmine_count / Game.init_player_tile_count
+
+def expected_farm_density() -> float:
+    return Game.init_player_farm_count / Game.init_player_tile_count
 
 def payback_period_curve_in_hour(max_level: int) -> LambdaType:
     """
@@ -281,7 +287,7 @@ class Game:
     note: this is already kinda fast, but might still feel slow. If so, we can initialize some resources
     """
 
-    base_troop_training_in_Seconds = 0.3
+    base_troop_training_in_seconds = 0.3
     """
     time to train one troop
     """
@@ -321,12 +327,6 @@ class Game:
     #   Burn: Build (low), Troop (heavy)
 
     (resource_weight_light, resource_weight_low, resource_weight_medium, resource_weight_high, resource_weight_heavy) = (1, 3, 4, 5, 16)
-
-    def expected_gold_density() -> float:
-        return Game.init_player_goldmine_count / Game.init_player_tile_count
-
-    def expected_farm_density() -> float:
-        return Game.init_player_farm_count / Game.init_player_tile_count
 
     def __init__(self) -> None:
         return
@@ -449,7 +449,7 @@ class Game:
         # Save world parameters here
         world_parameters["maxCityCenterLevel"] = self.max_city_center_level
         world_parameters["cityCenterLevelToEntityLevelRatio"] = int(self.city_center_level_to_building_level)
-        world_parameters["secondsToTrainAThousandTroops"] = int(Game.base_troop_training_in_Seconds * 1000)
+        world_parameters["secondsToTrainAThousandTroops"] = int(self.base_troop_training_in_seconds * 1000)
         game_parameters.append({ "subject": "Army", "componentName": "Rate", "object": "Gold", "level": 0, "functionName": "gather", "value": int(get_hourly_gather_rate_per_army(Resource.GOLD) * 1000 / 3600) })
         game_parameters.append({ "subject": "Army", "componentName": "Rate", "object": "Food", "level": 0, "functionName": "gather", "value": int(get_hourly_gather_rate_per_army(Resource.FOOD) * 1000 / 3600) })
         game_parameters.append({ "subject": "Troop", "componentName": "Load", "object": "Resource", "level": 0, "functionName": "", "value": int(resource_cap_per_troop() * 1000) })
