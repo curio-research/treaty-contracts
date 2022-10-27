@@ -57,10 +57,10 @@ def resource_cap_per_troop() -> int:
 
 def get_troop_size_by_center_level(level: int) -> int:
     """
-    Growth: same as barbarian counts curve
+    Growth: Slow Exponential
     level is city center level
     """
-    return Game.slow_exponential_curve()(level * Game.city_center_level_to_building_level) / Game.payback_period_curve_in_hour()(1) * get_PvE_troop_base_count() * 100 / Game.barbarian_to_army_difficulty_constant
+    return slow_exponential_curve(Game.max_city_center_level)(level) / slow_exponential_curve(9)(1) * get_PvE_troop_base_count() * 100 / Game.barbarian_to_army_difficulty_constant
 
 def get_building_resource_cap(level: int, buildingType: Building) -> np.array:
     """
@@ -79,7 +79,7 @@ def get_city_center_tiles_interval() -> int:
 def get_building_base_hourly_yield(building_type: Building) -> np.array:
     """
     Growth: Constant
-    Gist: based upon how much it takes to occupy one tile and one lv1 barbarian, given that the player has only a city center
+    Gist: based upon how much it takes to occupy one tile and one lv1 barbarian, given that the player has only a city center and init farms
     """
     total_troop = get_tile_troop_count(1) + get_barbarian_count_by_level(1)
     gold_cost_per_troop = Game.resource_weight_light 
@@ -88,11 +88,13 @@ def get_building_base_hourly_yield(building_type: Building) -> np.array:
     total_foodcost = total_troop * food_cost_per_troop
     total_seconds = Game.new_player_action_in_seconds * (1 + Game.tile_to_barbarian_strength_ratio)
 
-    # Food Mint: Harvest (heavy), Food Burn: Troop (heavy)
-    base_farm_food_hourly_yield = total_foodcost / total_seconds * 3600 * (Game.resource_weight_heavy/Game.resource_weight_heavy)
+    # Food Mint: Harvest (heavy), Food Burn: Troop (heavy); also need to consider density level
+    base_farm_food_hourly_yield = total_foodcost / total_seconds * 3600 * (Game.resource_weight_heavy/Game.resource_weight_heavy) \
+    / (Game.init_player_farm_count)
     
-    # Gold Mint: Harvest (low), Gold Burn: Troop (light)
-    base_gold_food_hourly_yield = total_goldcost / total_seconds * 3600 * (Game.resource_weight_low/Game.resource_weight_light)
+    # Gold Mint: Harvest (low), Gold Burn: Troop (light); also need to consider density level
+    base_gold_food_hourly_yield = total_goldcost / total_seconds * 3600 * (Game.resource_weight_low/Game.resource_weight_light) \
+    / (Game.init_player_goldmine_count)
     
     if building_type == Building.FARM:
         return np.array([0, base_farm_food_hourly_yield])
@@ -111,8 +113,8 @@ def get_building_hourly_yield_by_level(level: int, building_type: Building) -> n
     hourly_yield = get_building_base_hourly_yield(building_type)
     gold_base_hourly_yield = hourly_yield[0]
     food_base_hourly_yield = hourly_yield[1]
-    gold_hourly_yield = math.floor(Game.logarithmic_curve()(level) / Game.logarithmic_curve()(1) * gold_base_hourly_yield)
-    food_hourly_yield = math.floor(Game.logarithmic_curve()(level) / Game.logarithmic_curve()(1) * food_base_hourly_yield)
+    gold_hourly_yield = math.floor(logarithmic_curve(Game.max_city_center_level * Game.city_center_level_to_building_level)(level) / logarithmic_curve(9)(1) * gold_base_hourly_yield)
+    food_hourly_yield = math.floor(logarithmic_curve(Game.max_city_center_level * Game.city_center_level_to_building_level)(level) / logarithmic_curve(9)(1) * food_base_hourly_yield)
     return np.array([gold_hourly_yield, food_hourly_yield])
 
 def get_PvE_troop_base_count() -> int:
@@ -123,7 +125,7 @@ def get_barbarian_count_by_level(level: int) -> int:
     Growth: slow exponential
     Gist: barbarian rewards and costs both increase exponentially, but the latter at a lower rate
     """
-    return Game.slow_exponential_curve()(level) / Game.slow_exponential_curve()(1) * get_PvE_troop_base_count()
+    return slow_exponential_curve(Game.max_city_center_level * Game.city_center_level_to_building_level)(level) / slow_exponential_curve(9)(1) * get_PvE_troop_base_count()
 
 def get_barbarian_reward(level: int) -> np.array:
     """
@@ -136,7 +138,7 @@ def get_barbarian_reward(level: int) -> np.array:
     total_goldcost = barbarian_count * goldcost_per_troop
     total_foodcost = barbarian_count * foodcost_per_troop
     # actual reward = base reward * exponential curve (level as x)
-    gold_reward = total_goldcost * Game.barbarian_reward_to_cost_coefficient * Game.fast_exponential_curve()(level) / Game.fast_exponential_curve()(1)
+    gold_reward = total_goldcost * Game.barbarian_reward_to_cost_coefficient * fast_exponential_curve(Game.max_city_center_level * Game.city_center_level_to_building_level)(level) / fast_exponential_curve(9)(1)
     # food burn for troop is heavy while food mint for barbarians is low
     food_reward = total_foodcost * Game.barbarian_reward_to_cost_coefficient * (Game.resource_weight_light/Game.resource_weight_heavy)
     return np.array([gold_reward, food_reward])
@@ -146,7 +148,7 @@ def get_tile_troop_count(level: int) -> int:
     Growth: slow exponential
     Gist: tile power increases exponentially; for now all tiles are initialized to be lv1
     """
-    return Game.payback_period_curve_in_hour()(level) / Game.payback_period_curve_in_hour()(1) * get_PvE_troop_base_count() * Game.tile_to_barbarian_strength_ratio
+    return slow_exponential_curve(Game.max_city_center_level * Game.city_center_level_to_building_level)(level) / slow_exponential_curve(9)(1) * get_PvE_troop_base_count() * Game.tile_to_barbarian_strength_ratio
 
 def get_tile_upgrade_cost(level: int) -> np.array:
     """
@@ -171,13 +173,15 @@ def get_building_upgrade_cost(level: int, building_type: Building) -> np.array:
     Gist: both building yields and upgrade costs increase exponentially, but the latter at a lower rate
     """
     # cost is easy to calculate for goldmine
-    goldmine_goldcost = Game.payback_period_curve_in_hour()(level) * get_building_hourly_yield_by_level(level, Building.GOLDMINE)[0]
+    goldmine_goldcost = payback_period_curve_in_hour(Game.max_city_center_level * Game.city_center_level_to_building_level)(level) \
+    * get_building_hourly_yield_by_level(level, Building.GOLDMINE)[0]
     # calculate foodcost based on resource weight; NOTE: not scientific here, a leap of faith here
     goldmine_foodcost = goldmine_goldcost/Game.resource_weight_heavy * Game.resource_weight_low
     # assumption is that player spend gold equivalently on two types of building
     farm_goldcost = goldmine_goldcost * Game.init_player_goldmine_count / Game.init_player_farm_count
     # farm food cost if don't consider that part of it goes to troops
-    farm_foodcost_raw = Game.payback_period_curve_in_hour()(level) * get_building_hourly_yield_by_level(level, Building.FARM)[1]
+    farm_foodcost_raw = payback_period_curve_in_hour(Game.max_city_center_level * Game.city_center_level_to_building_level)(level) \
+    * get_building_hourly_yield_by_level(level, Building.FARM)[1]
     # consider relative weight of food burn => Build (low), Troop (heavy)
     farm_foodcost = farm_foodcost_raw * Game.resource_weight_low/(Game.resource_weight_heavy + Game.resource_weight_low)
     if building_type == Building.GOLDMINE:
@@ -193,10 +197,45 @@ def get_building_upgrade_cost(level: int, building_type: Building) -> np.array:
         corresponding_building_level = building_level_based_on_center_level(level + 1)
         expected_goldmine_hourly_yield = get_building_hourly_yield_by_level(corresponding_building_level, Building.GOLDMINE)[0]
         expected_farm_hourly_yield = get_building_hourly_yield_by_level(corresponding_building_level, Building.FARM)[1]
-        tax_gold = unlocked_goldmine_count * expected_goldmine_hourly_yield * Game.payback_period_curve_in_hour()(corresponding_building_level)
-        tax_food = unlocked_farm_count * expected_farm_hourly_yield * Game.payback_period_curve_in_hour()(corresponding_building_level)
+        tax_gold = unlocked_goldmine_count * expected_goldmine_hourly_yield * payback_period_curve_in_hour(Game.max_city_center_level * Game.city_center_level_to_building_level)(level)
+        tax_food = unlocked_farm_count * expected_farm_hourly_yield * payback_period_curve_in_hour(Game.max_city_center_level * Game.city_center_level_to_building_level)(level)
 
         return np.array([goldmine_goldcost + farm_goldcost + tax_gold, goldmine_foodcost + farm_foodcost + tax_food])
+
+def payback_period_curve_in_hour(max_level: int) -> LambdaType:
+    """
+    Growth: fast exponential
+    Note: sum from f(1) to f(9) is 19.757. Leap of faith: assume this is reasonable for 72 hr gameplay
+    Gist: (math.e)**(level/7) - 0.9 makes sure upgrade from (n - 1) to n (max level) has 5.15 hr payback period (72 h gameplay)
+    """
+    return lambda level: ((math.e)**((level / max_level * 9)/5) - 0.9) * Game.expected_play_time_in_hour / 72
+    
+def slow_exponential_curve(max_level: int) -> LambdaType:
+    """
+    Growth: slow exponential
+    NOTE: Don't tune this parameter to adjust gametime
+    """
+    return lambda level: ((math.e)**((level / max_level * 9)/7) - 0.9)
+    
+def fast_exponential_curve(max_level: int) -> LambdaType:
+    """
+    Growth: fast exponential
+    NOTE: Don't tune this parameter to adjust gametime
+    """
+    return lambda level: ((math.e)**((level / max_level * 9)/5) - 0.9)
+    
+def logarithmic_curve(max_level: int) -> LambdaType:
+    """
+    Growth: logrithmic
+    Mainly used for resource yield growth
+    """
+    return lambda level: math.log((level / max_level * 9)/2 + 1) + 1
+
+def tile_loyalty_points(decay_dist: float):
+    """
+    Multiply loyalty points to a tile's guard amount at each level to determine its actual guard amount level under control of a player based on its distance from the player's city center.
+    """
+    return lambda dist: -math.atan(dist - decay_dist) / math.pi + 1 / 2
 
 class Game:
     # TODO: use a JSON to initialize these variable
@@ -212,13 +251,13 @@ class Game:
     init_player_goldmine_count = 2
     """
     How many goldmines avg players have when city center level is 1
-    Determine resource density. Note that one of the goldmine is citycenter
+    Determine resource density. Note that one of the goldmines is citycenter
     """
 
-    init_player_farm_count = 4
+    init_player_farm_count = 9
     """
     How many farms avg players have when city center level is 1
-    Determine resource density. 
+    Determine resource density. Note that one of the farms is citycenter
     """
 
     player_login_interval_in_minutes = 20
@@ -274,46 +313,6 @@ class Game:
     Gather rate should be much faster than harvest yield rate
     """
 
-    def payback_period_curve_in_hour() -> LambdaType:
-        """
-        Growth: fast exponential
-        Gist: (math.e)**(level/7) - 0.9 makes sure upgrade from lv8 to lv9 has 5.15 hr payback period (72 h gameplay)
-        """
-        return lambda level: ((math.e)**(level/7) - 0.9) * Game.expected_play_time_in_hour / 72
-    
-    def slow_exponential_curve() -> LambdaType:
-        """
-        Growth: slow exponential
-        NOTE: Don't tune this parameter to adjust gametime
-        """
-        return lambda level: ((math.e)**(1/7 * level) - 0.9)
-    
-    def fast_exponential_curve() -> LambdaType:
-        """
-        Growth: fast exponential
-        NOTE: Don't tune this parameter to adjust gametime
-        """
-        return lambda level: ((math.e)**(1/5 * level) - 0.9)
-    
-    def logarithmic_curve() -> LambdaType:
-        """
-        Growth: logrithmic
-        Mainly used for resource yield growth
-        """
-        return lambda level: math.log(level/2 + 1) + 1
-
-    def expected_gold_density() -> float:
-        return Game.init_player_goldmine_count/Game.init_player_tile_count
-
-    def expected_farm_density() -> float:
-        return Game.init_player_farm_count/Game.init_player_tile_count
-
-    def tile_loyalty_points(self, decay_dist: float):
-        """
-        Multiply loyalty points to a tile's guard amount at each level to determine its actual guard amount level under control of a player based on its distance from the player's city center.
-        """
-        return lambda dist: -math.atan(dist - decay_dist) / math.pi + 1 / 2
-
     # Gold:
     #   Mint: Harvest (low), Gather (medium), Barbarians (high)
     #   Burn: Build (heavy), Troop (light)
@@ -322,6 +321,12 @@ class Game:
     #   Burn: Build (low), Troop (heavy)
 
     (resource_weight_light, resource_weight_low, resource_weight_medium, resource_weight_high, resource_weight_heavy) = (1, 3, 4, 5, 16)
+
+    def expected_gold_density() -> float:
+        return Game.init_player_goldmine_count / Game.init_player_tile_count
+
+    def expected_farm_density() -> float:
+        return Game.init_player_farm_count / Game.init_player_tile_count
 
     def __init__(self) -> None:
         return
@@ -443,7 +448,6 @@ class Game:
 
         # Save world parameters here
         world_parameters["maxCityCenterLevel"] = self.max_city_center_level
-        world_parameters["cityCenterLevelToTileCountRatio"] = int(get_city_center_tiles_interval())
         world_parameters["cityCenterLevelToEntityLevelRatio"] = int(self.city_center_level_to_building_level)
         world_parameters["secondsToTrainAThousandTroops"] = int(Game.base_troop_training_in_Seconds * 1000)
         game_parameters.append({ "subject": "Army", "componentName": "Rate", "object": "Gold", "level": 0, "functionName": "gather", "value": int(get_hourly_gather_rate_per_army(Resource.GOLD) * 1000 / 3600) })
@@ -513,6 +517,7 @@ class Game:
         curr_level = 1
         while curr_level <= max_building_level:
             game_parameters.append({ "subject": "Army", "componentName": "Amount", "object": "Troop", "level": curr_level, "functionName": "", "value": get_troop_size_by_center_level(curr_level)  })
+            game_parameters.append({ "subject": "City", "componentName": "Amount", "object": "Tile", "level": curr_level, "functionName": "", "value": self.init_player_tile_count + (curr_level - 1) * int(get_city_center_tiles_interval())  })
             curr_level += 1
         
         # Dump JSON
