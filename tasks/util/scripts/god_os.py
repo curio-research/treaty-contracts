@@ -308,6 +308,12 @@ class Game:
     def expected_farm_density() -> float:
         return Game.init_player_farm_count/Game.init_player_tile_count
 
+    def tile_loyalty_points(self, decay_dist: float):
+        """
+        Multiply loyalty points to a tile's guard amount at each level to determine its actual guard amount level under control of a player based on its distance from the player's city center.
+        """
+        return lambda dist: -math.atan(dist - decay_dist) / math.pi + 1 / 2
+
     # Gold:
     #   Mint: Harvest (low), Gather (medium), Barbarians (high)
     #   Burn: Build (heavy), Troop (light)
