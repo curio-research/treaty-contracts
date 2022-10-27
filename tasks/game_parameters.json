@@ -21,7 +21,7 @@
         "object": "Resource",
         "level": 0,
         "functionName": "",
-        "value": 2744
+        "value": 1829
     },
     {
         "subject": "Troop Production",
@@ -92,26 +92,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 0,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 1793
-=======
-        "functionName": "upgrade",
         "value": 895
->>>>>>> Stashed changes
     },
     {
         "subject": "Goldmine",
         "componentName": "Cost",
         "object": "Food",
         "level": 0,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 336
-=======
-        "functionName": "upgrade",
         "value": 167
->>>>>>> Stashed changes
     },
     {
         "subject": "Goldmine",
@@ -150,26 +140,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 1,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 5151
-=======
-        "functionName": "upgrade",
         "value": 2961
->>>>>>> Stashed changes
     },
     {
         "subject": "Goldmine",
         "componentName": "Cost",
         "object": "Food",
         "level": 1,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 965
-=======
-        "functionName": "upgrade",
         "value": 555
->>>>>>> Stashed changes
     },
     {
         "subject": "Goldmine",
@@ -208,26 +188,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 2,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 9791
-=======
-        "functionName": "upgrade",
         "value": 5932
->>>>>>> Stashed changes
     },
     {
         "subject": "Goldmine",
         "componentName": "Cost",
         "object": "Food",
         "level": 2,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 1835
-=======
-        "functionName": "upgrade",
         "value": 1112
->>>>>>> Stashed changes
     },
     {
         "subject": "Goldmine",
@@ -266,26 +236,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 3,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 15710
-=======
-        "functionName": "upgrade",
         "value": 9843
->>>>>>> Stashed changes
     },
     {
         "subject": "Goldmine",
         "componentName": "Cost",
         "object": "Food",
         "level": 3,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 2945
-=======
-        "functionName": "upgrade",
         "value": 1845
->>>>>>> Stashed changes
     },
     {
         "subject": "Goldmine",
@@ -324,26 +284,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 4,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 22974
-=======
-        "functionName": "upgrade",
         "value": 14792
->>>>>>> Stashed changes
     },
     {
         "subject": "Goldmine",
         "componentName": "Cost",
         "object": "Food",
         "level": 4,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 4307
-=======
-        "functionName": "upgrade",
         "value": 2773
->>>>>>> Stashed changes
     },
     {
         "subject": "Goldmine",
@@ -382,26 +332,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 5,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 31697
-=======
-        "functionName": "upgrade",
         "value": 20917
->>>>>>> Stashed changes
     },
     {
         "subject": "Goldmine",
         "componentName": "Cost",
         "object": "Food",
         "level": 5,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 5943
-=======
-        "functionName": "upgrade",
         "value": 3921
->>>>>>> Stashed changes
     },
     {
         "subject": "Goldmine",
@@ -440,26 +380,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 6,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 42040
-=======
-        "functionName": "upgrade",
         "value": 28397
->>>>>>> Stashed changes
     },
     {
         "subject": "Goldmine",
         "componentName": "Cost",
         "object": "Food",
         "level": 6,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 7882
-=======
-        "functionName": "upgrade",
         "value": 5324
->>>>>>> Stashed changes
     },
     {
         "subject": "Goldmine",
@@ -498,26 +428,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 7,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 54146
-=======
-        "functionName": "upgrade",
         "value": 37399
->>>>>>> Stashed changes
     },
     {
         "subject": "Goldmine",
         "componentName": "Cost",
         "object": "Food",
         "level": 7,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 10152
-=======
-        "functionName": "upgrade",
         "value": 7012
->>>>>>> Stashed changes
     },
     {
         "subject": "Goldmine",
@@ -556,26 +476,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 8,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 68289
-=======
-        "functionName": "upgrade",
         "value": 48251
->>>>>>> Stashed changes
     },
     {
         "subject": "Goldmine",
         "componentName": "Cost",
         "object": "Food",
         "level": 8,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 12804
-=======
-        "functionName": "upgrade",
         "value": 9047
->>>>>>> Stashed changes
     },
     {
         "subject": "Goldmine",
@@ -614,26 +524,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 9,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 84683
-=======
-        "functionName": "upgrade",
         "value": 61243
->>>>>>> Stashed changes
     },
     {
         "subject": "Goldmine",
         "componentName": "Cost",
         "object": "Food",
         "level": 9,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 15878
-=======
-        "functionName": "upgrade",
         "value": 11483
->>>>>>> Stashed changes
     },
     {
         "subject": "Goldmine",
@@ -672,26 +572,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 10,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 103611
-=======
-        "functionName": "upgrade",
         "value": 76633
->>>>>>> Stashed changes
     },
     {
         "subject": "Goldmine",
         "componentName": "Cost",
         "object": "Food",
         "level": 10,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 19427
-=======
-        "functionName": "upgrade",
         "value": 14368
->>>>>>> Stashed changes
     },
     {
         "subject": "Goldmine",
@@ -730,26 +620,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 11,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 125406
-=======
-        "functionName": "upgrade",
         "value": 94933
->>>>>>> Stashed changes
     },
     {
         "subject": "Goldmine",
         "componentName": "Cost",
         "object": "Food",
         "level": 11,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 23513
-=======
-        "functionName": "upgrade",
         "value": 17799
->>>>>>> Stashed changes
     },
     {
         "subject": "Goldmine",
@@ -788,26 +668,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 12,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 150469
-=======
-        "functionName": "upgrade",
         "value": 116618
->>>>>>> Stashed changes
     },
     {
         "subject": "Goldmine",
         "componentName": "Cost",
         "object": "Food",
         "level": 12,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 28212
-=======
-        "functionName": "upgrade",
         "value": 21865
->>>>>>> Stashed changes
     },
     {
         "subject": "Goldmine",
@@ -846,26 +716,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 13,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 179274
-=======
-        "functionName": "upgrade",
         "value": 142364
->>>>>>> Stashed changes
     },
     {
         "subject": "Goldmine",
         "componentName": "Cost",
         "object": "Food",
         "level": 13,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 33613
-=======
-        "functionName": "upgrade",
         "value": 26693
->>>>>>> Stashed changes
     },
     {
         "subject": "Goldmine",
@@ -904,26 +764,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 14,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 212206
-=======
-        "functionName": "upgrade",
         "value": 172571
->>>>>>> Stashed changes
     },
     {
         "subject": "Goldmine",
         "componentName": "Cost",
         "object": "Food",
         "level": 14,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 39788
-=======
-        "functionName": "upgrade",
         "value": 32357
->>>>>>> Stashed changes
     },
     {
         "subject": "Goldmine",
@@ -994,26 +844,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 0,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 398
-=======
-        "functionName": "upgrade",
         "value": 199
->>>>>>> Stashed changes
     },
     {
         "subject": "Farm",
         "componentName": "Cost",
         "object": "Food",
         "level": 0,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 335
-=======
-        "functionName": "upgrade",
         "value": 167
->>>>>>> Stashed changes
     },
     {
         "subject": "Farm",
@@ -1052,26 +892,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 1,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 1144
-=======
-        "functionName": "upgrade",
         "value": 658
->>>>>>> Stashed changes
     },
     {
         "subject": "Farm",
         "componentName": "Cost",
         "object": "Food",
         "level": 1,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 963
-=======
-        "functionName": "upgrade",
         "value": 554
->>>>>>> Stashed changes
     },
     {
         "subject": "Farm",
@@ -1110,26 +940,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 2,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 2175
-=======
-        "functionName": "upgrade",
         "value": 1318
->>>>>>> Stashed changes
     },
     {
         "subject": "Farm",
         "componentName": "Cost",
         "object": "Food",
         "level": 2,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 1831
-=======
-        "functionName": "upgrade",
         "value": 1109
->>>>>>> Stashed changes
     },
     {
         "subject": "Farm",
@@ -1168,26 +988,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 3,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 3491
-=======
-        "functionName": "upgrade",
         "value": 2187
->>>>>>> Stashed changes
     },
     {
         "subject": "Farm",
         "componentName": "Cost",
         "object": "Food",
         "level": 3,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 2940
-=======
-        "functionName": "upgrade",
         "value": 1842
->>>>>>> Stashed changes
     },
     {
         "subject": "Farm",
@@ -1226,26 +1036,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 4,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 5105
-=======
-        "functionName": "upgrade",
         "value": 3287
->>>>>>> Stashed changes
     },
     {
         "subject": "Farm",
         "componentName": "Cost",
         "object": "Food",
         "level": 4,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 4298
-=======
-        "functionName": "upgrade",
         "value": 2766
->>>>>>> Stashed changes
     },
     {
         "subject": "Farm",
@@ -1284,26 +1084,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 5,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 7043
-=======
-        "functionName": "upgrade",
         "value": 4648
->>>>>>> Stashed changes
     },
     {
         "subject": "Farm",
         "componentName": "Cost",
         "object": "Food",
         "level": 5,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 5933
-=======
-        "functionName": "upgrade",
         "value": 3915
->>>>>>> Stashed changes
     },
     {
         "subject": "Farm",
@@ -1342,26 +1132,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 6,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 9342
-=======
-        "functionName": "upgrade",
         "value": 6310
->>>>>>> Stashed changes
     },
     {
         "subject": "Farm",
         "componentName": "Cost",
         "object": "Food",
         "level": 6,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 7868
-=======
-        "functionName": "upgrade",
         "value": 5314
->>>>>>> Stashed changes
     },
     {
         "subject": "Farm",
@@ -1400,26 +1180,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 7,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 12032
-=======
-        "functionName": "upgrade",
         "value": 8310
->>>>>>> Stashed changes
     },
     {
         "subject": "Farm",
         "componentName": "Cost",
         "object": "Food",
         "level": 7,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 10133
-=======
-        "functionName": "upgrade",
         "value": 6999
->>>>>>> Stashed changes
     },
     {
         "subject": "Farm",
@@ -1458,26 +1228,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 8,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 15175
-=======
-        "functionName": "upgrade",
         "value": 10722
->>>>>>> Stashed changes
     },
     {
         "subject": "Farm",
         "componentName": "Cost",
         "object": "Food",
         "level": 8,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 12781
-=======
-        "functionName": "upgrade",
         "value": 9035
->>>>>>> Stashed changes
     },
     {
         "subject": "Farm",
@@ -1516,26 +1276,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 9,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 18818
-=======
-        "functionName": "upgrade",
         "value": 13609
->>>>>>> Stashed changes
     },
     {
         "subject": "Farm",
         "componentName": "Cost",
         "object": "Food",
         "level": 9,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 15846
-=======
-        "functionName": "upgrade",
         "value": 11460
->>>>>>> Stashed changes
     },
     {
         "subject": "Farm",
@@ -1574,26 +1324,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 10,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 23024
-=======
-        "functionName": "upgrade",
         "value": 17029
->>>>>>> Stashed changes
     },
     {
         "subject": "Farm",
         "componentName": "Cost",
         "object": "Food",
         "level": 10,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 19392
-=======
-        "functionName": "upgrade",
         "value": 14350
->>>>>>> Stashed changes
     },
     {
         "subject": "Farm",
@@ -1632,26 +1372,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 11,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 27868
-=======
-        "functionName": "upgrade",
         "value": 21096
->>>>>>> Stashed changes
     },
     {
         "subject": "Farm",
         "componentName": "Cost",
         "object": "Food",
         "level": 11,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 23476
-=======
-        "functionName": "upgrade",
         "value": 17780
->>>>>>> Stashed changes
     },
     {
         "subject": "Farm",
@@ -1690,26 +1420,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 12,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 33437
-=======
-        "functionName": "upgrade",
         "value": 25915
->>>>>>> Stashed changes
     },
     {
         "subject": "Farm",
         "componentName": "Cost",
         "object": "Food",
         "level": 12,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 28160
-=======
-        "functionName": "upgrade",
         "value": 21835
->>>>>>> Stashed changes
     },
     {
         "subject": "Farm",
@@ -1748,26 +1468,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 13,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 39838
-=======
-        "functionName": "upgrade",
         "value": 31636
->>>>>>> Stashed changes
     },
     {
         "subject": "Farm",
         "componentName": "Cost",
         "object": "Food",
         "level": 13,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 33548
-=======
-        "functionName": "upgrade",
         "value": 26631
->>>>>>> Stashed changes
     },
     {
         "subject": "Farm",
@@ -1806,26 +1516,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 14,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 47157
-=======
-        "functionName": "upgrade",
         "value": 38349
->>>>>>> Stashed changes
     },
     {
         "subject": "Farm",
         "componentName": "Cost",
         "object": "Food",
         "level": 14,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 39719
-=======
-        "functionName": "upgrade",
         "value": 32315
->>>>>>> Stashed changes
     },
     {
         "subject": "Farm",
@@ -2016,26 +1716,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 0,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 4926
-=======
-        "functionName": "upgrade",
         "value": 1641
->>>>>>> Stashed changes
     },
     {
         "subject": "City Center",
         "componentName": "Cost",
         "object": "Food",
         "level": 0,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 15255
-=======
-        "functionName": "upgrade",
         "value": 3252
->>>>>>> Stashed changes
     },
     {
         "subject": "City Center",
@@ -2074,26 +1764,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 1,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 14706
-=======
-        "functionName": "upgrade",
         "value": 5554
->>>>>>> Stashed changes
     },
     {
         "subject": "City Center",
         "componentName": "Cost",
         "object": "Food",
         "level": 1,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 46789
-=======
-        "functionName": "upgrade",
         "value": 11430
->>>>>>> Stashed changes
     },
     {
         "subject": "City Center",
@@ -2132,26 +1812,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 2,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 28089
-=======
-        "functionName": "upgrade",
         "value": 11157
->>>>>>> Stashed changes
     },
     {
         "subject": "City Center",
         "componentName": "Cost",
         "object": "Food",
         "level": 2,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 89673
-=======
-        "functionName": "upgrade",
         "value": 23065
->>>>>>> Stashed changes
     },
     {
         "subject": "City Center",
@@ -2190,26 +1860,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 3,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 44967
-=======
-        "functionName": "upgrade",
         "value": 18485
->>>>>>> Stashed changes
     },
     {
         "subject": "City Center",
         "componentName": "Cost",
         "object": "Food",
         "level": 3,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 143274
-=======
-        "functionName": "upgrade",
         "value": 38106
->>>>>>> Stashed changes
     },
     {
         "subject": "City Center",
@@ -2248,26 +1908,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 4,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 65474
-=======
-        "functionName": "upgrade",
         "value": 27710
->>>>>>> Stashed changes
     },
     {
         "subject": "City Center",
         "componentName": "Cost",
         "object": "Food",
         "level": 4,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 208062
-=======
-        "functionName": "upgrade",
         "value": 56909
->>>>>>> Stashed changes
     },
     {
         "subject": "City Center",
@@ -2674,26 +2324,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 1,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 11062
-=======
-        "functionName": "upgrade",
         "value": 5531
->>>>>>> Stashed changes
     },
     {
         "subject": "Tile",
         "componentName": "Cost",
         "object": "Food",
         "level": 1,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 176995
-=======
-        "functionName": "upgrade",
         "value": 88497
->>>>>>> Stashed changes
     },
     {
         "subject": "Tile",
@@ -2708,26 +2348,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 2,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 12052
-=======
-        "functionName": "upgrade",
         "value": 6026
->>>>>>> Stashed changes
     },
     {
         "subject": "Tile",
         "componentName": "Cost",
         "object": "Food",
         "level": 2,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 192835
-=======
-        "functionName": "upgrade",
         "value": 96417
->>>>>>> Stashed changes
     },
     {
         "subject": "Tile",
@@ -2742,26 +2372,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 3,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 13130
-=======
-        "functionName": "upgrade",
         "value": 6565
->>>>>>> Stashed changes
     },
     {
         "subject": "Tile",
         "componentName": "Cost",
         "object": "Food",
         "level": 3,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 210093
-=======
-        "functionName": "upgrade",
         "value": 105046
->>>>>>> Stashed changes
     },
     {
         "subject": "Tile",
@@ -2776,26 +2396,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 4,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 14305
-=======
-        "functionName": "upgrade",
         "value": 7152
->>>>>>> Stashed changes
     },
     {
         "subject": "Tile",
         "componentName": "Cost",
         "object": "Food",
         "level": 4,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 228895
-=======
-        "functionName": "upgrade",
         "value": 114447
->>>>>>> Stashed changes
     },
     {
         "subject": "Tile",
@@ -2810,26 +2420,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 5,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 15586
-=======
-        "functionName": "upgrade",
         "value": 7793
->>>>>>> Stashed changes
     },
     {
         "subject": "Tile",
         "componentName": "Cost",
         "object": "Food",
         "level": 5,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 249380
-=======
-        "functionName": "upgrade",
         "value": 124690
->>>>>>> Stashed changes
     },
     {
         "subject": "Tile",
@@ -2844,26 +2444,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 6,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 16981
-=======
-        "functionName": "upgrade",
         "value": 8490
->>>>>>> Stashed changes
     },
     {
         "subject": "Tile",
         "componentName": "Cost",
         "object": "Food",
         "level": 6,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 271699
-=======
-        "functionName": "upgrade",
         "value": 135849
->>>>>>> Stashed changes
     },
     {
         "subject": "Tile",
@@ -2878,26 +2468,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 7,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 18500
-=======
-        "functionName": "upgrade",
         "value": 9250
->>>>>>> Stashed changes
     },
     {
         "subject": "Tile",
         "componentName": "Cost",
         "object": "Food",
         "level": 7,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 296014
-=======
-        "functionName": "upgrade",
         "value": 148007
->>>>>>> Stashed changes
     },
     {
         "subject": "Tile",
@@ -2912,26 +2492,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 8,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 20156
-=======
-        "functionName": "upgrade",
         "value": 10078
->>>>>>> Stashed changes
     },
     {
         "subject": "Tile",
         "componentName": "Cost",
         "object": "Food",
         "level": 8,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 322506
-=======
-        "functionName": "upgrade",
         "value": 161253
->>>>>>> Stashed changes
     },
     {
         "subject": "Tile",
@@ -2946,26 +2516,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 9,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 21960
-=======
-        "functionName": "upgrade",
         "value": 10980
->>>>>>> Stashed changes
     },
     {
         "subject": "Tile",
         "componentName": "Cost",
         "object": "Food",
         "level": 9,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 351369
-=======
-        "functionName": "upgrade",
         "value": 175684
->>>>>>> Stashed changes
     },
     {
         "subject": "Tile",
@@ -2980,26 +2540,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 10,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 23925
-=======
-        "functionName": "upgrade",
         "value": 11962
->>>>>>> Stashed changes
     },
     {
         "subject": "Tile",
         "componentName": "Cost",
         "object": "Food",
         "level": 10,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 382815
-=======
-        "functionName": "upgrade",
         "value": 191407
->>>>>>> Stashed changes
     },
     {
         "subject": "Tile",
@@ -3014,26 +2564,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 11,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 26067
-=======
-        "functionName": "upgrade",
         "value": 13033
->>>>>>> Stashed changes
     },
     {
         "subject": "Tile",
         "componentName": "Cost",
         "object": "Food",
         "level": 11,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 417075
-=======
-        "functionName": "upgrade",
         "value": 208537
->>>>>>> Stashed changes
     },
     {
         "subject": "Tile",
@@ -3048,26 +2588,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 12,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 28400
-=======
-        "functionName": "upgrade",
         "value": 14200
->>>>>>> Stashed changes
     },
     {
         "subject": "Tile",
         "componentName": "Cost",
         "object": "Food",
         "level": 12,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 454401
-=======
-        "functionName": "upgrade",
         "value": 227200
->>>>>>> Stashed changes
     },
     {
         "subject": "Tile",
@@ -3082,26 +2612,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 13,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 30941
-=======
-        "functionName": "upgrade",
         "value": 15470
->>>>>>> Stashed changes
     },
     {
         "subject": "Tile",
         "componentName": "Cost",
         "object": "Food",
         "level": 13,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 495068
-=======
-        "functionName": "upgrade",
         "value": 247534
->>>>>>> Stashed changes
     },
     {
         "subject": "Tile",
@@ -3116,26 +2636,16 @@
         "componentName": "Cost",
         "object": "Gold",
         "level": 14,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 33710
-=======
-        "functionName": "upgrade",
         "value": 16855
->>>>>>> Stashed changes
     },
     {
         "subject": "Tile",
         "componentName": "Cost",
         "object": "Food",
         "level": 14,
-<<<<<<< Updated upstream
         "functionName": "Upgrade",
-        "value": 539374
-=======
-        "functionName": "upgrade",
         "value": 269687
->>>>>>> Stashed changes
     },
     {
         "subject": "Tile",
@@ -3151,7 +2661,7 @@
         "object": "Troop",
         "level": 1,
         "functionName": "",
-        "value": 38.77012487955817
+        "value": 58.15518731933726
     },
     {
         "subject": "City",
@@ -3167,7 +2677,7 @@
         "object": "Troop",
         "level": 2,
         "functionName": "",
-        "value": 76.15833101206607
+        "value": 114.2374965180991
     },
     {
         "subject": "City",
@@ -3183,7 +2693,7 @@
         "object": "Troop",
         "level": 3,
         "functionName": "",
-        "value": 124.50987562013539
+        "value": 186.7648134302031
     },
     {
         "subject": "City",
@@ -3199,7 +2709,7 @@
         "object": "Troop",
         "level": 4,
         "functionName": "",
-        "value": 187.03953691761637
+        "value": 280.55930537642456
     },
     {
         "subject": "City",
@@ -3215,7 +2725,7 @@
         "object": "Troop",
         "level": 5,
         "functionName": "",
-        "value": 267.9047620861451
+        "value": 401.85714312921766
     },
     {
         "subject": "City",

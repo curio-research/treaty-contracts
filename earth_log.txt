@@ -2,12 +2,8 @@
 ** Faith Constants **
 -----------------
 barbarian_reward_to_cost_coefficient: 4
-barbarian_to_army_difficulty_constant: 60
-<<<<<<< Updated upstream
-base_troop_training_in_seconds: 0.3
-=======
+barbarian_to_army_difficulty_constant: 40
 base_troop_training_in_seconds: 0.15
->>>>>>> Stashed changes
 city_center_level_to_building_level: 3
 expected_play_time_in_hour: 1.5
 expected_player_count: 3
@@ -542,14 +538,14 @@ Gather Stats
 -----------------
 Gold Hourly Gather Rate Per Army: 1667.5555555555554
 Food Hourly Gather Rate Per Army: 1668.0
-Resource Load per Troop: 2.744092908011975
+Resource Load per Troop: 1.8293952720079831
 -----------------
 TroopSize Stats
 -----------------
-City Center Level (1) TroopSize: 38.77012487955817
-City Center Level (2) TroopSize: 76.15833101206607
-City Center Level (3) TroopSize: 124.50987562013539
-City Center Level (4) TroopSize: 187.03953691761637
-City Center Level (5) TroopSize: 267.9047620861451
+City Center Level (1) TroopSize: 58.15518731933726
+City Center Level (2) TroopSize: 114.2374965180991
+City Center Level (3) TroopSize: 186.7648134302031
+City Center Level (4) TroopSize: 280.55930537642456
+City Center Level (5) TroopSize: 401.85714312921766
 Troop Gold Cost: 1
 Troop Food Cost: 16
