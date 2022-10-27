@@ -600,7 +600,7 @@ contract GameFacet is UseStorage {
         require(GameLib.getArmyAt(midPosition) == NULL, "CURIO: Occupied by another army");
 
         // Verify that total troop amount does not exceed max troop count
-        uint256 maxTroopCountPerArmy = GameLib.getConstant("Army", "Troop", "Amount", "", ECSLib.getUint("Level", _cityID));
+        uint256 maxTroopCountPerArmy = GameLib.getConstant("Army", "Troop", "Amount", "", ECSLib.getUint("Level", GameLib.getCityCenter(_cityID)));
         require(GameLib.sum(_amounts) <= maxTroopCountPerArmy, "CURIO: Troop amount exceeds capacity");
 
         // Gather army traits from individual troop types
