@@ -308,7 +308,7 @@ class Game:
     Upgrading Tiles should cost less than buying troops
     """
 
-    barbarian_to_army_difficulty_constant = 60
+    barbarian_to_army_difficulty_constant = 40
     """
     Affect army size. The percentage of troop attendence to defeat same-level barbarian
     Example: player city center is lv3, then its army should equal lv7 - 9 barbarians (avg is 8) if constant is 100
