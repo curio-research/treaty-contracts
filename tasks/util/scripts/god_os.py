@@ -527,6 +527,7 @@ class Game:
                 outfile.write(json.dumps(game_parameters, indent=4))
         with open("tasks/world_parameters.json", "w+") as outfile:
                 outfile.write(json.dumps(world_parameters, indent=4))
+        print('GodOS: generated and exported parameters')
 
 a = Game()
 a.print_parameters()
