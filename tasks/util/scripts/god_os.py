@@ -245,7 +245,7 @@ def tile_loyalty_points(decay_dist: float):
 
 class Game:
     # TODO: use a JSON to initialize these variable
-    total_tile_count = 9*9
+    total_tile_count = 11*11
     expected_player_count = 3
     init_player_tile_count = 9
 

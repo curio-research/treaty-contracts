@@ -21,7 +21,7 @@ resource_weight_low: 3
 resource_weight_medium: 4
 tile_to_barbarian_strength_ratio: 1.8
 tile_troop_discount: 0.2
-total_tile_count: 81
+total_tile_count: 121
 -----------------
 ** Goldmine Stats **
 -----------------
@@ -305,8 +305,8 @@ Gold Yield Per Hour: 543
 Food Yield Per Hour: 644
 Gold Cap: 181.0
 Food Cap: 214.66666666666666
-Gold Cost to Upgrade: 7.406514921619488
-Food Cost to Upgrade: 15.240910953896277
+Gold Cost to Upgrade: 8.696291006169918
+Food Cost to Upgrade: 22.121332998922828
 Tile Count Limit: 9
 -----------------
 Building Level: 2
@@ -315,9 +315,9 @@ Gold Yield Per Hour: 633
 Food Yield Per Hour: 750
 Gold Cap: 211.0
 Food Cap: 250.0
-Gold Cost to Upgrade: 14.877275071533553
-Food Cost to Upgrade: 30.754204411165126
-Tile Count Limit: 11
+Gold Cost to Upgrade: 17.482013105523002
+Food Cost to Upgrade: 44.649843134068334
+Tile Count Limit: 12
 -----------------
 Building Level: 3
 -----------------
@@ -325,9 +325,9 @@ Gold Yield Per Hour: 707
 Food Yield Per Hour: 838
 Gold Cap: 235.66666666666666
 Food Cap: 279.3333333333333
-Gold Cost to Upgrade: 24.64710587784576
-Food Cost to Upgrade: 50.808030862743124
-Tile Count Limit: 13
+Gold Cost to Upgrade: 28.94988124492135
+Food Cost to Upgrade: 73.75341589790558
+Tile Count Limit: 15
 -----------------
 Building Level: 4
 -----------------
@@ -335,9 +335,9 @@ Gold Yield Per Hour: 770
 Food Yield Per Hour: 912
 Gold Cap: 256.66666666666663
 Food Cap: 304.0
-Gold Cost to Upgrade: 36.94736502058514
-Food Cost to Upgrade: 75.87949114741204
-Tile Count Limit: 15
+Gold Cost to Upgrade: 43.36804407515609
+Food Cost to Upgrade: 110.12595881747066
+Tile Count Limit: 18
 -----------------
 Building Level: 5
 -----------------
@@ -346,7 +346,7 @@ Food Yield Per Hour: 978
 Gold Cap: 275.0
 Food Cap: 326.0
 Cannot Upgrade
-Tile Count Limit: 17
+Tile Count Limit: 21
 -----------------
 -----------------
 ** Barbarian Stats **
@@ -536,8 +536,8 @@ Cannot Upgrade
 -----------------
 Gather Stats
 -----------------
-Gold Hourly Gather Rate Per Army: 1667.5555555555554
-Food Hourly Gather Rate Per Army: 1668.0
+Gold Hourly Gather Rate Per Army: 2501.3333333333335
+Food Hourly Gather Rate Per Army: 2502.0
 Resource Load per Troop: 1.8293952720079831
 -----------------
 TroopSize Stats
