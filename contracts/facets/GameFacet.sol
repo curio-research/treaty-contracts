@@ -260,7 +260,6 @@ contract GameFacet is UseStorage {
         ECSLib.setUint("Level", _buildingID, centerLevel + 1);
     }
 
-    // FIXME: untested
     function moveCityCenter(uint256 _buildingID, Position memory _newTilePosition) external {
         GameLib.validEntityCheck(_buildingID);
         GameLib.ongoingGameCheck();
@@ -293,7 +292,6 @@ contract GameFacet is UseStorage {
         ECSLib.setPosition("Position", cityID, GameLib.getMidPositionFromTilePosition(_newTilePosition));
     }
 
-    // FIXME: untested
     function disownTile(uint256 _tileID) external {
         // Basic checks
         GameLib.validEntityCheck(_tileID);
@@ -301,12 +299,21 @@ contract GameFacet is UseStorage {
         GameLib.activePlayerCheck(msg.sender);
         GameLib.entityOwnershipCheck(_tileID, msg.sender);
 
+        // Verify that city center is not on tile
+        Position memory tilePosition = ECSLib.getPosition("StartPosition", _tileID);
+        require(!GameLib.coincident(tilePosition, ECSLib.getPosition("StartPosition", GameLib.getCityCenter(ECSLib.getUint("City", _tileID)))), "CURIO: Cannot disown city center");
+
+        // End gather processes on tile
+        uint256[] memory movableEntitiesOnTile = GameLib.getMovableEntitiesAtTile(tilePosition);
+        for (uint256 i = 0; i < movableEntitiesOnTile.length; i++) {
+            uint256 gatherID = GameLib.getArmyGather(movableEntitiesOnTile[i]);
+            if (gatherID != NULL) GameLib.endGather(movableEntitiesOnTile[i]);
+        }
+
         // TODO: deduct resources from, or return resources to, player inventory
 
         // Disown tile
-        Position memory tilePosition = ECSLib.getPosition("StartPosition", _tileID);
-        ECSLib.removeEntity(_tileID);
-        GameLib.initializeTile(tilePosition);
+        ECSLib.setUint("Owner", _tileID, NULL);
     }
 
     // ----------------------------------------------------------
