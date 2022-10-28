@@ -77,7 +77,7 @@ export const generateMap = (worldWidth: number, worldHeight: number, worldConsta
   // }
 
   // add mountains
-  tileMap = generateMapWithMountains({ width: worldWidth, height: worldHeight }, 0.1);
+  tileMap = generateMapWithMountains({ width: worldWidth, height: worldHeight });
 
   const level1GoldMineDensity = 0.05;
   const totalFarmDensity = level1GoldMineDensity * 4;
@@ -119,7 +119,7 @@ export const generateMap = (worldWidth: number, worldHeight: number, worldConsta
  * @param mountainPercentage how much mountain there is
  * @returns a 2d matrix of tile types
  */
-export const generateMapWithMountains = (mapInput: MapInput, mountainPercentage: number = 0.1, sizeFactor: number = 10, plateSizeMultiplier: number = 6, superpositionRatio: number[] = [0.6, 0.4]): TILE_TYPE[][] => {
+export const generateMapWithMountains = (mapInput: MapInput, mountainPercentage: number = 0.1, sizeFactor: number = 5, plateSizeMultiplier: number = 3, superpositionRatio: number[] = [0.1, 0.9]): TILE_TYPE[][] => {
   // Use multiple layers of Perlin noise to generate randomized continents and oceans with plate tectonics
   const microNoiseMap: number[][] = generateNoiseMap(mapInput.width, mapInput.height, sizeFactor);
   const plateNoiseMap: number[][] = generateNoiseMap(mapInput.width, mapInput.height, sizeFactor * plateSizeMultiplier);
