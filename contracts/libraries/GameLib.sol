@@ -103,12 +103,10 @@ library GameLib {
             // Barbarian tile
             uint256 barbarianLevel = terrain - 2;
             ECSLib.setUint("Level", tileID, barbarianLevel);
-            uint256 barbarianGuardAmount = getConstant("Barbarian", "Guard", "Amount", "", barbarianLevel * 4); // FIXME
+            uint256 barbarianGuardAmount = getConstant("Barbarian", "Guard", "Amount", "", barbarianLevel);
             Templates.addConstituent(tileID, gs().templates["Guard"], barbarianGuardAmount);
         } else {
-            // Mountain tile TODO: should mountain tiles have same strength as normal tiles?
-            uint256 tileGuardAmount = getConstant("Tile", "Guard", "Amount", "", ECSLib.getUint("Level", tileID));
-            Templates.addConstituent(tileID, gs().templates["Guard"], tileGuardAmount);
+            // Mountain tile, do nothing
         }
 
         // TEMP

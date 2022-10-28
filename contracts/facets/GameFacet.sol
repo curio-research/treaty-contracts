@@ -700,7 +700,7 @@ contract GameFacet is UseStorage {
                     if (GameLib.isBarbarian(_tileID)) {
                         // Reset barbarian
                         GameLib.distributeBarbarianReward(winnerCityID, _tileID);
-                        uint256 barbarianGuardAmount = GameLib.getConstant("Barbarian", "Guard", "Amount", "", (ECSLib.getUint("Terrain", _tileID) - 2) * 4); // FIXME: hardcoded
+                        uint256 barbarianGuardAmount = GameLib.getConstant("Barbarian", "Guard", "Amount", "", ECSLib.getUint("Terrain", _tileID) - 2); // FIXME: hardcoded
                         ECSLib.setUint("LastTimestamp", _tileID, block.timestamp);
                         Templates.addConstituent(_tileID, gs().templates["Guard"], barbarianGuardAmount);
                     } else {
