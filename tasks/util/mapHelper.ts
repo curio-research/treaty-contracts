@@ -5,6 +5,8 @@ import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { TILE_TYPE, componentNameToId, encodePosition, getImmediateSurroundingPositions, TileMap, Tag, Position, Owner, Health, Speed, Attack, Defense, Load, LastTimestamp, Tags, encodeString, encodeUint256, getRightPos, chainInfo } from 'curio-vault';
 import { TILE_WIDTH } from './constants';
 import { confirm } from './deployHelper';
+import SimplexNoise from 'simplex-noise';
+import { MapInput } from './types';
 
 const MAX_UINT256 = BigInt(Math.pow(2, 256)) - BigInt(1);
 
@@ -65,14 +67,18 @@ export const generateBlankFixmap = (): TileMap => {
 
 export const generateMap = (worldWidth: number, worldHeight: number, worldConstants: WorldConstantsStruct): TileMap => {
   let tileMap: TileMap = [];
-  // assign a blank map
-  for (let i = 0; i < worldWidth; i++) {
-    let col: TILE_TYPE[] = [];
-    for (let j = 0; j < worldHeight; j++) {
-      col.push(TILE_TYPE.LAND);
-    }
-    tileMap.push(col);
-  }
+  // // assign a blank map
+  // for (let i = 0; i < worldWidth; i++) {
+  //   let col: TILE_TYPE[] = [];
+  //   for (let j = 0; j < worldHeight; j++) {
+  //     col.push(TILE_TYPE.LAND);
+  //   }
+  //   tileMap.push(col);
+  // }
+
+  // add mountains
+  tileMap = generateMapWithMountains({ width: worldWidth, height: worldHeight }, 0.1);
+
   const level1GoldMineDensity = 0.05;
   const totalFarmDensity = level1GoldMineDensity * 4;
   const level1BarbarianDensity = 0.02;
@@ -102,6 +108,77 @@ export const generateMap = (worldWidth: number, worldHeight: number, worldConsta
   // }
 
   return tileMap;
+};
+
+/**
+ * Generate a 2d map of tile types using Perlin noise.
+ * @param mapInput map dimensions
+ * @param sizeFactor how large each mountain is
+ * @param plateSizeMultiplier how large a large plate is relative to a small plate
+ * @param superpositionRatio relative weights of small and large plates
+ * @param mountainPercentage how much mountain there is
+ * @returns a 2d matrix of tile types
+ */
+export const generateMapWithMountains = (mapInput: MapInput, mountainPercentage: number = 0.1, sizeFactor: number = 10, plateSizeMultiplier: number = 6, superpositionRatio: number[] = [0.6, 0.4]): TILE_TYPE[][] => {
+  // Use multiple layers of Perlin noise to generate randomized continents and oceans with plate tectonics
+  const microNoiseMap: number[][] = generateNoiseMap(mapInput.width, mapInput.height, sizeFactor);
+  const plateNoiseMap: number[][] = generateNoiseMap(mapInput.width, mapInput.height, sizeFactor * plateSizeMultiplier);
+  const noiseMap: number[][] = superpose([microNoiseMap, plateNoiseMap], superpositionRatio);
+
+  const tileMap: TILE_TYPE[][] = noiseMap.map((col) => col.map((val) => (val > mountainPercentage ? TILE_TYPE.LAND : TILE_TYPE.MOUNTAIN)));
+  return tileMap;
+};
+
+/**
+ * Generate noise matrix from Perlin noise.
+ * @param mapWidth
+ * @param mapHeight
+ * @param sizeFactor determines average sizes of continents and oceans
+ * @returns a 2d matrix of numbers between 0 and 1
+ */
+export const generateNoiseMap = (mapWidth: number, mapHeight: number, sizeFactor: number): number[][] => {
+  const noise = new SimplexNoise();
+
+  const scale = (val: number, min: number, max: number) => {
+    return (val - min) / (max - min);
+  };
+
+  const _noiseMatrix: number[][] = [];
+
+  for (let x = 0; x < mapWidth; x++) {
+    const col: number[] = [];
+    for (let y = 0; y < mapHeight; y++) {
+      const val = noise.noise2D(x / sizeFactor, y / sizeFactor);
+      col.push(Math.abs(scale(val, 0, 1)));
+    }
+    _noiseMatrix.push(col);
+  }
+  return _noiseMatrix;
+};
+
+/**
+ * Superpose an array of 2d matrices based on a given ratio.
+ * @param matrices
+ * @param ratio
+ * @returns a 2d matrix as the superposition result
+ */
+export const superpose = (matrices: number[][][], ratio: number[]): number[][] => {
+  if (ratio.reduce((a, b) => a + b, 0) !== 1) throw new Error('Ratio must sum up to 1');
+
+  const sum: number[][] = [];
+  for (let i = 0; i < matrices[0].length; i++) {
+    const col: number[] = [];
+    for (let j = 0; j < matrices[0][0].length; j++) {
+      let val = 0;
+      for (let k = 0; k < matrices.length; k++) {
+        val += matrices[k][i][j] * ratio[k];
+      }
+      col.push(val);
+    }
+    sum.push(col);
+  }
+
+  return sum;
 };
 
 export const chooseRandomEmptyLandPosition = (tileMap: TileMap): position => {
