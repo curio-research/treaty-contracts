@@ -212,9 +212,9 @@ def payback_period_curve_in_hour(max_level: int) -> LambdaType:
     """
     Growth: fast exponential
     Note: sum from f(1) to f(9) is 19.757. Leap of faith: assume this is reasonable for 72 hr gameplay
-    Gist: (math.e)**(level/7) - 0.9 makes sure upgrade from (n - 1) to n (max level) has 5.15 hr payback period (72 h gameplay)
+    Gist: (math.e)**(level/7) - 0.9 makes sure upgrade from (n - 1) to n (max level)
     """
-    return lambda level: ((math.e)**((level / max_level * 9)/5) - 0.9) * Game.expected_play_time_in_hour / 72
+    return lambda level: ((math.e)**((level / max_level * 9)/4) - 0.9) * Game.expected_play_time_in_hour / 72
     
 def slow_exponential_curve(max_level: int) -> LambdaType:
     """
@@ -245,11 +245,11 @@ def tile_loyalty_points(decay_dist: float):
 
 class Game:
     # TODO: use a JSON to initialize these variable
-    total_tile_count = 13*13
+    total_tile_count = 11*11
     expected_player_count = 3
     init_player_tile_count = 9
 
-    expected_play_time_in_hour = 1.5
+    expected_play_time_in_hour = 2
     """
     How many tiles does a level 1 city center player has
     """
@@ -287,7 +287,7 @@ class Game:
     note: this is already kinda fast, but might still feel slow. If so, we can initialize some resources
     """
 
-    base_troop_training_in_seconds = 0.3
+    base_troop_training_in_seconds = 0.15
     """
     time to train one troop
     """
@@ -298,7 +298,7 @@ class Game:
     To tune the difference in rate of increment. Adjust the exponential function (by default the diff is 2)
     """
 
-    tile_to_barbarian_strength_ratio = 2.5
+    tile_to_barbarian_strength_ratio = 1.8
     """
     Tile & Barbarians are both PvE mechanics. Adjust this number based upon expected player behavior
     """
@@ -308,7 +308,7 @@ class Game:
     Upgrading Tiles should cost less than buying troops
     """
 
-    barbarian_to_army_difficulty_constant = 60
+    barbarian_to_army_difficulty_constant = 40
     """
     Affect army size. The percentage of troop attendence to defeat same-level barbarian
     Example: player city center is lv3, then its army should equal lv7 - 9 barbarians (avg is 8) if constant is 100

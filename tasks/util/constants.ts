@@ -14,8 +14,8 @@ export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 // ----------------------------------------------------------
 
 export const SMALL_MAP_INPUT: MapInput = {
-  width: 13,
-  height: 13,
+  width: 11,
+  height: 11,
 };
 
 export const TILE_WIDTH = 5;
