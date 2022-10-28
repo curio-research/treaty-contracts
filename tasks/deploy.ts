@@ -4,12 +4,13 @@ import chalk from 'chalk';
 import { publishDeployment, isConnectionLive, startGameSync } from './../api/deployment';
 import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment, HardhatArguments } from 'hardhat/types';
-import { confirm, deployProxy, printDivider, indexerUrlSelector } from './util/deployHelper';
+import { confirm, deployProxy, printDivider, indexerUrlSelector, saveMapToLocal } from './util/deployHelper';
 import { createTemplates, generateWorldConstants, SMALL_MAP_INPUT } from './util/constants';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
 import { encodeTileMap, generateBlankFixmap, generateMap, initializeFixmap } from './util/mapHelper';
 import { COMPONENT_SPECS, GameConfig, TILE_TYPE, position, scaleMap, chainInfo } from 'curio-vault';
 import gameConstants from './game_parameters.json';
+import * as rw from 'random-words';
 
 /**
  * Deploy script for publishing games
@@ -50,6 +51,7 @@ task('deploy', 'deploy contracts')
       const worldConstants = generateWorldConstants(player1.address, SMALL_MAP_INPUT);
 
       const tileMap = fixmap ? generateBlankFixmap() : generateMap(SMALL_MAP_INPUT.width, SMALL_MAP_INPUT.height, worldConstants);
+      saveMapToLocal(tileMap);
 
       const ecsLib = await deployProxy<ECSLib>('ECSLib', player1, hre, []);
 
@@ -103,13 +105,13 @@ task('deploy', 'deploy contracts')
       // TODO: useful in some testing. Bulk initialize all tiles
       const tileWidth = Number(worldConstants.tileWidth);
       const allStartingPositions: position[] = [];
-      const harvestableLocations: position[] = [];
+      const specialPositions: position[] = [];
       for (let i = 0; i < tileMap.length; i++) {
         for (let j = 0; j < tileMap[0].length; j++) {
           const properTile = { x: i * tileWidth, y: j * tileWidth };
           allStartingPositions.push(properTile);
-          if (tileMap[i][j] === TILE_TYPE.BARBARIAN_LV1 || tileMap[i][j] === TILE_TYPE.BARBARIAN_LV2 || tileMap[i][j] === TILE_TYPE.GOLDMINE_LV1 || tileMap[i][j] === TILE_TYPE.FARM_LV1) {
-            harvestableLocations.push(properTile);
+          if (tileMap[i][j] === TILE_TYPE.BARBARIAN_LV1 || tileMap[i][j] === TILE_TYPE.BARBARIAN_LV2 || tileMap[i][j] === TILE_TYPE.GOLDMINE_LV1 || tileMap[i][j] === TILE_TYPE.MOUNTAIN) {
+            specialPositions.push(properTile);
           }
         }
       }
@@ -117,9 +119,9 @@ task('deploy', 'deploy contracts')
       // TODO: think about whether initializing all tiles / more than barbarian tiles is necessary
       // initialize tiles that include barbarians, farms, gold mine
       const bulkTileUploadSize = 5;
-      for (let i = 0; i < harvestableLocations.length; i += bulkTileUploadSize) {
-        console.log(`✦ initializing harvestable tiles ${i} to ${i + bulkTileUploadSize}`);
-        await confirm(await diamond.bulkInitializeTiles(harvestableLocations.slice(i, i + bulkTileUploadSize), { gasLimit: gasLimit }), hre);
+      for (let i = 0; i < specialPositions.length; i += bulkTileUploadSize) {
+        console.log(`✦ initializing special tiles ${i} to ${i + bulkTileUploadSize}`);
+        await confirm(await diamond.bulkInitializeTiles(specialPositions.slice(i, i + bulkTileUploadSize), { gasLimit: gasLimit }), hre);
       }
 
       if (fixmap) {
@@ -134,6 +136,7 @@ task('deploy', 'deploy contracts')
 
       // Generate config file
       const configFile: GameConfig = {
+        name: rw.default(3).join('-'),
         address: diamond.address,
         network: hre.network.name,
         deploymentId: deploymentId,
@@ -141,8 +144,6 @@ task('deploy', 'deploy contracts')
         map: scaleMap(tileMap, Number(worldConstants.tileWidth)),
         time: new Date(),
       };
-
-      console.log(tileMap);
 
       await publishDeployment(configFile);
 

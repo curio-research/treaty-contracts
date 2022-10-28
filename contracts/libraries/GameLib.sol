@@ -81,6 +81,10 @@ library GameLib {
         uint256 divFactor = numInitTerrainTypes**(tileY % batchSize);
         uint256 terrain = encodedCol / divFactor;
 
+        // Initialize tile
+        uint256 tileID = Templates.addTile(_startPosition, terrain);
+        ECSLib.setUint("Terrain", tileID, terrain);
+
         // Initialize gold mine
         if (terrain == 1 && getResourceAtTile(_startPosition) == 0) {
             Templates.addResource(gs().templates["Gold"], _startPosition, 0);
@@ -91,20 +95,18 @@ library GameLib {
             Templates.addResource(gs().templates["Food"], _startPosition, 0);
         }
 
-        // Initialize tile
-        uint256 tileID = Templates.addTile(_startPosition, terrain);
-        ECSLib.setUint("Terrain", tileID, terrain);
-
         if (terrain < 3) {
             // Normal tile
             uint256 tileGuardAmount = getConstant("Tile", "Guard", "Amount", "", ECSLib.getUint("Level", tileID));
             Templates.addConstituent(tileID, gs().templates["Guard"], tileGuardAmount);
-        } else {
+        } else if (terrain == 3 || terrain == 4) {
             // Barbarian tile
             uint256 barbarianLevel = terrain - 2;
             ECSLib.setUint("Level", tileID, barbarianLevel);
-            uint256 barbarianGuardAmount = getConstant("Barbarian", "Guard", "Amount", "", barbarianLevel * 4); // FIXME
+            uint256 barbarianGuardAmount = getConstant("Barbarian", "Guard", "Amount", "", barbarianLevel);
             Templates.addConstituent(tileID, gs().templates["Guard"], barbarianGuardAmount);
+        } else {
+            // Mountain tile, do nothing
         }
 
         // TEMP
@@ -607,12 +609,21 @@ library GameLib {
         require(inBound(_position), "CURIO: Position out of bound");
     }
 
+    function passableTerrainCheck(Position memory _tilePosition) internal {
+        require(ECSLib.getUint("Terrain", getTileAt(_tilePosition)) != 5, "CURIO: Tile not passable");
+    }
+
     // ----------------------------------------------------------
     // UTILITY FUNCTIONS
     // ----------------------------------------------------------
 
     function inBound(Position memory _p) internal view returns (bool) {
         return _p.x >= 0 && _p.x < gs().worldConstants.worldWidth && _p.y >= 0 && _p.y < gs().worldConstants.worldHeight;
+    }
+
+    function isBarbarian(uint256 _tileID) internal view returns (bool) {
+        // FIXME: hardcoded
+        return ECSLib.getUint("Terrain", _tileID) == 3 || ECSLib.getUint("Terrain", _tileID) == 4;
     }
 
     function random(uint256 _max, uint256 _salt) internal view returns (uint256) {
