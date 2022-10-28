@@ -658,39 +658,42 @@ contract GameFacet is UseStorage {
         }
 
         // Execute one round of battle
-        bool victory = GameLib.attack(_armyID, _tileID, false, false, false);
-        if (victory) {
-            uint256 winnerCityID = GameLib.getPlayerCity(GameLib.getPlayer(msg.sender));
-            if (cityID != NULL) {
-                // Victorious against city, add back some guards for the loser
-                Templates.addConstituent(_tileID, gs().templates["Guard"], GameLib.getConstant("City", "Guard", "Amount", "", ECSLib.getUint("Level", cityID)));
-                // City loses half of gold and winner gets it
-                uint256 loserCityGoldInventoryID = GameLib.getInventory(cityID, gs().templates["Gold"]);
-                uint256 loserTotalAmount = ECSLib.getUint("Amount", loserCityGoldInventoryID);
-                ECSLib.setUint("Amount", loserCityGoldInventoryID, loserTotalAmount / 2);
+        for (uint256 i = 0; i < 3; i++) {
+            // FIXME: hardcoded to accelerate battle
+            bool victory = GameLib.attack(_armyID, _tileID, false, false, false);
+            if (victory) {
+                uint256 winnerCityID = GameLib.getPlayerCity(GameLib.getPlayer(msg.sender));
+                if (cityID != NULL) {
+                    // Victorious against city, add back some guards for the loser
+                    Templates.addConstituent(_tileID, gs().templates["Guard"], GameLib.getConstant("City", "Guard", "Amount", "", ECSLib.getUint("Level", cityID)));
+                    // City loses half of gold and winner gets it
+                    uint256 loserCityGoldInventoryID = GameLib.getInventory(cityID, gs().templates["Gold"]);
+                    uint256 loserTotalAmount = ECSLib.getUint("Amount", loserCityGoldInventoryID);
+                    ECSLib.setUint("Amount", loserCityGoldInventoryID, loserTotalAmount / 2);
 
-                // Verify city ownership
-                require(winnerCityID != NULL, "CURIO: Winner must own a city");
+                    // Verify city ownership
+                    require(winnerCityID != NULL, "CURIO: Winner must own a city");
 
-                // Add harvested gold to player's city limited by its load
-                uint256 winnerCityGoldInventoryID = GameLib.getInventory(winnerCityID, gs().templates["Gold"]);
-                uint256 existingCityGold = ECSLib.getUint("Amount", winnerCityGoldInventoryID);
-                uint256 winnerTotalAmount = GameLib.min(ECSLib.getUint("Load", winnerCityGoldInventoryID), loserTotalAmount / 2 + existingCityGold);
-                ECSLib.setUint("Amount", winnerCityGoldInventoryID, winnerTotalAmount);
-            } else {
-                if (terrain >= 3) {
-                    // Reset barbarian
-                    GameLib.distributeBarbarianReward(winnerCityID, _tileID);
-                    uint256 barbarianGuardAmount = GameLib.getConstant("Tile", "Guard", "Amount", "", ECSLib.getUint("Level", _tileID));
-                    ECSLib.setUint("LastTimestamp", _tileID, block.timestamp);
-                    Templates.addConstituent(_tileID, gs().templates["Guard"], barbarianGuardAmount);
+                    // Add harvested gold to player's city limited by its load
+                    uint256 winnerCityGoldInventoryID = GameLib.getInventory(winnerCityID, gs().templates["Gold"]);
+                    uint256 existingCityGold = ECSLib.getUint("Amount", winnerCityGoldInventoryID);
+                    uint256 winnerTotalAmount = GameLib.min(ECSLib.getUint("Load", winnerCityGoldInventoryID), loserTotalAmount / 2 + existingCityGold);
+                    ECSLib.setUint("Amount", winnerCityGoldInventoryID, winnerTotalAmount);
                 } else {
-                    // Neutralize tile
-                    ECSLib.setUint("Owner", _tileID, NULL);
+                    if (terrain >= 3) {
+                        // Reset barbarian
+                        GameLib.distributeBarbarianReward(winnerCityID, _tileID);
+                        uint256 barbarianGuardAmount = GameLib.getConstant("Barbarian", "Guard", "Amount", "", (terrain - 2) * 4); // FIXME: hardcoded
+                        ECSLib.setUint("LastTimestamp", _tileID, block.timestamp);
+                        Templates.addConstituent(_tileID, gs().templates["Guard"], barbarianGuardAmount);
+                    } else {
+                        // Neutralize tile
+                        ECSLib.setUint("Owner", _tileID, NULL);
+                    }
                 }
+            } else {
+                GameLib.attack(_tileID, _armyID, false, false, true);
             }
-        } else {
-            GameLib.attack(_tileID, _armyID, false, false, true);
         }
     }
 
