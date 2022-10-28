@@ -21,7 +21,7 @@
         "object": "Resource",
         "level": 0,
         "functionName": "",
-        "value": 27440
+        "value": 2744
     },
     {
         "subject": "Troop Production",
@@ -93,7 +93,7 @@
         "object": "Gold",
         "level": 0,
         "functionName": "Upgrade",
-        "value": 239
+        "value": 1793
     },
     {
         "subject": "Goldmine",
@@ -101,7 +101,7 @@
         "object": "Food",
         "level": 0,
         "functionName": "Upgrade",
-        "value": 44
+        "value": 336
     },
     {
         "subject": "Goldmine",
@@ -141,7 +141,7 @@
         "object": "Gold",
         "level": 1,
         "functionName": "Upgrade",
-        "value": 686
+        "value": 5151
     },
     {
         "subject": "Goldmine",
@@ -149,7 +149,7 @@
         "object": "Food",
         "level": 1,
         "functionName": "Upgrade",
-        "value": 128
+        "value": 965
     },
     {
         "subject": "Goldmine",
@@ -189,7 +189,7 @@
         "object": "Gold",
         "level": 2,
         "functionName": "Upgrade",
-        "value": 1305
+        "value": 9791
     },
     {
         "subject": "Goldmine",
@@ -197,7 +197,7 @@
         "object": "Food",
         "level": 2,
         "functionName": "Upgrade",
-        "value": 244
+        "value": 1835
     },
     {
         "subject": "Goldmine",
@@ -237,7 +237,7 @@
         "object": "Gold",
         "level": 3,
         "functionName": "Upgrade",
-        "value": 2094
+        "value": 15710
     },
     {
         "subject": "Goldmine",
@@ -245,7 +245,7 @@
         "object": "Food",
         "level": 3,
         "functionName": "Upgrade",
-        "value": 392
+        "value": 2945
     },
     {
         "subject": "Goldmine",
@@ -285,7 +285,7 @@
         "object": "Gold",
         "level": 4,
         "functionName": "Upgrade",
-        "value": 3063
+        "value": 22974
     },
     {
         "subject": "Goldmine",
@@ -293,7 +293,7 @@
         "object": "Food",
         "level": 4,
         "functionName": "Upgrade",
-        "value": 574
+        "value": 4307
     },
     {
         "subject": "Goldmine",
@@ -333,7 +333,7 @@
         "object": "Gold",
         "level": 5,
         "functionName": "Upgrade",
-        "value": 4226
+        "value": 31697
     },
     {
         "subject": "Goldmine",
@@ -341,7 +341,7 @@
         "object": "Food",
         "level": 5,
         "functionName": "Upgrade",
-        "value": 792
+        "value": 5943
     },
     {
         "subject": "Goldmine",
@@ -381,7 +381,7 @@
         "object": "Gold",
         "level": 6,
         "functionName": "Upgrade",
-        "value": 5605
+        "value": 42040
     },
     {
         "subject": "Goldmine",
@@ -389,7 +389,7 @@
         "object": "Food",
         "level": 6,
         "functionName": "Upgrade",
-        "value": 1051
+        "value": 7882
     },
     {
         "subject": "Goldmine",
@@ -429,7 +429,7 @@
         "object": "Gold",
         "level": 7,
         "functionName": "Upgrade",
-        "value": 7219
+        "value": 54146
     },
     {
         "subject": "Goldmine",
@@ -437,7 +437,7 @@
         "object": "Food",
         "level": 7,
         "functionName": "Upgrade",
-        "value": 1353
+        "value": 10152
     },
     {
         "subject": "Goldmine",
@@ -477,7 +477,7 @@
         "object": "Gold",
         "level": 8,
         "functionName": "Upgrade",
-        "value": 9105
+        "value": 68289
     },
     {
         "subject": "Goldmine",
@@ -485,7 +485,7 @@
         "object": "Food",
         "level": 8,
         "functionName": "Upgrade",
-        "value": 1707
+        "value": 12804
     },
     {
         "subject": "Goldmine",
@@ -525,7 +525,7 @@
         "object": "Gold",
         "level": 9,
         "functionName": "Upgrade",
-        "value": 11291
+        "value": 84683
     },
     {
         "subject": "Goldmine",
@@ -533,7 +533,7 @@
         "object": "Food",
         "level": 9,
         "functionName": "Upgrade",
-        "value": 2117
+        "value": 15878
     },
     {
         "subject": "Goldmine",
@@ -573,7 +573,7 @@
         "object": "Gold",
         "level": 10,
         "functionName": "Upgrade",
-        "value": 13814
+        "value": 103611
     },
     {
         "subject": "Goldmine",
@@ -581,7 +581,7 @@
         "object": "Food",
         "level": 10,
         "functionName": "Upgrade",
-        "value": 2590
+        "value": 19427
     },
     {
         "subject": "Goldmine",
@@ -621,7 +621,7 @@
         "object": "Gold",
         "level": 11,
         "functionName": "Upgrade",
-        "value": 16720
+        "value": 125406
     },
     {
         "subject": "Goldmine",
@@ -629,7 +629,7 @@
         "object": "Food",
         "level": 11,
         "functionName": "Upgrade",
-        "value": 3135
+        "value": 23513
     },
     {
         "subject": "Goldmine",
@@ -669,7 +669,7 @@
         "object": "Gold",
         "level": 12,
         "functionName": "Upgrade",
-        "value": 20062
+        "value": 150469
     },
     {
         "subject": "Goldmine",
@@ -677,7 +677,7 @@
         "object": "Food",
         "level": 12,
         "functionName": "Upgrade",
-        "value": 3761
+        "value": 28212
     },
     {
         "subject": "Goldmine",
@@ -717,7 +717,7 @@
         "object": "Gold",
         "level": 13,
         "functionName": "Upgrade",
-        "value": 23903
+        "value": 179274
     },
     {
         "subject": "Goldmine",
@@ -725,7 +725,7 @@
         "object": "Food",
         "level": 13,
         "functionName": "Upgrade",
-        "value": 4481
+        "value": 33613
     },
     {
         "subject": "Goldmine",
@@ -765,7 +765,7 @@
         "object": "Gold",
         "level": 14,
         "functionName": "Upgrade",
-        "value": 28294
+        "value": 212206
     },
     {
         "subject": "Goldmine",
@@ -773,7 +773,7 @@
         "object": "Food",
         "level": 14,
         "functionName": "Upgrade",
-        "value": 5305
+        "value": 39788
     },
     {
         "subject": "Goldmine",
@@ -845,7 +845,7 @@
         "object": "Gold",
         "level": 0,
         "functionName": "Upgrade",
-        "value": 53
+        "value": 398
     },
     {
         "subject": "Farm",
@@ -853,7 +853,7 @@
         "object": "Food",
         "level": 0,
         "functionName": "Upgrade",
-        "value": 44
+        "value": 335
     },
     {
         "subject": "Farm",
@@ -893,7 +893,7 @@
         "object": "Gold",
         "level": 1,
         "functionName": "Upgrade",
-        "value": 152
+        "value": 1144
     },
     {
         "subject": "Farm",
@@ -901,7 +901,7 @@
         "object": "Food",
         "level": 1,
         "functionName": "Upgrade",
-        "value": 128
+        "value": 963
     },
     {
         "subject": "Farm",
@@ -941,7 +941,7 @@
         "object": "Gold",
         "level": 2,
         "functionName": "Upgrade",
-        "value": 290
+        "value": 2175
     },
     {
         "subject": "Farm",
@@ -949,7 +949,7 @@
         "object": "Food",
         "level": 2,
         "functionName": "Upgrade",
-        "value": 244
+        "value": 1831
     },
     {
         "subject": "Farm",
@@ -989,7 +989,7 @@
         "object": "Gold",
         "level": 3,
         "functionName": "Upgrade",
-        "value": 465
+        "value": 3491
     },
     {
         "subject": "Farm",
@@ -997,7 +997,7 @@
         "object": "Food",
         "level": 3,
         "functionName": "Upgrade",
-        "value": 392
+        "value": 2940
     },
     {
         "subject": "Farm",
@@ -1037,7 +1037,7 @@
         "object": "Gold",
         "level": 4,
         "functionName": "Upgrade",
-        "value": 680
+        "value": 5105
     },
     {
         "subject": "Farm",
@@ -1045,7 +1045,7 @@
         "object": "Food",
         "level": 4,
         "functionName": "Upgrade",
-        "value": 573
+        "value": 4298
     },
     {
         "subject": "Farm",
@@ -1085,7 +1085,7 @@
         "object": "Gold",
         "level": 5,
         "functionName": "Upgrade",
-        "value": 939
+        "value": 7043
     },
     {
         "subject": "Farm",
@@ -1093,7 +1093,7 @@
         "object": "Food",
         "level": 5,
         "functionName": "Upgrade",
-        "value": 791
+        "value": 5933
     },
     {
         "subject": "Farm",
@@ -1133,7 +1133,7 @@
         "object": "Gold",
         "level": 6,
         "functionName": "Upgrade",
-        "value": 1245
+        "value": 9342
     },
     {
         "subject": "Farm",
@@ -1141,7 +1141,7 @@
         "object": "Food",
         "level": 6,
         "functionName": "Upgrade",
-        "value": 1049
+        "value": 7868
     },
     {
         "subject": "Farm",
@@ -1181,7 +1181,7 @@
         "object": "Gold",
         "level": 7,
         "functionName": "Upgrade",
-        "value": 1604
+        "value": 12032
     },
     {
         "subject": "Farm",
@@ -1189,7 +1189,7 @@
         "object": "Food",
         "level": 7,
         "functionName": "Upgrade",
-        "value": 1351
+        "value": 10133
     },
     {
         "subject": "Farm",
@@ -1229,7 +1229,7 @@
         "object": "Gold",
         "level": 8,
         "functionName": "Upgrade",
-        "value": 2023
+        "value": 15175
     },
     {
         "subject": "Farm",
@@ -1237,7 +1237,7 @@
         "object": "Food",
         "level": 8,
         "functionName": "Upgrade",
-        "value": 1704
+        "value": 12781
     },
     {
         "subject": "Farm",
@@ -1277,7 +1277,7 @@
         "object": "Gold",
         "level": 9,
         "functionName": "Upgrade",
-        "value": 2509
+        "value": 18818
     },
     {
         "subject": "Farm",
@@ -1285,7 +1285,7 @@
         "object": "Food",
         "level": 9,
         "functionName": "Upgrade",
-        "value": 2112
+        "value": 15846
     },
     {
         "subject": "Farm",
@@ -1325,7 +1325,7 @@
         "object": "Gold",
         "level": 10,
         "functionName": "Upgrade",
-        "value": 3069
+        "value": 23024
     },
     {
         "subject": "Farm",
@@ -1333,7 +1333,7 @@
         "object": "Food",
         "level": 10,
         "functionName": "Upgrade",
-        "value": 2585
+        "value": 19392
     },
     {
         "subject": "Farm",
@@ -1373,7 +1373,7 @@
         "object": "Gold",
         "level": 11,
         "functionName": "Upgrade",
-        "value": 3715
+        "value": 27868
     },
     {
         "subject": "Farm",
@@ -1381,7 +1381,7 @@
         "object": "Food",
         "level": 11,
         "functionName": "Upgrade",
-        "value": 3130
+        "value": 23476
     },
     {
         "subject": "Farm",
@@ -1421,7 +1421,7 @@
         "object": "Gold",
         "level": 12,
         "functionName": "Upgrade",
-        "value": 4458
+        "value": 33437
     },
     {
         "subject": "Farm",
@@ -1429,7 +1429,7 @@
         "object": "Food",
         "level": 12,
         "functionName": "Upgrade",
-        "value": 3754
+        "value": 28160
     },
     {
         "subject": "Farm",
@@ -1469,7 +1469,7 @@
         "object": "Gold",
         "level": 13,
         "functionName": "Upgrade",
-        "value": 5311
+        "value": 39838
     },
     {
         "subject": "Farm",
@@ -1477,7 +1477,7 @@
         "object": "Food",
         "level": 13,
         "functionName": "Upgrade",
-        "value": 4473
+        "value": 33548
     },
     {
         "subject": "Farm",
@@ -1517,7 +1517,7 @@
         "object": "Gold",
         "level": 14,
         "functionName": "Upgrade",
-        "value": 6287
+        "value": 47157
     },
     {
         "subject": "Farm",
@@ -1525,7 +1525,7 @@
         "object": "Food",
         "level": 14,
         "functionName": "Upgrade",
-        "value": 5295
+        "value": 39719
     },
     {
         "subject": "Farm",
@@ -1717,7 +1717,7 @@
         "object": "Gold",
         "level": 0,
         "functionName": "Upgrade",
-        "value": 656
+        "value": 4926
     },
     {
         "subject": "City Center",
@@ -1725,7 +1725,7 @@
         "object": "Food",
         "level": 0,
         "functionName": "Upgrade",
-        "value": 2034
+        "value": 15255
     },
     {
         "subject": "City Center",
@@ -1765,7 +1765,7 @@
         "object": "Gold",
         "level": 1,
         "functionName": "Upgrade",
-        "value": 1960
+        "value": 14706
     },
     {
         "subject": "City Center",
@@ -1773,7 +1773,7 @@
         "object": "Food",
         "level": 1,
         "functionName": "Upgrade",
-        "value": 6238
+        "value": 46789
     },
     {
         "subject": "City Center",
@@ -1813,7 +1813,7 @@
         "object": "Gold",
         "level": 2,
         "functionName": "Upgrade",
-        "value": 3745
+        "value": 28089
     },
     {
         "subject": "City Center",
@@ -1821,7 +1821,7 @@
         "object": "Food",
         "level": 2,
         "functionName": "Upgrade",
-        "value": 11956
+        "value": 89673
     },
     {
         "subject": "City Center",
@@ -1861,7 +1861,7 @@
         "object": "Gold",
         "level": 3,
         "functionName": "Upgrade",
-        "value": 5995
+        "value": 44967
     },
     {
         "subject": "City Center",
@@ -1869,7 +1869,7 @@
         "object": "Food",
         "level": 3,
         "functionName": "Upgrade",
-        "value": 19103
+        "value": 143274
     },
     {
         "subject": "City Center",
@@ -1909,7 +1909,7 @@
         "object": "Gold",
         "level": 4,
         "functionName": "Upgrade",
-        "value": 8729
+        "value": 65474
     },
     {
         "subject": "City Center",
@@ -1917,7 +1917,7 @@
         "object": "Food",
         "level": 4,
         "functionName": "Upgrade",
-        "value": 27741
+        "value": 208062
     },
     {
         "subject": "City Center",
@@ -1957,7 +1957,7 @@
         "object": "Gold",
         "level": 1,
         "functionName": "",
-        "value": 6347
+        "value": 63476
     },
     {
         "subject": "Barbarian",
@@ -1965,7 +1965,7 @@
         "object": "Food",
         "level": 1,
         "functionName": "",
-        "value": 8967
+        "value": 89678
     },
     {
         "subject": "Barbarian",
@@ -1973,7 +1973,7 @@
         "object": "Guard",
         "level": 1,
         "functionName": "",
-        "value": 2.2419695544865736
+        "value": 22.419695544865736
     },
     {
         "subject": "Barbarian",
@@ -1981,7 +1981,7 @@
         "object": "Gold",
         "level": 2,
         "functionName": "",
-        "value": 15688
+        "value": 156887
     },
     {
         "subject": "Barbarian",
@@ -1989,7 +1989,7 @@
         "object": "Food",
         "level": 2,
         "functionName": "",
-        "value": 13582
+        "value": 135822
     },
     {
         "subject": "Barbarian",
@@ -1997,7 +1997,7 @@
         "object": "Guard",
         "level": 2,
         "functionName": "",
-        "value": 3.395571468625636
+        "value": 33.95571468625636
     },
     {
         "subject": "Barbarian",
@@ -2005,7 +2005,7 @@
         "object": "Gold",
         "level": 3,
         "functionName": "",
-        "value": 30880
+        "value": 308805
     },
     {
         "subject": "Barbarian",
@@ -2013,7 +2013,7 @@
         "object": "Food",
         "level": 3,
         "functionName": "",
-        "value": 18609
+        "value": 186096
     },
     {
         "subject": "Barbarian",
@@ -2021,7 +2021,7 @@
         "object": "Guard",
         "level": 3,
         "functionName": "",
-        "value": 4.652414985546979
+        "value": 46.5241498554698
     },
     {
         "subject": "Barbarian",
@@ -2029,7 +2029,7 @@
         "object": "Gold",
         "level": 4,
         "functionName": "",
-        "value": 53664
+        "value": 536649
     },
     {
         "subject": "Barbarian",
@@ -2037,7 +2037,7 @@
         "object": "Food",
         "level": 4,
         "functionName": "",
-        "value": 24086
+        "value": 240869
     },
     {
         "subject": "Barbarian",
@@ -2045,7 +2045,7 @@
         "object": "Guard",
         "level": 4,
         "functionName": "",
-        "value": 6.0217397124447505
+        "value": 60.21739712444751
     },
     {
         "subject": "Barbarian",
@@ -2053,7 +2053,7 @@
         "object": "Gold",
         "level": 5,
         "functionName": "",
-        "value": 86227
+        "value": 862275
     },
     {
         "subject": "Barbarian",
@@ -2061,7 +2061,7 @@
         "object": "Food",
         "level": 5,
         "functionName": "",
-        "value": 30054
+        "value": 300544
     },
     {
         "subject": "Barbarian",
@@ -2069,7 +2069,7 @@
         "object": "Guard",
         "level": 5,
         "functionName": "",
-        "value": 7.5136121551547355
+        "value": 75.13612155154736
     },
     {
         "subject": "Barbarian",
@@ -2077,7 +2077,7 @@
         "object": "Gold",
         "level": 6,
         "functionName": "",
-        "value": 131303
+        "value": 1313039
     },
     {
         "subject": "Barbarian",
@@ -2085,7 +2085,7 @@
         "object": "Food",
         "level": 6,
         "functionName": "",
-        "value": 36555
+        "value": 365559
     },
     {
         "subject": "Barbarian",
@@ -2093,7 +2093,7 @@
         "object": "Guard",
         "level": 6,
         "functionName": "",
-        "value": 9.138999721447929
+        "value": 91.38999721447928
     },
     {
         "subject": "Barbarian",
@@ -2101,7 +2101,7 @@
         "object": "Gold",
         "level": 7,
         "functionName": "",
-        "value": 192311
+        "value": 1923113
     },
     {
         "subject": "Barbarian",
@@ -2109,7 +2109,7 @@
         "object": "Food",
         "level": 7,
         "functionName": "",
-        "value": 43639
+        "value": 436394
     },
     {
         "subject": "Barbarian",
@@ -2117,7 +2117,7 @@
         "object": "Guard",
         "level": 7,
         "functionName": "",
-        "value": 10.909851347248805
+        "value": 109.09851347248805
     },
     {
         "subject": "Barbarian",
@@ -2125,7 +2125,7 @@
         "object": "Gold",
         "level": 8,
         "functionName": "",
-        "value": 273510
+        "value": 2735108
     },
     {
         "subject": "Barbarian",
@@ -2133,7 +2133,7 @@
         "object": "Food",
         "level": 8,
         "functionName": "",
-        "value": 51356
+        "value": 513567
     },
     {
         "subject": "Barbarian",
@@ -2141,7 +2141,7 @@
         "object": "Guard",
         "level": 8,
         "functionName": "",
-        "value": 12.83918533849699
+        "value": 128.3918533849699
     },
     {
         "subject": "Barbarian",
@@ -2149,7 +2149,7 @@
         "object": "Gold",
         "level": 9,
         "functionName": "",
-        "value": 380207
+        "value": 3802075
     },
     {
         "subject": "Barbarian",
@@ -2157,7 +2157,7 @@
         "object": "Food",
         "level": 9,
         "functionName": "",
-        "value": 59764
+        "value": 597647
     },
     {
         "subject": "Barbarian",
@@ -2165,7 +2165,7 @@
         "object": "Guard",
         "level": 9,
         "functionName": "",
-        "value": 14.941185074416248
+        "value": 149.41185074416248
     },
     {
         "subject": "Barbarian",
@@ -2173,7 +2173,7 @@
         "object": "Gold",
         "level": 10,
         "functionName": "",
-        "value": 518997
+        "value": 5189970
     },
     {
         "subject": "Barbarian",
@@ -2181,7 +2181,7 @@
         "object": "Food",
         "level": 10,
         "functionName": "",
-        "value": 68925
+        "value": 689252
     },
     {
         "subject": "Barbarian",
@@ -2189,7 +2189,7 @@
         "object": "Guard",
         "level": 10,
         "functionName": "",
-        "value": 17.23130327574756
+        "value": 172.3130327574756
     },
     {
         "subject": "Barbarian",
@@ -2197,7 +2197,7 @@
         "object": "Gold",
         "level": 11,
         "functionName": "",
-        "value": 698069
+        "value": 6980699
     },
     {
         "subject": "Barbarian",
@@ -2205,7 +2205,7 @@
         "object": "Food",
         "level": 11,
         "functionName": "",
-        "value": 78905
+        "value": 789055
     },
     {
         "subject": "Barbarian",
@@ -2213,7 +2213,7 @@
         "object": "Guard",
         "level": 11,
         "functionName": "",
-        "value": 19.726375604467588
+        "value": 197.2637560446759
     },
     {
         "subject": "Barbarian",
@@ -2221,7 +2221,7 @@
         "object": "Gold",
         "level": 12,
         "functionName": "",
-        "value": 927585
+        "value": 9275859
     },
     {
         "subject": "Barbarian",
@@ -2229,7 +2229,7 @@
         "object": "Food",
         "level": 12,
         "functionName": "",
-        "value": 89778
+        "value": 897789
     },
     {
         "subject": "Barbarian",
@@ -2237,7 +2237,7 @@
         "object": "Guard",
         "level": 12,
         "functionName": "",
-        "value": 22.444744430113968
+        "value": 224.44744430113965
     },
     {
         "subject": "Barbarian",
@@ -2245,7 +2245,7 @@
         "object": "Gold",
         "level": 13,
         "functionName": "",
-        "value": 1220135
+        "value": 12201355
     },
     {
         "subject": "Barbarian",
@@ -2253,7 +2253,7 @@
         "object": "Food",
         "level": 13,
         "functionName": "",
-        "value": 101625
+        "value": 1016255
     },
     {
         "subject": "Barbarian",
@@ -2261,7 +2261,7 @@
         "object": "Guard",
         "level": 13,
         "functionName": "",
-        "value": 25.406393672577764
+        "value": 254.06393672577767
     },
     {
         "subject": "Barbarian",
@@ -2269,7 +2269,7 @@
         "object": "Gold",
         "level": 14,
         "functionName": "",
-        "value": 1591307
+        "value": 15913079
     },
     {
         "subject": "Barbarian",
@@ -2277,7 +2277,7 @@
         "object": "Food",
         "level": 14,
         "functionName": "",
-        "value": 114532
+        "value": 1145323
     },
     {
         "subject": "Barbarian",
@@ -2285,7 +2285,7 @@
         "object": "Guard",
         "level": 14,
         "functionName": "",
-        "value": 28.63309571265164
+        "value": 286.3309571265164
     },
     {
         "subject": "Barbarian",
@@ -2293,7 +2293,7 @@
         "object": "Gold",
         "level": 15,
         "functionName": "",
-        "value": 2060390
+        "value": 20603906
     },
     {
         "subject": "Barbarian",
@@ -2301,7 +2301,7 @@
         "object": "Food",
         "level": 15,
         "functionName": "",
-        "value": 128594
+        "value": 1285942
     },
     {
         "subject": "Barbarian",
@@ -2309,7 +2309,7 @@
         "object": "Guard",
         "level": 15,
         "functionName": "",
-        "value": 32.148571450337414
+        "value": 321.48571450337414
     },
     {
         "subject": "Tile",
@@ -2317,7 +2317,7 @@
         "object": "Guard",
         "level": 1,
         "functionName": "",
-        "value": 5.604923886216434
+        "value": 56.04923886216434
     },
     {
         "subject": "Tile",
@@ -2325,7 +2325,7 @@
         "object": "Gold",
         "level": 1,
         "functionName": "Upgrade",
-        "value": 1106
+        "value": 11062
     },
     {
         "subject": "Tile",
@@ -2333,7 +2333,7 @@
         "object": "Food",
         "level": 1,
         "functionName": "Upgrade",
-        "value": 17699
+        "value": 176995
     },
     {
         "subject": "Tile",
@@ -2341,7 +2341,7 @@
         "object": "Guard",
         "level": 2,
         "functionName": "",
-        "value": 8.48892867156409
+        "value": 84.88928671564089
     },
     {
         "subject": "Tile",
@@ -2349,7 +2349,7 @@
         "object": "Gold",
         "level": 2,
         "functionName": "Upgrade",
-        "value": 1205
+        "value": 12052
     },
     {
         "subject": "Tile",
@@ -2357,7 +2357,7 @@
         "object": "Food",
         "level": 2,
         "functionName": "Upgrade",
-        "value": 19283
+        "value": 192835
     },
     {
         "subject": "Tile",
@@ -2365,7 +2365,7 @@
         "object": "Guard",
         "level": 3,
         "functionName": "",
-        "value": 11.631037463867449
+        "value": 116.3103746386745
     },
     {
         "subject": "Tile",
@@ -2373,7 +2373,7 @@
         "object": "Gold",
         "level": 3,
         "functionName": "Upgrade",
-        "value": 1313
+        "value": 13130
     },
     {
         "subject": "Tile",
@@ -2381,7 +2381,7 @@
         "object": "Food",
         "level": 3,
         "functionName": "Upgrade",
-        "value": 21009
+        "value": 210093
     },
     {
         "subject": "Tile",
@@ -2389,7 +2389,7 @@
         "object": "Guard",
         "level": 4,
         "functionName": "",
-        "value": 15.054349281111875
+        "value": 150.54349281111877
     },
     {
         "subject": "Tile",
@@ -2397,7 +2397,7 @@
         "object": "Gold",
         "level": 4,
         "functionName": "Upgrade",
-        "value": 1430
+        "value": 14305
     },
     {
         "subject": "Tile",
@@ -2405,7 +2405,7 @@
         "object": "Food",
         "level": 4,
         "functionName": "Upgrade",
-        "value": 22889
+        "value": 228895
     },
     {
         "subject": "Tile",
@@ -2413,7 +2413,7 @@
         "object": "Guard",
         "level": 5,
         "functionName": "",
-        "value": 18.784030387886837
+        "value": 187.8403038788684
     },
     {
         "subject": "Tile",
@@ -2421,7 +2421,7 @@
         "object": "Gold",
         "level": 5,
         "functionName": "Upgrade",
-        "value": 1558
+        "value": 15586
     },
     {
         "subject": "Tile",
@@ -2429,7 +2429,7 @@
         "object": "Food",
         "level": 5,
         "functionName": "Upgrade",
-        "value": 24938
+        "value": 249380
     },
     {
         "subject": "Tile",
@@ -2437,7 +2437,7 @@
         "object": "Guard",
         "level": 6,
         "functionName": "",
-        "value": 22.847499303619824
+        "value": 228.4749930361982
     },
     {
         "subject": "Tile",
@@ -2445,7 +2445,7 @@
         "object": "Gold",
         "level": 6,
         "functionName": "Upgrade",
-        "value": 1698
+        "value": 16981
     },
     {
         "subject": "Tile",
@@ -2453,7 +2453,7 @@
         "object": "Food",
         "level": 6,
         "functionName": "Upgrade",
-        "value": 27169
+        "value": 271699
     },
     {
         "subject": "Tile",
@@ -2461,7 +2461,7 @@
         "object": "Guard",
         "level": 7,
         "functionName": "",
-        "value": 27.274628368122013
+        "value": 272.7462836812201
     },
     {
         "subject": "Tile",
@@ -2469,7 +2469,7 @@
         "object": "Gold",
         "level": 7,
         "functionName": "Upgrade",
-        "value": 1850
+        "value": 18500
     },
     {
         "subject": "Tile",
@@ -2477,7 +2477,7 @@
         "object": "Food",
         "level": 7,
         "functionName": "Upgrade",
-        "value": 29601
+        "value": 296014
     },
     {
         "subject": "Tile",
@@ -2485,7 +2485,7 @@
         "object": "Guard",
         "level": 8,
         "functionName": "",
-        "value": 32.09796334624247
+        "value": 320.9796334624247
     },
     {
         "subject": "Tile",
@@ -2493,7 +2493,7 @@
         "object": "Gold",
         "level": 8,
         "functionName": "Upgrade",
-        "value": 2015
+        "value": 20156
     },
     {
         "subject": "Tile",
@@ -2501,7 +2501,7 @@
         "object": "Food",
         "level": 8,
         "functionName": "Upgrade",
-        "value": 32250
+        "value": 322506
     },
     {
         "subject": "Tile",
@@ -2509,7 +2509,7 @@
         "object": "Guard",
         "level": 9,
         "functionName": "",
-        "value": 37.35296268604062
+        "value": 373.5296268604062
     },
     {
         "subject": "Tile",
@@ -2517,7 +2517,7 @@
         "object": "Gold",
         "level": 9,
         "functionName": "Upgrade",
-        "value": 2196
+        "value": 21960
     },
     {
         "subject": "Tile",
@@ -2525,7 +2525,7 @@
         "object": "Food",
         "level": 9,
         "functionName": "Upgrade",
-        "value": 35136
+        "value": 351369
     },
     {
         "subject": "Tile",
@@ -2533,7 +2533,7 @@
         "object": "Guard",
         "level": 10,
         "functionName": "",
-        "value": 43.0782581893689
+        "value": 430.78258189368904
     },
     {
         "subject": "Tile",
@@ -2541,7 +2541,7 @@
         "object": "Gold",
         "level": 10,
         "functionName": "Upgrade",
-        "value": 2392
+        "value": 23925
     },
     {
         "subject": "Tile",
@@ -2549,7 +2549,7 @@
         "object": "Food",
         "level": 10,
         "functionName": "Upgrade",
-        "value": 38281
+        "value": 382815
     },
     {
         "subject": "Tile",
@@ -2557,7 +2557,7 @@
         "object": "Guard",
         "level": 11,
         "functionName": "",
-        "value": 49.31593901116897
+        "value": 493.15939011168973
     },
     {
         "subject": "Tile",
@@ -2565,7 +2565,7 @@
         "object": "Gold",
         "level": 11,
         "functionName": "Upgrade",
-        "value": 2606
+        "value": 26067
     },
     {
         "subject": "Tile",
@@ -2573,7 +2573,7 @@
         "object": "Food",
         "level": 11,
         "functionName": "Upgrade",
-        "value": 41707
+        "value": 417075
     },
     {
         "subject": "Tile",
@@ -2581,7 +2581,7 @@
         "object": "Guard",
         "level": 12,
         "functionName": "",
-        "value": 56.11186107528492
+        "value": 561.1186107528491
     },
     {
         "subject": "Tile",
@@ -2589,7 +2589,7 @@
         "object": "Gold",
         "level": 12,
         "functionName": "Upgrade",
-        "value": 2840
+        "value": 28400
     },
     {
         "subject": "Tile",
@@ -2597,7 +2597,7 @@
         "object": "Food",
         "level": 12,
         "functionName": "Upgrade",
-        "value": 45440
+        "value": 454401
     },
     {
         "subject": "Tile",
@@ -2605,7 +2605,7 @@
         "object": "Guard",
         "level": 13,
         "functionName": "",
-        "value": 63.51598418144441
+        "value": 635.1598418144441
     },
     {
         "subject": "Tile",
@@ -2613,7 +2613,7 @@
         "object": "Gold",
         "level": 13,
         "functionName": "Upgrade",
-        "value": 3094
+        "value": 30941
     },
     {
         "subject": "Tile",
@@ -2621,7 +2621,7 @@
         "object": "Food",
         "level": 13,
         "functionName": "Upgrade",
-        "value": 49506
+        "value": 495068
     },
     {
         "subject": "Tile",
@@ -2629,7 +2629,7 @@
         "object": "Guard",
         "level": 14,
         "functionName": "",
-        "value": 71.5827392816291
+        "value": 715.827392816291
     },
     {
         "subject": "Tile",
@@ -2637,7 +2637,7 @@
         "object": "Gold",
         "level": 14,
         "functionName": "Upgrade",
-        "value": 3371
+        "value": 33710
     },
     {
         "subject": "Tile",
@@ -2645,7 +2645,7 @@
         "object": "Food",
         "level": 14,
         "functionName": "Upgrade",
-        "value": 53937
+        "value": 539374
     },
     {
         "subject": "Tile",
@@ -2653,7 +2653,7 @@
         "object": "Guard",
         "level": 15,
         "functionName": "",
-        "value": 80.37142862584354
+        "value": 803.7142862584353
     },
     {
         "subject": "Army",
@@ -2661,7 +2661,7 @@
         "object": "Troop",
         "level": 1,
         "functionName": "",
-        "value": 7.754024975911633
+        "value": 77.54024975911634
     },
     {
         "subject": "City",
@@ -2677,7 +2677,7 @@
         "object": "Troop",
         "level": 2,
         "functionName": "",
-        "value": 15.231666202413214
+        "value": 152.31666202413214
     },
     {
         "subject": "City",
@@ -2693,7 +2693,7 @@
         "object": "Troop",
         "level": 3,
         "functionName": "",
-        "value": 24.901975124027082
+        "value": 249.01975124027078
     },
     {
         "subject": "City",
@@ -2709,7 +2709,7 @@
         "object": "Troop",
         "level": 4,
         "functionName": "",
-        "value": 37.40790738352328
+        "value": 374.07907383523275
     },
     {
         "subject": "City",
@@ -2725,7 +2725,7 @@
         "object": "Troop",
         "level": 5,
         "functionName": "",
-        "value": 53.58095241722902
+        "value": 535.8095241722903
     },
     {
         "subject": "City",
