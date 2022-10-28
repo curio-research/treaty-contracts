@@ -66,46 +66,26 @@ export const generateBlankFixmap = (): TileMap => {
 };
 
 export const generateMap = (worldWidth: number, worldHeight: number, worldConstants: WorldConstantsStruct): TileMap => {
-  let tileMap: TileMap = [];
-  // // assign a blank map
-  // for (let i = 0; i < worldWidth; i++) {
-  //   let col: TILE_TYPE[] = [];
-  //   for (let j = 0; j < worldHeight; j++) {
-  //     col.push(TILE_TYPE.LAND);
-  //   }
-  //   tileMap.push(col);
-  // }
-
   // add mountains
-  tileMap = generateMapWithMountains({ width: worldWidth, height: worldHeight });
+  let tileMap: TileMap = generateMapWithMountains({ width: worldWidth, height: worldHeight });
 
+  // add gold mines and barbarians
   const level1GoldMineDensity = 0.05;
-  const totalFarmDensity = level1GoldMineDensity * 4;
   const level1BarbarianDensity = 0.02;
   const level2BarbarianDensity = 0.02;
   const totalTileCount = worldWidth * worldHeight;
-  // const tileWidth = Number(worldConstants.tileWidth);
   for (let i = 0; i < totalTileCount * level1GoldMineDensity; i++) {
     const pos = chooseRandomEmptyLandPosition(tileMap);
     tileMap[pos.x][pos.y] = TILE_TYPE.GOLDMINE_LV1;
-  }
-  for (let i = 0; i < totalTileCount * totalFarmDensity; i++) {
-    const pos = chooseRandomEmptyLandPosition(tileMap);
-    tileMap[pos.x][pos.y] = TILE_TYPE.FARM_LV1;
   }
   for (let i = 0; i < totalTileCount * level1BarbarianDensity; i++) {
     const pos = chooseRandomEmptyLandPosition(tileMap);
     tileMap[pos.x][pos.y] = TILE_TYPE.BARBARIAN_LV1;
   }
-
   for (let i = 0; i < totalTileCount * level2BarbarianDensity; i++) {
     const pos = chooseRandomEmptyLandPosition(tileMap);
     tileMap[pos.x][pos.y] = TILE_TYPE.BARBARIAN_LV2;
   }
-  // for (let i = 0; i < totalTileCount * level2BarbarianDensity; i++) {
-  //   const pos = getProperTilePosition(chooseRandomEmptyLandPosition(tileMap), tileWidth);
-  //   tileMap[pos.x][pos.y] = TILE_TYPE.BARBARIAN_LV2;
-  // }
 
   return tileMap;
 };
@@ -190,7 +170,6 @@ export const chooseRandomEmptyLandPosition = (tileMap: TileMap): position => {
     const x = Math.floor(Math.random() * mapWidth);
     const y = Math.floor(Math.random() * mapHeight);
     if (tileMap[x][y] === TILE_TYPE.LAND) {
-      // FIXME: also counts farm as an empty tile
       pos = { x, y };
     }
   } while (!pos);
