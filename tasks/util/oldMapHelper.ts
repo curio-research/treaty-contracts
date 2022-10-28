@@ -32,11 +32,7 @@ export const generateGameMaps = (mapInput: MapInput, renderInput: RenderInput): 
   const plateNoiseMap: number[][] = generateNoiseMap(mapInput.width, mapInput.height, renderInput.sizeFactor * renderInput.plateSizeMultiplier);
   const noiseMap: number[][] = superpose([microNoiseMap, plateNoiseMap], renderInput.superpositionRatio);
 
-  // Generate colors, cutoffs, and tile map
-  const colorsAndCutoffs: ColorsAndCutoffs = getColorsAndCutoffs(renderInput);
-  const colorMap: number[][][] = noiseMap.map((row: number[]) => {
-    return row.map((val: number) => assignDepthColor(val, colorsAndCutoffs));
-  });
+  const tileMap = 1;
 
   // TODO: left here
   const { tileMap, portTiles, cityTiles, oilWellTiles } = placePortsAndCities(colorMap, 0, 0, 0); // FIXME: do not need ports and cities
