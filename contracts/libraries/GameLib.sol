@@ -278,10 +278,6 @@ library GameLib {
         removeArmy(_armyID);
     }
 
-    function resourceUpgradeCooldownCheck(uint256 _resourceID) external {
-        // requires 
-    }
-
     // ----------------------------------------------------------
     // LOGIC GETTERS
     // ----------------------------------------------------------
