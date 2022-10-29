@@ -395,6 +395,7 @@ class Game:
             self.building_upgrade_cooldown_ratio = 5
             (self.resource_weight_light, self.resource_weight_low, self.resource_weight_medium, self.resource_weight_high, self.resource_weight_heavy) = (1, 3, 4, 5, 16)
 
+    # todo: update it
     def print_parameters(self):
         print("-----------------")
         print(f"** Faith Constants **")
@@ -577,6 +578,8 @@ class Game:
                 game_parameters.append({ "subject": "Tile", "componentName": "Cost", "object": "Gold", "level": curr_level, "functionName": "Upgrade", "value": int(cost_gold * 1000)})
                 game_parameters.append({ "subject": "Tile", "componentName": "Cost", "object": "Food", "level": curr_level, "functionName": "Upgrade", "value": int(cost_food * 1000)})
                 game_parameters.append({ "subject": "Tile", "componentName": "Cooldown", "object": "", "level": curr_level, "functionName": "Upgrade", "value": int(get_tile_upgrade_cooldown_in_second(curr_level))})
+                # todo: currently recover cooldown is the same as upgrade
+                game_parameters.append({ "subject": "Tile", "componentName": "Cooldown", "object": "", "level": curr_level, "functionName": "Recover", "value": int(get_tile_upgrade_cooldown_in_second(curr_level))})
 
             curr_level += 1
 
