@@ -3,7 +3,7 @@ pragma solidity ^0.8.4;
 
 import "openzeppelin-contracts/contracts/utils/Strings.sol";
 import "contracts/libraries/Storage.sol";
-import {ComponentSpec, GameState, Position, Terrain, Tile, ValueType, WorldConstants, QueryCondition, QueryType} from "contracts/libraries/Types.sol";
+import {ComponentSpec, GameMode, GameState, Position, Terrain, Tile, ValueType, WorldConstants, QueryCondition, QueryType} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
 import {Templates} from "contracts/libraries/Templates.sol";
@@ -86,7 +86,7 @@ library GameLib {
         ECSLib.setUint("Terrain", tileID, terrain);
 
         // TEMP: battle royale mode
-        if (gs().worldConstants.isBattleRoyale) {
+        if (gs().worldConstants.gameMode == GameMode.BATTLE_ROYALE) {
             // Set map center tile to SUPERTILE of land, no resources, and the top tile strength to start
             if (coincident(_startPosition, getMapCenterTilePosition())) {
                 uint256 maxTileLevel = gs().worldConstants.maxCityCenterLevel * gs().worldConstants.cityCenterLevelToEntityLevelRatio;

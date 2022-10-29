@@ -4,7 +4,7 @@ pragma solidity ^0.8.4;
 import "contracts/libraries/Storage.sol";
 import {GameLib} from "contracts/libraries/GameLib.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
-import {Position, WorldConstants} from "contracts/libraries/Types.sol";
+import {GameMode, Position, WorldConstants} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
 import "contracts/libraries/Templates.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
@@ -108,7 +108,7 @@ contract GameFacet is UseStorage {
         GameLib.passableTerrainCheck(centerTilePosition);
 
         // TEMP: battle royale
-        if (gs().worldConstants.isBattleRoyale) {
+        if (gs().worldConstants.gameMode == GameMode.BATTLE_ROYALE) {
             require(!GameLib.coincident(centerTilePosition, GameLib.getMapCenterTilePosition()), "CURIO: City center can't be at supertile");
         }
 
@@ -283,7 +283,7 @@ contract GameFacet is UseStorage {
         GameLib.passableTerrainCheck(_newTilePosition);
 
         // TEMP: battle royale
-        if (gs().worldConstants.isBattleRoyale) {
+        if (gs().worldConstants.gameMode == GameMode.BATTLE_ROYALE) {
             require(!GameLib.coincident(_newTilePosition, GameLib.getMapCenterTilePosition()), "CURIO: City center can't be at supertile");
         }
 

@@ -1,5 +1,5 @@
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
-import { Duration, encodeString, encodeUint256, InventoryType, InventoryTypeOptions, Load, Tag, Tags, BattleCooldown, TILE_TYPE, Amount } from 'curio-vault';
+import { Duration, encodeString, encodeUint256, InventoryType, InventoryTypeOptions, Tag, Tags, TILE_TYPE, GameMode } from 'curio-vault';
 import { Curio } from './../../typechain-types/hardhat-diamond-abi/Curio';
 import { addGetEntity } from './mapHelper';
 import { MapInput } from './types';
@@ -35,7 +35,7 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): a
     maxCityCountPerPlayer: 3,
     maxArmyCountPerPlayer: 2,
     maxPlayerCount: 20,
-    isBattleRoyale: true,
+    gameMode: GameMode.BATTLE_ROYALE,
     // generated constants
     ...worldConstants,
   };

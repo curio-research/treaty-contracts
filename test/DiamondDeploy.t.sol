@@ -411,14 +411,15 @@ contract DiamondDeployTest is Test {
         return
             WorldConstants({
                 admin: deployer,
+                tileWidth: 10, // DO NOT REMOVE THIS COMMENT
                 worldWidth: 1000,
                 worldHeight: 1000,
-                numInitTerrainTypes: 1,
-                initBatchSize: 100,
+                numInitTerrainTypes: 6,
+                initBatchSize: 50,
                 maxCityCountPerPlayer: 3,
                 maxArmyCountPerPlayer: 3,
                 maxPlayerCount: 20,
-                tileWidth: 10, // DO NOT REMOVE THIS COMMENT
+                gameMode: GameMode.BATTLE_ROYALE,
                 maxCityCenterLevel: 3,
                 cityCenterLevelToEntityLevelRatio: 3,
                 secondsToTrainAThousandTroops: 500

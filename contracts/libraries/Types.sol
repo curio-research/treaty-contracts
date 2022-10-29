@@ -24,6 +24,11 @@ enum QueryType {
     HasVal
 }
 
+enum GameMode {
+    REGULAR,
+    BATTLE_ROYALE
+}
+
 struct QueryCondition {
     QueryType queryType;
     bytes value;
@@ -66,7 +71,7 @@ struct WorldConstants {
     uint256 maxCityCountPerPlayer;
     uint256 maxArmyCountPerPlayer;
     uint256 maxPlayerCount;
-    bool isBattleRoyale;
+    GameMode gameMode;
     // Generated configs
     uint256 maxCityCenterLevel;
     uint256 cityCenterLevelToEntityLevelRatio; // 3 => lv1 city center unlocks lv3 resources
