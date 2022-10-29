@@ -33,8 +33,10 @@ contract GameFacet is UseStorage {
         require(gs().players.length < gs().worldConstants.maxPlayerCount, "CURIO: Max player count exceeded");
         require(gs().playerEntityMap[msg.sender] == NULL, "CURIO: Player already initialized");
 
-        // Initialize tile
-        GameLib.initializeTile(GameLib.getProperTilePosition(_position));
+        // Initialize tile and check terrain
+        Position memory tilePosition = GameLib.getProperTilePosition(_position);
+        GameLib.initializeTile(tilePosition);
+        GameLib.passableTerrainCheck(tilePosition);
 
         // Register player
         uint256 playerID = Templates.addPlayer(_name);
@@ -42,16 +44,7 @@ contract GameFacet is UseStorage {
         gs().playerEntityMap[msg.sender] = playerID;
 
         // Add player's first settler
-        uint256 settlerID = Templates.addSettler(_position, playerID, gs().worldConstants.tileWidth);
-
-        // Add initial resources to settler
-        uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
-        for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
-            string memory inventoryType = ECSLib.getString("InventoryType", resourceTemplateIDs[i]);
-            uint256 inventoryAmount = GameLib.getConstant("initializePlayer", "Amount", inventoryType, 0);
-            uint256 inventoryLoad = GameLib.getConstant("initializePlayer", "Load", inventoryType, 0);
-            Templates.addInventory(settlerID, resourceTemplateIDs[i], inventoryAmount, inventoryLoad, true);
-        }
+        Templates.addSettler(_position, playerID, gs().worldConstants.tileWidth);
     }
 
     // ----------------------------------------------------------
@@ -66,8 +59,12 @@ contract GameFacet is UseStorage {
         GameLib.entityOwnershipCheck(_movableEntity, msg.sender);
         GameLib.inboundPositionCheck(_targetPosition);
 
-        // Initialize tile
-        GameLib.initializeTile(GameLib.getProperTilePosition(_targetPosition));
+        // Initialize tile and check terrain
+        {
+            Position memory tilePosition = GameLib.getProperTilePosition(_targetPosition);
+            GameLib.initializeTile(tilePosition);
+            GameLib.passableTerrainCheck(tilePosition);
+        }
 
         // Verify no other movable entity at exact destination coordinate
         require(GameLib.getMovableEntityAt(_targetPosition) == NULL, "CURIO: Destination occupied");
@@ -106,8 +103,16 @@ contract GameFacet is UseStorage {
         // Verify that settler can settle
         require(ECSLib.getBool("CanSettle", _settlerID), "CURIO: Settler cannot settle");
 
-        // Verify that territory is connected and includes settler's current position FIXME
+        // Verify that city center is not on mountain
         Position memory centerTilePosition = GameLib.getProperTilePosition(ECSLib.getPosition("Position", _settlerID));
+        GameLib.passableTerrainCheck(centerTilePosition);
+
+        // TEMP: battle royale
+        if (gs().worldConstants.isBattleRoyale) {
+            require(!GameLib.coincident(centerTilePosition, GameLib.getMapCenterTilePosition()), "CURIO: City center can't be at supertile");
+        }
+
+        // Verify that territory is connected and includes settler's current position FIXME
         require(GameLib.connected(_tiles), "CURIO: Territory disconnected");
         require(GameLib.includesPosition(centerTilePosition, _tiles), "CURIO: Tiles must cover settler position");
 
@@ -122,6 +127,7 @@ contract GameFacet is UseStorage {
             GameLib.inboundPositionCheck(_tiles[i]);
             require(GameLib.isProperTilePosition(_tiles[i]), "CURIO: Must be proper tile position");
             uint256 tileID = GameLib.initializeTile(_tiles[i]);
+            require(!GameLib.isBarbarian(tileID), "CURIO: Cannot settle on barbarians");
             require(ECSLib.getUint("City", tileID) == NULL, "CURIO: Overlaps with another city");
 
             ECSLib.setUint("City", tileID, cityID);
@@ -134,8 +140,16 @@ contract GameFacet is UseStorage {
         // Add city center
         Templates.addCityCenter(centerTilePosition, cityID);
 
+        // Add initial resources to city
+        uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
+        for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
+            string memory inventoryType = ECSLib.getString("InventoryType", resourceTemplateIDs[i]);
+            uint256 inventoryLoad = GameLib.getConstant("City Center", inventoryType, "Load", "", 1);
+            Templates.addInventory(cityID, resourceTemplateIDs[i], 0, inventoryLoad, true);
+        }
+
         // Strengthen guard to city defense level
-        uint256 cityGuardAmount = GameLib.getConstant("foundCity", "Amount", "Guard", 0);
+        uint256 cityGuardAmount = GameLib.getConstant("Tile", "Guard", "Amount", "", 1); // FIXME: update back to city strength level
         ECSLib.setUint("Amount", GameLib.getConstituents(GameLib.getTileAt(centerTilePosition))[0], cityGuardAmount);
     }
 
@@ -148,33 +162,36 @@ contract GameFacet is UseStorage {
         GameLib.entityOwnershipCheck(_cityID, msg.sender);
 
         // Deduct packing cost
-        uint256 packCost = GameLib.getConstant("packCity", "Cost", "Gold", 0);
+        uint256 packCost = GameLib.getConstant("City", "Gold", "Cost", "pack", 0);
         uint256 balance = GameLib.getCityGold(_cityID);
         require(balance >= packCost, "CURIO: Insufficient gold for packing");
         ECSLib.setUint("Amount", GameLib.getInventory(_cityID, gs().templates["Gold"]), balance - packCost);
 
         // Remove city tiles
         uint256[] memory tileIDs = GameLib.getCityTiles(_cityID);
-        assert(tileIDs.length == GameLib.getCityTileCountByLevel(ECSLib.getUint("Level", _cityID)));
+        assert(tileIDs.length == GameLib.getCityTileCountByLevel(ECSLib.getUint("Level", GameLib.getCityCenter(_cityID))));
         for (uint256 i = 0; i < tileIDs.length; i++) {
             ECSLib.setUint("Owner", tileIDs[i], NULL);
         }
 
         // Convert the settler to a city
-        uint256 health = GameLib.getConstant("packCity", "Health", "Settler", 0);
+        uint256 health = GameLib.getConstant("Settler", "Health", "", "", 0);
         Templates.convertCityToSettler(_cityID, health, gs().worldConstants.tileWidth);
 
         // Remove city center
         ECSLib.removeEntity(GameLib.getCityCenter(_cityID));
     }
 
-    // every time you purchase, you increase the number of tile defenders
-    function upgradeTile(uint256 _tileID) external {
+    function recoverTile(uint256 _tileID) external {
         // Basic checks
         GameLib.validEntityCheck(_tileID);
         GameLib.ongoingGameCheck();
         GameLib.activePlayerCheck(msg.sender);
         GameLib.entityOwnershipCheck(_tileID, msg.sender);
+
+        // lost tile amount = current level amount - actual amount
+        uint256 tileLevel = ECSLib.getUint("Level", _tileID);
+        uint256 lostGuardAmount = GameLib.getConstant("Tile", "Guard", "Amount", "", tileLevel) - ECSLib.getUint("Amount", _tileID);
 
         // Deduct costs
         uint256 playerID = GameLib.getPlayer(msg.sender);
@@ -182,92 +199,142 @@ contract GameFacet is UseStorage {
         for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
             uint256 inventoryID = GameLib.getInventory(GameLib.getPlayerCity(playerID), resourceTemplateIDs[i]);
             uint256 balance = ECSLib.getUint("Amount", inventoryID);
-            uint256 cost = GameLib.getConstant("upgradeTile", "Cost", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), 0);
+
+            uint256 totalRecoverCost = GameLib.getConstant("Tile", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Cost", "Upgrade", 0) * lostGuardAmount;
+
+            require(balance >= totalRecoverCost, "CURIO: Insufficient balance");
+            ECSLib.setUint("Amount", inventoryID, balance - totalRecoverCost);
+        }
+
+        // Recover the Tile
+        ECSLib.setUint("Amount", GameLib.getConstituents(_tileID)[0], GameLib.getConstant("Tile", "Guard", "Amount", "", tileLevel));
+    }
+
+    function upgradeTile(uint256 _tileID) external {
+        // Basic checks
+        GameLib.validEntityCheck(_tileID);
+        GameLib.ongoingGameCheck();
+        GameLib.activePlayerCheck(msg.sender);
+        GameLib.entityOwnershipCheck(_tileID, msg.sender);
+
+        // Check if player has reached max tile level
+        uint256 tileLevel = ECSLib.getUint("Level", _tileID);
+        uint256 cityCenterID = GameLib.getCityCenter(ECSLib.getUint("City", _tileID));
+        require(tileLevel < ECSLib.getUint("Level", cityCenterID) * gs().worldConstants.cityCenterLevelToEntityLevelRatio, "CURIO: Max Tile Level Reached");
+
+        // Require players to fully recover the tile before upgrade
+        require(GameLib.getConstant("Tile", "Guard", "Amount", "", tileLevel) <= ECSLib.getUint("Amount", GameLib.getConstituents(_tileID)[0]), "CURIO: Need to recover tile first");
+
+        // Deduct costs
+        uint256 playerID = GameLib.getPlayer(msg.sender);
+        uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
+        for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
+            uint256 inventoryID = GameLib.getInventory(GameLib.getPlayerCity(playerID), resourceTemplateIDs[i]);
+            uint256 balance = ECSLib.getUint("Amount", inventoryID);
+            uint256 cost = GameLib.getConstant("Tile", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Cost", "Upgrade", tileLevel);
             require(balance >= cost, "CURIO: Insufficient balance");
             ECSLib.setUint("Amount", inventoryID, balance - cost);
         }
 
-        // Upgrade tile defense
-        uint256 added = GameLib.getConstant("upgradeTile", "Amount", "Guard", 0);
-        uint256 newConstituentAmount = GameLib.min(ECSLib.getUint("Amount", GameLib.getConstituents(_tileID)[0]) + added, added * 3);
+        // Upgrade tile defense and level
+        uint256 newConstituentAmount = GameLib.getConstant("Tile", "Guard", "Amount", "", tileLevel + 1);
         ECSLib.setUint("Amount", GameLib.getConstituents(_tileID)[0], newConstituentAmount);
+        ECSLib.setUint("Level", _tileID, tileLevel + 1);
     }
 
-    function upgradeCityInventory(uint256 _buildingID) external {
+    // todo: merge it with upgrade resource
+    function upgradeCityCenter(uint256 _buildingID) external {
+        GameLib.validEntityCheck(_buildingID);
+        GameLib.ongoingGameCheck();
+        GameLib.activePlayerCheck(msg.sender);
+
+        // Check if player has reached maxCityCenterLevel
+        uint256 centerLevel = ECSLib.getUint("Level", _buildingID);
+        require(centerLevel < gs().worldConstants.maxCityCenterLevel, "CURIO: Reached Maximum Center Level");
+
+        // Tile needs to be yours
+        uint256 playerID = GameLib.getPlayer(msg.sender);
+        uint256 tileID = GameLib.getTileAt(ECSLib.getPosition("StartPosition", _buildingID));
+        require(ECSLib.getUint("Owner", tileID) == playerID, "CURIO: Tile isn't yours");
+
+        // Deduct costs and set load
+        uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
+        for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
+            uint256 inventoryID = GameLib.getInventory(GameLib.getPlayerCity(playerID), resourceTemplateIDs[i]);
+            uint256 balance = ECSLib.getUint("Amount", inventoryID);
+            uint256 cost = GameLib.getConstant("City Center", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Cost", "Upgrade", centerLevel);
+            require(balance >= cost, "CURIO: Insufficient balance");
+            ECSLib.setUint("Amount", inventoryID, balance - cost);
+
+            uint256 newLoad = GameLib.getConstant("City Center", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Load", "", centerLevel + 1);
+            ECSLib.setUint("Load", _buildingID, newLoad);
+        }
+
+        // Set new level
+        ECSLib.setUint("Level", _buildingID, centerLevel + 1);
+    }
+
+    function moveCityCenter(uint256 _buildingID, Position memory _newTilePosition) external {
         // Basic checks
         GameLib.validEntityCheck(_buildingID);
         GameLib.ongoingGameCheck();
         GameLib.activePlayerCheck(msg.sender);
-        uint256 cityID = ECSLib.getUint("City", _buildingID);
-        GameLib.entityOwnershipCheck(cityID, msg.sender);
+        GameLib.inboundPositionCheck(_newTilePosition);
+        GameLib.passableTerrainCheck(_newTilePosition);
 
-        // Verify that city has enough gold and deduct cost
-        uint256 goldInventoryID = GameLib.getInventory(cityID, gs().templates["Gold"]);
-        uint256 balance = ECSLib.getUint("Amount", goldInventoryID);
-        uint256 cost = GameLib.getConstant("upgradeCityInventory", "Cost", "Gold", 0);
-        require(balance >= cost, "CURIO: Insufficient gold balance");
-        ECSLib.setUint("Amount", goldInventoryID, balance - cost);
+        // TEMP: battle royale
+        if (gs().worldConstants.isBattleRoyale) {
+            require(!GameLib.coincident(_newTilePosition, GameLib.getMapCenterTilePosition()), "CURIO: City center can't be at supertile");
+        }
 
-        // Upgrade tile level and inventory loads
-        uint256 newLevel = ECSLib.getUint("Level", _buildingID) + 1;
-        ECSLib.setUint("Level", _buildingID, newLevel);
-        for (uint256 i = 0; i < gs().templateNames.length; i++) {
-            uint256 templateID = gs().templates[gs().templateNames[i]];
-            uint256 inventoryID = GameLib.getInventory(cityID, templateID);
-            if (inventoryID != NULL) {
-                if (GameLib.strEq(ECSLib.getString("Tag", inventoryID), "ResourceInventory")) {
-                    uint256 load = GameLib.getConstant("upgradeCityInventory", "Load", ECSLib.getString("InventoryType", templateID), newLevel);
-                    ECSLib.setUint("Load", inventoryID, load);
-                } else if (GameLib.strEq(ECSLib.getString("Tag", inventoryID), "TroopInventory")) {
-                    uint256 load = GameLib.getConstant("upgradeCityInventory", "Load", ECSLib.getString("InventoryType", templateID), newLevel);
-                    ECSLib.setUint("Load", inventoryID, load);
-                }
+        // Verify that city center belongs to player
+        uint256 playerID = GameLib.getPlayer(msg.sender);
+        require(ECSLib.getUint("Owner", GameLib.getTileAt(ECSLib.getPosition("StartPosition", _buildingID))) == playerID, "CURIO: Building is not yours");
+
+        // Verify that target tile belongs to player
+        require(ECSLib.getUint("Owner", GameLib.getTileAt(_newTilePosition)) == playerID, "CURIO: Can only move in your territory");
+
+        // Deduct costs
+        {
+            uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
+            for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
+                uint256 inventoryID = GameLib.getInventory(GameLib.getPlayerCity(playerID), resourceTemplateIDs[i]);
+                uint256 balance = ECSLib.getUint("Amount", inventoryID);
+                uint256 cost = GameLib.getConstant("City Center", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Cost", "Move", ECSLib.getUint("Level", _buildingID));
+                require(balance >= cost, "CURIO: Insufficient balance");
+                ECSLib.setUint("Amount", inventoryID, balance - cost);
             }
         }
+
+        // Move city center, city, and underlying settler positions
+        uint256 cityID = ECSLib.getUint("City", _buildingID);
+        ECSLib.setPosition("StartPosition", _buildingID, _newTilePosition);
+        ECSLib.setPosition("StartPosition", cityID, _newTilePosition);
+        ECSLib.setPosition("Position", cityID, GameLib.getMidPositionFromTilePosition(_newTilePosition));
     }
 
-    function upgradeCity(uint256 _cityID, Position[] memory _newTiles) external {
+    function disownTile(uint256 _tileID) external {
         // Basic checks
-        GameLib.validEntityCheck(_cityID);
+        GameLib.validEntityCheck(_tileID);
         GameLib.ongoingGameCheck();
         GameLib.activePlayerCheck(msg.sender);
-        GameLib.entityOwnershipCheck(_cityID, msg.sender);
+        GameLib.entityOwnershipCheck(_tileID, msg.sender);
 
-        // Verify that city has enough gold
-        uint256 goldInventoryID = GameLib.getInventory(_cityID, gs().templates["Gold"]);
-        uint256 balance = ECSLib.getUint("Amount", goldInventoryID);
-        uint256 cost = GameLib.getConstant("upgradeCity", "Cost", "Gold", 0);
-        require(balance >= cost, "CURIO: Insufficient gold balance");
+        // Verify that city center is not on tile
+        Position memory tilePosition = ECSLib.getPosition("StartPosition", _tileID);
+        require(!GameLib.coincident(tilePosition, ECSLib.getPosition("StartPosition", GameLib.getCityCenter(ECSLib.getUint("City", _tileID)))), "CURIO: Cannot disown city center");
 
-        // Verify tile count correctness
-        uint256 newLevel = ECSLib.getUint("Level", _cityID);
-        require(_newTiles.length == GameLib.getCityTileCountByLevel(newLevel) - GameLib.getCityTileCountByLevel(newLevel - 1), "CURIO: Incorrect tile count"); // FIXME: ECS
-
-        // Verify that territory is connected
-        require(GameLib.connected(_newTiles), "CURIO: Territory not connected");
-
-        // Verify that new territory is connected to existing territory
-        // TODO
-
-        // Verify that territory is wholly in bound and does not overlap with other cities
-        uint256 playerID = GameLib.getPlayer(msg.sender);
-        for (uint256 i = 0; i < _newTiles.length; i++) {
-            GameLib.inboundPositionCheck(_newTiles[i]);
-            require(GameLib.isProperTilePosition(_newTiles[i]), "CURIO: Must be proper tile position");
-            uint256 tileID = GameLib.initializeTile(_newTiles[i]);
-            require(ECSLib.getUint("City", tileID) == NULL, "CURIO: Overlaps with another city");
-
-            ECSLib.setUint("Owner", tileID, playerID);
+        // End gather processes on tile
+        uint256[] memory movableEntitiesOnTile = GameLib.getMovableEntitiesAtTile(tilePosition);
+        for (uint256 i = 0; i < movableEntitiesOnTile.length; i++) {
+            uint256 gatherID = GameLib.getArmyGather(movableEntitiesOnTile[i]);
+            if (gatherID != NULL) GameLib.endGather(movableEntitiesOnTile[i]);
         }
 
-        // Deduct upgrade cost
-        ECSLib.setUint("Amount", goldInventoryID, balance - cost);
+        // TODO: deduct resources from, or return resources to, player inventory
 
-        // Update city level and guard amount
-        ECSLib.setUint("Level", _cityID, newLevel);
-        uint256 centerTileID = GameLib.getTileAt(ECSLib.getPosition("StartPosition", GameLib.getCityCenter(_cityID)));
-        uint256 cityGuardAmount = GameLib.getConstant("upgradeCity", "Amount", "Guard", newLevel);
-        ECSLib.setUint("Amount", GameLib.getConstituents(centerTileID)[0], cityGuardAmount);
+        // Disown tile
+        ECSLib.setUint("Owner", _tileID, NULL);
     }
 
     // ----------------------------------------------------------
@@ -297,7 +364,7 @@ contract GameFacet is UseStorage {
         for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
             uint256 resourceInventoryID = GameLib.getInventory(cityID, resourceTemplateIDs[i]);
             uint256 balance = ECSLib.getUint("Amount", resourceInventoryID);
-            uint256 cost = _amount * GameLib.getConstant("startTroopProduction", "Cost", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), 0);
+            uint256 cost = _amount * GameLib.getConstant("Troop Production", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Cost", "", 0);
             require(balance >= cost, "CURIO: Insufficient balance");
             ECSLib.setUint("Amount", resourceInventoryID, balance - cost);
         }
@@ -309,14 +376,15 @@ contract GameFacet is UseStorage {
         // Create inventory if none exists, and verify that amount does not exceed ceiling
         uint256 troopInventoryID = GameLib.getInventory(cityID, _templateID);
         if (troopInventoryID == NULL) {
-            uint256 load = GameLib.getConstant("upgradeCityInventory", "Load", ECSLib.getString("InventoryType", _templateID), buildingLevel);
+            // todo: come up with troop loads for different levels of city center
+            uint256 load = GameLib.getConstant("City Center", "Troop", "Load", "", buildingLevel); // FIXME
             troopInventoryID = Templates.addInventory(cityID, _templateID, 0, load, false);
         } else {
             require(ECSLib.getUint("Amount", troopInventoryID) < ECSLib.getUint("Load", troopInventoryID), "CURIO: Amount exceeds inventory capacity");
         }
 
         // Start production
-        return Templates.addTroopProduction(_buildingID, _templateID, troopInventoryID, _amount, _amount / 5);
+        return Templates.addTroopProduction(_buildingID, _templateID, troopInventoryID, _amount, gs().worldConstants.secondsToTrainAThousandTroops * (_amount / 1000));
     }
 
     function endTroopProduction(uint256 _buildingID, uint256 _productionID) external {
@@ -366,6 +434,7 @@ contract GameFacet is UseStorage {
         // Verify that the army's capacity isn't full
         // TODO
 
+        // string memory subject = ECSLib.getUint("Template", _resourceID) == gs().templates["Gold"] ? "Goldmine" : "Farm";
         Templates.addResourceGather(startPosition, playerID, _resourceID, _armyID);
     }
 
@@ -421,7 +490,7 @@ contract GameFacet is UseStorage {
 
         // Get harvest amount
         uint256 templateID = ECSLib.getUint("Template", _resourceID);
-        uint256 harvestRate = GameLib.getConstant("harvestResource", "Rate", ECSLib.getString("InventoryType", templateID), resourceLevel);
+        uint256 harvestRate = GameLib.getConstant(templateID == gs().templates["Gold"] ? "Goldmine" : "Farm", ECSLib.getString("InventoryType", templateID), "Yield", "", resourceLevel);
         uint256 harvestAmount = (block.timestamp - ECSLib.getUint("LastTimestamp", _resourceID)) * harvestRate;
         harvestAmount = GameLib.min(ECSLib.getUint("Load", _resourceID), harvestAmount);
 
@@ -430,9 +499,14 @@ contract GameFacet is UseStorage {
 
         // Update city inventory amount
         uint256 cityInventoryID = GameLib.getInventory(cityID, templateID);
-        uint256 existingCityResource = ECSLib.getUint("Amount", cityInventoryID);
-        uint256 totalAmount = GameLib.min(ECSLib.getUint("Load", cityInventoryID), harvestAmount + existingCityResource);
-        ECSLib.setUint("Amount", cityInventoryID, totalAmount);
+        uint256 existingCityResourceAmount = ECSLib.getUint("Amount", cityInventoryID);
+        ECSLib.setUint("Amount", cityInventoryID, harvestAmount + existingCityResourceAmount);
+    }
+
+    function harvestResources(uint256[] memory resourceIds) external {
+        for (uint256 i = 0; i < resourceIds.length; i++) {
+            harvestResource(resourceIds[i]);
+        }
     }
 
     // TODO: harvest gold & food on a city; consider merge this with the function above
@@ -445,14 +519,16 @@ contract GameFacet is UseStorage {
         uint256 cityID = ECSLib.getUint("City", _buildingID);
         GameLib.entityOwnershipCheck(cityID, msg.sender);
 
+        uint256 cityCenterID = GameLib.getCityCenter(cityID);
+
         // Create inventory if none exists
         uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
         for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
             uint256 inventoryID = GameLib.getInventory(cityID, resourceTemplateIDs[i]);
-            uint256 harvestRate = GameLib.getConstant("harvestResourcesFromCity", "Rate", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), 0);
+            uint256 harvestRate = GameLib.getConstant("City Center", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Yield", "", ECSLib.getUint("Level", cityCenterID));
             uint256 harvestAmount = (block.timestamp - ECSLib.getUint("LastTimestamp", _buildingID)) * harvestRate;
-            harvestAmount = GameLib.min(GameLib.getConstant("harvestResourcesFromCity", "Load", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), ECSLib.getUint("Level", cityID)), harvestAmount);
-            ECSLib.setUint("Amount", inventoryID, GameLib.min(ECSLib.getUint("Amount", inventoryID) + harvestAmount, ECSLib.getUint("Load", inventoryID)));
+            harvestAmount = GameLib.min(GameLib.getConstant("City Center", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Load", "", ECSLib.getUint("Level", cityCenterID)), harvestAmount);
+            ECSLib.setUint("Amount", inventoryID, ECSLib.getUint("Amount", inventoryID) + harvestAmount);
         }
 
         // Reset harvest time
@@ -480,7 +556,8 @@ contract GameFacet is UseStorage {
         require(GameLib.getArmyAt(midPosition) == NULL, "CURIO: Occupied by another army");
 
         // Verify that total troop amount does not exceed max troop count
-        require(GameLib.sum(_amounts) <= gs().worldConstants.maxTroopCountPerArmy, "CURIO: Troop amount exceeds capacity");
+        uint256 maxTroopCountPerArmy = GameLib.getConstant("Army", "Troop", "Amount", "", ECSLib.getUint("Level", _cityID));
+        require(GameLib.sum(_amounts) <= maxTroopCountPerArmy, "CURIO: Troop amount exceeds capacity");
 
         // Gather army traits from individual troop types
         {
@@ -599,49 +676,51 @@ contract GameFacet is UseStorage {
             "CURIO: Attack not within range"
         );
 
-        uint256 tileLevel = ECSLib.getUint("Level", _tileID);
         uint256 cityID = GameLib.getCityAtTile(ECSLib.getPosition("StartPosition", _tileID));
 
         // if it is barbarian, check it's not hybernating
-        if (tileLevel == 1 || tileLevel == 2) {
-            uint256 barbarianCooldown = GameLib.getConstant("battleTile", "BattleCooldown", "Barbarian", tileLevel);
+        if (GameLib.isBarbarian(_tileID)) {
+            uint256 barbarianCooldown = GameLib.getConstant("Barbarian", "", "Cooldown", "", 0);
             require(block.timestamp >= ECSLib.getUint("LastTimestamp", _tileID) + barbarianCooldown, "CURIO: Barbarians hybernating");
         }
 
         // Execute one round of battle
-        bool victory = GameLib.attack(_armyID, _tileID, false, false, false);
-        if (victory) {
-            uint256 winnerCityID = GameLib.getPlayerCity(GameLib.getPlayer(msg.sender));
-            if (cityID != NULL) {
-                // Victorious against city, add back some guards for the loser
-                Templates.addConstituent(_tileID, gs().templates["Guard"], GameLib.getConstant("foundCity", "Amount", "Guard", 0));
-                // City loses half of gold and winner gets it
-                uint256 loserCityGoldInventoryID = GameLib.getInventory(cityID, gs().templates["Gold"]);
-                uint256 loserTotalAmount = ECSLib.getUint("Amount", loserCityGoldInventoryID);
-                ECSLib.setUint("Amount", loserCityGoldInventoryID, loserTotalAmount / 2);
+        for (uint256 i = 0; i < 3; i++) {
+            // FIXME: hardcoded to accelerate battle
+            bool victory = GameLib.attack(_armyID, _tileID, false, false, false);
+            if (victory) {
+                uint256 winnerCityID = GameLib.getPlayerCity(GameLib.getPlayer(msg.sender));
+                if (cityID != NULL) {
+                    // Victorious against city, add back some guards for the loser
+                    Templates.addConstituent(_tileID, gs().templates["Guard"], GameLib.getConstant("City", "Guard", "Amount", "", ECSLib.getUint("Level", cityID)));
+                    // City loses half of gold and winner gets it
+                    uint256 loserCityGoldInventoryID = GameLib.getInventory(cityID, gs().templates["Gold"]);
+                    uint256 loserTotalAmount = ECSLib.getUint("Amount", loserCityGoldInventoryID);
+                    ECSLib.setUint("Amount", loserCityGoldInventoryID, loserTotalAmount / 2);
 
-                // Verify city ownership
-                require(winnerCityID != NULL, "CURIO: Winner must own a city");
+                    // Verify city ownership
+                    require(winnerCityID != NULL, "CURIO: Winner must own a city");
 
-                // Add harvested gold to player's city limited by its load
-                uint256 winnerCityGoldInventoryID = GameLib.getInventory(winnerCityID, gs().templates["Gold"]);
-                uint256 existingCityGold = ECSLib.getUint("Amount", winnerCityGoldInventoryID);
-                uint256 winnerTotalAmount = GameLib.min(ECSLib.getUint("Load", winnerCityGoldInventoryID), loserTotalAmount / 2 + existingCityGold);
-                ECSLib.setUint("Amount", winnerCityGoldInventoryID, winnerTotalAmount);
-            } else {
-                if (tileLevel == 1 || tileLevel == 2) {
-                    // Reset barbarian
-                    GameLib.distributeBarbarianReward(winnerCityID, _tileID);
-                    uint256 barbarianGuardAmount = GameLib.getConstant("initializeTile", "Amount", "Guard", ECSLib.getUint("Level", _tileID));
-                    ECSLib.setUint("LastTimestamp", _tileID, block.timestamp);
-                    Templates.addConstituent(_tileID, gs().templates["Guard"], barbarianGuardAmount);
+                    // Add harvested gold to player's city limited by its load
+                    uint256 winnerCityGoldInventoryID = GameLib.getInventory(winnerCityID, gs().templates["Gold"]);
+                    uint256 existingCityGold = ECSLib.getUint("Amount", winnerCityGoldInventoryID);
+                    uint256 winnerTotalAmount = GameLib.min(ECSLib.getUint("Load", winnerCityGoldInventoryID), loserTotalAmount / 2 + existingCityGold);
+                    ECSLib.setUint("Amount", winnerCityGoldInventoryID, winnerTotalAmount);
                 } else {
-                    // Neutralize tile
-                    ECSLib.setUint("Owner", _tileID, NULL);
+                    if (GameLib.isBarbarian(_tileID)) {
+                        // Reset barbarian
+                        GameLib.distributeBarbarianReward(winnerCityID, _tileID);
+                        uint256 barbarianGuardAmount = GameLib.getConstant("Barbarian", "Guard", "Amount", "", ECSLib.getUint("Terrain", _tileID) - 2); // FIXME: hardcoded
+                        ECSLib.setUint("LastTimestamp", _tileID, block.timestamp);
+                        Templates.addConstituent(_tileID, gs().templates["Guard"], barbarianGuardAmount);
+                    } else {
+                        // Neutralize tile
+                        ECSLib.setUint("Owner", _tileID, NULL);
+                    }
                 }
+            } else {
+                GameLib.attack(_tileID, _armyID, false, false, true);
             }
-        } else {
-            GameLib.attack(_tileID, _armyID, false, false, true);
         }
     }
 
@@ -652,22 +731,26 @@ contract GameFacet is UseStorage {
         GameLib.activePlayerCheck(msg.sender);
         GameLib.entityOwnershipCheck(_armyID, msg.sender);
 
+        // Check Tile Count has not exceeded limits
+        uint256 playerID = GameLib.getPlayer(msg.sender);
+        uint256 cityID = GameLib.getPlayerCity(playerID);
+        // fixme: initialized tile hardcoded
+        require(GameLib.getCityTiles(cityID).length < GameLib.getConstant("City", "Tile", "Amount", "", ECSLib.getUint("Level", GameLib.getCityCenter(cityID))), "CURIO: Reached territory limit");
+
         // Verify target tile has no owner
         require(ECSLib.getUint("Owner", _tileID) == 0, "CURIO: Tile has owner");
 
         // Verify target tile is not barbarian tile
-        require(ECSLib.getUint("Level", _tileID) != 1 && ECSLib.getUint("Level", _tileID) != 2, "CURIO: Cannot claim barbarian tiles");
+        require(!GameLib.isBarbarian(_tileID), "CURIO: Cannot claim barbarian tiles");
 
         // Verify that no guard exists on tile
         require(GameLib.getConstituents(_tileID).length == 0, "CURIO: Tile has guard");
 
         // Verify that army is on selected tile
-        Position memory armyPosition = ECSLib.getPosition("Position", _armyID);
         Position memory tilePosition = ECSLib.getPosition("StartPosition", _tileID);
-        require(GameLib.coincident(GameLib.getProperTilePosition(armyPosition), tilePosition), "CURIO: Army must be on tile to claim");
+        require(GameLib.coincident(GameLib.getProperTilePosition(ECSLib.getPosition("Position", _armyID)), tilePosition), "CURIO: Army must be on tile to claim");
 
         // Verify that tile is next to own tile
-        uint256 playerID = GameLib.getPlayer(msg.sender);
         require(GameLib.isAdjacentToOwnTile(playerID, tilePosition), "CURIO: Can only claim next to a tile your own");
 
         // Verify that no other movable entity is on tile
@@ -676,7 +759,9 @@ contract GameFacet is UseStorage {
 
         // Transfer ownership of tile and initialize new guard
         ECSLib.setUint("Owner", _tileID, playerID);
-        Templates.addConstituent(_tileID, gs().templates["Guard"], GameLib.getConstant("initializeTile", "Amount", "Guard", 0));
+        ECSLib.setUint("City", _tileID, cityID);
+
+        Templates.addConstituent(_tileID, gs().templates["Guard"], GameLib.getConstant("Tile", "Guard", "Amount", "", ECSLib.getUint("Level", _tileID)));
     }
 
     function upgradeResource(uint256 _resourceID) public {
@@ -684,26 +769,36 @@ contract GameFacet is UseStorage {
         GameLib.ongoingGameCheck();
         GameLib.activePlayerCheck(msg.sender);
 
-        // Tile needs to be yours
-        uint256 playerID = GameLib.getPlayer(msg.sender);
-        uint256 tileID = GameLib.getTileAt(ECSLib.getPosition("StartPosition", _resourceID));
-        require(ECSLib.getUint("Owner", tileID) == playerID, "CURIO: Tile isn't yours");
+        {
+            // Tile needs to be yours
+            uint256 tileID = GameLib.getTileAt(ECSLib.getPosition("StartPosition", _resourceID));
+            require(ECSLib.getUint("Owner", tileID) == GameLib.getPlayer(msg.sender), "CURIO: Tile isn't yours");
 
-        // Deduct costs
-        uint256 newResourceLevel = ECSLib.getUint("Level", _resourceID) + 1;
+            // Check if player has reached max tile level
+            uint256 cityCenterID = GameLib.getCityCenter(ECSLib.getUint("City", tileID));
+            require(ECSLib.getUint("Level", _resourceID) < ECSLib.getUint("Level", cityCenterID) * gs().worldConstants.cityCenterLevelToEntityLevelRatio, "CURIO: Need to upgrade resource");
+        }
+        uint256 playerID = GameLib.getPlayer(msg.sender);
+        uint256 resourceLevel = ECSLib.getUint("Level", _resourceID);
+
+        // Deduct costs and set load
         uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
+        string memory subject = ECSLib.getUint("Template", _resourceID) == gs().templates["Gold"] ? "Goldmine" : "Farm";
         for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
             uint256 inventoryID = GameLib.getInventory(GameLib.getPlayerCity(playerID), resourceTemplateIDs[i]);
             uint256 balance = ECSLib.getUint("Amount", inventoryID);
-            uint256 cost = GameLib.getConstant("upgradeResource", "Cost", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), newResourceLevel);
+            uint256 cost = GameLib.getConstant(subject, ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Cost", "Upgrade", resourceLevel);
             require(balance >= cost, "CURIO: Insufficient balance");
             ECSLib.setUint("Amount", inventoryID, balance - cost);
         }
 
-        // Set new level and load
-        ECSLib.setUint("Level", _resourceID, newResourceLevel);
-        uint256 newLoad = GameLib.getConstant("upgradeResource", "Load", ECSLib.getString("InventoryType", ECSLib.getUint("Template", _resourceID)), newResourceLevel);
+        // Set load
+        uint256 newLoad = GameLib.getConstant(subject, ECSLib.getString("InventoryType", ECSLib.getUint("Template", _resourceID)), "Load", "", resourceLevel + 1);
         ECSLib.setUint("Load", _resourceID, newLoad);
+        ECSLib.setUint("LastTimestamp", _resourceID, block.timestamp);
+
+        // Set new level
+        ECSLib.setUint("Level", _resourceID, resourceLevel + 1);
     }
 
     // --------------------------

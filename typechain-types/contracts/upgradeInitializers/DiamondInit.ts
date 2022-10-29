@@ -25,15 +25,18 @@ import type {
 
 export type WorldConstantsStruct = {
   admin: PromiseOrValue<string>;
+  tileWidth: PromiseOrValue<BigNumberish>;
   worldWidth: PromiseOrValue<BigNumberish>;
   worldHeight: PromiseOrValue<BigNumberish>;
   numInitTerrainTypes: PromiseOrValue<BigNumberish>;
   initBatchSize: PromiseOrValue<BigNumberish>;
   maxCityCountPerPlayer: PromiseOrValue<BigNumberish>;
   maxArmyCountPerPlayer: PromiseOrValue<BigNumberish>;
-  maxTroopCountPerArmy: PromiseOrValue<BigNumberish>;
   maxPlayerCount: PromiseOrValue<BigNumberish>;
-  tileWidth: PromiseOrValue<BigNumberish>;
+  isBattleRoyale: PromiseOrValue<boolean>;
+  maxCityCenterLevel: PromiseOrValue<BigNumberish>;
+  cityCenterLevelToEntityLevelRatio: PromiseOrValue<BigNumberish>;
+  secondsToTrainAThousandTroops: PromiseOrValue<BigNumberish>;
 };
 
 export type WorldConstantsStructOutput = [
@@ -46,23 +49,29 @@ export type WorldConstantsStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
+  boolean,
+  BigNumber,
+  BigNumber,
   BigNumber
 ] & {
   admin: string;
+  tileWidth: BigNumber;
   worldWidth: BigNumber;
   worldHeight: BigNumber;
   numInitTerrainTypes: BigNumber;
   initBatchSize: BigNumber;
   maxCityCountPerPlayer: BigNumber;
   maxArmyCountPerPlayer: BigNumber;
-  maxTroopCountPerArmy: BigNumber;
   maxPlayerCount: BigNumber;
-  tileWidth: BigNumber;
+  isBattleRoyale: boolean;
+  maxCityCenterLevel: BigNumber;
+  cityCenterLevelToEntityLevelRatio: BigNumber;
+  secondsToTrainAThousandTroops: BigNumber;
 };
 
 export interface DiamondInitInterface extends utils.Interface {
   functions: {
-    "init((address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256))": FunctionFragment;
+    "init((address,uint256,uint256,uint256,uint256,uint256,uint256,uint256,uint256,bool,uint256,uint256,uint256))": FunctionFragment;
   };
 
   getFunction(nameOrSignatureOrTopic: "init"): FunctionFragment;

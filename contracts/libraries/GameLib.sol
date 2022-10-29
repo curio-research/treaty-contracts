@@ -81,29 +81,45 @@ library GameLib {
         uint256 divFactor = numInitTerrainTypes**(tileY % batchSize);
         uint256 terrain = encodedCol / divFactor;
 
-        // Initialize gold mine
-        if (terrain == 1 && getResourceAtTile(_startPosition) == 0) {
-            Templates.addResource(gs().templates["Gold"], _startPosition, getConstant("initializeTile", "Load", "Gold", 0));
-        }
-
-        // Initialize farm
-        if (terrain == 2 && getResourceAtTile(_startPosition) == 0) {
-            Templates.addResource(gs().templates["Food"], _startPosition, getConstant("initializeTile", "Load", "Food", 0));
-        }
-
         // Initialize tile
         uint256 tileID = Templates.addTile(_startPosition, terrain);
+        ECSLib.setUint("Terrain", tileID, terrain);
+
+        // TEMP: battle royale mode
+        if (gs().worldConstants.isBattleRoyale) {
+            // Set map center tile to SUPERTILE of land, no resources, and the top tile strength to start
+            if (coincident(_startPosition, getMapCenterTilePosition())) {
+                uint256 maxTileLevel = gs().worldConstants.maxCityCenterLevel * gs().worldConstants.cityCenterLevelToEntityLevelRatio;
+                ECSLib.setUint("Terrain", tileID, 0);
+                ECSLib.setUint("Level", tileID, maxTileLevel);
+                uint256 supertileGuardAmount = getConstant("Tile", "Guard", "Amount", "", maxTileLevel);
+                Templates.addConstituent(tileID, gs().templates["Guard"], supertileGuardAmount);
+            }
+            return tileID;
+        }
+
+        // Initialize gold mine
+        if (terrain == 1 && getResourceAtTile(_startPosition) == 0) {
+            Templates.addResource(gs().templates["Gold"], _startPosition, 0);
+        }
 
         if (terrain < 3) {
             // Normal tile
-            uint256 tileGuardAmount = getConstant("initializeTile", "Amount", "Guard", 0);
+            uint256 tileGuardAmount = getConstant("Tile", "Guard", "Amount", "", ECSLib.getUint("Level", tileID));
             Templates.addConstituent(tileID, gs().templates["Guard"], tileGuardAmount);
-        } else {
+        } else if (terrain == 3 || terrain == 4) {
             // Barbarian tile
             uint256 barbarianLevel = terrain - 2;
             ECSLib.setUint("Level", tileID, barbarianLevel);
-            uint256 barbarianGuardAmount = getConstant("initializeTile", "Amount", "Guard", barbarianLevel);
+            uint256 barbarianGuardAmount = getConstant("Barbarian", "Guard", "Amount", "", barbarianLevel);
             Templates.addConstituent(tileID, gs().templates["Guard"], barbarianGuardAmount);
+        } else {
+            // Mountain tile, do nothing
+        }
+
+        // All empty tiles are farms
+        if (terrain == 0 && getResourceAtTile(_startPosition) == 0) {
+            Templates.addResource(gs().templates["Food"], _startPosition, 0);
         }
 
         return tileID;
@@ -114,8 +130,8 @@ library GameLib {
         for (uint256 i = 0; i < _constituentIDs.length; i++) {
             ECSLib.removeEntity(_constituentIDs[i]);
         }
-        ECSLib.removeEntity(getArmyInventory(_armyID, gs().templates["Gold"]));
-        ECSLib.removeEntity(getArmyInventory(_armyID, gs().templates["Food"]));
+        ECSLib.removeEntity(getInventory(_armyID, gs().templates["Gold"]));
+        ECSLib.removeEntity(getInventory(_armyID, gs().templates["Food"]));
         ECSLib.removeEntity(_armyID);
     }
 
@@ -126,7 +142,7 @@ library GameLib {
 
         // Get army's and resource's remaining capacities
         uint256 templateID = ECSLib.getUint("Template", gatherID);
-        uint256 inventoryID = getArmyInventory(_armyID, templateID);
+        uint256 inventoryID = getInventory(_armyID, templateID);
         uint256 armyInventoryAmount;
         if (inventoryID == 0) {
             armyInventoryAmount = 0;
@@ -136,9 +152,11 @@ library GameLib {
         }
 
         // Gather
-        uint256 _gatherAmount = ((block.timestamp - ECSLib.getUint("InitTimestamp", gatherID)) / ECSLib.getUint("Duration", templateID)) * 100;
-        if (_gatherAmount > (ECSLib.getUint("Load", inventoryID) - armyInventoryAmount)) _gatherAmount = ECSLib.getUint("Load", _armyID) - armyInventoryAmount;
-        ECSLib.setUint("Amount", inventoryID, armyInventoryAmount + _gatherAmount);
+        uint256 armyTroopCount = getArmyTroopCount(_armyID);
+        uint256 gatherAmount = (block.timestamp - ECSLib.getUint("InitTimestamp", gatherID)) * getConstant("Army", ECSLib.getString("InventoryType", templateID), "Rate", "gather", 0);
+        uint256 remainingLoad = getConstant("Troop", "Resource", "Load", "", 0) * armyTroopCount - armyInventoryAmount;
+        if (gatherAmount > remainingLoad) gatherAmount = remainingLoad;
+        ECSLib.setUint("Amount", inventoryID, armyInventoryAmount + gatherAmount);
 
         ECSLib.removeEntity(gatherID);
     }
@@ -150,16 +168,16 @@ library GameLib {
         uint256 slingerTemplateId = gs().templates["Slinger"];
 
         if (_offenderTemplateID == horsemanTemplateId) {
-            if (_defenderTemplateID == warriorTemplateId) return 80;
-            if (_defenderTemplateID == slingerTemplateId) return 120;
+            if (_defenderTemplateID == warriorTemplateId) return 60;
+            if (_defenderTemplateID == slingerTemplateId) return 140;
             else return 100;
         } else if (_offenderTemplateID == warriorTemplateId) {
-            if (_defenderTemplateID == slingerTemplateId) return 80;
-            if (_defenderTemplateID == horsemanTemplateId) return 120;
+            if (_defenderTemplateID == slingerTemplateId) return 60;
+            if (_defenderTemplateID == horsemanTemplateId) return 140;
             else return 100;
         } else if (_offenderTemplateID == slingerTemplateId) {
-            if (_defenderTemplateID == horsemanTemplateId) return 80;
-            if (_defenderTemplateID == warriorTemplateId) return 120;
+            if (_defenderTemplateID == horsemanTemplateId) return 60;
+            if (_defenderTemplateID == warriorTemplateId) return 140;
             else return 100;
         } else return 100;
     }
@@ -202,10 +220,10 @@ library GameLib {
 
             if (_transferGoldUponVictory) {
                 // Offender takes defender's gold
-                uint256 offenderInventoryAmount = ECSLib.getUint("Amount", getArmyInventory(_offenderID, gs().templates["Gold"]));
-                uint256 capturedAmount = ECSLib.getUint("Amount", getArmyInventory(_defenderID, gs().templates["Gold"]));
+                uint256 offenderInventoryAmount = ECSLib.getUint("Amount", getInventory(_offenderID, gs().templates["Gold"]));
+                uint256 capturedAmount = ECSLib.getUint("Amount", getInventory(_defenderID, gs().templates["Gold"]));
                 if (capturedAmount > ECSLib.getUint("Load", _offenderID) - offenderInventoryAmount) capturedAmount = ECSLib.getUint("Load", _offenderID) - offenderInventoryAmount;
-                ECSLib.setUint("Amount", getArmyInventory(_offenderID, gs().templates["Gold"]), offenderInventoryAmount + capturedAmount);
+                ECSLib.setUint("Amount", getInventory(_offenderID, gs().templates["Gold"]), offenderInventoryAmount + capturedAmount);
             }
 
             if (_transferOwnershipUponVictory) {
@@ -215,7 +233,7 @@ library GameLib {
 
             if (_removeUponVictory) {
                 // Defender is removed
-                uint256 defenderInventoryID = getArmyInventory(_defenderID, gs().templates["Gold"]);
+                uint256 defenderInventoryID = getInventory(_defenderID, gs().templates["Gold"]);
                 if (defenderInventoryID != 0) ECSLib.removeEntity(defenderInventoryID);
                 ECSLib.removeEntity(_defenderID);
             }
@@ -240,10 +258,8 @@ library GameLib {
         uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
         for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
             uint256 cityInventoryID = getInventory(_cityID, resourceTemplateIDs[i]);
-            uint256 reward = getConstant("distributeBarbarianReward", "Amount", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), barbarianLevel);
-            uint256 balance = ECSLib.getUint("Amount", cityInventoryID) + reward;
-            balance = min(balance, ECSLib.getUint("Load", cityInventoryID));
-            ECSLib.setUint("Amount", cityInventoryID, balance);
+            uint256 reward = getConstant("Barbarian", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Reward", "", barbarianLevel * 4);
+            ECSLib.setUint("Amount", cityInventoryID, ECSLib.getUint("Amount", cityInventoryID) + reward);
         }
     }
 
@@ -251,7 +267,7 @@ library GameLib {
         uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
         for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
             uint256 cityResourceInventoryID = getInventory(_cityID, resourceTemplateIDs[i]);
-            uint256 armyResourceInventoryID = getArmyInventory(_armyID, resourceTemplateIDs[i]);
+            uint256 armyResourceInventoryID = getInventory(_armyID, resourceTemplateIDs[i]);
             uint256 cityResourceLoad = ECSLib.getUint("Load", cityResourceInventoryID);
             ECSLib.setUint("Amount", cityResourceInventoryID, min(ECSLib.getUint("Amount", cityResourceInventoryID) + ECSLib.getUint("Amount", armyResourceInventoryID), cityResourceLoad));
             ECSLib.setUint("Amount", armyResourceInventoryID, 0);
@@ -311,15 +327,26 @@ library GameLib {
         return ECSLib.query(query);
     }
 
+    function getArmyTroopCount(uint256 _armyID) internal returns (uint256) {
+        uint256 count = 0;
+        uint256[] memory constituentIDs = getConstituents(_armyID);
+        for (uint256 i = 0; i < constituentIDs.length; i++) {
+            count += ECSLib.getUint("Amount", constituentIDs[i]);
+        }
+        return count;
+    }
+
     function getConstant(
-        string memory _functionName,
+        string memory _subject,
+        string memory _object,
         string memory _componentName,
-        string memory _entityName,
+        string memory _functionName,
         uint256 _level
     ) internal view returns (uint256) {
-        string memory identifier = string(abi.encodePacked("Constant-", _functionName, "-", _componentName, "-", _entityName, "-", Strings.toString(_level)));
+        string memory identifier = string(abi.encodePacked(_subject, "-", _object, "-", _componentName, "-", _functionName, "-", Strings.toString(_level)));
         uint256[] memory res = ECSLib.getStringComponent("Tag").getEntitiesWithValue(identifier);
-        require(res.length == 1, string(abi.encodePacked("CURIO: Constant with Tag=", identifier, " not found")));
+        // require(res.length <= 1, string(abi.encodePacked("CURIO: Constant with Tag=", identifier, " duplicated")));
+        require(res.length >= 1, string(abi.encodePacked("CURIO: Constant with Tag=", identifier, " not found")));
         return ECSLib.getUint("Amount", res[0]);
     }
 
@@ -405,15 +432,15 @@ library GameLib {
         return result.length == 1 ? result[0] : 0;
     }
 
-    function getArmyInventory(uint256 _armyID, uint256 _templateID) internal returns (uint256) {
-        QueryCondition[] memory query = new QueryCondition[](3);
-        query[0] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("ResourceInventory"));
-        query[1] = ECSLib.queryChunk(QueryType.HasVal, "Army", abi.encode(_armyID));
-        query[2] = ECSLib.queryChunk(QueryType.HasVal, "Template", abi.encode(_templateID));
-        uint256[] memory res = ECSLib.query(query);
-        require(res.length <= 1, "CURIO: Army inventory assertion failed");
-        return res.length == 1 ? res[0] : 0;
-    }
+    // function getArmyInventory(uint256 _armyID, uint256 _templateID) internal returns (uint256) {
+    //     QueryCondition[] memory query = new QueryCondition[](3);
+    //     query[0] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("ResourceInventory"));
+    //     query[1] = ECSLib.queryChunk(QueryType.HasVal, "Army", abi.encode(_armyID));
+    //     query[2] = ECSLib.queryChunk(QueryType.HasVal, "Template", abi.encode(_templateID));
+    //     uint256[] memory res = ECSLib.query(query);
+    //     require(res.length <= 1, "CURIO: Army inventory assertion failed");
+    //     return res.length == 1 ? res[0] : 0;
+    // }
 
     function getInventory(uint256 _cityID, uint256 _templateID) internal returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
@@ -558,6 +585,10 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
+    function getMapCenterTilePosition() internal view returns (Position memory) {
+        return Position({x: gs().worldConstants.worldWidth / 2, y: gs().worldConstants.worldHeight / 2});
+    }
+
     // ----------------------------------------------------------
     // CHECKERS
     // ----------------------------------------------------------
@@ -590,12 +621,21 @@ library GameLib {
         require(inBound(_position), "CURIO: Position out of bound");
     }
 
+    function passableTerrainCheck(Position memory _tilePosition) internal {
+        require(ECSLib.getUint("Terrain", getTileAt(_tilePosition)) != 5, "CURIO: Tile not passable");
+    }
+
     // ----------------------------------------------------------
     // UTILITY FUNCTIONS
     // ----------------------------------------------------------
 
     function inBound(Position memory _p) internal view returns (bool) {
         return _p.x >= 0 && _p.x < gs().worldConstants.worldWidth && _p.y >= 0 && _p.y < gs().worldConstants.worldHeight;
+    }
+
+    function isBarbarian(uint256 _tileID) internal view returns (bool) {
+        // FIXME: hardcoded
+        return ECSLib.getUint("Terrain", _tileID) == 3 || ECSLib.getUint("Terrain", _tileID) == 4;
     }
 
     function random(uint256 _max, uint256 _salt) internal view returns (uint256) {

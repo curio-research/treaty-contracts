@@ -106,41 +106,21 @@ contract AdminFacet is UseStorage {
         uint256 _attack,
         uint256 _defense,
         uint256 _duration,
-        uint256 _load,
-        uint256 _cost
+        uint256 _load
     ) external onlyAdmin returns (uint256) {
-        return Templates.addTroopTemplate(_inventoryType, _health, _speed, _moveCooldown, _battleCooldown, _attack, _defense, _duration, _load, _cost);
+        return Templates.addTroopTemplate(_inventoryType, _health, _speed, _moveCooldown, _battleCooldown, _attack, _defense, _duration, _load);
     }
 
-    function addConstant(
-        string memory _functionName,
-        string memory _componentName,
-        string memory _entityName,
-        uint256 _level,
-        uint256 _amount
-    ) external onlyAdmin returns (uint256) {
-        return Templates.addConstant(_functionName, _componentName, _entityName, _level, _amount);
+    function addConstant(string memory _identifier, uint256 _value) external onlyAdmin returns (uint256) {
+        return Templates.addConstant(_identifier, _value);
     }
 
-    function bulkAddConstants(ConstantSpec[] memory _constantSpecs) external onlyAdmin {
-        ConstantSpec memory spec;
-        for (uint256 i = 0; i < _constantSpecs.length; i++) {
-            spec = _constantSpecs[i];
-            Templates.addConstant(spec.functionName, spec.componentName, spec.entityName, spec.level, spec.value);
+    function bulkAddConstants(string[] memory _identifiers, uint256[] memory _values) external onlyAdmin {
+        require(_identifiers.length == _values.length, "CURIO: Input length mismatch");
+        for (uint256 i = 0; i < _values.length; i++) {
+            Templates.addConstant(_identifiers[i], _values[i]);
         }
     }
-
-    // ----------------------------------------------------------------------
-    // STATE FUNCTIONS
-    // ----------------------------------------------------------------------
-
-    // /**
-    //  * Update player's balances to the latest state.
-    //  * @param _player player address
-    //  */
-    // function updatePlayerBalances(address _player) external {
-    //     GameLib._updatePlayerBalances(gs().playerEntityMap[_player]);
-    // }
 
     // ----------------------------------------------------------------------
     // ECS HELPERS

@@ -52,6 +52,45 @@
         }
       }
     },
+    "contracts/CurioERC20.sol": {
+      "lastModificationDate": 1666636424819,
+      "contentHash": "181ed0d4f7d510cc4aed46262cc77651",
+      "sourceName": "contracts/CurioERC20.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": "^0.8.4",
+      "artifacts": {
+        "CurioERC20": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "CurioERC20.sol/CurioERC20.json"
+        }
+      }
+    },
     "contracts/Diamond.sol": {
       "lastModificationDate": 1665288827100,
       "contentHash": "1e162c4c7e9cd8814e6f1ec468f3bfb7",

@@ -87,7 +87,7 @@ library Templates {
         ECSLib.setPosition("StartPosition", tileID, _startPosition);
         ECSLib.setUint("City", tileID, 0);
         ECSLib.setUint("Owner", tileID, 0);
-        ECSLib.setUint("Level", tileID, 0); // 1 or above means a barbarian
+        ECSLib.setUint("Level", tileID, 1);
         ECSLib.setUint("Terrain", tileID, _terrain);
         ECSLib.setUint("LastTimestamp", tileID, block.timestamp);
 
@@ -230,8 +230,7 @@ library Templates {
         uint256 _attack,
         uint256 _defense,
         uint256 _duration,
-        uint256 _load,
-        uint256 _cost
+        uint256 _load
     ) public returns (uint256) {
         uint256 templateID = ECSLib.addEntity();
 
@@ -245,23 +244,15 @@ library Templates {
         ECSLib.setUint("Defense", templateID, _defense);
         ECSLib.setUint("Duration", templateID, _duration);
         ECSLib.setUint("Load", templateID, _load);
-        ECSLib.setUint("Cost", templateID, _cost);
 
         return templateID;
     }
 
-    function addConstant(
-        string memory _functionName,
-        string memory _componentName,
-        string memory _entityName,
-        uint256 _level,
-        uint256 _amount
-    ) public returns (uint256) {
+    function addConstant(string memory _identifier, uint256 _value) public returns (uint256) {
         uint256 constantID = ECSLib.addEntity();
 
-        string memory identifier = string(abi.encodePacked("Constant-", _functionName, "-", _componentName, "-", _entityName, "-", Strings.toString(_level)));
-        ECSLib.setString("Tag", constantID, identifier);
-        ECSLib.setUint("Amount", constantID, _amount);
+        ECSLib.setString("Tag", constantID, _identifier);
+        ECSLib.setUint("Amount", constantID, _value);
 
         return constantID;
     }

@@ -1,0 +1,2738 @@
+[
+    {
+        "subject": "Army",
+        "componentName": "Rate",
+        "object": "Gold",
+        "level": 0,
+        "functionName": "gather",
+        "value": 694
+    },
+    {
+        "subject": "Army",
+        "componentName": "Rate",
+        "object": "Food",
+        "level": 0,
+        "functionName": "gather",
+        "value": 695
+    },
+    {
+        "subject": "Troop",
+        "componentName": "Load",
+        "object": "Resource",
+        "level": 0,
+        "functionName": "",
+        "value": 1829
+    },
+    {
+        "subject": "Troop Production",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 0,
+        "functionName": "",
+        "value": 1000
+    },
+    {
+        "subject": "Troop Production",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 0,
+        "functionName": "",
+        "value": 16000
+    },
+    {
+        "subject": "Settler",
+        "componentName": "Health",
+        "object": "",
+        "level": 0,
+        "functionName": "",
+        "value": 1000000000
+    },
+    {
+        "subject": "Barbarian",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 0,
+        "functionName": "",
+        "value": 30
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Yield",
+        "object": "Gold",
+        "level": 0,
+        "functionName": "",
+        "value": 119
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Yield",
+        "object": "Food",
+        "level": 0,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Load",
+        "object": "Gold",
+        "level": 0,
+        "functionName": "",
+        "value": 143333
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Load",
+        "object": "Food",
+        "level": 0,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 0,
+        "functionName": "Upgrade",
+        "value": 1194
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 0,
+        "functionName": "Upgrade",
+        "value": 223
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Yield",
+        "object": "Gold",
+        "level": 1,
+        "functionName": "",
+        "value": 150
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Yield",
+        "object": "Food",
+        "level": 1,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Load",
+        "object": "Gold",
+        "level": 1,
+        "functionName": "",
+        "value": 181000
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Load",
+        "object": "Food",
+        "level": 1,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 1,
+        "functionName": "Upgrade",
+        "value": 3949
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 1,
+        "functionName": "Upgrade",
+        "value": 740
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Yield",
+        "object": "Gold",
+        "level": 2,
+        "functionName": "",
+        "value": 175
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Yield",
+        "object": "Food",
+        "level": 2,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Load",
+        "object": "Gold",
+        "level": 2,
+        "functionName": "",
+        "value": 211000
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Load",
+        "object": "Food",
+        "level": 2,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 2,
+        "functionName": "Upgrade",
+        "value": 7910
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 2,
+        "functionName": "Upgrade",
+        "value": 1483
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Yield",
+        "object": "Gold",
+        "level": 3,
+        "functionName": "",
+        "value": 196
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Yield",
+        "object": "Food",
+        "level": 3,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Load",
+        "object": "Gold",
+        "level": 3,
+        "functionName": "",
+        "value": 235666
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Load",
+        "object": "Food",
+        "level": 3,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 3,
+        "functionName": "Upgrade",
+        "value": 13124
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 3,
+        "functionName": "Upgrade",
+        "value": 2460
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Yield",
+        "object": "Gold",
+        "level": 4,
+        "functionName": "",
+        "value": 213
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Yield",
+        "object": "Food",
+        "level": 4,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Load",
+        "object": "Gold",
+        "level": 4,
+        "functionName": "",
+        "value": 256666
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Load",
+        "object": "Food",
+        "level": 4,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 4,
+        "functionName": "Upgrade",
+        "value": 19723
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 4,
+        "functionName": "Upgrade",
+        "value": 3698
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Yield",
+        "object": "Gold",
+        "level": 5,
+        "functionName": "",
+        "value": 229
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Yield",
+        "object": "Food",
+        "level": 5,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Load",
+        "object": "Gold",
+        "level": 5,
+        "functionName": "",
+        "value": 275000
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Load",
+        "object": "Food",
+        "level": 5,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 5,
+        "functionName": "Upgrade",
+        "value": 27889
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 5,
+        "functionName": "Upgrade",
+        "value": 5229
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Yield",
+        "object": "Gold",
+        "level": 6,
+        "functionName": "",
+        "value": 242
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Yield",
+        "object": "Food",
+        "level": 6,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Load",
+        "object": "Gold",
+        "level": 6,
+        "functionName": "",
+        "value": 291333
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Load",
+        "object": "Food",
+        "level": 6,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 6,
+        "functionName": "Upgrade",
+        "value": 37863
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 6,
+        "functionName": "Upgrade",
+        "value": 7099
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Yield",
+        "object": "Gold",
+        "level": 7,
+        "functionName": "",
+        "value": 254
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Yield",
+        "object": "Food",
+        "level": 7,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Load",
+        "object": "Gold",
+        "level": 7,
+        "functionName": "",
+        "value": 305666
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Load",
+        "object": "Food",
+        "level": 7,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 7,
+        "functionName": "Upgrade",
+        "value": 49865
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 7,
+        "functionName": "Upgrade",
+        "value": 9349
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Yield",
+        "object": "Gold",
+        "level": 8,
+        "functionName": "",
+        "value": 265
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Yield",
+        "object": "Food",
+        "level": 8,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Load",
+        "object": "Gold",
+        "level": 8,
+        "functionName": "",
+        "value": 319000
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Load",
+        "object": "Food",
+        "level": 8,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 8,
+        "functionName": "Upgrade",
+        "value": 64334
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 8,
+        "functionName": "Upgrade",
+        "value": 12062
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Yield",
+        "object": "Gold",
+        "level": 9,
+        "functionName": "",
+        "value": 276
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Yield",
+        "object": "Food",
+        "level": 9,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Load",
+        "object": "Gold",
+        "level": 9,
+        "functionName": "",
+        "value": 331333
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Load",
+        "object": "Food",
+        "level": 9,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 9,
+        "functionName": "Upgrade",
+        "value": 81657
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 9,
+        "functionName": "Upgrade",
+        "value": 15310
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Yield",
+        "object": "Gold",
+        "level": 10,
+        "functionName": "",
+        "value": 285
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Yield",
+        "object": "Food",
+        "level": 10,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Load",
+        "object": "Gold",
+        "level": 10,
+        "functionName": "",
+        "value": 342333
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Load",
+        "object": "Food",
+        "level": 10,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 10,
+        "functionName": "Upgrade",
+        "value": 102177
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 10,
+        "functionName": "Upgrade",
+        "value": 19158
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Yield",
+        "object": "Gold",
+        "level": 11,
+        "functionName": "",
+        "value": 293
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Yield",
+        "object": "Food",
+        "level": 11,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Load",
+        "object": "Gold",
+        "level": 11,
+        "functionName": "",
+        "value": 352666
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Load",
+        "object": "Food",
+        "level": 11,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 11,
+        "functionName": "Upgrade",
+        "value": 126577
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 11,
+        "functionName": "Upgrade",
+        "value": 23733
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Yield",
+        "object": "Gold",
+        "level": 12,
+        "functionName": "",
+        "value": 301
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Yield",
+        "object": "Food",
+        "level": 12,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Load",
+        "object": "Gold",
+        "level": 12,
+        "functionName": "",
+        "value": 362333
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Load",
+        "object": "Food",
+        "level": 12,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 12,
+        "functionName": "Upgrade",
+        "value": 155490
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 12,
+        "functionName": "Upgrade",
+        "value": 29154
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Yield",
+        "object": "Gold",
+        "level": 13,
+        "functionName": "",
+        "value": 309
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Yield",
+        "object": "Food",
+        "level": 13,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Load",
+        "object": "Gold",
+        "level": 13,
+        "functionName": "",
+        "value": 371666
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Load",
+        "object": "Food",
+        "level": 13,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 13,
+        "functionName": "Upgrade",
+        "value": 189819
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 13,
+        "functionName": "Upgrade",
+        "value": 35591
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Yield",
+        "object": "Gold",
+        "level": 14,
+        "functionName": "",
+        "value": 316
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Yield",
+        "object": "Food",
+        "level": 14,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Load",
+        "object": "Gold",
+        "level": 14,
+        "functionName": "",
+        "value": 380000
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Load",
+        "object": "Food",
+        "level": 14,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 14,
+        "functionName": "Upgrade",
+        "value": 230095
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 14,
+        "functionName": "Upgrade",
+        "value": 43142
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Yield",
+        "object": "Gold",
+        "level": 15,
+        "functionName": "",
+        "value": 323
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Yield",
+        "object": "Food",
+        "level": 15,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Load",
+        "object": "Gold",
+        "level": 15,
+        "functionName": "",
+        "value": 388000
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Load",
+        "object": "Food",
+        "level": 15,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Yield",
+        "object": "Gold",
+        "level": 0,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Yield",
+        "object": "Food",
+        "level": 0,
+        "functionName": "",
+        "value": 141
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Load",
+        "object": "Gold",
+        "level": 0,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Load",
+        "object": "Food",
+        "level": 0,
+        "functionName": "",
+        "value": 170000
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 0,
+        "functionName": "Upgrade",
+        "value": 265
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 0,
+        "functionName": "Upgrade",
+        "value": 223
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Yield",
+        "object": "Gold",
+        "level": 1,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Yield",
+        "object": "Food",
+        "level": 1,
+        "functionName": "",
+        "value": 178
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Load",
+        "object": "Gold",
+        "level": 1,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Load",
+        "object": "Food",
+        "level": 1,
+        "functionName": "",
+        "value": 214666
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 1,
+        "functionName": "Upgrade",
+        "value": 877
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 1,
+        "functionName": "Upgrade",
+        "value": 739
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Yield",
+        "object": "Gold",
+        "level": 2,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Yield",
+        "object": "Food",
+        "level": 2,
+        "functionName": "",
+        "value": 208
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Load",
+        "object": "Gold",
+        "level": 2,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Load",
+        "object": "Food",
+        "level": 2,
+        "functionName": "",
+        "value": 250000
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 2,
+        "functionName": "Upgrade",
+        "value": 1757
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 2,
+        "functionName": "Upgrade",
+        "value": 1479
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Yield",
+        "object": "Gold",
+        "level": 3,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Yield",
+        "object": "Food",
+        "level": 3,
+        "functionName": "",
+        "value": 232
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Load",
+        "object": "Gold",
+        "level": 3,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Load",
+        "object": "Food",
+        "level": 3,
+        "functionName": "",
+        "value": 279333
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 3,
+        "functionName": "Upgrade",
+        "value": 2916
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 3,
+        "functionName": "Upgrade",
+        "value": 2456
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Yield",
+        "object": "Gold",
+        "level": 4,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Yield",
+        "object": "Food",
+        "level": 4,
+        "functionName": "",
+        "value": 253
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Load",
+        "object": "Gold",
+        "level": 4,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Load",
+        "object": "Food",
+        "level": 4,
+        "functionName": "",
+        "value": 304000
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 4,
+        "functionName": "Upgrade",
+        "value": 4382
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 4,
+        "functionName": "Upgrade",
+        "value": 3688
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Yield",
+        "object": "Gold",
+        "level": 5,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Yield",
+        "object": "Food",
+        "level": 5,
+        "functionName": "",
+        "value": 271
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Load",
+        "object": "Gold",
+        "level": 5,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Load",
+        "object": "Food",
+        "level": 5,
+        "functionName": "",
+        "value": 326000
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 5,
+        "functionName": "Upgrade",
+        "value": 6197
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 5,
+        "functionName": "Upgrade",
+        "value": 5220
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Yield",
+        "object": "Gold",
+        "level": 6,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Yield",
+        "object": "Food",
+        "level": 6,
+        "functionName": "",
+        "value": 287
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Load",
+        "object": "Gold",
+        "level": 6,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Load",
+        "object": "Food",
+        "level": 6,
+        "functionName": "",
+        "value": 345333
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 6,
+        "functionName": "Upgrade",
+        "value": 8414
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 6,
+        "functionName": "Upgrade",
+        "value": 7086
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Yield",
+        "object": "Gold",
+        "level": 7,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Yield",
+        "object": "Food",
+        "level": 7,
+        "functionName": "",
+        "value": 301
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Load",
+        "object": "Gold",
+        "level": 7,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Load",
+        "object": "Food",
+        "level": 7,
+        "functionName": "",
+        "value": 362333
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 7,
+        "functionName": "Upgrade",
+        "value": 11081
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 7,
+        "functionName": "Upgrade",
+        "value": 9333
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Yield",
+        "object": "Gold",
+        "level": 8,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Yield",
+        "object": "Food",
+        "level": 8,
+        "functionName": "",
+        "value": 315
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Load",
+        "object": "Gold",
+        "level": 8,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Load",
+        "object": "Food",
+        "level": 8,
+        "functionName": "",
+        "value": 378333
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 8,
+        "functionName": "Upgrade",
+        "value": 14296
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 8,
+        "functionName": "Upgrade",
+        "value": 12047
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Yield",
+        "object": "Gold",
+        "level": 9,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Yield",
+        "object": "Food",
+        "level": 9,
+        "functionName": "",
+        "value": 327
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Load",
+        "object": "Gold",
+        "level": 9,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Load",
+        "object": "Food",
+        "level": 9,
+        "functionName": "",
+        "value": 392666
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 9,
+        "functionName": "Upgrade",
+        "value": 18146
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 9,
+        "functionName": "Upgrade",
+        "value": 15280
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Yield",
+        "object": "Gold",
+        "level": 10,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Yield",
+        "object": "Food",
+        "level": 10,
+        "functionName": "",
+        "value": 338
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Load",
+        "object": "Gold",
+        "level": 10,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Load",
+        "object": "Food",
+        "level": 10,
+        "functionName": "",
+        "value": 406000
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 10,
+        "functionName": "Upgrade",
+        "value": 22706
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 10,
+        "functionName": "Upgrade",
+        "value": 19133
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Yield",
+        "object": "Gold",
+        "level": 11,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Yield",
+        "object": "Food",
+        "level": 11,
+        "functionName": "",
+        "value": 348
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Load",
+        "object": "Gold",
+        "level": 11,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Load",
+        "object": "Food",
+        "level": 11,
+        "functionName": "",
+        "value": 418333
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 11,
+        "functionName": "Upgrade",
+        "value": 28128
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 11,
+        "functionName": "Upgrade",
+        "value": 23707
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Yield",
+        "object": "Gold",
+        "level": 12,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Yield",
+        "object": "Food",
+        "level": 12,
+        "functionName": "",
+        "value": 358
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Load",
+        "object": "Gold",
+        "level": 12,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Load",
+        "object": "Food",
+        "level": 12,
+        "functionName": "",
+        "value": 429666
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 12,
+        "functionName": "Upgrade",
+        "value": 34553
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 12,
+        "functionName": "Upgrade",
+        "value": 29113
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Yield",
+        "object": "Gold",
+        "level": 13,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Yield",
+        "object": "Food",
+        "level": 13,
+        "functionName": "",
+        "value": 366
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Load",
+        "object": "Gold",
+        "level": 13,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Load",
+        "object": "Food",
+        "level": 13,
+        "functionName": "",
+        "value": 440333
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 13,
+        "functionName": "Upgrade",
+        "value": 42182
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 13,
+        "functionName": "Upgrade",
+        "value": 35508
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Yield",
+        "object": "Gold",
+        "level": 14,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Yield",
+        "object": "Food",
+        "level": 14,
+        "functionName": "",
+        "value": 375
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Load",
+        "object": "Gold",
+        "level": 14,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Load",
+        "object": "Food",
+        "level": 14,
+        "functionName": "",
+        "value": 450666
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 14,
+        "functionName": "Upgrade",
+        "value": 51132
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 14,
+        "functionName": "Upgrade",
+        "value": 43087
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Yield",
+        "object": "Gold",
+        "level": 15,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Yield",
+        "object": "Food",
+        "level": 15,
+        "functionName": "",
+        "value": 383
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Load",
+        "object": "Gold",
+        "level": 15,
+        "functionName": "",
+        "value": 0
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Load",
+        "object": "Food",
+        "level": 15,
+        "functionName": "",
+        "value": 460000
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Load",
+        "object": "Troop",
+        "level": 1,
+        "functionName": "",
+        "value": 999999999
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 1,
+        "functionName": "Move",
+        "value": 0
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 1,
+        "functionName": "Move",
+        "value": 0
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Load",
+        "object": "Troop",
+        "level": 2,
+        "functionName": "",
+        "value": 999999999
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 2,
+        "functionName": "Move",
+        "value": 0
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 2,
+        "functionName": "Move",
+        "value": 0
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Load",
+        "object": "Troop",
+        "level": 3,
+        "functionName": "",
+        "value": 999999999
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 3,
+        "functionName": "Move",
+        "value": 0
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 3,
+        "functionName": "Move",
+        "value": 0
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Load",
+        "object": "Troop",
+        "level": 4,
+        "functionName": "",
+        "value": 999999999
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 4,
+        "functionName": "Move",
+        "value": 0
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 4,
+        "functionName": "Move",
+        "value": 0
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Load",
+        "object": "Troop",
+        "level": 5,
+        "functionName": "",
+        "value": 999999999
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 5,
+        "functionName": "Move",
+        "value": 0
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 5,
+        "functionName": "Move",
+        "value": 0
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Yield",
+        "object": "Gold",
+        "level": 0,
+        "functionName": "",
+        "value": 119
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Yield",
+        "object": "Food",
+        "level": 0,
+        "functionName": "",
+        "value": 141
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Load",
+        "object": "Gold",
+        "level": 0,
+        "functionName": "",
+        "value": 143333
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Load",
+        "object": "Food",
+        "level": 0,
+        "functionName": "",
+        "value": 170000
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 0,
+        "functionName": "Upgrade",
+        "value": 2552
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 0,
+        "functionName": "Upgrade",
+        "value": 6280
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Yield",
+        "object": "Gold",
+        "level": 1,
+        "functionName": "",
+        "value": 150
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Yield",
+        "object": "Food",
+        "level": 1,
+        "functionName": "",
+        "value": 178
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Load",
+        "object": "Gold",
+        "level": 1,
+        "functionName": "",
+        "value": 181000
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Load",
+        "object": "Food",
+        "level": 1,
+        "functionName": "",
+        "value": 214666
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 1,
+        "functionName": "Upgrade",
+        "value": 8696
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 1,
+        "functionName": "Upgrade",
+        "value": 22121
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Yield",
+        "object": "Gold",
+        "level": 2,
+        "functionName": "",
+        "value": 175
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Yield",
+        "object": "Food",
+        "level": 2,
+        "functionName": "",
+        "value": 208
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Load",
+        "object": "Gold",
+        "level": 2,
+        "functionName": "",
+        "value": 211000
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Load",
+        "object": "Food",
+        "level": 2,
+        "functionName": "",
+        "value": 250000
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 2,
+        "functionName": "Upgrade",
+        "value": 17482
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 2,
+        "functionName": "Upgrade",
+        "value": 44649
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Yield",
+        "object": "Gold",
+        "level": 3,
+        "functionName": "",
+        "value": 196
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Yield",
+        "object": "Food",
+        "level": 3,
+        "functionName": "",
+        "value": 232
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Load",
+        "object": "Gold",
+        "level": 3,
+        "functionName": "",
+        "value": 235666
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Load",
+        "object": "Food",
+        "level": 3,
+        "functionName": "",
+        "value": 279333
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 3,
+        "functionName": "Upgrade",
+        "value": 28949
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 3,
+        "functionName": "Upgrade",
+        "value": 73753
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Yield",
+        "object": "Gold",
+        "level": 4,
+        "functionName": "",
+        "value": 213
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Yield",
+        "object": "Food",
+        "level": 4,
+        "functionName": "",
+        "value": 253
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Load",
+        "object": "Gold",
+        "level": 4,
+        "functionName": "",
+        "value": 256666
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Load",
+        "object": "Food",
+        "level": 4,
+        "functionName": "",
+        "value": 304000
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 4,
+        "functionName": "Upgrade",
+        "value": 43368
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 4,
+        "functionName": "Upgrade",
+        "value": 110125
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Yield",
+        "object": "Gold",
+        "level": 5,
+        "functionName": "",
+        "value": 229
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Yield",
+        "object": "Food",
+        "level": 5,
+        "functionName": "",
+        "value": 271
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Load",
+        "object": "Gold",
+        "level": 5,
+        "functionName": "",
+        "value": 275000
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Load",
+        "object": "Food",
+        "level": 5,
+        "functionName": "",
+        "value": 326000
+    },
+    {
+        "subject": "Barbarian",
+        "componentName": "Reward",
+        "object": "Gold",
+        "level": 1,
+        "functionName": "",
+        "value": 31738
+    },
+    {
+        "subject": "Barbarian",
+        "componentName": "Reward",
+        "object": "Food",
+        "level": 1,
+        "functionName": "",
+        "value": 44839
+    },
+    {
+        "subject": "Barbarian",
+        "componentName": "Amount",
+        "object": "Guard",
+        "level": 1,
+        "functionName": "",
+        "value": 11.209847772432868
+    },
+    {
+        "subject": "Barbarian",
+        "componentName": "Reward",
+        "object": "Gold",
+        "level": 2,
+        "functionName": "",
+        "value": 78443
+    },
+    {
+        "subject": "Barbarian",
+        "componentName": "Reward",
+        "object": "Food",
+        "level": 2,
+        "functionName": "",
+        "value": 67911
+    },
+    {
+        "subject": "Barbarian",
+        "componentName": "Amount",
+        "object": "Guard",
+        "level": 2,
+        "functionName": "",
+        "value": 16.97785734312818
+    },
+    {
+        "subject": "Barbarian",
+        "componentName": "Reward",
+        "object": "Gold",
+        "level": 3,
+        "functionName": "",
+        "value": 154402
+    },
+    {
+        "subject": "Barbarian",
+        "componentName": "Reward",
+        "object": "Food",
+        "level": 3,
+        "functionName": "",
+        "value": 93048
+    },
+    {
+        "subject": "Barbarian",
+        "componentName": "Amount",
+        "object": "Guard",
+        "level": 3,
+        "functionName": "",
+        "value": 23.2620749277349
+    },
+    {
+        "subject": "Barbarian",
+        "componentName": "Reward",
+        "object": "Gold",
+        "level": 4,
+        "functionName": "",
+        "value": 268324
+    },
+    {
+        "subject": "Barbarian",
+        "componentName": "Reward",
+        "object": "Food",
+        "level": 4,
+        "functionName": "",
+        "value": 120434
+    },
+    {
+        "subject": "Barbarian",
+        "componentName": "Amount",
+        "object": "Guard",
+        "level": 4,
+        "functionName": "",
+        "value": 30.108698562223754
+    },
+    {
+        "subject": "Barbarian",
+        "componentName": "Reward",
+        "object": "Gold",
+        "level": 5,
+        "functionName": "",
+        "value": 431137
+    },
+    {
+        "subject": "Barbarian",
+        "componentName": "Reward",
+        "object": "Food",
+        "level": 5,
+        "functionName": "",
+        "value": 150272
+    },
+    {
+        "subject": "Barbarian",
+        "componentName": "Amount",
+        "object": "Guard",
+        "level": 5,
+        "functionName": "",
+        "value": 37.56806077577368
+    },
+    {
+        "subject": "Barbarian",
+        "componentName": "Reward",
+        "object": "Gold",
+        "level": 6,
+        "functionName": "",
+        "value": 656519
+    },
+    {
+        "subject": "Barbarian",
+        "componentName": "Reward",
+        "object": "Food",
+        "level": 6,
+        "functionName": "",
+        "value": 182779
+    },
+    {
+        "subject": "Barbarian",
+        "componentName": "Amount",
+        "object": "Guard",
+        "level": 6,
+        "functionName": "",
+        "value": 45.69499860723964
+    },
+    {
+        "subject": "Barbarian",
+        "componentName": "Reward",
+        "object": "Gold",
+        "level": 7,
+        "functionName": "",
+        "value": 961556
+    },
+    {
+        "subject": "Barbarian",
+        "componentName": "Reward",
+        "object": "Food",
+        "level": 7,
+        "functionName": "",
+        "value": 218197
+    },
+    {
+        "subject": "Barbarian",
+        "componentName": "Amount",
+        "object": "Guard",
+        "level": 7,
+        "functionName": "",
+        "value": 54.549256736244025
+    },
+    {
+        "subject": "Barbarian",
+        "componentName": "Reward",
+        "object": "Gold",
+        "level": 8,
+        "functionName": "",
+        "value": 1367554
+    },
+    {
+        "subject": "Barbarian",
+        "componentName": "Reward",
+        "object": "Food",
+        "level": 8,
+        "functionName": "",
+        "value": 256783
+    },
+    {
+        "subject": "Barbarian",
+        "componentName": "Amount",
+        "object": "Guard",
+        "level": 8,
+        "functionName": "",
+        "value": 64.19592669248495
+    },
+    {
+        "subject": "Barbarian",
+        "componentName": "Reward",
+        "object": "Gold",
+        "level": 9,
+        "functionName": "",
+        "value": 1901037
+    },
+    {
+        "subject": "Barbarian",
+        "componentName": "Reward",
+        "object": "Food",
+        "level": 9,
+        "functionName": "",
+        "value": 298823
+    },
+    {
+        "subject": "Barbarian",
+        "componentName": "Amount",
+        "object": "Guard",
+        "level": 9,
+        "functionName": "",
+        "value": 74.70592537208124
+    },
+    {
+        "subject": "Barbarian",
+        "componentName": "Reward",
+        "object": "Gold",
+        "level": 10,
+        "functionName": "",
+        "value": 2594985
+    },
+    {
+        "subject": "Barbarian",
+        "componentName": "Reward",
+        "object": "Food",
+        "level": 10,
+        "functionName": "",
+        "value": 344626
+    },
+    {
+        "subject": "Barbarian",
+        "componentName": "Amount",
+        "object": "Guard",
+        "level": 10,
+        "functionName": "",
+        "value": 86.1565163787378
+    },
+    {
+        "subject": "Barbarian",
+        "componentName": "Reward",
+        "object": "Gold",
+        "level": 11,
+        "functionName": "",
+        "value": 3490349
+    },
+    {
+        "subject": "Barbarian",
+        "componentName": "Reward",
+        "object": "Food",
+        "level": 11,
+        "functionName": "",
+        "value": 394527
+    },
+    {
+        "subject": "Barbarian",
+        "componentName": "Amount",
+        "object": "Guard",
+        "level": 11,
+        "functionName": "",
+        "value": 98.63187802233794
+    },
+    {
+        "subject": "Barbarian",
+        "componentName": "Reward",
+        "object": "Gold",
+        "level": 12,
+        "functionName": "",
+        "value": 4637929
+    },
+    {
+        "subject": "Barbarian",
+        "componentName": "Reward",
+        "object": "Food",
+        "level": 12,
+        "functionName": "",
+        "value": 448894
+    },
+    {
+        "subject": "Barbarian",
+        "componentName": "Amount",
+        "object": "Guard",
+        "level": 12,
+        "functionName": "",
+        "value": 112.22372215056983
+    },
+    {
+        "subject": "Barbarian",
+        "componentName": "Reward",
+        "object": "Gold",
+        "level": 13,
+        "functionName": "",
+        "value": 6100677
+    },
+    {
+        "subject": "Barbarian",
+        "componentName": "Reward",
+        "object": "Food",
+        "level": 13,
+        "functionName": "",
+        "value": 508127
+    },
+    {
+        "subject": "Barbarian",
+        "componentName": "Amount",
+        "object": "Guard",
+        "level": 13,
+        "functionName": "",
+        "value": 127.03196836288883
+    },
+    {
+        "subject": "Barbarian",
+        "componentName": "Reward",
+        "object": "Gold",
+        "level": 14,
+        "functionName": "",
+        "value": 7956539
+    },
+    {
+        "subject": "Barbarian",
+        "componentName": "Reward",
+        "object": "Food",
+        "level": 14,
+        "functionName": "",
+        "value": 572661
+    },
+    {
+        "subject": "Barbarian",
+        "componentName": "Amount",
+        "object": "Guard",
+        "level": 14,
+        "functionName": "",
+        "value": 143.1654785632582
+    },
+    {
+        "subject": "Barbarian",
+        "componentName": "Reward",
+        "object": "Gold",
+        "level": 15,
+        "functionName": "",
+        "value": 10301953
+    },
+    {
+        "subject": "Barbarian",
+        "componentName": "Reward",
+        "object": "Food",
+        "level": 15,
+        "functionName": "",
+        "value": 642971
+    },
+    {
+        "subject": "Barbarian",
+        "componentName": "Amount",
+        "object": "Guard",
+        "level": 15,
+        "functionName": "",
+        "value": 160.74285725168707
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Amount",
+        "object": "Guard",
+        "level": 1,
+        "functionName": "",
+        "value": 20.177725990379162
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 1,
+        "functionName": "Upgrade",
+        "value": 3982
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 1,
+        "functionName": "Upgrade",
+        "value": 63718
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Amount",
+        "object": "Guard",
+        "level": 2,
+        "functionName": "",
+        "value": 30.56014321763072
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 2,
+        "functionName": "Upgrade",
+        "value": 4338
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 2,
+        "functionName": "Upgrade",
+        "value": 69420
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Amount",
+        "object": "Guard",
+        "level": 3,
+        "functionName": "",
+        "value": 41.871734869922825
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 3,
+        "functionName": "Upgrade",
+        "value": 4727
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 3,
+        "functionName": "Upgrade",
+        "value": 75633
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Amount",
+        "object": "Guard",
+        "level": 4,
+        "functionName": "",
+        "value": 54.19565741200276
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 4,
+        "functionName": "Upgrade",
+        "value": 5150
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 4,
+        "functionName": "Upgrade",
+        "value": 82402
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Amount",
+        "object": "Guard",
+        "level": 5,
+        "functionName": "",
+        "value": 67.62250939639263
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 5,
+        "functionName": "Upgrade",
+        "value": 5611
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 5,
+        "functionName": "Upgrade",
+        "value": 89777
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Amount",
+        "object": "Guard",
+        "level": 6,
+        "functionName": "",
+        "value": 82.25099749303135
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 6,
+        "functionName": "Upgrade",
+        "value": 6113
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 6,
+        "functionName": "Upgrade",
+        "value": 97811
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Amount",
+        "object": "Guard",
+        "level": 7,
+        "functionName": "",
+        "value": 98.18866212523925
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 7,
+        "functionName": "Upgrade",
+        "value": 6660
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 7,
+        "functionName": "Upgrade",
+        "value": 106565
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Amount",
+        "object": "Guard",
+        "level": 8,
+        "functionName": "",
+        "value": 115.5526680464729
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 8,
+        "functionName": "Upgrade",
+        "value": 7256
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 8,
+        "functionName": "Upgrade",
+        "value": 116102
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Amount",
+        "object": "Guard",
+        "level": 9,
+        "functionName": "",
+        "value": 134.47066566974624
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 9,
+        "functionName": "Upgrade",
+        "value": 7905
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 9,
+        "functionName": "Upgrade",
+        "value": 126492
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Amount",
+        "object": "Guard",
+        "level": 10,
+        "functionName": "",
+        "value": 155.08172948172805
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 10,
+        "functionName": "Upgrade",
+        "value": 8613
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 10,
+        "functionName": "Upgrade",
+        "value": 137813
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Amount",
+        "object": "Guard",
+        "level": 11,
+        "functionName": "",
+        "value": 177.5373804402083
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 11,
+        "functionName": "Upgrade",
+        "value": 9384
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 11,
+        "functionName": "Upgrade",
+        "value": 150147
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Amount",
+        "object": "Guard",
+        "level": 12,
+        "functionName": "",
+        "value": 202.0026998710257
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 12,
+        "functionName": "Upgrade",
+        "value": 10224
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 12,
+        "functionName": "Upgrade",
+        "value": 163584
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Amount",
+        "object": "Guard",
+        "level": 13,
+        "functionName": "",
+        "value": 228.6575430531999
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 13,
+        "functionName": "Upgrade",
+        "value": 11139
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 13,
+        "functionName": "Upgrade",
+        "value": 178224
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Amount",
+        "object": "Guard",
+        "level": 14,
+        "functionName": "",
+        "value": 257.69786141386476
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 14,
+        "functionName": "Upgrade",
+        "value": 12135
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 14,
+        "functionName": "Upgrade",
+        "value": 194174
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Amount",
+        "object": "Guard",
+        "level": 15,
+        "functionName": "",
+        "value": 289.33714305303675
+    },
+    {
+        "subject": "Army",
+        "componentName": "Amount",
+        "object": "Troop",
+        "level": 1,
+        "functionName": "",
+        "value": 58.15518731933726
+    },
+    {
+        "subject": "City",
+        "componentName": "Amount",
+        "object": "Tile",
+        "level": 1,
+        "functionName": "",
+        "value": 9
+    },
+    {
+        "subject": "Army",
+        "componentName": "Amount",
+        "object": "Troop",
+        "level": 2,
+        "functionName": "",
+        "value": 114.2374965180991
+    },
+    {
+        "subject": "City",
+        "componentName": "Amount",
+        "object": "Tile",
+        "level": 2,
+        "functionName": "",
+        "value": 12
+    },
+    {
+        "subject": "Army",
+        "componentName": "Amount",
+        "object": "Troop",
+        "level": 3,
+        "functionName": "",
+        "value": 186.7648134302031
+    },
+    {
+        "subject": "City",
+        "componentName": "Amount",
+        "object": "Tile",
+        "level": 3,
+        "functionName": "",
+        "value": 15
+    },
+    {
+        "subject": "Army",
+        "componentName": "Amount",
+        "object": "Troop",
+        "level": 4,
+        "functionName": "",
+        "value": 280.55930537642456
+    },
+    {
+        "subject": "City",
+        "componentName": "Amount",
+        "object": "Tile",
+        "level": 4,
+        "functionName": "",
+        "value": 18
+    },
+    {
+        "subject": "Army",
+        "componentName": "Amount",
+        "object": "Troop",
+        "level": 5,
+        "functionName": "",
+        "value": 401.85714312921766
+    },
+    {
+        "subject": "City",
+        "componentName": "Amount",
+        "object": "Tile",
+        "level": 5,
+        "functionName": "",
+        "value": 21
+    }
+]

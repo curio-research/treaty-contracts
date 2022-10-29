@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-pragma solidity 0.8.10;
+pragma solidity 0.8.15;
 
 import {DSTestPlus} from "./utils/DSTestPlus.sol";
 
@@ -46,6 +46,16 @@ contract SafeCastLibTest is DSTestPlus {
         assertEq(SafeCastLib.safeCastTo32(2.5e7), 2.5e7);
     }
 
+    function testSafeCastTo24() public {
+        assertEq(SafeCastLib.safeCastTo24(2.5e4), 2.5e4);
+        assertEq(SafeCastLib.safeCastTo24(2.5e3), 2.5e3);
+    }
+
+    function testSafeCastTo16() public {
+        assertEq(SafeCastLib.safeCastTo16(2.5e3), 2.5e3);
+        assertEq(SafeCastLib.safeCastTo16(2.5e2), 2.5e2);
+    }
+
     function testSafeCastTo8() public {
         assertEq(SafeCastLib.safeCastTo8(100), 100);
         assertEq(SafeCastLib.safeCastTo8(250), 250);
@@ -81,6 +91,10 @@ contract SafeCastLibTest is DSTestPlus {
 
     function testFailSafeCastTo32() public pure {
         SafeCastLib.safeCastTo32(type(uint32).max + 1);
+    }
+
+    function testFailSafeCastTo16() public pure {
+        SafeCastLib.safeCastTo16(type(uint16).max + 1);
     }
 
     function testFailSafeCastTo8() public pure {
@@ -135,6 +149,12 @@ contract SafeCastLibTest is DSTestPlus {
         assertEq(SafeCastLib.safeCastTo32(x), x);
     }
 
+    function testSafeCastTo16(uint256 x) public {
+        x = bound(x, 0, type(uint16).max);
+
+        assertEq(SafeCastLib.safeCastTo16(x), x);
+    }
+
     function testSafeCastTo8(uint256 x) public {
         x = bound(x, 0, type(uint8).max);
 
@@ -187,6 +207,18 @@ contract SafeCastLibTest is DSTestPlus {
         x = bound(x, type(uint32).max + 1, type(uint256).max);
 
         SafeCastLib.safeCastTo32(x);
+    }
+
+    function testFailSafeCastTo24(uint256 x) public {
+        x = bound(x, type(uint24).max + 1, type(uint256).max);
+
+        SafeCastLib.safeCastTo24(x);
+    }
+
+    function testFailSafeCastTo16(uint256 x) public {
+        x = bound(x, type(uint16).max + 1, type(uint256).max);
+
+        SafeCastLib.safeCastTo16(x);
     }
 
     function testFailSafeCastTo8(uint256 x) public {

@@ -1,43 +1,30 @@
+import { DiamondInit } from './../../typechain-types/upgradeInitializers/DiamondInit';
+import { DiamondCutFacet } from './../../typechain-types/facets/DiamondCutFacet';
 import { Curio } from './../../typechain-types/hardhat-diamond-abi/Curio';
 import { Signer } from 'ethers';
-import { deployProxy } from './deployHelper';
+import { confirm, deployProxy } from './deployHelper';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { getSelectors, FacetCutAction } from './diamondHelper';
-import { CurioInterface } from '../../typechain-types/hardhat-diamond-abi/Curio';
+import { chainInfo } from 'curio-vault';
 
-export async function deployDiamond(hre: HardhatRuntimeEnvironment, deployArgs: any[]) {
-  const accounts = await hre.ethers.getSigners();
-  const contractOwner = accounts[0];
+export async function deployDiamond(hre: HardhatRuntimeEnvironment, signer: Signer, deployArgs: [any]) {
+  const contractOwner = await signer.getAddress();
 
   // deploy DiamondCutFacet
-  const DiamondCutFacet = await hre.ethers.getContractFactory('DiamondCutFacet');
-  const diamondCutFacet = await DiamondCutFacet.deploy();
-  await diamondCutFacet.deployed();
-  console.log('✦ DiamondCutFacet:', diamondCutFacet.address);
+  const diamondCutFacet = await deployProxy<DiamondCutFacet>('DiamondCutFacet', signer, hre, []);
 
   // deploy Diamond
-  const Diamond = await hre.ethers.getContractFactory('Diamond');
-  const diamond = await Diamond.deploy(contractOwner.address, diamondCutFacet.address);
-  await diamond.deployed();
-  console.log('✦ Diamond:', diamond.address);
+  const diamond = await deployProxy<Curio>('Diamond', signer, hre, [contractOwner, diamondCutFacet.address]);
 
   // deploy DiamondInit
-  // DiamondInit provides a function that is called when the diamond is upgraded to initialize state variables
-  // Read about how the diamondCut function works here: https://eips.ethereum.org/EIPS/eip-2535#addingreplacingremoving-functions
-  const DiamondInit = await hre.ethers.getContractFactory('DiamondInit');
-  const diamondInit = await DiamondInit.deploy();
-  await diamondInit.deployed();
+  const diamondInit = await deployProxy<DiamondInit>('DiamondInit', signer, hre, []);
 
   // deploy facets
   const FacetNames = ['DiamondLoupeFacet', 'OwnershipFacet'];
   const cut = [];
   for (const FacetName of FacetNames) {
-    const Facet = await hre.ethers.getContractFactory(FacetName);
+    const facet = await deployProxy<any>(FacetName, signer, hre, []);
 
-    const facet = await Facet.deploy();
-    await facet.deployed();
-
-    console.log(`✦ ${FacetName}: ${facet.address}`);
     cut.push({
       facetAddress: facet.address,
       action: FacetCutAction.Add,
@@ -47,22 +34,17 @@ export async function deployDiamond(hre: HardhatRuntimeEnvironment, deployArgs: 
 
   // upgrade diamond with facets
   const diamondCut = await hre.ethers.getContractAt('IDiamondCut', diamond.address);
-  let tx;
-  let receipt;
 
   // call to init function. add initial state setting parameters. this acts as the constructor essentially
   let functionCall = diamondInit.interface.encodeFunctionData('init', deployArgs); // encodes data functions into bytes i believe
-  tx = await diamondCut.diamondCut(cut, diamondInit.address, functionCall);
-  // console.log("✦ Diamond cut tx: ", tx.hash);
+  const receipt = await confirm(await diamondCut.diamondCut(cut, diamondInit.address, functionCall), hre);
 
-  receipt = await tx.wait();
-  if (!receipt.status) {
-    throw Error(`Diamond upgrade failed: ${tx.hash}`);
+  if (receipt && !receipt.status) {
+    throw Error(`Diamond upgrade failed: ${receipt.transactionHash}`);
   }
+
   return diamond.address;
 }
-
-// deploy all facets
 
 interface Facet {
   name: string;
@@ -74,9 +56,7 @@ export const deployFacets = async (hre: HardhatRuntimeEnvironment, diamondAddres
 
   for (let i = 0; i < facets.length; i++) {
     const facetName: string = facets[i].name;
-
     const facet = await deployProxy<any>(facetName, signer, hre, [], facets[i].libraries);
-    await facet.deployed();
 
     facetContracts.push(facet);
   }
@@ -91,22 +71,26 @@ export const deployFacets = async (hre: HardhatRuntimeEnvironment, diamondAddres
     addresses.push(currentFacet.address);
     const selectors = getSelectors(currentFacet); // get all selectors and upload
 
-    const tx = await diamond.diamondCut(
-      [
-        {
-          facetAddress: currentFacet.address,
-          action: FacetCutAction.Add,
-          functionSelectors: selectors,
-        },
-      ],
-      hre.ethers.constants.AddressZero,
-      '0x',
-      { gasLimit: 800000 }
+    const gasLimit = chainInfo[hre.network.name].gasLimit;
+
+    const receipt = await confirm(
+      await diamond.diamondCut(
+        [
+          {
+            facetAddress: currentFacet.address,
+            action: FacetCutAction.Add,
+            functionSelectors: selectors,
+          },
+        ],
+        hre.ethers.constants.AddressZero,
+        '0x',
+        { gasLimit: gasLimit }
+      ),
+      hre
     );
 
-    const receipt = await tx.wait();
-    if (!receipt.status) {
-      throw Error(`Diamond upgrade failed: ${tx.hash}`);
+    if (receipt && !receipt.status) {
+      throw Error(`Diamond upgrade failed: ${receipt.transactionHash}`);
     }
   }
 };
