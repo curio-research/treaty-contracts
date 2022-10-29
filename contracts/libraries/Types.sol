@@ -66,6 +66,7 @@ struct WorldConstants {
     uint256 maxCityCountPerPlayer;
     uint256 maxArmyCountPerPlayer;
     uint256 maxPlayerCount;
+    bool isBattleRoyale;
     // Generated configs
     uint256 maxCityCenterLevel;
     uint256 cityCenterLevelToEntityLevelRatio; // 3 => lv1 city center unlocks lv3 resources

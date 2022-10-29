@@ -85,14 +85,20 @@ library GameLib {
         uint256 tileID = Templates.addTile(_startPosition, terrain);
         ECSLib.setUint("Terrain", tileID, terrain);
 
+        // TEMP: battle royale mode
+        if (gs().worldConstants.isBattleRoyale) {
+            // Set map center tile to SUPERTILE of land, no resources, and the top tile strength to start
+            if (coincident(_startPosition, getMapCenterTilePosition())) {
+                ECSLib.setUint("Terrain", tileID, 0);
+                uint256 supertileGuardAmount = getConstant("Tile", "Guard", "Amount", "", gs().worldConstants.maxCityCenterLevel * gs().worldConstants.cityCenterLevelToEntityLevelRatio);
+                Templates.addConstituent(tileID, gs().templates["Guard"], supertileGuardAmount);
+            }
+            return tileID;
+        }
+
         // Initialize gold mine
         if (terrain == 1 && getResourceAtTile(_startPosition) == 0) {
             Templates.addResource(gs().templates["Gold"], _startPosition, 0);
-        }
-
-        // Initialize farm
-        if (terrain == 2 && getResourceAtTile(_startPosition) == 0) {
-            Templates.addResource(gs().templates["Food"], _startPosition, 0);
         }
 
         if (terrain < 3) {
@@ -109,7 +115,7 @@ library GameLib {
             // Mountain tile, do nothing
         }
 
-        // TEMP
+        // All empty tiles are farms
         if (terrain == 0 && getResourceAtTile(_startPosition) == 0) {
             Templates.addResource(gs().templates["Food"], _startPosition, 0);
         }
@@ -575,6 +581,10 @@ library GameLib {
         uint256[] memory res = ECSLib.query(query);
         require(res.length <= 1, "CURIO: getPlayerCity query error");
         return res.length == 1 ? res[0] : 0;
+    }
+
+    function getMapCenterTilePosition() internal view returns (Position memory) {
+        return Position({x: gs().worldConstants.worldWidth / 2, y: gs().worldConstants.worldHeight / 2});
     }
 
     // ----------------------------------------------------------
