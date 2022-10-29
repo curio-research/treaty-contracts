@@ -89,8 +89,10 @@ library GameLib {
         if (gs().worldConstants.isBattleRoyale) {
             // Set map center tile to SUPERTILE of land, no resources, and the top tile strength to start
             if (coincident(_startPosition, getMapCenterTilePosition())) {
+                uint256 maxTileLevel = gs().worldConstants.maxCityCenterLevel * gs().worldConstants.cityCenterLevelToEntityLevelRatio;
                 ECSLib.setUint("Terrain", tileID, 0);
-                uint256 supertileGuardAmount = getConstant("Tile", "Guard", "Amount", "", gs().worldConstants.maxCityCenterLevel * gs().worldConstants.cityCenterLevelToEntityLevelRatio);
+                ECSLib.setUint("Level", tileID, maxTileLevel);
+                uint256 supertileGuardAmount = getConstant("Tile", "Guard", "Amount", "", maxTileLevel);
                 Templates.addConstituent(tileID, gs().templates["Guard"], supertileGuardAmount);
             }
             return tileID;
