@@ -15,6 +15,11 @@ class Resource(str, Enum):
     GOLD = "Gold"
     FOOD = "Food"
 
+class GameMode(str, Enum):
+    THREE_PLAYER_SHORT_TEST = "THREE_PLAYER_SHORT_TEST"
+    SLOW = "SLOW"
+    FAST = "FAST"
+
 class Building(str, Enum):
     GOLDMINE = "Goldmine"
     FARM = "Farm"
@@ -197,10 +202,28 @@ def get_building_upgrade_cost(level: int, building_type: Building) -> np.array:
         corresponding_building_level = building_level_based_on_center_level(level + 1)
         expected_goldmine_hourly_yield = get_building_hourly_yield_by_level(corresponding_building_level, Building.GOLDMINE)[0]
         expected_farm_hourly_yield = get_building_hourly_yield_by_level(corresponding_building_level, Building.FARM)[1]
+        # todo: tax should also include unlocked upgrades
         tax_gold = unlocked_goldmine_count * expected_goldmine_hourly_yield * payback_period_curve_in_hour(Game.max_city_center_level * Game.city_center_level_to_building_level)(level)
         tax_food = unlocked_farm_count * expected_farm_hourly_yield * payback_period_curve_in_hour(Game.max_city_center_level * Game.city_center_level_to_building_level)(level)
 
         return np.array([goldmine_goldcost + farm_goldcost + tax_gold, goldmine_foodcost + farm_foodcost + tax_food])
+
+def get_move_city_cooldown_in_hour(level: int) -> int:
+    """
+    Growth: fast exponential (same as upgrade)
+    Note: only x% time compared to citycenter's payback period
+    """
+    return payback_period_curve_in_hour(Game.max_city_center_level)(level) * Game.city_center_migration_cooldown_ratio / 100
+
+def get_building_upgrade_cooldown_in_hour(level: int) -> int:
+    """
+    Growth: fast exponential (same as upgrade)
+    Note: only x% time compared to buildings's payback period
+    """
+    return payback_period_curve_in_hour(Game.max_city_center_level * Game.city_center_level_to_building_level)(level) * Game.building_upgrade_cooldown_ratio / 100
+
+def get_tile_upgrade_cooldown_in_second(level: int) -> int:
+    return get_tile_troop_count(level) * Game.base_troop_training_in_seconds
 
 def expected_gold_density() -> float:
     return Game.init_player_goldmine_count / Game.init_player_tile_count
@@ -292,7 +315,7 @@ class Game:
     time to train one troop
     """
 
-    barbarian_reward_to_cost_coefficient = 4
+    barbarian_reward_to_cost_coefficient = 4 
     """
     Adjust this number based upon expected player behavior. This only changes the absolute ratio of reward to cost.
     To tune the difference in rate of increment. Adjust the exponential function (by default the diff is 2)
@@ -319,6 +342,16 @@ class Game:
     Gather rate should be much faster than harvest yield rate
     """
 
+    city_center_migration_cooldown_ratio = 10
+    """
+    Determine the cooldown time to migrate a city center. It's x% relative to the upgrade payback period
+    """
+
+    building_upgrade_cooldown_ratio = 5
+    """
+    Determine the cooldown time to migrate a city center. It's x% relative to the upgrade payback period
+    """
+
     # Gold:
     #   Mint: Harvest (low), Gather (medium), Barbarians (high)
     #   Burn: Build (heavy), Troop (light)
@@ -328,8 +361,27 @@ class Game:
 
     (resource_weight_light, resource_weight_low, resource_weight_medium, resource_weight_high, resource_weight_heavy) = (1, 3, 4, 5, 16)
 
-    def __init__(self) -> None:
-        return
+    def __init__(self, mode: GameMode) -> None:
+        if mode == GameMode.THREE_PLAYER_SHORT_TEST:
+            self.total_tile_count = 9*9
+            self.expected_player_count = 3
+            self.init_player_tile_count = 9
+            self.expected_play_time_in_hour = 1.5
+            self.init_player_goldmine_count = 2
+            self.init_player_farm_count = 9
+            self.player_login_interval_in_minutes = 15
+            self.max_city_center_level = 5
+            self.city_center_level_to_building_level = 3
+            self.new_player_action_in_seconds = 100
+            self.base_troop_training_in_seconds = 0.2
+            self.barbarian_reward_to_cost_coefficient = 4 
+            self.tile_to_barbarian_strength_ratio = 1.8
+            self.tile_troop_discount = 0.2
+            self.barbarian_to_army_difficulty_constant = 40
+            self.gather_rate_to_resource_rate = 40
+            self.city_center_migration_cooldown_ratio = 10
+            self.building_upgrade_cooldown_ratio = 5
+            (self.resource_weight_light, self.resource_weight_low, self.resource_weight_medium, self.resource_weight_high, self.resource_weight_heavy) = (1, 3, 4, 5, 16)
 
     def print_parameters(self):
         print("-----------------")
@@ -468,11 +520,6 @@ class Game:
                 max_building_level = self.max_city_center_level * self.city_center_level_to_building_level
             elif i == Building.CITY_CENTER:
                 max_building_level = self.max_city_center_level
-                for i in range(1, self.max_city_center_level + 1):
-                    game_parameters.append({ "subject": "City Center", "componentName": "Load", "object": "Troop", "level": i, "functionName": "", "value": 999999999 }) # FIXME: hardcoded
-                    game_parameters.append({ "subject": "City Center", "componentName": "Cost", "object": "Gold", "level": i, "functionName": "Move", "value": 0 }) # FIXME: hardcoded, attention @Modeo
-                    game_parameters.append({ "subject": "City Center", "componentName": "Cost", "object": "Food", "level": i, "functionName": "Move", "value": 0 }) # FIXME: hardcoded, attention @Modeo
-
 
             curr_level = 0
 
@@ -488,6 +535,13 @@ class Game:
                 if curr_level < max_building_level:
                     game_parameters.append({ "subject": building_type, "componentName": "Cost", "object": "Gold", "level": curr_level, "functionName": "Upgrade", "value": int(gold_upgrade_cost * 1000)  })
                     game_parameters.append({ "subject": building_type, "componentName": "Cost", "object": "Food", "level": curr_level, "functionName": "Upgrade", "value": int(food_upgrade_cost * 1000)  })
+                    game_parameters.append({ "subject": building_type, "componentName": "Cooldown", "object": "", "level": curr_level, "functionName": "Upgrade", "value": int(get_building_upgrade_cooldown_in_hour(curr_level) * 3600)})
+                    if building_type == Building.CITY_CENTER:
+                        game_parameters.append({ "subject": building_type, "componentName": "Cooldown", "object": "", "level": curr_level, "functionName": "Move", "value": int(get_move_city_cooldown_in_hour(curr_level) * 3600)})
+                if building_type == Building.CITY_CENTER:
+                    game_parameters.append({ "subject": "City Center", "componentName": "Load", "object": "Troop", "level": curr_level, "functionName": "", "value": 999999999 }) # FIXME: hardcoded
+                    game_parameters.append({ "subject": "City Center", "componentName": "Cost", "object": "Gold", "level": curr_level, "functionName": "Move", "value": 0 }) # FIXME: hardcoded, attention @Modeo
+                    game_parameters.append({ "subject": "City Center", "componentName": "Cost", "object": "Food", "level": curr_level, "functionName": "Move", "value": 0 }) # FIXME: hardcoded, attention @Modeo
 
                 curr_level += 1
 
@@ -511,9 +565,10 @@ class Game:
                 (cost_gold, cost_food) = get_tile_upgrade_cost(curr_level)
                 game_parameters.append({ "subject": "Tile", "componentName": "Cost", "object": "Gold", "level": curr_level, "functionName": "Upgrade", "value": int(cost_gold * 1000)})
                 game_parameters.append({ "subject": "Tile", "componentName": "Cost", "object": "Food", "level": curr_level, "functionName": "Upgrade", "value": int(cost_food * 1000)})
+                game_parameters.append({ "subject": "Tile", "componentName": "Cooldown", "object": "", "level": curr_level, "functionName": "Upgrade", "value": int(get_tile_upgrade_cooldown_in_second(curr_level))})
+
             curr_level += 1
 
-        
         # Army Size Stats
         max_building_level = self.max_city_center_level
         curr_level = 1
@@ -529,6 +584,6 @@ class Game:
                 outfile.write(json.dumps(world_parameters, indent=4))
         print('GodOS: generated and exported parameters')
 
-a = Game()
+a = Game(GameMode.THREE_PLAYER_SHORT_TEST)
 a.print_parameters()
 a.export_json_parameters()

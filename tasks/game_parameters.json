@@ -105,6 +105,14 @@
     },
     {
         "subject": "Goldmine",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 0,
+        "functionName": "Upgrade",
+        "value": 0
+    },
+    {
+        "subject": "Goldmine",
         "componentName": "Yield",
         "object": "Gold",
         "level": 1,
@@ -150,6 +158,14 @@
         "level": 1,
         "functionName": "Upgrade",
         "value": 740
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 1,
+        "functionName": "Upgrade",
+        "value": 1
     },
     {
         "subject": "Goldmine",
@@ -201,6 +217,14 @@
     },
     {
         "subject": "Goldmine",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 2,
+        "functionName": "Upgrade",
+        "value": 2
+    },
+    {
+        "subject": "Goldmine",
         "componentName": "Yield",
         "object": "Gold",
         "level": 3,
@@ -246,6 +270,14 @@
         "level": 3,
         "functionName": "Upgrade",
         "value": 2460
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 3,
+        "functionName": "Upgrade",
+        "value": 3
     },
     {
         "subject": "Goldmine",
@@ -297,6 +329,14 @@
     },
     {
         "subject": "Goldmine",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 4,
+        "functionName": "Upgrade",
+        "value": 4
+    },
+    {
+        "subject": "Goldmine",
         "componentName": "Yield",
         "object": "Gold",
         "level": 5,
@@ -342,6 +382,14 @@
         "level": 5,
         "functionName": "Upgrade",
         "value": 5229
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 5,
+        "functionName": "Upgrade",
+        "value": 6
     },
     {
         "subject": "Goldmine",
@@ -393,6 +441,14 @@
     },
     {
         "subject": "Goldmine",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 6,
+        "functionName": "Upgrade",
+        "value": 7
+    },
+    {
+        "subject": "Goldmine",
         "componentName": "Yield",
         "object": "Gold",
         "level": 7,
@@ -438,6 +494,14 @@
         "level": 7,
         "functionName": "Upgrade",
         "value": 9349
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 7,
+        "functionName": "Upgrade",
+        "value": 9
     },
     {
         "subject": "Goldmine",
@@ -489,6 +553,14 @@
     },
     {
         "subject": "Goldmine",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 8,
+        "functionName": "Upgrade",
+        "value": 12
+    },
+    {
+        "subject": "Goldmine",
         "componentName": "Yield",
         "object": "Gold",
         "level": 9,
@@ -534,6 +606,14 @@
         "level": 9,
         "functionName": "Upgrade",
         "value": 15310
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 9,
+        "functionName": "Upgrade",
+        "value": 14
     },
     {
         "subject": "Goldmine",
@@ -585,6 +665,14 @@
     },
     {
         "subject": "Goldmine",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 10,
+        "functionName": "Upgrade",
+        "value": 17
+    },
+    {
+        "subject": "Goldmine",
         "componentName": "Yield",
         "object": "Gold",
         "level": 11,
@@ -630,6 +718,14 @@
         "level": 11,
         "functionName": "Upgrade",
         "value": 23733
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 11,
+        "functionName": "Upgrade",
+        "value": 21
     },
     {
         "subject": "Goldmine",
@@ -681,6 +777,14 @@
     },
     {
         "subject": "Goldmine",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 12,
+        "functionName": "Upgrade",
+        "value": 25
+    },
+    {
+        "subject": "Goldmine",
         "componentName": "Yield",
         "object": "Gold",
         "level": 13,
@@ -729,6 +833,14 @@
     },
     {
         "subject": "Goldmine",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 13,
+        "functionName": "Upgrade",
+        "value": 30
+    },
+    {
+        "subject": "Goldmine",
         "componentName": "Yield",
         "object": "Gold",
         "level": 14,
@@ -774,6 +886,14 @@
         "level": 14,
         "functionName": "Upgrade",
         "value": 43142
+    },
+    {
+        "subject": "Goldmine",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 14,
+        "functionName": "Upgrade",
+        "value": 36
     },
     {
         "subject": "Goldmine",
@@ -857,6 +977,14 @@
     },
     {
         "subject": "Farm",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 0,
+        "functionName": "Upgrade",
+        "value": 0
+    },
+    {
+        "subject": "Farm",
         "componentName": "Yield",
         "object": "Gold",
         "level": 1,
@@ -902,6 +1030,14 @@
         "level": 1,
         "functionName": "Upgrade",
         "value": 739
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 1,
+        "functionName": "Upgrade",
+        "value": 1
     },
     {
         "subject": "Farm",
@@ -953,6 +1089,14 @@
     },
     {
         "subject": "Farm",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 2,
+        "functionName": "Upgrade",
+        "value": 2
+    },
+    {
+        "subject": "Farm",
         "componentName": "Yield",
         "object": "Gold",
         "level": 3,
@@ -998,6 +1142,14 @@
         "level": 3,
         "functionName": "Upgrade",
         "value": 2456
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 3,
+        "functionName": "Upgrade",
+        "value": 3
     },
     {
         "subject": "Farm",
@@ -1049,6 +1201,14 @@
     },
     {
         "subject": "Farm",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 4,
+        "functionName": "Upgrade",
+        "value": 4
+    },
+    {
+        "subject": "Farm",
         "componentName": "Yield",
         "object": "Gold",
         "level": 5,
@@ -1094,6 +1254,14 @@
         "level": 5,
         "functionName": "Upgrade",
         "value": 5220
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 5,
+        "functionName": "Upgrade",
+        "value": 6
     },
     {
         "subject": "Farm",
@@ -1145,6 +1313,14 @@
     },
     {
         "subject": "Farm",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 6,
+        "functionName": "Upgrade",
+        "value": 7
+    },
+    {
+        "subject": "Farm",
         "componentName": "Yield",
         "object": "Gold",
         "level": 7,
@@ -1190,6 +1366,14 @@
         "level": 7,
         "functionName": "Upgrade",
         "value": 9333
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 7,
+        "functionName": "Upgrade",
+        "value": 9
     },
     {
         "subject": "Farm",
@@ -1241,6 +1425,14 @@
     },
     {
         "subject": "Farm",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 8,
+        "functionName": "Upgrade",
+        "value": 12
+    },
+    {
+        "subject": "Farm",
         "componentName": "Yield",
         "object": "Gold",
         "level": 9,
@@ -1286,6 +1478,14 @@
         "level": 9,
         "functionName": "Upgrade",
         "value": 15280
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 9,
+        "functionName": "Upgrade",
+        "value": 14
     },
     {
         "subject": "Farm",
@@ -1337,6 +1537,14 @@
     },
     {
         "subject": "Farm",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 10,
+        "functionName": "Upgrade",
+        "value": 17
+    },
+    {
+        "subject": "Farm",
         "componentName": "Yield",
         "object": "Gold",
         "level": 11,
@@ -1382,6 +1590,14 @@
         "level": 11,
         "functionName": "Upgrade",
         "value": 23707
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 11,
+        "functionName": "Upgrade",
+        "value": 21
     },
     {
         "subject": "Farm",
@@ -1433,6 +1649,14 @@
     },
     {
         "subject": "Farm",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 12,
+        "functionName": "Upgrade",
+        "value": 25
+    },
+    {
+        "subject": "Farm",
         "componentName": "Yield",
         "object": "Gold",
         "level": 13,
@@ -1478,6 +1702,14 @@
         "level": 13,
         "functionName": "Upgrade",
         "value": 35508
+    },
+    {
+        "subject": "Farm",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 13,
+        "functionName": "Upgrade",
+        "value": 30
     },
     {
         "subject": "Farm",
@@ -1529,6 +1761,14 @@
     },
     {
         "subject": "Farm",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 14,
+        "functionName": "Upgrade",
+        "value": 36
+    },
+    {
+        "subject": "Farm",
         "componentName": "Yield",
         "object": "Gold",
         "level": 15,
@@ -1558,126 +1798,6 @@
         "level": 15,
         "functionName": "",
         "value": 460000
-    },
-    {
-        "subject": "City Center",
-        "componentName": "Load",
-        "object": "Troop",
-        "level": 1,
-        "functionName": "",
-        "value": 999999999
-    },
-    {
-        "subject": "City Center",
-        "componentName": "Cost",
-        "object": "Gold",
-        "level": 1,
-        "functionName": "Move",
-        "value": 0
-    },
-    {
-        "subject": "City Center",
-        "componentName": "Cost",
-        "object": "Food",
-        "level": 1,
-        "functionName": "Move",
-        "value": 0
-    },
-    {
-        "subject": "City Center",
-        "componentName": "Load",
-        "object": "Troop",
-        "level": 2,
-        "functionName": "",
-        "value": 999999999
-    },
-    {
-        "subject": "City Center",
-        "componentName": "Cost",
-        "object": "Gold",
-        "level": 2,
-        "functionName": "Move",
-        "value": 0
-    },
-    {
-        "subject": "City Center",
-        "componentName": "Cost",
-        "object": "Food",
-        "level": 2,
-        "functionName": "Move",
-        "value": 0
-    },
-    {
-        "subject": "City Center",
-        "componentName": "Load",
-        "object": "Troop",
-        "level": 3,
-        "functionName": "",
-        "value": 999999999
-    },
-    {
-        "subject": "City Center",
-        "componentName": "Cost",
-        "object": "Gold",
-        "level": 3,
-        "functionName": "Move",
-        "value": 0
-    },
-    {
-        "subject": "City Center",
-        "componentName": "Cost",
-        "object": "Food",
-        "level": 3,
-        "functionName": "Move",
-        "value": 0
-    },
-    {
-        "subject": "City Center",
-        "componentName": "Load",
-        "object": "Troop",
-        "level": 4,
-        "functionName": "",
-        "value": 999999999
-    },
-    {
-        "subject": "City Center",
-        "componentName": "Cost",
-        "object": "Gold",
-        "level": 4,
-        "functionName": "Move",
-        "value": 0
-    },
-    {
-        "subject": "City Center",
-        "componentName": "Cost",
-        "object": "Food",
-        "level": 4,
-        "functionName": "Move",
-        "value": 0
-    },
-    {
-        "subject": "City Center",
-        "componentName": "Load",
-        "object": "Troop",
-        "level": 5,
-        "functionName": "",
-        "value": 999999999
-    },
-    {
-        "subject": "City Center",
-        "componentName": "Cost",
-        "object": "Gold",
-        "level": 5,
-        "functionName": "Move",
-        "value": 0
-    },
-    {
-        "subject": "City Center",
-        "componentName": "Cost",
-        "object": "Food",
-        "level": 5,
-        "functionName": "Move",
-        "value": 0
     },
     {
         "subject": "City Center",
@@ -1729,6 +1849,46 @@
     },
     {
         "subject": "City Center",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 0,
+        "functionName": "Upgrade",
+        "value": 0
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 0,
+        "functionName": "Move",
+        "value": 0
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Load",
+        "object": "Troop",
+        "level": 0,
+        "functionName": "",
+        "value": 999999999
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 0,
+        "functionName": "Move",
+        "value": 0
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 0,
+        "functionName": "Move",
+        "value": 0
+    },
+    {
+        "subject": "City Center",
         "componentName": "Yield",
         "object": "Gold",
         "level": 1,
@@ -1774,6 +1934,46 @@
         "level": 1,
         "functionName": "Upgrade",
         "value": 22121
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 1,
+        "functionName": "Upgrade",
+        "value": 1
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 1,
+        "functionName": "Move",
+        "value": 6
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Load",
+        "object": "Troop",
+        "level": 1,
+        "functionName": "",
+        "value": 999999999
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 1,
+        "functionName": "Move",
+        "value": 0
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 1,
+        "functionName": "Move",
+        "value": 0
     },
     {
         "subject": "City Center",
@@ -1825,6 +2025,46 @@
     },
     {
         "subject": "City Center",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 2,
+        "functionName": "Upgrade",
+        "value": 2
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 2,
+        "functionName": "Move",
+        "value": 15
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Load",
+        "object": "Troop",
+        "level": 2,
+        "functionName": "",
+        "value": 999999999
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 2,
+        "functionName": "Move",
+        "value": 0
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 2,
+        "functionName": "Move",
+        "value": 0
+    },
+    {
+        "subject": "City Center",
         "componentName": "Yield",
         "object": "Gold",
         "level": 3,
@@ -1870,6 +2110,46 @@
         "level": 3,
         "functionName": "Upgrade",
         "value": 73753
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 3,
+        "functionName": "Upgrade",
+        "value": 3
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 3,
+        "functionName": "Move",
+        "value": 29
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Load",
+        "object": "Troop",
+        "level": 3,
+        "functionName": "",
+        "value": 999999999
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 3,
+        "functionName": "Move",
+        "value": 0
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 3,
+        "functionName": "Move",
+        "value": 0
     },
     {
         "subject": "City Center",
@@ -1921,6 +2201,46 @@
     },
     {
         "subject": "City Center",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 4,
+        "functionName": "Upgrade",
+        "value": 4
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 4,
+        "functionName": "Move",
+        "value": 51
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Load",
+        "object": "Troop",
+        "level": 4,
+        "functionName": "",
+        "value": 999999999
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 4,
+        "functionName": "Move",
+        "value": 0
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 4,
+        "functionName": "Move",
+        "value": 0
+    },
+    {
+        "subject": "City Center",
         "componentName": "Yield",
         "object": "Gold",
         "level": 5,
@@ -1950,6 +2270,30 @@
         "level": 5,
         "functionName": "",
         "value": 326000
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Load",
+        "object": "Troop",
+        "level": 5,
+        "functionName": "",
+        "value": 999999999
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cost",
+        "object": "Gold",
+        "level": 5,
+        "functionName": "Move",
+        "value": 0
+    },
+    {
+        "subject": "City Center",
+        "componentName": "Cost",
+        "object": "Food",
+        "level": 5,
+        "functionName": "Move",
+        "value": 0
     },
     {
         "subject": "Barbarian",
@@ -2337,6 +2681,14 @@
     },
     {
         "subject": "Tile",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 1,
+        "functionName": "Move",
+        "value": 3
+    },
+    {
+        "subject": "Tile",
         "componentName": "Amount",
         "object": "Guard",
         "level": 2,
@@ -2358,6 +2710,14 @@
         "level": 2,
         "functionName": "Upgrade",
         "value": 69420
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 2,
+        "functionName": "Move",
+        "value": 4
     },
     {
         "subject": "Tile",
@@ -2385,6 +2745,14 @@
     },
     {
         "subject": "Tile",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 3,
+        "functionName": "Move",
+        "value": 6
+    },
+    {
+        "subject": "Tile",
         "componentName": "Amount",
         "object": "Guard",
         "level": 4,
@@ -2406,6 +2774,14 @@
         "level": 4,
         "functionName": "Upgrade",
         "value": 82402
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 4,
+        "functionName": "Move",
+        "value": 8
     },
     {
         "subject": "Tile",
@@ -2433,6 +2809,14 @@
     },
     {
         "subject": "Tile",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 5,
+        "functionName": "Move",
+        "value": 10
+    },
+    {
+        "subject": "Tile",
         "componentName": "Amount",
         "object": "Guard",
         "level": 6,
@@ -2454,6 +2838,14 @@
         "level": 6,
         "functionName": "Upgrade",
         "value": 97811
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 6,
+        "functionName": "Move",
+        "value": 12
     },
     {
         "subject": "Tile",
@@ -2481,6 +2873,14 @@
     },
     {
         "subject": "Tile",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 7,
+        "functionName": "Move",
+        "value": 14
+    },
+    {
+        "subject": "Tile",
         "componentName": "Amount",
         "object": "Guard",
         "level": 8,
@@ -2502,6 +2902,14 @@
         "level": 8,
         "functionName": "Upgrade",
         "value": 116102
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 8,
+        "functionName": "Move",
+        "value": 17
     },
     {
         "subject": "Tile",
@@ -2529,6 +2937,14 @@
     },
     {
         "subject": "Tile",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 9,
+        "functionName": "Move",
+        "value": 20
+    },
+    {
+        "subject": "Tile",
         "componentName": "Amount",
         "object": "Guard",
         "level": 10,
@@ -2550,6 +2966,14 @@
         "level": 10,
         "functionName": "Upgrade",
         "value": 137813
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 10,
+        "functionName": "Move",
+        "value": 23
     },
     {
         "subject": "Tile",
@@ -2577,6 +3001,14 @@
     },
     {
         "subject": "Tile",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 11,
+        "functionName": "Move",
+        "value": 26
+    },
+    {
+        "subject": "Tile",
         "componentName": "Amount",
         "object": "Guard",
         "level": 12,
@@ -2598,6 +3030,14 @@
         "level": 12,
         "functionName": "Upgrade",
         "value": 163584
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 12,
+        "functionName": "Move",
+        "value": 30
     },
     {
         "subject": "Tile",
@@ -2625,6 +3065,14 @@
     },
     {
         "subject": "Tile",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 13,
+        "functionName": "Move",
+        "value": 34
+    },
+    {
+        "subject": "Tile",
         "componentName": "Amount",
         "object": "Guard",
         "level": 14,
@@ -2646,6 +3094,14 @@
         "level": 14,
         "functionName": "Upgrade",
         "value": 194174
+    },
+    {
+        "subject": "Tile",
+        "componentName": "Cooldown",
+        "object": "",
+        "level": 14,
+        "functionName": "Move",
+        "value": 38
     },
     {
         "subject": "Tile",

@@ -682,10 +682,14 @@ contract GameFacet is UseStorage {
                     require(winnerCityID != NULL, "CURIO: Winner must own a city");
 
                     // Add harvested gold to player's city limited by its load
+                    // todo: alternative to lastSackedTimeStamp is to reward a preset amount of resources
                     uint256 winnerCityGoldInventoryID = GameLib.getInventory(winnerCityID, gs().templates["Gold"]);
                     uint256 existingCityGold = ECSLib.getUint("Amount", winnerCityGoldInventoryID);
                     uint256 winnerTotalAmount = GameLib.min(ECSLib.getUint("Load", winnerCityGoldInventoryID), loserTotalAmount / 2 + existingCityGold);
                     ECSLib.setUint("Amount", winnerCityGoldInventoryID, winnerTotalAmount);
+
+                    // todo: update lastSackedTimeStamp
+
                 } else {
                     if (terrain >= 3) {
                         // Reset barbarian

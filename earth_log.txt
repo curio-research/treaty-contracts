@@ -4,8 +4,10 @@
 barbarian_reward_to_cost_coefficient: 4
 barbarian_to_army_difficulty_constant: 40
 base_troop_training_in_seconds: 0.15
+building_upgrade_cooldown_ratio: 5
 city_center_level_to_building_level: 3
-expected_play_time_in_hour: 2
+city_center_migration_cooldown_ratio: 10
+expected_play_time_in_hour: 1.5
 expected_player_count: 3
 gather_rate_to_resource_rate: 40
 init_player_farm_count: 9
@@ -13,7 +15,7 @@ init_player_goldmine_count: 2
 init_player_tile_count: 9
 max_city_center_level: 5
 new_player_action_in_seconds: 100
-player_login_interval_in_minutes: 20
+player_login_interval_in_minutes: 15
 resource_weight_heavy: 16
 resource_weight_high: 5
 resource_weight_light: 1
@@ -21,7 +23,7 @@ resource_weight_low: 3
 resource_weight_medium: 4
 tile_to_barbarian_strength_ratio: 1.8
 tile_troop_discount: 0.2
-total_tile_count: 121
+total_tile_count: 81
 -----------------
 ** Goldmine Stats **
 -----------------
