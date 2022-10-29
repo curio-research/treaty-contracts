@@ -56,11 +56,11 @@ export type WorldConstantsStruct = {
   initBatchSize: PromiseOrValue<BigNumberish>;
   maxCityCountPerPlayer: PromiseOrValue<BigNumberish>;
   maxArmyCountPerPlayer: PromiseOrValue<BigNumberish>;
-  maxTroopCountPerArmy: PromiseOrValue<BigNumberish>;
   maxPlayerCount: PromiseOrValue<BigNumberish>;
+  isBattleRoyale: PromiseOrValue<boolean>;
   maxCityCenterLevel: PromiseOrValue<BigNumberish>;
   cityCenterLevelToEntityLevelRatio: PromiseOrValue<BigNumberish>;
-  cityCenterLevelToTileCountRatio: PromiseOrValue<BigNumberish>;
+  secondsToTrainAThousandTroops: PromiseOrValue<BigNumberish>;
 };
 
 export type WorldConstantsStructOutput = [
@@ -73,7 +73,7 @@ export type WorldConstantsStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
-  BigNumber,
+  boolean,
   BigNumber,
   BigNumber,
   BigNumber
@@ -86,11 +86,11 @@ export type WorldConstantsStructOutput = [
   initBatchSize: BigNumber;
   maxCityCountPerPlayer: BigNumber;
   maxArmyCountPerPlayer: BigNumber;
-  maxTroopCountPerArmy: BigNumber;
   maxPlayerCount: BigNumber;
+  isBattleRoyale: boolean;
   maxCityCenterLevel: BigNumber;
   cityCenterLevelToEntityLevelRatio: BigNumber;
-  cityCenterLevelToTileCountRatio: BigNumber;
+  secondsToTrainAThousandTroops: BigNumber;
 };
 
 export type QueryConditionStruct = {
@@ -160,15 +160,19 @@ export interface CurioInterface extends utils.Interface {
     "battle(uint256,uint256)": FunctionFragment;
     "claimTile(uint256,uint256)": FunctionFragment;
     "disbandArmy(uint256)": FunctionFragment;
+    "disownTile(uint256)": FunctionFragment;
     "endGather(uint256)": FunctionFragment;
     "endTroopProduction(uint256,uint256)": FunctionFragment;
     "foundCity(uint256,(uint256,uint256)[],string)": FunctionFragment;
     "harvestResource(uint256)": FunctionFragment;
+    "harvestResources(uint256[])": FunctionFragment;
     "harvestResourcesFromCity(uint256)": FunctionFragment;
     "initializePlayer((uint256,uint256),string)": FunctionFragment;
     "move(uint256,(uint256,uint256))": FunctionFragment;
+    "moveCityCenter(uint256,(uint256,uint256))": FunctionFragment;
     "organizeArmy(uint256,uint256[],uint256[])": FunctionFragment;
     "packCity(uint256)": FunctionFragment;
+    "recoverTile(uint256)": FunctionFragment;
     "startGather(uint256,uint256)": FunctionFragment;
     "startTroopProduction(uint256,uint256,uint256)": FunctionFragment;
     "unloadResources(uint256)": FunctionFragment;
@@ -252,15 +256,19 @@ export interface CurioInterface extends utils.Interface {
       | "battle"
       | "claimTile"
       | "disbandArmy"
+      | "disownTile"
       | "endGather"
       | "endTroopProduction"
       | "foundCity"
       | "harvestResource"
+      | "harvestResources"
       | "harvestResourcesFromCity"
       | "initializePlayer"
       | "move"
+      | "moveCityCenter"
       | "organizeArmy"
       | "packCity"
+      | "recoverTile"
       | "startGather"
       | "startTroopProduction"
       | "unloadResources"
@@ -440,6 +448,10 @@ export interface CurioInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "disownTile",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "endGather",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
@@ -460,6 +472,10 @@ export interface CurioInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "harvestResources",
+    values: [PromiseOrValue<BigNumberish>[]]
+  ): string;
+  encodeFunctionData(
     functionFragment: "harvestResourcesFromCity",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
@@ -472,6 +488,10 @@ export interface CurioInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PositionStruct]
   ): string;
   encodeFunctionData(
+    functionFragment: "moveCityCenter",
+    values: [PromiseOrValue<BigNumberish>, PositionStruct]
+  ): string;
+  encodeFunctionData(
     functionFragment: "organizeArmy",
     values: [
       PromiseOrValue<BigNumberish>,
@@ -481,6 +501,10 @@ export interface CurioInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "packCity",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "recoverTile",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -784,6 +808,7 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "disbandArmy",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "disownTile", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "endGather", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "endTroopProduction",
@@ -792,6 +817,10 @@ export interface CurioInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "foundCity", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "harvestResource",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "harvestResources",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -804,10 +833,18 @@ export interface CurioInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "move", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "moveCityCenter",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "organizeArmy",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "packCity", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "recoverTile",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "startGather",
     data: BytesLike
@@ -1269,6 +1306,11 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    disownTile(
+      _tileID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     endGather(
       _armyID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1292,6 +1334,11 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    harvestResources(
+      resourceIds: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     harvestResourcesFromCity(
       _buildingID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1309,6 +1356,12 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    moveCityCenter(
+      _buildingID: PromiseOrValue<BigNumberish>,
+      _newTilePosition: PositionStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     organizeArmy(
       _cityID: PromiseOrValue<BigNumberish>,
       _templateIDs: PromiseOrValue<BigNumberish>[],
@@ -1318,6 +1371,11 @@ export interface Curio extends BaseContract {
 
     packCity(
       _cityID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    recoverTile(
+      _tileID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1733,6 +1791,11 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  disownTile(
+    _tileID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   endGather(
     _armyID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1756,6 +1819,11 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  harvestResources(
+    resourceIds: PromiseOrValue<BigNumberish>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   harvestResourcesFromCity(
     _buildingID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1773,6 +1841,12 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  moveCityCenter(
+    _buildingID: PromiseOrValue<BigNumberish>,
+    _newTilePosition: PositionStruct,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   organizeArmy(
     _cityID: PromiseOrValue<BigNumberish>,
     _templateIDs: PromiseOrValue<BigNumberish>[],
@@ -1782,6 +1856,11 @@ export interface Curio extends BaseContract {
 
   packCity(
     _cityID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  recoverTile(
+    _tileID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -2197,6 +2276,11 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    disownTile(
+      _tileID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     endGather(
       _armyID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -2220,6 +2304,11 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    harvestResources(
+      resourceIds: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     harvestResourcesFromCity(
       _buildingID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -2237,6 +2326,12 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    moveCityCenter(
+      _buildingID: PromiseOrValue<BigNumberish>,
+      _newTilePosition: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     organizeArmy(
       _cityID: PromiseOrValue<BigNumberish>,
       _templateIDs: PromiseOrValue<BigNumberish>[],
@@ -2246,6 +2341,11 @@ export interface Curio extends BaseContract {
 
     packCity(
       _cityID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    recoverTile(
+      _tileID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -2716,6 +2816,11 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    disownTile(
+      _tileID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     endGather(
       _armyID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -2739,6 +2844,11 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    harvestResources(
+      resourceIds: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     harvestResourcesFromCity(
       _buildingID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -2756,6 +2866,12 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    moveCityCenter(
+      _buildingID: PromiseOrValue<BigNumberish>,
+      _newTilePosition: PositionStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     organizeArmy(
       _cityID: PromiseOrValue<BigNumberish>,
       _templateIDs: PromiseOrValue<BigNumberish>[],
@@ -2765,6 +2881,11 @@ export interface Curio extends BaseContract {
 
     packCity(
       _cityID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    recoverTile(
+      _tileID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -3179,6 +3300,11 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    disownTile(
+      _tileID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     endGather(
       _armyID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -3202,6 +3328,11 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    harvestResources(
+      resourceIds: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     harvestResourcesFromCity(
       _buildingID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -3219,6 +3350,12 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    moveCityCenter(
+      _buildingID: PromiseOrValue<BigNumberish>,
+      _newTilePosition: PositionStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     organizeArmy(
       _cityID: PromiseOrValue<BigNumberish>,
       _templateIDs: PromiseOrValue<BigNumberish>[],
@@ -3228,6 +3365,11 @@ export interface Curio extends BaseContract {
 
     packCity(
       _cityID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    recoverTile(
+      _tileID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -14,8 +14,8 @@ export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 // ----------------------------------------------------------
 
 export const SMALL_MAP_INPUT: MapInput = {
-  width: 13,
-  height: 13,
+  width: 11,
+  height: 11,
 };
 
 export const TILE_WIDTH = 5;
@@ -35,7 +35,7 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): a
     maxCityCountPerPlayer: 3,
     maxArmyCountPerPlayer: 2,
     maxPlayerCount: 20,
-    maxTroopCountPerArmy: 16542,
+    isBattleRoyale: true,
     // generated constants
     ...worldConstants,
   };
@@ -59,7 +59,7 @@ export const createTemplates = async (diamond: Curio, hre: HardhatRuntimeEnviron
   let entity = Number(await diamond.getEntity());
 
   // Horseman
-  await confirm(await diamond.addTroopTemplate(InventoryTypeOptions.Horseman, 120, 2, 1, 2, 60, 120, 1, 95), hre);
+  await confirm(await diamond.addTroopTemplate(InventoryTypeOptions.Horseman, 120, 10, 1, 2, 60, 120, 1, 95), hre);
   templateNames.push(InventoryTypeOptions.Horseman);
   templateIDs.push(entity++);
 
@@ -69,7 +69,7 @@ export const createTemplates = async (diamond: Curio, hre: HardhatRuntimeEnviron
   templateIDs.push(entity++);
 
   // Slinger
-  await confirm(await diamond.addTroopTemplate(InventoryTypeOptions.Slinger, 125, 1, 1, 2, 60, 125, 1, 95), hre);
+  await confirm(await diamond.addTroopTemplate(InventoryTypeOptions.Slinger, 125, 2, 1, 2, 60, 125, 1, 95), hre);
   templateNames.push(InventoryTypeOptions.Slinger);
   templateIDs.push(entity++);
 

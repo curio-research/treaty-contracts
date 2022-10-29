@@ -81,30 +81,45 @@ library GameLib {
         uint256 divFactor = numInitTerrainTypes**(tileY % batchSize);
         uint256 terrain = encodedCol / divFactor;
 
+        // Initialize tile
+        uint256 tileID = Templates.addTile(_startPosition, terrain);
+        ECSLib.setUint("Terrain", tileID, terrain);
+
+        // TEMP: battle royale mode
+        if (gs().worldConstants.isBattleRoyale) {
+            // Set map center tile to SUPERTILE of land, no resources, and the top tile strength to start
+            if (coincident(_startPosition, getMapCenterTilePosition())) {
+                uint256 maxTileLevel = gs().worldConstants.maxCityCenterLevel * gs().worldConstants.cityCenterLevelToEntityLevelRatio;
+                ECSLib.setUint("Terrain", tileID, 0);
+                ECSLib.setUint("Level", tileID, maxTileLevel);
+                uint256 supertileGuardAmount = getConstant("Tile", "Guard", "Amount", "", maxTileLevel);
+                Templates.addConstituent(tileID, gs().templates["Guard"], supertileGuardAmount);
+            }
+            return tileID;
+        }
+
         // Initialize gold mine
         if (terrain == 1 && getResourceAtTile(_startPosition) == 0) {
             Templates.addResource(gs().templates["Gold"], _startPosition, 0);
         }
 
-        // Initialize farm
-        if (terrain == 2 && getResourceAtTile(_startPosition) == 0) {
-            Templates.addResource(gs().templates["Food"], _startPosition, 0);
-        }
-
-        // Initialize tile
-        uint256 tileID = Templates.addTile(_startPosition, terrain);
-        ECSLib.setUint("Terrain", tileID, terrain);
-
         if (terrain < 3) {
             // Normal tile
             uint256 tileGuardAmount = getConstant("Tile", "Guard", "Amount", "", ECSLib.getUint("Level", tileID));
             Templates.addConstituent(tileID, gs().templates["Guard"], tileGuardAmount);
-        } else {
+        } else if (terrain == 3 || terrain == 4) {
             // Barbarian tile
             uint256 barbarianLevel = terrain - 2;
             ECSLib.setUint("Level", tileID, barbarianLevel);
-            uint256 barbarianGuardAmount = getConstant("Barbarian", "Guard", "Amount", "", barbarianLevel * 4); // FIXME
+            uint256 barbarianGuardAmount = getConstant("Barbarian", "Guard", "Amount", "", barbarianLevel);
             Templates.addConstituent(tileID, gs().templates["Guard"], barbarianGuardAmount);
+        } else {
+            // Mountain tile, do nothing
+        }
+
+        // All empty tiles are farms
+        if (terrain == 0 && getResourceAtTile(_startPosition) == 0) {
+            Templates.addResource(gs().templates["Food"], _startPosition, 0);
         }
 
         return tileID;
@@ -139,7 +154,8 @@ library GameLib {
         // Gather
         uint256 armyTroopCount = getArmyTroopCount(_armyID);
         uint256 gatherAmount = (block.timestamp - ECSLib.getUint("InitTimestamp", gatherID)) * getConstant("Army", ECSLib.getString("InventoryType", templateID), "Rate", "gather", 0);
-        if (gatherAmount > (ECSLib.getUint("Load", inventoryID) - armyInventoryAmount)) gatherAmount = (getConstant("Troop", "Resource", "Load", "", 0) * armyTroopCount) - armyInventoryAmount;
+        uint256 remainingLoad = getConstant("Troop", "Resource", "Load", "", 0) * armyTroopCount - armyInventoryAmount;
+        if (gatherAmount > remainingLoad) gatherAmount = remainingLoad;
         ECSLib.setUint("Amount", inventoryID, armyInventoryAmount + gatherAmount);
 
         ECSLib.removeEntity(gatherID);
@@ -152,16 +168,16 @@ library GameLib {
         uint256 slingerTemplateId = gs().templates["Slinger"];
 
         if (_offenderTemplateID == horsemanTemplateId) {
-            if (_defenderTemplateID == warriorTemplateId) return 80;
-            if (_defenderTemplateID == slingerTemplateId) return 120;
+            if (_defenderTemplateID == warriorTemplateId) return 60;
+            if (_defenderTemplateID == slingerTemplateId) return 140;
             else return 100;
         } else if (_offenderTemplateID == warriorTemplateId) {
-            if (_defenderTemplateID == slingerTemplateId) return 80;
-            if (_defenderTemplateID == horsemanTemplateId) return 120;
+            if (_defenderTemplateID == slingerTemplateId) return 60;
+            if (_defenderTemplateID == horsemanTemplateId) return 140;
             else return 100;
         } else if (_offenderTemplateID == slingerTemplateId) {
-            if (_defenderTemplateID == horsemanTemplateId) return 80;
-            if (_defenderTemplateID == warriorTemplateId) return 120;
+            if (_defenderTemplateID == horsemanTemplateId) return 60;
+            if (_defenderTemplateID == warriorTemplateId) return 140;
             else return 100;
         } else return 100;
     }
@@ -242,7 +258,7 @@ library GameLib {
         uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
         for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
             uint256 cityInventoryID = getInventory(_cityID, resourceTemplateIDs[i]);
-            uint256 reward = getConstant("Barbarian", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Reward", "", barbarianLevel);
+            uint256 reward = getConstant("Barbarian", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Reward", "", barbarianLevel * 4);
             ECSLib.setUint("Amount", cityInventoryID, ECSLib.getUint("Amount", cityInventoryID) + reward);
         }
     }
@@ -574,6 +590,10 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
+    function getMapCenterTilePosition() internal view returns (Position memory) {
+        return Position({x: gs().worldConstants.worldWidth / 2, y: gs().worldConstants.worldHeight / 2});
+    }
+
     // ----------------------------------------------------------
     // CHECKERS
     // ----------------------------------------------------------
@@ -606,12 +626,21 @@ library GameLib {
         require(inBound(_position), "CURIO: Position out of bound");
     }
 
+    function passableTerrainCheck(Position memory _tilePosition) internal {
+        require(ECSLib.getUint("Terrain", getTileAt(_tilePosition)) != 5, "CURIO: Tile not passable");
+    }
+
     // ----------------------------------------------------------
     // UTILITY FUNCTIONS
     // ----------------------------------------------------------
 
     function inBound(Position memory _p) internal view returns (bool) {
         return _p.x >= 0 && _p.x < gs().worldConstants.worldWidth && _p.y >= 0 && _p.y < gs().worldConstants.worldHeight;
+    }
+
+    function isBarbarian(uint256 _tileID) internal view returns (bool) {
+        // FIXME: hardcoded
+        return ECSLib.getUint("Terrain", _tileID) == 3 || ECSLib.getUint("Terrain", _tileID) == 4;
     }
 
     function random(uint256 _max, uint256 _salt) internal view returns (uint256) {

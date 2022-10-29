@@ -42,11 +42,11 @@ export type WorldConstantsStruct = {
   initBatchSize: PromiseOrValue<BigNumberish>;
   maxCityCountPerPlayer: PromiseOrValue<BigNumberish>;
   maxArmyCountPerPlayer: PromiseOrValue<BigNumberish>;
-  maxTroopCountPerArmy: PromiseOrValue<BigNumberish>;
   maxPlayerCount: PromiseOrValue<BigNumberish>;
+  isBattleRoyale: PromiseOrValue<boolean>;
   maxCityCenterLevel: PromiseOrValue<BigNumberish>;
   cityCenterLevelToEntityLevelRatio: PromiseOrValue<BigNumberish>;
-  cityCenterLevelToTileCountRatio: PromiseOrValue<BigNumberish>;
+  secondsToTrainAThousandTroops: PromiseOrValue<BigNumberish>;
 };
 
 export type WorldConstantsStructOutput = [
@@ -59,7 +59,7 @@ export type WorldConstantsStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
-  BigNumber,
+  boolean,
   BigNumber,
   BigNumber,
   BigNumber
@@ -72,11 +72,11 @@ export type WorldConstantsStructOutput = [
   initBatchSize: BigNumber;
   maxCityCountPerPlayer: BigNumber;
   maxArmyCountPerPlayer: BigNumber;
-  maxTroopCountPerArmy: BigNumber;
   maxPlayerCount: BigNumber;
+  isBattleRoyale: boolean;
   maxCityCenterLevel: BigNumber;
   cityCenterLevelToEntityLevelRatio: BigNumber;
-  cityCenterLevelToTileCountRatio: BigNumber;
+  secondsToTrainAThousandTroops: BigNumber;
 };
 
 export interface GetterFacetInterface extends utils.Interface {

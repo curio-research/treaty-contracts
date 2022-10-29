@@ -650,6 +650,19 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
+        name: "_tileID",
+        type: "uint256",
+      },
+    ],
+    name: "disownTile",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
         name: "_armyID",
         type: "uint256",
       },
@@ -721,6 +734,19 @@ const _abi = [
       },
     ],
     name: "harvestResource",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256[]",
+        name: "resourceIds",
+        type: "uint256[]",
+      },
+    ],
+    name: "harvestResources",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -802,6 +828,36 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
+        name: "_buildingID",
+        type: "uint256",
+      },
+      {
+        components: [
+          {
+            internalType: "uint256",
+            name: "x",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "y",
+            type: "uint256",
+          },
+        ],
+        internalType: "struct Position",
+        name: "_newTilePosition",
+        type: "tuple",
+      },
+    ],
+    name: "moveCityCenter",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
         name: "_cityID",
         type: "uint256",
       },
@@ -836,6 +892,19 @@ const _abi = [
       },
     ],
     name: "packCity",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_tileID",
+        type: "uint256",
+      },
+    ],
+    name: "recoverTile",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -1482,13 +1551,13 @@ const _abi = [
           },
           {
             internalType: "uint256",
-            name: "maxTroopCountPerArmy",
+            name: "maxPlayerCount",
             type: "uint256",
           },
           {
-            internalType: "uint256",
-            name: "maxPlayerCount",
-            type: "uint256",
+            internalType: "bool",
+            name: "isBattleRoyale",
+            type: "bool",
           },
           {
             internalType: "uint256",
@@ -1502,7 +1571,7 @@ const _abi = [
           },
           {
             internalType: "uint256",
-            name: "cityCenterLevelToTileCountRatio",
+            name: "secondsToTrainAThousandTroops",
             type: "uint256",
           },
         ],

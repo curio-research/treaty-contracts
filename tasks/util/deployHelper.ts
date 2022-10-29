@@ -1,6 +1,9 @@
 import { ContractReceipt, ContractTransaction } from '@ethersproject/contracts';
 import { Signer, Contract } from 'ethers';
 import { FactoryOptions, HardhatRuntimeEnvironment } from 'hardhat/types';
+import * as path from 'path';
+import * as fsPromise from 'fs/promises';
+import * as fs from 'fs';
 
 // deploy proxy used in hre
 export const deployProxy = async <C extends Contract>(contractName: string, signer: Signer, hre: HardhatRuntimeEnvironment, contractArgs: unknown[], libs?: FactoryOptions['libraries']): Promise<C> => {
@@ -41,4 +44,20 @@ export const indexerUrlSelector = (hre: HardhatRuntimeEnvironment): string => {
 
   // TODO: add production indexer url cases
   return '';
+};
+
+export const saveMapToLocal = async (tileMap: any) => {
+  console.log('saving map to local...');
+
+  const mapsDir = path.join(path.join(__dirname), '..', 'maps');
+  if (!fs.existsSync(mapsDir)) fs.mkdirSync(mapsDir);
+
+  let mapIndex = (await fsPromise.readdir(mapsDir)).length;
+  let mapPath: string;
+  do {
+    mapPath = path.join(mapsDir, `map-${mapIndex}.json`);
+    mapIndex++;
+  } while (fs.existsSync(mapPath));
+
+  await fsPromise.writeFile(mapPath, JSON.stringify(tileMap));
 };
