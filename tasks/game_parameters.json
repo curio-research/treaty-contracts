@@ -1741,7 +1741,7 @@
         "object": "",
         "level": 1,
         "functionName": "Upgrade",
-        "value": 0
+        "value": 5
     },
     {
         "subject": "City Center",
@@ -1829,7 +1829,7 @@
         "object": "",
         "level": 2,
         "functionName": "Upgrade",
-        "value": 1
+        "value": 13
     },
     {
         "subject": "City Center",
@@ -1917,7 +1917,7 @@
         "object": "",
         "level": 3,
         "functionName": "Upgrade",
-        "value": 1
+        "value": 25
     },
     {
         "subject": "City Center",
@@ -2005,7 +2005,7 @@
         "object": "",
         "level": 4,
         "functionName": "Upgrade",
-        "value": 2
+        "value": 44
     },
     {
         "subject": "City Center",

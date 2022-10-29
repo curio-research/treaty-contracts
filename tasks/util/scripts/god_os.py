@@ -6,8 +6,6 @@ import json
 
 import sys
 
-from pyparsing import Word 
-
 stdout_origin=sys.stdout 
 sys.stdout = open("earth_log.txt", "w")
 
@@ -215,12 +213,14 @@ def get_move_city_cooldown_in_hour(level: int) -> int:
     """
     return payback_period_curve_in_hour(game_instance.max_city_center_level)(level) * game_instance.city_center_migration_cooldown_ratio / 100
 
-def get_building_upgrade_cooldown_in_hour(level: int) -> int:
+def get_building_upgrade_cooldown_in_hour(level: int, building_type: Building) -> int:
     """
     Growth: fast exponential (same as upgrade)
     Note: only x% time compared to buildings's payback period
     """
-    return payback_period_curve_in_hour(game_instance.max_city_center_level * game_instance.city_center_level_to_building_level)(level) * game_instance.building_upgrade_cooldown_ratio / 100
+    if building_type == Building.CITY_CENTER:
+        return payback_period_curve_in_hour(game_instance.max_city_center_level)(level) * game_instance.building_upgrade_cooldown_ratio / 100
+    else: return payback_period_curve_in_hour(game_instance.max_city_center_level * game_instance.city_center_level_to_building_level)(level) * game_instance.building_upgrade_cooldown_ratio / 100
 
 def get_tile_upgrade_cooldown_in_second(level: int) -> int:
     return get_tile_troop_count(level) * game_instance.base_troop_training_in_seconds
@@ -546,7 +546,7 @@ class Game:
                 if curr_level < max_building_level:
                     game_parameters.append({ "subject": building_type, "componentName": "Cost", "object": "Gold", "level": curr_level, "functionName": "Upgrade", "value": int(gold_upgrade_cost * 1000)  })
                     game_parameters.append({ "subject": building_type, "componentName": "Cost", "object": "Food", "level": curr_level, "functionName": "Upgrade", "value": int(food_upgrade_cost * 1000)  })
-                    game_parameters.append({ "subject": building_type, "componentName": "Cooldown", "object": "", "level": curr_level, "functionName": "Upgrade", "value": int(get_building_upgrade_cooldown_in_hour(curr_level) * 3600)})
+                    game_parameters.append({ "subject": building_type, "componentName": "Cooldown", "object": "", "level": curr_level, "functionName": "Upgrade", "value": int(get_building_upgrade_cooldown_in_hour(curr_level, building_type) * 3600)})
                     if building_type == Building.CITY_CENTER:
                         game_parameters.append({ "subject": building_type, "componentName": "Cooldown", "object": "", "level": curr_level, "functionName": "Move", "value": int(get_move_city_cooldown_in_hour(curr_level) * 3600)})
                 if building_type == Building.CITY_CENTER:
