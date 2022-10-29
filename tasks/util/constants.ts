@@ -35,6 +35,7 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): a
     maxCityCountPerPlayer: 3,
     maxArmyCountPerPlayer: 2,
     maxPlayerCount: 20,
+    isBattleRoyale: true,
     // generated constants
     ...worldConstants,
   };

@@ -107,6 +107,11 @@ contract GameFacet is UseStorage {
         Position memory centerTilePosition = GameLib.getProperTilePosition(ECSLib.getPosition("Position", _settlerID));
         GameLib.passableTerrainCheck(centerTilePosition);
 
+        // TEMP: battle royale
+        if (gs().worldConstants.isBattleRoyale) {
+            require(!GameLib.coincident(centerTilePosition, GameLib.getMapCenterTilePosition()), "CURIO: City center can't be at supertile");
+        }
+
         // Verify that territory is connected and includes settler's current position FIXME
         require(GameLib.connected(_tiles), "CURIO: Territory disconnected");
         require(GameLib.includesPosition(centerTilePosition, _tiles), "CURIO: Tiles must cover settler position");
@@ -276,6 +281,11 @@ contract GameFacet is UseStorage {
         GameLib.activePlayerCheck(msg.sender);
         GameLib.inboundPositionCheck(_newTilePosition);
         GameLib.passableTerrainCheck(_newTilePosition);
+
+        // TEMP: battle royale
+        if (gs().worldConstants.isBattleRoyale) {
+            require(!GameLib.coincident(_newTilePosition, GameLib.getMapCenterTilePosition()), "CURIO: City center can't be at supertile");
+        }
 
         // Verify that city center belongs to player
         uint256 playerID = GameLib.getPlayer(msg.sender);
