@@ -180,7 +180,7 @@ def get_building_upgrade_cost(level: int, building_type: Building) -> np.array:
     # cost is easy to calculate for goldmine
     goldmine_goldcost = payback_period_curve_in_hour(Game.max_city_center_level * Game.city_center_level_to_building_level)(level) \
     * get_building_hourly_yield_by_level(level, Building.GOLDMINE)[0]
-    # calculate foodcost based on resource weight; NOTE: not scientific here, a leap of faith here
+    # calculate foodcost based on resource weight; NOTE: not scientific, a leap of faith here
     goldmine_foodcost = goldmine_goldcost/Game.resource_weight_heavy * Game.resource_weight_low
     # assumption is that player spend gold equivalently on two types of building
     farm_goldcost = goldmine_goldcost * Game.init_player_goldmine_count / Game.init_player_farm_count
@@ -202,9 +202,9 @@ def get_building_upgrade_cost(level: int, building_type: Building) -> np.array:
         corresponding_building_level = building_level_based_on_center_level(level + 1)
         expected_goldmine_hourly_yield = get_building_hourly_yield_by_level(corresponding_building_level, Building.GOLDMINE)[0]
         expected_farm_hourly_yield = get_building_hourly_yield_by_level(corresponding_building_level, Building.FARM)[1]
-        # todo: tax should also include unlocked upgrades
-        tax_gold = unlocked_goldmine_count * expected_goldmine_hourly_yield * payback_period_curve_in_hour(Game.max_city_center_level * Game.city_center_level_to_building_level)(level)
-        tax_food = unlocked_farm_count * expected_farm_hourly_yield * payback_period_curve_in_hour(Game.max_city_center_level * Game.city_center_level_to_building_level)(level)
+
+        tax_gold = unlocked_goldmine_count * expected_goldmine_hourly_yield * payback_period_curve_in_hour(Game.max_city_center_level * Game.city_center_level_to_building_level)(level + Game.city_center_level_to_building_level)
+        tax_food = unlocked_farm_count * expected_farm_hourly_yield * payback_period_curve_in_hour(Game.max_city_center_level * Game.city_center_level_to_building_level)(level + Game.city_center_level_to_building_level)
 
         return np.array([goldmine_goldcost + farm_goldcost + tax_gold, goldmine_foodcost + farm_foodcost + tax_food])
 
@@ -258,7 +258,7 @@ def logarithmic_curve(max_level: int) -> LambdaType:
     Growth: logrithmic
     Mainly used for resource yield growth
     """
-    return lambda level: math.log((level / max_level * 9)/2 + 1) + 1
+    return lambda level: 7*math.log(((level / max_level * 9) + 1)/3) + 12
 
 def tile_loyalty_points(decay_dist: float):
     """
@@ -527,11 +527,12 @@ class Game:
                 (gold_upgrade_cost, food_upgrade_cost) = get_building_upgrade_cost(curr_level, building_type)
                 (gold_hourly_yield, food_hourly_yield) = get_building_hourly_yield_by_level(curr_level, building_type)
                 (gold_cap, food_cap) = get_building_resource_cap(curr_level, building_type)
-
-                game_parameters.append({ "subject": building_type, "componentName": "Yield", "object": "Gold", "level": curr_level, "functionName": "", "value": int(gold_hourly_yield * 1000 / 3600)  })
-                game_parameters.append({ "subject": building_type, "componentName": "Yield", "object": "Food", "level": curr_level, "functionName": "", "value": int(food_hourly_yield * 1000 / 3600)  })
-                game_parameters.append({ "subject": building_type, "componentName": "Load", "object": "Gold", "level": curr_level, "functionName": "", "value": int(gold_cap * 1000) })
-                game_parameters.append({ "subject": building_type, "componentName": "Load", "object": "Food", "level": curr_level, "functionName": "", "value": int(food_cap * 1000) })
+                if curr_level != 0:
+                    # if resources are upgraded; city center is initialized to be lv1
+                    game_parameters.append({ "subject": building_type, "componentName": "Yield", "object": "Gold", "level": curr_level, "functionName": "", "value": int(gold_hourly_yield * 1000 / 3600)  })
+                    game_parameters.append({ "subject": building_type, "componentName": "Yield", "object": "Food", "level": curr_level, "functionName": "", "value": int(food_hourly_yield * 1000 / 3600)  })
+                    game_parameters.append({ "subject": building_type, "componentName": "Load", "object": "Gold", "level": curr_level, "functionName": "", "value": int(gold_cap * 1000) })
+                    game_parameters.append({ "subject": building_type, "componentName": "Load", "object": "Food", "level": curr_level, "functionName": "", "value": int(food_cap * 1000) })
                 if curr_level < max_building_level:
                     game_parameters.append({ "subject": building_type, "componentName": "Cost", "object": "Gold", "level": curr_level, "functionName": "Upgrade", "value": int(gold_upgrade_cost * 1000)  })
                     game_parameters.append({ "subject": building_type, "componentName": "Cost", "object": "Food", "level": curr_level, "functionName": "Upgrade", "value": int(food_upgrade_cost * 1000)  })
