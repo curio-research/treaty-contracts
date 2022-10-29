@@ -1555,9 +1555,9 @@ const _abi = [
             type: "uint256",
           },
           {
-            internalType: "bool",
-            name: "isBattleRoyale",
-            type: "bool",
+            internalType: "enum GameMode",
+            name: "gameMode",
+            type: "uint8",
           },
           {
             internalType: "uint256",

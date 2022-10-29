@@ -63,7 +63,7 @@ contract DiamondDeployTest is Test {
     uint256 public goldTemplateID;
     uint256 public foodTemplateID;
 
-    // we assume these two facet selectors do not change. If they do however, we should use getSelectors
+    // we assume these two facet selectors do not change. If they do however, we should use _getSelectors
     bytes4[] OWNERSHIP_SELECTORS = [bytes4(0xf2fde38b), 0x8da5cb5b];
     bytes4[] LOUPE_SELECTORS = [bytes4(0xcdffacc6), 0x52ef6b2c, 0xadfca15e, 0x7a0ed627, 0x01ffc9a7];
 
@@ -84,14 +84,14 @@ contract DiamondDeployTest is Test {
         nato = new NATO();
 
         // Fetch args from CLI craft payload for init deploy
-        bytes memory initData = abi.encodeWithSelector(getSelectors("DiamondInit")[0], worldConstants);
+        bytes memory initData = abi.encodeWithSelector(_getSelectors("DiamondInit")[0], worldConstants);
 
         IDiamondCut.FacetCut[] memory cuts = new IDiamondCut.FacetCut[](5);
         cuts[0] = IDiamondCut.FacetCut({facetAddress: address(diamondLoupeFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: LOUPE_SELECTORS});
         cuts[1] = IDiamondCut.FacetCut({facetAddress: address(diamondOwnershipFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: OWNERSHIP_SELECTORS});
-        cuts[2] = IDiamondCut.FacetCut({facetAddress: address(gameFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: getSelectors("GameFacet")});
-        cuts[3] = IDiamondCut.FacetCut({facetAddress: address(getterFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: getSelectors("GetterFacet")});
-        cuts[4] = IDiamondCut.FacetCut({facetAddress: address(adminFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: getSelectors("AdminFacet")});
+        cuts[2] = IDiamondCut.FacetCut({facetAddress: address(gameFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: _getSelectors("GameFacet")});
+        cuts[3] = IDiamondCut.FacetCut({facetAddress: address(getterFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: _getSelectors("GetterFacet")});
+        cuts[4] = IDiamondCut.FacetCut({facetAddress: address(adminFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: _getSelectors("AdminFacet")});
 
         IDiamondCut(diamond).diamondCut(cuts, address(diamondInit), initData);
 
@@ -140,7 +140,7 @@ contract DiamondDeployTest is Test {
         uint256[][] memory _tileMap,
         uint256 _numInitTerrainTypes,
         uint256 _batchSize
-    ) internal pure returns (uint256[][] memory) {
+    ) private pure returns (uint256[][] memory) {
         uint256[][] memory _result = new uint256[][](_tileMap.length);
         uint256 _numBatchPerCol = _tileMap[0].length / _batchSize;
         uint256 _lastBatchSize = _tileMap[0].length % _batchSize;
@@ -260,154 +260,8 @@ contract DiamondDeployTest is Test {
         vm.stopPrank();
     }
 
-    // function _registerConstants() private {
-    //     vm.startPrank(deployer);
-
-    //     // `initializePlayer`
-    //     admin.addConstant("initializePlayer", "Amount", "Gold", NULL, 0);
-    //     admin.addConstant("initializePlayer", "Amount", "Food", NULL, 0);
-    //     admin.addConstant("initializePlayer", "Load", "Gold", NULL, 10000000);
-    //     admin.addConstant("initializePlayer", "Load", "Food", NULL, 10000000);
-
-    //     // `initializeTile`
-    //     admin.addConstant("initializeTile", "Amount", "Guard", 0, 200);
-    //     admin.addConstant("initializeTile", "Amount", "Guard", 1, 1000); // level 1 barbarian
-    //     admin.addConstant("initializeTile", "Amount", "Guard", 2, 2000); // level 2 barbarian
-    //     admin.addConstant("initializeTile", "Load", "Gold", 0, 1000);
-    //     admin.addConstant("initializeTile", "Load", "Food", 0, 1000);
-
-    //     // `foundCity`
-    //     admin.addConstant("foundCity", "Amount", "Guard", 0, 1500);
-
-    //     // `packCity`
-    //     admin.addConstant("packCity", "Cost", "Gold", 0, 1000000000000000);
-    //     admin.addConstant("packCity", "Health", "Settler", 0, 1000000000000000);
-
-    //     // `upgradeTile`
-    //     admin.addConstant("upgradeTile", "Cost", "Gold", 0, 10 * 200);
-    //     admin.addConstant("upgradeTile", "Cost", "Food", 0, 50 * 200);
-    //     for (uint256 i = 1; i <= 9; i++) {
-    //         admin.addConstant("upgradeTile", "Amount", "Guard", i, (3**i) * 200);
-    //     }
-
-    //     // `upgradeCityInventory`
-    //     admin.addConstant("upgradeCityInventory", "Cost", "Gold", 0, 3000);
-    //     for (uint256 i = 1; i <= 9; i++) {
-    //         // todo: fix the naming here
-    //         admin.addConstant("upgradeCityInventory", "Load", "Gold", i, 1000000 * i);
-    //         admin.addConstant("upgradeCityInventory", "Load", "Food", i, 1000000 * i);
-    //         admin.addConstant("upgradeCityInventory", "Load", "Horseman", i, 20000 * i);
-    //         admin.addConstant("upgradeCityInventory", "Load", "Warrior", i, 20000 * i);
-    //         admin.addConstant("upgradeCityInventory", "Load", "Slinger", i, 20000 * i);
-    //         admin.addConstant("upgradeCityInventory", "Load", "Cavalry", i, 20000 * i);
-    //         admin.addConstant("upgradeCityInventory", "Load", "Archer", i, 20000 * i);
-    //         admin.addConstant("upgradeCityInventory", "Load", "Infantry", i, 20000 * i);
-    //     }
-
-    //     // `upgradeResource`
-    //     for (uint256 i = 0; i <= 9; i++) {
-    //         admin.addConstant("upgradeGoldmine", "Cost", "Gold", i, 50000);
-    //         admin.addConstant("upgradeGoldmine", "Cost", "Food", i, 16000);
-    //         admin.addConstant("upgradeFarm", "Cost", "Gold", i, 50000);
-    //         admin.addConstant("upgradeFarm", "Cost", "Food", i, 16000);
-    //     }
-    //     admin.addConstant("upgradeGoldmine", "Load", "Gold", 1, 5500);
-    //     admin.addConstant("upgradeGoldmine", "Load", "Gold", 2, 6000);
-    //     admin.addConstant("upgradeGoldmine", "Load", "Gold", 3, 6500);
-    //     admin.addConstant("upgradeGoldmine", "Load", "Gold", 4, 7000);
-    //     admin.addConstant("upgradeGoldmine", "Load", "Gold", 5, 7500);
-    //     admin.addConstant("upgradeGoldmine", "Load", "Gold", 6, 8000);
-    //     admin.addConstant("upgradeGoldmine", "Load", "Gold", 7, 8500);
-    //     admin.addConstant("upgradeGoldmine", "Load", "Gold", 8, 9000);
-    //     admin.addConstant("upgradeGoldmine", "Load", "Gold", 9, 9500);
-    //     admin.addConstant("upgradeGoldmine", "Load", "Food", 1, 100000);
-    //     admin.addConstant("upgradeGoldmine", "Load", "Food", 2, 110000);
-    //     admin.addConstant("upgradeGoldmine", "Load", "Food", 3, 120000);
-    //     admin.addConstant("upgradeGoldmine", "Load", "Food", 4, 130000);
-    //     admin.addConstant("upgradeGoldmine", "Load", "Food", 5, 140000);
-    //     admin.addConstant("upgradeGoldmine", "Load", "Food", 6, 150000);
-    //     admin.addConstant("upgradeGoldmine", "Load", "Food", 7, 160000);
-    //     admin.addConstant("upgradeGoldmine", "Load", "Food", 8, 170000);
-    //     admin.addConstant("upgradeGoldmine", "Load", "Food", 9, 180000);
-    //     admin.addConstant("upgradeFarm", "Load", "Gold", 1, 5500);
-    //     admin.addConstant("upgradeFarm", "Load", "Gold", 2, 6000);
-    //     admin.addConstant("upgradeFarm", "Load", "Gold", 3, 6500);
-    //     admin.addConstant("upgradeFarm", "Load", "Gold", 4, 7000);
-    //     admin.addConstant("upgradeFarm", "Load", "Gold", 5, 7500);
-    //     admin.addConstant("upgradeFarm", "Load", "Gold", 6, 8000);
-    //     admin.addConstant("upgradeFarm", "Load", "Gold", 7, 8500);
-    //     admin.addConstant("upgradeFarm", "Load", "Gold", 8, 9000);
-    //     admin.addConstant("upgradeFarm", "Load", "Gold", 9, 9500);
-    //     admin.addConstant("upgradeFarm", "Load", "Food", 1, 100000);
-    //     admin.addConstant("upgradeFarm", "Load", "Food", 2, 110000);
-    //     admin.addConstant("upgradeFarm", "Load", "Food", 3, 120000);
-    //     admin.addConstant("upgradeFarm", "Load", "Food", 4, 130000);
-    //     admin.addConstant("upgradeFarm", "Load", "Food", 5, 140000);
-    //     admin.addConstant("upgradeFarm", "Load", "Food", 6, 150000);
-    //     admin.addConstant("upgradeFarm", "Load", "Food", 7, 160000);
-    //     admin.addConstant("upgradeFarm", "Load", "Food", 8, 170000);
-    //     admin.addConstant("upgradeFarm", "Load", "Food", 9, 180000);
-
-    //     // `upgradeCity`
-    //     admin.addConstant("upgradeCity", "Cost", "Gold", 0, 100000);
-    //     for (uint256 i = 1; i <= 3; i++) {
-    //         admin.addConstant("upgradeCity", "Amount", "Guard", i, 1500 * i);
-    //     }
-
-    //     // `startTroopProduction`
-    //     admin.addConstant("startTroopProduction", "Cost", "Gold", 0, 10);
-    //     admin.addConstant("startTroopProduction", "Cost", "Food", 0, 50);
-
-    //     // `harvestResource`
-    //     admin.addConstant("harvestResource", "Amount", "Gold", 1, 160);
-    //     admin.addConstant("harvestResource", "Amount", "Gold", 2, 200);
-    //     admin.addConstant("harvestResource", "Amount", "Gold", 3, 240);
-    //     admin.addConstant("harvestResource", "Amount", "Gold", 4, 260);
-    //     admin.addConstant("harvestResource", "Amount", "Gold", 5, 280);
-    //     admin.addConstant("harvestResource", "Amount", "Gold", 6, 300);
-    //     admin.addConstant("harvestResource", "Amount", "Gold", 7, 320);
-    //     admin.addConstant("harvestResource", "Amount", "Gold", 8, 340);
-    //     admin.addConstant("harvestResource", "Amount", "Gold", 9, 360);
-    //     admin.addConstant("harvestResource", "Amount", "Food", 1, 200);
-    //     admin.addConstant("harvestResource", "Amount", "Food", 2, 220);
-    //     admin.addConstant("harvestResource", "Amount", "Food", 3, 240);
-    //     admin.addConstant("harvestResource", "Amount", "Food", 4, 250);
-    //     admin.addConstant("harvestResource", "Amount", "Food", 5, 260);
-    //     admin.addConstant("harvestResource", "Amount", "Food", 6, 270);
-    //     admin.addConstant("harvestResource", "Amount", "Food", 7, 280);
-    //     admin.addConstant("harvestResource", "Amount", "Food", 8, 290);
-    //     admin.addConstant("harvestResource", "Amount", "Food", 9, 300);
-
-    //     admin.addConstant("harvestResource", "Rate", "Food", 0, 300);
-    //     admin.addConstant("harvestResource", "Rate", "Food", 1, 300);
-    //     admin.addConstant("harvestResource", "Rate", "Gold", 0, 300);
-    //     admin.addConstant("harvestResource", "Rate", "Gold", 1, 300);
-
-    //     // `harvestResourceFromCity`
-    //     admin.addConstant("harvestResourcesFromCity", "Amount", "Gold", 0, 180);
-    //     admin.addConstant("harvestResourcesFromCity", "Amount", "Food", 0, 180);
-    //     for (uint256 i = 1; i <= 5; i++) {
-    //         admin.addConstant("harvestResourcesFromCity", "Load", "Gold", i, 100000000);
-    //         admin.addConstant("harvestResourcesFromCity", "Load", "Food", i, 100000000);
-    //         admin.addConstant("harvestResourcesFromCity", "Load", "Horseman", i, 200000 * i);
-    //         admin.addConstant("harvestResourcesFromCity", "Load", "Warrior", i, 200000 * i);
-    //         admin.addConstant("harvestResourcesFromCity", "Load", "Slinger", i, 200000 * i);
-    //         admin.addConstant("harvestResourcesFromCity", "Load", "Cavalry", i, 200000 * i);
-    //         admin.addConstant("harvestResourcesFromCity", "Load", "Archer", i, 200000 * i);
-    //         admin.addConstant("harvestResourcesFromCity", "Load", "Infantry", i, 200000 * i);
-    //     }
-
-    //     // `distributeBarbarianReward`
-    //     admin.addConstant("distributeBarbarianReward", "Amount", "Gold", 1, 180000);
-    //     admin.addConstant("distributeBarbarianReward", "Amount", "Gold", 2, 480000);
-    //     admin.addConstant("distributeBarbarianReward", "Amount", "Food", 1, 60000);
-    //     admin.addConstant("distributeBarbarianReward", "Amount", "Food", 2, 150000);
-
-    //     vm.stopPrank();
-    // }
-
     // Note: hardcoded
-    function _generateWorldConstants() internal view returns (WorldConstants memory) {
+    function _generateWorldConstants() private view returns (WorldConstants memory) {
         return
             WorldConstants({
                 admin: deployer,
@@ -427,7 +281,7 @@ contract DiamondDeployTest is Test {
     }
 
     // Note: hardcoded
-    function _generateMap(uint256 _width, uint256 _height) public pure returns (uint256[][] memory) {
+    function _generateMap(uint256 _width, uint256 _height) private pure returns (uint256[][] memory) {
         uint256[] memory _plainCol = new uint256[](_height);
 
         // set individual columns
@@ -445,7 +299,7 @@ contract DiamondDeployTest is Test {
     }
 
     // // generates values that need to be initialized from the cli and pipes it back into solidity! magic
-    // function getInitVal() public returns (WorldConstants memory _constants) {
+    // function getInitVal() private returns (WorldConstants memory _constants) {
     //     string[] memory runJsInputs = new string[](4);
     //     runJsInputs[0] = "yarn";
     //     runJsInputs[1] = "--silent";
@@ -457,7 +311,7 @@ contract DiamondDeployTest is Test {
     //     _constants = abi.decode(res, (WorldConstants));
     // }
 
-    function getSelectors(string memory _facetName) internal returns (bytes4[] memory selectors) {
+    function _getSelectors(string memory _facetName) private returns (bytes4[] memory selectors) {
         string[] memory cmd = new string[](5);
         cmd[0] = "yarn";
         cmd[1] = "--silent";
