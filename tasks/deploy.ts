@@ -18,7 +18,7 @@ import * as rw from 'random-words';
  * Examples:
  * `yarn deploy:anvil`: starts Anvil instance + deploys a single game
  * `npx hardhat deploy`: deploys game on localhost
- * `npx hardhat deploy --network constellationNew`: deploy game on constellationNew network
+ * `npx hardhat deploy --network constellation`: deploy game on constellation network
  */
 
 task('deploy', 'deploy contracts')

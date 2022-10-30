@@ -42,12 +42,12 @@ export default {
       accounts: [LOCALHOST_USER1_PK, LOCALHOST_USER2_PK],
       chainId: 31337,
     },
-    constellation: {
+    constellationOld: {
       url: CONSTELLATION_RPC_URL,
       accounts: [USER1_PK, USER2_PK],
       chainId: 2901,
     },
-    constellationNew: {
+    constellation: {
       url: CONSTELLATIONNEW_RPC_URL,
       accounts: [LOCALHOST_USER1_PK, LOCALHOST_USER2_PK],
       chainId: 2938,
