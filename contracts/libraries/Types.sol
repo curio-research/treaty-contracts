@@ -40,14 +40,6 @@ struct ComponentSpec {
     ValueType valueType;
 }
 
-struct ConstantSpec {
-    string functionName;
-    string componentName;
-    string entityName;
-    uint256 level;
-    uint256 value;
-}
-
 struct Position {
     uint256 x;
     uint256 y;

@@ -3,7 +3,7 @@ pragma solidity ^0.8.4;
 
 import "contracts/libraries/Storage.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
-import {ComponentSpec, ConstantSpec, Position, Tile, ValueType, WorldConstants} from "contracts/libraries/Types.sol";
+import {ComponentSpec, Position, Tile, ValueType, WorldConstants} from "contracts/libraries/Types.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 import "contracts/libraries/Templates.sol";
 import {Set} from "contracts/Set.sol";

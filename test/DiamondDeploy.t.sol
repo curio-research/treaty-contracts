@@ -68,6 +68,9 @@ contract DiamondDeployTest is Test {
     bytes4[] LOUPE_SELECTORS = [bytes4(0xcdffacc6), 0x52ef6b2c, 0xadfca15e, 0x7a0ed627, 0x01ffc9a7];
 
     function setUp() public {
+        // TEMP: first thing first, fetch constants
+        _fetchConstants();
+
         vm.startPrank(deployer);
 
         diamondCutFacet = new DiamondCutFacet();
@@ -103,14 +106,6 @@ contract DiamondDeployTest is Test {
         console.log("hello");
 
         // Register components
-        string memory root = vm.projectRoot();
-        string memory path = string(abi.encodePacked(root, "/test/components/IsComponent.json"));
-        console.log("path set");
-        string memory json = vm.readFile(path);
-        console.log("hey!");
-        ComponentSpec memory componentSpec = abi.decode(bytes(json), (ComponentSpec));
-        console.log("YO!", componentSpec.name);
-
         admin.registerDefaultComponents(diamond);
 
         // Initialize map
@@ -172,6 +167,29 @@ contract DiamondDeployTest is Test {
         }
 
         return _result;
+    }
+
+    // TEMP
+    struct ConstantSpec {
+        string subject;
+        string componentName;
+        string object;
+        uint256 level;
+        string functionName;
+        uint256 value;
+    }
+
+    // WIP
+    function _fetchConstants() private {
+        string memory root = vm.projectRoot();
+        string memory path = string(abi.encodePacked(root, "/tasks/game_parameters.json"));
+        console.log("path set");
+        string memory json = vm.readFile(path);
+        console.log("hey!");
+        ConstantSpec[] memory constantSpec = abi.decode(bytes(json), (ConstantSpec[]));
+        console.log("YO!", constantSpec[0].subject);
+
+        return;
     }
 
     function _createTemplates() private {
