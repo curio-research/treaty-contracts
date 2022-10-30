@@ -16,6 +16,7 @@ import "contracts/libraries/Types.sol";
 import "contracts/NATO.sol";
 import "forge-std/console.sol";
 import "forge-std/StdJson.sol";
+import "openzeppelin-contracts/contracts/utils/Strings.sol";
 
 /// @title diamond deploy foundry template
 /// @notice This contract sets up the diamond for testing and is inherited by other foundry test contracts.
@@ -68,9 +69,6 @@ contract DiamondDeployTest is Test {
     bytes4[] LOUPE_SELECTORS = [bytes4(0xcdffacc6), 0x52ef6b2c, 0xadfca15e, 0x7a0ed627, 0x01ffc9a7];
 
     function setUp() public {
-        // TEMP: first thing first, fetch constants
-        _fetchConstants();
-
         vm.startPrank(deployer);
 
         diamondCutFacet = new DiamondCutFacet();
@@ -103,21 +101,24 @@ contract DiamondDeployTest is Test {
         admin = AdminFacet(diamond);
         ownership = OwnershipFacet(diamond);
 
-        console.log("hello");
-
         // Register components
         admin.registerDefaultComponents(diamond);
+        console.log("Components registered");
+
+        // Register constants
+        _registerConstants();
+        console.log("Constants Added");
 
         // Initialize map
         uint256[][] memory _map = _generateMap(worldConstants.worldWidth, worldConstants.worldHeight);
         uint256[][] memory _encodedColumnBatches = _encodeTileMap(_map, worldConstants.numInitTerrainTypes, worldConstants.initBatchSize);
         admin.storeEncodedColumnBatches(_encodedColumnBatches);
+        console.log("Map initialized and encoded");
 
         vm.stopPrank();
 
         // Create templates & constants
         _createTemplates();
-        // _registerConstants();
 
         // Initialize players
         vm.prank(player1);
@@ -179,36 +180,18 @@ contract DiamondDeployTest is Test {
         uint256 value;
     }
 
-    struct Bruh {
-        ConstantSpec[342] moment;
-    }
-
     // WIP
-    function _fetchConstants() private {
-        // string memory root = vm.projectRoot();
-        // string memory path = string(abi.encodePacked(root, "/tasks/game_parameters.json"));
-        // console.log("path set");
-        // string memory json = vm.readFile(path);
-        // console.log("hey!");
-        // ConstantSpec[] memory constantSpec = abi.decode(bytes(json), (ConstantSpec[]));
-        // console.log("YO!", constantSpec[0].subject);
+    function _registerConstants() private {
+        uint256 constantCount = 342; // FIXME: automate
 
         string memory root = vm.projectRoot();
-        string memory path = string(abi.encodePacked(root, "/tasks/bruh_moment.json"));
-        console.log("path set");
-        string memory fileContent = vm.readFile(path);
-        console.log("hey!");
-        bytes memory rawJson = vm.parseJson(fileContent);
-        console.log("man");
-        Bruh memory bruh = abi.decode(rawJson, (Bruh));
-        console.log("YO!", bruh.moment[0].subject);
-        console.log("YO!", bruh.moment[0].componentName);
-        console.log("YO!", bruh.moment[0].object);
-        console.log("YO!", bruh.moment[0].level);
-        console.log("YO!", bruh.moment[0].functionName);
-        console.log("YO!", bruh.moment[0].value);
-
-        return;
+        for (uint256 i = 0; i < constantCount; i++) {
+            string memory path = string(abi.encodePacked(root, "/test/data/game_parameter_", Strings.toString(i), ".json"));
+            bytes memory rawJson = vm.parseJson(vm.readFile(path));
+            ConstantSpec memory spec = abi.decode(rawJson, (ConstantSpec));
+            string memory identifier = string(abi.encodePacked(spec.subject, "-", spec.object, "-", spec.componentName, "-", spec.functionName, "-", Strings.toString(spec.level)));
+            admin.addConstant(identifier, spec.value);
+        }
     }
 
     function _createTemplates() private {

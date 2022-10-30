@@ -1,5 +1,5 @@
-import { DiamondInit } from './../../typechain-types/upgradeInitializers/DiamondInit';
-import { DiamondCutFacet } from './../../typechain-types/facets/DiamondCutFacet';
+import { DiamondInit } from './../../typechain-types/contracts/upgradeInitializers/DiamondInit';
+import { DiamondCutFacet } from './../../typechain-types/contracts/facets/DiamondCutFacet';
 import { Curio } from './../../typechain-types/hardhat-diamond-abi/Curio';
 import { Signer } from 'ethers';
 import { confirm, deployProxy } from './deployHelper';

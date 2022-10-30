@@ -617,10 +617,21 @@ class Game:
                                    "functionName": "", "level": curr_level, "value": self.init_player_tile_count + (curr_level - 1) * int(get_city_center_tiles_interval())})
             curr_level += 1
 
-        # Order object keys in game and world parameters for loading into Foundry
+        # For Foundry:
+        # - Order object keys in game and world parameters for loading into Foundry
+        # - Export into individual JSON files
+        def trunc(d: dict):
+            d["level"] = int(d["level"])
+            d["value"] = int(d["value"])
+            return d
+
         def order(d: dict): return OrderedDict(sorted(d.items()))
-        game_parameters = list(map(order, game_parameters))
+
+        game_parameters = list(map(trunc, list(map(order, game_parameters))))
         world_parameters = order(world_parameters)
+        for i in range(len(game_parameters)):
+            with open("test/data/game_parameter_%d.json" % i, "w+") as outfile:
+                outfile.write(json.dumps(game_parameters[i], indent=4))
 
         # Dump JSON
         with open("tasks/game_parameters.json", "w+") as outfile:
@@ -628,12 +639,6 @@ class Game:
         with open("tasks/world_parameters.json", "w+") as outfile:
             outfile.write(json.dumps(world_parameters, indent=4))
         print('GodOS: generated and exported parameters')
-
-        # FIXME: remove
-        bruh = {}
-        bruh["moment"] = game_parameters
-        with open("tasks/bruh_moment.json", "w+") as outfile:
-            outfile.write(json.dumps(bruh, indent=4))
 
 
 a = Game()

@@ -1,0 +1,8 @@
+{
+    "componentName": "Cost",
+    "functionName": "Upgrade",
+    "level": 5,
+    "object": "Food",
+    "subject": "Tile",
+    "value": 89777
+}

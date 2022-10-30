@@ -1973,7 +1973,7 @@
         "level": 1,
         "object": "Guard",
         "subject": "Barbarian",
-        "value": 11.209847772432868
+        "value": 11
     },
     {
         "componentName": "Reward",
@@ -1997,7 +1997,7 @@
         "level": 2,
         "object": "Guard",
         "subject": "Barbarian",
-        "value": 16.97785734312818
+        "value": 16
     },
     {
         "componentName": "Reward",
@@ -2021,7 +2021,7 @@
         "level": 3,
         "object": "Guard",
         "subject": "Barbarian",
-        "value": 23.2620749277349
+        "value": 23
     },
     {
         "componentName": "Reward",
@@ -2045,7 +2045,7 @@
         "level": 4,
         "object": "Guard",
         "subject": "Barbarian",
-        "value": 30.108698562223754
+        "value": 30
     },
     {
         "componentName": "Reward",
@@ -2069,7 +2069,7 @@
         "level": 5,
         "object": "Guard",
         "subject": "Barbarian",
-        "value": 37.56806077577368
+        "value": 37
     },
     {
         "componentName": "Reward",
@@ -2093,7 +2093,7 @@
         "level": 6,
         "object": "Guard",
         "subject": "Barbarian",
-        "value": 45.69499860723964
+        "value": 45
     },
     {
         "componentName": "Reward",
@@ -2117,7 +2117,7 @@
         "level": 7,
         "object": "Guard",
         "subject": "Barbarian",
-        "value": 54.549256736244025
+        "value": 54
     },
     {
         "componentName": "Reward",
@@ -2141,7 +2141,7 @@
         "level": 8,
         "object": "Guard",
         "subject": "Barbarian",
-        "value": 64.19592669248495
+        "value": 64
     },
     {
         "componentName": "Reward",
@@ -2165,7 +2165,7 @@
         "level": 9,
         "object": "Guard",
         "subject": "Barbarian",
-        "value": 74.70592537208124
+        "value": 74
     },
     {
         "componentName": "Reward",
@@ -2189,7 +2189,7 @@
         "level": 10,
         "object": "Guard",
         "subject": "Barbarian",
-        "value": 86.1565163787378
+        "value": 86
     },
     {
         "componentName": "Reward",
@@ -2213,7 +2213,7 @@
         "level": 11,
         "object": "Guard",
         "subject": "Barbarian",
-        "value": 98.63187802233794
+        "value": 98
     },
     {
         "componentName": "Reward",
@@ -2237,7 +2237,7 @@
         "level": 12,
         "object": "Guard",
         "subject": "Barbarian",
-        "value": 112.22372215056983
+        "value": 112
     },
     {
         "componentName": "Reward",
@@ -2261,7 +2261,7 @@
         "level": 13,
         "object": "Guard",
         "subject": "Barbarian",
-        "value": 127.03196836288883
+        "value": 127
     },
     {
         "componentName": "Reward",
@@ -2285,7 +2285,7 @@
         "level": 14,
         "object": "Guard",
         "subject": "Barbarian",
-        "value": 143.1654785632582
+        "value": 143
     },
     {
         "componentName": "Reward",
@@ -2309,7 +2309,7 @@
         "level": 15,
         "object": "Guard",
         "subject": "Barbarian",
-        "value": 160.74285725168707
+        "value": 160
     },
     {
         "componentName": "Amount",
@@ -2317,7 +2317,7 @@
         "level": 1,
         "object": "Guard",
         "subject": "Tile",
-        "value": 20.177725990379162
+        "value": 20
     },
     {
         "componentName": "Cost",
@@ -2341,7 +2341,7 @@
         "level": 2,
         "object": "Guard",
         "subject": "Tile",
-        "value": 30.56014321763072
+        "value": 30
     },
     {
         "componentName": "Cost",
@@ -2365,7 +2365,7 @@
         "level": 3,
         "object": "Guard",
         "subject": "Tile",
-        "value": 41.871734869922825
+        "value": 41
     },
     {
         "componentName": "Cost",
@@ -2389,7 +2389,7 @@
         "level": 4,
         "object": "Guard",
         "subject": "Tile",
-        "value": 54.19565741200276
+        "value": 54
     },
     {
         "componentName": "Cost",
@@ -2413,7 +2413,7 @@
         "level": 5,
         "object": "Guard",
         "subject": "Tile",
-        "value": 67.62250939639263
+        "value": 67
     },
     {
         "componentName": "Cost",
@@ -2437,7 +2437,7 @@
         "level": 6,
         "object": "Guard",
         "subject": "Tile",
-        "value": 82.25099749303135
+        "value": 82
     },
     {
         "componentName": "Cost",
@@ -2461,7 +2461,7 @@
         "level": 7,
         "object": "Guard",
         "subject": "Tile",
-        "value": 98.18866212523925
+        "value": 98
     },
     {
         "componentName": "Cost",
@@ -2485,7 +2485,7 @@
         "level": 8,
         "object": "Guard",
         "subject": "Tile",
-        "value": 115.5526680464729
+        "value": 115
     },
     {
         "componentName": "Cost",
@@ -2509,7 +2509,7 @@
         "level": 9,
         "object": "Guard",
         "subject": "Tile",
-        "value": 134.47066566974624
+        "value": 134
     },
     {
         "componentName": "Cost",
@@ -2533,7 +2533,7 @@
         "level": 10,
         "object": "Guard",
         "subject": "Tile",
-        "value": 155.08172948172805
+        "value": 155
     },
     {
         "componentName": "Cost",
@@ -2557,7 +2557,7 @@
         "level": 11,
         "object": "Guard",
         "subject": "Tile",
-        "value": 177.5373804402083
+        "value": 177
     },
     {
         "componentName": "Cost",
@@ -2581,7 +2581,7 @@
         "level": 12,
         "object": "Guard",
         "subject": "Tile",
-        "value": 202.0026998710257
+        "value": 202
     },
     {
         "componentName": "Cost",
@@ -2605,7 +2605,7 @@
         "level": 13,
         "object": "Guard",
         "subject": "Tile",
-        "value": 228.6575430531999
+        "value": 228
     },
     {
         "componentName": "Cost",
@@ -2629,7 +2629,7 @@
         "level": 14,
         "object": "Guard",
         "subject": "Tile",
-        "value": 257.69786141386476
+        "value": 257
     },
     {
         "componentName": "Cost",
@@ -2653,7 +2653,7 @@
         "level": 15,
         "object": "Guard",
         "subject": "Tile",
-        "value": 289.33714305303675
+        "value": 289
     },
     {
         "componentName": "Amount",
@@ -2661,7 +2661,7 @@
         "level": 1,
         "object": "Troop",
         "subject": "Army",
-        "value": 58.15518731933726
+        "value": 58
     },
     {
         "componentName": "Amount",
@@ -2677,7 +2677,7 @@
         "level": 2,
         "object": "Troop",
         "subject": "Army",
-        "value": 114.2374965180991
+        "value": 114
     },
     {
         "componentName": "Amount",
@@ -2693,7 +2693,7 @@
         "level": 3,
         "object": "Troop",
         "subject": "Army",
-        "value": 186.7648134302031
+        "value": 186
     },
     {
         "componentName": "Amount",
@@ -2709,7 +2709,7 @@
         "level": 4,
         "object": "Troop",
         "subject": "Army",
-        "value": 280.55930537642456
+        "value": 280
     },
     {
         "componentName": "Amount",
@@ -2725,7 +2725,7 @@
         "level": 5,
         "object": "Troop",
         "subject": "Army",
-        "value": 401.85714312921766
+        "value": 401
     },
     {
         "componentName": "Amount",
