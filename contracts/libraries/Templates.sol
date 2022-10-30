@@ -229,7 +229,6 @@ library Templates {
         uint256 _battleCooldown,
         uint256 _attack,
         uint256 _defense,
-        uint256 _duration,
         uint256 _load
     ) public returns (uint256) {
         uint256 templateID = ECSLib.addEntity();
@@ -242,8 +241,16 @@ library Templates {
         ECSLib.setUint("BattleCooldown", templateID, _battleCooldown);
         ECSLib.setUint("Attack", templateID, _attack);
         ECSLib.setUint("Defense", templateID, _defense);
-        ECSLib.setUint("Duration", templateID, _duration);
         ECSLib.setUint("Load", templateID, _load);
+
+        return templateID;
+    }
+
+    function addResourceTemplate(string memory _inventoryType) public returns (uint256) {
+        uint256 templateID = ECSLib.addEntity();
+
+        ECSLib.setString("Tag", templateID, "ResourceTemplate");
+        ECSLib.setString("InventoryType", templateID, _inventoryType);
 
         return templateID;
     }

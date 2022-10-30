@@ -83,7 +83,6 @@ export const createTemplates = async (diamond: Curio, hre: HardhatRuntimeEnviron
   entity = await addGetEntity(diamond);
   await confirm(await diamond.setComponentValue(Tag, entity, encodeString(Tags.ResourceTemplate)), hre);
   await confirm(await diamond.setComponentValue(InventoryType, entity, encodeString(inventoryType)), hre);
-  await confirm(await diamond.setComponentValue(Duration, entity, encodeUint256(1)), hre);
   templateNames.push(inventoryType);
   templateIDs.push(entity);
 
@@ -92,7 +91,6 @@ export const createTemplates = async (diamond: Curio, hre: HardhatRuntimeEnviron
   entity = await addGetEntity(diamond);
   await confirm(await diamond.setComponentValue(Tag, entity, encodeString(Tags.ResourceTemplate)), hre);
   await confirm(await diamond.setComponentValue(InventoryType, entity, encodeString(inventoryType)), hre);
-  await confirm(await diamond.setComponentValue(Duration, entity, encodeUint256(1)), hre);
   templateNames.push(inventoryType);
   templateIDs.push(entity);
 

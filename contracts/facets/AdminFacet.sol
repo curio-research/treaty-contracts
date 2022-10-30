@@ -105,10 +105,13 @@ contract AdminFacet is UseStorage {
         uint256 _battleCooldown,
         uint256 _attack,
         uint256 _defense,
-        uint256 _duration,
         uint256 _load
     ) external onlyAdmin returns (uint256) {
-        return Templates.addTroopTemplate(_inventoryType, _health, _speed, _moveCooldown, _battleCooldown, _attack, _defense, _duration, _load);
+        return Templates.addTroopTemplate(_inventoryType, _health, _speed, _moveCooldown, _battleCooldown, _attack, _defense, _load);
+    }
+
+    function addResourceTemplate(string memory _inventoryType) external onlyAdmin returns (uint256) {
+        return Templates.addResourceTemplate(_inventoryType);
     }
 
     function addConstant(string memory _identifier, uint256 _value) external onlyAdmin returns (uint256) {

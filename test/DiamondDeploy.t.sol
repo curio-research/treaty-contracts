@@ -100,25 +100,27 @@ contract DiamondDeployTest is Test {
         game = GameFacet(diamond);
         admin = AdminFacet(diamond);
         ownership = OwnershipFacet(diamond);
+        console.log(">>> Facets casted");
 
         // Register components
         admin.registerDefaultComponents(diamond);
-        console.log("Components registered");
+        console.log(">>> Components registered");
 
         // Register constants
         _registerConstants();
-        console.log("Constants Added");
+        console.log(">>> Constants Added");
 
         // Initialize map
         uint256[][] memory _map = _generateMap(worldConstants.worldWidth, worldConstants.worldHeight);
         uint256[][] memory _encodedColumnBatches = _encodeTileMap(_map, worldConstants.numInitTerrainTypes, worldConstants.initBatchSize);
         admin.storeEncodedColumnBatches(_encodedColumnBatches);
-        console.log("Map initialized and encoded");
+        console.log(">>> Map initialized and encoded");
 
         vm.stopPrank();
 
         // Create templates & constants
         _createTemplates();
+        console.log(">>> Templates created");
 
         // Initialize players
         vm.prank(player1);
@@ -130,6 +132,7 @@ contract DiamondDeployTest is Test {
         vm.prank(player3);
         game.initializePlayer(player3Pos, "Cindy");
         player3Id = getter.getPlayerId(player3);
+        console.log(">>> Players initialized, individual tests begin");
     }
 
     function _encodeTileMap(
@@ -180,7 +183,6 @@ contract DiamondDeployTest is Test {
         uint256 value;
     }
 
-    // WIP
     function _registerConstants() private {
         uint256 constantCount = 342; // FIXME: automate
 
@@ -195,86 +197,56 @@ contract DiamondDeployTest is Test {
     }
 
     function _createTemplates() private {
+        // TODO: automate
         vm.startPrank(deployer);
 
-        // todo: fix naming: horseman, warrior, slinger
-        // Troop: Cavalry
-        cavalryTemplateID = admin.addEntity();
-        admin.setComponentValue("Tag", cavalryTemplateID, abi.encode("TroopTemplate"));
-        admin.setComponentValue("InventoryType", cavalryTemplateID, abi.encode("Cavalry"));
-        admin.setComponentValue("Health", cavalryTemplateID, abi.encode(120));
-        admin.setComponentValue("Speed", cavalryTemplateID, abi.encode(5));
-        admin.setComponentValue("Attack", cavalryTemplateID, abi.encode(60));
-        admin.setComponentValue("Defense", cavalryTemplateID, abi.encode(120));
-        admin.setComponentValue("Load", cavalryTemplateID, abi.encode(1));
-        admin.setComponentValue("Duration", cavalryTemplateID, abi.encode(1));
-        admin.setComponentValue("Cost", cavalryTemplateID, abi.encode(1));
-        admin.setComponentValue("MoveCooldown", cavalryTemplateID, abi.encode(1));
-        admin.setComponentValue("BattleCooldown", cavalryTemplateID, abi.encode(2));
-
-        // Troop: Infantry
-        infantryTemplateID = admin.addEntity();
-        admin.setComponentValue("Tag", infantryTemplateID, abi.encode("TroopTemplate"));
-        admin.setComponentValue("InventoryType", infantryTemplateID, abi.encode("Infantry"));
-        admin.setComponentValue("Health", infantryTemplateID, abi.encode(120));
-        admin.setComponentValue("Speed", infantryTemplateID, abi.encode(5));
-        admin.setComponentValue("Attack", infantryTemplateID, abi.encode(60));
-        admin.setComponentValue("Defense", infantryTemplateID, abi.encode(120));
-        admin.setComponentValue("Load", infantryTemplateID, abi.encode(1));
-        admin.setComponentValue("Duration", infantryTemplateID, abi.encode(1));
-        admin.setComponentValue("Cost", infantryTemplateID, abi.encode(1));
-        admin.setComponentValue("MoveCooldown", infantryTemplateID, abi.encode(1));
-        admin.setComponentValue("BattleCooldown", infantryTemplateID, abi.encode(2));
-
-        // Troop: Archer
-        archerTemplateID = admin.addEntity();
-        admin.setComponentValue("Tag", archerTemplateID, abi.encode("TroopTemplate"));
-        admin.setComponentValue("InventoryType", archerTemplateID, abi.encode("Archer"));
-        admin.setComponentValue("Health", archerTemplateID, abi.encode(120));
-        admin.setComponentValue("Speed", archerTemplateID, abi.encode(5));
-        admin.setComponentValue("Attack", archerTemplateID, abi.encode(60));
-        admin.setComponentValue("Defense", archerTemplateID, abi.encode(120));
-        admin.setComponentValue("Load", archerTemplateID, abi.encode(1));
-        admin.setComponentValue("Duration", archerTemplateID, abi.encode(1));
-        admin.setComponentValue("Cost", archerTemplateID, abi.encode(1));
-        admin.setComponentValue("MoveCooldown", archerTemplateID, abi.encode(1));
-        admin.setComponentValue("BattleCooldown", archerTemplateID, abi.encode(2));
-
-        // Troop: Guard
-        guardTemplateID = admin.addEntity();
-        admin.setComponentValue("Tag", guardTemplateID, abi.encode("TroopTemplate"));
-        admin.setComponentValue("InventoryType", guardTemplateID, abi.encode("Guard"));
-        admin.setComponentValue("Health", guardTemplateID, abi.encode(120));
-        admin.setComponentValue("Attack", guardTemplateID, abi.encode(60));
-        admin.setComponentValue("Defense", guardTemplateID, abi.encode(120));
-
-        // Resource: Gold
-        goldTemplateID = admin.addEntity();
-        admin.setComponentValue("Tag", goldTemplateID, abi.encode("ResourceTemplate"));
-        admin.setComponentValue("InventoryType", goldTemplateID, abi.encode("Gold"));
-        admin.setComponentValue("Duration", goldTemplateID, abi.encode(1));
-
-        // Resource: Food
-        foodTemplateID = admin.addEntity();
-        admin.setComponentValue("Tag", foodTemplateID, abi.encode("ResourceTemplate"));
-        admin.setComponentValue("InventoryType", foodTemplateID, abi.encode("Food"));
-        admin.setComponentValue("Duration", foodTemplateID, abi.encode(1));
-
-        // Register template shortcuts
         string[] memory templateNames = new string[](6);
         uint256[] memory templateIDs = new uint256[](6);
-        templateNames[0] = "Cavalry";
-        templateNames[1] = "Infantry";
-        templateNames[2] = "Archer";
-        templateNames[3] = "Guard";
-        templateNames[4] = "Gold";
-        templateNames[5] = "Food";
-        templateIDs[0] = cavalryTemplateID;
-        templateIDs[1] = infantryTemplateID;
-        templateIDs[2] = archerTemplateID;
-        templateIDs[3] = guardTemplateID;
-        templateIDs[4] = goldTemplateID;
-        templateIDs[5] = foodTemplateID;
+        uint256 index = 0;
+
+        // Horseman
+        string memory templateName = "Horseman";
+        uint256 templateID = admin.addTroopTemplate(templateName, 120, 10, 1, 2, 60, 120, 95);
+        templateNames[index] = templateName;
+        templateIDs[index] = templateID;
+        index++;
+
+        // Warrior
+        templateName = "Warrior";
+        templateID = admin.addTroopTemplate(templateName, 120, 2, 1, 2, 60, 120, 95);
+        templateNames[index] = templateName;
+        templateIDs[index] = templateID;
+        index++;
+
+        // Slinger
+        templateName = "Slinger";
+        templateID = admin.addTroopTemplate(templateName, 120, 2, 1, 2, 60, 120, 95);
+        templateNames[index] = templateName;
+        templateIDs[index] = templateID;
+        index++;
+
+        // Guard
+        templateName = "Guard";
+        templateID = admin.addTroopTemplate(templateName, 120, 0, 0, 0, 60, 120, 0);
+        templateNames[index] = templateName;
+        templateIDs[index] = templateID;
+        index++;
+
+        // Gold
+        templateName = "Gold";
+        templateID = admin.addResourceTemplate(templateName);
+        templateNames[index] = templateName;
+        templateIDs[index] = templateID;
+        index++;
+
+        // Food
+        templateName = "Food";
+        templateID = admin.addResourceTemplate(templateName);
+        templateNames[index] = templateName;
+        templateIDs[index] = templateID;
+        index++;
+
+        // Register template names used for shortcuts
         admin.registerTemplateShortcuts(templateNames, templateIDs);
 
         vm.stopPrank();

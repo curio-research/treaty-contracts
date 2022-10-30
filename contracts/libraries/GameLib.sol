@@ -471,15 +471,6 @@ library GameLib {
         return gs().playerEntityMap[_address];
     }
 
-    function getBattleDamages(
-        uint256 _army1,
-        uint256 _army2,
-        uint256 _duration
-    ) internal view returns (uint256 _damageOn1, uint256 _damageOn2) {
-        _damageOn1 = (_duration * ECSLib.getUint("Attack", _army2) * 2) / ECSLib.getUint("Defense", _army1);
-        _damageOn2 = (_duration * ECSLib.getUint("Attack", _army1) * 2) / ECSLib.getUint("Defense", _army2);
-    }
-
     function getCityGold(uint256 _cityID) internal returns (uint256) {
         uint256 _goldInventoryID = getInventory(_cityID, gs().templates["Gold"]);
         uint256 _balance = _goldInventoryID != 0 ? ECSLib.getUint("Amount", _goldInventoryID) : 0;
