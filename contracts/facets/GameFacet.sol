@@ -314,8 +314,8 @@ contract GameFacet is UseStorage {
         require(ECSLib.getUint("Owner", GameLib.getTileAt(_newTilePosition)) == playerID, "CURIO: Can only move in your territory");
 
         // Verify that moveCityCenter cooldown has passed
-        uint256 cityCenterLevel = ECSLib.getUint("Level", _buildingID);
-        require(block.timestamp - ECSLib.getUint("LastMoved", _buildingID) > GameLib.getConstant("City Center", "", "Cooldown", "Move", cityCenterLevel), "CURIO: MoveCity cooldown unfinished");
+        uint256 centerLevel = ECSLib.getUint("Level", _buildingID);
+        require(block.timestamp - ECSLib.getUint("LastMoved", _buildingID) > GameLib.getConstant("City Center", "", "Cooldown", "Move", centerLevel), "CURIO: MoveCity cooldown unfinished");
 
         // Deduct costs
         {
@@ -323,7 +323,7 @@ contract GameFacet is UseStorage {
             for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
                 uint256 inventoryID = GameLib.getInventory(GameLib.getPlayerCity(playerID), resourceTemplateIDs[i]);
                 uint256 balance = ECSLib.getUint("Amount", inventoryID);
-                uint256 cost = GameLib.getConstant("City Center", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Cost", "Move", cityCenterLevel);
+                uint256 cost = GameLib.getConstant("City Center", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Cost", "Move", centerLevel);
                 require(balance >= cost, "CURIO: Insufficient balance");
                 ECSLib.setUint("Amount", inventoryID, balance - cost);
             }
