@@ -255,12 +255,12 @@ library Templates {
         return templateID;
     }
 
-    function addConstant(string memory _identifier, uint256 _value) public returns (uint256) {
-        uint256 constantID = ECSLib.addEntity();
+    function addGameParameter(string memory _identifier, uint256 _value) public returns (uint256) {
+        uint256 paramID = ECSLib.addEntity();
 
-        ECSLib.setString("Tag", constantID, _identifier);
-        ECSLib.setUint("Amount", constantID, _value);
+        ECSLib.setString("Tag", paramID, _identifier);
+        ECSLib.setUint("Amount", paramID, _value);
 
-        return constantID;
+        return paramID;
     }
 }

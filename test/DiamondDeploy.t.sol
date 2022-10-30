@@ -70,6 +70,7 @@ contract DiamondDeployTest is Test {
 
     function setUp() public {
         vm.startPrank(deployer);
+        console.log(">>> Setup started");
 
         diamondCutFacet = new DiamondCutFacet();
         diamond = address(new Diamond(deployer, address(diamondCutFacet)));
@@ -86,14 +87,12 @@ contract DiamondDeployTest is Test {
 
         // Fetch args from CLI craft payload for init deploy
         bytes memory initData = abi.encodeWithSelector(_getSelectors("DiamondInit")[0], worldConstants);
-
         IDiamondCut.FacetCut[] memory cuts = new IDiamondCut.FacetCut[](5);
         cuts[0] = IDiamondCut.FacetCut({facetAddress: address(diamondLoupeFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: LOUPE_SELECTORS});
         cuts[1] = IDiamondCut.FacetCut({facetAddress: address(diamondOwnershipFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: OWNERSHIP_SELECTORS});
         cuts[2] = IDiamondCut.FacetCut({facetAddress: address(gameFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: _getSelectors("GameFacet")});
         cuts[3] = IDiamondCut.FacetCut({facetAddress: address(getterFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: _getSelectors("GetterFacet")});
         cuts[4] = IDiamondCut.FacetCut({facetAddress: address(adminFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: _getSelectors("AdminFacet")});
-
         IDiamondCut(diamond).diamondCut(cuts, address(diamondInit), initData);
 
         getter = GetterFacet(diamond);
@@ -106,9 +105,9 @@ contract DiamondDeployTest is Test {
         admin.registerDefaultComponents(diamond);
         console.log(">>> Components registered");
 
-        // Register constants
-        _registerConstants();
-        console.log(">>> Constants Added");
+        // Register parameters
+        _registerGameParameters();
+        console.log(">>> Game parameters added");
 
         // Initialize map
         uint256[][] memory _map = _generateMap(worldConstants.worldWidth, worldConstants.worldHeight);
@@ -116,11 +115,11 @@ contract DiamondDeployTest is Test {
         admin.storeEncodedColumnBatches(_encodedColumnBatches);
         console.log(">>> Map initialized and encoded");
 
-        vm.stopPrank();
-
-        // Create templates & constants
+        // Create templates
         _createTemplates();
         console.log(">>> Templates created");
+
+        vm.stopPrank();
 
         // Initialize players
         vm.prank(player1);
@@ -173,33 +172,21 @@ contract DiamondDeployTest is Test {
         return _result;
     }
 
-    // TEMP
-    struct ConstantSpec {
-        string componentName;
-        string functionName;
-        uint256 level;
-        string object;
-        string subject;
-        uint256 value;
-    }
-
-    function _registerConstants() private {
-        uint256 constantCount = 342; // FIXME: automate
+    function _registerGameParameters() private {
+        uint256 paramCount = 342; // FIXME: automate
 
         string memory root = vm.projectRoot();
-        for (uint256 i = 0; i < constantCount; i++) {
+        for (uint256 i = 0; i < paramCount; i++) {
             string memory path = string(abi.encodePacked(root, "/test/data/game_parameter_", Strings.toString(i), ".json"));
             bytes memory rawJson = vm.parseJson(vm.readFile(path));
-            ConstantSpec memory spec = abi.decode(rawJson, (ConstantSpec));
+            GameParamSpec memory spec = abi.decode(rawJson, (GameParamSpec));
             string memory identifier = string(abi.encodePacked(spec.subject, "-", spec.object, "-", spec.componentName, "-", spec.functionName, "-", Strings.toString(spec.level)));
-            admin.addConstant(identifier, spec.value);
+            admin.addGameParameter(identifier, spec.value);
         }
     }
 
     function _createTemplates() private {
         // TODO: automate
-        vm.startPrank(deployer);
-
         string[] memory templateNames = new string[](6);
         uint256[] memory templateIDs = new uint256[](6);
         uint256 index = 0;
@@ -248,8 +235,6 @@ contract DiamondDeployTest is Test {
 
         // Register template names used for shortcuts
         admin.registerTemplateShortcuts(templateNames, templateIDs);
-
-        vm.stopPrank();
     }
 
     // Note: hardcoded

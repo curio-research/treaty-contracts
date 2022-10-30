@@ -40,6 +40,15 @@ struct ComponentSpec {
     ValueType valueType;
 }
 
+struct GameParamSpec {
+    string componentName;
+    string functionName;
+    uint256 level;
+    string object;
+    string subject;
+    uint256 value;
+}
+
 struct Position {
     uint256 x;
     uint256 y;

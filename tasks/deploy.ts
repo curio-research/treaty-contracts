@@ -87,7 +87,7 @@ task('deploy', 'deploy contracts')
         console.log(chalk.dim(`✦ registering constants ${i} to ${i + constantUploadBatchSize}`));
         const identifiers = gameConstants.map((c) => c.subject + '-' + c.object + '-' + c.componentName + '-' + c.functionName + '-' + Math.trunc(c.level).toString());
         const values = gameConstants.map((c) => Math.trunc(c.value));
-        await confirm(await diamond.bulkAddConstants(identifiers, values, { gasLimit: gasLimit }), hre);
+        await confirm(await diamond.bulkAddGameParameters(identifiers, values, { gasLimit: gasLimit }), hre);
       }
       console.log(`✦ constant registration took ${Math.floor(performance.now() - startTime)} ms`);
 

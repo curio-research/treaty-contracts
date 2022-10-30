@@ -114,14 +114,14 @@ contract AdminFacet is UseStorage {
         return Templates.addResourceTemplate(_inventoryType);
     }
 
-    function addConstant(string memory _identifier, uint256 _value) external onlyAdmin returns (uint256) {
-        return Templates.addConstant(_identifier, _value);
+    function addGameParameter(string memory _identifier, uint256 _value) external onlyAdmin returns (uint256) {
+        return Templates.addGameParameter(_identifier, _value);
     }
 
-    function bulkAddConstants(string[] memory _identifiers, uint256[] memory _values) external onlyAdmin {
+    function bulkAddGameParameters(string[] memory _identifiers, uint256[] memory _values) external onlyAdmin {
         require(_identifiers.length == _values.length, "CURIO: Input length mismatch");
         for (uint256 i = 0; i < _values.length; i++) {
-            Templates.addConstant(_identifiers[i], _values[i]);
+            Templates.addGameParameter(_identifiers[i], _values[i]);
         }
     }
 
@@ -133,7 +133,7 @@ contract AdminFacet is UseStorage {
         GameLib.registerComponents(_gameAddr, _componentSpecs);
     }
 
-    // FIXME: be able to sync with vault
+    // FIXME: not updated
     function registerDefaultComponents(address _gameAddr) external onlyAdmin {
         ComponentSpec[] memory _componentSpecs = new ComponentSpec[](39);
 
