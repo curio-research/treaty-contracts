@@ -33,8 +33,10 @@ contract GameFacet is UseStorage {
         require(gs().players.length < gs().worldConstants.maxPlayerCount, "CURIO: Max player count exceeded");
         require(gs().playerEntityMap[msg.sender] == NULL, "CURIO: Player already initialized");
 
-        // Initialize tile
-        GameLib.initializeTile(GameLib.getProperTilePosition(_position));
+        // Initialize tile and check terrain
+        Position memory tilePosition = GameLib.getProperTilePosition(_position);
+        GameLib.initializeTile(tilePosition);
+        GameLib.passableTerrainCheck(tilePosition);
 
         // Register player
         uint256 playerID = Templates.addPlayer(_name);
@@ -57,8 +59,12 @@ contract GameFacet is UseStorage {
         GameLib.entityOwnershipCheck(_movableEntity, msg.sender);
         GameLib.inboundPositionCheck(_targetPosition);
 
-        // Initialize tile
-        GameLib.initializeTile(GameLib.getProperTilePosition(_targetPosition));
+        // Initialize tile and check terrain
+        {
+            Position memory tilePosition = GameLib.getProperTilePosition(_targetPosition);
+            GameLib.initializeTile(tilePosition);
+            GameLib.passableTerrainCheck(tilePosition);
+        }
 
         // Verify no other movable entity at exact destination coordinate
         require(GameLib.getMovableEntityAt(_targetPosition) == NULL, "CURIO: Destination occupied");
@@ -97,8 +103,16 @@ contract GameFacet is UseStorage {
         // Verify that settler can settle
         require(ECSLib.getBool("CanSettle", _settlerID), "CURIO: Settler cannot settle");
 
-        // Verify that territory is connected and includes settler's current position FIXME
+        // Verify that city center is not on mountain
         Position memory centerTilePosition = GameLib.getProperTilePosition(ECSLib.getPosition("Position", _settlerID));
+        GameLib.passableTerrainCheck(centerTilePosition);
+
+        // TEMP: battle royale
+        if (gs().worldConstants.isBattleRoyale) {
+            require(!GameLib.coincident(centerTilePosition, GameLib.getMapCenterTilePosition()), "CURIO: City center can't be at supertile");
+        }
+
+        // Verify that territory is connected and includes settler's current position FIXME
         require(GameLib.connected(_tiles), "CURIO: Territory disconnected");
         require(GameLib.includesPosition(centerTilePosition, _tiles), "CURIO: Tiles must cover settler position");
 
@@ -113,7 +127,7 @@ contract GameFacet is UseStorage {
             GameLib.inboundPositionCheck(_tiles[i]);
             require(GameLib.isProperTilePosition(_tiles[i]), "CURIO: Must be proper tile position");
             uint256 tileID = GameLib.initializeTile(_tiles[i]);
-            require(ECSLib.getUint("Terrain", tileID) < 3, "CURIO: Cannot settle on barbarians");
+            require(!GameLib.isBarbarian(tileID), "CURIO: Cannot settle on barbarians");
             require(ECSLib.getUint("City", tileID) == NULL, "CURIO: Overlaps with another city");
 
             ECSLib.setUint("City", tileID, cityID);
@@ -279,10 +293,17 @@ contract GameFacet is UseStorage {
     }
 
     function moveCityCenter(uint256 _buildingID, Position memory _newTilePosition) external {
+        // Basic checks
         GameLib.validEntityCheck(_buildingID);
         GameLib.ongoingGameCheck();
         GameLib.activePlayerCheck(msg.sender);
         GameLib.inboundPositionCheck(_newTilePosition);
+        GameLib.passableTerrainCheck(_newTilePosition);
+
+        // TEMP: battle royale
+        if (gs().worldConstants.isBattleRoyale) {
+            require(!GameLib.coincident(_newTilePosition, GameLib.getMapCenterTilePosition()), "CURIO: City center can't be at supertile");
+        }
 
         // Verify that city center belongs to player
         uint256 playerID = GameLib.getPlayer(msg.sender);
@@ -694,11 +715,10 @@ contract GameFacet is UseStorage {
             "CURIO: Attack not within range"
         );
 
-        uint256 terrain = ECSLib.getUint("Terrain", _tileID);
         uint256 cityID = GameLib.getCityAtTile(ECSLib.getPosition("StartPosition", _tileID));
 
         // if it is barbarian, check it's not hybernating
-        if (terrain >= 3) {
+        if (GameLib.isBarbarian(_tileID)) {
             uint256 barbarianCooldown = GameLib.getConstant("Barbarian", "", "Cooldown", "", 0);
             require(block.timestamp >= ECSLib.getUint("LastTimestamp", _tileID) + barbarianCooldown, "CURIO: Barbarians hybernating");
         }
@@ -730,10 +750,10 @@ contract GameFacet is UseStorage {
                     // todo: update lastSackedTimeStamp
 
                 } else {
-                    if (terrain >= 3) {
+                    if (GameLib.isBarbarian(_tileID)) {
                         // Reset barbarian
                         GameLib.distributeBarbarianReward(winnerCityID, _tileID);
-                        uint256 barbarianGuardAmount = GameLib.getConstant("Barbarian", "Guard", "Amount", "", (terrain - 2) * 4); // FIXME: hardcoded
+                        uint256 barbarianGuardAmount = GameLib.getConstant("Barbarian", "Guard", "Amount", "", ECSLib.getUint("Terrain", _tileID) - 2); // FIXME: hardcoded
                         ECSLib.setUint("LastTimestamp", _tileID, block.timestamp);
                         Templates.addConstituent(_tileID, gs().templates["Guard"], barbarianGuardAmount);
                     } else {
@@ -764,7 +784,7 @@ contract GameFacet is UseStorage {
         require(ECSLib.getUint("Owner", _tileID) == 0, "CURIO: Tile has owner");
 
         // Verify target tile is not barbarian tile
-        require(ECSLib.getUint("Terrain", _tileID) < 3, "CURIO: Cannot claim barbarian tiles");
+        require(!GameLib.isBarbarian(_tileID), "CURIO: Cannot claim barbarian tiles");
 
         // Verify that no guard exists on tile
         require(GameLib.getConstituents(_tileID).length == 0, "CURIO: Tile has guard");

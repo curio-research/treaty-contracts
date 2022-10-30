@@ -43,6 +43,7 @@ export type WorldConstantsStruct = {
   maxCityCountPerPlayer: PromiseOrValue<BigNumberish>;
   maxArmyCountPerPlayer: PromiseOrValue<BigNumberish>;
   maxPlayerCount: PromiseOrValue<BigNumberish>;
+  isBattleRoyale: PromiseOrValue<boolean>;
   maxCityCenterLevel: PromiseOrValue<BigNumberish>;
   cityCenterLevelToEntityLevelRatio: PromiseOrValue<BigNumberish>;
   secondsToTrainAThousandTroops: PromiseOrValue<BigNumberish>;
@@ -58,6 +59,7 @@ export type WorldConstantsStructOutput = [
   BigNumber,
   BigNumber,
   BigNumber,
+  boolean,
   BigNumber,
   BigNumber,
   BigNumber
@@ -71,6 +73,7 @@ export type WorldConstantsStructOutput = [
   maxCityCountPerPlayer: BigNumber;
   maxArmyCountPerPlayer: BigNumber;
   maxPlayerCount: BigNumber;
+  isBattleRoyale: boolean;
   maxCityCenterLevel: BigNumber;
   cityCenterLevelToEntityLevelRatio: BigNumber;
   secondsToTrainAThousandTroops: BigNumber;
