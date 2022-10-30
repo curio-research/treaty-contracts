@@ -171,23 +171,42 @@ contract DiamondDeployTest is Test {
 
     // TEMP
     struct ConstantSpec {
-        string subject;
         string componentName;
-        string object;
-        uint256 level;
         string functionName;
+        uint256 level;
+        string object;
+        string subject;
         uint256 value;
+    }
+
+    struct Bruh {
+        ConstantSpec[342] moment;
     }
 
     // WIP
     function _fetchConstants() private {
+        // string memory root = vm.projectRoot();
+        // string memory path = string(abi.encodePacked(root, "/tasks/game_parameters.json"));
+        // console.log("path set");
+        // string memory json = vm.readFile(path);
+        // console.log("hey!");
+        // ConstantSpec[] memory constantSpec = abi.decode(bytes(json), (ConstantSpec[]));
+        // console.log("YO!", constantSpec[0].subject);
+
         string memory root = vm.projectRoot();
-        string memory path = string(abi.encodePacked(root, "/tasks/game_parameters.json"));
+        string memory path = string(abi.encodePacked(root, "/tasks/bruh_moment.json"));
         console.log("path set");
-        string memory json = vm.readFile(path);
+        string memory fileContent = vm.readFile(path);
         console.log("hey!");
-        ConstantSpec[] memory constantSpec = abi.decode(bytes(json), (ConstantSpec[]));
-        console.log("YO!", constantSpec[0].subject);
+        bytes memory rawJson = vm.parseJson(fileContent);
+        console.log("man");
+        Bruh memory bruh = abi.decode(rawJson, (Bruh));
+        console.log("YO!", bruh.moment[0].subject);
+        console.log("YO!", bruh.moment[0].componentName);
+        console.log("YO!", bruh.moment[0].object);
+        console.log("YO!", bruh.moment[0].level);
+        console.log("YO!", bruh.moment[0].functionName);
+        console.log("YO!", bruh.moment[0].value);
 
         return;
     }
