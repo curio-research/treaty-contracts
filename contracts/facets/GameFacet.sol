@@ -315,7 +315,7 @@ contract GameFacet is UseStorage {
 
         // Verify that moveCityCenter cooldown has passed
         uint256 cityCenterLevel = ECSLib.getUint("Level", _buildingID);
-        require(ECSLib.getUint("LastMoved", _buildingID) - block.timestamp > GameLib.getConstant("City Center", "", "Cooldown", "Move", cityCenterLevel), "CURIO: MoveCity cooldown unfinished");
+        require(block.timestamp - ECSLib.getUint("LastMoved", _buildingID) > GameLib.getConstant("City Center", "", "Cooldown", "Move", cityCenterLevel), "CURIO: MoveCity cooldown unfinished");
 
         // Deduct costs
         {
@@ -352,8 +352,8 @@ contract GameFacet is UseStorage {
 
         // Verify that tile is not during recover or upgrade
         uint256 tileLevel = ECSLib.getUint("Level", _tileID);
-        require(ECSLib.getUint("LastUpgraded", _tileID) - block.timestamp > GameLib.getConstant("Tile", "", "Cooldown", "Upgrade", tileLevel), "CURIO: Upgrade unfinished");
-        require(ECSLib.getUint("LastRecovered", _tileID) - block.timestamp > GameLib.getConstant("Tile", "", "Cooldown", "Recover", tileLevel), "CURIO: Recover unfinished");
+        require(block.timestamp - ECSLib.getUint("LastUpgraded", _tileID) > GameLib.getConstant("Tile", "", "Cooldown", "Upgrade", tileLevel), "CURIO: Upgrade unfinished");
+        require(block.timestamp - ECSLib.getUint("LastRecovered", _tileID) > GameLib.getConstant("Tile", "", "Cooldown", "Recover", tileLevel), "CURIO: Recover unfinished");
 
         // End gather processes on tile
         uint256[] memory movableEntitiesOnTile = GameLib.getMovableEntitiesAtTile(tilePosition);
@@ -557,16 +557,16 @@ contract GameFacet is UseStorage {
         uint256 cityCenterID = GameLib.getCityCenter(cityID);
 
         // Verify it's not being upgraded
-        uint256 cityCenterLevel = ECSLib.getUint("Level", cityCenterID);
-        require(block.timestamp - ECSLib.getUint("LastUpgraded", _buildingID) > GameLib.getConstant("City Center", "", "Cooldown", "Upgrade", cityCenterLevel), "CURIO: Upgrade unfinished");
+        uint256 centerLevel = ECSLib.getUint("Level", cityCenterID);
+        require(block.timestamp - ECSLib.getUint("LastUpgraded", _buildingID) > GameLib.getConstant("City Center", "", "Cooldown", "Upgrade", centerLevel), "CURIO: Upgrade unfinished");
 
         // Create inventory if none exists
         uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
         for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
             uint256 inventoryID = GameLib.getInventory(cityID, resourceTemplateIDs[i]);
-            uint256 harvestRate = GameLib.getConstant("City Center", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Yield", "", cityCenterLevel);
+            uint256 harvestRate = GameLib.getConstant("City Center", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Yield", "", centerLevel);
             uint256 harvestAmount = (block.timestamp - ECSLib.getUint("LastTimestamp", _buildingID)) * harvestRate;
-            harvestAmount = GameLib.min(GameLib.getConstant("City Center", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Load", "", cityCenterLevel), harvestAmount);
+            harvestAmount = GameLib.min(GameLib.getConstant("City Center", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Load", "", centerLevel), harvestAmount);
             ECSLib.setUint("Amount", inventoryID, ECSLib.getUint("Amount", inventoryID) + harvestAmount);
         }
 
