@@ -189,7 +189,7 @@ contract DiamondDeployTest is Test {
     }
 
     function _registerGameParameters() private {
-        uint256 paramCount = 342; // FIXME: automate
+        uint256 paramCount = 388; // FIXME: automate
 
         string memory root = vm.projectRoot();
         for (uint256 i = 0; i < paramCount; i++) {
