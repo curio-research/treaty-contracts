@@ -1537,7 +1537,7 @@
       }
     },
     "test/Basic.t.sol": {
-      "lastModificationDate": 1667193646189,
+      "lastModificationDate": 1667194483127,
       "contentHash": "7986ca08f56a1f8c59414a43047a63e3",
       "sourceName": "test/Basic.t.sol",
       "solcConfig": {
@@ -1681,8 +1681,8 @@
       }
     },
     "test/DiamondDeploy.t.sol": {
-      "lastModificationDate": 1667193672686,
-      "contentHash": "92c2e3e3c0913da8b43b8dbe94e7a0f7",
+      "lastModificationDate": 1667194805207,
+      "contentHash": "c21bf73fdf15d0b561fd93c41c37eca2",
       "sourceName": "test/DiamondDeploy.t.sol",
       "solcConfig": {
         "settings": {

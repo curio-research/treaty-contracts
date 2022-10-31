@@ -174,29 +174,47 @@ contract DiamondDeployTest is Test {
     }
 
     function _registerComponents() private {
-        uint256 compCount = 42; // FIXME: automate
-        ComponentSpec[] memory specs = new ComponentSpec[](compCount);
-
+        ComponentSpec[] memory temp = new ComponentSpec[](100000);
         string memory root = vm.projectRoot();
-        for (uint256 i = 0; i < compCount; i++) {
-            string memory path = string(abi.encodePacked(root, "/test/data/component_", Strings.toString(i), ".json"));
-            bytes memory rawJson = vm.parseJson(vm.readFile(path));
-            specs[i] = abi.decode(rawJson, (ComponentSpec));
+        uint256 index = 0;
+
+        while (true) {
+            string memory path = string(abi.encodePacked(root, "/test/data/component_", Strings.toString(index), ".json"));
+            try vm.readFile(path) {
+                bytes memory rawJson = vm.parseJson(vm.readFile(path));
+                temp[index] = abi.decode(rawJson, (ComponentSpec));
+                index++;
+            } catch {
+                // End of components
+                break;
+            }
+        }
+
+        // Copy values to array of known length
+        ComponentSpec[] memory specs = new ComponentSpec[](index);
+        for (uint256 i = 0; i < index; i++) {
+            specs[i] = temp[i];
         }
 
         admin.registerComponents(diamond, specs);
     }
 
     function _registerGameParameters() private {
-        uint256 paramCount = 388; // FIXME: automate
-
         string memory root = vm.projectRoot();
-        for (uint256 i = 0; i < paramCount; i++) {
-            string memory path = string(abi.encodePacked(root, "/test/data/game_parameter_", Strings.toString(i), ".json"));
-            bytes memory rawJson = vm.parseJson(vm.readFile(path));
-            GameParamSpec memory spec = abi.decode(rawJson, (GameParamSpec));
-            string memory identifier = string(abi.encodePacked(spec.subject, "-", spec.object, "-", spec.componentName, "-", spec.functionName, "-", Strings.toString(spec.level)));
-            admin.addGameParameter(identifier, spec.value);
+        uint256 index = 0;
+
+        while (true) {
+            string memory path = string(abi.encodePacked(root, "/test/data/game_parameter_", Strings.toString(index), ".json"));
+            try vm.readFile(path) {
+                bytes memory rawJson = vm.parseJson(vm.readFile(path));
+                GameParamSpec memory spec = abi.decode(rawJson, (GameParamSpec));
+                string memory identifier = string(abi.encodePacked(spec.subject, "-", spec.object, "-", spec.componentName, "-", spec.functionName, "-", Strings.toString(spec.level)));
+                admin.addGameParameter(identifier, spec.value);
+                index++;
+            } catch {
+                // End of parameters
+                break;
+            }
         }
     }
 
