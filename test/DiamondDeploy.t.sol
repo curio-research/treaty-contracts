@@ -175,7 +175,7 @@ contract DiamondDeployTest is Test {
     }
 
     function _registerComponents() private {
-        uint256 compCount = 38; // FIXME: automate
+        uint256 compCount = 42; // FIXME: automate
         ComponentSpec[] memory specs = new ComponentSpec[](compCount);
 
         string memory root = vm.projectRoot();
