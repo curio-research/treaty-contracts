@@ -16,7 +16,7 @@ import './tasks/mapGen';
 // to get the file size of each smart contract, run:
 // yarn run hardhat size-contracts
 
-const { USER1_PK, USER2_PK, OPTIMISM_KOVAN_RPC_URL, GNOSIS_OPTIMISM_RPC_URL, GNOSIS_RPC_URL, LOCALHOST_USER1_PK, LOCALHOST_USER2_PK, CONSTELLATION_RPC_URL, TAILSCALE_MAIN, ALTLAYER_RPC_URL, CONSTELLATIONNEW_RPC_URL, EXFAC_RPC_URL } = process.env;
+const { USER1_PK, USER2_PK, LOCALHOST_USER1_PK, LOCALHOST_USER2_PK, CONSTELLATION_RPC_URL, TAILSCALE_MAIN, ALTLAYER_RPC_URL, CONSTELLATIONNEW_RPC_URL, EXFAC_RPC_URL } = process.env;
 
 export default {
   defaultNetwork: 'localhost',
@@ -37,25 +37,10 @@ export default {
   },
 
   networks: {
-    optimismKovan: {
-      url: OPTIMISM_KOVAN_RPC_URL,
-      accounts: [USER1_PK, USER2_PK],
-      chainId: 69,
-    },
     tailscale: {
       url: `${TAILSCALE_MAIN}:8545`,
       accounts: [LOCALHOST_USER1_PK, LOCALHOST_USER2_PK],
       chainId: 31337,
-    },
-    gnosisOptimism: {
-      url: GNOSIS_OPTIMISM_RPC_URL,
-      accounts: [USER1_PK, USER2_PK],
-      chainId: 300,
-    },
-    gnosis: {
-      url: GNOSIS_RPC_URL,
-      accounts: [USER1_PK, USER2_PK],
-      chainId: 100,
     },
     constellation: {
       url: CONSTELLATION_RPC_URL,

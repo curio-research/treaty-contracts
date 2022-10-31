@@ -65,7 +65,8 @@ library GameLib {
 
     function initializeTile(Position memory _startPosition) internal returns (uint256) {
         require(isProperTilePosition(_startPosition), "CURIO: Not proper tile position");
-        if (getTileAt(_startPosition) != 0) return getTileAt(_startPosition);
+        uint256 tileId = getTileAt(_startPosition);
+        if (tileId != 0) return tileId;
 
         // Load constants
         uint256 batchSize = gs().worldConstants.initBatchSize;
