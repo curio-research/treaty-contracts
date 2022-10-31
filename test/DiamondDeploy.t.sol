@@ -62,6 +62,8 @@ contract DiamondDeployTest is Test {
     uint256 public goldTemplateID;
     uint256 public foodTemplateID;
 
+    WorldConstants public worldConstants;
+
     // we assume these two facet selectors do not change. If they do however, we should use _getSelectors
     bytes4[] OWNERSHIP_SELECTORS = [bytes4(0xf2fde38b), 0x8da5cb5b];
     bytes4[] LOUPE_SELECTORS = [bytes4(0xcdffacc6), 0x52ef6b2c, 0xadfca15e, 0x7a0ed627, 0x01ffc9a7];
@@ -81,7 +83,7 @@ contract DiamondDeployTest is Test {
         adminFacet = new AdminFacet();
 
         // Prepare world constants with either `_generateNewWorldConstants()` or `fetchWorldConstants()`
-        WorldConstants memory worldConstants = _fetchWorldConstants();
+        worldConstants = _fetchWorldConstants();
         worldConstants.worldWidth = 1000; // use deployment settings, except make map bigger
         worldConstants.worldHeight = 1000;
         console.log(">>> World constants ready");
@@ -287,15 +289,15 @@ contract DiamondDeployTest is Test {
         string memory root = vm.projectRoot();
         string memory path = string(abi.encodePacked(root, "/test/data/world_constants.json"));
         bytes memory rawJson = vm.parseJson(vm.readFile(path));
-        WorldConstants memory constants = abi.decode(rawJson, (WorldConstants));
+        worldConstants = abi.decode(rawJson, (WorldConstants));
 
-        constants.admin = deployer;
-        return constants;
+        worldConstants.admin = deployer;
+        return worldConstants;
     }
 
     /// @dev Second way to get world constants: initialize the world in a unique new state
-    function _generateNewWorldConstants() private view returns (WorldConstants memory) {
-        return
+    function _generateNewWorldConstants() private returns (WorldConstants memory) {
+        worldConstants =
             WorldConstants({
                 admin: deployer,
                 tileWidth: 10,
@@ -311,6 +313,7 @@ contract DiamondDeployTest is Test {
                 cityCenterLevelToEntityLevelRatio: 3,
                 secondsToTrainAThousandTroops: 500 // DO NOT REMOVE THIS COMMENT
             });
+        return worldConstants;
     }
 
     /// @dev First way to get map: fetch them from last deployment

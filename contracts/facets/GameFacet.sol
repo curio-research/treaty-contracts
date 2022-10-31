@@ -42,7 +42,7 @@ contract GameFacet is UseStorage {
         gs().playerEntityMap[msg.sender] = playerID;
 
         // Add player's first settler
-        Templates.addSettler(_position, playerID, gs().worldConstants.tileWidth);
+        Templates.addSettler(_position, GameLib.getProperTilePosition(_position), playerID, gs().worldConstants.tileWidth);
     }
 
     // ----------------------------------------------------------
@@ -133,7 +133,7 @@ contract GameFacet is UseStorage {
         }
 
         // Convert the settler to a city
-        Templates.convertSettlerToCity(_settlerID, _cityName, centerTilePosition);
+        Templates.convertSettlerToCity(_settlerID, _cityName);
 
         // Add city center
         Templates.addCityCenter(centerTilePosition, cityID);
@@ -235,11 +235,9 @@ contract GameFacet is UseStorage {
         require(tileLevel < ECSLib.getUint("Level", cityCenterID) * gs().worldConstants.cityCenterLevelToEntityLevelRatio, "CURIO: Max Tile Level Reached");
 
         // Require players to fully recover the tile before upgrade
-        {
-            uint256[] memory constituentIDs = GameLib.getConstituents(_tileID);
-            require(constituentIDs.length == 1, "CURIO: Tile initialized incorrectly");
-            require(GameLib.getConstant("Tile", "Guard", "Amount", "", tileLevel) <= ECSLib.getUint("Amount", constituentIDs[0]), "CURIO: Need to recover tile first");
-        }
+        uint256[] memory constituentIDs = GameLib.getConstituents(_tileID);
+        require(constituentIDs.length == 1, "CURIO: Tile initialized incorrectly");
+        require(GameLib.getConstant("Tile", "Guard", "Amount", "", tileLevel) <= ECSLib.getUint("Amount", constituentIDs[0]), "CURIO: Need to recover tile first");
 
         // check if upgrade is in process
         require(block.timestamp - ECSLib.getUint("LastUpgraded", _tileID) > GameLib.getConstant("Tile", "", "Cooldown", "Upgrade", tileLevel), "CURIO: Upgrade in process");
@@ -262,8 +260,6 @@ contract GameFacet is UseStorage {
 
         // Upgrade tile defense and level
         uint256 newConstituentAmount = GameLib.getConstant("Tile", "Guard", "Amount", "", tileLevel + 1);
-        uint256[] memory constituentIDs = GameLib.getConstituents(_tileID);
-        require(constituentIDs.length == 1, "CURIO: Tile initialized incorrectly");
         ECSLib.setUint("Amount", constituentIDs[0], newConstituentAmount);
         ECSLib.setUint("Level", _tileID, tileLevel + 1);
     }
@@ -638,7 +634,7 @@ contract GameFacet is UseStorage {
             speed /= GameLib.sum(_amounts);
 
             // Add army
-            Templates.addArmy(GameLib.getPlayer(msg.sender), midPosition, speed, load, moveCooldown, battleCooldown, gs().worldConstants.tileWidth);
+            Templates.addArmy(GameLib.getPlayer(msg.sender), midPosition, ECSLib.getPosition("StartPosition", _cityID), speed, load, moveCooldown, battleCooldown, gs().worldConstants.tileWidth);
         }
         uint256 armyID = GameLib.getArmyAt(midPosition);
 
