@@ -40,11 +40,7 @@ library Templates {
         return inventoryID;
     }
 
-    function convertSettlerToCity(
-        uint256 _settlerID,
-        string memory _cityName,
-        Position memory _centerTilePosition
-    ) public returns (uint256) {
+    function convertSettlerToCity(uint256 _settlerID, string memory _cityName) public returns (uint256) {
         uint256 cityID = _settlerID;
 
         // Convert the settler to a city
@@ -53,7 +49,6 @@ library Templates {
         ECSLib.removeUint("Speed", cityID);
         ECSLib.removeUint("LastTimestamp", cityID);
         ECSLib.removeUint("MoveCooldown", cityID);
-        ECSLib.setPosition("StartPosition", cityID, _centerTilePosition);
         ECSLib.setString("Tag", cityID, "City");
         ECSLib.setString("Name", cityID, _cityName);
         ECSLib.setBool("CanProduce", cityID);
@@ -76,7 +71,6 @@ library Templates {
         ECSLib.setString("Tag", settlerID, "Settler");
         ECSLib.removeString("Name", settlerID);
         ECSLib.removeBool("CanProduce", settlerID);
-        ECSLib.removePosition("StartPosition", settlerID);
 
         return settlerID;
     }
@@ -100,6 +94,7 @@ library Templates {
 
     function addSettler(
         Position memory _position,
+        Position memory _tilePosition,
         uint256 _playerID,
         uint256 _speed
     ) public returns (uint256) {
@@ -107,6 +102,7 @@ library Templates {
 
         ECSLib.setString("Tag", settlerID, "Settler");
         ECSLib.setPosition("Position", settlerID, _position);
+        ECSLib.setPosition("StartPosition", settlerID, _tilePosition);
         ECSLib.setUint("Owner", settlerID, _playerID);
         ECSLib.setUint("Level", settlerID, 1);
         ECSLib.setBool("CanSettle", settlerID);
@@ -151,6 +147,7 @@ library Templates {
     function addArmy(
         uint256 _playerID,
         Position memory _position,
+        Position memory _tilePosition,
         uint256 _speed,
         uint256 _load,
         uint256 _moveCooldown,
@@ -163,6 +160,7 @@ library Templates {
         ECSLib.setBool("CanBattle", armyID);
         ECSLib.setUint("Owner", armyID, _playerID);
         ECSLib.setPosition("Position", armyID, _position);
+        ECSLib.setPosition("StartPosition", armyID, _tilePosition);
         ECSLib.setUint("Speed", armyID, _speed);
         ECSLib.setUint("Load", armyID, _load);
         ECSLib.setUint("LastTimestamp", armyID, block.timestamp);
