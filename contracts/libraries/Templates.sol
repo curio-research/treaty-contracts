@@ -2,7 +2,7 @@
 pragma solidity ^0.8.4;
 
 import {Position, WorldConstants} from "contracts/libraries/Types.sol";
-import "openzeppelin-contracts/contracts/utils/Strings.sol";
+import {Strings} from "openzeppelin-contracts/contracts/utils/Strings.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
 
 library Templates {
@@ -234,7 +234,6 @@ library Templates {
         uint256 _battleCooldown,
         uint256 _attack,
         uint256 _defense,
-        uint256 _duration,
         uint256 _load
     ) public returns (uint256) {
         uint256 templateID = ECSLib.addEntity();
@@ -247,18 +246,26 @@ library Templates {
         ECSLib.setUint("BattleCooldown", templateID, _battleCooldown);
         ECSLib.setUint("Attack", templateID, _attack);
         ECSLib.setUint("Defense", templateID, _defense);
-        ECSLib.setUint("Duration", templateID, _duration);
         ECSLib.setUint("Load", templateID, _load);
 
         return templateID;
     }
 
-    function addConstant(string memory _identifier, uint256 _value) public returns (uint256) {
-        uint256 constantID = ECSLib.addEntity();
+    function addResourceTemplate(string memory _inventoryType) public returns (uint256) {
+        uint256 templateID = ECSLib.addEntity();
 
-        ECSLib.setString("Tag", constantID, _identifier);
-        ECSLib.setUint("Amount", constantID, _value);
+        ECSLib.setString("Tag", templateID, "ResourceTemplate");
+        ECSLib.setString("InventoryType", templateID, _inventoryType);
 
-        return constantID;
+        return templateID;
+    }
+
+    function addGameParameter(string memory _identifier, uint256 _value) public returns (uint256) {
+        uint256 paramID = ECSLib.addEntity();
+
+        ECSLib.setString("Tag", paramID, _identifier);
+        ECSLib.setUint("Amount", paramID, _value);
+
+        return paramID;
     }
 }

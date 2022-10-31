@@ -1,10 +1,9 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "openzeppelin-contracts/contracts/utils/Strings.sol";
-import "contracts/libraries/Storage.sol";
-import {ComponentSpec, GameState, Position, Terrain, Tile, ValueType, WorldConstants, QueryCondition, QueryType} from "contracts/libraries/Types.sol";
-import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
+import {Strings} from "openzeppelin-contracts/contracts/utils/Strings.sol";
+import {LibStorage} from "contracts/libraries/Storage.sol";
+import {ComponentSpec, GameMode, GameState, Position, Terrain, Tile, ValueType, WorldConstants, QueryCondition, QueryType} from "contracts/libraries/Types.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
 import {Templates} from "contracts/libraries/Templates.sol";
 import {Set} from "contracts/Set.sol";
@@ -17,8 +16,6 @@ import {AddressComponent, BoolComponent, IntComponent, PositionComponent, String
 /// Note: This file should not have any occurrences of `msg.sender`. Pass in player addresses to use them.
 
 library GameLib {
-    using SafeMath for uint256;
-
     function gs() internal pure returns (GameState storage) {
         return LibStorage.gameStorage();
     }
@@ -86,16 +83,18 @@ library GameLib {
         ECSLib.setUint("Terrain", tileID, terrain);
 
         // TEMP: battle royale mode
-        if (gs().worldConstants.isBattleRoyale) {
-            // Set map center tile to SUPERTILE of land, no resources, and the top tile strength to start
+        if (gs().worldConstants.gameMode == GameMode.BATTLE_ROYALE) {
             if (coincident(_startPosition, getMapCenterTilePosition())) {
+                // Set map center tile to SUPERTILE of land, no resources, and the top tile strength to start
                 uint256 maxTileLevel = gs().worldConstants.maxCityCenterLevel * gs().worldConstants.cityCenterLevelToEntityLevelRatio;
                 ECSLib.setUint("Terrain", tileID, 0);
                 ECSLib.setUint("Level", tileID, maxTileLevel);
+
                 uint256 supertileGuardAmount = getConstant("Tile", "Guard", "Amount", "", maxTileLevel);
                 Templates.addConstituent(tileID, gs().templates["Guard"], supertileGuardAmount);
+
+                return tileID;
             }
-            return tileID;
         }
 
         // Initialize gold mine
@@ -469,15 +468,6 @@ library GameLib {
 
     function getPlayer(address _address) internal view returns (uint256) {
         return gs().playerEntityMap[_address];
-    }
-
-    function getBattleDamages(
-        uint256 _army1,
-        uint256 _army2,
-        uint256 _duration
-    ) internal view returns (uint256 _damageOn1, uint256 _damageOn2) {
-        _damageOn1 = (_duration * ECSLib.getUint("Attack", _army2) * 2) / ECSLib.getUint("Defense", _army1);
-        _damageOn2 = (_duration * ECSLib.getUint("Attack", _army1) * 2) / ECSLib.getUint("Defense", _army2);
     }
 
     function getCityGold(uint256 _cityID) internal returns (uint256) {

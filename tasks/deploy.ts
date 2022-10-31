@@ -5,12 +5,13 @@ import { publishDeployment, isConnectionLive, startGameSync } from './../api/dep
 import { task } from 'hardhat/config';
 import { HardhatRuntimeEnvironment, HardhatArguments } from 'hardhat/types';
 import { confirm, deployProxy, printDivider, indexerUrlSelector, saveMapToLocal } from './util/deployHelper';
-import { createTemplates, generateWorldConstants, SMALL_MAP_INPUT } from './util/constants';
+import { createTemplates, generateWorldConstants, MAP_INPUT } from './util/constants';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
 import { encodeTileMap, generateBlankFixmap, generateMap, initializeFixmap } from './util/mapHelper';
 import { COMPONENT_SPECS, GameConfig, TILE_TYPE, position, scaleMap, chainInfo } from 'curio-vault';
 import gameConstants from './game_parameters.json';
 import * as rw from 'random-words';
+import { saveComponentsToJsonFiles, saveMapToJsonFile, saveWorldConstantsToJsonFile } from '../test/util/saveComponents';
 
 /**
  * Deploy script for publishing games
@@ -48,16 +49,20 @@ task('deploy', 'deploy contracts')
       let [player1] = await hre.ethers.getSigners();
       console.log('✦ player1 address is:', player1.address);
 
-      const worldConstants = generateWorldConstants(player1.address, SMALL_MAP_INPUT);
+      const worldConstants = generateWorldConstants(player1.address);
 
-      const tileMap = fixmap ? generateBlankFixmap() : generateMap(SMALL_MAP_INPUT.width, SMALL_MAP_INPUT.height, worldConstants);
+      const tileMap = fixmap ? generateBlankFixmap() : generateMap(MAP_INPUT.width, MAP_INPUT.height, worldConstants);
       saveMapToLocal(tileMap);
 
-      const ecsLib = await deployProxy<ECSLib>('ECSLib', player1, hre, []);
+      // FIXME: temp for Foundry, change to better automation
+      await saveComponentsToJsonFiles();
+      await saveWorldConstantsToJsonFile(player1.address);
+      await saveMapToJsonFile(tileMap);
+      console.log(`✦ Foundry data loaded`);
 
+      const ecsLib = await deployProxy<ECSLib>('ECSLib', player1, hre, []);
       const gameLib = await deployProxy<GameLib>('GameLib', player1, hre, [], { ECSLib: ecsLib.address });
       const templates = await deployProxy<any>('Templates', player1, hre, [], { ECSLib: ecsLib.address });
-
       const diamondAddr = await deployDiamond(hre, player1, [worldConstants]);
       const diamond = await getDiamond(hre, diamondAddr);
 
@@ -87,7 +92,7 @@ task('deploy', 'deploy contracts')
         console.log(chalk.dim(`✦ registering constants ${i} to ${i + constantUploadBatchSize}`));
         const identifiers = gameConstants.map((c) => c.subject + '-' + c.object + '-' + c.componentName + '-' + c.functionName + '-' + Math.trunc(c.level).toString());
         const values = gameConstants.map((c) => Math.trunc(c.value));
-        await confirm(await diamond.bulkAddConstants(identifiers, values, { gasLimit: gasLimit }), hre);
+        await confirm(await diamond.bulkAddGameParameters(identifiers, values, { gasLimit: gasLimit }), hre);
       }
       console.log(`✦ constant registration took ${Math.floor(performance.now() - startTime)} ms`);
 

@@ -1,11 +1,12 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "forge-std/Test.sol";
-import "test/DiamondDeploy.t.sol";
+import {Test} from "forge-std/Test.sol";
+import {DiamondDeployTest} from "test/DiamondDeploy.t.sol";
 import {Component} from "contracts/Component.sol";
 import {Position} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
+import {console} from "forge-std/console.sol";
 
 contract TreatyTest is Test, DiamondDeployTest {
     function testClaimBarbarinaGather() public {

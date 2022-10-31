@@ -1,10 +1,13 @@
-// SPDX-License-Identifier: Unlicense
+// SPDX-License-Identifier: MIT
 pragma solidity >=0.7.0 <0.9.0;
 
 import "../Test.sol";
+import "../StdJson.sol";
 
 contract StdCheatsTest is Test {
     Bar test;
+
+    using stdJson for string;
 
     function setUp() public {
         test = new Bar();
@@ -61,6 +64,19 @@ contract StdCheatsTest is Test {
         changePrank(address(1337));
         test.bar(address(1337));
         vm.stopPrank();
+    }
+
+    function testMakeAddrEquivalence() public {
+        (address addr, ) = makeAddrAndKey("1337");
+        assertEq(makeAddr("1337"), addr);
+    }
+
+    function testMakeAddrSigning() public {
+        (address addr, uint256 key) = makeAddrAndKey("1337");
+        bytes32 hash = keccak256("some_message");
+
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(key, hash);
+        assertEq(ecrecover(hash, v, r, s), addr);
     }
 
     function testDeal() public {
@@ -138,9 +154,29 @@ contract StdCheatsTest is Test {
         assertEq(string(getCode(deployed)), string(getCode(address(this))));
     }
 
+    // We need that payable constructor in order to send ETH on construction
+    constructor() payable {}
+
+    function testDeployCodeVal() public {
+        address deployed = deployCode("StdCheats.t.sol:StdCheatsTest", bytes(""), 1 ether);
+        assertEq(string(getCode(deployed)), string(getCode(address(this))));
+	assertEq(deployed.balance, 1 ether);
+    }
+
+    function testDeployCodeValNoArgs() public {
+        address deployed = deployCode("StdCheats.t.sol:StdCheatsTest", 1 ether);
+        assertEq(string(getCode(deployed)), string(getCode(address(this))));
+	assertEq(deployed.balance, 1 ether);
+    }
+
+    // We need this so we can call "this.deployCode" rather than "deployCode" directly
+    function deployCodeHelper(string memory what) external {
+        deployCode(what);
+    }
+
     function testDeployCodeFail() public {
         vm.expectRevert(bytes("Test deployCode(string): Deployment failed."));
-        this.deployCode("StdCheats.t.sol:RevertingContract");
+        this.deployCodeHelper("StdCheats.t.sol:RevertingContract");
     }
 
     function getCode(address who) internal view returns (bytes memory o_code) {
@@ -159,6 +195,58 @@ contract StdCheatsTest is Test {
             extcodecopy(who, add(o_code, 0x20), 0, size)
         }
     }
+
+    function testBytesToUint() public {
+        assertEq(3, bytesToUint(hex'03'));
+        assertEq(2, bytesToUint(hex'02'));
+        assertEq(255, bytesToUint(hex'ff'));
+        assertEq(29625, bytesToUint(hex'73b9'));
+    }
+
+    function testParseJsonTxDetail() public {
+        string memory root = vm.projectRoot();
+        string memory path = string.concat(root, "/src/test/fixtures/broadcast.log.json");
+        string memory json = vm.readFile(path);
+        bytes memory transactionDetails = json.parseRaw(".transactions[0].tx");
+        RawTx1559Detail memory rawTxDetail = abi.decode(transactionDetails, (RawTx1559Detail));
+        Tx1559Detail memory txDetail = rawToConvertedEIP1559Detail(rawTxDetail);
+        assertEq(txDetail.from, 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266);
+        assertEq(txDetail.to, 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512);
+        assertEq(txDetail.data, hex'23e99187000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000013370000000000000000000000000000000000000000000000000000000000000060000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000030000000000000000000000000000000000000000000000000000000000000004');
+        assertEq(txDetail.nonce, 3);
+        assertEq(txDetail.txType, 2);
+        assertEq(txDetail.gas, 29625);
+        assertEq(txDetail.value, 0);
+    }
+
+    function testReadEIP1559Transaction() public {
+        string memory root = vm.projectRoot();
+        string memory path = string.concat(root, "/src/test/fixtures/broadcast.log.json");
+        uint256 index = 0;
+        Tx1559 memory transaction = readTx1559(path, index);
+    }
+
+    function testReadEIP1559Transactions() public {
+        string memory root = vm.projectRoot();
+        string memory path = string.concat(root, "/src/test/fixtures/broadcast.log.json");
+        Tx1559[] memory transactions = readTx1559s(path);
+    }
+
+    function testReadReceipt() public {
+        string memory root = vm.projectRoot();
+        string memory path = string.concat(root, "/src/test/fixtures/broadcast.log.json");
+        uint index = 5;
+        Receipt memory receipt = readReceipt(path, index);
+        assertEq(receipt.logsBloom,
+                 hex"00000000000800000000000000000010000000000000000000000000000180000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100");
+    }
+
+    function testReadReceipts() public {
+        string memory root = vm.projectRoot();
+        string memory path = string.concat(root, "/src/test/fixtures/broadcast.log.json");
+        Receipt[] memory receipts = readReceipts(path);
+    }
+
 }
 
 contract Bar {
@@ -191,3 +279,4 @@ contract RevertingContract {
         revert();
     }
 }
+

@@ -1,5 +1,5 @@
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
-import { Duration, encodeString, encodeUint256, InventoryType, InventoryTypeOptions, Load, Tag, Tags, BattleCooldown, TILE_TYPE, Amount } from 'curio-vault';
+import { Duration, encodeString, encodeUint256, InventoryType, InventoryTypeOptions, Tag, Tags, TILE_TYPE, GameMode } from 'curio-vault';
 import { Curio } from './../../typechain-types/hardhat-diamond-abi/Curio';
 import { addGetEntity } from './mapHelper';
 import { MapInput } from './types';
@@ -13,29 +13,28 @@ export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 // WORLD CONSTANTS
 // ----------------------------------------------------------
 
-export const SMALL_MAP_INPUT: MapInput = {
+export const MAP_INPUT: MapInput = {
   width: 11,
   height: 11,
 };
-
-export const TILE_WIDTH = 5;
+export const TILE_WIDTH = 10;
 export const NUM_INIT_TERRAIN_TYPES = Object.keys(TILE_TYPE).length - 1;
 
-export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): any => {
+export const generateWorldConstants = (adminAddr: string): any => {
   return {
     // admin info
     admin: adminAddr,
     // map info
     tileWidth: TILE_WIDTH,
-    worldWidth: mapInput.width * TILE_WIDTH,
-    worldHeight: mapInput.height * TILE_WIDTH,
+    worldWidth: MAP_INPUT.width * TILE_WIDTH,
+    worldHeight: MAP_INPUT.height * TILE_WIDTH,
     numInitTerrainTypes: NUM_INIT_TERRAIN_TYPES,
     initBatchSize: Math.floor(150 / NUM_INIT_TERRAIN_TYPES),
     // manual configs
     maxCityCountPerPlayer: 3,
     maxArmyCountPerPlayer: 2,
     maxPlayerCount: 20,
-    isBattleRoyale: true,
+    gameMode: GameMode.BATTLE_ROYALE,
     // generated constants
     ...worldConstants,
   };
@@ -59,42 +58,34 @@ export const createTemplates = async (diamond: Curio, hre: HardhatRuntimeEnviron
   let entity = Number(await diamond.getEntity());
 
   // Horseman
-  await confirm(await diamond.addTroopTemplate(InventoryTypeOptions.Horseman, 120, 10, 1, 2, 60, 120, 1, 95), hre);
+  await confirm(await diamond.addTroopTemplate(InventoryTypeOptions.Horseman, 120, 10, 1, 2, 60, 120, 95), hre);
   templateNames.push(InventoryTypeOptions.Horseman);
   templateIDs.push(entity++);
 
   // Warrior
-  await confirm(await diamond.addTroopTemplate(InventoryTypeOptions.Warrior, 120, 1, 1, 2, 60, 120, 1, 95), hre);
+  await confirm(await diamond.addTroopTemplate(InventoryTypeOptions.Warrior, 120, 1, 1, 2, 60, 120, 95), hre);
   templateNames.push(InventoryTypeOptions.Warrior);
   templateIDs.push(entity++);
 
   // Slinger
-  await confirm(await diamond.addTroopTemplate(InventoryTypeOptions.Slinger, 125, 2, 1, 2, 60, 125, 1, 95), hre);
+  await confirm(await diamond.addTroopTemplate(InventoryTypeOptions.Slinger, 125, 2, 1, 2, 60, 125, 95), hre);
   templateNames.push(InventoryTypeOptions.Slinger);
   templateIDs.push(entity++);
 
   // Guard
-  await confirm(await diamond.addTroopTemplate(InventoryTypeOptions.Guard, 120, 0, 0, 0, 60, 120, 0, 0), hre);
+  await confirm(await diamond.addTroopTemplate(InventoryTypeOptions.Guard, 120, 0, 0, 0, 60, 120, 0), hre);
   templateNames.push(InventoryTypeOptions.Guard);
   templateIDs.push(entity++);
 
   // Gold
-  inventoryType = InventoryTypeOptions.Gold;
-  entity = await addGetEntity(diamond);
-  await confirm(await diamond.setComponentValue(Tag, entity, encodeString(Tags.ResourceTemplate)), hre);
-  await confirm(await diamond.setComponentValue(InventoryType, entity, encodeString(inventoryType)), hre);
-  await confirm(await diamond.setComponentValue(Duration, entity, encodeUint256(1)), hre);
-  templateNames.push(inventoryType);
-  templateIDs.push(entity);
+  await confirm(await diamond.addResourceTemplate(InventoryTypeOptions.Gold), hre);
+  templateNames.push(InventoryTypeOptions.Gold);
+  templateIDs.push(entity++);
 
   // Food
-  inventoryType = InventoryTypeOptions.Food;
-  entity = await addGetEntity(diamond);
-  await confirm(await diamond.setComponentValue(Tag, entity, encodeString(Tags.ResourceTemplate)), hre);
-  await confirm(await diamond.setComponentValue(InventoryType, entity, encodeString(inventoryType)), hre);
-  await confirm(await diamond.setComponentValue(Duration, entity, encodeUint256(1)), hre);
-  templateNames.push(inventoryType);
-  templateIDs.push(entity);
+  await confirm(await diamond.addResourceTemplate(InventoryTypeOptions.Food), hre);
+  templateNames.push(InventoryTypeOptions.Food);
+  templateIDs.push(entity++);
 
   // Register template names used for shortcuts
   await confirm(await diamond.registerTemplateShortcuts(templateNames, templateIDs), hre);
