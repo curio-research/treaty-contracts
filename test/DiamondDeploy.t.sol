@@ -55,9 +55,9 @@ contract DiamondDeployTest is Test {
     Position public player2Pos = Position({x: 60, y: 30});
     Position public player3Pos = Position({x: 50, y: 20});
 
-    uint256 public cavalryTemplateID;
-    uint256 public infantryTemplateID;
-    uint256 public archerTemplateID;
+    uint256 public horsemanTemplateID;
+    uint256 public warriorTemplateID;
+    uint256 public slingerTemplateID;
     uint256 public guardTemplateID;
     uint256 public goldTemplateID;
     uint256 public foodTemplateID;
@@ -236,6 +236,7 @@ contract DiamondDeployTest is Test {
         templateNames[index] = templateName;
         templateIDs[index] = templateID;
         index++;
+        horsemanTemplateID = templateID;
 
         // Warrior
         templateName = "Warrior";
@@ -243,6 +244,7 @@ contract DiamondDeployTest is Test {
         templateNames[index] = templateName;
         templateIDs[index] = templateID;
         index++;
+        warriorTemplateID = templateID;
 
         // Slinger
         templateName = "Slinger";
@@ -250,6 +252,7 @@ contract DiamondDeployTest is Test {
         templateNames[index] = templateName;
         templateIDs[index] = templateID;
         index++;
+        slingerTemplateID = templateID;
 
         // Guard
         templateName = "Guard";
@@ -257,6 +260,7 @@ contract DiamondDeployTest is Test {
         templateNames[index] = templateName;
         templateIDs[index] = templateID;
         index++;
+        guardTemplateID = templateID;
 
         // Gold
         templateName = "Gold";
@@ -264,6 +268,7 @@ contract DiamondDeployTest is Test {
         templateNames[index] = templateName;
         templateIDs[index] = templateID;
         index++;
+        goldTemplateID = templateID;
 
         // Food
         templateName = "Food";
@@ -271,6 +276,7 @@ contract DiamondDeployTest is Test {
         templateNames[index] = templateName;
         templateIDs[index] = templateID;
         index++;
+        foodTemplateID = templateID;
 
         // Register template names used for shortcuts
         admin.registerTemplateShortcuts(templateNames, templateIDs);
