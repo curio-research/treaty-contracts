@@ -440,14 +440,14 @@ class Game:
             self.total_tile_count = 9*9
             self.expected_player_count = 3
             self.init_player_tile_count = 9
-            self.expected_play_time_in_hour = 1.5
+            self.expected_play_time_in_hour = 0.1  # FIXME: restore to 1.5
             self.upgrade_time_to_expected_play_time_ratio = 1/3
             self.init_player_goldmine_count = 2
             self.init_player_farm_count = 9
             self.player_login_interval_in_minutes = 15
             self.max_city_center_level = 5
             self.city_center_level_to_building_level = 3
-            self.new_player_action_in_seconds = 100
+            self.new_player_action_in_seconds = 5  # FIXME: restore to 100
             self.base_troop_training_in_seconds = 0.2
             self.barbarian_reward_to_cost_coefficient = 4
             self.tile_to_barbarian_strength_ratio = 1.8
@@ -620,7 +620,7 @@ class Game:
             elif i == Building.CITY_CENTER:
                 max_building_level = self.max_city_center_level
 
-            curr_level = 1
+            curr_level = 0
 
             while curr_level <= max_building_level:
                 (gold_upgrade_cost, food_upgrade_cost) = get_building_upgrade_cost(

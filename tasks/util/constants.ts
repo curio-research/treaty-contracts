@@ -29,12 +29,12 @@ export const generateWorldConstants = (adminAddr: string): any => {
     worldWidth: MAP_INPUT.width * TILE_WIDTH,
     worldHeight: MAP_INPUT.height * TILE_WIDTH,
     numInitTerrainTypes: NUM_INIT_TERRAIN_TYPES,
-    initBatchSize: Math.floor(150 / NUM_INIT_TERRAIN_TYPES),
+    initBatchSize: Math.floor(240 / NUM_INIT_TERRAIN_TYPES),
     // manual configs
     maxCityCountPerPlayer: 3,
     maxArmyCountPerPlayer: 2,
     maxPlayerCount: 20,
-    gameMode: GameMode.BATTLE_ROYALE,
+    gameMode: GameMode.REGULAR,
     // generated constants
     ...worldConstants,
   };
@@ -53,9 +53,7 @@ export const createTemplates = async (diamond: Curio, hre: HardhatRuntimeEnviron
   const templateIDs: number[] = [];
   // TODO: automate this just like the game constants
 
-  let inventoryType = InventoryTypeOptions.Horseman;
-
-  let entity = Number(await diamond.getEntity());
+  let entity = Number(await diamond.getEntity()) + 1;
 
   // Horseman
   await confirm(await diamond.addTroopTemplate(InventoryTypeOptions.Horseman, 120, 10, 1, 2, 60, 120, 95), hre);

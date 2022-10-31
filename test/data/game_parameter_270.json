@@ -1,8 +1,8 @@
 {
-    "componentName": "Amount",
+    "componentName": "Yield",
     "functionName": "",
-    "level": 3,
-    "object": "Guard",
-    "subject": "Barbarian",
-    "value": 31
+    "level": 4,
+    "object": "Food",
+    "subject": "City Center",
+    "value": 373
 }

@@ -1,8 +1,8 @@
 {
     "componentName": "Cooldown",
     "functionName": "Upgrade",
-    "level": 9,
+    "level": 8,
     "object": "",
     "subject": "Goldmine",
-    "value": 6
+    "value": 0
 }

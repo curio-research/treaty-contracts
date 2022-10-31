@@ -5,7 +5,7 @@ import {Set} from "contracts/Set.sol";
 import {UseStorage} from "contracts/libraries/Storage.sol";
 import {GameLib} from "contracts/libraries/GameLib.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
-import {Position, Tile, WorldConstants} from "contracts/libraries/Types.sol";
+import {Position, WorldConstants} from "contracts/libraries/Types.sol";
 import {Component} from "contracts/Component.sol";
 
 /// @title Bulk getters

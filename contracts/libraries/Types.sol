@@ -3,10 +3,6 @@ pragma solidity ^0.8.4;
 
 /// Data structures for game
 
-enum Terrain {
-    LAND
-}
-
 enum ValueType {
     UINT,
     STRING,
@@ -54,11 +50,6 @@ struct GameParamSpec {
 struct Position {
     uint256 x;
     uint256 y;
-}
-
-struct Tile {
-    bool isInitialized;
-    Terrain terrain;
 }
 
 struct WorldConstants {

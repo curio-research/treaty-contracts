@@ -144,7 +144,7 @@ contract GameFacet is UseStorage {
             for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
                 string memory inventoryType = ECSLib.getString("InventoryType", resourceTemplateIDs[i]);
                 uint256 inventoryLoad = GameLib.getConstant("City Center", inventoryType, "Load", "", 1);
-                Templates.addInventory(cityID, resourceTemplateIDs[i], 0, inventoryLoad, true);
+                Templates.addInventory(cityID, resourceTemplateIDs[i], 10000000, inventoryLoad, true);
             }
         }
 
@@ -568,7 +568,9 @@ contract GameFacet is UseStorage {
 
         // Verify it's not being upgraded
         uint256 centerLevel = ECSLib.getUint("Level", cityCenterID);
-        require(block.timestamp - ECSLib.getUint("LastUpgraded", _buildingID) > GameLib.getConstant("City Center", "", "Cooldown", "Upgrade", centerLevel), "CURIO: Upgrade unfinished");
+        if (centerLevel < gs().worldConstants.maxCityCenterLevel) {
+            require(block.timestamp - ECSLib.getUint("LastUpgraded", _buildingID) > GameLib.getConstant("City Center", "", "Cooldown", "Upgrade", centerLevel), "CURIO: Upgrade unfinished");
+        }
 
         // Create inventory if none exists
         uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
@@ -605,7 +607,7 @@ contract GameFacet is UseStorage {
         require(GameLib.getArmyAt(midPosition) == NULL, "CURIO: Occupied by another army");
 
         // Verify that total troop amount does not exceed max troop count
-        uint256 maxTroopCountPerArmy = GameLib.getConstant("Army", "Troop", "Amount", "", ECSLib.getUint("Level", _cityID));
+        uint256 maxTroopCountPerArmy = GameLib.getConstant("Army", "Troop", "Amount", "", ECSLib.getUint("Level", GameLib.getCityCenter(_cityID)));
         require(GameLib.sum(_amounts) <= maxTroopCountPerArmy, "CURIO: Troop amount exceeds capacity");
 
         // Gather army traits from individual troop types
@@ -836,7 +838,7 @@ contract GameFacet is UseStorage {
         // check if upgrade is in process
         uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
         string memory subject = ECSLib.getUint("Template", _resourceID) == gs().templates["Gold"] ? "Goldmine" : "Farm";
-        require(block.timestamp - ECSLib.getUint("LastUpgraded", _resourceID) > GameLib.getConstant(subject, "", "Cooldown", "Upgrade", _resourceID), "CURIO: Upgrade in process");
+        require(block.timestamp - ECSLib.getUint("LastUpgraded", _resourceID) > GameLib.getConstant(subject, "", "Cooldown", "Upgrade", resourceLevel), "CURIO: Upgrade in process");
 
         // Deduct costs and set load
         for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
