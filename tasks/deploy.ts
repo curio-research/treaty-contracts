@@ -26,7 +26,7 @@ task('deploy', 'deploy contracts')
   .addOptionalParam('port', 'Port contract abis and game info to Vault') // default is to call port
   .addFlag('release', 'Publish deployment to official release') // default is to call publish
   .addFlag('fixmap', 'Use deterministic map') // default is non-deterministic maps; deterministic maps are mainly used for client development
-  .addFlag('indexer', 'Use production indexer') //
+  .addFlag('indexer', 'Use production indexer') // whether to use inexer or not
   .setAction(async (args: DeployArgs, hre: HardhatRuntimeEnvironment) => {
     try {
       await hre.run('compile');
