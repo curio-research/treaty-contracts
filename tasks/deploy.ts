@@ -29,9 +29,7 @@ task('deploy', 'deploy contracts')
   .addFlag('indexer', 'Use production indexer') //
   .setAction(async (args: DeployArgs, hre: HardhatRuntimeEnvironment) => {
     try {
-      // FIXME: temp for Foundry, change to better automation
-      await saveComponentsToJsonFile();
-      console.log('save done');
+      await saveComponentsToJsonFile(); // FIXME: temp for Foundry, change to better automation
 
       await hre.run('compile');
       printDivider();

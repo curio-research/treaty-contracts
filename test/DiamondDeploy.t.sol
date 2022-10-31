@@ -55,8 +55,6 @@ contract DiamondDeployTest is Test {
     Position public player2Pos = Position({x: 60, y: 30});
     Position public player3Pos = Position({x: 50, y: 20});
 
-    uint256 public destroyerTemplateId;
-
     uint256 public cavalryTemplateID;
     uint256 public infantryTemplateID;
     uint256 public archerTemplateID;
