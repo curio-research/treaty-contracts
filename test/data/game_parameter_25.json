@@ -1,8 +1,8 @@
 {
-    "componentName": "Yield",
-    "functionName": "",
+    "componentName": "Cost",
+    "functionName": "Upgrade",
     "level": 3,
     "object": "Gold",
     "subject": "Goldmine",
-    "value": 196
+    "value": 8699
 }

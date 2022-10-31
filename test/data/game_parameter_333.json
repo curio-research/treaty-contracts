@@ -1,8 +1,8 @@
 {
-    "componentName": "Amount",
-    "functionName": "",
-    "level": 1,
-    "object": "Tile",
-    "subject": "City",
-    "value": 9
+    "componentName": "Cost",
+    "functionName": "Upgrade",
+    "level": 6,
+    "object": "Gold",
+    "subject": "Tile",
+    "value": 8150
 }

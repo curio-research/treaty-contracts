@@ -1,8 +1,8 @@
 {
-    "componentName": "Cost",
-    "functionName": "Move",
-    "level": 3,
+    "componentName": "Load",
+    "functionName": "",
+    "level": 14,
     "object": "Gold",
-    "subject": "City Center",
+    "subject": "Farm",
     "value": 0
 }

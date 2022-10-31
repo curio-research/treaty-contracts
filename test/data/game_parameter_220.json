@@ -1,8 +1,8 @@
 {
     "componentName": "Cost",
-    "functionName": "Upgrade",
+    "functionName": "Move",
     "level": 1,
     "object": "Gold",
     "subject": "City Center",
-    "value": 8696
+    "value": 0
 }

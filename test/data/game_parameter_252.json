@@ -1,8 +1,8 @@
 {
-    "componentName": "Amount",
+    "componentName": "Load",
     "functionName": "",
-    "level": 3,
-    "object": "Guard",
-    "subject": "Barbarian",
-    "value": 23
+    "level": 4,
+    "object": "Troop",
+    "subject": "City Center",
+    "value": 999999999
 }

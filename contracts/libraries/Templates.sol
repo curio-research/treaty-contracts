@@ -16,6 +16,8 @@ library Templates {
         ECSLib.setString("BuildingType", cityCenterID, "City Center");
         ECSLib.setUint("InitTimestamp", cityCenterID, block.timestamp);
         ECSLib.setUint("LastTimestamp", cityCenterID, block.timestamp);
+        ECSLib.setUint("LastUpgraded", cityCenterID, 0);
+        ECSLib.setUint("LastMoved", cityCenterID, 0);
 
         return cityCenterID;
     }
@@ -90,6 +92,8 @@ library Templates {
         ECSLib.setUint("Level", tileID, 1);
         ECSLib.setUint("Terrain", tileID, _terrain);
         ECSLib.setUint("LastTimestamp", tileID, block.timestamp);
+        ECSLib.setUint("LastUpgraded", tileID, 0);
+        ECSLib.setUint("LastRecovered", tileID, 0);
 
         return tileID;
     }
@@ -127,6 +131,7 @@ library Templates {
         ECSLib.setPosition("StartPosition", resourceID, _startPosition);
         ECSLib.setUint("LastTimestamp", resourceID, block.timestamp);
         ECSLib.setUint("Load", resourceID, _load);
+        ECSLib.setUint("LastUpgraded", resourceID, 0);
 
         return resourceID;
     }

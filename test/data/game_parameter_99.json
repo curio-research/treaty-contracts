@@ -1,8 +1,8 @@
 {
-    "componentName": "Load",
+    "componentName": "Yield",
     "functionName": "",
-    "level": 15,
-    "object": "Gold",
+    "level": 14,
+    "object": "Food",
     "subject": "Goldmine",
-    "value": 388000
+    "value": 0
 }

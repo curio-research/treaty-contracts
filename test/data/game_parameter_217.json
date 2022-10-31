@@ -1,8 +1,8 @@
 {
-    "componentName": "Yield",
-    "functionName": "",
+    "componentName": "Cooldown",
+    "functionName": "Upgrade",
     "level": 1,
-    "object": "Food",
+    "object": "",
     "subject": "City Center",
-    "value": 178
+    "value": 5
 }

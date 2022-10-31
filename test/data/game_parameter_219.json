@@ -2,7 +2,7 @@
     "componentName": "Load",
     "functionName": "",
     "level": 1,
-    "object": "Food",
+    "object": "Troop",
     "subject": "City Center",
-    "value": 214666
+    "value": 999999999
 }

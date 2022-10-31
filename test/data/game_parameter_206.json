@@ -1,8 +1,8 @@
 {
-    "componentName": "Cost",
-    "functionName": "Move",
-    "level": 4,
-    "object": "Food",
-    "subject": "City Center",
-    "value": 0
+    "componentName": "Cooldown",
+    "functionName": "Upgrade",
+    "level": 14,
+    "object": "",
+    "subject": "Farm",
+    "value": 16
 }

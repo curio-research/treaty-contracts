@@ -1,8 +1,8 @@
 {
-    "componentName": "Load",
-    "functionName": "",
-    "level": 5,
+    "componentName": "Cost",
+    "functionName": "Move",
+    "level": 3,
     "object": "Food",
     "subject": "City Center",
-    "value": 326000
+    "value": 0
 }

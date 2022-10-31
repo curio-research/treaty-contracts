@@ -1,8 +1,8 @@
 {
-    "componentName": "Amount",
-    "functionName": "",
-    "level": 6,
-    "object": "Guard",
-    "subject": "Barbarian",
-    "value": 45
+    "componentName": "Cost",
+    "functionName": "Move",
+    "level": 5,
+    "object": "Food",
+    "subject": "City Center",
+    "value": 0
 }
