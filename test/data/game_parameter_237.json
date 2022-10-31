@@ -1,8 +1,8 @@
 {
-    "componentName": "Cost",
-    "functionName": "Upgrade",
-    "level": 3,
-    "object": "Gold",
+    "componentName": "Yield",
+    "functionName": "",
+    "level": 1,
+    "object": "Food",
     "subject": "City Center",
-    "value": 24915
+    "value": 220
 }

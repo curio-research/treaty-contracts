@@ -3,7 +3,7 @@ pragma solidity ^0.8.4;
 
 import {Strings} from "openzeppelin-contracts/contracts/utils/Strings.sol";
 import {LibStorage} from "contracts/libraries/Storage.sol";
-import {ComponentSpec, GameMode, GameState, Position, Terrain, Tile, ValueType, WorldConstants, QueryCondition, QueryType} from "contracts/libraries/Types.sol";
+import {ComponentSpec, GameMode, GameState, Position, ValueType, WorldConstants, QueryCondition, QueryType} from "contracts/libraries/Types.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
 import {Templates} from "contracts/libraries/Templates.sol";
 import {Set} from "contracts/Set.sol";
@@ -97,11 +97,6 @@ library GameLib {
             }
         }
 
-        // Initialize gold mine
-        if (terrain == 1 && getResourceAtTile(_startPosition) == 0) {
-            Templates.addResource(gs().templates["Gold"], _startPosition, 0);
-        }
-
         if (terrain < 3) {
             // Normal tile
             uint256 tileGuardAmount = getConstant("Tile", "Guard", "Amount", "", ECSLib.getUint("Level", tileID));
@@ -116,8 +111,13 @@ library GameLib {
             // Mountain tile, do nothing
         }
 
+        // Initialize gold mine
+        if (terrain == 1 && getResourceAtTile(_startPosition) == 0) {
+            Templates.addResource(gs().templates["Gold"], _startPosition, 0);
+        }
+
         // All empty tiles are farms
-        if (terrain == 0 && getResourceAtTile(_startPosition) == 0) {
+        if ((terrain == 0 || terrain == 2) && getResourceAtTile(_startPosition) == 0) {
             Templates.addResource(gs().templates["Food"], _startPosition, 0);
         }
 

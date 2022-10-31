@@ -1,8 +1,8 @@
 {
-    "componentName": "Amount",
-    "functionName": "",
-    "level": 8,
-    "object": "Guard",
-    "subject": "Barbarian",
-    "value": 85
+    "componentName": "Cost",
+    "functionName": "Move",
+    "level": 5,
+    "object": "Gold",
+    "subject": "City Center",
+    "value": 0
 }

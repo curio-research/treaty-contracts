@@ -1,8 +1,8 @@
 {
-    "componentName": "Load",
-    "functionName": "",
-    "level": 1,
-    "object": "Troop",
-    "subject": "City Center",
-    "value": 999999999
+    "componentName": "Cost",
+    "functionName": "Upgrade",
+    "level": 14,
+    "object": "Food",
+    "subject": "Farm",
+    "value": 30739
 }

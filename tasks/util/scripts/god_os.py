@@ -620,7 +620,7 @@ class Game:
             elif i == Building.CITY_CENTER:
                 max_building_level = self.max_city_center_level
 
-            curr_level = 1
+            curr_level = 0
 
             while curr_level <= max_building_level:
                 (gold_upgrade_cost, food_upgrade_cost) = get_building_upgrade_cost(

@@ -3,7 +3,7 @@ pragma solidity ^0.8.4;
 
 import {UseStorage} from "contracts/libraries/Storage.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
-import {ComponentSpec, Position, Tile, ValueType, WorldConstants} from "contracts/libraries/Types.sol";
+import {ComponentSpec, Position, ValueType, WorldConstants} from "contracts/libraries/Types.sol";
 import {Templates} from "contracts/libraries/Templates.sol";
 import {Set} from "contracts/Set.sol";
 import {GameLib} from "contracts/libraries/GameLib.sol";

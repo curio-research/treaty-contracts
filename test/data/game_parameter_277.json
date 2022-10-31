@@ -1,8 +1,8 @@
 {
-    "componentName": "Reward",
+    "componentName": "Load",
     "functionName": "",
-    "level": 6,
-    "object": "Gold",
-    "subject": "Barbarian",
-    "value": 875359
+    "level": 4,
+    "object": "Troop",
+    "subject": "City Center",
+    "value": 999999999
 }
