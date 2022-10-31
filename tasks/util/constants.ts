@@ -79,20 +79,14 @@ export const createTemplates = async (diamond: Curio, hre: HardhatRuntimeEnviron
   templateIDs.push(entity++);
 
   // Gold
-  inventoryType = InventoryTypeOptions.Gold;
-  entity = await addGetEntity(diamond);
-  await confirm(await diamond.setComponentValue(Tag, entity, encodeString(Tags.ResourceTemplate)), hre);
-  await confirm(await diamond.setComponentValue(InventoryType, entity, encodeString(inventoryType)), hre);
-  templateNames.push(inventoryType);
-  templateIDs.push(entity);
+  await confirm(await diamond.addResourceTemplate(InventoryTypeOptions.Gold), hre);
+  templateNames.push(InventoryTypeOptions.Gold);
+  templateIDs.push(entity++);
 
   // Food
-  inventoryType = InventoryTypeOptions.Food;
-  entity = await addGetEntity(diamond);
-  await confirm(await diamond.setComponentValue(Tag, entity, encodeString(Tags.ResourceTemplate)), hre);
-  await confirm(await diamond.setComponentValue(InventoryType, entity, encodeString(inventoryType)), hre);
-  templateNames.push(inventoryType);
-  templateIDs.push(entity);
+  await confirm(await diamond.addResourceTemplate(InventoryTypeOptions.Food), hre);
+  templateNames.push(InventoryTypeOptions.Food);
+  templateIDs.push(entity++);
 
   // Register template names used for shortcuts
   await confirm(await diamond.registerTemplateShortcuts(templateNames, templateIDs), hre);

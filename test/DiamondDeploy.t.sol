@@ -1,22 +1,22 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "forge-std/Test.sol";
-import "contracts/facets/DiamondCutFacet.sol";
-import "contracts/facets/DiamondLoupeFacet.sol";
-import "contracts/facets/OwnershipFacet.sol";
-import "contracts/diamond.sol";
-import "contracts/upgradeInitializers/diamondInit.sol";
-import "contracts/interfaces/IDiamondCut.sol";
-import "contracts/libraries/GameLib.sol";
-import "contracts/facets/GetterFacet.sol";
-import "contracts/facets/GameFacet.sol";
-import "contracts/facets/AdminFacet.sol";
-import "contracts/libraries/Types.sol";
-import "contracts/NATO.sol";
-import "forge-std/console.sol";
-import "forge-std/StdJson.sol";
-import "openzeppelin-contracts/contracts/utils/Strings.sol";
+import {Test} from "forge-std/Test.sol";
+import {DiamondCutFacet} from "contracts/facets/DiamondCutFacet.sol";
+import {DiamondLoupeFacet} from "contracts/facets/DiamondLoupeFacet.sol";
+import {OwnershipFacet} from "contracts/facets/OwnershipFacet.sol";
+import {Diamond} from "contracts/diamond.sol";
+import {DiamondInit} from "contracts/upgradeInitializers/diamondInit.sol";
+import {IDiamondCut} from "contracts/interfaces/IDiamondCut.sol";
+import {GameLib} from "contracts/libraries/GameLib.sol";
+import {GetterFacet} from "contracts/facets/GetterFacet.sol";
+import {GameFacet} from "contracts/facets/GameFacet.sol";
+import {AdminFacet} from "contracts/facets/AdminFacet.sol";
+import {Strings} from "openzeppelin-contracts/contracts/utils/Strings.sol";
+import {ComponentSpec, GameMode, GameParamSpec, Position, WorldConstants} from "contracts/libraries/Types.sol";
+import {NATO} from "contracts/NATO.sol";
+import {console} from "forge-std/console.sol";
+import {stdJson} from "forge-std/StdJson.sol";
 
 /// @title diamond deploy foundry template
 /// @notice This contract sets up the diamond for testing and is inherited by other foundry test contracts.
@@ -70,7 +70,7 @@ contract DiamondDeployTest is Test {
 
     function setUp() public {
         vm.startPrank(deployer);
-        console.log(">>> Setup started");
+        console.log("==================== SETUP BEGINS =====================");
 
         diamondCutFacet = new DiamondCutFacet();
         diamond = address(new Diamond(deployer, address(diamondCutFacet)));
@@ -133,7 +133,8 @@ contract DiamondDeployTest is Test {
         vm.prank(player3);
         game.initializePlayer(player3Pos, "Cindy");
         player3Id = getter.getPlayerId(player3);
-        console.log(">>> Players initialized, individual tests begin");
+        console.log(">>> Players initialized");
+        console.log("=============== INDIVIDUAL TESTS BEGIN ================");
     }
 
     function _encodeTileMap(
@@ -266,7 +267,7 @@ contract DiamondDeployTest is Test {
                 maxCityCountPerPlayer: 3,
                 maxArmyCountPerPlayer: 3,
                 maxPlayerCount: 20,
-                gameMode: GameMode.BATTLE_ROYALE,
+                gameMode: GameMode.REGULAR,
                 maxCityCenterLevel: 3,
                 cityCenterLevelToEntityLevelRatio: 3,
                 secondsToTrainAThousandTroops: 500

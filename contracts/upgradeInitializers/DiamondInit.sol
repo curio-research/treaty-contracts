@@ -15,7 +15,7 @@ import {IDiamondCut} from "contracts/interfaces/IDiamondCut.sol";
 import {IERC173} from "contracts/interfaces/IERC173.sol";
 import {IERC165} from "contracts/interfaces/IERC165.sol";
 import {Set} from "contracts/Set.sol";
-import "contracts/libraries/Storage.sol";
+import {UseStorage} from "contracts/libraries/Storage.sol";
 
 // It is expected that this contract is customized if you want to deploy your diamond
 // with data from a deployment script. Use the init function to initialize state variables

@@ -1,20 +1,17 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "contracts/libraries/Storage.sol";
+import {UseStorage} from "contracts/libraries/Storage.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
 import {ComponentSpec, Position, Tile, ValueType, WorldConstants} from "contracts/libraries/Types.sol";
-import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
-import "contracts/libraries/Templates.sol";
+import {Templates} from "contracts/libraries/Templates.sol";
 import {Set} from "contracts/Set.sol";
 import {GameLib} from "contracts/libraries/GameLib.sol";
-import "forge-std/console.sol";
 
 /// @title Admin facet
 /// @notice Contains admin functions and state functions, both of which should be out of scope for players
 
 contract AdminFacet is UseStorage {
-    using SafeMath for uint256;
     uint256 private constant NULL = 0;
 
     // TODO: Question: How to reuse functions from Util so that they can be directly called by external parties?

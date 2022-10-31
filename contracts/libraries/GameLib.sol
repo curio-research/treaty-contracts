@@ -1,10 +1,9 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "openzeppelin-contracts/contracts/utils/Strings.sol";
-import "contracts/libraries/Storage.sol";
+import {Strings} from "openzeppelin-contracts/contracts/utils/Strings.sol";
+import {LibStorage} from "contracts/libraries/Storage.sol";
 import {ComponentSpec, GameMode, GameState, Position, Terrain, Tile, ValueType, WorldConstants, QueryCondition, QueryType} from "contracts/libraries/Types.sol";
-import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
 import {Templates} from "contracts/libraries/Templates.sol";
 import {Set} from "contracts/Set.sol";
@@ -17,8 +16,6 @@ import {AddressComponent, BoolComponent, IntComponent, PositionComponent, String
 /// Note: This file should not have any occurrences of `msg.sender`. Pass in player addresses to use them.
 
 library GameLib {
-    using SafeMath for uint256;
-
     function gs() internal pure returns (GameState storage) {
         return LibStorage.gameStorage();
     }
@@ -87,15 +84,17 @@ library GameLib {
 
         // TEMP: battle royale mode
         if (gs().worldConstants.gameMode == GameMode.BATTLE_ROYALE) {
-            // Set map center tile to SUPERTILE of land, no resources, and the top tile strength to start
             if (coincident(_startPosition, getMapCenterTilePosition())) {
+                // Set map center tile to SUPERTILE of land, no resources, and the top tile strength to start
                 uint256 maxTileLevel = gs().worldConstants.maxCityCenterLevel * gs().worldConstants.cityCenterLevelToEntityLevelRatio;
                 ECSLib.setUint("Terrain", tileID, 0);
                 ECSLib.setUint("Level", tileID, maxTileLevel);
+
                 uint256 supertileGuardAmount = getConstant("Tile", "Guard", "Amount", "", maxTileLevel);
                 Templates.addConstituent(tileID, gs().templates["Guard"], supertileGuardAmount);
+
+                return tileID;
             }
-            return tileID;
         }
 
         // Initialize gold mine
