@@ -37,7 +37,7 @@ contract DiamondDeployTest is Test {
     AdminFacet public admin;
     OwnershipFacet public ownership;
 
-    // treaties
+    // Treaties
     NATO public nato;
 
     uint256 public NULL = 0;
@@ -70,17 +70,23 @@ contract DiamondDeployTest is Test {
         vm.startPrank(deployer);
         console.log("==================== SETUP BEGINS =====================");
 
+        // Initialize diamond facets
         diamondCutFacet = new DiamondCutFacet();
         diamond = address(new Diamond(deployer, address(diamondCutFacet)));
         diamondInit = new DiamondInit();
         diamondLoupeFacet = new DiamondLoupeFacet();
         diamondOwnershipFacet = new OwnershipFacet();
-
         gameFacet = new GameFacet();
         getterFacet = new GetterFacet();
         adminFacet = new AdminFacet();
-        WorldConstants memory worldConstants = _generateWorldConstants();
 
+        // Prepare world constants with either `_generateNewWorldConstants()` or `fetchWorldConstants()`
+        WorldConstants memory worldConstants = _fetchWorldConstants();
+        worldConstants.worldWidth = 1000; // use deployment settings, except make map bigger
+        worldConstants.worldHeight = 1000;
+        console.log(">>> World constants ready");
+
+        // Initialize treaties
         nato = new NATO();
 
         // Fetch args from CLI craft payload for init deploy
@@ -93,6 +99,7 @@ contract DiamondDeployTest is Test {
         cuts[4] = IDiamondCut.FacetCut({facetAddress: address(adminFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: _getSelectors("AdminFacet")});
         IDiamondCut(diamond).diamondCut(cuts, address(diamondInit), initData);
 
+        // Assign diamond functions to corresponding facets
         getter = GetterFacet(diamond);
         game = GameFacet(diamond);
         admin = AdminFacet(diamond);
@@ -107,15 +114,14 @@ contract DiamondDeployTest is Test {
         _registerGameParameters();
         console.log(">>> Game parameters registered");
 
-        // Initialize map
-        // TODO: automate
-        uint256[][] memory _map = _generateMap(worldConstants.worldWidth, worldConstants.worldHeight);
-        uint256[][] memory _encodedColumnBatches = _encodeTileMap(_map, worldConstants.numInitTerrainTypes, worldConstants.initBatchSize);
-        admin.storeEncodedColumnBatches(_encodedColumnBatches);
+        // Initialize map either with either `_generateNewMap()` or `_fetchLastDeployedMap()`
+        // Note: if fetching deployed map, check for map size
+        uint256[][] memory map = _generateNewMap(worldConstants.worldWidth, worldConstants.worldHeight);
+        uint256[][] memory encodedColumnBatches = _encodeTileMap(map, worldConstants.numInitTerrainTypes, worldConstants.initBatchSize);
+        admin.storeEncodedColumnBatches(encodedColumnBatches);
         console.log(">>> Map initialized and encoded");
 
         // Create templates
-        // TODO: automate
         _createTemplates();
         console.log(">>> Templates created");
 
@@ -270,12 +276,23 @@ contract DiamondDeployTest is Test {
         admin.registerTemplateShortcuts(templateNames, templateIDs);
     }
 
-    // Note: hardcoded
-    function _generateWorldConstants() private view returns (WorldConstants memory) {
+    /// @dev First way to get world constants: fetch them from data, identical with deployment
+    function _fetchWorldConstants() private returns (WorldConstants memory) {
+        string memory root = vm.projectRoot();
+        string memory path = string(abi.encodePacked(root, "/test/data/world_constants.json"));
+        bytes memory rawJson = vm.parseJson(vm.readFile(path));
+        WorldConstants memory constants = abi.decode(rawJson, (WorldConstants));
+
+        constants.admin = deployer;
+        return constants;
+    }
+
+    /// @dev Second way to get world constants: initialize the world in a unique new state
+    function _generateNewWorldConstants() private view returns (WorldConstants memory) {
         return
             WorldConstants({
                 admin: deployer,
-                tileWidth: 10, // DO NOT REMOVE THIS COMMENT
+                tileWidth: 10,
                 worldWidth: 1000,
                 worldHeight: 1000,
                 numInitTerrainTypes: 6,
@@ -286,12 +303,22 @@ contract DiamondDeployTest is Test {
                 gameMode: GameMode.REGULAR,
                 maxCityCenterLevel: 3,
                 cityCenterLevelToEntityLevelRatio: 3,
-                secondsToTrainAThousandTroops: 500
+                secondsToTrainAThousandTroops: 500 // DO NOT REMOVE THIS COMMENT
             });
     }
 
-    // Note: hardcoded
-    function _generateMap(uint256 _width, uint256 _height) private pure returns (uint256[][] memory) {
+    /// @dev First way to get map: fetch them from last deployment
+    function _fetchLastDeployedMap() private returns (uint256[][] memory) {
+        string memory root = vm.projectRoot();
+        string memory path = string(abi.encodePacked(root, "/test/data/map.json"));
+        bytes memory rawJson = vm.parseJson(vm.readFile(path));
+        uint256[][] memory map = abi.decode(rawJson, (uint256[][]));
+
+        return map;
+    }
+
+    /// @dev Second way to get map: initialize a new one
+    function _generateNewMap(uint256 _width, uint256 _height) private pure returns (uint256[][] memory) {
         uint256[] memory _plainCol = new uint256[](_height);
 
         // set individual columns

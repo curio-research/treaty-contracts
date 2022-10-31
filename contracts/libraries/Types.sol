@@ -36,11 +36,13 @@ struct QueryCondition {
 }
 
 struct ComponentSpec {
+    /// Note: Keys of this spec must be in alphabetical order for Foundry testing purposes.
     string name;
     ValueType valueType;
 }
 
 struct GameParamSpec {
+    /// Note: Keys of this spec must be in alphabetical order for Foundry testing purposes.
     string componentName;
     string functionName;
     uint256 level;
@@ -60,23 +62,20 @@ struct Tile {
 }
 
 struct WorldConstants {
-    // Admin info
+    /// Note: Keys of this spec must be in alphabetical order for Foundry testing purposes.
     address admin;
-    // Map info
-    uint256 tileWidth;
-    uint256 worldWidth;
-    uint256 worldHeight;
-    uint256 numInitTerrainTypes; // default is 6
-    uint256 initBatchSize; // default is 50 if numInitTerrainTypes = 6
-    // Manual configs
-    uint256 maxCityCountPerPlayer;
-    uint256 maxArmyCountPerPlayer;
-    uint256 maxPlayerCount;
-    GameMode gameMode;
-    // Generated configs
-    uint256 maxCityCenterLevel;
     uint256 cityCenterLevelToEntityLevelRatio; // 3 => lv1 city center unlocks lv3 resources
+    GameMode gameMode;
+    uint256 initBatchSize; // default is 50 if numInitTerrainTypes = 6
+    uint256 maxArmyCountPerPlayer;
+    uint256 maxCityCenterLevel;
+    uint256 maxCityCountPerPlayer;
+    uint256 maxPlayerCount;
+    uint256 numInitTerrainTypes; // default is 6
     uint256 secondsToTrainAThousandTroops;
+    uint256 tileWidth;
+    uint256 worldHeight;
+    uint256 worldWidth;
 }
 
 struct GameState {
@@ -84,7 +83,6 @@ struct GameState {
     uint256 lastPaused;
     WorldConstants worldConstants;
     address[] players;
-    // Tile[5000][5000] map;
     uint256[][] encodedColumnBatches;
     address[] treaties;
     address entities;

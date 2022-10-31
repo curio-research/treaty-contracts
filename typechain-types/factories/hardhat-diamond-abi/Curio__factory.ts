@@ -1517,42 +1517,7 @@ const _abi = [
           },
           {
             internalType: "uint256",
-            name: "tileWidth",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "worldWidth",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "worldHeight",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "numInitTerrainTypes",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "initBatchSize",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "maxCityCountPerPlayer",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "maxArmyCountPerPlayer",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "maxPlayerCount",
+            name: "cityCenterLevelToEntityLevelRatio",
             type: "uint256",
           },
           {
@@ -1562,17 +1527,52 @@ const _abi = [
           },
           {
             internalType: "uint256",
+            name: "initBatchSize",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "maxArmyCountPerPlayer",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
             name: "maxCityCenterLevel",
             type: "uint256",
           },
           {
             internalType: "uint256",
-            name: "cityCenterLevelToEntityLevelRatio",
+            name: "maxCityCountPerPlayer",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "maxPlayerCount",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "numInitTerrainTypes",
             type: "uint256",
           },
           {
             internalType: "uint256",
             name: "secondsToTrainAThousandTroops",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "tileWidth",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "worldHeight",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "worldWidth",
             type: "uint256",
           },
         ],

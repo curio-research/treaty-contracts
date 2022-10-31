@@ -13,22 +13,21 @@ export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 // WORLD CONSTANTS
 // ----------------------------------------------------------
 
-export const SMALL_MAP_INPUT: MapInput = {
+export const MAP_INPUT: MapInput = {
   width: 11,
   height: 11,
 };
-
-export const TILE_WIDTH = 5;
+export const TILE_WIDTH = 10;
 export const NUM_INIT_TERRAIN_TYPES = Object.keys(TILE_TYPE).length - 1;
 
-export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): any => {
+export const generateWorldConstants = (adminAddr: string): any => {
   return {
     // admin info
     admin: adminAddr,
     // map info
     tileWidth: TILE_WIDTH,
-    worldWidth: mapInput.width * TILE_WIDTH,
-    worldHeight: mapInput.height * TILE_WIDTH,
+    worldWidth: MAP_INPUT.width * TILE_WIDTH,
+    worldHeight: MAP_INPUT.height * TILE_WIDTH,
     numInitTerrainTypes: NUM_INIT_TERRAIN_TYPES,
     initBatchSize: Math.floor(150 / NUM_INIT_TERRAIN_TYPES),
     // manual configs
