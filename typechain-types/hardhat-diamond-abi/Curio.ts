@@ -144,7 +144,6 @@ export interface CurioInterface extends utils.Interface {
     "createArmy(uint256,(uint256,uint256))": FunctionFragment;
     "reactivatePlayer(address)": FunctionFragment;
     "registerComponents(address,(string,uint8)[])": FunctionFragment;
-    "registerDefaultComponents(address)": FunctionFragment;
     "registerTemplateShortcuts(string[],uint256[])": FunctionFragment;
     "removeEntity(uint256)": FunctionFragment;
     "setComponentValue(string,uint256,bytes)": FunctionFragment;
@@ -241,7 +240,6 @@ export interface CurioInterface extends utils.Interface {
       | "createArmy"
       | "reactivatePlayer"
       | "registerComponents"
-      | "registerDefaultComponents"
       | "registerTemplateShortcuts"
       | "removeEntity"
       | "setComponentValue"
@@ -378,10 +376,6 @@ export interface CurioInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "registerComponents",
     values: [PromiseOrValue<string>, ComponentSpecStruct[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "registerDefaultComponents",
-    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "registerTemplateShortcuts",
@@ -759,10 +753,6 @@ export interface CurioInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "registerComponents",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "registerDefaultComponents",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -1220,11 +1210,6 @@ export interface Curio extends BaseContract {
     registerComponents(
       _gameAddr: PromiseOrValue<string>,
       _componentSpecs: ComponentSpecStruct[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    registerDefaultComponents(
-      _gameAddr: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1720,11 +1705,6 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  registerDefaultComponents(
-    _gameAddr: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   registerTemplateShortcuts(
     _names: PromiseOrValue<string>[],
     _IDs: PromiseOrValue<BigNumberish>[],
@@ -2204,11 +2184,6 @@ export interface Curio extends BaseContract {
     registerComponents(
       _gameAddr: PromiseOrValue<string>,
       _componentSpecs: ComponentSpecStruct[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    registerDefaultComponents(
-      _gameAddr: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -2753,11 +2728,6 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    registerDefaultComponents(
-      _gameAddr: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     registerTemplateShortcuts(
       _names: PromiseOrValue<string>[],
       _IDs: PromiseOrValue<BigNumberish>[],
@@ -3238,11 +3208,6 @@ export interface Curio extends BaseContract {
     registerComponents(
       _gameAddr: PromiseOrValue<string>,
       _componentSpecs: ComponentSpecStruct[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    registerDefaultComponents(
-      _gameAddr: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

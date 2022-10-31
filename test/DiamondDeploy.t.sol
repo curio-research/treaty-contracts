@@ -102,20 +102,22 @@ contract DiamondDeployTest is Test {
         console.log(">>> Facets casted");
 
         // Register components
-        admin.registerDefaultComponents(diamond);
+        _registerComponents();
         console.log(">>> Components registered");
 
         // Register parameters
         _registerGameParameters();
-        console.log(">>> Game parameters added");
+        console.log(">>> Game parameters registered");
 
         // Initialize map
+        // TODO: automate
         uint256[][] memory _map = _generateMap(worldConstants.worldWidth, worldConstants.worldHeight);
         uint256[][] memory _encodedColumnBatches = _encodeTileMap(_map, worldConstants.numInitTerrainTypes, worldConstants.initBatchSize);
         admin.storeEncodedColumnBatches(_encodedColumnBatches);
         console.log(">>> Map initialized and encoded");
 
         // Create templates
+        // TODO: automate
         _createTemplates();
         console.log(">>> Templates created");
 
@@ -170,6 +172,20 @@ contract DiamondDeployTest is Test {
         }
 
         return _result;
+    }
+
+    function _registerComponents() private {
+        uint256 compCount = 38; // FIXME: automate
+        ComponentSpec[] memory specs = new ComponentSpec[](compCount);
+
+        string memory root = vm.projectRoot();
+        for (uint256 i = 0; i < compCount; i++) {
+            string memory path = string(abi.encodePacked(root, "/test/data/component_", Strings.toString(i), ".json"));
+            bytes memory rawJson = vm.parseJson(vm.readFile(path));
+            specs[i] = abi.decode(rawJson, (ComponentSpec));
+        }
+
+        admin.registerComponents(diamond, specs);
     }
 
     function _registerGameParameters() private {

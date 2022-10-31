@@ -284,19 +284,6 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "address",
-        name: "_gameAddr",
-        type: "address",
-      },
-    ],
-    name: "registerDefaultComponents",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
         internalType: "string[]",
         name: "_names",
         type: "string[]",

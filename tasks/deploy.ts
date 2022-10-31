@@ -11,6 +11,7 @@ import { encodeTileMap, generateBlankFixmap, generateMap, initializeFixmap } fro
 import { COMPONENT_SPECS, GameConfig, TILE_TYPE, position, scaleMap, chainInfo } from 'curio-vault';
 import gameConstants from './game_parameters.json';
 import * as rw from 'random-words';
+import { saveComponentsToJsonFile } from '../test/util/saveComponents';
 
 /**
  * Deploy script for publishing games
@@ -28,6 +29,10 @@ task('deploy', 'deploy contracts')
   .addFlag('indexer', 'Use production indexer') //
   .setAction(async (args: DeployArgs, hre: HardhatRuntimeEnvironment) => {
     try {
+      // FIXME: temp for Foundry, change to better automation
+      await saveComponentsToJsonFile();
+      console.log('save done');
+
       await hre.run('compile');
       printDivider();
       const s = performance.now();
