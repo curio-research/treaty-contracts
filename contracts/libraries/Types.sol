@@ -78,7 +78,6 @@ struct GameState {
     uint256 lastPaused;
     WorldConstants worldConstants;
     address[] players;
-    // Tile[5000][5000] map;
     uint256[][] encodedColumnBatches;
     address[] treaties;
     address entities;
