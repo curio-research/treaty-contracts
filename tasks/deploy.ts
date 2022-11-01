@@ -123,7 +123,7 @@ task('deploy', 'deploy contracts')
 
       // TODO: think about whether initializing all tiles / more than barbarian tiles is necessary
       // initialize tiles that include barbarians, farms, gold mine
-      const bulkTileUploadSize = 5;
+      const bulkTileUploadSize = 20;
       for (let i = 0; i < specialPositions.length; i += bulkTileUploadSize) {
         console.log(`✦ initializing special tiles ${i} to ${i + bulkTileUploadSize}`);
         await confirm(await diamond.bulkInitializeTiles(specialPositions.slice(i, i + bulkTileUploadSize), { gasLimit: gasLimit }), hre);
@@ -153,7 +153,7 @@ task('deploy', 'deploy contracts')
       await publishDeployment(configFile);
 
       // TODO: for now, only sync game state with middleware in dev mode
-      if (isDev || hre.network.name === 'constellationNew') {
+      if (isDev || hre.network.name === 'constellation') {
         await startGameSync(configFile);
       }
 
