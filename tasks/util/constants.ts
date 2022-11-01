@@ -17,7 +17,8 @@ export const MAP_INPUT: MapInput = {
   width: 11,
   height: 11,
 };
-export const TILE_WIDTH = 10;
+
+export const TILE_WIDTH = 5;
 export const NUM_INIT_TERRAIN_TYPES = Object.keys(TILE_TYPE).length - 1;
 
 export const generateWorldConstants = (adminAddr: string): any => {
