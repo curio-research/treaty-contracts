@@ -20,6 +20,10 @@ contract AdminFacet is UseStorage {
     // DEBUG FUNCTIONS
     // ----------------------------------------------------------------------
 
+    function stopGame() external onlyAdmin {
+        gs().worldConstants.gameLengthInSeconds = block.timestamp - gs().gameInitTimestamp;
+    }
+
     function removeEntity(uint256 _entity) external onlyAdmin {
         ECSLib.removeEntity(_entity);
     }

@@ -354,8 +354,8 @@
       }
     },
     "contracts/facets/AdminFacet.sol": {
-      "lastModificationDate": 1667319728749,
-      "contentHash": "283a2d2e7ac29c5655a557878b3b3123",
+      "lastModificationDate": 1667336279030,
+      "contentHash": "4695a51fcb4b716f540c3298181dfc63",
       "sourceName": "contracts/facets/AdminFacet.sol",
       "solcConfig": {
         "settings": {

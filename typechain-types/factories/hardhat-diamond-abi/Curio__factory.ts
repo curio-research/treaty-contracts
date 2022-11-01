@@ -396,6 +396,13 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "stopGame",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "uint256[][]",

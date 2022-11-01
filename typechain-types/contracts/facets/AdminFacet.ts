@@ -61,6 +61,7 @@ export interface AdminFacetInterface extends utils.Interface {
     "setComponentValue(string,uint256,bytes)": FunctionFragment;
     "spawnBarbarian((uint256,uint256),uint256)": FunctionFragment;
     "spawnResource((uint256,uint256),string)": FunctionFragment;
+    "stopGame()": FunctionFragment;
     "storeEncodedColumnBatches(uint256[][])": FunctionFragment;
   };
 
@@ -82,6 +83,7 @@ export interface AdminFacetInterface extends utils.Interface {
       | "setComponentValue"
       | "spawnBarbarian"
       | "spawnResource"
+      | "stopGame"
       | "storeEncodedColumnBatches"
   ): FunctionFragment;
 
@@ -163,6 +165,7 @@ export interface AdminFacetInterface extends utils.Interface {
     functionFragment: "spawnResource",
     values: [PositionStruct, PromiseOrValue<string>]
   ): string;
+  encodeFunctionData(functionFragment: "stopGame", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "storeEncodedColumnBatches",
     values: [PromiseOrValue<BigNumberish>[][]]
@@ -226,6 +229,7 @@ export interface AdminFacetInterface extends utils.Interface {
     functionFragment: "spawnResource",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "stopGame", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "storeEncodedColumnBatches",
     data: BytesLike
@@ -358,6 +362,10 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    stopGame(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     storeEncodedColumnBatches(
       _colBatches: PromiseOrValue<BigNumberish>[][],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -461,6 +469,10 @@ export interface AdminFacet extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  stopGame(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   storeEncodedColumnBatches(
     _colBatches: PromiseOrValue<BigNumberish>[][],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -561,6 +573,8 @@ export interface AdminFacet extends BaseContract {
       _inventoryType: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    stopGame(overrides?: CallOverrides): Promise<void>;
 
     storeEncodedColumnBatches(
       _colBatches: PromiseOrValue<BigNumberish>[][],
@@ -668,6 +682,10 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    stopGame(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     storeEncodedColumnBatches(
       _colBatches: PromiseOrValue<BigNumberish>[][],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -769,6 +787,10 @@ export interface AdminFacet extends BaseContract {
     spawnResource(
       _startPosition: PositionStruct,
       _inventoryType: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    stopGame(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
