@@ -123,9 +123,9 @@ task('deploy', 'deploy contracts')
 
       // TODO: think about whether initializing all tiles / more than barbarian tiles is necessary
       // initialize tiles that include barbarians, farms, gold mine
-      const bulkTileUploadSize = 20;
+      const bulkTileUploadSize = 5;
       for (let i = 0; i < specialPositions.length; i += bulkTileUploadSize) {
-        console.log(`✦ initializing special tiles ${i} to ${i + bulkTileUploadSize}`);
+        console.log(chalk.dim(`✦ initializing special tiles ${i} to ${i + bulkTileUploadSize}`));
         await confirm(await diamond.bulkInitializeTiles(specialPositions.slice(i, i + bulkTileUploadSize), { gasLimit: gasLimit }), hre);
       }
 

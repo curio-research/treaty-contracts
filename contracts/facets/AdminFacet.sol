@@ -14,7 +14,7 @@ import {GameLib} from "contracts/libraries/GameLib.sol";
 contract AdminFacet is UseStorage {
     uint256 private constant NULL = 0;
 
-    // TODO: Question: How to reuse functions from Util so that they can be directly called by external parties?
+    // Question: How to reuse functions from Util so that they can be directly called by external parties?
 
     // ----------------------------------------------------------------------
     // DEBUG FUNCTIONS

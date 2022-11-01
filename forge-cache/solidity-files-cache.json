@@ -356,8 +356,8 @@
       }
     },
     "contracts/facets/AdminFacet.sol": {
-      "lastModificationDate": 1667336279030,
-      "contentHash": "4695a51fcb4b716f540c3298181dfc63",
+      "lastModificationDate": 1667339832207,
+      "contentHash": "0eb333ccc1d06e4c7f5e61b46e64c1c8",
       "sourceName": "contracts/facets/AdminFacet.sol",
       "solcConfig": {
         "settings": {
@@ -396,6 +396,7 @@
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Templates.sol",
         "contracts/libraries/Types.sol",
+        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/Strings.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -534,6 +535,7 @@
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Templates.sol",
         "contracts/libraries/Types.sol",
+        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/Strings.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -584,6 +586,7 @@
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Templates.sol",
         "contracts/libraries/Types.sol",
+        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/Strings.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -678,6 +681,7 @@
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Templates.sol",
         "contracts/libraries/Types.sol",
+        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/Strings.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -890,8 +894,8 @@
       }
     },
     "contracts/libraries/GameLib.sol": {
-      "lastModificationDate": 1667326078254,
-      "contentHash": "2cec2e310cb5d519a48db16e97538310",
+      "lastModificationDate": 1667339401097,
+      "contentHash": "144f3cdae689c20ebf7fdfeb8b2cb7dd",
       "sourceName": "contracts/libraries/GameLib.sol",
       "solcConfig": {
         "settings": {
@@ -929,6 +933,7 @@
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Templates.sol",
         "contracts/libraries/Types.sol",
+        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/Strings.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -1112,7 +1117,7 @@
       }
     },
     "contracts/upgradeInitializers/DiamondInit.sol": {
-      "lastModificationDate": 1667337444035,
+      "lastModificationDate": 1667340061727,
       "contentHash": "4f7a59e7c93a99a59721442e69ae4f58",
       "sourceName": "contracts/upgradeInitializers/DiamondInit.sol",
       "solcConfig": {
@@ -1161,7 +1166,7 @@
       }
     },
     "contracts/upgradeInitializers/diamondInit.sol": {
-      "lastModificationDate": 1667337444035,
+      "lastModificationDate": 1667340061727,
       "contentHash": "4f7a59e7c93a99a59721442e69ae4f58",
       "sourceName": "contracts/upgradeInitializers/diamondInit.sol",
       "solcConfig": {
@@ -1689,8 +1694,8 @@
       }
     },
     "test/DiamondDeploy.t.sol": {
-      "lastModificationDate": 1667337736191,
-      "contentHash": "374d50884b9872fb5498bd20829a42ec",
+      "lastModificationDate": 1667337884507,
+      "contentHash": "fd1f8a11dbb736674db567b17ad40448",
       "sourceName": "test/DiamondDeploy.t.sol",
       "solcConfig": {
         "settings": {

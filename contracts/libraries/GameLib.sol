@@ -9,6 +9,7 @@ import {Templates} from "contracts/libraries/Templates.sol";
 import {Set} from "contracts/Set.sol";
 import {Component} from "contracts/Component.sol";
 import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, UintComponent, UintArrayComponent} from "contracts/TypedComponents.sol";
+import {console} from "forge-std/console.sol";
 
 /// @title Util library
 /// @notice Contains all events as well as lower-level setters and getters
@@ -591,6 +592,7 @@ library GameLib {
         require(!gs().isPaused, "CURIO: Game is paused");
 
         uint256 gameLengthInSeconds = gs().worldConstants.gameLengthInSeconds;
+        // FIXME: gs().gameInitTimestamp is somehow set incorrectly
         require(gameLengthInSeconds == 0 || (block.timestamp - gs().gameInitTimestamp) <= gameLengthInSeconds, "CURIO: Game has ended");
     }
 
