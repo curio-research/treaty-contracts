@@ -8,14 +8,14 @@ pragma solidity ^0.8.0;
 * Implementation of a diamond.
 /******************************************************************************/
 
-import {Tile, WorldConstants} from "contracts/libraries/Types.sol";
+import {WorldConstants} from "contracts/libraries/Types.sol";
 import {LibDiamond} from "contracts/libraries/LibDiamond.sol";
 import {IDiamondLoupe} from "contracts/interfaces/IDiamondLoupe.sol";
 import {IDiamondCut} from "contracts/interfaces/IDiamondCut.sol";
 import {IERC173} from "contracts/interfaces/IERC173.sol";
 import {IERC165} from "contracts/interfaces/IERC165.sol";
 import {Set} from "contracts/Set.sol";
-import "contracts/libraries/Storage.sol";
+import {UseStorage} from "contracts/libraries/Storage.sol";
 
 // It is expected that this contract is customized if you want to deploy your diamond
 // with data from a deployment script. Use the init function to initialize state variables

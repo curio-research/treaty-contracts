@@ -1,20 +1,22 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "forge-std/Test.sol";
-import "contracts/facets/DiamondCutFacet.sol";
-import "contracts/facets/DiamondLoupeFacet.sol";
-import "contracts/facets/OwnershipFacet.sol";
-import "contracts/diamond.sol";
-import "contracts/upgradeInitializers/diamondInit.sol";
-import "contracts/interfaces/IDiamondCut.sol";
-import "contracts/libraries/GameLib.sol";
-import "contracts/facets/GetterFacet.sol";
-import "contracts/facets/GameFacet.sol";
-import "contracts/facets/AdminFacet.sol";
-import "contracts/libraries/Types.sol";
-import "contracts/NATO.sol";
-import "forge-std/console.sol";
+import {Test} from "forge-std/Test.sol";
+import {DiamondCutFacet} from "contracts/facets/DiamondCutFacet.sol";
+import {DiamondLoupeFacet} from "contracts/facets/DiamondLoupeFacet.sol";
+import {OwnershipFacet} from "contracts/facets/OwnershipFacet.sol";
+import {Diamond} from "contracts/diamond.sol";
+import {DiamondInit} from "contracts/upgradeInitializers/diamondInit.sol";
+import {IDiamondCut} from "contracts/interfaces/IDiamondCut.sol";
+import {GameLib} from "contracts/libraries/GameLib.sol";
+import {GetterFacet} from "contracts/facets/GetterFacet.sol";
+import {GameFacet} from "contracts/facets/GameFacet.sol";
+import {AdminFacet} from "contracts/facets/AdminFacet.sol";
+import {Strings} from "openzeppelin-contracts/contracts/utils/Strings.sol";
+import {ComponentSpec, GameMode, GameParamSpec, Position, WorldConstants} from "contracts/libraries/Types.sol";
+import {NATO} from "contracts/NATO.sol";
+import {console} from "forge-std/console.sol";
+import {stdJson} from "forge-std/StdJson.sol";
 
 /// @title diamond deploy foundry template
 /// @notice This contract sets up the diamond for testing and is inherited by other foundry test contracts.
@@ -35,7 +37,7 @@ contract DiamondDeployTest is Test {
     AdminFacet public admin;
     OwnershipFacet public ownership;
 
-    // treaties
+    // Treaties
     NATO public nato;
 
     uint256 public NULL = 0;
@@ -53,65 +55,79 @@ contract DiamondDeployTest is Test {
     Position public player2Pos = Position({x: 60, y: 30});
     Position public player3Pos = Position({x: 50, y: 20});
 
-    uint256 public destroyerTemplateId;
-
-    uint256 public cavalryTemplateID;
-    uint256 public infantryTemplateID;
-    uint256 public archerTemplateID;
+    uint256 public horsemanTemplateID;
+    uint256 public warriorTemplateID;
+    uint256 public slingerTemplateID;
     uint256 public guardTemplateID;
     uint256 public goldTemplateID;
     uint256 public foodTemplateID;
 
-    // we assume these two facet selectors do not change. If they do however, we should use getSelectors
+    WorldConstants public worldConstants;
+
+    // we assume these two facet selectors do not change. If they do however, we should use _getSelectors
     bytes4[] OWNERSHIP_SELECTORS = [bytes4(0xf2fde38b), 0x8da5cb5b];
     bytes4[] LOUPE_SELECTORS = [bytes4(0xcdffacc6), 0x52ef6b2c, 0xadfca15e, 0x7a0ed627, 0x01ffc9a7];
 
     function setUp() public {
         vm.startPrank(deployer);
+        console.log("==================== SETUP BEGINS =====================");
 
+        // Initialize diamond facets
         diamondCutFacet = new DiamondCutFacet();
         diamond = address(new Diamond(deployer, address(diamondCutFacet)));
         diamondInit = new DiamondInit();
         diamondLoupeFacet = new DiamondLoupeFacet();
         diamondOwnershipFacet = new OwnershipFacet();
-
         gameFacet = new GameFacet();
         getterFacet = new GetterFacet();
         adminFacet = new AdminFacet();
-        WorldConstants memory worldConstants = _generateWorldConstants();
 
+        // Prepare world constants with either `_generateNewWorldConstants()` or `fetchWorldConstants()`
+        worldConstants = _fetchWorldConstants();
+        worldConstants.worldWidth = 1000; // use deployment settings, except make map bigger
+        worldConstants.worldHeight = 1000;
+        console.log(">>> World constants ready");
+
+        // Initialize treaties
         nato = new NATO();
 
         // Fetch args from CLI craft payload for init deploy
-        bytes memory initData = abi.encodeWithSelector(getSelectors("DiamondInit")[0], worldConstants);
-
+        bytes memory initData = abi.encodeWithSelector(_getSelectors("DiamondInit")[0], worldConstants);
         IDiamondCut.FacetCut[] memory cuts = new IDiamondCut.FacetCut[](5);
         cuts[0] = IDiamondCut.FacetCut({facetAddress: address(diamondLoupeFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: LOUPE_SELECTORS});
         cuts[1] = IDiamondCut.FacetCut({facetAddress: address(diamondOwnershipFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: OWNERSHIP_SELECTORS});
-        cuts[2] = IDiamondCut.FacetCut({facetAddress: address(gameFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: getSelectors("GameFacet")});
-        cuts[3] = IDiamondCut.FacetCut({facetAddress: address(getterFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: getSelectors("GetterFacet")});
-        cuts[4] = IDiamondCut.FacetCut({facetAddress: address(adminFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: getSelectors("AdminFacet")});
-
+        cuts[2] = IDiamondCut.FacetCut({facetAddress: address(gameFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: _getSelectors("GameFacet")});
+        cuts[3] = IDiamondCut.FacetCut({facetAddress: address(getterFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: _getSelectors("GetterFacet")});
+        cuts[4] = IDiamondCut.FacetCut({facetAddress: address(adminFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: _getSelectors("AdminFacet")});
         IDiamondCut(diamond).diamondCut(cuts, address(diamondInit), initData);
 
+        // Assign diamond functions to corresponding facets
         getter = GetterFacet(diamond);
         game = GameFacet(diamond);
         admin = AdminFacet(diamond);
         ownership = OwnershipFacet(diamond);
+        console.log(">>> Facets casted");
 
         // Register components
-        admin.registerDefaultComponents(diamond);
+        _registerComponents();
+        console.log(">>> Components registered");
 
-        // Initialize map
-        uint256[][] memory _map = _generateMap(worldConstants.worldWidth, worldConstants.worldHeight);
-        uint256[][] memory _encodedColumnBatches = _encodeTileMap(_map, worldConstants.numInitTerrainTypes, worldConstants.initBatchSize);
-        admin.storeEncodedColumnBatches(_encodedColumnBatches);
+        // Register parameters
+        _registerGameParameters();
+        console.log(">>> Game parameters registered");
+
+        // Initialize map either with either `_generateNewMap()` or `_fetchLastDeployedMap()`
+        // Note: if fetching deployed map, check for map size
+        uint256[][] memory map = _generateNewMap(worldConstants.worldWidth, worldConstants.worldHeight);
+        uint256[][] memory encodedColumnBatches = _encodeTileMap(map, worldConstants.numInitTerrainTypes, worldConstants.initBatchSize);
+        admin.storeEncodedColumnBatches(encodedColumnBatches);
+        console.log(">>> Map initialized and encoded");
+
+        // Create templates
+        _createTemplates();
+        console.log(">>> Templates created");
 
         vm.stopPrank();
-
-        // Create templates & constants
-        _createTemplates();
-        // _registerConstants();
 
         // Initialize players
         vm.prank(player1);
@@ -123,13 +139,15 @@ contract DiamondDeployTest is Test {
         vm.prank(player3);
         game.initializePlayer(player3Pos, "Cindy");
         player3Id = getter.getPlayerId(player3);
+        console.log(">>> Players initialized");
+        console.log("=============== INDIVIDUAL TESTS BEGIN ================");
     }
 
     function _encodeTileMap(
         uint256[][] memory _tileMap,
         uint256 _numInitTerrainTypes,
         uint256 _batchSize
-    ) internal pure returns (uint256[][] memory) {
+    ) private pure returns (uint256[][] memory) {
         uint256[][] memory _result = new uint256[][](_tileMap.length);
         uint256 _numBatchPerCol = _tileMap[0].length / _batchSize;
         uint256 _lastBatchSize = _tileMap[0].length % _batchSize;
@@ -163,259 +181,153 @@ contract DiamondDeployTest is Test {
         return _result;
     }
 
-    function _createTemplates() private {
-        vm.startPrank(deployer);
+    function _registerComponents() private {
+        ComponentSpec[] memory temp = new ComponentSpec[](100000);
+        string memory root = vm.projectRoot();
+        uint256 index = 0;
 
-        // todo: fix naming: horseman, warrior, slinger
-        // Troop: Cavalry
-        cavalryTemplateID = admin.addEntity();
-        admin.setComponentValue("Tag", cavalryTemplateID, abi.encode("TroopTemplate"));
-        admin.setComponentValue("InventoryType", cavalryTemplateID, abi.encode("Cavalry"));
-        admin.setComponentValue("Health", cavalryTemplateID, abi.encode(120));
-        admin.setComponentValue("Speed", cavalryTemplateID, abi.encode(5));
-        admin.setComponentValue("Attack", cavalryTemplateID, abi.encode(60));
-        admin.setComponentValue("Defense", cavalryTemplateID, abi.encode(120));
-        admin.setComponentValue("Load", cavalryTemplateID, abi.encode(1));
-        admin.setComponentValue("Duration", cavalryTemplateID, abi.encode(1));
-        admin.setComponentValue("Cost", cavalryTemplateID, abi.encode(1));
-        admin.setComponentValue("MoveCooldown", cavalryTemplateID, abi.encode(1));
-        admin.setComponentValue("BattleCooldown", cavalryTemplateID, abi.encode(2));
+        while (true) {
+            string memory path = string(abi.encodePacked(root, "/test/data/component_", Strings.toString(index), ".json"));
+            try vm.readFile(path) {
+                bytes memory rawJson = vm.parseJson(vm.readFile(path));
+                temp[index] = abi.decode(rawJson, (ComponentSpec));
+                index++;
+            } catch {
+                // End of components
+                break;
+            }
+        }
 
-        // Troop: Infantry
-        infantryTemplateID = admin.addEntity();
-        admin.setComponentValue("Tag", infantryTemplateID, abi.encode("TroopTemplate"));
-        admin.setComponentValue("InventoryType", infantryTemplateID, abi.encode("Infantry"));
-        admin.setComponentValue("Health", infantryTemplateID, abi.encode(120));
-        admin.setComponentValue("Speed", infantryTemplateID, abi.encode(5));
-        admin.setComponentValue("Attack", infantryTemplateID, abi.encode(60));
-        admin.setComponentValue("Defense", infantryTemplateID, abi.encode(120));
-        admin.setComponentValue("Load", infantryTemplateID, abi.encode(1));
-        admin.setComponentValue("Duration", infantryTemplateID, abi.encode(1));
-        admin.setComponentValue("Cost", infantryTemplateID, abi.encode(1));
-        admin.setComponentValue("MoveCooldown", infantryTemplateID, abi.encode(1));
-        admin.setComponentValue("BattleCooldown", infantryTemplateID, abi.encode(2));
+        // Copy values to array of known length
+        ComponentSpec[] memory specs = new ComponentSpec[](index);
+        for (uint256 i = 0; i < index; i++) {
+            specs[i] = temp[i];
+        }
 
-        // Troop: Archer
-        archerTemplateID = admin.addEntity();
-        admin.setComponentValue("Tag", archerTemplateID, abi.encode("TroopTemplate"));
-        admin.setComponentValue("InventoryType", archerTemplateID, abi.encode("Archer"));
-        admin.setComponentValue("Health", archerTemplateID, abi.encode(120));
-        admin.setComponentValue("Speed", archerTemplateID, abi.encode(5));
-        admin.setComponentValue("Attack", archerTemplateID, abi.encode(60));
-        admin.setComponentValue("Defense", archerTemplateID, abi.encode(120));
-        admin.setComponentValue("Load", archerTemplateID, abi.encode(1));
-        admin.setComponentValue("Duration", archerTemplateID, abi.encode(1));
-        admin.setComponentValue("Cost", archerTemplateID, abi.encode(1));
-        admin.setComponentValue("MoveCooldown", archerTemplateID, abi.encode(1));
-        admin.setComponentValue("BattleCooldown", archerTemplateID, abi.encode(2));
-
-        // Troop: Guard
-        guardTemplateID = admin.addEntity();
-        admin.setComponentValue("Tag", guardTemplateID, abi.encode("TroopTemplate"));
-        admin.setComponentValue("InventoryType", guardTemplateID, abi.encode("Guard"));
-        admin.setComponentValue("Health", guardTemplateID, abi.encode(120));
-        admin.setComponentValue("Attack", guardTemplateID, abi.encode(60));
-        admin.setComponentValue("Defense", guardTemplateID, abi.encode(120));
-
-        // Resource: Gold
-        goldTemplateID = admin.addEntity();
-        admin.setComponentValue("Tag", goldTemplateID, abi.encode("ResourceTemplate"));
-        admin.setComponentValue("InventoryType", goldTemplateID, abi.encode("Gold"));
-        admin.setComponentValue("Duration", goldTemplateID, abi.encode(1));
-
-        // Resource: Food
-        foodTemplateID = admin.addEntity();
-        admin.setComponentValue("Tag", foodTemplateID, abi.encode("ResourceTemplate"));
-        admin.setComponentValue("InventoryType", foodTemplateID, abi.encode("Food"));
-        admin.setComponentValue("Duration", foodTemplateID, abi.encode(1));
-
-        // Register template shortcuts
-        string[] memory templateNames = new string[](6);
-        uint256[] memory templateIDs = new uint256[](6);
-        templateNames[0] = "Cavalry";
-        templateNames[1] = "Infantry";
-        templateNames[2] = "Archer";
-        templateNames[3] = "Guard";
-        templateNames[4] = "Gold";
-        templateNames[5] = "Food";
-        templateIDs[0] = cavalryTemplateID;
-        templateIDs[1] = infantryTemplateID;
-        templateIDs[2] = archerTemplateID;
-        templateIDs[3] = guardTemplateID;
-        templateIDs[4] = goldTemplateID;
-        templateIDs[5] = foodTemplateID;
-        admin.registerTemplateShortcuts(templateNames, templateIDs);
-
-        vm.stopPrank();
+        admin.registerComponents(diamond, specs);
     }
 
-    // function _registerConstants() private {
-    //     vm.startPrank(deployer);
+    function _registerGameParameters() private {
+        string memory root = vm.projectRoot();
+        uint256 index = 0;
 
-    //     // `initializePlayer`
-    //     admin.addConstant("initializePlayer", "Amount", "Gold", NULL, 0);
-    //     admin.addConstant("initializePlayer", "Amount", "Food", NULL, 0);
-    //     admin.addConstant("initializePlayer", "Load", "Gold", NULL, 10000000);
-    //     admin.addConstant("initializePlayer", "Load", "Food", NULL, 10000000);
+        while (true) {
+            string memory path = string(abi.encodePacked(root, "/test/data/game_parameter_", Strings.toString(index), ".json"));
+            try vm.readFile(path) {
+                bytes memory rawJson = vm.parseJson(vm.readFile(path));
+                GameParamSpec memory spec = abi.decode(rawJson, (GameParamSpec));
+                string memory identifier = string(abi.encodePacked(spec.subject, "-", spec.object, "-", spec.componentName, "-", spec.functionName, "-", Strings.toString(spec.level)));
+                admin.addGameParameter(identifier, spec.value);
+                index++;
+            } catch {
+                // End of parameters
+                break;
+            }
+        }
+    }
 
-    //     // `initializeTile`
-    //     admin.addConstant("initializeTile", "Amount", "Guard", 0, 200);
-    //     admin.addConstant("initializeTile", "Amount", "Guard", 1, 1000); // level 1 barbarian
-    //     admin.addConstant("initializeTile", "Amount", "Guard", 2, 2000); // level 2 barbarian
-    //     admin.addConstant("initializeTile", "Load", "Gold", 0, 1000);
-    //     admin.addConstant("initializeTile", "Load", "Food", 0, 1000);
+    function _createTemplates() private {
+        // TODO: automate
+        string[] memory templateNames = new string[](6);
+        uint256[] memory templateIDs = new uint256[](6);
+        uint256 index = 0;
 
-    //     // `foundCity`
-    //     admin.addConstant("foundCity", "Amount", "Guard", 0, 1500);
+        // Horseman
+        string memory templateName = "Horseman";
+        uint256 templateID = admin.addTroopTemplate(templateName, 120, 10, 1, 2, 60, 120, 95);
+        templateNames[index] = templateName;
+        templateIDs[index] = templateID;
+        index++;
+        horsemanTemplateID = templateID;
 
-    //     // `packCity`
-    //     admin.addConstant("packCity", "Cost", "Gold", 0, 1000000000000000);
-    //     admin.addConstant("packCity", "Health", "Settler", 0, 1000000000000000);
+        // Warrior
+        templateName = "Warrior";
+        templateID = admin.addTroopTemplate(templateName, 120, 2, 1, 2, 60, 120, 95);
+        templateNames[index] = templateName;
+        templateIDs[index] = templateID;
+        index++;
+        warriorTemplateID = templateID;
 
-    //     // `upgradeTile`
-    //     admin.addConstant("upgradeTile", "Cost", "Gold", 0, 10 * 200);
-    //     admin.addConstant("upgradeTile", "Cost", "Food", 0, 50 * 200);
-    //     for (uint256 i = 1; i <= 9; i++) {
-    //         admin.addConstant("upgradeTile", "Amount", "Guard", i, (3**i) * 200);
-    //     }
+        // Slinger
+        templateName = "Slinger";
+        templateID = admin.addTroopTemplate(templateName, 120, 2, 1, 2, 60, 120, 95);
+        templateNames[index] = templateName;
+        templateIDs[index] = templateID;
+        index++;
+        slingerTemplateID = templateID;
 
-    //     // `upgradeCityInventory`
-    //     admin.addConstant("upgradeCityInventory", "Cost", "Gold", 0, 3000);
-    //     for (uint256 i = 1; i <= 9; i++) {
-    //         // todo: fix the naming here
-    //         admin.addConstant("upgradeCityInventory", "Load", "Gold", i, 1000000 * i);
-    //         admin.addConstant("upgradeCityInventory", "Load", "Food", i, 1000000 * i);
-    //         admin.addConstant("upgradeCityInventory", "Load", "Horseman", i, 20000 * i);
-    //         admin.addConstant("upgradeCityInventory", "Load", "Warrior", i, 20000 * i);
-    //         admin.addConstant("upgradeCityInventory", "Load", "Slinger", i, 20000 * i);
-    //         admin.addConstant("upgradeCityInventory", "Load", "Cavalry", i, 20000 * i);
-    //         admin.addConstant("upgradeCityInventory", "Load", "Archer", i, 20000 * i);
-    //         admin.addConstant("upgradeCityInventory", "Load", "Infantry", i, 20000 * i);
-    //     }
+        // Guard
+        templateName = "Guard";
+        templateID = admin.addTroopTemplate(templateName, 120, 0, 0, 0, 60, 120, 0);
+        templateNames[index] = templateName;
+        templateIDs[index] = templateID;
+        index++;
+        guardTemplateID = templateID;
 
-    //     // `upgradeResource`
-    //     for (uint256 i = 0; i <= 9; i++) {
-    //         admin.addConstant("upgradeGoldmine", "Cost", "Gold", i, 50000);
-    //         admin.addConstant("upgradeGoldmine", "Cost", "Food", i, 16000);
-    //         admin.addConstant("upgradeFarm", "Cost", "Gold", i, 50000);
-    //         admin.addConstant("upgradeFarm", "Cost", "Food", i, 16000);
-    //     }
-    //     admin.addConstant("upgradeGoldmine", "Load", "Gold", 1, 5500);
-    //     admin.addConstant("upgradeGoldmine", "Load", "Gold", 2, 6000);
-    //     admin.addConstant("upgradeGoldmine", "Load", "Gold", 3, 6500);
-    //     admin.addConstant("upgradeGoldmine", "Load", "Gold", 4, 7000);
-    //     admin.addConstant("upgradeGoldmine", "Load", "Gold", 5, 7500);
-    //     admin.addConstant("upgradeGoldmine", "Load", "Gold", 6, 8000);
-    //     admin.addConstant("upgradeGoldmine", "Load", "Gold", 7, 8500);
-    //     admin.addConstant("upgradeGoldmine", "Load", "Gold", 8, 9000);
-    //     admin.addConstant("upgradeGoldmine", "Load", "Gold", 9, 9500);
-    //     admin.addConstant("upgradeGoldmine", "Load", "Food", 1, 100000);
-    //     admin.addConstant("upgradeGoldmine", "Load", "Food", 2, 110000);
-    //     admin.addConstant("upgradeGoldmine", "Load", "Food", 3, 120000);
-    //     admin.addConstant("upgradeGoldmine", "Load", "Food", 4, 130000);
-    //     admin.addConstant("upgradeGoldmine", "Load", "Food", 5, 140000);
-    //     admin.addConstant("upgradeGoldmine", "Load", "Food", 6, 150000);
-    //     admin.addConstant("upgradeGoldmine", "Load", "Food", 7, 160000);
-    //     admin.addConstant("upgradeGoldmine", "Load", "Food", 8, 170000);
-    //     admin.addConstant("upgradeGoldmine", "Load", "Food", 9, 180000);
-    //     admin.addConstant("upgradeFarm", "Load", "Gold", 1, 5500);
-    //     admin.addConstant("upgradeFarm", "Load", "Gold", 2, 6000);
-    //     admin.addConstant("upgradeFarm", "Load", "Gold", 3, 6500);
-    //     admin.addConstant("upgradeFarm", "Load", "Gold", 4, 7000);
-    //     admin.addConstant("upgradeFarm", "Load", "Gold", 5, 7500);
-    //     admin.addConstant("upgradeFarm", "Load", "Gold", 6, 8000);
-    //     admin.addConstant("upgradeFarm", "Load", "Gold", 7, 8500);
-    //     admin.addConstant("upgradeFarm", "Load", "Gold", 8, 9000);
-    //     admin.addConstant("upgradeFarm", "Load", "Gold", 9, 9500);
-    //     admin.addConstant("upgradeFarm", "Load", "Food", 1, 100000);
-    //     admin.addConstant("upgradeFarm", "Load", "Food", 2, 110000);
-    //     admin.addConstant("upgradeFarm", "Load", "Food", 3, 120000);
-    //     admin.addConstant("upgradeFarm", "Load", "Food", 4, 130000);
-    //     admin.addConstant("upgradeFarm", "Load", "Food", 5, 140000);
-    //     admin.addConstant("upgradeFarm", "Load", "Food", 6, 150000);
-    //     admin.addConstant("upgradeFarm", "Load", "Food", 7, 160000);
-    //     admin.addConstant("upgradeFarm", "Load", "Food", 8, 170000);
-    //     admin.addConstant("upgradeFarm", "Load", "Food", 9, 180000);
+        // Gold
+        templateName = "Gold";
+        templateID = admin.addResourceTemplate(templateName);
+        templateNames[index] = templateName;
+        templateIDs[index] = templateID;
+        index++;
+        goldTemplateID = templateID;
 
-    //     // `upgradeCity`
-    //     admin.addConstant("upgradeCity", "Cost", "Gold", 0, 100000);
-    //     for (uint256 i = 1; i <= 3; i++) {
-    //         admin.addConstant("upgradeCity", "Amount", "Guard", i, 1500 * i);
-    //     }
+        // Food
+        templateName = "Food";
+        templateID = admin.addResourceTemplate(templateName);
+        templateNames[index] = templateName;
+        templateIDs[index] = templateID;
+        index++;
+        foodTemplateID = templateID;
 
-    //     // `startTroopProduction`
-    //     admin.addConstant("startTroopProduction", "Cost", "Gold", 0, 10);
-    //     admin.addConstant("startTroopProduction", "Cost", "Food", 0, 50);
+        // Register template names used for shortcuts
+        admin.registerTemplateShortcuts(templateNames, templateIDs);
+    }
 
-    //     // `harvestResource`
-    //     admin.addConstant("harvestResource", "Amount", "Gold", 1, 160);
-    //     admin.addConstant("harvestResource", "Amount", "Gold", 2, 200);
-    //     admin.addConstant("harvestResource", "Amount", "Gold", 3, 240);
-    //     admin.addConstant("harvestResource", "Amount", "Gold", 4, 260);
-    //     admin.addConstant("harvestResource", "Amount", "Gold", 5, 280);
-    //     admin.addConstant("harvestResource", "Amount", "Gold", 6, 300);
-    //     admin.addConstant("harvestResource", "Amount", "Gold", 7, 320);
-    //     admin.addConstant("harvestResource", "Amount", "Gold", 8, 340);
-    //     admin.addConstant("harvestResource", "Amount", "Gold", 9, 360);
-    //     admin.addConstant("harvestResource", "Amount", "Food", 1, 200);
-    //     admin.addConstant("harvestResource", "Amount", "Food", 2, 220);
-    //     admin.addConstant("harvestResource", "Amount", "Food", 3, 240);
-    //     admin.addConstant("harvestResource", "Amount", "Food", 4, 250);
-    //     admin.addConstant("harvestResource", "Amount", "Food", 5, 260);
-    //     admin.addConstant("harvestResource", "Amount", "Food", 6, 270);
-    //     admin.addConstant("harvestResource", "Amount", "Food", 7, 280);
-    //     admin.addConstant("harvestResource", "Amount", "Food", 8, 290);
-    //     admin.addConstant("harvestResource", "Amount", "Food", 9, 300);
+    /// @dev First way to get world constants: fetch them from data, identical with deployment
+    function _fetchWorldConstants() private returns (WorldConstants memory) {
+        string memory root = vm.projectRoot();
+        string memory path = string(abi.encodePacked(root, "/test/data/world_constants.json"));
+        bytes memory rawJson = vm.parseJson(vm.readFile(path));
+        worldConstants = abi.decode(rawJson, (WorldConstants));
 
-    //     admin.addConstant("harvestResource", "Rate", "Food", 0, 300);
-    //     admin.addConstant("harvestResource", "Rate", "Food", 1, 300);
-    //     admin.addConstant("harvestResource", "Rate", "Gold", 0, 300);
-    //     admin.addConstant("harvestResource", "Rate", "Gold", 1, 300);
+        worldConstants.admin = deployer;
+        return worldConstants;
+    }
 
-    //     // `harvestResourceFromCity`
-    //     admin.addConstant("harvestResourcesFromCity", "Amount", "Gold", 0, 180);
-    //     admin.addConstant("harvestResourcesFromCity", "Amount", "Food", 0, 180);
-    //     for (uint256 i = 1; i <= 5; i++) {
-    //         admin.addConstant("harvestResourcesFromCity", "Load", "Gold", i, 100000000);
-    //         admin.addConstant("harvestResourcesFromCity", "Load", "Food", i, 100000000);
-    //         admin.addConstant("harvestResourcesFromCity", "Load", "Horseman", i, 200000 * i);
-    //         admin.addConstant("harvestResourcesFromCity", "Load", "Warrior", i, 200000 * i);
-    //         admin.addConstant("harvestResourcesFromCity", "Load", "Slinger", i, 200000 * i);
-    //         admin.addConstant("harvestResourcesFromCity", "Load", "Cavalry", i, 200000 * i);
-    //         admin.addConstant("harvestResourcesFromCity", "Load", "Archer", i, 200000 * i);
-    //         admin.addConstant("harvestResourcesFromCity", "Load", "Infantry", i, 200000 * i);
-    //     }
-
-    //     // `distributeBarbarianReward`
-    //     admin.addConstant("distributeBarbarianReward", "Amount", "Gold", 1, 180000);
-    //     admin.addConstant("distributeBarbarianReward", "Amount", "Gold", 2, 480000);
-    //     admin.addConstant("distributeBarbarianReward", "Amount", "Food", 1, 60000);
-    //     admin.addConstant("distributeBarbarianReward", "Amount", "Food", 2, 150000);
-
-    //     vm.stopPrank();
-    // }
-
-    // Note: hardcoded
-    function _generateWorldConstants() internal view returns (WorldConstants memory) {
-        return
+    /// @dev Second way to get world constants: initialize the world in a unique new state
+    function _generateNewWorldConstants() private returns (WorldConstants memory) {
+        worldConstants =
             WorldConstants({
                 admin: deployer,
+                tileWidth: 10,
                 worldWidth: 1000,
                 worldHeight: 1000,
-                numInitTerrainTypes: 1,
-                initBatchSize: 100,
+                numInitTerrainTypes: 6,
+                initBatchSize: 50,
                 maxCityCountPerPlayer: 3,
                 maxArmyCountPerPlayer: 3,
                 maxPlayerCount: 20,
-                tileWidth: 10, // DO NOT REMOVE THIS COMMENT
+                gameMode: GameMode.REGULAR,
                 maxCityCenterLevel: 3,
                 cityCenterLevelToEntityLevelRatio: 3,
-                secondsToTrainAThousandTroops: 500
+                secondsToTrainAThousandTroops: 500 // DO NOT REMOVE THIS COMMENT
             });
+        return worldConstants;
     }
 
-    // Note: hardcoded
-    function _generateMap(uint256 _width, uint256 _height) public pure returns (uint256[][] memory) {
+    /// @dev First way to get map: fetch them from last deployment
+    function _fetchLastDeployedMap() private returns (uint256[][] memory) {
+        string memory root = vm.projectRoot();
+        string memory path = string(abi.encodePacked(root, "/test/data/map.json"));
+        bytes memory rawJson = vm.parseJson(vm.readFile(path));
+        uint256[][] memory map = abi.decode(rawJson, (uint256[][]));
+
+        return map;
+    }
+
+    /// @dev Second way to get map: initialize a new one
+    function _generateNewMap(uint256 _width, uint256 _height) private pure returns (uint256[][] memory) {
         uint256[] memory _plainCol = new uint256[](_height);
 
         // set individual columns
@@ -433,7 +345,7 @@ contract DiamondDeployTest is Test {
     }
 
     // // generates values that need to be initialized from the cli and pipes it back into solidity! magic
-    // function getInitVal() public returns (WorldConstants memory _constants) {
+    // function getInitVal() private returns (WorldConstants memory _constants) {
     //     string[] memory runJsInputs = new string[](4);
     //     runJsInputs[0] = "yarn";
     //     runJsInputs[1] = "--silent";
@@ -445,7 +357,7 @@ contract DiamondDeployTest is Test {
     //     _constants = abi.decode(res, (WorldConstants));
     // }
 
-    function getSelectors(string memory _facetName) internal returns (bytes4[] memory selectors) {
+    function _getSelectors(string memory _facetName) private returns (bytes4[] memory selectors) {
         string[] memory cmd = new string[](5);
         cmd[0] = "yarn";
         cmd[1] = "--silent";

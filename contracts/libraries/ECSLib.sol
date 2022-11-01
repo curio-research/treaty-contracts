@@ -1,9 +1,8 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "contracts/libraries/Storage.sol";
-import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
-import {Position, ValueType, QueryCondition, QueryType} from "contracts/libraries/Types.sol";
+import {LibStorage} from "contracts/libraries/Storage.sol";
+import {GameState, Position, QueryCondition, QueryType, ValueType} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
 import {UintBoolMapping} from "contracts/Mapping.sol";
 import {Component} from "contracts/Component.sol";
@@ -12,8 +11,6 @@ import {AddressComponent, BoolComponent, IntComponent, PositionComponent, String
 /// @title library of ECS utility functions
 
 library ECSLib {
-    using SafeMath for uint256;
-
     function gs() internal pure returns (GameState storage) {
         return LibStorage.gameStorage();
     }

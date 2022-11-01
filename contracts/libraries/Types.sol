@@ -3,10 +3,6 @@ pragma solidity ^0.8.4;
 
 /// Data structures for game
 
-enum Terrain {
-    LAND
-}
-
 enum ValueType {
     UINT,
     STRING,
@@ -24,6 +20,11 @@ enum QueryType {
     HasVal
 }
 
+enum GameMode {
+    REGULAR,
+    BATTLE_ROYALE
+}
+
 struct QueryCondition {
     QueryType queryType;
     bytes value;
@@ -31,15 +32,18 @@ struct QueryCondition {
 }
 
 struct ComponentSpec {
+    /// Note: Keys of this spec must be in alphabetical order for Foundry testing purposes.
     string name;
     ValueType valueType;
 }
 
-struct ConstantSpec {
-    string functionName;
+struct GameParamSpec {
+    /// Note: Keys of this spec must be in alphabetical order for Foundry testing purposes.
     string componentName;
-    string entityName;
+    string functionName;
     uint256 level;
+    string object;
+    string subject;
     uint256 value;
 }
 
@@ -48,29 +52,21 @@ struct Position {
     uint256 y;
 }
 
-struct Tile {
-    bool isInitialized;
-    Terrain terrain;
-}
-
 struct WorldConstants {
-    // Admin info
+    /// Note: Keys of this spec must be in alphabetical order for Foundry testing purposes.
     address admin;
-    // Map info
-    uint256 tileWidth;
-    uint256 worldWidth;
-    uint256 worldHeight;
-    uint256 numInitTerrainTypes; // default is 6
-    uint256 initBatchSize; // default is 50 if numInitTerrainTypes = 6
-    // Manual configs
-    uint256 maxCityCountPerPlayer;
-    uint256 maxArmyCountPerPlayer;
-    uint256 maxPlayerCount;
-    bool isBattleRoyale;
-    // Generated configs
-    uint256 maxCityCenterLevel;
     uint256 cityCenterLevelToEntityLevelRatio; // 3 => lv1 city center unlocks lv3 resources
+    GameMode gameMode;
+    uint256 initBatchSize; // default is 50 if numInitTerrainTypes = 6
+    uint256 maxArmyCountPerPlayer;
+    uint256 maxCityCenterLevel;
+    uint256 maxCityCountPerPlayer;
+    uint256 maxPlayerCount;
+    uint256 numInitTerrainTypes; // default is 6
     uint256 secondsToTrainAThousandTroops;
+    uint256 tileWidth;
+    uint256 worldHeight;
+    uint256 worldWidth;
 }
 
 struct GameState {
@@ -78,7 +74,6 @@ struct GameState {
     uint256 lastPaused;
     WorldConstants worldConstants;
     address[] players;
-    // Tile[5000][5000] map;
     uint256[][] encodedColumnBatches;
     address[] treaties;
     address entities;

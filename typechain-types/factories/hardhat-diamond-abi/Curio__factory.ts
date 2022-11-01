@@ -8,6 +8,19 @@ import type { Curio, CurioInterface } from "../../hardhat-diamond-abi/Curio";
 
 const _abi = [
   {
+    inputs: [],
+    name: "addEntity",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "string",
@@ -20,7 +33,7 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "addConstant",
+    name: "addGameParameter",
     outputs: [
       {
         internalType: "uint256",
@@ -32,8 +45,14 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "addEntity",
+    inputs: [
+      {
+        internalType: "string",
+        name: "_inventoryType",
+        type: "string",
+      },
+    ],
+    name: "addResourceTemplate",
     outputs: [
       {
         internalType: "uint256",
@@ -79,11 +98,6 @@ const _abi = [
       {
         internalType: "uint256",
         name: "_defense",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_duration",
         type: "uint256",
       },
       {
@@ -164,7 +178,7 @@ const _abi = [
         type: "uint256[]",
       },
     ],
-    name: "bulkAddConstants",
+    name: "bulkAddGameParameters",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -263,19 +277,6 @@ const _abi = [
       },
     ],
     name: "registerComponents",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_gameAddr",
-        type: "address",
-      },
-    ],
-    name: "registerDefaultComponents",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -1516,32 +1517,17 @@ const _abi = [
           },
           {
             internalType: "uint256",
-            name: "tileWidth",
+            name: "cityCenterLevelToEntityLevelRatio",
             type: "uint256",
           },
           {
-            internalType: "uint256",
-            name: "worldWidth",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "worldHeight",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "numInitTerrainTypes",
-            type: "uint256",
+            internalType: "enum GameMode",
+            name: "gameMode",
+            type: "uint8",
           },
           {
             internalType: "uint256",
             name: "initBatchSize",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "maxCityCountPerPlayer",
             type: "uint256",
           },
           {
@@ -1551,27 +1537,42 @@ const _abi = [
           },
           {
             internalType: "uint256",
-            name: "maxPlayerCount",
-            type: "uint256",
-          },
-          {
-            internalType: "bool",
-            name: "isBattleRoyale",
-            type: "bool",
-          },
-          {
-            internalType: "uint256",
             name: "maxCityCenterLevel",
             type: "uint256",
           },
           {
             internalType: "uint256",
-            name: "cityCenterLevelToEntityLevelRatio",
+            name: "maxCityCountPerPlayer",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "maxPlayerCount",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "numInitTerrainTypes",
             type: "uint256",
           },
           {
             internalType: "uint256",
             name: "secondsToTrainAThousandTroops",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "tileWidth",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "worldHeight",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "worldWidth",
             type: "uint256",
           },
         ],

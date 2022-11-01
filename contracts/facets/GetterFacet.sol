@@ -2,18 +2,16 @@
 pragma solidity ^0.8.4;
 
 import {Set} from "contracts/Set.sol";
-import "contracts/libraries/Storage.sol";
+import {UseStorage} from "contracts/libraries/Storage.sol";
 import {GameLib} from "contracts/libraries/GameLib.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
-import {Position, Tile, WorldConstants} from "contracts/libraries/Types.sol";
-import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
+import {Position, WorldConstants} from "contracts/libraries/Types.sol";
 import {Component} from "contracts/Component.sol";
 
 /// @title Bulk getters
 /// @notice Getters provide bulk functions useful for fetching data from the frontend
 
 contract GetterFacet is UseStorage {
-    using SafeMath for uint256;
     uint256 private NULL = 0;
 
     // Debug Helpers

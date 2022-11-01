@@ -2,7 +2,7 @@
 pragma solidity ^0.8.4;
 
 import {Position, WorldConstants} from "contracts/libraries/Types.sol";
-import "openzeppelin-contracts/contracts/utils/Strings.sol";
+import {Strings} from "openzeppelin-contracts/contracts/utils/Strings.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
 
 library Templates {
@@ -16,6 +16,8 @@ library Templates {
         ECSLib.setString("BuildingType", cityCenterID, "City Center");
         ECSLib.setUint("InitTimestamp", cityCenterID, block.timestamp);
         ECSLib.setUint("LastTimestamp", cityCenterID, block.timestamp);
+        ECSLib.setUint("LastUpgraded", cityCenterID, 0);
+        ECSLib.setUint("LastMoved", cityCenterID, 0);
 
         return cityCenterID;
     }
@@ -38,11 +40,7 @@ library Templates {
         return inventoryID;
     }
 
-    function convertSettlerToCity(
-        uint256 _settlerID,
-        string memory _cityName,
-        Position memory _centerTilePosition
-    ) public returns (uint256) {
+    function convertSettlerToCity(uint256 _settlerID, string memory _cityName) public returns (uint256) {
         uint256 cityID = _settlerID;
 
         // Convert the settler to a city
@@ -51,7 +49,6 @@ library Templates {
         ECSLib.removeUint("Speed", cityID);
         ECSLib.removeUint("LastTimestamp", cityID);
         ECSLib.removeUint("MoveCooldown", cityID);
-        ECSLib.setPosition("StartPosition", cityID, _centerTilePosition);
         ECSLib.setString("Tag", cityID, "City");
         ECSLib.setString("Name", cityID, _cityName);
         ECSLib.setBool("CanProduce", cityID);
@@ -74,7 +71,6 @@ library Templates {
         ECSLib.setString("Tag", settlerID, "Settler");
         ECSLib.removeString("Name", settlerID);
         ECSLib.removeBool("CanProduce", settlerID);
-        ECSLib.removePosition("StartPosition", settlerID);
 
         return settlerID;
     }
@@ -90,12 +86,15 @@ library Templates {
         ECSLib.setUint("Level", tileID, 1);
         ECSLib.setUint("Terrain", tileID, _terrain);
         ECSLib.setUint("LastTimestamp", tileID, block.timestamp);
+        ECSLib.setUint("LastUpgraded", tileID, 0);
+        ECSLib.setUint("LastRecovered", tileID, 0);
 
         return tileID;
     }
 
     function addSettler(
         Position memory _position,
+        Position memory _tilePosition,
         uint256 _playerID,
         uint256 _speed
     ) public returns (uint256) {
@@ -103,6 +102,7 @@ library Templates {
 
         ECSLib.setString("Tag", settlerID, "Settler");
         ECSLib.setPosition("Position", settlerID, _position);
+        ECSLib.setPosition("StartPosition", settlerID, _tilePosition);
         ECSLib.setUint("Owner", settlerID, _playerID);
         ECSLib.setUint("Level", settlerID, 1);
         ECSLib.setBool("CanSettle", settlerID);
@@ -127,6 +127,7 @@ library Templates {
         ECSLib.setPosition("StartPosition", resourceID, _startPosition);
         ECSLib.setUint("LastTimestamp", resourceID, block.timestamp);
         ECSLib.setUint("Load", resourceID, _load);
+        ECSLib.setUint("LastUpgraded", resourceID, 0);
 
         return resourceID;
     }
@@ -146,6 +147,7 @@ library Templates {
     function addArmy(
         uint256 _playerID,
         Position memory _position,
+        Position memory _tilePosition,
         uint256 _speed,
         uint256 _load,
         uint256 _moveCooldown,
@@ -158,6 +160,7 @@ library Templates {
         ECSLib.setBool("CanBattle", armyID);
         ECSLib.setUint("Owner", armyID, _playerID);
         ECSLib.setPosition("Position", armyID, _position);
+        ECSLib.setPosition("StartPosition", armyID, _tilePosition);
         ECSLib.setUint("Speed", armyID, _speed);
         ECSLib.setUint("Load", armyID, _load);
         ECSLib.setUint("LastTimestamp", armyID, block.timestamp);
@@ -229,7 +232,6 @@ library Templates {
         uint256 _battleCooldown,
         uint256 _attack,
         uint256 _defense,
-        uint256 _duration,
         uint256 _load
     ) public returns (uint256) {
         uint256 templateID = ECSLib.addEntity();
@@ -242,18 +244,26 @@ library Templates {
         ECSLib.setUint("BattleCooldown", templateID, _battleCooldown);
         ECSLib.setUint("Attack", templateID, _attack);
         ECSLib.setUint("Defense", templateID, _defense);
-        ECSLib.setUint("Duration", templateID, _duration);
         ECSLib.setUint("Load", templateID, _load);
 
         return templateID;
     }
 
-    function addConstant(string memory _identifier, uint256 _value) public returns (uint256) {
-        uint256 constantID = ECSLib.addEntity();
+    function addResourceTemplate(string memory _inventoryType) public returns (uint256) {
+        uint256 templateID = ECSLib.addEntity();
 
-        ECSLib.setString("Tag", constantID, _identifier);
-        ECSLib.setUint("Amount", constantID, _value);
+        ECSLib.setString("Tag", templateID, "ResourceTemplate");
+        ECSLib.setString("InventoryType", templateID, _inventoryType);
 
-        return constantID;
+        return templateID;
+    }
+
+    function addGameParameter(string memory _identifier, uint256 _value) public returns (uint256) {
+        uint256 paramID = ECSLib.addEntity();
+
+        ECSLib.setString("Tag", paramID, _identifier);
+        ECSLib.setUint("Amount", paramID, _value);
+
+        return paramID;
     }
 }

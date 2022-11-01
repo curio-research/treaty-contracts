@@ -1,11 +1,12 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "forge-std/Test.sol";
-import "test/DiamondDeploy.t.sol";
+import {Test} from "forge-std/Test.sol";
+import {DiamondDeployTest} from "test/DiamondDeploy.t.sol";
 import {Component} from "contracts/Component.sol";
 import {Position} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
+import {console} from "forge-std/console.sol";
 
 contract TreatyTest is Test, DiamondDeployTest {
     function testClaimBarbarinaGather() public {
@@ -53,8 +54,8 @@ contract TreatyTest is Test, DiamondDeployTest {
         // Produce troop and organize army
         {
             uint256[] memory texasArmyTemplateIDs = new uint256[](2);
-            texasArmyTemplateIDs[0] = cavalryTemplateID;
-            texasArmyTemplateIDs[1] = infantryTemplateID;
+            texasArmyTemplateIDs[0] = horsemanTemplateID;
+            texasArmyTemplateIDs[1] = warriorTemplateID;
             uint256[] memory texasArmyAmounts = new uint256[](2);
             texasArmyAmounts[0] = 1000;
             texasArmyAmounts[1] = 1000;
@@ -213,8 +214,8 @@ contract TreatyTest is Test, DiamondDeployTest {
         // Player 1 produces troops and organizes army
         {
             uint256[] memory moscowArmyTemplateIDs = new uint256[](2);
-            moscowArmyTemplateIDs[0] = cavalryTemplateID;
-            moscowArmyTemplateIDs[1] = infantryTemplateID;
+            moscowArmyTemplateIDs[0] = horsemanTemplateID;
+            moscowArmyTemplateIDs[1] = warriorTemplateID;
             uint256[] memory moscowArmyAmounts = new uint256[](2);
             moscowArmyAmounts[0] = 500;
             moscowArmyAmounts[1] = 500;
@@ -241,8 +242,8 @@ contract TreatyTest is Test, DiamondDeployTest {
         // Player 2 produces troops and organizes army
         {
             uint256[] memory kievArmyTemplateIDs = new uint256[](2);
-            kievArmyTemplateIDs[0] = infantryTemplateID;
-            kievArmyTemplateIDs[1] = archerTemplateID;
+            kievArmyTemplateIDs[0] = warriorTemplateID;
+            kievArmyTemplateIDs[1] = slingerTemplateID;
             uint256[] memory kievArmyAmounts = new uint256[](2);
             kievArmyAmounts[0] = 30;
             kievArmyAmounts[1] = 70;
@@ -359,9 +360,9 @@ contract TreatyTest is Test, DiamondDeployTest {
             assertGe(moscowInfantryAmount, 500 - 40);
             // assertLe(moscowInfantryAmount, 500 - 20); // FIXME
 
-            uint256 kievDefenseAmount = abi.decode(getter.getComponent("Amount").getBytesValue(getter.getConstituentAtTile(kievSuburbTileID)), (uint256));
-            // assertGe(kievDefenseAmount, _generateWorldConstants().cityGuardAmount - 50);
-            // assertLe(moscowInfantryAmount, _generateWorldConstants().cityGuardAmount - 20); // FIXME
+            // uint256 kievDefenseAmount = abi.decode(getter.getComponent("Amount").getBytesValue(getter.getConstituentAtTile(kievSuburbTileID)), (uint256));
+            // assertGe(kievDefenseAmount, worldConstants.cityGuardAmount - 50);
+            // assertLe(moscowInfantryAmount, worldConstants.cityGuardAmount - 20); // FIXME
             console.log("Moscow encounters great setback advancing to Kiev");
         }
         time += 6;
@@ -401,14 +402,14 @@ contract TreatyTest is Test, DiamondDeployTest {
         console.log("genghis City:", getter.getPositionExternal("StartPosition", genghisID).x, getter.getPositionExternal("StartPosition", genghisID).y);
 
         // Player produces troops
-        uint256 productionID = game.startTroopProduction(genghisYurtID, cavalryTemplateID, 20);
+        uint256 productionID = game.startTroopProduction(genghisYurtID, horsemanTemplateID, 20);
         vm.warp(25);
         game.endTroopProduction(genghisYurtID, productionID);
 
         // Player organizes an army
         uint256[] memory templateIDs = new uint256[](1);
         uint256[] memory amounts = new uint256[](1);
-        templateIDs[0] = cavalryTemplateID;
+        templateIDs[0] = horsemanTemplateID;
         amounts[0] = 18;
         uint256 goldenHordeID = game.organizeArmy(genghisID, templateIDs, amounts);
         assertEq(abi.decode(getter.getComponent("Amount").getBytesValue(getter.getInventoryByCityAndType(genghisID, "Cavalry")), (uint256)), 20 - 18);
@@ -517,17 +518,17 @@ contract TreatyTest is Test, DiamondDeployTest {
         assertTrue(getter.getInventoryByCityAndType(_settyID, "Cavalry") == NULL);
 
         // Produce troops
-        uint256 _productionID = game.startTroopProduction(_cityCenterID, cavalryTemplateID, 20);
+        uint256 _productionID = game.startTroopProduction(_cityCenterID, horsemanTemplateID, 20);
         vm.warp(30);
         vm.expectRevert("CURIO: Concurrent productions disallowed");
-        game.startTroopProduction(_cityCenterID, cavalryTemplateID, 20);
+        game.startTroopProduction(_cityCenterID, horsemanTemplateID, 20);
         game.endTroopProduction(_cityCenterID, _productionID);
 
         // Get inventory
         assertTrue(getter.getInventoryByCityAndType(_settyID, "Cavalry") != NULL);
 
         // Produce more troops
-        _productionID = game.startTroopProduction(_cityCenterID, cavalryTemplateID, 20);
+        _productionID = game.startTroopProduction(_cityCenterID, horsemanTemplateID, 20);
         vm.warp(60);
         game.endTroopProduction(_cityCenterID, _productionID);
 
@@ -599,7 +600,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         uint256 _cityCenterID = getter.getCityCenter(_settyID);
 
         // Produce troops
-        uint256 _productionID = game.startTroopProduction(_cityCenterID, cavalryTemplateID, 20);
+        uint256 _productionID = game.startTroopProduction(_cityCenterID, horsemanTemplateID, 20);
         vm.warp(30);
         game.endTroopProduction(_cityCenterID, _productionID);
 
@@ -724,12 +725,12 @@ contract TreatyTest is Test, DiamondDeployTest {
     //     uint256 _cityID = getter.getCityAt(player1Pos);
     //     uint256 _cityCenterID = getter.getCityCenter(_cityID);
 
-    //     uint256 _productionID = game.startTroopProduction(_cityCenterID, cavalryTemplateID, 20);
+    //     uint256 _productionID = game.startTroopProduction(_cityCenterID, horsemanTemplateID, 20);
     //     vm.warp(10);
     //     game.endTroopProduction(_cityCenterID, _productionID);
 
     //     uint256[] memory _arr1 = new uint256[](1);
-    //     _arr1[0] = cavalryTemplateID;
+    //     _arr1[0] = horsemanTemplateID;
     //     uint256[] memory _arr2 = new uint256[](1);
     //     _arr2[0] = 5;
     //     uint256 _army1 = game.organizeArmy(_cityID, _arr1, _arr2);
