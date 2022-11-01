@@ -129,10 +129,7 @@ contract GameFacet is UseStorage {
             // FIXME: for some reason this fixes the settling in 9 positions somewhatwell
             // require(!GameLib.isBarbarian(tileID), "CURIO: Cannot settle on barbarians");
             // require(ECSLib.getUint("City", tileID) == NULL, "CURIO: Overlaps with another city");
-        }
 
-        for (uint256 i = 0; i < _tiles.length; i++) {
-            uint256 tileID = GameLib.initializeTile(_tiles[i]);
             ECSLib.setUint("City", tileID, cityID);
             ECSLib.setUint("Owner", tileID, playerID);
         }

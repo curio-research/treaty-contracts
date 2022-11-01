@@ -36,8 +36,8 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
 export type WorldConstantsStruct = {
   admin: PromiseOrValue<string>;
   cityCenterLevelToEntityLevelRatio: PromiseOrValue<BigNumberish>;
+  gameLengthInSeconds: PromiseOrValue<BigNumberish>;
   gameMode: PromiseOrValue<BigNumberish>;
-  initBatchSize: PromiseOrValue<BigNumberish>;
   maxArmyCountPerPlayer: PromiseOrValue<BigNumberish>;
   maxCityCenterLevel: PromiseOrValue<BigNumberish>;
   maxCityCountPerPlayer: PromiseOrValue<BigNumberish>;
@@ -52,8 +52,8 @@ export type WorldConstantsStruct = {
 export type WorldConstantsStructOutput = [
   string,
   BigNumber,
-  number,
   BigNumber,
+  number,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -66,8 +66,8 @@ export type WorldConstantsStructOutput = [
 ] & {
   admin: string;
   cityCenterLevelToEntityLevelRatio: BigNumber;
+  gameLengthInSeconds: BigNumber;
   gameMode: number;
-  initBatchSize: BigNumber;
   maxArmyCountPerPlayer: BigNumber;
   maxCityCenterLevel: BigNumber;
   maxCityCountPerPlayer: BigNumber;

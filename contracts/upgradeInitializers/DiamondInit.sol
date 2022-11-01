@@ -16,6 +16,7 @@ import {IERC173} from "contracts/interfaces/IERC173.sol";
 import {IERC165} from "contracts/interfaces/IERC165.sol";
 import {Set} from "contracts/Set.sol";
 import {UseStorage} from "contracts/libraries/Storage.sol";
+import {console} from "forge-std/console.sol";
 
 // It is expected that this contract is customized if you want to deploy your diamond
 // with data from a deployment script. Use the init function to initialize state variables
@@ -26,12 +27,15 @@ contract DiamondInit is UseStorage {
     // You can add parameters to this function in order to pass in
     // data to set your own state variables
     function init(WorldConstants memory _worldConstants) external {
+        require(1 == 0, "CURIO: ZZ");
+
         // adding ERC165 data
         LibDiamond.DiamondStorage storage ds = LibDiamond.diamondStorage();
         ds.supportedInterfaces[type(IERC165).interfaceId] = true;
         ds.supportedInterfaces[type(IDiamondCut).interfaceId] = true;
         ds.supportedInterfaces[type(IDiamondLoupe).interfaceId] = true;
         ds.supportedInterfaces[type(IERC173).interfaceId] = true;
+        require(1 == 0, "CURIO: AA");
 
         // add your own state variables
         // EIP-2535 specifies that the `diamondCut` function takes two optional
@@ -42,9 +46,15 @@ contract DiamondInit is UseStorage {
 
         // set world constants
         gs().worldConstants = _worldConstants;
+        require(1 == 0, "CURIO: BB");
 
         // initialize entities
         gs().entities = address(new Set());
         gs().entityNonce = 1;
+        require(1 == 0, "CURIO: CC");
+
+        // set initial time
+        gs().gameInitTimestamp = block.timestamp;
+        require(1 == 0, "CURIO: DD");
     }
 }

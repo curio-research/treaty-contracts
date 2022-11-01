@@ -98,7 +98,7 @@ task('deploy', 'deploy contracts')
 
       // Initialize map
       startTime = performance.now();
-      const encodedTileMap = encodeTileMap(tileMap, worldConstants.numInitTerrainTypes, worldConstants.initBatchSize);
+      const encodedTileMap = encodeTileMap(tileMap, worldConstants.numInitTerrainTypes, Math.floor(200 / worldConstants.numInitTerrainTypes));
       await confirm(await diamond.storeEncodedColumnBatches(encodedTileMap), hre);
       console.log(`✦ lazy setting ${tileMap.length}x${tileMap[0].length} map took ${Math.floor(performance.now() - startTime)} ms`);
 

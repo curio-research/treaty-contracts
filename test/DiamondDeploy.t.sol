@@ -90,6 +90,7 @@ contract DiamondDeployTest is Test {
 
         // Initialize treaties
         nato = new NATO();
+        console.log(">>> Treaties initialized");
 
         // Fetch args from CLI craft payload for init deploy
         bytes memory initData = abi.encodeWithSelector(_getSelectors("DiamondInit")[0], worldConstants);
@@ -100,6 +101,7 @@ contract DiamondDeployTest is Test {
         cuts[3] = IDiamondCut.FacetCut({facetAddress: address(getterFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: _getSelectors("GetterFacet")});
         cuts[4] = IDiamondCut.FacetCut({facetAddress: address(adminFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: _getSelectors("AdminFacet")});
         IDiamondCut(diamond).diamondCut(cuts, address(diamondInit), initData);
+        console.log(">>> Diamond initialized");
 
         // Assign diamond functions to corresponding facets
         getter = GetterFacet(diamond);
@@ -119,7 +121,7 @@ contract DiamondDeployTest is Test {
         // Initialize map either with either `_generateNewMap()` or `_fetchLastDeployedMap()`
         // Note: if fetching deployed map, check for map size
         uint256[][] memory map = _generateNewMap(worldConstants.worldWidth, worldConstants.worldHeight);
-        uint256[][] memory encodedColumnBatches = _encodeTileMap(map, worldConstants.numInitTerrainTypes, worldConstants.initBatchSize);
+        uint256[][] memory encodedColumnBatches = _encodeTileMap(map, worldConstants.numInitTerrainTypes, 200 / worldConstants.numInitTerrainTypes);
         admin.storeEncodedColumnBatches(encodedColumnBatches);
         console.log(">>> Map initialized and encoded");
 
@@ -304,11 +306,11 @@ contract DiamondDeployTest is Test {
                 worldWidth: 1000,
                 worldHeight: 1000,
                 numInitTerrainTypes: 6,
-                initBatchSize: 50,
                 maxCityCountPerPlayer: 3,
                 maxArmyCountPerPlayer: 3,
                 maxPlayerCount: 20,
                 gameMode: GameMode.REGULAR,
+                gameLengthInSeconds: 3600,
                 maxCityCenterLevel: 3,
                 cityCenterLevelToEntityLevelRatio: 3,
                 secondsToTrainAThousandTroops: 500 // DO NOT REMOVE THIS COMMENT

@@ -47,8 +47,6 @@ export const indexerUrlSelector = (hre: HardhatRuntimeEnvironment): string => {
 };
 
 export const saveMapToLocal = async (tileMap: any) => {
-  console.log('saving map to local...');
-
   const mapsDir = path.join(path.join(__dirname), '..', 'maps');
   if (!fs.existsSync(mapsDir)) fs.mkdirSync(mapsDir);
 
@@ -60,4 +58,5 @@ export const saveMapToLocal = async (tileMap: any) => {
   } while (fs.existsSync(mapPath));
 
   await fsPromise.writeFile(mapPath, JSON.stringify(tileMap));
+  console.log('✦ map saved to local');
 };
