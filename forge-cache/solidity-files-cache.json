@@ -92,7 +92,7 @@
       }
     },
     "contracts/Diamond.sol": {
-      "lastModificationDate": 1665596810981,
+      "lastModificationDate": 1665288827100,
       "contentHash": "1e162c4c7e9cd8814e6f1ec468f3bfb7",
       "sourceName": "contracts/Diamond.sol",
       "solcConfig": {
@@ -124,7 +124,8 @@
       },
       "imports": [
         "contracts/interfaces/IDiamondCut.sol",
-        "contracts/libraries/LibDiamond.sol"
+        "contracts/libraries/LibDiamond.sol",
+        "lib/forge-std/src/console.sol"
       ],
       "versionRequirement": "^0.8.0",
       "artifacts": {
@@ -312,7 +313,7 @@
       }
     },
     "contracts/diamond.sol": {
-      "lastModificationDate": 1665596810981,
+      "lastModificationDate": 1665288827100,
       "contentHash": "1e162c4c7e9cd8814e6f1ec468f3bfb7",
       "sourceName": "contracts/diamond.sol",
       "solcConfig": {
@@ -344,7 +345,8 @@
       },
       "imports": [
         "contracts/interfaces/IDiamondCut.sol",
-        "contracts/libraries/LibDiamond.sol"
+        "contracts/libraries/LibDiamond.sol",
+        "lib/forge-std/src/console.sol"
       ],
       "versionRequirement": "^0.8.0",
       "artifacts": {
@@ -404,7 +406,7 @@
       }
     },
     "contracts/facets/DiamondCutFacet.sol": {
-      "lastModificationDate": 1665596810982,
+      "lastModificationDate": 1665288827102,
       "contentHash": "ad746ce9d800ea0c25c48b34397c7182",
       "sourceName": "contracts/facets/DiamondCutFacet.sol",
       "solcConfig": {
@@ -436,7 +438,8 @@
       },
       "imports": [
         "contracts/interfaces/IDiamondCut.sol",
-        "contracts/libraries/LibDiamond.sol"
+        "contracts/libraries/LibDiamond.sol",
+        "lib/forge-std/src/console.sol"
       ],
       "versionRequirement": "^0.8.0",
       "artifacts": {
@@ -446,7 +449,7 @@
       }
     },
     "contracts/facets/DiamondLoupeFacet.sol": {
-      "lastModificationDate": 1665596810982,
+      "lastModificationDate": 1665288827102,
       "contentHash": "a540c77de08e319128a4937adb8ee3f0",
       "sourceName": "contracts/facets/DiamondLoupeFacet.sol",
       "solcConfig": {
@@ -480,7 +483,8 @@
         "contracts/interfaces/IDiamondCut.sol",
         "contracts/interfaces/IDiamondLoupe.sol",
         "contracts/interfaces/IERC165.sol",
-        "contracts/libraries/LibDiamond.sol"
+        "contracts/libraries/LibDiamond.sol",
+        "lib/forge-std/src/console.sol"
       ],
       "versionRequirement": "^0.8.0",
       "artifacts": {
@@ -590,7 +594,7 @@
       }
     },
     "contracts/facets/OwnershipFacet.sol": {
-      "lastModificationDate": 1665596810982,
+      "lastModificationDate": 1665288827103,
       "contentHash": "511e52e633c81449539ae2a3a978abf8",
       "sourceName": "contracts/facets/OwnershipFacet.sol",
       "solcConfig": {
@@ -623,7 +627,8 @@
       "imports": [
         "contracts/interfaces/IDiamondCut.sol",
         "contracts/interfaces/IERC173.sol",
-        "contracts/libraries/LibDiamond.sol"
+        "contracts/libraries/LibDiamond.sol",
+        "lib/forge-std/src/console.sol"
       ],
       "versionRequirement": "^0.8.0",
       "artifacts": {
@@ -934,8 +939,8 @@
       }
     },
     "contracts/libraries/LibDiamond.sol": {
-      "lastModificationDate": 1665596810983,
-      "contentHash": "dc19813d865c86478eceb05147199488",
+      "lastModificationDate": 1667337479816,
+      "contentHash": "a04a0c0655fce0fa2862329209f619ae",
       "sourceName": "contracts/libraries/LibDiamond.sol",
       "solcConfig": {
         "settings": {
@@ -965,7 +970,8 @@
         }
       },
       "imports": [
-        "contracts/interfaces/IDiamondCut.sol"
+        "contracts/interfaces/IDiamondCut.sol",
+        "lib/forge-std/src/console.sol"
       ],
       "versionRequirement": "^0.8.0",
       "artifacts": {
@@ -1106,8 +1112,8 @@
       }
     },
     "contracts/upgradeInitializers/DiamondInit.sol": {
-      "lastModificationDate": 1667335892295,
-      "contentHash": "1ae5ce37b4a3afd1193ad4d07a8adbeb",
+      "lastModificationDate": 1667337444035,
+      "contentHash": "4f7a59e7c93a99a59721442e69ae4f58",
       "sourceName": "contracts/upgradeInitializers/DiamondInit.sol",
       "solcConfig": {
         "settings": {
@@ -1155,8 +1161,8 @@
       }
     },
     "contracts/upgradeInitializers/diamondInit.sol": {
-      "lastModificationDate": 1667335892295,
-      "contentHash": "1ae5ce37b4a3afd1193ad4d07a8adbeb",
+      "lastModificationDate": 1667337444035,
+      "contentHash": "4f7a59e7c93a99a59721442e69ae4f58",
       "sourceName": "contracts/upgradeInitializers/diamondInit.sol",
       "solcConfig": {
         "settings": {
@@ -1683,8 +1689,8 @@
       }
     },
     "test/DiamondDeploy.t.sol": {
-      "lastModificationDate": 1667336066759,
-      "contentHash": "727896e2e635d4c56368462b06fa5b74",
+      "lastModificationDate": 1667337736191,
+      "contentHash": "374d50884b9872fb5498bd20829a42ec",
       "sourceName": "test/DiamondDeploy.t.sol",
       "solcConfig": {
         "settings": {
