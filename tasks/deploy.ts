@@ -26,8 +26,8 @@ task('deploy', 'deploy contracts')
   .addOptionalParam('port', 'Port contract abis and game info to Vault') // default is to call port
   .addFlag('release', 'Publish deployment to official release') // default is to call publish
   .addFlag('fixmap', 'Use deterministic map') // default is non-deterministic maps; deterministic maps are mainly used for client development
-  .addFlag('indexer', 'Use production indexer') // whether to use inexer or not
-  .addOptionalParam('name', 'Deployment name') // whether to use inexer or not
+  .addFlag('indexer', 'Use production indexer') // whether to use indexer or not
+  .addOptionalParam('name', 'Deployment name')
   .setAction(async (args: DeployArgs, hre: HardhatRuntimeEnvironment) => {
     try {
       await hre.run('compile');
@@ -99,7 +99,7 @@ task('deploy', 'deploy contracts')
 
       // Initialize map
       startTime = performance.now();
-      const encodedTileMap = encodeTileMap(tileMap, worldConstants.numInitTerrainTypes, worldConstants.initBatchSize);
+      const encodedTileMap = encodeTileMap(tileMap, worldConstants.numInitTerrainTypes, Math.floor(200 / worldConstants.numInitTerrainTypes));
       await confirm(await diamond.storeEncodedColumnBatches(encodedTileMap), hre);
       console.log(`✦ lazy setting ${tileMap.length}x${tileMap[0].length} map took ${Math.floor(performance.now() - startTime)} ms`);
 
@@ -124,9 +124,9 @@ task('deploy', 'deploy contracts')
 
       // TODO: think about whether initializing all tiles / more than barbarian tiles is necessary
       // initialize tiles that include barbarians, farms, gold mine
-      const bulkTileUploadSize = 20;
+      const bulkTileUploadSize = 5;
       for (let i = 0; i < specialPositions.length; i += bulkTileUploadSize) {
-        console.log(`✦ initializing special tiles ${i} to ${i + bulkTileUploadSize}`);
+        console.log(chalk.dim(`✦ initializing special tiles ${i} to ${i + bulkTileUploadSize}`));
         await confirm(await diamond.bulkInitializeTiles(specialPositions.slice(i, i + bulkTileUploadSize), { gasLimit: gasLimit }), hre);
       }
 

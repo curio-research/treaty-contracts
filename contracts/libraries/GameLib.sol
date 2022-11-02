@@ -69,8 +69,8 @@ library GameLib {
         if (tileId != 0) return tileId;
 
         // Load constants
-        uint256 batchSize = gs().worldConstants.initBatchSize;
         uint256 numInitTerrainTypes = gs().worldConstants.numInitTerrainTypes;
+        uint256 batchSize = 200 / numInitTerrainTypes;
 
         // Decode tile terrain
         uint256 tileX = _startPosition.x / gs().worldConstants.tileWidth;
@@ -191,6 +191,9 @@ library GameLib {
     ) internal returns (bool victory) {
         uint256[] memory offenderConstituentIDs = getConstituents(_offenderID);
         uint256[] memory defenderConstituentIDs = getConstituents(_defenderID);
+
+        require(offenderConstituentIDs.length > 0, "CURIO: Offender cannot attack");
+        require(defenderConstituentIDs.length > 0, "CURIO: Defender already subjugated");
 
         // Offender attacks defender
         {
@@ -586,6 +589,10 @@ library GameLib {
 
     function ongoingGameCheck() internal view {
         require(!gs().isPaused, "CURIO: Game is paused");
+
+        uint256 gameLengthInSeconds = gs().worldConstants.gameLengthInSeconds;
+        // FIXME: gs().gameInitTimestamp is somehow set incorrectly
+        require(gameLengthInSeconds == 0 || (block.timestamp - gs().gameInitTimestamp) <= gameLengthInSeconds, "CURIO: Game has ended");
     }
 
     function validEntityCheck(uint256 _entity) internal view {

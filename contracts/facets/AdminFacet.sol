@@ -14,11 +14,15 @@ import {GameLib} from "contracts/libraries/GameLib.sol";
 contract AdminFacet is UseStorage {
     uint256 private constant NULL = 0;
 
-    // TODO: Question: How to reuse functions from Util so that they can be directly called by external parties?
+    // Question: How to reuse functions from Util so that they can be directly called by external parties?
 
     // ----------------------------------------------------------------------
     // DEBUG FUNCTIONS
     // ----------------------------------------------------------------------
+
+    function stopGame() external onlyAdmin {
+        gs().worldConstants.gameLengthInSeconds = block.timestamp - gs().gameInitTimestamp;
+    }
 
     function removeEntity(uint256 _entity) external onlyAdmin {
         ECSLib.removeEntity(_entity);

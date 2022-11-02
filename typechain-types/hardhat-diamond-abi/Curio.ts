@@ -50,8 +50,8 @@ export type ComponentSpecStructOutput = [string, number] & {
 export type WorldConstantsStruct = {
   admin: PromiseOrValue<string>;
   cityCenterLevelToEntityLevelRatio: PromiseOrValue<BigNumberish>;
+  gameLengthInSeconds: PromiseOrValue<BigNumberish>;
   gameMode: PromiseOrValue<BigNumberish>;
-  initBatchSize: PromiseOrValue<BigNumberish>;
   maxArmyCountPerPlayer: PromiseOrValue<BigNumberish>;
   maxCityCenterLevel: PromiseOrValue<BigNumberish>;
   maxCityCountPerPlayer: PromiseOrValue<BigNumberish>;
@@ -66,8 +66,8 @@ export type WorldConstantsStruct = {
 export type WorldConstantsStructOutput = [
   string,
   BigNumber,
-  number,
   BigNumber,
+  number,
   BigNumber,
   BigNumber,
   BigNumber,
@@ -80,8 +80,8 @@ export type WorldConstantsStructOutput = [
 ] & {
   admin: string;
   cityCenterLevelToEntityLevelRatio: BigNumber;
+  gameLengthInSeconds: BigNumber;
   gameMode: number;
-  initBatchSize: BigNumber;
   maxArmyCountPerPlayer: BigNumber;
   maxCityCenterLevel: BigNumber;
   maxCityCountPerPlayer: BigNumber;
@@ -149,6 +149,7 @@ export interface CurioInterface extends utils.Interface {
     "setComponentValue(string,uint256,bytes)": FunctionFragment;
     "spawnBarbarian((uint256,uint256),uint256)": FunctionFragment;
     "spawnResource((uint256,uint256),string)": FunctionFragment;
+    "stopGame()": FunctionFragment;
     "storeEncodedColumnBatches(uint256[][])": FunctionFragment;
     "diamondCut((address,uint8,bytes4[])[],address,bytes)": FunctionFragment;
     "facetAddress(bytes4)": FunctionFragment;
@@ -245,6 +246,7 @@ export interface CurioInterface extends utils.Interface {
       | "setComponentValue"
       | "spawnBarbarian"
       | "spawnResource"
+      | "stopGame"
       | "storeEncodedColumnBatches"
       | "diamondCut"
       | "facetAddress"
@@ -401,6 +403,7 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "spawnResource",
     values: [PositionStruct, PromiseOrValue<string>]
   ): string;
+  encodeFunctionData(functionFragment: "stopGame", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "storeEncodedColumnBatches",
     values: [PromiseOrValue<BigNumberish>[][]]
@@ -775,6 +778,7 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "spawnResource",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "stopGame", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "storeEncodedColumnBatches",
     data: BytesLike
@@ -1240,6 +1244,10 @@ export interface Curio extends BaseContract {
     spawnResource(
       _startPosition: PositionStruct,
       _inventoryType: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    stopGame(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1735,6 +1743,10 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  stopGame(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   storeEncodedColumnBatches(
     _colBatches: PromiseOrValue<BigNumberish>[][],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -2216,6 +2228,8 @@ export interface Curio extends BaseContract {
       _inventoryType: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    stopGame(overrides?: CallOverrides): Promise<void>;
 
     storeEncodedColumnBatches(
       _colBatches: PromiseOrValue<BigNumberish>[][],
@@ -2758,6 +2772,10 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    stopGame(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     storeEncodedColumnBatches(
       _colBatches: PromiseOrValue<BigNumberish>[][],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -3238,6 +3256,10 @@ export interface Curio extends BaseContract {
     spawnResource(
       _startPosition: PositionStruct,
       _inventoryType: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    stopGame(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

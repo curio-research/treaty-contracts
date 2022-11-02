@@ -12,7 +12,7 @@
   },
   "files": {
     "contracts/Component.sol": {
-      "lastModificationDate": 1666722583419,
+      "lastModificationDate": 1667194483113,
       "contentHash": "d358edd51715363a84865cc279701893",
       "sourceName": "contracts/Component.sol",
       "solcConfig": {
@@ -22,8 +22,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -54,7 +53,7 @@
       }
     },
     "contracts/CurioERC20.sol": {
-      "lastModificationDate": 1666653355716,
+      "lastModificationDate": 1667324741757,
       "contentHash": "181ed0d4f7d510cc4aed46262cc77651",
       "sourceName": "contracts/CurioERC20.sol",
       "solcConfig": {
@@ -64,8 +63,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -94,7 +92,7 @@
       }
     },
     "contracts/Diamond.sol": {
-      "lastModificationDate": 1665596810981,
+      "lastModificationDate": 1665288827100,
       "contentHash": "1e162c4c7e9cd8814e6f1ec468f3bfb7",
       "sourceName": "contracts/Diamond.sol",
       "solcConfig": {
@@ -104,8 +102,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -127,7 +124,8 @@
       },
       "imports": [
         "contracts/interfaces/IDiamondCut.sol",
-        "contracts/libraries/LibDiamond.sol"
+        "contracts/libraries/LibDiamond.sol",
+        "lib/forge-std/src/console.sol"
       ],
       "versionRequirement": "^0.8.0",
       "artifacts": {
@@ -137,7 +135,7 @@
       }
     },
     "contracts/Mapping.sol": {
-      "lastModificationDate": 1665596810981,
+      "lastModificationDate": 1666990663158,
       "contentHash": "04811aac85026d7704c1d8a9c09468ad",
       "sourceName": "contracts/Mapping.sol",
       "solcConfig": {
@@ -147,8 +145,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -177,7 +174,7 @@
       }
     },
     "contracts/NATO.sol": {
-      "lastModificationDate": 1666653350737,
+      "lastModificationDate": 1666990663159,
       "contentHash": "c6d4f2fbdfdfd05cc24842a058fc972a",
       "sourceName": "contracts/NATO.sol",
       "solcConfig": {
@@ -187,8 +184,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -217,7 +213,7 @@
       }
     },
     "contracts/Set.sol": {
-      "lastModificationDate": 1665596810982,
+      "lastModificationDate": 1666990663159,
       "contentHash": "b978f5ba69b3acb9f8424bbe0312a512",
       "sourceName": "contracts/Set.sol",
       "solcConfig": {
@@ -227,8 +223,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -257,7 +252,7 @@
       }
     },
     "contracts/TypedComponents.sol": {
-      "lastModificationDate": 1666290526748,
+      "lastModificationDate": 1666990663159,
       "contentHash": "784c815f5c7c20df44d5463e4396354d",
       "sourceName": "contracts/TypedComponents.sol",
       "solcConfig": {
@@ -267,8 +262,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -319,7 +313,7 @@
       }
     },
     "contracts/diamond.sol": {
-      "lastModificationDate": 1665596810981,
+      "lastModificationDate": 1665288827100,
       "contentHash": "1e162c4c7e9cd8814e6f1ec468f3bfb7",
       "sourceName": "contracts/diamond.sol",
       "solcConfig": {
@@ -329,8 +323,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -352,7 +345,8 @@
       },
       "imports": [
         "contracts/interfaces/IDiamondCut.sol",
-        "contracts/libraries/LibDiamond.sol"
+        "contracts/libraries/LibDiamond.sol",
+        "lib/forge-std/src/console.sol"
       ],
       "versionRequirement": "^0.8.0",
       "artifacts": {
@@ -362,8 +356,8 @@
       }
     },
     "contracts/facets/AdminFacet.sol": {
-      "lastModificationDate": 1667257374882,
-      "contentHash": "283a2d2e7ac29c5655a557878b3b3123",
+      "lastModificationDate": 1667417030005,
+      "contentHash": "4a08e661fa57573513812c011bd8725b",
       "sourceName": "contracts/facets/AdminFacet.sol",
       "solcConfig": {
         "settings": {
@@ -372,8 +366,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -403,6 +396,7 @@
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Templates.sol",
         "contracts/libraries/Types.sol",
+        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/Strings.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -413,7 +407,7 @@
       }
     },
     "contracts/facets/DiamondCutFacet.sol": {
-      "lastModificationDate": 1665596810982,
+      "lastModificationDate": 1665288827102,
       "contentHash": "ad746ce9d800ea0c25c48b34397c7182",
       "sourceName": "contracts/facets/DiamondCutFacet.sol",
       "solcConfig": {
@@ -423,8 +417,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -446,7 +439,8 @@
       },
       "imports": [
         "contracts/interfaces/IDiamondCut.sol",
-        "contracts/libraries/LibDiamond.sol"
+        "contracts/libraries/LibDiamond.sol",
+        "lib/forge-std/src/console.sol"
       ],
       "versionRequirement": "^0.8.0",
       "artifacts": {
@@ -456,7 +450,7 @@
       }
     },
     "contracts/facets/DiamondLoupeFacet.sol": {
-      "lastModificationDate": 1665596810982,
+      "lastModificationDate": 1665288827102,
       "contentHash": "a540c77de08e319128a4937adb8ee3f0",
       "sourceName": "contracts/facets/DiamondLoupeFacet.sol",
       "solcConfig": {
@@ -466,8 +460,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -491,7 +484,8 @@
         "contracts/interfaces/IDiamondCut.sol",
         "contracts/interfaces/IDiamondLoupe.sol",
         "contracts/interfaces/IERC165.sol",
-        "contracts/libraries/LibDiamond.sol"
+        "contracts/libraries/LibDiamond.sol",
+        "lib/forge-std/src/console.sol"
       ],
       "versionRequirement": "^0.8.0",
       "artifacts": {
@@ -501,8 +495,8 @@
       }
     },
     "contracts/facets/GameFacet.sol": {
-      "lastModificationDate": 1667265092397,
-      "contentHash": "68e3097c9d4dcbdde5adfff18995094b",
+      "lastModificationDate": 1667417030006,
+      "contentHash": "e177cf83cec572c7068125a1f13128af",
       "sourceName": "contracts/facets/GameFacet.sol",
       "solcConfig": {
         "settings": {
@@ -511,8 +505,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -542,6 +535,7 @@
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Templates.sol",
         "contracts/libraries/Types.sol",
+        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/Strings.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -552,7 +546,7 @@
       }
     },
     "contracts/facets/GetterFacet.sol": {
-      "lastModificationDate": 1667257374883,
+      "lastModificationDate": 1667319728749,
       "contentHash": "7103f4d1c116ae75915de531f3b83570",
       "sourceName": "contracts/facets/GetterFacet.sol",
       "solcConfig": {
@@ -562,8 +556,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -593,6 +586,7 @@
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Templates.sol",
         "contracts/libraries/Types.sol",
+        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/Strings.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -603,7 +597,7 @@
       }
     },
     "contracts/facets/OwnershipFacet.sol": {
-      "lastModificationDate": 1665596810982,
+      "lastModificationDate": 1665288827103,
       "contentHash": "511e52e633c81449539ae2a3a978abf8",
       "sourceName": "contracts/facets/OwnershipFacet.sol",
       "solcConfig": {
@@ -613,8 +607,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -637,7 +630,8 @@
       "imports": [
         "contracts/interfaces/IDiamondCut.sol",
         "contracts/interfaces/IERC173.sol",
-        "contracts/libraries/LibDiamond.sol"
+        "contracts/libraries/LibDiamond.sol",
+        "lib/forge-std/src/console.sol"
       ],
       "versionRequirement": "^0.8.0",
       "artifacts": {
@@ -647,7 +641,7 @@
       }
     },
     "contracts/facets/PolicyFacet.sol": {
-      "lastModificationDate": 1667241948696,
+      "lastModificationDate": 1667319728749,
       "contentHash": "d126995a56e612ac3aef5f6550ce668f",
       "sourceName": "contracts/facets/PolicyFacet.sol",
       "solcConfig": {
@@ -657,8 +651,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -688,6 +681,7 @@
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Templates.sol",
         "contracts/libraries/Types.sol",
+        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/Strings.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -698,7 +692,7 @@
       }
     },
     "contracts/interfaces/IDiamondCut.sol": {
-      "lastModificationDate": 1665596810983,
+      "lastModificationDate": 1665288827104,
       "contentHash": "d8b4c09443cf22718287f7f9a4a6bcb2",
       "sourceName": "contracts/interfaces/IDiamondCut.sol",
       "solcConfig": {
@@ -708,8 +702,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -738,7 +731,7 @@
       }
     },
     "contracts/interfaces/IDiamondLoupe.sol": {
-      "lastModificationDate": 1665596810983,
+      "lastModificationDate": 1665288827104,
       "contentHash": "a471cd6a18e337530aa0fb37a1dd2294",
       "sourceName": "contracts/interfaces/IDiamondLoupe.sol",
       "solcConfig": {
@@ -748,8 +741,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -778,7 +770,7 @@
       }
     },
     "contracts/interfaces/IERC165.sol": {
-      "lastModificationDate": 1665596810983,
+      "lastModificationDate": 1665288827104,
       "contentHash": "f8f9ee2c76e1678bfead7a3fad131934",
       "sourceName": "contracts/interfaces/IERC165.sol",
       "solcConfig": {
@@ -788,8 +780,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -818,7 +809,7 @@
       }
     },
     "contracts/interfaces/IERC173.sol": {
-      "lastModificationDate": 1665596810983,
+      "lastModificationDate": 1665288827104,
       "contentHash": "65e379207bc221335d0eedfe7b077af6",
       "sourceName": "contracts/interfaces/IERC173.sol",
       "solcConfig": {
@@ -828,8 +819,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -858,7 +848,7 @@
       }
     },
     "contracts/libraries/ECSLib.sol": {
-      "lastModificationDate": 1667241948696,
+      "lastModificationDate": 1667319728749,
       "contentHash": "18fe1e7bd2a95f756e0dc039dc216d19",
       "sourceName": "contracts/libraries/ECSLib.sol",
       "solcConfig": {
@@ -868,8 +858,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -905,8 +894,8 @@
       }
     },
     "contracts/libraries/GameLib.sol": {
-      "lastModificationDate": 1667257375061,
-      "contentHash": "d7cc96f0f5d8e283a8157017d908f57a",
+      "lastModificationDate": 1667417030006,
+      "contentHash": "8903cfcc2c74f787338455800ad802c6",
       "sourceName": "contracts/libraries/GameLib.sol",
       "solcConfig": {
         "settings": {
@@ -915,8 +904,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -945,6 +933,7 @@
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Templates.sol",
         "contracts/libraries/Types.sol",
+        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/Strings.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -955,8 +944,8 @@
       }
     },
     "contracts/libraries/LibDiamond.sol": {
-      "lastModificationDate": 1665596810983,
-      "contentHash": "dc19813d865c86478eceb05147199488",
+      "lastModificationDate": 1667417030007,
+      "contentHash": "a04a0c0655fce0fa2862329209f619ae",
       "sourceName": "contracts/libraries/LibDiamond.sol",
       "solcConfig": {
         "settings": {
@@ -965,8 +954,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -987,7 +975,8 @@
         }
       },
       "imports": [
-        "contracts/interfaces/IDiamondCut.sol"
+        "contracts/interfaces/IDiamondCut.sol",
+        "lib/forge-std/src/console.sol"
       ],
       "versionRequirement": "^0.8.0",
       "artifacts": {
@@ -997,7 +986,7 @@
       }
     },
     "contracts/libraries/Storage.sol": {
-      "lastModificationDate": 1665596810984,
+      "lastModificationDate": 1665288827106,
       "contentHash": "1b36141f848b096102e707d476aaf9cb",
       "sourceName": "contracts/libraries/Storage.sol",
       "solcConfig": {
@@ -1007,8 +996,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -1042,7 +1030,7 @@
       }
     },
     "contracts/libraries/Templates.sol": {
-      "lastModificationDate": 1667257374883,
+      "lastModificationDate": 1667319728750,
       "contentHash": "c66152096aa357af1ae0728376a47b28",
       "sourceName": "contracts/libraries/Templates.sol",
       "solcConfig": {
@@ -1052,8 +1040,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -1091,8 +1078,8 @@
       }
     },
     "contracts/libraries/Types.sol": {
-      "lastModificationDate": 1667257374883,
-      "contentHash": "c2aa2edcefd9b835dc7799111c81227e",
+      "lastModificationDate": 1667417030007,
+      "contentHash": "d22acc8376396115852d5ba57fa5648c",
       "sourceName": "contracts/libraries/Types.sol",
       "solcConfig": {
         "settings": {
@@ -1101,8 +1088,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -1131,8 +1117,8 @@
       }
     },
     "contracts/upgradeInitializers/DiamondInit.sol": {
-      "lastModificationDate": 1667257374883,
-      "contentHash": "d403c8c1c7b4a6e29144b53da0fdbc3d",
+      "lastModificationDate": 1667417030007,
+      "contentHash": "4f7a59e7c93a99a59721442e69ae4f58",
       "sourceName": "contracts/upgradeInitializers/DiamondInit.sol",
       "solcConfig": {
         "settings": {
@@ -1141,8 +1127,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -1170,7 +1155,8 @@
         "contracts/interfaces/IERC173.sol",
         "contracts/libraries/LibDiamond.sol",
         "contracts/libraries/Storage.sol",
-        "contracts/libraries/Types.sol"
+        "contracts/libraries/Types.sol",
+        "lib/forge-std/src/console.sol"
       ],
       "versionRequirement": "^0.8.0",
       "artifacts": {
@@ -1180,8 +1166,8 @@
       }
     },
     "contracts/upgradeInitializers/diamondInit.sol": {
-      "lastModificationDate": 1667257374883,
-      "contentHash": "d403c8c1c7b4a6e29144b53da0fdbc3d",
+      "lastModificationDate": 1667417030007,
+      "contentHash": "4f7a59e7c93a99a59721442e69ae4f58",
       "sourceName": "contracts/upgradeInitializers/diamondInit.sol",
       "solcConfig": {
         "settings": {
@@ -1190,8 +1176,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -1219,7 +1204,8 @@
         "contracts/interfaces/IERC173.sol",
         "contracts/libraries/LibDiamond.sol",
         "contracts/libraries/Storage.sol",
-        "contracts/libraries/Types.sol"
+        "contracts/libraries/Types.sol",
+        "lib/forge-std/src/console.sol"
       ],
       "versionRequirement": "^0.8.0",
       "artifacts": {
@@ -1229,7 +1215,7 @@
       }
     },
     "lib/forge-std/lib/ds-test/src/test.sol": {
-      "lastModificationDate": 1665596810985,
+      "lastModificationDate": 1667194483117,
       "contentHash": "962996f0e05d5218857a538a62d7c47e",
       "sourceName": "lib/forge-std/lib/ds-test/src/test.sol",
       "solcConfig": {
@@ -1239,8 +1225,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -1269,7 +1254,7 @@
       }
     },
     "lib/forge-std/src/Script.sol": {
-      "lastModificationDate": 1667241948699,
+      "lastModificationDate": 1667319728753,
       "contentHash": "571dde8775a6214a03d6772ee330ead5",
       "sourceName": "lib/forge-std/src/Script.sol",
       "solcConfig": {
@@ -1279,8 +1264,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -1314,7 +1298,7 @@
       }
     },
     "lib/forge-std/src/StdJson.sol": {
-      "lastModificationDate": 1667241948699,
+      "lastModificationDate": 1667319728753,
       "contentHash": "75c782f20a301ab9827060a03da071e4",
       "sourceName": "lib/forge-std/src/StdJson.sol",
       "solcConfig": {
@@ -1324,8 +1308,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -1356,7 +1339,7 @@
       }
     },
     "lib/forge-std/src/Test.sol": {
-      "lastModificationDate": 1667241948699,
+      "lastModificationDate": 1667319728753,
       "contentHash": "6cab65c53a9548c2428a10697fd06dd1",
       "sourceName": "lib/forge-std/src/Test.sol",
       "solcConfig": {
@@ -1366,8 +1349,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -1412,7 +1394,7 @@
       }
     },
     "lib/forge-std/src/Vm.sol": {
-      "lastModificationDate": 1667241948699,
+      "lastModificationDate": 1667319728753,
       "contentHash": "bd4bde818b3c57b21e0601277b1d2dac",
       "sourceName": "lib/forge-std/src/Vm.sol",
       "solcConfig": {
@@ -1422,8 +1404,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -1452,7 +1433,7 @@
       }
     },
     "lib/forge-std/src/console.sol": {
-      "lastModificationDate": 1665596810986,
+      "lastModificationDate": 1667194483118,
       "contentHash": "100b8a33b917da1147740d7ab8b0ded3",
       "sourceName": "lib/forge-std/src/console.sol",
       "solcConfig": {
@@ -1462,8 +1443,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -1492,7 +1472,7 @@
       }
     },
     "lib/forge-std/src/console2.sol": {
-      "lastModificationDate": 1665596810986,
+      "lastModificationDate": 1667194483118,
       "contentHash": "5df91f8e93efbfcccf68973dc1b74a70",
       "sourceName": "lib/forge-std/src/console2.sol",
       "solcConfig": {
@@ -1502,8 +1482,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -1532,7 +1511,7 @@
       }
     },
     "lib/openzeppelin-contracts/contracts/utils/Strings.sol": {
-      "lastModificationDate": 1665596811013,
+      "lastModificationDate": 1665288827155,
       "contentHash": "9ba0bb93454a1ab7b6824f59ead41f42",
       "sourceName": "lib/openzeppelin-contracts/contracts/utils/Strings.sol",
       "solcConfig": {
@@ -1542,8 +1521,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -1572,7 +1550,7 @@
       }
     },
     "test/Basic.t.sol": {
-      "lastModificationDate": 1667257528021,
+      "lastModificationDate": 1667319728756,
       "contentHash": "34ced3a61fe4e61ca241b9956bea2434",
       "sourceName": "test/Basic.t.sol",
       "solcConfig": {
@@ -1582,8 +1560,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -1645,7 +1622,7 @@
       }
     },
     "test/Depr.t.sol": {
-      "lastModificationDate": 1665596811042,
+      "lastModificationDate": 1666990663172,
       "contentHash": "ff7747e1ab4c86469ed2ed06c659b116",
       "sourceName": "test/Depr.t.sol",
       "solcConfig": {
@@ -1655,8 +1632,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -1718,8 +1694,8 @@
       }
     },
     "test/DiamondDeploy.t.sol": {
-      "lastModificationDate": 1667257528021,
-      "contentHash": "a2d661e1680825c8eae38882b74abc97",
+      "lastModificationDate": 1667417030009,
+      "contentHash": "fd1f8a11dbb736674db567b17ad40448",
       "sourceName": "test/DiamondDeploy.t.sol",
       "solcConfig": {
         "settings": {
@@ -1728,8 +1704,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -1790,7 +1765,7 @@
       }
     },
     "test/ECS.t.sol": {
-      "lastModificationDate": 1666022016424,
+      "lastModificationDate": 1666990663172,
       "contentHash": "5af2d7a97cc40ba9eb4dc53bf9000a06",
       "sourceName": "test/ECS.t.sol",
       "solcConfig": {
@@ -1800,8 +1775,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {

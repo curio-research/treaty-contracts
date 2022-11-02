@@ -56,8 +56,8 @@ struct WorldConstants {
     /// Note: Keys of this spec must be in alphabetical order for Foundry testing purposes.
     address admin;
     uint256 cityCenterLevelToEntityLevelRatio; // 3 => lv1 city center unlocks lv3 resources
+    uint256 gameLengthInSeconds; // 0 means not used
     GameMode gameMode;
-    uint256 initBatchSize; // default is 50 if numInitTerrainTypes = 6
     uint256 maxArmyCountPerPlayer;
     uint256 maxCityCenterLevel;
     uint256 maxCityCountPerPlayer;
@@ -72,6 +72,7 @@ struct WorldConstants {
 struct GameState {
     bool isPaused;
     uint256 lastPaused;
+    uint256 gameInitTimestamp;
     WorldConstants worldConstants;
     address[] players;
     uint256[][] encodedColumnBatches;
