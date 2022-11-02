@@ -184,6 +184,9 @@ contract GameFacet is UseStorage {
 
         // Remove city center
         ECSLib.removeEntity(GameLib.getCityCenter(_cityID));
+
+        // Add back farm
+        Templates.addResource(gs().templates["Food"], ECSLib.getPosition("StartPosition", _cityID), GameLib.getConstant("Farm", "Food", "Load", "", 0));
     }
 
     function recoverTile(uint256 _tileID) external {
@@ -344,11 +347,20 @@ contract GameFacet is UseStorage {
         // Set timestamp
         ECSLib.setUint("LastMoved", _buildingID, block.timestamp);
 
+        // Remove resource at target tile and restore Level 0 farm at current tile
+        {
+            uint256 resourceID = GameLib.getResourceAtTile(_newTilePosition);
+            if (resourceID != NULL) ECSLib.removeEntity(resourceID);
+            Templates.addResource(gs().templates["Food"], ECSLib.getPosition("StartPosition", _buildingID), GameLib.getConstant("Farm", "Food", "Load", "", 0));
+        }
+
         // Move city center, city, and underlying settler positions
-        uint256 cityID = ECSLib.getUint("City", _buildingID);
-        ECSLib.setPosition("StartPosition", _buildingID, _newTilePosition);
-        ECSLib.setPosition("StartPosition", cityID, _newTilePosition);
-        ECSLib.setPosition("Position", cityID, GameLib.getMidPositionFromTilePosition(_newTilePosition));
+        {
+            uint256 cityID = ECSLib.getUint("City", _buildingID);
+            ECSLib.setPosition("StartPosition", _buildingID, _newTilePosition);
+            ECSLib.setPosition("StartPosition", cityID, _newTilePosition);
+            ECSLib.setPosition("Position", cityID, GameLib.getMidPositionFromTilePosition(_newTilePosition));
+        }
     }
 
     function disownTile(uint256 _tileID) external {
