@@ -146,7 +146,7 @@ contract GameFacet is UseStorage {
             for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
                 string memory inventoryType = ECSLib.getString("InventoryType", resourceTemplateIDs[i]);
                 uint256 inventoryLoad = GameLib.getConstant("City Center", inventoryType, "Load", "", 1);
-                Templates.addInventory(cityID, resourceTemplateIDs[i], 10000000, inventoryLoad, true);
+                Templates.addInventory(cityID, resourceTemplateIDs[i], inventoryLoad, inventoryLoad, true);
             }
         }
 
@@ -558,8 +558,9 @@ contract GameFacet is UseStorage {
 
         // Update city inventory amount
         uint256 cityInventoryID = GameLib.getInventory(cityID, templateID);
-        uint256 existingCityResourceAmount = ECSLib.getUint("Amount", cityInventoryID);
-        ECSLib.setUint("Amount", cityInventoryID, harvestAmount + existingCityResourceAmount);
+        uint256 newCityResourceAmount = ECSLib.getUint("Amount", cityInventoryID) + harvestAmount;
+        newCityResourceAmount = GameLib.min(ECSLib.getUint("Load", cityInventoryID), newCityResourceAmount);
+        ECSLib.setUint("Amount", cityInventoryID, newCityResourceAmount);
     }
 
     function harvestResources(uint256[] memory resourceIds) external {
@@ -592,7 +593,7 @@ contract GameFacet is UseStorage {
             uint256 inventoryID = GameLib.getInventory(cityID, resourceTemplateIDs[i]);
             uint256 harvestRate = GameLib.getConstant("City Center", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Yield", "", centerLevel);
             uint256 harvestAmount = (block.timestamp - ECSLib.getUint("LastTimestamp", _buildingID)) * harvestRate;
-            harvestAmount = GameLib.min(GameLib.getConstant("City Center", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Load", "", centerLevel), harvestAmount);
+            harvestAmount = GameLib.min(ECSLib.getUint("Load", inventoryID), harvestAmount);
             ECSLib.setUint("Amount", inventoryID, ECSLib.getUint("Amount", inventoryID) + harvestAmount);
         }
 
