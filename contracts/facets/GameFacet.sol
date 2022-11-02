@@ -116,7 +116,10 @@ contract GameFacet is UseStorage {
 
         // Remove resource at destination if one exists
         uint256 resourceID = GameLib.getResourceAtTile(centerTilePosition);
-        if (resourceID != NULL) ECSLib.removeEntity(resourceID);
+        if (resourceID != NULL) {
+            require(ECSLib.getUint("Template", resourceID) != gs().templates["Gold"], "CURIO: Cannot settle on gold mine");
+            ECSLib.removeEntity(resourceID);
+        }
 
         // Verify that territory is wholly in bound and does not overlap with other cities, and set tile ownership
         uint256 playerID = GameLib.getPlayer(msg.sender);
@@ -350,7 +353,10 @@ contract GameFacet is UseStorage {
         // Remove resource at target tile and restore Level 0 farm at current tile
         {
             uint256 resourceID = GameLib.getResourceAtTile(_newTilePosition);
-            if (resourceID != NULL) ECSLib.removeEntity(resourceID);
+            if (resourceID != NULL) {
+                require(ECSLib.getUint("Template", resourceID) != gs().templates["Gold"], "CURIO: Cannot settle on gold mine");
+                ECSLib.removeEntity(resourceID);
+            }
             Templates.addResource(gs().templates["Food"], ECSLib.getPosition("StartPosition", _buildingID), GameLib.getConstant("Farm", "Food", "Load", "", 0));
         }
 

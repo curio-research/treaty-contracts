@@ -124,8 +124,7 @@
       },
       "imports": [
         "contracts/interfaces/IDiamondCut.sol",
-        "contracts/libraries/LibDiamond.sol",
-        "lib/forge-std/src/console.sol"
+        "contracts/libraries/LibDiamond.sol"
       ],
       "versionRequirement": "^0.8.0",
       "artifacts": {
@@ -345,8 +344,7 @@
       },
       "imports": [
         "contracts/interfaces/IDiamondCut.sol",
-        "contracts/libraries/LibDiamond.sol",
-        "lib/forge-std/src/console.sol"
+        "contracts/libraries/LibDiamond.sol"
       ],
       "versionRequirement": "^0.8.0",
       "artifacts": {
@@ -356,7 +354,7 @@
       }
     },
     "contracts/facets/AdminFacet.sol": {
-      "lastModificationDate": 1667417030005,
+      "lastModificationDate": 1667420940440,
       "contentHash": "4a08e661fa57573513812c011bd8725b",
       "sourceName": "contracts/facets/AdminFacet.sol",
       "solcConfig": {
@@ -396,7 +394,6 @@
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Templates.sol",
         "contracts/libraries/Types.sol",
-        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/Strings.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -439,8 +436,7 @@
       },
       "imports": [
         "contracts/interfaces/IDiamondCut.sol",
-        "contracts/libraries/LibDiamond.sol",
-        "lib/forge-std/src/console.sol"
+        "contracts/libraries/LibDiamond.sol"
       ],
       "versionRequirement": "^0.8.0",
       "artifacts": {
@@ -484,8 +480,7 @@
         "contracts/interfaces/IDiamondCut.sol",
         "contracts/interfaces/IDiamondLoupe.sol",
         "contracts/interfaces/IERC165.sol",
-        "contracts/libraries/LibDiamond.sol",
-        "lib/forge-std/src/console.sol"
+        "contracts/libraries/LibDiamond.sol"
       ],
       "versionRequirement": "^0.8.0",
       "artifacts": {
@@ -495,8 +490,8 @@
       }
     },
     "contracts/facets/GameFacet.sol": {
-      "lastModificationDate": 1667423780525,
-      "contentHash": "369f3bed657dfbaa7370c90f725e0b61",
+      "lastModificationDate": 1667428271324,
+      "contentHash": "c41008590cc15b98220bef5ce099313f",
       "sourceName": "contracts/facets/GameFacet.sol",
       "solcConfig": {
         "settings": {
@@ -535,7 +530,6 @@
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Templates.sol",
         "contracts/libraries/Types.sol",
-        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/Strings.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -586,7 +580,6 @@
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Templates.sol",
         "contracts/libraries/Types.sol",
-        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/Strings.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -630,8 +623,7 @@
       "imports": [
         "contracts/interfaces/IDiamondCut.sol",
         "contracts/interfaces/IERC173.sol",
-        "contracts/libraries/LibDiamond.sol",
-        "lib/forge-std/src/console.sol"
+        "contracts/libraries/LibDiamond.sol"
       ],
       "versionRequirement": "^0.8.0",
       "artifacts": {
@@ -681,7 +673,6 @@
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Templates.sol",
         "contracts/libraries/Types.sol",
-        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/Strings.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -894,8 +885,8 @@
       }
     },
     "contracts/libraries/GameLib.sol": {
-      "lastModificationDate": 1667420448430,
-      "contentHash": "cc9983b973f412c5aa122829534bed7a",
+      "lastModificationDate": 1667428283400,
+      "contentHash": "01fdd5ee1732ba7556bc09fd33ac3c33",
       "sourceName": "contracts/libraries/GameLib.sol",
       "solcConfig": {
         "settings": {
@@ -933,7 +924,6 @@
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Templates.sol",
         "contracts/libraries/Types.sol",
-        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/Strings.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -944,8 +934,8 @@
       }
     },
     "contracts/libraries/LibDiamond.sol": {
-      "lastModificationDate": 1667417030007,
-      "contentHash": "a04a0c0655fce0fa2862329209f619ae",
+      "lastModificationDate": 1667428293676,
+      "contentHash": "dc19813d865c86478eceb05147199488",
       "sourceName": "contracts/libraries/LibDiamond.sol",
       "solcConfig": {
         "settings": {
@@ -975,8 +965,7 @@
         }
       },
       "imports": [
-        "contracts/interfaces/IDiamondCut.sol",
-        "lib/forge-std/src/console.sol"
+        "contracts/interfaces/IDiamondCut.sol"
       ],
       "versionRequirement": "^0.8.0",
       "artifacts": {
@@ -1117,7 +1106,7 @@
       }
     },
     "contracts/upgradeInitializers/DiamondInit.sol": {
-      "lastModificationDate": 1667417030007,
+      "lastModificationDate": 1667420940442,
       "contentHash": "4f7a59e7c93a99a59721442e69ae4f58",
       "sourceName": "contracts/upgradeInitializers/DiamondInit.sol",
       "solcConfig": {
@@ -1155,8 +1144,7 @@
         "contracts/interfaces/IERC173.sol",
         "contracts/libraries/LibDiamond.sol",
         "contracts/libraries/Storage.sol",
-        "contracts/libraries/Types.sol",
-        "lib/forge-std/src/console.sol"
+        "contracts/libraries/Types.sol"
       ],
       "versionRequirement": "^0.8.0",
       "artifacts": {
@@ -1166,7 +1154,7 @@
       }
     },
     "contracts/upgradeInitializers/diamondInit.sol": {
-      "lastModificationDate": 1667417030007,
+      "lastModificationDate": 1667420940442,
       "contentHash": "4f7a59e7c93a99a59721442e69ae4f58",
       "sourceName": "contracts/upgradeInitializers/diamondInit.sol",
       "solcConfig": {
@@ -1204,8 +1192,7 @@
         "contracts/interfaces/IERC173.sol",
         "contracts/libraries/LibDiamond.sol",
         "contracts/libraries/Storage.sol",
-        "contracts/libraries/Types.sol",
-        "lib/forge-std/src/console.sol"
+        "contracts/libraries/Types.sol"
       ],
       "versionRequirement": "^0.8.0",
       "artifacts": {

@@ -6,7 +6,6 @@ pragma solidity ^0.8.0;
 * EIP-2535 Diamonds: https://eips.ethereum.org/EIPS/eip-2535
 /******************************************************************************/
 import {IDiamondCut} from "contracts/interfaces/IDiamondCut.sol";
-import {console} from "forge-std/console.sol";
 
 // Remember to add the loupe functions from DiamondLoupeFacet to the diamond.
 // The loupe functions are required by the EIP2535 Diamonds standard
@@ -210,9 +209,7 @@ library LibDiamond {
             if (_init != address(this)) {
                 enforceHasContractCode(_init, "LibDiamondCut: _init address has no code");
             }
-            console.log("before delegate call");
             (bool success, bytes memory error) = _init.delegatecall(_calldata);
-            console.log("after delegate call");
             if (!success) {
                 if (error.length > 0) {
                     // bubble up the error
