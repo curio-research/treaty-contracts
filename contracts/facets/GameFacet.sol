@@ -149,7 +149,7 @@ contract GameFacet is UseStorage {
             for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
                 string memory inventoryType = ECSLib.getString("InventoryType", resourceTemplateIDs[i]);
                 uint256 inventoryLoad = GameLib.getConstant("City Center", inventoryType, "Load", "", 1);
-                Templates.addInventory(cityID, resourceTemplateIDs[i], 10000000, inventoryLoad, true);
+                Templates.addInventory(cityID, resourceTemplateIDs[i], 5_000_000, inventoryLoad, true);
             }
         }
 
