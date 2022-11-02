@@ -27,6 +27,7 @@ task('deploy', 'deploy contracts')
   .addFlag('release', 'Publish deployment to official release') // default is to call publish
   .addFlag('fixmap', 'Use deterministic map') // default is non-deterministic maps; deterministic maps are mainly used for client development
   .addFlag('indexer', 'Use production indexer') // whether to use inexer or not
+  .addOptionalParam('name', 'Deployment name') // whether to use inexer or not
   .setAction(async (args: DeployArgs, hre: HardhatRuntimeEnvironment) => {
     try {
       await hre.run('compile');
@@ -35,10 +36,10 @@ task('deploy', 'deploy contracts')
 
       const gasLimit = chainInfo[hre.network.name].gasLimit;
 
-      const { port, release, fixmap, indexer } = args;
+      const { port, release, fixmap, indexer, name } = args;
 
       // Read variables from run flags
-      const isDev = hre.network.name === 'localhost' || hre.network.name === 'hardhat' || hre.network.name === 'constellation' || hre.network.name === 'altlayer' || hre.network.name === 'tailscale';
+      const isDev = hre.network.name === 'localhost' || hre.network.name === 'hardhat' || hre.network.name === 'altlayer' || hre.network.name === 'tailscale';
       console.log('Network:', hre.network.name);
 
       if (fixmap) console.log('Using deterministic map');
@@ -141,7 +142,7 @@ task('deploy', 'deploy contracts')
 
       // Generate config file
       const configFile: GameConfig = {
-        name: rw.default(3).join('-'),
+        name: name || rw.default(3).join('-'),
         address: diamond.address,
         network: hre.network.name,
         deploymentId: deploymentId,
@@ -157,7 +158,7 @@ task('deploy', 'deploy contracts')
         await startGameSync(configFile);
       }
 
-      if (isDev || hre.network.name === 'tailscale') {
+      if (isDev) {
         await hre.ethers.provider.send('evm_setNextBlockTimestamp', [Math.floor(new Date().getTime() / 1000)]);
         await hre.ethers.provider.send('evm_mine', []); // syncs the blockchain time to current unix time
       }
@@ -177,4 +178,5 @@ interface DeployArgs extends HardhatArguments {
   release: boolean;
   port: string | undefined;
   indexer: boolean;
+  name: string | undefined;
 }

@@ -57,7 +57,7 @@ export const createTemplates = async (diamond: Curio, hre: HardhatRuntimeEnviron
   let entity = Number(await diamond.getEntity()) + 1;
 
   // Horseman
-  await confirm(await diamond.addTroopTemplate(InventoryTypeOptions.Horseman, 120, 10, 1, 2, 60, 120, 95), hre);
+  await confirm(await diamond.addTroopTemplate(InventoryTypeOptions.Horseman, 120, 5, 1, 2, 60, 120, 95), hre);
   templateNames.push(InventoryTypeOptions.Horseman);
   templateIDs.push(entity++);
 
