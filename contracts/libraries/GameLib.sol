@@ -152,9 +152,8 @@ library GameLib {
         }
 
         // Gather
-        uint256 armyTroopCount = getArmyTroopCount(_armyID);
         uint256 gatherAmount = (block.timestamp - ECSLib.getUint("InitTimestamp", gatherID)) * getConstant("Army", ECSLib.getString("InventoryType", templateID), "Rate", "gather", 0);
-        uint256 remainingLoad = getConstant("Troop", "Resource", "Load", "", 0) * armyTroopCount - armyInventoryAmount;
+        uint256 remainingLoad = ECSLib.getUint("Load", _armyID) - armyInventoryAmount;
         if (gatherAmount > remainingLoad) gatherAmount = remainingLoad;
         ECSLib.setUint("Amount", inventoryID, armyInventoryAmount + gatherAmount);
 
