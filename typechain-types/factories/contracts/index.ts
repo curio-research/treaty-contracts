@@ -9,5 +9,6 @@ export * as libraries from "./libraries";
 export * as upgradeInitializers from "./upgradeInitializers";
 export { Component__factory } from "./Component__factory";
 export { Diamond__factory } from "./Diamond__factory";
+export { Entity__factory } from "./Entity__factory";
 export { NATO__factory } from "./NATO__factory";
 export { Set__factory } from "./Set__factory";

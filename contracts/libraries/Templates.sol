@@ -4,6 +4,7 @@ pragma solidity ^0.8.4;
 import {Position, WorldConstants} from "contracts/libraries/Types.sol";
 import {Strings} from "openzeppelin-contracts/contracts/utils/Strings.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
+import {Entity} from "../Entity.sol";
 
 library Templates {
     function addCityCenter(Position memory _startPosition, uint256 _cityID) public returns (uint256) {
@@ -155,6 +156,7 @@ library Templates {
         uint256 _attackRange
     ) public returns (uint256) {
         uint256 armyID = ECSLib.addEntity();
+        address armyEntityAddress = address(new Entity());
 
         ECSLib.setString("Tag", armyID, "Army");
         ECSLib.setBool("CanBattle", armyID);
@@ -167,6 +169,7 @@ library Templates {
         ECSLib.setUint("MoveCooldown", armyID, _moveCooldown);
         ECSLib.setUint("BattleCooldown", armyID, _battleCooldown);
         ECSLib.setUint("AttackRange", armyID, _attackRange);
+        ECSLib.setAddress("Address", armyID, armyEntityAddress);
 
         return armyID;
     }

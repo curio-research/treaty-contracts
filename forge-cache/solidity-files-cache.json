@@ -136,6 +136,46 @@
         }
       }
     },
+    "contracts/Entity.sol": {
+      "lastModificationDate": 1667362475414,
+      "contentHash": "01f6b5121d8d4919b1b1f9a16e7e5ef8",
+      "sourceName": "contracts/Entity.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": "^0.8.4",
+      "artifacts": {
+        "Entity": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "Entity.sol/Entity.json"
+        }
+      }
+    },
     "contracts/Mapping.sol": {
       "lastModificationDate": 1665596810981,
       "contentHash": "04811aac85026d7704c1d8a9c09468ad",
@@ -362,7 +402,7 @@
       }
     },
     "contracts/facets/AdminFacet.sol": {
-      "lastModificationDate": 1667257374882,
+      "lastModificationDate": 1667257528018,
       "contentHash": "283a2d2e7ac29c5655a557878b3b3123",
       "sourceName": "contracts/facets/AdminFacet.sol",
       "solcConfig": {
@@ -395,6 +435,7 @@
       },
       "imports": [
         "contracts/Component.sol",
+        "contracts/Entity.sol",
         "contracts/Mapping.sol",
         "contracts/Set.sol",
         "contracts/TypedComponents.sol",
@@ -501,8 +542,8 @@
       }
     },
     "contracts/facets/GameFacet.sol": {
-      "lastModificationDate": 1667265092397,
-      "contentHash": "68e3097c9d4dcbdde5adfff18995094b",
+      "lastModificationDate": 1667362574148,
+      "contentHash": "6d25b93f3a78286f76b3cbe714d1acbc",
       "sourceName": "contracts/facets/GameFacet.sol",
       "solcConfig": {
         "settings": {
@@ -534,6 +575,7 @@
       },
       "imports": [
         "contracts/Component.sol",
+        "contracts/Entity.sol",
         "contracts/Mapping.sol",
         "contracts/Set.sol",
         "contracts/TypedComponents.sol",
@@ -552,7 +594,7 @@
       }
     },
     "contracts/facets/GetterFacet.sol": {
-      "lastModificationDate": 1667257374883,
+      "lastModificationDate": 1667257528018,
       "contentHash": "7103f4d1c116ae75915de531f3b83570",
       "sourceName": "contracts/facets/GetterFacet.sol",
       "solcConfig": {
@@ -585,6 +627,7 @@
       },
       "imports": [
         "contracts/Component.sol",
+        "contracts/Entity.sol",
         "contracts/Mapping.sol",
         "contracts/Set.sol",
         "contracts/TypedComponents.sol",
@@ -680,6 +723,7 @@
       },
       "imports": [
         "contracts/Component.sol",
+        "contracts/Entity.sol",
         "contracts/Mapping.sol",
         "contracts/Set.sol",
         "contracts/TypedComponents.sol",
@@ -858,8 +902,8 @@
       }
     },
     "contracts/libraries/ECSLib.sol": {
-      "lastModificationDate": 1667241948696,
-      "contentHash": "18fe1e7bd2a95f756e0dc039dc216d19",
+      "lastModificationDate": 1667362822185,
+      "contentHash": "4114c4a3d7e678958ca1e2391ad41650",
       "sourceName": "contracts/libraries/ECSLib.sol",
       "solcConfig": {
         "settings": {
@@ -891,6 +935,7 @@
       },
       "imports": [
         "contracts/Component.sol",
+        "contracts/Entity.sol",
         "contracts/Mapping.sol",
         "contracts/Set.sol",
         "contracts/TypedComponents.sol",
@@ -905,7 +950,7 @@
       }
     },
     "contracts/libraries/GameLib.sol": {
-      "lastModificationDate": 1667257375061,
+      "lastModificationDate": 1667265092397,
       "contentHash": "d7cc96f0f5d8e283a8157017d908f57a",
       "sourceName": "contracts/libraries/GameLib.sol",
       "solcConfig": {
@@ -938,6 +983,7 @@
       },
       "imports": [
         "contracts/Component.sol",
+        "contracts/Entity.sol",
         "contracts/Mapping.sol",
         "contracts/Set.sol",
         "contracts/TypedComponents.sol",
@@ -1042,8 +1088,8 @@
       }
     },
     "contracts/libraries/Templates.sol": {
-      "lastModificationDate": 1667257374883,
-      "contentHash": "c66152096aa357af1ae0728376a47b28",
+      "lastModificationDate": 1667362871590,
+      "contentHash": "f877c4f4a21eadbd3fccd4d9ed8dc4c5",
       "sourceName": "contracts/libraries/Templates.sol",
       "solcConfig": {
         "settings": {
@@ -1075,6 +1121,7 @@
       },
       "imports": [
         "contracts/Component.sol",
+        "contracts/Entity.sol",
         "contracts/Mapping.sol",
         "contracts/Set.sol",
         "contracts/TypedComponents.sol",
@@ -1605,6 +1652,7 @@
       },
       "imports": [
         "contracts/Component.sol",
+        "contracts/Entity.sol",
         "contracts/Mapping.sol",
         "contracts/NATO.sol",
         "contracts/Set.sol",
@@ -1678,6 +1726,7 @@
       },
       "imports": [
         "contracts/Component.sol",
+        "contracts/Entity.sol",
         "contracts/Mapping.sol",
         "contracts/NATO.sol",
         "contracts/Set.sol",
@@ -1751,6 +1800,7 @@
       },
       "imports": [
         "contracts/Component.sol",
+        "contracts/Entity.sol",
         "contracts/Mapping.sol",
         "contracts/NATO.sol",
         "contracts/Set.sol",
@@ -1823,6 +1873,7 @@
       },
       "imports": [
         "contracts/Component.sol",
+        "contracts/Entity.sol",
         "contracts/Mapping.sol",
         "contracts/NATO.sol",
         "contracts/Set.sol",

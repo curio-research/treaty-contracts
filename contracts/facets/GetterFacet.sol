@@ -119,4 +119,10 @@ contract GetterFacet is UseStorage {
     function getResourceAtTile(Position memory _startPosition) external returns (uint256) {
         return GameLib.getResourceAtTile(_startPosition);
     }
+
+    //
+
+    function query(QueryCondition[] memory _queryCondition) public returns (uint256[] memory) {
+        return ECSLib.queryAsSet(_queryCondition).getAll();
+    }
 }

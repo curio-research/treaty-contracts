@@ -1,19 +1,19 @@
 module.exports = {
   printWidth: 400,
   singleQuote: true,
-  trailingComma: 'es5',
+  trailingComma: "es5",
   jsxBracketSameLine: false,
   semi: true,
-  arrowParens: 'always',
+  arrowParens: "always",
   overrides: [
     {
-      files: '*.scss',
+      files: "*.scss",
       options: {
         singleQuote: false,
       },
     },
     {
-      files: '*.sol',
+      files: "*.sol",
       options: {
         singleQuote: false,
       },

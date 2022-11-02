@@ -10,6 +10,8 @@ export type { Component } from "./contracts/Component";
 export { Component__factory } from "./factories/contracts/Component__factory";
 export type { Diamond } from "./contracts/Diamond";
 export { Diamond__factory } from "./factories/contracts/Diamond__factory";
+export type { Entity } from "./contracts/Entity";
+export { Entity__factory } from "./factories/contracts/Entity__factory";
 export type { AdminFacet } from "./contracts/facets/AdminFacet";
 export { AdminFacet__factory } from "./factories/contracts/facets/AdminFacet__factory";
 export type { DiamondCutFacet } from "./contracts/facets/DiamondCutFacet";

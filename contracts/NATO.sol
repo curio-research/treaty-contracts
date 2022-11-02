@@ -9,35 +9,35 @@ contract NATO {
     // ----------------------------------------------------------
     // Article I: The "Open Door"
     // ----------------------------------------------------------
-    function joinTreaty() external returns (bool) {
-        address _memberState = msg.sender;
+    // function joinTreaty() external returns (bool) {
+    //     address _memberState = msg.sender;
 
-        memberStates.push(_memberState);
-        isMemberStates[_memberState] = true;
+    //     memberStates.push(_memberState);
+    //     isMemberStates[_memberState] = true;
 
-        return true;
-    }
+    //     return true;
+    // }
 
-    // ----------------------------------------------------------
-    // Article II: On Denunciation of the Treaty
-    // ----------------------------------------------------------
-    function denounceTreaty() external returns (bool) {
-        address _memberState = msg.sender;
-        uint256 memberStatesSize = memberStates.length;
-        uint256 _index = 0;
+    // // ----------------------------------------------------------
+    // // Article II: On Denunciation of the Treaty
+    // // ----------------------------------------------------------
+    // function denounceTreaty() external returns (bool) {
+    //     address _memberState = msg.sender;
+    //     uint256 memberStatesSize = memberStates.length;
+    //     uint256 _index = 0;
 
-        while (_index < memberStatesSize) {
-            if (memberStates[_index] == _memberState) break;
-            _index++;
-        }
+    //     while (_index < memberStatesSize) {
+    //         if (memberStates[_index] == _memberState) break;
+    //         _index++;
+    //     }
 
-        memberStates[_index] = memberStates[memberStatesSize - 1];
-        memberStates.pop();
+    //     memberStates[_index] = memberStates[memberStatesSize - 1];
+    //     memberStates.pop();
 
-        isMemberStates[_memberState] = false;
+    //     isMemberStates[_memberState] = false;
 
-        return true;
-    }
+    //     return true;
+    // }
 
     // ----------------------------------------------------------
     // Article III: Truce between Member Nations

@@ -15,5 +15,6 @@ import type * as upgradeInitializers from "./upgradeInitializers";
 export type { upgradeInitializers };
 export type { Component } from "./Component";
 export type { Diamond } from "./Diamond";
+export type { Entity } from "./Entity";
 export type { NATO } from "./NATO";
 export type { Set } from "./Set";

@@ -7,6 +7,7 @@ import {Set} from "contracts/Set.sol";
 import {UintBoolMapping} from "contracts/Mapping.sol";
 import {Component} from "contracts/Component.sol";
 import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, UintComponent, UintArrayComponent} from "contracts/TypedComponents.sol";
+import {Entity} from "../Entity.sol";
 
 /// @title library of ECS utility functions
 
