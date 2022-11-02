@@ -5,8 +5,9 @@ import {Set} from "contracts/Set.sol";
 import {UseStorage} from "contracts/libraries/Storage.sol";
 import {GameLib} from "contracts/libraries/GameLib.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
-import {Position, WorldConstants} from "contracts/libraries/Types.sol";
+import {Position, WorldConstants, QueryCondition} from "contracts/libraries/Types.sol";
 import {Component} from "contracts/Component.sol";
+import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, UintComponent, UintArrayComponent} from "contracts/TypedComponents.sol";
 
 /// @title Bulk getters
 /// @notice Getters provide bulk functions useful for fetching data from the frontend
@@ -118,5 +119,18 @@ contract GetterFacet is UseStorage {
 
     function getResourceAtTile(Position memory _startPosition) external returns (uint256) {
         return GameLib.getResourceAtTile(_startPosition);
+    }
+
+    // ecs extenal exposers
+    function query(QueryCondition[] memory _queryCondition) public returns (uint256[] memory) {
+        return ECSLib.queryAsSet(_queryCondition).getAll();
+    }
+
+    function getUint(string memory _componentName, uint256 _entity) public view returns (uint256) {
+        return ECSLib.getUint(_componentName, _entity);
+    }
+
+    function getAddress(string memory _componentName, uint256 _entity) public view returns (address) {
+        return ECSLib.getAddress(_componentName, _entity);
     }
 }
