@@ -9,7 +9,6 @@ import {Templates} from "contracts/libraries/Templates.sol";
 import {Set} from "contracts/Set.sol";
 import {Component} from "contracts/Component.sol";
 import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, UintComponent, UintArrayComponent} from "contracts/TypedComponents.sol";
-import {console} from "forge-std/console.sol";
 
 /// @title Util library
 /// @notice Contains all events as well as lower-level setters and getters
