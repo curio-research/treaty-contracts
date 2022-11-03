@@ -222,7 +222,7 @@ def get_building_upgrade_cost(level: int, building_type: Building) -> np.array:
     goldmine_foodcost = goldmine_goldcost / \
         game_instance.resource_weight_heavy * game_instance.resource_weight_low
     # assumption is that player spend gold equivalently on two types of building
-    # hard coded for now
+    # FIXME: 5 is hard-coded for now
     farm_goldcost = goldmine_goldcost * game_instance.init_player_goldmine_count / \
         game_instance.init_player_farm_count * 5
     # farm food cost if don't consider that part of it goes to troops

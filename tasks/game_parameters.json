@@ -965,7 +965,7 @@
         "level": 0,
         "object": "Gold",
         "subject": "Farm",
-        "value": 974
+        "value": 4874
     },
     {
         "componentName": "Cost",
@@ -1021,7 +1021,7 @@
         "level": 1,
         "object": "Gold",
         "subject": "Farm",
-        "value": 4499
+        "value": 22499
     },
     {
         "componentName": "Cost",
@@ -1077,7 +1077,7 @@
         "level": 2,
         "object": "Gold",
         "subject": "Farm",
-        "value": 9998
+        "value": 49994
     },
     {
         "componentName": "Cost",
@@ -1133,7 +1133,7 @@
         "level": 3,
         "object": "Gold",
         "subject": "Farm",
-        "value": 17405
+        "value": 87027
     },
     {
         "componentName": "Cost",
@@ -1189,7 +1189,7 @@
         "level": 4,
         "object": "Gold",
         "subject": "Farm",
-        "value": 26848
+        "value": 134243
     },
     {
         "componentName": "Cost",
@@ -1245,7 +1245,7 @@
         "level": 5,
         "object": "Gold",
         "subject": "Farm",
-        "value": 38569
+        "value": 192849
     },
     {
         "componentName": "Cost",
@@ -1301,7 +1301,7 @@
         "level": 6,
         "object": "Gold",
         "subject": "Farm",
-        "value": 52884
+        "value": 264424
     },
     {
         "componentName": "Cost",
@@ -1357,7 +1357,7 @@
         "level": 7,
         "object": "Gold",
         "subject": "Farm",
-        "value": 70185
+        "value": 350929
     },
     {
         "componentName": "Cost",
@@ -1413,7 +1413,7 @@
         "level": 8,
         "object": "Gold",
         "subject": "Farm",
-        "value": 90950
+        "value": 454750
     },
     {
         "componentName": "Cost",
@@ -1469,7 +1469,7 @@
         "level": 9,
         "object": "Gold",
         "subject": "Farm",
-        "value": 115749
+        "value": 578746
     },
     {
         "componentName": "Cost",
@@ -1525,7 +1525,7 @@
         "level": 10,
         "object": "Gold",
         "subject": "Farm",
-        "value": 145240
+        "value": 726200
     },
     {
         "componentName": "Cost",
@@ -1581,7 +1581,7 @@
         "level": 11,
         "object": "Gold",
         "subject": "Farm",
-        "value": 180291
+        "value": 901455
     },
     {
         "componentName": "Cost",
@@ -1637,7 +1637,7 @@
         "level": 12,
         "object": "Gold",
         "subject": "Farm",
-        "value": 221735
+        "value": 1108678
     },
     {
         "componentName": "Cost",
@@ -1693,7 +1693,7 @@
         "level": 13,
         "object": "Gold",
         "subject": "Farm",
-        "value": 270762
+        "value": 1353814
     },
     {
         "componentName": "Cost",
@@ -1749,7 +1749,7 @@
         "level": 14,
         "object": "Gold",
         "subject": "Farm",
-        "value": 328603
+        "value": 1643016
     },
     {
         "componentName": "Cost",
@@ -1837,7 +1837,7 @@
         "level": 0,
         "object": "Gold",
         "subject": "City Center",
-        "value": 19245
+        "value": 23144
     },
     {
         "componentName": "Cost",
@@ -1933,7 +1933,7 @@
         "level": 1,
         "object": "Gold",
         "subject": "City Center",
-        "value": 45513
+        "value": 63513
     },
     {
         "componentName": "Cost",
@@ -2029,7 +2029,7 @@
         "level": 2,
         "object": "Gold",
         "subject": "City Center",
-        "value": 78113
+        "value": 118109
     },
     {
         "componentName": "Cost",
@@ -2125,7 +2125,7 @@
         "level": 3,
         "object": "Gold",
         "subject": "City Center",
-        "value": 118380
+        "value": 188002
     },
     {
         "componentName": "Cost",
@@ -2221,7 +2221,7 @@
         "level": 4,
         "object": "Gold",
         "subject": "City Center",
-        "value": 167482
+        "value": 274877
     },
     {
         "componentName": "Cost",
