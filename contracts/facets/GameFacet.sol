@@ -652,12 +652,11 @@ contract GameFacet is UseStorage {
         require(GameLib.getArmyAt(midPosition) == NULL, "CURIO: Occupied by another army");
 
         // Verify that total troop amount does not exceed max troop count
-        uint256 cityCenterID = GameLib.getCityCenter(_cityID);
-        uint256 maxTroopCountPerArmy = GameLib.getConstant("Army", "Troop", "Amount", "", ECSLib.getUint("Level", cityCenterID));
+        uint256 maxTroopCountPerArmy = GameLib.getConstant("Army", "Troop", "Amount", "", ECSLib.getUint("Level", GameLib.getCityCenter(_cityID)));
         require(GameLib.sum(_amounts) <= maxTroopCountPerArmy, "CURIO: Troop amount exceeds capacity");
 
         // City at Chaos cannot organize an army
-        GameLib.cityCenterHasRecoveredFromSack(cityCenterID);
+        GameLib.cityCenterHasRecoveredFromSack(GameLib.getCityCenter(_cityID));
 
         // Gather army traits from individual troop types
         {
@@ -677,10 +676,8 @@ contract GameFacet is UseStorage {
                 load += ECSLib.getUint("Load", _templateIDs[i]) * _amounts[i];
                 ECSLib.setUint("Amount", inventoryID, ECSLib.getUint("Amount", inventoryID) - _amounts[i]);
 
-                uint256 templateCooldown = ECSLib.getUint("MoveCooldown", _templateIDs[i]);
-                moveCooldown = templateCooldown > moveCooldown ? templateCooldown : moveCooldown;
-                templateCooldown = ECSLib.getUint("BattleCooldown", _templateIDs[i]);
-                battleCooldown = templateCooldown > battleCooldown ? templateCooldown : battleCooldown;
+                moveCooldown = GameLib.max(ECSLib.getUint("MoveCooldown", _templateIDs[i]), moveCooldown);
+                battleCooldown = GameLib.max(ECSLib.getUint("BattleCooldown", _templateIDs[i]), battleCooldown);
             }
             speed /= GameLib.sum(_amounts);
 
