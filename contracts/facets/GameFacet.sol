@@ -7,6 +7,7 @@ import {ECSLib} from "contracts/libraries/ECSLib.sol";
 import {GameMode, Position, WorldConstants} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
 import {Templates} from "contracts/libraries/Templates.sol";
+import "forge-std/console.sol";
 
 /// @title Game facet
 /// @notice Contains player functions

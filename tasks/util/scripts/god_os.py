@@ -99,7 +99,7 @@ def get_city_center_tiles_interval() -> int:
     Growth: Constant
     Gist: 9 tiles - avg tiles - max tiles => calculate with (avg - init) / (intervals/2)
     """
-    return math.floor(((game_instance.total_tile_count/game_instance.expected_player_count) - game_instance.init_player_tile_count) / (game_instance.max_city_center_level - 1) / 2)
+    return math.floor(((game_instance.total_tile_count/game_instance.expected_player_count) - game_instance.init_player_tile_count) / ((game_instance.max_city_center_level - 1) / 2))
 
 
 def get_building_base_hourly_yield(building_type: Building) -> np.array:
@@ -215,15 +215,16 @@ def get_building_upgrade_cost(level: int, building_type: Building) -> np.array:
     Growth: fast exponential
     Gist: both building yields and upgrade costs increase exponentially, but the latter at a lower rate
     """
-    # cost is easy to calculate for goldmine
-    goldmine_goldcost = payback_period_curve_in_hour(game_instance.max_city_center_level * game_instance.city_center_level_to_building_level)(level) \
+    # cost is easy to calculate for goldmine (cost curve faster than food)
+    goldmine_goldcost = gold_payback_period_curve_in_hour(game_instance.max_city_center_level * game_instance.city_center_level_to_building_level)(level) \
         * get_building_hourly_yield_by_level(level, Building.GOLDMINE)[0]
     # calculate foodcost based on resource weight; NOTE: not scientific, a leap of faith here
     goldmine_foodcost = goldmine_goldcost / \
         game_instance.resource_weight_heavy * game_instance.resource_weight_low
     # assumption is that player spend gold equivalently on two types of building
+    # hard coded for now
     farm_goldcost = goldmine_goldcost * game_instance.init_player_goldmine_count / \
-        game_instance.init_player_farm_count
+        game_instance.init_player_farm_count * 5
     # farm food cost if don't consider that part of it goes to troops
     farm_foodcost_raw = payback_period_curve_in_hour(game_instance.max_city_center_level * game_instance.city_center_level_to_building_level)(level) \
         * get_building_hourly_yield_by_level(level, Building.FARM)[1]
@@ -238,21 +239,21 @@ def get_building_upgrade_cost(level: int, building_type: Building) -> np.array:
         # city center upgrade cost incur additional tax, based upon new tile it unlocks
         # tax = expected resource output (= density * getCityCenterTilesInterval / '2' * yield) * payback period
         unlocked_goldmine_count = expected_gold_density() * get_city_center_tiles_interval()
-        unlocked_farm_count = expected_farm_density() * get_city_center_tiles_interval()
+        # unlocked_farm_count = expected_farm_density() * get_city_center_tiles_interval()
         # here I choose to use the new city level as base
         corresponding_building_level = building_level_based_on_center_level(
             level + 1)
         expected_goldmine_hourly_yield = get_building_hourly_yield_by_level(
             corresponding_building_level, Building.GOLDMINE)[0]
-        expected_farm_hourly_yield = get_building_hourly_yield_by_level(
-            corresponding_building_level, Building.FARM)[1]
+        # expected_farm_hourly_yield = get_building_hourly_yield_by_level(
+        #     corresponding_building_level, Building.FARM)[1]
 
-        tax_gold = unlocked_goldmine_count * expected_goldmine_hourly_yield * payback_period_curve_in_hour(
+        tax_gold = unlocked_goldmine_count * expected_goldmine_hourly_yield * gold_payback_period_curve_in_hour(
             game_instance.max_city_center_level * game_instance.city_center_level_to_building_level)(level + game_instance.city_center_level_to_building_level)
-        tax_food = unlocked_farm_count * expected_farm_hourly_yield * payback_period_curve_in_hour(
-            game_instance.max_city_center_level * game_instance.city_center_level_to_building_level)(level + game_instance.city_center_level_to_building_level)
+        # tax_food = unlocked_farm_count * expected_farm_hourly_yield * payback_period_curve_in_hour(
+        #     game_instance.max_city_center_level * game_instance.city_center_level_to_building_level)(level + game_instance.city_center_level_to_building_level)
 
-        return np.array([goldmine_goldcost + farm_goldcost + tax_gold, goldmine_foodcost + farm_foodcost + tax_food])
+        return np.array([goldmine_goldcost + farm_goldcost + tax_gold, goldmine_foodcost + farm_foodcost])
 
 
 def get_move_city_cooldown_in_hour(level: int) -> int:
@@ -279,11 +280,11 @@ def get_tile_upgrade_cooldown_in_second(level: int) -> int:
 
 
 def expected_gold_density() -> float:
-    return game_instance.init_player_goldmine_count / game_instance.init_player_tile_count
+    return 0.1
 
 
 def expected_farm_density() -> float:
-    return game_instance.init_player_farm_count / game_instance.init_player_tile_count
+    return 1 - expected_gold_density()
 
 
 def payback_period_curve_in_hour(max_level: int) -> LambdaType:
@@ -297,6 +298,25 @@ def payback_period_curve_in_hour(max_level: int) -> LambdaType:
     # only need to tune here; just look at a chart while tuning; don't need to care about max_level or the sum
     def payback_curve(fraction): return lambda level: (
         (math.e)**((level / max_level * 9)/4) - 0.9) / fraction
+    for level in range(0, max_level):
+        upgrade_hour_sum += payback_curve(1)(level)
+    # make sure that upgrades for all levels account for only a certain fraction of total playtime
+    target_upgrade_hour_sum = game_instance.expected_play_time_in_hour * \
+        game_instance.upgrade_time_to_expected_play_time_ratio
+
+    return payback_curve(upgrade_hour_sum / target_upgrade_hour_sum)
+
+def gold_payback_period_curve_in_hour(max_level: int) -> LambdaType:
+    """
+    Growth: very fast exponential
+    Note: sum from f(1) to f(9) is 19.757. Leap of faith: assume this is reasonable for 72 hr gameplay
+    Note: max_level not only affects x value but also total gameplay time -> need to make sure sum of y(x) is below 1/3 of all upgrades
+    Gist: the function makes sure upgrade from (n_max - 1) to n_max is reasonable 
+    """
+    upgrade_hour_sum = 0
+    # only need to tune here; just look at a chart while tuning; don't need to care about max_level or the sum
+    def payback_curve(fraction): return lambda level: (
+        (math.e)**((level / max_level * 9)/4) - 0.9) * 3 / fraction
     for level in range(0, max_level):
         upgrade_hour_sum += payback_curve(1)(level)
     # make sure that upgrades for all levels account for only a certain fraction of total playtime
@@ -341,7 +361,7 @@ class Game:
     # TODO: use a JSON to initialize these variable
     total_tile_count = 11*11
     expected_player_count = 3
-    init_player_tile_count = 9
+    init_player_tile_count = 1
 
     expected_play_time_in_hour = 2
 
@@ -350,13 +370,13 @@ class Game:
     Ratio of time spent on upgrading in the whole game
     """
 
-    init_player_goldmine_count = 2
+    init_player_goldmine_count = 1
     """
     How many goldmines avg players have when city center level is 1
     Determine resource density. Note that one of the goldmines is citycenter
     """
 
-    init_player_farm_count = 9
+    init_player_farm_count = 1
     """
     How many farms avg players have when city center level is 1
     Determine resource density. Note that one of the farms is citycenter
@@ -449,23 +469,23 @@ class Game:
         if mode == GameMode.THREE_PLAYER_SHORT_TEST:
             self.total_tile_count = 9*9
             self.expected_player_count = 3
-            self.init_player_tile_count = 9
-            self.expected_play_time_in_hour = 1.5
+            self.init_player_tile_count = 1
+            self.expected_play_time_in_hour = 1
             self.upgrade_time_to_expected_play_time_ratio = 1/3
-            self.init_player_goldmine_count = 2
-            self.init_player_farm_count = 9
+            self.init_player_goldmine_count = 1
+            self.init_player_farm_count = 1
             self.player_login_interval_in_minutes = 15
             self.max_city_center_level = 5
             self.city_center_level_to_building_level = 3
             self.new_player_action_in_seconds = 100
-            self.base_troop_training_in_seconds = 0.2
+            self.base_troop_training_in_seconds = 0.3
             self.barbarian_reward_to_cost_coefficient = 4
-            self.tile_to_barbarian_strength_ratio = 1.8
-            self.tile_troop_discount = 0.2
+            self.tile_to_barbarian_strength_ratio = 1.5
+            self.tile_troop_discount = 0.4
             self.barbarian_to_army_difficulty_constant = 40
             self.gather_rate_to_resource_rate = 40
-            self.city_center_migration_cooldown_ratio = 10
-            self.building_upgrade_cooldown_ratio = 5
+            self.city_center_migration_cooldown_ratio = 15
+            self.building_upgrade_cooldown_ratio = 10
             (self.resource_weight_light, self.resource_weight_low, self.resource_weight_medium,
              self.resource_weight_high, self.resource_weight_heavy) = (1, 3, 4, 5, 16)
             self.chaos_period_in_seconds = 100
