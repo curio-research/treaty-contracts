@@ -7,7 +7,7 @@ const hre = require('hardhat');
 import AdminFacetInterface from '../../../out/AdminFacet.sol/AdminFacet.json';
 import GetterFacetInterface from '../../../out/GetterFacet.sol/GetterFacet.json';
 import GameFacetInterface from '../../../out/GameFacet.sol/GameFacet.json';
-import DiamondInitInterface from '../../../out/upgradeInitializers/upgradeInitializers/DiamondInit.sol/DiamondInit.json';
+import DiamondInitInterface from '../../../out/DiamondInit.sol/DiamondInit.json';
 
 const nameToAbiMapping: any = {
   DiamondInit: DiamondInitInterface,
