@@ -417,6 +417,9 @@ contract GameFacet is UseStorage {
         uint256 cityID = ECSLib.getUint("City", _buildingID);
         GameLib.entityOwnershipCheck(cityID, msg.sender);
 
+        // City at chaos cannot produce any troops
+        GameLib.cityCenterLastSackedCheck(GameLib.getCityCenter(cityID));
+
         // Verify that city can produce
         require(ECSLib.getBool("CanProduce", cityID), "CURIO: City cannot produce");
 
@@ -458,6 +461,9 @@ contract GameFacet is UseStorage {
         // Verify that city belongs to player
         uint256 cityID = ECSLib.getUint("City", _buildingID);
         GameLib.entityOwnershipCheck(cityID, msg.sender);
+
+        // city at chaos cannot collect troops
+        GameLib.cityCenterLastSackedCheck(GameLib.getCityCenter(cityID));
 
         // Verify that enough time has passed for the given amount
         require(block.timestamp >= (ECSLib.getUint("InitTimestamp", _productionID) + ECSLib.getUint("Duration", _productionID)), "CURIO: Need more time for production");
@@ -526,16 +532,22 @@ contract GameFacet is UseStorage {
         uint256 cityCenterID = GameLib.getCityCenter(cityID);
         require(GameLib.coincident(ECSLib.getPosition("StartPosition", cityCenterID), startPosition), "CURIO: Army must be on city center");
 
+        // Army cannot unload resources to chaotic city
+        GameLib.cityCenterLastSackedCheck(cityCenterID);
+
         // Return carried resources to city
         GameLib.unloadResources(cityID, _armyID);
     }
 
-    // harvest gold from a gold resource directly
     function harvestResource(uint256 _resourceID) public {
         // Basic checks
         GameLib.validEntityCheck(_resourceID);
         GameLib.ongoingGameCheck();
         GameLib.activePlayerCheck(msg.sender);
+
+        // City at chaos cannot harvest resources
+        uint256 cityID = GameLib.getPlayerCity(GameLib.getPlayer(msg.sender));
+        GameLib.cityCenterLastSackedCheck(GameLib.getCityCenter(cityID));
 
         // Verify that resource is not owned by another player
         uint256 resourceLevel = ECSLib.getUint("Level", _resourceID);
@@ -546,7 +558,6 @@ contract GameFacet is UseStorage {
         require(resourceLevel > 0, "CURIO: Need to build tool to harvest");
 
         // Verify city ownership
-        uint256 cityID = GameLib.getPlayerCity(GameLib.getPlayer(msg.sender));
         require(cityID != NULL, "CURIO: Player must own a city");
 
         // Verify it's not being upgraded
@@ -586,6 +597,9 @@ contract GameFacet is UseStorage {
         GameLib.entityOwnershipCheck(cityID, msg.sender);
 
         uint256 cityCenterID = GameLib.getCityCenter(cityID);
+
+        // City at Chaos cannot harvest anything
+        GameLib.cityCenterLastSackedCheck(cityCenterID);
 
         // Verify it's not being upgraded
         uint256 centerLevel = ECSLib.getUint("Level", cityCenterID);
@@ -628,8 +642,12 @@ contract GameFacet is UseStorage {
         require(GameLib.getArmyAt(midPosition) == NULL, "CURIO: Occupied by another army");
 
         // Verify that total troop amount does not exceed max troop count
-        uint256 maxTroopCountPerArmy = GameLib.getConstant("Army", "Troop", "Amount", "", ECSLib.getUint("Level", GameLib.getCityCenter(_cityID)));
+        uint256 cityCenterID = GameLib.getCityCenter(_cityID);
+        uint256 maxTroopCountPerArmy = GameLib.getConstant("Army", "Troop", "Amount", "", ECSLib.getUint("Level", cityCenterID));
         require(GameLib.sum(_amounts) <= maxTroopCountPerArmy, "CURIO: Troop amount exceeds capacity");
+
+        // City at Chaos cannot organize an army
+        GameLib.cityCenterLastSackedCheck(cityCenterID);
 
         // Gather army traits from individual troop types
         {
@@ -749,6 +767,8 @@ contract GameFacet is UseStorage {
         );
 
         uint256 cityID = GameLib.getCityAtTile(ECSLib.getPosition("StartPosition", _tileID));
+        // Others cannot attack cities at chaos
+        GameLib.cityCenterLastSackedCheck(GameLib.getCityCenter(cityID));
 
         // if it is barbarian, check it's not hybernating
         if (GameLib.isBarbarian(_tileID)) {
@@ -764,22 +784,13 @@ contract GameFacet is UseStorage {
             if (cityID != NULL) {
                 // Victorious against city, add back some guards for the loser
                 Templates.addConstituent(_tileID, gs().templates["Guard"], GameLib.getConstant("City", "Guard", "Amount", "", ECSLib.getUint("Level", cityID)));
-                // City loses half of gold and winner gets it
-                uint256 loserCityGoldInventoryID = GameLib.getInventory(cityID, gs().templates["Gold"]);
-                uint256 loserTotalAmount = ECSLib.getUint("Amount", loserCityGoldInventoryID);
-                ECSLib.setUint("Amount", loserCityGoldInventoryID, loserTotalAmount / 2);
 
-                // Verify city ownership
-                require(winnerCityID != NULL, "CURIO: Winner must own a city");
+                // todo: harvest all resources from the players and update resource harvest timestamp to when cooldown ends
+                uint256 cityCenterID = GameLib.getCityCenter(cityID);
 
-                // Add harvested gold to player's city limited by its load
-                // todo: alternative to lastSackedTimeStamp is to reward a preset amount of resources
-                uint256 winnerCityGoldInventoryID = GameLib.getInventory(winnerCityID, gs().templates["Gold"]);
-                uint256 existingCityGold = ECSLib.getUint("Amount", winnerCityGoldInventoryID);
-                uint256 winnerTotalAmount = GameLib.min(ECSLib.getUint("Load", winnerCityGoldInventoryID), loserTotalAmount / 2 + existingCityGold);
-                ECSLib.setUint("Amount", winnerCityGoldInventoryID, winnerTotalAmount);
+                // update lastSacked
+                ECSLib.setUint("LastSacked", cityCenterID, block.timestamp);
 
-                // todo: update lastSackedTimeStamp
             } else {
                 if (GameLib.isBarbarian(_tileID)) {
                     // Reset barbarian

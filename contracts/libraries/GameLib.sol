@@ -622,6 +622,11 @@ library GameLib {
         require(ECSLib.getUint("Terrain", getTileAt(_tilePosition)) != 5, "CURIO: Tile not passable");
     }
 
+    function cityCenterLastSackedCheck(uint256 _cityCenterID) internal view {
+        // todo: god_os constants
+        require(block.timestamp - ECSLib.getUint("LastSacked", _cityCenterID) > 100, "CURIO: City At Chaos");
+    }
+
     // ----------------------------------------------------------
     // UTILITY FUNCTIONS
     // ----------------------------------------------------------

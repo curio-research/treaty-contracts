@@ -18,6 +18,7 @@ library Templates {
         ECSLib.setUint("LastTimestamp", cityCenterID, block.timestamp);
         ECSLib.setUint("LastUpgraded", cityCenterID, 0);
         ECSLib.setUint("LastMoved", cityCenterID, 0);
+        ECSLib.setUint("LastSacked", cityCenterID, 0); // todo: make sure initialized time exceeds cooldown constant
 
         return cityCenterID;
     }
