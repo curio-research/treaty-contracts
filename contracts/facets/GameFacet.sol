@@ -290,6 +290,9 @@ contract GameFacet is UseStorage {
         // check if upgrade is in process
         require(block.timestamp - ECSLib.getUint("LastUpgraded", _buildingID) > GameLib.getConstant("City Center", "", "Cooldown", "Upgrade", centerLevel), "CURIO: Upgrade in process");
 
+        // Verify there's no ongoing troop production
+        require(GameLib.getBuildingProduction(_buildingID) == NULL, "CURIO: Cannot upgrade when troop produciton is in process");
+
         // Deduct costs and set load
         uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
         for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
@@ -417,6 +420,10 @@ contract GameFacet is UseStorage {
         uint256 cityID = ECSLib.getUint("City", _buildingID);
         GameLib.entityOwnershipCheck(cityID, msg.sender);
 
+        // verify it's not being upgraded
+        uint256 buildingLevel = ECSLib.getUint("Level", _buildingID);
+        require(block.timestamp - ECSLib.getUint("LastUpgraded", _buildingID) > GameLib.getConstant("City Center", "", "Cooldown", "Upgrade", buildingLevel), "CURIO: Upgrade unfinished");
+
         // City at chaos cannot produce any troops
         GameLib.cityCenterLastSackedCheck(GameLib.getCityCenter(cityID));
 
@@ -436,7 +443,6 @@ contract GameFacet is UseStorage {
         // Verify no ongoing production
         require(GameLib.getBuildingProduction(_buildingID) == NULL, "CURIO: Concurrent productions disallowed");
 
-        uint256 buildingLevel = ECSLib.getUint("Level", cityID);
         // Create inventory if none exists, and verify that amount does not exceed ceiling
         uint256 troopInventoryID = GameLib.getInventory(cityID, _templateID);
         if (troopInventoryID == NULL) {
@@ -461,6 +467,10 @@ contract GameFacet is UseStorage {
         // Verify that city belongs to player
         uint256 cityID = ECSLib.getUint("City", _buildingID);
         GameLib.entityOwnershipCheck(cityID, msg.sender);
+
+        // verify it's not being upgraded
+        uint256 buildingLevel = ECSLib.getUint("Level", _buildingID);
+        require(block.timestamp - ECSLib.getUint("LastUpgraded", _buildingID) > GameLib.getConstant("City Center", "", "Cooldown", "Upgrade", buildingLevel), "CURIO: Upgrade unfinished");
 
         // city at chaos cannot collect troops
         GameLib.cityCenterLastSackedCheck(GameLib.getCityCenter(cityID));
