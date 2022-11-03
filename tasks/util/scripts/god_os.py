@@ -425,6 +425,11 @@ class Game:
     Determine the cooldown time to migrate a city center. It's x% relative to the upgrade payback period
     """
 
+    chaos_period_in_seconds = 100
+    """
+    Determine how long chaos period lasts for a city
+    """
+
     # Gold:
     #   Mint: Harvest (low), Gather (medium), Barbarians (high)
     #   Burn: Build (heavy), Troop (light)
@@ -458,6 +463,7 @@ class Game:
             self.building_upgrade_cooldown_ratio = 5
             (self.resource_weight_light, self.resource_weight_low, self.resource_weight_medium,
              self.resource_weight_high, self.resource_weight_heavy) = (1, 3, 4, 5, 16)
+            self.chaos_period_in_seconds = 100
 
     # todo: update it
     def print_parameters(self):
@@ -654,6 +660,8 @@ class Game:
                                            "level": curr_level, "functionName": "Move", "value": 0})  # FIXME: hardcoded, attention @Modeo
                     game_parameters.append({"subject": "City Center", "componentName": "Cost", "object": "Food",
                                            "level": curr_level, "functionName": "Move", "value": 0})  # FIXME: hardcoded, attention @Modeo
+                    game_parameters.append({"subject": "City Center", "componentName": "Cooldown", "object": "",
+                                           "level": curr_level, "functionName": "Chaos", "value": self.chaos_period_in_seconds})  # FIXME: hardcoded, attention @Modeo                       
 
                 curr_level += 1
 

@@ -451,7 +451,7 @@ contract GameFacet is UseStorage {
         return Templates.addTroopProduction(_buildingID, _templateID, troopInventoryID, _amount, gs().worldConstants.secondsToTrainAThousandTroops * (_amount / 1000));
     }
 
-    function endTroopProduction(uint256 _buildingID, uint256 _productionID) external {
+    function endTroopProduction(uint256 _buildingID, uint256 _productionID) public {
         // Basic checks
         GameLib.validEntityCheck(_buildingID);
         GameLib.validEntityCheck(_productionID);
@@ -787,6 +787,22 @@ contract GameFacet is UseStorage {
 
                 // todo: harvest all resources from the players and update resource harvest timestamp to when cooldown ends
                 uint256 cityCenterID = GameLib.getCityCenter(cityID);
+                uint256 cityCenterLevel = ECSLib.getUint("Level", cityCenterID);
+
+                // 1. end troop production
+                uint256 productionID = GameLib.getBuildingProduction(cityCenterID);
+                endTroopProduction(cityCenterID, productionID);
+
+                // 2. end resource harvest production => change lastTimestamp
+                uint256 chaosDuration = GameLib.getConstant("City Center", "", "Cooldown", "Chaos", cityCenterLevel);
+
+                uint256[] memory allResourceIDs = GameLib.getAllResourceIDByCity(cityID);
+                for (uint256 i = 0; i < allResourceIDs.length; i++) {
+                    uint256 resourceID = allResourceIDs[i];
+                    ECSLib.setUint("LastTimestamp", resourceID, block.timestamp + chaosDuration);
+                }
+                // 3. end cityCenter harvest production => change lastTimeStamp
+                ECSLib.setUint("LastTimestamp", cityCenterID, block.timestamp + chaosDuration);
 
                 // update lastSacked
                 ECSLib.setUint("LastSacked", cityCenterID, block.timestamp);
