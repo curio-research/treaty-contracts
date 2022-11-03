@@ -2,7 +2,7 @@
     "componentName": "Cost",
     "functionName": "Move",
     "level": 1,
-    "object": "Food",
+    "object": "Gold",
     "subject": "City Center",
     "value": 0
 }

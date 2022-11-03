@@ -1,8 +1,8 @@
 {
-    "componentName": "Cost",
-    "functionName": "Move",
+    "componentName": "Yield",
+    "functionName": "",
     "level": 5,
     "object": "Gold",
     "subject": "City Center",
-    "value": 0
+    "value": 342
 }

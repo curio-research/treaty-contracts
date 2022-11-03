@@ -5,6 +5,7 @@ barbarian_reward_to_cost_coefficient: 4
 barbarian_to_army_difficulty_constant: 40
 base_troop_training_in_seconds: 0.2
 building_upgrade_cooldown_ratio: 5
+chaos_period_in_seconds: 100
 city_center_level_to_building_level: 3
 city_center_migration_cooldown_ratio: 10
 expected_play_time_in_hour: 1.5
@@ -21,6 +22,7 @@ resource_weight_high: 5
 resource_weight_light: 1
 resource_weight_low: 3
 resource_weight_medium: 4
+super_tile_init_time_in_hour: 0.5
 tile_to_barbarian_strength_ratio: 1.8
 tile_troop_discount: 0.2
 total_tile_count: 81

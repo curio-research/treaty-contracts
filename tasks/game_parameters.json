@@ -1888,6 +1888,14 @@
         "value": 0
     },
     {
+        "componentName": "Cooldown",
+        "functionName": "Chaos",
+        "level": 0,
+        "object": "",
+        "subject": "City Center",
+        "value": 100
+    },
+    {
         "componentName": "Yield",
         "functionName": "",
         "level": 1,
@@ -1974,6 +1982,14 @@
         "object": "Food",
         "subject": "City Center",
         "value": 0
+    },
+    {
+        "componentName": "Cooldown",
+        "functionName": "Chaos",
+        "level": 1,
+        "object": "",
+        "subject": "City Center",
+        "value": 100
     },
     {
         "componentName": "Yield",
@@ -2064,6 +2080,14 @@
         "value": 0
     },
     {
+        "componentName": "Cooldown",
+        "functionName": "Chaos",
+        "level": 2,
+        "object": "",
+        "subject": "City Center",
+        "value": 100
+    },
+    {
         "componentName": "Yield",
         "functionName": "",
         "level": 3,
@@ -2150,6 +2174,14 @@
         "object": "Food",
         "subject": "City Center",
         "value": 0
+    },
+    {
+        "componentName": "Cooldown",
+        "functionName": "Chaos",
+        "level": 3,
+        "object": "",
+        "subject": "City Center",
+        "value": 100
     },
     {
         "componentName": "Yield",
@@ -2240,6 +2272,14 @@
         "value": 0
     },
     {
+        "componentName": "Cooldown",
+        "functionName": "Chaos",
+        "level": 4,
+        "object": "",
+        "subject": "City Center",
+        "value": 100
+    },
+    {
         "componentName": "Yield",
         "functionName": "",
         "level": 5,
@@ -2294,6 +2334,14 @@
         "object": "Food",
         "subject": "City Center",
         "value": 0
+    },
+    {
+        "componentName": "Cooldown",
+        "functionName": "Chaos",
+        "level": 5,
+        "object": "",
+        "subject": "City Center",
+        "value": 100
     },
     {
         "componentName": "Reward",
@@ -2654,6 +2702,14 @@
         "object": "Guard",
         "subject": "Barbarian",
         "value": 214
+    },
+    {
+        "componentName": "initTime",
+        "functionName": "",
+        "level": 15,
+        "object": "",
+        "subject": "SuperTile",
+        "value": 1800
     },
     {
         "componentName": "Amount",

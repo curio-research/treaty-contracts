@@ -1,8 +1,8 @@
 {
-    "componentName": "Load",
-    "functionName": "",
-    "level": 5,
-    "object": "Troop",
+    "componentName": "Cooldown",
+    "functionName": "Chaos",
+    "level": 4,
+    "object": "",
     "subject": "City Center",
-    "value": 999999999
+    "value": 100
 }

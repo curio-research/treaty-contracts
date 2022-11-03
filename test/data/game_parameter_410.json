@@ -1,8 +1,8 @@
 {
     "componentName": "Amount",
     "functionName": "",
-    "level": 4,
-    "object": "Tile",
-    "subject": "City",
-    "value": 15
+    "level": 1,
+    "object": "Troop",
+    "subject": "Army",
+    "value": 77
 }
