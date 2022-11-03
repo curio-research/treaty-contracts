@@ -195,7 +195,7 @@ library GameLib {
         uint256[] memory defenderConstituentIDs = getConstituents(_defenderID);
 
         require(offenderConstituentIDs.length > 0, "CURIO: Offender cannot attack");
-        require(defenderConstituentIDs.length > 0, "CURIO: Defender already subjugated");
+        require(defenderConstituentIDs.length > 0, "CURIO: Defender already subjugated, claim tile instead");
 
         // Offender attacks defender
         {
