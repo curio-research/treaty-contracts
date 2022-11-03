@@ -91,7 +91,7 @@ library GameLib {
                 ECSLib.setUint("Terrain", tileID, 0);
                 ECSLib.setUint("Level", tileID, maxTileLevel);
 
-                uint256 superTileInitTime = getConstant("Tile", "", "SuperTileInitTime", "", maxTileLevel);
+                uint256 superTileInitTime = getConstant("SuperTile", "", "initTime", "", maxTileLevel);
                 ECSLib.setUint("LastTimestamp", tileID, superTileInitTime);
 
                 uint256 supertileGuardAmount = getConstant("Tile", "Guard", "Amount", "", maxTileLevel);
@@ -437,8 +437,8 @@ library GameLib {
         return result.length == 1 ? result[0] : 0;
     }
 
-    // note: this function kinda crazy
-    function getAllResourceIDByCity(uint256 _cityID) internal returns (uint256[] memory) {
+    // FIXME: this function kinda crazy
+    function getAllResourceIDsByCity(uint256 _cityID) internal returns (uint256[] memory) {
         // get all tiles
         QueryCondition[] memory query1 = new QueryCondition[](2);
         query1[0] = ECSLib.queryChunk(QueryType.HasVal, "City", abi.encode(_cityID));
@@ -651,7 +651,7 @@ library GameLib {
         require(ECSLib.getUint("Terrain", getTileAt(_tilePosition)) != 5, "CURIO: Tile not passable");
     }
 
-    function cityCenterLastSackedCheck(uint256 _cityCenterID) internal view {
+    function cityCenterHasRecoveredFromSack(uint256 _cityCenterID) internal view {
         uint256 cityCenterLevel = ECSLib.getUint("Level", _cityCenterID);
         uint256 chaosDuration = GameLib.getConstant("City Center", "", "Cooldown", "Chaos", cityCenterLevel);
         require(block.timestamp - ECSLib.getUint("LastSacked", _cityCenterID) > chaosDuration, "CURIO: City At Chaos");

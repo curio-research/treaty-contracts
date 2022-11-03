@@ -425,7 +425,7 @@ contract GameFacet is UseStorage {
         require(block.timestamp - ECSLib.getUint("LastUpgraded", _buildingID) > GameLib.getConstant("City Center", "", "Cooldown", "Upgrade", buildingLevel), "CURIO: Upgrade unfinished");
 
         // City at chaos cannot produce any troops
-        GameLib.cityCenterLastSackedCheck(GameLib.getCityCenter(cityID));
+        GameLib.cityCenterHasRecoveredFromSack(GameLib.getCityCenter(cityID));
 
         // Verify that city can produce
         require(ECSLib.getBool("CanProduce", cityID), "CURIO: City cannot produce");
@@ -473,7 +473,7 @@ contract GameFacet is UseStorage {
         require(block.timestamp - ECSLib.getUint("LastUpgraded", _buildingID) > GameLib.getConstant("City Center", "", "Cooldown", "Upgrade", buildingLevel), "CURIO: Upgrade unfinished");
 
         // city at chaos cannot collect troops
-        GameLib.cityCenterLastSackedCheck(GameLib.getCityCenter(cityID));
+        GameLib.cityCenterHasRecoveredFromSack(GameLib.getCityCenter(cityID));
 
         // Verify that enough time has passed for the given amount
         require(block.timestamp >= (ECSLib.getUint("InitTimestamp", _productionID) + ECSLib.getUint("Duration", _productionID)), "CURIO: Need more time for production");
@@ -543,7 +543,7 @@ contract GameFacet is UseStorage {
         require(GameLib.coincident(ECSLib.getPosition("StartPosition", cityCenterID), startPosition), "CURIO: Army must be on city center");
 
         // Army cannot unload resources to chaotic city
-        GameLib.cityCenterLastSackedCheck(cityCenterID);
+        GameLib.cityCenterHasRecoveredFromSack(cityCenterID);
 
         // Return carried resources to city
         GameLib.unloadResources(cityID, _armyID);
@@ -557,7 +557,7 @@ contract GameFacet is UseStorage {
 
         // City at chaos cannot harvest resources
         uint256 cityID = GameLib.getPlayerCity(GameLib.getPlayer(msg.sender));
-        GameLib.cityCenterLastSackedCheck(GameLib.getCityCenter(cityID));
+        GameLib.cityCenterHasRecoveredFromSack(GameLib.getCityCenter(cityID));
 
         // Verify that resource is not owned by another player
         uint256 resourceLevel = ECSLib.getUint("Level", _resourceID);
@@ -609,7 +609,7 @@ contract GameFacet is UseStorage {
         uint256 cityCenterID = GameLib.getCityCenter(cityID);
 
         // City at Chaos cannot harvest anything
-        GameLib.cityCenterLastSackedCheck(cityCenterID);
+        GameLib.cityCenterHasRecoveredFromSack(cityCenterID);
 
         // Verify it's not being upgraded
         uint256 centerLevel = ECSLib.getUint("Level", cityCenterID);
@@ -657,7 +657,7 @@ contract GameFacet is UseStorage {
         require(GameLib.sum(_amounts) <= maxTroopCountPerArmy, "CURIO: Troop amount exceeds capacity");
 
         // City at Chaos cannot organize an army
-        GameLib.cityCenterLastSackedCheck(cityCenterID);
+        GameLib.cityCenterHasRecoveredFromSack(cityCenterID);
 
         // Gather army traits from individual troop types
         {
@@ -778,7 +778,7 @@ contract GameFacet is UseStorage {
 
         uint256 cityID = GameLib.getCityAtTile(ECSLib.getPosition("StartPosition", _tileID));
         // Others cannot attack cities at chaos
-        GameLib.cityCenterLastSackedCheck(GameLib.getCityCenter(cityID));
+        GameLib.cityCenterHasRecoveredFromSack(GameLib.getCityCenter(cityID));
 
         // if it is the super tile, check that it's active
         if (GameLib.coincident(ECSLib.getPosition("StartPosition", _tileID), GameLib.getMapCenterTilePosition())) {
@@ -813,7 +813,7 @@ contract GameFacet is UseStorage {
                 // 2. end resource harvest production => change lastTimestamp
                 uint256 chaosDuration = GameLib.getConstant("City Center", "", "Cooldown", "Chaos", cityCenterLevel);
 
-                uint256[] memory allResourceIDs = GameLib.getAllResourceIDByCity(cityID);
+                uint256[] memory allResourceIDs = GameLib.getAllResourceIDsByCity(cityID);
                 for (uint256 i = 0; i < allResourceIDs.length; i++) {
                     uint256 resourceID = allResourceIDs[i];
                     ECSLib.setUint("LastTimestamp", resourceID, block.timestamp + chaosDuration);
@@ -823,7 +823,6 @@ contract GameFacet is UseStorage {
 
                 // update lastSacked
                 ECSLib.setUint("LastSacked", cityCenterID, block.timestamp);
-
             } else {
                 if (GameLib.isBarbarian(_tileID)) {
                     // Reset barbarian
