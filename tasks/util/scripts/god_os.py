@@ -429,6 +429,11 @@ class Game:
     """
     Determine how long chaos period lasts for a city
     """
+    
+    super_tile_init_time_in_hour = 0.5
+    """
+    Determine when the super tile becomes active
+    """
 
     # Gold:
     #   Mint: Harvest (low), Gather (medium), Barbarians (high)
@@ -464,6 +469,7 @@ class Game:
             (self.resource_weight_light, self.resource_weight_low, self.resource_weight_medium,
              self.resource_weight_high, self.resource_weight_heavy) = (1, 3, 4, 5, 16)
             self.chaos_period_in_seconds = 100
+            self.super_tile_init_time_in_hour = 0.5
 
     # todo: update it
     def print_parameters(self):
@@ -682,6 +688,10 @@ class Game:
         curr_level = 1
         max_tile_level = self.max_city_center_level * \
             self.city_center_level_to_building_level
+
+        game_parameters.append({"subject": "Tile", "componentName": "SuperTileInitTime", "object": "",
+                                   "level": max_tile_level, "functionName": "", "value": self.super_tile_init_time_in_hour * 3600})
+
         while curr_level <= max_tile_level:
             tile_guard_count = get_tile_troop_count(curr_level)
             game_parameters.append({"subject": "Tile", "componentName": "Amount", "object": "Guard",

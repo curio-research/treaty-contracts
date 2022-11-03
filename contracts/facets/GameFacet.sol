@@ -770,6 +770,13 @@ contract GameFacet is UseStorage {
         // Others cannot attack cities at chaos
         GameLib.cityCenterLastSackedCheck(GameLib.getCityCenter(cityID));
 
+        // if it is the super tile, check that it's active
+        if (GameLib.coincident(ECSLib.getPosition("StartPosition", _tileID), GameLib.getMapCenterTilePosition())) {
+            // todo: end game when players occupy it for a certain period of time
+            // note: for super tile, lasttimestamp is when it becomes active
+            require(block.timestamp >= ECSLib.getUint("LastTimestamp", _tileID), "Curio: Super tile is not active yet");
+        }
+
         // if it is barbarian, check it's not hybernating
         if (GameLib.isBarbarian(_tileID)) {
             uint256 barbarianCooldown = GameLib.getConstant("Barbarian", "", "Cooldown", "", 0);
@@ -822,7 +829,6 @@ contract GameFacet is UseStorage {
         } else {
             GameLib.attack(_tileID, _armyID, false, false, true);
         }
-        // }
     }
 
     function claimTile(uint256 _armyID, uint256 _tileID) public {
