@@ -86,6 +86,7 @@ contract DiamondDeployTest is Test {
         worldConstants = _fetchWorldConstants();
         worldConstants.worldWidth = 1000; // use deployment settings, except make map bigger
         worldConstants.worldHeight = 1000;
+        worldConstants.tileWidth =10;
         console.log(">>> World constants ready");
 
         // Initialize treaties
