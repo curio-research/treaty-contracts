@@ -5,7 +5,7 @@
         "level": 0,
         "object": "Gold",
         "subject": "Army",
-        "value": 5723
+        "value": 6358
     },
     {
         "componentName": "Rate",
@@ -13,7 +13,7 @@
         "level": 0,
         "object": "Food",
         "subject": "Army",
-        "value": 51512
+        "value": 57236
     },
     {
         "componentName": "Load",
@@ -1837,7 +1837,7 @@
         "level": 0,
         "object": "Gold",
         "subject": "City Center",
-        "value": 164831
+        "value": 182568
     },
     {
         "componentName": "Cost",
@@ -1933,7 +1933,7 @@
         "level": 1,
         "object": "Gold",
         "subject": "City Center",
-        "value": 361035
+        "value": 398483
     },
     {
         "componentName": "Cost",
@@ -2029,7 +2029,7 @@
         "level": 2,
         "object": "Gold",
         "subject": "City Center",
-        "value": 589821
+        "value": 649431
     },
     {
         "componentName": "Cost",
@@ -2125,7 +2125,7 @@
         "level": 3,
         "object": "Gold",
         "subject": "City Center",
-        "value": 864334
+        "value": 950055
     },
     {
         "componentName": "Cost",
@@ -2221,7 +2221,7 @@
         "level": 4,
         "object": "Gold",
         "subject": "City Center",
-        "value": 1193499
+        "value": 1310196
     },
     {
         "componentName": "Cost",
@@ -3357,7 +3357,7 @@
         "level": 2,
         "object": "Tile",
         "subject": "City",
-        "value": 10
+        "value": 11
     },
     {
         "componentName": "Amount",
@@ -3373,7 +3373,7 @@
         "level": 3,
         "object": "Tile",
         "subject": "City",
-        "value": 19
+        "value": 21
     },
     {
         "componentName": "Amount",
@@ -3389,7 +3389,7 @@
         "level": 4,
         "object": "Tile",
         "subject": "City",
-        "value": 28
+        "value": 31
     },
     {
         "componentName": "Amount",
@@ -3405,6 +3405,6 @@
         "level": 5,
         "object": "Tile",
         "subject": "City",
-        "value": 37
+        "value": 41
     }
 ]

@@ -333,7 +333,7 @@ contract GameFacet is UseStorage {
         ECSLib.setUint("LastUpgraded", _buildingID, block.timestamp);
 
         // Update timestamp to when it's gonna finish upgrade
-        ECSLib.setUint("LastTimestamp", _buildingID, block.timestamp + GameLib.getConstant("City Center", "", "Cooldown", "Upgrade", centerLevel));
+        // ECSLib.setUint("LastTimestamp", _buildingID, block.timestamp + GameLib.getConstant("City Center", "", "Cooldown", "Upgrade", centerLevel)); // FIXME
         console.log(ECSLib.getUint("LastTimestamp", _buildingID));
 
         // Set new level
@@ -844,7 +844,7 @@ contract GameFacet is UseStorage {
                 // todo: same process for resources
 
                 // 3. end cityCenter harvest production => change lastTimeStamp
-                ECSLib.setUint("LastTimestamp", cityCenterID, block.timestamp + chaosDuration);
+                // ECSLib.setUint("LastTimestamp", cityCenterID, block.timestamp + chaosDuration); // FIXME
 
                 // update lastSacked
                 ECSLib.setUint("LastSacked", cityCenterID, block.timestamp);
@@ -956,7 +956,7 @@ contract GameFacet is UseStorage {
         ECSLib.setUint("Load", _resourceID, newLoad);
 
         // Update TimeStamp to when it's gonna finish upgrade
-        ECSLib.setUint("LastTimestamp", _resourceID, block.timestamp + GameLib.getConstant(subject, "", "Cooldown", "Upgrade", resourceLevel));
+        // ECSLib.setUint("LastTimestamp", _resourceID, block.timestamp + GameLib.getConstant(subject, "", "Cooldown", "Upgrade", resourceLevel));
 
         // Set timestamp
         ECSLib.setUint("LastUpgraded", _resourceID, block.timestamp);

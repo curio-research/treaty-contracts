@@ -491,7 +491,7 @@ class Game:
             self.super_tile_init_time_in_hour = 0
 
         if mode == GameMode.TEN_PLAYER_SHORT_TEST:
-            self.total_tile_count = 14*14
+            self.total_tile_count = 15*15
             self.expected_player_count = 10
             self.init_player_tile_count = 1
             self.expected_play_time_in_hour = 1
