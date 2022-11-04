@@ -1,8 +1,8 @@
 {
-    "componentName": "Cooldown",
-    "functionName": "Upgrade",
+    "componentName": "Load",
+    "functionName": "",
     "level": 4,
-    "object": "",
+    "object": "Gold",
     "subject": "City Center",
-    "value": 44
+    "value": 850500
 }

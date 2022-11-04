@@ -18,6 +18,7 @@ library Templates {
         ECSLib.setUint("LastTimestamp", cityCenterID, block.timestamp);
         ECSLib.setUint("LastUpgraded", cityCenterID, 0);
         ECSLib.setUint("LastMoved", cityCenterID, 0);
+        ECSLib.setUint("LastSacked", cityCenterID, 0); // todo: make sure initialized time exceeds cooldown constant
 
         return cityCenterID;
     }
@@ -85,7 +86,7 @@ library Templates {
         ECSLib.setUint("Owner", tileID, 0);
         ECSLib.setUint("Level", tileID, 1);
         ECSLib.setUint("Terrain", tileID, _terrain);
-        ECSLib.setUint("LastTimestamp", tileID, block.timestamp);
+        ECSLib.setUint("LastTimestamp", tileID, block.timestamp); // last reset time for barbarians, init active time for supertile
         ECSLib.setUint("LastUpgraded", tileID, 0);
         ECSLib.setUint("LastRecovered", tileID, 0);
 

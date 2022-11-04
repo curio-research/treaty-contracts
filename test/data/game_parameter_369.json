@@ -1,8 +1,8 @@
 {
-    "componentName": "Cost",
-    "functionName": "Upgrade",
-    "level": 8,
-    "object": "Food",
+    "componentName": "Amount",
+    "functionName": "",
+    "level": 7,
+    "object": "Guard",
     "subject": "Tile",
-    "value": 154803
+    "value": 163
 }

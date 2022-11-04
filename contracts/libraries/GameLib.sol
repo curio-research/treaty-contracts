@@ -91,6 +91,9 @@ library GameLib {
                 ECSLib.setUint("Terrain", tileID, 0);
                 ECSLib.setUint("Level", tileID, maxTileLevel);
 
+                uint256 superTileInitTime = getConstant("SuperTile", "", "lastTimestamp", "", maxTileLevel);
+                ECSLib.setUint("LastTimestamp", tileID, superTileInitTime);
+
                 uint256 supertileGuardAmount = getConstant("Tile", "Guard", "Amount", "", maxTileLevel);
                 Templates.addConstituent(tileID, gs().templates["Guard"], supertileGuardAmount);
 
@@ -192,7 +195,7 @@ library GameLib {
         uint256[] memory defenderConstituentIDs = getConstituents(_defenderID);
 
         require(offenderConstituentIDs.length > 0, "CURIO: Offender cannot attack");
-        require(defenderConstituentIDs.length > 0, "CURIO: Defender already subjugated");
+        require(defenderConstituentIDs.length > 0, "CURIO: Defender already subjugated, claim tile instead");
 
         // Offender attacks defender
         {
@@ -434,6 +437,32 @@ library GameLib {
         return result.length == 1 ? result[0] : 0;
     }
 
+    // FIXME: this function kinda crazy
+    function getAllResourceIDsByCity(uint256 _cityID) internal returns (uint256[] memory) {
+        // get all tiles
+        QueryCondition[] memory query1 = new QueryCondition[](2);
+        query1[0] = ECSLib.queryChunk(QueryType.HasVal, "City", abi.encode(_cityID));
+        query1[1] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("Tile"));
+        uint256[] memory res1 = ECSLib.query(query1);
+
+        // get all of their positions, and then find the resources
+        Position[] memory allTilePositions;
+        for (uint256 i = 0; i < res1.length; i++) {
+            allTilePositions[i] = ECSLib.getPosition("StartPosition", res1[i]);
+        }
+
+        // use the position to find resourceIDs
+        uint256[] memory resourceIDs;
+        for (uint256 i = 0; i < allTilePositions.length; i++) {
+            QueryCondition[] memory query2 = new QueryCondition[](2);
+            query2[0] = ECSLib.queryChunk(QueryType.HasVal, "StartPosition", abi.encode(allTilePositions[i]));
+            query2[1] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("Tile"));
+            uint256[] memory res2 = ECSLib.query(query2);
+            resourceIDs[resourceIDs.length] = (res2.length == 1 ? res2[0] : 0);
+        }
+        return resourceIDs;
+    }
+
     // function getArmyInventory(uint256 _armyID, uint256 _templateID) internal returns (uint256) {
     //     QueryCondition[] memory query = new QueryCondition[](3);
     //     query[0] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("ResourceInventory"));
@@ -622,6 +651,12 @@ library GameLib {
         require(ECSLib.getUint("Terrain", getTileAt(_tilePosition)) != 5, "CURIO: Tile not passable");
     }
 
+    function cityCenterHasRecoveredFromSack(uint256 _cityCenterID) internal view {
+        uint256 cityCenterLevel = ECSLib.getUint("Level", _cityCenterID);
+        uint256 chaosDuration = GameLib.getConstant("City Center", "", "Cooldown", "Chaos", cityCenterLevel);
+        require(block.timestamp - ECSLib.getUint("LastSacked", _cityCenterID) > chaosDuration, "CURIO: City At Chaos");
+    }
+
     // ----------------------------------------------------------
     // UTILITY FUNCTIONS
     // ----------------------------------------------------------
@@ -745,5 +780,9 @@ library GameLib {
 
     function min(uint256 x, uint256 y) internal pure returns (uint256) {
         return x <= y ? x : y;
+    }
+
+    function max(uint256 x, uint256 y) internal pure returns (uint256) {
+        return x > y ? x : y;
     }
 }

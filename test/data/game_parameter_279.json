@@ -1,8 +1,8 @@
 {
-    "componentName": "Cost",
-    "functionName": "Move",
+    "componentName": "Cooldown",
+    "functionName": "Upgrade",
     "level": 4,
-    "object": "Food",
+    "object": "",
     "subject": "City Center",
-    "value": 0
+    "value": 29
 }

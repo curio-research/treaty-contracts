@@ -1,8 +1,8 @@
 {
     "componentName": "Amount",
     "functionName": "",
-    "level": 4,
+    "level": 2,
     "object": "Guard",
     "subject": "Barbarian",
-    "value": 40
+    "value": 33
 }
