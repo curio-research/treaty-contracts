@@ -18,8 +18,7 @@ class Resource(str, Enum):
 
 class GameMode(str, Enum):
     THREE_PLAYER_SHORT_TEST = "THREE_PLAYER_SHORT_TEST"
-    SLOW = "SLOW"
-    FAST = "FAST"
+    TEN_PLAYER_SHORT_TEST = "TEN_PLAYER_SHORT_TEST"
 
 
 class Building(str, Enum):
@@ -222,9 +221,9 @@ def get_building_upgrade_cost(level: int, building_type: Building) -> np.array:
     goldmine_foodcost = goldmine_goldcost / \
         game_instance.resource_weight_heavy * game_instance.resource_weight_low
     # assumption is that player spend gold equivalently on two types of building
-    # FIXME: 5 is hard-coded for now
+    # FIXME: 3 is hardcoded for now; this is technically not right
     farm_goldcost = goldmine_goldcost * game_instance.init_player_goldmine_count / \
-        game_instance.init_player_farm_count * 5
+        game_instance.init_player_farm_count * 3
     # farm food cost if don't consider that part of it goes to troops
     farm_foodcost_raw = payback_period_curve_in_hour(game_instance.max_city_center_level * game_instance.city_center_level_to_building_level)(level) \
         * get_building_hourly_yield_by_level(level, Building.FARM)[1]
@@ -253,8 +252,8 @@ def get_building_upgrade_cost(level: int, building_type: Building) -> np.array:
         # tax_food = unlocked_farm_count * expected_farm_hourly_yield * payback_period_curve_in_hour(
         #     game_instance.max_city_center_level * game_instance.city_center_level_to_building_level)(level + game_instance.city_center_level_to_building_level)
 
-        # FIXME: tax_gold hardcoded to *5
-        return np.array([goldmine_goldcost + farm_goldcost + 5 * tax_gold, goldmine_foodcost + farm_foodcost])
+        # FIXME: tax_gold hardcoded to * 10
+        return np.array([goldmine_goldcost + farm_goldcost + 10 * tax_gold, goldmine_foodcost + farm_foodcost])
 
 
 def get_move_city_cooldown_in_hour(level: int) -> int:
@@ -490,6 +489,31 @@ class Game:
              self.resource_weight_high, self.resource_weight_heavy) = (1, 3, 4, 5, 16)
             self.chaos_period_in_seconds = 120
             self.super_tile_init_time_in_hour = 0
+
+        if mode == GameMode.TEN_PLAYER_SHORT_TEST:
+            self.total_tile_count = 14*14
+            self.expected_player_count = 10
+            self.init_player_tile_count = 1
+            self.expected_play_time_in_hour = 1
+            self.upgrade_time_to_expected_play_time_ratio = 1/3
+            self.init_player_goldmine_count = 1
+            self.init_player_farm_count = 1
+            self.player_login_interval_in_minutes = 15
+            self.max_city_center_level = 5
+            self.city_center_level_to_building_level = 3
+            self.new_player_action_in_seconds = 100
+            self.base_troop_training_in_seconds = 0.4
+            self.barbarian_reward_to_cost_coefficient = 4
+            self.tile_to_barbarian_strength_ratio = 1.5
+            self.tile_troop_discount = 0.5
+            self.barbarian_to_army_difficulty_constant = 40
+            self.gather_rate_to_resource_rate = 50
+            self.city_center_migration_cooldown_ratio = 15
+            self.building_upgrade_cooldown_ratio = 15
+            (self.resource_weight_light, self.resource_weight_low, self.resource_weight_medium,
+             self.resource_weight_high, self.resource_weight_heavy) = (1, 3, 4, 5, 16)
+            self.chaos_period_in_seconds = 120
+            self.super_tile_init_time_in_hour = 0        
 
     # todo: update it
     def print_parameters(self):
@@ -764,6 +788,6 @@ class Game:
 
 
 # change here when switching game mode
-game_instance = Game(GameMode.THREE_PLAYER_SHORT_TEST)
+game_instance = Game(GameMode.TEN_PLAYER_SHORT_TEST)
 game_instance.print_parameters()
 game_instance.export_json_parameters()
