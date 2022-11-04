@@ -467,7 +467,7 @@ class Game:
 
     def __init__(self, mode: GameMode) -> None:
         if mode == GameMode.THREE_PLAYER_SHORT_TEST:
-            self.total_tile_count = 6*6
+            self.total_tile_count = 8*8
             self.expected_player_count = 3
             self.init_player_tile_count = 1
             self.expected_play_time_in_hour = 0.5
@@ -489,7 +489,6 @@ class Game:
             (self.resource_weight_light, self.resource_weight_low, self.resource_weight_medium,
              self.resource_weight_high, self.resource_weight_heavy) = (1, 3, 4, 5, 16)
             self.chaos_period_in_seconds = 120
-            # FIXME: this is when game mode is not battle royale
             self.super_tile_init_time_in_hour = 0
 
     # todo: update it

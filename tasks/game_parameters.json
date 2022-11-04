@@ -5,7 +5,7 @@
         "level": 0,
         "object": "Gold",
         "subject": "Army",
-        "value": 3179
+        "value": 6358
     },
     {
         "componentName": "Rate",
@@ -13,7 +13,7 @@
         "level": 0,
         "object": "Food",
         "subject": "Army",
-        "value": 28618
+        "value": 57236
     },
     {
         "componentName": "Load",
@@ -1837,7 +1837,7 @@
         "level": 0,
         "object": "Gold",
         "subject": "City Center",
-        "value": 26069
+        "value": 48240
     },
     {
         "componentName": "Cost",
@@ -1933,7 +1933,7 @@
         "level": 1,
         "object": "Gold",
         "subject": "City Center",
-        "value": 64813
+        "value": 111623
     },
     {
         "componentName": "Cost",
@@ -2029,7 +2029,7 @@
         "level": 2,
         "object": "Gold",
         "subject": "City Center",
-        "value": 114511
+        "value": 189024
     },
     {
         "componentName": "Cost",
@@ -2125,7 +2125,7 @@
         "level": 3,
         "object": "Gold",
         "subject": "City Center",
-        "value": 176784
+        "value": 283936
     },
     {
         "componentName": "Cost",
@@ -2221,7 +2221,7 @@
         "level": 4,
         "object": "Gold",
         "subject": "City Center",
-        "value": 253290
+        "value": 399161
     },
     {
         "componentName": "Cost",
@@ -3357,7 +3357,7 @@
         "level": 2,
         "object": "Tile",
         "subject": "City",
-        "value": 6
+        "value": 11
     },
     {
         "componentName": "Amount",
@@ -3373,7 +3373,7 @@
         "level": 3,
         "object": "Tile",
         "subject": "City",
-        "value": 11
+        "value": 21
     },
     {
         "componentName": "Amount",
@@ -3389,7 +3389,7 @@
         "level": 4,
         "object": "Tile",
         "subject": "City",
-        "value": 16
+        "value": 31
     },
     {
         "componentName": "Amount",
@@ -3405,6 +3405,6 @@
         "level": 5,
         "object": "Tile",
         "subject": "City",
-        "value": 21
+        "value": 41
     }
 ]

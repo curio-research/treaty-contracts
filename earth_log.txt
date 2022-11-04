@@ -25,7 +25,7 @@ resource_weight_medium: 4
 super_tile_init_time_in_hour: 0
 tile_to_barbarian_strength_ratio: 1.5
 tile_troop_discount: 0.5
-total_tile_count: 36
+total_tile_count: 64
 upgrade_time_to_expected_play_time_ratio: 0.3333333333333333
 -----------------
 ** Goldmine Stats **
@@ -310,7 +310,7 @@ Gold Yield Per Hour: 2678
 Food Yield Per Hour: 14282
 Gold Cap: 669.5
 Food Cap: 3570.5
-Gold Cost to Upgrade: 64.81350766136327
+Gold Cost to Upgrade: 111.6233077445835
 Food Cost to Upgrade: 3.08933406895347
 Tile Count Limit: 1
 -----------------
@@ -320,9 +320,9 @@ Gold Yield Per Hour: 3463
 Food Yield Per Hour: 18472
 Gold Cap: 865.75
 Food Cap: 4618.0
-Gold Cost to Upgrade: 114.51172555500611
+Gold Cost to Upgrade: 189.02403479888818
 Food Cost to Upgrade: 6.864745488305103
-Tile Count Limit: 6
+Tile Count Limit: 11
 -----------------
 Building Level: 3
 -----------------
@@ -330,9 +330,9 @@ Gold Yield Per Hour: 4058
 Food Yield Per Hour: 21644
 Gold Cap: 1014.5
 Food Cap: 5411.0
-Gold Cost to Upgrade: 176.78465910511818
+Gold Cost to Upgrade: 283.9361176536562
 Food Cost to Upgrade: 11.94972038454716
-Tile Count Limit: 11
+Tile Count Limit: 21
 -----------------
 Building Level: 4
 -----------------
@@ -340,9 +340,9 @@ Gold Yield Per Hour: 4537
 Food Yield Per Hour: 24199
 Gold Cap: 1134.25
 Food Cap: 6049.75
-Gold Cost to Upgrade: 253.2902590885579
+Gold Cost to Upgrade: 399.1616454381972
 Food Cost to Upgrade: 18.434211218453253
-Tile Count Limit: 16
+Tile Count Limit: 31
 -----------------
 Building Level: 5
 -----------------
@@ -351,7 +351,7 @@ Food Yield Per Hour: 26337
 Gold Cap: 1234.5
 Food Cap: 6584.25
 Cannot Upgrade
-Tile Count Limit: 21
+Tile Count Limit: 41
 -----------------
 -----------------
 ** Barbarian Stats **
@@ -541,8 +541,8 @@ Cannot Upgrade
 -----------------
 Gather Stats
 -----------------
-Gold Hourly Gather Rate Per Army: 11446.0
-Food Hourly Gather Rate Per Army: 103025.25
+Gold Hourly Gather Rate Per Army: 22892.0
+Food Hourly Gather Rate Per Army: 206050.5
 Resource Load per Troop: 9.097922910596898
 -----------------
 TroopSize Stats
