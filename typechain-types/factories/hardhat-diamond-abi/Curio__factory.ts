@@ -593,6 +593,11 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "UpgradeUnfinished",
+    type: "error",
+  },
+  {
     inputs: [
       {
         internalType: "address",

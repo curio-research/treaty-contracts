@@ -253,7 +253,8 @@ def get_building_upgrade_cost(level: int, building_type: Building) -> np.array:
         # tax_food = unlocked_farm_count * expected_farm_hourly_yield * payback_period_curve_in_hour(
         #     game_instance.max_city_center_level * game_instance.city_center_level_to_building_level)(level + game_instance.city_center_level_to_building_level)
 
-        return np.array([goldmine_goldcost + farm_goldcost + tax_gold, goldmine_foodcost + farm_foodcost])
+        # FIXME: tax_gold hardcoded to *5
+        return np.array([goldmine_goldcost + farm_goldcost + 5 * tax_gold, goldmine_foodcost + farm_foodcost])
 
 
 def get_move_city_cooldown_in_hour(level: int) -> int:
@@ -358,7 +359,6 @@ def tile_loyalty_points(decay_dist: float):
 
 
 class Game:
-    # TODO: use a JSON to initialize these variable
     total_tile_count = 11*11
     expected_player_count = 3
     init_player_tile_count = 1
@@ -478,18 +478,19 @@ class Game:
             self.max_city_center_level = 5
             self.city_center_level_to_building_level = 3
             self.new_player_action_in_seconds = 100
-            self.base_troop_training_in_seconds = 0.3
+            self.base_troop_training_in_seconds = 0.4
             self.barbarian_reward_to_cost_coefficient = 4
             self.tile_to_barbarian_strength_ratio = 1.5
-            self.tile_troop_discount = 0.4
+            self.tile_troop_discount = 0.5
             self.barbarian_to_army_difficulty_constant = 40
-            self.gather_rate_to_resource_rate = 40
+            self.gather_rate_to_resource_rate = 50
             self.city_center_migration_cooldown_ratio = 15
             self.building_upgrade_cooldown_ratio = 10
             (self.resource_weight_light, self.resource_weight_low, self.resource_weight_medium,
              self.resource_weight_high, self.resource_weight_heavy) = (1, 3, 4, 5, 16)
-            self.chaos_period_in_seconds = 100
-            self.super_tile_init_time_in_hour = 0.5
+            self.chaos_period_in_seconds = 120
+            # FIXME: this is when game mode is not battle royale
+            self.super_tile_init_time_in_hour = 0
 
     # todo: update it
     def print_parameters(self):
@@ -705,7 +706,7 @@ class Game:
             curr_level += 1
 
         # Tile Stats
-        curr_level = 1
+        curr_level = 0
         max_tile_level = self.max_city_center_level * \
             self.city_center_level_to_building_level
 
@@ -716,6 +717,9 @@ class Game:
             tile_guard_count = get_tile_troop_count(curr_level)
             game_parameters.append({"subject": "Tile", "componentName": "Amount", "object": "Guard",
                                    "level": curr_level, "functionName": "", "value": tile_guard_count})
+            # todo: currently recover cooldown is the same as upgrade
+            game_parameters.append({"subject": "Tile", "componentName": "Cooldown", "object": "", "level": curr_level,
+                                       "functionName": "Recover", "value": int(get_tile_upgrade_cooldown_in_second(curr_level))})
             if curr_level != max_tile_level:
                 (cost_gold, cost_food) = get_tile_upgrade_cost(curr_level)
                 game_parameters.append({"subject": "Tile", "componentName": "Cost", "object": "Gold",
@@ -724,10 +728,6 @@ class Game:
                                        "level": curr_level, "functionName": "Upgrade", "value": int(cost_food * 1000)})
                 game_parameters.append({"subject": "Tile", "componentName": "Cooldown", "object": "", "level": curr_level,
                                        "functionName": "Upgrade", "value": int(get_tile_upgrade_cooldown_in_second(curr_level))})
-                # todo: currently recover cooldown is the same as upgrade
-                game_parameters.append({"subject": "Tile", "componentName": "Cooldown", "object": "", "level": curr_level,
-                                       "functionName": "Recover", "value": int(get_tile_upgrade_cooldown_in_second(curr_level))})
-
             curr_level += 1
 
         # Army Size Stats
