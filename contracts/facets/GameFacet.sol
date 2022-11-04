@@ -214,11 +214,9 @@ contract GameFacet is UseStorage {
         uint256 lostGuardAmount = GameLib.getConstant("Tile", "Guard", "Amount", "", tileLevel) - ECSLib.getUint("Amount", _tileID);
 
         // Deduct costs
+        uint256 playerID = GameLib.getPlayer(msg.sender);
         {
-            uint256 playerID = GameLib.getPlayer(msg.sender);
             uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
-            uint256 cityID = GameLib.getPlayerCity(playerID);
-            GameLib.cityCenterHasRecoveredFromSack(GameLib.getCityCenter(cityID));
             for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
                 uint256 inventoryID = GameLib.getInventory(GameLib.getPlayerCity(playerID), resourceTemplateIDs[i]);
                 uint256 balance = ECSLib.getUint("Amount", inventoryID);
@@ -229,6 +227,10 @@ contract GameFacet is UseStorage {
                 ECSLib.setUint("Amount", inventoryID, balance - totalRecoverCost);
             }
         }
+
+        // Verify that city center has recovered from sack
+        uint256 cityID = GameLib.getPlayerCity(playerID);
+        GameLib.cityCenterHasRecoveredFromSack(GameLib.getCityCenter(cityID));
 
         // Set timestamp
         ECSLib.setUint("LastRecovered", _tileID, block.timestamp);
@@ -916,6 +918,7 @@ contract GameFacet is UseStorage {
             uint256 cityCenterID = GameLib.getCityCenter(ECSLib.getUint("City", tileID));
             require(ECSLib.getUint("Level", _resourceID) < ECSLib.getUint("Level", cityCenterID) * gs().worldConstants.cityCenterLevelToEntityLevelRatio, "CURIO: Need to upgrade resource first");
 
+            // Verify that city center has recovered from sack
             GameLib.cityCenterHasRecoveredFromSack(cityCenterID);
         }
 
@@ -938,19 +941,16 @@ contract GameFacet is UseStorage {
         }
 
         //  note: harvestResource function / this paragraph reaches gas limit here
-        // {        
-        // // harvest existing resources; 
-        // uint256 templateID = ECSLib.getUint("Template", _resourceID);
-        // string memory buildingType = templateID == gs().templates["Gold"] ? "Goldmine" : "Farm";
-        // uint256 harvestRate = GameLib.getConstant(buildingType, ECSLib.getString("InventoryType", templateID), "Yield", "", resourceLevel);
-        // uint256 harvestAmount = (block.timestamp - ECSLib.getUint("LastTimestamp", _resourceID)) * harvestRate;
-        // harvestAmount = GameLib.min(ECSLib.getUint("Load", _resourceID), harvestAmount);
-        // uint256 cityInventoryID = GameLib.getInventory(ECSLib.getUint("City", _resourceID), templateID);
-        // uint256 newCityResourceAmount = ECSLib.getUint("Amount", cityInventoryID) + harvestAmount;
-        // newCityResourceAmount = GameLib.min(ECSLib.getUint("Load", cityInventoryID), newCityResourceAmount);
-        // ECSLib.setUint("Amount", cityInventoryID, newCityResourceAmount);
-        // }
-        
+        {
+            uint256 harvestRate = GameLib.getConstant(subject, ECSLib.getString("InventoryType", ECSLib.getUint("Template", _resourceID)), "Yield", "", resourceLevel);
+            uint256 harvestAmount = (block.timestamp - ECSLib.getUint("LastTimestamp", _resourceID)) * harvestRate;
+            harvestAmount = GameLib.min(ECSLib.getUint("Load", _resourceID), harvestAmount);
+            uint256 cityInventoryID = GameLib.getInventory(ECSLib.getUint("City", _resourceID), ECSLib.getUint("Template", _resourceID));
+            uint256 newCityResourceAmount = ECSLib.getUint("Amount", cityInventoryID) + harvestAmount;
+            newCityResourceAmount = GameLib.min(ECSLib.getUint("Load", cityInventoryID), newCityResourceAmount);
+            ECSLib.setUint("Amount", cityInventoryID, newCityResourceAmount);
+        }
+
         // Set load
         uint256 newLoad = GameLib.getConstant(subject, ECSLib.getString("InventoryType", ECSLib.getUint("Template", _resourceID)), "Load", "", resourceLevel + 1);
         ECSLib.setUint("Load", _resourceID, newLoad);

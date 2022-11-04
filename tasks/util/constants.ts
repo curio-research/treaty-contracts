@@ -34,7 +34,7 @@ export const generateWorldConstants = (adminAddr: string): any => {
     maxCityCountPerPlayer: 3,
     maxArmyCountPerPlayer: 2,
     maxPlayerCount: 20,
-    gameMode: GameMode.REGULAR,
+    gameMode: GameMode.BATTLE_ROYALE,
     gameLengthInSeconds: 2000000000,
     // generated constants
     ...worldConstants,
