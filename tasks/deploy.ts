@@ -86,6 +86,9 @@ task('deploy', 'deploy contracts')
 
       console.log(`✦ component registration took ${Math.floor(performance.now() - startTime)} ms`);
 
+      // Add game entity
+      await diamond.addGame();
+
       // Register constants
       startTime = performance.now();
       const constantUploadBatchSize = 200;
