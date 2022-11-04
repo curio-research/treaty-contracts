@@ -4,6 +4,8 @@ pragma solidity ^0.8.4;
 import {Position, WorldConstants} from "contracts/libraries/Types.sol";
 import {Strings} from "openzeppelin-contracts/contracts/utils/Strings.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
+import {console} from "forge-std/console.sol";
+
 
 library Templates {
     function addCityCenter(Position memory _startPosition, uint256 _cityID) public returns (uint256) {
@@ -120,6 +122,9 @@ library Templates {
         uint256 _load
     ) public returns (uint256) {
         uint256 resourceID = ECSLib.addEntity();
+
+        console.log("add resource:",resourceID);
+    
 
         ECSLib.setString("Tag", resourceID, "Resource");
         ECSLib.setUint("Template", resourceID, _templateID);

@@ -9,6 +9,7 @@ import {Templates} from "contracts/libraries/Templates.sol";
 import {Set} from "contracts/Set.sol";
 import {Component} from "contracts/Component.sol";
 import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, UintComponent, UintArrayComponent} from "contracts/TypedComponents.sol";
+import {console} from "forge-std/console.sol";
 
 /// @title Util library
 /// @notice Contains all events as well as lower-level setters and getters
@@ -64,12 +65,14 @@ library GameLib {
     }
 
     function initializeTile(Position memory _startPosition) internal returns (uint256) {
+        console.log("initialize tile");
         require(isProperTilePosition(_startPosition), "CURIO: Not proper tile position");
         uint256 tileId = getTileAt(_startPosition);
         if (tileId != 0) return tileId;
 
         // Load constants
         uint256 numInitTerrainTypes = gs().worldConstants.numInitTerrainTypes;
+        console.log("numInitTerrainTypes",numInitTerrainTypes);
         uint256 batchSize = 200 / numInitTerrainTypes;
 
         // Decode tile terrain
@@ -78,6 +81,8 @@ library GameLib {
         uint256 encodedCol = gs().encodedColumnBatches[tileX][tileY / batchSize] % (numInitTerrainTypes**((tileY % batchSize) + 1));
         uint256 divFactor = numInitTerrainTypes**(tileY % batchSize);
         uint256 terrain = encodedCol / divFactor;
+        console.log("terrian:");
+        console.log(terrain);
 
         // Initialize tile
         uint256 tileID = Templates.addTile(_startPosition, terrain);
@@ -295,6 +300,7 @@ library GameLib {
     // ----------------------------------------------------------
 
     function getConstituents(uint256 _keeperID) public returns (uint256[] memory) {
+        console.log("function get constituents");
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.HasVal, "Keeper", abi.encode(_keeperID));
         query[1] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("Constituent"));
@@ -375,6 +381,18 @@ library GameLib {
         query[0] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode(string("Resource")));
         query[1] = ECSLib.queryChunk(QueryType.HasVal, "StartPosition", abi.encode(_startPosition));
         uint256[] memory res = ECSLib.query(query);
+        console.log("function get resource at tile:");
+        console.log(res.length);
+
+        uint256[] memory elements = res;
+        
+        
+        for(uint i = 0;i<elements.length;i++){
+            console.log(elements[i]);
+        }
+
+
+        
         require(res.length <= 1, "CURIO: Tile resource assertion failed");
         return res.length == 1 ? res[0] : 0;
     }
@@ -595,6 +613,7 @@ library GameLib {
     }
 
     function validEntityCheck(uint256 _entity) internal view {
+
         require(Set(gs().entities).includes(_entity), "CURIO: Entity object not found");
     }
 

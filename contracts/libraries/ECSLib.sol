@@ -7,7 +7,7 @@ import {Set} from "contracts/Set.sol";
 import {UintBoolMapping} from "contracts/Mapping.sol";
 import {Component} from "contracts/Component.sol";
 import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, UintComponent, UintArrayComponent} from "contracts/TypedComponents.sol";
-
+import {console} from "forge-std/console.sol";
 /// @title library of ECS utility functions
 
 library ECSLib {
@@ -291,6 +291,8 @@ library ECSLib {
 
     function queryAsSet(QueryCondition[] memory _queryCondition) public returns (Set) {
         Set res = Set(gs().entities);
+      
+      // _queryCondition  queryType componentName , value 
 
         for (uint256 i = 0; i < _queryCondition.length; i++) {
             QueryCondition memory _queryChunkCondition = _queryCondition[i];

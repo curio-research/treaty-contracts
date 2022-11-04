@@ -319,8 +319,8 @@
       }
     },
     "contracts/facets/AdminFacet.sol": {
-      "lastModificationDate": 1667453677047,
-      "contentHash": "4a08e661fa57573513812c011bd8725b",
+      "lastModificationDate": 1667532707830,
+      "contentHash": "ce17bf87124a42168a07e8d75d3c41a8",
       "sourceName": "contracts/facets/AdminFacet.sol",
       "solcConfig": {
         "settings": {
@@ -360,6 +360,7 @@
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Templates.sol",
         "contracts/libraries/Types.sol",
+        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/Strings.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -458,8 +459,8 @@
       }
     },
     "contracts/facets/GameFacet.sol": {
-      "lastModificationDate": 1667453677047,
-      "contentHash": "c41008590cc15b98220bef5ce099313f",
+      "lastModificationDate": 1667569762784,
+      "contentHash": "475e349a2deb47e23c925509a66f9650",
       "sourceName": "contracts/facets/GameFacet.sol",
       "solcConfig": {
         "settings": {
@@ -499,6 +500,7 @@
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Templates.sol",
         "contracts/libraries/Types.sol",
+        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/Strings.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -550,6 +552,7 @@
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Templates.sol",
         "contracts/libraries/Types.sol",
+        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/Strings.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -645,6 +648,7 @@
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Templates.sol",
         "contracts/libraries/Types.sol",
+        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/Strings.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -815,8 +819,8 @@
       }
     },
     "contracts/libraries/ECSLib.sol": {
-      "lastModificationDate": 1667293269359,
-      "contentHash": "18fe1e7bd2a95f756e0dc039dc216d19",
+      "lastModificationDate": 1667533522473,
+      "contentHash": "4396411f1d93820e8df388167f52e887",
       "sourceName": "contracts/libraries/ECSLib.sol",
       "solcConfig": {
         "settings": {
@@ -852,7 +856,8 @@
         "contracts/Set.sol",
         "contracts/TypedComponents.sol",
         "contracts/libraries/Storage.sol",
-        "contracts/libraries/Types.sol"
+        "contracts/libraries/Types.sol",
+        "lib/forge-std/src/console.sol"
       ],
       "versionRequirement": "^0.8.4",
       "artifacts": {
@@ -862,8 +867,8 @@
       }
     },
     "contracts/libraries/GameLib.sol": {
-      "lastModificationDate": 1667453677047,
-      "contentHash": "01fdd5ee1732ba7556bc09fd33ac3c33",
+      "lastModificationDate": 1667561203562,
+      "contentHash": "df84b576fa6ab1c84f705b2b030ad2d9",
       "sourceName": "contracts/libraries/GameLib.sol",
       "solcConfig": {
         "settings": {
@@ -902,6 +907,7 @@
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Templates.sol",
         "contracts/libraries/Types.sol",
+        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/Strings.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -999,8 +1005,8 @@
       }
     },
     "contracts/libraries/Templates.sol": {
-      "lastModificationDate": 1667293269359,
-      "contentHash": "c66152096aa357af1ae0728376a47b28",
+      "lastModificationDate": 1667561393199,
+      "contentHash": "120b7a15dca898200748b6c16f1b37b1",
       "sourceName": "contracts/libraries/Templates.sol",
       "solcConfig": {
         "settings": {
@@ -1038,6 +1044,7 @@
         "contracts/libraries/ECSLib.sol",
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Types.sol",
+        "lib/forge-std/src/console.sol",
         "lib/openzeppelin-contracts/contracts/utils/Strings.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -1480,8 +1487,8 @@
       }
     },
     "test/Basic.t.sol": {
-      "lastModificationDate": 1667453677051,
-      "contentHash": "34ced3a61fe4e61ca241b9956bea2434",
+      "lastModificationDate": 1667572488101,
+      "contentHash": "328088156c733a4e604d57259eb11e88",
       "sourceName": "test/Basic.t.sol",
       "solcConfig": {
         "settings": {

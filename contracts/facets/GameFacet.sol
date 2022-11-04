@@ -7,7 +7,7 @@ import {ECSLib} from "contracts/libraries/ECSLib.sol";
 import {GameMode, Position, WorldConstants} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
 import {Templates} from "contracts/libraries/Templates.sol";
-
+import {console} from "forge-std/console.sol";
 /// @title Game facet
 /// @notice Contains player functions
 
@@ -50,6 +50,8 @@ contract GameFacet is UseStorage {
     // ----------------------------------------------------------
 
     function move(uint256 _movableEntity, Position memory _targetPosition) external {
+
+        console.log("function move :");
         // Basic checks
         GameLib.validEntityCheck(_movableEntity);
         GameLib.ongoingGameCheck();
@@ -68,6 +70,14 @@ contract GameFacet is UseStorage {
         require(GameLib.getMovableEntityAt(_targetPosition) == NULL, "CURIO: Destination occupied");
 
         // Check moveCooldown
+
+
+        console.log("block.timestamp:",block.timestamp);
+        console.log("last time stamp:",ECSLib.getUint("LastTimestamp", _movableEntity));
+        console.log("move cool down:",ECSLib.getUint("MoveCooldown", _movableEntity));
+
+
+
         require(block.timestamp >= ECSLib.getUint("LastTimestamp", _movableEntity) + ECSLib.getUint("MoveCooldown", _movableEntity), "CURIO: Moved too recently");
 
         // settler cannot move in enemy territory
@@ -79,6 +89,11 @@ contract GameFacet is UseStorage {
 
         // Calculate distance
         uint256 distance = GameLib.euclidean(ECSLib.getPosition("Position", _movableEntity), _targetPosition);
+        
+        console.log("calculate distance:");
+        console.log(distance);
+        console.log(ECSLib.getUint("Speed",_movableEntity));
+
         require(distance <= ECSLib.getUint("Speed", _movableEntity), "CURIO: Not enough movement points");
 
         // Move and update moveCooldown
@@ -92,6 +107,8 @@ contract GameFacet is UseStorage {
         Position[] memory _tiles,
         string memory _cityName
     ) external {
+
+        console.log("FUNCTION found city");
         // Basic checks
         GameLib.validEntityCheck(_settlerID);
         GameLib.ongoingGameCheck();
@@ -407,6 +424,8 @@ contract GameFacet is UseStorage {
         uint256 _templateID,
         uint256 _amount
     ) external returns (uint256 productionID) {
+
+        console.log("start troop production");
         // Basic checks
         GameLib.validEntityCheck(_buildingID);
         GameLib.validEntityCheck(_templateID);
@@ -426,6 +445,11 @@ contract GameFacet is UseStorage {
             uint256 resourceInventoryID = GameLib.getInventory(cityID, resourceTemplateIDs[i]);
             uint256 balance = ECSLib.getUint("Amount", resourceInventoryID);
             uint256 cost = _amount * GameLib.getConstant("Troop Production", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Cost", "", 0);
+
+            console.log("balance:",balance);
+            console.log("   need:",_amount*GameLib.getConstant("Troop Production", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Cost", "", 0));
+            console.log("_amount:",_amount);
+
             require(balance >= cost, "CURIO: Insufficient balance");
             ECSLib.setUint("Amount", resourceInventoryID, balance - cost);
         }
@@ -445,10 +469,12 @@ contract GameFacet is UseStorage {
         }
 
         // Start production
+        console.log("into templates : add troop production");
         return Templates.addTroopProduction(_buildingID, _templateID, troopInventoryID, _amount, gs().worldConstants.secondsToTrainAThousandTroops * (_amount / 1000));
     }
 
     function endTroopProduction(uint256 _buildingID, uint256 _productionID) external {
+        console.log("end troop production");
         // Basic checks
         GameLib.validEntityCheck(_buildingID);
         GameLib.validEntityCheck(_productionID);
@@ -459,9 +485,11 @@ contract GameFacet is UseStorage {
         uint256 cityID = ECSLib.getUint("City", _buildingID);
         GameLib.entityOwnershipCheck(cityID, msg.sender);
 
+
         // Verify that enough time has passed for the given amount
         require(block.timestamp >= (ECSLib.getUint("InitTimestamp", _productionID) + ECSLib.getUint("Duration", _productionID)), "CURIO: Need more time for production");
 
+    
         // Update inventory
         uint256 inventoryID = ECSLib.getUint("Inventory", _productionID);
         ECSLib.setUint("Amount", inventoryID, ECSLib.getUint("Amount", inventoryID) + ECSLib.getUint("Amount", _productionID));
@@ -616,19 +644,34 @@ contract GameFacet is UseStorage {
         uint256[] memory _templateIDs,
         uint256[] memory _amounts
     ) external returns (uint256) {
+
+        console.log("organize army");
         // Basic checks
         GameLib.validEntityCheck(_cityID);
         GameLib.ongoingGameCheck();
         GameLib.activePlayerCheck(msg.sender);
         GameLib.entityOwnershipCheck(_cityID, msg.sender);
+        console.log("player armies");
+        console.log(GameLib.getPlayerArmies(GameLib.getPlayer(msg.sender)).length);
+        console.log("gs().worldConstants.maxArmyCountPerPlayer");
+        console.log(gs().worldConstants.maxArmyCountPerPlayer);
         require(GameLib.getPlayerArmies(GameLib.getPlayer(msg.sender)).length < gs().worldConstants.maxArmyCountPerPlayer, "CURIO: Army max count reached");
+
 
         // Verify there is no army currently at the city center
         Position memory midPosition = GameLib.getMidPositionFromTilePosition(ECSLib.getPosition("StartPosition", _cityID));
+        console.log("mid position");
+        console.log(midPosition.x);
+        console.log(midPosition.y);
+
         require(GameLib.getArmyAt(midPosition) == NULL, "CURIO: Occupied by another army");
 
         // Verify that total troop amount does not exceed max troop count
         uint256 maxTroopCountPerArmy = GameLib.getConstant("Army", "Troop", "Amount", "", ECSLib.getUint("Level", GameLib.getCityCenter(_cityID)));
+        
+        console.log("max troop count per army:");
+        console.log(maxTroopCountPerArmy);
+        
         require(GameLib.sum(_amounts) <= maxTroopCountPerArmy, "CURIO: Troop amount exceeds capacity");
 
         // Gather army traits from individual troop types
@@ -643,8 +686,12 @@ contract GameFacet is UseStorage {
 
             for (uint256 i = 0; i < _templateIDs.length; i++) {
                 uint256 inventoryID = GameLib.getInventory(_cityID, _templateIDs[i]);
+
+                console.log(ECSLib.getUint("Amount", inventoryID));
+                console.log("amount :",_amounts[i]);
                 require(ECSLib.getUint("Amount", inventoryID) >= _amounts[i], "CURIO: Not enough troops");
 
+                
                 speed += ECSLib.getUint("Speed", _templateIDs[i]) * _amounts[i];
                 load += ECSLib.getUint("Load", _templateIDs[i]) * _amounts[i];
                 ECSLib.setUint("Amount", inventoryID, ECSLib.getUint("Amount", inventoryID) - _amounts[i]);
@@ -699,8 +746,13 @@ contract GameFacet is UseStorage {
      * @param _targetID target entity
      */
     function battle(uint256 _armyID, uint256 _targetID) external {
+
+        console.log("function battle");
+        console.log(_armyID);
         // Basic checks
         GameLib.validEntityCheck(_armyID);
+
+        console.log(_targetID);
         GameLib.validEntityCheck(_targetID);
         GameLib.ongoingGameCheck();
         GameLib.activePlayerCheck(msg.sender);
@@ -743,6 +795,8 @@ contract GameFacet is UseStorage {
 
     function _battleTile(uint256 _armyID, uint256 _tileID) private {
         // Verify that army and tile are adjacent
+
+
         require(
             GameLib.euclidean(ECSLib.getPosition("Position", _armyID), GameLib.getMidPositionFromTilePosition(ECSLib.getPosition("StartPosition", _tileID))) <= ECSLib.getUint("AttackRange", _armyID), //
             "CURIO: Attack not within range"
