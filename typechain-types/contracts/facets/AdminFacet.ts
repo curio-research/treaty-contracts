@@ -46,6 +46,7 @@ export type ComponentSpecStructOutput = [string, number] & {
 export interface AdminFacetInterface extends utils.Interface {
   functions: {
     "addEntity()": FunctionFragment;
+    "addGame()": FunctionFragment;
     "addGameParameter(string,uint256)": FunctionFragment;
     "addResourceTemplate(string)": FunctionFragment;
     "addTroopTemplate(string,uint256,uint256,uint256,uint256,uint256,uint256,uint256)": FunctionFragment;
@@ -68,6 +69,7 @@ export interface AdminFacetInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "addEntity"
+      | "addGame"
       | "addGameParameter"
       | "addResourceTemplate"
       | "addTroopTemplate"
@@ -88,6 +90,7 @@ export interface AdminFacetInterface extends utils.Interface {
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "addEntity", values?: undefined): string;
+  encodeFunctionData(functionFragment: "addGame", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "addGameParameter",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
@@ -172,6 +175,7 @@ export interface AdminFacetInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(functionFragment: "addEntity", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "addGame", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "addGameParameter",
     data: BytesLike
@@ -266,6 +270,10 @@ export interface AdminFacet extends BaseContract {
 
   functions: {
     addEntity(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    addGame(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -376,6 +384,10 @@ export interface AdminFacet extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  addGame(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   addGameParameter(
     _identifier: PromiseOrValue<string>,
     _value: PromiseOrValue<BigNumberish>,
@@ -480,6 +492,8 @@ export interface AdminFacet extends BaseContract {
 
   callStatic: {
     addEntity(overrides?: CallOverrides): Promise<BigNumber>;
+
+    addGame(overrides?: CallOverrides): Promise<void>;
 
     addGameParameter(
       _identifier: PromiseOrValue<string>,
@@ -589,6 +603,10 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    addGame(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     addGameParameter(
       _identifier: PromiseOrValue<string>,
       _value: PromiseOrValue<BigNumberish>,
@@ -694,6 +712,10 @@ export interface AdminFacet extends BaseContract {
 
   populateTransaction: {
     addEntity(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    addGame(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

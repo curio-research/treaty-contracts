@@ -21,6 +21,13 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "addGame",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "string",
@@ -591,6 +598,11 @@ const _abi = [
     ],
     stateMutability: "view",
     type: "function",
+  },
+  {
+    inputs: [],
+    name: "UpgradeUnfinished",
+    type: "error",
   },
   {
     inputs: [
