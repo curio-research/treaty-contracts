@@ -3,14 +3,14 @@
 -----------------
 barbarian_reward_to_cost_coefficient: 4
 barbarian_to_army_difficulty_constant: 40
-base_troop_training_in_seconds: 0.3
-building_upgrade_cooldown_ratio: 10
-chaos_period_in_seconds: 100
+base_troop_training_in_seconds: 0.4
+building_upgrade_cooldown_ratio: 15
+chaos_period_in_seconds: 120
 city_center_level_to_building_level: 3
 city_center_migration_cooldown_ratio: 15
-expected_play_time_in_hour: 0.5
-expected_player_count: 3
-gather_rate_to_resource_rate: 40
+expected_play_time_in_hour: 1
+expected_player_count: 10
+gather_rate_to_resource_rate: 50
 init_player_farm_count: 1
 init_player_goldmine_count: 1
 init_player_tile_count: 1
@@ -22,145 +22,145 @@ resource_weight_high: 5
 resource_weight_light: 1
 resource_weight_low: 3
 resource_weight_medium: 4
-super_tile_init_time_in_hour: 0.5
+super_tile_init_time_in_hour: 0
 tile_to_barbarian_strength_ratio: 1.5
-tile_troop_discount: 0.4
-total_tile_count: 36
+tile_troop_discount: 0.5
+total_tile_count: 196
 upgrade_time_to_expected_play_time_ratio: 0.3333333333333333
 -----------------
 ** Goldmine Stats **
 -----------------
 Building Level: 1
 -----------------
-Gold Yield Per Hour: 2008
+Gold Yield Per Hour: 2678
 Food Yield Per Hour: 0
-Gold Cap: 502.0
+Gold Cap: 669.5
 Food Cap: 0.0
-Gold Cost to Upgrade: 2.249903212404233
-Food Cost to Upgrade: 0.42185685232579373
+Gold Cost to Upgrade: 6.001235859381013
+Food Cost to Upgrade: 1.12523172363394
 -----------------
 Building Level: 2
 -----------------
-Gold Yield Per Hour: 2597
+Gold Yield Per Hour: 3463
 Food Yield Per Hour: 0
-Gold Cap: 649.25
+Gold Cap: 865.75
 Food Cap: 0.0
-Gold Cost to Upgrade: 4.999445767638322
-Food Cost to Upgrade: 0.9373960814321854
+Gold Cost to Upgrade: 13.33313877037467
+Food Cost to Upgrade: 2.4999635194452505
 -----------------
 Building Level: 3
 -----------------
-Gold Yield Per Hour: 3043
+Gold Yield Per Hour: 4058
 Food Yield Per Hour: 0
-Gold Cap: 760.75
+Gold Cap: 1014.5
 Food Cap: 0.0
-Gold Cost to Upgrade: 8.702720112275069
-Food Cost to Upgrade: 1.6317600210515755
+Gold Cost to Upgrade: 23.21106685219338
+Food Cost to Upgrade: 4.3520750347862585
 -----------------
 Building Level: 4
 -----------------
-Gold Yield Per Hour: 3402
+Gold Yield Per Hour: 4537
 Food Yield Per Hour: 0
-Gold Cap: 850.5
+Gold Cap: 1134.25
 Food Cap: 0.0
-Gold Cost to Upgrade: 13.424399568650388
-Food Cost to Upgrade: 2.517074919121948
+Gold Cost to Upgrade: 35.80629091297285
+Food Cost to Upgrade: 6.713679546182409
 -----------------
 Building Level: 5
 -----------------
-Gold Yield Per Hour: 3703
+Gold Yield Per Hour: 4938
 Food Yield Per Hour: 0
-Gold Cap: 925.75
+Gold Cap: 1234.5
 Food Cap: 0.0
-Gold Cost to Upgrade: 19.284926166702455
-Food Cost to Upgrade: 3.6159236562567103
+Gold Cost to Upgrade: 51.433413670632845
+Food Cost to Upgrade: 9.64376506324366
 -----------------
 Building Level: 6
 -----------------
-Gold Yield Per Hour: 3962
+Gold Yield Per Hour: 5282
 Food Yield Per Hour: 0
-Gold Cap: 990.5
+Gold Cap: 1320.5
 Food Cap: 0.0
-Gold Cost to Upgrade: 26.44248388472798
-Food Cost to Upgrade: 4.957965728386497
+Gold Cost to Upgrade: 70.50439166033982
+Food Cost to Upgrade: 13.219573436313716
 -----------------
 Building Level: 7
 -----------------
-Gold Yield Per Hour: 4189
+Gold Yield Per Hour: 5585
 Food Yield Per Hour: 0
-Gold Cap: 1047.25
+Gold Cap: 1396.25
 Food Cap: 0.0
-Gold Cost to Upgrade: 35.092906671565785
-Food Cost to Upgrade: 6.579920000918585
+Gold Cost to Upgrade: 93.57549952766526
+Food Cost to Upgrade: 17.545406161437235
 -----------------
 Building Level: 8
 -----------------
-Gold Yield Per Hour: 4391
+Gold Yield Per Hour: 5854
 Food Yield Per Hour: 0
-Gold Cap: 1097.75
+Gold Cap: 1463.5
 Food Cap: 0.0
-Gold Cost to Upgrade: 45.475079803589075
-Food Cost to Upgrade: 8.526577463172952
+Gold Cost to Upgrade: 121.25307090421792
+Food Cost to Upgrade: 22.73495079454086
 -----------------
 Building Level: 9
 -----------------
-Gold Yield Per Hour: 4573
+Gold Yield Per Hour: 6097
 Food Yield Per Hour: 0
-Gold Cap: 1143.25
+Gold Cap: 1524.25
 Food Cap: 0.0
-Gold Cost to Upgrade: 57.87469341021804
-Food Cost to Upgrade: 10.851505014415883
+Gold Cost to Upgrade: 154.32407860139926
+Food Cost to Upgrade: 28.935764737762362
 -----------------
 Building Level: 10
 -----------------
-Gold Yield Per Hour: 4738
+Gold Yield Per Hour: 6318
 Food Yield Per Hour: 0
-Gold Cap: 1184.5
+Gold Cap: 1579.5
 Food Cap: 0.0
-Gold Cost to Upgrade: 72.6200631637705
-Food Cost to Upgrade: 13.616261843206967
+Gold Cost to Upgrade: 193.6739379775019
+Food Cost to Upgrade: 36.313863370781604
 -----------------
 Building Level: 11
 -----------------
-Gold Yield Per Hour: 4891
+Gold Yield Per Hour: 6521
 Food Yield Per Hour: 0
-Gold Cap: 1222.75
+Gold Cap: 1630.25
 Food Cap: 0.0
-Gold Cost to Upgrade: 90.14552756845775
-Food Cost to Upgrade: 16.90228641908583
+Gold Cost to Upgrade: 240.37578624981109
+Food Cost to Upgrade: 45.07045992183958
 -----------------
 Building Level: 12
 -----------------
-Gold Yield Per Hour: 5031
+Gold Yield Per Hour: 6708
 Food Yield Per Hour: 0
-Gold Cap: 1257.75
+Gold Cap: 1677.0
 Food Cap: 0.0
-Gold Cost to Upgrade: 110.8678181082901
-Food Cost to Upgrade: 20.787715895304395
+Gold Cost to Upgrade: 295.6475149554402
+Food Cost to Upgrade: 55.43390905414504
 -----------------
 Building Level: 13
 -----------------
-Gold Yield Per Hour: 5162
+Gold Yield Per Hour: 6883
 Food Yield Per Hour: 0
-Gold Cap: 1290.5
+Gold Cap: 1720.75
 Food Cap: 0.0
-Gold Cost to Upgrade: 135.38145195682512
-Food Cost to Upgrade: 25.38402224190471
+Gold Cost to Upgrade: 361.0346895849777
+Food Cost to Upgrade: 67.69400429718331
 -----------------
 Building Level: 14
 -----------------
-Gold Yield Per Hour: 5284
+Gold Yield Per Hour: 7045
 Food Yield Per Hour: 0
-Gold Cap: 1321.0
+Gold Cap: 1761.25
 Food Cap: 0.0
-Gold Cost to Upgrade: 164.3016944809286
-Food Cost to Upgrade: 30.80656771517411
+Gold Cost to Upgrade: 438.1171224898342
+Food Cost to Upgrade: 82.14696046684391
 -----------------
 Building Level: 15
 -----------------
-Gold Yield Per Hour: 5398
+Gold Yield Per Hour: 7198
 Food Yield Per Hour: 0
-Gold Cap: 1349.5
+Gold Cap: 1799.5
 Food Cap: 0.0
 Cannot Upgrade
 -----------------
@@ -170,135 +170,135 @@ Cannot Upgrade
 Building Level: 1
 -----------------
 Gold Yield Per Hour: 0
-Food Yield Per Hour: 10712
+Food Yield Per Hour: 14282
 Gold Cap: 0.0
-Food Cap: 2678.0
-Gold Cost to Upgrade: 11.249516062021165
-Food Cost to Upgrade: 1.8951271134887402
+Food Cap: 3570.5
+Gold Cost to Upgrade: 18.00370757814304
+Food Cost to Upgrade: 5.053436414273
 -----------------
 Building Level: 2
 -----------------
 Gold Yield Per Hour: 0
-Food Yield Per Hour: 13854
+Food Yield Per Hour: 18472
 Gold Cap: 0.0
-Food Cap: 3463.5
-Gold Cost to Upgrade: 24.99722883819161
-Food Cost to Upgrade: 4.211072796436858
+Food Cap: 4618.0
+Gold Cost to Upgrade: 39.99941631112401
+Food Cost to Upgrade: 11.229527457164956
 -----------------
 Building Level: 3
 -----------------
 Gold Yield Per Hour: 0
-Food Yield Per Hour: 16233
+Food Yield Per Hour: 21644
 Gold Cap: 0.0
-Food Cap: 4058.25
-Gold Cost to Upgrade: 43.51360056137534
-Food Cost to Upgrade: 7.330262150365524
+Food Cap: 5411.0
+Gold Cost to Upgrade: 69.63320055658014
+Food Cost to Upgrade: 19.547365734308062
 -----------------
 Building Level: 4
 -----------------
 Gold Yield Per Hour: 0
-Food Yield Per Hour: 18149
+Food Yield Per Hour: 24199
 Gold Cap: 0.0
-Food Cap: 4537.25
-Gold Cost to Upgrade: 67.12199784325195
-Food Cost to Upgrade: 11.307872819615515
+Food Cap: 6049.75
+Gold Cost to Upgrade: 107.41887273891854
+Food Cost to Upgrade: 30.154742890724098
 -----------------
 Building Level: 5
 -----------------
 Gold Yield Per Hour: 0
-Food Yield Per Hour: 19752
+Food Yield Per Hour: 26337
 Gold Cap: 0.0
-Food Cap: 4938.0
-Gold Cost to Upgrade: 96.42463083351228
-Food Cost to Upgrade: 16.242130632831422
+Food Cap: 6584.25
+Gold Cost to Upgrade: 154.30024101189855
+Food Cost to Upgrade: 43.31399296039704
 -----------------
 Building Level: 6
 -----------------
 Gold Yield Per Hour: 0
-Food Yield Per Hour: 21131
+Food Yield Per Hour: 28175
 Gold Cap: 0.0
-Food Cap: 5282.75
-Gold Cost to Upgrade: 132.21241942363991
-Food Cost to Upgrade: 22.267706114728878
+Food Cap: 7043.75
+Gold Cost to Upgrade: 211.51317498101946
+Food Cost to Upgrade: 59.381252168140286
 -----------------
 Building Level: 7
 -----------------
 Gold Yield Per Hour: 0
-Food Yield Per Hour: 22341
+Food Yield Per Hour: 29788
 Gold Cap: 0.0
-Food Cap: 5585.25
-Gold Cost to Upgrade: 175.46453335782894
-Food Cost to Upgrade: 29.55148049212038
+Food Cap: 7447.0
+Gold Cost to Upgrade: 280.72649858299576
+Food Cost to Upgrade: 78.80394797898768
 -----------------
 Building Level: 8
 -----------------
 Gold Yield Per Hour: 0
-Food Yield Per Hour: 23418
+Food Yield Per Hour: 31225
 Gold Cap: 0.0
-Food Cap: 5854.5
-Gold Cost to Upgrade: 227.37539901794537
-Food Cost to Upgrade: 38.293713894705036
+Food Cap: 7806.25
+Gold Cost to Upgrade: 363.7592127126538
+Food Cost to Upgrade: 102.1198408371479
 -----------------
 Building Level: 9
 -----------------
 Gold Yield Per Hour: 0
-Food Yield Per Hour: 24390
+Food Yield Per Hour: 32520
 Gold Cap: 0.0
-Food Cap: 6097.5
-Gold Cost to Upgrade: 289.3734670510902
-Food Cost to Upgrade: 48.73791610742289
+Food Cap: 8130.0
+Gold Cost to Upgrade: 462.9722358041978
+Food Cost to Upgrade: 129.96777628646103
 -----------------
 Building Level: 10
 -----------------
 Gold Yield Per Hour: 0
-Food Yield Per Hour: 25274
+Food Yield Per Hour: 33699
 Gold Cap: 0.0
-Food Cap: 6318.5
-Gold Cost to Upgrade: 363.1003158188525
-Food Cost to Upgrade: 61.165031094659156
+Food Cap: 8424.75
+Gold Cost to Upgrade: 581.0218139325057
+Food Cost to Upgrade: 163.10836297055621
 -----------------
 Building Level: 11
 -----------------
 Gold Yield Per Hour: 0
-Food Yield Per Hour: 26085
+Food Yield Per Hour: 34781
 Gold Cap: 0.0
-Food Cap: 6521.25
-Gold Cost to Upgrade: 450.72763784228874
-Food Cost to Upgrade: 75.91105316822157
+Food Cap: 8695.25
+Gold Cost to Upgrade: 721.1273587494333
+Food Cost to Upgrade: 202.43529539918836
 -----------------
 Building Level: 12
 -----------------
 Gold Yield Per Hour: 0
-Food Yield Per Hour: 26835
+Food Yield Per Hour: 35780
 Gold Cap: 0.0
-Food Cap: 6708.75
-Gold Cost to Upgrade: 554.3390905414504
-Food Cost to Upgrade: 93.37281169180442
+Food Cap: 8945.0
+Gold Cost to Upgrade: 886.9425448663206
+Food Cost to Upgrade: 248.99416451147843
 -----------------
 Building Level: 13
 -----------------
 Gold Yield Per Hour: 0
-Food Yield Per Hour: 27532
+Food Yield Per Hour: 36709
 Gold Cap: 0.0
-Food Cap: 6883.0
-Gold Cost to Upgrade: 676.9072597841256
-Food Cost to Upgrade: 114.01095460578242
+Food Cap: 9177.25
+Gold Cost to Upgrade: 1083.104068754933
+Food Cost to Upgrade: 304.02645159259527
 -----------------
 Building Level: 14
 -----------------
 Gold Yield Per Hour: 0
-Food Yield Per Hour: 28183
+Food Yield Per Hour: 37577
 Gold Cap: 0.0
-Food Cap: 7045.75
-Gold Cost to Upgrade: 821.508472404643
-Food Cost to Upgrade: 138.36750434945642
+Food Cap: 9394.25
+Gold Cost to Upgrade: 1314.3513674695025
+Food Cost to Upgrade: 368.97673852602804
 -----------------
 Building Level: 15
 -----------------
 Gold Yield Per Hour: 0
-Food Yield Per Hour: 28793
+Food Yield Per Hour: 38391
 Gold Cap: 0.0
-Food Cap: 7198.25
+Food Cap: 9597.75
 Cannot Upgrade
 -----------------
 -----------------
@@ -306,52 +306,52 @@ Cannot Upgrade
 -----------------
 Building Level: 1
 -----------------
-Gold Yield Per Hour: 2008
-Food Yield Per Hour: 10712
-Gold Cap: 502.0
-Food Cap: 2678.0
-Gold Cost to Upgrade: 20.521382540860838
-Food Cost to Upgrade: 2.3169839658145337
+Gold Yield Per Hour: 2678
+Food Yield Per Hour: 14282
+Gold Cap: 669.5
+Food Cap: 3570.5
+Gold Cost to Upgrade: 361.0355040367097
+Food Cost to Upgrade: 6.17866813790694
 Tile Count Limit: 1
 -----------------
 Building Level: 2
 -----------------
-Gold Yield Per Hour: 2597
-Food Yield Per Hour: 13854
-Gold Cap: 649.25
-Food Cap: 3463.5
-Gold Cost to Upgrade: 41.17287000246603
-Food Cost to Upgrade: 5.1484688778690435
-Tile Count Limit: 6
+Gold Yield Per Hour: 3463
+Food Yield Per Hour: 18472
+Gold Cap: 865.75
+Food Cap: 4618.0
+Gold Cost to Upgrade: 589.8211816374496
+Food Cost to Upgrade: 13.729490976610206
+Tile Count Limit: 10
 -----------------
 Building Level: 3
 -----------------
-Gold Yield Per Hour: 3043
-Food Yield Per Hour: 16233
-Gold Cap: 760.75
-Food Cap: 4058.25
-Gold Cost to Upgrade: 68.28737094988084
-Food Cost to Upgrade: 8.9620221714171
-Tile Count Limit: 11
+Gold Yield Per Hour: 4058
+Food Yield Per Hour: 21644
+Gold Cap: 1014.5
+Food Cap: 5411.0
+Gold Cost to Upgrade: 864.3347689582474
+Food Cost to Upgrade: 23.89944076909432
+Tile Count Limit: 19
 -----------------
 Building Level: 4
 -----------------
-Gold Yield Per Hour: 3402
-Food Yield Per Hour: 18149
-Gold Cap: 850.5
-Food Cap: 4537.25
-Gold Cost to Upgrade: 102.4281525386939
-Food Cost to Upgrade: 13.824947738737462
-Tile Count Limit: 16
+Gold Yield Per Hour: 4537
+Food Yield Per Hour: 24199
+Gold Cap: 1134.25
+Food Cap: 6049.75
+Gold Cost to Upgrade: 1193.4991453692946
+Food Cost to Upgrade: 36.868422436906506
+Tile Count Limit: 28
 -----------------
 Building Level: 5
 -----------------
-Gold Yield Per Hour: 3703
-Food Yield Per Hour: 19752
-Gold Cap: 925.75
-Food Cap: 4938.0
+Gold Yield Per Hour: 4938
+Food Yield Per Hour: 26337
+Gold Cap: 1234.5
+Food Cap: 6584.25
 Cannot Upgrade
-Tile Count Limit: 21
+Tile Count Limit: 37
 -----------------
 -----------------
 ** Barbarian Stats **
@@ -359,198 +359,198 @@ Tile Count Limit: 21
 -----------------
 Barbarian Level: 1
 -----------------
-Barbarian Counts: 22.419695544865736
-Gold Reward: 63.4768684503117
-Food Reward: 89.67878217946294
+Barbarian Counts: 29.892927393154313
+Gold Reward: 84.63582460041559
+Food Reward: 119.57170957261725
 -----------------
 Barbarian Level: 2
 -----------------
-Barbarian Counts: 33.95571468625636
-Gold Reward: 156.8876421346272
-Food Reward: 135.82285874502543
+Barbarian Counts: 45.27428624834181
+Gold Reward: 209.18352284616964
+Food Reward: 181.09714499336724
 -----------------
 Barbarian Level: 3
 -----------------
-Barbarian Counts: 46.5241498554698
-Gold Reward: 308.80503636462174
-Food Reward: 186.0965994218792
+Barbarian Counts: 62.03219980729307
+Gold Reward: 411.7400484861623
+Food Reward: 248.12879922917227
 -----------------
 Barbarian Level: 4
 -----------------
-Barbarian Counts: 60.21739712444751
-Gold Reward: 536.6492421451098
-Food Reward: 240.86958849779003
+Barbarian Counts: 80.28986283259668
+Gold Reward: 715.5323228601466
+Food Reward: 321.15945133038673
 -----------------
 Barbarian Level: 5
 -----------------
-Barbarian Counts: 75.13612155154736
-Gold Reward: 862.2754909474756
-Food Reward: 300.54448620618945
+Barbarian Counts: 100.18149540206315
+Gold Reward: 1149.7006545966344
+Food Reward: 400.7259816082526
 -----------------
 Barbarian Level: 6
 -----------------
-Barbarian Counts: 91.38999721447928
-Gold Reward: 1313.0397325647086
-Food Reward: 365.5599888579171
+Barbarian Counts: 121.85332961930571
+Gold Reward: 1750.7196434196114
+Food Reward: 487.41331847722284
 -----------------
 Barbarian Level: 7
 -----------------
-Barbarian Counts: 109.09851347248805
-Gold Reward: 1923.1139469105976
-Food Reward: 436.3940538899522
+Barbarian Counts: 145.46468462998408
+Gold Reward: 2564.1519292141306
+Food Reward: 581.8587385199363
 -----------------
 Barbarian Level: 8
 -----------------
-Barbarian Counts: 128.3918533849699
-Gold Reward: 2735.108857352001
-Food Reward: 513.5674135398796
+Barbarian Counts: 171.18913784662652
+Gold Reward: 3646.811809802668
+Food Reward: 684.7565513865061
 -----------------
 Barbarian Level: 9
 -----------------
-Barbarian Counts: 149.41185074416248
-Gold Reward: 3802.075099196239
-Food Reward: 597.6474029766499
+Barbarian Counts: 199.21580099221666
+Gold Reward: 5069.433465594986
+Food Reward: 796.8632039688666
 -----------------
 Barbarian Level: 10
 -----------------
-Barbarian Counts: 172.3130327574756
-Gold Reward: 5189.970228900209
-Food Reward: 689.2521310299024
+Barbarian Counts: 229.75071034330082
+Gold Reward: 6919.9603052002785
+Food Reward: 919.0028413732033
 -----------------
 Barbarian Level: 11
 -----------------
-Barbarian Counts: 197.2637560446759
-Gold Reward: 6980.6990345325985
-Food Reward: 789.0550241787035
+Barbarian Counts: 263.01834139290116
+Gold Reward: 9307.59871271013
+Food Reward: 1052.0733655716047
 -----------------
 Barbarian Level: 12
 -----------------
-Barbarian Counts: 224.44744430113965
-Gold Reward: 9275.859282513473
-Food Reward: 897.7897772045586
+Barbarian Counts: 299.26325906818624
+Gold Reward: 12367.812376684633
+Food Reward: 1197.053036272745
 -----------------
 Barbarian Level: 13
 -----------------
-Barbarian Counts: 254.06393672577767
-Gold Reward: 12201.355362012395
-Food Reward: 1016.2557469031107
+Barbarian Counts: 338.7519156343702
+Gold Reward: 16268.473816016529
+Food Reward: 1355.0076625374809
 -----------------
 Barbarian Level: 14
 -----------------
-Barbarian Counts: 286.3309571265164
-Gold Reward: 15913.079559524958
-Food Reward: 1145.3238285060656
+Barbarian Counts: 381.7746095020219
+Gold Reward: 21217.439412699947
+Food Reward: 1527.0984380080877
 -----------------
 Barbarian Level: 15
 -----------------
-Barbarian Counts: 321.48571450337414
-Gold Reward: 20603.906500544137
-Food Reward: 1285.9428580134966
+Barbarian Counts: 428.6476193378322
+Gold Reward: 27471.875334058852
+Food Reward: 1714.590477351329
 -----------------
 ** Tile Upgrade Stats **
 -----------------
 -----------------
 Tile Level: 1
 -----------------
-Tile Guard Counts: 33.629543317298605
-Gold Cost to Upgrade: 13.274657150686771
-Food Cost to Upgrade: 212.39451441098834
+Tile Guard Counts: 44.83939108973147
+Gold Cost to Upgrade: 22.12442858447795
+Food Cost to Upgrade: 353.9908573516472
 -----------------
 Tile Level: 2
 -----------------
-Tile Guard Counts: 50.933572029384536
-Gold Cost to Upgrade: 14.462672586362439
-Food Cost to Upgrade: 231.40276138179902
+Tile Guard Counts: 67.91142937251271
+Gold Cost to Upgrade: 24.104454310604066
+Food Cost to Upgrade: 385.67126896966505
 -----------------
 Tile Level: 3
 -----------------
-Tile Guard Counts: 69.7862247832047
-Gold Cost to Upgrade: 15.757009462914693
-Food Cost to Upgrade: 252.1121514066351
+Tile Guard Counts: 93.0482997109396
+Gold Cost to Upgrade: 26.26168243819116
+Food Cost to Upgrade: 420.18691901105854
 -----------------
 Tile Level: 4
 -----------------
-Tile Guard Counts: 90.32609568667127
-Gold Cost to Upgrade: 17.167183017646533
-Food Cost to Upgrade: 274.6749282823445
+Tile Guard Counts: 120.43479424889503
+Gold Cost to Upgrade: 28.61197169607756
+Food Cost to Upgrade: 457.79154713724097
 -----------------
 Tile Level: 5
 -----------------
-Tile Guard Counts: 112.70418232732104
-Gold Cost to Upgrade: 18.703560054019057
-Food Cost to Upgrade: 299.2569608643049
+Tile Guard Counts: 150.27224310309472
+Gold Cost to Upgrade: 31.172600090031764
+Food Cost to Upgrade: 498.76160144050823
 -----------------
 Tile Level: 6
 -----------------
-Tile Guard Counts: 137.0849958217189
-Gold Cost to Upgrade: 20.37743515256442
-Food Cost to Upgrade: 326.0389624410307
+Tile Guard Counts: 182.77999442895856
+Gold Cost to Upgrade: 33.9623919209407
+Food Cost to Upgrade: 543.3982707350513
 -----------------
 Tile Level: 7
 -----------------
-Tile Guard Counts: 163.64777020873208
-Gold Cost to Upgrade: 22.20111370229438
-Food Cost to Upgrade: 355.21781923671006
+Tile Guard Counts: 218.19702694497613
+Gold Cost to Upgrade: 37.00185617049061
+Food Cost to Upgrade: 592.0296987278498
 -----------------
 Tile Level: 8
 -----------------
-Tile Guard Counts: 192.58778007745485
-Gold Cost to Upgrade: 24.18800236300465
-Food Cost to Upgrade: 387.0080378080744
+Tile Guard Counts: 256.7837067699398
+Gold Cost to Upgrade: 40.31333727167444
+Food Cost to Upgrade: 645.0133963467911
 -----------------
 Tile Level: 9
 -----------------
-Tile Guard Counts: 224.1177761162437
-Gold Cost to Upgrade: 26.35270762350342
-Food Cost to Upgrade: 421.6433219760547
+Tile Guard Counts: 298.823701488325
+Gold Cost to Upgrade: 43.92117937250572
+Food Cost to Upgrade: 702.7388699600915
 -----------------
 Tile Level: 10
 -----------------
-Tile Guard Counts: 258.4695491362134
-Gold Cost to Upgrade: 28.711143180308046
-Food Cost to Upgrade: 459.37829088492873
+Tile Guard Counts: 344.6260655149512
+Gold Cost to Upgrade: 47.85190530051335
+Food Cost to Upgrade: 765.6304848082136
 -----------------
 Tile Level: 11
 -----------------
-Tile Guard Counts: 295.8956340670138
-Gold Cost to Upgrade: 31.28064692619844
-Food Cost to Upgrade: 500.49035081917503
+Tile Guard Counts: 394.5275120893517
+Gold Cost to Upgrade: 52.13441154366407
+Food Cost to Upgrade: 834.1505846986252
 -----------------
 Tile Level: 12
 -----------------
-Tile Guard Counts: 336.6711664517095
-Gold Cost to Upgrade: 34.08010840866107
-Food Cost to Upgrade: 545.2817345385771
+Tile Guard Counts: 448.89488860227937
+Gold Cost to Upgrade: 56.80018068110181
+Food Cost to Upgrade: 908.8028908976289
 -----------------
 Tile Level: 13
 -----------------
-Tile Guard Counts: 381.0959050886665
-Gold Cost to Upgrade: 37.13010769522605
-Food Cost to Upgrade: 594.0817231236168
+Tile Guard Counts: 508.12787345155533
+Gold Cost to Upgrade: 61.88351282537673
+Food Cost to Upgrade: 990.1362052060276
 -----------------
 Tile Level: 14
 -----------------
-Tile Guard Counts: 429.4964356897746
-Gold Cost to Upgrade: 40.4530666665579
-Food Cost to Upgrade: 647.2490666649264
+Tile Guard Counts: 572.6619142530328
+Gold Cost to Upgrade: 67.42177777759653
+Food Cost to Upgrade: 1078.7484444415445
 -----------------
 Tile Level: 15
 -----------------
-Tile Guard Counts: 482.22857175506124
+Tile Guard Counts: 642.9714290067484
 Cannot Upgrade
 -----------------
 Gather Stats
 -----------------
-Gold Hourly Gather Rate Per Army: 8584.0
-Food Hourly Gather Rate Per Army: 77267.25
-Resource Load per Troop: 9.097671926489458
+Gold Hourly Gather Rate Per Army: 20602.8
+Food Hourly Gather Rate Per Army: 185445.44999999998
+Resource Load per Troop: 9.097922910596898
 -----------------
 TroopSize Stats
 -----------------
-City Center Level (1) TroopSize: 116.31037463867452
-City Center Level (2) TroopSize: 228.4749930361982
-City Center Level (3) TroopSize: 373.5296268604062
-City Center Level (4) TroopSize: 561.1186107528491
-City Center Level (5) TroopSize: 803.7142862584353
+City Center Level (1) TroopSize: 155.08049951823267
+City Center Level (2) TroopSize: 304.6333240482643
+City Center Level (3) TroopSize: 498.0395024805416
+City Center Level (4) TroopSize: 748.1581476704656
+City Center Level (5) TroopSize: 1071.6190483445805
 Troop Gold Cost: 1
 Troop Food Cost: 16
