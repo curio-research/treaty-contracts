@@ -134,6 +134,7 @@ export declare namespace IDiamondLoupe {
 export interface CurioInterface extends utils.Interface {
   functions: {
     "addEntity()": FunctionFragment;
+    "addGame()": FunctionFragment;
     "addGameParameter(string,uint256)": FunctionFragment;
     "addResourceTemplate(string)": FunctionFragment;
     "addTroopTemplate(string,uint256,uint256,uint256,uint256,uint256,uint256,uint256)": FunctionFragment;
@@ -231,6 +232,7 @@ export interface CurioInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "addEntity"
+      | "addGame"
       | "addGameParameter"
       | "addResourceTemplate"
       | "addTroopTemplate"
@@ -326,6 +328,7 @@ export interface CurioInterface extends utils.Interface {
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "addEntity", values?: undefined): string;
+  encodeFunctionData(functionFragment: "addGame", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "addGameParameter",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
@@ -721,6 +724,7 @@ export interface CurioInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(functionFragment: "addEntity", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "addGame", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "addGameParameter",
     data: BytesLike
@@ -1151,6 +1155,10 @@ export interface Curio extends BaseContract {
 
   functions: {
     addEntity(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    addGame(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1650,6 +1658,10 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  addGame(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   addGameParameter(
     _identifier: PromiseOrValue<string>,
     _value: PromiseOrValue<BigNumberish>,
@@ -2135,6 +2147,8 @@ export interface Curio extends BaseContract {
 
   callStatic: {
     addEntity(overrides?: CallOverrides): Promise<BigNumber>;
+
+    addGame(overrides?: CallOverrides): Promise<void>;
 
     addGameParameter(
       _identifier: PromiseOrValue<string>,
@@ -2679,6 +2693,10 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    addGame(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     addGameParameter(
       _identifier: PromiseOrValue<string>,
       _value: PromiseOrValue<BigNumberish>,
@@ -3163,6 +3181,10 @@ export interface Curio extends BaseContract {
 
   populateTransaction: {
     addEntity(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    addGame(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

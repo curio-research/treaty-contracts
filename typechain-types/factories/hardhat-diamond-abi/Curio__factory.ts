@@ -21,6 +21,13 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "addGame",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "string",
