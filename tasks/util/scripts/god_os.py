@@ -467,10 +467,10 @@ class Game:
 
     def __init__(self, mode: GameMode) -> None:
         if mode == GameMode.THREE_PLAYER_SHORT_TEST:
-            self.total_tile_count = 9*9
+            self.total_tile_count = 6*6
             self.expected_player_count = 3
             self.init_player_tile_count = 1
-            self.expected_play_time_in_hour = 1
+            self.expected_play_time_in_hour = 0.5
             self.upgrade_time_to_expected_play_time_ratio = 1/3
             self.init_player_goldmine_count = 1
             self.init_player_farm_count = 1
