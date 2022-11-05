@@ -936,16 +936,16 @@ contract GameFacet is UseStorage {
             ECSLib.setUint("Amount", inventoryID, balance - cost);
         }
 
-        //  note: harvestResource function / this paragraph reaches gas limit here
-        {
-            uint256 harvestRate = GameLib.getConstant(subject, ECSLib.getString("InventoryType", ECSLib.getUint("Template", _resourceID)), "Yield", "", resourceLevel);
-            uint256 harvestAmount = (block.timestamp - ECSLib.getUint("LastTimestamp", _resourceID)) * harvestRate;
-            harvestAmount = GameLib.min(ECSLib.getUint("Load", _resourceID), harvestAmount);
-            uint256 cityInventoryID = GameLib.getInventory(ECSLib.getUint("City", _resourceID), ECSLib.getUint("Template", _resourceID));
-            uint256 newCityResourceAmount = ECSLib.getUint("Amount", cityInventoryID) + harvestAmount;
-            newCityResourceAmount = GameLib.min(ECSLib.getUint("Load", cityInventoryID), newCityResourceAmount);
-            ECSLib.setUint("Amount", cityInventoryID, newCityResourceAmount);
-        }
+        // //  note: harvestResource function / this paragraph reaches gas limit here
+        // {
+        //     uint256 harvestRate = GameLib.getConstant(subject, ECSLib.getString("InventoryType", ECSLib.getUint("Template", _resourceID)), "Yield", "", resourceLevel);
+        //     uint256 harvestAmount = (block.timestamp - ECSLib.getUint("LastTimestamp", _resourceID)) * harvestRate;
+        //     harvestAmount = GameLib.min(ECSLib.getUint("Load", _resourceID), harvestAmount);
+        //     uint256 cityInventoryID = GameLib.getInventory(ECSLib.getUint("City", _resourceID), ECSLib.getUint("Template", _resourceID));
+        //     uint256 newCityResourceAmount = ECSLib.getUint("Amount", cityInventoryID) + harvestAmount;
+        //     newCityResourceAmount = GameLib.min(ECSLib.getUint("Load", cityInventoryID), newCityResourceAmount);
+        //     ECSLib.setUint("Amount", cityInventoryID, newCityResourceAmount);
+        // }
 
         // Set load
         uint256 newLoad = GameLib.getConstant(subject, ECSLib.getString("InventoryType", ECSLib.getUint("Template", _resourceID)), "Load", "", resourceLevel + 1);
