@@ -608,7 +608,8 @@ library GameLib {
     }
 
     function getMapCenterTilePosition() internal view returns (Position memory) {
-        return Position({x: gs().worldConstants.worldWidth / 2, y: gs().worldConstants.worldHeight / 2});
+        uint256 tileWidth = gs().worldConstants.tileWidth;
+        return Position({x: (gs().worldConstants.worldWidth / tileWidth / 2) * tileWidth, y: (gs().worldConstants.worldHeight / tileWidth / 2) * tileWidth});
     }
 
     // ----------------------------------------------------------

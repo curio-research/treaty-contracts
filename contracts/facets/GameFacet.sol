@@ -323,18 +323,14 @@ contract GameFacet is UseStorage {
             ECSLib.setUint("Load", _buildingID, newLoad);
         }
 
-        console.log(ECSLib.getUint("LastTimestamp", _buildingID));
-
         // Harvest Existing Resources
         harvestResourcesFromCity(_buildingID);
-        console.log(ECSLib.getUint("LastTimestamp", _buildingID));
 
         // Set timestamp
         ECSLib.setUint("LastUpgraded", _buildingID, block.timestamp);
 
         // Update timestamp to when it's gonna finish upgrade
         // ECSLib.setUint("LastTimestamp", _buildingID, block.timestamp + GameLib.getConstant("City Center", "", "Cooldown", "Upgrade", centerLevel)); // FIXME
-        console.log(ECSLib.getUint("LastTimestamp", _buildingID));
 
         // Set new level
         ECSLib.setUint("Level", _buildingID, centerLevel + 1);
