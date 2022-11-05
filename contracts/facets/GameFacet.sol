@@ -901,6 +901,65 @@ contract GameFacet is UseStorage {
     }
 
     function upgradeResource(uint256 _resourceID) public {
+        // GameLib.validEntityCheck(_resourceID);
+        // GameLib.ongoingGameCheck();
+        // GameLib.activePlayerCheck(msg.sender);
+
+        // {
+        //     // Tile needs to be yours
+        //     uint256 tileID = GameLib.getTileAt(ECSLib.getPosition("StartPosition", _resourceID));
+        //     require(ECSLib.getUint("Owner", tileID) == GameLib.getPlayer(msg.sender), "CURIO: Tile is not yours");
+
+        //     // Check if player has reached relative max resource level
+        //     uint256 cityCenterID = GameLib.getCityCenter(ECSLib.getUint("City", tileID));
+        //     require(ECSLib.getUint("Level", _resourceID) < ECSLib.getUint("Level", cityCenterID) * gs().worldConstants.cityCenterLevelToEntityLevelRatio, "CURIO: Need to upgrade resource first");
+
+        //     // Verify that city center has recovered from sack
+        //     GameLib.cityCenterHasRecoveredFromSack(cityCenterID);
+        // }
+
+        // uint256 playerID = GameLib.getPlayer(msg.sender);
+        // uint256 resourceLevel = ECSLib.getUint("Level", _resourceID);
+
+        // // check if upgrade is in process
+        // uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
+        // string memory subject = ECSLib.getUint("Template", _resourceID) == gs().templates["Gold"] ? "Goldmine" : "Farm";
+        // uint256 lastUpgradeDuration = GameLib.getConstant(subject, "", "Cooldown", "Upgrade", resourceLevel - 1);
+        // require(block.timestamp - ECSLib.getUint("LastUpgraded", _resourceID) > lastUpgradeDuration, "CURIO: Need to finish upgrading first");
+
+        // // Deduct costs and set load
+        // for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
+        //     uint256 inventoryID = GameLib.getInventory(GameLib.getPlayerCity(playerID), resourceTemplateIDs[i]);
+        //     uint256 balance = ECSLib.getUint("Amount", inventoryID);
+        //     uint256 cost = GameLib.getConstant(subject, ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Cost", "Upgrade", resourceLevel);
+        //     require(balance >= cost, "CURIO: Insufficient balance");
+        //     ECSLib.setUint("Amount", inventoryID, balance - cost);
+        // }
+
+        // // //  note: harvestResource function / this paragraph reaches gas limit here
+        // // {
+        // //     uint256 harvestRate = GameLib.getConstant(subject, ECSLib.getString("InventoryType", ECSLib.getUint("Template", _resourceID)), "Yield", "", resourceLevel);
+        // //     uint256 harvestAmount = (block.timestamp - ECSLib.getUint("LastTimestamp", _resourceID)) * harvestRate;
+        // //     harvestAmount = GameLib.min(ECSLib.getUint("Load", _resourceID), harvestAmount);
+        // //     uint256 cityInventoryID = GameLib.getInventory(ECSLib.getUint("City", _resourceID), ECSLib.getUint("Template", _resourceID));
+        // //     uint256 newCityResourceAmount = ECSLib.getUint("Amount", cityInventoryID) + harvestAmount;
+        // //     newCityResourceAmount = GameLib.min(ECSLib.getUint("Load", cityInventoryID), newCityResourceAmount);
+        // //     ECSLib.setUint("Amount", cityInventoryID, newCityResourceAmount);
+        // // }
+
+        // // Set load
+        // uint256 newLoad = GameLib.getConstant(subject, ECSLib.getString("InventoryType", ECSLib.getUint("Template", _resourceID)), "Load", "", resourceLevel + 1);
+        // ECSLib.setUint("Load", _resourceID, newLoad);
+
+        // // Update TimeStamp to when it's gonna finish upgrade
+        // // ECSLib.setUint("LastTimestamp", _resourceID, block.timestamp + GameLib.getConstant(subject, "", "Cooldown", "Upgrade", resourceLevel));
+
+        // // Set timestamp
+        // ECSLib.setUint("LastUpgraded", _resourceID, block.timestamp);
+
+        // // Set new level
+        // ECSLib.setUint("Level", _resourceID, resourceLevel + 1);
+
         GameLib.validEntityCheck(_resourceID);
         GameLib.ongoingGameCheck();
         GameLib.activePlayerCheck(msg.sender);
@@ -910,22 +969,17 @@ contract GameFacet is UseStorage {
             uint256 tileID = GameLib.getTileAt(ECSLib.getPosition("StartPosition", _resourceID));
             require(ECSLib.getUint("Owner", tileID) == GameLib.getPlayer(msg.sender), "CURIO: Tile is not yours");
 
-            // Check if player has reached relative max resource level
+            // Check if player has reached max tile level
             uint256 cityCenterID = GameLib.getCityCenter(ECSLib.getUint("City", tileID));
             require(ECSLib.getUint("Level", _resourceID) < ECSLib.getUint("Level", cityCenterID) * gs().worldConstants.cityCenterLevelToEntityLevelRatio, "CURIO: Need to upgrade resource first");
-
-            // Verify that city center has recovered from sack
-            GameLib.cityCenterHasRecoveredFromSack(cityCenterID);
         }
-
         uint256 playerID = GameLib.getPlayer(msg.sender);
         uint256 resourceLevel = ECSLib.getUint("Level", _resourceID);
 
         // check if upgrade is in process
         uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
         string memory subject = ECSLib.getUint("Template", _resourceID) == gs().templates["Gold"] ? "Goldmine" : "Farm";
-        uint256 lastUpgradeDuration = GameLib.getConstant(subject, "", "Cooldown", "Upgrade", resourceLevel - 1);
-        require(block.timestamp - ECSLib.getUint("LastUpgraded", _resourceID) > lastUpgradeDuration, "CURIO: Need to finish upgrading first");
+        require(block.timestamp - ECSLib.getUint("LastUpgraded", _resourceID) > GameLib.getConstant(subject, "", "Cooldown", "Upgrade", resourceLevel), "CURIO: Need to finish upgrading first");
 
         // Deduct costs and set load
         for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
@@ -936,23 +990,10 @@ contract GameFacet is UseStorage {
             ECSLib.setUint("Amount", inventoryID, balance - cost);
         }
 
-        // //  note: harvestResource function / this paragraph reaches gas limit here
-        // {
-        //     uint256 harvestRate = GameLib.getConstant(subject, ECSLib.getString("InventoryType", ECSLib.getUint("Template", _resourceID)), "Yield", "", resourceLevel);
-        //     uint256 harvestAmount = (block.timestamp - ECSLib.getUint("LastTimestamp", _resourceID)) * harvestRate;
-        //     harvestAmount = GameLib.min(ECSLib.getUint("Load", _resourceID), harvestAmount);
-        //     uint256 cityInventoryID = GameLib.getInventory(ECSLib.getUint("City", _resourceID), ECSLib.getUint("Template", _resourceID));
-        //     uint256 newCityResourceAmount = ECSLib.getUint("Amount", cityInventoryID) + harvestAmount;
-        //     newCityResourceAmount = GameLib.min(ECSLib.getUint("Load", cityInventoryID), newCityResourceAmount);
-        //     ECSLib.setUint("Amount", cityInventoryID, newCityResourceAmount);
-        // }
-
         // Set load
         uint256 newLoad = GameLib.getConstant(subject, ECSLib.getString("InventoryType", ECSLib.getUint("Template", _resourceID)), "Load", "", resourceLevel + 1);
         ECSLib.setUint("Load", _resourceID, newLoad);
-
-        // Update TimeStamp to when it's gonna finish upgrade
-        // ECSLib.setUint("LastTimestamp", _resourceID, block.timestamp + GameLib.getConstant(subject, "", "Cooldown", "Upgrade", resourceLevel));
+        ECSLib.setUint("LastTimestamp", _resourceID, block.timestamp);
 
         // Set timestamp
         ECSLib.setUint("LastUpgraded", _resourceID, block.timestamp);
