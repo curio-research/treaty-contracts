@@ -19,13 +19,12 @@ class Resource(str, Enum):
 class GameMode(str, Enum):
     THREE_PLAYER_SHORT_TEST = "THREE_PLAYER_SHORT_TEST"
     TEN_PLAYER_SHORT_TEST = "TEN_PLAYER_SHORT_TEST"
-
+    FIVE_PLAYER_SHORT_TEST = "FIVE_PLAYER_SHORT_TEST"
 
 class Building(str, Enum):
     GOLDMINE = "Goldmine"
     FARM = "Farm"
     CITY_CENTER = "City Center"
-
 
 def get_hourly_gather_rate_per_army(resource_type: Resource) -> int:
     """
@@ -493,6 +492,31 @@ class Game:
         if mode == GameMode.TEN_PLAYER_SHORT_TEST:
             self.total_tile_count = 15*15
             self.expected_player_count = 10
+            self.init_player_tile_count = 1
+            self.expected_play_time_in_hour = 1
+            self.upgrade_time_to_expected_play_time_ratio = 1/3
+            self.init_player_goldmine_count = 1
+            self.init_player_farm_count = 1
+            self.player_login_interval_in_minutes = 15
+            self.max_city_center_level = 5
+            self.city_center_level_to_building_level = 3
+            self.new_player_action_in_seconds = 100
+            self.base_troop_training_in_seconds = 0.4
+            self.barbarian_reward_to_cost_coefficient = 4
+            self.tile_to_barbarian_strength_ratio = 1.5
+            self.tile_troop_discount = 0.5
+            self.barbarian_to_army_difficulty_constant = 40
+            self.gather_rate_to_resource_rate = 50
+            self.city_center_migration_cooldown_ratio = 15
+            self.building_upgrade_cooldown_ratio = 15
+            (self.resource_weight_light, self.resource_weight_low, self.resource_weight_medium,
+             self.resource_weight_high, self.resource_weight_heavy) = (1, 3, 4, 5, 16)
+            self.chaos_period_in_seconds = 120
+            self.super_tile_init_time_in_hour = 0
+
+        if mode == GameMode.FIVE_PLAYER_SHORT_TEST:
+            self.total_tile_count = 12*12
+            self.expected_player_count = 5
             self.init_player_tile_count = 1
             self.expected_play_time_in_hour = 1
             self.upgrade_time_to_expected_play_time_ratio = 1/3
