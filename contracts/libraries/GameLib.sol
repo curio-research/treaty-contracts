@@ -87,7 +87,7 @@ library GameLib {
         if (gs().worldConstants.gameMode == GameMode.BATTLE_ROYALE) {
             if (coincident(_startPosition, getMapCenterTilePosition())) {
                 // Set map center tile to SUPERTILE of land, no resources, and the top tile strength to start
-                uint256 maxTileLevel = gs().worldConstants.maxCityCenterLevel * gs().worldConstants.cityCenterLevelToEntityLevelRatio;
+                uint256 maxTileLevel = (gs().worldConstants.maxCityCenterLevel * gs().worldConstants.cityCenterLevelToEntityLevelRatio) / 2;
                 ECSLib.setUint("Terrain", tileID, 0);
                 ECSLib.setUint("Level", tileID, maxTileLevel);
 
