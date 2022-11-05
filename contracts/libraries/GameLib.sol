@@ -91,8 +91,8 @@ library GameLib {
                 ECSLib.setUint("Terrain", tileID, 0);
                 ECSLib.setUint("Level", tileID, maxTileLevel);
 
-                uint256 superTileInitTime = getConstant("SuperTile", "", "lastTimestamp", "", maxTileLevel);
-                ECSLib.setUint("LastTimestamp", tileID, superTileInitTime);
+                // uint256 superTileInitTime = getConstant("SuperTile", "", "lastTimestamp", "", maxTileLevel);
+                // ECSLib.setUint("LastTimestamp", tileID, superTileInitTime);
 
                 uint256 supertileGuardAmount = getConstant("Tile", "Guard", "Amount", "", maxTileLevel);
                 Templates.addConstituent(tileID, gs().templates["Guard"], supertileGuardAmount);
