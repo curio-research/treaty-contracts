@@ -61,7 +61,7 @@ contract AdminFacet is UseStorage {
 
     function spawnResource(Position memory _startPosition, string memory _inventoryType) external onlyAdmin {
         GameLib.initializeTile(_startPosition);
-        console.log(" spawn resource");
+        console.log(" spawn resource:",_inventoryType);
         console.log(gs().templates[_inventoryType]);
 
         Templates.addResource(gs().templates[_inventoryType], _startPosition, 0);

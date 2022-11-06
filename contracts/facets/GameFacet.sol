@@ -165,7 +165,11 @@ contract GameFacet is UseStorage {
             uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
             for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
                 string memory inventoryType = ECSLib.getString("InventoryType", resourceTemplateIDs[i]);
+                console.log("inventoryType:",inventoryType);
+
                 uint256 inventoryLoad = GameLib.getConstant("City Center", inventoryType, "Load", "", 1);
+                console.log("inventoryLoad:",inventoryLoad);
+                
                 Templates.addInventory(cityID, resourceTemplateIDs[i], inventoryLoad, inventoryLoad, true);
             }
         }
@@ -248,6 +252,9 @@ contract GameFacet is UseStorage {
     }
 
     function upgradeTile(uint256 _tileID) external {
+
+        console.log("FUNCTION upgrade tile");
+
         // Basic checks
         GameLib.validEntityCheck(_tileID);
         GameLib.ongoingGameCheck();
@@ -274,6 +281,8 @@ contract GameFacet is UseStorage {
             for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
                 uint256 inventoryID = GameLib.getInventory(GameLib.getPlayerCity(playerID), resourceTemplateIDs[i]);
                 uint256 balance = ECSLib.getUint("Amount", inventoryID);
+                console.log("upgradeTile inventory type:",ECSLib.getString("InventoryType",resourceTemplateIDs[i]));
+
                 uint256 cost = GameLib.getConstant("Tile", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Cost", "Upgrade", tileLevel);
                 require(balance >= cost, "CURIO: Insufficient balance");
                 ECSLib.setUint("Amount", inventoryID, balance - cost);
@@ -746,13 +755,13 @@ contract GameFacet is UseStorage {
      * @param _targetID target entity
      */
     function battle(uint256 _armyID, uint256 _targetID) external {
+        console.log("FUNCTION battle");
 
-        console.log("function battle");
-        console.log(_armyID);
+        console.log("_armyID",_armyID);
+        console.log("_targetID",_targetID);
+
         // Basic checks
         GameLib.validEntityCheck(_armyID);
-
-        console.log(_targetID);
         GameLib.validEntityCheck(_targetID);
         GameLib.ongoingGameCheck();
         GameLib.activePlayerCheck(msg.sender);

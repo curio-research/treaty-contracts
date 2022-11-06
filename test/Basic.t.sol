@@ -12,9 +12,11 @@ contract TreatyTest is Test, DiamondDeployTest {
     function testClaimBarbarinaGather() public {
         // Pin key IDs and tile positions
         console.log("Pin key IDs and tile positions");
+        // player2Pos: (60,30)
         uint256 texasID = getter.getSettlerAt(player2Pos);
         Position memory cornTilePos = Position({x: 50, y: 40});
-        Position memory barbarinaTilePos = Position({x: 60, y: 50});
+        // Position memory barbarinaTilePos = Position({x: 60, y: 50});
+                        
         uint256 time = 2;
         vm.warp(time);
 
@@ -29,22 +31,39 @@ contract TreatyTest is Test, DiamondDeployTest {
         {
             vm.startPrank(deployer);
             admin.spawnResource(cornTilePos, "Food");
+
             // note: spawn barbarian depend on position to generate terrain==3 or ==4
             // note: if set (60,50)
             barbarinaTilePos = Position({x: 60, y: 50});
-            admin.spawnBarbarian(barbarinaTilePos, 1);
-            
-            // barbarinaTilePos = Position({x: 70, y: 50});
-            // admin.spawnBarbarian(barbarinaTilePos, 1);
-            
-            //  barbarinaTilePos = Position({x: 80, y: 50});
-            // admin.spawnBarbarian(barbarinaTilePos, 1);
-
+            //admin.spawnBarbarian(barbarinaTilePos, 1);
+    
             vm.stopPrank();
         }
-        
+
+
+
+        console.log("x:",barbarinaTilePos.x);
+        console.log("y:",barbarinaTilePos.y);
+                
         uint256 madameBarbarinaID = getter.getTileAt(barbarinaTilePos);
         assertTrue(Set(getter.getEntitiesAddr()).includes(madameBarbarinaID));
+        console.log("if have barbarian:",Set(getter.getEntitiesAddr()).includes(madameBarbarinaID));
+
+        // No files changed, compilation skipped
+        // Killed
+        // error Command failed with exit code 137.
+        // info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+        // for(uint i = barbarinaTilePos.x-10;i<=barbarinaTilePos.y+10;i++){
+        //     for(uint j = barbarinaTilePos.y-10;j<=barbarinaTilePos.y+10;i++){
+        //         Position memory pos = Position({x:i,y:j});
+        //         uint256 id  = getter.getTileAt(pos);
+        //         bool res = Set(getter.getEntitiesAddr()).includes(id);
+        //         if(res==true){
+        //             console.log('pos:',i,',',j);
+        //         }
+        //     }
+        // }
+        //return;
 
 
         // Player 2 founds city
@@ -66,11 +85,32 @@ contract TreatyTest is Test, DiamondDeployTest {
             assertEq(getter.getCityFood(texasID), 198250);
             assertEq(getter.getCityGold(texasID), 167250);
         }
+        
+        // 
+        // vm.startPrank(deployer);
+        // admin.assignResource(texasID, "Gold", 100000000);
+        // admin.assignResource(texasID, "Food", 100000000);
+        // vm.stopPrank();
+        
+        uint256 _cityID = getter.getCityAtTile(player2Pos);
+        console.log("_cityID:",_cityID);
+        uint256 _cityCenterID = getter.getCityCenter(_cityID);
+        console.log("_cityCenterID:",_cityCenterID);
 
-        vm.startPrank(deployer);
-        admin.assignResource(texasID, "Gold", 100000000);
-        admin.assignResource(texasID, "Food", 100000000);
+        for(uint i =0;i<=100;i++){
+            time += 5000;
+        vm.warp(time);
+
+        vm.startPrank(player2);
+        game.harvestResourcesFromCity(_cityCenterID);
         vm.stopPrank();
+        
+        }
+
+        console.log("City Gold after harvest:",getter.getCityGold(texasID));
+        console.log("City Food after harvest:",getter.getCityFood(texasID));
+
+        
 
         // Produce troop and organize army
         console.log("Produce troop and organize army");
@@ -79,8 +119,8 @@ contract TreatyTest is Test, DiamondDeployTest {
             texasArmyTemplateIDs[0] = horsemanTemplateID;
             texasArmyTemplateIDs[1] = warriorTemplateID;
             uint256[] memory texasArmyAmounts = new uint256[](2);
-            texasArmyAmounts[0] = 1000;
-            texasArmyAmounts[1] = 1000;
+            texasArmyAmounts[0] = 35;
+            texasArmyAmounts[1] = 35;
             // texasArmyAmounts[0] = 1;
             // texasArmyAmounts[1] = 1;
 
@@ -109,10 +149,11 @@ contract TreatyTest is Test, DiamondDeployTest {
         console.log(texasArmyID);
         // texasArmyID = getter.getArmyAt(Position({x: 55, y: 45}));
         // console.log(texasArmyID);
+        console.log("texasArmy exists:",Set(getter.getEntitiesAddr()).includes(texasArmyID));
         assertTrue(Set(getter.getEntitiesAddr()).includes(texasArmyID));
         
         madameBarbarinaID = getter.getTileAt(barbarinaTilePos);
-        console.log("check if barbarinaID exists");
+        console.log("barbarina exists:",Set(getter.getEntitiesAddr()).includes(madameBarbarinaID));
         assertTrue(Set(getter.getEntitiesAddr()).includes(madameBarbarinaID));
 
 
@@ -136,7 +177,6 @@ contract TreatyTest is Test, DiamondDeployTest {
             console.log(val);
 
 
-            //ddy: texasArmy fade away 
             while (getter.getConstituents(madameBarbarinaID).length > 0) {
                 console.log("during battle");
                 console.log(getter.getConstituents(madameBarbarinaID).length);
@@ -158,8 +198,6 @@ contract TreatyTest is Test, DiamondDeployTest {
         time += 1000;
         vm.warp(time);
 
-  
-
         // Check post condition
         console.log("Check post condition");
         console.log(getter.getCityFood(texasID));
@@ -168,7 +206,6 @@ contract TreatyTest is Test, DiamondDeployTest {
         // assertEq(getter.getCityFood(texasID), 60000);
         // assertEq(getter.getCityGold(texasID), 180000);
 
-     
         // Try claiming the barbarian in vain
         vm.startPrank(player2);
         time += 2;
@@ -277,6 +314,43 @@ contract TreatyTest is Test, DiamondDeployTest {
         admin.assignResource(moscowID, "Gold", 10000000);
         admin.assignResource(moscowID, "Food", 32000000);
         vm.stopPrank();
+
+
+        uint256 _cityID = getter.getCityAtTile(player1Pos);
+        uint256 _cityCenterID = getter.getCityCenter(_cityID);
+
+        for(uint i =0;i<=200;i++){
+            time += 5000;
+            vm.warp(time);
+
+            vm.startPrank(player1);
+            game.harvestResourcesFromCity(_cityCenterID);
+            vm.stopPrank();
+        }
+
+        console.log("City Gold after harvest:",getter.getCityGold(_cityID));
+        console.log("City Food after harvest:",getter.getCityFood(_cityID));
+        console.log("need Gold",10000000);
+        console.log("need food",32000000);
+
+        // _cityID = getter.getCityAtTile(player2Pos);
+        // _cityCenterID = getter.getCityCenter(_cityID);
+
+        //  for(uint i =0;i<=200;i++){
+        //     time += 5000;
+        //     vm.warp(time);
+
+        //     vm.startPrank(player2);
+        //     game.harvestResourcesFromCity(_cityCenterID);
+        //     vm.stopPrank();
+        // }
+
+        // console.log("City Gold after harvest:",getter.getCityGold(_cityID));
+        // console.log("City Food after harvest:",getter.getCityFood(_cityID));
+        // console.log("need Gold",10000000);
+        // console.log("need food",32000000);
+       
+
 
         // Player 1 produces troops and organizes army
         {
@@ -770,11 +844,15 @@ contract TreatyTest is Test, DiamondDeployTest {
         console.log("City Gold post Resource Upgrade:", getter.getCityGold(texasID));
         console.log("City Food post Resource Upgrade:", getter.getCityFood(texasID));
 
-        time += 5000;
+        for(uint i=0;i<=100;i++){
+            time += 5000;
         vm.warp(time);
         game.harvestResource(cornResourceID);
         console.log("City Gold after harvest:",getter.getCityGold(texasID));
         console.log("City Food after harvest:",getter.getCityFood(texasID));
+
+        }
+        
        
         // time+=500;
         // uint256 _cityID = getter.getCityAtTile(cornTilePos);
@@ -815,21 +893,64 @@ contract TreatyTest is Test, DiamondDeployTest {
             // assertEq(getter.getCityGold(texasID), _generateWorldConstants().initCityGold);
         }
 
-       
-        time += 5000;
-        vm.warp(time);
 
         uint256 _cityID = getter.getCityAtTile(player2Pos);
         console.log("_cityID:",_cityID);
         uint256 _cityCenterID = getter.getCityCenter(_cityID);
         console.log("_cityCenterID:",_cityCenterID);
+
+        for(uint i =0;i<=100;i++){
+            time += 5000;
+        vm.warp(time);
+
         vm.startPrank(player2);
         game.harvestResourcesFromCity(_cityCenterID);
         vm.stopPrank();
         console.log("City Gold after harvest:",getter.getCityGold(texasID));
         console.log("City Food after harvest:",getter.getCityFood(texasID));
+
+        }
+        
        
 
+    }
+
+    function testFoundCity() public{
+         // Pin key IDs and tile positions
+        uint256 texasID = getter.getSettlerAt(player2Pos);
+        Position memory cornTilePos = Position({x: 50, y: 40});
+        uint256 time = 2;
+        vm.warp(time);
+
+        // Spawn resource near player2's city
+        {
+            vm.startPrank(deployer);
+            admin.assignResource(texasID, "Gold", 10000000);
+            admin.assignResource(texasID, "Food", 32000000);
+            // note: spawn resource will cause error,
+            //       make getter.getResourceAtTile(cornTilePos) meet: "CURIO: Tile resource assertion failed"
+            // admin.spawnResource(cornTilePos, "Food");
+            vm.stopPrank();
+        }
+
+        // Player 2 founds city
+        {
+            Position[] memory texasTiles = new Position[](9);
+            texasTiles[0] = Position({x: 50, y: 20});
+            texasTiles[1] = Position({x: 50, y: 30});
+            texasTiles[2] = Position({x: 50, y: 40});
+            texasTiles[3] = Position({x: 60, y: 40});
+            texasTiles[4] = Position({x: 70, y: 40});
+            texasTiles[5] = Position({x: 70, y: 30});
+            texasTiles[6] = Position({x: 70, y: 20});
+            texasTiles[7] = Position({x: 60, y: 20});
+            texasTiles[8] = Position({x: 60, y: 30});
+            vm.startPrank(player2);
+            game.foundCity(texasID, texasTiles, "Lone Star Republic");
+            vm.stopPrank();
+            // assertEq(getter.getCityFood(texasID), 0);
+            // assertEq(getter.getCityGold(texasID), _generateWorldConstants().initCityGold);
+        }
     }
 
     // function testTreatyBasics() public {

@@ -54,6 +54,7 @@ contract DiamondDeployTest is Test {
     Position public player1Pos = Position({x: 60, y: 10});
     Position public player2Pos = Position({x: 60, y: 30});
     Position public player3Pos = Position({x: 50, y: 20});
+    Position public barbarinaTilePos = Position({x:60,y:50});
 
     uint256 public horsemanTemplateID;
     uint256 public warriorTemplateID;
@@ -67,6 +68,7 @@ contract DiamondDeployTest is Test {
     // we assume these two facet selectors do not change. If they do however, we should use _getSelectors
     bytes4[] OWNERSHIP_SELECTORS = [bytes4(0xf2fde38b), 0x8da5cb5b];
     bytes4[] LOUPE_SELECTORS = [bytes4(0xcdffacc6), 0x52ef6b2c, 0xadfca15e, 0x7a0ed627, 0x01ffc9a7];
+
 
     function setUp() public {
         vm.startPrank(deployer);
@@ -83,7 +85,7 @@ contract DiamondDeployTest is Test {
         adminFacet = new AdminFacet();
 
         // Prepare world constants with either `_generateNewWorldConstants()` or `fetchWorldConstants()`
-        worldConstants = _fetchWorldConstants();
+        worldConstants =  _fetchWorldConstants();
         worldConstants.worldWidth = 1000; // use deployment settings, except make map bigger
         worldConstants.worldHeight = 1000;
         worldConstants.tileWidth =10;
@@ -92,6 +94,7 @@ contract DiamondDeployTest is Test {
         // Initialize treaties
         nato = new NATO();
         console.log(">>> Treaties initialized");
+        
 
         // Fetch args from CLI craft payload for init deploy
         bytes memory initData = abi.encodeWithSelector(_getSelectors("DiamondInit")[0], worldConstants);
@@ -103,6 +106,8 @@ contract DiamondDeployTest is Test {
         cuts[4] = IDiamondCut.FacetCut({facetAddress: address(adminFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: _getSelectors("AdminFacet")});
         IDiamondCut(diamond).diamondCut(cuts, address(diamondInit), initData); // FIXME: this line is throwing "_init function reverted"
         console.log(">>> Diamond initialized");
+
+        
 
         // Assign diamond functions to corresponding facets
         getter = GetterFacet(diamond);
@@ -330,7 +335,7 @@ contract DiamondDeployTest is Test {
     }
 
     /// @dev Second way to get map: initialize a new one
-    function _generateNewMap(uint256 _width, uint256 _height) private pure returns (uint256[][] memory) {
+    function _generateNewMap(uint256 _width, uint256 _height) private view returns (uint256[][] memory) {
         uint256[] memory _plainCol = new uint256[](_height);
 
         // set individual columns
@@ -343,6 +348,8 @@ contract DiamondDeployTest is Test {
         for (uint256 x = 0; x < _width; x += 1) {
             _map[x] = _plainCol;
         }
+
+        _map[barbarinaTilePos.x][barbarinaTilePos.y] = 4;
 
         return _map;
     }
