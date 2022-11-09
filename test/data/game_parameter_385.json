@@ -1,8 +1,8 @@
 {
     "componentName": "Cooldown",
-    "functionName": "Upgrade",
-    "level": 11,
+    "functionName": "Recover",
+    "level": 9,
     "object": "",
     "subject": "Tile",
-    "value": 47
+    "value": 119
 }

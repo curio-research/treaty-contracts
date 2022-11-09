@@ -14,8 +14,8 @@ export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 // ----------------------------------------------------------
 
 export const MAP_INPUT: MapInput = {
-  width: 11,
-  height: 11,
+  width: 15,
+  height: 15,
 };
 
 export const TILE_WIDTH = 5;
@@ -34,7 +34,7 @@ export const generateWorldConstants = (adminAddr: string): any => {
     maxCityCountPerPlayer: 3,
     maxArmyCountPerPlayer: 2,
     maxPlayerCount: 20,
-    gameMode: GameMode.REGULAR,
+    gameMode: GameMode.BATTLE_ROYALE,
     gameLengthInSeconds: 2000000000,
     // generated constants
     ...worldConstants,

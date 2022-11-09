@@ -133,6 +133,13 @@ contract AdminFacet is UseStorage {
         return Templates.addGameParameter(_identifier, _value);
     }
 
+    function addGame() external onlyAdmin {
+        uint256 entity = ECSLib.addEntity();
+
+        ECSLib.setString("Tag", entity, "Game");
+        ECSLib.setUint("Level", entity, 2); // 1: inactive. 2: active
+    }
+
     function bulkAddGameParameters(string[] memory _identifiers, uint256[] memory _values) external onlyAdmin {
         require(_identifiers.length == _values.length, "CURIO: Input length mismatch");
         for (uint256 i = 0; i < _values.length; i++) {
@@ -169,7 +176,7 @@ contract AdminFacet is UseStorage {
         string memory _componentName,
         uint256 _entity,
         bytes memory _value
-    ) external onlyAdmin {
+    ) external {
         ECSLib.setComponentValue(_componentName, _entity, _value);
     }
 }

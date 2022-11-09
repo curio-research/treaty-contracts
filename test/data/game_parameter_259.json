@@ -1,8 +1,8 @@
 {
-    "componentName": "Yield",
-    "functionName": "",
-    "level": 3,
+    "componentName": "Cost",
+    "functionName": "Move",
+    "level": 2,
     "object": "Food",
     "subject": "City Center",
-    "value": 333
+    "value": 0
 }

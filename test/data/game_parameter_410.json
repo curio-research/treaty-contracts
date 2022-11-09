@@ -1,8 +1,8 @@
 {
-    "componentName": "Amount",
-    "functionName": "",
-    "level": 4,
-    "object": "Tile",
-    "subject": "City",
-    "value": 15
+    "componentName": "Cooldown",
+    "functionName": "Recover",
+    "level": 14,
+    "object": "",
+    "subject": "Tile",
+    "value": 229
 }

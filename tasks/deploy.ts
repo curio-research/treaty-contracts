@@ -8,7 +8,7 @@ import { confirm, deployProxy, printDivider, indexerUrlSelector, saveMapToLocal 
 import { createTemplates, generateWorldConstants, MAP_INPUT } from './util/constants';
 import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
 import { encodeTileMap, generateBlankFixmap, generateMap, initializeFixmap } from './util/mapHelper';
-import { COMPONENT_SPECS, GameConfig, TILE_TYPE, position, scaleMap, chainInfo } from 'curio-vault';
+import { COMPONENT_SPECS, GameConfig, TILE_TYPE, position, scaleMap, chainInfo, GameMode } from 'curio-vault';
 import gameConstants from './game_parameters.json';
 import * as rw from 'random-words';
 import { saveComponentsToJsonFiles, saveMapToJsonFile, saveWorldConstantsToJsonFile } from '../test/util/saveComponents';
@@ -86,6 +86,9 @@ task('deploy', 'deploy contracts')
 
       console.log(`✦ component registration took ${Math.floor(performance.now() - startTime)} ms`);
 
+      // Add game entity
+      await diamond.addGame();
+
       // Register constants
       startTime = performance.now();
       const constantUploadBatchSize = 200;
@@ -99,6 +102,7 @@ task('deploy', 'deploy contracts')
 
       // Initialize map
       startTime = performance.now();
+      if (worldConstants.gameMode == GameMode.BATTLE_ROYALE) tileMap[Math.floor(tileMap.length / 2)][Math.floor(tileMap[0].length / 2)] = TILE_TYPE.LAND;
       const encodedTileMap = encodeTileMap(tileMap, worldConstants.numInitTerrainTypes, Math.floor(200 / worldConstants.numInitTerrainTypes));
       await confirm(await diamond.storeEncodedColumnBatches(encodedTileMap), hre);
       console.log(`✦ lazy setting ${tileMap.length}x${tileMap[0].length} map took ${Math.floor(performance.now() - startTime)} ms`);

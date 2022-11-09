@@ -1,8 +1,8 @@
 {
-    "componentName": "Cost",
-    "functionName": "Upgrade",
+    "componentName": "Yield",
+    "functionName": "",
     "level": 4,
     "object": "Gold",
     "subject": "City Center",
-    "value": 35854
+    "value": 1260
 }

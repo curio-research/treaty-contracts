@@ -70,7 +70,7 @@ export const generateMap = (worldWidth: number, worldHeight: number, worldConsta
   let tileMap: TileMap = generateMapWithMountains({ width: worldWidth, height: worldHeight });
 
   // add gold mines and barbarians
-  const level1GoldMineDensity = 0.05;
+  const level1GoldMineDensity = 0.10;
   const level1BarbarianDensity = 0.02;
   const level2BarbarianDensity = 0.02;
   const totalTileCount = worldWidth * worldHeight;
