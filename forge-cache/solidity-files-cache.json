@@ -12,7 +12,7 @@
   },
   "files": {
     "contracts/Component.sol": {
-      "lastModificationDate": 1667293269323,
+      "lastModificationDate": 1667194483113,
       "contentHash": "d358edd51715363a84865cc279701893",
       "sourceName": "contracts/Component.sol",
       "solcConfig": {
@@ -22,8 +22,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -49,12 +48,12 @@
       "versionRequirement": "^0.8.4",
       "artifacts": {
         "Component": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "Component.sol/Component.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "Component.sol/Component.json"
         }
       }
     },
     "contracts/CurioERC20.sol": {
-      "lastModificationDate": 1667293269323,
+      "lastModificationDate": 1667324741757,
       "contentHash": "181ed0d4f7d510cc4aed46262cc77651",
       "sourceName": "contracts/CurioERC20.sol",
       "solcConfig": {
@@ -64,8 +63,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -89,12 +87,12 @@
       "versionRequirement": "^0.8.4",
       "artifacts": {
         "CurioERC20": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "CurioERC20.sol/CurioERC20.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "CurioERC20.sol/CurioERC20.json"
         }
       }
     },
     "contracts/Diamond.sol": {
-      "lastModificationDate": 1666581960971,
+      "lastModificationDate": 1665288827100,
       "contentHash": "1e162c4c7e9cd8814e6f1ec468f3bfb7",
       "sourceName": "contracts/Diamond.sol",
       "solcConfig": {
@@ -104,8 +102,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -132,12 +129,12 @@
       "versionRequirement": "^0.8.0",
       "artifacts": {
         "Diamond": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "Diamond.sol/Diamond.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "Diamond.sol/Diamond.json"
         }
       }
     },
     "contracts/Mapping.sol": {
-      "lastModificationDate": 1666581960971,
+      "lastModificationDate": 1666990663158,
       "contentHash": "04811aac85026d7704c1d8a9c09468ad",
       "sourceName": "contracts/Mapping.sol",
       "solcConfig": {
@@ -147,8 +144,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -172,12 +168,12 @@
       "versionRequirement": "^0.8.4",
       "artifacts": {
         "UintBoolMapping": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "Mapping.sol/UintBoolMapping.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "Mapping.sol/UintBoolMapping.json"
         }
       }
     },
     "contracts/NATO.sol": {
-      "lastModificationDate": 1666581960971,
+      "lastModificationDate": 1666990663159,
       "contentHash": "c6d4f2fbdfdfd05cc24842a058fc972a",
       "sourceName": "contracts/NATO.sol",
       "solcConfig": {
@@ -187,8 +183,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -212,12 +207,12 @@
       "versionRequirement": "^0.8.4",
       "artifacts": {
         "NATO": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "NATO.sol/NATO.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "NATO.sol/NATO.json"
         }
       }
     },
     "contracts/Set.sol": {
-      "lastModificationDate": 1666581960971,
+      "lastModificationDate": 1666990663159,
       "contentHash": "b978f5ba69b3acb9f8424bbe0312a512",
       "sourceName": "contracts/Set.sol",
       "solcConfig": {
@@ -227,8 +222,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -252,12 +246,12 @@
       "versionRequirement": "^0.8.4",
       "artifacts": {
         "Set": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "Set.sol/Set.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "Set.sol/Set.json"
         }
       }
     },
     "contracts/TypedComponents.sol": {
-      "lastModificationDate": 1666581960971,
+      "lastModificationDate": 1666990663159,
       "contentHash": "784c815f5c7c20df44d5463e4396354d",
       "sourceName": "contracts/TypedComponents.sol",
       "solcConfig": {
@@ -267,8 +261,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -296,31 +289,31 @@
       "versionRequirement": "^0.8.4",
       "artifacts": {
         "AddressComponent": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "TypedComponents.sol/AddressComponent.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "TypedComponents.sol/AddressComponent.json"
         },
         "BoolComponent": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "TypedComponents.sol/BoolComponent.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "TypedComponents.sol/BoolComponent.json"
         },
         "IntComponent": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "TypedComponents.sol/IntComponent.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "TypedComponents.sol/IntComponent.json"
         },
         "PositionComponent": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "TypedComponents.sol/PositionComponent.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "TypedComponents.sol/PositionComponent.json"
         },
         "StringComponent": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "TypedComponents.sol/StringComponent.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "TypedComponents.sol/StringComponent.json"
         },
         "UintArrayComponent": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "TypedComponents.sol/UintArrayComponent.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "TypedComponents.sol/UintArrayComponent.json"
         },
         "UintComponent": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "TypedComponents.sol/UintComponent.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "TypedComponents.sol/UintComponent.json"
         }
       }
     },
     "contracts/facets/AdminFacet.sol": {
-      "lastModificationDate": 1667738928527,
-      "contentHash": "b3193a5ed28b388bc540736c7a95b90a",
+      "lastModificationDate": 1667972838984,
+      "contentHash": "456dec15727d92990dccc0f514d65506",
       "sourceName": "contracts/facets/AdminFacet.sol",
       "solcConfig": {
         "settings": {
@@ -329,8 +322,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -366,12 +358,12 @@
       "versionRequirement": "^0.8.4",
       "artifacts": {
         "AdminFacet": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "AdminFacet.sol/AdminFacet.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "AdminFacet.sol/AdminFacet.json"
         }
       }
     },
     "contracts/facets/DiamondCutFacet.sol": {
-      "lastModificationDate": 1666581960971,
+      "lastModificationDate": 1665288827102,
       "contentHash": "ad746ce9d800ea0c25c48b34397c7182",
       "sourceName": "contracts/facets/DiamondCutFacet.sol",
       "solcConfig": {
@@ -381,8 +373,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -409,12 +400,12 @@
       "versionRequirement": "^0.8.0",
       "artifacts": {
         "DiamondCutFacet": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "DiamondCutFacet.sol/DiamondCutFacet.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "DiamondCutFacet.sol/DiamondCutFacet.json"
         }
       }
     },
     "contracts/facets/DiamondLoupeFacet.sol": {
-      "lastModificationDate": 1666581960971,
+      "lastModificationDate": 1665288827102,
       "contentHash": "a540c77de08e319128a4937adb8ee3f0",
       "sourceName": "contracts/facets/DiamondLoupeFacet.sol",
       "solcConfig": {
@@ -424,8 +415,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -454,13 +444,13 @@
       "versionRequirement": "^0.8.0",
       "artifacts": {
         "DiamondLoupeFacet": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "DiamondLoupeFacet.sol/DiamondLoupeFacet.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "DiamondLoupeFacet.sol/DiamondLoupeFacet.json"
         }
       }
     },
     "contracts/facets/GameFacet.sol": {
-      "lastModificationDate": 1667706218875,
-      "contentHash": "d160794794bd4163e0a9efc4ac8b44fa",
+      "lastModificationDate": 1667972705503,
+      "contentHash": "6fecbfb0313e3ebc2f2d32adab229998",
       "sourceName": "contracts/facets/GameFacet.sol",
       "solcConfig": {
         "settings": {
@@ -469,8 +459,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -506,12 +495,12 @@
       "versionRequirement": "^0.8.4",
       "artifacts": {
         "GameFacet": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "GameFacet.sol/GameFacet.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "GameFacet.sol/GameFacet.json"
         }
       }
     },
     "contracts/facets/GetterFacet.sol": {
-      "lastModificationDate": 1667306050345,
+      "lastModificationDate": 1667319728749,
       "contentHash": "7103f4d1c116ae75915de531f3b83570",
       "sourceName": "contracts/facets/GetterFacet.sol",
       "solcConfig": {
@@ -521,8 +510,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -558,12 +546,12 @@
       "versionRequirement": "^0.8.4",
       "artifacts": {
         "GetterFacet": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "GetterFacet.sol/GetterFacet.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "GetterFacet.sol/GetterFacet.json"
         }
       }
     },
     "contracts/facets/OwnershipFacet.sol": {
-      "lastModificationDate": 1666581960971,
+      "lastModificationDate": 1665288827103,
       "contentHash": "511e52e633c81449539ae2a3a978abf8",
       "sourceName": "contracts/facets/OwnershipFacet.sol",
       "solcConfig": {
@@ -573,8 +561,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -602,12 +589,12 @@
       "versionRequirement": "^0.8.0",
       "artifacts": {
         "OwnershipFacet": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "OwnershipFacet.sol/OwnershipFacet.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "OwnershipFacet.sol/OwnershipFacet.json"
         }
       }
     },
     "contracts/facets/PolicyFacet.sol": {
-      "lastModificationDate": 1667293269359,
+      "lastModificationDate": 1667319728749,
       "contentHash": "d126995a56e612ac3aef5f6550ce668f",
       "sourceName": "contracts/facets/PolicyFacet.sol",
       "solcConfig": {
@@ -617,8 +604,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -654,12 +640,12 @@
       "versionRequirement": "^0.8.4",
       "artifacts": {
         "PolicyFacet": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "PolicyFacet.sol/PolicyFacet.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "PolicyFacet.sol/PolicyFacet.json"
         }
       }
     },
     "contracts/interfaces/IDiamondCut.sol": {
-      "lastModificationDate": 1666581960971,
+      "lastModificationDate": 1665288827104,
       "contentHash": "d8b4c09443cf22718287f7f9a4a6bcb2",
       "sourceName": "contracts/interfaces/IDiamondCut.sol",
       "solcConfig": {
@@ -669,8 +655,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -694,12 +679,12 @@
       "versionRequirement": "^0.8.0",
       "artifacts": {
         "IDiamondCut": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "IDiamondCut.sol/IDiamondCut.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "IDiamondCut.sol/IDiamondCut.json"
         }
       }
     },
     "contracts/interfaces/IDiamondLoupe.sol": {
-      "lastModificationDate": 1666581960971,
+      "lastModificationDate": 1665288827104,
       "contentHash": "a471cd6a18e337530aa0fb37a1dd2294",
       "sourceName": "contracts/interfaces/IDiamondLoupe.sol",
       "solcConfig": {
@@ -709,8 +694,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -734,12 +718,12 @@
       "versionRequirement": "^0.8.0",
       "artifacts": {
         "IDiamondLoupe": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "IDiamondLoupe.sol/IDiamondLoupe.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "IDiamondLoupe.sol/IDiamondLoupe.json"
         }
       }
     },
     "contracts/interfaces/IERC165.sol": {
-      "lastModificationDate": 1666581960971,
+      "lastModificationDate": 1665288827104,
       "contentHash": "f8f9ee2c76e1678bfead7a3fad131934",
       "sourceName": "contracts/interfaces/IERC165.sol",
       "solcConfig": {
@@ -749,8 +733,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -774,12 +757,12 @@
       "versionRequirement": "^0.8.0",
       "artifacts": {
         "IERC165": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "IERC165.sol/IERC165.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "IERC165.sol/IERC165.json"
         }
       }
     },
     "contracts/interfaces/IERC173.sol": {
-      "lastModificationDate": 1666581960971,
+      "lastModificationDate": 1665288827104,
       "contentHash": "65e379207bc221335d0eedfe7b077af6",
       "sourceName": "contracts/interfaces/IERC173.sol",
       "solcConfig": {
@@ -789,8 +772,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -814,12 +796,12 @@
       "versionRequirement": "^0.8.0",
       "artifacts": {
         "IERC173": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "IERC173.sol/IERC173.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "IERC173.sol/IERC173.json"
         }
       }
     },
     "contracts/libraries/ECSLib.sol": {
-      "lastModificationDate": 1667533522473,
+      "lastModificationDate": 1667972424789,
       "contentHash": "4396411f1d93820e8df388167f52e887",
       "sourceName": "contracts/libraries/ECSLib.sol",
       "solcConfig": {
@@ -829,8 +811,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -862,13 +843,13 @@
       "versionRequirement": "^0.8.4",
       "artifacts": {
         "ECSLib": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "ECSLib.sol/ECSLib.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "ECSLib.sol/ECSLib.json"
         }
       }
     },
     "contracts/libraries/GameLib.sol": {
-      "lastModificationDate": 1667561203562,
-      "contentHash": "df84b576fa6ab1c84f705b2b030ad2d9",
+      "lastModificationDate": 1667972739921,
+      "contentHash": "23145da5598295df2f259847afbe031e",
       "sourceName": "contracts/libraries/GameLib.sol",
       "solcConfig": {
         "settings": {
@@ -877,8 +858,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -913,12 +893,12 @@
       "versionRequirement": "^0.8.4",
       "artifacts": {
         "GameLib": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "GameLib.sol/GameLib.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "GameLib.sol/GameLib.json"
         }
       }
     },
     "contracts/libraries/LibDiamond.sol": {
-      "lastModificationDate": 1666762313873,
+      "lastModificationDate": 1667428293676,
       "contentHash": "dc19813d865c86478eceb05147199488",
       "sourceName": "contracts/libraries/LibDiamond.sol",
       "solcConfig": {
@@ -928,8 +908,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -955,12 +934,12 @@
       "versionRequirement": "^0.8.0",
       "artifacts": {
         "LibDiamond": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "LibDiamond.sol/LibDiamond.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "LibDiamond.sol/LibDiamond.json"
         }
       }
     },
     "contracts/libraries/Storage.sol": {
-      "lastModificationDate": 1667292220335,
+      "lastModificationDate": 1665288827106,
       "contentHash": "1b36141f848b096102e707d476aaf9cb",
       "sourceName": "contracts/libraries/Storage.sol",
       "solcConfig": {
@@ -970,8 +949,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -997,16 +975,16 @@
       "versionRequirement": "^0.8.0",
       "artifacts": {
         "LibStorage": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "Storage.sol/LibStorage.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "Storage.sol/LibStorage.json"
         },
         "UseStorage": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "Storage.sol/UseStorage.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "Storage.sol/UseStorage.json"
         }
       }
     },
     "contracts/libraries/Templates.sol": {
-      "lastModificationDate": 1667561393199,
-      "contentHash": "120b7a15dca898200748b6c16f1b37b1",
+      "lastModificationDate": 1667972556722,
+      "contentHash": "c5e5c5a1533e7f0d8ffb2a1a0338ca19",
       "sourceName": "contracts/libraries/Templates.sol",
       "solcConfig": {
         "settings": {
@@ -1015,8 +993,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -1050,12 +1027,12 @@
       "versionRequirement": "^0.8.4",
       "artifacts": {
         "Templates": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "Templates.sol/Templates.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "Templates.sol/Templates.json"
         }
       }
     },
     "contracts/libraries/Types.sol": {
-      "lastModificationDate": 1667453677047,
+      "lastModificationDate": 1667420940442,
       "contentHash": "d22acc8376396115852d5ba57fa5648c",
       "sourceName": "contracts/libraries/Types.sol",
       "solcConfig": {
@@ -1065,8 +1042,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -1090,12 +1066,12 @@
       "versionRequirement": "^0.8.4",
       "artifacts": {
         "Types": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "Types.sol/Types.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "Types.sol/Types.json"
         }
       }
     },
     "contracts/upgradeInitializers/DiamondInit.sol": {
-      "lastModificationDate": 1667453677047,
+      "lastModificationDate": 1667420940442,
       "contentHash": "4f7a59e7c93a99a59721442e69ae4f58",
       "sourceName": "contracts/upgradeInitializers/DiamondInit.sol",
       "solcConfig": {
@@ -1105,8 +1081,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -1139,12 +1114,12 @@
       "versionRequirement": "^0.8.0",
       "artifacts": {
         "DiamondInit": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "DiamondInit.sol/DiamondInit.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "DiamondInit.sol/DiamondInit.json"
         }
       }
     },
     "lib/forge-std/lib/ds-test/src/test.sol": {
-      "lastModificationDate": 1667293269363,
+      "lastModificationDate": 1667194483117,
       "contentHash": "962996f0e05d5218857a538a62d7c47e",
       "sourceName": "lib/forge-std/lib/ds-test/src/test.sol",
       "solcConfig": {
@@ -1154,8 +1129,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -1179,12 +1153,12 @@
       "versionRequirement": ">=0.5.0",
       "artifacts": {
         "DSTest": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "test.sol/DSTest.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "test.sol/DSTest.json"
         }
       }
     },
     "lib/forge-std/src/Script.sol": {
-      "lastModificationDate": 1667293269363,
+      "lastModificationDate": 1667319728753,
       "contentHash": "571dde8775a6214a03d6772ee330ead5",
       "sourceName": "lib/forge-std/src/Script.sol",
       "solcConfig": {
@@ -1194,8 +1168,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -1224,12 +1197,12 @@
       "versionRequirement": ">=0.6.0, <0.9.0",
       "artifacts": {
         "Script": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "Script.sol/Script.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "Script.sol/Script.json"
         }
       }
     },
     "lib/forge-std/src/StdJson.sol": {
-      "lastModificationDate": 1667293269363,
+      "lastModificationDate": 1667319728753,
       "contentHash": "75c782f20a301ab9827060a03da071e4",
       "sourceName": "lib/forge-std/src/StdJson.sol",
       "solcConfig": {
@@ -1239,8 +1212,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -1266,12 +1238,12 @@
       "versionRequirement": ">=0.6.0, <0.9.0",
       "artifacts": {
         "stdJson": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "StdJson.sol/stdJson.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "StdJson.sol/stdJson.json"
         }
       }
     },
     "lib/forge-std/src/Test.sol": {
-      "lastModificationDate": 1667293269363,
+      "lastModificationDate": 1667319728753,
       "contentHash": "6cab65c53a9548c2428a10697fd06dd1",
       "sourceName": "lib/forge-std/src/Test.sol",
       "solcConfig": {
@@ -1281,8 +1253,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -1313,21 +1284,21 @@
       "versionRequirement": ">=0.6.0, <0.9.0",
       "artifacts": {
         "Test": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "Test.sol/Test.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "Test.sol/Test.json"
         },
         "stdError": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "Test.sol/stdError.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "Test.sol/stdError.json"
         },
         "stdMath": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "Test.sol/stdMath.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "Test.sol/stdMath.json"
         },
         "stdStorage": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "Test.sol/stdStorage.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "Test.sol/stdStorage.json"
         }
       }
     },
     "lib/forge-std/src/Vm.sol": {
-      "lastModificationDate": 1667293269363,
+      "lastModificationDate": 1667319728753,
       "contentHash": "bd4bde818b3c57b21e0601277b1d2dac",
       "sourceName": "lib/forge-std/src/Vm.sol",
       "solcConfig": {
@@ -1337,8 +1308,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -1362,12 +1332,12 @@
       "versionRequirement": ">=0.6.0, <0.9.0",
       "artifacts": {
         "Vm": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "Vm.sol/Vm.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "Vm.sol/Vm.json"
         }
       }
     },
     "lib/forge-std/src/console.sol": {
-      "lastModificationDate": 1667293269363,
+      "lastModificationDate": 1667194483118,
       "contentHash": "100b8a33b917da1147740d7ab8b0ded3",
       "sourceName": "lib/forge-std/src/console.sol",
       "solcConfig": {
@@ -1377,8 +1347,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -1402,12 +1371,12 @@
       "versionRequirement": ">=0.4.22, <0.9.0",
       "artifacts": {
         "console": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "console.sol/console.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "console.sol/console.json"
         }
       }
     },
     "lib/forge-std/src/console2.sol": {
-      "lastModificationDate": 1667293269363,
+      "lastModificationDate": 1667194483118,
       "contentHash": "5df91f8e93efbfcccf68973dc1b74a70",
       "sourceName": "lib/forge-std/src/console2.sol",
       "solcConfig": {
@@ -1417,8 +1386,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -1442,12 +1410,12 @@
       "versionRequirement": ">=0.4.22, <0.9.0",
       "artifacts": {
         "console2": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "console2.sol/console2.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "console2.sol/console2.json"
         }
       }
     },
     "lib/openzeppelin-contracts/contracts/utils/Strings.sol": {
-      "lastModificationDate": 1666581960987,
+      "lastModificationDate": 1665288827155,
       "contentHash": "9ba0bb93454a1ab7b6824f59ead41f42",
       "sourceName": "lib/openzeppelin-contracts/contracts/utils/Strings.sol",
       "solcConfig": {
@@ -1457,8 +1425,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -1482,13 +1449,13 @@
       "versionRequirement": "^0.8.0",
       "artifacts": {
         "Strings": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "Strings.sol/Strings.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "Strings.sol/Strings.json"
         }
       }
     },
     "test/Basic.t.sol": {
-      "lastModificationDate": 1667743665772,
-      "contentHash": "fe49f8b652dc0e656d902272cd3c823f",
+      "lastModificationDate": 1667972846828,
+      "contentHash": "5ed2b4b7c0b8d8a0360aecf6525f2030",
       "sourceName": "test/Basic.t.sol",
       "solcConfig": {
         "settings": {
@@ -1497,8 +1464,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -1555,12 +1521,12 @@
       "versionRequirement": "^0.8.4",
       "artifacts": {
         "TreatyTest": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "Basic.t.sol/TreatyTest.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "Basic.t.sol/TreatyTest.json"
         }
       }
     },
     "test/Depr.t.sol": {
-      "lastModificationDate": 1666581961007,
+      "lastModificationDate": 1666990663172,
       "contentHash": "ff7747e1ab4c86469ed2ed06c659b116",
       "sourceName": "test/Depr.t.sol",
       "solcConfig": {
@@ -1570,8 +1536,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -1628,12 +1593,12 @@
       "versionRequirement": "^0.8.4",
       "artifacts": {
         "ECS": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "Depr.t.sol/ECS.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "Depr.t.sol/ECS.json"
         }
       }
     },
     "test/DiamondDeploy.t.sol": {
-      "lastModificationDate": 1667741891117,
+      "lastModificationDate": 1667972424793,
       "contentHash": "a1f80840f1d3b909675d555aed6866be",
       "sourceName": "test/DiamondDeploy.t.sol",
       "solcConfig": {
@@ -1643,8 +1608,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -1700,12 +1664,12 @@
       "versionRequirement": "^0.8.4",
       "artifacts": {
         "DiamondDeployTest": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "DiamondDeploy.t.sol/DiamondDeployTest.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "DiamondDeploy.t.sol/DiamondDeployTest.json"
         }
       }
     },
     "test/ECS.t.sol": {
-      "lastModificationDate": 1666581961007,
+      "lastModificationDate": 1666990663172,
       "contentHash": "5af2d7a97cc40ba9eb4dc53bf9000a06",
       "sourceName": "test/ECS.t.sol",
       "solcConfig": {
@@ -1715,8 +1679,7 @@
             "runs": 200
           },
           "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
+            "bytecodeHash": "ipfs"
           },
           "outputSelection": {
             "*": {
@@ -1773,7 +1736,7 @@
       "versionRequirement": "^0.8.4",
       "artifacts": {
         "ECSTest": {
-          "0.8.4+commit.c7e474f2.Linux.gcc": "ECS.t.sol/ECSTest.json"
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "ECS.t.sol/ECSTest.json"
         }
       }
     }

@@ -7,7 +7,6 @@ import {ComponentSpec, Position, ValueType, WorldConstants} from "contracts/libr
 import {Templates} from "contracts/libraries/Templates.sol";
 import {Set} from "contracts/Set.sol";
 import {GameLib} from "contracts/libraries/GameLib.sol";
-import {console} from "forge-std/console.sol";
 
 /// @title Admin facet
 /// @notice Contains admin functions and state functions, both of which should be out of scope for players
@@ -42,36 +41,25 @@ contract AdminFacet is UseStorage {
         string memory _inventoryType,
         uint256 _amount
     ) external onlyAdmin {
-
         uint256 templateID = gs().templates[_inventoryType];
         uint256 cityInventoryID = GameLib.getInventory(_cityID, templateID);
         uint256 existingCityResource = ECSLib.getUint("Amount", cityInventoryID);
         uint256 totalAmount = GameLib.min(ECSLib.getUint("Load", cityInventoryID), _amount + existingCityResource);
 
-        console.log("admin assignResource");
-        console.log("Load:");
-        console.log(ECSLib.getUint("Load", cityInventoryID));
-        console.log(_amount);
-        console.log(existingCityResource);
-
         // ECSLib.setUint("Amount", cityInventoryID, totalAmount);
 
-        ECSLib.setUint("Amount",cityInventoryID,totalAmount);
+        ECSLib.setUint("Amount", cityInventoryID, totalAmount);
     }
 
     function spawnResource(Position memory _startPosition, string memory _inventoryType) external onlyAdmin {
-        GameLib.initializeTile(_startPosition);
-        console.log(" spawn resource:",_inventoryType);
-        console.log(gs().templates[_inventoryType]);
-
         Templates.addResource(gs().templates[_inventoryType], _startPosition, 0);
     }
 
-    function spawnBarbarian(Position memory _startPosition, uint256 _level) external onlyAdmin {
-        require(_level == 1 || _level == 2, "CURIO: Function not used correctly");
-        uint256 tileID = GameLib.initializeTile(_startPosition);
-        ECSLib.setUint("Level", tileID, _level);
-    }
+    // function spawnBarbarian(Position memory _startPosition, uint256 _level) external onlyAdmin {
+    //     require(_level == 1 || _level == 2, "CURIO: Function not used correctly");
+    //     uint256 tileID = GameLib.initializeTile(_startPosition);
+    //     ECSLib.setUint("Level", tileID, _level);
+    // }
 
     // ----------------------------------------------------------------------
     // ADMIN FUNCTIONS
