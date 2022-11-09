@@ -679,7 +679,6 @@ contract GameFacet is UseStorage {
 
         // Verify that total troop amount does not exceed max troop count
         uint256 maxTroopCountPerArmy = GameLib.getConstant("Army", "Troop", "Amount", "", ECSLib.getUint("Level", GameLib.getCityCenter(_cityID)));
-
         require(GameLib.sum(_amounts) <= maxTroopCountPerArmy, "CURIO: Troop amount exceeds capacity");
 
         // City at Chaos cannot organize an army
@@ -795,7 +794,6 @@ contract GameFacet is UseStorage {
 
     function _battleTile(uint256 _armyID, uint256 _tileID) private {
         // Verify that army and tile are adjacent
-
         require(
             GameLib.euclidean(ECSLib.getPosition("Position", _armyID), GameLib.getMidPositionFromTilePosition(ECSLib.getPosition("StartPosition", _tileID))) <= ECSLib.getUint("AttackRange", _armyID), //
             "CURIO: Attack out of range"

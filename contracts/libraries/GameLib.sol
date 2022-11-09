@@ -378,7 +378,6 @@ library GameLib {
         query[0] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode(string("Resource")));
         query[1] = ECSLib.queryChunk(QueryType.HasVal, "StartPosition", abi.encode(_startPosition));
         uint256[] memory res = ECSLib.query(query);
-
         require(res.length <= 1, "CURIO: Tile resource assertion failed");
         return res.length == 1 ? res[0] : 0;
     }

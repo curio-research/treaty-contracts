@@ -45,21 +45,12 @@ contract AdminFacet is UseStorage {
         uint256 cityInventoryID = GameLib.getInventory(_cityID, templateID);
         uint256 existingCityResource = ECSLib.getUint("Amount", cityInventoryID);
         uint256 totalAmount = GameLib.min(ECSLib.getUint("Load", cityInventoryID), _amount + existingCityResource);
-
-        // ECSLib.setUint("Amount", cityInventoryID, totalAmount);
-
         ECSLib.setUint("Amount", cityInventoryID, totalAmount);
     }
 
     function spawnResource(Position memory _startPosition, string memory _inventoryType) external onlyAdmin {
         Templates.addResource(gs().templates[_inventoryType], _startPosition, 0);
     }
-
-    // function spawnBarbarian(Position memory _startPosition, uint256 _level) external onlyAdmin {
-    //     require(_level == 1 || _level == 2, "CURIO: Function not used correctly");
-    //     uint256 tileID = GameLib.initializeTile(_startPosition);
-    //     ECSLib.setUint("Level", tileID, _level);
-    // }
 
     // ----------------------------------------------------------------------
     // ADMIN FUNCTIONS
