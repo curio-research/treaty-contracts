@@ -133,6 +133,57 @@
         }
       }
     },
+    "contracts/FoodERC20.sol": {
+      "lastModificationDate": 1667970134068,
+      "contentHash": "c21cf9e075bbe9df3a158ab3c9c4577c",
+      "sourceName": "contracts/FoodERC20.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "contracts/Component.sol",
+        "contracts/Mapping.sol",
+        "contracts/Set.sol",
+        "contracts/TypedComponents.sol",
+        "contracts/libraries/ECSLib.sol",
+        "contracts/libraries/GameLib.sol",
+        "contracts/libraries/Storage.sol",
+        "contracts/libraries/Templates.sol",
+        "contracts/libraries/Types.sol",
+        "lib/openzeppelin-contracts/contracts/utils/Strings.sol",
+        "lib/solmate/src/tokens/ERC20.sol"
+      ],
+      "versionRequirement": "^0.8.4",
+      "artifacts": {
+        "FoodERC20": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "FoodERC20.sol/FoodERC20.json"
+        }
+      }
+    },
     "contracts/Mapping.sol": {
       "lastModificationDate": 1666990663158,
       "contentHash": "04811aac85026d7704c1d8a9c09468ad",
@@ -354,7 +405,7 @@
       }
     },
     "contracts/facets/AdminFacet.sol": {
-      "lastModificationDate": 1667593517177,
+      "lastModificationDate": 1667613030882,
       "contentHash": "0e45191b9841b86cd3f3f9954f25477c",
       "sourceName": "contracts/facets/AdminFacet.sol",
       "solcConfig": {
@@ -490,7 +541,7 @@
       }
     },
     "contracts/facets/GameFacet.sol": {
-      "lastModificationDate": 1667614074184,
+      "lastModificationDate": 1667620814777,
       "contentHash": "f12d57fcde1e2bf4acf7d0f2e01d06f3",
       "sourceName": "contracts/facets/GameFacet.sol",
       "solcConfig": {
@@ -541,7 +592,7 @@
       }
     },
     "contracts/facets/GetterFacet.sol": {
-      "lastModificationDate": 1667319728749,
+      "lastModificationDate": 1667406523285,
       "contentHash": "7103f4d1c116ae75915de531f3b83570",
       "sourceName": "contracts/facets/GetterFacet.sol",
       "solcConfig": {
@@ -634,7 +685,7 @@
       }
     },
     "contracts/facets/PolicyFacet.sol": {
-      "lastModificationDate": 1667319728749,
+      "lastModificationDate": 1667406523285,
       "contentHash": "d126995a56e612ac3aef5f6550ce668f",
       "sourceName": "contracts/facets/PolicyFacet.sol",
       "solcConfig": {
@@ -886,8 +937,8 @@
       }
     },
     "contracts/libraries/GameLib.sol": {
-      "lastModificationDate": 1667615201019,
-      "contentHash": "9857118d33a6811f0d7eff28337f529d",
+      "lastModificationDate": 1667620814777,
+      "contentHash": "50241656f820315b1360372e70c315b9",
       "sourceName": "contracts/libraries/GameLib.sol",
       "solcConfig": {
         "settings": {
@@ -1537,8 +1588,47 @@
         }
       }
     },
+    "lib/solmate/src/tokens/ERC20.sol": {
+      "lastModificationDate": 1666636424824,
+      "contentHash": "0c7c7ada139062536af09d69d96d395c",
+      "sourceName": "lib/solmate/src/tokens/ERC20.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": ">=0.8.0",
+      "artifacts": {
+        "ERC20": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "ERC20.sol/ERC20.json"
+        }
+      }
+    },
     "test/Basic.t.sol": {
-      "lastModificationDate": 1667319728756,
+      "lastModificationDate": 1667406523297,
       "contentHash": "34ced3a61fe4e61ca241b9956bea2434",
       "sourceName": "test/Basic.t.sol",
       "solcConfig": {
@@ -1610,7 +1700,7 @@
       }
     },
     "test/Depr.t.sol": {
-      "lastModificationDate": 1666990663172,
+      "lastModificationDate": 1665041651044,
       "contentHash": "ff7747e1ab4c86469ed2ed06c659b116",
       "sourceName": "test/Depr.t.sol",
       "solcConfig": {
@@ -1682,7 +1772,7 @@
       }
     },
     "test/DiamondDeploy.t.sol": {
-      "lastModificationDate": 1667420940443,
+      "lastModificationDate": 1667491349045,
       "contentHash": "fd1f8a11dbb736674db567b17ad40448",
       "sourceName": "test/DiamondDeploy.t.sol",
       "solcConfig": {
@@ -1753,7 +1843,7 @@
       }
     },
     "test/ECS.t.sol": {
-      "lastModificationDate": 1666990663172,
+      "lastModificationDate": 1666133988921,
       "contentHash": "5af2d7a97cc40ba9eb4dc53bf9000a06",
       "sourceName": "test/ECS.t.sol",
       "solcConfig": {
