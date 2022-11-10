@@ -15,6 +15,7 @@ import {AdminFacet} from "contracts/facets/AdminFacet.sol";
 import {Strings} from "openzeppelin-contracts/contracts/utils/Strings.sol";
 import {ComponentSpec, GameMode, GameParamSpec, Position, WorldConstants} from "contracts/libraries/Types.sol";
 import {NATO} from "contracts/NATO.sol";
+import {WalletHangingGarden} from "contracts/WalletHangingGarden.sol";
 import {console} from "forge-std/console.sol";
 import {stdJson} from "forge-std/StdJson.sol";
 
@@ -39,6 +40,18 @@ contract DiamondDeployTest is Test {
 
     // Treaties
     NATO public nato;
+
+    // Smart Contract Wallets;
+    WalletHangingGarden public nationWallet1;
+    WalletHangingGarden public nationWallet2;
+    WalletHangingGarden public nationWallet3;
+
+    WalletHangingGarden public armyWallet11;
+    WalletHangingGarden public armyWallet12;
+    WalletHangingGarden public armyWallet21;
+    WalletHangingGarden public armyWallet22;
+    WalletHangingGarden public armyWallet31;
+    WalletHangingGarden public armyWallet32;
 
     uint256 public NULL = 0;
     address public NULL_ADDR = address(0);
@@ -122,6 +135,8 @@ contract DiamondDeployTest is Test {
         // Note: if fetching deployed map, check for map size
         uint256[][] memory map = _generateNewMap(worldConstants.worldWidth, worldConstants.worldHeight);
         uint256[][] memory encodedColumnBatches = _encodeTileMap(map, worldConstants.numInitTerrainTypes, 200 / worldConstants.numInitTerrainTypes);
+        console.log("map Example (x = 0, y = 0): ", encodedColumnBatches[0][0]);
+        console.log("encodedColumnBatches Example (x = 0, y = 0): ", encodedColumnBatches[0][0]);
         admin.storeEncodedColumnBatches(encodedColumnBatches);
         console.log(">>> Map initialized and encoded");
 
@@ -142,6 +157,27 @@ contract DiamondDeployTest is Test {
         game.initializePlayer(player3Pos, "Cindy");
         player3Id = getter.getPlayerId(player3);
         console.log(">>> Players initialized");
+
+        address[] memory initializedOwner = new address[](1);
+
+        initializedOwner[0] = player1;
+        WalletHangingGarden nationWallet1 = new WalletHangingGarden(initializedOwner, address(gameFacet));
+        WalletHangingGarden armyWallet11 = new WalletHangingGarden(initializedOwner, address(gameFacet));
+        WalletHangingGarden armyWallet12 = new WalletHangingGarden(initializedOwner, address(gameFacet));
+
+        initializedOwner[0] = player2;
+        WalletHangingGarden nationWallet2 = new WalletHangingGarden(initializedOwner, address(gameFacet));
+        WalletHangingGarden armyWallet21 = new WalletHangingGarden(initializedOwner, address(gameFacet));
+        WalletHangingGarden armyWallet22 = new WalletHangingGarden(initializedOwner, address(gameFacet));
+
+        initializedOwner[0] = player3;
+        WalletHangingGarden nationWallet3 = new WalletHangingGarden(initializedOwner, address(gameFacet));
+        WalletHangingGarden armyWallet31 = new WalletHangingGarden(initializedOwner, address(gameFacet));
+        WalletHangingGarden armyWallet32 = new WalletHangingGarden(initializedOwner, address(gameFacet));
+
+        console.log(">>> Smart Contract Wallets initialized");
+
+
         console.log("=============== INDIVIDUAL TESTS BEGIN ================");
     }
 

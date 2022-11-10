@@ -7,7 +7,7 @@ import {ECSLib} from "contracts/libraries/ECSLib.sol";
 import {GameLib} from "contracts/libraries/GameLib.sol";
 
 contract FoodERC20 is ERC20 {
-    /// Needed functions:
+    /// Outline:
     /// - approve
     /// - transfer
     /// - transferFrom
@@ -19,7 +19,9 @@ contract FoodERC20 is ERC20 {
         string memory _name,
         string memory _symbol,
         uint8 _decimals
-    ) ERC20(_name, _symbol, _decimals) {}
+    ) ERC20(_name, _symbol, _decimals) {
+        _mint(msg.sender, 10000);
+    }
 
     function approve(address spender, uint256 amount) public override returns (bool) {
         // TODO

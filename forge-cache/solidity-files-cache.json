@@ -134,8 +134,8 @@
       }
     },
     "contracts/FoodERC20.sol": {
-      "lastModificationDate": 1667970134068,
-      "contentHash": "c21cf9e075bbe9df3a158ab3c9c4577c",
+      "lastModificationDate": 1668012501618,
+      "contentHash": "02afd90b0e487ce17467bb4b5efd21ab",
       "sourceName": "contracts/FoodERC20.sol",
       "solcConfig": {
         "settings": {
@@ -220,6 +220,45 @@
       "artifacts": {
         "UintBoolMapping": {
           "0.8.4+commit.c7e474f2.Darwin.appleclang": "Mapping.sol/UintBoolMapping.json"
+        }
+      }
+    },
+    "contracts/MultiSigWallet.sol": {
+      "lastModificationDate": 1668013830079,
+      "contentHash": "661a2a04961e01cd87530d9694d83a2f",
+      "sourceName": "contracts/MultiSigWallet.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": "^0.8.4",
+      "artifacts": {
+        "MultiSigWallet": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "MultiSigWallet.sol/MultiSigWallet.json"
         }
       }
     },
@@ -1628,7 +1667,7 @@
       }
     },
     "test/Basic.t.sol": {
-      "lastModificationDate": 1667406523297,
+      "lastModificationDate": 1668012025978,
       "contentHash": "34ced3a61fe4e61ca241b9956bea2434",
       "sourceName": "test/Basic.t.sol",
       "solcConfig": {
@@ -1772,8 +1811,8 @@
       }
     },
     "test/DiamondDeploy.t.sol": {
-      "lastModificationDate": 1667491349045,
-      "contentHash": "fd1f8a11dbb736674db567b17ad40448",
+      "lastModificationDate": 1668015584205,
+      "contentHash": "a7c5033c7bdb4b8c82f1569bcd404cf2",
       "sourceName": "test/DiamondDeploy.t.sol",
       "solcConfig": {
         "settings": {
