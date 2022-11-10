@@ -58,6 +58,11 @@ const _abi = [
         name: "_inventoryType",
         type: "string",
       },
+      {
+        internalType: "address",
+        name: "_tokenContract",
+        type: "address",
+      },
     ],
     name: "addResourceTemplate",
     outputs: [
@@ -111,6 +116,11 @@ const _abi = [
         internalType: "uint256",
         name: "_load",
         type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "_tokenContract",
+        type: "address",
       },
     ],
     name: "addTroopTemplate",

@@ -48,8 +48,8 @@ export interface AdminFacetInterface extends utils.Interface {
     "addEntity()": FunctionFragment;
     "addGame()": FunctionFragment;
     "addGameParameter(string,uint256)": FunctionFragment;
-    "addResourceTemplate(string)": FunctionFragment;
-    "addTroopTemplate(string,uint256,uint256,uint256,uint256,uint256,uint256,uint256)": FunctionFragment;
+    "addResourceTemplate(string,address)": FunctionFragment;
+    "addTroopTemplate(string,uint256,uint256,uint256,uint256,uint256,uint256,uint256,address)": FunctionFragment;
     "adminInitializeTile((uint256,uint256))": FunctionFragment;
     "assignResource(uint256,string,uint256)": FunctionFragment;
     "bulkAddGameParameters(string[],uint256[])": FunctionFragment;
@@ -97,7 +97,7 @@ export interface AdminFacetInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "addResourceTemplate",
-    values: [PromiseOrValue<string>]
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "addTroopTemplate",
@@ -109,7 +109,8 @@ export interface AdminFacetInterface extends utils.Interface {
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>
     ]
   ): string;
   encodeFunctionData(
@@ -285,6 +286,7 @@ export interface AdminFacet extends BaseContract {
 
     addResourceTemplate(
       _inventoryType: PromiseOrValue<string>,
+      _tokenContract: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -297,6 +299,7 @@ export interface AdminFacet extends BaseContract {
       _attack: PromiseOrValue<BigNumberish>,
       _defense: PromiseOrValue<BigNumberish>,
       _load: PromiseOrValue<BigNumberish>,
+      _tokenContract: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -396,6 +399,7 @@ export interface AdminFacet extends BaseContract {
 
   addResourceTemplate(
     _inventoryType: PromiseOrValue<string>,
+    _tokenContract: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -408,6 +412,7 @@ export interface AdminFacet extends BaseContract {
     _attack: PromiseOrValue<BigNumberish>,
     _defense: PromiseOrValue<BigNumberish>,
     _load: PromiseOrValue<BigNumberish>,
+    _tokenContract: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -503,6 +508,7 @@ export interface AdminFacet extends BaseContract {
 
     addResourceTemplate(
       _inventoryType: PromiseOrValue<string>,
+      _tokenContract: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -515,6 +521,7 @@ export interface AdminFacet extends BaseContract {
       _attack: PromiseOrValue<BigNumberish>,
       _defense: PromiseOrValue<BigNumberish>,
       _load: PromiseOrValue<BigNumberish>,
+      _tokenContract: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -615,6 +622,7 @@ export interface AdminFacet extends BaseContract {
 
     addResourceTemplate(
       _inventoryType: PromiseOrValue<string>,
+      _tokenContract: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -627,6 +635,7 @@ export interface AdminFacet extends BaseContract {
       _attack: PromiseOrValue<BigNumberish>,
       _defense: PromiseOrValue<BigNumberish>,
       _load: PromiseOrValue<BigNumberish>,
+      _tokenContract: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -727,6 +736,7 @@ export interface AdminFacet extends BaseContract {
 
     addResourceTemplate(
       _inventoryType: PromiseOrValue<string>,
+      _tokenContract: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -739,6 +749,7 @@ export interface AdminFacet extends BaseContract {
       _attack: PromiseOrValue<BigNumberish>,
       _defense: PromiseOrValue<BigNumberish>,
       _load: PromiseOrValue<BigNumberish>,
+      _tokenContract: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

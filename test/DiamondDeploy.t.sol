@@ -15,6 +15,12 @@ import {AdminFacet} from "contracts/facets/AdminFacet.sol";
 import {Strings} from "openzeppelin-contracts/contracts/utils/Strings.sol";
 import {ComponentSpec, GameMode, GameParamSpec, Position, WorldConstants} from "contracts/libraries/Types.sol";
 import {NATO} from "contracts/NATO.sol";
+import {FoodERC20} from "contracts/tokens/FoodERC20.sol";
+import {GoldERC20} from "contracts/tokens/GoldERC20.sol";
+import {HorsemanERC20} from "contracts/tokens/HorsemanERC20.sol";
+import {SlingerERC20} from "contracts/tokens/SlingerERC20.sol";
+import {WarriarERC20} from "contracts/tokens/WarriarERC20.sol";
+
 import {WalletHangingGarden} from "contracts/WalletHangingGarden.sol";
 import {console} from "forge-std/console.sol";
 import {stdJson} from "forge-std/StdJson.sol";
@@ -52,6 +58,13 @@ contract DiamondDeployTest is Test {
     WalletHangingGarden public armyWallet22;
     WalletHangingGarden public armyWallet31;
     WalletHangingGarden public armyWallet32;
+
+    // Tokens
+    FoodERC20 public foodContract;
+    GoldERC20 public goldContract;
+    HorsemanERC20 public horsemanContract;
+    SlingerERC20 public slingerContract;
+    WarriorERC20 public warriorContract;
 
     uint256 public NULL = 0;
     address public NULL_ADDR = address(0);
@@ -101,10 +114,6 @@ contract DiamondDeployTest is Test {
         worldConstants.worldHeight = 1000;
         console.log(">>> World constants ready");
 
-        // Initialize treaties
-        nato = new NATO();
-        console.log(">>> Treaties initialized");
-
         // Fetch args from CLI craft payload for init deploy
         bytes memory initData = abi.encodeWithSelector(_getSelectors("DiamondInit")[0], worldConstants);
         IDiamondCut.FacetCut[] memory cuts = new IDiamondCut.FacetCut[](5);
@@ -140,6 +149,19 @@ contract DiamondDeployTest is Test {
         admin.storeEncodedColumnBatches(encodedColumnBatches);
         console.log(">>> Map initialized and encoded");
 
+        // Initialize treaties
+        nato = new NATO();
+        console.log(">>> Treaties initialized");
+
+        // Deploy Token Contracts
+        foodContract = new FoodERC20("Food", "FOOD", 1, deployer);
+        goldContract = new GoldERC20("Gold", "GOLD", 1, deployer);
+        // note: consider switching to erc1155
+        horsemanContract = new HorsemanERC20("Horseman", "HORSEMAN", 1, deployer);
+        warriorContract = new WarriorERC20("Warrior", "WARRIOR", 1, deployer);
+        slingerContract = new SlingerERC20("Slinger", "SLINGER", 1, deployer);
+        guardContract = new GuardERC20("Guard", "GUARD", 1, deployer);
+
         // Create templates
         _createTemplates();
         console.log(">>> Templates created");
@@ -160,6 +182,7 @@ contract DiamondDeployTest is Test {
 
         address[] memory initializedOwner = new address[](1);
 
+        // Deploy Smart Contract Wallets
         initializedOwner[0] = player1;
         WalletHangingGarden nationWallet1 = new WalletHangingGarden(initializedOwner, address(gameFacet));
         WalletHangingGarden armyWallet11 = new WalletHangingGarden(initializedOwner, address(gameFacet));
@@ -272,7 +295,7 @@ contract DiamondDeployTest is Test {
 
         // Horseman
         string memory templateName = "Horseman";
-        uint256 templateID = admin.addTroopTemplate(templateName, 120, 10, 1, 2, 60, 120, 95);
+        uint256 templateID = admin.addTroopTemplate(templateName, 120, 10, 1, 2, 60, 120, 95, horsemanContract);
         templateNames[index] = templateName;
         templateIDs[index] = templateID;
         index++;
@@ -280,7 +303,7 @@ contract DiamondDeployTest is Test {
 
         // Warrior
         templateName = "Warrior";
-        templateID = admin.addTroopTemplate(templateName, 120, 2, 1, 2, 60, 120, 95);
+        templateID = admin.addTroopTemplate(templateName, 120, 2, 1, 2, 60, 120, 95, warriorContract);
         templateNames[index] = templateName;
         templateIDs[index] = templateID;
         index++;
@@ -288,7 +311,7 @@ contract DiamondDeployTest is Test {
 
         // Slinger
         templateName = "Slinger";
-        templateID = admin.addTroopTemplate(templateName, 120, 2, 1, 2, 60, 120, 95);
+        templateID = admin.addTroopTemplate(templateName, 120, 2, 1, 2, 60, 120, 95, slingerContract);
         templateNames[index] = templateName;
         templateIDs[index] = templateID;
         index++;
@@ -296,7 +319,7 @@ contract DiamondDeployTest is Test {
 
         // Guard
         templateName = "Guard";
-        templateID = admin.addTroopTemplate(templateName, 120, 0, 0, 0, 60, 120, 0);
+        templateID = admin.addTroopTemplate(templateName, 120, 0, 0, 0, 60, 120, 0, guardContract);
         templateNames[index] = templateName;
         templateIDs[index] = templateID;
         index++;
