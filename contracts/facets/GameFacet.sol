@@ -27,12 +27,20 @@ contract GameFacet is UseStorage {
         gs().burnerAccounts[_burnerAddress] = msg.sender;
     }
 
-    function initializePlayer(Position memory _position, string memory _name) external {
+    function initializeNation(
+        uint256 _positionX,
+        uint256 _positionY,
+        string memory _name
+    ) external {
+        Position memory _position;
+        _position.x = _positionX;
+        _position.y = _positionY;
+
         // Basic checks
         GameLib.ongoingGameCheck();
-        GameLib.inboundPositionCheck(_position);
-        require(gs().players.length < gs().worldConstants.maxPlayerCount, "CURIO: Max player count reached");
-        require(gs().playerEntityMap[msg.sender] == NULL, "CURIO: Player already initialized");
+        // GameLib.inboundPositionCheck(_position);
+        require(gs().players.length < gs().worldConstants.maxPlayerCount, "CURIO: Max nation count reached");
+        require(gs().playerEntityMap[msg.sender] == NULL, "CURIO: Nation already initialized");
 
         // Initialize tile and check terrain
         Position memory tilePosition = GameLib.getProperTilePosition(_position);
@@ -40,12 +48,12 @@ contract GameFacet is UseStorage {
         GameLib.passableTerrainCheck(tilePosition);
 
         // Register player
-        uint256 playerID = Templates.addPlayer(_name);
+        uint256 nationID = Templates.addNation(_name);
         gs().players.push(msg.sender);
-        gs().playerEntityMap[msg.sender] = playerID;
+        gs().playerEntityMap[msg.sender] = nationID;
 
-        // Add player's first settler
-        Templates.addSettler(_position, GameLib.getProperTilePosition(_position), playerID, gs().worldConstants.tileWidth);
+        // Found capital
+        Templates.addCapital(tilePosition, nationID);
     }
 
     // ----------------------------------------------------------
@@ -88,115 +96,6 @@ contract GameFacet is UseStorage {
         ECSLib.setPosition("Position", _movableEntity, _targetPosition);
         ECSLib.setPosition("StartPosition", _movableEntity, GameLib.getProperTilePosition(_targetPosition));
         ECSLib.setUint("LastTimestamp", _movableEntity, block.timestamp);
-    }
-
-    function foundCity(
-        uint256 _settlerID,
-        Position[] memory _tiles,
-        string memory _cityName
-    ) external {
-        // Basic checks
-        GameLib.validEntityCheck(_settlerID);
-        GameLib.ongoingGameCheck();
-        GameLib.activePlayerCheck(msg.sender);
-        GameLib.entityOwnershipCheck(_settlerID, msg.sender);
-
-        // Verify that settler can settle
-        require(ECSLib.getBool("CanSettle", _settlerID), "CURIO: Settler cannot settle");
-
-        // Verify that no other movable entity is on tile
-        uint256[] memory movableEntitiesOnTile = GameLib.getMovableEntitiesAtTile(_tiles[0]);
-        require(movableEntitiesOnTile.length == 1 && movableEntitiesOnTile[0] == _settlerID, "CURIO: Other movable entity on tile");
-
-        // Verify that city center is not on mountain
-        Position memory centerTilePosition = GameLib.getProperTilePosition(ECSLib.getPosition("Position", _settlerID));
-        GameLib.passableTerrainCheck(centerTilePosition);
-
-        // TEMP: battle royale mode
-        if (gs().worldConstants.gameMode == GameMode.BATTLE_ROYALE) {
-            require(!GameLib.coincident(centerTilePosition, GameLib.getMapCenterTilePosition()), "CURIO: City cannot be on supertile");
-        }
-
-        // Verify that territory is connected and includes settler's current position
-        require(GameLib.connected(_tiles), "CURIO: Tiles must be connected");
-        require(GameLib.includesPosition(centerTilePosition, _tiles), "CURIO: Tiles must cover settler position");
-
-        // Remove resource at destination if one exists
-        uint256 resourceID = GameLib.getResourceAtTile(centerTilePosition);
-        if (resourceID != NULL) {
-            require(ECSLib.getUint("Template", resourceID) != gs().templates["Gold"], "CURIO: Cannot settle on goldmine");
-            ECSLib.removeEntity(resourceID);
-        }
-
-        // Verify that territory is wholly in bound and does not overlap with other cities, and set tile ownership
-        uint256 playerID = GameLib.getPlayer(msg.sender);
-        uint256 cityID = _settlerID;
-        for (uint256 i = 0; i < _tiles.length; i++) {
-            GameLib.inboundPositionCheck(_tiles[i]);
-            require(GameLib.isProperTilePosition(_tiles[i]), "CURIO: Must be proper tile position");
-            uint256 tileID = GameLib.initializeTile(_tiles[i]);
-
-            // FIXME: for some reason this fixes the settling in 9 positions somewhatwell
-            // require(!GameLib.isBarbarian(tileID), "CURIO: Cannot settle on barbarians");
-            // require(ECSLib.getUint("City", tileID) == NULL, "CURIO: Overlaps with another city");
-
-            ECSLib.setUint("City", tileID, cityID);
-            ECSLib.setUint("Owner", tileID, playerID);
-        }
-
-        // Convert the settler to a city
-        Templates.convertSettlerToCity(_settlerID, _cityName);
-
-        // Add city center
-        Templates.addCityCenter(centerTilePosition, cityID);
-
-        // Add initial resources to city
-        {
-            uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
-            for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
-                string memory inventoryType = ECSLib.getString("InventoryType", resourceTemplateIDs[i]);
-                uint256 inventoryLoad = GameLib.getConstant("City Center", inventoryType, "Load", "", 1);
-                Templates.addInventory(cityID, resourceTemplateIDs[i], inventoryLoad, inventoryLoad, true);
-            }
-        }
-
-        // Strengthen guard to city defense level
-        uint256 cityGuardAmount = GameLib.getConstant("Tile", "Guard", "Amount", "", 1); // FIXME: change to city strength level after packing
-        uint256[] memory constituentIDs = GameLib.getConstituents(GameLib.getTileAt(centerTilePosition));
-        require(constituentIDs.length == 1, "CURIO: Tile initialized incorrectly");
-        ECSLib.setUint("Amount", constituentIDs[0], cityGuardAmount);
-    }
-
-    /// @notice This function can be viewed as the inverse of `foundCity`, as it converts a city back into a settler.
-    function packCity(uint256 _cityID) external {
-        // Basic checks
-        GameLib.validEntityCheck(_cityID);
-        GameLib.ongoingGameCheck();
-        GameLib.activePlayerCheck(msg.sender);
-        GameLib.entityOwnershipCheck(_cityID, msg.sender);
-
-        // Deduct packing cost
-        uint256 packCost = GameLib.getConstant("City", "Gold", "Cost", "pack", 0);
-        uint256 balance = GameLib.getCityGold(_cityID);
-        require(balance >= packCost, "CURIO: Insufficient gold for packing");
-        ECSLib.setUint("Amount", GameLib.getInventory(_cityID, gs().templates["Gold"]), balance - packCost);
-
-        // Remove city tiles
-        uint256[] memory tileIDs = GameLib.getCityTiles(_cityID);
-        assert(tileIDs.length == GameLib.getCityTileCountByLevel(ECSLib.getUint("Level", GameLib.getCityCenter(_cityID))));
-        for (uint256 i = 0; i < tileIDs.length; i++) {
-            ECSLib.setUint("Owner", tileIDs[i], NULL);
-        }
-
-        // Convert the settler to a city
-        uint256 health = GameLib.getConstant("Settler", "Health", "", "", 0);
-        Templates.convertCityToSettler(_cityID, health, gs().worldConstants.tileWidth);
-
-        // Remove city center
-        ECSLib.removeEntity(GameLib.getCityCenter(_cityID));
-
-        // Add back farm
-        Templates.addResource(gs().templates["Food"], ECSLib.getPosition("StartPosition", _cityID), GameLib.getConstant("Farm", "Food", "Load", "", 0));
     }
 
     function recoverTile(uint256 _tileID) external {

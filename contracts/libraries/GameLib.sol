@@ -9,6 +9,7 @@ import {Templates} from "contracts/libraries/Templates.sol";
 import {Set} from "contracts/Set.sol";
 import {Component} from "contracts/Component.sol";
 import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, UintComponent, UintArrayComponent} from "contracts/TypedComponents.sol";
+import "forge-std/console.sol";
 
 /// @title Util library
 /// @notice Contains all events as well as lower-level setters and getters
@@ -645,7 +646,10 @@ library GameLib {
     }
 
     function inboundPositionCheck(Position memory _position) internal view {
+        console.log("NOt in bound?");
+        console.log(_position.x, _position.y);
         require(inBound(_position), "CURIO: Position out of bound");
+        console.log("?");
     }
 
     function passableTerrainCheck(Position memory _tilePosition) internal {
@@ -663,6 +667,7 @@ library GameLib {
     // ----------------------------------------------------------
 
     function inBound(Position memory _p) internal view returns (bool) {
+        console.log("Weird");
         return _p.x >= 0 && _p.x < gs().worldConstants.worldWidth && _p.y >= 0 && _p.y < gs().worldConstants.worldHeight;
     }
 

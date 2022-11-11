@@ -4,7 +4,7 @@ pragma solidity ^0.8.4;
 import {Position} from "contracts/libraries/Types.sol";
 import {GameLib} from "contracts/libraries/GameLib.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
-
+import {GameFacet} from "contracts/facets/GameFacet.sol";
 
 // interface GameFacetInterface {
 //     // function callable by army / city wallet
@@ -44,7 +44,7 @@ contract WalletHangingGarden {
     constructor(address[] memory _owners, address _gameFacetAdress) {
         require(_owners.length > 0, "owners required");
 
-        for (uint i = 0; i < _owners.length; i++) {
+        for (uint256 i = 0; i < _owners.length; i++) {
             address owner = _owners[i];
 
             require(owner != address(0), "invalid owner");
@@ -57,13 +57,9 @@ contract WalletHangingGarden {
         gameFacetAdress = _gameFacetAdress;
     }
 
-    function executeTransaction(
-        address _to,
-        bytes memory _data
-        ) public onlyOwner {
-
+    function executeTransaction(bytes memory _data) public onlyOwner {
         // fixme: low-level call checker modified to "warn"; integrate with interface
-        (bool success, ) = _to.call(_data);
-        require(success, "tx failed");
+        (bool success, bytes memory returndata) = gameFacetAdress.call(_data);
+        require(success, string (returndata));
     }
 }

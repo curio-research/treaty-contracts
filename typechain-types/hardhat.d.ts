@@ -97,9 +97,9 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.GuardERC20__factory>;
     getContractFactory(
-      name: "SlingerERC20",
+      name: "HorsemanERC20",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.SlingerERC20__factory>;
+    ): Promise<Contracts.HorsemanERC20__factory>;
     getContractFactory(
       name: "SlingerERC20",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -259,10 +259,10 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.GuardERC20>;
     getContractAt(
-      name: "SlingerERC20",
+      name: "HorsemanERC20",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.SlingerERC20>;
+    ): Promise<Contracts.HorsemanERC20>;
     getContractAt(
       name: "SlingerERC20",
       address: string,

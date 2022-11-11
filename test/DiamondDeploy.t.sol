@@ -19,7 +19,9 @@ import {FoodERC20} from "contracts/tokens/FoodERC20.sol";
 import {GoldERC20} from "contracts/tokens/GoldERC20.sol";
 import {HorsemanERC20} from "contracts/tokens/HorsemanERC20.sol";
 import {SlingerERC20} from "contracts/tokens/SlingerERC20.sol";
-import {WarriarERC20} from "contracts/tokens/WarriarERC20.sol";
+import {WarriorERC20} from "contracts/tokens/WarriorERC20.sol";
+import {GuardERC20} from "contracts/tokens/GuardERC20.sol";
+
 
 import {WalletHangingGarden} from "contracts/WalletHangingGarden.sol";
 import {console} from "forge-std/console.sol";
@@ -65,6 +67,7 @@ contract DiamondDeployTest is Test {
     HorsemanERC20 public horsemanContract;
     SlingerERC20 public slingerContract;
     WarriorERC20 public warriorContract;
+    GuardERC20 public guardContract;
 
     uint256 public NULL = 0;
     address public NULL_ADDR = address(0);
@@ -153,10 +156,10 @@ contract DiamondDeployTest is Test {
         nato = new NATO();
         console.log(">>> Treaties initialized");
 
-        // Deploy Token Contracts
+        // Deploy token contracts
         foodContract = new FoodERC20("Food", "FOOD", 1, deployer);
         goldContract = new GoldERC20("Gold", "GOLD", 1, deployer);
-        // note: consider switching to erc1155
+        // note: Consider switching to erc1155
         horsemanContract = new HorsemanERC20("Horseman", "HORSEMAN", 1, deployer);
         warriorContract = new WarriorERC20("Warrior", "WARRIOR", 1, deployer);
         slingerContract = new SlingerERC20("Slinger", "SLINGER", 1, deployer);
@@ -168,37 +171,37 @@ contract DiamondDeployTest is Test {
 
         vm.stopPrank();
 
-        // Initialize players
-        vm.prank(player1);
-        game.initializePlayer(player1Pos, "Alice");
-        player1Id = getter.getPlayerId(player1);
-        vm.prank(player2);
-        game.initializePlayer(player2Pos, "Bob");
-        player2Id = getter.getPlayerId(player2);
-        vm.prank(player3);
-        game.initializePlayer(player3Pos, "Cindy");
-        player3Id = getter.getPlayerId(player3);
-        console.log(">>> Players initialized");
-
         address[] memory initializedOwner = new address[](1);
 
         // Deploy Smart Contract Wallets
         initializedOwner[0] = player1;
-        WalletHangingGarden nationWallet1 = new WalletHangingGarden(initializedOwner, address(gameFacet));
-        WalletHangingGarden armyWallet11 = new WalletHangingGarden(initializedOwner, address(gameFacet));
-        WalletHangingGarden armyWallet12 = new WalletHangingGarden(initializedOwner, address(gameFacet));
+        nationWallet1 = new WalletHangingGarden(initializedOwner, address(game));
+        armyWallet11 = new WalletHangingGarden(initializedOwner, address(game));
+        armyWallet12 = new WalletHangingGarden(initializedOwner, address(game));
 
         initializedOwner[0] = player2;
-        WalletHangingGarden nationWallet2 = new WalletHangingGarden(initializedOwner, address(gameFacet));
-        WalletHangingGarden armyWallet21 = new WalletHangingGarden(initializedOwner, address(gameFacet));
-        WalletHangingGarden armyWallet22 = new WalletHangingGarden(initializedOwner, address(gameFacet));
+        nationWallet2 = new WalletHangingGarden(initializedOwner, address(game));
+        armyWallet21 = new WalletHangingGarden(initializedOwner, address(game));
+        armyWallet22 = new WalletHangingGarden(initializedOwner, address(game));
 
         initializedOwner[0] = player3;
-        WalletHangingGarden nationWallet3 = new WalletHangingGarden(initializedOwner, address(gameFacet));
-        WalletHangingGarden armyWallet31 = new WalletHangingGarden(initializedOwner, address(gameFacet));
-        WalletHangingGarden armyWallet32 = new WalletHangingGarden(initializedOwner, address(gameFacet));
+        nationWallet3 = new WalletHangingGarden(initializedOwner, address(game));
+        armyWallet31 = new WalletHangingGarden(initializedOwner, address(game));
+        armyWallet32 = new WalletHangingGarden(initializedOwner, address(game));
 
         console.log(">>> Smart Contract Wallets initialized");
+
+        // Initialize players
+        vm.prank(player1);
+        nationWallet1.executeTransaction(abi.encodeWithSignature("initializeNation(uint256,uint256,string)", player1Pos.x, player1Pos.y, "Alice"));
+        player1Id = getter.getPlayerId(player1);
+        // vm.prank(player2);
+        // game.initializeNation(player2Pos, "Bob");
+        // player2Id = getter.getPlayerId(player2);
+        // vm.prank(player3);
+        // game.initializeNation(player3Pos, "Cindy");
+        // player3Id = getter.getPlayerId(player3);
+        console.log(">>> Players initialized");
 
 
         console.log("=============== INDIVIDUAL TESTS BEGIN ================");
@@ -295,7 +298,7 @@ contract DiamondDeployTest is Test {
 
         // Horseman
         string memory templateName = "Horseman";
-        uint256 templateID = admin.addTroopTemplate(templateName, 120, 10, 1, 2, 60, 120, 95, horsemanContract);
+        uint256 templateID = admin.addTroopTemplate(templateName, 120, 10, 1, 2, 60, 120, 95, address(horsemanContract));
         templateNames[index] = templateName;
         templateIDs[index] = templateID;
         index++;
@@ -303,7 +306,7 @@ contract DiamondDeployTest is Test {
 
         // Warrior
         templateName = "Warrior";
-        templateID = admin.addTroopTemplate(templateName, 120, 2, 1, 2, 60, 120, 95, warriorContract);
+        templateID = admin.addTroopTemplate(templateName, 120, 2, 1, 2, 60, 120, 95, address(warriorContract));
         templateNames[index] = templateName;
         templateIDs[index] = templateID;
         index++;
@@ -311,7 +314,7 @@ contract DiamondDeployTest is Test {
 
         // Slinger
         templateName = "Slinger";
-        templateID = admin.addTroopTemplate(templateName, 120, 2, 1, 2, 60, 120, 95, slingerContract);
+        templateID = admin.addTroopTemplate(templateName, 120, 2, 1, 2, 60, 120, 95, address(slingerContract));
         templateNames[index] = templateName;
         templateIDs[index] = templateID;
         index++;
@@ -319,7 +322,7 @@ contract DiamondDeployTest is Test {
 
         // Guard
         templateName = "Guard";
-        templateID = admin.addTroopTemplate(templateName, 120, 0, 0, 0, 60, 120, 0, guardContract);
+        templateID = admin.addTroopTemplate(templateName, 120, 0, 0, 0, 60, 120, 0, address(guardContract));
         templateNames[index] = templateName;
         templateIDs[index] = templateID;
         index++;
@@ -327,7 +330,7 @@ contract DiamondDeployTest is Test {
 
         // Gold
         templateName = "Gold";
-        templateID = admin.addResourceTemplate(templateName);
+        templateID = admin.addResourceTemplate(templateName, address(goldContract));
         templateNames[index] = templateName;
         templateIDs[index] = templateID;
         index++;
@@ -335,7 +338,7 @@ contract DiamondDeployTest is Test {
 
         // Food
         templateName = "Food";
-        templateID = admin.addResourceTemplate(templateName);
+        templateID = admin.addResourceTemplate(templateName, address(foodContract));
         templateNames[index] = templateName;
         templateIDs[index] = templateID;
         index++;

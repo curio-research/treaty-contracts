@@ -9,7 +9,7 @@ import {Component} from "contracts/Component.sol";
 import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, UintComponent} from "contracts/TypedComponents.sol";
 
 /// @title Engine facet
-/// @notice Contains player functions such as march, purchaseTroop, initializePlayer
+/// @notice Contains player functions such as march, purchaseTroop, initializeNation
 
 contract PolicyFacet is UseStorage {
     // uint256 private NULL = 0;

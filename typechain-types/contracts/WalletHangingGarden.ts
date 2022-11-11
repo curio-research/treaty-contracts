@@ -25,7 +25,7 @@ import type {
 
 export interface WalletHangingGardenInterface extends utils.Interface {
   functions: {
-    "executeTransaction(address,bytes)": FunctionFragment;
+    "executeTransaction(bytes)": FunctionFragment;
     "isOwner(address)": FunctionFragment;
     "owners(uint256)": FunctionFragment;
   };
@@ -36,7 +36,7 @@ export interface WalletHangingGardenInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "executeTransaction",
-    values: [PromiseOrValue<string>, PromiseOrValue<BytesLike>]
+    values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "isOwner",
@@ -85,7 +85,6 @@ export interface WalletHangingGarden extends BaseContract {
 
   functions: {
     executeTransaction(
-      _to: PromiseOrValue<string>,
       _data: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -102,7 +101,6 @@ export interface WalletHangingGarden extends BaseContract {
   };
 
   executeTransaction(
-    _to: PromiseOrValue<string>,
     _data: PromiseOrValue<BytesLike>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -119,7 +117,6 @@ export interface WalletHangingGarden extends BaseContract {
 
   callStatic: {
     executeTransaction(
-      _to: PromiseOrValue<string>,
       _data: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -139,7 +136,6 @@ export interface WalletHangingGarden extends BaseContract {
 
   estimateGas: {
     executeTransaction(
-      _to: PromiseOrValue<string>,
       _data: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -157,7 +153,6 @@ export interface WalletHangingGarden extends BaseContract {
 
   populateTransaction: {
     executeTransaction(
-      _to: PromiseOrValue<string>,
       _data: PromiseOrValue<BytesLike>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

@@ -724,41 +724,6 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "_settlerID",
-        type: "uint256",
-      },
-      {
-        components: [
-          {
-            internalType: "uint256",
-            name: "x",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "y",
-            type: "uint256",
-          },
-        ],
-        internalType: "struct Position[]",
-        name: "_tiles",
-        type: "tuple[]",
-      },
-      {
-        internalType: "string",
-        name: "_cityName",
-        type: "string",
-      },
-    ],
-    name: "foundCity",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
         name: "_resourceID",
         type: "uint256",
       },
@@ -797,21 +762,14 @@ const _abi = [
   {
     inputs: [
       {
-        components: [
-          {
-            internalType: "uint256",
-            name: "x",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "y",
-            type: "uint256",
-          },
-        ],
-        internalType: "struct Position",
-        name: "_position",
-        type: "tuple",
+        internalType: "uint256",
+        name: "_positionX",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_positionY",
+        type: "uint256",
       },
       {
         internalType: "string",
@@ -819,7 +777,7 @@ const _abi = [
         type: "string",
       },
     ],
-    name: "initializePlayer",
+    name: "initializeNation",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -910,19 +868,6 @@ const _abi = [
         type: "uint256",
       },
     ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_cityID",
-        type: "uint256",
-      },
-    ],
-    name: "packCity",
-    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },

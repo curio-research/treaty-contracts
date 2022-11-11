@@ -6,7 +6,7 @@ import {Position} from "contracts/libraries/Types.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
 import {GameLib} from "contracts/libraries/GameLib.sol";
 
-contract SlingerERC20 is ERC20 {
+contract HorsemanERC20 is ERC20 {
     /// Outline:
     /// - approve
     /// - transfer

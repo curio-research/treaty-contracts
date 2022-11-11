@@ -4,6 +4,7 @@ pragma solidity ^0.8.4;
 import {Position, WorldConstants} from "contracts/libraries/Types.sol";
 import {Strings} from "openzeppelin-contracts/contracts/utils/Strings.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
+import "forge-std/console.sol";
 
 library Templates {
     function addCityCenter(Position memory _startPosition, uint256 _cityID) public returns (uint256) {
@@ -93,26 +94,23 @@ library Templates {
         return tileID;
     }
 
-    function addSettler(
-        Position memory _position,
-        Position memory _tilePosition,
-        uint256 _playerID,
-        uint256 _speed
-    ) public returns (uint256) {
-        uint256 settlerID = ECSLib.addEntity();
+    function addCapital(Position memory _tilePosition, uint256 _nationID) public returns (uint256) {
+        uint256 capitalID = ECSLib.addEntity();
 
-        ECSLib.setString("Tag", settlerID, "Settler");
-        ECSLib.setPosition("Position", settlerID, _position);
-        ECSLib.setPosition("StartPosition", settlerID, _tilePosition);
-        ECSLib.setUint("Owner", settlerID, _playerID);
-        ECSLib.setUint("Level", settlerID, 1);
-        ECSLib.setBool("CanSettle", settlerID);
-        ECSLib.setUint("Health", settlerID, 1); // FIXME
-        ECSLib.setUint("Speed", settlerID, _speed);
-        ECSLib.setUint("LastTimestamp", settlerID, block.timestamp);
-        ECSLib.setUint("MoveCooldown", settlerID, 0); // FIXME: change back for deployment
+        ECSLib.setString("Tag", capitalID, "Building");
+        ECSLib.setPosition("StartPosition", capitalID, _tilePosition);
+        ECSLib.setUint("Level", capitalID, 1);
+        ECSLib.setString("BuildingType", capitalID, "City Center"); //fixme: switch to Capital
+        ECSLib.setBool("CanProduce", capitalID);
+        ECSLib.setUint("InitTimestamp", capitalID, block.timestamp);
+        ECSLib.setUint("LastTimestamp", capitalID, block.timestamp);
+        ECSLib.setUint("LastUpgraded", capitalID, block.timestamp);
+        ECSLib.setUint("LastMoved", capitalID, block.timestamp);
+        ECSLib.setUint("LastSacked", capitalID, block.timestamp);
+        console.log("Modeo");
+        ECSLib.setUint("Nation", capitalID, _nationID);
 
-        return settlerID;
+        return capitalID;
     }
 
     function addResource(
@@ -133,16 +131,16 @@ library Templates {
         return resourceID;
     }
 
-    function addPlayer(string memory _name) public returns (uint256) {
-        uint256 playerID = ECSLib.addEntity();
+    function addNation(string memory _name) public returns (uint256) {
+        uint256 nationID = ECSLib.addEntity();
 
-        ECSLib.setBool("IsActive", playerID);
-        ECSLib.setString("Name", playerID, _name);
-        ECSLib.setString("Tag", playerID, "Player");
-        ECSLib.setUint("InitTimestamp", playerID, block.timestamp);
-        ECSLib.setAddress("Address", playerID, msg.sender);
+        ECSLib.setString("Tag", nationID, "Player");
+        ECSLib.setBool("IsActive", nationID);
+        ECSLib.setString("Name", nationID, _name);
+        ECSLib.setUint("InitTimestamp", nationID, block.timestamp);
+        ECSLib.setAddress("Address", nationID, msg.sender);
 
-        return playerID;
+        return nationID;
     }
 
     function addArmy(

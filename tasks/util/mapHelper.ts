@@ -70,7 +70,7 @@ export const generateMap = (worldWidth: number, worldHeight: number, worldConsta
   let tileMap: TileMap = generateMapWithMountains({ width: worldWidth, height: worldHeight });
 
   // add gold mines and barbarians
-  const level1GoldMineDensity = 0.10;
+  const level1GoldMineDensity = 0.1;
   const level1BarbarianDensity = 0.02;
   const level2BarbarianDensity = 0.02;
   const totalTileCount = worldWidth * worldHeight;
@@ -198,10 +198,10 @@ export const initializeFixmap = async (hre: HardhatRuntimeEnvironment, diamond: 
   const playerPositions = [player1Pos, player2Pos, player3Pos, player4Pos];
 
   // initialize 4 players
-  await confirm(await diamond.connect(player1).initializePlayer(player1Pos, 'A', { gasLimit: gasLimit }), hre);
-  await confirm(await diamond.connect(player2).initializePlayer(player2Pos, 'B', { gasLimit: gasLimit }), hre);
-  await confirm(await diamond.connect(player3).initializePlayer(player3Pos, 'C', { gasLimit: gasLimit }), hre);
-  await confirm(await diamond.connect(player4).initializePlayer(player4Pos, 'D', { gasLimit: gasLimit }), hre);
+  await confirm(await diamond.connect(player1).initializeNation(player1Pos.x, player1Pos.y, 'A', { gasLimit: gasLimit }), hre);
+  await confirm(await diamond.connect(player2).initializeNation(player1Pos.x, player1Pos.y, 'B', { gasLimit: gasLimit }), hre);
+  await confirm(await diamond.connect(player3).initializeNation(player1Pos.x, player1Pos.y, 'C', { gasLimit: gasLimit }), hre);
+  await confirm(await diamond.connect(player4).initializeNation(player1Pos.x, player1Pos.y, 'D', { gasLimit: gasLimit }), hre);
 
   const player1Id = (await diamond.getPlayerId(player1.address)).toNumber();
   const player2Id = (await diamond.getPlayerId(player2.address)).toNumber();
@@ -216,12 +216,6 @@ export const initializeFixmap = async (hre: HardhatRuntimeEnvironment, diamond: 
   const player2SettlerId = decodeBigNumberishArr(await positionComponent.getEntitiesWithValue(encodePosition(player2Pos)))[0];
   const player3SettlerId = decodeBigNumberishArr(await positionComponent.getEntitiesWithValue(encodePosition(player3Pos)))[0];
   const player4SettlerId = decodeBigNumberishArr(await positionComponent.getEntitiesWithValue(encodePosition(player4Pos)))[0];
-
-  // settle on all 4 spots
-  await diamond.connect(player1).foundCity(player1SettlerId, getImmediateSurroundingPositions(player1Pos), '');
-  await diamond.connect(player2).foundCity(player2SettlerId, getImmediateSurroundingPositions(player2Pos), '');
-  await diamond.connect(player3).foundCity(player3SettlerId, getImmediateSurroundingPositions(player3Pos), '');
-  await diamond.connect(player4).foundCity(player4SettlerId, getImmediateSurroundingPositions(player4Pos), '');
 
   // spawn armies
   await diamond.createArmy(player1Id, getRightPos(player1Pos));
