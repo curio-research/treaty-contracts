@@ -72,17 +72,17 @@ contract DiamondDeployTest is Test {
     uint256 public NULL = 0;
     address public NULL_ADDR = address(0);
 
-    address public deployer = address(0);
-    address public player1 = address(1);
-    address public player2 = address(2);
-    address public player3 = address(3);
-    uint256 public player1Id;
-    uint256 public player2Id;
-    uint256 public player3Id;
+    address public deployerAddress = address(0);
+    address public nation1Address = address(1);
+    address public nation2Address = address(2);
+    address public nation3Address = address(3);
+    uint256 public nation1ID;
+    uint256 public nation2ID;
+    uint256 public nation3ID;
 
-    Position public player1Pos = Position({x: 60, y: 10});
-    Position public player2Pos = Position({x: 60, y: 30});
-    Position public player3Pos = Position({x: 50, y: 20});
+    Position public nation1Pos = Position({x: 60, y: 10});
+    Position public nation2Pos = Position({x: 60, y: 30});
+    Position public nation3Pos = Position({x: 50, y: 20});
 
     uint256 public horsemanTemplateID;
     uint256 public warriorTemplateID;
@@ -98,12 +98,12 @@ contract DiamondDeployTest is Test {
     bytes4[] LOUPE_SELECTORS = [bytes4(0xcdffacc6), 0x52ef6b2c, 0xadfca15e, 0x7a0ed627, 0x01ffc9a7];
 
     function setUp() public {
-        vm.startPrank(deployer);
+        vm.startPrank(deployerAddress);
         console.log("==================== SETUP BEGINS =====================");
 
         // Initialize diamond facets
         diamondCutFacet = new DiamondCutFacet();
-        diamond = address(new Diamond(deployer, address(diamondCutFacet)));
+        diamond = address(new Diamond(deployerAddress, address(diamondCutFacet)));
         diamondInit = new DiamondInit();
         diamondLoupeFacet = new DiamondLoupeFacet();
         diamondOwnershipFacet = new OwnershipFacet();
@@ -157,13 +157,13 @@ contract DiamondDeployTest is Test {
         console.log(">>> Treaties initialized");
 
         // Deploy token contracts
-        foodContract = new FoodERC20("Food", "FOOD", 1, deployer);
-        goldContract = new GoldERC20("Gold", "GOLD", 1, deployer);
+        foodContract = new FoodERC20("Food", "FOOD", 1, deployerAddress);
+        goldContract = new GoldERC20("Gold", "GOLD", 1, deployerAddress);
         // note: Consider switching to erc1155
-        horsemanContract = new HorsemanERC20("Horseman", "HORSEMAN", 1, deployer);
-        warriorContract = new WarriorERC20("Warrior", "WARRIOR", 1, deployer);
-        slingerContract = new SlingerERC20("Slinger", "SLINGER", 1, deployer);
-        guardContract = new GuardERC20("Guard", "GUARD", 1, deployer);
+        horsemanContract = new HorsemanERC20("Horseman", "HORSEMAN", 1, deployerAddress);
+        warriorContract = new WarriorERC20("Warrior", "WARRIOR", 1, deployerAddress);
+        slingerContract = new SlingerERC20("Slinger", "SLINGER", 1, deployerAddress);
+        guardContract = new GuardERC20("Guard", "GUARD", 1, deployerAddress);
 
         // Create templates
         _createTemplates();
@@ -174,17 +174,17 @@ contract DiamondDeployTest is Test {
         address[] memory initializedOwner = new address[](1);
 
         // Deploy Smart Contract Wallets
-        initializedOwner[0] = player1;
+        initializedOwner[0] = nation1Address;
         nationWallet1 = new WalletHangingGarden(initializedOwner, address(game));
         armyWallet11 = new WalletHangingGarden(initializedOwner, address(game));
         armyWallet12 = new WalletHangingGarden(initializedOwner, address(game));
 
-        initializedOwner[0] = player2;
+        initializedOwner[0] = nation2Address;
         nationWallet2 = new WalletHangingGarden(initializedOwner, address(game));
         armyWallet21 = new WalletHangingGarden(initializedOwner, address(game));
         armyWallet22 = new WalletHangingGarden(initializedOwner, address(game));
 
-        initializedOwner[0] = player3;
+        initializedOwner[0] = nation3Address;
         nationWallet3 = new WalletHangingGarden(initializedOwner, address(game));
         armyWallet31 = new WalletHangingGarden(initializedOwner, address(game));
         armyWallet32 = new WalletHangingGarden(initializedOwner, address(game));
@@ -192,15 +192,19 @@ contract DiamondDeployTest is Test {
         console.log(">>> Smart Contract Wallets initialized");
 
         // Initialize players
-        vm.prank(player1);
-        nationWallet1.executeTransaction(abi.encodeWithSignature("initializeNation(uint256,uint256,string)", player1Pos.x, player1Pos.y, "Alice"));
-        player1Id = getter.getPlayerId(player1);
-        // vm.prank(player2);
-        // game.initializeNation(player2Pos, "Bob");
-        // player2Id = getter.getPlayerId(player2);
-        // vm.prank(player3);
-        // game.initializeNation(player3Pos, "Cindy");
-        // player3Id = getter.getPlayerId(player3);
+        vm.prank(nation1Address);
+        nationWallet1.executeTransaction(abi.encodeWithSignature("initializeNation(uint256,uint256,string)", nation1Pos.x, nation1Pos.y, "China"));
+        nation1ID = getter.getNationID(address(nationWallet1));
+
+        vm.prank(nation2Address);
+        nationWallet2.executeTransaction(abi.encodeWithSignature("initializeNation(uint256,uint256,string)", nation2Pos.x, nation2Pos.y, "US"));
+        nation2ID = getter.getNationID(address(nationWallet2));
+
+        vm.prank(nation3Address);
+        nationWallet3.executeTransaction(abi.encodeWithSignature("initializeNation(uint256,uint256,string)", nation3Pos.x, nation3Pos.y, "Russia"));
+        nation3ID = getter.getNationID(address(nationWallet3));
+
+
         console.log(">>> Players initialized");
 
 
@@ -355,7 +359,7 @@ contract DiamondDeployTest is Test {
         bytes memory rawJson = vm.parseJson(vm.readFile(path));
         worldConstants = abi.decode(rawJson, (WorldConstants));
 
-        worldConstants.admin = deployer;
+        worldConstants.admin = deployerAddress;
         return worldConstants;
     }
 
@@ -363,7 +367,7 @@ contract DiamondDeployTest is Test {
     function _generateNewWorldConstants() private returns (WorldConstants memory) {
         worldConstants =
             WorldConstants({
-                admin: deployer,
+                admin: deployerAddress,
                 tileWidth: 10,
                 worldWidth: 1000,
                 worldHeight: 1000,

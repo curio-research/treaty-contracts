@@ -525,12 +525,12 @@ library GameLib {
         ECSLib.setUint("Amount", _goldInventoryID, _foodAmount);
     }
 
-    function getCityCenter(uint256 _cityID) internal returns (uint256) {
+    function getCapital(uint256 _nationID) internal returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
-        query[0] = ECSLib.queryChunk(QueryType.HasVal, "City", abi.encode(_cityID));
-        query[1] = ECSLib.queryChunk(QueryType.HasVal, "BuildingType", abi.encode("City Center"));
+        query[0] = ECSLib.queryChunk(QueryType.HasVal, "Nation", abi.encode(_nationID));
+        query[1] = ECSLib.queryChunk(QueryType.HasVal, "BuildingType", abi.encode("Capital"));
         uint256[] memory res = ECSLib.query(query);
-        require(res.length <= 1, "CURIO: City Center assertion failed");
+        require(res.length <= 1, "CURIO: Capital assertion failed");
         return res.length == 1 ? res[0] : 0;
     }
 

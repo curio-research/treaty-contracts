@@ -7,12 +7,29 @@ import {GameLib} from "contracts/libraries/GameLib.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
 import {Position, WorldConstants} from "contracts/libraries/Types.sol";
 import {Component} from "contracts/Component.sol";
+import "forge-std/console.sol";
 
 /// @title Bulk getters
 /// @notice Getters provide bulk functions useful for fetching data from the frontend
 
 contract GetterFacet is UseStorage {
     uint256 private NULL = 0;
+
+    function getNationID(address _nationWalletAddress) external view returns (uint256) {
+        return gs().playerEntityMap[_nationWalletAddress];
+    }
+
+    function getNationWallet(uint256 _nationID) external view returns (address) {
+        return ECSLib.getAddress("Address", _nationID);
+    }
+
+    function getEntityNation(uint256 _entityID) external view returns (uint256) {
+        return ECSLib.getUint("Nation", _entityID);
+    }
+
+    function getNationName(uint256 _nationID) external view returns (string memory) {
+        return ECSLib.getString("Name", _nationID);
+    }
 
     // Debug Helpers
     function getEntitiesAddr() external view returns (address) {
@@ -74,10 +91,6 @@ contract GetterFacet is UseStorage {
         return gs().players.length;
     }
 
-    function getPlayerId(address _player) external view returns (uint256) {
-        return gs().playerEntityMap[_player];
-    }
-
     function getEntity() external view returns (uint256) {
         Set _entities = Set(gs().entities);
         return _entities.size();
@@ -91,12 +104,8 @@ contract GetterFacet is UseStorage {
         return GameLib.getCityAtTile(_startPosition);
     }
 
-    function getCityCenter(uint256 _cityID) external returns (uint256) {
-        return GameLib.getCityCenter(_cityID);
-    }
-
-    function getSettlerAt(Position memory _position) external returns (uint256) {
-        return GameLib.getSettlerAt(_position);
+    function getCapital(uint256 _cityID) external returns (uint256) {
+        return GameLib.getCapital(_cityID);
     }
 
     function getTileAt(Position memory _position) external returns (uint256) {

@@ -100,14 +100,13 @@ library Templates {
         ECSLib.setString("Tag", capitalID, "Building");
         ECSLib.setPosition("StartPosition", capitalID, _tilePosition);
         ECSLib.setUint("Level", capitalID, 1);
-        ECSLib.setString("BuildingType", capitalID, "City Center"); //fixme: switch to Capital
+        ECSLib.setString("BuildingType", capitalID, "Capital");
         ECSLib.setBool("CanProduce", capitalID);
         ECSLib.setUint("InitTimestamp", capitalID, block.timestamp);
         ECSLib.setUint("LastTimestamp", capitalID, block.timestamp);
         ECSLib.setUint("LastUpgraded", capitalID, block.timestamp);
         ECSLib.setUint("LastMoved", capitalID, block.timestamp);
         ECSLib.setUint("LastSacked", capitalID, block.timestamp);
-        console.log("Modeo");
         ECSLib.setUint("Nation", capitalID, _nationID);
 
         return capitalID;

@@ -543,8 +543,8 @@
       }
     },
     "contracts/facets/GameFacet.sol": {
-      "lastModificationDate": 1668124848870,
-      "contentHash": "f07e8eb0b1c476f0b4add4083fa90587",
+      "lastModificationDate": 1668142369332,
+      "contentHash": "93804a239f3a4ae3fb906d6ca81b833d",
       "sourceName": "contracts/facets/GameFacet.sol",
       "solcConfig": {
         "settings": {
@@ -594,8 +594,8 @@
       }
     },
     "contracts/facets/GetterFacet.sol": {
-      "lastModificationDate": 1667406523285,
-      "contentHash": "7103f4d1c116ae75915de531f3b83570",
+      "lastModificationDate": 1668142321718,
+      "contentHash": "b62340e77102c7571d853c7f28b9b76d",
       "sourceName": "contracts/facets/GetterFacet.sol",
       "solcConfig": {
         "settings": {
@@ -941,8 +941,8 @@
       }
     },
     "contracts/libraries/GameLib.sol": {
-      "lastModificationDate": 1668122178821,
-      "contentHash": "2c7ea447ae8c90f927ee94f97ef5db11",
+      "lastModificationDate": 1668141871474,
+      "contentHash": "0ae6db3279f826b2aeb7bfbae78b9099",
       "sourceName": "contracts/libraries/GameLib.sol",
       "solcConfig": {
         "settings": {
@@ -1076,8 +1076,8 @@
       }
     },
     "contracts/libraries/Templates.sol": {
-      "lastModificationDate": 1668124970873,
-      "contentHash": "7008b60220fd33a87e7af750d3aaf528",
+      "lastModificationDate": 1668141722840,
+      "contentHash": "23f28aaf37a51f4ffe65ee461da46f58",
       "sourceName": "contracts/libraries/Templates.sol",
       "solcConfig": {
         "settings": {
@@ -2026,8 +2026,8 @@
       }
     },
     "test/Depr.t.sol": {
-      "lastModificationDate": 1665041651044,
-      "contentHash": "ff7747e1ab4c86469ed2ed06c659b116",
+      "lastModificationDate": 1668142337743,
+      "contentHash": "f1a270ec169f63ce4d35f8828ade49a6",
       "sourceName": "test/Depr.t.sol",
       "solcConfig": {
         "settings": {
@@ -2106,8 +2106,8 @@
       }
     },
     "test/DiamondDeploy.t.sol": {
-      "lastModificationDate": 1668123381543,
-      "contentHash": "cf1636c68e9043f244fa0682de22c806",
+      "lastModificationDate": 1668142546558,
+      "contentHash": "7587d198cc17b63ee17da7896dc4092b",
       "sourceName": "test/DiamondDeploy.t.sol",
       "solcConfig": {
         "settings": {
@@ -2261,6 +2261,86 @@
       "artifacts": {
         "ECSTest": {
           "0.8.4+commit.c7e474f2.Darwin.appleclang": "ECS.t.sol/ECSTest.json"
+        }
+      }
+    },
+    "test/HangingGarden.t.sol": {
+      "lastModificationDate": 1668142644583,
+      "contentHash": "dcdae5daa623de55e9a99639e99b1c1d",
+      "sourceName": "test/HangingGarden.t.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "contracts/Component.sol",
+        "contracts/Mapping.sol",
+        "contracts/NATO.sol",
+        "contracts/Set.sol",
+        "contracts/TypedComponents.sol",
+        "contracts/WalletHangingGarden.sol",
+        "contracts/diamond.sol",
+        "contracts/facets/AdminFacet.sol",
+        "contracts/facets/DiamondCutFacet.sol",
+        "contracts/facets/DiamondLoupeFacet.sol",
+        "contracts/facets/GameFacet.sol",
+        "contracts/facets/GetterFacet.sol",
+        "contracts/facets/OwnershipFacet.sol",
+        "contracts/interfaces/IDiamondCut.sol",
+        "contracts/interfaces/IDiamondLoupe.sol",
+        "contracts/interfaces/IERC165.sol",
+        "contracts/interfaces/IERC173.sol",
+        "contracts/libraries/ECSLib.sol",
+        "contracts/libraries/GameLib.sol",
+        "contracts/libraries/LibDiamond.sol",
+        "contracts/libraries/Storage.sol",
+        "contracts/libraries/Templates.sol",
+        "contracts/libraries/Types.sol",
+        "contracts/tokens/FoodERC20.sol",
+        "contracts/tokens/GoldERC20.sol",
+        "contracts/tokens/GuardERC20.sol",
+        "contracts/tokens/HorsemanERC20.sol",
+        "contracts/tokens/SlingerERC20.sol",
+        "contracts/tokens/WarriorERC20.sol",
+        "contracts/upgradeInitializers/diamondInit.sol",
+        "lib/forge-std/lib/ds-test/src/test.sol",
+        "lib/forge-std/src/Script.sol",
+        "lib/forge-std/src/StdJson.sol",
+        "lib/forge-std/src/Test.sol",
+        "lib/forge-std/src/Vm.sol",
+        "lib/forge-std/src/console.sol",
+        "lib/forge-std/src/console2.sol",
+        "lib/openzeppelin-contracts/contracts/utils/Strings.sol",
+        "lib/solmate/src/tokens/ERC20.sol",
+        "test/DiamondDeploy.t.sol"
+      ],
+      "versionRequirement": "^0.8.4",
+      "artifacts": {
+        "TreatyTest": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "HangingGarden.t.sol/TreatyTest.json"
         }
       }
     }

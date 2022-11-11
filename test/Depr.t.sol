@@ -68,7 +68,7 @@ contract ECS is Test, DiamondDeployTest {
         // assertEq(_currentPosition.x, 7);
         // assertEq(_currentPosition.y, 1);
 
-        vm.startPrank(player1);
-        vm.stopPrank();
+        // vm.startPrank(player1);
+        // vm.stopPrank();
     }
 }
