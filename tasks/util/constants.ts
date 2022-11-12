@@ -18,6 +18,11 @@ export const MAP_INPUT: MapInput = {
   height: 15,
 };
 
+export const TEST_MAP_INPUT: MapInput = {
+  width: 100,
+  height: 2,
+};
+
 export const TILE_WIDTH = 5;
 export const NUM_INIT_TERRAIN_TYPES = Math.floor((Object.keys(TILE_TYPE).length + 1) / 2);
 
@@ -34,7 +39,7 @@ export const generateWorldConstants = (adminAddr: string): any => {
     maxCityCountPerPlayer: 3,
     maxArmyCountPerPlayer: 2,
     maxPlayerCount: 20,
-    gameMode: GameMode.BATTLE_ROYALE,
+    gameMode: GameMode.REGULAR,
     gameLengthInSeconds: 2000000000,
     // generated constants
     ...worldConstants,
