@@ -8,8 +8,8 @@ import { confirmTx } from './deployHelper';
 
 export const DRIP_AMOUNT_BY_NETWORK: Record<string, number> = {
   optimismKovan: 0.01,
-  localhost: 100,
-  constellation: 2,
+  localhost: 1000,
+  constellation: 1000,
   altlayer: 2,
   tailscale: 100,
 };
@@ -20,7 +20,6 @@ export const DRIP_AMOUNT_BY_NETWORK: Record<string, number> = {
 
 export const createSigners = async (hre: HardhatRuntimeEnvironment, signerCount: number, admin: Signer): Promise<Wallet[]> => {
   const provider = new hre.ethers.providers.JsonRpcProvider(chainInfo[hre.network.name].rpcUrl);
-  console.log(chalk.bgRed.yellow('>>> Network name:', (await provider.getNetwork()).name));
 
   // Create signers
   const signers: Wallet[] = [];
@@ -66,21 +65,21 @@ export const prepareLoadTest = async (input: LoadTestSetupInput, players: Wallet
   let startTime = performance.now();
   const playerIds: number[] = [];
   for (let i = 0; i < players.length; i++) {
-    console.log(chalk.bgRed.yellow.dim(`>>> initializing player with city ${i}`));
-    await (await diamond.connect(players[i]).initializePlayer({ x: i * TILE_WIDTH, y: 0 }, `Player ${i}`, { gasLimit: gasLimit })).wait();
+    console.log(chalk.bgRed.yellow.dim(`>>> Initializing player ${i} with city`));
+    await (await diamond.connect(players[i]).initializePlayer({ x: i * TILE_WIDTH, y: 0 }, `Player ${i}`, { gasLimit })).wait();
     playerIds.push((await diamond.getPlayerId(players[i].address)).toNumber());
 
-    const settlerId = decodeBigNumberishArr(await positionComponent.getEntitiesWithValue(encodePosition({ x: i * TILE_WIDTH, y: 0 }), { gasLimit: gasLimit }))[0];
+    const settlerId = decodeBigNumberishArr(await positionComponent.getEntitiesWithValue(encodePosition({ x: i * TILE_WIDTH, y: 0 }), { gasLimit }))[0];
     if (!settlerId) throw new Error('Settler not initialized yet');
-    await confirmTx(await diamond.connect(players[i]).foundCity(settlerId, [{ x: i * TILE_WIDTH, y: 0 }], `City ${i}`, { gasLimit: gasLimit }), hre);
+    await confirmTx(await diamond.connect(players[i]).foundCity(settlerId, [{ x: i * TILE_WIDTH, y: 0 }], `City ${i}`, { gasLimit }), hre);
   }
   console.log(chalk.bgRed.yellow(`>>> Players initialized with city after ${performance.now() - startTime} ms`));
 
   // Create an army for each player and log IDs (sync)
   startTime = performance.now();
-  console.log(chalk.bgRed.yellow(`>>> Starting to create armies, cities should be founded when this prints`));
   for (let i = 0; i < players.length; i++) {
-    await diamond.connect(admin).createArmy(playerIds[i], { x: i * TILE_WIDTH, y: 0 }, { gasLimit: gasLimit });
+    console.log(chalk.bgRed.yellow.dim(`>>> Creating army for player ${i}`));
+    await diamond.connect(admin).createArmy(playerIds[i], { x: i * TILE_WIDTH, y: 0 }, { gasLimit });
   }
   const armyIds = decodeBigNumberishArr(await tagComponent.getEntitiesWithValue(encodeString('Army')));
   console.log(chalk.bgRed.yellow(`>>> Armies created after ${performance.now() - startTime} ms`));
@@ -94,31 +93,43 @@ export const loadTestMoveArmy = async (hre: HardhatRuntimeEnvironment, diamond: 
   const { txsPerPlayer, periodPerTxBatchInMs, totalTimeoutInMs } = config;
   const gasLimit = chainInfo[hre.network.name].gasLimit;
 
+  const hashes = '#'.repeat(100);
+  console.log(chalk.bgRed.yellow(`${hashes}\nLoad testing begins with ${players.length} concurrent players each over ${txsPerPlayer} repeated transactions separated by ${periodPerTxBatchInMs} ms\n${hashes}`));
+
   // Begin load testing
   let nextMoveUp = false;
-  let startTime: number;
+  let startTime = performance.now();
+  let lastTime: number;
+  let batchesComplete = 0;
   for (let k = 0; k < txsPerPlayer; k++) {
     // Wait between batches of transactions
-    console.log(chalk.bgRed.yellow(`>>> Starting tx batch count ${k}...`));
+    console.log(chalk.bgRed.yellow(`>>> [batch ${k}] Starting to move armies...`));
     await sleep(periodPerTxBatchInMs);
 
     // Move all armies south by 1 coordinate (async)
-    startTime = performance.now();
+    lastTime = performance.now();
     let armiesMoved = 0;
     players.forEach(async (p, i) => {
-      console.log(chalk.bgRed.yellow.dim(`>>> Moving army for player ${i}...`));
+      console.log(chalk.bgRed.yellow.dim(`>>> [batch ${k}] Moving army for player ${i}...`));
       await confirmTx(await diamond.connect(p).move(armyIds[i], { x: i * TILE_WIDTH, y: nextMoveUp ? 0 : 1 }, { gasLimit }), hre);
 
       armiesMoved++;
       if (armiesMoved === players.length) {
+        batchesComplete++;
         nextMoveUp = !nextMoveUp;
-        console.log(chalk.bgRed.yellow(`>>> All army movements finished after ${performance.now() - startTime} ms`));
+        console.log(chalk.bgRed.yellow(`>>> [batch ${k}] All army movements finished after ${performance.now() - lastTime} ms`));
       }
     });
   }
 
-  // Terminate load test after some time
-  await sleep(totalTimeoutInMs);
+  // Check for completion or timeout
+  while (performance.now() - startTime < totalTimeoutInMs) {
+    await sleep(100);
+    if (batchesComplete === txsPerPlayer) {
+      console.log(chalk.bgRed.yellow(`>>> Load testing complete`));
+      break;
+    }
+  }
 };
 
 // ----------------------------------------------------------

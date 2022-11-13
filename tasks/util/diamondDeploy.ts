@@ -84,7 +84,7 @@ export const deployFacets = async (hre: HardhatRuntimeEnvironment, diamondAddres
         ],
         hre.ethers.constants.AddressZero,
         '0x',
-        { gasLimit: gasLimit }
+        { gasLimit }
       ),
       hre
     );

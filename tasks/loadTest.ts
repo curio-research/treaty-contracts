@@ -12,6 +12,9 @@ import { chainInfo } from 'curio-vault';
 
 task('load-test', 'perform load testing').setAction(async (args: HardhatArguments, hre: HardhatRuntimeEnvironment) => {
   try {
+    // Compile contracts
+    await hre.run('compile');
+
     const provider = new hre.ethers.providers.JsonRpcProvider(chainInfo[hre.network.name].rpcUrl);
     const admin = (await hre.ethers.getSigners())[0];
     const playerCount = 5;
@@ -46,7 +49,7 @@ task('load-test', 'perform load testing').setAction(async (args: HardhatArgument
     // Perform load test on `move`
     await loadTestMoveArmy(hre, diamond, setupOutput, players, {
       txsPerPlayer: 10,
-      periodPerTxBatchInMs: 1.5 * 1000,
+      periodPerTxBatchInMs: 6 * 1000,
       totalTimeoutInMs: 3 * 60 * 1000,
     });
   } catch (err: any) {

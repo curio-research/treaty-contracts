@@ -99,7 +99,7 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
   startTime = performance.now();
   const componentUploadBatchSize = 50;
   for (let i = 0; i < COMPONENT_SPECS.length; i += componentUploadBatchSize) {
-    console.log(chalk.dim(`✦ registering components ${i} to ${i + componentUploadBatchSize}`));
+    console.log(chalk.dim(`✦ Registering components ${i} to ${i + componentUploadBatchSize}`));
     await confirmTx(await diamond.registerComponents(diamond.address, COMPONENT_SPECS.slice(i, i + componentUploadBatchSize)), hre);
   }
   console.log(`✦ Component registration took ${Math.floor(performance.now() - startTime)} ms`);
@@ -111,12 +111,12 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
   startTime = performance.now();
   const gameParamUploadBatchSize = 200;
   for (let i = 0; i < GAME_PARAMETERS.length; i += gameParamUploadBatchSize) {
-    console.log(chalk.dim(`✦ registering game parameters ${i} to ${i + gameParamUploadBatchSize}`));
+    console.log(chalk.dim(`✦ Registering game parameters ${i} to ${i + gameParamUploadBatchSize}`));
     const identifiers = GAME_PARAMETERS.map((c) => c.subject + '-' + c.object + '-' + c.componentName + '-' + c.functionName + '-' + Math.trunc(c.level).toString());
     const values = GAME_PARAMETERS.map((c) => Math.trunc(c.value));
     await confirmTx(await diamond.bulkAddGameParameters(identifiers, values, { gasLimit }), hre);
   }
-  console.log(`✦ Constant registration took ${Math.floor(performance.now() - startTime)} ms`);
+  console.log(`✦ Game parameter registration took ${Math.floor(performance.now() - startTime)} ms`);
 
   // Initialize map
   startTime = performance.now();
