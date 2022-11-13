@@ -4,11 +4,12 @@ import { Component__factory } from './../../typechain-types/factories/contracts/
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { TILE_TYPE, componentNameToId, encodePosition, getImmediateSurroundingPositions, TileMap, Tag, Position, Owner, Health, Speed, Attack, Defense, Load, LastTimestamp, Tags, encodeString, encodeUint256, getRightPos, chainInfo } from 'curio-vault';
 import { TILE_WIDTH } from './constants';
-import { confirm } from './deployHelper';
+import { confirmTx } from './deployHelper';
 import SimplexNoise from 'simplex-noise';
-import { MapInput } from './types';
+import { LoadTestSetupInput, MapInput } from './types';
 import chalk from 'chalk';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
+import { Signer } from 'ethers';
 
 const MAX_UINT256 = BigInt(Math.pow(2, 256)) - BigInt(1);
 
@@ -212,10 +213,10 @@ export const initializeFixmap = async (hre: HardhatRuntimeEnvironment, diamond: 
   const playerPositions = [player1Pos, player2Pos, player3Pos, player4Pos];
 
   // initialize 4 players
-  await confirm(await diamond.connect(player1).initializePlayer(player1Pos, 'A', { gasLimit: gasLimit }), hre);
-  await confirm(await diamond.connect(player2).initializePlayer(player2Pos, 'B', { gasLimit: gasLimit }), hre);
-  await confirm(await diamond.connect(player3).initializePlayer(player3Pos, 'C', { gasLimit: gasLimit }), hre);
-  await confirm(await diamond.connect(player4).initializePlayer(player4Pos, 'D', { gasLimit: gasLimit }), hre);
+  await confirmTx(await diamond.connect(player1).initializePlayer(player1Pos, 'A', { gasLimit: gasLimit }), hre);
+  await confirmTx(await diamond.connect(player2).initializePlayer(player2Pos, 'B', { gasLimit: gasLimit }), hre);
+  await confirmTx(await diamond.connect(player3).initializePlayer(player3Pos, 'C', { gasLimit: gasLimit }), hre);
+  await confirmTx(await diamond.connect(player4).initializePlayer(player4Pos, 'D', { gasLimit: gasLimit }), hre);
 
   const player1Id = (await diamond.getPlayerId(player1.address)).toNumber();
   const player2Id = (await diamond.getPlayerId(player2.address)).toNumber();
@@ -240,80 +241,14 @@ export const initializeFixmap = async (hre: HardhatRuntimeEnvironment, diamond: 
   // spawn armies
   await diamond.createArmy(player1Id, getRightPos(player1Pos));
   let entity = (await diamond.getEntity()).toNumber();
-  await confirm(await diamond.setComponentValue(Speed, entity, encodeUint256(5)), hre);
+  await confirmTx(await diamond.setComponentValue(Speed, entity, encodeUint256(5)), hre);
 
   await diamond.createArmy(player2Id, getRightPos(getRightPos(player1Pos)));
   entity = (await diamond.getEntity()).toNumber();
-  await confirm(await diamond.setComponentValue(Speed, entity, encodeUint256(5)), hre);
+  await confirmTx(await diamond.setComponentValue(Speed, entity, encodeUint256(5)), hre);
 };
 
 export const addGetEntity = async (diamond: Curio): Promise<number> => {
   await diamond.addEntity();
   return (await diamond.getEntity()).toNumber();
-};
-
-export const preparePlayers = async (playerCount: number): Promise<SignerWithAddress[]> => {
-  return 1;
-};
-
-export const testLoad = async (hre: HardhatRuntimeEnvironment, diamond: Curio, playerCount: number, periodPerTnPerPlayer: number, tnsPerPlayer: number, functionName: string) => {
-  // Get more players
-
-  // Fetch players
-  const players = await hre.ethers.getSigners(); // players[0] is the game admin
-  const admin = players[0];
-  console.log(chalk.bgRed.yellow('>>> Signer count:', players.length));
-  if (players.length < playerCount) throw new Error('Not enough signers');
-
-  // Fetch gas limit, and necessary components
-  const gasLimit = chainInfo[hre.network.name].gasLimit;
-  const positionComponentAddr = await diamond.getComponentById(componentNameToId[Position]);
-  const positionComponent = Component__factory.connect(positionComponentAddr, admin);
-  const tagComponentAddr = await diamond.getComponentById(componentNameToId[Tag]);
-  const tagComponent = Component__factory.connect(tagComponentAddr, admin);
-
-  // Initialize each player with a city (sync)
-  let startTime = performance.now();
-  for (let i = 0; i < playerCount; i++) {
-    console.log(chalk.bgRed.yellow.dim(`>>> initializing player with city ${i}`));
-    await (await diamond.connect(players[i]).initializePlayer({ x: i * TILE_WIDTH, y: 0 }, `Player ${i}`, { gasLimit: gasLimit })).wait();
-    const settlerId = decodeBigNumberishArr(await positionComponent.getEntitiesWithValue(encodePosition({ x: i * TILE_WIDTH, y: 0 }), { gasLimit: gasLimit }))[0];
-    if (!settlerId) throw new Error('Settler not initialized yet');
-    await confirm(await diamond.connect(players[i]).foundCity(settlerId, [{ x: i * TILE_WIDTH, y: 0 }], `City ${i}`, { gasLimit: gasLimit }), hre);
-  }
-  console.log(chalk.bgRed.yellow(`>>> Players initialized with city after ${performance.now() - startTime} ms`));
-  const playerIds = players.map(async (player) => (await diamond.getPlayerId(player.address)).toNumber());
-
-  // Create an army for each player and log IDs (sync)
-  startTime = performance.now();
-  console.log(chalk.bgRed.yellow(`>>> Starting to create armies, cities should be founded when this prints`));
-  for (let i = 0; i < playerCount; i++) {
-    await diamond.connect(admin).createArmy(playerIds[i], { x: i * TILE_WIDTH, y: 0 }, { gasLimit: gasLimit });
-  }
-  const allArmyIds = decodeBigNumberishArr(await tagComponent.getEntitiesWithValue(encodeString('Army')));
-  console.log(chalk.bgRed.yellow(`>>> All armies created after ${performance.now() - startTime} ms`));
-  console.log(chalk.bgRed.yellow('>>> all army IDs'), allArmyIds);
-
-  await sleep(5000);
-
-  // Load test begins
-  for (let k = 0; k < tnsPerPlayer; k++) {
-    // // Wait between batches of transactions
-    // await sleep(periodPerTnPerPlayer);
-
-    // Move all armies south by 1 coordinate (async)
-    startTime = performance.now();
-    let armiesAdded = 0;
-    Array.from(Array(playerCount).keys()).forEach(async (i) => {
-      console.log(chalk.bgRed.yellow.dim(`>>> Moving army for player ${i}...`));
-      await confirm(await diamond.connect(players[i]).move(allArmyIds[i], { x: i * TILE_WIDTH, y: 1 }, { gasLimit: gasLimit }), hre);
-
-      armiesAdded++;
-      if (armiesAdded === playerCount) console.log(`>>> All army movements finished after ${performance.now() - startTime} ms`);
-    });
-  }
-};
-
-const sleep = (ms: number) => {
-  return new Promise((resolve) => setTimeout(resolve, ms));
 };
