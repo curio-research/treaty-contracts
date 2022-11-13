@@ -7,9 +7,9 @@ import * as fs from 'fs';
 import { chainInfo, COMPONENT_SPECS, Curio, position, TILE_TYPE } from 'curio-vault';
 import { ECSLib } from '../../typechain-types/contracts/libraries/ECSLib';
 import { GameLib } from '../../typechain-types/contracts/libraries/GameLib';
-import { generateWorldConstants, createTemplates, TEST_MAP_INPUT } from './constants';
+import { createTemplates } from './constants';
 import { deployDiamond, getDiamond, deployFacets } from './diamondDeploy';
-import { encodeTileMap, generateEmptyMap } from './mapHelper';
+import { encodeTileMap } from './mapHelper';
 import GAME_PARAMETERS from '../game_parameters.json';
 import chalk from 'chalk';
 
@@ -69,6 +69,13 @@ export const saveMapToLocal = async (tileMap: any) => {
   console.log('✦ map saved to local');
 };
 
+/**
+ * @dev The megafunction which initializes a fully functional game instance.
+ * @param hre
+ * @param worldConstants
+ * @param tileMap
+ * @returns a Curio diamond instance
+ */
 export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConstants: any, tileMap: TILE_TYPE[][]): Promise<Curio> => {
   const admin = (await hre.ethers.getSigners())[0];
   const gasLimit = chainInfo[hre.network.name].gasLimit;

@@ -20,6 +20,7 @@ export interface LoadTestSetupOutput {
 export interface LoadTestConfig {
   txsPerPlayer: number;
   periodPerTxBatchInMs: number;
+  totalTimeoutInMs: number;
 }
 
 export interface DeployArgs extends HardhatArguments {

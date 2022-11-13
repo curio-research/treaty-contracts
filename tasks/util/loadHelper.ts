@@ -3,7 +3,7 @@ import { TILE_WIDTH } from './constants';
 import chalk from 'chalk';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { LoadTestConfig, LoadTestSetupInput, LoadTestSetupOutput } from './types';
-import { Signer } from 'ethers';
+import { Signer, Wallet } from 'ethers';
 import { confirmTx } from './deployHelper';
 
 export const DRIP_AMOUNT_BY_NETWORK: Record<string, number> = {
@@ -18,16 +18,21 @@ export const DRIP_AMOUNT_BY_NETWORK: Record<string, number> = {
 // LOAD TEST FNS
 // ----------------------------------------------------------
 
-export const createSigners = async (hre: HardhatRuntimeEnvironment, signerCount: number, admin: Signer): Promise<Signer[]> => {
+export const createSigners = async (hre: HardhatRuntimeEnvironment, signerCount: number, admin: Signer): Promise<Wallet[]> => {
+  const provider = new hre.ethers.providers.JsonRpcProvider(chainInfo[hre.network.name].rpcUrl);
+  console.log(chalk.bgRed.yellow('>>> Network name:', (await provider.getNetwork()).name));
+
   // Create signers
-  const signers: Signer[] = [];
+  const signers: Wallet[] = [];
   for (let i = 0; i < signerCount; i++) {
-    signers.push(hre.ethers.Wallet.createRandom());
+    const privKey = hre.ethers.Wallet.createRandom();
+    const signer = new hre.ethers.Wallet(privKey, provider);
+    signers.push(signer);
   }
 
-  const txIntent = (recipient: Signer) => {
+  const txIntent = (recipient: Wallet) => {
     return {
-      to: recipient.getAddress(),
+      to: recipient.address,
       value: hre.ethers.utils.parseEther(String(DRIP_AMOUNT_BY_NETWORK[hre.network.name])),
       gasLimit: chainInfo[hre.network.name].gasLimit,
     };
@@ -36,19 +41,19 @@ export const createSigners = async (hre: HardhatRuntimeEnvironment, signerCount:
   // Drip tokens
   for (let i = 0; i < signerCount; i++) {
     await (await admin.sendTransaction(txIntent(signers[i]))).wait();
-    await sleep(50);
+    await sleep(50); // prevent tx too frequent error
   }
 
+  console.log(chalk.bgRed.yellow(`>>> ${signerCount} signers created and funded`));
   return signers;
 };
 
-export const prepareLoadTest = async (input: LoadTestSetupInput, players: Signer[]): Promise<LoadTestSetupOutput> => {
+export const prepareLoadTest = async (input: LoadTestSetupInput, players: Wallet[]): Promise<LoadTestSetupOutput> => {
   // Fetch inputs
   const { hre, diamond } = input;
 
   // Create players with enough tokens
   const admin = (await hre.ethers.getSigners())[0];
-  console.log(chalk.bgRed.yellow(`>>> ${players.length} signers created and funded`));
 
   // Fetch gas limit, and necessary components
   const gasLimit = chainInfo[hre.network.name].gasLimit;
@@ -63,7 +68,7 @@ export const prepareLoadTest = async (input: LoadTestSetupInput, players: Signer
   for (let i = 0; i < players.length; i++) {
     console.log(chalk.bgRed.yellow.dim(`>>> initializing player with city ${i}`));
     await (await diamond.connect(players[i]).initializePlayer({ x: i * TILE_WIDTH, y: 0 }, `Player ${i}`, { gasLimit: gasLimit })).wait();
-    playerIds.push((await diamond.getPlayerId(players[i].getAddress())).toNumber());
+    playerIds.push((await diamond.getPlayerId(players[i].address)).toNumber());
 
     const settlerId = decodeBigNumberishArr(await positionComponent.getEntitiesWithValue(encodePosition({ x: i * TILE_WIDTH, y: 0 }), { gasLimit: gasLimit }))[0];
     if (!settlerId) throw new Error('Settler not initialized yet');
@@ -78,8 +83,7 @@ export const prepareLoadTest = async (input: LoadTestSetupInput, players: Signer
     await diamond.connect(admin).createArmy(playerIds[i], { x: i * TILE_WIDTH, y: 0 }, { gasLimit: gasLimit });
   }
   const armyIds = decodeBigNumberishArr(await tagComponent.getEntitiesWithValue(encodeString('Army')));
-  console.log(chalk.bgRed.yellow(`>>> All armies created after ${performance.now() - startTime} ms`));
-  console.log(chalk.bgRed.yellow('>>> Army IDs:'), armyIds);
+  console.log(chalk.bgRed.yellow(`>>> Armies created after ${performance.now() - startTime} ms`));
 
   return { playerIds, armyIds };
 };
@@ -87,10 +91,10 @@ export const prepareLoadTest = async (input: LoadTestSetupInput, players: Signer
 export const loadTestMoveArmy = async (hre: HardhatRuntimeEnvironment, diamond: Curio, setupOutput: LoadTestSetupOutput, players: Signer[], config: LoadTestConfig): Promise<void> => {
   // Fetch inputs
   const { armyIds } = setupOutput;
-  const { txsPerPlayer, periodPerTxBatchInMs } = config;
+  const { txsPerPlayer, periodPerTxBatchInMs, totalTimeoutInMs } = config;
   const gasLimit = chainInfo[hre.network.name].gasLimit;
 
-  // Load test begins
+  // Begin load testing
   let nextMoveUp = false;
   let startTime: number;
   for (let k = 0; k < txsPerPlayer; k++) {
@@ -112,6 +116,9 @@ export const loadTestMoveArmy = async (hre: HardhatRuntimeEnvironment, diamond: 
       }
     });
   }
+
+  // Terminate load test after some time
+  await sleep(totalTimeoutInMs);
 };
 
 // ----------------------------------------------------------

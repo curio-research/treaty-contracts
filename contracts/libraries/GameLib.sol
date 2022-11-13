@@ -350,7 +350,7 @@ library GameLib {
     ) internal view returns (uint256) {
         string memory identifier = string(abi.encodePacked(_subject, "-", _object, "-", _componentName, "-", _functionName, "-", Strings.toString(_level)));
         uint256[] memory res = ECSLib.getStringComponent("Tag").getEntitiesWithValue(identifier);
-        require(res.length <= 1, string(abi.encodePacked("CURIO: Constant with Tag=", identifier, " duplicated")));
+        // require(res.length <= 1, string(abi.encodePacked("CURIO: Constant with Tag=", identifier, " duplicated")));
         require(res.length >= 1, string(abi.encodePacked("CURIO: Constant with Tag=", identifier, " not found")));
         return ECSLib.getUint("Amount", res[0]);
     }

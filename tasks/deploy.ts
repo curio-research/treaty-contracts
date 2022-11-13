@@ -5,7 +5,7 @@ import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { printDivider, indexerUrlSelector, saveMapToLocal, initializeGame } from './util/deployHelper';
 import { generateWorldConstants, MAP_INPUT } from './util/constants';
 import { generateBlankFixmap, generateMap, initializeFixmap } from './util/mapHelper';
-import { GameConfig, scaleMap, chainInfo } from 'curio-vault';
+import { GameConfig, scaleMap } from 'curio-vault';
 import * as rw from 'random-words';
 import { saveComponentsToJsonFiles, saveMapToJsonFile, saveWorldConstantsToJsonFile } from '../test/util/saveDataForTests';
 import { DeployArgs } from './util/types';
@@ -18,7 +18,6 @@ import { DeployArgs } from './util/types';
  * `npx hardhat deploy`: deploys game on localhost
  * `npx hardhat deploy --network constellationNew`: deploy game on constellationNew network
  */
-
 task('deploy', 'deploy contracts')
   .addOptionalParam('port', 'Port contract abis and game info to Vault') // default is to call port
   .addFlag('release', 'Publish deployment to official release') // default is to call publish
@@ -32,7 +31,6 @@ task('deploy', 'deploy contracts')
       printDivider();
 
       const s = performance.now();
-      const gasLimit = chainInfo[hre.network.name].gasLimit;
       const { port, release, fixmap, indexer, name } = args;
 
       // Read variables from run flags
@@ -46,6 +44,7 @@ task('deploy', 'deploy contracts')
       // Set up deployer and some local variables
       let [player1] = await hre.ethers.getSigners();
       console.log('✦ player1 address is:', player1.address);
+      console.log(chalk.bgBlue.green(`>>> Provider is`, (await player1.provider!.getNetwork()).name, player1.provider!.getBlockNumber));
 
       // Generate world constants and tile map
       const worldConstants = generateWorldConstants(player1.address);
@@ -61,9 +60,7 @@ task('deploy', 'deploy contracts')
       // Initialize game
       const diamond = await initializeGame(hre, worldConstants, tileMap);
 
-      if (fixmap) {
-        await initializeFixmap(hre, diamond);
-      }
+      if (fixmap) await initializeFixmap(hre, diamond);
 
       // Each deployment has a unique deploymentId
       const deploymentId = `deployer=${process.env.DEPLOYER_ID}-${release && 'release-'}${hre.network.name}-${Date.now()}`;

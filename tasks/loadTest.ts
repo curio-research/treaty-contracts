@@ -3,17 +3,19 @@ import { HardhatArguments, HardhatRuntimeEnvironment } from 'hardhat/types';
 import { task } from 'hardhat/config';
 import * as fsp from 'fs/promises';
 import { createSigners, loadTestMoveArmy, prepareLoadTest } from './util/loadHelper';
-import { Signer } from 'ethers';
+import { Wallet } from 'ethers';
 import { initializeGame } from './util/deployHelper';
 import { generateWorldConstants, TEST_MAP_INPUT } from './util/constants';
-import { chainInfo } from 'curio-vault';
 import { generateEmptyMap } from './util/mapHelper';
+import chalk from 'chalk';
+import { chainInfo } from 'curio-vault';
 
 task('load-test', 'perform load testing').setAction(async (args: HardhatArguments, hre: HardhatRuntimeEnvironment) => {
   try {
+    const provider = new hre.ethers.providers.JsonRpcProvider(chainInfo[hre.network.name].rpcUrl);
     const admin = (await hre.ethers.getSigners())[0];
-    const playerCount = 100;
-    const gasLimit = chainInfo[hre.network.name].gasLimit;
+    const playerCount = 5;
+    console.log(chalk.bgRed.yellow(`>>> Load testing on ${hre.network.name}`));
 
     // Initialize game
     const worldConstants = generateWorldConstants(admin.address);
@@ -21,41 +23,33 @@ task('load-test', 'perform load testing').setAction(async (args: HardhatArgument
     const diamond = await initializeGame(hre, worldConstants, tileMap);
 
     // Read from existing addresses, or if none exist, create new ones and save locally
-    let players: Signer[];
-    const filePath = path.join(path.join(__dirname), 'signers', hre.network.name);
+    let players: Wallet[];
+    const filePath = path.join(path.join(__dirname), 'signers', `${hre.network.name}.json`);
     try {
       const fileContent = await fsp.readFile(filePath);
-      players = JSON.parse(fileContent.toString());
+      players = JSON.parse(fileContent.toString())
+        .slice(0, playerCount)
+        .map((pK: string) => new hre.ethers.Wallet(pK, provider));
+      console.log(chalk.bgRed.yellow(`>>> ${players.length} existing signers loaded`));
       if (players.length < playerCount) {
-        players = await createSigners(hre, playerCount - players.length, admin);
-        await fsp.writeFile(filePath, JSON.stringify(players));
+        players = players.concat(await createSigners(hre, playerCount - players.length, admin));
+        await fsp.writeFile(filePath, JSON.stringify(players.map((w) => w.privateKey)));
       }
     } catch (err: any) {
       players = await createSigners(hre, playerCount, admin);
-      await fsp.writeFile(filePath, JSON.stringify(players));
+      await fsp.writeFile(filePath, JSON.stringify(players.map((w) => w.privateKey)));
     }
 
     // Prepare load test
     const setupOutput = await prepareLoadTest({ hre, diamond }, players);
 
     // Perform load test on `move`
-    loadTestMoveArmy(hre, diamond, setupOutput, players, {
+    await loadTestMoveArmy(hre, diamond, setupOutput, players, {
       txsPerPlayer: 10,
-      periodPerTxBatchInMs: 1500,
+      periodPerTxBatchInMs: 1.5 * 1000,
+      totalTimeoutInMs: 3 * 60 * 1000,
     });
   } catch (err: any) {
     console.log(err.message);
   }
 });
-
-task('create-wallets').setAction(async (args: HardhatArguments, hre: HardhatRuntimeEnvironment) => {
-  try {
-    console.log('MUAHAHAHAHAHA');
-  } catch (err: any) {
-    console.log(err.message);
-  }
-});
-
-function getDir(arg0: string, arg1: string): string {
-  throw new Error('Function not implemented.');
-}
