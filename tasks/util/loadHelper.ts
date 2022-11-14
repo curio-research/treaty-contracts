@@ -87,7 +87,7 @@ export const prepareLoadTest = async (input: LoadTestSetupInput, players: Wallet
   return { playerIds, armyIds };
 };
 
-export const loadTestMoveArmy = async (hre: HardhatRuntimeEnvironment, diamond: Curio, setupOutput: LoadTestSetupOutput, players: Signer[], config: LoadTestConfig): Promise<void> => {
+export const loadTestMoveArmy = async (hre: HardhatRuntimeEnvironment, diamond: Curio, setupOutput: LoadTestSetupOutput, players: Signer[], config: LoadTestConfig, outputFilePath?: string): Promise<void> => {
   // Fetch inputs
   const { armyIds } = setupOutput;
   const { txsPerPlayer, periodPerTxBatchInMs, totalTimeoutInMs } = config;
@@ -100,7 +100,8 @@ export const loadTestMoveArmy = async (hre: HardhatRuntimeEnvironment, diamond: 
   let nextMoveUp = false;
   let startTime = performance.now();
   let lastTime: number;
-  let batchesComplete = 0;
+  let gasConsumptionsByTx: number[] = [];
+  let timeByBatchInMs: number[] = [];
   for (let k = 0; k < txsPerPlayer; k++) {
     // Wait between batches of transactions
     console.log(chalk.bgRed.yellow(`>>> [batch ${k}] Starting to move armies...`));
@@ -111,12 +112,13 @@ export const loadTestMoveArmy = async (hre: HardhatRuntimeEnvironment, diamond: 
     let armiesMoved = 0;
     players.forEach(async (p, i) => {
       console.log(chalk.bgRed.yellow.dim(`>>> [batch ${k}] Moving army for player ${i}...`));
-      await confirmTx(await diamond.connect(p).move(armyIds[i], { x: i * TILE_WIDTH, y: nextMoveUp ? 0 : 1 }, { gasLimit }), hre);
+      const receipt = (await confirmTx(await diamond.connect(p).move(armyIds[i], { x: i * TILE_WIDTH, y: nextMoveUp ? 0 : 1 }, { gasLimit }), hre))!;
+      gasConsumptionsByTx.push(receipt.gasUsed.toNumber());
 
       armiesMoved++;
       if (armiesMoved === players.length) {
-        batchesComplete++;
         nextMoveUp = !nextMoveUp;
+        timeByBatchInMs.push(performance.now() - lastTime);
         console.log(chalk.bgRed.yellow(`>>> [batch ${k}] All army movements finished after ${performance.now() - lastTime} ms`));
       }
     });
@@ -125,8 +127,11 @@ export const loadTestMoveArmy = async (hre: HardhatRuntimeEnvironment, diamond: 
   // Check for completion or timeout
   while (performance.now() - startTime < totalTimeoutInMs) {
     await sleep(100);
-    if (batchesComplete === txsPerPlayer) {
-      console.log(chalk.bgRed.yellow(`>>> Load testing complete`));
+    if (timeByBatchInMs.length === txsPerPlayer) {
+      console.log(chalk.bgRed.yellow(`${hashes}\nLoad testing complete`));
+      console.log(chalk.bgRed.yellow(`Average gas per transaction: ${avg(gasConsumptionsByTx)}`));
+      console.log(chalk.bgRed.yellow(`Average time per transaction batch: ${avg(timeByBatchInMs)} ms`));
+      console.log(chalk.bgRed.yellow(`Result: ${(players.length / avg(timeByBatchInMs)) * 1000} TPS`));
       break;
     }
   }
@@ -136,6 +141,12 @@ export const loadTestMoveArmy = async (hre: HardhatRuntimeEnvironment, diamond: 
 // TS HELPERS
 // ----------------------------------------------------------
 
-const sleep = (ms: number) => {
+const sleep = async (ms: number): Promise<unknown> => {
   return new Promise((resolve) => setTimeout(resolve, ms));
+};
+
+const avg = (arr: number[]): number => {
+  let sum = 0;
+  arr.forEach((e) => (sum += e));
+  return sum / arr.length;
 };

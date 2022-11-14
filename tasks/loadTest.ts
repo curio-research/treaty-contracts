@@ -2,6 +2,7 @@ import * as path from 'path';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { task } from 'hardhat/config';
 import * as fsp from 'fs/promises';
+import * as fs from 'fs';
 import { createSigners, loadTestMoveArmy, prepareLoadTest } from './util/loadHelper';
 import { Wallet } from 'ethers';
 import { initializeGame } from './util/deployHelper';
@@ -27,7 +28,9 @@ task('load-test', 'perform load testing')
 
       // Prepare signers
       let players: Wallet[] = [];
-      const filePath = path.join(path.join(__dirname), 'signers', `${hre.network.name}.json`);
+      const dir = path.join(path.join(__dirname), 'signers');
+      if (!fs.existsSync(dir)) fs.mkdirSync(dir);
+      const filePath = path.join(dir, `${hre.network.name}.json`);
       try {
         // Read all existing signers for non-localhost networks
         if (hre.network.name !== 'localhost') {
@@ -50,7 +53,7 @@ task('load-test', 'perform load testing')
       }
 
       console.log(chalk.bgRed.yellow('>>> Admin balance:', (await admin.getBalance()).toString(), 'wei'));
-      console.log(chalk.bgRed.yellow('>>> Player balance', (await players[0].getBalance()).toString(), 'wei'));
+      console.log(chalk.bgRed.yellow('>>> Player balance:', (await players[0].getBalance()).toString(), 'wei'));
 
       // Initialize game
       const worldConstants = generateWorldConstants(admin.address);
@@ -63,7 +66,7 @@ task('load-test', 'perform load testing')
       // Perform load test on `move`
       await loadTestMoveArmy(hre, diamond, setupOutput, players, {
         txsPerPlayer: 10,
-        periodPerTxBatchInMs: Math.trunc(playerCount * 1.2 * 1000),
+        periodPerTxBatchInMs: Math.trunc(playerCount * 1.5 * 1000),
         totalTimeoutInMs: Math.trunc(300 * 60 * 1000),
       });
     } catch (err: any) {
