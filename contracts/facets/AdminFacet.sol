@@ -32,8 +32,8 @@ contract AdminFacet is UseStorage {
         Templates.addArmy(_playerID, _position, GameLib.getProperTilePosition(_position), 0, 1, 1, 2, 5);
     }
 
-    function adminInitializeTile(Position memory _startPosition) external onlyAdmin {
-        GameLib.initializeTile(_startPosition);
+    function adminInitializeTile(Position memory _startPosition, address _tileAddress) external onlyAdmin {
+        GameLib.initializeTile(_startPosition, _tileAddress);
     }
 
     function assignResource(
@@ -49,13 +49,12 @@ contract AdminFacet is UseStorage {
     }
 
     function spawnResource(Position memory _startPosition, string memory _inventoryType) external onlyAdmin {
-        GameLib.initializeTile(_startPosition);
         Templates.addResource(gs().templates[_inventoryType], _startPosition, 0);
     }
 
     function spawnBarbarian(Position memory _startPosition, uint256 _level) external onlyAdmin {
         require(_level == 1 || _level == 2, "CURIO: Function not used correctly");
-        uint256 tileID = GameLib.initializeTile(_startPosition);
+        uint256 tileID = GameLib.getTileAt(_startPosition);
         ECSLib.setUint("Level", tileID, _level);
     }
 
@@ -92,9 +91,11 @@ contract AdminFacet is UseStorage {
      * @dev Initialize all large tiles from an array of starting positions.
      * @param _positions all positions
      */
-    function bulkInitializeTiles(Position[] memory _positions) external onlyAdmin {
+
+     // fixme: update new initialization in deploy.ts
+    function bulkInitializeTiles(Position[] memory _positions, address _tileAddress) external onlyAdmin {
         for (uint256 i = 0; i < _positions.length; i++) {
-            GameLib.initializeTile(_positions[i]);
+            GameLib.initializeTile(_positions[i], _tileAddress);
         }
     }
 

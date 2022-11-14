@@ -77,19 +77,19 @@ library Templates {
         return settlerID;
     }
 
-    function addTile(Position memory _startPosition, uint256 _terrain) public returns (uint256) {
+    function addTile(Position memory _startPosition, uint256 _terrain, address _tileAddress) public returns (uint256) {
         uint256 tileID = ECSLib.addEntity();
 
         ECSLib.setString("Tag", tileID, "Tile");
         ECSLib.setBool("CanBattle", tileID);
         ECSLib.setPosition("StartPosition", tileID, _startPosition);
-        ECSLib.setUint("City", tileID, 0);
-        ECSLib.setUint("Owner", tileID, 0);
         ECSLib.setUint("Level", tileID, 1);
         ECSLib.setUint("Terrain", tileID, _terrain);
         ECSLib.setUint("LastTimestamp", tileID, block.timestamp); // last reset time for barbarians, init active time for supertile
         ECSLib.setUint("LastUpgraded", tileID, 0);
         ECSLib.setUint("LastRecovered", tileID, 0);
+        ECSLib.setUint("Nation", tileID, 0);
+        ECSLib.setAddress("Address", tileID, _tileAddress);
 
         return tileID;
     }
@@ -126,6 +126,7 @@ library Templates {
         ECSLib.setUint("LastTimestamp", resourceID, block.timestamp);
         ECSLib.setUint("Load", resourceID, _load);
         ECSLib.setUint("LastUpgraded", resourceID, 0);
+        ECSLib.setUint("Nation", resourceID, 0);
 
         return resourceID;
     }

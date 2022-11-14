@@ -113,8 +113,6 @@ contract DiamondDeployTest is Test {
 
         // Prepare world constants with either `_generateNewWorldConstants()` or `fetchWorldConstants()`
         worldConstants = _fetchWorldConstants();
-        worldConstants.worldWidth = 1000; // use deployment settings, except make map bigger
-        worldConstants.worldHeight = 1000;
         console.log(">>> World constants ready");
 
         // Fetch args from CLI craft payload for init deploy
@@ -147,9 +145,8 @@ contract DiamondDeployTest is Test {
         // Note: if fetching deployed map, check for map size
         uint256[][] memory map = _generateNewMap(worldConstants.worldWidth, worldConstants.worldHeight);
         uint256[][] memory encodedColumnBatches = _encodeTileMap(map, worldConstants.numInitTerrainTypes, 200 / worldConstants.numInitTerrainTypes);
-        console.log("map Example (x = 0, y = 0): ", encodedColumnBatches[0][0]);
-        console.log("encodedColumnBatches Example (x = 0, y = 0): ", encodedColumnBatches[0][0]);
         admin.storeEncodedColumnBatches(encodedColumnBatches);
+        _initializeMap();
         console.log(">>> Map initialized and encoded");
 
         // Initialize treaties
@@ -157,13 +154,13 @@ contract DiamondDeployTest is Test {
         console.log(">>> Treaties initialized");
 
         // Deploy token contracts
-        foodContract = new FoodERC20("Food", "FOOD", 1, deployerAddress);
-        goldContract = new GoldERC20("Gold", "GOLD", 1, deployerAddress);
+        foodContract = new FoodERC20("Food", "FOOD", 1, deployerAddress, address(game));
+        goldContract = new GoldERC20("Gold", "GOLD", 1, deployerAddress, address(game));
         // note: Consider switching to erc1155
-        horsemanContract = new HorsemanERC20("Horseman", "HORSEMAN", 1, deployerAddress);
-        warriorContract = new WarriorERC20("Warrior", "WARRIOR", 1, deployerAddress);
-        slingerContract = new SlingerERC20("Slinger", "SLINGER", 1, deployerAddress);
-        guardContract = new GuardERC20("Guard", "GUARD", 1, deployerAddress);
+        horsemanContract = new HorsemanERC20("Horseman", "HORSEMAN", 1, deployerAddress, address(game));
+        warriorContract = new WarriorERC20("Warrior", "WARRIOR", 1, deployerAddress, address(game));
+        slingerContract = new SlingerERC20("Slinger", "SLINGER", 1, deployerAddress, address(game));
+        guardContract = new GuardERC20("Guard", "GUARD", 1, deployerAddress, address(game));
 
         // Create templates
         _createTemplates();
@@ -209,6 +206,28 @@ contract DiamondDeployTest is Test {
 
 
         console.log("=============== INDIVIDUAL TESTS BEGIN ================");
+    }
+
+    // fixme: Then probably don't need to store batches in gs()
+    function _initializeMap() private {
+        bytes32 tileAddressBytes = keccak256(abi.encodePacked("tile address"));
+        for (uint256 i = 0; i < worldConstants.worldWidth / worldConstants.tileWidth; i++) {
+            uint256 PosX = i * worldConstants.tileWidth;
+            for (uint256 j = 0; j < worldConstants.worldHeight / worldConstants.tileWidth; j++) {
+                uint256 PosY = j * worldConstants.tileWidth;
+                Position memory startPosition;
+                startPosition.x = PosX;
+                startPosition.y = PosY;
+
+                // Generate burner wallet for each tile
+                address tileAddress = address(uint160(uint256(tileAddressBytes)));
+                tileAddressBytes = keccak256(abi.encodePacked(tileAddressBytes));
+                
+                admin.adminInitializeTile(startPosition, tileAddress);
+
+            }
+        }
+
     }
 
     function _encodeTileMap(
@@ -369,8 +388,8 @@ contract DiamondDeployTest is Test {
             WorldConstants({
                 admin: deployerAddress,
                 tileWidth: 10,
-                worldWidth: 1000,
-                worldHeight: 1000,
+                worldWidth: 1,
+                worldHeight: 1,
                 numInitTerrainTypes: 6,
                 maxCityCountPerPlayer: 3,
                 maxArmyCountPerPlayer: 3,

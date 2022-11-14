@@ -64,10 +64,11 @@ library GameLib {
         }
     }
 
-    function initializeTile(Position memory _startPosition) internal returns (uint256) {
+    function initializeTile(Position memory _startPosition, address _tileAddress) external returns (uint256) {
         require(isProperTilePosition(_startPosition), "CURIO: Not proper tile position");
         uint256 tileId = getTileAt(_startPosition);
         if (tileId != 0) return tileId;
+        console.log("YO");
 
         // Load constants
         uint256 numInitTerrainTypes = gs().worldConstants.numInitTerrainTypes;
@@ -81,8 +82,7 @@ library GameLib {
         uint256 terrain = encodedCol / divFactor;
 
         // Initialize tile
-        uint256 tileID = Templates.addTile(_startPosition, terrain);
-        ECSLib.setUint("Terrain", tileID, terrain);
+        uint256 tileID = Templates.addTile(_startPosition, terrain, _tileAddress);
 
         // TEMP: battle royale mode
         if (gs().worldConstants.gameMode == GameMode.BATTLE_ROYALE) {
@@ -105,13 +105,21 @@ library GameLib {
         if (terrain < 3) {
             // Normal tile
             uint256 tileGuardAmount = getConstant("Tile", "Guard", "Amount", "", ECSLib.getUint("Level", tileID));
-            Templates.addConstituent(tileID, gs().templates["Guard"], tileGuardAmount);
+
+            // Drip Guard tokens
+            address tokenContract = getTokenContract("Guard");
+            (bool success, ) = tokenContract.call(abi.encodeWithSignature("dripToken(address, amount)", _tileAddress, tileGuardAmount));
+            require(success, "CURIO: Token dripping fails");
         } else if (terrain == 3 || terrain == 4) {
             // Barbarian tile
             uint256 barbarianLevel = terrain - 2;
             ECSLib.setUint("Level", tileID, barbarianLevel);
             uint256 barbarianGuardAmount = getConstant("Barbarian", "Guard", "Amount", "", barbarianLevel);
-            Templates.addConstituent(tileID, gs().templates["Guard"], barbarianGuardAmount);
+
+            // Drip Guard tokens
+            address tokenContract = getTokenContract("Guard");
+            (bool success, ) = tokenContract.call(abi.encodeWithSignature("dripToken(address, amount)", _tileAddress, barbarianGuardAmount));
+            require(success, "CURIO: Token dripping fails");
         } else {
             // Mountain tile, do nothing
         }
@@ -297,6 +305,11 @@ library GameLib {
     // ----------------------------------------------------------
     // LOGIC GETTERS
     // ----------------------------------------------------------
+
+    function getTokenContract(string memory _tokenName) public view returns (address) {
+        uint256 tokenTemplateID = gs().templates[_tokenName];
+        return ECSLib.getAddress("Address", tokenTemplateID);
+    }
 
     function getConstituents(uint256 _keeperID) public returns (uint256[] memory) {
         QueryCondition[] memory query = new QueryCondition[](2);
@@ -499,7 +512,7 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    function getPlayer(address _address) internal view returns (uint256) {
+    function getNation(address _address) internal view returns (uint256) {
         return gs().playerEntityMap[_address];
     }
 
@@ -629,27 +642,24 @@ library GameLib {
         require(Set(gs().entities).includes(_entity), "CURIO: Entity object not found");
     }
 
-    function activePlayerCheck(address _player) internal view {
-        uint256 playerID = getPlayer(_player);
-        require(ECSLib.getBoolComponent("IsActive").has(playerID), "CURIO: You are inactive");
+    function activePlayerCheck(address _NationWalletAddress) internal view {
+        uint256 nationID = getNation(_NationWalletAddress);
+        require(ECSLib.getBoolComponent("IsActive").has(nationID), "CURIO: You are inactive");
     }
 
-    function entityOwnershipCheck(uint256 _entity, address _player) internal view {
-        uint256 playerID = getPlayer(_player);
-        require(ECSLib.getUint("Owner", _entity) == playerID, "CURIO: Entity is not yours");
+    function entityOwnershipCheck(uint256 _entity, address _NationWalletAddress) internal view {
+        uint256 nationID = getNation(_NationWalletAddress);
+        require(ECSLib.getUint("Owner", _entity) == nationID, "CURIO: Entity is not yours");
     }
 
-    function neutralOrOwnedEntityCheck(uint256 _entity, address _player) internal view {
-        uint256 _playerID = getPlayer(_player);
-        uint256 entityOwner = ECSLib.getUint("Owner", _entity);
-        require(entityOwner == _playerID || entityOwner == 0, "CURIO: Entity is not yours");
+    function neutralOrOwnedEntityCheck(uint256 _entity, address _NationWalletAddress) internal view {
+        uint256 nationID = getNation(_NationWalletAddress);
+        uint256 entityOwner = ECSLib.getUint("Nation", _entity);
+        require(entityOwner == nationID || entityOwner == 0, "CURIO: Entity is not yours");
     }
 
     function inboundPositionCheck(Position memory _position) internal view {
-        console.log("NOt in bound?");
-        console.log(_position.x, _position.y);
         require(inBound(_position), "CURIO: Position out of bound");
-        console.log("?");
     }
 
     function passableTerrainCheck(Position memory _tilePosition) internal {
@@ -667,7 +677,6 @@ library GameLib {
     // ----------------------------------------------------------
 
     function inBound(Position memory _p) internal view returns (bool) {
-        console.log("Weird");
         return _p.x >= 0 && _p.x < gs().worldConstants.worldWidth && _p.y >= 0 && _p.y < gs().worldConstants.worldHeight;
     }
 
