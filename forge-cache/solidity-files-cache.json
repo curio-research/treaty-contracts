@@ -354,8 +354,8 @@
       }
     },
     "contracts/facets/AdminFacet.sol": {
-      "lastModificationDate": 1667593517177,
-      "contentHash": "0e45191b9841b86cd3f3f9954f25477c",
+      "lastModificationDate": 1668296057427,
+      "contentHash": "dcd1c6cd79ae7466bb6be2b0b778180d",
       "sourceName": "contracts/facets/AdminFacet.sol",
       "solcConfig": {
         "settings": {
@@ -490,7 +490,7 @@
       }
     },
     "contracts/facets/GameFacet.sol": {
-      "lastModificationDate": 1667614074184,
+      "lastModificationDate": 1668296057427,
       "contentHash": "f12d57fcde1e2bf4acf7d0f2e01d06f3",
       "sourceName": "contracts/facets/GameFacet.sol",
       "solcConfig": {
@@ -886,8 +886,8 @@
       }
     },
     "contracts/libraries/GameLib.sol": {
-      "lastModificationDate": 1667615201019,
-      "contentHash": "9857118d33a6811f0d7eff28337f529d",
+      "lastModificationDate": 1668305756542,
+      "contentHash": "578fbc7f24a4e99ed1b5cadae9888d30",
       "sourceName": "contracts/libraries/GameLib.sol",
       "solcConfig": {
         "settings": {
@@ -1538,7 +1538,7 @@
       }
     },
     "test/Basic.t.sol": {
-      "lastModificationDate": 1667319728756,
+      "lastModificationDate": 1668296057432,
       "contentHash": "34ced3a61fe4e61ca241b9956bea2434",
       "sourceName": "test/Basic.t.sol",
       "solcConfig": {
@@ -1682,7 +1682,7 @@
       }
     },
     "test/DiamondDeploy.t.sol": {
-      "lastModificationDate": 1667420940443,
+      "lastModificationDate": 1668296057432,
       "contentHash": "fd1f8a11dbb736674db567b17ad40448",
       "sourceName": "test/DiamondDeploy.t.sol",
       "solcConfig": {
@@ -1821,6 +1821,78 @@
       "artifacts": {
         "ECSTest": {
           "0.8.4+commit.c7e474f2.Darwin.appleclang": "ECS.t.sol/ECSTest.json"
+        }
+      }
+    },
+    "test/Stress.t.sol": {
+      "lastModificationDate": 1668296057432,
+      "contentHash": "9cc2aa7318413b8992f915faa4d8acf9",
+      "sourceName": "test/Stress.t.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "contracts/Component.sol",
+        "contracts/Mapping.sol",
+        "contracts/NATO.sol",
+        "contracts/Set.sol",
+        "contracts/TypedComponents.sol",
+        "contracts/diamond.sol",
+        "contracts/facets/AdminFacet.sol",
+        "contracts/facets/DiamondCutFacet.sol",
+        "contracts/facets/DiamondLoupeFacet.sol",
+        "contracts/facets/GameFacet.sol",
+        "contracts/facets/GetterFacet.sol",
+        "contracts/facets/OwnershipFacet.sol",
+        "contracts/interfaces/IDiamondCut.sol",
+        "contracts/interfaces/IDiamondLoupe.sol",
+        "contracts/interfaces/IERC165.sol",
+        "contracts/interfaces/IERC173.sol",
+        "contracts/libraries/ECSLib.sol",
+        "contracts/libraries/GameLib.sol",
+        "contracts/libraries/LibDiamond.sol",
+        "contracts/libraries/Storage.sol",
+        "contracts/libraries/Templates.sol",
+        "contracts/libraries/Types.sol",
+        "contracts/upgradeInitializers/diamondInit.sol",
+        "lib/forge-std/lib/ds-test/src/test.sol",
+        "lib/forge-std/src/Script.sol",
+        "lib/forge-std/src/StdJson.sol",
+        "lib/forge-std/src/Test.sol",
+        "lib/forge-std/src/Vm.sol",
+        "lib/forge-std/src/console.sol",
+        "lib/forge-std/src/console2.sol",
+        "lib/openzeppelin-contracts/contracts/utils/Strings.sol",
+        "test/DiamondDeploy.t.sol"
+      ],
+      "versionRequirement": "^0.8.4",
+      "artifacts": {
+        "LoadTest": {
+          "0.8.4+commit.c7e474f2.Darwin.appleclang": "Stress.t.sol/LoadTest.json"
         }
       }
     }

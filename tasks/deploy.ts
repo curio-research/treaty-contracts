@@ -1,17 +1,14 @@
-import { GameLib } from './../typechain-types/contracts/libraries/GameLib';
-import { ECSLib } from './../typechain-types/contracts/libraries/ECSLib';
 import chalk from 'chalk';
 import { publishDeployment, isConnectionLive, startGameSync } from './../api/deployment';
 import { task } from 'hardhat/config';
-import { HardhatRuntimeEnvironment, HardhatArguments } from 'hardhat/types';
-import { confirm, deployProxy, printDivider, indexerUrlSelector, saveMapToLocal } from './util/deployHelper';
-import { createTemplates, generateWorldConstants, MAP_INPUT } from './util/constants';
-import { deployDiamond, deployFacets, getDiamond } from './util/diamondDeploy';
-import { encodeTileMap, generateBlankFixmap, generateMap, initializeFixmap } from './util/mapHelper';
-import { COMPONENT_SPECS, GameConfig, TILE_TYPE, position, scaleMap, chainInfo, GameMode } from 'curio-vault';
-import gameConstants from './game_parameters.json';
+import { HardhatRuntimeEnvironment } from 'hardhat/types';
+import { printDivider, indexerUrlSelector, saveMapToLocal, initializeGame } from './util/deployHelper';
+import { generateWorldConstants, MAP_INPUT } from './util/constants';
+import { generateBlankFixmap, generateMap, initializeFixmap } from './util/mapHelper';
+import { GameConfig, scaleMap } from 'curio-vault';
 import * as rw from 'random-words';
-import { saveComponentsToJsonFiles, saveMapToJsonFile, saveWorldConstantsToJsonFile } from '../test/util/saveComponents';
+import { saveComponentsToJsonFiles, saveMapToJsonFile, saveWorldConstantsToJsonFile } from '../test/util/saveDataForTests';
+import { DeployArgs } from './util/types';
 
 /**
  * Deploy script for publishing games
@@ -21,122 +18,49 @@ import { saveComponentsToJsonFiles, saveMapToJsonFile, saveWorldConstantsToJsonF
  * `npx hardhat deploy`: deploys game on localhost
  * `npx hardhat deploy --network constellationNew`: deploy game on constellationNew network
  */
-
 task('deploy', 'deploy contracts')
   .addOptionalParam('port', 'Port contract abis and game info to Vault') // default is to call port
   .addFlag('release', 'Publish deployment to official release') // default is to call publish
   .addFlag('fixmap', 'Use deterministic map') // default is non-deterministic maps; deterministic maps are mainly used for client development
+  .addFlag('test', 'For load testing') // default is no
   .addFlag('indexer', 'Use production indexer') // whether to use indexer or not
   .addOptionalParam('name', 'Deployment name')
   .setAction(async (args: DeployArgs, hre: HardhatRuntimeEnvironment) => {
     try {
       await hre.run('compile');
       printDivider();
+
       const s = performance.now();
-
-      const gasLimit = chainInfo[hre.network.name].gasLimit;
-
       const { port, release, fixmap, indexer, name } = args;
 
       // Read variables from run flags
       const isDev = hre.network.name === 'localhost' || hre.network.name === 'hardhat' || hre.network.name === 'altlayer' || hre.network.name === 'tailscale';
       console.log('Network:', hre.network.name);
 
-      if (fixmap) console.log('Using deterministic map');
+      if (fixmap) console.log(chalk.bgRed.black('Using deterministic map'));
 
       await isConnectionLive();
 
       // Set up deployer and some local variables
       let [player1] = await hre.ethers.getSigners();
       console.log('✦ player1 address is:', player1.address);
+      console.log(chalk.bgBlue.green(`>>> Provider is`, (await player1.provider!.getNetwork()).name, player1.provider!.getBlockNumber));
 
+      // Generate world constants and tile map
       const worldConstants = generateWorldConstants(player1.address);
-
-      const tileMap = fixmap ? generateBlankFixmap() : generateMap(MAP_INPUT.width, MAP_INPUT.height, worldConstants);
+      const tileMap = fixmap ? generateBlankFixmap() : generateMap(MAP_INPUT);
       saveMapToLocal(tileMap);
 
-      // FIXME: temp for Foundry, change to better automation
+      // Save components, world constants, and map to JSON files for Foundry testing
       await saveComponentsToJsonFiles();
       await saveWorldConstantsToJsonFile(player1.address);
       await saveMapToJsonFile(tileMap);
       console.log(`✦ Foundry data loaded`);
 
-      const ecsLib = await deployProxy<ECSLib>('ECSLib', player1, hre, []);
-      const gameLib = await deployProxy<GameLib>('GameLib', player1, hre, [], { ECSLib: ecsLib.address });
-      const templates = await deployProxy<any>('Templates', player1, hre, [], { ECSLib: ecsLib.address });
-      const diamondAddr = await deployDiamond(hre, player1, [worldConstants]);
-      const diamond = await getDiamond(hre, diamondAddr);
+      // Initialize game
+      const diamond = await initializeGame(hre, worldConstants, tileMap);
 
-      const facets = [
-        { name: 'GameFacet', libraries: { ECSLib: ecsLib.address, GameLib: gameLib.address, Templates: templates.address } },
-        { name: 'GetterFacet', libraries: { ECSLib: ecsLib.address, GameLib: gameLib.address } },
-        { name: 'AdminFacet', libraries: { ECSLib: ecsLib.address, GameLib: gameLib.address, Templates: templates.address } },
-      ];
-      await deployFacets(hre, diamondAddr, facets, player1);
-
-      printDivider();
-
-      // Batch register components
-      let startTime = performance.now();
-      const componentUploadBatchSize = 40;
-      for (let i = 0; i < COMPONENT_SPECS.length; i += componentUploadBatchSize) {
-        console.log(chalk.dim(`✦ registering components ${i} to ${i + componentUploadBatchSize}`));
-        await confirm(await diamond.registerComponents(diamond.address, COMPONENT_SPECS.slice(i, i + componentUploadBatchSize)), hre);
-      }
-
-      console.log(`✦ component registration took ${Math.floor(performance.now() - startTime)} ms`);
-
-      // Add game entity
-      await diamond.addGame();
-
-      // Register constants
-      startTime = performance.now();
-      const constantUploadBatchSize = 200;
-      for (let i = 0; i < gameConstants.length; i += constantUploadBatchSize) {
-        console.log(chalk.dim(`✦ registering constants ${i} to ${i + constantUploadBatchSize}`));
-        const identifiers = gameConstants.map((c) => c.subject + '-' + c.object + '-' + c.componentName + '-' + c.functionName + '-' + Math.trunc(c.level).toString());
-        const values = gameConstants.map((c) => Math.trunc(c.value));
-        await confirm(await diamond.bulkAddGameParameters(identifiers, values, { gasLimit: gasLimit }), hre);
-      }
-      console.log(`✦ constant registration took ${Math.floor(performance.now() - startTime)} ms`);
-
-      // Initialize map
-      startTime = performance.now();
-      if (worldConstants.gameMode == GameMode.BATTLE_ROYALE) tileMap[Math.floor(tileMap.length / 2)][Math.floor(tileMap[0].length / 2)] = TILE_TYPE.LAND;
-      const encodedTileMap = encodeTileMap(tileMap, worldConstants.numInitTerrainTypes, Math.floor(200 / worldConstants.numInitTerrainTypes));
-      await confirm(await diamond.storeEncodedColumnBatches(encodedTileMap), hre);
-      console.log(`✦ lazy setting ${tileMap.length}x${tileMap[0].length} map took ${Math.floor(performance.now() - startTime)} ms`);
-
-      // Create templates
-      startTime = performance.now();
-      await createTemplates(diamond, hre);
-      console.log(`✦ template creation took ${Math.floor(performance.now() - startTime)} ms`);
-
-      // TODO: useful in some testing. Bulk initialize all tiles
-      const tileWidth = Number(worldConstants.tileWidth);
-      const allStartingPositions: position[] = [];
-      const specialPositions: position[] = [];
-      for (let i = 0; i < tileMap.length; i++) {
-        for (let j = 0; j < tileMap[0].length; j++) {
-          const properTile = { x: i * tileWidth, y: j * tileWidth };
-          allStartingPositions.push(properTile);
-          if (tileMap[i][j] === TILE_TYPE.BARBARIAN_LV1 || tileMap[i][j] === TILE_TYPE.BARBARIAN_LV2 || tileMap[i][j] === TILE_TYPE.GOLDMINE_LV1 || tileMap[i][j] === TILE_TYPE.MOUNTAIN) {
-            specialPositions.push(properTile);
-          }
-        }
-      }
-
-      // TODO: think about whether initializing all tiles / more than barbarian tiles is necessary
-      // initialize tiles that include barbarians, farms, gold mine
-      const bulkTileUploadSize = 5;
-      for (let i = 0; i < specialPositions.length; i += bulkTileUploadSize) {
-        console.log(chalk.dim(`✦ initializing special tiles ${i} to ${i + bulkTileUploadSize}`));
-        await confirm(await diamond.bulkInitializeTiles(specialPositions.slice(i, i + bulkTileUploadSize), { gasLimit: gasLimit }), hre);
-      }
-
-      if (fixmap) {
-        await initializeFixmap(hre, diamond);
-      }
+      if (fixmap) await initializeFixmap(hre, diamond);
 
       // Each deployment has a unique deploymentId
       const deploymentId = `deployer=${process.env.DEPLOYER_ID}-${release && 'release-'}${hre.network.name}-${Date.now()}`;
@@ -176,11 +100,3 @@ task('deploy', 'deploy contracts')
       console.log(err.message);
     }
   });
-
-interface DeployArgs extends HardhatArguments {
-  fixmap: boolean;
-  release: boolean;
-  port: string | undefined;
-  indexer: boolean;
-  name: string | undefined;
-}

@@ -1,12 +1,15 @@
 import { Curio, WorldConstantsStruct } from './../../typechain-types/hardhat-diamond-abi/Curio';
-import { decodeBigNumberishArr, position } from 'curio-vault';
+import { Army, decodeBigNumberishArr, position } from 'curio-vault';
 import { Component__factory } from './../../typechain-types/factories/contracts/Component__factory';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { TILE_TYPE, componentNameToId, encodePosition, getImmediateSurroundingPositions, TileMap, Tag, Position, Owner, Health, Speed, Attack, Defense, Load, LastTimestamp, Tags, encodeString, encodeUint256, getRightPos, chainInfo } from 'curio-vault';
 import { TILE_WIDTH } from './constants';
-import { confirm } from './deployHelper';
+import { confirmTx } from './deployHelper';
 import SimplexNoise from 'simplex-noise';
-import { MapInput } from './types';
+import { LoadTestSetupInput, MapInput } from './types';
+import chalk from 'chalk';
+import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
+import { Signer } from 'ethers';
 
 const MAX_UINT256 = BigInt(Math.pow(2, 256)) - BigInt(1);
 
@@ -65,15 +68,15 @@ export const generateBlankFixmap = (): TileMap => {
   return tileMap;
 };
 
-export const generateMap = (worldWidth: number, worldHeight: number, worldConstants: WorldConstantsStruct): TileMap => {
+export const generateMap = (mapInput: MapInput): TileMap => {
   // add mountains
-  let tileMap: TileMap = generateMapWithMountains({ width: worldWidth, height: worldHeight });
+  let tileMap: TileMap = generateMapWithMountains(mapInput);
 
   // add gold mines and barbarians
-  const level1GoldMineDensity = 0.10;
+  const level1GoldMineDensity = 0.1;
   const level1BarbarianDensity = 0.02;
   const level2BarbarianDensity = 0.02;
-  const totalTileCount = worldWidth * worldHeight;
+  const totalTileCount = mapInput.width * mapInput.height;
   for (let i = 0; i < totalTileCount * level1GoldMineDensity; i++) {
     const pos = chooseRandomEmptyLandPosition(tileMap);
     tileMap[pos.x][pos.y] = TILE_TYPE.GOLDMINE_LV1;
@@ -87,6 +90,18 @@ export const generateMap = (worldWidth: number, worldHeight: number, worldConsta
     tileMap[pos.x][pos.y] = TILE_TYPE.BARBARIAN_LV2;
   }
 
+  return tileMap;
+};
+
+export const generateEmptyMap = (mapInput: MapInput): TILE_TYPE[][] => {
+  const tileMap: TILE_TYPE[][] = [];
+  for (let x = 0; x < mapInput.width; x++) {
+    const col: TILE_TYPE[] = [];
+    for (let y = 0; y < mapInput.height; y++) {
+      col.push(TILE_TYPE.LAND);
+    }
+    tileMap.push(col);
+  }
   return tileMap;
 };
 
@@ -198,10 +213,10 @@ export const initializeFixmap = async (hre: HardhatRuntimeEnvironment, diamond: 
   const playerPositions = [player1Pos, player2Pos, player3Pos, player4Pos];
 
   // initialize 4 players
-  await confirm(await diamond.connect(player1).initializePlayer(player1Pos, 'A', { gasLimit: gasLimit }), hre);
-  await confirm(await diamond.connect(player2).initializePlayer(player2Pos, 'B', { gasLimit: gasLimit }), hre);
-  await confirm(await diamond.connect(player3).initializePlayer(player3Pos, 'C', { gasLimit: gasLimit }), hre);
-  await confirm(await diamond.connect(player4).initializePlayer(player4Pos, 'D', { gasLimit: gasLimit }), hre);
+  await confirmTx(await diamond.connect(player1).initializePlayer(player1Pos, 'A', { gasLimit }), hre);
+  await confirmTx(await diamond.connect(player2).initializePlayer(player2Pos, 'B', { gasLimit }), hre);
+  await confirmTx(await diamond.connect(player3).initializePlayer(player3Pos, 'C', { gasLimit }), hre);
+  await confirmTx(await diamond.connect(player4).initializePlayer(player4Pos, 'D', { gasLimit }), hre);
 
   const player1Id = (await diamond.getPlayerId(player1.address)).toNumber();
   const player2Id = (await diamond.getPlayerId(player2.address)).toNumber();
@@ -226,14 +241,14 @@ export const initializeFixmap = async (hre: HardhatRuntimeEnvironment, diamond: 
   // spawn armies
   await diamond.createArmy(player1Id, getRightPos(player1Pos));
   let entity = (await diamond.getEntity()).toNumber();
-  await confirm(await diamond.setComponentValue(Speed, entity, encodeUint256(5)), hre);
+  await confirmTx(await diamond.setComponentValue(Speed, entity, encodeUint256(5)), hre);
 
   await diamond.createArmy(player2Id, getRightPos(getRightPos(player1Pos)));
   entity = (await diamond.getEntity()).toNumber();
-  await confirm(await diamond.setComponentValue(Speed, entity, encodeUint256(5)), hre);
+  await confirmTx(await diamond.setComponentValue(Speed, entity, encodeUint256(5)), hre);
 };
 
 export const addGetEntity = async (diamond: Curio): Promise<number> => {
-  await await diamond.addEntity();
+  await diamond.addEntity();
   return (await diamond.getEntity()).toNumber();
 };

@@ -2,7 +2,7 @@ import { DiamondInit } from './../../typechain-types/contracts/upgradeInitialize
 import { DiamondCutFacet } from './../../typechain-types/contracts/facets/DiamondCutFacet';
 import { Curio } from './../../typechain-types/hardhat-diamond-abi/Curio';
 import { Signer } from 'ethers';
-import { confirm, deployProxy } from './deployHelper';
+import { confirmTx, deployProxy } from './deployHelper';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { getSelectors, FacetCutAction } from './diamondHelper';
 import { chainInfo } from 'curio-vault';
@@ -37,7 +37,7 @@ export async function deployDiamond(hre: HardhatRuntimeEnvironment, signer: Sign
 
   // call to init function. add initial state setting parameters. this acts as the constructor essentially
   let functionCall = diamondInit.interface.encodeFunctionData('init', deployArgs); // encodes data functions into bytes i believe
-  const receipt = await confirm(await diamondCut.diamondCut(cut, diamondInit.address, functionCall), hre);
+  const receipt = await confirmTx(await diamondCut.diamondCut(cut, diamondInit.address, functionCall), hre);
 
   if (receipt && !receipt.status) {
     throw Error(`Diamond upgrade failed: ${receipt.transactionHash}`);
@@ -73,7 +73,7 @@ export const deployFacets = async (hre: HardhatRuntimeEnvironment, diamondAddres
 
     const gasLimit = chainInfo[hre.network.name].gasLimit;
 
-    const receipt = await confirm(
+    const receipt = await confirmTx(
       await diamond.diamondCut(
         [
           {
@@ -84,7 +84,7 @@ export const deployFacets = async (hre: HardhatRuntimeEnvironment, diamondAddres
         ],
         hre.ethers.constants.AddressZero,
         '0x',
-        { gasLimit: gasLimit }
+        { gasLimit }
       ),
       hre
     );

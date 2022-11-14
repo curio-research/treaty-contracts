@@ -3,7 +3,7 @@ import { Duration, encodeString, encodeUint256, InventoryType, InventoryTypeOpti
 import { Curio } from './../../typechain-types/hardhat-diamond-abi/Curio';
 import { addGetEntity } from './mapHelper';
 import { MapInput } from './types';
-import { confirm } from './deployHelper';
+import { confirmTx } from './deployHelper';
 import worldConstants from '../world_parameters.json';
 
 export const LOCALHOST_RPC_URL = 'http://127.0.0.1:8545/';
@@ -16,6 +16,11 @@ export const LOCALHOST_WS_RPC_URL = 'ws://localhost:8545';
 export const MAP_INPUT: MapInput = {
   width: 15,
   height: 15,
+};
+
+export const TEST_MAP_INPUT: MapInput = {
+  width: 1000,
+  height: 2,
 };
 
 export const TILE_WIDTH = 5;
@@ -34,7 +39,7 @@ export const generateWorldConstants = (adminAddr: string): any => {
     maxCityCountPerPlayer: 3,
     maxArmyCountPerPlayer: 2,
     maxPlayerCount: 20,
-    gameMode: GameMode.BATTLE_ROYALE,
+    gameMode: GameMode.REGULAR,
     gameLengthInSeconds: 2000000000,
     // generated constants
     ...worldConstants,
@@ -49,7 +54,7 @@ export const generateWorldConstants = (adminAddr: string): any => {
  * @dev Initialize 5 battle templates and 1 resource template
  * @param diamond diamond address
  */
-export const createTemplates = async (diamond: Curio, hre: HardhatRuntimeEnvironment) => {
+export const createTemplates = async (diamond: Curio, gasLimit: number, hre: HardhatRuntimeEnvironment) => {
   const templateNames: string[] = [];
   const templateIDs: number[] = [];
   // TODO: automate this just like the game constants
@@ -57,35 +62,35 @@ export const createTemplates = async (diamond: Curio, hre: HardhatRuntimeEnviron
   let entity = Number(await diamond.getEntity()) + 1;
 
   // Horseman
-  await confirm(await diamond.addTroopTemplate(InventoryTypeOptions.Horseman, 120, 5, 1, 2, 60, 120, 95), hre);
+  await confirmTx(await diamond.addTroopTemplate(InventoryTypeOptions.Horseman, 120, 5, 1, 2, 60, 120, 95, { gasLimit }), hre);
   templateNames.push(InventoryTypeOptions.Horseman);
   templateIDs.push(entity++);
 
   // Warrior
-  await confirm(await diamond.addTroopTemplate(InventoryTypeOptions.Warrior, 120, 1, 1, 2, 60, 120, 95), hre);
+  await confirmTx(await diamond.addTroopTemplate(InventoryTypeOptions.Warrior, 120, 1, 1, 2, 60, 120, 95, { gasLimit }), hre);
   templateNames.push(InventoryTypeOptions.Warrior);
   templateIDs.push(entity++);
 
   // Slinger
-  await confirm(await diamond.addTroopTemplate(InventoryTypeOptions.Slinger, 125, 2, 1, 2, 60, 125, 95), hre);
+  await confirmTx(await diamond.addTroopTemplate(InventoryTypeOptions.Slinger, 125, 2, 1, 2, 60, 125, 95, { gasLimit }), hre);
   templateNames.push(InventoryTypeOptions.Slinger);
   templateIDs.push(entity++);
 
   // Guard
-  await confirm(await diamond.addTroopTemplate(InventoryTypeOptions.Guard, 120, 0, 0, 0, 60, 120, 0), hre);
+  await confirmTx(await diamond.addTroopTemplate(InventoryTypeOptions.Guard, 120, 0, 0, 0, 60, 120, 0, { gasLimit }), hre);
   templateNames.push(InventoryTypeOptions.Guard);
   templateIDs.push(entity++);
 
   // Gold
-  await confirm(await diamond.addResourceTemplate(InventoryTypeOptions.Gold), hre);
+  await confirmTx(await diamond.addResourceTemplate(InventoryTypeOptions.Gold, { gasLimit }), hre);
   templateNames.push(InventoryTypeOptions.Gold);
   templateIDs.push(entity++);
 
   // Food
-  await confirm(await diamond.addResourceTemplate(InventoryTypeOptions.Food), hre);
+  await confirmTx(await diamond.addResourceTemplate(InventoryTypeOptions.Food, { gasLimit }), hre);
   templateNames.push(InventoryTypeOptions.Food);
   templateIDs.push(entity++);
 
   // Register template names used for shortcuts
-  await confirm(await diamond.registerTemplateShortcuts(templateNames, templateIDs), hre);
+  await confirmTx(await diamond.registerTemplateShortcuts(templateNames, templateIDs, { gasLimit }), hre);
 };
