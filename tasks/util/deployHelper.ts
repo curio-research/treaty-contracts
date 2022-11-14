@@ -33,7 +33,7 @@ export const confirmTx = async (contractTx: ContractTransaction, hre: HardhatRun
   // we assume that localhost anvil has automine / instant block confirmation
   if (hre.network.name === 'localhost' || hre.network.name === 'tailscale') return;
 
-  let receipt = await contractTx.wait();
+  const receipt = await contractTx.wait();
   return receipt;
 };
 
@@ -100,12 +100,12 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
   const componentUploadBatchSize = 50;
   for (let i = 0; i < COMPONENT_SPECS.length; i += componentUploadBatchSize) {
     console.log(chalk.dim(`✦ Registering components ${i} to ${i + componentUploadBatchSize}`));
-    await confirmTx(await diamond.registerComponents(diamond.address, COMPONENT_SPECS.slice(i, i + componentUploadBatchSize)), hre);
+    await confirmTx(await diamond.registerComponents(diamond.address, COMPONENT_SPECS.slice(i, i + componentUploadBatchSize), { gasLimit }), hre);
   }
   console.log(`✦ Component registration took ${Math.floor(performance.now() - startTime)} ms`);
 
   // Add game entity
-  await diamond.addGame();
+  await diamond.addGame({ gasLimit });
 
   // Register game parameters
   startTime = performance.now();
@@ -126,7 +126,7 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
 
   // Create templates
   startTime = performance.now();
-  await createTemplates(diamond, hre);
+  await createTemplates(diamond, gasLimit, hre);
   console.log(`✦ Template creation took ${Math.floor(performance.now() - startTime)} ms`);
 
   // Bulk initialize special tiles
@@ -143,7 +143,7 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
     console.log(chalk.dim(`✦ Initializing special tiles ${i} to ${i + bulkTileUploadSize}`));
     await confirmTx(await diamond.bulkInitializeTiles(specialTilePositions.slice(i, i + bulkTileUploadSize), { gasLimit }), hre);
   }
-  console.log(`✦ Special tile bulk initialziation took ${Math.floor(performance.now() - startTime)} ms`);
+  console.log(`✦ Special tile bulk initialization took ${Math.floor(performance.now() - startTime)} ms`);
 
   return diamond;
 };

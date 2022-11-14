@@ -9,8 +9,8 @@ import { confirmTx } from './deployHelper';
 export const DRIP_AMOUNT_BY_NETWORK: Record<string, number> = {
   optimismKovan: 0.01,
   localhost: 1000,
-  constellation: 1000,
-  altlayer: 2,
+  constellation: 5,
+  altlayer: 5,
   tailscale: 100,
 };
 

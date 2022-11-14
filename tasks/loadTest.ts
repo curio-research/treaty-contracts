@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { HardhatArguments, HardhatRuntimeEnvironment } from 'hardhat/types';
+import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { task } from 'hardhat/config';
 import * as fsp from 'fs/promises';
 import { createSigners, loadTestMoveArmy, prepareLoadTest } from './util/loadHelper';
@@ -10,49 +10,63 @@ import { generateEmptyMap } from './util/mapHelper';
 import chalk from 'chalk';
 import { chainInfo } from 'curio-vault';
 
-task('load-test', 'perform load testing').setAction(async (args: HardhatArguments, hre: HardhatRuntimeEnvironment) => {
-  try {
-    // Compile contracts
-    await hre.run('compile');
-
-    const provider = new hre.ethers.providers.JsonRpcProvider(chainInfo[hre.network.name].rpcUrl);
-    const admin = (await hre.ethers.getSigners())[0];
-    const playerCount = 5;
-    console.log(chalk.bgRed.yellow(`>>> Load testing on ${hre.network.name}`));
-
-    // Initialize game
-    const worldConstants = generateWorldConstants(admin.address);
-    const tileMap = generateEmptyMap(TEST_MAP_INPUT);
-    const diamond = await initializeGame(hre, worldConstants, tileMap);
-
-    // Read from existing addresses, or if none exist, create new ones and save locally
-    let players: Wallet[];
-    const filePath = path.join(path.join(__dirname), 'signers', `${hre.network.name}.json`);
+/**
+ * @notice Before load testing, make sure the admin wallet has plenty of tokens for the corresponding number of concurrent players.
+ */
+task('load-test', 'perform load testing')
+  .addOptionalParam('playercount', 'Number of players')
+  .setAction(async (args: any, hre: HardhatRuntimeEnvironment) => {
     try {
-      const fileContent = await fsp.readFile(filePath);
-      players = JSON.parse(fileContent.toString())
-        .slice(0, playerCount)
-        .map((pK: string) => new hre.ethers.Wallet(pK, provider));
-      console.log(chalk.bgRed.yellow(`>>> ${players.length} existing signers loaded`));
-      if (players.length < playerCount) {
-        players = players.concat(await createSigners(hre, playerCount - players.length, admin));
+      // Compile contracts
+      await hre.run('compile');
+
+      const provider = new hre.ethers.providers.JsonRpcProvider(chainInfo[hre.network.name].rpcUrl);
+      const admin = (await hre.ethers.getSigners())[0];
+      const playerCount: number = args.playercount ?? 5;
+      console.log(chalk.bgRed.yellow(`>>> Load testing on ${hre.network.name}`));
+
+      // Prepare signers
+      let players: Wallet[] = [];
+      const filePath = path.join(path.join(__dirname), 'signers', `${hre.network.name}.json`);
+      try {
+        // Read all existing signers for non-localhost networks
+        if (hre.network.name !== 'localhost') {
+          const fileContent = await fsp.readFile(filePath);
+          players = JSON.parse(fileContent.toString())
+            .slice(0, playerCount)
+            .map((pK: string) => new hre.ethers.Wallet(pK, provider));
+          console.log(chalk.bgRed.yellow(`>>> ${players.length} existing signers loaded`));
+        }
+
+        // Create and fund more signers if needed
+        if (players.length < playerCount) {
+          players = players.concat(await createSigners(hre, playerCount - players.length, admin));
+          await fsp.writeFile(filePath, JSON.stringify(players.map((w) => w.privateKey)));
+        }
+      } catch (err: any) {
+        // Create and fund all signers from scratch
+        players = await createSigners(hre, playerCount, admin);
         await fsp.writeFile(filePath, JSON.stringify(players.map((w) => w.privateKey)));
       }
+
+      console.log(chalk.bgRed.yellow('>>> Admin balance:', (await admin.getBalance()).toString(), 'wei'));
+      console.log(chalk.bgRed.yellow('>>> Player balance', (await players[0].getBalance()).toString(), 'wei'));
+
+      // Initialize game
+      const worldConstants = generateWorldConstants(admin.address);
+      const tileMap = generateEmptyMap(TEST_MAP_INPUT);
+      const diamond = await initializeGame(hre, worldConstants, tileMap);
+
+      // Prepare load test
+      const setupOutput = await prepareLoadTest({ hre, diamond }, players);
+
+      // Perform load test on `move`
+      await loadTestMoveArmy(hre, diamond, setupOutput, players, {
+        txsPerPlayer: 10,
+        periodPerTxBatchInMs: Math.trunc(playerCount * 1.2 * 1000),
+        totalTimeoutInMs: Math.trunc(300 * 60 * 1000),
+      });
     } catch (err: any) {
-      players = await createSigners(hre, playerCount, admin);
-      await fsp.writeFile(filePath, JSON.stringify(players.map((w) => w.privateKey)));
+      console.log(err.message);
     }
-
-    // Prepare load test
-    const setupOutput = await prepareLoadTest({ hre, diamond }, players);
-
-    // Perform load test on `move`
-    await loadTestMoveArmy(hre, diamond, setupOutput, players, {
-      txsPerPlayer: 10,
-      periodPerTxBatchInMs: 6 * 1000,
-      totalTimeoutInMs: 3 * 60 * 1000,
-    });
-  } catch (err: any) {
-    console.log(err.message);
-  }
-});
+  });
