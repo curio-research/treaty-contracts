@@ -63,6 +63,8 @@ contract DiamondDeployTest is Test {
     uint256 public goldTemplateID;
     uint256 public foodTemplateID;
 
+    uint256 public player2SettlerId;
+
     WorldConstants public worldConstants;
 
     // we assume these two facet selectors do not change. If they do however, we should use _getSelectors
@@ -146,6 +148,8 @@ contract DiamondDeployTest is Test {
         player3Id = getter.getPlayerId(player3);
         console.log(">>> Players initialized");
         console.log("=============== INDIVIDUAL TESTS BEGIN ================");
+
+        player2SettlerId = getter.getSettlerAt(player2Pos);
     }
 
     function _encodeTileMap(

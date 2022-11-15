@@ -20,6 +20,14 @@ contract AdminFacet is UseStorage {
     // DEBUG FUNCTIONS
     // ----------------------------------------------------------------------
 
+    function onlySet(uint256 _entity, uint256 _value) external {
+        ECSLib.setUint("Health", _entity, _value);
+    }
+
+    function onlyQuery(Position memory _startPosition) external returns (uint256[] memory) {
+        return GameLib.getMovableEntitiesAtTile(_startPosition);
+    }
+
     function stopGame() external onlyAdmin {
         gs().worldConstants.gameLengthInSeconds = block.timestamp - gs().gameInitTimestamp;
     }

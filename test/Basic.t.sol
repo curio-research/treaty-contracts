@@ -9,6 +9,28 @@ import {Set} from "contracts/Set.sol";
 import {console} from "forge-std/console.sol";
 
 contract TreatyTest is Test, DiamondDeployTest {
+    /// Load tests
+    function testLoadOneSet() public {
+        admin.onlySet(player2SettlerId, 0);
+    }
+
+    function testLoadTwentySets() public {
+        for (uint256 i = 0; i < 20; i++) admin.onlySet(player2SettlerId, i);
+    }
+
+    function testLoadTwoHundredSets() public {
+        for (uint256 i = 0; i < 200; i++) admin.onlySet(player2SettlerId, i);
+    }
+
+    function testLoadOneQuery() public {
+        admin.onlyQuery(player2Pos);
+    }
+
+    function testLoadTwentyQueries() public {
+        for (uint256 i = 0; i < 20; i++) admin.onlyQuery(player2Pos);
+    }
+
+    /// Logic tests
     function testClaimBarbarinaGather() public {
         // Pin key IDs and tile positions
         uint256 texasID = getter.getSettlerAt(player2Pos);

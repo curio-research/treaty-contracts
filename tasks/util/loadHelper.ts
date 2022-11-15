@@ -137,6 +137,16 @@ export const loadTestMoveArmy = async (hre: HardhatRuntimeEnvironment, diamond: 
   }
 };
 
+export const testComputeVsStorage = async (diamond: Curio, arbitraryArmyId: number) => {
+  let startTime = performance.now();
+  for (let i = 0; i < 20; i++) await diamond.onlyQuery();
+  console.log(chalk.bgGreen.blue(`20 Queries took ${performance.now() - startTime} ms`));
+
+  startTime = performance.now();
+  for (let i = 0; i < 20; i++) await diamond.onlySet(arbitraryArmyId, i);
+  console.log(chalk.bgGreen.blue(`20 Sets took ${performance.now() - startTime} ms`));
+};
+
 // ----------------------------------------------------------
 // TS HELPERS
 // ----------------------------------------------------------
