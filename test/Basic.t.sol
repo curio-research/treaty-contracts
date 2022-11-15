@@ -65,7 +65,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         uint256 _cityID = getter.getCityAtTile(player2Pos);
         uint256 _cityCenterID = getter.getCityCenter(_cityID);
 
-        // Harest resources from city 
+        // Harest resources from city
         for (uint256 i = 0; i <= 300; i++) {
             time += 5000;
             vm.warp(time);
@@ -100,7 +100,7 @@ contract TreatyTest is Test, DiamondDeployTest {
             game.organizeArmy(texasID, texasArmyTemplateIDs, texasArmyAmounts);
             vm.stopPrank();
         }
-        time += 75+75;
+        time += 75 + 75;
         vm.warp(time);
 
         // Fight the barbarian
@@ -147,13 +147,12 @@ contract TreatyTest is Test, DiamondDeployTest {
         time += 2;
         vm.warp(time);
         game.move(texasArmyID, Position({x: 65, y: 54}));
-        uint256 deployId = getter.getPlayerId(deployer);   
+        uint256 deployId = getter.getPlayerId(deployer);
 
         // vm.expectRevert("CURIO: Cannot claim barbarian tiles");
         vm.expectRevert("CURIO: Reached max tile count");
         game.claimTile(texasArmyID, madameBarbarinaID);
         vm.stopPrank();
-
 
         // Fight an empty tile and claim it
         vm.prank(deployer);
@@ -199,7 +198,7 @@ contract TreatyTest is Test, DiamondDeployTest {
             game.move(texasArmyID, Position({x: 50, y: 45}));
             time += 2;
             vm.warp(time);
-            game.move(texasArmyID, cornTilePos);// Position({x: 50, y: 40});
+            game.move(texasArmyID, cornTilePos); // Position({x: 50, y: 40});
 
             uint256 resourceID = getter.getResourceAtTile(cornTilePos);
 
@@ -405,7 +404,6 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.startPrank(player1);
         game.move(moscowArmyID, Position({x: 60, y: 15}));
         vm.stopPrank();
-      
 
         time += 5;
         vm.warp(time);

@@ -95,7 +95,6 @@ contract DiamondDeployTest is Test {
         nato = new NATO();
         console.log(">>> Treaties initialized");
         
-
         // Fetch args from CLI craft payload for init deploy
         bytes memory initData = abi.encodeWithSelector(_getSelectors("DiamondInit")[0], worldConstants);
         IDiamondCut.FacetCut[] memory cuts = new IDiamondCut.FacetCut[](5);
@@ -106,8 +105,6 @@ contract DiamondDeployTest is Test {
         cuts[4] = IDiamondCut.FacetCut({facetAddress: address(adminFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: _getSelectors("AdminFacet")});
         IDiamondCut(diamond).diamondCut(cuts, address(diamondInit), initData); // FIXME: this line is throwing "_init function reverted"
         console.log(">>> Diamond initialized");
-
-        
 
         // Assign diamond functions to corresponding facets
         getter = GetterFacet(diamond);

@@ -105,7 +105,6 @@ contract GameFacet is UseStorage {
 
         // Verify that no other movable entity is on tile
         uint256[] memory movableEntitiesOnTile = GameLib.getMovableEntitiesAtTile(_tiles[0]);
-
         require(movableEntitiesOnTile.length == 1 && movableEntitiesOnTile[0] == _settlerID, "CURIO: Other movable entity on tile");
 
         // Verify that city center is not on mountain
@@ -305,7 +304,6 @@ contract GameFacet is UseStorage {
 
         // check if upgrade is in process
         uint256 lastUpgradeDuration = GameLib.getConstant("City Center", "", "Cooldown", "Upgrade", centerLevel - 1);
-
         require(block.timestamp - ECSLib.getUint("LastUpgraded", _buildingID) > lastUpgradeDuration, "CURIO: Need to finish upgrade first");
 
         // Verify there's no ongoing troop production
@@ -317,7 +315,6 @@ contract GameFacet is UseStorage {
             uint256 inventoryID = GameLib.getInventory(GameLib.getPlayerCity(playerID), resourceTemplateIDs[i]);
             uint256 balance = ECSLib.getUint("Amount", inventoryID);
             uint256 cost = GameLib.getConstant("City Center", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Cost", "Upgrade", centerLevel);
-
             require(balance >= cost, "CURIO: Insufficient balance");
             ECSLib.setUint("Amount", inventoryID, balance - cost);
 
@@ -682,7 +679,6 @@ contract GameFacet is UseStorage {
 
         // Verify that total troop amount does not exceed max troop count
         uint256 maxTroopCountPerArmy = GameLib.getConstant("Army", "Troop", "Amount", "", ECSLib.getUint("Level", GameLib.getCityCenter(_cityID)));
-
         require(GameLib.sum(_amounts) <= maxTroopCountPerArmy, "CURIO: Troop amount exceeds capacity");
 
         // City at Chaos cannot organize an army
@@ -874,7 +870,6 @@ contract GameFacet is UseStorage {
         // Check Tile Count has not exceeded limits
         uint256 playerID = GameLib.getPlayer(msg.sender);
         uint256 cityID = GameLib.getPlayerCity(playerID);
-
         require(GameLib.getCityTiles(cityID).length < GameLib.getConstant("City", "Tile", "Amount", "", ECSLib.getUint("Level", GameLib.getCityCenter(cityID))), "CURIO: Reached max tile count");
 
         // Verify target tile has no owner
