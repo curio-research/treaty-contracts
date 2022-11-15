@@ -8,7 +8,6 @@ import {GameMode, Position, WorldConstants} from "contracts/libraries/Types.sol"
 import {Set} from "contracts/Set.sol";
 import {Templates} from "contracts/libraries/Templates.sol";
 
-
 /// @title Game facet
 /// @notice Contains player functions
 
@@ -288,7 +287,6 @@ contract GameFacet is UseStorage {
 
     // todo: merge it with upgrade resource
     function upgradeCityCenter(uint256 _buildingID) external {
-
         GameLib.validEntityCheck(_buildingID);
         GameLib.ongoingGameCheck();
         GameLib.activePlayerCheck(msg.sender);
@@ -307,7 +305,7 @@ contract GameFacet is UseStorage {
 
         // check if upgrade is in process
         uint256 lastUpgradeDuration = GameLib.getConstant("City Center", "", "Cooldown", "Upgrade", centerLevel - 1);
-        
+
         require(block.timestamp - ECSLib.getUint("LastUpgraded", _buildingID) > lastUpgradeDuration, "CURIO: Need to finish upgrade first");
 
         // Verify there's no ongoing troop production
@@ -867,7 +865,6 @@ contract GameFacet is UseStorage {
     }
 
     function claimTile(uint256 _armyID, uint256 _tileID) public {
-
         // Basic checks
         GameLib.validEntityCheck(_tileID);
         GameLib.ongoingGameCheck();
