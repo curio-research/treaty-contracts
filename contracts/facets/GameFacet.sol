@@ -38,18 +38,16 @@ contract GameFacet is UseStorage {
         Position memory tilePosition = GameLib.getProperTilePosition(_position);
 
         // Basic checks
-        GameLib.ongoingGameCheck();        
+        GameLib.ongoingGameCheck();
         GameLib.inboundPositionCheck(_position);
-        require(gs().players.length < gs().worldConstants.maxPlayerCount, "CURIO: Max nation count reached");
-        require(gs().playerEntityMap[msg.sender] == NULL, "CURIO: Nation already initialized");
+        require(gs().nations.length < gs().worldConstants.maxPlayerCount, "CURIO: Max nation count reached");
+        require(gs().nationEntityMap[msg.sender] == NULL, "CURIO: Nation already initialized");
 
         // Verify that capital is not on mountain
         uint256 tileID = GameLib.getTileAt(tilePosition);
         GameLib.passableTerrainCheck(tilePosition);
 
         // Verify that tile is neutral
-        console.log("TileID", tileID);
-        console.log("It should be neutral: ", ECSLib.getUint("Nation", tileID));
         require(ECSLib.getUint("Nation", tileID) == NULL, "CURIO: Tile unavailable");
 
         // Verify that no other movable entity is on tile
@@ -64,14 +62,33 @@ contract GameFacet is UseStorage {
 
         // Register player
         uint256 nationID = Templates.addNation(_name);
-        gs().players.push(msg.sender);
-        gs().playerEntityMap[msg.sender] = nationID;
+        gs().nations.push(msg.sender);
+        gs().nationEntityMap[msg.sender] = nationID;
 
         // Found capital
         Templates.addCapital(tilePosition, nationID);
 
         // set Tile Nation
         ECSLib.setUint("Nation", tileID, nationID);
+    }
+
+    function initializeArmy(address _armyWalletAddress) external {
+        // note: message.sender is supposed to be nation samrt contract wallet (but flexible to change)
+        GameLib.ongoingGameCheck();
+
+        // Check that player has not reached max army amount
+        uint256 nationID = gs().nationEntityMap[msg.sender];
+        uint256[] memory armyIDs = GameLib.getArmiesFromNation(nationID);
+        console.log(gs().worldConstants.maxArmyCountPerPlayer);
+        require(armyIDs.length + 1 <= gs().worldConstants.maxArmyCountPerPlayer, "CURIO: Army max count reached");
+
+        uint256 nationCapital = GameLib.getCapital(nationID);
+        Position memory capitalStartPosition = ECSLib.getPosition("StartPosition", nationCapital);
+
+        // Register army
+        uint256 armyID = Templates.addArmy(capitalStartPosition, 0, 0, 0, gs().worldConstants.tileWidth, nationID, _armyWalletAddress);
+        gs().armies.push(_armyWalletAddress);
+        gs().armyEntityMap[_armyWalletAddress] = armyID;
     }
 
     // ----------------------------------------------------------
@@ -625,7 +642,7 @@ contract GameFacet is UseStorage {
             speed /= GameLib.sum(_amounts);
 
             // Add army
-            Templates.addArmy(GameLib.getNation(msg.sender), midPosition, ECSLib.getPosition("StartPosition", _cityID), speed, load, moveCooldown, battleCooldown, gs().worldConstants.tileWidth);
+            // Templates.addArmy(GameLib.getNation(msg.sender), midPosition, ECSLib.getPosition("StartPosition", _cityID), speed, load, moveCooldown, battleCooldown, gs().worldConstants.tileWidth);
         }
         uint256 armyID = GameLib.getArmyAt(midPosition);
 

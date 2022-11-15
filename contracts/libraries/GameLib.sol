@@ -68,7 +68,6 @@ library GameLib {
         require(isProperTilePosition(_startPosition), "CURIO: Not proper tile position");
         uint256 tileId = getTileAt(_startPosition);
         if (tileId != 0) return tileId;
-        console.log("YO");
 
         // Load constants
         uint256 numInitTerrainTypes = gs().worldConstants.numInitTerrainTypes;
@@ -513,7 +512,15 @@ library GameLib {
     }
 
     function getNation(address _address) internal view returns (uint256) {
-        return gs().playerEntityMap[_address];
+        return gs().nationEntityMap[_address];
+    }
+
+    function getArmiesFromNation(uint256 _nationID) internal returns (uint256[] memory) {
+        QueryCondition[] memory query = new QueryCondition[](2);
+        query[0] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("Army"));
+        query[1] = ECSLib.queryChunk(QueryType.HasVal, "Nation", abi.encode(_nationID));
+        uint256[] memory res = ECSLib.query(query);
+        return res;
     }
 
     function getCityGold(uint256 _cityID) internal returns (uint256) {

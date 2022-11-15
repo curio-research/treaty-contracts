@@ -29,7 +29,7 @@ contract AdminFacet is UseStorage {
     }
 
     function createArmy(uint256 _playerID, Position memory _position) external onlyAdmin {
-        Templates.addArmy(_playerID, _position, GameLib.getProperTilePosition(_position), 0, 1, 1, 2, 5);
+        // Templates.addArmy(_playerID, _position, GameLib.getProperTilePosition(_position), 0, 1, 1, 2, 5);
     }
 
     function adminInitializeTile(Position memory _startPosition, address _tileAddress) external onlyAdmin {
@@ -72,7 +72,7 @@ contract AdminFacet is UseStorage {
      * @param _address player address
      */
     function reactivatePlayer(address _address) external onlyAdmin {
-        uint256 _playerID = gs().playerEntityMap[_address];
+        uint256 _playerID = gs().nationEntityMap[_address];
         require(_playerID != NULL, "CURIO: Player already initialized");
         require(!ECSLib.getBoolComponent("IsActive").has(_playerID), "CURIO: Player is active");
 
@@ -92,7 +92,7 @@ contract AdminFacet is UseStorage {
      * @param _positions all positions
      */
 
-     // fixme: update new initialization in deploy.ts
+    // fixme: update new initialization in deploy.ts
     function bulkInitializeTiles(Position[] memory _positions, address _tileAddress) external onlyAdmin {
         for (uint256 i = 0; i < _positions.length; i++) {
             GameLib.initializeTile(_positions[i], _tileAddress);

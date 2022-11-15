@@ -189,20 +189,28 @@ contract DiamondDeployTest is Test {
         console.log(">>> Smart Contract Wallets initialized");
 
         // Initialize players
-        vm.prank(nation1Address);
+        vm.startPrank(nation1Address);
         nationWallet1.executeTransaction(abi.encodeWithSignature("initializeNation(uint256,uint256,string)", nation1Pos.x, nation1Pos.y, "China"));
+        nationWallet1.executeTransaction(abi.encodeWithSignature("initializeArmy(address)", address(armyWallet11)));
+        nationWallet1.executeTransaction(abi.encodeWithSignature("initializeArmy(address)", address(armyWallet12)));
         nation1ID = getter.getNationID(address(nationWallet1));
+        vm.stopPrank();
 
-        vm.prank(nation2Address);
+        vm.startPrank(nation2Address);
         nationWallet2.executeTransaction(abi.encodeWithSignature("initializeNation(uint256,uint256,string)", nation2Pos.x, nation2Pos.y, "US"));
+        nationWallet2.executeTransaction(abi.encodeWithSignature("initializeArmy(address)", address(armyWallet21)));
+        nationWallet2.executeTransaction(abi.encodeWithSignature("initializeArmy(address)", address(armyWallet22)));
         nation2ID = getter.getNationID(address(nationWallet2));
+        vm.stopPrank();
 
-        vm.prank(nation3Address);
+        vm.startPrank(nation3Address);
         nationWallet3.executeTransaction(abi.encodeWithSignature("initializeNation(uint256,uint256,string)", nation3Pos.x, nation3Pos.y, "Russia"));
+        nationWallet3.executeTransaction(abi.encodeWithSignature("initializeArmy(address)", address(armyWallet31)));
+        nationWallet3.executeTransaction(abi.encodeWithSignature("initializeArmy(address)", address(armyWallet32)));
         nation3ID = getter.getNationID(address(nationWallet3));
-
-
-        console.log(">>> Players initialized");
+        vm.stopPrank();
+        
+        console.log(">>> Nations & Armies initialized");        
 
 
         console.log("=============== INDIVIDUAL TESTS BEGIN ================");
@@ -388,11 +396,11 @@ contract DiamondDeployTest is Test {
             WorldConstants({
                 admin: deployerAddress,
                 tileWidth: 10,
-                worldWidth: 1,
-                worldHeight: 1,
+                worldWidth: 100,
+                worldHeight: 100,
                 numInitTerrainTypes: 6,
                 maxCityCountPerPlayer: 3,
-                maxArmyCountPerPlayer: 3,
+                maxArmyCountPerPlayer: 2,
                 maxPlayerCount: 20,
                 gameMode: GameMode.REGULAR,
                 gameLengthInSeconds: 3600,

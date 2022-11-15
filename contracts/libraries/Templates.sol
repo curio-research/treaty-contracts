@@ -144,29 +144,26 @@ library Templates {
     }
 
     function addArmy(
-        uint256 _playerID,
         Position memory _position,
-        Position memory _tilePosition,
         uint256 _speed,
-        uint256 _load,
         uint256 _moveCooldown,
         uint256 _battleCooldown,
-        uint256 _attackRange
+        uint256 _attackRange,
+        uint256 _nationID,
+        address _armyAddress
     ) public returns (uint256) {
         uint256 armyID = ECSLib.addEntity();
 
         ECSLib.setString("Tag", armyID, "Army");
         ECSLib.setBool("CanBattle", armyID);
-        ECSLib.setUint("Owner", armyID, _playerID);
         ECSLib.setPosition("Position", armyID, _position);
-        ECSLib.setPosition("StartPosition", armyID, _tilePosition);
         ECSLib.setUint("Speed", armyID, _speed);
-        ECSLib.setUint("Load", armyID, _load);
         ECSLib.setUint("LastTimestamp", armyID, block.timestamp);
         ECSLib.setUint("MoveCooldown", armyID, _moveCooldown);
         ECSLib.setUint("BattleCooldown", armyID, _battleCooldown);
         ECSLib.setUint("AttackRange", armyID, _attackRange);
-
+        ECSLib.setUint("Nation", armyID, _nationID);
+        ECSLib.setAddress("Address", armyID, _armyAddress);
         return armyID;
     }
 

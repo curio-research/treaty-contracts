@@ -33,7 +33,7 @@ contract PolicyFacet is UseStorage {
     //  */
     // function sampleImpossiblePolicy() external {
     //     // Get player's ports and cities
-    //     uint256 _playerEntity = gs().playerEntityMap[msg.sender];
+    //     uint256 _playerEntity = gs().nationEntityMap[msg.sender];
     //     uint256[] memory _playerBases = GameLib._getPlayerBases(_playerEntity);
     //     // Update desired properties
     //     uint256 _baseEntity;
@@ -52,7 +52,7 @@ contract PolicyFacet is UseStorage {
     //     // 1. Verify that game is ongoing
     //     require(!gs().isPaused, "CURIO: Game is paused");
     //     // 2. Verify that player is active
-    //     uint256 _playerEntity = gs().playerEntityMap[msg.sender];
+    //     uint256 _playerEntity = gs().nationEntityMap[msg.sender];
     //     require(BoolComponent(gs().components["IsActive"]).has(_playerEntity), "CURIO: Player is inactive");
     //     // 3. Verify that player name is Stalin
     //     require(GameLib.strEq(ECSLib.getString("Name", _playerEntity), "Stalin"), "CURIO: Sorry bro, you're not our comrade");

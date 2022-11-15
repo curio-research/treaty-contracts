@@ -74,7 +74,8 @@ struct GameState {
     uint256 lastPaused;
     uint256 gameInitTimestamp;
     WorldConstants worldConstants;
-    address[] players;
+    address[] armies;
+    address[] nations;
     uint256[][] encodedColumnBatches;
     address[] treaties;
     address entities;
@@ -84,7 +85,8 @@ struct GameState {
     string[] templateNames;
     mapping(string => uint256) templates; // template name to id
     mapping(uint256 => address) componentEntityToAddress; // component id to contract address
-    mapping(address => uint256) playerEntityMap;
+    mapping(address => uint256) nationEntityMap;
+    mapping(address => uint256) armyEntityMap;
     mapping(address => address) accounts; // main address -> burner address
     mapping(address => address) burnerAccounts; // burner address -> main address
 }

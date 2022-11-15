@@ -5,6 +5,7 @@ import {Position} from "contracts/libraries/Types.sol";
 import {GameLib} from "contracts/libraries/GameLib.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
 import {GameFacet} from "contracts/facets/GameFacet.sol";
+import "forge-std/console.sol";
 
 // interface GameFacetInterface {
 //     // function callable by army / city wallet

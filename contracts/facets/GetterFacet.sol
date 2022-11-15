@@ -16,7 +16,7 @@ contract GetterFacet is UseStorage {
     uint256 private NULL = 0;
 
     function getNationID(address _nationWalletAddress) external view returns (uint256) {
-        return gs().playerEntityMap[_nationWalletAddress];
+        return gs().nationEntityMap[_nationWalletAddress];
     }
 
     function getNationWallet(uint256 _nationID) external view returns (address) {
@@ -29,6 +29,10 @@ contract GetterFacet is UseStorage {
 
     function getNationName(uint256 _nationID) external view returns (string memory) {
         return ECSLib.getString("Name", _nationID);
+    }
+
+    function getNationArmies(uint256 _nationID) external returns (uint256[] memory) {
+        return GameLib.getArmiesFromNation(_nationID);
     }
 
     // Debug Helpers
@@ -84,11 +88,11 @@ contract GetterFacet is UseStorage {
     }
 
     function isPlayerInitialized(address _player) external view returns (bool) {
-        return gs().playerEntityMap[_player] != NULL;
+        return gs().nationEntityMap[_player] != NULL;
     }
 
     function getPlayerCount() external view returns (uint256) {
-        return gs().players.length;
+        return gs().nations.length;
     }
 
     function getEntity() external view returns (uint256) {
