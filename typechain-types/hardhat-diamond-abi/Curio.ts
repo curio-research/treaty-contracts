@@ -148,7 +148,6 @@ export interface CurioInterface extends utils.Interface {
     "registerTemplateShortcuts(string[],uint256[])": FunctionFragment;
     "removeEntity(uint256)": FunctionFragment;
     "setComponentValue(string,uint256,bytes)": FunctionFragment;
-    "spawnBarbarian((uint256,uint256),uint256)": FunctionFragment;
     "spawnResource((uint256,uint256),string)": FunctionFragment;
     "stopGame()": FunctionFragment;
     "storeEncodedColumnBatches(uint256[][])": FunctionFragment;
@@ -246,7 +245,6 @@ export interface CurioInterface extends utils.Interface {
       | "registerTemplateShortcuts"
       | "removeEntity"
       | "setComponentValue"
-      | "spawnBarbarian"
       | "spawnResource"
       | "stopGame"
       | "storeEncodedColumnBatches"
@@ -397,10 +395,6 @@ export interface CurioInterface extends utils.Interface {
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BytesLike>
     ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "spawnBarbarian",
-    values: [PositionStruct, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "spawnResource",
@@ -772,10 +766,6 @@ export interface CurioInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "setComponentValue",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "spawnBarbarian",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -1240,12 +1230,6 @@ export interface Curio extends BaseContract {
       _componentName: PromiseOrValue<string>,
       _entity: PromiseOrValue<BigNumberish>,
       _value: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    spawnBarbarian(
-      _startPosition: PositionStruct,
-      _level: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1743,12 +1727,6 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  spawnBarbarian(
-    _startPosition: PositionStruct,
-    _level: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   spawnResource(
     _startPosition: PositionStruct,
     _inventoryType: PromiseOrValue<string>,
@@ -2228,12 +2206,6 @@ export interface Curio extends BaseContract {
       _componentName: PromiseOrValue<string>,
       _entity: PromiseOrValue<BigNumberish>,
       _value: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    spawnBarbarian(
-      _startPosition: PositionStruct,
-      _level: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -2778,12 +2750,6 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    spawnBarbarian(
-      _startPosition: PositionStruct,
-      _level: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     spawnResource(
       _startPosition: PositionStruct,
       _inventoryType: PromiseOrValue<string>,
@@ -3266,12 +3232,6 @@ export interface Curio extends BaseContract {
       _componentName: PromiseOrValue<string>,
       _entity: PromiseOrValue<BigNumberish>,
       _value: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    spawnBarbarian(
-      _startPosition: PositionStruct,
-      _level: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

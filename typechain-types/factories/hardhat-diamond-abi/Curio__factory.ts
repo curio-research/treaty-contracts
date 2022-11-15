@@ -362,36 +362,6 @@ const _abi = [
         type: "tuple",
       },
       {
-        internalType: "uint256",
-        name: "_level",
-        type: "uint256",
-      },
-    ],
-    name: "spawnBarbarian",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        components: [
-          {
-            internalType: "uint256",
-            name: "x",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "y",
-            type: "uint256",
-          },
-        ],
-        internalType: "struct Position",
-        name: "_startPosition",
-        type: "tuple",
-      },
-      {
         internalType: "string",
         name: "_inventoryType",
         type: "string",

@@ -5,8 +5,8 @@ import {Test} from "forge-std/Test.sol";
 import {DiamondCutFacet} from "contracts/facets/DiamondCutFacet.sol";
 import {DiamondLoupeFacet} from "contracts/facets/DiamondLoupeFacet.sol";
 import {OwnershipFacet} from "contracts/facets/OwnershipFacet.sol";
-import {Diamond} from "contracts/diamond.sol";
-import {DiamondInit} from "contracts/upgradeInitializers/diamondInit.sol";
+import {Diamond} from "contracts/Diamond.sol";
+import {DiamondInit} from "contracts/upgradeInitializers/DiamondInit.sol";
 import {IDiamondCut} from "contracts/interfaces/IDiamondCut.sol";
 import {GameLib} from "contracts/libraries/GameLib.sol";
 import {GetterFacet} from "contracts/facets/GetterFacet.sol";
@@ -54,6 +54,7 @@ contract DiamondDeployTest is Test {
     Position public player1Pos = Position({x: 60, y: 10});
     Position public player2Pos = Position({x: 60, y: 30});
     Position public player3Pos = Position({x: 50, y: 20});
+    Position public barbarinaTilePos = Position({x:60,y:50});
 
     uint256 public horsemanTemplateID;
     uint256 public warriorTemplateID;
@@ -67,6 +68,7 @@ contract DiamondDeployTest is Test {
     // we assume these two facet selectors do not change. If they do however, we should use _getSelectors
     bytes4[] OWNERSHIP_SELECTORS = [bytes4(0xf2fde38b), 0x8da5cb5b];
     bytes4[] LOUPE_SELECTORS = [bytes4(0xcdffacc6), 0x52ef6b2c, 0xadfca15e, 0x7a0ed627, 0x01ffc9a7];
+
 
     function setUp() public {
         vm.startPrank(deployer);
@@ -83,15 +85,16 @@ contract DiamondDeployTest is Test {
         adminFacet = new AdminFacet();
 
         // Prepare world constants with either `_generateNewWorldConstants()` or `fetchWorldConstants()`
-        worldConstants = _fetchWorldConstants();
+        worldConstants =  _fetchWorldConstants();
         worldConstants.worldWidth = 1000; // use deployment settings, except make map bigger
         worldConstants.worldHeight = 1000;
+        worldConstants.tileWidth =10;
         console.log(">>> World constants ready");
 
         // Initialize treaties
         nato = new NATO();
         console.log(">>> Treaties initialized");
-
+        
         // Fetch args from CLI craft payload for init deploy
         bytes memory initData = abi.encodeWithSelector(_getSelectors("DiamondInit")[0], worldConstants);
         IDiamondCut.FacetCut[] memory cuts = new IDiamondCut.FacetCut[](5);
@@ -329,7 +332,7 @@ contract DiamondDeployTest is Test {
     }
 
     /// @dev Second way to get map: initialize a new one
-    function _generateNewMap(uint256 _width, uint256 _height) private pure returns (uint256[][] memory) {
+    function _generateNewMap(uint256 _width, uint256 _height) private view returns (uint256[][] memory) {
         uint256[] memory _plainCol = new uint256[](_height);
 
         // set individual columns
@@ -342,6 +345,8 @@ contract DiamondDeployTest is Test {
         for (uint256 x = 0; x < _width; x += 1) {
             _map[x] = _plainCol;
         }
+
+        _map[barbarinaTilePos.x][barbarinaTilePos.y] = 4;
 
         return _map;
     }
