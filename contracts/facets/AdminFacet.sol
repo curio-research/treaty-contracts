@@ -7,6 +7,8 @@ import {ComponentSpec, Position, ValueType, WorldConstants} from "contracts/libr
 import {Templates} from "contracts/libraries/Templates.sol";
 import {Set} from "contracts/Set.sol";
 import {GameLib} from "contracts/libraries/GameLib.sol";
+import "forge-std/console.sol";
+
 
 /// @title Admin facet
 /// @notice Contains admin functions and state functions, both of which should be out of scope for players

@@ -9,10 +9,9 @@ import {Set} from "contracts/Set.sol";
 import {console} from "forge-std/console.sol";
 
 contract TreatyTest is Test, DiamondDeployTest {
-
-    function testNationsInitialization() public {
-        // Verify that wallet address is loaded correctly 
-        assertEq(getter.getNationWallet(nation1ID), address(nationWallet1));
+    function testInitialization() public {
+        // Verify that wallet address is loaded correctly
+        assertEq(getter.getEntityWallet(nation1ID), address(nationWallet1));
 
         // Verify that capital is established correctly
         uint256 nation1Capital = getter.getCapital(nation1ID);
@@ -22,13 +21,18 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         assertEq(nation1CapitalPosition.x, nation1Pos.x);
         assertEq(nation1CapitalPosition.y, nation1Pos.y);
-        
+
         assertEq(getter.getEntityNation(nation1Capital), nation1ID);
         assertEq(getter.getNationName(nation1ID), "China");
 
         // Verify that tile is initialized correctly
         uint256 nation1CapitalTile = getter.getTileAt(nation1CapitalPosition);
         assertEq(getter.getEntityNation(nation1CapitalTile), nation1ID);
+
+        // Verify that TileGuard tokens are dripped to tile wallet
+        uint256 correctTileGuardAmount = getter.getConstant("Tile", "Guard", "Amount", "", getter.getEntityLevel(nation1CapitalTile));
+        assertEq(guardContract.checkBalanceOf(deployerAddress), 9999999999999);
+        assertEq(guardContract.checkBalanceOf(getter.getEntityWallet(nation1CapitalTile)), correctTileGuardAmount);
 
         uint256 nation2CapitalTile = getter.getTileAt(nation2CapitalPosition);
         assertEq(getter.getEntityNation(nation2CapitalTile), nation2ID);
@@ -43,8 +47,5 @@ contract TreatyTest is Test, DiamondDeployTest {
         // vm.prank(nation1Address);
         // vm.expectRevert("CURIO: Army max count reached");
         // nationWallet1.executeTransaction(abi.encodeWithSignature("initializeArmy(address)", address(0)));
-
     }
-
-
 }

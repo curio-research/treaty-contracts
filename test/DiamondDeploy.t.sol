@@ -141,6 +141,18 @@ contract DiamondDeployTest is Test {
         _registerGameParameters();
         console.log(">>> Game parameters registered");
 
+        // Create templates
+        // Deploy token contracts
+        foodContract = new FoodERC20("Food", "FOOD", 1, deployerAddress, address(game));
+        goldContract = new GoldERC20("Gold", "GOLD", 1, deployerAddress, address(game));
+        // note: Consider switching to erc1155
+        horsemanContract = new HorsemanERC20("Horseman", "HORSEMAN", 1, deployerAddress, address(game));
+        warriorContract = new WarriorERC20("Warrior", "WARRIOR", 1, deployerAddress, address(game));
+        slingerContract = new SlingerERC20("Slinger", "SLINGER", 1, deployerAddress, address(game));
+        guardContract = new GuardERC20("Guard", "GUARD", 1, deployerAddress, address(game));
+        _createTemplates();
+        console.log(">>> Templates created");
+
         // Initialize map either with either `_generateNewMap()` or `_fetchLastDeployedMap()`
         // Note: if fetching deployed map, check for map size
         uint256[][] memory map = _generateNewMap(worldConstants.worldWidth, worldConstants.worldHeight);
@@ -153,18 +165,6 @@ contract DiamondDeployTest is Test {
         nato = new NATO();
         console.log(">>> Treaties initialized");
 
-        // Deploy token contracts
-        foodContract = new FoodERC20("Food", "FOOD", 1, deployerAddress, address(game));
-        goldContract = new GoldERC20("Gold", "GOLD", 1, deployerAddress, address(game));
-        // note: Consider switching to erc1155
-        horsemanContract = new HorsemanERC20("Horseman", "HORSEMAN", 1, deployerAddress, address(game));
-        warriorContract = new WarriorERC20("Warrior", "WARRIOR", 1, deployerAddress, address(game));
-        slingerContract = new SlingerERC20("Slinger", "SLINGER", 1, deployerAddress, address(game));
-        guardContract = new GuardERC20("Guard", "GUARD", 1, deployerAddress, address(game));
-
-        // Create templates
-        _createTemplates();
-        console.log(">>> Templates created");
 
         vm.stopPrank();
 
@@ -209,7 +209,7 @@ contract DiamondDeployTest is Test {
         nationWallet3.executeTransaction(abi.encodeWithSignature("initializeArmy(address)", address(armyWallet32)));
         nation3ID = getter.getNationID(address(nationWallet3));
         vm.stopPrank();
-        
+
         console.log(">>> Nations & Armies initialized");        
 
 

@@ -5,6 +5,8 @@ import {ERC20} from "lib/solmate/src/tokens/ERC20.sol";
 import {Position} from "contracts/libraries/Types.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
 import {GameLib} from "contracts/libraries/GameLib.sol";
+import "forge-std/console.sol";
+
 
 contract GuardERC20 is ERC20 {
     /// Outline:
@@ -33,6 +35,11 @@ contract GuardERC20 is ERC20 {
         _;
     }
 
+    // fixme: solmate doesn't have balanceOf ...? (then how is it compatible with popular platforms)
+    function checkBalanceOf(address _owner) public view returns (uint256) {
+        return balanceOf[_owner];
+    }
+
     // rewards unrestricted by distance
     function dripToken(address _recipient, uint256 amount) public onlyGameFacet {
         _mint(_recipient, amount);
@@ -42,7 +49,5 @@ contract GuardERC20 is ERC20 {
     function destroyToken(address _recipient, uint256 amount) public onlyGameFacet {
         _burn(_recipient, amount);
     }
-
-
 
 }

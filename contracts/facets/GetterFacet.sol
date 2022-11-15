@@ -19,8 +19,8 @@ contract GetterFacet is UseStorage {
         return gs().nationEntityMap[_nationWalletAddress];
     }
 
-    function getNationWallet(uint256 _nationID) external view returns (address) {
-        return ECSLib.getAddress("Address", _nationID);
+    function getEntityWallet(uint256 _entityID) external view returns (address) {
+        return ECSLib.getAddress("Address", _entityID);
     }
 
     function getEntityNation(uint256 _entityID) external view returns (uint256) {
@@ -71,8 +71,8 @@ contract GetterFacet is UseStorage {
 
     ////////////
 
-    function getResourceLevel(uint256 _resourceID) external view returns (uint256) {
-        return ECSLib.getUint("Level", _resourceID);
+    function getEntityLevel(uint256 _entityID) external view returns (uint256) {
+        return ECSLib.getUint("Level", _entityID);
     }
 
     function getComponent(string memory _name) external view returns (Component) {
@@ -85,6 +85,16 @@ contract GetterFacet is UseStorage {
 
     function getWorldConstants() external view returns (WorldConstants memory) {
         return gs().worldConstants;
+    }
+
+    function getConstant(
+        string memory _subject,
+        string memory _object,
+        string memory _componentName,
+        string memory _functionName,
+        uint256 _level
+    ) external view returns (uint256) {
+        return GameLib.getConstant(_subject, _object, _componentName, _functionName, _level);
     }
 
     function isPlayerInitialized(address _player) external view returns (bool) {

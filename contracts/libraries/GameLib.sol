@@ -107,7 +107,7 @@ library GameLib {
 
             // Drip Guard tokens
             address tokenContract = getTokenContract("Guard");
-            (bool success, ) = tokenContract.call(abi.encodeWithSignature("dripToken(address, amount)", _tileAddress, tileGuardAmount));
+            (bool success, ) = tokenContract.call(abi.encodeWithSignature("dripToken(address,uint256)", _tileAddress, tileGuardAmount));
             require(success, "CURIO: Token dripping fails");
         } else if (terrain == 3 || terrain == 4) {
             // Barbarian tile
@@ -117,7 +117,7 @@ library GameLib {
 
             // Drip Guard tokens
             address tokenContract = getTokenContract("Guard");
-            (bool success, ) = tokenContract.call(abi.encodeWithSignature("dripToken(address, amount)", _tileAddress, barbarianGuardAmount));
+            (bool success, ) = tokenContract.call(abi.encodeWithSignature("dripToken(address,uint256)", _tileAddress, barbarianGuardAmount));
             require(success, "CURIO: Token dripping fails");
         } else {
             // Mountain tile, do nothing

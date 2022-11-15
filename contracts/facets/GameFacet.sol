@@ -73,13 +73,12 @@ contract GameFacet is UseStorage {
     }
 
     function initializeArmy(address _armyWalletAddress) external {
-        // note: message.sender is supposed to be nation samrt contract wallet (but flexible to change)
+        // note: message.sender is supposed to be nation wallet (but flexible to change)
         GameLib.ongoingGameCheck();
 
         // Check that player has not reached max army amount
         uint256 nationID = gs().nationEntityMap[msg.sender];
         uint256[] memory armyIDs = GameLib.getArmiesFromNation(nationID);
-        console.log(gs().worldConstants.maxArmyCountPerPlayer);
         require(armyIDs.length + 1 <= gs().worldConstants.maxArmyCountPerPlayer, "CURIO: Army max count reached");
 
         uint256 nationCapital = GameLib.getCapital(nationID);
