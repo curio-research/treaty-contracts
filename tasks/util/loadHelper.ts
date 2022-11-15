@@ -7,10 +7,10 @@ import { Signer, Wallet } from 'ethers';
 import { confirmTx } from './deployHelper';
 
 export const DRIP_AMOUNT_BY_NETWORK: Record<string, number> = {
-  optimismKovan: 0.01,
+  altlayer: 100,
+  constellation: 100,
   localhost: 1000,
-  constellation: 5,
-  altlayer: 5,
+  optimismKovan: 0.01,
   tailscale: 100,
 };
 
