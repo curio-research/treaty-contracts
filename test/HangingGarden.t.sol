@@ -48,4 +48,18 @@ contract TreatyTest is Test, DiamondDeployTest {
         // vm.expectRevert("CURIO: Army max count reached");
         // nationWallet1.executeTransaction(abi.encodeWithSignature("initializeArmy(address)", address(0)));
     }
+
+    function testOrganizeThenMoveArmy() public {
+        // Deployer transfer enough gold & food to nation 1
+        warriorContract.transfer(nation1Address, 1000);
+        horsemanContract.transfer(nation1Address, 1000);
+        slingerContract.transfer(nation1Address, 1000);
+        // Nation 1 organize army
+        vm.startPrank(nation1WalletAddress);
+        nationWallet1.executeTransaction(abi.encodeWithSignature("organize(uint256,uint256,string)", nation1Pos.x, nation1Pos.y, "China"));
+
+        // Nation 1 move army
+    }
+
+
 }

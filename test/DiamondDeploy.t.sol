@@ -329,7 +329,7 @@ contract DiamondDeployTest is Test {
 
         // Horseman
         string memory templateName = "Horseman";
-        uint256 templateID = admin.addTroopTemplate(templateName, 120, 10, 1, 2, 60, 120, 95, address(horsemanContract));
+        uint256 templateID = admin.addTroopTemplate(templateName, 120, 10, 1, 2, 60, 120, 95, 95, address(horsemanContract));
         templateNames[index] = templateName;
         templateIDs[index] = templateID;
         index++;
@@ -337,7 +337,7 @@ contract DiamondDeployTest is Test {
 
         // Warrior
         templateName = "Warrior";
-        templateID = admin.addTroopTemplate(templateName, 120, 2, 1, 2, 60, 120, 95, address(warriorContract));
+        templateID = admin.addTroopTemplate(templateName, 120, 2, 1, 2, 60, 120, 95, 95, address(warriorContract));
         templateNames[index] = templateName;
         templateIDs[index] = templateID;
         index++;
@@ -345,7 +345,7 @@ contract DiamondDeployTest is Test {
 
         // Slinger
         templateName = "Slinger";
-        templateID = admin.addTroopTemplate(templateName, 120, 2, 1, 2, 60, 120, 95, address(slingerContract));
+        templateID = admin.addTroopTemplate(templateName, 120, 2, 1, 2, 60, 120, 95, 95, address(slingerContract));
         templateNames[index] = templateName;
         templateIDs[index] = templateID;
         index++;

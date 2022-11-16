@@ -35,6 +35,11 @@ contract GetterFacet is UseStorage {
         return GameLib.getArmiesFromNation(_nationID);
     }
 
+    function getAddressMaxLoad(address _entityAddress) external view returns (uint256) {
+        return GameLib.getAddressMaxLoad(_entityAddress);
+    }
+
+
     // Debug Helpers
     function getEntitiesAddr() external view returns (address) {
         return gs().entities;

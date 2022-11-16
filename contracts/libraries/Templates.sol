@@ -7,77 +7,11 @@ import {ECSLib} from "contracts/libraries/ECSLib.sol";
 import "forge-std/console.sol";
 
 library Templates {
-    function addCityCenter(Position memory _startPosition, uint256 _cityID) public returns (uint256) {
-        uint256 cityCenterID = ECSLib.addEntity();
-
-        ECSLib.setString("Tag", cityCenterID, "Building");
-        ECSLib.setPosition("StartPosition", cityCenterID, _startPosition);
-        ECSLib.setUint("City", cityCenterID, _cityID);
-        ECSLib.setUint("Level", cityCenterID, 1);
-        ECSLib.setString("BuildingType", cityCenterID, "City Center");
-        ECSLib.setUint("InitTimestamp", cityCenterID, block.timestamp);
-        ECSLib.setUint("LastTimestamp", cityCenterID, block.timestamp);
-        ECSLib.setUint("LastUpgraded", cityCenterID, 0);
-        ECSLib.setUint("LastMoved", cityCenterID, 0);
-        ECSLib.setUint("LastSacked", cityCenterID, 0); // todo: make sure initialized time exceeds cooldown constant
-
-        return cityCenterID;
-    }
-
-    function addInventory(
-        uint256 _keeperID,
-        uint256 _templateID,
-        uint256 _amount,
-        uint256 _load,
-        bool _isResource
+    function addTile(
+        Position memory _startPosition,
+        uint256 _terrain,
+        address _tileAddress
     ) public returns (uint256) {
-        uint256 inventoryID = ECSLib.addEntity();
-
-        ECSLib.setString("Tag", inventoryID, _isResource ? "ResourceInventory" : "TroopInventory");
-        ECSLib.setUint("Keeper", inventoryID, _keeperID);
-        ECSLib.setUint("Template", inventoryID, _templateID);
-        ECSLib.setUint("Amount", inventoryID, _amount);
-        ECSLib.setUint("Load", inventoryID, _load);
-
-        return inventoryID;
-    }
-
-    function convertSettlerToCity(uint256 _settlerID, string memory _cityName) public returns (uint256) {
-        uint256 cityID = _settlerID;
-
-        // Convert the settler to a city
-        ECSLib.removeBool("CanSettle", cityID);
-        ECSLib.removeUint("Health", cityID);
-        ECSLib.removeUint("Speed", cityID);
-        ECSLib.removeUint("LastTimestamp", cityID);
-        ECSLib.removeUint("MoveCooldown", cityID);
-        ECSLib.setString("Tag", cityID, "City");
-        ECSLib.setString("Name", cityID, _cityName);
-        ECSLib.setBool("CanProduce", cityID);
-
-        return cityID;
-    }
-
-    function convertCityToSettler(
-        uint256 _cityID,
-        uint256 _health,
-        uint256 _speed
-    ) public returns (uint256) {
-        uint256 settlerID = _cityID;
-
-        ECSLib.setBool("CanSettle", settlerID);
-        ECSLib.setUint("Health", settlerID, _health);
-        ECSLib.setUint("Speed", settlerID, _speed);
-        ECSLib.setUint("LastTimestamp", settlerID, block.timestamp);
-        ECSLib.setUint("MoveCooldown", settlerID, 1);
-        ECSLib.setString("Tag", settlerID, "Settler");
-        ECSLib.removeString("Name", settlerID);
-        ECSLib.removeBool("CanProduce", settlerID);
-
-        return settlerID;
-    }
-
-    function addTile(Position memory _startPosition, uint256 _terrain, address _tileAddress) public returns (uint256) {
         uint256 tileID = ECSLib.addEntity();
 
         ECSLib.setString("Tag", tileID, "Tile");
@@ -94,12 +28,14 @@ library Templates {
         return tileID;
     }
 
-    function addCapital(Position memory _tilePosition, uint256 _nationID) public returns (uint256) {
+    function addCapital(
+        Position memory _tilePosition,
+        uint256 _nationID
+    ) public returns (uint256) {
         uint256 capitalID = ECSLib.addEntity();
 
         ECSLib.setString("Tag", capitalID, "Building");
         ECSLib.setPosition("StartPosition", capitalID, _tilePosition);
-        ECSLib.setUint("Level", capitalID, 1);
         ECSLib.setString("BuildingType", capitalID, "Capital");
         ECSLib.setBool("CanProduce", capitalID);
         ECSLib.setUint("InitTimestamp", capitalID, block.timestamp);
@@ -108,15 +44,10 @@ library Templates {
         ECSLib.setUint("LastMoved", capitalID, block.timestamp);
         ECSLib.setUint("LastSacked", capitalID, block.timestamp);
         ECSLib.setUint("Nation", capitalID, _nationID);
-
         return capitalID;
     }
 
-    function addResource(
-        uint256 _templateID,
-        Position memory _startPosition,
-        uint256 _load
-    ) public returns (uint256) {
+    function addResource(uint256 _templateID, Position memory _startPosition) public returns (uint256) {
         uint256 resourceID = ECSLib.addEntity();
 
         ECSLib.setString("Tag", resourceID, "Resource");
@@ -124,10 +55,8 @@ library Templates {
         ECSLib.setUint("Level", resourceID, 0); // initialize at zero is equivalent to not having a gold mine "built"
         ECSLib.setPosition("StartPosition", resourceID, _startPosition);
         ECSLib.setUint("LastTimestamp", resourceID, block.timestamp);
-        ECSLib.setUint("Load", resourceID, _load);
         ECSLib.setUint("LastUpgraded", resourceID, 0);
         ECSLib.setUint("Nation", resourceID, 0);
-
         return resourceID;
     }
 
@@ -139,12 +68,12 @@ library Templates {
         ECSLib.setString("Name", nationID, _name);
         ECSLib.setUint("InitTimestamp", nationID, block.timestamp);
         ECSLib.setAddress("Address", nationID, msg.sender);
+        ECSLib.setUint("Level", nationID, 1);
 
         return nationID;
     }
 
     function addArmy(
-        Position memory _position,
         uint256 _speed,
         uint256 _moveCooldown,
         uint256 _battleCooldown,
@@ -156,7 +85,6 @@ library Templates {
 
         ECSLib.setString("Tag", armyID, "Army");
         ECSLib.setBool("CanBattle", armyID);
-        ECSLib.setPosition("Position", armyID, _position);
         ECSLib.setUint("Speed", armyID, _speed);
         ECSLib.setUint("LastTimestamp", armyID, block.timestamp);
         ECSLib.setUint("MoveCooldown", armyID, _moveCooldown);
@@ -165,21 +93,6 @@ library Templates {
         ECSLib.setUint("Nation", armyID, _nationID);
         ECSLib.setAddress("Address", armyID, _armyAddress);
         return armyID;
-    }
-
-    function addConstituent(
-        uint256 _keeperID,
-        uint256 _templateID,
-        uint256 _amount
-    ) public returns (uint256) {
-        uint256 guardID = ECSLib.addEntity();
-
-        ECSLib.setString("Tag", guardID, "Constituent");
-        ECSLib.setUint("Keeper", guardID, _keeperID);
-        ECSLib.setUint("Template", guardID, _templateID);
-        ECSLib.setUint("Amount", guardID, _amount);
-
-        return guardID;
     }
 
     function addTroopProduction(

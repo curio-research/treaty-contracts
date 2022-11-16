@@ -66,7 +66,9 @@ contract GameFacet is UseStorage {
         gs().nationEntityMap[msg.sender] = nationID;
 
         // Found capital
-        Templates.addCapital(tilePosition, nationID);
+        uint256 capitalInitialGoldLoad = GameLib.getConstant("City Center", "Gold", "Load", "", 1);
+        uint256 capitalInitialFoodLoad = GameLib.getConstant("City Center", "Food", "Load", "", 1);
+        Templates.addCapital(tilePosition, nationID, capitalInitialGoldLoad, capitalInitialFoodLoad);
 
         // set Tile Nation
         ECSLib.setUint("Nation", tileID, nationID);
@@ -81,11 +83,9 @@ contract GameFacet is UseStorage {
         uint256[] memory armyIDs = GameLib.getArmiesFromNation(nationID);
         require(armyIDs.length + 1 <= gs().worldConstants.maxArmyCountPerPlayer, "CURIO: Army max count reached");
 
-        uint256 nationCapital = GameLib.getCapital(nationID);
-        Position memory capitalStartPosition = ECSLib.getPosition("StartPosition", nationCapital);
-
         // Register army
-        uint256 armyID = Templates.addArmy(capitalStartPosition, 0, 0, 0, gs().worldConstants.tileWidth, nationID, _armyWalletAddress);
+        // note: Army currently initialized to have position
+        uint256 armyID = Templates.addArmy(0, 0, 0, gs().worldConstants.tileWidth, nationID, _armyWalletAddress);
         gs().armies.push(_armyWalletAddress);
         gs().armyEntityMap[_armyWalletAddress] = armyID;
     }
@@ -98,25 +98,23 @@ contract GameFacet is UseStorage {
         // Basic checks
         GameLib.validEntityCheck(_movableEntity);
         GameLib.ongoingGameCheck();
-        GameLib.activePlayerCheck(msg.sender);
-        GameLib.entityOwnershipCheck(_movableEntity, msg.sender);
         GameLib.inboundPositionCheck(_targetPosition);
 
-        // Initialize tile and check terrain
-        {
-            Position memory tilePosition = GameLib.getProperTilePosition(_targetPosition);
-            GameLib.passableTerrainCheck(tilePosition);
-        }
-
+        // Check terrain
+        Position memory tilePosition = GameLib.getProperTilePosition(_targetPosition);
+        GameLib.passableTerrainCheck(tilePosition);
+        
         // Verify no other movable entity at exact destination coordinate
         require(GameLib.getMovableEntityAt(_targetPosition) == NULL, "CURIO: Destination occupied by a unit");
 
         // Check moveCooldown
         require(block.timestamp >= ECSLib.getUint("LastTimestamp", _movableEntity) + ECSLib.getUint("MoveCooldown", _movableEntity), "CURIO: Moved too recently");
 
-        // settler cannot move in enemy territory
-        uint256 tileID = GameLib.getTileAt(GameLib.getProperTilePosition(_targetPosition));
-        if (tileID != NULL) GameLib.neutralOrOwnedEntityCheck(tileID, msg.sender);
+        // Army cannot move in enemy territory
+        uint256 tileID = GameLib.getTileAt(tilePosition);
+        uint256 armyID = GameLib.getArmy(msg.sender);
+        uint256 armyNationID = ECSLib.getUint("Nation", armyID);
+        if (tileID != NULL) GameLib.neutralOrOwnedEntityCheck(tileID, armyNationID);
 
         // Verify no gather
         require(GameLib.getArmyGather(_movableEntity) == NULL, "CURIO: Need to end gather first");
@@ -127,7 +125,6 @@ contract GameFacet is UseStorage {
 
         // Move and update moveCooldown
         ECSLib.setPosition("Position", _movableEntity, _targetPosition);
-        ECSLib.setPosition("StartPosition", _movableEntity, GameLib.getProperTilePosition(_targetPosition));
         ECSLib.setUint("LastTimestamp", _movableEntity, block.timestamp);
     }
 
@@ -135,8 +132,6 @@ contract GameFacet is UseStorage {
         // Basic checks
         GameLib.validEntityCheck(_tileID);
         GameLib.ongoingGameCheck();
-        GameLib.activePlayerCheck(msg.sender);
-        GameLib.entityOwnershipCheck(_tileID, msg.sender);
 
         uint256 tileLevel = ECSLib.getUint("Level", _tileID);
         require(block.timestamp - ECSLib.getUint("LastUpgraded", _tileID) > GameLib.getConstant("Tile", "", "Cooldown", "Upgrade", tileLevel - 1), "CURIO: Need to finish upgrading first");
@@ -177,8 +172,6 @@ contract GameFacet is UseStorage {
         // Basic checks
         GameLib.validEntityCheck(_tileID);
         GameLib.ongoingGameCheck();
-        GameLib.activePlayerCheck(msg.sender);
-        GameLib.entityOwnershipCheck(_tileID, msg.sender);
 
         // Check if player has reached max tile level
         uint256 tileLevel = ECSLib.getUint("Level", _tileID);
@@ -221,7 +214,6 @@ contract GameFacet is UseStorage {
     function upgradeCityCenter(uint256 _buildingID) external {
         GameLib.validEntityCheck(_buildingID);
         GameLib.ongoingGameCheck();
-        GameLib.activePlayerCheck(msg.sender);
 
         // Check if player has reached maxCityCenterLevel
         uint256 centerLevel = ECSLib.getUint("Level", _buildingID);
@@ -272,7 +264,6 @@ contract GameFacet is UseStorage {
         // Basic checks
         GameLib.validEntityCheck(_buildingID);
         GameLib.ongoingGameCheck();
-        GameLib.activePlayerCheck(msg.sender);
         GameLib.inboundPositionCheck(_newTilePosition);
         GameLib.passableTerrainCheck(_newTilePosition);
 
@@ -318,7 +309,7 @@ contract GameFacet is UseStorage {
                 require(ECSLib.getUint("Template", resourceID) != gs().templates["Gold"], "CURIO: Cannot settle on goldmine");
                 ECSLib.removeEntity(resourceID);
             }
-            Templates.addResource(gs().templates["Food"], ECSLib.getPosition("StartPosition", _buildingID), GameLib.getConstant("Farm", "Food", "Load", "", 0));
+            Templates.addResource(gs().templates["Food"], ECSLib.getPosition("StartPosition", _buildingID), GameLib.getConstant("Farm", "Food", "Load", "", 0, 0));
         }
 
         // Move city center, city, and underlying settler positions
@@ -334,8 +325,6 @@ contract GameFacet is UseStorage {
         // Basic checks
         GameLib.validEntityCheck(_tileID);
         GameLib.ongoingGameCheck();
-        GameLib.activePlayerCheck(msg.sender);
-        GameLib.entityOwnershipCheck(_tileID, msg.sender);
 
         // Verify that city center is not on tile
         Position memory tilePosition = ECSLib.getPosition("StartPosition", _tileID);
@@ -372,11 +361,9 @@ contract GameFacet is UseStorage {
         GameLib.validEntityCheck(_buildingID);
         GameLib.validEntityCheck(_templateID);
         GameLib.ongoingGameCheck();
-        GameLib.activePlayerCheck(msg.sender);
 
         // Verify city ownership
         uint256 cityID = ECSLib.getUint("City", _buildingID);
-        GameLib.entityOwnershipCheck(cityID, msg.sender);
 
         // verify it's not being upgraded
         uint256 buildingLevel = ECSLib.getUint("Level", _buildingID);
@@ -421,11 +408,9 @@ contract GameFacet is UseStorage {
         GameLib.validEntityCheck(_buildingID);
         GameLib.validEntityCheck(_productionID);
         GameLib.ongoingGameCheck();
-        GameLib.activePlayerCheck(msg.sender);
 
         // Verify that city belongs to player
         uint256 cityID = ECSLib.getUint("City", _buildingID);
-        GameLib.entityOwnershipCheck(cityID, msg.sender);
 
         // verify it's not being upgraded
         uint256 buildingLevel = ECSLib.getUint("Level", _buildingID);
@@ -449,8 +434,6 @@ contract GameFacet is UseStorage {
         GameLib.validEntityCheck(_armyID);
         GameLib.validEntityCheck(_resourceID);
         GameLib.ongoingGameCheck();
-        GameLib.activePlayerCheck(msg.sender);
-        GameLib.entityOwnershipCheck(_armyID, msg.sender);
 
         // Verify that army is sitting on the resource
         Position memory startPosition = GameLib.getProperTilePosition(ECSLib.getPosition("Position", _armyID));
@@ -477,8 +460,6 @@ contract GameFacet is UseStorage {
     function endGather(uint256 _armyID) external {
         GameLib.validEntityCheck(_armyID);
         GameLib.ongoingGameCheck();
-        GameLib.activePlayerCheck(msg.sender);
-        GameLib.entityOwnershipCheck(_armyID, msg.sender);
 
         // End gather
         GameLib.endGather(_armyID);
@@ -488,13 +469,10 @@ contract GameFacet is UseStorage {
         // Basic checks
         GameLib.validEntityCheck(_armyID);
         GameLib.ongoingGameCheck();
-        GameLib.activePlayerCheck(msg.sender);
-        GameLib.entityOwnershipCheck(_armyID, msg.sender);
 
         // Verify tile ownership
         Position memory startPosition = ECSLib.getPosition("StartPosition", _armyID);
         uint256 tileID = GameLib.getTileAt(startPosition);
-        GameLib.entityOwnershipCheck(tileID, msg.sender);
 
         // Verify that army is in city center tile
         uint256 cityID = ECSLib.getUint("City", tileID);
@@ -512,7 +490,6 @@ contract GameFacet is UseStorage {
         // Basic checks
         GameLib.validEntityCheck(_resourceID);
         GameLib.ongoingGameCheck();
-        GameLib.activePlayerCheck(msg.sender);
 
         // City at chaos cannot harvest resources
         uint256 cityID = GameLib.getPlayerCity(GameLib.getNation(msg.sender));
@@ -558,12 +535,9 @@ contract GameFacet is UseStorage {
     // TODO: harvest gold & food on a city; consider merge this with the function above
     function harvestResourcesFromCity(uint256 _buildingID) public {
         GameLib.validEntityCheck(_buildingID);
-        GameLib.ongoingGameCheck();
-        GameLib.activePlayerCheck(msg.sender);
 
         // Verify that city belongs to player
         uint256 cityID = ECSLib.getUint("City", _buildingID);
-        GameLib.entityOwnershipCheck(cityID, msg.sender);
 
         uint256 cityCenterID = GameLib.getCapital(cityID);
 
@@ -595,86 +569,92 @@ contract GameFacet is UseStorage {
     // ----------------------------------------------------------
 
     function organizeArmy(
-        uint256 _cityID,
+        uint256 _capitalID,
+        uint256 _armyID,
         uint256[] memory _templateIDs,
         uint256[] memory _amounts
-    ) external returns (uint256) {
+    ) external returns (bool) {
         // Basic checks
-        GameLib.validEntityCheck(_cityID);
+        GameLib.validEntityCheck(_capitalID);
         GameLib.ongoingGameCheck();
-        GameLib.activePlayerCheck(msg.sender);
-        GameLib.entityOwnershipCheck(_cityID, msg.sender);
-        require(GameLib.getPlayerArmies(GameLib.getNation(msg.sender)).length < gs().worldConstants.maxArmyCountPerPlayer, "CURIO: Army max count reached");
+        
+        // Check that army does not yet have position component; fixme: potential edges cases here
+        require(GameLib.coincident(ECSLib.getPosition("Position", _armyID), Position({x:0, y:0})), "CURIO: Army already organized");
 
         // Verify there is no army currently at the city center
-        Position memory midPosition = GameLib.getMidPositionFromTilePosition(ECSLib.getPosition("StartPosition", _cityID));
+        Position memory midPosition = GameLib.getMidPositionFromTilePosition(ECSLib.getPosition("StartPosition", _capitalID));
         require(GameLib.getArmyAt(midPosition) == NULL, "CURIO: City center occupied by another army");
 
         // Verify that total troop amount does not exceed max troop count
-        uint256 maxTroopCountPerArmy = GameLib.getConstant("Army", "Troop", "Amount", "", ECSLib.getUint("Level", GameLib.getCapital(_cityID)));
+        uint256 maxTroopCountPerArmy = GameLib.getConstant("Army", "Troop", "Amount", "", ECSLib.getUint("Level",_capitalID));
         require(GameLib.sum(_amounts) <= maxTroopCountPerArmy, "CURIO: Troop amount exceeds capacity");
 
         // City at Chaos cannot organize an army
-        GameLib.cityCenterHasRecoveredFromSack(GameLib.getCapital(_cityID));
+        GameLib.cityCenterHasRecoveredFromSack(GameLib.getCapital(_capitalID));
 
+        // fixme: Most of this part is useless
         // Gather army traits from individual troop types
         {
             uint256 speed = 0; // average
             uint256 load = 0; // sum
             uint256 moveCooldown = 0; // max
             uint256 battleCooldown = 0; // max
+            address armyAddress = ECSLib.getAddress("Address", _armyID);
 
             require(_templateIDs.length == _amounts.length, "CURIO: Input lengths do not match");
             require(_templateIDs.length > 0, "CURIO: Army must have at least 1 troop");
 
             for (uint256 i = 0; i < _templateIDs.length; i++) {
-                uint256 inventoryID = GameLib.getInventory(_cityID, _templateIDs[i]);
-                require(ECSLib.getUint("Amount", inventoryID) >= _amounts[i], "CURIO: Need to produce more troops");
+                address tokenContract = ECSLib.getAddress("Address", _templateIDs[i]);
+                require(tokenContract.checkBalanceOf(msg.sender) >= _amounts[i], "CURIO: Need to produce more troops");
 
                 speed += ECSLib.getUint("Speed", _templateIDs[i]) * _amounts[i];
                 load += ECSLib.getUint("Load", _templateIDs[i]) * _amounts[i];
-                ECSLib.setUint("Amount", inventoryID, ECSLib.getUint("Amount", inventoryID) - _amounts[i]);
+
+                tokenContract.transferFrom(msg.sender, armyAddress, _amounts[i]);
 
                 moveCooldown = GameLib.max(ECSLib.getUint("MoveCooldown", _templateIDs[i]), moveCooldown);
                 battleCooldown = GameLib.max(ECSLib.getUint("BattleCooldown", _templateIDs[i]), battleCooldown);
             }
             speed /= GameLib.sum(_amounts);
 
-            // Add army
-            // Templates.addArmy(GameLib.getNation(msg.sender), midPosition, ECSLib.getPosition("StartPosition", _cityID), speed, load, moveCooldown, battleCooldown, gs().worldConstants.tileWidth);
-        }
-        uint256 armyID = GameLib.getArmyAt(midPosition);
-
-        // Add army constituents
-        for (uint256 i = 0; i < _templateIDs.length; i++) {
-            Templates.addConstituent(armyID, _templateIDs[i], _amounts[i]);
+            // Edit army traits
+            ECSLib.setUint("Speed", _armyID, speed);
+            ECSLib.setUint("Load", _armyID, load);
+            ECSLib.setUint("MoveCooldown", _armyID, moveCooldown);
+            ECSLib.setUint("BattleCooldown", _armyID, battleCooldown);
         }
 
-        return armyID;
+        // Set Army Position
+        ECSLib.setPosition("Position", _armyID, midPosition);
+
+        return true;
     }
 
     function disbandArmy(uint256 _armyID) external {
         // Basic checks
         GameLib.validEntityCheck(_armyID);
         GameLib.ongoingGameCheck();
-        GameLib.activePlayerCheck(msg.sender);
-        GameLib.entityOwnershipCheck(_armyID, msg.sender);
 
         // Verify tile ownership
-        Position memory startPosition = ECSLib.getPosition("StartPosition", _armyID);
-        uint256 tileID = GameLib.getTileAt(startPosition);
-        GameLib.entityOwnershipCheck(tileID, msg.sender);
+        Position memory armyPosition = ECSLib.getPosition("Postiion", _armyID);
+        Position memory armyStartPosition = GameLib.getProperTilePosition(armyPosition);
+        uint256 tileID = GameLib.getTileAt(armyStartPosition);
 
-        // Verify that army is in city center tile
-        uint256 cityID = ECSLib.getUint("City", tileID);
-        uint256 cityCenterID = GameLib.getCapital(cityID);
-        require(GameLib.coincident(ECSLib.getPosition("StartPosition", cityCenterID), startPosition), "CURIO: Army must be on city center to disband");
+        // Verify that army is on capital tile
+        uint256 armyNationID = ECSLib.getUint("Nation", _armyID);
+        uint256 capitalID = GameLib.getCapital(armyNationID);
+        require(GameLib.coincident(ECSLib.getPosition("StartPosition", capitalID), armyStartPosition), "CURIO: Army must be on city center to disband");
+
+        address nationWalletAddress = ECSLib.getAddress("Address", armyNationID);
+        address armyWalletAddress = ECSLib.getAddress("Address", _armyID);
 
         // Return carried resources to city
-        GameLib.unloadResources(cityID, _armyID);
+        GameLib.unloadResources(nationWalletAddress, armyWalletAddress);
 
         // Return troops to corresponding inventories and disband army
-        GameLib.disbandArmy(cityID, _armyID);
+        GameLib.disbandArmy(nationWalletAddress, armyWalletAddress);
+        ECSLib.removeComponentValue("Position", _armyID);
     }
 
     /**
@@ -687,8 +667,6 @@ contract GameFacet is UseStorage {
         GameLib.validEntityCheck(_armyID);
         GameLib.validEntityCheck(_targetID);
         GameLib.ongoingGameCheck();
-        GameLib.activePlayerCheck(msg.sender);
-        GameLib.entityOwnershipCheck(_armyID, msg.sender);
 
         // Verify that army and target can battle
         require(ECSLib.getBool("CanBattle", _armyID), "CURIO: Army cannot battle");
@@ -797,8 +775,6 @@ contract GameFacet is UseStorage {
         // Basic checks
         GameLib.validEntityCheck(_tileID);
         GameLib.ongoingGameCheck();
-        GameLib.activePlayerCheck(msg.sender);
-        GameLib.entityOwnershipCheck(_armyID, msg.sender);
 
         // Check Tile Count has not exceeded limits
         uint256 playerID = GameLib.getNation(msg.sender);
@@ -835,7 +811,6 @@ contract GameFacet is UseStorage {
     function upgradeResource(uint256 _resourceID) public {
         GameLib.validEntityCheck(_resourceID);
         GameLib.ongoingGameCheck();
-        GameLib.activePlayerCheck(msg.sender);
 
         {
             // Tile needs to be yours
@@ -882,7 +857,6 @@ contract GameFacet is UseStorage {
     // TODO: setAddress => _setAddressArray
     // function joinTreaty(address _treatyAddress) external {
     //     // GameLib.ongoingGameCheck();
-    //     // GameLib.activePlayerCheck(msg.sender);
     //     // // request to sign treaty
     //     // (bool success, bytes memory returnData) = _treatyAddress.call(abi.encodeWithSignature("joinTreaty()"));
     //     // require(success, "CRUIO: Failed to call the external treaty");
