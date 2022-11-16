@@ -4,7 +4,7 @@ import { FactoryOptions, HardhatRuntimeEnvironment } from 'hardhat/types';
 import * as path from 'path';
 import * as fsPromise from 'fs/promises';
 import * as fs from 'fs';
-import { chainInfo, COMPONENT_SPECS, Curio, position, TILE_TYPE } from 'curio-vault';
+import { chainInfo, COMPONENT_SPECS, position, TILE_TYPE } from 'curio-vault';
 import { ECSLib } from '../../typechain-types/contracts/libraries/ECSLib';
 import { GameLib } from '../../typechain-types/contracts/libraries/GameLib';
 import { createTemplates } from './constants';
@@ -12,6 +12,7 @@ import { deployDiamond, getDiamond, deployFacets } from './diamondDeploy';
 import { encodeTileMap } from './mapHelper';
 import GAME_PARAMETERS from '../game_parameters.json';
 import chalk from 'chalk';
+import { Curio } from '../../typechain-types/hardhat-diamond-abi/Curio';
 
 // deploy proxy used in hre
 export const deployProxy = async <C extends Contract>(contractName: string, signer: Signer, hre: HardhatRuntimeEnvironment, contractArgs: unknown[], libs?: FactoryOptions['libraries']): Promise<C> => {

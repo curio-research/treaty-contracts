@@ -1447,8 +1447,8 @@
       }
     },
     "test/Basic.t.sol": {
-      "lastModificationDate": 1668550825895,
-      "contentHash": "08cb145f665d800081d91161ba6096eb",
+      "lastModificationDate": 1668557891001,
+      "contentHash": "871da315825fb528061565b93b0b16bf",
       "sourceName": "test/Basic.t.sol",
       "solcConfig": {
         "settings": {
@@ -1518,81 +1518,9 @@
         }
       }
     },
-    "test/Depr.t.sol": {
-      "lastModificationDate": 1668484923763,
-      "contentHash": "ff7747e1ab4c86469ed2ed06c659b116",
-      "sourceName": "test/Depr.t.sol",
-      "solcConfig": {
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "metadata": {
-            "bytecodeHash": "ipfs"
-          },
-          "outputSelection": {
-            "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
-            }
-          },
-          "evmVersion": "london",
-          "libraries": {}
-        }
-      },
-      "imports": [
-        "contracts/Component.sol",
-        "contracts/Diamond.sol",
-        "contracts/Mapping.sol",
-        "contracts/NATO.sol",
-        "contracts/Set.sol",
-        "contracts/TypedComponents.sol",
-        "contracts/facets/AdminFacet.sol",
-        "contracts/facets/DiamondCutFacet.sol",
-        "contracts/facets/DiamondLoupeFacet.sol",
-        "contracts/facets/GameFacet.sol",
-        "contracts/facets/GetterFacet.sol",
-        "contracts/facets/OwnershipFacet.sol",
-        "contracts/interfaces/IDiamondCut.sol",
-        "contracts/interfaces/IDiamondLoupe.sol",
-        "contracts/interfaces/IERC165.sol",
-        "contracts/interfaces/IERC173.sol",
-        "contracts/libraries/ECSLib.sol",
-        "contracts/libraries/GameLib.sol",
-        "contracts/libraries/LibDiamond.sol",
-        "contracts/libraries/Storage.sol",
-        "contracts/libraries/Templates.sol",
-        "contracts/libraries/Types.sol",
-        "contracts/upgradeInitializers/DiamondInit.sol",
-        "lib/forge-std/lib/ds-test/src/test.sol",
-        "lib/forge-std/src/Script.sol",
-        "lib/forge-std/src/StdJson.sol",
-        "lib/forge-std/src/Test.sol",
-        "lib/forge-std/src/Vm.sol",
-        "lib/forge-std/src/console.sol",
-        "lib/forge-std/src/console2.sol",
-        "lib/openzeppelin-contracts/contracts/utils/Strings.sol",
-        "test/DiamondDeploy.t.sol"
-      ],
-      "versionRequirement": "^0.8.4",
-      "artifacts": {
-        "ECS": {
-          "0.8.4+commit.c7e474f2.Darwin.appleclang": "Depr.t.sol/ECS.json"
-        }
-      }
-    },
     "test/DiamondDeploy.t.sol": {
-      "lastModificationDate": 1668550397768,
-      "contentHash": "94e9636e256303a52af28418c9d2bc9b",
+      "lastModificationDate": 1668556844794,
+      "contentHash": "78b760f2e30f067143248c544f0a42dd",
       "sourceName": "test/DiamondDeploy.t.sol",
       "solcConfig": {
         "settings": {

@@ -30,6 +30,13 @@ contract TreatyTest is Test, DiamondDeployTest {
         for (uint256 i = 0; i < 20; i++) admin.onlyQuery(player2Pos);
     }
 
+    function testLoadLmao() public {
+        console.log("StartPosition component cardinality:", getter.getComponent("StartPosition").getEntities().length);
+        console.log("Speed component cardinality:", getter.getComponent("Speed").getEntities().length);
+        assertEq(getter.getComponent("StartPosition").getEntities().length, 1);
+        assertEq(getter.getComponent("Speed").getEntities().length, 2);
+    }
+
     /// Logic tests
     function testClaimBarbarinaGather() public {
         // Pin key IDs and tile positions
