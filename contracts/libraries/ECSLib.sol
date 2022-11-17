@@ -8,6 +8,9 @@ import {UintBoolMapping} from "contracts/Mapping.sol";
 import {Component} from "contracts/Component.sol";
 import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, UintComponent, UintArrayComponent} from "contracts/TypedComponents.sol";
 
+// import {LibQuery} from "contracts/libraries/LibQuery.sol";
+// import {QueryFragment} from "contracts/libraries/Query.sol";
+
 /// @title library of ECS utility functions
 
 library ECSLib {
@@ -312,6 +315,16 @@ library ECSLib {
     function query(QueryCondition[] memory _queryCondition) public returns (uint256[] memory) {
         return queryAsSet(_queryCondition).getAll();
     }
+
+    // function query(QueryCondition[] memory _queryCondition) public returns (uint256[] memory) {
+    //     QueryFragment[] memory queryFragments = new QueryFragment[](_queryCondition.length);
+    //     for (uint256 i = 0; i < _queryCondition.length; i++) {
+    //         QueryCondition memory condition = _queryCondition[i];
+    //         queryFragments[i] = QueryFragment({queryType: condition.queryType, component: Component(condition.componentName), value: condition.value});
+    //     }
+
+    //     return LibQuery.query(queryFragments);
+    // }
 
     function queryChunk(
         QueryType _queryType,
