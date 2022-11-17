@@ -27,7 +27,7 @@ contract Component {
      * @param _entity entity ID
      */
     function getBytesValue(uint256 _entity) public view returns (bytes memory) {
-        require(has(_entity), "CURIO: Entity not found in component");
+        // require(has(_entity), "CURIO: Entity not found in component");
 
         return entityToValueMap[_entity];
     }

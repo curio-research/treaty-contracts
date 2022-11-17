@@ -15,9 +15,18 @@ enum ValueType {
     OTHER
 }
 
+// enum QueryType {
+//     Has,
+//     HasVal
+// }
+
 enum QueryType {
     Has,
-    HasVal
+    Not,
+    HasValue,
+    NotValue,
+    ProxyRead,
+    ProxyExpand
 }
 
 enum GameMode {

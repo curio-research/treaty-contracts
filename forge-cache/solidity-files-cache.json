@@ -12,8 +12,8 @@
   },
   "files": {
     "contracts/Component.sol": {
-      "lastModificationDate": 1668484923744,
-      "contentHash": "d358edd51715363a84865cc279701893",
+      "lastModificationDate": 1668647794338,
+      "contentHash": "b1f9ee197dea21787fa2e9d037527acd",
       "sourceName": "contracts/Component.sol",
       "solcConfig": {
         "settings": {
@@ -349,9 +349,13 @@
         "contracts/TypedComponents.sol",
         "contracts/libraries/ECSLib.sol",
         "contracts/libraries/GameLib.sol",
+        "contracts/libraries/LibQuery.sol",
+        "contracts/libraries/Query.sol",
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Templates.sol",
         "contracts/libraries/Types.sol",
+        "lib/memmove/src/Array.sol",
+        "lib/memmove/src/LinkedList.sol",
         "lib/openzeppelin-contracts/contracts/utils/Strings.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -485,9 +489,13 @@
         "contracts/TypedComponents.sol",
         "contracts/libraries/ECSLib.sol",
         "contracts/libraries/GameLib.sol",
+        "contracts/libraries/LibQuery.sol",
+        "contracts/libraries/Query.sol",
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Templates.sol",
         "contracts/libraries/Types.sol",
+        "lib/memmove/src/Array.sol",
+        "lib/memmove/src/LinkedList.sol",
         "lib/openzeppelin-contracts/contracts/utils/Strings.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -535,9 +543,13 @@
         "contracts/TypedComponents.sol",
         "contracts/libraries/ECSLib.sol",
         "contracts/libraries/GameLib.sol",
+        "contracts/libraries/LibQuery.sol",
+        "contracts/libraries/Query.sol",
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Templates.sol",
         "contracts/libraries/Types.sol",
+        "lib/memmove/src/Array.sol",
+        "lib/memmove/src/LinkedList.sol",
         "lib/openzeppelin-contracts/contracts/utils/Strings.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -628,9 +640,13 @@
         "contracts/TypedComponents.sol",
         "contracts/libraries/ECSLib.sol",
         "contracts/libraries/GameLib.sol",
+        "contracts/libraries/LibQuery.sol",
+        "contracts/libraries/Query.sol",
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Templates.sol",
         "contracts/libraries/Types.sol",
+        "lib/memmove/src/Array.sol",
+        "lib/memmove/src/LinkedList.sol",
         "lib/openzeppelin-contracts/contracts/utils/Strings.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -797,8 +813,8 @@
       }
     },
     "contracts/libraries/ECSLib.sol": {
-      "lastModificationDate": 1668645332397,
-      "contentHash": "51048c42d1b15be4f522dbf554a6bc2e",
+      "lastModificationDate": 1668647543295,
+      "contentHash": "9851c7bcd6db956ee1f54cbc788a5842",
       "sourceName": "contracts/libraries/ECSLib.sol",
       "solcConfig": {
         "settings": {
@@ -832,8 +848,12 @@
         "contracts/Mapping.sol",
         "contracts/Set.sol",
         "contracts/TypedComponents.sol",
+        "contracts/libraries/LibQuery.sol",
+        "contracts/libraries/Query.sol",
         "contracts/libraries/Storage.sol",
-        "contracts/libraries/Types.sol"
+        "contracts/libraries/Types.sol",
+        "lib/memmove/src/Array.sol",
+        "lib/memmove/src/LinkedList.sol"
       ],
       "versionRequirement": "^0.8.4",
       "artifacts": {
@@ -843,8 +863,8 @@
       }
     },
     "contracts/libraries/GameLib.sol": {
-      "lastModificationDate": 1668646591970,
-      "contentHash": "6b217b01e80cf9b5841387a4b436456f",
+      "lastModificationDate": 1668647598340,
+      "contentHash": "994172b40c4ae6dbd7974b051ad3a761",
       "sourceName": "contracts/libraries/GameLib.sol",
       "solcConfig": {
         "settings": {
@@ -879,9 +899,13 @@
         "contracts/Set.sol",
         "contracts/TypedComponents.sol",
         "contracts/libraries/ECSLib.sol",
+        "contracts/libraries/LibQuery.sol",
+        "contracts/libraries/Query.sol",
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Templates.sol",
         "contracts/libraries/Types.sol",
+        "lib/memmove/src/Array.sol",
+        "lib/memmove/src/LinkedList.sol",
         "lib/openzeppelin-contracts/contracts/utils/Strings.sol"
       ],
       "versionRequirement": "^0.8.13",
@@ -933,8 +957,8 @@
       }
     },
     "contracts/libraries/LibQuery.sol": {
-      "lastModificationDate": 1668645320764,
-      "contentHash": "22983cc55b74f2050331b4645373aae3",
+      "lastModificationDate": 1668647018187,
+      "contentHash": "ed180f9f38efa0e6097b520f2af88c95",
       "sourceName": "contracts/libraries/LibQuery.sol",
       "solcConfig": {
         "settings": {
@@ -963,8 +987,15 @@
           "libraries": {}
         }
       },
-      "imports": [],
-      "versionRequirement": null,
+      "imports": [
+        "contracts/Component.sol",
+        "contracts/Set.sol",
+        "contracts/libraries/Query.sol",
+        "contracts/libraries/Types.sol",
+        "lib/memmove/src/Array.sol",
+        "lib/memmove/src/LinkedList.sol"
+      ],
+      "versionRequirement": ">=0.8.13",
       "artifacts": {
         "LibQuery": {
           "0.8.13+commit.abaa5c0e.Darwin.appleclang": "LibQuery.sol/LibQuery.json"
@@ -972,8 +1003,8 @@
       }
     },
     "contracts/libraries/Query.sol": {
-      "lastModificationDate": 1668645318697,
-      "contentHash": "c16580c53bd931dca99055e72f28834d",
+      "lastModificationDate": 1668647577864,
+      "contentHash": "a9939a6644c45ebba382a7251cb35f0f",
       "sourceName": "contracts/libraries/Query.sol",
       "solcConfig": {
         "settings": {
@@ -1002,8 +1033,14 @@
           "libraries": {}
         }
       },
-      "imports": [],
-      "versionRequirement": null,
+      "imports": [
+        "contracts/Component.sol",
+        "contracts/Set.sol",
+        "contracts/libraries/Types.sol",
+        "lib/memmove/src/Array.sol",
+        "lib/memmove/src/LinkedList.sol"
+      ],
+      "versionRequirement": ">=0.8.13",
       "artifacts": {
         "Query": {
           "0.8.13+commit.abaa5c0e.Darwin.appleclang": "Query.sol/Query.json"
@@ -1091,8 +1128,12 @@
         "contracts/Set.sol",
         "contracts/TypedComponents.sol",
         "contracts/libraries/ECSLib.sol",
+        "contracts/libraries/LibQuery.sol",
+        "contracts/libraries/Query.sol",
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Types.sol",
+        "lib/memmove/src/Array.sol",
+        "lib/memmove/src/LinkedList.sol",
         "lib/openzeppelin-contracts/contracts/utils/Strings.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -1103,8 +1144,8 @@
       }
     },
     "contracts/libraries/Types.sol": {
-      "lastModificationDate": 1668484923746,
-      "contentHash": "d22acc8376396115852d5ba57fa5648c",
+      "lastModificationDate": 1668647475219,
+      "contentHash": "6dd1d445301a874a24e259d1deb68826",
       "sourceName": "contracts/libraries/Types.sol",
       "solcConfig": {
         "settings": {
@@ -1485,6 +1526,92 @@
         }
       }
     },
+    "lib/memmove/src/Array.sol": {
+      "lastModificationDate": 1668646939309,
+      "contentHash": "38d64821b08d1c7bce516640a0a7d983",
+      "sourceName": "lib/memmove/src/Array.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": ">=0.8.13, <0.9.0",
+      "artifacts": {
+        "ArrayLib": {
+          "0.8.13+commit.abaa5c0e.Darwin.appleclang": "Array.sol/ArrayLib.json"
+        },
+        "RefArrayLib": {
+          "0.8.13+commit.abaa5c0e.Darwin.appleclang": "Array.sol/RefArrayLib.json"
+        }
+      }
+    },
+    "lib/memmove/src/LinkedList.sol": {
+      "lastModificationDate": 1668646939309,
+      "contentHash": "d97eb113596d10ea6923492617aa02bf",
+      "sourceName": "lib/memmove/src/LinkedList.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/memmove/src/Array.sol"
+      ],
+      "versionRequirement": ">=0.8.13, <0.9.0",
+      "artifacts": {
+        "IndexableLinkedListLib": {
+          "0.8.13+commit.abaa5c0e.Darwin.appleclang": "LinkedList.sol/IndexableLinkedListLib.json"
+        },
+        "LinkedListLib": {
+          "0.8.13+commit.abaa5c0e.Darwin.appleclang": "LinkedList.sol/LinkedListLib.json"
+        }
+      }
+    },
     "lib/openzeppelin-contracts/contracts/utils/Strings.sol": {
       "lastModificationDate": 1665288827155,
       "contentHash": "9ba0bb93454a1ab7b6824f59ead41f42",
@@ -1575,6 +1702,8 @@
         "contracts/libraries/ECSLib.sol",
         "contracts/libraries/GameLib.sol",
         "contracts/libraries/LibDiamond.sol",
+        "contracts/libraries/LibQuery.sol",
+        "contracts/libraries/Query.sol",
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Templates.sol",
         "contracts/libraries/Types.sol",
@@ -1586,6 +1715,8 @@
         "lib/forge-std/src/Vm.sol",
         "lib/forge-std/src/console.sol",
         "lib/forge-std/src/console2.sol",
+        "lib/memmove/src/Array.sol",
+        "lib/memmove/src/LinkedList.sol",
         "lib/openzeppelin-contracts/contracts/utils/Strings.sol",
         "test/DiamondDeploy.t.sol"
       ],
@@ -1647,6 +1778,8 @@
         "contracts/libraries/ECSLib.sol",
         "contracts/libraries/GameLib.sol",
         "contracts/libraries/LibDiamond.sol",
+        "contracts/libraries/LibQuery.sol",
+        "contracts/libraries/Query.sol",
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Templates.sol",
         "contracts/libraries/Types.sol",
@@ -1658,6 +1791,8 @@
         "lib/forge-std/src/Vm.sol",
         "lib/forge-std/src/console.sol",
         "lib/forge-std/src/console2.sol",
+        "lib/memmove/src/Array.sol",
+        "lib/memmove/src/LinkedList.sol",
         "lib/openzeppelin-contracts/contracts/utils/Strings.sol",
         "test/DiamondDeploy.t.sol"
       ],
@@ -1719,6 +1854,8 @@
         "contracts/libraries/ECSLib.sol",
         "contracts/libraries/GameLib.sol",
         "contracts/libraries/LibDiamond.sol",
+        "contracts/libraries/LibQuery.sol",
+        "contracts/libraries/Query.sol",
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Templates.sol",
         "contracts/libraries/Types.sol",
@@ -1730,6 +1867,8 @@
         "lib/forge-std/src/Vm.sol",
         "lib/forge-std/src/console.sol",
         "lib/forge-std/src/console2.sol",
+        "lib/memmove/src/Array.sol",
+        "lib/memmove/src/LinkedList.sol",
         "lib/openzeppelin-contracts/contracts/utils/Strings.sol"
       ],
       "versionRequirement": "^0.8.4",
@@ -1790,6 +1929,8 @@
         "contracts/libraries/ECSLib.sol",
         "contracts/libraries/GameLib.sol",
         "contracts/libraries/LibDiamond.sol",
+        "contracts/libraries/LibQuery.sol",
+        "contracts/libraries/Query.sol",
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Templates.sol",
         "contracts/libraries/Types.sol",
@@ -1801,6 +1942,8 @@
         "lib/forge-std/src/Vm.sol",
         "lib/forge-std/src/console.sol",
         "lib/forge-std/src/console2.sol",
+        "lib/memmove/src/Array.sol",
+        "lib/memmove/src/LinkedList.sol",
         "lib/openzeppelin-contracts/contracts/utils/Strings.sol",
         "test/DiamondDeploy.t.sol"
       ],
@@ -1862,6 +2005,8 @@
         "contracts/libraries/ECSLib.sol",
         "contracts/libraries/GameLib.sol",
         "contracts/libraries/LibDiamond.sol",
+        "contracts/libraries/LibQuery.sol",
+        "contracts/libraries/Query.sol",
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Templates.sol",
         "contracts/libraries/Types.sol",
@@ -1873,6 +2018,8 @@
         "lib/forge-std/src/Vm.sol",
         "lib/forge-std/src/console.sol",
         "lib/forge-std/src/console2.sol",
+        "lib/memmove/src/Array.sol",
+        "lib/memmove/src/LinkedList.sol",
         "lib/openzeppelin-contracts/contracts/utils/Strings.sol",
         "test/DiamondDeploy.t.sol"
       ],

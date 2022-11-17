@@ -65,7 +65,7 @@ task('load-test', 'perform load testing')
 
       // Perform load test on `move`
       await loadTestMoveArmy(hre, diamond, setupOutput, players, {
-        txsPerPlayer: 10,
+        txsPerPlayer: 5,
         periodPerTxBatchInMs: Math.trunc(playerCount * 1.5 * 1000),
         totalTimeoutInMs: Math.trunc(300 * 60 * 1000),
       });

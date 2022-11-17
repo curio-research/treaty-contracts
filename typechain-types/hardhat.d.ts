@@ -73,6 +73,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.LibDiamond__factory>;
     getContractFactory(
+      name: "LibQuery",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.LibQuery__factory>;
+    getContractFactory(
       name: "UintBoolMapping",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.UintBoolMapping__factory>;
@@ -120,10 +124,6 @@ declare module "hardhat/types/runtime" {
       name: "Curio",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Curio__factory>;
-    getContractFactory(
-      name: "ERC20",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ERC20__factory>;
 
     getContractAt(
       name: "Component",
@@ -201,6 +201,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.LibDiamond>;
     getContractAt(
+      name: "LibQuery",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.LibQuery>;
+    getContractAt(
       name: "UintBoolMapping",
       address: string,
       signer?: ethers.Signer
@@ -260,11 +265,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Curio>;
-    getContractAt(
-      name: "ERC20",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ERC20>;
 
     // default types
     getContractFactory(

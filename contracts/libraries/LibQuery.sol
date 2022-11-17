@@ -2,7 +2,7 @@
 pragma solidity >=0.8.13;
 import {Component} from "contracts/Component.sol";
 import {QueryFragment, QueryType} from "contracts/libraries/Query.sol";
-import "memmove/LinkedList.sol";
+import "lib/memmove/src/LinkedList.sol";
 
 struct Uint256Node {
     uint256 value;
@@ -47,7 +47,7 @@ function passesQueryFragment(uint256 entity, QueryFragment memory fragment) view
 
     if (fragment.queryType == QueryType.HasValue) {
         // Entity must have the given component value
-        return keccak256(fragment.value) == keccak256(fragment.component.getRawValue(entity));
+        return keccak256(fragment.value) == keccak256(fragment.component.getBytesValue(entity));
     }
 
     if (fragment.queryType == QueryType.Not) {
@@ -57,7 +57,7 @@ function passesQueryFragment(uint256 entity, QueryFragment memory fragment) view
 
     if (fragment.queryType == QueryType.NotValue) {
         // Entity must not have the given component value
-        return keccak256(fragment.value) != keccak256(fragment.component.getRawValue(entity));
+        return keccak256(fragment.value) != keccak256(fragment.component.getBytesValue(entity));
     }
 
     require(isEntityFragment(fragment), "NO_ENTITY_FRAGMENT");
@@ -81,7 +81,7 @@ function passesQueryFragmentProxy(
         }
 
         // Move up the proxy chain
-        proxyEntity = abi.decode(proxyRead.component.getRawValue(proxyEntity), (uint256));
+        proxyEntity = abi.decode(proxyRead.component.getBytesValue(proxyEntity), (uint256));
         passes = passesQueryFragment(proxyEntity, fragment);
 
         if (isBreakingPassState(passes, fragment)) {
@@ -250,7 +250,7 @@ library LibQuery {
      */
     function getChildEntities(
         uint256 entity,
-        IComponent component,
+        Component component,
         uint256 depth
     ) internal view returns (uint256[] memory) {
         if (depth == 0) return new uint256[](0);
@@ -278,15 +278,15 @@ library LibQuery {
     }
 
     function getValueWithProxy(
-        IComponent component,
+        Component component,
         uint256 entity,
-        IComponent proxyComponent,
+        Component proxyComponent,
         uint256 depth
     ) internal view returns (bytes memory value, bool found) {
         uint256 proxyEntity = entity;
         for (uint256 i; i <= depth; i++) {
             // Check if the current entity has the requested value
-            if (component.has(proxyEntity)) return (component.getRawValue(proxyEntity), true);
+            if (component.has(proxyEntity)) return (component.getBytesValue(proxyEntity), true);
 
             // Abort if the current entity has no value in the proxy component
             if (!proxyComponent.has(proxyEntity)) {
@@ -294,7 +294,7 @@ library LibQuery {
             }
 
             // Move up the proxy chain
-            proxyEntity = abi.decode(proxyComponent.getRawValue(proxyEntity), (uint256));
+            proxyEntity = abi.decode(proxyComponent.getBytesValue(proxyEntity), (uint256));
         }
 
         return (new bytes(0), false);
