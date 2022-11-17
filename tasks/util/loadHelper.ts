@@ -8,12 +8,12 @@ import { confirmTx } from './deployHelper';
 import * as os from 'os';
 
 export const DRIP_AMOUNT_BY_NETWORK: Record<string, number> = {
-  optimismKovan: 0.01,
-  localhost: 100,
-  constellation: 100,
   altlayer: 100,
+  constellation: 100,
+  constellationFast: 100,
+  localhost: 1000,
+  optimismKovan: 0.01,
   tailscale: 100,
-  constellationFast: 1000,
 };
 
 // ----------------------------------------------------------
