@@ -83,9 +83,8 @@ library Templates {
         address _armyAddress
     ) public returns (uint256) {
         uint256 armyID = ECSLib.addEntity();
-
+        // note: CanBattle & Position is set when organized
         ECSLib.setString("Tag", armyID, "Army");
-        ECSLib.setBool("CanBattle", armyID);
         ECSLib.setUint("Speed", armyID, _speed);
         ECSLib.setUint("LastTimestamp", armyID, block.timestamp);
         ECSLib.setUint("MoveCooldown", armyID, _moveCooldown);

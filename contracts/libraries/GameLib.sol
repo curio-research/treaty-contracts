@@ -199,59 +199,61 @@ library GameLib {
         bool _transferOwnershipUponVictory,
         bool _removeUponVictory
     ) internal returns (bool victory) {
-        uint256[] memory offenderConstituentIDs = getConstituents(_offenderID);
-        uint256[] memory defenderConstituentIDs = getConstituents(_defenderID);
-
-        require(offenderConstituentIDs.length > 0, "CURIO: Offender cannot attack");
-        require(defenderConstituentIDs.length > 0, "CURIO: Defender already subjugated, claim tile instead");
+        uint256[] memory troopTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("TroopTemplate"));
+        address offenderAddress = ECSLib.getAddress("Address", _offenderID);
+        address defenderAddress = ECSLib.getAddress("Address", _defenderID);
+        victory = true;
 
         // Offender attacks defender
         {
             uint256 loss;
-            for (uint256 i = 0; i < offenderConstituentIDs.length; i++) {
-                if (ECSLib.getUint("Amount", offenderConstituentIDs[i]) == 0) continue;
-                for (uint256 j = 0; j < defenderConstituentIDs.length; j++) {
-                    uint256 troopTypeBonus = getAttackBonus(ECSLib.getUint("Template", offenderConstituentIDs[i]), ECSLib.getUint("Template", defenderConstituentIDs[j]));
-
-                    if (ECSLib.getUint("Amount", defenderConstituentIDs[j]) == 0) continue;
+            for (uint256 i = 0; i < troopTemplateIDs.length; i++) {
+                uint256 offenderTroopTemplateID = troopTemplateIDs[i];
+                address offenderTroopContract = ECSLib.getAddress("Address", offenderTroopTemplateID);
+                uint256 offenderTroopBalance = getAddressBalance(offenderAddress, offenderTroopContract);
+                if (offenderTroopBalance == 0) continue;
+                for (uint256 j = 0; j < troopTemplateIDs.length; j++) {
+                    uint256 troopTypeBonus = getAttackBonus(i, j);
+                    uint256 defenderTroopTemplateID = troopTemplateIDs[j];
+                    address defenderTroopContract = ECSLib.getAddress("Address", defenderTroopTemplateID);
+                    uint256 defenderTroopBalance = getAddressBalance(defenderAddress, defenderTroopContract);
+                    if (defenderTroopBalance == 0) continue;
                     loss =
-                        (troopTypeBonus * (sqrt(ECSLib.getUint("Amount", offenderConstituentIDs[i])) * ECSLib.getUint("Attack", ECSLib.getUint("Template", offenderConstituentIDs[i])) * 2)) / //
-                        (ECSLib.getUint("Defense", ECSLib.getUint("Template", defenderConstituentIDs[j])) * ECSLib.getUint("Health", ECSLib.getUint("Template", defenderConstituentIDs[j])));
+                        (troopTypeBonus * (sqrt(offenderTroopBalance) * ECSLib.getUint("Attack", offenderTroopTemplateID) * 2)) / //
+                        (ECSLib.getUint("Defense", defenderTroopTemplateID) * ECSLib.getUint("Health", defenderTroopTemplateID));
 
-                    if (loss >= ECSLib.getUint("Amount", defenderConstituentIDs[j])) {
-                        ECSLib.removeEntity(defenderConstituentIDs[j]);
+                    if (loss >= defenderTroopBalance) {
+                        (bool success, ) = defenderTroopContract.call(abi.encodeWithSignature("destroyToken(address,uint256)", defenderAddress, defenderTroopBalance));
+                        require(success, "CURIO: token burn fails");
                     } else {
-                        ECSLib.setUint("Amount", defenderConstituentIDs[j], ECSLib.getUint("Amount", defenderConstituentIDs[j]) - loss);
+                        victory = false;
+                        (bool success, ) = defenderTroopContract.call(abi.encodeWithSignature("destroyToken(address,uint256)", defenderAddress, loss));
+                        require(success, "CURIO: token burn fails");
                     }
                 }
             }
         }
-
-        // Check defender status
-        if (getConstituents(_defenderID).length == 0) {
-            victory = true;
-
+        if (victory) {
             if (_transferGoldUponVictory) {
-                // Offender takes defender's gold
-                uint256 offenderInventoryAmount = ECSLib.getUint("Amount", getInventory(_offenderID, gs().templates["Gold"]));
-                uint256 capturedAmount = ECSLib.getUint("Amount", getInventory(_defenderID, gs().templates["Gold"]));
-                if (capturedAmount > ECSLib.getUint("Load", _offenderID) - offenderInventoryAmount) capturedAmount = ECSLib.getUint("Load", _offenderID) - offenderInventoryAmount;
-                ECSLib.setUint("Amount", getInventory(_offenderID, gs().templates["Gold"]), offenderInventoryAmount + capturedAmount);
+            // Offender takes defender's resources
+                uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
+                for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
+                address resourceTokenContract = ECSLib.getAddress("Address", resourceTemplateIDs[i]);
+                (bool success, ) = resourceTokenContract.call(abi.encodeWithSignature("transferAll(address,address)", defenderAddress, offenderAddress));
+                require(success, "CURIO: Resource transfer fails upon battle victory");
+                }
             }
 
             if (_transferOwnershipUponVictory) {
                 // Defender becomes owned by offender's owner
-                ECSLib.setUint("Owner", _defenderID, ECSLib.getUint("Owner", _offenderID));
+                ECSLib.setUint("Nation", _defenderID, ECSLib.getUint("Nation", _offenderID));
             }
 
             if (_removeUponVictory) {
-                // Defender is removed
-                uint256 defenderInventoryID = getInventory(_defenderID, gs().templates["Gold"]);
-                if (defenderInventoryID != 0) ECSLib.removeEntity(defenderInventoryID);
-                ECSLib.removeEntity(_defenderID);
+                // Defender (always army here) is dealt with same as in disband
+                ECSLib.removeComponentValue("Position", _defenderID);
+                ECSLib.removeComponentValue("CanBattle", _defenderID);
             }
-        } else {
-            victory = false;
         }
     }
 
@@ -326,6 +328,13 @@ library GameLib {
         } else if (strEq(entityTag, "Army") && (strEq(_resourceType, "Food") || strEq(_resourceType, "Gold"))) {
             return ECSLib.getUint("Load", entityID);
         } else return 0;
+    }
+
+    function getAddressBalance(address _entityAddress, address _tokenContract) public returns (uint256) {
+        // note: Entity can be army or tile
+        (bool success, bytes memory returnData) = _tokenContract.call(abi.encodeWithSignature("checkBalanceOf(address)", _entityAddress));
+        require(success, "CURIO: Failing to check troop balance");
+        return abi.decode(returnData, (uint256));
     }
 
     function getConstituents(uint256 _keeperID) public returns (uint256[] memory) {
@@ -520,11 +529,11 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    function getNationID(address _address) internal view returns (uint256) {
+    function getNationIDByAddress(address _address) internal view returns (uint256) {
         return gs().nationEntityMap[_address];
     }
 
-    function getArmyID(address _address) internal view returns (uint256) {
+    function getArmyIDByAddress(address _address) internal view returns (uint256) {
         return gs().armyEntityMap[_address];
     }
 

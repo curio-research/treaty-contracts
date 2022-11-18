@@ -543,8 +543,8 @@
       }
     },
     "contracts/facets/GameFacet.sol": {
-      "lastModificationDate": 1668790418301,
-      "contentHash": "6b073fbe4869bca0a3111af72c9dc01f",
+      "lastModificationDate": 1668800199666,
+      "contentHash": "13c69c878f3b0f2c94c2dd93fb77d093",
       "sourceName": "contracts/facets/GameFacet.sol",
       "solcConfig": {
         "settings": {
@@ -594,8 +594,8 @@
       }
     },
     "contracts/facets/GetterFacet.sol": {
-      "lastModificationDate": 1668723737221,
-      "contentHash": "4f3c2d41e059fd49037f5da894f51f96",
+      "lastModificationDate": 1668792370051,
+      "contentHash": "4cf50a5f512d46c32a6991532e240097",
       "sourceName": "contracts/facets/GetterFacet.sol",
       "solcConfig": {
         "settings": {
@@ -941,8 +941,8 @@
       }
     },
     "contracts/libraries/GameLib.sol": {
-      "lastModificationDate": 1668731502858,
-      "contentHash": "32ad2a2c36fa93855bf82443c257afdd",
+      "lastModificationDate": 1668800067482,
+      "contentHash": "ca0dc5ba0528a7ef03ac3c79f19a23fa",
       "sourceName": "contracts/libraries/GameLib.sol",
       "solcConfig": {
         "settings": {
@@ -1076,8 +1076,8 @@
       }
     },
     "contracts/libraries/Templates.sol": {
-      "lastModificationDate": 1668722264802,
-      "contentHash": "8ee8144b14aa66345b49ae4492be5249",
+      "lastModificationDate": 1668795980441,
+      "contentHash": "8b6e9d4ed7514d5f8b8ba93b02c577cf",
       "sourceName": "contracts/libraries/Templates.sol",
       "solcConfig": {
         "settings": {
@@ -1326,8 +1326,8 @@
       }
     },
     "contracts/tokens/HorsemanERC20.sol": {
-      "lastModificationDate": 1668790681864,
-      "contentHash": "8664e7e6ce36044d7cc0a0b440932070",
+      "lastModificationDate": 1668790920027,
+      "contentHash": "e95d038482d505941071501c38f0db7f",
       "sourceName": "contracts/tokens/HorsemanERC20.sol",
       "solcConfig": {
         "settings": {
@@ -2118,8 +2118,8 @@
       }
     },
     "test/DiamondDeploy.t.sol": {
-      "lastModificationDate": 1668790855711,
-      "contentHash": "234ce4a9155837e673221ad9802c9705",
+      "lastModificationDate": 1668792407941,
+      "contentHash": "111c54774658712efa6b8a8b2cf0da9c",
       "sourceName": "test/DiamondDeploy.t.sol",
       "solcConfig": {
         "settings": {
@@ -2277,8 +2277,8 @@
       }
     },
     "test/HangingGarden.t.sol": {
-      "lastModificationDate": 1668790612613,
-      "contentHash": "6ecdb98440986e38702ff88544edac81",
+      "lastModificationDate": 1668801616635,
+      "contentHash": "b27aa56b86faa111984a2a5b48a5be55",
       "sourceName": "test/HangingGarden.t.sol",
       "solcConfig": {
         "settings": {

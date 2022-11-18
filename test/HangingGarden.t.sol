@@ -50,7 +50,9 @@ contract TreatyTest is Test, DiamondDeployTest {
         console.log(">>> testInitialization passed");      
     }
 
-    function testOrganizeDisbandArmy() public {
+    function testOrganizeDisbandMoveArmy() public {
+        // bug: lastChaos time is 0. This is wrong.
+        uint256 time = block.timestamp + 600;
         // Deployer transfer enough gold & food to nation 1
         vm.startPrank(deployerAddress);
         warriorContract.transfer(address(nationWallet1), 1000);
@@ -66,7 +68,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.startPrank(nation1Address);
 
         uint256 nation1CapitalID = getter.getCapital(nation1ID);
-        uint256 nation1Army1ID = getter.getArmyID(address(armyWallet11));
+        uint256 nation1Army1ID = getter.getArmyIDByAddress(address(armyWallet11));
 
         uint256[] memory chinaArmyTemplateIDs = new uint256[](3);
         chinaArmyTemplateIDs[0] = warriorTemplateID;
@@ -76,8 +78,8 @@ contract TreatyTest is Test, DiamondDeployTest {
         chinaTemplateAmounts[0] = 500;
         chinaTemplateAmounts[1] = 500;
         chinaTemplateAmounts[2] = 500;
-        // bug: lastChaos time is 0. This is wrong.
-        vm.warp(600);
+        vm.warp(time + 10);
+        time += 10;
 
         nationWallet1.executeGameTX(
             abi.encodeWithSignature("organizeArmy(uint256,uint256,uint256[],uint256[])",
@@ -87,12 +89,18 @@ contract TreatyTest is Test, DiamondDeployTest {
         assertEq(slingerContract.checkBalanceOf(address(nationWallet1)) + warriorContract.checkBalanceOf(address(armyWallet11)), 1000);
         assertEq(horsemanContract.checkBalanceOf(address(nationWallet1)) + warriorContract.checkBalanceOf(address(armyWallet11)), 1000);
 
-        console.log("Army 11 Warrior Balance: ", warriorContract.checkBalanceOf(address(armyWallet11)));
-        console.log("Army 11 Horseman Balance: ", horsemanContract.checkBalanceOf(address(armyWallet11)));
-        console.log("Army 11 Slinger Balance: ", slingerContract.checkBalanceOf(address(armyWallet11)));
-        console.log("Army 11 Position:", getter.getPositionExternal("Position", nation1Army1ID).x, " ", getter.getPositionExternal("Position", nation1Army1ID).x);
+        vm.warp(time + 10);
+        time += 10;
+        armyWallet11.executeGameTX(abi.encodeWithSignature("move(uint256,uint256,uint256)", nation1Army1ID, 63, 13));
+        assertEq(getter.getPositionExternal("Position", nation1Army1ID).x, 63);
+        assertEq(getter.getPositionExternal("Position", nation1Army1ID).y, 13);
 
-        vm.warp(5);
+        vm.warp(time + 10);
+        time += 10;
+        armyWallet11.executeGameTX(abi.encodeWithSignature("move(uint256,uint256,uint256)", nation1Army1ID, 62, 12));
+
+        vm.warp(time + 10);
+        time += 10;
         armyWallet11.executeGameTX(abi.encodeWithSignature("disbandArmy(uint256)", nation1Army1ID));
         assertEq(warriorContract.checkBalanceOf(address(armyWallet11)), 0);
         assertEq(slingerContract.checkBalanceOf(address(armyWallet11)), 0);
@@ -101,6 +109,131 @@ contract TreatyTest is Test, DiamondDeployTest {
         assertEq(slingerContract.checkBalanceOf(address(nationWallet1)), 1000);
         assertEq(horsemanContract.checkBalanceOf(address(nationWallet1)), 1000);
 
-        console.log(">>> testOrganizeDisbandArmy passed");
+        console.log(">>> testOrganizeMoveDisbandArmy passed");
+    }
+
+    function testBattle() public {
+        // bug: lastChaos time is 0. This is wrong.
+        uint256 time = block.timestamp + 600;
+        // Deployer transfer enough gold & food to nation 1 & 2
+        vm.startPrank(deployerAddress);
+        warriorContract.transfer(address(nationWallet1), 1000);
+        horsemanContract.transfer(address(nationWallet1), 1000);
+        slingerContract.transfer(address(nationWallet1), 1000);
+        warriorContract.transfer(address(nationWallet2), 1000);
+        horsemanContract.transfer(address(nationWallet2), 1000);
+        slingerContract.transfer(address(nationWallet2), 1000);
+
+        vm.stopPrank();
+
+        // Nation 1 organize army
+        vm.startPrank(nation1Address);
+
+        uint256 nation1CapitalID = getter.getCapital(nation1ID);
+        uint256 army11ID = getter.getArmyIDByAddress(address(armyWallet11));
+
+        uint256[] memory armyTemplateIDs = new uint256[](3);
+        armyTemplateIDs[0] = warriorTemplateID;
+        armyTemplateIDs[1] = horsemanTemplateID;
+        armyTemplateIDs[2] = slingerTemplateID;
+        uint256[] memory armyTemplateAmounts = new uint256[](3);
+        armyTemplateAmounts[0] = 500;
+        armyTemplateAmounts[1] = 500;
+        armyTemplateAmounts[2] = 500;
+        vm.warp(time + 10);
+        time += 10;
+
+        vm.warp(time + 10);
+        time += 10;
+        nationWallet1.executeGameTX(
+            abi.encodeWithSignature("organizeArmy(uint256,uint256,uint256[],uint256[])",
+            nation1CapitalID, army11ID, armyTemplateIDs, armyTemplateAmounts));
+        
+        // Nation 1 move army
+        vm.warp(time + 10);
+        time += 10;
+        armyWallet11.executeGameTX(abi.encodeWithSignature("move(uint256,uint256,uint256)", army11ID, 60, 12));
+
+        vm.warp(time + 10);
+        time += 10;
+        armyWallet11.executeGameTX(abi.encodeWithSignature("move(uint256,uint256,uint256)", army11ID, 60, 14));
+
+        vm.warp(time + 10);
+        time += 10;
+        armyWallet11.executeGameTX(abi.encodeWithSignature("move(uint256,uint256,uint256)", army11ID, 60, 16));
+
+        vm.warp(time + 10);
+        time += 10;
+        armyWallet11.executeGameTX(abi.encodeWithSignature("move(uint256,uint256,uint256)", army11ID, 60, 18));
+
+        vm.stopPrank();
+
+        // Nation 2 organize army
+        vm.startPrank(nation2Address);
+
+        uint256 nation2CapitalID = getter.getCapital(nation2ID);
+        uint256 army21ID = getter.getArmyIDByAddress(address(armyWallet21));
+
+        vm.warp(time + 10);
+        time += 10;
+        nationWallet2.executeGameTX(
+            abi.encodeWithSignature("organizeArmy(uint256,uint256,uint256[],uint256[])",
+            nation2CapitalID, army21ID, armyTemplateIDs, armyTemplateAmounts));
+
+        vm.warp(time + 10);
+        time += 10;
+        armyWallet21.executeGameTX(abi.encodeWithSignature("move(uint256,uint256,uint256)", army21ID, 60, 30));
+
+        vm.warp(time + 10);
+        time += 10;
+        armyWallet21.executeGameTX(abi.encodeWithSignature("move(uint256,uint256,uint256)", army21ID, 60, 28));
+
+        vm.warp(time + 10);
+        time += 10;
+        armyWallet21.executeGameTX(abi.encodeWithSignature("move(uint256,uint256,uint256)", army21ID, 60, 26));
+
+        vm.warp(time + 10);
+        time += 10;
+        armyWallet21.executeGameTX(abi.encodeWithSignature("move(uint256,uint256,uint256)", army21ID, 60, 24));
+
+        vm.warp(time + 10);
+        time += 10;
+        armyWallet21.executeGameTX(abi.encodeWithSignature("move(uint256,uint256,uint256)", army21ID, 60, 22));
+
+        vm.stopPrank();
+
+        console.log("Army11 Pos: ", getter.getPositionExternal("Position", army11ID).x, getter.getPositionExternal("Position", army11ID).y);
+        console.log("Army21 Pos: ", getter.getPositionExternal("Position", army21ID).x, getter.getPositionExternal("Position", army21ID).y);
+
+        // give army 11 some resources to test if it goes to army 21
+        vm.startPrank(deployerAddress);
+        goldContract.transfer(address(armyWallet11), 1000);
+        foodContract.transfer(address(armyWallet11), 1000);
+
+        vm.stopPrank();
+
+        vm.startPrank(nation2Address);
+
+        // Note: just enough to kill army 11
+        uint256 battleTime = 8;
+
+        for (uint256 i = 0; i < battleTime; i++) {
+        vm.warp(time + 10);
+        time += 10;
+        armyWallet21.executeGameTX(abi.encodeWithSignature("battle(uint256,uint256)", army21ID, army11ID));
+        }
+
+        vm.stopPrank();
+        assertEq(warriorContract.checkBalanceOf(address(armyWallet11)), 0);
+        assertEq(horsemanContract.checkBalanceOf(address(armyWallet11)), 0);
+        assertEq(slingerContract.checkBalanceOf(address(armyWallet11)), 0);
+        assertEq(goldContract.checkBalanceOf(address(armyWallet11)), 0);
+        assertEq(foodContract.checkBalanceOf(address(armyWallet11)), 0);
+
+        // Note: resource successfully transferred to army 21
+        assertEq(goldContract.checkBalanceOf(address(armyWallet21)), 1000);
+        assertEq(foodContract.checkBalanceOf(address(armyWallet21)), 1000);
+
+        console.log(">>> testBattle passed");
     }
 }

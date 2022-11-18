@@ -211,7 +211,7 @@ contract DiamondDeployTest is Test {
 
         }
         
-        nation1ID = getter.getNationID(address(nationWallet1));
+        nation1ID = getter.getNationIDByAddress(address(nationWallet1));
         vm.stopPrank();
 
         vm.startPrank(nation2Address);
@@ -228,7 +228,7 @@ contract DiamondDeployTest is Test {
         abi.encodeWithSignature("approve(address,uint256)", address(game), type(uint256).max));
         }
 
-        nation2ID = getter.getNationID(address(nationWallet2));
+        nation2ID = getter.getNationIDByAddress(address(nationWallet2));
         vm.stopPrank();
 
         vm.startPrank(nation3Address);
@@ -245,7 +245,7 @@ contract DiamondDeployTest is Test {
         abi.encodeWithSignature("approve(address,uint256)", address(game), type(uint256).max));
         }
 
-        nation3ID = getter.getNationID(address(nationWallet3));
+        nation3ID = getter.getNationIDByAddress(address(nationWallet3));
         vm.stopPrank();
 
         console.log(">>> Nations & Armies initialized");        

@@ -15,12 +15,12 @@ import "forge-std/console.sol";
 contract GetterFacet is UseStorage {
     uint256 private NULL = 0;
 
-    function getNationID(address _nationWalletAddress) external view returns (uint256) {
-        return gs().nationEntityMap[_nationWalletAddress];
+    function getNationIDByAddress(address _nationWalletAddress) external view returns (uint256) {
+        return GameLib.getNationIDByAddress(_nationWalletAddress);
     }
 
-    function getArmyID(address _armyAddress) external view returns (uint256) {
-        return GameLib.getArmyID(_armyAddress);
+    function getArmyIDByAddress(address _armyAddress) external view returns (uint256) {
+        return GameLib.getArmyIDByAddress(_armyAddress);
     }
 
     function getEntityWallet(uint256 _entityID) external view returns (address) {
