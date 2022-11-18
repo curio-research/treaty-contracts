@@ -22,7 +22,6 @@ import {SlingerERC20} from "contracts/tokens/SlingerERC20.sol";
 import {WarriorERC20} from "contracts/tokens/WarriorERC20.sol";
 import {GuardERC20} from "contracts/tokens/GuardERC20.sol";
 
-
 import {WalletHangingGarden} from "contracts/WalletHangingGarden.sol";
 import {console} from "forge-std/console.sol";
 import {stdJson} from "forge-std/StdJson.sol";
@@ -143,14 +142,22 @@ contract DiamondDeployTest is Test {
 
         // Create templates
         // Deploy token contracts
-        foodContract = new FoodERC20("Food", "FOOD", 1, deployerAddress, address(game));
-        goldContract = new GoldERC20("Gold", "GOLD", 1, deployerAddress, address(game));
+        foodContract = new FoodERC20("Food", "FOOD", 1, deployerAddress, address(diamond));
+        goldContract = new GoldERC20("Gold", "GOLD", 1, deployerAddress, address(diamond));
         // note: Consider switching to erc1155
-        horsemanContract = new HorsemanERC20("Horseman", "HORSEMAN", 1, deployerAddress, address(game));
-        warriorContract = new WarriorERC20("Warrior", "WARRIOR", 1, deployerAddress, address(game));
-        slingerContract = new SlingerERC20("Slinger", "SLINGER", 1, deployerAddress, address(game));
-        guardContract = new GuardERC20("Guard", "GUARD", 1, deployerAddress, address(game));
+        horsemanContract = new HorsemanERC20("Horseman", "HORSEMAN", 1, deployerAddress, address(diamond));
+        warriorContract = new WarriorERC20("Warrior", "WARRIOR", 1, deployerAddress, address(diamond));
+        slingerContract = new SlingerERC20("Slinger", "SLINGER", 1, deployerAddress, address(diamond));
+        guardContract = new GuardERC20("Guard", "GUARD", 1, deployerAddress, address(diamond));
         _createTemplates();
+
+        address[] memory tokenContracts = new address[](6);
+        tokenContracts[0] = address(foodContract);
+        tokenContracts[1] = address(goldContract);
+        tokenContracts[2] = address(horsemanContract);
+        tokenContracts[3] = address(warriorContract);
+        tokenContracts[4] = address(slingerContract);
+        tokenContracts[5] = address(guardContract);
         console.log(">>> Templates created");
 
         // Initialize map either with either `_generateNewMap()` or `_fetchLastDeployedMap()`
@@ -190,23 +197,41 @@ contract DiamondDeployTest is Test {
 
         // Initialize players
         vm.startPrank(nation1Address);
-        nationWallet1.executeTransaction(abi.encodeWithSignature("initializeNation(uint256,uint256,string)", nation1Pos.x, nation1Pos.y, "China"));
-        nationWallet1.executeTransaction(abi.encodeWithSignature("initializeArmy(address)", address(armyWallet11)));
-        nationWallet1.executeTransaction(abi.encodeWithSignature("initializeArmy(address)", address(armyWallet12)));
+        nationWallet1.executeGameTX(abi.encodeWithSignature("initializeNation(uint256,uint256,string)", nation1Pos.x, nation1Pos.y, "China"));
+        nationWallet1.executeGameTX(abi.encodeWithSignature("initializeArmy(address)", address(armyWallet11)));
+        nationWallet1.executeGameTX(abi.encodeWithSignature("initializeArmy(address)", address(armyWallet12)));
+        
+        for (uint256 i = 0; i < tokenContracts.length; i ++) {
+            nationWallet1.executeTX(address(tokenContracts[i]), 
+        abi.encodeWithSignature("approve(address,uint256)", address(game), type(uint256).max));
+        }
+        
         nation1ID = getter.getNationID(address(nationWallet1));
         vm.stopPrank();
 
         vm.startPrank(nation2Address);
-        nationWallet2.executeTransaction(abi.encodeWithSignature("initializeNation(uint256,uint256,string)", nation2Pos.x, nation2Pos.y, "US"));
-        nationWallet2.executeTransaction(abi.encodeWithSignature("initializeArmy(address)", address(armyWallet21)));
-        nationWallet2.executeTransaction(abi.encodeWithSignature("initializeArmy(address)", address(armyWallet22)));
+        nationWallet2.executeGameTX(abi.encodeWithSignature("initializeNation(uint256,uint256,string)", nation2Pos.x, nation2Pos.y, "US"));
+        nationWallet2.executeGameTX(abi.encodeWithSignature("initializeArmy(address)", address(armyWallet21)));
+        nationWallet2.executeGameTX(abi.encodeWithSignature("initializeArmy(address)", address(armyWallet22)));
+
+        for (uint256 i = 0; i < tokenContracts.length; i ++) {
+            nationWallet2.executeTX(address(tokenContracts[i]), 
+        abi.encodeWithSignature("approve(address,uint256)", address(game), type(uint256).max));
+        }
+
         nation2ID = getter.getNationID(address(nationWallet2));
         vm.stopPrank();
 
         vm.startPrank(nation3Address);
-        nationWallet3.executeTransaction(abi.encodeWithSignature("initializeNation(uint256,uint256,string)", nation3Pos.x, nation3Pos.y, "Russia"));
-        nationWallet3.executeTransaction(abi.encodeWithSignature("initializeArmy(address)", address(armyWallet31)));
-        nationWallet3.executeTransaction(abi.encodeWithSignature("initializeArmy(address)", address(armyWallet32)));
+        nationWallet3.executeGameTX(abi.encodeWithSignature("initializeNation(uint256,uint256,string)", nation3Pos.x, nation3Pos.y, "Russia"));
+        nationWallet3.executeGameTX(abi.encodeWithSignature("initializeArmy(address)", address(armyWallet31)));
+        nationWallet3.executeGameTX(abi.encodeWithSignature("initializeArmy(address)", address(armyWallet32)));
+
+        for (uint256 i = 0; i < tokenContracts.length; i ++) {
+            nationWallet3.executeTX(address(tokenContracts[i]), 
+        abi.encodeWithSignature("approve(address,uint256)", address(game), type(uint256).max));
+        }
+
         nation3ID = getter.getNationID(address(nationWallet3));
         vm.stopPrank();
 
@@ -214,6 +239,12 @@ contract DiamondDeployTest is Test {
 
 
         console.log("=============== INDIVIDUAL TESTS BEGIN ================");
+    }
+
+    function _approveTokenTransfer(address[] memory _tokenContracts) private {
+        for (uint256 i = 0; i < _tokenContracts.length; i++) {
+            address token = _tokenContracts[i];
+        }
     }
 
     // fixme: Then probably don't need to store batches in gs()
@@ -329,7 +360,7 @@ contract DiamondDeployTest is Test {
 
         // Horseman
         string memory templateName = "Horseman";
-        uint256 templateID = admin.addTroopTemplate(templateName, 120, 10, 1, 2, 60, 120, 95, 95, address(horsemanContract));
+        uint256 templateID = admin.addTroopTemplate(templateName, 120, 60, 120, 95, address(horsemanContract));
         templateNames[index] = templateName;
         templateIDs[index] = templateID;
         index++;
@@ -337,7 +368,7 @@ contract DiamondDeployTest is Test {
 
         // Warrior
         templateName = "Warrior";
-        templateID = admin.addTroopTemplate(templateName, 120, 2, 1, 2, 60, 120, 95, 95, address(warriorContract));
+        templateID = admin.addTroopTemplate(templateName, 120, 60, 120, 95, address(warriorContract));
         templateNames[index] = templateName;
         templateIDs[index] = templateID;
         index++;
@@ -345,7 +376,7 @@ contract DiamondDeployTest is Test {
 
         // Slinger
         templateName = "Slinger";
-        templateID = admin.addTroopTemplate(templateName, 120, 2, 1, 2, 60, 120, 95, 95, address(slingerContract));
+        templateID = admin.addTroopTemplate(templateName, 120, 60, 120, 95, address(slingerContract));
         templateNames[index] = templateName;
         templateIDs[index] = templateID;
         index++;
@@ -353,7 +384,7 @@ contract DiamondDeployTest is Test {
 
         // Guard
         templateName = "Guard";
-        templateID = admin.addTroopTemplate(templateName, 120, 0, 0, 0, 60, 120, 0, address(guardContract));
+        templateID = admin.addTroopTemplate(templateName, 120, 60, 120, 0, address(guardContract));
         templateNames[index] = templateName;
         templateIDs[index] = templateID;
         index++;

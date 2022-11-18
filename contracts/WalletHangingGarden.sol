@@ -35,6 +35,7 @@ import "forge-std/console.sol";
 contract WalletHangingGarden {
     address gameFacetAdress;
     address[] public owners;
+
     mapping(address => bool) public isOwner;
 
     modifier onlyOwner() {
@@ -58,9 +59,14 @@ contract WalletHangingGarden {
         gameFacetAdress = _gameFacetAdress;
     }
 
-    function executeTransaction(bytes memory _data) public onlyOwner {
+    function executeGameTX(bytes memory _data) public onlyOwner {
         // fixme: low-level call checker modified to "warn"; integrate with interface
         (bool success, bytes memory returndata) = gameFacetAdress.call(_data);
-        require(success, string (returndata));
+        require(success, string(returndata));
+    }
+
+    function executeTX(address _contractAddress, bytes memory _data) public onlyOwner {
+        (bool success, bytes memory returndata) = _contractAddress.call(_data);
+        require(success, string(returndata));
     }
 }

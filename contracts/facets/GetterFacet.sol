@@ -19,6 +19,10 @@ contract GetterFacet is UseStorage {
         return gs().nationEntityMap[_nationWalletAddress];
     }
 
+    function getArmyID(address _armyAddress) external view returns (uint256) {
+        return GameLib.getArmyID(_armyAddress);
+    }
+
     function getEntityWallet(uint256 _entityID) external view returns (address) {
         return ECSLib.getAddress("Address", _entityID);
     }
@@ -35,10 +39,9 @@ contract GetterFacet is UseStorage {
         return GameLib.getArmiesFromNation(_nationID);
     }
 
-    function getAddressMaxLoad(address _entityAddress) external view returns (uint256) {
-        return GameLib.getAddressMaxLoad(_entityAddress);
+    function getAddressMaxLoad(address _entityAddress, string memory _resourceType) external returns (uint256) {
+        return GameLib.getAddressMaxLoad(_entityAddress, _resourceType);
     }
-
 
     // Debug Helpers
     function getEntitiesAddr() external view returns (address) {

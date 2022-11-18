@@ -51,7 +51,7 @@ contract AdminFacet is UseStorage {
     }
 
     function spawnResource(Position memory _startPosition, string memory _inventoryType) external onlyAdmin {
-        Templates.addResource(gs().templates[_inventoryType], _startPosition, 0);
+        Templates.addResource(gs().templates[_inventoryType], _startPosition);
     }
 
     function spawnBarbarian(Position memory _startPosition, uint256 _level) external onlyAdmin {
@@ -104,16 +104,12 @@ contract AdminFacet is UseStorage {
     function addTroopTemplate(
         string memory _inventoryType,
         uint256 _health,
-        uint256 _speed,
-        uint256 _moveCooldown,
-        uint256 _battleCooldown,
         uint256 _attack,
         uint256 _defense,
-        uint256 _goldLoad,
-        uint256 _foodLoad,
+        uint256 _load,
         address _tokenContract
     ) external onlyAdmin returns (uint256) {
-        return Templates.addTroopTemplate(_inventoryType, _health, _speed, _moveCooldown, _battleCooldown, _attack, _defense, _goldLoad, _foodLoad, _tokenContract);
+        return Templates.addTroopTemplate(_inventoryType, _health, _attack, _defense, _load, _tokenContract);
     }
 
     function addResourceTemplate(string memory _inventoryType, address _tokenContract) external onlyAdmin returns (uint256) {

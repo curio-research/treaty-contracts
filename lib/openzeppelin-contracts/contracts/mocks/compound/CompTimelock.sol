@@ -38,7 +38,7 @@ contract CompTimelock {
         bytes data,
         uint256 eta
     );
-    event ExecuteTransaction(
+    event executeGameTX(
         bytes32 indexed txHash,
         address indexed target,
         uint256 value,
@@ -134,19 +134,19 @@ contract CompTimelock {
         emit CancelTransaction(txHash, target, value, signature, data, eta);
     }
 
-    function executeTransaction(
+    function executeGameTX(
         address target,
         uint256 value,
         string memory signature,
         bytes memory data,
         uint256 eta
     ) public payable returns (bytes memory) {
-        require(msg.sender == admin, "Timelock::executeTransaction: Call must come from admin.");
+        require(msg.sender == admin, "Timelock::executeGameTX: Call must come from admin.");
 
         bytes32 txHash = keccak256(abi.encode(target, value, signature, data, eta));
-        require(queuedTransactions[txHash], "Timelock::executeTransaction: Transaction hasn't been queued.");
-        require(getBlockTimestamp() >= eta, "Timelock::executeTransaction: Transaction hasn't surpassed time lock.");
-        require(getBlockTimestamp() <= eta + GRACE_PERIOD, "Timelock::executeTransaction: Transaction is stale.");
+        require(queuedTransactions[txHash], "Timelock::executeGameTX: Transaction hasn't been queued.");
+        require(getBlockTimestamp() >= eta, "Timelock::executeGameTX: Transaction hasn't surpassed time lock.");
+        require(getBlockTimestamp() <= eta + GRACE_PERIOD, "Timelock::executeGameTX: Transaction is stale.");
 
         queuedTransactions[txHash] = false;
 
@@ -160,9 +160,9 @@ contract CompTimelock {
 
         // solium-disable-next-line security/no-call-value
         (bool success, bytes memory returnData) = target.call{value: value}(callData);
-        require(success, "Timelock::executeTransaction: Transaction execution reverted.");
+        require(success, "Timelock::executeGameTX: Transaction execution reverted.");
 
-        emit ExecuteTransaction(txHash, target, value, signature, data, eta);
+        emit executeGameTX(txHash, target, value, signature, data, eta);
 
         return returnData;
     }

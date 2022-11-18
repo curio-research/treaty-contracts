@@ -312,8 +312,8 @@
       }
     },
     "contracts/WalletHangingGarden.sol": {
-      "lastModificationDate": 1668483477043,
-      "contentHash": "aa74bdfec8a5750e6d095a4c60996ee1",
+      "lastModificationDate": 1668730383254,
+      "contentHash": "41ec0e65d3f06b70801d385ecc1d5896",
       "sourceName": "contracts/WalletHangingGarden.sol",
       "solcConfig": {
         "settings": {
@@ -406,8 +406,8 @@
       }
     },
     "contracts/facets/AdminFacet.sol": {
-      "lastModificationDate": 1668538902941,
-      "contentHash": "b891e48cd8e4348e019b1fbf8a38c5d6",
+      "lastModificationDate": 1668722425843,
+      "contentHash": "a1c48e8ee0314d36a3d5d99f8544f95d",
       "sourceName": "contracts/facets/AdminFacet.sol",
       "solcConfig": {
         "settings": {
@@ -543,8 +543,8 @@
       }
     },
     "contracts/facets/GameFacet.sol": {
-      "lastModificationDate": 1668486421161,
-      "contentHash": "706f99b8d699c9416d00eb2dce5d6a6c",
+      "lastModificationDate": 1668730909712,
+      "contentHash": "62c4a03e9a97be6ad2502acde10bb257",
       "sourceName": "contracts/facets/GameFacet.sol",
       "solcConfig": {
         "settings": {
@@ -594,8 +594,8 @@
       }
     },
     "contracts/facets/GetterFacet.sol": {
-      "lastModificationDate": 1668486322796,
-      "contentHash": "196a2dbb3a8d8ba7c78bcaf20831edac",
+      "lastModificationDate": 1668723737221,
+      "contentHash": "4f3c2d41e059fd49037f5da894f51f96",
       "sourceName": "contracts/facets/GetterFacet.sol",
       "solcConfig": {
         "settings": {
@@ -941,8 +941,8 @@
       }
     },
     "contracts/libraries/GameLib.sol": {
-      "lastModificationDate": 1668540164346,
-      "contentHash": "1cd963536eb159d9ea9c1cc029f3e0cc",
+      "lastModificationDate": 1668731214928,
+      "contentHash": "471f022e24c949a7c5d6610f6df25e39",
       "sourceName": "contracts/libraries/GameLib.sol",
       "solcConfig": {
         "settings": {
@@ -1076,8 +1076,8 @@
       }
     },
     "contracts/libraries/Templates.sol": {
-      "lastModificationDate": 1668469781734,
-      "contentHash": "3f686522d20ac0beb693bffab78e7a56",
+      "lastModificationDate": 1668722264802,
+      "contentHash": "8ee8144b14aa66345b49ae4492be5249",
       "sourceName": "contracts/libraries/Templates.sol",
       "solcConfig": {
         "settings": {
@@ -1164,8 +1164,8 @@
       }
     },
     "contracts/tokens/FoodERC20.sol": {
-      "lastModificationDate": 1668486834917,
-      "contentHash": "639666ce8de9f12921a186b12f454155",
+      "lastModificationDate": 1668730495242,
+      "contentHash": "384cfb2f31f90b96c3095bf66923ebe6",
       "sourceName": "contracts/tokens/FoodERC20.sol",
       "solcConfig": {
         "settings": {
@@ -1199,6 +1199,8 @@
         "contracts/Mapping.sol",
         "contracts/Set.sol",
         "contracts/TypedComponents.sol",
+        "contracts/facets/GameFacet.sol",
+        "contracts/facets/GetterFacet.sol",
         "contracts/libraries/ECSLib.sol",
         "contracts/libraries/GameLib.sol",
         "contracts/libraries/Storage.sol",
@@ -1216,8 +1218,8 @@
       }
     },
     "contracts/tokens/GoldERC20.sol": {
-      "lastModificationDate": 1668195220767,
-      "contentHash": "7fb94ac61763abab345327badee293dd",
+      "lastModificationDate": 1668730713396,
+      "contentHash": "0071e18dc041c61ad7d040ebb8fe89ec",
       "sourceName": "contracts/tokens/GoldERC20.sol",
       "solcConfig": {
         "settings": {
@@ -1251,6 +1253,8 @@
         "contracts/Mapping.sol",
         "contracts/Set.sol",
         "contracts/TypedComponents.sol",
+        "contracts/facets/GameFacet.sol",
+        "contracts/facets/GetterFacet.sol",
         "contracts/libraries/ECSLib.sol",
         "contracts/libraries/GameLib.sol",
         "contracts/libraries/Storage.sol",
@@ -1268,8 +1272,8 @@
       }
     },
     "contracts/tokens/GuardERC20.sol": {
-      "lastModificationDate": 1668540115589,
-      "contentHash": "5c53d9b9f4fb31e762f7d5ed80a6a651",
+      "lastModificationDate": 1668731451253,
+      "contentHash": "ec3584c49512dccb4dfdb9b43bb7ecc9",
       "sourceName": "contracts/tokens/GuardERC20.sol",
       "solcConfig": {
         "settings": {
@@ -1303,6 +1307,8 @@
         "contracts/Mapping.sol",
         "contracts/Set.sol",
         "contracts/TypedComponents.sol",
+        "contracts/facets/GameFacet.sol",
+        "contracts/facets/GetterFacet.sol",
         "contracts/libraries/ECSLib.sol",
         "contracts/libraries/GameLib.sol",
         "contracts/libraries/Storage.sol",
@@ -1320,8 +1326,8 @@
       }
     },
     "contracts/tokens/HorsemanERC20.sol": {
-      "lastModificationDate": 1668195231104,
-      "contentHash": "404f2abb7651524b3e284ee211013594",
+      "lastModificationDate": 1668731285321,
+      "contentHash": "aaa4beaedef8e2ee0b862b12e94a2f62",
       "sourceName": "contracts/tokens/HorsemanERC20.sol",
       "solcConfig": {
         "settings": {
@@ -1355,6 +1361,8 @@
         "contracts/Mapping.sol",
         "contracts/Set.sol",
         "contracts/TypedComponents.sol",
+        "contracts/facets/GameFacet.sol",
+        "contracts/facets/GetterFacet.sol",
         "contracts/libraries/ECSLib.sol",
         "contracts/libraries/GameLib.sol",
         "contracts/libraries/Storage.sol",
@@ -1372,8 +1380,8 @@
       }
     },
     "contracts/tokens/SlingerERC20.sol": {
-      "lastModificationDate": 1668195238172,
-      "contentHash": "f25a796baa4b071ffbc6d203dae5d435",
+      "lastModificationDate": 1668731439646,
+      "contentHash": "8c38472d7232fb2f3bac9c6ea9426f88",
       "sourceName": "contracts/tokens/SlingerERC20.sol",
       "solcConfig": {
         "settings": {
@@ -1407,6 +1415,8 @@
         "contracts/Mapping.sol",
         "contracts/Set.sol",
         "contracts/TypedComponents.sol",
+        "contracts/facets/GameFacet.sol",
+        "contracts/facets/GetterFacet.sol",
         "contracts/libraries/ECSLib.sol",
         "contracts/libraries/GameLib.sol",
         "contracts/libraries/Storage.sol",
@@ -1424,8 +1434,8 @@
       }
     },
     "contracts/tokens/WarriorERC20.sol": {
-      "lastModificationDate": 1668195244148,
-      "contentHash": "67e9731c3ef3b35a3a0cc8b1faa8e33e",
+      "lastModificationDate": 1668731442658,
+      "contentHash": "23719629a0d53df21baa4cbf406f4424",
       "sourceName": "contracts/tokens/WarriorERC20.sol",
       "solcConfig": {
         "settings": {
@@ -1459,6 +1469,8 @@
         "contracts/Mapping.sol",
         "contracts/Set.sol",
         "contracts/TypedComponents.sol",
+        "contracts/facets/GameFacet.sol",
+        "contracts/facets/GetterFacet.sol",
         "contracts/libraries/ECSLib.sol",
         "contracts/libraries/GameLib.sol",
         "contracts/libraries/Storage.sol",
@@ -2106,8 +2118,8 @@
       }
     },
     "test/DiamondDeploy.t.sol": {
-      "lastModificationDate": 1668538986646,
-      "contentHash": "2ce5c1b2835fdb9690d31131468b7f9f",
+      "lastModificationDate": 1668730372122,
+      "contentHash": "50f6813f1b26bbdb98de2ed3ba518127",
       "sourceName": "test/DiamondDeploy.t.sol",
       "solcConfig": {
         "settings": {
@@ -2265,8 +2277,8 @@
       }
     },
     "test/HangingGarden.t.sol": {
-      "lastModificationDate": 1668540144673,
-      "contentHash": "73691cda5c9c9f5b925dd423a85515c9",
+      "lastModificationDate": 1668730957699,
+      "contentHash": "1efb22869b8c6a88797d1b07bd1a1c15",
       "sourceName": "test/HangingGarden.t.sol",
       "solcConfig": {
         "settings": {

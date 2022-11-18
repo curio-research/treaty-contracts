@@ -78,6 +78,7 @@ library Templates {
         uint256 _moveCooldown,
         uint256 _battleCooldown,
         uint256 _attackRange,
+        uint256 _load,
         uint256 _nationID,
         address _armyAddress
     ) public returns (uint256) {
@@ -90,6 +91,7 @@ library Templates {
         ECSLib.setUint("MoveCooldown", armyID, _moveCooldown);
         ECSLib.setUint("BattleCooldown", armyID, _battleCooldown);
         ECSLib.setUint("AttackRange", armyID, _attackRange);
+        ECSLib.setUint("Load", armyID, _load);
         ECSLib.setUint("Nation", armyID, _nationID);
         ECSLib.setAddress("Address", armyID, _armyAddress);
         return armyID;
@@ -136,9 +138,6 @@ library Templates {
     function addTroopTemplate(
         string memory _inventoryType,
         uint256 _health,
-        uint256 _speed,
-        uint256 _moveCooldown,
-        uint256 _battleCooldown,
         uint256 _attack,
         uint256 _defense,
         uint256 _load,
@@ -149,9 +148,6 @@ library Templates {
         ECSLib.setString("Tag", templateID, "TroopTemplate");
         ECSLib.setString("InventoryType", templateID, _inventoryType);
         ECSLib.setUint("Health", templateID, _health);
-        ECSLib.setUint("Speed", templateID, _speed);
-        ECSLib.setUint("MoveCooldown", templateID, _moveCooldown);
-        ECSLib.setUint("BattleCooldown", templateID, _battleCooldown);
         ECSLib.setUint("Attack", templateID, _attack);
         ECSLib.setUint("Defense", templateID, _defense);
         ECSLib.setUint("Load", templateID, _load);

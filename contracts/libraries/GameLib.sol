@@ -84,22 +84,22 @@ library GameLib {
         uint256 tileID = Templates.addTile(_startPosition, terrain, _tileAddress);
 
         // TEMP: battle royale mode
-        if (gs().worldConstants.gameMode == GameMode.BATTLE_ROYALE) {
-            if (coincident(_startPosition, getMapCenterTilePosition())) {
-                // Set map center tile to SUPERTILE of land, no resources, and the top tile strength to start
-                uint256 maxTileLevel = (gs().worldConstants.maxCityCenterLevel * gs().worldConstants.cityCenterLevelToEntityLevelRatio) / 2;
-                ECSLib.setUint("Terrain", tileID, 0);
-                ECSLib.setUint("Level", tileID, maxTileLevel);
+        // if (gs().worldConstants.gameMode == GameMode.BATTLE_ROYALE) {
+        //     if (coincident(_startPosition, getMapCenterTilePosition())) {
+        //         // Set map center tile to SUPERTILE of land, no resources, and the top tile strength to start
+        //         uint256 maxTileLevel = (gs().worldConstants.maxCityCenterLevel * gs().worldConstants.cityCenterLevelToEntityLevelRatio) / 2;
+        //         ECSLib.setUint("Terrain", tileID, 0);
+        //         ECSLib.setUint("Level", tileID, maxTileLevel);
 
-                // uint256 superTileInitTime = getConstant("SuperTile", "", "lastTimestamp", "", maxTileLevel);
-                // ECSLib.setUint("LastTimestamp", tileID, superTileInitTime);
+        //         // uint256 superTileInitTime = getConstant("SuperTile", "", "lastTimestamp", "", maxTileLevel);
+        //         // ECSLib.setUint("LastTimestamp", tileID, superTileInitTime);
 
-                uint256 supertileGuardAmount = getConstant("Tile", "Guard", "Amount", "", maxTileLevel);
-                Templates.addConstituent(tileID, gs().templates["Guard"], supertileGuardAmount);
+        //         uint256 supertileGuardAmount = getConstant("Tile", "Guard", "Amount", "", maxTileLevel);
+        //         Templates.addConstituent(tileID, gs().templates["Guard"], supertileGuardAmount);
 
-                return tileID;
-            }
-        }
+        //         return tileID;
+        //     }
+        // }
 
         if (terrain < 3) {
             // Normal tile
@@ -125,12 +125,12 @@ library GameLib {
 
         // Initialize gold mine
         if (terrain == 1 && getResourceAtTile(_startPosition) == 0) {
-            Templates.addResource(gs().templates["Gold"], _startPosition, 0, 0);
+            Templates.addResource(gs().templates["Gold"], _startPosition);
         }
 
         // All empty tiles are farms
         if ((terrain == 0 || terrain == 2) && getResourceAtTile(_startPosition) == 0) {
-            Templates.addResource(gs().templates["Food"], _startPosition, 0, 0);
+            Templates.addResource(gs().templates["Food"], _startPosition);
         }
 
         return tileID;
@@ -157,7 +157,7 @@ library GameLib {
         uint256 armyInventoryAmount;
         if (inventoryID == 0) {
             armyInventoryAmount = 0;
-            inventoryID = Templates.addInventory(_armyID, templateID, armyInventoryAmount, ECSLib.getUint("Load", _armyID), true);
+            // inventoryID = Templates.addInventory(_armyID, templateID, armyInventoryAmount, ECSLib.getUint("Load", _armyID), true);
         } else {
             armyInventoryAmount = ECSLib.getUint("Amount", inventoryID);
         }
@@ -280,7 +280,8 @@ library GameLib {
         uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
         for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
             address tokenContract = ECSLib.getAddress("Address", resourceTemplateIDs[i]);
-            tokenContract.transferAll(_armyAddress, _nationAddress);
+            (bool success,) = tokenContract.call(abi.encodeWithSignature("transferAll(address,address)", _armyAddress, _nationAddress));
+            require(success, "CURIO: unloadResources transfer fails");
         }
     }
 
@@ -289,7 +290,8 @@ library GameLib {
         uint256[] memory troopTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("TroopTemplate"));
         for (uint256 i = 0; i < troopTemplateIDs.length; i++) {
             address tokenContract = ECSLib.getAddress("Address", troopTemplateIDs[i]);
-            uint256 armyTroopAmount = tokenContract.transferAll(_armyAddress, _nationAddress);
+            (bool success,) = tokenContract.call(abi.encodeWithSignature("transferAll(address,address)", _armyAddress, _nationAddress));
+            require(success, "CURIO: disbandArmy transfer fails");
         }
     }
 
@@ -302,12 +304,28 @@ library GameLib {
         return ECSLib.getAddress("Address", tokenTemplateID);
     }
 
-    function getAddressMaxLoad(address _entityAddress) public view returns (uint256) {
+    function getEntityByAddress(address _entityAddress) public returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](1);
         query[0] = ECSLib.queryChunk(QueryType.HasVal, "Address", abi.encode(_entityAddress));
         uint256[] memory res = ECSLib.query(query);
-        require(res.length <= 1, "CURIO: Max load assertion failed");
+        require(res.length <= 1, "CURIO: Find more than one entity");
         return res.length == 1 ? res[0] : 0;
+    }
+
+    function getAddressMaxLoad(address _entityAddress, string memory _resourceType) public returns (uint256) {
+        /**
+        Only Army has troop load & resource. Data is stored in game constant based on nation level
+        Resource/Capital yield load restricted within the game
+         */
+        uint256 entityID = getEntityByAddress(_entityAddress);
+        string memory entityTag = ECSLib.getString("Tag", entityID);
+
+        if (strEq(entityTag, "Army") && strEq(_resourceType, "Troop")) {
+            uint256 armyNationID = ECSLib.getUint("Nation", entityID);
+            return getConstant(entityTag, _resourceType, "Amount", "", ECSLib.getUint("Level", armyNationID));
+        } else if (strEq(entityTag, "Army") && (strEq(_resourceType, "Food") || strEq(_resourceType, "Gold"))) {
+            return ECSLib.getUint("Load", entityID);
+        } else return 0;
     }
 
     function getConstituents(uint256 _keeperID) public returns (uint256[] memory) {
@@ -502,11 +520,11 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    function getNation(address _address) internal view returns (uint256) {
+    function getNationID(address _address) internal view returns (uint256) {
         return gs().nationEntityMap[_address];
     }
 
-    function getArmy(address _address) internal view returns (uint256) {
+    function getArmyID(address _address) internal view returns (uint256) {
         return gs().armyEntityMap[_address];
     }
 
