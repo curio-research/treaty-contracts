@@ -47,6 +47,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         // vm.prank(nation1Address);
         // vm.expectRevert("CURIO: Army max count reached");
         // nationWallet1.executeGameTX(abi.encodeWithSignature("initializeArmy(address)", address(0)));
+        console.log(">>> testInitialization passed");      
     }
 
     function testOrganizeThenMoveArmy() public {
@@ -85,9 +86,11 @@ contract TreatyTest is Test, DiamondDeployTest {
         assertEq(warriorContract.checkBalanceOf(address(nationWallet1)) + warriorContract.checkBalanceOf(address(armyWallet11)), 1000);
         assertEq(slingerContract.checkBalanceOf(address(nationWallet1)) + warriorContract.checkBalanceOf(address(armyWallet11)), 1000);
         assertEq(horsemanContract.checkBalanceOf(address(nationWallet1)) + warriorContract.checkBalanceOf(address(armyWallet11)), 1000);
-
+        
         console.log("Army 11 Warrior Balance: ", warriorContract.checkBalanceOf(address(armyWallet11)));
         console.log("Army 11 Horseman Balance: ", horsemanContract.checkBalanceOf(address(armyWallet11)));
         console.log("Army 11 Slinger Balance: ", slingerContract.checkBalanceOf(address(armyWallet11)));
+
+        console.log(">>> testOrganizeThenMoveArmy passed");
     }
 }

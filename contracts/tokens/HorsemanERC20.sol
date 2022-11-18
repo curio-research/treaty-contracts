@@ -56,7 +56,6 @@ contract HorsemanERC20 is ERC20 {
         uint256 amount
     ) public override onlyGame returns (bool) {
         uint256 recipientMaxLoad = _getAddressMaxLoad(to);
-        console.log("Max Load:", recipientMaxLoad);
         if (recipientMaxLoad == 0) {
             return super.transferFrom(from, to, amount);
         } else {

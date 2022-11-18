@@ -241,12 +241,6 @@ contract DiamondDeployTest is Test {
         console.log("=============== INDIVIDUAL TESTS BEGIN ================");
     }
 
-    function _approveTokenTransfer(address[] memory _tokenContracts) private {
-        for (uint256 i = 0; i < _tokenContracts.length; i++) {
-            address token = _tokenContracts[i];
-        }
-    }
-
     // fixme: Then probably don't need to store batches in gs()
     function _initializeMap() private {
         bytes32 tileAddressBytes = keccak256(abi.encodePacked("tile address"));
