@@ -204,6 +204,11 @@ contract DiamondDeployTest is Test {
         for (uint256 i = 0; i < tokenContracts.length; i ++) {
             nationWallet1.executeTX(address(tokenContracts[i]), 
         abi.encodeWithSignature("approve(address,uint256)", address(game), type(uint256).max));
+            armyWallet11.executeTX(address(tokenContracts[i]), 
+        abi.encodeWithSignature("approve(address,uint256)", address(game), type(uint256).max));
+            armyWallet12.executeTX(address(tokenContracts[i]), 
+        abi.encodeWithSignature("approve(address,uint256)", address(game), type(uint256).max));
+
         }
         
         nation1ID = getter.getNationID(address(nationWallet1));
@@ -217,6 +222,10 @@ contract DiamondDeployTest is Test {
         for (uint256 i = 0; i < tokenContracts.length; i ++) {
             nationWallet2.executeTX(address(tokenContracts[i]), 
         abi.encodeWithSignature("approve(address,uint256)", address(game), type(uint256).max));
+            armyWallet21.executeTX(address(tokenContracts[i]), 
+        abi.encodeWithSignature("approve(address,uint256)", address(game), type(uint256).max));
+            armyWallet22.executeTX(address(tokenContracts[i]), 
+        abi.encodeWithSignature("approve(address,uint256)", address(game), type(uint256).max));
         }
 
         nation2ID = getter.getNationID(address(nationWallet2));
@@ -229,6 +238,10 @@ contract DiamondDeployTest is Test {
 
         for (uint256 i = 0; i < tokenContracts.length; i ++) {
             nationWallet3.executeTX(address(tokenContracts[i]), 
+        abi.encodeWithSignature("approve(address,uint256)", address(game), type(uint256).max));
+            armyWallet31.executeTX(address(tokenContracts[i]), 
+        abi.encodeWithSignature("approve(address,uint256)", address(game), type(uint256).max));
+            armyWallet32.executeTX(address(tokenContracts[i]), 
         abi.encodeWithSignature("approve(address,uint256)", address(game), type(uint256).max));
         }
 

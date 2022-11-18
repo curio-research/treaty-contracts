@@ -50,7 +50,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         console.log(">>> testInitialization passed");      
     }
 
-    function testOrganizeThenMoveArmy() public {
+    function testOrganizeDisbandArmy() public {
         // Deployer transfer enough gold & food to nation 1
         vm.startPrank(deployerAddress);
         warriorContract.transfer(address(nationWallet1), 1000);
@@ -86,11 +86,21 @@ contract TreatyTest is Test, DiamondDeployTest {
         assertEq(warriorContract.checkBalanceOf(address(nationWallet1)) + warriorContract.checkBalanceOf(address(armyWallet11)), 1000);
         assertEq(slingerContract.checkBalanceOf(address(nationWallet1)) + warriorContract.checkBalanceOf(address(armyWallet11)), 1000);
         assertEq(horsemanContract.checkBalanceOf(address(nationWallet1)) + warriorContract.checkBalanceOf(address(armyWallet11)), 1000);
-        
+
         console.log("Army 11 Warrior Balance: ", warriorContract.checkBalanceOf(address(armyWallet11)));
         console.log("Army 11 Horseman Balance: ", horsemanContract.checkBalanceOf(address(armyWallet11)));
         console.log("Army 11 Slinger Balance: ", slingerContract.checkBalanceOf(address(armyWallet11)));
+        console.log("Army 11 Position:", getter.getPositionExternal("Position", nation1Army1ID).x, " ", getter.getPositionExternal("Position", nation1Army1ID).x);
 
-        console.log(">>> testOrganizeThenMoveArmy passed");
+        vm.warp(5);
+        armyWallet11.executeGameTX(abi.encodeWithSignature("disbandArmy(uint256)", nation1Army1ID));
+        assertEq(warriorContract.checkBalanceOf(address(armyWallet11)), 0);
+        assertEq(slingerContract.checkBalanceOf(address(armyWallet11)), 0);
+        assertEq(horsemanContract.checkBalanceOf(address(armyWallet11)), 0);
+        assertEq(warriorContract.checkBalanceOf(address(nationWallet1)), 1000);
+        assertEq(slingerContract.checkBalanceOf(address(nationWallet1)), 1000);
+        assertEq(horsemanContract.checkBalanceOf(address(nationWallet1)), 1000);
+
+        console.log(">>> testOrganizeDisbandArmy passed");
     }
 }

@@ -573,9 +573,12 @@ contract GameFacet is UseStorage {
         uint256[] memory _templateIDs,
         uint256[] memory _amounts
     ) external returns (bool) {
-        // Basic checks
+        // Basic checks; note: msg.sender should be nation
         GameLib.validEntityCheck(_capitalID);
         GameLib.ongoingGameCheck();
+        uint256 nationID = ECSLib.getUint("Nation", _capitalID);
+        address nationAddress  = ECSLib.getAddress("Address", nationID);
+        require(nationAddress == msg.sender, "CURIO: You do not control this nation");
         
         // Check that army does not yet have position component; fixme: potential edges cases here
         require(GameLib.coincident(ECSLib.getPosition("Position", _armyID), Position({x:0, y:0})), "CURIO: Army already organized");
@@ -600,7 +603,7 @@ contract GameFacet is UseStorage {
                 // require(tokenContract.checkBalanceOf(msg.sender) >= _amounts[i], "CURIO: Need to produce more troops");
 
                 load += ECSLib.getUint("Load", _templateIDs[i]) * _amounts[i];
-                (bool success,) = tokenContract.call(abi.encodeWithSignature("transferFrom(address,address,uint256)", msg.sender, armyAddress, _amounts[i]));
+                (bool success,) = tokenContract.call(abi.encodeWithSignature("transferFrom(address,address,uint256)", nationAddress, armyAddress, _amounts[i]));
                 require(success, "CURIO: organizeArmy transfer fails");
             }
 
@@ -615,12 +618,14 @@ contract GameFacet is UseStorage {
     }
 
     function disbandArmy(uint256 _armyID) external {
-        // Basic checks
+        // Basic checks; note: message.sender should be army
         GameLib.validEntityCheck(_armyID);
         GameLib.ongoingGameCheck();
+        address armyWalletAddress = ECSLib.getAddress("Address", _armyID);
+        require(armyWalletAddress == msg.sender, "CURIO: You do not control this army");
 
         // Verify tile ownership
-        Position memory armyPosition = ECSLib.getPosition("Postiion", _armyID);
+        Position memory armyPosition = ECSLib.getPosition("Position", _armyID);
         Position memory armyStartPosition = GameLib.getProperTilePosition(armyPosition);
 
         // Verify that army is on capital tile
@@ -629,7 +634,6 @@ contract GameFacet is UseStorage {
         require(GameLib.coincident(ECSLib.getPosition("StartPosition", capitalID), armyStartPosition), "CURIO: Army must be on city center to disband");
 
         address nationWalletAddress = ECSLib.getAddress("Address", armyNationID);
-        address armyWalletAddress = ECSLib.getAddress("Address", _armyID);
 
         // Return carried resources to city
         GameLib.unloadResources(nationWalletAddress, armyWalletAddress);
