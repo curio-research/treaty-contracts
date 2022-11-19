@@ -39,18 +39,18 @@ contract WalletHangingGarden {
     mapping(address => bool) public isOwner;
 
     modifier onlyOwner() {
-        require(isOwner[msg.sender], "not owner");
+        require(isOwner[msg.sender], "You do not have access to this wallet");
         _;
     }
 
     constructor(address[] memory _owners, address _gameFacetAdress) {
-        require(_owners.length > 0, "owners required");
+        require(_owners.length > 0, "Wallet owners required");
 
         for (uint256 i = 0; i < _owners.length; i++) {
             address owner = _owners[i];
 
-            require(owner != address(0), "invalid owner");
-            require(!isOwner[owner], "owner not unique");
+            require(owner != address(0), "Invalid wallet owner");
+            require(!isOwner[owner], "Wallet owner not unique");
 
             isOwner[owner] = true;
             owners.push(owner);

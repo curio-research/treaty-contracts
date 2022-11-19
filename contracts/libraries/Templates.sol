@@ -40,7 +40,6 @@ library Templates {
         ECSLib.setBool("CanProduce", capitalID);
         ECSLib.setUint("InitTimestamp", capitalID, block.timestamp);
         ECSLib.setUint("LastTimestamp", capitalID, block.timestamp);
-        ECSLib.setUint("LastUpgraded", capitalID, block.timestamp);
         ECSLib.setUint("LastMoved", capitalID, block.timestamp);
         ECSLib.setUint("LastSacked", capitalID, block.timestamp);
         ECSLib.setUint("Nation", capitalID, _nationID);
@@ -67,6 +66,7 @@ library Templates {
         ECSLib.setBool("IsActive", nationID);
         ECSLib.setString("Name", nationID, _name);
         ECSLib.setUint("InitTimestamp", nationID, block.timestamp);
+        ECSLib.setUint("LastUpgraded", nationID, 0);
         ECSLib.setAddress("Address", nationID, msg.sender);
         ECSLib.setUint("Level", nationID, 1);
 
@@ -83,7 +83,7 @@ library Templates {
         address _armyAddress
     ) public returns (uint256) {
         uint256 armyID = ECSLib.addEntity();
-        // note: CanBattle & Position is set when organized
+        // note: CanBattle & Position & StartPosition is set when organized
         ECSLib.setString("Tag", armyID, "Army");
         ECSLib.setUint("Speed", armyID, _speed);
         ECSLib.setUint("LastTimestamp", armyID, block.timestamp);
