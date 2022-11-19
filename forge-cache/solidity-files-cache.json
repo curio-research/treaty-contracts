@@ -312,8 +312,8 @@
       }
     },
     "contracts/WalletHangingGarden.sol": {
-      "lastModificationDate": 1668803418094,
-      "contentHash": "695060f76a8f793f466ca4dc1cd48a5d",
+      "lastModificationDate": 1668899671001,
+      "contentHash": "b5ff622252c65d1886ef7438a7538848",
       "sourceName": "contracts/WalletHangingGarden.sol",
       "solcConfig": {
         "settings": {
@@ -543,8 +543,8 @@
       }
     },
     "contracts/facets/GameFacet.sol": {
-      "lastModificationDate": 1668894219404,
-      "contentHash": "dade2a3265ff4f81f35dfdec3a40b41a",
+      "lastModificationDate": 1668899463988,
+      "contentHash": "7f5119a5d4f957b802bb15dd56b7bed4",
       "sourceName": "contracts/facets/GameFacet.sol",
       "solcConfig": {
         "settings": {
@@ -1218,8 +1218,8 @@
       }
     },
     "contracts/tokens/GoldERC20.sol": {
-      "lastModificationDate": 1668889425819,
-      "contentHash": "7e3c6947644818916a4922305a697d9e",
+      "lastModificationDate": 1668899807537,
+      "contentHash": "3ec0da9f5c45cea278a59e5fa85d1eec",
       "sourceName": "contracts/tokens/GoldERC20.sol",
       "solcConfig": {
         "settings": {
@@ -2118,8 +2118,8 @@
       }
     },
     "test/DiamondDeploy.t.sol": {
-      "lastModificationDate": 1668792407941,
-      "contentHash": "111c54774658712efa6b8a8b2cf0da9c",
+      "lastModificationDate": 1668897240472,
+      "contentHash": "c2fa99299e8f5674ae35a02e73a5defc",
       "sourceName": "test/DiamondDeploy.t.sol",
       "solcConfig": {
         "settings": {
@@ -2277,8 +2277,8 @@
       }
     },
     "test/HangingGarden.t.sol": {
-      "lastModificationDate": 1668893232250,
-      "contentHash": "020ac1450a011cfb6ff9f290e08a35d9",
+      "lastModificationDate": 1668899098897,
+      "contentHash": "4d2fa36d3b08afaba8bdd8f72413237f",
       "sourceName": "test/HangingGarden.t.sol",
       "solcConfig": {
         "settings": {

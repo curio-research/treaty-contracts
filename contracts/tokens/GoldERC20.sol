@@ -54,7 +54,7 @@ contract GoldERC20 is ERC20 {
         address from,
         address to,
         uint256 amount
-    ) public override onlyGame returns (bool) {
+    ) public override returns (bool) {
         uint256 recipientMaxLoad = _getAddressMaxLoad(to);
         if (recipientMaxLoad == 0) {
             return super.transferFrom(from, to, amount);

@@ -178,20 +178,24 @@ contract DiamondDeployTest is Test {
         address[] memory initializedOwner = new address[](1);
 
         // Deploy Smart Contract Wallets
+        // TODO: nation and army can use different wallet contracts
+
+        uint256 homieFee = 666;
+
         initializedOwner[0] = nation1Address;
-        nationWallet1 = new WalletHangingGarden(initializedOwner, address(game));
-        armyWallet11 = new WalletHangingGarden(initializedOwner, address(game));
-        armyWallet12 = new WalletHangingGarden(initializedOwner, address(game));
+        nationWallet1 = new WalletHangingGarden(initializedOwner, address(game), address(goldContract), homieFee);
+        armyWallet11 = new WalletHangingGarden(initializedOwner, address(game), address(goldContract), homieFee);
+        armyWallet12 = new WalletHangingGarden(initializedOwner, address(game), address(goldContract), homieFee);
 
         initializedOwner[0] = nation2Address;
-        nationWallet2 = new WalletHangingGarden(initializedOwner, address(game));
-        armyWallet21 = new WalletHangingGarden(initializedOwner, address(game));
-        armyWallet22 = new WalletHangingGarden(initializedOwner, address(game));
+        nationWallet2 = new WalletHangingGarden(initializedOwner, address(game), address(goldContract), homieFee);
+        armyWallet21 = new WalletHangingGarden(initializedOwner, address(game), address(goldContract), homieFee);
+        armyWallet22 = new WalletHangingGarden(initializedOwner, address(game), address(goldContract), homieFee);
 
         initializedOwner[0] = nation3Address;
-        nationWallet3 = new WalletHangingGarden(initializedOwner, address(game));
-        armyWallet31 = new WalletHangingGarden(initializedOwner, address(game));
-        armyWallet32 = new WalletHangingGarden(initializedOwner, address(game));
+        nationWallet3 = new WalletHangingGarden(initializedOwner, address(game), address(goldContract), homieFee);
+        armyWallet31 = new WalletHangingGarden(initializedOwner, address(game), address(goldContract), homieFee);
+        armyWallet32 = new WalletHangingGarden(initializedOwner, address(game), address(goldContract), homieFee);
 
         console.log(">>> Smart Contract Wallets initialized");
 

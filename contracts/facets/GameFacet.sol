@@ -122,7 +122,20 @@ contract GameFacet is UseStorage {
         // todo: integrate with 1-N treaty here
         uint256 tileID = GameLib.getTileAt(tilePosition);
         uint256 armyNationID = ECSLib.getUint("Nation", _armyID);
-        if (tileID != NULL) GameLib.neutralOrOwnedEntityCheck(tileID, armyNationID);
+
+        {
+        // Check if army is nation's homie
+        uint256 tileNationID = ECSLib.getUint("Nation", tileID);
+        if (tileNationID != NULL) {
+            address tileNationContract = ECSLib.getAddress("Address", tileNationID);
+            console.log(tileNationContract);
+            // note: here it should have a standard; I'm using this name just for fun
+            (bool success, bytes memory data) = tileNationContract.call(abi.encodeWithSignature("approveHomiesEntering(address)", address(armyAddress)));
+            require(success, "CURIO: Fail to check policy");
+            bool isHomie = abi.decode(data, (bool));
+            if (!isHomie) GameLib.neutralOrOwnedEntityCheck(tileID, armyNationID);
+            } else GameLib.neutralOrOwnedEntityCheck(tileID, armyNationID);
+        }
 
         // Verify no gather
         require(GameLib.getArmyGather(_armyID) == NULL, "CURIO: Need to end gather first");
@@ -414,7 +427,7 @@ contract GameFacet is UseStorage {
         address troopContract = ECSLib.getAddress("Address", ECSLib.getUint("Template", _productionID));
         (bool success,) = troopContract.call(abi.encodeWithSignature("dripToken(address,uint256)", msg.sender, ECSLib.getUint("Amount", _productionID)));
         require(success, "Curio: Troop Production dripping fails");
-        
+
         // Delete production
         ECSLib.removeEntity(_productionID);
     }

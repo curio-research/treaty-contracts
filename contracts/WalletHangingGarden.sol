@@ -33,17 +33,21 @@ import "forge-std/console.sol";
 
 // note: this is a minimalistic implementation of smart contract wallet
 contract WalletHangingGarden {
-    address gameFacetAdress;
+    address gameFacetAddress;
+    address goldTokenAddress;
     address[] public owners;
+    address[] public myHomies;
+    uint256 homieFee;
 
     mapping(address => bool) public isOwner;
+    mapping(address => bool) public isHomie;
 
     modifier onlyOwner() {
         require(isOwner[msg.sender], "You do not have access to this wallet");
         _;
     }
 
-    constructor(address[] memory _owners, address _gameFacetAdress) {
+    constructor(address[] memory _owners, address _gameFacetAddress, address _goldTokenAddress, uint256 _homieFee) {
         require(_owners.length > 0, "Wallet owners required");
 
         for (uint256 i = 0; i < _owners.length; i++) {
@@ -54,14 +58,19 @@ contract WalletHangingGarden {
 
             isOwner[owner] = true;
             owners.push(owner);
+
+            isHomie[owner] = true;
+            owners.push(owner);
         }
 
-        gameFacetAdress = _gameFacetAdress;
+        gameFacetAddress = _gameFacetAddress;
+        goldTokenAddress = _goldTokenAddress;
+        homieFee = _homieFee;
     }
 
     function executeGameTX(bytes memory _data) public onlyOwner {
         // fixme: low-level call checker modified to "warn"; integrate with interface
-        (bool success, bytes memory returndata) = gameFacetAdress.call(_data);
+        (bool success, bytes memory returndata) = gameFacetAddress.call(_data);
         require(success, string(returndata));
     }
 
@@ -73,8 +82,22 @@ contract WalletHangingGarden {
     // ----------------------------------------------------------
     //                          Poicy
     // ----------------------------------------------------------
-
     
+    function inquireHomieFee() public view returns (uint256) {
+        return homieFee;
+    }
 
+    function becomeAHomie(address _armyAddress) public returns (bool) {
+        // note: msg.sender can be from anyone
+        // note: msg.sender need to first approve homie fee spending
+        (bool success, ) = goldTokenAddress.call(abi.encodeWithSignature("transferFrom(address,address,uint256)", msg.sender, address(this), homieFee));
+        require(success, "Fail to pay homie fee!");
+        isHomie[_armyAddress] = true;
+        owners.push(_armyAddress);
+        return true;
+    }
 
+    function approveHomiesEntering(address _armyAddress) public view returns (bool) {
+        return isHomie[_armyAddress];
+    }
 }

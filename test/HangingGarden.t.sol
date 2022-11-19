@@ -397,5 +397,53 @@ contract TreatyTest is Test, DiamondDeployTest {
         assertEq(foodContract.checkBalanceOf(address(nationWallet1)), armyFoodBalance);
     }
 
-    
+    // TODO: Test troop production & upgrade/recover tiles
+    function testHomiePolicy() public {
+        // bug: lastChaos time is 0. This is wrong.
+        uint256 time = block.timestamp + 600;
+        // Deployer transfer enough gold & food to nation 1 & 2
+        vm.startPrank(deployerAddress);
+        warriorContract.transfer(address(nationWallet1), 1000);
+        horsemanContract.transfer(address(nationWallet1), 1000);
+        slingerContract.transfer(address(nationWallet1), 1000);
+        goldContract.transfer(address(nationWallet1), 1000000);
+        foodContract.transfer(address(nationWallet1), 1000000);
+        vm.stopPrank();
+
+        // Nation 1 organize army
+        vm.startPrank(nation1Address);
+
+        uint256 nation1CapitalID = getter.getCapital(nation1ID);
+        uint256 army11ID = getter.getArmyIDByAddress(address(armyWallet11));
+
+        uint256[] memory armyTemplateIDs = new uint256[](3);
+        armyTemplateIDs[0] = warriorTemplateID;
+        armyTemplateIDs[1] = horsemanTemplateID;
+        armyTemplateIDs[2] = slingerTemplateID;
+        uint256[] memory armyTemplateAmounts = new uint256[](3);
+        armyTemplateAmounts[0] = 500;
+        armyTemplateAmounts[1] = 500;
+        armyTemplateAmounts[2] = 500;
+        vm.warp(time + 10);
+        time += 10;
+        nationWallet1.executeGameTX(
+            abi.encodeWithSignature("organizeArmy(uint256,uint256,uint256[],uint256[])",
+            nation1CapitalID, army11ID, armyTemplateIDs, armyTemplateAmounts));
+
+        // Nation 1's army11 becomes a homie of Nation 2 !!!
+        uint256 homieFee = nationWallet2.inquireHomieFee();
+        nationWallet1.executeTX(address(goldContract), 
+        abi.encodeWithSignature("approve(address,uint256)", address(nationWallet2), homieFee));
+
+        abi.encodeWithSignature("becomeAHomie(address)", address(armyWallet11)));
+
+        // army11 now able to enter sacred land of its homie (capital is 60,30)
+        uint256 y_coordinate = 30;
+
+        for (uint256 curr_coordinate = 12; curr_coordinate <= y_coordinate; curr_coordinate += 2) {
+        vm.warp(time + 10);
+        time += 10;
+        armyWallet11.executeGameTX(abi.encodeWithSignature("move(uint256,uint256,uint256)", army11ID, 60, curr_coordinate));
+        }
+    }
 }
