@@ -54,6 +54,13 @@ contract AdminFacet is UseStorage {
         Templates.addResource(gs().templates[_inventoryType], _startPosition);
     }
 
+    function giftTileAndResourceAt(Position memory _startPosition, uint256 _nationID) external onlyAdmin {
+        uint256 tileID = GameLib.getTileAt(_startPosition);
+        uint256 resourceID = GameLib.getResourceAt(_startPosition);
+        ECSLib.setUint("Nation", tileID, _nationID);
+        ECSLib.setUint("Nation", resourceID, _nationID);
+    }
+
     function spawnBarbarian(Position memory _startPosition, uint256 _level) external onlyAdmin {
         require(_level == 1 || _level == 2, "CURIO: Function not used correctly");
         uint256 tileID = GameLib.getTileAt(_startPosition);

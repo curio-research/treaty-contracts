@@ -292,4 +292,110 @@ contract TreatyTest is Test, DiamondDeployTest {
         assertEq(getter.getEntityLevel(nation1ID), 2);
         assertEq(getter.getEntityNation(targetTileID), nation1ID);
     }
+
+    function testHarvest() public {
+        // bug: lastChaos time is 0. This is wrong.
+        vm.startPrank(deployerAddress);
+        uint256 nation1ID = getter.getNationIDByAddress(address(nationWallet1));
+        // this tile and its resource is next to nation1 capital
+        Position memory farmTilePos = Position({x:60, y:5});
+        admin.giftTileAndResourceAt(Position({x:60, y:5}), nation1ID);
+
+        goldContract.transfer(address(nationWallet1), 1000000);
+        foodContract.transfer(address(nationWallet1), 1000000);
+
+        vm.stopPrank();
+
+        uint256 time = block.timestamp + 600;
+        vm.warp(time);
+
+        vm.startPrank(nation1Address);
+        nationWallet1.executeGameTX(abi.encodeWithSignature("upgradeNation(uint256)", nation1ID));
+        uint256 nation1CapitalID = getter.getCapital(nation1ID);
+
+        nationWallet1.executeGameTX(abi.encodeWithSignature("harvestResourcesFromCapital(uint256)", nation1CapitalID));
+
+        uint256 goldBalance1 = goldContract.checkBalanceOf(address(nationWallet1));
+        uint256 foodBalance1 = foodContract.checkBalanceOf(address(nationWallet1));
+        assertTrue(goldBalance1 > 1000000);
+        assertTrue(foodBalance1 > 1000000);
+
+        uint256 farmID = getter.getResourceAtTile(farmTilePos);
+        nationWallet1.executeGameTX(abi.encodeWithSignature("upgradeResource(uint256)", farmID));
+
+        uint256 foodBalance2 = foodContract.checkBalanceOf(address(nationWallet1));
+
+        time += 50;
+        vm.warp(time);
+        nationWallet1.executeGameTX(abi.encodeWithSignature("harvestResource(uint256)", farmID));
+        assertTrue(foodContract.checkBalanceOf(address(nationWallet1)) > foodBalance2);
+    }
+
+    function testGather() public {
+        // bug: lastChaos time is 0. This is wrong.
+        uint256 time = block.timestamp + 600;
+        // Deployer transfer enough gold & food to nation 1 & 2
+        vm.startPrank(deployerAddress);
+        warriorContract.transfer(address(nationWallet1), 1000);
+        horsemanContract.transfer(address(nationWallet1), 1000);
+        slingerContract.transfer(address(nationWallet1), 1000);
+
+        vm.stopPrank();
+
+        // Nation 1 organize army
+        vm.startPrank(nation1Address);
+
+        uint256 nation1CapitalID = getter.getCapital(nation1ID);
+        uint256 army11ID = getter.getArmyIDByAddress(address(armyWallet11));
+
+        uint256[] memory armyTemplateIDs = new uint256[](3);
+        armyTemplateIDs[0] = warriorTemplateID;
+        armyTemplateIDs[1] = horsemanTemplateID;
+        armyTemplateIDs[2] = slingerTemplateID;
+        uint256[] memory armyTemplateAmounts = new uint256[](3);
+        armyTemplateAmounts[0] = 500;
+        armyTemplateAmounts[1] = 500;
+        armyTemplateAmounts[2] = 500;
+
+        vm.warp(time + 10);
+        time += 10;
+        nationWallet1.executeGameTX(
+            abi.encodeWithSignature("organizeArmy(uint256,uint256,uint256[],uint256[])",
+            nation1CapitalID, army11ID, armyTemplateIDs, armyTemplateAmounts));
+
+        vm.warp(time + 10);
+        time += 10;
+        armyWallet11.executeGameTX(abi.encodeWithSignature("move(uint256,uint256,uint256)", army11ID, 60, 10));
+
+        vm.warp(time + 10);
+        time += 10;
+        armyWallet11.executeGameTX(abi.encodeWithSignature("move(uint256,uint256,uint256)", army11ID, 60, 8));
+
+        vm.warp(time + 10);
+        time += 10;
+        Position memory targetTilePos = Position({x:60, y:5});
+        uint256 resourceID = getter.getResourceAtTile(targetTilePos);
+
+        // Army Gather Food
+        armyWallet11.executeGameTX(abi.encodeWithSignature("startGather(uint256,uint256)", army11ID, resourceID));
+        vm.warp(time + 50);
+        time += 50;
+        armyWallet11.executeGameTX(abi.encodeWithSignature("endGather(uint256)", army11ID));
+        uint256 armyFoodBalance = foodContract.checkBalanceOf(address(armyWallet11));
+        assertTrue(armyFoodBalance > 0);
+
+        vm.warp(time + 10);
+        time += 10;
+        armyWallet11.executeGameTX(abi.encodeWithSignature("move(uint256,uint256,uint256)", army11ID, 60, 10));
+
+        vm.warp(time + 10);
+        time += 10;
+        armyWallet11.executeGameTX(abi.encodeWithSignature("move(uint256,uint256,uint256)", army11ID, 60, 12));
+        armyWallet11.executeGameTX(abi.encodeWithSignature("unloadResources(uint256)", army11ID));
+        console.log(foodContract.checkBalanceOf(address(armyWallet11)));
+        assertEq(foodContract.checkBalanceOf(address(armyWallet11)), 0);
+        assertEq(foodContract.checkBalanceOf(address(nationWallet1)), armyFoodBalance);
+    }
+
+    
 }

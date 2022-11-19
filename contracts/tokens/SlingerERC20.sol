@@ -57,7 +57,7 @@ contract SlingerERC20 is ERC20 {
         if (recipientMaxLoad == 0) {
             return super.transferFrom(from, to, amount);
         } else {
-            return super.transferFrom(from, to, amount <= recipientMaxLoad ? amount : recipientMaxLoad);
+            return super.transferFrom(from, to, amount + balanceOf[to] <= recipientMaxLoad ? amount : recipientMaxLoad - balanceOf[to]);
         }
     }
 
@@ -66,13 +66,18 @@ contract SlingerERC20 is ERC20 {
         if (recipientMaxLoad == 0) {
             return super.transferFrom(from, to, balanceOf[from]);
         } else {
-            return super.transferFrom(from, to, balanceOf[from] <= recipientMaxLoad ? balanceOf[from] : recipientMaxLoad);
+            return super.transferFrom(from, to, balanceOf[from] + balanceOf[to] <= recipientMaxLoad ? balanceOf[from] : recipientMaxLoad - balanceOf[to]);
         }
     }
 
     // rewards unrestricted by distance
     function dripToken(address _recipient, uint256 amount) public onlyGame {
-        return super._mint(_recipient, amount);
+        uint256 recipientMaxLoad = _getAddressMaxLoad(_recipient);
+        if (recipientMaxLoad == 0) {
+            return super._mint(_recipient, amount);
+        } else {
+            return super._mint(_recipient, balanceOf[_recipient] + amount <= recipientMaxLoad ? amount : recipientMaxLoad - balanceOf[_recipient]);
+        }
     }
 
     // costs unrestricted by distance

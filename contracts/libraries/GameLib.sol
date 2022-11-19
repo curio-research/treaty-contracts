@@ -151,22 +151,15 @@ library GameLib {
         uint256 gatherID = getArmyGather(_armyID);
         require(gatherID != 0, "CURIO: Need to start gathering first");
 
-        // Get army's and resource's remaining capacities
+        // Get army's remaining capacities
         uint256 templateID = ECSLib.getUint("Template", gatherID);
-        uint256 inventoryID = getInventory(_armyID, templateID);
-        uint256 armyInventoryAmount;
-        if (inventoryID == 0) {
-            armyInventoryAmount = 0;
-            // inventoryID = Templates.addInventory(_armyID, templateID, armyInventoryAmount, ECSLib.getUint("Load", _armyID), true);
-        } else {
-            armyInventoryAmount = ECSLib.getUint("Amount", inventoryID);
-        }
+        address tokenContract = ECSLib.getAddress("Address", templateID);
+        address armyAddress = ECSLib.getAddress("Address", _armyID);   
 
         // Gather
         uint256 gatherAmount = (block.timestamp - ECSLib.getUint("InitTimestamp", gatherID)) * getConstant("Army", ECSLib.getString("InventoryType", templateID), "Rate", "gather", 0);
-        uint256 remainingLoad = ECSLib.getUint("Load", _armyID) - armyInventoryAmount;
-        if (gatherAmount > remainingLoad) gatherAmount = remainingLoad;
-        ECSLib.setUint("Amount", inventoryID, armyInventoryAmount + gatherAmount);
+        (bool success, ) = tokenContract.call(abi.encodeWithSignature("dripToken(address,uint256)", armyAddress, gatherAmount));
+        require(success, "CURIO: Token dripping fails");
 
         ECSLib.removeEntity(gatherID);
     }
@@ -265,6 +258,7 @@ library GameLib {
                 // Defender (always army here) is dealt with same as in disband
                 ECSLib.removeComponentValue("Position", _defenderID);
                 ECSLib.removeComponentValue("CanBattle", _defenderID);
+
             }
         }
     }
@@ -328,17 +322,23 @@ library GameLib {
 
     function getAddressMaxLoad(address _entityAddress, string memory _resourceType) public returns (uint256) {
         /**
-        Only Army has troop load & resource. Data is stored in game constant based on nation level
+        Only Army & Tile has troop load & resource. 
+        Data is stored in game constant based on nation level
         Resource/Capital yield load restricted within the game
          */
+
+        // fixme: exteremely inefficient but unavoidable unless entityID is address
         uint256 entityID = getEntityByAddress(_entityAddress);
         string memory entityTag = ECSLib.getString("Tag", entityID);
-
-        if (strEq(entityTag, "Army") && strEq(_resourceType, "Troop")) {
+        if (strEq(entityTag, "Army")) {
             uint256 armyNationID = ECSLib.getUint("Nation", entityID);
-            return getConstant(entityTag, _resourceType, "Amount", "", ECSLib.getUint("Level", armyNationID));
-        } else if (strEq(entityTag, "Army") && (strEq(_resourceType, "Food") || strEq(_resourceType, "Gold"))) {
-            return ECSLib.getUint("Load", entityID);
+            if (strEq(_resourceType, "Troop")) {
+                return getConstant(entityTag, _resourceType, "Amount", "", ECSLib.getUint("Level", armyNationID));
+            } else if (strEq(_resourceType, "Food") || strEq(_resourceType, "Gold")) {
+                return ECSLib.getUint("Load", entityID);
+            }
+        } else if (strEq(entityTag, "Tile")) {
+            return GameLib.getConstant("Tile", "Guard", "Amount", "", ECSLib.getUint("Level", entityID));
         } else return 0;
     }
 
@@ -594,6 +594,15 @@ library GameLib {
         query[1] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("Tile"));
         uint256[] memory res = ECSLib.query(query);
         require(res.length <= 1, "CURIO: Tile assertion failed");
+        return res.length == 1 ? res[0] : 0;
+    }
+
+    function getResourceAt(Position memory _startPosition) internal returns (uint256) {
+        QueryCondition[] memory query = new QueryCondition[](2);
+        query[0] = ECSLib.queryChunk(QueryType.HasVal, "StartPosition", abi.encode(_startPosition));
+        query[1] = ECSLib.queryChunk(QueryType.HasVal, "Tag", abi.encode("Resource"));
+        uint256[] memory res = ECSLib.query(query);
+        require(res.length <= 1, "CURIO: Resource assertion failed");
         return res.length == 1 ? res[0] : 0;
     }
 

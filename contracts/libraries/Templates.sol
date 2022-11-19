@@ -42,6 +42,7 @@ library Templates {
         ECSLib.setUint("LastTimestamp", capitalID, block.timestamp);
         ECSLib.setUint("LastMoved", capitalID, block.timestamp);
         ECSLib.setUint("LastSacked", capitalID, block.timestamp);
+        ECSLib.setUint("Load", capitalID, 0);
         ECSLib.setUint("Nation", capitalID, _nationID);
         return capitalID;
     }
@@ -55,6 +56,7 @@ library Templates {
         ECSLib.setPosition("StartPosition", resourceID, _startPosition);
         ECSLib.setUint("LastTimestamp", resourceID, block.timestamp);
         ECSLib.setUint("LastUpgraded", resourceID, 0);
+        ECSLib.setUint("Load", resourceID, 0);
         ECSLib.setUint("Nation", resourceID, 0);
         return resourceID;
     }
@@ -99,7 +101,6 @@ library Templates {
     function addTroopProduction(
         uint256 _buildingID,
         uint256 _templateID,
-        uint256 _troopInventoryID,
         uint256 _amount,
         uint256 _duration
     ) public returns (uint256) {
@@ -108,7 +109,6 @@ library Templates {
         ECSLib.setString("Tag", productionID, "TroopProduction");
         ECSLib.setUint("Keeper", productionID, _buildingID);
         ECSLib.setUint("Template", productionID, _templateID);
-        ECSLib.setUint("Inventory", productionID, _troopInventoryID);
         ECSLib.setUint("Amount", productionID, _amount);
         ECSLib.setUint("InitTimestamp", productionID, block.timestamp);
         ECSLib.setUint("Duration", productionID, _duration);
@@ -118,7 +118,6 @@ library Templates {
 
     function addResourceGather(
         Position memory _position,
-        uint256 _playerID,
         uint256 _resourceTemplateID,
         uint256 _armyID
     ) public returns (uint256) {
@@ -126,7 +125,6 @@ library Templates {
 
         ECSLib.setString("Tag", gatherID, "ResourceGather");
         ECSLib.setPosition("Position", gatherID, _position);
-        ECSLib.setUint("Owner", gatherID, _playerID);
         ECSLib.setUint("Template", gatherID, ECSLib.getUint("Template", _resourceTemplateID));
         ECSLib.setUint("InitTimestamp", gatherID, block.timestamp);
         ECSLib.setUint("Army", gatherID, _armyID);
