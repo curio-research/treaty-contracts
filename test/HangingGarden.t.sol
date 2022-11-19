@@ -435,6 +435,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         nationWallet1.executeTX(address(goldContract), 
         abi.encodeWithSignature("approve(address,uint256)", address(nationWallet2), homieFee));
 
+        nationWallet1.executeTX(address(nationWallet2), 
         abi.encodeWithSignature("becomeAHomie(address)", address(armyWallet11)));
 
         // army11 now able to enter sacred land of its homie (capital is 60,30)
