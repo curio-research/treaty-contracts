@@ -419,19 +419,23 @@ library GameLib {
     }
 
     function getTemplateByInventoryType(string memory _inventoryType) internal returns (uint256) {
-        Set _set1 = new Set();
-        Set _set2 = new Set();
-        Set _set3 = new Set();
-        _set1.addArray(ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate")));
-        _set2.addArray(ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("TroopTemplate")));
-        _set3.addArray(ECSLib.getStringComponent("InventoryType").getEntitiesWithValue(_inventoryType));
-        uint256[] memory _inter1 = ECSLib.intersection(_set1, _set3);
-        uint256[] memory _inter2 = ECSLib.intersection(_set2, _set3);
-        _set1 = new Set();
-        _set2 = new Set();
-        _set1.addArray(_inter1);
-        _set2.addArray(_inter2);
-        uint256[] memory result = ECSLib.union(_set1, _set2);
+        QueryCondition[] memory query1 = new QueryCondition[](2);
+        query1[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("ResourceTemplate"));
+        query1[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["InventoryType"]), abi.encode(_inventoryType));
+        uint256[] memory res1 = ECSLib.query(query1);
+        require(res1.length <= 1, "CURIO: Resource template assertion failed");
+
+        QueryCondition[] memory query2 = new QueryCondition[](2);
+        query2[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("TroopTemplate"));
+        query2[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["InventoryType"]), abi.encode(_inventoryType));
+        uint256[] memory res2 = ECSLib.query(query2);
+        require(res2.length <= 1, "CURIO: Troop template assertion failed");
+
+        Set set1 = new Set();
+        Set set2 = new Set();
+        set1.addArray(res1);
+        set2.addArray(res2);
+        uint256[] memory result = ECSLib.union(set1, set2);
 
         require(result.length <= 1, "CURIO: Template assertion failed");
         return result.length == 1 ? result[0] : 0;
