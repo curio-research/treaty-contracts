@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity >=0.8.13;
 import {Component} from "contracts/Component.sol";
-import {QueryFragment, QueryType} from "contracts/libraries/Query.sol";
+import {QueryFragment, QueryType} from "contracts/libraries/Types.sol";
 import "lib/memmove/src/LinkedList.sol";
 
 struct Uint256Node {
@@ -9,53 +9,53 @@ struct Uint256Node {
     uint256 next;
 }
 
-function pointer(Uint256Node memory a) pure returns (bytes32 ptr) {
+function pointer(Uint256Node memory a) public pure returns (bytes32 ptr) {
     /// @solidity memory-safe-assembly
     assembly {
         ptr := a
     }
 }
 
-function fromPointer(bytes32 ptr) pure returns (Uint256Node memory a) {
+function fromPointer(bytes32 ptr) public pure returns (Uint256Node memory a) {
     /// @solidity memory-safe-assembly
     assembly {
         a := ptr
     }
 }
 
-function isPositiveFragment(QueryFragment memory fragment) pure returns (bool) {
-    return fragment.queryType == QueryType.Has || fragment.queryType == QueryType.HasValue;
+function isPositiveFragment(QueryFragment memory fragment) public pure returns (bool) {
+    return fragment.queryType == QueryType.Has || fragment.queryType == QueryType.IsExactly;
 }
 
-function isNegativeFragment(QueryFragment memory fragment) pure returns (bool) {
-    return fragment.queryType == QueryType.Not || fragment.queryType == QueryType.NotValue;
+function isNegativeFragment(QueryFragment memory fragment) public pure returns (bool) {
+    return fragment.queryType == QueryType.HasNot || fragment.queryType == QueryType.IsNot;
 }
 
-function isSettingFragment(QueryFragment memory fragment) pure returns (bool) {
+function isSettingFragment(QueryFragment memory fragment) public pure returns (bool) {
     return fragment.queryType == QueryType.ProxyRead || fragment.queryType == QueryType.ProxyExpand;
 }
 
-function isEntityFragment(QueryFragment memory fragment) pure returns (bool) {
-    return fragment.queryType == QueryType.Has || fragment.queryType == QueryType.HasValue || fragment.queryType == QueryType.Not || fragment.queryType == QueryType.NotValue;
+function isEntityFragment(QueryFragment memory fragment) public pure returns (bool) {
+    return fragment.queryType == QueryType.Has || fragment.queryType == QueryType.IsExactly || fragment.queryType == QueryType.HasNot || fragment.queryType == QueryType.IsNot;
 }
 
-function passesQueryFragment(uint256 entity, QueryFragment memory fragment) view returns (bool) {
+function passesQueryFragment(uint256 entity, QueryFragment memory fragment) public view returns (bool) {
     if (fragment.queryType == QueryType.Has) {
         // Entity must have given component
         return fragment.component.has(entity);
     }
 
-    if (fragment.queryType == QueryType.HasValue) {
+    if (fragment.queryType == QueryType.IsExactly) {
         // Entity must have the given component value
         return keccak256(fragment.value) == keccak256(fragment.component.getBytesValue(entity));
     }
 
-    if (fragment.queryType == QueryType.Not) {
+    if (fragment.queryType == QueryType.HasNot) {
         // Entity must not have the given value
         return !fragment.component.has(entity);
     }
 
-    if (fragment.queryType == QueryType.NotValue) {
+    if (fragment.queryType == QueryType.IsNot) {
         // Entity must not have the given component value
         return keccak256(fragment.value) != keccak256(fragment.component.getBytesValue(entity));
     }
@@ -68,7 +68,7 @@ function passesQueryFragmentProxy(
     uint256 entity,
     QueryFragment memory fragment,
     QueryFragment memory proxyRead
-) view returns (bool passes, bool proxyFound) {
+) public view returns (bool passes, bool proxyFound) {
     require(isEntityFragment(fragment), "NO_ENTITY_FRAGMENT");
     require(proxyRead.queryType == QueryType.ProxyRead, "NO_PROXY_READ_FRAGMENT");
 
@@ -92,11 +92,11 @@ function passesQueryFragmentProxy(
 }
 
 /**
- * For positive fragments (Has/HasValue) we need to find any passing entity up the proxy chain
- * so as soon as passes is true, we can early return. For negative fragments (Not/NotValue) every entity
+ * For positive fragments (Has/IsExactly) we need to find any passing entity up the proxy chain
+ * so as soon as passes is true, we can early return. For negative fragments (HasNot/IsNot) every entity
  * up the proxy chain must pass, so we can early return if we find one that doesn't pass.
  */
-function isBreakingPassState(bool passes, QueryFragment memory fragment) pure returns (bool) {
+function isBreakingPassState(bool passes, QueryFragment memory fragment) public pure returns (bool) {
     return (passes && isPositiveFragment(fragment)) || (!passes && isNegativeFragment(fragment));
 }
 
@@ -108,7 +108,7 @@ struct QueryVars {
     bool initialFragment;
 }
 
-library LibQuery {
+library QueryLib {
     using LinkedListLib for LinkedList;
 
     /**
@@ -133,7 +133,7 @@ library LibQuery {
                 if (fragment.queryType == QueryType.ProxyExpand) v.proxyExpand = fragment;
             } else if (v.initialFragment) {
                 // Handle entity query fragments
-                // First regular fragment must be Has or HasValue
+                // First regular fragment must be Has or IsExactly
                 require(isPositiveFragment(fragment), "NEGATIVE_INITIAL_FRAGMENT");
                 v.initialFragment = false;
 

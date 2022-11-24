@@ -38,6 +38,8 @@ export type { LibDiamond } from "./contracts/libraries/LibDiamond";
 export { LibDiamond__factory } from "./factories/contracts/libraries/LibDiamond__factory";
 export type { LibQuery } from "./contracts/libraries/LibQuery";
 export { LibQuery__factory } from "./factories/contracts/libraries/LibQuery__factory";
+export type { QueryLib } from "./contracts/libraries/QueryLib";
+export { QueryLib__factory } from "./factories/contracts/libraries/QueryLib__factory";
 export type { UintBoolMapping } from "./contracts/Mapping.sol/UintBoolMapping";
 export { UintBoolMapping__factory } from "./factories/contracts/Mapping.sol/UintBoolMapping__factory";
 export type { NATO } from "./contracts/NATO";

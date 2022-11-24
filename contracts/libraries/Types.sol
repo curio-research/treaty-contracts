@@ -1,6 +1,8 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
+import {Component} from "contracts/Component.sol";
+
 /// Data structures for game
 
 enum ValueType {
@@ -22,11 +24,17 @@ enum ValueType {
 
 enum QueryType {
     Has,
-    Not,
-    HasValue,
-    NotValue,
+    HasNot,
+    IsExactly,
+    IsNot,
     ProxyRead,
     ProxyExpand
+}
+
+struct QueryFragment {
+    QueryType queryType;
+    Component component;
+    bytes value;
 }
 
 enum GameMode {

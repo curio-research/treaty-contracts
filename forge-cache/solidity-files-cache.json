@@ -12,8 +12,8 @@
   },
   "files": {
     "contracts/Component.sol": {
-      "lastModificationDate": 1669317295590,
-      "contentHash": "b1f9ee197dea21787fa2e9d037527acd",
+      "lastModificationDate": 1669317442063,
+      "contentHash": "05e04f41ef59832edcaa19b4b49293aa",
       "sourceName": "contracts/Component.sol",
       "solcConfig": {
         "settings": {
@@ -349,8 +349,7 @@
         "contracts/TypedComponents.sol",
         "contracts/libraries/ECSLib.sol",
         "contracts/libraries/GameLib.sol",
-        "contracts/libraries/LibQuery.sol",
-        "contracts/libraries/Query.sol",
+        "contracts/libraries/QueryLib.sol",
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Templates.sol",
         "contracts/libraries/Types.sol",
@@ -489,8 +488,7 @@
         "contracts/TypedComponents.sol",
         "contracts/libraries/ECSLib.sol",
         "contracts/libraries/GameLib.sol",
-        "contracts/libraries/LibQuery.sol",
-        "contracts/libraries/Query.sol",
+        "contracts/libraries/QueryLib.sol",
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Templates.sol",
         "contracts/libraries/Types.sol",
@@ -543,8 +541,7 @@
         "contracts/TypedComponents.sol",
         "contracts/libraries/ECSLib.sol",
         "contracts/libraries/GameLib.sol",
-        "contracts/libraries/LibQuery.sol",
-        "contracts/libraries/Query.sol",
+        "contracts/libraries/QueryLib.sol",
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Templates.sol",
         "contracts/libraries/Types.sol",
@@ -640,8 +637,7 @@
         "contracts/TypedComponents.sol",
         "contracts/libraries/ECSLib.sol",
         "contracts/libraries/GameLib.sol",
-        "contracts/libraries/LibQuery.sol",
-        "contracts/libraries/Query.sol",
+        "contracts/libraries/QueryLib.sol",
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Templates.sol",
         "contracts/libraries/Types.sol",
@@ -813,8 +809,8 @@
       }
     },
     "contracts/libraries/ECSLib.sol": {
-      "lastModificationDate": 1669317295591,
-      "contentHash": "54d7615aa771166a75267fd1784d2e3b",
+      "lastModificationDate": 1669320815760,
+      "contentHash": "35cf80943fefc4d283c518777fc87039",
       "sourceName": "contracts/libraries/ECSLib.sol",
       "solcConfig": {
         "settings": {
@@ -848,8 +844,7 @@
         "contracts/Mapping.sol",
         "contracts/Set.sol",
         "contracts/TypedComponents.sol",
-        "contracts/libraries/LibQuery.sol",
-        "contracts/libraries/Query.sol",
+        "contracts/libraries/QueryLib.sol",
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Types.sol",
         "lib/memmove/src/Array.sol",
@@ -863,8 +858,8 @@
       }
     },
     "contracts/libraries/GameLib.sol": {
-      "lastModificationDate": 1669317295591,
-      "contentHash": "994172b40c4ae6dbd7974b051ad3a761",
+      "lastModificationDate": 1669317645107,
+      "contentHash": "191d12e61dc1219a58added8ac7590b0",
       "sourceName": "contracts/libraries/GameLib.sol",
       "solcConfig": {
         "settings": {
@@ -899,8 +894,7 @@
         "contracts/Set.sol",
         "contracts/TypedComponents.sol",
         "contracts/libraries/ECSLib.sol",
-        "contracts/libraries/LibQuery.sol",
-        "contracts/libraries/Query.sol",
+        "contracts/libraries/QueryLib.sol",
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Templates.sol",
         "contracts/libraries/Types.sol",
@@ -956,56 +950,10 @@
         }
       }
     },
-    "contracts/libraries/LibQuery.sol": {
-      "lastModificationDate": 1669317295591,
-      "contentHash": "ed180f9f38efa0e6097b520f2af88c95",
-      "sourceName": "contracts/libraries/LibQuery.sol",
-      "solcConfig": {
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "metadata": {
-            "bytecodeHash": "ipfs"
-          },
-          "outputSelection": {
-            "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
-            }
-          },
-          "evmVersion": "london",
-          "libraries": {}
-        }
-      },
-      "imports": [
-        "contracts/Component.sol",
-        "contracts/Set.sol",
-        "contracts/libraries/Query.sol",
-        "contracts/libraries/Types.sol",
-        "lib/memmove/src/Array.sol",
-        "lib/memmove/src/LinkedList.sol"
-      ],
-      "versionRequirement": ">=0.8.13",
-      "artifacts": {
-        "LibQuery": {
-          "0.8.13+commit.abaa5c0e.Darwin.appleclang": "LibQuery.sol/LibQuery.json"
-        }
-      }
-    },
-    "contracts/libraries/Query.sol": {
-      "lastModificationDate": 1669317295591,
-      "contentHash": "a9939a6644c45ebba382a7251cb35f0f",
-      "sourceName": "contracts/libraries/Query.sol",
+    "contracts/libraries/QueryLib.sol": {
+      "lastModificationDate": 1669320797128,
+      "contentHash": "958d553781143b94ef30326e1479afc6",
+      "sourceName": "contracts/libraries/QueryLib.sol",
       "solcConfig": {
         "settings": {
           "optimizer": {
@@ -1042,8 +990,8 @@
       ],
       "versionRequirement": ">=0.8.13",
       "artifacts": {
-        "Query": {
-          "0.8.13+commit.abaa5c0e.Darwin.appleclang": "Query.sol/Query.json"
+        "QueryLib": {
+          "0.8.13+commit.abaa5c0e.Darwin.appleclang": "QueryLib.sol/QueryLib.json"
         }
       }
     },
@@ -1079,6 +1027,8 @@
         }
       },
       "imports": [
+        "contracts/Component.sol",
+        "contracts/Set.sol",
         "contracts/libraries/Types.sol"
       ],
       "versionRequirement": "^0.8.0",
@@ -1128,8 +1078,7 @@
         "contracts/Set.sol",
         "contracts/TypedComponents.sol",
         "contracts/libraries/ECSLib.sol",
-        "contracts/libraries/LibQuery.sol",
-        "contracts/libraries/Query.sol",
+        "contracts/libraries/QueryLib.sol",
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Types.sol",
         "lib/memmove/src/Array.sol",
@@ -1144,8 +1093,8 @@
       }
     },
     "contracts/libraries/Types.sol": {
-      "lastModificationDate": 1669317295592,
-      "contentHash": "6dd1d445301a874a24e259d1deb68826",
+      "lastModificationDate": 1669320758018,
+      "contentHash": "5b0b8dc687d6d1e88bf4b4df32fed18b",
       "sourceName": "contracts/libraries/Types.sol",
       "solcConfig": {
         "settings": {
@@ -1174,7 +1123,10 @@
           "libraries": {}
         }
       },
-      "imports": [],
+      "imports": [
+        "contracts/Component.sol",
+        "contracts/Set.sol"
+      ],
       "versionRequirement": "^0.8.4",
       "artifacts": {
         "Types": {
@@ -1214,6 +1166,7 @@
         }
       },
       "imports": [
+        "contracts/Component.sol",
         "contracts/Set.sol",
         "contracts/interfaces/IDiamondCut.sol",
         "contracts/interfaces/IDiamondLoupe.sol",
@@ -1702,8 +1655,7 @@
         "contracts/libraries/ECSLib.sol",
         "contracts/libraries/GameLib.sol",
         "contracts/libraries/LibDiamond.sol",
-        "contracts/libraries/LibQuery.sol",
-        "contracts/libraries/Query.sol",
+        "contracts/libraries/QueryLib.sol",
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Templates.sol",
         "contracts/libraries/Types.sol",
@@ -1778,8 +1730,7 @@
         "contracts/libraries/ECSLib.sol",
         "contracts/libraries/GameLib.sol",
         "contracts/libraries/LibDiamond.sol",
-        "contracts/libraries/LibQuery.sol",
-        "contracts/libraries/Query.sol",
+        "contracts/libraries/QueryLib.sol",
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Templates.sol",
         "contracts/libraries/Types.sol",
@@ -1853,8 +1804,7 @@
         "contracts/libraries/ECSLib.sol",
         "contracts/libraries/GameLib.sol",
         "contracts/libraries/LibDiamond.sol",
-        "contracts/libraries/LibQuery.sol",
-        "contracts/libraries/Query.sol",
+        "contracts/libraries/QueryLib.sol",
         "contracts/libraries/Storage.sol",
         "contracts/libraries/Templates.sol",
         "contracts/libraries/Types.sol",

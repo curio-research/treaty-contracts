@@ -2,14 +2,13 @@
 pragma solidity ^0.8.13;
 
 import {LibStorage} from "contracts/libraries/Storage.sol";
-import {GameState, Position, QueryCondition, ValueType, QueryType} from "contracts/libraries/Types.sol";
+import {GameState, Position, QueryCondition, ValueType, QueryFragment, QueryType} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
 import {UintBoolMapping} from "contracts/Mapping.sol";
 import {Component} from "contracts/Component.sol";
 import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, UintComponent, UintArrayComponent} from "contracts/TypedComponents.sol";
 
-import {LibQuery} from "contracts/libraries/LibQuery.sol";
-import {QueryFragment} from "contracts/libraries/Query.sol";
+import {QueryLib} from "contracts/libraries/QueryLib.sol";
 
 /// @title library of ECS utility functions
 
@@ -292,30 +291,6 @@ library ECSLib {
     // HELPERS
     // ----------------------------------------------------------
 
-    // function queryAsSet(QueryCondition[] memory _queryCondition) public returns (Set) {
-    //     Set res = Set(gs().entities);
-
-    //     for (uint256 i = 0; i < _queryCondition.length; i++) {
-    //         QueryCondition memory _queryChunkCondition = _queryCondition[i];
-    //         Component component = _getComponent(_queryChunkCondition.componentName);
-
-    //         if (_queryChunkCondition.queryType == QueryType.Has) {
-    //             res = intersectionAsSet(res, component.getEntitiesAsSet());
-    //         } else if (_queryChunkCondition.queryType == QueryType.HasVal) {
-    //             // Exact value
-    //             res = intersectionAsSet(res, component.getEntitiesWithValueAsSet(_queryChunkCondition.value));
-    //         } else {
-    //             revert("CURIO: Query type not supported");
-    //         }
-    //     }
-
-    //     return res;
-    // }
-
-    // function query(QueryCondition[] memory _queryCondition) public returns (uint256[] memory) {
-    //     return queryAsSet(_queryCondition).getAll();
-    // }
-
     function query(QueryCondition[] memory _queryCondition) public returns (uint256[] memory) {
         QueryFragment[] memory queryFragments = new QueryFragment[](_queryCondition.length);
         for (uint256 i = 0; i < _queryCondition.length; i++) {
@@ -323,7 +298,7 @@ library ECSLib {
             queryFragments[i] = QueryFragment({queryType: condition.queryType, component: Component(gs().components[condition.componentName]), value: condition.value});
         }
 
-        return LibQuery.query(queryFragments);
+        return QueryLib.query(queryFragments);
     }
 
     function queryChunk(
