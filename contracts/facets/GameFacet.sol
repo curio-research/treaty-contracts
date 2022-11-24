@@ -827,14 +827,14 @@ contract GameFacet is UseStorage {
 
                 // todo: harvest all resources from the players and update resource harvest timestamp to when cooldown ends
                 uint256 cityCenterID = GameLib.getCityCenter(cityID);
-                uint256 cityCenterLevel = ECSLib.getUint("Level", cityCenterID);
+                // uint256 cityCenterLevel = ECSLib.getUint("Level", cityCenterID);
 
                 // 1. end troop production
                 uint256 productionID = GameLib.getBuildingProduction(cityCenterID);
                 if (productionID != NULL) endTroopProduction(cityCenterID, productionID);
 
-                // 2. end resource harvest production => change lastTimestamp
-                uint256 chaosDuration = GameLib.getConstant("City Center", "", "Cooldown", "Chaos", cityCenterLevel);
+                // // 2. end resource harvest production => change lastTimestamp
+                // uint256 chaosDuration = GameLib.getConstant("City Center", "", "Cooldown", "Chaos", cityCenterLevel);
 
                 // todo: same process for resources
 

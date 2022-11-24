@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import {LibStorage} from "contracts/libraries/Storage.sol";
-import {GameState, Position, QueryCondition, ValueType, QueryFragment, QueryType} from "contracts/libraries/Types.sol";
+import {GameState, Position, QueryCondition, QueryType, ValueType} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
 import {UintBoolMapping} from "contracts/Mapping.sol";
 import {Component} from "contracts/Component.sol";
@@ -291,22 +291,16 @@ library ECSLib {
     // HELPERS
     // ----------------------------------------------------------
 
-    function query(QueryCondition[] memory _queryCondition) public returns (uint256[] memory) {
-        QueryFragment[] memory queryFragments = new QueryFragment[](_queryCondition.length);
-        for (uint256 i = 0; i < _queryCondition.length; i++) {
-            QueryCondition memory condition = _queryCondition[i];
-            queryFragments[i] = QueryFragment({queryType: condition.queryType, component: Component(gs().components[condition.componentName]), value: condition.value});
-        }
-
-        return QueryLib.query(queryFragments);
+    function query(QueryCondition[] memory _queryConditions) public view returns (uint256[] memory) {
+        return QueryLib.query(_queryConditions);
     }
 
     function queryChunk(
         QueryType _queryType,
-        string memory _componentName,
+        Component _component,
         bytes memory _value
     ) public pure returns (QueryCondition memory) {
-        return QueryCondition({queryType: _queryType, componentName: _componentName, value: _value});
+        return QueryCondition({queryType: _queryType, component: _component, value: _value});
     }
 
     function intersectionAsSet(Set _set1, Set _set2) public returns (Set) {

@@ -26,12 +26,6 @@ enum QueryType {
     ProxyExpand
 }
 
-struct QueryFragment {
-    QueryType queryType;
-    Component component;
-    bytes value;
-}
-
 enum GameMode {
     REGULAR,
     BATTLE_ROYALE
@@ -39,8 +33,8 @@ enum GameMode {
 
 struct QueryCondition {
     QueryType queryType;
+    Component component;
     bytes value;
-    string componentName;
 }
 
 struct ComponentSpec {

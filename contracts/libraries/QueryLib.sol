@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity >=0.8.13;
 import {Component} from "contracts/Component.sol";
-import {QueryFragment, QueryType} from "contracts/libraries/Types.sol";
+import {QueryCondition, QueryType} from "contracts/libraries/Types.sol";
 import "lib/memmove/src/LinkedList.sol";
 
 struct Uint256Node {
@@ -9,67 +9,67 @@ struct Uint256Node {
     uint256 next;
 }
 
-function pointer(Uint256Node memory a) public pure returns (bytes32 ptr) {
+function pointer(Uint256Node memory a) pure returns (bytes32 ptr) {
     /// @solidity memory-safe-assembly
     assembly {
         ptr := a
     }
 }
 
-function fromPointer(bytes32 ptr) public pure returns (Uint256Node memory a) {
+function fromPointer(bytes32 ptr) pure returns (Uint256Node memory a) {
     /// @solidity memory-safe-assembly
     assembly {
         a := ptr
     }
 }
 
-function isPositiveFragment(QueryFragment memory fragment) public pure returns (bool) {
-    return fragment.queryType == QueryType.Has || fragment.queryType == QueryType.IsExactly;
+function isPositiveCondition(QueryCondition memory condition) pure returns (bool) {
+    return condition.queryType == QueryType.Has || condition.queryType == QueryType.IsExactly;
 }
 
-function isNegativeFragment(QueryFragment memory fragment) public pure returns (bool) {
-    return fragment.queryType == QueryType.HasNot || fragment.queryType == QueryType.IsNot;
+function isNegativeCondition(QueryCondition memory condition) pure returns (bool) {
+    return condition.queryType == QueryType.HasNot || condition.queryType == QueryType.IsNot;
 }
 
-function isSettingFragment(QueryFragment memory fragment) public pure returns (bool) {
-    return fragment.queryType == QueryType.ProxyRead || fragment.queryType == QueryType.ProxyExpand;
+function isSettingCondition(QueryCondition memory condition) pure returns (bool) {
+    return condition.queryType == QueryType.ProxyRead || condition.queryType == QueryType.ProxyExpand;
 }
 
-function isEntityFragment(QueryFragment memory fragment) public pure returns (bool) {
-    return fragment.queryType == QueryType.Has || fragment.queryType == QueryType.IsExactly || fragment.queryType == QueryType.HasNot || fragment.queryType == QueryType.IsNot;
+function isEntityCondition(QueryCondition memory condition) pure returns (bool) {
+    return condition.queryType == QueryType.Has || condition.queryType == QueryType.IsExactly || condition.queryType == QueryType.HasNot || condition.queryType == QueryType.IsNot;
 }
 
-function passesQueryFragment(uint256 entity, QueryFragment memory fragment) public view returns (bool) {
-    if (fragment.queryType == QueryType.Has) {
+function passesQueryCondition(uint256 entity, QueryCondition memory condition) view returns (bool) {
+    if (condition.queryType == QueryType.Has) {
         // Entity must have given component
-        return fragment.component.has(entity);
+        return condition.component.has(entity);
     }
 
-    if (fragment.queryType == QueryType.IsExactly) {
+    if (condition.queryType == QueryType.IsExactly) {
         // Entity must have the given component value
-        return keccak256(fragment.value) == keccak256(fragment.component.getBytesValue(entity));
+        return keccak256(condition.value) == keccak256(condition.component.getBytesValue(entity));
     }
 
-    if (fragment.queryType == QueryType.HasNot) {
+    if (condition.queryType == QueryType.HasNot) {
         // Entity must not have the given value
-        return !fragment.component.has(entity);
+        return !condition.component.has(entity);
     }
 
-    if (fragment.queryType == QueryType.IsNot) {
+    if (condition.queryType == QueryType.IsNot) {
         // Entity must not have the given component value
-        return keccak256(fragment.value) != keccak256(fragment.component.getBytesValue(entity));
+        return keccak256(condition.value) != keccak256(condition.component.getBytesValue(entity));
     }
 
-    require(isEntityFragment(fragment), "NO_ENTITY_FRAGMENT");
+    require(isEntityCondition(condition), "NO_ENTITY_FRAGMENT");
     return false;
 }
 
-function passesQueryFragmentProxy(
+function passesQueryConditionProxy(
     uint256 entity,
-    QueryFragment memory fragment,
-    QueryFragment memory proxyRead
-) public view returns (bool passes, bool proxyFound) {
-    require(isEntityFragment(fragment), "NO_ENTITY_FRAGMENT");
+    QueryCondition memory condition,
+    QueryCondition memory proxyRead
+) view returns (bool passes, bool proxyFound) {
+    require(isEntityCondition(condition), "NO_ENTITY_FRAGMENT");
     require(proxyRead.queryType == QueryType.ProxyRead, "NO_PROXY_READ_FRAGMENT");
 
     uint256 proxyEntity = entity;
@@ -82,9 +82,9 @@ function passesQueryFragmentProxy(
 
         // Move up the proxy chain
         proxyEntity = abi.decode(proxyRead.component.getBytesValue(proxyEntity), (uint256));
-        passes = passesQueryFragment(proxyEntity, fragment);
+        passes = passesQueryCondition(proxyEntity, condition);
 
-        if (isBreakingPassState(passes, fragment)) {
+        if (isBreakingPassState(passes, condition)) {
             return (passes, true);
         }
     }
@@ -92,20 +92,20 @@ function passesQueryFragmentProxy(
 }
 
 /**
- * For positive fragments (Has/IsExactly) we need to find any passing entity up the proxy chain
- * so as soon as passes is true, we can early return. For negative fragments (HasNot/IsNot) every entity
+ * For positive conditions (Has/IsExactly) we need to find any passing entity up the proxy chain
+ * so as soon as passes is true, we can early return. For negative conditions (HasNot/IsNot) every entity
  * up the proxy chain must pass, so we can early return if we find one that doesn't pass.
  */
-function isBreakingPassState(bool passes, QueryFragment memory fragment) public pure returns (bool) {
-    return (passes && isPositiveFragment(fragment)) || (!passes && isNegativeFragment(fragment));
+function isBreakingPassState(bool passes, QueryCondition memory condition) pure returns (bool) {
+    return (passes && isPositiveCondition(condition)) || (!passes && isNegativeCondition(condition));
 }
 
 struct QueryVars {
     LinkedList entities;
     uint256 numEntities;
-    QueryFragment proxyRead;
-    QueryFragment proxyExpand;
-    bool initialFragment;
+    QueryCondition proxyRead;
+    QueryCondition proxyExpand;
+    bool initialCondition;
 }
 
 library QueryLib {
@@ -113,32 +113,32 @@ library QueryLib {
 
     /**
      * Execute the given query and return a list of entity ids
-     * @param fragments List of query fragments to execute
+     * @param conditions List of query conditions to execute
      * @return entities List of entities matching the query
      */
-    function query(QueryFragment[] memory fragments) internal view returns (uint256[] memory) {
+    function query(QueryCondition[] memory conditions) internal view returns (uint256[] memory) {
         QueryVars memory v;
         v.entities = LinkedListLib.newLinkedList(32);
         v.numEntities = 0;
         v.proxyRead;
         v.proxyExpand;
-        v.initialFragment = true;
+        v.initialCondition = true;
 
-        // Process fragments
-        for (uint256 i; i < fragments.length; i++) {
-            QueryFragment memory fragment = fragments[i];
-            if (isSettingFragment(fragment)) {
-                // Store setting fragments for subsequent query fragments
-                if (fragment.queryType == QueryType.ProxyRead) v.proxyRead = fragment;
-                if (fragment.queryType == QueryType.ProxyExpand) v.proxyExpand = fragment;
-            } else if (v.initialFragment) {
-                // Handle entity query fragments
-                // First regular fragment must be Has or IsExactly
-                require(isPositiveFragment(fragment), "NEGATIVE_INITIAL_FRAGMENT");
-                v.initialFragment = false;
+        // Process conditions
+        for (uint256 i; i < conditions.length; i++) {
+            QueryCondition memory condition = conditions[i];
+            if (isSettingCondition(condition)) {
+                // Store setting conditions for subsequent query conditions
+                if (condition.queryType == QueryType.ProxyRead) v.proxyRead = condition;
+                if (condition.queryType == QueryType.ProxyExpand) v.proxyExpand = condition;
+            } else if (v.initialCondition) {
+                // Handle entity query conditions
+                // First regular condition must be Has or IsExactly
+                require(isPositiveCondition(condition), "NEGATIVE_INITIAL_FRAGMENT");
+                v.initialCondition = false;
 
                 // Create the first interim result
-                uint256[] memory entityArray = fragment.queryType == QueryType.Has ? fragment.component.getEntities() : fragment.component.getEntitiesWithValue(fragment.value);
+                uint256[] memory entityArray = condition.queryType == QueryType.Has ? condition.component.getEntities() : condition.component.getEntitiesWithValue(condition.value);
 
                 v.entities = arrayToList(entityArray);
                 v.numEntities = entityArray.length;
@@ -155,7 +155,7 @@ library QueryLib {
                     }
                 }
             } else {
-                // There already is an interim result, apply the current fragment
+                // There already is an interim result, apply the current condition
                 LinkedList nextEntities = LinkedListLib.newLinkedList(32);
                 uint256 nextNumEntities = 0;
                 bool success = true;
@@ -166,20 +166,20 @@ library QueryLib {
                     Uint256Node memory node = fromPointer(element);
                     uint256 entity = node.value;
 
-                    // Branch 1: Simple / check if the current entity passes the query fragment
-                    bool passes = passesQueryFragment(entity, fragment);
+                    // Branch 1: Simple / check if the current entity passes the query condition
+                    bool passes = passesQueryCondition(entity, condition);
 
                     // Branch 2: Proxy upwards / check if proxy entity passes the query
-                    passes = _processProxyRead(v, fragment, entity, passes);
+                    passes = _processProxyRead(v, condition, entity, passes);
 
-                    // If the entity passes the query fragment, add it to the new interim result
+                    // If the entity passes the query condition, add it to the new interim result
                     if (passes) {
                         nextEntities = nextEntities.push_and_link(pointer(Uint256Node(entity, 0)));
                         nextNumEntities++;
                     }
 
-                    // Branch 3: Proxy downwards / run the query fragments on child entities if proxy expand is active
-                    (nextEntities, nextNumEntities) = _processProxyExpand(v, fragment, entity, nextEntities, nextNumEntities);
+                    // Branch 3: Proxy downwards / run the query conditions on child entities if proxy expand is active
+                    (nextEntities, nextNumEntities) = _processProxyExpand(v, condition, entity, nextEntities, nextNumEntities);
 
                     // Move to the next entity
                     (success, element) = v.entities.next(element);
@@ -197,21 +197,21 @@ library QueryLib {
     // Branch 2: Proxy upwards / check if proxy entity passes the query
     function _processProxyRead(
         QueryVars memory v,
-        QueryFragment memory fragment,
+        QueryCondition memory condition,
         uint256 entity,
         bool passes
     ) internal view returns (bool) {
-        if (address(v.proxyRead.component) != address(0) && abi.decode(v.proxyRead.value, (uint256)) > 0 && !isBreakingPassState(passes, fragment)) {
-            (bool newPasses, bool proxyFound) = passesQueryFragmentProxy(entity, fragment, v.proxyRead);
+        if (address(v.proxyRead.component) != address(0) && abi.decode(v.proxyRead.value, (uint256)) > 0 && !isBreakingPassState(passes, condition)) {
+            (bool newPasses, bool proxyFound) = passesQueryConditionProxy(entity, condition, v.proxyRead);
             if (proxyFound) return newPasses;
         }
         return passes;
     }
 
-    // Branch 3: Proxy downwards / run the query fragments on child entities if proxy expand is active
+    // Branch 3: Proxy downwards / run the query conditions on child entities if proxy expand is active
     function _processProxyExpand(
         QueryVars memory v,
-        QueryFragment memory fragment,
+        QueryCondition memory condition,
         uint256 entity,
         LinkedList nextEntities,
         uint256 nextNumEntities
@@ -223,11 +223,11 @@ library QueryLib {
                 uint256 childEntity = childEntities[ctr];
 
                 // Add the child entity if it passes the direct check
-                bool childPasses = passesQueryFragment(childEntity, fragment);
+                bool childPasses = passesQueryCondition(childEntity, condition);
 
                 // or if a proxy read is active and it passes the proxy read check
                 if (!childPasses && address(v.proxyRead.component) != address(0) && abi.decode(v.proxyRead.value, (uint256)) > 0) {
-                    (bool proxyPasses, bool proxyFound) = passesQueryFragmentProxy(childEntity, fragment, v.proxyRead);
+                    (bool proxyPasses, bool proxyFound) = passesQueryConditionProxy(childEntity, condition, v.proxyRead);
                     if (proxyFound) childPasses = proxyPasses;
                 }
 
