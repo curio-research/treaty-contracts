@@ -1,4 +1,4 @@
-import { chainInfo, componentNameToId, Component__factory, Curio, decodeBigNumberishArr, encodePosition, encodeString, Position, Tag } from 'curio-vault';
+import { chainInfo, componentNameToId, Component__factory, decodeBigNumberishArr, encodePosition, encodeString, Position, Tag } from 'curio-vault';
 import { TILE_WIDTH } from './constants';
 import chalk from 'chalk';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
@@ -6,6 +6,7 @@ import { LoadTestConfig, LoadTestSetupInput, LoadTestSetupOutput } from './types
 import { Signer, Wallet } from 'ethers';
 import { confirmTx } from './deployHelper';
 import * as os from 'os';
+import { Curio } from '../../typechain-types/hardhat-diamond-abi/Curio';
 
 export const DRIP_AMOUNT_BY_NETWORK: Record<string, number> = {
   altlayer: 100,
@@ -157,6 +158,16 @@ export const loadTestMoveArmy = async (hre: HardhatRuntimeEnvironment, diamond: 
       break;
     }
   }
+};
+
+export const testComputeVsStorage = async (diamond: Curio, arbitraryArmyId: number) => {
+  let startTime = performance.now();
+  for (let i = 0; i < 20; i++) await diamond.onlyQuery({ x: 0, y: 0 });
+  console.log(chalk.bgGreen.blue(`20 Queries took ${performance.now() - startTime} ms`));
+
+  startTime = performance.now();
+  for (let i = 0; i < 20; i++) await diamond.onlySet(arbitraryArmyId, i);
+  console.log(chalk.bgGreen.blue(`20 Sets took ${performance.now() - startTime} ms`));
 };
 
 // ----------------------------------------------------------

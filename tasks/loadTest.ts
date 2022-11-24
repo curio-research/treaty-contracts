@@ -3,7 +3,7 @@ import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { task } from 'hardhat/config';
 import * as fsp from 'fs/promises';
 import * as fs from 'fs';
-import { createSigners, loadTestMoveArmy, prepareLoadTest } from './util/loadHelper';
+import { createSigners, loadTestMoveArmy, prepareLoadTest, testComputeVsStorage } from './util/loadHelper';
 import { Wallet } from 'ethers';
 import { initializeGame } from './util/deployHelper';
 import { generateWorldConstants, TEST_MAP_INPUT } from './util/constants';
@@ -69,6 +69,9 @@ task('load-test', 'perform load testing')
         periodPerTxBatchInMs: Math.trunc(playerCount * 1.5 * 1000),
         totalTimeoutInMs: Math.trunc(300 * 60 * 1000),
       });
+
+      // Test compute vs. storage durations
+      await testComputeVsStorage(diamond, setupOutput.armyIds[0]);
     } catch (err: any) {
       console.log(err.message);
     }
