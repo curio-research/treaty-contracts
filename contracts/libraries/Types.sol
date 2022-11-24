@@ -17,11 +17,6 @@ enum ValueType {
     OTHER
 }
 
-// enum QueryType {
-//     Has,
-//     HasVal
-// }
-
 enum QueryType {
     Has,
     HasNot,
