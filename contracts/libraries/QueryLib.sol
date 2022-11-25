@@ -60,7 +60,7 @@ function passesQueryCondition(uint256 entity, QueryCondition memory condition) v
         return keccak256(condition.value) != keccak256(condition.component.getBytesValue(entity));
     }
 
-    require(isEntityCondition(condition), "NO_ENTITY_FRAGMENT");
+    require(isEntityCondition(condition), "NO_ENTITY_CONDITION");
     return false;
 }
 
@@ -69,8 +69,8 @@ function passesQueryConditionProxy(
     QueryCondition memory condition,
     QueryCondition memory proxyRead
 ) view returns (bool passes, bool proxyFound) {
-    require(isEntityCondition(condition), "NO_ENTITY_FRAGMENT");
-    require(proxyRead.queryType == QueryType.ProxyRead, "NO_PROXY_READ_FRAGMENT");
+    require(isEntityCondition(condition), "NO_ENTITY_CONDITION");
+    require(proxyRead.queryType == QueryType.ProxyRead, "NO_PROXY_READ_CONDITION");
 
     uint256 proxyEntity = entity;
 
@@ -134,7 +134,7 @@ library QueryLib {
             } else if (v.initialCondition) {
                 // Handle entity query conditions
                 // First regular condition must be Has or IsExactly
-                require(isPositiveCondition(condition), "NEGATIVE_INITIAL_FRAGMENT");
+                require(isPositiveCondition(condition), "NEGATIVE_INITIAL_CONDITION");
                 v.initialCondition = false;
 
                 // Create the first interim result

@@ -183,14 +183,3 @@ const avg = (arr: number[]): number => {
   arr.forEach((e) => (sum += e));
   return sum / arr.length;
 };
-
-async function processArray(items: Array<any>, process: any) {
-  var todo = items.concat();
-
-  setTimeout(function () {
-    process(todo.shift());
-    if (todo.length > 0) {
-      setTimeout(arguments.callee, 25);
-    }
-  }, 25);
-}

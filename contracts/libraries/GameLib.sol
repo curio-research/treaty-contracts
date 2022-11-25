@@ -297,42 +297,42 @@ library GameLib {
     // LOGIC GETTERS
     // ----------------------------------------------------------
 
-    function getConstituents(uint256 _keeperID) public returns (uint256[] memory) {
+    function getConstituents(uint256 _keeperID) public view returns (uint256[] memory) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Keeper"]), abi.encode(_keeperID));
         query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Constituent"));
         return ECSLib.query(query);
     }
 
-    function getPlayerSignatures(uint256 _playerID) internal returns (uint256[] memory) {
+    function getPlayerSignatures(uint256 _playerID) internal view returns (uint256[] memory) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Owner"]), abi.encode(_playerID));
         query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Signature"));
         return ECSLib.query(query);
     }
 
-    function getCityTiles(uint256 _cityID) internal returns (uint256[] memory) {
+    function getCityTiles(uint256 _cityID) internal view returns (uint256[] memory) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["City"]), abi.encode(_cityID));
         query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Tile"));
         return ECSLib.query(query);
     }
 
-    function getPlayerArmies(uint256 _playerID) internal returns (uint256[] memory) {
+    function getPlayerArmies(uint256 _playerID) internal view returns (uint256[] memory) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Owner"]), abi.encode(_playerID));
         query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Army"));
         return ECSLib.query(query);
     }
 
-    function getMovableEntitiesAtTile(Position memory _startPosition) internal returns (uint256[] memory) {
+    function getMovableEntitiesAtTile(Position memory _startPosition) internal view returns (uint256[] memory) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.Has, Component(gs().components["Speed"]), new bytes(0));
         query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["StartPosition"]), abi.encode(_startPosition));
         return ECSLib.query(query);
     }
 
-    function getArmyTroopCount(uint256 _armyID) internal returns (uint256) {
+    function getArmyTroopCount(uint256 _armyID) internal view returns (uint256) {
         uint256 count = 0;
         uint256[] memory constituentIDs = getConstituents(_armyID);
         for (uint256 i = 0; i < constituentIDs.length; i++) {
@@ -355,7 +355,7 @@ library GameLib {
         return ECSLib.getUint("Amount", res[0]);
     }
 
-    function getBuildingProduction(uint256 _buildingID) internal returns (uint256) {
+    function getBuildingProduction(uint256 _buildingID) internal view returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Keeper"]), abi.encode(_buildingID));
         query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("TroopProduction"));
@@ -364,7 +364,7 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    function getArmyGather(uint256 _armyID) internal returns (uint256) {
+    function getArmyGather(uint256 _armyID) internal view returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Army"]), abi.encode(_armyID));
         query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("ResourceGather"));
@@ -373,7 +373,7 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    function getResourceAtTile(Position memory _startPosition) internal returns (uint256) {
+    function getResourceAtTile(Position memory _startPosition) internal view returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode(string("Resource")));
         query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["StartPosition"]), abi.encode(_startPosition));
@@ -382,7 +382,7 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    function getMovableEntityAt(Position memory _position) internal returns (uint256) {
+    function getMovableEntityAt(Position memory _position) internal view returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.Has, Component(gs().components["Speed"]), new bytes(0));
         query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Position"]), abi.encode(_position));
@@ -391,7 +391,7 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    function getArmyAt(Position memory _position) internal returns (uint256) {
+    function getArmyAt(Position memory _position) internal view returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode(string("Army")));
         query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Position"]), abi.encode(_position));
@@ -400,7 +400,7 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    function getCityAtTile(Position memory _startPosition) internal returns (uint256) {
+    function getCityAtTile(Position memory _startPosition) internal view returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("City"));
         query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["StartPosition"]), abi.encode(_startPosition));
@@ -409,7 +409,7 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    function getConstituentAtTile(uint256 _tileID) internal returns (uint256) {
+    function getConstituentAtTile(uint256 _tileID) internal view returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Constituent"));
         query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Keeper"]), abi.encode(_tileID));
@@ -418,7 +418,7 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    function getTemplateByInventoryType(string memory _inventoryType) internal returns (uint256) {
+    function getTemplateByInventoryType(string memory _inventoryType) internal view returns (uint256) {
         QueryCondition[] memory query1 = new QueryCondition[](2);
         query1[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("ResourceTemplate"));
         query1[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["InventoryType"]), abi.encode(_inventoryType));
@@ -431,18 +431,14 @@ library GameLib {
         uint256[] memory res2 = ECSLib.query(query2);
         require(res2.length <= 1, "CURIO: Troop template assertion failed");
 
-        Set set1 = new Set();
-        Set set2 = new Set();
-        set1.addArray(res1);
-        set2.addArray(res2);
-        uint256[] memory result = ECSLib.union(set1, set2);
+        uint256[] memory result = ECSLib.concatenate(res1, res2);
 
         require(result.length <= 1, "CURIO: Template assertion failed");
         return result.length == 1 ? result[0] : 0;
     }
 
     // FIXME: this function kinda crazy
-    function getAllResourceIDsByCity(uint256 _cityID) internal returns (uint256[] memory) {
+    function getAllResourceIDsByCity(uint256 _cityID) internal view returns (uint256[] memory) {
         // get all tiles
         QueryCondition[] memory query1 = new QueryCondition[](2);
         query1[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["City"]), abi.encode(_cityID));
@@ -467,7 +463,7 @@ library GameLib {
         return resourceIDs;
     }
 
-    function getInventory(uint256 _cityID, uint256 _templateID) internal returns (uint256) {
+    function getInventory(uint256 _cityID, uint256 _templateID) internal view returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](3);
         query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Keeper"]), abi.encode(_cityID));
         query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Template"]), abi.encode(_templateID));
@@ -478,7 +474,7 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    function getSettlerAt(Position memory _position) internal returns (uint256) {
+    function getSettlerAt(Position memory _position) internal view returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Settler"));
         query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Position"]), abi.encode(_position));
@@ -491,13 +487,13 @@ library GameLib {
         return gs().playerEntityMap[_address];
     }
 
-    function getCityGold(uint256 _cityID) internal returns (uint256) {
+    function getCityGold(uint256 _cityID) internal view returns (uint256) {
         uint256 _goldInventoryID = getInventory(_cityID, gs().templates["Gold"]);
         uint256 _balance = _goldInventoryID != 0 ? ECSLib.getUint("Amount", _goldInventoryID) : 0;
         return _balance;
     }
 
-    function getCityFood(uint256 _cityID) internal returns (uint256) {
+    function getCityFood(uint256 _cityID) internal view returns (uint256) {
         uint256 _foodInventoryID = getInventory(_cityID, gs().templates["Food"]);
         uint256 _balance = _foodInventoryID != 0 ? ECSLib.getUint("Amount", _foodInventoryID) : 0;
         return _balance;
@@ -513,7 +509,7 @@ library GameLib {
         ECSLib.setUint("Amount", _goldInventoryID, _foodAmount);
     }
 
-    function getCityCenter(uint256 _cityID) internal returns (uint256) {
+    function getCityCenter(uint256 _cityID) internal view returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["City"]), abi.encode(_cityID));
         query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["BuildingType"]), abi.encode("City Center"));
@@ -522,7 +518,7 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    function getTileAt(Position memory _startPosition) internal returns (uint256) {
+    function getTileAt(Position memory _startPosition) internal view returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["StartPosition"]), abi.encode(_startPosition));
         query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Tile"));
@@ -565,7 +561,7 @@ library GameLib {
         return result;
     }
 
-    function isAdjacentToOwnTile(uint256 _playerID, Position memory _tilePosition) internal returns (bool) {
+    function isAdjacentToOwnTile(uint256 _playerID, Position memory _tilePosition) internal view returns (bool) {
         Position[] memory neighborPositions = getTileNeighbors(_tilePosition);
         bool result = false;
         for (uint256 i = 0; i < neighborPositions.length; i++) {
@@ -587,7 +583,7 @@ library GameLib {
         return ((_level + 1) * (_level + 2)) / 2 + 6;
     }
 
-    function getPlayerCity(uint256 _playerID) internal returns (uint256) {
+    function getPlayerCity(uint256 _playerID) internal view returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Owner"]), abi.encode(_playerID));
         query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("City"));
@@ -637,7 +633,7 @@ library GameLib {
         require(inBound(_position), "CURIO: Position out of bound");
     }
 
-    function passableTerrainCheck(Position memory _tilePosition) internal {
+    function passableTerrainCheck(Position memory _tilePosition) internal view {
         require(ECSLib.getUint("Terrain", getTileAt(_tilePosition)) != 5, "CURIO: Tile not passable");
     }
 

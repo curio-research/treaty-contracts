@@ -24,7 +24,7 @@ contract AdminFacet is UseStorage {
         ECSLib.setUint("Health", _entity, _value);
     }
 
-    function onlyQuery(Position memory _startPosition) external returns (uint256[] memory) {
+    function onlyQuery(Position memory _startPosition) external view returns (uint256[] memory) {
         return GameLib.getMovableEntitiesAtTile(_startPosition);
     }
 
