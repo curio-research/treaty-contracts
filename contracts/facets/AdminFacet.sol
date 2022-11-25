@@ -1,5 +1,5 @@
 //SPDX-License-Identifier: MIT
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.13;
 
 import {UseStorage} from "contracts/libraries/Storage.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
@@ -24,7 +24,7 @@ contract AdminFacet is UseStorage {
         ECSLib.setUint("Health", _entity, _value);
     }
 
-    function onlyQuery(Position memory _startPosition) external returns (uint256[] memory) {
+    function onlyQuery(Position memory _startPosition) external view returns (uint256[] memory) {
         return GameLib.getMovableEntitiesAtTile(_startPosition);
     }
 

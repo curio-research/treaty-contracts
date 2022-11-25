@@ -44,7 +44,6 @@ task('deploy', 'deploy contracts')
       // Set up deployer and some local variables
       let [player1] = await hre.ethers.getSigners();
       console.log('✦ player1 address is:', player1.address);
-      console.log(chalk.bgBlue.green(`>>> Provider is`, (await player1.provider!.getNetwork()).name, player1.provider!.getBlockNumber));
 
       // Generate world constants and tile map
       const worldConstants = generateWorldConstants(player1.address);

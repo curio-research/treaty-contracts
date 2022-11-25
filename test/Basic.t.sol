@@ -22,11 +22,11 @@ contract TreatyTest is Test, DiamondDeployTest {
         for (uint256 i = 0; i < 200; i++) admin.onlySet(player2SettlerId, i);
     }
 
-    function testLoadOneQuery() public {
+    function testLoadOneQuery() public view {
         admin.onlyQuery(player2Pos);
     }
 
-    function testLoadTwentyQueries() public {
+    function testLoadTwentyQueries() public view {
         for (uint256 i = 0; i < 20; i++) admin.onlyQuery(player2Pos);
     }
 

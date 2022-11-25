@@ -5,11 +5,13 @@ import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { LoadTestConfig, LoadTestSetupInput, LoadTestSetupOutput } from './types';
 import { Signer, Wallet } from 'ethers';
 import { confirmTx } from './deployHelper';
+import * as os from 'os';
 import { Curio } from '../../typechain-types/hardhat-diamond-abi/Curio';
 
 export const DRIP_AMOUNT_BY_NETWORK: Record<string, number> = {
   altlayer: 100,
   constellation: 100,
+  constellationFast: 100,
   localhost: 1000,
   optimismKovan: 0.01,
   tailscale: 100,
@@ -62,19 +64,34 @@ export const prepareLoadTest = async (input: LoadTestSetupInput, players: Wallet
   const tagComponentAddr = await diamond.getComponentById(componentNameToId[Tag]);
   const tagComponent = Component__factory.connect(tagComponentAddr, admin);
 
-  // Initialize each player with a city (sync)
+  const numberOfCores = os.cpus().length;
+  console.log(chalk.bgRed.yellow(`>>> Number of CPU cores: ${numberOfCores}`));
+
+  // Initialize each player with a city (async)
   let startTime = performance.now();
   const playerIds: number[] = [];
-  for (let i = 0; i < players.length; i++) {
-    console.log(chalk.bgRed.yellow.dim(`>>> Initializing player ${i} with city`));
-    await (await diamond.connect(players[i]).initializePlayer({ x: i * TILE_WIDTH, y: 0 }, `Player ${i}`, { gasLimit })).wait();
-    playerIds.push((await diamond.getPlayerId(players[i].address)).toNumber());
+  let playersInitialized = 0;
+  const intervalInMs = 800; // FIXME: softcode
+  players.forEach(async (p, i) => {
+    setTimeout(async () => {
+      console.log(chalk.bgRed.yellow.dim(`>>> Initializing player ${i} with city`));
+      await (await diamond.connect(p).initializePlayer({ x: i * TILE_WIDTH, y: 0 }, `Player ${i}`, { gasLimit })).wait();
+      playerIds.push((await diamond.getPlayerId(p.address)).toNumber());
 
-    const settlerId = decodeBigNumberishArr(await positionComponent.getEntitiesWithValue(encodePosition({ x: i * TILE_WIDTH, y: 0 }), { gasLimit }))[0];
-    if (!settlerId) throw new Error('Settler not initialized yet');
-    await confirmTx(await diamond.connect(players[i]).foundCity(settlerId, [{ x: i * TILE_WIDTH, y: 0 }], `City ${i}`, { gasLimit }), hre);
+      const settlerId = decodeBigNumberishArr(await positionComponent.getEntitiesWithValue(encodePosition({ x: i * TILE_WIDTH, y: 0 }), { gasLimit }))[0];
+      if (!settlerId) throw new Error('Settler not initialized yet');
+      await confirmTx(await diamond.connect(p).foundCity(settlerId, [{ x: i * TILE_WIDTH, y: 0 }], `City ${i}`, { gasLimit }), hre);
+      playersInitialized++;
+    }, i * intervalInMs);
+  });
+
+  while (true) {
+    await sleep(100);
+    if (playersInitialized === players.length) {
+      console.log(chalk.bgRed.yellow(`>>> Players initialized with city after ${performance.now() - startTime} ms`));
+      break;
+    }
   }
-  console.log(chalk.bgRed.yellow(`>>> Players initialized with city after ${performance.now() - startTime} ms`));
 
   // Create an army for each player and log IDs (sync)
   startTime = performance.now();
@@ -104,25 +121,30 @@ export const loadTestMoveArmy = async (hre: HardhatRuntimeEnvironment, diamond: 
   let gasConsumptionsByTx: number[] = [];
   let timeByBatchInMs: number[] = [];
   for (let k = 0; k < txsPerPlayer; k++) {
-    // Wait between batches of transactions
     console.log(chalk.bgRed.yellow(`>>> [batch ${k}] Starting to move armies...`));
-    await sleep(periodPerTxBatchInMs);
 
     // Move all armies south by 1 coordinate (async)
     lastTime = performance.now();
     let armiesMoved = 0;
+    const intervalInMs = 180; // FIXME: softcode
     players.forEach(async (p, i) => {
+      // setTimeout(async () => {
       console.log(chalk.bgRed.yellow.dim(`>>> [batch ${k}] Moving army for player ${i}...`));
-      const receipt = (await confirmTx(await diamond.connect(p).move(armyIds[i], { x: i * TILE_WIDTH, y: nextMoveUp ? 0 : 1 }, { gasLimit }), hre))!;
+      const receipt = await (await diamond.connect(p).move(armyIds[i], { x: i * TILE_WIDTH, y: nextMoveUp ? 0 : 1 }, { gasLimit })).wait();
       gasConsumptionsByTx.push(receipt.gasUsed.toNumber());
 
       armiesMoved++;
+    });
+
+    while (true) {
+      await sleep(50);
       if (armiesMoved === players.length) {
         nextMoveUp = !nextMoveUp;
         timeByBatchInMs.push(performance.now() - lastTime);
         console.log(chalk.bgRed.yellow(`>>> [batch ${k}] All army movements finished after ${performance.now() - lastTime} ms`));
+        break;
       }
-    });
+    }
   }
 
   // Check for completion or timeout
