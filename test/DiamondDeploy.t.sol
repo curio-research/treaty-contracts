@@ -189,11 +189,6 @@ contract DiamondDeployTest is Test {
         _initializeMap();
         console.log(">>> Map initialized and encoded");
 
-        // Initialize treaties
-        nato = new NATO();
-        console.log(">>> Treaties initialized");
-
-
         vm.stopPrank();
 
         address[] memory initializedOwner = new address[](1);

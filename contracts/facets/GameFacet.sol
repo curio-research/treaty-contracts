@@ -746,7 +746,7 @@ contract GameFacet is UseStorage {
         // for (uint256 i = 0; i < 3; i++) { // FIXME: hardcoded to accelerate battle
         bool victory = GameLib.attack(_armyID, _tileID, false, false, false);
         if (victory) {
-            uint256 winnerCityID = GameLib.getPlayerCity(GameLib.getNationIDByAddress(msg.sender));
+            // uint256 winnerCityID = GameLib.getPlayerCity(GameLib.getNationIDByAddress(msg.sender));
             if (capitalID != NULL) {
                 // Victorious against city, add back some guards for the loser
                 (bool success, ) = guardTokenAddress.call(abi.encodeWithSignature("dripToken(address,uint256)", tileAddress, GameLib.getConstant("Tile", "Guard", "Amount", "", ECSLib.getUint("Level", capitalID))));
@@ -754,7 +754,7 @@ contract GameFacet is UseStorage {
 
                 // todo: harvest all resources from the players and update resource harvest timestamp to when cooldown ends
                 uint256 cityCenterID = GameLib.getCapital(capitalID);
-                uint256 cityCenterLevel = ECSLib.getUint("Level", cityCenterID);
+                // uint256 cityCenterLevel = ECSLib.getUint("Level", cityCenterID);
 
                 // 1. end troop production
                 uint256 productionID = GameLib.getBuildingProduction(cityCenterID);

@@ -10,7 +10,6 @@ import {AdminFacet} from "contracts/facets/AdminFacet.sol";
 import {GameFacet} from "contracts/facets/GameFacet.sol";
 import {console} from "forge-std/console.sol";
 
-
 contract WarriorERC20 is ERC20 {
     /// Outline:
     /// - approve
@@ -20,10 +19,10 @@ contract WarriorERC20 is ERC20 {
     /// - _mint (internal)
     /// - _burn (internal)
 
-   address public diamond;
-   GetterFacet public getter;
-   AdminFacet public admin; 
-   GameFacet public game;
+    address public diamond;
+    GetterFacet public getter;
+    AdminFacet public admin;
+    GameFacet public game;
 
     constructor(
         string memory _name,
@@ -42,7 +41,7 @@ contract WarriorERC20 is ERC20 {
         _;
     }
 
-    function _getAddressMaxLoadAndBalance(address _entityAddress) internal returns (uint256, uint256) {
+    function _getAddressMaxLoadAndBalance(address _entityAddress) internal view returns (uint256, uint256) {
         return getter.getAddressMaxLoadAndBalance(_entityAddress, "Warrior");
     }
 

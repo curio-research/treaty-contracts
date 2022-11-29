@@ -563,7 +563,7 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    function getResourceAt(Position memory _startPosition) internal returns (uint256) {
+    function getResourceAt(Position memory _startPosition) internal view returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["StartPosition"]), abi.encode(_startPosition));
         query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Resource"));

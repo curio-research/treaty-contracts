@@ -61,22 +61,22 @@ export const createTemplates = async (diamond: Curio, gasLimit: number, hre: Har
   let entity = Number(await diamond.getEntity()) + 1;
 
   // Horseman
-  await confirmTx(await diamond.addTroopTemplate(InventoryTypeOptions.Horseman, 120, 5, 1, 2, 60, 120, 95, 'TODO', { gasLimit }), hre);
+  await confirmTx(await diamond.addTroopTemplate(InventoryTypeOptions.Horseman, 120, 60, 120, 95, 'TODO', { gasLimit }), hre);
   templateNames.push(InventoryTypeOptions.Horseman);
   templateIDs.push(entity++);
 
   // Warrior
-  await confirmTx(await diamond.addTroopTemplate(InventoryTypeOptions.Warrior, 120, 1, 1, 2, 60, 120, 95, 'TODO', { gasLimit }), hre);
+  await confirmTx(await diamond.addTroopTemplate(InventoryTypeOptions.Warrior, 120, 60, 120, 95, 'TODO', { gasLimit }), hre);
   templateNames.push(InventoryTypeOptions.Warrior);
   templateIDs.push(entity++);
 
   // Slinger
-  await confirmTx(await diamond.addTroopTemplate(InventoryTypeOptions.Slinger, 125, 2, 1, 2, 60, 125, 95, 'TODO', { gasLimit }), hre);
+  await confirmTx(await diamond.addTroopTemplate(InventoryTypeOptions.Slinger, 120, 60, 120, 95, 'TODO', { gasLimit }), hre);
   templateNames.push(InventoryTypeOptions.Slinger);
   templateIDs.push(entity++);
 
   // Guard
-  await confirmTx(await diamond.addTroopTemplate(InventoryTypeOptions.Guard, 120, 0, 0, 0, 60, 120, 0, 'TODO', { gasLimit }), hre);
+  await confirmTx(await diamond.addTroopTemplate(InventoryTypeOptions.Guard, 120, 60, 120, 0, 'TODO', { gasLimit }), hre);
   templateNames.push(InventoryTypeOptions.Guard);
   templateIDs.push(entity++);
 

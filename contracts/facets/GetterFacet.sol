@@ -35,17 +35,16 @@ contract GetterFacet is UseStorage {
         return ECSLib.getString("Name", _nationID);
     }
 
-    function getNationArmies(uint256 _nationID) external returns (uint256[] memory) {
+    function getNationArmies(uint256 _nationID) external view returns (uint256[] memory) {
         return GameLib.getArmiesFromNation(_nationID);
     }
 
-    function getAddressMaxLoadAndBalance(address _entityAddress, string memory _resourceType) external returns (uint256, uint256) {
+    function getAddressMaxLoadAndBalance(address _entityAddress, string memory _resourceType) external view returns (uint256, uint256) {
         return GameLib.getAddressMaxLoadAndBalance(_entityAddress, _resourceType);
     }
 
-    function getInventoryBalance(address _keeperAddress, string memory _resourceType) external returns (uint256) {
+    function getInventoryBalance(address _keeperAddress, string memory _resourceType) external view returns (uint256) {
         uint256 entityID = GameLib.getEntityByAddress(_keeperAddress);
-        string memory entityTag = ECSLib.getString("Tag", entityID);
         uint256 templateID = gs().templates[_resourceType];
         uint256 inventoryID = GameLib.getInventory(entityID, templateID);
         return ECSLib.getUint("Amount", inventoryID);
@@ -154,7 +153,7 @@ contract GetterFacet is UseStorage {
         return GameLib.getTileAt(_position);
     }
 
-    function getInventory(address _inventoryAddress, string memory _templateString) external returns (uint256) {
+    function getInventory(address _inventoryAddress, string memory _templateString) external view returns (uint256) {
         uint256 templateID = gs().templates[_templateString];
         uint256 entityID = GameLib.getEntityByAddress(_inventoryAddress);
         return GameLib.getInventory(entityID, templateID);
