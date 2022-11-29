@@ -68,6 +68,16 @@ contract GameFacet is UseStorage {
 
         // set Tile Nation
         ECSLib.setUint("Nation", tileID, nationID);
+
+        uint256[] memory troopTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("TroopTemplate"));
+        for (uint256 i = 0; i < troopTemplateIDs.length; i++) {
+            Templates.addInventory(nationID, troopTemplateIDs[i]);
+        }
+
+        uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
+        for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
+            Templates.addInventory(nationID, resourceTemplateIDs[i]);
+        }
     }
 
     function initializeArmy(address _armyWalletAddress) external {
@@ -84,6 +94,16 @@ contract GameFacet is UseStorage {
         uint256 armyID = Templates.addArmy(2, 1, 2, gs().worldConstants.tileWidth, 0, nationID, _armyWalletAddress);
         gs().armies.push(_armyWalletAddress);
         gs().armyEntityMap[_armyWalletAddress] = armyID;
+
+        uint256[] memory troopTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("TroopTemplate"));
+        for (uint256 i = 0; i < troopTemplateIDs.length; i++) {
+            Templates.addInventory(armyID, troopTemplateIDs[i]);
+        }
+
+        uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
+        for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
+            Templates.addInventory(armyID, resourceTemplateIDs[i]);
+        }
     }
 
     // ----------------------------------------------------------
@@ -731,7 +751,8 @@ contract GameFacet is UseStorage {
             uint256 winnerCityID = GameLib.getPlayerCity(GameLib.getNationIDByAddress(msg.sender));
             if (capitalID != NULL) {
                 // Victorious against city, add back some guards for the loser
-                (bool success, ) = guardTokenAddress.call(abi.encodeWithSignature("dripToken(address,uint256)", tileAddress, GameLib.getConstant("Tile", "Guard", "Amount", "", ECSLib.getUint("Level", capitalID))));
+                (bool success, ) = guardTokenAddress.call(abi.encodeWithSignature("dripToken(address,uint256)", tileAddress,
+                GameLib.getConstant("Tile", "Guard", "Amount", "", ECSLib.getUint("Level", capitalID))));
                 require(success, "CURIO: Capital guard reset dripping fails");
 
                 // todo: harvest all resources from the players and update resource harvest timestamp to when cooldown ends
@@ -755,7 +776,8 @@ contract GameFacet is UseStorage {
             } else {
                 if (GameLib.isBarbarian(_tileID)) {
                     // Reset barbarian
-                    GameLib.distributeBarbarianReward(winnerCityID, _tileID);
+                    // todo: add this back
+                    // GameLib.distributeBarbarianReward(winnerCityID, _tileID);
                     uint256 barbarianGuardAmount = GameLib.getConstant("Barbarian", "Guard", "Amount", "", ECSLib.getUint("Terrain", _tileID) - 2); // FIXME: hardcoded
                     ECSLib.setUint("LastTimestamp", _tileID, block.timestamp);
                     (bool success, ) = guardTokenAddress.call(abi.encodeWithSignature("dripToken(address,uint256)", tileAddress, barbarianGuardAmount));

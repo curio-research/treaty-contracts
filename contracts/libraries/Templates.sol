@@ -132,6 +132,18 @@ library Templates {
         return gatherID;
     }
 
+    function addInventory (
+        uint256 _keeperID,
+        uint256 _templateID
+    ) public returns (uint256) {
+        uint256 inventoryID = ECSLib.addEntity();
+        ECSLib.setUint("Keeper", inventoryID, _keeperID);
+        ECSLib.setUint("Template", inventoryID, _templateID);
+        ECSLib.setUint("Amount", inventoryID, 0);
+
+        return inventoryID;
+    }
+
     function addTroopTemplate(
         string memory _inventoryType,
         uint256 _health,

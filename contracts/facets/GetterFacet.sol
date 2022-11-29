@@ -39,18 +39,21 @@ contract GetterFacet is UseStorage {
         return GameLib.getArmiesFromNation(_nationID);
     }
 
-    function getAddressMaxLoad(address _entityAddress, string memory _resourceType) external returns (uint256) {
-        return GameLib.getAddressMaxLoad(_entityAddress, _resourceType);
+    function getAddressMaxLoadAndBalance(address _entityAddress, string memory _resourceType) external returns (uint256, uint256) {
+        return GameLib.getAddressMaxLoadAndBalance(_entityAddress, _resourceType);
     }
+
+    function getInventoryBalance(address _keeperAddress, string memory _resourceType) external returns (uint256) {
+        uint256 entityID = GameLib.getEntityByAddress(_keeperAddress);
+        string memory entityTag = ECSLib.getString("Tag", entityID);
+        uint256 templateID = gs().templates[_resourceType];
+        uint256 inventoryID = GameLib.getInventory(entityID, templateID);
+        return ECSLib.getUint("Amount", inventoryID);
+    } 
 
     // Debug Helpers
     function getEntitiesAddr() external view returns (address) {
         return gs().entities;
-    }
-
-    function getInventoryByCityAndType(uint256 _cityID, string memory _inventoryType) external returns (uint256) {
-        uint256 _templateID = GameLib.getTemplateByInventoryType(_inventoryType);
-        return GameLib.getInventory(_cityID, _templateID);
     }
 
     function getTemplateByInventoryType(string memory _inventoryType) external returns (uint256) {
@@ -134,17 +137,10 @@ contract GetterFacet is UseStorage {
         return GameLib.getTileAt(_position);
     }
 
-    function getCityFood(uint256 _cityID) external returns (uint256) {
-        return GameLib.getCityFood(_cityID);
-    }
-
-    function getCityGold(uint256 _cityID) external returns (uint256) {
-        return GameLib.getCityGold(_cityID);
-    }
-
-    function getArmyFood(uint256 _armyID) external returns (uint256) {
-        uint256 foodInventoryID = GameLib.getInventory(_armyID, gs().templates["Food"]);
-        return ECSLib.getUint("Amount", foodInventoryID);
+    function getInventory(address _inventoryAddress, string memory _templateString) external returns (uint256) {
+        uint256 templateID = gs().templates[_templateString];
+        uint256 entityID = GameLib.getEntityByAddress(_inventoryAddress);
+        return GameLib.getInventory(entityID, templateID);
     }
 
     function getResourceAtTile(Position memory _startPosition) external returns (uint256) {

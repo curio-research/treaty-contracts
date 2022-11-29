@@ -83,6 +83,8 @@ struct GameState {
     string[] componentNames;
     mapping(string => address) components; // component name to contract address
     string[] templateNames;
+    address[] authorized;
+    mapping(address => bool) isAuthorized; // authorized token contracts
     mapping(string => uint256) templates; // template name to id
     mapping(uint256 => address) componentEntityToAddress; // component id to contract address
     mapping(address => uint256) nationEntityMap;

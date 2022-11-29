@@ -82,6 +82,12 @@ library GameLib {
 
         // Initialize tile
         uint256 tileID = Templates.addTile(_startPosition, terrain, _tileAddress);
+        {
+        uint256[] memory troopTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("TroopTemplate"));
+        for (uint256 i = 0; i < troopTemplateIDs.length; i++) {
+            Templates.addInventory(tileID, troopTemplateIDs[i]);
+        }
+        }
 
         // TEMP: battle royale mode
         // if (gs().worldConstants.gameMode == GameMode.BATTLE_ROYALE) {
@@ -134,16 +140,6 @@ library GameLib {
         }
 
         return tileID;
-    }
-
-    function removeArmy(uint256 _armyID) internal {
-        uint256[] memory _constituentIDs = getConstituents(_armyID);
-        for (uint256 i = 0; i < _constituentIDs.length; i++) {
-            ECSLib.removeEntity(_constituentIDs[i]);
-        }
-        ECSLib.removeEntity(getInventory(_armyID, gs().templates["Gold"]));
-        ECSLib.removeEntity(getInventory(_armyID, gs().templates["Food"]));
-        ECSLib.removeEntity(_armyID);
     }
 
     function endGather(uint256 _armyID) internal {
@@ -274,15 +270,15 @@ library GameLib {
         if (!victory) attack(_keeperIdB, _keeperIdA, _transferGoldUponVictory, _transferOwnershipUponVictory, _removeUponVictory);
     }
 
-    function distributeBarbarianReward(uint256 _cityID, uint256 _barbarianTileID) internal {
-        uint256 barbarianLevel = ECSLib.getUint("Level", _barbarianTileID);
-        uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
-        for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
-            uint256 cityInventoryID = getInventory(_cityID, resourceTemplateIDs[i]);
-            uint256 reward = getConstant("Barbarian", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Reward", "", barbarianLevel * 4);
-            ECSLib.setUint("Amount", cityInventoryID, ECSLib.getUint("Amount", cityInventoryID) + reward);
-        }
-    }
+    // function distributeBarbarianReward(uint256 _cityID, uint256 _barbarianTileID) internal {
+    //     uint256 barbarianLevel = ECSLib.getUint("Level", _barbarianTileID);
+    //     uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
+    //     for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
+    //         uint256 cityInventoryID = getInventory(_cityID, resourceTemplateIDs[i]);
+    //         uint256 reward = getConstant("Barbarian", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Reward", "", barbarianLevel * 4);
+    //         ECSLib.setUint("Amount", cityInventoryID, ECSLib.getUint("Amount", cityInventoryID) + reward);
+    //     }
+    // }
 
     function unloadResources(address _nationAddress, address _armyAddress) internal {
         uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
@@ -320,26 +316,34 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    function getAddressMaxLoad(address _entityAddress, string memory _resourceType) public returns (uint256) {
+    function getAddressMaxLoadAndBalance(address _entityAddress, string memory _resourceType) public returns (uint256, uint256) {
         /**
         Only Army & Tile has troop load & resource. 
         Data is stored in game constant based on nation level
         Resource/Capital yield load restricted within the game
          */
+        
+        // note: put load and balance together so it only does query once
 
         // fixme: exteremely inefficient but unavoidable unless entityID is address
         uint256 entityID = getEntityByAddress(_entityAddress);
         string memory entityTag = ECSLib.getString("Tag", entityID);
+        uint256 templateID = gs().templates[_resourceType];
+        uint256 inventoryID = getInventory(entityID, templateID);
+        uint256 balance = ECSLib.getUint("Amount", inventoryID);
+
         if (strEq(entityTag, "Army")) {
             uint256 armyNationID = ECSLib.getUint("Nation", entityID);
-            if (strEq(_resourceType, "Troop")) {
-                return getConstant(entityTag, _resourceType, "Amount", "", ECSLib.getUint("Level", armyNationID));
-            } else if (strEq(_resourceType, "Food") || strEq(_resourceType, "Gold")) {
-                return ECSLib.getUint("Load", entityID);
+            if (templateID == gs().templates["Horseman"] || templateID == gs().templates["Warrior"] || templateID == gs().templates["Slinger"]) {
+                uint256 maxLoad = getConstant(entityTag, "Troop", "Amount", "", ECSLib.getUint("Level", armyNationID));
+                return (maxLoad, balance);
+            } else if (templateID == gs().templates["Food"] || templateID == gs().templates["Gold"]) {
+                return (ECSLib.getUint("Load", entityID), balance);
             }
-        } else if (strEq(entityTag, "Tile")) {
-            return GameLib.getConstant("Tile", "Guard", "Amount", "", ECSLib.getUint("Level", entityID));
-        } else return 0;
+        } else if (templateID == gs().templates["Guard"]) {
+            uint256 maxLoad = GameLib.getConstant("Tile", "Guard", "Amount", "", ECSLib.getUint("Level", entityID));
+            return (maxLoad, balance);
+        } else return (0, balance);
     }
 
     function getAddressBalance(address _entityAddress, address _tokenContract) public returns (uint256) {
@@ -525,17 +529,11 @@ library GameLib {
     //     return res.length == 1 ? res[0] : 0;
     // }
 
-    function getInventory(uint256 _cityID, uint256 _templateID) internal returns (uint256) {
+    function getInventory(uint256 _keeperID, uint256 _templateID) internal returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
-        query[0] = ECSLib.queryChunk(QueryType.HasVal, "Keeper", abi.encode(_cityID));
+        query[0] = ECSLib.queryChunk(QueryType.HasVal, "Keeper", abi.encode(_keeperID));
         query[1] = ECSLib.queryChunk(QueryType.HasVal, "Template", abi.encode(_templateID));
         uint256[] memory res = ECSLib.query(query);
-
-        Set _set1 = new Set();
-        Set _set2 = new Set();
-        _set1.addArray(res);
-        _set2.addArray(ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("Production")));
-        res = ECSLib.difference(_set1, _set2);
 
         require(res.length <= 1, "CURIO: Inventory assertion failed");
         return res.length == 1 ? res[0] : 0;
@@ -555,28 +553,6 @@ library GameLib {
         query[1] = ECSLib.queryChunk(QueryType.HasVal, "Nation", abi.encode(_nationID));
         uint256[] memory res = ECSLib.query(query);
         return res;
-    }
-
-    function getCityGold(uint256 _cityID) internal returns (uint256) {
-        uint256 _goldInventoryID = getInventory(_cityID, gs().templates["Gold"]);
-        uint256 _balance = _goldInventoryID != 0 ? ECSLib.getUint("Amount", _goldInventoryID) : 0;
-        return _balance;
-    }
-
-    function getCityFood(uint256 _cityID) internal returns (uint256) {
-        uint256 _foodInventoryID = getInventory(_cityID, gs().templates["Food"]);
-        uint256 _balance = _foodInventoryID != 0 ? ECSLib.getUint("Amount", _foodInventoryID) : 0;
-        return _balance;
-    }
-
-    function setCityGold(uint256 _cityID, uint256 _goldAmount) internal {
-        uint256 _goldInventoryID = getInventory(_cityID, gs().templates["Gold"]);
-        ECSLib.setUint("Amount", _goldInventoryID, _goldAmount);
-    }
-
-    function setCityFood(uint256 _cityID, uint256 _foodAmount) internal {
-        uint256 _goldInventoryID = getInventory(_cityID, gs().templates["Food"]);
-        ECSLib.setUint("Amount", _goldInventoryID, _foodAmount);
     }
 
     function getCapital(uint256 _nationID) internal returns (uint256) {

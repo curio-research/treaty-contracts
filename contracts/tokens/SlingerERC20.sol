@@ -6,7 +6,10 @@ import {Position} from "contracts/libraries/Types.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
 import {GameLib} from "contracts/libraries/GameLib.sol";
 import {GetterFacet} from "contracts/facets/GetterFacet.sol";
+import {AdminFacet} from "contracts/facets/AdminFacet.sol";
 import {GameFacet} from "contracts/facets/GameFacet.sol";
+import {console} from "forge-std/console.sol";
+
 
 contract SlingerERC20 is ERC20 {
     /// Outline:
@@ -19,69 +22,99 @@ contract SlingerERC20 is ERC20 {
 
    address public diamond;
    GetterFacet public getter;
+   AdminFacet public admin; 
    GameFacet public game;
 
     constructor(
         string memory _name,
         string memory _symbol,
         uint8 _decimals,
-        address _deployer,
         address _diamond
     ) ERC20(_name, _symbol, _decimals) {
-        _mint(_deployer, 9999999999999);
         diamond = _diamond;
         getter = GetterFacet(diamond);
+        admin = AdminFacet(diamond);
         game = GameFacet(diamond);
     }
 
     modifier onlyGame() {
-        require(msg.sender == address(game), "CURIO: Function can only be called by the game");
+        require(msg.sender == address(game) || msg.sender == address(admin), "CURIO: Function can only be called by the game");
         _;
     }
 
-    function _getAddressMaxLoad(address _entityAddress) internal returns (uint256) {
-        return getter.getAddressMaxLoad(_entityAddress, "Troop");
+    function _getAddressMaxLoadAndBalance(address _entityAddress) internal returns (uint256, uint256) {
+        return getter.getAddressMaxLoadAndBalance(_entityAddress, "Slinger");
     }
 
     // fixme: solmate doesn't have balanceOf ...? (then how is it compatible with popular platforms)
-    function checkBalanceOf(address _owner) public view returns (uint256) {
-        return balanceOf[_owner];
+    function checkBalanceOf(address _entityAddress) public returns (uint256) {
+        return getter.getInventoryBalance(_entityAddress, "Slinger");
     }
 
     function transferFrom(
-        address from,
-        address to,
-        uint256 amount
+        address _from,
+        address _to,
+        uint256 _amount
     ) public override onlyGame returns (bool) {
-        uint256 recipientMaxLoad = _getAddressMaxLoad(to);
-        if (recipientMaxLoad == 0) {
-            return super.transferFrom(from, to, amount);
+        // note: copy paste erc20 standard lines;
+        // todo: should these data be stored in ECS ???
+        uint256 allowed = allowance[_from][msg.sender]; // Saves gas for limited approvals.
+        if (allowed != type(uint256).max) allowance[_from][msg.sender] = allowed - _amount;
+
+        (uint256 recipientMaxLoad, uint256 recipientCurrentBalance) = _getAddressMaxLoadAndBalance(_to);
+        if (recipientMaxLoad == 0 || recipientCurrentBalance + _amount <= recipientMaxLoad) {
+            admin.updateInventoryAmount(_from, "Slinger", _amount, false);
+            admin.updateInventoryAmount(_to, "Slinger", _amount, true);
+            emit Transfer(_from, _to, _amount);
+            return true;
         } else {
-            return super.transferFrom(from, to, amount + balanceOf[to] <= recipientMaxLoad ? amount : recipientMaxLoad - balanceOf[to]);
+            admin.updateInventoryAmount(_from, "Slinger", recipientMaxLoad - recipientCurrentBalance, false);
+            admin.updateInventoryAmount(_to, "Slinger", recipientMaxLoad - recipientCurrentBalance, true);
+            emit Transfer(_from, _to, recipientMaxLoad - recipientCurrentBalance);
+            return true;
         }
     }
 
-    function transferAll(address from, address to) public onlyGame returns (bool) {
-        uint256 recipientMaxLoad = _getAddressMaxLoad(to);
-        if (recipientMaxLoad == 0) {
-            return super.transferFrom(from, to, balanceOf[from]);
+    function transferAll(address _from, address _to) public onlyGame returns (bool) {
+        uint256 amount = getter.getInventoryBalance(_from, "Slinger");
+        // note: copy paste erc20 standard lines;
+        // todo: should these data be stored in ECS ???
+        uint256 allowed = allowance[_from][msg.sender]; // Saves gas for limited approvals.
+        if (allowed != type(uint256).max) allowance[_from][msg.sender] = allowed - amount;
+
+        (uint256 recipientMaxLoad, uint256 recipientCurrentBalance) = _getAddressMaxLoadAndBalance(_to);
+        if (recipientMaxLoad == 0 || recipientCurrentBalance + amount <= recipientMaxLoad) {
+            admin.updateInventoryAmount(_from, "Slinger", amount, false);
+            admin.updateInventoryAmount(_to, "Slinger", amount, true);
+            emit Transfer(_from, _to, amount);
+            return true;
         } else {
-            return super.transferFrom(from, to, balanceOf[from] + balanceOf[to] <= recipientMaxLoad ? balanceOf[from] : recipientMaxLoad - balanceOf[to]);
+            admin.updateInventoryAmount(_from, "Slinger", recipientMaxLoad - recipientCurrentBalance, false);
+            admin.updateInventoryAmount(_to, "Slinger", recipientMaxLoad - recipientCurrentBalance, true);
+            emit Transfer(_from, _to, recipientMaxLoad - recipientCurrentBalance);
+            return true;
         }
     }
 
     // rewards unrestricted by distance
-    function dripToken(address _recipient, uint256 amount) public onlyGame {
-        uint256 recipientMaxLoad = _getAddressMaxLoad(_recipient);
-        if (recipientMaxLoad == 0) {
-            return super._mint(_recipient, amount);
+    function dripToken(address _address, uint256 _amount) public onlyGame {
+        // note: copy paste erc20 standard lines;
+        totalSupply += _amount;
+        (uint256 recipientMaxLoad, uint256 recipientCurrentBalance) = _getAddressMaxLoadAndBalance(_address);
+        if (recipientMaxLoad == 0 || recipientCurrentBalance + _amount <= recipientMaxLoad) {
+            admin.updateInventoryAmount(_address, "Slinger", _amount, true);
+            emit Transfer(address(0), _address, _amount);
         } else {
-            return super._mint(_recipient, balanceOf[_recipient] + amount <= recipientMaxLoad ? amount : recipientMaxLoad - balanceOf[_recipient]);
+            admin.updateInventoryAmount(_address, "Slinger", recipientMaxLoad - recipientCurrentBalance, true);
+            emit Transfer(address(0), _address, _amount);
         }
     }
 
     // costs unrestricted by distance
-    function destroyToken(address _recipient, uint256 amount) public onlyGame {
-        return super._burn(_recipient, amount);
+    function destroyToken(address _address, uint256 _amount) public onlyGame {
+        // note: copy paste erc20 standard lines;
+        totalSupply -= _amount;
+        admin.updateInventoryAmount(_address, "Slinger", _amount, false);
+        emit Transfer(address(0), _address, _amount);
     }
 }

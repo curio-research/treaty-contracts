@@ -108,6 +108,7 @@ contract DiamondDeployTest is Test {
         diamondOwnershipFacet = new OwnershipFacet();
         gameFacet = new GameFacet();
         getterFacet = new GetterFacet();
+
         adminFacet = new AdminFacet();
 
         // Prepare world constants with either `_generateNewWorldConstants()` or `fetchWorldConstants()`
@@ -142,13 +143,13 @@ contract DiamondDeployTest is Test {
 
         // Create templates
         // Deploy token contracts
-        foodContract = new FoodERC20("Food", "FOOD", 1, deployerAddress, address(diamond));
-        goldContract = new GoldERC20("Gold", "GOLD", 1, deployerAddress, address(diamond));
+        foodContract = new FoodERC20("Food", "FOOD", 1, address(diamond));
+        goldContract = new GoldERC20("Gold", "GOLD", 1, address(diamond));
         // note: Consider switching to erc1155
-        horsemanContract = new HorsemanERC20("Horseman", "HORSEMAN", 1, deployerAddress, address(diamond));
-        warriorContract = new WarriorERC20("Warrior", "WARRIOR", 1, deployerAddress, address(diamond));
-        slingerContract = new SlingerERC20("Slinger", "SLINGER", 1, deployerAddress, address(diamond));
-        guardContract = new GuardERC20("Guard", "GUARD", 1, deployerAddress, address(diamond));
+        horsemanContract = new HorsemanERC20("Horseman", "HORSEMAN", 1, address(diamond));
+        warriorContract = new WarriorERC20("Warrior", "WARRIOR", 1, address(diamond));
+        slingerContract = new SlingerERC20("Slinger", "SLINGER", 1, address(diamond));
+        guardContract = new GuardERC20("Guard", "GUARD", 1, address(diamond));
         _createTemplates();
 
         address[] memory tokenContracts = new address[](6);
@@ -158,6 +159,15 @@ contract DiamondDeployTest is Test {
         tokenContracts[3] = address(warriorContract);
         tokenContracts[4] = address(slingerContract);
         tokenContracts[5] = address(guardContract);
+
+        // admin facet authorizes all token contracts to make changes to ECS States
+        admin.addAuthroized(address(foodContract));
+        admin.addAuthroized(address(goldContract));
+        admin.addAuthroized(address(horsemanContract));
+        admin.addAuthroized(address(warriorContract));
+        admin.addAuthroized(address(slingerContract));
+        admin.addAuthroized(address(guardContract));
+
         console.log(">>> Templates created");
 
         // Initialize map either with either `_generateNewMap()` or `_fetchLastDeployedMap()`
@@ -212,7 +222,6 @@ contract DiamondDeployTest is Test {
         abi.encodeWithSignature("approve(address,uint256)", address(game), type(uint256).max));
             armyWallet12.executeTX(address(tokenContracts[i]), 
         abi.encodeWithSignature("approve(address,uint256)", address(game), type(uint256).max));
-
         }
         
         nation1ID = getter.getNationIDByAddress(address(nationWallet1));
@@ -277,7 +286,6 @@ contract DiamondDeployTest is Test {
 
             }
         }
-
     }
 
     function _encodeTileMap(
@@ -340,7 +348,6 @@ contract DiamondDeployTest is Test {
         for (uint256 i = 0; i < index; i++) {
             specs[i] = temp[i];
         }
-
         admin.registerComponents(diamond, specs);
     }
 
