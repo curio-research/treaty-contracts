@@ -46,7 +46,7 @@ contract WarriorERC20 is ERC20 {
     }
 
     // fixme: solmate doesn't have balanceOf ...? (then how is it compatible with popular platforms)
-    function checkBalanceOf(address _entityAddress) public returns (uint256) {
+    function checkBalanceOf(address _entityAddress) public view returns (uint256) {
         return getter.getInventoryBalance(_entityAddress, "Warrior");
     }
 

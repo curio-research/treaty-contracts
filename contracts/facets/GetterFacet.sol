@@ -145,7 +145,7 @@ contract GetterFacet is UseStorage {
         return GameLib.getCityAtTile(_startPosition);
     }
 
-    function getCapital(uint256 _cityID) external returns (uint256) {
+    function getCapital(uint256 _cityID) external view returns (uint256) {
         return GameLib.getCapital(_cityID);
     }
 

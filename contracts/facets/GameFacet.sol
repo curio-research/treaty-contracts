@@ -31,12 +31,12 @@ contract GameFacet is UseStorage {
         uint256 _positionY,
         string memory _name
     ) external {
-        Position memory _position = Position({x: _positionX, y: _positionY});
-        Position memory tilePosition = GameLib.getProperTilePosition(_position);
+        Position memory position = Position({x: _positionX, y: _positionY});
+        Position memory tilePosition = GameLib.getProperTilePosition(position);
 
         // Basic checks
         GameLib.ongoingGameCheck();
-        GameLib.inboundPositionCheck(_position);
+        GameLib.inboundPositionCheck(position);
         require(gs().nations.length < gs().worldConstants.maxPlayerCount, "CURIO: Max nation count reached");
         require(gs().nationEntityMap[msg.sender] == NULL, "CURIO: Nation already initialized");
 
@@ -123,7 +123,7 @@ contract GameFacet is UseStorage {
         address armyAddress = ECSLib.getAddress("Address", _armyID);
         require(armyAddress == msg.sender, "CURIO: You do not control this army");
 
-        // Verify that army is organized first (has position component); bug: (0,0) position?
+        // Verify that army is organized first (has position component); bug: (0, 0) position?
         Position memory armyPosition = ECSLib.getPosition("Position", _armyID);
         require(!(armyPosition.x == 0 && armyPosition.y == 0), "CURIO: Army is not organized first");
 

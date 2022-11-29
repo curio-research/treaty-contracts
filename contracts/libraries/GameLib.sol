@@ -342,7 +342,9 @@ library GameLib {
         } else if (templateID == gs().templates["Guard"]) {
             uint256 maxLoad = GameLib.getConstant("Tile", "Guard", "Amount", "", ECSLib.getUint("Level", entityID));
             return (maxLoad, balance);
-        } else return (0, balance);
+        }
+
+        return (0, balance);
     }
 
     function getAddressBalance(address _entityAddress, address _tokenContract) public returns (uint256) {

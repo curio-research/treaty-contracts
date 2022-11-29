@@ -507,8 +507,8 @@
       }
     },
     "contracts/facets/GameFacet.sol": {
-      "lastModificationDate": 1669763923681,
-      "contentHash": "67949d7ce9d9130e0e1293ab473033e9",
+      "lastModificationDate": 1669765126220,
+      "contentHash": "7f078be35330e8ee7f28b2b8c2624f39",
       "sourceName": "contracts/facets/GameFacet.sol",
       "solcConfig": {
         "settings": {
@@ -561,8 +561,8 @@
       }
     },
     "contracts/facets/GetterFacet.sol": {
-      "lastModificationDate": 1669763907838,
-      "contentHash": "e5835fe82c38066be4f9fab52b2b4c2d",
+      "lastModificationDate": 1669764797080,
+      "contentHash": "70e95d35cccbb49191edb9d53d4c7b16",
       "sourceName": "contracts/facets/GetterFacet.sol",
       "solcConfig": {
         "settings": {
@@ -917,8 +917,8 @@
       }
     },
     "contracts/libraries/GameLib.sol": {
-      "lastModificationDate": 1669763896985,
-      "contentHash": "f4a50ddd1fb09017ff54d38c335920df",
+      "lastModificationDate": 1669764820133,
+      "contentHash": "ab3e8043bae59b5660b0d41af2774c86",
       "sourceName": "contracts/libraries/GameLib.sol",
       "solcConfig": {
         "settings": {
@@ -1196,8 +1196,8 @@
       }
     },
     "contracts/tokens/FoodERC20.sol": {
-      "lastModificationDate": 1669758816272,
-      "contentHash": "5759334ef303331595cd77168786325e",
+      "lastModificationDate": 1669764742889,
+      "contentHash": "dc6b27838d41d4d0e965aaa07c62a58f",
       "sourceName": "contracts/tokens/FoodERC20.sol",
       "solcConfig": {
         "settings": {
@@ -1254,8 +1254,8 @@
       }
     },
     "contracts/tokens/GoldERC20.sol": {
-      "lastModificationDate": 1669758816272,
-      "contentHash": "552221361938422348c2e627c00405f2",
+      "lastModificationDate": 1669764728938,
+      "contentHash": "1f7b9de65f20641b6ab2c2b0731dab04",
       "sourceName": "contracts/tokens/GoldERC20.sol",
       "solcConfig": {
         "settings": {
@@ -1312,8 +1312,8 @@
       }
     },
     "contracts/tokens/GuardERC20.sol": {
-      "lastModificationDate": 1669758816272,
-      "contentHash": "ad9ede61c9de82f024df95312f824de6",
+      "lastModificationDate": 1669764720334,
+      "contentHash": "860fb58525a3bab450b7d0b8cadeff29",
       "sourceName": "contracts/tokens/GuardERC20.sol",
       "solcConfig": {
         "settings": {
@@ -1370,8 +1370,8 @@
       }
     },
     "contracts/tokens/HorsemanERC20.sol": {
-      "lastModificationDate": 1669758816272,
-      "contentHash": "abe894fb09e6c15e2c9e526b4251c228",
+      "lastModificationDate": 1669764195839,
+      "contentHash": "76054466c449235cdef477079a01ccfd",
       "sourceName": "contracts/tokens/HorsemanERC20.sol",
       "solcConfig": {
         "settings": {
@@ -1428,8 +1428,8 @@
       }
     },
     "contracts/tokens/SlingerERC20.sol": {
-      "lastModificationDate": 1669758816272,
-      "contentHash": "f4710af21c0874b1d319be8974b0152e",
+      "lastModificationDate": 1669764181715,
+      "contentHash": "787e966e3ef8eb8ddabac083b1fdc2f3",
       "sourceName": "contracts/tokens/SlingerERC20.sol",
       "solcConfig": {
         "settings": {
@@ -1486,8 +1486,8 @@
       }
     },
     "contracts/tokens/WarriorERC20.sol": {
-      "lastModificationDate": 1669758816272,
-      "contentHash": "82cccccfca3dba75843795f8e86d8212",
+      "lastModificationDate": 1669764707967,
+      "contentHash": "7ddad4b088aecea933a5bae307829036",
       "sourceName": "contracts/tokens/WarriorERC20.sol",
       "solcConfig": {
         "settings": {
@@ -2175,8 +2175,8 @@
       }
     },
     "test/DiamondDeploy.t.sol": {
-      "lastModificationDate": 1669763106354,
-      "contentHash": "e2310d726ecdfe37bfc7477d544ac542",
+      "lastModificationDate": 1669765103035,
+      "contentHash": "68e27716bfbe6c9ea48a1a5ef57abc72",
       "sourceName": "test/DiamondDeploy.t.sol",
       "solcConfig": {
         "settings": {

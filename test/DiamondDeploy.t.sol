@@ -117,9 +117,6 @@ contract DiamondDeployTest is Test {
 
         // Prepare world constants with either `_generateNewWorldConstants()` or `fetchWorldConstants()`
         worldConstants =  _fetchWorldConstants();
-        worldConstants.worldWidth = 1000; // use deployment settings, except make map bigger
-        worldConstants.worldHeight = 1000;
-        worldConstants.tileWidth = 10;
         console.log(">>> World constants ready");
 
         // Initialize treaties
@@ -178,7 +175,6 @@ contract DiamondDeployTest is Test {
         admin.addAuthroized(address(warriorContract));
         admin.addAuthroized(address(slingerContract));
         admin.addAuthroized(address(guardContract));
-
         console.log(">>> Templates created");
 
         // Initialize map either with either `_generateNewMap()` or `_fetchLastDeployedMap()`
