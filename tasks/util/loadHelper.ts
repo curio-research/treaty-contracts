@@ -4,7 +4,6 @@ import chalk from 'chalk';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { LoadTestConfig, LoadTestSetupInput, LoadTestSetupOutput } from './types';
 import { Signer, Wallet } from 'ethers';
-import { confirmTx } from './deployHelper';
 import * as os from 'os';
 import { Curio } from '../../typechain-types/hardhat-diamond-abi/Curio';
 
@@ -12,7 +11,7 @@ export const DRIP_AMOUNT_BY_NETWORK: Record<string, number> = {
   altlayer: 100,
   constellation: 100,
   constellationFast: 100,
-  localhost: 1000,
+  localhost: 1,
   optimismKovan: 0.01,
   tailscale: 100,
 };
@@ -67,33 +66,28 @@ export const prepareLoadTest = async (input: LoadTestSetupInput, players: Wallet
   const numberOfCores = os.cpus().length;
   console.log(chalk.bgRed.yellow(`>>> Number of CPU cores: ${numberOfCores}`));
 
-  // Initialize each player with a city (async)
+  // Initialize each player with a city (sync, because player IDs are used for initializing armies in same order as players)
   let startTime = performance.now();
   const playerIds: number[] = [];
-  let playersInitialized = 0;
-  const intervalInMs = 800; // FIXME: softcode
-  players.forEach(async (p, i) => {
-    setTimeout(async () => {
-      console.log(chalk.bgRed.yellow.dim(`>>> Initializing player ${i} with city`));
-      await (await diamond.connect(p).initializePlayer({ x: i * TILE_WIDTH, y: 0 }, `Player ${i}`, { gasLimit })).wait();
-      playerIds.push((await diamond.getPlayerId(p.address)).toNumber());
+  for (let i = 0; i < players.length; i++) {
+    console.log(chalk.bgRed.yellow.dim(`>>> Initializing player ${i} with city`));
+    await (await diamond.connect(players[i]).initializePlayer({ x: i * TILE_WIDTH, y: 0 }, `Player ${i}`, { gasLimit })).wait();
+    playerIds.push((await diamond.getPlayerId(players[i].address)).toNumber());
 
-      const settlerId = decodeBigNumberishArr(await positionComponent.getEntitiesWithValue(encodePosition({ x: i * TILE_WIDTH, y: 0 }), { gasLimit }))[0];
-      if (!settlerId) throw new Error('Settler not initialized yet');
-      await confirmTx(await diamond.connect(p).foundCity(settlerId, [{ x: i * TILE_WIDTH, y: 0 }], `City ${i}`, { gasLimit }), hre);
-      playersInitialized++;
-    }, i * intervalInMs);
-  });
-
-  while (true) {
-    await sleep(100);
-    if (playersInitialized === players.length) {
-      console.log(chalk.bgRed.yellow(`>>> Players initialized with city after ${performance.now() - startTime} ms`));
-      break;
-    }
+    const settlerId = decodeBigNumberishArr(await positionComponent.getEntitiesWithValue(encodePosition({ x: i * TILE_WIDTH, y: 0 }), { gasLimit }))[0];
+    if (!settlerId) throw new Error('Settler not initialized yet');
+    await diamond.connect(players[i]).foundCity(settlerId, [{ x: i * TILE_WIDTH, y: 0 }], `City ${i}`, { gasLimit });
   }
+  if (
+    !(await diamond.playersAndIdsMatch(
+      players.map((p) => p.address),
+      playerIds
+    ))
+  )
+    throw new Error(chalk.bgWhite.red('⊂(⊙д⊙)つ Players and IDs do not match. Try increase the `offsetInMs` parameter.'));
+  console.log(chalk.bgRed.yellow(`>>> Players initialized with city after ${performance.now() - startTime} ms`));
 
-  // Create an army for each player and log IDs (sync)
+  // Create an army for each player and log IDs (sync, because army IDs are used for sending load test txs)
   startTime = performance.now();
   for (let i = 0; i < players.length; i++) {
     console.log(chalk.bgRed.yellow.dim(`>>> Creating army for player ${i}`));
@@ -126,9 +120,7 @@ export const loadTestMoveArmy = async (hre: HardhatRuntimeEnvironment, diamond: 
     // Move all armies south by 1 coordinate (async)
     lastTime = performance.now();
     let armiesMoved = 0;
-    const intervalInMs = 180; // FIXME: softcode
     players.forEach(async (p, i) => {
-      // setTimeout(async () => {
       console.log(chalk.bgRed.yellow.dim(`>>> [batch ${k}] Moving army for player ${i}...`));
       const receipt = await (await diamond.connect(p).move(armyIds[i], { x: i * TILE_WIDTH, y: nextMoveUp ? 0 : 1 }, { gasLimit })).wait();
       gasConsumptionsByTx.push(receipt.gasUsed.toNumber());

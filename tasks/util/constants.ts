@@ -26,19 +26,19 @@ export const TEST_MAP_INPUT: MapInput = {
 export const TILE_WIDTH = 5;
 export const NUM_INIT_TERRAIN_TYPES = Math.floor((Object.keys(TILE_TYPE).length + 1) / 2);
 
-export const generateWorldConstants = (adminAddr: string): any => {
+export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): any => {
   return {
     // admin info
     admin: adminAddr,
     // map info
     tileWidth: TILE_WIDTH,
-    worldWidth: MAP_INPUT.width * TILE_WIDTH,
-    worldHeight: MAP_INPUT.height * TILE_WIDTH,
+    worldWidth: mapInput.width * TILE_WIDTH,
+    worldHeight: mapInput.height * TILE_WIDTH,
     numInitTerrainTypes: NUM_INIT_TERRAIN_TYPES,
     // manual configs
     maxCityCountPerPlayer: 3,
     maxArmyCountPerPlayer: 2,
-    maxPlayerCount: 20,
+    maxPlayerCount: 1000,
     gameMode: GameMode.REGULAR,
     gameLengthInSeconds: 2000000000,
     // generated constants

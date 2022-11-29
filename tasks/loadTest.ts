@@ -23,6 +23,7 @@ task('load-test', 'perform load testing')
 
       const provider = new hre.ethers.providers.JsonRpcProvider(chainInfo[hre.network.name].rpcUrl);
       const admin = (await hre.ethers.getSigners())[0];
+      console.log('✦ admin address is:', admin.address);
       const playerCount: number = args.playercount ?? 5;
       console.log(chalk.bgRed.yellow(`>>> Load testing on ${hre.network.name}`));
 
@@ -33,13 +34,11 @@ task('load-test', 'perform load testing')
       const filePath = path.join(dir, `${hre.network.name}.json`);
       try {
         // Read all existing signers for non-localhost networks
-        if (hre.network.name !== 'localhost') {
-          const fileContent = await fsp.readFile(filePath);
-          players = JSON.parse(fileContent.toString())
-            .slice(0, playerCount)
-            .map((pK: string) => new hre.ethers.Wallet(pK, provider));
-          console.log(chalk.bgRed.yellow(`>>> ${players.length} existing signers loaded`));
-        }
+        const fileContent = await fsp.readFile(filePath);
+        players = JSON.parse(fileContent.toString())
+          .slice(0, playerCount)
+          .map((pK: string) => new hre.ethers.Wallet(pK, provider));
+        console.log(chalk.bgRed.yellow(`>>> ${players.length} existing signers loaded`));
 
         // Create and fund more signers if needed
         if (players.length < playerCount) {
@@ -56,7 +55,7 @@ task('load-test', 'perform load testing')
       console.log(chalk.bgRed.yellow('>>> Player balance:', (await players[0].getBalance()).toString(), 'wei'));
 
       // Initialize game
-      const worldConstants = generateWorldConstants(admin.address);
+      const worldConstants = generateWorldConstants(admin.address, TEST_MAP_INPUT);
       const tileMap = generateEmptyMap(TEST_MAP_INPUT);
       const diamond = await initializeGame(hre, worldConstants, tileMap);
 

@@ -15,16 +15,28 @@ contract GetterFacet is UseStorage {
     uint256 private NULL = 0;
 
     // Debug Helpers
+    function playersAndIdsMatch(address[] memory players, uint256[] memory playerIDs) external view returns (bool) {
+        if (players.length != playerIDs.length) {
+            return false;
+        }
+        for (uint256 i = 0; i < players.length; i++) {
+            if (gs().playerEntityMap[players[i]] != playerIDs[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     function getEntitiesAddr() external view returns (address) {
         return gs().entities;
     }
 
-    function getInventoryByCityAndType(uint256 _cityID, string memory _inventoryType) external returns (uint256) {
+    function getInventoryByCityAndType(uint256 _cityID, string memory _inventoryType) external view returns (uint256) {
         uint256 _templateID = GameLib.getTemplateByInventoryType(_inventoryType);
         return GameLib.getInventory(_cityID, _templateID);
     }
 
-    function getTemplateByInventoryType(string memory _inventoryType) external returns (uint256) {
+    function getTemplateByInventoryType(string memory _inventoryType) external view returns (uint256) {
         return GameLib.getTemplateByInventoryType(_inventoryType);
     }
 

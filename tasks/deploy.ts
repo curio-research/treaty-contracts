@@ -46,7 +46,7 @@ task('deploy', 'deploy contracts')
       console.log('✦ player1 address is:', player1.address);
 
       // Generate world constants and tile map
-      const worldConstants = generateWorldConstants(player1.address);
+      const worldConstants = generateWorldConstants(player1.address, MAP_INPUT);
       const tileMap = fixmap ? generateBlankFixmap() : generateMap(MAP_INPUT);
       saveMapToLocal(tileMap);
 

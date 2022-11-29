@@ -17,7 +17,8 @@ import { Curio } from '../../typechain-types/hardhat-diamond-abi/Curio';
 // deploy proxy used in hre
 export const deployProxy = async <C extends Contract>(contractName: string, signer: Signer, hre: HardhatRuntimeEnvironment, contractArgs: unknown[], libs?: FactoryOptions['libraries']): Promise<C> => {
   const factory = await hre.ethers.getContractFactory(contractName, libs ? { libraries: libs } : signer);
-  const contract = await factory.deploy(...contractArgs);
+  const gasLimit = chainInfo[hre.network.name].gasLimit;
+  const contract = await factory.deploy(...contractArgs, { gasLimit });
 
   await confirmTx(contract.deployTransaction, hre);
 

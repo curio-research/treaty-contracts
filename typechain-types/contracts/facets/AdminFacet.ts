@@ -335,8 +335,8 @@ export interface AdminFacet extends BaseContract {
 
     onlyQuery(
       _startPosition: PositionStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
 
     onlySet(
       _entity: PromiseOrValue<BigNumberish>,
@@ -451,8 +451,8 @@ export interface AdminFacet extends BaseContract {
 
   onlyQuery(
     _startPosition: PositionStruct,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
 
   onlySet(
     _entity: PromiseOrValue<BigNumberish>,
@@ -680,7 +680,7 @@ export interface AdminFacet extends BaseContract {
 
     onlyQuery(
       _startPosition: PositionStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     onlySet(
@@ -797,7 +797,7 @@ export interface AdminFacet extends BaseContract {
 
     onlyQuery(
       _startPosition: PositionStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     onlySet(
