@@ -73,10 +73,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.LibDiamond__factory>;
     getContractFactory(
-      name: "LibQuery",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.LibQuery__factory>;
-    getContractFactory(
       name: "QueryLib",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.QueryLib__factory>;
@@ -204,11 +200,6 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.LibDiamond>;
-    getContractAt(
-      name: "LibQuery",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.LibQuery>;
     getContractAt(
       name: "QueryLib",
       address: string,

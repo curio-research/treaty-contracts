@@ -37,14 +37,14 @@ export type PositionStructOutput = [BigNumber, BigNumber] & {
 
 export type QueryConditionStruct = {
   queryType: PromiseOrValue<BigNumberish>;
+  component: PromiseOrValue<string>;
   value: PromiseOrValue<BytesLike>;
-  componentName: PromiseOrValue<string>;
 };
 
 export type QueryConditionStructOutput = [number, string, string] & {
   queryType: number;
+  component: string;
   value: string;
-  componentName: string;
 };
 
 export interface ECSLibInterface extends utils.Interface {
@@ -67,7 +67,8 @@ export interface ECSLibInterface extends utils.Interface {
     "getUintArray(string,uint256)": FunctionFragment;
     "getUintArrayComponent(string)": FunctionFragment;
     "getUintComponent(string)": FunctionFragment;
-    "queryChunk(uint8,string,bytes)": FunctionFragment;
+    "query((uint8,Component,bytes)[])": FunctionFragment;
+    "queryChunk(uint8,Component,bytes)": FunctionFragment;
   };
 
   getFunction(
@@ -90,6 +91,7 @@ export interface ECSLibInterface extends utils.Interface {
       | "getUintArray"
       | "getUintArrayComponent"
       | "getUintComponent"
+      | "query"
       | "queryChunk"
   ): FunctionFragment;
 
@@ -166,6 +168,10 @@ export interface ECSLibInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "query",
+    values: [QueryConditionStruct[]]
+  ): string;
+  encodeFunctionData(
     functionFragment: "queryChunk",
     values: [
       PromiseOrValue<BigNumberish>,
@@ -231,6 +237,7 @@ export interface ECSLibInterface extends utils.Interface {
     functionFragment: "getUintComponent",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "query", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "queryChunk", data: BytesLike): Result;
 
   events: {
@@ -427,9 +434,14 @@ export interface ECSLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
+    query(
+      _queryConditions: QueryConditionStruct[],
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
+
     queryChunk(
       _queryType: PromiseOrValue<BigNumberish>,
-      _componentName: PromiseOrValue<string>,
+      _component: PromiseOrValue<string>,
       _value: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[QueryConditionStructOutput]>;
@@ -534,9 +546,14 @@ export interface ECSLib extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
+  query(
+    _queryConditions: QueryConditionStruct[],
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
   queryChunk(
     _queryType: PromiseOrValue<BigNumberish>,
-    _componentName: PromiseOrValue<string>,
+    _component: PromiseOrValue<string>,
     _value: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<QueryConditionStructOutput>;
@@ -641,9 +658,14 @@ export interface ECSLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
+    query(
+      _queryConditions: QueryConditionStruct[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
+
     queryChunk(
       _queryType: PromiseOrValue<BigNumberish>,
-      _componentName: PromiseOrValue<string>,
+      _component: PromiseOrValue<string>,
       _value: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<QueryConditionStructOutput>;
@@ -783,9 +805,14 @@ export interface ECSLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    query(
+      _queryConditions: QueryConditionStruct[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     queryChunk(
       _queryType: PromiseOrValue<BigNumberish>,
-      _componentName: PromiseOrValue<string>,
+      _component: PromiseOrValue<string>,
       _value: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -891,9 +918,14 @@ export interface ECSLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    query(
+      _queryConditions: QueryConditionStruct[],
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     queryChunk(
       _queryType: PromiseOrValue<BigNumberish>,
-      _componentName: PromiseOrValue<string>,
+      _component: PromiseOrValue<string>,
       _value: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

@@ -28,17 +28,28 @@ import type {
 export interface GameLibInterface extends utils.Interface {
   functions: {
     "getAttackBonus(uint256,uint256)": FunctionFragment;
+    "getConstituents(uint256)": FunctionFragment;
   };
 
-  getFunction(nameOrSignatureOrTopic: "getAttackBonus"): FunctionFragment;
+  getFunction(
+    nameOrSignatureOrTopic: "getAttackBonus" | "getConstituents"
+  ): FunctionFragment;
 
   encodeFunctionData(
     functionFragment: "getAttackBonus",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
+  encodeFunctionData(
+    functionFragment: "getConstituents",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "getAttackBonus",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getConstituents",
     data: BytesLike
   ): Result;
 
@@ -93,6 +104,11 @@ export interface GameLib extends BaseContract {
       _defenderTemplateID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    getConstituents(
+      _keeperID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
   };
 
   getAttackBonus(
@@ -101,12 +117,22 @@ export interface GameLib extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  getConstituents(
+    _keeperID: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
   callStatic: {
     getAttackBonus(
       _offenderTemplateID: PromiseOrValue<BigNumberish>,
       _defenderTemplateID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    getConstituents(
+      _keeperID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
   };
 
   filters: {
@@ -123,12 +149,22 @@ export interface GameLib extends BaseContract {
       _defenderTemplateID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    getConstituents(
+      _keeperID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     getAttackBonus(
       _offenderTemplateID: PromiseOrValue<BigNumberish>,
       _defenderTemplateID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getConstituents(
+      _keeperID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

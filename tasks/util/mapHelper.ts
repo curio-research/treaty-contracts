@@ -1,15 +1,12 @@
-import { Curio, WorldConstantsStruct } from './../../typechain-types/hardhat-diamond-abi/Curio';
-import { Army, decodeBigNumberishArr, position } from 'curio-vault';
+import { Curio } from './../../typechain-types/hardhat-diamond-abi/Curio';
+import { decodeBigNumberishArr, position } from 'curio-vault';
 import { Component__factory } from './../../typechain-types/factories/contracts/Component__factory';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
-import { TILE_TYPE, componentNameToId, encodePosition, getImmediateSurroundingPositions, TileMap, Tag, Position, Owner, Health, Speed, Attack, Defense, Load, LastTimestamp, Tags, encodeString, encodeUint256, getRightPos, chainInfo } from 'curio-vault';
+import { TILE_TYPE, componentNameToId, encodePosition, getImmediateSurroundingPositions, TileMap, Position, Speed, encodeUint256, getRightPos, chainInfo } from 'curio-vault';
 import { TILE_WIDTH } from './constants';
 import { confirmTx } from './deployHelper';
 import SimplexNoise from 'simplex-noise';
-import { LoadTestSetupInput, MapInput } from './types';
-import chalk from 'chalk';
-import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
-import { Signer } from 'ethers';
+import { MapInput } from './types';
 
 const MAX_UINT256 = BigInt(Math.pow(2, 256)) - BigInt(1);
 

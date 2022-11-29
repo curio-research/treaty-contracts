@@ -1,4 +1,4 @@
-import { Curio } from 'curio-vault';
+import { Curio } from '../../../typechain-types/hardhat-diamond-abi/Curio';
 import { Signer } from 'ethers';
 import { HardhatArguments, HardhatRuntimeEnvironment } from 'hardhat/types';
 
