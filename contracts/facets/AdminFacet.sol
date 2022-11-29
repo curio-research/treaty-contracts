@@ -40,10 +40,6 @@ contract AdminFacet is UseStorage {
         ECSLib.removeEntity(_entity);
     }
 
-    function createArmy(uint256 _playerID, Position memory _position) external onlyAuthorized {
-        // Templates.addArmy(_playerID, _position, GameLib.getProperTilePosition(_position), 0, 1, 1, 2, 5);
-    }
-
     function adminInitializeTile(Position memory _startPosition, address _tileAddress) external onlyAuthorized {
         GameLib.initializeTile(_startPosition, _tileAddress);
     }

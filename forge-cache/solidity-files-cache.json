@@ -312,8 +312,8 @@
       }
     },
     "contracts/WalletHangingGarden.sol": {
-      "lastModificationDate": 1669751724929,
-      "contentHash": "eb0eb1ce386bc6c3b08f5b18f0e4fdf0",
+      "lastModificationDate": 1669752092387,
+      "contentHash": "f001fb0519d3fe987fa856fad6663844",
       "sourceName": "contracts/WalletHangingGarden.sol",
       "solcConfig": {
         "settings": {
@@ -543,8 +543,8 @@
       }
     },
     "contracts/facets/GameFacet.sol": {
-      "lastModificationDate": 1669749070451,
-      "contentHash": "5dcd70bdbb06e2a6511c1270324184bb",
+      "lastModificationDate": 1669752388011,
+      "contentHash": "0d6d676066ba572bcc69dae1e07a21e9",
       "sourceName": "contracts/facets/GameFacet.sol",
       "solcConfig": {
         "settings": {
@@ -1164,7 +1164,7 @@
       }
     },
     "contracts/tokens/FoodERC20.sol": {
-      "lastModificationDate": 1669750307512,
+      "lastModificationDate": 1669752194541,
       "contentHash": "5759334ef303331595cd77168786325e",
       "sourceName": "contracts/tokens/FoodERC20.sol",
       "solcConfig": {
@@ -1219,8 +1219,8 @@
       }
     },
     "contracts/tokens/GoldERC20.sol": {
-      "lastModificationDate": 1669752002071,
-      "contentHash": "6da82a28541d5af4e18a6184c4e073ea",
+      "lastModificationDate": 1669752194541,
+      "contentHash": "552221361938422348c2e627c00405f2",
       "sourceName": "contracts/tokens/GoldERC20.sol",
       "solcConfig": {
         "settings": {
@@ -1274,7 +1274,7 @@
       }
     },
     "contracts/tokens/GuardERC20.sol": {
-      "lastModificationDate": 1669750299982,
+      "lastModificationDate": 1669752194541,
       "contentHash": "ad9ede61c9de82f024df95312f824de6",
       "sourceName": "contracts/tokens/GuardERC20.sol",
       "solcConfig": {
@@ -1329,7 +1329,7 @@
       }
     },
     "contracts/tokens/HorsemanERC20.sol": {
-      "lastModificationDate": 1669750328419,
+      "lastModificationDate": 1669752194541,
       "contentHash": "abe894fb09e6c15e2c9e526b4251c228",
       "sourceName": "contracts/tokens/HorsemanERC20.sol",
       "solcConfig": {
@@ -1384,7 +1384,7 @@
       }
     },
     "contracts/tokens/SlingerERC20.sol": {
-      "lastModificationDate": 1669750319048,
+      "lastModificationDate": 1669752194541,
       "contentHash": "f4710af21c0874b1d319be8974b0152e",
       "sourceName": "contracts/tokens/SlingerERC20.sol",
       "solcConfig": {
@@ -1439,7 +1439,7 @@
       }
     },
     "contracts/tokens/WarriorERC20.sol": {
-      "lastModificationDate": 1669750322006,
+      "lastModificationDate": 1669752194541,
       "contentHash": "82cccccfca3dba75843795f8e86d8212",
       "sourceName": "contracts/tokens/WarriorERC20.sol",
       "solcConfig": {
@@ -2124,7 +2124,7 @@
       }
     },
     "test/DiamondDeploy.t.sol": {
-      "lastModificationDate": 1669751151487,
+      "lastModificationDate": 1669752194542,
       "contentHash": "1b4e70f3dd33df1deb911228f69abea0",
       "sourceName": "test/DiamondDeploy.t.sol",
       "solcConfig": {
@@ -2283,8 +2283,8 @@
       }
     },
     "test/HangingGarden.t.sol": {
-      "lastModificationDate": 1669751744499,
-      "contentHash": "52f2b6d2f1f8783f96fba6fe0b77dc9e",
+      "lastModificationDate": 1669752194542,
+      "contentHash": "8c22079e3484f745fbf605619ed96025",
       "sourceName": "test/HangingGarden.t.sol",
       "solcConfig": {
         "settings": {

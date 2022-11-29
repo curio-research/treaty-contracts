@@ -148,7 +148,6 @@ contract GameFacet is UseStorage {
         uint256 tileNationID = ECSLib.getUint("Nation", tileID);
         if (tileNationID != NULL) {
             address tileNationContract = ECSLib.getAddress("Address", tileNationID);
-            console.log(tileNationContract);
             // note: here it should have a standard; I'm using this name just for fun
             (bool success, bytes memory data) = tileNationContract.call(abi.encodeWithSignature("approveHomiesEntering(address)", address(armyAddress)));
             require(success, "CURIO: Fail to check policy");
