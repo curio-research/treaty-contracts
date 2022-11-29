@@ -1,5 +1,5 @@
 //SPDX-License-Identifier: MIT
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.13;
 
 import {LibStorage} from "contracts/libraries/Storage.sol";
 import {GameState, Position, QueryCondition, QueryType, ValueType} from "contracts/libraries/Types.sol";
@@ -7,6 +7,8 @@ import {Set} from "contracts/Set.sol";
 import {UintBoolMapping} from "contracts/Mapping.sol";
 import {Component} from "contracts/Component.sol";
 import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, UintComponent, UintArrayComponent} from "contracts/TypedComponents.sol";
+
+import {QueryLib} from "contracts/libraries/QueryLib.sol";
 
 /// @title library of ECS utility functions
 
@@ -289,36 +291,16 @@ library ECSLib {
     // HELPERS
     // ----------------------------------------------------------
 
-    function queryAsSet(QueryCondition[] memory _queryCondition) public returns (Set) {
-        Set res = Set(gs().entities);
-
-        for (uint256 i = 0; i < _queryCondition.length; i++) {
-            QueryCondition memory _queryChunkCondition = _queryCondition[i];
-            Component component = _getComponent(_queryChunkCondition.componentName);
-
-            if (_queryChunkCondition.queryType == QueryType.Has) {
-                res = intersectionAsSet(res, component.getEntitiesAsSet());
-            } else if (_queryChunkCondition.queryType == QueryType.HasVal) {
-                // Exact value
-                res = intersectionAsSet(res, component.getEntitiesWithValueAsSet(_queryChunkCondition.value));
-            } else {
-                revert("CURIO: Query type not supported");
-            }
-        }
-
-        return res;
-    }
-
-    function query(QueryCondition[] memory _queryCondition) public returns (uint256[] memory) {
-        return queryAsSet(_queryCondition).getAll();
+    function query(QueryCondition[] memory _queryConditions) public view returns (uint256[] memory) {
+        return QueryLib.query(_queryConditions);
     }
 
     function queryChunk(
         QueryType _queryType,
-        string memory _componentName,
+        Component _component,
         bytes memory _value
     ) public pure returns (QueryCondition memory) {
-        return QueryCondition({queryType: _queryType, componentName: _componentName, value: _value});
+        return QueryCondition({queryType: _queryType, component: _component, value: _value});
     }
 
     function intersectionAsSet(Set _set1, Set _set2) public returns (Set) {

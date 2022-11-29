@@ -27,18 +27,61 @@ import type {
 
 export interface GameLibInterface extends utils.Interface {
   functions: {
+    "getAddressMaxLoadAndBalance(address,string)": FunctionFragment;
     "getAttackBonus(uint256,uint256)": FunctionFragment;
+    "getConstituents(uint256)": FunctionFragment;
+    "getEntityByAddress(address)": FunctionFragment;
+    "getTokenContract(string)": FunctionFragment;
   };
 
-  getFunction(nameOrSignatureOrTopic: "getAttackBonus"): FunctionFragment;
+  getFunction(
+    nameOrSignatureOrTopic:
+      | "getAddressMaxLoadAndBalance"
+      | "getAttackBonus"
+      | "getConstituents"
+      | "getEntityByAddress"
+      | "getTokenContract"
+  ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "getAddressMaxLoadAndBalance",
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "getAttackBonus",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
+  encodeFunctionData(
+    functionFragment: "getConstituents",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getEntityByAddress",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTokenContract",
+    values: [PromiseOrValue<string>]
+  ): string;
 
   decodeFunctionResult(
+    functionFragment: "getAddressMaxLoadAndBalance",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getAttackBonus",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getConstituents",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getEntityByAddress",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTokenContract",
     data: BytesLike
   ): Result;
 
@@ -88,12 +131,39 @@ export interface GameLib extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    getAddressMaxLoadAndBalance(
+      _entityAddress: PromiseOrValue<string>,
+      _resourceType: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber, BigNumber]>;
+
     getAttackBonus(
       _offenderTemplateID: PromiseOrValue<BigNumberish>,
       _defenderTemplateID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    getConstituents(
+      _keeperID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
+
+    getEntityByAddress(
+      _entityAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    getTokenContract(
+      _tokenName: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
   };
+
+  getAddressMaxLoadAndBalance(
+    _entityAddress: PromiseOrValue<string>,
+    _resourceType: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<[BigNumber, BigNumber]>;
 
   getAttackBonus(
     _offenderTemplateID: PromiseOrValue<BigNumberish>,
@@ -101,12 +171,48 @@ export interface GameLib extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  getConstituents(
+    _keeperID: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
+  getEntityByAddress(
+    _entityAddress: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getTokenContract(
+    _tokenName: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
   callStatic: {
+    getAddressMaxLoadAndBalance(
+      _entityAddress: PromiseOrValue<string>,
+      _resourceType: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber, BigNumber]>;
+
     getAttackBonus(
       _offenderTemplateID: PromiseOrValue<BigNumberish>,
       _defenderTemplateID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    getConstituents(
+      _keeperID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
+
+    getEntityByAddress(
+      _entityAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getTokenContract(
+      _tokenName: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<string>;
   };
 
   filters: {
@@ -118,17 +224,59 @@ export interface GameLib extends BaseContract {
   };
 
   estimateGas: {
+    getAddressMaxLoadAndBalance(
+      _entityAddress: PromiseOrValue<string>,
+      _resourceType: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getAttackBonus(
       _offenderTemplateID: PromiseOrValue<BigNumberish>,
       _defenderTemplateID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    getConstituents(
+      _keeperID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getEntityByAddress(
+      _entityAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getTokenContract(
+      _tokenName: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    getAddressMaxLoadAndBalance(
+      _entityAddress: PromiseOrValue<string>,
+      _resourceType: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getAttackBonus(
       _offenderTemplateID: PromiseOrValue<BigNumberish>,
       _defenderTemplateID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getConstituents(
+      _keeperID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getEntityByAddress(
+      _entityAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getTokenContract(
+      _tokenName: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

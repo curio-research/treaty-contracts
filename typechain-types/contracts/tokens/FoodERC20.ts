@@ -30,32 +30,48 @@ import type {
 export interface FoodERC20Interface extends utils.Interface {
   functions: {
     "DOMAIN_SEPARATOR()": FunctionFragment;
+    "admin()": FunctionFragment;
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
+    "checkBalanceOf(address)": FunctionFragment;
     "decimals()": FunctionFragment;
+    "destroyToken(address,uint256)": FunctionFragment;
+    "diamond()": FunctionFragment;
+    "dripToken(address,uint256)": FunctionFragment;
+    "game()": FunctionFragment;
+    "getter()": FunctionFragment;
     "name()": FunctionFragment;
     "nonces(address)": FunctionFragment;
     "permit(address,address,uint256,uint256,uint8,bytes32,bytes32)": FunctionFragment;
     "symbol()": FunctionFragment;
     "totalSupply()": FunctionFragment;
     "transfer(address,uint256)": FunctionFragment;
+    "transferAll(address,address)": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
       | "DOMAIN_SEPARATOR"
+      | "admin"
       | "allowance"
       | "approve"
       | "balanceOf"
+      | "checkBalanceOf"
       | "decimals"
+      | "destroyToken"
+      | "diamond"
+      | "dripToken"
+      | "game"
+      | "getter"
       | "name"
       | "nonces"
       | "permit"
       | "symbol"
       | "totalSupply"
       | "transfer"
+      | "transferAll"
       | "transferFrom"
   ): FunctionFragment;
 
@@ -63,6 +79,7 @@ export interface FoodERC20Interface extends utils.Interface {
     functionFragment: "DOMAIN_SEPARATOR",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "admin", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "allowance",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
@@ -75,7 +92,22 @@ export interface FoodERC20Interface extends utils.Interface {
     functionFragment: "balanceOf",
     values: [PromiseOrValue<string>]
   ): string;
+  encodeFunctionData(
+    functionFragment: "checkBalanceOf",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "destroyToken",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(functionFragment: "diamond", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "dripToken",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(functionFragment: "game", values?: undefined): string;
+  encodeFunctionData(functionFragment: "getter", values?: undefined): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "nonces",
@@ -103,6 +135,10 @@ export interface FoodERC20Interface extends utils.Interface {
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "transferAll",
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "transferFrom",
     values: [
       PromiseOrValue<string>,
@@ -115,10 +151,23 @@ export interface FoodERC20Interface extends utils.Interface {
     functionFragment: "DOMAIN_SEPARATOR",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "admin", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "checkBalanceOf",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "destroyToken",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "diamond", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "dripToken", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "game", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "getter", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "nonces", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "permit", data: BytesLike): Result;
@@ -128,6 +177,10 @@ export interface FoodERC20Interface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "transfer", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "transferAll",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "transferFrom",
     data: BytesLike
@@ -195,6 +248,8 @@ export interface FoodERC20 extends BaseContract {
   functions: {
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<[string]>;
 
+    admin(overrides?: CallOverrides): Promise<[string]>;
+
     allowance(
       arg0: PromiseOrValue<string>,
       arg1: PromiseOrValue<string>,
@@ -212,7 +267,30 @@ export interface FoodERC20 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    checkBalanceOf(
+      _entityAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     decimals(overrides?: CallOverrides): Promise<[number]>;
+
+    destroyToken(
+      _address: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    diamond(overrides?: CallOverrides): Promise<[string]>;
+
+    dripToken(
+      _address: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    game(overrides?: CallOverrides): Promise<[string]>;
+
+    getter(overrides?: CallOverrides): Promise<[string]>;
 
     name(overrides?: CallOverrides): Promise<[string]>;
 
@@ -242,15 +320,23 @@ export interface FoodERC20 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    transferAll(
+      _from: PromiseOrValue<string>,
+      _to: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     transferFrom(
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
+      _from: PromiseOrValue<string>,
+      _to: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
   DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<string>;
+
+  admin(overrides?: CallOverrides): Promise<string>;
 
   allowance(
     arg0: PromiseOrValue<string>,
@@ -269,7 +355,30 @@ export interface FoodERC20 extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  checkBalanceOf(
+    _entityAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   decimals(overrides?: CallOverrides): Promise<number>;
+
+  destroyToken(
+    _address: PromiseOrValue<string>,
+    _amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  diamond(overrides?: CallOverrides): Promise<string>;
+
+  dripToken(
+    _address: PromiseOrValue<string>,
+    _amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  game(overrides?: CallOverrides): Promise<string>;
+
+  getter(overrides?: CallOverrides): Promise<string>;
 
   name(overrides?: CallOverrides): Promise<string>;
 
@@ -299,15 +408,23 @@ export interface FoodERC20 extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  transferAll(
+    _from: PromiseOrValue<string>,
+    _to: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   transferFrom(
-    from: PromiseOrValue<string>,
-    to: PromiseOrValue<string>,
-    amount: PromiseOrValue<BigNumberish>,
+    _from: PromiseOrValue<string>,
+    _to: PromiseOrValue<string>,
+    _amount: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<string>;
+
+    admin(overrides?: CallOverrides): Promise<string>;
 
     allowance(
       arg0: PromiseOrValue<string>,
@@ -326,7 +443,30 @@ export interface FoodERC20 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    checkBalanceOf(
+      _entityAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     decimals(overrides?: CallOverrides): Promise<number>;
+
+    destroyToken(
+      _address: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    diamond(overrides?: CallOverrides): Promise<string>;
+
+    dripToken(
+      _address: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    game(overrides?: CallOverrides): Promise<string>;
+
+    getter(overrides?: CallOverrides): Promise<string>;
 
     name(overrides?: CallOverrides): Promise<string>;
 
@@ -356,10 +496,16 @@ export interface FoodERC20 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    transferAll(
+      _from: PromiseOrValue<string>,
+      _to: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     transferFrom(
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
+      _from: PromiseOrValue<string>,
+      _to: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<boolean>;
   };
@@ -391,6 +537,8 @@ export interface FoodERC20 extends BaseContract {
   estimateGas: {
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<BigNumber>;
 
+    admin(overrides?: CallOverrides): Promise<BigNumber>;
+
     allowance(
       arg0: PromiseOrValue<string>,
       arg1: PromiseOrValue<string>,
@@ -408,7 +556,30 @@ export interface FoodERC20 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    checkBalanceOf(
+      _entityAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     decimals(overrides?: CallOverrides): Promise<BigNumber>;
+
+    destroyToken(
+      _address: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    diamond(overrides?: CallOverrides): Promise<BigNumber>;
+
+    dripToken(
+      _address: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    game(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getter(overrides?: CallOverrides): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -438,16 +609,24 @@ export interface FoodERC20 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    transferAll(
+      _from: PromiseOrValue<string>,
+      _to: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     transferFrom(
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
+      _from: PromiseOrValue<string>,
+      _to: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    admin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     allowance(
       arg0: PromiseOrValue<string>,
@@ -466,7 +645,30 @@ export interface FoodERC20 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    checkBalanceOf(
+      _entityAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     decimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    destroyToken(
+      _address: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    diamond(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    dripToken(
+      _address: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    game(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -496,10 +698,16 @@ export interface FoodERC20 extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    transferAll(
+      _from: PromiseOrValue<string>,
+      _to: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     transferFrom(
-      from: PromiseOrValue<string>,
-      to: PromiseOrValue<string>,
-      amount: PromiseOrValue<BigNumberish>,
+      _from: PromiseOrValue<string>,
+      _to: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };

@@ -1,5 +1,5 @@
 //SPDX-License-Identifier: MIT
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.13;
 
 import {Set} from "contracts/Set.sol";
 import {UseStorage} from "contracts/libraries/Storage.sol";
@@ -49,26 +49,43 @@ contract GetterFacet is UseStorage {
         uint256 templateID = gs().templates[_resourceType];
         uint256 inventoryID = GameLib.getInventory(entityID, templateID);
         return ECSLib.getUint("Amount", inventoryID);
-    } 
+    }
 
     // Debug Helpers
+    function playersAndIdsMatch(address[] memory nations, uint256[] memory nationIDs) external view returns (bool) {
+        if (nations.length != nationIDs.length) {
+            return false;
+        }
+        for (uint256 i = 0; i < nations.length; i++) {
+            if (gs().nationEntityMap[nations[i]] != nationIDs[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     function getEntitiesAddr() external view returns (address) {
         return gs().entities;
     }
 
-    function getTemplateByInventoryType(string memory _inventoryType) external returns (uint256) {
+    function getInventoryByCityAndType(uint256 _cityID, string memory _inventoryType) external view returns (uint256) {
+        uint256 _templateID = GameLib.getTemplateByInventoryType(_inventoryType);
+        return GameLib.getInventory(_cityID, _templateID);
+    }
+
+    function getTemplateByInventoryType(string memory _inventoryType) external view returns (uint256) {
         return GameLib.getTemplateByInventoryType(_inventoryType);
     }
 
-    function getConstituents(uint256 _armyID) external returns (uint256[] memory) {
+    function getConstituents(uint256 _armyID) external view returns (uint256[] memory) {
         return GameLib.getConstituents(_armyID);
     }
 
-    function getConstituentAtTile(uint256 _tileID) external returns (uint256) {
+    function getConstituentAtTile(uint256 _tileID) external view returns (uint256) {
         return GameLib.getConstituentAtTile(_tileID);
     }
 
-    function getArmyAt(Position memory _position) external returns (uint256) {
+    function getArmyAt(Position memory _position) external view returns (uint256) {
         return GameLib.getArmyAt(_position);
     }
 
@@ -125,7 +142,7 @@ contract GetterFacet is UseStorage {
         return Set(gs().entities).getAll();
     }
 
-    function getCityAtTile(Position memory _startPosition) external returns (uint256) {
+    function getCityAtTile(Position memory _startPosition) external view returns (uint256) {
         return GameLib.getCityAtTile(_startPosition);
     }
 
@@ -133,7 +150,7 @@ contract GetterFacet is UseStorage {
         return GameLib.getCapital(_cityID);
     }
 
-    function getTileAt(Position memory _position) external returns (uint256) {
+    function getTileAt(Position memory _position) external view returns (uint256) {
         return GameLib.getTileAt(_position);
     }
 
@@ -143,7 +160,12 @@ contract GetterFacet is UseStorage {
         return GameLib.getInventory(entityID, templateID);
     }
 
-    function getResourceAtTile(Position memory _startPosition) external returns (uint256) {
+    function getArmyFood(uint256 _armyID) external view returns (uint256) {
+        uint256 foodInventoryID = GameLib.getInventory(_armyID, gs().templates["Food"]);
+        return ECSLib.getUint("Amount", foodInventoryID);
+    }
+
+    function getResourceAtTile(Position memory _startPosition) external view returns (uint256) {
         return GameLib.getResourceAtTile(_startPosition);
     }
 }

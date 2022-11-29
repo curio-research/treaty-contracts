@@ -1,5 +1,5 @@
 //SPDX-License-Identifier: MIT
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.13;
 
 import {UseStorage} from "contracts/libraries/Storage.sol";
 import {GameLib} from "contracts/libraries/GameLib.sol";
@@ -7,7 +7,6 @@ import {ECSLib} from "contracts/libraries/ECSLib.sol";
 import {GameMode, Position, WorldConstants} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
 import {Templates} from "contracts/libraries/Templates.sol";
-import "forge-std/console.sol";
 
 /// @title Game facet
 /// @notice Contains player functions
@@ -144,15 +143,15 @@ contract GameFacet is UseStorage {
         uint256 armyNationID = ECSLib.getUint("Nation", _armyID);
 
         {
-        // Check if army is nation's homie
-        uint256 tileNationID = ECSLib.getUint("Nation", tileID);
-        if (tileNationID != NULL) {
-            address tileNationContract = ECSLib.getAddress("Address", tileNationID);
-            // note: here it should have a standard; I'm using this name just for fun
-            (bool success, bytes memory data) = tileNationContract.call(abi.encodeWithSignature("approveHomiesEntering(address)", address(armyAddress)));
-            require(success, "CURIO: Fail to check policy");
-            bool isHomie = abi.decode(data, (bool));
-            if (!isHomie) GameLib.neutralOrOwnedEntityCheck(tileID, armyNationID);
+            // Check if army is nation's homie
+            uint256 tileNationID = ECSLib.getUint("Nation", tileID);
+            if (tileNationID != NULL) {
+                address tileNationContract = ECSLib.getAddress("Address", tileNationID);
+                // note: here it should have a standard; I'm using this name just for fun
+                (bool success, bytes memory data) = tileNationContract.call(abi.encodeWithSignature("approveHomiesEntering(address)", address(armyAddress)));
+                require(success, "CURIO: Fail to check policy");
+                bool isHomie = abi.decode(data, (bool));
+                if (!isHomie) GameLib.neutralOrOwnedEntityCheck(tileID, armyNationID);
             } else GameLib.neutralOrOwnedEntityCheck(tileID, armyNationID);
         }
 
@@ -234,12 +233,12 @@ contract GameFacet is UseStorage {
             uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
 
             for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
-            address resourceContract = ECSLib.getAddress("Address", resourceTemplateIDs[i]);
-            uint256 balance = GameLib.getAddressBalance(msg.sender, resourceContract);
-            uint256 cost = GameLib.getConstant("Tile", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Cost", "Upgrade", tileLevel);
-            require(balance >= cost, "CURIO: Insufficient balance");
-            (bool success1, ) = resourceContract.call(abi.encodeWithSignature("destroyToken(address,uint256)", msg.sender, cost));
-            require(success1, "CURIO: token burn fails");
+                address resourceContract = ECSLib.getAddress("Address", resourceTemplateIDs[i]);
+                uint256 balance = GameLib.getAddressBalance(msg.sender, resourceContract);
+                uint256 cost = GameLib.getConstant("Tile", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Cost", "Upgrade", tileLevel);
+                require(balance >= cost, "CURIO: Insufficient balance");
+                (bool success1, ) = resourceContract.call(abi.encodeWithSignature("destroyToken(address,uint256)", msg.sender, cost));
+                require(success1, "CURIO: token burn fails");
             }
         }
 
@@ -444,7 +443,7 @@ contract GameFacet is UseStorage {
 
         // Update inventory
         address troopContract = ECSLib.getAddress("Address", ECSLib.getUint("Template", _productionID));
-        (bool success,) = troopContract.call(abi.encodeWithSignature("dripToken(address,uint256)", msg.sender, ECSLib.getUint("Amount", _productionID)));
+        (bool success, ) = troopContract.call(abi.encodeWithSignature("dripToken(address,uint256)", msg.sender, ECSLib.getUint("Amount", _productionID)));
         require(success, "Curio: Troop Production dripping fails");
 
         // Delete production
@@ -750,8 +749,7 @@ contract GameFacet is UseStorage {
             uint256 winnerCityID = GameLib.getPlayerCity(GameLib.getNationIDByAddress(msg.sender));
             if (capitalID != NULL) {
                 // Victorious against city, add back some guards for the loser
-                (bool success, ) = guardTokenAddress.call(abi.encodeWithSignature("dripToken(address,uint256)", tileAddress,
-                GameLib.getConstant("Tile", "Guard", "Amount", "", ECSLib.getUint("Level", capitalID))));
+                (bool success, ) = guardTokenAddress.call(abi.encodeWithSignature("dripToken(address,uint256)", tileAddress, GameLib.getConstant("Tile", "Guard", "Amount", "", ECSLib.getUint("Level", capitalID))));
                 require(success, "CURIO: Capital guard reset dripping fails");
 
                 // todo: harvest all resources from the players and update resource harvest timestamp to when cooldown ends
@@ -762,8 +760,8 @@ contract GameFacet is UseStorage {
                 uint256 productionID = GameLib.getBuildingProduction(cityCenterID);
                 if (productionID != NULL) endTroopProduction(cityCenterID, productionID);
 
-                // 2. end resource harvest production => change lastTimestamp
-                uint256 chaosDuration = GameLib.getConstant("City Center", "", "Cooldown", "Chaos", cityCenterLevel);
+                // // 2. end resource harvest production => change lastTimestamp
+                // uint256 chaosDuration = GameLib.getConstant("City Center", "", "Cooldown", "Chaos", cityCenterLevel);
 
                 // todo: same process for resources
 

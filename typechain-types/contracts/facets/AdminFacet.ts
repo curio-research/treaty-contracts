@@ -45,16 +45,20 @@ export type ComponentSpecStructOutput = [string, number] & {
 
 export interface AdminFacetInterface extends utils.Interface {
   functions: {
+    "addAuthroized(address)": FunctionFragment;
     "addEntity()": FunctionFragment;
     "addGame()": FunctionFragment;
     "addGameParameter(string,uint256)": FunctionFragment;
+    "addInventory(uint256,string)": FunctionFragment;
     "addResourceTemplate(string,address)": FunctionFragment;
-    "addTroopTemplate(string,uint256,uint256,uint256,uint256,uint256,uint256,uint256,address)": FunctionFragment;
-    "adminInitializeTile((uint256,uint256))": FunctionFragment;
-    "assignResource(uint256,string,uint256)": FunctionFragment;
+    "addTroopTemplate(string,uint256,uint256,uint256,uint256,address)": FunctionFragment;
+    "adminInitializeTile((uint256,uint256),address)": FunctionFragment;
     "bulkAddGameParameters(string[],uint256[])": FunctionFragment;
-    "bulkInitializeTiles((uint256,uint256)[])": FunctionFragment;
-    "createArmy(uint256,(uint256,uint256))": FunctionFragment;
+    "bulkInitializeTiles((uint256,uint256)[],address)": FunctionFragment;
+    "dripToken(address,string,uint256)": FunctionFragment;
+    "giftTileAndResourceAt((uint256,uint256),uint256)": FunctionFragment;
+    "onlyQuery((uint256,uint256))": FunctionFragment;
+    "onlySet(uint256,uint256)": FunctionFragment;
     "reactivatePlayer(address)": FunctionFragment;
     "registerComponents(address,(string,uint8)[])": FunctionFragment;
     "registerTemplateShortcuts(string[],uint256[])": FunctionFragment;
@@ -64,20 +68,25 @@ export interface AdminFacetInterface extends utils.Interface {
     "spawnResource((uint256,uint256),string)": FunctionFragment;
     "stopGame()": FunctionFragment;
     "storeEncodedColumnBatches(uint256[][])": FunctionFragment;
+    "updateInventoryAmount(address,string,uint256,bool)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "addAuthroized"
       | "addEntity"
       | "addGame"
       | "addGameParameter"
+      | "addInventory"
       | "addResourceTemplate"
       | "addTroopTemplate"
       | "adminInitializeTile"
-      | "assignResource"
       | "bulkAddGameParameters"
       | "bulkInitializeTiles"
-      | "createArmy"
+      | "dripToken"
+      | "giftTileAndResourceAt"
+      | "onlyQuery"
+      | "onlySet"
       | "reactivatePlayer"
       | "registerComponents"
       | "registerTemplateShortcuts"
@@ -87,13 +96,22 @@ export interface AdminFacetInterface extends utils.Interface {
       | "spawnResource"
       | "stopGame"
       | "storeEncodedColumnBatches"
+      | "updateInventoryAmount"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "addAuthroized",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(functionFragment: "addEntity", values?: undefined): string;
   encodeFunctionData(functionFragment: "addGame", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "addGameParameter",
     values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "addInventory",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "addResourceTemplate",
@@ -107,23 +125,12 @@ export interface AdminFacetInterface extends utils.Interface {
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>
     ]
   ): string;
   encodeFunctionData(
     functionFragment: "adminInitializeTile",
-    values: [PositionStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "assignResource",
-    values: [
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>
-    ]
+    values: [PositionStruct, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "bulkAddGameParameters",
@@ -131,11 +138,27 @@ export interface AdminFacetInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "bulkInitializeTiles",
-    values: [PositionStruct[]]
+    values: [PositionStruct[], PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
-    functionFragment: "createArmy",
-    values: [PromiseOrValue<BigNumberish>, PositionStruct]
+    functionFragment: "dripToken",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "giftTileAndResourceAt",
+    values: [PositionStruct, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "onlyQuery",
+    values: [PositionStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "onlySet",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "reactivatePlayer",
@@ -174,11 +197,28 @@ export interface AdminFacetInterface extends utils.Interface {
     functionFragment: "storeEncodedColumnBatches",
     values: [PromiseOrValue<BigNumberish>[][]]
   ): string;
+  encodeFunctionData(
+    functionFragment: "updateInventoryAmount",
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<boolean>
+    ]
+  ): string;
 
+  decodeFunctionResult(
+    functionFragment: "addAuthroized",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "addEntity", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "addGame", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "addGameParameter",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "addInventory",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -194,10 +234,6 @@ export interface AdminFacetInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "assignResource",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "bulkAddGameParameters",
     data: BytesLike
   ): Result;
@@ -205,7 +241,13 @@ export interface AdminFacetInterface extends utils.Interface {
     functionFragment: "bulkInitializeTiles",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "createArmy", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "dripToken", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "giftTileAndResourceAt",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "onlyQuery", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "onlySet", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "reactivatePlayer",
     data: BytesLike
@@ -239,6 +281,10 @@ export interface AdminFacetInterface extends utils.Interface {
     functionFragment: "storeEncodedColumnBatches",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateInventoryAmount",
+    data: BytesLike
+  ): Result;
 
   events: {};
 }
@@ -270,6 +316,11 @@ export interface AdminFacet extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    addAuthroized(
+      authorizedAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     addEntity(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -284,6 +335,12 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    addInventory(
+      _keeperID: PromiseOrValue<BigNumberish>,
+      _templateString: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     addResourceTemplate(
       _inventoryType: PromiseOrValue<string>,
       _tokenContract: PromiseOrValue<string>,
@@ -293,9 +350,6 @@ export interface AdminFacet extends BaseContract {
     addTroopTemplate(
       _inventoryType: PromiseOrValue<string>,
       _health: PromiseOrValue<BigNumberish>,
-      _speed: PromiseOrValue<BigNumberish>,
-      _moveCooldown: PromiseOrValue<BigNumberish>,
-      _battleCooldown: PromiseOrValue<BigNumberish>,
       _attack: PromiseOrValue<BigNumberish>,
       _defense: PromiseOrValue<BigNumberish>,
       _load: PromiseOrValue<BigNumberish>,
@@ -305,13 +359,7 @@ export interface AdminFacet extends BaseContract {
 
     adminInitializeTile(
       _startPosition: PositionStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    assignResource(
-      _cityID: PromiseOrValue<BigNumberish>,
-      _inventoryType: PromiseOrValue<string>,
-      _amount: PromiseOrValue<BigNumberish>,
+      _tileAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -323,12 +371,31 @@ export interface AdminFacet extends BaseContract {
 
     bulkInitializeTiles(
       _positions: PositionStruct[],
+      _tileAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    createArmy(
-      _playerID: PromiseOrValue<BigNumberish>,
-      _position: PositionStruct,
+    dripToken(
+      _address: PromiseOrValue<string>,
+      _tokenName: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    giftTileAndResourceAt(
+      _startPosition: PositionStruct,
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    onlyQuery(
+      _startPosition: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
+
+    onlySet(
+      _entity: PromiseOrValue<BigNumberish>,
+      _value: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -381,7 +448,20 @@ export interface AdminFacet extends BaseContract {
       _colBatches: PromiseOrValue<BigNumberish>[][],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    updateInventoryAmount(
+      _inventoryAddress: PromiseOrValue<string>,
+      _templateString: PromiseOrValue<string>,
+      _amountChanged: PromiseOrValue<BigNumberish>,
+      _isIncrease: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
   };
+
+  addAuthroized(
+    authorizedAddress: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   addEntity(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -397,6 +477,12 @@ export interface AdminFacet extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  addInventory(
+    _keeperID: PromiseOrValue<BigNumberish>,
+    _templateString: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   addResourceTemplate(
     _inventoryType: PromiseOrValue<string>,
     _tokenContract: PromiseOrValue<string>,
@@ -406,9 +492,6 @@ export interface AdminFacet extends BaseContract {
   addTroopTemplate(
     _inventoryType: PromiseOrValue<string>,
     _health: PromiseOrValue<BigNumberish>,
-    _speed: PromiseOrValue<BigNumberish>,
-    _moveCooldown: PromiseOrValue<BigNumberish>,
-    _battleCooldown: PromiseOrValue<BigNumberish>,
     _attack: PromiseOrValue<BigNumberish>,
     _defense: PromiseOrValue<BigNumberish>,
     _load: PromiseOrValue<BigNumberish>,
@@ -418,13 +501,7 @@ export interface AdminFacet extends BaseContract {
 
   adminInitializeTile(
     _startPosition: PositionStruct,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  assignResource(
-    _cityID: PromiseOrValue<BigNumberish>,
-    _inventoryType: PromiseOrValue<string>,
-    _amount: PromiseOrValue<BigNumberish>,
+    _tileAddress: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -436,12 +513,31 @@ export interface AdminFacet extends BaseContract {
 
   bulkInitializeTiles(
     _positions: PositionStruct[],
+    _tileAddress: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  createArmy(
-    _playerID: PromiseOrValue<BigNumberish>,
-    _position: PositionStruct,
+  dripToken(
+    _address: PromiseOrValue<string>,
+    _tokenName: PromiseOrValue<string>,
+    _amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  giftTileAndResourceAt(
+    _startPosition: PositionStruct,
+    _nationID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  onlyQuery(
+    _startPosition: PositionStruct,
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
+  onlySet(
+    _entity: PromiseOrValue<BigNumberish>,
+    _value: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -495,7 +591,20 @@ export interface AdminFacet extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  updateInventoryAmount(
+    _inventoryAddress: PromiseOrValue<string>,
+    _templateString: PromiseOrValue<string>,
+    _amountChanged: PromiseOrValue<BigNumberish>,
+    _isIncrease: PromiseOrValue<boolean>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
+    addAuthroized(
+      authorizedAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     addEntity(overrides?: CallOverrides): Promise<BigNumber>;
 
     addGame(overrides?: CallOverrides): Promise<void>;
@@ -503,6 +612,12 @@ export interface AdminFacet extends BaseContract {
     addGameParameter(
       _identifier: PromiseOrValue<string>,
       _value: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    addInventory(
+      _keeperID: PromiseOrValue<BigNumberish>,
+      _templateString: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -515,9 +630,6 @@ export interface AdminFacet extends BaseContract {
     addTroopTemplate(
       _inventoryType: PromiseOrValue<string>,
       _health: PromiseOrValue<BigNumberish>,
-      _speed: PromiseOrValue<BigNumberish>,
-      _moveCooldown: PromiseOrValue<BigNumberish>,
-      _battleCooldown: PromiseOrValue<BigNumberish>,
       _attack: PromiseOrValue<BigNumberish>,
       _defense: PromiseOrValue<BigNumberish>,
       _load: PromiseOrValue<BigNumberish>,
@@ -527,13 +639,7 @@ export interface AdminFacet extends BaseContract {
 
     adminInitializeTile(
       _startPosition: PositionStruct,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    assignResource(
-      _cityID: PromiseOrValue<BigNumberish>,
-      _inventoryType: PromiseOrValue<string>,
-      _amount: PromiseOrValue<BigNumberish>,
+      _tileAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -545,12 +651,31 @@ export interface AdminFacet extends BaseContract {
 
     bulkInitializeTiles(
       _positions: PositionStruct[],
+      _tileAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    createArmy(
-      _playerID: PromiseOrValue<BigNumberish>,
-      _position: PositionStruct,
+    dripToken(
+      _address: PromiseOrValue<string>,
+      _tokenName: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    giftTileAndResourceAt(
+      _startPosition: PositionStruct,
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    onlyQuery(
+      _startPosition: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
+
+    onlySet(
+      _entity: PromiseOrValue<BigNumberish>,
+      _value: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -601,11 +726,24 @@ export interface AdminFacet extends BaseContract {
       _colBatches: PromiseOrValue<BigNumberish>[][],
       overrides?: CallOverrides
     ): Promise<void>;
+
+    updateInventoryAmount(
+      _inventoryAddress: PromiseOrValue<string>,
+      _templateString: PromiseOrValue<string>,
+      _amountChanged: PromiseOrValue<BigNumberish>,
+      _isIncrease: PromiseOrValue<boolean>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
   };
 
   filters: {};
 
   estimateGas: {
+    addAuthroized(
+      authorizedAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     addEntity(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -620,6 +758,12 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    addInventory(
+      _keeperID: PromiseOrValue<BigNumberish>,
+      _templateString: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     addResourceTemplate(
       _inventoryType: PromiseOrValue<string>,
       _tokenContract: PromiseOrValue<string>,
@@ -629,9 +773,6 @@ export interface AdminFacet extends BaseContract {
     addTroopTemplate(
       _inventoryType: PromiseOrValue<string>,
       _health: PromiseOrValue<BigNumberish>,
-      _speed: PromiseOrValue<BigNumberish>,
-      _moveCooldown: PromiseOrValue<BigNumberish>,
-      _battleCooldown: PromiseOrValue<BigNumberish>,
       _attack: PromiseOrValue<BigNumberish>,
       _defense: PromiseOrValue<BigNumberish>,
       _load: PromiseOrValue<BigNumberish>,
@@ -641,13 +782,7 @@ export interface AdminFacet extends BaseContract {
 
     adminInitializeTile(
       _startPosition: PositionStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    assignResource(
-      _cityID: PromiseOrValue<BigNumberish>,
-      _inventoryType: PromiseOrValue<string>,
-      _amount: PromiseOrValue<BigNumberish>,
+      _tileAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -659,12 +794,31 @@ export interface AdminFacet extends BaseContract {
 
     bulkInitializeTiles(
       _positions: PositionStruct[],
+      _tileAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    createArmy(
-      _playerID: PromiseOrValue<BigNumberish>,
-      _position: PositionStruct,
+    dripToken(
+      _address: PromiseOrValue<string>,
+      _tokenName: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    giftTileAndResourceAt(
+      _startPosition: PositionStruct,
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    onlyQuery(
+      _startPosition: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    onlySet(
+      _entity: PromiseOrValue<BigNumberish>,
+      _value: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -715,11 +869,24 @@ export interface AdminFacet extends BaseContract {
 
     storeEncodedColumnBatches(
       _colBatches: PromiseOrValue<BigNumberish>[][],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    updateInventoryAmount(
+      _inventoryAddress: PromiseOrValue<string>,
+      _templateString: PromiseOrValue<string>,
+      _amountChanged: PromiseOrValue<BigNumberish>,
+      _isIncrease: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    addAuthroized(
+      authorizedAddress: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     addEntity(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -734,6 +901,12 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    addInventory(
+      _keeperID: PromiseOrValue<BigNumberish>,
+      _templateString: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     addResourceTemplate(
       _inventoryType: PromiseOrValue<string>,
       _tokenContract: PromiseOrValue<string>,
@@ -743,9 +916,6 @@ export interface AdminFacet extends BaseContract {
     addTroopTemplate(
       _inventoryType: PromiseOrValue<string>,
       _health: PromiseOrValue<BigNumberish>,
-      _speed: PromiseOrValue<BigNumberish>,
-      _moveCooldown: PromiseOrValue<BigNumberish>,
-      _battleCooldown: PromiseOrValue<BigNumberish>,
       _attack: PromiseOrValue<BigNumberish>,
       _defense: PromiseOrValue<BigNumberish>,
       _load: PromiseOrValue<BigNumberish>,
@@ -755,13 +925,7 @@ export interface AdminFacet extends BaseContract {
 
     adminInitializeTile(
       _startPosition: PositionStruct,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    assignResource(
-      _cityID: PromiseOrValue<BigNumberish>,
-      _inventoryType: PromiseOrValue<string>,
-      _amount: PromiseOrValue<BigNumberish>,
+      _tileAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -773,12 +937,31 @@ export interface AdminFacet extends BaseContract {
 
     bulkInitializeTiles(
       _positions: PositionStruct[],
+      _tileAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    createArmy(
-      _playerID: PromiseOrValue<BigNumberish>,
-      _position: PositionStruct,
+    dripToken(
+      _address: PromiseOrValue<string>,
+      _tokenName: PromiseOrValue<string>,
+      _amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    giftTileAndResourceAt(
+      _startPosition: PositionStruct,
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    onlyQuery(
+      _startPosition: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    onlySet(
+      _entity: PromiseOrValue<BigNumberish>,
+      _value: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -829,6 +1012,14 @@ export interface AdminFacet extends BaseContract {
 
     storeEncodedColumnBatches(
       _colBatches: PromiseOrValue<BigNumberish>[][],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    updateInventoryAmount(
+      _inventoryAddress: PromiseOrValue<string>,
+      _templateString: PromiseOrValue<string>,
+      _amountChanged: PromiseOrValue<BigNumberish>,
+      _isIncrease: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };

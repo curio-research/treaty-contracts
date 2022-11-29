@@ -1,5 +1,5 @@
 //SPDX-License-Identifier: MIT
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.13;
 
 import {UseStorage} from "contracts/libraries/Storage.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
@@ -8,7 +8,6 @@ import {Templates} from "contracts/libraries/Templates.sol";
 import {Set} from "contracts/Set.sol";
 import {GameLib} from "contracts/libraries/GameLib.sol";
 import "forge-std/console.sol";
-
 
 /// @title Admin facet
 /// @notice Contains admin functions and state functions, both of which should be out of scope for players
@@ -32,6 +31,14 @@ contract AdminFacet is UseStorage {
     // DEBUG FUNCTIONS
     // ----------------------------------------------------------------------
 
+    function onlySet(uint256 _entity, uint256 _value) external {
+        ECSLib.setUint("Health", _entity, _value);
+    }
+
+    function onlyQuery(Position memory _startPosition) external view returns (uint256[] memory) {
+        return GameLib.getMovableEntitiesAtTile(_startPosition);
+    }
+
     function stopGame() external onlyAuthorized {
         gs().worldConstants.gameLengthInSeconds = block.timestamp - gs().gameInitTimestamp;
     }
@@ -44,11 +51,19 @@ contract AdminFacet is UseStorage {
         GameLib.initializeTile(_startPosition, _tileAddress);
     }
 
+    // function createArmy(uint256 _playerID, Position memory _position) external onlyAuthorized {
+    //     Templates.addArmy(_playerID, _position, GameLib.getProperTilePosition(_position), 10, 1, 1, 2, 5, "TODO");
+    // }
+
     function spawnResource(Position memory _startPosition, string memory _inventoryType) external onlyAuthorized {
         Templates.addResource(gs().templates[_inventoryType], _startPosition);
     }
 
-    function dripToken(address _address, string memory _tokenName, uint256 _amount) external onlyAuthorized {
+    function dripToken(
+        address _address,
+        string memory _tokenName,
+        uint256 _amount
+    ) external onlyAuthorized {
         address tokenContract = GameLib.getTokenContract(_tokenName);
         (bool success, ) = tokenContract.call(abi.encodeWithSignature("dripToken(address,uint256)", _address, _amount));
         require(success, "CURIO: Token dripping fails");
@@ -103,15 +118,17 @@ contract AdminFacet is UseStorage {
         }
     }
 
-    function addInventory(
-        uint256 _keeperID,
-        string memory _templateString
-    ) external onlyAuthorized returns (uint256) {
+    function addInventory(uint256 _keeperID, string memory _templateString) external onlyAuthorized returns (uint256) {
         uint256 templateID = gs().templates[_templateString];
         return Templates.addInventory(_keeperID, templateID);
     }
 
-    function updateInventoryAmount(address _inventoryAddress, string memory _templateString, uint256 _amountChanged, bool _isIncrease) external onlyAuthorized returns (bool) {
+    function updateInventoryAmount(
+        address _inventoryAddress,
+        string memory _templateString,
+        uint256 _amountChanged,
+        bool _isIncrease
+    ) external onlyAuthorized returns (bool) {
         uint256 templateID = gs().templates[_templateString];
         uint256 keeperID = GameLib.getEntityByAddress(_inventoryAddress);
         uint256 inventoryID = GameLib.getInventory(keeperID, templateID);
