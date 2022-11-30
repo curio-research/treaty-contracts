@@ -15,6 +15,10 @@ import "forge-std/console.sol";
 contract GetterFacet is UseStorage {
     uint256 private NULL = 0;
 
+    function getTokenContract(string memory _tokenName) external view returns (address) {
+        GameLib.getTokenContract(_tokenName);
+    }
+
     function getNationIDByAddress(address _nationWalletAddress) external view returns (uint256) {
         return GameLib.getNationIDByAddress(_nationWalletAddress);
     }
