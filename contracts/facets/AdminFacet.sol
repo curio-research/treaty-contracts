@@ -47,8 +47,8 @@ contract AdminFacet is UseStorage {
         ECSLib.removeEntity(_entity);
     }
 
-    function adminInitializeTile(Position memory _startPosition, address _tileAddress) external onlyAuthorized {
-        GameLib.initializeTile(_startPosition, _tileAddress);
+    function adminInitializeTile(Position memory _startPosition) external onlyAuthorized {
+        GameLib.initializeTile(_startPosition);
     }
 
     // function createArmy(uint256 _playerID, Position memory _position) external onlyAuthorized {
@@ -66,7 +66,7 @@ contract AdminFacet is UseStorage {
     ) external onlyAuthorized {
         address tokenContract = GameLib.getTokenContract(_tokenName);
         (bool success, ) = tokenContract.call(abi.encodeWithSignature("dripToken(address,uint256)", _address, _amount));
-        require(success, "CURIO: Token dripping fails");
+        require(success, string.concat("CURIO: Failed to drip token", _tokenName));
     }
 
     function giftTileAndResourceAt(Position memory _startPosition, uint256 _nationID) external onlyAuthorized {
@@ -74,12 +74,6 @@ contract AdminFacet is UseStorage {
         uint256 resourceID = GameLib.getResourceAt(_startPosition);
         ECSLib.setUint("Nation", tileID, _nationID);
         ECSLib.setUint("Nation", resourceID, _nationID);
-    }
-
-    function spawnBarbarian(Position memory _startPosition, uint256 _level) external onlyAuthorized {
-        require(_level == 1 || _level == 2, "CURIO: Function not used correctly");
-        uint256 tileID = GameLib.getTileAt(_startPosition);
-        ECSLib.setUint("Level", tileID, _level);
     }
 
     // ----------------------------------------------------------------------
@@ -112,34 +106,23 @@ contract AdminFacet is UseStorage {
      */
 
     // fixme: update new initialization in deploy.ts
-    function bulkInitializeTiles(Position[] memory _positions, address _tileAddress) external onlyAuthorized {
+    function bulkInitializeTiles(Position[] memory _positions) external onlyAuthorized {
         for (uint256 i = 0; i < _positions.length; i++) {
-            GameLib.initializeTile(_positions[i], _tileAddress);
+            GameLib.initializeTile(_positions[i]);
         }
     }
 
-    function addInventory(uint256 _keeperID, string memory _templateString) external onlyAuthorized returns (uint256) {
-        uint256 templateID = gs().templates[_templateString];
+    function addInventory(uint256 _keeperID, string memory _inventoryType) external onlyAuthorized returns (uint256) {
+        uint256 templateID = gs().templates[_inventoryType];
         return Templates.addInventory(_keeperID, templateID);
     }
 
     function updateInventoryAmount(
-        address _inventoryAddress,
-        string memory _templateString,
-        uint256 _amountChanged,
-        bool _isIncrease
+        uint256 _inventoryID,
+        uint256 _newAmount
     ) external onlyAuthorized returns (bool) {
-        uint256 templateID = gs().templates[_templateString];
-        uint256 keeperID = GameLib.getEntityByAddress(_inventoryAddress);
-        uint256 inventoryID = GameLib.getInventory(keeperID, templateID);
-        uint256 inventoryCurrentBalance = ECSLib.getUint("Amount", inventoryID);
-        if (_isIncrease) {
-            ECSLib.setUint("Amount", inventoryID, inventoryCurrentBalance + _amountChanged);
-            return true;
-        } else {
-            ECSLib.setUint("Amount", inventoryID, inventoryCurrentBalance - _amountChanged);
-            return true;
-        }
+        ECSLib.setUint("Amount", _inventoryID, _newAmount);
+        return true;
     }
 
     function addTroopTemplate(

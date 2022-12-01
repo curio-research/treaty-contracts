@@ -213,16 +213,16 @@ contract DiamondDeployTest is Test {
 
         // Initialize players
         vm.startPrank(nation1Address);
-        nationWallet1.executeGameTX(abi.encodeWithSignature("initializeNation(uint256,uint256,string)", nation1Pos.x, nation1Pos.y, "China"));
-        nationWallet1.executeGameTX(abi.encodeWithSignature("initializeArmy(address)", address(armyWallet11)));
-        nationWallet1.executeGameTX(abi.encodeWithSignature("initializeArmy(address)", address(armyWallet12)));
+        nationWallet1.executeGameTx(abi.encodeWithSignature("initializeNation(uint256,uint256,string)", nation1Pos.x, nation1Pos.y, "China"));
+        nationWallet1.executeGameTx(abi.encodeWithSignature("initializeArmy(address)", address(armyWallet11)));
+        nationWallet1.executeGameTx(abi.encodeWithSignature("initializeArmy(address)", address(armyWallet12)));
         
         for (uint256 i = 0; i < tokenContracts.length; i ++) {
-            nationWallet1.executeTX(address(tokenContracts[i]), 
+            nationWallet1.executeTx(address(tokenContracts[i]), 
         abi.encodeWithSignature("approve(address,uint256)", address(game), type(uint256).max));
-            armyWallet11.executeTX(address(tokenContracts[i]), 
+            armyWallet11.executeTx(address(tokenContracts[i]), 
         abi.encodeWithSignature("approve(address,uint256)", address(game), type(uint256).max));
-            armyWallet12.executeTX(address(tokenContracts[i]), 
+            armyWallet12.executeTx(address(tokenContracts[i]), 
         abi.encodeWithSignature("approve(address,uint256)", address(game), type(uint256).max));
         }
         
@@ -230,16 +230,16 @@ contract DiamondDeployTest is Test {
         vm.stopPrank();
 
         vm.startPrank(nation2Address);
-        nationWallet2.executeGameTX(abi.encodeWithSignature("initializeNation(uint256,uint256,string)", nation2Pos.x, nation2Pos.y, "US"));
-        nationWallet2.executeGameTX(abi.encodeWithSignature("initializeArmy(address)", address(armyWallet21)));
-        nationWallet2.executeGameTX(abi.encodeWithSignature("initializeArmy(address)", address(armyWallet22)));
+        nationWallet2.executeGameTx(abi.encodeWithSignature("initializeNation(uint256,uint256,string)", nation2Pos.x, nation2Pos.y, "US"));
+        nationWallet2.executeGameTx(abi.encodeWithSignature("initializeArmy(address)", address(armyWallet21)));
+        nationWallet2.executeGameTx(abi.encodeWithSignature("initializeArmy(address)", address(armyWallet22)));
 
         for (uint256 i = 0; i < tokenContracts.length; i ++) {
-            nationWallet2.executeTX(address(tokenContracts[i]), 
+            nationWallet2.executeTx(address(tokenContracts[i]), 
         abi.encodeWithSignature("approve(address,uint256)", address(game), type(uint256).max));
-            armyWallet21.executeTX(address(tokenContracts[i]), 
+            armyWallet21.executeTx(address(tokenContracts[i]), 
         abi.encodeWithSignature("approve(address,uint256)", address(game), type(uint256).max));
-            armyWallet22.executeTX(address(tokenContracts[i]), 
+            armyWallet22.executeTx(address(tokenContracts[i]), 
         abi.encodeWithSignature("approve(address,uint256)", address(game), type(uint256).max));
         }
 
@@ -247,16 +247,16 @@ contract DiamondDeployTest is Test {
         vm.stopPrank();
 
         vm.startPrank(nation3Address);
-        nationWallet3.executeGameTX(abi.encodeWithSignature("initializeNation(uint256,uint256,string)", nation3Pos.x, nation3Pos.y, "Russia"));
-        nationWallet3.executeGameTX(abi.encodeWithSignature("initializeArmy(address)", address(armyWallet31)));
-        nationWallet3.executeGameTX(abi.encodeWithSignature("initializeArmy(address)", address(armyWallet32)));
+        nationWallet3.executeGameTx(abi.encodeWithSignature("initializeNation(uint256,uint256,string)", nation3Pos.x, nation3Pos.y, "Russia"));
+        nationWallet3.executeGameTx(abi.encodeWithSignature("initializeArmy(address)", address(armyWallet31)));
+        nationWallet3.executeGameTx(abi.encodeWithSignature("initializeArmy(address)", address(armyWallet32)));
 
         for (uint256 i = 0; i < tokenContracts.length; i ++) {
-            nationWallet3.executeTX(address(tokenContracts[i]), 
+            nationWallet3.executeTx(address(tokenContracts[i]), 
         abi.encodeWithSignature("approve(address,uint256)", address(game), type(uint256).max));
-            armyWallet31.executeTX(address(tokenContracts[i]), 
+            armyWallet31.executeTx(address(tokenContracts[i]), 
         abi.encodeWithSignature("approve(address,uint256)", address(game), type(uint256).max));
-            armyWallet32.executeTX(address(tokenContracts[i]), 
+            armyWallet32.executeTx(address(tokenContracts[i]), 
         abi.encodeWithSignature("approve(address,uint256)", address(game), type(uint256).max));
         }
 
@@ -269,7 +269,6 @@ contract DiamondDeployTest is Test {
 
     // fixme: Then probably don't need to store batches in gs()
     function _initializeMap() private {
-        bytes32 tileAddressBytes = keccak256(abi.encodePacked("tile address"));
         for (uint256 i = 0; i < worldConstants.worldWidth / worldConstants.tileWidth; i++) {
             uint256 PosX = i * worldConstants.tileWidth;
             for (uint256 j = 0; j < worldConstants.worldHeight / worldConstants.tileWidth; j++) {
@@ -278,12 +277,7 @@ contract DiamondDeployTest is Test {
                 startPosition.x = PosX;
                 startPosition.y = PosY;
 
-                // Generate burner wallet for each tile
-                address tileAddress = address(uint160(uint256(tileAddressBytes)));
-                tileAddressBytes = keccak256(abi.encodePacked(tileAddressBytes));
-                
-                admin.adminInitializeTile(startPosition, tileAddress);
-
+                admin.adminInitializeTile(startPosition);
             }
         }
     }

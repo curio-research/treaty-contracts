@@ -29,7 +29,8 @@ contract WalletHangingGarden {
     constructor(
         address[] memory _owners,
         address _diamond,
-        uint256 _homieFee) {
+        uint256 _homieFee
+    ) {
         require(_owners.length > 0, "Wallet owners required");
 
         for (uint256 i = 0; i < _owners.length; i++) {
@@ -67,7 +68,7 @@ contract WalletHangingGarden {
     // ----------------------------------------------------------
     //                          Poicy
     // ----------------------------------------------------------
-    
+
     function inquireHomieFee() public view returns (uint256) {
         return homieFee;
     }

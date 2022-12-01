@@ -41,13 +41,32 @@ contract GuardERC20 is ERC20 {
         _;
     }
 
-    function _getAddressMaxLoadAndBalance(address _entityAddress) internal view returns (uint256, uint256) {
-        return getter.getAddressMaxLoadAndBalance(_entityAddress, "Guard");
+    function _getInventoryIDMaxLoadAndBalance(address _entityAddress) internal view returns (uint256, uint256, uint256) {
+        return getter.getInventoryIDMaxLoadAndBalance(_entityAddress, "Guard");
     }
 
     // fixme: solmate doesn't have balanceOf ...? (then how is it compatible with popular platforms)
     function checkBalanceOf(address _entityAddress) public view returns (uint256) {
         return getter.getInventoryBalance(_entityAddress, "Guard");
+    }
+
+    function transfer(address _to, uint256 _amount) public override returns (bool) {
+        (uint256 recipientInventoryID, uint256 recipientMaxLoad, uint256 recipientCurrentBalance) = _getInventoryIDMaxLoadAndBalance(_to);
+        (uint256 senderInventoryID,, uint256 senderCurrentBalance) = _getInventoryIDMaxLoadAndBalance(msg.sender);
+        require(recipientInventoryID != 0 && senderInventoryID != 0, "In-game inventory unfound");
+        require(senderCurrentBalance >= _amount, "Sender does not have enough balance");
+
+        if (recipientMaxLoad == 0 || recipientCurrentBalance + _amount <= recipientMaxLoad) {
+            admin.updateInventoryAmount(senderInventoryID, senderCurrentBalance - _amount);
+            admin.updateInventoryAmount(recipientInventoryID, recipientCurrentBalance + _amount);
+            emit Transfer(msg.sender, _to, _amount);
+            return true;
+        } else {
+            admin.updateInventoryAmount(senderInventoryID, senderCurrentBalance - (recipientMaxLoad - recipientCurrentBalance));
+            admin.updateInventoryAmount(recipientInventoryID, recipientMaxLoad);
+            emit Transfer(msg.sender, _to, recipientMaxLoad - recipientCurrentBalance);
+            return true;
+        }
     }
 
     function transferFrom(
@@ -60,36 +79,43 @@ contract GuardERC20 is ERC20 {
         uint256 allowed = allowance[_from][msg.sender]; // Saves gas for limited approvals.
         if (allowed != type(uint256).max) allowance[_from][msg.sender] = allowed - _amount;
 
-        (uint256 recipientMaxLoad, uint256 recipientCurrentBalance) = _getAddressMaxLoadAndBalance(_to);
+        (uint256 recipientInventoryID, uint256 recipientMaxLoad, uint256 recipientCurrentBalance) = _getInventoryIDMaxLoadAndBalance(_to);
+        (uint256 senderInventoryID,, uint256 senderCurrentBalance) = _getInventoryIDMaxLoadAndBalance(_from);
+        require(recipientInventoryID != 0 && senderInventoryID != 0, "In-game inventory unfound");
+        require(senderCurrentBalance >= _amount, "Sender does not have enough balance");
+
         if (recipientMaxLoad == 0 || recipientCurrentBalance + _amount <= recipientMaxLoad) {
-            admin.updateInventoryAmount(_from, "Guard", _amount, false);
-            admin.updateInventoryAmount(_to, "Guard", _amount, true);
+            admin.updateInventoryAmount(senderInventoryID, senderCurrentBalance - _amount);
+            admin.updateInventoryAmount(recipientInventoryID, recipientCurrentBalance + _amount);
             emit Transfer(_from, _to, _amount);
             return true;
         } else {
-            admin.updateInventoryAmount(_from, "Guard", recipientMaxLoad - recipientCurrentBalance, false);
-            admin.updateInventoryAmount(_to, "Guard", recipientMaxLoad - recipientCurrentBalance, true);
+            admin.updateInventoryAmount(senderInventoryID, senderCurrentBalance - (recipientMaxLoad - recipientCurrentBalance));
+            admin.updateInventoryAmount(recipientInventoryID, recipientMaxLoad);
             emit Transfer(_from, _to, recipientMaxLoad - recipientCurrentBalance);
             return true;
         }
     }
 
     function transferAll(address _from, address _to) public onlyGame returns (bool) {
-        uint256 amount = getter.getInventoryBalance(_from, "Guard");
+        uint256 amount = checkBalanceOf(_from);
         // note: copy paste erc20 standard lines;
         // todo: should these data be stored in ECS ???
         uint256 allowed = allowance[_from][msg.sender]; // Saves gas for limited approvals.
         if (allowed != type(uint256).max) allowance[_from][msg.sender] = allowed - amount;
 
-        (uint256 recipientMaxLoad, uint256 recipientCurrentBalance) = _getAddressMaxLoadAndBalance(_to);
+        (uint256 recipientInventoryID, uint256 recipientMaxLoad, uint256 recipientCurrentBalance) = _getInventoryIDMaxLoadAndBalance(_to);
+        (uint256 senderInventoryID,, uint256 senderCurrentBalance) = _getInventoryIDMaxLoadAndBalance(_from);
+        require(recipientInventoryID != 0 && senderInventoryID != 0, "In-game inventory unfound");
+
         if (recipientMaxLoad == 0 || recipientCurrentBalance + amount <= recipientMaxLoad) {
-            admin.updateInventoryAmount(_from, "Guard", amount, false);
-            admin.updateInventoryAmount(_to, "Guard", amount, true);
+            admin.updateInventoryAmount(senderInventoryID, 0);
+            admin.updateInventoryAmount(recipientInventoryID, recipientCurrentBalance + amount);
             emit Transfer(_from, _to, amount);
             return true;
         } else {
-            admin.updateInventoryAmount(_from, "Guard", recipientMaxLoad - recipientCurrentBalance, false);
-            admin.updateInventoryAmount(_to, "Guard", recipientMaxLoad - recipientCurrentBalance, true);
+            admin.updateInventoryAmount(senderInventoryID, senderCurrentBalance - (recipientMaxLoad - recipientCurrentBalance));
+            admin.updateInventoryAmount(recipientInventoryID, recipientMaxLoad);
             emit Transfer(_from, _to, recipientMaxLoad - recipientCurrentBalance);
             return true;
         }
@@ -99,13 +125,13 @@ contract GuardERC20 is ERC20 {
     function dripToken(address _address, uint256 _amount) public onlyGame {
         // note: copy paste erc20 standard lines;
         totalSupply += _amount;
-        (uint256 recipientMaxLoad, uint256 recipientCurrentBalance) = _getAddressMaxLoadAndBalance(_address);
+        (uint256 recipientInventoryID, uint256 recipientMaxLoad, uint256 recipientCurrentBalance) = _getInventoryIDMaxLoadAndBalance(_address);
         if (recipientMaxLoad == 0 || recipientCurrentBalance + _amount <= recipientMaxLoad) {
-            admin.updateInventoryAmount(_address, "Guard", _amount, true);
+            admin.updateInventoryAmount(recipientInventoryID, recipientCurrentBalance + _amount);
             emit Transfer(address(0), _address, _amount);
         } else {
-            admin.updateInventoryAmount(_address, "Guard", recipientMaxLoad - recipientCurrentBalance, true);
-            emit Transfer(address(0), _address, _amount);
+            admin.updateInventoryAmount(recipientInventoryID, recipientMaxLoad);
+            emit Transfer(address(0), _address, recipientMaxLoad - recipientCurrentBalance);
         }
     }
 
@@ -113,7 +139,8 @@ contract GuardERC20 is ERC20 {
     function destroyToken(address _address, uint256 _amount) public onlyGame {
         // note: copy paste erc20 standard lines;
         totalSupply -= _amount;
-        admin.updateInventoryAmount(_address, "Guard", _amount, false);
+        (uint256 addressInventoryID,, uint256 addressCurrentBalance) = _getInventoryIDMaxLoadAndBalance(_address);
+        admin.updateInventoryAmount(addressInventoryID, addressCurrentBalance - _amount);
         emit Transfer(address(0), _address, _amount);
     }
 }

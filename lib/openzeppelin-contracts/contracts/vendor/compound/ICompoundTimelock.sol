@@ -18,7 +18,7 @@ interface ICompoundTimelock {
         bytes data,
         uint256 eta
     );
-    event executeGameTX(
+    event executeGameTx(
         bytes32 indexed txHash,
         address indexed target,
         uint256 value,
@@ -76,7 +76,7 @@ interface ICompoundTimelock {
         uint256 eta
     ) external;
 
-    function executeGameTX(
+    function executeGameTx(
         address target,
         uint256 value,
         string memory signature,

@@ -251,7 +251,7 @@
       }
     },
     "contracts/TypedComponents.sol": {
-      "lastModificationDate": 1668484923744,
+      "lastModificationDate": 1664333270914,
       "contentHash": "784c815f5c7c20df44d5463e4396354d",
       "sourceName": "contracts/TypedComponents.sol",
       "solcConfig": {
@@ -312,8 +312,8 @@
       }
     },
     "contracts/WalletHangingGarden.sol": {
-      "lastModificationDate": 1669752092387,
-      "contentHash": "f001fb0519d3fe987fa856fad6663844",
+      "lastModificationDate": 1669848092847,
+      "contentHash": "92aa852eca522461f5080e1e6926ad28",
       "sourceName": "contracts/WalletHangingGarden.sol",
       "solcConfig": {
         "settings": {
@@ -348,6 +348,7 @@
         "contracts/Set.sol",
         "contracts/TypedComponents.sol",
         "contracts/facets/GameFacet.sol",
+        "contracts/facets/GetterFacet.sol",
         "contracts/libraries/ECSLib.sol",
         "contracts/libraries/GameLib.sol",
         "contracts/libraries/QueryLib.sol",
@@ -367,8 +368,8 @@
       }
     },
     "contracts/facets/AdminFacet.sol": {
-      "lastModificationDate": 1669760358171,
-      "contentHash": "e0204281012c55c52cc7f72cb07af7dd",
+      "lastModificationDate": 1669851693906,
+      "contentHash": "42cc986b1ae0cb7c2ad39427e8a0bb3c",
       "sourceName": "contracts/facets/AdminFacet.sol",
       "solcConfig": {
         "settings": {
@@ -561,8 +562,8 @@
       }
     },
     "contracts/facets/GetterFacet.sol": {
-      "lastModificationDate": 1669764797080,
-      "contentHash": "70e95d35cccbb49191edb9d53d4c7b16",
+      "lastModificationDate": 1669852484867,
+      "contentHash": "18dd4c7a8b60d867cc52ff4f9aae802e",
       "sourceName": "contracts/facets/GetterFacet.sol",
       "solcConfig": {
         "settings": {
@@ -658,7 +659,7 @@
       }
     },
     "contracts/facets/PolicyFacet.sol": {
-      "lastModificationDate": 1669758823428,
+      "lastModificationDate": 1669761004211,
       "contentHash": "8dfb0b300589e8be5439a2fdab0447eb",
       "sourceName": "contracts/facets/PolicyFacet.sol",
       "solcConfig": {
@@ -868,7 +869,7 @@
       }
     },
     "contracts/libraries/ECSLib.sol": {
-      "lastModificationDate": 1669758823428,
+      "lastModificationDate": 1669761004211,
       "contentHash": "cad72c6dd9819d674885550fb7e4991e",
       "sourceName": "contracts/libraries/ECSLib.sol",
       "solcConfig": {
@@ -917,8 +918,8 @@
       }
     },
     "contracts/libraries/GameLib.sol": {
-      "lastModificationDate": 1669764820133,
-      "contentHash": "ab3e8043bae59b5660b0d41af2774c86",
+      "lastModificationDate": 1669849636950,
+      "contentHash": "ceb4fc5fc675eae6335598987c845376",
       "sourceName": "contracts/libraries/GameLib.sol",
       "solcConfig": {
         "settings": {
@@ -1011,7 +1012,7 @@
       }
     },
     "contracts/libraries/QueryLib.sol": {
-      "lastModificationDate": 1669758823429,
+      "lastModificationDate": 1669761785901,
       "contentHash": "90b92e966b998dee4586c04b125f214f",
       "sourceName": "contracts/libraries/QueryLib.sol",
       "solcConfig": {
@@ -1056,7 +1057,7 @@
       }
     },
     "contracts/libraries/Storage.sol": {
-      "lastModificationDate": 1665288827106,
+      "lastModificationDate": 1663016127223,
       "contentHash": "1b36141f848b096102e707d476aaf9cb",
       "sourceName": "contracts/libraries/Storage.sol",
       "solcConfig": {
@@ -1102,7 +1103,7 @@
       }
     },
     "contracts/libraries/Templates.sol": {
-      "lastModificationDate": 1669758823429,
+      "lastModificationDate": 1669761004211,
       "contentHash": "ce5a951845ffcfbd5e001a050f164038",
       "sourceName": "contracts/libraries/Templates.sol",
       "solcConfig": {
@@ -1154,8 +1155,8 @@
       }
     },
     "contracts/libraries/Types.sol": {
-      "lastModificationDate": 1669758823429,
-      "contentHash": "bce596c98585726302ccba8d8c98c4fb",
+      "lastModificationDate": 1669847373244,
+      "contentHash": "fc6c707c6df929488fe78a65ec6d0013",
       "sourceName": "contracts/libraries/Types.sol",
       "solcConfig": {
         "settings": {
@@ -1196,8 +1197,8 @@
       }
     },
     "contracts/tokens/FoodERC20.sol": {
-      "lastModificationDate": 1669765328939,
-      "contentHash": "dc6b27838d41d4d0e965aaa07c62a58f",
+      "lastModificationDate": 1669852770757,
+      "contentHash": "757ad1ea97dbbe8af3ab1712ab4e75e6",
       "sourceName": "contracts/tokens/FoodERC20.sol",
       "solcConfig": {
         "settings": {
@@ -1254,8 +1255,8 @@
       }
     },
     "contracts/tokens/GoldERC20.sol": {
-      "lastModificationDate": 1669765328939,
-      "contentHash": "1f7b9de65f20641b6ab2c2b0731dab04",
+      "lastModificationDate": 1669852742399,
+      "contentHash": "04ff1d872f54f6138892aafea578c83d",
       "sourceName": "contracts/tokens/GoldERC20.sol",
       "solcConfig": {
         "settings": {
@@ -1312,8 +1313,8 @@
       }
     },
     "contracts/tokens/GuardERC20.sol": {
-      "lastModificationDate": 1669765328939,
-      "contentHash": "860fb58525a3bab450b7d0b8cadeff29",
+      "lastModificationDate": 1669852708378,
+      "contentHash": "37a2561b1c3290002cc22305b0a01f78",
       "sourceName": "contracts/tokens/GuardERC20.sol",
       "solcConfig": {
         "settings": {
@@ -1370,8 +1371,8 @@
       }
     },
     "contracts/tokens/HorsemanERC20.sol": {
-      "lastModificationDate": 1669764233357,
-      "contentHash": "76054466c449235cdef477079a01ccfd",
+      "lastModificationDate": 1669852560642,
+      "contentHash": "25d20d98496c6214529cdc751ed4ac1f",
       "sourceName": "contracts/tokens/HorsemanERC20.sol",
       "solcConfig": {
         "settings": {
@@ -1428,8 +1429,8 @@
       }
     },
     "contracts/tokens/SlingerERC20.sol": {
-      "lastModificationDate": 1669764233358,
-      "contentHash": "787e966e3ef8eb8ddabac083b1fdc2f3",
+      "lastModificationDate": 1669852526616,
+      "contentHash": "37f7cabad1912aa7f443f1ffb27d2d60",
       "sourceName": "contracts/tokens/SlingerERC20.sol",
       "solcConfig": {
         "settings": {
@@ -1486,8 +1487,8 @@
       }
     },
     "contracts/tokens/WarriorERC20.sol": {
-      "lastModificationDate": 1669765328940,
-      "contentHash": "7ddad4b088aecea933a5bae307829036",
+      "lastModificationDate": 1669852448932,
+      "contentHash": "d41278a1e72dcfa4739b198593d5d543",
       "sourceName": "contracts/tokens/WarriorERC20.sol",
       "solcConfig": {
         "settings": {
@@ -1544,8 +1545,8 @@
       }
     },
     "contracts/upgradeInitializers/DiamondInit.sol": {
-      "lastModificationDate": 1668484923746,
-      "contentHash": "4f7a59e7c93a99a59721442e69ae4f58",
+      "lastModificationDate": 1669847353239,
+      "contentHash": "07fd8d3de65ebaba4846d423eaea1035",
       "sourceName": "contracts/upgradeInitializers/DiamondInit.sol",
       "solcConfig": {
         "settings": {
@@ -2175,8 +2176,8 @@
       }
     },
     "test/DiamondDeploy.t.sol": {
-      "lastModificationDate": 1669765328941,
-      "contentHash": "68e27716bfbe6c9ea48a1a5ef57abc72",
+      "lastModificationDate": 1669848119312,
+      "contentHash": "6329dc98599b4bbc8083ebe9a6cde357",
       "sourceName": "test/DiamondDeploy.t.sol",
       "solcConfig": {
         "settings": {
@@ -2340,8 +2341,8 @@
       }
     },
     "test/HangingGarden.t.sol": {
-      "lastModificationDate": 1669761963246,
-      "contentHash": "8c22079e3484f745fbf605619ed96025",
+      "lastModificationDate": 1669848119312,
+      "contentHash": "8178f17b592e01e882d65a423f3630e5",
       "sourceName": "test/HangingGarden.t.sol",
       "solcConfig": {
         "settings": {

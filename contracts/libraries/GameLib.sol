@@ -64,10 +64,13 @@ library GameLib {
         }
     }
 
-    function initializeTile(Position memory _startPosition, address _tileAddress) external returns (uint256) {
+    function initializeTile(Position memory _startPosition) external returns (uint256) {
         require(isProperTilePosition(_startPosition), "CURIO: Not proper tile position");
         uint256 tileId = getTileAt(_startPosition);
         if (tileId != 0) return tileId;
+
+        address tileAddress = address(uint160(uint(keccak256(abi.encodePacked(gs().tileNonce)))));
+        gs().tileNonce++;
 
         // Load constants
         uint256 numInitTerrainTypes = gs().worldConstants.numInitTerrainTypes;
@@ -81,7 +84,7 @@ library GameLib {
         uint256 terrain = encodedCol / divFactor;
 
         // Initialize tile
-        uint256 tileID = Templates.addTile(_startPosition, terrain, _tileAddress);
+        uint256 tileID = Templates.addTile(_startPosition, terrain, tileAddress);
         {
             uint256[] memory troopTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("TroopTemplate"));
             for (uint256 i = 0; i < troopTemplateIDs.length; i++) {
@@ -113,7 +116,7 @@ library GameLib {
 
             // Drip Guard tokens
             address tokenContract = getTokenContract("Guard");
-            (bool success, ) = tokenContract.call(abi.encodeWithSignature("dripToken(address,uint256)", _tileAddress, tileGuardAmount));
+            (bool success, ) = tokenContract.call(abi.encodeWithSignature("dripToken(address,uint256)", tileAddress, tileGuardAmount));
             require(success, "CURIO: Token dripping fails");
         } else if (terrain == 3 || terrain == 4) {
             // Barbarian tile
@@ -123,7 +126,7 @@ library GameLib {
 
             // Drip Guard tokens
             address tokenContract = getTokenContract("Guard");
-            (bool success, ) = tokenContract.call(abi.encodeWithSignature("dripToken(address,uint256)", _tileAddress, barbarianGuardAmount));
+            (bool success, ) = tokenContract.call(abi.encodeWithSignature("dripToken(address,uint256)", tileAddress, barbarianGuardAmount));
             require(success, "CURIO: Token dripping fails");
         } else {
             // Mountain tile, do nothing
@@ -315,14 +318,14 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    function getAddressMaxLoadAndBalance(address _entityAddress, string memory _resourceType) public view returns (uint256, uint256) {
+    function getInventoryIDMaxLoadAndBalance(address _entityAddress, string memory _resourceType) public view returns (uint256, uint256, uint256) {
         /**
         Only Army & Tile has troop load & resource. 
         Data is stored in game constant based on nation level
         Resource/Capital yield load restricted within the game
          */
 
-        // note: put load and balance together so it only does query once
+        // note: put ID, load, and balance together so it only does query once
 
         // fixme: exteremely inefficient but unavoidable unless entityID is address
         uint256 entityID = getEntityByAddress(_entityAddress);
@@ -335,16 +338,16 @@ library GameLib {
             uint256 armyNationID = ECSLib.getUint("Nation", entityID);
             if (templateID == gs().templates["Horseman"] || templateID == gs().templates["Warrior"] || templateID == gs().templates["Slinger"]) {
                 uint256 maxLoad = getConstant(entityTag, "Troop", "Amount", "", ECSLib.getUint("Level", armyNationID));
-                return (maxLoad, balance);
+                return (inventoryID, maxLoad, balance);
             } else if (templateID == gs().templates["Food"] || templateID == gs().templates["Gold"]) {
-                return (ECSLib.getUint("Load", entityID), balance);
+                return (inventoryID, ECSLib.getUint("Load", entityID), balance);
             }
         } else if (templateID == gs().templates["Guard"]) {
             uint256 maxLoad = GameLib.getConstant("Tile", "Guard", "Amount", "", ECSLib.getUint("Level", entityID));
-            return (maxLoad, balance);
+            return (inventoryID, maxLoad, balance);
         }
 
-        return (0, balance);
+        return (inventoryID, 0, balance);
     }
 
     function getAddressBalance(address _entityAddress, address _tokenContract) public returns (uint256) {
