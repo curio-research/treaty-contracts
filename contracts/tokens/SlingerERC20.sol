@@ -50,23 +50,33 @@ contract SlingerERC20 is ERC20 {
         return getter.getInventoryBalance(_entityAddress, "Slinger");
     }
 
+    function _transferHelper(
+        address _to,
+        address _from,
+        uint256 _amount,
+        uint256 _senderInventoryID,
+        uint256 _recipientInventoryID,
+        uint256 _senderBalance,
+        uint256 _recipientBalance,
+        uint256 _recipientMaxLoad) internal {
+         if (_recipientMaxLoad == 0 || _recipientBalance + _amount <= _recipientMaxLoad) {
+            admin.updateInventoryAmount(_senderInventoryID, _senderBalance - _amount);
+            admin.updateInventoryAmount(_recipientInventoryID, _recipientBalance + _amount);
+            emit Transfer(_from, _to, _amount);
+        } else {
+            admin.updateInventoryAmount(_senderInventoryID, _senderBalance - (_recipientMaxLoad - _recipientBalance));
+            admin.updateInventoryAmount(_recipientInventoryID, _recipientMaxLoad);
+            emit Transfer(_from, _to, _recipientMaxLoad - _recipientBalance);
+        }
+    }
+
     function transfer(address _to, uint256 _amount) public override returns (bool) {
         (uint256 recipientInventoryID, uint256 recipientMaxLoad, uint256 recipientCurrentBalance) = _getInventoryIDMaxLoadAndBalance(_to);
         (uint256 senderInventoryID,, uint256 senderCurrentBalance) = _getInventoryIDMaxLoadAndBalance(msg.sender);
         require(recipientInventoryID != 0 && senderInventoryID != 0, "In-game inventory unfound");
         require(senderCurrentBalance >= _amount, "Sender does not have enough balance");
 
-        if (recipientMaxLoad == 0 || recipientCurrentBalance + _amount <= recipientMaxLoad) {
-            admin.updateInventoryAmount(senderInventoryID, senderCurrentBalance - _amount);
-            admin.updateInventoryAmount(recipientInventoryID, recipientCurrentBalance + _amount);
-            emit Transfer(msg.sender, _to, _amount);
-            return true;
-        } else {
-            admin.updateInventoryAmount(senderInventoryID, senderCurrentBalance - (recipientMaxLoad - recipientCurrentBalance));
-            admin.updateInventoryAmount(recipientInventoryID, recipientMaxLoad);
-            emit Transfer(msg.sender, _to, recipientMaxLoad - recipientCurrentBalance);
-            return true;
-        }
+        _transferHelper(_to, msg.sender, _amount, senderInventoryID, recipientInventoryID, senderCurrentBalance, recipientCurrentBalance, recipientMaxLoad);
     }
 
     function transferFrom(
@@ -84,17 +94,7 @@ contract SlingerERC20 is ERC20 {
         require(recipientInventoryID != 0 && senderInventoryID != 0, "In-game inventory unfound");
         require(senderCurrentBalance >= _amount, "Sender does not have enough balance");
 
-        if (recipientMaxLoad == 0 || recipientCurrentBalance + _amount <= recipientMaxLoad) {
-            admin.updateInventoryAmount(senderInventoryID, senderCurrentBalance - _amount);
-            admin.updateInventoryAmount(recipientInventoryID, recipientCurrentBalance + _amount);
-            emit Transfer(_from, _to, _amount);
-            return true;
-        } else {
-            admin.updateInventoryAmount(senderInventoryID, senderCurrentBalance - (recipientMaxLoad - recipientCurrentBalance));
-            admin.updateInventoryAmount(recipientInventoryID, recipientMaxLoad);
-            emit Transfer(_from, _to, recipientMaxLoad - recipientCurrentBalance);
-            return true;
-        }
+        _transferHelper(_to, _from, _amount, senderInventoryID, recipientInventoryID, senderCurrentBalance, recipientCurrentBalance, recipientMaxLoad);
     }
 
     function transferAll(address _from, address _to) public onlyGame returns (bool) {
@@ -108,17 +108,7 @@ contract SlingerERC20 is ERC20 {
         (uint256 senderInventoryID,, uint256 senderCurrentBalance) = _getInventoryIDMaxLoadAndBalance(_from);
         require(recipientInventoryID != 0 && senderInventoryID != 0, "In-game inventory unfound");
 
-        if (recipientMaxLoad == 0 || recipientCurrentBalance + amount <= recipientMaxLoad) {
-            admin.updateInventoryAmount(senderInventoryID, 0);
-            admin.updateInventoryAmount(recipientInventoryID, recipientCurrentBalance + amount);
-            emit Transfer(_from, _to, amount);
-            return true;
-        } else {
-            admin.updateInventoryAmount(senderInventoryID, senderCurrentBalance - (recipientMaxLoad - recipientCurrentBalance));
-            admin.updateInventoryAmount(recipientInventoryID, recipientMaxLoad);
-            emit Transfer(_from, _to, recipientMaxLoad - recipientCurrentBalance);
-            return true;
-        }
+        _transferHelper(_to, _from, amount, senderInventoryID, recipientInventoryID, senderCurrentBalance, recipientCurrentBalance, recipientMaxLoad);
     }
 
     // rewards unrestricted by distance

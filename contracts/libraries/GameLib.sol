@@ -93,22 +93,25 @@ library GameLib {
         }
 
         // TEMP: battle royale mode
-        // if (gs().worldConstants.gameMode == GameMode.BATTLE_ROYALE) {
-        //     if (coincident(_startPosition, getMapCenterTilePosition())) {
-        //         // Set map center tile to SUPERTILE of land, no resources, and the top tile strength to start
-        //         uint256 maxTileLevel = (gs().worldConstants.maxCityCenterLevel * gs().worldConstants.cityCenterLevelToEntityLevelRatio) / 2;
-        //         ECSLib.setUint("Terrain", tileID, 0);
-        //         ECSLib.setUint("Level", tileID, maxTileLevel);
+        if (gs().worldConstants.gameMode == GameMode.BATTLE_ROYALE) {
+            if (coincident(_startPosition, getMapCenterTilePosition())) {
+                // Set map center tile to SUPERTILE of land, no resources, and the top tile strength to start
+                uint256 maxTileLevel = (gs().worldConstants.maxCityCenterLevel * gs().worldConstants.cityCenterLevelToEntityLevelRatio) / 2;
+                ECSLib.setUint("Terrain", tileID, 0);
+                ECSLib.setUint("Level", tileID, maxTileLevel);
 
-        //         // uint256 superTileInitTime = getConstant("SuperTile", "", "lastTimestamp", "", maxTileLevel);
-        //         // ECSLib.setUint("LastTimestamp", tileID, superTileInitTime);
+                // uint256 superTileInitTime = getConstant("SuperTile", "", "lastTimestamp", "", maxTileLevel);
+                // ECSLib.setUint("LastTimestamp", tileID, superTileInitTime);
 
-        //         uint256 supertileGuardAmount = getConstant("Tile", "Guard", "Amount", "", maxTileLevel);
-        //         Templates.addConstituent(tileID, gs().templates["Guard"], supertileGuardAmount);
+                uint256 supertileGuardAmount = getConstant("Tile", "Guard", "Amount", "", maxTileLevel);
+                // Drip Guard tokens
+                address tokenContract = getTokenContract("Guard");
+                (bool success, ) = tokenContract.call(abi.encodeWithSignature("dripToken(address,uint256)", tileAddress, supertileGuardAmount));
+                require(success, "CURIO: Failed to drip Guard tokens");
 
-        //         return tileID;
-        //     }
-        // }
+                return tileID;
+            }
+        }
 
         if (terrain < 3) {
             // Normal tile
@@ -117,7 +120,7 @@ library GameLib {
             // Drip Guard tokens
             address tokenContract = getTokenContract("Guard");
             (bool success, ) = tokenContract.call(abi.encodeWithSignature("dripToken(address,uint256)", tileAddress, tileGuardAmount));
-            require(success, "CURIO: Token dripping fails");
+            require(success, "CURIO: Failed to drip Guard tokens");
         } else if (terrain == 3 || terrain == 4) {
             // Barbarian tile
             uint256 barbarianLevel = terrain - 2;
@@ -127,7 +130,7 @@ library GameLib {
             // Drip Guard tokens
             address tokenContract = getTokenContract("Guard");
             (bool success, ) = tokenContract.call(abi.encodeWithSignature("dripToken(address,uint256)", tileAddress, barbarianGuardAmount));
-            require(success, "CURIO: Token dripping fails");
+            require(success, "CURIO: Failed to drip Guard tokens");
         } else {
             // Mountain tile, do nothing
         }
@@ -158,7 +161,7 @@ library GameLib {
         // Gather
         uint256 gatherAmount = (block.timestamp - ECSLib.getUint("InitTimestamp", gatherID)) * getConstant("Army", ECSLib.getString("InventoryType", templateID), "Rate", "gather", 0);
         (bool success, ) = tokenContract.call(abi.encodeWithSignature("dripToken(address,uint256)", armyAddress, gatherAmount));
-        require(success, "CURIO: Token dripping fails");
+        require(success, "CURIO: Failed to drip resource tokens");
 
         ECSLib.removeEntity(gatherID);
     }
@@ -194,7 +197,7 @@ library GameLib {
         uint256[] memory troopTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("TroopTemplate"));
         address offenderAddress = ECSLib.getAddress("Address", _offenderID);
         address defenderAddress = ECSLib.getAddress("Address", _defenderID);
-        bool[] memory defenderTemplateIsDead = new bool[](troopTemplateIDs.length);
+        bool[] memory defenderTemplateIsEliminated = new bool[](troopTemplateIDs.length);
 
         // Offender attacks defender
         {
@@ -210,18 +213,18 @@ library GameLib {
                     address defenderTroopContract = ECSLib.getAddress("Address", defenderTroopTemplateID);
                     uint256 defenderTroopBalance = getAddressBalance(defenderAddress, defenderTroopContract);
                     if (defenderTroopBalance == 0) {
-                        defenderTemplateIsDead[j] = true;
+                        defenderTemplateIsEliminated[j] = true;
                         continue;
                     }
                     loss =
                         (troopTypeBonus * (sqrt(offenderTroopBalance) * ECSLib.getUint("Attack", offenderTroopTemplateID) * 2)) / //
                         (ECSLib.getUint("Defense", defenderTroopTemplateID) * ECSLib.getUint("Health", defenderTroopTemplateID));
                     if (loss >= defenderTroopBalance) {
-                        defenderTemplateIsDead[j] = true;
+                        defenderTemplateIsEliminated[j] = true;
                         (bool success, ) = defenderTroopContract.call(abi.encodeWithSignature("destroyToken(address,uint256)", defenderAddress, defenderTroopBalance));
                         require(success, "CURIO: token burn fails");
                     } else {
-                        defenderTemplateIsDead[j] = false;
+                        defenderTemplateIsEliminated[j] = false;
                         (bool success, ) = defenderTroopContract.call(abi.encodeWithSignature("destroyToken(address,uint256)", defenderAddress, loss));
                         require(success, "CURIO: token burn fails");
                     }
@@ -230,8 +233,8 @@ library GameLib {
         }
 
         victory = true;
-        for (uint256 i; i < defenderTemplateIsDead.length; i++) {
-            if (!defenderTemplateIsDead[i]) {
+        for (uint256 i; i < defenderTemplateIsEliminated.length; i++) {
+            if (!defenderTemplateIsEliminated[i]) {
                 victory = false;
                 break;
             }
@@ -272,15 +275,16 @@ library GameLib {
         if (!victory) attack(_keeperIdB, _keeperIdA, _transferGoldUponVictory, _transferOwnershipUponVictory, _removeUponVictory);
     }
 
-    // function distributeBarbarianReward(uint256 _cityID, uint256 _barbarianTileID) internal {
-    //     uint256 barbarianLevel = ECSLib.getUint("Level", _barbarianTileID);
-    //     uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
-    //     for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
-    //         uint256 cityInventoryID = getInventory(_cityID, resourceTemplateIDs[i]);
-    //         uint256 reward = getConstant("Barbarian", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Reward", "", barbarianLevel * 4);
-    //         ECSLib.setUint("Amount", cityInventoryID, ECSLib.getUint("Amount", cityInventoryID) + reward);
-    //     }
-    // }
+    function distributeBarbarianReward(uint256 _armyID, uint256 _barbarianTileID) internal {
+        uint256 barbarianLevel = ECSLib.getUint("Level", _barbarianTileID);
+        uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
+        for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
+            uint256 rewardAmount = getConstant("Barbarian", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Reward", "", barbarianLevel * 4);
+            address tokenContract = ECSLib.getAddress("Address", resourceTemplateIDs[i]);
+            (bool success, ) = tokenContract.call(abi.encodeWithSignature("dripToken(address,uint256)", ECSLib.getAddress("Address", _armyID), rewardAmount));
+            require(success, "CURIO: Failed to drip barbarian rewards");
+        }
+    }
 
     function unloadResources(address _nationAddress, address _armyAddress) internal {
         uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
@@ -314,7 +318,7 @@ library GameLib {
         QueryCondition[] memory query = new QueryCondition[](1);
         query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Address"]), abi.encode(_entityAddress));
         uint256[] memory res = ECSLib.query(query);
-        require(res.length <= 1, "CURIO: Find more than one entity");
+        require(res.length <= 1, "CURIO: Found more than one entity");
         return res.length == 1 ? res[0] : 0;
     }
 

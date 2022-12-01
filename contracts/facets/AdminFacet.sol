@@ -20,7 +20,7 @@ contract AdminFacet is UseStorage {
         _;
     }
 
-    function addAuthroized(address authorizedAddress) external onlyAuthorized {
+    function addAuthorized(address authorizedAddress) external onlyAuthorized {
         gs().authorized.push(authorizedAddress);
         gs().isAuthorized[authorizedAddress] = true;
     }

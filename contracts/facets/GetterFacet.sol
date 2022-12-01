@@ -35,10 +35,6 @@ contract GetterFacet is UseStorage {
         return ECSLib.getUint("Nation", _entityID);
     }
 
-    function getNationName(uint256 _nationID) external view returns (string memory) {
-        return ECSLib.getString("Name", _nationID);
-    }
-
     function getNationArmies(uint256 _nationID) external view returns (uint256[] memory) {
         return GameLib.getArmiesFromNation(_nationID);
     }

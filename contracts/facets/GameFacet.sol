@@ -31,6 +31,7 @@ contract GameFacet is UseStorage {
         uint256 _positionY,
         string memory _name
     ) external {
+        // fixme: Figure out a way to pass in position in delegate call
         Position memory position = Position({x: _positionX, y: _positionY});
         Position memory tilePosition = GameLib.getProperTilePosition(position);
 
@@ -204,12 +205,12 @@ contract GameFacet is UseStorage {
         ECSLib.setUint("LastRecovered", _tileID, block.timestamp);
 
         // Recover the Tile
-        (bool success2, ) = guardTokenAddress.call(abi.encodeWithSignature("dripToken(address,uint256)", tileAddress, lostGuardAmount));
-        require(success2, "CURIO: Capital guard reset dripping fails");
+        (bool success, ) = guardTokenAddress.call(abi.encodeWithSignature("dripToken(address,uint256)", tileAddress, lostGuardAmount));
+        require(success, "CURIO: Failed to drip guard tokens");
     }
 
     function upgradeTile(uint256 _tileID) external {
-        // Basic checks
+        // Basic checks; note: msg.sender should be nation address
         GameLib.validEntityCheck(_tileID);
         GameLib.ongoingGameCheck();
 
@@ -248,8 +249,8 @@ contract GameFacet is UseStorage {
         // Upgrade tile defense and level
         uint256 newTileGuardAmount = GameLib.getConstant("Tile", "Guard", "Amount", "", tileLevel + 1);
         ECSLib.setUint("Level", _tileID, tileLevel + 1);
-        (bool success2, ) = guardTokenAddress.call(abi.encodeWithSignature("dripToken(address,uint256)", tileAddress, newTileGuardAmount));
-        require(success2, "CURIO: Capital guard reset dripping fails");
+        (bool success, ) = guardTokenAddress.call(abi.encodeWithSignature("dripToken(address,uint256)", tileAddress, newTileGuardAmount));
+        require(success, "CURIO: Failed to drip Guard tokens");
     }
 
     // todo: merge it with upgrade resource
@@ -444,7 +445,7 @@ contract GameFacet is UseStorage {
         // Update inventory
         address troopContract = ECSLib.getAddress("Address", ECSLib.getUint("Template", _productionID));
         (bool success, ) = troopContract.call(abi.encodeWithSignature("dripToken(address,uint256)", msg.sender, ECSLib.getUint("Amount", _productionID)));
-        require(success, "Curio: Troop Production dripping fails");
+        require(success, "Curio: Failed to drip troop tokens");
 
         // Delete production
         ECSLib.removeEntity(_productionID);
@@ -482,7 +483,7 @@ contract GameFacet is UseStorage {
     }
 
     function unloadResources(uint256 _armyID) external {
-        // Basic checks; msg.sneder should be the army
+        // Basic checks; note: msg.sneder should be the army
         GameLib.validEntityCheck(_armyID);
         GameLib.ongoingGameCheck();
         require(ECSLib.getAddress("Address", _armyID) == msg.sender, "CURIO: You do not control this army");
@@ -504,7 +505,7 @@ contract GameFacet is UseStorage {
     }
 
     function harvestResource(uint256 _resourceID) public {
-        // Basic checks; msg.sender should be nation
+        // Basic checks; note: msg.sender should be nation
         GameLib.validEntityCheck(_resourceID);
         GameLib.ongoingGameCheck();
         uint256 nationID = ECSLib.getUint("Nation", _resourceID);
@@ -535,10 +536,11 @@ contract GameFacet is UseStorage {
         // Update city inventory amount
         address tokenContract = ECSLib.getAddress("Address", templateID);
         (bool success, ) = tokenContract.call(abi.encodeWithSignature("dripToken(address,uint256)", msg.sender, harvestAmount));
-        require(success, "CURIO: Token dripping fails");
+        require(success, "CURIO: Failed to drip resource tokens");
     }
 
     function harvestResources(uint256[] memory resourceIds) external {
+        // note: msg.sender should be the nation address
         for (uint256 i = 0; i < resourceIds.length; i++) {
             harvestResource(resourceIds[i]);
         }
@@ -546,7 +548,7 @@ contract GameFacet is UseStorage {
 
     // TODO: harvest gold & food on a city; consider merge this with the function above
     function harvestResourcesFromCapital(uint256 _buildingID) public {
-        // Basic Check; msg.sender should be the nation address
+        // Basic Check; note: msg.sender should be the nation address
         GameLib.validEntityCheck(_buildingID);
         uint256 nationID = ECSLib.getUint("Nation", _buildingID);
         require(ECSLib.getAddress("Address", nationID) == msg.sender, "CURIO: You do not control this nation");
@@ -590,7 +592,7 @@ contract GameFacet is UseStorage {
         uint256 _armyID,
         uint256[] memory _templateIDs,
         uint256[] memory _amounts
-    ) external returns (bool) {
+    ) external {
         // Basic checks; note: msg.sender should be nation
         GameLib.validEntityCheck(_capitalID);
         GameLib.ongoingGameCheck();
@@ -635,7 +637,6 @@ contract GameFacet is UseStorage {
         ECSLib.setBool("CanBattle", _armyID);
         ECSLib.setPosition("Position", _armyID, midPosition);
         ECSLib.setPosition("StartPosition", _armyID, tilePosition);
-        return true;
     }
 
     function disbandArmy(uint256 _armyID) external {
@@ -746,11 +747,11 @@ contract GameFacet is UseStorage {
         // for (uint256 i = 0; i < 3; i++) { // FIXME: hardcoded to accelerate battle
         bool victory = GameLib.attack(_armyID, _tileID, false, false, false);
         if (victory) {
-            // uint256 winnerCityID = GameLib.getPlayerCity(GameLib.getNationIDByAddress(msg.sender));
             if (capitalID != NULL) {
                 // Victorious against city, add back some guards for the loser
-                (bool success, ) = guardTokenAddress.call(abi.encodeWithSignature("dripToken(address,uint256)", tileAddress, GameLib.getConstant("Tile", "Guard", "Amount", "", ECSLib.getUint("Level", capitalID))));
-                require(success, "CURIO: Capital guard reset dripping fails");
+                (bool success, ) = guardTokenAddress.call(abi.encodeWithSignature("dripToken(address,uint256)",
+                tileAddress, GameLib.getConstant("Tile", "Guard", "Amount", "", ECSLib.getUint("Level", capitalID))));
+                require(success, "CURIO: Failed to drip guard tokens");
 
                 // todo: harvest all resources from the players and update resource harvest timestamp to when cooldown ends
                 uint256 cityCenterID = GameLib.getCapital(capitalID);
@@ -773,12 +774,11 @@ contract GameFacet is UseStorage {
             } else {
                 if (GameLib.isBarbarian(_tileID)) {
                     // Reset barbarian
-                    // todo: add this back
-                    // GameLib.distributeBarbarianReward(winnerCityID, _tileID);
+                    GameLib.distributeBarbarianReward(_armyID, _tileID);
                     uint256 barbarianGuardAmount = GameLib.getConstant("Barbarian", "Guard", "Amount", "", ECSLib.getUint("Terrain", _tileID) - 2); // FIXME: hardcoded
                     ECSLib.setUint("LastTimestamp", _tileID, block.timestamp);
                     (bool success, ) = guardTokenAddress.call(abi.encodeWithSignature("dripToken(address,uint256)", tileAddress, barbarianGuardAmount));
-                    require(success, "CURIO: Barbarians reset dripping fails");
+                    require(success, "CURIO: Failed to drip Barbarian tokens");
                 } else {
                     // Neutralize tile & resource
                     uint256 resourceID = GameLib.getResourceAt(ECSLib.getPosition("StartPosition", _tileID));
@@ -793,7 +793,7 @@ contract GameFacet is UseStorage {
     }
 
     function claimTile(uint256 _armyID, uint256 _tileID) public {
-        // Basic checks; msg.sender should be army wallet
+        // Basic checks; note: msg.sender should be army wallet
         GameLib.validEntityCheck(_tileID);
         GameLib.ongoingGameCheck();
         require(ECSLib.getAddress("Address", _armyID) == msg.sender, "CURIO: You do not control this army");
@@ -827,7 +827,7 @@ contract GameFacet is UseStorage {
         uint256 tileGuardAmount = GameLib.getConstant("Tile", "Guard", "Amount", "", ECSLib.getUint("Level", _tileID));
         address tokenContract = GameLib.getTokenContract("Guard");
         (bool success, ) = tokenContract.call(abi.encodeWithSignature("dripToken(address,uint256)", ECSLib.getAddress("Address", _tileID), tileGuardAmount));
-        require(success, "CURIO: Token dripping fails");
+        require(success, "CURIO: Failed to drip Guard tokens");
 
         // Transfer ownership of resource;
         uint256 resourceID = GameLib.getResourceAt(tilePosition);

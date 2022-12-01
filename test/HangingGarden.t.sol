@@ -4,6 +4,7 @@ pragma solidity ^0.8.4;
 import {Test} from "forge-std/Test.sol";
 import {DiamondDeployTest} from "test/DiamondDeploy.t.sol";
 import {Component} from "contracts/Component.sol";
+import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, UintComponent} from "contracts/TypedComponents.sol";
 import {Position} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
 import {console} from "forge-std/console.sol";
@@ -23,7 +24,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         assertEq(nation1CapitalPosition.y, nation1Pos.y);
 
         assertEq(getter.getEntityNation(nation1CapitalID), nation1ID);
-        assertEq(getter.getNationName(nation1ID), "China");
+        assertEq(abi.decode(getter.getComponent("Name").getBytesValue(nation1ID), (string)), "China");
 
         // Verify that tile is initialized correctly
         uint256 nation1CapitalTile = getter.getTileAt(nation1CapitalPosition);

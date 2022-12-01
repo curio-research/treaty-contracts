@@ -169,12 +169,12 @@ contract DiamondDeployTest is Test {
         tokenContracts[5] = address(guardContract);
 
         // admin facet authorizes all token contracts to make changes to ECS States
-        admin.addAuthroized(address(foodContract));
-        admin.addAuthroized(address(goldContract));
-        admin.addAuthroized(address(horsemanContract));
-        admin.addAuthroized(address(warriorContract));
-        admin.addAuthroized(address(slingerContract));
-        admin.addAuthroized(address(guardContract));
+        admin.addAuthorized(address(foodContract));
+        admin.addAuthorized(address(goldContract));
+        admin.addAuthorized(address(horsemanContract));
+        admin.addAuthorized(address(warriorContract));
+        admin.addAuthorized(address(slingerContract));
+        admin.addAuthorized(address(guardContract));
         console.log(">>> Templates created");
 
         // Initialize map either with either `_generateNewMap()` or `_fetchLastDeployedMap()`
