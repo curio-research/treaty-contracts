@@ -368,8 +368,8 @@
       }
     },
     "contracts/facets/AdminFacet.sol": {
-      "lastModificationDate": 1669851693906,
-      "contentHash": "42cc986b1ae0cb7c2ad39427e8a0bb3c",
+      "lastModificationDate": 1669858002912,
+      "contentHash": "e07e412710063e192f73cc459da7d58d",
       "sourceName": "contracts/facets/AdminFacet.sol",
       "solcConfig": {
         "settings": {
@@ -1255,8 +1255,8 @@
       }
     },
     "contracts/tokens/GoldERC20.sol": {
-      "lastModificationDate": 1669852742399,
-      "contentHash": "04ff1d872f54f6138892aafea578c83d",
+      "lastModificationDate": 1669857865197,
+      "contentHash": "004eea431dd1e540ad2c09713d1f598f",
       "sourceName": "contracts/tokens/GoldERC20.sol",
       "solcConfig": {
         "settings": {
@@ -1313,8 +1313,8 @@
       }
     },
     "contracts/tokens/GuardERC20.sol": {
-      "lastModificationDate": 1669852708378,
-      "contentHash": "37a2561b1c3290002cc22305b0a01f78",
+      "lastModificationDate": 1669857908375,
+      "contentHash": "2226bee18b6364d7466b4b40016b0c32",
       "sourceName": "contracts/tokens/GuardERC20.sol",
       "solcConfig": {
         "settings": {
@@ -1371,8 +1371,8 @@
       }
     },
     "contracts/tokens/HorsemanERC20.sol": {
-      "lastModificationDate": 1669852560642,
-      "contentHash": "25d20d98496c6214529cdc751ed4ac1f",
+      "lastModificationDate": 1669857886445,
+      "contentHash": "ef9b123c3e330fa0bf9b2948d0bf11ab",
       "sourceName": "contracts/tokens/HorsemanERC20.sol",
       "solcConfig": {
         "settings": {
@@ -1429,8 +1429,8 @@
       }
     },
     "contracts/tokens/SlingerERC20.sol": {
-      "lastModificationDate": 1669852526616,
-      "contentHash": "37f7cabad1912aa7f443f1ffb27d2d60",
+      "lastModificationDate": 1669857895654,
+      "contentHash": "9d31f65858e43fb3720ab5bb4d6168b2",
       "sourceName": "contracts/tokens/SlingerERC20.sol",
       "solcConfig": {
         "settings": {
@@ -1487,8 +1487,8 @@
       }
     },
     "contracts/tokens/WarriorERC20.sol": {
-      "lastModificationDate": 1669852448932,
-      "contentHash": "d41278a1e72dcfa4739b198593d5d543",
+      "lastModificationDate": 1669857877479,
+      "contentHash": "653dbfe33a8ecfc3dff2ef55a1ab8973",
       "sourceName": "contracts/tokens/WarriorERC20.sol",
       "solcConfig": {
         "settings": {
@@ -2176,8 +2176,8 @@
       }
     },
     "test/DiamondDeploy.t.sol": {
-      "lastModificationDate": 1669848119312,
-      "contentHash": "6329dc98599b4bbc8083ebe9a6cde357",
+      "lastModificationDate": 1669858018450,
+      "contentHash": "18f371d6145fe81562a995a6d8f029b3",
       "sourceName": "test/DiamondDeploy.t.sol",
       "solcConfig": {
         "settings": {
