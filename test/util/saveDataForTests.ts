@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as fsPromise from 'fs/promises';
 import { COMPONENT_SPECS, TILE_TYPE } from 'curio-vault';
-import { generateWorldConstants } from '../../tasks/util/constants';
+import { generateWorldConstants, MAP_INPUT } from '../../tasks/util/constants';
 
 export const saveComponentsToJsonFiles = async () => {
   for (let i = 0; i < COMPONENT_SPECS.length; i++) {
@@ -10,7 +10,7 @@ export const saveComponentsToJsonFiles = async () => {
 };
 
 export const saveWorldConstantsToJsonFile = async (admin: string) => {
-  let worldConstants = generateWorldConstants(admin);
+  let worldConstants = generateWorldConstants(admin, MAP_INPUT);
   worldConstants = orderByKey(worldConstants);
   await fsPromise.writeFile(path.join(path.join(__dirname), '..', 'data', `world_constants.json`), JSON.stringify(worldConstants));
 };

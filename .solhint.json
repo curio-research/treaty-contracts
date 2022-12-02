@@ -31,7 +31,7 @@
     "imports-on-top": "warn",
     "visibility-modifier-order": "error",
     "avoid-call-value": "error",
-    "avoid-low-level-calls": "error",
+    "avoid-low-level-calls": "warn",
     "avoid-sha3": "error",
     "avoid-suicide": "error",
     "avoid-throw": "error",

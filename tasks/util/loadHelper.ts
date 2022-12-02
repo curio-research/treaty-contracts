@@ -58,8 +58,6 @@ export const prepareLoadTest = async (input: LoadTestSetupInput, players: Wallet
 
   // Fetch gas limit, and necessary components
   const gasLimit = chainInfo[hre.network.name].gasLimit;
-  const positionComponentAddr = await diamond.getComponentById(componentNameToId[Position]);
-  const positionComponent = Component__factory.connect(positionComponentAddr, admin);
   const tagComponentAddr = await diamond.getComponentById(componentNameToId[Tag]);
   const tagComponent = Component__factory.connect(tagComponentAddr, admin);
 
@@ -71,27 +69,16 @@ export const prepareLoadTest = async (input: LoadTestSetupInput, players: Wallet
   const playerIds: number[] = [];
   for (let i = 0; i < players.length; i++) {
     console.log(chalk.bgRed.yellow.dim(`>>> Initializing player ${i} with city`));
-    await (await diamond.connect(players[i]).initializePlayer({ x: i * TILE_WIDTH, y: 0 }, `Player ${i}`, { gasLimit })).wait();
-    playerIds.push((await diamond.getPlayerId(players[i].address)).toNumber());
-
-    const settlerId = decodeBigNumberishArr(await positionComponent.getEntitiesWithValue(encodePosition({ x: i * TILE_WIDTH, y: 0 }), { gasLimit }))[0];
-    if (!settlerId) throw new Error('Settler not initialized yet');
-    await diamond.connect(players[i]).foundCity(settlerId, [{ x: i * TILE_WIDTH, y: 0 }], `City ${i}`, { gasLimit });
+    await (await diamond.connect(players[i]).initializeNation(i * TILE_WIDTH, 0, `Player ${i}`, { gasLimit })).wait();
+    playerIds.push((await diamond.getNationIDByAddress(players[i].address)).toNumber());
   }
-  if (
-    !(await diamond.playersAndIdsMatch(
-      players.map((p) => p.address),
-      playerIds
-    ))
-  )
-    throw new Error(chalk.bgWhite.red('⊂(⊙д⊙)つ Players and IDs do not match. Try increase the `offsetInMs` parameter.'));
   console.log(chalk.bgRed.yellow(`>>> Players initialized with city after ${performance.now() - startTime} ms`));
 
   // Create an army for each player and log IDs (sync, because army IDs are used for sending load test txs)
   startTime = performance.now();
   for (let i = 0; i < players.length; i++) {
     console.log(chalk.bgRed.yellow.dim(`>>> Creating army for player ${i}`));
-    await diamond.connect(admin).createArmy(playerIds[i], { x: i * TILE_WIDTH, y: 0 }, { gasLimit });
+    await diamond.connect(admin).initializeArmy('TODO', { gasLimit });
   }
   const armyIds = decodeBigNumberishArr(await tagComponent.getEntitiesWithValue(encodeString('Army')));
   console.log(chalk.bgRed.yellow(`>>> Armies created after ${performance.now() - startTime} ms`));
@@ -122,7 +109,7 @@ export const loadTestMoveArmy = async (hre: HardhatRuntimeEnvironment, diamond: 
     let armiesMoved = 0;
     players.forEach(async (p, i) => {
       console.log(chalk.bgRed.yellow.dim(`>>> [batch ${k}] Moving army for player ${i}...`));
-      const receipt = await (await diamond.connect(p).move(armyIds[i], { x: i * TILE_WIDTH, y: nextMoveUp ? 0 : 1 }, { gasLimit })).wait();
+      const receipt = await (await diamond.connect(p).move(armyIds[i], i * TILE_WIDTH, nextMoveUp ? 0 : 1, { gasLimit })).wait();
       gasConsumptionsByTx.push(receipt.gasUsed.toNumber());
 
       armiesMoved++;

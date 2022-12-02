@@ -29,10 +29,18 @@ export interface GameLibInterface extends utils.Interface {
   functions: {
     "getAttackBonus(uint256,uint256)": FunctionFragment;
     "getConstituents(uint256)": FunctionFragment;
+    "getEntityByAddress(address)": FunctionFragment;
+    "getInventoryIDMaxLoadAndBalance(address,string)": FunctionFragment;
+    "getTokenContract(string)": FunctionFragment;
   };
 
   getFunction(
-    nameOrSignatureOrTopic: "getAttackBonus" | "getConstituents"
+    nameOrSignatureOrTopic:
+      | "getAttackBonus"
+      | "getConstituents"
+      | "getEntityByAddress"
+      | "getInventoryIDMaxLoadAndBalance"
+      | "getTokenContract"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -43,6 +51,18 @@ export interface GameLibInterface extends utils.Interface {
     functionFragment: "getConstituents",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
+  encodeFunctionData(
+    functionFragment: "getEntityByAddress",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getInventoryIDMaxLoadAndBalance",
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTokenContract",
+    values: [PromiseOrValue<string>]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "getAttackBonus",
@@ -50,6 +70,18 @@ export interface GameLibInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getConstituents",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getEntityByAddress",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getInventoryIDMaxLoadAndBalance",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTokenContract",
     data: BytesLike
   ): Result;
 
@@ -109,6 +141,22 @@ export interface GameLib extends BaseContract {
       _keeperID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
+
+    getEntityByAddress(
+      _entityAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    getInventoryIDMaxLoadAndBalance(
+      _entityAddress: PromiseOrValue<string>,
+      _resourceType: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber, BigNumber, BigNumber]>;
+
+    getTokenContract(
+      _tokenName: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
   };
 
   getAttackBonus(
@@ -122,6 +170,22 @@ export interface GameLib extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
+  getEntityByAddress(
+    _entityAddress: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getInventoryIDMaxLoadAndBalance(
+    _entityAddress: PromiseOrValue<string>,
+    _resourceType: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<[BigNumber, BigNumber, BigNumber]>;
+
+  getTokenContract(
+    _tokenName: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
   callStatic: {
     getAttackBonus(
       _offenderTemplateID: PromiseOrValue<BigNumberish>,
@@ -133,6 +197,22 @@ export interface GameLib extends BaseContract {
       _keeperID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
+
+    getEntityByAddress(
+      _entityAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getInventoryIDMaxLoadAndBalance(
+      _entityAddress: PromiseOrValue<string>,
+      _resourceType: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber, BigNumber, BigNumber]>;
+
+    getTokenContract(
+      _tokenName: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<string>;
   };
 
   filters: {
@@ -154,6 +234,22 @@ export interface GameLib extends BaseContract {
       _keeperID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    getEntityByAddress(
+      _entityAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getInventoryIDMaxLoadAndBalance(
+      _entityAddress: PromiseOrValue<string>,
+      _resourceType: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getTokenContract(
+      _tokenName: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -165,6 +261,22 @@ export interface GameLib extends BaseContract {
 
     getConstituents(
       _keeperID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getEntityByAddress(
+      _entityAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getInventoryIDMaxLoadAndBalance(
+      _entityAddress: PromiseOrValue<string>,
+      _resourceType: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getTokenContract(
+      _tokenName: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

@@ -2,7 +2,7 @@ import { Curio } from './../../typechain-types/hardhat-diamond-abi/Curio';
 import { decodeBigNumberishArr, position } from 'curio-vault';
 import { Component__factory } from './../../typechain-types/factories/contracts/Component__factory';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
-import { TILE_TYPE, componentNameToId, encodePosition, getImmediateSurroundingPositions, TileMap, Position, Speed, encodeUint256, getRightPos, chainInfo } from 'curio-vault';
+import { TILE_TYPE, componentNameToId, encodePosition, TileMap, Position, Speed, encodeUint256, getRightPos, chainInfo } from 'curio-vault';
 import { TILE_WIDTH } from './constants';
 import { confirmTx } from './deployHelper';
 import SimplexNoise from 'simplex-noise';
@@ -210,15 +210,15 @@ export const initializeFixmap = async (hre: HardhatRuntimeEnvironment, diamond: 
   const playerPositions = [player1Pos, player2Pos, player3Pos, player4Pos];
 
   // initialize 4 players
-  await confirmTx(await diamond.connect(player1).initializePlayer(player1Pos, 'A', { gasLimit }), hre);
-  await confirmTx(await diamond.connect(player2).initializePlayer(player2Pos, 'B', { gasLimit }), hre);
-  await confirmTx(await diamond.connect(player3).initializePlayer(player3Pos, 'C', { gasLimit }), hre);
-  await confirmTx(await diamond.connect(player4).initializePlayer(player4Pos, 'D', { gasLimit }), hre);
+  await confirmTx(await diamond.connect(player1).initializeNation(player1Pos.x, player1Pos.y, 'A', { gasLimit: gasLimit }), hre);
+  await confirmTx(await diamond.connect(player2).initializeNation(player1Pos.x, player1Pos.y, 'B', { gasLimit: gasLimit }), hre);
+  await confirmTx(await diamond.connect(player3).initializeNation(player1Pos.x, player1Pos.y, 'C', { gasLimit: gasLimit }), hre);
+  await confirmTx(await diamond.connect(player4).initializeNation(player1Pos.x, player1Pos.y, 'D', { gasLimit: gasLimit }), hre);
 
-  const player1Id = (await diamond.getPlayerId(player1.address)).toNumber();
-  const player2Id = (await diamond.getPlayerId(player2.address)).toNumber();
-  const player3Id = (await diamond.getPlayerId(player3.address)).toNumber();
-  const player4Id = (await diamond.getPlayerId(player4.address)).toNumber();
+  const player1Id = (await diamond.getNationIDByAddress(player1.address)).toNumber();
+  const player2Id = (await diamond.getNationIDByAddress(player2.address)).toNumber();
+  const player3Id = (await diamond.getNationIDByAddress(player3.address)).toNumber();
+  const player4Id = (await diamond.getNationIDByAddress(player4.address)).toNumber();
 
   // fetch all settler Ids by fetching the entities on a given position
   const positionComponentAddr = await diamond.getComponentById(componentNameToId[Position]);
@@ -229,18 +229,12 @@ export const initializeFixmap = async (hre: HardhatRuntimeEnvironment, diamond: 
   const player3SettlerId = decodeBigNumberishArr(await positionComponent.getEntitiesWithValue(encodePosition(player3Pos)))[0];
   const player4SettlerId = decodeBigNumberishArr(await positionComponent.getEntitiesWithValue(encodePosition(player4Pos)))[0];
 
-  // settle on all 4 spots
-  await diamond.connect(player1).foundCity(player1SettlerId, getImmediateSurroundingPositions(player1Pos), '');
-  await diamond.connect(player2).foundCity(player2SettlerId, getImmediateSurroundingPositions(player2Pos), '');
-  await diamond.connect(player3).foundCity(player3SettlerId, getImmediateSurroundingPositions(player3Pos), '');
-  await diamond.connect(player4).foundCity(player4SettlerId, getImmediateSurroundingPositions(player4Pos), '');
-
   // spawn armies
-  await diamond.createArmy(player1Id, getRightPos(player1Pos));
+  await diamond.initializeArmy(player1.address);
   let entity = (await diamond.getEntity()).toNumber();
   await confirmTx(await diamond.setComponentValue(Speed, entity, encodeUint256(5)), hre);
 
-  await diamond.createArmy(player2Id, getRightPos(getRightPos(player1Pos)));
+  await diamond.initializeArmy(player1.address);
   entity = (await diamond.getEntity()).toNumber();
   await confirmTx(await diamond.setComponentValue(Speed, entity, encodeUint256(5)), hre);
 };

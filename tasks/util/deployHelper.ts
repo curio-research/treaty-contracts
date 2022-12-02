@@ -49,7 +49,6 @@ export const indexerUrlSelector = (hre: HardhatRuntimeEnvironment): string => {
 
   if (hre.network.name === 'constellationNew') {
     return process.env.INDEXER_URL || '';
-    return process.env.BACKEND_URL || '';
   }
 
   // TODO: add production indexer url cases
@@ -85,8 +84,8 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
   // Deploy diamond
   let startTime = performance.now();
   const ecsLib = await deployProxy<ECSLib>('ECSLib', admin, hre, []);
-  const gameLib = await deployProxy<GameLib>('GameLib', admin, hre, [], { ECSLib: ecsLib.address });
-  const templates = await deployProxy<any>('Templates', admin, hre, [], { ECSLib: ecsLib.address });
+  const templates = await deployProxy<any>('Templates', admin, hre, [], { ECSLib: ecsLib.address }); // FIXME: type
+  const gameLib = await deployProxy<GameLib>('GameLib', admin, hre, [], { ECSLib: ecsLib.address, Templates: templates.address });
   const diamondAddr = await deployDiamond(hre, admin, [worldConstants]);
   const diamond = await getDiamond(hre, diamondAddr);
   const facets = [

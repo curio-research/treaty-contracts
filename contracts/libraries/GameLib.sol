@@ -63,10 +63,13 @@ library GameLib {
         }
     }
 
-    function initializeTile(Position memory _startPosition) internal returns (uint256) {
+    function initializeTile(Position memory _startPosition) external returns (uint256) {
         require(isProperTilePosition(_startPosition), "CURIO: Not proper tile position");
         uint256 tileId = getTileAt(_startPosition);
         if (tileId != 0) return tileId;
+
+        address tileAddress = address(uint160(uint256(keccak256(abi.encodePacked(gs().tileNonce)))));
+        gs().tileNonce++;
 
         // Load constants
         uint256 numInitTerrainTypes = gs().worldConstants.numInitTerrainTypes;
@@ -80,8 +83,13 @@ library GameLib {
         uint256 terrain = encodedCol / divFactor;
 
         // Initialize tile
-        uint256 tileID = Templates.addTile(_startPosition, terrain);
-        ECSLib.setUint("Terrain", tileID, terrain);
+        uint256 tileID = Templates.addTile(_startPosition, terrain, tileAddress);
+        {
+            uint256[] memory troopTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("TroopTemplate"));
+            for (uint256 i = 0; i < troopTemplateIDs.length; i++) {
+                Templates.addInventory(tileID, troopTemplateIDs[i]);
+            }
+        }
 
         // TEMP: battle royale mode
         if (gs().worldConstants.gameMode == GameMode.BATTLE_ROYALE) {
@@ -95,7 +103,10 @@ library GameLib {
                 // ECSLib.setUint("LastTimestamp", tileID, superTileInitTime);
 
                 uint256 supertileGuardAmount = getConstant("Tile", "Guard", "Amount", "", maxTileLevel);
-                Templates.addConstituent(tileID, gs().templates["Guard"], supertileGuardAmount);
+                // Drip Guard tokens
+                address tokenContract = getTokenContract("Guard");
+                (bool success, ) = tokenContract.call(abi.encodeWithSignature("dripToken(address,uint256)", tileAddress, supertileGuardAmount));
+                require(success, "CURIO: Failed to drip Guard tokens");
 
                 return tileID;
             }
@@ -104,38 +115,36 @@ library GameLib {
         if (terrain < 3) {
             // Normal tile
             uint256 tileGuardAmount = getConstant("Tile", "Guard", "Amount", "", ECSLib.getUint("Level", tileID));
-            Templates.addConstituent(tileID, gs().templates["Guard"], tileGuardAmount);
+
+            // Drip Guard tokens
+            address tokenContract = getTokenContract("Guard");
+            (bool success, ) = tokenContract.call(abi.encodeWithSignature("dripToken(address,uint256)", tileAddress, tileGuardAmount));
+            require(success, "CURIO: Failed to drip Guard tokens");
         } else if (terrain == 3 || terrain == 4) {
             // Barbarian tile
             uint256 barbarianLevel = terrain - 2;
             ECSLib.setUint("Level", tileID, barbarianLevel);
             uint256 barbarianGuardAmount = getConstant("Barbarian", "Guard", "Amount", "", barbarianLevel);
-            Templates.addConstituent(tileID, gs().templates["Guard"], barbarianGuardAmount);
+
+            // Drip Guard tokens
+            address tokenContract = getTokenContract("Guard");
+            (bool success, ) = tokenContract.call(abi.encodeWithSignature("dripToken(address,uint256)", tileAddress, barbarianGuardAmount));
+            require(success, "CURIO: Failed to drip Guard tokens");
         } else {
             // Mountain tile, do nothing
         }
 
         // Initialize gold mine
         if (terrain == 1 && getResourceAtTile(_startPosition) == 0) {
-            Templates.addResource(gs().templates["Gold"], _startPosition, 0);
+            Templates.addResource(gs().templates["Gold"], _startPosition);
         }
 
         // All empty tiles are farms
         if ((terrain == 0 || terrain == 2) && getResourceAtTile(_startPosition) == 0) {
-            Templates.addResource(gs().templates["Food"], _startPosition, 0);
+            Templates.addResource(gs().templates["Food"], _startPosition);
         }
 
         return tileID;
-    }
-
-    function removeArmy(uint256 _armyID) internal {
-        uint256[] memory _constituentIDs = getConstituents(_armyID);
-        for (uint256 i = 0; i < _constituentIDs.length; i++) {
-            ECSLib.removeEntity(_constituentIDs[i]);
-        }
-        ECSLib.removeEntity(getInventory(_armyID, gs().templates["Gold"]));
-        ECSLib.removeEntity(getInventory(_armyID, gs().templates["Food"]));
-        ECSLib.removeEntity(_armyID);
     }
 
     function endGather(uint256 _armyID) internal {
@@ -143,22 +152,15 @@ library GameLib {
         uint256 gatherID = getArmyGather(_armyID);
         require(gatherID != 0, "CURIO: Need to start gathering first");
 
-        // Get army's and resource's remaining capacities
+        // Get army's remaining capacities
         uint256 templateID = ECSLib.getUint("Template", gatherID);
-        uint256 inventoryID = getInventory(_armyID, templateID);
-        uint256 armyInventoryAmount;
-        if (inventoryID == 0) {
-            armyInventoryAmount = 0;
-            inventoryID = Templates.addInventory(_armyID, templateID, armyInventoryAmount, ECSLib.getUint("Load", _armyID), true);
-        } else {
-            armyInventoryAmount = ECSLib.getUint("Amount", inventoryID);
-        }
+        address tokenContract = ECSLib.getAddress("Address", templateID);
+        address armyAddress = ECSLib.getAddress("Address", _armyID);
 
         // Gather
         uint256 gatherAmount = (block.timestamp - ECSLib.getUint("InitTimestamp", gatherID)) * getConstant("Army", ECSLib.getString("InventoryType", templateID), "Rate", "gather", 0);
-        uint256 remainingLoad = ECSLib.getUint("Load", _armyID) - armyInventoryAmount;
-        if (gatherAmount > remainingLoad) gatherAmount = remainingLoad;
-        ECSLib.setUint("Amount", inventoryID, armyInventoryAmount + gatherAmount);
+        (bool success, ) = tokenContract.call(abi.encodeWithSignature("dripToken(address,uint256)", armyAddress, gatherAmount));
+        require(success, "CURIO: Failed to drip resource tokens");
 
         ECSLib.removeEntity(gatherID);
     }
@@ -191,59 +193,73 @@ library GameLib {
         bool _transferOwnershipUponVictory,
         bool _removeUponVictory
     ) internal returns (bool victory) {
-        uint256[] memory offenderConstituentIDs = getConstituents(_offenderID);
-        uint256[] memory defenderConstituentIDs = getConstituents(_defenderID);
-
-        require(offenderConstituentIDs.length > 0, "CURIO: Offender cannot attack");
-        require(defenderConstituentIDs.length > 0, "CURIO: Defender already subjugated, claim tile instead");
+        uint256[] memory troopTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("TroopTemplate"));
+        address offenderAddress = ECSLib.getAddress("Address", _offenderID);
+        address defenderAddress = ECSLib.getAddress("Address", _defenderID);
+        bool[] memory defenderTemplateIsEliminated = new bool[](troopTemplateIDs.length);
 
         // Offender attacks defender
         {
             uint256 loss;
-            for (uint256 i = 0; i < offenderConstituentIDs.length; i++) {
-                if (ECSLib.getUint("Amount", offenderConstituentIDs[i]) == 0) continue;
-                for (uint256 j = 0; j < defenderConstituentIDs.length; j++) {
-                    uint256 troopTypeBonus = getAttackBonus(ECSLib.getUint("Template", offenderConstituentIDs[i]), ECSLib.getUint("Template", defenderConstituentIDs[j]));
-
-                    if (ECSLib.getUint("Amount", defenderConstituentIDs[j]) == 0) continue;
+            for (uint256 i = 0; i < troopTemplateIDs.length; i++) {
+                uint256 offenderTroopTemplateID = troopTemplateIDs[i];
+                address offenderTroopContract = ECSLib.getAddress("Address", offenderTroopTemplateID);
+                uint256 offenderTroopBalance = getAddressBalance(offenderAddress, offenderTroopContract);
+                if (offenderTroopBalance == 0) continue;
+                for (uint256 j = 0; j < troopTemplateIDs.length; j++) {
+                    uint256 troopTypeBonus = getAttackBonus(i, j);
+                    uint256 defenderTroopTemplateID = troopTemplateIDs[j];
+                    address defenderTroopContract = ECSLib.getAddress("Address", defenderTroopTemplateID);
+                    uint256 defenderTroopBalance = getAddressBalance(defenderAddress, defenderTroopContract);
+                    if (defenderTroopBalance == 0) {
+                        defenderTemplateIsEliminated[j] = true;
+                        continue;
+                    }
                     loss =
-                        (troopTypeBonus * (sqrt(ECSLib.getUint("Amount", offenderConstituentIDs[i])) * ECSLib.getUint("Attack", ECSLib.getUint("Template", offenderConstituentIDs[i])) * 2)) / //
-                        (ECSLib.getUint("Defense", ECSLib.getUint("Template", defenderConstituentIDs[j])) * ECSLib.getUint("Health", ECSLib.getUint("Template", defenderConstituentIDs[j])));
-
-                    if (loss >= ECSLib.getUint("Amount", defenderConstituentIDs[j])) {
-                        ECSLib.removeEntity(defenderConstituentIDs[j]);
+                        (troopTypeBonus * (sqrt(offenderTroopBalance) * ECSLib.getUint("Attack", offenderTroopTemplateID) * 2)) / //
+                        (ECSLib.getUint("Defense", defenderTroopTemplateID) * ECSLib.getUint("Health", defenderTroopTemplateID));
+                    if (loss >= defenderTroopBalance) {
+                        defenderTemplateIsEliminated[j] = true;
+                        (bool success, ) = defenderTroopContract.call(abi.encodeWithSignature("destroyToken(address,uint256)", defenderAddress, defenderTroopBalance));
+                        require(success, "CURIO: token burn fails");
                     } else {
-                        ECSLib.setUint("Amount", defenderConstituentIDs[j], ECSLib.getUint("Amount", defenderConstituentIDs[j]) - loss);
+                        defenderTemplateIsEliminated[j] = false;
+                        (bool success, ) = defenderTroopContract.call(abi.encodeWithSignature("destroyToken(address,uint256)", defenderAddress, loss));
+                        require(success, "CURIO: token burn fails");
                     }
                 }
             }
         }
 
-        // Check defender status
-        if (getConstituents(_defenderID).length == 0) {
-            victory = true;
+        victory = true;
+        for (uint256 i; i < defenderTemplateIsEliminated.length; i++) {
+            if (!defenderTemplateIsEliminated[i]) {
+                victory = false;
+                break;
+            }
+        }
 
+        if (victory) {
             if (_transferGoldUponVictory) {
-                // Offender takes defender's gold
-                uint256 offenderInventoryAmount = ECSLib.getUint("Amount", getInventory(_offenderID, gs().templates["Gold"]));
-                uint256 capturedAmount = ECSLib.getUint("Amount", getInventory(_defenderID, gs().templates["Gold"]));
-                if (capturedAmount > ECSLib.getUint("Load", _offenderID) - offenderInventoryAmount) capturedAmount = ECSLib.getUint("Load", _offenderID) - offenderInventoryAmount;
-                ECSLib.setUint("Amount", getInventory(_offenderID, gs().templates["Gold"]), offenderInventoryAmount + capturedAmount);
+                // Offender takes defender's resources
+                uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
+                for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
+                    address resourceTokenContract = ECSLib.getAddress("Address", resourceTemplateIDs[i]);
+                    (bool success, ) = resourceTokenContract.call(abi.encodeWithSignature("transferAll(address,address)", defenderAddress, offenderAddress));
+                    require(success, "CURIO: Resource transfer fails upon battle victory");
+                }
             }
 
             if (_transferOwnershipUponVictory) {
                 // Defender becomes owned by offender's owner
-                ECSLib.setUint("Owner", _defenderID, ECSLib.getUint("Owner", _offenderID));
+                ECSLib.setUint("Nation", _defenderID, ECSLib.getUint("Nation", _offenderID));
             }
 
             if (_removeUponVictory) {
-                // Defender is removed
-                uint256 defenderInventoryID = getInventory(_defenderID, gs().templates["Gold"]);
-                if (defenderInventoryID != 0) ECSLib.removeEntity(defenderInventoryID);
-                ECSLib.removeEntity(_defenderID);
+                // Defender (always army here) is dealt with same as in disband
+                ECSLib.removeComponentValue("Position", _defenderID);
+                ECSLib.removeComponentValue("CanBattle", _defenderID);
             }
-        } else {
-            victory = false;
         }
     }
 
@@ -258,44 +274,98 @@ library GameLib {
         if (!victory) attack(_keeperIdB, _keeperIdA, _transferGoldUponVictory, _transferOwnershipUponVictory, _removeUponVictory);
     }
 
-    function distributeBarbarianReward(uint256 _cityID, uint256 _barbarianTileID) internal {
+    function distributeBarbarianReward(uint256 _armyID, uint256 _barbarianTileID) internal {
         uint256 barbarianLevel = ECSLib.getUint("Level", _barbarianTileID);
         uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
         for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
-            uint256 cityInventoryID = getInventory(_cityID, resourceTemplateIDs[i]);
-            uint256 reward = getConstant("Barbarian", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Reward", "", barbarianLevel * 4);
-            ECSLib.setUint("Amount", cityInventoryID, ECSLib.getUint("Amount", cityInventoryID) + reward);
+            uint256 rewardAmount = getConstant("Barbarian", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Reward", "", barbarianLevel * 4);
+            address tokenContract = ECSLib.getAddress("Address", resourceTemplateIDs[i]);
+            (bool success, ) = tokenContract.call(abi.encodeWithSignature("dripToken(address,uint256)", ECSLib.getAddress("Address", _armyID), rewardAmount));
+            require(success, "CURIO: Failed to drip barbarian rewards");
         }
     }
 
-    function unloadResources(uint256 _cityID, uint256 _armyID) internal {
+    function unloadResources(address _nationAddress, address _armyAddress) internal {
         uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
         for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
-            uint256 cityResourceInventoryID = getInventory(_cityID, resourceTemplateIDs[i]);
-            uint256 armyResourceInventoryID = getInventory(_armyID, resourceTemplateIDs[i]);
-            uint256 cityResourceLoad = ECSLib.getUint("Load", cityResourceInventoryID);
-            ECSLib.setUint("Amount", cityResourceInventoryID, min(ECSLib.getUint("Amount", cityResourceInventoryID) + ECSLib.getUint("Amount", armyResourceInventoryID), cityResourceLoad));
-            ECSLib.setUint("Amount", armyResourceInventoryID, 0);
+            address tokenContract = ECSLib.getAddress("Address", resourceTemplateIDs[i]);
+            (bool success, ) = tokenContract.call(abi.encodeWithSignature("transferAll(address,address)", _armyAddress, _nationAddress));
+            require(success, "CURIO: unloadResources transfer fails");
         }
     }
 
-    function disbandArmy(uint256 _cityID, uint256 _armyID) internal {
+    function disbandArmy(address _nationAddress, address _armyAddress) internal {
         // Return troops to corresponding inventories
-        uint256[] memory constituentIDs = getConstituents(_armyID);
-        for (uint256 i = 0; i < constituentIDs.length; i++) {
-            uint256 cityTroopInventoryID = getInventory(_cityID, ECSLib.getUint("Template", constituentIDs[i]));
-            uint256 armyTroopAmount = ECSLib.getUint("Amount", constituentIDs[i]);
-            uint256 cityTroopLoad = ECSLib.getUint("Load", cityTroopInventoryID);
-            ECSLib.setUint("Amount", cityTroopInventoryID, min(ECSLib.getUint("Amount", cityTroopInventoryID) + armyTroopAmount, cityTroopLoad)); // add troop amount back to city
+        uint256[] memory troopTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("TroopTemplate"));
+        for (uint256 i = 0; i < troopTemplateIDs.length; i++) {
+            address tokenContract = ECSLib.getAddress("Address", troopTemplateIDs[i]);
+            (bool success, ) = tokenContract.call(abi.encodeWithSignature("transferAll(address,address)", _armyAddress, _nationAddress));
+            require(success, "CURIO: disbandArmy transfer fails");
         }
-
-        // Disband army
-        removeArmy(_armyID);
     }
 
     // ----------------------------------------------------------
     // LOGIC GETTERS
     // ----------------------------------------------------------
+
+    function getTokenContract(string memory _tokenName) public view returns (address) {
+        uint256 tokenTemplateID = gs().templates[_tokenName];
+        return ECSLib.getAddress("Address", tokenTemplateID);
+    }
+
+    function getEntityByAddress(address _entityAddress) public view returns (uint256) {
+        QueryCondition[] memory query = new QueryCondition[](1);
+        query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Address"]), abi.encode(_entityAddress));
+        uint256[] memory res = ECSLib.query(query);
+        require(res.length <= 1, "CURIO: Found more than one entity");
+        return res.length == 1 ? res[0] : 0;
+    }
+
+    function getInventoryIDMaxLoadAndBalance(address _entityAddress, string memory _resourceType)
+        public
+        view
+        returns (
+            uint256,
+            uint256,
+            uint256
+        )
+    {
+        /**
+        Only Army & Tile has troop load & resource. 
+        Data is stored in game constant based on nation level
+        Resource/Capital yield load restricted within the game
+         */
+
+        // note: put ID, load, and balance together so it only does query once
+
+        // fixme: exteremely inefficient but unavoidable unless entityID is address
+        uint256 entityID = getEntityByAddress(_entityAddress);
+        uint256 templateID = gs().templates[_resourceType];
+        uint256 inventoryID = getInventory(entityID, templateID);
+        uint256 balance = ECSLib.getUint("Amount", inventoryID);
+
+        if (strEq(ECSLib.getString("Tag", entityID), "Army")) {
+            uint256 armyNationID = ECSLib.getUint("Nation", entityID);
+            if (templateID == gs().templates["Horseman"] || templateID == gs().templates["Warrior"] || templateID == gs().templates["Slinger"]) {
+                uint256 maxLoad = getConstant(ECSLib.getString("Tag", entityID), "Troop", "Amount", "", ECSLib.getUint("Level", armyNationID));
+                return (inventoryID, maxLoad, balance);
+            } else if (templateID == gs().templates["Food"] || templateID == gs().templates["Gold"]) {
+                return (inventoryID, ECSLib.getUint("Load", entityID), balance);
+            }
+        } else if (templateID == gs().templates["Guard"]) {
+            uint256 maxLoad = GameLib.getConstant("Tile", "Guard", "Amount", "", ECSLib.getUint("Level", entityID));
+            return (inventoryID, maxLoad, balance);
+        }
+
+        return (inventoryID, 0, balance);
+    }
+
+    function getAddressBalance(address _entityAddress, address _tokenContract) public returns (uint256) {
+        // note: Entity can be army or tile
+        (bool success, bytes memory returnData) = _tokenContract.call(abi.encodeWithSignature("checkBalanceOf(address)", _entityAddress));
+        require(success, "CURIO: Failing to check troop balance");
+        return abi.decode(returnData, (uint256));
+    }
 
     function getConstituents(uint256 _keeperID) public view returns (uint256[] memory) {
         QueryCondition[] memory query = new QueryCondition[](2);
@@ -311,9 +381,9 @@ library GameLib {
         return ECSLib.query(query);
     }
 
-    function getCityTiles(uint256 _cityID) internal view returns (uint256[] memory) {
+    function getNationTiles(uint256 _nationID) internal view returns (uint256[] memory) {
         QueryCondition[] memory query = new QueryCondition[](2);
-        query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["City"]), abi.encode(_cityID));
+        query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Nation"]), abi.encode(_nationID));
         query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Tile"));
         return ECSLib.query(query);
     }
@@ -400,48 +470,20 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    function getCityAtTile(Position memory _startPosition) internal view returns (uint256) {
+    function getCapitalAtTile(Position memory _startPosition) internal view returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
-        query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("City"));
+        query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Capital"));
         query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["StartPosition"]), abi.encode(_startPosition));
         uint256[] memory res = ECSLib.query(query);
         require(res.length <= 1, "CURIO: Tile city assertion failed");
         return res.length == 1 ? res[0] : 0;
     }
 
-    function getConstituentAtTile(uint256 _tileID) internal view returns (uint256) {
-        QueryCondition[] memory query = new QueryCondition[](2);
-        query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Constituent"));
-        query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Keeper"]), abi.encode(_tileID));
-        uint256[] memory res = ECSLib.query(query);
-        require(res.length <= 1, "CURIO: Constituent assertion failed");
-        return res.length == 1 ? res[0] : 0;
-    }
-
-    function getTemplateByInventoryType(string memory _inventoryType) internal view returns (uint256) {
-        QueryCondition[] memory query1 = new QueryCondition[](2);
-        query1[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("ResourceTemplate"));
-        query1[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["InventoryType"]), abi.encode(_inventoryType));
-        uint256[] memory res1 = ECSLib.query(query1);
-        require(res1.length <= 1, "CURIO: Resource template assertion failed");
-
-        QueryCondition[] memory query2 = new QueryCondition[](2);
-        query2[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("TroopTemplate"));
-        query2[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["InventoryType"]), abi.encode(_inventoryType));
-        uint256[] memory res2 = ECSLib.query(query2);
-        require(res2.length <= 1, "CURIO: Troop template assertion failed");
-
-        uint256[] memory result = ECSLib.concatenate(res1, res2);
-
-        require(result.length <= 1, "CURIO: Template assertion failed");
-        return result.length == 1 ? result[0] : 0;
-    }
-
     // FIXME: this function kinda crazy
-    function getAllResourceIDsByCity(uint256 _cityID) internal view returns (uint256[] memory) {
+    function getAllResourceIDsByNation(uint256 _nationID) internal view returns (uint256[] memory) {
         // get all tiles
         QueryCondition[] memory query1 = new QueryCondition[](2);
-        query1[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["City"]), abi.encode(_cityID));
+        query1[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["City"]), abi.encode(_nationID));
         query1[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Tile"));
         uint256[] memory res1 = ECSLib.query(query1);
 
@@ -463,58 +505,38 @@ library GameLib {
         return resourceIDs;
     }
 
-    function getInventory(uint256 _cityID, uint256 _templateID) internal view returns (uint256) {
-        QueryCondition[] memory query = new QueryCondition[](3);
-        query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Keeper"]), abi.encode(_cityID));
+    function getInventory(uint256 _keeperID, uint256 _templateID) internal view returns (uint256) {
+        QueryCondition[] memory query = new QueryCondition[](2);
+        query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Keeper"]), abi.encode(_keeperID));
         query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Template"]), abi.encode(_templateID));
-        query[2] = ECSLib.queryChunk(QueryType.IsNot, Component(gs().components["Tag"]), abi.encode("Production"));
         uint256[] memory res = ECSLib.query(query);
 
         require(res.length <= 1, "CURIO: Inventory assertion failed");
         return res.length == 1 ? res[0] : 0;
     }
 
-    function getSettlerAt(Position memory _position) internal view returns (uint256) {
+    function getNationIDByAddress(address _address) internal view returns (uint256) {
+        return gs().nationEntityMap[_address];
+    }
+
+    function getArmyIDByAddress(address _address) internal view returns (uint256) {
+        return gs().armyEntityMap[_address];
+    }
+
+    function getArmiesFromNation(uint256 _nationID) internal view returns (uint256[] memory) {
         QueryCondition[] memory query = new QueryCondition[](2);
-        query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Settler"));
-        query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Position"]), abi.encode(_position));
+        query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Army"));
+        query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Nation"]), abi.encode(_nationID));
         uint256[] memory res = ECSLib.query(query);
-        require(res.length <= 1, "CURIO: Settler assertion failed");
-        return res.length == 1 ? res[0] : 0;
+        return res;
     }
 
-    function getPlayer(address _address) internal view returns (uint256) {
-        return gs().playerEntityMap[_address];
-    }
-
-    function getCityGold(uint256 _cityID) internal view returns (uint256) {
-        uint256 _goldInventoryID = getInventory(_cityID, gs().templates["Gold"]);
-        uint256 _balance = _goldInventoryID != 0 ? ECSLib.getUint("Amount", _goldInventoryID) : 0;
-        return _balance;
-    }
-
-    function getCityFood(uint256 _cityID) internal view returns (uint256) {
-        uint256 _foodInventoryID = getInventory(_cityID, gs().templates["Food"]);
-        uint256 _balance = _foodInventoryID != 0 ? ECSLib.getUint("Amount", _foodInventoryID) : 0;
-        return _balance;
-    }
-
-    function setCityGold(uint256 _cityID, uint256 _goldAmount) internal {
-        uint256 _goldInventoryID = getInventory(_cityID, gs().templates["Gold"]);
-        ECSLib.setUint("Amount", _goldInventoryID, _goldAmount);
-    }
-
-    function setCityFood(uint256 _cityID, uint256 _foodAmount) internal {
-        uint256 _goldInventoryID = getInventory(_cityID, gs().templates["Food"]);
-        ECSLib.setUint("Amount", _goldInventoryID, _foodAmount);
-    }
-
-    function getCityCenter(uint256 _cityID) internal view returns (uint256) {
+    function getCapital(uint256 _nationID) internal view returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
-        query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["City"]), abi.encode(_cityID));
-        query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["BuildingType"]), abi.encode("City Center"));
+        query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Nation"]), abi.encode(_nationID));
+        query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["BuildingType"]), abi.encode("Capital"));
         uint256[] memory res = ECSLib.query(query);
-        require(res.length <= 1, "CURIO: City Center assertion failed");
+        require(res.length <= 1, "CURIO: Capital assertion failed");
         return res.length == 1 ? res[0] : 0;
     }
 
@@ -524,6 +546,15 @@ library GameLib {
         query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Tile"));
         uint256[] memory res = ECSLib.query(query);
         require(res.length <= 1, "CURIO: Tile assertion failed");
+        return res.length == 1 ? res[0] : 0;
+    }
+
+    function getResourceAt(Position memory _startPosition) internal view returns (uint256) {
+        QueryCondition[] memory query = new QueryCondition[](2);
+        query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["StartPosition"]), abi.encode(_startPosition));
+        query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Resource"));
+        uint256[] memory res = ECSLib.query(query);
+        require(res.length <= 1, "CURIO: Resource assertion failed");
         return res.length == 1 ? res[0] : 0;
     }
 
@@ -561,11 +592,11 @@ library GameLib {
         return result;
     }
 
-    function isAdjacentToOwnTile(uint256 _playerID, Position memory _tilePosition) internal view returns (bool) {
+    function isAdjacentToOwnTile(uint256 _nationID, Position memory _tilePosition) internal view returns (bool) {
         Position[] memory neighborPositions = getTileNeighbors(_tilePosition);
         bool result = false;
         for (uint256 i = 0; i < neighborPositions.length; i++) {
-            if (ECSLib.getUint("Owner", getTileAt(neighborPositions[i])) == _playerID) {
+            if (ECSLib.getUint("Nation", getTileAt(neighborPositions[i])) == _nationID) {
                 result = true;
                 break;
             }
@@ -573,23 +604,9 @@ library GameLib {
         return result;
     }
 
-    function adjacentToCity(Position memory _position, uint256 _cityID) internal view returns (bool) {
-        Position memory _centerPosition = ECSLib.getPosition("Position", _cityID);
-        return !coincident(_position, _centerPosition) && withinDistance(_position, _centerPosition, 2);
-    }
-
     function getCityTileCountByLevel(uint256 _level) internal pure returns (uint256) {
         require(_level >= 1, "CURIO: City level must be at least 1");
         return ((_level + 1) * (_level + 2)) / 2 + 6;
-    }
-
-    function getPlayerCity(uint256 _playerID) internal view returns (uint256) {
-        QueryCondition[] memory query = new QueryCondition[](2);
-        query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Owner"]), abi.encode(_playerID));
-        query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("City"));
-        uint256[] memory res = ECSLib.query(query);
-        require(res.length <= 1, "CURIO: getPlayerCity query error");
-        return res.length == 1 ? res[0] : 0;
     }
 
     function getMapCenterTilePosition() internal view returns (Position memory) {
@@ -605,7 +622,6 @@ library GameLib {
         require(!gs().isPaused, "CURIO: Game is paused");
 
         uint256 gameLengthInSeconds = gs().worldConstants.gameLengthInSeconds;
-        // FIXME: gs().gameInitTimestamp is somehow set incorrectly
         require(gameLengthInSeconds == 0 || (block.timestamp - gs().gameInitTimestamp) <= gameLengthInSeconds, "CURIO: Game has ended");
     }
 
@@ -613,20 +629,9 @@ library GameLib {
         require(Set(gs().entities).includes(_entity), "CURIO: Entity object not found");
     }
 
-    function activePlayerCheck(address _player) internal view {
-        uint256 playerID = getPlayer(_player);
-        require(ECSLib.getBoolComponent("IsActive").has(playerID), "CURIO: You are inactive");
-    }
-
-    function entityOwnershipCheck(uint256 _entity, address _player) internal view {
-        uint256 playerID = getPlayer(_player);
-        require(ECSLib.getUint("Owner", _entity) == playerID, "CURIO: Entity is not yours");
-    }
-
-    function neutralOrOwnedEntityCheck(uint256 _entity, address _player) internal view {
-        uint256 _playerID = getPlayer(_player);
-        uint256 entityOwner = ECSLib.getUint("Owner", _entity);
-        require(entityOwner == _playerID || entityOwner == 0, "CURIO: Entity is not yours");
+    function neutralOrOwnedEntityCheck(uint256 _entity, uint256 _nationID) internal view {
+        uint256 entityNation = ECSLib.getUint("Nation", _entity);
+        require(entityNation == _nationID || entityNation == 0, "CURIO: Entity is not yours");
     }
 
     function inboundPositionCheck(Position memory _position) internal view {
@@ -637,7 +642,7 @@ library GameLib {
         require(ECSLib.getUint("Terrain", getTileAt(_tilePosition)) != 5, "CURIO: Tile not passable");
     }
 
-    function cityCenterHasRecoveredFromSack(uint256 _cityCenterID) internal view {
+    function capitalHasRecoveredFromSack(uint256 _cityCenterID) internal view {
         uint256 cityCenterLevel = ECSLib.getUint("Level", _cityCenterID);
         uint256 chaosDuration = GameLib.getConstant("City Center", "", "Cooldown", "Chaos", cityCenterLevel);
         require(block.timestamp - ECSLib.getUint("LastSacked", _cityCenterID) > chaosDuration, "CURIO: City At Chaos");
