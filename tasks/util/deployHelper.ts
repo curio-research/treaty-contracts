@@ -85,8 +85,8 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
   // Deploy diamond
   let startTime = performance.now();
   const ecsLib = await deployProxy<ECSLib>('ECSLib', admin, hre, []);
-  const gameLib = await deployProxy<GameLib>('GameLib', admin, hre, [], { ECSLib: ecsLib.address });
-  const templates = await deployProxy<any>('Templates', admin, hre, [], { ECSLib: ecsLib.address });
+  const templates = await deployProxy<any>('Templates', admin, hre, [], { ECSLib: ecsLib.address }); // FIXME: type
+  const gameLib = await deployProxy<GameLib>('GameLib', admin, hre, [], { ECSLib: ecsLib.address, Templates: templates.address });
   const diamondAddr = await deployDiamond(hre, admin, [worldConstants]);
   const diamond = await getDiamond(hre, diamondAddr);
   const facets = [
@@ -143,7 +143,7 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
   const bulkTileUploadSize = 100;
   for (let i = 0; i < specialTilePositions.length; i += bulkTileUploadSize) {
     console.log(chalk.dim(`✦ Initializing special tiles ${i} to ${i + bulkTileUploadSize}`));
-    await confirmTx(await diamond.bulkInitializeTiles(specialTilePositions.slice(i, i + bulkTileUploadSize), 'TODO', { gasLimit }), hre);
+    await confirmTx(await diamond.bulkInitializeTiles(specialTilePositions.slice(i, i + bulkTileUploadSize), { gasLimit }), hre);
   }
   console.log(`✦ Special tile bulk initialization took ${Math.floor(performance.now() - startTime)} ms`);
 

@@ -15,12 +15,17 @@ import "forge-std/console.sol";
 contract AdminFacet is UseStorage {
     uint256 private constant NULL = 0;
 
+    modifier onlyAdmin() {
+        require(msg.sender == gs().worldConstants.admin, "CURIO: Unauthorized");
+        _;
+    }
+
     modifier onlyAuthorized() {
         require(msg.sender == gs().worldConstants.admin || gs().isAuthorized[msg.sender] == true, "CURIO: Unauthorized");
         _;
     }
 
-    function addAuthorized(address authorizedAddress) external onlyAuthorized {
+    function addAuthorized(address authorizedAddress) external onlyAdmin {
         gs().authorized.push(authorizedAddress);
         gs().isAuthorized[authorizedAddress] = true;
     }
@@ -117,10 +122,7 @@ contract AdminFacet is UseStorage {
         return Templates.addInventory(_keeperID, templateID);
     }
 
-    function updateInventoryAmount(
-        uint256 _inventoryID,
-        uint256 _newAmount
-    ) external onlyAuthorized returns (bool) {
+    function updateInventoryAmount(uint256 _inventoryID, uint256 _newAmount) external onlyAuthorized returns (bool) {
         ECSLib.setUint("Amount", _inventoryID, _newAmount);
         return true;
     }

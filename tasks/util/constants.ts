@@ -56,37 +56,36 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): a
 export const createTemplates = async (diamond: Curio, gasLimit: number, hre: HardhatRuntimeEnvironment) => {
   const templateNames: string[] = [];
   const templateIDs: number[] = [];
-  // TODO: automate this just like the game constants
 
   let entity = Number(await diamond.getEntity()) + 1;
 
   // Horseman
-  await confirmTx(await diamond.addTroopTemplate(InventoryTypeOptions.Horseman, 120, 60, 120, 95, 'TODO', { gasLimit }), hre);
+  await confirmTx(await diamond.addTroopTemplate(InventoryTypeOptions.Horseman, 120, 60, 120, 95, '0x0000000000000000000000000000000000000000', { gasLimit }), hre);
   templateNames.push(InventoryTypeOptions.Horseman);
   templateIDs.push(entity++);
 
   // Warrior
-  await confirmTx(await diamond.addTroopTemplate(InventoryTypeOptions.Warrior, 120, 60, 120, 95, 'TODO', { gasLimit }), hre);
+  await confirmTx(await diamond.addTroopTemplate(InventoryTypeOptions.Warrior, 120, 60, 120, 95, '0x0000000000000000000000000000000000000000', { gasLimit }), hre);
   templateNames.push(InventoryTypeOptions.Warrior);
   templateIDs.push(entity++);
 
   // Slinger
-  await confirmTx(await diamond.addTroopTemplate(InventoryTypeOptions.Slinger, 120, 60, 120, 95, 'TODO', { gasLimit }), hre);
+  await confirmTx(await diamond.addTroopTemplate(InventoryTypeOptions.Slinger, 120, 60, 120, 95, '0x0000000000000000000000000000000000000000', { gasLimit }), hre);
   templateNames.push(InventoryTypeOptions.Slinger);
   templateIDs.push(entity++);
 
   // Guard
-  await confirmTx(await diamond.addTroopTemplate(InventoryTypeOptions.Guard, 120, 60, 120, 0, 'TODO', { gasLimit }), hre);
+  await confirmTx(await diamond.addTroopTemplate(InventoryTypeOptions.Guard, 120, 60, 120, 0, '0x0000000000000000000000000000000000000000', { gasLimit }), hre);
   templateNames.push(InventoryTypeOptions.Guard);
   templateIDs.push(entity++);
 
   // Gold
-  await confirmTx(await diamond.addResourceTemplate(InventoryTypeOptions.Gold, 'TODO', { gasLimit }), hre);
+  await confirmTx(await diamond.addResourceTemplate(InventoryTypeOptions.Gold, '0x0000000000000000000000000000000000000000', { gasLimit }), hre);
   templateNames.push(InventoryTypeOptions.Gold);
   templateIDs.push(entity++);
 
   // Food
-  await confirmTx(await diamond.addResourceTemplate(InventoryTypeOptions.Food, 'TODO', { gasLimit }), hre);
+  await confirmTx(await diamond.addResourceTemplate(InventoryTypeOptions.Food, '0x0000000000000000000000000000000000000000', { gasLimit }), hre);
   templateNames.push(InventoryTypeOptions.Food);
   templateIDs.push(entity++);
 
