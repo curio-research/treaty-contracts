@@ -4,7 +4,6 @@ pragma solidity ^0.8.13;
 import {Position, WorldConstants} from "contracts/libraries/Types.sol";
 import {Strings} from "openzeppelin-contracts/contracts/utils/Strings.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
-import "forge-std/console.sol";
 
 library Templates {
     function addTile(

@@ -9,7 +9,6 @@ import {Templates} from "contracts/libraries/Templates.sol";
 import {Set} from "contracts/Set.sol";
 import {Component} from "contracts/Component.sol";
 import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, UintComponent, UintArrayComponent} from "contracts/TypedComponents.sol";
-import "forge-std/console.sol";
 
 /// @title Util library
 /// @notice Contains all events as well as lower-level setters and getters
@@ -464,48 +463,20 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    function getCityAtTile(Position memory _startPosition) internal view returns (uint256) {
+    function getCapitalAtTile(Position memory _startPosition) internal view returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
-        query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("City"));
+        query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Capital"));
         query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["StartPosition"]), abi.encode(_startPosition));
         uint256[] memory res = ECSLib.query(query);
         require(res.length <= 1, "CURIO: Tile city assertion failed");
         return res.length == 1 ? res[0] : 0;
     }
 
-    function getConstituentAtTile(uint256 _tileID) internal view returns (uint256) {
-        QueryCondition[] memory query = new QueryCondition[](2);
-        query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Constituent"));
-        query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Keeper"]), abi.encode(_tileID));
-        uint256[] memory res = ECSLib.query(query);
-        require(res.length <= 1, "CURIO: Constituent assertion failed");
-        return res.length == 1 ? res[0] : 0;
-    }
-
-    function getTemplateByInventoryType(string memory _inventoryType) internal view returns (uint256) {
-        QueryCondition[] memory query1 = new QueryCondition[](2);
-        query1[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("ResourceTemplate"));
-        query1[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["InventoryType"]), abi.encode(_inventoryType));
-        uint256[] memory res1 = ECSLib.query(query1);
-        require(res1.length <= 1, "CURIO: Resource template assertion failed");
-
-        QueryCondition[] memory query2 = new QueryCondition[](2);
-        query2[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("TroopTemplate"));
-        query2[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["InventoryType"]), abi.encode(_inventoryType));
-        uint256[] memory res2 = ECSLib.query(query2);
-        require(res2.length <= 1, "CURIO: Troop template assertion failed");
-
-        uint256[] memory result = ECSLib.concatenate(res1, res2);
-
-        require(result.length <= 1, "CURIO: Template assertion failed");
-        return result.length == 1 ? result[0] : 0;
-    }
-
     // FIXME: this function kinda crazy
-    function getAllResourceIDsByCity(uint256 _cityID) internal view returns (uint256[] memory) {
+    function getAllResourceIDsByNation(uint256 _nationID) internal view returns (uint256[] memory) {
         // get all tiles
         QueryCondition[] memory query1 = new QueryCondition[](2);
-        query1[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["City"]), abi.encode(_cityID));
+        query1[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["City"]), abi.encode(_nationID));
         query1[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Tile"));
         uint256[] memory res1 = ECSLib.query(query1);
 
@@ -528,10 +499,9 @@ library GameLib {
     }
 
     function getInventory(uint256 _keeperID, uint256 _templateID) internal view returns (uint256) {
-        QueryCondition[] memory query = new QueryCondition[](3);
+        QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Keeper"]), abi.encode(_keeperID));
         query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Template"]), abi.encode(_templateID));
-        query[2] = ECSLib.queryChunk(QueryType.IsNot, Component(gs().components["Tag"]), abi.encode("Production"));
         uint256[] memory res = ECSLib.query(query);
 
         require(res.length <= 1, "CURIO: Inventory assertion failed");
@@ -627,23 +597,9 @@ library GameLib {
         return result;
     }
 
-    function adjacentToCity(Position memory _position, uint256 _cityID) internal view returns (bool) {
-        Position memory _centerPosition = ECSLib.getPosition("Position", _cityID);
-        return !coincident(_position, _centerPosition) && withinDistance(_position, _centerPosition, 2);
-    }
-
     function getCityTileCountByLevel(uint256 _level) internal pure returns (uint256) {
         require(_level >= 1, "CURIO: City level must be at least 1");
         return ((_level + 1) * (_level + 2)) / 2 + 6;
-    }
-
-    function getPlayerCity(uint256 _playerID) internal view returns (uint256) {
-        QueryCondition[] memory query = new QueryCondition[](2);
-        query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Owner"]), abi.encode(_playerID));
-        query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("City"));
-        uint256[] memory res = ECSLib.query(query);
-        require(res.length <= 1, "CURIO: getPlayerCity query error");
-        return res.length == 1 ? res[0] : 0;
     }
 
     function getMapCenterTilePosition() internal view returns (Position memory) {

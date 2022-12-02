@@ -6,8 +6,7 @@ pragma solidity ^0.8.4;
 // import {Component} from "contracts/Component.sol";
 // import {Position} from "contracts/libraries/Types.sol";
 // import {Set} from "contracts/Set.sol";
-// import {console} from "forge-std/console.sol";
-
+//
 // contract TreatyTest is Test, DiamondDeployTest {
 //     /// Load tests
 //     function testLoadOneSet() public {
@@ -491,15 +490,15 @@ pragma solidity ^0.8.4;
 //         // Check battle preconditions
 //         uint256 moscowInfantryAmount;
 //         uint256 kievArcherAmount;
-        // {
-        //     assertEq(abi.decode(getter.getComponent("Position").getBytesValue(moscowArmyID), (Position)).y, 25);
-        //     assertEq(abi.decode(getter.getComponent("Position").getBytesValue(kievArmyID), (Position)).y, 30);
-        //     moscowInfantryAmount = abi.decode(getter.getComponent("Amount").getBytesValue(getter.getConstituents(moscowArmyID)[1]), (uint256));
-        //     assertEq(moscowInfantryAmount, 75); //250
-        //     kievArcherAmount = abi.decode(getter.getComponent("Amount").getBytesValue(getter.getConstituents(kievArmyID)[1]), (uint256));
-        //     assertEq(kievArcherAmount, 70);
-        //     console.log("Everything is in order");
-        // }
+// {
+//     assertEq(abi.decode(getter.getComponent("Position").getBytesValue(moscowArmyID), (Position)).y, 25);
+//     assertEq(abi.decode(getter.getComponent("Position").getBytesValue(kievArmyID), (Position)).y, 30);
+//     moscowInfantryAmount = abi.decode(getter.getComponent("Amount").getBytesValue(getter.getConstituents(moscowArmyID)[1]), (uint256));
+//     assertEq(moscowInfantryAmount, 75); //250
+//     kievArcherAmount = abi.decode(getter.getComponent("Amount").getBytesValue(getter.getConstituents(kievArmyID)[1]), (uint256));
+//     assertEq(kievArcherAmount, 70);
+//     console.log("Everything is in order");
+// }
 
 //         // Moscow's army battles Kiev's army
 //         {

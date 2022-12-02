@@ -8,7 +8,6 @@ import {GameLib} from "contracts/libraries/GameLib.sol";
 import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {AdminFacet} from "contracts/facets/AdminFacet.sol";
 import {GameFacet} from "contracts/facets/GameFacet.sol";
-import {console} from "forge-std/console.sol";
 
 contract HorsemanERC20 is ERC20 {
     /// Outline:
@@ -77,6 +76,7 @@ contract HorsemanERC20 is ERC20 {
         require(senderCurrentBalance >= _amount, "Sender does not have enough balance");
 
         _transferHelper(_to, msg.sender, _amount, senderInventoryID, recipientInventoryID, senderCurrentBalance, recipientCurrentBalance, recipientMaxLoad);
+        return true;
     }
 
     function transferFrom(
@@ -95,6 +95,7 @@ contract HorsemanERC20 is ERC20 {
         require(senderCurrentBalance >= _amount, "Sender does not have enough balance");
 
         _transferHelper(_to, _from, _amount, senderInventoryID, recipientInventoryID, senderCurrentBalance, recipientCurrentBalance, recipientMaxLoad);
+        return true;
     }
 
     function transferAll(address _from, address _to) public onlyGame returns (bool) {
@@ -109,6 +110,7 @@ contract HorsemanERC20 is ERC20 {
         require(recipientInventoryID != 0 && senderInventoryID != 0, "In-game inventory unfound");
 
         _transferHelper(_to, _from, amount, senderInventoryID, recipientInventoryID, senderCurrentBalance, recipientCurrentBalance, recipientMaxLoad);
+        return true;
     }
 
     // rewards unrestricted by distance

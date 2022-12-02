@@ -6,7 +6,6 @@ import {GameLib} from "contracts/libraries/GameLib.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
 import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {GameFacet} from "contracts/facets/GameFacet.sol";
-import "forge-std/console.sol";
 
 // note: this is a minimalistic implementation of smart contract wallet
 contract WalletHangingGarden {
