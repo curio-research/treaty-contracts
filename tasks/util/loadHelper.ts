@@ -74,13 +74,6 @@ export const prepareLoadTest = async (input: LoadTestSetupInput, players: Wallet
     await (await diamond.connect(players[i]).initializeNation(i * TILE_WIDTH, 0, `Player ${i}`, { gasLimit })).wait();
     playerIds.push((await diamond.getNationIDByAddress(players[i].address)).toNumber());
   }
-  if (
-    !(await diamond.playersAndIdsMatch(
-      players.map((p) => p.address),
-      playerIds
-    ))
-  )
-    throw new Error(chalk.bgWhite.red('⊂(⊙д⊙)つ Players and IDs do not match. Try increase the `offsetInMs` parameter.'));
   console.log(chalk.bgRed.yellow(`>>> Players initialized with city after ${performance.now() - startTime} ms`));
 
   // Create an army for each player and log IDs (sync, because army IDs are used for sending load test txs)

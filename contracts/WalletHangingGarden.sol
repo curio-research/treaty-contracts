@@ -83,7 +83,7 @@ contract WalletHangingGarden {
         return true;
     }
 
-    function approveHomiesEntering(address _armyAddress) public view returns (bool) {
+    function approveMove(address _armyAddress) public view returns (bool) {
         return isHomie[_armyAddress];
     }
 }

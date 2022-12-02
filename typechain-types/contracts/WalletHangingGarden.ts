@@ -25,7 +25,7 @@ import type {
 
 export interface WalletHangingGardenInterface extends utils.Interface {
   functions: {
-    "approveHomiesEntering(address)": FunctionFragment;
+    "approveMove(address)": FunctionFragment;
     "becomeAHomie(address)": FunctionFragment;
     "diamond()": FunctionFragment;
     "executeGameTx(bytes)": FunctionFragment;
@@ -41,7 +41,7 @@ export interface WalletHangingGardenInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "approveHomiesEntering"
+      | "approveMove"
       | "becomeAHomie"
       | "diamond"
       | "executeGameTx"
@@ -56,7 +56,7 @@ export interface WalletHangingGardenInterface extends utils.Interface {
   ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "approveHomiesEntering",
+    functionFragment: "approveMove",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
@@ -96,7 +96,7 @@ export interface WalletHangingGardenInterface extends utils.Interface {
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "approveHomiesEntering",
+    functionFragment: "approveMove",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -150,7 +150,7 @@ export interface WalletHangingGarden extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    approveHomiesEntering(
+    approveMove(
       _armyAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
@@ -200,7 +200,7 @@ export interface WalletHangingGarden extends BaseContract {
     ): Promise<[string]>;
   };
 
-  approveHomiesEntering(
+  approveMove(
     _armyAddress: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<boolean>;
@@ -250,7 +250,7 @@ export interface WalletHangingGarden extends BaseContract {
   ): Promise<string>;
 
   callStatic: {
-    approveHomiesEntering(
+    approveMove(
       _armyAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<boolean>;
@@ -303,7 +303,7 @@ export interface WalletHangingGarden extends BaseContract {
   filters: {};
 
   estimateGas: {
-    approveHomiesEntering(
+    approveMove(
       _armyAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -354,7 +354,7 @@ export interface WalletHangingGarden extends BaseContract {
   };
 
   populateTransaction: {
-    approveHomiesEntering(
+    approveMove(
       _armyAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

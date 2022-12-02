@@ -90,7 +90,6 @@ contract GameFacet is UseStorage {
         require(armyIDs.length + 1 <= gs().worldConstants.maxArmyCountPerPlayer, "CURIO: Army max count reached");
 
         // Register army
-        // note: Army currently initialized to have position
         uint256 armyID = Templates.addArmy(2, 1, 2, gs().worldConstants.tileWidth, 0, nationID, _armyWalletAddress);
         gs().armies.push(_armyWalletAddress);
         gs().armyEntityMap[_armyWalletAddress] = armyID;
@@ -105,10 +104,6 @@ contract GameFacet is UseStorage {
             Templates.addInventory(armyID, resourceTemplateIDs[i]);
         }
     }
-
-    // ----------------------------------------------------------
-    // SETTLEMENT
-    // ----------------------------------------------------------
 
     function move(
         uint256 _armyID,
@@ -149,7 +144,7 @@ contract GameFacet is UseStorage {
             if (tileNationID != NULL) {
                 address tileNationContract = ECSLib.getAddress("Address", tileNationID);
                 // note: here it should have a standard; I'm using this name just for fun
-                (bool success, bytes memory data) = tileNationContract.call(abi.encodeWithSignature("approveHomiesEntering(address)", address(armyAddress)));
+                (bool success, bytes memory data) = tileNationContract.call(abi.encodeWithSignature("approveMove(address)", address(armyAddress)));
                 require(success, "CURIO: Fail to check policy");
                 bool isHomie = abi.decode(data, (bool));
                 if (!isHomie) GameLib.neutralOrOwnedEntityCheck(tileID, armyNationID);
@@ -749,8 +744,7 @@ contract GameFacet is UseStorage {
         if (victory) {
             if (capitalID != NULL) {
                 // Victorious against city, add back some guards for the loser
-                (bool success, ) = guardTokenAddress.call(abi.encodeWithSignature("dripToken(address,uint256)",
-                tileAddress, GameLib.getConstant("Tile", "Guard", "Amount", "", ECSLib.getUint("Level", capitalID))));
+                (bool success, ) = guardTokenAddress.call(abi.encodeWithSignature("dripToken(address,uint256)", tileAddress, GameLib.getConstant("Tile", "Guard", "Amount", "", ECSLib.getUint("Level", capitalID))));
                 require(success, "CURIO: Failed to drip guard tokens");
 
                 // todo: harvest all resources from the players and update resource harvest timestamp to when cooldown ends

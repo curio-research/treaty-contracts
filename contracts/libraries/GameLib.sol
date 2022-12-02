@@ -332,15 +332,14 @@ library GameLib {
 
         // fixme: exteremely inefficient but unavoidable unless entityID is address
         uint256 entityID = getEntityByAddress(_entityAddress);
-        string memory entityTag = ECSLib.getString("Tag", entityID);
         uint256 templateID = gs().templates[_resourceType];
         uint256 inventoryID = getInventory(entityID, templateID);
         uint256 balance = ECSLib.getUint("Amount", inventoryID);
 
-        if (strEq(entityTag, "Army")) {
+        if (strEq(ECSLib.getString("Tag", entityID), "Army")) {
             uint256 armyNationID = ECSLib.getUint("Nation", entityID);
             if (templateID == gs().templates["Horseman"] || templateID == gs().templates["Warrior"] || templateID == gs().templates["Slinger"]) {
-                uint256 maxLoad = getConstant(entityTag, "Troop", "Amount", "", ECSLib.getUint("Level", armyNationID));
+                uint256 maxLoad = getConstant(ECSLib.getString("Tag", entityID), "Troop", "Amount", "", ECSLib.getUint("Level", armyNationID));
                 return (inventoryID, maxLoad, balance);
             } else if (templateID == gs().templates["Food"] || templateID == gs().templates["Gold"]) {
                 return (inventoryID, ECSLib.getUint("Load", entityID), balance);
