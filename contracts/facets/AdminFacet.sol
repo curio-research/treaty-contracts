@@ -7,7 +7,7 @@ import {ComponentSpec, Position, ValueType, WorldConstants} from "contracts/libr
 import {Templates} from "contracts/libraries/Templates.sol";
 import {Set} from "contracts/Set.sol";
 import {GameLib} from "contracts/libraries/GameLib.sol";
-import "forge-std/console.sol";
+import {console} from "forge-std/console.sol";
 
 /// @title Admin facet
 /// @notice Contains admin functions and state functions, both of which should be out of scope for players
@@ -110,7 +110,6 @@ contract AdminFacet is UseStorage {
      * @param _positions all positions
      */
 
-    // fixme: update new initialization in deploy.ts
     function bulkInitializeTiles(Position[] memory _positions) external onlyAuthorized {
         for (uint256 i = 0; i < _positions.length; i++) {
             GameLib.initializeTile(_positions[i]);

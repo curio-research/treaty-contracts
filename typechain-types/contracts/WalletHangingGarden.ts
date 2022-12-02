@@ -32,10 +32,10 @@ export interface WalletHangingGardenInterface extends utils.Interface {
     "executeTx(address,bytes)": FunctionFragment;
     "game()": FunctionFragment;
     "getter()": FunctionFragment;
-    "inquireHomieFee()": FunctionFragment;
+    "homieFee()": FunctionFragment;
+    "homies(uint256)": FunctionFragment;
     "isHomie(address)": FunctionFragment;
     "isOwner(address)": FunctionFragment;
-    "myHomies(uint256)": FunctionFragment;
     "owners(uint256)": FunctionFragment;
   };
 
@@ -48,10 +48,10 @@ export interface WalletHangingGardenInterface extends utils.Interface {
       | "executeTx"
       | "game"
       | "getter"
-      | "inquireHomieFee"
+      | "homieFee"
+      | "homies"
       | "isHomie"
       | "isOwner"
-      | "myHomies"
       | "owners"
   ): FunctionFragment;
 
@@ -74,9 +74,10 @@ export interface WalletHangingGardenInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "game", values?: undefined): string;
   encodeFunctionData(functionFragment: "getter", values?: undefined): string;
+  encodeFunctionData(functionFragment: "homieFee", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "inquireHomieFee",
-    values?: undefined
+    functionFragment: "homies",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "isHomie",
@@ -85,10 +86,6 @@ export interface WalletHangingGardenInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "isOwner",
     values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "myHomies",
-    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "owners",
@@ -111,13 +108,10 @@ export interface WalletHangingGardenInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "executeTx", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "game", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getter", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "inquireHomieFee",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "homieFee", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "homies", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "isHomie", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "isOwner", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "myHomies", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owners", data: BytesLike): Result;
 
   events: {};
@@ -177,7 +171,12 @@ export interface WalletHangingGarden extends BaseContract {
 
     getter(overrides?: CallOverrides): Promise<[string]>;
 
-    inquireHomieFee(overrides?: CallOverrides): Promise<[BigNumber]>;
+    homieFee(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    homies(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
     isHomie(
       arg0: PromiseOrValue<string>,
@@ -188,11 +187,6 @@ export interface WalletHangingGarden extends BaseContract {
       arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
-
-    myHomies(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
 
     owners(
       arg0: PromiseOrValue<BigNumberish>,
@@ -227,7 +221,12 @@ export interface WalletHangingGarden extends BaseContract {
 
   getter(overrides?: CallOverrides): Promise<string>;
 
-  inquireHomieFee(overrides?: CallOverrides): Promise<BigNumber>;
+  homieFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+  homies(
+    arg0: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   isHomie(
     arg0: PromiseOrValue<string>,
@@ -238,11 +237,6 @@ export interface WalletHangingGarden extends BaseContract {
     arg0: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<boolean>;
-
-  myHomies(
-    arg0: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<string>;
 
   owners(
     arg0: PromiseOrValue<BigNumberish>,
@@ -258,7 +252,7 @@ export interface WalletHangingGarden extends BaseContract {
     becomeAHomie(
       _armyAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
 
     diamond(overrides?: CallOverrides): Promise<string>;
 
@@ -277,7 +271,12 @@ export interface WalletHangingGarden extends BaseContract {
 
     getter(overrides?: CallOverrides): Promise<string>;
 
-    inquireHomieFee(overrides?: CallOverrides): Promise<BigNumber>;
+    homieFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+    homies(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     isHomie(
       arg0: PromiseOrValue<string>,
@@ -288,11 +287,6 @@ export interface WalletHangingGarden extends BaseContract {
       arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<boolean>;
-
-    myHomies(
-      arg0: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
 
     owners(
       arg0: PromiseOrValue<BigNumberish>,
@@ -330,7 +324,12 @@ export interface WalletHangingGarden extends BaseContract {
 
     getter(overrides?: CallOverrides): Promise<BigNumber>;
 
-    inquireHomieFee(overrides?: CallOverrides): Promise<BigNumber>;
+    homieFee(overrides?: CallOverrides): Promise<BigNumber>;
+
+    homies(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     isHomie(
       arg0: PromiseOrValue<string>,
@@ -339,11 +338,6 @@ export interface WalletHangingGarden extends BaseContract {
 
     isOwner(
       arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    myHomies(
-      arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -381,7 +375,12 @@ export interface WalletHangingGarden extends BaseContract {
 
     getter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    inquireHomieFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    homieFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    homies(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     isHomie(
       arg0: PromiseOrValue<string>,
@@ -390,11 +389,6 @@ export interface WalletHangingGarden extends BaseContract {
 
     isOwner(
       arg0: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    myHomies(
-      arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

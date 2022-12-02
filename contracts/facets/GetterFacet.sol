@@ -7,7 +7,7 @@ import {GameLib} from "contracts/libraries/GameLib.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
 import {Position, WorldConstants} from "contracts/libraries/Types.sol";
 import {Component} from "contracts/Component.sol";
-import "forge-std/console.sol";
+import {console} from "forge-std/console.sol";
 
 /// @title Bulk getters
 /// @notice Getters provide bulk functions useful for fetching data from the frontend
@@ -39,7 +39,15 @@ contract GetterFacet is UseStorage {
         return GameLib.getArmiesFromNation(_nationID);
     }
 
-    function getInventoryIDMaxLoadAndBalance(address _entityAddress, string memory _resourceType) external view returns (uint256, uint256, uint256) {
+    function getInventoryIDMaxLoadAndBalance(address _entityAddress, string memory _resourceType)
+        external
+        view
+        returns (
+            uint256,
+            uint256,
+            uint256
+        )
+    {
         return GameLib.getInventoryIDMaxLoadAndBalance(_entityAddress, _resourceType);
     }
 

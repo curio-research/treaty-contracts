@@ -419,7 +419,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         nationWallet1.executeGameTx(abi.encodeWithSignature("organizeArmy(uint256,uint256,uint256[],uint256[])", nation1CapitalID, army11ID, armyTemplateIDs, armyTemplateAmounts));
 
         // Nation 1's army11 becomes a homie of Nation 2 !!!
-        uint256 homieFee = nationWallet2.inquireHomieFee();
+        uint256 homieFee = nationWallet2.homieFee();
 
         nationWallet1.executeTx(address(goldContract), abi.encodeWithSignature("approve(address,uint256)", address(nationWallet2), homieFee));
 

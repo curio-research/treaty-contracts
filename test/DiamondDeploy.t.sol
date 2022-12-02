@@ -187,83 +187,75 @@ contract DiamondDeployTest is Test {
 
         vm.stopPrank();
 
-        address[] memory initializedOwner = new address[](1);
-
-        // Deploy Smart Contract Wallets
-        // TODO: nation and army can use different wallet contracts
-
+        // Deploy smart contract wallets
         uint256 homieFee = 666;
+        address[] memory initializedOwners = new address[](1);
 
-        initializedOwner[0] = nation1Address;
-        nationWallet1 = new WalletHangingGarden(initializedOwner, address(diamond), homieFee);
-        armyWallet11 = new WalletHangingGarden(initializedOwner, address(diamond), homieFee);
-        armyWallet12 = new WalletHangingGarden(initializedOwner, address(diamond), homieFee);
+        initializedOwners[0] = nation1Address;
+        nationWallet1 = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
+        armyWallet11 = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
+        armyWallet12 = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
 
-        initializedOwner[0] = nation2Address;
-        nationWallet2 = new WalletHangingGarden(initializedOwner, address(diamond), homieFee);
-        armyWallet21 = new WalletHangingGarden(initializedOwner, address(diamond), homieFee);
-        armyWallet22 = new WalletHangingGarden(initializedOwner, address(diamond), homieFee);
+        initializedOwners[0] = nation2Address;
+        nationWallet2 = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
+        armyWallet21 = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
+        armyWallet22 = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
 
-        initializedOwner[0] = nation3Address;
-        nationWallet3 = new WalletHangingGarden(initializedOwner, address(diamond), homieFee);
-        armyWallet31 = new WalletHangingGarden(initializedOwner, address(diamond), homieFee);
-        armyWallet32 = new WalletHangingGarden(initializedOwner, address(diamond), homieFee);
-
-        console.log(">>> Smart Contract Wallets initialized");
+        initializedOwners[0] = nation3Address;
+        nationWallet3 = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
+        armyWallet31 = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
+        armyWallet32 = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
+        console.log(">>> Smart contract wallets initialized");
 
         // Initialize players
-        vm.startPrank(nation1Address);
-        nationWallet1.executeGameTx(abi.encodeWithSignature("initializeNation(uint256,uint256,string)", nation1Pos.x, nation1Pos.y, "China"));
-        nationWallet1.executeGameTx(abi.encodeWithSignature("initializeArmy(address)", address(armyWallet11)));
-        nationWallet1.executeGameTx(abi.encodeWithSignature("initializeArmy(address)", address(armyWallet12)));
-        
-        for (uint256 i = 0; i < tokenContracts.length; i ++) {
-            nationWallet1.executeTx(address(tokenContracts[i]), 
-        abi.encodeWithSignature("approve(address,uint256)", address(game), type(uint256).max));
-            armyWallet11.executeTx(address(tokenContracts[i]), 
-        abi.encodeWithSignature("approve(address,uint256)", address(game), type(uint256).max));
-            armyWallet12.executeTx(address(tokenContracts[i]), 
-        abi.encodeWithSignature("approve(address,uint256)", address(game), type(uint256).max));
+        address nationAddr;
+        WalletHangingGarden nationWallet;
+        WalletHangingGarden armyWallet1;
+        WalletHangingGarden armyWallet2;
+        Position memory capitalPos;
+        string memory nationName;
+        for (uint256 i = 0; i < 3; i++) {
+            if (i == 0) {
+                nationAddr = nation1Address;
+                nationWallet = nationWallet1;
+                armyWallet1 = armyWallet11;
+                armyWallet2 = armyWallet12;
+                capitalPos = nation1Pos;
+                nationName = "China";
+            } else if (i == 1) {
+                nationAddr = nation2Address;
+                nationWallet = nationWallet2;
+                armyWallet1 = armyWallet21;
+                armyWallet2 = armyWallet22;
+                capitalPos = nation2Pos;
+                nationName = "US";
+            } else if (i == 2) {
+                nationAddr = nation3Address;
+                nationWallet = nationWallet3;
+                armyWallet1 = armyWallet31;
+                armyWallet2 = armyWallet32;
+                capitalPos = nation3Pos;
+                nationName = "Russia";
+            }
+
+            vm.startPrank(nationAddr);
+            nationWallet.executeGameTx(abi.encodeWithSignature("initializeNation(uint256,uint256,string)", capitalPos.x, capitalPos.y, nationName));
+            nationWallet.executeGameTx(abi.encodeWithSignature("initializeArmy(address)", address(armyWallet1)));
+            nationWallet.executeGameTx(abi.encodeWithSignature("initializeArmy(address)", address(armyWallet2)));
+            
+            for (uint256 j = 0; j < tokenContracts.length; j++) {
+                nationWallet.executeTx(address(tokenContracts[j]), abi.encodeWithSignature("approve(address,uint256)", address(game), type(uint256).max));
+                armyWallet1.executeTx(address(tokenContracts[j]), abi.encodeWithSignature("approve(address,uint256)", address(game), type(uint256).max));
+                armyWallet1.executeTx(address(tokenContracts[j]), abi.encodeWithSignature("approve(address,uint256)", address(game), type(uint256).max));
+            }
+            
+            if (i == 0) { nation1ID = getter.getNationIDByAddress(address(nationWallet)); }
+            else if (i == 1) { nation2ID = getter.getNationIDByAddress(address(nationWallet)); }
+            else if (i == 2) { nation3ID = getter.getNationIDByAddress(address(nationWallet)); }
+            vm.stopPrank();
         }
-        
-        nation1ID = getter.getNationIDByAddress(address(nationWallet1));
-        vm.stopPrank();
 
-        vm.startPrank(nation2Address);
-        nationWallet2.executeGameTx(abi.encodeWithSignature("initializeNation(uint256,uint256,string)", nation2Pos.x, nation2Pos.y, "US"));
-        nationWallet2.executeGameTx(abi.encodeWithSignature("initializeArmy(address)", address(armyWallet21)));
-        nationWallet2.executeGameTx(abi.encodeWithSignature("initializeArmy(address)", address(armyWallet22)));
-
-        for (uint256 i = 0; i < tokenContracts.length; i ++) {
-            nationWallet2.executeTx(address(tokenContracts[i]), 
-        abi.encodeWithSignature("approve(address,uint256)", address(game), type(uint256).max));
-            armyWallet21.executeTx(address(tokenContracts[i]), 
-        abi.encodeWithSignature("approve(address,uint256)", address(game), type(uint256).max));
-            armyWallet22.executeTx(address(tokenContracts[i]), 
-        abi.encodeWithSignature("approve(address,uint256)", address(game), type(uint256).max));
-        }
-
-        nation2ID = getter.getNationIDByAddress(address(nationWallet2));
-        vm.stopPrank();
-
-        vm.startPrank(nation3Address);
-        nationWallet3.executeGameTx(abi.encodeWithSignature("initializeNation(uint256,uint256,string)", nation3Pos.x, nation3Pos.y, "Russia"));
-        nationWallet3.executeGameTx(abi.encodeWithSignature("initializeArmy(address)", address(armyWallet31)));
-        nationWallet3.executeGameTx(abi.encodeWithSignature("initializeArmy(address)", address(armyWallet32)));
-
-        for (uint256 i = 0; i < tokenContracts.length; i ++) {
-            nationWallet3.executeTx(address(tokenContracts[i]), 
-        abi.encodeWithSignature("approve(address,uint256)", address(game), type(uint256).max));
-            armyWallet31.executeTx(address(tokenContracts[i]), 
-        abi.encodeWithSignature("approve(address,uint256)", address(game), type(uint256).max));
-            armyWallet32.executeTx(address(tokenContracts[i]), 
-        abi.encodeWithSignature("approve(address,uint256)", address(game), type(uint256).max));
-        }
-
-        nation3ID = getter.getNationIDByAddress(address(nationWallet3));
-        vm.stopPrank();
-
-        console.log(">>> Nations & Armies initialized");
+        console.log(">>> Nations and armies initialized");
         console.log("=============== INDIVIDUAL TESTS BEGIN ================");
     }
 

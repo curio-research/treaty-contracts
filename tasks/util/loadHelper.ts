@@ -58,8 +58,6 @@ export const prepareLoadTest = async (input: LoadTestSetupInput, players: Wallet
 
   // Fetch gas limit, and necessary components
   const gasLimit = chainInfo[hre.network.name].gasLimit;
-  const positionComponentAddr = await diamond.getComponentById(componentNameToId[Position]);
-  const positionComponent = Component__factory.connect(positionComponentAddr, admin);
   const tagComponentAddr = await diamond.getComponentById(componentNameToId[Tag]);
   const tagComponent = Component__factory.connect(tagComponentAddr, admin);
 

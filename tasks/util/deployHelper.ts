@@ -49,7 +49,6 @@ export const indexerUrlSelector = (hre: HardhatRuntimeEnvironment): string => {
 
   if (hre.network.name === 'constellationNew') {
     return process.env.INDEXER_URL || '';
-    return process.env.BACKEND_URL || '';
   }
 
   // TODO: add production indexer url cases

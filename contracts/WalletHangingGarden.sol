@@ -14,8 +14,8 @@ contract WalletHangingGarden {
     GameFacet public game;
 
     address[] public owners;
-    address[] public myHomies;
-    uint256 homieFee;
+    address[] public homies;
+    uint256 public homieFee;
 
     mapping(address => bool) public isOwner;
     mapping(address => bool) public isHomie;
@@ -42,7 +42,7 @@ contract WalletHangingGarden {
             owners.push(owner);
 
             isHomie[owner] = true;
-            owners.push(owner);
+            homies.push(owner);
         }
 
         diamond = _diamond;
@@ -53,26 +53,22 @@ contract WalletHangingGarden {
     }
 
     function executeGameTx(bytes memory _data) public onlyOwner {
-        // fixme: low-level call checker modified to "warn"; integrate with interface
         address gameFacetAddress = address(game);
         (bool success, bytes memory returndata) = gameFacetAddress.call(_data);
         require(success, string(returndata));
     }
 
     function executeTx(address _contractAddress, bytes memory _data) public onlyOwner {
+        // FIXME: unsafe low-level call
         (bool success, bytes memory returndata) = _contractAddress.call(_data);
         require(success, string(returndata));
     }
 
     // ----------------------------------------------------------
-    //                          Poicy
+    //                          POLICY
     // ----------------------------------------------------------
 
-    function inquireHomieFee() public view returns (uint256) {
-        return homieFee;
-    }
-
-    function becomeAHomie(address _armyAddress) public returns (bool) {
+    function becomeAHomie(address _armyAddress) public {
         // note: msg.sender can be from anyone
         // note: msg.sender need to first approve homie fee spending
         address goldTokenAddress = getter.getTokenContract("Gold");
@@ -80,7 +76,6 @@ contract WalletHangingGarden {
         require(success, "Fail to pay homie fee!");
         isHomie[_armyAddress] = true;
         owners.push(_armyAddress);
-        return true;
     }
 
     function approveMove(address _armyAddress) public view returns (bool) {

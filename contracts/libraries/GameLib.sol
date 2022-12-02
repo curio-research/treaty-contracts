@@ -68,7 +68,7 @@ library GameLib {
         uint256 tileId = getTileAt(_startPosition);
         if (tileId != 0) return tileId;
 
-        address tileAddress = address(uint160(uint(keccak256(abi.encodePacked(gs().tileNonce)))));
+        address tileAddress = address(uint160(uint256(keccak256(abi.encodePacked(gs().tileNonce)))));
         gs().tileNonce++;
 
         // Load constants
@@ -321,7 +321,15 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    function getInventoryIDMaxLoadAndBalance(address _entityAddress, string memory _resourceType) public view returns (uint256, uint256, uint256) {
+    function getInventoryIDMaxLoadAndBalance(address _entityAddress, string memory _resourceType)
+        public
+        view
+        returns (
+            uint256,
+            uint256,
+            uint256
+        )
+    {
         /**
         Only Army & Tile has troop load & resource. 
         Data is stored in game constant based on nation level
@@ -614,7 +622,6 @@ library GameLib {
         require(!gs().isPaused, "CURIO: Game is paused");
 
         uint256 gameLengthInSeconds = gs().worldConstants.gameLengthInSeconds;
-        // FIXME: gs().gameInitTimestamp is somehow set incorrectly
         require(gameLengthInSeconds == 0 || (block.timestamp - gs().gameInitTimestamp) <= gameLengthInSeconds, "CURIO: Game has ended");
     }
 

@@ -31,7 +31,7 @@ contract GameFacet is UseStorage {
         uint256 _positionY,
         string memory _name
     ) external {
-        // fixme: Figure out a way to pass in position in delegate call
+        // FIXME: Figure out a way to pass in position in delegate call
         Position memory position = Position({x: _positionX, y: _positionY});
         Position memory tilePosition = GameLib.getProperTilePosition(position);
 
