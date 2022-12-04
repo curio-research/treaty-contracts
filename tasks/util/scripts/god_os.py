@@ -8,7 +8,6 @@ import json
 import sys
 
 stdout_origin = sys.stdout
-sys.stdout = open("earth_log.txt", "w")
 
 
 class Resource(str, Enum):
@@ -542,118 +541,6 @@ class Game:
             self.chaos_period_in_seconds = 120
             self.super_tile_init_time_in_hour = 0
 
-    # todo: update it
-    def print_parameters(self):
-        print("-----------------")
-        print(f"** Faith Constants **")
-        print("-----------------")
-        raw_constant_list = [attr for attr in dir(self) if not callable(
-            getattr(self, attr)) and not attr.startswith("__")]
-        for raw_constant in raw_constant_list:
-            print(f"{raw_constant}: {getattr(self, raw_constant)}")
-
-        # Print Building Stats
-        for i in [Building.GOLDMINE, Building.FARM, Building.CAPITAL]:
-            max_building_level = 1
-            buildingType = i
-            if i == Building.GOLDMINE:
-                max_building_level = self.max_capital_level * \
-                    self.capital_level_to_building_level
-            if i == Building.FARM:
-                max_building_level = self.max_capital_level * \
-                    self.capital_level_to_building_level
-            if i == Building.CAPITAL:
-                max_building_level = self.max_capital_level
-
-            curr_level = 1
-
-            print("-----------------")
-            print(f"** {i} Stats **")
-            print("-----------------")
-
-            while curr_level <= max_building_level:
-                (gold_upgrade_cost, food_upgrade_cost) = get_building_upgrade_cost(
-                    curr_level, buildingType)
-                (gold_hourly_yield, food_hourly_yield) = get_building_hourly_yield_by_level(
-                    curr_level, buildingType)
-                (gold_cap, food_cap) = get_building_resource_cap(
-                    curr_level, buildingType)
-                print(f"Building Level: {curr_level}")
-                print("-----------------")
-                print(f"Gold Yield Per Hour: {gold_hourly_yield}")
-                print(f"Food Yield Per Hour: {food_hourly_yield}")
-                print(f"Gold Cap: {gold_cap}")
-                print(f"Food Cap: {food_cap}")
-                if curr_level < max_building_level:
-                    print(f"Gold Cost to Upgrade: {gold_upgrade_cost}")
-                    print(f"Food Cost to Upgrade: {food_upgrade_cost}")
-                if curr_level == max_building_level:
-                    print("Cannot Upgrade")
-                if buildingType == Building.CAPITAL:
-                    print(
-                        f"Tile Count Limit: {self.init_player_tile_count + get_capital_tiles_interval()*(curr_level-1)}")
-                print("-----------------")
-
-                curr_level += 1
-
-        print("-----------------")
-        print(f"** Barbarian Stats **")
-        print("-----------------")
-        curr_level = 1
-        while curr_level <= self.max_capital_level * self.capital_level_to_building_level:
-            (reward_gold, reward_food) = get_barbarian_reward(curr_level)
-            barbarian_count = get_barbarian_count_by_level(curr_level)
-            print("-----------------")
-            print(f"Barbarian Level: {curr_level}")
-            print("-----------------")
-            print(f"Barbarian Counts: {barbarian_count}")
-            print(f"Gold Reward: {reward_gold}")
-            print(f"Food Reward: {reward_food}")
-            curr_level += 1
-
-        print("-----------------")
-        print(f"** Tile Upgrade Stats **")
-        print("-----------------")
-        curr_level = 1
-        max_tile_level = self.max_capital_level * \
-            self.capital_level_to_building_level
-        while curr_level <= max_tile_level:
-            (cost_gold, cost_food) = get_tile_upgrade_cost(curr_level)
-            tile_guard_count = get_tile_troop_count(curr_level)
-            print("-----------------")
-            print(f"Tile Level: {curr_level}")
-            print("-----------------")
-            print(f"Tile Guard Counts: {tile_guard_count}")
-            if curr_level < max_tile_level:
-                print(f"Gold Cost to Upgrade: {cost_gold}")
-                print(f"Food Cost to Upgrade: {cost_food}")
-            if curr_level == max_tile_level:
-                print("Cannot Upgrade")
-            curr_level += 1
-
-        print("-----------------")
-        print(f"Gather Stats")
-        print("-----------------")
-        for i in [Resource.GOLD, Resource.FOOD]:
-            print(
-                f"{i} Hourly Gather Rate Per Army: {get_hourly_gather_rate_per_army(i)}")
-        print(f"Resource Load per Troop: {resource_cap_per_troop()}")
-
-        print("-----------------")
-        print(f"TroopSize Stats")
-        print("-----------------")
-        max_building_level = self.max_capital_level
-        curr_level = 1
-        while curr_level <= max_building_level:
-            print(
-                f"Capital Level ({curr_level}) TroopSize: {get_troop_size_by_center_level(curr_level)}")
-            curr_level += 1
-        print(f"Troop Gold Cost: {self.resource_weight_light}")
-        print(f"Troop Food Cost: {self.resource_weight_heavy}")
-
-        sys.stdout.close()
-        sys.stdout = stdout_origin
-
     """
     Constant format:
     "subject": "Farm",
@@ -691,16 +578,16 @@ class Game:
                                "object": "", "level": 0, "functionName": "", "value": 30})
 
         # Building Stats
-        for i in [Building.GOLDMINE, Building.FARM, Building.CAPITAL]:
+        for bt in [Building.GOLDMINE, Building.FARM, Building.CAPITAL]:
             max_building_level = 1
-            building_type = i
-            if i == Building.GOLDMINE:
+            building_type = bt
+            if bt == Building.GOLDMINE:
                 max_building_level = self.max_capital_level * \
                     self.capital_level_to_building_level
-            elif i == Building.FARM:
+            elif bt == Building.FARM:
                 max_building_level = self.max_capital_level * \
                     self.capital_level_to_building_level
-            elif i == Building.CAPITAL:
+            elif bt == Building.CAPITAL:
                 max_building_level = self.max_capital_level
 
             curr_level = 0
@@ -802,9 +689,9 @@ class Game:
 
         game_parameters = list(map(trunc, list(map(order, game_parameters))))
         world_parameters = order(world_parameters)
-        for i in range(len(game_parameters)):
-            with open("test/data/game_parameter_%d.json" % i, "w+") as outfile:
-                outfile.write(json.dumps(game_parameters[i], indent=4))
+        for bt in range(len(game_parameters)):
+            with open("test/data/game_parameter_%d.json" % bt, "w+") as outfile:
+                outfile.write(json.dumps(game_parameters[bt], indent=4))
 
         # Dump JSON
         with open("tasks/game_parameters.json", "w+") as outfile:
@@ -816,5 +703,4 @@ class Game:
 
 # change here when switching game mode
 game_instance = Game(GameMode.TEN_PLAYER_SHORT_TEST)
-game_instance.print_parameters()
 game_instance.export_json_parameters()

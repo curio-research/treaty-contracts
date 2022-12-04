@@ -760,13 +760,13 @@ contract GameFacet is UseStorage {
                 uint256 productionID = GameLib.getBuildingProduction(capitalID);
                 if (productionID != NULL) endTroopProduction(capitalID, productionID);
 
-                // // 2. end resource harvest production => change lastTimestamp
-                // uint256 chaosDuration = GameLib.getConstant("Capital", "", "Cooldown", "Chaos", capitalLevel);
+                // 2. end resource harvest production => change lastTimestamp
+                uint256 chaosDuration = GameLib.getConstant("Capital", "", "Cooldown", "Chaos", capitalLevel);
 
                 // todo: same process for resources
 
                 // 3. end capital harvest production => change lastTimeStamp
-                // ECSLib.setUint("LastTimestamp", capitalID, block.timestamp + chaosDuration); // FIXME
+                ECSLib.setUint("LastTimestamp", capitalID, block.timestamp + chaosDuration); // FIXME
 
                 // update lastSacked
                 ECSLib.setUint("LastSacked", capitalID, block.timestamp);
