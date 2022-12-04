@@ -5,16 +5,16 @@ barbarian_reward_to_cost_coefficient: 4
 barbarian_to_army_difficulty_constant: 40
 base_troop_training_in_seconds: 0.4
 building_upgrade_cooldown_ratio: 15
+capital_level_to_building_level: 3
+capital_migration_cooldown_ratio: 15
 chaos_period_in_seconds: 120
-city_center_level_to_building_level: 3
-city_center_migration_cooldown_ratio: 15
 expected_play_time_in_hour: 1
 expected_player_count: 10
 gather_rate_to_resource_rate: 50
 init_player_farm_count: 1
 init_player_goldmine_count: 1
 init_player_tile_count: 1
-max_city_center_level: 5
+max_capital_level: 5
 new_player_action_in_seconds: 100
 player_login_interval_in_minutes: 15
 resource_weight_heavy: 16
@@ -302,7 +302,7 @@ Food Cap: 9597.75
 Cannot Upgrade
 -----------------
 -----------------
-** City Center Stats **
+** Capital Stats **
 -----------------
 Building Level: 1
 -----------------
@@ -547,10 +547,10 @@ Resource Load per Troop: 9.097922910596898
 -----------------
 TroopSize Stats
 -----------------
-City Center Level (1) TroopSize: 155.08049951823267
-City Center Level (2) TroopSize: 304.6333240482643
-City Center Level (3) TroopSize: 498.0395024805416
-City Center Level (4) TroopSize: 748.1581476704656
-City Center Level (5) TroopSize: 1071.6190483445805
+Capital Level (1) TroopSize: 155.08049951823267
+Capital Level (2) TroopSize: 304.6333240482643
+Capital Level (3) TroopSize: 498.0395024805416
+Capital Level (4) TroopSize: 748.1581476704656
+Capital Level (5) TroopSize: 1071.6190483445805
 Troop Gold Cost: 1
 Troop Food Cost: 16

@@ -434,13 +434,13 @@ contract DiamondDeployTest is Test {
                 worldWidth: 100,
                 worldHeight: 100,
                 numInitTerrainTypes: 6,
-                maxCityCountPerPlayer: 3,
+                maxCapitalCountPerPlayer: 3,
                 maxArmyCountPerPlayer: 2,
                 maxPlayerCount: 20,
                 gameMode: GameMode.REGULAR,
                 gameLengthInSeconds: 3600,
-                maxCityCenterLevel: 3,
-                cityCenterLevelToEntityLevelRatio: 3,
+                maxCapitalLevel: 3,
+                capitalLevelToEntityLevelRatio: 3,
                 secondsToTrainAThousandTroops: 500 // DO NOT REMOVE THIS COMMENT
             });
         return worldConstants;

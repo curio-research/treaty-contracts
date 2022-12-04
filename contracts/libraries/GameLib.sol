@@ -95,7 +95,7 @@ library GameLib {
         if (gs().worldConstants.gameMode == GameMode.BATTLE_ROYALE) {
             if (coincident(_startPosition, getMapCenterTilePosition())) {
                 // Set map center tile to SUPERTILE of land, no resources, and the top tile strength to start
-                uint256 maxTileLevel = (gs().worldConstants.maxCityCenterLevel * gs().worldConstants.cityCenterLevelToEntityLevelRatio) / 2;
+                uint256 maxTileLevel = (gs().worldConstants.maxCapitalLevel * gs().worldConstants.capitalLevelToEntityLevelRatio) / 2;
                 ECSLib.setUint("Terrain", tileID, 0);
                 ECSLib.setUint("Level", tileID, maxTileLevel);
 
@@ -475,7 +475,7 @@ library GameLib {
         query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Capital"));
         query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["StartPosition"]), abi.encode(_startPosition));
         uint256[] memory res = ECSLib.query(query);
-        require(res.length <= 1, "CURIO: Tile city assertion failed");
+        require(res.length <= 1, "CURIO: Tile capital assertion failed");
         return res.length == 1 ? res[0] : 0;
     }
 
@@ -483,7 +483,7 @@ library GameLib {
     function getAllResourceIDsByNation(uint256 _nationID) internal view returns (uint256[] memory) {
         // get all tiles
         QueryCondition[] memory query1 = new QueryCondition[](2);
-        query1[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["City"]), abi.encode(_nationID));
+        query1[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Nation"]), abi.encode(_nationID));
         query1[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Tile"));
         uint256[] memory res1 = ECSLib.query(query1);
 
@@ -604,8 +604,8 @@ library GameLib {
         return result;
     }
 
-    function getCityTileCountByLevel(uint256 _level) internal pure returns (uint256) {
-        require(_level >= 1, "CURIO: City level must be at least 1");
+    function getNationTileCountByLevel(uint256 _level) internal pure returns (uint256) {
+        require(_level >= 1, "CURIO: Nation level must be at least 1");
         return ((_level + 1) * (_level + 2)) / 2 + 6;
     }
 
@@ -642,10 +642,10 @@ library GameLib {
         require(ECSLib.getUint("Terrain", getTileAt(_tilePosition)) != 5, "CURIO: Tile not passable");
     }
 
-    function capitalHasRecoveredFromSack(uint256 _cityCenterID) internal view {
-        uint256 cityCenterLevel = ECSLib.getUint("Level", _cityCenterID);
-        uint256 chaosDuration = GameLib.getConstant("City Center", "", "Cooldown", "Chaos", cityCenterLevel);
-        require(block.timestamp - ECSLib.getUint("LastSacked", _cityCenterID) > chaosDuration, "CURIO: City At Chaos");
+    function capitalHasRecoveredFromSack(uint256 _capitalID) internal view {
+        uint256 capitalLevel = ECSLib.getUint("Level", _capitalID);
+        uint256 chaosDuration = GameLib.getConstant("Capital", "", "Cooldown", "Chaos", capitalLevel);
+        require(block.timestamp - ECSLib.getUint("LastSacked", _capitalID) > chaosDuration, "CURIO: Capital at chaos");
     }
 
     // ----------------------------------------------------------

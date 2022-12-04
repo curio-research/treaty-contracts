@@ -119,8 +119,8 @@ contract GetterFacet is UseStorage {
         return Set(gs().entities).getAll();
     }
 
-    function getCapital(uint256 _cityID) external view returns (uint256) {
-        return GameLib.getCapital(_cityID);
+    function getCapital(uint256 _nationID) external view returns (uint256) {
+        return GameLib.getCapital(_nationID);
     }
 
     function getTileAt(Position memory _position) external view returns (uint256) {
