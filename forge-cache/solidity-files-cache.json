@@ -561,8 +561,8 @@
       }
     },
     "contracts/facets/GetterFacet.sol": {
-      "lastModificationDate": 1670181319992,
-      "contentHash": "76ccdeddb462f5ab816925a2d23b01f2",
+      "lastModificationDate": 1670207203444,
+      "contentHash": "a80b3293736a891ce759e11cdf9e4b13",
       "sourceName": "contracts/facets/GetterFacet.sol",
       "solcConfig": {
         "settings": {

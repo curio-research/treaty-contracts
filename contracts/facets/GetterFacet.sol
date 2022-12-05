@@ -5,7 +5,7 @@ import {Set} from "contracts/Set.sol";
 import {UseStorage} from "contracts/libraries/Storage.sol";
 import {GameLib} from "contracts/libraries/GameLib.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
-import {Position, WorldConstants} from "contracts/libraries/Types.sol";
+import {Position, QueryCondition, WorldConstants} from "contracts/libraries/Types.sol";
 import {Component} from "contracts/Component.sol";
 import {console} from "forge-std/console.sol";
 
@@ -135,5 +135,9 @@ contract GetterFacet is UseStorage {
 
     function getResourceAtTile(Position memory _startPosition) external view returns (uint256) {
         return GameLib.getResourceAtTile(_startPosition);
+    }
+
+    function query(QueryCondition[] memory _queryConditions) external view returns (uint256[] memory) {
+        return ECSLib.query(_queryConditions);
     }
 }
