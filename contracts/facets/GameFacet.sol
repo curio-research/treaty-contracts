@@ -39,7 +39,7 @@ contract GameFacet is UseStorage {
         GameLib.ongoingGameCheck();
         GameLib.inboundPositionCheck(position);
         require(gs().nations.length < gs().worldConstants.maxPlayerCount, "CURIO: Max nation count reached");
-        require(gs().addressEntityMap[msg.sender] == NULL, "CURIO: Address already initialized");
+        require(gs().addressToEntity[msg.sender] == NULL, "CURIO: Address already initialized");
 
         // Verify that capital is not on mountain
         uint256 tileID = GameLib.getTileAt(tilePosition);
@@ -61,7 +61,7 @@ contract GameFacet is UseStorage {
         // Register player
         uint256 nationID = Templates.addNation(_name);
         gs().nations.push(msg.sender);
-        gs().addressEntityMap[msg.sender] = nationID;
+        gs().addressToEntity[msg.sender] = nationID;
 
         // Found capital
         Templates.addCapital(tilePosition, nationID);
@@ -85,14 +85,14 @@ contract GameFacet is UseStorage {
         GameLib.ongoingGameCheck();
 
         // Check that player has not reached max army amount
-        uint256 nationID = gs().addressEntityMap[msg.sender];
+        uint256 nationID = gs().addressToEntity[msg.sender];
         uint256[] memory armyIDs = GameLib.getArmiesFromNation(nationID);
         require(armyIDs.length + 1 <= gs().worldConstants.maxArmyCountPerPlayer, "CURIO: Army max count reached");
 
         // Register army
         uint256 armyID = Templates.addArmy(2, 1, 2, gs().worldConstants.tileWidth, 0, nationID, _armyWalletAddress);
         gs().armies.push(_armyWalletAddress);
-        gs().addressEntityMap[_armyWalletAddress] = armyID;
+        gs().addressToEntity[_armyWalletAddress] = armyID;
 
         uint256[] memory troopTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("TroopTemplate"));
         for (uint256 i = 0; i < troopTemplateIDs.length; i++) {
