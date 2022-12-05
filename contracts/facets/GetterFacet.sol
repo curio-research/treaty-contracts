@@ -19,12 +19,8 @@ contract GetterFacet is UseStorage {
         return GameLib.getTokenContract(_tokenName);
     }
 
-    function getNationIDByAddress(address _nationWalletAddress) external view returns (uint256) {
-        return GameLib.getNationIDByAddress(_nationWalletAddress);
-    }
-
-    function getArmyIDByAddress(address _armyAddress) external view returns (uint256) {
-        return GameLib.getArmyIDByAddress(_armyAddress);
+    function getEntityIDByAddress(address _entityAddress) external view returns (uint256) {
+        return GameLib.getEntityIDByAddress(_entityAddress);
     }
 
     function getEntityWallet(uint256 _entityID) external view returns (address) {
@@ -100,10 +96,6 @@ contract GetterFacet is UseStorage {
         uint256 _level
     ) external view returns (uint256) {
         return GameLib.getConstant(_subject, _object, _componentName, _functionName, _level);
-    }
-
-    function isPlayerInitialized(address _player) external view returns (bool) {
-        return gs().nationEntityMap[_player] != NULL;
     }
 
     function getPlayerCount() external view returns (uint256) {

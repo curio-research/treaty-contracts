@@ -94,8 +94,7 @@ struct GameState {
     mapping(address => bool) isAuthorized; // authorized token contracts
     mapping(string => uint256) templates; // template name to id
     mapping(uint256 => address) componentEntityToAddress; // component id to contract address
-    mapping(address => uint256) nationEntityMap;
-    mapping(address => uint256) armyEntityMap;
+    mapping(address => uint256) addressToEntity;
     mapping(address => address) accounts; // main address -> burner address
     mapping(address => address) burnerAccounts; // burner address -> main address
 }

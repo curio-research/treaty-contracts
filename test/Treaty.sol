@@ -67,7 +67,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.startPrank(nation1Address);
 
         uint256 nation1CapitalID = getter.getCapital(nation1ID);
-        uint256 nation1Army1ID = getter.getArmyIDByAddress(address(armyWallet11));
+        uint256 nation1Army1ID = getter.getEntityIDByAddress(address(armyWallet11));
 
         uint256[] memory chinaArmyTemplateIDs = new uint256[](3);
         chinaArmyTemplateIDs[0] = warriorTemplateID;
@@ -125,7 +125,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.startPrank(nation1Address);
 
         uint256 nation1CapitalID = getter.getCapital(nation1ID);
-        uint256 army11ID = getter.getArmyIDByAddress(address(armyWallet11));
+        uint256 army11ID = getter.getEntityIDByAddress(address(armyWallet11));
 
         uint256[] memory armyTemplateIDs = new uint256[](3);
         armyTemplateIDs[0] = warriorTemplateID;
@@ -165,7 +165,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.startPrank(nation2Address);
 
         uint256 nation2CapitalID = getter.getCapital(nation2ID);
-        uint256 army21ID = getter.getArmyIDByAddress(address(armyWallet21));
+        uint256 army21ID = getter.getEntityIDByAddress(address(armyWallet21));
 
         vm.warp(time + 10);
         time += 10;
@@ -241,7 +241,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.startPrank(nation1Address);
 
         uint256 nation1CapitalID = getter.getCapital(nation1ID);
-        uint256 army11ID = getter.getArmyIDByAddress(address(armyWallet11));
+        uint256 army11ID = getter.getEntityIDByAddress(address(armyWallet11));
 
         uint256[] memory armyTemplateIDs = new uint256[](3);
         armyTemplateIDs[0] = warriorTemplateID;
@@ -279,7 +279,7 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         vm.warp(time + 10);
         time += 10;
-        nation1ID = getter.getNationIDByAddress(address(nationWallet1));
+        nation1ID = getter.getEntityIDByAddress(address(nationWallet1));
         nationWallet1.executeGameTx(abi.encodeWithSignature("upgradeNation(uint256)", nation1ID));
         armyWallet11.executeGameTx(abi.encodeWithSignature("claimTile(uint256,uint256)", army11ID, targetTileID));
 
@@ -310,7 +310,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         // Nation 1 organizes army
         vm.startPrank(nation1Address);
         uint256 nation1CapitalID = getter.getCapital(nation1ID);
-        uint256 army11ID = getter.getArmyIDByAddress(address(armyWallet11));
+        uint256 army11ID = getter.getEntityIDByAddress(address(armyWallet11));
         {
             uint256[] memory armyTemplateIDs = new uint256[](3);
             armyTemplateIDs[0] = warriorTemplateID;
@@ -358,7 +358,7 @@ contract TreatyTest is Test, DiamondDeployTest {
     function testHarvest() public {
         // bug: lastChaos time is 0. This is wrong.
         vm.startPrank(deployerAddress);
-        uint256 nation1ID = getter.getNationIDByAddress(address(nationWallet1));
+        uint256 nation1ID = getter.getEntityIDByAddress(address(nationWallet1));
         // this tile and its resource is next to nation1 capital
         Position memory farmTilePos = Position({x: 60, y: 5});
         admin.giftTileAndResourceAt(Position({x: 60, y: 5}), nation1ID);
@@ -408,7 +408,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.startPrank(nation1Address);
 
         uint256 nation1CapitalID = getter.getCapital(nation1ID);
-        uint256 army11ID = getter.getArmyIDByAddress(address(armyWallet11));
+        uint256 army11ID = getter.getEntityIDByAddress(address(armyWallet11));
 
         uint256[] memory armyTemplateIDs = new uint256[](3);
         armyTemplateIDs[0] = warriorTemplateID;
@@ -473,7 +473,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.startPrank(nation1Address);
 
         uint256 nation1CapitalID = getter.getCapital(nation1ID);
-        uint256 army11ID = getter.getArmyIDByAddress(address(armyWallet11));
+        uint256 army11ID = getter.getEntityIDByAddress(address(armyWallet11));
 
         uint256[] memory armyTemplateIDs = new uint256[](3);
         armyTemplateIDs[0] = warriorTemplateID;

@@ -249,9 +249,9 @@ contract DiamondDeployTest is Test {
                 armyWallet1.executeTx(address(tokenContracts[j]), abi.encodeWithSignature("approve(address,uint256)", address(game), type(uint256).max));
             }
             
-            if (i == 0) { nation1ID = getter.getNationIDByAddress(address(nationWallet)); }
-            else if (i == 1) { nation2ID = getter.getNationIDByAddress(address(nationWallet)); }
-            else if (i == 2) { nation3ID = getter.getNationIDByAddress(address(nationWallet)); }
+            if (i == 0) { nation1ID = getter.getEntityIDByAddress(address(nationWallet)); }
+            else if (i == 1) { nation2ID = getter.getEntityIDByAddress(address(nationWallet)); }
+            else if (i == 2) { nation3ID = getter.getEntityIDByAddress(address(nationWallet)); }
             vm.stopPrank();
         }
 

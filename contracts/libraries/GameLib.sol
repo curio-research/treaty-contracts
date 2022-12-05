@@ -84,6 +84,8 @@ library GameLib {
 
         // Initialize tile
         uint256 tileID = Templates.addTile(_startPosition, terrain, tileAddress);
+        gs().addressToEntity[tileAddress] = tileID;
+
         {
             uint256[] memory troopTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("TroopTemplate"));
             for (uint256 i = 0; i < troopTemplateIDs.length; i++) {
@@ -338,8 +340,7 @@ library GameLib {
 
         // note: put ID, load, and balance together so it only does query once
 
-        // fixme: exteremely inefficient but unavoidable unless entityID is address
-        uint256 entityID = getEntityByAddress(_entityAddress);
+        uint256 entityID = gs().addressToEntity[_entityAddress];
         uint256 templateID = gs().templates[_resourceType];
         uint256 inventoryID = getInventory(entityID, templateID);
         uint256 balance = ECSLib.getUint("Amount", inventoryID);
@@ -515,12 +516,8 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    function getNationIDByAddress(address _address) internal view returns (uint256) {
-        return gs().nationEntityMap[_address];
-    }
-
-    function getArmyIDByAddress(address _address) internal view returns (uint256) {
-        return gs().armyEntityMap[_address];
+    function getEntityIDByAddress(address _address) internal view returns (uint256) {
+        return gs().addressToEntity[_address];
     }
 
     function getArmiesFromNation(uint256 _nationID) internal view returns (uint256[] memory) {
