@@ -508,8 +508,8 @@
       }
     },
     "contracts/facets/GameFacet.sol": {
-      "lastModificationDate": 1670181309148,
-      "contentHash": "73d25783c18c79d421bd103b7e9bc6fa",
+      "lastModificationDate": 1670200090205,
+      "contentHash": "a7756ca668b2207c25f2105f9a08c67c",
       "sourceName": "contracts/facets/GameFacet.sol",
       "solcConfig": {
         "settings": {
@@ -867,8 +867,8 @@
       }
     },
     "contracts/libraries/ECSLib.sol": {
-      "lastModificationDate": 1670025111506,
-      "contentHash": "306a37309ec8ef1b1f08117a81ead2a0",
+      "lastModificationDate": 1670200973831,
+      "contentHash": "c03562552d4b17a22b6dc1ee661170db",
       "sourceName": "contracts/libraries/ECSLib.sol",
       "solcConfig": {
         "settings": {
@@ -916,8 +916,8 @@
       }
     },
     "contracts/libraries/GameLib.sol": {
-      "lastModificationDate": 1670181447976,
-      "contentHash": "6f7cebce21b6910923f420b1fdeec607",
+      "lastModificationDate": 1670198855069,
+      "contentHash": "c65cbcca573fd77d2389fab3a23050fb",
       "sourceName": "contracts/libraries/GameLib.sol",
       "solcConfig": {
         "settings": {
@@ -1100,8 +1100,8 @@
       }
     },
     "contracts/libraries/Templates.sol": {
-      "lastModificationDate": 1670025111506,
-      "contentHash": "e4c22556864445175a011e5f63c07f0f",
+      "lastModificationDate": 1670198903679,
+      "contentHash": "123a8193dd61674e03eea712a1925382",
       "sourceName": "contracts/libraries/Templates.sol",
       "solcConfig": {
         "settings": {
@@ -2172,7 +2172,7 @@
       }
     },
     "test/DiamondDeploy.t.sol": {
-      "lastModificationDate": 1670181870786,
+      "lastModificationDate": 1670200666276,
       "contentHash": "4bee3feed94208676530634abb49a8e1",
       "sourceName": "test/DiamondDeploy.t.sol",
       "solcConfig": {
@@ -2253,93 +2253,10 @@
         }
       }
     },
-    "test/ECS.t.sol": {
-      "lastModificationDate": 1670002595322,
-      "contentHash": "5af2d7a97cc40ba9eb4dc53bf9000a06",
-      "sourceName": "test/ECS.t.sol",
-      "solcConfig": {
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "metadata": {
-            "bytecodeHash": "ipfs"
-          },
-          "outputSelection": {
-            "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
-            }
-          },
-          "evmVersion": "london",
-          "libraries": {}
-        }
-      },
-      "imports": [
-        "contracts/Component.sol",
-        "contracts/Diamond.sol",
-        "contracts/Mapping.sol",
-        "contracts/NATO.sol",
-        "contracts/Set.sol",
-        "contracts/TypedComponents.sol",
-        "contracts/WalletHangingGarden.sol",
-        "contracts/facets/AdminFacet.sol",
-        "contracts/facets/DiamondCutFacet.sol",
-        "contracts/facets/DiamondLoupeFacet.sol",
-        "contracts/facets/GameFacet.sol",
-        "contracts/facets/GetterFacet.sol",
-        "contracts/facets/OwnershipFacet.sol",
-        "contracts/interfaces/IDiamondCut.sol",
-        "contracts/interfaces/IDiamondLoupe.sol",
-        "contracts/interfaces/IERC165.sol",
-        "contracts/interfaces/IERC173.sol",
-        "contracts/libraries/ECSLib.sol",
-        "contracts/libraries/GameLib.sol",
-        "contracts/libraries/LibDiamond.sol",
-        "contracts/libraries/QueryLib.sol",
-        "contracts/libraries/Storage.sol",
-        "contracts/libraries/Templates.sol",
-        "contracts/libraries/Types.sol",
-        "contracts/tokens/FoodERC20.sol",
-        "contracts/tokens/GoldERC20.sol",
-        "contracts/tokens/GuardERC20.sol",
-        "contracts/tokens/HorsemanERC20.sol",
-        "contracts/tokens/SlingerERC20.sol",
-        "contracts/tokens/WarriorERC20.sol",
-        "contracts/upgradeInitializers/DiamondInit.sol",
-        "lib/forge-std/lib/ds-test/src/test.sol",
-        "lib/forge-std/src/Script.sol",
-        "lib/forge-std/src/StdJson.sol",
-        "lib/forge-std/src/Test.sol",
-        "lib/forge-std/src/Vm.sol",
-        "lib/forge-std/src/console.sol",
-        "lib/forge-std/src/console2.sol",
-        "lib/memmove/src/Array.sol",
-        "lib/memmove/src/LinkedList.sol",
-        "lib/openzeppelin-contracts/contracts/utils/Strings.sol",
-        "lib/solmate/src/tokens/ERC20.sol",
-        "test/DiamondDeploy.t.sol"
-      ],
-      "versionRequirement": "^0.8.4",
-      "artifacts": {
-        "ECSTest": {
-          "0.8.13+commit.abaa5c0e.Darwin.appleclang": "ECS.t.sol/ECSTest.json"
-        }
-      }
-    },
-    "test/HangingGarden.t.sol": {
-      "lastModificationDate": 1670025111511,
-      "contentHash": "08c3ccfcd700b6bae472f0715226e6f0",
-      "sourceName": "test/HangingGarden.t.sol",
+    "test/Treaty.sol": {
+      "lastModificationDate": 1670200911022,
+      "contentHash": "20eb9959b8e72e149019025c3a373fb1",
+      "sourceName": "test/Treaty.sol",
       "solcConfig": {
         "settings": {
           "optimizer": {
@@ -2415,7 +2332,7 @@
       "versionRequirement": "^0.8.4",
       "artifacts": {
         "TreatyTest": {
-          "0.8.13+commit.abaa5c0e.Darwin.appleclang": "HangingGarden.t.sol/TreatyTest.json"
+          "0.8.13+commit.abaa5c0e.Darwin.appleclang": "Treaty.sol/TreatyTest.json"
         }
       }
     }

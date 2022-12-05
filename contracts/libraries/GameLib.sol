@@ -99,8 +99,8 @@ library GameLib {
                 ECSLib.setUint("Terrain", tileID, 0);
                 ECSLib.setUint("Level", tileID, maxTileLevel);
 
-                // uint256 superTileInitTime = getConstant("SuperTile", "", "lastTimestamp", "", maxTileLevel);
-                // ECSLib.setUint("LastTimestamp", tileID, superTileInitTime);
+                // uint256 superTileInitTime = getConstant("SuperTile", "", "LastRecovered", "", maxTileLevel);
+                // ECSLib.setUint("LastRecovered", tileID, superTileInitTime);
 
                 uint256 supertileGuardAmount = getConstant("Tile", "Guard", "Amount", "", maxTileLevel);
                 // Drip Guard tokens
@@ -645,7 +645,7 @@ library GameLib {
     function capitalHasRecoveredFromSack(uint256 _capitalID) internal view {
         uint256 capitalLevel = ECSLib.getUint("Level", _capitalID);
         uint256 chaosDuration = GameLib.getConstant("Capital", "", "Cooldown", "Chaos", capitalLevel);
-        require(block.timestamp - ECSLib.getUint("LastSacked", _capitalID) > chaosDuration, "CURIO: Capital at chaos");
+        require(block.timestamp - ECSLib.getUint("LastSacked", _capitalID) > chaosDuration, "CURIO: Capital in chaos");
     }
 
     // ----------------------------------------------------------

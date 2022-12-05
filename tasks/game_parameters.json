@@ -2704,7 +2704,7 @@
         "value": 428
     },
     {
-        "componentName": "lastTimestamp",
+        "componentName": "LastRecovered",
         "functionName": "",
         "level": 15,
         "object": "",

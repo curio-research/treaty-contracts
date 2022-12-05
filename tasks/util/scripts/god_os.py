@@ -647,7 +647,7 @@ class Game:
         max_tile_level = self.max_capital_level * \
             self.capital_level_to_building_level
 
-        game_parameters.append({"subject": "SuperTile", "componentName": "lastTimestamp", "object": "",
+        game_parameters.append({"subject": "SuperTile", "componentName": "LastRecovered", "object": "",
                                 "level": max_tile_level, "functionName": "", "value": self.super_tile_init_time_in_hour * 3600})
 
         while curr_level <= max_tile_level:

@@ -131,7 +131,7 @@ contract GameFacet is UseStorage {
         require(GameLib.getMovableEntityAt(targetPosition) == NULL, "CURIO: Destination occupied by a unit");
 
         // Check moveCooldown
-        require(block.timestamp >= ECSLib.getUint("LastTimestamp", _armyID) + ECSLib.getUint("MoveCooldown", _armyID), "CURIO: Moved too recently");
+        require(block.timestamp >= ECSLib.getUint("LastMoved", _armyID) + ECSLib.getUint("MoveCooldown", _armyID), "CURIO: Moved too recently");
 
         // Army cannot move in enemy territory
         // todo: integrate with 1-N treaty here
@@ -156,12 +156,13 @@ contract GameFacet is UseStorage {
 
         // Calculate distance
         uint256 distance = GameLib.euclidean(ECSLib.getPosition("Position", _armyID), targetPosition);
+
         require(distance <= ECSLib.getUint("Speed", _armyID), "CURIO: Not enough movement points");
 
         // Move and update moveCooldown
         ECSLib.setPosition("Position", _armyID, targetPosition);
         ECSLib.setPosition("StartPosition", _armyID, tilePosition);
-        ECSLib.setUint("LastTimestamp", _armyID, block.timestamp);
+        ECSLib.setUint("LastMoved", _armyID, block.timestamp);
     }
 
     function recoverTile(uint256 _tileID) external {
@@ -288,7 +289,7 @@ contract GameFacet is UseStorage {
         ECSLib.setUint("LastUpgraded", _nationID, block.timestamp);
 
         // Update timestamp to when it's gonna finish upgrade
-        // ECSLib.setUint("LastTimestamp", _buildingID, block.timestamp + GameLib.getConstant("Capital", "", "Cooldown", "Upgrade", centerLevel)); // FIXME
+        // ECSLib.setUint("LastUpgraded", _buildingID, block.timestamp + GameLib.getConstant("Capital", "", "Cooldown", "Upgrade", centerLevel)); // FIXME
 
         // Set new level
         ECSLib.setUint("Level", _nationID, nationLevel + 1);
@@ -520,13 +521,13 @@ contract GameFacet is UseStorage {
 
         // Get harvest amount
         uint256 harvestRate = GameLib.getConstant(buildingType, ECSLib.getString("InventoryType", templateID), "Yield", "", resourceLevel);
-        uint256 harvestAmount = (block.timestamp - ECSLib.getUint("LastTimestamp", _resourceID)) * harvestRate;
+        uint256 harvestAmount = (block.timestamp - ECSLib.getUint("LastHarvested", _resourceID)) * harvestRate;
         uint256 harvestMaxLoad = GameLib.getConstant(buildingType, ECSLib.getString("InventoryType", ECSLib.getUint("Template", _resourceID)), "Load", "", resourceLevel);
 
         harvestAmount = GameLib.min(harvestMaxLoad, harvestAmount);
 
         // Update last harvest
-        ECSLib.setUint("LastTimestamp", _resourceID, block.timestamp);
+        ECSLib.setUint("LastHarvested", _resourceID, block.timestamp);
 
         // Update capital inventory amount
         address tokenContract = ECSLib.getAddress("Address", templateID);
@@ -565,7 +566,7 @@ contract GameFacet is UseStorage {
         for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
             uint256 harvestRate = GameLib.getConstant("Capital", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Yield", "", capitalLevel);
             address tokenContract = ECSLib.getAddress("Address", resourceTemplateIDs[i]);
-            uint256 harvestAmount = (block.timestamp - ECSLib.getUint("LastTimestamp", _buildingID)) * harvestRate;
+            uint256 harvestAmount = (block.timestamp - ECSLib.getUint("LastHarvested", _buildingID)) * harvestRate;
             uint256 harvestMaxLoad = GameLib.getConstant("Capital", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Load", "", capitalLevel);
 
             harvestAmount = GameLib.min(harvestMaxLoad, harvestAmount);
@@ -575,7 +576,7 @@ contract GameFacet is UseStorage {
         }
 
         // Reset harvest time
-        ECSLib.setUint("LastTimestamp", _buildingID, block.timestamp);
+        ECSLib.setUint("LastHarvested", _buildingID, block.timestamp);
     }
 
     // ----------------------------------------------------------
@@ -684,8 +685,8 @@ contract GameFacet is UseStorage {
         require(ECSLib.getUint("Nation", _targetID) != armyNationID, "CURIO: Cannot battle entity of same nation");
 
         // Check battle cooldown and update last timestamp
-        require(block.timestamp >= ECSLib.getUint("LastTimestamp", _armyID) + ECSLib.getUint("BattleCooldown", _armyID), "CURIO: Battled too recently");
-        ECSLib.setUint("LastTimestamp", _armyID, block.timestamp);
+        require(block.timestamp >= ECSLib.getUint("LastAttacked", _armyID) + ECSLib.getUint("BattleCooldown", _armyID), "CURIO: Battled too recently");
+        ECSLib.setUint("LastAttacked", _armyID, block.timestamp);
 
         // End army's gather
         // if (GameLib.getArmyGather(_armyID) != NULL) GameLib.endGather(_armyID);
@@ -728,14 +729,13 @@ contract GameFacet is UseStorage {
         // if it is the super tile, check that it's active
         if (GameLib.coincident(ECSLib.getPosition("StartPosition", _tileID), GameLib.getMapCenterTilePosition())) {
             // todo: end game when players occupy it for a certain period of time
-            // note: for super tile, lasttimestamp is when it becomes active
-            require(block.timestamp >= ECSLib.getUint("LastTimestamp", _tileID), "Curio: Supertile is not active yet");
+            require(block.timestamp >= ECSLib.getUint("LastRecovered", _tileID), "Curio: Supertile is not active yet");
         }
 
         // if it is barbarian, check it's not hybernating
         if (GameLib.isBarbarian(_tileID)) {
             uint256 barbarianCooldown = GameLib.getConstant("Barbarian", "", "Cooldown", "", 0);
-            require(block.timestamp >= ECSLib.getUint("LastTimestamp", _tileID) + barbarianCooldown, "CURIO: Barbarians hybernating, need to wait");
+            require(block.timestamp >= ECSLib.getUint("LastRecovered", _tileID) + barbarianCooldown, "CURIO: Barbarians hybernating, need to wait");
         }
 
         // Execute one round of battle
@@ -753,20 +753,17 @@ contract GameFacet is UseStorage {
                 require(success, "CURIO: Failed to drip guard tokens");
 
                 // todo: harvest all resources from the players and update resource harvest timestamp to when cooldown ends
-                uint256 capitalID = GameLib.getCapital(capitalID);
                 // uint256 capitalLevel = ECSLib.getUint("Level", capitalID);
 
                 // 1. end troop production
                 uint256 productionID = GameLib.getBuildingProduction(capitalID);
                 if (productionID != NULL) endTroopProduction(capitalID, productionID);
 
-                // 2. end resource harvest production => change lastTimestamp
-                uint256 chaosDuration = GameLib.getConstant("Capital", "", "Cooldown", "Chaos", capitalLevel);
+                // 2. end resource harvest production => change lastHarvested
+                // uint256 chaosDuration = GameLib.getConstant("Capital", "", "Cooldown", "Chaos", capitalLevel);
 
-                // todo: same process for resources
-
-                // 3. end capital harvest production => change lastTimeStamp
-                ECSLib.setUint("LastTimestamp", capitalID, block.timestamp + chaosDuration); // FIXME
+                // 3. end capital harvest production => change lastHarvested
+                // ECSLib.setUint("LastHarvested", capitalID, block.timestamp + chaosDuration); // FIXME
 
                 // update lastSacked
                 ECSLib.setUint("LastSacked", capitalID, block.timestamp);
@@ -775,7 +772,7 @@ contract GameFacet is UseStorage {
                     // Reset barbarian
                     GameLib.distributeBarbarianReward(_armyID, _tileID);
                     uint256 barbarianGuardAmount = GameLib.getConstant("Barbarian", "Guard", "Amount", "", ECSLib.getUint("Terrain", _tileID) - 2); // FIXME: hardcoded
-                    ECSLib.setUint("LastTimestamp", _tileID, block.timestamp);
+                    ECSLib.setUint("LastRecovered", _tileID, block.timestamp);
                     (bool success, ) = guardTokenAddress.call(abi.encodeWithSignature("dripToken(address,uint256)", tileAddress, barbarianGuardAmount));
                     require(success, "CURIO: Failed to drip Barbarian tokens");
                 } else {
