@@ -302,76 +302,6 @@ library ECSLib {
         return QueryCondition({queryType: _queryType, component: _component, value: _value});
     }
 
-    function intersectionAsSet(Set _set1, Set _set2) public returns (Set) {
-        UintBoolMapping searchedElements = new UintBoolMapping();
-        Set intersections = new Set();
-
-        // Loop through first set
-        uint256[] memory set1elements = _set1.getAll();
-        uint256 element;
-        for (uint256 i = 0; i < _set1.size(); i++) {
-            element = set1elements[i];
-
-            // Check if element is in second set
-            if (!searchedElements.val(element)) {
-                if (_set2.includes(element)) {
-                    intersections.add(element);
-                }
-                searchedElements.set(element, true);
-            }
-        }
-
-        // Loop through second set
-        uint256[] memory set2elements = _set2.getAll();
-        for (uint256 i = 0; i < _set2.size(); i++) {
-            element = set2elements[i];
-
-            // Check if element is in first set
-            if (!searchedElements.val(element)) {
-                if (_set1.includes(element)) {
-                    intersections.add(element);
-                }
-                searchedElements.set(element, true);
-            }
-        }
-
-        return intersections;
-    }
-
-    // Set-theoretic intersection
-    function intersection(Set _set1, Set _set2) public returns (uint256[] memory) {
-        return intersectionAsSet(_set1, _set2).getAll();
-    }
-
-    // Set-theoretic difference
-    function difference(Set _set1, Set _set2) public returns (uint256[] memory) {
-        return differenceAsSet(_set1, _set2).getAll();
-    }
-
-    function differenceAsSet(Set set1, Set set2) public returns (Set) {
-        Set res = new Set();
-
-        for (uint256 i = 0; i < set1.size(); i++) {
-            uint256 _element = set1.getAll()[i];
-
-            // Check if element is in second set
-            if (!set2.includes(_element)) {
-                res.add(_element);
-            }
-        }
-
-        return res;
-    }
-
-    // Set-theoretic union
-    function union(Set _set1, Set _set2) public returns (uint256[] memory) {
-        uint256[] memory arr1 = difference(_set1, _set2);
-        uint256[] memory arr2 = intersection(_set1, _set2);
-        uint256[] memory arr3 = difference(_set2, _set1);
-
-        return concatenate(concatenate(arr1, arr2), arr3);
-    }
-
     function concatenate(uint256[] memory _arr1, uint256[] memory _arr2) public pure returns (uint256[] memory) {
         uint256[] memory _result = new uint256[](_arr1.length + _arr2.length);
 
@@ -380,27 +310,6 @@ library ECSLib {
         }
         for (uint256 i = 0; i < _arr2.length; i++) {
             _result[_arr1.length + i] = _arr2[i];
-        }
-
-        return _result;
-    }
-
-    // inclusive on both ends
-    function filterByComponentRange(
-        uint256[] memory _entities,
-        string memory _componentName,
-        uint256 _lb,
-        uint256 _ub
-    ) public returns (uint256[] memory) {
-        Set _set1 = new Set();
-        _set1.addArray(_entities);
-
-        uint256[] memory _result = new uint256[](0);
-        Set _set2;
-        for (uint256 _value = _lb; _value <= _ub; _value++) {
-            _set2 = new Set();
-            _set2.addArray(UintComponent(gs().components[_componentName]).getEntitiesWithValue(_value));
-            _result = concatenate(_result, intersection(_set1, _set2));
         }
 
         return _result;

@@ -35,7 +35,7 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): a
     worldHeight: mapInput.height * TILE_WIDTH,
     numInitTerrainTypes: NUM_INIT_TERRAIN_TYPES,
     // manual configs
-    maxCityCountPerPlayer: 3,
+    maxCapitalCountPerPlayer: 3,
     maxArmyCountPerPlayer: 2,
     maxPlayerCount: 1000,
     gameMode: GameMode.REGULAR,

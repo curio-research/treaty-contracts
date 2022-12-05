@@ -18,7 +18,6 @@ library Templates {
         ECSLib.setPosition("StartPosition", tileID, _startPosition);
         ECSLib.setUint("Level", tileID, 1);
         ECSLib.setUint("Terrain", tileID, _terrain);
-        ECSLib.setUint("LastTimestamp", tileID, block.timestamp); // last reset time for barbarians, init active time for supertile
         ECSLib.setUint("LastUpgraded", tileID, 0);
         ECSLib.setUint("LastRecovered", tileID, 0);
         ECSLib.setUint("Nation", tileID, 0);
@@ -27,10 +26,7 @@ library Templates {
         return tileID;
     }
 
-    function addCapital(
-        Position memory _tilePosition,
-        uint256 _nationID
-    ) public returns (uint256) {
+    function addCapital(Position memory _tilePosition, uint256 _nationID) public returns (uint256) {
         uint256 capitalID = ECSLib.addEntity();
 
         ECSLib.setString("Tag", capitalID, "Building");
@@ -38,9 +34,8 @@ library Templates {
         ECSLib.setString("BuildingType", capitalID, "Capital");
         ECSLib.setBool("CanProduce", capitalID);
         ECSLib.setUint("InitTimestamp", capitalID, block.timestamp);
-        ECSLib.setUint("LastTimestamp", capitalID, block.timestamp);
         ECSLib.setUint("LastMoved", capitalID, block.timestamp);
-        ECSLib.setUint("LastSacked", capitalID, block.timestamp);
+        ECSLib.setUint("LastSacked", capitalID, 0);
         ECSLib.setUint("Load", capitalID, 0);
         ECSLib.setUint("Nation", capitalID, _nationID);
         return capitalID;
@@ -53,7 +48,7 @@ library Templates {
         ECSLib.setUint("Template", resourceID, _templateID);
         ECSLib.setUint("Level", resourceID, 0); // initialize at zero is equivalent to not having a gold mine "built"
         ECSLib.setPosition("StartPosition", resourceID, _startPosition);
-        ECSLib.setUint("LastTimestamp", resourceID, block.timestamp);
+        ECSLib.setUint("LastHarvested", resourceID, block.timestamp);
         ECSLib.setUint("LastUpgraded", resourceID, 0);
         ECSLib.setUint("Load", resourceID, 0);
         ECSLib.setUint("Nation", resourceID, 0);
@@ -87,7 +82,8 @@ library Templates {
         // note: CanBattle & Position & StartPosition is set when organized
         ECSLib.setString("Tag", armyID, "Army");
         ECSLib.setUint("Speed", armyID, _speed);
-        ECSLib.setUint("LastTimestamp", armyID, block.timestamp);
+        ECSLib.setUint("LastMoved", armyID, block.timestamp);
+        ECSLib.setUint("LastAttacked", armyID, block.timestamp);
         ECSLib.setUint("MoveCooldown", armyID, _moveCooldown);
         ECSLib.setUint("BattleCooldown", armyID, _battleCooldown);
         ECSLib.setUint("AttackRange", armyID, _attackRange);
@@ -131,10 +127,7 @@ library Templates {
         return gatherID;
     }
 
-    function addInventory (
-        uint256 _keeperID,
-        uint256 _templateID
-    ) public returns (uint256) {
+    function addInventory(uint256 _keeperID, uint256 _templateID) public returns (uint256) {
         uint256 inventoryID = ECSLib.addEntity();
         ECSLib.setUint("Keeper", inventoryID, _keeperID);
         ECSLib.setUint("Template", inventoryID, _templateID);

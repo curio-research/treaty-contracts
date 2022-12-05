@@ -49,12 +49,12 @@ export type ComponentSpecStructOutput = [string, number] & {
 
 export type WorldConstantsStruct = {
   admin: PromiseOrValue<string>;
-  cityCenterLevelToEntityLevelRatio: PromiseOrValue<BigNumberish>;
+  capitalLevelToEntityLevelRatio: PromiseOrValue<BigNumberish>;
   gameLengthInSeconds: PromiseOrValue<BigNumberish>;
   gameMode: PromiseOrValue<BigNumberish>;
   maxArmyCountPerPlayer: PromiseOrValue<BigNumberish>;
-  maxCityCenterLevel: PromiseOrValue<BigNumberish>;
-  maxCityCountPerPlayer: PromiseOrValue<BigNumberish>;
+  maxCapitalLevel: PromiseOrValue<BigNumberish>;
+  maxCapitalCountPerPlayer: PromiseOrValue<BigNumberish>;
   maxPlayerCount: PromiseOrValue<BigNumberish>;
   numInitTerrainTypes: PromiseOrValue<BigNumberish>;
   secondsToTrainAThousandTroops: PromiseOrValue<BigNumberish>;
@@ -79,12 +79,12 @@ export type WorldConstantsStructOutput = [
   BigNumber
 ] & {
   admin: string;
-  cityCenterLevelToEntityLevelRatio: BigNumber;
+  capitalLevelToEntityLevelRatio: BigNumber;
   gameLengthInSeconds: BigNumber;
   gameMode: number;
   maxArmyCountPerPlayer: BigNumber;
-  maxCityCenterLevel: BigNumber;
-  maxCityCountPerPlayer: BigNumber;
+  maxCapitalLevel: BigNumber;
+  maxCapitalCountPerPlayer: BigNumber;
   maxPlayerCount: BigNumber;
   numInitTerrainTypes: BigNumber;
   secondsToTrainAThousandTroops: BigNumber;
@@ -1497,7 +1497,7 @@ export interface Curio extends BaseContract {
     ): Promise<[BigNumber]>;
 
     getCapital(
-      _cityID: PromiseOrValue<BigNumberish>,
+      _nationID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -2017,7 +2017,7 @@ export interface Curio extends BaseContract {
   ): Promise<BigNumber>;
 
   getCapital(
-    _cityID: PromiseOrValue<BigNumberish>,
+    _nationID: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -2533,7 +2533,7 @@ export interface Curio extends BaseContract {
     ): Promise<BigNumber>;
 
     getCapital(
-      _cityID: PromiseOrValue<BigNumberish>,
+      _nationID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -3108,7 +3108,7 @@ export interface Curio extends BaseContract {
     ): Promise<BigNumber>;
 
     getCapital(
-      _cityID: PromiseOrValue<BigNumberish>,
+      _nationID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -3627,7 +3627,7 @@ export interface Curio extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getCapital(
-      _cityID: PromiseOrValue<BigNumberish>,
+      _nationID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

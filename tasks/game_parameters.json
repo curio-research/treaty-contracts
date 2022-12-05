@@ -1804,7 +1804,7 @@
         "functionName": "",
         "level": 0,
         "object": "Gold",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 421
     },
     {
@@ -1812,7 +1812,7 @@
         "functionName": "",
         "level": 0,
         "object": "Food",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 2249
     },
     {
@@ -1820,7 +1820,7 @@
         "functionName": "",
         "level": 0,
         "object": "Gold",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 379500
     },
     {
@@ -1828,7 +1828,7 @@
         "functionName": "",
         "level": 0,
         "object": "Food",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 2024750
     },
     {
@@ -1836,7 +1836,7 @@
         "functionName": "Upgrade",
         "level": 0,
         "object": "Gold",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 182568
     },
     {
@@ -1844,7 +1844,7 @@
         "functionName": "Upgrade",
         "level": 0,
         "object": "Food",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 1338
     },
     {
@@ -1852,7 +1852,7 @@
         "functionName": "Upgrade",
         "level": 0,
         "object": "",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 1
     },
     {
@@ -1860,7 +1860,7 @@
         "functionName": "Move",
         "level": 0,
         "object": "",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 1
     },
     {
@@ -1868,7 +1868,7 @@
         "functionName": "",
         "level": 0,
         "object": "Troop",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 999999999
     },
     {
@@ -1876,7 +1876,7 @@
         "functionName": "Move",
         "level": 0,
         "object": "Gold",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 0
     },
     {
@@ -1884,7 +1884,7 @@
         "functionName": "Move",
         "level": 0,
         "object": "Food",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 0
     },
     {
@@ -1892,7 +1892,7 @@
         "functionName": "Chaos",
         "level": 0,
         "object": "",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 120
     },
     {
@@ -1900,7 +1900,7 @@
         "functionName": "",
         "level": 1,
         "object": "Gold",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 743
     },
     {
@@ -1908,7 +1908,7 @@
         "functionName": "",
         "level": 1,
         "object": "Food",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 3967
     },
     {
@@ -1916,7 +1916,7 @@
         "functionName": "",
         "level": 1,
         "object": "Gold",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 669500
     },
     {
@@ -1924,7 +1924,7 @@
         "functionName": "",
         "level": 1,
         "object": "Food",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 3570500
     },
     {
@@ -1932,7 +1932,7 @@
         "functionName": "Upgrade",
         "level": 1,
         "object": "Gold",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 398483
     },
     {
@@ -1940,7 +1940,7 @@
         "functionName": "Upgrade",
         "level": 1,
         "object": "Food",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 6178
     },
     {
@@ -1948,7 +1948,7 @@
         "functionName": "Upgrade",
         "level": 1,
         "object": "",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 11
     },
     {
@@ -1956,7 +1956,7 @@
         "functionName": "Move",
         "level": 1,
         "object": "",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 11
     },
     {
@@ -1964,7 +1964,7 @@
         "functionName": "",
         "level": 1,
         "object": "Troop",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 999999999
     },
     {
@@ -1972,7 +1972,7 @@
         "functionName": "Move",
         "level": 1,
         "object": "Gold",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 0
     },
     {
@@ -1980,7 +1980,7 @@
         "functionName": "Move",
         "level": 1,
         "object": "Food",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 0
     },
     {
@@ -1988,7 +1988,7 @@
         "functionName": "Chaos",
         "level": 1,
         "object": "",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 120
     },
     {
@@ -1996,7 +1996,7 @@
         "functionName": "",
         "level": 2,
         "object": "Gold",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 961
     },
     {
@@ -2004,7 +2004,7 @@
         "functionName": "",
         "level": 2,
         "object": "Food",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 5131
     },
     {
@@ -2012,7 +2012,7 @@
         "functionName": "",
         "level": 2,
         "object": "Gold",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 865750
     },
     {
@@ -2020,7 +2020,7 @@
         "functionName": "",
         "level": 2,
         "object": "Food",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 4618000
     },
     {
@@ -2028,7 +2028,7 @@
         "functionName": "Upgrade",
         "level": 2,
         "object": "Gold",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 649431
     },
     {
@@ -2036,7 +2036,7 @@
         "functionName": "Upgrade",
         "level": 2,
         "object": "Food",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 13729
     },
     {
@@ -2044,7 +2044,7 @@
         "functionName": "Upgrade",
         "level": 2,
         "object": "",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 26
     },
     {
@@ -2052,7 +2052,7 @@
         "functionName": "Move",
         "level": 2,
         "object": "",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 26
     },
     {
@@ -2060,7 +2060,7 @@
         "functionName": "",
         "level": 2,
         "object": "Troop",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 999999999
     },
     {
@@ -2068,7 +2068,7 @@
         "functionName": "Move",
         "level": 2,
         "object": "Gold",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 0
     },
     {
@@ -2076,7 +2076,7 @@
         "functionName": "Move",
         "level": 2,
         "object": "Food",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 0
     },
     {
@@ -2084,7 +2084,7 @@
         "functionName": "Chaos",
         "level": 2,
         "object": "",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 120
     },
     {
@@ -2092,7 +2092,7 @@
         "functionName": "",
         "level": 3,
         "object": "Gold",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 1127
     },
     {
@@ -2100,7 +2100,7 @@
         "functionName": "",
         "level": 3,
         "object": "Food",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 6012
     },
     {
@@ -2108,7 +2108,7 @@
         "functionName": "",
         "level": 3,
         "object": "Gold",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 1014500
     },
     {
@@ -2116,7 +2116,7 @@
         "functionName": "",
         "level": 3,
         "object": "Food",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 5411000
     },
     {
@@ -2124,7 +2124,7 @@
         "functionName": "Upgrade",
         "level": 3,
         "object": "Gold",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 950055
     },
     {
@@ -2132,7 +2132,7 @@
         "functionName": "Upgrade",
         "level": 3,
         "object": "Food",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 23899
     },
     {
@@ -2140,7 +2140,7 @@
         "functionName": "Upgrade",
         "level": 3,
         "object": "",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 51
     },
     {
@@ -2148,7 +2148,7 @@
         "functionName": "Move",
         "level": 3,
         "object": "",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 51
     },
     {
@@ -2156,7 +2156,7 @@
         "functionName": "",
         "level": 3,
         "object": "Troop",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 999999999
     },
     {
@@ -2164,7 +2164,7 @@
         "functionName": "Move",
         "level": 3,
         "object": "Gold",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 0
     },
     {
@@ -2172,7 +2172,7 @@
         "functionName": "Move",
         "level": 3,
         "object": "Food",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 0
     },
     {
@@ -2180,7 +2180,7 @@
         "functionName": "Chaos",
         "level": 3,
         "object": "",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 120
     },
     {
@@ -2188,7 +2188,7 @@
         "functionName": "",
         "level": 4,
         "object": "Gold",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 1260
     },
     {
@@ -2196,7 +2196,7 @@
         "functionName": "",
         "level": 4,
         "object": "Food",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 6721
     },
     {
@@ -2204,7 +2204,7 @@
         "functionName": "",
         "level": 4,
         "object": "Gold",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 1134250
     },
     {
@@ -2212,7 +2212,7 @@
         "functionName": "",
         "level": 4,
         "object": "Food",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 6049750
     },
     {
@@ -2220,7 +2220,7 @@
         "functionName": "Upgrade",
         "level": 4,
         "object": "Gold",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 1310196
     },
     {
@@ -2228,7 +2228,7 @@
         "functionName": "Upgrade",
         "level": 4,
         "object": "Food",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 36868
     },
     {
@@ -2236,7 +2236,7 @@
         "functionName": "Upgrade",
         "level": 4,
         "object": "",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 88
     },
     {
@@ -2244,7 +2244,7 @@
         "functionName": "Move",
         "level": 4,
         "object": "",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 88
     },
     {
@@ -2252,7 +2252,7 @@
         "functionName": "",
         "level": 4,
         "object": "Troop",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 999999999
     },
     {
@@ -2260,7 +2260,7 @@
         "functionName": "Move",
         "level": 4,
         "object": "Gold",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 0
     },
     {
@@ -2268,7 +2268,7 @@
         "functionName": "Move",
         "level": 4,
         "object": "Food",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 0
     },
     {
@@ -2276,7 +2276,7 @@
         "functionName": "Chaos",
         "level": 4,
         "object": "",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 120
     },
     {
@@ -2284,7 +2284,7 @@
         "functionName": "",
         "level": 5,
         "object": "Gold",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 1371
     },
     {
@@ -2292,7 +2292,7 @@
         "functionName": "",
         "level": 5,
         "object": "Food",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 7315
     },
     {
@@ -2300,7 +2300,7 @@
         "functionName": "",
         "level": 5,
         "object": "Gold",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 1234500
     },
     {
@@ -2308,7 +2308,7 @@
         "functionName": "",
         "level": 5,
         "object": "Food",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 6584250
     },
     {
@@ -2316,7 +2316,7 @@
         "functionName": "",
         "level": 5,
         "object": "Troop",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 999999999
     },
     {
@@ -2324,7 +2324,7 @@
         "functionName": "Move",
         "level": 5,
         "object": "Gold",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 0
     },
     {
@@ -2332,7 +2332,7 @@
         "functionName": "Move",
         "level": 5,
         "object": "Food",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 0
     },
     {
@@ -2340,7 +2340,7 @@
         "functionName": "Chaos",
         "level": 5,
         "object": "",
-        "subject": "City Center",
+        "subject": "Capital",
         "value": 120
     },
     {
@@ -2704,7 +2704,7 @@
         "value": 428
     },
     {
-        "componentName": "lastTimestamp",
+        "componentName": "LastRecovered",
         "functionName": "",
         "level": 15,
         "object": "",
@@ -3340,7 +3340,7 @@
         "functionName": "",
         "level": 1,
         "object": "Tile",
-        "subject": "City",
+        "subject": "Nation",
         "value": 1
     },
     {
@@ -3356,7 +3356,7 @@
         "functionName": "",
         "level": 2,
         "object": "Tile",
-        "subject": "City",
+        "subject": "Nation",
         "value": 11
     },
     {
@@ -3372,7 +3372,7 @@
         "functionName": "",
         "level": 3,
         "object": "Tile",
-        "subject": "City",
+        "subject": "Nation",
         "value": 21
     },
     {
@@ -3388,7 +3388,7 @@
         "functionName": "",
         "level": 4,
         "object": "Tile",
-        "subject": "City",
+        "subject": "Nation",
         "value": 31
     },
     {
@@ -3404,7 +3404,7 @@
         "functionName": "",
         "level": 5,
         "object": "Tile",
-        "subject": "City",
+        "subject": "Nation",
         "value": 41
     }
 ]

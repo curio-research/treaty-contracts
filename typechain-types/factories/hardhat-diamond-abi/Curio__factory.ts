@@ -1107,7 +1107,7 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "_cityID",
+        name: "_nationID",
         type: "uint256",
       },
     ],
@@ -1577,7 +1577,7 @@ const _abi = [
           },
           {
             internalType: "uint256",
-            name: "cityCenterLevelToEntityLevelRatio",
+            name: "capitalLevelToEntityLevelRatio",
             type: "uint256",
           },
           {
@@ -1597,12 +1597,12 @@ const _abi = [
           },
           {
             internalType: "uint256",
-            name: "maxCityCenterLevel",
+            name: "maxCapitalLevel",
             type: "uint256",
           },
           {
             internalType: "uint256",
-            name: "maxCityCountPerPlayer",
+            name: "maxCapitalCountPerPlayer",
             type: "uint256",
           },
           {
