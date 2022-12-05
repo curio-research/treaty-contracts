@@ -535,6 +535,7 @@ contract GameFacet is UseStorage {
         require(success, "CURIO: Failed to drip resource tokens");
     }
 
+    // FIXME: need to set LastRecovered of a nation's resources when chaos starts
     function harvestResources(uint256[] memory resourceIds) external {
         // note: msg.sender should be the nation address
         for (uint256 i = 0; i < resourceIds.length; i++) {
@@ -752,20 +753,17 @@ contract GameFacet is UseStorage {
                 );
                 require(success, "CURIO: Failed to drip guard tokens");
 
-                // todo: harvest all resources from the players and update resource harvest timestamp to when cooldown ends
-                // uint256 capitalLevel = ECSLib.getUint("Level", capitalID);
+                // Descend capital into chaos mode
+                // 1. Terminate troop production
+                // 2. Harvest resources and disable harvest
+                // 3. Update `LastSacked` to current timestamp
 
-                // 1. end troop production
                 uint256 productionID = GameLib.getBuildingProduction(capitalID);
-                if (productionID != NULL) endTroopProduction(capitalID, productionID);
+                if (productionID != NULL) ECSLib.removeEntity(productionID);
 
-                // 2. end resource harvest production => change lastHarvested
-                // uint256 chaosDuration = GameLib.getConstant("Capital", "", "Cooldown", "Chaos", capitalLevel);
+                uint256 chaosDuration = GameLib.getConstant("Capital", "", "Cooldown", "Chaos", ECSLib.getUint("Level", capitalID));
+                ECSLib.setUint("LastHarvested", capitalID, block.timestamp + chaosDuration);
 
-                // 3. end capital harvest production => change lastHarvested
-                // ECSLib.setUint("LastHarvested", capitalID, block.timestamp + chaosDuration); // FIXME
-
-                // update lastSacked
                 ECSLib.setUint("LastSacked", capitalID, block.timestamp);
             } else {
                 if (GameLib.isBarbarian(_tileID)) {
