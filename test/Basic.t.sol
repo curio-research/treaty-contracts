@@ -419,10 +419,6 @@ pragma solidity ^0.8.4;
 //         // kievArmyID = getter.getArmyAt(Position({x: 60, y: 40}));
 //         // console.log("kievArmyID:",kievArmyID);
 
-//         bool res = getter.isPlayerInitialized(player1);
-//         console.log(res);
-//         res = getter.isPlayerInitialized(player2);
-//         console.log(res);
 
 //         // Moscow and Kiev move their armies next to one another
 //         time += 5;

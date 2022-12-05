@@ -7,7 +7,6 @@ import {Component} from "contracts/Component.sol";
 import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, UintComponent} from "contracts/TypedComponents.sol";
 import {Position} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
-import {console} from "forge-std/console.sol";
 
 contract TreatyTest is Test, DiamondDeployTest {
     function testInitialization() public {
@@ -285,74 +284,6 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         assertEq(getter.getEntityLevel(nation1ID), 2);
         assertEq(getter.getEntityNation(targetTileID), nation1ID);
-    }
-
-    function testBattleCapitalChaos() public {
-        // Start time
-        uint256 time = block.timestamp + 500;
-        vm.warp(time);
-
-        // Deployer transfers gold, food, and troops to Nation 1 and Nation 2
-        vm.startPrank(deployerAddress);
-        admin.dripToken(address(nationWallet1), "Gold", 1000000);
-        admin.dripToken(address(nationWallet1), "Food", 1000000);
-        admin.dripToken(address(nationWallet1), "Warrior", 1000);
-        admin.dripToken(address(nationWallet1), "Horseman", 1000);
-        admin.dripToken(address(nationWallet1), "Slinger", 1000);
-
-        admin.dripToken(address(nationWallet2), "Gold", 1000000);
-        admin.dripToken(address(nationWallet2), "Food", 1000000);
-        admin.dripToken(address(nationWallet2), "Warrior", 1000);
-        admin.dripToken(address(nationWallet2), "Horseman", 1000);
-        admin.dripToken(address(nationWallet2), "Slinger", 1000);
-        vm.stopPrank();
-
-        // Nation 1 organizes army
-        vm.startPrank(nation1Address);
-        uint256 nation1CapitalID = getter.getCapital(nation1ID);
-        uint256 army11ID = getter.getEntityIDByAddress(address(armyWallet11));
-        {
-            uint256[] memory armyTemplateIDs = new uint256[](3);
-            armyTemplateIDs[0] = warriorTemplateID;
-            armyTemplateIDs[1] = horsemanTemplateID;
-            armyTemplateIDs[2] = slingerTemplateID;
-            uint256[] memory armyTemplateAmounts = new uint256[](3);
-            armyTemplateAmounts[0] = 500;
-            armyTemplateAmounts[1] = 500;
-            armyTemplateAmounts[2] = 500;
-            vm.warp(time + 10);
-            nationWallet1.executeGameTx(abi.encodeWithSignature("organizeArmy(uint256,uint256,uint256[],uint256[])", nation1CapitalID, army11ID, armyTemplateIDs, armyTemplateAmounts));
-        }
-        time += 10;
-
-        // Nation 1 moves army to (62, 29)
-        for (uint256 i = 1; i <= 9; i++) {
-            time += 1;
-            vm.warp(time);
-            armyWallet11.executeGameTx(abi.encodeWithSignature("move(uint256,uint256,uint256)", army11ID, 62, 11 + 2 * i));
-        }
-
-        // Nation 1 attacks Nation 2's capital
-        uint256 nation2CapitalID = getter.getCapital(nation2ID);
-        uint256 nation2CapitalTileID = getter.getTileAt(getter.getPositionExternal("StartPosition", nation2CapitalID));
-        while (abi.decode(getter.getComponent("LastSacked").getBytesValue(nation2CapitalID), (uint256)) < time) {
-            // Continue to battle until Nation 2's capital is sacked
-            time += 2;
-            vm.warp(time);
-            armyWallet11.executeGameTx(abi.encodeWithSignature("battle(uint256,uint256)", army11ID, nation2CapitalTileID));
-        }
-        vm.stopPrank();
-
-        // Nation 2 fails to upgrade its capital during chaos
-        vm.startPrank(nation2Address);
-        vm.expectRevert();
-        nationWallet2.executeGameTx(abi.encodeWithSignature("upgradeNation(uint256)", nation2ID));
-
-        // Nation 2 upgrades its capital after chaos
-        time += 200;
-        vm.warp(time);
-        nationWallet2.executeGameTx(abi.encodeWithSignature("upgradeNation(uint256)", nation2ID));
-        vm.stopPrank();
     }
 
     function testHarvest() public {

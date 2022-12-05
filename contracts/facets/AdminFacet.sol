@@ -90,7 +90,7 @@ contract AdminFacet is UseStorage {
      * @param _address player address
      */
     function reactivatePlayer(address _address) external onlyAuthorized {
-        uint256 _playerID = gs().nationEntityMap[_address];
+        uint256 _playerID = gs().addressEntityMap[_address];
         require(_playerID != NULL, "CURIO: Player already initialized");
         require(!ECSLib.getBoolComponent("IsActive").has(_playerID), "CURIO: Player is active");
 

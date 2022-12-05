@@ -215,10 +215,10 @@ export const initializeFixmap = async (hre: HardhatRuntimeEnvironment, diamond: 
   await confirmTx(await diamond.connect(player3).initializeNation(player1Pos.x, player1Pos.y, 'C', { gasLimit: gasLimit }), hre);
   await confirmTx(await diamond.connect(player4).initializeNation(player1Pos.x, player1Pos.y, 'D', { gasLimit: gasLimit }), hre);
 
-  const player1Id = (await diamond.getNationIDByAddress(player1.address)).toNumber();
-  const player2Id = (await diamond.getNationIDByAddress(player2.address)).toNumber();
-  const player3Id = (await diamond.getNationIDByAddress(player3.address)).toNumber();
-  const player4Id = (await diamond.getNationIDByAddress(player4.address)).toNumber();
+  const player1Id = (await diamond.getEntityIDByAddress(player1.address)).toNumber();
+  const player2Id = (await diamond.getEntityIDByAddress(player2.address)).toNumber();
+  const player3Id = (await diamond.getEntityIDByAddress(player3.address)).toNumber();
+  const player4Id = (await diamond.getEntityIDByAddress(player4.address)).toNumber();
 
   // fetch all settler Ids by fetching the entities on a given position
   const positionComponentAddr = await diamond.getComponentById(componentNameToId[Position]);
