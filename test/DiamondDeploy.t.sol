@@ -49,16 +49,19 @@ contract DiamondDeployTest is Test {
     NATO public nato;
 
     // Smart Contract Wallets
-    WalletHangingGarden public nationWallet1;
-    WalletHangingGarden public nationWallet2;
-    WalletHangingGarden public nationWallet3;
+    WalletHangingGarden public nation1Wallet;
+    WalletHangingGarden public nation2Wallet;
+    WalletHangingGarden public nation3Wallet;
+    uint256 public nation1ID;
+    uint256 public nation2ID;
+    uint256 public nation3ID;
 
-    WalletHangingGarden public armyWallet11;
-    WalletHangingGarden public armyWallet12;
-    WalletHangingGarden public armyWallet21;
-    WalletHangingGarden public armyWallet22;
-    WalletHangingGarden public armyWallet31;
-    WalletHangingGarden public armyWallet32;
+    WalletHangingGarden public army11Wallet;
+    WalletHangingGarden public army12Wallet;
+    WalletHangingGarden public army21Wallet;
+    WalletHangingGarden public army22Wallet;
+    WalletHangingGarden public army31Wallet;
+    WalletHangingGarden public army32Wallet;
 
     // Tokens
     FoodERC20 public foodContract;
@@ -72,12 +75,9 @@ contract DiamondDeployTest is Test {
     address public NULL_ADDR = address(0);
 
     address public deployerAddress = address(0);
-    address public nation1Address = address(1);
-    address public nation2Address = address(2);
-    address public nation3Address = address(3);
-    uint256 public nation1ID;
-    uint256 public nation2ID;
-    uint256 public nation3ID;
+    address public player1Addr = address(1);
+    address public player2Addr = address(2);
+    address public player3Addr = address(3);
 
     Position public nation1Pos = Position({x: 60, y: 10});
     Position public nation2Pos = Position({x: 60, y: 30});
@@ -191,20 +191,20 @@ contract DiamondDeployTest is Test {
         uint256 homieFee = 666;
         address[] memory initializedOwners = new address[](1);
 
-        initializedOwners[0] = nation1Address;
-        nationWallet1 = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
-        armyWallet11 = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
-        armyWallet12 = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
+        initializedOwners[0] = player1Addr;
+        nation1Wallet = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
+        army11Wallet = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
+        army12Wallet = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
 
-        initializedOwners[0] = nation2Address;
-        nationWallet2 = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
-        armyWallet21 = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
-        armyWallet22 = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
+        initializedOwners[0] = player2Addr;
+        nation2Wallet = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
+        army21Wallet = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
+        army22Wallet = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
 
-        initializedOwners[0] = nation3Address;
-        nationWallet3 = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
-        armyWallet31 = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
-        armyWallet32 = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
+        initializedOwners[0] = player3Addr;
+        nation3Wallet = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
+        army31Wallet = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
+        army32Wallet = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
         console.log(">>> Smart contract wallets initialized");
 
         // Initialize players
@@ -216,24 +216,24 @@ contract DiamondDeployTest is Test {
         string memory nationName;
         for (uint256 i = 0; i < 3; i++) {
             if (i == 0) {
-                nationAddr = nation1Address;
-                nationWallet = nationWallet1;
-                armyWallet1 = armyWallet11;
-                armyWallet2 = armyWallet12;
+                nationAddr = player1Addr;
+                nationWallet = nation1Wallet;
+                armyWallet1 = army11Wallet;
+                armyWallet2 = army12Wallet;
                 capitalPos = nation1Pos;
                 nationName = "China";
             } else if (i == 1) {
-                nationAddr = nation2Address;
-                nationWallet = nationWallet2;
-                armyWallet1 = armyWallet21;
-                armyWallet2 = armyWallet22;
+                nationAddr = player2Addr;
+                nationWallet = nation2Wallet;
+                armyWallet1 = army21Wallet;
+                armyWallet2 = army22Wallet;
                 capitalPos = nation2Pos;
                 nationName = "US";
             } else if (i == 2) {
-                nationAddr = nation3Address;
-                nationWallet = nationWallet3;
-                armyWallet1 = armyWallet31;
-                armyWallet2 = armyWallet32;
+                nationAddr = player3Addr;
+                nationWallet = nation3Wallet;
+                armyWallet1 = army31Wallet;
+                armyWallet2 = army32Wallet;
                 capitalPos = nation3Pos;
                 nationName = "Russia";
             }
