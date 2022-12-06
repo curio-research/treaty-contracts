@@ -61,6 +61,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC173__factory>;
     getContractFactory(
+      name: "ITreaty",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ITreaty__factory>;
+    getContractFactory(
       name: "ECSLib",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ECSLib__factory>;
@@ -112,6 +116,14 @@ declare module "hardhat/types/runtime" {
       name: "WarriorERC20",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.WarriorERC20__factory>;
+    getContractFactory(
+      name: "FTTERC20",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.FTTERC20__factory>;
+    getContractFactory(
+      name: "FTX",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.FTX__factory>;
     getContractFactory(
       name: "AddressComponent",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -218,6 +230,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IERC173>;
     getContractAt(
+      name: "ITreaty",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ITreaty>;
+    getContractAt(
       name: "ECSLib",
       address: string,
       signer?: ethers.Signer
@@ -282,6 +299,16 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.WarriorERC20>;
+    getContractAt(
+      name: "FTTERC20",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.FTTERC20>;
+    getContractAt(
+      name: "FTX",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.FTX>;
     getContractAt(
       name: "AddressComponent",
       address: string,

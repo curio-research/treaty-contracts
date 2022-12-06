@@ -7,6 +7,7 @@ export * as facets from "./facets";
 export * as interfaces from "./interfaces";
 export * as libraries from "./libraries";
 export * as tokens from "./tokens";
+export * as treaties from "./treaties";
 export * as upgradeInitializers from "./upgradeInitializers";
 export { Component__factory } from "./Component__factory";
 export { Diamond__factory } from "./Diamond__factory";

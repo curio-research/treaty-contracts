@@ -13,6 +13,8 @@ import type * as libraries from "./libraries";
 export type { libraries };
 import type * as tokens from "./tokens";
 export type { tokens };
+import type * as treaties from "./treaties";
+export type { treaties };
 import type * as upgradeInitializers from "./upgradeInitializers";
 export type { upgradeInitializers };
 export type { Component } from "./Component";

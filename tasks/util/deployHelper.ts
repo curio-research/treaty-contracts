@@ -96,6 +96,11 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
   await deployFacets(hre, diamondAddr, facets, admin);
   console.log(`✦ Diamond deployment took ${Math.floor(performance.now() - startTime)} ms`);
 
+  // Deploy treaties
+  startTime = performance.now();
+  await deployProxy<any>('FTX', admin, hre, [diamond.address, admin.address]); // FIXME
+  console.log(`✦ Treaty deployment took ${Math.floor(performance.now() - startTime)} ms`);
+
   // Batch register components
   startTime = performance.now();
   const componentUploadBatchSize = 50;

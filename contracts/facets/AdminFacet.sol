@@ -85,6 +85,12 @@ contract AdminFacet is UseStorage {
     // ADMIN FUNCTIONS
     // ----------------------------------------------------------------------
 
+    // sent using the initial function
+    function authorizeGame(address _burnerAddress) external onlyAuthorized {
+        gs().accounts[msg.sender] = _burnerAddress;
+        gs().burnerAccounts[_burnerAddress] = msg.sender;
+    }
+
     /**
      * @dev Reactivate an inactive player.
      * @param _address player address

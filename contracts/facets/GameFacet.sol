@@ -20,12 +20,6 @@ contract GameFacet is UseStorage {
     // BASIC
     // ----------------------------------------------------------
 
-    // sent using the initial function
-    function authorizeGame(address _burnerAddress) external {
-        gs().accounts[msg.sender] = _burnerAddress;
-        gs().burnerAccounts[_burnerAddress] = msg.sender;
-    }
-
     function initializeNation(
         uint256 _positionX,
         uint256 _positionY,
@@ -786,6 +780,7 @@ contract GameFacet is UseStorage {
         }
     }
 
+    // FIXME: can remove armyID, and similarly for methods above
     function claimTile(uint256 _armyID, uint256 _tileID) public {
         // Basic checks; note: msg.sender should be army wallet
         GameLib.validEntityCheck(_tileID);
@@ -867,6 +862,23 @@ contract GameFacet is UseStorage {
     // --------------------------
     // treaty (WIP)
     // --------------------------
+
+    // TODO: there's no approval mechanism from treaty yet, only from nation
+    function joinTreaty(address _treatyAddr) external {
+        GameLib.ongoingGameCheck();
+
+        uint256 nationID = gs().addressToEntity[msg.sender];
+        Templates.addSignature(_treatyAddr, nationID);
+    }
+
+    function leaveTreaty(address _treatyAddr) external {
+        GameLib.ongoingGameCheck();
+
+        uint256 nationID = gs().addressToEntity[msg.sender];
+        uint256 signatureID = GameLib.getNationTreatySignature(_treatyAddr, nationID);
+        require(signatureID != NULL, "CURIO: Nation is not a treaty signatory");
+        ECSLib.removeEntity(signatureID);
+    }
 
     // TODO: setAddress => _setAddressArray
     // function joinTreaty(address _treatyAddress) external {

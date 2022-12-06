@@ -175,4 +175,14 @@ library Templates {
 
         return paramID;
     }
+
+    function addSignature(address _treatyAddr, uint256 _nationID) public returns (uint256) {
+        uint256 signatureID = ECSLib.addEntity();
+
+        ECSLib.setString("Tag", signatureID, "Signature");
+        ECSLib.setAddress("Treaty", signatureID, _treatyAddr);
+        ECSLib.setUint("Nation", signatureID, _nationID);
+
+        return signatureID;
+    }
 }

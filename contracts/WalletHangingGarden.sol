@@ -2,8 +2,6 @@
 pragma solidity ^0.8.4;
 
 import {Position} from "contracts/libraries/Types.sol";
-import {GameLib} from "contracts/libraries/GameLib.sol";
-import {ECSLib} from "contracts/libraries/ECSLib.sol";
 import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {GameFacet} from "contracts/facets/GameFacet.sol";
 

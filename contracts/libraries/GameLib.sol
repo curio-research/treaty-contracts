@@ -375,11 +375,21 @@ library GameLib {
         return ECSLib.query(query);
     }
 
-    function getPlayerSignatures(uint256 _playerID) internal view returns (uint256[] memory) {
+    function getNationSignatures(uint256 _nationID) internal view returns (uint256[] memory) {
         QueryCondition[] memory query = new QueryCondition[](2);
-        query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Owner"]), abi.encode(_playerID));
-        query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Signature"));
+        query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Signature"));
+        query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Nation"]), abi.encode(_nationID));
         return ECSLib.query(query);
+    }
+
+    function getNationTreatySignature(address _treatyAddr, uint256 _nationID) internal view returns (uint256) {
+        QueryCondition[] memory query = new QueryCondition[](2);
+        query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Signature"));
+        query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Nation"]), abi.encode(_nationID));
+        query[2] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Treaty"]), abi.encode(_treatyAddr));
+
+        uint256[] memory res = ECSLib.query(query);
+        return res.length == 1 ? res[0] : 0;
     }
 
     function getNationTiles(uint256 _nationID) internal view returns (uint256[] memory) {

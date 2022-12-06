@@ -59,6 +59,12 @@ contract FTX is ITreaty {
 
         return true;
     }
+
+    function joinTreaty() external override returns (bool) {
+        require(msg.sender == diamond, "FTX: You don't need to join");
+
+        return true;
+    }
 }
 
 contract FTTERC20 is ERC20 {
