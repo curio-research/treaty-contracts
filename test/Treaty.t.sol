@@ -1,5 +1,5 @@
 //SPDX-License-Identifier: MIT
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.13;
 
 import {Test} from "forge-std/Test.sol";
 import {DiamondDeployTest} from "test/DiamondDeploy.t.sol";

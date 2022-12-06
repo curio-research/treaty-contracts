@@ -99,7 +99,7 @@ contract GoldERC20 is ERC20 {
         uint256 allowed = allowance[_from][msg.sender]; // Saves gas for limited approvals.
         if (allowed != type(uint256).max) allowance[_from][msg.sender] = allowed - _amount;
         (uint256 recipientInventoryID, uint256 recipientMaxLoad, uint256 recipientCurrentBalance) = _getInventoryIDMaxLoadAndBalance(_to);
-        (uint256 senderInventoryID,, uint256 senderCurrentBalance) = _getInventoryIDMaxLoadAndBalance(_from);
+        (uint256 senderInventoryID, , uint256 senderCurrentBalance) = _getInventoryIDMaxLoadAndBalance(_from);
         require(recipientInventoryID != 0 && senderInventoryID != 0, "In-game inventory unfound");
         require(senderCurrentBalance >= _amount, "Sender does not have enough balance");
         _transferHelper(_to, _from, _amount, senderInventoryID, recipientInventoryID, senderCurrentBalance, recipientCurrentBalance, recipientMaxLoad);

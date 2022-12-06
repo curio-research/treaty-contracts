@@ -1,5 +1,5 @@
 //SPDX-License-Identifier: MIT
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.13;
 
 import {Test} from "forge-std/Test.sol";
 import {DiamondCutFacet} from "contracts/facets/DiamondCutFacet.sol";
@@ -48,7 +48,7 @@ contract DiamondDeployTest is Test {
     // Treaties
     NATO public nato;
 
-    // Smart Contract Wallets;
+    // Smart Contract Wallets
     WalletHangingGarden public nationWallet1;
     WalletHangingGarden public nationWallet2;
     WalletHangingGarden public nationWallet3;

@@ -78,6 +78,7 @@ contract WalletHangingGarden {
         owners.push(_armyAddress);
     }
 
+    // FIXME: this shouldn't be in the wallet hanging garden.
     function approveMove(address _armyAddress) public view returns (bool) {
         return isHomie[_armyAddress];
     }
