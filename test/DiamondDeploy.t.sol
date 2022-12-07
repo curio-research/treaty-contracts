@@ -17,7 +17,6 @@ import {ComponentSpec, GameMode, GameParamSpec, Position, WorldConstants} from "
 import {NATO} from "contracts/NATO.sol";
 import {CurioERC20} from "contracts/tokens/CurioERC20.sol";
 
-import {WalletHangingGarden} from "contracts/WalletHangingGarden.sol";
 import {console} from "forge-std/console.sol";
 import {stdJson} from "forge-std/StdJson.sol";
 
@@ -44,19 +43,12 @@ contract DiamondDeployTest is Test {
     NATO public nato;
 
     // Smart Contract Wallets
-    WalletHangingGarden public nation1Wallet;
-    WalletHangingGarden public nation2Wallet;
-    WalletHangingGarden public nation3Wallet;
+    address public nation1Wallet;
+    address public nation2Wallet;
+    address public nation3Wallet;
     uint256 public nation1ID;
     uint256 public nation2ID;
     uint256 public nation3ID;
-
-    WalletHangingGarden public army11Wallet;
-    WalletHangingGarden public army12Wallet;
-    WalletHangingGarden public army21Wallet;
-    WalletHangingGarden public army22Wallet;
-    WalletHangingGarden public army31Wallet;
-    WalletHangingGarden public army32Wallet;
 
     // Tokens
     CurioERC20 public foodToken;
@@ -93,7 +85,6 @@ contract DiamondDeployTest is Test {
     // we assume these two facet selectors do not change. If they do however, we should use _getSelectors
     bytes4[] OWNERSHIP_SELECTORS = [bytes4(0xf2fde38b), 0x8da5cb5b];
     bytes4[] LOUPE_SELECTORS = [bytes4(0xcdffacc6), 0x52ef6b2c, 0xadfca15e, 0x7a0ed627, 0x01ffc9a7];
-
 
     function setUp() public {
         vm.startPrank(deployerAddress);
@@ -187,9 +178,7 @@ contract DiamondDeployTest is Test {
         address[] memory initializedOwners = new address[](1);
 
         initializedOwners[0] = player1Addr;
-        nation1Wallet = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
-        army11Wallet = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
-        army12Wallet = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
+        nation1Wallet = _generateRandomWalletAddr();
 
         initializedOwners[0] = player2Addr;
         nation2Wallet = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
@@ -349,6 +338,13 @@ contract DiamondDeployTest is Test {
                 break;
             }
         }
+    }
+
+    function _generateRandomWalletAddr() private returns (address) {
+        address addr = address(keccak256(abi.encodePacked(block.timestamp, block.difficulty, gs().walletNonce)));
+        gs().walletNonce++;
+
+        return addr;
     }
 
     function _createTemplates() private {

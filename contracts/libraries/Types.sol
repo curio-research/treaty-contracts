@@ -87,6 +87,7 @@ struct GameState {
     address entities;
     uint256 entityNonce;
     uint256 tileNonce;
+    uint256 walletNonce;
     string[] componentNames;
     mapping(string => address) components; // component name to contract address
     string[] templateNames;
