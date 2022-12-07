@@ -9,7 +9,7 @@ import {Position} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
 import {console} from "forge-std/console.sol";
 
-contract TreatyTest is Test, DiamondDeployTest {
+contract BaseGameTest is Test, DiamondDeployTest {
     function testInitialization() public {
         // Verify that wallet address is loaded correctly
         assertEq(getter.getEntityWallet(nation1ID), address(nation1Wallet));
@@ -32,7 +32,7 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Verify that TileGuard tokens are dripped to tile wallet
         uint256 correctTileGuardAmount = getter.getConstant("Tile", "Guard", "Amount", "", getter.getEntityLevel(nation1CapitalTile));
-        assertEq(guardContract.checkBalanceOf(getter.getEntityWallet(nation1CapitalTile)), correctTileGuardAmount);
+        assertEq(guardToken.checkBalanceOf(getter.getEntityWallet(nation1CapitalTile)), correctTileGuardAmount);
 
         uint256 nation2CapitalTile = getter.getTileAt(nation2CapitalPosition);
         assertEq(getter.getEntityNation(nation2CapitalTile), nation2ID);
@@ -58,9 +58,9 @@ contract TreatyTest is Test, DiamondDeployTest {
         admin.dripToken(address(nation1Wallet), "Horseman", 1000);
         admin.dripToken(address(nation1Wallet), "Slinger", 1000);
 
-        assertEq(warriorContract.checkBalanceOf(address(nation1Wallet)), 1000);
-        assertEq(horsemanContract.checkBalanceOf(address(nation1Wallet)), 1000);
-        assertEq(slingerContract.checkBalanceOf(address(nation1Wallet)), 1000);
+        assertEq(warriorToken.checkBalanceOf(address(nation1Wallet)), 1000);
+        assertEq(horsemanToken.checkBalanceOf(address(nation1Wallet)), 1000);
+        assertEq(slingerToken.checkBalanceOf(address(nation1Wallet)), 1000);
 
         vm.stopPrank();
         // Nation 1 organize army
@@ -82,9 +82,9 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         nation1Wallet.executeGameTx(abi.encodeWithSignature("organizeArmy(uint256,uint256,uint256[],uint256[])", nation1CapitalID, nation1Army1ID, chinaArmyTemplateIDs, chinaTemplateAmounts));
 
-        assertEq(warriorContract.checkBalanceOf(address(nation1Wallet)) + warriorContract.checkBalanceOf(address(army11Wallet)), 1000);
-        assertEq(slingerContract.checkBalanceOf(address(nation1Wallet)) + warriorContract.checkBalanceOf(address(army11Wallet)), 1000);
-        assertEq(horsemanContract.checkBalanceOf(address(nation1Wallet)) + warriorContract.checkBalanceOf(address(army11Wallet)), 1000);
+        assertEq(warriorToken.checkBalanceOf(address(nation1Wallet)) + warriorToken.checkBalanceOf(address(army11Wallet)), 1000);
+        assertEq(slingerToken.checkBalanceOf(address(nation1Wallet)) + warriorToken.checkBalanceOf(address(army11Wallet)), 1000);
+        assertEq(horsemanToken.checkBalanceOf(address(nation1Wallet)) + warriorToken.checkBalanceOf(address(army11Wallet)), 1000);
 
         vm.warp(time + 10);
         time += 10;
@@ -99,12 +99,12 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.warp(time + 10);
         time += 10;
         army11Wallet.executeGameTx(abi.encodeWithSignature("disbandArmy(uint256)", nation1Army1ID));
-        assertEq(warriorContract.checkBalanceOf(address(army11Wallet)), 0);
-        assertEq(slingerContract.checkBalanceOf(address(army11Wallet)), 0);
-        assertEq(horsemanContract.checkBalanceOf(address(army11Wallet)), 0);
-        assertEq(warriorContract.checkBalanceOf(address(nation1Wallet)), 1000);
-        assertEq(slingerContract.checkBalanceOf(address(nation1Wallet)), 1000);
-        assertEq(horsemanContract.checkBalanceOf(address(nation1Wallet)), 1000);
+        assertEq(warriorToken.checkBalanceOf(address(army11Wallet)), 0);
+        assertEq(slingerToken.checkBalanceOf(address(army11Wallet)), 0);
+        assertEq(horsemanToken.checkBalanceOf(address(army11Wallet)), 0);
+        assertEq(warriorToken.checkBalanceOf(address(nation1Wallet)), 1000);
+        assertEq(slingerToken.checkBalanceOf(address(nation1Wallet)), 1000);
+        assertEq(horsemanToken.checkBalanceOf(address(nation1Wallet)), 1000);
     }
 
     function testBattleArmy() public {
@@ -212,15 +212,15 @@ contract TreatyTest is Test, DiamondDeployTest {
         }
 
         vm.stopPrank();
-        assertEq(warriorContract.checkBalanceOf(address(army11Wallet)), 0);
-        assertEq(horsemanContract.checkBalanceOf(address(army11Wallet)), 0);
-        assertEq(slingerContract.checkBalanceOf(address(army11Wallet)), 0);
-        assertEq(goldContract.checkBalanceOf(address(army11Wallet)), 0);
-        assertEq(foodContract.checkBalanceOf(address(army11Wallet)), 0);
+        assertEq(warriorToken.checkBalanceOf(address(army11Wallet)), 0);
+        assertEq(horsemanToken.checkBalanceOf(address(army11Wallet)), 0);
+        assertEq(slingerToken.checkBalanceOf(address(army11Wallet)), 0);
+        assertEq(goldToken.checkBalanceOf(address(army11Wallet)), 0);
+        assertEq(foodToken.checkBalanceOf(address(army11Wallet)), 0);
 
         // Note: resource successfully transferred to army 21
-        assertEq(goldContract.checkBalanceOf(address(army21Wallet)), 1000);
-        assertEq(foodContract.checkBalanceOf(address(army21Wallet)), 1000);
+        assertEq(goldToken.checkBalanceOf(address(army21Wallet)), 1000);
+        assertEq(foodToken.checkBalanceOf(address(army21Wallet)), 1000);
     }
 
     function testUpgradeNationBattleClaimTile() public {
@@ -275,7 +275,7 @@ contract TreatyTest is Test, DiamondDeployTest {
             time += 10;
             army11Wallet.executeGameTx(abi.encodeWithSignature("battle(uint256,uint256)", army11ID, targetTileID));
         }
-        assertEq(guardContract.checkBalanceOf(targetTileAddress), 0);
+        assertEq(guardToken.checkBalanceOf(targetTileAddress), 0);
 
         vm.warp(time + 10);
         time += 10;
@@ -377,20 +377,20 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         nation1Wallet.executeGameTx(abi.encodeWithSignature("harvestResourcesFromCapital(uint256)", nation1CapitalID));
 
-        uint256 goldBalance1 = goldContract.checkBalanceOf(address(nation1Wallet));
-        uint256 foodBalance1 = foodContract.checkBalanceOf(address(nation1Wallet));
+        uint256 goldBalance1 = goldToken.checkBalanceOf(address(nation1Wallet));
+        uint256 foodBalance1 = foodToken.checkBalanceOf(address(nation1Wallet));
         assertTrue(goldBalance1 > 1000000);
         assertTrue(foodBalance1 > 1000000);
 
         uint256 farmID = getter.getResourceAtTile(farmTilePos);
         nation1Wallet.executeGameTx(abi.encodeWithSignature("upgradeResource(uint256)", farmID));
 
-        uint256 foodBalance2 = foodContract.checkBalanceOf(address(nation1Wallet));
+        uint256 foodBalance2 = foodToken.checkBalanceOf(address(nation1Wallet));
 
         time += 50;
         vm.warp(time);
         nation1Wallet.executeGameTx(abi.encodeWithSignature("harvestResource(uint256)", farmID));
-        assertTrue(foodContract.checkBalanceOf(address(nation1Wallet)) > foodBalance2);
+        assertTrue(foodToken.checkBalanceOf(address(nation1Wallet)) > foodBalance2);
     }
 
     function testGather() public {
@@ -441,7 +441,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         vm.warp(time + 50);
         time += 50;
         army11Wallet.executeGameTx(abi.encodeWithSignature("endGather(uint256)", army11ID));
-        uint256 armyFoodBalance = foodContract.checkBalanceOf(address(army11Wallet));
+        uint256 armyFoodBalance = foodToken.checkBalanceOf(address(army11Wallet));
         assertTrue(armyFoodBalance > 0);
 
         vm.warp(time + 10);
@@ -452,8 +452,8 @@ contract TreatyTest is Test, DiamondDeployTest {
         time += 10;
         army11Wallet.executeGameTx(abi.encodeWithSignature("move(uint256,uint256,uint256)", army11ID, 60, 12));
         army11Wallet.executeGameTx(abi.encodeWithSignature("unloadResources(uint256)", army11ID));
-        assertEq(foodContract.checkBalanceOf(address(army11Wallet)), 0);
-        assertEq(foodContract.checkBalanceOf(address(nation1Wallet)), armyFoodBalance);
+        assertEq(foodToken.checkBalanceOf(address(army11Wallet)), 0);
+        assertEq(foodToken.checkBalanceOf(address(nation1Wallet)), armyFoodBalance);
     }
 
     // TODO: Test troop production & upgrade/recover tiles
@@ -490,7 +490,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         // Nation 1's army11 becomes a homie of Nation 2 !!!
         uint256 homieFee = nation2Wallet.homieFee();
 
-        nation1Wallet.executeTx(address(goldContract), abi.encodeWithSignature("approve(address,uint256)", address(nation2Wallet), homieFee));
+        nation1Wallet.executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(nation2Wallet), homieFee));
 
         nation1Wallet.executeTx(address(nation2Wallet), abi.encodeWithSignature("becomeAHomie(address)", address(army11Wallet)));
 

@@ -184,6 +184,19 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "address",
+        name: "_burnerAddress",
+        type: "address",
+      },
+    ],
+    name: "authorizeGame",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "string[]",
         name: "_identifiers",
         type: "string[]",
@@ -682,19 +695,6 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "address",
-        name: "_burnerAddress",
-        type: "address",
-      },
-    ],
-    name: "authorizeGame",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
         internalType: "uint256",
         name: "_armyID",
         type: "uint256",
@@ -856,6 +856,32 @@ const _abi = [
       },
     ],
     name: "initializeNation",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_treatyAddr",
+        type: "address",
+      },
+    ],
+    name: "joinTreaty",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_treatyAddr",
+        type: "address",
+      },
+    ],
+    name: "leaveTreaty",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

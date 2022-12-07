@@ -15,12 +15,7 @@ import {AdminFacet} from "contracts/facets/AdminFacet.sol";
 import {Strings} from "openzeppelin-contracts/contracts/utils/Strings.sol";
 import {ComponentSpec, GameMode, GameParamSpec, Position, WorldConstants} from "contracts/libraries/Types.sol";
 import {NATO} from "contracts/NATO.sol";
-import {FoodERC20} from "contracts/tokens/FoodERC20.sol";
-import {GoldERC20} from "contracts/tokens/GoldERC20.sol";
-import {HorsemanERC20} from "contracts/tokens/HorsemanERC20.sol";
-import {SlingerERC20} from "contracts/tokens/SlingerERC20.sol";
-import {WarriorERC20} from "contracts/tokens/WarriorERC20.sol";
-import {GuardERC20} from "contracts/tokens/GuardERC20.sol";
+import {CurioERC20} from "contracts/tokens/CurioERC20.sol";
 
 import {WalletHangingGarden} from "contracts/WalletHangingGarden.sol";
 import {console} from "forge-std/console.sol";
@@ -64,12 +59,12 @@ contract DiamondDeployTest is Test {
     WalletHangingGarden public army32Wallet;
 
     // Tokens
-    FoodERC20 public foodContract;
-    GoldERC20 public goldContract;
-    HorsemanERC20 public horsemanContract;
-    SlingerERC20 public slingerContract;
-    WarriorERC20 public warriorContract;
-    GuardERC20 public guardContract;
+    CurioERC20 public foodToken;
+    CurioERC20 public goldToken;
+    CurioERC20 public horsemanToken;
+    CurioERC20 public slingerToken;
+    CurioERC20 public warriorToken;
+    CurioERC20 public guardToken;
 
     uint256 public NULL = 0;
     address public NULL_ADDR = address(0);
@@ -151,30 +146,30 @@ contract DiamondDeployTest is Test {
 
         // Create templates
         // Deploy token contracts
-        foodContract = new FoodERC20("Food", "FOOD", 1, address(diamond));
-        goldContract = new GoldERC20("Gold", "GOLD", 1, address(diamond));
+        foodToken = new CurioERC20("Food", "FOOD", 1, address(diamond));
+        goldToken = new CurioERC20("Gold", "GOLD", 1, address(diamond));
         // note: Consider switching to erc1155
-        horsemanContract = new HorsemanERC20("Horseman", "HORSEMAN", 1, address(diamond));
-        warriorContract = new WarriorERC20("Warrior", "WARRIOR", 1, address(diamond));
-        slingerContract = new SlingerERC20("Slinger", "SLINGER", 1, address(diamond));
-        guardContract = new GuardERC20("Guard", "GUARD", 1, address(diamond));
+        horsemanToken = new CurioERC20("Horseman", "HORSEMAN", 1, address(diamond));
+        warriorToken = new CurioERC20("Warrior", "WARRIOR", 1, address(diamond));
+        slingerToken = new CurioERC20("Slinger", "SLINGER", 1, address(diamond));
+        guardToken = new CurioERC20("Guard", "GUARD", 1, address(diamond));
         _createTemplates();
 
         address[] memory tokenContracts = new address[](6);
-        tokenContracts[0] = address(foodContract);
-        tokenContracts[1] = address(goldContract);
-        tokenContracts[2] = address(horsemanContract);
-        tokenContracts[3] = address(warriorContract);
-        tokenContracts[4] = address(slingerContract);
-        tokenContracts[5] = address(guardContract);
+        tokenContracts[0] = address(foodToken);
+        tokenContracts[1] = address(goldToken);
+        tokenContracts[2] = address(horsemanToken);
+        tokenContracts[3] = address(warriorToken);
+        tokenContracts[4] = address(slingerToken);
+        tokenContracts[5] = address(guardToken);
 
         // admin facet authorizes all token contracts to make changes to ECS States
-        admin.addAuthorized(address(foodContract));
-        admin.addAuthorized(address(goldContract));
-        admin.addAuthorized(address(horsemanContract));
-        admin.addAuthorized(address(warriorContract));
-        admin.addAuthorized(address(slingerContract));
-        admin.addAuthorized(address(guardContract));
+        admin.addAuthorized(address(foodToken));
+        admin.addAuthorized(address(goldToken));
+        admin.addAuthorized(address(horsemanToken));
+        admin.addAuthorized(address(warriorToken));
+        admin.addAuthorized(address(slingerToken));
+        admin.addAuthorized(address(guardToken));
         console.log(">>> Templates created");
 
         // Initialize map either with either `_generateNewMap()` or `_fetchLastDeployedMap()`
@@ -364,7 +359,7 @@ contract DiamondDeployTest is Test {
 
         // Horseman
         string memory templateName = "Horseman";
-        uint256 templateID = admin.addTroopTemplate(templateName, 120, 60, 120, 95, address(horsemanContract));
+        uint256 templateID = admin.addTroopTemplate(templateName, 120, 60, 120, 95, address(horsemanToken));
         templateNames[index] = templateName;
         templateIDs[index] = templateID;
         index++;
@@ -372,7 +367,7 @@ contract DiamondDeployTest is Test {
 
         // Warrior
         templateName = "Warrior";
-        templateID = admin.addTroopTemplate(templateName, 120, 60, 120, 95, address(warriorContract));
+        templateID = admin.addTroopTemplate(templateName, 120, 60, 120, 95, address(warriorToken));
         templateNames[index] = templateName;
         templateIDs[index] = templateID;
         index++;
@@ -380,7 +375,7 @@ contract DiamondDeployTest is Test {
 
         // Slinger
         templateName = "Slinger";
-        templateID = admin.addTroopTemplate(templateName, 120, 60, 120, 95, address(slingerContract));
+        templateID = admin.addTroopTemplate(templateName, 120, 60, 120, 95, address(slingerToken));
         templateNames[index] = templateName;
         templateIDs[index] = templateID;
         index++;
@@ -388,7 +383,7 @@ contract DiamondDeployTest is Test {
 
         // Guard
         templateName = "Guard";
-        templateID = admin.addTroopTemplate(templateName, 120, 60, 120, 0, address(guardContract));
+        templateID = admin.addTroopTemplate(templateName, 120, 60, 120, 0, address(guardToken));
         templateNames[index] = templateName;
         templateIDs[index] = templateID;
         index++;
@@ -396,7 +391,7 @@ contract DiamondDeployTest is Test {
 
         // Gold
         templateName = "Gold";
-        templateID = admin.addResourceTemplate(templateName, address(goldContract));
+        templateID = admin.addResourceTemplate(templateName, address(goldToken));
         templateNames[index] = templateName;
         templateIDs[index] = templateID;
         index++;
@@ -404,7 +399,7 @@ contract DiamondDeployTest is Test {
 
         // Food
         templateName = "Food";
-        templateID = admin.addResourceTemplate(templateName, address(foodContract));
+        templateID = admin.addResourceTemplate(templateName, address(foodToken));
         templateNames[index] = templateName;
         templateIDs[index] = templateID;
         index++;

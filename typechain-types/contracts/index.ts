@@ -21,4 +21,5 @@ export type { Component } from "./Component";
 export type { Diamond } from "./Diamond";
 export type { NATO } from "./NATO";
 export type { Set } from "./Set";
+export type { Treaty } from "./Treaty";
 export type { WalletHangingGarden } from "./WalletHangingGarden";
