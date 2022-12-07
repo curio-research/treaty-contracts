@@ -1,6 +1,6 @@
+@pwnednomore/contracts/=lib/pnm-contracts/
+ds-test/=lib/pnm-contracts/lib/forge-std/lib/ds-test/src/
+forge-std/=lib/pnm-contracts/lib/forge-std/src/
 solmate/=lib/solmate/src/
 openzeppelin-contracts/=lib/openzeppelin-contracts/
-@pwnednomore/contracts/=lib/pnm-contracts/
-forge-std/=lib/forge-std/src/
-ds-test/=lib/forge-std/lib/ds-test/src/
 contracts/=contracts/
