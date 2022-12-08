@@ -16,11 +16,22 @@ import {CurioERC20} from "contracts/tokens/CurioERC20.sol";
 contract GetterFacet is UseStorage {
     uint256 private NULL = 0;
 
+    function getInventoryIDLoadAndBalance(address _entityAddress, string memory _resourceType)
+        external
+        returns (
+            uint256,
+            uint256,
+            uint256
+        )
+    {
+        return GameLib.getInventoryIDLoadAndBalance(_entityAddress, _resourceType);
+    }
+
     function getTokenContract(string memory _tokenName) external view returns (CurioERC20) {
         return GameLib.getTokenContract(_tokenName);
     }
 
-    function getEntityIDByAddress(address _entityAddress) external view returns (uint256) {
+    function getEntityByAddress(address _entityAddress) external view returns (uint256) {
         return ECSLib.getAddressComponent("Address").getEntitiesWithValue(_entityAddress)[0];
     }
 
@@ -34,18 +45,6 @@ contract GetterFacet is UseStorage {
 
     function getNationArmies(uint256 _nationID) external view returns (uint256[] memory) {
         return GameLib.getArmiesFromNation(_nationID);
-    }
-
-    function getInventoryIDMaxLoadAndBalance(address _entityAddress, string memory _resourceType)
-        external
-        view
-        returns (
-            uint256,
-            uint256,
-            uint256
-        )
-    {
-        return GameLib.getInventoryIDMaxLoadAndBalance(_entityAddress, _resourceType);
     }
 
     function getInventoryBalance(address _keeperAddress, string memory _resourceType) external view returns (uint256) {

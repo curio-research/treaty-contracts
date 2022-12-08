@@ -5,52 +5,60 @@ import {ERC20} from "lib/solmate/src/tokens/ERC20.sol";
 import {ITreaty} from "contracts/interfaces/ITreaty.sol";
 import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {CurioERC20} from "contracts/tokens/CurioERC20.sol";
+import {console} from "forge-std/console.sol";
 
 contract FTX is ITreaty {
     address public diamond;
+    GetterFacet public getter;
     CurioERC20 public goldToken;
     FTTERC20 public fttToken;
-    address public sbf;
+    address public sbfAddress;
+    address public sbfCapitalAddress;
     bool public isBankrupt;
 
     constructor(address _diamond) {
         require(_diamond != address(0), "FTX: Diamond address required");
 
         diamond = _diamond;
-        goldToken = GetterFacet(_diamond).getTokenContract("Gold");
+        getter = GetterFacet(_diamond);
+        goldToken = getter.getTokenContract("Gold");
         fttToken = new FTTERC20(address(this));
-        sbf = msg.sender;
+        sbfAddress = msg.sender;
+        sbfCapitalAddress = getter.getAddress(getter.getCapital(getter.getEntityByAddress(sbfAddress)));
 
-        fttToken.approve(msg.sender, 100000000000);
+        // fttToken.approve(msg.sender, 100000000000);
     }
 
     function deposit(uint256 _amount) external returns (bool) {
-        require(msg.sender != sbf, "FTX: You don't need to deposit");
+        require(msg.sender != sbfAddress, "FTX: You don't need to deposit");
 
-        goldToken.transferFrom(msg.sender, sbf, _amount);
+        address senderCapitalAddress = getter.getAddress(getter.getCapital(getter.getEntityByAddress(msg.sender)));
+        goldToken.transferFrom(senderCapitalAddress, sbfCapitalAddress, _amount);
 
-        fttToken.mint(msg.sender, _amount);
+        fttToken.mint(senderCapitalAddress, _amount);
 
         return true;
     }
 
     function withdraw(uint256 _amount) external returns (bool) {
-        require(msg.sender != sbf, "FTX: You don't need to withdraw");
+        require(msg.sender != sbfAddress, "FTX: You don't need to withdraw");
 
         require(!isBankrupt, "FTX: Your money is gone");
-        require(fttToken.balanceOf(msg.sender) >= _amount, "FTX: Insufficient balance");
 
-        uint256 sbfGoldBalance = goldToken.checkBalanceOf(sbf);
+        address senderCapitalAddress = getter.getAddress(getter.getCapital(getter.getEntityByAddress(msg.sender)));
+        require(fttToken.balanceOf(senderCapitalAddress) >= _amount, "FTX: Insufficient balance");
+
+        uint256 sbfGoldBalance = goldToken.checkBalanceOf(sbfCapitalAddress);
         uint256 availableAmount = sbfGoldBalance > _amount ? _amount : sbfGoldBalance;
-        goldToken.transferFrom(sbf, msg.sender, availableAmount);
+        goldToken.transferFrom(sbfCapitalAddress, senderCapitalAddress, availableAmount);
 
-        fttToken.burn(msg.sender, availableAmount);
+        fttToken.burn(senderCapitalAddress, availableAmount);
 
         return true;
     }
 
     function run() external returns (bool) {
-        require(msg.sender == sbf, "FTX: You don't need to run");
+        require(msg.sender == sbfAddress, "FTX: You don't need to run");
         require(!isBankrupt, "FTX: You've already escaped");
 
         isBankrupt = true;

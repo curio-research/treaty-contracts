@@ -71,7 +71,6 @@ contract AdminFacet is UseStorage {
         uint256 _amount
     ) external onlyAuthorized {
         CurioERC20 token = GameLib.getTokenContract(_tokenName);
-        console.log("yo");
         token.dripToken(_address, _amount);
     }
 

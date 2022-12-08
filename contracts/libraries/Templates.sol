@@ -41,6 +41,7 @@ library Templates {
         ECSLib.setUint("LastMoved", capitalID, block.timestamp);
         ECSLib.setUint("LastSacked", capitalID, 0);
         ECSLib.setUint("LastUpgraded", capitalID, 0);
+        ECSLib.setUint("LastHarvested", capitalID, 0);
         ECSLib.setUint("Nation", capitalID, _nationID);
         ECSLib.setUint("Level", capitalID, 1);
         ECSLib.setAddress("Address", capitalID, _address);
@@ -63,13 +64,14 @@ library Templates {
         return resourceID;
     }
 
-    function addNation(string memory _name) public returns (uint256) {
+    function addNation(string memory _name, address _address) public returns (uint256) {
         uint256 nationID = ECSLib.addEntity();
 
         ECSLib.setString("Tag", nationID, "Nation");
         ECSLib.setBool("IsActive", nationID);
         ECSLib.setString("Name", nationID, _name);
         ECSLib.setUint("InitTimestamp", nationID, block.timestamp);
+        ECSLib.setAddress("Address", nationID, _address);
 
         return nationID;
     }

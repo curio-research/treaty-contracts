@@ -12,7 +12,7 @@ import {console} from "forge-std/console.sol";
 contract BaseGameTest is Test, DiamondDeployTest {
     function testInitialization() public {
         // Verify that wallet address is loaded correctly
-        assertEq(getter.getAddress(nation1ID), nation1CapitalAddr);
+        assertEq(getter.getAddress(nation1CapitalID), nation1CapitalAddr);
 
         // Verify that capital is established correctly
         Position memory nation1CapitalPosition = getter.getPositionExternal("StartPosition", nation1CapitalID);
@@ -35,11 +35,9 @@ contract BaseGameTest is Test, DiamondDeployTest {
         uint256 nation2CapitalTile = getter.getTileAt(nation2CapitalPosition);
         assertEq(getter.getNation(nation2CapitalTile), nation2ID);
 
-        // Verify that armies are initialized correctly
+        // Verify that no armies are initialized
         uint256[] memory nation1ArmyIDs = getter.getNationArmies(nation1ID);
-        assertEq(nation1ArmyIDs.length, 2);
-        assertEq(getter.getNation(nation1ArmyIDs[0]), nation1ID);
-        assertEq(getter.getNation(nation1ArmyIDs[1]), nation1ID);
+        assertEq(nation1ArmyIDs.length, 0);
     }
 
     function testOrganizeDisbandMoveArmy() public {
@@ -104,11 +102,11 @@ contract BaseGameTest is Test, DiamondDeployTest {
 
         // Deployer transfer enough gold & food to nation 1 & 2
         vm.startPrank(deployer);
-        admin.dripToken(nation1CapitalAddr, "Warrior", 1000);
         admin.dripToken(nation1CapitalAddr, "Horseman", 1000);
+        admin.dripToken(nation1CapitalAddr, "Warrior", 1000);
         admin.dripToken(nation1CapitalAddr, "Slinger", 1000);
-        admin.dripToken(nation2CapitalAddr, "Warrior", 1000);
         admin.dripToken(nation2CapitalAddr, "Horseman", 1000);
+        admin.dripToken(nation2CapitalAddr, "Warrior", 1000);
         admin.dripToken(nation2CapitalAddr, "Slinger", 1000);
 
         vm.stopPrank();
@@ -132,12 +130,8 @@ contract BaseGameTest is Test, DiamondDeployTest {
         vm.warp(time + 10);
         time += 10;
 
-        console.log("CC");
-
         uint256 army11ID = game.organizeArmy(nation1CapitalID, armyTemplateIDs, armyTemplateAmounts);
         address army11Addr = getter.getAddress(army11ID);
-
-        console.log("DD");
 
         // Nation 1 move army
         vm.warp(time + 10);
@@ -158,14 +152,10 @@ contract BaseGameTest is Test, DiamondDeployTest {
 
         vm.stopPrank();
 
-        console.log("EE");
-
         // Nation 2 organize army
         vm.startPrank(player2);
 
         uint256 nation2CapitalID = getter.getCapital(nation2ID);
-
-        console.log("FF");
 
         vm.warp(time + 10);
         time += 10;
@@ -211,8 +201,6 @@ contract BaseGameTest is Test, DiamondDeployTest {
             time += 10;
             game.battle(army21ID, army11ID);
         }
-
-        console.log("LOL");
 
         vm.stopPrank();
         assertEq(warriorToken.checkBalanceOf(army11Addr), 0);
@@ -279,12 +267,13 @@ contract BaseGameTest is Test, DiamondDeployTest {
 
         vm.warp(time + 10);
         time += 10;
-        nation1ID = getter.getEntityIDByAddress(nation1CapitalAddr);
         game.upgradeNation();
         game.claimTile(army11ID, targetTileID);
 
-        assertEq(getter.getEntityLevel(nation1ID), 2);
+        assertEq(getter.getEntityLevel(nation1CapitalID), 2);
         assertEq(getter.getNation(targetTileID), nation1ID);
+
+        vm.stopPrank();
     }
 
     function testBattleCapitalChaos() public {
@@ -353,8 +342,8 @@ contract BaseGameTest is Test, DiamondDeployTest {
     }
 
     function testHarvest() public {
-        // bug: lastChaos time is 0. This is wrong.
         vm.startPrank(deployer);
+
         // this tile and its resource is next to nation1 capital
         Position memory farmTilePos = Position({x: 60, y: 5});
         admin.giftTileAndResourceAt(Position({x: 60, y: 5}), nation1ID);
@@ -366,11 +355,12 @@ contract BaseGameTest is Test, DiamondDeployTest {
 
         uint256 time = block.timestamp + 600;
         vm.warp(time);
-
         vm.startPrank(player1);
         game.upgradeNation();
         uint256 nation1CapitalID = getter.getCapital(nation1ID);
 
+        time += 20;
+        vm.warp(time);
         game.harvestResourcesFromCapital(nation1CapitalID);
 
         uint256 goldBalance1 = goldToken.checkBalanceOf(nation1CapitalAddr);

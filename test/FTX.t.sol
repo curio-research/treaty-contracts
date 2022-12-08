@@ -14,18 +14,18 @@ contract FTXTest is Test, DiamondDeployTest {
 
         // Deploy transfers gold to Player 1
         vm.prank(deployer);
-        admin.dripToken(player1, "Gold", 8);
+        admin.dripToken(nation1CapitalAddr, "Gold", 8);
 
         // Player 2 (SBF) starts FTX and grants it access to his wallet
         vm.startPrank(player2);
         FTX ftx = new FTX(diamond);
-        goldToken.approve(address(ftx), 10000);
+        // goldToken.approve(address(ftx), 10000);
         vm.stopPrank();
         assertEq(goldToken.balanceOf(nation2CapitalAddr), 0);
 
         // Player 1 deposits to FTX
         vm.startPrank(player1);
-        goldToken.approve(address(ftx), 2);
+        // goldToken.approve(address(ftx), 2);
         ftx.deposit(2);
         assertEq(goldToken.checkBalanceOf(nation1CapitalAddr), 6);
         assertEq(ftx.fttToken().checkBalanceOf(nation1CapitalAddr), 2);

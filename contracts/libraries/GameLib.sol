@@ -10,6 +10,7 @@ import {Set} from "contracts/Set.sol";
 import {Component} from "contracts/Component.sol";
 import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, UintComponent, UintArrayComponent} from "contracts/TypedComponents.sol";
 import {CurioERC20} from "contracts/tokens/CurioERC20.sol";
+import {console} from "forge-std/console.sol";
 
 /// @title Util library
 /// @notice Contains all events as well as lower-level setters and getters
@@ -184,26 +185,32 @@ library GameLib {
         // Offender attacks defender
         {
             uint256 loss;
-            for (uint256 i = 0; i < troopTemplateIDs.length; i++) {
-                if (ECSLib.getUint("Amount", getInventory(_offenderID, troopTemplateIDs[i])) == 0) continue;
-                for (uint256 j = 0; j < troopTemplateIDs.length; j++) {
+            for (uint256 j = 0; j < troopTemplateIDs.length; j++) {
+                if (ECSLib.getUint("Amount", getInventory(_defenderID, troopTemplateIDs[j])) == 0) continue;
+
+                uint256 defenderTroopAmount;
+                for (uint256 i = 0; i < troopTemplateIDs.length; i++) {
+                    if (ECSLib.getUint("Amount", getInventory(_offenderID, troopTemplateIDs[i])) == 0) continue;
+
                     {
                         uint256 troopTypeBonus = getAttackBonus(troopTemplateIDs[i], troopTemplateIDs[j]);
-                        uint256 offenderTroopBalance = ECSLib.getUint("Amount", getInventory(_offenderID, troopTemplateIDs[i]));
+                        uint256 offenderTroopAmount = ECSLib.getUint("Amount", getInventory(_offenderID, troopTemplateIDs[i]));
                         loss =
-                            (troopTypeBonus * (sqrt(offenderTroopBalance) * ECSLib.getUint("Attack", troopTemplateIDs[i]) * 2)) / //
+                            (troopTypeBonus * (sqrt(offenderTroopAmount) * ECSLib.getUint("Attack", troopTemplateIDs[i]) * 2)) / //
                             (ECSLib.getUint("Defense", troopTemplateIDs[j]) * ECSLib.getUint("Health", troopTemplateIDs[j]));
                     }
 
                     address defenderAddress = ECSLib.getAddress("Address", _defenderID);
-                    uint256 defenderTroopBalance = ECSLib.getUint("Amount", getInventory(_defenderID, troopTemplateIDs[j]));
+                    defenderTroopAmount = ECSLib.getUint("Amount", getInventory(_defenderID, troopTemplateIDs[j]));
+
                     CurioERC20 defenderTroopToken = CurioERC20(ECSLib.getAddress("Address", troopTemplateIDs[j]));
-                    if (loss >= defenderTroopBalance) {
-                        defenderTroopToken.destroyToken(defenderAddress, defenderTroopBalance);
-                    } else {
-                        defenderTroopToken.destroyToken(defenderAddress, loss);
-                        victory = false;
-                    }
+                    loss = loss >= defenderTroopAmount ? defenderTroopAmount : loss;
+                    defenderTroopToken.destroyToken(defenderAddress, loss);
+                }
+
+                defenderTroopAmount = ECSLib.getUint("Amount", getInventory(_defenderID, troopTemplateIDs[j]));
+                if (defenderTroopAmount > 0) {
+                    victory = false;
                 }
             }
         }
@@ -214,7 +221,7 @@ library GameLib {
                 uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
                 for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
                     CurioERC20 resourceToken = CurioERC20(ECSLib.getAddress("Address", resourceTemplateIDs[i]));
-                    resourceToken.transferAll(ECSLib.getAddress("Address", _offenderID), ECSLib.getAddress("Address", _offenderID));
+                    resourceToken.transferAll(ECSLib.getAddress("Address", _defenderID), ECSLib.getAddress("Address", _offenderID));
                 }
             }
 
@@ -283,41 +290,51 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    function getInventoryIDMaxLoadAndBalance(address _entityAddress, string memory _resourceType)
+    function getInventoryIDLoadAndBalance(address _entityAddress, string memory _resourceType)
         public
-        view
         returns (
             uint256,
             uint256,
             uint256
         )
     {
-        /**
-        Only Army & Tile has troop load & resource. 
-        Data is stored in game constant based on nation level
-        Resource/Capital yield load restricted within the game
-         */
-
-        // note: put ID, load, and balance together so it only does query once
         uint256 entityID = ECSLib.getAddressComponent("Address").getEntitiesWithValue(_entityAddress)[0];
         uint256 templateID = gs().templates[_resourceType];
-        uint256 inventoryID = getInventory(entityID, templateID);
-        uint256 balance = ECSLib.getUint("Amount", inventoryID);
+        string memory entityTag = ECSLib.getString("Tag", entityID);
 
-        if (strEq(ECSLib.getString("Tag", entityID), "Army")) {
+        // Fetch load for given template
+        // FIXME: troop load
+        uint256 load;
+        if (strEq(entityTag, "Army")) {
             uint256 capitalID = getCapital(ECSLib.getUint("Nation", entityID));
             if (templateID == gs().templates["Horseman"] || templateID == gs().templates["Warrior"] || templateID == gs().templates["Slinger"]) {
-                uint256 maxLoad = getConstant(ECSLib.getString("Tag", entityID), "Troop", "Amount", "", ECSLib.getUint("Level", capitalID));
-                return (inventoryID, maxLoad, balance);
+                load = getConstant(ECSLib.getString("Tag", entityID), "Troop", "Amount", "", ECSLib.getUint("Level", capitalID));
             } else if (templateID == gs().templates["Food"] || templateID == gs().templates["Gold"]) {
-                return (inventoryID, ECSLib.getUint("Load", entityID), balance);
+                load = ECSLib.getUint("Load", entityID);
+            } else if (templateID == gs().templates["Guard"]) {
+                load = 0;
+            } else {
+                revert("CURIO: Unsupported template");
             }
-        } else if (templateID == gs().templates["Guard"]) {
-            uint256 maxLoad = GameLib.getConstant("Tile", "Guard", "Amount", "", ECSLib.getUint("Level", entityID));
-            return (inventoryID, maxLoad, balance);
+        } else if (strEq(entityTag, "Building") && strEq(ECSLib.getString("BuildingType", entityID), "Capital")) {
+            // Set to max uint256
+            load = 2**256 - 1;
+        } else if (strEq(entityTag, "Tile")) {
+            load = getConstant("Tile", "Guard", "Amount", "", ECSLib.getUint("Level", entityID));
+        } else {
+            revert("CURIO: Unsupported keeper");
         }
 
-        return (inventoryID, 0, balance);
+        // Fetch inventoryID, and create if not found
+        uint256 inventoryID = getInventory(entityID, templateID);
+        if (inventoryID == 0) {
+            inventoryID = Templates.addInventory(entityID, templateID);
+        }
+
+        // Fetch balance
+        uint256 balance = ECSLib.getUint("Amount", inventoryID);
+
+        return (inventoryID, load, balance);
     }
 
     function getConstituents(uint256 _keeperID) public view returns (uint256[] memory) {

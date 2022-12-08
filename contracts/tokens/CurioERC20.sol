@@ -32,16 +32,15 @@ contract CurioERC20 is ERC20 {
         _;
     }
 
-    function _getInventoryIDMaxLoadAndBalance(address _entityAddress)
+    function _getInventoryIDLoadAndBalance(address _entityAddress)
         private
-        view
         returns (
             uint256,
             uint256,
             uint256
         )
     {
-        return getter.getInventoryIDMaxLoadAndBalance(_entityAddress, name);
+        return getter.getInventoryIDLoadAndBalance(_entityAddress, name);
     }
 
     // FIXME: solmate doesn't have balanceOf
@@ -54,16 +53,16 @@ contract CurioERC20 is ERC20 {
         address _to,
         uint256 _amount
     ) private {
-        (uint256 senderInventoryID, , uint256 senderBalance) = _getInventoryIDMaxLoadAndBalance(_from);
-        (uint256 recipientInventoryID, uint256 recipientMaxLoad, uint256 recipientBalance) = _getInventoryIDMaxLoadAndBalance(_to);
+        (uint256 senderInventoryID, , uint256 senderBalance) = _getInventoryIDLoadAndBalance(_from);
+        (uint256 recipientInventoryID, uint256 recipientLoad, uint256 recipientBalance) = _getInventoryIDLoadAndBalance(_to);
         require(senderInventoryID != 0 && recipientInventoryID != 0, "CurioERC20: In-game inventory not found");
         require(senderBalance >= _amount, "CurioERC20: Sender insufficent balance");
 
         uint256 transferAmount;
-        if (recipientMaxLoad == 0 || recipientBalance + _amount <= recipientMaxLoad) {
+        if (recipientBalance + _amount <= recipientLoad) {
             transferAmount = _amount;
         } else {
-            transferAmount = recipientMaxLoad - recipientBalance;
+            transferAmount = recipientLoad - recipientBalance;
         }
 
         admin.updateInventoryAmount(senderInventoryID, senderBalance - transferAmount);
@@ -101,25 +100,23 @@ contract CurioERC20 is ERC20 {
     }
 
     function dripToken(address _address, uint256 _amount) public onlyGame {
-        (uint256 recipientInventoryID, uint256 recipientMaxLoad, uint256 recipientCurrentBalance) = _getInventoryIDMaxLoadAndBalance(_address);
-        console.log("haha");
+        (uint256 recipientInventoryID, uint256 recipientLoad, uint256 recipientCurrentBalance) = _getInventoryIDLoadAndBalance(_address);
 
         uint256 dripAmount;
-        if (recipientMaxLoad == 0 || recipientCurrentBalance + _amount <= recipientMaxLoad) {
+        if (recipientCurrentBalance + _amount <= recipientLoad) {
             dripAmount = _amount;
         } else {
-            dripAmount = recipientMaxLoad - recipientCurrentBalance;
+            dripAmount = recipientLoad - recipientCurrentBalance;
         }
 
         admin.updateInventoryAmount(recipientInventoryID, recipientCurrentBalance + dripAmount);
-        console.log("got it");
         emit Transfer(address(0), _address, dripAmount);
 
         totalSupply += dripAmount;
     }
 
     function destroyToken(address _address, uint256 _amount) public onlyGame {
-        (uint256 addressInventoryID, , uint256 addressCurrentBalance) = _getInventoryIDMaxLoadAndBalance(_address);
+        (uint256 addressInventoryID, , uint256 addressCurrentBalance) = _getInventoryIDLoadAndBalance(_address);
 
         uint256 destroyAmount = _amount > addressCurrentBalance ? addressCurrentBalance : _amount;
 

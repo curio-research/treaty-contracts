@@ -9,6 +9,7 @@ import {Set} from "contracts/Set.sol";
 import {Templates} from "contracts/libraries/Templates.sol";
 import {CurioERC20} from "contracts/tokens/CurioERC20.sol";
 import {CurioWallet} from "contracts/CurioWallet.sol";
+import {console} from "forge-std/console.sol";
 
 /// @title Game facet
 /// @notice Contains national functions
@@ -52,7 +53,7 @@ contract GameFacet is UseStorage {
         }
 
         // Register nation
-        nationID = Templates.addNation(_name);
+        nationID = Templates.addNation(_name, msg.sender);
         gs().nations.push(msg.sender);
         gs().nationAddressToId[msg.sender] = nationID;
 
@@ -122,8 +123,8 @@ contract GameFacet is UseStorage {
         require(gs().nationAddressToId[msg.sender] == nationID, "CURIO: Can only recover your own tile");
 
         uint256 tileLevel = ECSLib.getUint("Level", _tileID);
-        require(block.timestamp - ECSLib.getUint("LastUpgraded", _tileID) > GameLib.getConstant("Tile", "", "Cooldown", "Upgrade", tileLevel - 1), "CURIO: Need to finish upgrading first");
-        require(block.timestamp - ECSLib.getUint("LastRecovered", _tileID) > GameLib.getConstant("Tile", "", "Cooldown", "Recover", tileLevel), "CURIO: Need to finish recovering first");
+        require(block.timestamp >= ECSLib.getUint("LastUpgraded", _tileID), "CURIO: Need to finish upgrading first");
+        require(block.timestamp >= ECSLib.getUint("LastRecovered", _tileID), "CURIO: Need to finish recovering first");
 
         // lost tile amount = current level amount - actual amount
         address tileAddress = ECSLib.getAddress("Address", _tileID);
@@ -149,7 +150,7 @@ contract GameFacet is UseStorage {
         GameLib.capitalHasRecoveredFromSack(GameLib.getCapital(nationID));
 
         // Set timestamp
-        ECSLib.setUint("LastRecovered", _tileID, block.timestamp);
+        ECSLib.setUint("LastRecovered", _tileID, block.timestamp + GameLib.getConstant("Tile", "", "Cooldown", "Recover", tileLevel));
 
         // Recover the tile
         guardToken.dripToken(tileAddress, lostGuardAmount);
@@ -175,7 +176,7 @@ contract GameFacet is UseStorage {
         require(GameLib.getConstant("Tile", "Guard", "Amount", "", tileLevel) == guardAmount, "CURIO: Must recover before upgrade");
 
         // check if upgrade is in process
-        require(block.timestamp - ECSLib.getUint("LastUpgraded", _tileID) > GameLib.getConstant("Tile", "", "Cooldown", "Upgrade", tileLevel - 1), "CURIO: Need to finish upgrading first");
+        require(block.timestamp >= ECSLib.getUint("LastUpgraded", _tileID), "CURIO: Need to finish upgrading first");
 
         // Deduct costs from capital
         {
@@ -184,7 +185,7 @@ contract GameFacet is UseStorage {
 
             for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
                 CurioERC20 resourceToken = CurioERC20(ECSLib.getAddress("Address", resourceTemplateIDs[i]));
-                uint256 balance = ECSLib.getUint("Amount", GameLib.getInventory(nationID, resourceTemplateIDs[i]));
+                uint256 balance = ECSLib.getUint("Amount", GameLib.getInventory(capitalID, resourceTemplateIDs[i]));
                 uint256 cost = GameLib.getConstant("Tile", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Cost", "Upgrade", tileLevel);
                 require(balance >= cost, "CURIO: Insufficient balance");
 
@@ -193,7 +194,7 @@ contract GameFacet is UseStorage {
         }
 
         // set timestamp
-        ECSLib.setUint("LastUpgraded", _tileID, block.timestamp);
+        ECSLib.setUint("LastUpgraded", _tileID, block.timestamp + GameLib.getConstant("Tile", "", "Cooldown", "Upgrade", tileLevel));
 
         // Upgrade tile defense and level
         uint256 newGuardAmount = GameLib.getConstant("Tile", "Guard", "Amount", "", tileLevel + 1);
@@ -209,16 +210,15 @@ contract GameFacet is UseStorage {
         GameLib.ongoingGameCheck();
 
         // Check if nation has reached maxCapitalLevel
-        uint256 nationLevel = ECSLib.getUint("Level", GameLib.getCapital(nationID)); // FIXME: capital level should be separated from nation level
-        require(nationLevel < gs().worldConstants.maxCapitalLevel, "CURIO: Reached max capital level");
+        uint256 capitalID = GameLib.getCapital(nationID);
+        uint256 capitalLevel = ECSLib.getUint("Level", capitalID); // FIXME: capital level should be separated from nation level
+        require(capitalLevel < gs().worldConstants.maxCapitalLevel, "CURIO: Reached max capital level");
 
         // Check sack
-        uint256 capitalID = GameLib.getCapital(nationID);
         GameLib.capitalHasRecoveredFromSack(capitalID);
 
         // check if capital upgrade is in process
-        uint256 lastUpgradeDuration = GameLib.getConstant("Capital", "", "Cooldown", "Upgrade", nationLevel - 1);
-        require(block.timestamp - ECSLib.getUint("LastUpgraded", capitalID) > lastUpgradeDuration, "CURIO: Need to finish upgrade first");
+        require(block.timestamp >= ECSLib.getUint("LastUpgraded", capitalID), "CURIO: Need to finish upgrading first");
 
         // Verify there's no ongoing troop production
         require(GameLib.getBuildingProduction(capitalID) == NULL, "CURIO: Need to finish production first");
@@ -230,9 +230,10 @@ contract GameFacet is UseStorage {
 
             for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
                 CurioERC20 resourceToken = CurioERC20(ECSLib.getAddress("Address", resourceTemplateIDs[i]));
-                uint256 inventoryID = GameLib.getInventory(nationID, resourceTemplateIDs[i]);
+                uint256 inventoryID = GameLib.getInventory(capitalID, resourceTemplateIDs[i]);
                 uint256 balance = ECSLib.getUint("Amount", inventoryID);
-                uint256 cost = GameLib.getConstant("Capital", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Cost", "Upgrade", nationLevel);
+                uint256 cost = GameLib.getConstant("Capital", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Cost", "Upgrade", capitalLevel);
+
                 require(balance >= cost, "CURIO: Insufficient balance");
 
                 resourceToken.destroyToken(capitalAddress, cost);
@@ -243,10 +244,10 @@ contract GameFacet is UseStorage {
         harvestResourcesFromCapital(capitalID);
 
         // Update timestamp to when upgrade is finished
-        ECSLib.setUint("LastUpgraded", capitalID, block.timestamp + GameLib.getConstant("Capital", "", "Cooldown", "Upgrade", nationLevel));
+        ECSLib.setUint("LastUpgraded", capitalID, block.timestamp + GameLib.getConstant("Capital", "", "Cooldown", "Upgrade", capitalLevel));
 
         // Set new level
-        ECSLib.setUint("Level", capitalID, nationLevel + 1);
+        ECSLib.setUint("Level", capitalID, capitalLevel + 1);
     }
 
     function moveCapital(uint256 _capitalID, Position memory _newTilePosition) external {
@@ -279,7 +280,7 @@ contract GameFacet is UseStorage {
 
             for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
                 CurioERC20 resourceToken = CurioERC20(ECSLib.getAddress("Address", resourceTemplateIDs[i]));
-                uint256 balance = ECSLib.getUint("Amount", GameLib.getInventory(nationID, resourceTemplateIDs[i]));
+                uint256 balance = ECSLib.getUint("Amount", GameLib.getInventory(_capitalID, resourceTemplateIDs[i]));
                 uint256 cost = GameLib.getConstant("Capital", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Cost", "Move", capitalLevel);
                 require(balance >= cost, "CURIO: Insufficient balance");
 
@@ -313,8 +314,8 @@ contract GameFacet is UseStorage {
 
         // Verify that tile is not during recover or upgrade
         uint256 tileLevel = ECSLib.getUint("Level", _tileID);
-        require(block.timestamp - ECSLib.getUint("LastUpgraded", _tileID) > GameLib.getConstant("Tile", "", "Cooldown", "Upgrade", tileLevel - 1), "CURIO: Need to finish upgrading first");
-        require(block.timestamp - ECSLib.getUint("LastRecovered", _tileID) > GameLib.getConstant("Tile", "", "Cooldown", "Recover", tileLevel), "CURIO: Need to finish recovering first");
+        require(block.timestamp > ECSLib.getUint("LastUpgraded", _tileID), "CURIO: Need to finish upgrading first");
+        require(block.timestamp > ECSLib.getUint("LastRecovered", _tileID), "CURIO: Need to finish recovering first");
 
         // End gather processes on tile
         uint256[] memory movableEntitiesOnTile = GameLib.getMovableEntitiesAtTile(tilePosition);
@@ -347,10 +348,7 @@ contract GameFacet is UseStorage {
         require(gs().nationAddressToId[msg.sender] == nationID, "CURIO: Can only produce at your capital");
 
         // Verify no upgrades in process
-        {
-            uint256 buildingLevel = ECSLib.getUint("Level", _capitalID);
-            require(block.timestamp - ECSLib.getUint("LastUpgraded", _capitalID) > GameLib.getConstant("Capital", "", "Cooldown", "Upgrade", buildingLevel - 1), "CURIO: Need to finish upgrading first");
-        }
+        require(block.timestamp >= ECSLib.getUint("LastUpgraded", _capitalID), "CURIO: Need to finish upgrading first");
 
         // Verify sack
         GameLib.capitalHasRecoveredFromSack(_capitalID);
@@ -363,7 +361,7 @@ contract GameFacet is UseStorage {
             uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("TroopTemplate"));
 
             for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
-                uint256 balance = ECSLib.getUint("Amount", GameLib.getInventory(nationID, resourceTemplateIDs[i]));
+                uint256 balance = ECSLib.getUint("Amount", GameLib.getInventory(_capitalID, resourceTemplateIDs[i]));
                 uint256 cost = _amount * GameLib.getConstant("Troop Production", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Cost", "Move", ECSLib.getUint("Level", _capitalID));
                 require(balance >= cost, "CURIO: Insufficient balance");
 
@@ -387,8 +385,7 @@ contract GameFacet is UseStorage {
         require(gs().nationAddressToId[msg.sender] == nationID, "CURIO: Can only produce at your capital");
 
         // Verify no upgrades in process
-        uint256 buildingLevel = ECSLib.getUint("Level", _capitalID);
-        require(block.timestamp - ECSLib.getUint("LastUpgraded", _capitalID) > GameLib.getConstant("Capital", "", "Cooldown", "Upgrade", buildingLevel - 1), "CURIO: Need to finish upgrading first");
+        require(block.timestamp > ECSLib.getUint("LastUpgraded", _capitalID), "CURIO: Need to finish upgrading first");
 
         // capital at chaos cannot collect troops
         GameLib.capitalHasRecoveredFromSack(_capitalID);
@@ -460,8 +457,8 @@ contract GameFacet is UseStorage {
         GameLib.capitalHasRecoveredFromSack(capitalID);
 
         // Return carried resources to capital
-        address nationAddress = ECSLib.getAddress("Address", ECSLib.getUint("Nation", _armyID));
-        GameLib.unloadResources(nationAddress, ECSLib.getAddress("Address", _armyID));
+        address capitalAddress = ECSLib.getAddress("Address", capitalID);
+        GameLib.unloadResources(capitalAddress, ECSLib.getAddress("Address", _armyID));
     }
 
     function harvestResource(uint256 _resourceID) public {
@@ -480,14 +477,17 @@ contract GameFacet is UseStorage {
         // Verify upgrade not in process
         uint256 templateID = ECSLib.getUint("Template", _resourceID);
         string memory buildingType = templateID == gs().templates["Gold"] ? "Goldmine" : "Farm";
-        require(block.timestamp - ECSLib.getUint("LastUpgraded", _resourceID) > GameLib.getConstant(buildingType, "", "Cooldown", "Upgrade", resourceLevel - 1), "CURIO: Need to finish upgrading first");
+        require(block.timestamp >= ECSLib.getUint("LastUpgraded", _resourceID), "CURIO: Need to finish upgrading first");
+
+        // Verify can harvest
+        require(block.timestamp >= ECSLib.getUint("LastHarvested", _resourceID), "CURIO: Need more time to harvest");
 
         // Get harvest amount
         uint256 harvestRate = GameLib.getConstant(buildingType, ECSLib.getString("InventoryType", templateID), "Yield", "", resourceLevel);
         uint256 harvestAmount = (block.timestamp - ECSLib.getUint("LastHarvested", _resourceID)) * harvestRate;
-        uint256 harvestMaxLoad = GameLib.getConstant(buildingType, ECSLib.getString("InventoryType", ECSLib.getUint("Template", _resourceID)), "Load", "", resourceLevel);
+        uint256 harvestLoad = GameLib.getConstant(buildingType, ECSLib.getString("InventoryType", ECSLib.getUint("Template", _resourceID)), "Load", "", resourceLevel);
 
-        harvestAmount = GameLib.min(harvestMaxLoad, harvestAmount);
+        harvestAmount = GameLib.min(harvestLoad, harvestAmount);
 
         // Update last harvest
         ECSLib.setUint("LastHarvested", _resourceID, block.timestamp);
@@ -517,8 +517,11 @@ contract GameFacet is UseStorage {
         // Verify it's not being upgraded; note: capital level is same as nation level here
         uint256 capitalLevel = ECSLib.getUint("Level", _capitalID);
         if (capitalLevel < gs().worldConstants.maxCapitalLevel) {
-            require(block.timestamp - ECSLib.getUint("LastUpgraded", _capitalID) > GameLib.getConstant("Capital", "", "Cooldown", "Upgrade", capitalLevel - 1), "CURIO: Need to finish upgrading first");
+            require(block.timestamp >= ECSLib.getUint("LastUpgraded", _capitalID), "CURIO: Need to finish upgrading first");
         }
+
+        // Verify can harvest
+        require(block.timestamp >= ECSLib.getUint("LastHarvested", _capitalID), "CURIO: Need more time to harvest");
 
         // Create inventory if none exists
         {
@@ -528,9 +531,9 @@ contract GameFacet is UseStorage {
                 uint256 harvestRate = GameLib.getConstant("Capital", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Yield", "", capitalLevel);
                 CurioERC20 resourceToken = CurioERC20(ECSLib.getAddress("Address", resourceTemplateIDs[i]));
                 uint256 harvestAmount = (block.timestamp - ECSLib.getUint("LastHarvested", _capitalID)) * harvestRate;
-                uint256 harvestMaxLoad = GameLib.getConstant("Capital", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Load", "", capitalLevel);
+                uint256 harvestLoad = GameLib.getConstant("Capital", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Load", "", capitalLevel);
 
-                harvestAmount = GameLib.min(harvestMaxLoad, harvestAmount);
+                harvestAmount = GameLib.min(harvestLoad, harvestAmount);
 
                 resourceToken.dripToken(capitalAddress, harvestAmount);
             }
@@ -552,7 +555,6 @@ contract GameFacet is UseStorage {
         GameLib.validEntityCheck(_capitalID);
         GameLib.ongoingGameCheck();
         uint256 nationID = ECSLib.getUint("Nation", _capitalID);
-        address nationAddress = ECSLib.getAddress("Address", nationID);
         require(gs().nationAddressToId[msg.sender] == nationID, "CURIO: Can only organize army at your own capital");
 
         // Verify there is no army currently at the capital
@@ -570,6 +572,7 @@ contract GameFacet is UseStorage {
         // Collect army traits from individual troop types & transfer troops from nation
         {
             uint256 load = 0; // sum
+            address capitalAddress = ECSLib.getAddress("Address", _capitalID);
 
             require(_templateIDs.length == _amounts.length, "CURIO: Input lengths do not match");
             require(_templateIDs.length > 0, "CURIO: Army must have at least 1 troop");
@@ -579,7 +582,8 @@ contract GameFacet is UseStorage {
                 // require(tokenContract.checkBalanceOf(msg.sender) >= _amounts[i], "CURIO: Need to produce more troops");
 
                 load += ECSLib.getUint("Load", _templateIDs[i]) * _amounts[i];
-                troopToken.transferFrom(nationAddress, armyAddress, _amounts[i]);
+
+                troopToken.transferFrom(capitalAddress, armyAddress, _amounts[i]);
             }
 
             // Edit army traits
@@ -683,8 +687,7 @@ contract GameFacet is UseStorage {
 
         // if it is barbarian, check it's not hybernating
         if (GameLib.isBarbarian(_tileID)) {
-            uint256 barbarianCooldown = GameLib.getConstant("Barbarian", "", "Cooldown", "", 0);
-            require(block.timestamp >= ECSLib.getUint("LastRecovered", _tileID) + barbarianCooldown, "CURIO: Barbarians hybernating, need to wait");
+            require(block.timestamp >= ECSLib.getUint("LastRecovered", _tileID), "CURIO: Barbarians hybernating, need to wait");
         }
 
         // Execute one round of battle
@@ -710,7 +713,7 @@ contract GameFacet is UseStorage {
                     // Reset barbarian
                     GameLib.distributeBarbarianReward(_armyID, _tileID);
                     uint256 barbarianGuardAmount = GameLib.getConstant("Barbarian", "Guard", "Amount", "", ECSLib.getUint("Terrain", _tileID) - 2); // FIXME: hardcoded
-                    ECSLib.setUint("LastRecovered", _tileID, block.timestamp);
+                    ECSLib.setUint("LastRecovered", _tileID, block.timestamp + GameLib.getConstant("Barbarian", "", "Cooldown", "", 0));
                     guardToken.dripToken(tileAddress, barbarianGuardAmount);
                 } else {
                     // Neutralize tile & resource
@@ -780,7 +783,7 @@ contract GameFacet is UseStorage {
 
         // check if upgrade is in process
         string memory subject = ECSLib.getUint("Template", _resourceID) == gs().templates["Gold"] ? "Goldmine" : "Farm";
-        require(block.timestamp - ECSLib.getUint("LastUpgraded", _resourceID) > GameLib.getConstant(subject, "", "Cooldown", "Upgrade", resourceLevel), "CURIO: Need to finish upgrading first");
+        require(block.timestamp >= ECSLib.getUint("LastUpgraded", _resourceID), "CURIO: Need to finish upgrading first");
 
         // Deduct costs from capital
         {
@@ -789,7 +792,7 @@ contract GameFacet is UseStorage {
 
             for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
                 CurioERC20 resourceToken = CurioERC20(ECSLib.getAddress("Address", resourceTemplateIDs[i]));
-                uint256 balance = ECSLib.getUint("Amount", GameLib.getInventory(nationID, resourceTemplateIDs[i]));
+                uint256 balance = ECSLib.getUint("Amount", GameLib.getInventory(capitalID, resourceTemplateIDs[i]));
                 uint256 cost = GameLib.getConstant(subject, ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Cost", "Upgrade", resourceLevel);
                 require(balance >= cost, "CURIO: Insufficient balance");
 
@@ -800,7 +803,7 @@ contract GameFacet is UseStorage {
         // todo: harvest resource before upgrade
 
         // Set timestamp
-        ECSLib.setUint("LastUpgraded", _resourceID, block.timestamp);
+        ECSLib.setUint("LastUpgraded", _resourceID, block.timestamp + GameLib.getConstant(subject, "", "Cooldown", "Upgrade", resourceLevel));
 
         // Set new level
         ECSLib.setUint("Level", _resourceID, resourceLevel + 1);
