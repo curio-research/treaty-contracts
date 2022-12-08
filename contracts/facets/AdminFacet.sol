@@ -7,9 +7,10 @@ import {ComponentSpec, Position, ValueType, WorldConstants} from "contracts/libr
 import {Templates} from "contracts/libraries/Templates.sol";
 import {Set} from "contracts/Set.sol";
 import {GameLib} from "contracts/libraries/GameLib.sol";
+import {CurioERC20} from "contracts/tokens/CurioERC20.sol";
 
 /// @title Admin facet
-/// @notice Contains admin functions and state functions, both of which should be out of scope for players
+/// @notice Contains admin functions and state functions, both of which should be out of scope for nations
 
 contract AdminFacet is UseStorage {
     uint256 private constant NULL = 0;
@@ -55,8 +56,8 @@ contract AdminFacet is UseStorage {
         GameLib.initializeTile(_startPosition);
     }
 
-    // function createArmy(uint256 _playerID, Position memory _position) external onlyAuthorized {
-    //     Templates.addArmy(_playerID, _position, GameLib.getProperTilePosition(_position), 10, 1, 1, 2, 5, "TODO");
+    // function createArmy(uint256 _nationID, Position memory _position) external onlyAuthorized {
+    //     Templates.addArmy(_nationID, _position, GameLib.getProperTilePosition(_position), 10, 1, 1, 2, 5, "TODO");
     // }
 
     function spawnResource(Position memory _startPosition, string memory _inventoryType) external onlyAuthorized {
@@ -68,9 +69,8 @@ contract AdminFacet is UseStorage {
         string memory _tokenName,
         uint256 _amount
     ) external onlyAuthorized {
-        address tokenContract = GameLib.getTokenContract(_tokenName);
-        (bool success, ) = tokenContract.call(abi.encodeWithSignature("dripToken(address,uint256)", _address, _amount));
-        require(success, string.concat("CURIO: Failed to drip token", _tokenName));
+        CurioERC20 token = GameLib.getTokenContract(_tokenName);
+        token.dripToken(_address, _amount);
     }
 
     function giftTileAndResourceAt(Position memory _startPosition, uint256 _nationID) external onlyAuthorized {
@@ -91,15 +91,15 @@ contract AdminFacet is UseStorage {
     }
 
     /**
-     * @dev Reactivate an inactive player.
-     * @param _address player address
+     * @dev Reactivate an inactive nation.
+     * @param _address nation address
      */
-    function reactivatePlayer(address _address) external onlyAuthorized {
-        uint256 _playerID = gs().addressToEntity[_address];
-        require(_playerID != NULL, "CURIO: Player already initialized");
-        require(!ECSLib.getBoolComponent("IsActive").has(_playerID), "CURIO: Player is active");
+    function reactivateNation(address _address) external onlyAuthorized {
+        uint256 _nationID = gs().nationAddressToId[_address];
+        require(_nationID != NULL, "CURIO: Nation already initialized");
+        require(!ECSLib.getBoolComponent("IsActive").has(_nationID), "CURIO: Nation is active");
 
-        ECSLib.setBool("IsActive", _playerID);
+        ECSLib.setBool("IsActive", _nationID);
     }
 
     /**

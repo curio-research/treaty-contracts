@@ -9,7 +9,7 @@ library Templates {
     function addTile(
         Position memory _startPosition,
         uint256 _terrain,
-        address _tileAddress
+        address _address
     ) public returns (uint256) {
         uint256 tileID = ECSLib.addEntity();
 
@@ -21,12 +21,16 @@ library Templates {
         ECSLib.setUint("LastUpgraded", tileID, 0);
         ECSLib.setUint("LastRecovered", tileID, 0);
         ECSLib.setUint("Nation", tileID, 0);
-        ECSLib.setAddress("Address", tileID, _tileAddress);
+        ECSLib.setAddress("Address", tileID, _address);
 
         return tileID;
     }
 
-    function addCapital(Position memory _tilePosition, uint256 _nationID) public returns (uint256) {
+    function addCapital(
+        Position memory _tilePosition,
+        uint256 _nationID,
+        address _address
+    ) public returns (uint256) {
         uint256 capitalID = ECSLib.addEntity();
 
         ECSLib.setString("Tag", capitalID, "Building");
@@ -36,8 +40,11 @@ library Templates {
         ECSLib.setUint("InitTimestamp", capitalID, block.timestamp);
         ECSLib.setUint("LastMoved", capitalID, block.timestamp);
         ECSLib.setUint("LastSacked", capitalID, 0);
-        ECSLib.setUint("Load", capitalID, 0);
+        ECSLib.setUint("LastUpgraded", capitalID, 0);
         ECSLib.setUint("Nation", capitalID, _nationID);
+        ECSLib.setUint("Level", capitalID, 1);
+        ECSLib.setAddress("Address", capitalID, _address);
+
         return capitalID;
     }
 
@@ -52,19 +59,17 @@ library Templates {
         ECSLib.setUint("LastUpgraded", resourceID, 0);
         ECSLib.setUint("Load", resourceID, 0);
         ECSLib.setUint("Nation", resourceID, 0);
+
         return resourceID;
     }
 
     function addNation(string memory _name) public returns (uint256) {
         uint256 nationID = ECSLib.addEntity();
 
-        ECSLib.setString("Tag", nationID, "Player");
+        ECSLib.setString("Tag", nationID, "Nation");
         ECSLib.setBool("IsActive", nationID);
         ECSLib.setString("Name", nationID, _name);
         ECSLib.setUint("InitTimestamp", nationID, block.timestamp);
-        ECSLib.setUint("LastUpgraded", nationID, 0);
-        ECSLib.setAddress("Address", nationID, msg.sender);
-        ECSLib.setUint("Level", nationID, 1);
 
         return nationID;
     }
@@ -74,12 +79,13 @@ library Templates {
         uint256 _moveCooldown,
         uint256 _battleCooldown,
         uint256 _attackRange,
-        uint256 _load,
         uint256 _nationID,
-        address _armyAddress
+        address _armyAddress,
+        Position memory _position,
+        Position memory _startPosition
     ) public returns (uint256) {
         uint256 armyID = ECSLib.addEntity();
-        // note: CanBattle & Position & StartPosition is set when organized
+
         ECSLib.setString("Tag", armyID, "Army");
         ECSLib.setUint("Speed", armyID, _speed);
         ECSLib.setUint("LastMoved", armyID, block.timestamp);
@@ -87,9 +93,12 @@ library Templates {
         ECSLib.setUint("MoveCooldown", armyID, _moveCooldown);
         ECSLib.setUint("BattleCooldown", armyID, _battleCooldown);
         ECSLib.setUint("AttackRange", armyID, _attackRange);
-        ECSLib.setUint("Load", armyID, _load);
         ECSLib.setUint("Nation", armyID, _nationID);
         ECSLib.setAddress("Address", armyID, _armyAddress);
+        ECSLib.setBool("CanBattle", armyID);
+        ECSLib.setPosition("Position", armyID, _position);
+        ECSLib.setPosition("StartPosition", armyID, _startPosition);
+
         return armyID;
     }
 

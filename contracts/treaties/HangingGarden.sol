@@ -1,12 +1,15 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.13;
 
 import {Position} from "contracts/libraries/Types.sol";
 import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {GameFacet} from "contracts/facets/GameFacet.sol";
+import {ITreaty} from "contracts/interfaces/ITreaty.sol";
 
-// note: this is a minimalistic implementation of smart contract wallet
-contract WalletHangingGarden {
+/// note: this is a minimalistic implementation of smart contract wallet
+/// FIXME: not polished!!! need to update!!!
+
+contract HangingGarden is ITreaty {
     address public diamond;
     GetterFacet public getter;
     GameFacet public game;
@@ -69,7 +72,7 @@ contract WalletHangingGarden {
     function becomeAHomie(address _armyAddress) public {
         // note: msg.sender can be from anyone
         // note: msg.sender need to first approve homie fee spending
-        address goldTokenAddress = getter.getTokenContract("Gold");
+        address goldTokenAddress = address(getter.getTokenContract("Gold"));
         (bool success, ) = goldTokenAddress.call(abi.encodeWithSignature("transferFrom(address,address,uint256)", msg.sender, address(this), homieFee));
         require(success, "Fail to pay homie fee!");
         isHomie[_armyAddress] = true;

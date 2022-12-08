@@ -8,6 +8,7 @@ import {ECSLib} from "contracts/libraries/ECSLib.sol";
 import {Position, QueryCondition, WorldConstants} from "contracts/libraries/Types.sol";
 import {Component} from "contracts/Component.sol";
 import {console} from "forge-std/console.sol";
+import {CurioERC20} from "contracts/tokens/CurioERC20.sol";
 
 /// @title Bulk getters
 /// @notice Getters provide bulk functions useful for fetching data from the frontend
@@ -15,12 +16,12 @@ import {console} from "forge-std/console.sol";
 contract GetterFacet is UseStorage {
     uint256 private NULL = 0;
 
-    function getTokenContract(string memory _tokenName) external view returns (address) {
+    function getTokenContract(string memory _tokenName) external view returns (CurioERC20) {
         return GameLib.getTokenContract(_tokenName);
     }
 
     function getEntityIDByAddress(address _entityAddress) external view returns (uint256) {
-        return GameLib.getEntityIDByAddress(_entityAddress);
+        return ECSLib.getAddressComponent("Address").getEntitiesWithValue(_entityAddress)[0];
     }
 
     function getEntityWallet(uint256 _entityID) external view returns (address) {

@@ -347,7 +347,7 @@ const _abi = [
         type: "address",
       },
     ],
-    name: "reactivatePlayer",
+    name: "reactivateNation",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -688,11 +688,6 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "UpgradeUnfinished",
-    type: "error",
-  },
-  {
     inputs: [
       {
         internalType: "uint256",
@@ -771,7 +766,7 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "_buildingID",
+        name: "_capitalID",
         type: "uint256",
       },
       {
@@ -815,24 +810,11 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "_buildingID",
+        name: "_capitalID",
         type: "uint256",
       },
     ],
     name: "harvestResourcesFromCapital",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_armyWalletAddress",
-        type: "address",
-      },
-    ],
-    name: "initializeArmy",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -913,7 +895,7 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "_buildingID",
+        name: "_capitalID",
         type: "uint256",
       },
       {
@@ -944,11 +926,6 @@ const _abi = [
       {
         internalType: "uint256",
         name: "_capitalID",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_armyID",
         type: "uint256",
       },
       {
@@ -1002,7 +979,7 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "_buildingID",
+        name: "_capitalID",
         type: "uint256",
       },
       {
@@ -1041,13 +1018,7 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_nationID",
-        type: "uint256",
-      },
-    ],
+    inputs: [],
     name: "upgradeNation",
     outputs: [],
     stateMutability: "nonpayable",
@@ -1563,7 +1534,7 @@ const _abi = [
     name: "getTokenContract",
     outputs: [
       {
-        internalType: "address",
+        internalType: "contract CurioERC20",
         name: "",
         type: "address",
       },
@@ -1599,7 +1570,7 @@ const _abi = [
           },
           {
             internalType: "uint256",
-            name: "maxArmyCountPerPlayer",
+            name: "maxArmyCountPerNation",
             type: "uint256",
           },
           {
@@ -1609,12 +1580,12 @@ const _abi = [
           },
           {
             internalType: "uint256",
-            name: "maxCapitalCountPerPlayer",
+            name: "maxCapitalCountPerNation",
             type: "uint256",
           },
           {
             internalType: "uint256",
-            name: "maxPlayerCount",
+            name: "maxNationCount",
             type: "uint256",
           },
           {

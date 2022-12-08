@@ -64,10 +64,10 @@ struct WorldConstants {
     uint256 capitalLevelToEntityLevelRatio; // 3 => lv1 capital unlocks lv3 resources
     uint256 gameLengthInSeconds; // 0 means not used
     GameMode gameMode;
-    uint256 maxArmyCountPerPlayer;
+    uint256 maxArmyCountPerNation;
     uint256 maxCapitalLevel;
-    uint256 maxCapitalCountPerPlayer;
-    uint256 maxPlayerCount;
+    uint256 maxCapitalCountPerNation;
+    uint256 maxNationCount;
     uint256 numInitTerrainTypes; // default is 6
     uint256 secondsToTrainAThousandTroops;
     uint256 tileWidth;
@@ -80,13 +80,13 @@ struct GameState {
     uint256 lastPaused;
     uint256 gameInitTimestamp;
     WorldConstants worldConstants;
-    address[] armies;
-    address[] nations;
     uint256[][] encodedColumnBatches;
+    address[] nations;
     address[] treaties;
     address entities;
     uint256 entityNonce;
     uint256 tileNonce;
+    uint256 walletNonce;
     string[] componentNames;
     mapping(string => address) components; // component name to contract address
     string[] templateNames;
@@ -94,7 +94,7 @@ struct GameState {
     mapping(address => bool) isAuthorized; // authorized token contracts
     mapping(string => uint256) templates; // template name to id
     mapping(uint256 => address) componentEntityToAddress; // component id to contract address
-    mapping(address => uint256) addressToEntity;
+    mapping(address => uint256) nationAddressToId;
     mapping(address => address) accounts; // main address -> burner address
     mapping(address => address) burnerAccounts; // burner address -> main address
 }

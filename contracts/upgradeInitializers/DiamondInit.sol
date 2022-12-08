@@ -47,6 +47,7 @@ contract DiamondInit is UseStorage {
         gs().entities = address(new Set());
         gs().entityNonce = 1;
         gs().tileNonce = 1;
+        gs().walletNonce = 1;
 
         // set initial time
         gs().gameInitTimestamp = block.timestamp;

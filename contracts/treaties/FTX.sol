@@ -4,28 +4,30 @@ pragma solidity ^0.8.13;
 import {ERC20} from "lib/solmate/src/tokens/ERC20.sol";
 import {ITreaty} from "contracts/interfaces/ITreaty.sol";
 import {GetterFacet} from "contracts/facets/GetterFacet.sol";
+import {CurioERC20} from "contracts/tokens/CurioERC20.sol";
 
 contract FTX is ITreaty {
     address public diamond;
-    address public goldToken;
+    CurioERC20 public goldToken;
     FTTERC20 public fttToken;
     address public sbf;
     bool public isBankrupt;
 
-    constructor(address _diamond, address _sbf) {
+    constructor(address _diamond) {
         require(_diamond != address(0), "FTX: Diamond address required");
 
         diamond = _diamond;
         goldToken = GetterFacet(_diamond).getTokenContract("Gold");
         fttToken = new FTTERC20(address(this));
-        sbf = _sbf;
+        sbf = msg.sender;
+
+        fttToken.approve(msg.sender, 100000000000);
     }
 
     function deposit(uint256 _amount) external returns (bool) {
         require(msg.sender != sbf, "FTX: You don't need to deposit");
 
-        (bool success, ) = goldToken.call(abi.encodeWithSignature("transferFrom(address,address,uint256)", msg.sender, sbf, _amount));
-        require(success, "FTX: Deposit failed");
+        goldToken.transferFrom(msg.sender, sbf, _amount);
 
         fttToken.mint(msg.sender, _amount);
 
@@ -38,13 +40,9 @@ contract FTX is ITreaty {
         require(!isBankrupt, "FTX: Your money is gone");
         require(fttToken.balanceOf(msg.sender) >= _amount, "FTX: Insufficient balance");
 
-        (bool success, bytes memory result) = goldToken.call(abi.encodeWithSignature("checkBalanceOf(address)", sbf));
-        require(success, "FTX: Check SBF balance failed");
-        uint256 sbfGoldBalance = abi.decode(result, (uint256));
-
+        uint256 sbfGoldBalance = goldToken.checkBalanceOf(sbf);
         uint256 availableAmount = sbfGoldBalance > _amount ? _amount : sbfGoldBalance;
-        (success, ) = goldToken.call(abi.encodeWithSignature("transferFrom(address,address,uint256)", sbf, msg.sender, availableAmount));
-        require(success, "FTX: Withdrawal failed");
+        goldToken.transferFrom(sbf, msg.sender, availableAmount);
 
         fttToken.burn(msg.sender, availableAmount);
 

@@ -17,7 +17,6 @@ import {ComponentSpec, GameMode, GameParamSpec, Position, WorldConstants} from "
 import {NATO} from "contracts/NATO.sol";
 import {CurioERC20} from "contracts/tokens/CurioERC20.sol";
 
-import {WalletHangingGarden} from "contracts/WalletHangingGarden.sol";
 import {console} from "forge-std/console.sol";
 import {stdJson} from "forge-std/StdJson.sol";
 
@@ -44,19 +43,19 @@ contract DiamondDeployTest is Test {
     NATO public nato;
 
     // Smart Contract Wallets
-    WalletHangingGarden public nation1Wallet;
-    WalletHangingGarden public nation2Wallet;
-    WalletHangingGarden public nation3Wallet;
+    CurioWallet public nation1Wallet;
+    CurioWallet public nation2Wallet;
+    CurioWallet public nation3Wallet;
     uint256 public nation1ID;
     uint256 public nation2ID;
     uint256 public nation3ID;
 
-    WalletHangingGarden public army11Wallet;
-    WalletHangingGarden public army12Wallet;
-    WalletHangingGarden public army21Wallet;
-    WalletHangingGarden public army22Wallet;
-    WalletHangingGarden public army31Wallet;
-    WalletHangingGarden public army32Wallet;
+    CurioWallet public army11Wallet;
+    CurioWallet public army12Wallet;
+    CurioWallet public army21Wallet;
+    CurioWallet public army22Wallet;
+    CurioWallet public army31Wallet;
+    CurioWallet public army32Wallet;
 
     // Tokens
     CurioERC20 public foodToken;
@@ -187,26 +186,26 @@ contract DiamondDeployTest is Test {
         address[] memory initializedOwners = new address[](1);
 
         initializedOwners[0] = player1Addr;
-        nation1Wallet = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
-        army11Wallet = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
-        army12Wallet = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
+        nation1Wallet = new CurioWallet(initializedOwners, address(diamond), homieFee);
+        army11Wallet = new CurioWallet(initializedOwners, address(diamond), homieFee);
+        army12Wallet = new CurioWallet(initializedOwners, address(diamond), homieFee);
 
         initializedOwners[0] = player2Addr;
-        nation2Wallet = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
-        army21Wallet = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
-        army22Wallet = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
+        nation2Wallet = new CurioWallet(initializedOwners, address(diamond), homieFee);
+        army21Wallet = new CurioWallet(initializedOwners, address(diamond), homieFee);
+        army22Wallet = new CurioWallet(initializedOwners, address(diamond), homieFee);
 
         initializedOwners[0] = player3Addr;
-        nation3Wallet = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
-        army31Wallet = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
-        army32Wallet = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
+        nation3Wallet = new CurioWallet(initializedOwners, address(diamond), homieFee);
+        army31Wallet = new CurioWallet(initializedOwners, address(diamond), homieFee);
+        army32Wallet = new CurioWallet(initializedOwners, address(diamond), homieFee);
         console.log(">>> Smart contract wallets initialized");
 
         // Initialize players
         address nationAddr;
-        WalletHangingGarden nationWallet;
-        WalletHangingGarden armyWallet1;
-        WalletHangingGarden armyWallet2;
+        CurioWallet nationWallet;
+        CurioWallet armyWallet1;
+        CurioWallet armyWallet2;
         Position memory capitalPos;
         string memory nationName;
         for (uint256 i = 0; i < 3; i++) {
@@ -305,6 +304,13 @@ contract DiamondDeployTest is Test {
         }
 
         return _result;
+    }
+
+     function _generateRandomWalletAddr() private returns (address) {
+        address addr = address(keccak256(abi.encodePacked(block.timestamp, block.difficulty, gs().walletNonce)));
+        gs().walletNonce++;
+
+        return addr;
     }
 
     function _registerComponents() private {

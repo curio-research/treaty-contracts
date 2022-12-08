@@ -3,3 +3,9 @@
 /* eslint-disable */
 export type { CurioERC20 } from "./CurioERC20";
 export type { CurioERC721 } from "./CurioERC721";
+export type { FoodERC20 } from "./FoodERC20";
+export type { GoldERC20 } from "./GoldERC20";
+export type { GuardERC20 } from "./GuardERC20";
+export type { HorsemanERC20 } from "./HorsemanERC20";
+export type { SlingerERC20 } from "./SlingerERC20";
+export type { WarriorERC20 } from "./WarriorERC20";

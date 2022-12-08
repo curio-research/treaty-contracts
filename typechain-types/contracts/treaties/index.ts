@@ -3,3 +3,4 @@
 /* eslint-disable */
 import type * as ftxSol from "./FTX.sol";
 export type { ftxSol };
+export type { HangingGarden } from "./HangingGarden";

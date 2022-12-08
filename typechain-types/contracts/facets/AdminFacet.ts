@@ -60,7 +60,7 @@ export interface AdminFacetInterface extends utils.Interface {
     "giftTileAndResourceAt((uint256,uint256),uint256)": FunctionFragment;
     "onlyQuery((uint256,uint256))": FunctionFragment;
     "onlySet(uint256,uint256)": FunctionFragment;
-    "reactivatePlayer(address)": FunctionFragment;
+    "reactivateNation(address)": FunctionFragment;
     "registerComponents(address,(string,uint8)[])": FunctionFragment;
     "registerTemplateShortcuts(string[],uint256[])": FunctionFragment;
     "removeEntity(uint256)": FunctionFragment;
@@ -88,7 +88,7 @@ export interface AdminFacetInterface extends utils.Interface {
       | "giftTileAndResourceAt"
       | "onlyQuery"
       | "onlySet"
-      | "reactivatePlayer"
+      | "reactivateNation"
       | "registerComponents"
       | "registerTemplateShortcuts"
       | "removeEntity"
@@ -165,7 +165,7 @@ export interface AdminFacetInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "reactivatePlayer",
+    functionFragment: "reactivateNation",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
@@ -248,7 +248,7 @@ export interface AdminFacetInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "onlyQuery", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "onlySet", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "reactivatePlayer",
+    functionFragment: "reactivateNation",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -397,7 +397,7 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    reactivatePlayer(
+    reactivateNation(
       _address: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -534,7 +534,7 @@ export interface AdminFacet extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  reactivatePlayer(
+  reactivateNation(
     _address: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -667,7 +667,7 @@ export interface AdminFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    reactivatePlayer(
+    reactivateNation(
       _address: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -805,7 +805,7 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    reactivatePlayer(
+    reactivateNation(
       _address: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -943,7 +943,7 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    reactivatePlayer(
+    reactivateNation(
       _address: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
