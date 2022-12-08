@@ -80,9 +80,9 @@ library Templates {
         uint256 _battleCooldown,
         uint256 _attackRange,
         uint256 _nationID,
-        address _armyAddress,
         Position memory _position,
-        Position memory _startPosition
+        Position memory _startPosition,
+        address _address
     ) public returns (uint256) {
         uint256 armyID = ECSLib.addEntity();
 
@@ -94,7 +94,7 @@ library Templates {
         ECSLib.setUint("BattleCooldown", armyID, _battleCooldown);
         ECSLib.setUint("AttackRange", armyID, _attackRange);
         ECSLib.setUint("Nation", armyID, _nationID);
-        ECSLib.setAddress("Address", armyID, _armyAddress);
+        ECSLib.setAddress("Address", armyID, _address);
         ECSLib.setBool("CanBattle", armyID);
         ECSLib.setPosition("Position", armyID, _position);
         ECSLib.setPosition("StartPosition", armyID, _startPosition);

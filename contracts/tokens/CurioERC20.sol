@@ -5,6 +5,7 @@ import {ERC20} from "lib/solmate/src/tokens/ERC20.sol";
 import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {AdminFacet} from "contracts/facets/AdminFacet.sol";
 import {GameFacet} from "contracts/facets/GameFacet.sol";
+import {console} from "forge-std/console.sol";
 
 contract CurioERC20 is ERC20 {
     address public diamond;
@@ -80,9 +81,9 @@ contract CurioERC20 is ERC20 {
         address _to,
         uint256 _amount
     ) public override returns (bool) {
-        uint256 allowed = allowance[_from][msg.sender];
-        require(allowed >= _amount, "CurioERC20: Insufficient allowance");
-        if (allowed != type(uint256).max) allowance[_from][msg.sender] = allowed - _amount;
+        // uint256 allowed = allowance[_from][msg.sender];
+        // require(allowed >= _amount, "CurioERC20: Insufficient allowance");
+        // if (allowed != type(uint256).max) allowance[_from][msg.sender] = allowed - _amount;
 
         _transferHelper(_from, _to, _amount);
         return true;
@@ -91,9 +92,9 @@ contract CurioERC20 is ERC20 {
     function transferAll(address _from, address _to) public onlyGame returns (bool) {
         uint256 amount = checkBalanceOf(_from);
 
-        uint256 allowed = allowance[_from][msg.sender];
-        require(allowed >= amount, "CurioERC20: Insufficient allowance");
-        if (allowed != type(uint256).max) allowance[_from][msg.sender] = allowed - amount;
+        // uint256 allowed = allowance[_from][msg.sender];
+        // require(allowed >= amount, "CurioERC20: Insufficient allowance");
+        // if (allowed != type(uint256).max) allowance[_from][msg.sender] = allowed - amount;
 
         _transferHelper(_from, _to, amount);
         return true;
@@ -101,6 +102,7 @@ contract CurioERC20 is ERC20 {
 
     function dripToken(address _address, uint256 _amount) public onlyGame {
         (uint256 recipientInventoryID, uint256 recipientMaxLoad, uint256 recipientCurrentBalance) = _getInventoryIDMaxLoadAndBalance(_address);
+        console.log("haha");
 
         uint256 dripAmount;
         if (recipientMaxLoad == 0 || recipientCurrentBalance + _amount <= recipientMaxLoad) {
@@ -110,6 +112,7 @@ contract CurioERC20 is ERC20 {
         }
 
         admin.updateInventoryAmount(recipientInventoryID, recipientCurrentBalance + dripAmount);
+        console.log("got it");
         emit Transfer(address(0), _address, dripAmount);
 
         totalSupply += dripAmount;

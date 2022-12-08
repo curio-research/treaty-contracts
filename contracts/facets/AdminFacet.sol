@@ -8,6 +8,7 @@ import {Templates} from "contracts/libraries/Templates.sol";
 import {Set} from "contracts/Set.sol";
 import {GameLib} from "contracts/libraries/GameLib.sol";
 import {CurioERC20} from "contracts/tokens/CurioERC20.sol";
+import {console} from "forge-std/console.sol";
 
 /// @title Admin facet
 /// @notice Contains admin functions and state functions, both of which should be out of scope for nations
@@ -70,6 +71,7 @@ contract AdminFacet is UseStorage {
         uint256 _amount
     ) external onlyAuthorized {
         CurioERC20 token = GameLib.getTokenContract(_tokenName);
+        console.log("yo");
         token.dripToken(_address, _amount);
     }
 
@@ -187,6 +189,10 @@ contract AdminFacet is UseStorage {
 
     function addEntity() external onlyAuthorized returns (uint256) {
         return ECSLib.addEntity();
+    }
+
+    function generateNewAddress() external onlyAuthorized returns (address) {
+        return GameLib.generateNewAddress();
     }
 
     function setComponentValue(

@@ -590,7 +590,7 @@ export interface GameFacet extends BaseContract {
       _positionY: PromiseOrValue<BigNumberish>,
       _name: PromiseOrValue<string>,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<BigNumber>;
 
     joinTreaty(
       _treatyAddr: PromiseOrValue<string>,
@@ -620,7 +620,7 @@ export interface GameFacet extends BaseContract {
       _templateIDs: PromiseOrValue<BigNumberish>[],
       _amounts: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<BigNumber>;
 
     recoverTile(
       _tileID: PromiseOrValue<BigNumberish>,

@@ -91,7 +91,9 @@ export type QueryConditionStructOutput = [number, string, string] & {
 
 export interface GetterFacetInterface extends utils.Interface {
   functions: {
+    "getAddress(uint256)": FunctionFragment;
     "getArmyAt((uint256,uint256))": FunctionFragment;
+    "getArmyAtTile((uint256,uint256))": FunctionFragment;
     "getCapital(uint256)": FunctionFragment;
     "getComponent(string)": FunctionFragment;
     "getComponentById(uint256)": FunctionFragment;
@@ -101,12 +103,11 @@ export interface GetterFacetInterface extends utils.Interface {
     "getEntity()": FunctionFragment;
     "getEntityIDByAddress(address)": FunctionFragment;
     "getEntityLevel(uint256)": FunctionFragment;
-    "getEntityNation(uint256)": FunctionFragment;
-    "getEntityWallet(uint256)": FunctionFragment;
     "getInventory(address,string)": FunctionFragment;
     "getInventoryBalance(address,string)": FunctionFragment;
     "getInventoryIDMaxLoadAndBalance(address,string)": FunctionFragment;
     "getMainBurnerAccount(address)": FunctionFragment;
+    "getNation(uint256)": FunctionFragment;
     "getNationArmies(uint256)": FunctionFragment;
     "getPlayerCount()": FunctionFragment;
     "getPositionExternal(string,uint256)": FunctionFragment;
@@ -119,7 +120,9 @@ export interface GetterFacetInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "getAddress"
       | "getArmyAt"
+      | "getArmyAtTile"
       | "getCapital"
       | "getComponent"
       | "getComponentById"
@@ -129,12 +132,11 @@ export interface GetterFacetInterface extends utils.Interface {
       | "getEntity"
       | "getEntityIDByAddress"
       | "getEntityLevel"
-      | "getEntityNation"
-      | "getEntityWallet"
       | "getInventory"
       | "getInventoryBalance"
       | "getInventoryIDMaxLoadAndBalance"
       | "getMainBurnerAccount"
+      | "getNation"
       | "getNationArmies"
       | "getPlayerCount"
       | "getPositionExternal"
@@ -146,7 +148,15 @@ export interface GetterFacetInterface extends utils.Interface {
   ): FunctionFragment;
 
   encodeFunctionData(
+    functionFragment: "getAddress",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getArmyAt",
+    values: [PositionStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getArmyAtTile",
     values: [PositionStruct]
   ): string;
   encodeFunctionData(
@@ -189,14 +199,6 @@ export interface GetterFacetInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "getEntityNation",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getEntityWallet",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "getInventory",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
@@ -211,6 +213,10 @@ export interface GetterFacetInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getMainBurnerAccount",
     values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getNation",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getNationArmies",
@@ -245,7 +251,12 @@ export interface GetterFacetInterface extends utils.Interface {
     values: [QueryConditionStruct[]]
   ): string;
 
+  decodeFunctionResult(functionFragment: "getAddress", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getArmyAt", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getArmyAtTile",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getCapital", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getComponent",
@@ -277,14 +288,6 @@ export interface GetterFacetInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getEntityNation",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getEntityWallet",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "getInventory",
     data: BytesLike
   ): Result;
@@ -300,6 +303,7 @@ export interface GetterFacetInterface extends utils.Interface {
     functionFragment: "getMainBurnerAccount",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getNation", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getNationArmies",
     data: BytesLike
@@ -357,8 +361,18 @@ export interface GetterFacet extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    getAddress(
+      _entityID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     getArmyAt(
       _position: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    getArmyAtTile(
+      _startPosition: PositionStruct,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -402,16 +416,6 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    getEntityNation(
-      _entityID: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    getEntityWallet(
-      _entityID: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
     getInventory(
       _inventoryAddress: PromiseOrValue<string>,
       _inventoryType: PromiseOrValue<string>,
@@ -434,6 +438,11 @@ export interface GetterFacet extends BaseContract {
       _primaryAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[string]>;
+
+    getNation(
+      _entityID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     getNationArmies(
       _nationID: PromiseOrValue<BigNumberish>,
@@ -473,8 +482,18 @@ export interface GetterFacet extends BaseContract {
     ): Promise<[BigNumber[]]>;
   };
 
+  getAddress(
+    _entityID: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
   getArmyAt(
     _position: PositionStruct,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getArmyAtTile(
+    _startPosition: PositionStruct,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -518,16 +537,6 @@ export interface GetterFacet extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
-  getEntityNation(
-    _entityID: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  getEntityWallet(
-    _entityID: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
   getInventory(
     _inventoryAddress: PromiseOrValue<string>,
     _inventoryType: PromiseOrValue<string>,
@@ -550,6 +559,11 @@ export interface GetterFacet extends BaseContract {
     _primaryAddress: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<string>;
+
+  getNation(
+    _entityID: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   getNationArmies(
     _nationID: PromiseOrValue<BigNumberish>,
@@ -589,8 +603,18 @@ export interface GetterFacet extends BaseContract {
   ): Promise<BigNumber[]>;
 
   callStatic: {
+    getAddress(
+      _entityID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
     getArmyAt(
       _position: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getArmyAtTile(
+      _startPosition: PositionStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -634,16 +658,6 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getEntityNation(
-      _entityID: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getEntityWallet(
-      _entityID: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
     getInventory(
       _inventoryAddress: PromiseOrValue<string>,
       _inventoryType: PromiseOrValue<string>,
@@ -666,6 +680,11 @@ export interface GetterFacet extends BaseContract {
       _primaryAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<string>;
+
+    getNation(
+      _entityID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     getNationArmies(
       _nationID: PromiseOrValue<BigNumberish>,
@@ -708,8 +727,18 @@ export interface GetterFacet extends BaseContract {
   filters: {};
 
   estimateGas: {
+    getAddress(
+      _entityID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getArmyAt(
       _position: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getArmyAtTile(
+      _startPosition: PositionStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -753,16 +782,6 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getEntityNation(
-      _entityID: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getEntityWallet(
-      _entityID: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     getInventory(
       _inventoryAddress: PromiseOrValue<string>,
       _inventoryType: PromiseOrValue<string>,
@@ -783,6 +802,11 @@ export interface GetterFacet extends BaseContract {
 
     getMainBurnerAccount(
       _primaryAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getNation(
+      _entityID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -823,8 +847,18 @@ export interface GetterFacet extends BaseContract {
   };
 
   populateTransaction: {
+    getAddress(
+      _entityID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getArmyAt(
       _position: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getArmyAtTile(
+      _startPosition: PositionStruct,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -868,16 +902,6 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getEntityNation(
-      _entityID: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getEntityWallet(
-      _entityID: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     getInventory(
       _inventoryAddress: PromiseOrValue<string>,
       _inventoryType: PromiseOrValue<string>,
@@ -898,6 +922,11 @@ export interface GetterFacet extends BaseContract {
 
     getMainBurnerAccount(
       _primaryAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getNation(
+      _entityID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

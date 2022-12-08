@@ -24,11 +24,11 @@ contract GetterFacet is UseStorage {
         return ECSLib.getAddressComponent("Address").getEntitiesWithValue(_entityAddress)[0];
     }
 
-    function getEntityWallet(uint256 _entityID) external view returns (address) {
+    function getAddress(uint256 _entityID) external view returns (address) {
         return ECSLib.getAddress("Address", _entityID);
     }
 
-    function getEntityNation(uint256 _entityID) external view returns (uint256) {
+    function getNation(uint256 _entityID) external view returns (uint256) {
         return ECSLib.getUint("Nation", _entityID);
     }
 
@@ -61,6 +61,11 @@ contract GetterFacet is UseStorage {
 
     function getArmyAt(Position memory _position) external view returns (uint256) {
         return GameLib.getArmyAt(_position);
+    }
+
+    function getArmyAtTile(Position memory _startPosition) external view returns (uint256) {
+        // FIXME
+        return GameLib.getMovableEntitiesAtTile(_startPosition)[0];
     }
 
     function getMainBurnerAccount(address _primaryAddress) external view returns (address) {

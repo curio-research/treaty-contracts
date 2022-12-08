@@ -14,8 +14,9 @@ import {GameFacet} from "contracts/facets/GameFacet.sol";
 import {AdminFacet} from "contracts/facets/AdminFacet.sol";
 import {Strings} from "openzeppelin-contracts/contracts/utils/Strings.sol";
 import {ComponentSpec, GameMode, GameParamSpec, Position, WorldConstants} from "contracts/libraries/Types.sol";
-import {NATO} from "contracts/NATO.sol";
+import {NATO} from "contracts/treaties/NATO.sol";
 import {CurioERC20} from "contracts/tokens/CurioERC20.sol";
+import {CurioWallet} from "contracts/CurioWallet.sol";
 
 import {console} from "forge-std/console.sol";
 import {stdJson} from "forge-std/StdJson.sol";
@@ -33,7 +34,7 @@ contract DiamondDeployTest is Test {
     GetterFacet public getterFacet;
     AdminFacet public adminFacet;
 
-    // diamond-contract-casted methods
+    // Diamond facets
     GameFacet public game;
     GetterFacet public getter;
     AdminFacet public admin;
@@ -42,50 +43,44 @@ contract DiamondDeployTest is Test {
     // Treaties
     NATO public nato;
 
-    // Smart Contract Wallets
-    CurioWallet public nation1Wallet;
-    CurioWallet public nation2Wallet;
-    CurioWallet public nation3Wallet;
+    // Players (nations)
+    address public deployer = address(0);
+    address public player1 = address(1);
+    address public player2 = address(2);
+    address public player3 = address(3);
     uint256 public nation1ID;
     uint256 public nation2ID;
     uint256 public nation3ID;
 
-    CurioWallet public army11Wallet;
-    CurioWallet public army12Wallet;
-    CurioWallet public army21Wallet;
-    CurioWallet public army22Wallet;
-    CurioWallet public army31Wallet;
-    CurioWallet public army32Wallet;
+    // Capitals
+    uint256 public nation1CapitalID;
+    uint256 public nation2CapitalID;
+    uint256 public nation3CapitalID;
+    address public nation1CapitalAddr;
+    address public nation2CapitalAddr;
+    address public nation3CapitalAddr;
 
     // Tokens
+    uint256 public foodTemplateID;
+    uint256 public goldTemplateID;
+    uint256 public horsemanTemplateID;
+    uint256 public warriorTemplateID;
+    uint256 public slingerTemplateID;
+    uint256 public guardTemplateID;
     CurioERC20 public foodToken;
     CurioERC20 public goldToken;
     CurioERC20 public horsemanToken;
-    CurioERC20 public slingerToken;
     CurioERC20 public warriorToken;
+    CurioERC20 public slingerToken;
     CurioERC20 public guardToken;
 
     uint256 public NULL = 0;
     address public NULL_ADDR = address(0);
 
-    address public deployerAddress = address(0);
-    address public player1Addr = address(1);
-    address public player2Addr = address(2);
-    address public player3Addr = address(3);
-
     Position public nation1Pos = Position({x: 60, y: 10});
     Position public nation2Pos = Position({x: 60, y: 30});
     Position public nation3Pos = Position({x: 50, y: 20});
     Position public barbarinaTilePos = Position({x: 60, y: 50});
-
-    uint256 public horsemanTemplateID;
-    uint256 public warriorTemplateID;
-    uint256 public slingerTemplateID;
-    uint256 public guardTemplateID;
-    uint256 public goldTemplateID;
-    uint256 public foodTemplateID;
-
-    uint256 public player2SettlerId;
 
     WorldConstants public worldConstants;
 
@@ -95,18 +90,17 @@ contract DiamondDeployTest is Test {
 
 
     function setUp() public {
-        vm.startPrank(deployerAddress);
+        vm.startPrank(deployer);
         console.log("==================== SETUP BEGINS =====================");
 
         // Initialize diamond facets
         diamondCutFacet = new DiamondCutFacet();
-        diamond = address(new Diamond(deployerAddress, address(diamondCutFacet)));
+        diamond = address(new Diamond(deployer, address(diamondCutFacet)));
         diamondInit = new DiamondInit();
         diamondLoupeFacet = new DiamondLoupeFacet();
         diamondOwnershipFacet = new OwnershipFacet();
         gameFacet = new GameFacet();
         getterFacet = new GetterFacet();
-
         adminFacet = new AdminFacet();
 
         // Prepare world constants with either `_generateNewWorldConstants()` or `fetchWorldConstants()`
@@ -163,6 +157,7 @@ contract DiamondDeployTest is Test {
         tokenContracts[5] = address(guardToken);
 
         // admin facet authorizes all token contracts to make changes to ECS States
+        // FIXME: are these really needed?
         admin.addAuthorized(address(foodToken));
         admin.addAuthorized(address(goldToken));
         admin.addAuthorized(address(horsemanToken));
@@ -181,75 +176,21 @@ contract DiamondDeployTest is Test {
 
         vm.stopPrank();
 
-        // Deploy smart contract wallets
-        uint256 homieFee = 666;
-        address[] memory initializedOwners = new address[](1);
-
-        initializedOwners[0] = player1Addr;
-        nation1Wallet = new CurioWallet(initializedOwners, address(diamond), homieFee);
-        army11Wallet = new CurioWallet(initializedOwners, address(diamond), homieFee);
-        army12Wallet = new CurioWallet(initializedOwners, address(diamond), homieFee);
-
-        initializedOwners[0] = player2Addr;
-        nation2Wallet = new CurioWallet(initializedOwners, address(diamond), homieFee);
-        army21Wallet = new CurioWallet(initializedOwners, address(diamond), homieFee);
-        army22Wallet = new CurioWallet(initializedOwners, address(diamond), homieFee);
-
-        initializedOwners[0] = player3Addr;
-        nation3Wallet = new CurioWallet(initializedOwners, address(diamond), homieFee);
-        army31Wallet = new CurioWallet(initializedOwners, address(diamond), homieFee);
-        army32Wallet = new CurioWallet(initializedOwners, address(diamond), homieFee);
-        console.log(">>> Smart contract wallets initialized");
-
         // Initialize players
-        address nationAddr;
-        CurioWallet nationWallet;
-        CurioWallet armyWallet1;
-        CurioWallet armyWallet2;
-        Position memory capitalPos;
-        string memory nationName;
-        for (uint256 i = 0; i < 3; i++) {
-            if (i == 0) {
-                nationAddr = player1Addr;
-                nationWallet = nation1Wallet;
-                armyWallet1 = army11Wallet;
-                armyWallet2 = army12Wallet;
-                capitalPos = nation1Pos;
-                nationName = "China";
-            } else if (i == 1) {
-                nationAddr = player2Addr;
-                nationWallet = nation2Wallet;
-                armyWallet1 = army21Wallet;
-                armyWallet2 = army22Wallet;
-                capitalPos = nation2Pos;
-                nationName = "US";
-            } else if (i == 2) {
-                nationAddr = player3Addr;
-                nationWallet = nation3Wallet;
-                armyWallet1 = army31Wallet;
-                armyWallet2 = army32Wallet;
-                capitalPos = nation3Pos;
-                nationName = "Russia";
-            }
-
-            vm.startPrank(nationAddr);
-            nationWallet.executeGameTx(abi.encodeWithSignature("initializeNation(uint256,uint256,string)", capitalPos.x, capitalPos.y, nationName));
-            nationWallet.executeGameTx(abi.encodeWithSignature("initializeArmy(address)", address(armyWallet1)));
-            nationWallet.executeGameTx(abi.encodeWithSignature("initializeArmy(address)", address(armyWallet2)));
-            
-            for (uint256 j = 0; j < tokenContracts.length; j++) {
-                nationWallet.executeTx(address(tokenContracts[j]), abi.encodeWithSignature("approve(address,uint256)", address(game), type(uint256).max));
-                armyWallet1.executeTx(address(tokenContracts[j]), abi.encodeWithSignature("approve(address,uint256)", address(game), type(uint256).max));
-                armyWallet1.executeTx(address(tokenContracts[j]), abi.encodeWithSignature("approve(address,uint256)", address(game), type(uint256).max));
-            }
-            
-            if (i == 0) { nation1ID = getter.getEntityIDByAddress(address(nationWallet)); }
-            else if (i == 1) { nation2ID = getter.getEntityIDByAddress(address(nationWallet)); }
-            else if (i == 2) { nation3ID = getter.getEntityIDByAddress(address(nationWallet)); }
-            vm.stopPrank();
-        }
-
-        console.log(">>> Nations and armies initialized");
+        vm.prank(player1);
+        nation1ID = game.initializeNation(nation1Pos.x, nation1Pos.y, "China");
+        nation1CapitalID = getter.getCapital(nation1ID);
+        nation1CapitalAddr = getter.getAddress(nation1CapitalID);
+        vm.prank(player2);
+        nation2ID = game.initializeNation(nation2Pos.x, nation2Pos.y, "US");
+        nation2CapitalID = getter.getCapital(nation2ID);
+        nation2CapitalAddr = getter.getAddress(nation2CapitalID);
+        vm.prank(player3);
+        nation3ID = game.initializeNation(nation3Pos.x, nation3Pos.y, "Russia");
+        nation3CapitalID = getter.getCapital(nation3ID);
+        nation3CapitalAddr = getter.getAddress(nation3CapitalID);
+        console.log(">>> Nations initialized");
+        
         console.log("=============== INDIVIDUAL TESTS BEGIN ================");
     }
 
@@ -304,13 +245,6 @@ contract DiamondDeployTest is Test {
         }
 
         return _result;
-    }
-
-     function _generateRandomWalletAddr() private returns (address) {
-        address addr = address(keccak256(abi.encodePacked(block.timestamp, block.difficulty, gs().walletNonce)));
-        gs().walletNonce++;
-
-        return addr;
     }
 
     function _registerComponents() private {
@@ -422,7 +356,7 @@ contract DiamondDeployTest is Test {
         bytes memory rawJson = vm.parseJson(vm.readFile(path));
         worldConstants = abi.decode(rawJson, (WorldConstants));
 
-        worldConstants.admin = deployerAddress;
+        worldConstants.admin = deployer;
         return worldConstants;
     }
 
@@ -430,14 +364,14 @@ contract DiamondDeployTest is Test {
     function _generateNewWorldConstants() private returns (WorldConstants memory) {
         worldConstants =
             WorldConstants({
-                admin: deployerAddress,
+                admin: deployer,
                 tileWidth: 10,
                 worldWidth: 100,
                 worldHeight: 100,
                 numInitTerrainTypes: 6,
-                maxCapitalCountPerPlayer: 3,
-                maxArmyCountPerPlayer: 2,
-                maxPlayerCount: 20,
+                maxCapitalCountPerNation: 3,
+                maxArmyCountPerNation: 2,
+                maxNationCount: 20,
                 gameMode: GameMode.REGULAR,
                 gameLengthInSeconds: 3600,
                 maxCapitalLevel: 3,

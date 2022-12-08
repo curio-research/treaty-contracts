@@ -228,15 +228,6 @@ export const initializeFixmap = async (hre: HardhatRuntimeEnvironment, diamond: 
   const player2SettlerId = decodeBigNumberishArr(await positionComponent.getEntitiesWithValue(encodePosition(player2Pos)))[0];
   const player3SettlerId = decodeBigNumberishArr(await positionComponent.getEntitiesWithValue(encodePosition(player3Pos)))[0];
   const player4SettlerId = decodeBigNumberishArr(await positionComponent.getEntitiesWithValue(encodePosition(player4Pos)))[0];
-
-  // spawn armies
-  await diamond.initializeArmy(player1.address);
-  let entity = (await diamond.getEntity()).toNumber();
-  await confirmTx(await diamond.setComponentValue(Speed, entity, encodeUint256(5)), hre);
-
-  await diamond.initializeArmy(player1.address);
-  entity = (await diamond.getEntity()).toNumber();
-  await confirmTx(await diamond.setComponentValue(Speed, entity, encodeUint256(5)), hre);
 };
 
 export const addGetEntity = async (diamond: Curio): Promise<number> => {

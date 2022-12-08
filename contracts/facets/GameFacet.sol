@@ -8,6 +8,7 @@ import {GameMode, Position, WorldConstants} from "contracts/libraries/Types.sol"
 import {Set} from "contracts/Set.sol";
 import {Templates} from "contracts/libraries/Templates.sol";
 import {CurioERC20} from "contracts/tokens/CurioERC20.sol";
+import {CurioWallet} from "contracts/CurioWallet.sol";
 
 /// @title Game facet
 /// @notice Contains national functions
@@ -23,7 +24,7 @@ contract GameFacet is UseStorage {
         uint256 _positionX,
         uint256 _positionY,
         string memory _name
-    ) external {
+    ) external returns (uint256 nationID) {
         Position memory position = Position({x: _positionX, y: _positionY});
         Position memory tilePosition = GameLib.getProperTilePosition(position);
 
@@ -51,12 +52,12 @@ contract GameFacet is UseStorage {
         }
 
         // Register nation
-        uint256 nationID = Templates.addNation(_name);
+        nationID = Templates.addNation(_name);
         gs().nations.push(msg.sender);
         gs().nationAddressToId[msg.sender] = nationID;
 
         // Found capital
-        address capitalAddress = GameLib.generateNewAddress();
+        address capitalAddress = address(new CurioWallet(address(this)));
         Templates.addCapital(tilePosition, nationID, capitalAddress);
 
         // set Tile Nation
@@ -100,19 +101,6 @@ contract GameFacet is UseStorage {
         uint256 tileID = GameLib.getTileAt(tilePosition);
         uint256 armyNationID = ECSLib.getUint("Nation", _armyID);
         GameLib.neutralOrOwnedEntityCheck(tileID, armyNationID);
-
-        // {
-        //     // Check if army is nation's homie
-        //     uint256 tileNationID = ECSLib.getUint("Nation", tileID);
-        //     if (tileNationID != NULL) {
-        //         address tileNationContract = ECSLib.getAddress("Address", tileNationID);
-        //         // note: here it should have a standard; I'm using this name just for fun
-        //         (bool success, bytes memory data) = tileNationContract.call(abi.encodeWithSignature("approveMove(address)", address(armyAddress)));
-        //         require(success, "CURIO: Fail to check policy");
-        //         bool isHomie = abi.decode(data, (bool));
-        //         if (!isHomie) GameLib.neutralOrOwnedEntityCheck(tileID, armyNationID);
-        //     }
-        // }
 
         // Verify no gather
         require(GameLib.getArmyGather(_armyID) == NULL, "CURIO: Need to end gather first");
@@ -560,7 +548,7 @@ contract GameFacet is UseStorage {
         uint256 _capitalID,
         uint256[] memory _templateIDs,
         uint256[] memory _amounts
-    ) external {
+    ) external returns (uint256 armyID) {
         GameLib.validEntityCheck(_capitalID);
         GameLib.ongoingGameCheck();
         uint256 nationID = ECSLib.getUint("Nation", _capitalID);
@@ -576,8 +564,8 @@ contract GameFacet is UseStorage {
         GameLib.capitalHasRecoveredFromSack(_capitalID);
 
         // Add army
-        address armyAddress = GameLib.generateNewAddress();
-        uint256 armyID = Templates.addArmy(2, 1, 2, gs().worldConstants.tileWidth, nationID, armyAddress, midPosition, tilePosition);
+        address armyAddress = address(new CurioWallet(address(this)));
+        armyID = Templates.addArmy(2, 1, 2, gs().worldConstants.tileWidth, nationID, midPosition, tilePosition, armyAddress);
 
         // Collect army traits from individual troop types & transfer troops from nation
         {
@@ -838,38 +826,4 @@ contract GameFacet is UseStorage {
         require(signatureID != NULL, "CURIO: Nation is not a treaty signatory");
         ECSLib.removeEntity(signatureID);
     }
-
-    // TODO: setAddress => _setAddressArray
-    // function joinTreaty(address _treatyAddress) external {
-    //     // GameLib.ongoingGameCheck();
-    //     // // request to sign treaty
-    //     // (bool success, bytes memory returnData) = _treatyAddress.call(abi.encodeWithSignature("joinTreaty()"));
-    //     // require(success, "CRUIO: Failed to call the external treaty");
-    //     // require(abi.decode(returnData, (bool)), "CRUIO: The treaty rejects your request");
-    //     // // Sign treaty
-    //     // uint256 _signatureID = ECSLib.addEntity();
-    //     // ECSLib.setString("Tag", _signatureID, "Signature");
-    //     // ECSLib.setUint("Owner", _signatureID, _nationID);
-    //     // ECSLib.setAddress("Treaty", _signatureID, _treatyAddress);
-    // }
-
-    // function denounceTreaty(address _treatyToDenounce) external {
-    //     // uint256 _nationID = GameLib.getNation(msg.sender);
-    //     // // Verify that nation is active
-    //     // require(ECSLib.getBoolComponent("IsActive").has(_nationID), "CURIO: You are inactive");
-    //     // GameLib.ongoingGameCheck();
-    //     // // request to breach treaty
-    //     // (bool success, bytes memory returnData) = _treatyToDenounce.call(abi.encodeWithSignature("denounceTreaty()"));
-    //     // require(success, "CRUIO: Failed to call the external treaty");
-    //     // require(abi.decode(returnData, (bool)), "CRUIO: The treaty rejects your request");
-    //     // // breach treaty
-    //     // uint256[] memory _signatureIDs = GameLib.getNationSignatures(_nationID);
-    //     // for (uint256 i = 0; i < _signatureIDs.length; i++) {
-    //     //     address _treaty = ECSLib.getAddress("Treaty", _signatureIDs[i]);
-    //     //     if (_treaty == _treatyToDenounce) {
-    //     //         ECSLib.removeEntity(_signatureIDs[i]);
-    //     //         break;
-    //     //     }
-    //     // }
-    // }
 }

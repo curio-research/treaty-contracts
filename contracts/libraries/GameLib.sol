@@ -66,8 +66,10 @@ library GameLib {
 
     function initializeTile(Position memory _startPosition) external returns (uint256) {
         require(isProperTilePosition(_startPosition), "CURIO: Not proper tile position");
-        uint256 tileId = getTileAt(_startPosition);
-        if (tileId != 0) return tileId;
+        {
+            uint256 tileID = getTileAt(_startPosition);
+            if (tileID != 0) return tileID;
+        }
 
         address tileAddress = generateNewAddress();
         gs().tileNonce++;
@@ -85,14 +87,7 @@ library GameLib {
 
         // Initialize tile
         uint256 tileID = Templates.addTile(_startPosition, terrain, tileAddress);
-
-        {
-            uint256[] memory troopTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("TroopTemplate"));
-            for (uint256 i = 0; i < troopTemplateIDs.length; i++) {
-                Templates.addInventory(tileID, troopTemplateIDs[i]);
-            }
-        }
-
+        Templates.addInventory(tileID, gs().templates["Guard"]);
         CurioERC20 guardToken = getTokenContract("Guard");
 
         // TEMP: battle royale mode

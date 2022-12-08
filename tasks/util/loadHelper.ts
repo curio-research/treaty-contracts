@@ -78,7 +78,7 @@ export const prepareLoadTest = async (input: LoadTestSetupInput, players: Wallet
   startTime = performance.now();
   for (let i = 0; i < players.length; i++) {
     console.log(chalk.bgRed.yellow.dim(`>>> Creating army for player ${i}`));
-    await diamond.connect(admin).initializeArmy('TODO', { gasLimit });
+    await diamond.connect(admin).organizeArmy(1, [1], [1], { gasLimit }); // FIXME: not complete
   }
   const armyIds = decodeBigNumberishArr(await tagComponent.getEntitiesWithValue(encodeString('Army')));
   console.log(chalk.bgRed.yellow(`>>> Armies created after ${performance.now() - startTime} ms`));
