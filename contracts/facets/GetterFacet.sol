@@ -27,6 +27,10 @@ contract GetterFacet is UseStorage {
         return GameLib.getInventoryIDLoadAndBalance(_entityAddress, _resourceType);
     }
 
+    function getTreatyByName(string memory _treatyName) external view returns (uint256) {
+        return GameLib.getTreatyByName(_treatyName);
+    }
+
     function getTokenContract(string memory _tokenName) external view returns (CurioERC20) {
         return GameLib.getTokenContract(_tokenName);
     }

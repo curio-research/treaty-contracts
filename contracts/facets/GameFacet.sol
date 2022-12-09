@@ -313,7 +313,6 @@ contract GameFacet is UseStorage {
         require(!GameLib.coincident(tilePosition, ECSLib.getPosition("StartPosition", GameLib.getCapital(ECSLib.getUint("Nation", _tileID)))), "CURIO: Cannot abandon capital");
 
         // Verify that tile is not during recover or upgrade
-        uint256 tileLevel = ECSLib.getUint("Level", _tileID);
         require(block.timestamp > ECSLib.getUint("LastUpgraded", _tileID), "CURIO: Need to finish upgrading first");
         require(block.timestamp > ECSLib.getUint("LastRecovered", _tileID), "CURIO: Need to finish recovering first");
 
@@ -814,18 +813,18 @@ contract GameFacet is UseStorage {
     // --------------------------
 
     // TODO: there's no approval mechanism from treaty yet, only from nation
-    function joinTreaty(address _treatyAddr) external {
+    function joinTreaty(uint256 _treatyID) external {
         GameLib.ongoingGameCheck();
 
         uint256 nationID = gs().nationAddressToId[msg.sender];
-        Templates.addSignature(_treatyAddr, nationID);
+        Templates.addSignature(_treatyID, nationID);
     }
 
-    function leaveTreaty(address _treatyAddr) external {
+    function leaveTreaty(uint256 _treatyID) external {
         GameLib.ongoingGameCheck();
 
         uint256 nationID = gs().nationAddressToId[msg.sender];
-        uint256 signatureID = GameLib.getNationTreatySignature(_treatyAddr, nationID);
+        uint256 signatureID = GameLib.getNationTreatySignature(_treatyID, nationID);
         require(signatureID != NULL, "CURIO: Nation is not a treaty signatory");
         ECSLib.removeEntity(signatureID);
     }

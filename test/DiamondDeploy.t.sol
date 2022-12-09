@@ -106,10 +106,6 @@ contract DiamondDeployTest is Test {
         // Prepare world constants with either `_generateNewWorldConstants()` or `fetchWorldConstants()`
         worldConstants =  _fetchWorldConstants();
         console.log(">>> World constants ready");
-
-        // Initialize treaties
-        nato = new NATO();
-        console.log(">>> Treaties initialized");
         
         // Fetch args from CLI craft payload for init deploy
         bytes memory initData = abi.encodeWithSelector(_getSelectors("DiamondInit")[0], worldConstants);
@@ -137,25 +133,13 @@ contract DiamondDeployTest is Test {
         _registerGameParameters();
         console.log(">>> Game parameters registered");
 
-        // Create templates
         // Deploy token contracts
         foodToken = new CurioERC20("Food", "FOOD", 1, address(diamond));
         goldToken = new CurioERC20("Gold", "GOLD", 1, address(diamond));
-        // note: Consider switching to erc1155
         horsemanToken = new CurioERC20("Horseman", "HORSEMAN", 1, address(diamond));
         warriorToken = new CurioERC20("Warrior", "WARRIOR", 1, address(diamond));
         slingerToken = new CurioERC20("Slinger", "SLINGER", 1, address(diamond));
         guardToken = new CurioERC20("Guard", "GUARD", 1, address(diamond));
-        _createTemplates();
-
-        address[] memory tokenContracts = new address[](6);
-        tokenContracts[0] = address(foodToken);
-        tokenContracts[1] = address(goldToken);
-        tokenContracts[2] = address(horsemanToken);
-        tokenContracts[3] = address(warriorToken);
-        tokenContracts[4] = address(slingerToken);
-        tokenContracts[5] = address(guardToken);
-
         // admin facet authorizes all token contracts to make changes to ECS States
         // FIXME: are these really needed?
         admin.addAuthorized(address(foodToken));
@@ -164,6 +148,10 @@ contract DiamondDeployTest is Test {
         admin.addAuthorized(address(warriorToken));
         admin.addAuthorized(address(slingerToken));
         admin.addAuthorized(address(guardToken));
+        console.log(">>> Token contracts deployed");
+
+        // Create templates
+        _createTemplates();
         console.log(">>> Templates created");
 
         // Initialize map either with either `_generateNewMap()` or `_fetchLastDeployedMap()`
@@ -173,6 +161,11 @@ contract DiamondDeployTest is Test {
         admin.storeEncodedColumnBatches(encodedColumnBatches);
         _initializeMap();
         console.log(">>> Map initialized and encoded");
+
+        // Initialize treaties
+        nato = new NATO(diamond);
+        admin.addTreaty(address(nato), nato.name());
+        console.log(">>> Treaties initialized");
 
         vm.stopPrank();
 
@@ -194,17 +187,10 @@ contract DiamondDeployTest is Test {
         console.log("=============== INDIVIDUAL TESTS BEGIN ================");
     }
 
-    // fixme: Then probably don't need to store batches in gs()
     function _initializeMap() private {
         for (uint256 i = 0; i < worldConstants.worldWidth / worldConstants.tileWidth; i++) {
-            uint256 PosX = i * worldConstants.tileWidth;
             for (uint256 j = 0; j < worldConstants.worldHeight / worldConstants.tileWidth; j++) {
-                uint256 PosY = j * worldConstants.tileWidth;
-                Position memory startPosition;
-                startPosition.x = PosX;
-                startPosition.y = PosY;
-
-                admin.adminInitializeTile(startPosition);
+                admin.adminInitializeTile(Position({x: i * worldConstants.tileWidth, y: j * worldConstants.tileWidth}));
             }
         }
     }

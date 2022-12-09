@@ -45,8 +45,8 @@ export interface GameFacetInterface extends utils.Interface {
     "harvestResources(uint256[])": FunctionFragment;
     "harvestResourcesFromCapital(uint256)": FunctionFragment;
     "initializeNation(uint256,uint256,string)": FunctionFragment;
-    "joinTreaty(address)": FunctionFragment;
-    "leaveTreaty(address)": FunctionFragment;
+    "joinTreaty(uint256)": FunctionFragment;
+    "leaveTreaty(uint256)": FunctionFragment;
     "move(uint256,uint256,uint256)": FunctionFragment;
     "moveCapital(uint256,(uint256,uint256))": FunctionFragment;
     "organizeArmy(uint256,uint256[],uint256[])": FunctionFragment;
@@ -131,11 +131,11 @@ export interface GameFacetInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "joinTreaty",
-    values: [PromiseOrValue<string>]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "leaveTreaty",
-    values: [PromiseOrValue<string>]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "move",
@@ -347,12 +347,12 @@ export interface GameFacet extends BaseContract {
     ): Promise<ContractTransaction>;
 
     joinTreaty(
-      _treatyAddr: PromiseOrValue<string>,
+      _treatyID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     leaveTreaty(
-      _treatyAddr: PromiseOrValue<string>,
+      _treatyID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -470,12 +470,12 @@ export interface GameFacet extends BaseContract {
   ): Promise<ContractTransaction>;
 
   joinTreaty(
-    _treatyAddr: PromiseOrValue<string>,
+    _treatyID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   leaveTreaty(
-    _treatyAddr: PromiseOrValue<string>,
+    _treatyID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -593,12 +593,12 @@ export interface GameFacet extends BaseContract {
     ): Promise<BigNumber>;
 
     joinTreaty(
-      _treatyAddr: PromiseOrValue<string>,
+      _treatyID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     leaveTreaty(
-      _treatyAddr: PromiseOrValue<string>,
+      _treatyID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -717,12 +717,12 @@ export interface GameFacet extends BaseContract {
     ): Promise<BigNumber>;
 
     joinTreaty(
-      _treatyAddr: PromiseOrValue<string>,
+      _treatyID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     leaveTreaty(
-      _treatyAddr: PromiseOrValue<string>,
+      _treatyID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -841,12 +841,12 @@ export interface GameFacet extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     joinTreaty(
-      _treatyAddr: PromiseOrValue<string>,
+      _treatyID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     leaveTreaty(
-      _treatyAddr: PromiseOrValue<string>,
+      _treatyID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -165,6 +165,14 @@ contract AdminFacet is UseStorage {
         }
     }
 
+    function addTreaty(address _address, string memory _name) external onlyAuthorized returns (uint256) {
+        return Templates.addTreaty(_address, _name);
+    }
+
+    function generateNewAddress() external onlyAuthorized returns (address) {
+        return GameLib.generateNewAddress();
+    }
+
     // ----------------------------------------------------------------------
     // ECS HELPERS
     // ----------------------------------------------------------------------
@@ -188,10 +196,6 @@ contract AdminFacet is UseStorage {
 
     function addEntity() external onlyAuthorized returns (uint256) {
         return ECSLib.addEntity();
-    }
-
-    function generateNewAddress() external onlyAuthorized returns (address) {
-        return GameLib.generateNewAddress();
     }
 
     function setComponentValue(

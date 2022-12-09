@@ -23,13 +23,16 @@ import type {
 export interface ITreatyInterface extends utils.Interface {
   functions: {
     "diamond()": FunctionFragment;
+    "name()": FunctionFragment;
   };
 
-  getFunction(nameOrSignatureOrTopic: "diamond"): FunctionFragment;
+  getFunction(nameOrSignatureOrTopic: "diamond" | "name"): FunctionFragment;
 
   encodeFunctionData(functionFragment: "diamond", values?: undefined): string;
+  encodeFunctionData(functionFragment: "name", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "diamond", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
 
   events: {};
 }
@@ -62,21 +65,31 @@ export interface ITreaty extends BaseContract {
 
   functions: {
     diamond(overrides?: CallOverrides): Promise<[string]>;
+
+    name(overrides?: CallOverrides): Promise<[string]>;
   };
 
   diamond(overrides?: CallOverrides): Promise<string>;
 
+  name(overrides?: CallOverrides): Promise<string>;
+
   callStatic: {
     diamond(overrides?: CallOverrides): Promise<string>;
+
+    name(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {};
 
   estimateGas: {
     diamond(overrides?: CallOverrides): Promise<BigNumber>;
+
+    name(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
     diamond(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

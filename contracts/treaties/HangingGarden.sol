@@ -14,6 +14,8 @@ contract HangingGarden is ITreaty {
     GetterFacet public getter;
     GameFacet public game;
 
+    string public name;
+
     address[] public owners;
     address[] public homies;
     uint256 public homieFee;
@@ -49,6 +51,8 @@ contract HangingGarden is ITreaty {
         diamond = _diamond;
         getter = GetterFacet(diamond);
         game = GameFacet(diamond);
+
+        name = "HangingGarden";
 
         homieFee = _homieFee;
     }

@@ -23,9 +23,14 @@ contract FTXTest is Test, DiamondDeployTest {
         vm.stopPrank();
         assertEq(goldToken.balanceOf(nation2CapitalAddr), 0);
 
+        // Deployer registers FTX treaty
+        vm.startPrank(deployer);
+        admin.addTreaty(address(ftx), ftx.name());
+        vm.stopPrank();
+
         // Player 1 deposits to FTX
         vm.startPrank(player1);
-        // goldToken.approve(address(ftx), 2);
+        goldToken.approve(address(ftx), 2);
         ftx.deposit(2);
         assertEq(goldToken.checkBalanceOf(nation1CapitalAddr), 6);
         assertEq(ftx.fttToken().checkBalanceOf(nation1CapitalAddr), 2);
@@ -38,7 +43,7 @@ contract FTXTest is Test, DiamondDeployTest {
         assertEq(goldToken.checkBalanceOf(nation2CapitalAddr), 1);
 
         // Player 1 gives FTX all gold
-        goldToken.approve(address(ftx), 7);
+        // goldToken.approve(address(ftx), 7);
         ftx.deposit(7);
         assertEq(goldToken.checkBalanceOf(nation1CapitalAddr), 0);
         assertEq(ftx.fttToken().checkBalanceOf(nation1CapitalAddr), 8);

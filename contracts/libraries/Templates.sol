@@ -4,6 +4,7 @@ pragma solidity ^0.8.13;
 import {Position, WorldConstants} from "contracts/libraries/Types.sol";
 import {Strings} from "openzeppelin-contracts/contracts/utils/Strings.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
+import {console} from "forge-std/console.sol";
 
 library Templates {
     function addTile(
@@ -187,13 +188,24 @@ library Templates {
         return paramID;
     }
 
-    function addSignature(address _treatyAddr, uint256 _nationID) public returns (uint256) {
+    function addSignature(uint256 _treatyID, uint256 _nationID) public returns (uint256) {
         uint256 signatureID = ECSLib.addEntity();
 
         ECSLib.setString("Tag", signatureID, "Signature");
-        ECSLib.setAddress("Treaty", signatureID, _treatyAddr);
+        ECSLib.setUint("Treaty", signatureID, _treatyID);
         ECSLib.setUint("Nation", signatureID, _nationID);
 
         return signatureID;
+    }
+
+    function addTreaty(address _address, string memory _name) public returns (uint256) {
+        uint256 treatyID = ECSLib.addEntity();
+
+        ECSLib.setString("Tag", treatyID, "Treaty");
+        ECSLib.setUint("InitTimestamp", treatyID, block.timestamp);
+        ECSLib.setString("Name", treatyID, _name);
+        ECSLib.setAddress("Address", treatyID, _address);
+
+        return treatyID;
     }
 }

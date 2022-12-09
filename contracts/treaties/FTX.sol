@@ -9,6 +9,7 @@ import {console} from "forge-std/console.sol";
 
 contract FTX is ITreaty {
     address public diamond;
+    string public name;
     GetterFacet public getter;
     CurioERC20 public goldToken;
     FTTERC20 public fttToken;
@@ -20,6 +21,7 @@ contract FTX is ITreaty {
         require(_diamond != address(0), "FTX: Diamond address required");
 
         diamond = _diamond;
+        name = "FTX";
         getter = GetterFacet(_diamond);
         goldToken = getter.getTokenContract("Gold");
         fttToken = new FTTERC20(address(this));

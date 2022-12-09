@@ -9,6 +9,7 @@ contract Treaty is ITreaty {
     address public diamond;
     GameFacet public game;
     GetterFacet public getter;
+    string public name;
 
     constructor(address _diamond) {
         require(_diamond != address(0), "Treaty: Diamond address required");
@@ -16,6 +17,8 @@ contract Treaty is ITreaty {
         diamond = _diamond;
         game = GameFacet(_diamond);
         getter = GetterFacet(_diamond);
+
+        name = "Treaty";
     }
 
     function joinTreaty() external returns (bool) {}

@@ -27,18 +27,22 @@ export interface NATOInterface extends utils.Interface {
   functions: {
     "approveMoveArmy()": FunctionFragment;
     "denounceTreaty()": FunctionFragment;
+    "diamond()": FunctionFragment;
     "isMemberStates(address)": FunctionFragment;
     "joinTreaty()": FunctionFragment;
     "memberStates(uint256)": FunctionFragment;
+    "name()": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
       | "approveMoveArmy"
       | "denounceTreaty"
+      | "diamond"
       | "isMemberStates"
       | "joinTreaty"
       | "memberStates"
+      | "name"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -49,6 +53,7 @@ export interface NATOInterface extends utils.Interface {
     functionFragment: "denounceTreaty",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "diamond", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "isMemberStates",
     values: [PromiseOrValue<string>]
@@ -61,6 +66,7 @@ export interface NATOInterface extends utils.Interface {
     functionFragment: "memberStates",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
+  encodeFunctionData(functionFragment: "name", values?: undefined): string;
 
   decodeFunctionResult(
     functionFragment: "approveMoveArmy",
@@ -70,6 +76,7 @@ export interface NATOInterface extends utils.Interface {
     functionFragment: "denounceTreaty",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "diamond", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "isMemberStates",
     data: BytesLike
@@ -79,6 +86,7 @@ export interface NATOInterface extends utils.Interface {
     functionFragment: "memberStates",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
 
   events: {};
 }
@@ -116,6 +124,8 @@ export interface NATO extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    diamond(overrides?: CallOverrides): Promise<[string]>;
+
     isMemberStates(
       arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -129,6 +139,8 @@ export interface NATO extends BaseContract {
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[string]>;
+
+    name(overrides?: CallOverrides): Promise<[string]>;
   };
 
   approveMoveArmy(overrides?: CallOverrides): Promise<boolean>;
@@ -136,6 +148,8 @@ export interface NATO extends BaseContract {
   denounceTreaty(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  diamond(overrides?: CallOverrides): Promise<string>;
 
   isMemberStates(
     arg0: PromiseOrValue<string>,
@@ -151,10 +165,14 @@ export interface NATO extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
+  name(overrides?: CallOverrides): Promise<string>;
+
   callStatic: {
     approveMoveArmy(overrides?: CallOverrides): Promise<boolean>;
 
     denounceTreaty(overrides?: CallOverrides): Promise<boolean>;
+
+    diamond(overrides?: CallOverrides): Promise<string>;
 
     isMemberStates(
       arg0: PromiseOrValue<string>,
@@ -167,6 +185,8 @@ export interface NATO extends BaseContract {
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
+
+    name(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {};
@@ -178,6 +198,8 @@ export interface NATO extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    diamond(overrides?: CallOverrides): Promise<BigNumber>;
+
     isMemberStates(
       arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -191,6 +213,8 @@ export interface NATO extends BaseContract {
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    name(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -200,6 +224,8 @@ export interface NATO extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    diamond(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     isMemberStates(
       arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -213,5 +239,7 @@ export interface NATO extends BaseContract {
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

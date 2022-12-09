@@ -29,6 +29,7 @@ export interface TreatyInterface extends utils.Interface {
     "getter()": FunctionFragment;
     "joinTreaty()": FunctionFragment;
     "leaveTreaty()": FunctionFragment;
+    "name()": FunctionFragment;
   };
 
   getFunction(
@@ -38,6 +39,7 @@ export interface TreatyInterface extends utils.Interface {
       | "getter"
       | "joinTreaty"
       | "leaveTreaty"
+      | "name"
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "diamond", values?: undefined): string;
@@ -51,6 +53,7 @@ export interface TreatyInterface extends utils.Interface {
     functionFragment: "leaveTreaty",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "name", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "diamond", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "game", data: BytesLike): Result;
@@ -60,6 +63,7 @@ export interface TreatyInterface extends utils.Interface {
     functionFragment: "leaveTreaty",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
 
   events: {};
 }
@@ -104,6 +108,8 @@ export interface Treaty extends BaseContract {
     leaveTreaty(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    name(overrides?: CallOverrides): Promise<[string]>;
   };
 
   diamond(overrides?: CallOverrides): Promise<string>;
@@ -120,6 +126,8 @@ export interface Treaty extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  name(overrides?: CallOverrides): Promise<string>;
+
   callStatic: {
     diamond(overrides?: CallOverrides): Promise<string>;
 
@@ -130,6 +138,8 @@ export interface Treaty extends BaseContract {
     joinTreaty(overrides?: CallOverrides): Promise<boolean>;
 
     leaveTreaty(overrides?: CallOverrides): Promise<boolean>;
+
+    name(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {};
@@ -148,6 +158,8 @@ export interface Treaty extends BaseContract {
     leaveTreaty(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    name(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -164,5 +176,7 @@ export interface Treaty extends BaseContract {
     leaveTreaty(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
+
+    name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

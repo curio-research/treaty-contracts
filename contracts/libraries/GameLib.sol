@@ -351,11 +351,11 @@ library GameLib {
         return ECSLib.query(query);
     }
 
-    function getNationTreatySignature(address _treatyAddr, uint256 _nationID) internal view returns (uint256) {
+    function getNationTreatySignature(uint256 _treatyID, uint256 _nationID) internal view returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Signature"));
         query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Nation"]), abi.encode(_nationID));
-        query[2] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Treaty"]), abi.encode(_treatyAddr));
+        query[2] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Treaty"]), abi.encode(_treatyID));
 
         uint256[] memory res = ECSLib.query(query);
         return res.length == 1 ? res[0] : 0;
@@ -403,6 +403,15 @@ library GameLib {
         // require(res.length <= 1, string(abi.encodePacked("CURIO: Constant with Tag=", identifier, " duplicated")));
         require(res.length >= 1, string(abi.encodePacked("CURIO: Constant with Tag=", identifier, " not found")));
         return ECSLib.getUint("Amount", res[0]);
+    }
+
+    function getTreatyByName(string memory _name) public view returns (uint256) {
+        QueryCondition[] memory query = new QueryCondition[](2);
+        query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Treaty"));
+        query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Name"]), abi.encode(_name));
+        uint256[] memory res = ECSLib.query(query);
+        require(res.length <= 1, "CURIO: Treaty assertion failed");
+        return res.length == 1 ? res[0] : 0;
     }
 
     function getBuildingProduction(uint256 _buildingID) internal view returns (uint256) {

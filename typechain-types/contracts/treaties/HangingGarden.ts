@@ -36,6 +36,7 @@ export interface HangingGardenInterface extends utils.Interface {
     "homies(uint256)": FunctionFragment;
     "isHomie(address)": FunctionFragment;
     "isOwner(address)": FunctionFragment;
+    "name()": FunctionFragment;
     "owners(uint256)": FunctionFragment;
   };
 
@@ -52,6 +53,7 @@ export interface HangingGardenInterface extends utils.Interface {
       | "homies"
       | "isHomie"
       | "isOwner"
+      | "name"
       | "owners"
   ): FunctionFragment;
 
@@ -87,6 +89,7 @@ export interface HangingGardenInterface extends utils.Interface {
     functionFragment: "isOwner",
     values: [PromiseOrValue<string>]
   ): string;
+  encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "owners",
     values: [PromiseOrValue<BigNumberish>]
@@ -112,6 +115,7 @@ export interface HangingGardenInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "homies", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "isHomie", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "isOwner", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owners", data: BytesLike): Result;
 
   events: {};
@@ -188,6 +192,8 @@ export interface HangingGarden extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    name(overrides?: CallOverrides): Promise<[string]>;
+
     owners(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -238,6 +244,8 @@ export interface HangingGarden extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  name(overrides?: CallOverrides): Promise<string>;
+
   owners(
     arg0: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
@@ -287,6 +295,8 @@ export interface HangingGarden extends BaseContract {
       arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    name(overrides?: CallOverrides): Promise<string>;
 
     owners(
       arg0: PromiseOrValue<BigNumberish>,
@@ -341,6 +351,8 @@ export interface HangingGarden extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    name(overrides?: CallOverrides): Promise<BigNumber>;
+
     owners(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -391,6 +403,8 @@ export interface HangingGarden extends BaseContract {
       arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     owners(
       arg0: PromiseOrValue<BigNumberish>,
