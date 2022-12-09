@@ -351,6 +351,17 @@ library GameLib {
         return ECSLib.query(query);
     }
 
+    function getSignedTreaties(uint256 _nationID) internal view returns (uint256[] memory) {
+        uint256[] memory signatureIDs = getNationSignatures(_nationID);
+
+        uint256[] memory treatyIDs = new uint256[](signatureIDs.length);
+        for (uint256 i = 0; i < signatureIDs.length; i++) {
+            treatyIDs[i] = ECSLib.getUint("Treaty", signatures[i]);
+        }
+
+        return treatyIDs;
+    }
+
     function getNationTreatySignature(uint256 _treatyID, uint256 _nationID) internal view returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Signature"));
