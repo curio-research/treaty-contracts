@@ -17,6 +17,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Component__factory>;
     getContractFactory(
+      name: "CurioWallet",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.CurioWallet__factory>;
+    getContractFactory(
       name: "Diamond",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Diamond__factory>;
@@ -61,6 +65,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC173__factory>;
     getContractFactory(
+      name: "ITreaty",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ITreaty__factory>;
+    getContractFactory(
       name: "ECSLib",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ECSLib__factory>;
@@ -81,37 +89,37 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.UintBoolMapping__factory>;
     getContractFactory(
-      name: "NATO",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.NATO__factory>;
-    getContractFactory(
       name: "Set",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Set__factory>;
     getContractFactory(
-      name: "FoodERC20",
+      name: "CurioERC20",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.FoodERC20__factory>;
+    ): Promise<Contracts.CurioERC20__factory>;
     getContractFactory(
-      name: "GoldERC20",
+      name: "CurioERC721",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.GoldERC20__factory>;
+    ): Promise<Contracts.CurioERC721__factory>;
     getContractFactory(
-      name: "GuardERC20",
+      name: "FTTERC20",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.GuardERC20__factory>;
+    ): Promise<Contracts.FTTERC20__factory>;
     getContractFactory(
-      name: "HorsemanERC20",
+      name: "FTX",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.HorsemanERC20__factory>;
+    ): Promise<Contracts.FTX__factory>;
     getContractFactory(
-      name: "SlingerERC20",
+      name: "HangingGarden",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.SlingerERC20__factory>;
+    ): Promise<Contracts.HangingGarden__factory>;
     getContractFactory(
-      name: "WarriorERC20",
+      name: "NATO",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.WarriorERC20__factory>;
+    ): Promise<Contracts.NATO__factory>;
+    getContractFactory(
+      name: "Treaty",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Treaty__factory>;
     getContractFactory(
       name: "AddressComponent",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -145,10 +153,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.DiamondInit__factory>;
     getContractFactory(
-      name: "WalletHangingGarden",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.WalletHangingGarden__factory>;
-    getContractFactory(
       name: "Curio",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Curio__factory>;
@@ -156,12 +160,25 @@ declare module "hardhat/types/runtime" {
       name: "ERC20",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC20__factory>;
+    getContractFactory(
+      name: "ERC721",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC721__factory>;
+    getContractFactory(
+      name: "ERC721TokenReceiver",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC721TokenReceiver__factory>;
 
     getContractAt(
       name: "Component",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Component>;
+    getContractAt(
+      name: "CurioWallet",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.CurioWallet>;
     getContractAt(
       name: "Diamond",
       address: string,
@@ -218,6 +235,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IERC173>;
     getContractAt(
+      name: "ITreaty",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ITreaty>;
+    getContractAt(
       name: "ECSLib",
       address: string,
       signer?: ethers.Signer
@@ -243,45 +265,45 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.UintBoolMapping>;
     getContractAt(
-      name: "NATO",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.NATO>;
-    getContractAt(
       name: "Set",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Set>;
     getContractAt(
-      name: "FoodERC20",
+      name: "CurioERC20",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.FoodERC20>;
+    ): Promise<Contracts.CurioERC20>;
     getContractAt(
-      name: "GoldERC20",
+      name: "CurioERC721",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.GoldERC20>;
+    ): Promise<Contracts.CurioERC721>;
     getContractAt(
-      name: "GuardERC20",
+      name: "FTTERC20",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.GuardERC20>;
+    ): Promise<Contracts.FTTERC20>;
     getContractAt(
-      name: "HorsemanERC20",
+      name: "FTX",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.HorsemanERC20>;
+    ): Promise<Contracts.FTX>;
     getContractAt(
-      name: "SlingerERC20",
+      name: "HangingGarden",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.SlingerERC20>;
+    ): Promise<Contracts.HangingGarden>;
     getContractAt(
-      name: "WarriorERC20",
+      name: "NATO",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.WarriorERC20>;
+    ): Promise<Contracts.NATO>;
+    getContractAt(
+      name: "Treaty",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Treaty>;
     getContractAt(
       name: "AddressComponent",
       address: string,
@@ -323,11 +345,6 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.DiamondInit>;
     getContractAt(
-      name: "WalletHangingGarden",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.WalletHangingGarden>;
-    getContractAt(
       name: "Curio",
       address: string,
       signer?: ethers.Signer
@@ -337,6 +354,16 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ERC20>;
+    getContractAt(
+      name: "ERC721",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC721>;
+    getContractAt(
+      name: "ERC721TokenReceiver",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC721TokenReceiver>;
 
     // default types
     getContractFactory(

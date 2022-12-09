@@ -70,7 +70,7 @@ export const prepareLoadTest = async (input: LoadTestSetupInput, players: Wallet
   for (let i = 0; i < players.length; i++) {
     console.log(chalk.bgRed.yellow.dim(`>>> Initializing player ${i} with city`));
     await (await diamond.connect(players[i]).initializeNation(i * TILE_WIDTH, 0, `Player ${i}`, { gasLimit })).wait();
-    playerIds.push((await diamond.getEntityIDByAddress(players[i].address)).toNumber());
+    playerIds.push((await diamond.getEntityByAddress(players[i].address)).toNumber());
   }
   console.log(chalk.bgRed.yellow(`>>> Players initialized with city after ${performance.now() - startTime} ms`));
 
@@ -78,7 +78,7 @@ export const prepareLoadTest = async (input: LoadTestSetupInput, players: Wallet
   startTime = performance.now();
   for (let i = 0; i < players.length; i++) {
     console.log(chalk.bgRed.yellow.dim(`>>> Creating army for player ${i}`));
-    await diamond.connect(admin).initializeArmy('TODO', { gasLimit });
+    await diamond.connect(admin).organizeArmy(1, [1], [1], { gasLimit }); // FIXME: not complete
   }
   const armyIds = decodeBigNumberishArr(await tagComponent.getEntitiesWithValue(encodeString('Army')));
   console.log(chalk.bgRed.yellow(`>>> Armies created after ${performance.now() - startTime} ms`));

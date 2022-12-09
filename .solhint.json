@@ -10,7 +10,7 @@
     "reason-string": [
       "warn",
       {
-        "maxLength": 40
+        "maxLength": 50
       }
     ],
     "quotes": ["error", "double"],

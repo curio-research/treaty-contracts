@@ -1,5 +1,5 @@
 //SPDX-License-Identifier: MIT
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
 import "test/DiamondDeploy.t.sol";
@@ -24,7 +24,6 @@ contract ECS is Test, DiamondDeployTest {
         - Alice marches her army to a location close to Bob's city center
         - Bob marches his army to Alice's army, and a battle begins
          */
-
         // // Verify pre-conditions
         // assertTrue(getter.getComponent("DefenseFactor").has(destroyerTemplateId));
         // assertTrue(!getter.getComponent("DefenseFactor").has(player1Id));
@@ -37,11 +36,9 @@ contract ECS is Test, DiamondDeployTest {
         // assertEq(getter.getComponent("Name").getEntitiesWithValue(abi.encode("Alice"))[0], player1Id);
         // vm.expectRevert(bytes("CURIO: Component not found"));
         // getter.getComponent("NonexistentComponent");
-
         // // Purchase a destroyer
         // uint256 _troopEntity = game.purchaseTroop(player1Pos, destroyerTemplateId);
         // uint256 _armyEntity = abi.decode(getter.getComponent("ArmyEntity").getBytesValue(_troopEntity), (uint256));
-
         // // Verify post-conditions
         // assertEq(abi.decode(getter.getComponent("Gold").getBytesValue(player1Id), (uint256)), 20 - 19);
         // assertEq(getter.getComponent("Position").getEntitiesWithValue(abi.encode(player1Pos)).length, 2);
@@ -53,21 +50,17 @@ contract ECS is Test, DiamondDeployTest {
         // uint256[] memory _baseEntities = getter.getComponent("CanPurchase").getEntities();
         // assertEq(_baseEntities.length, 6); // because 1 nearby city and 2 ports are also initialized in neighbor search
         // assertEq(abi.decode(getter.getComponent("OwnerEntity").getBytesValue(_baseEntities[0]), (uint256)), player1Id);
-
         // // Verify inability to buy another destroyer before moving destroyer away
         // vm.expectRevert(bytes("CURIO: Base occupied by another troop"));
         // game.purchaseTroop(player1Pos, destroyerTemplateId);
-
         // // Move destroyer to nearby water tile
         // vm.warp(3);
         // game.moveTroop(_troopEntity, Position({x: 7, y: 1}));
         // _armyEntity = abi.decode(getter.getComponent("ArmyEntity").getBytesValue(_troopEntity), (uint256));
-
         // // Verify post-conditions
         // Position memory _currentPosition = abi.decode(getter.getComponent("Position").getBytesValue(_armyEntity), (Position));
         // assertEq(_currentPosition.x, 7);
         // assertEq(_currentPosition.y, 1);
-
         // vm.startPrank(player1);
         // vm.stopPrank();
     }

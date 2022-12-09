@@ -1,5 +1,5 @@
 //SPDX-License-Identifier: MIT
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.13;
 
 import {Test} from "forge-std/Test.sol";
 import {DiamondCutFacet} from "contracts/facets/DiamondCutFacet.sol";
@@ -14,15 +14,10 @@ import {GameFacet} from "contracts/facets/GameFacet.sol";
 import {AdminFacet} from "contracts/facets/AdminFacet.sol";
 import {Strings} from "openzeppelin-contracts/contracts/utils/Strings.sol";
 import {ComponentSpec, GameMode, GameParamSpec, Position, WorldConstants} from "contracts/libraries/Types.sol";
-import {NATO} from "contracts/NATO.sol";
-import {FoodERC20} from "contracts/tokens/FoodERC20.sol";
-import {GoldERC20} from "contracts/tokens/GoldERC20.sol";
-import {HorsemanERC20} from "contracts/tokens/HorsemanERC20.sol";
-import {SlingerERC20} from "contracts/tokens/SlingerERC20.sol";
-import {WarriorERC20} from "contracts/tokens/WarriorERC20.sol";
-import {GuardERC20} from "contracts/tokens/GuardERC20.sol";
+import {NATO} from "contracts/treaties/NATO.sol";
+import {CurioERC20} from "contracts/tokens/CurioERC20.sol";
+import {CurioWallet} from "contracts/CurioWallet.sol";
 
-import {WalletHangingGarden} from "contracts/WalletHangingGarden.sol";
 import {console} from "forge-std/console.sol";
 import {stdJson} from "forge-std/StdJson.sol";
 
@@ -39,7 +34,7 @@ contract DiamondDeployTest is Test {
     GetterFacet public getterFacet;
     AdminFacet public adminFacet;
 
-    // diamond-contract-casted methods
+    // Diamond facets
     GameFacet public game;
     GetterFacet public getter;
     AdminFacet public admin;
@@ -48,50 +43,44 @@ contract DiamondDeployTest is Test {
     // Treaties
     NATO public nato;
 
-    // Smart Contract Wallets;
-    WalletHangingGarden public nationWallet1;
-    WalletHangingGarden public nationWallet2;
-    WalletHangingGarden public nationWallet3;
-
-    WalletHangingGarden public armyWallet11;
-    WalletHangingGarden public armyWallet12;
-    WalletHangingGarden public armyWallet21;
-    WalletHangingGarden public armyWallet22;
-    WalletHangingGarden public armyWallet31;
-    WalletHangingGarden public armyWallet32;
-
-    // Tokens
-    FoodERC20 public foodContract;
-    GoldERC20 public goldContract;
-    HorsemanERC20 public horsemanContract;
-    SlingerERC20 public slingerContract;
-    WarriorERC20 public warriorContract;
-    GuardERC20 public guardContract;
-
-    uint256 public NULL = 0;
-    address public NULL_ADDR = address(0);
-
-    address public deployerAddress = address(0);
-    address public nation1Address = address(1);
-    address public nation2Address = address(2);
-    address public nation3Address = address(3);
+    // Players (nations)
+    address public deployer = address(0);
+    address public player1 = address(1);
+    address public player2 = address(2);
+    address public player3 = address(3);
     uint256 public nation1ID;
     uint256 public nation2ID;
     uint256 public nation3ID;
+
+    // Capitals
+    uint256 public nation1CapitalID;
+    uint256 public nation2CapitalID;
+    uint256 public nation3CapitalID;
+    address public nation1CapitalAddr;
+    address public nation2CapitalAddr;
+    address public nation3CapitalAddr;
+
+    // Tokens
+    uint256 public foodTemplateID;
+    uint256 public goldTemplateID;
+    uint256 public horsemanTemplateID;
+    uint256 public warriorTemplateID;
+    uint256 public slingerTemplateID;
+    uint256 public guardTemplateID;
+    CurioERC20 public foodToken;
+    CurioERC20 public goldToken;
+    CurioERC20 public horsemanToken;
+    CurioERC20 public warriorToken;
+    CurioERC20 public slingerToken;
+    CurioERC20 public guardToken;
+
+    uint256 public NULL = 0;
+    address public NULL_ADDR = address(0);
 
     Position public nation1Pos = Position({x: 60, y: 10});
     Position public nation2Pos = Position({x: 60, y: 30});
     Position public nation3Pos = Position({x: 50, y: 20});
     Position public barbarinaTilePos = Position({x: 60, y: 50});
-
-    uint256 public horsemanTemplateID;
-    uint256 public warriorTemplateID;
-    uint256 public slingerTemplateID;
-    uint256 public guardTemplateID;
-    uint256 public goldTemplateID;
-    uint256 public foodTemplateID;
-
-    uint256 public player2SettlerId;
 
     WorldConstants public worldConstants;
 
@@ -101,27 +90,22 @@ contract DiamondDeployTest is Test {
 
 
     function setUp() public {
-        vm.startPrank(deployerAddress);
+        vm.startPrank(deployer);
         console.log("==================== SETUP BEGINS =====================");
 
         // Initialize diamond facets
         diamondCutFacet = new DiamondCutFacet();
-        diamond = address(new Diamond(deployerAddress, address(diamondCutFacet)));
+        diamond = address(new Diamond(deployer, address(diamondCutFacet)));
         diamondInit = new DiamondInit();
         diamondLoupeFacet = new DiamondLoupeFacet();
         diamondOwnershipFacet = new OwnershipFacet();
         gameFacet = new GameFacet();
         getterFacet = new GetterFacet();
-
         adminFacet = new AdminFacet();
 
         // Prepare world constants with either `_generateNewWorldConstants()` or `fetchWorldConstants()`
         worldConstants =  _fetchWorldConstants();
         console.log(">>> World constants ready");
-
-        // Initialize treaties
-        nato = new NATO();
-        console.log(">>> Treaties initialized");
         
         // Fetch args from CLI craft payload for init deploy
         bytes memory initData = abi.encodeWithSelector(_getSelectors("DiamondInit")[0], worldConstants);
@@ -149,32 +133,23 @@ contract DiamondDeployTest is Test {
         _registerGameParameters();
         console.log(">>> Game parameters registered");
 
+        // Deploy and authorize token contracts
+        goldToken = new CurioERC20("Gold", "GOLD", 0, address(diamond));
+        foodToken = new CurioERC20("Food", "FOOD", 0, address(diamond));
+        horsemanToken = new CurioERC20("Horseman", "HORSEMAN", 0, address(diamond));
+        warriorToken = new CurioERC20("Warrior", "WARRIOR", 0, address(diamond));
+        slingerToken = new CurioERC20("Slinger", "SLINGER", 0, address(diamond));
+        guardToken = new CurioERC20("Guard", "GUARD", 0, address(diamond));
+        admin.addAuthorized(address(foodToken));
+        admin.addAuthorized(address(goldToken));
+        admin.addAuthorized(address(horsemanToken));
+        admin.addAuthorized(address(warriorToken));
+        admin.addAuthorized(address(slingerToken));
+        admin.addAuthorized(address(guardToken));
+        console.log(">>> Token contracts deployed");
+
         // Create templates
-        // Deploy token contracts
-        foodContract = new FoodERC20("Food", "FOOD", 1, address(diamond));
-        goldContract = new GoldERC20("Gold", "GOLD", 1, address(diamond));
-        // note: Consider switching to erc1155
-        horsemanContract = new HorsemanERC20("Horseman", "HORSEMAN", 1, address(diamond));
-        warriorContract = new WarriorERC20("Warrior", "WARRIOR", 1, address(diamond));
-        slingerContract = new SlingerERC20("Slinger", "SLINGER", 1, address(diamond));
-        guardContract = new GuardERC20("Guard", "GUARD", 1, address(diamond));
         _createTemplates();
-
-        address[] memory tokenContracts = new address[](6);
-        tokenContracts[0] = address(foodContract);
-        tokenContracts[1] = address(goldContract);
-        tokenContracts[2] = address(horsemanContract);
-        tokenContracts[3] = address(warriorContract);
-        tokenContracts[4] = address(slingerContract);
-        tokenContracts[5] = address(guardContract);
-
-        // admin facet authorizes all token contracts to make changes to ECS States
-        admin.addAuthorized(address(foodContract));
-        admin.addAuthorized(address(goldContract));
-        admin.addAuthorized(address(horsemanContract));
-        admin.addAuthorized(address(warriorContract));
-        admin.addAuthorized(address(slingerContract));
-        admin.addAuthorized(address(guardContract));
         console.log(">>> Templates created");
 
         // Initialize map either with either `_generateNewMap()` or `_fetchLastDeployedMap()`
@@ -185,91 +160,35 @@ contract DiamondDeployTest is Test {
         _initializeMap();
         console.log(">>> Map initialized and encoded");
 
+        // Initialize treaties
+        nato = new NATO(diamond);
+        admin.addTreaty(address(nato), nato.name());
+        console.log(">>> Treaties initialized");
+
         vm.stopPrank();
 
-        // Deploy smart contract wallets
-        uint256 homieFee = 666;
-        address[] memory initializedOwners = new address[](1);
-
-        initializedOwners[0] = nation1Address;
-        nationWallet1 = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
-        armyWallet11 = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
-        armyWallet12 = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
-
-        initializedOwners[0] = nation2Address;
-        nationWallet2 = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
-        armyWallet21 = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
-        armyWallet22 = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
-
-        initializedOwners[0] = nation3Address;
-        nationWallet3 = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
-        armyWallet31 = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
-        armyWallet32 = new WalletHangingGarden(initializedOwners, address(diamond), homieFee);
-        console.log(">>> Smart contract wallets initialized");
-
         // Initialize players
-        address nationAddr;
-        WalletHangingGarden nationWallet;
-        WalletHangingGarden armyWallet1;
-        WalletHangingGarden armyWallet2;
-        Position memory capitalPos;
-        string memory nationName;
-        for (uint256 i = 0; i < 3; i++) {
-            if (i == 0) {
-                nationAddr = nation1Address;
-                nationWallet = nationWallet1;
-                armyWallet1 = armyWallet11;
-                armyWallet2 = armyWallet12;
-                capitalPos = nation1Pos;
-                nationName = "China";
-            } else if (i == 1) {
-                nationAddr = nation2Address;
-                nationWallet = nationWallet2;
-                armyWallet1 = armyWallet21;
-                armyWallet2 = armyWallet22;
-                capitalPos = nation2Pos;
-                nationName = "US";
-            } else if (i == 2) {
-                nationAddr = nation3Address;
-                nationWallet = nationWallet3;
-                armyWallet1 = armyWallet31;
-                armyWallet2 = armyWallet32;
-                capitalPos = nation3Pos;
-                nationName = "Russia";
-            }
-
-            vm.startPrank(nationAddr);
-            nationWallet.executeGameTx(abi.encodeWithSignature("initializeNation(uint256,uint256,string)", capitalPos.x, capitalPos.y, nationName));
-            nationWallet.executeGameTx(abi.encodeWithSignature("initializeArmy(address)", address(armyWallet1)));
-            nationWallet.executeGameTx(abi.encodeWithSignature("initializeArmy(address)", address(armyWallet2)));
-            
-            for (uint256 j = 0; j < tokenContracts.length; j++) {
-                nationWallet.executeTx(address(tokenContracts[j]), abi.encodeWithSignature("approve(address,uint256)", address(game), type(uint256).max));
-                armyWallet1.executeTx(address(tokenContracts[j]), abi.encodeWithSignature("approve(address,uint256)", address(game), type(uint256).max));
-                armyWallet1.executeTx(address(tokenContracts[j]), abi.encodeWithSignature("approve(address,uint256)", address(game), type(uint256).max));
-            }
-            
-            if (i == 0) { nation1ID = getter.getEntityIDByAddress(address(nationWallet)); }
-            else if (i == 1) { nation2ID = getter.getEntityIDByAddress(address(nationWallet)); }
-            else if (i == 2) { nation3ID = getter.getEntityIDByAddress(address(nationWallet)); }
-            vm.stopPrank();
-        }
-
-        console.log(">>> Nations and armies initialized");
+        vm.prank(player1);
+        nation1ID = game.initializeNation(nation1Pos.x, nation1Pos.y, "China");
+        nation1CapitalID = getter.getCapital(nation1ID);
+        nation1CapitalAddr = getter.getAddress(nation1CapitalID);
+        vm.prank(player2);
+        nation2ID = game.initializeNation(nation2Pos.x, nation2Pos.y, "US");
+        nation2CapitalID = getter.getCapital(nation2ID);
+        nation2CapitalAddr = getter.getAddress(nation2CapitalID);
+        vm.prank(player3);
+        nation3ID = game.initializeNation(nation3Pos.x, nation3Pos.y, "Russia");
+        nation3CapitalID = getter.getCapital(nation3ID);
+        nation3CapitalAddr = getter.getAddress(nation3CapitalID);
+        console.log(">>> Nations initialized");
+        
         console.log("=============== INDIVIDUAL TESTS BEGIN ================");
     }
 
-    // fixme: Then probably don't need to store batches in gs()
     function _initializeMap() private {
         for (uint256 i = 0; i < worldConstants.worldWidth / worldConstants.tileWidth; i++) {
-            uint256 PosX = i * worldConstants.tileWidth;
             for (uint256 j = 0; j < worldConstants.worldHeight / worldConstants.tileWidth; j++) {
-                uint256 PosY = j * worldConstants.tileWidth;
-                Position memory startPosition;
-                startPosition.x = PosX;
-                startPosition.y = PosY;
-
-                admin.adminInitializeTile(startPosition);
+                admin.adminInitializeTile(Position({x: i * worldConstants.tileWidth, y: j * worldConstants.tileWidth}));
             }
         }
     }
@@ -364,7 +283,7 @@ contract DiamondDeployTest is Test {
 
         // Horseman
         string memory templateName = "Horseman";
-        uint256 templateID = admin.addTroopTemplate(templateName, 120, 60, 120, 95, address(horsemanContract));
+        uint256 templateID = admin.addTroopTemplate(templateName, 120, 60, 120, 95, address(horsemanToken));
         templateNames[index] = templateName;
         templateIDs[index] = templateID;
         index++;
@@ -372,7 +291,7 @@ contract DiamondDeployTest is Test {
 
         // Warrior
         templateName = "Warrior";
-        templateID = admin.addTroopTemplate(templateName, 120, 60, 120, 95, address(warriorContract));
+        templateID = admin.addTroopTemplate(templateName, 120, 60, 120, 95, address(warriorToken));
         templateNames[index] = templateName;
         templateIDs[index] = templateID;
         index++;
@@ -380,7 +299,7 @@ contract DiamondDeployTest is Test {
 
         // Slinger
         templateName = "Slinger";
-        templateID = admin.addTroopTemplate(templateName, 120, 60, 120, 95, address(slingerContract));
+        templateID = admin.addTroopTemplate(templateName, 120, 60, 120, 95, address(slingerToken));
         templateNames[index] = templateName;
         templateIDs[index] = templateID;
         index++;
@@ -388,7 +307,7 @@ contract DiamondDeployTest is Test {
 
         // Guard
         templateName = "Guard";
-        templateID = admin.addTroopTemplate(templateName, 120, 60, 120, 0, address(guardContract));
+        templateID = admin.addTroopTemplate(templateName, 120, 60, 120, 0, address(guardToken));
         templateNames[index] = templateName;
         templateIDs[index] = templateID;
         index++;
@@ -396,7 +315,7 @@ contract DiamondDeployTest is Test {
 
         // Gold
         templateName = "Gold";
-        templateID = admin.addResourceTemplate(templateName, address(goldContract));
+        templateID = admin.addResourceTemplate(templateName, address(goldToken));
         templateNames[index] = templateName;
         templateIDs[index] = templateID;
         index++;
@@ -404,7 +323,7 @@ contract DiamondDeployTest is Test {
 
         // Food
         templateName = "Food";
-        templateID = admin.addResourceTemplate(templateName, address(foodContract));
+        templateID = admin.addResourceTemplate(templateName, address(foodToken));
         templateNames[index] = templateName;
         templateIDs[index] = templateID;
         index++;
@@ -421,7 +340,7 @@ contract DiamondDeployTest is Test {
         bytes memory rawJson = vm.parseJson(vm.readFile(path));
         worldConstants = abi.decode(rawJson, (WorldConstants));
 
-        worldConstants.admin = deployerAddress;
+        worldConstants.admin = deployer;
         return worldConstants;
     }
 
@@ -429,14 +348,14 @@ contract DiamondDeployTest is Test {
     function _generateNewWorldConstants() private returns (WorldConstants memory) {
         worldConstants =
             WorldConstants({
-                admin: deployerAddress,
+                admin: deployer,
                 tileWidth: 10,
                 worldWidth: 100,
                 worldHeight: 100,
                 numInitTerrainTypes: 6,
-                maxCapitalCountPerPlayer: 3,
-                maxArmyCountPerPlayer: 2,
-                maxPlayerCount: 20,
+                maxCapitalCountPerNation: 3,
+                maxArmyCountPerNation: 2,
+                maxNationCount: 20,
                 gameMode: GameMode.REGULAR,
                 gameLengthInSeconds: 3600,
                 maxCapitalLevel: 3,

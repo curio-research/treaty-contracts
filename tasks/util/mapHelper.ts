@@ -215,10 +215,10 @@ export const initializeFixmap = async (hre: HardhatRuntimeEnvironment, diamond: 
   await confirmTx(await diamond.connect(player3).initializeNation(player1Pos.x, player1Pos.y, 'C', { gasLimit: gasLimit }), hre);
   await confirmTx(await diamond.connect(player4).initializeNation(player1Pos.x, player1Pos.y, 'D', { gasLimit: gasLimit }), hre);
 
-  const player1Id = (await diamond.getEntityIDByAddress(player1.address)).toNumber();
-  const player2Id = (await diamond.getEntityIDByAddress(player2.address)).toNumber();
-  const player3Id = (await diamond.getEntityIDByAddress(player3.address)).toNumber();
-  const player4Id = (await diamond.getEntityIDByAddress(player4.address)).toNumber();
+  const player1Id = (await diamond.getEntityByAddress(player1.address)).toNumber();
+  const player2Id = (await diamond.getEntityByAddress(player2.address)).toNumber();
+  const player3Id = (await diamond.getEntityByAddress(player3.address)).toNumber();
+  const player4Id = (await diamond.getEntityByAddress(player4.address)).toNumber();
 
   // fetch all settler Ids by fetching the entities on a given position
   const positionComponentAddr = await diamond.getComponentById(componentNameToId[Position]);
@@ -228,15 +228,6 @@ export const initializeFixmap = async (hre: HardhatRuntimeEnvironment, diamond: 
   const player2SettlerId = decodeBigNumberishArr(await positionComponent.getEntitiesWithValue(encodePosition(player2Pos)))[0];
   const player3SettlerId = decodeBigNumberishArr(await positionComponent.getEntitiesWithValue(encodePosition(player3Pos)))[0];
   const player4SettlerId = decodeBigNumberishArr(await positionComponent.getEntitiesWithValue(encodePosition(player4Pos)))[0];
-
-  // spawn armies
-  await diamond.initializeArmy(player1.address);
-  let entity = (await diamond.getEntity()).toNumber();
-  await confirmTx(await diamond.setComponentValue(Speed, entity, encodeUint256(5)), hre);
-
-  await diamond.initializeArmy(player1.address);
-  entity = (await diamond.getEntity()).toNumber();
-  await confirmTx(await diamond.setComponentValue(Speed, entity, encodeUint256(5)), hre);
 };
 
 export const addGetEntity = async (diamond: Curio): Promise<number> => {

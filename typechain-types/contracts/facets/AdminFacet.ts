@@ -51,15 +51,18 @@ export interface AdminFacetInterface extends utils.Interface {
     "addGameParameter(string,uint256)": FunctionFragment;
     "addInventory(uint256,string)": FunctionFragment;
     "addResourceTemplate(string,address)": FunctionFragment;
+    "addTreaty(address,string)": FunctionFragment;
     "addTroopTemplate(string,uint256,uint256,uint256,uint256,address)": FunctionFragment;
     "adminInitializeTile((uint256,uint256))": FunctionFragment;
+    "authorizeGame(address)": FunctionFragment;
     "bulkAddGameParameters(string[],uint256[])": FunctionFragment;
     "bulkInitializeTiles((uint256,uint256)[])": FunctionFragment;
     "dripToken(address,string,uint256)": FunctionFragment;
+    "generateNewAddress()": FunctionFragment;
     "giftTileAndResourceAt((uint256,uint256),uint256)": FunctionFragment;
     "onlyQuery((uint256,uint256))": FunctionFragment;
     "onlySet(uint256,uint256)": FunctionFragment;
-    "reactivatePlayer(address)": FunctionFragment;
+    "reactivateNation(address)": FunctionFragment;
     "registerComponents(address,(string,uint8)[])": FunctionFragment;
     "registerTemplateShortcuts(string[],uint256[])": FunctionFragment;
     "removeEntity(uint256)": FunctionFragment;
@@ -78,15 +81,18 @@ export interface AdminFacetInterface extends utils.Interface {
       | "addGameParameter"
       | "addInventory"
       | "addResourceTemplate"
+      | "addTreaty"
       | "addTroopTemplate"
       | "adminInitializeTile"
+      | "authorizeGame"
       | "bulkAddGameParameters"
       | "bulkInitializeTiles"
       | "dripToken"
+      | "generateNewAddress"
       | "giftTileAndResourceAt"
       | "onlyQuery"
       | "onlySet"
-      | "reactivatePlayer"
+      | "reactivateNation"
       | "registerComponents"
       | "registerTemplateShortcuts"
       | "removeEntity"
@@ -116,6 +122,10 @@ export interface AdminFacetInterface extends utils.Interface {
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "addTreaty",
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "addTroopTemplate",
     values: [
       PromiseOrValue<string>,
@@ -129,6 +139,10 @@ export interface AdminFacetInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "adminInitializeTile",
     values: [PositionStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "authorizeGame",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "bulkAddGameParameters",
@@ -147,6 +161,10 @@ export interface AdminFacetInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
+    functionFragment: "generateNewAddress",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "giftTileAndResourceAt",
     values: [PositionStruct, PromiseOrValue<BigNumberish>]
   ): string;
@@ -159,7 +177,7 @@ export interface AdminFacetInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "reactivatePlayer",
+    functionFragment: "reactivateNation",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
@@ -214,12 +232,17 @@ export interface AdminFacetInterface extends utils.Interface {
     functionFragment: "addResourceTemplate",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "addTreaty", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "addTroopTemplate",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "adminInitializeTile",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "authorizeGame",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -232,13 +255,17 @@ export interface AdminFacetInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "dripToken", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "generateNewAddress",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "giftTileAndResourceAt",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "onlyQuery", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "onlySet", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "reactivatePlayer",
+    functionFragment: "reactivateNation",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -332,6 +359,12 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    addTreaty(
+      _address: PromiseOrValue<string>,
+      _name: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     addTroopTemplate(
       _inventoryType: PromiseOrValue<string>,
       _health: PromiseOrValue<BigNumberish>,
@@ -344,6 +377,11 @@ export interface AdminFacet extends BaseContract {
 
     adminInitializeTile(
       _startPosition: PositionStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    authorizeGame(
+      _burnerAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -365,6 +403,10 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    generateNewAddress(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     giftTileAndResourceAt(
       _startPosition: PositionStruct,
       _nationID: PromiseOrValue<BigNumberish>,
@@ -382,7 +424,7 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    reactivatePlayer(
+    reactivateNation(
       _address: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -464,6 +506,12 @@ export interface AdminFacet extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  addTreaty(
+    _address: PromiseOrValue<string>,
+    _name: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   addTroopTemplate(
     _inventoryType: PromiseOrValue<string>,
     _health: PromiseOrValue<BigNumberish>,
@@ -476,6 +524,11 @@ export interface AdminFacet extends BaseContract {
 
   adminInitializeTile(
     _startPosition: PositionStruct,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  authorizeGame(
+    _burnerAddress: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -497,6 +550,10 @@ export interface AdminFacet extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  generateNewAddress(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   giftTileAndResourceAt(
     _startPosition: PositionStruct,
     _nationID: PromiseOrValue<BigNumberish>,
@@ -514,7 +571,7 @@ export interface AdminFacet extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  reactivatePlayer(
+  reactivateNation(
     _address: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -592,6 +649,12 @@ export interface AdminFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    addTreaty(
+      _address: PromiseOrValue<string>,
+      _name: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     addTroopTemplate(
       _inventoryType: PromiseOrValue<string>,
       _health: PromiseOrValue<BigNumberish>,
@@ -604,6 +667,11 @@ export interface AdminFacet extends BaseContract {
 
     adminInitializeTile(
       _startPosition: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    authorizeGame(
+      _burnerAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -625,6 +693,8 @@ export interface AdminFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    generateNewAddress(overrides?: CallOverrides): Promise<string>;
+
     giftTileAndResourceAt(
       _startPosition: PositionStruct,
       _nationID: PromiseOrValue<BigNumberish>,
@@ -642,7 +712,7 @@ export interface AdminFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    reactivatePlayer(
+    reactivateNation(
       _address: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -725,6 +795,12 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    addTreaty(
+      _address: PromiseOrValue<string>,
+      _name: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     addTroopTemplate(
       _inventoryType: PromiseOrValue<string>,
       _health: PromiseOrValue<BigNumberish>,
@@ -737,6 +813,11 @@ export interface AdminFacet extends BaseContract {
 
     adminInitializeTile(
       _startPosition: PositionStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    authorizeGame(
+      _burnerAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -758,6 +839,10 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    generateNewAddress(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     giftTileAndResourceAt(
       _startPosition: PositionStruct,
       _nationID: PromiseOrValue<BigNumberish>,
@@ -775,7 +860,7 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    reactivatePlayer(
+    reactivateNation(
       _address: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -858,6 +943,12 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    addTreaty(
+      _address: PromiseOrValue<string>,
+      _name: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     addTroopTemplate(
       _inventoryType: PromiseOrValue<string>,
       _health: PromiseOrValue<BigNumberish>,
@@ -870,6 +961,11 @@ export interface AdminFacet extends BaseContract {
 
     adminInitializeTile(
       _startPosition: PositionStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    authorizeGame(
+      _burnerAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -891,6 +987,10 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    generateNewAddress(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     giftTileAndResourceAt(
       _startPosition: PositionStruct,
       _nationID: PromiseOrValue<BigNumberish>,
@@ -908,7 +1008,7 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    reactivatePlayer(
+    reactivateNation(
       _address: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;

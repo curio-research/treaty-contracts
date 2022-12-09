@@ -7,10 +7,11 @@ import {ComponentSpec, Position, ValueType, WorldConstants} from "contracts/libr
 import {Templates} from "contracts/libraries/Templates.sol";
 import {Set} from "contracts/Set.sol";
 import {GameLib} from "contracts/libraries/GameLib.sol";
+import {CurioERC20} from "contracts/tokens/CurioERC20.sol";
 import {console} from "forge-std/console.sol";
 
 /// @title Admin facet
-/// @notice Contains admin functions and state functions, both of which should be out of scope for players
+/// @notice Contains admin functions and state functions, both of which should be out of scope for nations
 
 contract AdminFacet is UseStorage {
     uint256 private constant NULL = 0;
@@ -56,8 +57,8 @@ contract AdminFacet is UseStorage {
         GameLib.initializeTile(_startPosition);
     }
 
-    // function createArmy(uint256 _playerID, Position memory _position) external onlyAuthorized {
-    //     Templates.addArmy(_playerID, _position, GameLib.getProperTilePosition(_position), 10, 1, 1, 2, 5, "TODO");
+    // function createArmy(uint256 _nationID, Position memory _position) external onlyAuthorized {
+    //     Templates.addArmy(_nationID, _position, GameLib.getProperTilePosition(_position), 10, 1, 1, 2, 5, "TODO");
     // }
 
     function spawnResource(Position memory _startPosition, string memory _inventoryType) external onlyAuthorized {
@@ -69,9 +70,8 @@ contract AdminFacet is UseStorage {
         string memory _tokenName,
         uint256 _amount
     ) external onlyAuthorized {
-        address tokenContract = GameLib.getTokenContract(_tokenName);
-        (bool success, ) = tokenContract.call(abi.encodeWithSignature("dripToken(address,uint256)", _address, _amount));
-        require(success, string.concat("CURIO: Failed to drip token", _tokenName));
+        CurioERC20 token = GameLib.getTokenContract(_tokenName);
+        token.dripToken(_address, _amount);
     }
 
     function giftTileAndResourceAt(Position memory _startPosition, uint256 _nationID) external onlyAuthorized {
@@ -85,16 +85,22 @@ contract AdminFacet is UseStorage {
     // ADMIN FUNCTIONS
     // ----------------------------------------------------------------------
 
-    /**
-     * @dev Reactivate an inactive player.
-     * @param _address player address
-     */
-    function reactivatePlayer(address _address) external onlyAuthorized {
-        uint256 _playerID = gs().addressToEntity[_address];
-        require(_playerID != NULL, "CURIO: Player already initialized");
-        require(!ECSLib.getBoolComponent("IsActive").has(_playerID), "CURIO: Player is active");
+    // sent using the initial function
+    function authorizeGame(address _burnerAddress) external onlyAuthorized {
+        gs().accounts[msg.sender] = _burnerAddress;
+        gs().burnerAccounts[_burnerAddress] = msg.sender;
+    }
 
-        ECSLib.setBool("IsActive", _playerID);
+    /**
+     * @dev Reactivate an inactive nation.
+     * @param _address nation address
+     */
+    function reactivateNation(address _address) external onlyAuthorized {
+        uint256 _nationID = gs().nationAddressToId[_address];
+        require(_nationID != NULL, "CURIO: Nation already initialized");
+        require(!ECSLib.getBoolComponent("IsActive").has(_nationID), "CURIO: Nation is active");
+
+        ECSLib.setBool("IsActive", _nationID);
     }
 
     /**
@@ -111,6 +117,7 @@ contract AdminFacet is UseStorage {
      */
 
     function bulkInitializeTiles(Position[] memory _positions) external onlyAuthorized {
+        console.log("bulk");
         for (uint256 i = 0; i < _positions.length; i++) {
             GameLib.initializeTile(_positions[i]);
         }
@@ -157,6 +164,14 @@ contract AdminFacet is UseStorage {
         for (uint256 i = 0; i < _values.length; i++) {
             Templates.addGameParameter(_identifiers[i], _values[i]);
         }
+    }
+
+    function addTreaty(address _address, string memory _name) external onlyAuthorized returns (uint256) {
+        return Templates.addTreaty(_address, _name);
+    }
+
+    function generateNewAddress() external onlyAuthorized returns (address) {
+        return GameLib.generateNewAddress();
     }
 
     // ----------------------------------------------------------------------

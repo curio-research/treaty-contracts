@@ -1,10 +1,19 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.13;
+
+import {ITreaty} from "contracts/interfaces/ITreaty.sol";
 
 // FIXME: add back Ownable
-contract NATO {
+contract NATO is ITreaty {
+    address public diamond;
+    string public name;
     address[] public memberStates;
     mapping(address => bool) public isMemberStates;
+
+    constructor(address _diamond) {
+        diamond = _diamond;
+        name = "North Atlantic Treaty Organization";
+    }
 
     // ----------------------------------------------------------
     // Article I: The "Open Door"
