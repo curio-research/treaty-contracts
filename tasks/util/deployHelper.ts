@@ -7,6 +7,9 @@ import * as fs from 'fs';
 import { chainInfo, COMPONENT_SPECS, position, TILE_TYPE } from 'curio-vault';
 import { ECSLib } from '../../typechain-types/contracts/libraries/ECSLib';
 import { GameLib } from '../../typechain-types/contracts/libraries/GameLib';
+import { CurioERC20 } from '../../typechain-types/contracts/tokens/CurioERC20';
+import { FTX } from '../../typechain-types/contracts/treaties/FTX.sol';
+import { NATO } from '../../typechain-types/contracts/treaties/NATO';
 import { createTemplates } from './constants';
 import { deployDiamond, getDiamond, deployFacets } from './diamondDeploy';
 import { encodeTileMap } from './mapHelper';
@@ -96,11 +99,6 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
   await deployFacets(hre, diamondAddr, facets, admin);
   console.log(`✦ Diamond deployment took ${Math.floor(performance.now() - startTime)} ms`);
 
-  // // Deploy treaties
-  // startTime = performance.now();
-  // await deployProxy<any>('FTX', admin, hre, [diamond.address, admin.address]); // FIXME
-  // console.log(`✦ Treaty deployment took ${Math.floor(performance.now() - startTime)} ms`);
-
   // Batch register components
   startTime = performance.now();
   const componentUploadBatchSize = 50;
@@ -124,16 +122,27 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
   }
   console.log(`✦ Game parameter registration took ${Math.floor(performance.now() - startTime)} ms`);
 
+  // Deploy and authorize token contracts
+  startTime = performance.now();
+  const tokenNames = ['Gold', 'Food', 'Horseman', 'Warrior', 'Slinger', 'Guard'];
+  const tokenAddrs: string[] = [];
+  for (const tokenName of tokenNames) {
+    const token = await deployProxy<CurioERC20>('CurioERC20', admin, hre, [tokenName, tokenName.toUpperCase(), 0, diamond.address]);
+    tokenAddrs.push(token.address);
+    await confirmTx(await diamond.addAuthorized(token.address, { gasLimit }), hre);
+  }
+  console.log(`✦ Token contract deployment and authorization took ${Math.floor(performance.now() - startTime)} ms`);
+
+  // Create templates
+  startTime = performance.now();
+  await createTemplates(diamond, tokenAddrs, gasLimit, hre);
+  console.log(`✦ Template creation took ${Math.floor(performance.now() - startTime)} ms`);
+
   // Initialize map
   startTime = performance.now();
   const encodedTileMap = encodeTileMap(tileMap, worldConstants.numInitTerrainTypes, Math.floor(200 / worldConstants.numInitTerrainTypes));
   await confirmTx(await diamond.storeEncodedColumnBatches(encodedTileMap, { gasLimit }), hre);
   console.log(`✦ Lazy setting ${tileMap.length}x${tileMap[0].length} map took ${Math.floor(performance.now() - startTime)} ms`);
-
-  // Create templates
-  startTime = performance.now();
-  await createTemplates(diamond, gasLimit, hre);
-  console.log(`✦ Template creation took ${Math.floor(performance.now() - startTime)} ms`);
 
   // Bulk initialize special tiles
   const tileWidth = Number(worldConstants.tileWidth);
@@ -150,6 +159,12 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
     await confirmTx(await diamond.bulkInitializeTiles(specialTilePositions.slice(i, i + bulkTileUploadSize), { gasLimit }), hre);
   }
   console.log(`✦ Special tile bulk initialization took ${Math.floor(performance.now() - startTime)} ms`);
+
+  // TODO: Deploy treaties
+  startTime = performance.now();
+  // await deployProxy<FTX>('FTX', admin, hre, [diamond.address]);
+  await deployProxy<NATO>('NATO', admin, hre, [diamond.address]);
+  console.log(`✦ Treaty deployment took ${Math.floor(performance.now() - startTime)} ms`);
 
   return diamond;
 };

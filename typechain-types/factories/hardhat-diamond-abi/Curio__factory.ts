@@ -1575,6 +1575,25 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "uint256",
+        name: "_nationID",
+        type: "uint256",
+      },
+    ],
+    name: "getSignedTreaties",
+    outputs: [
+      {
+        internalType: "uint256[]",
+        name: "",
+        type: "uint256[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         components: [
           {
             internalType: "uint256",

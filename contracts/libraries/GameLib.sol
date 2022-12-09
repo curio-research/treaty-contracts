@@ -65,7 +65,7 @@ library GameLib {
         }
     }
 
-    function initializeTile(Position memory _startPosition) external returns (uint256) {
+    function initializeTile(Position memory _startPosition) public returns (uint256) {
         require(isProperTilePosition(_startPosition), "CURIO: Not proper tile position");
         {
             uint256 tileID = getTileAt(_startPosition);
@@ -356,7 +356,7 @@ library GameLib {
 
         uint256[] memory treatyIDs = new uint256[](signatureIDs.length);
         for (uint256 i = 0; i < signatureIDs.length; i++) {
-            treatyIDs[i] = ECSLib.getUint("Treaty", signatures[i]);
+            treatyIDs[i] = ECSLib.getUint("Treaty", signatureIDs[i]);
         }
 
         return treatyIDs;

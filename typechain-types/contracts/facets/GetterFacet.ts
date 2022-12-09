@@ -114,6 +114,7 @@ export interface GetterFacetInterface extends utils.Interface {
     "getPlayerCount()": FunctionFragment;
     "getPositionExternal(string,uint256)": FunctionFragment;
     "getResourceAtTile((uint256,uint256))": FunctionFragment;
+    "getSignedTreaties(uint256)": FunctionFragment;
     "getTileAt((uint256,uint256))": FunctionFragment;
     "getTokenContract(string)": FunctionFragment;
     "getTreatyByName(string)": FunctionFragment;
@@ -144,6 +145,7 @@ export interface GetterFacetInterface extends utils.Interface {
       | "getPlayerCount"
       | "getPositionExternal"
       | "getResourceAtTile"
+      | "getSignedTreaties"
       | "getTileAt"
       | "getTokenContract"
       | "getTreatyByName"
@@ -239,6 +241,10 @@ export interface GetterFacetInterface extends utils.Interface {
     values: [PositionStruct]
   ): string;
   encodeFunctionData(
+    functionFragment: "getSignedTreaties",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getTileAt",
     values: [PositionStruct]
   ): string;
@@ -326,6 +332,10 @@ export interface GetterFacetInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getResourceAtTile",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getSignedTreaties",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getTileAt", data: BytesLike): Result;
@@ -474,6 +484,11 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    getSignedTreaties(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
+
     getTileAt(
       _position: PositionStruct,
       overrides?: CallOverrides
@@ -600,6 +615,11 @@ export interface GetterFacet extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  getSignedTreaties(
+    _nationID: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
   getTileAt(
     _position: PositionStruct,
     overrides?: CallOverrides
@@ -725,6 +745,11 @@ export interface GetterFacet extends BaseContract {
       _startPosition: PositionStruct,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    getSignedTreaties(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
 
     getTileAt(
       _position: PositionStruct,
@@ -855,6 +880,11 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getSignedTreaties(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getTileAt(
       _position: PositionStruct,
       overrides?: CallOverrides
@@ -977,6 +1007,11 @@ export interface GetterFacet extends BaseContract {
 
     getResourceAtTile(
       _startPosition: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getSignedTreaties(
+      _nationID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

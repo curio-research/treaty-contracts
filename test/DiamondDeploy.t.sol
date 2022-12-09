@@ -133,15 +133,13 @@ contract DiamondDeployTest is Test {
         _registerGameParameters();
         console.log(">>> Game parameters registered");
 
-        // Deploy token contracts
-        foodToken = new CurioERC20("Food", "FOOD", 1, address(diamond));
-        goldToken = new CurioERC20("Gold", "GOLD", 1, address(diamond));
-        horsemanToken = new CurioERC20("Horseman", "HORSEMAN", 1, address(diamond));
-        warriorToken = new CurioERC20("Warrior", "WARRIOR", 1, address(diamond));
-        slingerToken = new CurioERC20("Slinger", "SLINGER", 1, address(diamond));
-        guardToken = new CurioERC20("Guard", "GUARD", 1, address(diamond));
-        // admin facet authorizes all token contracts to make changes to ECS States
-        // FIXME: are these really needed?
+        // Deploy and authorize token contracts
+        goldToken = new CurioERC20("Gold", "GOLD", 0, address(diamond));
+        foodToken = new CurioERC20("Food", "FOOD", 0, address(diamond));
+        horsemanToken = new CurioERC20("Horseman", "HORSEMAN", 0, address(diamond));
+        warriorToken = new CurioERC20("Warrior", "WARRIOR", 0, address(diamond));
+        slingerToken = new CurioERC20("Slinger", "SLINGER", 0, address(diamond));
+        guardToken = new CurioERC20("Guard", "GUARD", 0, address(diamond));
         admin.addAuthorized(address(foodToken));
         admin.addAuthorized(address(goldToken));
         admin.addAuthorized(address(horsemanToken));
