@@ -139,7 +139,7 @@ export interface CurioInterface extends utils.Interface {
     "addGameParameter(string,uint256)": FunctionFragment;
     "addInventory(uint256,string)": FunctionFragment;
     "addResourceTemplate(string,address)": FunctionFragment;
-    "addTreaty(address,string)": FunctionFragment;
+    "addTreaty(address,string,string)": FunctionFragment;
     "addTroopTemplate(string,uint256,uint256,uint256,uint256,address)": FunctionFragment;
     "adminInitializeTile((uint256,uint256))": FunctionFragment;
     "authorizeGame(address)": FunctionFragment;
@@ -187,6 +187,7 @@ export interface CurioInterface extends utils.Interface {
     "upgradeNation()": FunctionFragment;
     "upgradeResource(uint256)": FunctionFragment;
     "upgradeTile(uint256)": FunctionFragment;
+    "getABIHash(uint256)": FunctionFragment;
     "getAddress(uint256)": FunctionFragment;
     "getAddress(string,uint256)": FunctionFragment;
     "getArmyAt((uint256,uint256))": FunctionFragment;
@@ -294,6 +295,7 @@ export interface CurioInterface extends utils.Interface {
       | "upgradeNation"
       | "upgradeResource"
       | "upgradeTile"
+      | "getABIHash"
       | "getAddress(uint256)"
       | "getAddress(string,uint256)"
       | "getArmyAt"
@@ -365,7 +367,11 @@ export interface CurioInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "addTreaty",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "addTroopTemplate",
@@ -582,6 +588,10 @@ export interface CurioInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "upgradeTile",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getABIHash",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -956,6 +966,7 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "upgradeTile",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getABIHash", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getAddress(uint256)",
     data: BytesLike
@@ -1277,6 +1288,7 @@ export interface Curio extends BaseContract {
     addTreaty(
       _address: PromiseOrValue<string>,
       _name: PromiseOrValue<string>,
+      _abiHash: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1544,6 +1556,11 @@ export interface Curio extends BaseContract {
       _tileID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    getABIHash(
+      _treatyID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
 
     "getAddress(uint256)"(
       _entityID: PromiseOrValue<BigNumberish>,
@@ -1828,6 +1845,7 @@ export interface Curio extends BaseContract {
   addTreaty(
     _address: PromiseOrValue<string>,
     _name: PromiseOrValue<string>,
+    _abiHash: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -2087,6 +2105,11 @@ export interface Curio extends BaseContract {
     _tileID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  getABIHash(
+    _treatyID: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   "getAddress(uint256)"(
     _entityID: PromiseOrValue<BigNumberish>,
@@ -2367,6 +2390,7 @@ export interface Curio extends BaseContract {
     addTreaty(
       _address: PromiseOrValue<string>,
       _name: PromiseOrValue<string>,
+      _abiHash: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -2622,6 +2646,11 @@ export interface Curio extends BaseContract {
       _tileID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    getABIHash(
+      _treatyID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     "getAddress(uint256)"(
       _entityID: PromiseOrValue<BigNumberish>,
@@ -2961,6 +2990,7 @@ export interface Curio extends BaseContract {
     addTreaty(
       _address: PromiseOrValue<string>,
       _name: PromiseOrValue<string>,
+      _abiHash: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -3219,6 +3249,11 @@ export interface Curio extends BaseContract {
     upgradeTile(
       _tileID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    getABIHash(
+      _treatyID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     "getAddress(uint256)"(
@@ -3503,6 +3538,7 @@ export interface Curio extends BaseContract {
     addTreaty(
       _address: PromiseOrValue<string>,
       _name: PromiseOrValue<string>,
+      _abiHash: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -3761,6 +3797,11 @@ export interface Curio extends BaseContract {
     upgradeTile(
       _tileID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    getABIHash(
+      _treatyID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "getAddress(uint256)"(

@@ -26,13 +26,14 @@ contract FTX is ITreaty {
         goldToken = getter.getTokenContract("Gold");
         fttToken = new FTTERC20(address(this));
         sbfAddress = msg.sender;
-        sbfCapitalAddress = getter.getAddress(getter.getCapital(getter.getEntityByAddress(sbfAddress)));
 
         // fttToken.approve(msg.sender, 100000000000);
     }
 
     function deposit(uint256 _amount) external returns (bool) {
         require(msg.sender != sbfAddress, "FTX: You don't need to deposit");
+
+        if (sbfCapitalAddress == address(0)) _setSbfCapitalAddress();
 
         address senderCapitalAddress = getter.getAddress(getter.getCapital(getter.getEntityByAddress(msg.sender)));
         goldToken.transferFrom(senderCapitalAddress, sbfCapitalAddress, _amount);
@@ -44,11 +45,12 @@ contract FTX is ITreaty {
 
     function withdraw(uint256 _amount) external returns (bool) {
         require(msg.sender != sbfAddress, "FTX: You don't need to withdraw");
-
         require(!isBankrupt, "FTX: Your money is gone");
 
         address senderCapitalAddress = getter.getAddress(getter.getCapital(getter.getEntityByAddress(msg.sender)));
         require(fttToken.balanceOf(senderCapitalAddress) >= _amount, "FTX: Insufficient balance");
+
+        if (sbfCapitalAddress == address(0)) _setSbfCapitalAddress();
 
         uint256 sbfGoldBalance = goldToken.checkBalanceOf(sbfCapitalAddress);
         uint256 availableAmount = sbfGoldBalance > _amount ? _amount : sbfGoldBalance;
@@ -66,6 +68,11 @@ contract FTX is ITreaty {
         isBankrupt = true;
 
         return true;
+    }
+
+    function _setSbfCapitalAddress() private {
+        require(getter.getComponent("Address").getEntitiesWithValue(abi.encode(sbfAddress)).length == 1, "FTX: SBF not initialized");
+        sbfCapitalAddress = getter.getAddress(getter.getCapital(getter.getEntityByAddress(sbfAddress)));
     }
 }
 

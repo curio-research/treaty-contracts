@@ -141,6 +141,8 @@ library Templates {
 
     function addInventory(uint256 _keeperID, uint256 _templateID) public returns (uint256) {
         uint256 inventoryID = ECSLib.addEntity();
+
+        ECSLib.setString("Tag", inventoryID, "Inventory");
         ECSLib.setUint("Keeper", inventoryID, _keeperID);
         ECSLib.setUint("Template", inventoryID, _templateID);
         ECSLib.setUint("Amount", inventoryID, 0);
@@ -198,12 +200,17 @@ library Templates {
         return signatureID;
     }
 
-    function addTreaty(address _address, string memory _name) public returns (uint256) {
+    function addTreaty(
+        address _address,
+        string memory _name,
+        string memory _abiHash
+    ) public returns (uint256) {
         uint256 treatyID = ECSLib.addEntity();
 
         ECSLib.setString("Tag", treatyID, "Treaty");
         ECSLib.setUint("InitTimestamp", treatyID, block.timestamp);
         ECSLib.setString("Name", treatyID, _name);
+        ECSLib.setString("ABIHash", treatyID, _abiHash);
         ECSLib.setAddress("Address", treatyID, _address);
 
         return treatyID;

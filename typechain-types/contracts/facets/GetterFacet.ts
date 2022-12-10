@@ -93,6 +93,7 @@ export type QueryConditionStructOutput = [number, string, string] & {
 
 export interface GetterFacetInterface extends utils.Interface {
   functions: {
+    "getABIHash(uint256)": FunctionFragment;
     "getAddress(uint256)": FunctionFragment;
     "getArmyAt((uint256,uint256))": FunctionFragment;
     "getArmyAtTile((uint256,uint256))": FunctionFragment;
@@ -124,6 +125,7 @@ export interface GetterFacetInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "getABIHash"
       | "getAddress"
       | "getArmyAt"
       | "getArmyAtTile"
@@ -153,6 +155,10 @@ export interface GetterFacetInterface extends utils.Interface {
       | "query"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "getABIHash",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(
     functionFragment: "getAddress",
     values: [PromiseOrValue<BigNumberish>]
@@ -265,6 +271,7 @@ export interface GetterFacetInterface extends utils.Interface {
     values: [QueryConditionStruct[]]
   ): string;
 
+  decodeFunctionResult(functionFragment: "getABIHash", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getAddress", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getArmyAt", data: BytesLike): Result;
   decodeFunctionResult(
@@ -383,6 +390,11 @@ export interface GetterFacet extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    getABIHash(
+      _treatyID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     getAddress(
       _entityID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -513,6 +525,11 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
   };
+
+  getABIHash(
+    _treatyID: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   getAddress(
     _entityID: PromiseOrValue<BigNumberish>,
@@ -645,6 +662,11 @@ export interface GetterFacet extends BaseContract {
   ): Promise<BigNumber[]>;
 
   callStatic: {
+    getABIHash(
+      _treatyID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
     getAddress(
       _entityID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -779,6 +801,11 @@ export interface GetterFacet extends BaseContract {
   filters: {};
 
   estimateGas: {
+    getABIHash(
+      _treatyID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getAddress(
       _entityID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -909,6 +936,11 @@ export interface GetterFacet extends BaseContract {
   };
 
   populateTransaction: {
+    getABIHash(
+      _treatyID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getAddress(
       _entityID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides

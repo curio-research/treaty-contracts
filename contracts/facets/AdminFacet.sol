@@ -166,8 +166,12 @@ contract AdminFacet is UseStorage {
         }
     }
 
-    function addTreaty(address _address, string memory _name) external onlyAuthorized returns (uint256) {
-        return Templates.addTreaty(_address, _name);
+    function addTreaty(
+        address _address,
+        string memory _name,
+        string memory _abiHash
+    ) external onlyAuthorized returns (uint256) {
+        return Templates.addTreaty(_address, _name, _abiHash);
     }
 
     function generateNewAddress() external onlyAuthorized returns (address) {

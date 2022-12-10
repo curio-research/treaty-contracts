@@ -57,6 +57,10 @@ contract GetterFacet is UseStorage {
         return ECSLib.getAddressComponent("Address").getEntitiesWithValue(_entityAddress)[0];
     }
 
+    function getABIHash(uint256 _treatyID) external view returns (string memory) {
+        return ECSLib.getString("ABIHash", _treatyID);
+    }
+
     // ----------------------------------------------------------
     // LOGIC GETTERS
     // ----------------------------------------------------------

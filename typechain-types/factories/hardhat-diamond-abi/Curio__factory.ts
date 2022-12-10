@@ -124,6 +124,11 @@ const _abi = [
         name: "_name",
         type: "string",
       },
+      {
+        internalType: "string",
+        name: "_abiHash",
+        type: "string",
+      },
     ],
     name: "addTreaty",
     outputs: [
@@ -1097,6 +1102,25 @@ const _abi = [
     name: "upgradeTile",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_treatyID",
+        type: "uint256",
+      },
+    ],
+    name: "getABIHash",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {

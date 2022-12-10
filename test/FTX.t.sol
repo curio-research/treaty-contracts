@@ -25,7 +25,7 @@ contract FTXTest is Test, DiamondDeployTest {
 
         // Deployer registers FTX treaty
         vm.startPrank(deployer);
-        admin.addTreaty(address(ftx), ftx.name());
+        admin.addTreaty(address(ftx), ftx.name(), "placeholder ABI");
         vm.stopPrank();
 
         // Player 1 deposits to FTX

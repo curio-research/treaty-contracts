@@ -17,7 +17,6 @@ import {ComponentSpec, GameMode, GameParamSpec, Position, WorldConstants} from "
 import {NATO} from "contracts/treaties/NATO.sol";
 import {CurioERC20} from "contracts/tokens/CurioERC20.sol";
 import {CurioWallet} from "contracts/CurioWallet.sol";
-
 import {console} from "forge-std/console.sol";
 import {stdJson} from "forge-std/StdJson.sol";
 
@@ -162,7 +161,7 @@ contract DiamondDeployTest is Test {
 
         // Initialize treaties
         nato = new NATO(diamond);
-        admin.addTreaty(address(nato), nato.name());
+        admin.addTreaty(address(nato), nato.name(), "sample ABI");
         console.log(">>> Treaties initialized");
 
         vm.stopPrank();

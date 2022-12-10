@@ -147,7 +147,7 @@ contract GameFacet is UseStorage {
         }
 
         // Verify that capital has recovered from sack
-        GameLib.capitalHasRecoveredFromSack(GameLib.getCapital(nationID));
+        GameLib.capitalSackRecoveryCheck(GameLib.getCapital(nationID));
 
         // Set timestamp
         ECSLib.setUint("LastRecovered", _tileID, block.timestamp + GameLib.getConstant("Tile", "", "Cooldown", "Recover", tileLevel));
@@ -167,7 +167,7 @@ contract GameFacet is UseStorage {
         uint256 capitalID = GameLib.getCapital(ECSLib.getUint("Nation", _tileID));
         require(tileLevel < ECSLib.getUint("Level", capitalID) * gs().worldConstants.capitalLevelToEntityLevelRatio, "CURIO: Max tile level reached");
 
-        GameLib.capitalHasRecoveredFromSack(capitalID);
+        GameLib.capitalSackRecoveryCheck(capitalID);
 
         // Require nations to fully recover the tile before upgrade
         address tileAddress = ECSLib.getAddress("Address", _tileID);
@@ -215,7 +215,7 @@ contract GameFacet is UseStorage {
         require(capitalLevel < gs().worldConstants.maxCapitalLevel, "CURIO: Reached max capital level");
 
         // Check sack
-        GameLib.capitalHasRecoveredFromSack(capitalID);
+        GameLib.capitalSackRecoveryCheck(capitalID);
 
         // check if capital upgrade is in process
         require(block.timestamp >= ECSLib.getUint("LastUpgraded", capitalID), "CURIO: Need to finish upgrading first");
@@ -264,7 +264,7 @@ contract GameFacet is UseStorage {
         }
 
         // Capital at chaos cannot move
-        GameLib.capitalHasRecoveredFromSack(_capitalID);
+        GameLib.capitalSackRecoveryCheck(_capitalID);
 
         // Verify that target tile belongs to nation
         require(ECSLib.getUint("Nation", GameLib.getTileAt(_newTilePosition)) == nationID, "CURIO: Can only move in your territory");
@@ -350,7 +350,7 @@ contract GameFacet is UseStorage {
         require(block.timestamp >= ECSLib.getUint("LastUpgraded", _capitalID), "CURIO: Need to finish upgrading first");
 
         // Verify sack
-        GameLib.capitalHasRecoveredFromSack(_capitalID);
+        GameLib.capitalSackRecoveryCheck(_capitalID);
 
         // Verify that capital can produce
         require(ECSLib.getBool("CanProduce", _capitalID), "CURIO: Capital cannot produce");
@@ -387,7 +387,7 @@ contract GameFacet is UseStorage {
         require(block.timestamp > ECSLib.getUint("LastUpgraded", _capitalID), "CURIO: Need to finish upgrading first");
 
         // capital at chaos cannot collect troops
-        GameLib.capitalHasRecoveredFromSack(_capitalID);
+        GameLib.capitalSackRecoveryCheck(_capitalID);
 
         // Verify that enough time has passed for the given amount
         require(block.timestamp >= (ECSLib.getUint("InitTimestamp", _productionID) + ECSLib.getUint("Duration", _productionID)), "CURIO: Need more time for production");
@@ -453,7 +453,7 @@ contract GameFacet is UseStorage {
         require(GameLib.coincident(ECSLib.getPosition("StartPosition", capitalID), startPosition), "CURIO: Must be on capital to unload");
 
         // Army cannot unload resources to chaotic capital
-        GameLib.capitalHasRecoveredFromSack(capitalID);
+        GameLib.capitalSackRecoveryCheck(capitalID);
 
         // Return carried resources to capital
         address capitalAddress = ECSLib.getAddress("Address", capitalID);
@@ -467,7 +467,7 @@ contract GameFacet is UseStorage {
         require(gs().nationAddressToId[msg.sender] == nationID, "CURIO: Can only harvest a resource you own");
 
         // Capital at chaos cannot harvest resources
-        GameLib.capitalHasRecoveredFromSack(GameLib.getCapital(nationID));
+        GameLib.capitalSackRecoveryCheck(GameLib.getCapital(nationID));
 
         // Verify that the resource level is greater than zero, meaning that a tool has "been built".
         uint256 resourceLevel = ECSLib.getUint("Level", _resourceID);
@@ -511,7 +511,7 @@ contract GameFacet is UseStorage {
         require(gs().nationAddressToId[msg.sender] == nationID, "CURIO: Can only harvest from your own capital");
 
         // Verify sack
-        GameLib.capitalHasRecoveredFromSack(_capitalID);
+        GameLib.capitalSackRecoveryCheck(_capitalID);
 
         // Verify it's not being upgraded; note: capital level is same as nation level here
         uint256 capitalLevel = ECSLib.getUint("Level", _capitalID);
@@ -562,7 +562,7 @@ contract GameFacet is UseStorage {
         require(GameLib.getArmyAt(midPosition) == NULL, "CURIO: Capital occupied by another army");
 
         // Capital at Chaos cannot organize an army
-        GameLib.capitalHasRecoveredFromSack(_capitalID);
+        GameLib.capitalSackRecoveryCheck(_capitalID);
 
         // Add army
         address armyAddress = address(new CurioWallet(address(this)));
@@ -676,7 +676,7 @@ contract GameFacet is UseStorage {
 
         uint256 capitalID = GameLib.getCapital(ECSLib.getUint("Nation", _tileID));
         // Others cannot attack cities at chaos
-        GameLib.capitalHasRecoveredFromSack(GameLib.getCapital(capitalID));
+        GameLib.capitalSackRecoveryCheck(GameLib.getCapital(capitalID));
 
         // if it is the super tile, check that it's active
         if (GameLib.coincident(ECSLib.getPosition("StartPosition", _tileID), GameLib.getMapCenterTilePosition())) {
