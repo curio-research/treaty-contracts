@@ -769,6 +769,19 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
+        name: "_targetNationID",
+        type: "uint256",
+      },
+    ],
+    name: "closeBorder",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
         name: "_armyID",
         type: "uint256",
       },
@@ -965,6 +978,19 @@ const _abi = [
       },
     ],
     name: "moveCapital",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_targetNationID",
+        type: "uint256",
+      },
+    ],
+    name: "openBorder",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

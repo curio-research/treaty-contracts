@@ -628,12 +628,10 @@ library GameLib {
         require(Set(gs().entities).includes(_entity), "CURIO: Entity object not found");
     }
 
-    function neutralOrOwnedEntityCheck(uint256 _entity, uint256 _nationID) internal view {
-        uint256 entityNation = ECSLib.getUint("Nation", _entity);
-        if (entityNation == 0 || entityNation == _nationID) return;
-
-        // Check if owner nation allows passing through
-        // TODO: left here
+    function neutralOrOpenTileCheck(uint256 _tileID, uint256 _nationID) internal view {
+        uint256 tileNationID = ECSLib.getUint("Nation", _tileID);
+        if (tileNationID == 0) return;
+        require(includes(_nationID, ECSLib.getUintArray("OpenNations", tileNationID)), "CURIO: Tile not neutral or open");
     }
 
     function inboundPositionCheck(Position memory _position) internal view {
@@ -735,14 +733,12 @@ library GameLib {
         return (keccak256(abi.encodePacked((_s1))) == keccak256(abi.encodePacked((_s2))));
     }
 
-    function includesPosition(Position memory _p, Position[] memory _area) internal pure returns (bool) {
-        for (uint256 i = 0; i < _area.length; i++) {
-            if (coincident(_p, _area[i])) return true;
-        }
-        return false;
+    function includes(uint256 _element, uint256[] memory _array) internal pure returns (bool) {
+        uint256 index = find(_element, _array);
+        return index < _array.length;
     }
 
-    function getIndex(uint256 _element, uint256[] memory _array) internal pure returns (uint256) {
+    function find(uint256 _element, uint256[] memory _array) internal pure returns (uint256) {
         uint256 index = 0;
         while (index < _array.length) {
             if (_array[index] == _element) break;

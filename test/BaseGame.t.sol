@@ -17,6 +17,8 @@ contract BaseGameTest is Test, DiamondDeployTest {
     // - [x] initializeNation
     // - [x] upgradeNation
     // - [ ] moveCapital
+    // - [ ] openBorder
+    // - [ ] closeBorder
     // Tile:
     // - [x] claimTile
     // - [ ] upgradeTile
@@ -511,7 +513,7 @@ contract BaseGameTest is Test, DiamondDeployTest {
         // Check transfer distance
         assertEq(foodToken.maxTransferDistance(), 20);
 
-        // Deployer drips gold, food, and troops to Nation 2
+        // Deployer drips gold, food, and troops to Nation 1 and 2
         vm.startPrank(deployer);
         admin.dripToken(nation1CapitalAddr, "Gold", 1000000);
         admin.dripToken(nation1CapitalAddr, "Food", 1000000);
@@ -563,6 +565,84 @@ contract BaseGameTest is Test, DiamondDeployTest {
         vm.expectRevert();
         capital1Wallet.executeTx(address(foodToken), abi.encodeWithSignature("transfer(address,uint256)", army21Addr, 50));
         assertEq(foodToken.checkBalanceOf(army21Addr), 50);
+        vm.stopPrank();
+    }
+
+    function testOpenCloseBorder() public {
+        // Start time
+        uint256 time = block.timestamp + 500;
+        vm.warp(time);
+
+        // Check initial open nations
+        uint256[] memory nation1OpenNations = abi.decode(getter.getComponent("OpenNations").getBytesValue(nation1ID), (uint256[]));
+        assertEq(nation1OpenNations.length, 1);
+        assertEq(nation1OpenNations[0], nation1ID);
+
+        // Deployer drips gold, food, and troops to Nation 1 and 2
+        vm.startPrank(deployer);
+        admin.dripToken(nation2CapitalAddr, "Gold", 1000000);
+        admin.dripToken(nation2CapitalAddr, "Food", 1000000);
+        admin.dripToken(nation2CapitalAddr, "Warrior", 1000);
+        admin.dripToken(nation2CapitalAddr, "Horseman", 1000);
+        admin.dripToken(nation2CapitalAddr, "Slinger", 1000);
+        vm.stopPrank();
+
+        // Nation 2 organizes army
+        time += 10;
+        vm.warp(time + 10);
+        vm.startPrank(player2);
+        uint256[] memory armyTemplateIDs = new uint256[](3);
+        armyTemplateIDs[0] = warriorTemplateID;
+        armyTemplateIDs[1] = horsemanTemplateID;
+        armyTemplateIDs[2] = slingerTemplateID;
+        uint256[] memory armyTemplateAmounts = new uint256[](3);
+        armyTemplateAmounts[0] = 500;
+        armyTemplateAmounts[1] = 500;
+        armyTemplateAmounts[2] = 500;
+        uint256 army21ID = game.organizeArmy(nation2CapitalID, armyTemplateIDs, armyTemplateAmounts);
+
+        // Nation 2 moves army to (62, 16)
+        time += 10;
+        vm.warp(time + 10);
+        for (uint256 i = 1; i <= 8; i++) {
+            time += 1;
+            vm.warp(time);
+            game.move(army21ID, 62, 32 - 2 * i);
+        }
+        assertEq(getter.getArmyAt(Position({x: 62, y: 16})), army21ID);
+
+        // Nation 2's army fails to enter Nation 1's territory
+        time += 1;
+        vm.warp(time);
+        vm.expectRevert("CURIO: Tile not neutral or open");
+        game.move(army21ID, 62, 14);
+        vm.stopPrank();
+
+        // Nation 1 opens border with Nation 2
+        vm.prank(player1);
+        game.openBorder(nation2ID);
+
+        // Nation 2's army enters Nation 1's territory
+        time += 1;
+        vm.warp(time);
+        vm.prank(player2);
+        game.move(army21ID, 62, 14);
+
+        // Nation 1 closes border with Nation 2
+        vm.prank(player1);
+        game.closeBorder(nation2ID);
+
+        // Nation 2's army fails to move in Nation 1's territory
+        vm.startPrank(player2);
+        time += 1;
+        vm.warp(time);
+        vm.expectRevert("CURIO: Tile not neutral or open");
+        game.move(army21ID, 62, 12);
+
+        // Nation 2's army moves out of Nation 1's territory in one step
+        time += 1;
+        vm.warp(time);
+        game.move(army21ID, 62, 16);
         vm.stopPrank();
     }
 }

@@ -69,12 +69,15 @@ library Templates {
 
     function addNation(string memory _name, address _address) public returns (uint256) {
         uint256 nationID = ECSLib.addEntity();
+        uint256[] memory openNationIDs = new uint256[](1);
+        openNationIDs[0] = nationID;
 
         ECSLib.setString("Tag", nationID, "Nation");
         ECSLib.setBool("IsActive", nationID);
         ECSLib.setString("Name", nationID, _name);
         ECSLib.setUint("InitTimestamp", nationID, block.timestamp);
         ECSLib.setAddress("Address", nationID, _address);
+        ECSLib.setUintArray("OpenNations", nationID, openNationIDs);
 
         return nationID;
     }
@@ -217,4 +220,6 @@ library Templates {
 
         return treatyID;
     }
+
+    // function addTreatyPermission
 }

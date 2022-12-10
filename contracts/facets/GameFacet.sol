@@ -175,6 +175,51 @@ contract GameFacet is UseStorage {
         }
     }
 
+    // FIXME: optimize gas, for example by using a set
+    function openBorder(uint256 _targetNationID) external {
+        GameLib.ongoingGameCheck();
+        GameLib.validEntityCheck(_targetNationID);
+        uint256 nationID = gs().nationAddressToId[msg.sender];
+        GameLib.validEntityCheck(nationID);
+
+        // Verify that target nation is not self
+        require(nationID != _targetNationID, "CURIO: Cannot open border with yourself");
+
+        // Verify that target nation is not already open
+        uint256[] memory openNations = ECSLib.getUintArray("OpenNations", nationID);
+        require(!GameLib.includes(_targetNationID, openNations), "CURIO: Nation already open");
+
+        // Add target nation to open nations
+        uint256[] memory newOpenNations = new uint256[](openNations.length + 1);
+        for (uint256 i = 0; i < openNations.length; i++) {
+            newOpenNations[i] = openNations[i];
+        }
+        newOpenNations[openNations.length] = _targetNationID;
+        ECSLib.setUintArray("OpenNations", nationID, newOpenNations);
+    }
+
+    function closeBorder(uint256 _targetNationID) external {
+        GameLib.ongoingGameCheck();
+        GameLib.validEntityCheck(_targetNationID);
+        uint256 nationID = gs().nationAddressToId[msg.sender];
+        GameLib.validEntityCheck(nationID);
+
+        // Verify that target nation is not self
+        require(nationID != _targetNationID, "CURIO: Cannot open border with yourself");
+
+        // Verify that target nation is open
+        uint256[] memory openNations = ECSLib.getUintArray("OpenNations", nationID);
+        uint256 index = GameLib.find(_targetNationID, openNations);
+        require(index < openNations.length, "CURIO: Nation not open");
+
+        // Remove target nation from open nations
+        uint256[] memory newOpenNations = new uint256[](openNations.length - 1);
+        for (uint256 i = 0; i < newOpenNations.length; i++) {
+            newOpenNations[i] = i < index ? openNations[i] : openNations[i + 1];
+        }
+        ECSLib.setUintArray("OpenNations", nationID, newOpenNations);
+    }
+
     // ----------------------------------------------------------
     // TILE
     // ----------------------------------------------------------
@@ -434,7 +479,7 @@ contract GameFacet is UseStorage {
 
         // Army cannot move in enemy territory
         uint256 tileID = GameLib.getTileAt(tilePosition);
-        GameLib.neutralOrOwnedEntityCheck(tileID, nationID);
+        GameLib.neutralOrOpenTileCheck(tileID, nationID);
 
         // Verify no gather
         require(GameLib.getArmyGather(_armyID) == NULL, "CURIO: Need to end gather first");
@@ -539,7 +584,7 @@ contract GameFacet is UseStorage {
 
         // Verify that resource is not in another nation's territory
         uint256 tileID = GameLib.getTileAt(startPosition);
-        GameLib.neutralOrOwnedEntityCheck(tileID, ECSLib.getUint("Nation", _armyID));
+        GameLib.neutralOrOpenTileCheck(tileID, ECSLib.getUint("Nation", _armyID));
 
         // Cannot gather twice
         require(GameLib.getArmyGather(_armyID) == NULL, "CURIO: Must finish existing gather first");

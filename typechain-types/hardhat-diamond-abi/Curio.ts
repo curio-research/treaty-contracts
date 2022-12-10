@@ -167,6 +167,7 @@ export interface CurioInterface extends utils.Interface {
     "supportsInterface(bytes4)": FunctionFragment;
     "battle(uint256,uint256)": FunctionFragment;
     "claimTile(uint256,uint256)": FunctionFragment;
+    "closeBorder(uint256)": FunctionFragment;
     "disbandArmy(uint256)": FunctionFragment;
     "disownTile(uint256)": FunctionFragment;
     "endGather(uint256)": FunctionFragment;
@@ -179,6 +180,7 @@ export interface CurioInterface extends utils.Interface {
     "leaveTreaty(uint256)": FunctionFragment;
     "move(uint256,uint256,uint256)": FunctionFragment;
     "moveCapital(uint256,(uint256,uint256))": FunctionFragment;
+    "openBorder(uint256)": FunctionFragment;
     "organizeArmy(uint256,uint256[],uint256[])": FunctionFragment;
     "recoverTile(uint256)": FunctionFragment;
     "startGather(uint256,uint256)": FunctionFragment;
@@ -277,6 +279,7 @@ export interface CurioInterface extends utils.Interface {
       | "supportsInterface"
       | "battle"
       | "claimTile"
+      | "closeBorder"
       | "disbandArmy"
       | "disownTile"
       | "endGather"
@@ -289,6 +292,7 @@ export interface CurioInterface extends utils.Interface {
       | "leaveTreaty"
       | "move"
       | "moveCapital"
+      | "openBorder"
       | "organizeArmy"
       | "recoverTile"
       | "startGather"
@@ -499,6 +503,10 @@ export interface CurioInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "closeBorder",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "disbandArmy",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
@@ -553,6 +561,10 @@ export interface CurioInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "moveCapital",
     values: [PromiseOrValue<BigNumberish>, PositionStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "openBorder",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "organizeArmy",
@@ -911,6 +923,10 @@ export interface CurioInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "battle", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "claimTile", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "closeBorder",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "disbandArmy",
     data: BytesLike
   ): Result;
@@ -946,6 +962,7 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "moveCapital",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "openBorder", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "organizeArmy",
     data: BytesLike
@@ -1467,6 +1484,11 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    closeBorder(
+      _targetNationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     disbandArmy(
       _armyID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1530,6 +1552,11 @@ export interface Curio extends BaseContract {
     moveCapital(
       _capitalID: PromiseOrValue<BigNumberish>,
       _newTilePosition: PositionStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    openBorder(
+      _targetNationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -2027,6 +2054,11 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  closeBorder(
+    _targetNationID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   disbandArmy(
     _armyID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -2090,6 +2122,11 @@ export interface Curio extends BaseContract {
   moveCapital(
     _capitalID: PromiseOrValue<BigNumberish>,
     _newTilePosition: PositionStruct,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  openBorder(
+    _targetNationID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -2581,6 +2618,11 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    closeBorder(
+      _targetNationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     disbandArmy(
       _armyID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -2644,6 +2686,11 @@ export interface Curio extends BaseContract {
     moveCapital(
       _capitalID: PromiseOrValue<BigNumberish>,
       _newTilePosition: PositionStruct,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    openBorder(
+      _targetNationID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -3194,6 +3241,11 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    closeBorder(
+      _targetNationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     disbandArmy(
       _armyID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -3257,6 +3309,11 @@ export interface Curio extends BaseContract {
     moveCapital(
       _capitalID: PromiseOrValue<BigNumberish>,
       _newTilePosition: PositionStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    openBorder(
+      _targetNationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -3753,6 +3810,11 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    closeBorder(
+      _targetNationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     disbandArmy(
       _armyID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -3816,6 +3878,11 @@ export interface Curio extends BaseContract {
     moveCapital(
       _capitalID: PromiseOrValue<BigNumberish>,
       _newTilePosition: PositionStruct,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    openBorder(
+      _targetNationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
