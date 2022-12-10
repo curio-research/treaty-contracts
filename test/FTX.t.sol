@@ -4,6 +4,7 @@ pragma solidity ^0.8.13;
 import {Test} from "forge-std/Test.sol";
 import {DiamondDeployTest} from "test/DiamondDeploy.t.sol";
 import {FTX} from "contracts/treaties/FTX.sol";
+import {CurioWallet} from "contracts/CurioWallet.sol";
 import {console} from "forge-std/console.sol";
 
 contract FTXTest is Test, DiamondDeployTest {
@@ -19,7 +20,7 @@ contract FTXTest is Test, DiamondDeployTest {
         // Player 2 (SBF) starts FTX and grants it access to his wallet
         vm.startPrank(player2);
         FTX ftx = new FTX(diamond);
-        // goldToken.approve(address(ftx), 10000);
+        CurioWallet(nation2CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(ftx), 10000));
         vm.stopPrank();
         assertEq(goldToken.balanceOf(nation2CapitalAddr), 0);
 
@@ -30,7 +31,7 @@ contract FTXTest is Test, DiamondDeployTest {
 
         // Player 1 deposits to FTX
         vm.startPrank(player1);
-        goldToken.approve(address(ftx), 2);
+        CurioWallet(nation1CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(ftx), 2));
         ftx.deposit(2);
         assertEq(goldToken.checkBalanceOf(nation1CapitalAddr), 6);
         assertEq(ftx.fttToken().checkBalanceOf(nation1CapitalAddr), 2);
@@ -43,7 +44,7 @@ contract FTXTest is Test, DiamondDeployTest {
         assertEq(goldToken.checkBalanceOf(nation2CapitalAddr), 1);
 
         // Player 1 gives FTX all gold
-        // goldToken.approve(address(ftx), 7);
+        CurioWallet(nation1CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(ftx), 7));
         ftx.deposit(7);
         assertEq(goldToken.checkBalanceOf(nation1CapitalAddr), 0);
         assertEq(ftx.fttToken().checkBalanceOf(nation1CapitalAddr), 8);
@@ -51,9 +52,10 @@ contract FTXTest is Test, DiamondDeployTest {
         vm.stopPrank();
 
         // Player 2 (SBF) transfers all but 1 gold to Player 3 (Caroline)
-        vm.prank(player2);
-        goldToken.transferFrom(nation2CapitalAddr, nation3CapitalAddr, 7);
+        vm.startPrank(player2);
+        CurioWallet(nation2CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("transfer(address,uint256)", nation3CapitalAddr, 7));
         assertEq(goldToken.checkBalanceOf(nation2CapitalAddr), 1);
+        vm.stopPrank();
 
         // Player 1 manages to withdraw only 1 gold from FTX
         vm.prank(player1);
