@@ -65,6 +65,10 @@ contract GetterFacet is UseStorage {
     // LOGIC GETTERS
     // ----------------------------------------------------------
 
+    function isPlayerInitialized(address _player) external view returns (bool) {
+        return gs().nationAddressToId[_player] != NULL;
+    }
+
     function getNation(uint256 _entityID) external view returns (uint256) {
         return ECSLib.getUint("Nation", _entityID);
     }

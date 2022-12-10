@@ -216,6 +216,7 @@ export interface CurioInterface extends utils.Interface {
     "getTokenContract(string)": FunctionFragment;
     "getTreatyByName(string)": FunctionFragment;
     "getWorldConstants()": FunctionFragment;
+    "isPlayerInitialized(address)": FunctionFragment;
     "query((uint8,address,bytes)[])": FunctionFragment;
     "query((uint8,Component,bytes)[])": FunctionFragment;
     "owner()": FunctionFragment;
@@ -325,6 +326,7 @@ export interface CurioInterface extends utils.Interface {
       | "getTokenContract"
       | "getTreatyByName"
       | "getWorldConstants"
+      | "isPlayerInitialized"
       | "query((uint8,address,bytes)[])"
       | "query((uint8,Component,bytes)[])"
       | "owner"
@@ -712,6 +714,10 @@ export interface CurioInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "isPlayerInitialized",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "query((uint8,address,bytes)[])",
     values: [QueryConditionStruct[]]
   ): string;
@@ -1068,6 +1074,10 @@ export interface CurioInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getWorldConstants",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "isPlayerInitialized",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -1709,6 +1719,11 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[WorldConstantsStructOutput]>;
 
+    isPlayerInitialized(
+      _player: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     "query((uint8,address,bytes)[])"(
       _queryConditions: QueryConditionStruct[],
       overrides?: CallOverrides
@@ -2264,6 +2279,11 @@ export interface Curio extends BaseContract {
     overrides?: CallOverrides
   ): Promise<WorldConstantsStructOutput>;
 
+  isPlayerInitialized(
+    _player: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   "query((uint8,address,bytes)[])"(
     _queryConditions: QueryConditionStruct[],
     overrides?: CallOverrides
@@ -2810,6 +2830,11 @@ export interface Curio extends BaseContract {
     getWorldConstants(
       overrides?: CallOverrides
     ): Promise<WorldConstantsStructOutput>;
+
+    isPlayerInitialized(
+      _player: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     "query((uint8,address,bytes)[])"(
       _queryConditions: QueryConditionStruct[],
@@ -3419,6 +3444,11 @@ export interface Curio extends BaseContract {
 
     getWorldConstants(overrides?: CallOverrides): Promise<BigNumber>;
 
+    isPlayerInitialized(
+      _player: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     "query((uint8,address,bytes)[])"(
       _queryConditions: QueryConditionStruct[],
       overrides?: CallOverrides
@@ -3972,6 +4002,11 @@ export interface Curio extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getWorldConstants(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    isPlayerInitialized(
+      _player: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     "query((uint8,address,bytes)[])"(
       _queryConditions: QueryConditionStruct[],

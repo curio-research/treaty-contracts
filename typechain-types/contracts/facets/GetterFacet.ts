@@ -121,6 +121,7 @@ export interface GetterFacetInterface extends utils.Interface {
     "getTokenContract(string)": FunctionFragment;
     "getTreatyByName(string)": FunctionFragment;
     "getWorldConstants()": FunctionFragment;
+    "isPlayerInitialized(address)": FunctionFragment;
     "query((uint8,address,bytes)[])": FunctionFragment;
   };
 
@@ -154,6 +155,7 @@ export interface GetterFacetInterface extends utils.Interface {
       | "getTokenContract"
       | "getTreatyByName"
       | "getWorldConstants"
+      | "isPlayerInitialized"
       | "query"
   ): FunctionFragment;
 
@@ -273,6 +275,10 @@ export interface GetterFacetInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "isPlayerInitialized",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "query",
     values: [QueryConditionStruct[]]
   ): string;
@@ -366,6 +372,10 @@ export interface GetterFacetInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getWorldConstants",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "isPlayerInitialized",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "query", data: BytesLike): Result;
@@ -536,6 +546,11 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[WorldConstantsStructOutput]>;
 
+    isPlayerInitialized(
+      _player: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     query(
       _queryConditions: QueryConditionStruct[],
       overrides?: CallOverrides
@@ -678,6 +693,11 @@ export interface GetterFacet extends BaseContract {
     overrides?: CallOverrides
   ): Promise<WorldConstantsStructOutput>;
 
+  isPlayerInitialized(
+    _player: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   query(
     _queryConditions: QueryConditionStruct[],
     overrides?: CallOverrides
@@ -819,6 +839,11 @@ export interface GetterFacet extends BaseContract {
     getWorldConstants(
       overrides?: CallOverrides
     ): Promise<WorldConstantsStructOutput>;
+
+    isPlayerInitialized(
+      _player: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     query(
       _queryConditions: QueryConditionStruct[],
@@ -963,6 +988,11 @@ export interface GetterFacet extends BaseContract {
 
     getWorldConstants(overrides?: CallOverrides): Promise<BigNumber>;
 
+    isPlayerInitialized(
+      _player: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     query(
       _queryConditions: QueryConditionStruct[],
       overrides?: CallOverrides
@@ -1103,6 +1133,11 @@ export interface GetterFacet extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getWorldConstants(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    isPlayerInitialized(
+      _player: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     query(
       _queryConditions: QueryConditionStruct[],
