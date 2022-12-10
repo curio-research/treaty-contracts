@@ -166,17 +166,19 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
 
   // Bulk initialize special tiles
   const tileWidth = Number(worldConstants.tileWidth);
-  const specialTilePositions: position[] = [];
+  // const specialTilePositions: position[] = [];
+  const allTilePositions: position[] = [];
   tileMap.forEach((col, i) =>
     col.forEach((val, j) => {
-      if (val !== TILE_TYPE.LAND) specialTilePositions.push({ x: i * tileWidth, y: j * tileWidth });
+      // if (val !== TILE_TYPE.LAND) specialTilePositions.push({ x: i * tileWidth, y: j * tileWidth });
+      allTilePositions.push({ x: i * tileWidth, y: j * tileWidth });
     })
   );
   startTime = performance.now();
   const bulkTileUploadSize = 100;
-  for (let i = 0; i < specialTilePositions.length; i += bulkTileUploadSize) {
+  for (let i = 0; i < allTilePositions.length; i += bulkTileUploadSize) {
     console.log(chalk.dim(`✦ Initializing special tiles ${i} to ${i + bulkTileUploadSize}`));
-    await confirmTx(await diamond.bulkInitializeTiles(specialTilePositions.slice(i, i + bulkTileUploadSize), { gasLimit }), hre);
+    await confirmTx(await diamond.bulkInitializeTiles(allTilePositions.slice(i, i + bulkTileUploadSize), { gasLimit }), hre);
   }
   console.log(`✦ Special tile bulk initialization took ${Math.floor(performance.now() - startTime)} ms`);
 
