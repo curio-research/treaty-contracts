@@ -3,5 +3,6 @@
 /* eslint-disable */
 import type * as ftxSol from "./FTX.sol";
 export type { ftxSol };
+export type { Alliance } from "./Alliance";
 export type { HangingGarden } from "./HangingGarden";
 export type { NATO } from "./NATO";

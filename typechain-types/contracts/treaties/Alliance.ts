@@ -6,8 +6,6 @@ import type {
   BigNumber,
   BytesLike,
   CallOverrides,
-  ContractTransaction,
-  Overrides,
   PopulatedTransaction,
   Signer,
   utils,
@@ -20,39 +18,36 @@ import type {
   TypedListener,
   OnEvent,
   PromiseOrValue,
-} from "../common";
+} from "../../common";
 
-export interface CurioWalletInterface extends utils.Interface {
+export interface AllianceInterface extends utils.Interface {
   functions: {
     "diamond()": FunctionFragment;
-    "executeTx(address,bytes)": FunctionFragment;
     "getter()": FunctionFragment;
+    "name()": FunctionFragment;
   };
 
   getFunction(
-    nameOrSignatureOrTopic: "diamond" | "executeTx" | "getter"
+    nameOrSignatureOrTopic: "diamond" | "getter" | "name"
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "diamond", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "executeTx",
-    values: [PromiseOrValue<string>, PromiseOrValue<BytesLike>]
-  ): string;
   encodeFunctionData(functionFragment: "getter", values?: undefined): string;
+  encodeFunctionData(functionFragment: "name", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "diamond", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "executeTx", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getter", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
 
   events: {};
 }
 
-export interface CurioWallet extends BaseContract {
+export interface Alliance extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: CurioWalletInterface;
+  interface: AllianceInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -76,35 +71,23 @@ export interface CurioWallet extends BaseContract {
   functions: {
     diamond(overrides?: CallOverrides): Promise<[string]>;
 
-    executeTx(
-      _contractAddress: PromiseOrValue<string>,
-      _callData: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     getter(overrides?: CallOverrides): Promise<[string]>;
+
+    name(overrides?: CallOverrides): Promise<[string]>;
   };
 
   diamond(overrides?: CallOverrides): Promise<string>;
 
-  executeTx(
-    _contractAddress: PromiseOrValue<string>,
-    _callData: PromiseOrValue<BytesLike>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   getter(overrides?: CallOverrides): Promise<string>;
+
+  name(overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
     diamond(overrides?: CallOverrides): Promise<string>;
 
-    executeTx(
-      _contractAddress: PromiseOrValue<string>,
-      _callData: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
     getter(overrides?: CallOverrides): Promise<string>;
+
+    name(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {};
@@ -112,24 +95,16 @@ export interface CurioWallet extends BaseContract {
   estimateGas: {
     diamond(overrides?: CallOverrides): Promise<BigNumber>;
 
-    executeTx(
-      _contractAddress: PromiseOrValue<string>,
-      _callData: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     getter(overrides?: CallOverrides): Promise<BigNumber>;
+
+    name(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
     diamond(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    executeTx(
-      _contractAddress: PromiseOrValue<string>,
-      _callData: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     getter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }
