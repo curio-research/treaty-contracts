@@ -21,8 +21,8 @@ contract FTXTest is Test, DiamondDeployTest {
         vm.startPrank(player2);
         FTX ftx = new FTX(diamond);
         CurioWallet(nation2CapitalAddr).executeTx(address(goldToken), abi.encodeWithSignature("approve(address,uint256)", address(ftx), 10000));
-        vm.stopPrank();
         assertEq(goldToken.balanceOf(nation2CapitalAddr), 0);
+        vm.stopPrank();
 
         // Deployer registers FTX treaty
         vm.startPrank(deployer);

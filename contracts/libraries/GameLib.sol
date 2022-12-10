@@ -630,7 +630,10 @@ library GameLib {
 
     function neutralOrOwnedEntityCheck(uint256 _entity, uint256 _nationID) internal view {
         uint256 entityNation = ECSLib.getUint("Nation", _entity);
-        require(entityNation == _nationID || entityNation == 0, "CURIO: Entity is not yours");
+        if (entityNation == 0 || entityNation == _nationID) return;
+
+        // Check if owner nation allows passing through
+        // TODO: left here
     }
 
     function inboundPositionCheck(Position memory _position) internal view {

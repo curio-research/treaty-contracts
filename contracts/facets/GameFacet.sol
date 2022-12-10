@@ -100,8 +100,7 @@ contract GameFacet is UseStorage {
 
         // Army cannot move in enemy territory
         uint256 tileID = GameLib.getTileAt(tilePosition);
-        uint256 armyNationID = ECSLib.getUint("Nation", _armyID);
-        GameLib.neutralOrOwnedEntityCheck(tileID, armyNationID);
+        GameLib.neutralOrOwnedEntityCheck(tileID, nationID);
 
         // Verify no gather
         require(GameLib.getArmyGather(_armyID) == NULL, "CURIO: Need to end gather first");
@@ -361,7 +360,7 @@ contract GameFacet is UseStorage {
 
             for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
                 uint256 balance = ECSLib.getUint("Amount", GameLib.getInventory(_capitalID, resourceTemplateIDs[i]));
-                uint256 cost = _amount * GameLib.getConstant("Troop Production", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Cost", "Move", ECSLib.getUint("Level", _capitalID));
+                uint256 cost = _amount * GameLib.getConstant("Troop Production", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Cost", "", 0);
                 require(balance >= cost, "CURIO: Insufficient balance");
 
                 CurioERC20 resourceToken = CurioERC20(ECSLib.getAddress("Address", resourceTemplateIDs[i]));

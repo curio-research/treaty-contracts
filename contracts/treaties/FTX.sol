@@ -26,8 +26,6 @@ contract FTX is ITreaty {
         goldToken = getter.getTokenContract("Gold");
         fttToken = new FTTERC20(address(this));
         sbfAddress = msg.sender;
-
-        // fttToken.approve(msg.sender, 100000000000);
     }
 
     function deposit(uint256 _amount) external returns (bool) {
