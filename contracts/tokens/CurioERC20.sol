@@ -12,6 +12,9 @@ contract CurioERC20 is ERC20 {
     GetterFacet public getter;
     AdminFacet public admin;
     GameFacet public game;
+    uint256 public maxTransferDistance = 20; // FIXME: move back to WorldConstants
+
+    uint256 private NULL = 0;
 
     constructor(
         string memory _name,
@@ -55,8 +58,10 @@ contract CurioERC20 is ERC20 {
     ) private {
         (uint256 senderInventoryID, , uint256 senderBalance) = _getInventoryIDLoadAndBalance(_from);
         (uint256 recipientInventoryID, uint256 recipientLoad, uint256 recipientBalance) = _getInventoryIDLoadAndBalance(_to);
-        require(senderInventoryID != 0 && recipientInventoryID != 0, "CurioERC20: In-game inventory not found");
+        require(senderInventoryID != NULL && recipientInventoryID != NULL, "CurioERC20: In-game inventory not found");
         require(senderBalance >= _amount, "CurioERC20: Sender insufficent balance");
+        // require(getter.getDistanceByAddresses(_from, _to) <= getter.getWorldConstants().maxTransferDistance, "CurioERC20: Too far from recipient to transfer");
+        require(getter.getDistanceByAddresses(_from, _to) <= maxTransferDistance, "CurioERC20: Too far from recipient to transfer");
 
         uint256 transferAmount;
         if (recipientBalance + _amount <= recipientLoad) {

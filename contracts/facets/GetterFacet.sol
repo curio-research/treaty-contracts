@@ -137,6 +137,12 @@ contract GetterFacet is UseStorage {
         return gs().nations.length;
     }
 
+    function getDistanceByAddresses(address _addr1, address _addr2) external view returns (uint256) {
+        Position memory pos1 = ECSLib.getPosition("Position", GameLib.getEntityByAddress(_addr1));
+        Position memory pos2 = ECSLib.getPosition("Position", GameLib.getEntityByAddress(_addr2));
+        return GameLib.euclidean(pos1, pos2);
+    }
+
     // ----------------------------------------------------------
     // ECS GETTERS
     // ----------------------------------------------------------

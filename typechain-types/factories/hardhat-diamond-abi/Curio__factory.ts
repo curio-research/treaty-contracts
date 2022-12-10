@@ -1301,6 +1301,30 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_addr1",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_addr2",
+        type: "address",
+      },
+    ],
+    name: "getDistanceByAddresses",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "getEntities",
     outputs: [

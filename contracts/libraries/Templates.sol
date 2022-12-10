@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import {Position, WorldConstants} from "contracts/libraries/Types.sol";
+import {Position} from "contracts/libraries/Types.sol";
 import {Strings} from "openzeppelin-contracts/contracts/utils/Strings.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
 import {console} from "forge-std/console.sol";
@@ -29,6 +29,7 @@ library Templates {
 
     function addCapital(
         Position memory _tilePosition,
+        Position memory _position,
         uint256 _nationID,
         address _address
     ) public returns (uint256) {
@@ -36,6 +37,7 @@ library Templates {
 
         ECSLib.setString("Tag", capitalID, "Building");
         ECSLib.setPosition("StartPosition", capitalID, _tilePosition);
+        ECSLib.setPosition("Position", capitalID, _position);
         ECSLib.setString("BuildingType", capitalID, "Capital");
         ECSLib.setBool("CanProduce", capitalID);
         ECSLib.setUint("InitTimestamp", capitalID, block.timestamp);

@@ -59,7 +59,7 @@ contract GameFacet is UseStorage {
 
         // Found capital
         address capitalAddress = address(new CurioWallet(address(this)));
-        Templates.addCapital(tilePosition, nationID, capitalAddress);
+        Templates.addCapital(tilePosition, GameLib.getMidPositionFromTilePosition(tilePosition), nationID, capitalAddress);
 
         // set Tile Nation
         ECSLib.setUint("Nation", tileID, nationID);

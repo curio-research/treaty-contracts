@@ -8,8 +8,6 @@ import { chainInfo, COMPONENT_SPECS, position, TILE_TYPE } from 'curio-vault';
 import { ECSLib } from '../../typechain-types/contracts/libraries/ECSLib';
 import { GameLib } from '../../typechain-types/contracts/libraries/GameLib';
 import { CurioERC20 } from '../../typechain-types/contracts/tokens/CurioERC20';
-import { FTX } from '../../typechain-types/contracts/treaties/FTX.sol';
-import { NATO } from '../../typechain-types/contracts/treaties/NATO';
 import { createTemplates } from './constants';
 import { deployDiamond, getDiamond, deployFacets } from './diamondDeploy';
 import { encodeTileMap } from './mapHelper';
@@ -87,6 +85,7 @@ export const uploadABIToIPFS = async (hre: HardhatRuntimeEnvironment, contractNa
   }
 };
 
+// Retrieve at https://gateway.pinata.cloud/ipfs/<hash>
 export const deployTreaty = async (name: string, admin: Signer, hre: HardhatRuntimeEnvironment, diamond: Curio, gasLimit: number) => {
   const treaty = await deployProxy<any>(name, admin, hre, [diamond.address]);
   const abiHash = await uploadABIToIPFS(hre, name);
