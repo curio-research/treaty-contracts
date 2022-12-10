@@ -18,7 +18,7 @@ contract GameFacet is UseStorage {
     uint256 private constant NULL = 0;
 
     // ----------------------------------------------------------
-    // BASIC
+    // NATION/CAPITAL
     // ----------------------------------------------------------
 
     function initializeNation(
@@ -73,132 +73,6 @@ contract GameFacet is UseStorage {
         for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
             Templates.addInventory(nationID, resourceTemplateIDs[i]);
         }
-    }
-
-    function move(
-        uint256 _armyID,
-        uint256 _targetX,
-        uint256 _targetY
-    ) external {
-        GameLib.validEntityCheck(_armyID);
-        GameLib.ongoingGameCheck();
-        Position memory targetPosition = Position({x: _targetX, y: _targetY});
-        GameLib.inboundPositionCheck(targetPosition);
-
-        uint256 nationID = ECSLib.getUint("Nation", _armyID);
-        require(gs().nationAddressToId[msg.sender] == nationID, "CURIO: Can only move your own army");
-
-        // Check terrain
-        Position memory tilePosition = GameLib.getProperTilePosition(targetPosition);
-        GameLib.passableTerrainCheck(tilePosition);
-
-        // Verify no other movable entity at exact destination coordinate
-        require(GameLib.getMovableEntityAt(targetPosition) == NULL, "CURIO: Destination occupied by a unit");
-
-        // Check movement cooldown
-        require(block.timestamp >= ECSLib.getUint("LastMoved", _armyID) + ECSLib.getUint("MoveCooldown", _armyID), "CURIO: Moved too recently");
-
-        // Army cannot move in enemy territory
-        uint256 tileID = GameLib.getTileAt(tilePosition);
-        GameLib.neutralOrOwnedEntityCheck(tileID, nationID);
-
-        // Verify no gather
-        require(GameLib.getArmyGather(_armyID) == NULL, "CURIO: Need to end gather first");
-
-        // Calculate distance
-        uint256 distance = GameLib.euclidean(ECSLib.getPosition("Position", _armyID), targetPosition);
-        require(distance <= ECSLib.getUint("Speed", _armyID), "CURIO: Not enough movement points");
-
-        // Move and update moveCooldown
-        ECSLib.setPosition("Position", _armyID, targetPosition);
-        ECSLib.setPosition("StartPosition", _armyID, tilePosition);
-        ECSLib.setUint("LastMoved", _armyID, block.timestamp);
-    }
-
-    function recoverTile(uint256 _tileID) external {
-        GameLib.validEntityCheck(_tileID);
-        GameLib.ongoingGameCheck();
-        uint256 nationID = ECSLib.getUint("Nation", _tileID);
-        require(gs().nationAddressToId[msg.sender] == nationID, "CURIO: Can only recover your own tile");
-
-        uint256 tileLevel = ECSLib.getUint("Level", _tileID);
-        require(block.timestamp >= ECSLib.getUint("LastUpgraded", _tileID), "CURIO: Need to finish upgrading first");
-        require(block.timestamp >= ECSLib.getUint("LastRecovered", _tileID), "CURIO: Need to finish recovering first");
-
-        // lost tile amount = current level amount - actual amount
-        address tileAddress = ECSLib.getAddress("Address", _tileID);
-        CurioERC20 guardToken = GameLib.getTokenContract("Guard"); // FIXME: getTokenContract not clear
-        uint256 lostGuardAmount = GameLib.getConstant("Tile", "Guard", "Amount", "", tileLevel) - ECSLib.getUint("Amount", GameLib.getInventory(_tileID, gs().templates["Guard"]));
-
-        // Deduct costs from capital
-        {
-            address capitalAddress = ECSLib.getAddress("Address", GameLib.getCapital(nationID));
-            uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
-
-            for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
-                CurioERC20 resourceToken = CurioERC20(ECSLib.getAddress("Address", resourceTemplateIDs[i]));
-                uint256 balance = ECSLib.getUint("Amount", GameLib.getInventory(nationID, resourceTemplateIDs[i]));
-                uint256 totalRecoverCost = GameLib.getConstant("Tile", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Cost", "Upgrade", 0) * lostGuardAmount;
-                require(balance >= totalRecoverCost, "CURIO: Insufficient balance");
-
-                resourceToken.destroyToken(capitalAddress, totalRecoverCost);
-            }
-        }
-
-        // Verify that capital has recovered from sack
-        GameLib.capitalSackRecoveryCheck(GameLib.getCapital(nationID));
-
-        // Set timestamp
-        ECSLib.setUint("LastRecovered", _tileID, block.timestamp + GameLib.getConstant("Tile", "", "Cooldown", "Recover", tileLevel));
-
-        // Recover the tile
-        guardToken.dripToken(tileAddress, lostGuardAmount);
-    }
-
-    function upgradeTile(uint256 _tileID) external {
-        GameLib.validEntityCheck(_tileID);
-        GameLib.ongoingGameCheck();
-        uint256 nationID = ECSLib.getUint("Nation", _tileID);
-        require(gs().nationAddressToId[msg.sender] == nationID, "CURIO: Can only upgrade your own tile");
-
-        // Check if nation has reached max tile level
-        uint256 tileLevel = ECSLib.getUint("Level", _tileID);
-        uint256 capitalID = GameLib.getCapital(ECSLib.getUint("Nation", _tileID));
-        require(tileLevel < ECSLib.getUint("Level", capitalID) * gs().worldConstants.capitalLevelToEntityLevelRatio, "CURIO: Max tile level reached");
-
-        GameLib.capitalSackRecoveryCheck(capitalID);
-
-        // Require nations to fully recover the tile before upgrade
-        address tileAddress = ECSLib.getAddress("Address", _tileID);
-        CurioERC20 guardToken = GameLib.getTokenContract("Guard");
-        uint256 guardAmount = ECSLib.getUint("Amount", GameLib.getInventory(nationID, gs().templates["Guard"]));
-        require(GameLib.getConstant("Tile", "Guard", "Amount", "", tileLevel) == guardAmount, "CURIO: Must recover before upgrade");
-
-        // check if upgrade is in process
-        require(block.timestamp >= ECSLib.getUint("LastUpgraded", _tileID), "CURIO: Need to finish upgrading first");
-
-        // Deduct costs from capital
-        {
-            address capitalAddress = ECSLib.getAddress("Address", GameLib.getCapital(nationID));
-            uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
-
-            for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
-                CurioERC20 resourceToken = CurioERC20(ECSLib.getAddress("Address", resourceTemplateIDs[i]));
-                uint256 balance = ECSLib.getUint("Amount", GameLib.getInventory(capitalID, resourceTemplateIDs[i]));
-                uint256 cost = GameLib.getConstant("Tile", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Cost", "Upgrade", tileLevel);
-                require(balance >= cost, "CURIO: Insufficient balance");
-
-                resourceToken.destroyToken(capitalAddress, cost);
-            }
-        }
-
-        // set timestamp
-        ECSLib.setUint("LastUpgraded", _tileID, block.timestamp + GameLib.getConstant("Tile", "", "Cooldown", "Upgrade", tileLevel));
-
-        // Upgrade tile defense and level
-        uint256 newGuardAmount = GameLib.getConstant("Tile", "Guard", "Amount", "", tileLevel + 1);
-        ECSLib.setUint("Level", _tileID, tileLevel + 1);
-        guardToken.dripToken(tileAddress, newGuardAmount - guardAmount);
     }
 
     // todo: merge it with upgrade resource
@@ -301,6 +175,137 @@ contract GameFacet is UseStorage {
         }
     }
 
+    // ----------------------------------------------------------
+    // TILE
+    // ----------------------------------------------------------
+
+    function claimTile(uint256 _armyID, uint256 _tileID) external {
+        GameLib.validEntityCheck(_tileID);
+        GameLib.ongoingGameCheck();
+        uint256 nationID = ECSLib.getUint("Nation", _armyID);
+        require(gs().nationAddressToId[msg.sender] == nationID, "CURIO: Can only claim tile with your own army");
+
+        // Check Tile Count has not exceeded limits
+        uint256 capitalID = GameLib.getCapital(nationID);
+        require(GameLib.getNationTiles(nationID).length < GameLib.getConstant("Nation", "Tile", "Amount", "", ECSLib.getUint("Level", capitalID)), "CURIO: Reached max tile count");
+
+        // Verify target tile has no owner
+        require(ECSLib.getUint("Nation", _tileID) == NULL, "CURIO: Tile has owner");
+
+        // Verify target tile is not barbarian tile
+        require(!GameLib.isBarbarian(_tileID), "CURIO: Cannot claim barbarian tiles");
+
+        // Verify that no guard exists on tile
+        require(ECSLib.getUint("Amount", GameLib.getInventory(_tileID, gs().templates["Guard"])) == 0, "CURIO: Tile has guard");
+
+        // Verify that army is on selected tile
+        Position memory tilePosition = ECSLib.getPosition("StartPosition", _tileID);
+        require(GameLib.coincident(GameLib.getProperTilePosition(ECSLib.getPosition("Position", _armyID)), tilePosition), "CURIO: Army must be on tile to claim");
+
+        // Verify that tile is next to own tile
+        require(GameLib.isAdjacentToOwnTile(nationID, tilePosition), "CURIO: Can only claim contiguous tiles");
+
+        // Verify that no other movable entity is on tile
+        uint256[] memory movableEntitiesOnTile = GameLib.getMovableEntitiesAtTile(tilePosition);
+        require(movableEntitiesOnTile.length == 1 && movableEntitiesOnTile[0] == _armyID, "CURIO: Other movable entity on tile");
+
+        // Transfer ownership of tile and initialize new guard
+        ECSLib.setUint("Nation", _tileID, nationID);
+        uint256 tileGuardAmount = GameLib.getConstant("Tile", "Guard", "Amount", "", ECSLib.getUint("Level", _tileID));
+        CurioERC20 guardToken = GameLib.getTokenContract("Guard");
+        guardToken.dripToken(ECSLib.getAddress("Address", _tileID), tileGuardAmount);
+
+        // Transfer ownership of resource
+        uint256 resourceID = GameLib.getResourceAt(tilePosition);
+        ECSLib.setUint("Nation", resourceID, nationID);
+    }
+
+    function upgradeTile(uint256 _tileID) external {
+        GameLib.validEntityCheck(_tileID);
+        GameLib.ongoingGameCheck();
+        uint256 nationID = ECSLib.getUint("Nation", _tileID);
+        require(gs().nationAddressToId[msg.sender] == nationID, "CURIO: Can only upgrade your own tile");
+
+        // Check if nation has reached max tile level
+        uint256 tileLevel = ECSLib.getUint("Level", _tileID);
+        uint256 capitalID = GameLib.getCapital(ECSLib.getUint("Nation", _tileID));
+        require(tileLevel < ECSLib.getUint("Level", capitalID) * gs().worldConstants.capitalLevelToEntityLevelRatio, "CURIO: Max tile level reached");
+
+        GameLib.capitalSackRecoveryCheck(capitalID);
+
+        // Require nations to fully recover the tile before upgrade
+        address tileAddress = ECSLib.getAddress("Address", _tileID);
+        CurioERC20 guardToken = GameLib.getTokenContract("Guard");
+        uint256 guardAmount = ECSLib.getUint("Amount", GameLib.getInventory(nationID, gs().templates["Guard"]));
+        require(GameLib.getConstant("Tile", "Guard", "Amount", "", tileLevel) == guardAmount, "CURIO: Must recover before upgrade");
+
+        // check if upgrade is in process
+        require(block.timestamp >= ECSLib.getUint("LastUpgraded", _tileID), "CURIO: Need to finish upgrading first");
+
+        // Deduct costs from capital
+        {
+            address capitalAddress = ECSLib.getAddress("Address", GameLib.getCapital(nationID));
+            uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
+
+            for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
+                CurioERC20 resourceToken = CurioERC20(ECSLib.getAddress("Address", resourceTemplateIDs[i]));
+                uint256 balance = ECSLib.getUint("Amount", GameLib.getInventory(capitalID, resourceTemplateIDs[i]));
+                uint256 cost = GameLib.getConstant("Tile", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Cost", "Upgrade", tileLevel);
+                require(balance >= cost, "CURIO: Insufficient balance");
+
+                resourceToken.destroyToken(capitalAddress, cost);
+            }
+        }
+
+        // set timestamp
+        ECSLib.setUint("LastUpgraded", _tileID, block.timestamp + GameLib.getConstant("Tile", "", "Cooldown", "Upgrade", tileLevel));
+
+        // Upgrade tile defense and level
+        uint256 newGuardAmount = GameLib.getConstant("Tile", "Guard", "Amount", "", tileLevel + 1);
+        ECSLib.setUint("Level", _tileID, tileLevel + 1);
+        guardToken.dripToken(tileAddress, newGuardAmount - guardAmount);
+    }
+
+    function recoverTile(uint256 _tileID) external {
+        GameLib.validEntityCheck(_tileID);
+        GameLib.ongoingGameCheck();
+        uint256 nationID = ECSLib.getUint("Nation", _tileID);
+        require(gs().nationAddressToId[msg.sender] == nationID, "CURIO: Can only recover your own tile");
+
+        uint256 tileLevel = ECSLib.getUint("Level", _tileID);
+        require(block.timestamp >= ECSLib.getUint("LastUpgraded", _tileID), "CURIO: Need to finish upgrading first");
+        require(block.timestamp >= ECSLib.getUint("LastRecovered", _tileID), "CURIO: Need to finish recovering first");
+
+        // lost tile amount = current level amount - actual amount
+        address tileAddress = ECSLib.getAddress("Address", _tileID);
+        CurioERC20 guardToken = GameLib.getTokenContract("Guard"); // FIXME: getTokenContract not clear
+        uint256 lostGuardAmount = GameLib.getConstant("Tile", "Guard", "Amount", "", tileLevel) - ECSLib.getUint("Amount", GameLib.getInventory(_tileID, gs().templates["Guard"]));
+
+        // Deduct costs from capital
+        {
+            address capitalAddress = ECSLib.getAddress("Address", GameLib.getCapital(nationID));
+            uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
+
+            for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
+                CurioERC20 resourceToken = CurioERC20(ECSLib.getAddress("Address", resourceTemplateIDs[i]));
+                uint256 balance = ECSLib.getUint("Amount", GameLib.getInventory(nationID, resourceTemplateIDs[i]));
+                uint256 totalRecoverCost = GameLib.getConstant("Tile", ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Cost", "Upgrade", 0) * lostGuardAmount;
+                require(balance >= totalRecoverCost, "CURIO: Insufficient balance");
+
+                resourceToken.destroyToken(capitalAddress, totalRecoverCost);
+            }
+        }
+
+        // Verify that capital has recovered from sack
+        GameLib.capitalSackRecoveryCheck(GameLib.getCapital(nationID));
+
+        // Set timestamp
+        ECSLib.setUint("LastRecovered", _tileID, block.timestamp + GameLib.getConstant("Tile", "", "Cooldown", "Recover", tileLevel));
+
+        // Recover the tile
+        guardToken.dripToken(tileAddress, lostGuardAmount);
+    }
+
     function disownTile(uint256 _tileID) external {
         GameLib.validEntityCheck(_tileID);
         GameLib.ongoingGameCheck();
@@ -329,7 +334,7 @@ contract GameFacet is UseStorage {
     }
 
     // ----------------------------------------------------------
-    // PRODUCTION
+    // TROOP PRODUCTION
     // ----------------------------------------------------------
 
     function startTroopProduction(
@@ -356,7 +361,7 @@ contract GameFacet is UseStorage {
 
         // Deduct costs
         {
-            uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("TroopTemplate"));
+            uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
 
             for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
                 uint256 balance = ECSLib.getUint("Amount", GameLib.getInventory(_capitalID, resourceTemplateIDs[i]));
@@ -372,10 +377,10 @@ contract GameFacet is UseStorage {
         require(GameLib.getBuildingProduction(_capitalID) == NULL, "CURIO: Must end ongoing production first");
 
         // Start production
-        return Templates.addTroopProduction(_capitalID, _templateID, _amount, gs().worldConstants.secondsToTrainAThousandTroops * (_amount / 1000)); // FIXME: naming
+        productionID = Templates.addTroopProduction(_capitalID, _templateID, _amount, (gs().worldConstants.secondsToTrainAThousandTroops * _amount) / 1000); // FIXME: naming
     }
 
-    function endTroopProduction(uint256 _capitalID, uint256 _productionID) public {
+    function endTroopProduction(uint256 _capitalID, uint256 _productionID) external {
         GameLib.validEntityCheck(_capitalID);
         GameLib.validEntityCheck(_productionID);
         GameLib.ongoingGameCheck();
@@ -399,6 +404,124 @@ contract GameFacet is UseStorage {
         // Delete production
         ECSLib.removeEntity(_productionID);
     }
+
+    // ----------------------------------------------------------
+    // ARMY
+    // ----------------------------------------------------------
+
+    function move(
+        uint256 _armyID,
+        uint256 _targetX,
+        uint256 _targetY
+    ) external {
+        GameLib.validEntityCheck(_armyID);
+        GameLib.ongoingGameCheck();
+        Position memory targetPosition = Position({x: _targetX, y: _targetY});
+        GameLib.inboundPositionCheck(targetPosition);
+
+        uint256 nationID = ECSLib.getUint("Nation", _armyID);
+        require(gs().nationAddressToId[msg.sender] == nationID, "CURIO: Can only move your own army");
+
+        // Check terrain
+        Position memory tilePosition = GameLib.getProperTilePosition(targetPosition);
+        GameLib.passableTerrainCheck(tilePosition);
+
+        // Verify no other movable entity at exact destination coordinate
+        require(GameLib.getMovableEntityAt(targetPosition) == NULL, "CURIO: Destination occupied by a unit");
+
+        // Check movement cooldown
+        require(block.timestamp >= ECSLib.getUint("LastMoved", _armyID) + ECSLib.getUint("MoveCooldown", _armyID), "CURIO: Moved too recently");
+
+        // Army cannot move in enemy territory
+        uint256 tileID = GameLib.getTileAt(tilePosition);
+        GameLib.neutralOrOwnedEntityCheck(tileID, nationID);
+
+        // Verify no gather
+        require(GameLib.getArmyGather(_armyID) == NULL, "CURIO: Need to end gather first");
+
+        // Calculate distance
+        uint256 distance = GameLib.euclidean(ECSLib.getPosition("Position", _armyID), targetPosition);
+        require(distance <= ECSLib.getUint("Speed", _armyID), "CURIO: Not enough movement points");
+
+        // Move and update moveCooldown
+        ECSLib.setPosition("Position", _armyID, targetPosition);
+        ECSLib.setPosition("StartPosition", _armyID, tilePosition);
+        ECSLib.setUint("LastMoved", _armyID, block.timestamp);
+    }
+
+    function organizeArmy(
+        uint256 _capitalID,
+        uint256[] memory _templateIDs,
+        uint256[] memory _amounts
+    ) external returns (uint256 armyID) {
+        GameLib.validEntityCheck(_capitalID);
+        GameLib.ongoingGameCheck();
+        uint256 nationID = ECSLib.getUint("Nation", _capitalID);
+        require(gs().nationAddressToId[msg.sender] == nationID, "CURIO: Can only organize army at your own capital");
+
+        // Verify there is no army currently at the capital
+        Position memory tilePosition = ECSLib.getPosition("StartPosition", _capitalID);
+        Position memory midPosition = GameLib.getMidPositionFromTilePosition(tilePosition);
+        require(GameLib.getArmyAt(midPosition) == NULL, "CURIO: Capital occupied by another army");
+
+        // Capital at Chaos cannot organize an army
+        GameLib.capitalSackRecoveryCheck(_capitalID);
+
+        // Add army
+        address armyAddress = address(new CurioWallet(address(this)));
+        armyID = Templates.addArmy(2, 1, 2, gs().worldConstants.tileWidth, nationID, midPosition, tilePosition, armyAddress);
+
+        // Collect army traits from individual troop types & transfer troops from nation
+        {
+            uint256 load = 0; // sum
+            address capitalAddress = ECSLib.getAddress("Address", _capitalID);
+
+            require(_templateIDs.length == _amounts.length, "CURIO: Input lengths do not match");
+            require(_templateIDs.length > 0, "CURIO: Army must have at least 1 troop");
+
+            for (uint256 i = 0; i < _templateIDs.length; i++) {
+                CurioERC20 troopToken = CurioERC20(ECSLib.getAddress("Address", _templateIDs[i]));
+                // require(tokenContract.checkBalanceOf(msg.sender) >= _amounts[i], "CURIO: Need to produce more troops");
+
+                load += ECSLib.getUint("Load", _templateIDs[i]) * _amounts[i];
+
+                troopToken.transferFrom(capitalAddress, armyAddress, _amounts[i]);
+            }
+
+            // Edit army traits
+            ECSLib.setUint("Load", armyID, load);
+        }
+    }
+
+    function disbandArmy(uint256 _armyID) external {
+        GameLib.validEntityCheck(_armyID);
+        GameLib.ongoingGameCheck();
+        uint256 nationID = ECSLib.getUint("Nation", _armyID);
+        address armyAddress = ECSLib.getAddress("Address", _armyID);
+        require(gs().nationAddressToId[msg.sender] == nationID, "CURIO: Can only disband your own army");
+
+        // Verify tile ownership
+        Position memory armyPosition = ECSLib.getPosition("Position", _armyID);
+        Position memory armyStartPosition = GameLib.getProperTilePosition(armyPosition);
+
+        // Verify that army is on capital tile
+        uint256 capitalID = GameLib.getCapital(nationID);
+        require(GameLib.coincident(ECSLib.getPosition("StartPosition", capitalID), armyStartPosition), "CURIO: Move army to capital to disband");
+
+        address capitalAddress = ECSLib.getAddress("Address", capitalID);
+
+        // Return carried resources to capital
+        GameLib.unloadResources(capitalAddress, armyAddress);
+
+        // Return troops to corresponding inventories and disband army
+        GameLib.disbandArmy(capitalAddress, armyAddress);
+        ECSLib.removeComponentValue("Position", _armyID);
+        ECSLib.removeComponentValue("CanBattle", _armyID);
+    }
+
+    // ----------------------------------------------------------
+    // RESOURCE COLLECTION
+    // ----------------------------------------------------------
 
     function startGather(uint256 _armyID, uint256 _resourceID) external {
         GameLib.validEntityCheck(_armyID);
@@ -541,79 +664,49 @@ contract GameFacet is UseStorage {
         ECSLib.setUint("LastHarvested", _capitalID, block.timestamp);
     }
 
+    function upgradeResource(uint256 _resourceID) public {
+        GameLib.validEntityCheck(_resourceID);
+        GameLib.ongoingGameCheck();
+        uint256 nationID = ECSLib.getUint("Nation", _resourceID);
+        require(gs().nationAddressToId[msg.sender] == nationID, "CURIO: Can only upgrade your own resource");
+
+        // Check if nation has reached max tile level
+        uint256 capitalID = GameLib.getCapital(nationID);
+        require(ECSLib.getUint("Level", _resourceID) < ECSLib.getUint("Level", capitalID) * gs().worldConstants.capitalLevelToEntityLevelRatio, "CURIO: Need to upgrade nation first");
+
+        uint256 resourceLevel = ECSLib.getUint("Level", _resourceID);
+
+        // check if upgrade is in process
+        string memory subject = ECSLib.getUint("Template", _resourceID) == gs().templates["Gold"] ? "Goldmine" : "Farm";
+        require(block.timestamp >= ECSLib.getUint("LastUpgraded", _resourceID), "CURIO: Need to finish upgrading first");
+
+        // Deduct costs from capital
+        {
+            address capitalAddress = ECSLib.getAddress("Address", capitalID);
+            uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
+
+            for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
+                CurioERC20 resourceToken = CurioERC20(ECSLib.getAddress("Address", resourceTemplateIDs[i]));
+                uint256 balance = ECSLib.getUint("Amount", GameLib.getInventory(capitalID, resourceTemplateIDs[i]));
+                uint256 cost = GameLib.getConstant(subject, ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Cost", "Upgrade", resourceLevel);
+                require(balance >= cost, "CURIO: Insufficient balance");
+
+                resourceToken.destroyToken(capitalAddress, cost);
+            }
+        }
+
+        // todo: harvest resource before upgrade
+
+        // Set timestamp
+        ECSLib.setUint("LastUpgraded", _resourceID, block.timestamp + GameLib.getConstant(subject, "", "Cooldown", "Upgrade", resourceLevel));
+
+        // Set new level
+        ECSLib.setUint("Level", _resourceID, resourceLevel + 1);
+    }
+
     // ----------------------------------------------------------
     // BATTLE
     // ----------------------------------------------------------
-
-    function organizeArmy(
-        uint256 _capitalID,
-        uint256[] memory _templateIDs,
-        uint256[] memory _amounts
-    ) external returns (uint256 armyID) {
-        GameLib.validEntityCheck(_capitalID);
-        GameLib.ongoingGameCheck();
-        uint256 nationID = ECSLib.getUint("Nation", _capitalID);
-        require(gs().nationAddressToId[msg.sender] == nationID, "CURIO: Can only organize army at your own capital");
-
-        // Verify there is no army currently at the capital
-        Position memory tilePosition = ECSLib.getPosition("StartPosition", _capitalID);
-        Position memory midPosition = GameLib.getMidPositionFromTilePosition(tilePosition);
-        require(GameLib.getArmyAt(midPosition) == NULL, "CURIO: Capital occupied by another army");
-
-        // Capital at Chaos cannot organize an army
-        GameLib.capitalSackRecoveryCheck(_capitalID);
-
-        // Add army
-        address armyAddress = address(new CurioWallet(address(this)));
-        armyID = Templates.addArmy(2, 1, 2, gs().worldConstants.tileWidth, nationID, midPosition, tilePosition, armyAddress);
-
-        // Collect army traits from individual troop types & transfer troops from nation
-        {
-            uint256 load = 0; // sum
-            address capitalAddress = ECSLib.getAddress("Address", _capitalID);
-
-            require(_templateIDs.length == _amounts.length, "CURIO: Input lengths do not match");
-            require(_templateIDs.length > 0, "CURIO: Army must have at least 1 troop");
-
-            for (uint256 i = 0; i < _templateIDs.length; i++) {
-                CurioERC20 troopToken = CurioERC20(ECSLib.getAddress("Address", _templateIDs[i]));
-                // require(tokenContract.checkBalanceOf(msg.sender) >= _amounts[i], "CURIO: Need to produce more troops");
-
-                load += ECSLib.getUint("Load", _templateIDs[i]) * _amounts[i];
-
-                troopToken.transferFrom(capitalAddress, armyAddress, _amounts[i]);
-            }
-
-            // Edit army traits
-            ECSLib.setUint("Load", armyID, load);
-        }
-    }
-
-    function disbandArmy(uint256 _armyID) external {
-        GameLib.validEntityCheck(_armyID);
-        GameLib.ongoingGameCheck();
-        uint256 nationID = ECSLib.getUint("Nation", _armyID);
-        address armyAddress = ECSLib.getAddress("Address", _armyID);
-        require(gs().nationAddressToId[msg.sender] == nationID, "CURIO: Can only disband your own army");
-
-        // Verify tile ownership
-        Position memory armyPosition = ECSLib.getPosition("Position", _armyID);
-        Position memory armyStartPosition = GameLib.getProperTilePosition(armyPosition);
-
-        // Verify that army is on capital tile
-        uint256 capitalID = GameLib.getCapital(nationID);
-        require(GameLib.coincident(ECSLib.getPosition("StartPosition", capitalID), armyStartPosition), "CURIO: Move army to capital to disband");
-
-        address capitalAddress = ECSLib.getAddress("Address", capitalID);
-
-        // Return carried resources to capital
-        GameLib.unloadResources(capitalAddress, armyAddress);
-
-        // Return troops to corresponding inventories and disband army
-        GameLib.disbandArmy(capitalAddress, armyAddress);
-        ECSLib.removeComponentValue("Position", _armyID);
-        ECSLib.removeComponentValue("CanBattle", _armyID);
-    }
 
     /**
      * @dev One round of battle against an army, a tile, or a tile with a capital.
@@ -726,90 +819,9 @@ contract GameFacet is UseStorage {
         }
     }
 
-    function claimTile(uint256 _armyID, uint256 _tileID) public {
-        GameLib.validEntityCheck(_tileID);
-        GameLib.ongoingGameCheck();
-        uint256 nationID = ECSLib.getUint("Nation", _armyID);
-        require(gs().nationAddressToId[msg.sender] == nationID, "CURIO: Can only claim tile with your own army");
-
-        // Check Tile Count has not exceeded limits
-        uint256 capitalID = GameLib.getCapital(nationID);
-        require(GameLib.getNationTiles(nationID).length < GameLib.getConstant("Nation", "Tile", "Amount", "", ECSLib.getUint("Level", capitalID)), "CURIO: Reached max tile count");
-
-        // Verify target tile has no owner
-        require(ECSLib.getUint("Nation", _tileID) == NULL, "CURIO: Tile has owner");
-
-        // Verify target tile is not barbarian tile
-        require(!GameLib.isBarbarian(_tileID), "CURIO: Cannot claim barbarian tiles");
-
-        // Verify that no guard exists on tile
-        require(ECSLib.getUint("Amount", GameLib.getInventory(_tileID, gs().templates["Guard"])) == 0, "CURIO: Tile has guard");
-
-        // Verify that army is on selected tile
-        Position memory tilePosition = ECSLib.getPosition("StartPosition", _tileID);
-        require(GameLib.coincident(GameLib.getProperTilePosition(ECSLib.getPosition("Position", _armyID)), tilePosition), "CURIO: Army must be on tile to claim");
-
-        // Verify that tile is next to own tile
-        require(GameLib.isAdjacentToOwnTile(nationID, tilePosition), "CURIO: Can only claim contiguous tiles");
-
-        // Verify that no other movable entity is on tile
-        uint256[] memory movableEntitiesOnTile = GameLib.getMovableEntitiesAtTile(tilePosition);
-        require(movableEntitiesOnTile.length == 1 && movableEntitiesOnTile[0] == _armyID, "CURIO: Other movable entity on tile");
-
-        // Transfer ownership of tile and initialize new guard
-        ECSLib.setUint("Nation", _tileID, nationID);
-        uint256 tileGuardAmount = GameLib.getConstant("Tile", "Guard", "Amount", "", ECSLib.getUint("Level", _tileID));
-        CurioERC20 guardToken = GameLib.getTokenContract("Guard");
-        guardToken.dripToken(ECSLib.getAddress("Address", _tileID), tileGuardAmount);
-
-        // Transfer ownership of resource
-        uint256 resourceID = GameLib.getResourceAt(tilePosition);
-        ECSLib.setUint("Nation", resourceID, nationID);
-    }
-
-    function upgradeResource(uint256 _resourceID) public {
-        GameLib.validEntityCheck(_resourceID);
-        GameLib.ongoingGameCheck();
-        uint256 nationID = ECSLib.getUint("Nation", _resourceID);
-        require(gs().nationAddressToId[msg.sender] == nationID, "CURIO: Can only upgrade your own resource");
-
-        // Check if nation has reached max tile level
-        uint256 capitalID = GameLib.getCapital(nationID);
-        require(ECSLib.getUint("Level", _resourceID) < ECSLib.getUint("Level", capitalID) * gs().worldConstants.capitalLevelToEntityLevelRatio, "CURIO: Need to upgrade nation first");
-
-        uint256 resourceLevel = ECSLib.getUint("Level", _resourceID);
-
-        // check if upgrade is in process
-        string memory subject = ECSLib.getUint("Template", _resourceID) == gs().templates["Gold"] ? "Goldmine" : "Farm";
-        require(block.timestamp >= ECSLib.getUint("LastUpgraded", _resourceID), "CURIO: Need to finish upgrading first");
-
-        // Deduct costs from capital
-        {
-            address capitalAddress = ECSLib.getAddress("Address", capitalID);
-            uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
-
-            for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
-                CurioERC20 resourceToken = CurioERC20(ECSLib.getAddress("Address", resourceTemplateIDs[i]));
-                uint256 balance = ECSLib.getUint("Amount", GameLib.getInventory(capitalID, resourceTemplateIDs[i]));
-                uint256 cost = GameLib.getConstant(subject, ECSLib.getString("InventoryType", resourceTemplateIDs[i]), "Cost", "Upgrade", resourceLevel);
-                require(balance >= cost, "CURIO: Insufficient balance");
-
-                resourceToken.destroyToken(capitalAddress, cost);
-            }
-        }
-
-        // todo: harvest resource before upgrade
-
-        // Set timestamp
-        ECSLib.setUint("LastUpgraded", _resourceID, block.timestamp + GameLib.getConstant(subject, "", "Cooldown", "Upgrade", resourceLevel));
-
-        // Set new level
-        ECSLib.setUint("Level", _resourceID, resourceLevel + 1);
-    }
-
-    // --------------------------
-    // treaty (WIP)
-    // --------------------------
+    // ----------------------------------------------------------
+    // TREATY
+    // ----------------------------------------------------------
 
     // TODO: there's no approval mechanism from treaty yet, only from nation
     function joinTreaty(uint256 _treatyID) external {

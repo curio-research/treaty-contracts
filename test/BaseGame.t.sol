@@ -11,6 +11,35 @@ import {CurioWallet} from "contracts/CurioWallet.sol";
 import {console} from "forge-std/console.sol";
 
 contract BaseGameTest is Test, DiamondDeployTest {
+    // GameFacet Coverage Overview
+    //
+    // Nation/Capital:
+    // - [x] initializeNation
+    // - [x] upgradeNation
+    // - [ ] moveCapital
+    // Tile:
+    // - [x] claimTile
+    // - [ ] upgradeTile
+    // - [ ] recoverTile
+    // - [ ] disownTile
+    // Production:
+    // - [x] startTroopProduction
+    // - [x] endTroopProduction
+    // Army:
+    // - [x] move
+    // - [x] organizeArmy
+    // - [x] disbandArmy
+    // Resource:
+    // - [x] startGather
+    // - [x] endGather
+    // - [x] unloadResources
+    // - [x] harvestResource
+    // - [x] harvestResourceFromCapital
+    // - [x] upgradeResource
+    // Battle:
+    // - [x] battle (army vs. army)
+    // - [ ] battle (army vs. tile)
+
     function testInitialization() public {
         // Verify that wallet address is loaded correctly
         assertEq(getter.getAddress(nation1CapitalID), nation1CapitalAddr);
@@ -440,6 +469,38 @@ contract BaseGameTest is Test, DiamondDeployTest {
         game.unloadResources(army11ID);
         assertEq(foodToken.checkBalanceOf(army11Addr), 0);
         assertEq(foodToken.checkBalanceOf(nation1CapitalAddr), armyFoodBalance);
+    }
+
+    function testTroopProduction() public {
+        // Start time
+        uint256 time = block.timestamp + 500;
+        vm.warp(time);
+
+        // Deployer drips gold and food to Nation 1
+        vm.startPrank(deployer);
+        admin.dripToken(nation1CapitalAddr, "Gold", 100000000);
+        admin.dripToken(nation1CapitalAddr, "Food", 100000000);
+        assertEq(horsemanToken.checkBalanceOf(nation1CapitalAddr), 0);
+        vm.stopPrank();
+
+        // Nation 1 produces 1000 horsemen
+        vm.startPrank(player1);
+        uint256 horsemanTemplateID = getter.getEntityByAddress(address(horsemanToken));
+        uint256 productionID = game.startTroopProduction(nation1CapitalID, horsemanTemplateID, 1000);
+
+        // Nation 1 fails to end troop production
+        time += worldConstants.secondsToTrainAThousandTroops / 2;
+        vm.warp(time);
+        vm.expectRevert("CURIO: Need more time for production");
+        game.endTroopProduction(nation1CapitalID, productionID);
+        assertEq(horsemanToken.checkBalanceOf(nation1CapitalAddr), 0);
+
+        // Nation 1 ends troop production
+        time += time += worldConstants.secondsToTrainAThousandTroops / 2 + 1;
+        vm.warp(time);
+        game.endTroopProduction(nation1CapitalID, productionID);
+        assertEq(horsemanToken.checkBalanceOf(nation1CapitalAddr), 1000);
+        vm.stopPrank();
     }
 
     function testTransferDistance() public {
