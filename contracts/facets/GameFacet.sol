@@ -515,8 +515,7 @@ contract GameFacet is UseStorage {
 
         // Return troops to corresponding inventories and disband army
         GameLib.disbandArmy(capitalAddress, armyAddress);
-        ECSLib.removeComponentValue("Position", _armyID);
-        ECSLib.removeComponentValue("CanBattle", _armyID);
+        ECSLib.removeEntity(_armyID);
     }
 
     // ----------------------------------------------------------
