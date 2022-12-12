@@ -227,8 +227,7 @@ library GameLib {
 
             if (_removeUponVictory) {
                 // Defender (always army here) is dealt with same as in disband
-                ECSLib.removeComponentValue("Position", _defenderID);
-                ECSLib.removeComponentValue("CanBattle", _defenderID);
+                ECSLib.removeEntity(_defenderID);
             }
         }
     }
