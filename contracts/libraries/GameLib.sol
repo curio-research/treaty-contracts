@@ -227,8 +227,7 @@ library GameLib {
 
             if (_removeUponVictory) {
                 // Defender (always army here) is dealt with same as in disband
-                ECSLib.removeComponentValue("Position", _defenderID);
-                ECSLib.removeComponentValue("CanBattle", _defenderID);
+                ECSLib.removeEntity(_defenderID);
             }
         }
     }
@@ -381,7 +380,7 @@ library GameLib {
 
     function getNationArmies(uint256 _nationID) internal view returns (uint256[] memory) {
         QueryCondition[] memory query = new QueryCondition[](2);
-        query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Owner"]), abi.encode(_nationID));
+        query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Nation"]), abi.encode(_nationID));
         query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Army"));
         return ECSLib.query(query);
     }
@@ -506,9 +505,10 @@ library GameLib {
     }
 
     function getInventory(uint256 _keeperID, uint256 _templateID) internal view returns (uint256) {
-        QueryCondition[] memory query = new QueryCondition[](2);
-        query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Keeper"]), abi.encode(_keeperID));
-        query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Template"]), abi.encode(_templateID));
+        QueryCondition[] memory query = new QueryCondition[](3);
+        query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Inventory"));
+        query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Keeper"]), abi.encode(_keeperID));
+        query[2] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Template"]), abi.encode(_templateID));
         uint256[] memory res = ECSLib.query(query);
 
         require(res.length <= 1, "CURIO: Inventory assertion failed");
@@ -629,7 +629,10 @@ library GameLib {
 
     function neutralOrOwnedEntityCheck(uint256 _entity, uint256 _nationID) internal view {
         uint256 entityNation = ECSLib.getUint("Nation", _entity);
-        require(entityNation == _nationID || entityNation == 0, "CURIO: Entity is not yours");
+        if (entityNation == 0 || entityNation == _nationID) return;
+
+        // Check if owner nation allows passing through
+        // TODO: left here
     }
 
     function inboundPositionCheck(Position memory _position) internal view {
@@ -640,10 +643,14 @@ library GameLib {
         require(ECSLib.getUint("Terrain", getTileAt(_tilePosition)) != 5, "CURIO: Tile not passable");
     }
 
-    function capitalHasRecoveredFromSack(uint256 _capitalID) internal view {
+    function capitalSackRecoveryCheck(uint256 _capitalID) internal view {
         uint256 capitalLevel = ECSLib.getUint("Level", _capitalID);
         uint256 chaosDuration = GameLib.getConstant("Capital", "", "Cooldown", "Chaos", capitalLevel);
         require(block.timestamp - ECSLib.getUint("LastSacked", _capitalID) > chaosDuration, "CURIO: Capital in chaos");
+    }
+
+    function activeNationCheck(address _address) internal view {
+        require(gs().nationAddressToId[_address] != 0, "CURIO: Nation not yet initialized");
     }
 
     // ----------------------------------------------------------

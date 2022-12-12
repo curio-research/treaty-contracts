@@ -124,6 +124,11 @@ const _abi = [
         name: "_name",
         type: "string",
       },
+      {
+        internalType: "string",
+        name: "_abiHash",
+        type: "string",
+      },
     ],
     name: "addTreaty",
     outputs: [
@@ -1103,6 +1108,25 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
+        name: "_treatyID",
+        type: "uint256",
+      },
+    ],
+    name: "getABIHash",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
         name: "_entityID",
         type: "uint256",
       },
@@ -1266,6 +1290,30 @@ const _abi = [
       },
     ],
     name: "getConstant",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_addr1",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_addr2",
+        type: "address",
+      },
+    ],
+    name: "getDistanceByAddresses",
     outputs: [
       {
         internalType: "uint256",
@@ -1735,6 +1783,25 @@ const _abi = [
         internalType: "struct WorldConstants",
         name: "",
         type: "tuple",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_player",
+        type: "address",
+      },
+    ],
+    name: "isPlayerInitialized",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
       },
     ],
     stateMutability: "view",

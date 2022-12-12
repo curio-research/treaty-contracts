@@ -93,6 +93,7 @@ export type QueryConditionStructOutput = [number, string, string] & {
 
 export interface GetterFacetInterface extends utils.Interface {
   functions: {
+    "getABIHash(uint256)": FunctionFragment;
     "getAddress(uint256)": FunctionFragment;
     "getArmyAt((uint256,uint256))": FunctionFragment;
     "getArmyAtTile((uint256,uint256))": FunctionFragment;
@@ -100,6 +101,7 @@ export interface GetterFacetInterface extends utils.Interface {
     "getComponent(string)": FunctionFragment;
     "getComponentById(uint256)": FunctionFragment;
     "getConstant(string,string,string,string,uint256)": FunctionFragment;
+    "getDistanceByAddresses(address,address)": FunctionFragment;
     "getEntities()": FunctionFragment;
     "getEntitiesAddr()": FunctionFragment;
     "getEntity()": FunctionFragment;
@@ -119,11 +121,13 @@ export interface GetterFacetInterface extends utils.Interface {
     "getTokenContract(string)": FunctionFragment;
     "getTreatyByName(string)": FunctionFragment;
     "getWorldConstants()": FunctionFragment;
+    "isPlayerInitialized(address)": FunctionFragment;
     "query((uint8,address,bytes)[])": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "getABIHash"
       | "getAddress"
       | "getArmyAt"
       | "getArmyAtTile"
@@ -131,6 +135,7 @@ export interface GetterFacetInterface extends utils.Interface {
       | "getComponent"
       | "getComponentById"
       | "getConstant"
+      | "getDistanceByAddresses"
       | "getEntities"
       | "getEntitiesAddr"
       | "getEntity"
@@ -150,9 +155,14 @@ export interface GetterFacetInterface extends utils.Interface {
       | "getTokenContract"
       | "getTreatyByName"
       | "getWorldConstants"
+      | "isPlayerInitialized"
       | "query"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "getABIHash",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(
     functionFragment: "getAddress",
     values: [PromiseOrValue<BigNumberish>]
@@ -186,6 +196,10 @@ export interface GetterFacetInterface extends utils.Interface {
       PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>
     ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getDistanceByAddresses",
+    values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "getEntities",
@@ -261,10 +275,15 @@ export interface GetterFacetInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "isPlayerInitialized",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "query",
     values: [QueryConditionStruct[]]
   ): string;
 
+  decodeFunctionResult(functionFragment: "getABIHash", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getAddress", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getArmyAt", data: BytesLike): Result;
   decodeFunctionResult(
@@ -282,6 +301,10 @@ export interface GetterFacetInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getConstant",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getDistanceByAddresses",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -351,6 +374,10 @@ export interface GetterFacetInterface extends utils.Interface {
     functionFragment: "getWorldConstants",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "isPlayerInitialized",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "query", data: BytesLike): Result;
 
   events: {};
@@ -383,6 +410,11 @@ export interface GetterFacet extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    getABIHash(
+      _treatyID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     getAddress(
       _entityID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -419,6 +451,12 @@ export interface GetterFacet extends BaseContract {
       _componentName: PromiseOrValue<string>,
       _functionName: PromiseOrValue<string>,
       _level: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    getDistanceByAddresses(
+      _addr1: PromiseOrValue<string>,
+      _addr2: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
@@ -508,11 +546,21 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[WorldConstantsStructOutput]>;
 
+    isPlayerInitialized(
+      _player: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     query(
       _queryConditions: QueryConditionStruct[],
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
   };
+
+  getABIHash(
+    _treatyID: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   getAddress(
     _entityID: PromiseOrValue<BigNumberish>,
@@ -550,6 +598,12 @@ export interface GetterFacet extends BaseContract {
     _componentName: PromiseOrValue<string>,
     _functionName: PromiseOrValue<string>,
     _level: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  getDistanceByAddresses(
+    _addr1: PromiseOrValue<string>,
+    _addr2: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
@@ -639,12 +693,22 @@ export interface GetterFacet extends BaseContract {
     overrides?: CallOverrides
   ): Promise<WorldConstantsStructOutput>;
 
+  isPlayerInitialized(
+    _player: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   query(
     _queryConditions: QueryConditionStruct[],
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
   callStatic: {
+    getABIHash(
+      _treatyID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
     getAddress(
       _entityID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -681,6 +745,12 @@ export interface GetterFacet extends BaseContract {
       _componentName: PromiseOrValue<string>,
       _functionName: PromiseOrValue<string>,
       _level: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getDistanceByAddresses(
+      _addr1: PromiseOrValue<string>,
+      _addr2: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -770,6 +840,11 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<WorldConstantsStructOutput>;
 
+    isPlayerInitialized(
+      _player: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     query(
       _queryConditions: QueryConditionStruct[],
       overrides?: CallOverrides
@@ -779,6 +854,11 @@ export interface GetterFacet extends BaseContract {
   filters: {};
 
   estimateGas: {
+    getABIHash(
+      _treatyID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getAddress(
       _entityID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -815,6 +895,12 @@ export interface GetterFacet extends BaseContract {
       _componentName: PromiseOrValue<string>,
       _functionName: PromiseOrValue<string>,
       _level: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getDistanceByAddresses(
+      _addr1: PromiseOrValue<string>,
+      _addr2: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -902,6 +988,11 @@ export interface GetterFacet extends BaseContract {
 
     getWorldConstants(overrides?: CallOverrides): Promise<BigNumber>;
 
+    isPlayerInitialized(
+      _player: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     query(
       _queryConditions: QueryConditionStruct[],
       overrides?: CallOverrides
@@ -909,6 +1000,11 @@ export interface GetterFacet extends BaseContract {
   };
 
   populateTransaction: {
+    getABIHash(
+      _treatyID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getAddress(
       _entityID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -945,6 +1041,12 @@ export interface GetterFacet extends BaseContract {
       _componentName: PromiseOrValue<string>,
       _functionName: PromiseOrValue<string>,
       _level: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getDistanceByAddresses(
+      _addr1: PromiseOrValue<string>,
+      _addr2: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1031,6 +1133,11 @@ export interface GetterFacet extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getWorldConstants(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    isPlayerInitialized(
+      _player: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     query(
       _queryConditions: QueryConditionStruct[],

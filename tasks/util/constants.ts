@@ -40,6 +40,7 @@ export const generateWorldConstants = (adminAddr: string, mapInput: MapInput): a
     maxNationCount: 1000,
     gameMode: GameMode.REGULAR,
     gameLengthInSeconds: 2000000000,
+    // maxTransferDistance: 100,
     // generated constants
     ...worldConstants,
   };

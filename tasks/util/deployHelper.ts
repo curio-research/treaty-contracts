@@ -8,14 +8,13 @@ import { chainInfo, COMPONENT_SPECS, position, TILE_TYPE } from 'curio-vault';
 import { ECSLib } from '../../typechain-types/contracts/libraries/ECSLib';
 import { GameLib } from '../../typechain-types/contracts/libraries/GameLib';
 import { CurioERC20 } from '../../typechain-types/contracts/tokens/CurioERC20';
-import { FTX } from '../../typechain-types/contracts/treaties/FTX.sol';
-import { NATO } from '../../typechain-types/contracts/treaties/NATO';
 import { createTemplates } from './constants';
 import { deployDiamond, getDiamond, deployFacets } from './diamondDeploy';
 import { encodeTileMap } from './mapHelper';
 import GAME_PARAMETERS from '../game_parameters.json';
 import chalk from 'chalk';
 import { Curio } from '../../typechain-types/hardhat-diamond-abi/Curio';
+import pinataSDK from '@pinata/sdk';
 
 // deploy proxy used in hre
 export const deployProxy = async <C extends Contract>(contractName: string, signer: Signer, hre: HardhatRuntimeEnvironment, contractArgs: unknown[], libs?: FactoryOptions['libraries']): Promise<C> => {
@@ -70,7 +69,28 @@ export const saveMapToLocal = async (tileMap: any) => {
   } while (fs.existsSync(mapPath));
 
   await fsPromise.writeFile(mapPath, JSON.stringify(tileMap));
-  console.log('✦ map saved to local');
+  console.log(`✦ Map saved locally at: ${mapPath}`);
+};
+
+export const uploadABIToIPFS = async (hre: HardhatRuntimeEnvironment, contractName: string): Promise<string> => {
+  const pinata = pinataSDK(process.env.PINATA_API_KEY!, process.env.PINATA_API_SECRET!);
+  try {
+    await pinata.testAuthentication();
+    const abi = (await hre.artifacts.readArtifact(contractName)).abi;
+    const response = await pinata.pinJSONToIPFS(abi);
+    return response.IpfsHash;
+  } catch (error) {
+    console.log(chalk.bgRed('✦ Pinata error: ' + error));
+    return '';
+  }
+};
+
+// Retrieve at https://gateway.pinata.cloud/ipfs/<hash>
+export const deployTreaty = async (name: string, admin: Signer, hre: HardhatRuntimeEnvironment, diamond: Curio, gasLimit: number) => {
+  const treaty = await deployProxy<any>(name, admin, hre, [diamond.address]);
+  const abiHash = await uploadABIToIPFS(hre, name);
+  console.log(chalk.dim(`✦ Treaty ${name} deployed and ABI uploaded to IPFS at hash=${abiHash}`));
+  diamond.connect(admin).addTreaty(treaty.address, name, abiHash, { gasLimit });
 };
 
 /**
@@ -126,8 +146,8 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
   startTime = performance.now();
   const tokenNames = ['Gold', 'Food', 'Horseman', 'Warrior', 'Slinger', 'Guard'];
   const tokenAddrs: string[] = [];
-  for (const tokenName of tokenNames) {
-    const token = await deployProxy<CurioERC20>('CurioERC20', admin, hre, [tokenName, tokenName.toUpperCase(), 0, diamond.address]);
+  for (const name of tokenNames) {
+    const token = await deployProxy<CurioERC20>('CurioERC20', admin, hre, [name, name.toUpperCase(), 0, diamond.address]);
     tokenAddrs.push(token.address);
     await confirmTx(await diamond.addAuthorized(token.address, { gasLimit }), hre);
   }
@@ -146,24 +166,28 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
 
   // Bulk initialize special tiles
   const tileWidth = Number(worldConstants.tileWidth);
-  const specialTilePositions: position[] = [];
+  // const specialTilePositions: position[] = [];
+  const allTilePositions: position[] = [];
   tileMap.forEach((col, i) =>
     col.forEach((val, j) => {
-      if (val !== TILE_TYPE.LAND) specialTilePositions.push({ x: i * tileWidth, y: j * tileWidth });
+      // if (val !== TILE_TYPE.LAND) specialTilePositions.push({ x: i * tileWidth, y: j * tileWidth });
+      allTilePositions.push({ x: i * tileWidth, y: j * tileWidth });
     })
   );
   startTime = performance.now();
   const bulkTileUploadSize = 100;
-  for (let i = 0; i < specialTilePositions.length; i += bulkTileUploadSize) {
+  for (let i = 0; i < allTilePositions.length; i += bulkTileUploadSize) {
     console.log(chalk.dim(`✦ Initializing special tiles ${i} to ${i + bulkTileUploadSize}`));
-    await confirmTx(await diamond.bulkInitializeTiles(specialTilePositions.slice(i, i + bulkTileUploadSize), { gasLimit }), hre);
+    await confirmTx(await diamond.bulkInitializeTiles(allTilePositions.slice(i, i + bulkTileUploadSize), { gasLimit }), hre);
   }
   console.log(`✦ Special tile bulk initialization took ${Math.floor(performance.now() - startTime)} ms`);
 
-  // TODO: Deploy treaties
+  // Deploy treaties
   startTime = performance.now();
-  // await deployProxy<FTX>('FTX', admin, hre, [diamond.address]);
-  await deployProxy<NATO>('NATO', admin, hre, [diamond.address]);
+  const treatyNames = ['FTX', 'NATO'];
+  for (const name of treatyNames) {
+    await deployTreaty(name, admin, hre, diamond, gasLimit);
+  }
   console.log(`✦ Treaty deployment took ${Math.floor(performance.now() - startTime)} ms`);
 
   return diamond;

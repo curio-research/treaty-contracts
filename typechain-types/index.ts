@@ -52,6 +52,8 @@ export type { CurioERC20 } from "./contracts/tokens/CurioERC20";
 export { CurioERC20__factory } from "./factories/contracts/tokens/CurioERC20__factory";
 export type { CurioERC721 } from "./contracts/tokens/CurioERC721";
 export { CurioERC721__factory } from "./factories/contracts/tokens/CurioERC721__factory";
+export type { Alliance } from "./contracts/treaties/Alliance";
+export { Alliance__factory } from "./factories/contracts/treaties/Alliance__factory";
 export type { FTTERC20 } from "./contracts/treaties/FTX.sol/FTTERC20";
 export { FTTERC20__factory } from "./factories/contracts/treaties/FTX.sol/FTTERC20__factory";
 export type { FTX } from "./contracts/treaties/FTX.sol/FTX";

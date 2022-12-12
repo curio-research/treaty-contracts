@@ -16,8 +16,6 @@ import {Strings} from "openzeppelin-contracts/contracts/utils/Strings.sol";
 import {ComponentSpec, GameMode, GameParamSpec, Position, WorldConstants} from "contracts/libraries/Types.sol";
 import {NATO} from "contracts/treaties/NATO.sol";
 import {CurioERC20} from "contracts/tokens/CurioERC20.sol";
-import {CurioWallet} from "contracts/CurioWallet.sol";
-
 import {console} from "forge-std/console.sol";
 import {stdJson} from "forge-std/StdJson.sol";
 
@@ -88,7 +86,6 @@ contract DiamondDeployTest is Test {
     bytes4[] OWNERSHIP_SELECTORS = [bytes4(0xf2fde38b), 0x8da5cb5b];
     bytes4[] LOUPE_SELECTORS = [bytes4(0xcdffacc6), 0x52ef6b2c, 0xadfca15e, 0x7a0ed627, 0x01ffc9a7];
 
-
     function setUp() public {
         vm.startPrank(deployer);
         console.log("==================== SETUP BEGINS =====================");
@@ -104,19 +101,21 @@ contract DiamondDeployTest is Test {
         adminFacet = new AdminFacet();
 
         // Prepare world constants with either `_generateNewWorldConstants()` or `fetchWorldConstants()`
-        worldConstants =  _fetchWorldConstants();
+        worldConstants = _fetchWorldConstants();
         console.log(">>> World constants ready");
         
         // Fetch args from CLI craft payload for init deploy
-        bytes memory initData = abi.encodeWithSelector(_getSelectors("DiamondInit")[0], worldConstants);
-        IDiamondCut.FacetCut[] memory cuts = new IDiamondCut.FacetCut[](5);
-        cuts[0] = IDiamondCut.FacetCut({facetAddress: address(diamondLoupeFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: LOUPE_SELECTORS});
-        cuts[1] = IDiamondCut.FacetCut({facetAddress: address(diamondOwnershipFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: OWNERSHIP_SELECTORS});
-        cuts[2] = IDiamondCut.FacetCut({facetAddress: address(gameFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: _getSelectors("GameFacet")});
-        cuts[3] = IDiamondCut.FacetCut({facetAddress: address(getterFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: _getSelectors("GetterFacet")});
-        cuts[4] = IDiamondCut.FacetCut({facetAddress: address(adminFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: _getSelectors("AdminFacet")});
-        IDiamondCut(diamond).diamondCut(cuts, address(diamondInit), initData);
-        console.log(">>> Diamond initialized");
+        {
+            bytes memory initData = abi.encodeWithSelector(_getSelectors("DiamondInit")[0], worldConstants);
+            IDiamondCut.FacetCut[] memory cuts = new IDiamondCut.FacetCut[](5);
+            cuts[0] = IDiamondCut.FacetCut({facetAddress: address(diamondLoupeFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: LOUPE_SELECTORS});
+            cuts[1] = IDiamondCut.FacetCut({facetAddress: address(diamondOwnershipFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: OWNERSHIP_SELECTORS});
+            cuts[2] = IDiamondCut.FacetCut({facetAddress: address(gameFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: _getSelectors("GameFacet")});
+            cuts[3] = IDiamondCut.FacetCut({facetAddress: address(getterFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: _getSelectors("GetterFacet")});
+            cuts[4] = IDiamondCut.FacetCut({facetAddress: address(adminFacet), action: IDiamondCut.FacetCutAction.Add, functionSelectors: _getSelectors("AdminFacet")});
+            IDiamondCut(diamond).diamondCut(cuts, address(diamondInit), initData);
+            console.log(">>> Diamond initialized");
+        }
 
         // Assign diamond functions to corresponding facets
         getter = GetterFacet(diamond);
@@ -154,15 +153,17 @@ contract DiamondDeployTest is Test {
 
         // Initialize map either with either `_generateNewMap()` or `_fetchLastDeployedMap()`
         // Note: if fetching deployed map, check for map size
-        uint256[][] memory map = _generateNewMap(worldConstants.worldWidth, worldConstants.worldHeight);
-        uint256[][] memory encodedColumnBatches = _encodeTileMap(map, worldConstants.numInitTerrainTypes, 200 / worldConstants.numInitTerrainTypes);
-        admin.storeEncodedColumnBatches(encodedColumnBatches);
-        _initializeMap();
-        console.log(">>> Map initialized and encoded");
+        {
+            uint256[][] memory map = _generateNewMap(worldConstants.worldWidth, worldConstants.worldHeight);
+            uint256[][] memory encodedColumnBatches = _encodeTileMap(map, worldConstants.numInitTerrainTypes, 200 / worldConstants.numInitTerrainTypes);
+            admin.storeEncodedColumnBatches(encodedColumnBatches);
+            _initializeMap();
+            console.log(">>> Map initialized and encoded");
+        }
 
         // Initialize treaties
         nato = new NATO(diamond);
-        admin.addTreaty(address(nato), nato.name());
+        admin.addTreaty(address(nato), nato.name(), "sample ABI");
         console.log(">>> Treaties initialized");
 
         vm.stopPrank();
@@ -335,11 +336,14 @@ contract DiamondDeployTest is Test {
 
     /// @dev First way to get world constants: fetch them from data, identical with deployment
     function _fetchWorldConstants() private returns (WorldConstants memory) {
-        string memory root = vm.projectRoot();
-        string memory path = string(abi.encodePacked(root, "/test/data/world_constants.json"));
-        bytes memory rawJson = vm.parseJson(vm.readFile(path));
-        worldConstants = abi.decode(rawJson, (WorldConstants));
+        bytes memory rawJson;
+        {
+            string memory root = vm.projectRoot();
+            string memory path = string(abi.encodePacked(root, "/test/data/world_constants.json"));
+            rawJson = vm.parseJson(vm.readFile(path));
+        }
 
+        worldConstants = abi.decode(rawJson, (WorldConstants));
         worldConstants.admin = deployer;
         return worldConstants;
     }
@@ -348,19 +352,20 @@ contract DiamondDeployTest is Test {
     function _generateNewWorldConstants() private returns (WorldConstants memory) {
         worldConstants =
             WorldConstants({
-                admin: deployer,
-                tileWidth: 10,
-                worldWidth: 100,
-                worldHeight: 100,
-                numInitTerrainTypes: 6,
-                maxCapitalCountPerNation: 3,
-                maxArmyCountPerNation: 2,
-                maxNationCount: 20,
-                gameMode: GameMode.REGULAR,
-                gameLengthInSeconds: 3600,
-                maxCapitalLevel: 3,
+                admin: deployer, // DO NOT REMOVE THIS COMMENT
                 capitalLevelToEntityLevelRatio: 3,
-                secondsToTrainAThousandTroops: 500 // DO NOT REMOVE THIS COMMENT
+                gameLengthInSeconds: 3600,
+                gameMode: GameMode.REGULAR,
+                maxArmyCountPerNation: 2,
+                maxCapitalCountPerNation: 3,
+                maxCapitalLevel: 3,
+                maxNationCount: 20,
+                // maxTransferDistance: 100
+                numInitTerrainTypes: 6,
+                secondsToTrainAThousandTroops: 500,
+                tileWidth: 10,
+                worldHeight: 100,
+                worldWidth: 100
             });
         return worldConstants;
     }

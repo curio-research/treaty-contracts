@@ -68,6 +68,7 @@ struct WorldConstants {
     uint256 maxCapitalLevel;
     uint256 maxCapitalCountPerNation;
     uint256 maxNationCount;
+    // uint256 maxTransferDistance; // FIXME: stack too deep for Foundry test
     uint256 numInitTerrainTypes; // default is 6
     uint256 secondsToTrainAThousandTroops;
     uint256 tileWidth;

@@ -57,9 +57,17 @@ contract GetterFacet is UseStorage {
         return ECSLib.getAddressComponent("Address").getEntitiesWithValue(_entityAddress)[0];
     }
 
+    function getABIHash(uint256 _treatyID) external view returns (string memory) {
+        return ECSLib.getString("ABIHash", _treatyID);
+    }
+
     // ----------------------------------------------------------
     // LOGIC GETTERS
     // ----------------------------------------------------------
+
+    function isPlayerInitialized(address _player) external view returns (bool) {
+        return gs().nationAddressToId[_player] != NULL;
+    }
 
     function getNation(uint256 _entityID) external view returns (uint256) {
         return ECSLib.getUint("Nation", _entityID);
@@ -131,6 +139,12 @@ contract GetterFacet is UseStorage {
 
     function getPlayerCount() external view returns (uint256) {
         return gs().nations.length;
+    }
+
+    function getDistanceByAddresses(address _addr1, address _addr2) external view returns (uint256) {
+        Position memory pos1 = ECSLib.getPosition("Position", GameLib.getEntityByAddress(_addr1));
+        Position memory pos2 = ECSLib.getPosition("Position", GameLib.getEntityByAddress(_addr2));
+        return GameLib.euclidean(pos1, pos2);
     }
 
     // ----------------------------------------------------------

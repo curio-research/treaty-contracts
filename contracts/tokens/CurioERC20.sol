@@ -12,6 +12,9 @@ contract CurioERC20 is ERC20 {
     GetterFacet public getter;
     AdminFacet public admin;
     GameFacet public game;
+    uint256 public maxTransferDistance = 20; // FIXME: move back to WorldConstants
+
+    uint256 private NULL = 0;
 
     constructor(
         string memory _name,
@@ -28,7 +31,7 @@ contract CurioERC20 is ERC20 {
     }
 
     modifier onlyGame() {
-        require(msg.sender == address(game) || msg.sender == address(admin), "CURIO: Only game can call this function");
+        require(msg.sender == diamond, "CURIO: Only game can call this function");
         _;
     }
 
@@ -55,8 +58,10 @@ contract CurioERC20 is ERC20 {
     ) private {
         (uint256 senderInventoryID, , uint256 senderBalance) = _getInventoryIDLoadAndBalance(_from);
         (uint256 recipientInventoryID, uint256 recipientLoad, uint256 recipientBalance) = _getInventoryIDLoadAndBalance(_to);
-        require(senderInventoryID != 0 && recipientInventoryID != 0, "CurioERC20: In-game inventory not found");
+        require(senderInventoryID != NULL && recipientInventoryID != NULL, "CurioERC20: In-game inventory not found");
         require(senderBalance >= _amount, "CurioERC20: Sender insufficent balance");
+        // require(getter.getDistanceByAddresses(_from, _to) <= getter.getWorldConstants().maxTransferDistance, "CurioERC20: Too far from recipient to transfer");
+        require(getter.getDistanceByAddresses(_from, _to) <= maxTransferDistance, "CurioERC20: Too far from recipient to transfer");
 
         uint256 transferAmount;
         if (recipientBalance + _amount <= recipientLoad) {
@@ -80,9 +85,11 @@ contract CurioERC20 is ERC20 {
         address _to,
         uint256 _amount
     ) public override returns (bool) {
-        // uint256 allowed = allowance[_from][msg.sender];
-        // require(allowed >= _amount, "CurioERC20: Insufficient allowance");
-        // if (allowed != type(uint256).max) allowance[_from][msg.sender] = allowed - _amount;
+        if (msg.sender != diamond) {
+            uint256 allowed = allowance[_from][msg.sender];
+            require(allowed >= _amount, "CurioERC20: Insufficient allowance");
+            if (allowed != type(uint256).max) allowance[_from][msg.sender] = allowed - _amount;
+        }
 
         _transferHelper(_from, _to, _amount);
         return true;
@@ -91,9 +98,11 @@ contract CurioERC20 is ERC20 {
     function transferAll(address _from, address _to) public onlyGame returns (bool) {
         uint256 amount = checkBalanceOf(_from);
 
-        // uint256 allowed = allowance[_from][msg.sender];
-        // require(allowed >= amount, "CurioERC20: Insufficient allowance");
-        // if (allowed != type(uint256).max) allowance[_from][msg.sender] = allowed - amount;
+        if (msg.sender != diamond) {
+            uint256 allowed = allowance[_from][msg.sender];
+            require(allowed >= amount, "CurioERC20: Insufficient allowance");
+            if (allowed != type(uint256).max) allowance[_from][msg.sender] = allowed - amount;
+        }
 
         _transferHelper(_from, _to, amount);
         return true;

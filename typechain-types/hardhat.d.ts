@@ -101,6 +101,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.CurioERC721__factory>;
     getContractFactory(
+      name: "Alliance",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Alliance__factory>;
+    getContractFactory(
       name: "FTTERC20",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.FTTERC20__factory>;
@@ -279,6 +283,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.CurioERC721>;
+    getContractAt(
+      name: "Alliance",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Alliance>;
     getContractAt(
       name: "FTTERC20",
       address: string,

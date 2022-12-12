@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import {Position, WorldConstants} from "contracts/libraries/Types.sol";
+import {Position} from "contracts/libraries/Types.sol";
 import {Strings} from "openzeppelin-contracts/contracts/utils/Strings.sol";
 import {ECSLib} from "contracts/libraries/ECSLib.sol";
 import {console} from "forge-std/console.sol";
@@ -29,6 +29,7 @@ library Templates {
 
     function addCapital(
         Position memory _tilePosition,
+        Position memory _position,
         uint256 _nationID,
         address _address
     ) public returns (uint256) {
@@ -36,6 +37,7 @@ library Templates {
 
         ECSLib.setString("Tag", capitalID, "Building");
         ECSLib.setPosition("StartPosition", capitalID, _tilePosition);
+        ECSLib.setPosition("Position", capitalID, _position);
         ECSLib.setString("BuildingType", capitalID, "Capital");
         ECSLib.setBool("CanProduce", capitalID);
         ECSLib.setUint("InitTimestamp", capitalID, block.timestamp);
@@ -141,6 +143,8 @@ library Templates {
 
     function addInventory(uint256 _keeperID, uint256 _templateID) public returns (uint256) {
         uint256 inventoryID = ECSLib.addEntity();
+
+        ECSLib.setString("Tag", inventoryID, "Inventory");
         ECSLib.setUint("Keeper", inventoryID, _keeperID);
         ECSLib.setUint("Template", inventoryID, _templateID);
         ECSLib.setUint("Amount", inventoryID, 0);
@@ -198,12 +202,17 @@ library Templates {
         return signatureID;
     }
 
-    function addTreaty(address _address, string memory _name) public returns (uint256) {
+    function addTreaty(
+        address _address,
+        string memory _name,
+        string memory _abiHash
+    ) public returns (uint256) {
         uint256 treatyID = ECSLib.addEntity();
 
         ECSLib.setString("Tag", treatyID, "Treaty");
         ECSLib.setUint("InitTimestamp", treatyID, block.timestamp);
         ECSLib.setString("Name", treatyID, _name);
+        ECSLib.setString("ABIHash", treatyID, _abiHash);
         ECSLib.setAddress("Address", treatyID, _address);
 
         return treatyID;

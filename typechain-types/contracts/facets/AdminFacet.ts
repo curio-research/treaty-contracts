@@ -51,7 +51,7 @@ export interface AdminFacetInterface extends utils.Interface {
     "addGameParameter(string,uint256)": FunctionFragment;
     "addInventory(uint256,string)": FunctionFragment;
     "addResourceTemplate(string,address)": FunctionFragment;
-    "addTreaty(address,string)": FunctionFragment;
+    "addTreaty(address,string,string)": FunctionFragment;
     "addTroopTemplate(string,uint256,uint256,uint256,uint256,address)": FunctionFragment;
     "adminInitializeTile((uint256,uint256))": FunctionFragment;
     "authorizeGame(address)": FunctionFragment;
@@ -123,7 +123,11 @@ export interface AdminFacetInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "addTreaty",
-    values: [PromiseOrValue<string>, PromiseOrValue<string>]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "addTroopTemplate",
@@ -362,6 +366,7 @@ export interface AdminFacet extends BaseContract {
     addTreaty(
       _address: PromiseOrValue<string>,
       _name: PromiseOrValue<string>,
+      _abiHash: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -509,6 +514,7 @@ export interface AdminFacet extends BaseContract {
   addTreaty(
     _address: PromiseOrValue<string>,
     _name: PromiseOrValue<string>,
+    _abiHash: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -652,6 +658,7 @@ export interface AdminFacet extends BaseContract {
     addTreaty(
       _address: PromiseOrValue<string>,
       _name: PromiseOrValue<string>,
+      _abiHash: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -798,6 +805,7 @@ export interface AdminFacet extends BaseContract {
     addTreaty(
       _address: PromiseOrValue<string>,
       _name: PromiseOrValue<string>,
+      _abiHash: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -946,6 +954,7 @@ export interface AdminFacet extends BaseContract {
     addTreaty(
       _address: PromiseOrValue<string>,
       _name: PromiseOrValue<string>,
+      _abiHash: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

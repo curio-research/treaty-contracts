@@ -41,6 +41,7 @@ export interface CurioERC20Interface extends utils.Interface {
     "dripToken(address,uint256)": FunctionFragment;
     "game()": FunctionFragment;
     "getter()": FunctionFragment;
+    "maxTransferDistance()": FunctionFragment;
     "name()": FunctionFragment;
     "nonces(address)": FunctionFragment;
     "permit(address,address,uint256,uint256,uint8,bytes32,bytes32)": FunctionFragment;
@@ -65,6 +66,7 @@ export interface CurioERC20Interface extends utils.Interface {
       | "dripToken"
       | "game"
       | "getter"
+      | "maxTransferDistance"
       | "name"
       | "nonces"
       | "permit"
@@ -108,6 +110,10 @@ export interface CurioERC20Interface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "game", values?: undefined): string;
   encodeFunctionData(functionFragment: "getter", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "maxTransferDistance",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "nonces",
@@ -168,6 +174,10 @@ export interface CurioERC20Interface extends utils.Interface {
   decodeFunctionResult(functionFragment: "dripToken", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "game", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getter", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "maxTransferDistance",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "nonces", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "permit", data: BytesLike): Result;
@@ -292,6 +302,8 @@ export interface CurioERC20 extends BaseContract {
 
     getter(overrides?: CallOverrides): Promise<[string]>;
 
+    maxTransferDistance(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     name(overrides?: CallOverrides): Promise<[string]>;
 
     nonces(
@@ -380,6 +392,8 @@ export interface CurioERC20 extends BaseContract {
 
   getter(overrides?: CallOverrides): Promise<string>;
 
+  maxTransferDistance(overrides?: CallOverrides): Promise<BigNumber>;
+
   name(overrides?: CallOverrides): Promise<string>;
 
   nonces(
@@ -467,6 +481,8 @@ export interface CurioERC20 extends BaseContract {
     game(overrides?: CallOverrides): Promise<string>;
 
     getter(overrides?: CallOverrides): Promise<string>;
+
+    maxTransferDistance(overrides?: CallOverrides): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<string>;
 
@@ -581,6 +597,8 @@ export interface CurioERC20 extends BaseContract {
 
     getter(overrides?: CallOverrides): Promise<BigNumber>;
 
+    maxTransferDistance(overrides?: CallOverrides): Promise<BigNumber>;
+
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
     nonces(
@@ -669,6 +687,10 @@ export interface CurioERC20 extends BaseContract {
     game(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    maxTransferDistance(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
