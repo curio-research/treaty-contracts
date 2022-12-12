@@ -17,8 +17,8 @@ contract BaseGameTest is Test, DiamondDeployTest {
     // - [x] initializeNation
     // - [x] upgradeNation
     // - [ ] moveCapital
-    // - [ ] openBorder
-    // - [ ] closeBorder
+    // - [x] openBorder
+    // - [x] closeBorder
     // Tile:
     // - [x] claimTile
     // - [ ] upgradeTile
@@ -41,6 +41,9 @@ contract BaseGameTest is Test, DiamondDeployTest {
     // Battle:
     // - [x] battle (army vs. army)
     // - [ ] battle (army vs. tile)
+    // Treaty:
+    // - [ ] joinTreaty
+    // - [ ] leaveTreaty
 
     function testInitialization() public {
         // Verify that wallet address is loaded correctly

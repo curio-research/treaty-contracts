@@ -176,7 +176,7 @@ library GameLib {
     function attack(
         uint256 _offenderID,
         uint256 _defenderID,
-        bool _transferGoldUponVictory,
+        bool _transferResourcesUponVictory,
         bool _removeUponVictory
     ) internal returns (bool victory) {
         uint256[] memory troopTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("TroopTemplate"));
@@ -216,7 +216,7 @@ library GameLib {
         }
 
         if (victory) {
-            if (_transferGoldUponVictory) {
+            if (_transferResourcesUponVictory) {
                 // Offender takes defender's resources
                 uint256[] memory resourceTemplateIDs = ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("ResourceTemplate"));
                 for (uint256 i = 0; i < resourceTemplateIDs.length; i++) {
@@ -235,11 +235,11 @@ library GameLib {
     function battleOnce(
         uint256 _keeperIdA,
         uint256 _keeperIdB,
-        bool _transferGoldUponVictory,
+        bool _transferResourcesUponVictory,
         bool _removeUponVictory
     ) internal returns (bool victory) {
-        victory = attack(_keeperIdA, _keeperIdB, _transferGoldUponVictory, _removeUponVictory);
-        if (!victory) attack(_keeperIdB, _keeperIdA, _transferGoldUponVictory, _removeUponVictory);
+        victory = attack(_keeperIdA, _keeperIdB, _transferResourcesUponVictory, _removeUponVictory);
+        if (!victory) attack(_keeperIdB, _keeperIdA, _transferResourcesUponVictory, _removeUponVictory);
     }
 
     function distributeBarbarianReward(uint256 _armyID, uint256 _barbarianTileID) internal {

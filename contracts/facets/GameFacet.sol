@@ -872,7 +872,11 @@ contract GameFacet is UseStorage {
         GameLib.ongoingGameCheck();
 
         uint256 nationID = gs().nationAddressToId[msg.sender];
+        uint256 signatureID = GameLib.getNationTreatySignature(_treatyID, nationID);
+        require(signatureID == NULL, "CURIO: Nation is already a signatory");
         Templates.addSignature(_treatyID, nationID);
+
+        // TODO: add approval mechanism
     }
 
     function leaveTreaty(uint256 _treatyID) external {
@@ -880,7 +884,7 @@ contract GameFacet is UseStorage {
 
         uint256 nationID = gs().nationAddressToId[msg.sender];
         uint256 signatureID = GameLib.getNationTreatySignature(_treatyID, nationID);
-        require(signatureID != NULL, "CURIO: Nation is not a treaty signatory");
+        require(signatureID != NULL, "CURIO: Nation is not a signatory");
         ECSLib.removeEntity(signatureID);
     }
 }

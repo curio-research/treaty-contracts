@@ -220,6 +220,4 @@ library Templates {
 
         return treatyID;
     }
-
-    // function addTreatyPermission
 }
