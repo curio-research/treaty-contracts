@@ -18,12 +18,6 @@ contract Set {
         elementIndexMap[_element] = size() - 1;
     }
 
-    function addArray(uint256[] memory _elements) public {
-        for (uint256 i = 0; i < _elements.length; i++) {
-            add(_elements[i]);
-        }
-    }
-
     function remove(uint256 _element) public {
         if (!includes(_element)) return;
 

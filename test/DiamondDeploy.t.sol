@@ -82,6 +82,8 @@ contract DiamondDeployTest is Test {
 
     WorldConstants public worldConstants;
 
+    uint256 public natoID;
+
     // we assume these two facet selectors do not change. If they do however, we should use _getSelectors
     bytes4[] OWNERSHIP_SELECTORS = [bytes4(0xf2fde38b), 0x8da5cb5b];
     bytes4[] LOUPE_SELECTORS = [bytes4(0xcdffacc6), 0x52ef6b2c, 0xadfca15e, 0x7a0ed627, 0x01ffc9a7];
@@ -163,7 +165,7 @@ contract DiamondDeployTest is Test {
 
         // Initialize treaties
         nato = new NATO(diamond);
-        admin.addTreaty(address(nato), nato.name(), "sample ABI");
+        natoID = admin.addTreaty(address(nato), nato.name(), "sample ABI");
         console.log(">>> Treaties initialized");
 
         vm.stopPrank();

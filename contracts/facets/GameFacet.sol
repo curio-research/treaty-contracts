@@ -517,25 +517,23 @@ contract GameFacet is UseStorage {
         armyID = Templates.addArmy(2, 1, 2, gs().worldConstants.tileWidth, nationID, midPosition, tilePosition, armyAddress);
 
         // Collect army traits from individual troop types & transfer troops from nation
-        {
-            uint256 load = 0; // sum
-            address capitalAddress = ECSLib.getAddress("Address", _capitalID);
+        uint256 load = 0; // sum
+        address capitalAddress = ECSLib.getAddress("Address", _capitalID);
 
-            require(_templateIDs.length == _amounts.length, "CURIO: Input lengths do not match");
-            require(_templateIDs.length > 0, "CURIO: Army must have at least 1 troop");
+        require(_templateIDs.length == _amounts.length, "CURIO: Input lengths do not match");
+        require(_templateIDs.length > 0, "CURIO: Army must have at least 1 troop");
 
-            for (uint256 i = 0; i < _templateIDs.length; i++) {
-                CurioERC20 troopToken = CurioERC20(ECSLib.getAddress("Address", _templateIDs[i]));
-                // require(tokenContract.checkBalanceOf(msg.sender) >= _amounts[i], "CURIO: Need to produce more troops");
+        for (uint256 i = 0; i < _templateIDs.length; i++) {
+            CurioERC20 troopToken = CurioERC20(ECSLib.getAddress("Address", _templateIDs[i]));
+            // require(tokenContract.checkBalanceOf(msg.sender) >= _amounts[i], "CURIO: Need to produce more troops");
 
-                load += ECSLib.getUint("Load", _templateIDs[i]) * _amounts[i];
+            load += ECSLib.getUint("Load", _templateIDs[i]) * _amounts[i];
 
-                troopToken.transferFrom(capitalAddress, armyAddress, _amounts[i]);
-            }
-
-            // Edit army traits
-            ECSLib.setUint("Load", armyID, load);
+            troopToken.transferFrom(capitalAddress, armyAddress, _amounts[i]);
         }
+
+        // Edit army traits
+        ECSLib.setUint("Load", armyID, load);
     }
 
     function disbandArmy(uint256 _armyID) external {
@@ -887,4 +885,13 @@ contract GameFacet is UseStorage {
         require(signatureID != NULL, "CURIO: Nation is not a signatory");
         ECSLib.removeEntity(signatureID);
     }
+
+    // function delegatePermission(
+    //     string memory _functionName,
+    //     uint256 _targetNationID,
+    //     bool _positive
+    // ) external {
+    //     GameLib.ongoingGameCheck();
+    //     GameLib.TODO();
+    // }
 }

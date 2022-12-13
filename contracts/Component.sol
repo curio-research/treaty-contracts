@@ -66,6 +66,7 @@ contract Component {
 
     /**
      * @dev Get all entities with this component and all their values in the form of two arrays.
+     * TODO: GAS: Expensive
      */
     function getAllEntitiesAndValues() public view returns (uint256[] memory, bytes[] memory) {
         uint256[] memory entityArray = entities.getAll();

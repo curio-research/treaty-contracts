@@ -648,4 +648,15 @@ contract BaseGameTest is Test, DiamondDeployTest {
         game.move(army21ID, 62, 16);
         vm.stopPrank();
     }
+
+    function testJoinLeaveTreaty() public {
+        // Start time
+        uint256 time = block.timestamp + 500;
+        vm.warp(time);
+
+        // Join treaty
+        vm.startPrank(player1);
+        game.joinTreaty(natoID);
+        vm.stopPrank();
+    }
 }

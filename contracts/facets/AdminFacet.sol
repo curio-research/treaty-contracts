@@ -128,9 +128,8 @@ contract AdminFacet is UseStorage {
         return Templates.addInventory(_keeperID, templateID);
     }
 
-    function updateInventoryAmount(uint256 _inventoryID, uint256 _newAmount) external onlyAuthorized returns (bool) {
+    function updateInventoryAmount(uint256 _inventoryID, uint256 _newAmount) external onlyAuthorized {
         ECSLib.setUint("Amount", _inventoryID, _newAmount);
-        return true;
     }
 
     function addTroopTemplate(
