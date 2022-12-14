@@ -66,7 +66,7 @@ contract GetterFacet is UseStorage {
     // ----------------------------------------------------------
 
     function isPlayerInitialized(address _player) external view returns (bool) {
-        return gs().nationAddressToId[_player] != NULL;
+        return GameLib.getEntityByAddress(_player) != NULL;
     }
 
     function getNation(uint256 _entityID) external view returns (uint256) {

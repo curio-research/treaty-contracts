@@ -765,7 +765,7 @@ export interface AdminFacet extends BaseContract {
       _inventoryID: PromiseOrValue<BigNumberish>,
       _newAmount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
   };
 
   filters: {};

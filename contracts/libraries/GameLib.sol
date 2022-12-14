@@ -153,7 +153,7 @@ library GameLib {
     }
 
     // FIXME: Hardcoded triangular relations
-    function getAttackBonus(uint256 _offenderTemplateID, uint256 _defenderTemplateID) public view returns (uint256) {
+    function getAttackBonus(uint256 _offenderTemplateID, uint256 _defenderTemplateID) internal view returns (uint256) {
         uint256 horsemanTemplateId = gs().templates["Horseman"];
         uint256 warriorTemplateId = gs().templates["Warrior"];
         uint256 slingerTemplateId = gs().templates["Slinger"];
@@ -276,21 +276,19 @@ library GameLib {
     // LOGIC GETTERS
     // ----------------------------------------------------------
 
-    function getTokenContract(string memory _tokenName) public view returns (CurioERC20) {
+    function getTokenContract(string memory _tokenName) internal view returns (CurioERC20) {
         uint256 tokenTemplateID = gs().templates[_tokenName];
         return CurioERC20(ECSLib.getAddress("Address", tokenTemplateID));
     }
 
-    function getEntityByAddress(address _entityAddress) public view returns (uint256) {
-        QueryCondition[] memory query = new QueryCondition[](1);
-        query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Address"]), abi.encode(_entityAddress));
-        uint256[] memory res = ECSLib.query(query);
+    function getEntityByAddress(address _entityAddress) internal view returns (uint256) {
+        uint256[] memory res = AddressComponent(gs().components["Address"]).getEntitiesWithValue(_entityAddress);
         require(res.length <= 1, "CURIO: Found more than one entity");
         return res.length == 1 ? res[0] : 0;
     }
 
     function getInventoryIDLoadAndBalance(address _entityAddress, string memory _resourceType)
-        public
+        internal
         returns (
             uint256,
             uint256,
@@ -336,7 +334,7 @@ library GameLib {
         return (inventoryID, load, balance);
     }
 
-    function getConstituents(uint256 _keeperID) public view returns (uint256[] memory) {
+    function getConstituents(uint256 _keeperID) internal view returns (uint256[] memory) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Keeper"]), abi.encode(_keeperID));
         query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Constituent"));
@@ -415,7 +413,7 @@ library GameLib {
         return ECSLib.getUint("Amount", res[0]);
     }
 
-    function getTreatyByName(string memory _name) public view returns (uint256) {
+    function getTreatyByName(string memory _name) internal view returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Treaty"));
         query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Name"]), abi.encode(_name));
@@ -433,7 +431,7 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    function getArmyGather(uint256 _armyID) public view returns (uint256) {
+    function getArmyGather(uint256 _armyID) internal view returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Army"]), abi.encode(_armyID));
         query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("ResourceGather"));
@@ -504,7 +502,7 @@ library GameLib {
         return resourceIDs;
     }
 
-    function getInventory(uint256 _keeperID, uint256 _templateID) public view returns (uint256) {
+    function getInventory(uint256 _keeperID, uint256 _templateID) internal view returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](3);
         query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Inventory"));
         query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Keeper"]), abi.encode(_keeperID));
@@ -515,7 +513,7 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    function getArmiesFromNation(uint256 _nationID) public view returns (uint256[] memory) {
+    function getArmiesFromNation(uint256 _nationID) internal view returns (uint256[] memory) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Army"));
         query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Nation"]), abi.encode(_nationID));
@@ -547,6 +545,21 @@ library GameLib {
         query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Resource"));
         uint256[] memory res = ECSLib.query(query);
         require(res.length <= 1, "CURIO: Resource assertion failed");
+        return res.length == 1 ? res[0] : 0;
+    }
+
+    function getPermission(
+        string memory _functionName,
+        uint256 _ownerID,
+        uint256 _callerID
+    ) internal view returns (uint256) {
+        QueryCondition[] memory query = new QueryCondition[](4);
+        query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Permission"));
+        query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["FunctionName"]), abi.encode(_functionName));
+        query[2] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Owner"]), abi.encode(_ownerID));
+        query[3] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Caller"]), abi.encode(_callerID));
+        uint256[] memory res = ECSLib.query(query);
+        require(res.length <= 1, "CURIO: Permission assertion failed");
         return res.length == 1 ? res[0] : 0;
     }
 
@@ -647,8 +660,12 @@ library GameLib {
         require(block.timestamp - ECSLib.getUint("LastSacked", _capitalID) > chaosDuration, "CURIO: Capital in chaos");
     }
 
-    function activeNationCheck(address _address) internal view {
-        require(gs().nationAddressToId[_address] != 0, "CURIO: Nation not yet initialized");
+    function functionPermissionCheck(
+        string memory _functionName,
+        uint256 _ownerID,
+        uint256 _callerID
+    ) internal view {
+        require(getPermission(_functionName, _ownerID, _callerID) != 0, string.concat("CURIO: Not permitted to call ", _functionName));
     }
 
     // ----------------------------------------------------------

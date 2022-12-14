@@ -96,11 +96,11 @@ contract AdminFacet is UseStorage {
      * @param _address nation address
      */
     function reactivateNation(address _address) external onlyAuthorized {
-        uint256 _nationID = gs().nationAddressToId[_address];
-        require(_nationID != NULL, "CURIO: Nation already initialized");
-        require(!ECSLib.getBoolComponent("IsActive").has(_nationID), "CURIO: Nation is active");
+        uint256 nationID = GameLib.getEntityByAddress(_address);
+        require(nationID != NULL, "CURIO: Nation already initialized");
+        require(!ECSLib.getBoolComponent("IsActive").has(nationID), "CURIO: Nation is active");
 
-        ECSLib.setBool("IsActive", _nationID);
+        ECSLib.setBool("IsActive", nationID);
     }
 
     /**

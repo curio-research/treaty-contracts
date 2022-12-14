@@ -542,13 +542,7 @@ const _abi = [
       },
     ],
     name: "updateInventoryAmount",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
@@ -769,11 +763,26 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "_targetNationID",
+        name: "_nationID",
         type: "uint256",
       },
+      {
+        internalType: "uint256",
+        name: "_delegateID",
+        type: "uint256",
+      },
+      {
+        internalType: "string",
+        name: "_functionName",
+        type: "string",
+      },
+      {
+        internalType: "bool",
+        name: "_canCall",
+        type: "bool",
+      },
     ],
-    name: "closeBorder",
+    name: "delegatePermission",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -852,7 +861,7 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256[]",
-        name: "resourceIds",
+        name: "resourceIDs",
         type: "uint256[]",
       },
     ],
@@ -907,6 +916,11 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
+        name: "_nationID",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
         name: "_treatyID",
         type: "uint256",
       },
@@ -918,6 +932,11 @@ const _abi = [
   },
   {
     inputs: [
+      {
+        internalType: "uint256",
+        name: "_nationID",
+        type: "uint256",
+      },
       {
         internalType: "uint256",
         name: "_treatyID",
@@ -978,19 +997,6 @@ const _abi = [
       },
     ],
     name: "moveCapital",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_targetNationID",
-        type: "uint256",
-      },
-    ],
-    name: "openBorder",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -1098,8 +1104,14 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "upgradeNation",
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_capitalID",
+        type: "uint256",
+      },
+    ],
+    name: "upgradeCapital",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

@@ -220,4 +220,19 @@ library Templates {
 
         return treatyID;
     }
+
+    function addPermission(
+        string memory _functionName,
+        uint256 _ownerID,
+        uint256 _callerID
+    ) public returns (uint256) {
+        uint256 permissionID = ECSLib.addEntity();
+
+        ECSLib.setString("Tag", permissionID, "Permission");
+        ECSLib.setString("FunctionName", permissionID, _functionName);
+        ECSLib.setUint("Owner", permissionID, _ownerID);
+        ECSLib.setUint("Caller", permissionID, _callerID);
+
+        return permissionID;
+    }
 }

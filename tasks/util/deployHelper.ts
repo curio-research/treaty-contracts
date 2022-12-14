@@ -112,10 +112,10 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
   const diamondAddr = await deployDiamond(hre, admin, [worldConstants]);
   const diamond = await getDiamond(hre, diamondAddr);
   const facets = [
-    { name: 'GameFacet', libraries: { ECSLib: ecsLib.address, GameLib: gameLib.address, Templates: templates.address } },
-    { name: 'GetterFacet', libraries: { ECSLib: ecsLib.address, GameLib: gameLib.address } },
+    { name: 'GameFacet', libraries: { ECSLib: ecsLib.address, Templates: templates.address } },
+    { name: 'GetterFacet', libraries: { ECSLib: ecsLib.address, Templates: templates.address } },
     { name: 'AdminFacet', libraries: { ECSLib: ecsLib.address, GameLib: gameLib.address, Templates: templates.address } },
-  ];
+  ]; // FIXME: GameFacet for some reason does not like to be linked to GameLib, and neither does GetterFacet
   await deployFacets(hre, diamondAddr, facets, admin);
   console.log(`✦ Diamond deployment took ${Math.floor(performance.now() - startTime)} ms`);
 

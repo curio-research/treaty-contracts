@@ -84,6 +84,7 @@ struct GameState {
     uint256[][] encodedColumnBatches;
     address[] nations;
     address[] treaties;
+    string[] gameFunctionNames;
     address entities;
     uint256 entityNonce;
     uint256 tileNonce;
@@ -95,7 +96,6 @@ struct GameState {
     mapping(address => bool) isAuthorized; // authorized token contracts
     mapping(string => uint256) templates; // template name to id
     mapping(uint256 => address) componentEntityToAddress; // component id to contract address
-    mapping(address => uint256) nationAddressToId;
     mapping(address => address) accounts; // main address -> burner address
     mapping(address => address) burnerAccounts; // burner address -> main address
 }
