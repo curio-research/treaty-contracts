@@ -4,17 +4,14 @@ pragma solidity ^0.8.13;
 import {Position} from "contracts/libraries/Types.sol";
 import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {GameFacet} from "contracts/facets/GameFacet.sol";
-import {ITreaty} from "contracts/interfaces/ITreaty.sol";
+import {CurioTreaty} from "contracts/CurioTreaty.sol";
 
 /// note: this is a minimalistic implementation of smart contract wallet
 /// FIXME: not polished!!! need to update!!!
 
-contract HangingGarden is ITreaty {
-    address public diamond;
+contract HangingGarden is CurioTreaty {
     GetterFacet public getter;
     GameFacet public game;
-
-    string public name;
 
     address[] public owners;
     address[] public homies;
@@ -32,7 +29,7 @@ contract HangingGarden is ITreaty {
         address[] memory _owners,
         address _diamond,
         uint256 _homieFee
-    ) {
+    ) CurioTreaty(_diamond) {
         require(_owners.length > 0, "Wallet owners required");
 
         for (uint256 i = 0; i < _owners.length; i++) {
@@ -48,7 +45,6 @@ contract HangingGarden is ITreaty {
             homies.push(owner);
         }
 
-        diamond = _diamond;
         getter = GetterFacet(diamond);
         game = GameFacet(diamond);
 

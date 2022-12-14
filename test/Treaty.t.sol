@@ -4,10 +4,50 @@ pragma solidity ^0.8.13;
 import {Test} from "forge-std/Test.sol";
 import {DiamondDeployTest} from "test/DiamondDeploy.t.sol";
 import {FTX} from "contracts/treaties/FTX.sol";
+import {TestTreaty} from "contracts/treaties/TestTreaty.sol";
 import {CurioWallet} from "contracts/CurioWallet.sol";
 import {console} from "forge-std/console.sol";
 
-contract FTXTest is Test, DiamondDeployTest {
+contract TreatyTest is Test, DiamondDeployTest {
+    function testApproval() public {
+        // Start time
+        uint256 time = block.timestamp + 500;
+        vm.warp(time);
+
+        // Check initial condition
+        assertEq(abi.decode(getter.getComponent("Level").getBytesValue(nation2CapitalID), (uint256)), 1);
+
+        // Player 1 deploys TestTreaty treaty
+        vm.startPrank(player1);
+        TestTreaty testTreaty = new TestTreaty(diamond);
+        vm.stopPrank();
+
+        // Deployer registers TestTreaty treaty and drips gold and food to Player 2
+        vm.startPrank(deployer);
+        uint256 testTreatyID = admin.addTreaty(address(testTreaty), testTreaty.name(), "placeholder ABI");
+        admin.dripToken(nation2CapitalAddr, "Gold", 1000000000);
+        admin.dripToken(nation2CapitalAddr, "Food", 1000000000);
+        vm.stopPrank();
+
+        // Player 2 joins TestTreaty treaty
+        vm.startPrank(player2);
+        game.joinTreaty(nation2ID, testTreatyID);
+        assertTrue(getter.getNationTreatySignature(nation2ID, testTreatyID) > 0);
+
+        // Player 2 fails to upgrade capital
+        vm.expectRevert("CURIO: Treaty disapproved UpgradeCapital");
+        game.upgradeCapital(nation2CapitalID);
+        assertEq(abi.decode(getter.getComponent("Level").getBytesValue(nation2CapitalID), (uint256)), 1);
+
+        // Player 2 leaves treaty
+        game.leaveTreaty(nation2ID, testTreatyID);
+
+        // Player 2 upgrades capital
+        game.upgradeCapital(nation2CapitalID);
+        assertEq(abi.decode(getter.getComponent("Level").getBytesValue(nation2CapitalID), (uint256)), 2);
+        vm.stopPrank();
+    }
+
     function testFTX() public {
         // Start time
         uint256 time = block.timestamp + 500;

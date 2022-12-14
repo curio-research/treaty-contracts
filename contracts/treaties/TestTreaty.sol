@@ -2,21 +2,20 @@
 pragma solidity ^0.8.13;
 
 import {ERC20} from "lib/solmate/src/tokens/ERC20.sol";
-import {ITreaty} from "contracts/interfaces/ITreaty.sol";
+import {CurioTreaty} from "contracts/CurioTreaty.sol";
 import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {CurioERC20} from "contracts/tokens/CurioERC20.sol";
 import {console} from "forge-std/console.sol";
 
-contract Alliance is ITreaty {
-    address public diamond;
-    string public name;
+contract TestTreaty is CurioTreaty {
     GetterFacet public getter;
 
-    constructor(address _diamond) {
-        require(_diamond != address(0), "FTX: Diamond address required");
-
-        diamond = _diamond;
-        name = "Alliance";
+    constructor(address _diamond) CurioTreaty(_diamond) {
+        name = "Test Treaty";
         getter = GetterFacet(_diamond);
+    }
+
+    function approveUpgradeCapital(uint256 _nationID) public pure override returns (bool) {
+        return false;
     }
 }

@@ -5,3 +5,4 @@ export * as ftxSol from "./FTX.sol";
 export { Alliance__factory } from "./Alliance__factory";
 export { HangingGarden__factory } from "./HangingGarden__factory";
 export { NATO__factory } from "./NATO__factory";
+export { TestTreaty__factory } from "./TestTreaty__factory";

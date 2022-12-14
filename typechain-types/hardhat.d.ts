@@ -17,6 +17,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Component__factory>;
     getContractFactory(
+      name: "CurioTreaty",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.CurioTreaty__factory>;
+    getContractFactory(
       name: "CurioWallet",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.CurioWallet__factory>;
@@ -121,6 +125,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.NATO__factory>;
     getContractFactory(
+      name: "TestTreaty",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TestTreaty__factory>;
+    getContractFactory(
       name: "Treaty",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Treaty__factory>;
@@ -178,6 +186,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Component>;
+    getContractAt(
+      name: "CurioTreaty",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.CurioTreaty>;
     getContractAt(
       name: "CurioWallet",
       address: string,
@@ -308,6 +321,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.NATO>;
+    getContractAt(
+      name: "TestTreaty",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TestTreaty>;
     getContractAt(
       name: "Treaty",
       address: string,

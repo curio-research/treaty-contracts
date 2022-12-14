@@ -767,14 +767,14 @@ const _abi = [
         type: "uint256",
       },
       {
-        internalType: "uint256",
-        name: "_delegateID",
-        type: "uint256",
-      },
-      {
         internalType: "string",
         name: "_functionName",
         type: "string",
+      },
+      {
+        internalType: "uint256",
+        name: "_delegateID",
+        type: "uint256",
       },
       {
         internalType: "bool",
@@ -1579,6 +1579,30 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_nationID",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_treatyID",
+        type: "uint256",
+      },
+    ],
+    name: "getNationTreatySignature",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "getPlayerCount",
     outputs: [
@@ -1741,6 +1765,25 @@ const _abi = [
         internalType: "uint256",
         name: "",
         type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_treatyID",
+        type: "uint256",
+      },
+    ],
+    name: "getTreatySigners",
+    outputs: [
+      {
+        internalType: "uint256[]",
+        name: "",
+        type: "uint256[]",
       },
     ],
     stateMutability: "view",

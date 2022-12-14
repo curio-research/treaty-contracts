@@ -50,30 +50,29 @@ contract DiamondInit is UseStorage {
         gs().walletNonce = 1;
 
         // set function names
-        string[] memory gameFunctionNames = new string[](23);
-        gameFunctionNames[0] = "initializeNation";
-        gameFunctionNames[1] = "upgradeCapital";
-        gameFunctionNames[2] = "moveCapital";
-        gameFunctionNames[3] = "claimTile";
-        gameFunctionNames[4] = "upgradeTile";
-        gameFunctionNames[5] = "recoverTile";
-        gameFunctionNames[6] = "disownTile";
-        gameFunctionNames[7] = "moveTile";
-        gameFunctionNames[8] = "startTroopProduction";
-        gameFunctionNames[9] = "endTroopProduction";
-        gameFunctionNames[10] = "move";
-        gameFunctionNames[11] = "organizeArmy";
-        gameFunctionNames[12] = "disbandArmy";
-        gameFunctionNames[13] = "startGather";
-        gameFunctionNames[14] = "endGather";
-        gameFunctionNames[15] = "unloadResources";
-        gameFunctionNames[16] = "harvestResource";
-        gameFunctionNames[17] = "harvestResourcesFromCapital";
-        gameFunctionNames[18] = "upgradeResource";
-        gameFunctionNames[19] = "battle";
-        gameFunctionNames[20] = "joinTreaty";
-        gameFunctionNames[21] = "leaveTreaty";
-        gameFunctionNames[22] = "delegatePermission";
+        string[] memory gameFunctionNames = new string[](22);
+        gameFunctionNames[0] = "InitializeNation";
+        gameFunctionNames[1] = "UpgradeCapital";
+        gameFunctionNames[2] = "MoveCapital";
+        gameFunctionNames[3] = "ClaimTile";
+        gameFunctionNames[4] = "UpgradeTile";
+        gameFunctionNames[5] = "RecoverTile";
+        gameFunctionNames[6] = "DisownTile";
+        gameFunctionNames[7] = "StartTroopProduction";
+        gameFunctionNames[8] = "EndTroopProduction";
+        gameFunctionNames[9] = "Move";
+        gameFunctionNames[10] = "OrganizeArmy";
+        gameFunctionNames[11] = "DisbandArmy";
+        gameFunctionNames[12] = "StartGather";
+        gameFunctionNames[13] = "EndGather";
+        gameFunctionNames[14] = "UnloadResources";
+        gameFunctionNames[15] = "HarvestResource";
+        gameFunctionNames[16] = "HarvestResourcesFromCapital";
+        gameFunctionNames[17] = "UpgradeResource";
+        gameFunctionNames[18] = "Battle";
+        gameFunctionNames[19] = "JoinTreaty";
+        gameFunctionNames[20] = "LeaveTreaty";
+        gameFunctionNames[21] = "DelegatePermission";
         gs().gameFunctionNames = gameFunctionNames;
 
         // set initial time

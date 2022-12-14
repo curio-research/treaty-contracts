@@ -10,6 +10,7 @@ import {Set} from "contracts/Set.sol";
 import {Component} from "contracts/Component.sol";
 import {AddressComponent, BoolComponent, IntComponent, PositionComponent, StringComponent, UintComponent, UintArrayComponent} from "contracts/TypedComponents.sol";
 import {CurioERC20} from "contracts/tokens/CurioERC20.sol";
+import {CurioTreaty} from "contracts/CurioTreaty.sol";
 import {console} from "forge-std/console.sol";
 
 /// @title Util library
@@ -171,6 +172,82 @@ library GameLib {
             if (_defenderTemplateID == warriorTemplateId) return 140;
             else return 100;
         } else return 100;
+    }
+
+    function battleArmy(uint256 _armyID, uint256 _targetArmyID) internal {
+        // Verify that army and target army are adjacent
+        require(euclidean(ECSLib.getPosition("Position", _armyID), ECSLib.getPosition("Position", _targetArmyID)) <= ECSLib.getUint("AttackRange", _armyID), "CURIO: Attack out of range");
+
+        // End target army's gather
+        if (getArmyGather(_targetArmyID) != 0) endGather(_targetArmyID);
+
+        // Execute one round of battle
+        bool victory = attack(_armyID, _targetArmyID, true, true);
+        if (!victory) attack(_targetArmyID, _armyID, true, true);
+    }
+
+    function battleTile(uint256 _armyID, uint256 _tileID) internal {
+        // Verify that army and tile are adjacent
+        require(
+            euclidean(ECSLib.getPosition("Position", _armyID), getMidPositionFromTilePosition(ECSLib.getPosition("StartPosition", _tileID))) <= ECSLib.getUint("AttackRange", _armyID), //
+            "CURIO: Attack out of range"
+        );
+        // Verify that target tile doesn't have guard left
+        address tileAddress = ECSLib.getAddress("Address", _tileID);
+        CurioERC20 guardToken = getTokenContract("Guard");
+        require(ECSLib.getUint("Amount", getInventory(_tileID, gs().templates["Guard"])) > 0, "CURIO: defender subjugated, claim tile instead");
+
+        uint256 capitalID = getCapital(ECSLib.getUint("Nation", _tileID));
+        // Others cannot attack cities at chaos
+        capitalSackRecoveryCheck(getCapital(capitalID));
+
+        // if it is the super tile, check that it's active
+        if (coincident(ECSLib.getPosition("StartPosition", _tileID), getMapCenterTilePosition())) {
+            // todo: end game when nations occupy it for a certain period of time
+            require(block.timestamp >= ECSLib.getUint("LastRecovered", _tileID), "Curio: Supertile is not active yet");
+        }
+
+        // if it is barbarian, check it's not hybernating
+        if (isBarbarian(_tileID)) {
+            require(block.timestamp >= ECSLib.getUint("LastRecovered", _tileID), "CURIO: Barbarians hybernating, need to wait");
+        }
+
+        // Execute one round of battle
+        bool victory = attack(_armyID, _tileID, false, false);
+        if (victory) {
+            if (capitalID != 0) {
+                // Victorious against capital, add back some guards for the loser
+                guardToken.dripToken(tileAddress, getConstant("Tile", "Guard", "Amount", "", ECSLib.getUint("Level", capitalID)));
+
+                // Descend capital into chaos mode
+                // 1. Terminate troop production
+                // 2. Harvest resources and disable harvest
+                // 3. Update `LastSacked` to current timestamp
+                uint256 productionID = getBuildingProduction(capitalID);
+                if (productionID != 0) ECSLib.removeEntity(productionID);
+
+                uint256 chaosDuration = getConstant("Capital", "", "Cooldown", "Chaos", ECSLib.getUint("Level", capitalID));
+                ECSLib.setUint("LastHarvested", capitalID, block.timestamp + chaosDuration);
+
+                ECSLib.setUint("LastSacked", capitalID, block.timestamp);
+            } else {
+                if (isBarbarian(_tileID)) {
+                    // Reset barbarian
+                    distributeBarbarianReward(_armyID, _tileID);
+                    uint256 barbarianGuardAmount = getConstant("Barbarian", "Guard", "Amount", "", ECSLib.getUint("Terrain", _tileID) - 2); // FIXME: hardcoded
+                    ECSLib.setUint("LastRecovered", _tileID, block.timestamp + getConstant("Barbarian", "", "Cooldown", "", 0));
+                    guardToken.dripToken(tileAddress, barbarianGuardAmount);
+                } else {
+                    // Neutralize tile & resource
+                    uint256 resourceID = getResourceAt(ECSLib.getPosition("StartPosition", _tileID));
+                    ECSLib.setUint("Nation", _tileID, 0);
+                    ECSLib.setUint("Nation", resourceID, 0);
+                }
+            }
+        } else {
+            // todo: if tile wins against army, army's resource goes to tile's nation
+            attack(_tileID, _armyID, false, true);
+        }
     }
 
     function attack(
@@ -341,6 +418,24 @@ library GameLib {
         return ECSLib.query(query);
     }
 
+    function getTreatySignatures(uint256 _treatyID) internal view returns (uint256[] memory) {
+        QueryCondition[] memory query = new QueryCondition[](2);
+        query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Signature"));
+        query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Treaty"]), abi.encode(_treatyID));
+        return ECSLib.query(query);
+    }
+
+    function getTreatySigners(uint256 _treatyID) internal view returns (uint256[] memory) {
+        uint256[] memory signatureIDs = getTreatySignatures(_treatyID);
+
+        uint256[] memory signerIDs = new uint256[](signatureIDs.length);
+        for (uint256 i = 0; i < signatureIDs.length; i++) {
+            signerIDs[i] = ECSLib.getUint("Nation", signatureIDs[i]);
+        }
+
+        return signerIDs;
+    }
+
     function getNationSignatures(uint256 _nationID) internal view returns (uint256[] memory) {
         QueryCondition[] memory query = new QueryCondition[](2);
         query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Signature"));
@@ -359,7 +454,18 @@ library GameLib {
         return treatyIDs;
     }
 
-    function getNationTreatySignature(uint256 _treatyID, uint256 _nationID) internal view returns (uint256) {
+    function getSignedTreatyAddresses(uint256 _nationID) internal view returns (address[] memory) {
+        uint256[] memory signatureIDs = getNationSignatures(_nationID);
+
+        address[] memory treatyAddresses = new address[](signatureIDs.length);
+        for (uint256 i = 0; i < signatureIDs.length; i++) {
+            treatyAddresses[i] = ECSLib.getAddress("Address", ECSLib.getUint("Treaty", signatureIDs[i]));
+        }
+
+        return treatyAddresses;
+    }
+
+    function getNationTreatySignature(uint256 _nationID, uint256 _treatyID) internal view returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](3);
         query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Signature"));
         query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Nation"]), abi.encode(_nationID));
@@ -660,12 +766,22 @@ library GameLib {
         require(block.timestamp - ECSLib.getUint("LastSacked", _capitalID) > chaosDuration, "CURIO: Capital in chaos");
     }
 
-    function functionPermissionCheck(
+    function nationDelegationCheck(
         string memory _functionName,
         uint256 _ownerID,
         uint256 _callerID
     ) internal view {
         require(getPermission(_functionName, _ownerID, _callerID) != 0, string.concat("CURIO: Not permitted to call ", _functionName));
+    }
+
+    function treatyApprovalCheck(string memory _functionName, uint256 _nationID) internal {
+        address[] memory treatyAddresses = getSignedTreatyAddresses(_nationID);
+        for (uint256 i; i < treatyAddresses.length; i++) {
+            (bool success, bytes memory data) = treatyAddresses[i].call(abi.encodeWithSignature(string.concat("approve", _functionName, "(uint256)"), _nationID));
+            require(success, "CURIO: Treaty approval check failed");
+            bool approved = abi.decode(data, (bool));
+            require(approved, string.concat("CURIO: Treaty disapproved ", _functionName));
+        }
     }
 
     // ----------------------------------------------------------

@@ -113,6 +113,7 @@ export interface GetterFacetInterface extends utils.Interface {
     "getMainBurnerAccount(address)": FunctionFragment;
     "getNation(uint256)": FunctionFragment;
     "getNationArmies(uint256)": FunctionFragment;
+    "getNationTreatySignature(uint256,uint256)": FunctionFragment;
     "getPlayerCount()": FunctionFragment;
     "getPositionExternal(string,uint256)": FunctionFragment;
     "getResourceAtTile((uint256,uint256))": FunctionFragment;
@@ -120,6 +121,7 @@ export interface GetterFacetInterface extends utils.Interface {
     "getTileAt((uint256,uint256))": FunctionFragment;
     "getTokenContract(string)": FunctionFragment;
     "getTreatyByName(string)": FunctionFragment;
+    "getTreatySigners(uint256)": FunctionFragment;
     "getWorldConstants()": FunctionFragment;
     "isPlayerInitialized(address)": FunctionFragment;
     "query((uint8,address,bytes)[])": FunctionFragment;
@@ -147,6 +149,7 @@ export interface GetterFacetInterface extends utils.Interface {
       | "getMainBurnerAccount"
       | "getNation"
       | "getNationArmies"
+      | "getNationTreatySignature"
       | "getPlayerCount"
       | "getPositionExternal"
       | "getResourceAtTile"
@@ -154,6 +157,7 @@ export interface GetterFacetInterface extends utils.Interface {
       | "getTileAt"
       | "getTokenContract"
       | "getTreatyByName"
+      | "getTreatySigners"
       | "getWorldConstants"
       | "isPlayerInitialized"
       | "query"
@@ -243,6 +247,10 @@ export interface GetterFacetInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
+    functionFragment: "getNationTreatySignature",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getPlayerCount",
     values?: undefined
   ): string;
@@ -269,6 +277,10 @@ export interface GetterFacetInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getTreatyByName",
     values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTreatySigners",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getWorldConstants",
@@ -346,6 +358,10 @@ export interface GetterFacetInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getNationTreatySignature",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getPlayerCount",
     data: BytesLike
   ): Result;
@@ -368,6 +384,10 @@ export interface GetterFacetInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getTreatyByName",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getTreatySigners",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -509,6 +529,12 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber[]]>;
 
+    getNationTreatySignature(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _treatyID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     getPlayerCount(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getPositionExternal(
@@ -541,6 +567,11 @@ export interface GetterFacet extends BaseContract {
       _treatyName: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    getTreatySigners(
+      _treatyID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
 
     getWorldConstants(
       overrides?: CallOverrides
@@ -656,6 +687,12 @@ export interface GetterFacet extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber[]>;
 
+  getNationTreatySignature(
+    _nationID: PromiseOrValue<BigNumberish>,
+    _treatyID: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   getPlayerCount(overrides?: CallOverrides): Promise<BigNumber>;
 
   getPositionExternal(
@@ -688,6 +725,11 @@ export interface GetterFacet extends BaseContract {
     _treatyName: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
+
+  getTreatySigners(
+    _treatyID: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
 
   getWorldConstants(
     overrides?: CallOverrides
@@ -803,6 +845,12 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber[]>;
 
+    getNationTreatySignature(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _treatyID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getPlayerCount(overrides?: CallOverrides): Promise<BigNumber>;
 
     getPositionExternal(
@@ -835,6 +883,11 @@ export interface GetterFacet extends BaseContract {
       _treatyName: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    getTreatySigners(
+      _treatyID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
 
     getWorldConstants(
       overrides?: CallOverrides
@@ -953,6 +1006,12 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getNationTreatySignature(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _treatyID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     getPlayerCount(overrides?: CallOverrides): Promise<BigNumber>;
 
     getPositionExternal(
@@ -983,6 +1042,11 @@ export interface GetterFacet extends BaseContract {
 
     getTreatyByName(
       _treatyName: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getTreatySigners(
+      _treatyID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1099,6 +1163,12 @@ export interface GetterFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getNationTreatySignature(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _treatyID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     getPlayerCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getPositionExternal(
@@ -1129,6 +1199,11 @@ export interface GetterFacet extends BaseContract {
 
     getTreatyByName(
       _treatyName: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getTreatySigners(
+      _treatyID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

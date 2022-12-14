@@ -10,6 +10,7 @@ export * as tokens from "./tokens";
 export * as treaties from "./treaties";
 export * as upgradeInitializers from "./upgradeInitializers";
 export { Component__factory } from "./Component__factory";
+export { CurioTreaty__factory } from "./CurioTreaty__factory";
 export { CurioWallet__factory } from "./CurioWallet__factory";
 export { Diamond__factory } from "./Diamond__factory";
 export { Set__factory } from "./Set__factory";
