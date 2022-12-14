@@ -89,7 +89,7 @@ contract GetterFacet is UseStorage {
         uint256 entityID = GameLib.getEntityByAddress(_keeperAddress);
         uint256 templateID = gs().templates[_resourceType];
         uint256 inventoryID = GameLib.getInventory(entityID, templateID);
-        return ECSLib.getUint("Amount", inventoryID);
+        return inventoryID == NULL ? 0 : ECSLib.getUint("Amount", inventoryID);
     }
 
     function getEntitiesAddr() external view returns (address) {

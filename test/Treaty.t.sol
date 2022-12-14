@@ -31,7 +31,7 @@ contract TreatyTest is Test, DiamondDeployTest {
 
         // Player 2 joins TestTreaty treaty
         vm.startPrank(player2);
-        game.joinTreaty(nation2ID, testTreatyID);
+        testTreaty.join();
         assertTrue(getter.getNationTreatySignature(nation2ID, testTreatyID) > 0);
 
         // Player 2 fails to upgrade capital
@@ -40,7 +40,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         assertEq(abi.decode(getter.getComponent("Level").getBytesValue(nation2CapitalID), (uint256)), 1);
 
         // Player 2 leaves treaty
-        game.leaveTreaty(nation2ID, testTreatyID);
+        testTreaty.leave();
 
         // Player 2 upgrades capital
         game.upgradeCapital(nation2CapitalID);

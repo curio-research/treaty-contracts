@@ -17,12 +17,18 @@ contract AdminFacet is UseStorage {
     uint256 private constant NULL = 0;
 
     modifier onlyAdmin() {
-        require(msg.sender == gs().worldConstants.admin, "CURIO: Unauthorized");
+        require(msg.sender == gs().worldConstants.admin, "CURIO: Only admin can call");
         _;
     }
 
     modifier onlyAuthorized() {
-        require(msg.sender == gs().worldConstants.admin || gs().isAuthorized[msg.sender] == true, "CURIO: Unauthorized");
+        require(msg.sender == gs().worldConstants.admin || gs().isAuthorized[msg.sender] == true, "CURIO: Only admin or authorized token can call");
+        _;
+    }
+
+    modifier onlyTreaty() {
+        uint256 treatyID = GameLib.getEntityByAddress(msg.sender);
+        require(GameLib.strEq(ECSLib.getString("Tag", treatyID), "Treaty"), "CURIO: Only treaty can call");
         _;
     }
 
@@ -45,6 +51,32 @@ contract AdminFacet is UseStorage {
         return GameLib.getMovableEntitiesAtTile(_startPosition);
     }
 
+    // ----------------------------------------------------------------------
+    // TREATY FUNCTIONS
+    // ----------------------------------------------------------------------
+
+    function addSigner(uint256 _nationID) external onlyTreaty returns (uint256) {
+        GameLib.ongoingGameCheck();
+
+        uint256 treatyID = GameLib.getEntityByAddress(msg.sender);
+        uint256 signatureID = GameLib.getNationTreatySignature(_nationID, treatyID);
+        require(signatureID == NULL, "CURIO: Nation is already a signatory");
+        return Templates.addSignature(treatyID, _nationID);
+    }
+
+    function removeSigner(uint256 _nationID) external onlyTreaty {
+        GameLib.ongoingGameCheck();
+
+        uint256 treatyID = GameLib.getEntityByAddress(msg.sender);
+        uint256 signatureID = GameLib.getNationTreatySignature(_nationID, treatyID);
+        require(signatureID != NULL, "CURIO: Nation is not a signatory");
+        ECSLib.removeEntity(signatureID);
+    }
+
+    // ----------------------------------------------------------------------
+    // ADMIN FUNCTIONS
+    // ----------------------------------------------------------------------
+
     function stopGame() external onlyAuthorized {
         gs().worldConstants.gameLengthInSeconds = block.timestamp - gs().gameInitTimestamp;
     }
@@ -56,10 +88,6 @@ contract AdminFacet is UseStorage {
     function adminInitializeTile(Position memory _startPosition) external onlyAuthorized {
         GameLib.initializeTile(_startPosition);
     }
-
-    // function createArmy(uint256 _nationID, Position memory _position) external onlyAuthorized {
-    //     Templates.addArmy(_nationID, _position, GameLib.getProperTilePosition(_position), 10, 1, 1, 2, 5, "TODO");
-    // }
 
     function spawnResource(Position memory _startPosition, string memory _inventoryType) external onlyAuthorized {
         Templates.addResource(gs().templates[_inventoryType], _startPosition);
@@ -80,10 +108,6 @@ contract AdminFacet is UseStorage {
         ECSLib.setUint("Nation", tileID, _nationID);
         ECSLib.setUint("Nation", resourceID, _nationID);
     }
-
-    // ----------------------------------------------------------------------
-    // ADMIN FUNCTIONS
-    // ----------------------------------------------------------------------
 
     // sent using the initial function
     function authorizeGame(address _burnerAddress) external onlyAuthorized {

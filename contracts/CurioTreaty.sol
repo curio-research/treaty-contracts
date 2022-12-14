@@ -2,21 +2,45 @@
 pragma solidity ^0.8.13;
 
 import {ITreaty} from "contracts/interfaces/ITreaty.sol";
+import {GetterFacet} from "contracts/facets/GetterFacet.sol";
+import {AdminFacet} from "contracts/facets/AdminFacet.sol";
 
 contract CurioTreaty is ITreaty {
-    address public override diamond;
-    string public override name;
+    address public diamond;
+    string public name;
+    GetterFacet public getter;
+    AdminFacet public admin;
 
     constructor(address _diamond) {
         require(_diamond != address(0), "CurioTreaty: Diamond address required");
 
         diamond = _diamond;
+        getter = GetterFacet(_diamond);
+        admin = AdminFacet(_diamond);
     }
 
     modifier onlyGame() {
         require(msg.sender == diamond, "CurioTreaty: Only game can call");
         _;
     }
+
+    // ----------------------------------------------------------
+    // MEMBERSHIP FUNCTIONS (CALLED BY NATION)
+    // ----------------------------------------------------------
+
+    function join() public virtual {
+        uint256 nationID = getter.getEntityByAddress(msg.sender);
+        admin.addSigner(nationID);
+    }
+
+    function leave() public virtual {
+        uint256 nationID = getter.getEntityByAddress(msg.sender);
+        admin.removeSigner(nationID);
+    }
+
+    // ----------------------------------------------------------
+    // APPROVE FUNCTIONS (CALLED BY GAME)
+    // ----------------------------------------------------------
 
     function approveUpgradeCapital(uint256 _nationID) public view virtual onlyGame returns (bool) {
         return true;

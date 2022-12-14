@@ -3,12 +3,10 @@ pragma solidity ^0.8.13;
 
 import {ERC20} from "lib/solmate/src/tokens/ERC20.sol";
 import {CurioTreaty} from "contracts/CurioTreaty.sol";
-import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {CurioERC20} from "contracts/tokens/CurioERC20.sol";
 import {console} from "forge-std/console.sol";
 
 contract FTX is CurioTreaty {
-    GetterFacet public getter;
     CurioERC20 public goldToken;
     FTTERC20 public fttToken;
     address public sbfAddress;
@@ -17,7 +15,6 @@ contract FTX is CurioTreaty {
 
     constructor(address _diamond) CurioTreaty(_diamond) {
         name = "FTX";
-        getter = GetterFacet(_diamond);
         goldToken = getter.getTokenContract("Gold");
         fttToken = new FTTERC20(address(this));
         sbfAddress = msg.sender;

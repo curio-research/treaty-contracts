@@ -770,30 +770,6 @@ contract GameFacet is UseStorage {
     // TREATY
     // ----------------------------------------------------------
 
-    function joinTreaty(uint256 _nationID, uint256 _treatyID) external {
-        GameLib.ongoingGameCheck();
-        GameLib.validEntityCheck(_nationID);
-        GameLib.validEntityCheck(_treatyID);
-        GameLib.nationDelegationCheck("JoinTreaty", _nationID, GameLib.getEntityByAddress(msg.sender));
-        GameLib.treatyApprovalCheck("JoinTreaty", _nationID);
-
-        uint256 signatureID = GameLib.getNationTreatySignature(_nationID, _treatyID);
-        require(signatureID == NULL, "CURIO: Nation is already a signatory");
-        Templates.addSignature(_treatyID, _nationID);
-    }
-
-    function leaveTreaty(uint256 _nationID, uint256 _treatyID) external {
-        GameLib.ongoingGameCheck();
-        GameLib.validEntityCheck(_nationID);
-        GameLib.validEntityCheck(_treatyID);
-        GameLib.nationDelegationCheck("LeaveTreaty", _nationID, GameLib.getEntityByAddress(msg.sender));
-        GameLib.treatyApprovalCheck("LeaveTreaty", _nationID);
-
-        uint256 signatureID = GameLib.getNationTreatySignature(_nationID, _treatyID);
-        require(signatureID != NULL, "CURIO: Nation is not a signatory");
-        ECSLib.removeEntity(signatureID);
-    }
-
     function delegatePermission(
         uint256 _nationID,
         string memory _functionName,

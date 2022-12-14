@@ -2,7 +2,6 @@
 pragma solidity ^0.8.13;
 
 import {Position} from "contracts/libraries/Types.sol";
-import {GetterFacet} from "contracts/facets/GetterFacet.sol";
 import {GameFacet} from "contracts/facets/GameFacet.sol";
 import {CurioTreaty} from "contracts/CurioTreaty.sol";
 
@@ -10,7 +9,6 @@ import {CurioTreaty} from "contracts/CurioTreaty.sol";
 /// FIXME: not polished!!! need to update!!!
 
 contract HangingGarden is CurioTreaty {
-    GetterFacet public getter;
     GameFacet public game;
 
     address[] public owners;
@@ -45,7 +43,6 @@ contract HangingGarden is CurioTreaty {
             homies.push(owner);
         }
 
-        getter = GetterFacet(diamond);
         game = GameFacet(diamond);
 
         name = "HangingGarden";

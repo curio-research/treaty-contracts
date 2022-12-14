@@ -8,13 +8,15 @@ import {AddressComponent, BoolComponent, IntComponent, PositionComponent, String
 import {Position} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
 import {CurioWallet} from "contracts/CurioWallet.sol";
+import {CurioTreaty} from "contracts/CurioTreaty.sol";
 import {console} from "forge-std/console.sol";
 
-contract BaseGameTest is Test, DiamondDeployTest {
+contract GameTest is Test, DiamondDeployTest {
     // GameFacet Coverage Overview
     //
-    // Nation/Capital:
+    // Nation:
     // - [x] initializeNation
+    // Capital:
     // - [x] upgradeCapital
     // - [ ] moveCapital
     // Tile:
@@ -40,8 +42,6 @@ contract BaseGameTest is Test, DiamondDeployTest {
     // - [x] battle (army vs. army)
     // - [ ] battle (army vs. tile)
     // Treaty:
-    // - [ ] joinTreaty
-    // - [ ] leaveTreaty
     // - [x] delegatePermission
 
     function testInitialization() public {
@@ -567,17 +567,6 @@ contract BaseGameTest is Test, DiamondDeployTest {
         vm.expectRevert();
         capital1Wallet.executeTx(address(foodToken), abi.encodeWithSignature("transfer(address,uint256)", army21Addr, 50));
         assertEq(foodToken.checkBalanceOf(army21Addr), 50);
-        vm.stopPrank();
-    }
-
-    function testJoinLeaveTreaty() public {
-        // Start time
-        uint256 time = block.timestamp + 500;
-        vm.warp(time);
-
-        // Join treaty
-        vm.startPrank(player1);
-        game.joinTreaty(nation1ID, natoID);
         vm.stopPrank();
     }
 
