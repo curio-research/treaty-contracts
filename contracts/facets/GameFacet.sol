@@ -76,7 +76,7 @@ contract GameFacet is UseStorage {
         // Set permissions
         string[] memory functionNames = gs().gameFunctionNames;
         for (uint256 i; i < functionNames.length; i++) {
-            Templates.addPermission(functionNames[i], nationID, nationID);
+            Templates.addDelegation(functionNames[i], nationID, nationID);
         }
     }
 
@@ -773,7 +773,7 @@ contract GameFacet is UseStorage {
     // TREATY
     // ----------------------------------------------------------
 
-    function delegatePermission(
+    function delegateGameFunction(
         uint256 _nationID,
         string memory _functionName,
         uint256 _delegateID,
@@ -783,17 +783,11 @@ contract GameFacet is UseStorage {
         GameLib.ongoingGameCheck();
         GameLib.validEntityCheck(_nationID);
         GameLib.validEntityCheck(_delegateID);
-        GameLib.nationDelegationCheck("DelegatePermission", _nationID, GameLib.getEntityByAddress(msg.sender));
-        GameLib.treatyApprovalCheck("DelegatePermission", _nationID, abi.encode(_functionName, _delegateID, _canCall));
+        GameLib.validFunctionNameCheck(_functionName);
+        GameLib.nationDelegationCheck("DelegateGameFunction", _nationID, GameLib.getEntityByAddress(msg.sender));
+        GameLib.treatyApprovalCheck("DelegateGameFunction", _nationID, abi.encode(_functionName, _delegateID, _canCall));
 
-        // Get current permission
-        uint256 permissionID = GameLib.getPermission(_functionName, _nationID, _delegateID);
-
-        // Update permission
-        if (_canCall && permissionID == NULL) {
-            Templates.addPermission(_functionName, _nationID, _delegateID);
-        } else if (!_canCall && permissionID != NULL) {
-            ECSLib.removeEntity(permissionID);
-        }
+        // Delegate function
+        GameLib.delegateGameFunction(_nationID, _functionName, _delegateID, _canCall);
     }
 }

@@ -57,6 +57,7 @@ contract AdminFacet is UseStorage {
 
     function addSigner(uint256 _nationID) external onlyTreaty returns (uint256) {
         GameLib.ongoingGameCheck();
+        GameLib.validEntityCheck(_nationID);
 
         uint256 treatyID = GameLib.getEntityByAddress(msg.sender);
         uint256 signatureID = GameLib.getNationTreatySignature(_nationID, treatyID);
@@ -66,11 +67,27 @@ contract AdminFacet is UseStorage {
 
     function removeSigner(uint256 _nationID) external onlyTreaty {
         GameLib.ongoingGameCheck();
+        GameLib.validEntityCheck(_nationID);
 
         uint256 treatyID = GameLib.getEntityByAddress(msg.sender);
         uint256 signatureID = GameLib.getNationTreatySignature(_nationID, treatyID);
         require(signatureID != NULL, "CURIO: Nation is not a signatory");
         ECSLib.removeEntity(signatureID);
+    }
+
+    function delegateGameFunction(
+        uint256 _nationID,
+        string memory _functionName,
+        bool _canCall
+    ) external onlyTreaty {
+        // Basic checks
+        GameLib.ongoingGameCheck();
+        GameLib.validEntityCheck(_nationID);
+        GameLib.validFunctionNameCheck(_functionName);
+
+        // Delegate function
+        uint256 treatyID = GameLib.getEntityByAddress(msg.sender);
+        GameLib.delegateGameFunction(_nationID, _functionName, treatyID, _canCall);
     }
 
     // ----------------------------------------------------------------------

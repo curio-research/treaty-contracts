@@ -222,18 +222,18 @@ library Templates {
         return treatyID;
     }
 
-    function addPermission(
+    function addDelegation(
         string memory _functionName,
         uint256 _ownerID,
         uint256 _callerID
     ) public returns (uint256) {
-        uint256 permissionID = ECSLib.addEntity();
+        uint256 delegationID = ECSLib.addEntity();
 
-        ECSLib.setString("Tag", permissionID, "Permission");
-        ECSLib.setString("FunctionName", permissionID, _functionName);
-        ECSLib.setUint("Owner", permissionID, _ownerID);
-        ECSLib.setUint("Caller", permissionID, _callerID);
+        ECSLib.setString("Tag", delegationID, "Delegation");
+        ECSLib.setString("FunctionName", delegationID, _functionName);
+        ECSLib.setUint("Owner", delegationID, _ownerID);
+        ECSLib.setUint("Caller", delegationID, _callerID);
 
-        return permissionID;
+        return delegationID;
     }
 }

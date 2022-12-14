@@ -42,7 +42,7 @@ contract GameTest is Test, DiamondDeployTest {
     // - [x] battle (army vs. army)
     // - [ ] battle (army vs. tile)
     // Treaty:
-    // - [x] delegatePermission
+    // - [x] delegateGameFunction
 
     function testInitialization() public {
         // Verify that wallet address is loaded correctly
@@ -589,7 +589,7 @@ contract GameTest is Test, DiamondDeployTest {
 
         // Nation 1 delegates troop production to Nation 2
         vm.startPrank(player1);
-        game.delegatePermission(nation1ID, "StartTroopProduction", nation2ID, true);
+        game.delegateGameFunction(nation1ID, "StartTroopProduction", nation2ID, true);
         vm.stopPrank();
 
         // Nation 2 produces troops on behalf of Nation 1
@@ -607,7 +607,7 @@ contract GameTest is Test, DiamondDeployTest {
 
         // Nation 1 revokes delegation
         vm.startPrank(player1);
-        game.delegatePermission(nation1ID, "StartTroopProduction", nation2ID, false);
+        game.delegateGameFunction(nation1ID, "StartTroopProduction", nation2ID, false);
         vm.stopPrank();
 
         // Nation 2 fails to produce troops on behalf of Nation 1

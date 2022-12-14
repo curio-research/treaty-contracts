@@ -72,8 +72,11 @@ contract DiamondInit is UseStorage {
         gameFunctionNames[18] = "Battle";
         gameFunctionNames[19] = "JoinTreaty";
         gameFunctionNames[20] = "LeaveTreaty";
-        gameFunctionNames[21] = "DelegatePermission";
+        gameFunctionNames[21] = "DelegateGameFunction";
         gs().gameFunctionNames = gameFunctionNames;
+        for (uint256 i; i < gameFunctionNames.length; i++) {
+            gs().isGameFunction[gameFunctionNames[i]] = true;
+        }
 
         // set initial time
         gs().gameInitTimestamp = block.timestamp;

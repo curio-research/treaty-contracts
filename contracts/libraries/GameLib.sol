@@ -349,6 +349,23 @@ library GameLib {
         }
     }
 
+    function delegateGameFunction(
+        uint256 _nationID,
+        string memory _functionName,
+        uint256 _delegateID,
+        bool _canCall
+    ) internal {
+        // Get current permission
+        uint256 delegationID = GameLib.getDelegation(_functionName, _nationID, _delegateID);
+
+        // Update permission
+        if (_canCall && delegationID == 0) {
+            Templates.addDelegation(_functionName, _nationID, _delegateID);
+        } else if (!_canCall && delegationID != 0) {
+            ECSLib.removeEntity(delegationID);
+        }
+    }
+
     // ----------------------------------------------------------
     // LOGIC GETTERS
     // ----------------------------------------------------------
@@ -654,18 +671,18 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
-    function getPermission(
+    function getDelegation(
         string memory _functionName,
         uint256 _ownerID,
         uint256 _callerID
     ) internal view returns (uint256) {
         QueryCondition[] memory query = new QueryCondition[](4);
-        query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Permission"));
+        query[0] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Tag"]), abi.encode("Delegation"));
         query[1] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["FunctionName"]), abi.encode(_functionName));
         query[2] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Owner"]), abi.encode(_ownerID));
         query[3] = ECSLib.queryChunk(QueryType.IsExactly, Component(gs().components["Caller"]), abi.encode(_callerID));
         uint256[] memory res = ECSLib.query(query);
-        require(res.length <= 1, "CURIO: Permission assertion failed");
+        require(res.length <= 1, "CURIO: Delegation assertion failed");
         return res.length == 1 ? res[0] : 0;
     }
 
@@ -766,12 +783,16 @@ library GameLib {
         require(block.timestamp - ECSLib.getUint("LastSacked", _capitalID) > chaosDuration, "CURIO: Capital in chaos");
     }
 
+    function validFunctionNameCheck(string memory _functionName) internal view {
+        require(gs().isGameFunction[_functionName], "CURIO: Game function does not exist");
+    }
+
     function nationDelegationCheck(
         string memory _functionName,
         uint256 _ownerID,
         uint256 _callerID
     ) internal view {
-        require(getPermission(_functionName, _ownerID, _callerID) != 0, string.concat("CURIO: Not permitted to call ", _functionName));
+        require(getDelegation(_functionName, _ownerID, _callerID) != 0, string.concat("CURIO: Not permitted to call ", _functionName));
     }
 
     function treatyApprovalCheck(

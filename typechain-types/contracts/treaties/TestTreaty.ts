@@ -7,6 +7,8 @@ import type {
   BigNumberish,
   BytesLike,
   CallOverrides,
+  ContractTransaction,
+  Overrides,
   PopulatedTransaction,
   Signer,
   utils,
@@ -23,34 +25,40 @@ import type {
 
 export interface TestTreatyInterface extends utils.Interface {
   functions: {
-    "approveBattle(uint256)": FunctionFragment;
-    "approveClaimTile(uint256)": FunctionFragment;
-    "approveDelegatePermission(uint256)": FunctionFragment;
-    "approveDisbandArmy(uint256)": FunctionFragment;
-    "approveDisownTile(uint256)": FunctionFragment;
-    "approveEndGather(uint256)": FunctionFragment;
-    "approveEndTroopProduction(uint256)": FunctionFragment;
-    "approveHarvestResource(uint256)": FunctionFragment;
-    "approveHarvestResourcesFromCapital(uint256)": FunctionFragment;
-    "approveJoinTreaty(uint256)": FunctionFragment;
-    "approveLeaveTreaty(uint256)": FunctionFragment;
-    "approveMove(uint256)": FunctionFragment;
-    "approveMoveCapital(uint256)": FunctionFragment;
-    "approveOrganizeArmy(uint256)": FunctionFragment;
-    "approveRecoverTile(uint256)": FunctionFragment;
-    "approveStartGather(uint256)": FunctionFragment;
-    "approveStartTroopProduction(uint256)": FunctionFragment;
-    "approveUnloadResources(uint256)": FunctionFragment;
-    "approveUpgradeCapital(uint256)": FunctionFragment;
-    "approveUpgradeResource(uint256)": FunctionFragment;
-    "approveUpgradeTile(uint256)": FunctionFragment;
+    "admin()": FunctionFragment;
+    "approveBattle(uint256,bytes)": FunctionFragment;
+    "approveClaimTile(uint256,bytes)": FunctionFragment;
+    "approveDelegatePermission(uint256,bytes)": FunctionFragment;
+    "approveDisbandArmy(uint256,bytes)": FunctionFragment;
+    "approveDisownTile(uint256,bytes)": FunctionFragment;
+    "approveEndGather(uint256,bytes)": FunctionFragment;
+    "approveEndTroopProduction(uint256,bytes)": FunctionFragment;
+    "approveHarvestResource(uint256,bytes)": FunctionFragment;
+    "approveHarvestResourcesFromCapital(uint256,bytes)": FunctionFragment;
+    "approveJoinTreaty(uint256,bytes)": FunctionFragment;
+    "approveLeaveTreaty(uint256,bytes)": FunctionFragment;
+    "approveMove(uint256,bytes)": FunctionFragment;
+    "approveMoveCapital(uint256,bytes)": FunctionFragment;
+    "approveOrganizeArmy(uint256,bytes)": FunctionFragment;
+    "approveRecoverTile(uint256,bytes)": FunctionFragment;
+    "approveStartGather(uint256,bytes)": FunctionFragment;
+    "approveStartTroopProduction(uint256,bytes)": FunctionFragment;
+    "approveUnloadResources(uint256,bytes)": FunctionFragment;
+    "approveUpgradeCapital(uint256,bytes)": FunctionFragment;
+    "approveUpgradeResource(uint256,bytes)": FunctionFragment;
+    "approveUpgradeTile(uint256,bytes)": FunctionFragment;
+    "delegatedGameFunctionNames(uint256)": FunctionFragment;
+    "description()": FunctionFragment;
     "diamond()": FunctionFragment;
     "getter()": FunctionFragment;
+    "join()": FunctionFragment;
+    "leave()": FunctionFragment;
     "name()": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "admin"
       | "approveBattle"
       | "approveClaimTile"
       | "approveDelegatePermission"
@@ -72,99 +80,115 @@ export interface TestTreatyInterface extends utils.Interface {
       | "approveUpgradeCapital"
       | "approveUpgradeResource"
       | "approveUpgradeTile"
+      | "delegatedGameFunctionNames"
+      | "description"
       | "diamond"
       | "getter"
+      | "join"
+      | "leave"
       | "name"
   ): FunctionFragment;
 
+  encodeFunctionData(functionFragment: "admin", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "approveBattle",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "approveClaimTile",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "approveDelegatePermission",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "approveDisbandArmy",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "approveDisownTile",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "approveEndGather",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "approveEndTroopProduction",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "approveHarvestResource",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "approveHarvestResourcesFromCapital",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "approveJoinTreaty",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "approveLeaveTreaty",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "approveMove",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "approveMoveCapital",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "approveOrganizeArmy",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "approveRecoverTile",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "approveStartGather",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "approveStartTroopProduction",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "approveUnloadResources",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "approveUpgradeCapital",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "approveUpgradeResource",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "approveUpgradeTile",
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BytesLike>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "delegatedGameFunctionNames",
     values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "description",
+    values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "diamond", values?: undefined): string;
   encodeFunctionData(functionFragment: "getter", values?: undefined): string;
+  encodeFunctionData(functionFragment: "join", values?: undefined): string;
+  encodeFunctionData(functionFragment: "leave", values?: undefined): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
 
+  decodeFunctionResult(functionFragment: "admin", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "approveBattle",
     data: BytesLike
@@ -247,10 +271,20 @@ export interface TestTreatyInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "approveUpgradeTile",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "delegatedGameFunctionNames",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "description",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "diamond", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getter", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "join", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "leave", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
 
   events: {};
@@ -283,338 +317,448 @@ export interface TestTreaty extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    admin(overrides?: CallOverrides): Promise<[string]>;
+
     approveBattle(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     approveClaimTile(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     approveDelegatePermission(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     approveDisbandArmy(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     approveDisownTile(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     approveEndGather(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     approveEndTroopProduction(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     approveHarvestResource(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     approveHarvestResourcesFromCapital(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     approveJoinTreaty(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     approveLeaveTreaty(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     approveMove(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     approveMoveCapital(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     approveOrganizeArmy(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     approveRecoverTile(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     approveStartGather(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     approveStartTroopProduction(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     approveUnloadResources(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     approveUpgradeCapital(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     approveUpgradeResource(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     approveUpgradeTile(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
+
+    delegatedGameFunctionNames(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    description(overrides?: CallOverrides): Promise<[string]>;
 
     diamond(overrides?: CallOverrides): Promise<[string]>;
 
     getter(overrides?: CallOverrides): Promise<[string]>;
 
+    join(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    leave(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     name(overrides?: CallOverrides): Promise<[string]>;
   };
 
+  admin(overrides?: CallOverrides): Promise<string>;
+
   approveBattle(
     _nationID: PromiseOrValue<BigNumberish>,
+    _encodedParams: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   approveClaimTile(
     _nationID: PromiseOrValue<BigNumberish>,
+    _encodedParams: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   approveDelegatePermission(
     _nationID: PromiseOrValue<BigNumberish>,
+    _encodedParams: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   approveDisbandArmy(
     _nationID: PromiseOrValue<BigNumberish>,
+    _encodedParams: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   approveDisownTile(
     _nationID: PromiseOrValue<BigNumberish>,
+    _encodedParams: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   approveEndGather(
     _nationID: PromiseOrValue<BigNumberish>,
+    _encodedParams: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   approveEndTroopProduction(
     _nationID: PromiseOrValue<BigNumberish>,
+    _encodedParams: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   approveHarvestResource(
     _nationID: PromiseOrValue<BigNumberish>,
+    _encodedParams: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   approveHarvestResourcesFromCapital(
     _nationID: PromiseOrValue<BigNumberish>,
+    _encodedParams: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   approveJoinTreaty(
     _nationID: PromiseOrValue<BigNumberish>,
+    _encodedParams: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   approveLeaveTreaty(
     _nationID: PromiseOrValue<BigNumberish>,
+    _encodedParams: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   approveMove(
     _nationID: PromiseOrValue<BigNumberish>,
+    _encodedParams: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   approveMoveCapital(
     _nationID: PromiseOrValue<BigNumberish>,
+    _encodedParams: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   approveOrganizeArmy(
     _nationID: PromiseOrValue<BigNumberish>,
+    _encodedParams: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   approveRecoverTile(
     _nationID: PromiseOrValue<BigNumberish>,
+    _encodedParams: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   approveStartGather(
     _nationID: PromiseOrValue<BigNumberish>,
+    _encodedParams: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   approveStartTroopProduction(
     _nationID: PromiseOrValue<BigNumberish>,
+    _encodedParams: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   approveUnloadResources(
     _nationID: PromiseOrValue<BigNumberish>,
+    _encodedParams: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   approveUpgradeCapital(
     _nationID: PromiseOrValue<BigNumberish>,
+    _encodedParams: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   approveUpgradeResource(
     _nationID: PromiseOrValue<BigNumberish>,
+    _encodedParams: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   approveUpgradeTile(
     _nationID: PromiseOrValue<BigNumberish>,
+    _encodedParams: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<boolean>;
+
+  delegatedGameFunctionNames(
+    arg0: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  description(overrides?: CallOverrides): Promise<string>;
 
   diamond(overrides?: CallOverrides): Promise<string>;
 
   getter(overrides?: CallOverrides): Promise<string>;
 
+  join(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  leave(
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   name(overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
+    admin(overrides?: CallOverrides): Promise<string>;
+
     approveBattle(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     approveClaimTile(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     approveDelegatePermission(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     approveDisbandArmy(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     approveDisownTile(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     approveEndGather(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     approveEndTroopProduction(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     approveHarvestResource(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     approveHarvestResourcesFromCapital(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     approveJoinTreaty(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     approveLeaveTreaty(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     approveMove(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     approveMoveCapital(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     approveOrganizeArmy(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     approveRecoverTile(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     approveStartGather(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     approveStartTroopProduction(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     approveUnloadResources(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     approveUpgradeCapital(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     approveUpgradeResource(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     approveUpgradeTile(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    delegatedGameFunctionNames(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    description(overrides?: CallOverrides): Promise<string>;
 
     diamond(overrides?: CallOverrides): Promise<string>;
 
     getter(overrides?: CallOverrides): Promise<string>;
+
+    join(overrides?: CallOverrides): Promise<void>;
+
+    leave(overrides?: CallOverrides): Promise<void>;
 
     name(overrides?: CallOverrides): Promise<string>;
   };
@@ -622,227 +766,303 @@ export interface TestTreaty extends BaseContract {
   filters: {};
 
   estimateGas: {
+    admin(overrides?: CallOverrides): Promise<BigNumber>;
+
     approveBattle(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     approveClaimTile(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     approveDelegatePermission(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     approveDisbandArmy(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     approveDisownTile(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     approveEndGather(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     approveEndTroopProduction(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     approveHarvestResource(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     approveHarvestResourcesFromCapital(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     approveJoinTreaty(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     approveLeaveTreaty(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     approveMove(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     approveMoveCapital(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     approveOrganizeArmy(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     approveRecoverTile(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     approveStartGather(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     approveStartTroopProduction(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     approveUnloadResources(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     approveUpgradeCapital(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     approveUpgradeResource(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     approveUpgradeTile(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    delegatedGameFunctionNames(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    description(overrides?: CallOverrides): Promise<BigNumber>;
 
     diamond(overrides?: CallOverrides): Promise<BigNumber>;
 
     getter(overrides?: CallOverrides): Promise<BigNumber>;
 
+    join(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    leave(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     name(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    admin(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     approveBattle(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     approveClaimTile(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     approveDelegatePermission(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     approveDisbandArmy(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     approveDisownTile(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     approveEndGather(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     approveEndTroopProduction(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     approveHarvestResource(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     approveHarvestResourcesFromCapital(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     approveJoinTreaty(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     approveLeaveTreaty(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     approveMove(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     approveMoveCapital(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     approveOrganizeArmy(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     approveRecoverTile(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     approveStartGather(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     approveStartTroopProduction(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     approveUnloadResources(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     approveUpgradeCapital(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     approveUpgradeResource(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     approveUpgradeTile(
       _nationID: PromiseOrValue<BigNumberish>,
+      _encodedParams: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    delegatedGameFunctionNames(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    description(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     diamond(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    join(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    leave(
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };

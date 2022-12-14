@@ -1,6 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
+import {Set} from "contracts/Set.sol";
 import {Component} from "contracts/Component.sol";
 
 /// Data structures for game
@@ -85,7 +86,8 @@ struct GameState {
     address[] nations;
     address[] treaties;
     string[] gameFunctionNames;
-    address entities;
+    mapping(string => bool) isGameFunction;
+    address entities; // set
     uint256 entityNonce;
     uint256 tileNonce;
     uint256 walletNonce;

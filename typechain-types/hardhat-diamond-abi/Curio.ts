@@ -139,12 +139,15 @@ export interface CurioInterface extends utils.Interface {
     "addGameParameter(string,uint256)": FunctionFragment;
     "addInventory(uint256,string)": FunctionFragment;
     "addResourceTemplate(string,address)": FunctionFragment;
+    "addSigner(uint256)": FunctionFragment;
     "addTreaty(address,string,string)": FunctionFragment;
     "addTroopTemplate(string,uint256,uint256,uint256,uint256,address)": FunctionFragment;
     "adminInitializeTile((uint256,uint256))": FunctionFragment;
     "authorizeGame(address)": FunctionFragment;
     "bulkAddGameParameters(string[],uint256[])": FunctionFragment;
     "bulkInitializeTiles((uint256,uint256)[])": FunctionFragment;
+    "delegateGameFunction(uint256,string,bool)": FunctionFragment;
+    "delegateGameFunction(uint256,string,uint256,bool)": FunctionFragment;
     "dripToken(address,string,uint256)": FunctionFragment;
     "generateNewAddress()": FunctionFragment;
     "giftTileAndResourceAt((uint256,uint256),uint256)": FunctionFragment;
@@ -154,6 +157,7 @@ export interface CurioInterface extends utils.Interface {
     "registerComponents(address,(string,uint8)[])": FunctionFragment;
     "registerTemplateShortcuts(string[],uint256[])": FunctionFragment;
     "removeEntity(uint256)": FunctionFragment;
+    "removeSigner(uint256)": FunctionFragment;
     "setComponentValue(string,uint256,bytes)": FunctionFragment;
     "spawnResource((uint256,uint256),string)": FunctionFragment;
     "stopGame()": FunctionFragment;
@@ -167,17 +171,14 @@ export interface CurioInterface extends utils.Interface {
     "supportsInterface(bytes4)": FunctionFragment;
     "battle(uint256,uint256)": FunctionFragment;
     "claimTile(uint256,uint256)": FunctionFragment;
-    "delegatePermission(uint256,string,uint256,bool)": FunctionFragment;
     "disbandArmy(uint256)": FunctionFragment;
     "disownTile(uint256)": FunctionFragment;
     "endGather(uint256)": FunctionFragment;
-    "endTroopProduction(uint256,uint256)": FunctionFragment;
+    "endTroopProduction(uint256)": FunctionFragment;
     "harvestResource(uint256)": FunctionFragment;
     "harvestResources(uint256[])": FunctionFragment;
     "harvestResourcesFromCapital(uint256)": FunctionFragment;
     "initializeNation(uint256,uint256,string)": FunctionFragment;
-    "joinTreaty(uint256,uint256)": FunctionFragment;
-    "leaveTreaty(uint256,uint256)": FunctionFragment;
     "move(uint256,uint256,uint256)": FunctionFragment;
     "moveCapital(uint256,(uint256,uint256))": FunctionFragment;
     "organizeArmy(uint256,uint256[],uint256[])": FunctionFragment;
@@ -252,12 +253,15 @@ export interface CurioInterface extends utils.Interface {
       | "addGameParameter"
       | "addInventory"
       | "addResourceTemplate"
+      | "addSigner"
       | "addTreaty"
       | "addTroopTemplate"
       | "adminInitializeTile"
       | "authorizeGame"
       | "bulkAddGameParameters"
       | "bulkInitializeTiles"
+      | "delegateGameFunction(uint256,string,bool)"
+      | "delegateGameFunction(uint256,string,uint256,bool)"
       | "dripToken"
       | "generateNewAddress"
       | "giftTileAndResourceAt"
@@ -267,6 +271,7 @@ export interface CurioInterface extends utils.Interface {
       | "registerComponents"
       | "registerTemplateShortcuts"
       | "removeEntity"
+      | "removeSigner"
       | "setComponentValue"
       | "spawnResource"
       | "stopGame"
@@ -280,7 +285,6 @@ export interface CurioInterface extends utils.Interface {
       | "supportsInterface"
       | "battle"
       | "claimTile"
-      | "delegatePermission"
       | "disbandArmy"
       | "disownTile"
       | "endGather"
@@ -289,8 +293,6 @@ export interface CurioInterface extends utils.Interface {
       | "harvestResources"
       | "harvestResourcesFromCapital"
       | "initializeNation"
-      | "joinTreaty"
-      | "leaveTreaty"
       | "move"
       | "moveCapital"
       | "organizeArmy"
@@ -376,6 +378,10 @@ export interface CurioInterface extends utils.Interface {
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "addSigner",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "addTreaty",
     values: [
       PromiseOrValue<string>,
@@ -409,6 +415,23 @@ export interface CurioInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "bulkInitializeTiles",
     values: [PositionStruct[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "delegateGameFunction(uint256,string,bool)",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<boolean>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "delegateGameFunction(uint256,string,uint256,bool)",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<boolean>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "dripToken",
@@ -448,6 +471,10 @@ export interface CurioInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "removeEntity",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "removeSigner",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -505,15 +532,6 @@ export interface CurioInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "delegatePermission",
-    values: [
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<boolean>
-    ]
-  ): string;
-  encodeFunctionData(
     functionFragment: "disbandArmy",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
@@ -527,7 +545,7 @@ export interface CurioInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "endTroopProduction",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "harvestResource",
@@ -548,14 +566,6 @@ export interface CurioInterface extends utils.Interface {
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>
     ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "joinTreaty",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "leaveTreaty",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "move",
@@ -848,6 +858,7 @@ export interface CurioInterface extends utils.Interface {
     functionFragment: "addResourceTemplate",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "addSigner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "addTreaty", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "addTroopTemplate",
@@ -867,6 +878,14 @@ export interface CurioInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "bulkInitializeTiles",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "delegateGameFunction(uint256,string,bool)",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "delegateGameFunction(uint256,string,uint256,bool)",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "dripToken", data: BytesLike): Result;
@@ -894,6 +913,10 @@ export interface CurioInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "removeEntity",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "removeSigner",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -934,10 +957,6 @@ export interface CurioInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "battle", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "claimTile", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "delegatePermission",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "disbandArmy",
     data: BytesLike
   ): Result;
@@ -961,11 +980,6 @@ export interface CurioInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "initializeNation",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "joinTreaty", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "leaveTreaty",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "move", data: BytesLike): Result;
@@ -1340,6 +1354,11 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    addSigner(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     addTreaty(
       _address: PromiseOrValue<string>,
       _name: PromiseOrValue<string>,
@@ -1375,6 +1394,21 @@ export interface Curio extends BaseContract {
 
     bulkInitializeTiles(
       _positions: PositionStruct[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    "delegateGameFunction(uint256,string,bool)"(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _functionName: PromiseOrValue<string>,
+      _canCall: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    "delegateGameFunction(uint256,string,uint256,bool)"(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _functionName: PromiseOrValue<string>,
+      _delegateID: PromiseOrValue<BigNumberish>,
+      _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1425,6 +1459,11 @@ export interface Curio extends BaseContract {
 
     removeEntity(
       _entity: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    removeSigner(
+      _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1502,14 +1541,6 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    delegatePermission(
-      _nationID: PromiseOrValue<BigNumberish>,
-      _functionName: PromiseOrValue<string>,
-      _delegateID: PromiseOrValue<BigNumberish>,
-      _canCall: PromiseOrValue<boolean>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     disbandArmy(
       _armyID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1527,7 +1558,6 @@ export interface Curio extends BaseContract {
 
     endTroopProduction(
       _capitalID: PromiseOrValue<BigNumberish>,
-      _productionID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1550,18 +1580,6 @@ export interface Curio extends BaseContract {
       _positionX: PromiseOrValue<BigNumberish>,
       _positionY: PromiseOrValue<BigNumberish>,
       _name: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    joinTreaty(
-      _nationID: PromiseOrValue<BigNumberish>,
-      _treatyID: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    leaveTreaty(
-      _nationID: PromiseOrValue<BigNumberish>,
-      _treatyID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -1930,6 +1948,11 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  addSigner(
+    _nationID: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   addTreaty(
     _address: PromiseOrValue<string>,
     _name: PromiseOrValue<string>,
@@ -1965,6 +1988,21 @@ export interface Curio extends BaseContract {
 
   bulkInitializeTiles(
     _positions: PositionStruct[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  "delegateGameFunction(uint256,string,bool)"(
+    _nationID: PromiseOrValue<BigNumberish>,
+    _functionName: PromiseOrValue<string>,
+    _canCall: PromiseOrValue<boolean>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  "delegateGameFunction(uint256,string,uint256,bool)"(
+    _nationID: PromiseOrValue<BigNumberish>,
+    _functionName: PromiseOrValue<string>,
+    _delegateID: PromiseOrValue<BigNumberish>,
+    _canCall: PromiseOrValue<boolean>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -2015,6 +2053,11 @@ export interface Curio extends BaseContract {
 
   removeEntity(
     _entity: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  removeSigner(
+    _nationID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -2084,14 +2127,6 @@ export interface Curio extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  delegatePermission(
-    _nationID: PromiseOrValue<BigNumberish>,
-    _functionName: PromiseOrValue<string>,
-    _delegateID: PromiseOrValue<BigNumberish>,
-    _canCall: PromiseOrValue<boolean>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   disbandArmy(
     _armyID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -2109,7 +2144,6 @@ export interface Curio extends BaseContract {
 
   endTroopProduction(
     _capitalID: PromiseOrValue<BigNumberish>,
-    _productionID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -2132,18 +2166,6 @@ export interface Curio extends BaseContract {
     _positionX: PromiseOrValue<BigNumberish>,
     _positionY: PromiseOrValue<BigNumberish>,
     _name: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  joinTreaty(
-    _nationID: PromiseOrValue<BigNumberish>,
-    _treatyID: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  leaveTreaty(
-    _nationID: PromiseOrValue<BigNumberish>,
-    _treatyID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -2508,6 +2530,11 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    addSigner(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     addTreaty(
       _address: PromiseOrValue<string>,
       _name: PromiseOrValue<string>,
@@ -2543,6 +2570,21 @@ export interface Curio extends BaseContract {
 
     bulkInitializeTiles(
       _positions: PositionStruct[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "delegateGameFunction(uint256,string,bool)"(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _functionName: PromiseOrValue<string>,
+      _canCall: PromiseOrValue<boolean>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    "delegateGameFunction(uint256,string,uint256,bool)"(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _functionName: PromiseOrValue<string>,
+      _delegateID: PromiseOrValue<BigNumberish>,
+      _canCall: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -2591,6 +2633,11 @@ export interface Curio extends BaseContract {
 
     removeEntity(
       _entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    removeSigner(
+      _nationID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -2660,14 +2707,6 @@ export interface Curio extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    delegatePermission(
-      _nationID: PromiseOrValue<BigNumberish>,
-      _functionName: PromiseOrValue<string>,
-      _delegateID: PromiseOrValue<BigNumberish>,
-      _canCall: PromiseOrValue<boolean>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     disbandArmy(
       _armyID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -2685,7 +2724,6 @@ export interface Curio extends BaseContract {
 
     endTroopProduction(
       _capitalID: PromiseOrValue<BigNumberish>,
-      _productionID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -2710,18 +2748,6 @@ export interface Curio extends BaseContract {
       _name: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    joinTreaty(
-      _nationID: PromiseOrValue<BigNumberish>,
-      _treatyID: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    leaveTreaty(
-      _nationID: PromiseOrValue<BigNumberish>,
-      _treatyID: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     move(
       _armyID: PromiseOrValue<BigNumberish>,
@@ -3143,6 +3169,11 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    addSigner(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     addTreaty(
       _address: PromiseOrValue<string>,
       _name: PromiseOrValue<string>,
@@ -3178,6 +3209,21 @@ export interface Curio extends BaseContract {
 
     bulkInitializeTiles(
       _positions: PositionStruct[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    "delegateGameFunction(uint256,string,bool)"(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _functionName: PromiseOrValue<string>,
+      _canCall: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    "delegateGameFunction(uint256,string,uint256,bool)"(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _functionName: PromiseOrValue<string>,
+      _delegateID: PromiseOrValue<BigNumberish>,
+      _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -3228,6 +3274,11 @@ export interface Curio extends BaseContract {
 
     removeEntity(
       _entity: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    removeSigner(
+      _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -3297,14 +3348,6 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    delegatePermission(
-      _nationID: PromiseOrValue<BigNumberish>,
-      _functionName: PromiseOrValue<string>,
-      _delegateID: PromiseOrValue<BigNumberish>,
-      _canCall: PromiseOrValue<boolean>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     disbandArmy(
       _armyID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -3322,7 +3365,6 @@ export interface Curio extends BaseContract {
 
     endTroopProduction(
       _capitalID: PromiseOrValue<BigNumberish>,
-      _productionID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -3345,18 +3387,6 @@ export interface Curio extends BaseContract {
       _positionX: PromiseOrValue<BigNumberish>,
       _positionY: PromiseOrValue<BigNumberish>,
       _name: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    joinTreaty(
-      _nationID: PromiseOrValue<BigNumberish>,
-      _treatyID: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    leaveTreaty(
-      _nationID: PromiseOrValue<BigNumberish>,
-      _treatyID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -3724,6 +3754,11 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    addSigner(
+      _nationID: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     addTreaty(
       _address: PromiseOrValue<string>,
       _name: PromiseOrValue<string>,
@@ -3759,6 +3794,21 @@ export interface Curio extends BaseContract {
 
     bulkInitializeTiles(
       _positions: PositionStruct[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "delegateGameFunction(uint256,string,bool)"(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _functionName: PromiseOrValue<string>,
+      _canCall: PromiseOrValue<boolean>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    "delegateGameFunction(uint256,string,uint256,bool)"(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _functionName: PromiseOrValue<string>,
+      _delegateID: PromiseOrValue<BigNumberish>,
+      _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -3809,6 +3859,11 @@ export interface Curio extends BaseContract {
 
     removeEntity(
       _entity: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    removeSigner(
+      _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -3878,14 +3933,6 @@ export interface Curio extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    delegatePermission(
-      _nationID: PromiseOrValue<BigNumberish>,
-      _functionName: PromiseOrValue<string>,
-      _delegateID: PromiseOrValue<BigNumberish>,
-      _canCall: PromiseOrValue<boolean>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     disbandArmy(
       _armyID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -3903,7 +3950,6 @@ export interface Curio extends BaseContract {
 
     endTroopProduction(
       _capitalID: PromiseOrValue<BigNumberish>,
-      _productionID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -3926,18 +3972,6 @@ export interface Curio extends BaseContract {
       _positionX: PromiseOrValue<BigNumberish>,
       _positionY: PromiseOrValue<BigNumberish>,
       _name: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    joinTreaty(
-      _nationID: PromiseOrValue<BigNumberish>,
-      _treatyID: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    leaveTreaty(
-      _nationID: PromiseOrValue<BigNumberish>,
-      _treatyID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

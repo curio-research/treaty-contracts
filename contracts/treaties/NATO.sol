@@ -10,6 +10,7 @@ contract NATO is CurioTreaty {
 
     constructor(address _diamond) CurioTreaty(_diamond) {
         name = "North Atlantic Treaty Organization";
+        description = "A treaty between the United States, Canada, and ten European countries to defend each other by mutual defense if attacked by any external party";
     }
 
     // ----------------------------------------------------------

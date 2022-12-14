@@ -7,9 +7,11 @@ import {AdminFacet} from "contracts/facets/AdminFacet.sol";
 
 contract CurioTreaty is ITreaty {
     address public diamond;
-    string public name;
     GetterFacet public getter;
     AdminFacet public admin;
+    string public name;
+    string public description;
+    string[] public delegatedGameFunctionNames;
 
     constructor(address _diamond) {
         require(_diamond != address(0), "CurioTreaty: Diamond address required");
@@ -29,13 +31,25 @@ contract CurioTreaty is ITreaty {
     // ----------------------------------------------------------
 
     function join() public virtual {
+        // Add signature
         uint256 nationID = getter.getEntityByAddress(msg.sender);
         admin.addSigner(nationID);
+
+        // Delegate functions
+        for (uint256 i = 0; i < delegatedGameFunctionNames.length; i++) {
+            admin.delegateGameFunction(nationID, delegatedGameFunctionNames[i], true);
+        }
     }
 
     function leave() public virtual {
+        // Remove signature
         uint256 nationID = getter.getEntityByAddress(msg.sender);
         admin.removeSigner(nationID);
+
+        // Abrogate functions
+        for (uint256 i = 0; i < delegatedGameFunctionNames.length; i++) {
+            admin.delegateGameFunction(nationID, delegatedGameFunctionNames[i], false);
+        }
     }
 
     // ----------------------------------------------------------

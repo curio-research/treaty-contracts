@@ -15,6 +15,7 @@ contract FTX is CurioTreaty {
 
     constructor(address _diamond) CurioTreaty(_diamond) {
         name = "FTX";
+        description = "FTX is a cryptocurrency exchange based in the United States. It is totally not a scam.";
         goldToken = getter.getTokenContract("Gold");
         fttToken = new FTTERC20(address(this));
         sbfAddress = msg.sender;

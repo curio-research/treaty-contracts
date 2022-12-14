@@ -10,13 +10,16 @@ contract Alliance is CurioTreaty {
     CurioERC20 public goldToken;
 
     constructor(address _diamond) CurioTreaty(_diamond) {
-        name = "Alliance";
         goldToken = getter.getTokenContract("Gold");
+
+        name = "Alliance";
+        description = "A treaty between two or more countries to work together towards a common goal or to defend each other in the case of external aggression";
+        string[] memory temp = new string[](1);
+        temp[0] = "Battle";
+        delegatedGameFunctionNames = temp;
     }
 
     function join() public override {
-        // Check that nation has delegated Battle function to treaty
-
         // Transfer 1000 gold from nation to treaty
         address nationCapitalAddress = getter.getAddress(getter.getCapital(getter.getEntityByAddress(msg.sender)));
         goldToken.transferFrom(nationCapitalAddress, address(this), 1000);
@@ -46,5 +49,13 @@ contract Alliance is CurioTreaty {
         if (getter.getNationTreatySignature(targetNationID, treatyID) != 0) return false;
 
         return super.approveBattle(_nationID, _encodedParams);
+    }
+
+    /**
+     * @dev Attack a target army belonging to a non-ally nation with all nearby ally armies.
+     * @param _targetArmyID target army entity
+     */
+    function besiege(uint256 _targetArmyID) public {
+        // TODO: Implement
     }
 }

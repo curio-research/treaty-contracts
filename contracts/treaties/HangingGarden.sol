@@ -46,6 +46,7 @@ contract HangingGarden is CurioTreaty {
         game = GameFacet(diamond);
 
         name = "HangingGarden";
+        description = "A deprecated smart contract wallet for Curio";
 
         homieFee = _homieFee;
     }
