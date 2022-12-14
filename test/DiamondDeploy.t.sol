@@ -15,6 +15,7 @@ import {AdminFacet} from "contracts/facets/AdminFacet.sol";
 import {Strings} from "openzeppelin-contracts/contracts/utils/Strings.sol";
 import {ComponentSpec, GameMode, GameParamSpec, Position, WorldConstants} from "contracts/libraries/Types.sol";
 import {NATO} from "contracts/treaties/NATO.sol";
+import {Alliance} from "contracts/treaties/Alliance.sol";
 import {CurioERC20} from "contracts/tokens/CurioERC20.sol";
 import {console} from "forge-std/console.sol";
 import {stdJson} from "forge-std/StdJson.sol";
@@ -40,6 +41,9 @@ contract DiamondDeployTest is Test {
 
     // Treaties
     NATO public nato;
+    Alliance public alliance;
+    uint256 public natoID;
+    uint256 public allianceID;
 
     // Players (nations)
     address public deployer = address(0);
@@ -81,8 +85,6 @@ contract DiamondDeployTest is Test {
     Position public barbarinaTilePos = Position({x: 60, y: 50});
 
     WorldConstants public worldConstants;
-
-    uint256 public natoID;
 
     // we assume these two facet selectors do not change. If they do however, we should use _getSelectors
     bytes4[] OWNERSHIP_SELECTORS = [bytes4(0xf2fde38b), 0x8da5cb5b];
@@ -166,6 +168,8 @@ contract DiamondDeployTest is Test {
         // Initialize treaties
         nato = new NATO(diamond);
         natoID = admin.addTreaty(address(nato), nato.name(), "sample ABI");
+        alliance = new Alliance(diamond);
+        allianceID = admin.addTreaty(address(alliance), alliance.name(), "sample ABI");
         console.log(">>> Treaties initialized");
 
         vm.stopPrank();

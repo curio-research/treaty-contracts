@@ -341,10 +341,9 @@ contract GameTest is Test, DiamondDeployTest {
         armyTemplateAmounts[0] = 500;
         armyTemplateAmounts[1] = 500;
         armyTemplateAmounts[2] = 500;
-        vm.warp(time + 10);
-        uint256 army11ID = game.organizeArmy(nation1CapitalID, armyTemplateIDs, armyTemplateAmounts);
-
         time += 10;
+        vm.warp(time);
+        uint256 army11ID = game.organizeArmy(nation1CapitalID, armyTemplateIDs, armyTemplateAmounts);
 
         // Nation 1 moves army to (62, 29)
         for (uint256 i = 1; i <= 9; i++) {
@@ -490,19 +489,19 @@ contract GameTest is Test, DiamondDeployTest {
         // Nation 1 produces 1000 horsemen
         vm.startPrank(player1);
         uint256 horsemanTemplateID = getter.getEntityByAddress(address(horsemanToken));
-        uint256 productionID = game.startTroopProduction(nation1CapitalID, horsemanTemplateID, 1000);
+        game.startTroopProduction(nation1CapitalID, horsemanTemplateID, 1000);
 
         // Nation 1 fails to end troop production
         time += worldConstants.secondsToTrainAThousandTroops / 2;
         vm.warp(time);
         vm.expectRevert("CURIO: Need more time for production");
-        game.endTroopProduction(nation1CapitalID, productionID);
+        game.endTroopProduction(nation1CapitalID);
         assertEq(horsemanToken.checkBalanceOf(nation1CapitalAddr), 0);
 
         // Nation 1 ends troop production
         time += time += worldConstants.secondsToTrainAThousandTroops / 2 + 1;
         vm.warp(time);
-        game.endTroopProduction(nation1CapitalID, productionID);
+        game.endTroopProduction(nation1CapitalID);
         assertEq(horsemanToken.checkBalanceOf(nation1CapitalAddr), 1000);
         vm.stopPrank();
     }
@@ -595,14 +594,14 @@ contract GameTest is Test, DiamondDeployTest {
 
         // Nation 2 produces troops on behalf of Nation 1
         vm.startPrank(player2);
-        uint256 productionID = game.startTroopProduction(nation1CapitalID, horsemanTemplateID, 1000);
+        game.startTroopProduction(nation1CapitalID, horsemanTemplateID, 1000);
         vm.stopPrank();
 
         // Nation 1 ends production
         time += worldConstants.secondsToTrainAThousandTroops + 1;
         vm.warp(time);
         vm.startPrank(player1);
-        game.endTroopProduction(nation1CapitalID, productionID);
+        game.endTroopProduction(nation1CapitalID);
         assertEq(horsemanToken.checkBalanceOf(nation1CapitalAddr), 1000);
         vm.stopPrank();
 

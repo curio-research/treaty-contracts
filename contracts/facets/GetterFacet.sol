@@ -152,6 +152,11 @@ contract GetterFacet is UseStorage {
     function getDistanceByAddresses(address _addr1, address _addr2) external view returns (uint256) {
         Position memory pos1 = ECSLib.getPosition("Position", GameLib.getEntityByAddress(_addr1));
         Position memory pos2 = ECSLib.getPosition("Position", GameLib.getEntityByAddress(_addr2));
+
+        // TEMP FIXME: Treaty contracts without positions are still allowed to transfer
+        Position memory nullPos = Position({x: 0, y: 0});
+        if (GameLib.coincident(pos1, nullPos) || GameLib.coincident(pos2, nullPos)) return 0;
+
         return GameLib.euclidean(pos1, pos2);
     }
 

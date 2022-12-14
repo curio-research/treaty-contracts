@@ -395,15 +395,15 @@ library GameLib {
             load = 2**256 - 1;
         } else if (strEq(entityTag, "Tile")) {
             load = getConstant("Tile", "Guard", "Amount", "", ECSLib.getUint("Level", entityID));
+        } else if (strEq(entityTag, "Treaty")) {
+            load = 2**256 - 1;
         } else {
             revert("CURIO: Unsupported keeper");
         }
 
         // Fetch inventoryID, and create if not found
         uint256 inventoryID = getInventory(entityID, templateID);
-        if (inventoryID == 0) {
-            inventoryID = Templates.addInventory(entityID, templateID);
-        }
+        if (inventoryID == 0) inventoryID = Templates.addInventory(entityID, templateID);
 
         // Fetch balance
         uint256 balance = ECSLib.getUint("Amount", inventoryID);
@@ -774,10 +774,14 @@ library GameLib {
         require(getPermission(_functionName, _ownerID, _callerID) != 0, string.concat("CURIO: Not permitted to call ", _functionName));
     }
 
-    function treatyApprovalCheck(string memory _functionName, uint256 _nationID) internal {
+    function treatyApprovalCheck(
+        string memory _functionName,
+        uint256 _nationID,
+        bytes memory _encodedParams
+    ) internal {
         address[] memory treatyAddresses = getSignedTreatyAddresses(_nationID);
         for (uint256 i; i < treatyAddresses.length; i++) {
-            (bool success, bytes memory data) = treatyAddresses[i].call(abi.encodeWithSignature(string.concat("approve", _functionName, "(uint256)"), _nationID));
+            (bool success, bytes memory data) = treatyAddresses[i].call(abi.encodeWithSignature(string.concat("approve", _functionName, "(uint256,bytes)"), _nationID, _encodedParams));
             require(success, "CURIO: Treaty approval check failed");
             bool approved = abi.decode(data, (bool));
             require(approved, string.concat("CURIO: Treaty disapproved ", _functionName));

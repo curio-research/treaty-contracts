@@ -201,6 +201,7 @@ library Templates {
         ECSLib.setString("Tag", signatureID, "Signature");
         ECSLib.setUint("Treaty", signatureID, _treatyID);
         ECSLib.setUint("Nation", signatureID, _nationID);
+        ECSLib.setUint("InitTimestamp", signatureID, block.timestamp);
 
         return signatureID;
     }

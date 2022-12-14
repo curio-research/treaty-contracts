@@ -9,7 +9,7 @@ contract TestTreaty is CurioTreaty {
         name = "Test Treaty";
     }
 
-    function approveUpgradeCapital(uint256 _nationID) public pure override returns (bool) {
+    function approveUpgradeCapital(uint256 _nationID, bytes memory _encodedParams) public pure override returns (bool) {
         return false;
     }
 }
