@@ -374,7 +374,7 @@ export interface AdminFacet extends BaseContract {
 
   functions: {
     addAuthorized(
-      authorizedAddress: PromiseOrValue<string>,
+      _tokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -544,7 +544,7 @@ export interface AdminFacet extends BaseContract {
   };
 
   addAuthorized(
-    authorizedAddress: PromiseOrValue<string>,
+    _tokenAddress: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -714,7 +714,7 @@ export interface AdminFacet extends BaseContract {
 
   callStatic: {
     addAuthorized(
-      authorizedAddress: PromiseOrValue<string>,
+      _tokenAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -879,7 +879,7 @@ export interface AdminFacet extends BaseContract {
 
   estimateGas: {
     addAuthorized(
-      authorizedAddress: PromiseOrValue<string>,
+      _tokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1050,7 +1050,7 @@ export interface AdminFacet extends BaseContract {
 
   populateTransaction: {
     addAuthorized(
-      authorizedAddress: PromiseOrValue<string>,
+      _tokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

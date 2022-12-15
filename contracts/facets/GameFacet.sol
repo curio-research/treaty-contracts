@@ -31,7 +31,7 @@ contract GameFacet is UseStorage {
         // Basic checks
         GameLib.ongoingGameCheck();
         GameLib.inboundPositionCheck(position);
-        require(gs().nations.length < gs().worldConstants.maxNationCount, "CURIO: Max nation count reached");
+        require(GameLib.getNationCount() < gs().worldConstants.maxNationCount, "CURIO: Max nation count reached");
         require(GameLib.getEntityByAddress(msg.sender) == NULL, "CURIO: Nation already initialized");
 
         // Verify that capital is not on mountain
@@ -54,7 +54,6 @@ contract GameFacet is UseStorage {
 
         // Register nation
         nationID = Templates.addNation(_name, msg.sender);
-        gs().nations.push(msg.sender);
 
         // Found capital
         address capitalAddress = address(new CurioWallet(address(this)));
@@ -454,7 +453,7 @@ contract GameFacet is UseStorage {
 
         // Army cannot move in enemy territory
         uint256 tileID = GameLib.getTileAt(tilePosition);
-        GameLib.neutralOrOpenTileCheck(tileID, nationID);
+        GameLib.neutralOrOwnedTileCheck(tileID, nationID);
 
         // Verify no gather
         require(GameLib.getArmyGather(_armyID) == NULL, "CURIO: Need to end gather first");
@@ -596,7 +595,7 @@ contract GameFacet is UseStorage {
 
         // Verify that resource is not in another nation's territory
         uint256 tileID = GameLib.getTileAt(startPosition);
-        GameLib.neutralOrOpenTileCheck(tileID, ECSLib.getUint("Nation", _armyID));
+        GameLib.neutralOrOwnedTileCheck(tileID, ECSLib.getUint("Nation", _armyID));
 
         // Cannot gather twice
         require(GameLib.getArmyGather(_armyID) == NULL, "CURIO: Must finish existing gather first");

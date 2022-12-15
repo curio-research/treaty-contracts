@@ -147,8 +147,8 @@ contract DiamondDeployTest is Test {
         warriorToken = new CurioERC20("Warrior", "WARRIOR", 0, address(diamond));
         slingerToken = new CurioERC20("Slinger", "SLINGER", 0, address(diamond));
         guardToken = new CurioERC20("Guard", "GUARD", 0, address(diamond));
-        admin.addAuthorized(address(foodToken));
         admin.addAuthorized(address(goldToken));
+        admin.addAuthorized(address(foodToken));
         admin.addAuthorized(address(horsemanToken));
         admin.addAuthorized(address(warriorToken));
         admin.addAuthorized(address(slingerToken));

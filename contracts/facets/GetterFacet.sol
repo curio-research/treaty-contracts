@@ -105,7 +105,7 @@ contract GetterFacet is UseStorage {
     }
 
     function getMainBurnerAccount(address _primaryAddress) external view returns (address) {
-        return gs().accounts[_primaryAddress];
+        return gs().mainToBurner[_primaryAddress];
     }
 
     function getCapital(uint256 _nationID) external view returns (uint256) {
@@ -141,7 +141,7 @@ contract GetterFacet is UseStorage {
     }
 
     function getPlayerCount() external view returns (uint256) {
-        return gs().nations.length;
+        return GameLib.getNationCount();
     }
 
     function getDistanceByAddresses(address _addr1, address _addr2) external view returns (uint256) {
@@ -181,8 +181,7 @@ contract GetterFacet is UseStorage {
     }
 
     function getEntity() external view returns (uint256) {
-        Set _entities = Set(gs().entities);
-        return _entities.size();
+        return Set(gs().entities).size();
     }
 
     function getEntities() external view returns (uint256[] memory) {

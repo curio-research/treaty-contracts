@@ -78,26 +78,29 @@ struct WorldConstants {
 }
 
 struct GameState {
+    // Basic
     bool isPaused;
     uint256 lastPaused;
     uint256 gameInitTimestamp;
     WorldConstants worldConstants;
     uint256[][] encodedColumnBatches;
-    address[] nations;
-    address[] treaties;
+    // Functions
     string[] gameFunctionNames;
     mapping(string => bool) isGameFunction;
-    address entities; // set
-    uint256 entityNonce;
-    uint256 tileNonce;
-    uint256 walletNonce;
+    // Entities
+    address entities;
+    uint256 entityNonce; // tracks the biggest entity ever created to avoid collisions
+    // Components
     string[] componentNames;
-    mapping(string => address) components; // component name to contract address
+    mapping(string => address) components; // component name -> component address
+    // Templates
     string[] templateNames;
-    address[] authorized;
-    mapping(address => bool) isAuthorized; // authorized token contracts
-    mapping(string => uint256) templates; // template name to id
-    mapping(uint256 => address) componentEntityToAddress; // component id to contract address
-    mapping(address => address) accounts; // main address -> burner address
-    mapping(address => address) burnerAccounts; // burner address -> main address
+    mapping(string => uint256) templates; // template name -> template id
+    // Tokens
+    address[] authorizedTokens;
+    mapping(address => bool) isAuthorizedToken;
+    // Accounts
+    mapping(address => address) mainToBurner; // main address -> burner address
+    mapping(address => address) burnerToMain; // burner address -> main address
+    uint256 addressNonce; // used for generating tile addresses
 }

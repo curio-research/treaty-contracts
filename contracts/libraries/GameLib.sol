@@ -58,7 +58,6 @@ library GameLib {
             // Record identifier entity for component
             uint256 componentID = ECSLib.addEntity();
             ECSLib.setBool("IsComponent", componentID);
-            gs().componentEntityToAddress[componentID] = addr;
 
             gs().componentNames.push(spec.name);
 
@@ -73,8 +72,8 @@ library GameLib {
             if (tileID != 0) return tileID;
         }
 
+        // Generate tile address
         address tileAddress = generateNewAddress();
-        gs().tileNonce++;
 
         // Load constants
         uint256 numInitTerrainTypes = gs().worldConstants.numInitTerrainTypes;
@@ -415,7 +414,7 @@ library GameLib {
         } else if (strEq(entityTag, "Treaty")) {
             load = 2**256 - 1;
         } else {
-            revert("CURIO: Unsupported keeper");
+            revert(string.concat("CURIO: Unsupported keeper '", entityTag, "'"));
         }
 
         // Fetch inventoryID, and create if not found
@@ -686,9 +685,13 @@ library GameLib {
         return res.length == 1 ? res[0] : 0;
     }
 
+    function getNationCount() internal view returns (uint256) {
+        return ECSLib.getStringComponent("Tag").getEntitiesWithValue(string("Nation")).length;
+    }
+
     function generateNewAddress() internal returns (address) {
-        address newAddress = address(uint160(uint256(keccak256(abi.encodePacked(gs().walletNonce, block.timestamp, block.difficulty)))));
-        gs().walletNonce++;
+        address newAddress = address(uint160(uint256(keccak256(abi.encodePacked(gs().addressNonce, block.timestamp, block.difficulty)))));
+        gs().addressNonce++;
         return newAddress;
     }
 
@@ -794,10 +797,9 @@ library GameLib {
         require(Set(gs().entities).includes(_entity), "CURIO: Entity object not found");
     }
 
-    function neutralOrOpenTileCheck(uint256 _tileID, uint256 _nationID) internal view {
+    function neutralOrOwnedTileCheck(uint256 _tileID, uint256 _nationID) internal view {
         uint256 tileNationID = ECSLib.getUint("Nation", _tileID);
-        if (tileNationID == 0) return;
-        require(includes(_nationID, ECSLib.getUintArray("OpenNations", tileNationID)), "CURIO: Tile not neutral or open");
+        require(tileNationID == 0 || tileNationID == _nationID, "CURIO: Tile not neutral or owned");
     }
 
     function inboundPositionCheck(Position memory _position) internal view {

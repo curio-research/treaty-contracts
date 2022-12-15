@@ -22,7 +22,7 @@ contract AdminFacet is UseStorage {
     }
 
     modifier onlyAuthorized() {
-        require(msg.sender == gs().worldConstants.admin || gs().isAuthorized[msg.sender] == true, "CURIO: Only admin or authorized token can call");
+        require(msg.sender == gs().worldConstants.admin || gs().isAuthorizedToken[msg.sender] == true, "CURIO: Only admin or authorized token can call");
         _;
     }
 
@@ -32,9 +32,9 @@ contract AdminFacet is UseStorage {
         _;
     }
 
-    function addAuthorized(address authorizedAddress) external onlyAdmin {
-        gs().authorized.push(authorizedAddress);
-        gs().isAuthorized[authorizedAddress] = true;
+    function addAuthorized(address _tokenAddress) external onlyAdmin {
+        gs().authorizedTokens.push(_tokenAddress);
+        gs().isAuthorizedToken[_tokenAddress] = true;
     }
 
     // Question: How to reuse functions from Util so that they can be directly called by external parties?
@@ -126,10 +126,10 @@ contract AdminFacet is UseStorage {
         ECSLib.setUint("Nation", resourceID, _nationID);
     }
 
-    // sent using the initial function
+    /// @dev Link a player's main account and burner account
     function authorizeGame(address _burnerAddress) external onlyAuthorized {
-        gs().accounts[msg.sender] = _burnerAddress;
-        gs().burnerAccounts[_burnerAddress] = msg.sender;
+        gs().mainToBurner[msg.sender] = _burnerAddress;
+        gs().burnerToMain[_burnerAddress] = msg.sender;
     }
 
     /**

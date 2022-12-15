@@ -27,17 +27,17 @@ library ECSLib {
     // ----------------------------------------------------------
 
     function _getComponent(string memory _name) public view returns (Component) {
-        address _componentAddr = gs().components[_name];
-        require(_componentAddr != address(0), string(abi.encodePacked("CURIO: Component ", _name, " not found")));
+        address componentAddr = gs().components[_name];
+        require(componentAddr != address(0), string(abi.encodePacked("CURIO: Component ", _name, " not found")));
 
-        return Component(_componentAddr);
+        return Component(componentAddr);
     }
 
     function getComponentByEntity(uint256 _entity) public view returns (Component) {
-        address _componentAddr = gs().componentEntityToAddress[_entity];
-        require(_componentAddr != address(0), string(abi.encodePacked("CURIO: Component with id ", _entity, " not found")));
+        address componentAddr = getAddress("Address", _entity);
+        require(componentAddr != address(0), string(abi.encodePacked("CURIO: Component with id ", _entity, " not found")));
 
-        return Component(_componentAddr);
+        return Component(componentAddr);
     }
 
     function addComponent(string memory _name, ValueType _valueType) public {
@@ -45,31 +45,31 @@ library ECSLib {
     }
 
     function addEntity() public returns (uint256) {
-        Set _entities = Set(gs().entities);
-        uint256 _newEntity = gs().entityNonce;
-        _entities.add(_newEntity);
+        Set entities = Set(gs().entities);
+        uint256 newEntity = gs().entityNonce;
+        entities.add(newEntity);
 
         gs().entityNonce++;
 
-        emit NewEntity(_newEntity);
-        return _newEntity;
+        emit NewEntity(newEntity);
+        return newEntity;
     }
 
     // FIXME: remove over all components, or remove over components which the entity has? One more general, the other more efficient.
     function removeEntity(uint256 _entity) public {
-        Set _entities = Set(gs().entities);
-        _entities.remove(_entity);
+        Set entities = Set(gs().entities);
+        entities.remove(_entity);
 
-        string[] memory _componentNames = gs().componentNames;
-        for (uint256 i = 0; i < _componentNames.length; i++) {
-            Component _component = _getComponent(gs().componentNames[i]);
-            _component.remove(_entity);
+        string[] memory componentNames = gs().componentNames;
+        for (uint256 i = 0; i < componentNames.length; i++) {
+            Component component = _getComponent(gs().componentNames[i]);
+            component.remove(_entity);
         }
 
         emit EntityRemoved(_entity);
     }
 
-    function _getComponentValue(string memory _componentName, uint256 _entity) public view returns (bytes memory) {
+    function getComponentValue(string memory _componentName, uint256 _entity) public view returns (bytes memory) {
         return _getComponent(_componentName).getBytesValue(_entity);
     }
 
