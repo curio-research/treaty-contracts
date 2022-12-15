@@ -24,7 +24,7 @@ export const deployProxy = async <C extends Contract>(contractName: string, sign
 
   await confirmTx(contract.deployTransaction, hre);
 
-  console.log(`✦ ${contractName}: `, contract.address);
+  console.log(chalk.dim(`✦ ${contractName}: `, contract.address));
 
   return contract as C;
 };
@@ -141,7 +141,7 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
     'HarvestResourcesFromCapital',
     'UpgradeResource',
     'Battle',
-    'DelegateGameFunction', // DO NOT REMOVE THIS COMMENT
+    'DelegateGameFunction', // STYLE: DO NOT REMOVE THIS COMMENT
   ];
   await confirmTx(await diamond.registerFunctionNames(functionNames, { gasLimit }), hre);
   console.log(`✦ Function name registration took ${Math.floor(performance.now() - startTime)} ms`);
@@ -202,7 +202,7 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
     })
   );
   startTime = performance.now();
-  const bulkTileUploadSize = 100;
+  const bulkTileUploadSize = 10;
   for (let i = 0; i < allTilePositions.length; i += bulkTileUploadSize) {
     console.log(chalk.dim(`✦ Initializing special tiles ${i} to ${i + bulkTileUploadSize}`));
     await confirmTx(await diamond.bulkInitializeTiles(allTilePositions.slice(i, i + bulkTileUploadSize), { gasLimit }), hre);
@@ -211,11 +211,16 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
 
   // Deploy treaties
   startTime = performance.now();
-  const treatyNames = ['FTX', 'NATO'];
+  const treatyNames = ['FTX', 'NATO', 'Alliance'];
   for (const name of treatyNames) {
     await deployTreaty(name, admin, hre, diamond, gasLimit);
+    await sleep(1000);
   }
   console.log(`✦ Treaty deployment took ${Math.floor(performance.now() - startTime)} ms`);
 
   return diamond;
+};
+
+const sleep = async (timeInMs: number) => {
+  return new Promise((resolve) => setTimeout(resolve, timeInMs));
 };

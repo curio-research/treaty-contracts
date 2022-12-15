@@ -21,21 +21,15 @@ contract GameFacet is UseStorage {
     // NATION/CAPITAL
     // ----------------------------------------------------------
 
-    function initializeNation(
-        uint256 _positionX,
-        uint256 _positionY,
-        string memory _name
-    ) external returns (uint256 nationID) {
-        Position memory position = Position({x: _positionX, y: _positionY});
-
+    function initializeNation(Position memory _position, string memory _name) external returns (uint256 nationID) {
         // Basic checks
         GameLib.ongoingGameCheck();
-        GameLib.inboundPositionCheck(position);
+        GameLib.inboundPositionCheck(_position);
         require(GameLib.getNationCount() < gs().worldConstants.maxNationCount, "CURIO: Max nation count reached");
         require(GameLib.getEntityByAddress(msg.sender) == NULL, "CURIO: Nation already initialized");
 
         // Verify that capital is not on mountain
-        Position memory tilePosition = GameLib.getProperTilePosition(position);
+        Position memory tilePosition = GameLib.getProperTilePosition(_position);
         uint256 tileID = GameLib.getTileAt(tilePosition);
         GameLib.passableTerrainCheck(tilePosition);
 
@@ -426,27 +420,21 @@ contract GameFacet is UseStorage {
     // ARMY
     // ----------------------------------------------------------
 
-    function move(
-        uint256 _armyID,
-        uint256 _targetX,
-        uint256 _targetY
-    ) external {
-        Position memory targetPosition = Position({x: _targetX, y: _targetY});
-
+    function move(uint256 _armyID, Position memory _targetPosition) external {
         // Basic checks
         GameLib.ongoingGameCheck();
         GameLib.validEntityCheck(_armyID);
-        GameLib.inboundPositionCheck(targetPosition);
+        GameLib.inboundPositionCheck(_targetPosition);
         uint256 nationID = ECSLib.getUint("Nation", _armyID);
         GameLib.nationDelegationCheck("Move", nationID, GameLib.getEntityByAddress(msg.sender));
-        GameLib.treatyApprovalCheck("Move", nationID, abi.encode(_armyID, targetPosition));
+        GameLib.treatyApprovalCheck("Move", nationID, abi.encode(_armyID, _targetPosition));
 
         // Check terrain
-        Position memory tilePosition = GameLib.getProperTilePosition(targetPosition);
+        Position memory tilePosition = GameLib.getProperTilePosition(_targetPosition);
         GameLib.passableTerrainCheck(tilePosition);
 
         // Verify no other movable entity at exact destination coordinate
-        require(GameLib.getMovableEntityAt(targetPosition) == NULL, "CURIO: Destination occupied by a unit");
+        require(GameLib.getMovableEntityAt(_targetPosition) == NULL, "CURIO: Destination occupied by a unit");
 
         // Check movement cooldown
         require(block.timestamp >= ECSLib.getUint("LastMoved", _armyID) + ECSLib.getUint("MoveCooldown", _armyID), "CURIO: Moved too recently");
@@ -459,11 +447,11 @@ contract GameFacet is UseStorage {
         require(GameLib.getArmyGather(_armyID) == NULL, "CURIO: Need to end gather first");
 
         // Calculate distance
-        uint256 distance = GameLib.euclidean(ECSLib.getPosition("Position", _armyID), targetPosition);
+        uint256 distance = GameLib.euclidean(ECSLib.getPosition("Position", _armyID), _targetPosition);
         require(distance <= ECSLib.getUint("Speed", _armyID), "CURIO: Not enough movement points");
 
         // Move and update moveCooldown
-        ECSLib.setPosition("Position", _armyID, targetPosition);
+        ECSLib.setPosition("Position", _armyID, _targetPosition);
         ECSLib.setPosition("StartPosition", _armyID, tilePosition);
         ECSLib.setUint("LastMoved", _armyID, block.timestamp);
     }

@@ -45,8 +45,8 @@ export interface GameFacetInterface extends utils.Interface {
     "harvestResource(uint256)": FunctionFragment;
     "harvestResources(uint256[])": FunctionFragment;
     "harvestResourcesFromCapital(uint256)": FunctionFragment;
-    "initializeNation(uint256,uint256,string)": FunctionFragment;
-    "move(uint256,uint256,uint256)": FunctionFragment;
+    "initializeNation((uint256,uint256),string)": FunctionFragment;
+    "move(uint256,(uint256,uint256))": FunctionFragment;
     "moveCapital(uint256,(uint256,uint256))": FunctionFragment;
     "organizeArmy(uint256,uint256[],uint256[])": FunctionFragment;
     "recoverTile(uint256)": FunctionFragment;
@@ -130,19 +130,11 @@ export interface GameFacetInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "initializeNation",
-    values: [
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<string>
-    ]
+    values: [PositionStruct, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "move",
-    values: [
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>
-    ]
+    values: [PromiseOrValue<BigNumberish>, PositionStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "moveCapital",
@@ -345,16 +337,14 @@ export interface GameFacet extends BaseContract {
     ): Promise<ContractTransaction>;
 
     initializeNation(
-      _positionX: PromiseOrValue<BigNumberish>,
-      _positionY: PromiseOrValue<BigNumberish>,
+      _position: PositionStruct,
       _name: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     move(
       _armyID: PromiseOrValue<BigNumberish>,
-      _targetX: PromiseOrValue<BigNumberish>,
-      _targetY: PromiseOrValue<BigNumberish>,
+      _targetPosition: PositionStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -466,16 +456,14 @@ export interface GameFacet extends BaseContract {
   ): Promise<ContractTransaction>;
 
   initializeNation(
-    _positionX: PromiseOrValue<BigNumberish>,
-    _positionY: PromiseOrValue<BigNumberish>,
+    _position: PositionStruct,
     _name: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   move(
     _armyID: PromiseOrValue<BigNumberish>,
-    _targetX: PromiseOrValue<BigNumberish>,
-    _targetY: PromiseOrValue<BigNumberish>,
+    _targetPosition: PositionStruct,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -587,16 +575,14 @@ export interface GameFacet extends BaseContract {
     ): Promise<void>;
 
     initializeNation(
-      _positionX: PromiseOrValue<BigNumberish>,
-      _positionY: PromiseOrValue<BigNumberish>,
+      _position: PositionStruct,
       _name: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     move(
       _armyID: PromiseOrValue<BigNumberish>,
-      _targetX: PromiseOrValue<BigNumberish>,
-      _targetY: PromiseOrValue<BigNumberish>,
+      _targetPosition: PositionStruct,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -711,16 +697,14 @@ export interface GameFacet extends BaseContract {
     ): Promise<BigNumber>;
 
     initializeNation(
-      _positionX: PromiseOrValue<BigNumberish>,
-      _positionY: PromiseOrValue<BigNumberish>,
+      _position: PositionStruct,
       _name: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     move(
       _armyID: PromiseOrValue<BigNumberish>,
-      _targetX: PromiseOrValue<BigNumberish>,
-      _targetY: PromiseOrValue<BigNumberish>,
+      _targetPosition: PositionStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -833,16 +817,14 @@ export interface GameFacet extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     initializeNation(
-      _positionX: PromiseOrValue<BigNumberish>,
-      _positionY: PromiseOrValue<BigNumberish>,
+      _position: PositionStruct,
       _name: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     move(
       _armyID: PromiseOrValue<BigNumberish>,
-      _targetX: PromiseOrValue<BigNumberish>,
-      _targetY: PromiseOrValue<BigNumberish>,
+      _targetPosition: PositionStruct,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

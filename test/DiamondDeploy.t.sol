@@ -180,15 +180,15 @@ contract DiamondDeployTest is Test {
 
         // Initialize players
         vm.prank(player1);
-        nation1ID = game.initializeNation(nation1Pos.x, nation1Pos.y, "China");
+        nation1ID = game.initializeNation(nation1Pos, "China");
         nation1CapitalID = getter.getCapital(nation1ID);
         nation1CapitalAddr = getter.getAddress(nation1CapitalID);
         vm.prank(player2);
-        nation2ID = game.initializeNation(nation2Pos.x, nation2Pos.y, "US");
+        nation2ID = game.initializeNation(nation2Pos, "US");
         nation2CapitalID = getter.getCapital(nation2ID);
         nation2CapitalAddr = getter.getAddress(nation2CapitalID);
         vm.prank(player3);
-        nation3ID = game.initializeNation(nation3Pos.x, nation3Pos.y, "Russia");
+        nation3ID = game.initializeNation(nation3Pos, "Russia");
         nation3CapitalID = getter.getCapital(nation3ID);
         nation3CapitalAddr = getter.getAddress(nation3CapitalID);
         console.log(">>> Nations initialized");

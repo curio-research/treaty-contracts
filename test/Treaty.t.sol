@@ -6,6 +6,7 @@ import {DiamondDeployTest} from "test/DiamondDeploy.t.sol";
 import {FTX} from "contracts/treaties/FTX.sol";
 import {TestTreaty} from "contracts/treaties/TestTreaty.sol";
 import {CurioWallet} from "contracts/CurioWallet.sol";
+import {Position} from "contracts/libraries/Types.sol";
 import {console} from "forge-std/console.sol";
 
 contract TreatyTest is Test, DiamondDeployTest {
@@ -105,7 +106,7 @@ contract TreatyTest is Test, DiamondDeployTest {
         for (uint256 i = 1; i <= 9; i++) {
             time += 1;
             vm.warp(time);
-            game.move(army11ID, 62, 11 + 2 * i);
+            game.move(army11ID, Position({x: 62, y: 11 + 2 * i}));
         }
         vm.stopPrank();
 
@@ -178,28 +179,28 @@ contract TreatyTest is Test, DiamondDeployTest {
         // Nation 3 moves army from (52, 22) to (59, 31)
         time += 1;
         vm.warp(time);
-        game.move(army31ID, 53, 23);
+        game.move(army31ID, Position({x: 53, y: 23}));
         time += 1;
         vm.warp(time);
-        game.move(army31ID, 54, 24);
+        game.move(army31ID, Position({x: 54, y: 24}));
         time += 1;
         vm.warp(time);
-        game.move(army31ID, 55, 25);
+        game.move(army31ID, Position({x: 55, y: 25}));
         time += 1;
         vm.warp(time);
-        game.move(army31ID, 56, 26);
+        game.move(army31ID, Position({x: 56, y: 26}));
         time += 1;
         vm.warp(time);
-        game.move(army31ID, 57, 27);
+        game.move(army31ID, Position({x: 57, y: 27}));
         time += 1;
         vm.warp(time);
-        game.move(army31ID, 58, 28);
+        game.move(army31ID, Position({x: 58, y: 28}));
         time += 1;
         vm.warp(time);
-        game.move(army31ID, 59, 29);
+        game.move(army31ID, Position({x: 59, y: 29}));
         time += 1;
         vm.warp(time);
-        game.move(army31ID, 59, 31);
+        game.move(army31ID, Position({x: 59, y: 31}));
         vm.stopPrank();
 
         // Nation 1 accidentally tries to let Alliance besiege Nation 3's army, but luckily fails

@@ -112,13 +112,13 @@ contract GameTest is Test, DiamondDeployTest {
 
         vm.warp(time + 10);
         time += 10;
-        game.move(army11ID, 63, 13);
+        game.move(army11ID, Position({x: 63, y: 13}));
         assertEq(getter.getPositionExternal("Position", army11ID).x, 63);
         assertEq(getter.getPositionExternal("Position", army11ID).y, 13);
 
         vm.warp(time + 10);
         time += 10;
-        game.move(army11ID, 62, 12);
+        game.move(army11ID, Position({x: 62, y: 12}));
 
         vm.warp(time + 10);
         time += 10;
@@ -170,19 +170,19 @@ contract GameTest is Test, DiamondDeployTest {
         // Nation 1 move army
         vm.warp(time + 10);
         time += 10;
-        game.move(army11ID, 60, 12);
+        game.move(army11ID, Position({x: 60, y: 12}));
 
         vm.warp(time + 10);
         time += 10;
-        game.move(army11ID, 60, 14);
+        game.move(army11ID, Position({x: 60, y: 14}));
 
         vm.warp(time + 10);
         time += 10;
-        game.move(army11ID, 60, 16);
+        game.move(army11ID, Position({x: 60, y: 16}));
 
         vm.warp(time + 10);
         time += 10;
-        game.move(army11ID, 60, 18);
+        game.move(army11ID, Position({x: 60, y: 18}));
 
         vm.stopPrank();
 
@@ -198,23 +198,23 @@ contract GameTest is Test, DiamondDeployTest {
 
         vm.warp(time + 10);
         time += 10;
-        game.move(army21ID, 60, 30);
+        game.move(army21ID, Position({x: 60, y: 30}));
 
         vm.warp(time + 10);
         time += 10;
-        game.move(army21ID, 60, 28);
+        game.move(army21ID, Position({x: 60, y: 28}));
 
         vm.warp(time + 10);
         time += 10;
-        game.move(army21ID, 60, 26);
+        game.move(army21ID, Position({x: 60, y: 26}));
 
         vm.warp(time + 10);
         time += 10;
-        game.move(army21ID, 60, 24);
+        game.move(army21ID, Position({x: 60, y: 24}));
 
         vm.warp(time + 10);
         time += 10;
-        game.move(army21ID, 60, 22);
+        game.move(army21ID, Position({x: 60, y: 22}));
 
         vm.stopPrank();
 
@@ -279,11 +279,11 @@ contract GameTest is Test, DiamondDeployTest {
 
         vm.warp(time + 10);
         time += 10;
-        game.move(army11ID, 60, 10);
+        game.move(army11ID, Position({x: 60, y: 10}));
 
         vm.warp(time + 10);
         time += 10;
-        game.move(army11ID, 60, 8);
+        game.move(army11ID, Position({x: 60, y: 8}));
 
         vm.warp(time + 10);
         time += 10;
@@ -349,7 +349,7 @@ contract GameTest is Test, DiamondDeployTest {
         for (uint256 i = 1; i <= 9; i++) {
             time += 1;
             vm.warp(time);
-            game.move(army11ID, 62, 11 + 2 * i);
+            game.move(army11ID, Position({x: 62, y: 11 + 2 * i}));
         }
 
         // Nation 1 attacks Nation 2's capital
@@ -443,11 +443,11 @@ contract GameTest is Test, DiamondDeployTest {
 
         vm.warp(time + 10);
         time += 10;
-        game.move(army11ID, 60, 10);
+        game.move(army11ID, Position({x: 60, y: 10}));
 
         vm.warp(time + 10);
         time += 10;
-        game.move(army11ID, 60, 8);
+        game.move(army11ID, Position({x: 60, y: 8}));
 
         vm.warp(time + 10);
         time += 10;
@@ -464,11 +464,11 @@ contract GameTest is Test, DiamondDeployTest {
 
         vm.warp(time + 10);
         time += 10;
-        game.move(army11ID, 60, 10);
+        game.move(army11ID, Position({x: 60, y: 10}));
 
         vm.warp(time + 10);
         time += 10;
-        game.move(army11ID, 60, 12);
+        game.move(army11ID, Position({x: 60, y: 12}));
         game.unloadResources(army11ID);
         assertEq(foodToken.checkBalanceOf(army11Addr), 0);
         assertEq(foodToken.checkBalanceOf(nation1CapitalAddr), armyFoodBalance);
@@ -557,7 +557,7 @@ contract GameTest is Test, DiamondDeployTest {
         for (uint256 i = 1; i <= 9; i++) {
             time += 1;
             vm.warp(time);
-            game.move(army21ID, 62, 31 + 2 * i);
+            game.move(army21ID, Position({x: 62, y: 31 + 2 * i}));
         }
         vm.stopPrank();
 
