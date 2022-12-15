@@ -51,12 +51,14 @@ export interface AdminFacetInterface extends utils.Interface {
     "addGameParameter(string,uint256)": FunctionFragment;
     "addInventory(uint256,string)": FunctionFragment;
     "addResourceTemplate(string,address)": FunctionFragment;
+    "addSigner(uint256)": FunctionFragment;
     "addTreaty(address,string,string)": FunctionFragment;
     "addTroopTemplate(string,uint256,uint256,uint256,uint256,address)": FunctionFragment;
     "adminInitializeTile((uint256,uint256))": FunctionFragment;
     "authorizeGame(address)": FunctionFragment;
     "bulkAddGameParameters(string[],uint256[])": FunctionFragment;
     "bulkInitializeTiles((uint256,uint256)[])": FunctionFragment;
+    "delegateGameFunction(uint256,string,bool)": FunctionFragment;
     "dripToken(address,string,uint256)": FunctionFragment;
     "generateNewAddress()": FunctionFragment;
     "giftTileAndResourceAt((uint256,uint256),uint256)": FunctionFragment;
@@ -64,8 +66,10 @@ export interface AdminFacetInterface extends utils.Interface {
     "onlySet(uint256,uint256)": FunctionFragment;
     "reactivateNation(address)": FunctionFragment;
     "registerComponents(address,(string,uint8)[])": FunctionFragment;
+    "registerFunctionNames(string[])": FunctionFragment;
     "registerTemplateShortcuts(string[],uint256[])": FunctionFragment;
     "removeEntity(uint256)": FunctionFragment;
+    "removeSigner(uint256)": FunctionFragment;
     "setComponentValue(string,uint256,bytes)": FunctionFragment;
     "spawnResource((uint256,uint256),string)": FunctionFragment;
     "stopGame()": FunctionFragment;
@@ -81,12 +85,14 @@ export interface AdminFacetInterface extends utils.Interface {
       | "addGameParameter"
       | "addInventory"
       | "addResourceTemplate"
+      | "addSigner"
       | "addTreaty"
       | "addTroopTemplate"
       | "adminInitializeTile"
       | "authorizeGame"
       | "bulkAddGameParameters"
       | "bulkInitializeTiles"
+      | "delegateGameFunction"
       | "dripToken"
       | "generateNewAddress"
       | "giftTileAndResourceAt"
@@ -94,8 +100,10 @@ export interface AdminFacetInterface extends utils.Interface {
       | "onlySet"
       | "reactivateNation"
       | "registerComponents"
+      | "registerFunctionNames"
       | "registerTemplateShortcuts"
       | "removeEntity"
+      | "removeSigner"
       | "setComponentValue"
       | "spawnResource"
       | "stopGame"
@@ -120,6 +128,10 @@ export interface AdminFacetInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "addResourceTemplate",
     values: [PromiseOrValue<string>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "addSigner",
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "addTreaty",
@@ -157,6 +169,14 @@ export interface AdminFacetInterface extends utils.Interface {
     values: [PositionStruct[]]
   ): string;
   encodeFunctionData(
+    functionFragment: "delegateGameFunction",
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<boolean>
+    ]
+  ): string;
+  encodeFunctionData(
     functionFragment: "dripToken",
     values: [
       PromiseOrValue<string>,
@@ -189,11 +209,19 @@ export interface AdminFacetInterface extends utils.Interface {
     values: [PromiseOrValue<string>, ComponentSpecStruct[]]
   ): string;
   encodeFunctionData(
+    functionFragment: "registerFunctionNames",
+    values: [PromiseOrValue<string>[]]
+  ): string;
+  encodeFunctionData(
     functionFragment: "registerTemplateShortcuts",
     values: [PromiseOrValue<string>[], PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(
     functionFragment: "removeEntity",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "removeSigner",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -236,6 +264,7 @@ export interface AdminFacetInterface extends utils.Interface {
     functionFragment: "addResourceTemplate",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "addSigner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "addTreaty", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "addTroopTemplate",
@@ -255,6 +284,10 @@ export interface AdminFacetInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "bulkInitializeTiles",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "delegateGameFunction",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "dripToken", data: BytesLike): Result;
@@ -277,11 +310,19 @@ export interface AdminFacetInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "registerFunctionNames",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "registerTemplateShortcuts",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "removeEntity",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "removeSigner",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -333,7 +374,7 @@ export interface AdminFacet extends BaseContract {
 
   functions: {
     addAuthorized(
-      authorizedAddress: PromiseOrValue<string>,
+      _tokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -360,6 +401,11 @@ export interface AdminFacet extends BaseContract {
     addResourceTemplate(
       _inventoryType: PromiseOrValue<string>,
       _tokenContract: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    addSigner(
+      _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -398,6 +444,13 @@ export interface AdminFacet extends BaseContract {
 
     bulkInitializeTiles(
       _positions: PositionStruct[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    delegateGameFunction(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _functionName: PromiseOrValue<string>,
+      _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -440,6 +493,11 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    registerFunctionNames(
+      _functionNames: PromiseOrValue<string>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     registerTemplateShortcuts(
       _names: PromiseOrValue<string>[],
       _IDs: PromiseOrValue<BigNumberish>[],
@@ -448,6 +506,11 @@ export interface AdminFacet extends BaseContract {
 
     removeEntity(
       _entity: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    removeSigner(
+      _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -481,7 +544,7 @@ export interface AdminFacet extends BaseContract {
   };
 
   addAuthorized(
-    authorizedAddress: PromiseOrValue<string>,
+    _tokenAddress: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -508,6 +571,11 @@ export interface AdminFacet extends BaseContract {
   addResourceTemplate(
     _inventoryType: PromiseOrValue<string>,
     _tokenContract: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  addSigner(
+    _nationID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -546,6 +614,13 @@ export interface AdminFacet extends BaseContract {
 
   bulkInitializeTiles(
     _positions: PositionStruct[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  delegateGameFunction(
+    _nationID: PromiseOrValue<BigNumberish>,
+    _functionName: PromiseOrValue<string>,
+    _canCall: PromiseOrValue<boolean>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -588,6 +663,11 @@ export interface AdminFacet extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  registerFunctionNames(
+    _functionNames: PromiseOrValue<string>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   registerTemplateShortcuts(
     _names: PromiseOrValue<string>[],
     _IDs: PromiseOrValue<BigNumberish>[],
@@ -596,6 +676,11 @@ export interface AdminFacet extends BaseContract {
 
   removeEntity(
     _entity: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  removeSigner(
+    _nationID: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -629,7 +714,7 @@ export interface AdminFacet extends BaseContract {
 
   callStatic: {
     addAuthorized(
-      authorizedAddress: PromiseOrValue<string>,
+      _tokenAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -652,6 +737,11 @@ export interface AdminFacet extends BaseContract {
     addResourceTemplate(
       _inventoryType: PromiseOrValue<string>,
       _tokenContract: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    addSigner(
+      _nationID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -690,6 +780,13 @@ export interface AdminFacet extends BaseContract {
 
     bulkInitializeTiles(
       _positions: PositionStruct[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    delegateGameFunction(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _functionName: PromiseOrValue<string>,
+      _canCall: PromiseOrValue<boolean>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -730,6 +827,11 @@ export interface AdminFacet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    registerFunctionNames(
+      _functionNames: PromiseOrValue<string>[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     registerTemplateShortcuts(
       _names: PromiseOrValue<string>[],
       _IDs: PromiseOrValue<BigNumberish>[],
@@ -738,6 +840,11 @@ export interface AdminFacet extends BaseContract {
 
     removeEntity(
       _entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    removeSigner(
+      _nationID: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -765,14 +872,14 @@ export interface AdminFacet extends BaseContract {
       _inventoryID: PromiseOrValue<BigNumberish>,
       _newAmount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
-    ): Promise<boolean>;
+    ): Promise<void>;
   };
 
   filters: {};
 
   estimateGas: {
     addAuthorized(
-      authorizedAddress: PromiseOrValue<string>,
+      _tokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -799,6 +906,11 @@ export interface AdminFacet extends BaseContract {
     addResourceTemplate(
       _inventoryType: PromiseOrValue<string>,
       _tokenContract: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    addSigner(
+      _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -837,6 +949,13 @@ export interface AdminFacet extends BaseContract {
 
     bulkInitializeTiles(
       _positions: PositionStruct[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    delegateGameFunction(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _functionName: PromiseOrValue<string>,
+      _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -879,6 +998,11 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    registerFunctionNames(
+      _functionNames: PromiseOrValue<string>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     registerTemplateShortcuts(
       _names: PromiseOrValue<string>[],
       _IDs: PromiseOrValue<BigNumberish>[],
@@ -887,6 +1011,11 @@ export interface AdminFacet extends BaseContract {
 
     removeEntity(
       _entity: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    removeSigner(
+      _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -921,7 +1050,7 @@ export interface AdminFacet extends BaseContract {
 
   populateTransaction: {
     addAuthorized(
-      authorizedAddress: PromiseOrValue<string>,
+      _tokenAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -948,6 +1077,11 @@ export interface AdminFacet extends BaseContract {
     addResourceTemplate(
       _inventoryType: PromiseOrValue<string>,
       _tokenContract: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    addSigner(
+      _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -986,6 +1120,13 @@ export interface AdminFacet extends BaseContract {
 
     bulkInitializeTiles(
       _positions: PositionStruct[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    delegateGameFunction(
+      _nationID: PromiseOrValue<BigNumberish>,
+      _functionName: PromiseOrValue<string>,
+      _canCall: PromiseOrValue<boolean>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1028,6 +1169,11 @@ export interface AdminFacet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    registerFunctionNames(
+      _functionNames: PromiseOrValue<string>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     registerTemplateShortcuts(
       _names: PromiseOrValue<string>[],
       _IDs: PromiseOrValue<BigNumberish>[],
@@ -1036,6 +1182,11 @@ export interface AdminFacet extends BaseContract {
 
     removeEntity(
       _entity: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    removeSigner(
+      _nationID: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -50,13 +50,13 @@ export type QueryConditionStructOutput = [number, string, string] & {
 export interface ECSLibInterface extends utils.Interface {
   functions: {
     "_getComponent(string)": FunctionFragment;
-    "_getComponentValue(string,uint256)": FunctionFragment;
     "concatenate(uint256[],uint256[])": FunctionFragment;
     "getAddress(string,uint256)": FunctionFragment;
     "getAddressComponent(string)": FunctionFragment;
     "getBool(string,uint256)": FunctionFragment;
     "getBoolComponent(string)": FunctionFragment;
     "getComponentByEntity(uint256)": FunctionFragment;
+    "getComponentValue(string,uint256)": FunctionFragment;
     "getInt(string,uint256)": FunctionFragment;
     "getIntComponent(string)": FunctionFragment;
     "getPosition(string,uint256)": FunctionFragment;
@@ -74,13 +74,13 @@ export interface ECSLibInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "_getComponent"
-      | "_getComponentValue"
       | "concatenate"
       | "getAddress"
       | "getAddressComponent"
       | "getBool"
       | "getBoolComponent"
       | "getComponentByEntity"
+      | "getComponentValue"
       | "getInt"
       | "getIntComponent"
       | "getPosition"
@@ -98,10 +98,6 @@ export interface ECSLibInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "_getComponent",
     values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "_getComponentValue",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "concatenate",
@@ -126,6 +122,10 @@ export interface ECSLibInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "getComponentByEntity",
     values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getComponentValue",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getInt",
@@ -185,10 +185,6 @@ export interface ECSLibInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "_getComponentValue",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "concatenate",
     data: BytesLike
   ): Result;
@@ -204,6 +200,10 @@ export interface ECSLibInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getComponentByEntity",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getComponentValue",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getInt", data: BytesLike): Result;
@@ -340,12 +340,6 @@ export interface ECSLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    _getComponentValue(
-      _componentName: PromiseOrValue<string>,
-      _entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
     concatenate(
       _arr1: PromiseOrValue<BigNumberish>[],
       _arr2: PromiseOrValue<BigNumberish>[],
@@ -375,6 +369,12 @@ export interface ECSLib extends BaseContract {
     ): Promise<[string]>;
 
     getComponentByEntity(
+      _entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
+    getComponentValue(
+      _componentName: PromiseOrValue<string>,
       _entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[string]>;
@@ -452,12 +452,6 @@ export interface ECSLib extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
-  _getComponentValue(
-    _componentName: PromiseOrValue<string>,
-    _entity: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
   concatenate(
     _arr1: PromiseOrValue<BigNumberish>[],
     _arr2: PromiseOrValue<BigNumberish>[],
@@ -487,6 +481,12 @@ export interface ECSLib extends BaseContract {
   ): Promise<string>;
 
   getComponentByEntity(
+    _entity: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  getComponentValue(
+    _componentName: PromiseOrValue<string>,
     _entity: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<string>;
@@ -564,12 +564,6 @@ export interface ECSLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    _getComponentValue(
-      _componentName: PromiseOrValue<string>,
-      _entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
     concatenate(
       _arr1: PromiseOrValue<BigNumberish>[],
       _arr2: PromiseOrValue<BigNumberish>[],
@@ -599,6 +593,12 @@ export interface ECSLib extends BaseContract {
     ): Promise<string>;
 
     getComponentByEntity(
+      _entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    getComponentValue(
+      _componentName: PromiseOrValue<string>,
       _entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
@@ -711,12 +711,6 @@ export interface ECSLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    _getComponentValue(
-      _componentName: PromiseOrValue<string>,
-      _entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     concatenate(
       _arr1: PromiseOrValue<BigNumberish>[],
       _arr2: PromiseOrValue<BigNumberish>[],
@@ -746,6 +740,12 @@ export interface ECSLib extends BaseContract {
     ): Promise<BigNumber>;
 
     getComponentByEntity(
+      _entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getComponentValue(
+      _componentName: PromiseOrValue<string>,
       _entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
@@ -824,12 +824,6 @@ export interface ECSLib extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    _getComponentValue(
-      _componentName: PromiseOrValue<string>,
-      _entity: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     concatenate(
       _arr1: PromiseOrValue<BigNumberish>[],
       _arr2: PromiseOrValue<BigNumberish>[],
@@ -859,6 +853,12 @@ export interface ECSLib extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getComponentByEntity(
+      _entity: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getComponentValue(
+      _componentName: PromiseOrValue<string>,
       _entity: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

@@ -18,6 +18,7 @@ export type { treaties };
 import type * as upgradeInitializers from "./upgradeInitializers";
 export type { upgradeInitializers };
 export type { Component } from "./Component";
+export type { CurioTreaty } from "./CurioTreaty";
 export type { CurioWallet } from "./CurioWallet";
 export type { Diamond } from "./Diamond";
 export type { Set } from "./Set";

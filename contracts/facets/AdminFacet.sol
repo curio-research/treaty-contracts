@@ -17,18 +17,24 @@ contract AdminFacet is UseStorage {
     uint256 private constant NULL = 0;
 
     modifier onlyAdmin() {
-        require(msg.sender == gs().worldConstants.admin, "CURIO: Unauthorized");
+        require(msg.sender == gs().worldConstants.admin, "CURIO: Only admin can call");
         _;
     }
 
     modifier onlyAuthorized() {
-        require(msg.sender == gs().worldConstants.admin || gs().isAuthorized[msg.sender] == true, "CURIO: Unauthorized");
+        require(msg.sender == gs().worldConstants.admin || gs().isAuthorizedToken[msg.sender] == true, "CURIO: Only admin or authorized token can call");
         _;
     }
 
-    function addAuthorized(address authorizedAddress) external onlyAdmin {
-        gs().authorized.push(authorizedAddress);
-        gs().isAuthorized[authorizedAddress] = true;
+    modifier onlyTreaty() {
+        uint256 treatyID = GameLib.getEntityByAddress(msg.sender);
+        require(GameLib.strEq(ECSLib.getString("Tag", treatyID), "Treaty"), "CURIO: Only treaty can call");
+        _;
+    }
+
+    function addAuthorized(address _tokenAddress) external onlyAdmin {
+        gs().authorizedTokens.push(_tokenAddress);
+        gs().isAuthorizedToken[_tokenAddress] = true;
     }
 
     // Question: How to reuse functions from Util so that they can be directly called by external parties?
@@ -42,8 +48,51 @@ contract AdminFacet is UseStorage {
     }
 
     function onlyQuery(Position memory _startPosition) external view returns (uint256[] memory) {
-        return GameLib.getMovableEntitiesAtTile(_startPosition);
+        return GameLib.getArmiesAtTile(_startPosition);
     }
+
+    // ----------------------------------------------------------------------
+    // TREATY FUNCTIONS
+    // ----------------------------------------------------------------------
+
+    function addSigner(uint256 _nationID) external onlyTreaty returns (uint256) {
+        GameLib.ongoingGameCheck();
+        GameLib.validEntityCheck(_nationID);
+
+        uint256 treatyID = GameLib.getEntityByAddress(msg.sender);
+        uint256 signatureID = GameLib.getNationTreatySignature(_nationID, treatyID);
+        require(signatureID == NULL, "CURIO: Nation is already a signatory");
+        return Templates.addSignature(treatyID, _nationID);
+    }
+
+    function removeSigner(uint256 _nationID) external onlyTreaty {
+        GameLib.ongoingGameCheck();
+        GameLib.validEntityCheck(_nationID);
+
+        uint256 treatyID = GameLib.getEntityByAddress(msg.sender);
+        uint256 signatureID = GameLib.getNationTreatySignature(_nationID, treatyID);
+        require(signatureID != NULL, "CURIO: Nation is not a signatory");
+        ECSLib.removeEntity(signatureID);
+    }
+
+    function delegateGameFunction(
+        uint256 _nationID,
+        string memory _functionName,
+        bool _canCall
+    ) external onlyTreaty {
+        // Basic checks
+        GameLib.ongoingGameCheck();
+        GameLib.validEntityCheck(_nationID);
+        GameLib.validFunctionNameCheck(_functionName);
+
+        // Delegate function
+        uint256 treatyID = GameLib.getEntityByAddress(msg.sender);
+        GameLib.delegateGameFunction(_nationID, _functionName, treatyID, _canCall);
+    }
+
+    // ----------------------------------------------------------------------
+    // ADMIN FUNCTIONS
+    // ----------------------------------------------------------------------
 
     function stopGame() external onlyAuthorized {
         gs().worldConstants.gameLengthInSeconds = block.timestamp - gs().gameInitTimestamp;
@@ -56,10 +105,6 @@ contract AdminFacet is UseStorage {
     function adminInitializeTile(Position memory _startPosition) external onlyAuthorized {
         GameLib.initializeTile(_startPosition);
     }
-
-    // function createArmy(uint256 _nationID, Position memory _position) external onlyAuthorized {
-    //     Templates.addArmy(_nationID, _position, GameLib.getProperTilePosition(_position), 10, 1, 1, 2, 5, "TODO");
-    // }
 
     function spawnResource(Position memory _startPosition, string memory _inventoryType) external onlyAuthorized {
         Templates.addResource(gs().templates[_inventoryType], _startPosition);
@@ -81,14 +126,10 @@ contract AdminFacet is UseStorage {
         ECSLib.setUint("Nation", resourceID, _nationID);
     }
 
-    // ----------------------------------------------------------------------
-    // ADMIN FUNCTIONS
-    // ----------------------------------------------------------------------
-
-    // sent using the initial function
+    /// @dev Link a player's main account and burner account
     function authorizeGame(address _burnerAddress) external onlyAuthorized {
-        gs().accounts[msg.sender] = _burnerAddress;
-        gs().burnerAccounts[_burnerAddress] = msg.sender;
+        gs().mainToBurner[msg.sender] = _burnerAddress;
+        gs().burnerToMain[_burnerAddress] = msg.sender;
     }
 
     /**
@@ -96,11 +137,11 @@ contract AdminFacet is UseStorage {
      * @param _address nation address
      */
     function reactivateNation(address _address) external onlyAuthorized {
-        uint256 _nationID = gs().nationAddressToId[_address];
-        require(_nationID != NULL, "CURIO: Nation already initialized");
-        require(!ECSLib.getBoolComponent("IsActive").has(_nationID), "CURIO: Nation is active");
+        uint256 nationID = GameLib.getEntityByAddress(_address);
+        require(nationID != NULL, "CURIO: Nation already initialized");
+        require(!ECSLib.getBoolComponent("IsActive").has(nationID), "CURIO: Nation is active");
 
-        ECSLib.setBool("IsActive", _nationID);
+        ECSLib.setBool("IsActive", nationID);
     }
 
     /**
@@ -128,9 +169,8 @@ contract AdminFacet is UseStorage {
         return Templates.addInventory(_keeperID, templateID);
     }
 
-    function updateInventoryAmount(uint256 _inventoryID, uint256 _newAmount) external onlyAuthorized returns (bool) {
+    function updateInventoryAmount(uint256 _inventoryID, uint256 _newAmount) external onlyAuthorized {
         ECSLib.setUint("Amount", _inventoryID, _newAmount);
-        return true;
     }
 
     function addTroopTemplate(
@@ -166,12 +206,21 @@ contract AdminFacet is UseStorage {
         }
     }
 
+    /**
+     * @dev Add a new treaty to the game.
+     * @param _address deployed treaty address
+     * @param _name treaty name
+     * @param _abiHash treaty abi hash
+     * @return treatyID registered treaty entity
+     * @notice This function is currently used for permissioned deployment of treaties. In the future, treaties will be
+     *         deployed permissionlessly by players.
+     */
     function addTreaty(
         address _address,
         string memory _name,
         string memory _abiHash
-    ) external onlyAuthorized returns (uint256) {
-        return Templates.addTreaty(_address, _name, _abiHash);
+    ) external onlyAuthorized returns (uint256 treatyID) {
+        treatyID = Templates.addTreaty(_address, _name, _abiHash);
     }
 
     function generateNewAddress() external onlyAuthorized returns (address) {
@@ -181,6 +230,13 @@ contract AdminFacet is UseStorage {
     // ----------------------------------------------------------------------
     // ECS HELPERS
     // ----------------------------------------------------------------------
+
+    function registerFunctionNames(string[] memory _functionNames) external onlyAuthorized {
+        gs().gameFunctionNames = _functionNames;
+        for (uint256 i; i < _functionNames.length; i++) {
+            gs().isGameFunction[_functionNames[i]] = true;
+        }
+    }
 
     function registerComponents(address _gameAddr, ComponentSpec[] memory _componentSpecs) external onlyAuthorized {
         GameLib.registerComponents(_gameAddr, _componentSpecs);

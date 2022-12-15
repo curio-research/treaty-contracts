@@ -8,14 +8,16 @@ import {AddressComponent, BoolComponent, IntComponent, PositionComponent, String
 import {Position} from "contracts/libraries/Types.sol";
 import {Set} from "contracts/Set.sol";
 import {CurioWallet} from "contracts/CurioWallet.sol";
+import {CurioTreaty} from "contracts/CurioTreaty.sol";
 import {console} from "forge-std/console.sol";
 
-contract BaseGameTest is Test, DiamondDeployTest {
+contract GameTest is Test, DiamondDeployTest {
     // GameFacet Coverage Overview
     //
-    // Nation/Capital:
+    // Nation:
     // - [x] initializeNation
-    // - [x] upgradeNation
+    // Capital:
+    // - [x] upgradeCapital
     // - [ ] moveCapital
     // Tile:
     // - [x] claimTile
@@ -39,6 +41,8 @@ contract BaseGameTest is Test, DiamondDeployTest {
     // Battle:
     // - [x] battle (army vs. army)
     // - [ ] battle (army vs. tile)
+    // Treaty:
+    // - [x] delegateGameFunction
 
     function testInitialization() public {
         // Verify that wallet address is loaded correctly
@@ -108,13 +112,13 @@ contract BaseGameTest is Test, DiamondDeployTest {
 
         vm.warp(time + 10);
         time += 10;
-        game.move(army11ID, 63, 13);
+        game.move(army11ID, Position({x: 63, y: 13}));
         assertEq(getter.getPositionExternal("Position", army11ID).x, 63);
         assertEq(getter.getPositionExternal("Position", army11ID).y, 13);
 
         vm.warp(time + 10);
         time += 10;
-        game.move(army11ID, 62, 12);
+        game.move(army11ID, Position({x: 62, y: 12}));
 
         vm.warp(time + 10);
         time += 10;
@@ -166,19 +170,19 @@ contract BaseGameTest is Test, DiamondDeployTest {
         // Nation 1 move army
         vm.warp(time + 10);
         time += 10;
-        game.move(army11ID, 60, 12);
+        game.move(army11ID, Position({x: 60, y: 12}));
 
         vm.warp(time + 10);
         time += 10;
-        game.move(army11ID, 60, 14);
+        game.move(army11ID, Position({x: 60, y: 14}));
 
         vm.warp(time + 10);
         time += 10;
-        game.move(army11ID, 60, 16);
+        game.move(army11ID, Position({x: 60, y: 16}));
 
         vm.warp(time + 10);
         time += 10;
-        game.move(army11ID, 60, 18);
+        game.move(army11ID, Position({x: 60, y: 18}));
 
         vm.stopPrank();
 
@@ -194,23 +198,23 @@ contract BaseGameTest is Test, DiamondDeployTest {
 
         vm.warp(time + 10);
         time += 10;
-        game.move(army21ID, 60, 30);
+        game.move(army21ID, Position({x: 60, y: 30}));
 
         vm.warp(time + 10);
         time += 10;
-        game.move(army21ID, 60, 28);
+        game.move(army21ID, Position({x: 60, y: 28}));
 
         vm.warp(time + 10);
         time += 10;
-        game.move(army21ID, 60, 26);
+        game.move(army21ID, Position({x: 60, y: 26}));
 
         vm.warp(time + 10);
         time += 10;
-        game.move(army21ID, 60, 24);
+        game.move(army21ID, Position({x: 60, y: 24}));
 
         vm.warp(time + 10);
         time += 10;
-        game.move(army21ID, 60, 22);
+        game.move(army21ID, Position({x: 60, y: 22}));
 
         vm.stopPrank();
 
@@ -244,7 +248,7 @@ contract BaseGameTest is Test, DiamondDeployTest {
         assertEq(foodToken.checkBalanceOf(army21Addr), 1000);
     }
 
-    function testUpgradeNationBattleClaimTile() public {
+    function testUpgradeCapitalBattleClaimTile() public {
         // bug: lastChaos time is 0. This is wrong.
         uint256 time = block.timestamp + 600;
         // Deployer transfer enough gold & food to nation 1 & 2
@@ -275,11 +279,11 @@ contract BaseGameTest is Test, DiamondDeployTest {
 
         vm.warp(time + 10);
         time += 10;
-        game.move(army11ID, 60, 10);
+        game.move(army11ID, Position({x: 60, y: 10}));
 
         vm.warp(time + 10);
         time += 10;
-        game.move(army11ID, 60, 8);
+        game.move(army11ID, Position({x: 60, y: 8}));
 
         vm.warp(time + 10);
         time += 10;
@@ -297,7 +301,7 @@ contract BaseGameTest is Test, DiamondDeployTest {
 
         vm.warp(time + 10);
         time += 10;
-        game.upgradeNation();
+        game.upgradeCapital(nation1CapitalID);
         game.claimTile(army11ID, targetTileID);
 
         assertEq(getter.getEntityLevel(nation1CapitalID), 2);
@@ -337,16 +341,15 @@ contract BaseGameTest is Test, DiamondDeployTest {
         armyTemplateAmounts[0] = 500;
         armyTemplateAmounts[1] = 500;
         armyTemplateAmounts[2] = 500;
-        vm.warp(time + 10);
-        uint256 army11ID = game.organizeArmy(nation1CapitalID, armyTemplateIDs, armyTemplateAmounts);
-
         time += 10;
+        vm.warp(time);
+        uint256 army11ID = game.organizeArmy(nation1CapitalID, armyTemplateIDs, armyTemplateAmounts);
 
         // Nation 1 moves army to (62, 29)
         for (uint256 i = 1; i <= 9; i++) {
             time += 1;
             vm.warp(time);
-            game.move(army11ID, 62, 11 + 2 * i);
+            game.move(army11ID, Position({x: 62, y: 11 + 2 * i}));
         }
 
         // Nation 1 attacks Nation 2's capital
@@ -362,12 +365,12 @@ contract BaseGameTest is Test, DiamondDeployTest {
         // Nation 2 fails to upgrade its capital during chaos
         vm.startPrank(player2);
         vm.expectRevert();
-        game.upgradeNation();
+        game.upgradeCapital(nation2CapitalID);
 
         // Nation 2 upgrades its capital after chaos
         time += 200;
         vm.warp(time);
-        game.upgradeNation();
+        game.upgradeCapital(nation2CapitalID);
         vm.stopPrank();
     }
 
@@ -386,7 +389,7 @@ contract BaseGameTest is Test, DiamondDeployTest {
         uint256 time = block.timestamp + 600;
         vm.warp(time);
         vm.startPrank(player1);
-        game.upgradeNation();
+        game.upgradeCapital(nation1CapitalID);
         uint256 nation1CapitalID = getter.getCapital(nation1ID);
 
         time += 20;
@@ -440,11 +443,11 @@ contract BaseGameTest is Test, DiamondDeployTest {
 
         vm.warp(time + 10);
         time += 10;
-        game.move(army11ID, 60, 10);
+        game.move(army11ID, Position({x: 60, y: 10}));
 
         vm.warp(time + 10);
         time += 10;
-        game.move(army11ID, 60, 8);
+        game.move(army11ID, Position({x: 60, y: 8}));
 
         vm.warp(time + 10);
         time += 10;
@@ -461,11 +464,11 @@ contract BaseGameTest is Test, DiamondDeployTest {
 
         vm.warp(time + 10);
         time += 10;
-        game.move(army11ID, 60, 10);
+        game.move(army11ID, Position({x: 60, y: 10}));
 
         vm.warp(time + 10);
         time += 10;
-        game.move(army11ID, 60, 12);
+        game.move(army11ID, Position({x: 60, y: 12}));
         game.unloadResources(army11ID);
         assertEq(foodToken.checkBalanceOf(army11Addr), 0);
         assertEq(foodToken.checkBalanceOf(nation1CapitalAddr), armyFoodBalance);
@@ -486,19 +489,19 @@ contract BaseGameTest is Test, DiamondDeployTest {
         // Nation 1 produces 1000 horsemen
         vm.startPrank(player1);
         uint256 horsemanTemplateID = getter.getEntityByAddress(address(horsemanToken));
-        uint256 productionID = game.startTroopProduction(nation1CapitalID, horsemanTemplateID, 1000);
+        game.startTroopProduction(nation1CapitalID, horsemanTemplateID, 1000);
 
         // Nation 1 fails to end troop production
         time += worldConstants.secondsToTrainAThousandTroops / 2;
         vm.warp(time);
         vm.expectRevert("CURIO: Need more time for production");
-        game.endTroopProduction(nation1CapitalID, productionID);
+        game.endTroopProduction(nation1CapitalID);
         assertEq(horsemanToken.checkBalanceOf(nation1CapitalAddr), 0);
 
         // Nation 1 ends troop production
         time += time += worldConstants.secondsToTrainAThousandTroops / 2 + 1;
         vm.warp(time);
-        game.endTroopProduction(nation1CapitalID, productionID);
+        game.endTroopProduction(nation1CapitalID);
         assertEq(horsemanToken.checkBalanceOf(nation1CapitalAddr), 1000);
         vm.stopPrank();
     }
@@ -511,7 +514,7 @@ contract BaseGameTest is Test, DiamondDeployTest {
         // Check transfer distance
         assertEq(foodToken.maxTransferDistance(), 20);
 
-        // Deployer drips gold, food, and troops to Nation 2
+        // Deployer drips gold, food, and troops to Nation 1 and 2
         vm.startPrank(deployer);
         admin.dripToken(nation1CapitalAddr, "Gold", 1000000);
         admin.dripToken(nation1CapitalAddr, "Food", 1000000);
@@ -554,7 +557,7 @@ contract BaseGameTest is Test, DiamondDeployTest {
         for (uint256 i = 1; i <= 9; i++) {
             time += 1;
             vm.warp(time);
-            game.move(army21ID, 62, 31 + 2 * i);
+            game.move(army21ID, Position({x: 62, y: 31 + 2 * i}));
         }
         vm.stopPrank();
 
@@ -563,6 +566,55 @@ contract BaseGameTest is Test, DiamondDeployTest {
         vm.expectRevert();
         capital1Wallet.executeTx(address(foodToken), abi.encodeWithSignature("transfer(address,uint256)", army21Addr, 50));
         assertEq(foodToken.checkBalanceOf(army21Addr), 50);
+        vm.stopPrank();
+    }
+
+    function testDelegation() public {
+        // Start time
+        uint256 time = block.timestamp + 500;
+        vm.warp(time);
+
+        // Deployer drips gold and food to Nation 1
+        vm.startPrank(deployer);
+        admin.dripToken(nation1CapitalAddr, "Gold", 100000000);
+        admin.dripToken(nation1CapitalAddr, "Food", 100000000);
+        vm.stopPrank();
+
+        // Nation 2 fails to produce troops on behalf of Nation 1
+        vm.startPrank(player2);
+        vm.expectRevert("CURIO: Not permitted to call StartTroopProduction");
+        game.startTroopProduction(nation1CapitalID, horsemanTemplateID, 1000);
+        assertEq(horsemanToken.checkBalanceOf(nation1CapitalAddr), 0);
+        vm.stopPrank();
+
+        // Nation 1 delegates troop production to Nation 2
+        vm.startPrank(player1);
+        game.delegateGameFunction(nation1ID, "StartTroopProduction", nation2ID, true);
+        vm.stopPrank();
+
+        // Nation 2 produces troops on behalf of Nation 1
+        vm.startPrank(player2);
+        game.startTroopProduction(nation1CapitalID, horsemanTemplateID, 1000);
+        vm.stopPrank();
+
+        // Nation 1 ends production
+        time += worldConstants.secondsToTrainAThousandTroops + 1;
+        vm.warp(time);
+        vm.startPrank(player1);
+        game.endTroopProduction(nation1CapitalID);
+        assertEq(horsemanToken.checkBalanceOf(nation1CapitalAddr), 1000);
+        vm.stopPrank();
+
+        // Nation 1 revokes delegation
+        vm.startPrank(player1);
+        game.delegateGameFunction(nation1ID, "StartTroopProduction", nation2ID, false);
+        vm.stopPrank();
+
+        // Nation 2 fails to produce troops on behalf of Nation 1
+        vm.startPrank(player2);
+        vm.expectRevert("CURIO: Not permitted to call StartTroopProduction");
+        game.startTroopProduction(nation1CapitalID, horsemanTemplateID, 1000);
+        assertEq(horsemanToken.checkBalanceOf(nation1CapitalAddr), 1000);
         vm.stopPrank();
     }
 }

@@ -21,9 +21,9 @@ import type {
   TypedListener,
   OnEvent,
   PromiseOrValue,
-} from "../../../common";
+} from "../common";
 
-export interface FTXInterface extends utils.Interface {
+export interface CurioTreatyInterface extends utils.Interface {
   functions: {
     "admin()": FunctionFragment;
     "approveBattle(uint256,bytes)": FunctionFragment;
@@ -48,21 +48,13 @@ export interface FTXInterface extends utils.Interface {
     "approveUpgradeResource(uint256,bytes)": FunctionFragment;
     "approveUpgradeTile(uint256,bytes)": FunctionFragment;
     "delegatedGameFunctionNames(uint256)": FunctionFragment;
-    "deposit(uint256)": FunctionFragment;
     "description()": FunctionFragment;
     "diamond()": FunctionFragment;
-    "fttToken()": FunctionFragment;
     "game()": FunctionFragment;
     "getter()": FunctionFragment;
-    "goldToken()": FunctionFragment;
-    "isBankrupt()": FunctionFragment;
     "join()": FunctionFragment;
     "leave()": FunctionFragment;
     "name()": FunctionFragment;
-    "run()": FunctionFragment;
-    "sbfAddress()": FunctionFragment;
-    "sbfCapitalAddress()": FunctionFragment;
-    "withdraw(uint256)": FunctionFragment;
   };
 
   getFunction(
@@ -90,21 +82,13 @@ export interface FTXInterface extends utils.Interface {
       | "approveUpgradeResource"
       | "approveUpgradeTile"
       | "delegatedGameFunctionNames"
-      | "deposit"
       | "description"
       | "diamond"
-      | "fttToken"
       | "game"
       | "getter"
-      | "goldToken"
-      | "isBankrupt"
       | "join"
       | "leave"
       | "name"
-      | "run"
-      | "sbfAddress"
-      | "sbfCapitalAddress"
-      | "withdraw"
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "admin", values?: undefined): string;
@@ -197,38 +181,15 @@ export interface FTXInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "deposit",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
     functionFragment: "description",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "diamond", values?: undefined): string;
-  encodeFunctionData(functionFragment: "fttToken", values?: undefined): string;
   encodeFunctionData(functionFragment: "game", values?: undefined): string;
   encodeFunctionData(functionFragment: "getter", values?: undefined): string;
-  encodeFunctionData(functionFragment: "goldToken", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "isBankrupt",
-    values?: undefined
-  ): string;
   encodeFunctionData(functionFragment: "join", values?: undefined): string;
   encodeFunctionData(functionFragment: "leave", values?: undefined): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
-  encodeFunctionData(functionFragment: "run", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "sbfAddress",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "sbfCapitalAddress",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "withdraw",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
 
   decodeFunctionResult(functionFragment: "admin", data: BytesLike): Result;
   decodeFunctionResult(
@@ -319,37 +280,26 @@ export interface FTXInterface extends utils.Interface {
     functionFragment: "delegatedGameFunctionNames",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "description",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "diamond", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "fttToken", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "game", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getter", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "goldToken", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "isBankrupt", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "join", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "leave", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "run", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "sbfAddress", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "sbfCapitalAddress",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
 
   events: {};
 }
 
-export interface FTX extends BaseContract {
+export interface CurioTreaty extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: FTXInterface;
+  interface: CurioTreatyInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -504,24 +454,13 @@ export interface FTX extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    deposit(
-      _amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     description(overrides?: CallOverrides): Promise<[string]>;
 
     diamond(overrides?: CallOverrides): Promise<[string]>;
 
-    fttToken(overrides?: CallOverrides): Promise<[string]>;
-
     game(overrides?: CallOverrides): Promise<[string]>;
 
     getter(overrides?: CallOverrides): Promise<[string]>;
-
-    goldToken(overrides?: CallOverrides): Promise<[string]>;
-
-    isBankrupt(overrides?: CallOverrides): Promise<[boolean]>;
 
     join(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -532,19 +471,6 @@ export interface FTX extends BaseContract {
     ): Promise<ContractTransaction>;
 
     name(overrides?: CallOverrides): Promise<[string]>;
-
-    run(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    sbfAddress(overrides?: CallOverrides): Promise<[string]>;
-
-    sbfCapitalAddress(overrides?: CallOverrides): Promise<[string]>;
-
-    withdraw(
-      _amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
   };
 
   admin(overrides?: CallOverrides): Promise<string>;
@@ -680,24 +606,13 @@ export interface FTX extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
-  deposit(
-    _amount: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   description(overrides?: CallOverrides): Promise<string>;
 
   diamond(overrides?: CallOverrides): Promise<string>;
 
-  fttToken(overrides?: CallOverrides): Promise<string>;
-
   game(overrides?: CallOverrides): Promise<string>;
 
   getter(overrides?: CallOverrides): Promise<string>;
-
-  goldToken(overrides?: CallOverrides): Promise<string>;
-
-  isBankrupt(overrides?: CallOverrides): Promise<boolean>;
 
   join(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -708,19 +623,6 @@ export interface FTX extends BaseContract {
   ): Promise<ContractTransaction>;
 
   name(overrides?: CallOverrides): Promise<string>;
-
-  run(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  sbfAddress(overrides?: CallOverrides): Promise<string>;
-
-  sbfCapitalAddress(overrides?: CallOverrides): Promise<string>;
-
-  withdraw(
-    _amount: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
 
   callStatic: {
     admin(overrides?: CallOverrides): Promise<string>;
@@ -856,41 +758,19 @@ export interface FTX extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    deposit(
-      _amount: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
     description(overrides?: CallOverrides): Promise<string>;
 
     diamond(overrides?: CallOverrides): Promise<string>;
 
-    fttToken(overrides?: CallOverrides): Promise<string>;
-
     game(overrides?: CallOverrides): Promise<string>;
 
     getter(overrides?: CallOverrides): Promise<string>;
-
-    goldToken(overrides?: CallOverrides): Promise<string>;
-
-    isBankrupt(overrides?: CallOverrides): Promise<boolean>;
 
     join(overrides?: CallOverrides): Promise<void>;
 
     leave(overrides?: CallOverrides): Promise<void>;
 
     name(overrides?: CallOverrides): Promise<string>;
-
-    run(overrides?: CallOverrides): Promise<boolean>;
-
-    sbfAddress(overrides?: CallOverrides): Promise<string>;
-
-    sbfCapitalAddress(overrides?: CallOverrides): Promise<string>;
-
-    withdraw(
-      _amount: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
   };
 
   filters: {};
@@ -1029,24 +909,13 @@ export interface FTX extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    deposit(
-      _amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     description(overrides?: CallOverrides): Promise<BigNumber>;
 
     diamond(overrides?: CallOverrides): Promise<BigNumber>;
 
-    fttToken(overrides?: CallOverrides): Promise<BigNumber>;
-
     game(overrides?: CallOverrides): Promise<BigNumber>;
 
     getter(overrides?: CallOverrides): Promise<BigNumber>;
-
-    goldToken(overrides?: CallOverrides): Promise<BigNumber>;
-
-    isBankrupt(overrides?: CallOverrides): Promise<BigNumber>;
 
     join(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1057,19 +926,6 @@ export interface FTX extends BaseContract {
     ): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
-
-    run(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    sbfAddress(overrides?: CallOverrides): Promise<BigNumber>;
-
-    sbfCapitalAddress(overrides?: CallOverrides): Promise<BigNumber>;
-
-    withdraw(
-      _amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -1206,24 +1062,13 @@ export interface FTX extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    deposit(
-      _amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
     description(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     diamond(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    fttToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     game(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    goldToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    isBankrupt(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     join(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1234,18 +1079,5 @@ export interface FTX extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    run(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    sbfAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    sbfCapitalAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    withdraw(
-      _amount: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
   };
 }

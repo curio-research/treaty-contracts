@@ -20,8 +20,4 @@ contract Treaty is ITreaty {
 
         name = "Treaty";
     }
-
-    function joinTreaty() external returns (bool) {}
-
-    function leaveTreaty() external returns (bool) {}
 }

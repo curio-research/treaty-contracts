@@ -26,7 +26,6 @@ import type {
 export interface SetInterface extends utils.Interface {
   functions: {
     "add(uint256)": FunctionFragment;
-    "addArray(uint256[])": FunctionFragment;
     "getAll()": FunctionFragment;
     "includes(uint256)": FunctionFragment;
     "remove(uint256)": FunctionFragment;
@@ -34,22 +33,12 @@ export interface SetInterface extends utils.Interface {
   };
 
   getFunction(
-    nameOrSignatureOrTopic:
-      | "add"
-      | "addArray"
-      | "getAll"
-      | "includes"
-      | "remove"
-      | "size"
+    nameOrSignatureOrTopic: "add" | "getAll" | "includes" | "remove" | "size"
   ): FunctionFragment;
 
   encodeFunctionData(
     functionFragment: "add",
     values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "addArray",
-    values: [PromiseOrValue<BigNumberish>[]]
   ): string;
   encodeFunctionData(functionFragment: "getAll", values?: undefined): string;
   encodeFunctionData(
@@ -63,7 +52,6 @@ export interface SetInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "size", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "add", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "addArray", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getAll", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "includes", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "remove", data: BytesLike): Result;
@@ -104,11 +92,6 @@ export interface Set extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    addArray(
-      _elements: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     getAll(overrides?: CallOverrides): Promise<[BigNumber[]]>;
 
     includes(
@@ -129,11 +112,6 @@ export interface Set extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  addArray(
-    _elements: PromiseOrValue<BigNumberish>[],
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   getAll(overrides?: CallOverrides): Promise<BigNumber[]>;
 
   includes(
@@ -151,11 +129,6 @@ export interface Set extends BaseContract {
   callStatic: {
     add(
       _element: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    addArray(
-      _elements: PromiseOrValue<BigNumberish>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -182,11 +155,6 @@ export interface Set extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    addArray(
-      _elements: PromiseOrValue<BigNumberish>[],
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     getAll(overrides?: CallOverrides): Promise<BigNumber>;
 
     includes(
@@ -205,11 +173,6 @@ export interface Set extends BaseContract {
   populateTransaction: {
     add(
       _element: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    addArray(
-      _elements: PromiseOrValue<BigNumberish>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

@@ -15,6 +15,7 @@ import {AdminFacet} from "contracts/facets/AdminFacet.sol";
 import {Strings} from "openzeppelin-contracts/contracts/utils/Strings.sol";
 import {ComponentSpec, GameMode, GameParamSpec, Position, WorldConstants} from "contracts/libraries/Types.sol";
 import {NATO} from "contracts/treaties/NATO.sol";
+import {Alliance} from "contracts/treaties/Alliance.sol";
 import {CurioERC20} from "contracts/tokens/CurioERC20.sol";
 import {console} from "forge-std/console.sol";
 import {stdJson} from "forge-std/StdJson.sol";
@@ -40,6 +41,9 @@ contract DiamondDeployTest is Test {
 
     // Treaties
     NATO public nato;
+    Alliance public alliance;
+    uint256 public natoID;
+    uint256 public allianceID;
 
     // Players (nations)
     address public deployer = address(0);
@@ -124,6 +128,10 @@ contract DiamondDeployTest is Test {
         ownership = OwnershipFacet(diamond);
         console.log(">>> Facets casted");
 
+        // Register function names
+        _registerFunctionNames();
+        console.log(">>> Function names registered");
+
         // Register components
         _registerComponents();
         console.log(">>> Components registered");
@@ -139,8 +147,8 @@ contract DiamondDeployTest is Test {
         warriorToken = new CurioERC20("Warrior", "WARRIOR", 0, address(diamond));
         slingerToken = new CurioERC20("Slinger", "SLINGER", 0, address(diamond));
         guardToken = new CurioERC20("Guard", "GUARD", 0, address(diamond));
-        admin.addAuthorized(address(foodToken));
         admin.addAuthorized(address(goldToken));
+        admin.addAuthorized(address(foodToken));
         admin.addAuthorized(address(horsemanToken));
         admin.addAuthorized(address(warriorToken));
         admin.addAuthorized(address(slingerToken));
@@ -163,22 +171,24 @@ contract DiamondDeployTest is Test {
 
         // Initialize treaties
         nato = new NATO(diamond);
-        admin.addTreaty(address(nato), nato.name(), "sample ABI");
+        natoID = admin.addTreaty(address(nato), nato.name(), "sample ABI");
+        alliance = new Alliance(diamond);
+        allianceID = admin.addTreaty(address(alliance), alliance.name(), "sample ABI");
         console.log(">>> Treaties initialized");
 
         vm.stopPrank();
 
         // Initialize players
         vm.prank(player1);
-        nation1ID = game.initializeNation(nation1Pos.x, nation1Pos.y, "China");
+        nation1ID = game.initializeNation(nation1Pos, "China");
         nation1CapitalID = getter.getCapital(nation1ID);
         nation1CapitalAddr = getter.getAddress(nation1CapitalID);
         vm.prank(player2);
-        nation2ID = game.initializeNation(nation2Pos.x, nation2Pos.y, "US");
+        nation2ID = game.initializeNation(nation2Pos, "US");
         nation2CapitalID = getter.getCapital(nation2ID);
         nation2CapitalAddr = getter.getAddress(nation2CapitalID);
         vm.prank(player3);
-        nation3ID = game.initializeNation(nation3Pos.x, nation3Pos.y, "Russia");
+        nation3ID = game.initializeNation(nation3Pos, "Russia");
         nation3CapitalID = getter.getCapital(nation3ID);
         nation3CapitalAddr = getter.getAddress(nation3CapitalID);
         console.log(">>> Nations initialized");
@@ -230,6 +240,31 @@ contract DiamondDeployTest is Test {
         }
 
         return _result;
+    }
+
+    function _registerFunctionNames() private {
+        string[] memory gameFunctionNames = new string[](20);
+        gameFunctionNames[0] = "InitializeNation";
+        gameFunctionNames[1] = "UpgradeCapital";
+        gameFunctionNames[2] = "MoveCapital";
+        gameFunctionNames[3] = "ClaimTile";
+        gameFunctionNames[4] = "UpgradeTile";
+        gameFunctionNames[5] = "RecoverTile";
+        gameFunctionNames[6] = "DisownTile";
+        gameFunctionNames[7] = "StartTroopProduction";
+        gameFunctionNames[8] = "EndTroopProduction";
+        gameFunctionNames[9] = "Move";
+        gameFunctionNames[10] = "OrganizeArmy";
+        gameFunctionNames[11] = "DisbandArmy";
+        gameFunctionNames[12] = "StartGather";
+        gameFunctionNames[13] = "EndGather";
+        gameFunctionNames[14] = "UnloadResources";
+        gameFunctionNames[15] = "HarvestResource";
+        gameFunctionNames[16] = "HarvestResourcesFromCapital";
+        gameFunctionNames[17] = "UpgradeResource";
+        gameFunctionNames[18] = "Battle";
+        gameFunctionNames[19] = "DelegateGameFunction";
+        admin.registerFunctionNames(gameFunctionNames);
     }
 
     function _registerComponents() private {

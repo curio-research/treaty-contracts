@@ -1,18 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import {ITreaty} from "contracts/interfaces/ITreaty.sol";
+import {CurioTreaty} from "contracts/CurioTreaty.sol";
 
 // FIXME: add back Ownable
-contract NATO is ITreaty {
-    address public diamond;
-    string public name;
+contract NATO is CurioTreaty {
     address[] public memberStates;
     mapping(address => bool) public isMemberStates;
 
-    constructor(address _diamond) {
-        diamond = _diamond;
+    constructor(address _diamond) CurioTreaty(_diamond) {
         name = "North Atlantic Treaty Organization";
+        description = "A treaty between the United States, Canada, and ten European countries to defend each other by mutual defense if attacked by any external party";
     }
 
     // ----------------------------------------------------------

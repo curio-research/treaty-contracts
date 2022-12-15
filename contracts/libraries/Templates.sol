@@ -198,6 +198,7 @@ library Templates {
         ECSLib.setString("Tag", signatureID, "Signature");
         ECSLib.setUint("Treaty", signatureID, _treatyID);
         ECSLib.setUint("Nation", signatureID, _nationID);
+        ECSLib.setUint("InitTimestamp", signatureID, block.timestamp);
 
         return signatureID;
     }
@@ -216,5 +217,20 @@ library Templates {
         ECSLib.setAddress("Address", treatyID, _address);
 
         return treatyID;
+    }
+
+    function addDelegation(
+        string memory _functionName,
+        uint256 _ownerID,
+        uint256 _callerID
+    ) public returns (uint256) {
+        uint256 delegationID = ECSLib.addEntity();
+
+        ECSLib.setString("Tag", delegationID, "Delegation");
+        ECSLib.setString("FunctionName", delegationID, _functionName);
+        ECSLib.setUint("Owner", delegationID, _ownerID);
+        ECSLib.setUint("Caller", delegationID, _callerID);
+
+        return delegationID;
     }
 }

@@ -40,16 +40,10 @@ contract DiamondInit is UseStorage {
         // in order to set state variables in the diamond during deployment or an upgrade
         // More info here: https://eips.ethereum.org/EIPS/eip-2535#diamond-interface
 
-        // set world constants
         gs().worldConstants = _worldConstants;
-
-        // initialize entities
         gs().entities = address(new Set());
         gs().entityNonce = 1;
-        gs().tileNonce = 1;
-        gs().walletNonce = 1;
-
-        // set initial time
+        gs().addressNonce = 1;
         gs().gameInitTimestamp = block.timestamp;
     }
 }

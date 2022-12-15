@@ -2,27 +2,20 @@
 pragma solidity ^0.8.13;
 
 import {ERC20} from "lib/solmate/src/tokens/ERC20.sol";
-import {ITreaty} from "contracts/interfaces/ITreaty.sol";
-import {GetterFacet} from "contracts/facets/GetterFacet.sol";
+import {CurioTreaty} from "contracts/CurioTreaty.sol";
 import {CurioERC20} from "contracts/tokens/CurioERC20.sol";
 import {console} from "forge-std/console.sol";
 
-contract FTX is ITreaty {
-    address public diamond;
-    string public name;
-    GetterFacet public getter;
+contract FTX is CurioTreaty {
     CurioERC20 public goldToken;
     FTTERC20 public fttToken;
     address public sbfAddress;
     address public sbfCapitalAddress;
     bool public isBankrupt;
 
-    constructor(address _diamond) {
-        require(_diamond != address(0), "FTX: Diamond address required");
-
-        diamond = _diamond;
+    constructor(address _diamond) CurioTreaty(_diamond) {
         name = "FTX";
-        getter = GetterFacet(_diamond);
+        description = "FTX is a cryptocurrency exchange based in the United States. It is totally not a scam.";
         goldToken = getter.getTokenContract("Gold");
         fttToken = new FTTERC20(address(this));
         sbfAddress = msg.sender;
