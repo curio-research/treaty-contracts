@@ -49,35 +49,6 @@ contract DiamondInit is UseStorage {
         gs().tileNonce = 1;
         gs().walletNonce = 1;
 
-        // set function names
-        string[] memory gameFunctionNames = new string[](22);
-        gameFunctionNames[0] = "InitializeNation";
-        gameFunctionNames[1] = "UpgradeCapital";
-        gameFunctionNames[2] = "MoveCapital";
-        gameFunctionNames[3] = "ClaimTile";
-        gameFunctionNames[4] = "UpgradeTile";
-        gameFunctionNames[5] = "RecoverTile";
-        gameFunctionNames[6] = "DisownTile";
-        gameFunctionNames[7] = "StartTroopProduction";
-        gameFunctionNames[8] = "EndTroopProduction";
-        gameFunctionNames[9] = "Move";
-        gameFunctionNames[10] = "OrganizeArmy";
-        gameFunctionNames[11] = "DisbandArmy";
-        gameFunctionNames[12] = "StartGather";
-        gameFunctionNames[13] = "EndGather";
-        gameFunctionNames[14] = "UnloadResources";
-        gameFunctionNames[15] = "HarvestResource";
-        gameFunctionNames[16] = "HarvestResourcesFromCapital";
-        gameFunctionNames[17] = "UpgradeResource";
-        gameFunctionNames[18] = "Battle";
-        gameFunctionNames[19] = "JoinTreaty";
-        gameFunctionNames[20] = "LeaveTreaty";
-        gameFunctionNames[21] = "DelegateGameFunction";
-        gs().gameFunctionNames = gameFunctionNames;
-        for (uint256 i; i < gameFunctionNames.length; i++) {
-            gs().isGameFunction[gameFunctionNames[i]] = true;
-        }
-
         // set initial time
         gs().gameInitTimestamp = block.timestamp;
     }

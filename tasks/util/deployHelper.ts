@@ -119,6 +119,33 @@ export const initializeGame = async (hre: HardhatRuntimeEnvironment, worldConsta
   await deployFacets(hre, diamondAddr, facets, admin);
   console.log(`✦ Diamond deployment took ${Math.floor(performance.now() - startTime)} ms`);
 
+  // Register function names
+  startTime = performance.now();
+  const functionNames = [
+    'InitializeNation',
+    'UpgradeCapital',
+    'MoveCapital',
+    'ClaimTile',
+    'UpgradeTile',
+    'RecoverTile',
+    'DisownTile',
+    'StartTroopProduction',
+    'EndTroopProduction',
+    'Move',
+    'OrganizeArmy',
+    'DisbandArmy',
+    'StartGather',
+    'EndGather',
+    'UnloadResources',
+    'HarvestResources',
+    'HarvestResourcesFromCapital',
+    'UpgradeResource',
+    'Battle',
+    'DelegateGameFunction', // DO NOT REMOVE THIS COMMENT
+  ];
+  await confirmTx(await diamond.registerFunctionNames(functionNames, { gasLimit }), hre);
+  console.log(`✦ Function name registration took ${Math.floor(performance.now() - startTime)} ms`);
+
   // Batch register components
   startTime = performance.now();
   const componentUploadBatchSize = 50;

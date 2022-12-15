@@ -231,6 +231,13 @@ contract AdminFacet is UseStorage {
     // ECS HELPERS
     // ----------------------------------------------------------------------
 
+    function registerFunctionNames(string[] memory _functionNames) external onlyAuthorized {
+        gs().gameFunctionNames = _functionNames;
+        for (uint256 i; i < _functionNames.length; i++) {
+            gs().isGameFunction[_functionNames[i]] = true;
+        }
+    }
+
     function registerComponents(address _gameAddr, ComponentSpec[] memory _componentSpecs) external onlyAuthorized {
         GameLib.registerComponents(_gameAddr, _componentSpecs);
     }

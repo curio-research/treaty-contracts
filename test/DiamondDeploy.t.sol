@@ -128,6 +128,10 @@ contract DiamondDeployTest is Test {
         ownership = OwnershipFacet(diamond);
         console.log(">>> Facets casted");
 
+        // Register function names
+        _registerFunctionNames();
+        console.log(">>> Function names registered");
+
         // Register components
         _registerComponents();
         console.log(">>> Components registered");
@@ -236,6 +240,31 @@ contract DiamondDeployTest is Test {
         }
 
         return _result;
+    }
+
+    function _registerFunctionNames() private {
+        string[] memory gameFunctionNames = new string[](20);
+        gameFunctionNames[0] = "InitializeNation";
+        gameFunctionNames[1] = "UpgradeCapital";
+        gameFunctionNames[2] = "MoveCapital";
+        gameFunctionNames[3] = "ClaimTile";
+        gameFunctionNames[4] = "UpgradeTile";
+        gameFunctionNames[5] = "RecoverTile";
+        gameFunctionNames[6] = "DisownTile";
+        gameFunctionNames[7] = "StartTroopProduction";
+        gameFunctionNames[8] = "EndTroopProduction";
+        gameFunctionNames[9] = "Move";
+        gameFunctionNames[10] = "OrganizeArmy";
+        gameFunctionNames[11] = "DisbandArmy";
+        gameFunctionNames[12] = "StartGather";
+        gameFunctionNames[13] = "EndGather";
+        gameFunctionNames[14] = "UnloadResources";
+        gameFunctionNames[15] = "HarvestResource";
+        gameFunctionNames[16] = "HarvestResourcesFromCapital";
+        gameFunctionNames[17] = "UpgradeResource";
+        gameFunctionNames[18] = "Battle";
+        gameFunctionNames[19] = "DelegateGameFunction";
+        admin.registerFunctionNames(gameFunctionNames);
     }
 
     function _registerComponents() private {

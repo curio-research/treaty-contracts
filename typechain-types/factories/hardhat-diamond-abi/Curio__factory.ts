@@ -470,6 +470,19 @@ const _abi = [
     inputs: [
       {
         internalType: "string[]",
+        name: "_functionNames",
+        type: "string[]",
+      },
+    ],
+    name: "registerFunctionNames",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string[]",
         name: "_names",
         type: "string[]",
       },

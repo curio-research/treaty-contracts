@@ -175,7 +175,7 @@ library GameLib {
     }
 
     function battleArmy(uint256 _armyID, uint256 _targetArmyID) internal {
-        // Verify that army and target army are adjacent
+        // Verify that army and tar army are adjacent
         require(euclidean(ECSLib.getPosition("Position", _armyID), ECSLib.getPosition("Position", _targetArmyID)) <= ECSLib.getUint("AttackRange", _armyID), "CURIO: Attack out of range");
 
         // End target army's gather
@@ -356,7 +356,7 @@ library GameLib {
         bool _canCall
     ) internal {
         // Get current permission
-        uint256 delegationID = GameLib.getDelegation(_functionName, _nationID, _delegateID);
+        uint256 delegationID = getDelegation(_functionName, _nationID, _delegateID);
 
         // Update permission
         if (_canCall && delegationID == 0) {
