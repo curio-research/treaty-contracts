@@ -920,6 +920,7 @@ library GameLib {
     }
 
     function strEq(string memory _s1, string memory _s2) internal pure returns (bool) {
+        if (bytes(_s1).length != bytes(_s2).length) return false;
         return (keccak256(abi.encodePacked((_s1))) == keccak256(abi.encodePacked((_s2))));
     }
 
